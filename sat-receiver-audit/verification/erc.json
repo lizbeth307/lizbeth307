@@ -1,0 +1,117 @@
+{
+    "$schema": "https://schemas.kicad.org/erc.v1.json",
+    "coordinate_units": "mm",
+    "date": "2026-10-19T07:35:08",
+    "ignored_checks": [
+        {
+            "description": "Global label only appears once in the schematic",
+            "key": "single_global_label"
+        },
+        {
+            "description": "Four connection points are joined together",
+            "key": "four_way_junction"
+        },
+        {
+            "description": "SPICE model issue",
+            "key": "simulation_model_issue"
+        },
+        {
+            "description": "Assigned footprint doesn't match footprint filters",
+            "key": "footprint_filter"
+        }
+    ],
+    "included_severities": [
+        "error",
+        "warning",
+        "exclusion"
+    ],
+    "kicad_version": "10.0.7",
+    "sheets": [
+        {
+            "path": "/",
+            "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25",
+            "violations": []
+        },
+        {
+            "path": "/E1/",
+            "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25/a943ccec-2813-5b6f-9c47-b1bcb52cee7f",
+            "violations": []
+        },
+        {
+            "path": "/E1_02/",
+            "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25/18b3b3ad-34e0-53cc-9f25-c4ecb6dfa9a2",
+            "violations": []
+        },
+        {
+            "path": "/E2/",
+            "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25/81984160-ffc1-5150-93ba-690a49e1cc5c",
+            "violations": []
+        },
+        {
+            "path": "/E2_02/",
+            "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25/def01337-c22c-581d-ab21-3e0f48197e81",
+            "violations": []
+        },
+        {
+            "path": "/E2_03/",
+            "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25/c4c82d69-a1e5-5cf1-924c-73422e522133",
+            "violations": []
+        },
+        {
+            "path": "/E2_04/",
+            "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25/b86a610c-9540-56eb-9a94-fee3a23ee226",
+            "violations": []
+        },
+        {
+            "path": "/E2_05/",
+            "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25/3b171c1f-559e-51e7-80e8-e40d3812ba35",
+            "violations": []
+        },
+        {
+            "path": "/E3/",
+            "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25/815659b2-9f99-5caa-9e97-34b4cd398135",
+            "violations": []
+        },
+        {
+            "path": "/E3_02/",
+            "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25/047fcfd6-7912-5c2d-b6e9-2eba49e8ffe0",
+            "violations": []
+        },
+        {
+            "path": "/E3_03/",
+            "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25/c85ad7f8-a0d1-5e29-929c-feed1fd251ab",
+            "violations": []
+        },
+        {
+            "path": "/E4/",
+            "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25/8f7e80ea-aee4-5257-bec3-c2e6ba73b52d",
+            "violations": []
+        },
+        {
+            "path": "/E4_02/",
+            "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25/29d9ed3f-1ac6-5216-98b0-395a68609862",
+            "violations": []
+        },
+        {
+            "path": "/E4_03/",
+            "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25/4dd92141-48db-50ea-8b51-bae65ea8ecfb",
+            "violations": []
+        },
+        {
+            "path": "/E4_04/",
+            "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25/9df58c55-738d-55e8-9cee-b8959598c250",
+            "violations": []
+        },
+        {
+            "path": "/E5/",
+            "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25/7961f449-97be-5318-9750-0d1b8f253ccf",
+            "violations": []
+        },
+        {
+            "path": "/E5_02/",
+            "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25/2f560f15-377c-5a7b-8d16-c38c753251d6",
+            "violations": []
+        }
+    ],
+    "source": "sr-rx-v2.kicad_sch"
+}

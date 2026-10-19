@@ -1,0 +1,457 @@
+{
+  "schema_version": 1,
+  "hardware_readiness": false,
+  "production_release": false,
+  "custom_firmware_implemented_and_tested": false,
+  "battery_adc_calibration_valid": false,
+  "gate_results": {
+    "E1-01": "OPEN",
+    "E1-02": "OPEN",
+    "E1-03": "OPEN",
+    "E1-04": "OPEN",
+    "E1-05": "OPEN",
+    "E1-06": "OPEN",
+    "E1-07": "OPEN",
+    "E2-01": "OPEN",
+    "E2-02": "OPEN",
+    "E2-03": "OPEN",
+    "E2-04": "OPEN",
+    "E2-05": "OPEN",
+    "E3-01": "OPEN",
+    "E3-02": "OPEN",
+    "E3-03": "OPEN",
+    "E3-04": "OPEN",
+    "E3-05": "OPEN",
+    "E3-06": "OPEN",
+    "E3-07": "OPEN",
+    "E3-08": "OPEN",
+    "E4-01": "OPEN",
+    "E4-03": "OPEN",
+    "E4-04": "OPEN",
+    "E4-05": "OPEN",
+    "E4-06": "OPEN",
+    "E4-07": "OPEN",
+    "E4-08": "OPEN",
+    "E5-01": "OPEN",
+    "E5-02": "OPEN",
+    "E5-03": "OPEN",
+    "E5-04": "OPEN",
+    "E5-05": "OPEN",
+    "E5-06": "OPEN",
+    "E5-07": "OPEN",
+    "E5-08": "OPEN",
+    "E5-09": "OPEN"
+  },
+  "startup_output_requests": {
+    "CHG_INHIBIT": 1,
+    "EN_AUX12": 0,
+    "EN_BONI": 0,
+    "EN_HFP": 0,
+    "EN_LABPORT": 0,
+    "EN_LIME3V3": 0,
+    "EN_LNA1": 0,
+    "EN_LNA2": 0,
+    "EN_LNA3": 0,
+    "EN_LNA4": 0,
+    "EN_LNB": 0,
+    "EN_RTLA": 0,
+    "EN_RTLB": 0,
+    "EN_SB_LNA": 0,
+    "EN_T7": 0,
+    "K1_ON": 0,
+    "K2_ON": 0,
+    "PICO_DISP_EN": 0,
+    "SW_LIME_A": 0,
+    "SW_LIME_B": 0,
+    "SW_RTLA_A": 0,
+    "SW_RTLA_B": 0,
+    "SW_RTLB_A": 0,
+    "SW_RTLB_B": 0
+  },
+  "control_contacts": {
+    "CHG_INHIBIT": [
+      {
+        "ref": "R122",
+        "pin": "1",
+        "type": "passive"
+      },
+      {
+        "ref": "U303",
+        "pin": "5",
+        "type": "output"
+      }
+    ],
+    "PICO_DISP_EN": [
+      {
+        "ref": "U202",
+        "pin": "1",
+        "type": "input"
+      },
+      {
+        "ref": "R213",
+        "pin": "1",
+        "type": "passive"
+      },
+      {
+        "ref": "U305",
+        "pin": "21",
+        "type": "output"
+      }
+    ],
+    "EN_LIME3V3": [
+      {
+        "ref": "U203",
+        "pin": "1",
+        "type": "input"
+      },
+      {
+        "ref": "R218",
+        "pin": "1",
+        "type": "passive"
+      },
+      {
+        "ref": "U303",
+        "pin": "21",
+        "type": "output"
+      }
+    ],
+    "EN_AUX12": [
+      {
+        "ref": "Q202",
+        "pin": "1",
+        "type": "input"
+      },
+      {
+        "ref": "R220",
+        "pin": "1",
+        "type": "passive"
+      },
+      {
+        "ref": "U301",
+        "pin": "22",
+        "type": "output"
+      }
+    ],
+    "EN_LNA1": [
+      {
+        "ref": "U206",
+        "pin": "3",
+        "type": "input"
+      },
+      {
+        "ref": "R229",
+        "pin": "1",
+        "type": "passive"
+      },
+      {
+        "ref": "U301",
+        "pin": "26",
+        "type": "output"
+      }
+    ],
+    "EN_LNA2": [
+      {
+        "ref": "U207",
+        "pin": "3",
+        "type": "input"
+      },
+      {
+        "ref": "R234",
+        "pin": "1",
+        "type": "passive"
+      },
+      {
+        "ref": "U301",
+        "pin": "27",
+        "type": "output"
+      }
+    ],
+    "EN_LNA3": [
+      {
+        "ref": "U208",
+        "pin": "3",
+        "type": "input"
+      },
+      {
+        "ref": "R239",
+        "pin": "1",
+        "type": "passive"
+      },
+      {
+        "ref": "U301",
+        "pin": "28",
+        "type": "output"
+      }
+    ],
+    "EN_LNA4": [
+      {
+        "ref": "U209",
+        "pin": "3",
+        "type": "input"
+      },
+      {
+        "ref": "R244",
+        "pin": "1",
+        "type": "passive"
+      },
+      {
+        "ref": "U302",
+        "pin": "28",
+        "type": "output"
+      }
+    ],
+    "EN_RTLB": [
+      {
+        "ref": "U210",
+        "pin": "3",
+        "type": "input"
+      },
+      {
+        "ref": "R249",
+        "pin": "1",
+        "type": "passive"
+      },
+      {
+        "ref": "U301",
+        "pin": "24",
+        "type": "output"
+      }
+    ],
+    "EN_LNB": [
+      {
+        "ref": "U211",
+        "pin": "13",
+        "type": "input"
+      },
+      {
+        "ref": "R253",
+        "pin": "1",
+        "type": "passive"
+      },
+      {
+        "ref": "R291",
+        "pin": "1",
+        "type": "passive"
+      },
+      {
+        "ref": "U301",
+        "pin": "1",
+        "type": "output"
+      }
+    ],
+    "EN_BONI": [
+      {
+        "ref": "U213",
+        "pin": "13",
+        "type": "input"
+      },
+      {
+        "ref": "R261",
+        "pin": "1",
+        "type": "passive"
+      },
+      {
+        "ref": "U214",
+        "pin": "3",
+        "type": "input"
+      },
+      {
+        "ref": "U301",
+        "pin": "2",
+        "type": "output"
+      }
+    ],
+    "EN_SB_LNA": [
+      {
+        "ref": "U221",
+        "pin": "3",
+        "type": "input"
+      },
+      {
+        "ref": "R294",
+        "pin": "1",
+        "type": "passive"
+      },
+      {
+        "ref": "U303",
+        "pin": "25",
+        "type": "output"
+      }
+    ],
+    "K1_ON": [
+      {
+        "ref": "U301",
+        "pin": "3",
+        "type": "output"
+      },
+      {
+        "ref": "R412",
+        "pin": "1",
+        "type": "passive"
+      }
+    ],
+    "K2_ON": [
+      {
+        "ref": "U301",
+        "pin": "4",
+        "type": "output"
+      },
+      {
+        "ref": "R413",
+        "pin": "1",
+        "type": "passive"
+      }
+    ],
+    "SW_RTLA_A": [
+      {
+        "ref": "U301",
+        "pin": "5",
+        "type": "output"
+      },
+      {
+        "ref": "R440",
+        "pin": "1",
+        "type": "passive"
+      }
+    ],
+    "SW_RTLA_B": [
+      {
+        "ref": "U301",
+        "pin": "6",
+        "type": "output"
+      },
+      {
+        "ref": "R441",
+        "pin": "1",
+        "type": "passive"
+      }
+    ],
+    "SW_RTLB_A": [
+      {
+        "ref": "U301",
+        "pin": "7",
+        "type": "output"
+      },
+      {
+        "ref": "R442",
+        "pin": "1",
+        "type": "passive"
+      }
+    ],
+    "SW_RTLB_B": [
+      {
+        "ref": "U301",
+        "pin": "8",
+        "type": "output"
+      },
+      {
+        "ref": "R443",
+        "pin": "1",
+        "type": "passive"
+      }
+    ],
+    "EN_LABPORT": [
+      {
+        "ref": "U301",
+        "pin": "21",
+        "type": "output"
+      },
+      {
+        "ref": "U502",
+        "pin": "3",
+        "type": "input"
+      },
+      {
+        "ref": "R506",
+        "pin": "1",
+        "type": "passive"
+      }
+    ],
+    "EN_RTLA": [
+      {
+        "ref": "U301",
+        "pin": "23",
+        "type": "output"
+      },
+      {
+        "ref": "U501",
+        "pin": "3",
+        "type": "input"
+      },
+      {
+        "ref": "R502",
+        "pin": "1",
+        "type": "passive"
+      }
+    ],
+    "EN_HFP": [
+      {
+        "ref": "U301",
+        "pin": "25",
+        "type": "output"
+      },
+      {
+        "ref": "U503",
+        "pin": "3",
+        "type": "input"
+      },
+      {
+        "ref": "R510",
+        "pin": "1",
+        "type": "passive"
+      }
+    ],
+    "EN_T7": [
+      {
+        "ref": "U302",
+        "pin": "8",
+        "type": "output"
+      },
+      {
+        "ref": "U505",
+        "pin": "4",
+        "type": "input"
+      },
+      {
+        "ref": "R515",
+        "pin": "1",
+        "type": "passive"
+      }
+    ],
+    "SW_LIME_A": [
+      {
+        "ref": "U303",
+        "pin": "23",
+        "type": "output"
+      },
+      {
+        "ref": "R444",
+        "pin": "1",
+        "type": "passive"
+      }
+    ],
+    "SW_LIME_B": [
+      {
+        "ref": "U303",
+        "pin": "24",
+        "type": "output"
+      },
+      {
+        "ref": "R445",
+        "pin": "1",
+        "type": "passive"
+      }
+    ]
+  },
+  "rules": [
+    "Це специфікація станів, не реалізований GPIO-драйвер і не доказ виконання їх прошивкою.",
+    "До апаратного приймання усі bias enables заблоковані незалежно від логічного рівня непідключеного DC-sense.",
+    "Підтягнутий HIGH від відсутнього датчика не є доказом безпечного DC.",
+    "Preflight DC-free вимірюється лише при вимкненому власному bias; після увімкнення bias застосовуються визначені для нього струмові й напругові вікна.",
+    "Pico GP17 через Q306 апаратно утримує спільний RESET трьох MCP при Pico boot/reset. Майбутня прошивка повинна тримати RESET при heartbeat fault; release тільки після свіжого explicit re-arm, OLAT safe-low перед IODIR. Прошивка не реалізована; повна втрата живлення Pico не покривається цим FET.",
+    "Штатний режим без чинної двоточкової калібровки батарейного ADC заборонений.",
+    "При SJ1 на Adafruit INA228 VBUS вимірює VIN+ до шунта; V_N = VBUS - VSHUNT з правильним знаком струму.",
+    "Стан реле K1=1,K2=1 заборонено. HMC A/B=00 вибирає RF1 PARK.",
+    "Сервісна зарядка через ISDT/raw balance вимкнена до E1-02; main OFF і запобіжник не доводять ізоляцію B0/P−."
+  ]
+}

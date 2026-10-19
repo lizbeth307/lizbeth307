@@ -1,0 +1,120 @@
+{
+  "passed": true,
+  "pdf_sha256": "857080063ea0da04a5e67efc476952f4dbefe5d82704a43d43251c6ee623403f",
+  "bytes": 628850,
+  "pages": 17,
+  "parser_validation": [
+    "Poppler pdfinfo",
+    "PyMuPDF"
+  ],
+  "visual_review": "All17 pages inspected in Poppler contact sheets; dense pages9/12/17 also reviewed at2200px. Pages12-15 rerendered after E4 title correction; pixel changes confined to corrected title line, drawing bodies unchanged.",
+  "critical_issues": [],
+  "minor_issues": [],
+  "resolved_issues": [
+    "E4 title shortened to fit drawing frame; full heading retained."
+  ],
+  "page_checks": [
+    {
+      "page": 1,
+      "text_spans_outside_page": 0,
+      "title_outside_frame": false,
+      "replacement_glyphs": 0
+    },
+    {
+      "page": 2,
+      "text_spans_outside_page": 0,
+      "title_outside_frame": false,
+      "replacement_glyphs": 0
+    },
+    {
+      "page": 3,
+      "text_spans_outside_page": 0,
+      "title_outside_frame": false,
+      "replacement_glyphs": 0
+    },
+    {
+      "page": 4,
+      "text_spans_outside_page": 0,
+      "title_outside_frame": false,
+      "replacement_glyphs": 0
+    },
+    {
+      "page": 5,
+      "text_spans_outside_page": 0,
+      "title_outside_frame": false,
+      "replacement_glyphs": 0
+    },
+    {
+      "page": 6,
+      "text_spans_outside_page": 0,
+      "title_outside_frame": false,
+      "replacement_glyphs": 0
+    },
+    {
+      "page": 7,
+      "text_spans_outside_page": 0,
+      "title_outside_frame": false,
+      "replacement_glyphs": 0
+    },
+    {
+      "page": 8,
+      "text_spans_outside_page": 0,
+      "title_outside_frame": false,
+      "replacement_glyphs": 0
+    },
+    {
+      "page": 9,
+      "text_spans_outside_page": 0,
+      "title_outside_frame": false,
+      "replacement_glyphs": 0
+    },
+    {
+      "page": 10,
+      "text_spans_outside_page": 0,
+      "title_outside_frame": false,
+      "replacement_glyphs": 0
+    },
+    {
+      "page": 11,
+      "text_spans_outside_page": 0,
+      "title_outside_frame": false,
+      "replacement_glyphs": 0
+    },
+    {
+      "page": 12,
+      "text_spans_outside_page": 0,
+      "title_outside_frame": false,
+      "replacement_glyphs": 0
+    },
+    {
+      "page": 13,
+      "text_spans_outside_page": 0,
+      "title_outside_frame": false,
+      "replacement_glyphs": 0
+    },
+    {
+      "page": 14,
+      "text_spans_outside_page": 0,
+      "title_outside_frame": false,
+      "replacement_glyphs": 0
+    },
+    {
+      "page": 15,
+      "text_spans_outside_page": 0,
+      "title_outside_frame": false,
+      "replacement_glyphs": 0
+    },
+    {
+      "page": 16,
+      "text_spans_outside_page": 0,
+      "title_outside_frame": false,
+      "replacement_glyphs": 0
+    },
+    {
+      "page": 17,
+      "text_spans_outside_page": 0,
+      "title_outside_frame": false,
+      "replacement_glyphs": 0
+    }
+  ]
+}

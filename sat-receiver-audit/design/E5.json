@@ -1,0 +1,3071 @@
+{
+  "sheet": "E5",
+  "title": "USB, VBUS, PCIe та корпусні інтерфейси",
+  "sources": [
+    {
+      "url": "https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
+      "note": "PDF p26 USB HUB: J5 lower 1..9, upper10..13; J2 bank1=P3,bank2=P2; p28 DC-IN J21 1=12V,2=GND,3=PWR_ON_KEY; p32 MKEY."
+    },
+    {
+      "url": "https://github.com/adafruit/Adafruit-CH334F-Breakout-PCB/blob/main/Adafruit%20CH334F%20Mini%204-Port%20USB%20Hub%20Breakout.sch",
+      "note": "Eagle source: each JPx 1=VBUS,2=D+,3=D−,4=GND. H1=JP2,H2=JP1,H3=JP3,H4=JP4; JP5=upstream. All VBUS pads common, through PTC2 only to IC supply."
+    },
+    {
+      "url": "https://www.ti.com/lit/gpn/tps2553",
+      "note": "Pin map DBV/DRV, current-limit table2 and formulas, >=0.1uF input bypass, nonlatch and latch variants, reverse blocking."
+    },
+    {
+      "url": "https://www.ti.com/lit/ds/symlink/lm66100.pdf",
+      "note": "LM66100 physical DCK pin1VIN,2GND,3CE,4NC,5ST,6VOUT; CE=VOUT for reverse current blocking."
+    },
+    {
+      "url": "https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf",
+      "note": "TPD4E1U06DBVR physical 1D1+,2GND,3D2+,4D2−,5NC,6D1−; 0..5.5V protected lines."
+    },
+    {
+      "url": "https://www.bourns.com/docs/product-datasheets/srr1260.pdf",
+      "note": "SRR1260-101M 100uH +/-20%, DCR max180mOhm, rated1.7A."
+    },
+    {
+      "url": "https://download.semiconductor.samsung.com/resources/user-manual/samsung_portable_ssd_t7_user_manual_english.pdf",
+      "note": "Samsung T7 rated5V1.5A; intact USB-A to C cable interfaces used as functional assembly."
+    },
+    {
+      "url": "https://www.vishay.com/doc?88746=",
+      "note": "SS14 Schottky SMA cathode band, 1A40V; functional IMU supply reverse isolation."
+    },
+    {
+      "url": "https://www.ti.com/lit/ds/symlink/tca9517.pdf",
+      "note": "TCA9517DR SOIC8 full pinout, 0.9..5.5V A /2.7..5.5V B, powered-off HiZ, static-offset B-side restrictions."
+    }
+  ],
+  "notes": [
+    "Base build WITH Lime: lower blueJ5=T7, hubH2=RTL-A, J5upper=RTL-B data only, hubH3=LAB port, hubH4=HF+; H1 spare.",
+    "Do not mistake PCB contact numbers for plug-contact numbers. Q6A physical J2 bank1 carriesP3/hub and bank2P2/touch. Adafruit JP pads2/3 are D+/D−.",
+    "No hostVBUS reaches display or hub. USB power isolation must be checked with unpowered continuity and all off/on combinations.",
+    "Receiver modules only onE4; this sheet cable endpoints are interconnects. T7/IMU/display shown as functional assemblies; absence of internal board detail is not factory-pinout verification.",
+    "FB501/502 sleevesHF+ and Würth touch/cable ferrites are mechanical common-mode suppression around complete cable, not series electrical inductors. Maintain shielded short cables and retest RFnoise.",
+    "All IC physical pins are listed. Bare-IC EN/FAULT/ILIM electrical types retained; caps, pulls and current-setting resistors explicitly drawn. ERC pass alone does not verify power budgets, SI, USB compliance, module internals or thermal behavior.",
+    "E4 NT401 owns the single explicit GND/CHASSIS bond; E5 does not add another. E3 owns IMU MCU/BNO085 and consumes E5_IMU_VIN; no duplicate IMU functional module here."
+  ],
+  "components": [
+    {
+      "ref": "U500",
+      "value": "Q6A onboard peripheral rail sources",
+      "kind": "module",
+      "group": "Q6A порти і живлення",
+      "source": "https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
+      "status": "module",
+      "pins": [
+        {
+          "number": "VIN",
+          "name": "from protected J21",
+          "type": "power_in",
+          "net": "J21"
+        },
+        {
+          "number": "GND",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "5V",
+          "name": "VCC_5V_PERI source",
+          "type": "power_out",
+          "net": "VCC_5V_PERI"
+        },
+        {
+          "number": "MKEY_3V3",
+          "name": "VCC_3V3_MKEY source",
+          "type": "power_out",
+          "net": "VCC_3V3_MKEY"
+        }
+      ],
+      "notes": [
+        "Existing SY7120/SGM40666AS and MKEY supply not rebuilt on this sheet. Q6A 40pin connector owned by E3."
+      ],
+      "description": "Functional interface of existing Q6A internal supplies; not a replacement SBC or physical connector pinout."
+    },
+    {
+      "ref": "J521",
+      "value": "Q6A J21 existing header pads",
+      "kind": "connector",
+      "group": "Q6A порти і живлення",
+      "source": "https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
+      "status": "verified",
+      "pins": [
+        {
+          "number": "1",
+          "name": "ADP12V_IN",
+          "type": "power_in",
+          "net": "J21"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "PWR_ON_KEY",
+          "type": "input",
+          "net": "PWR_ON_KEY"
+        }
+      ],
+      "notes": [
+        "Physical numbering from manufacturer schematic PDF p28; original header desoldered only after soak test; preserve pad orientation."
+      ]
+    },
+    {
+      "ref": "J503",
+      "value": "J21 service harness 3pin locking",
+      "kind": "connector",
+      "group": "Q6A порти і живлення",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "12V",
+          "type": "passive",
+          "net": "J21"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "KEY",
+          "type": "passive",
+          "net": "PWR_ON_KEY"
+        }
+      ],
+      "notes": [
+        "PROJECT harness pin assignment matches original J21:1/2/3. Power/GND20AWG twisted pair, KEY26–28AWG; insulation and strain relief. No power source from service PC."
+      ]
+    },
+    {
+      "ref": "J511",
+      "value": "Q6A J5 stacked USB3 lower / USB2 upper",
+      "kind": "connector",
+      "group": "Q6A порти і живлення",
+      "source": "https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
+      "status": "verified",
+      "pins": [
+        {
+          "number": "1",
+          "name": "J5 lower VBUS",
+          "type": "power_out",
+          "net": "E5_VBUS_J5"
+        },
+        {
+          "number": "2",
+          "name": "J5 lower D−",
+          "type": "bidirectional",
+          "net": "E5_T7_DM"
+        },
+        {
+          "number": "3",
+          "name": "J5 lower D+",
+          "type": "bidirectional",
+          "net": "E5_T7_DP"
+        },
+        {
+          "number": "4",
+          "name": "J5 lower GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "5",
+          "name": "J5 lower SSRX−",
+          "type": "input",
+          "net": "E5_T7_HOST_RX_N"
+        },
+        {
+          "number": "6",
+          "name": "J5 lower SSRX+",
+          "type": "input",
+          "net": "E5_T7_HOST_RX_P"
+        },
+        {
+          "number": "7",
+          "name": "SS GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "8",
+          "name": "J5 lower SSTX−",
+          "type": "output",
+          "net": "E5_T7_HOST_TX_N"
+        },
+        {
+          "number": "9",
+          "name": "J5 lower SSTX+",
+          "type": "output",
+          "net": "E5_T7_HOST_TX_P"
+        },
+        {
+          "number": "10",
+          "name": "J5 upper VBUS UNUSED",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "11",
+          "name": "J5 upper D−",
+          "type": "bidirectional",
+          "net": "RTLB_DM"
+        },
+        {
+          "number": "12",
+          "name": "J5 upper D+",
+          "type": "bidirectional",
+          "net": "RTLB_DP"
+        },
+        {
+          "number": "13",
+          "name": "J5 upper GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "19",
+          "name": "onboard TAB/GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "20",
+          "name": "onboard TAB/GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "21",
+          "name": "onboard TAB/GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "22",
+          "name": "onboard TAB/GND",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Upper VBUS contact10 is live on Q6A but deliberately has no cable conductor; receiver VBUS_RTLB comes from E2. USB plug contact1 corresponds stacked PCB contact10.",
+        "Both J5 VBUS contacts are supplied internally by U35 WS4612. Do not connect upper VBUS to LAB5. Tab numbers19..22 are GND on existing board, not isolated chassis."
+      ]
+    },
+    {
+      "ref": "J512",
+      "value": "Q6A J2 stacked USB2 bank1 P3 / bank2 P2",
+      "kind": "connector",
+      "group": "Q6A порти і живлення",
+      "source": "https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
+      "status": "verified",
+      "pins": [
+        {
+          "number": "1",
+          "name": "P3 VBUS OMITTED",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "2",
+          "name": "P3 D− to hub",
+          "type": "bidirectional",
+          "net": "E5_HUB_DM"
+        },
+        {
+          "number": "3",
+          "name": "P3 D+ to hub",
+          "type": "bidirectional",
+          "net": "E5_HUB_DP"
+        },
+        {
+          "number": "4",
+          "name": "P3 GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "5",
+          "name": "P2 VBUS OMITTED",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "6",
+          "name": "P2 D− to touch",
+          "type": "bidirectional",
+          "net": "E5_TOUCH_DM"
+        },
+        {
+          "number": "7",
+          "name": "P2 D+ to touch",
+          "type": "bidirectional",
+          "net": "E5_TOUCH_DP"
+        },
+        {
+          "number": "8",
+          "name": "P2 GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "9",
+          "name": "onboard shell/GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "10",
+          "name": "onboard shell/GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "11",
+          "name": "onboard shell/GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "12",
+          "name": "onboard shell/GND",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Bank1 physical pins1..4=FE1.1s P3 (hub); bank2 physical5..8=FE1.1s P2 (touch). This corrects ambiguous J2a/J2b aliases. No VBUS conductor in either cable."
+      ]
+    },
+    {
+      "ref": "U510",
+      "value": "Adafruit5997 CH334F revC board",
+      "kind": "module",
+      "group": "CH334F і USB2 кабелі",
+      "source": "https://github.com/adafruit/Adafruit-CH334F-Breakout-PCB/blob/main/Adafruit%20CH334F%20Mini%204-Port%20USB%20Hub%20Breakout.sch",
+      "status": "module",
+      "pins": [
+        {
+          "number": "JP5_1",
+          "name": "UP 5V input",
+          "type": "power_in",
+          "net": "LAB5"
+        },
+        {
+          "number": "JP5_2",
+          "name": "UP D+",
+          "type": "bidirectional",
+          "net": "E5_HUB_DP"
+        },
+        {
+          "number": "JP5_3",
+          "name": "UP D−",
+          "type": "bidirectional",
+          "net": "E5_HUB_DM"
+        },
+        {
+          "number": "JP5_4",
+          "name": "UP GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "JP2_1",
+          "name": "H1/5V PAD UNUSED",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "JP2_2",
+          "name": "H1/D+",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "JP2_3",
+          "name": "H1/D−",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "JP2_4",
+          "name": "H1/GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "JP1_1",
+          "name": "H2/5V PAD UNUSED",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "JP1_2",
+          "name": "H2/D+",
+          "type": "bidirectional",
+          "net": "RTLA_DP"
+        },
+        {
+          "number": "JP1_3",
+          "name": "H2/D−",
+          "type": "bidirectional",
+          "net": "RTLA_DM"
+        },
+        {
+          "number": "JP1_4",
+          "name": "H2/GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "JP3_1",
+          "name": "H3/5V PAD UNUSED",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "JP3_2",
+          "name": "H3/D+",
+          "type": "bidirectional",
+          "net": "E5_LABPORT_DP"
+        },
+        {
+          "number": "JP3_3",
+          "name": "H3/D−",
+          "type": "bidirectional",
+          "net": "E5_LABPORT_DM"
+        },
+        {
+          "number": "JP3_4",
+          "name": "H3/GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "JP4_1",
+          "name": "H4/5V PAD UNUSED",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "JP4_2",
+          "name": "H4/D+",
+          "type": "bidirectional",
+          "net": "HFP_DP"
+        },
+        {
+          "number": "JP4_3",
+          "name": "H4/D−",
+          "type": "bidirectional",
+          "net": "HFP_DM"
+        },
+        {
+          "number": "JP4_4",
+          "name": "H4/GND",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "CRITICAL: JP pads2=D+,3=D−, opposite USB-A contacts2=D−,3=D+. H1=JP2,H2=JP1,H3=JP3,H4=JP4.",
+        "H2/H3/H4 pad1 is electrically LAB5 inside board but NO outgoing VBUS wire is fitted. H1 spare not populated. Existing onboard bypass/PTC/clock are part of assembled module.",
+        "JP5 5V externally fed from LAB5; its D+/D−/GND from Q6A J2 P3. USB-C upstream socket unused; never plug a second host. H1 USB fallback requires explicit cable build and firmware profile."
+      ],
+      "description": "Commercial assembled hub external solder-pad interface; compound identifiers are PCB connector/contact names, not CH334F IC pins."
+    },
+    {
+      "ref": "J501",
+      "value": "LAB USB-A panel receptacle",
+      "kind": "connector",
+      "group": "CH334F і USB2 кабелі",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "VBUS",
+          "type": "passive",
+          "net": "VBUS_LABPORT"
+        },
+        {
+          "number": "2",
+          "name": "D−",
+          "type": "bidirectional",
+          "net": "E5_LABPORT_DM"
+        },
+        {
+          "number": "3",
+          "name": "D+",
+          "type": "bidirectional",
+          "net": "E5_LABPORT_DP"
+        },
+        {
+          "number": "4",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "S",
+          "name": "cable shield",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "One peripheral only; external powered hub must not backfeed. USB-A standard contact numbering; hub JP3_2 goes USB-A3, JP3_3 goes USB-A2."
+      ]
+    },
+    {
+      "ref": "J543",
+      "value": "RTL-A USB cable endpoint",
+      "kind": "connector",
+      "group": "CH334F і USB2 кабелі",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "VBUS from U501",
+          "type": "passive",
+          "net": "VBUS_RTLA"
+        },
+        {
+          "number": "2",
+          "name": "D−",
+          "type": "bidirectional",
+          "net": "RTLA_DM"
+        },
+        {
+          "number": "3",
+          "name": "D+",
+          "type": "bidirectional",
+          "net": "RTLA_DP"
+        },
+        {
+          "number": "4",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Represents cable contact numbering only; actual RTL-A receiver module drawn on E4, not duplicated. H2/JP1 pad1 not wired."
+      ]
+    },
+    {
+      "ref": "J541",
+      "value": "RTL-B split-VBUS USB cable endpoint",
+      "kind": "connector",
+      "group": "CH334F і USB2 кабелі",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "VBUS from E2",
+          "type": "passive",
+          "net": "VBUS_RTLB"
+        },
+        {
+          "number": "2",
+          "name": "D− from J5_11",
+          "type": "bidirectional",
+          "net": "RTLB_DM"
+        },
+        {
+          "number": "3",
+          "name": "D+ from J5_12",
+          "type": "bidirectional",
+          "net": "RTLB_DP"
+        },
+        {
+          "number": "4",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Lindy36700 plus Würth74271112 if A/B noise-rise<0.5dB. J5 top plug contact1 wire omitted; do not confuse physical stacked J5 pin10 with plug pin1. Receiver module only on E4."
+      ]
+    },
+    {
+      "ref": "J544",
+      "value": "HF+ microUSB-B cable endpoint",
+      "kind": "connector",
+      "group": "CH334F і USB2 кабелі",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "VBUS filtered",
+          "type": "passive",
+          "net": "VBUS_HFP"
+        },
+        {
+          "number": "2",
+          "name": "D−",
+          "type": "bidirectional",
+          "net": "HFP_DM"
+        },
+        {
+          "number": "3",
+          "name": "D+",
+          "type": "bidirectional",
+          "net": "HFP_DP"
+        },
+        {
+          "number": "4",
+          "name": "ID unused",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "5",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "S",
+          "name": "shield",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Endpoint only, Airspy module on E4. Two Fair-Rite2631480002 sleeves surround complete cable including power/data; sleeves are common-mode mechanical ferrites, not a series DC component."
+      ]
+    },
+    {
+      "ref": "U501",
+      "value": "TPS2553DBVR-1",
+      "kind": "ic",
+      "group": "VBUS RTL-A і LAB PORT",
+      "source": "https://www.ti.com/lit/gpn/tps2553",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "IN",
+          "type": "power_in",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "EN",
+          "type": "input",
+          "net": "EN_RTLA"
+        },
+        {
+          "number": "4",
+          "name": "FAULT_N",
+          "type": "open_collector",
+          "net": "FAULT_RTLA"
+        },
+        {
+          "number": "5",
+          "name": "ILIM",
+          "type": "output",
+          "net": "E5_U501_ILIM"
+        },
+        {
+          "number": "6",
+          "name": "OUT",
+          "type": "power_out",
+          "net": "VBUS_RTLA"
+        }
+      ],
+      "notes": [
+        "RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; no pulls to AON or LAB5.",
+        "Latch-off version; software reset by EN low then high."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6"
+    },
+    {
+      "ref": "R501",
+      "value": "43.2k 1%",
+      "kind": "resistor",
+      "group": "VBUS RTL-A і LAB PORT",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E5_U501_ILIM"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric"
+    },
+    {
+      "ref": "R502",
+      "value": "100k",
+      "kind": "resistor",
+      "group": "VBUS RTL-A і LAB PORT",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "EN_RTLA"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Fail-off during GPIO input/reset state."
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric"
+    },
+    {
+      "ref": "R503",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "VBUS RTL-A і LAB PORT",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "FAULT_RTLA"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ],
+      "notes": [
+        "Only Q6A-switched3.3V pull-up avoids back-power of unpowered MCP."
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric"
+    },
+    {
+      "ref": "C501",
+      "value": "100nF X7R 10V",
+      "kind": "capacitor",
+      "group": "VBUS RTL-A і LAB PORT",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Place at IN/GND pins, short loop."
+      ]
+    },
+    {
+      "ref": "C502",
+      "value": "4.7uF X7R 10V",
+      "kind": "capacitor",
+      "group": "VBUS RTL-A і LAB PORT",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C503",
+      "value": "47uF 10V",
+      "kind": "capacitor",
+      "group": "VBUS RTL-A і LAB PORT",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "VBUS_RTLA"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R504",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "VBUS RTL-A і LAB PORT",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "VBUS_RTLA"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Passive discharge permits defined power-cycle delay; wait until <0.5V before reenable."
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric"
+    },
+    {
+      "ref": "U502",
+      "value": "TPS2553DBVR-1",
+      "kind": "ic",
+      "group": "VBUS RTL-A і LAB PORT",
+      "source": "https://www.ti.com/lit/gpn/tps2553",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "IN",
+          "type": "power_in",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "EN",
+          "type": "input",
+          "net": "EN_LABPORT"
+        },
+        {
+          "number": "4",
+          "name": "FAULT_N",
+          "type": "open_collector",
+          "net": "FAULT_LABPORT"
+        },
+        {
+          "number": "5",
+          "name": "ILIM",
+          "type": "output",
+          "net": "E5_U502_ILIM"
+        },
+        {
+          "number": "6",
+          "name": "OUT",
+          "type": "power_out",
+          "net": "VBUS_LABPORT"
+        }
+      ],
+      "notes": [
+        "RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; no pulls to AON or LAB5.",
+        "Latch-off version; software reset by EN low then high."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6"
+    },
+    {
+      "ref": "R505",
+      "value": "34.8k 1%",
+      "kind": "resistor",
+      "group": "VBUS RTL-A і LAB PORT",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E5_U502_ILIM"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric"
+    },
+    {
+      "ref": "R506",
+      "value": "100k",
+      "kind": "resistor",
+      "group": "VBUS RTL-A і LAB PORT",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "EN_LABPORT"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Fail-off during GPIO input/reset state."
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric"
+    },
+    {
+      "ref": "R507",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "VBUS RTL-A і LAB PORT",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "FAULT_LABPORT"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ],
+      "notes": [
+        "Only Q6A-switched3.3V pull-up avoids back-power of unpowered MCP."
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric"
+    },
+    {
+      "ref": "C504",
+      "value": "100nF X7R 10V",
+      "kind": "capacitor",
+      "group": "VBUS RTL-A і LAB PORT",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Place at IN/GND pins, short loop."
+      ]
+    },
+    {
+      "ref": "C505",
+      "value": "4.7uF X7R 10V",
+      "kind": "capacitor",
+      "group": "VBUS RTL-A і LAB PORT",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C506",
+      "value": "150uF 10V low-ESR",
+      "kind": "capacitor",
+      "group": "VBUS RTL-A і LAB PORT",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "VBUS_LABPORT"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "At least120uF at downstream external USB port after gate, not only on common hub supply."
+      ]
+    },
+    {
+      "ref": "C507",
+      "value": "100nF X7R 10V",
+      "kind": "capacitor",
+      "group": "VBUS RTL-A і LAB PORT",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "VBUS_LABPORT"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R508",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "VBUS RTL-A і LAB PORT",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "VBUS_LABPORT"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric"
+    },
+    {
+      "ref": "U503",
+      "value": "TPS2553DBVR",
+      "kind": "ic",
+      "group": "VBUS HF+ з демпфованим LC",
+      "source": "https://www.ti.com/lit/gpn/tps2553",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "IN",
+          "type": "power_in",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "EN",
+          "type": "input",
+          "net": "EN_HFP"
+        },
+        {
+          "number": "4",
+          "name": "FAULT_N",
+          "type": "open_collector",
+          "net": "FAULT_HFP"
+        },
+        {
+          "number": "5",
+          "name": "ILIM",
+          "type": "output",
+          "net": "E5_U503_ILIM"
+        },
+        {
+          "number": "6",
+          "name": "OUT",
+          "type": "power_out",
+          "net": "E5_VBUS_HFP_SW"
+        }
+      ],
+      "notes": [
+        "RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; no pulls to AON or LAB5.",
+        "Non-latching constant-current version selected for large capacitive/device startup."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6"
+    },
+    {
+      "ref": "R509",
+      "value": "28.7k 1%",
+      "kind": "resistor",
+      "group": "VBUS HF+ з демпфованим LC",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E5_U503_ILIM"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric"
+    },
+    {
+      "ref": "R510",
+      "value": "100k",
+      "kind": "resistor",
+      "group": "VBUS HF+ з демпфованим LC",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "EN_HFP"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Fail-off during GPIO input/reset state."
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric"
+    },
+    {
+      "ref": "R511",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "VBUS HF+ з демпфованим LC",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "FAULT_HFP"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ],
+      "notes": [
+        "Only Q6A-switched3.3V pull-up avoids back-power of unpowered MCP."
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric"
+    },
+    {
+      "ref": "C508",
+      "value": "100nF X7R 10V",
+      "kind": "capacitor",
+      "group": "VBUS HF+ з демпфованим LC",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Place at IN/GND pins, short loop."
+      ]
+    },
+    {
+      "ref": "C509",
+      "value": "4.7uF X7R 10V",
+      "kind": "capacitor",
+      "group": "VBUS HF+ з демпфованим LC",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C510",
+      "value": "1uF X7R 10V",
+      "kind": "capacitor",
+      "group": "VBUS HF+ з демпфованим LC",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "E5_VBUS_HFP_SW"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "L501",
+      "value": "SRR1260-101M 100uH",
+      "kind": "inductor",
+      "group": "VBUS HF+ з демпфованим LC",
+      "source": "https://www.bourns.com/docs/product-datasheets/srr1260.pdf",
+      "status": "verified",
+      "pins": [
+        {
+          "number": "1",
+          "name": "IN",
+          "type": "passive",
+          "net": "E5_VBUS_HFP_SW"
+        },
+        {
+          "number": "2",
+          "name": "OUT",
+          "type": "passive",
+          "net": "VBUS_HFP"
+        }
+      ],
+      "notes": [
+        "DCR<=180mOhm; Irms1.7A. Mounted away from HF receiver."
+      ]
+    },
+    {
+      "ref": "C511",
+      "value": "EEU-FR1C101 100uF 16V",
+      "kind": "capacitor",
+      "group": "VBUS HF+ з демпфованим LC",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "VBUS_HFP"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R512",
+      "value": "1Ohm 0.5W",
+      "kind": "resistor",
+      "group": "VBUS HF+ з демпфованим LC",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "VBUS_HFP"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E5_HFP_DAMP"
+        }
+      ],
+      "notes": [
+        "Series RC damping branch, parallel to main100uF. Not in DC receiver power path."
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric"
+    },
+    {
+      "ref": "C512",
+      "value": "220uF 16V low-ESR",
+      "kind": "capacitor",
+      "group": "VBUS HF+ з демпфованим LC",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "E5_HFP_DAMP"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C513",
+      "value": "100nF X7R 10V",
+      "kind": "capacitor",
+      "group": "VBUS HF+ з демпфованим LC",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "VBUS_HFP"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R513",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "VBUS HF+ з демпфованим LC",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "VBUS_HFP"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric"
+    },
+    {
+      "ref": "U505",
+      "value": "TPS2553DRVR",
+      "kind": "ic",
+      "group": "T7 USB3 VBUS",
+      "source": "https://www.ti.com/lit/gpn/tps2553",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "OUT",
+          "type": "power_out",
+          "net": "E5_VBUS_T7"
+        },
+        {
+          "number": "2",
+          "name": "ILIM",
+          "type": "output",
+          "net": "E5_U505_ILIM"
+        },
+        {
+          "number": "3",
+          "name": "FAULT_N",
+          "type": "open_collector",
+          "net": "E5_FAULT_T7"
+        },
+        {
+          "number": "4",
+          "name": "EN",
+          "type": "input",
+          "net": "EN_T7"
+        },
+        {
+          "number": "5",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "6",
+          "name": "IN",
+          "type": "power_in",
+          "net": "E5_VBUS_J5"
+        },
+        {
+          "number": "7",
+          "name": "exposed pad",
+          "type": "power_in",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; no pulls to AON or LAB5.",
+        "Non-latching constant-current version selected for large capacitive/device startup."
+      ],
+      "footprint": "Package_SON:WSON-6-1EP_2x2mm_P0.65mm_EP1x1.6mm"
+    },
+    {
+      "ref": "R514",
+      "value": "15.8k 1%",
+      "kind": "resistor",
+      "group": "T7 USB3 VBUS",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E5_U505_ILIM"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric"
+    },
+    {
+      "ref": "R515",
+      "value": "100k",
+      "kind": "resistor",
+      "group": "T7 USB3 VBUS",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "EN_T7"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Fail-off during GPIO input/reset state."
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric"
+    },
+    {
+      "ref": "R516",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "T7 USB3 VBUS",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E5_FAULT_T7"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ],
+      "notes": [
+        "Only Q6A-switched3.3V pull-up avoids back-power of unpowered MCP."
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric"
+    },
+    {
+      "ref": "C514",
+      "value": "100nF X7R 10V",
+      "kind": "capacitor",
+      "group": "T7 USB3 VBUS",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "E5_VBUS_J5"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Place at IN/GND pins, short loop."
+      ]
+    },
+    {
+      "ref": "C515",
+      "value": "4.7uF X7R 10V",
+      "kind": "capacitor",
+      "group": "T7 USB3 VBUS",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "E5_VBUS_J5"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C516",
+      "value": "150uF 10V low-ESR",
+      "kind": "capacitor",
+      "group": "T7 USB3 VBUS",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "E5_VBUS_T7"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R517",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "T7 USB3 VBUS",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E5_VBUS_T7"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric"
+    },
+    {
+      "ref": "TP501",
+      "value": "T7 FAULT_N test point",
+      "kind": "testpoint",
+      "group": "T7 USB3 VBUS",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "FAULT_N",
+          "type": "passive",
+          "net": "E5_FAULT_T7"
+        }
+      ],
+      "notes": [
+        "No free MCP input claimed; diagnostic testpoint only."
+      ]
+    },
+    {
+      "ref": "U540",
+      "value": "Samsung T7 + intact A-to-C USB3 cable",
+      "kind": "module",
+      "group": "T7 USB3 VBUS",
+      "source": "https://download.semiconductor.samsung.com/resources/user-manual/samsung_portable_ssd_t7_user_manual_english.pdf",
+      "status": "module",
+      "pins": [
+        {
+          "number": "VBUS",
+          "name": "5V",
+          "type": "power_in",
+          "net": "E5_VBUS_T7"
+        },
+        {
+          "number": "GND",
+          "name": "signal ground",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "DM",
+          "name": "D−",
+          "type": "bidirectional",
+          "net": "E5_T7_DM"
+        },
+        {
+          "number": "DP",
+          "name": "D+",
+          "type": "bidirectional",
+          "net": "E5_T7_DP"
+        },
+        {
+          "number": "TXN",
+          "name": "device SSTX−",
+          "type": "output",
+          "net": "E5_T7_HOST_RX_N"
+        },
+        {
+          "number": "TXP",
+          "name": "device SSTX+",
+          "type": "output",
+          "net": "E5_T7_HOST_RX_P"
+        },
+        {
+          "number": "RXN",
+          "name": "device SSRX−",
+          "type": "input",
+          "net": "E5_T7_HOST_TX_N"
+        },
+        {
+          "number": "RXP",
+          "name": "device SSRX+",
+          "type": "input",
+          "net": "E5_T7_HOST_TX_P"
+        },
+        {
+          "number": "SHIELD",
+          "name": "cable shield",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Switch only VBUS in a short controlled assembly; preserve all four SuperSpeed conductors, USB2 pair, GND and screen. Do not splice into long loose wires. EN_T7 low after sync/unmount; enumeration not equal RF quiet, test authorized=0 versus power-off.",
+        "Q6A source remains its own J5/U35 VBUS. LAB5 fallback is unpopulated, no source ORing jumper fitted."
+      ],
+      "description": "Functional USB3 device/cable interface; no fabricated USB-C contact mapping."
+    },
+    {
+      "ref": "J520",
+      "value": "Q6A HDMI Type-A existing port",
+      "kind": "connector",
+      "group": "Дисплей HDMI, DC і USB touch",
+      "source": "https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
+      "status": "verified",
+      "pins": [
+        {
+          "number": "1",
+          "name": "TMDS2+",
+          "type": "output",
+          "net": "E5_HDMI_D2_P"
+        },
+        {
+          "number": "2",
+          "name": "TMDS2 shield",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "TMDS2−",
+          "type": "output",
+          "net": "E5_HDMI_D2_N"
+        },
+        {
+          "number": "4",
+          "name": "TMDS1+",
+          "type": "output",
+          "net": "E5_HDMI_D1_P"
+        },
+        {
+          "number": "5",
+          "name": "TMDS1 shield",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "6",
+          "name": "TMDS1−",
+          "type": "output",
+          "net": "E5_HDMI_D1_N"
+        },
+        {
+          "number": "7",
+          "name": "TMDS0+",
+          "type": "output",
+          "net": "E5_HDMI_D0_P"
+        },
+        {
+          "number": "8",
+          "name": "TMDS0 shield",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "9",
+          "name": "TMDS0−",
+          "type": "output",
+          "net": "E5_HDMI_D0_N"
+        },
+        {
+          "number": "10",
+          "name": "TMDSCLK+",
+          "type": "output",
+          "net": "E5_HDMI_CLK_P"
+        },
+        {
+          "number": "11",
+          "name": "TMDSCLK shield",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "12",
+          "name": "TMDSCLK−",
+          "type": "output",
+          "net": "E5_HDMI_CLK_N"
+        },
+        {
+          "number": "13",
+          "name": "CEC",
+          "type": "bidirectional",
+          "net": "E5_HDMI_CEC"
+        },
+        {
+          "number": "14",
+          "name": "UTILITY/HEAC unused",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "15",
+          "name": "DDC SCL",
+          "type": "output",
+          "net": "E5_HDMI_SCL"
+        },
+        {
+          "number": "16",
+          "name": "DDC SDA",
+          "type": "bidirectional",
+          "net": "E5_HDMI_SDA"
+        },
+        {
+          "number": "17",
+          "name": "DDC ground",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "18",
+          "name": "+5V",
+          "type": "power_out",
+          "net": "E5_HDMI_5V_Q6A"
+        },
+        {
+          "number": "19",
+          "name": "HPD",
+          "type": "input",
+          "net": "E5_HDMI_HPD"
+        }
+      ],
+      "notes": [
+        "Pin18+5V is preserved through low-loss reverse isolation U506, never removed. HDMI ordinary cable retains data pairs/shields/HPD/DDC. No Ethernet utility connection used."
+      ]
+    },
+    {
+      "ref": "U520",
+      "value": "Wisecoco display/controller assembly",
+      "kind": "module",
+      "group": "Дисплей HDMI, DC і USB touch",
+      "source": "STACK.md §2.6,§5.1,§5.2",
+      "status": "module",
+      "pins": [
+        {
+          "number": "HDMI_1",
+          "name": "TMDS2+",
+          "type": "input",
+          "net": "E5_HDMI_D2_P"
+        },
+        {
+          "number": "HDMI_2",
+          "name": "TMDS2 shield",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "HDMI_3",
+          "name": "TMDS2−",
+          "type": "input",
+          "net": "E5_HDMI_D2_N"
+        },
+        {
+          "number": "HDMI_4",
+          "name": "TMDS1+",
+          "type": "input",
+          "net": "E5_HDMI_D1_P"
+        },
+        {
+          "number": "HDMI_5",
+          "name": "TMDS1 shield",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "HDMI_6",
+          "name": "TMDS1−",
+          "type": "input",
+          "net": "E5_HDMI_D1_N"
+        },
+        {
+          "number": "HDMI_7",
+          "name": "TMDS0+",
+          "type": "input",
+          "net": "E5_HDMI_D0_P"
+        },
+        {
+          "number": "HDMI_8",
+          "name": "TMDS0 shield",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "HDMI_9",
+          "name": "TMDS0−",
+          "type": "input",
+          "net": "E5_HDMI_D0_N"
+        },
+        {
+          "number": "HDMI_10",
+          "name": "TMDSCLK+",
+          "type": "input",
+          "net": "E5_HDMI_CLK_P"
+        },
+        {
+          "number": "HDMI_11",
+          "name": "TMDSCLK shield",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "HDMI_12",
+          "name": "TMDSCLK−",
+          "type": "input",
+          "net": "E5_HDMI_CLK_N"
+        },
+        {
+          "number": "HDMI_13",
+          "name": "CEC",
+          "type": "bidirectional",
+          "net": "E5_HDMI_CEC"
+        },
+        {
+          "number": "HDMI_14",
+          "name": "UTILITY/HEAC unused",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "HDMI_15",
+          "name": "DDC SCL",
+          "type": "input",
+          "net": "E5_HDMI_SCL"
+        },
+        {
+          "number": "HDMI_16",
+          "name": "DDC SDA",
+          "type": "bidirectional",
+          "net": "E5_HDMI_SDA"
+        },
+        {
+          "number": "HDMI_17",
+          "name": "DDC ground",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "HDMI_18",
+          "name": "+5V",
+          "type": "power_in",
+          "net": "E5_HDMI_5V_DISP"
+        },
+        {
+          "number": "HDMI_19",
+          "name": "HPD",
+          "type": "output",
+          "net": "E5_HDMI_HPD"
+        },
+        {
+          "number": "DC_POS",
+          "name": "board DC input",
+          "type": "power_in",
+          "net": "DISP12"
+        },
+        {
+          "number": "DC_GND",
+          "name": "DC return",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "TP_DP",
+          "name": "touch D+",
+          "type": "bidirectional",
+          "net": "E5_TOUCH_DP"
+        },
+        {
+          "number": "TP_DM",
+          "name": "touch D−",
+          "type": "bidirectional",
+          "net": "E5_TOUCH_DM"
+        },
+        {
+          "number": "TP_GND",
+          "name": "touch GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "TP_VBUS",
+          "name": "USB touch VBUS OMITTED",
+          "type": "passive",
+          "nc": true
+        }
+      ],
+      "notes": [
+        "DC only from protected DISP12, never LAB5. Touch USB VBUS conductor absent. A USB-C touch cable is acceptable only if actual pinout and no-VBUS enumeration are validated. KEY/backlight internal connectors omitted pending exact received board; no undocumented pin numbers invented."
+      ],
+      "description": "Functional display assembly; HDMI contact names reflect standard Type-A. DC_POS and TP_* are logical labels until exact board connectors are inspected."
+    },
+    {
+      "ref": "U506",
+      "value": "LM66100DCKR HDMI5V ideal diode",
+      "kind": "ic",
+      "group": "Дисплей HDMI, DC і USB touch",
+      "source": "https://www.ti.com/lit/ds/symlink/lm66100.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "VIN",
+          "type": "power_in",
+          "net": "E5_HDMI_5V_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "CE_N/RCB sense",
+          "type": "input",
+          "net": "E5_HDMI_5V_DISP"
+        },
+        {
+          "number": "4",
+          "name": "NC",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "5",
+          "name": "ST_N diagnostic",
+          "type": "open_collector",
+          "net": "E5_HDMI_ST_N"
+        },
+        {
+          "number": "6",
+          "name": "VOUT",
+          "type": "power_out",
+          "net": "E5_HDMI_5V_DISP"
+        }
+      ],
+      "notes": [
+        "Engineering replacement of unspecified Schottky D501: low loss protects HDMI+5V margin. CE must connect VOUT for reverse-current blocking; CE=GND is NOT reverse-blocking mode. ST is used as a diagnostic output at TP502 with100k pull-up to VIN (R552); not connected to Q6A3.3V logic.",
+        "At55mA and120mOhm RON worst-case at125C, calculated drop6.6mV plus cable resistance. Still validate HDMI supply and DDC/HPD across all power states."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-363_SC-70-6"
+    },
+    {
+      "ref": "C517",
+      "value": "100nF X7R 10V",
+      "kind": "capacitor",
+      "group": "Дисплей HDMI, DC і USB touch",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "E5_HDMI_5V_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C518",
+      "value": "100nF X7R 10V",
+      "kind": "capacitor",
+      "group": "Дисплей HDMI, DC і USB touch",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "E5_HDMI_5V_DISP"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "J530",
+      "value": "Q6A MKEY host lane0 functional interface",
+      "kind": "module",
+      "group": "PCIe x1 riser та Lime",
+      "source": "https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
+      "status": "module",
+      "pins": [
+        {
+          "number": "TX0_P",
+          "name": "host TX+",
+          "type": "output",
+          "net": "E5_PCIE_TX0_P"
+        },
+        {
+          "number": "TX0_N",
+          "name": "host TX−",
+          "type": "output",
+          "net": "E5_PCIE_TX0_N"
+        },
+        {
+          "number": "RX0_P",
+          "name": "host RX+",
+          "type": "input",
+          "net": "E5_PCIE_RX0_P"
+        },
+        {
+          "number": "RX0_N",
+          "name": "host RX−",
+          "type": "input",
+          "net": "E5_PCIE_RX0_N"
+        },
+        {
+          "number": "REFCLK_P",
+          "name": "REFCLK+",
+          "type": "output",
+          "net": "E5_PCIE_REFCLK_P"
+        },
+        {
+          "number": "REFCLK_N",
+          "name": "REFCLK−",
+          "type": "output",
+          "net": "E5_PCIE_REFCLK_N"
+        },
+        {
+          "number": "PERST_N",
+          "name": "PERST#",
+          "type": "output",
+          "net": "E5_PCIE_PERST_N"
+        },
+        {
+          "number": "CLKREQ_N",
+          "name": "CLKREQ#",
+          "type": "input",
+          "net": "E5_PCIE_CLKREQ_N"
+        },
+        {
+          "number": "WAKE_N",
+          "name": "WAKE#",
+          "type": "input",
+          "net": "E5_PCIE_WAKE_N"
+        },
+        {
+          "number": "GND",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "VCC_3V3_MKEY supplied by U500 and sensed/limited on E2. Factory MKEY lane1 not used by x1 Lime."
+      ],
+      "description": "Functional subset of MKEY (lane0 + sidebands). Complete connector physical numbering is intentionally not a fabricated custom pinout."
+    },
+    {
+      "ref": "U530",
+      "value": "ADT-Link R44SF 5cm modified riser",
+      "kind": "module",
+      "group": "PCIe x1 riser та Lime",
+      "source": "STACK.md §5.1 LIME3V3, §5.8",
+      "status": "module",
+      "pins": [
+        {
+          "number": "H_TX0_P",
+          "name": "host host TX+",
+          "type": "passive",
+          "net": "E5_PCIE_TX0_P"
+        },
+        {
+          "number": "H_TX0_N",
+          "name": "host host TX−",
+          "type": "passive",
+          "net": "E5_PCIE_TX0_N"
+        },
+        {
+          "number": "H_RX0_P",
+          "name": "host host RX+",
+          "type": "passive",
+          "net": "E5_PCIE_RX0_P"
+        },
+        {
+          "number": "H_RX0_N",
+          "name": "host host RX−",
+          "type": "passive",
+          "net": "E5_PCIE_RX0_N"
+        },
+        {
+          "number": "H_REFCLK_P",
+          "name": "host REFCLK+",
+          "type": "passive",
+          "net": "E5_PCIE_REFCLK_P"
+        },
+        {
+          "number": "H_REFCLK_N",
+          "name": "host REFCLK−",
+          "type": "passive",
+          "net": "E5_PCIE_REFCLK_N"
+        },
+        {
+          "number": "H_PERST_N",
+          "name": "host PERST#",
+          "type": "passive",
+          "net": "E5_PCIE_PERST_N"
+        },
+        {
+          "number": "H_CLKREQ_N",
+          "name": "host CLKREQ#",
+          "type": "passive",
+          "net": "E5_PCIE_CLKREQ_N"
+        },
+        {
+          "number": "H_WAKE_N",
+          "name": "host WAKE#",
+          "type": "passive",
+          "net": "E5_PCIE_WAKE_N"
+        },
+        {
+          "number": "C_TX0_P",
+          "name": "card host TX+",
+          "type": "passive",
+          "net": "E5_PCIE_TX0_P"
+        },
+        {
+          "number": "C_TX0_N",
+          "name": "card host TX−",
+          "type": "passive",
+          "net": "E5_PCIE_TX0_N"
+        },
+        {
+          "number": "C_RX0_P",
+          "name": "card host RX+",
+          "type": "passive",
+          "net": "E5_PCIE_RX0_P"
+        },
+        {
+          "number": "C_RX0_N",
+          "name": "card host RX−",
+          "type": "passive",
+          "net": "E5_PCIE_RX0_N"
+        },
+        {
+          "number": "C_REFCLK_P",
+          "name": "card REFCLK+",
+          "type": "passive",
+          "net": "E5_PCIE_REFCLK_P"
+        },
+        {
+          "number": "C_REFCLK_N",
+          "name": "card REFCLK−",
+          "type": "passive",
+          "net": "E5_PCIE_REFCLK_N"
+        },
+        {
+          "number": "C_PERST_N",
+          "name": "card PERST#",
+          "type": "passive",
+          "net": "E5_PCIE_PERST_N"
+        },
+        {
+          "number": "C_CLKREQ_N",
+          "name": "card CLKREQ#",
+          "type": "passive",
+          "net": "E5_PCIE_CLKREQ_N"
+        },
+        {
+          "number": "C_WAKE_N",
+          "name": "card WAKE#",
+          "type": "passive",
+          "net": "E5_PCIE_WAKE_N"
+        },
+        {
+          "number": "H_3V3",
+          "name": "host3V3 ISOLATED",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "C_3V3",
+          "name": "card 3V3 switched",
+          "type": "passive",
+          "net": "LIME3V3"
+        },
+        {
+          "number": "GND",
+          "name": "common GND",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "All host-to-card 3.3V conductors isolated on card side and replaced by LIME3V3; grounds/sidebands/PCIe pairs preserved. Connector variant and exact modification points require ADT-Link confirmation. No Y connection between switched and unswitched3.3V.",
+        "Matching host/card signal contacts share the same canonical E5_PCIE_* nets to model verified intended pass-through without claiming an active buffer. Physical exact adapter pinout and cut locations remain gated."
+      ],
+      "description": "Functional pass-through assembly; matching H_*/C_* pins are intended connected pairwise inside cable. No asserted PCB pad numbers."
+    },
+    {
+      "ref": "J502",
+      "value": "UART5 console 3pin locking",
+      "kind": "connector",
+      "group": "Сервіс і зовнішні шини",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "Q6A TX → adapterRX",
+          "type": "passive",
+          "net": "UART5_TX"
+        },
+        {
+          "number": "3",
+          "name": "adapterTX → Q6A RX",
+          "type": "passive",
+          "net": "UART5_RX"
+        }
+      ],
+      "notes": [
+        "PROJECT contact assignment. 3.3V TTL only. No5V/3V3 power wire; Q6A header physicalTX/RX mapping remains on E3."
+      ]
+    },
+    {
+      "ref": "SW501",
+      "value": "EDL recessed momentary NO",
+      "kind": "switch",
+      "group": "Сервіс і зовнішні шини",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "EDL contactA",
+          "type": "passive",
+          "net": "E5_EDL_A"
+        },
+        {
+          "number": "2",
+          "name": "EDL contactB",
+          "type": "passive",
+          "net": "E5_EDL_B"
+        }
+      ],
+      "notes": [
+        "Dry-contact parallel only to factoryEDL button; no applied voltage. T7 physically unplugged for recovery."
+      ]
+    },
+    {
+      "ref": "J522",
+      "value": "Q6A factory EDL button functional pads",
+      "kind": "module",
+      "group": "Сервіс і зовнішні шини",
+      "source": "https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
+      "status": "module",
+      "pins": [
+        {
+          "number": "A",
+          "name": "EDL padA",
+          "type": "passive",
+          "net": "E5_EDL_A"
+        },
+        {
+          "number": "B",
+          "name": "EDL padB",
+          "type": "passive",
+          "net": "E5_EDL_B"
+        }
+      ],
+      "notes": [
+        "Original factory button remains usable; external switch in parallel. No R137/R207 modifications."
+      ],
+      "description": "Functional switch pads; physical pad orientation to confirm on exact Q6A board before soldering."
+    },
+    {
+      "ref": "J505",
+      "value": "LAB BUS 6pin locking DESIGN",
+      "kind": "connector",
+      "group": "Сервіс і зовнішні шини",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "AUX12 protected",
+          "type": "passive",
+          "net": "AUX12"
+        },
+        {
+          "number": "2",
+          "name": "GND power",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "SDA-B",
+          "type": "bidirectional",
+          "net": "I2CB_SDA"
+        },
+        {
+          "number": "4",
+          "name": "GND signal",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "5",
+          "name": "SCL-B",
+          "type": "bidirectional",
+          "net": "I2CB_SCL"
+        },
+        {
+          "number": "6",
+          "name": "SLED_DET_N",
+          "type": "input",
+          "net": "SLED_DET"
+        }
+      ],
+      "notes": [
+        "PROJECT assignment, not documented factory pinout. Mating sled connects6 to2/4 on insertion; E3 owns10k pullup and MCP#3 GPB6. I2C100kHz; beyond1m use PCA9615 redesign. Key orientation verified before energizing AUX12."
+      ]
+    },
+    {
+      "ref": "J504",
+      "value": "Olimex GX16-4 IMU DESIGN pinout",
+      "kind": "connector",
+      "group": "Сервіс і зовнішні шини",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "LAB5 to pack",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "packTX → PicoRX",
+          "type": "passive",
+          "net": "IMU_TX"
+        },
+        {
+          "number": "4",
+          "name": "PicoTX → packRX",
+          "type": "passive",
+          "net": "IMU_RX"
+        },
+        {
+          "number": "S",
+          "name": "shell/shield",
+          "type": "passive",
+          "net": "CHASSIS"
+        }
+      ],
+      "notes": [
+        "PROJECT assignment engraved at both mating halves; use molded pin numbers, not mirrored face-view guesses. 2m HELU49655 cable; shield360degree to shell/case, <=0.1Ohm. Signals are3.3V TTL, not5V UART."
+      ]
+    },
+    {
+      "ref": "U551",
+      "value": "TPD4E1U06DBVR",
+      "kind": "ic",
+      "group": "Сервіс і зовнішні шини",
+      "source": "https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf",
+      "status": "verified",
+      "pins": [
+        {
+          "number": "1",
+          "name": "D1+ TX",
+          "type": "passive",
+          "net": "IMU_TX"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "D2+ 5V",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "4",
+          "name": "D2− spare",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "5",
+          "name": "NC",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "6",
+          "name": "D1− RX",
+          "type": "passive",
+          "net": "IMU_RX"
+        }
+      ],
+      "notes": [
+        "Shunt ESD array. Fit immediately at connector, short ground path; spare channel unconnected. No VCC pin."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6"
+    },
+    {
+      "ref": "J550",
+      "value": "IMU pack cable termination DESIGN",
+      "kind": "connector",
+      "group": "Сервіс і зовнішні шини",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "5V raw",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "packTX",
+          "type": "passive",
+          "net": "IMU_TX"
+        },
+        {
+          "number": "4",
+          "name": "packRX",
+          "type": "passive",
+          "net": "IMU_RX"
+        },
+        {
+          "number": "S",
+          "name": "pack cable shield",
+          "type": "passive",
+          "net": "CHASSIS"
+        }
+      ],
+      "notes": [
+        "Same molded-contact mapping as GX16; cable shields at both enclosures; this models harness, not RP2040-Zero board contact numbers."
+      ]
+    },
+    {
+      "ref": "U552",
+      "value": "TPD4E1U06DBVR",
+      "kind": "ic",
+      "group": "Сервіс і зовнішні шини",
+      "source": "https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf",
+      "status": "verified",
+      "pins": [
+        {
+          "number": "1",
+          "name": "D1+ TX",
+          "type": "passive",
+          "net": "IMU_TX"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "D2+ 5V",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "4",
+          "name": "D2− spare",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "5",
+          "name": "NC",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "6",
+          "name": "D1− RX",
+          "type": "passive",
+          "net": "IMU_RX"
+        }
+      ],
+      "notes": [
+        "Shunt ESD array. Fit immediately at connector, short ground path; spare channel unconnected. No VCC pin."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6"
+    },
+    {
+      "ref": "D502",
+      "value": "SS14-E3/61T IMU supply reverse isolation",
+      "kind": "diode",
+      "group": "Сервіс і зовнішні шини",
+      "source": "https://www.vishay.com/doc?88746=",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "K band → packVIN",
+          "type": "passive",
+          "net": "E5_IMU_VIN"
+        },
+        {
+          "number": "2",
+          "name": "A ← cable5V",
+          "type": "passive",
+          "net": "LAB5"
+        }
+      ],
+      "notes": [
+        "Located INSIDE IMU pack before MCU5V/VSYS. Band=cathode. No direct LAB5 wire to RP2040-Zero USB5V.",
+        "Output E5_IMU_VIN feeds E3 RP2040-Zero U309 5V_IN. IMU firmware/MCU and BNO085 SPI wiring owned by E3; do not duplicate pack module on E5."
+      ],
+      "footprint": "Diode_SMD:D_SMA"
+    },
+    {
+      "ref": "C519",
+      "value": "10uF X7R 10V",
+      "kind": "capacitor",
+      "group": "Сервіс і зовнішні шини",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "E5_IMU_VIN"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C520",
+      "value": "100nF X7R 10V",
+      "kind": "capacitor",
+      "group": "Сервіс і зовнішні шини",
+      "source": "STACK.md §5.2 / engineering design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "E5_IMU_VIN"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "U507",
+      "value": "TCA9517DR",
+      "kind": "ic",
+      "group": "LAB BUS I2C buffer",
+      "source": "https://www.ti.com/lit/ds/symlink/tca9517.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "VCCA",
+          "net": "3V3_Q6A",
+          "type": "power_in"
+        },
+        {
+          "number": "2",
+          "name": "SCLA",
+          "net": "I2C2_SCL",
+          "type": "bidirectional"
+        },
+        {
+          "number": "3",
+          "name": "SDAA",
+          "net": "I2C2_SDA",
+          "type": "bidirectional"
+        },
+        {
+          "number": "4",
+          "name": "GND",
+          "net": "GND",
+          "type": "power_in"
+        },
+        {
+          "number": "5",
+          "name": "EN",
+          "net": "3V3_Q6A",
+          "type": "input"
+        },
+        {
+          "number": "6",
+          "name": "SDAB",
+          "net": "I2CB_SDA",
+          "type": "bidirectional"
+        },
+        {
+          "number": "7",
+          "name": "SCLB",
+          "net": "I2CB_SCL",
+          "type": "bidirectional"
+        },
+        {
+          "number": "8",
+          "name": "VCCB",
+          "net": "3V3_Q6A",
+          "type": "power_in"
+        }
+      ],
+      "notes": [
+        "A side to Q6A I2C2, B side to LAB BUS cable. Both sides powered by Q6A switched3.3V; powered-off high impedance per TI. No additional A-side pull-up: existing Q6A10k and E3 DNP option only.",
+        "B side has static low offset; do not cascade B-to-B with another offset buffer or connect a rise-time accelerator. Cable100kHz, <=1m; larger cable requires PCA9615 redesign and new pinout."
+      ],
+      "footprint": "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm"
+    },
+    {
+      "ref": "R550",
+      "value": "4.7k 1%",
+      "kind": "resistor",
+      "group": "LAB BUS I2C buffer",
+      "source": "https://www.ti.com/lit/ds/symlink/tca9517.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "I2CB_SDA",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "3V3_Q6A",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Only intended B-side pull-up set. Remove/DNP parallel pull-ups on attached sled modules; do not pull from AUX-powered remote3.3V without power-state review."
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric"
+    },
+    {
+      "ref": "R551",
+      "value": "4.7k 1%",
+      "kind": "resistor",
+      "group": "LAB BUS I2C buffer",
+      "source": "https://www.ti.com/lit/ds/symlink/tca9517.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "I2CB_SCL",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "3V3_Q6A",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Only intended B-side pull-up set. Remove/DNP parallel pull-ups on attached sled modules; do not pull from AUX-powered remote3.3V without power-state review."
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric"
+    },
+    {
+      "ref": "C550",
+      "value": "100nF X7R 10V",
+      "kind": "capacitor",
+      "group": "LAB BUS I2C buffer",
+      "source": "https://www.ti.com/lit/ds/symlink/tca9517.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "3V3_Q6A",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "One at VCCA pin1, one at VCCB pin8, close ground return."
+      ]
+    },
+    {
+      "ref": "C551",
+      "value": "100nF X7R 10V",
+      "kind": "capacitor",
+      "group": "LAB BUS I2C buffer",
+      "source": "https://www.ti.com/lit/ds/symlink/tca9517.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "3V3_Q6A",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "One at VCCA pin1, one at VCCB pin8, close ground return."
+      ]
+    },
+    {
+      "ref": "R552",
+      "value": "100k 1%",
+      "kind": "resistor",
+      "group": "Дисплей HDMI, DC і USB touch",
+      "source": "https://www.ti.com/lit/ds/symlink/lm66100.pdf",
+      "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E5_HDMI_ST_N",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E5_HDMI_5V_Q6A",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Diagnostic open-drain status pull-up to local HDMI VIN only. No3.3V GPIO connection; testpoint may be5V."
+      ]
+    },
+    {
+      "ref": "TP502",
+      "value": "HDMI ideal diode ST_N diagnostic",
+      "kind": "testpoint",
+      "group": "Дисплей HDMI, DC і USB touch",
+      "source": "https://www.ti.com/lit/ds/symlink/lm66100.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "ST_N (5V-domain)",
+          "net": "E5_HDMI_ST_N",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Measure with high-impedance DMM/scope. Low=disabled when sufficient supply exists; high/pulled-to-VIN=enabled. Interpret relative to actualVIN."
+      ]
+    }
+  ],
+  "open_items": [
+    {
+      "id": "E5-01",
+      "description": "Received Wisecoco board DC barrel size/polarity and USBTP/USB-C touch wiring still undocumented; no-VBUS enumeration must work.",
+      "blocking": true,
+      "resolve": "Obtain exact board photo/schematic, DMM mapping, vendor confirmation and enumerate with onlyD+/D−/GND. Never substitute guessed connector numbering."
+    },
+    {
+      "id": "E5-02",
+      "description": "IMU cable and exact received board revisions are unverified physical assemblies; E3 now defines RP2040-Zero/BNO085 internal wiring.",
+      "blocking": true,
+      "resolve": "Verify E3 board-pad map on received revisions; confirm chosen GX16 harness orientation, 3.3V UART and diode-fed E5_IMU_VIN; run 1e6 CRC-clean frames and 100 cold starts."
+    },
+    {
+      "id": "E5-03",
+      "description": "ADT-Link R44SF connector variant and removal of ALL host3.3V paths are not yet confirmed.",
+      "blocking": true,
+      "resolve": "Confirm part withADT-Link; continuity test every3.3V contact after modification. Validate8GT/sx1, cold/warm boots andzeroAER. Validate genuine power-cycle withLIME3V3 off including signal backfeed."
+    },
+    {
+      "id": "E5-04",
+      "description": "Current-setting resistors are engineering starting values, no measured device steady/startup currents or hot-corner proof.",
+      "blocking": true,
+      "resolve": "Measure current/inrush, setRTL/HF limits1.5–2times measured asSTACK, confirmHFminimumstartup>=0.75A; retry/latch test at all battery states; scopeLCovershoot."
+    },
+    {
+      "id": "E5-05",
+      "description": "T7 VBUS rail capacity and modified cable SuperSpeed signal integrity untested.",
+      "blocking": true,
+      "resolve": "WithrealT7 proveJ5load<1.5A expected operating budget, VCC_5V_PERI<=14W,5000M/UAS,noUSBresets,fio,hot-cornerTJ<=105C for1.5A. Reevaluate rail/switch/cable if failed."
+    },
+    {
+      "id": "E5-06",
+      "description": "HDMI/display/hub and receiver backfeed paths through signal lines need physical power-state validation.",
+      "blocking": true,
+      "resolve": "VerifyQ6Aoff/LAB5on/displayon combinations usingDMM/FNB58. HDMI5VQ6A andQ6AUSBVBUS shouldremain0V withinmeasurementresolution. CheckDDC/HPD afterU506installation andno phantom receiverpower."
+    },
+    {
+      "id": "E5-07",
+      "description": "EDL factory button pads and cable orientation not physically located on exact receivedQ6A.",
+      "blocking": true,
+      "resolve": "Use factory button first; continuity-identify its two switch nets before fittingparallelSW501. UnplugT7 forEDL and confirm05c6:9008."
+    },
+    {
+      "id": "E5-08",
+      "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released.",
+      "blocking": true,
+      "resolve": "Record exact supplier part numbers, face-view and wire-color tables; no-power continuity plus first energization current limit."
+    },
+    {
+      "id": "E5-09",
+      "description": "Radiated-noise behavior and USB2touch enumeration are physical integration gates, not determined by netlist.",
+      "blocking": true,
+      "resolve": "RunSTACK A/B noise matrix (HF+,GNSS,Lband,T7authorized=0/off), cable strain relief andenvironmental tests; do not markproductionready beforepasses."
+    }
+  ],
+  "decisions": [
+    {
+      "id": "R-E5-01",
+      "description": "UART service, LAB BUS, GX16 and J21 locking harness contact mappings assigned as PROJECT design; molded numbering must be used at assembly.",
+      "source": "OriginalSTACK only gave signals; final wiring tables in E5-review.md."
+    },
+    {
+      "id": "R-E5-02",
+      "description": "Replace unspecified HDMI Schottky D501 by low-loss LM66100DCKR ideal diodeU506 withCE=VOUT. Maintains intended source→display isolation while reducing supply drop.",
+      "source": "https://www.ti.com/lit/ds/symlink/lm66100.pdf"
+    },
+    {
+      "id": "R-E5-03",
+      "description": "Initial current limits: RTL-A43.2k,LAB34.8k,HF28.7k,T7DRV15.8k. HFP andT7 use nonlatching versions for startup; RTL-A/LAB retain latch-off.",
+      "source": "https://www.ti.com/lit/gpn/tps2553; bench-current and thermal tests still required."
+    },
+    {
+      "id": "R-E5-04",
+      "description": "T7 switch on existingJ5VBUS only, no populatedLAB5 alternative. DRV package chosen for better thermal resistance, initial limit guarantees about1.5A againstSamsung rating.",
+      "source": "https://www.ti.com/lit/gpn/tps2553; https://download.semiconductor.samsung.com/resources/user-manual/samsung_portable_ssd_t7_user_manual_english.pdf"
+    },
+    {
+      "id": "R-E5-05",
+      "description": "SLED detect assignedLAB BUS pin6, remote mating jumper toGND; existingE3 pullup10k to3V3_Q6A.",
+      "source": "Coordination withE3; project-design contact assignment."
+    },
+    {
+      "id": "R-E5-06",
+      "description": "TCA9517 added to E5 cable interface: both rails and EN from3V3_Q6A, B-side one4.7k pull-up pair, A-side no additional pull-ups. Existing/remote parallelpulls must be removed or DNP.",
+      "source": "https://www.ti.com/lit/ds/symlink/tca9517.pdf; E3/E5 ownership agreement."
+    },
+    {
+      "id": "R-E5-07",
+      "description": "Use LM66100 ST open-drain output as local5V diagnostic with100k pull-upR552 andTP502. Manufacturer ground-tie recommendation applies only if unused. Keeps correct OD electrical type and removes direct ST-ground powerflag ERC collision without blanket exclusions.",
+      "source": "https://www.ti.com/lit/ds/symlink/lm66100.pdf; section5 pin functions and section6.5ST current/voltage limits."
+    }
+  ],
+  "power_flags": [
+    {
+      "net": "VBUS_HFP",
+      "reason": "Known power after passive L501: U503.OUT drives100uH L501 then VBUS_HFP. Flag identifies actual filtered power without changing module power_in types.",
+      "source": "STACK.md §5.2; U503/L501/C511 in E5.json; https://www.bourns.com/docs/product-datasheets/srr1260.pdf"
+    },
+    {
+      "net": "E5_IMU_VIN",
+      "reason": "Known power after D502 Schottky: LAB5→SS14 anode→cathode E5_IMU_VIN supplies E3 IMU MCU. Flag declares powered-after-passive path only.",
+      "source": "STACK.md §5.1 reverse-feed rules; D502 in E5.json; https://www.vishay.com/doc?88746="
+    }
+  ]
+}

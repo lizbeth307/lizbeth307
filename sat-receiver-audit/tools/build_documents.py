@@ -1,0 +1,125 @@
+#!/usr/bin/env python3
+"""Assemble review, connection and component inventories from the reviewed graphs."""
+import csv
+import json
+from pathlib import Path
+
+BASE = Path(__file__).resolve().parents[1]
+
+
+def md(value):
+    return str(value).replace("|", "\\|").replace("\n", " ")
+
+
+def main():
+    graphs = [json.loads(p.read_text()) for p in sorted((BASE / "design").glob("E[1-5].json"))]
+    report = json.loads((BASE / "verification/validation.json").read_text())
+    generated = json.loads((BASE / "build/kicad/generation-manifest.json").read_text())
+    items = [dict(x, sheet=g["sheet"]) for g in graphs for x in g.get("open_items", [])]
+    blockers = [x for x in items if x.get("blocking")]
+    lines = ["# Ворота приймання SR-RX-v2.1", "", "Жоден стендовий тест не виконано. `OPEN` не означає, що виявлено несправність конкретного екземпляра: це умова, без підтвердження якої його не можна приймати чи підключати. Стан апаратного випуску — **BLOCKED**.", "", "Основні інструкції українською наведено в аудитах [E1](design/E1-review.md), [E2](design/E2-review.md), [E3](design/E3-review.md), [E4](design/E4-review.md), [E5](design/E5-review.md) та [таблицях монтажу](design/E5-connection-guide.md). Нижче — повний реєстр ідентифікаторів із машинного контракту.", ""]
+    for item in items:
+        lines += [f"## {item['id']} — {'OPEN / блокує випуск' if item.get('blocking') else 'умова окремої опції'}", "", md(item["description"]), "", "**Умова закриття:** " + md(item.get("resolve", "")), ""]
+    lines += ["## Додаткова калібровка аварійного ADC", "", "Дільник E1 100 kΩ / 20 kΩ з допуском 1% та LM4040C30 0.5% не дають точного батарейного порога без калібровки. Початкова похибка біля 12.9 V може становити приблизно ±0.28 V. Перед штатним запуском потрібні дві опорні напруги, запис scale/offset із серійним номером пристрою та перевірка відсічки 12.9±0.1 V за кімнатної і підвищеної температури. Немає чинної калібровки — штатний режим заборонений.", "", "## Правило звітності", "", "Синтаксично валідний KiCad, збіг переліків з'єднань і навіть ERC без помилок не закривають ці ворота. Заборонено записувати PASS без виміряних даних, умов тесту, приладу й дати."]
+    (BASE / "OPEN_ITEMS.md").write_text("\n".join(lines) + "\n")
+
+    rows = []
+    for g in graphs:
+        for c in g["components"]:
+            rows.append([g["sheet"], c["ref"], c["value"], c.get("kind", ""), c.get("status", ""), "DNP" if c.get("dnp") else "", c.get("footprint", ""), c.get("source", ""), "; ".join(c.get("notes", []))])
+    with (BASE / "build/11-schematic-bom.csv").open("w", newline="") as f:
+        w = csv.writer(f, quoting=csv.QUOTE_ALL, lineterminator="\n")
+        w.writerow(["Аркуш", "Позначення", "Деталь / номінал", "Тип", "Статус", "Не монтувати", "Посадкове місце", "Джерело", "Примітки"])
+        w.writerows(rows)
+    # This inventory is not added to the old purchasing BOM: on-module parts may
+    # already be supplied with a commercial assembly.
+    (BASE / "build/11-schematic-bom.md").write_text("""# Перелік елементів електричної схеми v2.1
+
+[11-schematic-bom.csv](11-schematic-bom.csv) формується з перевірених графів E1–E5. Це перелік позначених на схемі елементів, а не готовий кошик покупок. Частина резисторів, мікросхем і роз'ємів уже входить до готових модулів; повторно замовляти їх автоматично не можна.
+
+Колонка DNP означає «не монтувати». `design` — обране в цій редакції проєктне рішення; `verified` — перевірена документація, а не результат стенду. Порожнє посадкове місце не дозволяє виготовляти PCB.
+
+Початковий кошторис [10-bom.md](10-bom.md) і [10-bom.csv](10-bom.csv) залишається оцінкою редакції v2 від 18.10.2026. Він не є підтвердженою ціною оновлених схем. Заміни перетворювача, додаткові захисти, детектори, пасиви та конструктивні зміни мають бути включені в остаточний кошик за конкретними MPN і кількостями, без подвійного обліку деталей модулів. Непідтверджені ціни не прирівняно до нуля.
+
+Джерела і розрахунки змін: [E1](../design/E1-review.md), [E2](../design/E2-review.md), [E3](../design/E3-review.md), [E4](../design/E4-review.md), [E5](../design/E5-review.md).
+""")
+    # Explicitly conservative reference contract. It is data for the future
+    # firmware implementation, not a service that writes GPIOs.
+    controls = {}
+    for g in graphs:
+        for c in g["components"]:
+            for p in c["pins"]:
+                net = p.get("net", "")
+                if net.startswith(("EN_", "SW_")) or net in {"K1_ON", "K2_ON", "PICO_DISP_EN", "CHG_INHIBIT"}:
+                    controls.setdefault(net, []).append({"ref": c["ref"], "pin": str(p["number"]), "type": p.get("type", "")})
+    readiness = {
+        "schema_version": 1,
+        "hardware_readiness": False,
+        "production_release": False,
+        "custom_firmware_implemented_and_tested": False,
+        "battery_adc_calibration_valid": False,
+        "gate_results": {i["id"]: "OPEN" for i in blockers},
+        "startup_output_requests": {n: (1 if n == "CHG_INHIBIT" else 0) for n in sorted(controls)},
+        "control_contacts": controls,
+        "rules": [
+            "Це специфікація станів, не реалізований GPIO-драйвер і не доказ виконання їх прошивкою.",
+            "До апаратного приймання усі bias enables заблоковані незалежно від логічного рівня непідключеного DC-sense.",
+            "Підтягнутий HIGH від відсутнього датчика не є доказом безпечного DC.",
+            "Preflight DC-free вимірюється лише при вимкненому власному bias; після увімкнення bias застосовуються визначені для нього струмові й напругові вікна.",
+            "Pico GP17 через Q306 апаратно утримує спільний RESET трьох MCP при Pico boot/reset. Майбутня прошивка повинна тримати RESET при heartbeat fault; release тільки після свіжого explicit re-arm, OLAT safe-low перед IODIR. Прошивка не реалізована; повна втрата живлення Pico не покривається цим FET.",
+            "Штатний режим без чинної двоточкової калібровки батарейного ADC заборонений.",
+            "При SJ1 на Adafruit INA228 VBUS вимірює VIN+ до шунта; V_N = VBUS - VSHUNT з правильним знаком струму.",
+            "Стан реле K1=1,K2=1 заборонено. HMC A/B=00 вибирає RF1 PARK.",
+            "Сервісна зарядка через ISDT/raw balance вимкнена до E1-02; main OFF і запобіжник не доводять ізоляцію B0/P−.",
+        ],
+    }
+    (BASE / "design/readiness-contract.json").write_text(json.dumps(readiness, ensure_ascii=False, indent=2) + "\n")
+    errors = report.get("erc_errors", [])
+    status = "без помилок" if not errors else f"{len(errors)} помилок; див. сирий звіт і пояснення"
+    completion = f"""# SR-RX-v2.1 — передача перевіреного інженерного комплекту
+
+Редакція від 19.10.2026. Вихідний репозиторій: [lizbeth307/lizbeth307](https://github.com/lizbeth307/lizbeth307), гілка Claude `ccr-1537979d-cj7q9t`, останній збережений коміт `465318835e71eae326059f5f66e2b47232169556`.
+
+## Що фактично передано від Claude
+
+У Git були вимоги, STACK, інструкції, журнали аудиту, чернетки SVG і 36 бібліотечних символів. Усі E1–E5 були порожніми файлами по 210 байтів. Завантажений HTML побайтово збігався з файлом Git і не містив бібліотек. Повідомлення про процес креслення не означало, що його результат було збережено.
+
+## Результат цієї редакції
+
+- Заповнено всі п'ять розділів схеми. Для читабельності вони розбиті на {len(generated['pages'])} електричних сторінок і кореневий зміст.
+- На схемах {report['physical_components']} позначених елементів; {report['connected_physical_contacts']} підключених фізичних/явно функціональних контактів у {report['named_nets']} іменованих мережах. Повний експорт KiCad зіставлено з графами: **{report['graph_netlist_comparison']}**.
+- Збережено початкові бібліотеки, додано самодостатню бібліотеку елементів нових схем, відносні таблиці бібліотек, підтверджені стандартні посадкові місця й джерела.
+- ERC виконано справжнім KiCad 10.0.7: **{status}**. [Сирий ERC](verification/erc.json) не відфільтровано. [Незалежна звірка](verification/validation.json) містить точні лічильники й SHA256 файлів.
+- [PDF](build/kicad/sr-rx-v2.pdf), SVG, XML-netlist, [перелік елементів](build/11-schematic-bom.csv), [таблиці монтажу](design/E5-connection-guide.md) і відтворювані генератори входять у комплект.
+
+## Матеріальні виправлення
+
+Перевірено фізичні контакти Q6A J2/J5/J21, нумерацію Adafruit CH334F, повні pinouts мікросхем і NC, розподіл MCP, ізоляцію HDMI, драйвери реле та PARK, живлення IMU, допуски ILIM/OVLO, паралельні LT3045, фільтри живлення й запас струму LAB5. Проєктні призначення джгутів позначені як нові рішення; їх не видано за фабричну розпіновку невідомої плати.
+
+Окремо усунено помилку двох паралельних навантажень HF+ у PARK. Для сервісної зарядки виявлено непідтверджений шлях B0/P−; цей режим заблоковано до підтвердження топології, а не оголошено захищеним.
+
+## Межа завершення
+
+Це інженерна схема та пакет перевірок. **Пристрій не зібрано, стендові результати відсутні, виробничий випуск заблоковано.** У реєстрі {len(blockers)} блокувальних умов, багато з яких стосуються одного приймального тесту або ревізії плати. Не можна перетворювати їх на PASS за результатом програмної перевірки.
+
+Початковий `sr-rx-v2.kicad_pcb` є порожнім шаблоном. Розведення PCB, Gerber, DRC готової плати та підтверджені механічні файли виробництва тут не заявлено. Наявні 8 креслень розміщення — теоретичні ескізи, які мають бути звірені з новими розмірами деталей.
+
+Власні `labd/labrx`, HMI, безпечні декодерні збірки й NPU-система описані планом встановлення; їхній робочий код не був у вихідному репозиторії та не верифікований на Q6A. [readiness-contract.json](design/readiness-contract.json) є специфікацією для реалізації, **не** встановленим захистом GPIO.
+
+Ціни v2 від 18.10 залишено як історичну оцінку. Нові схеми мають окремий BOM-аудит; їх не названо підтвердженим кошторисом покупок.
+
+## Як продовжити без втрати контексту
+
+1. Відкрити `build/kicad/sr-rx-v2.kicad_pro` у KiCad 10; коренева схема індексує всі сторінки.
+2. Прочитати [актуальні ворота](OPEN_ITEMS.md) та відповідні `design/E#-review.md` до купівлі, модифікації чи підключення заліза.
+3. Звіряти монтаж за [E5 connection guide](design/E5-connection-guide.md), а вимоги безпеки — за [STACK](STACK.md) з пріоритетною поправкою v2.1 на початку.
+4. Записувати фактичні результати приймання окремо з приладами, датою, умовами й ревізіями. Після зміни графа повторити генерацію, ERC і звірку netlist.
+
+Жорсткі правила з USER_REQUIREMENTS збережено: лише прийом в ефірі, без приватного змісту/військових трактів, без рамок/тарілок, місце з GNSS, схема передбачає термінування Lime TX; блокування передачі в ПЗ залишається обов’язковою, ще не реалізованою й не перевіреною вимогою.
+"""
+    (BASE / "COMPLETION.md").write_text(completion)
+    print(f"Wrote component inventory, readiness contract and {len(blockers)} blocking gate records")
+
+
+if __name__ == "__main__":
+    main()

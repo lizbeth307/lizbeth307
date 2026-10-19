@@ -1,0 +1,48 @@
+{
+  "status": "PASS",
+  "radxa_gpio_contract": "PASS",
+  "raw_battery_negative_isolated_from_protected_return": "PASS",
+  "external_balance_DNP": "PASS",
+  "MCP_reset_domain_isolated_path": "PASS",
+  "no_OVP_enable_pullup": "PASS",
+  "relay_ideal_contact_states": [
+    {
+      "K1": 0,
+      "K2": 0,
+      "terminations": {
+        "HF": [
+          "R417"
+        ],
+        "VHF": [
+          "R418"
+        ],
+        "HFP": [
+          "R419"
+        ]
+      }
+    },
+    {
+      "K1": 1,
+      "K2": 0,
+      "terminations": {
+        "HF": [],
+        "VHF": [
+          "R418"
+        ],
+        "HFP": []
+      }
+    },
+    {
+      "K1": 0,
+      "K2": 1,
+      "terminations": {
+        "HF": [
+          "R417"
+        ],
+        "VHF": [],
+        "HFP": []
+      }
+    }
+  ],
+  "limitations": "Ideal contacts only; RF loss/isolation and physical BMS/charger topology remain acceptance gates. State11 is forbidden by the firmware contract. Reset-path wiring does not prove firmware heartbeat/timing or coverage of Pico power loss."
+}

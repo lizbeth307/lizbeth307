@@ -1,0 +1,439 @@
+{
+  "kicad_version": "10.0.7",
+  "assignments": 176,
+  "footprints": [
+    {
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "pads": [
+        "1",
+        "2"
+      ],
+      "refs": [
+        "C201",
+        "C211",
+        "C214",
+        "C258",
+        "C269",
+        "C274",
+        "C275",
+        "C276",
+        "C277",
+        "C278",
+        "C279",
+        "C280",
+        "C281",
+        "C282",
+        "C283",
+        "C284",
+        "C285",
+        "C286",
+        "C287",
+        "C288"
+      ]
+    },
+    {
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0805_2012Metric.kicad_mod",
+      "sha256": "62775a51fe74ba7f1b572de327bdbd3fc92582721b2abcaa47787865590d89cb",
+      "pads": [
+        "1",
+        "2"
+      ],
+      "refs": [
+        "C202",
+        "C203",
+        "C212",
+        "C213",
+        "C215",
+        "C216",
+        "C232",
+        "C233",
+        "C234",
+        "C236",
+        "C237",
+        "C238",
+        "C240",
+        "C241",
+        "C242",
+        "C244",
+        "C245",
+        "C246",
+        "C248",
+        "C249",
+        "C250",
+        "C257",
+        "C259",
+        "C260",
+        "C261",
+        "C268",
+        "C270",
+        "C271",
+        "C272",
+        "C295",
+        "C296",
+        "C297"
+      ]
+    },
+    {
+      "footprint": "Capacitor_SMD:C_1210_3225Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_1210_3225Metric.kicad_mod",
+      "sha256": "e1dae516e079b70c4736d001fb81bfb4ef5f9c2a37c8175223a44f83a04ff75f",
+      "pads": [
+        "1",
+        "2"
+      ],
+      "refs": [
+        "C204",
+        "C205",
+        "C208",
+        "C209",
+        "C217",
+        "C218",
+        "C220",
+        "C221",
+        "C223",
+        "C224",
+        "C226",
+        "C227",
+        "C228",
+        "C229",
+        "C230",
+        "C231",
+        "C252",
+        "C253",
+        "C255",
+        "C256",
+        "C263",
+        "C264",
+        "C266",
+        "C267",
+        "C289",
+        "C290",
+        "C291",
+        "C292",
+        "C293",
+        "C294"
+      ]
+    },
+    {
+      "footprint": "Diode_SMD:D_SMA",
+      "file": "build/kicad/footprints/Diode_SMD.pretty/D_SMA.kicad_mod",
+      "sha256": "f7cba3b52ed8b34dce89170722de58324eac04e9e61a095e0eab37b9ca93cb7f",
+      "pads": [
+        "1",
+        "2"
+      ],
+      "refs": [
+        "D301",
+        "D305",
+        "D306",
+        "D502"
+      ]
+    },
+    {
+      "footprint": "Diode_SMD:Nexperia_CFP3_SOD-123W",
+      "file": "build/kicad/footprints/Diode_SMD.pretty/Nexperia_CFP3_SOD-123W.kicad_mod",
+      "sha256": "89ef0339e4b40830049981c4b2399acae4b93461c56423016d586bebea47f940",
+      "pads": [
+        "1",
+        "2"
+      ],
+      "refs": [
+        "D202",
+        "D203"
+      ]
+    },
+    {
+      "footprint": "Package_SO:MSOP-10_3x3mm_P0.5mm",
+      "file": "build/kicad/footprints/Package_SO.pretty/MSOP-10_3x3mm_P0.5mm.kicad_mod",
+      "sha256": "c179dbee33613027667b07b4dba02648f193fc65f63616c9d73d6f1162c6bb9d",
+      "pads": [
+        "1",
+        "10",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "refs": [
+        "U102"
+      ]
+    },
+    {
+      "footprint": "Package_SO:SOIC-28W_7.5x17.9mm_P1.27mm",
+      "file": "build/kicad/footprints/Package_SO.pretty/SOIC-28W_7.5x17.9mm_P1.27mm.kicad_mod",
+      "sha256": "8df054b2353cacbe8e7228f97eacdd863eeebcfe7dc3a6315ee2deb370496519",
+      "pads": [
+        "1",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "2",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "refs": [
+        "U301",
+        "U302",
+        "U303"
+      ]
+    },
+    {
+      "footprint": "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm",
+      "file": "build/kicad/footprints/Package_SO.pretty/SOIC-8_3.9x4.9mm_P1.27mm.kicad_mod",
+      "sha256": "074ecb2092b24fa4b4b9cdd7c926fc587b0d7d6d21e7341e57935fd42d36894f",
+      "pads": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "refs": [
+        "U507"
+      ]
+    },
+    {
+      "footprint": "Package_SO:TSSOP-24_4.4x7.8mm_P0.65mm",
+      "file": "build/kicad/footprints/Package_SO.pretty/TSSOP-24_4.4x7.8mm_P0.65mm.kicad_mod",
+      "sha256": "951159bb3a87997ba4a4f14affd963324813db13d9426715b2a29388369d74ed",
+      "pads": [
+        "1",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "2",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "refs": [
+        "U306"
+      ]
+    },
+    {
+      "footprint": "Package_SON:WSON-6-1EP_2x2mm_P0.65mm_EP1x1.6mm",
+      "file": "build/kicad/footprints/Package_SON.pretty/WSON-6-1EP_2x2mm_P0.65mm_EP1x1.6mm.kicad_mod",
+      "sha256": "5b7efafe23ba0a80faf2aa5786e7ceed526eb3802b254bc28577f1fc06abb633",
+      "pads": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "refs": [
+        "U505"
+      ]
+    },
+    {
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15",
+      "pads": [
+        "1",
+        "2",
+        "3"
+      ],
+      "refs": [
+        "D101",
+        "D102",
+        "D103",
+        "Q101",
+        "Q301",
+        "U307",
+        "D302",
+        "D303",
+        "Q302",
+        "Q303",
+        "Q304",
+        "Q305",
+        "Q306",
+        "D401",
+        "Q401",
+        "Q402",
+        "D450",
+        "U458",
+        "Q456",
+        "Q457",
+        "D451",
+        "Q450",
+        "Q451",
+        "D452",
+        "Q452",
+        "Q453",
+        "D453",
+        "Q454",
+        "Q455"
+      ]
+    },
+    {
+      "footprint": "Package_TO_SOT_SMD:SOT-23-5",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-5.kicad_mod",
+      "sha256": "455a3f7c3e5eb5b8847eaa5df23e18651e78ab9f75afd09a0883758a0d901761",
+      "pads": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "refs": [
+        "U103"
+      ]
+    },
+    {
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "sha256": "f341c73aac9dcb553456f68bf3fee3d26eb14acf6d8a1cae82b50418fe1d71ca",
+      "pads": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "refs": [
+        "U104",
+        "U310",
+        "U311",
+        "U312",
+        "U313",
+        "U456",
+        "U457",
+        "U450",
+        "U451",
+        "U452",
+        "U453",
+        "U454",
+        "U455",
+        "U501",
+        "U502",
+        "U503",
+        "U551",
+        "U552"
+      ]
+    },
+    {
+      "footprint": "Package_TO_SOT_SMD:SOT-363_SC-70-6",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-363_SC-70-6.kicad_mod",
+      "sha256": "0659d885e00b786968c3ba29152b808777240a91c1fb49ab8d814eb03530115c",
+      "pads": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "refs": [
+        "U506"
+      ]
+    },
+    {
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "pads": [
+        "1",
+        "2"
+      ],
+      "refs": [
+        "R501",
+        "R502",
+        "R503",
+        "R504",
+        "R505",
+        "R506",
+        "R507",
+        "R508",
+        "R509",
+        "R510",
+        "R511",
+        "R512",
+        "R513",
+        "R514",
+        "R515",
+        "R516",
+        "R517",
+        "R550",
+        "R551",
+        "R552"
+      ]
+    },
+    {
+      "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_1210_3225Metric.kicad_mod",
+      "sha256": "8816a8edfa0e619a86c5a65a59048b0fa2c3472d0df5a62244290224abacf7ff",
+      "pads": [
+        "1",
+        "2"
+      ],
+      "refs": [
+        "R4460",
+        "R4461",
+        "R4462",
+        "R4463",
+        "R4464",
+        "R4465",
+        "R4466",
+        "R4467",
+        "R4468",
+        "R4469",
+        "R4470",
+        "R4471"
+      ]
+    }
+  ],
+  "pin_pad_mismatches": [],
+  "pending_assignment_corrections": []
+}

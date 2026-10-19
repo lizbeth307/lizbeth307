@@ -1,0 +1,5223 @@
+{
+  "sheet": "E3",
+  "title": "Керування, Pico HMI, GPIO, GNSS і IMU",
+  "sources": [
+    {
+      "url": "https://dl.radxa.com/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
+      "note": "V1.21: J20 40-pin mapping, translators; J11 RTC pin 1 GND, pin 2 battery+; J21 pin 3 power key."
+    },
+    {
+      "url": "https://docs.radxa.com/en/dragon/q6a/hardware-use/pin-gpio",
+      "note": "Physical header pins and functional SoC mux."
+    },
+    {
+      "url": "https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf",
+      "note": "DS20001952D table 2-1, SOIC pin numbers; GPA7/GPB7 output-only; reset and interrupt configuration."
+    },
+    {
+      "url": "https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf",
+      "note": "Waveshare P1 pins1-8; RESET is direct active-low; GPS1 IPEX 1/3/4 ground and 2 antenna; RT9193-33 on board."
+    },
+    {
+      "url": "https://datasheets.raspberrypi.com/pico/Pico-R3-A4-Pinout.pdf",
+      "note": "Raspberry Pi Pico SC0915 physical pins 1-40, SWD pads; UART and I2C mux."
+    },
+    {
+      "url": "https://www.diodes.com/datasheet/download/PI4IOE5V9555.pdf",
+      "note": "DS41303 Rev1-2 TSSOP24 pin table; address pins and interrupt."
+    },
+    {
+      "url": "https://learn.adafruit.com/adafruit-9-dof-orientation-imu-fusion-breakout-bno085/pinouts",
+      "note": "Adafruit4754 named functional interfaces; PS0=PS1=high SPI; INT and RST mandatory."
+    },
+    {
+      "url": "https://files.waveshare.com/upload/4/4c/RP2040_Zero.pdf",
+      "note": "WaveshareRP2040-Zero named GPIO and 5V/3V3 power pads."
+    },
+    {
+      "url": "https://www.vishay.com/docs/84286/veml7700.pdf",
+      "note": "VEML7700 function and I2C address0x10; installed module Adafruit4162 retains factory passives."
+    },
+    {
+      "url": "https://www.ti.com/lit/ds/symlink/lm4040.pdf",
+      "note": "LM4040C30 DBZ pin1 cathode pin2 anode pin3 tie anode permitted."
+    },
+    {
+      "url": "https://www.aosmd.com/sites/default/files/res/datasheets/AO3400A.pdf",
+      "note": "AO3400A logic level gate specifications and SOT23 pinout."
+    },
+    {
+      "url": "https://aosmd.com/sites/default/files/res/datasheets/AO3401A.pdf",
+      "note": "AO3401A P-channel high-side fan switch."
+    },
+    {
+      "url": "https://assets.nexperia.com/documents/data-sheet/2N7002.pdf",
+      "note": "2N7002 SOT23 pin1G pin2S pin3D."
+    },
+    {
+      "url": "https://www.diodes.com/datasheet/download/BAT54.pdf",
+      "note": "BAT54 SOT23 diode pin1A pin3K pin2NC."
+    },
+    {
+      "url": "https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf",
+      "note": "TPD4E1U06 DBV pin numbers; ESD parts."
+    },
+    {
+      "url": "https://www.quectel.com/content/uploads/2023/05/Quectel_LC76G_Series_Hardware_Design_V1.3.pdf",
+      "note": "Section4.2.1 RESET_N internal10k to1.8V, no external pullup allowed; low pulse at least100ms."
+    },
+    {
+      "url": "https://github.com/adafruit/Adafruit-BNO08x-PCB/blob/master/Adafruit_BNO08x.sch",
+      "note": "Official Eagle symbol H_INTN direction=out, direct net INT to header; used to correct electrical type."
+    },
+    {
+      "url": "https://docs.sparkfun.com/SparkFun_VR_IMU_Breakout_BNO086_QWIIC/assets/component_documentation/BNO080_085-Datasheet_v1.16.pdf",
+      "note": "Manufacturer BNO08X datasheet distributed by module maker: SPI PS1 high, PS0/WAKE GPIO; preserve initial high strap and allow runtime wake."
+    },
+    {
+      "url": "https://www.delta-fan.com/Download/Spec/BFB0305HA-C.pdf",
+      "note": "Delta BFB0305HA-C officialrev00: two wires red+/black-,5V4.5-5.5V,0.13A typ0.20A maxaverage; peakmustbemeasured. Mechanicaldrawing andPQcurve."
+    },
+    {
+      "url": "https://semiware.com/uploads/datasheet/MF52A103F3950.pdf",
+      "note": "Semiware MF52A103F3950 revA2.0 concrete10k1%/B25/5039501%NTC,dimensions,RTtableandoperatingrange."
+    }
+  ],
+  "notes": [
+    "Original git STACK.md is the requirements source. This is a new schematic completion design and does not claim bench or manufacturing validation.",
+    "K1_ON/K2_ON replace incorrect draft K1_DRV/K2_DRV labels. Every unknown module contact uses a functional named interface; no GPx(TBD) nets are used.",
+    "Canonical additions agreed across sheets: PICO_OFF, PICO_DISP_EN, PWR_BUTTON, CHG_INHIBIT, E1_BAT_ADC. E1 owns the battery ADC divider and button diode to Pololu A; E3 owns the switch and Q6A power-key OR.",
+    "MCP enable pulldowns and RF input 100k/1k/100pF filters belong to E2/E4/E5 recipient sheets. E3 owns nineteen input pullups to switched 3V3_Q6A.",
+    "The DNP 10k I2C2 pullup pair is not populated by default. Q6A-side pullups are already present onboard; TCA9517 cable buffer and its remote-side pullups belong to E5.",
+    "Pack internal named-pad wiring appears as U309/U314. E5 owns GX16-4, input Schottky and both endpoint TVS arrays; E5_IMU_VIN is the protected 5V pack supply.",
+    "Pico GP17 physical22 is now E3_MCP_RESET_ASSERT through R393100ohm to Q3062N7002 gate, with R394100k gate-source pulldown and R3951k GPIO-side pullup toPico3V3. Q306 drain joins physical pin18 of allthree internal MCPs. Three existing10k pullups are to3V3_Q6A only. No free PicoGPIO remains.",
+    "This change supplies the missing hardware actuator for a future Pico heartbeat watchdog. It is not proof of firmware implementation or independent protection against every simultaneous Pico/Linux failure. Commissioning requires the explicit boot/hang/re-arm fault-injection gate.",
+    "With Pico supply present, powered GPIO reset/highimpedance defaults to asserting the shared MCP reset via R395; a functioning future firmware must sink GP17 low for release. Without the required firmware the expander-controlled branches remain disabled rather than being commissioned."
+  ],
+  "components": [
+    {
+      "ref": "J301",
+      "value": "Q6A J20 2x20 3.3V GPIO",
+      "kind": "connector",
+      "group": "Q6A header",
+      "source": "https://dl.radxa.com/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
+      "status": "verified",
+      "pins": [
+        {
+          "number": "1",
+          "name": "3V3",
+          "type": "power_out",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "5V",
+          "type": "passive",
+          "net": "VCC_5V_PERI"
+        },
+        {
+          "number": "3",
+          "name": "GPIO24",
+          "type": "input",
+          "net": "INA228_ALERT"
+        },
+        {
+          "number": "4",
+          "name": "5V",
+          "type": "passive",
+          "net": "VCC_5V_PERI"
+        },
+        {
+          "number": "5",
+          "name": "GPIO25",
+          "type": "input",
+          "net": "MCP_INT"
+        },
+        {
+          "number": "6",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "7",
+          "name": "GPIO96",
+          "type": "input",
+          "net": "E3_GNSS_PPS"
+        },
+        {
+          "number": "8",
+          "name": "GPIO22_UART5_TX",
+          "type": "output",
+          "net": "UART5_TX"
+        },
+        {
+          "number": "9",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "10",
+          "name": "GPIO23_UART5_RX",
+          "type": "input",
+          "net": "UART5_RX"
+        },
+        {
+          "number": "11",
+          "name": "GPIO_UNUSED",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "12",
+          "name": "GPIO97_SWCLK",
+          "type": "output",
+          "net": "E3_PICO_SWCLK"
+        },
+        {
+          "number": "13",
+          "name": "GPIO0_I2C0_SDA",
+          "type": "bidirectional",
+          "net": "I2C0_SDA"
+        },
+        {
+          "number": "14",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "15",
+          "name": "GPIO1_I2C0_SCL",
+          "type": "bidirectional",
+          "net": "I2C0_SCL"
+        },
+        {
+          "number": "16",
+          "name": "GPIO26_UART6_TX",
+          "type": "output",
+          "net": "UART6_TX"
+        },
+        {
+          "number": "17",
+          "name": "3V3",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "18",
+          "name": "GPIO27_UART6_RX",
+          "type": "input",
+          "net": "UART6_RX"
+        },
+        {
+          "number": "19",
+          "name": "GPIO_UNUSED",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "20",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "21",
+          "name": "GPIO_UNUSED",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "22",
+          "name": "GPIO_UNUSED",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "23",
+          "name": "GPIO_UNUSED",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "24",
+          "name": "GPIO_UNUSED",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "25",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "26",
+          "name": "GPIO_UNUSED",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "27",
+          "name": "GPIO8_I2C2_SDA",
+          "type": "bidirectional",
+          "net": "I2C2_SDA"
+        },
+        {
+          "number": "28",
+          "name": "GPIO9_I2C2_SCL",
+          "type": "bidirectional",
+          "net": "I2C2_SCL"
+        },
+        {
+          "number": "29",
+          "name": "GPIO31_UART7_RX",
+          "type": "input",
+          "net": "UART7_RX"
+        },
+        {
+          "number": "30",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "31",
+          "name": "GPIO_UNUSED",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "32",
+          "name": "GPIO30_UART7_TX",
+          "type": "output",
+          "net": "UART7_TX"
+        },
+        {
+          "number": "33",
+          "name": "GPIO_UNUSED",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "34",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "35",
+          "name": "GPIO100_SWDIO",
+          "type": "bidirectional",
+          "net": "E3_PICO_SWDIO"
+        },
+        {
+          "number": "36",
+          "name": "GPIO_UNUSED",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "37",
+          "name": "GPIO_UNUSED",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "38",
+          "name": "GPIO98_RUN",
+          "type": "output",
+          "net": "E3_PICO_RUN"
+        },
+        {
+          "number": "39",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "40",
+          "name": "GPIO99_SAFE_BOOT",
+          "type": "input",
+          "net": "SAFE_BOOT"
+        }
+      ],
+      "notes": [
+        "Only one QUP owner per engine. UART6 uses 16/18, debug console uses 8/10; I2C2 27/28. No safety enable uses Q6A GPIO directly.",
+        "Header3V3 and Pico3V3 are different rails; never join. UM3304 paths are short, <50pF; UART7/PPS wiring <=20cm.",
+        "GPIO96 exclusive pps-gpio, GP97/98/100 reserved for service SWD/RUN; disable conflicting MI2S audio nodes."
+      ]
+    },
+    {
+      "ref": "J302",
+      "value": "Power-board control harness DESIGN",
+      "kind": "connector",
+      "group": "Q6A header",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "3V3_Q6A",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "SDA",
+          "type": "passive",
+          "net": "I2C2_SDA"
+        },
+        {
+          "number": "4",
+          "name": "SCL",
+          "type": "passive",
+          "net": "I2C2_SCL"
+        },
+        {
+          "number": "5",
+          "name": "INT",
+          "type": "passive",
+          "net": "MCP_INT"
+        }
+      ],
+      "notes": [
+        "New carrier harness assignment, not a measured existing cable."
+      ]
+    },
+    {
+      "ref": "R301",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "Q6A header",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "INA228_ALERT"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ],
+      "notes": [
+        "Single ALERT pullup to switched Q6A3V3; never AON."
+      ]
+    },
+    {
+      "ref": "R302",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "Q6A header",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "MCP_INT"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ]
+    },
+    {
+      "ref": "R303",
+      "value": "10k DNP",
+      "kind": "resistor",
+      "group": "Q6A header",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "I2C2_SDA"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ],
+      "notes": [
+        "Not populated by default: Q6A UM3204H already has pullups; populate only after measured bus-edge review."
+      ],
+      "dnp": true
+    },
+    {
+      "ref": "R304",
+      "value": "10k DNP",
+      "kind": "resistor",
+      "group": "Q6A header",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "I2C2_SCL"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ],
+      "notes": [
+        "Not populated by default: Q6A UM3204H already has pullups; populate only after measured bus-edge review."
+      ],
+      "dnp": true
+    },
+    {
+      "ref": "U301",
+      "value": "MCP23017-E/SO #1 0x20",
+      "kind": "ic",
+      "group": "MCP23017 control",
+      "source": "https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf",
+      "status": "verified",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GPB0",
+          "type": "output",
+          "net": "EN_LNB"
+        },
+        {
+          "number": "2",
+          "name": "GPB1",
+          "type": "output",
+          "net": "EN_BONI"
+        },
+        {
+          "number": "3",
+          "name": "GPB2",
+          "type": "output",
+          "net": "K1_ON"
+        },
+        {
+          "number": "4",
+          "name": "GPB3",
+          "type": "output",
+          "net": "K2_ON"
+        },
+        {
+          "number": "5",
+          "name": "GPB4",
+          "type": "output",
+          "net": "SW_RTLA_A"
+        },
+        {
+          "number": "6",
+          "name": "GPB5",
+          "type": "output",
+          "net": "SW_RTLA_B"
+        },
+        {
+          "number": "7",
+          "name": "GPB6",
+          "type": "output",
+          "net": "SW_RTLB_A"
+        },
+        {
+          "number": "8",
+          "name": "GPB7",
+          "type": "output",
+          "net": "SW_RTLB_B"
+        },
+        {
+          "number": "9",
+          "name": "VDD",
+          "type": "power_in",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "10",
+          "name": "VSS",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "11",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "12",
+          "name": "SCL",
+          "type": "input",
+          "net": "I2C2_SCL"
+        },
+        {
+          "number": "13",
+          "name": "SDA",
+          "type": "bidirectional",
+          "net": "I2C2_SDA"
+        },
+        {
+          "number": "14",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "15",
+          "name": "A0",
+          "type": "input",
+          "net": "GND"
+        },
+        {
+          "number": "16",
+          "name": "A1",
+          "type": "input",
+          "net": "GND"
+        },
+        {
+          "number": "17",
+          "name": "A2",
+          "type": "input",
+          "net": "GND"
+        },
+        {
+          "number": "18",
+          "name": "RESET_N",
+          "type": "input",
+          "net": "E3_MCP_RESET_N"
+        },
+        {
+          "number": "19",
+          "name": "INTB",
+          "type": "open_collector",
+          "nc": true
+        },
+        {
+          "number": "20",
+          "name": "INTA",
+          "type": "open_collector",
+          "nc": true
+        },
+        {
+          "number": "21",
+          "name": "GPA0",
+          "type": "output",
+          "net": "EN_LABPORT"
+        },
+        {
+          "number": "22",
+          "name": "GPA1",
+          "type": "output",
+          "net": "EN_AUX12"
+        },
+        {
+          "number": "23",
+          "name": "GPA2",
+          "type": "output",
+          "net": "EN_RTLA"
+        },
+        {
+          "number": "24",
+          "name": "GPA3",
+          "type": "output",
+          "net": "EN_RTLB"
+        },
+        {
+          "number": "25",
+          "name": "GPA4",
+          "type": "output",
+          "net": "EN_HFP"
+        },
+        {
+          "number": "26",
+          "name": "GPA5",
+          "type": "output",
+          "net": "EN_LNA1"
+        },
+        {
+          "number": "27",
+          "name": "GPA6",
+          "type": "output",
+          "net": "EN_LNA2"
+        },
+        {
+          "number": "28",
+          "name": "GPA7",
+          "type": "output",
+          "net": "EN_LNA3"
+        }
+      ],
+      "notes": [
+        "SOIC28, no exposed pad. Address pins hard-strapped; 100nF +10uF close to VDD.",
+        "Set IOCON.ODR=1 and MIRROR=1 before enabling interrupts; no push-pull interrupt wire-OR. Program OLAT safe-low before IODIR outputs.",
+        "Unused outputs unconnected; firmware sets low. GPA7/GPB7 never configured as inputs.",
+        "Active-low RESET pin18 joins shared E3_MCP_RESET_N. Pico GP17 controls its open-drain Q306. Retain this chip10k pullup to3V3_Q6A; no pullup toPico3V3/AON.",
+        "DS20001952D table1-2 specifies output highimpedance within1us of RESETlow; reset IODIR=0xff, OLAT=0.00, GPINTEN=0. Initialize IO7 output bits to0 only after writing safeOLAT0; do not attempt to read GPA7/GPB7 as inputs."
+      ],
+      "footprint": "Package_SO:SOIC-28W_7.5x17.9mm_P1.27mm"
+    },
+    {
+      "ref": "C301",
+      "value": "100n 16V",
+      "kind": "capacitor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C302",
+      "value": "10u 10V",
+      "kind": "capacitor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R305",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_MCP_RESET_N"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ]
+    },
+    {
+      "ref": "U302",
+      "value": "MCP23017-E/SO #3 0x22",
+      "kind": "ic",
+      "group": "MCP23017 control",
+      "source": "https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GPB0",
+          "type": "input",
+          "net": "PG_LNB"
+        },
+        {
+          "number": "2",
+          "name": "GPB1",
+          "type": "input",
+          "net": "PG_BONI"
+        },
+        {
+          "number": "3",
+          "name": "GPB2",
+          "type": "input",
+          "net": "DCS_UHF"
+        },
+        {
+          "number": "4",
+          "name": "GPB3",
+          "type": "input",
+          "net": "DCS_LBAND"
+        },
+        {
+          "number": "5",
+          "name": "GPB4",
+          "type": "input",
+          "net": "DCS_HF"
+        },
+        {
+          "number": "6",
+          "name": "GPB5",
+          "type": "input",
+          "net": "PTC_AUX"
+        },
+        {
+          "number": "7",
+          "name": "GPB6",
+          "type": "input",
+          "net": "SLED_DET"
+        },
+        {
+          "number": "8",
+          "name": "GPB7",
+          "type": "output",
+          "net": "EN_T7"
+        },
+        {
+          "number": "9",
+          "name": "VDD",
+          "type": "power_in",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "10",
+          "name": "VSS",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "11",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "12",
+          "name": "SCL",
+          "type": "input",
+          "net": "I2C2_SCL"
+        },
+        {
+          "number": "13",
+          "name": "SDA",
+          "type": "bidirectional",
+          "net": "I2C2_SDA"
+        },
+        {
+          "number": "14",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "15",
+          "name": "A0",
+          "type": "input",
+          "net": "GND"
+        },
+        {
+          "number": "16",
+          "name": "A1",
+          "type": "input",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "17",
+          "name": "A2",
+          "type": "input",
+          "net": "GND"
+        },
+        {
+          "number": "18",
+          "name": "RESET_N",
+          "type": "input",
+          "net": "E3_MCP_RESET_N"
+        },
+        {
+          "number": "19",
+          "name": "INTB",
+          "type": "open_collector",
+          "net": "MCP_INT"
+        },
+        {
+          "number": "20",
+          "name": "INTA",
+          "type": "open_collector",
+          "net": "MCP_INT"
+        },
+        {
+          "number": "21",
+          "name": "GPA0",
+          "type": "input",
+          "net": "FAULT_LABPORT"
+        },
+        {
+          "number": "22",
+          "name": "GPA1",
+          "type": "input",
+          "net": "FAULT_LNA1"
+        },
+        {
+          "number": "23",
+          "name": "GPA2",
+          "type": "input",
+          "net": "FAULT_LNA2"
+        },
+        {
+          "number": "24",
+          "name": "GPA3",
+          "type": "input",
+          "net": "FAULT_LNA3"
+        },
+        {
+          "number": "25",
+          "name": "GPA4",
+          "type": "input",
+          "net": "FAULT_LNA4"
+        },
+        {
+          "number": "26",
+          "name": "GPA5",
+          "type": "input",
+          "net": "FLT_LNB"
+        },
+        {
+          "number": "27",
+          "name": "GPA6",
+          "type": "input",
+          "net": "FLT_BONI"
+        },
+        {
+          "number": "28",
+          "name": "GPA7",
+          "type": "output",
+          "net": "EN_LNA4"
+        }
+      ],
+      "notes": [
+        "SOIC28, no exposed pad. Address pins hard-strapped; 100nF +10uF close to VDD.",
+        "Set IOCON.ODR=1 and MIRROR=1 before enabling interrupts; no push-pull interrupt wire-OR. Program OLAT safe-low before IODIR outputs.",
+        "Unused outputs unconnected; firmware sets low. GPA7/GPB7 never configured as inputs.",
+        "Active-low RESET pin18 joins shared E3_MCP_RESET_N. Pico GP17 controls its open-drain Q306. Retain this chip10k pullup to3V3_Q6A; no pullup toPico3V3/AON.",
+        "DS20001952D table1-2 specifies output highimpedance within1us of RESETlow; reset IODIR=0xff, OLAT=0.00, GPINTEN=0. Initialize IO7 output bits to0 only after writing safeOLAT0; do not attempt to read GPA7/GPB7 as inputs."
+      ],
+      "footprint": "Package_SO:SOIC-28W_7.5x17.9mm_P1.27mm"
+    },
+    {
+      "ref": "C303",
+      "value": "100n 16V",
+      "kind": "capacitor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C304",
+      "value": "10u 10V",
+      "kind": "capacitor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R306",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_MCP_RESET_N"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ]
+    },
+    {
+      "ref": "U303",
+      "value": "MCP23017-E/SO #4 0x23",
+      "kind": "ic",
+      "group": "MCP23017 control",
+      "source": "https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GPB0",
+          "type": "input",
+          "net": "FAULT_RTLB"
+        },
+        {
+          "number": "2",
+          "name": "GPB1",
+          "type": "input",
+          "net": "FAULT_HFP"
+        },
+        {
+          "number": "3",
+          "name": "GPB2",
+          "type": "input",
+          "net": "FAULT_RTLA"
+        },
+        {
+          "number": "4",
+          "name": "GPB3",
+          "type": "input",
+          "net": "FLT_LIME3V3"
+        },
+        {
+          "number": "5",
+          "name": "GPB4",
+          "type": "output",
+          "net": "CHG_INHIBIT"
+        },
+        {
+          "number": "6",
+          "name": "GPB5",
+          "type": "input",
+          "net": "OVP_LNB_N"
+        },
+        {
+          "number": "7",
+          "name": "GPB6",
+          "type": "input",
+          "nc": true
+        },
+        {
+          "number": "8",
+          "name": "GPB7",
+          "type": "output",
+          "nc": true
+        },
+        {
+          "number": "9",
+          "name": "VDD",
+          "type": "power_in",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "10",
+          "name": "VSS",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "11",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "12",
+          "name": "SCL",
+          "type": "input",
+          "net": "I2C2_SCL"
+        },
+        {
+          "number": "13",
+          "name": "SDA",
+          "type": "bidirectional",
+          "net": "I2C2_SDA"
+        },
+        {
+          "number": "14",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "15",
+          "name": "A0",
+          "type": "input",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "16",
+          "name": "A1",
+          "type": "input",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "17",
+          "name": "A2",
+          "type": "input",
+          "net": "GND"
+        },
+        {
+          "number": "18",
+          "name": "RESET_N",
+          "type": "input",
+          "net": "E3_MCP_RESET_N"
+        },
+        {
+          "number": "19",
+          "name": "INTB",
+          "type": "open_collector",
+          "net": "MCP_INT"
+        },
+        {
+          "number": "20",
+          "name": "INTA",
+          "type": "open_collector",
+          "net": "MCP_INT"
+        },
+        {
+          "number": "21",
+          "name": "GPA0",
+          "type": "output",
+          "net": "EN_LIME3V3"
+        },
+        {
+          "number": "22",
+          "name": "GPA1",
+          "type": "output",
+          "net": "E3_GNSS_RESET_GATE"
+        },
+        {
+          "number": "23",
+          "name": "GPA2",
+          "type": "output",
+          "net": "SW_LIME_A"
+        },
+        {
+          "number": "24",
+          "name": "GPA3",
+          "type": "output",
+          "net": "SW_LIME_B"
+        },
+        {
+          "number": "25",
+          "name": "GPA4",
+          "type": "output",
+          "net": "EN_SB_LNA"
+        },
+        {
+          "number": "26",
+          "name": "GPA5",
+          "type": "input",
+          "net": "FLT_SB_LNA"
+        },
+        {
+          "number": "27",
+          "name": "GPA6",
+          "type": "input",
+          "nc": true
+        },
+        {
+          "number": "28",
+          "name": "GPA7",
+          "type": "output",
+          "nc": true
+        }
+      ],
+      "notes": [
+        "SOIC28, no exposed pad. Address pins hard-strapped; 100nF +10uF close to VDD.",
+        "Set IOCON.ODR=1 and MIRROR=1 before enabling interrupts; no push-pull interrupt wire-OR. Program OLAT safe-low before IODIR outputs.",
+        "Unused outputs unconnected; firmware sets low. GPA7/GPB7 never configured as inputs.",
+        "GPB5 reads OVP_LNB_N safe-enable node from E2. Do not add a pullup: EN_LNB drives it through 4.7k and E2 has a 100k pulldown. High means permitted enable; low is OVP or disabled, qualify with EN_LNB.",
+        "Active-low RESET pin18 joins shared E3_MCP_RESET_N. Pico GP17 controls its open-drain Q306. Retain this chip10k pullup to3V3_Q6A; no pullup toPico3V3/AON.",
+        "DS20001952D table1-2 specifies output highimpedance within1us of RESETlow; reset IODIR=0xff, OLAT=0.00, GPINTEN=0. Initialize IO7 output bits to0 only after writing safeOLAT0; do not attempt to read GPA7/GPB7 as inputs."
+      ],
+      "footprint": "Package_SO:SOIC-28W_7.5x17.9mm_P1.27mm"
+    },
+    {
+      "ref": "C305",
+      "value": "100n 16V",
+      "kind": "capacitor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C306",
+      "value": "10u 10V",
+      "kind": "capacitor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R307",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_MCP_RESET_N"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ]
+    },
+    {
+      "ref": "R308",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "FAULT_LABPORT"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ]
+    },
+    {
+      "ref": "R309",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "FAULT_LNA1"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ]
+    },
+    {
+      "ref": "R310",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "FAULT_LNA2"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ]
+    },
+    {
+      "ref": "R311",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "FAULT_LNA3"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ]
+    },
+    {
+      "ref": "R312",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "FAULT_LNA4"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ]
+    },
+    {
+      "ref": "R313",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "FLT_LNB"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ]
+    },
+    {
+      "ref": "R314",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "FLT_BONI"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ]
+    },
+    {
+      "ref": "R315",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "PG_LNB"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ]
+    },
+    {
+      "ref": "R316",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "PG_BONI"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ]
+    },
+    {
+      "ref": "R317",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "DCS_UHF"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ]
+    },
+    {
+      "ref": "R318",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "DCS_LBAND"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ]
+    },
+    {
+      "ref": "R319",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "DCS_HF"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ]
+    },
+    {
+      "ref": "R320",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "PTC_AUX"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ]
+    },
+    {
+      "ref": "R321",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "SLED_DET"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ]
+    },
+    {
+      "ref": "R322",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "FAULT_RTLB"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ]
+    },
+    {
+      "ref": "R323",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "FAULT_HFP"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ]
+    },
+    {
+      "ref": "R324",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "FAULT_RTLA"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ]
+    },
+    {
+      "ref": "R325",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "MCP23017 control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "FLT_LIME3V3"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        }
+      ]
+    },
+    {
+      "ref": "U304",
+      "value": "Waveshare LC76G GNSS 24370",
+      "kind": "module",
+      "group": "GNSS",
+      "source": "https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf",
+      "status": "module",
+      "pins": [
+        {
+          "number": "P1.1",
+          "name": "VCC",
+          "type": "power_in",
+          "net": "VCC_5V_PERI"
+        },
+        {
+          "number": "P1.2",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "P1.3",
+          "name": "TXD",
+          "type": "output",
+          "net": "UART6_RX"
+        },
+        {
+          "number": "P1.4",
+          "name": "RXD",
+          "type": "input",
+          "net": "UART6_TX"
+        },
+        {
+          "number": "P1.5",
+          "name": "1PPS",
+          "type": "output",
+          "net": "E3_GNSS_PPS"
+        },
+        {
+          "number": "P1.6",
+          "name": "RESET_N",
+          "type": "input",
+          "net": "E3_GNSS_RESET_N"
+        },
+        {
+          "number": "P1.7",
+          "name": "SDA",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "P1.8",
+          "name": "SCL",
+          "type": "input",
+          "nc": true
+        },
+        {
+          "number": "GPS1.1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "GPS1.2",
+          "name": "ANT",
+          "type": "passive",
+          "net": "GNSS_ANT"
+        },
+        {
+          "number": "GPS1.3",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "GPS1.4",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Supply VCC with Q6A 5V; do not feed it from 3V3. Leave module SDA/SCL disconnected from I2C2.",
+        "P1.6 RESET connects via factory 0 ohm to LC76G RESET_N. Use the external 2N7002 open drain, high at its gate to reset.",
+        "Quectel specifies an internal 10k pullup to 1.8V on RESET_N and forbids external pullups. Hold reset low for at least 100ms, then release."
+      ],
+      "description": "Commercial board, physical terminals qualified by connector. Factory RT9193-33, RF bias network, MS621FE and decoupling remain on module."
+    },
+    {
+      "ref": "Q301",
+      "value": "2N7002",
+      "kind": "nfet",
+      "group": "GNSS",
+      "source": "Manufacturer datasheet; STACK.md §5.2",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "E3_GNSS_RESET_GATE"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "E3_GNSS_RESET_N"
+        }
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "R326",
+      "value": "100k",
+      "kind": "resistor",
+      "group": "GNSS",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_GNSS_RESET_GATE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "J303",
+      "value": "Q6A J11 RTC battery 1.25mm",
+      "kind": "connector",
+      "group": "RTC",
+      "source": "https://dl.radxa.com/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
+      "status": "verified",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "CR2032_PLUS",
+          "type": "passive",
+          "net": "E3_RTC_BAT"
+        }
+      ],
+      "notes": [
+        "J11 pin 1 is ground, pin 2 is positive through onboard 1k and BAT54CW. The Q6A onboard RS4C411ZAE uses its private RTC I2C bus."
+      ]
+    },
+    {
+      "ref": "BT301",
+      "value": "CR2032 3V primary",
+      "kind": "battery",
+      "group": "RTC",
+      "source": "STACK.md RTC; Radxa officialRTC interface",
+      "status": "design",
+      "pins": [
+        {
+          "number": "+",
+          "name": "POS",
+          "type": "power_out",
+          "net": "E3_RTC_BAT"
+        },
+        {
+          "number": "-",
+          "name": "NEG",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "description": "Battery pack functional polarity labels; verify mating lead polarity before insertion."
+    },
+    {
+      "ref": "U305",
+      "value": "Raspberry Pi Pico SC0915",
+      "kind": "module",
+      "group": "Pico HMI",
+      "source": "https://datasheets.raspberrypi.com/pico/Pico-R3-A4-Pinout.pdf",
+      "status": "module",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GP0",
+          "type": "output",
+          "net": "UART7_RX"
+        },
+        {
+          "number": "2",
+          "name": "GP1",
+          "type": "input",
+          "net": "UART7_TX"
+        },
+        {
+          "number": "4",
+          "name": "GP2",
+          "type": "input",
+          "net": "E3_ENC1_A"
+        },
+        {
+          "number": "5",
+          "name": "GP3",
+          "type": "input",
+          "net": "E3_ENC1_B"
+        },
+        {
+          "number": "6",
+          "name": "GP4",
+          "type": "bidirectional",
+          "net": "E3_HMI_SDA"
+        },
+        {
+          "number": "7",
+          "name": "GP5",
+          "type": "bidirectional",
+          "net": "E3_HMI_SCL"
+        },
+        {
+          "number": "9",
+          "name": "GP6",
+          "type": "input",
+          "net": "E3_ENC2_A"
+        },
+        {
+          "number": "10",
+          "name": "GP7",
+          "type": "input",
+          "net": "E3_ENC2_B"
+        },
+        {
+          "number": "11",
+          "name": "GP8",
+          "type": "output",
+          "net": "IMU_RX"
+        },
+        {
+          "number": "12",
+          "name": "GP9",
+          "type": "input",
+          "net": "IMU_TX"
+        },
+        {
+          "number": "14",
+          "name": "GP10",
+          "type": "input",
+          "net": "E3_HMI_INT"
+        },
+        {
+          "number": "15",
+          "name": "GP11",
+          "type": "input",
+          "net": "E3_BUTTON_SENSE"
+        },
+        {
+          "number": "16",
+          "name": "GP12",
+          "type": "output",
+          "net": "E3_Q6A_KEY_GATE"
+        },
+        {
+          "number": "17",
+          "name": "GP13",
+          "type": "output",
+          "net": "PICO_OFF"
+        },
+        {
+          "number": "19",
+          "name": "GP14",
+          "type": "input",
+          "net": "E3_Q6A_ON_SENSE"
+        },
+        {
+          "number": "20",
+          "name": "GP15",
+          "type": "output",
+          "net": "SAFE_BOOT"
+        },
+        {
+          "number": "21",
+          "name": "GP16",
+          "type": "output",
+          "net": "PICO_DISP_EN"
+        },
+        {
+          "number": "22",
+          "name": "GP17",
+          "type": "output",
+          "net": "E3_MCP_RESET_ASSERT"
+        },
+        {
+          "number": "24",
+          "name": "GP18",
+          "type": "output",
+          "net": "E3_FAN_EN"
+        },
+        {
+          "number": "25",
+          "name": "GP19",
+          "type": "output",
+          "net": "E3_BLOWER_EN"
+        },
+        {
+          "number": "26",
+          "name": "GP20",
+          "type": "output",
+          "net": "E3_PIEZO_DRIVE"
+        },
+        {
+          "number": "27",
+          "name": "GP21",
+          "type": "output",
+          "net": "E3_LED_DRIVE"
+        },
+        {
+          "number": "29",
+          "name": "GP22",
+          "type": "input",
+          "net": "E3_FAN_TACH"
+        },
+        {
+          "number": "31",
+          "name": "GP26",
+          "type": "input",
+          "net": "E3_PANEL_TEMP"
+        },
+        {
+          "number": "32",
+          "name": "GP27",
+          "type": "input",
+          "net": "E1_BAT_ADC"
+        },
+        {
+          "number": "34",
+          "name": "GP28",
+          "type": "input",
+          "net": "E3_CASE_TEMP"
+        },
+        {
+          "number": "3",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "8",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "13",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "18",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "23",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "28",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "33",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "38",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "30",
+          "name": "RUN",
+          "type": "input",
+          "net": "E3_PICO_RUN"
+        },
+        {
+          "number": "35",
+          "name": "ADC_VREF",
+          "type": "power_in",
+          "net": "E3_ADC3V0"
+        },
+        {
+          "number": "36",
+          "name": "3V3_OUT",
+          "type": "power_out",
+          "net": "E3_PICO3V3"
+        },
+        {
+          "number": "37",
+          "name": "3V3_EN",
+          "type": "input",
+          "nc": true
+        },
+        {
+          "number": "39",
+          "name": "VSYS",
+          "type": "power_in",
+          "net": "E3_PICO_VSYS"
+        },
+        {
+          "number": "40",
+          "name": "VBUS",
+          "type": "power_in",
+          "nc": true
+        },
+        {
+          "number": "SWCLK",
+          "name": "SWCLK",
+          "type": "input",
+          "net": "E3_PICO_SWCLK"
+        },
+        {
+          "number": "SWDIO",
+          "name": "SWDIO",
+          "type": "bidirectional",
+          "net": "E3_PICO_SWDIO"
+        },
+        {
+          "number": "SWD_GND",
+          "name": "SWD_GND",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "VSYS receives LAB5 through a Schottky diode. Module VBUS is reserved for USB programming or fallback H1. Never bridge VBUS to LAB5; connect USB only with the main switch on or LAB5 isolated.",
+        "Remove factory R7 before fitting the external 200 ohm ADC_VREF feed and LM4040C30. Battery ADC divider belongs to E1. ADC inputs must remain below the 3.0V reference.",
+        "Before Q6A 3V3 is present, put UART TX, SAFE_BOOT and service outputs in high impedance. This schematic relies on verified firmware sequencing; it does not claim hardware isolation.",
+        "All26 exposed GPIOs are assigned: GP17 physical22 now drives the MCP hardware-reset actuator, not brightness. No free Pico GPIO remains. GP23/24/25/29 are module internal and allthree external ADCs are assigned.",
+        "Required firmware behavior, not implemented firmware: assert GP17 high early at boot; maintain or assert it on missing/invalid UART heartbeat or unsafe shutdown; hold until an explicit qualified recovery/re-arm sequence. Program safe OLAT=0 and IOCON.ODR/MIRROR before re-enabling outputs and interrupts.",
+        "A sustained low on common MCP RESET makes allinternal expander output drivers high-impedance. Recipient pulldowns then disable their power branches, select HMC00 and turn relays off. It also resets allMCP fault history, which software must log before intentional reset where possible.",
+        "Brightness remains DDC/CI or a separately documented future KEY interface through an available MCP GPIO. GP17 is committed to watchdog reset."
+      ],
+      "description": "Factory Pico RP2040 module with physical pins 1-40 plus three named SWD pads. Factory SMPS, flash, clock and bypass capacitors retained."
+    },
+    {
+      "ref": "D301",
+      "value": "SS14",
+      "kind": "diode",
+      "group": "Pico HMI",
+      "source": "STACK.md VSYS Schottky; SS14 standardSMA",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "K",
+          "type": "passive",
+          "net": "E3_PICO_VSYS"
+        },
+        {
+          "number": "2",
+          "name": "A",
+          "type": "passive",
+          "net": "LAB5"
+        }
+      ],
+      "footprint": "Diode_SMD:D_SMA"
+    },
+    {
+      "ref": "C307",
+      "value": "10u 10V",
+      "kind": "capacitor",
+      "group": "Pico HMI",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_PICO_VSYS"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C308",
+      "value": "100n 16V",
+      "kind": "capacitor",
+      "group": "Pico HMI",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_PICO3V3"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R327",
+      "value": "200",
+      "kind": "resistor",
+      "group": "Pico HMI",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_PICO3V3"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_ADC3V0"
+        }
+      ],
+      "notes": [
+        "Remove Pico factory R7. This external 200 ohm resistor is the sole reference feed, about 1.5mA at 3.3V nominal."
+      ]
+    },
+    {
+      "ref": "U307",
+      "value": "LM4040C30IDBZR",
+      "kind": "ic",
+      "group": "Pico HMI",
+      "source": "https://www.ti.com/lit/ds/symlink/lm4040.pdf",
+      "status": "verified",
+      "pins": [
+        {
+          "number": "1",
+          "name": "CATHODE",
+          "type": "power_out",
+          "net": "E3_ADC3V0"
+        },
+        {
+          "number": "2",
+          "name": "ANODE",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "STAR_TIE_ANODE",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "3.0V shunt reference; verify current budget at minimum Pico3V3, maximum reference tolerance and maximum ADC/NTC load."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "C309",
+      "value": "100n 16V",
+      "kind": "capacitor",
+      "group": "Pico HMI",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_ADC3V0"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R328",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "Pico HMI",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_Q6A_ON_SENSE"
+        }
+      ]
+    },
+    {
+      "ref": "R329",
+      "value": "100k",
+      "kind": "resistor",
+      "group": "Pico HMI",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_Q6A_ON_SENSE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "SW301",
+      "value": "Power button momentary NO",
+      "kind": "switch",
+      "group": "Pico power control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "net": "PWR_BUTTON"
+        },
+        {
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R330",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "Pico power control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_BUTTON_SENSE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_PICO3V3"
+        }
+      ]
+    },
+    {
+      "ref": "D302",
+      "value": "BAT54",
+      "kind": "diode",
+      "group": "Pico power control",
+      "source": "https://www.diodes.com/datasheet/download/BAT54.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "net": "E3_BUTTON_SENSE"
+        },
+        {
+          "number": "2",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "3",
+          "name": "K",
+          "type": "passive",
+          "net": "PWR_BUTTON"
+        }
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "D303",
+      "value": "BAT54",
+      "kind": "diode",
+      "group": "Pico power control",
+      "source": "https://www.diodes.com/datasheet/download/BAT54.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "net": "PWR_ON_KEY"
+        },
+        {
+          "number": "2",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "3",
+          "name": "K",
+          "type": "passive",
+          "net": "PWR_BUTTON"
+        }
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "Q302",
+      "value": "2N7002",
+      "kind": "nfet",
+      "group": "Pico power control",
+      "source": "Manufacturer datasheet; STACK.md §5.2",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "E3_Q6A_KEY_GATE"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "PWR_ON_KEY"
+        }
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "R331",
+      "value": "100k",
+      "kind": "resistor",
+      "group": "Pico power control",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_Q6A_KEY_GATE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R332",
+      "value": "10k 1%",
+      "kind": "resistor",
+      "group": "Thermal sensors",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_ADC3V0"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_PANEL_TEMP"
+        }
+      ]
+    },
+    {
+      "ref": "TH301",
+      "value": "Semiware MF52A103F3950",
+      "kind": "resistor",
+      "group": "Thermal sensors",
+      "source": "https://semiware.com/uploads/datasheet/MF52A103F3950.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_PANEL_TEMP"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Maker revA2.0 states operating-20 to120C, bead diameter up to2.2mm, body length4mm and nominal lead pitch2.0mm. Confirm purchased lead dimensions against the drawing; one printed wire-tolerance value appears malformed, so do not infer it.",
+        "Mount the panel sensor on the rear heat spreader near the panel hot spot; mount the case sensor on the inner frame away from direct converter heat. Electrically insulate and strain-relieve the leads, solder at least6mm from the bead per maker instruction. Attachment thickness and lag require installed calibration.",
+        "Reference-fed10k divider is ratiometric toADC_VREF. At25C nominal sensor power is0.225mW; with maker dissipation coefficient>=2mW/C the still-air self-heating estimate is<=0.113C. This is a model, not a measured mounted offset.",
+        "Use maker table R60C=2.4734k and R68C=1.8623k for thermal acceptance points. Verify sensor open/short/stale data drives fail-safe full cooling. Calibrate actual installed temperature at25/60/68C."
+      ],
+      "description": "Concrete BOM candidate, leaded bead NTC:10k at25C +/-1%, B25/50=3950K +/-1%. Use maker R/T table, not a generic beta curve outside its defined range."
+    },
+    {
+      "ref": "C310",
+      "value": "100n 16V",
+      "kind": "capacitor",
+      "group": "Thermal sensors",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_PANEL_TEMP"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R333",
+      "value": "10k 1%",
+      "kind": "resistor",
+      "group": "Thermal sensors",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_ADC3V0"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_CASE_TEMP"
+        }
+      ]
+    },
+    {
+      "ref": "TH302",
+      "value": "Semiware MF52A103F3950",
+      "kind": "resistor",
+      "group": "Thermal sensors",
+      "source": "https://semiware.com/uploads/datasheet/MF52A103F3950.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_CASE_TEMP"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Maker revA2.0 states operating-20 to120C, bead diameter up to2.2mm, body length4mm and nominal lead pitch2.0mm. Confirm purchased lead dimensions against the drawing; one printed wire-tolerance value appears malformed, so do not infer it.",
+        "Mount the panel sensor on the rear heat spreader near the panel hot spot; mount the case sensor on the inner frame away from direct converter heat. Electrically insulate and strain-relieve the leads, solder at least6mm from the bead per maker instruction. Attachment thickness and lag require installed calibration.",
+        "Reference-fed10k divider is ratiometric toADC_VREF. At25C nominal sensor power is0.225mW; with maker dissipation coefficient>=2mW/C the still-air self-heating estimate is<=0.113C. This is a model, not a measured mounted offset.",
+        "Use maker table R60C=2.4734k and R68C=1.8623k for thermal acceptance points. Verify sensor open/short/stale data drives fail-safe full cooling. Calibrate actual installed temperature at25/60/68C."
+      ],
+      "description": "Concrete BOM candidate, leaded bead NTC:10k at25C +/-1%, B25/50=3950K +/-1%. Use maker R/T table, not a generic beta curve outside its defined range."
+    },
+    {
+      "ref": "C311",
+      "value": "100n 16V",
+      "kind": "capacitor",
+      "group": "Thermal sensors",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_CASE_TEMP"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "U306",
+      "value": "PI4IOE5V9555LEX 0x20",
+      "kind": "ic",
+      "group": "HMI buttons",
+      "source": "https://www.diodes.com/datasheet/download/PI4IOE5V9555.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "INT_N",
+          "type": "open_collector",
+          "net": "E3_HMI_INT"
+        },
+        {
+          "number": "2",
+          "name": "A1",
+          "type": "input",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "A2",
+          "type": "input",
+          "net": "GND"
+        },
+        {
+          "number": "4",
+          "name": "IO0_0",
+          "type": "input",
+          "net": "E3_HOME"
+        },
+        {
+          "number": "5",
+          "name": "IO0_1",
+          "type": "input",
+          "net": "E3_BACK"
+        },
+        {
+          "number": "6",
+          "name": "IO0_2",
+          "type": "input",
+          "net": "E3_REC"
+        },
+        {
+          "number": "7",
+          "name": "IO0_3",
+          "type": "input",
+          "net": "E3_MARK"
+        },
+        {
+          "number": "8",
+          "name": "IO0_4",
+          "type": "input",
+          "net": "E3_FN"
+        },
+        {
+          "number": "9",
+          "name": "IO0_5",
+          "type": "input",
+          "net": "E3_LOCK"
+        },
+        {
+          "number": "10",
+          "name": "IO0_6",
+          "type": "input",
+          "net": "E3_ENC1_PRESS"
+        },
+        {
+          "number": "11",
+          "name": "IO0_7",
+          "type": "input",
+          "net": "E3_ENC2_PRESS"
+        },
+        {
+          "number": "12",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "13",
+          "name": "IO1_0",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "14",
+          "name": "IO1_1",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "15",
+          "name": "IO1_2",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "16",
+          "name": "IO1_3",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "17",
+          "name": "IO1_4",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "18",
+          "name": "IO1_5",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "19",
+          "name": "IO1_6",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "20",
+          "name": "IO1_7",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "21",
+          "name": "A0",
+          "type": "input",
+          "net": "GND"
+        },
+        {
+          "number": "22",
+          "name": "SCL",
+          "type": "input",
+          "net": "E3_HMI_SCL"
+        },
+        {
+          "number": "23",
+          "name": "SDA",
+          "type": "bidirectional",
+          "net": "E3_HMI_SDA"
+        },
+        {
+          "number": "24",
+          "name": "VCC",
+          "type": "power_in",
+          "net": "E3_PICO3V3"
+        }
+      ],
+      "notes": [
+        "A0/A1/A2 grounded; Pico I2C0 is separate from Q6A I2C0/I2C2.",
+        "Design IO0_0..7 = HOME, BACK, REC, MARK, FN, LOCK, encoder1 press, encoder2 press. IO1 is unconnected and configured output low.",
+        "Initialize and read back registers 2-7; poll ports every 20-50ms alongside INT. Perform nine-clock bus recovery after a NACK or timeout."
+      ],
+      "footprint": "Package_SO:TSSOP-24_4.4x7.8mm_P0.65mm"
+    },
+    {
+      "ref": "C312",
+      "value": "100n 16V",
+      "kind": "capacitor",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_PICO3V3"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C313",
+      "value": "1u 10V",
+      "kind": "capacitor",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_PICO3V3"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R334",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_HMI_INT"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_PICO3V3"
+        }
+      ]
+    },
+    {
+      "ref": "R335",
+      "value": "2.2k",
+      "kind": "resistor",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_HOME"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_PICO3V3"
+        }
+      ]
+    },
+    {
+      "ref": "R336",
+      "value": "100",
+      "kind": "resistor",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_HOME"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_HOME_EXT"
+        }
+      ],
+      "notes": [
+        "Series ESD/current-limiting resistor at bezel."
+      ]
+    },
+    {
+      "ref": "SW302",
+      "value": "HOME momentary NO",
+      "kind": "switch",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "net": "E3_HOME_EXT"
+        },
+        {
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R337",
+      "value": "2.2k",
+      "kind": "resistor",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_BACK"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_PICO3V3"
+        }
+      ]
+    },
+    {
+      "ref": "R338",
+      "value": "100",
+      "kind": "resistor",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_BACK"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_BACK_EXT"
+        }
+      ],
+      "notes": [
+        "Series ESD/current-limiting resistor at bezel."
+      ]
+    },
+    {
+      "ref": "SW303",
+      "value": "BACK momentary NO",
+      "kind": "switch",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "net": "E3_BACK_EXT"
+        },
+        {
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R339",
+      "value": "2.2k",
+      "kind": "resistor",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_REC"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_PICO3V3"
+        }
+      ]
+    },
+    {
+      "ref": "R340",
+      "value": "100",
+      "kind": "resistor",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_REC"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_REC_EXT"
+        }
+      ],
+      "notes": [
+        "Series ESD/current-limiting resistor at bezel."
+      ]
+    },
+    {
+      "ref": "SW304",
+      "value": "REC momentary NO",
+      "kind": "switch",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "net": "E3_REC_EXT"
+        },
+        {
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R341",
+      "value": "2.2k",
+      "kind": "resistor",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_MARK"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_PICO3V3"
+        }
+      ]
+    },
+    {
+      "ref": "R342",
+      "value": "100",
+      "kind": "resistor",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_MARK"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_MARK_EXT"
+        }
+      ],
+      "notes": [
+        "Series ESD/current-limiting resistor at bezel."
+      ]
+    },
+    {
+      "ref": "SW305",
+      "value": "MARK momentary NO",
+      "kind": "switch",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "net": "E3_MARK_EXT"
+        },
+        {
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R343",
+      "value": "2.2k",
+      "kind": "resistor",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_FN"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_PICO3V3"
+        }
+      ]
+    },
+    {
+      "ref": "R344",
+      "value": "100",
+      "kind": "resistor",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_FN"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_FN_EXT"
+        }
+      ],
+      "notes": [
+        "Series ESD/current-limiting resistor at bezel."
+      ]
+    },
+    {
+      "ref": "SW306",
+      "value": "FN momentary NO",
+      "kind": "switch",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "net": "E3_FN_EXT"
+        },
+        {
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R345",
+      "value": "2.2k",
+      "kind": "resistor",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_LOCK"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_PICO3V3"
+        }
+      ]
+    },
+    {
+      "ref": "R346",
+      "value": "100",
+      "kind": "resistor",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_LOCK"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_LOCK_EXT"
+        }
+      ],
+      "notes": [
+        "Series ESD/current-limiting resistor at bezel."
+      ]
+    },
+    {
+      "ref": "SW307",
+      "value": "LOCK momentary NO",
+      "kind": "switch",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "net": "E3_LOCK_EXT"
+        },
+        {
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R347",
+      "value": "2.2k",
+      "kind": "resistor",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_ENC1_PRESS"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_PICO3V3"
+        }
+      ]
+    },
+    {
+      "ref": "R348",
+      "value": "100",
+      "kind": "resistor",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_ENC1_PRESS"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_ENC1_PRESS_EXT"
+        }
+      ],
+      "notes": [
+        "Series ESD/current-limiting resistor at bezel."
+      ]
+    },
+    {
+      "ref": "SW308",
+      "value": "ENC1_PRESS momentary NO",
+      "kind": "switch",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "net": "E3_ENC1_PRESS_EXT"
+        },
+        {
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R349",
+      "value": "2.2k",
+      "kind": "resistor",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_ENC2_PRESS"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_PICO3V3"
+        }
+      ]
+    },
+    {
+      "ref": "R350",
+      "value": "100",
+      "kind": "resistor",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_ENC2_PRESS"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_ENC2_PRESS_EXT"
+        }
+      ],
+      "notes": [
+        "Series ESD/current-limiting resistor at bezel."
+      ]
+    },
+    {
+      "ref": "SW309",
+      "value": "ENC2_PRESS momentary NO",
+      "kind": "switch",
+      "group": "HMI buttons",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "net": "E3_ENC2_PRESS_EXT"
+        },
+        {
+          "number": "2",
+          "name": "B",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "U310",
+      "value": "TPD4E1U06DBVR",
+      "kind": "ic",
+      "group": "HMI buttons",
+      "source": "https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf",
+      "status": "verified",
+      "pins": [
+        {
+          "number": "1",
+          "name": "D1+",
+          "type": "passive",
+          "net": "E3_HOME_EXT"
+        },
+        {
+          "number": "3",
+          "name": "D2+",
+          "type": "passive",
+          "net": "E3_BACK_EXT"
+        },
+        {
+          "number": "4",
+          "name": "D2-",
+          "type": "passive",
+          "net": "E3_REC_EXT"
+        },
+        {
+          "number": "6",
+          "name": "D1-",
+          "type": "passive",
+          "net": "E3_MARK_EXT"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "5",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        }
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6"
+    },
+    {
+      "ref": "U311",
+      "value": "TPD4E1U06DBVR",
+      "kind": "ic",
+      "group": "HMI buttons",
+      "source": "https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf",
+      "status": "verified",
+      "pins": [
+        {
+          "number": "1",
+          "name": "D1+",
+          "type": "passive",
+          "net": "E3_FN_EXT"
+        },
+        {
+          "number": "3",
+          "name": "D2+",
+          "type": "passive",
+          "net": "E3_LOCK_EXT"
+        },
+        {
+          "number": "4",
+          "name": "D2-",
+          "type": "passive",
+          "net": "E3_ENC1_PRESS_EXT"
+        },
+        {
+          "number": "6",
+          "name": "D1-",
+          "type": "passive",
+          "net": "E3_ENC2_PRESS_EXT"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "5",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        }
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6"
+    },
+    {
+      "ref": "R351",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "HMI encoders",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_ENC1_A_RAW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_PICO3V3"
+        }
+      ]
+    },
+    {
+      "ref": "R352",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "HMI encoders",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_ENC1_A_RAW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_ENC1_A"
+        }
+      ]
+    },
+    {
+      "ref": "C314",
+      "value": "10n 16V",
+      "kind": "capacitor",
+      "group": "HMI encoders",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_ENC1_A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R353",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "HMI encoders",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_ENC1_B_RAW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_PICO3V3"
+        }
+      ]
+    },
+    {
+      "ref": "R354",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "HMI encoders",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_ENC1_B_RAW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_ENC1_B"
+        }
+      ]
+    },
+    {
+      "ref": "C315",
+      "value": "10n 16V",
+      "kind": "capacitor",
+      "group": "HMI encoders",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_ENC1_B"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "ENC301",
+      "value": "PEC11R-4220F encoder",
+      "kind": "module",
+      "group": "HMI encoders",
+      "source": "STACK.md §5.2; BournsPEC11R",
+      "status": "module",
+      "pins": [
+        {
+          "number": "A",
+          "name": "A",
+          "type": "passive",
+          "net": "E3_ENC1_A_RAW"
+        },
+        {
+          "number": "C",
+          "name": "COMMON",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "B",
+          "name": "B",
+          "type": "passive",
+          "net": "E3_ENC1_B_RAW"
+        }
+      ],
+      "description": "Functional quadrature contacts A/B/C; integrated push switch represented separately by SW308. Confirm exact encoder suffix and terminal orientation before assembly."
+    },
+    {
+      "ref": "R355",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "HMI encoders",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_ENC2_A_RAW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_PICO3V3"
+        }
+      ]
+    },
+    {
+      "ref": "R356",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "HMI encoders",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_ENC2_A_RAW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_ENC2_A"
+        }
+      ]
+    },
+    {
+      "ref": "C316",
+      "value": "10n 16V",
+      "kind": "capacitor",
+      "group": "HMI encoders",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_ENC2_A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R357",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "HMI encoders",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_ENC2_B_RAW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_PICO3V3"
+        }
+      ]
+    },
+    {
+      "ref": "R358",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "HMI encoders",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_ENC2_B_RAW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_ENC2_B"
+        }
+      ]
+    },
+    {
+      "ref": "C317",
+      "value": "10n 16V",
+      "kind": "capacitor",
+      "group": "HMI encoders",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_ENC2_B"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "ENC302",
+      "value": "PEC11R-4220F encoder",
+      "kind": "module",
+      "group": "HMI encoders",
+      "source": "STACK.md §5.2; BournsPEC11R",
+      "status": "module",
+      "pins": [
+        {
+          "number": "A",
+          "name": "A",
+          "type": "passive",
+          "net": "E3_ENC2_A_RAW"
+        },
+        {
+          "number": "C",
+          "name": "COMMON",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "B",
+          "name": "B",
+          "type": "passive",
+          "net": "E3_ENC2_B_RAW"
+        }
+      ],
+      "description": "Functional quadrature contacts A/B/C; integrated push switch represented separately by SW309. Confirm exact encoder suffix and terminal orientation before assembly."
+    },
+    {
+      "ref": "U312",
+      "value": "TPD4E1U06DBVR",
+      "kind": "ic",
+      "group": "HMI encoders",
+      "source": "https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf",
+      "status": "verified",
+      "pins": [
+        {
+          "number": "1",
+          "name": "D1+",
+          "type": "passive",
+          "net": "E3_ENC1_A_RAW"
+        },
+        {
+          "number": "3",
+          "name": "D2+",
+          "type": "passive",
+          "net": "E3_ENC1_B_RAW"
+        },
+        {
+          "number": "4",
+          "name": "D2-",
+          "type": "passive",
+          "net": "E3_ENC2_A_RAW"
+        },
+        {
+          "number": "6",
+          "name": "D1-",
+          "type": "passive",
+          "net": "E3_ENC2_B_RAW"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "5",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        }
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6"
+    },
+    {
+      "ref": "R359",
+      "value": "100",
+      "kind": "resistor",
+      "group": "Ambient sensor",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_HMI_SDA"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_BEZEL_SDA"
+        }
+      ]
+    },
+    {
+      "ref": "R360",
+      "value": "100",
+      "kind": "resistor",
+      "group": "Ambient sensor",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_HMI_SCL"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_BEZEL_SCL"
+        }
+      ]
+    },
+    {
+      "ref": "R361",
+      "value": "4.7k",
+      "kind": "resistor",
+      "group": "Ambient sensor",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_HMI_SDA"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_PICO3V3"
+        }
+      ],
+      "notes": [
+        "Including the Adafruit module factory 10k pullup, effective resistance is about 3.2k."
+      ]
+    },
+    {
+      "ref": "R362",
+      "value": "4.7k",
+      "kind": "resistor",
+      "group": "Ambient sensor",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_HMI_SCL"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_PICO3V3"
+        }
+      ]
+    },
+    {
+      "ref": "U313",
+      "value": "TPD4E1U06DBVR",
+      "kind": "ic",
+      "group": "Ambient sensor",
+      "source": "https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf",
+      "status": "verified",
+      "pins": [
+        {
+          "number": "1",
+          "name": "D1+",
+          "type": "passive",
+          "net": "E3_BEZEL_SDA"
+        },
+        {
+          "number": "3",
+          "name": "D2+",
+          "type": "passive",
+          "net": "E3_BEZEL_SCL"
+        },
+        {
+          "number": "4",
+          "name": "D2-",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "6",
+          "name": "D1-",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "5",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        }
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6"
+    },
+    {
+      "ref": "U308",
+      "value": "Adafruit4162 VEML7700 0x10",
+      "kind": "module",
+      "group": "Ambient sensor",
+      "source": "https://learn.adafruit.com/adafruit-veml7700/pinouts",
+      "status": "module",
+      "pins": [
+        {
+          "number": "VIN",
+          "name": "VIN",
+          "type": "power_in",
+          "net": "E3_PICO3V3"
+        },
+        {
+          "number": "GND",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "SDA",
+          "name": "SDA",
+          "type": "bidirectional",
+          "net": "E3_BEZEL_SDA"
+        },
+        {
+          "number": "SCL",
+          "name": "SCL",
+          "type": "input",
+          "net": "E3_BEZEL_SCL"
+        },
+        {
+          "number": "3Vo",
+          "name": "3Vo",
+          "type": "power_out",
+          "nc": true
+        }
+      ],
+      "notes": [
+        "Cut the factory power LED jumper. Confirm address 0x10. VEML7700 has no external interrupt pin. Retain module bypass and pullup components."
+      ],
+      "description": "Commercial module functional pad names; onboard regulator, bypass capacitors and pullups retained."
+    },
+    {
+      "ref": "R363",
+      "value": "150",
+      "kind": "resistor",
+      "group": "Indicators",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_PIEZO_DRIVE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_PIEZO_OUT"
+        }
+      ]
+    },
+    {
+      "ref": "BZ301",
+      "value": "CPT-1207-3TH",
+      "kind": "module",
+      "group": "Indicators",
+      "source": "https://www.sameskydevices.com/product/resource/cpt-1207-3th.pdf",
+      "status": "module",
+      "pins": [
+        {
+          "number": "+",
+          "name": "PLUS",
+          "type": "passive",
+          "net": "E3_PIEZO_OUT"
+        },
+        {
+          "number": "-",
+          "name": "MINUS",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "description": "Externally driven piezo with functional polarity labels. Timer at 125MHz generates approximately 4.209kHz."
+    },
+    {
+      "ref": "R364",
+      "value": "680",
+      "kind": "resistor",
+      "group": "Indicators",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_LED_DRIVE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_LED_A"
+        }
+      ]
+    },
+    {
+      "ref": "D304",
+      "value": "WP7113LSECK/J3 red",
+      "kind": "diode",
+      "group": "Indicators",
+      "source": "STACK.md HMI statusLED",
+      "status": "module",
+      "pins": [
+        {
+          "number": "A",
+          "name": "A",
+          "type": "passive",
+          "net": "E3_LED_A"
+        },
+        {
+          "number": "K",
+          "name": "K",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "description": "THT LED functional polarity labels; check cathode flat and lead orientation before assembly."
+    },
+    {
+      "ref": "R365",
+      "value": "100",
+      "kind": "resistor",
+      "group": "Cooling",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_FAN_EN"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_FAN_NG"
+        }
+      ]
+    },
+    {
+      "ref": "R366",
+      "value": "100k",
+      "kind": "resistor",
+      "group": "Cooling",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_FAN_NG"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "Q303",
+      "value": "AO3400A",
+      "kind": "nfet",
+      "group": "Cooling",
+      "source": "Manufacturer datasheet; STACK.md §5.2",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "E3_FAN_NG"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "E3_FAN_PG"
+        }
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "R367",
+      "value": "100k",
+      "kind": "resistor",
+      "group": "Cooling",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_FAN_PG"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "LAB5"
+        }
+      ]
+    },
+    {
+      "ref": "Q304",
+      "value": "AO3401A",
+      "kind": "pfet",
+      "group": "Cooling",
+      "source": "https://aosmd.com/sites/default/files/res/datasheets/AO3401A.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "E3_FAN_PG"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "E3_FAN5"
+        }
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "D305",
+      "value": "SS14 flyback",
+      "kind": "diode",
+      "group": "Cooling",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "K",
+          "type": "passive",
+          "net": "E3_FAN5"
+        },
+        {
+          "number": "2",
+          "name": "A",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "footprint": "Diode_SMD:D_SMA"
+    },
+    {
+      "ref": "C318",
+      "value": "10u 10V",
+      "kind": "capacitor",
+      "group": "Cooling",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_FAN5"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C319",
+      "value": "100n 16V",
+      "kind": "capacitor",
+      "group": "Cooling",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_FAN5"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "FAN301",
+      "value": "NoctuaNF-A4x10 5V nonPWM",
+      "kind": "module",
+      "group": "Cooling",
+      "source": "https://www.noctua.at/en/products/nf-a4x10-5v/specifications",
+      "status": "module",
+      "pins": [
+        {
+          "number": "V+",
+          "name": "+5V",
+          "type": "power_in",
+          "net": "E3_FAN5"
+        },
+        {
+          "number": "GND",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "TACH",
+          "name": "TACH",
+          "type": "open_collector",
+          "net": "E3_FAN_TACH_RAW"
+        }
+      ],
+      "description": "Factory fan functional wire labels. Ground is never switched. Confirm connector lead order against the actual Noctua cable before assembly."
+    },
+    {
+      "ref": "R368",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "Cooling",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_FAN_TACH_RAW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_PICO3V3"
+        }
+      ]
+    },
+    {
+      "ref": "R369",
+      "value": "2.2k",
+      "kind": "resistor",
+      "group": "Cooling",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_FAN_TACH_RAW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_FAN_TACH"
+        }
+      ]
+    },
+    {
+      "ref": "R370",
+      "value": "100",
+      "kind": "resistor",
+      "group": "Cooling",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_BLOWER_EN"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_BLOWER_GATE"
+        }
+      ]
+    },
+    {
+      "ref": "R371",
+      "value": "100k",
+      "kind": "resistor",
+      "group": "Cooling",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_BLOWER_GATE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "Q305",
+      "value": "AO3400A",
+      "kind": "nfet",
+      "group": "Cooling",
+      "source": "Manufacturer datasheet; STACK.md §5.2",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "E3_BLOWER_GATE"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "E3_BLOWER_GND"
+        }
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "D306",
+      "value": "SS14 flyback",
+      "kind": "diode",
+      "group": "Cooling",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "K",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "A",
+          "type": "passive",
+          "net": "E3_BLOWER_GND"
+        }
+      ],
+      "footprint": "Diode_SMD:D_SMA"
+    },
+    {
+      "ref": "C320",
+      "value": "10u 10V",
+      "kind": "capacitor",
+      "group": "Cooling",
+      "source": "STACK.md §5.2; project design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "FAN302",
+      "value": "Delta BFB0305HA-C 5V 2wire",
+      "kind": "module",
+      "group": "Cooling",
+      "source": "https://www.delta-fan.com/Download/Spec/BFB0305HA-C.pdf",
+      "status": "module",
+      "pins": [
+        {
+          "number": "RED",
+          "name": "RED_PLUS",
+          "type": "power_in",
+          "net": "LAB5"
+        },
+        {
+          "number": "BLACK",
+          "name": "BLACK_MINUS",
+          "type": "passive",
+          "net": "E3_BLOWER_GND"
+        }
+      ],
+      "notes": [
+        "Maker PDF rev00 specifies5.0V nominal,4.5-5.5V operating,0.13A average nominal/0.20A maximum average,0.65W nominal/1.00W maximum; these are not startup peak ratings. The drawing label artwork also shows0.24A, so the design budget reserves0.25A continuous until the actual label/current is checked.",
+        "Use existing AO3400A low-side switch: this exact suffix has two wires and no tach output. Red=LAB5, black=switched return. Keep flyback SS14 and fit10uF plus100nF directly across the blower leads.",
+        "Provisional startup budget is0.50A, a project qualification limit rather than a manufacturer guarantee. Delta explicitly requires peak-current measurement with an oscilloscope. Capture starting/stalled/auto-restart current and LAB5 droop at both5V rail limits.",
+        "Manufacturer body envelope is30.0+/-0.5 by30.0+/-0.5 by10.0+/-0.5mm; mounting hole spacing24.0+/-0.3mm, two holesdiameter2.4+/-0.3mm; lead length145+/-10mm. Allocate at least32x32x12mm for the body as a design fit gate, plus intake/outlet duct clearance and lead strain relief.",
+        "Maker free-air airflow1.45CFM nominal/min1.17CFM and zero-flow pressure0.285inH2O nominal/min0.182inH2O are curve endpoints, not simultaneous installed performance. Qualify the separate display duct, inlet pressure drop<=5Pa, closed-cover thermal limits and RF noise. Operating range-10 to70C.",
+        "LAB5 aggregate, including concurrency with RTL-B, remains unqualified. If measured steady demand exceeds2.5A, follow STACK load-shedding/D36V50F5 plusfuse review before commissioning."
+      ],
+      "description": "Concrete BOM candidate: Delta BFB0305HA-C two-wire centrifugal blower. Factory red wire positive, black wire negative; no invented connector numbering. Mechanical integration and qualification remain open."
+    },
+    {
+      "ref": "U309",
+      "value": "Waveshare RP2040-Zero 20187",
+      "kind": "module",
+      "group": "External IMU",
+      "status": "module",
+      "source": "https://files.waveshare.com/upload/4/4c/RP2040_Zero.pdf",
+      "description": "Commercial module, functional named GPIO/power pads. Factory LDO, 12MHz oscillator, flash, bypass capacitors and GPIO29 RGB LED remain onboard; no invented numeric cable contacts.",
+      "notes": [
+        "Design assignment: UART0 GP0 TX / GP1 RX; SPI0 GP2 SCK, GP3 MOSI, GP4 MISO, GP5 CS; GP6 BNO interrupt, GP7 reset, GP8 PS0/WAKE. SPI 1MHz MODE3; core 125MHz; UART115200 CRC frames.",
+        "GPIO9-28 pads unused; GPIO29 belongs to the onboard RGB LED. E5 owns GX16-4, supply Schottky and ESD at both ends. Connect no USB during deployed operation.",
+        "The named-pad interface is physically identified by Waveshare schematic; actual pad orientation and assembled harness continuity must be checked before power."
+      ],
+      "pins": [
+        {
+          "number": "GP0",
+          "name": "GP0",
+          "type": "output",
+          "net": "IMU_TX"
+        },
+        {
+          "number": "GP1",
+          "name": "GP1",
+          "type": "input",
+          "net": "IMU_RX"
+        },
+        {
+          "number": "GP2",
+          "name": "GP2",
+          "type": "output",
+          "net": "E3_IMU_SCK"
+        },
+        {
+          "number": "GP3",
+          "name": "GP3",
+          "type": "output",
+          "net": "E3_IMU_MOSI"
+        },
+        {
+          "number": "GP4",
+          "name": "GP4",
+          "type": "input",
+          "net": "E3_IMU_MISO"
+        },
+        {
+          "number": "GP5",
+          "name": "GP5",
+          "type": "output",
+          "net": "E3_IMU_CS_N"
+        },
+        {
+          "number": "GP6",
+          "name": "GP6",
+          "type": "input",
+          "net": "E3_IMU_INT_N"
+        },
+        {
+          "number": "GP7",
+          "name": "GP7",
+          "type": "output",
+          "net": "E3_IMU_RST_N"
+        },
+        {
+          "number": "GP8",
+          "name": "GP8",
+          "type": "output",
+          "net": "E3_IMU_WAKE_N"
+        },
+        {
+          "number": "GP9",
+          "name": "GP9",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "GP10",
+          "name": "GP10",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "GP11",
+          "name": "GP11",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "GP12",
+          "name": "GP12",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "GP13",
+          "name": "GP13",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "GP14",
+          "name": "GP14",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "GP15",
+          "name": "GP15",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "GP16",
+          "name": "GP16",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "GP17",
+          "name": "GP17",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "GP18",
+          "name": "GP18",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "GP19",
+          "name": "GP19",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "GP20",
+          "name": "GP20",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "GP21",
+          "name": "GP21",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "GP22",
+          "name": "GP22",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "GP23",
+          "name": "GP23",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "GP24",
+          "name": "GP24",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "GP25",
+          "name": "GP25",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "GP26",
+          "name": "GP26",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "GP27",
+          "name": "GP27",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "GP28",
+          "name": "GP28",
+          "type": "bidirectional",
+          "nc": true
+        },
+        {
+          "number": "5V",
+          "name": "5V_IN",
+          "type": "power_in",
+          "net": "E5_IMU_VIN"
+        },
+        {
+          "number": "3V3",
+          "name": "3V3_OUT",
+          "type": "power_out",
+          "net": "E3_IMU3V3"
+        },
+        {
+          "number": "GND",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "U314",
+      "value": "Adafruit 4754 BNO085 SPI",
+      "kind": "module",
+      "group": "External IMU",
+      "status": "module",
+      "source": "https://learn.adafruit.com/adafruit-9-dof-orientation-imu-fusion-breakout-bno085/pinouts",
+      "description": "Commercial module, functional pad names from maker documentation. Factory regulator, level shifting, decoupling and bias resistors remain on module.",
+      "notes": [
+        "VIN from RP2040-Zero 3V3, not 5V: maker requires supply equal MCU logic level. Both PS0 and PS1 strapped high select SPI. INT and RST are connected, as required for stable SPI.",
+        "Never route BNO085 on Q6A I2C; full quaternion reports only, CRC frame forwarded by Pico. E5 owns external pack ESD.",
+        "The official Adafruit Eagle H_INTN pin is an output connected directly to INT pad. Earlier draft open_collector type was incorrect and is corrected from source, not suppressed for ERC.",
+        "PS1 straps high. PS0/WAKE is pulled high through 1k (overrides the module factory10k pulldown) and connected to Zero GP8: keep it high throughout reset and first INT, then pulse low to wake the BNO for host-initiated SPI as required by the CEVA datasheet."
+      ],
+      "pins": [
+        {
+          "number": "VIN",
+          "name": "VIN",
+          "type": "power_in",
+          "net": "E3_IMU3V3"
+        },
+        {
+          "number": "GND",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3Vo",
+          "name": "3Vo",
+          "type": "power_out",
+          "nc": true
+        },
+        {
+          "number": "SCL",
+          "name": "SCL_SPI_SCK",
+          "type": "input",
+          "net": "E3_IMU_SCK"
+        },
+        {
+          "number": "SDA",
+          "name": "SDA_SPI_MISO",
+          "type": "output",
+          "net": "E3_IMU_MISO"
+        },
+        {
+          "number": "DI",
+          "name": "DI_SPI_MOSI",
+          "type": "input",
+          "net": "E3_IMU_MOSI"
+        },
+        {
+          "number": "CS",
+          "name": "CS_N",
+          "type": "input",
+          "net": "E3_IMU_CS_N"
+        },
+        {
+          "number": "INT",
+          "name": "INT_N",
+          "type": "output",
+          "net": "E3_IMU_INT_N"
+        },
+        {
+          "number": "RST",
+          "name": "RST_N",
+          "type": "input",
+          "net": "E3_IMU_RST_N"
+        },
+        {
+          "number": "P0",
+          "name": "PS0",
+          "type": "input",
+          "net": "E3_IMU_WAKE_N"
+        },
+        {
+          "number": "P1",
+          "name": "PS1",
+          "type": "input",
+          "net": "E3_IMU3V3"
+        },
+        {
+          "number": "BT",
+          "name": "BOOT",
+          "type": "input",
+          "nc": true
+        }
+      ]
+    },
+    {
+      "ref": "C340",
+      "value": "10u 10V",
+      "kind": "capacitor",
+      "group": "External IMU",
+      "status": "design",
+      "source": "Local pack bypass design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E5_IMU_VIN"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C341",
+      "value": "100n 16V",
+      "kind": "capacitor",
+      "group": "External IMU",
+      "status": "design",
+      "source": "Local pack bypass design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_IMU3V3"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R390",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "External IMU",
+      "status": "design",
+      "source": "SPI CS idle-high design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_IMU_CS_N"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_IMU3V3"
+        }
+      ]
+    },
+    {
+      "ref": "R391",
+      "value": "1k",
+      "kind": "resistor",
+      "group": "External IMU",
+      "source": "Adafruit official Eagle PS0 net has factory 10k pulldown. External 1k pullup overrides it at reset; Zero GP8 sinks about3.3mA during wake.",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E3_IMU_WAKE_N",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E3_IMU3V3",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Do not fit10k here: together with the factory10k pulldown it would produce half-rail and invalid SPI strap. 1k gives about3.0V high at3.3V supply, then GP8 drives the wake pulse low."
+      ]
+    },
+    {
+      "ref": "R392",
+      "value": "10k",
+      "kind": "resistor",
+      "group": "MCP23017 control",
+      "source": "E2/E4 S-band LNA protection signal assignment",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "FLT_SB_LNA",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "3V3_Q6A",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C342",
+      "value": "10u 10V",
+      "kind": "capacitor",
+      "group": "Cooling",
+      "source": "https://www.delta-fan.com/Download/Spec/BFB0305HA-C.pdf application notice13; local lead decoupling design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "LAB5",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E3_BLOWER_GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C343",
+      "value": "100n 16V",
+      "kind": "capacitor",
+      "group": "Cooling",
+      "source": "https://www.delta-fan.com/Download/Spec/BFB0305HA-C.pdf application notice13; local lead decoupling design",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "LAB5",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E3_BLOWER_GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "Q306",
+      "value": "2N7002,215",
+      "kind": "nfet",
+      "group": "MCP hardware watchdog reset",
+      "status": "design",
+      "source": "https://assets.nexperia.com/documents/data-sheet/2N7002.pdf; Microchip DS20001952D table1-2",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "description": "Open-drain pull-down for the shared active-low reset of all three internal MCP23017 expanders. Gate is driven only by Pico GP17.",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "net": "E3_MCP_RESET_GATE",
+          "type": "input"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "net": "E3_MCP_RESET_N",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Physical SOT23 pins:1gate,2source,3drain. No Pico3V3 DC connection to Q6A3V3: the MOS gate is insulated. Drain pullups are only to switched3V3_Q6A.",
+        "GP17 high or highimpedance while Pico3V3 is present asserts RESET low via R395. Working firmware must actively hold GP17 low to release reset. R394100k gate-source pulldown turns Q306 off only when Pico supply is absent; complete loss ofPico power is not an independently covered fault.",
+        "The three existing10k reset pullups remain in parallel, equivalent3.33k. Sink current is about0.99mA at3.3V. Scope verification must show RESET_N<0.2VDD when asserted and>0.8VDD when released."
+      ]
+    },
+    {
+      "ref": "R393",
+      "value": "100",
+      "kind": "resistor",
+      "group": "MCP hardware watchdog reset",
+      "status": "design",
+      "source": "Pico watchdog gate interface design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E3_MCP_RESET_ASSERT",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E3_MCP_RESET_GATE",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R394",
+      "value": "100k",
+      "kind": "resistor",
+      "group": "MCP hardware watchdog reset",
+      "status": "design",
+      "source": "Defined MOSFET gate state during Pico reset/poweroff",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E3_MCP_RESET_GATE",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R395",
+      "value": "1k",
+      "kind": "resistor",
+      "group": "MCP hardware watchdog reset",
+      "status": "design",
+      "source": "Fail-safe default assertion while powered Pico GPIO is highimpedance",
+      "description": "Pullup on the GPIO side of gate series resistor: powered Pico reset/highimpedance asserts MCPreset; normal firmware actively sinks GP17 low to release it.",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E3_PICO3V3",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E3_MCP_RESET_ASSERT",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "About3.3mA static current is sunk by GP17 in normal release state. R393 has no static voltage-divider drop when GP17 actively low because the pullup is on its GPIO side.",
+        "The1k pullup overrides weak RP2040 pad pulldowns during reset. Verify gate high and RESETlow over actual supply ramp, brownout andtemperature."
+      ]
+    }
+  ],
+  "open_items": [
+    {
+      "id": "E3-01",
+      "description": "IMU assembly and two metre single-ended UART need bench verification. Internal named-pad wiring is specified, but no physical harness has been measured.",
+      "blocking": true,
+      "resolve": "Check actual module revision, GX16 plug/socket viewing direction and continuity to E5 design pinout; validate input Schottky and TVS at both ends; 1e6 frames with zero CRC errors. Upgrade to differential interface if errors occur."
+    },
+    {
+      "id": "E3-02",
+      "description": "Brightness control requires confirmed DDC/CI support or an exact Wisecoco KEY/Backlight interface. Pico GP17 is now reserved for MCP watchdog reset and unavailable for brightness.",
+      "blocking": true,
+      "resolve": "Demonstrate ddcutil brightness through the specified RA620 link, or obtain exact KEY/Backlight revision pinout and design a new interface using a free MCPGPIO if suitable. Verify thermal dimming; do not reuse PicoGP17."
+    },
+    {
+      "id": "E3-03",
+      "description": "BOM candidate Delta BFB0305HA-C is selected; final mechanical fit, installed airflow, start/stall current, LAB5 concurrency and noise remain unqualified.",
+      "blocking": true,
+      "resolve": "Fit body envelope30.5x30.5x10.5mm plus duct/lead clearance into CAD before cutting enclosure. Measure0.25A design continuous reserve and provisional0.50A startup limit rather than claiming peak from datasheet. Confirm LAB5 under2.5A in allowed concurrency, or implement STACK shedding/upgradedconverter-fuse path. Run45min closed-cover solar thermal test and RF A/B noise checks; inlet drop<=5Pa at requiredflow."
+    },
+    {
+      "id": "E3-04",
+      "description": "UM3304 UART7/PPS/SWD cable capacitance and power-off behavior cannot be proven by ERC.",
+      "blocking": true,
+      "resolve": "Check <=20cm wiring, UART7 loopback, boot glitches and absence of Q6A backfeed with Pico on/Q6A off. Verify TX high-impedance sequencing or add hardware isolation."
+    },
+    {
+      "id": "E3-05",
+      "description": "Shared MCP interrupt requires open-drain configuration before interrupts are enabled, plus measured I2C rise time and VOL.",
+      "blocking": true,
+      "resolve": "Set ODR=1 and MIRROR=1 first. Validate 100kHz, rise <=1000ns, 1e6 reads under load, 20 cold/20 warm boots, and 10us FAULT capture."
+    },
+    {
+      "id": "E3-06",
+      "description": "BOM candidate Semiware MF52A103F3950 is selected for both NTCs; purchased-lot curve, attachment, lag and installed calibration remain unqualified.",
+      "blocking": true,
+      "resolve": "Verify10k+/-1% at25C and manufacturerB25/50=3950+/-1%; use exactmakerRTtable. Fit insulated bead/strainrelief on panel spreader and frame, check25/60/68C against reference thermometer, qualify lag and open/short/stale fail-safe behavior. Remain inside-20..120C sensorrange."
+    },
+    {
+      "id": "E3-07",
+      "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+      "blocking": true,
+      "resolve": "Calibrate gain/offset against a calibrated voltmeter at two pack-equivalent voltages such as12.6V and16.4V; cross-checkINA228. Independently verify physical12.9V software cutoff within+/-0.1V, including5s dwell, at12.8/12.9/13.0V across specifiedtemperature and load states. Store calibratedcoefficients with revision/CRC. No commissioningpassuntilmet; hardwareAON UVsupervisor remains independentbackup."
+    },
+    {
+      "id": "E3-08",
+      "description": "The physical MCP watchdog-reset actuator is wired, but Pico heartbeat-watchdog firmware and its boot/recovery behavior do not yet exist or pass hardware tests.",
+      "blocking": true,
+      "resolve": "Implement future firmware with reset asserted at powered boot/highimpedance, on missing/invalid heartbeat and during unsafe/re-arm states. Hold resetlow>=1us (projectguard100ms minimum,normallylatcheduntilqualifiedrecovery). ActivelysinkGP17LOWonlyfornormalrelease; verifyGPIOsink~3.3mA. ScopeRESET<0.2VDDasserted/>0.8VDDreleased; proveinternalENlow,HMC00,relaysofffrominitialENhighuponLinuxkill/UARThang. Test20cold/20warmboots,PicoGPIOreset/brownout,andQ6Aoff/Picoonwithoutbackfeed. Beforeoutputre-enablewriteOLAT0,IODIRincludingIO7=0foroutputs,andIOCONODR/MIRRORthenGPINTEN. FullPicosupplylosswithQ6Aaliveisnotcoveredbythisactuator;AONbatteryprotectionisindependent."
+    }
+  ],
+  "decisions": [
+    {
+      "id": "R-E3-01",
+      "description": "MCP #3: GPA0 FAULT_LABPORT, A1 FAULT_LNA1, A2 FAULT_LNA2, A3 FAULT_LNA3, A4 FAULT_LNA4, A5 FLT_LNB, A6 FLT_BONI; GPB0 PG_LNB, B1 PG_BONI, B2 DCS_UHF, B3 DCS_LBAND, B4 DCS_HF, B5 PTC_AUX, B6 SLED_DET. GPA7 EN_LNA4 and GPB7 EN_T7 unchanged.",
+      "source": "New carrier design assignment, all fourteen inputs avoid A7/B7."
+    },
+    {
+      "id": "R-E3-02",
+      "description": "MCP #4 GPA2 = SW_LIME_A, GPA3 = SW_LIME_B, GPB4 = CHG_INHIBIT.",
+      "source": "Free GPIO assigned by new design; agreed with E4 and E1."
+    },
+    {
+      "id": "R-E3-03",
+      "description": "HMI IO0_0..7 = HOME, BACK, REC, MARK, FN, LOCK, encoder1 press and encoder2 press.",
+      "source": "New HMI carrier assignment, no claim of a measured existing harness."
+    },
+    {
+      "id": "R-E3-04",
+      "description": "New power-board harness pins: 1 = 3V3_Q6A, 2 = GND, 3 = SDA, 4 = SCL, 5 = INT.",
+      "source": "New harness design, verify assembled mating halves before power."
+    },
+    {
+      "id": "R-E3-05",
+      "description": "Use Q6A factory RTC. J11 pin 1 ground, pin 2 CR2032 positive.",
+      "source": "Q6Aofficialschematicv1.21,pdfpage16."
+    },
+    {
+      "id": "R-E3-06",
+      "description": "Pico reference uses a single external 200 ohm feed and LM4040C30 after factory R7 removal; NTC dividers run from reference 3.0V. E1 owns the battery divider.",
+      "source": "STACK reference requirement; avoids duplicated or conflicting ADC networks."
+    },
+    {
+      "id": "R-E3-07",
+      "description": "IMU firmware GPIO assignment on RP2040-Zero: UART0 GP0 TX/GP1 RX; SPI0 GP2 SCK, GP3 MOSI, GP4 MISO, GP5 CS; GP6 INT, GP7 RST. BNO085 VIN from module 3V3; both PS0/PS1 high.",
+      "source": "Official Waveshare and Adafruit module pad/function documentation; assignment is new project design."
+    },
+    {
+      "id": "R-E3-08",
+      "description": "MCP #4 GPB5 reads OVP_LNB_N from E2 without any pullup.",
+      "source": "E2 hardware OVP design: actual safe-enable node with 4.7k series from EN_LNB and 100k pulldown; an added pullup could inadvertently enable the eFuse."
+    },
+    {
+      "id": "R-E3-09",
+      "description": "IMU Zero GP8 controls BNO PS0/WAKE with a 1k pullup overriding the module factory10k pulldown. Hold high during reset and first INT, then permit runtime wake.",
+      "source": "Manufacturer BNO08X SPI interface notes; GP8 was free on external Zero."
+    },
+    {
+      "id": "R-E3-10",
+      "description": "MCP #4 GPA4 physical25 = EN_SB_LNA output; GPA5 physical26 = FLT_SB_LNA input with10k pullup to3V3_Q6A. Recipient E2 owns the enable pulldown.",
+      "source": "FreeGPIO assignment agreed with E4 completion pass for concrete S-band LNA."
+    },
+    {
+      "id": "R-E3-11",
+      "description": "Select Delta BFB0305HA-C as a concrete5Vtwo-wireblowercandidate, retaining low-sideAO3400A and adding10uF+100nF directly across its leads. Designreserve0.25Acontinuous/0.50Astartpeak must be measured.",
+      "source": "Official Delta rev00 PDF; partselectiondoesnotclosemechanical/thermal/currentqualification."
+    },
+    {
+      "id": "R-E3-12",
+      "description": "Select Semiware MF52A103F3950 as both10kB3950NTCcandidates. ExactmakerRTtableandinstalledcalibrationaremandatory.",
+      "source": "Official Semiware revA2.0 PDF. Candidate replaces genericunselectedNTCwithoutclaimingavailabilityorinstalledperformance."
+    },
+    {
+      "id": "R-E3-13",
+      "description": "DCS_UHF/DCS_LBAND/DCS_HF:low means both window-comparator conditions safe; high means DCunsafe/unknown, loss of detectorpower or wireopen.",
+      "source": "AgreedE4realwindowdetectorwithtwoseries2N7002;E3pullupsprovidefail-safedefault."
+    },
+    {
+      "id": "R-E3-14",
+      "description": "Reassign PicoGP17 physical22 to sharedthree-MCP active-low reset: R393100ohm seriesgate, Q3062N7002, R394100k gate-sourcepulldown, R3951k GPIO-sidepullup toPico3V3. Powered GPIOhighimpedance defaults asserted; firmware drivesLOWforrelease. Existing3x10kresetpullupsremainonQ6A3V3.",
+      "source": "Root final fail-safe design review; Microchip DS20001952D RESET minimum low1us, output high-impedance within1us, IODIR reset0xff and OLAT reset0x00."
+    }
+  ],
+  "power_flags": [
+    {
+      "net": "E3_PICO_VSYS",
+      "reason": "Pico VSYS is physically powered by LAB5 through forward SS14 D301. A passive diode cannot propagate KiCad power_out type. Flag marks supplied net after diode, not a second source.",
+      "source": "STACK.md Pico supply and E3 D301 connectivity."
+    },
+    {
+      "net": "E3_FAN5",
+      "reason": "Fan supply is physically powered from LAB5 through AO3401A Q304 when enabled. The pass MOSFET has passive drain/source pins, so KiCad requires a powered-net marker downstream.",
+      "source": "STACK.md high-side Noctua fan control and E3 Q304 connectivity."
+    }
+  ]
+}

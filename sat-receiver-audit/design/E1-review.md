@@ -1,0 +1,105 @@
+# E1 — живлення, заряд і апаратне вимкнення
+
+Стан: інженерна схема створена; **готовність до складання не підтверджена**. Дата перевірки: 19.10.2026. Джерело вимог: оригінальний `STACK.md`, `build/02-zhyvlennia.md`, `build/09-testy.md` репозиторію, коміт `4653188`. Відновлений HTML використовувався для початкової навігації. Жодних вимірів заліза немає.
+
+## 1. Що реалізовано
+
+`E1.json` містить 77 компонентів і 206 контактів: чотири окремі P50B, функціональний BMS, головний і сервісний запобіжники, деталізацію Adafruit INA228, AON LDO, повну UV-схему з гістерезисом, діодне OR для OFF, Pololu #2813, два основні DC/DC, LAB5 π-фільтр, ADC дільник Pico, USB-PD eFuse з обв’язкою та функціональний IP2368 із місцями модифікацій, NTC і незалежним термостатом.
+
+Фізичні номери наведено для IC і BAT54/2N7002. Комерційні модулі мають назви функціональних клем: вони **не означають перевіреного фізичного порядку роз’єму**. Для зарядної плати місця VSET/ISET/NTC описують точки модифікацій, які ще треба знайти й підтвердити на конкретній ревізії. Внутрішня силова частина готових модулів не дублюється як вигадана власна PCB.
+
+## 2. Перевірені первинні джерела
+
+- [Molicel P50B PDS](https://www.molicel.com/wp-content/uploads/Product-Data-Sheet-of-INR-21700-P50B-80122.pdf): комірка 5 Ah, номінально 3.6 V, CV 4.2 V. Щоденний заряд STACK приблизно до 4.10 V і вікно 0…45 °C є суворішими рішеннями проєкту.
+- [Pololu #2813](https://www.pololu.com/product/2813): A через кнопку на GND — лише ON; OFF — active high >1 V. ON і CTRL залишено вільними. UV та Pico передають OFF через окремі BAT54, без прямого з’єднання push-pull виходів.
+- [Pololu D36V50F12](https://www.pololu.com/product/4095) і [D36V28F5](https://www.pololu.com/product/3782): назви зовнішніх клем, open-drain PG, EN 1.2/1.35 V та внутрішній pull-up 100 kΩ. D36V50F12 є buck; не гарантує 12 V, коли батарея близька до 13.2 V.
+- [TI TPS709](https://www.ti.com/lit/ds/symlink/tps709.pdf), саме DBV без A/B: 1 IN, 2 GND, 3 EN, 4 NC, 5 OUT. EN дозволено залишити вільним. До VIN його не приєднано. На виході потрібна ефективна ємність щонайменше 2.2 µF; обрано 4.7 µF з контролем DC bias.
+- [Microchip MCP65R41/6](https://ww1.microchip.com/downloads/en/DeviceDoc/22269B.pdf): 1 OUT, 2 VSS, 3 IN+, 4 IN−, 5 VREF, 6 VDD. Для опції `1202` reference 1.21 V. На VREF/IN+ не поставлено конденсатора; bypass 100 nF стоїть на VDD.
+- [TI INA228](https://www.ti.com/lit/ds/symlink/ina228.pdf): фізичні DGS pins, open-drain ALERT, ADCRANGE=0 із ±163.84 mV. Деталі breakout звірено з [оригінальним Eagle Adafruit](https://github.com/adafruit/Adafruit-INA228-PCB/blob/main/Adafruit%20INA228%20I2C%20Power%20Monitor.sch), завантаженим і розібраним як XML.
+- [TI TPS25947, Rev. C](https://www.ti.com/lit/ds/symlink/tps25947.pdf): pin 1 EN/UVLO, 2 OVLO, 3 AUXOFF, 4 FLT, 5 IN, 6 OUT, 7 DVDT, 8 GND, 9 ILM, 10 ITIMER. Варіант A має auto-retry. Немає доданого вигаданого exposed-pad pin. Для external IN pull-up TI вимагає ≥350 kΩ, коли VIN >5 V.
+- [Nexperia BAT54](https://assets.nexperia.com/documents/data-sheet/BAT54.pdf): 1 A, 2 NC, 3 K. [2N7002](https://assets.nexperia.com/documents/data-sheet/2N7002.pdf): 1 G, 2 S, 3 D. [Vishay SMBJ](https://www.vishay.com/docs/88392/smbj.pdf): полярність TVS визначає cathode band.
+
+## 3. Важливі уточнення INA228
+
+Плата Adafruit #5832 містить R6 — **одну збірку 4×10 kΩ**, що одночасно підтягує SDA/SCL і стягує A0/A1. Після видалення R6 адресні входи потрібно явно заземлити. Обрано адресу **0x40**, а не залишено варіант 0x40/0x45. Це має збігатися з конфігурацією labpowerd.
+
+R7 10 kΩ живить LED: його знято. C1=100 nF та C2=10 µF збережено. Шунт у CAD має значення `HoLLR2512-2W-15mR-1%`; маркетингові 0.1% не прийнято. R101/U102/C101/C102 у JSON — деталізація вже купленого модуля, а не додаткова покупка.
+
+SJ1 з’єднує VBUS із **VIN+**, тобто батарейним боком шунта. Зарядний BAT+ і всі навантаження приєднано до E1_N після шунта. При розряді 4.6 A: падіння 69 mV і розсіювання 0.317 W. ADCRANGE=0 охоплює приблизно ±10.92 A. SHUNT_CAL калібрується; накопичення CHARGE/ENERGY працює в continuous режимі. ALERT та I2C pull-up живляться від 3V3_Q6A, а VS INA228 — від AON3V3.
+
+## 4. Розрахунок UV і вибрані обв’язки
+
+Для Rtop=3.30 MΩ і Rbottom=332 kΩ+4.02 kΩ:
+
+`β = 336020 / 3636020`.
+
+IN+ з’єднано із VREF через 100 kΩ та OUT через 4.22 MΩ. Ідеальна threshold напруга:
+
+`Vthreshold(out) = (1.21/100k + Vout/4.22M) / (1/100k + 1/4.22M) / β`.
+
+За VOL=0 / VOH=3.3 V це дає **12.790 / 13.617 V**. Це модель, а не гарантований поріг. Offset, reference tolerance, внутрішній hysteresis, реальний VOH і температурний дрейф потребують trim R105 та воріт E1-04. Конденсатор 100 nF на IN− має τ≈30.5 ms. Струм власне дільника при 14.8 V ≈4.07 µA. Низька батарея дає high OUT і утримує OFF.
+
+Запасний EN SYS12: 10.0 kΩ / 1.00 kΩ із внутрішнім 100 kΩ верхнього плеча дає effective Rtop≈9.091 kΩ; модель 12.109 V sleep / 13.623 V wake. Це резерв, не заміна UV-компаратора чи BMS.
+
+Pico ADC бере сигнал **із E1_SW**, не E1_N. 100 kΩ / 20 kΩ дає 2.8 V при 16.8 V; 100 nF забезпечує τ≈1.67 ms. Коли головний вимикач OFF, дільник не може живити вимкнений Pico з батареї.
+
+USB-PD eFuse має нові початкові engineering values: RILM=953 Ω → ILIM≈3.498 A за `3334/R`; OVLO 174 kΩ / 10 kΩ 0.1% → 22.08 V номінально, приблизно **21.726…22.546 V** з пороговими і резистивними допусками. EN pull-up 470 kΩ, DVDT 3.3 nF, ITIMER вільний. Ці значення вимагають hot-plug, startup та SOA тестів.
+
+LAB5 π-фільтр уточнено конкретними MPN: XAL6060-103MEC 10 µH; два полярні OS-CON 35SVPF22M 22 µF; демпфер WSL2512R3300FEA 0.33 Ω +16SVPC100M 100 µF. Номінальні значення збережено, class-II MLCC замінено на polymer для стабільної ємності під DC bias. Для C=22 µF: fLC≈10.73 kHz і Z0≈0.674 Ω. Виміряна стабільність, температура та кінцеві напруги ще є воротами E1-05; докладний вибір у §8.
+
+## 5. Небезпечна невизначеність сервісного балансу
+
+Daly комутує низьке плече. **E1_CELL0/raw B− і GND/P− не з’єднано в схемі.** Однак, якщо ISDT 608PD з’єднує balance B0 із output−, підключення балансного кабелю до raw B− і силового XT30− до P− може обійти BMS та створити струмовий шлях у тонкому балансному дроті.
+
+J102 позначено **DNP / service-only**. Місячний баланс ISDT у поточній конфігурації заборонений до затвердженого інтерфейсу. Низькоомна continuity output−/B0 є однозначним reject; високий опір без живлення **ще не доводить** ізоляцію за всіх станів та підключень USB. Потрібні схема/підтвердження виробника або перепроєктування з fault validation, яке доводить, що BMS зупиняє весь зарядний/розрядний струм і обходу через balance не лишається. Main OFF і 5 A fuse цього не доводять. Не переносити B0 на P− та не переносити силовий return на raw B− як «виправлення». Докладніше — `design/charger-bms-review.md`.
+
+## 6. Ворота перед складанням
+
+У JSON є сім блокувальних open items. Вони не замінені словами «готово»:
+
+| Gate | Умова закриття |
+|---|---|
+| E1-01, IP2368 COUT | Ревізійна схема/continuity точок модифікацій; NTC 0/45 °C, обрив/КЗ; charge і reverse-boost inhibit; CV кожної комірки; 2 h при 3 A; 20 PD cycles; VBUS назовні 0 V. DS посилання архіву повторно недоступне, поведінку не оголошено незалежно перевіреною. |
+| E1-02, ISDT/BMS | Approved topology або redesign/fault validation без bypass BMS і силового струму в balance; до цього J102 DNP. |
+| E1-03, Daly | Маркування реального BMS, правильний revision DS, фізичний порядок sense, послідовні cell voltages, wake 3/3. Поточний TinyTronics PDF називає J04G3, STACK — J05G. |
+| E1-04, UV | При 25/50 °C: 12.8±0.1 / 13.6±0.1 V, drift≤50 mV; AON без INA ≤11 µA; кнопку не можна використати для обходу UV. |
+| E1-05, LAB5 | Default уже D36V50F5 #4091 +4 A fuse. Приймання 3.2 A continuous /4 A transient, step 10–90%, температура 50 °C та 5 V±5% після кожного ключа/кабелю. Стара модель 2.3 A не доводить бюджет. |
+| E1-06, силова плата | Reflow layout; USB-PD ILIM/OVLO/hot-plug/reverse tests; C4 RF A/B; SYS12 4.2 A при 14/16.4 V; головний шлях 4.6 A у корпусі 50 °C; PCB ERC/DRC. |
+| E1-07, фізичні parts | Вибір і подвійна перевірка connector/land-pattern mappings. Функціональний контакт не підміняє фізичний номер. |
+
+## 7. Контракти між аркушами
+
+| Сигнал | Власник/споживач |
+|---|---|
+| E1_SW, SYS12, LAB5, AON3V3 | Виходи E1; захищені гілки і INA3221 належать E2. |
+| I2C0_SDA, I2C0_SCL, INA228_ALERT | INA228 E1; 40-pin і pull-up E3. |
+| PWR_BUTTON | Кнопка E3; E1 має лише окремий BAT54 до Pololu A. |
+| PICO_OFF | Pico GP13 E3 → BAT54 → OFF E1. |
+| E1_BAT_ADC | Дільник E1 → Pico GP27 E3. |
+| CHG_INHIBIT | MCP #4 GPB4 (новий design E3) → 1 kΩ /2N7002/100 kΩ E1. |
+| CHASSIS | USB-C shell; єдине grounding рішення належить інтеграції E5. |
+
+Вимкнення Q6A не забороняє звичайний заряд автоматично. Коли MCP знеструмлений, gate Q101 стягнутий на GND; незалежний KSD9700 NO лишається активним. Його дія через NTC є стендовою умовою E1-01, а не доведеним захисним каналом.
+
+## 8. Уточнений LAB5 — остаточний вибір деталей для схеми
+
+**Default змінено на [Pololu D36V50F5 #4091](https://www.pololu.com/product/4091) з запобіжником 4 A.** D36V28F5 більше не є основною конфігурацією: модель 2.3 A не включала RTL-B, і вже 2.3+0.27≈2.57 A перевищувало старі ворота 2.5 A. Назва «5.5 A» є типовою термозалежною характеристикою виробника, не гарантією струму при 50 °C. Функціональні контакти: VIN, VRP, VOUT, GND, EN, PG; VRP/EN вільні. Використовувати прямі силові дроти або обидва дубльовані силові отвори, а не один header rated 3 A.
+
+| Ref | Конкретний MPN | Підстава вибору |
+|---|---|---|
+| L101 | [Coilcraft XAL6060-103MEC](https://www.coilcraft.com/en-us/products/power/shielded-inductors/molded-inductor/xal/xal60xx/) | 10 µH ±20%; DCR max29.8 mΩ при25°C; Isat7.6 A для30% Ldrop; Irms5 A для20 K rise. Корпус6.56×6.36×6.1 mm max по висоті. |
+| C111, C112 | [Panasonic 35SVPF22M](https://industrial.panasonic.com/ww/products/pt/os-con/models/35SVPF22M), ×2 | 22 µF35 V±20%, початково≥17.6 µF; ESR≤35 mΩ, ripple2.6 A при105°C/100kHz; Ø6.3×5.9 mm. Полярний polymer, плюс до рейки. |
+| C113 | [Panasonic 16SVPC100M](https://industrial.panasonic.com/ww/products/pt/OS-CON/models/16SVPC100M) | 100 µF16 V±20%, початково≥80 µF; ESR≤24 mΩ, ripple2.49 A при105°C/100kHz; Ø6.3×5.9 mm. |
+| R110 | [Vishay WSL2512R3300FEA](https://www.vishay.com/docs/30100/wsl.pdf) | 0.330 Ω1%, metal strip2512. Значення0.33 Ω має приблизно0.885 W при70°C після value derating; далі температурний derating. |
+
+[Офіційне технічне пояснення Panasonic](https://pages.na.industrial.panasonic.com/rs/173-ONW-167/images/MLCC%20White%20Paper.pdf) підтверджує стабільнішу ємність polymer під DC bias. Це design-заміна початкових generic X7R: параметри частоти, температури й loop stability перевірити на зібраному фільтрі. ESR при100 kHz не вважати гарантованим ESR саме на резонансі10.73 kHz.
+
+При4 A дросель має максимум119.2 mV падіння та0.477 W втрат при25°C. Модель **за заданої copper temperature55°C**, а не прогноз температури:133.3 mV/0.533 W. Вихід F5±4% разом із втратами не гарантує≥4.75 V на кожному USB-пристрої за найгірших допусків. Потрібні scope/DMM після кожного ключа й кабелю; low-corner unit відбракувати або переглянути rail design.
+
+Проєктний envelope: LAB5≤3.2 A continuous, qualification transients≤4 A; це не виміряна здатність і не нова електронна межа запобіжника. При 50°C провести30 min на3.2 A, окремо load steps і startup. Blower отримав design reserve0.25 A continuous/0.50 A startup; SB_LNA65 mA від LAB5 входить один раз у policy `I_ANT≤1 A`. Фізичне обмеження пари LT3045≤1 A лишається незалежним. `I_ANT +0.83 A×EN_LAB≤1.5 A` резервує максимум LAB switch замість невиміряного струму. DC-сенсори E4 живляться від3V3_Q6A, до LAB5 не додаються.
+
+BOM delta: прибрати одну D36V28F5 та3 A fuse, додати одну D36V50F5 #4091 та4 A fuse. Чотири типи фільтра вище замінюють generic позиції, а не додаються паралельно. Геометрія converter зросла з17.8×20.3×8.8 до25.4×25.4×9.5 mm: +7.6/+5.1/+0.7 mm, площа+78.5%. Це потребує нових кріплень і placement. **Фінальні ціни й підсумки комплекту цією правкою не перераховано.**
+
+U102 footprint виправлено на існуючий `Package_SO:MSOP-10_3x3mm_P0.5mm`. TI DGS0010A та bundled KiCad10.0.7 обидва JEDEC MO-187 BA, корпус3×3 mm/pitch0.5. KiCad IPC land pads1.5×0.35 mm /centers4.2 mm відрізняються від TI example1.45×0.3 mm /centers4.4 mm; це допустиме позначення package family, а не підтвердження виробничого layout. До виготовлення звірити toe/heel, paste і process.
+
+Окремо від навантажень у бюджеті LAB5 зарезервовано **52 mA власного струму**: 2×LT3045 по25 mA worst-case GND поблизу dropout, SET≈0.204 mA і дев’ять LAB5 TPS2553 по0.140 mA, разом≈51.5 mA. Ключ T7 живиться від VCC_5V_PERI й до цих дев’яти не входить. Цей overhead не приховано в I_ANT і не додає повторно струм зовнішніх LNA.

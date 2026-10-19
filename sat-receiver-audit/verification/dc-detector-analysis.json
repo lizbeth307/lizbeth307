@@ -1,0 +1,236 @@
+{
+  "model": "E4 arithmetic corner sweep; not SPICE or prototype qualification",
+  "design_file": "/workspace/scratch/63085b43f730/git-source/sat-receiver-audit/design/E4.json",
+  "assumptions": {
+    "initial_resistor_tolerance_fraction": 0.001,
+    "comparator_input_error_allowance_v": 0.011,
+    "full_hysteresis_allowance_v": 0.008,
+    "net_clamp_leakage_allowance_a": 8e-08,
+    "normal_reference_range_v": [
+      2.024,
+      2.072
+    ],
+    "reference_pg_derived_range_v": [
+      1.669436201268611,
+      2.2622393393393385
+    ],
+    "broad_reference_envelope_v": [
+      1.65,
+      2.263
+    ],
+    "feed_diode_min_vf_for_maximum_current_bound_v": 0,
+    "vdd_range_v": [
+      3.135,
+      3.465
+    ],
+    "foreign_dc_design_envelope_v": [
+      -30,
+      30
+    ]
+  },
+  "excluded_from_model": [
+    "PCB surface contamination/leakage, resistor TCR mismatch and thermal gradients",
+    "RF parasitic capacitance/inductance, rectification and strong RF overload",
+    "Full transient clamp waveforms, input-clamp current sharing and ESD/lightning",
+    "Capacitor leakage, component faults and all system ground offsets",
+    "Guarantee that every corner unit also accepts an open/floating antenna as safe"
+  ],
+  "nominal": {
+    "lower_coax_trip_v": -0.04708045977011534,
+    "upper_coax_trip_v": 0.04708045977011466,
+    "reference_pg_lower_v": 1.7407951807228916,
+    "reference_pg_upper_v": 2.1734999999999998,
+    "open_port_self_bias_v": 0.020277227722772278,
+    "50ohm_terminated_port_self_bias_v": 0.000978499761108457,
+    "port_bleed_ohm": 996.0,
+    "ideal_50ohm_port_bleed_insertion_loss_db": 0.2153280732642311,
+    "extra_bias_current_4v5_a": 0.004518072289156626,
+    "extra_boni_bias_current_13v8_a": 0.013855421686746989,
+    "bleed_power_at_30v_w": 0.9036144578313253,
+    "per_bleed_resistor_power_at_30v_w": 0.22590361445783133
+  },
+  "normal_corners": {
+    "reference_range_v": [
+      2.024,
+      2.072
+    ],
+    "lower_trip_range_v": [
+      -0.0938528902156108,
+      -0.0004972654716033122
+    ],
+    "upper_trip_range_v": [
+      0.0004982609980733262,
+      0.09366537195344142
+    ],
+    "corner_count": 1024,
+    "max_abs_trip_v": 0.0938528902156108
+  },
+  "expanded_reference_corners": {
+    "reference_range_v": [
+      1.65,
+      2.263
+    ],
+    "lower_trip_range_v": [
+      -0.0986303669636398,
+      0.007344782684612835
+    ],
+    "upper_trip_range_v": [
+      -0.007359486954252037,
+      0.09843330329338211
+    ],
+    "corner_count": 1024,
+    "max_abs_trip_v": 0.0986303669636398
+  },
+  "power": {
+    "reference_feed_max_a": 0.009703703703703702,
+    "gate_pulldowns_max_a": 0.00028,
+    "rail_bleed_max_a": 0.00035,
+    "three_E3_dcs_pullups_max_a": 0.00105,
+    "eight_comparators_quiescent_max_a": 2.88e-05,
+    "total_conservative_3v3_a": 0.011412503703703704,
+    "lab5_detector_current_a": 0,
+    "off_3v3_leakage_voltage_bound_v": 0.000808,
+    "negative_clamp_current_bound_at_minus30v_a": 0.0006446607249820102,
+    "minimum_feed_headroom": {
+      "condition": "VDD3.135V, REF2.072V, all ports0V, resistor extremes;1µA input/leak reserve",
+      "reference_load_max_a": 0.00023806595579966612,
+      "required_minimum_shunt_cathode_current_a": 8e-05,
+      "maximum_diode_vf_for_required_headroom_v": 1.0148130076963504,
+      "conditional_examples": [
+        {
+          "assumed_diode_vf_v": 0.9,
+          "available_cathode_current_a": 0.0008378416349594086,
+          "meets_80ua_if_assumption_true": true
+        },
+        {
+          "assumed_diode_vf_v": 1.0,
+          "available_cathode_current_a": 0.00017777562835874787,
+          "meets_80ua_if_assumption_true": true
+        }
+      ],
+      "full_temperature_diode_vf_guaranteed_by_this_model": false,
+      "qualification": "Measure cold minimum-supply headroom. If REF collapses, reference-good must force DCS HIGH; that is safe-state behavior, not proof of usable preflight."
+    }
+  },
+  "logic_truth_table": [
+    {
+      "lower_ok": false,
+      "upper_ok": false,
+      "ref_low_ok": false,
+      "ref_high_ok": false,
+      "dcs": "HIGH_UNSAFE"
+    },
+    {
+      "lower_ok": false,
+      "upper_ok": false,
+      "ref_low_ok": false,
+      "ref_high_ok": true,
+      "dcs": "HIGH_UNSAFE"
+    },
+    {
+      "lower_ok": false,
+      "upper_ok": false,
+      "ref_low_ok": true,
+      "ref_high_ok": false,
+      "dcs": "HIGH_UNSAFE"
+    },
+    {
+      "lower_ok": false,
+      "upper_ok": false,
+      "ref_low_ok": true,
+      "ref_high_ok": true,
+      "dcs": "HIGH_UNSAFE"
+    },
+    {
+      "lower_ok": false,
+      "upper_ok": true,
+      "ref_low_ok": false,
+      "ref_high_ok": false,
+      "dcs": "HIGH_UNSAFE"
+    },
+    {
+      "lower_ok": false,
+      "upper_ok": true,
+      "ref_low_ok": false,
+      "ref_high_ok": true,
+      "dcs": "HIGH_UNSAFE"
+    },
+    {
+      "lower_ok": false,
+      "upper_ok": true,
+      "ref_low_ok": true,
+      "ref_high_ok": false,
+      "dcs": "HIGH_UNSAFE"
+    },
+    {
+      "lower_ok": false,
+      "upper_ok": true,
+      "ref_low_ok": true,
+      "ref_high_ok": true,
+      "dcs": "HIGH_UNSAFE"
+    },
+    {
+      "lower_ok": true,
+      "upper_ok": false,
+      "ref_low_ok": false,
+      "ref_high_ok": false,
+      "dcs": "HIGH_UNSAFE"
+    },
+    {
+      "lower_ok": true,
+      "upper_ok": false,
+      "ref_low_ok": false,
+      "ref_high_ok": true,
+      "dcs": "HIGH_UNSAFE"
+    },
+    {
+      "lower_ok": true,
+      "upper_ok": false,
+      "ref_low_ok": true,
+      "ref_high_ok": false,
+      "dcs": "HIGH_UNSAFE"
+    },
+    {
+      "lower_ok": true,
+      "upper_ok": false,
+      "ref_low_ok": true,
+      "ref_high_ok": true,
+      "dcs": "HIGH_UNSAFE"
+    },
+    {
+      "lower_ok": true,
+      "upper_ok": true,
+      "ref_low_ok": false,
+      "ref_high_ok": false,
+      "dcs": "HIGH_UNSAFE"
+    },
+    {
+      "lower_ok": true,
+      "upper_ok": true,
+      "ref_low_ok": false,
+      "ref_high_ok": true,
+      "dcs": "HIGH_UNSAFE"
+    },
+    {
+      "lower_ok": true,
+      "upper_ok": true,
+      "ref_low_ok": true,
+      "ref_high_ok": false,
+      "dcs": "HIGH_UNSAFE"
+    },
+    {
+      "lower_ok": true,
+      "upper_ok": true,
+      "ref_low_ok": true,
+      "ref_high_ok": true,
+      "dcs": "LOW_SAFE"
+    }
+  ],
+  "conclusions": {
+    "analytical_max_abs_trip_below_0v1_under_listed_assumptions": true,
+    "analytical_power_allocation_below_12ma": true,
+    "hardware_qualified": false,
+    "required_acceptance": "Each real channel must accept0V and open/50ohm loads, reject±0.100V in both sweep directions over admitted temperature/supply, pass startup/off-state/ref-fault tests, and meet RF loading gates.",
+    "bias_rule": "Only preflight with own bias OFF. Own bias ON normally drives DCS HIGH. Enable only after≥500ms settling and≥500ms continuous LOW."
+  }
+}

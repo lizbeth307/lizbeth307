@@ -1,0 +1,6260 @@
+{
+  "sheet": "E4",
+  "title": "РЧ-тракт: DC-розвʼязка, перемикачі, реле та приймачі",
+  "sources": [
+    {
+      "url": "https://www.analog.com/media/en/technical-documentation/data-sheets/hmc7992.pdf",
+      "note": "Rev A physical pin map, DC blocks, power sequencing and truth Table 4 verified."
+    },
+    {
+      "url": "https://omronfs.omron.com/en_US/ecb/products/pdf/en-g6k_2f_rf.pdf",
+      "note": "Page 4 top-view contact/coil pin map verified; case ground pads are unnumbered."
+    },
+    {
+      "url": "https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/rfcontrol.html",
+      "note": "v1.2 uses X1 TX and X2/X4 RX; generic setup page still lists X3."
+    },
+    {
+      "url": "https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/overview.html",
+      "note": "v1.2 RF/clock/M.2 board connector references."
+    },
+    {
+      "url": "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
+      "note": "AO3400A SOT-23 driver and logic-level gate drive."
+    },
+    {
+      "url": "https://assets.nexperia.com/documents/data-sheet/BAT54C.pdf",
+      "note": "BAT54C: 1/2 anodes; 3 common cathode."
+    },
+    {
+      "url": "https://bonito.net/en/boni-whip-2/",
+      "note": "Supplied coax power inserter; 12–15 V supply."
+    },
+    {
+      "url": "https://www.minicircuits.com/WebStore/dashboardPdf?model=TCBT-2R5G%2B",
+      "note": "Primary manufacturer datasheet Rev G (250728): pad 1 DC; pad 2 isolate; pad 3 RF+DC; pad 4 RF. External 0.01 µF DC bypass required; 200 mA maximum."
+    },
+    {
+      "url": "https://www.minicircuits.com/WebStore/dashboardPdf?model=YAT-10A%2B",
+      "note": "Primary manufacturer pad description: pad 2 input, pad 5 output, pads 1/3/4/6 plus bottom exposed pad ground."
+    },
+    {
+      "url": "https://www.ti.com/lit/ds/symlink/tlv3011.pdf",
+      "note": "TLV3012B DBV6 pins, fail-safe input/ground-clamp limits, PP LOW during POR, 2–8 mV hysteresis and comparator/reference error limits."
+    },
+    {
+      "url": "https://www.ti.com/lit/ds/symlink/lm4040.pdf",
+      "note": "LM4040A20IDBZR shunt 2.048 V; DBZ1 cathode,2 anode,3 tie anode; min current and error budget."
+    },
+    {
+      "url": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
+      "note": "Low-leakage series diodes,1 anode1,3 shared cathode1/anode2,2 cathode2; max80nA at150°C/75V."
+    },
+    {
+      "url": "https://nooelec.com/store/sdr/sdr-addons/rf-blocks/lana-wb.html",
+      "note": "LaNA WB100845,300MHz–8GHz,USB-C3.3–5.5V and ≤65mA; one power method only."
+    },
+    {
+      "url": "https://www.nooelec.com/store/downloads/dl/file/id/118/product/350/lana_wb_datasheet_revision_1.pdf",
+      "note": "Rev1 physical60×38×25mm,38g. NF curve around2.2GHz must not be replaced with whole-band nominal."
+    },
+    {
+      "url": "https://www.sysmocom.de/downloads/rf_filter_cf2235-kt30.pdf",
+      "note": "Pass2170–2300MHz,50Ω,IL≤1dB,124×47×33mm186g,IP50."
+    },
+    {
+      "url": "https://www.hammfg.com/part/1554U2GY",
+      "note": "External pod polycarbonate enclosure nominal200×120×90mm; manufacturer current attributes201×119×89mm,PCB area190.45×106.6mm. Shipping mass is not enclosure mass."
+    },
+    {
+      "url": "https://www.coilcraft.com/en-us/products/rf/ferrite-core-chip-inductors/0805-(2012)/0805ls/0805ls-471/",
+      "note": "ch1 137 MHz; SRF min500MHz, DCR≤0.31Ω, Irms0.72A (15°C rise reference, not absolute max)."
+    },
+    {
+      "url": "https://www.coilcraft.com/en-us/products/rf/ceramic-core-chip-inductors/0805-(2012)/0805hp/0805hp-221/",
+      "note": "ch2 435–440 MHz; SRF typ930MHz, DCR≤0.426Ω, Irms0.50A (15°C rise reference, not absolute max)."
+    },
+    {
+      "url": "https://www.coilcraft.com/en-us/products/rf/ceramic-core-chip-inductors/0603-(1608)/0603hp/0603hp-47n/",
+      "note": "ch3 L-band through 1707 MHz: Coilcraft Document 225-2, revised 04/30/26, confirms SRF typ 2.3 GHz, DCR ≤0.24 Ω and Irms 0.68 A (15 °C rise reference). The PDF specification table resolves the product-page prose discrepancy; final PCB impedance/SRF still require measurement."
+    },
+    {
+      "url": "https://www.coilcraft.com/getmedia/624a615f-2f4d-4200-95a6-61764a49bbc8/0603hp.pdf",
+      "note": "Official Document 225-2 revised 04/30/26, second page, 47N row: 47 nH, L typ 66.9 nH at 1.7 GHz, Q typ 72, SRF typ 2.3 GHz, DCR max 0.24 Ω, Irms 680 mA."
+    }
+  ],
+  "notes": [
+    "Receive-only: Lime X1 TX is permanently cabled to an internal ANNE-50+ 50 Ω load. No TX antenna path. Software transmit entry points must return an error.",
+    "HMC7992 truth table A/B: 00 RF1 PARK; 10 RF2; 01 RF3; 11 RF4. Each of six controls has 1 kΩ series, 100 kΩ pulldown and 100 pF to GND. Supply and MCP controls use 3V3_Q6A. Sequence GND → VDD → controls → RF.",
+    "Every HMC RF terminal has its own ≥50 V C0G DC block, including PARK and unused U407 RF4. U405 uses 1 nF; U406/U407 use 100 pF. BENCH down to HF requires 10 nF C0G 0603 at U406 RF4/RFC and fresh measurement.",
+    "BIAS_CH1..4 are the protected, monitored, filtered E2 outputs. E4 has no duplicate TPS2553 switches, ILIM parts or monitor shunts.",
+    "K1_ON / K2_ON: 00 PARK with receiver and both antennas at 50 Ω; 10 HF; 01 VHF/AIS; 11 forbidden. Pass through 00 and allow ≥10 ms settling on every change. At most one energized coil.",
+    "The HF relay cascade has one receiver PARK load. Two independent 50 Ω NC loads on parallel receiver commons would yield 25 Ω and are rejected. HF uses two contacts; VHF uses three. Final PCB loss, return loss and isolation must be measured.",
+    "All coax shields join RF GND. Bulkhead shells bond 360° to CHASSIS. W408 passes center and shield through the same cores as coax, not as a series RF inductor.",
+    "P2/P3 must never exceed 5.5 V. BONI13V8 goes only to keyed BNC P5; LNB13V2 only to F P4. Unpowered Uputronics means no useful UHF path.",
+    "Test sources are conducted at internal BENCH only, with receiver input ≤−40 dBm. No source antenna. RTL receiver bias-tees remain OFF.",
+    "Receiver USB canonical nets and Lime E5_PCIE_* nets are intentional agreed E4/E5 links. E5 owns host/hub/cabling and the riser; E4 owns the receiver modules.",
+    "DCS_UHF/LBAND/HF are real TLV3012B bipolar window circuits. HIGH means unsafe, unknown or off. LOW means both window tests and both reference-good tests passed. Nominal coax thresholds are ±47.080 mV; input hysteresis is 2–8 mV (4–16 mV at coax).",
+    "DC preflight is valid only with the corresponding own bias OFF: disable the relevant EN, wait ≥500 ms, require DCS LOW continuously for ≥500 ms, then enable bias. DCS HIGH is expected with own bias ON. Disable bias and repeat preflight before changing antennas or routes.",
+    "Foreign DC design envelope is ±30 V. The 49.8 kΩ tap limits sustained negative clamp current below0.7mA. Upper clamps return to the shunt reference. BAV199 blocks reference-to-Q6A backfeed; a10k rail bleed limits reverse-leakage voltage. Physically verify the OFF 3.3V rail stays below0.1V.",
+    "Detectors allocate ≤12 mA from3V3_Q6A (about6mA typical), and zero current fromLAB5. This includes the three existing E3 DCS pullups; do not count them twice.",
+    "S-band uses the existing helix →0.10mRG316→LaNAWB100845→0.10mRG316→podBLK89→cf2235→1.00mRG316→RX2→retainedBLK89→LimeX4. LaNA uses one1.50m26AWG USB-C power-only cable from protectedBIAS_SB_LNA5V.",
+    "S-band LNA and filter belong to an external inline pod at the antenna feed, not the occupied handheld RF bay. Select Hammond1554U2GY, with the filter on a lower tray and LaNA above it. Proof-fit and cable-entry sealing remain required. Pack the pod in the backpack kit; longest part<35cm. Handheld mass excludes this pod.",
+    "Sysmocom cf2235 has a2170–2300MHz passband, including2252.5/2284/2285MHz. Retain the mission allowlist as software policy, not a physical-filter rejection claim.",
+    "Each sensed RF port has a996Ω DC bleed (four249Ω≥0.5W resistors). A floating port self-biases to about20.3mV; a50Ω terminated port to about0.98mV. Expected extra own-bias load is4.52mA onP2/P3 and13.86mA onBoni. Include0.215dB ideal50Ω tap loss in RF acceptance/calibration.",
+    "DCS open wire fails HIGH while 3V3_Q6A is present; a short of DCS to GND can imitate SAFE and is not detected by this interface. This is a preflight aid with explicit prototype acceptance, not a certified single-fault safety interlock.",
+    "J416/J417 explicitly show the existing external UHF/L-band antenna feed and shield upstream of A418/A419. They belong to the selected antenna/LNA assembly and add no extra purchased connector; an integrated active patch uses an internal feed/return boundary rather than an invented exposed SMA."
+  ],
+  "components": [
+    {
+      "ref": "A401",
+      "value": "Flamingo+ FM v2 #1",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "IN",
+          "name": "IN",
+          "net": "E4_P1",
+          "type": "passive"
+        },
+        {
+          "number": "OUT",
+          "name": "OUT",
+          "net": "E4_RF_P1_FM",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "A402",
+      "value": "SAWbird+ NOAA 100800",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "IN",
+          "name": "IN",
+          "net": "E4_RF_P1_FM",
+          "type": "passive"
+        },
+        {
+          "number": "OUT",
+          "name": "OUT",
+          "net": "E4_RF_CH1",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "A403",
+      "value": "Flamingo+ FM v2 #2 optional",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "IN",
+          "name": "IN",
+          "net": "E4_P8",
+          "type": "passive"
+        },
+        {
+          "number": "OUT",
+          "name": "OUT",
+          "net": "E4_RF_P8_FM",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "A404",
+      "value": "LNA V2 optional",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "IN",
+          "name": "IN",
+          "net": "E4_RF_P8_FM",
+          "type": "passive"
+        },
+        {
+          "number": "OUT",
+          "name": "OUT",
+          "net": "E4_RF_CH4",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "A405",
+      "value": "SMA attenuator 15/20/30 dB: bench selection",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "IN",
+          "name": "IN",
+          "net": "E4_RF_CH5_DC",
+          "type": "passive"
+        },
+        {
+          "number": "OUT",
+          "name": "OUT",
+          "net": "E4_RF_CH5_ATT",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "A406",
+      "value": "Boni-Whip supplied bias-tee",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "ANT",
+          "name": "ANT",
+          "net": "E4_HF_CM",
+          "type": "passive"
+        },
+        {
+          "number": "DC",
+          "name": "DC",
+          "net": "BONI13V8",
+          "type": "passive"
+        },
+        {
+          "number": "RF",
+          "name": "RF",
+          "net": "E4_HF_BT",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering.",
+      "notes": [
+        "Ports ANT, RF and DC are functional names. Confirm labels, DC connector polarity and the receiver-side DC block on the actual supplied unit."
+      ]
+    },
+    {
+      "ref": "A407",
+      "value": "YAT-10A+ 10 dB",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "verified",
+      "source": "https://www.minicircuits.com/WebStore/dashboardPdf?model=YAT-10A%2B",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "RF_IN",
+          "net": "E4_YAT_IN",
+          "type": "passive"
+        },
+        {
+          "number": "3",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "4",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "5",
+          "name": "RF_OUT",
+          "net": "E4_YAT_OUT",
+          "type": "passive"
+        },
+        {
+          "number": "6",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "EP",
+          "name": "EP_GND",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Pad map independently verified from primary Mini-Circuits datasheet retrieval on 2026-10-19. Footprint dimensions, orientation and ground-pad implementation must still be checked during PCB release."
+      ],
+      "description": "Physical manufacturer SMT pad map, independently verified from the Mini-Circuits primary datasheet text."
+    },
+    {
+      "ref": "A408",
+      "value": "H1 SMA pad 0/2/3 dB",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "IN",
+          "name": "IN",
+          "net": "E4_RX1_PAD",
+          "type": "passive"
+        },
+        {
+          "number": "OUT",
+          "name": "OUT",
+          "net": "E4_RX1_PANEL",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "A409",
+      "value": "BLK-89-S+",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "IN",
+          "name": "IN",
+          "net": "E4_LIME_RX2",
+          "type": "passive"
+        },
+        {
+          "number": "OUT",
+          "name": "OUT",
+          "net": "E4_RX2_BLK",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "A410",
+      "value": "ANNE-50+ 50 Ω load",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "END_A",
+          "name": "END_A",
+          "net": "E4_TX_LOAD",
+          "type": "passive"
+        },
+        {
+          "number": "END_B",
+          "name": "END_B",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "A411",
+      "value": "RTL-SDR Blog V4L LABRXA",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "ANT",
+          "name": "ANT",
+          "net": "E4_RFC_A",
+          "type": "passive"
+        },
+        {
+          "number": "USB_DM",
+          "name": "USB_DM",
+          "net": "RTLA_DM",
+          "type": "bidirectional"
+        },
+        {
+          "number": "USB_DP",
+          "name": "USB_DP",
+          "net": "RTLA_DP",
+          "type": "bidirectional"
+        },
+        {
+          "number": "USB_GND",
+          "name": "USB_GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "USB_SHIELD",
+          "name": "USB_SHIELD",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "USB_VBUS",
+          "name": "USB_VBUS",
+          "net": "VBUS_RTLA",
+          "type": "power_in"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering.",
+      "notes": [
+        "Internal RTL bias-tee must remain OFF; RFC DC block adds independent hardware isolation."
+      ]
+    },
+    {
+      "ref": "A412",
+      "value": "RTL-SDR Blog V4L LABRXB",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "ANT",
+          "name": "ANT",
+          "net": "E4_RFC_B",
+          "type": "passive"
+        },
+        {
+          "number": "USB_DM",
+          "name": "USB_DM",
+          "net": "RTLB_DM",
+          "type": "bidirectional"
+        },
+        {
+          "number": "USB_DP",
+          "name": "USB_DP",
+          "net": "RTLB_DP",
+          "type": "bidirectional"
+        },
+        {
+          "number": "USB_GND",
+          "name": "USB_GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "USB_SHIELD",
+          "name": "USB_SHIELD",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "USB_VBUS",
+          "name": "USB_VBUS",
+          "net": "VBUS_RTLB",
+          "type": "power_in"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering.",
+      "notes": [
+        "Internal RTL bias-tee must remain OFF; RFC DC block adds independent hardware isolation."
+      ]
+    },
+    {
+      "ref": "A414",
+      "value": "Airspy HF+ Discovery",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "ANT",
+          "name": "ANT",
+          "net": "E4_HFP_ANT",
+          "type": "passive"
+        },
+        {
+          "number": "USB_DM",
+          "name": "USB_DM",
+          "net": "HFP_DM",
+          "type": "bidirectional"
+        },
+        {
+          "number": "USB_DP",
+          "name": "USB_DP",
+          "net": "HFP_DP",
+          "type": "bidirectional"
+        },
+        {
+          "number": "USB_GND",
+          "name": "USB_GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "USB_SHIELD",
+          "name": "USB_SHIELD",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "USB_VBUS",
+          "name": "USB_VBUS",
+          "net": "VBUS_HFP",
+          "type": "power_in"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "A415",
+      "value": "LimeSDR Micro M.2 v1.2 receive-only",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "J4_REF_IN",
+          "name": "J4_REF_IN",
+          "net": "E4_LIME_REF",
+          "type": "passive"
+        },
+        {
+          "number": "X1_TX",
+          "name": "X1_TX",
+          "net": "E4_LIME_TX",
+          "type": "passive"
+        },
+        {
+          "number": "X2_RX_A",
+          "name": "X2_RX_A",
+          "net": "E4_LIME_RXA",
+          "type": "passive"
+        },
+        {
+          "number": "X4_RX_B",
+          "name": "X4_RX_B",
+          "net": "E4_LIME_RXB",
+          "type": "passive"
+        },
+        {
+          "number": "X9_3V3",
+          "name": "X9_3V3",
+          "net": "LIME3V3",
+          "type": "power_in"
+        },
+        {
+          "number": "X9_CLKREQ_N",
+          "name": "X9_CLKREQ_N",
+          "net": "E5_PCIE_CLKREQ_N",
+          "type": "passive"
+        },
+        {
+          "number": "X9_GND",
+          "name": "X9_GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "X9_PERST_N",
+          "name": "X9_PERST_N",
+          "net": "E5_PCIE_PERST_N",
+          "type": "passive"
+        },
+        {
+          "number": "X9_REFCLK_N",
+          "name": "X9_REFCLK_N",
+          "net": "E5_PCIE_REFCLK_N",
+          "type": "passive"
+        },
+        {
+          "number": "X9_REFCLK_P",
+          "name": "X9_REFCLK_P",
+          "net": "E5_PCIE_REFCLK_P",
+          "type": "passive"
+        },
+        {
+          "number": "X9_RX_N",
+          "name": "X9_RX_N",
+          "net": "E5_PCIE_TX0_N",
+          "type": "passive"
+        },
+        {
+          "number": "X9_RX_P",
+          "name": "X9_RX_P",
+          "net": "E5_PCIE_TX0_P",
+          "type": "passive"
+        },
+        {
+          "number": "X9_TX_N",
+          "name": "X9_TX_N",
+          "net": "E5_PCIE_RX0_N",
+          "type": "passive"
+        },
+        {
+          "number": "X9_TX_P",
+          "name": "X9_TX_P",
+          "net": "E5_PCIE_RX0_P",
+          "type": "passive"
+        },
+        {
+          "number": "X9_WAKE_N",
+          "name": "X9_WAKE_N",
+          "net": "E5_PCIE_WAKE_N",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering.",
+      "notes": [
+        "X1 TX is permanently loaded. X2/X4 are the v1.2 receive ports; validate channel A/B mapping on the supplied board. J4 is a reference input, not an antenna."
+      ]
+    },
+    {
+      "ref": "A418",
+      "value": "Uputronics 440 Rev 3.0 external LNA",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "IN",
+          "name": "IN",
+          "net": "E4_P2_ANT",
+          "type": "passive"
+        },
+        {
+          "number": "OUT",
+          "name": "OUT",
+          "net": "E4_P2",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "A419",
+      "value": "GOES / H1 / iO / active patch external LNA",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "IN",
+          "name": "IN",
+          "net": "E4_P3_ANT",
+          "type": "passive"
+        },
+        {
+          "number": "OUT",
+          "name": "OUT",
+          "net": "E4_P3",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering.",
+      "notes": [
+        "Exactly one documented L-band LNA/active patch is connected per operating profile. No TCBT 200 mA device on ch3."
+      ]
+    },
+    {
+      "ref": "A420",
+      "value": "Othernet Bullseye LNB",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "IF",
+          "name": "IF",
+          "net": "E4_LNB_IF",
+          "type": "passive"
+        },
+        {
+          "number": "REF25",
+          "name": "REF25",
+          "net": "E4_LNB_REF25",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "A421",
+      "value": "AXING CFA 11-00 DC-isolated 75 Ω load",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "END_A",
+          "name": "END_A",
+          "net": "E4_LNB_REF25",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "A422",
+      "value": "Nooelec LaNA WB 100845",
+      "kind": "module",
+      "group": "S-band external inline pod",
+      "status": "module",
+      "source": "https://nooelec.com/store/sdr/sdr-addons/rf-blocks/lana-wb.html",
+      "pins": [
+        {
+          "number": "SMA_IN",
+          "name": "SMA_IN",
+          "type": "passive",
+          "net": "E4_SB_LNA_IN"
+        },
+        {
+          "number": "SMA_OUT",
+          "name": "SMA_OUT",
+          "type": "passive",
+          "net": "E4_SB_LNA_OUT"
+        },
+        {
+          "number": "USB_C_VBUS",
+          "name": "USB_C_VBUS",
+          "type": "power_in",
+          "net": "E4_SB_POD5"
+        },
+        {
+          "number": "USB_C_GND",
+          "name": "USB_C_GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering.",
+      "notes": [
+        "300 MHz–8 GHz. External USB-C power 3.3–5.5 V, ≤65 mA specified. Use only this power method; no simultaneous bias-tee or external supply.",
+        "Located at existing S-band helix feed in an external weatherproof inline pod, not inside the handheld RF bay. Gain/NF at 2.2–2.3 GHz must be measured; product-wide nominal NF is not a guaranteed 2.2 GHz figure."
+      ],
+      "dnp": false
+    },
+    {
+      "ref": "A423",
+      "value": "sysmocom cf2235-kt30 2170–2300 MHz",
+      "kind": "module",
+      "group": "S-band external inline pod",
+      "status": "module",
+      "source": "https://www.sysmocom.de/downloads/rf_filter_cf2235-kt30.pdf",
+      "pins": [
+        {
+          "number": "SMA_F_A",
+          "name": "SMA_F_A",
+          "type": "passive",
+          "net": "E4_SB_FILTER_IN"
+        },
+        {
+          "number": "SMA_F_B",
+          "name": "SMA_F_B",
+          "type": "passive",
+          "net": "E4_SB_FILTER_OUT"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering.",
+      "dnp": false,
+      "notes": [
+        "Both SMA-female ports are bidirectional. 50 Ω, IL ≤1 dB, VSWR ≤1.30, 124×47×33 mm, 186 g, −20…+50 °C, IP50; needs weather enclosure.",
+        "Primary datasheet passband is 2170–2300 MHz. 2252.5/2284/2285 MHz are in-band: retain the software allowlist for policy/mission selection, not as a physical filter claim."
+      ]
+    },
+    {
+      "ref": "A424",
+      "value": "TCBT-2R5G+ ch4",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "verified",
+      "source": "https://www.minicircuits.com/WebStore/dashboardPdf?model=TCBT-2R5G%2B",
+      "pins": [
+        {
+          "number": "1",
+          "name": "DC",
+          "net": "BIAS_CH4",
+          "type": "passive"
+        },
+        {
+          "number": "3",
+          "name": "RF_DC",
+          "net": "E4_RF_CH4",
+          "type": "passive"
+        },
+        {
+          "number": "4",
+          "name": "RF",
+          "net": "E4_CH4_RF_ONLY",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "ISOLATE",
+          "nc": true,
+          "type": "no_connect"
+        }
+      ],
+      "notes": [
+        "Pad map independently verified from primary Mini-Circuits datasheet retrieval on 2026-10-19. Footprint dimensions, orientation and ground-pad implementation must still be checked during PCB release.",
+        "Manufacturer Rev G requires external C1 = 0.01 µF: C446 = 10 nF. Pad 2 is isolated and must not connect to ground. ch4 E2 RILIM = 162 kΩ; maximum current stays below the device 200 mA rating."
+      ],
+      "description": "Physical manufacturer SMT pad map, independently verified from the Mini-Circuits primary datasheet text."
+    },
+    {
+      "ref": "C401",
+      "value": "1 nF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_RTLA_RF1",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_PARK_A",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C402",
+      "value": "1 nF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_RF_CH1",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_RTLA_RF2",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C403",
+      "value": "1 nF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_P2",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_RTLA_RF3",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C404",
+      "value": "1 nF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_CH4_RF_ONLY",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_RTLA_RF4",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C405",
+      "value": "1 nF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_RTLA_RFC",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_RFC_A",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C406",
+      "value": "100 pF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_RTLB_RF1",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_PARK_B",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C407",
+      "value": "100 pF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_RF_CH3_B",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_RTLB_RF2",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C408",
+      "value": "100 pF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_RF_CH5_ATT",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_RTLB_RF3",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C409",
+      "value": "100 pF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_BENCH",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_RTLB_RF4",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C410",
+      "value": "100 pF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_RTLB_RFC",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_RFC_B",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C411",
+      "value": "100 pF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_P3",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_LIME_RFC",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C412",
+      "value": "100 pF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_RF_CH5",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_RF_CH5_DC",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C414",
+      "value": "100 pF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_LIME_RF1",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_PARK_C",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C415",
+      "value": "100 pF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_LIME_RF3",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_YAT_IN",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C416",
+      "value": "100 pF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_LIME_TO_RTLB",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_RF_CH3_B",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C417",
+      "value": "100 pF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_LIME_RFSPARE",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_PARK_C_SPARE",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C418",
+      "value": "22 pF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_YAT_OUT",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_RX1_EDGE",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C419",
+      "value": "100 pF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_RTLA_CTL_A",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C420",
+      "value": "100 pF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_RTLA_CTL_B",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C421",
+      "value": "100 pF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_RTLB_CTL_A",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C422",
+      "value": "100 pF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_RTLB_CTL_B",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C434",
+      "value": "100 pF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_LIME_CTL_A",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C435",
+      "value": "100 pF C0G 50 V 0402",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_LIME_CTL_B",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C440",
+      "value": "100 nF X7R 10 V ",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "3V3_Q6A",
+          "type": "power_in"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C441",
+      "value": "100 nF X7R 10 V ",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "3V3_Q6A",
+          "type": "power_in"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C442",
+      "value": "100 nF X7R 10 V ",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "3V3_Q6A",
+          "type": "power_in"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "C446",
+      "value": "10 nF X7R 50 V external DC bypass",
+      "kind": "capacitor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "BIAS_CH4",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "D401",
+      "value": "BAT54C",
+      "kind": "diode",
+      "group": "RF passives and drivers",
+      "status": "verified",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A1",
+          "net": "E4_K1_LS",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "A2",
+          "net": "E4_K2_LS",
+          "type": "passive"
+        },
+        {
+          "number": "3",
+          "name": "K_COMMON",
+          "net": "LAB5",
+          "type": "passive"
+        }
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "J401",
+      "value": "P1 VHF137 SMA: no DC",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_P1",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "J402",
+      "value": "P2 UHF SMA: 4.5 V",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_P2",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "J403",
+      "value": "P3 L-band SMA: 4.5 V",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_P3",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "J404",
+      "value": "P4 LNB F: 13.2 V",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_P4",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "J405",
+      "value": "P5 HF BNC: 13.8 V",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_P5",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "J406",
+      "value": "P6 VHF/AIS SMA: no DC",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_P6",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "J407",
+      "value": "P7 GNSS SMA",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "GNSS_ANT",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "J408",
+      "value": "P8 WIDE optional SMA",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_P8",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "J409",
+      "value": "BENCH internal SMA",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_BENCH",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "J410",
+      "value": "RTL-A RF internal SMA",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_RFC_A",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "J411",
+      "value": "RTL-B RF internal SMA",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_RFC_B",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "J412",
+      "value": "RX1 edge SMA",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_RX1_EDGE",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "J413",
+      "value": "RX1 panel SMA: captive loop",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_RX1_PANEL",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "J414",
+      "value": "RX2 panel SMA",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_LIME_RX2",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "J415",
+      "value": "REF IN panel SMA",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_REF_IN",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "J416",
+      "value": "UHF antenna feed / A418 input interface",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; assembly boundary of external Uputronics 440 LNA and selected UHF antenna",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_P2_ANT",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional antenna-side coax interface of the external A418 assembly; named center/shield ports are not physical PCB pad numbers.",
+      "notes": [
+        "This is the selected UHF antenna/feed connection to the LNA RF input, upstream of A418; J402 remains the handheld P2 connection downstream of the LNA.",
+        "The interface is assembly-owned. When A418 has its integral SMA input, this record identifies that existing input and its mating antenna feed; it is not an additional bulkhead, adaptor, PCB jack or purchase. Verify the received assembly connector and cable before mating."
+      ]
+    },
+    {
+      "ref": "J417",
+      "value": "L-band antenna feed / A419 input interface",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; profile-selected external L-band antenna/LNA or active-patch assembly boundary",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_P3_ANT",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional RF feed/return interface of the selected external A419 antenna assembly; named center/shield ports do not invent internal PCB pad numbers.",
+      "notes": [
+        "Exactly one profile antenna/feed drives this interface. For a discrete external LNA, it identifies the existing antenna-side input connector and its shield. For an integrated active patch, CENTER and SHIELD express its internal antenna feed and RF return; no accessible extra SMA is asserted.",
+        "The interface is assembly-owned and adds no separately purchased connector. J403 remains the handheld P3 connection on the receiver-facing side. Confirm the chosen profile assembly and its real connectors during its existing hardware acceptance."
+      ]
+    },
+    {
+      "ref": "K401",
+      "value": "G6K-2F-RF-S DC5 HF",
+      "kind": "relay",
+      "group": "RF passives and drivers",
+      "status": "verified",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "COIL+",
+          "net": "LAB5",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "NC1",
+          "net": "E4_PARK_HF",
+          "type": "passive"
+        },
+        {
+          "number": "3",
+          "name": "COM1",
+          "net": "E4_HF_BT",
+          "type": "passive"
+        },
+        {
+          "number": "4",
+          "name": "NO1",
+          "net": "E4_HF_LINK",
+          "type": "passive"
+        },
+        {
+          "number": "5",
+          "name": "NO2",
+          "net": "E4_HF_LINK",
+          "type": "passive"
+        },
+        {
+          "number": "6",
+          "name": "COM2",
+          "net": "E4_HFP_ANT",
+          "type": "passive"
+        },
+        {
+          "number": "7",
+          "name": "NC2",
+          "net": "E4_RELAY_STAGE",
+          "type": "passive"
+        },
+        {
+          "number": "8",
+          "name": "COIL-",
+          "net": "E4_K1_LS",
+          "type": "passive"
+        },
+        {
+          "number": "G1",
+          "name": "CASE_GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "G2",
+          "name": "CASE_GND",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "G1/G2 are project pad IDs for the two unnumbered case ground terminals. The chosen footprint must use the same IDs."
+      ]
+    },
+    {
+      "ref": "K402",
+      "value": "G6K-2F-RF-S DC5 VHF",
+      "kind": "relay",
+      "group": "RF passives and drivers",
+      "status": "verified",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "COIL+",
+          "net": "LAB5",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "NC1",
+          "net": "E4_PARK_VHF",
+          "type": "passive"
+        },
+        {
+          "number": "3",
+          "name": "COM1",
+          "net": "E4_P6",
+          "type": "passive"
+        },
+        {
+          "number": "4",
+          "name": "NO1",
+          "net": "E4_VHF_LINK",
+          "type": "passive"
+        },
+        {
+          "number": "5",
+          "name": "NO2",
+          "net": "E4_VHF_LINK",
+          "type": "passive"
+        },
+        {
+          "number": "6",
+          "name": "COM2",
+          "net": "E4_RELAY_STAGE",
+          "type": "passive"
+        },
+        {
+          "number": "7",
+          "name": "NC2",
+          "net": "E4_PARK_HFP",
+          "type": "passive"
+        },
+        {
+          "number": "8",
+          "name": "COIL-",
+          "net": "E4_K2_LS",
+          "type": "passive"
+        },
+        {
+          "number": "G1",
+          "name": "CASE_GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "G2",
+          "name": "CASE_GND",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "G1/G2 are project pad IDs for the two unnumbered case ground terminals. The chosen footprint must use the same IDs."
+      ]
+    },
+    {
+      "ref": "L401",
+      "value": "470 nH optional bleed: part TBD",
+      "kind": "inductor",
+      "group": "RF passives and drivers",
+      "status": "TBD",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_P1",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "dnp": true,
+      "notes": [
+        "Optional bleed is DNP until exact part and RF loading are qualified."
+      ]
+    },
+    {
+      "ref": "L402",
+      "value": "Coilcraft 0805LS-471XGRC 470 nH 2%",
+      "kind": "inductor",
+      "group": "RF passives and drivers",
+      "status": "verified",
+      "source": "https://www.coilcraft.com/en-us/products/rf/ferrite-core-chip-inductors/0805-(2012)/0805ls/0805ls-471/",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_RF_CH1",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "BIAS_CH1",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "ch1 137 MHz; SRF min500MHz, DCR≤0.31Ω, Irms0.72A (15°C rise reference, not absolute max).",
+        "Concrete part selection, not a measured final injector. Confirm manufacturer land pattern and RF impedance/IL/RL/isolation under actual DC current on the completed PCB."
+      ]
+    },
+    {
+      "ref": "L403",
+      "value": "Coilcraft 0805HP-221XGRC 220 nH 2%",
+      "kind": "inductor",
+      "group": "RF passives and drivers",
+      "status": "verified",
+      "source": "https://www.coilcraft.com/en-us/products/rf/ceramic-core-chip-inductors/0805-(2012)/0805hp/0805hp-221/",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_P2",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "BIAS_CH2",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "ch2 435–440 MHz; SRF typ930MHz, DCR≤0.426Ω, Irms0.50A (15°C rise reference, not absolute max).",
+        "Concrete part selection, not a measured final injector. Confirm manufacturer land pattern and RF impedance/IL/RL/isolation under actual DC current on the completed PCB."
+      ]
+    },
+    {
+      "ref": "L404",
+      "value": "Coilcraft 0603HP-47NXGRW 47 nH 2%",
+      "kind": "inductor",
+      "group": "RF passives and drivers",
+      "status": "verified",
+      "source": "https://www.coilcraft.com/en-us/products/rf/ceramic-core-chip-inductors/0603-(1608)/0603hp/0603hp-47n/",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_P3",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "BIAS_CH3",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "ch3 L-band through 1707 MHz: Coilcraft Document 225-2, revised 04/30/26, confirms SRF typ 2.3 GHz, DCR ≤0.24 Ω and Irms 0.68 A (15 °C rise reference). The PDF specification table resolves the product-page prose discrepancy; final PCB impedance/SRF still require measurement.",
+        "Concrete part selection, not a measured final injector. Confirm manufacturer land pattern and RF impedance/IL/RL/isolation under actual DC current on the completed PCB."
+      ]
+    },
+    {
+      "ref": "L406",
+      "value": "LQW2UAS68NG00L 68 nH 1 A",
+      "kind": "inductor",
+      "group": "RF passives and drivers",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_RF_CH5",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "LNB13V2",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "L407",
+      "value": "470 nH bleed SRF >300 MHz: part TBD",
+      "kind": "inductor",
+      "group": "RF passives and drivers",
+      "status": "TBD",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_P6",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "dnp": true,
+      "notes": [
+        "Optional bleed is DNP until exact part and RF loading are qualified."
+      ]
+    },
+    {
+      "ref": "NT401",
+      "value": "RF ground / CHASSIS bond",
+      "kind": "net_tie",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "CHASSIS",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "Q401",
+      "value": "AO3400A",
+      "kind": "nfet",
+      "group": "RF passives and drivers",
+      "status": "verified",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "net": "E4_K1_G",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "net": "E4_K1_LS",
+          "type": "passive"
+        }
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "Q402",
+      "value": "AO3400A",
+      "kind": "nfet",
+      "group": "RF passives and drivers",
+      "status": "verified",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "net": "E4_K2_G",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "net": "E4_K2_LS",
+          "type": "passive"
+        }
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "R405",
+      "value": "49.9Ω 1% RF load",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_PARK_A",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R406",
+      "value": "49.9Ω 1% RF load",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_PARK_B",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R407",
+      "value": "49.9Ω 1% RF load",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_PARK_C",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R408",
+      "value": "100kΩ 1% ",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_RTLA_CTL_A",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R409",
+      "value": "100kΩ 1% ",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_RTLA_CTL_B",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R410",
+      "value": "100kΩ 1% ",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_RTLB_CTL_A",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R411",
+      "value": "100kΩ 1% ",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_RTLB_CTL_B",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R412",
+      "value": "100Ω ",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "K1_ON",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_K1_G",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R413",
+      "value": "100Ω ",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "K2_ON",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_K2_G",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R414",
+      "value": "100kΩ 1% ",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_K1_G",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R415",
+      "value": "100kΩ 1% ",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_K2_G",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R416",
+      "value": "49.9Ω 1% RF load",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_PARK_C_SPARE",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R417",
+      "value": "49.9Ω 1% RF load",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_PARK_HF",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R418",
+      "value": "49.9Ω 1% RF load",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_PARK_VHF",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R419",
+      "value": "49.9Ω 1% RF load",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_PARK_HFP",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R434",
+      "value": "100kΩ 1% ",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_LIME_CTL_A",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R435",
+      "value": "100kΩ 1% ",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_LIME_CTL_B",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R440",
+      "value": "1kΩ 1% ",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "SW_RTLA_A",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_RTLA_CTL_A",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R441",
+      "value": "1kΩ 1% ",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "SW_RTLA_B",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_RTLA_CTL_B",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R442",
+      "value": "1kΩ 1% ",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "SW_RTLB_A",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_RTLB_CTL_A",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R443",
+      "value": "1kΩ 1% ",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "SW_RTLB_B",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_RTLB_CTL_B",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R444",
+      "value": "1kΩ 1% ",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "SW_LIME_A",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_LIME_CTL_A",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "R445",
+      "value": "1kΩ 1% ",
+      "kind": "resistor",
+      "group": "RF passives and drivers",
+      "status": "design",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "SW_LIME_B",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_LIME_CTL_B",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "U405",
+      "value": "HMC7992LP3DE A",
+      "kind": "ic",
+      "group": "SP4T switches",
+      "status": "verified",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "RF4",
+          "net": "E4_RTLA_RF4",
+          "type": "passive"
+        },
+        {
+          "number": "10",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "11",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "12",
+          "name": "RF1",
+          "net": "E4_RTLA_RF1",
+          "type": "passive"
+        },
+        {
+          "number": "13",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "14",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "15",
+          "name": "RFC",
+          "net": "E4_RTLA_RFC",
+          "type": "passive"
+        },
+        {
+          "number": "16",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "3",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "4",
+          "name": "RF3",
+          "net": "E4_RTLA_RF3",
+          "type": "passive"
+        },
+        {
+          "number": "5",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "6",
+          "name": "VDD",
+          "net": "3V3_Q6A",
+          "type": "power_in"
+        },
+        {
+          "number": "7",
+          "name": "B",
+          "net": "E4_RTLA_CTL_B",
+          "type": "input"
+        },
+        {
+          "number": "8",
+          "name": "A",
+          "net": "E4_RTLA_CTL_A",
+          "type": "input"
+        },
+        {
+          "number": "9",
+          "name": "RF2",
+          "net": "E4_RTLA_RF2",
+          "type": "passive"
+        },
+        {
+          "number": "EPAD",
+          "name": "EPAD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "U406",
+      "value": "HMC7992LP3DE B",
+      "kind": "ic",
+      "group": "SP4T switches",
+      "status": "verified",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "RF4",
+          "net": "E4_RTLB_RF4",
+          "type": "passive"
+        },
+        {
+          "number": "10",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "11",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "12",
+          "name": "RF1",
+          "net": "E4_RTLB_RF1",
+          "type": "passive"
+        },
+        {
+          "number": "13",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "14",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "15",
+          "name": "RFC",
+          "net": "E4_RTLB_RFC",
+          "type": "passive"
+        },
+        {
+          "number": "16",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "3",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "4",
+          "name": "RF3",
+          "net": "E4_RTLB_RF3",
+          "type": "passive"
+        },
+        {
+          "number": "5",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "6",
+          "name": "VDD",
+          "net": "3V3_Q6A",
+          "type": "power_in"
+        },
+        {
+          "number": "7",
+          "name": "B",
+          "net": "E4_RTLB_CTL_B",
+          "type": "input"
+        },
+        {
+          "number": "8",
+          "name": "A",
+          "net": "E4_RTLB_CTL_A",
+          "type": "input"
+        },
+        {
+          "number": "9",
+          "name": "RF2",
+          "net": "E4_RTLB_RF2",
+          "type": "passive"
+        },
+        {
+          "number": "EPAD",
+          "name": "EPAD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "U407",
+      "value": "HMC7992LP3DE C",
+      "kind": "ic",
+      "group": "SP4T switches",
+      "status": "verified",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "1",
+          "name": "RF4",
+          "net": "E4_LIME_RFSPARE",
+          "type": "passive"
+        },
+        {
+          "number": "10",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "11",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "12",
+          "name": "RF1",
+          "net": "E4_LIME_RF1",
+          "type": "passive"
+        },
+        {
+          "number": "13",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "14",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "15",
+          "name": "RFC",
+          "net": "E4_LIME_RFC",
+          "type": "passive"
+        },
+        {
+          "number": "16",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "3",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "4",
+          "name": "RF3",
+          "net": "E4_LIME_RF3",
+          "type": "passive"
+        },
+        {
+          "number": "5",
+          "name": "GND",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "6",
+          "name": "VDD",
+          "net": "3V3_Q6A",
+          "type": "power_in"
+        },
+        {
+          "number": "7",
+          "name": "B",
+          "net": "E4_LIME_CTL_B",
+          "type": "input"
+        },
+        {
+          "number": "8",
+          "name": "A",
+          "net": "E4_LIME_CTL_A",
+          "type": "input"
+        },
+        {
+          "number": "9",
+          "name": "RF2",
+          "net": "E4_LIME_TO_RTLB",
+          "type": "passive"
+        },
+        {
+          "number": "EPAD",
+          "name": "EPAD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ]
+    },
+    {
+      "ref": "W401",
+      "value": "Goobay 58814 75 Ω F-F 1 m",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "END_A",
+          "name": "END_A",
+          "net": "E4_LNB_IF",
+          "type": "passive"
+        },
+        {
+          "number": "END_B",
+          "name": "END_B",
+          "net": "E4_P4",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "W402",
+      "value": "75 Ω shielded internal IF coax",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "END_A",
+          "name": "END_A",
+          "net": "E4_P4",
+          "type": "passive"
+        },
+        {
+          "number": "END_B",
+          "name": "END_B",
+          "net": "E4_RF_CH5",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "W403",
+      "value": "RX1 panel → Lime X2 MHF4 coax",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "END_A",
+          "name": "END_A",
+          "net": "E4_RX1_PANEL",
+          "type": "passive"
+        },
+        {
+          "number": "END_B",
+          "name": "END_B",
+          "net": "E4_LIME_RXA",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "W404",
+      "value": "RX2 → Lime X4 MHF4 coax",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "END_A",
+          "name": "END_A",
+          "net": "E4_RX2_BLK",
+          "type": "passive"
+        },
+        {
+          "number": "END_B",
+          "name": "END_B",
+          "net": "E4_LIME_RXB",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "W405",
+      "value": "REF IN → J4 MHF4 coax",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "END_A",
+          "name": "END_A",
+          "net": "E4_REF_IN",
+          "type": "passive"
+        },
+        {
+          "number": "END_B",
+          "name": "END_B",
+          "net": "E4_LIME_REF",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "W406",
+      "value": "CAB.01075 X1 → ANNE-50+ captive coax",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "END_A",
+          "name": "END_A",
+          "net": "E4_LIME_TX",
+          "type": "passive"
+        },
+        {
+          "number": "END_B",
+          "name": "END_B",
+          "net": "E4_TX_LOAD",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "W407",
+      "value": "P7 SMA → LC76G IPEX coax",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "END_A",
+          "name": "END_A",
+          "net": "GNSS_ANT",
+          "type": "passive"
+        },
+        {
+          "number": "END_B",
+          "name": "END_B",
+          "net": "GNSS_ANT",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "W408",
+      "value": "RG316 common-mode choke FT240-77 +2631102002",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "IN_CENTER",
+          "name": "IN_CENTER",
+          "net": "E4_P5",
+          "type": "passive"
+        },
+        {
+          "number": "IN_SHIELD",
+          "name": "IN_SHIELD",
+          "net": "GND",
+          "type": "passive"
+        },
+        {
+          "number": "OUT_CENTER",
+          "name": "OUT_CENTER",
+          "net": "E4_HF_CM",
+          "type": "passive"
+        },
+        {
+          "number": "OUT_SHIELD",
+          "name": "OUT_SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering.",
+      "notes": [
+        "The center conductor and shield both pass through the cores as one continuous coax. This is a common-mode impedance, not a series RF choke."
+      ]
+    },
+    {
+      "ref": "W409",
+      "value": "Captive RX1 edge → profile pad coax",
+      "kind": "module",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "pins": [
+        {
+          "number": "EDGE",
+          "name": "EDGE",
+          "net": "E4_RX1_EDGE",
+          "type": "passive"
+        },
+        {
+          "number": "PAD",
+          "name": "PAD",
+          "net": "E4_RX1_PAD",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional interface with logical connector names; no implied physical PCB pin numbering."
+    },
+    {
+      "ref": "W422",
+      "value": "RG316 SMA-M/M 0.10 m helix → LaNA",
+      "kind": "module",
+      "group": "S-band external inline pod",
+      "pins": [
+        {
+          "number": "ANT",
+          "name": "ANT",
+          "type": "passive",
+          "net": "E4_RX2_ANT"
+        },
+        {
+          "number": "LNA",
+          "name": "LNA",
+          "type": "passive",
+          "net": "E4_SB_LNA_IN"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "Functional cable assembly; connector identifiers are logical, not physical pad numbering."
+      ],
+      "description": "Functional cable assembly interface."
+    },
+    {
+      "ref": "W423",
+      "value": "RG316 SMA-M/M 0.10 m LaNA → DC block",
+      "kind": "module",
+      "group": "S-band external inline pod",
+      "pins": [
+        {
+          "number": "LNA",
+          "name": "LNA",
+          "type": "passive",
+          "net": "E4_SB_LNA_OUT"
+        },
+        {
+          "number": "BLOCK",
+          "name": "BLOCK",
+          "type": "passive",
+          "net": "E4_SB_PREBLOCK"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "Functional cable assembly; connector identifiers are logical, not physical pad numbering."
+      ],
+      "description": "Functional cable assembly interface."
+    },
+    {
+      "ref": "W424",
+      "value": "RG316 SMA-M/M 1.00 m pod → RX2",
+      "kind": "module",
+      "group": "S-band external inline pod",
+      "pins": [
+        {
+          "number": "FILTER",
+          "name": "FILTER",
+          "type": "passive",
+          "net": "E4_SB_FILTER_OUT"
+        },
+        {
+          "number": "PANEL",
+          "name": "PANEL",
+          "type": "passive",
+          "net": "E4_LIME_RX2"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "Functional cable assembly; connector identifiers are logical, not physical pad numbering."
+      ],
+      "description": "Functional cable assembly interface."
+    },
+    {
+      "ref": "W425",
+      "value": "USB-C power-only 1.50 m, 26 AWG pair",
+      "kind": "module",
+      "group": "S-band external inline pod",
+      "pins": [
+        {
+          "number": "BRANCH_5V",
+          "name": "BRANCH_5V",
+          "type": "power_in",
+          "net": "BIAS_SB_LNA"
+        },
+        {
+          "number": "POD_5V",
+          "name": "POD_5V",
+          "type": "power_out",
+          "net": "E4_SB_POD5"
+        },
+        {
+          "number": "RETURN",
+          "name": "RETURN",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "Functional cable assembly; connector identifiers are logical, not physical pad numbering.",
+        "The POD_5V power_out is the documented conductor output of this cable from protected BIAS_SB_LNA, not an independent supply or an assumed unknown rail."
+      ],
+      "description": "Functional cable assembly interface."
+    },
+    {
+      "ref": "J422",
+      "value": "Existing S-band helix feed SMA",
+      "kind": "connector",
+      "group": "S-band external inline pod",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "type": "passive",
+          "net": "E4_RX2_ANT"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "module",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "A425",
+      "value": "Mini-Circuits BLK-89-S+ pod DC block",
+      "kind": "module",
+      "group": "S-band external inline pod",
+      "pins": [
+        {
+          "number": "SMA_A",
+          "name": "SMA_A",
+          "type": "passive",
+          "net": "E4_SB_PREBLOCK"
+        },
+        {
+          "number": "SMA_B",
+          "name": "SMA_B",
+          "type": "passive",
+          "net": "E4_SB_FILTER_IN"
+        },
+        {
+          "number": "SHIELDS",
+          "name": "SHIELDS",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "module",
+      "source": "https://www.minicircuits.com/WebStore/dashboard.html?model=BLK-89-S%2B",
+      "notes": [
+        "Explicit output DC isolation before the cavity filter; retained A409 still blocks DC at the receiver. Do not assume USB-powered LaNA output has no DC."
+      ],
+      "description": "Commercial SMA module functional interface; no invented physical pin numbers."
+    },
+    {
+      "ref": "D450",
+      "value": "BAV199 reference reverse-feed isolation",
+      "kind": "diode",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "3",
+          "name": "K1_A2",
+          "type": "passive",
+          "net": "E4_DCS_REF_FEED"
+        },
+        {
+          "number": "2",
+          "name": "K2",
+          "type": "no_connect",
+          "nc": true
+        }
+      ],
+      "status": "verified",
+      "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
+      "notes": [
+        "Use diode 1 only. Blocks REF-to-Q6A current with Q6A OFF. Spare cathode pin 2 floats."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "R4400",
+      "value": "150 Ω 1% 0.125 W",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF_FEED"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4401",
+      "value": "10 kΩ 1% Q6A off-state bleed",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "80 nA worst-case BAV199 reverse leakage would produce ≤0.8 mV here; no clamp to switched 3.3 V rail."
+      ]
+    },
+    {
+      "ref": "U458",
+      "value": "LM4040A20IDBZR 2.048 V 0.1% shunt",
+      "kind": "ic",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "CATHODE",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        },
+        {
+          "number": "2",
+          "name": "ANODE",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "STAR_CONNECT_ANODE",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.ti.com/lit/ds/symlink/lm4040.pdf",
+      "notes": [
+        "Pin 3 is tied to anode as TI recommends in high-EMI environments. Reference supply, dividers and clamp current budget are in review."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "C4400",
+      "value": "100 nF X7R 10 V",
+      "kind": "capacitor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4402",
+      "value": "26.7 kΩ 0.1%",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_LOW"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4403",
+      "value": "25.5 kΩ 0.1%",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_LOW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4404",
+      "value": "25.5 kΩ 0.1%",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_HIGH"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4405",
+      "value": "26.7 kΩ 0.1%",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_HIGH"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4406",
+      "value": "10.0 kΩ 0.1%",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_REF_PG_LOW"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4407",
+      "value": "24.9 kΩ 0.1%",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF_PG_LOW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4408",
+      "value": "24.9 kΩ 0.1%",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_REF_PG_HIGH"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4409",
+      "value": "33.2 kΩ 0.1%",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF_PG_HIGH"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "C4401",
+      "value": "10 nF C0G 50 V",
+      "kind": "capacitor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_LOW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "C4402",
+      "value": "10 nF C0G 50 V",
+      "kind": "capacitor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_HIGH"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "C4405",
+      "value": "10 nF C0G 50 V",
+      "kind": "capacitor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF_PG_LOW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "C4406",
+      "value": "10 nF C0G 50 V",
+      "kind": "capacitor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF_PG_HIGH"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "U456",
+      "value": "TLV3012BIDBVR",
+      "kind": "ic",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "OUT",
+          "type": "output",
+          "net": "E4_DCS_REF_GOOD_LOW"
+        },
+        {
+          "number": "2",
+          "name": "V-",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "IN+",
+          "type": "input",
+          "net": "E4_DCS_REF_PG_LOW"
+        },
+        {
+          "number": "4",
+          "name": "IN-",
+          "type": "input",
+          "net": "E4_DCS_REF12_LOW"
+        },
+        {
+          "number": "6",
+          "name": "V+",
+          "type": "power_in",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "5",
+          "name": "REF",
+          "type": "output",
+          "net": "E4_DCS_REF12_LOW"
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.ti.com/lit/ds/symlink/tlv3011.pdf",
+      "notes": [
+        "B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6"
+    },
+    {
+      "ref": "U457",
+      "value": "TLV3012BIDBVR",
+      "kind": "ic",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "OUT",
+          "type": "output",
+          "net": "E4_DCS_REF_GOOD_HIGH"
+        },
+        {
+          "number": "2",
+          "name": "V-",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "IN+",
+          "type": "input",
+          "net": "E4_DCS_REF12_HIGH"
+        },
+        {
+          "number": "4",
+          "name": "IN-",
+          "type": "input",
+          "net": "E4_DCS_REF_PG_HIGH"
+        },
+        {
+          "number": "6",
+          "name": "V+",
+          "type": "power_in",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "5",
+          "name": "REF",
+          "type": "output",
+          "net": "E4_DCS_REF12_HIGH"
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.ti.com/lit/ds/symlink/tlv3011.pdf",
+      "notes": [
+        "B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6"
+    },
+    {
+      "ref": "C4403",
+      "value": "1 nF C0G 50 V",
+      "kind": "capacitor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF12_LOW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "C4404",
+      "value": "1 nF C0G 50 V",
+      "kind": "capacitor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF12_HIGH"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4450",
+      "value": "100 Ω",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF_GOOD_LOW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_REF_GATE_LOW"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4451",
+      "value": "100 kΩ",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF_GATE_LOW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4452",
+      "value": "100 Ω",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF_GOOD_HIGH"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_REF_GATE_HIGH"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4453",
+      "value": "100 kΩ",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF_GATE_HIGH"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "Q456",
+      "value": "AO3400A",
+      "kind": "nfet",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "E4_DCS_REF_GATE_LOW"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "E4_DCS_REF_RETURN_MID"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "E4_DCS_RETURN"
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
+      "notes": [
+        "Series sink only; specified logic-level 2.5 V gate drive."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "Q457",
+      "value": "AO3400A",
+      "kind": "nfet",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "E4_DCS_REF_GATE_HIGH"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "E4_DCS_REF_RETURN_MID"
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
+      "notes": [
+        "Series sink only; specified logic-level 2.5 V gate drive."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "R4420",
+      "value": "24.9 kΩ 0.1% 0402 RF tap",
+      "kind": "resistor",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_P2"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_UHF_TAP"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "First RF tap resistor directly at coax, with ≤1 mm stub. Keep detector traces behind RF via fence."
+      ]
+    },
+    {
+      "ref": "R4421",
+      "value": "24.9 kΩ 0.1% 0402",
+      "kind": "resistor",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_UHF_TAP"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_UHF_SENSE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4422",
+      "value": "49.8 kΩ 0.1%",
+      "kind": "resistor",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_UHF_SENSE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "C4420",
+      "value": "100 pF C0G 50 V",
+      "kind": "capacitor",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_UHF_TAP"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "C4421",
+      "value": "10 nF C0G 50 V",
+      "kind": "capacitor",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_UHF_SENSE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "D451",
+      "value": "BAV199 sense clamps",
+      "kind": "diode",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A1",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "K1_A2",
+          "type": "passive",
+          "net": "E4_DCS_UHF_SENSE"
+        },
+        {
+          "number": "2",
+          "name": "K2",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        }
+      ],
+      "status": "verified",
+      "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
+      "notes": [
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "U450",
+      "value": "TLV3012BIDBVR",
+      "kind": "ic",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "OUT",
+          "type": "output",
+          "net": "E4_DCS_UHF_LOW_OK"
+        },
+        {
+          "number": "2",
+          "name": "V-",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "IN+",
+          "type": "input",
+          "net": "E4_DCS_UHF_SENSE"
+        },
+        {
+          "number": "4",
+          "name": "IN-",
+          "type": "input",
+          "net": "E4_DCS_LOW"
+        },
+        {
+          "number": "6",
+          "name": "V+",
+          "type": "power_in",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "5",
+          "name": "REF",
+          "type": "no_connect",
+          "nc": true
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.ti.com/lit/ds/symlink/tlv3011.pdf",
+      "notes": [
+        "B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6"
+    },
+    {
+      "ref": "U451",
+      "value": "TLV3012BIDBVR",
+      "kind": "ic",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "OUT",
+          "type": "output",
+          "net": "E4_DCS_UHF_HIGH_OK"
+        },
+        {
+          "number": "2",
+          "name": "V-",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "IN+",
+          "type": "input",
+          "net": "E4_DCS_HIGH"
+        },
+        {
+          "number": "4",
+          "name": "IN-",
+          "type": "input",
+          "net": "E4_DCS_UHF_SENSE"
+        },
+        {
+          "number": "6",
+          "name": "V+",
+          "type": "power_in",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "5",
+          "name": "REF",
+          "type": "no_connect",
+          "nc": true
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.ti.com/lit/ds/symlink/tlv3011.pdf",
+      "notes": [
+        "B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6"
+    },
+    {
+      "ref": "R4423",
+      "value": "100 Ω",
+      "kind": "resistor",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_UHF_LOW_OK"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_UHF_LOW_GATE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4424",
+      "value": "100 kΩ",
+      "kind": "resistor",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_UHF_LOW_GATE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4425",
+      "value": "100 Ω",
+      "kind": "resistor",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_UHF_HIGH_OK"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_UHF_HIGH_GATE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4426",
+      "value": "100 kΩ",
+      "kind": "resistor",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_UHF_HIGH_GATE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "Q450",
+      "value": "AO3400A",
+      "kind": "nfet",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "E4_DCS_UHF_LOW_GATE"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "E4_DCS_UHF_SINK_MID"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "DCS_UHF"
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
+      "notes": [
+        "Series sink only; specified logic-level 2.5 V gate drive."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "Q451",
+      "value": "AO3400A",
+      "kind": "nfet",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "E4_DCS_UHF_HIGH_GATE"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "E4_DCS_RETURN"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "E4_DCS_UHF_SINK_MID"
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
+      "notes": [
+        "Series sink only; specified logic-level 2.5 V gate drive."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "R4430",
+      "value": "24.9 kΩ 0.1% 0402 RF tap",
+      "kind": "resistor",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_P3"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_TAP"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "First RF tap resistor directly at coax, with ≤1 mm stub. Keep detector traces behind RF via fence."
+      ]
+    },
+    {
+      "ref": "R4431",
+      "value": "24.9 kΩ 0.1% 0402",
+      "kind": "resistor",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_TAP"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_SENSE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4432",
+      "value": "49.8 kΩ 0.1%",
+      "kind": "resistor",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_SENSE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "C4430",
+      "value": "100 pF C0G 50 V",
+      "kind": "capacitor",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_TAP"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "C4431",
+      "value": "10 nF C0G 50 V",
+      "kind": "capacitor",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_SENSE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "D452",
+      "value": "BAV199 sense clamps",
+      "kind": "diode",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A1",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "K1_A2",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_SENSE"
+        },
+        {
+          "number": "2",
+          "name": "K2",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        }
+      ],
+      "status": "verified",
+      "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
+      "notes": [
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "U452",
+      "value": "TLV3012BIDBVR",
+      "kind": "ic",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "OUT",
+          "type": "output",
+          "net": "E4_DCS_LBAND_LOW_OK"
+        },
+        {
+          "number": "2",
+          "name": "V-",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "IN+",
+          "type": "input",
+          "net": "E4_DCS_LBAND_SENSE"
+        },
+        {
+          "number": "4",
+          "name": "IN-",
+          "type": "input",
+          "net": "E4_DCS_LOW"
+        },
+        {
+          "number": "6",
+          "name": "V+",
+          "type": "power_in",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "5",
+          "name": "REF",
+          "type": "no_connect",
+          "nc": true
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.ti.com/lit/ds/symlink/tlv3011.pdf",
+      "notes": [
+        "B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6"
+    },
+    {
+      "ref": "U453",
+      "value": "TLV3012BIDBVR",
+      "kind": "ic",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "OUT",
+          "type": "output",
+          "net": "E4_DCS_LBAND_HIGH_OK"
+        },
+        {
+          "number": "2",
+          "name": "V-",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "IN+",
+          "type": "input",
+          "net": "E4_DCS_HIGH"
+        },
+        {
+          "number": "4",
+          "name": "IN-",
+          "type": "input",
+          "net": "E4_DCS_LBAND_SENSE"
+        },
+        {
+          "number": "6",
+          "name": "V+",
+          "type": "power_in",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "5",
+          "name": "REF",
+          "type": "no_connect",
+          "nc": true
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.ti.com/lit/ds/symlink/tlv3011.pdf",
+      "notes": [
+        "B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6"
+    },
+    {
+      "ref": "R4433",
+      "value": "100 Ω",
+      "kind": "resistor",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_LOW_OK"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_LOW_GATE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4434",
+      "value": "100 kΩ",
+      "kind": "resistor",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_LOW_GATE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4435",
+      "value": "100 Ω",
+      "kind": "resistor",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_HIGH_OK"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_HIGH_GATE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4436",
+      "value": "100 kΩ",
+      "kind": "resistor",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_HIGH_GATE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "Q452",
+      "value": "AO3400A",
+      "kind": "nfet",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "E4_DCS_LBAND_LOW_GATE"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_SINK_MID"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "DCS_LBAND"
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
+      "notes": [
+        "Series sink only; specified logic-level 2.5 V gate drive."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "Q453",
+      "value": "AO3400A",
+      "kind": "nfet",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "E4_DCS_LBAND_HIGH_GATE"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "E4_DCS_RETURN"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_SINK_MID"
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
+      "notes": [
+        "Series sink only; specified logic-level 2.5 V gate drive."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "R4440",
+      "value": "24.9 kΩ 0.1% 0402 RF tap",
+      "kind": "resistor",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_HF_CM"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_HF_TAP"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "First RF tap resistor directly at coax, with ≤1 mm stub. Keep detector traces behind RF via fence."
+      ]
+    },
+    {
+      "ref": "R4441",
+      "value": "24.9 kΩ 0.1% 0402",
+      "kind": "resistor",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_HF_TAP"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_HF_SENSE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4442",
+      "value": "49.8 kΩ 0.1%",
+      "kind": "resistor",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_HF_SENSE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "C4440",
+      "value": "100 pF C0G 50 V",
+      "kind": "capacitor",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_HF_TAP"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "C4441",
+      "value": "10 nF C0G 50 V",
+      "kind": "capacitor",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_HF_SENSE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "D453",
+      "value": "BAV199 sense clamps",
+      "kind": "diode",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A1",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "K1_A2",
+          "type": "passive",
+          "net": "E4_DCS_HF_SENSE"
+        },
+        {
+          "number": "2",
+          "name": "K2",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        }
+      ],
+      "status": "verified",
+      "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
+      "notes": [
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "U454",
+      "value": "TLV3012BIDBVR",
+      "kind": "ic",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "OUT",
+          "type": "output",
+          "net": "E4_DCS_HF_LOW_OK"
+        },
+        {
+          "number": "2",
+          "name": "V-",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "IN+",
+          "type": "input",
+          "net": "E4_DCS_HF_SENSE"
+        },
+        {
+          "number": "4",
+          "name": "IN-",
+          "type": "input",
+          "net": "E4_DCS_LOW"
+        },
+        {
+          "number": "6",
+          "name": "V+",
+          "type": "power_in",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "5",
+          "name": "REF",
+          "type": "no_connect",
+          "nc": true
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.ti.com/lit/ds/symlink/tlv3011.pdf",
+      "notes": [
+        "B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6"
+    },
+    {
+      "ref": "U455",
+      "value": "TLV3012BIDBVR",
+      "kind": "ic",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "OUT",
+          "type": "output",
+          "net": "E4_DCS_HF_HIGH_OK"
+        },
+        {
+          "number": "2",
+          "name": "V-",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "IN+",
+          "type": "input",
+          "net": "E4_DCS_HIGH"
+        },
+        {
+          "number": "4",
+          "name": "IN-",
+          "type": "input",
+          "net": "E4_DCS_HF_SENSE"
+        },
+        {
+          "number": "6",
+          "name": "V+",
+          "type": "power_in",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "5",
+          "name": "REF",
+          "type": "no_connect",
+          "nc": true
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.ti.com/lit/ds/symlink/tlv3011.pdf",
+      "notes": [
+        "B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6"
+    },
+    {
+      "ref": "R4443",
+      "value": "100 Ω",
+      "kind": "resistor",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_HF_LOW_OK"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_HF_LOW_GATE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4444",
+      "value": "100 kΩ",
+      "kind": "resistor",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_HF_LOW_GATE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4445",
+      "value": "100 Ω",
+      "kind": "resistor",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_HF_HIGH_OK"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_HF_HIGH_GATE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "R4446",
+      "value": "100 kΩ",
+      "kind": "resistor",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_HF_HIGH_GATE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md"
+    },
+    {
+      "ref": "Q454",
+      "value": "AO3400A",
+      "kind": "nfet",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "E4_DCS_HF_LOW_GATE"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "E4_DCS_HF_SINK_MID"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "DCS_HF"
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
+      "notes": [
+        "Series sink only; specified logic-level 2.5 V gate drive."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "Q455",
+      "value": "AO3400A",
+      "kind": "nfet",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "E4_DCS_HF_HIGH_GATE"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "E4_DCS_RETURN"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "E4_DCS_HF_SINK_MID"
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
+      "notes": [
+        "Series sink only; specified logic-level 2.5 V gate drive."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "C4410",
+      "value": "100 nF X7R 10 V local decoupling",
+      "kind": "capacitor",
+      "group": "DC detectors: local power",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "Place at U450 supply pins."
+      ]
+    },
+    {
+      "ref": "C4411",
+      "value": "100 nF X7R 10 V local decoupling",
+      "kind": "capacitor",
+      "group": "DC detectors: local power",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "Place at U451 supply pins."
+      ]
+    },
+    {
+      "ref": "C4412",
+      "value": "100 nF X7R 10 V local decoupling",
+      "kind": "capacitor",
+      "group": "DC detectors: local power",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "Place at U452 supply pins."
+      ]
+    },
+    {
+      "ref": "C4413",
+      "value": "100 nF X7R 10 V local decoupling",
+      "kind": "capacitor",
+      "group": "DC detectors: local power",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "Place at U453 supply pins."
+      ]
+    },
+    {
+      "ref": "C4414",
+      "value": "100 nF X7R 10 V local decoupling",
+      "kind": "capacitor",
+      "group": "DC detectors: local power",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "Place at U454 supply pins."
+      ]
+    },
+    {
+      "ref": "C4415",
+      "value": "100 nF X7R 10 V local decoupling",
+      "kind": "capacitor",
+      "group": "DC detectors: local power",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "Place at U455 supply pins."
+      ]
+    },
+    {
+      "ref": "C4416",
+      "value": "100 nF X7R 10 V local decoupling",
+      "kind": "capacitor",
+      "group": "DC detectors: local power",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "Place at U456 supply pins."
+      ]
+    },
+    {
+      "ref": "C4417",
+      "value": "100 nF X7R 10 V local decoupling",
+      "kind": "capacitor",
+      "group": "DC detectors: local power",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "Place at U457 supply pins."
+      ]
+    },
+    {
+      "ref": "R4460",
+      "value": "249 Ω 1% ≥0.5 W",
+      "kind": "resistor",
+      "group": "DC detectors: UHF",
+      "status": "design",
+      "source": "E4 bipolar detector DC return design",
+      "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_P2",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_DCS_UHF_BLEED_1",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified.",
+        "First bleed resistor directly at the coax tap. Keep its pads and ground-return geometry short and symmetric; the other three form a series chain, not parallel RF loads."
+      ]
+    },
+    {
+      "ref": "R4461",
+      "value": "249 Ω 1% ≥0.5 W",
+      "kind": "resistor",
+      "group": "DC detectors: UHF",
+      "status": "design",
+      "source": "E4 bipolar detector DC return design",
+      "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_DCS_UHF_BLEED_1",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_DCS_UHF_BLEED_2",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified."
+      ]
+    },
+    {
+      "ref": "R4462",
+      "value": "249 Ω 1% ≥0.5 W",
+      "kind": "resistor",
+      "group": "DC detectors: UHF",
+      "status": "design",
+      "source": "E4 bipolar detector DC return design",
+      "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_DCS_UHF_BLEED_2",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_DCS_UHF_BLEED_3",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified."
+      ]
+    },
+    {
+      "ref": "R4463",
+      "value": "249 Ω 1% ≥0.5 W",
+      "kind": "resistor",
+      "group": "DC detectors: UHF",
+      "status": "design",
+      "source": "E4 bipolar detector DC return design",
+      "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_DCS_UHF_BLEED_3",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified."
+      ]
+    },
+    {
+      "ref": "R4464",
+      "value": "249 Ω 1% ≥0.5 W",
+      "kind": "resistor",
+      "group": "DC detectors: LBAND",
+      "status": "design",
+      "source": "E4 bipolar detector DC return design",
+      "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_P3",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_DCS_LBAND_BLEED_1",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified.",
+        "First bleed resistor directly at the coax tap. Keep its pads and ground-return geometry short and symmetric; the other three form a series chain, not parallel RF loads."
+      ]
+    },
+    {
+      "ref": "R4465",
+      "value": "249 Ω 1% ≥0.5 W",
+      "kind": "resistor",
+      "group": "DC detectors: LBAND",
+      "status": "design",
+      "source": "E4 bipolar detector DC return design",
+      "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_DCS_LBAND_BLEED_1",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_DCS_LBAND_BLEED_2",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified."
+      ]
+    },
+    {
+      "ref": "R4466",
+      "value": "249 Ω 1% ≥0.5 W",
+      "kind": "resistor",
+      "group": "DC detectors: LBAND",
+      "status": "design",
+      "source": "E4 bipolar detector DC return design",
+      "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_DCS_LBAND_BLEED_2",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_DCS_LBAND_BLEED_3",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified."
+      ]
+    },
+    {
+      "ref": "R4467",
+      "value": "249 Ω 1% ≥0.5 W",
+      "kind": "resistor",
+      "group": "DC detectors: LBAND",
+      "status": "design",
+      "source": "E4 bipolar detector DC return design",
+      "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_DCS_LBAND_BLEED_3",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified."
+      ]
+    },
+    {
+      "ref": "R4468",
+      "value": "249 Ω 1% ≥0.5 W",
+      "kind": "resistor",
+      "group": "DC detectors: HF",
+      "status": "design",
+      "source": "E4 bipolar detector DC return design",
+      "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_HF_CM",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_DCS_HF_BLEED_1",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified.",
+        "First bleed resistor directly at the coax tap. Keep its pads and ground-return geometry short and symmetric; the other three form a series chain, not parallel RF loads."
+      ]
+    },
+    {
+      "ref": "R4469",
+      "value": "249 Ω 1% ≥0.5 W",
+      "kind": "resistor",
+      "group": "DC detectors: HF",
+      "status": "design",
+      "source": "E4 bipolar detector DC return design",
+      "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_DCS_HF_BLEED_1",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_DCS_HF_BLEED_2",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified."
+      ]
+    },
+    {
+      "ref": "R4470",
+      "value": "249 Ω 1% ≥0.5 W",
+      "kind": "resistor",
+      "group": "DC detectors: HF",
+      "status": "design",
+      "source": "E4 bipolar detector DC return design",
+      "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_DCS_HF_BLEED_2",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "E4_DCS_HF_BLEED_3",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified."
+      ]
+    },
+    {
+      "ref": "R4471",
+      "value": "249 Ω 1% ≥0.5 W",
+      "kind": "resistor",
+      "group": "DC detectors: HF",
+      "status": "design",
+      "source": "E4 bipolar detector DC return design",
+      "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "E4_DCS_HF_BLEED_3",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified."
+      ]
+    },
+    {
+      "ref": "C447",
+      "value": "100 pF C0G 50 V",
+      "kind": "capacitor",
+      "group": "RF bias injector local decoupling",
+      "status": "design",
+      "source": "Band-specific bias injector design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "BIAS_CH1",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Place at the RF choke DC end with direct RF ground via. E2 power-board capacitance is not a substitute for local RF bypass."
+      ]
+    },
+    {
+      "ref": "C448",
+      "value": "10 nF C0G 50 V",
+      "kind": "capacitor",
+      "group": "RF bias injector local decoupling",
+      "status": "design",
+      "source": "Band-specific bias injector design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "BIAS_CH1",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Place at the RF choke DC end with direct RF ground via. E2 power-board capacitance is not a substitute for local RF bypass."
+      ]
+    },
+    {
+      "ref": "C449",
+      "value": "100 pF C0G 50 V",
+      "kind": "capacitor",
+      "group": "RF bias injector local decoupling",
+      "status": "design",
+      "source": "Band-specific bias injector design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "BIAS_CH2",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Place at the RF choke DC end with direct RF ground via. E2 power-board capacitance is not a substitute for local RF bypass."
+      ]
+    },
+    {
+      "ref": "C450",
+      "value": "10 nF C0G 50 V",
+      "kind": "capacitor",
+      "group": "RF bias injector local decoupling",
+      "status": "design",
+      "source": "Band-specific bias injector design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "BIAS_CH2",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Place at the RF choke DC end with direct RF ground via. E2 power-board capacitance is not a substitute for local RF bypass."
+      ]
+    },
+    {
+      "ref": "C451",
+      "value": "100 pF C0G 50 V",
+      "kind": "capacitor",
+      "group": "RF bias injector local decoupling",
+      "status": "design",
+      "source": "Band-specific bias injector design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "BIAS_CH3",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Place at the RF choke DC end with direct RF ground via. E2 power-board capacitance is not a substitute for local RF bypass."
+      ]
+    },
+    {
+      "ref": "C452",
+      "value": "10 nF C0G 50 V",
+      "kind": "capacitor",
+      "group": "RF bias injector local decoupling",
+      "status": "design",
+      "source": "Band-specific bias injector design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "net": "BIAS_CH3",
+          "type": "passive"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "notes": [
+        "Place at the RF choke DC end with direct RF ground via. E2 power-board capacitance is not a substitute for local RF bypass."
+      ]
+    }
+  ],
+  "open_items": [
+    {
+      "id": "E4-01",
+      "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional static bleeds stay DNP.",
+      "blocking": true,
+      "resolve": "Verify selected 0805LS-471XGRC / 0805HP-221XGRC / 0603HP-47NXGRW manufacturer land patterns and target-band impedance under bias. VNA qualify IL/RL/isolation and DC heating at actual/worst protected current. The current Coilcraft 0603HP PDF confirms the 2.3 GHz typical SRF; no documentary SRF question remains. L401/L407 stay optional DNP until separately qualified."
+    },
+    {
+      "id": "E4-03",
+      "description": "Boni supplied bias-tee port labels, DC socket polarity and receiver DC block require actual hardware.",
+      "blocking": true,
+      "resolve": "Measure continuity/polarity, antenna DC and RADIO port <0.1 V before connecting HF+."
+    },
+    {
+      "id": "E4-04",
+      "description": "S-band module and supply selection are complete; external inline pod assembly, cable loss, gain/NF and thermal/current measurements remain unqualified.",
+      "blocking": true,
+      "resolve": "Build specified LaNAWB100845 + cf2235 + DC blocks in Hammond1554U2GY pod; verify stacked fit/cable bends, weather seals and strain relief. Measure LaNA current/inrush at protected5V, 2.2–2.3GHz S21/NF/linearity, and receiver protection. Do not substitute generic nominal NF for the actual S-band measurement."
+    },
+    {
+      "id": "E4-05",
+      "description": "Lime X2/X4 are verified RX ports for v1.2; supplied-board channel A/B and cable labels need confirmation.",
+      "blocking": true,
+      "resolve": "Check the exact revision schematic and conduct a one-port-at-a-time RX test. Generic setup X3 wording is not evidence."
+    },
+    {
+      "id": "E4-06",
+      "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification.",
+      "blocking": true,
+      "resolve": "Verify each DCS LOW at0V and HIGH by±0.100V in both sweep directions over admitted temperature/supply range; record thresholds/hysteresis. Test±30V limited foreignDC with Q6A ON/OFF and require3V3_Q6A<0.1V whenOFF. Measure RFtap IL/RL/NF impact. Require startup/reference-fault HIGH and ownbiasOFF≥500ms beforepreflight; readiness staysfalse untilqualified. Check floating/open antenna as well as0Ω/50ΩDC loads. Include the996Ω bleed load in current baselines and measure its RF loss/parasitics. Reject false-safe at±0.100V; false-unsafe units also fail usability qualification. Also qualify cold minimum-supply reference-feed headroom: the arithmetic model requires D450 Vf≤1.015 V at VDD3.135 V and REF2.072 V for at least80µA LM4040 cathode current. Reference collapse must force HIGH, and must not be misreported as a working detector."
+    },
+    {
+      "id": "E4-07",
+      "description": "RF PCB, relay insertion loss, isolation, return loss and startup PARK are unmeasured.",
+      "blocking": true,
+      "resolve": "VNA: HF selector 10 kHz–260 MHz IL ≤0.3 dB, RL ≥21 dB, isolation ≥35 dB at 162–260 MHz plus STACK LF/HF gates. HMC ≥40 dB isolation at 0.1–1.7 GHz (37–40 dB conditional and recorded); verify all DC blocks and startup. Check all SMT footprint pad numbers, dimensions, orientation and ground/exposed-pad implementation against the now-verified manufacturer maps."
+    },
+    {
+      "id": "E4-08",
+      "description": "RX1 captive edge/pad/panel assembly and H1 attenuation have not been measured.",
+      "blocking": true,
+      "resolve": "Confirm edge → pad → panel → X2 without bypass. YAT 10±0.5 dB and RL ≥20 dB; H1 total ≥12.0 dB at 1420 MHz, using 3 dB pad if the 2 dB pad fails."
+    },
+    {
+      "id": "E4-09",
+      "description": "BENCH RF sled is not delivered as a separate HMC7992 + PE4312 PCB here.",
+      "blocking": false,
+      "resolve": "Deliver its PCB/netlist, controls and 31.5 dB startup test if installed. Until then use the internal BENCH SMA with a qualified external conducted source."
+    }
+  ],
+  "decisions": [
+    {
+      "id": "R-E4-01",
+      "description": "Assign HMC-C RF2 to RTL-B; RF3 to Lime RX1; RF1 PARK; RF4 to its own DC-blocked 49.9 Ω load.",
+      "source": "RF2/RF4 allocation was unspecified. This is a controlled project assignment."
+    },
+    {
+      "id": "R-E4-02",
+      "description": "K1 COM2 = HF+, NC2 = STAGE. K2 COM2 = STAGE, NC2 = the single HF+ PARK resistor. Each COM1 = its antenna, NC1 = its own load, NO1/NO2 tied locally.",
+      "source": "Avoids parallel receiver NC loads. 00 PARK, 10 HF, 01 VHF, 11 forbidden."
+    },
+    {
+      "id": "R-E4-03",
+      "description": "RX1 edge → profile pad → panel → X2 is a captive coax assembly.",
+      "source": "Closes the previously undefined panel/edge wiring with no unattenuated bypass."
+    },
+    {
+      "id": "R-E4-04",
+      "description": "Use 1 kΩ series resistance on each HMC control.",
+      "source": "Limits cross-power transient current; supply-before-control sequencing still applies."
+    },
+    {
+      "id": "R-E4-05",
+      "description": "TCBT/YAT documentary pad-map gate E4-02 is closed by independently retrieved primary manufacturer datasheet text; C446 = 10 nF is confirmed.",
+      "source": "https://www.minicircuits.com/WebStore/dashboardPdf?model=TCBT-2R5G%2B ; https://www.minicircuits.com/WebStore/dashboardPdf?model=YAT-10A%2B"
+    },
+    {
+      "id": "R-E4-06",
+      "description": "Replace A431–A433 placeholders with8TLV3012BIDBVR, LM4040A20 isolated shunt reference, BAV199 clamps, precision dividers and8AO3400A series sink FETs. DCS is LOW only for both windowconditions AND both reference-good conditions.",
+      "source": "Concrete circuit design using verified manufacturer pins and startup behavior; threshold/prototype qualification remains open."
+    },
+    {
+      "id": "R-E4-07",
+      "description": "Select LaNAWB100845 powered from E2 BIAS_SB_LNA5V; E3 MCP4GPA4 EN_SB_LNA andGPA5 FLT_SB_LNA. Retain sysmocomcf2235 with verified actual passband and explicit external pod.",
+      "source": "Manufacturer documentation; coordinated with E2/E3. One direct USB-C power method avoids adding an unqualified S-band bias injector."
+    },
+    {
+      "id": "R-E4-08",
+      "description": "Place oversized S-band LNA/filter in Hammond1554U2GY external feed pod, two vertical trays, connected through existing RX2 with1mRFcoax; powercable1.5mthrough existingservicehatchstrain-relieved exit.",
+      "source": "cf2235height33mm andLaNAheight25mm cannot be silently packed into occupied handheldRFbay. External backpackfeedassembly preserves theexistingantenna andsignalorder."
+    },
+    {
+      "id": "R-E4-09",
+      "description": "Select ch1 0805LS-471XGRC, ch2 0805HP-221XGRC, ch3 0603HP-47NXGRW, with local100pF+10nF DC-end RF bypass. All listed current references meet≥0.5A; do not treat their15°C-rise Irms as absolute maximum current.",
+      "source": "Independent Coilcraft primary specifications; band-specific final PCB VNA/thermal qualification remains hardware acceptance."
+    }
+  ]
+}

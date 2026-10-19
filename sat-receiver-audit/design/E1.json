@@ -1,0 +1,2434 @@
+{
+  "sheet": "E1",
+  "title": "Акумулятор, заряд, AON і головні перетворювачі",
+  "sources": [
+    {
+      "url": "https://www.molicel.com/wp-content/uploads/Product-Data-Sheet-of-INR-21700-P50B-80122.pdf",
+      "note": "Оригінальна PDS Molicel: 5 Ah, 4.2 V charge, 2.5 V discharge, обрано суворіші межі STACK."
+    },
+    {
+      "url": "https://www.pololu.com/product/2813",
+      "note": "Функції A/GND on-only, OFF active high >1 V, ON/CTRL та функціональні силові клеми."
+    },
+    {
+      "url": "https://www.pololu.com/product/4095",
+      "note": "D36V50F12: VIN/VRP/VOUT/GND/EN/PG; EN 1.2/1.35 V, внутрішнє100kдоVIN."
+    },
+    {
+      "url": "https://www.pololu.com/product/3782",
+      "note": "D36V28F5: VIN/VOUT/2xGND/EN/PG, струм і зовнішні клеми."
+    },
+    {
+      "url": "https://www.ti.com/lit/ds/symlink/tps709.pdf",
+      "note": "TPS709 DBV physical pin1IN,2GND,3EN,4NC,5OUT. Не плутати з TPS709A/B."
+    },
+    {
+      "url": "https://ww1.microchip.com/downloads/en/DeviceDoc/22269B.pdf",
+      "note": "MCP65R41 physical1OUT,2VSS,3IN+,4IN−,5VREF,6VDD; 1.21 V option."
+    },
+    {
+      "url": "https://www.ti.com/lit/ds/symlink/ina228.pdf",
+      "note": "INA228DGS physical pinout, open-drain ALERT, ±163.84 mV ADCRANGE0."
+    },
+    {
+      "url": "https://github.com/adafruit/Adafruit-INA228-PCB/blob/main/Adafruit%20INA228%20I2C%20Power%20Monitor.sch",
+      "note": "Eagle schematic прочитано: R6 4×10 kΩ; R7 LED 10 kΩ; R1 HoLLR2512-2W-15mR-1%; SJ1 VIN+→VBUS; C1 100 nF; C2 10 µF."
+    },
+    {
+      "url": "https://www.ti.com/lit/ds/symlink/tps25947.pdf",
+      "note": "TPS259470A RPW: усі 10 pins; ILIM=3334/RILM; OVLO 1.2 V nominal; ITIMER floating — найшвидший limit; DVDT 3.3 nF."
+    },
+    {
+      "url": "https://assets.nexperia.com/documents/data-sheet/BAT54.pdf",
+      "note": "BAT54single SOT23:1A,2NC,3K."
+    },
+    {
+      "url": "https://assets.nexperia.com/documents/data-sheet/2N7002.pdf",
+      "note": "2N7002:1G,2S,3D."
+    },
+    {
+      "url": "https://www.vishay.com/docs/88392/smbj.pdf",
+      "note": "SMBJ17A: полярність за cathode band; функціональні A/K, VRWM17V."
+    },
+    {
+      "url": "https://www.tinytronics.nl/en/power/bms-and-chargers/bms/daly-bms-li-ion-li-po-protection-circuit-4s-15a-with-balancing",
+      "note": "Пошук первинного DalyPDF: поточний attachment називає J04G3, неJ05G; конкретна ревізія лишається gate."
+    },
+    {
+      "url": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2308290920_INJOINIC-IP2368-BZ-VGLIP_C5203723.pdf",
+      "note": "Посилання архіву на DS Injoinic недоступне повторній retrieval; програмування/NTC COUT не оголошено незалежно перевіреним."
+    },
+    {
+      "url": "https://www.coilcraft.com/en-us/products/power/shielded-inductors/molded-inductor/xal/xal60xx/",
+      "note": "XAL6060-103MEC: 10µH±20%, DCRmax29.8mΩ@25°C, Isat7.6A@30%Ldrop, Irms5A@20Krise."
+    },
+    {
+      "url": "https://industrial.panasonic.com/ww/products/pt/os-con/models/35SVPF22M",
+      "note": "35SVPF22M:22µF±20%,35V,ESR35mΩ,ripple2.6A@105°C/100kHz,Ø6.3×5.9mm."
+    },
+    {
+      "url": "https://industrial.panasonic.com/ww/products/pt/OS-CON/models/16SVPC100M",
+      "note": "16SVPC100M:100µF±20%,16V,ESR24mΩ,ripple2.49A@105°C/100kHz,Ø6.3×5.9mm."
+    },
+    {
+      "url": "https://www.vishay.com/docs/30100/wsl.pdf",
+      "note": "WSL2512 0.33Ω1% і part code перевірено; value power derating вище0.1Ω."
+    },
+    {
+      "url": "https://pages.na.industrial.panasonic.com/rs/173-ONW-167/images/MLCC%20White%20Paper.pdf",
+      "note": "Panasonic technical whitepaper: порівняння DC-bias stability OS-CON і class-II MLCC."
+    },
+    {
+      "url": "https://www.pololu.com/product/4091",
+      "note": "D36V50F5#4091,5V±4%, advertised5.5Atypconditional;6functionalconnectionsізVRP,25.4×25.4×9.5mm;новийLAB5default."
+    }
+  ],
+  "notes": [
+    "Теоретичний проєкт — перевірити на стенді. Оригінальний STACK.md коміту 4653188 має пріоритет над відновленим HTML.",
+    "Окремі IC і пасиви розкрито. Готові Pololu, Daly та IP2368 мають функціональні інтерфейси без вигаданих фізичних номерів контактів.",
+    "Силовий шлях: 4S1P → Daly у низькому плечі → 7.5 A у плюсі → 15 mΩ → E1_N → Pololu #2813 → E1_SW. GND є Daly P−; raw B− названо E1_CELL0.",
+    "Зарядник BAT+ підключено до E1_N після шунта. Зарядний струм вимірюється INA228 зі знаком, протилежним розряду.",
+    "SYS12 і LAB5 формуються тут. Захищені J21, DISP12, AUX12, LNB, Boni, LNA, Lime та два INA3221 належать E2.",
+    "IC bypass розташувати біля виводів. Фільтри і transient-тести потребують конкретної плати. Немає PCB layout чи фізичних вимірів.",
+    "U102, R101, C101 і C102 є деталізацією наявного Adafruit #5832. Не купувати їх вдруге. Зняти R6/R7, A0/A1 з’єднати з GND для 0x40, SJ1 замкнути.",
+    "PICO_OFF є імпульсом active high від GP13. UV працює від AON і утримує OFF нижче порога. Повторний запуск — кнопкою після відновлення ≥13.6 V.",
+    "Стендові RF-джерела підключаються лише до навантаження або DUT. Ця силова схема не створює TX-трактів."
+  ],
+  "components": [
+    {
+      "ref": "BT101",
+      "value": "Molicel INR21700-P50B 5Ah",
+      "kind": "battery",
+      "group": "Пак 4S1P",
+      "status": "module",
+      "source": "https://www.molicel.com/wp-content/uploads/Product-Data-Sheet-of-INR-21700-P50B-80122.pdf",
+      "pins": [
+        {
+          "number": "+",
+          "name": "+",
+          "type": "passive",
+          "net": "E1_CELL1"
+        },
+        {
+          "number": "-",
+          "name": "−",
+          "type": "passive",
+          "net": "E1_CELL0"
+        }
+      ],
+      "notes": [
+        "Точкове зварювання чистого Ni; ізоляційні кільця, бар’єр і вентиляція. Заряд 0…45 °C за STACK."
+      ],
+      "description": "Позначення +/− — полярність комірки, не номер невідомого роз’єму."
+    },
+    {
+      "ref": "BT102",
+      "value": "Molicel INR21700-P50B 5Ah",
+      "kind": "battery",
+      "group": "Пак 4S1P",
+      "status": "module",
+      "source": "https://www.molicel.com/wp-content/uploads/Product-Data-Sheet-of-INR-21700-P50B-80122.pdf",
+      "pins": [
+        {
+          "number": "+",
+          "name": "+",
+          "type": "passive",
+          "net": "E1_CELL2"
+        },
+        {
+          "number": "-",
+          "name": "−",
+          "type": "passive",
+          "net": "E1_CELL1"
+        }
+      ],
+      "notes": [
+        "Точкове зварювання чистого Ni; ізоляційні кільця, бар’єр і вентиляція. Заряд 0…45 °C за STACK."
+      ],
+      "description": "Позначення +/− — полярність комірки, не номер невідомого роз’єму."
+    },
+    {
+      "ref": "BT103",
+      "value": "Molicel INR21700-P50B 5Ah",
+      "kind": "battery",
+      "group": "Пак 4S1P",
+      "status": "module",
+      "source": "https://www.molicel.com/wp-content/uploads/Product-Data-Sheet-of-INR-21700-P50B-80122.pdf",
+      "pins": [
+        {
+          "number": "+",
+          "name": "+",
+          "type": "passive",
+          "net": "E1_CELL3"
+        },
+        {
+          "number": "-",
+          "name": "−",
+          "type": "passive",
+          "net": "E1_CELL2"
+        }
+      ],
+      "notes": [
+        "Точкове зварювання чистого Ni; ізоляційні кільця, бар’єр і вентиляція. Заряд 0…45 °C за STACK."
+      ],
+      "description": "Позначення +/− — полярність комірки, не номер невідомого роз’єму."
+    },
+    {
+      "ref": "BT104",
+      "value": "Molicel INR21700-P50B 5Ah",
+      "kind": "battery",
+      "group": "Пак 4S1P",
+      "status": "module",
+      "source": "https://www.molicel.com/wp-content/uploads/Product-Data-Sheet-of-INR-21700-P50B-80122.pdf",
+      "pins": [
+        {
+          "number": "+",
+          "name": "+",
+          "type": "passive",
+          "net": "E1_CELL4"
+        },
+        {
+          "number": "-",
+          "name": "−",
+          "type": "passive",
+          "net": "E1_CELL3"
+        }
+      ],
+      "notes": [
+        "Точкове зварювання чистого Ni; ізоляційні кільця, бар’єр і вентиляція. Заряд 0…45 °C за STACK."
+      ],
+      "description": "Позначення +/− — полярність комірки, не номер невідомого роз’єму."
+    },
+    {
+      "ref": "U101",
+      "value": "Daly DL-J05G-L4S15ATJ 4S15A",
+      "kind": "module",
+      "group": "Пак 4S1P",
+      "status": "module",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "B-",
+          "name": "B− силовий",
+          "type": "passive",
+          "net": "E1_CELL0"
+        },
+        {
+          "number": "P-",
+          "name": "P− силовий",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "B0",
+          "name": "sense B0",
+          "type": "passive",
+          "net": "E1_CELL0"
+        },
+        {
+          "number": "B1",
+          "name": "sense B1",
+          "type": "passive",
+          "net": "E1_CELL1"
+        },
+        {
+          "number": "B2",
+          "name": "sense B2",
+          "type": "passive",
+          "net": "E1_CELL2"
+        },
+        {
+          "number": "B3",
+          "name": "sense B3",
+          "type": "passive",
+          "net": "E1_CELL3"
+        },
+        {
+          "number": "B4",
+          "name": "sense B4",
+          "type": "passive",
+          "net": "E1_CELL4"
+        }
+      ],
+      "notes": [
+        "BMS не має власного NTC. Баланс 30 mA працює лише біля 4.18 V. Сенсорні дроти не є силовими.",
+        "Першим підключається B−, далі перевірені sense від B0 вгору. При знятті першим від’єднати sense-штекер."
+      ],
+      "description": "Функціональні дроти B−/P− та sense B0…B4. Порядок PHB2.0 не задано; звірити на екземплярі."
+    },
+    {
+      "ref": "F101",
+      "value": "Mini-blade 7.5 A DC ≥32 V",
+      "kind": "fuse",
+      "group": "Пак 4S1P",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_CELL4"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E1_SHUNT_P"
+        }
+      ],
+      "notes": [
+        "18 AWG. Тримач та інтерконекти мають витримувати ≥7.5 A. Для зберігання понад 2–4 тижні вийняти F101."
+      ]
+    },
+    {
+      "ref": "R101",
+      "value": "15 mΩ 1% 2 W (Adafruit R1)",
+      "kind": "resistor",
+      "group": "Лічильник заряду",
+      "status": "verified",
+      "source": "https://github.com/adafruit/Adafruit-INA228-PCB/blob/main/Adafruit%20INA228%20I2C%20Power%20Monitor.sch",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_SHUNT_P"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E1_N"
+        }
+      ],
+      "notes": [
+        "Існуючий шунт Adafruit #5832; Kelvin-вимір. При 4.6 A: 69 mV і 0.317 W; при 7.5 A: 0.844 W."
+      ]
+    },
+    {
+      "ref": "U102",
+      "value": "INA228AIDGSR на Adafruit 5832",
+      "kind": "ic",
+      "group": "Лічильник заряду",
+      "status": "verified",
+      "source": "https://www.ti.com/lit/ds/symlink/ina228.pdf",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A1",
+          "type": "input",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "A0",
+          "type": "input",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "ALERT",
+          "type": "open_collector",
+          "net": "INA228_ALERT"
+        },
+        {
+          "number": "4",
+          "name": "SDA",
+          "type": "bidirectional",
+          "net": "I2C0_SDA"
+        },
+        {
+          "number": "5",
+          "name": "SCL",
+          "type": "input",
+          "net": "I2C0_SCL"
+        },
+        {
+          "number": "6",
+          "name": "VS",
+          "type": "power_in",
+          "net": "AON3V3"
+        },
+        {
+          "number": "7",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "8",
+          "name": "VBUS",
+          "type": "input",
+          "net": "E1_SHUNT_P"
+        },
+        {
+          "number": "9",
+          "name": "IN−",
+          "type": "input",
+          "net": "E1_N"
+        },
+        {
+          "number": "10",
+          "name": "IN+",
+          "type": "input",
+          "net": "E1_SHUNT_P"
+        }
+      ],
+      "notes": [
+        "Деталізація Adafruit #5832 після модифікації, а не другий IC. SJ1 з’єднує VBUS з VIN+, тобто шина вимірюється на батарейному боці шунта.",
+        "Зняти R6. A0/A1 на GND задають 0x40. Зняти R7 LED. SHUNT_CAL калібрувати на 0.5/2/4 A; ADCRANGE=0; continuous CHARGE/ENERGY. Драйвер ina238 не прив’язувати.",
+        "TI DGS0010A має JEDEC MO-187 BA, 3×3 mm, pitch 0.5 mm. Реальний стандартний KiCad MSOP-10 ID обрано замість неіснуючого VSSOP-10 ID. Bundled KiCad 10.0.7 має IPC pads 1.5×0.35 mm / centers 4.2 mm; TI example 1.45×0.3 mm / centers 4.4 mm. Це альтернативний land pattern; до layout перевірити toe/heel та технологію пайки. U102 є деталізацією breakout, не вказівкою пересаджувати IC."
+      ],
+      "footprint": "Package_SO:MSOP-10_3x3mm_P0.5mm"
+    },
+    {
+      "ref": "C101",
+      "value": "100 nF (Adafruit C1)",
+      "kind": "capacitor",
+      "group": "Лічильник заряду",
+      "status": "verified",
+      "source": "https://github.com/adafruit/Adafruit-INA228-PCB/blob/main/Adafruit%20INA228%20I2C%20Power%20Monitor.sch",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "AON3V3"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C102",
+      "value": "10 µF (Adafruit C2)",
+      "kind": "capacitor",
+      "group": "Лічильник заряду",
+      "status": "verified",
+      "source": "https://github.com/adafruit/Adafruit-INA228-PCB/blob/main/Adafruit%20INA228%20I2C%20Power%20Monitor.sch",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "AON3V3"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R102",
+      "value": "10k1%",
+      "kind": "resistor",
+      "group": "Лічильник заряду",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "INA228_ALERT"
+        }
+      ],
+      "notes": [
+        "ALERT підтягнуто тільки до 3V3_Q6A. I2C0 pull-up належить E3 і також живиться від 3V3_Q6A."
+      ]
+    },
+    {
+      "ref": "U103",
+      "value": "TPS70933DBVR",
+      "kind": "ic",
+      "group": "AON і UV",
+      "status": "verified",
+      "source": "https://www.ti.com/lit/ds/symlink/tps709.pdf",
+      "pins": [
+        {
+          "number": "1",
+          "name": "IN",
+          "type": "power_in",
+          "net": "E1_N"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "EN",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "4",
+          "name": "NC",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "5",
+          "name": "OUT",
+          "type": "power_out",
+          "net": "AON3V3"
+        }
+      ],
+      "notes": [
+        "Саме TPS70933DBVR. EN залишено вільним за дозволом TI; ніколи не з’єднувати його з N. Варіанти TPS709A/B мають інші піни."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-5"
+    },
+    {
+      "ref": "C103",
+      "value": "2.2µF50VX7R (effective≥1µF)",
+      "kind": "capacitor",
+      "group": "AON і UV",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_N"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Поруч IN. Перевірити ефективну ємність при 16.8 V DC bias."
+      ]
+    },
+    {
+      "ref": "C104",
+      "value": "4.7µF10VX7R (effective≥2.2µF)",
+      "kind": "capacitor",
+      "group": "AON і UV",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "AON3V3"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "TI вимагає ≥2.2 µF для стабільності. Ефективна ємність повинна враховувати DC bias."
+      ]
+    },
+    {
+      "ref": "U104",
+      "value": "MCP65R41T-1202E/CHY",
+      "kind": "ic",
+      "group": "AON і UV",
+      "status": "verified",
+      "source": "https://ww1.microchip.com/downloads/en/DeviceDoc/22269B.pdf",
+      "pins": [
+        {
+          "number": "1",
+          "name": "OUT",
+          "type": "output",
+          "net": "E1_UV_OFF"
+        },
+        {
+          "number": "2",
+          "name": "VSS",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "IN+",
+          "type": "input",
+          "net": "E1_UV_REFH"
+        },
+        {
+          "number": "4",
+          "name": "IN−",
+          "type": "input",
+          "net": "E1_UV_SENSE"
+        },
+        {
+          "number": "5",
+          "name": "VREF 1.21 V",
+          "type": "output",
+          "net": "E1_UV_REF"
+        },
+        {
+          "number": "6",
+          "name": "VDD",
+          "type": "power_in",
+          "net": "AON3V3"
+        }
+      ],
+      "notes": [
+        "High OUT означає низьку батарею. Конденсатора на VREF та IN+ немає. Слід VREF короткий; вузли MΩ очищено від флюсу."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6"
+    },
+    {
+      "ref": "C105",
+      "value": "100nF10VX7R",
+      "kind": "capacitor",
+      "group": "AON і UV",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "AON3V3"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R103",
+      "value": "3.30M0.1%25ppm",
+      "kind": "resistor",
+      "group": "AON і UV",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_N"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E1_UV_SENSE"
+        }
+      ]
+    },
+    {
+      "ref": "R104",
+      "value": "332k0.1%25ppm",
+      "kind": "resistor",
+      "group": "AON і UV",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_UV_SENSE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E1_UV_TRIM"
+        }
+      ]
+    },
+    {
+      "ref": "R105",
+      "value": "4.02k0.1%25ppm TRIM",
+      "kind": "resistor",
+      "group": "AON і UV",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_UV_TRIM"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R106",
+      "value": "100k1%",
+      "kind": "resistor",
+      "group": "AON і UV",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_UV_REF"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E1_UV_REFH"
+        }
+      ]
+    },
+    {
+      "ref": "R107",
+      "value": "4.22M1%",
+      "kind": "resistor",
+      "group": "AON і UV",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_UV_OFF"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E1_UV_REFH"
+        }
+      ]
+    },
+    {
+      "ref": "C106",
+      "value": "100nF10VX7R",
+      "kind": "capacitor",
+      "group": "AON і UV",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_UV_SENSE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Deglitch τ≈30.5 ms. Конденсатор тільки на IN−, а не на VREF чи IN+."
+      ]
+    },
+    {
+      "ref": "D101",
+      "value": "BAT54,215",
+      "kind": "diode",
+      "group": "AON і UV",
+      "status": "verified",
+      "source": "https://assets.nexperia.com/documents/data-sheet/BAT54.pdf",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "net": "E1_UV_OFF"
+        },
+        {
+          "number": "2",
+          "name": "NC",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "3",
+          "name": "K",
+          "type": "passive",
+          "net": "E1_MASTER_OFF"
+        }
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "D102",
+      "value": "BAT54,215",
+      "kind": "diode",
+      "group": "Головний вимикач",
+      "status": "verified",
+      "source": "https://assets.nexperia.com/documents/data-sheet/BAT54.pdf",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "net": "PICO_OFF"
+        },
+        {
+          "number": "2",
+          "name": "NC",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "3",
+          "name": "K",
+          "type": "passive",
+          "net": "E1_MASTER_OFF"
+        }
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "U106",
+      "value": "Pololu 2813 HP",
+      "kind": "module",
+      "group": "Головний вимикач",
+      "status": "module",
+      "source": "https://www.pololu.com/product/2813",
+      "pins": [
+        {
+          "number": "VIN",
+          "name": "VIN",
+          "type": "power_in",
+          "net": "E1_N"
+        },
+        {
+          "number": "VOUT",
+          "name": "VOUT",
+          "type": "power_out",
+          "net": "E1_SW"
+        },
+        {
+          "number": "GND",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "A",
+          "name": "A",
+          "type": "input",
+          "net": "E1_SWITCH_A"
+        },
+        {
+          "number": "B",
+          "name": "B",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "ON",
+          "name": "ON",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "OFF",
+          "name": "OFF",
+          "type": "input",
+          "net": "E1_MASTER_OFF"
+        },
+        {
+          "number": "CTRL",
+          "name": "CTRL",
+          "type": "no_connect",
+          "nc": true
+        }
+      ],
+      "notes": [
+        "A через кнопку на GND дає лише ввімкнення. OFF >1 V вимикає від Pico або UV. CTRL і ON не підключено. Перевірити пріоритет held OFF над кнопкою."
+      ],
+      "description": "Офіційні функціональні клеми Pololu, без довільних фізичних номерів."
+    },
+    {
+      "ref": "D103",
+      "value": "BAT54,215",
+      "kind": "diode",
+      "group": "Головний вимикач",
+      "status": "verified",
+      "source": "https://assets.nexperia.com/documents/data-sheet/BAT54.pdf",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "net": "E1_SWITCH_A"
+        },
+        {
+          "number": "2",
+          "name": "NC",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "3",
+          "name": "K",
+          "type": "passive",
+          "net": "PWR_BUTTON"
+        }
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "D104",
+      "value": "SMBJ17A-E3/52",
+      "kind": "diode",
+      "group": "Головний вимикач",
+      "status": "verified",
+      "source": "https://www.vishay.com/docs/88392/smbj.pdf",
+      "pins": [
+        {
+          "number": "A",
+          "name": "A",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "K",
+          "name": "K",
+          "type": "passive",
+          "net": "E1_N"
+        }
+      ],
+      "description": "Двоклемний TVS. A/K описують полярність; кільце катода до плюса. Номери pad перед PCB звірити."
+    },
+    {
+      "ref": "D105",
+      "value": "SMBJ17A-E3/52",
+      "kind": "diode",
+      "group": "Головний вимикач",
+      "status": "verified",
+      "source": "https://www.vishay.com/docs/88392/smbj.pdf",
+      "pins": [
+        {
+          "number": "A",
+          "name": "A",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "K",
+          "name": "K",
+          "type": "passive",
+          "net": "E1_SW"
+        }
+      ],
+      "description": "Другий TVS на E1_SW. Полярність за cathode band. Не вважати гарячий clamp гарантовано безпечним для 28 V eFuse."
+    },
+    {
+      "ref": "U107",
+      "value": "Pololu D36V50F12#4095",
+      "kind": "module",
+      "group": "SYS12",
+      "status": "module",
+      "source": "https://www.pololu.com/product/4095",
+      "pins": [
+        {
+          "number": "VIN",
+          "name": "VIN",
+          "type": "power_in",
+          "net": "E1_SW"
+        },
+        {
+          "number": "VRP",
+          "name": "VRP",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "VOUT",
+          "name": "VOUT",
+          "type": "power_out",
+          "net": "SYS12"
+        },
+        {
+          "number": "GND",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "EN",
+          "name": "EN",
+          "type": "input",
+          "net": "E1_EN_SYS12"
+        },
+        {
+          "number": "PG",
+          "name": "PG",
+          "type": "open_collector",
+          "net": "E1_PG_SYS12"
+        }
+      ],
+      "notes": [
+        "12 V без boost. PG резервний для тесту. Монітори захищених шин містить E2."
+      ],
+      "description": "Функціональні клеми модуля; дубльовані силові отвори належать спільним мережам."
+    },
+    {
+      "ref": "R108",
+      "value": "10.0k1%",
+      "kind": "resistor",
+      "group": "SYS12",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_SW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E1_EN_SYS12"
+        }
+      ]
+    },
+    {
+      "ref": "R109",
+      "value": "1.00k1%",
+      "kind": "resistor",
+      "group": "SYS12",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_EN_SYS12"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "TP101",
+      "value": "PG_SYS12резерв",
+      "kind": "testpoint",
+      "group": "SYS12",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "PG",
+          "type": "passive",
+          "net": "E1_PG_SYS12"
+        }
+      ],
+      "notes": [
+        "Без постійного pull-up. Тестувати open-drain зовнішнім підтягуванням до 3.3 V; це не сигнал PG для labd."
+      ]
+    },
+    {
+      "ref": "C107",
+      "value": "100µF35VlowESR",
+      "kind": "capacitor",
+      "group": "SYS12",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_SW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C108",
+      "value": "1µF50VX7R",
+      "kind": "capacitor",
+      "group": "SYS12",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_SW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "U108",
+      "value": "Pololu D36V50F5 #4091 — LAB5 default",
+      "kind": "module",
+      "group": "LAB5",
+      "status": "module",
+      "source": "https://www.pololu.com/product/4091",
+      "pins": [
+        {
+          "number": "VIN",
+          "name": "VIN",
+          "type": "power_in",
+          "net": "E1_SW"
+        },
+        {
+          "number": "VRP",
+          "name": "VRP",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "VOUT",
+          "name": "VOUT",
+          "type": "power_out",
+          "net": "E1_LAB5_RAW"
+        },
+        {
+          "number": "GND",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "EN",
+          "name": "EN",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "PG",
+          "name": "PG",
+          "type": "open_collector",
+          "net": "E1_PG_LAB5"
+        }
+      ],
+      "notes": [
+        "Оновлений default LAB5 замість D36V28F5. Advertised 5.5 A typ є умовним терморейтингом, а не гарантією при 50 °C. Вихід 5 V ±4%; EN вільний із внутрішнім pull-up; VRP не підключено; PG лише на TP102.",
+        "Габарит 25.4×25.4×9.5 mm проти 17.8×20.3×8.8 mm старого модуля: +7.6×5.1×0.7 mm і +78.5% площі. Потрібне перекомпонування силової плати та кріплень.",
+        "Проєктний режим: сукупний LAB5 ≤3.2 A continuous; transient qualification ≤4 A. Це новий бюджет, не вимір. Перевірити кожний VBUS після ключа. Силові дроти паяти напряму або використовувати обидва парні силові піни: одиночний header rated 3 A непридатний.",
+        "D36V28F5 є legacy-варіантом лише обмежених профілів з окремим gate ≤2.5 A; у default BOM і схемі не встановлюється."
+      ],
+      "description": "Офіційний функціональний інтерфейс Pololu #4091. Дубльовані силові отвори належать спільним мережам; не одинарний header при струмі понад3A.",
+      "mpn": "D36V50F5",
+      "manufacturer": "Pololu"
+    },
+    {
+      "ref": "C109",
+      "value": "100µF35VlowESR",
+      "kind": "capacitor",
+      "group": "LAB5",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_SW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C110",
+      "value": "1µF50VX7R",
+      "kind": "capacitor",
+      "group": "LAB5",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_SW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "F102",
+      "value": "4 A DC ≥32 V LAB5",
+      "kind": "fuse",
+      "group": "LAB5",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_LAB5_RAW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E1_LAB5_FUSED"
+        }
+      ],
+      "notes": [
+        "Оновлено 3 A →4 A разом із D36V50F5. Плановий continuous бюджет ≤3.2 A (80% номіналу запобіжника). Time-current та ambient derating підтвердити з конкретним тримачем при 50 °C. Не обходити запобіжник під час stress-тесту."
+      ]
+    },
+    {
+      "ref": "C111",
+      "value": "35SVPF22M 22 µF 35 V ±20% OS-CON",
+      "kind": "capacitor",
+      "group": "LAB5",
+      "status": "design",
+      "source": "https://industrial.panasonic.com/ww/products/pt/os-con/models/35SVPF22M",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "E1_LAB5_FUSED"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "mpn": "35SVPF22M",
+      "manufacturer": "Panasonic",
+      "notes": [
+        "Конкретний полярний polymer OS-CON замість generic X7R 22 µF. Початковий мінімум 17.6 µF. Не має властивої class-II MLCC втрати ємності від DC bias. Ефективний C у частоті/температурі та converter interaction ще перевіряються.",
+        "ESR≤35 mΩ при 100 kHz; ripple 2.6 A rms при 105 °C/100 kHz; корпус Ø6.3×5.9 mm, size C6. Плюс до рейки, мінус до GND. Це design-заміна, не результат A/B тесту."
+      ]
+    },
+    {
+      "ref": "L101",
+      "value": "XAL6060-103MEC 10 µH ±20%",
+      "kind": "inductor",
+      "group": "LAB5",
+      "status": "design",
+      "source": "https://www.coilcraft.com/en-us/products/power/shielded-inductors/molded-inductor/xal/xal60xx/",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_LAB5_FUSED"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "LAB5"
+        }
+      ],
+      "notes": [
+        "Конкретний shielded molded inductor: DCR 27.0 mΩ typ /29.8 mΩ max при 25 °C; Isat 7.6 A означає 30% типового падіння L; Irms 5.0 A для 20 K rise, 7.0 A для 40 K у тесті виробника.",
+        "При 2.5 A: I²R≤0.186 W, падіння≤74.5 mV при 25 °C. Isat не є дозволом тривалого струму 7.6 A. Тепло й L(I) перевірити в застосуванні.",
+        "Корпус 6.56±0.2×6.36±0.2×6.1 mm max. При 4 A та 25 °C: ≤119.2 mV /0.477 W. Модель за copper temperature 55 °C: 133.3 mV /0.533 W. Це не прогноз реальної температури дроселя; потрібен стенд."
+      ],
+      "mpn": "XAL6060-103MEC",
+      "manufacturer": "Coilcraft"
+    },
+    {
+      "ref": "C112",
+      "value": "35SVPF22M 22 µF 35 V ±20% OS-CON",
+      "kind": "capacitor",
+      "group": "LAB5",
+      "status": "design",
+      "source": "https://industrial.panasonic.com/ww/products/pt/os-con/models/35SVPF22M",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "mpn": "35SVPF22M",
+      "manufacturer": "Panasonic",
+      "notes": [
+        "Конкретний полярний polymer OS-CON замість generic X7R 22 µF. Початковий мінімум 17.6 µF. Не має властивої class-II MLCC втрати ємності від DC bias. Ефективний C у частоті/температурі та converter interaction ще перевіряються.",
+        "ESR≤35 mΩ при 100 kHz; ripple 2.6 A rms при 105 °C/100 kHz; корпус Ø6.3×5.9 mm, size C6. Плюс до рейки, мінус до GND. Це design-заміна, не результат A/B тесту."
+      ]
+    },
+    {
+      "ref": "R110",
+      "value": "WSL2512R3300FEA 0.330 Ω 1%",
+      "kind": "resistor",
+      "group": "LAB5",
+      "status": "design",
+      "source": "https://www.vishay.com/docs/30100/wsl.pdf",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E1_LAB5_DAMP"
+        }
+      ],
+      "mpn": "WSL2512R3300FEA",
+      "manufacturer": "Vishay Dale",
+      "notes": [
+        "Power Metal Strip 2512, nominal 1 W family. Для 0.33 Ω value derating дає приблизно 0.885 W при 70 °C (між 1 W при 0.1 Ω та 0.8 W при 0.5 Ω); далі температурний derating. Family inductance 0.5–5 nH.",
+        "У серійній RC-гілці не проводить постійний струм LAB5. Для ступеня 5 V оцінка енергії C113: 0.5×100 µF×25=1.25 mJ. Це оцінка; pulse curve та виміряний transient лишаються gate."
+      ]
+    },
+    {
+      "ref": "C113",
+      "value": "16SVPC100M 100 µF 16 V ±20% OS-CON",
+      "kind": "capacitor",
+      "group": "LAB5",
+      "status": "design",
+      "source": "https://industrial.panasonic.com/ww/products/pt/OS-CON/models/16SVPC100M",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+",
+          "type": "passive",
+          "net": "E1_LAB5_DAMP"
+        },
+        {
+          "number": "2",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "mpn": "16SVPC100M",
+      "manufacturer": "Panasonic",
+      "notes": [
+        "Демпферна ємність: початковий мінімум 80 µF; ESR≤24 mΩ при 100 kHz; ripple 2.49 A rms при 105 °C/100 kHz; корпус Ø6.3×5.9 mm C6. Полімерна технологія без MLCC DC-bias collapse.",
+        "Послідовно R110=0.33 Ω. ESR частотно-залежний: 24 mΩ не є гарантованим ESR саме на 10.7 kHz. Демпфування у моделі та step response перевірити."
+      ]
+    },
+    {
+      "ref": "TP102",
+      "value": "PG_LAB5резерв",
+      "kind": "testpoint",
+      "group": "LAB5",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "PG",
+          "type": "passive",
+          "net": "E1_PG_LAB5"
+        }
+      ],
+      "notes": [
+        "Open-drain без постійного pull-up; лише сервісний тест."
+      ]
+    },
+    {
+      "ref": "F103",
+      "value": "5A DC≥32V service",
+      "kind": "fuse",
+      "group": "Сервісний заряд",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_N"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E1_SERVICE_P"
+        }
+      ]
+    },
+    {
+      "ref": "J101",
+      "value": "XT30 сервісний заряд/розряд",
+      "kind": "connector",
+      "group": "Сервісний заряд",
+      "status": "module",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "+",
+          "name": "+",
+          "type": "passive",
+          "net": "E1_SERVICE_P"
+        },
+        {
+          "number": "-",
+          "name": "−",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "ISDT із балансним кабелем заборонено до закриття E1-02. Звичайний сервіс — із current-limited джерелом ≤5 A і головним вимикачем OFF."
+      ],
+      "description": "Функціональні +/−. Полярність визначити за формою та маркуванням конкретного XT30."
+    },
+    {
+      "ref": "J102",
+      "value": "DNP — зовнішній balance 4S (GATE)",
+      "kind": "connector",
+      "group": "Сервісний заряд",
+      "status": "TBD",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "B0",
+          "name": "B0",
+          "type": "passive",
+          "net": "E1_CELL0"
+        },
+        {
+          "number": "B1",
+          "name": "B1",
+          "type": "passive",
+          "net": "E1_CELL1"
+        },
+        {
+          "number": "B2",
+          "name": "B2",
+          "type": "passive",
+          "net": "E1_CELL2"
+        },
+        {
+          "number": "B3",
+          "name": "B3",
+          "type": "passive",
+          "net": "E1_CELL3"
+        },
+        {
+          "number": "B4",
+          "name": "B4",
+          "type": "passive",
+          "net": "E1_CELL4"
+        }
+      ],
+      "notes": [
+        "DNP / service-only. Не монтувати і не підключати зовнішній балансний кабель до закриття E1-02. Місячний баланс ISDT 608PD вимкнено у процедурі.",
+        "B0 є raw B− і може обійти BMS через внутрішню землю ISDT. Не переводити B0 на P− і не переносити силовий XT30 return на raw B− як автоматичне виправлення."
+      ],
+      "description": "Функціональні taps комірок. Фізичний тип і порядок потребують перевірки. Не підключати до зарядника до E1-02.",
+      "dnp": true
+    },
+    {
+      "ref": "R111",
+      "value": "100k1%",
+      "kind": "resistor",
+      "group": "Аварійний ADC",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_SW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E1_BAT_ADC"
+        }
+      ]
+    },
+    {
+      "ref": "R112",
+      "value": "20.0k1%",
+      "kind": "resistor",
+      "group": "Аварійний ADC",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_BAT_ADC"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C114",
+      "value": "100nF10V",
+      "kind": "capacitor",
+      "group": "Аварійний ADC",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_BAT_ADC"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Pico GP27 на E3; 16.8 V / 6 = 2.8 V. ADC τ≈1.67 ms; перед виміром витримати щонайменше 5τ."
+      ]
+    },
+    {
+      "ref": "J103",
+      "value": "USB-C PD заряд",
+      "kind": "connector",
+      "group": "Заряд IP2368",
+      "status": "module",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "VBUS",
+          "name": "VBUS",
+          "type": "power_in",
+          "net": "E1_USB_PD_RAW"
+        },
+        {
+          "number": "GND",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "CC1",
+          "name": "CC1",
+          "type": "bidirectional",
+          "net": "E1_CHG_CC1"
+        },
+        {
+          "number": "CC2",
+          "name": "CC2",
+          "type": "bidirectional",
+          "net": "E1_CHG_CC2"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "type": "passive",
+          "net": "CHASSIS"
+        }
+      ],
+      "notes": [
+        "CC підключено прямо до IP2368. На зовнішньому роз’ємі не дублювати Rd 5.1 kΩ. eFuse стоїть тільки у VBUS."
+      ],
+      "description": "Функціональний корпусний USB-C feedthrough. D+/D−/SS не потрібні. Фізичний VBUS/CC кабель обрати й продзвонити."
+    },
+    {
+      "ref": "U109",
+      "value": "TPS259470ARPWR USB-C",
+      "kind": "ic",
+      "group": "Захист USB-PD",
+      "status": "verified",
+      "source": "https://www.ti.com/lit/ds/symlink/tps25947.pdf",
+      "pins": [
+        {
+          "number": "1",
+          "name": "EN/UVLO",
+          "type": "input",
+          "net": "E1_PD_EN"
+        },
+        {
+          "number": "2",
+          "name": "OVLO",
+          "type": "input",
+          "net": "E1_PD_OVLO"
+        },
+        {
+          "number": "3",
+          "name": "AUXOFF",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "4",
+          "name": "FLT",
+          "type": "open_collector",
+          "net": "E1_PD_FLT"
+        },
+        {
+          "number": "5",
+          "name": "IN",
+          "type": "power_in",
+          "net": "E1_USB_PD_RAW"
+        },
+        {
+          "number": "6",
+          "name": "OUT",
+          "type": "power_out",
+          "net": "E1_USB_PD_SAFE"
+        },
+        {
+          "number": "7",
+          "name": "DVDT",
+          "type": "passive",
+          "net": "E1_PD_DVDT"
+        },
+        {
+          "number": "8",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "9",
+          "name": "ILM",
+          "type": "passive",
+          "net": "E1_PD_ILM"
+        },
+        {
+          "number": "10",
+          "name": "ITIMER",
+          "type": "no_connect",
+          "nc": true
+        }
+      ],
+      "notes": [
+        "RPW — 10-pin HotRod без окремого нумерованого EP. Перед PCB звірити land pattern.",
+        "RILM=953 Ω дає 3.50 A номінально; варіант A має auto-retry. Reverse blocking не доводить коректну sink-поведінку Try.SRC плати."
+      ]
+    },
+    {
+      "ref": "R113",
+      "value": "470k1%",
+      "kind": "resistor",
+      "group": "Захист USB-PD",
+      "status": "design",
+      "source": "https://www.ti.com/lit/ds/symlink/tps25947.pdf",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_USB_PD_RAW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E1_PD_EN"
+        }
+      ],
+      "notes": [
+        "TI дозволяє pull-up від IN через ≥350 kΩ при VIN >5 V. Прямий EN на 20 V неприпустимий."
+      ]
+    },
+    {
+      "ref": "R114",
+      "value": "174k0.1%",
+      "kind": "resistor",
+      "group": "Захист USB-PD",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_USB_PD_RAW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E1_PD_OVLO"
+        }
+      ]
+    },
+    {
+      "ref": "R115",
+      "value": "10.0k0.1%",
+      "kind": "resistor",
+      "group": "Захист USB-PD",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_PD_OVLO"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R116",
+      "value": "953Ω1%",
+      "kind": "resistor",
+      "group": "Захист USB-PD",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_PD_ILM"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C115",
+      "value": "3.3nF50VC0G",
+      "kind": "capacitor",
+      "group": "Захист USB-PD",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_PD_DVDT"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C116",
+      "value": "1µF50VX7R",
+      "kind": "capacitor",
+      "group": "Захист USB-PD",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_USB_PD_RAW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "C117",
+      "value": "1µF50VX7R",
+      "kind": "capacitor",
+      "group": "Захист USB-PD",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_USB_PD_SAFE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "TP103",
+      "value": "PD_FLT service",
+      "kind": "testpoint",
+      "group": "Захист USB-PD",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "FLT",
+          "type": "passive",
+          "net": "E1_PD_FLT"
+        }
+      ],
+      "notes": [
+        "Open-drain для сервісу. Постійного pull-up до AON немає."
+      ]
+    },
+    {
+      "ref": "U110",
+      "value": "IP2368 COUT 4S retail board",
+      "kind": "module",
+      "group": "Заряд IP2368",
+      "status": "module",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "VBUS",
+          "name": "VBUS після eFuse",
+          "type": "power_in",
+          "net": "E1_USB_PD_SAFE"
+        },
+        {
+          "number": "CC1",
+          "name": "CC1",
+          "type": "bidirectional",
+          "net": "E1_CHG_CC1"
+        },
+        {
+          "number": "CC2",
+          "name": "CC2",
+          "type": "bidirectional",
+          "net": "E1_CHG_CC2"
+        },
+        {
+          "number": "BAT+",
+          "name": "BAT+",
+          "type": "passive",
+          "net": "E1_N"
+        },
+        {
+          "number": "BAT-",
+          "name": "BAT−",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "NTC",
+          "name": "NTC modification node",
+          "type": "passive",
+          "net": "E1_CHG_NTC"
+        },
+        {
+          "number": "VSET",
+          "name": "VSET modification node",
+          "type": "passive",
+          "net": "E1_CHG_VSET"
+        },
+        {
+          "number": "ISET",
+          "name": "ISET modification node",
+          "type": "passive",
+          "net": "E1_CHG_ISET"
+        },
+        {
+          "number": "ISET_MODE",
+          "name": "ISET_MODE modification node",
+          "type": "passive",
+          "net": "E1_CHG_ISETMODE"
+        },
+        {
+          "number": "CELLSET",
+          "name": "CELLSET modification node",
+          "type": "passive",
+          "net": "E1_CHG_CELLSET"
+        }
+      ],
+      "notes": [
+        "Замінити stock R4 на RVSET 5.1 kΩ; R3 на RISET 15 kΩ; R7 CELLSET 13 kΩ для 4S; ISET_MODE через 1 kΩ на GND; R6 замінити справжнім 10 kΩ B3380.",
+        "До E1-01 обов’язково підтвердити місця модифікацій фото і continuity, маркування LDO та ревізію IP2368. Не підключати NTC або VSET навгад.",
+        "Заряд лише при 0…45 °C комірок; KSD 70 °C NO на MOSFET. Quiet inhibit діє тільки після успішного стендового тесту."
+      ],
+      "description": "Назви описують функції та місця заміни резисторів, а не підтверджені зовнішні роз’єми. Офіційна схема COUT не знайдена; внутрішня силова частина готового модуля не дублюється."
+    },
+    {
+      "ref": "R117",
+      "value": "5.10k1% replacesR4",
+      "kind": "resistor",
+      "group": "Заряд IP2368",
+      "status": "TBD",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_CHG_VSET"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Ціль близько 16.4 V; попередня модель STACK 16.25…16.57 V. Підтвердити на COUT."
+      ]
+    },
+    {
+      "ref": "R118",
+      "value": "15.0k1% replacesR3",
+      "kind": "resistor",
+      "group": "Заряд IP2368",
+      "status": "TBD",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_CHG_ISET"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Ціль 3 A на батарейному боці при ISET_MODE low. Це окрема межа від вхідного eFuse 3.5 A."
+      ]
+    },
+    {
+      "ref": "R119",
+      "value": "1.00k1% ISET_MODE",
+      "kind": "resistor",
+      "group": "Заряд IP2368",
+      "status": "TBD",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_CHG_ISETMODE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R120",
+      "value": "13.0k1%4Scellset",
+      "kind": "resistor",
+      "group": "Заряд IP2368",
+      "status": "TBD",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_CHG_CELLSET"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "TH101",
+      "value": "NTC 10 kΩ B3380 при 25 °C",
+      "kind": "resistor",
+      "group": "Заряд IP2368",
+      "status": "TBD",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_CHG_NTC"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Розташувати на комірці. Перевірити обрив і КЗ. Передавальну функцію COUT для 0…45 °C ще потрібно підтвердити."
+      ]
+    },
+    {
+      "ref": "C118",
+      "value": "100nF50VnearNTCpad",
+      "kind": "capacitor",
+      "group": "Заряд IP2368",
+      "status": "TBD",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_CHG_NTC"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "R121",
+      "value": "2.20k1%",
+      "kind": "resistor",
+      "group": "Інгібування заряду",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_CHG_NTC"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E1_CHG_INHIBIT_LOW"
+        }
+      ]
+    },
+    {
+      "ref": "Q101",
+      "value": "2N7002,215",
+      "kind": "nfet",
+      "group": "Інгібування заряду",
+      "status": "verified",
+      "source": "https://assets.nexperia.com/documents/data-sheet/2N7002.pdf",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "E1_CHG_GATE"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "E1_CHG_INHIBIT_LOW"
+        }
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23"
+    },
+    {
+      "ref": "R122",
+      "value": "1.00k1%",
+      "kind": "resistor",
+      "group": "Інгібування заряду",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "CHG_INHIBIT"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E1_CHG_GATE"
+        }
+      ]
+    },
+    {
+      "ref": "R123",
+      "value": "100k1%",
+      "kind": "resistor",
+      "group": "Інгібування заряду",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_CHG_GATE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "TH102",
+      "value": "KSD9700 70 °C NO",
+      "kind": "switch",
+      "group": "Інгібування заряду",
+      "status": "module",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E1_CHG_INHIBIT_LOW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Паралельно D/S Q101 на сигнальному рівні, сумарно через R121. Ніколи у розрив PD 20 V. Close 65…75 °C, reopen щонайменше на 15 K нижче."
+      ]
+    },
+    {
+      "ref": "TP104",
+      "value": "ВузолN",
+      "kind": "testpoint",
+      "group": "Контрольні точки",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "ВузолN",
+          "type": "passive",
+          "net": "E1_N"
+        }
+      ]
+    },
+    {
+      "ref": "TP105",
+      "value": "ВузолSW",
+      "kind": "testpoint",
+      "group": "Контрольні точки",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "ВузолSW",
+          "type": "passive",
+          "net": "E1_SW"
+        }
+      ]
+    },
+    {
+      "ref": "TP106",
+      "value": "AON3V3",
+      "kind": "testpoint",
+      "group": "Контрольні точки",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "AON3V3",
+          "type": "passive",
+          "net": "AON3V3"
+        }
+      ]
+    },
+    {
+      "ref": "TP107",
+      "value": "Protectedground",
+      "kind": "testpoint",
+      "group": "Контрольні точки",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "Protectedground",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "TP108",
+      "value": "UV_OFF",
+      "kind": "testpoint",
+      "group": "Контрольні точки",
+      "status": "design",
+      "source": "STACK §2.7,§5.1",
+      "pins": [
+        {
+          "number": "1",
+          "name": "UV_OFF",
+          "type": "passive",
+          "net": "E1_UV_OFF"
+        }
+      ]
+    }
+  ],
+  "open_items": [
+    {
+      "id": "E1-01",
+      "description": "Ревізія COUT і місця NTC/VSET/ISET/ISET_MODE/CELLSET не підтверджені офіційною схемою. Вікно 0…45 °C та inhibit не перевірені.",
+      "blocking": true,
+      "resolve": "До модифікацій отримати ревізійну схему або фото обох боків з continuity до IC. Стенд: NTC 0/45 °C, обрив/КЗ, зупинка charge і reverse boost, 2 h при 3 A, 20 PD cycles, зовнішній VBUS=0 V, startup 5→20 V, CV кожної комірки. При провалі цей модуль не використовувати; ISDT лише після E1-02."
+    },
+    {
+      "id": "E1-02",
+      "description": "Balance B0 = raw B− може шунтувати Daly через спільну землю ISDT 608PD і пропускати силовий струм по тонкому sense-дроту.",
+      "blocking": true,
+      "resolve": "J102 позначено DNP/service-only; місячний баланс ISDT вимкнути до затвердженого інтерфейсу. До підключення перевірити DMM ізоляцію output−/balance B0 ISDT без живлення та отримати принципову схему виробника. При спільній землі потрібне перепроєктування з явним аналізом усіх струмових шляхів і незалежним захистом; ані main OFF, ані 5 A fuse не доводять безпеку. Не виправляти перенесенням B0→P− чи XT30−→raw B−. Внутрішній sense harness Daly лишається. Див. design/charger-bms-review.md. Низька continuity є reject; високий опір без живлення не є pass, бо стан може змінитися при роботі чи через USB. Для закриття потрібне підтвердження топології виробником або redesign із fault validation відсічки BMS в усіх струмових шляхах."
+    },
+    {
+      "id": "E1-03",
+      "description": "Фізичний PHB2.0 pin order Daly та ревізія J05G/J04G3 нез’ясовані.",
+      "blocking": true,
+      "resolve": "На прийманні звірити маркування з Daly DS саме цієї ревізії. Продзвонити B0…B4 зі знятим sense-штекером; послідовні напруги 3…4.2 V, сумарно 4S. Пробудження зарядником 3/3. До цього підключення sense заборонене."
+    },
+    {
+      "id": "E1-04",
+      "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки ще не перевірено.",
+      "blocking": true,
+      "resolve": "До батареї current-limited sweep 14→12→14 V при 25 і 50 °C: trip 12.8±0.1 V, release 13.6±0.1 V, drift≤50 mV. Калібрувати R105. AON без INA ≤11 µA. Утримуванням кнопки не можна обійти UV. 20 PD cycles без самозапуску. При провалі fallback TLV3012 із нижнім плечем 346.04 kΩ і повним повтором тесту."
+    },
+    {
+      "id": "E1-05",
+      "description": "Default LAB5: D36V50F5 +4 A fuse; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
+      "blocking": true,
+      "resolve": "U108 D36V50F5 #4091; F102 4 A; L101 XAL6060-103MEC; C111/C112 35SVPF22M; C113 16SVPC100M; R110 WSL2512R3300FEA. Звірити площу, висоту і land patterns. Виміряти всі режими: LAB5 ≤3.2 A continuous; blower reserve 0.25 A continuous /0.50 A startup; SB_LNA 65 mA враховувати один раз у I_ANT≤1 A. Додаткова policy: I_ANT+0.83 A×EN_LAB≤1.5 A. За 5 V та 0…50 °C підтвердити C111/C112 effective ≥10 µF; C113 початково ≥80 µF; step 10…90% без осциляцій; 5 V±5% на КОЖНОМУ пристрої після switch/кабелю. Термо 30 min при 3.2 A і середовищі 50 °C; до 4 A transient із логом запобіжника та пульсацій. Вихід модуля 5 V±4% та drop L101 не гарантують USB 4.75 V у всіх допусках: low unit відбракувати або переробити живлення. Якщо actual сума перевищує бюджет — формальний concurrency cap/rail redesign із повтором тестів."
+    },
+    {
+      "id": "E1-06",
+      "description": "Термо, transient, ESD та узгодження захистів не доведені на реальному PCB.",
+      "blocking": true,
+      "resolve": "Силова плата reflow. Перевірити USB-PD OVLO≈22 V, ILIM≈3.5 A, hot-plug 0→20 V і reverse blocking. TVS E1_SW не вважати гарантією захисту 28 V eFuse. SYS12: C4 RF A/B і 60 min при 4.2 A, входи 14/16.4 V; батарейний шлях 4.6 A при case 50 °C. Перед виготовленням PCB потрібні layout, ERC і DRC."
+    },
+    {
+      "id": "E1-07",
+      "description": "USB-C feedthrough, XT30 та BMS мають функціональні контакти; механічні parts і land patterns не задано.",
+      "blocking": true,
+      "resolve": "Перед PCB вибрати конкретні частини, відобразити їхні фізичні контакти на functional nets і незалежно перевірити pin mapping. Ця JSON описує схему, а не Gerber."
+    }
+  ],
+  "decisions": [
+    {
+      "id": "R-E1-01",
+      "description": "INA228 закріплено на 0x40: обидва address pins на GND після зняття R6.",
+      "source": "STACK C14 дозволяє 0x40/0x45; обрано перше, згідно з TI address map."
+    },
+    {
+      "id": "R-E1-02",
+      "description": "USB-PD eFuse: RILM 953 Ω; OVLO 174 kΩ / 10 kΩ 0.1%; EN pull-up 470 kΩ; CdVdt 3.3 nF; ITIMER open.",
+      "source": "TI: 3334/R = 3.498 A; 1.2×(1+174/10)=22.08 V. З межею comparator 1.183…1.223 V та допусками резисторів: 21.726…22.546 V. Перевірити PD 5 V startup, 20 V та перехідні."
+    },
+    {
+      "id": "R-E1-03",
+      "description": "UV feedback: VREF →100 kΩ→IN+; OUT →4.22 MΩ→IN+; N →3.30 MΩ→IN−; IN− →332 kΩ+4.02 kΩ→GND; 100 nF на IN−.",
+      "source": "Власний розрахунок за офіційними pinout та характеристиками: β=336020/3636020; trip 12.790 V; release 13.617 V для VOH=3.3/VOL=0; τ≈30.5 ms. Reference, offset та VOH вимагають індивідуального trim."
+    },
+    {
+      "id": "R-E1-04",
+      "description": "Узгоджені між аркушами E1_SW, SYS12, LAB5, AON3V3. PICO_OFF = Pico GP13. CHG_INHIBIT = MCP #4 GPB4 (design). E1_BAT_ADC = Pico GP27.",
+      "source": "Узгодження E1/E2/E3."
+    },
+    {
+      "id": "R-E1-05",
+      "description": "LAB5 π має конкретні parts: XAL6060-103MEC 10 µH; 35SVPF22M 22 µF×2; демпфер WSL2512R3300FEA 0.33 Ω +16SVPC100M 100 µF. Номінальні L/C/R збережено; MLCC замінено polymer як design-рішення.",
+      "source": "Офіційні Coilcraft/Panasonic/Vishay datasheets. fLC≈10.73 kHz, Z0≈0.674 Ω за C=22 µF. Дросель при 2.5 A: ≤74.5 mV /0.186 W при 25 °C. Heat, step response та real C залишаються E1-05."
+    },
+    {
+      "id": "R-E1-06",
+      "description": "Service balance не оголошено захищеним Daly до перевірки ізоляції. Схема портів показує вихідний намір STACK із блокувальними воротами.",
+      "source": "Аналіз низькобічного BMS і можливого загального output−/balance B0 у ISDT; на екземплярі не перевірено."
+    },
+    {
+      "id": "R-E1-07",
+      "description": "Default LAB5 змінено з D36V28F5 +3 A fuse на D36V50F5 #4091 +4 A fuse: legacy-модель 2.3 A не враховувала RTL-B. Старий converter не є default.",
+      "source": "Рішення інтеграції 19.10.2026 та офіційний Pololu #4091. Новий design budget 3.2 A continuous /4 A transient qualification. Power і thermal acceptance OPEN. Підсумкові ціни комплекту не перераховані."
+    }
+  ],
+  "power_flags": [
+    {
+      "net": "GND",
+      "reason": "Фізичний силовий return від Daly P− та USB-C GND. Відокремлений від raw cell B−.",
+      "source": "U101 P−, J103 GND; STACK §5.1"
+    },
+    {
+      "net": "E1_N",
+      "reason": "Реальна батарейна напруга після F101 7.5 A і шунта R101; або вихід charger BAT+ через захищений шлях. Пасиви не породжують KiCad power_out.",
+      "source": "4S1P → F101 → R101 → E1_N; U110 BAT+"
+    },
+    {
+      "net": "LAB5",
+      "reason": "Реальний вихід Pololu U108 після F102 і L101; флаг не обходить їхній струмовий захист.",
+      "source": "U108 VOUT → F102 → L101 → LAB5"
+    },
+    {
+      "net": "E1_USB_PD_RAW",
+      "reason": "Живлення від зовнішнього односпрямованого USB-PD адаптера до входу eFuse U109. Не джерело з боку IP2368.",
+      "source": "J103 VBUS; STACK §2.7, §5.1"
+    }
+  ],
+  "bom_changes": [
+    {
+      "id": "E1-BOM-LAB5",
+      "removed": [
+        {
+          "ref": "U108",
+          "mpn": "D36V28F5",
+          "quantity": 1
+        },
+        {
+          "ref": "F102",
+          "value": "3 A fuse",
+          "quantity": 1
+        }
+      ],
+      "added": [
+        {
+          "ref": "U108",
+          "mpn": "D36V50F5",
+          "manufacturer": "Pololu",
+          "item": "4091",
+          "quantity": 1
+        },
+        {
+          "ref": "F102",
+          "value": "4 A DC≥32V fuse",
+          "quantity": 1
+        },
+        {
+          "ref": "L101",
+          "mpn": "XAL6060-103MEC",
+          "quantity": 1
+        },
+        {
+          "ref": "C111,C112",
+          "mpn": "35SVPF22M",
+          "quantity": 2
+        },
+        {
+          "ref": "C113",
+          "mpn": "16SVPC100M",
+          "quantity": 1
+        },
+        {
+          "ref": "R110",
+          "mpn": "WSL2512R3300FEA",
+          "quantity": 1
+        }
+      ],
+      "note": "Нові L/C/R замінюють generic позиції; не паралельні додаткові деталі. Ціни, landed totals і фінальний layout не оновлені цією правкою; потрібне центральне зведення. Нову запасну D36V28F5 не купувати."
+    }
+  ],
+  "lab5_budget": {
+    "converter": "Pololu D36V50F5 #4091",
+    "fuse_a": 4.0,
+    "design_continuous_a": 3.2,
+    "transient_qualification_a": 4.0,
+    "internal_overhead_reserve_a": 0.052,
+    "internal_overhead_note": "Окремо від навантажень: 2×LT3045 worst-case GND по25mA поблизу dropout +SET0.204mA +9×LAB5 TPS2553 по0.140mA ≈51.5mA; резерв округлено вгору52mA. T7 TPS2553 відVCC_5V_PERI доцих9невходить. ЗауваженняE2;неподвійнийрахунок струмівLNA.",
+    "antenna_policy_a": 1.0,
+    "antenna_policy_note": "I_ANT включає S-band65mA одинраз; фізична межа париLT3045≤1A лишається окремо.",
+    "lab_port_reservation_a": 0.83,
+    "combined_ant_lab_policy_a": 1.5,
+    "qualification_status": "OPEN — не вимір, не гарантія струму при50°C"
+  }
+}

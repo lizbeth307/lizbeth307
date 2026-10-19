@@ -1,0 +1,293 @@
+{
+  "passed": true,
+  "methodology": "Independent stdlib JSON and XML parsers; no generator/validator imports.",
+  "graph_sha256": {
+    "E1.json": "e87f79db4da0d9be7e74aa1ad2816ea99ae4ed8fd6e723ba375c1559bfd51392",
+    "E2.json": "adc5b67b6b53977143847d688f657364a5e300a80761d74e1dc82e34bd703c16",
+    "E3.json": "ad604c2be01425969c56f800bf92c46631fc7dccccdb872b245e8fc5ff8223de",
+    "E4.json": "b05555c7a6729029f779df3ca3d0a62d71e206520a33cf7e34ffa3e2c081344d",
+    "E5.json": "86a9099809fbcdf365c82ecf4a239531b1b55715ee17cd1c5fb5a776c979ca05"
+  },
+  "netlist_sha256": "b28c8d6f451725b3f41347a9fe70f96bbbc223cba5e147b89ec4541f55119e75",
+  "counts": {
+    "hardware_components": 754,
+    "hardware_pin_declarations": 2326,
+    "connected_hardware_pins": 2189,
+    "connected_hardware_nets": 466,
+    "declared_nc_pins": 137,
+    "xml_hardware_components": 754,
+    "xml_pin_nodes": 2326,
+    "xml_nets": 603,
+    "explicit_power_flags": 25
+  },
+  "dnp_components": [
+    "J102",
+    "R303",
+    "R304",
+    "L401",
+    "L407"
+  ],
+  "power_flag_components": {},
+  "power_flag_annotations": [
+    {
+      "sheet": "E1",
+      "net": "GND",
+      "reason": "Фізичний силовий return від Daly P− та USB-C GND. Відокремлений від raw cell B−.",
+      "source": "U101 P−, J103 GND; STACK §5.1"
+    },
+    {
+      "sheet": "E1",
+      "net": "E1_N",
+      "reason": "Реальна батарейна напруга після F101 7.5 A і шунта R101; або вихід charger BAT+ через захищений шлях. Пасиви не породжують KiCad power_out.",
+      "source": "4S1P → F101 → R101 → E1_N; U110 BAT+"
+    },
+    {
+      "sheet": "E1",
+      "net": "LAB5",
+      "reason": "Реальний вихід Pololu U108 після F102 і L101; флаг не обходить їхній струмовий захист.",
+      "source": "U108 VOUT → F102 → L101 → LAB5"
+    },
+    {
+      "sheet": "E1",
+      "net": "E1_USB_PD_RAW",
+      "reason": "Живлення від зовнішнього односпрямованого USB-PD адаптера до входу eFuse U109. Не джерело з боку IP2368.",
+      "source": "J103 VBUS; STACK §2.7, §5.1"
+    },
+    {
+      "sheet": "E2",
+      "net": "E2_J21_FUSED",
+      "reason": "Реальний силовий шлях: SYS12 → F201 blade 4A. Прапорець лише переносить ознаку джерела через passive для ERC; нове джерело не додається.",
+      "source": "E2.json: силовий шлях; STACK.md §5.1"
+    },
+    {
+      "sheet": "E2",
+      "net": "E2_DISP_IN",
+      "reason": "Реальний силовий шлях: SYS12 → L202 вхідного π-фільтра. Прапорець лише переносить ознаку джерела через passive для ERC; нове джерело не додається.",
+      "source": "E2.json: силовий шлях; STACK.md §5.1"
+    },
+    {
+      "sheet": "E2",
+      "net": "E2_LNA_IN",
+      "reason": "Реальний силовий шлях: LAB5 → L205 вхідного фільтра LT3045. Прапорець лише переносить ознаку джерела через passive для ERC; нове джерело не додається.",
+      "source": "E2.json: силовий шлях; STACK.md §5.1"
+    },
+    {
+      "sheet": "E2",
+      "net": "LNA4V5",
+      "reason": "Реальний силовий шлях: OUT U204/U205 → окремі баласти 20mR. Прапорець лише переносить ознаку джерела через passive для ERC; нове джерело не додається.",
+      "source": "E2.json: силовий шлях; STACK.md §5.1"
+    },
+    {
+      "sheet": "E2",
+      "net": "E2_LNB_IN",
+      "reason": "Реальний силовий шлях: E1_SW → вхідний дросель LNB. Прапорець лише переносить ознаку джерела через passive для ERC; нове джерело не додається.",
+      "source": "E2.json: силовий шлях; STACK.md §5.1"
+    },
+    {
+      "sheet": "E2",
+      "net": "E2_BONI_IN",
+      "reason": "Реальний силовий шлях: E1_SW → вхідний дросель Boni. Прапорець лише переносить ознаку джерела через passive для ERC; нове джерело не додається.",
+      "source": "E2.json: силовий шлях; STACK.md §5.1"
+    },
+    {
+      "sheet": "E2",
+      "net": "J21",
+      "reason": "Реальний силовий шлях: OUT U201 → вихідний π-фільтр. Прапорець лише переносить ознаку джерела через passive для ERC; нове джерело не додається.",
+      "source": "E2.json: силовий шлях; STACK.md §5.1"
+    },
+    {
+      "sheet": "E2",
+      "net": "LIME3V3",
+      "reason": "Реальний силовий шлях: OUT U203 → вихідний π-фільтр. Прапорець лише переносить ознаку джерела через passive для ERC; нове джерело не додається.",
+      "source": "E2.json: силовий шлях; STACK.md §5.1"
+    },
+    {
+      "sheet": "E2",
+      "net": "AUX12",
+      "reason": "Реальний силовий шлях: SYS12 → Q201 → PTC F202 → LC. Прапорець лише переносить ознаку джерела через passive для ERC; нове джерело не додається.",
+      "source": "E2.json: силовий шлях; STACK.md §5.1"
+    },
+    {
+      "sheet": "E2",
+      "net": "VBUS_RTLB",
+      "reason": "Реальний силовий шлях: OUT U210 → вихідний π-фільтр. Прапорець лише переносить ознаку джерела через passive для ERC; нове джерело не додається.",
+      "source": "E2.json: силовий шлях; STACK.md §5.1"
+    },
+    {
+      "sheet": "E2",
+      "net": "LNB13V2",
+      "reason": "Реальний силовий шлях: OUT U212 → шунт 0.1R → LC. Прапорець лише переносить ознаку джерела через passive для ERC; нове джерело не додається.",
+      "source": "E2.json: силовий шлях; STACK.md §5.1"
+    },
+    {
+      "sheet": "E2",
+      "net": "BONI13V8",
+      "reason": "Реальний силовий шлях: OUT U214 → шунт 0.2R → LC. Прапорець лише переносить ознаку джерела через passive для ERC; нове джерело не додається.",
+      "source": "E2.json: силовий шлях; STACK.md §5.1"
+    },
+    {
+      "sheet": "E2",
+      "net": "BIAS_CH1",
+      "reason": "Реальний силовий шлях: OUT U206 → шунт 0.2R → LC. Прапорець лише переносить ознаку джерела через passive для ERC; нове джерело не додається.",
+      "source": "E2.json: силовий шлях; STACK.md §5.1"
+    },
+    {
+      "sheet": "E2",
+      "net": "BIAS_CH2",
+      "reason": "Реальний силовий шлях: OUT U207 → шунт 0.2R → LC. Прапорець лише переносить ознаку джерела через passive для ERC; нове джерело не додається.",
+      "source": "E2.json: силовий шлях; STACK.md §5.1"
+    },
+    {
+      "sheet": "E2",
+      "net": "BIAS_CH3",
+      "reason": "Реальний силовий шлях: OUT U208 → шунт 0.2R → LC. Прапорець лише переносить ознаку джерела через passive для ERC; нове джерело не додається.",
+      "source": "E2.json: силовий шлях; STACK.md §5.1"
+    },
+    {
+      "sheet": "E2",
+      "net": "BIAS_CH4",
+      "reason": "Реальний силовий шлях: OUT U209 → шунт 0.2R → LC. Прапорець лише переносить ознаку джерела через passive для ERC; нове джерело не додається.",
+      "source": "E2.json: силовий шлях; STACK.md §5.1"
+    },
+    {
+      "sheet": "E2",
+      "net": "BIAS_SB_LNA",
+      "reason": "Реальний силовий шлях: OUT U221 → L215. Прапорець лише переносить ознаку джерела через passive для ERC; нове джерело не додається.",
+      "source": "E2.json: силовий шлях; STACK.md §5.1"
+    },
+    {
+      "sheet": "E3",
+      "net": "E3_PICO_VSYS",
+      "reason": "Pico VSYS is physically powered by LAB5 through forward SS14 D301. A passive diode cannot propagate KiCad power_out type. Flag marks supplied net after diode, not a second source.",
+      "source": "STACK.md Pico supply and E3 D301 connectivity."
+    },
+    {
+      "sheet": "E3",
+      "net": "E3_FAN5",
+      "reason": "Fan supply is physically powered from LAB5 through AO3401A Q304 when enabled. The pass MOSFET has passive drain/source pins, so KiCad requires a powered-net marker downstream.",
+      "source": "STACK.md high-side Noctua fan control and E3 Q304 connectivity."
+    },
+    {
+      "sheet": "E5",
+      "net": "VBUS_HFP",
+      "reason": "Known power after passive L501: U503.OUT drives100uH L501 then VBUS_HFP. Flag identifies actual filtered power without changing module power_in types.",
+      "source": "STACK.md §5.2; U503/L501/C511 in E5.json; https://www.bourns.com/docs/product-datasheets/srr1260.pdf"
+    },
+    {
+      "sheet": "E5",
+      "net": "E5_IMU_VIN",
+      "reason": "Known power after D502 Schottky: LAB5→SS14 anode→cathode E5_IMU_VIN supplies E3 IMU MCU. Flag declares powered-after-passive path only.",
+      "source": "STACK.md §5.1 reverse-feed rules; D502 in E5.json; https://www.vishay.com/doc?88746="
+    }
+  ],
+  "value_whitespace_normalizations": [
+    {
+      "ref": "C440",
+      "graph_value": "100 nF X7R 10 V ",
+      "xml_value": "100 nF X7R 10 V"
+    },
+    {
+      "ref": "C441",
+      "graph_value": "100 nF X7R 10 V ",
+      "xml_value": "100 nF X7R 10 V"
+    },
+    {
+      "ref": "C442",
+      "graph_value": "100 nF X7R 10 V ",
+      "xml_value": "100 nF X7R 10 V"
+    },
+    {
+      "ref": "R408",
+      "graph_value": "100kΩ 1% ",
+      "xml_value": "100kΩ 1%"
+    },
+    {
+      "ref": "R409",
+      "graph_value": "100kΩ 1% ",
+      "xml_value": "100kΩ 1%"
+    },
+    {
+      "ref": "R410",
+      "graph_value": "100kΩ 1% ",
+      "xml_value": "100kΩ 1%"
+    },
+    {
+      "ref": "R411",
+      "graph_value": "100kΩ 1% ",
+      "xml_value": "100kΩ 1%"
+    },
+    {
+      "ref": "R412",
+      "graph_value": "100Ω ",
+      "xml_value": "100Ω"
+    },
+    {
+      "ref": "R413",
+      "graph_value": "100Ω ",
+      "xml_value": "100Ω"
+    },
+    {
+      "ref": "R414",
+      "graph_value": "100kΩ 1% ",
+      "xml_value": "100kΩ 1%"
+    },
+    {
+      "ref": "R415",
+      "graph_value": "100kΩ 1% ",
+      "xml_value": "100kΩ 1%"
+    },
+    {
+      "ref": "R434",
+      "graph_value": "100kΩ 1% ",
+      "xml_value": "100kΩ 1%"
+    },
+    {
+      "ref": "R435",
+      "graph_value": "100kΩ 1% ",
+      "xml_value": "100kΩ 1%"
+    },
+    {
+      "ref": "R440",
+      "graph_value": "1kΩ 1% ",
+      "xml_value": "1kΩ 1%"
+    },
+    {
+      "ref": "R441",
+      "graph_value": "1kΩ 1% ",
+      "xml_value": "1kΩ 1%"
+    },
+    {
+      "ref": "R442",
+      "graph_value": "1kΩ 1% ",
+      "xml_value": "1kΩ 1%"
+    },
+    {
+      "ref": "R443",
+      "graph_value": "1kΩ 1% ",
+      "xml_value": "1kΩ 1%"
+    },
+    {
+      "ref": "R444",
+      "graph_value": "1kΩ 1% ",
+      "xml_value": "1kΩ 1%"
+    },
+    {
+      "ref": "R445",
+      "graph_value": "1kΩ 1% ",
+      "xml_value": "1kΩ 1%"
+    }
+  ],
+  "checks": {
+    "schema_errors": [],
+    "working_graph_differences": [],
+    "missing_connected_pins": [],
+    "wrong_net_assignments": [],
+    "extra_connected_pins": [],
+    "duplicate_node_assignments": [],
+    "nc_pins_unexpectedly_connected": [],
+    "missing_hardware_components": [],
+    "extra_hardware_components": [],
+    "component_value_mismatches": [],
+    "raw_pack_negative_on_GND": []
+  }
+}

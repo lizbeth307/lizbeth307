@@ -1,0 +1,2 @@
+# Preserve native KiCad plot bytes, including whitespace in SVG style records.
+build/kicad/svg/*.svg -whitespace

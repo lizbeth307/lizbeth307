@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" viewBox="0 0 1200 920">
+<title>SR-RX-v2.1 — зміни живлення та зовнішній S-band вузол</title>
+<rect width="1200" height="920" fill="white"/>
+<g font-family="DejaVu Sans,sans-serif" fill="#152536">
+<text x="40" y="45" font-size="25" font-weight="bold">SR-RX-v2.1 · зміни компонування</text>
+<text x="40" y="75" font-size="14">19.10.2026 · розміри в mm · масштаб схематичний · теоретичний проєкт — перевірити на стенді</text>
+<line x1="40" y1="92" x2="1160" y2="92" stroke="#bcc8d3"/>
+<text x="40" y="130" font-size="20" font-weight="bold">1. LAB5: збільшена площадка перетворювача</text>
+<rect x="75" y="165" width="203" height="178" fill="none" stroke="#8192a2" stroke-width="2" stroke-dasharray="7 4"/>
+<text x="75" y="369" font-size="14">Попередній D36V28F5</text><text x="75" y="391" font-size="14">20.3 ×17.8 ×8.8</text>
+<rect x="360" y="165" width="254" height="254" rx="3" fill="#eaf3f6" stroke="#1b617b" stroke-width="2"/>
+<text x="378" y="200" font-size="17" font-weight="bold">D36V50F5 #4091</text><text x="378" y="228" font-size="15">25.4 ×25.4 ×9.5</text>
+<text x="378" y="261" font-size="14">VIN / VRP / VOUT</text><text x="378" y="284" font-size="14">GND / EN / PG</text>
+<text x="378" y="325" font-size="14">F102 = 4 A</text><text x="378" y="349" font-size="14">Тривалий тест 3.2 A</text><text x="378" y="373" font-size="14">Пускова кваліфікація 4 A</text>
+<text x="665" y="181" font-size="15" font-weight="bold">Потрібна нова примірка:</text>
+<text x="665" y="212" font-size="14">• площа плати +78.5%</text><text x="665" y="240" font-size="14">• висота +0.7 mm</text>
+<text x="665" y="268" font-size="14">• реальні отвори та траси кабелів</text><text x="665" y="296" font-size="14">• кришка, ізоляція, теплові зазори</text>
+<text x="665" y="337" font-size="14">Старі ескізи корпуса не доводять сумісність.</text>
+<line x1="40" y1="455" x2="1160" y2="455" stroke="#bcc8d3"/>
+<text x="40" y="490" font-size="20" font-weight="bold">2. S-band: зовнішній рюкзаковий вузол біля спіралі</text>
+<rect x="65" y="530" width="765" height="260" rx="10" fill="#f3f6f7" stroke="#44677c" stroke-width="2"/>
+<text x="88" y="563" font-size="16" font-weight="bold">Hammond 1554U2GY · кандидат 200 ×120 ×91</text>
+<rect x="90" y="590" width="285" height="78" fill="white" stroke="#547c91"/><text x="106" y="620" font-size="15">Nooelec LaNA WB</text><text x="106" y="646" font-size="14">60 ×38 ×25 · живлення 3.3–5.5 V</text>
+<path d="M 375 630 H 415" fill="none" stroke="#1b617b" stroke-width="3"/>
+<rect x="415" y="590" width="385" height="78" fill="white" stroke="#547c91"/><text x="432" y="620" font-size="15">sysmocom cf2235-kt30</text><text x="432" y="646" font-size="14">124 ×47 ×33 · 186 g · 2170–2300 MHz</text>
+<text x="90" y="704" font-size="14">Деталі шарами: 33 +5 +25 = 63 mm без стійок, кришки й конекторів.</text>
+<text x="90" y="732" font-size="14">Герметизація, RF-зазори, роз'єми та примірка — натурний тест.</text>
+<text x="90" y="760" font-size="14">Наведено логічний маршрут; прямокутники не є масштабними кресленнями деталей.</text>
+<path d="M 15 630 H 90 M 800 630 H 875" fill="none" stroke="#1b617b" stroke-width="3"/>
+<text x="875" y="601" font-size="14">RG316 1 m → RX2</text><text x="875" y="628" font-size="14">→ DC-block → Lime X4</text>
+<path d="M 45 825 V 680 H 230 V 668" fill="none" stroke="#a76922" stroke-width="3"/>
+<text x="65" y="847" font-size="14">LAB5 → окремий TPS2553 → BIAS_SB_LNA → power-only USB-C 1.5 m</text>
+<line x1="40" y1="875" x2="1160" y2="875" stroke="#bcc8d3"/>
+<text x="40" y="901" font-size="13">Лише прийом в ефірі · не PCB/Gerber · монтаж і кваліфікація: 12-revision-v2.1.md та OPEN_ITEMS.md</text>
+</g></svg>
