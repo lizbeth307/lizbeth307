@@ -1,0 +1,554 @@
+{
+ "sheet": "E5",
+ "title": "USB, VBUS і роз'єми корпусу",
+ "nets": [
+  {
+   "net": "VCC_5V_PERI",
+   "nodes": [
+    "U500.U35(WS4612).IN",
+    "U500.U33.IN"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "NC_J2a_1",
+   "nodes": [
+    "U500.J2a.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "NC_J5U_1",
+   "nodes": [
+    "U500.J5U.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "NC_J2b_1",
+   "nodes": [
+    "U500.J2b.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "NC_U520_TP_VBUS",
+   "nodes": [
+    "U520.TP.VBUS"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "HDMI_BUS",
+   "nodes": [
+    "U500.HDMI",
+    "U520.HDMI_IN"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "HDMI_5V_Q6A",
+   "nodes": [
+    "U500.HDMI.18",
+    "D501.A"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "HDMI_5V_DISP",
+   "nodes": [
+    "D501.K",
+    "U520.HDMI.18"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "TP_DM",
+   "nodes": [
+    "U500.J2a.2",
+    "U520.TP.D-"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "TP_DP",
+   "nodes": [
+    "U500.J2a.3",
+    "U520.TP.D+"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "GND",
+   "nodes": [
+    "U500.J2a.4",
+    "U520.TP.GND",
+    "U500.J5L.4",
+    "U500.J5L.7",
+    "U540.GND",
+    "U500.J5U.4",
+    "U541.4",
+    "U500.J2b.4",
+    "U510.UP.GND",
+    "U501.2",
+    "R501.2",
+    "U510.H2.GND",
+    "U543.4",
+    "U502.2",
+    "R502.2",
+    "U510.H3.GND",
+    "J501.4",
+    "U503.2",
+    "R504.2",
+    "C501.-",
+    "C502.-",
+    "U510.H4.GND",
+    "U544.5",
+    "J503.GND",
+    "U500.J21.GND",
+    "J502.GND",
+    "J504.GND",
+    "U550.GND",
+    "J505.GND"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "PCIE1",
+   "nodes": [
+    "U500.M2.PCIe",
+    "U530.HOST"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "PCIE1_CARD",
+   "nodes": [
+    "U530.CARD",
+    "U531.M2.PCIe"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "VCC_3V3_MKEY",
+   "nodes": [
+    "U500.M2.3V3"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "LIME3V3",
+   "nodes": [
+    "U530.CARD.3V3",
+    "U531.M2.3V3"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "VBUS_J5",
+   "nodes": [
+    "U500.J5L.1",
+    "U505.IN"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "VBUS_T7",
+   "nodes": [
+    "U505.OUT",
+    "U540.VBUS"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "EN_T7",
+   "nodes": [
+    "U505.EN"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "USB0_DM",
+   "nodes": [
+    "U500.J5L.2",
+    "U540.D-"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "USB0_DP",
+   "nodes": [
+    "U500.J5L.3",
+    "U540.D+"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "USB0_SSRXN",
+   "nodes": [
+    "U500.J5L.5",
+    "U540.SSTX-"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "USB0_SSRXP",
+   "nodes": [
+    "U500.J5L.6",
+    "U540.SSTX+"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "USB0_SSTXN",
+   "nodes": [
+    "U500.J5L.8",
+    "U540.SSRX-"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "USB0_SSTXP",
+   "nodes": [
+    "U500.J5L.9",
+    "U540.SSRX+"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "VBUS_RTLB",
+   "nodes": [
+    "U541.1"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "RTLB_DM",
+   "nodes": [
+    "U500.J5U.2",
+    "U541.2"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RTLB_DP",
+   "nodes": [
+    "U500.J5U.3",
+    "U541.3"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "LAB5",
+   "nodes": [
+    "U510.JP5",
+    "U501.1",
+    "U502.1",
+    "U503.1",
+    "J504.5V",
+    "U550.IO(5V)"
+   ],
+   "offsheet": "E1"
+  },
+  {
+   "net": "HUB_DM",
+   "nodes": [
+    "U500.J2b.2",
+    "U510.UP.D-"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "HUB_DP",
+   "nodes": [
+    "U500.J2b.3",
+    "U510.UP.D+"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "NC_U510_H1",
+   "nodes": [
+    "U510.H1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "NC_U510_H2_PAD1",
+   "nodes": [
+    "U510.H2.PAD1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "EN_RTLA",
+   "nodes": [
+    "U501.3"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "FAULT_RTLA",
+   "nodes": [
+    "U501.4"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "RTLA_ILIM",
+   "nodes": [
+    "U501.5",
+    "R501.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "VBUS_RTLA",
+   "nodes": [
+    "U501.6",
+    "U543.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RTLA_DM",
+   "nodes": [
+    "U510.H2.D-",
+    "U543.2"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RTLA_DP",
+   "nodes": [
+    "U510.H2.D+",
+    "U543.3"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "NC_U510_H3_PAD1",
+   "nodes": [
+    "U510.H3.PAD1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "EN_LABUSB",
+   "nodes": [
+    "U502.3"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "FAULT_LABUSB",
+   "nodes": [
+    "U502.4"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "LABUSB_ILIM",
+   "nodes": [
+    "U502.5",
+    "R502.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "VBUS_LABUSB",
+   "nodes": [
+    "U502.6",
+    "J501.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "LABUSB_DM",
+   "nodes": [
+    "U510.H3.D-",
+    "J501.2"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "LABUSB_DP",
+   "nodes": [
+    "U510.H3.D+",
+    "J501.3"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "NC_U510_H4_PAD1",
+   "nodes": [
+    "U510.H4.PAD1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "EN_HFP",
+   "nodes": [
+    "U503.3"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "FAULT_HFP",
+   "nodes": [
+    "U503.4"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "HFP_ILIM",
+   "nodes": [
+    "U503.5",
+    "R504.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "VBUS_HFP_SW",
+   "nodes": [
+    "U503.6",
+    "L501.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "VBUS_HFP",
+   "nodes": [
+    "L501.2",
+    "C501.+",
+    "R503.1",
+    "U544.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "HFP_DAMP",
+   "nodes": [
+    "R503.2",
+    "C502.+"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "HFP_DM",
+   "nodes": [
+    "U510.H4.D-",
+    "U544.2"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "HFP_DP",
+   "nodes": [
+    "U510.H4.D+",
+    "U544.3"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "PWR_ON_KEY",
+   "nodes": [
+    "J503.3",
+    "U500.J21.3"
+   ],
+   "offsheet": "E1"
+  },
+  {
+   "net": "J21",
+   "nodes": [
+    "J503.12V",
+    "U500.J21.12V"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "EDL_A",
+   "nodes": [
+    "SW501.2",
+    "U500.EDL.a"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "EDL_B",
+   "nodes": [
+    "SW501.1",
+    "U500.EDL.b"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "UART5_P8",
+   "nodes": [
+    "J502.P8"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "UART5_P10",
+   "nodes": [
+    "J502.P10"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "IMU_TX",
+   "nodes": [
+    "J504.TX",
+    "U550.IO(TX)"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "IMU_RX",
+   "nodes": [
+    "J504.RX",
+    "U550.IO(RX)"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "CHASSIS",
+   "nodes": [
+    "J504.SHELL",
+    "W508.SHIELD"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "I2CB_SDA",
+   "nodes": [
+    "J505.SDA_B"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "I2CB_SCL",
+   "nodes": [
+    "J505.SCL_B"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "AUX12",
+   "nodes": [
+    "J505.AUX12"
+   ],
+   "offsheet": "E2"
+  }
+ ],
+ "notes": [
+  "STACK §5.2 «Карта USB», §1.1 C5: збірка з Lime (за замовч.): J5 нижн. = T7, H2 = RTL-A. Пад 1 CH334F на H2/H3/H4 не з'єднано: JP5 «5V» Adafruit 5997 — спільна мережа VBUS, VBUS пігтейлів — лише від своїх ключів; при складанні — перевірка неперервності.",
+  "STACK §2.7 «Ключі струму», §5.1 LAB5: RILIM R501 (RTL-A) і R504 (HF+) — TBD = 1,5–2× виміряного струму (HF+: ≥0,75 A на запуску); ворота §8 TPS2553DBVR-1 п. 3; засувка HF+ → TPS2553DBVR (LCSC C55266). Ключ VBUS_RTLB — на E2.",
+  "STACK §5.2, §5.1 VCC_5V_PERI: T7 «на власному VBUS», EN MCP #3 GPB7 — деталь U505 і місце вставки TBD; LAB5 розділеним дротом — лише якщо не пройдено ворота 14 W; навантаження J5 < 1,5 A (стенд B10). FB507 — тип TBD (§2.11.1).",
+  "STACK §5.2, §2.10, §8 «Набір кабелів»: Lindy 36700 + Würth 74271112 на термоусадці, умова A/B фону < 0,5 dB; для H2 (RTL-A, W505) STACK подовжувач не задає — TBD.",
+  "STACK §2.3 «Екран HF+», §5.7, §8: LC демпфовано (≤220 µF); FB501/FB502 надіти до пайки на пад H4. STACK §5.1, §2.6: до дисплея лише D−/D+/GND сенсора; D501 (анод — Q6A) — деталь TBD.",
+  "STACK §5.1 LIME3V3, §1.2 #21, §5.8: LIME3V3 з E2 (TPS259470ARPWR, EN MCP #4 GPA0, FLT GPB3); VCC_3V3_MKEY не перемикати; варіант R44SF підтвердити з ADT-Link.",
+  "STACK §5.2 «Інші шини», §5.8, §8.2: нумерацію GX16-4 (5 V, TX, RX, GND), LAB BUS 6-pin, J21 1/2, UART5 8/10 TX/RX і точки EDL STACK не дає — TBD (схема Q6A v1.21, P7). EDL: T7 від'єднати."
+ ]
+}
