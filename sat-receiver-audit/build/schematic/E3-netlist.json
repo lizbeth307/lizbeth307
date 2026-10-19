@@ -1,0 +1,571 @@
+{
+ "sheet": "E3",
+ "title": "Керування: Q6A, I2C, розширювачі GPIO, GNSS",
+ "nets": [
+  {
+   "net": "3V3_Q6A",
+   "nodes": [
+    "J301.1",
+    "J301.17",
+    "J302.3V3_Q6A",
+    "R339.2",
+    "U301.VDD",
+    "C301.1",
+    "C302.1",
+    "R317.2",
+    "U303.VDD",
+    "C305.1",
+    "C306.1",
+    "R319.2",
+    "U303.A0",
+    "U303.A1",
+    "R335.2",
+    "R336.2",
+    "R337.2",
+    "R338.2",
+    "U302.VDD",
+    "C303.1",
+    "C304.1",
+    "R318.2",
+    "U302.A1",
+    "R322.2",
+    "R323.2",
+    "R324.2",
+    "R325.2",
+    "R326.2",
+    "R327.2",
+    "R328.2",
+    "R329.2",
+    "R330.2"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "GND",
+   "nodes": [
+    "J301.GND*",
+    "J302.GND",
+    "U304.GND",
+    "C301.2",
+    "C302.2",
+    "U301.VSS",
+    "U301.A0",
+    "U301.A1",
+    "U301.A2",
+    "R301.2",
+    "R302.2",
+    "R303.2",
+    "R304.2",
+    "R305.2",
+    "R306.2",
+    "R307.2",
+    "R308.2",
+    "R309.2",
+    "R310.2",
+    "R311.2",
+    "R312.2",
+    "R313.2",
+    "R314.2",
+    "C305.2",
+    "C306.2",
+    "U303.VSS",
+    "U303.A2",
+    "R333.2",
+    "R334.2",
+    "Q301.S",
+    "C303.2",
+    "C304.2",
+    "U302.VSS",
+    "U302.A0",
+    "U302.A2",
+    "R331.2",
+    "R332.2"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "I2C2_SDA",
+   "nodes": [
+    "J301.27*",
+    "J302.SDA",
+    "U301.SDA",
+    "U303.SDA",
+    "U302.SDA"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "I2C2_SCL",
+   "nodes": [
+    "J301.28*",
+    "J302.SCL",
+    "U301.SCL",
+    "U303.SCL",
+    "U302.SCL"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "MCP_INT",
+   "nodes": [
+    "J301.5",
+    "J302.INT",
+    "U303.INTA",
+    "U303.INTB",
+    "U302.INTA",
+    "U302.INTB"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "INA228_ALERT",
+   "nodes": [
+    "J301.3",
+    "R339.1"
+   ],
+   "offsheet": "E1"
+  },
+  {
+   "net": "VCC_5V_PERI",
+   "nodes": [
+    "J301.2/4",
+    "U304.VCC"
+   ],
+   "offsheet": "E5"
+  },
+  {
+   "net": "GNSS_PPS",
+   "nodes": [
+    "J301.7",
+    "U304.PPS"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "UART6_TX",
+   "nodes": [
+    "J301.16*",
+    "U304.RXD"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "UART6_RX",
+   "nodes": [
+    "J301.18*",
+    "U304.TXD"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "I2C0_SDA",
+   "nodes": [
+    "J301.13*"
+   ],
+   "offsheet": "E1"
+  },
+  {
+   "net": "I2C0_SCL",
+   "nodes": [
+    "J301.15*"
+   ],
+   "offsheet": "E1"
+  },
+  {
+   "net": "UART5_TX",
+   "nodes": [
+    "J301.8*"
+   ],
+   "offsheet": "E5"
+  },
+  {
+   "net": "UART5_RX",
+   "nodes": [
+    "J301.10*"
+   ],
+   "offsheet": "E5"
+  },
+  {
+   "net": "UART7_TX",
+   "nodes": [
+    "J301.32"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "UART7_RX",
+   "nodes": [
+    "J301.29"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "PICO_SWCLK",
+   "nodes": [
+    "J301.12"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "PICO_SWDIO",
+   "nodes": [
+    "J301.35"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "PICO_RUN",
+   "nodes": [
+    "J301.38"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "SAFE_BOOT",
+   "nodes": [
+    "J301.40"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "LC76G_RESET",
+   "nodes": [
+    "U304.RESET",
+    "Q301.D"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "GNSS_ANT",
+   "nodes": [
+    "U304.ANT"
+   ],
+   "offsheet": "E4"
+  },
+  {
+   "net": "U301_RESET",
+   "nodes": [
+    "U301.RESET",
+    "R317.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "EN_LABPORT",
+   "nodes": [
+    "U301.GPA0",
+    "R301.1"
+   ],
+   "offsheet": "E5"
+  },
+  {
+   "net": "EN_AUX12",
+   "nodes": [
+    "U301.GPA1",
+    "R302.1"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "EN_RTLA",
+   "nodes": [
+    "U301.GPA2",
+    "R303.1"
+   ],
+   "offsheet": "E5"
+  },
+  {
+   "net": "EN_RTLB",
+   "nodes": [
+    "U301.GPA3",
+    "R304.1"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "EN_HFP",
+   "nodes": [
+    "U301.GPA4",
+    "R305.1"
+   ],
+   "offsheet": "E5"
+  },
+  {
+   "net": "EN_LNA1",
+   "nodes": [
+    "U301.GPA5",
+    "R306.1"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "EN_LNA2",
+   "nodes": [
+    "U301.GPA6",
+    "R307.1"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "EN_LNA3",
+   "nodes": [
+    "U301.GPA7",
+    "R308.1"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "EN_LNB",
+   "nodes": [
+    "U301.GPB0",
+    "R309.1"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "EN_BONI",
+   "nodes": [
+    "U301.GPB1",
+    "R310.1"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "K1_DRV",
+   "nodes": [
+    "U301.GPB2"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "K2_DRV",
+   "nodes": [
+    "U301.GPB3"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "SW_RTLA_A",
+   "nodes": [
+    "U301.GPB4",
+    "R311.1"
+   ],
+   "offsheet": "E4"
+  },
+  {
+   "net": "SW_RTLA_B",
+   "nodes": [
+    "U301.GPB5",
+    "R312.1"
+   ],
+   "offsheet": "E4"
+  },
+  {
+   "net": "SW_RTLB_A",
+   "nodes": [
+    "U301.GPB6",
+    "R313.1"
+   ],
+   "offsheet": "E4"
+  },
+  {
+   "net": "SW_RTLB_B",
+   "nodes": [
+    "U301.GPB7",
+    "R314.1"
+   ],
+   "offsheet": "E4"
+  },
+  {
+   "net": "U303_RESET",
+   "nodes": [
+    "U303.RESET",
+    "R319.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "EN_LIME3V3",
+   "nodes": [
+    "U303.GPA0",
+    "R333.1"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "FAULT_RTLB",
+   "nodes": [
+    "U303.GPB0",
+    "R335.1"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "FAULT_HFP",
+   "nodes": [
+    "U303.GPB1",
+    "R336.1"
+   ],
+   "offsheet": "E5"
+  },
+  {
+   "net": "FAULT_RTLA",
+   "nodes": [
+    "U303.GPB2",
+    "R337.1"
+   ],
+   "offsheet": "E5"
+  },
+  {
+   "net": "FLT_LIME3V3",
+   "nodes": [
+    "U303.GPB3",
+    "R338.1"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "LC76G_RST_G",
+   "nodes": [
+    "U303.GPA1",
+    "R334.1",
+    "Q301.G"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "U302_RESET",
+   "nodes": [
+    "U302.RESET",
+    "R318.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "EN_LNA4",
+   "nodes": [
+    "U302.GPA7",
+    "R331.1"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "EN_T7",
+   "nodes": [
+    "U302.GPB7",
+    "R332.1"
+   ],
+   "offsheet": "E5"
+  },
+  {
+   "net": "FAULT_LABPORT",
+   "nodes": [
+    "U302.GPx(TBD)",
+    "R322.1"
+   ],
+   "offsheet": "E5"
+  },
+  {
+   "net": "FAULT_LNA1",
+   "nodes": [
+    "U302.GPx(TBD)",
+    "R323.1"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "FAULT_LNA2",
+   "nodes": [
+    "U302.GPx(TBD)",
+    "R324.1"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "FAULT_LNA3",
+   "nodes": [
+    "U302.GPx(TBD)",
+    "R325.1"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "FAULT_LNA4",
+   "nodes": [
+    "U302.GPx(TBD)",
+    "R326.1"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "FLT_LNB",
+   "nodes": [
+    "U302.GPx(TBD)",
+    "R327.1"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "FLT_BONI",
+   "nodes": [
+    "U302.GPx(TBD)",
+    "R328.1"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "PG_LNB",
+   "nodes": [
+    "U302.GPx(TBD)",
+    "R329.1"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "PG_BONI",
+   "nodes": [
+    "U302.GPx(TBD)",
+    "R330.1"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "DCS_UHF",
+   "nodes": [
+    "U302.GPx(TBD)"
+   ],
+   "offsheet": "E4"
+  },
+  {
+   "net": "DCS_LBAND",
+   "nodes": [
+    "U302.GPx(TBD)"
+   ],
+   "offsheet": "E4"
+  },
+  {
+   "net": "DCS_HF",
+   "nodes": [
+    "U302.GPx(TBD)"
+   ],
+   "offsheet": "E4"
+  },
+  {
+   "net": "PTC_AUX",
+   "nodes": [
+    "U302.GPx(TBD)"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "SLED_DET",
+   "nodes": [
+    "U302.GPx(TBD)"
+   ],
+   "offsheet": "E5"
+  }
+ ],
+ "notes": [
+  "чернетка"
+ ]
+}
