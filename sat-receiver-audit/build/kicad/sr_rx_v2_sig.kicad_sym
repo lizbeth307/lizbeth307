@@ -1,0 +1,3045 @@
+(kicad_symbol_lib
+  (version 20241209)
+  (generator "kicad-mcp")
+  (generator_version "9.0")
+  (symbol "Radxa_Dragon_Q6A_GPIO40"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "J" (at 0 31.75 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "Radxa_Dragon_Q6A_GPIO40" (at 0 -31.75 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://docs.radxa.com/en/dragon/q6a/hardware-use/pin-gpio"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Radxa Dragon Q6A 40-pin GPIO header (on the Q6A board; the harness mates to it). Pin numbers and names per Radxa docs pin-gpio (Function0 GPIO_n plus the STACK function) and Q6A schematic v1.21 p.24 (e.g. pin 27 QUPSE2_I2C_SDA_3V3, 28 QUPSE2_I2C_SCL_3V3). 3.3 V logic via on-board UM3304/UM3204H/CJ3134K translators. Pin types follow STACK v2 section 5.2: inputs left, outputs right, unused GPIO bidirectional on the right. Pins 17 (3V3) and 4 (5V) are passive duplicates of 1 and 2."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "Radxa Dragon Q6A QCS6490 GPIO header 40pin"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "Radxa_Dragon_Q6A_GPIO40_0_1"
+      (rectangle
+        (start -22.86 27.94)
+        (end 22.86 -27.94)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "Radxa_Dragon_Q6A_GPIO40_1_1"
+      (pin input line
+        (at -25.4 20.32 0)
+        (length 2.54)
+        (name "GPIO_24"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -25.4 17.78 0)
+        (length 2.54)
+        (name "GPIO_25"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "5"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -25.4 15.24 0)
+        (length 2.54)
+        (name "GPIO_96"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "7"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -25.4 12.7 0)
+        (length 2.54)
+        (name "GPIO_23/UART5_RX"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "10"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -25.4 10.16 0)
+        (length 2.54)
+        (name "GPIO_27/UART6_RX"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "18"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -25.4 7.62 0)
+        (length 2.54)
+        (name "GPIO_31/UART7_RX"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "29"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -25.4 5.08 0)
+        (length 2.54)
+        (name "GPIO_99"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "40"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at -25.4 0 0)
+        (length 2.54)
+        (name "GPIO_0/I2C0_SDA"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "13"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at -25.4 -2.54 0)
+        (length 2.54)
+        (name "GPIO_1/I2C0_SCL"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "15"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at -25.4 -5.08 0)
+        (length 2.54)
+        (name "GPIO_8/I2C2_SDA"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "27"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at -25.4 -7.62 0)
+        (length 2.54)
+        (name "GPIO_9/I2C2_SCL"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "28"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at -25.4 -10.16 0)
+        (length 2.54)
+        (name "GPIO_100"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "35"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin output line
+        (at 25.4 20.32 180)
+        (length 2.54)
+        (name "GPIO_22/UART5_TX"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "8"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin output line
+        (at 25.4 17.78 180)
+        (length 2.54)
+        (name "GPIO_26/UART6_TX"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "16"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin output line
+        (at 25.4 15.24 180)
+        (length 2.54)
+        (name "GPIO_30/UART7_TX"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "32"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin output line
+        (at 25.4 12.7 180)
+        (length 2.54)
+        (name "GPIO_97"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "12"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin output line
+        (at 25.4 10.16 180)
+        (length 2.54)
+        (name "GPIO_98"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "38"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 25.4 5.08 180)
+        (length 2.54)
+        (name "GPIO_29"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "11"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 25.4 2.54 180)
+        (length 2.54)
+        (name "GPIO_49"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "19"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 25.4 0 180)
+        (length 2.54)
+        (name "GPIO_48"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "21"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 25.4 -2.54 180)
+        (length 2.54)
+        (name "GPIO_57"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "22"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 25.4 -5.08 180)
+        (length 2.54)
+        (name "GPIO_50"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "23"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 25.4 -7.62 180)
+        (length 2.54)
+        (name "GPIO_51"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "24"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 25.4 -10.16 180)
+        (length 2.54)
+        (name "GPIO_55"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "26"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 25.4 -12.7 180)
+        (length 2.54)
+        (name "GPIO_28"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "31"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 25.4 -15.24 180)
+        (length 2.54)
+        (name "GPIO_56"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "33"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 25.4 -17.78 180)
+        (length 2.54)
+        (name "GPIO_59"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "36"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 25.4 -20.32 180)
+        (length 2.54)
+        (name "GPIO_58"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "37"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_out line
+        (at -5.08 30.48 270)
+        (length 2.54)
+        (name "3V3"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -2.54 30.48 270)
+        (length 2.54)
+        (name "3V3"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "17"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_out line
+        (at 0 30.48 270)
+        (length 2.54)
+        (name "5V"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 2.54 30.48 270)
+        (length 2.54)
+        (name "5V"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at -10.16 -30.48 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "6"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -7.62 -30.48 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "9"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -5.08 -30.48 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "14"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -2.54 -30.48 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "20"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 0 -30.48 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "25"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 2.54 -30.48 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "30"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 5.08 -30.48 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "34"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 7.62 -30.48 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "39"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "Waveshare_LC76G_GNSS_Module"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 24.13 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "Waveshare_LC76G_GNSS_Module" (at 0 -21.59 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Waveshare LC76G GNSS Module (SKU 24370), Quectel LC76G + RT9193-33 LDO. Header P1 per Waveshare module schematic: 1 VCC, 2 GND, 3 TXD, 4 RXD, 5 1PPS, 6 RESET (to LC76G RESET_N via R4 0R, active low), 7 SDA, 8 SCL; antenna IPEX GPS1: pin 2 DATA (RF_IN, VCC_RF bias via R5 10R + L1 68nH) drawn as RF, pins 1/3/4 GND drawn as RFG. Wiki: VCC 3.3-5 V; STACK v2 5.2: feed 5 V only. P1 pin 0 (GND, shown in the schematic) is not drawn."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "GNSS GPS LC76G Waveshare module UART PPS"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "Waveshare_LC76G_GNSS_Module_0_1"
+      (rectangle
+        (start -7.62 17.78)
+        (end 7.62 -15.24)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "Waveshare_LC76G_GNSS_Module_1_1"
+      (pin passive line
+        (at -12.7 10.16 0)
+        (length 5.08)
+        (name "ANT"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "RF"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -12.7 5.08 0)
+        (length 5.08)
+        (name "RXD"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -12.7 2.54 0)
+        (length 5.08)
+        (name "~{RESET}"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "6"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -12.7 0 0)
+        (length 5.08)
+        (name "SCL"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "8"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at -12.7 -2.54 0)
+        (length 5.08)
+        (name "SDA"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "7"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin output line
+        (at 12.7 10.16 180)
+        (length 5.08)
+        (name "TXD"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin output line
+        (at 12.7 7.62 180)
+        (length 5.08)
+        (name "1PPS"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "5"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 22.86 270)
+        (length 5.08)
+        (name "VCC"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at -2.54 -20.32 90)
+        (length 5.08)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 0 -20.32 90)
+        (length 5.08)
+        (name "ANT_GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "RFG"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "IMU_Pack_BNO085_RP2040-Zero"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 13.97 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "IMU_Pack_BNO085_RP2040-Zero" (at 0 -13.97 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://learn.adafruit.com/adafruit-9-dof-orientation-imu-fusion-breakout-bno085/pinouts"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "External IMU pack (Adafruit BNO085 4754 + Waveshare RP2040-Zero 20187 in Hammond 1550Z101), reached through the Olimex GX16-4 body socket: 5 V (Schottky at the pack input), TX, RX, GND, braid on the GX16 shell. STACK v2 5.2 \"Other buses\". Port IDs are symbolic; the GX16-4 contact numbers are not given in STACK (TBD). Pack TX goes to Pico GP9 (UART1 RX), pack RX from Pico GP8 (UART1 TX), 115200, frames with CRC."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "IMU BNO085 RP2040-Zero pack UART GX16"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "IMU_Pack_BNO085_RP2040-Zero_0_1"
+      (rectangle
+        (start -5.08 7.62)
+        (end 5.08 -7.62)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "IMU_Pack_BNO085_RP2040-Zero_1_1"
+      (pin input line
+        (at -10.16 2.54 0)
+        (length 5.08)
+        (name "RX"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "RX"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin output line
+        (at 10.16 2.54 180)
+        (length 5.08)
+        (name "TX"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "TX"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 12.7 270)
+        (length 5.08)
+        (name "5V"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "5V"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at -2.54 -12.7 90)
+        (length 5.08)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 0 -12.7 90)
+        (length 5.08)
+        (name "SHIELD"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "SH"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "TPD4E1U06DBV"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 11.43 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "TPD4E1U06DBV" (at 0 -11.43 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "TI TPD4E1U06DBVR, 4-channel ESD protection, SOT-23-6 (DBV). Pins per TI datasheet: 1 D1+, 2 GND, 3 D2+, 4 D2-, 5 NC, 6 D1-. Used at the GX16-4 IMU socket (TX, RX, 5 V; STACK v2 5.2)."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "ESD TVS array 4 channel SOT-23-6"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "TPD4E1U06DBV_0_1"
+      (rectangle
+        (start -5.08 10.16)
+        (end 5.08 -7.62)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "TPD4E1U06DBV_1_1"
+      (pin passive line
+        (at -7.62 7.62 0)
+        (length 2.54)
+        (name "D1+"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -7.62 5.08 0)
+        (length 2.54)
+        (name "D1-"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "6"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -7.62 2.54 0)
+        (length 2.54)
+        (name "D2+"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -7.62 0 0)
+        (length 2.54)
+        (name "D2-"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin no_connect line
+        (at 7.62 7.62 180)
+        (length 2.54)
+        (name "NC"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "5"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 -10.16 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "Adafruit_4162_VEML7700"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 16.51 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "Adafruit_4162_VEML7700" (at 0 -13.97 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://learn.adafruit.com/adafruit-veml7700/pinouts"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Adafruit 4162 VEML7700 ambient light sensor breakout (STEMMA QT). Pins per Adafruit learn \"pinouts\": Vin (3-5 V), 3Vo (3.3 V regulator output), GND, SCL, SDA; level-shifted I2C, fixed 7-bit address 0x10 (STACK v2 5.2). Pin IDs are the silkscreen names; header order not drawn."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "VEML7700 light sensor I2C Adafruit"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "Adafruit_4162_VEML7700_0_1"
+      (rectangle
+        (start -7.62 10.16)
+        (end 7.62 -7.62)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "Adafruit_4162_VEML7700_1_1"
+      (pin input line
+        (at -12.7 2.54 0)
+        (length 5.08)
+        (name "SCL"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "SCL"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at -12.7 0 0)
+        (length 5.08)
+        (name "SDA"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "SDA"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_out line
+        (at 12.7 2.54 180)
+        (length 5.08)
+        (name "3Vo"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3Vo"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 15.24 270)
+        (length 5.08)
+        (name "VIN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "VIN"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 -12.7 90)
+        (length 5.08)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "Wisecoco_7in_HDMI_Display"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 21.59 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "Wisecoco_7in_HDMI_Display" (at 0 -19.05 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "~"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Wisecoco 7\" (6.97\") 1920x1080 HDMI display board with capacitive touch (STACK v2 2.6, behind the written-answers gate). Only the interfaces STACK uses are drawn: HDMI IN (Adafruit 2420 cable from the Q6A HDMI), touch USB \"USB TP\" (D+/D-/GND only to Q6A J2a = FE1.1s P2; VBUS never connected), DC input from DISP12. Port IDs are symbolic: the board pinout is not published (pinout UNCONFIRMED). KEY/OSD and Backlight connectors not drawn (GP17 path TBD)."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "display HDMI touch Wisecoco"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "Wisecoco_7in_HDMI_Display_0_1"
+      (rectangle
+        (start -7.62 15.24)
+        (end 7.62 -12.7)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "Wisecoco_7in_HDMI_Display_1_1"
+      (pin passive line
+        (at -12.7 2.54 0)
+        (length 5.08)
+        (name "HDMI_IN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "H"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at -12.7 0 0)
+        (length 5.08)
+        (name "TP_D+"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "TP+"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at -12.7 -2.54 0)
+        (length 5.08)
+        (name "TP_D-"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "TP-"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at -2.54 20.32 270)
+        (length 5.08)
+        (name "DC_IN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "DC+"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin no_connect line
+        (at 0 20.32 270)
+        (length 5.08)
+        (name "TP_VBUS"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "TPV"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at -2.54 -17.78 90)
+        (length 5.08)
+        (name "DC_GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "DC-"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 0 -17.78 90)
+        (length 5.08)
+        (name "TP_GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "TPG"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "Adafruit_5997_CH334F_Hub"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 39.37 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "Adafruit_5997_CH334F_Hub" (at 0 -39.37 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://cdn-learn.adafruit.com/assets/assets/000/131/436/original/components_schem.png"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Adafruit 5997 CH334F 4-port USB 2.0 hub breakout (MTT). Per Adafruit schematic rev C: upstream pads JP5 (silk USBHOST) 1 VBUS, 2 DPH (D+), 3 DMH (D-), 4 GND; downstream pads (silk PORT1-4) JP2 = hub port 1 (D+1/D-1), JP1 = port 2, JP3 = port 3, JP4 = port 4, each 1 VBUS, 2 D+, 3 D-, 4 GND. JP5-1 and pad 1 of every port are one VBUS net (100 uF each, C3-C6) that reaches the CH334F V5 through PTC2 5V/2A. STACK H1-H4 = hub ports 1-4; pad 1 of H2/H3/H4 must stay unconnected (STACK v2 5.2). The USB-C upstream receptacle is not drawn."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "USB hub CH334F Adafruit breakout MTT"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "Adafruit_5997_CH334F_Hub_0_1"
+      (rectangle
+        (start -12.7 30.48)
+        (end 12.7 -30.48)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "Adafruit_5997_CH334F_Hub_1_1"
+      (pin bidirectional line
+        (at -20.32 22.86 0)
+        (length 7.62)
+        (name "DPH(D+)"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "JP5-2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at -20.32 20.32 0)
+        (length 7.62)
+        (name "DMH(D-)"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "JP5-3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 20.32 22.86 180)
+        (length 7.62)
+        (name "H1_VBUS"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "JP2-1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 20.32 20.32 180)
+        (length 7.62)
+        (name "H1_D+"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "JP2-2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 20.32 17.78 180)
+        (length 7.62)
+        (name "H1_D-"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "JP2-3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 20.32 15.24 180)
+        (length 7.62)
+        (name "H1_GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "JP2-4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 20.32 10.16 180)
+        (length 7.62)
+        (name "H2_VBUS"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "JP1-1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 20.32 7.62 180)
+        (length 7.62)
+        (name "H2_D+"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "JP1-2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 20.32 5.08 180)
+        (length 7.62)
+        (name "H2_D-"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "JP1-3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 20.32 2.54 180)
+        (length 7.62)
+        (name "H2_GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "JP1-4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 20.32 -2.54 180)
+        (length 7.62)
+        (name "H3_VBUS"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "JP3-1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 20.32 -5.08 180)
+        (length 7.62)
+        (name "H3_D+"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "JP3-2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 20.32 -7.62 180)
+        (length 7.62)
+        (name "H3_D-"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "JP3-3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 20.32 -10.16 180)
+        (length 7.62)
+        (name "H3_GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "JP3-4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 20.32 -15.24 180)
+        (length 7.62)
+        (name "H4_VBUS"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "JP4-1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 20.32 -17.78 180)
+        (length 7.62)
+        (name "H4_D+"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "JP4-2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 20.32 -20.32 180)
+        (length 7.62)
+        (name "H4_D-"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "JP4-3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 20.32 -22.86 180)
+        (length 7.62)
+        (name "H4_GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "JP4-4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 38.1 270)
+        (length 7.62)
+        (name "VBUS"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "JP5-1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 -38.1 90)
+        (length 7.62)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "JP5-4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "RTL-SDR_Blog_V4L"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 16.51 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "RTL-SDR_Blog_V4L" (at 0 -16.51 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.rtl-sdr.com/wp-content/uploads/2026/08/RTLSDR_V4L_Datasheet4.pdf"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "RTL-SDR Blog V4L (Lite), R828S + RTL2832U, 1 PPM TCXO, receive only. Datasheet V1.0: input 1x SMA (50 Ohm, software bias tee 4.5 V 180 mA - disabled in core, STACK v2 5.3), USB connector USB-A male, 250-270 mA. USB pins use the standard USB-A numbering 1 VBUS, 2 D-, 3 D+, 4 GND; RF/RFG = SMA centre/shell (symbolic IDs)."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "RTL-SDR V4L R828S RTL2832U SDR receiver dongle"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "RTL-SDR_Blog_V4L_0_1"
+      (rectangle
+        (start -7.62 10.16)
+        (end 7.62 -10.16)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "RTL-SDR_Blog_V4L_1_1"
+      (pin passive line
+        (at -12.7 2.54 0)
+        (length 5.08)
+        (name "RF_IN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "RF"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 12.7 2.54 180)
+        (length 5.08)
+        (name "D-"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 12.7 0 180)
+        (length 5.08)
+        (name "D+"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 15.24 270)
+        (length 5.08)
+        (name "VBUS"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at -2.54 -15.24 90)
+        (length 5.08)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 0 -15.24 90)
+        (length 5.08)
+        (name "USB_SH"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "SH"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 2.54 -15.24 90)
+        (length 5.08)
+        (name "RF_GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "RFG"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "Airspy_HF_Plus_Discovery"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 19.05 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "Airspy_HF_Plus_Discovery" (at 0 -19.05 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://airspy.com/airspy-hf-discovery/"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Airspy HF+ Discovery receiver, HF 0.5 kHz-31 MHz and VHF 64-260 MHz. Vendor page: \"Single RF Input to cover all bands\"; STACK v2 (BOM 2.2 / 5.2): one SMA, micro-USB B, no bias tee. USB pins use the standard micro-B numbering 1 VBUS, 2 D-, 3 D+, 4 ID, 5 GND; RF/RFG = SMA centre/shell (symbolic IDs)."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "Airspy HF+ Discovery SDR HF VHF receiver"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "Airspy_HF_Plus_Discovery_0_1"
+      (rectangle
+        (start -5.08 12.7)
+        (end 5.08 -12.7)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "Airspy_HF_Plus_Discovery_1_1"
+      (pin passive line
+        (at -10.16 5.08 0)
+        (length 5.08)
+        (name "ANT"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "RF"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 10.16 5.08 180)
+        (length 5.08)
+        (name "D-"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 10.16 2.54 180)
+        (length 5.08)
+        (name "D+"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 10.16 0 180)
+        (length 5.08)
+        (name "ID"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 17.78 270)
+        (length 5.08)
+        (name "VBUS"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at -2.54 -17.78 90)
+        (length 5.08)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "5"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 0 -17.78 90)
+        (length 5.08)
+        (name "USB_SH"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "SH"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 2.54 -17.78 90)
+        (length 5.08)
+        (name "ANT_GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "RFG"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "LimeSDR_Micro_M.2_v1.2"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 39.37 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "LimeSDR_Micro_M.2_v1.2" (at 0 -36.83 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/M_2.html"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "LimeSDR Micro M.2 2280 v1.2 (LMS7002M + LA9310), B+M key edge X9, PCIe Gen3 x1, powered only from 3.3 V on the M.2 edge. Edge pins and names per myriadrf v1.2 \"M.2 edge connector\" (Table 14, LimeSDR schematic names; NC pins not drawn). RF MHF4 connectors per v1.2 overview: X1 TX, X2 RX, X4 RX (X3 RX AUX removed in v1.1, changelog); J4 MHF4 external reference clock input 10-52 MHz, 1.8-3.3 V (also on edge pin 28). RX-only build: X1 goes only to the ANNE-50+ load (STACK v2 2.11.1, 5.3). X1/X2/X4/J4 IDs are the board designators; *S pins are the MHF4 shells."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "LimeSDR Micro M.2 LMS7002M SDR PCIe"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "LimeSDR_Micro_M.2_v1.2_0_1"
+      (rectangle
+        (start -22.86 33.02)
+        (end 22.86 -30.48)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "LimeSDR_Micro_M.2_v1.2_1_1"
+      (pin passive line
+        (at -27.94 17.78 0)
+        (length 5.08)
+        (name "X2_RX"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "X2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -27.94 15.24 0)
+        (length 5.08)
+        (name "X4_RX"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "X4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -27.94 12.7 0)
+        (length 5.08)
+        (name "J4_REF_IN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "J4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -27.94 7.62 0)
+        (length 5.08)
+        (name "M.2_CLK_IN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "28"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -27.94 5.08 0)
+        (length 5.08)
+        (name "M.2_PPS_IN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "46"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -27.94 2.54 0)
+        (length 5.08)
+        (name "PCIE_PERST#"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "50"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -27.94 0 0)
+        (length 5.08)
+        (name "PCIE_W_DISABLE1#"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "8"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -27.94 -2.54 0)
+        (length 5.08)
+        (name "PCIE_W_DISABLE2#"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "26"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -27.94 -5.08 0)
+        (length 5.08)
+        (name "PCIE_REF_CLK_N"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "53"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -27.94 -7.62 0)
+        (length 5.08)
+        (name "PCIE_REF_CLK_P"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "55"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -27.94 -10.16 0)
+        (length 5.08)
+        (name "PCIE_PET0_N"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "41"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -27.94 -12.7 0)
+        (length 5.08)
+        (name "PCIE_PET0_P"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "43"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 27.94 17.78 180)
+        (length 5.08)
+        (name "X1_TX"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "X1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 27.94 12.7 180)
+        (length 5.08)
+        (name "PCIE_PER0_N"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "47"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 27.94 10.16 180)
+        (length 5.08)
+        (name "PCIE_PER0_P"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "49"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin open_collector line
+        (at 27.94 7.62 180)
+        (length 5.08)
+        (name "M.2_LED1#"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "10"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin output line
+        (at 27.94 5.08 180)
+        (length 5.08)
+        (name "M.2_LNA1_EN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "20"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin output line
+        (at 27.94 2.54 180)
+        (length 5.08)
+        (name "M.2_PA_EN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "22"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin output line
+        (at 27.94 0 180)
+        (length 5.08)
+        (name "M.2_CLK_OUT"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "24"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin output line
+        (at 27.94 -2.54 180)
+        (length 5.08)
+        (name "M.2_PPS_OUT"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "48"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin output line
+        (at 27.94 -5.08 180)
+        (length 5.08)
+        (name "M.2_TRX1"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "56"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 27.94 -10.16 180)
+        (length 5.08)
+        (name "M.2_SMB_CLK"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "40"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 27.94 -12.7 180)
+        (length 5.08)
+        (name "M.2_SMB_DATA"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "42"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 27.94 -15.24 180)
+        (length 5.08)
+        (name "M.2_GPIO_2"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "44"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 27.94 -17.78 180)
+        (length 5.08)
+        (name "CLK_REQUEST#"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "52"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 27.94 -20.32 180)
+        (length 5.08)
+        (name "M.2_MFG"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "58"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at -5.08 38.1 270)
+        (length 5.08)
+        (name "VCC3P3_M.2"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -2.54 38.1 270)
+        (length 5.08)
+        (name "VCC3P3_M.2"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 0 38.1 270)
+        (length 5.08)
+        (name "VCC3P3_M.2"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "70"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 2.54 38.1 270)
+        (length 5.08)
+        (name "VCC3P3_M.2"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "72"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 5.08 38.1 270)
+        (length 5.08)
+        (name "VCC3P3_M.2"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "74"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at -20.32 -35.56 90)
+        (length 5.08)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -17.78 -35.56 90)
+        (length 5.08)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -15.24 -35.56 90)
+        (length 5.08)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "21"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -12.7 -35.56 90)
+        (length 5.08)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "27"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -10.16 -35.56 90)
+        (length 5.08)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "33"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -7.62 -35.56 90)
+        (length 5.08)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "39"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -5.08 -35.56 90)
+        (length 5.08)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "45"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -2.54 -35.56 90)
+        (length 5.08)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "51"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 0 -35.56 90)
+        (length 5.08)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "57"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 2.54 -35.56 90)
+        (length 5.08)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "71"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 5.08 -35.56 90)
+        (length 5.08)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "73"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 7.62 -35.56 90)
+        (length 5.08)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "75"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 10.16 -35.56 90)
+        (length 5.08)
+        (name "X1_GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "X1S"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 12.7 -35.56 90)
+        (length 5.08)
+        (name "X2_GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "X2S"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 15.24 -35.56 90)
+        (length 5.08)
+        (name "X4_GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "X4S"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 17.78 -35.56 90)
+        (length 5.08)
+        (name "J4_GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "J4S"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "Omron_G6K-2F-RF"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "K" (at 0 13.97 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "Omron_G6K-2F-RF" (at 0 -16.51 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://omronfs.omron.com/en_US/ecb/products/pdf/en-g6k_2f_rf.pdf"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Aratas (formerly Omron) G6K-2F-RF / G6K-2F-RF-S DC5 surface-mount high-frequency DPDT relay. Terminal arrangement (top view) per datasheet: coil 1 (+) / 8 (-); pole 1 COM 3, NC 2, NO 4; pole 2 COM 6, NC 7, NO 5; two case ground terminals (G). The datasheet does not number the ground terminals: named G1/G2 here, the footprint must use the same IDs. Coil polarity matters."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "relay RF DPDT G6K Omron Aratas"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "Omron_G6K-2F-RF_0_1"
+      (rectangle
+        (start -10.16 12.7)
+        (end 10.16 -12.7)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "Omron_G6K-2F-RF_1_1"
+      (pin passive line
+        (at -12.7 10.16 0)
+        (length 2.54)
+        (name "COIL+"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -12.7 7.62 0)
+        (length 2.54)
+        (name "COIL-"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "8"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 12.7 10.16 180)
+        (length 2.54)
+        (name "COM_P1"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 12.7 7.62 180)
+        (length 2.54)
+        (name "NC_P1"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 12.7 5.08 180)
+        (length 2.54)
+        (name "NO_P1"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 12.7 0 180)
+        (length 2.54)
+        (name "COM_P2"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "6"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 12.7 -2.54 180)
+        (length 2.54)
+        (name "NC_P2"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "7"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 12.7 -5.08 180)
+        (length 2.54)
+        (name "NO_P2"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "5"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -2.54 -15.24 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "G1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 0 -15.24 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "G2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "MiniCircuits_TCBT-2R5G"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 13.97 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "MiniCircuits_TCBT-2R5G" (at 0 -11.43 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.minicircuits.com/pdfs/TCBT-2R5G+.pdf"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Mini-Circuits TCBT-2R5G+ bias tee, 20-2500 MHz, 200 mA, 25 V (case GU1604). Pad connections per datasheet: 1 DC, 2 ISOLATE (do not use, keep isolated), 3 RF & DC, 4 RF. C1 on the DC port is a required external connection. Used only on ch4 WIDE with RILIM 162k (STACK v2 5.3)."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "bias tee Mini-Circuits TCBT"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "MiniCircuits_TCBT-2R5G_0_1"
+      (rectangle
+        (start -7.62 10.16)
+        (end 7.62 -7.62)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "MiniCircuits_TCBT-2R5G_1_1"
+      (pin passive line
+        (at -10.16 5.08 0)
+        (length 2.54)
+        (name "RF_DC"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 10.16 5.08 180)
+        (length 2.54)
+        (name "RF"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 0 12.7 270)
+        (length 2.54)
+        (name "DC"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin no_connect line
+        (at 0 -10.16 90)
+        (length 2.54)
+        (name "ISOLATE"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "MiniCircuits_YAT-10A"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 6.35 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "MiniCircuits_YAT-10A" (at 0 -8.89 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.minicircuits.com/pdfs/YAT-10A+.pdf"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Mini-Circuits YAT-10A+ fixed attenuator 10 dB, DC-18 GHz, 1.7 W, MCLP 2x2 mm (case MC1630). Pads per datasheet: 2 RF-IN, 5 RF-OUT, 1/3/4/6 and exposed pad GND. Exposed pad drawn as \"EP\" (unnumbered in the datasheet). On the injector board before the Lime RX1 edge socket (STACK v2 2.11.1, 5.3)."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "attenuator 10dB Mini-Circuits YAT MMIC"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "MiniCircuits_YAT-10A_0_1"
+      (rectangle
+        (start -10.16 5.08)
+        (end 10.16 -5.08)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "MiniCircuits_YAT-10A_1_1"
+      (pin passive line
+        (at -12.7 2.54 0)
+        (length 2.54)
+        (name "RF-IN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 12.7 2.54 180)
+        (length 2.54)
+        (name "RF-OUT"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "5"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -5.08 -7.62 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -2.54 -7.62 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 0 -7.62 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 2.54 -7.62 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "6"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 5.08 -7.62 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "EP"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "MiniCircuits_BLK-89-S"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 3.81 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "MiniCircuits_BLK-89-S" (at 0 -3.81 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.minicircuits.com/pdfs/BLK-89-S+.pdf"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Mini-Circuits BLK-89-S+ coaxial DC block, 50 Ohm, 0.1-8000 MHz, +50 V DC, Port 1 SMA female, Port 2 SMA male (datasheet \"Coaxial connections\"). Outer conductor not modelled. Lime RX2 only (STACK v2 2.11.1)."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "DC block coaxial SMA Mini-Circuits"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "MiniCircuits_BLK-89-S_0_1"
+      (rectangle
+        (start -12.7 2.54)
+        (end 12.7 -2.54)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "MiniCircuits_BLK-89-S_1_1"
+      (pin passive line
+        (at -15.24 0 0)
+        (length 2.54)
+        (name "P1_SMA-F"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 15.24 0 180)
+        (length 2.54)
+        (name "P2_SMA-M"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "MiniCircuits_ANNE-50"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 8.89 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "MiniCircuits_ANNE-50" (at 0 -8.89 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.minicircuits.com/pdfs/ANNE-50+.pdf"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Mini-Circuits ANNE-50+ 50 Ohm coaxial termination, SMA male, DC-18 GHz (case LL561). Load for the Lime X1 TX port only (STACK v2 2.11.1, 5.3). 1 = centre, 2 = body."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "termination load 50 ohm SMA Mini-Circuits"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "MiniCircuits_ANNE-50_0_1"
+      (rectangle
+        (start -5.08 7.62)
+        (end 5.08 -5.08)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "MiniCircuits_ANNE-50_1_1"
+      (pin passive line
+        (at -7.62 5.08 0)
+        (length 2.54)
+        (name "IN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 0 -7.62 90)
+        (length 2.54)
+        (name "SHELL"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "Attenuator_Coax"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 6.35 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "Attenuator_Coax" (at 0 -8.89 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.nooelec.com/store/sdr/sdr-addons/attenuators/attenuator-bundle.html"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Generic in-line coaxial attenuator pad (SMA/F). Used for the Nooelec 100815 pad set (2 dB / 3 dB for H1 on Lime RX1, STACK v2 2.11.1, 8) and for the LNB IF attenuator 15/20/30 dB chosen on the bench (STACK v2 5.3; Value must stay \"ATT 15/20/30 dB TBD\" until the bench gate). 1 IN, 2 OUT, 3 body."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "attenuator pad coaxial SMA"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "Attenuator_Coax_0_1"
+      (rectangle
+        (start -5.08 5.08)
+        (end 5.08 -5.08)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "Attenuator_Coax_1_1"
+      (pin passive line
+        (at -7.62 2.54 0)
+        (length 2.54)
+        (name "IN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 7.62 2.54 180)
+        (length 2.54)
+        (name "OUT"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 0 -7.62 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "Nooelec_Flamingo_Plus_FM_v2"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "FL" (at 0 6.35 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "Nooelec_Flamingo_Plus_FM_v2" (at 0 -8.89 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.nooelec.com/store/flamingo-plus-fm.html"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Nooelec Flamingo+ FM v2 (100813) broadcast-FM band-stop filter: >60 dB typical stopband, -3 dB at 75/120 MHz, passes DC (bias) up to 250 mA min. Reciprocal two-port; IN/OUT orientation is ours. Connector gender not stated by the vendor page (a male-male SMA barrel is included). STACK v2 5.3: P1 -> Flamingo+ #1 -> SAWbird+ NOAA; P8 -> Flamingo+ #2."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "FM band stop filter Nooelec Flamingo"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "Nooelec_Flamingo_Plus_FM_v2_0_1"
+      (rectangle
+        (start -5.08 5.08)
+        (end 5.08 -5.08)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "Nooelec_Flamingo_Plus_FM_v2_1_1"
+      (pin passive line
+        (at -7.62 2.54 0)
+        (length 2.54)
+        (name "IN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 7.62 2.54 180)
+        (length 2.54)
+        (name "OUT"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 0 -7.62 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "Nooelec_SAWbird_Plus"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 13.97 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "Nooelec_SAWbird_Plus" (at 0 -11.43 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.nooelec.com/store/downloads/dl/file/id/112/product/301/sawbird_noaa_datasheet_revision_1.pdf"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Nooelec SAWbird+ (NOAA 100800 / GOES / H1 / iO) SAW filter + LNA module. Datasheet \"Pin configuration\": RF Input, RF Output + DC Power (bias tee), USB Input; 3 power options (USB, pin header, bias tee) - use only one. STACK v2 5.3: power only through RF_OUT (bias from the injector), never via micro-USB near an antenna feed; USB_5V stays unconnected. 3.3-5.5 V, NOAA 170 mA bias-tee / GOES 140 mA. Pin header not drawn."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "SAWbird LNA SAW filter Nooelec module"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "Nooelec_SAWbird_Plus_0_1"
+      (rectangle
+        (start -12.7 10.16)
+        (end 12.7 -7.62)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "Nooelec_SAWbird_Plus_1_1"
+      (pin passive line
+        (at -15.24 0 0)
+        (length 2.54)
+        (name "RF_IN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 15.24 0 180)
+        (length 2.54)
+        (name "RF_OUT_DC"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 0 12.7 270)
+        (length 2.54)
+        (name "USB_5V"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 0 -10.16 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "LNA_Module_BiasFed"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 6.35 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "LNA_Module_BiasFed" (at 0 -8.89 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://store.uputronics.com/products/uputronics-filtered-preamps"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Bias-fed LNA module with SMA input and SMA output that also takes DC (bias tee). Used for Uputronics HAB-FPA440 Rev 3.0 (limiter -> HPF -> PSA4-5043+ -> SAW 440 MHz; 3.5-5.5 V, about 50 mA; never more than 5.5 V; STACK v2 5.3) and RTL-SDR Blog Wideband LNA V2 (QPL9547, 3-5 V bias tee; STACK v2 3.1 / P8 path). 1 RF_IN (antenna side), 2 RF_OUT_DC, 3 body."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "LNA bias tee module Uputronics RTL-SDR Blog"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "LNA_Module_BiasFed_0_1"
+      (rectangle
+        (start -12.7 5.08)
+        (end 12.7 -5.08)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "LNA_Module_BiasFed_1_1"
+      (pin passive line
+        (at -15.24 2.54 0)
+        (length 2.54)
+        (name "RF_IN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 15.24 2.54 180)
+        (length 2.54)
+        (name "RF_OUT_DC"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 0 -7.62 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "Bonito_Boni-Whip_BiasTee"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 16.51 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "Bonito_Boni-Whip_BiasTee" (at 0 -16.51 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://bonito.net/en/boni-whip-2/"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Bonito Boni-Whip power inserter (bias tee) shipped with the Boni-Whip active antenna: supply 12-15 V fed up the coax (vendor page). STACK v2 5.3: inside, next to the HF+ shield, between the P5 BNC->SMA RG316 jumper and relay K1; BONI13V8 into its 2.1 mm DC jack. Connector types and polarity of the DC jack are not stated by the vendor page (UNCONFIRMED)."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "bias tee power inserter Boni-Whip Bonito"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "Bonito_Boni-Whip_BiasTee_0_1"
+      (rectangle
+        (start -12.7 10.16)
+        (end 12.7 -10.16)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "Bonito_Boni-Whip_BiasTee_1_1"
+      (pin passive line
+        (at -17.78 0 0)
+        (length 5.08)
+        (name "ANT_RF_DC"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "ANT"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 17.78 0 180)
+        (length 5.08)
+        (name "RX_RF"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "RX"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 15.24 270)
+        (length 5.08)
+        (name "DC_IN+"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "DC+"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at -2.54 -15.24 90)
+        (length 5.08)
+        (name "DC_IN-"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "DC-"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 0 -15.24 90)
+        (length 5.08)
+        (name "RF_GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+)

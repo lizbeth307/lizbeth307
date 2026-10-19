@@ -1,0 +1,5 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "sr_rx_v2_pwr")(type "KiCad")(uri "${KIPRJMOD}/sr_rx_v2_pwr.kicad_sym")(options "")(descr "SR-RX-v2 power symbols (E1/E2), STACK.md v2"))
+  (lib (name "sr_rx_v2_sig")(type "KiCad")(uri "${KIPRJMOD}/sr_rx_v2_sig.kicad_sym")(options "")(descr "SR-RX-v2 signal symbols (E3/E4/E5: control, RF, USB), STACK.md v2"))
+)

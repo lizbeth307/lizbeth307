@@ -1,0 +1,1943 @@
+(kicad_symbol_lib
+  (version 20241209)
+  (generator "kicad-mcp")
+  (generator_version "9.0")
+  (symbol "TPS259470ARPWR"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 11.43 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "TPS259470ARPWR" (at 0 8.89 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.ti.com/lit/ds/symlink/tps25947.pdf"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "TI TPS259470ARPWR eFuse, 2.7-23 V, 5.5 A, 28 mOhm, true reverse-current blocking, adjustable OVLO, FLT + AUXOFF, auto-retry; VQFN-HR-10 (RPW, 2x2 mm). Pins per SLVSFC9C (Rev C, May 2026) Table 5-1. Footprint TBD (RPW land pattern not checked). STACK §2.7/§5.1: J21, DISP12, USB-C VBUS, LIME3V3."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "eFuse TPS25947 load switch OVLO reverse blocking"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "TPS259470ARPWR_0_1"
+      (rectangle
+        (start -10.16 7.62)
+        (end 10.16 -12.7)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "TPS259470ARPWR_1_1"
+      (pin power_in line
+        (at -12.7 5.08 0)
+        (length 2.54)
+        (name "IN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "5"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -12.7 0 0)
+        (length 2.54)
+        (name "EN/UVLO"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -12.7 -2.54 0)
+        (length 2.54)
+        (name "OVLO"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_out line
+        (at 12.7 5.08 180)
+        (length 2.54)
+        (name "OUT"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "6"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin open_collector line
+        (at 12.7 0 180)
+        (length 2.54)
+        (name "~{FLT}"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin open_collector line
+        (at 12.7 -2.54 180)
+        (length 2.54)
+        (name "AUXOFF"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -7.62 -15.24 90)
+        (length 2.54)
+        (name "ILM"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "9"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -2.54 -15.24 90)
+        (length 2.54)
+        (name "DVDT"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "7"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 2.54 -15.24 90)
+        (length 2.54)
+        (name "ITIMER"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "10"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 7.62 -15.24 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "8"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "TPS2553DBVR-1"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 8.89 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "TPS2553DBVR-1" (at 0 6.35 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.ti.com/lit/ds/symlink/tps2553.pdf"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "TI TPS2553DBVR-1 current-limited power-distribution switch, adjustable ILIM (RILIM 15k-232k), EN active high, latch-off (-1) after 7.5 ms typ deglitch; SOT-23-6 (DBV). Pins per SLVS841F pin table (TPS2553 DBV). STACK §2.7 \"Ключі струму\", §5.1 LAB5/LNA4V5."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "load switch current limit USB VBUS latch"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "TPS2553DBVR-1_0_1"
+      (rectangle
+        (start -10.16 5.08)
+        (end 10.16 -10.16)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "TPS2553DBVR-1_1_1"
+      (pin power_in line
+        (at -12.7 2.54 0)
+        (length 2.54)
+        (name "IN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -12.7 -2.54 0)
+        (length 2.54)
+        (name "EN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_out line
+        (at 12.7 2.54 180)
+        (length 2.54)
+        (name "OUT"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "6"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin open_collector line
+        (at 12.7 -2.54 180)
+        (length 2.54)
+        (name "~{FAULT}"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -5.08 -12.7 90)
+        (length 2.54)
+        (name "ILIM"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "5"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 -12.7 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "TPS7A4701RGWT"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 24.13 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "TPS7A4701RGWT" (at 0 21.59 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" "Package_DFN_QFN:Texas_RGW0020A_VQFN-20-1EP_5x5mm_P0.65mm_EP3.15x3.15mm_ThermalVias"
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.ti.com/lit/ds/symlink/tps7a47.pdf"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "TI TPS7A4701RGWT (RGWR also fits) 36 V, 1 A low-noise LDO with ANY-OUT pins named as in SBVS204G Table 4-1 (6P4V1=5, 6P4V2=4, 3P2V=6, 1P6V=8, 0P8V=9, 0P4V=10, 0P2V=11, 0P1V=12; ground a pin to add its weight to 1.4 V). VQFN-20 RGW 5x5 mm, thermal pad internally GND. NC pins 2, 17-19 not drawn. No PG pin. STACK §2.7, §5.1 LNB13V2/BONI13V8."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "LDO ANY-OUT low noise 36V"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "TPS7A4701RGWT_0_1"
+      (rectangle
+        (start -10.16 20.32)
+        (end 10.16 -15.24)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "TPS7A4701RGWT_1_1"
+      (pin power_in line
+        (at -12.7 17.78 0)
+        (length 2.54)
+        (name "IN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "15"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -12.7 15.24 0)
+        (length 2.54)
+        (name "IN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "16"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -12.7 10.16 0)
+        (length 2.54)
+        (name "EN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "13"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -12.7 5.08 0)
+        (length 2.54)
+        (name "6P4V1"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "5"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -12.7 2.54 0)
+        (length 2.54)
+        (name "6P4V2"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -12.7 0 0)
+        (length 2.54)
+        (name "3P2V"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "6"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -12.7 -2.54 0)
+        (length 2.54)
+        (name "1P6V"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "8"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -12.7 -5.08 0)
+        (length 2.54)
+        (name "0P8V"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "9"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -12.7 -7.62 0)
+        (length 2.54)
+        (name "0P4V"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "10"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -12.7 -10.16 0)
+        (length 2.54)
+        (name "0P2V"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "11"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -12.7 -12.7 0)
+        (length 2.54)
+        (name "0P1V"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "12"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_out line
+        (at 12.7 17.78 180)
+        (length 2.54)
+        (name "OUT"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 12.7 15.24 180)
+        (length 2.54)
+        (name "OUT"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "20"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at 12.7 10.16 180)
+        (length 2.54)
+        (name "SENSE/FB"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 12.7 5.08 180)
+        (length 2.54)
+        (name "NR"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "14"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at -2.54 -17.78 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "7"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 2.54 -17.78 90)
+        (length 2.54)
+        (name "EP"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "21"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "TLV3011"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 11.43 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "TLV3011" (at 0 8.89 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.ti.com/lit/ds/symlink/tlv3011.pdf"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "TI TLV3011 nanopower comparator, open-drain output, integrated 1.242 V reference; pinout identical for DBV (SOT-23-6) and DCK (SC70-6) per SBOS300C Figure 5-1 / Table 5-1. Package suffix not fixed by STACK (§2.7 \"2x TLV3011\") - footprint TBD. Rail-good LNB/BONI -> MCP #3."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "comparator open drain reference rail good"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "TLV3011_0_1"
+      (rectangle
+        (start -7.62 5.08)
+        (end 7.62 -5.08)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "TLV3011_1_1"
+      (pin input line
+        (at -10.16 2.54 0)
+        (length 2.54)
+        (name "IN+"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -10.16 -2.54 0)
+        (length 2.54)
+        (name "IN-"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin open_collector line
+        (at 10.16 2.54 180)
+        (length 2.54)
+        (name "OUT"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin output line
+        (at 10.16 -2.54 180)
+        (length 2.54)
+        (name "REF"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "5"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 7.62 270)
+        (length 2.54)
+        (name "V+"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "6"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 -7.62 90)
+        (length 2.54)
+        (name "V-"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "TLV3012AIDBVR"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 11.43 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "TLV3012AIDBVR" (at 0 8.89 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" "Package_TO_SOT_SMD:SOT-23-6"
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.ti.com/lit/ds/symlink/tlv3011.pdf"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "TI TLV3012AIDBVR nanopower comparator, push-pull output, integrated 1.242 V reference, SOT-23-6 (DBV); pins per SBOS300C Table 5-1. STACK §2.7: fallback for MCP65R41T-1202E/CHY (same pin order) if the bench gate fails."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "comparator push-pull reference supervisor"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "TLV3012AIDBVR_0_1"
+      (rectangle
+        (start -7.62 5.08)
+        (end 7.62 -5.08)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "TLV3012AIDBVR_1_1"
+      (pin input line
+        (at -10.16 2.54 0)
+        (length 2.54)
+        (name "IN+"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -10.16 -2.54 0)
+        (length 2.54)
+        (name "IN-"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin output line
+        (at 10.16 2.54 180)
+        (length 2.54)
+        (name "OUT"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin output line
+        (at 10.16 -2.54 180)
+        (length 2.54)
+        (name "REF"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "5"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 7.62 270)
+        (length 2.54)
+        (name "V+"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "6"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 -7.62 90)
+        (length 2.54)
+        (name "V-"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "TPS70933DBVR"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "U" (at 0 8.89 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "TPS70933DBVR" (at 0 6.35 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" "Package_TO_SOT_SMD:SOT-23-5"
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.ti.com/lit/ds/symlink/tps709.pdf"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "TI TPS70933DBVR 150 mA, 30 V, 1 uA IQ LDO, fixed 3.3 V, SOT-23-5 (DBV, standard TPS709 pinout: IN=1, GND=2, EN=3, NC=4, OUT=5 per SBVS186H Table 5-1; NC pin 4 not drawn). EN may float (enables device; keep below 6.5 V, abs max 7 V): STACK §5.1 leave EN floating, never tie to N. Not TPS709B (different pinout)."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "LDO 3.3V low IQ always-on AON"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "TPS70933DBVR_0_1"
+      (rectangle
+        (start -7.62 5.08)
+        (end 7.62 -5.08)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "TPS70933DBVR_1_1"
+      (pin power_in line
+        (at -10.16 2.54 0)
+        (length 2.54)
+        (name "IN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -10.16 0 0)
+        (length 2.54)
+        (name "EN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_out line
+        (at 10.16 2.54 180)
+        (length 2.54)
+        (name "OUT"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "5"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 -7.62 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "SMBJ17A"
+    (pin_numbers (hide yes))
+    (pin_names (offset 1.016) (hide yes))
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "D" (at 0 2.54 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "SMBJ17A" (at 0 -2.54 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" "Diode_SMD:D_SMB"
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.vishay.com/docs/88392/smbj.pdf"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "TVS diode, unidirectional, 600 W, SMB (DO-214AA): VRWM 17 V, VBR 18.9-20.9 V, VC 27.6 V at 21.7 A, marking LR (Vishay SMBJ17A-E3/52 = Littelfuse SMBJ17A). Band = cathode (pin 1, KiCad D_SMB convention). STACK §2.7, §5.1: node N and node SW."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "TVS transient suppressor unidirectional SMB"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "SMBJ17A_0_1"
+      (polyline
+        (pts
+          (xy -0.762 1.27)
+          (xy -1.27 1.27)
+          (xy -1.27 -1.27)
+          (xy -1.778 -1.27)
+        )
+        (stroke (width 0.254) (type default))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 1.27 1.27)
+          (xy 1.27 -1.27)
+          (xy -1.27 0)
+          (xy 1.27 1.27)
+        )
+        (stroke (width 0.254) (type default))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 1.27 0)
+          (xy -1.27 0)
+        )
+        (stroke (width 0) (type default))
+        (fill (type none))
+      )
+    )
+    (symbol "SMBJ17A_1_1"
+      (pin passive line
+        (at -3.81 0 0)
+        (length 2.54)
+        (name "K"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 3.81 0 180)
+        (length 2.54)
+        (name "A"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "SMBJ13A"
+    (pin_numbers (hide yes))
+    (pin_names (offset 1.016) (hide yes))
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "D" (at 0 2.54 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "SMBJ13A" (at 0 -2.54 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" "Diode_SMD:D_SMB"
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.vishay.com/docs/88392/smbj.pdf"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "TVS diode, unidirectional, 600 W, SMB (DO-214AA): VRWM 13 V, VBR 14.4-15.9 V, VC 21.5 V at 27.9 A, marking LG (Vishay SMBJ13A-E3/52 = Littelfuse SMBJ13A). Band = cathode (pin 1). STACK §2.7, §5.1: J21 output only (fast transients)."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "TVS transient suppressor unidirectional SMB"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "SMBJ13A_0_1"
+      (polyline
+        (pts
+          (xy -0.762 1.27)
+          (xy -1.27 1.27)
+          (xy -1.27 -1.27)
+          (xy -1.778 -1.27)
+        )
+        (stroke (width 0.254) (type default))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 1.27 1.27)
+          (xy 1.27 -1.27)
+          (xy -1.27 0)
+          (xy 1.27 1.27)
+        )
+        (stroke (width 0.254) (type default))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 1.27 0)
+          (xy -1.27 0)
+        )
+        (stroke (width 0) (type default))
+        (fill (type none))
+      )
+    )
+    (symbol "SMBJ13A_1_1"
+      (pin passive line
+        (at -3.81 0 0)
+        (length 2.54)
+        (name "K"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 3.81 0 180)
+        (length 2.54)
+        (name "A"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "BAT54"
+    (pin_numbers (hide yes))
+    (pin_names (offset 1.016) (hide yes))
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "D" (at 0 2.54 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "BAT54" (at 0 -2.54 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" "Package_TO_SOT_SMD:SOT-23"
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.diodes.com/assets/Datasheets/ds11005.pdf"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Schottky diode 30 V, 200 mA, single, SOT-23: pin 1 = anode, pin 3 = cathode, pin 2 = n.c. (not drawn); Diodes Inc. DS11005 polarity diagram, standard SOT-23 numbering. STACK §2.7/§5.1: button -> #2813 A, supervisor OUT -> #2813 OFF (diode OR)."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "Schottky diode SOT-23 OR"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "BAT54_0_1"
+      (polyline
+        (pts
+          (xy -1.905 0.635)
+          (xy -1.905 1.27)
+          (xy -1.27 1.27)
+          (xy -1.27 -1.27)
+          (xy -0.635 -1.27)
+          (xy -0.635 -0.635)
+        )
+        (stroke (width 0.254) (type default))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 1.27 1.27)
+          (xy 1.27 -1.27)
+          (xy -1.27 0)
+          (xy 1.27 1.27)
+        )
+        (stroke (width 0.254) (type default))
+        (fill (type none))
+      )
+      (polyline
+        (pts
+          (xy 1.27 0)
+          (xy -1.27 0)
+        )
+        (stroke (width 0) (type default))
+        (fill (type none))
+      )
+    )
+    (symbol "BAT54_1_1"
+      (pin passive line
+        (at -3.81 0 0)
+        (length 2.54)
+        (name "K"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 3.81 0 180)
+        (length 2.54)
+        (name "A"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "Pololu_2813_HP"
+    (pin_numbers (hide yes))
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "A" (at 0 11.43 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "Pololu_2813_HP" (at 0 8.89 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.pololu.com/product/2813"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Pololu #2813 Big Pushbutton Power Switch with Reverse Voltage Protection, HP (4.5-32 V rec., 40 V abs). Module terminals as on the Pololu pinout diagram (picture 0J6931): VIN, VOUT, GND (each duplicated on the board, drawn once), ON, OFF, CTRL, A, B. One-directional (power on VOUT cannot be switched to VIN). STACK §2.7, §5.1: A to GND via button (on-only), OFF from Pico GP13 / UV supervisor."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "pushbutton power switch latching Pololu module"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "Pololu_2813_HP_0_1"
+      (rectangle
+        (start -10.16 7.62)
+        (end 10.16 -12.7)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "Pololu_2813_HP_1_1"
+      (pin power_in line
+        (at -12.7 5.08 0)
+        (length 2.54)
+        (name "VIN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "VIN"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -12.7 0 0)
+        (length 2.54)
+        (name "ON"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "ON"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -12.7 -2.54 0)
+        (length 2.54)
+        (name "OFF"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "OFF"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -12.7 -5.08 0)
+        (length 2.54)
+        (name "CTRL"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "CTRL"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -12.7 -7.62 0)
+        (length 2.54)
+        (name "A"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "A"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -12.7 -10.16 0)
+        (length 2.54)
+        (name "B"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "B"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_out line
+        (at 12.7 5.08 180)
+        (length 2.54)
+        (name "VOUT"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "VOUT"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 -15.24 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "Pololu_D36V50Fx"
+    (pin_numbers (hide yes))
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "A" (at 0 11.43 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "Pololu_D36V50Fx" (at 0 8.89 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.pololu.com/product/4095"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Pololu D36V50Fx 5.5 A step-down regulator module (D36V50F12 #4095 = SYS12; D36V50F5 #4091 = LAB5 fallback). Terminals per Pololu product pages: VIN, VRP (VIN after reverse-voltage protection), VOUT, GND (each duplicated on the board, drawn once), EN (100k internal pull-up to VIN; <1.2 V sleep, >1.35 V wake), PG (open drain, external pull-up). STACK §2.7, §5.1."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "buck step-down regulator Pololu module"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "Pololu_D36V50Fx_0_1"
+      (rectangle
+        (start -7.62 7.62)
+        (end 7.62 -7.62)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "Pololu_D36V50Fx_1_1"
+      (pin power_in line
+        (at -10.16 5.08 0)
+        (length 2.54)
+        (name "VIN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "VIN"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -10.16 2.54 0)
+        (length 2.54)
+        (name "VRP"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "VRP"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -10.16 -2.54 0)
+        (length 2.54)
+        (name "EN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "EN"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_out line
+        (at 10.16 5.08 180)
+        (length 2.54)
+        (name "VOUT"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "VOUT"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin open_collector line
+        (at 10.16 -2.54 180)
+        (length 2.54)
+        (name "PG"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "PG"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 -10.16 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "Pololu_D36V28Fx"
+    (pin_numbers (hide yes))
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "A" (at 0 11.43 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "Pololu_D36V28Fx" (at 0 8.89 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.pololu.com/product/3782"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Pololu D36V28Fx 3.2 A step-down regulator module (D36V28F5 #3782 = LAB5). Six connections per Pololu: PG, EN, VIN, VOUT, 2x GND (drawn once). EN pulled up to VIN by 100k (<1.2 V sleep, >1.35 V wake); PG open drain, needs external pull-up. Back-feed above about 5 V on VOUT pumps VIN above 60 V (STACK §2.7, Pololu staff): SMBJ17A on node SW."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "buck step-down regulator Pololu module"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "Pololu_D36V28Fx_0_1"
+      (rectangle
+        (start -7.62 7.62)
+        (end 7.62 -7.62)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "Pololu_D36V28Fx_1_1"
+      (pin power_in line
+        (at -10.16 5.08 0)
+        (length 2.54)
+        (name "VIN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "VIN"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -10.16 -2.54 0)
+        (length 2.54)
+        (name "EN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "EN"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_out line
+        (at 10.16 5.08 180)
+        (length 2.54)
+        (name "VOUT"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "VOUT"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin open_collector line
+        (at 10.16 -2.54 180)
+        (length 2.54)
+        (name "PG"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "PG"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 -10.16 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "Pololu_D36V6Fx"
+    (pin_numbers (hide yes))
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "A" (at 0 11.43 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "Pololu_D36V6Fx" (at 0 8.89 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.pololu.com/product/3793"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Pololu D36V6Fx 600 mA step-down regulator module (D36V6F6 #3793 = 6 V pre-regulator on sled v2 behind AUX12). Four connections per Pololu: SHDN (active low, <1.25 V off, may float), VIN, GND, VOUT. No reverse-voltage protection (STACK §5.1 AUX12: add input reverse-polarity protection on the sled)."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "buck step-down regulator Pololu module"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "Pololu_D36V6Fx_0_1"
+      (rectangle
+        (start -7.62 7.62)
+        (end 7.62 -7.62)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "Pololu_D36V6Fx_1_1"
+      (pin power_in line
+        (at -10.16 5.08 0)
+        (length 2.54)
+        (name "VIN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "VIN"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -10.16 -2.54 0)
+        (length 2.54)
+        (name "~{SHDN}"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "SHDN"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_out line
+        (at 10.16 5.08 180)
+        (length 2.54)
+        (name "VOUT"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "VOUT"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 -10.16 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "Daly_DL-J05G-L4S15ATJ"
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "A" (at 0 11.43 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "Daly_DL-J05G-L4S15ATJ" (at 0 8.89 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://www.tinytronics.nl/product_files/005102_Data-Sheet-of-DL-J04G3-L04S15ATJ-BMS-circuits.pdf"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Daly DL-J05G-L4S15ATJ Li-ion 4S 12 V 15 A common-port BMS with 30 mA passive balance. Terminals per Daly spec A0 §4.1 (TinyTronics 005102 download): B- lead (to pack negative), P- lead (charge/discharge negative), sampling connector PHB2.0 5-pin: 1=B0 (cell 1 negative), 2=B1+, 3=B2+, 4=B3+, 5=B4+ (4 and 5 by the spec pattern \"... last cell positive\"). Pack positive bypasses the BMS. STACK §2.7, §5.1."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "BMS battery protection 4S Li-ion balance module"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "Daly_DL-J05G-L4S15ATJ_0_1"
+      (rectangle
+        (start -10.16 7.62)
+        (end 10.16 -12.7)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "Daly_DL-J05G-L4S15ATJ_1_1"
+      (pin passive line
+        (at -12.7 5.08 0)
+        (length 2.54)
+        (name "B4+"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "5"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -12.7 2.54 0)
+        (length 2.54)
+        (name "B3+"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "4"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -12.7 0 0)
+        (length 2.54)
+        (name "B2+"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "3"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -12.7 -2.54 0)
+        (length 2.54)
+        (name "B1+"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -12.7 -5.08 0)
+        (length 2.54)
+        (name "B0"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -12.7 -10.16 0)
+        (length 2.54)
+        (name "B-"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "B-"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 12.7 -10.16 180)
+        (length 2.54)
+        (name "P-"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "P-"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "Adafruit_INA228_5832"
+    (pin_numbers (hide yes))
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "A" (at 0 13.97 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "Adafruit_INA228_5832" (at 0 11.43 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "https://learn.adafruit.com/adafruit-ina228-i2c-power-monitor/pinouts"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "Adafruit INA228 breakout #5832 (85 V, 20-bit power/energy/charge monitor, on-board 15 mOhm 1% shunt between VIN+ and VIN-). Terminals per Adafruit learn guide pinouts: VIN, GND, SCL, SDA, ALRT (active low), VBUS, VIN+, VIN-; VBUS jumper (STACK \"SJ1\") ties VBUS to VIN+ for high-side; A0/A1 jumpers set address. STACK §2.7, §5.1: VIN from AON 3V3, ALRT pull-up only to 3V3_Q6A."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "INA228 current monitor coulomb counter Adafruit module"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "Adafruit_INA228_5832_0_1"
+      (rectangle
+        (start -10.16 7.62)
+        (end 10.16 -7.62)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "Adafruit_INA228_5832_1_1"
+      (pin passive line
+        (at -12.7 2.54 0)
+        (length 2.54)
+        (name "VIN+"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "VIN+"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at -12.7 -2.54 0)
+        (length 2.54)
+        (name "VBUS"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "VBUS"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 12.7 2.54 180)
+        (length 2.54)
+        (name "VIN-"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "VIN-"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin open_collector line
+        (at 12.7 0 180)
+        (length 2.54)
+        (name "ALRT"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "ALRT"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at 12.7 -2.54 180)
+        (length 2.54)
+        (name "SDA"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "SDA"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin input line
+        (at 12.7 -5.08 180)
+        (length 2.54)
+        (name "SCL"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "SCL"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 10.16 270)
+        (length 2.54)
+        (name "VIN"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "VIN"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 -10.16 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+  (symbol "IP2368_COUT_Board"
+    (pin_numbers (hide yes))
+    (exclude_from_sim no)
+    (in_bom yes)
+    (on_board yes)
+    (property "Reference" "A" (at 0 11.43 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Value" "IP2368_COUT_Board" (at 0 8.89 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+    )
+    (property "Footprint" ""
+      (at 0 -5.08 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Datasheet" "~"
+      (at 0 -7.62 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "Description" "UNVERIFIED terminal names: retail IP2368 4S 100 W PD charger board, COUT variant (no vendor datasheet for the board). Terminals are functional names taken from STACK §2.7/§5.1 (VBUS and CC1/CC2 fed from the case USB-C via TPS259470A; battery output to node N; NTC node at R6; CHG_INHIBIT MOSFET drain/source for the KSD9700 in parallel), not from board silkscreen. Confirm on the received board before layout."
+      (at 0 -10.16 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (property "ki_keywords" "IP2368 USB-C PD charger 4S module"
+      (at 0 0 0)
+      (effects
+        (font (size 1.27 1.27))
+      )
+      (hide yes)
+    )
+    (symbol "IP2368_COUT_Board_0_1"
+      (rectangle
+        (start -12.7 7.62)
+        (end 12.7 -12.7)
+        (stroke (width 0.254) (type default))
+        (fill (type background))
+      )
+    )
+    (symbol "IP2368_COUT_Board_1_1"
+      (pin power_in line
+        (at -15.24 5.08 0)
+        (length 2.54)
+        (name "VBUS"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "VBUS"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at -15.24 0 0)
+        (length 2.54)
+        (name "CC1"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "CC1"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin bidirectional line
+        (at -15.24 -2.54 0)
+        (length 2.54)
+        (name "CC2"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "CC2"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at -15.24 -7.62 0)
+        (length 2.54)
+        (name "NTC"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "NTC"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 15.24 5.08 180)
+        (length 2.54)
+        (name "BAT+"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "BAT+"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 15.24 -2.54 180)
+        (length 2.54)
+        (name "CHG_INH_D"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "CHG_INH_D"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin passive line
+        (at 15.24 -5.08 180)
+        (length 2.54)
+        (name "CHG_INH_S"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "CHG_INH_S"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+      (pin power_in line
+        (at 0 -15.24 90)
+        (length 2.54)
+        (name "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+        (number "GND"
+          (effects (font (size 1.27 1.27)))
+        )
+      )
+    )
+  )
+)
