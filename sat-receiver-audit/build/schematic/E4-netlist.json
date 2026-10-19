@@ -1,0 +1,863 @@
+{
+ "sheet": "E4",
+ "title": "РЧ-тракт: антени, фільтри, перемикачі, SDR",
+ "nets": [
+  {
+   "net": "LNA4V5",
+   "nodes": [
+    "U401.IN",
+    "U402.IN",
+    "U403.IN",
+    "U404.IN"
+   ],
+   "offsheet": "E1"
+  },
+  {
+   "net": "EN_LNA1",
+   "nodes": [
+    "U401.EN"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "FAULT_LNA1",
+   "nodes": [
+    "U401.FAULT"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "ILIM1",
+   "nodes": [
+    "U401.ILIM",
+    "R401.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "GND",
+   "nodes": [
+    "R401.2",
+    "U401.GND",
+    "R402.2",
+    "U402.GND",
+    "R403.2",
+    "U403.GND",
+    "R404.2",
+    "U404.GND",
+    "L401.2",
+    "R405.2",
+    "C419.2",
+    "R408.2",
+    "C420.2",
+    "R409.2",
+    "C421.2",
+    "R410.2",
+    "C422.2",
+    "R411.2",
+    "U405.GND",
+    "U406.GND",
+    "R407.2",
+    "U407.GND",
+    "R406.2",
+    "Q401.S",
+    "R414.2",
+    "Q402.S",
+    "R415.2",
+    "L407.2",
+    "A410.2"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "BIAS_CH1",
+   "nodes": [
+    "U401.OUT",
+    "L402.2"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "EN_LNA2",
+   "nodes": [
+    "U402.EN"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "FAULT_LNA2",
+   "nodes": [
+    "U402.FAULT"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "ILIM2",
+   "nodes": [
+    "U402.ILIM",
+    "R402.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "BIAS_CH2",
+   "nodes": [
+    "U402.OUT",
+    "L403.2"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "EN_LNA3",
+   "nodes": [
+    "U403.EN"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "FAULT_LNA3",
+   "nodes": [
+    "U403.FAULT"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "ILIM3",
+   "nodes": [
+    "U403.ILIM",
+    "R403.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "BIAS_CH3",
+   "nodes": [
+    "U403.OUT",
+    "L404.2"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "EN_LNA4",
+   "nodes": [
+    "U404.EN"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "FAULT_LNA4",
+   "nodes": [
+    "U404.FAULT"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "ILIM4",
+   "nodes": [
+    "U404.ILIM",
+    "R404.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "BIAS_CH4",
+   "nodes": [
+    "U404.OUT",
+    "L405.2"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "3V3_Q6A",
+   "nodes": [
+    "U405.VDD",
+    "U406.VDD",
+    "U407.VDD"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "P1",
+   "nodes": [
+    "ANT.P1",
+    "J401.1",
+    "L401.1",
+    "A401.IN"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RF_P1_FM",
+   "nodes": [
+    "A401.OUT",
+    "A402.IN"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RF_CH1",
+   "nodes": [
+    "A402.OUT",
+    "L402.1",
+    "C402.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RTLA_RF2",
+   "nodes": [
+    "C402.2",
+    "U405.RF2"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "P2_ANT",
+   "nodes": [
+    "ANT.P2",
+    "A418.IN"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "P2",
+   "nodes": [
+    "A418.OUT",
+    "J402.1",
+    "L403.1",
+    "C403.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RTLA_RF3",
+   "nodes": [
+    "C403.2",
+    "U405.RF3"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "P8",
+   "nodes": [
+    "ANT.P8",
+    "J408.1",
+    "A403.IN"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RF_P8_FM",
+   "nodes": [
+    "A403.OUT",
+    "A404.IN"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RF_CH4",
+   "nodes": [
+    "A404.OUT",
+    "L405.1",
+    "C404.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RTLA_RF4",
+   "nodes": [
+    "C404.2",
+    "U405.RF4"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RTLA_RF1",
+   "nodes": [
+    "U405.RF1",
+    "C401.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "PARK_A",
+   "nodes": [
+    "C401.2",
+    "R405.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "SW_RTLA_A",
+   "nodes": [
+    "U405.A",
+    "C419.1",
+    "R408.1"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "SW_RTLA_B",
+   "nodes": [
+    "U405.B",
+    "C420.1",
+    "R409.1"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "SW_RTLB_A",
+   "nodes": [
+    "U406.A",
+    "C421.1",
+    "R410.1"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "SW_RTLB_B",
+   "nodes": [
+    "U406.B",
+    "C422.1",
+    "R411.1"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "RTLA_RFC",
+   "nodes": [
+    "U405.RFC",
+    "C405.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RFC_A",
+   "nodes": [
+    "C405.2",
+    "J410.1",
+    "A411.ANT"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "USB_RTLA",
+   "nodes": [
+    "A411.USB"
+   ],
+   "offsheet": "E5"
+  },
+  {
+   "net": "RTLB_RFC",
+   "nodes": [
+    "U406.RFC",
+    "C410.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RFC_B",
+   "nodes": [
+    "C410.2",
+    "J411.1",
+    "A412.ANT"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "USB_RTLB",
+   "nodes": [
+    "A412.USB"
+   ],
+   "offsheet": "E5"
+  },
+  {
+   "net": "BENCH",
+   "nodes": [
+    "J409.1",
+    "C409.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RTLB_RF4",
+   "nodes": [
+    "C409.2",
+    "U406.RF4"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "LNB_REF25",
+   "nodes": [
+    "A420.REF25",
+    "A421.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "LNB_IF",
+   "nodes": [
+    "A420.IF",
+    "W401.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "P4",
+   "nodes": [
+    "W401.2",
+    "J404.1",
+    "W402.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RF_CH5",
+   "nodes": [
+    "W402.2",
+    "L406.1",
+    "C412.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "LNB13V2",
+   "nodes": [
+    "L406.2"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "RF_CH5_DC",
+   "nodes": [
+    "C412.2",
+    "A405.IN"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RF_CH5_ATT",
+   "nodes": [
+    "A405.OUT",
+    "C408.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RTLB_RF3",
+   "nodes": [
+    "C408.2",
+    "U406.RF3"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "SW_LIME_A",
+   "nodes": [
+    "U407.A"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "SW_LIME_B",
+   "nodes": [
+    "U407.B"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "LIME_RF1",
+   "nodes": [
+    "U407.RF1",
+    "C414.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "PARK_C",
+   "nodes": [
+    "C414.2",
+    "R407.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "LIME_RFSPARE",
+   "nodes": [
+    "U407.RF4/2*",
+    "C417.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "P3_ANT",
+   "nodes": [
+    "ANT.P3",
+    "A419.IN"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "P3",
+   "nodes": [
+    "A419.OUT",
+    "J403.1",
+    "L404.1",
+    "C411.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "LIME_RFC",
+   "nodes": [
+    "C411.2",
+    "U407.RFC"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "LIME_TO_RTLB",
+   "nodes": [
+    "U407.RF2/4*",
+    "C416.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RF_CH3_B",
+   "nodes": [
+    "C416.2",
+    "C407.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RTLB_RF2",
+   "nodes": [
+    "C407.2",
+    "U406.RF2"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RTLB_RF1",
+   "nodes": [
+    "U406.RF1",
+    "C406.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "PARK_B",
+   "nodes": [
+    "C406.2",
+    "R406.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "LIME_RF3",
+   "nodes": [
+    "U407.RF3",
+    "C415.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "YAT_IN",
+   "nodes": [
+    "C415.2",
+    "A407.IN"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "YAT_OUT",
+   "nodes": [
+    "A407.OUT",
+    "C418.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RX1_EDGE",
+   "nodes": [
+    "C418.2",
+    "J412.1",
+    "A408.IN"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RX1_PAD",
+   "nodes": [
+    "A408.OUT",
+    "W403.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "LIME_RX1_PANEL",
+   "nodes": [
+    "J413.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "K1_ON",
+   "nodes": [
+    "R412.1"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "K1_G",
+   "nodes": [
+    "R412.2",
+    "Q401.G",
+    "R414.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "K1_LS",
+   "nodes": [
+    "K401.8",
+    "Q401.D",
+    "D401.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "LAB5",
+   "nodes": [
+    "K401.1",
+    "K402.1",
+    "D401.3"
+   ],
+   "offsheet": "E1"
+  },
+  {
+   "net": "K2_ON",
+   "nodes": [
+    "R413.1"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "K2_G",
+   "nodes": [
+    "R413.2",
+    "Q402.G",
+    "R415.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "K2_LS",
+   "nodes": [
+    "K402.8",
+    "Q402.D",
+    "D401.2"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "P5",
+   "nodes": [
+    "ANT.P5",
+    "J405.1",
+    "L408.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "HF_CM",
+   "nodes": [
+    "L408.2",
+    "A406.ANT"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "BONI13V8",
+   "nodes": [
+    "A406.DC"
+   ],
+   "offsheet": "E2"
+  },
+  {
+   "net": "HF_BT",
+   "nodes": [
+    "A406.RF",
+    "K401.IN"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "P6",
+   "nodes": [
+    "ANT.P6",
+    "J406.1",
+    "L407.1",
+    "K402.IN"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "HFP_ANT",
+   "nodes": [
+    "K401.OUT",
+    "K402.OUT",
+    "A414.ANT"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "USB_HFP",
+   "nodes": [
+    "A414.USB"
+   ],
+   "offsheet": "E5"
+  },
+  {
+   "net": "P7",
+   "nodes": [
+    "ANT.P7",
+    "J407.1",
+    "W407.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "GNSS_RF",
+   "nodes": [
+    "W407.2"
+   ],
+   "offsheet": "E3"
+  },
+  {
+   "net": "LAB_ANT",
+   "nodes": [
+    "ANT.LAB",
+    "A416.IN"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "LAB_FM",
+   "nodes": [
+    "A416.OUT",
+    "A413.ANT"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "USB_LAB",
+   "nodes": [
+    "A413.USB"
+   ],
+   "offsheet": "E5"
+  },
+  {
+   "net": "RX2_ANT",
+   "nodes": [
+    "ANT.RX2",
+    "A422.IN"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "SB_LNA_OUT",
+   "nodes": [
+    "A422.OUT",
+    "A423.IN"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "LIME_RX2",
+   "nodes": [
+    "A423.OUT",
+    "J414.1",
+    "A409.IN"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "RX2_BLK",
+   "nodes": [
+    "A409.OUT",
+    "W404.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "LIME_RXB",
+   "nodes": [
+    "W404.2",
+    "A415.RXB"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "REF_IN",
+   "nodes": [
+    "J415.1",
+    "W405.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "LIME_REF",
+   "nodes": [
+    "W405.2",
+    "A415.J4"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "LIME_RXA",
+   "nodes": [
+    "W403.2",
+    "A415.RXA"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "LIME_TX",
+   "nodes": [
+    "A415.X1",
+    "W406.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "TX_LOAD",
+   "nodes": [
+    "W406.2",
+    "A410.1"
+   ],
+   "offsheet": null
+  },
+  {
+   "net": "M2_LIME",
+   "nodes": [
+    "A415.M2"
+   ],
+   "offsheet": "E5"
+  }
+ ],
+ "notes": [
+  "Лише прийом: Lime X1 (TX) — тільки кабелем W406 на внутрішнє навантаження A410 ANNE-50+ 50 Ω; TX-тракту і підсилювача до антени немає (STACK §2.11.1, §5.3).",
+  "Джерела сигналу (генератор, VNA, шумове джерело) — лише кондуктивно у BENCH J409, ≤ −40 dBm, усі перемикачі на 50 Ω (STACK §5.3).",
+  "DC-блоки за G3: 1 nF на всіх виводах RTL-A, 100 pF на всіх виводах RTL-B; 10 nF C0G 0603 на RF4/RFC RTL-B — лише якщо BENCH має доходити до КХ (STACK §5.3).",
+  "Старт: A=B=Low через 100 kΩ → RF1 (49.9 Ω); K401/K402 знеструмлені → HF+, P5, P6 на 50 Ω; усі EN зміщення вимкнені (STACK §5.2, §5.3).",
+  "HMC7992: GND → VDD (3V3_Q6A, шина MCP23017) → A/B; 1 kΩ в A/B лише якщо VDD з іншої шини (STACK §2.3, §5.2).",
+  "Ніколи понад 5.5 V на P2/P3; 13.8 V BONI13V8 лише на BNC P5, 13.2 V LNB13V2 лише на F P4; EN LNB лише поки RTL-B на RF3 (STACK §5.1, §5.3).",
+  "V4L: bias-tee вимкнено (EEPROM, токен labd), серійні LABRXA/B/C; STACK v2 — V4L (R828S), не V4 (STACK §2.2, §5.3).",
+  "Шунти INA3221 0.2 Ω (ch1–ch4) і 0.1 Ω (LNB) та LT3045 — на E1/E2; DC-sense — MCP #3 на E3 (STACK §5.1, §5.2).",
+  "TBD — у таблиці на аркуші; закривають стендові ворота STACK §8, §8.1 (L-12), §8.2."
+ ]
+}
