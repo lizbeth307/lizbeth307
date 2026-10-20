@@ -256,9 +256,9 @@
     },
     {
       "id": "E3-08",
-      "description": "The physical MCP watchdog-reset actuator is wired, but Pico heartbeat-watchdog firmware and its boot/recovery behavior do not yet exist or pass hardware tests.",
+      "description": "Pico watchdog, MicroPython GPIO/UART adapter and host handshake implemented 20.10.2026 and tested on the host. Actual GPIO timing, reset levels, WDT/brownout behavior and Linux/serial fault recovery have not been qualified on the device.",
       "blocking": true,
-      "resolve": "Implement future firmware with reset asserted at powered boot/highimpedance, on missing/invalid heartbeat and during unsafe/re-arm states. Hold resetlow>=1us (projectguard100ms minimum,normallylatcheduntilqualifiedrecovery). ActivelysinkGP17LOWonlyfornormalrelease; verifyGPIOsink~3.3mA. ScopeRESET<0.2VDDasserted/>0.8VDDreleased; proveinternalENlow,HMC00,relaysofffrominitialENhighuponLinuxkill/UARThang. Test20cold/20warmboots,PicoGPIOreset/brownout,andQ6Aoff/Picoonwithoutbackfeed. Beforeoutputre-enablewriteOLAT0,IODIRincludingIO7=0foroutputs,andIOCONODR/MIRRORthenGPINTEN. FullPicosupplylosswithQ6Aaliveisnotcoveredbythisactuator;AONbatteryprotectionisindependent.",
+      "resolve": "Run the implemented firmware with the actual accepted Pico/Q6A assembly: scope MCP RESET assertion/release, safe output image including CHG_INHIBIT=1 after initialization, 100ms guard, 750ms heartbeat deadline plus measured latency, explicit fresh-session recovery, Linux kill/hang, UART loss/corruption, WDT/brownout and GPIO current/backfeed. Complete Pico power loss with Q6A alive remains outside Q306 coverage; no software test closes this boundary.",
       "sheet": "E3"
     },
     {
@@ -384,7 +384,7 @@
   "source_sha256": {
     "E1.json": "e87f79db4da0d9be7e74aa1ad2816ea99ae4ed8fd6e723ba375c1559bfd51392",
     "E2.json": "adc5b67b6b53977143847d688f657364a5e300a80761d74e1dc82e34bd703c16",
-    "E3.json": "ad604c2be01425969c56f800bf92c46631fc7dccccdb872b245e8fc5ff8223de",
+    "E3.json": "0a2e2e60ede923b2d0a1aa0f8484a97513c1ef36ae389d3aee365fbcf90aaac5",
     "E4.json": "b05555c7a6729029f779df3ca3d0a62d71e206520a33cf7e34ffa3e2c081344d",
     "E5.json": "86a9099809fbcdf365c82ecf4a239531b1b55715ee17cd1c5fb5a776c979ca05"
   }

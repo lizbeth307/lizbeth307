@@ -1,0 +1,24 @@
+[Unit]
+Description=SR-RX qualified shutdown bridge
+After=srrx.service
+Requires=srrx.service
+ConditionPathExists=/etc/srrx/acceptance.json
+
+[Service]
+Type=simple
+User=root
+WorkingDirectory=/opt/srrx
+Environment=PYTHONPATH=/opt/srrx/software
+ExecStart=/usr/bin/python3 -m srrx.poweroff --socket /run/srrx/control.sock --execute
+Restart=on-failure
+RestartSec=2
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+RestrictAddressFamilies=AF_UNIX
+MemoryMax=64M
+TasksMax=8
+
+[Install]
+WantedBy=multi-user.target

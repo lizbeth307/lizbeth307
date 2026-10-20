@@ -1,0 +1,8035 @@
+{
+  "board_id": "DC_CORE",
+  "status": "UNROUTED_PLACEMENT_INPUT_NOT_FABRICATION",
+  "part_count": 71,
+  "components": [
+    {
+      "ref": "C4400",
+      "value": "100 nF X7R 10 V",
+      "kind": "capacitor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "C4401",
+      "value": "10 nF C0G 50 V",
+      "kind": "capacitor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_LOW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "C4402",
+      "value": "10 nF C0G 50 V",
+      "kind": "capacitor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_HIGH"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "C4403",
+      "value": "1 nF C0G 50 V",
+      "kind": "capacitor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF12_LOW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "C4404",
+      "value": "1 nF C0G 50 V",
+      "kind": "capacitor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF12_HIGH"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "C4405",
+      "value": "10 nF C0G 50 V",
+      "kind": "capacitor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF_PG_LOW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "C4406",
+      "value": "10 nF C0G 50 V",
+      "kind": "capacitor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF_PG_HIGH"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "C4410",
+      "value": "100 nF X7R 10 V local decoupling",
+      "kind": "capacitor",
+      "group": "DC detectors: local power",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "Place at U450 supply pins."
+      ],
+      "sheet": "E4",
+      "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "C4411",
+      "value": "100 nF X7R 10 V local decoupling",
+      "kind": "capacitor",
+      "group": "DC detectors: local power",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "Place at U451 supply pins."
+      ],
+      "sheet": "E4",
+      "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "C4412",
+      "value": "100 nF X7R 10 V local decoupling",
+      "kind": "capacitor",
+      "group": "DC detectors: local power",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "Place at U452 supply pins."
+      ],
+      "sheet": "E4",
+      "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "C4413",
+      "value": "100 nF X7R 10 V local decoupling",
+      "kind": "capacitor",
+      "group": "DC detectors: local power",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "Place at U453 supply pins."
+      ],
+      "sheet": "E4",
+      "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "C4414",
+      "value": "100 nF X7R 10 V local decoupling",
+      "kind": "capacitor",
+      "group": "DC detectors: local power",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "Place at U454 supply pins."
+      ],
+      "sheet": "E4",
+      "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "C4415",
+      "value": "100 nF X7R 10 V local decoupling",
+      "kind": "capacitor",
+      "group": "DC detectors: local power",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "Place at U455 supply pins."
+      ],
+      "sheet": "E4",
+      "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "C4416",
+      "value": "100 nF X7R 10 V local decoupling",
+      "kind": "capacitor",
+      "group": "DC detectors: local power",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "Place at U456 supply pins."
+      ],
+      "sheet": "E4",
+      "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "C4417",
+      "value": "100 nF X7R 10 V local decoupling",
+      "kind": "capacitor",
+      "group": "DC detectors: local power",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "Place at U457 supply pins."
+      ],
+      "sheet": "E4",
+      "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "C4421",
+      "value": "10 nF C0G 50 V",
+      "kind": "capacitor",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_UHF_SENSE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "C4431",
+      "value": "10 nF C0G 50 V",
+      "kind": "capacitor",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_SENSE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "C4441",
+      "value": "10 nF C0G 50 V",
+      "kind": "capacitor",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_HF_SENSE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "D450",
+      "value": "BAV199 reference reverse-feed isolation",
+      "kind": "diode",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "3",
+          "name": "K1_A2",
+          "type": "passive",
+          "net": "E4_DCS_REF_FEED"
+        },
+        {
+          "number": "2",
+          "name": "K2",
+          "type": "no_connect",
+          "nc": true
+        }
+      ],
+      "status": "verified",
+      "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
+      "notes": [
+        "Use diode 1 only. Blocks REF-to-Q6A current with Q6A OFF. Spare cathode pin 2 floats."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "sheet": "E4",
+      "placement_footprint": "Package_TO_SOT_SMD:SOT-23",
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "placement_blockers": []
+    },
+    {
+      "ref": "D451",
+      "value": "BAV199 sense clamps",
+      "kind": "diode",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A1",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "K1_A2",
+          "type": "passive",
+          "net": "E4_DCS_UHF_SENSE"
+        },
+        {
+          "number": "2",
+          "name": "K2",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        }
+      ],
+      "status": "verified",
+      "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
+      "notes": [
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "sheet": "E4",
+      "placement_footprint": "Package_TO_SOT_SMD:SOT-23",
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "placement_blockers": []
+    },
+    {
+      "ref": "D452",
+      "value": "BAV199 sense clamps",
+      "kind": "diode",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A1",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "K1_A2",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_SENSE"
+        },
+        {
+          "number": "2",
+          "name": "K2",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        }
+      ],
+      "status": "verified",
+      "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
+      "notes": [
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "sheet": "E4",
+      "placement_footprint": "Package_TO_SOT_SMD:SOT-23",
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "placement_blockers": []
+    },
+    {
+      "ref": "D453",
+      "value": "BAV199 sense clamps",
+      "kind": "diode",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A1",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "K1_A2",
+          "type": "passive",
+          "net": "E4_DCS_HF_SENSE"
+        },
+        {
+          "number": "2",
+          "name": "K2",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        }
+      ],
+      "status": "verified",
+      "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
+      "notes": [
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "sheet": "E4",
+      "placement_footprint": "Package_TO_SOT_SMD:SOT-23",
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "placement_blockers": []
+    },
+    {
+      "ref": "Q450",
+      "value": "AO3400A",
+      "kind": "nfet",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "E4_DCS_UHF_LOW_GATE"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "E4_DCS_UHF_SINK_MID"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "DCS_UHF"
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
+      "notes": [
+        "Series sink only; specified logic-level 2.5 V gate drive."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "sheet": "E4",
+      "placement_footprint": "Package_TO_SOT_SMD:SOT-23",
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "placement_blockers": []
+    },
+    {
+      "ref": "Q451",
+      "value": "AO3400A",
+      "kind": "nfet",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "E4_DCS_UHF_HIGH_GATE"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "E4_DCS_RETURN"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "E4_DCS_UHF_SINK_MID"
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
+      "notes": [
+        "Series sink only; specified logic-level 2.5 V gate drive."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "sheet": "E4",
+      "placement_footprint": "Package_TO_SOT_SMD:SOT-23",
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "placement_blockers": []
+    },
+    {
+      "ref": "Q452",
+      "value": "AO3400A",
+      "kind": "nfet",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "E4_DCS_LBAND_LOW_GATE"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_SINK_MID"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "DCS_LBAND"
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
+      "notes": [
+        "Series sink only; specified logic-level 2.5 V gate drive."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "sheet": "E4",
+      "placement_footprint": "Package_TO_SOT_SMD:SOT-23",
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "placement_blockers": []
+    },
+    {
+      "ref": "Q453",
+      "value": "AO3400A",
+      "kind": "nfet",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "E4_DCS_LBAND_HIGH_GATE"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "E4_DCS_RETURN"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_SINK_MID"
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
+      "notes": [
+        "Series sink only; specified logic-level 2.5 V gate drive."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "sheet": "E4",
+      "placement_footprint": "Package_TO_SOT_SMD:SOT-23",
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "placement_blockers": []
+    },
+    {
+      "ref": "Q454",
+      "value": "AO3400A",
+      "kind": "nfet",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "E4_DCS_HF_LOW_GATE"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "E4_DCS_HF_SINK_MID"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "DCS_HF"
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
+      "notes": [
+        "Series sink only; specified logic-level 2.5 V gate drive."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "sheet": "E4",
+      "placement_footprint": "Package_TO_SOT_SMD:SOT-23",
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "placement_blockers": []
+    },
+    {
+      "ref": "Q455",
+      "value": "AO3400A",
+      "kind": "nfet",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "E4_DCS_HF_HIGH_GATE"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "E4_DCS_RETURN"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "E4_DCS_HF_SINK_MID"
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
+      "notes": [
+        "Series sink only; specified logic-level 2.5 V gate drive."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "sheet": "E4",
+      "placement_footprint": "Package_TO_SOT_SMD:SOT-23",
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "placement_blockers": []
+    },
+    {
+      "ref": "Q456",
+      "value": "AO3400A",
+      "kind": "nfet",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "E4_DCS_REF_GATE_LOW"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "E4_DCS_REF_RETURN_MID"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "E4_DCS_RETURN"
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
+      "notes": [
+        "Series sink only; specified logic-level 2.5 V gate drive."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "sheet": "E4",
+      "placement_footprint": "Package_TO_SOT_SMD:SOT-23",
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "placement_blockers": []
+    },
+    {
+      "ref": "Q457",
+      "value": "AO3400A",
+      "kind": "nfet",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "E4_DCS_REF_GATE_HIGH"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "E4_DCS_REF_RETURN_MID"
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
+      "notes": [
+        "Series sink only; specified logic-level 2.5 V gate drive."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "sheet": "E4",
+      "placement_footprint": "Package_TO_SOT_SMD:SOT-23",
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "placement_blockers": []
+    },
+    {
+      "ref": "R4400",
+      "value": "150 Ω 1% 0.125 W",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF_FEED"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4401",
+      "value": "10 kΩ 1% Q6A off-state bleed",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "notes": [
+        "80 nA worst-case BAV199 reverse leakage would produce ≤0.8 mV here; no clamp to switched 3.3 V rail."
+      ],
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4402",
+      "value": "26.7 kΩ 0.1%",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_LOW"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4403",
+      "value": "25.5 kΩ 0.1%",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_LOW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4404",
+      "value": "25.5 kΩ 0.1%",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_HIGH"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4405",
+      "value": "26.7 kΩ 0.1%",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_HIGH"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4406",
+      "value": "10.0 kΩ 0.1%",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_REF_PG_LOW"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4407",
+      "value": "24.9 kΩ 0.1%",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF_PG_LOW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4408",
+      "value": "24.9 kΩ 0.1%",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_REF_PG_HIGH"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4409",
+      "value": "33.2 kΩ 0.1%",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF_PG_HIGH"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4421",
+      "value": "24.9 kΩ 0.1% 0402",
+      "kind": "resistor",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_UHF_TAP"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_UHF_SENSE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0402_1005Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": null,
+      "placement_blockers": [
+        "Manufacturer MPN/land pattern approval required before production",
+        "Fetch official portable footprint first"
+      ]
+    },
+    {
+      "ref": "R4422",
+      "value": "49.8 kΩ 0.1%",
+      "kind": "resistor",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_UHF_SENSE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4423",
+      "value": "100 Ω",
+      "kind": "resistor",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_UHF_LOW_OK"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_UHF_LOW_GATE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4424",
+      "value": "100 kΩ",
+      "kind": "resistor",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_UHF_LOW_GATE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4425",
+      "value": "100 Ω",
+      "kind": "resistor",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_UHF_HIGH_OK"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_UHF_HIGH_GATE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4426",
+      "value": "100 kΩ",
+      "kind": "resistor",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_UHF_HIGH_GATE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4431",
+      "value": "24.9 kΩ 0.1% 0402",
+      "kind": "resistor",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_TAP"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_SENSE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0402_1005Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": null,
+      "placement_blockers": [
+        "Manufacturer MPN/land pattern approval required before production",
+        "Fetch official portable footprint first"
+      ]
+    },
+    {
+      "ref": "R4432",
+      "value": "49.8 kΩ 0.1%",
+      "kind": "resistor",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_SENSE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4433",
+      "value": "100 Ω",
+      "kind": "resistor",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_LOW_OK"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_LOW_GATE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4434",
+      "value": "100 kΩ",
+      "kind": "resistor",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_LOW_GATE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4435",
+      "value": "100 Ω",
+      "kind": "resistor",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_HIGH_OK"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_HIGH_GATE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4436",
+      "value": "100 kΩ",
+      "kind": "resistor",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_LBAND_HIGH_GATE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4441",
+      "value": "24.9 kΩ 0.1% 0402",
+      "kind": "resistor",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_HF_TAP"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_HF_SENSE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0402_1005Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": null,
+      "placement_blockers": [
+        "Manufacturer MPN/land pattern approval required before production",
+        "Fetch official portable footprint first"
+      ]
+    },
+    {
+      "ref": "R4442",
+      "value": "49.8 kΩ 0.1%",
+      "kind": "resistor",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_HF_SENSE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4443",
+      "value": "100 Ω",
+      "kind": "resistor",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_HF_LOW_OK"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_HF_LOW_GATE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4444",
+      "value": "100 kΩ",
+      "kind": "resistor",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_HF_LOW_GATE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4445",
+      "value": "100 Ω",
+      "kind": "resistor",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_HF_HIGH_OK"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_HF_HIGH_GATE"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4446",
+      "value": "100 kΩ",
+      "kind": "resistor",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_HF_HIGH_GATE"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4450",
+      "value": "100 Ω",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF_GOOD_LOW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_REF_GATE_LOW"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4451",
+      "value": "100 kΩ",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF_GATE_LOW"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4452",
+      "value": "100 Ω",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF_GOOD_HIGH"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E4_DCS_REF_GATE_HIGH"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "R4453",
+      "value": "100 kΩ",
+      "kind": "resistor",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E4_DCS_REF_GATE_HIGH"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "design",
+      "source": "E4 completion design; see E4-review.md",
+      "sheet": "E4",
+      "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
+      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "placement_blockers": [
+        "Manufacturer MPN/package/land pattern approval required before production"
+      ]
+    },
+    {
+      "ref": "U450",
+      "value": "TLV3012BIDBVR",
+      "kind": "ic",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "OUT",
+          "type": "output",
+          "net": "E4_DCS_UHF_LOW_OK"
+        },
+        {
+          "number": "2",
+          "name": "V-",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "IN+",
+          "type": "input",
+          "net": "E4_DCS_UHF_SENSE"
+        },
+        {
+          "number": "4",
+          "name": "IN-",
+          "type": "input",
+          "net": "E4_DCS_LOW"
+        },
+        {
+          "number": "6",
+          "name": "V+",
+          "type": "power_in",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "5",
+          "name": "REF",
+          "type": "no_connect",
+          "nc": true
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.ti.com/lit/ds/symlink/tlv3011.pdf",
+      "notes": [
+        "B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "sheet": "E4",
+      "placement_footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "placement_blockers": []
+    },
+    {
+      "ref": "U451",
+      "value": "TLV3012BIDBVR",
+      "kind": "ic",
+      "group": "DC detectors: UHF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "OUT",
+          "type": "output",
+          "net": "E4_DCS_UHF_HIGH_OK"
+        },
+        {
+          "number": "2",
+          "name": "V-",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "IN+",
+          "type": "input",
+          "net": "E4_DCS_HIGH"
+        },
+        {
+          "number": "4",
+          "name": "IN-",
+          "type": "input",
+          "net": "E4_DCS_UHF_SENSE"
+        },
+        {
+          "number": "6",
+          "name": "V+",
+          "type": "power_in",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "5",
+          "name": "REF",
+          "type": "no_connect",
+          "nc": true
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.ti.com/lit/ds/symlink/tlv3011.pdf",
+      "notes": [
+        "B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "sheet": "E4",
+      "placement_footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "placement_blockers": []
+    },
+    {
+      "ref": "U452",
+      "value": "TLV3012BIDBVR",
+      "kind": "ic",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "OUT",
+          "type": "output",
+          "net": "E4_DCS_LBAND_LOW_OK"
+        },
+        {
+          "number": "2",
+          "name": "V-",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "IN+",
+          "type": "input",
+          "net": "E4_DCS_LBAND_SENSE"
+        },
+        {
+          "number": "4",
+          "name": "IN-",
+          "type": "input",
+          "net": "E4_DCS_LOW"
+        },
+        {
+          "number": "6",
+          "name": "V+",
+          "type": "power_in",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "5",
+          "name": "REF",
+          "type": "no_connect",
+          "nc": true
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.ti.com/lit/ds/symlink/tlv3011.pdf",
+      "notes": [
+        "B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "sheet": "E4",
+      "placement_footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "placement_blockers": []
+    },
+    {
+      "ref": "U453",
+      "value": "TLV3012BIDBVR",
+      "kind": "ic",
+      "group": "DC detectors: LBAND",
+      "pins": [
+        {
+          "number": "1",
+          "name": "OUT",
+          "type": "output",
+          "net": "E4_DCS_LBAND_HIGH_OK"
+        },
+        {
+          "number": "2",
+          "name": "V-",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "IN+",
+          "type": "input",
+          "net": "E4_DCS_HIGH"
+        },
+        {
+          "number": "4",
+          "name": "IN-",
+          "type": "input",
+          "net": "E4_DCS_LBAND_SENSE"
+        },
+        {
+          "number": "6",
+          "name": "V+",
+          "type": "power_in",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "5",
+          "name": "REF",
+          "type": "no_connect",
+          "nc": true
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.ti.com/lit/ds/symlink/tlv3011.pdf",
+      "notes": [
+        "B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "sheet": "E4",
+      "placement_footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "placement_blockers": []
+    },
+    {
+      "ref": "U454",
+      "value": "TLV3012BIDBVR",
+      "kind": "ic",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "OUT",
+          "type": "output",
+          "net": "E4_DCS_HF_LOW_OK"
+        },
+        {
+          "number": "2",
+          "name": "V-",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "IN+",
+          "type": "input",
+          "net": "E4_DCS_HF_SENSE"
+        },
+        {
+          "number": "4",
+          "name": "IN-",
+          "type": "input",
+          "net": "E4_DCS_LOW"
+        },
+        {
+          "number": "6",
+          "name": "V+",
+          "type": "power_in",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "5",
+          "name": "REF",
+          "type": "no_connect",
+          "nc": true
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.ti.com/lit/ds/symlink/tlv3011.pdf",
+      "notes": [
+        "B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "sheet": "E4",
+      "placement_footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "placement_blockers": []
+    },
+    {
+      "ref": "U455",
+      "value": "TLV3012BIDBVR",
+      "kind": "ic",
+      "group": "DC detectors: HF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "OUT",
+          "type": "output",
+          "net": "E4_DCS_HF_HIGH_OK"
+        },
+        {
+          "number": "2",
+          "name": "V-",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "IN+",
+          "type": "input",
+          "net": "E4_DCS_HIGH"
+        },
+        {
+          "number": "4",
+          "name": "IN-",
+          "type": "input",
+          "net": "E4_DCS_HF_SENSE"
+        },
+        {
+          "number": "6",
+          "name": "V+",
+          "type": "power_in",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "5",
+          "name": "REF",
+          "type": "no_connect",
+          "nc": true
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.ti.com/lit/ds/symlink/tlv3011.pdf",
+      "notes": [
+        "B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "sheet": "E4",
+      "placement_footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "placement_blockers": []
+    },
+    {
+      "ref": "U456",
+      "value": "TLV3012BIDBVR",
+      "kind": "ic",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "OUT",
+          "type": "output",
+          "net": "E4_DCS_REF_GOOD_LOW"
+        },
+        {
+          "number": "2",
+          "name": "V-",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "IN+",
+          "type": "input",
+          "net": "E4_DCS_REF_PG_LOW"
+        },
+        {
+          "number": "4",
+          "name": "IN-",
+          "type": "input",
+          "net": "E4_DCS_REF12_LOW"
+        },
+        {
+          "number": "6",
+          "name": "V+",
+          "type": "power_in",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "5",
+          "name": "REF",
+          "type": "output",
+          "net": "E4_DCS_REF12_LOW"
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.ti.com/lit/ds/symlink/tlv3011.pdf",
+      "notes": [
+        "B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "sheet": "E4",
+      "placement_footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "placement_blockers": []
+    },
+    {
+      "ref": "U457",
+      "value": "TLV3012BIDBVR",
+      "kind": "ic",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "OUT",
+          "type": "output",
+          "net": "E4_DCS_REF_GOOD_HIGH"
+        },
+        {
+          "number": "2",
+          "name": "V-",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "IN+",
+          "type": "input",
+          "net": "E4_DCS_REF12_HIGH"
+        },
+        {
+          "number": "4",
+          "name": "IN-",
+          "type": "input",
+          "net": "E4_DCS_REF_PG_HIGH"
+        },
+        {
+          "number": "6",
+          "name": "V+",
+          "type": "power_in",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "5",
+          "name": "REF",
+          "type": "output",
+          "net": "E4_DCS_REF12_HIGH"
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.ti.com/lit/ds/symlink/tlv3011.pdf",
+      "notes": [
+        "B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "sheet": "E4",
+      "placement_footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "placement_blockers": []
+    },
+    {
+      "ref": "U458",
+      "value": "LM4040A20IDBZR 2.048 V 0.1% shunt",
+      "kind": "ic",
+      "group": "DC detectors: common reference",
+      "pins": [
+        {
+          "number": "1",
+          "name": "CATHODE",
+          "type": "passive",
+          "net": "E4_DCS_REF"
+        },
+        {
+          "number": "2",
+          "name": "ANODE",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "STAR_CONNECT_ANODE",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "status": "verified",
+      "source": "https://www.ti.com/lit/ds/symlink/lm4040.pdf",
+      "notes": [
+        "Pin 3 is tied to anode as TI recommends in high-EMI environments. Reference supply, dividers and clamp current budget are in review."
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "sheet": "E4",
+      "placement_footprint": "Package_TO_SOT_SMD:SOT-23",
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "placement_blockers": []
+    }
+  ],
+  "nets": {
+    "3V3_Q6A": [
+      {
+        "ref": "D450",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "A1"
+      },
+      {
+        "ref": "R4401",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "U456",
+        "pin": "6",
+        "sheet": "E4",
+        "name": "V+"
+      },
+      {
+        "ref": "U457",
+        "pin": "6",
+        "sheet": "E4",
+        "name": "V+"
+      },
+      {
+        "ref": "U450",
+        "pin": "6",
+        "sheet": "E4",
+        "name": "V+"
+      },
+      {
+        "ref": "U451",
+        "pin": "6",
+        "sheet": "E4",
+        "name": "V+"
+      },
+      {
+        "ref": "U452",
+        "pin": "6",
+        "sheet": "E4",
+        "name": "V+"
+      },
+      {
+        "ref": "U453",
+        "pin": "6",
+        "sheet": "E4",
+        "name": "V+"
+      },
+      {
+        "ref": "U454",
+        "pin": "6",
+        "sheet": "E4",
+        "name": "V+"
+      },
+      {
+        "ref": "U455",
+        "pin": "6",
+        "sheet": "E4",
+        "name": "V+"
+      },
+      {
+        "ref": "C4410",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "C4411",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "C4412",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "C4413",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "C4414",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "C4415",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "C4416",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "C4417",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      }
+    ],
+    "DCS_HF": [
+      {
+        "ref": "Q454",
+        "pin": "3",
+        "sheet": "E4",
+        "name": "D"
+      }
+    ],
+    "DCS_LBAND": [
+      {
+        "ref": "Q452",
+        "pin": "3",
+        "sheet": "E4",
+        "name": "D"
+      }
+    ],
+    "DCS_UHF": [
+      {
+        "ref": "Q450",
+        "pin": "3",
+        "sheet": "E4",
+        "name": "D"
+      }
+    ],
+    "E4_DCS_HF_HIGH_GATE": [
+      {
+        "ref": "R4445",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4446",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "Q455",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "G"
+      }
+    ],
+    "E4_DCS_HF_HIGH_OK": [
+      {
+        "ref": "U455",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "OUT"
+      },
+      {
+        "ref": "R4445",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      }
+    ],
+    "E4_DCS_HF_LOW_GATE": [
+      {
+        "ref": "R4443",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4444",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "Q454",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "G"
+      }
+    ],
+    "E4_DCS_HF_LOW_OK": [
+      {
+        "ref": "U454",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "OUT"
+      },
+      {
+        "ref": "R4443",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      }
+    ],
+    "E4_DCS_HF_SENSE": [
+      {
+        "ref": "R4441",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4442",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "C4441",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "D453",
+        "pin": "3",
+        "sheet": "E4",
+        "name": "K1_A2"
+      },
+      {
+        "ref": "U454",
+        "pin": "3",
+        "sheet": "E4",
+        "name": "IN+"
+      },
+      {
+        "ref": "U455",
+        "pin": "4",
+        "sheet": "E4",
+        "name": "IN-"
+      }
+    ],
+    "E4_DCS_HF_SINK_MID": [
+      {
+        "ref": "Q454",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "S"
+      },
+      {
+        "ref": "Q455",
+        "pin": "3",
+        "sheet": "E4",
+        "name": "D"
+      }
+    ],
+    "E4_DCS_HF_TAP": [
+      {
+        "ref": "R4441",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      }
+    ],
+    "E4_DCS_HIGH": [
+      {
+        "ref": "R4404",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4405",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "C4402",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "U451",
+        "pin": "3",
+        "sheet": "E4",
+        "name": "IN+"
+      },
+      {
+        "ref": "U453",
+        "pin": "3",
+        "sheet": "E4",
+        "name": "IN+"
+      },
+      {
+        "ref": "U455",
+        "pin": "3",
+        "sheet": "E4",
+        "name": "IN+"
+      }
+    ],
+    "E4_DCS_LBAND_HIGH_GATE": [
+      {
+        "ref": "R4435",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4436",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "Q453",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "G"
+      }
+    ],
+    "E4_DCS_LBAND_HIGH_OK": [
+      {
+        "ref": "U453",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "OUT"
+      },
+      {
+        "ref": "R4435",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      }
+    ],
+    "E4_DCS_LBAND_LOW_GATE": [
+      {
+        "ref": "R4433",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4434",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "Q452",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "G"
+      }
+    ],
+    "E4_DCS_LBAND_LOW_OK": [
+      {
+        "ref": "U452",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "OUT"
+      },
+      {
+        "ref": "R4433",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      }
+    ],
+    "E4_DCS_LBAND_SENSE": [
+      {
+        "ref": "R4431",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4432",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "C4431",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "D452",
+        "pin": "3",
+        "sheet": "E4",
+        "name": "K1_A2"
+      },
+      {
+        "ref": "U452",
+        "pin": "3",
+        "sheet": "E4",
+        "name": "IN+"
+      },
+      {
+        "ref": "U453",
+        "pin": "4",
+        "sheet": "E4",
+        "name": "IN-"
+      }
+    ],
+    "E4_DCS_LBAND_SINK_MID": [
+      {
+        "ref": "Q452",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "S"
+      },
+      {
+        "ref": "Q453",
+        "pin": "3",
+        "sheet": "E4",
+        "name": "D"
+      }
+    ],
+    "E4_DCS_LBAND_TAP": [
+      {
+        "ref": "R4431",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      }
+    ],
+    "E4_DCS_LOW": [
+      {
+        "ref": "R4402",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4403",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "C4401",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "U450",
+        "pin": "4",
+        "sheet": "E4",
+        "name": "IN-"
+      },
+      {
+        "ref": "U452",
+        "pin": "4",
+        "sheet": "E4",
+        "name": "IN-"
+      },
+      {
+        "ref": "U454",
+        "pin": "4",
+        "sheet": "E4",
+        "name": "IN-"
+      }
+    ],
+    "E4_DCS_REF": [
+      {
+        "ref": "R4400",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "U458",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "CATHODE"
+      },
+      {
+        "ref": "C4400",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "R4402",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "R4404",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "R4406",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "R4408",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "R4422",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "D451",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "K2"
+      },
+      {
+        "ref": "R4432",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "D452",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "K2"
+      },
+      {
+        "ref": "R4442",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "D453",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "K2"
+      }
+    ],
+    "E4_DCS_REF12_HIGH": [
+      {
+        "ref": "U457",
+        "pin": "3",
+        "sheet": "E4",
+        "name": "IN+"
+      },
+      {
+        "ref": "U457",
+        "pin": "5",
+        "sheet": "E4",
+        "name": "REF"
+      },
+      {
+        "ref": "C4404",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      }
+    ],
+    "E4_DCS_REF12_LOW": [
+      {
+        "ref": "U456",
+        "pin": "4",
+        "sheet": "E4",
+        "name": "IN-"
+      },
+      {
+        "ref": "U456",
+        "pin": "5",
+        "sheet": "E4",
+        "name": "REF"
+      },
+      {
+        "ref": "C4403",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      }
+    ],
+    "E4_DCS_REF_FEED": [
+      {
+        "ref": "D450",
+        "pin": "3",
+        "sheet": "E4",
+        "name": "K1_A2"
+      },
+      {
+        "ref": "R4400",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      }
+    ],
+    "E4_DCS_REF_GATE_HIGH": [
+      {
+        "ref": "R4452",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4453",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "Q457",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "G"
+      }
+    ],
+    "E4_DCS_REF_GATE_LOW": [
+      {
+        "ref": "R4450",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4451",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "Q456",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "G"
+      }
+    ],
+    "E4_DCS_REF_GOOD_HIGH": [
+      {
+        "ref": "U457",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "OUT"
+      },
+      {
+        "ref": "R4452",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      }
+    ],
+    "E4_DCS_REF_GOOD_LOW": [
+      {
+        "ref": "U456",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "OUT"
+      },
+      {
+        "ref": "R4450",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      }
+    ],
+    "E4_DCS_REF_PG_HIGH": [
+      {
+        "ref": "R4408",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4409",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "C4406",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "U457",
+        "pin": "4",
+        "sheet": "E4",
+        "name": "IN-"
+      }
+    ],
+    "E4_DCS_REF_PG_LOW": [
+      {
+        "ref": "R4406",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4407",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "C4405",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "U456",
+        "pin": "3",
+        "sheet": "E4",
+        "name": "IN+"
+      }
+    ],
+    "E4_DCS_REF_RETURN_MID": [
+      {
+        "ref": "Q456",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "S"
+      },
+      {
+        "ref": "Q457",
+        "pin": "3",
+        "sheet": "E4",
+        "name": "D"
+      }
+    ],
+    "E4_DCS_RETURN": [
+      {
+        "ref": "Q456",
+        "pin": "3",
+        "sheet": "E4",
+        "name": "D"
+      },
+      {
+        "ref": "Q451",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "S"
+      },
+      {
+        "ref": "Q453",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "S"
+      },
+      {
+        "ref": "Q455",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "S"
+      }
+    ],
+    "E4_DCS_UHF_HIGH_GATE": [
+      {
+        "ref": "R4425",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4426",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "Q451",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "G"
+      }
+    ],
+    "E4_DCS_UHF_HIGH_OK": [
+      {
+        "ref": "U451",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "OUT"
+      },
+      {
+        "ref": "R4425",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      }
+    ],
+    "E4_DCS_UHF_LOW_GATE": [
+      {
+        "ref": "R4423",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4424",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "Q450",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "G"
+      }
+    ],
+    "E4_DCS_UHF_LOW_OK": [
+      {
+        "ref": "U450",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "OUT"
+      },
+      {
+        "ref": "R4423",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      }
+    ],
+    "E4_DCS_UHF_SENSE": [
+      {
+        "ref": "R4421",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4422",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "C4421",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      },
+      {
+        "ref": "D451",
+        "pin": "3",
+        "sheet": "E4",
+        "name": "K1_A2"
+      },
+      {
+        "ref": "U450",
+        "pin": "3",
+        "sheet": "E4",
+        "name": "IN+"
+      },
+      {
+        "ref": "U451",
+        "pin": "4",
+        "sheet": "E4",
+        "name": "IN-"
+      }
+    ],
+    "E4_DCS_UHF_SINK_MID": [
+      {
+        "ref": "Q450",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "S"
+      },
+      {
+        "ref": "Q451",
+        "pin": "3",
+        "sheet": "E4",
+        "name": "D"
+      }
+    ],
+    "E4_DCS_UHF_TAP": [
+      {
+        "ref": "R4421",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "1"
+      }
+    ],
+    "GND": [
+      {
+        "ref": "R4401",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "U458",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "ANODE"
+      },
+      {
+        "ref": "U458",
+        "pin": "3",
+        "sheet": "E4",
+        "name": "STAR_CONNECT_ANODE"
+      },
+      {
+        "ref": "C4400",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4403",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4405",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4407",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4409",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "C4401",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "C4402",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "C4405",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "C4406",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "U456",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "V-"
+      },
+      {
+        "ref": "U457",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "V-"
+      },
+      {
+        "ref": "C4403",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "C4404",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4451",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4453",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "Q457",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "S"
+      },
+      {
+        "ref": "C4421",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "D451",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "A1"
+      },
+      {
+        "ref": "U450",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "V-"
+      },
+      {
+        "ref": "U451",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "V-"
+      },
+      {
+        "ref": "R4424",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4426",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "C4431",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "D452",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "A1"
+      },
+      {
+        "ref": "U452",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "V-"
+      },
+      {
+        "ref": "U453",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "V-"
+      },
+      {
+        "ref": "R4434",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4436",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "C4441",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "D453",
+        "pin": "1",
+        "sheet": "E4",
+        "name": "A1"
+      },
+      {
+        "ref": "U454",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "V-"
+      },
+      {
+        "ref": "U455",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "V-"
+      },
+      {
+        "ref": "R4444",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "R4446",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "C4410",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "C4411",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "C4412",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "C4413",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "C4414",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "C4415",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "C4416",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      },
+      {
+        "ref": "C4417",
+        "pin": "2",
+        "sheet": "E4",
+        "name": "2"
+      }
+    ]
+  },
+  "external_boundary": [
+    {
+      "net": "3V3_Q6A",
+      "core_nodes": [
+        {
+          "ref": "D450",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "A1"
+        },
+        {
+          "ref": "R4401",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "1"
+        },
+        {
+          "ref": "U456",
+          "pin": "6",
+          "sheet": "E4",
+          "name": "V+"
+        },
+        {
+          "ref": "U457",
+          "pin": "6",
+          "sheet": "E4",
+          "name": "V+"
+        },
+        {
+          "ref": "U450",
+          "pin": "6",
+          "sheet": "E4",
+          "name": "V+"
+        },
+        {
+          "ref": "U451",
+          "pin": "6",
+          "sheet": "E4",
+          "name": "V+"
+        },
+        {
+          "ref": "U452",
+          "pin": "6",
+          "sheet": "E4",
+          "name": "V+"
+        },
+        {
+          "ref": "U453",
+          "pin": "6",
+          "sheet": "E4",
+          "name": "V+"
+        },
+        {
+          "ref": "U454",
+          "pin": "6",
+          "sheet": "E4",
+          "name": "V+"
+        },
+        {
+          "ref": "U455",
+          "pin": "6",
+          "sheet": "E4",
+          "name": "V+"
+        },
+        {
+          "ref": "C4410",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "1"
+        },
+        {
+          "ref": "C4411",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "1"
+        },
+        {
+          "ref": "C4412",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "1"
+        },
+        {
+          "ref": "C4413",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "1"
+        },
+        {
+          "ref": "C4414",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "1"
+        },
+        {
+          "ref": "C4415",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "1"
+        },
+        {
+          "ref": "C4416",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "1"
+        },
+        {
+          "ref": "C4417",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "1"
+        }
+      ],
+      "external_nodes": [
+        {
+          "ref": "R102",
+          "pin": "1",
+          "sheet": "E1",
+          "name": "1"
+        },
+        {
+          "ref": "R206",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "R212",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "U215",
+          "pin": "4",
+          "sheet": "E2",
+          "name": "VS"
+        },
+        {
+          "ref": "U215",
+          "pin": "5",
+          "sheet": "E2",
+          "name": "A0"
+        },
+        {
+          "ref": "U215",
+          "pin": "16",
+          "sheet": "E2",
+          "name": "VPU"
+        },
+        {
+          "ref": "C277",
+          "pin": "1",
+          "sheet": "E2",
+          "name": "1"
+        },
+        {
+          "ref": "U216",
+          "pin": "4",
+          "sheet": "E2",
+          "name": "VS"
+        },
+        {
+          "ref": "U216",
+          "pin": "16",
+          "sheet": "E2",
+          "name": "VPU"
+        },
+        {
+          "ref": "C281",
+          "pin": "1",
+          "sheet": "E2",
+          "name": "1"
+        },
+        {
+          "ref": "U217",
+          "pin": "6",
+          "sheet": "E2",
+          "name": "V+"
+        },
+        {
+          "ref": "C283",
+          "pin": "1",
+          "sheet": "E2",
+          "name": "1"
+        },
+        {
+          "ref": "U218",
+          "pin": "6",
+          "sheet": "E2",
+          "name": "V+"
+        },
+        {
+          "ref": "C285",
+          "pin": "1",
+          "sheet": "E2",
+          "name": "1"
+        },
+        {
+          "ref": "U219",
+          "pin": "6",
+          "sheet": "E2",
+          "name": "V+"
+        },
+        {
+          "ref": "C287",
+          "pin": "1",
+          "sheet": "E2",
+          "name": "1"
+        },
+        {
+          "ref": "J301",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "3V3"
+        },
+        {
+          "ref": "J301",
+          "pin": "17",
+          "sheet": "E3",
+          "name": "3V3"
+        },
+        {
+          "ref": "J302",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "3V3_Q6A"
+        },
+        {
+          "ref": "R301",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R302",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R303",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R304",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "U301",
+          "pin": "9",
+          "sheet": "E3",
+          "name": "VDD"
+        },
+        {
+          "ref": "C301",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "1"
+        },
+        {
+          "ref": "C302",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "1"
+        },
+        {
+          "ref": "R305",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "U302",
+          "pin": "9",
+          "sheet": "E3",
+          "name": "VDD"
+        },
+        {
+          "ref": "U302",
+          "pin": "16",
+          "sheet": "E3",
+          "name": "A1"
+        },
+        {
+          "ref": "C303",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "1"
+        },
+        {
+          "ref": "C304",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "1"
+        },
+        {
+          "ref": "R306",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "U303",
+          "pin": "9",
+          "sheet": "E3",
+          "name": "VDD"
+        },
+        {
+          "ref": "U303",
+          "pin": "15",
+          "sheet": "E3",
+          "name": "A0"
+        },
+        {
+          "ref": "U303",
+          "pin": "16",
+          "sheet": "E3",
+          "name": "A1"
+        },
+        {
+          "ref": "C305",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "1"
+        },
+        {
+          "ref": "C306",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "1"
+        },
+        {
+          "ref": "R307",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R308",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R309",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R310",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R311",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R312",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R313",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R314",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R315",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R316",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R317",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R318",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R319",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R320",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R321",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R322",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R323",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R324",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R325",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R328",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "1"
+        },
+        {
+          "ref": "R392",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "C440",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "1"
+        },
+        {
+          "ref": "C441",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "1"
+        },
+        {
+          "ref": "C442",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "1"
+        },
+        {
+          "ref": "U405",
+          "pin": "6",
+          "sheet": "E4",
+          "name": "VDD"
+        },
+        {
+          "ref": "U406",
+          "pin": "6",
+          "sheet": "E4",
+          "name": "VDD"
+        },
+        {
+          "ref": "U407",
+          "pin": "6",
+          "sheet": "E4",
+          "name": "VDD"
+        },
+        {
+          "ref": "R503",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        },
+        {
+          "ref": "R507",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        },
+        {
+          "ref": "R511",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        },
+        {
+          "ref": "R516",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        },
+        {
+          "ref": "U507",
+          "pin": "1",
+          "sheet": "E5",
+          "name": "VCCA"
+        },
+        {
+          "ref": "U507",
+          "pin": "5",
+          "sheet": "E5",
+          "name": "EN"
+        },
+        {
+          "ref": "U507",
+          "pin": "8",
+          "sheet": "E5",
+          "name": "VCCB"
+        },
+        {
+          "ref": "R550",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        },
+        {
+          "ref": "R551",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        },
+        {
+          "ref": "C550",
+          "pin": "1",
+          "sheet": "E5",
+          "name": "1"
+        },
+        {
+          "ref": "C551",
+          "pin": "1",
+          "sheet": "E5",
+          "name": "1"
+        }
+      ],
+      "connector_or_wire_pad_selected": false
+    },
+    {
+      "net": "DCS_HF",
+      "core_nodes": [
+        {
+          "ref": "Q454",
+          "pin": "3",
+          "sheet": "E4",
+          "name": "D"
+        }
+      ],
+      "external_nodes": [
+        {
+          "ref": "U302",
+          "pin": "5",
+          "sheet": "E3",
+          "name": "GPB4"
+        },
+        {
+          "ref": "R319",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "1"
+        }
+      ],
+      "connector_or_wire_pad_selected": false
+    },
+    {
+      "net": "DCS_LBAND",
+      "core_nodes": [
+        {
+          "ref": "Q452",
+          "pin": "3",
+          "sheet": "E4",
+          "name": "D"
+        }
+      ],
+      "external_nodes": [
+        {
+          "ref": "U302",
+          "pin": "4",
+          "sheet": "E3",
+          "name": "GPB3"
+        },
+        {
+          "ref": "R318",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "1"
+        }
+      ],
+      "connector_or_wire_pad_selected": false
+    },
+    {
+      "net": "DCS_UHF",
+      "core_nodes": [
+        {
+          "ref": "Q450",
+          "pin": "3",
+          "sheet": "E4",
+          "name": "D"
+        }
+      ],
+      "external_nodes": [
+        {
+          "ref": "U302",
+          "pin": "3",
+          "sheet": "E3",
+          "name": "GPB2"
+        },
+        {
+          "ref": "R317",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "1"
+        }
+      ],
+      "connector_or_wire_pad_selected": false
+    },
+    {
+      "net": "E4_DCS_HF_TAP",
+      "core_nodes": [
+        {
+          "ref": "R4441",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "1"
+        }
+      ],
+      "external_nodes": [
+        {
+          "ref": "R4440",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C4440",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "1"
+        }
+      ],
+      "connector_or_wire_pad_selected": false
+    },
+    {
+      "net": "E4_DCS_LBAND_TAP",
+      "core_nodes": [
+        {
+          "ref": "R4431",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "1"
+        }
+      ],
+      "external_nodes": [
+        {
+          "ref": "R4430",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C4430",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "1"
+        }
+      ],
+      "connector_or_wire_pad_selected": false
+    },
+    {
+      "net": "E4_DCS_UHF_TAP",
+      "core_nodes": [
+        {
+          "ref": "R4421",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "1"
+        }
+      ],
+      "external_nodes": [
+        {
+          "ref": "R4420",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C4420",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "1"
+        }
+      ],
+      "connector_or_wire_pad_selected": false
+    },
+    {
+      "net": "GND",
+      "core_nodes": [
+        {
+          "ref": "R4401",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "U458",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "ANODE"
+        },
+        {
+          "ref": "U458",
+          "pin": "3",
+          "sheet": "E4",
+          "name": "STAR_CONNECT_ANODE"
+        },
+        {
+          "ref": "C4400",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R4403",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R4405",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R4407",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R4409",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C4401",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C4402",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C4405",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C4406",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "U456",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "V-"
+        },
+        {
+          "ref": "U457",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "V-"
+        },
+        {
+          "ref": "C4403",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C4404",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R4451",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R4453",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "Q457",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "S"
+        },
+        {
+          "ref": "C4421",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "D451",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "A1"
+        },
+        {
+          "ref": "U450",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "V-"
+        },
+        {
+          "ref": "U451",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "V-"
+        },
+        {
+          "ref": "R4424",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R4426",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C4431",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "D452",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "A1"
+        },
+        {
+          "ref": "U452",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "V-"
+        },
+        {
+          "ref": "U453",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "V-"
+        },
+        {
+          "ref": "R4434",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R4436",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C4441",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "D453",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "A1"
+        },
+        {
+          "ref": "U454",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "V-"
+        },
+        {
+          "ref": "U455",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "V-"
+        },
+        {
+          "ref": "R4444",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R4446",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C4410",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C4411",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C4412",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C4413",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C4414",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C4415",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C4416",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C4417",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        }
+      ],
+      "external_nodes": [
+        {
+          "ref": "U101",
+          "pin": "P-",
+          "sheet": "E1",
+          "name": "P− силовий"
+        },
+        {
+          "ref": "U102",
+          "pin": "1",
+          "sheet": "E1",
+          "name": "A1"
+        },
+        {
+          "ref": "U102",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "A0"
+        },
+        {
+          "ref": "U102",
+          "pin": "7",
+          "sheet": "E1",
+          "name": "GND"
+        },
+        {
+          "ref": "C101",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "C102",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "U103",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "GND"
+        },
+        {
+          "ref": "C103",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "C104",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "U104",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "VSS"
+        },
+        {
+          "ref": "C105",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "R105",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "C106",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "U106",
+          "pin": "GND",
+          "sheet": "E1",
+          "name": "GND"
+        },
+        {
+          "ref": "D104",
+          "pin": "A",
+          "sheet": "E1",
+          "name": "A"
+        },
+        {
+          "ref": "D105",
+          "pin": "A",
+          "sheet": "E1",
+          "name": "A"
+        },
+        {
+          "ref": "U107",
+          "pin": "GND",
+          "sheet": "E1",
+          "name": "GND"
+        },
+        {
+          "ref": "R109",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "C107",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "C108",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "U108",
+          "pin": "GND",
+          "sheet": "E1",
+          "name": "GND"
+        },
+        {
+          "ref": "C109",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "C110",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "C111",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "−"
+        },
+        {
+          "ref": "C112",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "−"
+        },
+        {
+          "ref": "C113",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "−"
+        },
+        {
+          "ref": "J101",
+          "pin": "-",
+          "sheet": "E1",
+          "name": "−"
+        },
+        {
+          "ref": "R112",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "C114",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "J103",
+          "pin": "GND",
+          "sheet": "E1",
+          "name": "GND"
+        },
+        {
+          "ref": "U109",
+          "pin": "8",
+          "sheet": "E1",
+          "name": "GND"
+        },
+        {
+          "ref": "R115",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "R116",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "C115",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "C116",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "C117",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "U110",
+          "pin": "BAT-",
+          "sheet": "E1",
+          "name": "BAT−"
+        },
+        {
+          "ref": "R117",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "R118",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "R119",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "R120",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "TH101",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "C118",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "Q101",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "S"
+        },
+        {
+          "ref": "R123",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "TH102",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "2"
+        },
+        {
+          "ref": "TP107",
+          "pin": "1",
+          "sheet": "E1",
+          "name": "Protectedground"
+        },
+        {
+          "ref": "R202",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "U201",
+          "pin": "8",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "R203",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "R205",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C201",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C202",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C203",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C204",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C205",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C206",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "-"
+        },
+        {
+          "ref": "D201",
+          "pin": "A",
+          "sheet": "E2",
+          "name": "A"
+        },
+        {
+          "ref": "C207",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C208",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C209",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C210",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "-"
+        },
+        {
+          "ref": "U202",
+          "pin": "8",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "R209",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "R211",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C211",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C212",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C213",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "R213",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "U203",
+          "pin": "8",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "R214",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "R216",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C214",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C215",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C216",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "R218",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C217",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C218",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C219",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "-"
+        },
+        {
+          "ref": "Q202",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "S"
+        },
+        {
+          "ref": "R220",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C220",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C221",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C222",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "-"
+        },
+        {
+          "ref": "C223",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C224",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C225",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "-"
+        },
+        {
+          "ref": "U204",
+          "pin": "6",
+          "sheet": "E2",
+          "name": "ILIM"
+        },
+        {
+          "ref": "U204",
+          "pin": "9",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "U204",
+          "pin": "13",
+          "sheet": "E2",
+          "name": "EP"
+        },
+        {
+          "ref": "C226",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C227",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "U205",
+          "pin": "6",
+          "sheet": "E2",
+          "name": "ILIM"
+        },
+        {
+          "ref": "U205",
+          "pin": "9",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "U205",
+          "pin": "13",
+          "sheet": "E2",
+          "name": "EP"
+        },
+        {
+          "ref": "C228",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C229",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "R227",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C230",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C231",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "U206",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "R228",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C232",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "R229",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C233",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C234",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C235",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "-"
+        },
+        {
+          "ref": "U207",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "R233",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C236",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "R234",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C237",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C238",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C239",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "-"
+        },
+        {
+          "ref": "U208",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "R238",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C240",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "R239",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C241",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C242",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C243",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "-"
+        },
+        {
+          "ref": "U209",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "R243",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C244",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "R244",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C245",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C246",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C247",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "-"
+        },
+        {
+          "ref": "U210",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "R248",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C248",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "R249",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C249",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C250",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C251",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "-"
+        },
+        {
+          "ref": "C252",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C253",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C254",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "-"
+        },
+        {
+          "ref": "U211",
+          "pin": "5",
+          "sheet": "E2",
+          "name": "6P4V1"
+        },
+        {
+          "ref": "U211",
+          "pin": "6",
+          "sheet": "E2",
+          "name": "3P2V"
+        },
+        {
+          "ref": "U211",
+          "pin": "7",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "U211",
+          "pin": "8",
+          "sheet": "E2",
+          "name": "1P6V"
+        },
+        {
+          "ref": "U211",
+          "pin": "10",
+          "sheet": "E2",
+          "name": "0P4V"
+        },
+        {
+          "ref": "U211",
+          "pin": "11",
+          "sheet": "E2",
+          "name": "0P2V"
+        },
+        {
+          "ref": "U211",
+          "pin": "EP",
+          "sheet": "E2",
+          "name": "EP"
+        },
+        {
+          "ref": "C255",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C256",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C257",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "R253",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "D202",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "A"
+        },
+        {
+          "ref": "U212",
+          "pin": "1",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "U212",
+          "pin": "EP",
+          "sheet": "E2",
+          "name": "EP"
+        },
+        {
+          "ref": "R254",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "R256",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C258",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C259",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C260",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C261",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C262",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "-"
+        },
+        {
+          "ref": "C263",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C264",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C265",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "-"
+        },
+        {
+          "ref": "U213",
+          "pin": "5",
+          "sheet": "E2",
+          "name": "6P4V1"
+        },
+        {
+          "ref": "U213",
+          "pin": "6",
+          "sheet": "E2",
+          "name": "3P2V"
+        },
+        {
+          "ref": "U213",
+          "pin": "7",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "U213",
+          "pin": "8",
+          "sheet": "E2",
+          "name": "1P6V"
+        },
+        {
+          "ref": "U213",
+          "pin": "9",
+          "sheet": "E2",
+          "name": "0P8V"
+        },
+        {
+          "ref": "U213",
+          "pin": "10",
+          "sheet": "E2",
+          "name": "0P4V"
+        },
+        {
+          "ref": "U213",
+          "pin": "EP",
+          "sheet": "E2",
+          "name": "EP"
+        },
+        {
+          "ref": "C266",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C267",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C268",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "R261",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "D203",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "A"
+        },
+        {
+          "ref": "U214",
+          "pin": "1",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "U214",
+          "pin": "EP",
+          "sheet": "E2",
+          "name": "EP"
+        },
+        {
+          "ref": "R262",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "R264",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C269",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C270",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C271",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C272",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C273",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "-"
+        },
+        {
+          "ref": "U215",
+          "pin": "3",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "U215",
+          "pin": "EP",
+          "sheet": "E2",
+          "name": "EP"
+        },
+        {
+          "ref": "C277",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "U216",
+          "pin": "3",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "U216",
+          "pin": "EP",
+          "sheet": "E2",
+          "name": "EP"
+        },
+        {
+          "ref": "C281",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "U217",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "V-"
+        },
+        {
+          "ref": "R281",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C282",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C283",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "U218",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "V-"
+        },
+        {
+          "ref": "R284",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C284",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C285",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "U219",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "V-"
+        },
+        {
+          "ref": "R287",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C286",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C287",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "U220",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "U220",
+          "pin": "3",
+          "sheet": "E2",
+          "name": "INA"
+        },
+        {
+          "ref": "R290",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "R292",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C288",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C289",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C290",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C291",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C292",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C293",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C294",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "U221",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "R293",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "R294",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C295",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C296",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C297",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C298",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "-"
+        },
+        {
+          "ref": "J301",
+          "pin": "6",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J301",
+          "pin": "9",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J301",
+          "pin": "14",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J301",
+          "pin": "20",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J301",
+          "pin": "25",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J301",
+          "pin": "30",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J301",
+          "pin": "34",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J301",
+          "pin": "39",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J302",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "U301",
+          "pin": "10",
+          "sheet": "E3",
+          "name": "VSS"
+        },
+        {
+          "ref": "U301",
+          "pin": "15",
+          "sheet": "E3",
+          "name": "A0"
+        },
+        {
+          "ref": "U301",
+          "pin": "16",
+          "sheet": "E3",
+          "name": "A1"
+        },
+        {
+          "ref": "U301",
+          "pin": "17",
+          "sheet": "E3",
+          "name": "A2"
+        },
+        {
+          "ref": "C301",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "C302",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "U302",
+          "pin": "10",
+          "sheet": "E3",
+          "name": "VSS"
+        },
+        {
+          "ref": "U302",
+          "pin": "15",
+          "sheet": "E3",
+          "name": "A0"
+        },
+        {
+          "ref": "U302",
+          "pin": "17",
+          "sheet": "E3",
+          "name": "A2"
+        },
+        {
+          "ref": "C303",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "C304",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "U303",
+          "pin": "10",
+          "sheet": "E3",
+          "name": "VSS"
+        },
+        {
+          "ref": "U303",
+          "pin": "17",
+          "sheet": "E3",
+          "name": "A2"
+        },
+        {
+          "ref": "C305",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "C306",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "U304",
+          "pin": "P1.2",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "U304",
+          "pin": "GPS1.1",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "U304",
+          "pin": "GPS1.3",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "U304",
+          "pin": "GPS1.4",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "Q301",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "S"
+        },
+        {
+          "ref": "R326",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "J303",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "BT301",
+          "pin": "-",
+          "sheet": "E3",
+          "name": "NEG"
+        },
+        {
+          "ref": "U305",
+          "pin": "3",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "U305",
+          "pin": "8",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "U305",
+          "pin": "13",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "U305",
+          "pin": "18",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "U305",
+          "pin": "23",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "U305",
+          "pin": "28",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "U305",
+          "pin": "33",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "U305",
+          "pin": "38",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "U305",
+          "pin": "SWD_GND",
+          "sheet": "E3",
+          "name": "SWD_GND"
+        },
+        {
+          "ref": "C307",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "C308",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "U307",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "ANODE"
+        },
+        {
+          "ref": "U307",
+          "pin": "3",
+          "sheet": "E3",
+          "name": "STAR_TIE_ANODE"
+        },
+        {
+          "ref": "C309",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "R329",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "SW301",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "B"
+        },
+        {
+          "ref": "Q302",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "S"
+        },
+        {
+          "ref": "R331",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "TH301",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "C310",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "TH302",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "C311",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "U306",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "A1"
+        },
+        {
+          "ref": "U306",
+          "pin": "3",
+          "sheet": "E3",
+          "name": "A2"
+        },
+        {
+          "ref": "U306",
+          "pin": "12",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "U306",
+          "pin": "21",
+          "sheet": "E3",
+          "name": "A0"
+        },
+        {
+          "ref": "C312",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "C313",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "SW302",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "B"
+        },
+        {
+          "ref": "SW303",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "B"
+        },
+        {
+          "ref": "SW304",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "B"
+        },
+        {
+          "ref": "SW305",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "B"
+        },
+        {
+          "ref": "SW306",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "B"
+        },
+        {
+          "ref": "SW307",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "B"
+        },
+        {
+          "ref": "SW308",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "B"
+        },
+        {
+          "ref": "SW309",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "B"
+        },
+        {
+          "ref": "U310",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "U311",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "C314",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "C315",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "ENC301",
+          "pin": "C",
+          "sheet": "E3",
+          "name": "COMMON"
+        },
+        {
+          "ref": "C316",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "C317",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "ENC302",
+          "pin": "C",
+          "sheet": "E3",
+          "name": "COMMON"
+        },
+        {
+          "ref": "U312",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "U313",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "U308",
+          "pin": "GND",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "BZ301",
+          "pin": "-",
+          "sheet": "E3",
+          "name": "MINUS"
+        },
+        {
+          "ref": "D304",
+          "pin": "K",
+          "sheet": "E3",
+          "name": "K"
+        },
+        {
+          "ref": "R366",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "Q303",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "S"
+        },
+        {
+          "ref": "D305",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "A"
+        },
+        {
+          "ref": "C318",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "C319",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "FAN301",
+          "pin": "GND",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "R371",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "Q305",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "S"
+        },
+        {
+          "ref": "C320",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "U309",
+          "pin": "GND",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "U314",
+          "pin": "GND",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "C340",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "C341",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "Q306",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "S"
+        },
+        {
+          "ref": "R394",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "A401",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "A402",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "A403",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "A404",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "A405",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "A406",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "A407",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "A407",
+          "pin": "3",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "A407",
+          "pin": "4",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "A407",
+          "pin": "6",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "A407",
+          "pin": "EP",
+          "sheet": "E4",
+          "name": "EP_GND"
+        },
+        {
+          "ref": "A408",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "A409",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "A410",
+          "pin": "END_B",
+          "sheet": "E4",
+          "name": "END_B"
+        },
+        {
+          "ref": "A411",
+          "pin": "USB_GND",
+          "sheet": "E4",
+          "name": "USB_GND"
+        },
+        {
+          "ref": "A411",
+          "pin": "USB_SHIELD",
+          "sheet": "E4",
+          "name": "USB_SHIELD"
+        },
+        {
+          "ref": "A412",
+          "pin": "USB_GND",
+          "sheet": "E4",
+          "name": "USB_GND"
+        },
+        {
+          "ref": "A412",
+          "pin": "USB_SHIELD",
+          "sheet": "E4",
+          "name": "USB_SHIELD"
+        },
+        {
+          "ref": "A414",
+          "pin": "USB_GND",
+          "sheet": "E4",
+          "name": "USB_GND"
+        },
+        {
+          "ref": "A414",
+          "pin": "USB_SHIELD",
+          "sheet": "E4",
+          "name": "USB_SHIELD"
+        },
+        {
+          "ref": "A415",
+          "pin": "X9_GND",
+          "sheet": "E4",
+          "name": "X9_GND"
+        },
+        {
+          "ref": "A418",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "A419",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "A420",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "A421",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "A422",
+          "pin": "USB_C_GND",
+          "sheet": "E4",
+          "name": "USB_C_GND"
+        },
+        {
+          "ref": "A422",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "A423",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "C419",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C420",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C421",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C422",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C434",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C435",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C440",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C441",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C442",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C446",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "J401",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J402",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J403",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J404",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J405",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J406",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J407",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J408",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J409",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J410",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J411",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J412",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J413",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J414",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J415",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J416",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J417",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "K401",
+          "pin": "G1",
+          "sheet": "E4",
+          "name": "CASE_GND"
+        },
+        {
+          "ref": "K401",
+          "pin": "G2",
+          "sheet": "E4",
+          "name": "CASE_GND"
+        },
+        {
+          "ref": "K402",
+          "pin": "G1",
+          "sheet": "E4",
+          "name": "CASE_GND"
+        },
+        {
+          "ref": "K402",
+          "pin": "G2",
+          "sheet": "E4",
+          "name": "CASE_GND"
+        },
+        {
+          "ref": "L401",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "L407",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "NT401",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "1"
+        },
+        {
+          "ref": "Q401",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "S"
+        },
+        {
+          "ref": "Q402",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "S"
+        },
+        {
+          "ref": "R405",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R406",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R407",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R408",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R409",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R410",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R411",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R414",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R415",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R416",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R417",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R418",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R419",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R434",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R435",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "U405",
+          "pin": "10",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U405",
+          "pin": "11",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U405",
+          "pin": "13",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U405",
+          "pin": "14",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U405",
+          "pin": "16",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U405",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U405",
+          "pin": "3",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U405",
+          "pin": "5",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U405",
+          "pin": "EPAD",
+          "sheet": "E4",
+          "name": "EPAD"
+        },
+        {
+          "ref": "U406",
+          "pin": "10",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U406",
+          "pin": "11",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U406",
+          "pin": "13",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U406",
+          "pin": "14",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U406",
+          "pin": "16",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U406",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U406",
+          "pin": "3",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U406",
+          "pin": "5",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U406",
+          "pin": "EPAD",
+          "sheet": "E4",
+          "name": "EPAD"
+        },
+        {
+          "ref": "U407",
+          "pin": "10",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U407",
+          "pin": "11",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U407",
+          "pin": "13",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U407",
+          "pin": "14",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U407",
+          "pin": "16",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U407",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U407",
+          "pin": "3",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U407",
+          "pin": "5",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "U407",
+          "pin": "EPAD",
+          "sheet": "E4",
+          "name": "EPAD"
+        },
+        {
+          "ref": "W401",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "W402",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "W403",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "W404",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "W405",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "W406",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "W407",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "W408",
+          "pin": "IN_SHIELD",
+          "sheet": "E4",
+          "name": "IN_SHIELD"
+        },
+        {
+          "ref": "W408",
+          "pin": "OUT_SHIELD",
+          "sheet": "E4",
+          "name": "OUT_SHIELD"
+        },
+        {
+          "ref": "W409",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "W422",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "W423",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "W424",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "W425",
+          "pin": "RETURN",
+          "sheet": "E4",
+          "name": "RETURN"
+        },
+        {
+          "ref": "W425",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "J422",
+          "pin": "SHIELD",
+          "sheet": "E4",
+          "name": "SHIELD"
+        },
+        {
+          "ref": "A425",
+          "pin": "SHIELDS",
+          "sheet": "E4",
+          "name": "SHIELDS"
+        },
+        {
+          "ref": "C4420",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C4430",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C4440",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R4463",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R4467",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "R4471",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C447",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C448",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C449",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C450",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C451",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "C452",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "2"
+        },
+        {
+          "ref": "U500",
+          "pin": "GND",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "J521",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "J503",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "J511",
+          "pin": "4",
+          "sheet": "E5",
+          "name": "J5 lower GND"
+        },
+        {
+          "ref": "J511",
+          "pin": "7",
+          "sheet": "E5",
+          "name": "SS GND"
+        },
+        {
+          "ref": "J511",
+          "pin": "13",
+          "sheet": "E5",
+          "name": "J5 upper GND"
+        },
+        {
+          "ref": "J511",
+          "pin": "19",
+          "sheet": "E5",
+          "name": "onboard TAB/GND"
+        },
+        {
+          "ref": "J511",
+          "pin": "20",
+          "sheet": "E5",
+          "name": "onboard TAB/GND"
+        },
+        {
+          "ref": "J511",
+          "pin": "21",
+          "sheet": "E5",
+          "name": "onboard TAB/GND"
+        },
+        {
+          "ref": "J511",
+          "pin": "22",
+          "sheet": "E5",
+          "name": "onboard TAB/GND"
+        },
+        {
+          "ref": "J512",
+          "pin": "4",
+          "sheet": "E5",
+          "name": "P3 GND"
+        },
+        {
+          "ref": "J512",
+          "pin": "8",
+          "sheet": "E5",
+          "name": "P2 GND"
+        },
+        {
+          "ref": "J512",
+          "pin": "9",
+          "sheet": "E5",
+          "name": "onboard shell/GND"
+        },
+        {
+          "ref": "J512",
+          "pin": "10",
+          "sheet": "E5",
+          "name": "onboard shell/GND"
+        },
+        {
+          "ref": "J512",
+          "pin": "11",
+          "sheet": "E5",
+          "name": "onboard shell/GND"
+        },
+        {
+          "ref": "J512",
+          "pin": "12",
+          "sheet": "E5",
+          "name": "onboard shell/GND"
+        },
+        {
+          "ref": "U510",
+          "pin": "JP5_4",
+          "sheet": "E5",
+          "name": "UP GND"
+        },
+        {
+          "ref": "U510",
+          "pin": "JP2_4",
+          "sheet": "E5",
+          "name": "H1/GND"
+        },
+        {
+          "ref": "U510",
+          "pin": "JP1_4",
+          "sheet": "E5",
+          "name": "H2/GND"
+        },
+        {
+          "ref": "U510",
+          "pin": "JP3_4",
+          "sheet": "E5",
+          "name": "H3/GND"
+        },
+        {
+          "ref": "U510",
+          "pin": "JP4_4",
+          "sheet": "E5",
+          "name": "H4/GND"
+        },
+        {
+          "ref": "J501",
+          "pin": "4",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "J501",
+          "pin": "S",
+          "sheet": "E5",
+          "name": "cable shield"
+        },
+        {
+          "ref": "J543",
+          "pin": "4",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "J541",
+          "pin": "4",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "J544",
+          "pin": "5",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "J544",
+          "pin": "S",
+          "sheet": "E5",
+          "name": "shield"
+        },
+        {
+          "ref": "U501",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "R501",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        },
+        {
+          "ref": "R502",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        },
+        {
+          "ref": "C501",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "−"
+        },
+        {
+          "ref": "C502",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "−"
+        },
+        {
+          "ref": "C503",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "−"
+        },
+        {
+          "ref": "R504",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        },
+        {
+          "ref": "U502",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "R505",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        },
+        {
+          "ref": "R506",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        },
+        {
+          "ref": "C504",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "−"
+        },
+        {
+          "ref": "C505",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "−"
+        },
+        {
+          "ref": "C506",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "−"
+        },
+        {
+          "ref": "C507",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "−"
+        },
+        {
+          "ref": "R508",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        },
+        {
+          "ref": "U503",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "R509",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        },
+        {
+          "ref": "R510",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        },
+        {
+          "ref": "C508",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "−"
+        },
+        {
+          "ref": "C509",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "−"
+        },
+        {
+          "ref": "C510",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "−"
+        },
+        {
+          "ref": "C511",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "−"
+        },
+        {
+          "ref": "C512",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "−"
+        },
+        {
+          "ref": "C513",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "−"
+        },
+        {
+          "ref": "R513",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        },
+        {
+          "ref": "U505",
+          "pin": "5",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "U505",
+          "pin": "7",
+          "sheet": "E5",
+          "name": "exposed pad"
+        },
+        {
+          "ref": "R514",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        },
+        {
+          "ref": "R515",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        },
+        {
+          "ref": "C514",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "−"
+        },
+        {
+          "ref": "C515",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "−"
+        },
+        {
+          "ref": "C516",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "−"
+        },
+        {
+          "ref": "R517",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        },
+        {
+          "ref": "U540",
+          "pin": "GND",
+          "sheet": "E5",
+          "name": "signal ground"
+        },
+        {
+          "ref": "U540",
+          "pin": "SHIELD",
+          "sheet": "E5",
+          "name": "cable shield"
+        },
+        {
+          "ref": "J520",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "TMDS2 shield"
+        },
+        {
+          "ref": "J520",
+          "pin": "5",
+          "sheet": "E5",
+          "name": "TMDS1 shield"
+        },
+        {
+          "ref": "J520",
+          "pin": "8",
+          "sheet": "E5",
+          "name": "TMDS0 shield"
+        },
+        {
+          "ref": "J520",
+          "pin": "11",
+          "sheet": "E5",
+          "name": "TMDSCLK shield"
+        },
+        {
+          "ref": "J520",
+          "pin": "17",
+          "sheet": "E5",
+          "name": "DDC ground"
+        },
+        {
+          "ref": "U520",
+          "pin": "HDMI_2",
+          "sheet": "E5",
+          "name": "TMDS2 shield"
+        },
+        {
+          "ref": "U520",
+          "pin": "HDMI_5",
+          "sheet": "E5",
+          "name": "TMDS1 shield"
+        },
+        {
+          "ref": "U520",
+          "pin": "HDMI_8",
+          "sheet": "E5",
+          "name": "TMDS0 shield"
+        },
+        {
+          "ref": "U520",
+          "pin": "HDMI_11",
+          "sheet": "E5",
+          "name": "TMDSCLK shield"
+        },
+        {
+          "ref": "U520",
+          "pin": "HDMI_17",
+          "sheet": "E5",
+          "name": "DDC ground"
+        },
+        {
+          "ref": "U520",
+          "pin": "DC_GND",
+          "sheet": "E5",
+          "name": "DC return"
+        },
+        {
+          "ref": "U520",
+          "pin": "TP_GND",
+          "sheet": "E5",
+          "name": "touch GND"
+        },
+        {
+          "ref": "U506",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "C517",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "−"
+        },
+        {
+          "ref": "C518",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "−"
+        },
+        {
+          "ref": "J530",
+          "pin": "GND",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "U530",
+          "pin": "GND",
+          "sheet": "E5",
+          "name": "common GND"
+        },
+        {
+          "ref": "J502",
+          "pin": "1",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "J505",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "GND power"
+        },
+        {
+          "ref": "J505",
+          "pin": "4",
+          "sheet": "E5",
+          "name": "GND signal"
+        },
+        {
+          "ref": "J504",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "U551",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "J550",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "U552",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "C519",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "−"
+        },
+        {
+          "ref": "C520",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "−"
+        },
+        {
+          "ref": "U507",
+          "pin": "4",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "C550",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        },
+        {
+          "ref": "C551",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        }
+      ],
+      "connector_or_wire_pad_selected": false
+    }
+  ],
+  "must_remain_at_RF_port": [
+    "C4420",
+    "C4430",
+    "C4440",
+    "R4420",
+    "R4430",
+    "R4440",
+    "R4460",
+    "R4461",
+    "R4462",
+    "R4463",
+    "R4464",
+    "R4465",
+    "R4466",
+    "R4467",
+    "R4468",
+    "R4469",
+    "R4470",
+    "R4471"
+  ],
+  "constraints": [
+    {
+      "id": "DC-01",
+      "boards": [
+        "DC_CORE",
+        "RF_INJECTOR"
+      ],
+      "requirement": "Keep each first24.9k RF tap plus100pF at its RF port; place12 bleeds at RF ports, away from core reference/precision dividers. Core boundary carries filtered DC TAP, not50ohm RF. Original schematic nodes preserved.",
+      "source": "design/E4-review.md; E4.json DC detector groups"
+    },
+    {
+      "id": "DC-02",
+      "boards": [
+        "DC_CORE"
+      ],
+      "requirement": "Clean low-leakage SENSE layout, short divider/input routes and local ground; do not place hot bleeds/regulators beside precision network. Leakage/TCR/RF/ground error must be measured:98.630mV analytical corner has only1.370mV margin to100mV.",
+      "source": "design/E4-review.md; design/E4-detector-analysis.py"
+    },
+    {
+      "id": "DC-03",
+      "boards": [
+        "DC_CORE"
+      ],
+      "requirement": "Local100nF per comparator;1nF on each used internal reference; reference shunt/clamps/ground paths close. DCS HIGH=unsafe; LOW requires both window and both reference-good decisions. No signal pullup added on detector board; existing pullups belong E3.",
+      "source": "E4.json; https://www.ti.com/lit/ds/symlink/tlv3011.pdf"
+    },
+    {
+      "id": "DC-04",
+      "boards": [
+        "DC_CORE",
+        "RF_INJECTOR"
+      ],
+      "requirement": "Design envelope +/-30V limited DC. Verify chosen resistors rated voltage/power and PCB clearance for that envelope; no lightning/ESD compliance claim. Four249ohm bleeds dissipate0.226W each at30V and require >=0.5W parts with50C derating.",
+      "source": "design/E4-review.md; E4-06"
+    },
+    {
+      "id": "DC-05",
+      "boards": [
+        "DC_CORE"
+      ],
+      "requirement": "3V3_Q6A budget<=12mA includes E3 DCS pullups. At3.135V min supply, cold D450 VF must satisfy<=1.015V headroom for LM4040>=80uA. Each channel must reject+/-100mV over accepted temperature/supply and remain unsafe through startup/reference failure.",
+      "source": "design/E4-detector-analysis.py; design/E4-review.md"
+    },
+    {
+      "id": "MECH-01",
+      "boards": [
+        "PWR_MAIN",
+        "PWR_BRANCH",
+        "CTRL_HMI",
+        "USB_POWER",
+        "RF_HMC",
+        "RF_HF",
+        "RF_INJECTOR",
+        "DC_CORE"
+      ],
+      "requirement": "All partitions are engineering candidates. Final outline, mounting, stackup, copper weight, connector MPN/orientation and enclosure proof-fit are unset. No Gerbers/drill/production DRC is authorized by this preparation output.",
+      "source": "STACK.md §5.8; build/05-mekhanika.md; build/13-pcb-preparation.md"
+    }
+  ],
+  "blockers": [
+    "50 passive land patterns are placement proposals, not approved production MPN selections.",
+    "Three explicitly0402 resistor footprints must be fetched from official KiCad if absent.",
+    "Eight-net connector/wire-pad implementation, mounting/outline and cable routing are unselected.",
+    "RF-port tap/bleed assemblies are excluded from this core and must be placed on the RF substrate.",
+    "Prototype threshold/leakage/temperature/ground-offset/RF/rail-off tests remain mandatory."
+  ],
+  "source_node_audit": {
+    "source_graph": "design/E4.json",
+    "actual_xml": "verification/netlist.xml",
+    "connected_pins_checked": 180,
+    "status": "PASS",
+    "all_pins": 187,
+    "nc_pins": 7
+  },
+  "provenance": {
+    "inputs": [
+      {
+        "file": "design/E1.json",
+        "sha256": "e87f79db4da0d9be7e74aa1ad2816ea99ae4ed8fd6e723ba375c1559bfd51392"
+      },
+      {
+        "file": "design/E2.json",
+        "sha256": "adc5b67b6b53977143847d688f657364a5e300a80761d74e1dc82e34bd703c16"
+      },
+      {
+        "file": "design/E3.json",
+        "sha256": "0a2e2e60ede923b2d0a1aa0f8484a97513c1ef36ae389d3aee365fbcf90aaac5"
+      },
+      {
+        "file": "design/E4.json",
+        "sha256": "b05555c7a6729029f779df3ca3d0a62d71e206520a33cf7e34ffa3e2c081344d"
+      },
+      {
+        "file": "design/E5.json",
+        "sha256": "86a9099809fbcdf365c82ecf4a239531b1b55715ee17cd1c5fb5a776c979ca05"
+      },
+      {
+        "file": "build/kicad/footprints/manifest.json",
+        "sha256": "9b87ab7f6bbf7bfb1a2abc13e49093a3060cb98360707bd8d4b148814de77daf"
+      },
+      {
+        "file": "verification/netlist.xml",
+        "sha256": "cfc4adf58ca9ee86ab88963e6c04321012092c60a8f328b37782e1ded8c415d5"
+      }
+    ],
+    "source_documents": [
+      "https://aosmd.com/sites/default/files/res/datasheets/AO3401A.pdf",
+      "https://assets.nexperia.com/documents/data-sheet/2N7002.pdf",
+      "https://assets.nexperia.com/documents/data-sheet/BAT54.pdf",
+      "https://assets.nexperia.com/documents/data-sheet/BAT54C.pdf",
+      "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
+      "https://assets.nexperia.com/documents/data-sheet/PMEG4030ER.pdf",
+      "https://bonito.net/en/boni-whip-2/",
+      "https://datasheets.raspberrypi.com/pico/Pico-R3-A4-Pinout.pdf",
+      "https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
+      "https://dl.radxa.com/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
+      "https://docs.radxa.com/en/dragon/q6a/hardware-use/pin-gpio",
+      "https://docs.sparkfun.com/SparkFun_VR_IMU_Breakout_BNO086_QWIIC/assets/component_documentation/BNO080_085-Datasheet_v1.16.pdf",
+      "https://download.semiconductor.samsung.com/resources/user-manual/samsung_portable_ssd_t7_user_manual_english.pdf",
+      "https://files.waveshare.com/upload/4/4c/RP2040_Zero.pdf",
+      "https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf",
+      "https://github.com/adafruit/Adafruit-BNO08x-PCB/blob/master/Adafruit_BNO08x.sch",
+      "https://github.com/adafruit/Adafruit-CH334F-Breakout-PCB/blob/main/Adafruit%20CH334F%20Mini%204-Port%20USB%20Hub%20Breakout.sch",
+      "https://github.com/adafruit/Adafruit-INA228-PCB/blob/main/Adafruit%20INA228%20I2C%20Power%20Monitor.sch",
+      "https://industrial.panasonic.com/ww/products/pt/OS-CON/models/16SVPC100M",
+      "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
+      "https://industrial.panasonic.com/ww/products/pt/os-con/models/35SVPF22M",
+      "https://learn.adafruit.com/adafruit-9-dof-orientation-imu-fusion-breakout-bno085/pinouts",
+      "https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/overview.html",
+      "https://myriadrf.org/projects/limesdr-micro/reference/M.2/v1.2/rfcontrol.html",
+      "https://nooelec.com/store/sdr/sdr-addons/rf-blocks/lana-wb.html",
+      "https://omronfs.omron.com/en_US/ecb/products/pdf/en-g6k_2f_rf.pdf",
+      "https://pages.na.industrial.panasonic.com/rs/173-ONW-167/images/MLCC%20White%20Paper.pdf",
+      "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H103J080AA",
+      "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H332J080AA",
+      "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA",
+      "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H473K080AA",
+      "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
+      "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC",
+      "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H226M250AC",
+      "https://semiware.com/uploads/datasheet/MF52A103F3950.pdf",
+      "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2308290920_INJOINIC-IP2368-BZ-VGLIP_C5203723.pdf",
+      "https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf",
+      "https://ww1.microchip.com/downloads/en/DeviceDoc/22269B.pdf",
+      "https://www.analog.com/media/en/technical-documentation/data-sheets/3045fa.pdf",
+      "https://www.analog.com/media/en/technical-documentation/data-sheets/hmc7992.pdf",
+      "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
+      "https://www.aosmd.com/sites/default/files/res/datasheets/AO3400A.pdf",
+      "https://www.aosmd.com/sites/default/files/res/datasheets/AO3407A.pdf",
+      "https://www.bourns.com/docs/product-datasheets/srr1260.pdf",
+      "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
+      "https://www.coilcraft.com/en-us/products/power/shielded-inductors/molded-inductor/xal/xal60xx/",
+      "https://www.coilcraft.com/en-us/products/rf/ceramic-core-chip-inductors/0603-(1608)/0603hp/0603hp-47n/",
+      "https://www.coilcraft.com/en-us/products/rf/ceramic-core-chip-inductors/0805-(2012)/0805hp/0805hp-221/",
+      "https://www.coilcraft.com/en-us/products/rf/ferrite-core-chip-inductors/0805-(2012)/0805ls/0805ls-471/",
+      "https://www.coilcraft.com/getmedia/49bc46c8-4b2c-45b9-9b6c-2eaa235ea698/xal50xx.pdf",
+      "https://www.coilcraft.com/getmedia/624a615f-2f4d-4200-95a6-61764a49bbc8/0603hp.pdf",
+      "https://www.delta-fan.com/Download/Spec/BFB0305HA-C.pdf",
+      "https://www.diodes.com/datasheet/download/BAT54.pdf",
+      "https://www.diodes.com/datasheet/download/PI4IOE5V9555.pdf",
+      "https://www.hammfg.com/part/1554U2GY",
+      "https://www.minicircuits.com/WebStore/dashboardPdf?model=TCBT-2R5G%2B",
+      "https://www.minicircuits.com/WebStore/dashboardPdf?model=YAT-10A%2B",
+      "https://www.molicel.com/wp-content/uploads/Product-Data-Sheet-of-INR-21700-P50B-80122.pdf",
+      "https://www.nooelec.com/store/downloads/dl/file/id/118/product/350/lana_wb_datasheet_revision_1.pdf",
+      "https://www.pololu.com/product/2813",
+      "https://www.pololu.com/product/3782",
+      "https://www.pololu.com/product/4091",
+      "https://www.pololu.com/product/4095",
+      "https://www.quectel.com/content/uploads/2023/05/Quectel_LC76G_Series_Hardware_Design_V1.3.pdf",
+      "https://www.sysmocom.de/downloads/rf_filter_cf2235-kt30.pdf",
+      "https://www.ti.com/lit/ds/symlink/ina228.pdf",
+      "https://www.ti.com/lit/ds/symlink/ina3221.pdf",
+      "https://www.ti.com/lit/ds/symlink/lm4040.pdf",
+      "https://www.ti.com/lit/ds/symlink/lm66100.pdf",
+      "https://www.ti.com/lit/ds/symlink/tca9517.pdf",
+      "https://www.ti.com/lit/ds/symlink/tlv3011.pdf",
+      "https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf",
+      "https://www.ti.com/lit/ds/symlink/tps25947.pdf",
+      "https://www.ti.com/lit/ds/symlink/tps2596.pdf",
+      "https://www.ti.com/lit/ds/symlink/tps3701.pdf",
+      "https://www.ti.com/lit/ds/symlink/tps709.pdf",
+      "https://www.ti.com/lit/ds/symlink/tps7a47.pdf",
+      "https://www.ti.com/lit/gpn/tps2553",
+      "https://www.ti.com/lit/gpn/tps2553-1",
+      "https://www.ti.com/product/TLV3011B/part-details/TLV3011BIDBVR",
+      "https://www.ti.com/product/TPS3701/part-details/TPS3701DDCR",
+      "https://www.tinytronics.nl/en/power/bms-and-chargers/bms/daly-bms-li-ion-li-po-protection-circuit-4s-15a-with-balancing",
+      "https://www.vishay.com/doc?88746=",
+      "https://www.vishay.com/docs/28758/tnpw_e3.pdf",
+      "https://www.vishay.com/docs/30100/wsl.pdf",
+      "https://www.vishay.com/docs/84286/veml7700.pdf",
+      "https://www.vishay.com/docs/88392/smbj.pdf"
+    ],
+    "generator": "pcb/prepare.py",
+    "note": "All classification/board splits are new controlled engineering proposals. They do not change E1..E5, claim module pin order, or authorize production."
+  }
+}

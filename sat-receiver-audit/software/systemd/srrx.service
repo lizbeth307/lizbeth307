@@ -1,0 +1,35 @@
+[Unit]
+Description=SR-RX single-writer hardware control
+After=local-fs.target
+ConditionPathExists=/etc/srrx/acceptance.json
+ConditionPathExists=/etc/srrx/devices.env
+
+[Service]
+Type=simple
+User=labd
+Group=labd
+SupplementaryGroups=i2c dialout
+WorkingDirectory=/opt/srrx
+Environment=PYTHONPATH=/opt/srrx/software
+EnvironmentFile=/etc/srrx/devices.env
+ExecStart=/usr/bin/python3 -m srrx.daemon --hardware --project /opt/srrx --acceptance /etc/srrx/acceptance.json --socket /run/srrx/control.sock --i2c ${SRRX_I2C2} --i2c0 ${SRRX_I2C0} --pico ${SRRX_PICO}
+Restart=on-failure
+RestartSec=2
+TimeoutStopSec=3
+RuntimeDirectory=srrx
+RuntimeDirectoryMode=0750
+UMask=0007
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_UNIX
+LockPersonality=yes
+MemoryMax=128M
+TasksMax=8
+
+[Install]
+WantedBy=multi-user.target

@@ -5131,9 +5131,9 @@
     },
     {
       "id": "E3-08",
-      "description": "The physical MCP watchdog-reset actuator is wired, but Pico heartbeat-watchdog firmware and its boot/recovery behavior do not yet exist or pass hardware tests.",
+      "description": "Pico watchdog, MicroPython GPIO/UART adapter and host handshake implemented 20.10.2026 and tested on the host. Actual GPIO timing, reset levels, WDT/brownout behavior and Linux/serial fault recovery have not been qualified on the device.",
       "blocking": true,
-      "resolve": "Implement future firmware with reset asserted at powered boot/highimpedance, on missing/invalid heartbeat and during unsafe/re-arm states. Hold resetlow>=1us (projectguard100ms minimum,normallylatcheduntilqualifiedrecovery). ActivelysinkGP17LOWonlyfornormalrelease; verifyGPIOsink~3.3mA. ScopeRESET<0.2VDDasserted/>0.8VDDreleased; proveinternalENlow,HMC00,relaysofffrominitialENhighuponLinuxkill/UARThang. Test20cold/20warmboots,PicoGPIOreset/brownout,andQ6Aoff/Picoonwithoutbackfeed. Beforeoutputre-enablewriteOLAT0,IODIRincludingIO7=0foroutputs,andIOCONODR/MIRRORthenGPINTEN. FullPicosupplylosswithQ6Aaliveisnotcoveredbythisactuator;AONbatteryprotectionisindependent."
+      "resolve": "Run the implemented firmware with the actual accepted Pico/Q6A assembly: scope MCP RESET assertion/release, safe output image including CHG_INHIBIT=1 after initialization, 100ms guard, 750ms heartbeat deadline plus measured latency, explicit fresh-session recovery, Linux kill/hang, UART loss/corruption, WDT/brownout and GPIO current/backfeed. Complete Pico power loss with Q6A alive remains outside Q306 coverage; no software test closes this boundary."
     }
   ],
   "decisions": [

@@ -1,2 +1,5 @@
 # Preserve native KiCad plot bytes, including whitespace in SVG style records.
 build/kicad/svg/*.svg -whitespace
+build/kicad/pcb-preparation/*.svg -whitespace
+# Raw native command logs retain the tool's final blank lines.
+build/kicad/pcb-preparation/*-command.log -whitespace

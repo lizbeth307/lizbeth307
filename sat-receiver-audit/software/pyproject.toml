@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "srrx-control"
+version = "0.2.0"
+description = "SR-RX supervisor link and interlocked local control service"
+requires-python = ">=3.11"
+dependencies = []
+
+[project.scripts]
+labd = "srrx.daemon:main"
+labctl = "srrx.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["srrx*"]

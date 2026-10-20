@@ -1,0 +1,9 @@
+{
+  "resource": "build/kicad/footprints/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod",
+  "sha256": "e05c7605248c220836f642ed1f526133edf0374acdfd5bb2631e58b4e377acfb",
+  "source": "https://ppa.launchpadcontent.net/kicad/kicad-10.0-releases/ubuntu/pool/main/k/kicad-library-footprints/kicad-footprints_10.0.7~ubuntu24.04.1_all.deb",
+  "package_sha256": "a1c25a690348180d572b73496668cffafdaecf284d6555279fa89d5e4fefa46c",
+  "license": "build/kicad/footprints/LICENSE.md",
+  "content_modified": false,
+  "qualification": "Placement candidate only, not approved MPN/land pattern"
+}

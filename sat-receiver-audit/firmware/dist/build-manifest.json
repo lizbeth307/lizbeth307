@@ -1,0 +1,34 @@
+{
+  "runtime_included": false,
+  "device_flashed": false,
+  "hardware_qualified": false,
+  "packages": {
+    "pico": {
+      "file": "pico-micropython-files.zip",
+      "bytes": 17862,
+      "sha256": "3dfb4bf29c21a3d6b4ab17212fad8f84cdbb34e170d047166441eee8e49d5c91",
+      "source_files": {
+        "adapter.py": "19a19013902b19ddca40c42d3eb1db56af050d79ecf5a570aa905db54f2225f2",
+        "boot.py": "d9497a15dae9944f79505f3cbce8718ff405b9aa3a9d43dfa13764e8bd56e886",
+        "calibration.py": "a7106862c928540c20fa4239e3242b83ae1c25e9ae28a98248adc12996b4610d",
+        "imu_relay.py": "192f8bc43cc932c036c13cdf70cc4548eb0f56fa3f7af9c940d42aabc6b6d820",
+        "main.py": "2068db84d9bac3644953ef45b8c34fdc4ce923dc5244ff21615f922cc4150f4f",
+        "supervisor.py": "18e8c6989c256a6de403156291ca55ef1c2f46b81c9d7c362e72b3d78d2b9764",
+        "wire.py": "00d61272927fa8dfe389cd595649c5075321b5ecc83a2ecc857cc25b6756e4f4"
+      }
+    },
+    "imu": {
+      "file": "imu-micropython-files.zip",
+      "bytes": 13582,
+      "sha256": "e26549c2276e95428d8839855b2d48ec872b97862d3f7b1185121b6479b0c8c5",
+      "source_files": {
+        "__init__.py": "199b3d33d721f235d3f2c90ecbb32512e6dad7ff404241f2d9db383e43e79288",
+        "device.py": "02a9a2b6e93074716375617137cdfe1bb6df9d22e5021768c59cf273aeafea2e",
+        "main.py": "9d8206334bc045c022d275eb8ab75b88444ea679b6fae135fdae6a7169a5172c",
+        "session.py": "350484a09ad30255d7a0f44b3c0d631726de96f5639a59443d96377bcccd424d",
+        "shtp.py": "f23f08679f9847fd64a14fc73171b2e5191016b1cd665c8c5d66f90e4ee26525",
+        "wire.py": "00d61272927fa8dfe389cd595649c5075321b5ecc83a2ecc857cc25b6756e4f4"
+      }
+    }
+  }
+}

@@ -1,0 +1,2627 @@
+{
+  "passed": true,
+  "status": "UNROUTED_PLACEMENT_STARTER_NOT_FOR_FABRICATION",
+  "components": 71,
+  "source_pins": 187,
+  "connected_pads": 180,
+  "nc_pads": 7,
+  "net_count": 40,
+  "external_boundary_nets": [
+    "3V3_Q6A",
+    "DCS_HF",
+    "DCS_LBAND",
+    "DCS_UHF",
+    "E4_DCS_HF_TAP",
+    "E4_DCS_LBAND_TAP",
+    "E4_DCS_UHF_TAP",
+    "GND"
+  ],
+  "tracks_and_vias": 0,
+  "copper_zones": 0,
+  "errors": [],
+  "pad_assignments": [
+    {
+      "ref": "C4400",
+      "pad": "1",
+      "net": "E4_DCS_REF",
+      "nc": false,
+      "position_mm": [
+        52.225,
+        40.0
+      ]
+    },
+    {
+      "ref": "C4400",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        53.775,
+        40.0
+      ]
+    },
+    {
+      "ref": "C4401",
+      "pad": "1",
+      "net": "E4_DCS_LOW",
+      "nc": false,
+      "position_mm": [
+        43.225,
+        52.0
+      ]
+    },
+    {
+      "ref": "C4401",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        44.775,
+        52.0
+      ]
+    },
+    {
+      "ref": "C4402",
+      "pad": "1",
+      "net": "E4_DCS_HIGH",
+      "nc": false,
+      "position_mm": [
+        43.225,
+        61.0
+      ]
+    },
+    {
+      "ref": "C4402",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        44.775,
+        61.0
+      ]
+    },
+    {
+      "ref": "C4403",
+      "pad": "1",
+      "net": "E4_DCS_REF12_LOW",
+      "nc": false,
+      "position_mm": [
+        64.225,
+        70.0
+      ]
+    },
+    {
+      "ref": "C4403",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        65.775,
+        70.0
+      ]
+    },
+    {
+      "ref": "C4404",
+      "pad": "1",
+      "net": "E4_DCS_REF12_HIGH",
+      "nc": false,
+      "position_mm": [
+        64.225,
+        85.0
+      ]
+    },
+    {
+      "ref": "C4404",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        65.775,
+        85.0
+      ]
+    },
+    {
+      "ref": "C4405",
+      "pad": "1",
+      "net": "E4_DCS_REF_PG_LOW",
+      "nc": false,
+      "position_mm": [
+        43.225,
+        70.0
+      ]
+    },
+    {
+      "ref": "C4405",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        44.775,
+        70.0
+      ]
+    },
+    {
+      "ref": "C4406",
+      "pad": "1",
+      "net": "E4_DCS_REF_PG_HIGH",
+      "nc": false,
+      "position_mm": [
+        43.225,
+        79.0
+      ]
+    },
+    {
+      "ref": "C4406",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        44.775,
+        79.0
+      ]
+    },
+    {
+      "ref": "C4410",
+      "pad": "1",
+      "net": "3V3_Q6A",
+      "nc": false,
+      "position_mm": [
+        95.225,
+        32.5
+      ]
+    },
+    {
+      "ref": "C4410",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        96.775,
+        32.5
+      ]
+    },
+    {
+      "ref": "C4411",
+      "pad": "1",
+      "net": "3V3_Q6A",
+      "nc": false,
+      "position_mm": [
+        117.225,
+        32.5
+      ]
+    },
+    {
+      "ref": "C4411",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        118.775,
+        32.5
+      ]
+    },
+    {
+      "ref": "C4412",
+      "pad": "1",
+      "net": "3V3_Q6A",
+      "nc": false,
+      "position_mm": [
+        95.225,
+        62.5
+      ]
+    },
+    {
+      "ref": "C4412",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        96.775,
+        62.5
+      ]
+    },
+    {
+      "ref": "C4413",
+      "pad": "1",
+      "net": "3V3_Q6A",
+      "nc": false,
+      "position_mm": [
+        117.225,
+        62.5
+      ]
+    },
+    {
+      "ref": "C4413",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        118.775,
+        62.5
+      ]
+    },
+    {
+      "ref": "C4414",
+      "pad": "1",
+      "net": "3V3_Q6A",
+      "nc": false,
+      "position_mm": [
+        95.225,
+        92.5
+      ]
+    },
+    {
+      "ref": "C4414",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        96.775,
+        92.5
+      ]
+    },
+    {
+      "ref": "C4415",
+      "pad": "1",
+      "net": "3V3_Q6A",
+      "nc": false,
+      "position_mm": [
+        117.225,
+        92.5
+      ]
+    },
+    {
+      "ref": "C4415",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        118.775,
+        92.5
+      ]
+    },
+    {
+      "ref": "C4416",
+      "pad": "1",
+      "net": "3V3_Q6A",
+      "nc": false,
+      "position_mm": [
+        57.225,
+        65.5
+      ]
+    },
+    {
+      "ref": "C4416",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        58.775,
+        65.5
+      ]
+    },
+    {
+      "ref": "C4417",
+      "pad": "1",
+      "net": "3V3_Q6A",
+      "nc": false,
+      "position_mm": [
+        57.225,
+        80.5
+      ]
+    },
+    {
+      "ref": "C4417",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        58.775,
+        80.5
+      ]
+    },
+    {
+      "ref": "C4421",
+      "pad": "1",
+      "net": "E4_DCS_UHF_SENSE",
+      "nc": false,
+      "position_mm": [
+        87.225,
+        45.0
+      ]
+    },
+    {
+      "ref": "C4421",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        88.775,
+        45.0
+      ]
+    },
+    {
+      "ref": "C4431",
+      "pad": "1",
+      "net": "E4_DCS_LBAND_SENSE",
+      "nc": false,
+      "position_mm": [
+        87.225,
+        75.0
+      ]
+    },
+    {
+      "ref": "C4431",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        88.775,
+        75.0
+      ]
+    },
+    {
+      "ref": "C4441",
+      "pad": "1",
+      "net": "E4_DCS_HF_SENSE",
+      "nc": false,
+      "position_mm": [
+        87.225,
+        105.0
+      ]
+    },
+    {
+      "ref": "C4441",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        88.775,
+        105.0
+      ]
+    },
+    {
+      "ref": "D450",
+      "pad": "1",
+      "net": "3V3_Q6A",
+      "nc": false,
+      "position_mm": [
+        29.0625,
+        39.05
+      ]
+    },
+    {
+      "ref": "D450",
+      "pad": "3",
+      "net": "E4_DCS_REF_FEED",
+      "nc": false,
+      "position_mm": [
+        30.9375,
+        40.0
+      ]
+    },
+    {
+      "ref": "D450",
+      "pad": "2",
+      "net": "",
+      "nc": true,
+      "position_mm": [
+        29.0625,
+        40.95
+      ]
+    },
+    {
+      "ref": "D451",
+      "pad": "1",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        95.0625,
+        44.05
+      ]
+    },
+    {
+      "ref": "D451",
+      "pad": "3",
+      "net": "E4_DCS_UHF_SENSE",
+      "nc": false,
+      "position_mm": [
+        96.9375,
+        45.0
+      ]
+    },
+    {
+      "ref": "D451",
+      "pad": "2",
+      "net": "E4_DCS_REF",
+      "nc": false,
+      "position_mm": [
+        95.0625,
+        45.95
+      ]
+    },
+    {
+      "ref": "D452",
+      "pad": "1",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        95.0625,
+        74.05
+      ]
+    },
+    {
+      "ref": "D452",
+      "pad": "3",
+      "net": "E4_DCS_LBAND_SENSE",
+      "nc": false,
+      "position_mm": [
+        96.9375,
+        75.0
+      ]
+    },
+    {
+      "ref": "D452",
+      "pad": "2",
+      "net": "E4_DCS_REF",
+      "nc": false,
+      "position_mm": [
+        95.0625,
+        75.95
+      ]
+    },
+    {
+      "ref": "D453",
+      "pad": "1",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        95.0625,
+        104.05
+      ]
+    },
+    {
+      "ref": "D453",
+      "pad": "3",
+      "net": "E4_DCS_HF_SENSE",
+      "nc": false,
+      "position_mm": [
+        96.9375,
+        105.0
+      ]
+    },
+    {
+      "ref": "D453",
+      "pad": "2",
+      "net": "E4_DCS_REF",
+      "nc": false,
+      "position_mm": [
+        95.0625,
+        105.95
+      ]
+    },
+    {
+      "ref": "Q450",
+      "pad": "1",
+      "net": "E4_DCS_UHF_LOW_GATE",
+      "nc": false,
+      "position_mm": [
+        95.0625,
+        52.05
+      ]
+    },
+    {
+      "ref": "Q450",
+      "pad": "2",
+      "net": "E4_DCS_UHF_SINK_MID",
+      "nc": false,
+      "position_mm": [
+        95.0625,
+        53.95
+      ]
+    },
+    {
+      "ref": "Q450",
+      "pad": "3",
+      "net": "DCS_UHF",
+      "nc": false,
+      "position_mm": [
+        96.9375,
+        53.0
+      ]
+    },
+    {
+      "ref": "Q451",
+      "pad": "1",
+      "net": "E4_DCS_UHF_HIGH_GATE",
+      "nc": false,
+      "position_mm": [
+        117.0625,
+        52.05
+      ]
+    },
+    {
+      "ref": "Q451",
+      "pad": "2",
+      "net": "E4_DCS_RETURN",
+      "nc": false,
+      "position_mm": [
+        117.0625,
+        53.95
+      ]
+    },
+    {
+      "ref": "Q451",
+      "pad": "3",
+      "net": "E4_DCS_UHF_SINK_MID",
+      "nc": false,
+      "position_mm": [
+        118.9375,
+        53.0
+      ]
+    },
+    {
+      "ref": "Q452",
+      "pad": "1",
+      "net": "E4_DCS_LBAND_LOW_GATE",
+      "nc": false,
+      "position_mm": [
+        95.0625,
+        82.05
+      ]
+    },
+    {
+      "ref": "Q452",
+      "pad": "2",
+      "net": "E4_DCS_LBAND_SINK_MID",
+      "nc": false,
+      "position_mm": [
+        95.0625,
+        83.95
+      ]
+    },
+    {
+      "ref": "Q452",
+      "pad": "3",
+      "net": "DCS_LBAND",
+      "nc": false,
+      "position_mm": [
+        96.9375,
+        83.0
+      ]
+    },
+    {
+      "ref": "Q453",
+      "pad": "1",
+      "net": "E4_DCS_LBAND_HIGH_GATE",
+      "nc": false,
+      "position_mm": [
+        117.0625,
+        82.05
+      ]
+    },
+    {
+      "ref": "Q453",
+      "pad": "2",
+      "net": "E4_DCS_RETURN",
+      "nc": false,
+      "position_mm": [
+        117.0625,
+        83.95
+      ]
+    },
+    {
+      "ref": "Q453",
+      "pad": "3",
+      "net": "E4_DCS_LBAND_SINK_MID",
+      "nc": false,
+      "position_mm": [
+        118.9375,
+        83.0
+      ]
+    },
+    {
+      "ref": "Q454",
+      "pad": "1",
+      "net": "E4_DCS_HF_LOW_GATE",
+      "nc": false,
+      "position_mm": [
+        95.0625,
+        112.05
+      ]
+    },
+    {
+      "ref": "Q454",
+      "pad": "2",
+      "net": "E4_DCS_HF_SINK_MID",
+      "nc": false,
+      "position_mm": [
+        95.0625,
+        113.95
+      ]
+    },
+    {
+      "ref": "Q454",
+      "pad": "3",
+      "net": "DCS_HF",
+      "nc": false,
+      "position_mm": [
+        96.9375,
+        113.0
+      ]
+    },
+    {
+      "ref": "Q455",
+      "pad": "1",
+      "net": "E4_DCS_HF_HIGH_GATE",
+      "nc": false,
+      "position_mm": [
+        117.0625,
+        112.05
+      ]
+    },
+    {
+      "ref": "Q455",
+      "pad": "2",
+      "net": "E4_DCS_RETURN",
+      "nc": false,
+      "position_mm": [
+        117.0625,
+        113.95
+      ]
+    },
+    {
+      "ref": "Q455",
+      "pad": "3",
+      "net": "E4_DCS_HF_SINK_MID",
+      "nc": false,
+      "position_mm": [
+        118.9375,
+        113.0
+      ]
+    },
+    {
+      "ref": "Q456",
+      "pad": "1",
+      "net": "E4_DCS_REF_GATE_LOW",
+      "nc": false,
+      "position_mm": [
+        62.0625,
+        97.05
+      ]
+    },
+    {
+      "ref": "Q456",
+      "pad": "2",
+      "net": "E4_DCS_REF_RETURN_MID",
+      "nc": false,
+      "position_mm": [
+        62.0625,
+        98.95
+      ]
+    },
+    {
+      "ref": "Q456",
+      "pad": "3",
+      "net": "E4_DCS_RETURN",
+      "nc": false,
+      "position_mm": [
+        63.9375,
+        98.0
+      ]
+    },
+    {
+      "ref": "Q457",
+      "pad": "1",
+      "net": "E4_DCS_REF_GATE_HIGH",
+      "nc": false,
+      "position_mm": [
+        79.0625,
+        97.05
+      ]
+    },
+    {
+      "ref": "Q457",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        79.0625,
+        98.95
+      ]
+    },
+    {
+      "ref": "Q457",
+      "pad": "3",
+      "net": "E4_DCS_REF_RETURN_MID",
+      "nc": false,
+      "position_mm": [
+        80.9375,
+        98.0
+      ]
+    },
+    {
+      "ref": "R4400",
+      "pad": "1",
+      "net": "E4_DCS_REF_FEED",
+      "nc": false,
+      "position_mm": [
+        36.175,
+        40.0
+      ]
+    },
+    {
+      "ref": "R4400",
+      "pad": "2",
+      "net": "E4_DCS_REF",
+      "nc": false,
+      "position_mm": [
+        37.825,
+        40.0
+      ]
+    },
+    {
+      "ref": "R4401",
+      "pad": "1",
+      "net": "3V3_Q6A",
+      "nc": false,
+      "position_mm": [
+        44.175,
+        94.0
+      ]
+    },
+    {
+      "ref": "R4401",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        45.825,
+        94.0
+      ]
+    },
+    {
+      "ref": "R4402",
+      "pad": "1",
+      "net": "E4_DCS_REF",
+      "nc": false,
+      "position_mm": [
+        29.175,
+        52.0
+      ]
+    },
+    {
+      "ref": "R4402",
+      "pad": "2",
+      "net": "E4_DCS_LOW",
+      "nc": false,
+      "position_mm": [
+        30.825,
+        52.0
+      ]
+    },
+    {
+      "ref": "R4403",
+      "pad": "1",
+      "net": "E4_DCS_LOW",
+      "nc": false,
+      "position_mm": [
+        36.175,
+        52.0
+      ]
+    },
+    {
+      "ref": "R4403",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        37.825,
+        52.0
+      ]
+    },
+    {
+      "ref": "R4404",
+      "pad": "1",
+      "net": "E4_DCS_REF",
+      "nc": false,
+      "position_mm": [
+        29.175,
+        61.0
+      ]
+    },
+    {
+      "ref": "R4404",
+      "pad": "2",
+      "net": "E4_DCS_HIGH",
+      "nc": false,
+      "position_mm": [
+        30.825,
+        61.0
+      ]
+    },
+    {
+      "ref": "R4405",
+      "pad": "1",
+      "net": "E4_DCS_HIGH",
+      "nc": false,
+      "position_mm": [
+        36.175,
+        61.0
+      ]
+    },
+    {
+      "ref": "R4405",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        37.825,
+        61.0
+      ]
+    },
+    {
+      "ref": "R4406",
+      "pad": "1",
+      "net": "E4_DCS_REF",
+      "nc": false,
+      "position_mm": [
+        29.175,
+        70.0
+      ]
+    },
+    {
+      "ref": "R4406",
+      "pad": "2",
+      "net": "E4_DCS_REF_PG_LOW",
+      "nc": false,
+      "position_mm": [
+        30.825,
+        70.0
+      ]
+    },
+    {
+      "ref": "R4407",
+      "pad": "1",
+      "net": "E4_DCS_REF_PG_LOW",
+      "nc": false,
+      "position_mm": [
+        36.175,
+        70.0
+      ]
+    },
+    {
+      "ref": "R4407",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        37.825,
+        70.0
+      ]
+    },
+    {
+      "ref": "R4408",
+      "pad": "1",
+      "net": "E4_DCS_REF",
+      "nc": false,
+      "position_mm": [
+        29.175,
+        79.0
+      ]
+    },
+    {
+      "ref": "R4408",
+      "pad": "2",
+      "net": "E4_DCS_REF_PG_HIGH",
+      "nc": false,
+      "position_mm": [
+        30.825,
+        79.0
+      ]
+    },
+    {
+      "ref": "R4409",
+      "pad": "1",
+      "net": "E4_DCS_REF_PG_HIGH",
+      "nc": false,
+      "position_mm": [
+        36.175,
+        79.0
+      ]
+    },
+    {
+      "ref": "R4409",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        37.825,
+        79.0
+      ]
+    },
+    {
+      "ref": "R4421",
+      "pad": "1",
+      "net": "E4_DCS_UHF_TAP",
+      "nc": false,
+      "position_mm": [
+        103.49,
+        45.0
+      ]
+    },
+    {
+      "ref": "R4421",
+      "pad": "2",
+      "net": "E4_DCS_UHF_SENSE",
+      "nc": false,
+      "position_mm": [
+        104.51,
+        45.0
+      ]
+    },
+    {
+      "ref": "R4422",
+      "pad": "1",
+      "net": "E4_DCS_REF",
+      "nc": false,
+      "position_mm": [
+        111.175,
+        45.0
+      ]
+    },
+    {
+      "ref": "R4422",
+      "pad": "2",
+      "net": "E4_DCS_UHF_SENSE",
+      "nc": false,
+      "position_mm": [
+        112.825,
+        45.0
+      ]
+    },
+    {
+      "ref": "R4423",
+      "pad": "1",
+      "net": "E4_DCS_UHF_LOW_OK",
+      "nc": false,
+      "position_mm": [
+        87.175,
+        53.0
+      ]
+    },
+    {
+      "ref": "R4423",
+      "pad": "2",
+      "net": "E4_DCS_UHF_LOW_GATE",
+      "nc": false,
+      "position_mm": [
+        88.825,
+        53.0
+      ]
+    },
+    {
+      "ref": "R4424",
+      "pad": "1",
+      "net": "E4_DCS_UHF_LOW_GATE",
+      "nc": false,
+      "position_mm": [
+        87.175,
+        61.0
+      ]
+    },
+    {
+      "ref": "R4424",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        88.825,
+        61.0
+      ]
+    },
+    {
+      "ref": "R4425",
+      "pad": "1",
+      "net": "E4_DCS_UHF_HIGH_OK",
+      "nc": false,
+      "position_mm": [
+        109.175,
+        53.0
+      ]
+    },
+    {
+      "ref": "R4425",
+      "pad": "2",
+      "net": "E4_DCS_UHF_HIGH_GATE",
+      "nc": false,
+      "position_mm": [
+        110.825,
+        53.0
+      ]
+    },
+    {
+      "ref": "R4426",
+      "pad": "1",
+      "net": "E4_DCS_UHF_HIGH_GATE",
+      "nc": false,
+      "position_mm": [
+        109.175,
+        61.0
+      ]
+    },
+    {
+      "ref": "R4426",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        110.825,
+        61.0
+      ]
+    },
+    {
+      "ref": "R4431",
+      "pad": "1",
+      "net": "E4_DCS_LBAND_TAP",
+      "nc": false,
+      "position_mm": [
+        103.49,
+        75.0
+      ]
+    },
+    {
+      "ref": "R4431",
+      "pad": "2",
+      "net": "E4_DCS_LBAND_SENSE",
+      "nc": false,
+      "position_mm": [
+        104.51,
+        75.0
+      ]
+    },
+    {
+      "ref": "R4432",
+      "pad": "1",
+      "net": "E4_DCS_REF",
+      "nc": false,
+      "position_mm": [
+        111.175,
+        75.0
+      ]
+    },
+    {
+      "ref": "R4432",
+      "pad": "2",
+      "net": "E4_DCS_LBAND_SENSE",
+      "nc": false,
+      "position_mm": [
+        112.825,
+        75.0
+      ]
+    },
+    {
+      "ref": "R4433",
+      "pad": "1",
+      "net": "E4_DCS_LBAND_LOW_OK",
+      "nc": false,
+      "position_mm": [
+        87.175,
+        83.0
+      ]
+    },
+    {
+      "ref": "R4433",
+      "pad": "2",
+      "net": "E4_DCS_LBAND_LOW_GATE",
+      "nc": false,
+      "position_mm": [
+        88.825,
+        83.0
+      ]
+    },
+    {
+      "ref": "R4434",
+      "pad": "1",
+      "net": "E4_DCS_LBAND_LOW_GATE",
+      "nc": false,
+      "position_mm": [
+        87.175,
+        91.0
+      ]
+    },
+    {
+      "ref": "R4434",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        88.825,
+        91.0
+      ]
+    },
+    {
+      "ref": "R4435",
+      "pad": "1",
+      "net": "E4_DCS_LBAND_HIGH_OK",
+      "nc": false,
+      "position_mm": [
+        109.175,
+        83.0
+      ]
+    },
+    {
+      "ref": "R4435",
+      "pad": "2",
+      "net": "E4_DCS_LBAND_HIGH_GATE",
+      "nc": false,
+      "position_mm": [
+        110.825,
+        83.0
+      ]
+    },
+    {
+      "ref": "R4436",
+      "pad": "1",
+      "net": "E4_DCS_LBAND_HIGH_GATE",
+      "nc": false,
+      "position_mm": [
+        109.175,
+        91.0
+      ]
+    },
+    {
+      "ref": "R4436",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        110.825,
+        91.0
+      ]
+    },
+    {
+      "ref": "R4441",
+      "pad": "1",
+      "net": "E4_DCS_HF_TAP",
+      "nc": false,
+      "position_mm": [
+        103.49,
+        105.0
+      ]
+    },
+    {
+      "ref": "R4441",
+      "pad": "2",
+      "net": "E4_DCS_HF_SENSE",
+      "nc": false,
+      "position_mm": [
+        104.51,
+        105.0
+      ]
+    },
+    {
+      "ref": "R4442",
+      "pad": "1",
+      "net": "E4_DCS_REF",
+      "nc": false,
+      "position_mm": [
+        111.175,
+        105.0
+      ]
+    },
+    {
+      "ref": "R4442",
+      "pad": "2",
+      "net": "E4_DCS_HF_SENSE",
+      "nc": false,
+      "position_mm": [
+        112.825,
+        105.0
+      ]
+    },
+    {
+      "ref": "R4443",
+      "pad": "1",
+      "net": "E4_DCS_HF_LOW_OK",
+      "nc": false,
+      "position_mm": [
+        87.175,
+        113.0
+      ]
+    },
+    {
+      "ref": "R4443",
+      "pad": "2",
+      "net": "E4_DCS_HF_LOW_GATE",
+      "nc": false,
+      "position_mm": [
+        88.825,
+        113.0
+      ]
+    },
+    {
+      "ref": "R4444",
+      "pad": "1",
+      "net": "E4_DCS_HF_LOW_GATE",
+      "nc": false,
+      "position_mm": [
+        87.175,
+        121.0
+      ]
+    },
+    {
+      "ref": "R4444",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        88.825,
+        121.0
+      ]
+    },
+    {
+      "ref": "R4445",
+      "pad": "1",
+      "net": "E4_DCS_HF_HIGH_OK",
+      "nc": false,
+      "position_mm": [
+        109.175,
+        113.0
+      ]
+    },
+    {
+      "ref": "R4445",
+      "pad": "2",
+      "net": "E4_DCS_HF_HIGH_GATE",
+      "nc": false,
+      "position_mm": [
+        110.825,
+        113.0
+      ]
+    },
+    {
+      "ref": "R4446",
+      "pad": "1",
+      "net": "E4_DCS_HF_HIGH_GATE",
+      "nc": false,
+      "position_mm": [
+        109.175,
+        121.0
+      ]
+    },
+    {
+      "ref": "R4446",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        110.825,
+        121.0
+      ]
+    },
+    {
+      "ref": "R4450",
+      "pad": "1",
+      "net": "E4_DCS_REF_GOOD_LOW",
+      "nc": false,
+      "position_mm": [
+        54.175,
+        98.0
+      ]
+    },
+    {
+      "ref": "R4450",
+      "pad": "2",
+      "net": "E4_DCS_REF_GATE_LOW",
+      "nc": false,
+      "position_mm": [
+        55.825,
+        98.0
+      ]
+    },
+    {
+      "ref": "R4451",
+      "pad": "1",
+      "net": "E4_DCS_REF_GATE_LOW",
+      "nc": false,
+      "position_mm": [
+        54.175,
+        105.0
+      ]
+    },
+    {
+      "ref": "R4451",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        55.825,
+        105.0
+      ]
+    },
+    {
+      "ref": "R4452",
+      "pad": "1",
+      "net": "E4_DCS_REF_GOOD_HIGH",
+      "nc": false,
+      "position_mm": [
+        71.175,
+        98.0
+      ]
+    },
+    {
+      "ref": "R4452",
+      "pad": "2",
+      "net": "E4_DCS_REF_GATE_HIGH",
+      "nc": false,
+      "position_mm": [
+        72.825,
+        98.0
+      ]
+    },
+    {
+      "ref": "R4453",
+      "pad": "1",
+      "net": "E4_DCS_REF_GATE_HIGH",
+      "nc": false,
+      "position_mm": [
+        71.175,
+        105.0
+      ]
+    },
+    {
+      "ref": "R4453",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        72.825,
+        105.0
+      ]
+    },
+    {
+      "ref": "U450",
+      "pad": "1",
+      "net": "E4_DCS_UHF_LOW_OK",
+      "nc": false,
+      "position_mm": [
+        94.8625,
+        36.05
+      ]
+    },
+    {
+      "ref": "U450",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        94.8625,
+        37.0
+      ]
+    },
+    {
+      "ref": "U450",
+      "pad": "3",
+      "net": "E4_DCS_UHF_SENSE",
+      "nc": false,
+      "position_mm": [
+        94.8625,
+        37.95
+      ]
+    },
+    {
+      "ref": "U450",
+      "pad": "4",
+      "net": "E4_DCS_LOW",
+      "nc": false,
+      "position_mm": [
+        97.1375,
+        37.95
+      ]
+    },
+    {
+      "ref": "U450",
+      "pad": "6",
+      "net": "3V3_Q6A",
+      "nc": false,
+      "position_mm": [
+        97.1375,
+        36.05
+      ]
+    },
+    {
+      "ref": "U450",
+      "pad": "5",
+      "net": "",
+      "nc": true,
+      "position_mm": [
+        97.1375,
+        37.0
+      ]
+    },
+    {
+      "ref": "U451",
+      "pad": "1",
+      "net": "E4_DCS_UHF_HIGH_OK",
+      "nc": false,
+      "position_mm": [
+        116.8625,
+        36.05
+      ]
+    },
+    {
+      "ref": "U451",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        116.8625,
+        37.0
+      ]
+    },
+    {
+      "ref": "U451",
+      "pad": "3",
+      "net": "E4_DCS_HIGH",
+      "nc": false,
+      "position_mm": [
+        116.8625,
+        37.95
+      ]
+    },
+    {
+      "ref": "U451",
+      "pad": "4",
+      "net": "E4_DCS_UHF_SENSE",
+      "nc": false,
+      "position_mm": [
+        119.1375,
+        37.95
+      ]
+    },
+    {
+      "ref": "U451",
+      "pad": "6",
+      "net": "3V3_Q6A",
+      "nc": false,
+      "position_mm": [
+        119.1375,
+        36.05
+      ]
+    },
+    {
+      "ref": "U451",
+      "pad": "5",
+      "net": "",
+      "nc": true,
+      "position_mm": [
+        119.1375,
+        37.0
+      ]
+    },
+    {
+      "ref": "U452",
+      "pad": "1",
+      "net": "E4_DCS_LBAND_LOW_OK",
+      "nc": false,
+      "position_mm": [
+        94.8625,
+        66.05
+      ]
+    },
+    {
+      "ref": "U452",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        94.8625,
+        67.0
+      ]
+    },
+    {
+      "ref": "U452",
+      "pad": "3",
+      "net": "E4_DCS_LBAND_SENSE",
+      "nc": false,
+      "position_mm": [
+        94.8625,
+        67.95
+      ]
+    },
+    {
+      "ref": "U452",
+      "pad": "4",
+      "net": "E4_DCS_LOW",
+      "nc": false,
+      "position_mm": [
+        97.1375,
+        67.95
+      ]
+    },
+    {
+      "ref": "U452",
+      "pad": "6",
+      "net": "3V3_Q6A",
+      "nc": false,
+      "position_mm": [
+        97.1375,
+        66.05
+      ]
+    },
+    {
+      "ref": "U452",
+      "pad": "5",
+      "net": "",
+      "nc": true,
+      "position_mm": [
+        97.1375,
+        67.0
+      ]
+    },
+    {
+      "ref": "U453",
+      "pad": "1",
+      "net": "E4_DCS_LBAND_HIGH_OK",
+      "nc": false,
+      "position_mm": [
+        116.8625,
+        66.05
+      ]
+    },
+    {
+      "ref": "U453",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        116.8625,
+        67.0
+      ]
+    },
+    {
+      "ref": "U453",
+      "pad": "3",
+      "net": "E4_DCS_HIGH",
+      "nc": false,
+      "position_mm": [
+        116.8625,
+        67.95
+      ]
+    },
+    {
+      "ref": "U453",
+      "pad": "4",
+      "net": "E4_DCS_LBAND_SENSE",
+      "nc": false,
+      "position_mm": [
+        119.1375,
+        67.95
+      ]
+    },
+    {
+      "ref": "U453",
+      "pad": "6",
+      "net": "3V3_Q6A",
+      "nc": false,
+      "position_mm": [
+        119.1375,
+        66.05
+      ]
+    },
+    {
+      "ref": "U453",
+      "pad": "5",
+      "net": "",
+      "nc": true,
+      "position_mm": [
+        119.1375,
+        67.0
+      ]
+    },
+    {
+      "ref": "U454",
+      "pad": "1",
+      "net": "E4_DCS_HF_LOW_OK",
+      "nc": false,
+      "position_mm": [
+        94.8625,
+        96.05
+      ]
+    },
+    {
+      "ref": "U454",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        94.8625,
+        97.0
+      ]
+    },
+    {
+      "ref": "U454",
+      "pad": "3",
+      "net": "E4_DCS_HF_SENSE",
+      "nc": false,
+      "position_mm": [
+        94.8625,
+        97.95
+      ]
+    },
+    {
+      "ref": "U454",
+      "pad": "4",
+      "net": "E4_DCS_LOW",
+      "nc": false,
+      "position_mm": [
+        97.1375,
+        97.95
+      ]
+    },
+    {
+      "ref": "U454",
+      "pad": "6",
+      "net": "3V3_Q6A",
+      "nc": false,
+      "position_mm": [
+        97.1375,
+        96.05
+      ]
+    },
+    {
+      "ref": "U454",
+      "pad": "5",
+      "net": "",
+      "nc": true,
+      "position_mm": [
+        97.1375,
+        97.0
+      ]
+    },
+    {
+      "ref": "U455",
+      "pad": "1",
+      "net": "E4_DCS_HF_HIGH_OK",
+      "nc": false,
+      "position_mm": [
+        116.8625,
+        96.05
+      ]
+    },
+    {
+      "ref": "U455",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        116.8625,
+        97.0
+      ]
+    },
+    {
+      "ref": "U455",
+      "pad": "3",
+      "net": "E4_DCS_HIGH",
+      "nc": false,
+      "position_mm": [
+        116.8625,
+        97.95
+      ]
+    },
+    {
+      "ref": "U455",
+      "pad": "4",
+      "net": "E4_DCS_HF_SENSE",
+      "nc": false,
+      "position_mm": [
+        119.1375,
+        97.95
+      ]
+    },
+    {
+      "ref": "U455",
+      "pad": "6",
+      "net": "3V3_Q6A",
+      "nc": false,
+      "position_mm": [
+        119.1375,
+        96.05
+      ]
+    },
+    {
+      "ref": "U455",
+      "pad": "5",
+      "net": "",
+      "nc": true,
+      "position_mm": [
+        119.1375,
+        97.0
+      ]
+    },
+    {
+      "ref": "U456",
+      "pad": "1",
+      "net": "E4_DCS_REF_GOOD_LOW",
+      "nc": false,
+      "position_mm": [
+        56.8625,
+        69.05
+      ]
+    },
+    {
+      "ref": "U456",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        56.8625,
+        70.0
+      ]
+    },
+    {
+      "ref": "U456",
+      "pad": "3",
+      "net": "E4_DCS_REF_PG_LOW",
+      "nc": false,
+      "position_mm": [
+        56.8625,
+        70.95
+      ]
+    },
+    {
+      "ref": "U456",
+      "pad": "4",
+      "net": "E4_DCS_REF12_LOW",
+      "nc": false,
+      "position_mm": [
+        59.1375,
+        70.95
+      ]
+    },
+    {
+      "ref": "U456",
+      "pad": "6",
+      "net": "3V3_Q6A",
+      "nc": false,
+      "position_mm": [
+        59.1375,
+        69.05
+      ]
+    },
+    {
+      "ref": "U456",
+      "pad": "5",
+      "net": "E4_DCS_REF12_LOW",
+      "nc": false,
+      "position_mm": [
+        59.1375,
+        70.0
+      ]
+    },
+    {
+      "ref": "U457",
+      "pad": "1",
+      "net": "E4_DCS_REF_GOOD_HIGH",
+      "nc": false,
+      "position_mm": [
+        56.8625,
+        84.05
+      ]
+    },
+    {
+      "ref": "U457",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        56.8625,
+        85.0
+      ]
+    },
+    {
+      "ref": "U457",
+      "pad": "3",
+      "net": "E4_DCS_REF12_HIGH",
+      "nc": false,
+      "position_mm": [
+        56.8625,
+        85.95
+      ]
+    },
+    {
+      "ref": "U457",
+      "pad": "4",
+      "net": "E4_DCS_REF_PG_HIGH",
+      "nc": false,
+      "position_mm": [
+        59.1375,
+        85.95
+      ]
+    },
+    {
+      "ref": "U457",
+      "pad": "6",
+      "net": "3V3_Q6A",
+      "nc": false,
+      "position_mm": [
+        59.1375,
+        84.05
+      ]
+    },
+    {
+      "ref": "U457",
+      "pad": "5",
+      "net": "E4_DCS_REF12_HIGH",
+      "nc": false,
+      "position_mm": [
+        59.1375,
+        85.0
+      ]
+    },
+    {
+      "ref": "U458",
+      "pad": "1",
+      "net": "E4_DCS_REF",
+      "nc": false,
+      "position_mm": [
+        44.0625,
+        39.05
+      ]
+    },
+    {
+      "ref": "U458",
+      "pad": "2",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        44.0625,
+        40.95
+      ]
+    },
+    {
+      "ref": "U458",
+      "pad": "3",
+      "net": "GND",
+      "nc": false,
+      "position_mm": [
+        45.9375,
+        40.0
+      ]
+    }
+  ],
+  "input_file": "pcb/generated/detector-core-input.json",
+  "input_sha256": "e0fb2d49421ffe4ac388af1e239a5342cb782f46ec4ab00048a3459b0ee428d9",
+  "board_file": "build/kicad/pcb-preparation/detector-core-placement.kicad_pcb",
+  "board_sha256": "2fe4de9b11293c0af930ee4e919f6f832fb0fc8994c51a132b2c9053df9fc862",
+  "kicad_version": "10.0.7",
+  "outline_candidate_mm": {
+    "x": 125.0,
+    "y": 115.0,
+    "production_qualified": false
+  },
+  "footprint_sources": [
+    {
+      "ref": "C4400",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "C4401",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "C4402",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "C4403",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "C4404",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "C4405",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "C4406",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "C4410",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "C4411",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "C4412",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "C4413",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "C4414",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "C4415",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "C4416",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "C4417",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "C4421",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "C4431",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "C4441",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
+      "sha256": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "D450",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15",
+      "status": "graph_assigned_portable"
+    },
+    {
+      "ref": "D451",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15",
+      "status": "graph_assigned_portable"
+    },
+    {
+      "ref": "D452",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15",
+      "status": "graph_assigned_portable"
+    },
+    {
+      "ref": "D453",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15",
+      "status": "graph_assigned_portable"
+    },
+    {
+      "ref": "Q450",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15",
+      "status": "graph_assigned_portable"
+    },
+    {
+      "ref": "Q451",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15",
+      "status": "graph_assigned_portable"
+    },
+    {
+      "ref": "Q452",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15",
+      "status": "graph_assigned_portable"
+    },
+    {
+      "ref": "Q453",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15",
+      "status": "graph_assigned_portable"
+    },
+    {
+      "ref": "Q454",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15",
+      "status": "graph_assigned_portable"
+    },
+    {
+      "ref": "Q455",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15",
+      "status": "graph_assigned_portable"
+    },
+    {
+      "ref": "Q456",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15",
+      "status": "graph_assigned_portable"
+    },
+    {
+      "ref": "Q457",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15",
+      "status": "graph_assigned_portable"
+    },
+    {
+      "ref": "R4400",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4401",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4402",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4403",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4404",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4405",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4406",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4407",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4408",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4409",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4421",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod",
+      "sha256": "e05c7605248c220836f642ed1f526133edf0374acdfd5bb2631e58b4e377acfb",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4422",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4423",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4424",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4425",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4426",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4431",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod",
+      "sha256": "e05c7605248c220836f642ed1f526133edf0374acdfd5bb2631e58b4e377acfb",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4432",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4433",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4434",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4435",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4436",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4441",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod",
+      "sha256": "e05c7605248c220836f642ed1f526133edf0374acdfd5bb2631e58b4e377acfb",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4442",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4443",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4444",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4445",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4446",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4450",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4451",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4452",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "R4453",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
+      "sha256": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "status": "proposed_not_production_qualified"
+    },
+    {
+      "ref": "U450",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "sha256": "f341c73aac9dcb553456f68bf3fee3d26eb14acf6d8a1cae82b50418fe1d71ca",
+      "status": "graph_assigned_portable"
+    },
+    {
+      "ref": "U451",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "sha256": "f341c73aac9dcb553456f68bf3fee3d26eb14acf6d8a1cae82b50418fe1d71ca",
+      "status": "graph_assigned_portable"
+    },
+    {
+      "ref": "U452",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "sha256": "f341c73aac9dcb553456f68bf3fee3d26eb14acf6d8a1cae82b50418fe1d71ca",
+      "status": "graph_assigned_portable"
+    },
+    {
+      "ref": "U453",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "sha256": "f341c73aac9dcb553456f68bf3fee3d26eb14acf6d8a1cae82b50418fe1d71ca",
+      "status": "graph_assigned_portable"
+    },
+    {
+      "ref": "U454",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "sha256": "f341c73aac9dcb553456f68bf3fee3d26eb14acf6d8a1cae82b50418fe1d71ca",
+      "status": "graph_assigned_portable"
+    },
+    {
+      "ref": "U455",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "sha256": "f341c73aac9dcb553456f68bf3fee3d26eb14acf6d8a1cae82b50418fe1d71ca",
+      "status": "graph_assigned_portable"
+    },
+    {
+      "ref": "U456",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "sha256": "f341c73aac9dcb553456f68bf3fee3d26eb14acf6d8a1cae82b50418fe1d71ca",
+      "status": "graph_assigned_portable"
+    },
+    {
+      "ref": "U457",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod",
+      "sha256": "f341c73aac9dcb553456f68bf3fee3d26eb14acf6d8a1cae82b50418fe1d71ca",
+      "status": "graph_assigned_portable"
+    },
+    {
+      "ref": "U458",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "file": "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod",
+      "sha256": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15",
+      "status": "graph_assigned_portable"
+    }
+  ],
+  "passive_land_patterns_proposed": 50,
+  "boundary_implementation": "Unselected: no invented connector/wire-pad numbers were added.",
+  "rf_exclusions": [
+    "C4420",
+    "C4430",
+    "C4440",
+    "R4420",
+    "R4430",
+    "R4440",
+    "R4460",
+    "R4461",
+    "R4462",
+    "R4463",
+    "R4464",
+    "R4465",
+    "R4466",
+    "R4467",
+    "R4468",
+    "R4469",
+    "R4470",
+    "R4471"
+  ],
+  "constraints": [
+    {
+      "id": "DC-01",
+      "boards": [
+        "DC_CORE",
+        "RF_INJECTOR"
+      ],
+      "requirement": "Keep each first24.9k RF tap plus100pF at its RF port; place12 bleeds at RF ports, away from core reference/precision dividers. Core boundary carries filtered DC TAP, not50ohm RF. Original schematic nodes preserved.",
+      "source": "design/E4-review.md; E4.json DC detector groups"
+    },
+    {
+      "id": "DC-02",
+      "boards": [
+        "DC_CORE"
+      ],
+      "requirement": "Clean low-leakage SENSE layout, short divider/input routes and local ground; do not place hot bleeds/regulators beside precision network. Leakage/TCR/RF/ground error must be measured:98.630mV analytical corner has only1.370mV margin to100mV.",
+      "source": "design/E4-review.md; design/E4-detector-analysis.py"
+    },
+    {
+      "id": "DC-03",
+      "boards": [
+        "DC_CORE"
+      ],
+      "requirement": "Local100nF per comparator;1nF on each used internal reference; reference shunt/clamps/ground paths close. DCS HIGH=unsafe; LOW requires both window and both reference-good decisions. No signal pullup added on detector board; existing pullups belong E3.",
+      "source": "E4.json; https://www.ti.com/lit/ds/symlink/tlv3011.pdf"
+    },
+    {
+      "id": "DC-04",
+      "boards": [
+        "DC_CORE",
+        "RF_INJECTOR"
+      ],
+      "requirement": "Design envelope +/-30V limited DC. Verify chosen resistors rated voltage/power and PCB clearance for that envelope; no lightning/ESD compliance claim. Four249ohm bleeds dissipate0.226W each at30V and require >=0.5W parts with50C derating.",
+      "source": "design/E4-review.md; E4-06"
+    },
+    {
+      "id": "DC-05",
+      "boards": [
+        "DC_CORE"
+      ],
+      "requirement": "3V3_Q6A budget<=12mA includes E3 DCS pullups. At3.135V min supply, cold D450 VF must satisfy<=1.015V headroom for LM4040>=80uA. Each channel must reject+/-100mV over accepted temperature/supply and remain unsafe through startup/reference failure.",
+      "source": "design/E4-detector-analysis.py; design/E4-review.md"
+    },
+    {
+      "id": "MECH-01",
+      "boards": [
+        "PWR_MAIN",
+        "PWR_BRANCH",
+        "CTRL_HMI",
+        "USB_POWER",
+        "RF_HMC",
+        "RF_HF",
+        "RF_INJECTOR",
+        "DC_CORE"
+      ],
+      "requirement": "All partitions are engineering candidates. Final outline, mounting, stackup, copper weight, connector MPN/orientation and enclosure proof-fit are unset. No Gerbers/drill/production DRC is authorized by this preparation output.",
+      "source": "STACK.md §5.8; build/05-mekhanika.md; build/13-pcb-preparation.md"
+    }
+  ],
+  "blockers": [
+    "50 passive land patterns are placement proposals, not approved production MPN selections.",
+    "Three explicitly0402 resistor footprints must be fetched from official KiCad if absent.",
+    "Eight-net connector/wire-pad implementation, mounting/outline and cable routing are unselected.",
+    "RF-port tap/bleed assemblies are excluded from this core and must be placed on the RF substrate.",
+    "Prototype threshold/leakage/temperature/ground-offset/RF/rail-off tests remain mandatory."
+  ],
+  "resource_resolution": {
+    "R_0402_1005Metric": "Resolved using unmodified official KiCad 10.0.7 resource; actual file paths and hashes are recorded in placement-audit.json. Passive production qualification remains open.",
+    "source_metadata_null_paths": 3,
+    "provenance_file": "build/kicad/pcb-preparation/footprint-provenance.json"
+  },
+  "drc": {
+    "exit_code": 5,
+    "raw_file": "build/kicad/pcb-preparation/drc-raw.json",
+    "raw_sha256": "9bdefbcc05e1bca61744ac41f8295396b992390fdd6dc194f731192fcb18aa18",
+    "counts": {
+      "unconnected_items": 140
+    },
+    "sections": {
+      "violations": 0,
+      "unconnected_items": 140,
+      "schematic_parity": 0
+    },
+    "ignored_checks": [],
+    "configuration": "Five normally ignored KiCad categories explicitly enabled as warning in the candidate project.",
+    "additional_warning_categories": [
+      "missing_courtyard",
+      "track_not_centered_on_via",
+      "tuning_profile_track_geometries",
+      "footprint_filters_mismatch",
+      "footprint_type_mismatch"
+    ],
+    "suppressed_or_filtered": false,
+    "release_status": "NOT_RELEASED_UNROUTED"
+  },
+  "independent_parse": {
+    "counts": {
+      "board_components": 71,
+      "board_pads": 187,
+      "boundary_nets": 8,
+      "connected_pins": 180,
+      "excluded_RF_port_references": 18,
+      "nc_pads": 7,
+      "nets": 40,
+      "source_components": 71,
+      "source_pins": 187,
+      "unique_library_candidates": 5,
+      "unique_uuids": 1381,
+      "uuids": 1381
+    },
+    "issues": [],
+    "methodology": "Independent stdlib S-expression and JSON parsers; no generator or audit imports.",
+    "nc_pads": [
+      {
+        "pin": "2",
+        "ref": "D450"
+      },
+      {
+        "pin": "5",
+        "ref": "U450"
+      },
+      {
+        "pin": "5",
+        "ref": "U451"
+      },
+      {
+        "pin": "5",
+        "ref": "U452"
+      },
+      {
+        "pin": "5",
+        "ref": "U453"
+      },
+      {
+        "pin": "5",
+        "ref": "U454"
+      },
+      {
+        "pin": "5",
+        "ref": "U455"
+      }
+    ],
+    "outline": {
+      "closed": true,
+      "height_mm": 115.0,
+      "segment_count": 4,
+      "vertices": [
+        [
+          20.0,
+          20.0
+        ],
+        [
+          145.0,
+          20.0
+        ],
+        [
+          145.0,
+          135.0
+        ],
+        [
+          20.0,
+          135.0
+        ]
+      ],
+      "width_mm": 125.0
+    },
+    "passed": true,
+    "raw_DRC": {
+      "date": "2026-10-20T17:46:49",
+      "expected_unconnected_items": 140,
+      "ignored_checks": [],
+      "included_severities": [
+        "error",
+        "warning",
+        "exclusion"
+      ],
+      "schematic_parity": 0,
+      "unconnected_items": 140,
+      "unconnected_severities": {
+        "error": 140
+      },
+      "version": "10.0.7",
+      "violations": 0
+    },
+    "routing": {
+      "arc": 0,
+      "segment": 0,
+      "via": 0,
+      "zone": 0
+    },
+    "sha256": {
+      "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
+      "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod": "f341c73aac9dcb553456f68bf3fee3d26eb14acf6d8a1cae82b50418fe1d71ca",
+      "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15",
+      "build/kicad/footprints/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod": "e05c7605248c220836f642ed1f526133edf0374acdfd5bb2631e58b4e377acfb",
+      "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
+      "build/kicad/pcb-preparation/detector-core-placement.kicad_pcb": "2fe4de9b11293c0af930ee4e919f6f832fb0fc8994c51a132b2c9053df9fc862",
+      "build/kicad/pcb-preparation/drc-raw.json": "9bdefbcc05e1bca61744ac41f8295396b992390fdd6dc194f731192fcb18aa18",
+      "build/kicad/pcb-preparation/fp-lib-table": "3c70de3a601572184b4711b493dbe13a6a7aaa9ea21b98fb5654d8f660fc1119",
+      "pcb/generated/detector-core-input.json": "e0fb2d49421ffe4ac388af1e239a5342cb782f46ec4ab00048a3459b0ee428d9"
+    }
+  }
+}

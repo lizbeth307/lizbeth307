@@ -1,0 +1,127 @@
+[
+  {
+    "id": "PWR-01",
+    "boards": [
+      "PWR_MAIN",
+      "PWR_BRANCH"
+    ],
+    "requirement": "4.6 A main path and 50 °C enclosure qualification; LAB5 <=3.2 A continuous, 4 A transient acceptance. Size copper/vias/connectors from chosen stackup and thermal calculation; no trace width is asserted here.",
+    "source": "design/E1-review.md; E1-05/E1-06"
+  },
+  {
+    "id": "PWR-02",
+    "boards": [
+      "PWR_MAIN"
+    ],
+    "requirement": "Keep raw E1_CELL0/B- distinct from GND/P-. No accidental copper, mounting-hole or balance-cable BMS bypass. J102 remains DNP/service-only.",
+    "source": "design/E1-review.md; design/charger-bms-review.md"
+  },
+  {
+    "id": "PWR-03",
+    "boards": [
+      "PWR_BRANCH"
+    ],
+    "requirement": "LT3045 pair <=1 A physical total; Kelvin current-shunt routes, low-drop high-current planes, regulator exposed-pad heat flow and vendor capacitor placement are release work. LNB precision OVP and switch ratings need full temperature validation.",
+    "source": "design/E2-review.md"
+  },
+  {
+    "id": "DC-01",
+    "boards": [
+      "DC_CORE",
+      "RF_INJECTOR"
+    ],
+    "requirement": "Keep each first24.9k RF tap plus100pF at its RF port; place12 bleeds at RF ports, away from core reference/precision dividers. Core boundary carries filtered DC TAP, not50ohm RF. Original schematic nodes preserved.",
+    "source": "design/E4-review.md; E4.json DC detector groups"
+  },
+  {
+    "id": "DC-02",
+    "boards": [
+      "DC_CORE"
+    ],
+    "requirement": "Clean low-leakage SENSE layout, short divider/input routes and local ground; do not place hot bleeds/regulators beside precision network. Leakage/TCR/RF/ground error must be measured:98.630mV analytical corner has only1.370mV margin to100mV.",
+    "source": "design/E4-review.md; design/E4-detector-analysis.py"
+  },
+  {
+    "id": "DC-03",
+    "boards": [
+      "DC_CORE"
+    ],
+    "requirement": "Local100nF per comparator;1nF on each used internal reference; reference shunt/clamps/ground paths close. DCS HIGH=unsafe; LOW requires both window and both reference-good decisions. No signal pullup added on detector board; existing pullups belong E3.",
+    "source": "E4.json; https://www.ti.com/lit/ds/symlink/tlv3011.pdf"
+  },
+  {
+    "id": "DC-04",
+    "boards": [
+      "DC_CORE",
+      "RF_INJECTOR"
+    ],
+    "requirement": "Design envelope +/-30V limited DC. Verify chosen resistors rated voltage/power and PCB clearance for that envelope; no lightning/ESD compliance claim. Four249ohm bleeds dissipate0.226W each at30V and require >=0.5W parts with50C derating.",
+    "source": "design/E4-review.md; E4-06"
+  },
+  {
+    "id": "DC-05",
+    "boards": [
+      "DC_CORE"
+    ],
+    "requirement": "3V3_Q6A budget<=12mA includes E3 DCS pullups. At3.135V min supply, cold D450 VF must satisfy<=1.015V headroom for LM4040>=80uA. Each channel must reject+/-100mV over accepted temperature/supply and remain unsafe through startup/reference failure.",
+    "source": "design/E4-detector-analysis.py; design/E4-review.md"
+  },
+  {
+    "id": "RF-01",
+    "boards": [
+      "RF_HMC",
+      "RF_INJECTOR"
+    ],
+    "requirement": "50ohm geometry requires approved dielectric/copper stackup and vendor footprint reference planes. Ground EPAD/grounds with short low-inductance returns and via fences; all15 HMC RF-terminal DC blocks remain. No generic width or finished impedance claimed.",
+    "source": "https://www.analog.com/media/en/technical-documentation/data-sheets/hmc7992.pdf; design/E4-review.md"
+  },
+  {
+    "id": "RF-02",
+    "boards": [
+      "RF_HF"
+    ],
+    "requirement": "HF selector10kHz..260MHz IL<=0.3dB, RL>=21dB, isolation>=35dB at162..260MHz plus STACK LF gates. The detector996ohm bleed alone adds0.2153dB ideal loss, making this a real acceptance risk. Relays use2/3 contacts for HF/VHF.",
+    "source": "design/E4-review.md; STACK.md §5.7"
+  },
+  {
+    "id": "RF-03",
+    "boards": [
+      "RF_HMC"
+    ],
+    "requirement": "Power order GND->VDD->controls; shared3V3_Q6A,1k/100k/100pF controls,00 RF1 PARK. HMC isolation>=40dB at0.1..1.7GHz;37..40dB conditional only. X1 TX stays on internal load.",
+    "source": "design/E4-review.md"
+  },
+  {
+    "id": "IO-01",
+    "boards": [
+      "CTRL_HMI",
+      "USB_POWER"
+    ],
+    "requirement": "3.3V GPIO only; retain existing USB3/HDMI/PCIe cables/riser and their shield return. Do not create an unqualified high-speed PCB route from functional cable symbols. T7 WSON thermal condition TJ<=105C at1.5A requires copper/thermal validation.",
+    "source": "design/E3-review.md; design/E5-review.md"
+  },
+  {
+    "id": "MECH-02",
+    "boards": [
+      "CTRL_HMI",
+      "PWR_BRANCH"
+    ],
+    "requirement": "Existing mechanical source calls for MCP expanders15..20mm from TPS7A4701, PTC and buck inductors, and I2C away from switching nodes. Separate CTRL/PWR domains are candidates; if combined, preserve this separation and recheck enclosure fit.",
+    "source": "build/05-mekhanika.md §3 item15; STACK.md §5.8"
+  },
+  {
+    "id": "MECH-01",
+    "boards": [
+      "PWR_MAIN",
+      "PWR_BRANCH",
+      "CTRL_HMI",
+      "USB_POWER",
+      "RF_HMC",
+      "RF_HF",
+      "RF_INJECTOR",
+      "DC_CORE"
+    ],
+    "requirement": "All partitions are engineering candidates. Final outline, mounting, stackup, copper weight, connector MPN/orientation and enclosure proof-fit are unset. No Gerbers/drill/production DRC is authorized by this preparation output.",
+    "source": "STACK.md §5.8; build/05-mekhanika.md; build/13-pcb-preparation.md"
+  }
+]

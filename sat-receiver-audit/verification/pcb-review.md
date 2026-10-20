@@ -1,0 +1,77 @@
+# DC detector PCB placement starter — independent review
+
+**Status: UNROUTED, NOT FOR FABRICATION.** This is a concrete KiCad placement candidate for the DC detector core, not a production PCB. No Gerbers or drill files were generated. Source graphs and schematics were not changed.
+
+## Verified snapshot
+
+KiCad 10.0.7 native `pcbnew` loaded 71 real footprint candidates, saved the board and read it back. The native audit and a separate S-expression parser, which did not import the generator or its audit, both found an exact match for every source reference, physical pin number and assigned net.
+
+| Check | Result |
+|---|---:|
+| Components / numbered pads | 71 / 187 |
+| Connected pads / explicitly empty NC pads | 180 / 7 |
+| Named source nets / external boundary nets | 40 / 8 |
+| Tracks / arcs / vias / copper zones | 0 / 0 / 0 / 0 |
+| Unique UUIDs, independent parser | 1,381 / 1,381 |
+| Excluded RF-port references absent | 18 / 18 |
+| Candidate closed rectangular outline | 125 × 115 mm |
+
+The seven empty NC pads are D450.2 and U450–U455.5. The boundary retains `3V3_Q6A`, `DCS_HF`, `DCS_LBAND`, `DCS_UHF`, `E4_DCS_HF_TAP`, `E4_DCS_LBAND_TAP`, `E4_DCS_UHF_TAP` and `GND`. No connector or wire-pad numbers were invented. The filtered DC TAP nets are not RF transmission lines; the RF-port tap and bleed assemblies remain outside this core.
+
+The native SVG was XML-parsed and rendered to PNG. Visual inspection confirmed legible reference labels, separated groups, visible fabrication warnings and no clipped placement. The outline, two-layer configuration and component positions are engineering candidates; mounting, enclosure fit, stackup, routing, leakage/ground effects and thermal behavior remain unqualified.
+
+## Raw DRC
+
+The real KiCad DRC returned **exit code 5**, with **140 unconnected errors** and zero other reported violations. The board is deliberately unrouted. Five normally ignored KiCad categories were explicitly enabled as **warning** in the candidate project: `missing_courtyard`, `track_not_centered_on_via`, `tuning_profile_track_geometries`, `footprint_filters_mismatch` and `footprint_type_mismatch`. The final raw report has **`ignored_checks: []`**. No exclusions or findings were filtered out.
+
+`schematic_parity` has zero entries because the command did not request a standalone schematic parity test: this board is a subset of the full project. Instead, the input preparation audits the 180 connected source nodes against the final full-project XML netlist, and both placement audits independently compare every subset source pin to its physical PCB pad. This does not constitute a full-project board/schematic parity claim.
+
+The complete report is `build/kicad/pcb-preparation/drc-raw.json`; `placement-audit.json` contains every source-pad assignment and footprint resource hash. `verification/pcb-review.json` is the compact machine-readable review.
+
+## Footprint provenance and release gates
+
+The 71 placements use 29 R0603, 3 R0402, 18 C0603, 13 SOT-23 and 8 SOT-23-6 footprints. The **50 passive footprints are proposals requiring production MPN and land-pattern approval**; the other 21 use graph-assigned portable footprints. A matching pad count is not approval of a component purchase or assembly.
+
+The missing `Resistor_SMD:R_0402_1005Metric` resource was copied unmodified from the official KiCad 10.0.7 Ubuntu footprint package, SHA-256 `a1c25a690348180d572b73496668cffafdaecf284d6555279fa89d5e4fefa46c`. The resource SHA-256 is `e05c7605248c220836f642ed1f526133edf0374acdfd5bb2631e58b4e377acfb`. Package URL and license reference are retained in `build/kicad/pcb-preparation/footprint-provenance.json`; the existing KiCad license and design exception apply. The frozen input's three null resource-path fields are resolved explicitly in the placement audit without changing that input.
+
+Before production: select/qualify the passives, implement the eight-net physical boundary, approve outline/mounting/stackup and clearances, route and validate the sensitive DC circuit, implement the separate RF-port assemblies and complete the source's prototype threshold/leakage/temperature/ground-offset/RF/rail-off tests. The 140 raw unrouted errors must be resolved. This starter provides no manufacturing release.
+
+## Reproduction
+
+With KiCad 10 Python and `kicad-cli` installed:
+
+```sh
+python3 pcb/generate_layout.py
+python3 pcb/generate_layout.py --check
+```
+
+Independent read-only check, using only the Python standard library (no native KiCad or temporary runtime):
+
+```sh
+python3 verification/independent_pcb_check.py
+```
+
+For the locally extracted official Ubuntu runtime used here:
+
+```sh
+python3 pcb/generate_layout.py --runtime-root /tmp/kicad-runtime/root --kicad-cli /tmp/kicad-runtime/kicad-cli
+python3 pcb/generate_layout.py --runtime-root /tmp/kicad-runtime/root --check
+```
+
+`--runtime-root` re-executes with that root's `usr/lib/x86_64-linux-gnu` on `LD_LIBRARY_PATH` and `usr/lib/python3/dist-packages` on `PYTHONPATH`; no workstation path is embedded in the generator. PNG rendering additionally uses optional PyMuPDF; the native SVG remains available without it. KiCad runtime package: official `kicad_10.0.7~ubuntu24.04.1_amd64.deb`, SHA-256 `ce96f7c3bd935a021c65b301427f74c1c16b211210b49ce9b40309ce5ecfbb33`, from the official `kicad/kicad-10.0-releases` Ubuntu PPA.
+
+The final DRC command was:
+
+```sh
+kicad-cli pcb drc --format json --severity-all --all-track-errors --exit-code-violations --output build/kicad/pcb-preparation/drc-raw.json build/kicad/pcb-preparation/detector-core-placement.kicad_pcb
+```
+
+Its complete JSON is retained unmodified in `drc-raw.json`. A generation run is successful when a valid starter and raw DRC are produced; the explicit DRC exit 5 and NOT FOR FABRICATION status remain in the review. The `--check` command only performs the source/board/resource consistency audit and does not claim a DRC release.
+
+Snapshot SHA-256 values:
+
+- Input: `e0fb2d49421ffe4ac388af1e239a5342cb782f46ec4ab00048a3459b0ee428d9`
+- Board: `2fe4de9b11293c0af930ee4e919f6f832fb0fc8994c51a132b2c9053df9fc862`
+- Final raw DRC: `9bdefbcc05e1bca61744ac41f8295396b992390fdd6dc194f731192fcb18aa18`
+
+These hashes identify the reviewed snapshot. Regeneration uses new native UUIDs, so re-run the audit after any source or board change.

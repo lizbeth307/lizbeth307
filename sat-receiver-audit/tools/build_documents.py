@@ -15,6 +15,8 @@ def main():
     graphs = [json.loads(p.read_text()) for p in sorted((BASE / "design").glob("E[1-5].json"))]
     report = json.loads((BASE / "verification/validation.json").read_text())
     generated = json.loads((BASE / "build/kicad/generation-manifest.json").read_text())
+    software_path = BASE / "verification/software-tests.json"
+    software = json.loads(software_path.read_text()) if software_path.exists() else {}
     items = [dict(x, sheet=g["sheet"]) for g in graphs for x in g.get("open_items", [])]
     blockers = [x for x in items if x.get("blocking")]
     lines = ["# Ворота приймання SR-RX-v2.1", "", "Жоден стендовий тест не виконано. `OPEN` не означає, що виявлено несправність конкретного екземпляра: це умова, без підтвердження якої його не можна приймати чи підключати. Стан апаратного випуску — **BLOCKED**.", "", "Основні інструкції українською наведено в аудитах [E1](design/E1-review.md), [E2](design/E2-review.md), [E3](design/E3-review.md), [E4](design/E4-review.md), [E5](design/E5-review.md) та [таблицях монтажу](design/E5-connection-guide.md). Нижче — повний реєстр ідентифікаторів із машинного контракту.", ""]
@@ -57,6 +59,11 @@ def main():
         "hardware_readiness": False,
         "production_release": False,
         "custom_firmware_implemented_and_tested": False,
+        "custom_firmware_source_implemented": True,
+        "host_regression_status": software.get("host_regression_status", "NOT_RUN"),
+        "host_tests_passed": software.get("passed", 0),
+        "host_tests_skipped": len(software.get("skipped", [])),
+        "firmware_flashed_and_hardware_qualified": False,
         "battery_adc_calibration_valid": False,
         "gate_results": {i["id"]: "OPEN" for i in blockers},
         "startup_output_requests": {n: (1 if n == "CHG_INHIBIT" else 0) for n in sorted(controls)},
@@ -66,7 +73,7 @@ def main():
             "До апаратного приймання усі bias enables заблоковані незалежно від логічного рівня непідключеного DC-sense.",
             "Підтягнутий HIGH від відсутнього датчика не є доказом безпечного DC.",
             "Preflight DC-free вимірюється лише при вимкненому власному bias; після увімкнення bias застосовуються визначені для нього струмові й напругові вікна.",
-            "Pico GP17 через Q306 апаратно утримує спільний RESET трьох MCP при Pico boot/reset. Майбутня прошивка повинна тримати RESET при heartbeat fault; release тільки після свіжого explicit re-arm, OLAT safe-low перед IODIR. Прошивка не реалізована; повна втрата живлення Pico не покривається цим FET.",
+            "Pico GP17 через Q306 апаратно утримує спільний RESET трьох MCP при Pico boot/reset. Реалізована прошивка тримає RESET при heartbeat fault; release тільки після свіжого explicit ARM. Safe OLAT (CHG_INHIBIT=1, решта0) перед IODIR. Фізичний час і рівні не кваліфіковані; повна втрата живлення Pico не покривається цим FET.",
             "Штатний режим без чинної двоточкової калібровки батарейного ADC заборонений.",
             "При SJ1 на Adafruit INA228 VBUS вимірює VIN+ до шунта; V_N = VBUS - VSHUNT з правильним знаком струму.",
             "Стан реле K1=1,K2=1 заборонено. HMC A/B=00 вибирає RF1 PARK.",
@@ -78,7 +85,7 @@ def main():
     status = "без помилок" if not errors else f"{len(errors)} помилок; див. сирий звіт і пояснення"
     completion = f"""# SR-RX-v2.1 — передача перевіреного інженерного комплекту
 
-Редакція від 19.10.2026. Вихідний репозиторій: [lizbeth307/lizbeth307](https://github.com/lizbeth307/lizbeth307), гілка Claude `ccr-1537979d-cj7q9t`, останній збережений коміт `465318835e71eae326059f5f66e2b47232169556`.
+Редакція від 20.10.2026. Вихідний репозиторій: [lizbeth307/lizbeth307](https://github.com/lizbeth307/lizbeth307), гілка Claude `ccr-1537979d-cj7q9t`, останній збережений коміт `465318835e71eae326059f5f66e2b47232169556`.
 
 ## Що фактично передано від Claude
 
@@ -102,9 +109,9 @@ def main():
 
 Це інженерна схема та пакет перевірок. **Пристрій не зібрано, стендові результати відсутні, виробничий випуск заблоковано.** У реєстрі {len(blockers)} блокувальних умов, багато з яких стосуються одного приймального тесту або ревізії плати. Не можна перетворювати їх на PASS за результатом програмної перевірки.
 
-Початковий `sr-rx-v2.kicad_pcb` є порожнім шаблоном. Розведення PCB, Gerber, DRC готової плати та підтверджені механічні файли виробництва тут не заявлено. Наявні 8 креслень розміщення — теоретичні ескізи, які мають бути звірені з новими розмірами деталей.
+Початковий `sr-rx-v2.kicad_pcb` є порожнім шаблоном. Розведення PCB, Gerber, DRC готової плати та підтверджені механічні файли виробництва тут не заявлено. Наявні 8 креслень розміщення — теоретичні ескізи, які мають бути звірені з новими розмірами деталей. Додано [PCB-підготовку](build/13-pcb-preparation.md) та справжній placement starter DC_CORE: 71 компонент/187 контактів; траси не розведені, raw DRC не є PASS. Повні результати — verification/pcb-review.json.
 
-Власні `labd/labrx`, HMI, безпечні декодерні збірки й NPU-система описані планом встановлення; їхній робочий код не був у вихідному репозиторії та не верифікований на Q6A. [readiness-contract.json](design/readiness-contract.json) є специфікацією для реалізації, **не** встановленим захистом GPIO.
+Реалізовано [labd/labctl, Pico Supervisor і RP2040-Zero/BNO085](software/README.md), UART/CRC, I²C-монітори, інтерлоки, калібрування, приймальні записи та systemd units. Хостові перевірки: **{software.get("passed", 0)} PASS**, **{len(software.get("skipped", []))} SKIP**; фізичне встановлення/прошивання не виконано. Сервіс реально запущено й перевірено через stdio-процес; Unix socket у цьому середовищі недоступний. Повний `labrx` data plane, частина HMI, vendor decoder patches, NPU та системний образ залишаються невиконаними. [readiness-contract.json](design/readiness-contract.json) фіксує межу; його дані самі не керують GPIO.
 
 Ціни v2 від 18.10 залишено як історичну оцінку. Нові схеми мають окремий BOM-аудит; їх не названо підтвердженим кошторисом покупок.
 

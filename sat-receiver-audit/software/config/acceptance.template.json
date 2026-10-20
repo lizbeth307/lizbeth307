@@ -1,0 +1,730 @@
+{
+  "schema_version": 1,
+  "project_revision": "SR-RX-v2.1",
+  "hardware_unit_id": "",
+  "pico_serial": "",
+  "accepted_at": "",
+  "graph_sha256": {
+    "design/E1.json": "e87f79db4da0d9be7e74aa1ad2816ea99ae4ed8fd6e723ba375c1559bfd51392",
+    "design/E2.json": "adc5b67b6b53977143847d688f657364a5e300a80761d74e1dc82e34bd703c16",
+    "design/E3.json": "0a2e2e60ede923b2d0a1aa0f8484a97513c1ef36ae389d3aee365fbcf90aaac5",
+    "design/E4.json": "b05555c7a6729029f779df3ca3d0a62d71e206520a33cf7e34ffa3e2c081344d",
+    "design/E5.json": "86a9099809fbcdf365c82ecf4a239531b1b55715ee17cd1c5fb5a776c979ca05",
+    "design/readiness-contract.json": "bd30860cb3fa7fc3ade9420edf01e8f1be40296803647306c945ed0f84b3a4fd"
+  },
+  "source_sha256": {
+    "firmware/imu/__init__.py": "199b3d33d721f235d3f2c90ecbb32512e6dad7ff404241f2d9db383e43e79288",
+    "firmware/imu/device.py": "02a9a2b6e93074716375617137cdfe1bb6df9d22e5021768c59cf273aeafea2e",
+    "firmware/imu/main.py": "9d8206334bc045c022d275eb8ab75b88444ea679b6fae135fdae6a7169a5172c",
+    "firmware/imu/session.py": "350484a09ad30255d7a0f44b3c0d631726de96f5639a59443d96377bcccd424d",
+    "firmware/imu/shtp.py": "f23f08679f9847fd64a14fc73171b2e5191016b1cd665c8c5d66f90e4ee26525",
+    "firmware/pico/adapter.py": "19a19013902b19ddca40c42d3eb1db56af050d79ecf5a570aa905db54f2225f2",
+    "firmware/pico/boot.py": "d9497a15dae9944f79505f3cbce8718ff405b9aa3a9d43dfa13764e8bd56e886",
+    "firmware/pico/calibration.py": "a7106862c928540c20fa4239e3242b83ae1c25e9ae28a98248adc12996b4610d",
+    "firmware/pico/imu_relay.py": "192f8bc43cc932c036c13cdf70cc4548eb0f56fa3f7af9c940d42aabc6b6d820",
+    "firmware/pico/main.py": "2068db84d9bac3644953ef45b8c34fdc4ce923dc5244ff21615f922cc4150f4f",
+    "firmware/pico/supervisor.py": "18e8c6989c256a6de403156291ca55ef1c2f46b81c9d7c362e72b3d78d2b9764",
+    "software/pyproject.toml": "3ec630746527d10365102d4d2c74038f5586be1ed28ae247b41748ae0d2d1ce8",
+    "software/srrx/__init__.py": "ca1ef5a29d88a01729f7df02537fbe5b6d14f04fbb0510f6fdd9782dda404dd7",
+    "software/srrx/cli.py": "806fb2d9ab96db8e9b39d1f3ab4c380ef529878d5505a789a1d2d7aab3b4e712",
+    "software/srrx/commissioning.py": "85264943cde83816ca192d100008ce494a05c472e63563ba4201bf48bae75c01",
+    "software/srrx/daemon.py": "2b6e32eb91e79a0130c4abab9dc58d5d347d503e8d7180166ca7fe16b33160d2",
+    "software/srrx/demo.py": "9421ed3f95ffdc819b192d9cb9d9beb3fb6f48230ff412c1af0591a1498da0cb",
+    "software/srrx/engine.py": "900db99b63f2b9b88ef9253ae688306cb73d344cc6298235d86e7105a7a7a239",
+    "software/srrx/hardware.py": "0dbf351d7cea86b6743ec4479ae8d78604c351009dae8a9b87715b039eb133ba",
+    "software/srrx/link.py": "08cba4b57ade899eee133a370f70dc33d80752d13e25a2e745187c9d92bcda27",
+    "software/srrx/policy.py": "bfffff805fd6392055ea61d608a502728d9fb884704c7c75e32c23e1b23557f1",
+    "software/srrx/poweroff.py": "b7b9b1f78a75cae654971eebf64ec45e7d92ee45065936444b9b6040300e1046",
+    "software/srrx/provision.py": "bf4eaa04c4f28b937911014a41b8de0f1e2039519542e3a87f5e066632ae9faa",
+    "software/srrx/runtime_telemetry.py": "fd5abc6bbf9eb356b0640ece7f89132531b890e2beafdf2c40d387306797ff44",
+    "software/srrx/telemetry.py": "2427c56deab13eea2bf8f9e949982985f69e63e1d4c4bbe4b32a54d90f1a1220",
+    "software/srrx/wire.py": "00d61272927fa8dfe389cd595649c5075321b5ecc83a2ecc857cc25b6756e4f4",
+    "software/systemd/srrx-poweroff.service": "07b210a210634eccd7796c8398119c0e8a64ade933d2caa59aae654c9e152261",
+    "software/systemd/srrx.service": "9ed6a1203fec3b808a53d67d7f7ee52381a2511f87787adb28124b00dfccb261"
+  },
+  "lab5_budget": {
+    "always_on_a": null,
+    "max_lab5_a": null,
+    "evidence": {
+      "date": "",
+      "instrument": "",
+      "notes": "",
+      "artifacts": []
+    }
+  },
+  "gates": {
+    "E1-01": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E1-02": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E1-03": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E1-04": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E1-05": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E1-06": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E1-07": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E2-01": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E2-02": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E2-03": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E2-04": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E2-05": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E3-01": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E3-02": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E3-03": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E3-04": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E3-05": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E3-06": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E3-07": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E3-08": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E4-01": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E4-03": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E4-04": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E4-05": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E4-06": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E4-07": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E4-08": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E5-01": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E5-02": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E5-03": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E5-04": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E5-05": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E5-06": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E5-07": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E5-08": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "E5-09": {
+      "status": "OPEN",
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    }
+  },
+  "battery_adc": {
+    "status": "OPEN",
+    "record": {},
+    "points": [],
+    "evidence": {
+      "date": "",
+      "instrument": "",
+      "notes": "",
+      "artifacts": []
+    }
+  },
+  "firmware": {
+    "pico": {
+      "status": "OPEN",
+      "artifact": {
+        "path": "",
+        "sha256": ""
+      },
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "imu": {
+      "status": "OPEN",
+      "artifact": {
+        "path": "",
+        "sha256": ""
+      },
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    }
+  },
+  "branch_limits": {
+    "LNA1": {
+      "baseline_a": null,
+      "max_current_a": null,
+      "min_voltage_v": null,
+      "max_voltage_v": null,
+      "calibration": {
+        "status": "OPEN",
+        "unit_id": "",
+        "source": "INA3221:0x41:1",
+        "units": "SI",
+        "current_gain": null,
+        "current_offset_a": null,
+        "voltage_gain": null,
+        "voltage_offset_v": null
+      },
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "LNA2": {
+      "baseline_a": null,
+      "max_current_a": null,
+      "min_voltage_v": null,
+      "max_voltage_v": null,
+      "calibration": {
+        "status": "OPEN",
+        "unit_id": "",
+        "source": "INA3221:0x41:2",
+        "units": "SI",
+        "current_gain": null,
+        "current_offset_a": null,
+        "voltage_gain": null,
+        "voltage_offset_v": null
+      },
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "LNA3": {
+      "baseline_a": null,
+      "max_current_a": null,
+      "min_voltage_v": null,
+      "max_voltage_v": null,
+      "calibration": {
+        "status": "OPEN",
+        "unit_id": "",
+        "source": "INA3221:0x41:3",
+        "units": "SI",
+        "current_gain": null,
+        "current_offset_a": null,
+        "voltage_gain": null,
+        "voltage_offset_v": null
+      },
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "LNA4": {
+      "baseline_a": null,
+      "max_current_a": null,
+      "min_voltage_v": null,
+      "max_voltage_v": null,
+      "calibration": {
+        "status": "OPEN",
+        "unit_id": "",
+        "source": "INA3221:0x43:1",
+        "units": "SI",
+        "current_gain": null,
+        "current_offset_a": null,
+        "voltage_gain": null,
+        "voltage_offset_v": null
+      },
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "LNB": {
+      "baseline_a": null,
+      "max_current_a": null,
+      "min_voltage_v": null,
+      "max_voltage_v": null,
+      "calibration": {
+        "status": "OPEN",
+        "unit_id": "",
+        "source": "INA3221:0x43:2",
+        "units": "SI",
+        "current_gain": null,
+        "current_offset_a": null,
+        "voltage_gain": null,
+        "voltage_offset_v": null
+      },
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "BONI": {
+      "baseline_a": null,
+      "max_current_a": null,
+      "min_voltage_v": null,
+      "max_voltage_v": null,
+      "calibration": {
+        "status": "OPEN",
+        "unit_id": "",
+        "source": "INA3221:0x43:3",
+        "units": "SI",
+        "current_gain": null,
+        "current_offset_a": null,
+        "voltage_gain": null,
+        "voltage_offset_v": null
+      },
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "SB_LNA": {
+      "baseline_a": null,
+      "max_current_a": null,
+      "min_voltage_v": null,
+      "max_voltage_v": null,
+      "calibration": {
+        "status": "OPEN",
+        "unit_id": "",
+        "source": "bench_only_no_runtime_sensor",
+        "units": "SI",
+        "current_gain": null,
+        "current_offset_a": null,
+        "voltage_gain": null,
+        "voltage_offset_v": null
+      },
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "RTLA": {
+      "baseline_a": null,
+      "max_current_a": null,
+      "min_voltage_v": null,
+      "max_voltage_v": null,
+      "calibration": {
+        "status": "OPEN",
+        "unit_id": "",
+        "source": "bench_only_no_runtime_sensor",
+        "units": "SI",
+        "current_gain": null,
+        "current_offset_a": null,
+        "voltage_gain": null,
+        "voltage_offset_v": null
+      },
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "RTLB": {
+      "baseline_a": null,
+      "max_current_a": null,
+      "min_voltage_v": null,
+      "max_voltage_v": null,
+      "calibration": {
+        "status": "OPEN",
+        "unit_id": "",
+        "source": "bench_only_no_runtime_sensor",
+        "units": "SI",
+        "current_gain": null,
+        "current_offset_a": null,
+        "voltage_gain": null,
+        "voltage_offset_v": null
+      },
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "HFP": {
+      "baseline_a": null,
+      "max_current_a": null,
+      "min_voltage_v": null,
+      "max_voltage_v": null,
+      "calibration": {
+        "status": "OPEN",
+        "unit_id": "",
+        "source": "bench_only_no_runtime_sensor",
+        "units": "SI",
+        "current_gain": null,
+        "current_offset_a": null,
+        "voltage_gain": null,
+        "voltage_offset_v": null
+      },
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "LIME3V3": {
+      "baseline_a": null,
+      "max_current_a": null,
+      "min_voltage_v": null,
+      "max_voltage_v": null,
+      "calibration": {
+        "status": "OPEN",
+        "unit_id": "",
+        "source": "bench_only_no_runtime_sensor",
+        "units": "SI",
+        "current_gain": null,
+        "current_offset_a": null,
+        "voltage_gain": null,
+        "voltage_offset_v": null
+      },
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "T7": {
+      "baseline_a": null,
+      "max_current_a": null,
+      "min_voltage_v": null,
+      "max_voltage_v": null,
+      "calibration": {
+        "status": "OPEN",
+        "unit_id": "",
+        "source": "bench_only_no_runtime_sensor",
+        "units": "SI",
+        "current_gain": null,
+        "current_offset_a": null,
+        "voltage_gain": null,
+        "voltage_offset_v": null
+      },
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "LABPORT": {
+      "baseline_a": null,
+      "max_current_a": null,
+      "min_voltage_v": null,
+      "max_voltage_v": null,
+      "calibration": {
+        "status": "OPEN",
+        "unit_id": "",
+        "source": "bench_only_no_runtime_sensor",
+        "units": "SI",
+        "current_gain": null,
+        "current_offset_a": null,
+        "voltage_gain": null,
+        "voltage_offset_v": null
+      },
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    },
+    "AUX12": {
+      "baseline_a": null,
+      "max_current_a": null,
+      "min_voltage_v": null,
+      "max_voltage_v": null,
+      "calibration": {
+        "status": "OPEN",
+        "unit_id": "",
+        "source": "bench_only_no_runtime_sensor",
+        "units": "SI",
+        "current_gain": null,
+        "current_offset_a": null,
+        "voltage_gain": null,
+        "voltage_offset_v": null
+      },
+      "evidence": {
+        "date": "",
+        "instrument": "",
+        "notes": "",
+        "artifacts": []
+      }
+    }
+  }
+}

@@ -1,0 +1,58 @@
+{
+  "status": "PASS",
+  "backend": "SIMULATION",
+  "physical_tests_performed": false,
+  "scenarios": [
+    {
+      "label": "active_bias",
+      "at_ms": 1800,
+      "pico_state": "ACTIVE",
+      "last_reported_pico_state": "ACTIVE",
+      "reset": false,
+      "armed": true,
+      "LNA2": true,
+      "error": null
+    },
+    {
+      "label": "uart_lost",
+      "at_ms": 2800,
+      "pico_state": "TRIPPED",
+      "last_reported_pico_state": "ACTIVE",
+      "reset": true,
+      "armed": false,
+      "LNA2": false,
+      "error": "pico_status_timeout"
+    },
+    {
+      "label": "link_restored_no_auto_rearm",
+      "at_ms": 3800,
+      "pico_state": "TRIPPED",
+      "last_reported_pico_state": "TRIPPED",
+      "reset": true,
+      "armed": false,
+      "LNA2": false,
+      "error": "pico_HEARTBEAT_TIMEOUT"
+    },
+    {
+      "label": "explicit_recovery_outputs_off",
+      "at_ms": 5600,
+      "pico_state": "ACTIVE",
+      "last_reported_pico_state": "ACTIVE",
+      "reset": false,
+      "armed": true,
+      "LNA2": false,
+      "error": null
+    },
+    {
+      "label": "fault_latched",
+      "at_ms": 5800,
+      "pico_state": "TRIPPED",
+      "last_reported_pico_state": "TRIPPED",
+      "reset": true,
+      "armed": false,
+      "LNA2": false,
+      "error": "pico_HOST_TRIP"
+    }
+  ],
+  "encoded_wire": true
+}
