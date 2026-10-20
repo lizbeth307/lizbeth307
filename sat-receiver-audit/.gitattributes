@@ -3,3 +3,9 @@ build/kicad/svg/*.svg -whitespace
 build/kicad/pcb-preparation/*.svg -whitespace
 # Raw native command logs retain the tool's final blank lines.
 build/kicad/pcb-preparation/*-command.log -whitespace
+build/kicad/pcb-prototype/*.svg -whitespace
+build/kicad/pcb-prototype/*-command.log -whitespace
+# Unified diffs retain exact upstream context, including blank context lines.
+deployment/patches/*.patch -whitespace
+# Primary upstream source fixtures are byte-for-byte patch inputs.
+deployment/upstream-fixtures/** -whitespace

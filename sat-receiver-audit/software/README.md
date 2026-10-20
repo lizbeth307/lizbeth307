@@ -1,6 +1,22 @@
-# SR-RX — виконуване керування, редакція 20.10.2026
+# SR-RX 0.3 — керування, приймальна обробка й меню, 20.10.2026
 
 У цій редакції реалізовано Python-службу `labd`, CLI `labctl`, переносний протокол UART, Pico Supervisor і прошивку зовнішнього RP2040-Zero/BNO085. Linux-служба має реальний I²C/UART backend та окремий режим SIMULATION. За замовчуванням запускається симуляція. Апаратного приймання, встановлення на Q6A або прошивання MCU не виконано.
+
+Додано [labrx](RX.md) з RTL/HF+ bindings і FFT, [маскований спектр](SPECTRUM.md), [GNSS](LOCATION.md), [навчання](LEARNING.md), [Qt-меню](HMI.md), [декодерні адаптери](DECODERS.md) та [встановлення](DEPLOYMENT.md). Для цих функцій потрібні додаткові залежності; labd лишається на стандартній бібліотеці. Шість сторінок меню перевірено справжнім Qt offscreen. Знімки та hashes — `verification/hmi-views/`; це SIMULATION, не робота приймача на столі.
+
+## Швидкий запуск меню
+
+У власному Python-середовищі встановити `software` з extras `hmi` (NumPy/PySide6):
+
+```sh
+python3 -m venv /tmp/srrx-demo-venv
+/tmp/srrx-demo-venv/bin/pip install './software[hmi]'
+PYTHONPATH=software:. /tmp/srrx-demo-venv/bin/python -m srrx.hmi --demo
+```
+
+Демонстрація запускає справжній дочірній labd через pipes. Команду виконують із кореня повного проєкту: design/firmware є частиною комплекту, а не Python-wheel. `PYTHONPATH` вибирає саме це дерево джерел і його графи. У меню можна явно ARM/HOLD, вибирати routes, створити SIM-спектр, позначити дозволені ділянки й навчити CPU-модель. Немає автоматичного дозволу фізичного приймача. Для офлайн-встановлення використовують перевірений wheel cache з deployment, а не завантажують пакети наосліп на пристрій.
+
+Повна хостова перевірка: `python3 tools/run_tests_offline.py`. Тестовий процес блокує IPv4/IPv6 sockets; ONNX telemetry opt-out встановлюється до import. Якщо необов'язкові Qt/ONNX залежності відсутні, їхні перевірки мають явний SKIP; це видно у звіті. Пакет джерел MCU: `python3 tools/build_firmware.py`.
 
 Дані схеми залишаються в `design/E1.json`–`E5.json`. Карта MCP завантажується з E3; інтерлоки, бюджети та апаратні обмеження беруться з актуальних E1–E5, а не зі старої таблиці STACK. Протокол — [PROTOCOL.md](PROTOCOL.md), незалежний огляд — [INTEGRATION-REVIEW.md](INTEGRATION-REVIEW.md). Точні поточні лічильники тестів і SHA256 — `verification/software-tests.json`.
 
@@ -9,7 +25,7 @@
 Python 3.11+ на Linux. Із кореня `sat-receiver-audit`:
 
 ```bash
-python3 tools/check_software.py
+python3 tools/run_tests_offline.py
 PYTHONPATH=software:. python3 -m srrx.demo --output verification/software-simulation.json
 ```
 
@@ -86,6 +102,6 @@ python3 tools/build_firmware.py
 
 ## Межа цієї реалізації
 
-Сервіс є контролером живлення/комутації й не відкриває SDR. Повний `labrx` data plane, vendor patches приймальних програм, Qt/encoder menu/VEML7700 HMI, NPU-моделі й установлений A/B образ Q6A залишаються окремими невиконаними частинами початкового плану. Кнопка живлення, охолодження та CRC-потік IMU вже реалізовані в Pico/IMU, решта HMI не має права самостійно дозволяти EN.
+`labd` є контролером живлення/комутації; SDR відкриває окремий приймальний процес. Реалізовані FFT/RAM pipeline, bindings RTL/HF+, GNSS, спектральне навчання та меню не замінюють весь початковий C++ data plane 56 MS/s, повний каталог декодерів, підтверджений HTP/QAIRT runtime чи встановлений A/B образ. Lime runtime заблокований; експериментальні vendor patches є вихідним кодом для аудиту. Приймання Q6A, реальних SDR/дисплея й фізичних входів не виконано. HMI не має права самостійно дозволяти EN.
 
 Прошивки не змінюють відому апаратну межу: повна втрата Pico3V3 при живій Q6A відпускає Q306 і не покривається цим reset actuator. Під час MCP RESET CHG_INHIBIT також high impedance — зарядка залишається під автономним апаратним контролем. Власне приймання батарейного/зарядного вузла, ISR/OS latency, GPIO рівнів, RF/термо й backfeed не виконано. Деталі: [OPEN_ITEMS](../OPEN_ITEMS.md).

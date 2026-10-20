@@ -1,0 +1,661 @@
+{
+  "schema_version": 1,
+  "project_revision": "SR-RX-v2.1",
+  "generated_on": "2026-10-20",
+  "target": {
+    "board": "Radxa Dragon Q6A",
+    "architecture": "aarch64",
+    "distribution_id": "ubuntu",
+    "distribution_codename": "noble",
+    "kernel": "6.18.2-4-qcom",
+    "base_image": "Radxa OS r2",
+    "base_image_sha256": "c83ce7f610104f6c0185f88bf10c405acb995f46e95a9c94419065db0cf964cb",
+    "base_image_primary_url": "https://api.github.com/repos/radxa-build/radxa-dragon-q6a/releases/tags/rsdk-r2"
+  },
+  "status": "BLOCKED",
+  "notes": [
+    "Refs with ref_verified=true were resolved through official repository API. Acquired full source archives record actual SHA256/size/URL; null hashes remain unresolved.",
+    "Git commit/blob SHA1 is not an archive SHA256.",
+    "Default with Lime remains specified, but Lime runtime backend and hardware release remain disabled pending listed audits.",
+    "Null hashes or unresolved pins prevent offline/release verification; never substitute current/latest."
+  ],
+  "components": [
+    {
+      "id": "limesuiteng",
+      "version": "25.1.0+git37cb183+lab1",
+      "repo": "myriadrf/LimeSuiteNG",
+      "ref": "37cb1833e35955f7072c0fb91642d14ae5515f28",
+      "commit": "37cb1833e35955f7072c0fb91642d14ae5515f28",
+      "ref_verified": true,
+      "role": "default_with_lime",
+      "recipe": "Lime patch applied; BUILD_GUI/CLI/AMARISOFT/GNURADIO/HDSDR=OFF",
+      "release_blockers": [
+        "full native/raw-register TX audit",
+        "arm64 compile/link and Soapy TX rejection",
+        "TXEN after configure/calibrate; conducted leakage test",
+        "Lime firmware archive hashes and DKMS source lock"
+      ],
+      "upstream_url": "https://github.com/myriadrf/LimeSuiteNG",
+      "source_archive_sha256": "818cb504284991acf69cc214469d695eff35b35244b73ace23768a95c7d9c749",
+      "source_cache_path": "sources/limesuiteng.tar.gz",
+      "primary_url": "https://github.com/myriadrf/LimeSuiteNG/commit/37cb1833e35955f7072c0fb91642d14ae5515f28",
+      "source_archive_size": 13197691,
+      "source_archive_url": "https://github.com/myriadrf/LimeSuiteNG/archive/37cb1833e35955f7072c0fb91642d14ae5515f28.tar.gz"
+    },
+    {
+      "id": "rtlsdr",
+      "version": "2.0.3-0+lab1",
+      "repo": "osmocom/rtl-sdr",
+      "ref": "v2.0.3",
+      "commit": "797f8143266d983c56d8f35d2d442527529dd8a5",
+      "ref_verified": true,
+      "recipe": "revert 7ebcb04; bias patch; ENABLE_ZEROCOPY=OFF; DETACH_KERNEL_DRIVER=ON; SONAME2",
+      "release_blockers": [
+        "37 exported API comparison with noble2.0.1",
+        "arm64 zero-copy/SONAME/runtime V4L tests",
+        "GPIO0 ON permanently disabled in this patch; token bridge not implemented"
+      ],
+      "upstream_url": "https://github.com/osmocom/rtl-sdr",
+      "source_archive_sha256": "6c31a5d92554959ea3e5b9bf5ba97d1a96561d397fa66a881bf88276a0e3abde",
+      "source_cache_path": "sources/rtlsdr.tar.gz",
+      "primary_url": "https://github.com/osmocom/rtl-sdr/commit/797f8143266d983c56d8f35d2d442527529dd8a5",
+      "revert_commit": "7ebcb041f2ce887ef4d1a64607558889a86ff169",
+      "source_archive_size": 138362,
+      "source_archive_url": "https://github.com/osmocom/rtl-sdr/archive/797f8143266d983c56d8f35d2d442527529dd8a5.tar.gz"
+    },
+    {
+      "id": "airspyhf",
+      "version": "1.6.8-4build1",
+      "repo": "airspy/airspyhf",
+      "ref": "1.6.8",
+      "commit": "8891387edddcd185e2949e9814e9ef35f46f0722",
+      "ref_verified": true,
+      "recipe": "Ubuntu packaging SONAME1; default lacks bias-tee API; no upstream make install",
+      "release_blockers": [
+        "Ubuntu source/deb archive hashes",
+        "HF+ firmware R4.0.7 minimum/R5.0.1 target and ppb verification"
+      ],
+      "upstream_url": "https://github.com/airspy/airspyhf",
+      "source_archive_sha256": "e4a886d8060ce5803fa13ec8294a3f60cdf21488eedcf46fcd6a27571a124c3b",
+      "source_cache_path": "sources/airspyhf.tar.gz",
+      "primary_url": "https://github.com/airspy/airspyhf/commit/8891387edddcd185e2949e9814e9ef35f46f0722",
+      "source_archive_size": 33550,
+      "source_archive_url": "https://github.com/airspy/airspyhf/archive/8891387edddcd185e2949e9814e9ef35f46f0722.tar.gz"
+    },
+    {
+      "id": "satdump",
+      "version": "2.0.0~alpha+git20260929+lab1",
+      "repo": "SatDump/SatDump",
+      "ref": "1aedd602055c154401384a8cc7876713bb371254",
+      "commit": "1aedd602055c154401384a8cc7876713bb371254",
+      "ref_verified": true,
+      "recipe": "cherry-pick c0b6f88 and6b5957f; only five pipelines and file/net_source",
+      "release_blockers": [
+        "source archive hash",
+        "packaging/allowlist/privacy patch build and fixture tests"
+      ],
+      "upstream_url": "https://github.com/SatDump/SatDump",
+      "source_archive_sha256": "122267dbf038c541a78ea19c50071eec585c8fafb769617dcb7a4cb4c6f73235",
+      "source_cache_path": "sources/satdump.tar.gz",
+      "primary_url": "https://github.com/SatDump/SatDump/commit/1aedd602055c154401384a8cc7876713bb371254",
+      "source_archive_size": 101357307,
+      "source_archive_url": "https://github.com/SatDump/SatDump/archive/1aedd602055c154401384a8cc7876713bb371254.tar.gz"
+    },
+    {
+      "id": "gr-satellites",
+      "version": "5.10.0~git20260922-0lab1",
+      "repo": "daniestevez/gr-satellites",
+      "ref": "4210dc45c9725e30d8f612eeec614f3f353cd09c",
+      "commit": "4210dc45c9725e30d8f612eeec614f3f353cd09c",
+      "ref_verified": true,
+      "recipe": "submit_tlm=no; GR_SATELLITES_SUBMIT_TLM=0",
+      "release_blockers": [
+        "source archive hash",
+        "packaging/allowlist/privacy patch build and fixture tests"
+      ],
+      "upstream_url": "https://github.com/daniestevez/gr-satellites",
+      "source_archive_sha256": "7472908706c9aee8aee388dcb6b7bde4eff1a16f907134883d9da810ff8ab28d",
+      "source_cache_path": "sources/gr-satellites.tar.gz",
+      "primary_url": "https://github.com/daniestevez/gr-satellites/commit/4210dc45c9725e30d8f612eeec614f3f353cd09c",
+      "source_archive_size": 4025462,
+      "source_archive_url": "https://github.com/daniestevez/gr-satellites/archive/4210dc45c9725e30d8f612eeec614f3f353cd09c.tar.gz"
+    },
+    {
+      "id": "sdrpp",
+      "version": "git8c9f5ee+lab1",
+      "repo": "AlexandreRouma/SDRPlusPlus",
+      "ref": "8c9f5ee8fe405775bfcd62c8c8f8c0fc928a64af",
+      "commit": "8c9f5ee8fe405775bfcd62c8c8f8c0fc928a64af",
+      "ref_verified": true,
+      "recipe": "build allowlist in build07\u00a713; no recorder/iq_exporter/network_sink",
+      "release_blockers": [
+        "source archive hash",
+        "packaging/allowlist/privacy patch build and fixture tests"
+      ],
+      "upstream_url": "https://github.com/AlexandreRouma/SDRPlusPlus",
+      "source_archive_sha256": "c3d884bb146957792823068cea62c78d11f33eda3d537f12b0c31484bde1eb67",
+      "source_cache_path": "sources/sdrpp.tar.gz",
+      "primary_url": "https://github.com/AlexandreRouma/SDRPlusPlus/commit/8c9f5ee8fe405775bfcd62c8c8f8c0fc928a64af",
+      "source_archive_size": 3815934,
+      "source_archive_url": "https://github.com/AlexandreRouma/SDRPlusPlus/archive/8c9f5ee8fe405775bfcd62c8c8f8c0fc928a64af.tar.gz"
+    },
+    {
+      "id": "sdrangel",
+      "version": "7.27.2+lab1",
+      "repo": "f4exb/sdrangel",
+      "ref": "v7.27.2",
+      "commit": "97e9e21fe9754b363ae70caac822802d908e8acd",
+      "ref_verified": true,
+      "recipe": "Qt5 RX-only plugin allowlist; all channeltx/samplesink/samplemimo/channelmimo excluded",
+      "release_blockers": [
+        "source archive hash",
+        "packaging/allowlist/privacy patch build and fixture tests"
+      ],
+      "upstream_url": "https://github.com/f4exb/sdrangel",
+      "source_archive_sha256": null,
+      "source_cache_path": "sources/sdrangel.tar.gz",
+      "primary_url": "https://github.com/f4exb/sdrangel/commit/97e9e21fe9754b363ae70caac822802d908e8acd",
+      "archive_acquisition_note": "over128MiBcap"
+    },
+    {
+      "id": "soapyairspyhf",
+      "version": "0.2.1+lab1",
+      "repo": "pothosware/SoapyAirspyHF",
+      "ref": "soapy-airspyhf-0.2.1",
+      "commit": "0b3daf0b47c3c1d0857c873bb184f6a86a37333c",
+      "ref_verified": true,
+      "recipe": "SoapySDR0.8.1 + Ubuntu SONAME1 AirspyHF",
+      "release_blockers": [
+        "source archive hash",
+        "packaging/allowlist/privacy patch build and fixture tests"
+      ],
+      "upstream_url": "https://github.com/pothosware/SoapyAirspyHF",
+      "source_archive_sha256": "32abfbbed456d095027a235153fac9e92106a310cc8614b2f36bef5d78189be1",
+      "source_cache_path": "sources/soapyairspyhf.tar.gz",
+      "primary_url": "https://github.com/pothosware/SoapyAirspyHF/commit/0b3daf0b47c3c1d0857c873bb184f6a86a37333c",
+      "source_archive_size": 12129,
+      "source_archive_url": "https://github.com/pothosware/SoapyAirspyHF/archive/0b3daf0b47c3c1d0857c873bb184f6a86a37333c.tar.gz"
+    },
+    {
+      "id": "readsb",
+      "version": "3.16.17+lab1",
+      "repo": "wiedehopf/readsb",
+      "ref": "v3.16.17",
+      "commit": "094720939c01943de82b14df6f42f67fff1cd514",
+      "ref_verified": true,
+      "recipe": "civil-only dbFlags/milRange gate; localhost; aircraft db\u226490days",
+      "release_blockers": [
+        "source archive hash",
+        "packaging/allowlist/privacy patch build and fixture tests"
+      ],
+      "upstream_url": "https://github.com/wiedehopf/readsb",
+      "source_archive_sha256": "faf70a419aac546e719e6293c52f55c891ea24a6745373f1c3d04191f2d0b81a",
+      "source_cache_path": "sources/readsb.tar.gz",
+      "primary_url": "https://github.com/wiedehopf/readsb/commit/094720939c01943de82b14df6f42f67fff1cd514",
+      "source_archive_size": 417062,
+      "source_archive_url": "https://github.com/wiedehopf/readsb/archive/094720939c01943de82b14df6f42f67fff1cd514.tar.gz"
+    },
+    {
+      "id": "ais-catcher",
+      "version": "0.70+lab1",
+      "repo": "jvde-github/AIS-catcher",
+      "ref": "v0.70",
+      "commit": "8833c64b3da0c42e9a724b9bd13eaab2fffadcca",
+      "ref_verified": true,
+      "recipe": "no -X; static type known and\u226035 before display/log",
+      "release_blockers": [
+        "source archive hash",
+        "packaging/allowlist/privacy patch build and fixture tests"
+      ],
+      "upstream_url": "https://github.com/jvde-github/AIS-catcher",
+      "source_archive_sha256": "597ec260638d55e51d4aea5aeccd8b4a8d9f514a1bdf637870363def645eba3c",
+      "source_cache_path": "sources/ais-catcher.tar.gz",
+      "primary_url": "https://github.com/jvde-github/AIS-catcher/commit/8833c64b3da0c42e9a724b9bd13eaab2fffadcca",
+      "source_archive_size": 1405086,
+      "source_archive_url": "https://github.com/jvde-github/AIS-catcher/archive/8833c64b3da0c42e9a724b9bd13eaab2fffadcca.tar.gz"
+    },
+    {
+      "id": "radiosonde-auto-rx",
+      "version": "1.9.0+lab1",
+      "repo": "projecthorus/radiosonde_auto_rx",
+      "ref": "v1.9.0",
+      "commit": "53d03c72ad18ce4357c0cedd1f4acf2bf1efb36e",
+      "ref_verified": true,
+      "recipe": "uploads off; localhost; serial-bound",
+      "release_blockers": [
+        "source archive hash",
+        "packaging/allowlist/privacy patch build and fixture tests"
+      ],
+      "upstream_url": "https://github.com/projecthorus/radiosonde_auto_rx",
+      "source_archive_sha256": "804e83e06e7ec30074d6fcfd6852b3262cc76848005ef83be6b4bd00b10f84dc",
+      "source_cache_path": "sources/radiosonde-auto-rx.tar.gz",
+      "primary_url": "https://github.com/projecthorus/radiosonde_auto_rx/commit/53d03c72ad18ce4357c0cedd1f4acf2bf1efb36e",
+      "source_archive_size": 1971621,
+      "source_archive_url": "https://github.com/projecthorus/radiosonde_auto_rx/archive/53d03c72ad18ce4357c0cedd1f4acf2bf1efb36e.tar.gz"
+    },
+    {
+      "id": "slowrx",
+      "version": "gitc94327a+lab1",
+      "repo": "sjlongland/slowrx-daemon",
+      "ref": "c94327ae40ab970b0bea20ebb378d71f8e69b98a",
+      "commit": null,
+      "ref_verified": false,
+      "recipe": "decode only; pinned STACK ref returned404, disabled",
+      "release_blockers": [
+        "STACK source ref unresolved: primary404; disabled"
+      ],
+      "upstream_url": "https://github.com/sjlongland/slowrx-daemon",
+      "source_archive_sha256": null,
+      "source_cache_path": "sources/slowrx.tar.gz",
+      "primary_url": "https://github.com/sjlongland/slowrx-daemon"
+    },
+    {
+      "id": "soapysdr",
+      "version": "0.8.1-4build1",
+      "repo": "pothosware/SoapySDR",
+      "ref": "soapy-sdr-0.8.1",
+      "commit": "1cf5a539a21414ff509ff7d0eedfc5fa8edb90c6",
+      "ref_verified": true,
+      "recipe": "only RTLSDR/AirspyHF and reviewed patched Lime plugins; no remote",
+      "release_blockers": [
+        "source archive hash",
+        "packaging/allowlist/privacy patch build and fixture tests"
+      ],
+      "upstream_url": "https://github.com/pothosware/SoapySDR",
+      "source_archive_sha256": "e680e9a6f741764b9c31b0520e577d91ad4197968d50c78db601c8a59e9ba72a",
+      "source_cache_path": "sources/soapysdr.tar.gz",
+      "primary_url": "https://github.com/pothosware/SoapySDR/commit/1cf5a539a21414ff509ff7d0eedfc5fa8edb90c6",
+      "source_archive_size": 131334,
+      "source_archive_url": "https://github.com/pothosware/SoapySDR/archive/1cf5a539a21414ff509ff7d0eedfc5fa8edb90c6.tar.gz"
+    },
+    {
+      "id": "la9310-limesdr",
+      "version": "0.2.1",
+      "upstream_url": null,
+      "ref": null,
+      "commit": null,
+      "ref_verified": false,
+      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "release_blockers": [
+        "primary pin/package artifact verification unresolved",
+        "source and binary archive hashes",
+        "isolated arm64 recipe and acceptance tests"
+      ],
+      "source_archive_sha256": null,
+      "source_cache_path": "sources/la9310-limesdr.tar.gz",
+      "primary_url": null
+    },
+    {
+      "id": "la9310-uart",
+      "version": "1.0.0",
+      "upstream_url": null,
+      "ref": null,
+      "commit": null,
+      "ref_verified": false,
+      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "release_blockers": [
+        "primary pin/package artifact verification unresolved",
+        "source and binary archive hashes",
+        "isolated arm64 recipe and acceptance tests"
+      ],
+      "source_archive_sha256": null,
+      "source_cache_path": "sources/la9310-uart.tar.gz",
+      "primary_url": null
+    },
+    {
+      "id": "gnuradio",
+      "version": "3.10.9.2-1.1ubuntu2",
+      "upstream_url": "https://launchpad.net/ubuntu/+source/gnuradio",
+      "ref": null,
+      "commit": null,
+      "ref_verified": false,
+      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "release_blockers": [
+        "primary pin/package artifact verification unresolved",
+        "source and binary archive hashes",
+        "isolated arm64 recipe and acceptance tests"
+      ],
+      "source_archive_sha256": null,
+      "source_cache_path": "sources/gnuradio.tar.gz",
+      "primary_url": "https://launchpad.net/ubuntu/+source/gnuradio"
+    },
+    {
+      "id": "volk",
+      "version": "3.1.2-1.1build1",
+      "upstream_url": "https://launchpad.net/ubuntu/+source/volk",
+      "ref": null,
+      "commit": null,
+      "ref_verified": false,
+      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "release_blockers": [
+        "primary pin/package artifact verification unresolved",
+        "source and binary archive hashes",
+        "isolated arm64 recipe and acceptance tests"
+      ],
+      "source_archive_sha256": null,
+      "source_cache_path": "sources/volk.tar.gz",
+      "primary_url": "https://launchpad.net/ubuntu/+source/volk"
+    },
+    {
+      "id": "gnss-sdr",
+      "version": "0.0.19",
+      "upstream_url": "https://github.com/gnss-sdr/gnss-sdr",
+      "ref": "v0.0.19",
+      "commit": "1ddd4562723040fd66cb334b578a5b69455625f4",
+      "ref_verified": true,
+      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "release_blockers": [
+        "primary pin/package artifact verification unresolved",
+        "source and binary archive hashes",
+        "isolated arm64 recipe and acceptance tests"
+      ],
+      "source_archive_sha256": "53e7b246ee83dc215c196dd6c4dd3e5f250179f7f3e192a0984fa646584e7105",
+      "source_cache_path": "sources/gnss-sdr.tar.gz",
+      "primary_url": "https://github.com/gnss-sdr/gnss-sdr/commit/1ddd4562723040fd66cb334b578a5b69455625f4",
+      "repo": "gnss-sdr/gnss-sdr",
+      "source_archive_size": 4088619,
+      "source_archive_url": "https://github.com/gnss-sdr/gnss-sdr/archive/1ddd4562723040fd66cb334b578a5b69455625f4.tar.gz"
+    },
+    {
+      "id": "virgo",
+      "version": "3.8.9",
+      "upstream_url": "https://github.com/varenius/virgo",
+      "ref": null,
+      "commit": null,
+      "ref_verified": false,
+      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "release_blockers": [
+        "primary pin/package artifact verification unresolved",
+        "source and binary archive hashes",
+        "isolated arm64 recipe and acceptance tests"
+      ],
+      "source_archive_sha256": null,
+      "source_cache_path": "sources/virgo.tar.gz",
+      "primary_url": "https://github.com/varenius/virgo"
+    },
+    {
+      "id": "gpsd",
+      "version": "3.25-3ubuntu3.2",
+      "upstream_url": "https://launchpad.net/ubuntu/+source/gpsd",
+      "ref": null,
+      "commit": null,
+      "ref_verified": false,
+      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "release_blockers": [
+        "primary pin/package artifact verification unresolved",
+        "source and binary archive hashes",
+        "isolated arm64 recipe and acceptance tests"
+      ],
+      "source_archive_sha256": null,
+      "source_cache_path": "sources/gpsd.tar.gz",
+      "primary_url": "https://launchpad.net/ubuntu/+source/gpsd"
+    },
+    {
+      "id": "chrony",
+      "version": "4.5-1ubuntu4.2",
+      "upstream_url": "https://launchpad.net/ubuntu/+source/chrony",
+      "ref": null,
+      "commit": null,
+      "ref_verified": false,
+      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "release_blockers": [
+        "primary pin/package artifact verification unresolved",
+        "source and binary archive hashes",
+        "isolated arm64 recipe and acceptance tests"
+      ],
+      "source_archive_sha256": null,
+      "source_cache_path": "sources/chrony.tar.gz",
+      "primary_url": "https://launchpad.net/ubuntu/+source/chrony"
+    },
+    {
+      "id": "openwebrx-plus",
+      "version": "1.2.126+lab1",
+      "upstream_url": "https://github.com/luarvique/openwebrx",
+      "ref": "1.2.126",
+      "commit": "f2a8feca17afd9e983af10f1794a3283a146c5bd",
+      "ref_verified": true,
+      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "release_blockers": [
+        "primary pin/package artifact verification unresolved",
+        "source and binary archive hashes",
+        "isolated arm64 recipe and acceptance tests"
+      ],
+      "source_archive_sha256": "005ae3ec4ee1236afa0708894f6fd4d9cbee1d2b4185af3b5eb161468bf3f581",
+      "source_cache_path": "sources/openwebrx-plus.tar.gz",
+      "primary_url": "https://github.com/luarvique/openwebrx/commit/f2a8feca17afd9e983af10f1794a3283a146c5bd",
+      "repo": "luarvique/openwebrx",
+      "source_archive_size": 1528305,
+      "source_archive_url": "https://github.com/luarvique/openwebrx/archive/f2a8feca17afd9e983af10f1794a3283a146c5bd.tar.gz"
+    },
+    {
+      "id": "redsea",
+      "version": "1.3.1",
+      "upstream_url": "https://github.com/windytan/redsea",
+      "ref": "v1.3.1",
+      "commit": "4cc27df9939798e800c4ff7cb484be6d9bf68b4d",
+      "ref_verified": true,
+      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "release_blockers": [
+        "primary pin/package artifact verification unresolved",
+        "source and binary archive hashes",
+        "isolated arm64 recipe and acceptance tests"
+      ],
+      "source_archive_sha256": "2d44e6cbce9e52ec1fd03437fa3ec3acc5d48d6c05f4e13939d9c160e7d5f724",
+      "source_cache_path": "sources/redsea.tar.gz",
+      "primary_url": "https://github.com/windytan/redsea/commit/4cc27df9939798e800c4ff7cb484be6d9bf68b4d",
+      "repo": "windytan/redsea",
+      "source_archive_size": 130721,
+      "source_archive_url": "https://github.com/windytan/redsea/archive/4cc27df9939798e800c4ff7cb484be6d9bf68b4d.tar.gz"
+    },
+    {
+      "id": "welle-io",
+      "version": "2.4",
+      "upstream_url": "https://github.com/AlbrechtL/welle.io",
+      "ref": "v2.4",
+      "commit": "0aacf578d77d79212483cd6fce436fb66523f63f",
+      "ref_verified": true,
+      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "release_blockers": [
+        "primary pin/package artifact verification unresolved",
+        "source and binary archive hashes",
+        "isolated arm64 recipe and acceptance tests"
+      ],
+      "source_archive_sha256": "150ecf2b4839a322cea7bac65d6f23e1679572079225870a9a8017c992791023",
+      "source_cache_path": "sources/welle-io.tar.gz",
+      "primary_url": "https://github.com/AlbrechtL/welle.io/commit/0aacf578d77d79212483cd6fce436fb66523f63f",
+      "repo": "AlbrechtL/welle.io",
+      "source_archive_size": 6765868,
+      "source_archive_url": "https://github.com/AlbrechtL/welle.io/archive/0aacf578d77d79212483cd6fce436fb66523f63f.tar.gz"
+    },
+    {
+      "id": "gpredict",
+      "version": "2.6+git20261011+lab1",
+      "upstream_url": "https://github.com/csete/gpredict",
+      "ref": "1d80049b0fecc06a18378d88f09b1d154a070234",
+      "commit": "1d80049b0fecc06a18378d88f09b1d154a070234",
+      "ref_verified": true,
+      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "release_blockers": [
+        "primary pin/package artifact verification unresolved",
+        "source and binary archive hashes",
+        "isolated arm64 recipe and acceptance tests"
+      ],
+      "source_archive_sha256": "4b0dadbc059fe231ad9c3fc179ef2a327a4137ea25c23054ac9e47f3d140ca9a",
+      "source_cache_path": "sources/gpredict.tar.gz",
+      "primary_url": "https://github.com/csete/gpredict/commit/1d80049b0fecc06a18378d88f09b1d154a070234",
+      "repo": "csete/gpredict",
+      "source_archive_size": 7719554,
+      "source_archive_url": "https://github.com/csete/gpredict/archive/1d80049b0fecc06a18378d88f09b1d154a070234.tar.gz"
+    },
+    {
+      "id": "wsjt-decoders",
+      "version": "2.7.0+lab1",
+      "upstream_url": "https://git.code.sf.net/p/wsjt/wsjtx",
+      "ref": "b4f9a43",
+      "commit": null,
+      "ref_verified": false,
+      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "release_blockers": [
+        "primary pin/package artifact verification unresolved",
+        "source and binary archive hashes",
+        "isolated arm64 recipe and acceptance tests"
+      ],
+      "source_archive_sha256": null,
+      "source_cache_path": "sources/wsjt-decoders.tar.gz",
+      "primary_url": "https://git.code.sf.net/p/wsjt/wsjtx"
+    },
+    {
+      "id": "nanovna-saver",
+      "version": "git3445a0a",
+      "upstream_url": "https://github.com/NanoVNA-Saver/nanovna-saver",
+      "ref": "3445a0a",
+      "commit": "3445a0ab86161f9c886c9d6f215eb57cab9b6f45",
+      "ref_verified": true,
+      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "release_blockers": [
+        "primary pin/package artifact verification unresolved",
+        "source and binary archive hashes",
+        "isolated arm64 recipe and acceptance tests"
+      ],
+      "source_archive_sha256": "e8b1796b7ae06a0245a44060bd9f8135f4228aab3b56387e34f7822241071e42",
+      "source_cache_path": "sources/nanovna-saver.tar.gz",
+      "primary_url": "https://github.com/NanoVNA-Saver/nanovna-saver/commit/3445a0ab86161f9c886c9d6f215eb57cab9b6f45",
+      "repo": "NanoVNA-Saver/nanovna-saver",
+      "source_archive_size": 683475,
+      "source_archive_url": "https://github.com/NanoVNA-Saver/nanovna-saver/archive/3445a0ab86161f9c886c9d6f215eb57cab9b6f45.tar.gz"
+    },
+    {
+      "id": "qttinysa",
+      "version": "2.0.1",
+      "upstream_url": "https://github.com/g4ixt/QtTinySA",
+      "ref": "v2.0.1",
+      "commit": "4a31b823a98b8200f9bde38e314648c5b22d90e6",
+      "ref_verified": true,
+      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "release_blockers": [
+        "primary pin/package artifact verification unresolved",
+        "source and binary archive hashes",
+        "isolated arm64 recipe and acceptance tests"
+      ],
+      "source_archive_sha256": "d30b54bdadb9ef026c251094d4b7943258b57f97e1baa7c0f820b7f0d469fc25",
+      "source_cache_path": "sources/qttinysa.tar.gz",
+      "primary_url": "https://github.com/g4ixt/QtTinySA/commit/4a31b823a98b8200f9bde38e314648c5b22d90e6",
+      "repo": "g4ixt/QtTinySA",
+      "source_archive_size": 14580140,
+      "source_archive_url": "https://github.com/g4ixt/QtTinySA/archive/4a31b823a98b8200f9bde38e314648c5b22d90e6.tar.gz"
+    },
+    {
+      "id": "qairt",
+      "version": "2.42.0.251225 / qcom-qnn-sdk-v68 0.1.0-2",
+      "upstream_url": null,
+      "ref": null,
+      "commit": null,
+      "ref_verified": false,
+      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "release_blockers": [
+        "primary pin/package artifact verification unresolved",
+        "source and binary archive hashes",
+        "isolated arm64 recipe and acceptance tests"
+      ],
+      "source_archive_sha256": null,
+      "source_cache_path": "sources/qairt.tar.gz",
+      "primary_url": null
+    },
+    {
+      "id": "labwc",
+      "version": "0.7.4+lab1",
+      "upstream_url": "https://github.com/labwc/labwc",
+      "ref": "6ab9d3f",
+      "commit": "6ab9d3fe464b31eed25fe2126d6b0dfb6cd0bff4",
+      "ref_verified": true,
+      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "release_blockers": [
+        "primary pin/package artifact verification unresolved",
+        "source and binary archive hashes",
+        "isolated arm64 recipe and acceptance tests"
+      ],
+      "source_archive_sha256": "9cc9d75b43b3dcde96ab842f59ed31e322d10473088438781beaa1c0fcbad0de",
+      "source_cache_path": "sources/labwc.tar.gz",
+      "primary_url": "https://github.com/labwc/labwc/commit/6ab9d3fe464b31eed25fe2126d6b0dfb6cd0bff4",
+      "repo": "labwc/labwc",
+      "source_archive_size": 566087,
+      "source_archive_url": "https://github.com/labwc/labwc/archive/6ab9d3fe464b31eed25fe2126d6b0dfb6cd0bff4.tar.gz"
+    }
+  ],
+  "artifacts": [
+    {
+      "name": "linux-headers-6.18.2-4-qcom_6.18.2-4_arm64.deb",
+      "sha256": "696e4279fe530e6974c5b3e388e41f82e6c02aa617cbe009115561f4a74fef2d",
+      "size": 9025048,
+      "url": "https://github.com/radxa-pkg/linux-qcom/releases/download/6.18.2-4/linux-headers-6.18.2-4-qcom_6.18.2-4_arm64.deb",
+      "id": "linux-headers-6.18.2-4-qcom",
+      "cache_path": "debs/linux-headers-6.18.2-4-qcom_6.18.2-4_arm64.deb",
+      "digest_source": "https://api.github.com/repos/radxa-pkg/linux-qcom/releases/tags/6.18.2-4",
+      "verification": "official release asset digest; downloaded bytes still need cache verification"
+    },
+    {
+      "name": "linux-headers-radxa-dragon-q6a_6.18.2-4_all.deb",
+      "sha256": "f8d821b31478d090fde255b8b7dae35ae945a293a44e80d4a66ee5ace3534d46",
+      "size": 2604,
+      "url": "https://github.com/radxa-pkg/linux-qcom/releases/download/6.18.2-4/linux-headers-radxa-dragon-q6a_6.18.2-4_all.deb",
+      "id": "linux-headers-radxa-dragon-q6a",
+      "cache_path": "debs/linux-headers-radxa-dragon-q6a_6.18.2-4_all.deb",
+      "digest_source": "https://api.github.com/repos/radxa-pkg/linux-qcom/releases/tags/6.18.2-4",
+      "verification": "official release asset digest; downloaded bytes still need cache verification"
+    },
+    {
+      "name": "linux-image-6.18.2-4-qcom_6.18.2-4_arm64.deb",
+      "sha256": "0bbdbfda97627a0e51afefb3d0aa7dc23c3658151e5f14aee24c276d0bb7fbeb",
+      "size": 68282992,
+      "url": "https://github.com/radxa-pkg/linux-qcom/releases/download/6.18.2-4/linux-image-6.18.2-4-qcom_6.18.2-4_arm64.deb",
+      "id": "linux-image-6.18.2-4-qcom",
+      "cache_path": "debs/linux-image-6.18.2-4-qcom_6.18.2-4_arm64.deb",
+      "digest_source": "https://api.github.com/repos/radxa-pkg/linux-qcom/releases/tags/6.18.2-4",
+      "verification": "official release asset digest; downloaded bytes still need cache verification"
+    },
+    {
+      "name": "linux-image-radxa-dragon-q6a_6.18.2-4_all.deb",
+      "sha256": "c3bafef41f802321e03f0fd2a57ec13ffa7322d9a39701afa5b5074054b32df4",
+      "size": 2616,
+      "url": "https://github.com/radxa-pkg/linux-qcom/releases/download/6.18.2-4/linux-image-radxa-dragon-q6a_6.18.2-4_all.deb",
+      "id": "linux-image-radxa-dragon-q6a",
+      "cache_path": "debs/linux-image-radxa-dragon-q6a_6.18.2-4_all.deb",
+      "digest_source": "https://api.github.com/repos/radxa-pkg/linux-qcom/releases/tags/6.18.2-4",
+      "verification": "official release asset digest; downloaded bytes still need cache verification"
+    },
+    {
+      "name": "linux-libc-dev-radxa-dragon-q6a_6.18.2-4_all.deb",
+      "sha256": "b006ba170c2a46f34abbf12ef278f336efc47b56e1cbc701f19d07f3278b5cf4",
+      "size": 2608,
+      "url": "https://github.com/radxa-pkg/linux-qcom/releases/download/6.18.2-4/linux-libc-dev-radxa-dragon-q6a_6.18.2-4_all.deb",
+      "id": "linux-libc-dev-radxa-dragon-q6a",
+      "cache_path": "debs/linux-libc-dev-radxa-dragon-q6a_6.18.2-4_all.deb",
+      "digest_source": "https://api.github.com/repos/radxa-pkg/linux-qcom/releases/tags/6.18.2-4",
+      "verification": "official release asset digest; downloaded bytes still need cache verification"
+    },
+    {
+      "id": "radxa-os-r2-ufs4096",
+      "name": "radxa-dragon-q6a_noble_gnome_r2.output_4096.img.xz",
+      "cache_path": "images/radxa-dragon-q6a_noble_gnome_r2.output_4096.img.xz",
+      "size": 1578528436,
+      "sha256": "c83ce7f610104f6c0185f88bf10c405acb995f46e95a9c94419065db0cf964cb",
+      "url": "https://github.com/radxa-build/radxa-dragon-q6a/releases/download/rsdk-r2/radxa-dragon-q6a_noble_gnome_r2.output_4096.img.xz",
+      "digest_source": "https://api.github.com/repos/radxa-build/radxa-dragon-q6a/releases/tags/rsdk-r2",
+      "verification": "official release asset digest; downloaded bytes still need cache verification"
+    }
+  ],
+  "phase0": {
+    "firmware_candidates": [
+      "radxa-firmware-qcs6490 0.2.29",
+      "radxa-firmware-qcs6490 0.2.42"
+    ],
+    "selection": null,
+    "hashes": null,
+    "fastrpc_candidates": [
+      "1.0.4-1",
+      "1.0.7-3"
+    ],
+    "selection_fastrpc": null,
+    "required_evidence": "Q6A FastRPC/HTP timing and HDMI/PPS matrix"
+  }
+}

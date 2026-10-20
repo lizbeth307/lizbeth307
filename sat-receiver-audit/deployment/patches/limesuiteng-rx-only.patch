@@ -1,0 +1,123 @@
+--- a/plugins/soapysdr/Streaming.cpp
++++ b/plugins/soapysdr/Streaming.cpp
+@@ -107,6 +107,10 @@
+ SoapySDR::Stream* Soapy_limesuiteng::setupStream(
+     const int direction, const std::string& format, const std::vector<size_t>& channels, const SoapySDR::Kwargs& args)
+ {
++    /* SRRX_RX_ONLY: reject TX before allocation/configuration. */
++    if (direction != SOAPY_SDR_RX)
++        throw std::runtime_error("SRRX receive-only: TX setupStream rejected");
++
+     std::unique_lock<std::recursive_mutex> lock(_accessMutex);
+     // Store result into opaque stream object
+     auto stream = new IConnectionStream;
+@@ -366,38 +370,8 @@
+     const long long timeNs,
+     const long timeoutUs)
+ {
+-    if ((flags & SOAPY_SDR_HAS_TIME) && (timeNs < 0))
+-    {
+-        return SOAPY_SDR_TIME_ERROR;
+-    }
+-
+-    auto icstream = reinterpret_cast<IConnectionStream*>(stream);
+-
+-    // Input metadata
+-    StreamTxMeta metadata{};
+-    metadata.timestamp = Timespec(int64_t(SoapySDR::timeNsToTicks(timeNs, sampleRate[SOAPY_SDR_RX])));
+-    metadata.hasTimestamp = (flags & SOAPY_SDR_HAS_TIME);
+-    metadata.flags = (flags & SOAPY_SDR_END_BURST) ? StreamTxMeta::EndOfBurst : 0;
+-
+-    int samplesSent = 0;
+-    switch (icstream->streamConfig.format)
+-    {
+-    case DataFormat::I16:
+-    case DataFormat::I12:
+-        samplesSent = rfstream->Transmit(reinterpret_cast<const complex16_t* const*>(buffs), numElems, &metadata);
+-        break;
+-    case DataFormat::F32:
+-        samplesSent = rfstream->Transmit(reinterpret_cast<const complex32f_t* const*>(buffs), numElems, &metadata);
+-        break;
+-    }
+-
+-    if (samplesSent == 0)
+-        return SOAPY_SDR_TIMEOUT;
+-
+-    if (samplesSent < 0)
+-        return SOAPY_SDR_STREAM_ERROR;
+-
+-    return samplesSent;
++    /* SRRX_RX_ONLY: no transmit path is compiled in this entry point. */
++    return SOAPY_SDR_NOT_SUPPORTED;
+ }
+ 
+ int Soapy_limesuiteng::readStreamStatus(
+--- a/src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp
++++ b/src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp
+@@ -425,6 +425,10 @@
+ 
+ OpStatus LimeSDR_Micro::Configure(const SDRConfig& cfg, uint8_t socIndex)
+ {
++    /* SRRX_RX_ONLY: typed native configuration must not enable TX. */
++    if (cfg.channel[0].tx.enabled || cfg.channel[1].tx.enabled)
++        return OpStatus::NotSupported;
++
+     OpStatus status;
+     if (!fw)
+         return ReportError(OpStatus::Error, "Firmware is not loaded");
+@@ -604,6 +608,10 @@
+ 
+ OpStatus LimeSDR_Micro::Calibrate(uint8_t moduleIndex, TRXDir trx, uint8_t channel, double bandwidth)
+ {
++    /* SRRX_RX_ONLY: transmit calibration is never callable. */
++    if (trx == TRXDir::Tx)
++        return OpStatus::NotSupported;
++
+     mLMSChips.at(0)->SetActiveChannel(static_cast<LMS7002M::Channel>((channel % 2) + 1));
+     return trx == TRXDir::Rx ? CalibrateRx() : CalibrateTx();
+ }
+@@ -824,24 +832,25 @@
+ 
+ OpStatus LimeSDR_Micro::UploadTxWaveform(const StreamConfig& config, uint8_t moduleIndex, const void** samples, uint32_t count)
+ {
++    /* SRRX_RX_ONLY: onboard waveform upload disabled. */
++    return OpStatus::NotSupported;
++}
++
++OpStatus LimeSDR_Micro::GetGPSLock(GPS_Lock* status)
++{
+     return OpStatus::NotImplemented;
+ }
+ 
+-OpStatus LimeSDR_Micro::GetGPSLock(GPS_Lock* status)
++OpStatus LimeSDR_Micro::GPIORead(uint8_t* buffer, const size_t bufLength)
+ {
+     return OpStatus::NotImplemented;
+ }
+ 
+-OpStatus LimeSDR_Micro::GPIORead(uint8_t* buffer, const size_t bufLength)
++OpStatus LimeSDR_Micro::GPIOWrite(const uint8_t* buffer, const size_t bufLength)
+ {
+     return OpStatus::NotImplemented;
+ }
+ 
+-OpStatus LimeSDR_Micro::GPIOWrite(const uint8_t* buffer, const size_t bufLength)
+-{
+-    return OpStatus::NotImplemented;
+-}
+-
+ OpStatus LimeSDR_Micro::SetAntenna(uint8_t moduleIndex, TRXDir trx, uint8_t channel, uint8_t path)
+ {
+     return LMSSetPath(trx, channel, path);
+@@ -849,6 +858,11 @@
+ 
+ std::unique_ptr<lime::RFStream> LimeSDR_Micro::StreamCreate(const StreamConfig& config, uint8_t moduleIndex)
+ {
++    /* SRRX_RX_ONLY: native streaming must not bypass Soapy. */
++    const auto tx = config.channels.find(TRXDir::Tx);
++    if (tx != config.channels.end() && !tx->second.empty())
++        return nullptr;
++
+     if (!la9310->IsVSPAFirmwareLoaded())
+     {
+         std::vector<char> firmware;

@@ -5,14 +5,15 @@
   "packages": {
     "pico": {
       "file": "pico-micropython-files.zip",
-      "bytes": 17862,
-      "sha256": "3dfb4bf29c21a3d6b4ab17212fad8f84cdbb34e170d047166441eee8e49d5c91",
+      "bytes": 23292,
+      "sha256": "33fbdffbd89153b9323e5febcbd8b61c88fe5337bb8a2880498b214d40f0a69b",
       "source_files": {
-        "adapter.py": "19a19013902b19ddca40c42d3eb1db56af050d79ecf5a570aa905db54f2225f2",
+        "adapter.py": "f405206c2279fcf8cf6b4225f185c9fc93d87fd23ac9a2ebf763b6fb9db2954a",
         "boot.py": "d9497a15dae9944f79505f3cbce8718ff405b9aa3a9d43dfa13764e8bd56e886",
         "calibration.py": "a7106862c928540c20fa4239e3242b83ae1c25e9ae28a98248adc12996b4610d",
+        "hmi.py": "c3f6c1c3fae841e940d6b04eda3efe1b77e12185ef415272e0b23ad35a19c174",
         "imu_relay.py": "192f8bc43cc932c036c13cdf70cc4548eb0f56fa3f7af9c940d42aabc6b6d820",
-        "main.py": "2068db84d9bac3644953ef45b8c34fdc4ce923dc5244ff21615f922cc4150f4f",
+        "main.py": "77c2942efa4fc76ae44799b966df8be719e3f8ff004d739ab16eff8ff2f34554",
         "supervisor.py": "18e8c6989c256a6de403156291ca55ef1c2f46b81c9d7c362e72b3d78d2b9764",
         "wire.py": "00d61272927fa8dfe389cd595649c5075321b5ecc83a2ecc857cc25b6756e4f4"
       }
@@ -20,7 +21,7 @@
     "imu": {
       "file": "imu-micropython-files.zip",
       "bytes": 13582,
-      "sha256": "e26549c2276e95428d8839855b2d48ec872b97862d3f7b1185121b6479b0c8c5",
+      "sha256": "2adba3e276175e24125613ee87e20eb17ecf5d48d5ecccdb8fa54251aec85f15",
       "source_files": {
         "__init__.py": "199b3d33d721f235d3f2c90ecbb32512e6dad7ff404241f2d9db383e43e79288",
         "device.py": "02a9a2b6e93074716375617137cdfe1bb6df9d22e5021768c59cf273aeafea2e",

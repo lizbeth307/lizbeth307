@@ -1,0 +1,11 @@
+{
+  "v": 1,
+  "backend": "rtl",
+  "branch": "RTLA",
+  "serial": "",
+  "library_path": "",
+  "library_sha256": "",
+  "rx_only_reviewed": false,
+  "bias_disabled_verified": false,
+  "dependencies_reviewed": false
+}

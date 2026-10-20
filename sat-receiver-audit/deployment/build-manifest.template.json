@@ -1,0 +1,8 @@
+{
+  "schema_version": 1,
+  "status": "OPEN",
+  "files": {},
+  "allowed_modules": [],
+  "source_audit": {"status": "OPEN", "report": {"path": null, "sha256": null}},
+  "tx_negative_tests": {"status": "OPEN", "report": {"path": null, "sha256": null}}
+}

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "status": "OPEN",
+  "hardware_unit_id": null,
+  "device_bindings_sha256": null,
+  "build_manifest_sha256": null,
+  "source_lock_sha256": null,
+  "profile": "controller",
+  "base_image_sha256": null,
+  "offline_snapshot": {"status": "OPEN", "path": null, "sha256": null}
+}

@@ -1,0 +1,29 @@
+{
+  "status": "CACHE_BYTES_VERIFIED",
+  "entries": 19,
+  "includes_core": false,
+  "hardware_ready": false,
+  "verified_on": "2026-10-20",
+  "components": [
+    "limesuiteng",
+    "rtlsdr",
+    "airspyhf",
+    "satdump",
+    "gr-satellites",
+    "sdrpp",
+    "soapyairspyhf",
+    "readsb",
+    "ais-catcher",
+    "radiosonde-auto-rx",
+    "soapysdr",
+    "gnss-sdr",
+    "openwebrx-plus",
+    "redsea",
+    "welle-io",
+    "gpredict",
+    "nanovna-saver",
+    "qttinysa",
+    "labwc"
+  ],
+  "source_lock_sha256": "00a8a889f7508463aba6840162644bb22de55f620fa40e9ba1e47e3571a9f22e"
+}

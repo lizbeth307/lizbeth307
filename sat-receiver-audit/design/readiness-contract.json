@@ -5,9 +5,43 @@
   "custom_firmware_implemented_and_tested": false,
   "custom_firmware_source_implemented": true,
   "host_regression_status": "PASS",
-  "host_tests_passed": 169,
-  "host_tests_skipped": 1,
+  "host_tests_passed": 376,
+  "host_tests_skipped": 2,
   "firmware_flashed_and_hardware_qualified": false,
+  "software_components": {
+    "supervised_control": {
+      "source_present": true,
+      "physical_qualification": false
+    },
+    "rx_fft": {
+      "source_present": true,
+      "physical_qualification": false
+    },
+    "touch_menu": {
+      "source_present": true,
+      "physical_qualification": false
+    },
+    "gnss": {
+      "source_present": true,
+      "physical_qualification": false
+    },
+    "spectrum_training": {
+      "source_present": true,
+      "physical_qualification": false
+    },
+    "onnx_export": {
+      "source_present": true,
+      "physical_qualification": false
+    },
+    "physical_hmi": {
+      "source_present": true,
+      "physical_qualification": false
+    },
+    "deployment": {
+      "source_present": true,
+      "physical_qualification": false
+    }
+  },
   "battery_adc_calibration_valid": false,
   "gate_results": {
     "E1-01": "OPEN",

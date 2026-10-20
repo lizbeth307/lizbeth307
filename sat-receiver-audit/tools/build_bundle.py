@@ -12,6 +12,7 @@ import subprocess
 import tempfile
 import os
 import zipfile
+import sys
 from lxml import html, etree
 import fitz
 
@@ -80,7 +81,7 @@ def archive():
         if not p.is_file():
             continue
         rel = p.relative_to(BASE)
-        if (p.suffix.lower() in {".html", ".png", ".pyc", ".kicad_prl", ".lck", ".tmp"} or (p.suffix.lower() == ".zip" and rel.parts[:2] != ("firmware", "dist")) or "__pycache__" in rel.parts):
+        if (p.suffix.lower() in {".html", ".pyc", ".kicad_prl", ".lck", ".tmp"} or (p.suffix.lower() == ".png" and rel.parts[:2] != ("verification", "hmi-views")) or (p.suffix.lower() == ".zip" and rel.parts[:2] != ("firmware", "dist")) or "__pycache__" in rel.parts):
             continue
         if any(part in {"tmp", ".git", "qa"} for part in rel.parts):
             continue
@@ -91,8 +92,14 @@ def archive():
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as z:
         for rel, data in paths:
-            z.writestr("SR-RX-v2/" + str(rel), data)
-        z.writestr("SR-RX-v2/ARCHIVE-MANIFEST.json", json.dumps(manifest, ensure_ascii=False, indent=2))
+            entry = zipfile.ZipInfo("SR-RX-v2/" + str(rel), date_time=(2026, 10, 20, 0, 0, 0))
+            entry.compress_type = zipfile.ZIP_DEFLATED
+            entry.external_attr = 0o100644 << 16
+            z.writestr(entry, data, compresslevel=9)
+        entry = zipfile.ZipInfo("SR-RX-v2/ARCHIVE-MANIFEST.json", date_time=(2026, 10, 20, 0, 0, 0))
+        entry.compress_type = zipfile.ZIP_DEFLATED
+        entry.external_attr = 0o100644 << 16
+        z.writestr(entry, json.dumps(manifest, ensure_ascii=False, indent=2), compresslevel=9)
     payload = buffer.getvalue()
     with zipfile.ZipFile(io.BytesIO(payload)) as check:
         assert check.testzip() is None, "Archive CRC validation failed"
@@ -104,10 +111,21 @@ CORE = [
     ("Стан та результати перевірок", "COMPLETION.md"),
     ("Пріоритетні поправки v2.1", "build/12-revision-v2.1.md"),
     ("Виконуване керування 20.10", "software/README.md"),
+    ("Приймальний процес", "software/RX.md"),
+    ("Touch-меню", "software/HMI.md"),
+    ("GNSS і джерело координат", "software/LOCATION.md"),
+    ("Спектр і маски", "software/SPECTRUM.md"),
+    ("Навчання на спектрі", "software/LEARNING.md"),
+    ("Експорт моделі", "software/MODEL-EXPORT.md"),
+    ("Декодерні адаптери", "software/DECODERS.md"),
+    ("Встановлення", "software/DEPLOYMENT.md"),
+    ("Апаратні HMI-входи", "software/PERIPHERALS.md"),
+    ("Наскрізна перевірка консолі", "software/CONSOLE-REVIEW.md"),
     ("Огляд інтеграції ПЗ", "software/INTEGRATION-REVIEW.md"),
     ("Прошивка Pico", "firmware/pico/README.md"),
     ("Прошивка зовнішньої IMU", "firmware/imu/README.md"),
     ("PCB-підготовка", "build/13-pcb-preparation.md"),
+    ("Внутрішнє розведення прототипу", "build/kicad/pcb-prototype/README.md"),
     ("Поточний стан ПЗ і PCB", "build/14-control-software.md"),
     ("Ворота приймання", "OPEN_ITEMS.md"),
     ("Вимоги", "USER_REQUIREMENTS.md"),
@@ -135,9 +153,19 @@ INCLUDED = {p for _, p in CORE}
 
 
 def main():
+    sys.path.insert(0, str(BASE / "software"))
+    from srrx.commissioning import project_hashes
+    software = json.loads((BASE / "verification/software-tests.json").read_text())
+    graphs, sources = project_hashes(BASE)
+    if (software.get("host_regression_status") != "PASS" or software.get("graph_sha256") != graphs
+            or software.get("source_sha256") != sources):
+        raise SystemExit("Package only after current-source software regression PASS; report is stale or failed")
     verification = json.loads((BASE / "verification/validation.json").read_text())
     if verification["graph_netlist_comparison"] != "PASS" or verification["erc_counts"]:
         raise SystemExit("Package only after graph comparison and the full ERC pass")
+    for relative, expected in verification["sha256"].items():
+        if hashlib.sha256((BASE / relative).read_bytes()).hexdigest() != expected:
+            raise SystemExit("CAD verification is stale: " + relative)
     pdf = BASE / "build/kicad/sr-rx-v2.pdf"
     if not pdf.read_bytes().rstrip().endswith(b"%%EOF"):
         raise SystemExit("PDF is incomplete; regenerate it before packaging")
@@ -151,12 +179,19 @@ def main():
     pdf_link = f'<a class="button" id="download-pdf" download="sr-rx-v2.pdf" href="{data_uri(pdf,"application/pdf")}">Завантажити PDF схем</a>'
     zip_link = f'<a class="button" id="source-archive" download="SR-RX-v2-project.zip" href="{data_uri(source_zip,"application/zip")}">Завантажити весь проєкт ZIP</a>'
     gallery = []
+    for filename, title in [("01-overview.png", "Меню: стан системи"), ("03-spectrum.png", "Меню: спектр"), ("05-teach-classify.png", "Меню: навчання")]:
+        preview = BASE / "verification/hmi-views" / filename
+        if preview.exists():
+            gallery.append(f'<details><summary>{title} — справжній Qt, SIMULATION</summary><img loading="lazy" alt="{title}" src="{data_uri(preview,"image/png")}"></details>')
     overlay = BASE / "build/12-revision-v2.1.svg"
     if overlay.exists():
         gallery.append(f'<details><summary>Зміни габаритів і зовнішній S-band вузол v2.1</summary><img loading="lazy" alt="Механічні поправки v2.1; ескіз, не виробниче креслення" src="{data_uri(overlay,"image/svg+xml")}"></details>')
     placement = BASE / "build/kicad/pcb-preparation/detector-core-placement.svg"
     if placement.exists():
         gallery.append(f'<details><summary>DC_CORE: 71 компонент, нерозведений PCB starter</summary><p class="muted">187 контактів зіставлені зі схемою. Трас немає, DRC містить непідключення. Цей макет не призначений для виготовлення.</p><img loading="lazy" alt="DC_CORE unrouted placement candidate" src="{data_uri(placement,"image/svg+xml")}"></details>')
+    routed = BASE / "build/kicad/pcb-prototype/detector-core-routed-prototype.svg"
+    if routed.exists():
+        gallery.append(f'<details><summary>DC_CORE: внутрішній розведений прототип, raw DRC0</summary><p class="muted">71 компонент,187 контактів. Зовнішні інтерфейси/MPN/механіка й фізична кваліфікація відкриті; НЕ ДЛЯ ВИГОТОВЛЕННЯ.</p><img loading="lazy" alt="Internal routed prototype; not for fabrication" src="{data_uri(routed,"image/svg+xml")}"></details>')
     # Light previews keep this single file practical on a phone. The PDF and ZIP
     # retain the full vector originals; thumbnails are not fabrication drawings.
     with fitz.open(pdf) as pdf_doc:

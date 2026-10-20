@@ -33,6 +33,7 @@ mpremote fs cp firmware/pico/supervisor.py :supervisor.py
 mpremote fs cp firmware/pico/calibration.py :calibration.py
 mpremote fs cp firmware/pico/adapter.py :adapter.py
 mpremote fs cp firmware/pico/imu_relay.py :imu_relay.py
+mpremote fs cp firmware/pico/hmi.py :hmi.py
 mpremote fs cp software/srrx/wire.py :wire.py
 mpremote fs cp firmware/pico/main.py :main.py
 mpremote reset
@@ -66,11 +67,12 @@ are RP2040 GPIO, with physical Pico header numbers in parentheses.
 | Host UART0 TX/RX | GP0/1 (1/2) | 115200; TX input/high impedance while Q6A is off |
 | IMU UART1 TX/RX | GP8/9 (11/12) | 115200; framed pack telemetry, independent of Q6A power |
 
-GP2/3 and GP6/7 remain reserved for encoders; GP4/5 and GP10 remain reserved for
-the local HMI I2C/interrupt. This supervisor currently implements the power
-button and cooling, not the complete menu/encoder/VEML7700 HMI. Unimplemented
-HMI functions cannot authorize power outputs. GP17 is committed to reset and
-must never be used for display brightness.
+GP2/3 and GP6/7 read the two encoders; GP4/5 and GP10 serve the local HMI
+I2C/interrupt. `hmi.py` implements the PI4IOE5V9555 keys and VEML7700 sensor,
+with bounded EVENT telemetry documented in `software/PERIPHERALS.md`. These
+inputs never authorize power outputs. GP17 is committed to reset and must
+never be used for display brightness. Physical HMI timing and wiring remain
+subject to unit acceptance.
 
 ## Session, ARM and trip contract
 

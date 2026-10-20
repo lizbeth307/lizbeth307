@@ -1,0 +1,43 @@
+--- a/src/librtlsdr.c
++++ b/src/librtlsdr.c
+@@ -1644,6 +1644,8 @@
+ 
+ 	rtlsdr_set_i2c_repeater(dev, 0);
+ 
++	/* SRRX_RX_ONLY: bias OFF before exposing the opened device. */
++	rtlsdr_set_bias_tee_gpio(dev, 0, 0);
+ 	*out_dev = dev;
+ 
+ 	return 0;
+@@ -1676,6 +1678,8 @@
+ #endif
+ 		}
+ 
++		/* SRRX_RX_ONLY: best-effort OFF while the device is still present. */
++		rtlsdr_set_bias_tee_gpio(dev, 0, 0);
+ 		rtlsdr_deinit_baseband(dev);
+ 	}
+ 
+@@ -2042,6 +2046,11 @@
+ 
+ int rtlsdr_set_bias_tee_gpio(rtlsdr_dev_t *dev, int gpio, int on)
+ {
++	/* SRRX_RX_ONLY: external guarded injectors supply antenna DC.
++	 * GPIO5 input switching and every OFF request remain available.
++	 * Runtime GPIO0 ON is disabled until the labd token bridge is audited. */
++	if (gpio == 0 && on)
++		return -EPERM;
+ 	if (!dev)
+ 		return -1;
+ 
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -29,7 +29,7 @@
+   )
+ set_target_properties(rtlsdr PROPERTIES DEFINE_SYMBOL "rtlsdr_EXPORTS")
+ set_target_properties(rtlsdr PROPERTIES OUTPUT_NAME rtlsdr)
+-set_target_properties(rtlsdr PROPERTIES SOVERSION 0)
++set_target_properties(rtlsdr PROPERTIES SOVERSION 2)
+ set_target_properties(rtlsdr PROPERTIES VERSION ${LIBVER})
+ generate_export_header(rtlsdr)
+ 

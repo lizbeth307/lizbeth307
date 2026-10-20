@@ -5,6 +5,10 @@ import json
 import sys
 import time
 import unittest
+import os
+
+# Set before test discovery, since optional test modules can load native runtimes.
+os.environ["ORT_DISABLE_TELEMETRY"] = "1"
 
 BASE = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(BASE / "software"), str(BASE), str(BASE / "firmware/pico")]
@@ -12,11 +16,18 @@ sys.path[:0] = [str(BASE / "software"), str(BASE), str(BASE / "firmware/pico")]
 
 def main():
     started = time.monotonic()
-    suite = unittest.defaultTestLoader.discover(str(BASE / "software/tests"))
+    groups = {"software": unittest.TestLoader().discover(str(BASE / "software/tests"))}
+    if (BASE / "deployment/tests").is_dir():
+        groups["deployment"] = unittest.TestLoader().discover(str(BASE / "deployment/tests"))
+    group_counts = {name: tests.countTestCases() for name, tests in groups.items()}
+    suite = unittest.TestSuite(groups.values())
     result = unittest.TextTestRunner(verbosity=1).run(suite)
     from srrx.commissioning import project_hashes
     graphs, sources = project_hashes(BASE)
     report = {"host_regression_status": "PASS" if result.wasSuccessful() else "FAIL",
+        "test_environment": {"internet_sockets_denied": os.environ.get("SRRX_TEST_INET_DENIED") == "1",
+                             "ort_disable_telemetry_preimport": os.environ.get("ORT_DISABLE_TELEMETRY") == "1"},
+        "test_groups": group_counts,
         "tests_discovered": result.testsRun, "passed": result.testsRun - len(result.errors) - len(result.failures) - len(result.skipped),
         "failures": [{"test": str(t), "trace": s} for t, s in result.failures],
         "errors": [{"test": str(t), "trace": s} for t, s in result.errors],

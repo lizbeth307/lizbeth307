@@ -37,6 +37,103 @@ class TickClock:
         return self._elapsed
 
 
+class PicoHMITransport:
+    """Sole owner of actual Pico GP4/5 I2C and GP2/3/6/7 encoder inputs."""
+    domain = "pico_hmi_i2c0"
+
+    def __init__(self, machine_module=None, time_module=None):
+        if machine_module is None:
+            import machine as machine_module
+        if time_module is None:
+            import time as time_module
+        from hmi import Quadrature
+        try:
+            import micropython
+            micropython.alloc_emergency_exception_buf(100)
+        except ImportError:
+            pass
+        self.machine, self.time = machine_module, time_module
+        Pin = self.machine.Pin
+        self.sda, self.scl = Pin(4, Pin.IN), Pin(5, Pin.IN)
+        self.interrupt = Pin(10, Pin.IN)
+        self.a1, self.b1 = Pin(2, Pin.IN), Pin(3, Pin.IN)
+        self.a2, self.b2 = Pin(6, Pin.IN), Pin(7, Pin.IN)
+        self.encoder1 = Quadrature(self.a1.value(), self.b1.value())
+        self.encoder2 = Quadrature(self.a2.value(), self.b2.value())
+        self.i2c = None
+        trigger = Pin.IRQ_RISING | Pin.IRQ_FALLING
+        self.a1.irq(handler=self._encoder_one, trigger=trigger, hard=True)
+        self.b1.irq(handler=self._encoder_one, trigger=trigger, hard=True)
+        self.a2.irq(handler=self._encoder_two, trigger=trigger, hard=True)
+        self.b2.irq(handler=self._encoder_two, trigger=trigger, hard=True)
+
+    def _encoder_one(self, pin):
+        self.encoder1.update(self.a1.value(), self.b1.value())
+
+    def _encoder_two(self, pin):
+        self.encoder2.update(self.a2.value(), self.b2.value())
+
+    def sample_encoders(self):
+        # Copy only small scalars with interrupts disabled; allocate result tuples
+        # after restoring IRQs so a GC cannot stall input capture inside this block.
+        mask = self.machine.disable_irq()
+        try:
+            first, second = self.encoder1.pending, self.encoder2.pending
+            bad1, bad2 = self.encoder1.invalid, self.encoder2.invalid
+            over1, over2 = self.encoder1.overflow, self.encoder2.overflow
+            self.encoder1.pending = self.encoder2.pending = 0
+            self.encoder1.invalid = self.encoder2.invalid = False
+            self.encoder1.overflow = self.encoder2.overflow = False
+            if bad1 or over1:
+                self.encoder1.quarters = 0
+            if bad2 or over2:
+                self.encoder2.quarters = 0
+        finally:
+            self.machine.enable_irq(mask)
+        error1 = "ENCODER_OVERRUN" if over1 else "ENCODER_TRANSITION" if bad1 else None
+        error2 = "ENCODER_OVERRUN" if over2 else "ENCODER_TRANSITION" if bad2 else None
+        return ((0 if error1 else first, error1), (0 if error2 else second, error2))
+
+    def interrupt_pending(self):
+        return self.interrupt.value() == 0
+
+    def recover(self):
+        Pin = self.machine.Pin
+        self.sda.init(Pin.OPEN_DRAIN, value=1)
+        self.scl.init(Pin.OPEN_DRAIN, value=1)
+        for unused in range(9):
+            self.scl.value(0)
+            self.time.sleep_us(5)
+            self.scl.value(1)
+            self.time.sleep_us(5)
+            if not self.scl.value():
+                raise OSError("HMI_SCL_STUCK")
+        # STOP: SDA low, release SCL, then release SDA. No unbounded wait.
+        self.scl.value(0)
+        self.sda.value(0)
+        self.time.sleep_us(5)
+        self.scl.value(1)
+        self.time.sleep_us(5)
+        self.sda.value(1)
+        self.time.sleep_us(5)
+        if not self.sda.value() or not self.scl.value():
+            raise OSError("HMI_BUS_STUCK")
+        # Timeout is per clock-stretch wait; all transactions have fixed size.
+        self.i2c = self.machine.SoftI2C(sda=self.sda, scl=self.scl,
+                                       freq=100000, timeout=200)
+        return True
+
+    def read(self, address, register, count):
+        if self.i2c is None:
+            raise OSError("HMI_NOT_RECOVERED")
+        return self.i2c.readfrom_mem(address, register, count, addrsize=8)
+
+    def write(self, address, register, data):
+        if self.i2c is None:
+            raise OSError("HMI_NOT_RECOVERED")
+        return self.i2c.writeto_mem(address, register, data, addrsize=8)
+
+
 class Hardware:
     def __init__(self, calibration=None, machine_module=None):
         if machine_module is None:

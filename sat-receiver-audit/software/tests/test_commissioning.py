@@ -16,13 +16,14 @@ class AcceptanceTests(unittest.TestCase):
         self.temp = tempfile.TemporaryDirectory()
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
-        for directory in ("design", "software/srrx", "firmware/pico", "firmware/imu", "measurements"):
+        for directory in ("design", "software/srrx", "firmware/pico", "firmware/imu", "measurements", "deployment"):
             (self.root / directory).mkdir(parents=True)
         for i in range(1, 6):
             (self.root / f"design/E{i}.json").write_text('{"test_fixture":true}')
         (self.root / "design/readiness-contract.json").write_text(json.dumps({"gate_results": dict.fromkeys(GATE_IDS, "OPEN")}))
         for filename in ("software/srrx/model.py", "firmware/pico/main.py", "firmware/imu/main.py"):
             (self.root / filename).write_text("# synthetic fixture source\n")
+        (self.root / "deployment/guard.sh").write_text("# synthetic deployment guard fixture\n")
         (self.root / "measurements/bench.log").write_text("Synthetic validator fixture: not a hardware measurement.\n")
         self.manifest = acceptance_template(self.root)
         self.path = self.root / "acceptance.json"
@@ -105,7 +106,7 @@ class AcceptanceTests(unittest.TestCase):
     def test_graph_source_and_evidence_changes_revoke_acceptance(self):
         self.complete_fixture()
         self.save()
-        for filename in ("design/E1.json", "software/srrx/model.py", "firmware/imu/main.py", "measurements/bench.log"):
+        for filename in ("design/E1.json", "software/srrx/model.py", "firmware/imu/main.py", "deployment/guard.sh", "measurements/bench.log"):
             with self.subTest(filename=filename):
                 path = self.root / filename
                 original = path.read_bytes()

@@ -27,6 +27,7 @@ class Engine:
         self.identity_ok = simulated
         self.last_tick_ms = None
         self.imu_sample = None
+        self.hmi_sample = None
         self.requested_mode = "field"
         if simulated:
             # These are explicitly synthetic, never written into acceptance.
@@ -68,6 +69,7 @@ class Engine:
             if frame["t"] != "HELLO":
                 return
             self.trip("new_pico_session", notify=False)
+            self.imu_sample = self.hmi_sample = None
             self.session, self.rx_seq, self.tx_seq = frame["s"], -1, 0
             self.last_hb_ms = None
         if frame["q"] <= self.rx_seq:
@@ -85,6 +87,8 @@ class Engine:
             self.events = self.events[-32:]
             if isinstance(status.get("imu"), dict):
                 self.imu_sample = (self.now_ms, dict(status["imu"]))
+            if "hmi" in status:
+                self.hmi_sample = (self.now_ms, dict(status["hmi"])) if type(status["hmi"]) is dict else None
             return
         if type(status.get("state")) is not str or status["state"] not in {"SAFE", "WARMING", "CONFIGURING", "ACTIVE", "TRIPPED", "SHUTTING_DOWN", "OFF"}:
             self.trip("invalid_pico_state")
@@ -107,6 +111,7 @@ class Engine:
         try:
             if self.last_tick_ms is not None and self.now_ms - self.last_tick_ms > 100:
                 self.imu_sample = None
+                self.hmi_sample = None
                 # A delayed host must not relabel UART-queued orientation as
                 # newly acquired. HELLO repeats allow session resynchronization.
                 if hasattr(self.link, "discard_input"):
@@ -264,6 +269,41 @@ class Engine:
             return {"ok": True}
         return {"ok": False, "error": "unknown operation"}
 
+    def _hmi_status(self):
+        invalid = {"ok": False, "fresh": False, "age_ms": None, "keys": 0,
+                   "presses": None, "encoders": None, "lux": None, "lux_valid": False,
+                   "lux_age_ms": None, "sequence": None, "generation": None, "error": "HMI_NOT_FRESH"}
+        if self.hmi_sample is None:
+            return invalid
+        received, sample = self.hmi_sample
+        fields = {"ok", "fresh", "age_ms", "keys", "presses", "encoders", "lux",
+                  "lux_valid", "lux_age_ms", "sequence", "generation", "error"}
+        source_age = sample.get("age_ms")
+        age = source_age + self.now_ms - received + 100 if type(source_age) is int else 500
+        if (set(sample) != fields or sample.get("ok") is not True or sample.get("fresh") is not True
+                or type(source_age) is not int or not 0 <= source_age < 500 or not 0 <= age < 500
+                or self.last_status_ms is None or not 0 <= self.now_ms-self.last_status_ms <= 500
+                or type(sample.get("keys")) is not int or not 0 <= sample["keys"] <= 255
+                or type(sample.get("sequence")) is not int or not 0 <= sample["sequence"] <= 0xffffffff
+                or type(sample.get("generation")) is not int or not 0 <= sample["generation"] <= 65535
+                or type(sample.get("presses")) is not list or len(sample["presses"]) != 8
+                or any(type(x) is not int or not 0 <= x <= 65535 for x in sample["presses"])
+                or type(sample.get("encoders")) is not list or len(sample["encoders"]) != 2
+                or any(type(x) is not int or not -0x80000000 <= x <= 0x7fffffff for x in sample["encoders"])
+                or type(sample.get("lux_valid")) is not bool
+                or sample.get("error") is not None and (type(sample["error"]) is not str or len(sample["error"]) > 80)):
+            return invalid
+        result = dict(sample, age_ms=age)
+        la = sample.get("lux_age_ms")
+        la = la + self.now_ms - received + 100 if type(la) is int and la >= 0 else 3000
+        lux = sample.get("lux")
+        if not (sample["lux_valid"] and type(lux) in (int, float) and math.isfinite(lux)
+                and 0 <= lux <= 200000 and 0 <= la < 2000):
+            result.update(lux=None, lux_valid=False, lux_age_ms=None)
+        else:
+            result["lux_age_ms"] = la
+        return result
+
     def status(self):
         imu = {"ok": False, "fresh": False, "quaternion": None, "error": "IMU_NOT_FRESH"}
         if self.imu_sample:
@@ -284,7 +324,7 @@ class Engine:
             "requested_operating_mode": self.requested_mode,
             "session": self.session, "configured": self.configured, "last_error": self.last_error,
             "policy": self.policy.status(), "events": list(self.events),
-            "imu": imu,
+            "imu": imu, "hmi": self._hmi_status(),
             "live_identity_verified": self.identity_ok,
             "hardware_qualified": bool(self.acceptance) and self.identity_ok and not self.simulated}
 

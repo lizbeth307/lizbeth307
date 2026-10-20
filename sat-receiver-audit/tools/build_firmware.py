@@ -21,8 +21,14 @@ def main():
         buffer = io.BytesIO()
         with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as z:
             for name, data in files.items():
-                z.writestr(name, data)
-            z.writestr("SOURCE-SHA256.json", json.dumps(manifest, indent=2))
+                entry = zipfile.ZipInfo(name, date_time=(2026, 1, 1, 0, 0, 0))
+                entry.compress_type = zipfile.ZIP_DEFLATED
+                entry.external_attr = 0o100644 << 16
+                z.writestr(entry, data)
+            entry = zipfile.ZipInfo("SOURCE-SHA256.json", date_time=(2026, 1, 1, 0, 0, 0))
+            entry.compress_type = zipfile.ZIP_DEFLATED
+            entry.external_attr = 0o100644 << 16
+            z.writestr(entry, json.dumps(manifest, indent=2))
         data = buffer.getvalue()
         with zipfile.ZipFile(io.BytesIO(data)) as z:
             assert z.testzip() is None

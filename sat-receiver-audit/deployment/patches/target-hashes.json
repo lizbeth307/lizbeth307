@@ -1,0 +1,22 @@
+{
+  "rtlsdr": {
+    "src/librtlsdr.c": {
+      "before_sha256": "8c872716cd6959b3cefb047c4808179b77bedb17dd9572ffc92445d3ded1275c",
+      "after_sha256": "e87deb4eefdc61cf1171f8669f2a8e6d2108310c683c9cd1ec0dfaa47d436e9f"
+    },
+    "src/CMakeLists.txt": {
+      "before_sha256": "70ee7266476ce86acd73ef6463c1ffa0fb24e7fa0f48b6ce8b4bb07119f54f6e",
+      "after_sha256": "44d4c8f905f5ee5a33b7e9dc6068b01603a0edaafae3b8a5897cbd38f5d0659d"
+    }
+  },
+  "limesuiteng": {
+    "plugins/soapysdr/Streaming.cpp": {
+      "before_sha256": "fe9477323e5e947237bae337a4c7e6a77882ec9bee28c3092f6eb1f64104c8ac",
+      "after_sha256": "b79373ed4a76d7562c19a2592397a27d13059c8f36d511bb3cfd9978514e499b"
+    },
+    "src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp": {
+      "before_sha256": "f76a14d5589fa516090984e9a95258bd3ae481f6e4134dc7e6ff298d5f98ce09",
+      "after_sha256": "c226888485b1fcb37509e84083d61fec8cf6ac0b0d91ade4cb1e199e4ade645e"
+    }
+  }
+}

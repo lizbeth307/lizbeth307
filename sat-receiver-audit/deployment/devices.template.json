@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "board_compatible": "radxa,dragon-q6a",
+  "i2c": {
+    "ina228": {"path": null, "of_fullname": null},
+    "control": {"path": null, "of_fullname": null}
+  },
+  "pico": {
+    "path": "/dev/lab/pico",
+    "kind": "platform",
+    "kernel_parent": null,
+    "vid": null,
+    "pid": null,
+    "serial": null
+  },
+  "usb": {
+    "rtl_a": {"vid": "0bda", "pid": "2838", "serial": "LABRXA", "path": "/dev/lab/rtla"},
+    "rtl_b": {"vid": "0bda", "pid": "2838", "serial": "LABRXB", "path": "/dev/lab/rtlb"},
+    "hfplus": {"vid": "03eb", "pid": "800c", "serial": null, "path": "/dev/lab/hfplus"}
+  },
+  "lime": {"enabled": false, "pci_address": null, "device_path": null}
+}

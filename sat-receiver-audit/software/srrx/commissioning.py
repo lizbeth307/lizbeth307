@@ -138,7 +138,9 @@ def project_hashes(project_root):
     root = Path(project_root).resolve(strict=True)
     graphs = {name: _digest(_local_file(root, name)) for name in GRAPH_PATHS}
     sources = sorted(set(root.glob("software/srrx/**/*.py")) | set(root.glob("firmware/**/*.py"))
-                     | set(root.glob("software/systemd/*.service")) | set(root.glob("software/pyproject.toml")))
+                     | set(root.glob("software/systemd/*.service")) | set(root.glob("software/pyproject.toml"))
+                     | set(root.glob("deployment/*.py")) | set(root.glob("deployment/*.sh"))
+                     | set(root.glob("deployment/*.json")) | set(root.glob("deployment/patches/*")))
     if not any(p.is_relative_to(root / "software/srrx") for p in sources):
         raise ValidationError("software sources missing")
     source_hashes = {p.relative_to(root).as_posix(): _digest(_local_file(root, p.relative_to(root).as_posix()))

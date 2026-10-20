@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "active_slot": "A",
+  "root_a_partuuid": null,
+  "root_b_partuuid": null,
+  "base_cmdline_without_root": null,
+  "kernel_efi_path": null,
+  "initrd_efi_path": null,
+  "lab_dtb_efi_path": null,
+  "rescue_kernel_efi_path": null,
+  "rescue_initrd_efi_path": null,
+  "rescue_dtb_efi_path": null
+}

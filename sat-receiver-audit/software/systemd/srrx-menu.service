@@ -1,0 +1,16 @@
+[Unit]
+Description=SR-RX local touch console
+PartOf=graphical-session.target
+After=graphical-session.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/srrx
+Environment=PYTHONPATH=/opt/srrx/software
+ExecStart=/usr/bin/env /opt/srrx/venv/bin/python3 -m srrx.hmi --socket /run/srrx/control.sock --fullscreen
+Restart=no
+NoNewPrivileges=yes
+PrivateTmp=yes
+
+[Install]
+WantedBy=graphical-session.target

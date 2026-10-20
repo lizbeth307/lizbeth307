@@ -14,11 +14,56 @@ def status_payload(supervisor, adc_raw):
     return result
 
 
+def hmi_payload(poller, now_ms):
+    result = poller.snapshot(now_ms)
+    # Budget the bounded source UART transmit before the host adds its RX budget.
+    result["age_ms"] = min(65535, result["age_ms"] + 100)
+    if result["lux_age_ms"] is not None:
+        result["lux_age_ms"] = min(65535, result["lux_age_ms"] + 100)
+    return {"hmi": result}
+
+
+class TelemetrySchedule:
+    """One bounded frame per loop; status cannot be starved by optional input."""
+    def __init__(self):
+        self.status_at = -200
+        self.hello_at = -1000
+        self.hmi_at = -200
+        self.state = None
+        self._auxiliary = "IMU"
+
+    def choose(self, now_ms, state, needs_hello, has_imu, has_events):
+        if needs_hello:
+            return "HELLO"
+        if state != self.state or now_ms - self.status_at >= 200:
+            return "STATUS"
+        hmi_due = now_ms - self.hmi_at >= 200
+        if hmi_due and (not has_imu or self._auxiliary == "HMI"):
+            return "HMI"
+        if has_imu:
+            return "IMU"
+        if hmi_due:
+            return "HMI"
+        if has_events:
+            return "EVENT"
+        return None
+
+    def sent(self, kind, now_ms, state):
+        if kind == "HELLO":
+            self.hello_at = now_ms
+        elif kind == "STATUS":
+            self.status_at, self.state = now_ms, state
+        elif kind == "HMI":
+            self.hmi_at, self._auxiliary = now_ms, "IMU"
+        elif kind == "IMU":
+            self._auxiliary = "HMI"
+
+
 def run():
     import machine
     import time
     import os
-    from adapter import Hardware, TickClock, write_all
+    from adapter import Hardware, PicoHMITransport, TickClock, write_all
 
     hardware = Hardware()  # Safe pins first, even if later imports/files fail.
     machine.freq(125000000)
@@ -30,6 +75,7 @@ def run():
         from calibration import load, validate, commissioning_valid
         from wire import encode_frame, FrameDecoder
         from imu_relay import IMURelay
+        from hmi import PeripheralPoller
 
         serial = machine.unique_id().hex()
         calibration_record = {}
@@ -63,14 +109,15 @@ def run():
                                 stop=1, tx=machine.Pin(8), rx=machine.Pin(9),
                                 timeout=0, timeout_char=0, rxbuf=1024)
         clock = TickClock(time.ticks_ms, time.ticks_diff)
+        hmi = PeripheralPoller(PicoHMITransport())
         tx_session = None
         tx_seq = 0
-        status_at = -200
-        hello_at = -1000
-        previous_state = None
+        schedule = TelemetrySchedule()
         previous_link = False
         imu_loop_at = None
         imu_errors = 0
+        imu_latest = None
+        diagnostic_events = []
 
         def transmit(kind, payload):
             nonlocal tx_seq, tx_session
@@ -80,13 +127,16 @@ def run():
             supervisor.step(moment, hardware.sample(moment))
             hardware.apply(supervisor.outputs)
             if hardware.uart is None:
-                return
+                return False
             if tx_session != supervisor.session and kind != "HELLO":
                 transmit("HELLO", hello_payload(supervisor, serial, local_cal_crc))
+                return False
             if kind == "HELLO":
                 payload = hello_payload(supervisor, serial, local_cal_crc)
             elif kind == "STATUS":
                 payload = status_payload(supervisor, hardware.raw)
+            elif kind == "EVENT" and "hmi" in payload:
+                payload = hmi_payload(hmi, moment)
             if tx_session != supervisor.session:
                 tx_session = supervisor.session
                 tx_seq = 0
@@ -99,11 +149,15 @@ def run():
             tx_seq += 1
             write_all(hardware.uart, packet, time.ticks_ms, time.ticks_diff,
                       time.sleep_ms)
+            return True
 
         while True:
             now = clock.now_ms()
             supervisor.step(now, hardware.sample(now))
             hardware.apply(supervisor.outputs)
+            # Fixed-size I2C transactions only; integration waits are scheduled,
+            # never slept. HMI has no reference to Supervisor.receive/ARM.
+            hmi.poll(now)
             pending_imu = []
             # Keep draining the pack while Q6A is off. Otherwise an old UART
             # buffer could be relabelled fresh when Linux finally boots.
@@ -132,11 +186,16 @@ def run():
             stale = imu_relay.step(now)
             if stale is not None:
                 pending_imu.append((stale, now))
+            if pending_imu:
+                imu_latest = pending_imu[-1]
+            diagnostic_events.extend(supervisor.drain_events())
+            if len(diagnostic_events) > 8:
+                diagnostic_events = diagnostic_events[-8:]
             linked = hardware.uart is not None
             if linked != previous_link:
                 decoder.reset()
                 previous_link = linked
-                hello_at = -1000
+                schedule.hello_at = -1000
             if linked:
                 # Bounded UART work prevents hostile/noisy RX from starving the
                 # state machine. Protocol frames are <=512 bytes.
@@ -150,28 +209,39 @@ def run():
                             supervisor.step(now, hardware.sample(now))
                             supervisor.receive(frame, now)
                             hardware.apply(supervisor.outputs)
-                # HELLO must be the first outbound frame of every Pico session.
-                changed = previous_state != supervisor.state
-                if (tx_session != supervisor.session or now - hello_at >= 1000
-                        and supervisor.state in ("SAFE", "TRIPPED", "OFF")):
-                    transmit("HELLO", hello_payload(supervisor, serial, local_cal_crc))
-                    hello_at = now
-                for event, received_at in pending_imu:
-                    event = imu_relay.forwarding(event, received_at, clock.now_ms())
+                # One outbound frame per iteration avoids routine UART bursts
+                # exceeding the 100ms HMI/IMU scheduling-gap guard.
+                needs_hello = (tx_session != supervisor.session or
+                    now - schedule.hello_at >= 1000 and supervisor.state in ("SAFE", "TRIPPED", "OFF"))
+                choice = schedule.choose(now, supervisor.state, needs_hello,
+                                         imu_latest is not None, bool(diagnostic_events))
+                sent = False
+                if choice == "HELLO":
+                    sent = transmit("HELLO", hello_payload(supervisor, serial, local_cal_crc))
+                elif choice == "STATUS":
+                    sent = transmit("STATUS", status_payload(supervisor, hardware.raw))
+                elif choice == "HMI":
+                    sent = transmit("EVENT", {"hmi": {}})
+                elif choice == "IMU":
+                    event, received_at = imu_latest
+                    event = imu_relay.forwarding({"imu": dict(event["imu"])}, received_at, clock.now_ms())
                     if event is not None:
-                        transmit("EVENT", event)
-                for event in supervisor.drain_events():
+                        sent = transmit("EVENT", event)
+                    if sent or event is None:
+                        imu_latest = None
+                elif choice == "EVENT":
+                    event = diagnostic_events[0]
                     kind = "TRIP" if event["event"] == "TRIP" else "EVENT"
-                    transmit(kind, event)
-                if changed or now - status_at >= 200:
-                    payload = status_payload(supervisor, hardware.raw)
-                    # Never forward NaN/Inf; the model stores None on failed ADC.
-                    transmit("STATUS", payload)
-                    status_at = now
-                previous_state = supervisor.state
+                    sent = transmit(kind, event)
+                    if sent:
+                        diagnostic_events.pop(0)
+                if sent:
+                    schedule.sent(choice, clock.now_ms(), supervisor.state)
             else:
                 # Bound event storage while no host is powered.
                 supervisor.drain_events()
+                diagnostic_events = []
+                imu_latest = None
             wdt.feed()  # Only after sensing, model deadlines and physical outputs.
             time.sleep_ms(20)
     finally:

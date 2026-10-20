@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "verified_on": "2026-10-20",
+  "refs": [
+    {
+      "repo": "gnss-sdr/gnss-sdr",
+      "ref": "v0.0.19",
+      "sha": "1ddd4562723040fd66cb334b578a5b69455625f4"
+    },
+    {
+      "repo": "varenius/virgo",
+      "ref": "v3.8.9",
+      "sha": null
+    },
+    {
+      "repo": "csete/gpredict",
+      "ref": "1d80049b0fecc06a18378d88f09b1d154a070234",
+      "sha": "1d80049b0fecc06a18378d88f09b1d154a070234"
+    },
+    {
+      "repo": "NanoVNA-Saver/nanovna-saver",
+      "ref": "3445a0a",
+      "sha": "3445a0ab86161f9c886c9d6f215eb57cab9b6f45"
+    },
+    {
+      "repo": "windytan/redsea",
+      "ref": "v1.3.1",
+      "sha": "4cc27df9939798e800c4ff7cb484be6d9bf68b4d"
+    },
+    {
+      "repo": "AlbrechtL/welle.io",
+      "ref": "v2.4",
+      "sha": "0aacf578d77d79212483cd6fce436fb66523f63f"
+    },
+    {
+      "repo": "labwc/labwc",
+      "ref": "6ab9d3f",
+      "sha": "6ab9d3fe464b31eed25fe2126d6b0dfb6cd0bff4"
+    }
+  ]
+}
