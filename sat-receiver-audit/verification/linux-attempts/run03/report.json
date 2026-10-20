@@ -1,0 +1,32 @@
+{
+  "schema_version": 1,
+  "status": "FAIL",
+  "bootstrap_exit_code": 1,
+  "environment": {
+    "architecture": "aarch64",
+    "kernel": "6.8.0-147-generic",
+    "pid1": "systemd",
+    "os_release": "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.5 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo\n",
+    "clock_source": "host preparation timestamp plus guest uptime; not GNSS qualification"
+  },
+  "suites": {
+    "software-tests.json": "PASS",
+    "system-smoke.json": "PASS",
+    "pty-smoke.json": "FAIL",
+    "gui-smoke.json": "PASS_LINUX_OFFSCREEN_SIMULATION",
+    "xcb-smoke.json": "PASS",
+    "rx-worker-smoke.json": "FAIL",
+    "storage-smoke.json": "FAIL",
+    "module-lab/report.json": "EMULATION_FAIL"
+  },
+  "physical_tests_performed": false,
+  "hardware_qualified": false,
+  "network_devices": [],
+  "q6a_peripherals_emulated": false,
+  "host": {
+    "qemu_exit_code": 0,
+    "elapsed_s": 1413.883,
+    "run_manifest_sha256": "93dcab1156359752fe442319be203780e5c7394107f665542c7a44350698959b",
+    "console_sha256": "acc7d5f78c4d1c36b42d9031dc8b9b543a8d28903f3d160d8ebe0ca35dadd741"
+  }
+}

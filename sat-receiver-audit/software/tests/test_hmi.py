@@ -375,18 +375,28 @@ class MetadataTests(unittest.TestCase):
             job.close()
 
     def test_real_stdio_demo_uses_actual_service_and_closes(self):
-        transport = DemoTransport(timeout=3)
+        transport = DemoTransport(timeout=20)
         controller = ConsoleController(transport)
         try:
+            # A cold TCG interpreter can take seconds before its first reply.
+            # Warm it without changing production freshness/handshake deadlines.
+            initial = transport({'op': 'status'})
+            self.assertTrue(initial['ok'], initial)
+            self.assertEqual(initial['data']['mode'], 'SIMULATION')
+            self.assertFalse(initial['data']['policy']['armed'])
+            transport.timeout = 3
             view = controller.poll()
-            self.assertTrue(view["connected"])
+            self.assertTrue(view["connected"], view)
             self.assertEqual(view["data"]["mode"], "SIMULATION")
             self.assertFalse(view["data"]["policy"]["armed"])
-            ready_at = time.monotonic() + 2
+            ready_at = time.monotonic() + 20
             while time.monotonic() < ready_at and (view["data"].get("session") is None or view["data"]["pico"].get("state") != "SAFE"):
                 time.sleep(.05)
                 view = controller.poll()
-            self.assertTrue(controller.arm()["ok"])
+            self.assertIsNotNone(view['data'].get('session'), view)
+            self.assertEqual(view['data']['pico'].get('state'), 'SAFE', view)
+            armed = controller.arm()
+            self.assertTrue(armed["ok"], armed)
             deadline = time.monotonic() + 3
             while time.monotonic() < deadline:
                 time.sleep(.1)

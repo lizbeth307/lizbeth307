@@ -1,0 +1,111 @@
+{
+  "cases": [
+    {
+      "case": "termios_and_fragmented_bidirectional_frames",
+      "elapsed_s": 0.124,
+      "observed": {
+        "baud_setting": 115200,
+        "directions_checked": 2,
+        "fragmented_byte_delivery": true
+      },
+      "status": "PASS"
+    },
+    {
+      "case": "crc_oversize_and_resynchronization",
+      "elapsed_s": 0.016,
+      "observed": {
+        "corrupt_crc_rejected": true,
+        "next_valid_frame_received": true,
+        "oversize_rejected": true
+      },
+      "status": "PASS"
+    },
+    {
+      "case": "kernel_input_flush_and_decoder_reset",
+      "elapsed_s": 0.018,
+      "observed": {
+        "kernel_tciflush": true,
+        "partial_decoder_state_cleared": true
+      },
+      "status": "PASS"
+    },
+    {
+      "case": "bounded_transmit_queue",
+      "elapsed_s": 0.069,
+      "observed": {
+        "maximum_pending_bytes": 2048,
+        "overflow_refused": true
+      },
+      "status": "PASS"
+    },
+    {
+      "case": "supervisor_handshake_and_clean_close",
+      "elapsed_s": 0.852,
+      "observed": {
+        "close_deenergizes_model": true,
+        "explicit_arm_handshake": true,
+        "real_supervisor_state_machine": true,
+        "simulated_host_engine": true
+      },
+      "status": "PASS"
+    },
+    {
+      "case": "replay_timeout_and_explicit_recovery",
+      "elapsed_s": 1.821,
+      "observed": {
+        "explicit_recovery_keeps_previous_loads_off": true,
+        "replay_does_not_refresh_status": true,
+        "uart_return_does_not_auto_arm": true
+      },
+      "status": "PASS"
+    },
+    {
+      "case": "new_session_invalidates_old_frames",
+      "elapsed_s": 0.835,
+      "observed": {
+        "new_session_revokes_permission": true,
+        "old_session_replay_rejected": true
+      },
+      "status": "PASS"
+    },
+    {
+      "case": "master_hup_trips_and_closes",
+      "elapsed_s": 0.701,
+      "observed": {
+        "descriptor_closed": true,
+        "hup_to_model_disarm_ms": 85.099,
+        "real_kernel_hup": true,
+        "transport_fault_disarms_model": true
+      },
+      "status": "PASS"
+    }
+  ],
+  "elapsed_s": 4.438,
+  "failed": 0,
+  "passed": 8,
+  "platform": "linux",
+  "python": "3.12.3",
+  "scope": {
+    "acceptance_records_created": false,
+    "gpio_i2c_sdr_opened": false,
+    "hardware_release": "BLOCKED",
+    "host_engine_mode": "SIMULATION",
+    "kernel_pty_termios": true,
+    "peer_is_portable_supervisor_model": true,
+    "physical_tests_performed": false,
+    "physical_uart_tested": false
+  },
+  "source_sha256": {
+    "deployment/linux_lab/pty_smoke.py": "64daa04a95c2085f0f34973c1a970593fddb792aa1923e4a12b62967ae624f19",
+    "design/E3.json": "0a2e2e60ede923b2d0a1aa0f8484a97513c1ef36ae389d3aee365fbcf90aaac5",
+    "firmware/pico/supervisor.py": "18e8c6989c256a6de403156291ca55ef1c2f46b81c9d7c362e72b3d78d2b9764",
+    "software/srrx/engine.py": "d478d09a2c3a6bbb4d79dc7c6c743a03db8eb4decd6cd8f81777a610b1a8e568",
+    "software/srrx/hardware.py": "0dbf351d7cea86b6743ec4479ae8d78604c351009dae8a9b87715b039eb133ba",
+    "software/srrx/link.py": "a99368de67d617d2c9e46bea35a676cf5de8d9701cda0cec680b7134e345e6d4",
+    "software/srrx/policy.py": "bfffff805fd6392055ea61d608a502728d9fb884704c7c75e32c23e1b23557f1",
+    "software/srrx/wire.py": "00d61272927fa8dfe389cd595649c5075321b5ecc83a2ecc857cc25b6756e4f4"
+  },
+  "status": "PASS",
+  "suite": "real_linux_pty_smoke",
+  "v": 1
+}

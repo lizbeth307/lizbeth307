@@ -1,0 +1,1283 @@
+{
+  "schema_version": 1,
+  "scope": "QEMU_ARM64_LINUX_SIMULATION_ONLY",
+  "status": "PASS",
+  "started_at": "2026-10-20T21:33:42.762656+00:00",
+  "hardware_qualified": false,
+  "hardware_acceptance_generated": false,
+  "services_enabled": false,
+  "host_poweroff_requested": false,
+  "steps": [
+    {
+      "name": "guest_boundary",
+      "status": "PASS",
+      "elapsed_s": 0.0,
+      "evidence": {
+        "uid": 0,
+        "architecture": "aarch64",
+        "system": "Linux",
+        "pid1": "systemd",
+        "kernel": "6.8.0-147-generic",
+        "distribution": {
+          "ID": "ubuntu",
+          "VERSION_ID": "24.04",
+          "VERSION_CODENAME": "noble"
+        },
+        "network_interfaces": [
+          "lo"
+        ]
+      }
+    },
+    {
+      "name": "candidate_stage",
+      "status": "PASS",
+      "elapsed_s": 22.238,
+      "evidence": {
+        "stage": "/var/tmp/srrx-linux-lab-qfykq9ay/candidate",
+        "payload_files": 177,
+        "current_source_files_verified": 168,
+        "manifest_sha256": "1235e2085b09ee7e2dafcbb2e12f1ff55b289b80cd2943f7d644bd716d5d9116",
+        "physical_gates_open": 36,
+        "menu_user_unit": true,
+        "systemd_verify": "PASS"
+      }
+    },
+    {
+      "name": "hardware_missing_records",
+      "status": "PASS",
+      "elapsed_s": 1.942,
+      "evidence": {
+        "MainPID": "0",
+        "Result": "success",
+        "NRestarts": "0",
+        "ExecMainStartTimestampMonotonic": "0",
+        "ExecMainPID": "0",
+        "ExecStartPre": "{ path=/usr/bin/python3 ; argv[]=/usr/bin/python3 /opt/srrx/deployment/deploy.py release-guard --devices /etc/srrx/devices.json --acceptance /etc/srrx/acceptance.json --release /etc/srrx/release.json --build-manifest /etc/srrx/build-manifest.json --cache /srv/srrx-cache ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }",
+        "DevicePolicy": "auto",
+        "User": "labd",
+        "Group": "labd",
+        "PrivateTmp": "yes",
+        "PrivateDevices": "no",
+        "ProtectKernelTunables": "yes",
+        "ProtectKernelModules": "yes",
+        "ProtectControlGroups": "yes",
+        "ProtectHome": "yes",
+        "ProtectSystem": "strict",
+        "NoNewPrivileges": "yes",
+        "RestrictAddressFamilies": "AF_UNIX",
+        "RuntimeDirectory": "srrx",
+        "ActiveState": "inactive",
+        "SubState": "dead",
+        "UnitFileState": "disabled",
+        "ConditionResult": "no"
+      }
+    },
+    {
+      "name": "hardware_open_records",
+      "status": "PASS",
+      "elapsed_s": 7.172,
+      "evidence": {
+        "systemd": {
+          "MainPID": "0",
+          "Result": "exit-code",
+          "NRestarts": "0",
+          "ExecMainStartTimestampMonotonic": "0",
+          "ExecMainPID": "0",
+          "ExecStartPre": "{ path=/usr/bin/python3 ; argv[]=/usr/bin/python3 /opt/srrx/deployment/deploy.py release-guard --devices /etc/srrx/devices.json --acceptance /etc/srrx/acceptance.json --release /etc/srrx/release.json --build-manifest /etc/srrx/build-manifest.json --cache /srv/srrx-cache ; ignore_errors=no ; start_time=[Tue 2026-10-20 21:34:07 UTC] ; stop_time=[Tue 2026-10-20 21:34:10 UTC] ; pid=1683 ; code=exited ; status=2 }",
+          "DevicePolicy": "auto",
+          "User": "labd",
+          "Group": "labd",
+          "PrivateTmp": "yes",
+          "PrivateDevices": "no",
+          "ProtectKernelTunables": "yes",
+          "ProtectKernelModules": "yes",
+          "ProtectControlGroups": "yes",
+          "ProtectHome": "yes",
+          "ProtectSystem": "strict",
+          "NoNewPrivileges": "yes",
+          "RestrictAddressFamilies": "AF_UNIX",
+          "RuntimeDirectory": "srrx",
+          "ActiveState": "activating",
+          "SubState": "auto-restart",
+          "UnitFileState": "disabled",
+          "ConditionResult": "yes"
+        },
+        "stderr": "labd refused startup: physical hardware unit ID is empty or a placeholder\n",
+        "generated_acceptance": false
+      }
+    },
+    {
+      "name": "installed_entrypoints_stdio",
+      "status": "PASS",
+      "elapsed_s": 1.65,
+      "evidence": {
+        "installed_prefix": "/opt/srrx/venv",
+        "cwd": "/",
+        "explicit_project": "/opt/srrx",
+        "stdio_mode": "SIMULATION",
+        "malformed_request_rejected": true
+      }
+    },
+    {
+      "name": "systemd_simulation",
+      "status": "PASS",
+      "elapsed_s": 24.422,
+      "evidence": {
+        "properties": {
+          "MainPID": "1744",
+          "Result": "success",
+          "NRestarts": "0",
+          "ExecMainStartTimestampMonotonic": "911880495",
+          "ExecMainPID": "1744",
+          "DevicePolicy": "closed",
+          "User": "labd",
+          "Group": "labd",
+          "PrivateTmp": "yes",
+          "PrivateDevices": "yes",
+          "ProtectKernelTunables": "yes",
+          "ProtectKernelModules": "yes",
+          "ProtectControlGroups": "yes",
+          "ProtectHome": "yes",
+          "ProtectSystem": "strict",
+          "NoNewPrivileges": "yes",
+          "RestrictAddressFamilies": "AF_UNIX",
+          "RuntimeDirectory": "srrx-linux-lab",
+          "ActiveState": "active",
+          "SubState": "running",
+          "UnitFileState": "static",
+          "ConditionResult": "yes"
+        },
+        "unit_sha256": "004981c395226b21e5bbbab0bd66e101b1e421218d57255c90aa2aa1c561b898",
+        "status": {
+          "mode": "SIMULATION",
+          "pico": {
+            "state": "SAFE",
+            "fault": null,
+            "mcp_reset": true,
+            "calibration_valid": true,
+            "hardware_commissioned": true,
+            "reject_reason": null,
+            "hb_fresh": false,
+            "q6a_on": true,
+            "battery_mv": 14800,
+            "panel_temp_c": 25.0,
+            "case_temp_c": 25.0,
+            "fan_stalled": false,
+            "brightness_limit_pct": 100
+          },
+          "requested_operating_mode": "field",
+          "session": 2,
+          "configured": false,
+          "last_error": "new_pico_session",
+          "policy": {
+            "armed": false,
+            "fault": "new_pico_session",
+            "mode": "field",
+            "pico_active": false,
+            "commissioned": true,
+            "owner": null,
+            "lease_deadline_ms": null,
+            "outputs": {
+              "EN_LNB": false,
+              "EN_BONI": false,
+              "K1_ON": false,
+              "K2_ON": false,
+              "SW_RTLA_A": false,
+              "SW_RTLA_B": false,
+              "SW_RTLB_A": false,
+              "SW_RTLB_B": false,
+              "EN_LABPORT": false,
+              "EN_AUX12": false,
+              "EN_RTLA": false,
+              "EN_RTLB": false,
+              "EN_HFP": false,
+              "EN_LNA1": false,
+              "EN_LNA2": false,
+              "EN_LNA3": false,
+              "EN_T7": false,
+              "EN_LNA4": false,
+              "CHG_INHIBIT": true,
+              "EN_LIME3V3": false,
+              "E3_GNSS_RESET_GATE": false,
+              "SW_LIME_A": false,
+              "SW_LIME_B": false,
+              "EN_SB_LNA": false
+            },
+            "inputs": {},
+            "simulation": true,
+            "branch_observability": {
+              "LNA1": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "LNA2": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "LNA3": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "LNA4": {
+                "current_unknown": false,
+                "reservation_a": 0.08639999999999999
+              },
+              "LNB": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "BONI": {
+                "current_unknown": false,
+                "reservation_a": 0.0678
+              },
+              "SB_LNA": {
+                "current_unknown": true,
+                "reservation_a": 0.065
+              },
+              "RTLA": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "RTLB": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "HFP": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "LIME3V3": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "T7": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "LABPORT": {
+                "current_unknown": true,
+                "reservation_a": 0.83
+              },
+              "AUX12": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              }
+            },
+            "always_on_reserve_a": 0.6,
+            "max_lab5_a": 3.2
+          },
+          "events": [
+            {
+              "at_ms": 917010,
+              "reason": "new_pico_session"
+            }
+          ],
+          "imu": {
+            "ok": false,
+            "fresh": false,
+            "quaternion": null,
+            "error": "IMU_NOT_FRESH"
+          },
+          "hmi": {
+            "ok": false,
+            "fresh": false,
+            "age_ms": null,
+            "keys": 0,
+            "presses": null,
+            "encoders": null,
+            "lux": null,
+            "lux_valid": false,
+            "lux_age_ms": null,
+            "sequence": null,
+            "generation": null,
+            "error": "HMI_NOT_FRESH"
+          },
+          "live_identity_verified": true,
+          "hardware_qualified": false
+        }
+      }
+    },
+    {
+      "name": "single_writer",
+      "status": "PASS",
+      "elapsed_s": 2.587,
+      "evidence": {
+        "same_uid_flock_rejected": true,
+        "service_pid_unchanged": "1744",
+        "stderr": "labd refused startup: [Errno 11] Resource temporarily unavailable\n"
+      }
+    },
+    {
+      "name": "client_permissions",
+      "status": "PASS",
+      "elapsed_s": 7.031,
+      "evidence": {
+        "socket_mode": "0660",
+        "directory_mode": "0750",
+        "client_uid": 1001,
+        "client_group": "labd",
+        "nonmember_denied": true,
+        "peer_uid_cannot_be_spoofed": true
+      }
+    },
+    {
+      "name": "explicit_arm_and_fault",
+      "status": "PASS",
+      "elapsed_s": 1.295,
+      "evidence": {
+        "fault_input": "FAULT_LNA1",
+        "clearing_fault_did_not_rearm": true,
+        "tripped_status": {
+          "mode": "SIMULATION",
+          "pico": {
+            "state": "TRIPPED",
+            "fault": "HOST_TRIP",
+            "mcp_reset": true,
+            "calibration_valid": true,
+            "hardware_commissioned": true,
+            "reject_reason": null,
+            "hb_fresh": false,
+            "q6a_on": true,
+            "battery_mv": 14800,
+            "panel_temp_c": 25.0,
+            "case_temp_c": 25.0,
+            "fan_stalled": false,
+            "brightness_limit_pct": 100
+          },
+          "requested_operating_mode": "field",
+          "session": 5,
+          "configured": false,
+          "last_error": "pico_HOST_TRIP",
+          "policy": {
+            "armed": false,
+            "fault": "active-low fault: FAULT_LNA1",
+            "mode": "field",
+            "pico_active": false,
+            "commissioned": true,
+            "owner": "uid:1001",
+            "lease_deadline_ms": 932932,
+            "outputs": {
+              "EN_LNB": false,
+              "EN_BONI": false,
+              "K1_ON": false,
+              "K2_ON": false,
+              "SW_RTLA_A": false,
+              "SW_RTLA_B": false,
+              "SW_RTLB_A": false,
+              "SW_RTLB_B": false,
+              "EN_LABPORT": false,
+              "EN_AUX12": false,
+              "EN_RTLA": false,
+              "EN_RTLB": false,
+              "EN_HFP": false,
+              "EN_LNA1": false,
+              "EN_LNA2": false,
+              "EN_LNA3": false,
+              "EN_T7": false,
+              "EN_LNA4": false,
+              "CHG_INHIBIT": true,
+              "EN_LIME3V3": false,
+              "E3_GNSS_RESET_GATE": false,
+              "SW_LIME_A": false,
+              "SW_LIME_B": false,
+              "EN_SB_LNA": false
+            },
+            "inputs": {
+              "PG_LNB": false,
+              "PG_BONI": false,
+              "DCS_UHF": false,
+              "DCS_LBAND": false,
+              "DCS_HF": false,
+              "PTC_AUX": false,
+              "SLED_DET": true,
+              "FAULT_LABPORT": true,
+              "FAULT_LNA1": false,
+              "FAULT_LNA2": true,
+              "FAULT_LNA3": true,
+              "FAULT_LNA4": true,
+              "FLT_LNB": true,
+              "FLT_BONI": true,
+              "FAULT_RTLB": true,
+              "FAULT_HFP": true,
+              "FAULT_RTLA": true,
+              "FLT_LIME3V3": true,
+              "OVP_LNB_N": false,
+              "FLT_SB_LNA": true
+            },
+            "simulation": true,
+            "branch_observability": {
+              "LNA1": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "LNA2": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "LNA3": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "LNA4": {
+                "current_unknown": false,
+                "reservation_a": 0.08639999999999999
+              },
+              "LNB": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "BONI": {
+                "current_unknown": false,
+                "reservation_a": 0.0678
+              },
+              "SB_LNA": {
+                "current_unknown": true,
+                "reservation_a": 0.065
+              },
+              "RTLA": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "RTLB": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "HFP": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "LIME3V3": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "T7": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "LABPORT": {
+                "current_unknown": true,
+                "reservation_a": 0.83
+              },
+              "AUX12": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              }
+            },
+            "always_on_reserve_a": 0.6,
+            "max_lab5_a": 3.2
+          },
+          "events": [
+            {
+              "at_ms": 917010,
+              "reason": "new_pico_session"
+            },
+            {
+              "at_ms": 928011,
+              "reason": "host_policy_fault"
+            },
+            {
+              "at_ms": 928019,
+              "reason": "new_pico_session"
+            },
+            {
+              "at_ms": 928019,
+              "reason": "pico_HOST_TRIP"
+            }
+          ],
+          "imu": {
+            "ok": false,
+            "fresh": false,
+            "quaternion": null,
+            "error": "IMU_NOT_FRESH"
+          },
+          "hmi": {
+            "ok": false,
+            "fresh": false,
+            "age_ms": null,
+            "keys": 0,
+            "presses": null,
+            "encoders": null,
+            "lux": null,
+            "lux_valid": false,
+            "lux_age_ms": null,
+            "sequence": null,
+            "generation": null,
+            "error": "HMI_NOT_FRESH"
+          },
+          "live_identity_verified": true,
+          "hardware_qualified": false
+        }
+      }
+    },
+    {
+      "name": "link_loss_latched",
+      "status": "PASS",
+      "elapsed_s": 2.513,
+      "evidence": {
+        "restored_link_did_not_rearm": true,
+        "tripped_status": {
+          "mode": "SIMULATION",
+          "pico": {
+            "state": "ACTIVE",
+            "fault": null,
+            "mcp_reset": false,
+            "calibration_valid": true,
+            "hardware_commissioned": true,
+            "reject_reason": null,
+            "hb_fresh": true,
+            "q6a_on": true,
+            "battery_mv": 14800,
+            "panel_temp_c": 25.0,
+            "case_temp_c": 25.0,
+            "fan_stalled": false,
+            "brightness_limit_pct": 100
+          },
+          "requested_operating_mode": "field",
+          "session": 5,
+          "configured": false,
+          "last_error": "pico_status_timeout",
+          "policy": {
+            "armed": false,
+            "fault": "pico_status_timeout",
+            "mode": "field",
+            "pico_active": false,
+            "commissioned": false,
+            "owner": "uid:1001",
+            "lease_deadline_ms": 934353,
+            "outputs": {
+              "EN_LNB": false,
+              "EN_BONI": false,
+              "K1_ON": false,
+              "K2_ON": false,
+              "SW_RTLA_A": false,
+              "SW_RTLA_B": false,
+              "SW_RTLB_A": false,
+              "SW_RTLB_B": false,
+              "EN_LABPORT": false,
+              "EN_AUX12": false,
+              "EN_RTLA": false,
+              "EN_RTLB": false,
+              "EN_HFP": false,
+              "EN_LNA1": false,
+              "EN_LNA2": false,
+              "EN_LNA3": false,
+              "EN_T7": false,
+              "EN_LNA4": false,
+              "CHG_INHIBIT": true,
+              "EN_LIME3V3": false,
+              "E3_GNSS_RESET_GATE": false,
+              "SW_LIME_A": false,
+              "SW_LIME_B": false,
+              "EN_SB_LNA": false
+            },
+            "inputs": {
+              "PG_LNB": false,
+              "PG_BONI": false,
+              "DCS_UHF": false,
+              "DCS_LBAND": false,
+              "DCS_HF": false,
+              "PTC_AUX": false,
+              "SLED_DET": true,
+              "FAULT_LABPORT": true,
+              "FAULT_LNA1": true,
+              "FAULT_LNA2": true,
+              "FAULT_LNA3": true,
+              "FAULT_LNA4": true,
+              "FLT_LNB": true,
+              "FLT_BONI": true,
+              "FAULT_RTLB": true,
+              "FAULT_HFP": true,
+              "FAULT_RTLA": true,
+              "FLT_LIME3V3": true,
+              "OVP_LNB_N": false,
+              "FLT_SB_LNA": true
+            },
+            "simulation": true,
+            "branch_observability": {
+              "LNA1": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "LNA2": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "LNA3": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "LNA4": {
+                "current_unknown": false,
+                "reservation_a": 0.08639999999999999
+              },
+              "LNB": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "BONI": {
+                "current_unknown": false,
+                "reservation_a": 0.0678
+              },
+              "SB_LNA": {
+                "current_unknown": true,
+                "reservation_a": 0.065
+              },
+              "RTLA": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "RTLB": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "HFP": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "LIME3V3": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "T7": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "LABPORT": {
+                "current_unknown": true,
+                "reservation_a": 0.83
+              },
+              "AUX12": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              }
+            },
+            "always_on_reserve_a": 0.6,
+            "max_lab5_a": 3.2
+          },
+          "events": [
+            {
+              "at_ms": 917010,
+              "reason": "new_pico_session"
+            },
+            {
+              "at_ms": 928011,
+              "reason": "host_policy_fault"
+            },
+            {
+              "at_ms": 928019,
+              "reason": "new_pico_session"
+            },
+            {
+              "at_ms": 928019,
+              "reason": "pico_HOST_TRIP"
+            },
+            {
+              "at_ms": 929935,
+              "reason": "pico_status_timeout"
+            }
+          ],
+          "imu": {
+            "ok": false,
+            "fresh": false,
+            "quaternion": null,
+            "error": "IMU_NOT_FRESH"
+          },
+          "hmi": {
+            "ok": false,
+            "fresh": false,
+            "age_ms": null,
+            "keys": 0,
+            "presses": null,
+            "encoders": null,
+            "lux": null,
+            "lux_valid": false,
+            "lux_age_ms": null,
+            "sequence": null,
+            "generation": null,
+            "error": "HMI_NOT_FRESH"
+          },
+          "live_identity_verified": true,
+          "hardware_qualified": false
+        }
+      }
+    },
+    {
+      "name": "lease_expiry_latched",
+      "status": "PASS",
+      "elapsed_s": 1.677,
+      "evidence": {
+        "expired_lease_latched": true,
+        "late_renewal_did_not_rearm": true,
+        "exact_fault": "owner lease expired",
+        "tripped_status": {
+          "mode": "SIMULATION",
+          "pico": {
+            "state": "TRIPPED",
+            "fault": "HOST_TRIP",
+            "mcp_reset": true,
+            "calibration_valid": true,
+            "hardware_commissioned": true,
+            "reject_reason": null,
+            "hb_fresh": true,
+            "q6a_on": true,
+            "battery_mv": 14800,
+            "panel_temp_c": 25.0,
+            "case_temp_c": 25.0,
+            "fan_stalled": false,
+            "brightness_limit_pct": 100
+          },
+          "requested_operating_mode": "field",
+          "session": 14,
+          "configured": false,
+          "last_error": "pico_HOST_TRIP",
+          "policy": {
+            "armed": false,
+            "fault": "owner lease expired",
+            "mode": "field",
+            "pico_active": false,
+            "commissioned": true,
+            "owner": null,
+            "lease_deadline_ms": null,
+            "outputs": {
+              "EN_LNB": false,
+              "EN_BONI": false,
+              "K1_ON": false,
+              "K2_ON": false,
+              "SW_RTLA_A": false,
+              "SW_RTLA_B": false,
+              "SW_RTLB_A": false,
+              "SW_RTLB_B": false,
+              "EN_LABPORT": false,
+              "EN_AUX12": false,
+              "EN_RTLA": false,
+              "EN_RTLB": false,
+              "EN_HFP": false,
+              "EN_LNA1": false,
+              "EN_LNA2": false,
+              "EN_LNA3": false,
+              "EN_T7": false,
+              "EN_LNA4": false,
+              "CHG_INHIBIT": true,
+              "EN_LIME3V3": false,
+              "E3_GNSS_RESET_GATE": false,
+              "SW_LIME_A": false,
+              "SW_LIME_B": false,
+              "EN_SB_LNA": false
+            },
+            "inputs": {
+              "PG_LNB": false,
+              "PG_BONI": false,
+              "DCS_UHF": false,
+              "DCS_LBAND": false,
+              "DCS_HF": false,
+              "PTC_AUX": false,
+              "SLED_DET": true,
+              "FAULT_LABPORT": true,
+              "FAULT_LNA1": true,
+              "FAULT_LNA2": true,
+              "FAULT_LNA3": true,
+              "FAULT_LNA4": true,
+              "FLT_LNB": true,
+              "FLT_BONI": true,
+              "FAULT_RTLB": true,
+              "FAULT_HFP": true,
+              "FAULT_RTLA": true,
+              "FLT_LIME3V3": true,
+              "OVP_LNB_N": false,
+              "FLT_SB_LNA": true
+            },
+            "simulation": true,
+            "branch_observability": {
+              "LNA1": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "LNA2": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "LNA3": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "LNA4": {
+                "current_unknown": false,
+                "reservation_a": 0.08639999999999999
+              },
+              "LNB": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "BONI": {
+                "current_unknown": false,
+                "reservation_a": 0.0678
+              },
+              "SB_LNA": {
+                "current_unknown": true,
+                "reservation_a": 0.065
+              },
+              "RTLA": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "RTLB": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "HFP": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "LIME3V3": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "T7": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "LABPORT": {
+                "current_unknown": true,
+                "reservation_a": 0.83
+              },
+              "AUX12": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              }
+            },
+            "always_on_reserve_a": 0.6,
+            "max_lab5_a": 3.2
+          },
+          "events": [
+            {
+              "at_ms": 917010,
+              "reason": "new_pico_session"
+            },
+            {
+              "at_ms": 928011,
+              "reason": "host_policy_fault"
+            },
+            {
+              "at_ms": 928019,
+              "reason": "new_pico_session"
+            },
+            {
+              "at_ms": 928019,
+              "reason": "pico_HOST_TRIP"
+            },
+            {
+              "at_ms": 929935,
+              "reason": "pico_status_timeout"
+            },
+            {
+              "at_ms": 931051,
+              "reason": "new_pico_session"
+            },
+            {
+              "at_ms": 931051,
+              "reason": "pico_HEARTBEAT_TIMEOUT"
+            },
+            {
+              "at_ms": 932090,
+              "reason": "host_policy_fault"
+            },
+            {
+              "at_ms": 932098,
+              "reason": "new_pico_session"
+            },
+            {
+              "at_ms": 932098,
+              "reason": "pico_HOST_TRIP"
+            }
+          ],
+          "imu": {
+            "ok": false,
+            "fresh": false,
+            "quaternion": null,
+            "error": "IMU_NOT_FRESH"
+          },
+          "hmi": {
+            "ok": false,
+            "fresh": false,
+            "age_ms": null,
+            "keys": 0,
+            "presses": null,
+            "encoders": null,
+            "lux": null,
+            "lux_valid": false,
+            "lux_age_ms": null,
+            "sequence": null,
+            "generation": null,
+            "error": "HMI_NOT_FRESH"
+          },
+          "live_identity_verified": true,
+          "hardware_qualified": false
+        }
+      }
+    },
+    {
+      "name": "simulation_shutdown",
+      "status": "PASS",
+      "elapsed_s": 5.752,
+      "evidence": {
+        "pico_state": "SHUTTING_DOWN",
+        "os_poweroff_executed": false,
+        "poweroff_bridge_started": false
+      }
+    },
+    {
+      "name": "systemd_restart_disarmed",
+      "status": "PASS",
+      "elapsed_s": 7.657,
+      "evidence": {
+        "old_pid": "1760",
+        "new_pid": "1773",
+        "restart_count": "1",
+        "no_auto_arm": true,
+        "status": {
+          "mode": "SIMULATION",
+          "pico": {
+            "state": "SAFE",
+            "fault": null,
+            "mcp_reset": true,
+            "calibration_valid": true,
+            "hardware_commissioned": true,
+            "reject_reason": null,
+            "hb_fresh": false,
+            "q6a_on": true,
+            "battery_mv": 14800,
+            "panel_temp_c": 25.0,
+            "case_temp_c": 25.0,
+            "fan_stalled": false,
+            "brightness_limit_pct": 100
+          },
+          "requested_operating_mode": "field",
+          "session": 2,
+          "configured": false,
+          "last_error": "new_pico_session",
+          "policy": {
+            "armed": false,
+            "fault": "new_pico_session",
+            "mode": "field",
+            "pico_active": false,
+            "commissioned": true,
+            "owner": null,
+            "lease_deadline_ms": null,
+            "outputs": {
+              "EN_LNB": false,
+              "EN_BONI": false,
+              "K1_ON": false,
+              "K2_ON": false,
+              "SW_RTLA_A": false,
+              "SW_RTLA_B": false,
+              "SW_RTLB_A": false,
+              "SW_RTLB_B": false,
+              "EN_LABPORT": false,
+              "EN_AUX12": false,
+              "EN_RTLA": false,
+              "EN_RTLB": false,
+              "EN_HFP": false,
+              "EN_LNA1": false,
+              "EN_LNA2": false,
+              "EN_LNA3": false,
+              "EN_T7": false,
+              "EN_LNA4": false,
+              "CHG_INHIBIT": true,
+              "EN_LIME3V3": false,
+              "E3_GNSS_RESET_GATE": false,
+              "SW_LIME_A": false,
+              "SW_LIME_B": false,
+              "EN_SB_LNA": false
+            },
+            "inputs": {},
+            "simulation": true,
+            "branch_observability": {
+              "LNA1": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "LNA2": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "LNA3": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "LNA4": {
+                "current_unknown": false,
+                "reservation_a": 0.08639999999999999
+              },
+              "LNB": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "BONI": {
+                "current_unknown": false,
+                "reservation_a": 0.0678
+              },
+              "SB_LNA": {
+                "current_unknown": true,
+                "reservation_a": 0.065
+              },
+              "RTLA": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "RTLB": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "HFP": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "LIME3V3": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "T7": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "LABPORT": {
+                "current_unknown": true,
+                "reservation_a": 0.83
+              },
+              "AUX12": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              }
+            },
+            "always_on_reserve_a": 0.6,
+            "max_lab5_a": 3.2
+          },
+          "events": [
+            {
+              "at_ms": 946059,
+              "reason": "new_pico_session"
+            }
+          ],
+          "imu": {
+            "ok": false,
+            "fresh": false,
+            "quaternion": null,
+            "error": "IMU_NOT_FRESH"
+          },
+          "hmi": {
+            "ok": false,
+            "fresh": false,
+            "age_ms": null,
+            "keys": 0,
+            "presses": null,
+            "encoders": null,
+            "lux": null,
+            "lux_valid": false,
+            "lux_age_ms": null,
+            "sequence": null,
+            "generation": null,
+            "error": "HMI_NOT_FRESH"
+          },
+          "live_identity_verified": true,
+          "hardware_qualified": false
+        }
+      }
+    },
+    {
+      "name": "gui_handoff",
+      "status": "PASS",
+      "elapsed_s": 0.849,
+      "evidence": {
+        "unit": "srrx-linux-lab-sim.service",
+        "socket": "/run/srrx-linux-lab/control.sock",
+        "client": "labclient",
+        "group": "labd",
+        "service_left_running": true,
+        "hardware_unit_running": false,
+        "status": {
+          "mode": "SIMULATION",
+          "pico": {
+            "state": "SAFE",
+            "fault": null,
+            "mcp_reset": true,
+            "calibration_valid": true,
+            "hardware_commissioned": true,
+            "reject_reason": null,
+            "hb_fresh": true,
+            "q6a_on": true,
+            "battery_mv": 14800,
+            "panel_temp_c": 25.0,
+            "case_temp_c": 25.0,
+            "fan_stalled": false,
+            "brightness_limit_pct": 100
+          },
+          "requested_operating_mode": "field",
+          "session": 2,
+          "configured": false,
+          "last_error": "new_pico_session",
+          "policy": {
+            "armed": false,
+            "fault": "new_pico_session",
+            "mode": "field",
+            "pico_active": false,
+            "commissioned": true,
+            "owner": null,
+            "lease_deadline_ms": null,
+            "outputs": {
+              "EN_LNB": false,
+              "EN_BONI": false,
+              "K1_ON": false,
+              "K2_ON": false,
+              "SW_RTLA_A": false,
+              "SW_RTLA_B": false,
+              "SW_RTLB_A": false,
+              "SW_RTLB_B": false,
+              "EN_LABPORT": false,
+              "EN_AUX12": false,
+              "EN_RTLA": false,
+              "EN_RTLB": false,
+              "EN_HFP": false,
+              "EN_LNA1": false,
+              "EN_LNA2": false,
+              "EN_LNA3": false,
+              "EN_T7": false,
+              "EN_LNA4": false,
+              "CHG_INHIBIT": true,
+              "EN_LIME3V3": false,
+              "E3_GNSS_RESET_GATE": false,
+              "SW_LIME_A": false,
+              "SW_LIME_B": false,
+              "EN_SB_LNA": false
+            },
+            "inputs": {},
+            "simulation": true,
+            "branch_observability": {
+              "LNA1": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "LNA2": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "LNA3": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "LNA4": {
+                "current_unknown": false,
+                "reservation_a": 0.08639999999999999
+              },
+              "LNB": {
+                "current_unknown": false,
+                "reservation_a": 0.12
+              },
+              "BONI": {
+                "current_unknown": false,
+                "reservation_a": 0.0678
+              },
+              "SB_LNA": {
+                "current_unknown": true,
+                "reservation_a": 0.065
+              },
+              "RTLA": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "RTLB": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "HFP": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "LIME3V3": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "T7": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              },
+              "LABPORT": {
+                "current_unknown": true,
+                "reservation_a": 0.83
+              },
+              "AUX12": {
+                "current_unknown": true,
+                "reservation_a": 0.12
+              }
+            },
+            "always_on_reserve_a": 0.6,
+            "max_lab5_a": 3.2
+          },
+          "events": [
+            {
+              "at_ms": 946059,
+              "reason": "new_pico_session"
+            }
+          ],
+          "imu": {
+            "ok": false,
+            "fresh": false,
+            "quaternion": null,
+            "error": "IMU_NOT_FRESH"
+          },
+          "hmi": {
+            "ok": false,
+            "fresh": false,
+            "age_ms": null,
+            "keys": 0,
+            "presses": null,
+            "encoders": null,
+            "lux": null,
+            "lux_valid": false,
+            "lux_age_ms": null,
+            "sequence": null,
+            "generation": null,
+            "error": "HMI_NOT_FRESH"
+          },
+          "live_identity_verified": true,
+          "hardware_qualified": false
+        }
+      }
+    }
+  ],
+  "required_steps": [
+    "guest_boundary",
+    "candidate_stage",
+    "hardware_missing_records",
+    "hardware_open_records",
+    "installed_entrypoints_stdio",
+    "systemd_simulation",
+    "single_writer",
+    "client_permissions",
+    "explicit_arm_and_fault",
+    "link_loss_latched",
+    "lease_expiry_latched",
+    "simulation_shutdown",
+    "systemd_restart_disarmed",
+    "gui_handoff"
+  ],
+  "rpc_helper": {
+    "pid": 1746,
+    "uid": 1001,
+    "gid": 1003,
+    "groups": [
+      1001
+    ],
+    "per_request_unix_connection": true,
+    "requests": 174,
+    "exit_code": 0,
+    "cleaned_up": true
+  },
+  "finished_at": "2026-10-20T21:35:09.627739+00:00",
+  "source_sha256": {
+    "software/srrx/daemon.py": "2b6e32eb91e79a0130c4abab9dc58d5d347d503e8d7180166ca7fe16b33160d2",
+    "software/srrx/engine.py": "d478d09a2c3a6bbb4d79dc7c6c743a03db8eb4decd6cd8f81777a610b1a8e568",
+    "software/systemd/srrx.service": "9ed6a1203fec3b808a53d67d7f7ee52381a2511f87787adb28124b00dfccb261",
+    "design/E3.json": "0a2e2e60ede923b2d0a1aa0f8484a97513c1ef36ae389d3aee365fbcf90aaac5",
+    "deployment/linux_lab/guest_smoke.py": "ac5c71206fd1da21240395e7ce5b9be5f2310524b25cc95c136409bb8880a5ab"
+  }
+}

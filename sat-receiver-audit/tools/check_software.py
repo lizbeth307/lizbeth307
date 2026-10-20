@@ -19,6 +19,8 @@ def main():
     groups = {"software": unittest.TestLoader().discover(str(BASE / "software/tests"))}
     if (BASE / "deployment/tests").is_dir():
         groups["deployment"] = unittest.TestLoader().discover(str(BASE / "deployment/tests"))
+    if (BASE / "deployment/linux_lab/test_guest_smoke.py").is_file():
+        groups["linux_lab"] = unittest.TestLoader().discover(str(BASE / "deployment/linux_lab"), pattern="test_*.py")
     group_counts = {name: tests.countTestCases() for name, tests in groups.items()}
     suite = unittest.TestSuite(groups.values())
     result = unittest.TextTestRunner(verbosity=1).run(suite)

@@ -397,12 +397,15 @@ class UnixServiceFailureTests(unittest.TestCase):
                                         '--project', str(PROJECT), '--socket', str(path)],
                                        cwd=PROJECT, env=env, stdout=subprocess.PIPE,
                                        stderr=subprocess.PIPE, text=True)
+            startup_complete = False
             try:
-                deadline = time.monotonic() + 4
+                # Cold ARM64 TCG startup is separate from all live RPC limits.
+                deadline = time.monotonic() + 20
                 while not path.exists() and process.poll() is None and time.monotonic() < deadline:
                     time.sleep(.01)
                 self.assertIsNone(process.poll(), 'daemon exited before creating its socket')
                 self.assertTrue(path.exists(), 'daemon socket startup timed out')
+                startup_complete = True
                 malformed = [b'not json\n', b'[]\n', b'{"op":[]}\n',
                              b'{"op":"lease","value":{"ttl_ms":NaN}}\n',
                              b'{"op":"control","name":"EN_LNA1","value":1}\n',
@@ -434,7 +437,10 @@ class UnixServiceFailureTests(unittest.TestCase):
                 except subprocess.TimeoutExpired:
                     process.kill()
                     stdout, stderr = process.communicate(timeout=2)
-                self.assertEqual(process.returncode, 0, stdout + stderr)
+                # Preserve the primary startup failure if SIGTERM arrived before
+                # the child had installed its clean-shutdown signal handler.
+                if startup_complete:
+                    self.assertEqual(process.returncode, 0, stdout + stderr)
                 self.assertFalse(path.exists(), 'clean service shutdown left the socket behind')
 
 

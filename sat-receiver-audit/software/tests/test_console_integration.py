@@ -26,7 +26,9 @@ def command(module, *arguments):
     return subprocess.run([sys.executable, '-m', module, *map(str, arguments)], cwd=PROJECT,
                           env=dict(os.environ, PYTHONPATH=str(PROJECT / 'software'),
                                    OPENBLAS_NUM_THREADS='1', OMP_NUM_THREADS='1', MKL_NUM_THREADS='1'),
-                          capture_output=True, text=True, timeout=20)
+                          # ARM64 TCG must cold-load NumPy/ORT from the guest disk.
+                          # This bounds the test subprocess, not a service lease.
+                          capture_output=True, text=True, timeout=90)
 
 
 def ready_status():
@@ -192,11 +194,25 @@ class ConsolePipelineTests(unittest.TestCase):
             self.assertEqual(list(Path(directory).iterdir()), [])
 
     def test_live_demo_console_cannot_satisfy_physical_capture_guard(self):
-        transport = DemoTransport(timeout=2)
+        transport = DemoTransport(timeout=20)
         controller = ConsoleController(transport)
         try:
-            controller.poll()
-            self.assertTrue(controller.arm()['ok'])
+            # Bound interpreter startup separately from live console freshness.
+            initial = transport({'op': 'status'})
+            self.assertTrue(initial['ok'], initial)
+            self.assertEqual(initial['data']['mode'], 'SIMULATION')
+            self.assertFalse(initial['data']['policy']['armed'])
+            transport.timeout = 2
+            ready_at = time.monotonic() + 20
+            while True:
+                status = controller.poll()
+                if (status['connected'] and status['data'].get('session') is not None
+                        and status['data']['pico'].get('state') == 'SAFE'):
+                    break
+                self.assertLess(time.monotonic(), ready_at, status)
+                time.sleep(.03)
+            armed = controller.arm()
+            self.assertTrue(armed['ok'], armed)
             deadline = time.monotonic() + 4
             while time.monotonic() < deadline:
                 status = controller.poll()

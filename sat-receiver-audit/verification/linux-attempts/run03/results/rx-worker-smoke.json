@@ -1,0 +1,136 @@
+{
+  "status": "FAIL",
+  "scope": "spawned-worker-native-ABI-component-only-no-RF-no-accepted-hardware",
+  "architecture": "aarch64",
+  "kernel": "6.8.0-147-generic",
+  "python": "3.12.3",
+  "fixture_source_sha256": "604389407b8f426749fc9273e589ea41232d611515cefa2b152d4b588923dcaf",
+  "startup_deadline_s": 60.0,
+  "production_read_deadline_s": 1.0,
+  "native_compile_performed": true,
+  "control_guard_replaced_only_in_test": true,
+  "acceptance_file_created": false,
+  "physical_receiver_tested": false,
+  "physical_control_outputs_tested": false,
+  "rf_transmitted": false,
+  "raw_iq_persisted": false,
+  "cases": [
+    {
+      "case": "driver_error",
+      "status": "PASS",
+      "issues": [],
+      "native_read_entered": true,
+      "exception_type": "OSError",
+      "exception": "RTL read failed (-71)",
+      "elapsed_s": 5.87,
+      "close_duration_s": 0.031,
+      "worker_exitcode": -15,
+      "worker_alive_after_close": false,
+      "actual_read_observer_checks": 1,
+      "production_capture_cleanup_exercised": true,
+      "clean_error_boundary": true,
+      "branch_off_request_observed": true,
+      "branch_off_electrically_tested": false,
+      "fixture_short_sample_count": null,
+      "core_rlimit_confirmed_zero": true,
+      "only_case_artifact": [
+        "lifecycle.txt"
+      ],
+      "elf_machine": 183
+    },
+    {
+      "case": "hang_ignoring_sigterm",
+      "status": "PASS",
+      "issues": [],
+      "native_read_entered": true,
+      "exception_type": "TimeoutError",
+      "exception": "No fresh RX block within one second",
+      "elapsed_s": 7.019,
+      "close_duration_s": 0.523,
+      "worker_exitcode": -9,
+      "worker_alive_after_close": false,
+      "actual_read_observer_checks": 20,
+      "production_capture_cleanup_exercised": true,
+      "clean_error_boundary": true,
+      "branch_off_request_observed": true,
+      "branch_off_electrically_tested": false,
+      "fixture_short_sample_count": null,
+      "core_rlimit_confirmed_zero": true,
+      "only_case_artifact": [
+        "lifecycle.txt"
+      ],
+      "elf_machine": 183
+    },
+    {
+      "case": "crash_sigsegv",
+      "status": "FAIL",
+      "issues": [
+        "Native SIGSEGV fixture exit not observed"
+      ],
+      "native_read_entered": true,
+      "exception_type": "TimeoutError",
+      "exception": "No fresh RX block within one second",
+      "elapsed_s": 6.898,
+      "close_duration_s": 0.53,
+      "worker_exitcode": -9,
+      "worker_alive_after_close": false,
+      "actual_read_observer_checks": 20,
+      "production_capture_cleanup_exercised": true,
+      "clean_error_boundary": true,
+      "branch_off_request_observed": true,
+      "branch_off_electrically_tested": false,
+      "fixture_short_sample_count": null,
+      "core_rlimit_confirmed_zero": true,
+      "only_case_artifact": [
+        "lifecycle.txt"
+      ],
+      "elf_machine": 183
+    },
+    {
+      "case": "invalid_odd_short_read",
+      "status": "PASS",
+      "issues": [],
+      "native_read_entered": true,
+      "exception_type": "OSError",
+      "exception": "Invalid/empty RTL IQ block",
+      "elapsed_s": 5.79,
+      "close_duration_s": 0.022,
+      "worker_exitcode": -15,
+      "worker_alive_after_close": false,
+      "actual_read_observer_checks": 1,
+      "production_capture_cleanup_exercised": true,
+      "clean_error_boundary": true,
+      "branch_off_request_observed": true,
+      "branch_off_electrically_tested": false,
+      "fixture_short_sample_count": null,
+      "core_rlimit_confirmed_zero": true,
+      "only_case_artifact": [
+        "lifecycle.txt"
+      ],
+      "elf_machine": 183
+    },
+    {
+      "case": "valid_even_short_read",
+      "status": "PASS",
+      "issues": [],
+      "native_read_entered": true,
+      "exception_type": null,
+      "exception": null,
+      "elapsed_s": 4.529,
+      "close_duration_s": 0.018,
+      "worker_exitcode": -15,
+      "worker_alive_after_close": false,
+      "actual_read_observer_checks": 1,
+      "production_capture_cleanup_exercised": false,
+      "clean_error_boundary": true,
+      "branch_off_request_observed": false,
+      "branch_off_electrically_tested": false,
+      "fixture_short_sample_count": 1,
+      "core_rlimit_confirmed_zero": true,
+      "only_case_artifact": [
+        "lifecycle.txt"
+      ],
+      "elf_machine": 183
+    }
+  ]
+}

@@ -132,9 +132,12 @@ def validate_frame(frame):
     return _checked_frame(frame, True)
 
 
-def append_survey(path, frame):
+def append_survey(path, frame, *, storage_guard=None):
     """Append only a re-masked spectrum JSON line, never raw IQ or extra fields."""
     safe = validate_frame(mask_frame(frame))
+    if storage_guard is not None:
+        storage_guard.append_jsonl(path, safe)
+        return safe
     line = json.dumps(safe, allow_nan=False, separators=(',', ':')) + '\n'
     destination = Path(path)
     destination.parent.mkdir(parents=True, exist_ok=True)

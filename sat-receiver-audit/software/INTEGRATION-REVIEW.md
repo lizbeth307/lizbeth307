@@ -1,5 +1,7 @@
 # Огляд інтеграції сервісу, 20 жовтня 2026
 
+Доповнення v0.3.1: наведені нижче лічильники й обмеження AF_UNIX описують початковий хостовий набір. Для перевірки справжніх Linux IPC, systemd, UID/permissions і відмов підготовлено окреме [середовище Ubuntu ARM64](../deployment/linux_lab/README.md). Поточні виправлення UART, RX worker і накопичувача описані в [FINDINGS.md](../deployment/linux_lab/FINDINGS.md); результати VM не підміняють хостовий SKIP.
+
 Додано `tests/test_service_failures.py`: **19 тестів, 18 PASS, 1 явний SKIP** у цьому середовищі. Перевірено справжні `Engine`, `SimLink`, обидва wire codecs і переносну модель Pico Supervisor. Поточний загальний результат усіх `software/tests` збережено в `verification/software-tests.json`; цей огляд фіксує окремий набір інтеграційних сценаріїв. Окремо успішно запущено реальний дочірній процес `python -m srrx.daemon --simulate --stdio` із JSON-запитами через pipes.
 
 Це програмні інтеграційні перевірки. Вони не створюють hardware acceptance, не вимірюють ADC, не керують GPIO/I²C/UART пристрою і не закривають апаратних воріт E1–E5.

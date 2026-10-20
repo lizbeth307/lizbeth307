@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "environment": "Ubuntu24.04ARM64genericQEMUvirt-8.2",
+  "q6a_board_emulation": false,
+  "hardware_qualification": false,
+  "image_release": "20261017",
+  "primary_base_url": "https://cloud-images.ubuntu.com/releases/noble/release-20261017/",
+  "ubuntu_assets": [
+    {
+      "name": "ubuntu-24.04-server-cloudimg-arm64.img",
+      "url": "https://cloud-images.ubuntu.com/releases/noble/release-20261017/ubuntu-24.04-server-cloudimg-arm64.img",
+      "bytes": 616522752,
+      "sha256": "50e24e1fb79e89116e939d90aa7738f7af48c442fa1bc2510131e0b39c50348e"
+    },
+    {
+      "name": "ubuntu-24.04-server-cloudimg-arm64-vmlinuz-generic",
+      "url": "https://cloud-images.ubuntu.com/releases/noble/release-20261017/unpacked/ubuntu-24.04-server-cloudimg-arm64-vmlinuz-generic",
+      "bytes": 18600927,
+      "sha256": "353bab8eeaad9caf931dd85fd7a7bf8800d2669d759c0369ffaba7abc03a7aff"
+    },
+    {
+      "name": "ubuntu-24.04-server-cloudimg-arm64-initrd-generic",
+      "url": "https://cloud-images.ubuntu.com/releases/noble/release-20261017/unpacked/ubuntu-24.04-server-cloudimg-arm64-initrd-generic",
+      "bytes": 29297293,
+      "sha256": "86e1b682fc0655e7b6d455c44f8ea2d7f0d35a8ff097e292da6ee46a206041fd"
+    }
+  ]
+}

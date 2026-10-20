@@ -17,8 +17,13 @@ class SerialLink:
             a[6][termios.VMIN] = a[6][termios.VTIME] = 0
             termios.tcsetattr(self.fd, termios.TCSANOW, a)
             termios.tcflush(self.fd, termios.TCIOFLUSH)
-        except BaseException:
+        except BaseException as exc:
             os.close(self.fd)
+            self.fd = None
+            # CPython termios.error is not an OSError. Present one transport
+            # failure contract to daemon/Engine even during partial startup.
+            if isinstance(exc, termios.error):
+                raise OSError(*exc.args) from exc
             raise
         self.decoder, self.pending = FrameDecoder(), bytearray()
 
@@ -54,8 +59,14 @@ class SerialLink:
             self.fd = None
 
     def discard_input(self):
-        termios.tcflush(self.fd, termios.TCIFLUSH)
-        self.decoder.reset()
+        try:
+            termios.tcflush(self.fd, termios.TCIFLUSH)
+        except termios.error as exc:
+            # HUP can report EIO here after a delayed host tick. Engine must
+            # latch that failure and de-energize, rather than lose the exception.
+            raise OSError(*exc.args) from exc
+        finally:
+            self.decoder.reset()
 
 
 class SimLink:

@@ -17,6 +17,17 @@ def main():
     generated = json.loads((BASE / "build/kicad/generation-manifest.json").read_text())
     software_path = BASE / "verification/software-tests.json"
     software = json.loads(software_path.read_text()) if software_path.exists() else {}
+    linux_path = BASE / "verification/linux-lab/report.json"
+    linux = json.loads(linux_path.read_text()) if linux_path.exists() else {}
+    module_path = BASE / "verification/module-lab/report.json"
+    modules = json.loads(module_path.read_text()) if module_path.exists() else {}
+    linux_note = (f"Фактичний ARM64 Linux/systemd прогін: **{linux.get('status', 'NOT_RUN')}**. "
+                  "Окремий звіт і журнали: [Linux lab](verification/linux-lab/README.md).") if linux else "ARM64 Linux lab підготовлено; фактичні результати потрібно читати в окремому звіті після запуску."
+    module_note = (f"Емуляція модулів: **{modules['execution_status']}**, "
+                   f"{modules['coverage']['component_count']} елементи, {modules['coverage']['assembly_count']} вузли, "
+                   f"{modules['coverage']['interface_count']} інтерфейсів. "
+                   f"Функціональні моделі покрили {modules['coverage']['counts']['EMULATION_PASS']} інтерфейсів; "
+                   "інші функції залишаються непідтвердженими. [Таблиця](verification/module-lab/MODULE-RESULTS.md).") if modules else "Результати модулів зберігаються окремо; сам інвентар не доводить успішну емуляцію."
     items = [dict(x, sheet=g["sheet"]) for g in graphs for x in g.get("open_items", [])]
     blockers = [x for x in items if x.get("blocking")]
     lines = ["# Ворота приймання SR-RX-v2.1", "", "Жоден стендовий тест не виконано. `OPEN` не означає, що виявлено несправність конкретного екземпляра: це умова, без підтвердження якої його не можна приймати чи підключати. Стан апаратного випуску — **BLOCKED**.", "", "Основні інструкції українською наведено в аудитах [E1](design/E1-review.md), [E2](design/E2-review.md), [E3](design/E3-review.md), [E4](design/E4-review.md), [E5](design/E5-review.md) та [таблицях монтажу](design/E5-connection-guide.md). Нижче — повний реєстр ідентифікаторів із машинного контракту.", ""]
@@ -121,7 +132,13 @@ def main():
 
 Початковий `sr-rx-v2.kicad_pcb` є порожнім шаблоном. Gerber, виробнича PCB та підтверджені механічні файли виготовлення не заявлені. Наявні 8 креслень розміщення — теоретичні ескізи, які мають бути звірені з новими розмірами деталей. Додано [PCB-підготовку](build/13-pcb-preparation.md), нерозведений starter DC_CORE (71 компонент/187 контактів, verification/pcb-review.json) та окремий [прототип внутрішнього розведення](build/kicad/pcb-prototype/README.md). Його точний raw DRC і незалежна звірка містяться у verification/pcb-prototype-review.json. Навіть нуль внутрішніх DRC findings не визначає зовнішні роз'єми, MPN, корпус або фізичну точність детектора.
 
-Реалізовано [керування й меню](software/README.md), Pico Supervisor, RP2040-Zero/BNO085, UART/CRC, I²C-монітори, інтерлоки, калібрування, приймальні записи та systemd units. Додано [RX/FFT](software/RX.md), [GNSS](software/LOCATION.md), [спектральне навчання](software/LEARNING.md), [touch-консоль](software/HMI.md), [декодерні адаптери](software/DECODERS.md) та [staging встановлення](software/DEPLOYMENT.md). Хостові перевірки: **{software.get("passed", 0)} PASS**, **{len(software.get("skipped", []))} SKIP**; фізичне встановлення/прошивання не виконано. Сервіс перевірено справжнім stdio-процесом; GUI — справжнім Qt offscreen; Unix socket у цьому середовищі недоступний.
+Реалізовано [керування й меню](software/README.md), Pico Supervisor, RP2040-Zero/BNO085, UART/CRC, I²C-монітори, інтерлоки, калібрування, приймальні записи та systemd units. Додано [RX/FFT](software/RX.md), [GNSS](software/LOCATION.md), [спектральне навчання](software/LEARNING.md), [touch-консоль](software/HMI.md), [декодерні адаптери](software/DECODERS.md) та [staging встановлення](software/DEPLOYMENT.md). Хостові перевірки: **{software.get("passed", 0)} PASS**, **{len(software.get("skipped", []))} SKIP**; фізичне встановлення/прошивання не виконано. Сервіс перевіряється справжніми процесами; GUI — справжнім Qt. Обмеження Unix socket хоста відокремлено від перевірок у Linux guest.
+
+## Перевірка без фізичної плати
+
+Додано відтворюване [ARM64 Linux середовище](deployment/linux_lab/README.md), [моделі модулів](deployment/module_lab/README.md) і прив'язку запису до конкретного змонтованого диска через StorageGuard. {linux_note}
+
+{module_note} Моделі з'єднань використовують незалежний експорт KiCad; навмисні обриви, замикання та підключення NC не є фізичними вимірюваннями. Реальні USB/PCIe/HDMI, RF, BMS, калібрування, тактування Q6A та фізичний T7 залишаються відкритими.
 
 Повний C++ data plane56MS/s/Lime, весь початковий каталог декодерів, апаратний HTP/QAIRT та встановлений A/B образ не оголошено завершеними. Experimental vendor patches і вихідні генератори мають пройти native/API та стендове приймання; EGC/DSC вимкнені без перевірених pre-payload parsers. [readiness-contract.json](design/readiness-contract.json) фіксує межу; його дані самі не керують GPIO.
 

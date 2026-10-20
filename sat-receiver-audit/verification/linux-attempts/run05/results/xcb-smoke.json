@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-10-20T21:02:34.554162+00:00",
+  "status": "FAIL",
+  "qualification": "LINUX_XCB_XVFB_SIMULATION",
+  "environment": {
+    "system": "Linux",
+    "machine": "aarch64",
+    "kernel": "6.8.0-147-generic",
+    "os_id": "ubuntu",
+    "os_version": "24.04",
+    "python": "3.12.3",
+    "uid": 1001,
+    "user": "labclient",
+    "groups": [
+      "labclient",
+      "labd"
+    ]
+  },
+  "socket": "/run/srrx-linux-lab/control.sock",
+  "display": ":99",
+  "source_sha256": "cefe12320aa3ada89b11ac5c95d7ee9c1063aebcc21ca9bac6d493a049fd244d",
+  "physical_tests_performed": false,
+  "q6a_tests_performed": false,
+  "xvfb_started_or_stopped_by_this_script": false,
+  "scope": "Actual XCB/Xvfb visible Qt widgets and Unix SIM service; no physical display/touch or hardware qualification",
+  "references": [
+    "https://doc.qt.io/qt-6/qscreen.html",
+    "https://xorg.freedesktop.org/releases/X11R6.9.0/doc/html/Xserver.1.html",
+    "https://www.x.org/releases/X11R7.6/doc/libX11/specs/libX11/libX11.html",
+    "https://specifications.freedesktop.org/wm/latest/ar01s05.html"
+  ],
+  "xvfb": {
+    "display": ":99",
+    "unix_socket": "/tmp/.X11-unix/X99",
+    "unix_socket_uid": 1001,
+    "servers": [
+      {
+        "pid": 1768,
+        "uid": 1001,
+        "argv": [
+          "/usr/bin/Xvfb",
+          ":99",
+          "-screen",
+          "0",
+          "1280x800x24",
+          "-nolisten",
+          "tcp"
+        ]
+      }
+    ],
+    "explicit_nolisten_tcp": true,
+    "display_tcp_listener": false
+  },
+  "initial_service": {
+    "mode": "SIMULATION",
+    "pico_state": "TRIPPED",
+    "pico_reset_asserted": true,
+    "armed": false,
+    "fault": "owner lease expired",
+    "owner": null,
+    "lease_deadline_ms": null,
+    "outputs": {
+      "EN_LNB": false,
+      "EN_BONI": false,
+      "K1_ON": false,
+      "K2_ON": false,
+      "SW_RTLA_A": false,
+      "SW_RTLA_B": false,
+      "SW_RTLB_A": false,
+      "SW_RTLB_B": false,
+      "EN_LABPORT": false,
+      "EN_AUX12": false,
+      "EN_RTLA": false,
+      "EN_RTLB": false,
+      "EN_HFP": false,
+      "EN_LNA1": false,
+      "EN_LNA2": false,
+      "EN_LNA3": false,
+      "EN_T7": false,
+      "EN_LNA4": false,
+      "EN_LIME3V3": false,
+      "SW_LIME_A": false,
+      "SW_LIME_B": false,
+      "EN_SB_LNA": false
+    },
+    "energized": []
+  },
+  "error": "TimeoutError: timed out",
+  "traceback": "Traceback (most recent call last):\n  File \"/opt/srrx/deployment/linux_lab/xcb_smoke.py\", line 435, in orchestrate\n    capture = child_run(\"cli-screen\", expected_cli_pid=cli.pid)\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/srrx/deployment/linux_lab/xcb_smoke.py\", line 408, in child_run\n    probe()  # Independent read-only IPC cannot arm/renew a lease.\n    ^^^^^^^\n  File \"/opt/srrx/deployment/linux_lab/xcb_smoke.py\", line 362, in probe\n    reply = request_once(args.socket, {\"op\": \"status\"}, timeout=1)\n            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/opt/srrx/software/srrx/daemon.py\", line 38, in request_once\n    block = s.recv(8192)\n            ^^^^^^^^^^^^\nTimeoutError: timed out\n",
+  "cleanup_disarm_requested": true,
+  "final_service": {
+    "mode": "SIMULATION",
+    "pico_state": "TRIPPED",
+    "pico_reset_asserted": true,
+    "armed": false,
+    "fault": "owner lease expired",
+    "owner": null,
+    "lease_deadline_ms": null,
+    "outputs": {
+      "EN_LNB": false,
+      "EN_BONI": false,
+      "K1_ON": false,
+      "K2_ON": false,
+      "SW_RTLA_A": false,
+      "SW_RTLA_B": false,
+      "SW_RTLB_A": false,
+      "SW_RTLB_B": false,
+      "EN_LABPORT": false,
+      "EN_AUX12": false,
+      "EN_RTLA": false,
+      "EN_RTLB": false,
+      "EN_HFP": false,
+      "EN_LNA1": false,
+      "EN_LNA2": false,
+      "EN_LNA3": false,
+      "EN_T7": false,
+      "EN_LNA4": false,
+      "EN_LIME3V3": false,
+      "SW_LIME_A": false,
+      "SW_LIME_B": false,
+      "EN_SB_LNA": false
+    },
+    "energized": []
+  }
+}

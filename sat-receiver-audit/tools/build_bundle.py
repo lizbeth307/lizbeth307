@@ -81,7 +81,7 @@ def archive():
         if not p.is_file():
             continue
         rel = p.relative_to(BASE)
-        if (p.suffix.lower() in {".html", ".pyc", ".kicad_prl", ".lck", ".tmp"} or (p.suffix.lower() == ".png" and rel.parts[:2] != ("verification", "hmi-views")) or (p.suffix.lower() == ".zip" and rel.parts[:2] != ("firmware", "dist")) or "__pycache__" in rel.parts):
+        if ((p.suffix.lower() == ".html" and rel.as_posix() != "verification/module-lab/module-results.html") or p.suffix.lower() in {".pyc", ".kicad_prl", ".lck", ".tmp"} or (p.suffix.lower() == ".png" and rel.parts[:2] not in {( "verification", "hmi-views"), ("verification", "linux-lab")}) or (p.suffix.lower() == ".zip" and rel.parts[:2] != ("firmware", "dist")) or "__pycache__" in rel.parts):
             continue
         if any(part in {"tmp", ".git", "qa"} for part in rel.parts):
             continue
@@ -109,6 +109,10 @@ def archive():
 
 CORE = [
     ("Стан та результати перевірок", "COMPLETION.md"),
+    ("Емуляція кожного модуля", "verification/module-lab/MODULE-RESULTS.md"),
+    ("Стенд моделей модулів", "deployment/module_lab/README.md"),
+    ("ARM64 Linux середовище", "deployment/linux_lab/README.md"),
+    ("Результати Linux", "verification/linux-lab/README.md"),
     ("Пріоритетні поправки v2.1", "build/12-revision-v2.1.md"),
     ("Виконуване керування 20.10", "software/README.md"),
     ("Приймальний процес", "software/RX.md"),
@@ -160,6 +164,26 @@ def main():
     if (software.get("host_regression_status") != "PASS" or software.get("graph_sha256") != graphs
             or software.get("source_sha256") != sources):
         raise SystemExit("Package only after current-source software regression PASS; report is stale or failed")
+    module_report = json.loads((BASE / "verification/module-lab/report.json").read_text())
+    linux_report = json.loads((BASE / "verification/linux-lab/report.json").read_text())
+    if module_report.get("execution_status") != "PASS" or linux_report.get("status") != "PASS":
+        raise SystemExit("Package only after Linux and module-lab PASS")
+    lab_binding = json.loads((BASE / "verification/linux-lab/source-binding.json").read_text())
+    for relative, expected in lab_binding["source_sha256"].items():
+        if hashlib.sha256((BASE / relative).read_bytes()).hexdigest() != expected:
+            raise SystemExit("Linux execution result is stale: " + relative)
+    for relative, key in (("verification/module-lab/report.json", "module_report_sha256"),
+                          ("verification/linux-lab/report.json", "linux_report_sha256")):
+        if hashlib.sha256((BASE / relative).read_bytes()).hexdigest() != lab_binding[key]:
+            raise SystemExit("Linux/module report binding changed: " + relative)
+    models = BASE / "deployment/module_lab"
+    if module_report["inventory_sha256"] != hashlib.sha256((models / "inventory.json").read_bytes()).hexdigest():
+        raise SystemExit("Module inventory result is stale")
+    if module_report["model_sha256"] != {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(models.glob("*.py"))}:
+        raise SystemExit("Module models changed after their run")
+    for relative, expected in module_report["coverage"]["graph_sha256"].items():
+        if hashlib.sha256((BASE / relative).read_bytes()).hexdigest() != expected:
+            raise SystemExit("Module graph result is stale: " + relative)
     verification = json.loads((BASE / "verification/validation.json").read_text())
     if verification["graph_netlist_comparison"] != "PASS" or verification["erc_counts"]:
         raise SystemExit("Package only after graph comparison and the full ERC pass")
@@ -206,7 +230,7 @@ def main():
 :root{color-scheme:light dark;--bg:#fcfcfa;--fg:#182331;--muted:#5b6672;--line:#d7dee4;--paper:#fff;--accent:#1c5c78;--warn:#fff3d9;--warnfg:#543c09}
 @media(prefers-color-scheme:dark){:root{--bg:#111820;--fg:#e4eaf0;--muted:#a2afbd;--line:#334252;--paper:#1b2530;--accent:#80c7e7;--warn:#392e18;--warnfg:#f9df9c}}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,sans-serif}a{color:var(--accent)}nav{position:fixed;width:270px;padding:24px 20px;inset:0 auto 0 0;overflow:auto;border-right:1px solid var(--line)}nav ol{padding-left:20px}nav li{margin:6px 0}main{margin-left:270px;max-width:1280px;padding:32px 40px;overflow-wrap:anywhere}h1{font-size:1.8rem;line-height:1.2}h2{margin-top:1.6em;font-size:1.3rem}h3{font-size:1.08rem}.eyebrow,.muted{color:var(--muted);font-size:.85rem}.eyebrow{text-transform:none;letter-spacing:.03em}section{padding:28px 0;border-top:2px solid var(--line);margin-top:28px}.notice{padding:16px 20px;border-left:4px solid #bd8b28;background:var(--warn);color:var(--warnfg);margin:20px 0}.button{display:inline-block;border:1px solid var(--accent);border-radius:7px;padding:10px 16px;text-decoration:none;margin:5px 8px 5px 0;font-weight:600}table{display:block;max-width:100%;overflow-x:auto;border-collapse:collapse;font-size:.86rem}td,th{border:1px solid var(--line);padding:7px 10px;vertical-align:top;min-width:80px}th{background:var(--paper)}pre{white-space:pre-wrap;overflow-x:auto;padding:14px;background:var(--paper);border:1px solid var(--line);border-radius:6px;font-size:.83rem}code{font-family:ui-monospace,monospace;font-size:.9em}details{padding:12px;border:1px solid var(--line);margin:12px 0;border-radius:6px}summary{cursor:pointer;font-weight:650}img{display:block;width:100%;height:auto;background:#fff;margin-top:12px}blockquote{margin-left:0;padding-left:16px;border-left:3px solid var(--line)}@media(max-width:900px){nav{position:static;width:auto;border:0;border-bottom:1px solid var(--line)}nav ol{columns:2;font-size:.88rem}main{margin:0;padding:20px 16px}}@media print{nav,.button{display:none}main{margin:0;max-width:none;padding:0}details{break-inside:avoid}section{break-before:page}}
-</style></head><body><nav><b>SR-RX-v2.1</b><p class="muted">20 жовтня 2026<br>Редагована схема · документація · аудит</p><ol>'''+"".join(nav)+'''<li><a href="#schematics">Огляд схем</a></li><li><a href="#downloads">Вбудовані файли</a></li></ol></nav><main><div class="eyebrow">Інженерна редакція від коміту 4653188</div><h1>Супутниковий приймач і портативна радіолабораторія</h1><p>В ефірі — лише прийом. Автономне ядро Radxa Dragon Q6A, RTL-SDR, HF+ та Lime.</p><div class="notice"><b>Стендове приймання не виконано.</b> Цей комплект містить відновлені й перевірені програмно схеми та конкретні умови їх апаратного приймання. Він не є дозволом на виготовлення PCB або підключення неперевіреного акумуляторного вузла.</div>'''+pdf_link+zip_link+"".join(sections)+'''<section id="schematics"><h1>Огляд електричних схем KiCad</h1><p>Усі сторінки експортовано з редагованого проєкту. З'єднання через однакові глобальні мітки перевірено порівнянням із XML-netlist.</p>'''+"".join(gallery)+'''</section><section id="downloads"><h1>Вбудовані файли</h1><p>Кнопки на початку документа працюють без інтернету. ZIP містить усі доступні вихідні документи, первинні журнали аудиту, графи, KiCad, SVG, PDF, BOM, перевірки та генератори. HTML не вкладено в ZIP, щоб уникнути рекурсії.</p><p class="muted">У ZIP '''+str(len(manifest))+''' файлів. Контрольні суми наведені у вкладеному ARCHIVE-MANIFEST.json. Початковий Git збережено історією комітів.</p></section></main></body></html>'''
+</style></head><body><nav><b>SR-RX-v2.1</b><p class="muted">20 жовтня 2026<br>Редагована схема · документація · аудит</p><ol>'''+"".join(nav)+'''<li><a href="#schematics">Огляд схем</a></li><li><a href="#downloads">Вбудовані файли</a></li></ol></nav><main><div class="eyebrow">Інженерна редакція від коміту 4653188</div><h1>Супутниковий приймач і портативна радіолабораторія</h1><p>В ефірі — лише прийом. Автономне ядро Radxa Dragon Q6A, RTL-SDR, HF+ та Lime.</p><div class="notice"><b>Стендове приймання не виконано.</b> Цей комплект містить відновлені й перевірені програмно схеми та конкретні умови їх апаратного приймання. Він не є дозволом на виготовлення PCB або підключення неперевіреного акумуляторного вузла.</div>'''+pdf_link+zip_link+"".join(sections)+'''<section id="schematics"><h1>Огляд електричних схем KiCad</h1><p>Усі сторінки експортовано з редагованого проєкту. З'єднання через однакові глобальні мітки перевірено порівнянням із XML-netlist.</p>'''+"".join(gallery)+'''</section><section id="downloads"><h1>Вбудовані файли</h1><p>Кнопки на початку документа працюють без інтернету. ZIP містить усі доступні вихідні документи, первинні журнали аудиту, графи, KiCad, SVG, PDF, BOM, перевірки та генератори. Головний HTML не вкладено в ZIP, щоб уникнути рекурсії; окремий автономний звіт модулів міститься в verification/module-lab/module-results.html.</p><p class="muted">У ZIP '''+str(len(manifest))+''' файлів. Контрольні суми наведені у вкладеному ARCHIVE-MANIFEST.json. Початковий Git збережено історією комітів.</p></section></main></body></html>'''
     out = BASE / "SR-RX-v2-ves-proekt.html"
     # Verify every data attachment byte-for-byte, and fail on broken internal links.
     # Embedded archives legitimately exceed libxml's default 10MB attribute

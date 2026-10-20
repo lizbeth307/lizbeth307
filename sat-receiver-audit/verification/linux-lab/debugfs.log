@@ -1,0 +1,20 @@
+debugfs 1.47.0 (5-Feb-2023)
+dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//gui/pause-qt.stderr.log
+dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//gui/pause-startup-disarmed.png
+dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//gui/kill-qt.stderr.log
+dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//gui/fixture-pause.json
+dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//gui/pause-resumed-disarmed.png
+dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//gui/kill-startup-disarmed.png
+dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//gui/fixture-kill.json
+dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//gui/report.json
+rdump: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//gui
+dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//xcb/production-cli.stderr.log
+dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//xcb/cli-screen.stderr.log
+dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//xcb/production-cli-xcb.png
+dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//xcb/menu-fixture.json
+dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//xcb/cli-screen.json
+dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//xcb/menu-fixture.stderr.log
+dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//xcb/production-menu-widget-xcb.png
+dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//xcb/production-menu-xserver-xcb.png
+dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//xcb/report.json
+rdump: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//xcb

@@ -1,0 +1,65 @@
+{
+  "schema_version": 1,
+  "status": "ABORTED",
+  "classification": "INFRASTRUCTURE_EXEC_SERVER_TRANSPORT_LOSS_BEFORE_APPLICATION_TESTS",
+  "recorded_at_utc": "2026-10-20T21:19:13.832278+00:00",
+  "application_test_failure_observed": false,
+  "application_test_suites_started": false,
+  "application_results_present": false,
+  "physical_tests_performed": false,
+  "hardware_qualified": false,
+  "process_exit_code": null,
+  "qemu_exit_code": null,
+  "clean_shutdown_observed": false,
+  "source_modified_for_recovery": false,
+  "image_repair_performed": false,
+  "image_mutation_by_diagnostic_tools": false,
+  "source_manifest_sha256": "e891349c49c49348bb4454408ab43e6fb8aa25d3d34a44f2b8fdcc7035adb4f0",
+  "last_guest_console": "cloud-init modules:config at guest 204.598061 seconds; no modules:final or application test phase observed",
+  "transport_error": "Unified exec process failed: exec-server transport disconnected; failed to resume exec-server session: recovery timed out after 25s",
+  "former_exec_session": 88539,
+  "writer_stopped_evidence": {
+    "frozen_timestamp_samples_utc": [
+      "2026-10-20T21:18:14Z",
+      "2026-10-20T21:18:54Z"
+    ],
+    "unchanged_files": [
+      {
+        "path": "/tmp/srrx-linuxlab-run06.log",
+        "size": 0,
+        "mtime_ns": 1792530737870192163
+      },
+      {
+        "path": "/tmp/srrx-linux-lab-run06/console.log",
+        "size": 55422,
+        "mtime_ns": 1792530945836534892
+      },
+      {
+        "path": "/tmp/srrx-linux-lab-run06/guest.qcow2",
+        "size": 15532032,
+        "mtime_ns": 1792530961367813717
+      },
+      {
+        "path": "/tmp/srrx-linux-lab-run06/results.img",
+        "size": 134217728,
+        "mtime_ns": 1792530716173345677
+      }
+    ],
+    "readonly_f_getlk_guest_and_results": "F_UNLCK for both images; query only, no acquired locks",
+    "exclusive_qemu_img_check": {
+      "command": [
+        "qemu-img",
+        "check",
+        "-f",
+        "qcow2",
+        "/tmp/srrx-linux-lab-run06/guest.qcow2"
+      ],
+      "exit_code": 0,
+      "output": "No errors were found on the image. 224/163840 = 0.14% allocated, 41.96% fragmented, 0.00% compressed clusters; image end offset 15532032"
+    },
+    "root_independent_qemu_img_check": "exit 0; check-errors 0",
+    "report_json_absent": true,
+    "results_pristine": true
+  },
+  "replacement_plan": "Discard this incomplete execution as evidence of application correctness. Prepare run07 from the known cleanly stopped run05 cache; preserve run06 files unchanged."
+}

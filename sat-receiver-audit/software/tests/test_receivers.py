@@ -1,11 +1,17 @@
 import copy
 import ctypes as C
+import errno
 import hashlib
 import json
+import os
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
+import textwrap
 import unittest
 from unittest.mock import patch
+from types import SimpleNamespace
 
 import numpy as np
 
@@ -175,3 +181,211 @@ class CaptureTests(unittest.TestCase):
         with self.assertRaises(OSError):
             run_capture(record={"backend":"rtl","branch":"RTLA"},transport=transport,source_factory=lambda *a:Source())
         self.assertEqual(calls[-1],{"op":"control","name":"EN_RTLA","value":False})
+
+
+    def test_actual_pipe_eof_is_clean_oserror_after_capture_cleanup_and_cli_refusal(self):
+        import contextlib
+        import io
+        import multiprocessing as mp
+        from types import SimpleNamespace
+        import srrx.labrx as labrx
+        # Actual unidirectional multiprocessing pipe EOF, not a mocked recv error.
+        reader, sender = mp.get_context("spawn").Pipe(duplex=False)
+        sender.close()
+        worker = object.__new__(labrx.WorkerSource)
+        worker.reader = reader
+        worker.process = SimpleNamespace(is_alive=lambda: False)
+        calls = []
+        def transport(request):
+            calls.append(dict(request))
+            return ready()
+        try:
+            with tempfile.TemporaryDirectory() as temporary:
+                output, survey = Path(temporary)/"spectrum.json", Path(temporary)/"survey.jsonl"
+                with self.assertRaisesRegex(OSError, "worker pipe closed") as caught:
+                    labrx.run_capture(frames=1, output=output, survey=survey,
+                                      record={"backend":"rtl", "branch":"RTLA"},
+                                      transport=transport, source_factory=lambda *a:worker)
+                self.assertIsInstance(caught.exception.__cause__, EOFError)
+                self.assertTrue(reader.closed)
+                self.assertEqual(calls[-1], {"op":"control", "name":"EN_RTLA", "value":False})
+                self.assertFalse(output.exists() or survey.exists())
+                # The exact normalized failure also follows main's public clean
+                # error path; no physical-mode acceptance is fabricated here.
+                stderr = io.StringIO()
+                with patch.object(labrx, "run_capture", side_effect=caught.exception), contextlib.redirect_stderr(stderr):
+                    self.assertEqual(labrx.main(["--simulate", "--frames", "1"]), 2)
+                self.assertIn("labrx: RX worker pipe closed", stderr.getvalue())
+                self.assertNotIn("Traceback", stderr.getvalue())
+        finally:
+            reader.close()
+
+
+class WorkerCorePrivacyTests(unittest.TestCase):
+    def fake_prctl(self, *results):
+        calls, values = [], iter(results)
+        def invoke(*arguments):
+            calls.append(arguments)
+            return next(values)
+        return SimpleNamespace(prctl=Function(invoke)), calls
+
+    def test_core_guard_sets_limit_and_verifies_real_prctl_contract(self):
+        from srrx.labrx import _disable_worker_core_dumps
+        library, calls = self.fake_prctl(0, 0)
+        with patch('srrx.labrx.sys.platform', 'linux'), \
+             patch('srrx.labrx.resource.setrlimit') as limit:
+            _disable_worker_core_dumps(libc=library)
+            import resource
+            limit.assert_called_once_with(resource.RLIMIT_CORE, (0, 0))
+        self.assertEqual(calls, [(4, 0, 0, 0, 0), (3, 0, 0, 0, 0)])
+
+    def test_failed_set_failed_get_and_still_dumpable_all_refuse(self):
+        from srrx.labrx import _disable_worker_core_dumps
+        for results in ((-1,), (0, -1), (0, 1)):
+            with self.subTest(results=results):
+                library, calls = self.fake_prctl(*results)
+                with patch('srrx.labrx.sys.platform', 'linux'), \
+                     patch('srrx.labrx.resource.setrlimit'), \
+                     patch('srrx.labrx.C.get_errno', return_value=errno.EACCES):
+                    with self.assertRaises(OSError) as raised:
+                        _disable_worker_core_dumps(libc=library)
+                self.assertEqual(len(calls), len(results))
+                self.assertEqual(raised.exception.errno, errno.EPERM if results[-1] == 1 else errno.EACCES)
+
+    def test_unsupported_platform_and_missing_prctl_refuse(self):
+        from srrx.labrx import _disable_worker_core_dumps
+        with patch('srrx.labrx.sys.platform', 'darwin'), \
+             patch('srrx.labrx.resource.setrlimit') as limit:
+            with self.assertRaises(OSError) as raised:
+                _disable_worker_core_dumps(libc=SimpleNamespace())
+            limit.assert_not_called()
+        self.assertEqual(raised.exception.errno, errno.ENOSYS)
+        with patch('srrx.labrx.sys.platform', 'linux'), patch('srrx.labrx.resource.setrlimit'):
+            with self.assertRaises(OSError) as raised:
+                _disable_worker_core_dumps(libc=SimpleNamespace())
+        self.assertEqual(raised.exception.errno, errno.ENOSYS)
+
+    def run_worker_boundary(self, guard_results):
+        import srrx.labrx as labrx
+        from unittest.mock import Mock
+        events, replies = [], []
+        receiver = Mock()
+        def read():
+            events.append('read')
+            raise OSError('fixture read end')
+        receiver.read.side_effect = read
+        receiver.close.side_effect = lambda: events.append('close')
+        connection = SimpleNamespace(send_bytes=replies.append, close=lambda: events.append('pipe_close'))
+        results = iter(guard_results)
+        def guard():
+            events.append('guard')
+            value = next(results)
+            if isinstance(value, Exception):
+                raise value
+        def load(*arguments):
+            events.append('driver_load')
+            return receiver
+        with tempfile.TemporaryDirectory() as temporary:
+            path = Path(temporary)/'fixture.so'
+            path.write_bytes(b'hash-only unit fixture, never dlopen')
+            record = {'backend':'rtl','library_path':str(path),'library_sha256':hashlib.sha256(path.read_bytes()).hexdigest()}
+            with patch.object(labrx, '_disable_worker_core_dumps', side_effect=guard), \
+                 patch.object(labrx, 'RTLReceiver', side_effect=load):
+                labrx._worker(connection, record, 100000000, 1024000)
+        return events, replies, receiver
+
+    def test_worker_privacy_guard_precedes_driver_load_and_first_read(self):
+        events, replies, receiver = self.run_worker_boundary([None, None])
+        self.assertEqual(events, ['guard','driver_load','guard','read','close','pipe_close'])
+        self.assertEqual(len(replies), 1)
+        self.assertTrue(replies[0].startswith(b'E'))
+        receiver.close.assert_called_once_with()
+
+    def test_preload_privacy_failure_never_opens_driver(self):
+        events, replies, receiver = self.run_worker_boundary([OSError('privacy unavailable')])
+        self.assertEqual(events, ['guard','pipe_close'])
+        receiver.read.assert_not_called()
+        receiver.close.assert_not_called()
+        self.assertTrue(replies[0].startswith(b'E'))
+
+    def test_post_init_privacy_failure_closes_driver_without_reading(self):
+        events, replies, receiver = self.run_worker_boundary([None,OSError('privacy reset by initialization')])
+        self.assertEqual(events, ['guard','driver_load','guard','close','pipe_close'])
+        receiver.read.assert_not_called()
+        receiver.close.assert_called_once_with()
+        self.assertTrue(replies[0].startswith(b'E'))
+
+    def test_parent_privacy_failure_never_observes_control_opens_source_or_writes_output(self):
+        import srrx.labrx as labrx
+        from unittest.mock import Mock
+        transport, source = Mock(), Mock()
+        with tempfile.TemporaryDirectory() as temporary:
+            output, survey = Path(temporary)/'spectrum.json', Path(temporary)/'survey.jsonl'
+            with patch.object(labrx, '_disable_worker_core_dumps', side_effect=OSError('privacy unavailable')), \
+                 patch.object(labrx, 'ControlGuard') as guard:
+                with self.assertRaisesRegex(OSError, 'privacy unavailable'):
+                    labrx.run_capture(frames=1, output=output, survey=survey,
+                        record={'backend':'rtl','branch':'RTLA'}, transport=transport, source_factory=source)
+                guard.assert_not_called()
+            transport.assert_not_called()
+            source.assert_not_called()
+            self.assertEqual(list(Path(temporary).iterdir()), [])
+
+    def test_simulation_does_not_change_parent_dumpability(self):
+        import srrx.labrx as labrx
+        with patch.object(labrx, '_disable_worker_core_dumps') as privacy:
+            result = labrx.run_capture(fft_size=64, frames=1)
+        privacy.assert_not_called()
+        self.assertEqual(result['source'], 'SIMULATION')
+
+    @unittest.skipUnless(sys.platform == 'linux', 'Actual process dumpability requires Linux')
+    def test_real_capture_parent_is_nondumpable_before_source_and_remains_so_after_cleanup(self):
+        # This fresh subprocess uses an in-memory guard/source fixture. It opens
+        # no device, invents no accepted status/record, and saves no sample/frame.
+        code = textwrap.dedent('''
+            import ctypes as C
+            import json
+            from unittest.mock import patch
+            import numpy as np
+            import srrx.labrx as labrx
+            runtime=C.CDLL(None, use_errno=True)
+            runtime.prctl.argtypes=[C.c_int,C.c_ulong,C.c_ulong,C.c_ulong,C.c_ulong]
+            runtime.prctl.restype=C.c_int
+            def dumpable():
+                value=runtime.prctl(3,0,0,0,0)
+                if value < 0: raise OSError(C.get_errno(), 'PR_GET_DUMPABLE failed')
+                return value
+            observations={'before':dumpable()}
+            calls=[]
+            class FixtureGuard:
+                def __init__(self,transport,branch):
+                    assert branch=='RTLA'
+                    observations['guard']=dumpable()
+                def check(self):
+                    return {'scope':'parent-privacy-fixture-no-hardware-status'}
+            class FixtureSource:
+                def __init__(self,*arguments): observations['constructor']=dumpable()
+                def read(self,guard):
+                    guard.check()
+                    observations['read']=dumpable()
+                    return np.ones(64,dtype=np.complex64)
+                def close(self): observations['close']=dumpable()
+            def transport(request):
+                calls.append(request)
+                return {'ok':True,'scope':'component-fixture-command-observed-only'}
+            with patch.object(labrx,'ControlGuard',FixtureGuard):
+                labrx.run_capture(fft_size=64,frames=1,
+                    record={'backend':'rtl','branch':'RTLA'},transport=transport,source_factory=FixtureSource)
+            observations['after']=dumpable()
+            print(json.dumps({'scope':'native-parent-privacy-fixture-no-devices-no-files',
+                'observations':observations,'cleanup_commands':calls,'physical_receiver_tested':False}))
+        ''')
+        project=Path(__file__).resolve().parents[2]
+        result=subprocess.run([sys.executable,'-c',code],cwd=project,capture_output=True,text=True,timeout=90,
+            env=dict(os.environ,PYTHONPATH=str(project/'software'),OPENBLAS_NUM_THREADS='1',OMP_NUM_THREADS='1',MKL_NUM_THREADS='1'))
+        self.assertEqual(result.returncode,0,result.stdout+result.stderr)
+        observed=json.loads(result.stdout)
+        self.assertFalse(observed['physical_receiver_tested'])
+        self.assertEqual({key:value for key,value in observed['observations'].items() if key!='before'},
+                         {'guard':0,'constructor':0,'read':0,'close':0,'after':0})
+        self.assertEqual(observed['cleanup_commands'],[{'op':'control','name':'EN_RTLA','value':False}])

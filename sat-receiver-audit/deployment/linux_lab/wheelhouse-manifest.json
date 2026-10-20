@@ -1,0 +1,694 @@
+{
+  "schema_version": 1,
+  "kind": "srrx_offline_arm64_wheelhouse",
+  "verified_at_utc": "2026-10-20T19:08:22+00:00",
+  "target": {
+    "architecture": "aarch64",
+    "python": "CPython3.12",
+    "os": "Ubuntu24.04",
+    "glibc": "2.39"
+  },
+  "host_install_performed": false,
+  "native_runtime_import_performed": false,
+  "verification_scope": "ZIP_metadata_compatible_tags_and_primary_PyPI_JSON_SHA256_size_no_package_execution",
+  "wheel_count": 19,
+  "total_size_bytes": 313191203,
+  "wheels": [
+    {
+      "name": "build",
+      "version": "1.6.1",
+      "filename": "build-1.6.1-py3-none-any.whl",
+      "size_bytes": 31179,
+      "sha256": "ecd351a4be9d35a9eaaba244a7687143c9c7d4aea6ac964e7e7ddab20cbcf4e7",
+      "url": "https://files.pythonhosted.org/packages/ad/9b/9fb3585dabcd73a1b2a6267f63f62649347c9e6d072c9fde365b105abb2c/build-1.6.1-py3-none-any.whl",
+      "pypi_json_url": "https://pypi.org/pypi/build/1.6.1/json",
+      "pypi_json_file": "pypi-metadata/build-1.6.1.json",
+      "pypi_json_sha256": "064e9dcb80e948b5de7a841c3fd9b5644a980eb27bb644fb7f562b7d773b157b",
+      "pypi_sha256": "ecd351a4be9d35a9eaaba244a7687143c9c7d4aea6ac964e7e7ddab20cbcf4e7",
+      "pypi_size_bytes": 31179,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2026-09-10T07:55:59.148398Z",
+      "wheel_tags": [
+        "py3-none-any"
+      ],
+      "requires_python": ">= 3.10",
+      "requires_dist": [
+        "packaging >= 24.0",
+        "pyproject_hooks",
+        "colorama; os_name == \"nt\"",
+        "importlib-metadata >= 4.6; python_full_version < \"3.10.2\"",
+        "tomli >= 1.1.0; python_version < \"3.11\"",
+        "keyring ; extra == \"keyring\"",
+        "uv >= 0.1.18 ; extra == \"uv\"",
+        "virtualenv >= 20.36.1 ; extra == \"virtualenv\""
+      ],
+      "inspected_native_elf_count": 0,
+      "inspected_native_elf_machine": null
+    },
+    {
+      "name": "flatbuffers",
+      "version": "25.12.19",
+      "filename": "flatbuffers-25.12.19-py2.py3-none-any.whl",
+      "size_bytes": 26661,
+      "sha256": "7634f50c427838bb021c2d66a3d1168e9d199b0607e6329399f04846d42e20b4",
+      "url": "https://files.pythonhosted.org/packages/e8/2d/d2a548598be01649e2d46231d151a6c56d10b964d94043a335ae56ea2d92/flatbuffers-25.12.19-py2.py3-none-any.whl",
+      "pypi_json_url": "https://pypi.org/pypi/flatbuffers/25.12.19/json",
+      "pypi_json_file": "pypi-metadata/flatbuffers-25.12.19.json",
+      "pypi_json_sha256": "3800bcba3177624044bb53f06f4a588061c10034f93467a0d163549b0928045a",
+      "pypi_sha256": "7634f50c427838bb021c2d66a3d1168e9d199b0607e6329399f04846d42e20b4",
+      "pypi_size_bytes": 26661,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2025-12-19T23:16:13.622515Z",
+      "wheel_tags": [
+        "py2-none-any",
+        "py3-none-any"
+      ],
+      "requires_python": null,
+      "requires_dist": [],
+      "inspected_native_elf_count": 0,
+      "inspected_native_elf_machine": null
+    },
+    {
+      "name": "ml_dtypes",
+      "version": "0.6.0",
+      "filename": "ml_dtypes-0.6.0-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+      "size_bytes": 360227,
+      "sha256": "37da32aa97749251025666d62372775019594577b9c9e9cfda83bed48d778fdb",
+      "url": "https://files.pythonhosted.org/packages/ed/cf/87e8a6c57eed63a91782a0d229856ddf73e138ce004dd71e2799a9dcdb33/ml_dtypes-0.6.0-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+      "pypi_json_url": "https://pypi.org/pypi/ml_dtypes/0.6.0/json",
+      "pypi_json_file": "pypi-metadata/ml-dtypes-0.6.0.json",
+      "pypi_json_sha256": "99684e9e2e506da8db8acbfb076e2b8108ae442e62d8af858613bd41d42662ea",
+      "pypi_sha256": "37da32aa97749251025666d62372775019594577b9c9e9cfda83bed48d778fdb",
+      "pypi_size_bytes": 360227,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2026-08-13T14:14:02.938142Z",
+      "wheel_tags": [
+        "cp312-cp312-manylinux_2_27_aarch64",
+        "cp312-cp312-manylinux_2_28_aarch64"
+      ],
+      "requires_python": ">=3.10",
+      "requires_dist": [
+        "numpy>=2.0.0",
+        "numpy>=2.1.0; python_version >= \"3.13\"",
+        "numpy>=2.3.0; python_version >= \"3.14\"",
+        "absl-py; extra == \"dev\"",
+        "pytest; extra == \"dev\"",
+        "pytest-xdist; extra == \"dev\"",
+        "pylint>=2.6.0; extra == \"dev\"",
+        "pyink; extra == \"dev\""
+      ],
+      "inspected_native_elf_count": 1,
+      "inspected_native_elf_machine": "EM_AARCH64"
+    },
+    {
+      "name": "numpy",
+      "version": "2.3.5",
+      "filename": "numpy-2.3.5-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+      "size_bytes": 14250702,
+      "sha256": "8b973c57ff8e184109db042c842423ff4f60446239bd585a5131cc47f06f789d",
+      "url": "https://files.pythonhosted.org/packages/74/78/fcd41e5a0ce4f3f7b003da85825acddae6d7ecb60cf25194741b036ca7d6/numpy-2.3.5-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl",
+      "pypi_json_url": "https://pypi.org/pypi/numpy/2.3.5/json",
+      "pypi_json_file": "pypi-metadata/numpy-2.3.5.json",
+      "pypi_json_sha256": "b152ed47e23df7c54138ba3f4841ce36f7c607def65185e80de0367ad51f0c84",
+      "pypi_sha256": "8b973c57ff8e184109db042c842423ff4f60446239bd585a5131cc47f06f789d",
+      "pypi_size_bytes": 14250702,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2025-11-16T22:49:59.632126Z",
+      "wheel_tags": [
+        "cp312-cp312-manylinux_2_27_aarch64",
+        "cp312-cp312-manylinux_2_28_aarch64"
+      ],
+      "requires_python": ">=3.11",
+      "requires_dist": [],
+      "inspected_native_elf_count": 21,
+      "inspected_native_elf_machine": "EM_AARCH64"
+    },
+    {
+      "name": "onnx",
+      "version": "1.23.2",
+      "filename": "onnx-1.23.2-cp312-abi3-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl",
+      "size_bytes": 8640515,
+      "sha256": "a203efdbaabbbe8f25e854e2b2921382d6fcf4c67895656f939044b0632974e8",
+      "url": "https://files.pythonhosted.org/packages/f9/50/2e156ef2cae1c9f4ff01a41dffa43fc1eb7b969755055436bf6df1805d54/onnx-1.23.2-cp312-abi3-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl",
+      "pypi_json_url": "https://pypi.org/pypi/onnx/1.23.2/json",
+      "pypi_json_file": "pypi-metadata/onnx-1.23.2.json",
+      "pypi_json_sha256": "fba596e5e4a96cdbd7fb0ec75407545256160e272a3ebe074c316dab3fd2f94c",
+      "pypi_sha256": "a203efdbaabbbe8f25e854e2b2921382d6fcf4c67895656f939044b0632974e8",
+      "pypi_size_bytes": 8640515,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2026-10-06T04:25:36.727204Z",
+      "wheel_tags": [
+        "cp312-abi3-manylinux_2_26_aarch64",
+        "cp312-abi3-manylinux_2_28_aarch64"
+      ],
+      "requires_python": ">=3.10",
+      "requires_dist": [
+        "numpy>=1.23.2",
+        "protobuf>=6.31.1",
+        "typing_extensions>=4.7.1",
+        "ml_dtypes>=0.5.4",
+        "Pillow>=12.2.0; extra == \"reference\""
+      ],
+      "inspected_native_elf_count": 1,
+      "inspected_native_elf_machine": "EM_AARCH64"
+    },
+    {
+      "name": "onnxruntime",
+      "version": "1.31.0",
+      "filename": "onnxruntime-1.31.0-cp312-cp312-manylinux_2_28_aarch64.whl",
+      "size_bytes": 21420804,
+      "sha256": "35758d7606d578ec5b9d65f6e8a1f488013194c3f6097038a3223cb26d35ef9a",
+      "url": "https://files.pythonhosted.org/packages/53/1a/561b43ca1536d9e81d1785bb8a1a260a9e314ef6d04976ba0411c652bda1/onnxruntime-1.31.0-cp312-cp312-manylinux_2_28_aarch64.whl",
+      "pypi_json_url": "https://pypi.org/pypi/onnxruntime/1.31.0/json",
+      "pypi_json_file": "pypi-metadata/onnxruntime-1.31.0.json",
+      "pypi_json_sha256": "0b74275000ad2aa562cdaf253283587d4e482844f9cccd98e9c419affb9d7e82",
+      "pypi_sha256": "35758d7606d578ec5b9d65f6e8a1f488013194c3f6097038a3223cb26d35ef9a",
+      "pypi_size_bytes": 21420804,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2026-10-09T04:18:21.729287Z",
+      "wheel_tags": [
+        "cp312-cp312-manylinux_2_28_aarch64"
+      ],
+      "requires_python": ">=3.11",
+      "requires_dist": [
+        "flatbuffers",
+        "numpy>=1.21.6",
+        "packaging",
+        "protobuf>=4.25.8",
+        "sympy; extra == \"symbolic\"",
+        "ml_dtypes; extra == \"quantization\""
+      ],
+      "inspected_native_elf_count": 3,
+      "inspected_native_elf_machine": "EM_AARCH64"
+    },
+    {
+      "name": "packaging",
+      "version": "26.3",
+      "filename": "packaging-26.3-py3-none-any.whl",
+      "size_bytes": 129956,
+      "sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+      "url": "https://files.pythonhosted.org/packages/63/34/ba1c580383c9eada3711951fef0795c80b829a078d72188184bcab9dd527/packaging-26.3-py3-none-any.whl",
+      "pypi_json_url": "https://pypi.org/pypi/packaging/26.3/json",
+      "pypi_json_file": "pypi-metadata/packaging-26.3.json",
+      "pypi_json_sha256": "4f190d2f0b312b3086058cee64ab4333bf3ce67fb78b4c2bdb43899049b29f4d",
+      "pypi_sha256": "d7193f7c8e4e93f444fde0262bf90af30e16fa0ad0ad44cb553c87339b23cd1c",
+      "pypi_size_bytes": 129956,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2026-08-04T18:15:27.159957Z",
+      "wheel_tags": [
+        "py3-none-any"
+      ],
+      "requires_python": ">=3.9",
+      "requires_dist": [],
+      "inspected_native_elf_count": 0,
+      "inspected_native_elf_machine": null
+    },
+    {
+      "name": "pip",
+      "version": "26.2.2",
+      "filename": "pip-26.2.2-py3-none-any.whl",
+      "size_bytes": 1819850,
+      "sha256": "fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70",
+      "url": "https://files.pythonhosted.org/packages/3f/06/3e4420302363fbb71be3c7f35ce042f54bfca330e3e66b3a2e3c4cca579f/pip-26.2.2-py3-none-any.whl",
+      "pypi_json_url": "https://pypi.org/pypi/pip/26.2.2/json",
+      "pypi_json_file": "pypi-metadata/pip-26.2.2.json",
+      "pypi_json_sha256": "ebd1e77f0bdb480aa8cf26c605ad6856753becb015a3d2006228cadb40465931",
+      "pypi_sha256": "fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70",
+      "pypi_size_bytes": 1819850,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2026-10-20T16:36:27.046054Z",
+      "wheel_tags": [
+        "py3-none-any"
+      ],
+      "requires_python": ">=3.10",
+      "requires_dist": [],
+      "inspected_native_elf_count": 0,
+      "inspected_native_elf_machine": null
+    },
+    {
+      "name": "protobuf",
+      "version": "7.36.2",
+      "filename": "protobuf-7.36.2-cp310-abi3-manylinux2014_aarch64.whl",
+      "size_bytes": 344219,
+      "sha256": "e11e1f0180583a2af89db6a2ecd9e8dc40aa6d2988ca175bfd0e6d12ea72d74e",
+      "url": "https://files.pythonhosted.org/packages/b6/ea/91fdf7c2b8bbd49cde056f00a9df6773532987e1c00fe2830b895af95c7e/protobuf-7.36.2-cp310-abi3-manylinux2014_aarch64.whl",
+      "pypi_json_url": "https://pypi.org/pypi/protobuf/7.36.2/json",
+      "pypi_json_file": "pypi-metadata/protobuf-7.36.2.json",
+      "pypi_json_sha256": "090d6bb0e21b26299221770a798ec48c5d45dc4d71a374b44b5e0e7c3a7c47f1",
+      "pypi_sha256": "e11e1f0180583a2af89db6a2ecd9e8dc40aa6d2988ca175bfd0e6d12ea72d74e",
+      "pypi_size_bytes": 344219,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2026-09-17T20:07:52.914883Z",
+      "wheel_tags": [
+        "cp310-abi3-manylinux2014_aarch64"
+      ],
+      "requires_python": ">=3.10",
+      "requires_dist": [],
+      "inspected_native_elf_count": 1,
+      "inspected_native_elf_machine": "EM_AARCH64"
+    },
+    {
+      "name": "pyproject_hooks",
+      "version": "1.3.3",
+      "filename": "pyproject_hooks-1.3.3-py3-none-any.whl",
+      "size_bytes": 10724,
+      "sha256": "5fc53fdac9f7bd63fbcdc868fb5f90b4784d78a53a3d3388cd738b807441a20b",
+      "url": "https://files.pythonhosted.org/packages/85/11/044d1ae1b4ec0d7af88ee5bc91e081be1022533032b906a7bdabdbb60977/pyproject_hooks-1.3.3-py3-none-any.whl",
+      "pypi_json_url": "https://pypi.org/pypi/pyproject_hooks/1.3.3/json",
+      "pypi_json_file": "pypi-metadata/pyproject-hooks-1.3.3.json",
+      "pypi_json_sha256": "ef47170935f8a098c070a3cd65d637d5bbf646158d9559eebac9c465b83d0401",
+      "pypi_sha256": "5fc53fdac9f7bd63fbcdc868fb5f90b4784d78a53a3d3388cd738b807441a20b",
+      "pypi_size_bytes": 10724,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2026-09-16T08:58:02.960279Z",
+      "wheel_tags": [
+        "py3-none-any"
+      ],
+      "requires_python": ">=3.8",
+      "requires_dist": [],
+      "inspected_native_elf_count": 0,
+      "inspected_native_elf_machine": null
+    },
+    {
+      "name": "PySide6",
+      "version": "6.12.0",
+      "filename": "pyside6-6.12.0-cp310-abi3-manylinux_2_39_aarch64.whl",
+      "size_bytes": 577708,
+      "sha256": "8920e163f60493e18822d20f1e01c7c4bcf9c1c5cfbc68284788896f692594f8",
+      "url": "https://files.pythonhosted.org/packages/4d/8c/dfd4f339285d2e6c31067789b9b7dd2cee26c098ecc78ac7200fb04aa344/pyside6-6.12.0-cp310-abi3-manylinux_2_39_aarch64.whl",
+      "pypi_json_url": "https://pypi.org/pypi/PySide6/6.12.0/json",
+      "pypi_json_file": "pypi-metadata/pyside6-6.12.0.json",
+      "pypi_json_sha256": "08c9c4735deb5d972dd4236236bee7cee6fe18f1fccc7e92b24e08c649d63a3b",
+      "pypi_sha256": "8920e163f60493e18822d20f1e01c7c4bcf9c1c5cfbc68284788896f692594f8",
+      "pypi_size_bytes": 577708,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2026-10-08T09:11:18.705847Z",
+      "wheel_tags": [
+        "cp310-abi3-manylinux_2_39_aarch64"
+      ],
+      "requires_python": "<3.16,>=3.10",
+      "requires_dist": [
+        "PySide6_Essentials==6.12.0",
+        "PySide6_Addons==6.12.0",
+        "PySide6_WebEngine==6.12.0.140",
+        "PySide6_Pdf==6.12.0.140",
+        "tomli>=2.0.1; python_version < \"3.11\"",
+        "PySide6_Examples==6.12.0; extra == \"full\"",
+        "shiboken6_generator==6.12.0; extra == \"full\""
+      ],
+      "inspected_native_elf_count": 0,
+      "inspected_native_elf_machine": null
+    },
+    {
+      "name": "PySide6_Addons",
+      "version": "6.12.0",
+      "filename": "pyside6_addons-6.12.0-cp310-abi3-manylinux_2_39_aarch64.whl",
+      "size_bytes": 63646547,
+      "sha256": "48cd0b639c06c9f79685f340ccae4319614b66d6efcdf06c2ce3836790d8c46e",
+      "url": "https://files.pythonhosted.org/packages/94/14/b6c5683614601448c3ea8f19613ca378db75158ba594b662a8a8041e3e5f/pyside6_addons-6.12.0-cp310-abi3-manylinux_2_39_aarch64.whl",
+      "pypi_json_url": "https://pypi.org/pypi/PySide6_Addons/6.12.0/json",
+      "pypi_json_file": "pypi-metadata/pyside6-addons-6.12.0.json",
+      "pypi_json_sha256": "57540ad2fecaf83a3782b6e409099cbcd9575069ada1fb92e7e9387b735553e8",
+      "pypi_sha256": "48cd0b639c06c9f79685f340ccae4319614b66d6efcdf06c2ce3836790d8c46e",
+      "pypi_size_bytes": 63646547,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2026-10-08T09:08:26.921346Z",
+      "wheel_tags": [
+        "cp310-abi3-manylinux_2_39_aarch64"
+      ],
+      "requires_python": "<3.16,>=3.10",
+      "requires_dist": [
+        "PySide6_Essentials==6.12.0",
+        "PySide6_WebEngine==6.12.0.140; extra == \"webengine\""
+      ],
+      "inspected_native_elf_count": 180,
+      "inspected_native_elf_machine": "EM_AARCH64"
+    },
+    {
+      "name": "PySide6_Essentials",
+      "version": "6.12.0",
+      "filename": "pyside6_essentials-6.12.0-cp310-abi3-manylinux_2_39_aarch64.whl",
+      "size_bytes": 83810102,
+      "sha256": "08c5841063fc1df69b7fa1ee405f539e66576a83fc48004be3e2c5e35ccbfa69",
+      "url": "https://files.pythonhosted.org/packages/5e/4e/f4fd4c016719be832ec49d3c87940459e87fd666179a0a199a3998d07916/pyside6_essentials-6.12.0-cp310-abi3-manylinux_2_39_aarch64.whl",
+      "pypi_json_url": "https://pypi.org/pypi/PySide6_Essentials/6.12.0/json",
+      "pypi_json_file": "pypi-metadata/pyside6-essentials-6.12.0.json",
+      "pypi_json_sha256": "831feab9b07c343224453cf4313d56bf10a2c9c6af1e44b8778ffd25547715e6",
+      "pypi_sha256": "08c5841063fc1df69b7fa1ee405f539e66576a83fc48004be3e2c5e35ccbfa69",
+      "pypi_size_bytes": 83810102,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2026-10-08T09:10:09.130425Z",
+      "wheel_tags": [
+        "cp310-abi3-manylinux_2_39_aarch64"
+      ],
+      "requires_python": "<3.16,>=3.10",
+      "requires_dist": [
+        "shiboken6==6.12.0"
+      ],
+      "inspected_native_elf_count": 271,
+      "inspected_native_elf_machine": "EM_AARCH64"
+    },
+    {
+      "name": "PySide6_Pdf",
+      "version": "6.12.0.140",
+      "filename": "pyside6_pdf-6.12.0.140-cp310-abi3-manylinux_2_39_aarch64.whl",
+      "size_bytes": 2837165,
+      "sha256": "2b63ee1f8ce3d3b2b648be2ebda483dd0fbca8d44c92a6c6f924033ac7fbde8c",
+      "url": "https://files.pythonhosted.org/packages/39/cb/4a8cf3edb3f1b2396935573c02255be75f5605dcc77e9e3a201a6d6f26d7/pyside6_pdf-6.12.0.140-cp310-abi3-manylinux_2_39_aarch64.whl",
+      "pypi_json_url": "https://pypi.org/pypi/PySide6_Pdf/6.12.0.140/json",
+      "pypi_json_file": "pypi-metadata/pyside6-pdf-6.12.0.140.json",
+      "pypi_json_sha256": "c23dccbaa711f2a061b8f84b0edefcdca6861bcca90f40937ae6ec2ee81d394c",
+      "pypi_sha256": "2b63ee1f8ce3d3b2b648be2ebda483dd0fbca8d44c92a6c6f924033ac7fbde8c",
+      "pypi_size_bytes": 2837165,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2026-10-08T09:07:40.756574Z",
+      "wheel_tags": [
+        "cp310-abi3-manylinux_2_39_aarch64"
+      ],
+      "requires_python": "<3.16,>=3.10",
+      "requires_dist": [
+        "PySide6_Essentials==6.12.0"
+      ],
+      "inspected_native_elf_count": 5,
+      "inspected_native_elf_machine": "EM_AARCH64"
+    },
+    {
+      "name": "PySide6_WebEngine",
+      "version": "6.12.0.140",
+      "filename": "pyside6_webengine-6.12.0.140-cp310-abi3-manylinux_2_39_aarch64.whl",
+      "size_bytes": 114053128,
+      "sha256": "66a842ccb7f06fa7e357f6d4d63bc2739e3cbc1f93583f314e38c43024fe5f74",
+      "url": "https://files.pythonhosted.org/packages/1b/34/75944ed126293868fcbcc589fa2254e3310016920e5d32d21c29be021524/pyside6_webengine-6.12.0.140-cp310-abi3-manylinux_2_39_aarch64.whl",
+      "pypi_json_url": "https://pypi.org/pypi/PySide6_WebEngine/6.12.0.140/json",
+      "pypi_json_file": "pypi-metadata/pyside6-webengine-6.12.0.140.json",
+      "pypi_json_sha256": "489c139bf6cc566bbf4ccc45b90e98c709b076532b159f9a67325e0bb24b78eb",
+      "pypi_sha256": "66a842ccb7f06fa7e357f6d4d63bc2739e3cbc1f93583f314e38c43024fe5f74",
+      "pypi_size_bytes": 114053128,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2026-10-08T09:06:21.275127Z",
+      "wheel_tags": [
+        "cp310-abi3-manylinux_2_39_aarch64"
+      ],
+      "requires_python": "<3.16,>=3.10",
+      "requires_dist": [
+        "PySide6_Addons==6.12.0"
+      ],
+      "inspected_native_elf_count": 10,
+      "inspected_native_elf_machine": "EM_AARCH64"
+    },
+    {
+      "name": "setuptools",
+      "version": "84.2.1",
+      "filename": "setuptools-84.2.1-py3-none-any.whl",
+      "size_bytes": 876263,
+      "sha256": "ca140b45d5325a9478f880e351484f62fef15f336462e449ca0c03c873d589c2",
+      "url": "https://files.pythonhosted.org/packages/ef/55/6dc6d6bb953bdfc52519a0059592c52b6e3b8ad51cf8256dffceb55b0610/setuptools-84.2.1-py3-none-any.whl",
+      "pypi_json_url": "https://pypi.org/pypi/setuptools/84.2.1/json",
+      "pypi_json_file": "pypi-metadata/setuptools-84.2.1.json",
+      "pypi_json_sha256": "d75de8ba0d3304a3d74484fb9f340edb87ef02712da4fa02a2ed92e71b0572dd",
+      "pypi_sha256": "ca140b45d5325a9478f880e351484f62fef15f336462e449ca0c03c873d589c2",
+      "pypi_size_bytes": 876263,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2026-10-20T19:01:35.678013Z",
+      "wheel_tags": [
+        "py3-none-any"
+      ],
+      "requires_python": ">=3.10",
+      "requires_dist": [
+        "pytest!=8.1.*,>=6; extra == \"test\"",
+        "virtualenv>=13.0.0; extra == \"test\"",
+        "wheel>=0.44.0; extra == \"test\"",
+        "pip>=19.1; extra == \"test\"",
+        "packaging>=26.3; extra == \"test\"",
+        "jaraco.envs>=2.2; extra == \"test\"",
+        "pytest-xdist>=3; extra == \"test\"",
+        "jaraco.path>=3.7.2; extra == \"test\"",
+        "build[virtualenv]>=1.0.3; extra == \"test\"",
+        "filelock>=3.4.0; extra == \"test\"",
+        "ini2toml[lite]>=0.14; extra == \"test\"",
+        "tomli-w>=1.0.0; extra == \"test\"",
+        "pytest-timeout; extra == \"test\"",
+        "pytest-perf; sys_platform != \"cygwin\" and extra == \"test\"",
+        "jaraco.develop>=7.21; (python_version >= \"3.9\" and sys_platform != \"cygwin\") and extra == \"test\"",
+        "pytest-home>=0.5; extra == \"test\"",
+        "pytest-subprocess; extra == \"test\"",
+        "pyproject-hooks!=1.1; extra == \"test\"",
+        "jaraco.test>=5.5; extra == \"test\"",
+        "sphinx>=3.5; extra == \"doc\"",
+        "jaraco.packaging>=9.3; extra == \"doc\"",
+        "rst.linker>=1.9; extra == \"doc\"",
+        "furo; extra == \"doc\"",
+        "sphinx-lint; extra == \"doc\"",
+        "jaraco.tidelift>=1.4; extra == \"doc\"",
+        "pygments-github-lexers==0.0.5; extra == \"doc\"",
+        "sphinx-favicon; extra == \"doc\"",
+        "sphinx-inline-tabs; extra == \"doc\"",
+        "sphinx-reredirects; extra == \"doc\"",
+        "sphinxcontrib-towncrier; extra == \"doc\"",
+        "sphinx-notfound-page<2,>=1; extra == \"doc\"",
+        "pyproject-hooks!=1.1; extra == \"doc\"",
+        "towncrier<24.7; extra == \"doc\"",
+        "packaging>=26.3; extra == \"core\"",
+        "more_itertools>=8.8; extra == \"core\"",
+        "jaraco.text>=3.7; extra == \"core\"",
+        "importlib_metadata>=6; python_version < \"3.10\" and extra == \"core\"",
+        "tomli>=2.0.1; python_version < \"3.11\" and extra == \"core\"",
+        "wheel>=0.43.0; extra == \"core\"",
+        "jaraco.functools>=4; extra == \"core\"",
+        "more_itertools; extra == \"core\"",
+        "pytest-checkdocs>=2.14; extra == \"check\"",
+        "pytest-ruff>=0.2.1; sys_platform != \"cygwin\" and extra == \"check\"",
+        "ruff>=0.13.0; sys_platform != \"cygwin\" and extra == \"check\"",
+        "pytest-cov; extra == \"cover\"",
+        "pytest-enabler>=3.4; extra == \"enabler\"",
+        "pytest-mypy>=1.0.1; platform_python_implementation != \"PyPy\" and extra == \"type\"",
+        "mypy==1.18.*; extra == \"type\"",
+        "importlib_metadata>=7.0.2; python_version < \"3.10\" and extra == \"type\"",
+        "jaraco.develop>=7.21; sys_platform != \"cygwin\" and extra == \"type\""
+      ],
+      "inspected_native_elf_count": 0,
+      "inspected_native_elf_machine": null
+    },
+    {
+      "name": "shiboken6",
+      "version": "6.12.0",
+      "filename": "shiboken6-6.12.0-cp310-abi3-manylinux_2_39_aarch64.whl",
+      "size_bytes": 276562,
+      "sha256": "ff72a72b3277b418902d562b987b33a6f6818bed9fe40a49d634d09bc67f620e",
+      "url": "https://files.pythonhosted.org/packages/97/ca/a4415e6218e0dff764fe2b2d30db2fc8f499a08ace07634232ade3f73adc/shiboken6-6.12.0-cp310-abi3-manylinux_2_39_aarch64.whl",
+      "pypi_json_url": "https://pypi.org/pypi/shiboken6/6.12.0/json",
+      "pypi_json_file": "pypi-metadata/shiboken6-6.12.0.json",
+      "pypi_json_sha256": "b578fd1f2ad26c001f2c6a69b10b11b4311661e9923fd5e8f2f5b16f37be3ea3",
+      "pypi_sha256": "ff72a72b3277b418902d562b987b33a6f6818bed9fe40a49d634d09bc67f620e",
+      "pypi_size_bytes": 276562,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2026-10-08T09:10:44.250878Z",
+      "wheel_tags": [
+        "cp310-abi3-manylinux_2_39_aarch64"
+      ],
+      "requires_python": "<3.16,>=3.10",
+      "requires_dist": [],
+      "inspected_native_elf_count": 2,
+      "inspected_native_elf_machine": "EM_AARCH64"
+    },
+    {
+      "name": "typing_extensions",
+      "version": "4.16.0",
+      "filename": "typing_extensions-4.16.0-py3-none-any.whl",
+      "size_bytes": 45571,
+      "sha256": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8",
+      "url": "https://files.pythonhosted.org/packages/49/d3/b8441a820a491ddfc024b0b0cf0393375b75ea13866d9c66727e54c2fc80/typing_extensions-4.16.0-py3-none-any.whl",
+      "pypi_json_url": "https://pypi.org/pypi/typing_extensions/4.16.0/json",
+      "pypi_json_file": "pypi-metadata/typing-extensions-4.16.0.json",
+      "pypi_json_sha256": "2140da00d62dde967f52d0be0ae28444f1d6a3fe603f52c83c23988c32122d5a",
+      "pypi_sha256": "481caa481374e813c1b176ada14e97f1f67a4539ce9cfeb3f350d78d6370c2e8",
+      "pypi_size_bytes": 45571,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2026-07-02T08:40:04.659120Z",
+      "wheel_tags": [
+        "py3-none-any"
+      ],
+      "requires_python": ">=3.9",
+      "requires_dist": [],
+      "inspected_native_elf_count": 0,
+      "inspected_native_elf_machine": null
+    },
+    {
+      "name": "wheel",
+      "version": "0.48.0",
+      "filename": "wheel-0.48.0-py3-none-any.whl",
+      "size_bytes": 33320,
+      "sha256": "3217dcc807155e45db462d7ef2431f5ddda0d7273b700d05a67b271ceb1287ab",
+      "url": "https://files.pythonhosted.org/packages/2e/29/69cfbb602cd91690c55d38ba9fe53e6a7e76a6fa647bf38f19c138d25449/wheel-0.48.0-py3-none-any.whl",
+      "pypi_json_url": "https://pypi.org/pypi/wheel/0.48.0/json",
+      "pypi_json_file": "pypi-metadata/wheel-0.48.0.json",
+      "pypi_json_sha256": "03f655da3a6dd010d9ac41d4771d5d973109cb662a1e10eb9d967535ffd145f8",
+      "pypi_sha256": "3217dcc807155e45db462d7ef2431f5ddda0d7273b700d05a67b271ceb1287ab",
+      "pypi_size_bytes": 33320,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2026-08-11T22:02:26.100721Z",
+      "wheel_tags": [
+        "py3-none-any"
+      ],
+      "requires_python": ">=3.9",
+      "requires_dist": [
+        "packaging >= 24.0"
+      ],
+      "inspected_native_elf_count": 0,
+      "inspected_native_elf_machine": null
+    }
+  ],
+  "dependency_closure": {
+    "complete_for_target": true,
+    "project_pyproject_sha256": "0b553aa04753b09482684e6222d977f9f69eb283b68e6095c501619943f615d0",
+    "extras": [
+      "radio",
+      "hmi",
+      "model"
+    ],
+    "active_requirements_checked": 27,
+    "requirements": [
+      {
+        "owner": "build",
+        "requirement": "packaging >= 24.0",
+        "resolved_version": "26.3"
+      },
+      {
+        "owner": "build",
+        "requirement": "pyproject_hooks",
+        "resolved_version": "1.3.3"
+      },
+      {
+        "owner": "ml_dtypes",
+        "requirement": "numpy>=2.0.0",
+        "resolved_version": "2.3.5"
+      },
+      {
+        "owner": "onnx",
+        "requirement": "numpy>=1.23.2",
+        "resolved_version": "2.3.5"
+      },
+      {
+        "owner": "onnx",
+        "requirement": "protobuf>=6.31.1",
+        "resolved_version": "7.36.2"
+      },
+      {
+        "owner": "onnx",
+        "requirement": "typing_extensions>=4.7.1",
+        "resolved_version": "4.16.0"
+      },
+      {
+        "owner": "onnx",
+        "requirement": "ml_dtypes>=0.5.4",
+        "resolved_version": "0.6.0"
+      },
+      {
+        "owner": "onnxruntime",
+        "requirement": "flatbuffers",
+        "resolved_version": "25.12.19"
+      },
+      {
+        "owner": "onnxruntime",
+        "requirement": "numpy>=1.21.6",
+        "resolved_version": "2.3.5"
+      },
+      {
+        "owner": "onnxruntime",
+        "requirement": "packaging",
+        "resolved_version": "26.3"
+      },
+      {
+        "owner": "onnxruntime",
+        "requirement": "protobuf>=4.25.8",
+        "resolved_version": "7.36.2"
+      },
+      {
+        "owner": "PySide6",
+        "requirement": "PySide6_Essentials==6.12.0",
+        "resolved_version": "6.12.0"
+      },
+      {
+        "owner": "PySide6",
+        "requirement": "PySide6_Addons==6.12.0",
+        "resolved_version": "6.12.0"
+      },
+      {
+        "owner": "PySide6",
+        "requirement": "PySide6_WebEngine==6.12.0.140",
+        "resolved_version": "6.12.0.140"
+      },
+      {
+        "owner": "PySide6",
+        "requirement": "PySide6_Pdf==6.12.0.140",
+        "resolved_version": "6.12.0.140"
+      },
+      {
+        "owner": "PySide6_Addons",
+        "requirement": "PySide6_Essentials==6.12.0",
+        "resolved_version": "6.12.0"
+      },
+      {
+        "owner": "PySide6_Essentials",
+        "requirement": "shiboken6==6.12.0",
+        "resolved_version": "6.12.0"
+      },
+      {
+        "owner": "PySide6_Pdf",
+        "requirement": "PySide6_Essentials==6.12.0",
+        "resolved_version": "6.12.0"
+      },
+      {
+        "owner": "PySide6_WebEngine",
+        "requirement": "PySide6_Addons==6.12.0",
+        "resolved_version": "6.12.0"
+      },
+      {
+        "owner": "wheel",
+        "requirement": "packaging >= 24.0",
+        "resolved_version": "26.3"
+      },
+      {
+        "owner": "srrx-control[radio]",
+        "requirement": "numpy>=1.26,<3",
+        "resolved_version": "2.3.5"
+      },
+      {
+        "owner": "srrx-control[hmi]",
+        "requirement": "numpy>=1.26,<3",
+        "resolved_version": "2.3.5"
+      },
+      {
+        "owner": "srrx-control[hmi]",
+        "requirement": "PySide6>=6.8,<7",
+        "resolved_version": "6.12.0"
+      },
+      {
+        "owner": "srrx-control[model]",
+        "requirement": "numpy>=1.26,<3",
+        "resolved_version": "2.3.5"
+      },
+      {
+        "owner": "srrx-control[model]",
+        "requirement": "onnx>=1.17,<2",
+        "resolved_version": "1.23.2"
+      },
+      {
+        "owner": "srrx-control[model]",
+        "requirement": "onnxruntime>=1.20,<2",
+        "resolved_version": "1.31.0"
+      },
+      {
+        "owner": "srrx build-system",
+        "requirement": "setuptools",
+        "resolved_version": "84.2.1"
+      }
+    ]
+  },
+  "native_architecture_inspection": {
+    "elf_machine": 183,
+    "elf_machine_name": "EM_AARCH64",
+    "elf_count": 495,
+    "scope": "ELF headers of .so/bin/libexec members read from ZIP, no native import or execution"
+  }
+}

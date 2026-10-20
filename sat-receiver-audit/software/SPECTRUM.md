@@ -24,9 +24,26 @@ NumPy — optional dependency. Поточна перевірка викорис�
 - `.clear()` очищує власний IQ history. Зміна center/rate/source автоматично очищує history, щоб не змішувати різні налаштування.
 - `mask_frame(frame) -> new frame` перевіряє структуру/геометрію і повторно застосовує всі маски. Caller-invalid bins ніколи не стають valid. Invalid power примусово `None`; input не мутується.
 - `validate_frame(frame) -> new frame` додатково відхиляє вже немаскований або неканонічний frame. Помилки — `SpectrumError(ValueError)`.
-- `append_survey(path, frame) -> sanitized frame` **спершу mask, потім validate, потім JSONL write**. Воно не довіряє `valid`, не пише extra keys/raw IQ і не торкається файла для невалідної структури.
+- `append_survey(path, frame, *, storage_guard=None) -> sanitized frame` **спершу mask, потім validate, потім JSONL write**. Воно не довіряє `valid`, не пише extra keys/raw IQ і не торкається файла для невалідної структури. Переданий `StorageGuard` виконує запис після цієї перевірки; без нього зберігається звичайна локальна поведінка зі створенням parent directories.
 
 Перед UI, annotation, export, feature extraction і training споживач мусить виконати `safe = mask_frame(untrusted_frame)`. Вибрані для annotation/training bins мають бути valid; прогалини не інтерполювати й не підміняти нулями. Сам exporter також повторно застосовує цю межу.
+
+## Прив'язка запису до змонтованого тому
+
+Для removable storage можна передати `storage_guard=guard`, де `guard = StorageGuard(root, device)` із `srrx.storage`. `root` — точна вже змонтована точка, `device` — явний block device тому, бажано шлях `/dev/disk/by-uuid/…` з UUID, який перевірив оператор. UUID T7 не вигадується. Відносний шлях у guarded API лежить під root, абсолютний також мусить бути всередині; батьківські каталоги мають вже існувати. Приклад API після зовнішнього налаштування й перевірки тому:
+
+```python
+from srrx.storage import StorageGuard
+
+with StorageGuard('/media/T7', '/dev/disk/by-uuid/REPLACE_WITH_VERIFIED_UUID') as guard:
+    append_survey('survey.jsonl', frame, storage_guard=guard)
+```
+
+Placeholder треба замінити фактичним перевіреним UUID. Guard звіряє block identity, `st_dev`, Linux mount ID та pinned directory fd; використовує `dirfd`/`O_NOFOLLOW`, не створює відсутніх каталогів і не переносить запис на rootfs, коли mount зник. Заміна/втрата тому, bind/nested-mount підміна, read-only або помилка IO/ENOSPC назавжди відкликає екземпляр guard; повторний запис потребує усунення причини та нової явної прив'язки. Звичайний локальний API без guard такого захисту не має.
+
+Guarded append — bounded atomic copy+append з лімітом **64 MiB на файл**, без автоматичного rollover. Потрібен один writer і каталоги, доступні для запису лише довіреному writer; advisory lock не є захистом від чужих процесів, що його ігнорують, або привілейованого перемонтування. Помилка до atomic replace зберігає попередній файл. Після replace помилка directory fsync може означати невизначену durability; збереження попередніх байтів і витримування power loss не заявляються.
+
+`labrx` приймає цю прив'язку лише парою `--storage-root`/`--storage-device`; приклад і cleanup RX наведено в [RX.md](RX.md). Guard не монтує, не форматує, не робить unmount і не вимикає EN_T7. Оператор спершу зупиняє capture і закриває guard, потім виконує перевірений sync/unmount/power-off workflow. Фізичний T7, USB3/UAS та апаратний порядок вимкнення залишаються непідтвердженими.
 
 ## Точний frame contract
 

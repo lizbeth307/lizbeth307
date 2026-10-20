@@ -1,0 +1,117 @@
+#!/usr/bin/env python3
+"""Rebuild isolated, hash-locked x86_64 QEMU/ISO tools without host installation.
+
+The destination must be a new directory outside this project. Requires Python3,
+curl, dpkg-deb, tar, gpgv and an existing trusted Ubuntu archive keyring.
+"""
+from __future__ import annotations
+import argparse, concurrent.futures, hashlib, json, lzma, os
+from pathlib import Path
+import platform, shutil, subprocess, sys, urllib.parse
+
+PROJECT=Path(__file__).resolve().parents[2]
+LOCK=Path(__file__).with_name('host-packages.lock.json')
+
+
+def digest(path):return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def acquire(item,path,cache=None):
+    if cache is not None:
+        candidate=cache/item['filename']
+        if candidate.is_file() and candidate.stat().st_size==item['bytes'] and digest(candidate)==item['sha256']:
+            shutil.copyfile(candidate,path)
+            if digest(path)!=item['sha256']:raise RuntimeError('Copied cache hash mismatch')
+            return
+    subprocess.run(['curl','--fail','--location','--retry','2','--connect-timeout','20','--max-time','300','--silent','--show-error',item['url'],'--output',str(path)],check=True)
+    if ('bytes' in item and path.stat().st_size!=item['bytes']) or digest(path)!=item['sha256']:
+        raise RuntimeError('Hash/size mismatch for '+item['url'])
+
+
+def signed_records(raw):
+    records={}
+    for block in raw.decode('utf-8').split('\n\n'):
+        fields={}
+        for line in block.splitlines():
+            if not line.startswith(' ') and ': ' in line:
+                key,value=line.split(': ',1);fields[key]=value
+        if 'Filename' in fields:records[fields['Filename']]=fields
+    return records
+
+
+def wrappers(dest):
+    template='''#!/bin/sh
+set -eu
+tools_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+export QEMU_MODULE_DIR="$tools_root/root/usr/lib/x86_64-linux-gnu/qemu"
+exec "$tools_root/root/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2" --library-path "$tools_root/root/usr/lib/x86_64-linux-gnu:$tools_root/root/lib/x86_64-linux-gnu" "$tools_root/root/usr/bin/PROGRAM" EXTRA "$@"
+'''
+    for program,extra in [('qemu-system-aarch64','-L "$tools_root/root/usr/share/qemu"'),('qemu-img',''),('genisoimage','')]:
+        path=dest/'bin'/program;path.write_text(template.replace('PROGRAM',program).replace('EXTRA',extra));path.chmod(0o755)
+
+
+def main():
+    parser=argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--dest',type=Path,required=True,help='New tools directory outside project; existing paths are rejected')
+    parser.add_argument('--package-cache',type=Path,help='Optional read-only cache directory containing locked .deb filenames')
+    parser.add_argument('--keyring',type=Path,default=Path('/usr/share/keyrings/ubuntu-archive-keyring.gpg'))
+    parser.add_argument('--jobs',type=int,default=6)
+    args=parser.parse_args();dest=args.dest.expanduser().resolve()
+    if dest==PROJECT or dest.is_relative_to(PROJECT):parser.error('--dest must be outside the project')
+    if dest.exists() or args.dest.is_symlink():parser.error('--dest must not already exist')
+    if platform.system()!='Linux' or platform.machine() not in ('x86_64','amd64'):parser.error('This lock targets Linux x86_64 hosts')
+    if not args.keyring.is_file():parser.error('An existing trusted Ubuntu archive keyring is required; use --keyring')
+    for command in ('curl','dpkg-deb','tar','gpgv'):
+        if not shutil.which(command):parser.error('Required host utility is missing: '+command)
+    lock=json.loads(LOCK.read_text())
+    if lock['schema_version']!=1 or len(lock['packages'])!=87:parser.error('Unexpected lock schema or package count')
+    if not 1<=args.jobs<=16:parser.error('--jobs must be between 1 and 16')
+    dest.mkdir(parents=True,exist_ok=False)
+    for part in ('debs','metadata','metadata/gpg-home','root','bin'):(dest/part).mkdir()
+    (dest/'metadata/gpg-home').chmod(0o700)
+    shutil.copyfile(LOCK,dest/'host-packages.lock.json')
+    release=dest/'metadata/InRelease';acquire(lock['inrelease'],release)
+    verify=subprocess.run(['gpgv','--homedir',str(dest/'metadata/gpg-home'),'--keyring',str(args.keyring.resolve()),'--status-fd','1',str(release)],capture_output=True,text=True)
+    (dest/'metadata/gpg-verification.txt').write_text(verify.stdout+verify.stderr)
+    if verify.returncode or ('[GNUPG:] VALIDSIG '+lock['inrelease']['signing_fingerprint']+' ') not in verify.stdout:
+        raise RuntimeError('Ubuntu InRelease signature verification failed')
+    rows=[line.split() for line in release.read_text().splitlines()]
+    for fields in ([lock['index']['sha256'],str(lock['index']['bytes']),'main/binary-amd64/Packages.xz'],[lock['index']['uncompressed_sha256'],str(lock['index']['uncompressed_bytes']),'main/binary-amd64/Packages']):
+        if fields not in rows:raise RuntimeError('Index hash is absent from signed InRelease')
+    index=dest/'metadata/Packages.xz';acquire(lock['index'],index)
+    raw=lzma.decompress(index.read_bytes())
+    if len(raw)!=lock['index']['uncompressed_bytes'] or hashlib.sha256(raw).hexdigest()!=lock['index']['uncompressed_sha256']:
+        raise RuntimeError('Uncompressed signed index hash mismatch')
+    records=signed_records(raw)
+    for item in lock['packages']:
+        if Path(item['filename']).name!=item['filename']:raise RuntimeError('Unsafe locked package filename')
+        key=urllib.parse.unquote(urllib.parse.urlsplit(item['url']).path).split('/ubuntu/',1)[1]
+        signed=records[key]
+        for key1,key2 in [('name','Package'),('version','Version'),('architecture','Architecture'),('sha256','SHA256')]:
+            if item[key1]!=signed[key2]:raise RuntimeError('Lock/index mismatch: '+item['name']+' '+key1)
+        if item['bytes']!=int(signed['Size']):raise RuntimeError('Lock/index size mismatch: '+item['name'])
+    cache=args.package_cache.resolve() if args.package_cache else None
+    def fetch(item):acquire(item,dest/'debs'/item['filename'],cache);return item['name']
+    with concurrent.futures.ThreadPoolExecutor(max_workers=args.jobs) as workers:
+        for name in workers.map(fetch,lock['packages']):print('Verified '+name,flush=True)
+    # Only unpack filesystem payloads; do not invoke dpkg installation or scripts.
+    for item in lock['packages']:
+        producer=subprocess.Popen(['dpkg-deb','--fsys-tarfile',str(dest/'debs'/item['filename'])],stdout=subprocess.PIPE)
+        try:
+            subprocess.run(['tar','--extract','--no-same-owner','--no-same-permissions','--directory',str(dest/'root')],stdin=producer.stdout,check=True)
+        finally:producer.stdout.close()
+        if producer.wait():raise RuntimeError('Cannot unpack '+item['name'])
+    wrappers(dest)
+    versions={}
+    for name in lock['tools']:
+        result=subprocess.run([str(dest/'bin'/name),'--version'],capture_output=True,text=True,check=True)
+        versions[name]=result.stdout.strip().splitlines()[0]
+    report={'status':'PASS','platform':lock['platform'],'package_count':len(lock['packages']),'download_bytes':lock['download_bytes'],'lock_sha256':digest(LOCK),'versions':versions,'host_installation':False,'scope':'Tool versions tested; no guest Linux boot, physical-board or security-update qualification claim.'}
+    (dest/'tools-verification.json').write_text(json.dumps(report,indent=2)+'\n')
+    print(json.dumps(report,indent=2))
+
+
+if __name__=='__main__':
+    try:main()
+    except (RuntimeError,subprocess.CalledProcessError,OSError,KeyError) as error:
+        print('Tool rebuild failed: '+str(error),file=sys.stderr);raise SystemExit(1)

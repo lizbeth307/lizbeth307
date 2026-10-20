@@ -1,0 +1,57 @@
+{
+  "status": "FAIL",
+  "scope": "actual Linux virtual ext4 block device; Samsung USB and physical power sequencing untested",
+  "physical_verified": false,
+  "hardware_qualified": false,
+  "cases": [
+    {
+      "id": "actual_block_mount_masked_capture",
+      "status": "PASS",
+      "evidence": {
+        "records": 2,
+        "raw_iq_persisted": false,
+        "cli_exit": 0
+      },
+      "elapsed_s": 5.328
+    },
+    {
+      "id": "wrong_device_refused",
+      "status": "PASS",
+      "evidence": {
+        "error": "[Errno 19] Storage guard revoked: Mounted device differs from explicit binding"
+      },
+      "elapsed_s": 0.015
+    },
+    {
+      "id": "same_device_mount_id_change_revokes",
+      "status": "PASS",
+      "evidence": {
+        "error": "[Errno 19] Storage guard revoked: [Errno 19] Storage guard revoked: Storage path no longer names the pinned mount root",
+        "same_st_dev_replacement_detected": true,
+        "automatic_recovery": false
+      },
+      "elapsed_s": 0.349
+    },
+    {
+      "id": "real_ENOSPC_preserves_previous_record",
+      "status": "FAIL",
+      "error": "OSError(28, 'No space left on device')"
+    }
+  ],
+  "identity": {
+    "root": "/mnt/srrx-t7-model",
+    "device": "/dev/disk/by-label/SRRXT7",
+    "resolved_device": "/dev/vde",
+    "mount_id": 58,
+    "major": 253,
+    "minor": 64,
+    "mount_root": "/",
+    "mountpoint": "/mnt/srrx-t7-model",
+    "options": "rw,nosuid,nodev,noexec,relatime",
+    "filesystem": "ext4",
+    "source": "/dev/vde",
+    "root_inode": 2,
+    "physical_verified": false
+  },
+  "error": "OSError(28, 'No space left on device')"
+}
