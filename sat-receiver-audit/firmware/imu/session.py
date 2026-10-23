@@ -1,12 +1,12 @@
 """Portable fail-closed BNO085 configuration/freshness state machine."""
 try:
     from .shtp import (CONTROL, INPUT_NORMAL, ROTATION_VECTOR, REPORT_INTERVAL_US,
-                       FRESHNESS_MS, ImuError, parse_product_id, product_id_request,
+                       FRESHNESS_MS, ImuError, parse_product_ids, product_id_request,
                        set_feature, get_feature, validate_feature_response,
                        parse_sensor_cargo)
 except ImportError:
     from shtp import (CONTROL, INPUT_NORMAL, ROTATION_VECTOR, REPORT_INTERVAL_US,
-                      FRESHNESS_MS, ImuError, parse_product_id, product_id_request,
+                      FRESHNESS_MS, ImuError, parse_product_ids, product_id_request,
                       set_feature, get_feature, validate_feature_response,
                       parse_sensor_cargo)
 
@@ -72,7 +72,7 @@ class ImuSession:
                 raise ImuError("sensor_reset")
             if channel == CONTROL:
                 if payload and payload[0] == 0xF8:
-                    product = parse_product_id(payload)
+                    product = parse_product_ids(payload)[0]
                     if self.state == "WAIT_PRODUCT":
                         self.product = product
                         self.state = "WAIT_FEATURE"
@@ -86,8 +86,9 @@ class ImuSession:
                     if self.state == "WAIT_FEATURE":
                         self.state = "WAIT_FIRST"
                     return commands, events
-                # Initial SH-2 unsolicited initialization report on control channel.
-                if len(payload) == 16 and payload[0] == 0xF1 and payload[2] == 4:
+                # Initial SH-2 initialization report: CEVA sh2.c sends command
+                # 0x84 (INITIALIZE | UNSOLICITED); 0x04 is the solicited form.
+                if len(payload) == 16 and payload[0] == 0xF1 and payload[2] in (0x04, 0x84):
                     if self.state == "WAIT_PRODUCT":
                         return commands, events
                     raise ImuError("sensor_reset")

@@ -176,6 +176,70 @@ class StorageTests(unittest.TestCase):
                 self.assertFalse(list(self.root.glob(".srrx-*")))
                 self.assertTrue(self.guard.revoked)
 
+    def test_guarded_append_writes_only_the_new_line_to_the_same_inode(self):
+        self.guard.append_jsonl("survey.jsonl", {"n": 0})
+        destination = self.root / "survey.jsonl"
+        inode = destination.stat().st_ino
+        for n in range(1, 4):
+            with patch("srrx.storage.os.replace", side_effect=AssertionError("whole-file copy+replace")):
+                self.guard.append_jsonl("survey.jsonl", {"n": n})
+            self.assertEqual(destination.stat().st_ino, inode)
+        self.assertEqual([json.loads(x) for x in destination.read_text().splitlines()], [{"n": n} for n in range(4)])
+        self.assertFalse(list(self.root.glob(".srrx-*")))
+        self.assertFalse(self.guard.revoked)
+
+    def test_torn_final_line_is_never_extended(self):
+        destination = self.root / "survey.jsonl"
+        destination.write_bytes(b'{"n":1}\n{"n":')
+        with self.assertRaises(OSError) as failure:
+            self.guard.append_jsonl("survey.jsonl", {"n": 2})
+        self.assertEqual(failure.exception.errno, errno.EILSEQ)
+        self.assertEqual(destination.read_bytes(), b'{"n":1}\n{"n":')
+        self.assertTrue(self.guard.revoked)
+
+    def test_output_replaced_before_in_place_append_is_rejected(self):
+        destination, replacement = self.root / "survey.jsonl", self.root / "replacement"
+        destination.write_bytes(b'{"keep":1}\n')
+        original, calls = StorageGuard.check, []
+        def swapping(guard):
+            calls.append(1)
+            if len(calls) == 2:  # after the inode was opened, before the line is written
+                replacement.write_bytes(b'{"other":1}\n')
+                os.replace(replacement, destination)
+            return original(guard)
+        with patch.object(StorageGuard, "check", swapping):
+            with self.assertRaises(StorageRevoked):
+                self.guard.append_jsonl("survey.jsonl", {"new": 2})
+        self.assertEqual(destination.read_bytes(), b'{"other":1}\n')
+        self.assertTrue(self.guard.revoked)
+
+    def test_fsync_failure_after_in_place_append_restores_exact_previous_bytes(self):
+        import fcntl
+        destination = self.root / "survey.jsonl"
+        destination.write_bytes(b'{"keep":1}\n{"keep":2}\n')
+        before, inode, fsync, seen = destination.read_bytes(), destination.stat().st_ino, os.fsync, []
+        def failing(fd):
+            if not seen:  # the first fsync is the one on the appended descriptor
+                value = os.fstat(fd)
+                seen.append((value.st_ino, value.st_nlink, fcntl.fcntl(fd, fcntl.F_GETFL) & os.O_APPEND,
+                             destination.read_bytes()))
+                raise OSError(errno.EIO, "injected fsync failure")
+            return fsync(fd)
+        with patch("srrx.storage.os.fsync", side_effect=failing):
+            with self.assertRaises(OSError) as failure:
+                self.guard.append_jsonl("survey.jsonl", {"new": 3})
+        self.assertEqual(failure.exception.errno, errno.EIO)
+        # The write reached the checked inode through the reopened O_APPEND descriptor...
+        self.assertEqual(seen, [(inode, 1, os.O_APPEND, before + b'{"new":3}\n')])
+        # ...and the failed fsync truncated that same inode back to exactly the previous lines.
+        self.assertEqual(destination.read_bytes(), before)
+        self.assertEqual(destination.stat().st_ino, inode)
+        self.assertFalse(list(self.root.glob(".srrx-*")))
+        self.assertTrue(self.guard.revoked)
+        with self.assertRaises(StorageRevoked):
+            self.guard.append_jsonl("survey.jsonl", {"later": 4})
+        self.assertEqual(destination.read_bytes(), before)
+
     def test_mount_loss_after_staging_before_commit_preserves_previous_file(self):
         destination = self.root / "saved.json"
         destination.write_bytes(b'{"keep":1}\n')

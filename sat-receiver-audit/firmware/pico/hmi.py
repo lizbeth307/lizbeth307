@@ -263,7 +263,8 @@ class PeripheralPoller:
             self._configured = False
             self._mark("HMI_POLL_GAP")
         self._now = now_ms
-        self.error = None
+        if self._configured:
+            self.error = None  # A key-bus root cause stays until _initialize succeeds.
         try:
             self._encoders()
             if not self._configured and now_ms >= self._retry_at:
@@ -278,12 +279,10 @@ class PeripheralPoller:
             self._mark(str(exc)[:32] or "HMI_IO_ERROR")
         try:
             self.light.poll(now_ms)
-        except (OSError, ValueError, TypeError, IndexError) as exc:
+        except (OSError, ValueError, TypeError, IndexError):
+            # Lux-only fault: keys keep their baseline; a shared-bus fault is
+            # caught by the key path's own reads and 1 s readback.
             self.light.failed(now_ms, "ALS_IO_ERROR")
-            self._recover = True
-            self._configured = False
-            self._retry_at = max(self._retry_at, now_ms + 20)
-            self._mark("ALS_IO_ERROR")
         if self.sequence < 0xffffffff:
             self.sequence += 1
         else:

@@ -146,7 +146,7 @@
         },
         {
           "id": "E1-04",
-          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки ще не перевірено.",
+          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки, старт SYS12 після release і порядок із програмною відсічкою E3-07 ще не перевірені.",
           "blocking": true
         },
         {
@@ -257,7 +257,7 @@
         },
         {
           "id": "E1-04",
-          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки ще не перевірено.",
+          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки, старт SYS12 після release і порядок із програмною відсічкою E3-07 ще не перевірені.",
           "blocking": true
         },
         {
@@ -408,7 +408,7 @@
         },
         {
           "id": "E1-04",
-          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки ще не перевірено.",
+          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки, старт SYS12 після release і порядок із програмною відсічкою E3-07 ще не перевірені.",
           "blocking": true
         },
         {
@@ -516,7 +516,7 @@
         },
         {
           "id": "E1-04",
-          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки ще не перевірено.",
+          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки, старт SYS12 після release і порядок із програмною відсічкою E3-07 ще не перевірені.",
           "blocking": true
         },
         {
@@ -629,7 +629,7 @@
         },
         {
           "id": "E1-04",
-          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки ще не перевірено.",
+          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки, старт SYS12 після release і порядок із програмною відсічкою E3-07 ще не перевірені.",
           "blocking": true
         },
         {
@@ -772,7 +772,7 @@
         },
         {
           "id": "E1-04",
-          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки ще не перевірено.",
+          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки, старт SYS12 після release і порядок із програмною відсічкою E3-07 ще не перевірені.",
           "blocking": true
         },
         {
@@ -859,7 +859,7 @@
         },
         {
           "id": "E1-04",
-          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки ще не перевірено.",
+          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки, старт SYS12 після release і порядок із програмною відсічкою E3-07 ще не перевірені.",
           "blocking": true
         },
         {
@@ -953,7 +953,7 @@
         },
         {
           "id": "E1-04",
-          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки ще не перевірено.",
+          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки, старт SYS12 після release і порядок із програмною відсічкою E3-07 ще не перевірені.",
           "blocking": true
         },
         {
@@ -1083,7 +1083,7 @@
         },
         {
           "id": "E1-04",
-          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки ще не перевірено.",
+          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки, старт SYS12 після release і порядок із програмною відсічкою E3-07 ще не перевірені.",
           "blocking": true
         },
         {
@@ -1218,7 +1218,7 @@
         },
         {
           "id": "E1-04",
-          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки ще не перевірено.",
+          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки, старт SYS12 після release і порядок із програмною відсічкою E3-07 ще не перевірені.",
           "blocking": true
         },
         {
@@ -1322,7 +1322,7 @@
         },
         {
           "id": "E1-04",
-          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки ще не перевірено.",
+          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки, старт SYS12 після release і порядок із програмною відсічкою E3-07 ще не перевірені.",
           "blocking": true
         },
         {
@@ -1432,7 +1432,7 @@
         },
         {
           "id": "E1-04",
-          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки ще не перевірено.",
+          "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки, старт SYS12 після release і порядок із програмною відсічкою E3-07 ще не перевірені.",
           "blocking": true
         },
         {
@@ -1648,7 +1648,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Потрібне підтвердження запасу напруги, розподілу струму й температури пари LT3045 на 4.5V. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -1825,7 +1825,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Потрібне підтвердження запасу напруги, розподілу струму й температури пари LT3045 на 4.5V. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -1987,7 +1987,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Потрібне підтвердження запасу напруги, розподілу струму й температури пари LT3045 на 4.5V. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -2140,7 +2140,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Потрібне підтвердження запасу напруги, розподілу струму й температури пари LT3045 на 4.5V. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -2344,7 +2344,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Потрібне підтвердження запасу напруги, розподілу струму й температури пари LT3045 на 4.5V. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -2485,7 +2485,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Потрібне підтвердження запасу напруги, розподілу струму й температури пари LT3045 на 4.5V. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -2626,7 +2626,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Потрібне підтвердження запасу напруги, розподілу струму й температури пари LT3045 на 4.5V. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -2767,7 +2767,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Потрібне підтвердження запасу напруги, розподілу струму й температури пари LT3045 на 4.5V. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -2908,7 +2908,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Потрібне підтвердження запасу напруги, розподілу струму й температури пари LT3045 на 4.5V. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -3040,7 +3040,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Потрібне підтвердження запасу напруги, розподілу струму й температури пари LT3045 на 4.5V. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -3280,7 +3280,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Потрібне підтвердження запасу напруги, розподілу струму й температури пари LT3045 на 4.5V. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -3519,7 +3519,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Потрібне підтвердження запасу напруги, розподілу струму й температури пари LT3045 на 4.5V. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -3669,7 +3669,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Потрібне підтвердження запасу напруги, розподілу струму й температури пари LT3045 на 4.5V. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -3819,7 +3819,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Потрібне підтвердження запасу напруги, розподілу струму й температури пари LT3045 на 4.5V. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -3915,7 +3915,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Потрібне підтвердження запасу напруги, розподілу струму й температури пари LT3045 на 4.5V. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -4011,7 +4011,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Потрібне підтвердження запасу напруги, розподілу струму й температури пари LT3045 на 4.5V. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -4106,7 +4106,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Потрібне підтвердження запасу напруги, розподілу струму й температури пари LT3045 на 4.5V. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -4224,7 +4224,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Потрібне підтвердження запасу напруги, розподілу струму й температури пари LT3045 на 4.5V. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -4356,7 +4356,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Потрібне підтвердження запасу напруги, розподілу струму й температури пари LT3045 на 4.5V. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -4481,7 +4481,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near13.05V; nominal ADC code does not establish the13.05+/-0.1V cutoff. The software window 12.95-13.15V must stay above the E1-04 hardware AON UV trip window 12.8+/-0.1V on every unit.",
           "blocking": true
         },
         {
@@ -4810,7 +4810,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near13.05V; nominal ADC code does not establish the13.05+/-0.1V cutoff. The software window 12.95-13.15V must stay above the E1-04 hardware AON UV trip window 12.8+/-0.1V on every unit.",
           "blocking": true
         },
         {
@@ -4912,7 +4912,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near13.05V; nominal ADC code does not establish the13.05+/-0.1V cutoff. The software window 12.95-13.15V must stay above the E1-04 hardware AON UV trip window 12.8+/-0.1V on every unit.",
           "blocking": true
         },
         {
@@ -4990,7 +4990,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near13.05V; nominal ADC code does not establish the13.05+/-0.1V cutoff. The software window 12.95-13.15V must stay above the E1-04 hardware AON UV trip window 12.8+/-0.1V on every unit.",
           "blocking": true
         },
         {
@@ -5155,7 +5155,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near13.05V; nominal ADC code does not establish the13.05+/-0.1V cutoff. The software window 12.95-13.15V must stay above the E1-04 hardware AON UV trip window 12.8+/-0.1V on every unit.",
           "blocking": true
         },
         {
@@ -5272,7 +5272,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near13.05V; nominal ADC code does not establish the13.05+/-0.1V cutoff. The software window 12.95-13.15V must stay above the E1-04 hardware AON UV trip window 12.8+/-0.1V on every unit.",
           "blocking": true
         },
         {
@@ -5393,7 +5393,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near13.05V; nominal ADC code does not establish the13.05+/-0.1V cutoff. The software window 12.95-13.15V must stay above the E1-04 hardware AON UV trip window 12.8+/-0.1V on every unit.",
           "blocking": true
         },
         {
@@ -5635,7 +5635,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near13.05V; nominal ADC code does not establish the13.05+/-0.1V cutoff. The software window 12.95-13.15V must stay above the E1-04 hardware AON UV trip window 12.8+/-0.1V on every unit.",
           "blocking": true
         },
         {
@@ -5810,7 +5810,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near13.05V; nominal ADC code does not establish the13.05+/-0.1V cutoff. The software window 12.95-13.15V must stay above the E1-04 hardware AON UV trip window 12.8+/-0.1V on every unit.",
           "blocking": true
         },
         {
@@ -5925,7 +5925,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near13.05V; nominal ADC code does not establish the13.05+/-0.1V cutoff. The software window 12.95-13.15V must stay above the E1-04 hardware AON UV trip window 12.8+/-0.1V on every unit.",
           "blocking": true
         },
         {
@@ -6029,7 +6029,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near13.05V; nominal ADC code does not establish the13.05+/-0.1V cutoff. The software window 12.95-13.15V must stay above the E1-04 hardware AON UV trip window 12.8+/-0.1V on every unit.",
           "blocking": true
         },
         {
@@ -6241,7 +6241,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near13.05V; nominal ADC code does not establish the13.05+/-0.1V cutoff. The software window 12.95-13.15V must stay above the E1-04 hardware AON UV trip window 12.8+/-0.1V on every unit.",
           "blocking": true
         },
         {
@@ -6364,7 +6364,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near13.05V; nominal ADC code does not establish the13.05+/-0.1V cutoff. The software window 12.95-13.15V must stay above the E1-04 hardware AON UV trip window 12.8+/-0.1V on every unit.",
           "blocking": true
         },
         {
@@ -6473,7 +6473,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near13.05V; nominal ADC code does not establish the13.05+/-0.1V cutoff. The software window 12.95-13.15V must stay above the E1-04 hardware AON UV trip window 12.8+/-0.1V on every unit.",
           "blocking": true
         },
         {
@@ -6678,7 +6678,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
           "blocking": true
         },
         {
@@ -6779,7 +6779,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
           "blocking": true
         },
         {
@@ -7347,7 +7347,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
           "blocking": true
         },
         {
@@ -7448,7 +7448,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
           "blocking": true
         },
         {
@@ -7712,7 +7712,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
           "blocking": true
         },
         {
@@ -7921,7 +7921,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
           "blocking": true
         },
         {
@@ -8130,7 +8130,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
           "blocking": true
         },
         {
@@ -8339,7 +8339,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
           "blocking": true
         },
         {
@@ -8474,7 +8474,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
           "blocking": true
         },
         {
@@ -8596,7 +8596,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
           "blocking": true
         },
         {

@@ -6,7 +6,7 @@
 
 | Мітка | Значення для розмітки |
 |---|---|
-| `unknown_energy` | Невідома спектральна енергія |
+| `unknown_energy` | Невідома спектральна енергія. Це також зарезервований результат OOD: таку розмітку можна зберегти, але вона не навчається як клас |
 | `analog_broadcast` | Приклад аналогового мовлення, підтверджений користувачем |
 | `digital_broadcast` | Приклад цифрового мовлення, підтверджений користувачем |
 | `weather_satellite` | Приклад метеосупутникового прийому |
@@ -40,10 +40,11 @@ PYTHONPATH=software python -m srrx.learning annotate --dataset ./annotations.jso
 - Один annotation box — послідовні frequency bins **одного** спектрального кадру: `start_bin` включно, `end_bin` виключно. Розмір від 8 до 4096 bins. Це не часова область waterfall.
 - Кожний bin усередині box має бути валідним. Box із хоча б одним masked/invalid/null bin відхиляється цілком.
 - `mask_frame()` повторно застосовується перед annotation, feature extraction, перевіркою збереженого датасету, training та inference. Обов’язкові no-data діапазони визначені в `srrx.spectrum`: 3–30 kHz, 225–400 MHz, 1530–1660 MHz включно з FFT bins, що торкаються меж. Caller-invalid bins не відновлюються. Неповний FFT не є прикладом.
+- Під час перевірки датасету кожний збережений кадр повторно маскується й порівнюється з canonical копією один раз. Boxes вирізаються з цієї вже перевіреної копії, тож вартість не множиться на кількість annotations.
 - Датасет: максимум 2000 annotations та 1 048 576 сумарних bins у збережених унікальних кадрах. Один JSON-файл — максимум 64 MiB.
 - Зберігаються canonical **masked power spectra**, геометрія частот для повторної перевірки маски, label/box, анонімна capture group і час явної розмітки. Raw IQ, звук, payload та координати не записуються. Canonical frames не містять додаткових метаданих.
 - Повторені нормалізовані фрагменти, зокрема копії зі зміною gain, відхиляються. Перекривні boxes одного кадру також відхиляються. Перевірка не доводить незалежності близьких у часі, але чисельно відмінних кадрів; правильне групування сесій потрібне від користувача.
-- Збереження JSON — `fsync`, atomic `replace`, права `0600`. Перевіряються schema, числові межі, SHA256, унікальність і consistency. SHA256 виявляє зміни; це не цифровий підпис та не сертифікат походження.
+- Збереження JSON — `fsync`, atomic `replace`, права `0600`. На POSIX після `replace` виконується `fsync` каталогу; його помилка повідомляється як `durability not confirmed`, бо файл уже замінено. Windows не має `fsync` каталогу, тому там цей крок пропускається. Перевіряються schema, числові межі, SHA256, унікальність і consistency. SHA256 виявляє зміни; це не цифровий підпис та не сертифікат походження.
 
 ## Навчання й оцінка
 
@@ -52,6 +53,8 @@ PYTHONPATH=software python -m srrx.learning annotate --dataset ./annotations.jso
 `relative_shape_v1` має 36 безрозмірних ознак: 32 інтерпольовані значення нормалізованої форми та mean/occupancy/roughness/deviation. Віднімається 10-й percentile, масштаб задається різницею 90-го й 10-го percentile з мінімумом 1 dB. Абсолютна частота та абсолютний рівень не входять в ознаки. `voice_spectrogram` залишається назвою користувацького класу; один FFT не містить часових ознак мовлення.
 
 Centroids обчислюються тільки за training annotations. Евклідова RMS-відстань порівнюється з per-class radius: `max(0.08, 1.5 × максимальна training distance)`. Якщо distance більша за radius або margin між двома найближчими класами менша за 0.1, результат — `unknown_energy`, `ood: true`.
+
+Annotations `unknown_energy` залишаються в датасеті, але не входять у train/validation і не стають класом моделі. Інакше OOD-відхилення відкладеного прикладу `unknown_energy` рахувалося б як правильний збіг і завищувало б accuracy. Модель із класом `unknown_energy` відхиляється. Для навчання потрібні щонайменше два інші класи.
 
 `confidence` — **евристична оцінка форми**, не калібрована ймовірність та не доказ типу протоколу. Модель може помилятися на іншому SNR, FFT, receiver, gain, bandwidth, propagation або схожій спектральній формі. Немає автоматичного виконання команд за prediction.
 
@@ -97,7 +100,7 @@ Manifest JSON має рівно такі поля:
 
 Приклад містить placeholders; без справжніх файлів він не є робочим manifest. Labels і порядок мають точно збігатися з trained model. Вхід ONNX — один `float32[1,36]`; вихід — один tensor `[1,number_of_labels]` невід’ємних RMS-відстаней до відповідних centroids. Artifact і backend обмежені 1 GiB кожний та перевіряються потоковим SHA256.
 
-Адаптер вимагає QNN HTP, забороняє CPU EP fallback, перевіряє активний provider і tensor shapes та реально викликає `session.run`. Перевірка результату допускає похибку `0.01 + 2% × CPU distance`. Host features, OOD і ця контрольна CPU-перевірка лишаються на CPU. Лише успішний виклик HTP позначається `QAIRT_QNN_HTP`. Звичайний Python callback не може позначити CPU як NPU.
+Адаптер вимагає QNN HTP, забороняє CPU EP fallback, перевіряє активний provider і tensor shapes та реально викликає `session.run`. Перевірка результату допускає похибку `0.01 + 2% × CPU distance`. Host features, OOD і ця контрольна CPU-перевірка лишаються на CPU. Label, OOD, distance і confidence завжди обчислюються з точних CPU-відстаней. Біля порогу radius/margin допуск міг би змінити рішення, тому HTP-результат зараховується лише тоді, коли його відстані в межах допуску й дають ті самі `label`, `nearest_label` та `ood`. Інакше повертається CPU-результат із `npu.available: false` і причиною. Лише успішний і узгоджений виклик HTP позначається `QAIRT_QNN_HTP`. Звичайний Python callback не може позначити CPU як NPU.
 
 `--backend npu --npu-manifest ./manifest.json` або `infer(..., backend="npu", npu_manifest=...)` за будь-якої недоступності повертає справжній CPU-результат із `npu.available: false` та причиною. Тести перевіряють цей шлях; апаратний HTP тут не тестувався.
 
@@ -109,4 +112,4 @@ Manifest JSON має рівно такі поля:
 PYTHONPATH=software python -m unittest discover -s software/tests -p 'test_learning.py' -v
 ```
 
-Тести охоплюють mask bypass, invalid capture/geometry, дозволені класи, explicit annotation, gain-copy duplicates, overlap/capture-group leakage, реальний fit/holdout/inference/OOD, atomic persistence, пошкоджені models/JSON/provenance, чесний NPU fallback та робочі CLI demo/train/infer.
+Тести охоплюють mask bypass, invalid capture/geometry, дозволені класи, explicit annotation, gain-copy duplicates, overlap/capture-group leakage, реальний fit/holdout/inference/OOD, зарезервований `unknown_energy`, одне маскування на збережений кадр, atomic persistence і помилку `fsync` каталогу, пошкоджені models/JSON/provenance, чесний NPU fallback, збіг NPU-рішення з CPU та робочі CLI demo/train/infer.

@@ -32,10 +32,13 @@ LAB5_BRANCHES = {"LNA1", "LNA2", "LNA3", "LNA4", "SB_LNA", "RTLA", "RTLB", "HFP"
 ROUTES = {"PARK": (False, False), "RF1": (False, False),
           "RF2": (True, False), "RF3": (False, True), "RF4": (True, True)}
 MAX_INPUT_AGE_MS, MAX_TELEMETRY_AGE_MS, MAX_LEASE_MS = 250, 1000, 5000
+SAFE_UNCONFIRMED = "; safe write unconfirmed: Pico MCP RESET required"
 
 
 def _number(value):
-    return type(value) in (int, float) and math.isfinite(value)
+    # An int is exact and every caller range-checks it; math.isfinite would
+    # raise OverflowError for a JSON integer beyond float range.
+    return type(value) is int or type(value) is float and math.isfinite(value)
 
 
 class SafetyPolicy:
@@ -87,6 +90,9 @@ class SafetyPolicy:
         self.bias_off_since = {branch: now for branch in DCS}
         self.dcs_low_since = {branch: None for branch in DCS}
         self.relay_off_since = now
+        # Confirmations given before this arm (possibly by another client
+        # while no lease was held) never carry into the new session.
+        self.confirmations = dict.fromkeys(self.confirmations, False)
         return True
 
     @property
@@ -208,7 +214,8 @@ class SafetyPolicy:
         try:
             self.hardware.all_off()
         except Exception:
-            self.fault += "; safe write unconfirmed: Pico MCP RESET required"
+            if not self.fault.endswith(SAFE_UNCONFIRMED):
+                self.fault += SAFE_UNCONFIRMED
 
     def _budget_ok(self, proposed, now):
         antenna = 0.0

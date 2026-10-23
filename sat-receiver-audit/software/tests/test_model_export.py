@@ -1,21 +1,26 @@
 import contextlib
 import copy
+import errno
 import io
+import importlib
 import importlib.util
 import json
 import os
 from pathlib import Path
+import re
 import sys
 import tempfile
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
+import uuid
 
 from srrx import learning, model_export as export
 
 
 # Static discovery only. Importing a test module must never initialize ORT.
-AVAILABLE = all(importlib.util.find_spec(name) is not None for name in ("onnx", "numpy", "onnxruntime"))
+# The privacy guard is audited for Linux only and deliberately blocks ORT elsewhere.
+AVAILABLE = sys.platform.startswith("linux") and all(importlib.util.find_spec(name) is not None for name in ("onnx", "numpy", "onnxruntime"))
 
 
 class TelemetryGuardTests(unittest.TestCase):
@@ -114,7 +119,46 @@ class DependencyTests(unittest.TestCase):
             self.assertEqual(result.exception.code, 0)
 
 
-@unittest.skipUnless(AVAILABLE, "Real ONNX/ONNX Runtime optional dependencies unavailable; CPU artifact tests not executed")
+class ExportDataTests(unittest.TestCase):
+    """Pure-Python export helpers; no ONNX Runtime is loaded here."""
+    def test_no_module_or_test_imports_onnxruntime_outside_the_guard(self):
+        root = Path(__file__).resolve().parents[1]
+        pattern = re.compile(r"^\s*(?:import\s+onnxruntime|from\s+onnxruntime[\s.]).*$", re.M)
+        offenders = []
+        for path in sorted(list((root / "srrx").glob("*.py")) + list((root / "tests").glob("*.py"))):
+            for match in pattern.finditer(path.read_text(encoding="utf-8")):
+                line = match.group(0).strip()
+                # model_export imports the quantization helpers only after load_ort_private().
+                if not (path.name == "model_export.py" and line.startswith("from onnxruntime.quantization")):
+                    offenders.append(path.name + ": " + line)
+        self.assertEqual(offenders, [])
+
+    def test_export_features_use_exactly_the_trained_records_not_reserved_unknown_energy(self):
+        dataset = learning.empty_dataset()
+        for family, label in enumerate(("analog_broadcast", "digital_broadcast", "unknown_energy")):
+            for index in range(3):
+                dataset = learning.annotate(dataset, learning._demo_frame(index, family), 0, 256, label,
+                                            group_id=uuid.UUID(int=family * 100 + index + 1), user_confirmed=True)
+        model = learning.train(dataset, seed=7)
+        _, _, vectors, train_ids, validation_ids = export._dataset_features(model, dataset)
+        self.assertEqual(set(vectors), set(train_ids) | set(validation_ids))
+        self.assertEqual(len(vectors), 6)
+        for identifier, record in ((record["id"], record) for record in dataset["annotations"] if record["id"] in vectors):
+            self.assertEqual(vectors[identifier], learning.extract_features(
+                dataset["frames"][record["frame_sha256"]], record["start_bin"], record["end_bin"]))
+
+    @unittest.skipIf(os.name == "nt", "POSIX directory fsync path")
+    def test_directory_fsync_failure_after_replace_is_reported_as_unconfirmed_durability(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "artifact.onnx"
+            with patch("srrx.model_export.os.fsync", side_effect=[None, OSError(errno.EIO, "I/O error")]):
+                with self.assertRaisesRegex(OSError, "durability not confirmed"):
+                    export._atomic_bytes(path, b"replacement")
+            self.assertEqual(path.read_bytes(), b"replacement")
+            self.assertFalse(list(Path(directory).glob(".srrx-model-*")))
+
+
+@unittest.skipUnless(AVAILABLE, "Real ONNX/ONNX Runtime optional dependencies or the audited Linux guard unavailable; CPU artifact tests not executed")
 class ModelExportTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
@@ -151,10 +195,15 @@ class ModelExportTests(unittest.TestCase):
         self.assertEqual(report["label_agreements"], report["samples"])
         self.assertEqual(report["validation_annotation_ids"], self.model["provenance"]["validation_annotation_ids"])
         self.assertFalse(report["npu_qualified"] or report["qnn_compiled"])
+        # Float32 must also match off the held-out data: corners, centroids, farthest corners.
+        self.assertEqual(report["range_probes"], 2 + 2 * len(self.model["labels"]))
+        self.assertEqual(report["range_probe_decision_agreements"], report["range_probes"])
+        self.assertTrue(report["range_probe_distances_within_tolerance"])
+        self.assertLess(report["range_probe_max_absolute_error"], 2e-6)
 
     def test_float_extreme_and_centroid_vectors_match_actual_runtime(self):
         import numpy as np
-        import onnxruntime as ort
+        ort = export.load_ort_private()  # Never a direct import: it would bypass the privacy guard.
         options = ort.SessionOptions()
         options.intra_op_num_threads = options.inter_op_num_threads = 1
         session = ort.InferenceSession(str(self.artifact), sess_options=options, providers=["CPUExecutionProvider"])
@@ -180,6 +229,29 @@ class ModelExportTests(unittest.TestCase):
         proto = onnx.load_model(output)
         self.assertTrue(any(tensor.data_type == onnx.TensorProto.INT8 for tensor in proto.graph.initializer))
         self.assertFalse(report["npu_qualified"] or report["qnn_compiled"])
+        self.assertGreater(report["int8_weights"], 0)
+        self.assertTrue(report["mixed_float_ops"])
+        # MinMax calibration from training features saturates far from the data:
+        # that is reported, and only identical label/OOD decisions are accepted there.
+        self.assertEqual(report["range_probe_decision_agreements"], report["range_probes"])
+        self.assertFalse(report["range_probe_distances_within_tolerance"])
+        far = max(learning._distance([0.0 if value >= .5 else 1.0 for value in point], point)
+                  for point in self.model["centroids"].values())
+        self.assertLess(report["max_range_probe_distance"], far - .01)
+        self.assertGreater(report["max_range_probe_distance"], max(self.model["radii"].values()))
+
+    def test_qdq_without_signed_int8_zero_points_or_weights_is_not_published(self):
+        export.load_ort_private()
+        quantization = importlib.import_module("onnxruntime.quantization")
+        real = quantization.quantize_static
+        def unsigned(*args, **kwargs):
+            kwargs.update(activation_type=quantization.QuantType.QUInt8, weight_type=quantization.QuantType.QUInt8)
+            return real(*args, **kwargs)
+        output = self.directory / "unsigned.onnx"
+        with patch.object(quantization, "quantize_static", side_effect=unsigned):
+            with self.assertRaisesRegex(export.ExportError, "signed INT8"):
+                export.quantize_static_int8(self.model, self.dataset, self.artifact, output, allow_simulation_calibration=True)
+        self.assertFalse(output.exists())
 
     def test_synthetic_calibration_requires_explicit_opt_in(self):
         output = self.directory / "unaccepted.onnx"

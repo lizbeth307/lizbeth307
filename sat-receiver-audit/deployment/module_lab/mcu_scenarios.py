@@ -5,9 +5,14 @@ Results are EMULATION_PASS, never physical hardware PASS or commissioning.
 No valid calibration/commissioning record is created, written or provisioned.
 """
 import argparse
+import contextlib
 import hashlib
 import json
 from pathlib import Path
+import sys
+import tempfile
+from types import SimpleNamespace
+from unittest import mock
 
 try:
     from .mcu_bus import EmulatedMachine, VirtualClock, SOURCE_REFS, load_firmware
@@ -90,7 +95,7 @@ def pico_safe_gpio_and_adc(fw):
     sample = hardware.sample(clock.now_ms())
     _check(sample["panel_temp_c"] is None and sample["case_temp_c"] is None,
            "open/short NTC reused cached valid data")
-    machine.set_battery_mv(12900)
+    machine.set_battery_mv(13050)  # Exactly the labd/Pico software cutoff.
     _check(hardware.sample(1)["battery_mv"] is None, "uncalibrated battery became valid")
     model = fw.supervisor.Supervisor()
     model.step(1, hardware.sample(1))
@@ -130,7 +135,7 @@ def pico_power_uart_and_tach(fw):
 def pico_watchdog_ticks_uart(fw):
     clock = VirtualClock(VirtualClock.TICKS_PERIOD - 5)
     machine = EmulatedMachine(clock)
-    hardware = fw.adapter.Hardware(machine_module=machine)
+    fw.adapter.Hardware(machine_module=machine)  # Firmware boot pin configuration only.
     ticks = fw.adapter.TickClock(clock.ticks_ms, clock.ticks_diff)
     clock.sleep_ms(10)
     _check(ticks.now_ms() == 10, "actual TickClock failed at ticks wrap")
@@ -163,9 +168,95 @@ def pico_watchdog_ticks_uart(fw):
         _check(clock.now_ms() - start == 100, "UART backpressure deadline not bounded")
     else:
         raise AssertionError("blocked UART did not time out")
-    return {"ticks_wrap": True, "watchdog_pad_reset_ms": 1000,
+    # The WDT here is built and fed by this case: a model self-test. Firmware
+    # construction/feed policy is pico_main_watchdog_feed_policy.
+    return {"ticks_wrap": True, "watchdog_model_self_test_ms": 1000,
+            "firmware_wdt_construction_and_feed_policy": "NOT_EXERCISED_HERE",
             "short_write_bytes": len(packet), "backpressure_timeout_ms": 100,
             "instruction_level_restart": "UNSUPPORTED"}
+
+
+class _Stop(BaseException):
+    """Leaves firmware run()'s endless loops; firmware never catches BaseException."""
+
+
+def pico_main_watchdog_feed_policy(fw, loops=60):
+    """Run the deployed main.run() loop: its own WDT, feed placement and a stall."""
+    clock = VirtualClock()
+    machine = EmulatedMachine(clock)  # Q6A off: no UART traffic, loop timing is sleep only.
+    seen = {"loops": 0, "calls": 0, "stall": None, "stop": None}
+    # Bounded run: a firmware exception (fail-safe sleep_ms(50) loop), a changed
+    # loop period or a loop that never sleeps ends as EMULATION_FAIL, not a hang.
+    budget_ms, budget_calls = (loops + 2) * 20 + 5000, 10 * (loops + 2) + 100
+
+    def stop(reason):
+        seen["stop"] = seen["stop"] or reason
+        raise _Stop()
+
+    def budget():
+        seen["calls"] += 1
+        if seen["calls"] > budget_calls or clock.now_ms() > budget_ms:
+            stop("budget exhausted after %d clock calls, %d virtual ms" % (seen["calls"], clock.now_ms()))
+
+    def ticks_ms():
+        budget()
+        return clock.ticks_ms()
+
+    def sleep_ms(value):
+        if seen["stop"]:
+            raise _Stop()
+        budget()
+        if value != 20 and seen["loops"]:
+            stop("sleep_ms(%r) after the 20 ms main loop started: fail-safe or changed period" % (value,))
+        if value == 20:  # The main loop's only sleep, right after wdt.feed().
+            seen["loops"] += 1
+            if seen["loops"] == loops + 1:
+                clock.sleep_ms(999)
+                seen["stall"] = machine.reset_count
+                return
+            if seen["loops"] == loops + 2:
+                clock.sleep_ms(1000)
+                seen["reset"] = (machine.reset_count, machine.reset_reason,
+                                 machine.Pin(17).mode, machine.mcp_reset_asserted)
+                stop("done")
+        clock.sleep_ms(value)
+
+    time_module = SimpleNamespace(ticks_ms=ticks_ms, ticks_diff=clock.ticks_diff,
+                                  sleep_ms=sleep_ms, sleep_us=clock.sleep_us)
+    modules = {"machine": machine, "time": time_module, "adapter": fw.adapter, "supervisor": fw.supervisor,
+               "imu_relay": fw.relay, "micropython": SimpleNamespace(alloc_emergency_exception_buf=lambda size: None)}
+    with tempfile.TemporaryDirectory(prefix="srrx-pico-main-") as folder, contextlib.chdir(folder), \
+            mock.patch.dict(sys.modules, modules):
+        # No calibration.json/commissioning.json in this cwd: ARM stays refused.
+        try:
+            fw.main.run()
+        except _Stop as stopped:
+            error = stopped.__context__  # A firmware exception that ran the fail-safe finally.
+            while isinstance(error, _Stop):
+                error = error.__context__
+        else:
+            raise AssertionError("firmware main loop returned")
+    _check(error is None, "firmware run() raised %s: %s; fail-safe entered" % (type(error).__name__, error))
+    _check(seen["stop"] == "done" and seen["loops"] == loops + 2,
+           "firmware main loop ran %d of %d 20 ms loops: %s" % (seen["loops"], loops + 2, seen["stop"]))
+    _check(machine.wdt is not None and machine.wdt.timeout == 1000, "firmware WDT timeout is not 1000 ms")
+    feeds = [index for index, entry in enumerate(machine.trace) if entry[1] == "wdt_feed"]
+    reset_driven = [index for index, entry in enumerate(machine.trace)
+                    if entry[1:3] == ("pin", 17) and entry[3] == machine.Pin.OUT and entry[4] == 1]
+    _check(feeds and reset_driven and reset_driven[0] < feeds[0], "WDT started before safe GP17 reset drive")
+    _check(len(feeds) >= loops + 2, "firmware did not feed its WDT every loop")
+    for start, end in zip(feeds, feeds[1:]):
+        segment = machine.trace[start + 1:end]
+        _check(any(entry[1:3] == ("adc", 27) for entry in segment)
+               and any(entry[1:3] == ("pin", 17) for entry in segment),
+               "WDT fed without fresh sensing and output application")
+    _check(seen["stall"] == 0, "999 ms loop stall reset the Pico early")
+    _check(seen.get("reset") == (1, "WDT", machine.Pin.IN, True),
+           "1000 ms stall did not WDT-reset to high-Z GP17 with Q306 reset asserted")
+    return {"entrypoint": "firmware/pico/main.py run()", "wdt_timeout_ms": 1000,
+            "normal_loops_without_reset": loops, "each_feed_after_fresh_sensing_and_outputs": True,
+            "stall_999ms_reset": False, "stall_1000ms_reset": "WDT",
+            "reset_pad_high_z_asserts_mcp_reset": True, "physical_watchdog": "UNSUPPORTED"}
 
 
 def pi4io_keys_encoders(fw):
@@ -458,6 +549,7 @@ CASES = (
     ("pico_safe_gpio_and_adc", ("pico_adc_ntc_battery", "pico_gpio_supervisor"), pico_safe_gpio_and_adc),
     ("pico_power_uart_and_tach", ("pico_gpio_supervisor", "pico_fan_tach"), pico_power_uart_and_tach),
     ("pico_watchdog_ticks_uart", ("pico_watchdog_clock", "pico_uart"), pico_watchdog_ticks_uart),
+    ("pico_main_watchdog_feed_policy", ("pico_watchdog_clock",), pico_main_watchdog_feed_policy),
     ("pi4io_keys_encoders", ("pi4io9555_keys", "pico_encoders"), pi4io_keys_encoders),
     ("pi4io_fault_recovery", ("pi4io9555_keys", "pico_encoders"), pi4io_fault_recovery),
     ("veml_conversion_fault_age", ("veml7700" ,), veml_conversion_fault_age),
@@ -513,7 +605,7 @@ def main(argv=None):
     report = run(args.project)
     encoded = json.dumps(report, indent=2, sort_keys=True) + "\n"
     if args.output is not None:
-        args.output.write_text(encoded, encoding="utf-8")
+        args.output.write_text(encoded, encoding="utf-8", newline="\n")
     else:
         print(encoded, end="")
     return 0 if report["status"] == "EMULATION_PASS" else 1

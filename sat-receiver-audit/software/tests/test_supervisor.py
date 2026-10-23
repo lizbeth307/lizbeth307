@@ -83,7 +83,7 @@ class SupervisorTests(unittest.TestCase):
     def test_q6a_off_invalid_and_hot_sensors_block_arm(self):
         for field, value, reason in (("q6a_on", False, "Q6A_OFF"),
                                      ("battery_mv", None, "SENSOR_INVALID"),
-                                     ("battery_mv", 12900, "BATTERY_LOW"),
+                                     ("battery_mv", 13050, "BATTERY_LOW"),
                                      ("panel_temp_c", float("nan"), "SENSOR_INVALID"),
                                      ("case_temp_c", float("inf"), "SENSOR_INVALID"),
                                      ("panel_temp_c", 68, "PANEL_HOT"),
@@ -104,7 +104,7 @@ class SupervisorTests(unittest.TestCase):
         rig.send("HB")
         self.assertEqual(rig.model.state, "CONFIGURING")
         self.assertFalse(rig.model.outputs["mcp_reset"])
-        self.assertFalse(rig.model.outputs["disp_en"])
+        self.assertTrue(rig.model.outputs["disp_en"])
         rig.send("CONFIGURED", {"safe": True})
         self.assertEqual(rig.model.state, "ACTIVE")
         self.assertTrue(rig.model.outputs["disp_en"])
@@ -272,7 +272,7 @@ class SupervisorTests(unittest.TestCase):
 
     def test_uv_without_hb_exact_five_second_dwell_and_pulse(self):
         rig = Rig()
-        rig.inputs["battery_mv"] = 12900
+        rig.inputs["battery_mv"] = 13050
         rig.model.step(0, rig.inputs)
         rig.advance(4999)
         self.assertNotEqual(rig.model.state, "OFF")
@@ -281,7 +281,7 @@ class SupervisorTests(unittest.TestCase):
 
     def test_uv_live_hb_is_linux_responsibility(self):
         rig = Rig().activate()
-        rig.inputs["battery_mv"] = 12900
+        rig.inputs["battery_mv"] = 13050
         rig.advance(8000, heartbeat=True)
         self.assertEqual(rig.model.state, "ACTIVE")
         self.assertFalse(rig.model.outputs["pico_off"])
@@ -290,7 +290,7 @@ class SupervisorTests(unittest.TestCase):
         rig = Rig()
         rig.inputs["battery_mv"] = 12800
         rig.advance(4000)
-        rig.inputs["battery_mv"] = 13000
+        rig.inputs["battery_mv"] = 13100
         rig.advance(4200)
         rig.inputs["battery_mv"] = 12800
         rig.advance(8000)
@@ -349,6 +349,93 @@ class SupervisorTests(unittest.TestCase):
         self.assertFalse(rig.model.outputs["disp_en"])
         self.assertTrue(rig.model.outputs["mcp_reset"])
 
+    def test_battery_gate_is_13050_inclusive_on_arm_and_uv_fallback(self):
+        rig = Rig()
+        rig.inputs["battery_mv"] = 13051
+        rig.advance(6000)
+        self.assertEqual(rig.model.state, "SAFE")
+        self.assertTrue(rig.send("ARM", {"qualified": True}))
+
+    def test_low_battery_while_armed_cannot_mask_thermal_or_fan_trips(self):
+        for field, value, reason in (("panel_temp_c", 80, "PANEL_HOT"),
+                                     ("case_temp_c", 75, "CASE_HOT"),
+                                     ("fan_stalled", True, "FAN_STALLED")):
+            rig = Rig().activate()
+            rig.inputs["battery_mv"] = 12800
+            rig.inputs[field] = value
+            rig.advance(220, heartbeat=True)
+            self.assertEqual(rig.model.fault, reason, field)
+            self.assertTrue(rig.model.outputs["mcp_reset"])
+            self.assertTrue(rig.model.outputs["fan_en"])
+            self.assertTrue(rig.model.outputs["blower_en"])
+
+    def test_shutdown_after_physical_restart_gets_full_grace(self):
+        for trigger in ("host", "button"):
+            rig = Rig().activate()
+            rig.send("SHUTDOWN", {"phase": "ARM_OFF"})
+            rig.advance(300)
+            rig.send("SHUTDOWN", {"phase": "OFF_NOW"})
+            rig.advance(20300)
+            self.assertEqual(rig.model.fault, "OFF_NOW_GRACE_ELAPSED")
+            rig.inputs["button_pressed"] = True
+            rig.advance(20400)
+            self.assertEqual(rig.model.state, "SAFE")
+            rig.inputs["button_pressed"] = False
+            rig.advance(20500)
+            if trigger == "host":
+                self.assertTrue(rig.send("SHUTDOWN", {"phase": "ARM_OFF"}))
+                self.assertEqual(rig.model.state, "SHUTTING_DOWN")
+                rig.advance(20600)
+                self.assertTrue(rig.send("SHUTDOWN", {"phase": "OFF_NOW"}))
+                rig.advance(40599)
+                self.assertEqual(rig.model.state, "SHUTTING_DOWN")
+                self.assertFalse(rig.model.outputs["pico_off"])
+                rig.advance(40600)
+                self.assertEqual(rig.model.fault, "OFF_NOW_GRACE_ELAPSED")
+            else:
+                rig.inputs["button_pressed"] = True
+                rig.advance(22100)
+                rig.inputs["button_pressed"] = False
+                self.assertEqual((rig.model.state, rig.model.fault), ("SHUTTING_DOWN", "BUTTON"))
+                rig.advance(82040)
+                self.assertEqual(rig.model.state, "SHUTTING_DOWN")
+                self.assertFalse(rig.model.outputs["pico_off"])
+                rig.advance(82060)
+                self.assertEqual(rig.model.fault, "ARM_OFF_HEARTBEAT_LOST")
+
+    def test_display_follows_q6a_outside_active_with_panel_hysteresis(self):
+        rig = Rig()
+        self.assertTrue(rig.model.outputs["disp_en"])  # SAFE console: ARM + HOLD.
+        self.assertTrue(rig.model.outputs["mcp_reset"])
+        rig.activate()
+        rig.send("TRIP")
+        self.assertEqual(rig.model.state, "TRIPPED")
+        self.assertTrue(rig.model.outputs["mcp_reset"])
+        self.assertTrue(rig.model.outputs["disp_en"])  # Fault and RECOVER + ARM visible.
+        for panel, expected in ((67.9, True), (68, False), (65, False), (60.1, False),
+                                (60, True), (None, False), (65, False), (59, True)):
+            rig.inputs["panel_temp_c"] = panel
+            rig.advance(rig.now + 20)
+            self.assertEqual(rig.model.outputs["disp_en"], expected, panel)
+        rig.inputs["q6a_on"] = False
+        rig.advance(rig.now + 20)
+        self.assertFalse(rig.model.outputs["disp_en"])
+
+    def test_display_off_in_shutdown_off_and_on_stale_samples(self):
+        rig = Rig()
+        rig.send("SHUTDOWN", {"phase": "ARM_OFF"})
+        self.assertFalse(rig.model.outputs["disp_en"])
+        rig = Rig()
+        rig.inputs["battery_mv"] = 12800
+        rig.advance(6000)
+        self.assertEqual(rig.model.state, "OFF")
+        self.assertFalse(rig.model.outputs["disp_en"])
+        rig = Rig()
+        rig.model.receive({"v": 1, "t": "HB", "s": rig.model.session, "q": 0, "p": {}}, 250)
+        self.assertTrue(rig.model.outputs["disp_en"])
+        rig.model.receive({"v": 1, "t": "HB", "s": rig.model.session, "q": 1, "p": {}}, 251)
+        self.assertFalse(rig.model.outputs["disp_en"])
+
 
 class CalibrationTests(unittest.TestCase):
     def record(self):
@@ -356,15 +443,18 @@ class CalibrationTests(unittest.TestCase):
                                0.2, -0.1, "DMM-01/log-01")
 
     def test_crc_known_vector_and_record_roundtrip(self):
+        import struct
         self.assertEqual(crc32(b"123456789"), 0xcbf43926)
-        record = json.loads(json.dumps(self.record()))
+        # Parse as the single-precision RP2040 port would; integer fields keep the CRC.
+        record = json.loads(json.dumps(self.record()),
+                            parse_float=lambda s: struct.unpack("<f", struct.pack("<f", float(s)))[0])
         cal = validate(record, "abc123")
         self.assertEqual(cal.battery_mv(46000), 12600)
         self.assertEqual(cal.battery_mv(59900), 16400)
 
     def test_corruption_revision_serial_and_missing_field_rejected(self):
-        for mutate in (lambda r: r.update(offset_mv=20),
-                       lambda r: r.pop("scale_mv_per_count")):
+        for mutate in (lambda r: r.update(offset_uv=20),
+                       lambda r: r.pop("scale_nv_per_count")):
             record = self.record()
             mutate(record)
             with self.assertRaises(ValueError):

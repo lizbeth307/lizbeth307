@@ -1380,9 +1380,10 @@
         }
       ],
       "notes": [
-        "Series RC damping branch, parallel to main100uF. Not in DC receiver power path."
+        "Series RC damping branch, parallel to main100uF. Not in DC receiver power path.",
+        "1210 package for the 0.5 W rating, as for the ≥0.5 W E4 R44xx bleeds; a standard 0603 part is only about 0.1 W. Startup charge of C512 dissipates at most ½×220 uF×(5 V)² ≈ 2.75 mJ in R512; check it against the chosen part's single-pulse curve."
       ],
-      "footprint": "Resistor_SMD:R_0603_1608Metric"
+      "footprint": "Resistor_SMD:R_1210_3225Metric"
     },
     {
       "ref": "C512",

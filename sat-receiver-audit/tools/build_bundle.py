@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Produce an offline project HTML with an embedded, non-recursive source archive."""
 import base64
-from datetime import datetime
 import hashlib
 import html as escape_html
 import io
@@ -32,13 +31,21 @@ def atomic_write(path, data):
             os.unlink(name)
 
 
+def sha(path):
+    return hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def report(relative):
+    return json.loads((BASE / relative).read_text(encoding="utf-8"))
+
+
 def section_id(path):
     return "file-" + re.sub(r"[^a-zA-Z0-9_-]", "-", str(path))
 
 
 def markdown(path):
     p = BASE / path
-    rendered = subprocess.run(["pandoc", "-f", "gfm", "-t", "html5", "--wrap=none"], input=p.read_text(), text=True, capture_output=True, check=True).stdout
+    rendered = subprocess.run(["pandoc", "-f", "gfm", "-t", "html5", "--wrap=none"], input=p.read_text(encoding="utf-8"), encoding="utf-8", capture_output=True, check=True).stdout
     fragment = html.fragment_fromstring(rendered, create_parent="div")
     prefix = section_id(path)
     for node in fragment.xpath('.//*[@id]'):
@@ -57,9 +64,9 @@ def markdown(path):
         except ValueError:
             a.set("href", "#source-archive")
             continue
-        if str(rel) in INCLUDED:
+        if rel.as_posix() in INCLUDED:
             a.set("href", "#" + section_id(rel))
-        elif str(rel) == "build/kicad/sr-rx-v2.pdf":
+        elif rel.as_posix() == "build/kicad/sr-rx-v2.pdf":
             a.set("href", "#download-pdf")
         else:
             a.set("href", "#source-archive")
@@ -87,22 +94,25 @@ def archive():
             continue
         data = p.read_bytes()
         paths.append((rel, data))
-        manifest.append({"path": str(rel), "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest()})
+        manifest.append({"path": rel.as_posix(), "bytes": len(data), "sha256": hashlib.sha256(data).hexdigest()})
     # Store no archive inside itself, and no temporary workstation state.
     buffer = io.BytesIO()
     with zipfile.ZipFile(buffer, "w", compression=zipfile.ZIP_DEFLATED, compresslevel=9) as z:
         for rel, data in paths:
-            entry = zipfile.ZipInfo("SR-RX-v2/" + str(rel), date_time=(2026, 10, 20, 0, 0, 0))
+            entry = zipfile.ZipInfo("SR-RX-v2/" + rel.as_posix(), date_time=(2026, 10, 20, 0, 0, 0))
             entry.compress_type = zipfile.ZIP_DEFLATED
             entry.external_attr = 0o100644 << 16
+            entry.create_system = 3  # Unix mode bits; identical archive bytes on every host
             z.writestr(entry, data, compresslevel=9)
         entry = zipfile.ZipInfo("SR-RX-v2/ARCHIVE-MANIFEST.json", date_time=(2026, 10, 20, 0, 0, 0))
         entry.compress_type = zipfile.ZIP_DEFLATED
         entry.external_attr = 0o100644 << 16
+        entry.create_system = 3
         z.writestr(entry, json.dumps(manifest, ensure_ascii=False, indent=2), compresslevel=9)
     payload = buffer.getvalue()
     with zipfile.ZipFile(io.BytesIO(payload)) as check:
-        assert check.testzip() is None, "Archive CRC validation failed"
+        if check.testzip() is not None:
+            raise SystemExit("Archive CRC validation failed")
     atomic_write(target, payload)
     return target, manifest
 
@@ -157,21 +167,26 @@ INCLUDED = {p for _, p in CORE}
 
 
 def main():
-    sys.path.insert(0, str(BASE / "software"))
+    sys.path[:0] = [str(BASE / "software"), str(BASE / "tools")]
     from srrx.commissioning import project_hashes
-    software = json.loads((BASE / "verification/software-tests.json").read_text())
+    from finalize_linux_lab import bound_sources
+    software = report("verification/software-tests.json")
     graphs, sources = project_hashes(BASE)
     if (software.get("host_regression_status") != "PASS" or software.get("graph_sha256") != graphs
-            or software.get("source_sha256") != sources):
-        raise SystemExit("Package only after current-source software regression PASS; report is stale or failed")
-    module_report = json.loads((BASE / "verification/module-lab/report.json").read_text())
-    linux_report = json.loads((BASE / "verification/linux-lab/report.json").read_text())
+            or software.get("source_sha256") != sources
+            or software.get("test_environment", {}).get("internet_sockets_denied") is not True):
+        raise SystemExit("Package only after current-source software regression PASS with Internet sockets denied; report is stale or failed")
+    module_report = report("verification/module-lab/report.json")
+    linux_report = report("verification/linux-lab/report.json")
     if module_report.get("execution_status") != "PASS" or linux_report.get("status") != "PASS":
         raise SystemExit("Package only after Linux and module-lab PASS")
-    lab_binding = json.loads((BASE / "verification/linux-lab/source-binding.json").read_text())
+    lab_binding = report("verification/linux-lab/source-binding.json")
     for relative, expected in lab_binding["source_sha256"].items():
         if hashlib.sha256((BASE / relative).read_bytes()).hexdigest() != expected:
             raise SystemExit("Linux execution result is stale: " + relative)
+    unbound = sorted(bound_sources(BASE) - set(lab_binding["source_sha256"]))
+    if unbound:
+        raise SystemExit("Linux execution result does not cover current sources: " + ", ".join(unbound[:12]))
     for relative, key in (("verification/module-lab/report.json", "module_report_sha256"),
                           ("verification/linux-lab/report.json", "linux_report_sha256")):
         if hashlib.sha256((BASE / relative).read_bytes()).hexdigest() != lab_binding[key]:
@@ -184,22 +199,56 @@ def main():
     for relative, expected in module_report["coverage"]["graph_sha256"].items():
         if hashlib.sha256((BASE / relative).read_bytes()).hexdigest() != expected:
             raise SystemExit("Module graph result is stale: " + relative)
-    verification = json.loads((BASE / "verification/validation.json").read_text())
+    verification = report("verification/validation.json")
     if verification["graph_netlist_comparison"] != "PASS" or verification["erc_counts"]:
-        raise SystemExit("Package only after graph comparison and the full ERC pass")
-    for relative, expected in verification["sha256"].items():
-        if hashlib.sha256((BASE / relative).read_bytes()).hexdigest() != expected:
-            raise SystemExit("CAD verification is stale: " + relative)
+        raise SystemExit("Package only after graph comparison and ERC with no reported violations")
+    schematics = {p.relative_to(BASE).as_posix(): sha(p) for p in sorted((BASE / "build/kicad").glob("*.kicad_sch"))}
+    if verification["sha256"] != schematics:
+        raise SystemExit("CAD verification is stale: validated schematics differ from build/kicad")
+    inputs = {r["file"]: r["sha256"] for r in verification.get("input_files", [])}
+    if set(inputs) != {"verification/erc.json", "verification/netlist.xml"} or any(sha(BASE / f) != h for f, h in inputs.items()):
+        raise SystemExit("CAD verification is not bound to the current ERC/netlist; rerun tools/run_checks.py")
+    # Every shipped CAD/PCB PASS report must be bound to the files it checked.
+    design = {p.relative_to(BASE).as_posix(): sha(p) for p in sorted((BASE / "design").glob("E[1-5].json"))}
+    invariants = report("verification/electrical-invariants.json")
+    if invariants.get("status") != "PASS" or invariants.get("input_sha256") != design:
+        raise SystemExit("Electrical invariant report is stale or failed; rerun tools/run_checks.py")
+    independent = report("verification/independent-netlist-review.json")
+    if (independent.get("passed") is not True or independent.get("netlist_sha256") != sha(BASE / "verification/netlist.xml")
+            or independent.get("graph_sha256") != {Path(f).name: h for f, h in design.items()}):
+        raise SystemExit("Independent netlist review is stale or failed; rerun tools/run_checks.py")
+    detector = subprocess.run([sys.executable, "-X", "utf8", str(BASE / "design/E4-detector-analysis.py"), "--json"], cwd=BASE, encoding="utf-8", capture_output=True, check=True).stdout
+    if {k: v for k, v in json.loads(detector).items() if k != "design_file"} != {k: v for k, v in report("verification/dc-detector-analysis.json").items() if k != "design_file"}:
+        raise SystemExit("DC-detector analysis report is stale; rerun tools/run_checks.py")
+    starter = report("verification/pcb-review.json")
+    if (starter.get("passed") is not True or starter["board_sha256"] != sha(BASE / starter["board_file"])
+            or starter["input_sha256"] != sha(BASE / starter["input_file"]) or starter["drc"]["raw_sha256"] != sha(BASE / starter["drc"]["raw_file"])):
+        raise SystemExit("PCB placement review is stale or failed; rerun pcb/generate_layout.py")
+    routed_board = BASE / "build/kicad/pcb-prototype/detector-core-routed-prototype.kicad_pcb"
+    proto = report("verification/pcb-prototype-review.json")
+    drc = proto.get("drc", {})
+    if (proto.get("status") != "ROUTED_INTERNAL_PROTOTYPE_NOT_FOR_FABRICATION" or proto.get("published_board") is not True
+            or proto.get("board_sha256") != sha(routed_board) or drc.get("raw_sha256") != sha(BASE / "build/kicad/pcb-prototype/drc-raw.json")
+            or drc.get("exit_code") != 0 or any(drc["sections"].values()) or drc["ignored_checks"] or proto["source_pad_audit"]["passed"] is not True):
+        raise SystemExit("Routed prototype review is stale or not clean; rerun pcb/generate_routed.py")
+    if subprocess.run([sys.executable, str(BASE / "tools/build_firmware.py"), "--check"], cwd=BASE).returncode:
+        raise SystemExit("Firmware packages are stale; rerun tools/build_firmware.py")
     pdf = BASE / "build/kicad/sr-rx-v2.pdf"
     if not pdf.read_bytes().rstrip().endswith(b"%%EOF"):
         raise SystemExit("PDF is incomplete; regenerate it before packaging")
+    # The PDF has no hash of its own in validation.json; its export record binds it.
+    export = report("verification/pdf-export.json")
+    if export.get("pdf") != {"file": "build/kicad/sr-rx-v2.pdf", "sha256": sha(pdf)} or export.get("kicad_sch_sha256") != schematics:
+        raise SystemExit("Schematic PDF is not the export of the current verified schematics; run tools/run_checks.py --export")
+    missing_core = [p for _, p in CORE if not (BASE / p).is_file()]
+    if missing_core:
+        raise SystemExit("Missing CORE documents: " + ", ".join(missing_core))
     source_zip, manifest = archive()
-    generated = json.loads((BASE / "build/kicad/generation-manifest.json").read_text())
+    generated = report("build/kicad/generation-manifest.json")
     nav = [f'<li><a href="#{section_id(p)}">{escape_html.escape(title)}</a></li>' for title, p in CORE]
     sections = []
     for title, p in CORE:
-        if (BASE / p).exists():
-            sections.append(f'<section id="{section_id(p)}"><div class="eyebrow">{escape_html.escape(p)}</div>{markdown(p)}</section>')
+        sections.append(f'<section id="{section_id(p)}"><div class="eyebrow">{escape_html.escape(p)}</div>{markdown(p)}</section>')
     pdf_link = f'<a class="button" id="download-pdf" download="sr-rx-v2.pdf" href="{data_uri(pdf,"application/pdf")}">Завантажити PDF схем</a>'
     zip_link = f'<a class="button" id="source-archive" download="SR-RX-v2-project.zip" href="{data_uri(source_zip,"application/zip")}">Завантажити весь проєкт ZIP</a>'
     gallery = []
@@ -212,15 +261,16 @@ def main():
         gallery.append(f'<details><summary>Зміни габаритів і зовнішній S-band вузол v2.1</summary><img loading="lazy" alt="Механічні поправки v2.1; ескіз, не виробниче креслення" src="{data_uri(overlay,"image/svg+xml")}"></details>')
     placement = BASE / "build/kicad/pcb-preparation/detector-core-placement.svg"
     if placement.exists():
-        gallery.append(f'<details><summary>DC_CORE: 71 компонент, нерозведений PCB starter</summary><p class="muted">187 контактів зіставлені зі схемою. Трас немає, DRC містить непідключення. Цей макет не призначений для виготовлення.</p><img loading="lazy" alt="DC_CORE unrouted placement candidate" src="{data_uri(placement,"image/svg+xml")}"></details>')
+        gallery.append(f'<details><summary>DC_CORE: {starter["components"]} компонент, нерозведений PCB starter</summary><p class="muted">{starter["source_pins"]} контактів зіставлені зі схемою. Трас немає, DRC містить непідключення. Цей макет не призначений для виготовлення.</p><img loading="lazy" alt="DC_CORE unrouted placement candidate" src="{data_uri(placement,"image/svg+xml")}"></details>')
     routed = BASE / "build/kicad/pcb-prototype/detector-core-routed-prototype.svg"
     if routed.exists():
-        gallery.append(f'<details><summary>DC_CORE: внутрішній розведений прототип, raw DRC0</summary><p class="muted">71 компонент,187 контактів. Зовнішні інтерфейси/MPN/механіка й фізична кваліфікація відкриті; НЕ ДЛЯ ВИГОТОВЛЕННЯ.</p><img loading="lazy" alt="Internal routed prototype; not for fabrication" src="{data_uri(routed,"image/svg+xml")}"></details>')
+        gallery.append(f'<details><summary>DC_CORE: внутрішній розведений прототип, raw DRC{sum(drc["sections"].values())}</summary><p class="muted">{proto["source_pad_audit"]["parts"]} компонент,{proto["source_pad_audit"]["pins"]} контактів. Зовнішні інтерфейси/MPN/механіка й фізична кваліфікація відкриті; НЕ ДЛЯ ВИГОТОВЛЕННЯ.</p><img loading="lazy" alt="Internal routed prototype; not for fabrication" src="{data_uri(routed,"image/svg+xml")}"></details>')
     # Light previews keep this single file practical on a phone. The PDF and ZIP
     # retain the full vector originals; thumbnails are not fabrication drawings.
     with fitz.open(pdf) as pdf_doc:
         pages = [{"stem": "sr-rx-v2", "title": "Зміст електричної схеми"}] + generated["pages"]
-        assert len(pdf_doc) == len(pages), "PDF page count differs from generated project"
+        if len(pdf_doc) != len(pages):
+            raise SystemExit("PDF page count differs from generated project")
         for i, p in enumerate(pages):
             page = pdf_doc[i]
             pix = page.get_pixmap(matrix=fitz.Matrix(1000 / page.rect.width, 1000 / page.rect.width), alpha=False)
@@ -232,7 +282,8 @@ def main():
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,sans-serif}a{color:var(--accent)}nav{position:fixed;width:270px;padding:24px 20px;inset:0 auto 0 0;overflow:auto;border-right:1px solid var(--line)}nav ol{padding-left:20px}nav li{margin:6px 0}main{margin-left:270px;max-width:1280px;padding:32px 40px;overflow-wrap:anywhere}h1{font-size:1.8rem;line-height:1.2}h2{margin-top:1.6em;font-size:1.3rem}h3{font-size:1.08rem}.eyebrow,.muted{color:var(--muted);font-size:.85rem}.eyebrow{text-transform:none;letter-spacing:.03em}section{padding:28px 0;border-top:2px solid var(--line);margin-top:28px}.notice{padding:16px 20px;border-left:4px solid #bd8b28;background:var(--warn);color:var(--warnfg);margin:20px 0}.button{display:inline-block;border:1px solid var(--accent);border-radius:7px;padding:10px 16px;text-decoration:none;margin:5px 8px 5px 0;font-weight:600}table{display:block;max-width:100%;overflow-x:auto;border-collapse:collapse;font-size:.86rem}td,th{border:1px solid var(--line);padding:7px 10px;vertical-align:top;min-width:80px}th{background:var(--paper)}pre{white-space:pre-wrap;overflow-x:auto;padding:14px;background:var(--paper);border:1px solid var(--line);border-radius:6px;font-size:.83rem}code{font-family:ui-monospace,monospace;font-size:.9em}details{padding:12px;border:1px solid var(--line);margin:12px 0;border-radius:6px}summary{cursor:pointer;font-weight:650}img{display:block;width:100%;height:auto;background:#fff;margin-top:12px}blockquote{margin-left:0;padding-left:16px;border-left:3px solid var(--line)}@media(max-width:900px){nav{position:static;width:auto;border:0;border-bottom:1px solid var(--line)}nav ol{columns:2;font-size:.88rem}main{margin:0;padding:20px 16px}}@media print{nav,.button{display:none}main{margin:0;max-width:none;padding:0}details{break-inside:avoid}section{break-before:page}}
 </style></head><body><nav><b>SR-RX-v2.1</b><p class="muted">20 жовтня 2026<br>Редагована схема · документація · аудит</p><ol>'''+"".join(nav)+'''<li><a href="#schematics">Огляд схем</a></li><li><a href="#downloads">Вбудовані файли</a></li></ol></nav><main><div class="eyebrow">Інженерна редакція від коміту 4653188</div><h1>Супутниковий приймач і портативна радіолабораторія</h1><p>В ефірі — лише прийом. Автономне ядро Radxa Dragon Q6A, RTL-SDR, HF+ та Lime.</p><div class="notice"><b>Стендове приймання не виконано.</b> Цей комплект містить відновлені й перевірені програмно схеми та конкретні умови їх апаратного приймання. Він не є дозволом на виготовлення PCB або підключення неперевіреного акумуляторного вузла.</div>'''+pdf_link+zip_link+"".join(sections)+'''<section id="schematics"><h1>Огляд електричних схем KiCad</h1><p>Усі сторінки експортовано з редагованого проєкту. З'єднання через однакові глобальні мітки перевірено порівнянням із XML-netlist.</p>'''+"".join(gallery)+'''</section><section id="downloads"><h1>Вбудовані файли</h1><p>Кнопки на початку документа працюють без інтернету. ZIP містить усі доступні вихідні документи, первинні журнали аудиту, графи, KiCad, SVG, PDF, BOM, перевірки та генератори. Головний HTML не вкладено в ZIP, щоб уникнути рекурсії; окремий автономний звіт модулів міститься в verification/module-lab/module-results.html.</p><p class="muted">У ZIP '''+str(len(manifest))+''' файлів. Контрольні суми наведені у вкладеному ARCHIVE-MANIFEST.json. Початковий Git збережено історією комітів.</p></section></main></body></html>'''
     out = BASE / "SR-RX-v2-ves-proekt.html"
-    # Verify every data attachment byte-for-byte, and fail on broken internal links.
+    # Verify every data attachment byte-for-byte. Missing CORE documents fail
+    # above; stale legacy heading anchors are rerouted below, never left dead.
     # Embedded archives legitimately exceed libxml's default 10MB attribute
     # limit. Parse our own generated document without silently truncating them.
     tree = html.fromstring(doc, parser=html.HTMLParser(huge_tree=True))
@@ -247,7 +298,8 @@ def main():
             a.set("href", "#" + (base_id if base_id in ids else "source-archive"))
     for link, original in [("download-pdf", pdf), ("source-archive", source_zip)]:
         node = tree.xpath('//*[@id=$id]', id=link)[0]
-        assert base64.b64decode(node.get("href").split(",", 1)[1]) == original.read_bytes()
+        if base64.b64decode(node.get("href").split(",", 1)[1]) != original.read_bytes():
+            raise SystemExit("Embedded attachment differs from its file: " + link)
     atomic_write(out, ('<!doctype html>\n' + etree.tostring(tree, encoding="unicode", method="html")).encode())
     print(json.dumps({"html_bytes": out.stat().st_size, "archive_bytes": source_zip.stat().st_size, "archive_files": len(manifest), "legacy_heading_links_repaired": len(missing)}, ensure_ascii=False))
 

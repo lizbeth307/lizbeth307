@@ -18,13 +18,16 @@
  		rtlsdr_deinit_baseband(dev);
  	}
  
-@@ -2042,6 +2046,11 @@
+@@ -2042,6 +2046,14 @@
  
  int rtlsdr_set_bias_tee_gpio(rtlsdr_dev_t *dev, int gpio, int on)
  {
 +	/* SRRX_RX_ONLY: external guarded injectors supply antenna DC.
-+	 * GPIO5 input switching and every OFF request remain available.
++	 * Only GPIO0..7 exist: the uint8_t helpers would wrap e.g. 256 to GPIO0.
++	 * GPIO5 input switching and every in-range OFF request remain available.
 +	 * Runtime GPIO0 ON is disabled until the labd token bridge is audited. */
++	if (gpio < 0 || gpio > 7)
++		return -EINVAL;
 +	if (gpio == 0 && on)
 +		return -EPERM;
  	if (!dev)

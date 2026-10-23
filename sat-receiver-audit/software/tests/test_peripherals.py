@@ -427,7 +427,8 @@ class AmbientAndWireTests(unittest.TestCase):
             result = run_until(poller, 200, start=120)
             self.assertFalse(result["lux_valid"])
             self.assertIsNone(result["lux"])
-            self.assertGreater(result["generation"], 0)
+            # FW-HMI-01: a lux-only fault never resets the key expander.
+            self.assertEqual(result["generation"], 0)
 
     def test_hmi_snapshot_worst_case_fits_wire_and_source_age_is_added(self):
         poller = PeripheralPoller(FakeBus(), PROJECT)

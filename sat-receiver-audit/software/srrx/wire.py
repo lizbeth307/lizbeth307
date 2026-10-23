@@ -10,6 +10,7 @@ except ImportError:  # Older MicroPython builds expose only ujson.
 
 MAX_FRAME_BYTES = 512
 UINT32_MAX = 0xFFFFFFFF
+_INT_LIMIT = 10 ** MAX_FRAME_BYTES  # Once, not a bigint power per value.
 FRAME_TYPES = ("HELLO", "HB", "ARM", "CONFIGURED", "TRIP", "SHUTDOWN", "STATUS", "EVENT")
 _FIELDS = ("v", "t", "s", "q", "p")
 _HEX = b"0123456789ABCDEF"
@@ -76,7 +77,7 @@ def _validate_json_values(value):
             lower_size += 4 if obj else 5
         elif kind is int:
             # A huge bigint must not allocate a huge decimal string in dumps.
-            if obj > 10 ** MAX_FRAME_BYTES or obj < -(10 ** MAX_FRAME_BYTES):
+            if obj > _INT_LIMIT or obj < -_INT_LIMIT:
                 raise ValueError("integer is too large")
             lower_size += len(str(obj))
         elif kind is float:
@@ -243,8 +244,14 @@ class FrameDecoder:
             self._error()
         # Recover a valid suffix after malformed/truncated prefix, without
         # mistaking '@' in a valid payload string for an unconditional reset.
+        # The summed suffix length is bounded: a line of many '@' must not
+        # cost quadratic CRC work on the Pico (1 s WDT, 20 ms loop).
+        budget = 2 * MAX_FRAME_BYTES
         for start in range(len(candidate) - 1, 0, -1):
             if candidate[start] == 64:
+                budget -= len(candidate) - start
+                if budget < 0:
+                    break
                 try:
                     return _parse_candidate(candidate[start:])
                 except Exception:

@@ -209,6 +209,8 @@ class LocationTracker:
         self._nmea_date = None
         self._gsa = {}
         self._gst = None
+        self._candidate = {}
+        self._active_fault = None
         self.last_error = None
         self.rejected_count = 0
         self.ignored_count = 0
@@ -229,9 +231,34 @@ class LocationTracker:
             raise ValueError("unknown GNSS source")
         self._healthy[source] = False
         self._good_3d[source] = 0
-        self.last_error = str(reason)[:64]
+        self.last_error = self._active_fault = str(reason)[:64]
         self.rejected_count += 1
         return False
+
+    def _delta(self, previous, record):
+        if previous["utc_s"] is not None and record["utc_s"] is not None:
+            return record["utc_s"] - previous["utc_s"]
+        if previous["tod_s"] is not None and record["tod_s"] is not None:
+            return (record["tod_s"] - previous["tod_s"] + 43200) % 86400 - 43200
+        return None
+
+    def _discontinuity(self, record, reason):
+        # A single jump never passes. Only three distinct epochs that agree with
+        # monotonic receipt on the new timeline retire the old time reference;
+        # the next epoch is then a first fix again (UTC/3D gates restart).
+        source = record["origin"]
+        candidate = self._candidate.get(source)
+        delta = None if candidate is None else self._delta(candidate[0], record)
+        if delta is None or abs(delta) > 0.000001:
+            consistent = delta is not None and delta > 0 and abs(
+                delta - (record["received_ms"] - candidate[0]["received_ms"]) / 1000) <= self.utc_tolerance_s
+            candidate = self._candidate[source] = (record, candidate[1] + 1 if consistent else 1)
+        if candidate[1] >= 3:
+            self._fixes.pop(source, None)
+            self._candidate.pop(source, None)
+            if source == "nmea":
+                self._nmea_date = None
+        return self.invalidate(source, reason)
 
     def _record(self, source, lat, lon, now_ms, **extra):
         result = {"origin": source, "lat": float(lat), "lon": float(lon),
@@ -261,17 +288,13 @@ class LocationTracker:
         duplicate = False
         if previous is not None:
             elapsed = (now - previous["received_ms"]) / 1000
-            delta = None
-            if previous["utc_s"] is not None and record["utc_s"] is not None:
-                delta = record["utc_s"] - previous["utc_s"]
-            elif previous["tod_s"] is not None and record["tod_s"] is not None:
-                delta = (record["tod_s"] - previous["tod_s"] + 43200) % 86400 - 43200
+            delta = self._delta(previous, record)
             if delta is not None:
                 if delta < -0.000001:
-                    return self.invalidate(source, "UTC_REVERSED")
+                    return self._discontinuity(record, "UTC_REVERSED")
                 duplicate = abs(delta) <= 0.000001
                 if not duplicate and abs(delta - elapsed) > self.utc_tolerance_s:
-                    return self.invalidate(source, "UTC_TIME_JUMP")
+                    return self._discontinuity(record, "UTC_TIME_JUMP")
             if duplicate:
                 if _distance(previous["lat"], previous["lon"], record["lat"], record["lon"]) > self.jump_slack_m:
                     return self.invalidate(source, "CONTRADICTORY_EPOCH")
@@ -294,6 +317,8 @@ class LocationTracker:
         self._fixes[source] = record
         self._last_good = record
         self._healthy[source] = True
+        self._candidate.pop(source, None)
+        self._active_fault = None
         self._good_3d[source] = self._good_3d[source] + 1 if record["mode"] == 3 else 0
         record["utc_verified"] = (self.utc_reference is not None and record["utc_s"] is not None
                                   and self._good_3d[source] >= 3 and not record["leap_second"])
@@ -306,12 +331,14 @@ class LocationTracker:
             return self.invalidate("gpsd", "GPSD_OBJECT")
         if report.get("class") == "GST":
             current = self._fixes.get("gpsd")
+            # Omitted GST fields are unknown estimates, not a fault of the fix.
             if (current is None or report.get("device") != current["device"]
-                    or now_ms - current["received_ms"] >= self.fresh_ms):
+                    or now_ms - current["received_ms"] >= self.fresh_ms
+                    or "time" not in report or "lat" not in report or "lon" not in report):
                 self.ignored_count += 1
                 return False
             try:
-                epoch, unused = _gpsd_time(report.get("time"))
+                epoch, unused = _gpsd_time(report["time"])
                 if abs(epoch - current["utc_s"]) > 0.5:
                     self.ignored_count += 1
                     return False
@@ -418,10 +445,16 @@ class LocationTracker:
             if kind == "ZDA":
                 if len(fields) < 7:
                     raise ValueError("NMEA_FIELDS")
+                if not all(fields[1:5]):
+                    # Receiver has no date/time yet; an empty ZDA is not a fault.
+                    self.ignored_count += 1
+                    return False
                 date = dt.date(int(fields[4]), int(fields[3]), int(fields[2]))
                 epoch, tod, leap = self._nmea_epoch(fields[1], now_ms, date)
                 previous = self._nmea_date
-                if previous and abs(epoch - previous[0] - (now_ms - previous[1]) / 1000) > self.utc_tolerance_s:
+                # Only the same <=120 s anchor window that may date GGA/RMC is checked.
+                if (previous and now_ms - previous[1] <= 120000
+                        and abs(epoch - previous[0] - (now_ms - previous[1]) / 1000) > self.utc_tolerance_s):
                     raise ValueError("NMEA_DATE_JUMP")
                 self._nmea_date = (epoch, now_ms)
                 self.ignored_count += 1
@@ -438,9 +471,13 @@ class LocationTracker:
             if kind == "GST":
                 if len(fields) < 9:
                     raise ValueError("NMEA_GST")
+                error_lat = _nmea_number(fields[6], 0, 1000000)
+                error_lon = _nmea_number(fields[7], 0, 1000000)
+                if not fields[1] or error_lat is None or error_lon is None:
+                    # Empty estimate fields mean "unknown"; they never invalidate the fix.
+                    self.ignored_count += 1
+                    return False
                 hour, minute, second = _tod(fields[1])
-                error_lat = _nmea_number(fields[6], 0, 1000000, False)
-                error_lon = _nmea_number(fields[7], 0, 1000000, False)
                 self._gst = (hour * 3600 + minute * 60 + second,
                              math.hypot(error_lat, error_lon), now_ms)
                 current = self._fixes.get("nmea")
@@ -500,7 +537,11 @@ class LocationTracker:
                          "alt_msl_m": altitude,
                          "alt_hae_m": altitude + separation if altitude is not None and separation is not None else None}
             gsa = self._gsa.get(talker)
-            mode = gsa[0] if gsa and now_ms - gsa[1] < self.fresh_ms else 2
+            explicit = gsa is not None and now_ms - gsa[1] < self.fresh_ms
+            mode = gsa[0] if explicit else 2
+            if explicit and mode == 2 and "alt_msl_m" in extra:
+                # As for gpsd: an explicit 2D solution holds/assumes altitude.
+                extra["alt_msl_m"] = extra["alt_hae_m"] = None
             if mode == 1:
                 return self.invalidate("nmea", "NMEA_NO_FIX")
             if mode == 3 and extra.get("satellites", 4) < 4:
@@ -605,8 +646,9 @@ class LocationTracker:
             record = max(fallback, key=lambda value: (value["received_ms"], value["origin"] == "manual")) if fallback else None
             source = "manual" if record and record["origin"] == "manual" else "last_good" if record else "none"
             fresh = False
+            # last_error is history; only an unrecovered fault explains a fallback.
             reason = ("MONOTONIC_TIME_REVERSED" if self._clock_fault else
-                      self.last_error or ("MANUAL_FALLBACK" if source == "manual" else "STALE" if record else "NO_LOCATION"))
+                      self._active_fault or ("MANUAL_FALLBACK" if source == "manual" else "STALE" if record else "NO_LOCATION"))
         result = {"available": record is not None, "source": source,
                   "origin": record["origin"] if record else None,
                   "fresh": fresh, "live_fix": fresh, "age_ms": None,
@@ -706,10 +748,9 @@ class GpsdClient:
                         self.close("GPSD_CONNECT_FAILED")
                         return 0
                     self.connected = True
-            if not self.watching and now_ms - self._started >= 3000:
-                self.close("GPSD_HANDSHAKE_TIMEOUT")
-                return 0
             if not self.connected:
+                if now_ms - self._started >= 3000:
+                    self.close("GPSD_HANDSHAKE_TIMEOUT")
                 return 0
             for unused in range(4):
                 try:
@@ -728,6 +769,8 @@ class GpsdClient:
                         if type(frame.get("proto_major")) is not int or frame["proto_major"] != 3:
                             self.close("GPSD_PROTOCOL_UNSUPPORTED")
                             return count
+                        if not self._version_ok:
+                            self._started = now_ms  # The WATCH acknowledgement gets its own 3 s window.
                         self._version_ok = True
                         if not self.watching and not self._pending:
                             self._pending.extend(self.WATCH)
@@ -750,6 +793,9 @@ class GpsdClient:
                     del self._pending[:sent]
                 except BlockingIOError:
                     pass
+            # Checked after draining, so already-received handshake bytes count.
+            if not self.watching and now_ms - self._started >= 3000:
+                self.close("GPSD_HANDSHAKE_TIMEOUT")
         except OSError:
             self.close("GPSD_IO_ERROR")
         return count

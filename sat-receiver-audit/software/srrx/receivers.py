@@ -3,12 +3,9 @@ from __future__ import annotations
 
 import ctypes as C
 import hashlib
-import json
-import math
 from pathlib import Path
 import queue
 import re
-import time
 
 import numpy as np
 
@@ -83,6 +80,9 @@ def validate_tuning(backend, center_hz, sample_rate):
 
 class RTLReceiver:
     """Osmocom rtl-sdr.h C ABI. Use only inside a supervised worker process."""
+    # Successive rtlsdr_read_sync blocks are not proven contiguous: never splice them.
+    discontinuity = True
+
     def __init__(self, record, center_hz, sample_rate, *, loader=C.CDLL):
         validate_tuning("rtl", center_hz, sample_rate)
         self.dev, self.lib = C.c_void_p(), loader(record["library_path"])
@@ -164,8 +164,8 @@ class AirspyHFReceiver:
     def __init__(self, record, center_hz, sample_rate, *, loader=C.CDLL):
         validate_tuning("airspyhf", center_hz, sample_rate)
         self.dev, self.lib = C.c_void_p(), loader(record["library_path"])
-        self.closed, self.started, self.error = False, False, None
-        self.blocks = queue.Queue(maxsize=2)
+        self.closed, self.started, self.error, self.discontinuity, self._gap = False, False, None, False, False
+        self.blocks = queue.Queue(maxsize=64)  # (gap_before, block); 1 MiB at 2048-sample transfers
         self.callback_type = C.CFUNCTYPE(C.c_int, C.POINTER(_HFTransfer))
         v, u = C.c_void_p, C.c_uint32
         for name, args in {
@@ -205,19 +205,28 @@ class AirspyHFReceiver:
             if not transfer.samples:
                 raise OSError("HF+ null samples")
             a = np.ctypeslib.as_array(transfer.samples, shape=(2 * transfer.sample_count,)).copy()
-            self.blocks.put_nowait((a[::2] + 1j * a[1::2]).astype(np.complex64))
+            block = (a[::2] + 1j * a[1::2]).astype(np.complex64)
+            # Consumer lag is not a USB drop: drop this transfer and mark the next
+            # queued one. Only read() dequeues and only this thread touches _gap,
+            # so a block marked contiguous never follows a dropped one.
+            try:
+                self.blocks.put_nowait((self._gap, block))
+                self._gap = False
+            except queue.Full:
+                self._gap = True
             return 0
         except BaseException as exc:
-            self.error = str(exc) or "HF+ bounded queue overflow"
+            self.error = str(exc) or "HF+ callback failed"
             return -1
 
     def read(self):
         if self.error:
             raise OSError(self.error)
         try:
-            return self.blocks.get(timeout=.25)
+            self.discontinuity, block = self.blocks.get(timeout=.25)
         except queue.Empty as exc:
             raise TimeoutError("HF+ sample timeout") from exc
+        return block
 
     def close(self):
         if not self.closed:

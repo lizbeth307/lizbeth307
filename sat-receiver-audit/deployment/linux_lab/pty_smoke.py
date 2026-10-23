@@ -33,15 +33,17 @@ from srrx.link import SerialLink
 from srrx.wire import FrameDecoder, encode_frame
 
 
-def _supervisor_class():
-    source = PROJECT / "firmware/pico/supervisor.py"
-    spec = importlib.util.spec_from_file_location("srrx_pty_supervisor_fixture", source)
+def _firmware(name, attribute):
+    spec = importlib.util.spec_from_file_location("srrx_pty_" + name + "_fixture", PROJECT / "firmware/pico" / (name + ".py"))
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    return module.Supervisor
+    return getattr(module, attribute)
 
 
-Supervisor = _supervisor_class()
+Supervisor = _firmware("supervisor", "Supervisor")
+# The shipped main.py frame cadence (STATUS on change or every 200 ms), not a
+# faster fixture rate that would hide real 500 ms freshness margins.
+TelemetrySchedule = _firmware("main", "TelemetrySchedule")
 
 
 def check(condition, message):
@@ -104,6 +106,7 @@ class PTY:
     """Own only fresh /dev/pts endpoints allocated for this fixture."""
     def __init__(self):
         self.master = self.link = self.engine = None
+        self.max_loop_gap_ms = 0  # Host stalls >100 ms flush real-cadence frames.
         slave = None
         try:
             self.master, slave = pty.openpty()
@@ -163,8 +166,7 @@ class Peer:
         self.received_types = []
         self.last_frame = None
         self.last_session = None
-        self.last_status = -1000
-        self.last_hello = -1000
+        self.last_hello, self.hello_seq = -1000, None
         self.tx_sequence = 0
         self.inputs = {"q6a_on": True, "battery_mv": 14800,
                        "panel_temp_c": 25.0, "case_temp_c": 25.0,
@@ -180,6 +182,7 @@ class Peer:
         # file, and the host Engine remains explicitly simulated throughout.
         self.model = Supervisor(calibration_valid=True, hardware_commissioned=True,
                                 session_factory=self.next_session)
+        self.schedule = TelemetrySchedule()
         self.last_session = None
         self.decoder.reset()
 
@@ -191,31 +194,32 @@ class Peer:
         self.model.step(stamp, self.inputs)
         if not emit:
             return
-        if self.model.session != self.last_session:
-            kind, self.tx_sequence = "HELLO", 0
-            self.last_session = self.model.session
-        elif stamp - self.last_hello >= 1000 and self.model.state in ("SAFE", "TRIPPED", "OFF"):
-            # Match firmware/pico/main.py: a HELLO discarded by the host's
-            # delayed-tick flush must not make this session undiscoverable.
-            kind = "HELLO"
-        elif stamp - self.last_status >= 75:
-            kind = "STATUS"
-        else:
+        # Same rule as firmware/pico/main.py: a HELLO discarded by the host's
+        # delayed-tick flush must not make this session undiscoverable.
+        needs_hello = (self.model.session != self.last_session or
+                       stamp - self.schedule.hello_at >= 1000 and self.model.state in ("SAFE", "TRIPPED", "OFF"))
+        kind = self.schedule.choose(stamp, self.model.state, needs_hello, False, False)
+        if kind not in ("HELLO", "STATUS"):
             return
+        if self.model.session != self.last_session:
+            self.tx_sequence, self.last_session = 0, self.model.session
         outgoing = {"v": 1, "t": kind, "s": self.model.session,
                     "q": self.tx_sequence, "p": self.model.status()}
         write_all(self.endpoint.master, encode_frame(outgoing))
         self.last_frame = outgoing
         self.tx_sequence += 1
-        self.last_status = stamp
+        self.schedule.sent(kind, stamp, self.model.state)
         if kind == "HELLO":
-            self.last_hello = stamp
+            self.last_hello, self.hello_seq = stamp, outgoing["q"]
 
 
 def pump(endpoint, peer, predicate=lambda: False, *, timeout=1, emit=True, replay=None):
-    deadline = time.monotonic() + timeout
+    deadline, previous = time.monotonic() + timeout, None
     while time.monotonic() < deadline:
         stamp = now_ms()
+        if previous is not None:
+            endpoint.max_loop_gap_ms = max(endpoint.max_loop_gap_ms, stamp - previous)
+        previous = stamp
         peer.tick(stamp, emit=emit)
         if replay is not None:
             write_all(endpoint.master, encode_frame(replay))
@@ -259,7 +263,8 @@ def handshake_diagnostics(endpoint, peer):
                           "host_decoder_bytes": endpoint.link.decoder.buffered_bytes,
                           "peer_decoder_bytes": peer.decoder.buffered_bytes,
                           "slave_queued_bytes": queued(endpoint.link.fd),
-                          "master_queued_bytes": queued(endpoint.master)}}
+                          "master_queued_bytes": queued(endpoint.master),
+                          "max_pump_loop_gap_ms": endpoint.max_loop_gap_ms}}
 
 
 def handshake_check(condition, message, endpoint, peer):
@@ -296,6 +301,19 @@ def active_engine(endpoint):
     handshake_check(reply.get("ok") is True and hardware.outputs["EN_T7"],
                     "Fixture test load did not become active", endpoint, peer)
     return peer
+
+
+def hup_trip_path(cause):
+    """Engine.trip stores 'OSError: ...' (or a subclass name) for transport
+    failures; an empty-read HUP surfaces only via the 500 ms status deadline."""
+    names, pending = set(), [OSError]
+    while pending:
+        kind = pending.pop()
+        names.add(kind.__name__)
+        pending.extend(kind.__subclasses__())
+    if type(cause) is str and ": " in cause and cause.split(": ", 1)[0] in names:
+        return "transport_error"
+    return "status_deadline" if cause == "pico_status_timeout" else None
 
 
 def outputs_off(endpoint):
@@ -479,11 +497,14 @@ def lost_hello_repeats_and_resynchronizes_without_arm():
         check(endpoint.engine.session is None and endpoint.engine.rx_seq == -1,
               "Unknown-session STATUS established identity without HELLO")
 
+        # Only a HELLO can establish the session; like firmware, a due STATUS
+        # may follow it in the very next loop, so do not require it to be last.
+        # A delayed-tick flush may also drop a repeat: allow three 1000 ms repeats.
         handshake_pump(endpoint, peer,
-                       lambda: peer.last_frame["t"] == "HELLO"
+                       lambda: peer.last_hello > first_hello_at
                        and endpoint.engine.session == peer.model.session
-                       and endpoint.engine.rx_seq == peer.last_frame["q"],
-                       "Repeated HELLO did not resynchronize after real TCIFLUSH", timeout=2)
+                       and endpoint.engine.rx_seq >= peer.hello_seq,
+                       "Repeated HELLO did not resynchronize after real TCIFLUSH", timeout=3.5)
         check(peer.last_hello-first_hello_at >= 1000, "HELLO repeat bypassed the real firmware interval")
         check(outputs_off(endpoint) and not endpoint.engine.pending_arm and "ARM" not in peer.received_types,
               "Session resynchronization automatically armed or restored a load")
@@ -492,7 +513,7 @@ def lost_hello_repeats_and_resynchronizes_without_arm():
               "Lost-HELLO fixture unexpectedly qualified physical hardware")
         return {"first_hello_deliberately_tciflush": True, "unknown_session_status_ignored": True,
                 "real_hello_repeat_interval_ms": peer.last_hello-first_hello_at,
-                "restored_session": endpoint.engine.session, "repeated_hello_seq": endpoint.engine.rx_seq,
+                "restored_session": endpoint.engine.session, "repeated_hello_seq": peer.hello_seq,
                 "automatic_arm": False, "previous_loads_restored": False}
 
 
@@ -509,10 +530,16 @@ def master_hup_trips_and_closes():
             time.sleep(.01)
         elapsed_ms = round((time.monotonic() - started) * 1000, 3)
         check(outputs_off(endpoint), "Kernel PTY HUP retained permission beyond the host freshness deadline")
-        check(endpoint.engine.last_error is not None, "PTY HUP was not surfaced as a transport fault")
+        # Read before close(), which records daemon_exit. Every trip sets
+        # last_error, so record which accepted HUP path actually disarmed.
+        cause = endpoint.engine.last_error
+        path = hup_trip_path(cause)
+        check(path is not None, "PTY HUP disarm had an unrelated trip cause: " + str(cause))
         endpoint.engine.close()
         check(endpoint.link.fd is None, "HUP cleanup left the serial file descriptor open")
-    return {"real_kernel_hup": True, "transport_fault_disarms_model": True,
+    return {"real_kernel_hup": True, "trip_cause": cause, "trip_path": path,
+            "transport_fault_disarms_model": path == "transport_error",
+            "status_deadline_disarmed_model": path == "status_deadline",
             "hup_to_model_disarm_ms": elapsed_ms, "descriptor_closed": True}
 
 

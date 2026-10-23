@@ -31,11 +31,16 @@ except ImportError:
 DOCS = ["https://doc.qt.io/qt-6/qtest-qtoucheventsequence.html",
         "https://doc.qt.io/qtforpython-6/PySide6/QtGui/QInputDevice.html"]
 REFS = {
+    # Qt/storage scenarios exercise neither passive J512 contacts nor the U505
+    # EN_T7 switch/FAULT_N. run.py never counts FILESYSTEM_FIXTURE as coverage.
     "hub": ["design/E5.json:U510", "design/E5.json:J512", "build/12-revision-v2.1.md"],
-    "touch": ["design/E5.json:U520", "design/E5.json:J512", "design/E5-connection-guide.md"],
-    "t7": ["design/E5.json:U540", "design/E5.json:U505", "design/E5.json:EN_T7"],
+    "touch": ["design/E5.json:U520", "design/E5-connection-guide.md"],
+    "t7": ["design/E5.json:U540", "design/E5.json:EN_T7"],
     "hantek": ["design/E5.json:J501", "STACK.md:3.1 Hantek 6022BE", "STACK.md:P17"],
 }
+TASK_REFS = {"IO-INVENTORY-SCENARIOS": REFS["hub"] + REFS["touch"] + REFS["t7"] + REFS["hantek"],
+             "IO-STORAGE-SCENARIOS": REFS["t7"], "IO-GUARDED-STORAGE-SCENARIOS": REFS["t7"],
+             "IO-QT-SCENARIOS": REFS["touch"] + REFS["t7"]}
 
 
 def require(condition, message):
@@ -46,7 +51,7 @@ def require(condition, message):
 def record(identifier, refs, level, status, evidence, limitation=None):
     value = {"id": identifier, "design_refs": refs, "coverage_level": level,
              "status": status, "physical_verified": False, "accepted": False,
-             "evidence": evidence}
+             "case_count": 1 if status in ("PASS", "FAIL") else 0, "evidence": evidence}
     if limitation:
         value["limitation"] = limitation
     return value
@@ -77,7 +82,7 @@ def inventory_scenarios(root):
     unknown_record = next(d for d in unknown["devices"] if d["device"] == "1-3")
     require(unknown_record["binding"] == "UNSUPPORTED" and unknown_record["observed_driver"] is None,
             "Unknown descriptor acquired a driver")
-    path.joinpath("idVendor").write_text("NOT_HEX\n")
+    path.joinpath("idVendor").write_text("NOT_HEX\n", encoding="utf-8")
     malformed = inventory.scan()
     require(any(e["device"] == "1-3" for e in malformed["errors"]), "Malformed descriptor was accepted")
     path.joinpath("idVendor").write_bytes(b"x" * 257)
@@ -88,7 +93,7 @@ def inventory_scenarios(root):
     symlink = inventory.scan()
     require(any(e["device"] == "1-3" for e in symlink["errors"]), "Descriptor symlink was followed")
     tree.remove("1-3")
-    records.append(record("IO-USB-UNKNOWN-ERROR", REFS["hub"] + REFS["hantek"], "FILESYSTEM_FIXTURE", "PASS",
+    records.append(record("IO-USB-UNKNOWN-ERROR", REFS["hub"], "FILESYSTEM_FIXTURE", "PASS",
                           {"unknown": unknown_record, "malformed_rejected": True, "oversize_rejected": True,
                            "descriptor_symlink_rejected": True, "auto_bind": False}))
 
@@ -129,7 +134,7 @@ def storage_scenarios(root):
     latest, survey = root / "spectrum.json", root / "survey.jsonl"
     result = run_capture(frames=2, fft_size=64, center_hz=100000000,
                          sample_rate=1024000, output=latest, survey=survey)
-    lines = [json.loads(line) for line in survey.read_text().splitlines()]
+    lines = [json.loads(line) for line in survey.read_text(encoding="utf-8").splitlines()]
     require(result["frames"] == 2 and result["raw_iq_persisted"] is False, "SIM capture unexpectedly persisted IQ")
     require(len(lines) == 2 and all(validate_frame(line) == line for line in lines), "Storage content is not canonical masked metadata")
     require(sorted(p.name for p in root.iterdir()) == ["spectrum.json", "survey.jsonl"], "Unexpected persisted files")
@@ -145,7 +150,7 @@ def storage_scenarios(root):
     require(hashlib.sha256(latest.read_bytes()).hexdigest() == digest, "Failed atomic write replaced last good metadata")
     require(not list(root.glob(".srrx-*")), "Failed write left a staging file")
     blocker = root / "not-a-mount"
-    blocker.write_text("synthetic unavailable storage path")
+    blocker.write_text("synthetic unavailable storage path", encoding="utf-8")
     try:
         run_capture(frames=1, fft_size=64, output=blocker / "spectrum.json")
     except OSError:
@@ -198,10 +203,10 @@ def guarded_storage_scenarios(root):
     with synthetic_storage_binding(root) as (guard, rows):
         capture = run_capture(frames=2, fft_size=64, output="spectrum.json",
                               survey="survey.jsonl", storage_guard=guard)
-        saved = json.loads((root / "spectrum.json").read_text())
+        saved = json.loads((root / "spectrum.json").read_text(encoding="utf-8"))
         require(saved == validate_frame(saved) and capture["raw_iq_persisted"] is False,
                 "Guarded production capture did not persist masked metadata")
-        require(len((root / "survey.jsonl").read_text().splitlines()) == 2, "Guarded JSONL append failed")
+        require(len((root / "survey.jsonl").read_text(encoding="utf-8").splitlines()) == 2, "Guarded JSONL append failed")
         # Model the configured pathname now referring to a replacement directory.
         # The guard must not write there, or resurrect a missing mount directory.
         detached = root.with_name("detached-storage")
@@ -441,17 +446,25 @@ def run(project=None, output_dir=None, qt=True):
         for identifier, task in tasks:
             try:
                 report["modules"].extend(task())
-            except ImportError as error:
-                report["modules"].append(record(identifier, REFS["touch"], "MISSING_DEPENDENCY", "UNSUPPORTED",
-                                                {"error": str(error)[:300]}))
             except Exception as error:
-                report["modules"].append(record(identifier, [], "EXECUTED_SCENARIO", "FAIL",
-                                                {"error": type(error).__name__ + ": " + str(error)[:500],
-                                                 "traceback": traceback.format_exc()[-4000:]}))
+                # Only an absent PySide6 is an environment gap. Any other import
+                # error, including a production srrx symbol, is a failed scenario.
+                if (identifier == "IO-QT-SCENARIOS" and isinstance(error, ModuleNotFoundError)
+                        and (error.name or "").split(".")[0] == "PySide6"):
+                    report["modules"].append(record(identifier, REFS["touch"], "MISSING_DEPENDENCY", "UNAVAILABLE",
+                                                    {"error": str(error)[:300]}))
+                else:
+                    report["modules"].append(record(identifier, TASK_REFS[identifier], "EXECUTED_SCENARIO", "FAIL",
+                                                    {"error": type(error).__name__ + ": " + str(error)[:500],
+                                                     "traceback": traceback.format_exc()[-4000:]}))
     report["modules"].extend(unsupported_records())
-    report["execution_status"] = "FAIL" if any(m["status"] == "FAIL" for m in report["modules"]) else "PASS"
-    report["status"] = "FAIL" if report["execution_status"] == "FAIL" else "EMULATION_PASS_WITH_UNSUPPORTED"
-    report["counts"] = {state: sum(m["status"] == state for m in report["modules"]) for state in ("PASS", "FAIL", "UNSUPPORTED")}
+    states = {m["status"] for m in report["modules"]}
+    report["execution_status"] = ("FAIL" if "FAIL" in states or "PASS" not in states
+                                  else "UNAVAILABLE" if "UNAVAILABLE" in states else "PASS")
+    report["status"] = {"FAIL": "FAIL", "UNAVAILABLE": "UNAVAILABLE"}.get(report["execution_status"],
+                                                                         "EMULATION_PASS_WITH_UNSUPPORTED")
+    report["counts"] = {state: sum(m["status"] == state for m in report["modules"])
+                        for state in ("PASS", "FAIL", "UNSUPPORTED", "UNAVAILABLE")}
     report["source_sha256"] = {}
     for relative in ("deployment/module_lab/io_modules.py", "deployment/module_lab/io_scenarios.py",
                      "software/srrx/hmi.py", "software/srrx/labrx.py", "software/srrx/spectrum.py",
@@ -470,9 +483,9 @@ def main(argv=None):
     args = parser.parse_args(argv)
     report = run(args.project, qt=not args.no_qt)
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    args.output.write_text(json.dumps(report, indent=2, allow_nan=False) + "\n")
+    args.output.write_text(json.dumps(report, indent=2, allow_nan=False) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps({"suite": report["suite"], "status": report["status"], "counts": report["counts"]}))
-    return 0 if report["execution_status"] == "PASS" else 1
+    return 0 if report["execution_status"] == "PASS" else 2 if report["execution_status"] == "UNAVAILABLE" else 1
 
 
 if __name__ == "__main__":

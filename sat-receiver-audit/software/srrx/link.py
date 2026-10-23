@@ -1,4 +1,5 @@
 """Bounded, nonblocking Pico UART and model transports."""
+import fcntl
 import importlib.util
 import os
 from pathlib import Path
@@ -10,6 +11,10 @@ class SerialLink:
     def __init__(self, path):
         self.fd = os.open(path, os.O_RDWR | os.O_NOCTTY | os.O_NONBLOCK)
         try:
+            # Exclusive owner before any termios change or flush: a second
+            # writer must never discard the live daemon's queued TRIP/HB.
+            fcntl.flock(self.fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            fcntl.ioctl(self.fd, termios.TIOCEXCL)
             a = termios.tcgetattr(self.fd)
             a[0] = a[1] = a[3] = 0
             a[2] = termios.CS8 | termios.CREAD | termios.CLOCAL

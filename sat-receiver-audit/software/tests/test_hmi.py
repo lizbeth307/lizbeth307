@@ -3,13 +3,19 @@ import importlib.util
 import json
 import os
 from pathlib import Path
+import subprocess
+import sys
 import tempfile
 import time
 import unittest
+from unittest.mock import patch
 
 from srrx.hmi import (ConsoleController, DemoTransport, EN_OUTPUTS, ReceiverSimulation,
                       create_window, load_json, load_spectrum, spectrum_columns, location_callbacks, HMINavigation,
                       channel_rows, location_summary, learning_summary)
+
+ROOT = Path(__file__).resolve().parents[2]
+LINUX = sys.platform.startswith("linux")
 
 
 class Clock:
@@ -25,7 +31,7 @@ class Backend:
         self.requests = []
         self.failure = None
         self.reject_lease = False
-        self.data = {"mode": "SIMULATION", "pico": {"state": "SAFE"},
+        self.data = {"mode": "SIMULATION", "pico": {"state": "SAFE"}, "pico_fresh": True,
                      "policy": {"armed": False, "fault": None, "mode": "field",
                                 "outputs": {name: False for name in EN_OUTPUTS}},
                      "imu": {"ok": False, "fresh": False, "quaternion": None}}
@@ -39,6 +45,8 @@ class Backend:
             return {"ok": True, "data": copy.deepcopy(self.data)}
         if op == "lease" and self.reject_lease:
             return {"ok": False, "error": "Lease owned by another operator"}
+        if op in ("arm", "recover"):
+            self.data["last_error"] = None  # As labd: ARM clears last_error; a trip sets it.
         if op == "disarm":
             self.data["policy"]["armed"] = False
             self.data["policy"]["outputs"] = {name: False for name in EN_OUTPUTS}
@@ -64,6 +72,12 @@ def frame(center=100000000, size=16):
             "fft_size": size, "power_dbfs": [-70.0] * size, "valid": [True] * size,
             "relative_frequency_hz": [(index - size // 2) * 16000 / size for index in range(size)],
             "source": "SIMULATION", "sample_count": size}
+
+
+def qt_app():
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+    from PySide6.QtWidgets import QApplication
+    return QApplication.instance() or QApplication([])
 
 
 def panel(sequence=1, presses=None, encoders=None, **changes):
@@ -187,6 +201,109 @@ class ControllerTests(unittest.TestCase):
         clock.now += .5
         self.assertTrue(controller.poll()["holding"])
         self.assertFalse(any(backend.data["policy"]["outputs"].values()))
+        self.assertFalse(any(r["op"] == "control" and r.get("value") for r in backend.requests))
+
+    def test_handshake_abort_is_seen_through_first_fault_latch(self):
+        # labd latches the first fault (new_pico_session) until ACTIVE; an
+        # aborted ARM is visible only through last_error.
+        backend, clock = Backend(), Clock()
+        backend.data["policy"]["fault"] = backend.data["last_error"] = "new_pico_session"
+        controller = ConsoleController(backend, clock)
+        controller.poll()
+        self.assertTrue(controller.arm()["ok"])
+        clock.now += .25
+        self.assertTrue(controller.poll()["holding"])
+        backend.data["last_error"] = "pico_status_timeout"
+        clock.now += .25
+        self.assertFalse(controller.poll()["holding"])
+        self.assertEqual(controller.error, "pico_status_timeout")
+        self.assertIn("aborted", controller.notice)
+        self.assertEqual(backend.requests[-1], {"op": "disarm"})
+
+    @unittest.skipUnless(os.name == "posix", "srrx.link/srrx.hardware need POSIX termios/fcntl")
+    def test_real_engine_aborted_handshake_stops_hold_within_one_poll(self):
+        from srrx.engine import Engine
+        from srrx.hardware import SimHardware
+        from srrx.link import SimLink
+        engine, clock, now = Engine(SimHardware(), SimLink(ROOT)), Clock(), [0]
+        def advance(seconds):
+            end = now[0] + int(seconds * 1000)
+            while now[0] < end:
+                now[0] += 20
+                engine.tick(now[0])
+            clock.now += seconds
+        requests = []
+        def transport(request):
+            requests.append(request["op"])
+            return json.loads(json.dumps(engine.request(dict(request, _owner="uid:1000")), allow_nan=False))
+        controller = ConsoleController(transport, clock)
+        try:
+            advance(.6)
+            self.assertEqual(controller.poll()["data"]["pico"]["state"], "SAFE")
+            engine.link.drop_link = True  # The supervisor link dies as ARM is sent.
+            self.assertTrue(controller.arm()["ok"])
+            advance(.75)
+            view = controller.poll()
+            self.assertFalse(engine.pending_arm)
+            self.assertEqual(view["data"]["last_error"], "pico_status_timeout")
+            self.assertEqual(view["data"]["policy"]["fault"], controller.arm_fault)
+            self.assertFalse(view["holding"])
+            self.assertEqual(requests[-1], "disarm")
+            self.assertEqual(requests.count("lease"), 1)
+        finally:
+            controller.close()
+            engine.close()
+
+    def test_hold_press_during_arm_handshake_keeps_arm(self):
+        backend, clock = Backend(), Clock()
+        controller = ConsoleController(backend, clock)
+        controller.poll()
+        self.assertTrue(controller.arm()["ok"])
+        count = len(backend.requests)
+        self.assertTrue(controller.hold(True)["ok"])
+        self.assertTrue(controller.holding)
+        self.assertIsNotNone(controller.arm_started)
+        self.assertEqual(len(backend.requests), count)
+        for _ in range(11):
+            clock.now += .25
+            controller.poll()
+        self.assertFalse(controller.holding)  # The handshake deadline still applies.
+        self.assertIn({"op": "disarm"}, backend.requests)
+
+    def test_link_error_clears_only_after_fresh_disarmed_status(self):
+        backend, clock = Backend(), Clock()
+        controller = ConsoleController(backend, clock)
+        controller.poll()
+        backend.failure = OSError("timed out")
+        clock.now += .25
+        self.assertEqual(controller.poll()["error"], "timed out")
+        backend.failure = None
+        clock.now += .25
+        self.assertIsNone(controller.poll()["error"])
+        controller, backend, clock = active()
+        backend.failure = OSError("timed out")
+        clock.now += .25
+        self.assertFalse(controller.poll()["holding"])
+        backend.failure = None
+        for _ in range(3):
+            clock.now += .25
+            self.assertIn("Disarm unconfirmed", controller.poll()["error"])  # labd still reports armed.
+        backend.data["policy"]["armed"] = False
+        clock.now += .25
+        self.assertIsNone(controller.poll()["error"])
+        self.assertFalse(controller.command("control", name="EN_RTLA", value=True)["ok"])
+        clock.now += .25
+        self.assertIsNotNone(controller.poll()["error"])  # A command rejection is not a link error.
+
+    def test_confirmation_status_reports_only_accepted_values(self):
+        controller, backend, _ = active()
+        self.assertFalse(controller.command("confirmations", value={"bench_loads": True})["ok"])
+        self.assertFalse(controller.status()["confirmations"]["bench_loads"])
+        self.assertTrue(controller.command("confirmations", value={"boni_connected": True})["ok"])
+        self.assertEqual(controller.status()["confirmations"],
+                         {"bench_loads": False, "boni_connected": True, "boni_profile": False})
+        controller.disarm()
+        self.assertFalse(any(controller.status()["confirmations"].values()))
 
     def test_handshake_timeout_and_new_fault_stop_lease(self):
         for new_fault in (False, True):
@@ -218,7 +335,7 @@ class ControllerTests(unittest.TestCase):
             self.assertFalse(view["holding"])
             self.assertIn({"op": "disarm"}, backend.requests)
 
-    def test_ui_gap_and_backwards_clock_stop_hold(self):
+    def test_poll_gap_and_backwards_clock_stop_hold(self):
         controller, backend, clock = active()
         clock.now += 2
         self.assertFalse(controller.poll()["holding"])
@@ -347,6 +464,14 @@ class MetadataTests(unittest.TestCase):
                 with self.assertRaises((ValueError, UnicodeError)):
                     load_json(path)
 
+    def test_deep_json_nesting_is_rejected_as_value_error(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "deep.json"
+            path.write_text("[" * 100000 + "]" * 100000)
+            for loader in (load_json, load_spectrum):
+                with self.assertRaisesRegex(ValueError, "nesting"):
+                    loader(path)
+
     def test_spectrum_json_jsonl_and_masked_pixel_remains_blank(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "frame.json"
@@ -374,6 +499,26 @@ class MetadataTests(unittest.TestCase):
         finally:
             job.close()
 
+    @unittest.skipUnless(LINUX, "stdio daemon pipes need Linux selectors")
+    def test_demo_transport_waits_for_cold_start_then_ordinary_timeout(self):
+        # Child stand-in answers each request after 1.5 s: longer than the
+        # ordinary 1 s timeout, shorter than the one-off cold-start allowance.
+        script = ("import sys, time\nwhile sys.stdin.readline():\n"
+                  "    time.sleep(1.5)\n    sys.stdout.write('{\"ok\": true}\\n'); sys.stdout.flush()\n")
+        popen = subprocess.Popen
+        with patch("srrx.hmi.subprocess.Popen", side_effect=lambda args, **kw: popen([sys.executable, "-c", script], **kw)):
+            transport = DemoTransport(timeout=1.0)
+        try:
+            self.assertEqual(transport({"op": "status"}), {"ok": True})
+            with self.assertRaisesRegex(OSError, "timeout"):
+                transport({"op": "status"})
+            self.assertTrue(transport.closed)
+            with self.assertRaisesRegex(OSError, "unavailable"):
+                transport({"op": "status"})
+        finally:
+            transport.close()
+
+    @unittest.skipUnless(LINUX, "stdio daemon pipes need Linux selectors")
     def test_real_stdio_demo_uses_actual_service_and_closes(self):
         transport = DemoTransport(timeout=20)
         controller = ConsoleController(transport)
@@ -411,6 +556,7 @@ class MetadataTests(unittest.TestCase):
             transport.close()
         self.assertIsNotNone(transport.process.poll())
 
+    @unittest.skipUnless(LINUX, "labrx SIM subprocess targets the Linux host")
     def test_real_receiver_simulation_cli_produces_masked_frame(self):
         job = ReceiverSimulation()
         received = None
@@ -456,10 +602,18 @@ class QtTests(unittest.TestCase):
             window.worker.submit("arm")
             self.assertTrue(window.worker.commands.empty())
             self.assertEqual(len(backend.requests), before)
+            self.assertFalse(any(button.isEnabled() for button in window.command_buttons.values()))
+            from PySide6.QtWidgets import QMessageBox
+            with patch.object(QMessageBox, "question", side_effect=AssertionError("dialog for a locked command")):
+                window.action("arm")
+                window.action("hold", {"enabled": True})
+            self.assertIn("locked", window.input_message)
+            self.assertTrue(window.worker.commands.empty())
             view["data"]["hmi"] = panel(3, presses=[0, 0, 1, 1, 0, 2, 0, 0])
             controller.snapshot = copy.deepcopy(view["data"])
             window.render_state(view)
             self.assertFalse(window.worker.locked)
+            self.assertTrue(all(button.isEnabled() for button in window.command_buttons.values()))
         finally:
             window.close(); app.processEvents()
 
@@ -493,6 +647,338 @@ class QtTests(unittest.TestCase):
             app.processEvents()
         self.assertEqual(backend.requests[-1], {"op": "disarm"})
 
+    def test_saved_location_stays_pinned_over_live_tracker(self):
+        app = qt_app()
+        from PySide6.QtWidgets import QFileDialog
+        callbacks, close = location_callbacks()
+        provider, calls = callbacks["location"], []
+        callbacks["location"] = lambda: calls.append(1) or provider()
+        controller = ConsoleController(Backend(), Clock())
+        controller.poll()
+        window = create_window(controller, callbacks=callbacks, start_worker=False)
+        try:
+            with tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / "position.json"
+                path.write_text(json.dumps({"available": True, "source": "gpsd", "lat": 50.45, "lon": 30.52,
+                                            "fresh": True, "live_fix": True, "age_ms": 1200}))
+                with patch.object(QFileDialog, "getOpenFileName", return_value=(str(path), "")):
+                    window.open_location()
+            before = len(calls)
+            window._heartbeat()
+            window._heartbeat()
+            self.assertEqual(len(calls) - before, 2)  # Still polled while pinned: gpsd keeps draining.
+            self.assertIn("50.450000° N", window.location_text.text())
+            self.assertIn("Saved position — no live fix", window.location_text.text())
+            self.assertIn("paused", window.location_note.text())
+            window.live_location()
+            self.assertIn("No position available", window.location_text.text())
+            window.latitude.setValue(10); window.longitude.setValue(20)
+            window.manual_location()
+            window._heartbeat()
+            self.assertIn("10.000000° N", window.location_text.text())
+            self.assertIn("Manual — not a GNSS fix", window.location_text.text())
+        finally:
+            window.close(); app.processEvents(); close()
+
+    def test_location_note_follows_shown_source_and_keeps_rejections(self):
+        app = qt_app()
+        from PySide6.QtWidgets import QFileDialog
+        state = {"value": None, "error": None}
+        manual = {"available": True, "source": "manual", "lat": 10.0, "lon": 20.0, "fresh": False, "live_fix": False}
+        gnss = {"available": True, "source": "gpsd", "lat": 50.0, "lon": 30.0, "fresh": True, "live_fix": True, "age_ms": 100}
+        def location():
+            if state["error"]:
+                raise OSError(state["error"])
+            return state["value"]
+        callbacks = {"location": location, "manual_location": lambda lat, lon: state.update(value=dict(manual, lat=lat, lon=lon))}
+        controller = ConsoleController(Backend(), Clock())
+        controller.poll()
+        window = create_window(controller, callbacks=callbacks, start_worker=False)
+        try:
+            window.latitude.setValue(10); window.longitude.setValue(20)
+            window.manual_location()
+            window._heartbeat()
+            self.assertIn("Manual — not a GNSS fix", window.location_text.text())
+            self.assertEqual(window.location_note.text(), "Manual position — not a GNSS fix")
+            state["value"] = gnss  # The tracker prefers a fresh GNSS fix over the manual record.
+            window._heartbeat()
+            self.assertIn("Live GNSS fix", window.location_text.text())
+            self.assertEqual(window.location_note.text(), "Live tracker position")
+            with tempfile.TemporaryDirectory() as directory:
+                bad, good = Path(directory) / "bad.json", Path(directory) / "saved.json"
+                bad.write_text("{")
+                good.write_text(json.dumps({"available": True, "source": "gpsd", "lat": 1.5, "lon": 2.5}))
+                with patch.object(QFileDialog, "getOpenFileName", return_value=(str(bad), "")):
+                    window.open_location()
+                window._heartbeat(); window._heartbeat()
+                self.assertIn("Position rejected", window.location_note.text())  # Unchanged live state keeps it.
+                with patch.object(QFileDialog, "getOpenFileName", return_value=(str(good), "")):
+                    window.open_location()
+            state["error"] = "gpsd gone"
+            window._heartbeat()
+            self.assertIn("1.500000° N", window.location_text.text())  # A provider error keeps the pinned text.
+            self.assertIn("paused", window.location_note.text())
+            self.assertIn("gpsd gone", window.location_note.text())
+            state["error"] = None
+            window._heartbeat()
+            self.assertEqual(window.location_note.text(), window.PINNED)
+            window.live_location()
+            self.assertIn("Live GNSS fix", window.location_text.text())
+            self.assertEqual(window.location_note.text(), "Live tracker position")
+        finally:
+            window.close(); app.processEvents()
+
+    def test_heartbeat_sources_fail_independently(self):
+        app = qt_app()
+        from PySide6.QtWidgets import QFileDialog
+        calls = []
+        def location():
+            calls.append(1)
+            if len(calls) > 2:
+                raise OSError("gpsd gone")
+            return {"available": True, "source": "gpsd", "lat": 1.0, "lon": 2.0,
+                    "fresh": True, "live_fix": True, "age_ms": 100}
+        controller = ConsoleController(Backend(), Clock())
+        controller.poll()
+        window = create_window(controller, callbacks={"location": location}, start_worker=False)
+        try:
+            with tempfile.TemporaryDirectory() as directory:
+                path = Path(directory) / "frame.json"
+                path.write_text(json.dumps(frame()))
+                with patch.object(QFileDialog, "getOpenFileName", return_value=(str(path), "")):
+                    window.open_spectrum()
+                    self.assertEqual(window.frame_file, path)
+                    path.unlink()
+                    window._heartbeat()
+                    self.assertIsNone(window.frame_file)
+                    self.assertIn("Tracked file lost", window.spec_note.text())
+                    self.assertIn("Live GNSS fix", window.location_text.text())
+                    window._heartbeat(); window._heartbeat()
+                    self.assertEqual(len(calls), 3)
+                    self.assertNotIn("Live GNSS fix", window.location_text.text())
+                    self.assertIn("Location unavailable", window.location_text.text())
+                    path.write_text(json.dumps(frame()))
+                    window.open_spectrum()
+                    with path.open("ab") as stream:
+                        stream.write(b" " * (2 * 1024 * 1024))
+                    window._heartbeat()
+                    self.assertIsNone(window.frame_file)
+                    self.assertIn("exceeds 2 MiB", window.spec_note.text())
+        finally:
+            window.close(); app.processEvents()
+
+    def test_banner_and_supervisor_readouts_never_claim_unknown_state(self):
+        app = qt_app()
+        controller, backend, clock = active()
+        backend.data["pico"].update(battery_mv=14800, case_temp_c=25.0, panel_temp_c=30.0)
+        controller.poll()
+        window = create_window(controller, start_worker=False)
+        try:
+            window.render_state(controller.status())
+            self.assertEqual(window.metric_values["battery"].text(), "14.80 V")
+            self.assertIn("CONTROL ARMED", window.banner.text())
+            for stale in (False, None):
+                if stale is None:
+                    del backend.data["pico_fresh"]
+                else:
+                    backend.data["pico_fresh"] = stale
+                clock.now += .25
+                controller.poll()
+                window.render_state(controller.status())
+                self.assertEqual(window.metric_values["battery"].text(), "Unavailable")
+                self.assertIn("Case unavailable", window.metric_values["temperature"].text())
+                if stale is None:  # A labd without the field: withheld, but no stale/ARM claim.
+                    self.assertIn("PICO FRESHNESS UNREPORTED", window.banner.text())
+                    self.assertNotIn("STALE", window.banner.text())
+                    self.assertIn("did not report Pico freshness", window.fault_text.text())
+                    self.assertNotIn("ARM will be refused", window.fault_text.text())
+                else:
+                    self.assertIn("PICO STATUS STALE", window.banner.text())
+                    self.assertIn("ARM will be refused", window.fault_text.text())
+            backend.data["pico_fresh"] = True
+            backend.failure = OSError("timed out")  # labd stays armed; DISARM cannot be confirmed.
+            clock.now += .25
+            controller.poll()
+            window.render_state(controller.status())
+            self.assertIn("CONTROL UNKNOWN", window.banner.text())
+            self.assertIn("MODE UNKNOWN", window.banner.text())
+            self.assertNotIn("CONTROL OFF", window.banner.text())
+            self.assertIn("unconfirmed", window.fault_text.text())
+            self.assertIn("Console: Disarm unconfirmed", window.fault_text.text())
+            backend.failure = None
+            backend.data["policy"].update(armed=False, fault="operator_disarm")
+            clock.now += .25
+            controller.poll()
+            window.render_state(controller.status())
+            self.assertIn("CONTROL OFF", window.banner.text())
+            self.assertEqual(window.fault_text.text(), "Stopped by operator")
+            for stale in (None, False):  # The labd protection fault stays visible without Pico freshness.
+                backend.data.pop("pico_fresh", None)
+                if stale is False:
+                    backend.data["pico_fresh"] = False
+                clock.now += .25
+                controller.poll()
+                window.render_state(controller.status())
+                self.assertTrue(window.fault_text.text().endswith("\nStopped by operator"))
+            backend.data["policy"]["fault"] = "new_pico_session"
+            clock.now += .25
+            controller.poll()
+            window.render_state(controller.status())
+            self.assertNotIn("ready", window.fault_text.text())  # Never "ready" without fresh Pico status.
+        finally:
+            window.close(); app.processEvents()
+
+    @unittest.skipUnless(os.name == "posix", "srrx.link/srrx.hardware need POSIX termios/fcntl")
+    def test_real_engine_pico_readouts_never_contradict_labd_freshness(self):
+        app = qt_app()
+        from srrx.engine import Engine
+        from srrx.hardware import SimHardware
+        from srrx.link import SimLink
+        engine, clock, now = Engine(SimHardware(), SimLink(ROOT)), Clock(), [0]
+        def advance(seconds):
+            end = now[0] + int(seconds * 1000)
+            while now[0] < end:
+                now[0] += 20
+                engine.tick(now[0])
+            clock.now += seconds
+        controller = ConsoleController(lambda request: json.loads(json.dumps(
+            engine.request(dict(request, _owner="uid:1000")), allow_nan=False)), clock)
+        window = create_window(controller, start_worker=False)
+        try:
+            for drop in (False, True):
+                engine.link.drop_link = drop
+                advance(.6)
+                view = controller.poll()
+                window.render_state(view)
+                stale = engine.last_status_ms is None or engine.now_ms - engine.last_status_ms > 500  # labd's ARM refusal.
+                self.assertEqual(stale, drop)
+                battery, fault = window.metric_values["battery"].text(), window.fault_text.text()
+                self.assertFalse("ARM will be refused" in fault and not stale)
+                self.assertFalse(battery != "Unavailable" and stale)
+                if "pico_fresh" in view["data"]:
+                    self.assertEqual(battery == "14.80 V", not stale)
+                    self.assertEqual("PICO STATUS STALE" in window.banner.text(), stale)
+                else:
+                    self.assertIn("PICO FRESHNESS UNREPORTED", window.banner.text())
+        finally:
+            window.close(); app.processEvents()
+            engine.close()
+
+    def test_streamed_frame_keeps_selection_and_annotates_confirmed_frame(self):
+        app = qt_app()
+        controller = ConsoleController(Backend(), Clock())
+        controller.poll()
+        window = create_window(controller, start_worker=False)
+        try:
+            window.accept_frame(frame(size=1024))
+            window.bin_start.setValue(10); window.bin_end.setValue(600)
+            window.teach_confirm.setChecked(True)
+            newer = frame(size=1024)
+            newer["power_dbfs"] = [-60.0] * 1024
+            window.accept_frame(newer)  # Same geometry, as a streamed survey/SIM frame.
+            self.assertEqual((window.bin_start.value(), window.bin_end.value()), (10, 600))
+            self.assertTrue(window.teach_confirm.isChecked())
+            window.learning_action("annotate")
+            record = window.dataset["annotations"][0]
+            self.assertEqual((record["start_bin"], record["end_bin"]), (10, 600))
+            self.assertEqual(window.dataset["frames"][record["frame_sha256"]]["power_dbfs"][10], -70.0)
+            window.teach_confirm.setChecked(True)
+            window.bin_end.setValue(500)
+            self.assertFalse(window.teach_confirm.isChecked())
+            window.teach_confirm.setChecked(True)
+            window.label.setCurrentIndex(1)
+            self.assertFalse(window.teach_confirm.isChecked())
+            window.teach_confirm.setChecked(True)
+            window.accept_frame(frame(size=512))
+            self.assertFalse(window.teach_confirm.isChecked())
+            self.assertEqual((window.bin_start.value(), window.bin_end.value()), (0, 256))
+        finally:
+            window.close(); app.processEvents()
+
+    def test_rejected_bench_confirmation_is_unticked(self):
+        app = qt_app()
+        controller, backend, _ = active()
+        window = create_window(controller, start_worker=False)
+        try:
+            bench, boni = window.confirmation_checks[0], window.confirmation_checks[1]
+            bench.setChecked(True)  # The operator's tap, rejected in field mode.
+            self.assertFalse(controller.command("confirmations", value={"bench_loads": True})["ok"])
+            window.render_state(controller.status())
+            self.assertFalse(bench.isChecked())
+            boni.setChecked(True)
+            self.assertTrue(controller.command("confirmations", value={"boni_connected": True})["ok"])
+            window.render_state(controller.status())
+            self.assertTrue(boni.isChecked())
+            controller.disarm()
+            window.render_state(controller.status())
+            self.assertFalse(boni.isChecked())
+        finally:
+            window.close(); app.processEvents()
+
+    def test_worker_stop_warning_persists_and_commands_are_dropped(self):
+        app = qt_app()
+        controller, backend, _ = active()
+        window = create_window(controller, start_worker=False)
+        try:
+            texts = [widget.text() for widget in window.tab_commands]
+            for text in ("Apply route", "Apply HF relay", "Stage LAB", "OFF", "Bench loads connected and checked"):
+                self.assertIn(text, texts)
+            route = window.tab_commands[texts.index("Apply route")]
+            route.click()  # In-tab commands go through action() while the worker is alive.
+            self.assertEqual(window.worker.commands.get_nowait(), ("route", {"receiver": "RTLA", "value": "PARK"}))
+            window._finished()
+            window._heartbeat(); window._heartbeat()
+            self.assertIn("Control worker stopped", window.banner.text())
+            self.assertIn("NO CONNECTION", window.banner.text())
+            self.assertIn("HOLD OFF", window.banner.text())
+            self.assertFalse(any(button.isEnabled() for button in window.command_buttons.values()))
+            self.assertFalse(any(widget.isEnabled() for widget in window.tab_commands))
+            self.assertFalse(window.output_on_buttons["EN_RTLA"].isEnabled())
+            window.worker.submit("control", {"name": "EN_RTLA", "value": True})
+            window.action("hold", {"enabled": True})
+            self.assertTrue(window.worker.commands.empty())
+            self.assertIn("Control worker stopped", window.input_message)
+            window.action("route", {"receiver": "RTLA", "value": "PARK"})
+            self.assertIn("ROUTE not sent", window.input_message)
+            self.assertTrue(window.worker.commands.empty())
+        finally:
+            window.close(); app.processEvents()
+
+    def test_gui_heartbeat_stall_disarms_hold(self):
+        # The touch-UI heartbeat (Worker.ui_at), not the controller poll gap:
+        # the worker keeps polling while only the GUI thread stalls.
+        app = qt_app()
+        backend = Backend()
+        controller = ConsoleController(backend, Clock())
+        window = create_window(controller)
+        try:
+            def wait(predicate, seconds=10):
+                deadline = time.monotonic() + seconds
+                while time.monotonic() < deadline and not predicate():
+                    app.processEvents(); time.sleep(.02)
+            wait(lambda: controller.status()["connected"])
+            window.worker.submit("arm")  # Explicit operator ARM through the running worker.
+            wait(lambda: controller.holding)
+            backend.data["policy"]["armed"] = True
+            backend.data["pico"]["state"] = "ACTIVE"
+            wait(lambda: controller.holding and controller.arm_started is None)
+            wait(lambda: False, .5)  # Natural GUI heartbeats while ACTIVE.
+            self.assertTrue(controller.holding)
+            self.assertNotIn({"op": "disarm"}, backend.requests)
+            time.sleep(2.0)  # GUI thread blocked: no heartbeat, no processEvents.
+            self.assertFalse(controller.holding)
+            self.assertIn({"op": "disarm"}, backend.requests)
+            self.assertIn("heartbeat lost", controller.notice)
+        finally:
+            window.close()
+            deadline = time.monotonic() + 3
+            while time.monotonic() < deadline and window.worker.isRunning():
+                app.processEvents(); time.sleep(.02)
+            window.worker.stopping.set()
+            window.worker.wait(1500)
+            window.close(); app.processEvents()
+
+    @unittest.skipUnless(LINUX, "stdio daemon pipes need Linux selectors")
     def test_worker_real_demo_arm_then_window_close_stops_service(self):
         os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
         from PySide6.QtWidgets import QApplication
@@ -502,7 +988,8 @@ class QtTests(unittest.TestCase):
         window = create_window(controller)
         try:
             window.show()
-            deadline = time.monotonic() + 3
+            # The first reply has the cold-start allowance; later ones keep 1 s.
+            deadline = time.monotonic() + 20
             while time.monotonic() < deadline and not controller.snapshot.get("session"):
                 app.processEvents(); time.sleep(.02)
             window.worker.submit("arm")  # One explicit simulated operator action.

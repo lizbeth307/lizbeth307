@@ -141,6 +141,30 @@ class DecoderPolicyTests(unittest.TestCase):
             with self.subTest(key=key), self.assertRaises(d.DecoderRefused):
                 d._validate_installation(dict(record, **{key: value}))
 
+    def test_executable_and_record_directories_must_be_admin_owned(self):
+        path = Path("/opt/noaa-apt/noaa-apt")
+        def lstat(modes):
+            def value(name):
+                uid, mode = modes.get(Path(name), (0, 0o40755))
+                return mock.Mock(st_uid=uid, st_mode=mode)
+            return value
+        for modes, allowed in (({}, True), ({Path("/tmp"): (0, 0o41777)}, True),
+                               ({path.parent: (1000, 0o40755)}, False),
+                               ({Path("/opt"): (0, 0o40775)}, False), ({Path("/"): (0, 0o40757)}, False)):
+            with self.subTest(modes=modes), mock.patch.object(d.os, "lstat", side_effect=lstat(modes)):
+                if allowed:
+                    d._admin_directories(path)
+                    d._admin_directories(Path("/tmp/noaa-apt"))
+                else:
+                    with self.assertRaisesRegex(d.DecoderRefused, "ADMIN_OWNED_DIRECTORY_REQUIRED"):
+                        d._admin_directories(path)
+        record = dict(self.install, sha256="0" * 64)
+        with mock.patch.object(d, "_file", return_value=path), \
+                mock.patch.object(d, "_admin_directories", side_effect=d.DecoderRefused("ADMIN_OWNED_DIRECTORY_REQUIRED")), \
+                mock.patch.object(d, "_hash_file", side_effect=AssertionError("must refuse before hashing")):
+            with self.assertRaisesRegex(d.DecoderRefused, "ADMIN_OWNED_DIRECTORY_REQUIRED"):
+                d._validate_installation(record)
+
     def test_png_strips_text_and_rejects_crc_or_truncation(self):
         candidate = self.root / "candidate.png"
         candidate.write_bytes(png())

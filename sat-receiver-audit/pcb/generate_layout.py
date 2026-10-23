@@ -111,8 +111,10 @@ def create_board(pcb, source, out):
     board.SetTitleBlock(block)
     positions = placement()
     refs = {c['ref'] for c in source['components']}
-    assert not (refs & set(source['must_remain_at_RF_port'])), 'RF-port components leaked into DC core'
-    assert refs == set(positions), {'missing_positions': sorted(refs-set(positions)), 'unused_positions': sorted(set(positions)-refs)}
+    if refs & set(source['must_remain_at_RF_port']):
+        raise ValueError('RF-port components leaked into DC core')
+    if refs != set(positions):
+        raise ValueError({'missing_positions': sorted(refs-set(positions)), 'unused_positions': sorted(set(positions)-refs)})
     netmap = {}
     for code, name in enumerate(sorted(source['nets']), 1):
         net = pcb.NETINFO_ITEM(board, name, code)
@@ -234,16 +236,16 @@ def main():
     parser.add_argument('--kicad-cli',default='kicad-cli')
     parser.add_argument('--check',action='store_true',help='Read-only source-pin-to-board-pad audit')
     args=parser.parse_args();pcb=native_module(args.runtime_root)
-    source=json.loads(args.input.read_text());out=args.output.resolve()
-    assert source['source_node_audit']['status']=='PASS', 'Input source-node audit is not PASS'
-    assert source['part_count']==71 and len(source['components'])==71, 'This starter is frozen for71parts'
-    assert sum(len(c['pins']) for c in source['components'])==187, 'Input pin count changed'
+    source=json.loads(args.input.read_text(encoding='utf-8'));out=args.output.resolve()
+    if source['source_node_audit']['status']!='PASS':raise SystemExit('Input source-node audit is not PASS')
+    if source['part_count']!=71 or len(source['components'])!=71:raise SystemExit('This starter is frozen for71parts')
+    if sum(len(c['pins']) for c in source['components'])!=187:raise SystemExit('Input pin count changed')
     board_path=out/(BOARD_NAME+'.kicad_pcb')
     if args.check:
         result=audit(pcb,source,board_path)
         stored_path=out/'placement-audit.json'
         if stored_path.is_file():
-            stored=json.loads(stored_path.read_text())
+            stored=json.loads(stored_path.read_text(encoding='utf-8'))
             if stored.get('input_sha256')!=digest(args.input):result['errors'].append(dict(kind='input_snapshot_changed'))
             if stored.get('board_sha256')!=digest(board_path):result['errors'].append(dict(kind='board_snapshot_changed'))
             for entry in stored.get('footprint_sources',[]):
@@ -254,7 +256,7 @@ def main():
     out.mkdir(parents=True,exist_ok=True)
     board_path,footprints=create_board(pcb,source,out)
     result=audit(pcb,source,board_path)
-    result.update(input_file=str(args.input.resolve().relative_to(BASE)),input_sha256=digest(args.input),board_file=str(board_path.relative_to(BASE)),board_sha256=digest(board_path),kicad_version=pcb.Version(),outline_candidate_mm={'x':OUTLINE[2]-OUTLINE[0],'y':OUTLINE[3]-OUTLINE[1],'production_qualified':False},footprint_sources=footprints,passive_land_patterns_proposed=sum(c['placement_footprint_status']=='proposed_not_production_qualified' for c in source['components']),boundary_implementation='Unselected: no invented connector/wire-pad numbers were added.',rf_exclusions=source['must_remain_at_RF_port'],constraints=source['constraints'],blockers=source['blockers'])
+    result.update(input_file=args.input.resolve().relative_to(BASE).as_posix(),input_sha256=digest(args.input),board_file=board_path.relative_to(BASE).as_posix(),board_sha256=digest(board_path),kicad_version=pcb.Version(),outline_candidate_mm={'x':OUTLINE[2]-OUTLINE[0],'y':OUTLINE[3]-OUTLINE[1],'production_qualified':False},footprint_sources=footprints,passive_land_patterns_proposed=sum(c['placement_footprint_status']=='proposed_not_production_qualified' for c in source['components']),boundary_implementation='Unselected: no invented connector/wire-pad numbers were added.',rf_exclusions=source['must_remain_at_RF_port'],constraints=source['constraints'],blockers=source['blockers'])
     result['resource_resolution']={'R_0402_1005Metric':'Resolved using unmodified official KiCad 10.0.7 resource; actual file paths and hashes are recorded in placement-audit.json. Passive production qualification remains open.','source_metadata_null_paths':sum(c.get('placement_footprint_file') is None for c in source['components']),'provenance_file':'build/kicad/pcb-preparation/footprint-provenance.json'}
     atomic_write(out/'placement-audit.json',json.dumps(result,ensure_ascii=False,indent=2)+'\n')
     review=BASE/'verification/pcb-review.json'
@@ -266,10 +268,10 @@ def main():
     drc=subprocess.run([str(cli),'pcb','drc','--format','json','--severity-all','--all-track-errors','--exit-code-violations','--output',str(raw),str(board_path)],capture_output=True,text=True)
     atomic_write(out/'drc-command.log',drc.stdout+'\n'+drc.stderr)
     if not raw.is_file():raise SystemExit('KiCad DRC report not produced: '+drc.stderr)
-    rawdoc=json.loads(raw.read_text());types=Counter(v.get('type','unknown') for key in ('violations','unconnected_items','schematic_parity') for v in rawdoc.get(key,[]))
+    rawdoc=json.loads(raw.read_text(encoding='utf-8'));types=Counter(v.get('type','unknown') for key in ('violations','unconnected_items','schematic_parity') for v in rawdoc.get(key,[]))
     if drc.returncode not in (0,5):
         raise SystemExit('KiCad DRC failed to complete; raw output and log retained.')
-    summary=dict(exit_code=drc.returncode,raw_file=str(raw.relative_to(BASE)),raw_sha256=digest(raw),counts=dict(types),sections={key:len(rawdoc.get(key,[])) for key in ('violations','unconnected_items','schematic_parity')},ignored_checks=rawdoc.get('ignored_checks',[]),configuration='Five normally ignored KiCad categories explicitly enabled as warning in the candidate project.',additional_warning_categories=list(EXTRA_DRC_WARNINGS),suppressed_or_filtered=False,release_status='NOT_RELEASED_UNROUTED')
+    summary=dict(exit_code=drc.returncode,raw_file=raw.relative_to(BASE).as_posix(),raw_sha256=digest(raw),counts=dict(types),sections={key:len(rawdoc.get(key,[])) for key in ('violations','unconnected_items','schematic_parity')},ignored_checks=rawdoc.get('ignored_checks',[]),configuration='Five normally ignored KiCad categories explicitly enabled as warning in the candidate project.',additional_warning_categories=list(EXTRA_DRC_WARNINGS),suppressed_or_filtered=False,release_status='NOT_RELEASED_UNROUTED')
     result['drc']=summary
     atomic_write(out/'placement-audit.json',json.dumps(result,ensure_ascii=False,indent=2)+'\n')
     atomic_write(review,json.dumps({k:v for k,v in result.items() if k not in ('pad_assignments','footprint_sources')},ensure_ascii=False,indent=2)+'\n')

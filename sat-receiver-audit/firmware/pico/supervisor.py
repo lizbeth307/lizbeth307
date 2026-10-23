@@ -59,6 +59,7 @@ class Supervisor:
         self._button_handled = False
         self._fan_latch = True
         self._blower_latch = True
+        self._disp_hot = True  # Unknown panel temperature keeps DISP12 off.
         self.events = []
         self.outputs = {}
         self._render_outputs()
@@ -108,7 +109,7 @@ class Supervisor:
                 and _number(self._inputs.get("panel_temp_c"), -20, 120)
                 and _number(self._inputs.get("case_temp_c"), -20, 120))
 
-    def _readiness(self):
+    def _readiness(self, ignore_battery=False):
         if not self.hardware_commissioned:
             return "NOT_COMMISSIONED"
         if not self.calibration_valid:
@@ -119,7 +120,7 @@ class Supervisor:
             return "Q6A_OFF"
         if not self._sensors_valid():
             return "SENSOR_INVALID"
-        if self._inputs["battery_mv"] <= 12900:
+        if not ignore_battery and self._inputs["battery_mv"] <= 13050:
             return "BATTERY_LOW"
         if self._inputs["panel_temp_c"] >= 68:
             return "PANEL_HOT"
@@ -152,6 +153,7 @@ class Supervisor:
         self.fault = reason
         self._shutdown_at = self._now
         self._shutdown_hb_at = self._last_hb
+        self._off_now_at = None  # Each shutdown gets its own full OFF_NOW grace.
         self._event("SHUTDOWN_REQUEST", reason=reason)
 
     def _cut_power(self, reason):
@@ -288,6 +290,7 @@ class Supervisor:
                     self._q6a_seen = False
                     self._q6a_off_at = None
                     self._off_at = None
+                    self._off_now_at = self._shutdown_at = self._shutdown_hb_at = None
                     self._rotate_session()
                     self._button_handled = True
                     self._event("PHYSICAL_RESTART")
@@ -301,11 +304,10 @@ class Supervisor:
     def _advance(self):
         armed = self.state in ("WARMING", "CONFIGURING", "ACTIVE")
         if armed:
-            reason = self._readiness()
             # Falling below UV threshold does not bypass the required dwell;
             # Linux handles live-HB undervoltage, Pico covers absent-HB fallback.
-            if reason == "BATTERY_LOW":
-                reason = None
+            # Skip only that gate: thermal/fan gates after it must still trip.
+            reason = self._readiness(ignore_battery=True)
             if reason is not None:
                 self._trip(reason)
             elif (self._last_hb is None and self._now - self._arm_at >= HB_TIMEOUT_MS
@@ -329,7 +331,7 @@ class Supervisor:
             elif self._now - reference >= ARM_OFF_HB_LOSS_MS:
                 self._cut_power("ARM_OFF_HEARTBEAT_LOST")
         low = (_number(self._inputs.get("battery_mv"), 8000, 17500)
-               and self._inputs["battery_mv"] <= 12900 and not self._hb_fresh()
+               and self._inputs["battery_mv"] <= 13050 and not self._hb_fresh()
                and self.calibration_valid)
         if low:
             if self._uv_at is None:
@@ -359,9 +361,17 @@ class Supervisor:
         brightness = 100
         if _number(panel, -20, 120):
             brightness = 20 if panel >= 68 else 50 if panel >= 60 else 100
+        # DISP12 is the operator console, not an ARM output. Missing, invalid or
+        # stale panel NTC counts as hot; it re-enables only at <=60 C.
+        if (self._inputs_at is None or self._now - self._inputs_at > SENSOR_MAX_AGE_MS
+                or not _number(panel, -20, 120) or panel >= 68):
+            self._disp_hot = True
+        elif panel <= 60:
+            self._disp_hot = False
         self.outputs = {
             "mcp_reset": not (self.state in ("CONFIGURING", "ACTIVE")),
-            "disp_en": active and q6a_on,
+            "disp_en": (q6a_on and not self._disp_hot
+                        and self.state not in ("OFF", "SHUTTING_DOWN")),
             "safe_boot": not active,
             "fan_en": self._fan_latch,
             "blower_en": self._blower_latch,

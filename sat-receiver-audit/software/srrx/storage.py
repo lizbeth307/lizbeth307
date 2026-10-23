@@ -7,8 +7,11 @@ identity at every operation, and revokes permanently on loss/replacement/error.
 No output parent directory is created. Paths are relative to root or absolute
 below it; all existing parents must be real directories on the same mount.
 
-Writes use O_NOFOLLOW and dirfd-relative staging/replace. JSONL append is an
-atomic bounded copy+append, retaining the previous file on pre-commit errors.
+Writes use O_NOFOLLOW and dirfd-relative staging/replace. JSONL append to an
+existing file writes only the new line to the same checked inode (O(line), not
+a whole-file copy) and truncates back to the previous complete lines on a write
+or fsync error; a power loss mid-append can leave one torn final line, which a
+later append refuses. A new JSONL file is created by staging+replace.
 One writer owns a guard; advisory locking does not protect against privileged
 mount manipulation or an unrelated program ignoring the lock. Mount/output
 directories must be writable only by the trusted capture writer; malicious
@@ -266,6 +269,9 @@ class StorageGuard:
             existing, previous = self._existing(parent, parts[-1])
             if append and previous is not None and previous.st_size + len(encoded) > MAX_FILE_BYTES:
                 raise OSError(errno.EFBIG, "Bounded survey size reached; choose a new file explicitly")
+            if append and existing is not None:
+                self._append(parent, parts, existing, previous, encoded)
+                return
             for _ in range(5):
                 temporary_name = ".srrx-" + secrets.token_hex(12)
                 try:
@@ -276,32 +282,9 @@ class StorageGuard:
                     temporary_name = None
             if temporary_fd is None:
                 raise OSError(errno.EEXIST, "Cannot create unique storage staging file")
-            if append and existing is not None:
-                copied = 0
-                while True:
-                    block = os.read(existing, 65536)
-                    if not block:
-                        break
-                    copied += len(block)
-                    if copied + len(encoded) > MAX_FILE_BYTES:
-                        raise OSError(errno.EFBIG, "Survey grew past bound")
-                    _write_all(temporary_fd, block)
             _write_all(temporary_fd, encoded)
             os.fsync(temporary_fd)
-            self.check()
-            # Reopen from the pinned root: reject a renamed/symlinked parent.
-            verified = self._parent(parts)
-            try:
-                if _inode(os.fstat(verified)) != _inode(os.fstat(parent)):
-                    raise StorageRevoked("Output parent changed during write")
-            finally:
-                os.close(verified)
-            current, value = self._existing(parent, parts[-1])
-            if current is not None:
-                os.close(current)
-            key = lambda item: None if item is None else (item.st_dev, item.st_ino, item.st_size, item.st_mtime_ns)
-            if key(value) != key(previous):
-                raise StorageRevoked("Output changed during atomic write")
+            self._verify(parent, parts, previous)
             os.replace(temporary_name, parts[-1], src_dir_fd=parent, dst_dir_fd=parent)
             temporary_name = None
             os.fsync(parent)
@@ -322,6 +305,45 @@ class StorageGuard:
                 os.close(parent)
             if locked:
                 fcntl.flock(self._root_fd, fcntl.LOCK_UN)
+
+    def _verify(self, parent, parts, previous):
+        self.check()
+        # Reopen from the pinned root: reject a renamed/symlinked parent.
+        verified = self._parent(parts)
+        try:
+            if _inode(os.fstat(verified)) != _inode(os.fstat(parent)):
+                raise StorageRevoked("Output parent changed during write")
+        finally:
+            os.close(verified)
+        current, value = self._existing(parent, parts[-1])
+        if current is not None:
+            os.close(current)
+        key = lambda item: None if item is None else (item.st_dev, item.st_ino, item.st_size, item.st_mtime_ns)
+        if key(value) != key(previous):
+            raise StorageRevoked("Output changed during atomic write")
+
+    def _append(self, parent, parts, existing, previous, encoded):
+        """O(line) append to the verified inode; a failed write is truncated back."""
+        if previous.st_size and os.pread(existing, 1, previous.st_size - 1) != b"\n":
+            raise OSError(errno.EILSEQ, "Survey does not end with a complete line; choose a new file explicitly")
+        self._verify(parent, parts, previous)
+        # Reopen the exact checked inode via its descriptor, never by name again.
+        fd = os.open("/proc/self/fd/" + str(existing), os.O_WRONLY | os.O_APPEND | getattr(os, "O_CLOEXEC", 0))
+        try:
+            if _inode(os.fstat(fd)) != _inode(previous):
+                raise StorageRevoked("Output changed during append")
+            try:
+                _write_all(fd, encoded)
+                os.fsync(fd)
+            except BaseException:
+                os.ftruncate(fd, previous.st_size)  # keep exactly the previous complete lines
+                os.fsync(fd)
+                raise
+            if os.fstat(fd).st_size != previous.st_size + len(encoded):
+                raise StorageRevoked("Output changed during append")
+        finally:
+            os.close(fd)
+        self.check()
 
     def atomic_json(self, path, value):
         encoded = (json.dumps(value, allow_nan=False, separators=(",", ":")) + "\n").encode("utf-8")

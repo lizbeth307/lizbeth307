@@ -1,7 +1,9 @@
 """UART termios failures reach the real Engine's safe transport boundary."""
 import errno
+import fcntl
 import os
 from pathlib import Path
+import select
 import termios
 import unittest
 from unittest.mock import patch
@@ -47,6 +49,7 @@ class SerialTermiosTests(unittest.TestCase):
                 attributes = [0, 0, 0, 0, 0, 0, [0] * 32]
                 with patch("srrx.link.os.open", return_value=72), \
                      patch("srrx.link.os.close") as close, \
+                     patch("srrx.link.fcntl.flock"), patch("srrx.link.fcntl.ioctl"), \
                      patch("srrx.link.termios.tcgetattr", return_value=attributes) as get, \
                      patch("srrx.link.termios.tcsetattr") as set_, \
                      patch("srrx.link.termios.tcflush") as flush:
@@ -57,10 +60,60 @@ class SerialTermiosTests(unittest.TestCase):
                 self.assertEqual(raised.exception.errno, errno.EIO)
                 self.assertIs(raised.exception.__cause__, failure)
 
+    def test_exclusive_ownership_precedes_any_termios_change_or_flush(self):
+        for point, failure in (("flock", BlockingIOError(errno.EWOULDBLOCK, "held by live labd")),
+                               ("ioctl", OSError(errno.EBUSY, os.strerror(errno.EBUSY)))):
+            with self.subTest(point=point):
+                order = []
+                attributes = [0, 0, 0, 0, 0, 0, [0] * 32]
+                with patch("srrx.link.os.open", return_value=75), \
+                     patch("srrx.link.os.close") as close, \
+                     patch("srrx.link.fcntl.flock", side_effect=lambda *a: order.append("flock")) as flock, \
+                     patch("srrx.link.fcntl.ioctl", side_effect=lambda *a: order.append("ioctl")) as ioctl, \
+                     patch("srrx.link.termios.tcgetattr", return_value=attributes), \
+                     patch("srrx.link.termios.tcsetattr", side_effect=lambda *a: order.append("tcsetattr")), \
+                     patch("srrx.link.termios.tcflush", side_effect=lambda *a: order.append("tcflush")):
+                    SerialLink("/dev/in-memory-test-only")
+                    self.assertEqual(order, ["flock", "ioctl", "tcsetattr", "tcflush"])
+                    flock.assert_called_once_with(75, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                    ioctl.assert_called_once_with(75, termios.TIOCEXCL)
+                    order.clear()
+                    {"flock": flock, "ioctl": ioctl}[point].side_effect = failure
+                    with self.assertRaises(OSError) as raised:
+                        SerialLink("/dev/in-memory-test-only")
+                    self.assertIs(raised.exception, failure)
+                    self.assertNotIn("tcsetattr", order)
+                    self.assertNotIn("tcflush", order)
+                    self.assertEqual(close.call_count, 1)
+
+    @unittest.skipUnless(hasattr(os, "openpty"), "needs a Linux PTY")
+    def test_second_open_of_live_uart_is_refused_and_queued_output_survives(self):
+        master, slave = os.openpty()
+        first = None
+        try:
+            name = os.ttyname(slave)
+            first = SerialLink(name)
+            frame = {"v": 1, "t": "TRIP", "s": 9, "q": 3, "p": {"reason": "fixture"}}
+            first.send(frame)
+            first.poll(0)
+            with self.assertRaises(OSError):
+                SerialLink(name)  # TIOCEXCL (EBUSY), or flock when run as root.
+            data = bytearray()
+            while b"\n" not in data:
+                self.assertTrue(select.select([master], [], [], 2)[0], "queued frame was discarded")
+                data.extend(os.read(master, 4096))
+            self.assertEqual(FrameDecoder().feed(bytes(data)), [frame])
+        finally:
+            if first is not None:
+                first.close()
+            os.close(slave)
+            os.close(master)
+
     def test_constructor_cancellation_still_closes_without_reclassifying(self):
         cancelled = KeyboardInterrupt("fixture cancellation")
         with patch("srrx.link.os.open", return_value=73), \
              patch("srrx.link.os.close") as close, \
+             patch("srrx.link.fcntl.flock"), patch("srrx.link.fcntl.ioctl"), \
              patch("srrx.link.termios.tcgetattr", side_effect=cancelled):
             with self.assertRaises(KeyboardInterrupt) as raised:
                 SerialLink("/dev/in-memory-test-only")

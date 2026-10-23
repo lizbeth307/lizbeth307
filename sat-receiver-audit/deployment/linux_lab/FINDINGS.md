@@ -67,6 +67,16 @@ Linux ігнорує `RLIMIT_CORE` для core dump, переданого чер
 | Один read-only Unix status запит XCB observer перевищив1s під час холодного Qt startup | [xcb_smoke.py](xcb_smoke.py) повторює лише визначені transport misses в межах чинного загального deadline дочірнього процесу. Unsafe/rejected/malformed відповіді та permission/missing socket одразу FAIL; initial/final і post-child successful probes обов’язкові. Report показує кількість успішних samples, timeouts і gaps; пропущена відповідь не підтверджує readiness або безперервно безпечний стан. |
 | ENOSPC scenario спочатку очікував `StorageRevoked` на першій помилці запису | [storage_smoke.py](storage_smoke.py) перевіряє справжній початковий `OSError` з errno ENOSPC, незмінність попереднього запису і permanent revocation; `StorageRevoked` очікується на наступному зверненні. Production contract не змінено заради PASS. |
 
+## Посилення harness після run07 (потребує нового ARM64 запуску)
+
+Ці зміни внесено після run07 і ще не виконано в ARM64 guest; результати run07 вони не змінюють і не підтверджують. Production timers, freshness deadlines і safety guards не послаблені.
+
+- Кешований overlay більше не означає неперевірені залежності: guest перевстановлює всі locked DEB (без `--skip-same-version`), заново створює venv і примусово проводить кожний wheel через `--require-hashes`; `dependency-verification.json` порівнює встановлені версії з обома lock і входить до загального PASS. Run07 фактично використав кешовані DEB/wheels попередніх VM.
+- Host приймає overlay лише від прогону з записаним summary і `qemu_exit_code=0`, записує backing chain із SHA256 кожного шару та генерує новий cloud-init instance-id. Поле `previous_clean_shutdown` прибрано: воно не мало доказів.
+- `explicit_arm_and_fault` і `link_loss_latched` вимагають точної першої причини trip, як уже вимагав lease-сценарій; PTY HUP записує фактичну причину; RX failure-сценарії відхиляють будь-який тип помилки поза публічною межею CLI.
+- PTY peer відправляє STATUS/HELLO за `TelemetrySchedule` прошивки (200 ms / 1000 ms) замість 75 ms. Це зменшує запас fixture до реального: host stall понад приблизно 300 ms із TCIFLUSH може коректно спричинити `pico_status_timeout`. Таку відмову слід аналізувати (діагностика містить `max_pump_loop_gap_ms`), а не послаблювати 500 ms deadline.
+- Підсумок guest приймає лише задокументовані SKIP (QNN HTP SDK, PyMuPDF поза wheelhouse), кожен один раз; `host_regression_status=PASS` з іншими SKIP більше не дає PASS. Host відхиляє symlink/спеціальні файли в результатах guest і робочі шляхи з пробілами; архів джерел належить root.
+
 ## Переносимість автономного комплекту
 
 Під час перевірки розпакованого комплекту в іншому каталозі launcher виявив відсутній порожній directory target для `tools/root/usr/share/misc/magic → ../file/magic`. Початковий host-only builder включав файли, symlinks та їхні parent directories, але губив порожні каталоги. `build_kit.py` тепер записує runtime directories в manifest, включає їх до tar та звіряє точну множину/режим каталогів. Launcher перевіряє їх до symlink resolution. Це виправлення пакування; воно не змінює виконані guest/model джерела або результати run07. Переносимість підтверджується окремими `--verify-only` і `--prepare-only`, а не повторним завантаженням VM.
@@ -103,14 +113,16 @@ gzip -t /tmp/SR-RX-v2.1-git.patch.gz
 
 Patch відображає лише commits до HEAD, тому його не будувати до commit поточних змін. Інструкція застосування — [RESTORE-GIT](../../RESTORE-GIT.md). Відмова remote push не заважає віддати ZIP і patch, але не є успішною публікацією.
 
-4. Після фінального ZIP створити offline kit. Наведені assets/tools — поточні локальні caches; на іншому хості їхні шляхи слід замінити. `--output` має бути новим `.tar.zst` поза checkout, а його parent directory має вже існувати.
+4. Після фінального ZIP створити offline kit. Усі вхідні каталоги створюють скрипти репозиторію: `fetch_tools.py` (locked host DEB, розпакований `root/`, wrappers `bin/`, `host-packages.lock.json`) і `fetch_assets.py` (image/kernel/initrd, підписаний `ubuntu-24.04-server-cloudimg-arm64.manifest`, wheels, guest DEB). `--tools`/`--dest` мають бути новими каталогами поза checkout; `--output` — новим `.tar.zst` поза checkout, а його parent directory має вже існувати. Builder потребує `gpgv`, `zstd`, `dpkg-deb` і `tar`.
 
 ```sh
+python3 deployment/linux_lab/fetch_tools.py --dest /tmp/srrx-qemu-tools
+python3 deployment/linux_lab/fetch_assets.py --dest /tmp/srrx-arm64-assets
 python3 deployment/linux_lab/build_kit.py \
-  --assets /workspace/scratch/63085b43f730/linux-lab-assets \
-  --tools /workspace/scratch/63085b43f730/linux-lab-tools \
+  --assets /tmp/srrx-arm64-assets \
+  --tools /tmp/srrx-qemu-tools \
   --project-zip SR-RX-v2-project.zip \
   --output /tmp/SR-RX-Linux-Lab.tar.zst
 ```
 
-Builder звіряє signed/locked inputs та кожний archive payload hash. Його PASS означає цілісність kit; він **не завантажує guest**. Після розпакування використовуйте `launch.py --verify-only`, потім новий workspace для `--prepare-only` або повного запуску. Kit не містить попередній writable overlay як runnable input і стартує з pinned base image; це окрема перевірка від cached run07. Фінально звірити manifest/CRC архівів, додати checksums і передати project ZIP/HTML, Git patch та offline kit із фактичними verification reports.
+Builder звіряє signed/locked inputs та кожний archive payload hash. `tools/root` має точно збігатися з новим розпакуванням hash-locked host DEB у порядку lock (файли, SHA256, executable bit, symlink targets), а `tools/bin` — із wrappers `fetch_tools.py`; самодекларовані JSON-маніфести більше не приймаються як provenance. Wrappers запускають locked `ld.so` з `--inhibit-cache`, а `fetch_tools.py` перевіряє через `ld.so --list`, що жодна DT_NEEDED бібліотека QEMU/genisoimage не береться з хоста. Його PASS означає цілісність kit; він **не завантажує guest**. Після розпакування використовуйте `launch.py --verify-only`, потім новий workspace для `--prepare-only` або повного запуску. Kit не містить попередній writable overlay як runnable input і стартує з pinned base image; це окрема перевірка від cached run07. Фінально звірити manifest/CRC архівів, додати checksums і передати project ZIP/HTML, Git patch та offline kit із фактичними verification reports.

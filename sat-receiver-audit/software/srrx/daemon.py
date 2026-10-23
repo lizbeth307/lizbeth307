@@ -25,6 +25,14 @@ def reject_constant(value):
     raise ValueError("Non-finite JSON constant")
 
 
+def soc_temp_c(root="/sys/class/thermal"):
+    """Hottest Linux thermal zone in C. Any unreadable zone leaves it unknown."""
+    zones = sorted(Path(root).glob("thermal_zone*/temp"))
+    if not zones:
+        raise OSError("no Linux thermal zone")
+    return max(int(zone.read_text()) for zone in zones) / 1000
+
+
 def request_once(path, request, timeout=2.0):
     data = json.dumps(request, allow_nan=False, separators=(",", ":")).encode() + b"\n"
     if len(data) > MAX_REQUEST:
@@ -48,6 +56,11 @@ class Server:
     def __init__(self, path, engine):
         self.path, self.engine = Path(path), engine
         self.path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+        # mkdir accepts an existing directory as is; another user who owns it
+        # could replace the bound socket and receive operator requests.
+        info = os.lstat(self.path.parent)
+        if not stat.S_ISDIR(info.st_mode) or info.st_uid != os.geteuid() or info.st_mode & 0o022:
+            raise RuntimeError("Control socket directory must be ours and not group/other writable")
         self.selector = selectors.DefaultSelector()
         self.clients, self.running = {}, True
         self.lock_fd = os.open(str(self.path) + ".lock", os.O_CREAT | os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW, 0o600)
@@ -93,8 +106,8 @@ class Server:
             if request.get("op") == "off_now" and state["uid"] != 0:
                 result = {"ok": False, "error": "OFF_NOW is restricted to the root shutdown bridge"}
             else:
-                result = self.engine.request(request)
-        except (ValueError, TypeError, RecursionError, OSError, RuntimeError) as exc:
+                result = self.engine.request(request, int(time.monotonic() * 1000))
+        except (ValueError, TypeError, RecursionError, OverflowError, OSError, RuntimeError) as exc:
             result = {"ok": False, "error": str(exc)[:200]}
         state["tx"] = bytearray(json.dumps(result, allow_nan=False, separators=(",", ":")).encode() + b"\n")
 
@@ -177,8 +190,8 @@ def run_stdio(engine):
                     if request.get("op") == "off_now" and os.geteuid() != 0:
                         result = {"ok": False, "error": "OFF_NOW requires root"}
                     else:
-                        result = engine.request(request)
-                except (ValueError, TypeError, RecursionError, OSError, RuntimeError) as exc:
+                        result = engine.request(request, int(time.monotonic() * 1000))
+                except (ValueError, TypeError, RecursionError, OverflowError, OSError, RuntimeError) as exc:
                     result = {"ok": False, "error": str(exc)[:200]}
                 print(json.dumps(result, allow_nan=False, separators=(",", ":")), flush=True)
     finally:
@@ -213,7 +226,8 @@ def main(argv=None):
             # ever substituted in the physical backend.
             from .runtime_telemetry import ProjectTelemetry
             telemetry = ProjectTelemetry(args.i2c0, hardware, acceptance)
-            engine = Engine(hardware, link, simulated=False, acceptance=acceptance, telemetry_reader=telemetry)
+            engine = Engine(hardware, link, simulated=False, acceptance=acceptance, telemetry_reader=telemetry,
+                            soc_temp_reader=soc_temp_c)
         else:
             hardware = SimHardware(load_mapping(args.project / "design/E3.json"))
             # Synthetic detector idle levels and power-good signals are labelled

@@ -23,8 +23,12 @@ class PatchError(ValueError):
     pass
 
 
+PATCH_GIT = ["git", "-c", "core.autocrlf=false", "-c", "core.eol=lf", "-c", "apply.whitespace=nowarn", "apply"]
+
+
 def digest(path):
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    with open(path, "rb") as handle:
+        return hashlib.file_digest(handle, "sha256").hexdigest()
 
 
 def _run(args, cwd):
@@ -53,7 +57,7 @@ def check_source(component, source, fixture=False):
         if path.is_symlink() or not path.is_file() or digest(path) != hashes["before_sha256"]:
             raise PatchError("source target SHA256 differs: " + relative)
     patch = HERE / "patches" / (component + "-rx-only.patch")
-    _run(["git", "apply", "--check", str(patch)], source)
+    _run(PATCH_GIT + ["--check", str(patch)], source)
     return source, expected, patch
 
 
@@ -67,7 +71,7 @@ def apply_to_copy(component, source, destination, fixture=False):
     # copytree preserves the upstream source and does not modify a host prefix.
     shutil.copytree(source, destination, symlinks=True, ignore=shutil.ignore_patterns(".git"))
     try:
-        _run(["git", "apply", str(patch)], destination)
+        _run(PATCH_GIT + [str(patch)], destination)
         for relative, hashes in expected.items():
             if digest(destination / relative) != hashes["after_sha256"]:
                 raise PatchError("post-patch SHA256 differs: " + relative)

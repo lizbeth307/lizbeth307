@@ -175,6 +175,56 @@ class GpsdTrackingTests(unittest.TestCase):
             self.assertEqual(tracker.status(1000)["device"], "configured-gnss-device")
             self.assertTrue(tracker.status(1000)["fresh"])
 
+    def test_receiver_timeline_discontinuity_reacquires_only_after_three_consistent_epochs(self):
+        # E.g. host suspend under CLOCK_MONOTONIC: receiver UTC +60 s, monotonic +1 s.
+        epoch = dt.datetime(2026, 10, 20, 12, tzinfo=dt.timezone.utc).timestamp()
+        reference = [epoch]
+        tracker = LocationTracker(utc_reference=lambda: reference[0])
+        for second in range(3):
+            reference[0] = epoch + second
+            self.assertTrue(tracker.ingest_gpsd(tpv(second), second * 1000))
+        self.assertTrue(tracker.status(2000)["utc_verified"])
+        accepted, verified = [], []
+        for step in range(1, 8):
+            reference[0] = epoch + 61 + step
+            accepted.append(tracker.ingest_gpsd(tpv(time="2026-10-20T12:01:%02d.000Z" % (1 + step)), 2000 + step * 1000))
+            status = tracker.status(2000 + step * 1000)
+            verified.append(status["utc_verified"])
+            if not accepted[-1]:
+                self.assertEqual((status["source"], status["reason"]), ("last_good", "UTC_TIME_JUMP"))
+        self.assertEqual(accepted, [False, False, False, True, True, True, True])
+        self.assertEqual(verified, [False, False, False, False, False, True, True])
+
+    def test_single_or_unstable_time_jumps_never_replace_the_reference(self):
+        tracker = LocationTracker()
+        tracker.ingest_gpsd(tpv(0), 0)
+        self.assertFalse(tracker.ingest_gpsd(tpv(time="2026-10-20T12:05:00.000Z"), 1000))
+        self.assertTrue(tracker.ingest_gpsd(tpv(2), 2000))
+        for step in range(1, 12):
+            # Each epoch lands on a different timeline: no consistent new reference.
+            time = "2026-10-20T13:%02d:%02d.000Z" % (step * 3, step)
+            self.assertFalse(tracker.ingest_gpsd(tpv(time=time), 2000 + step * 1000))
+        self.assertEqual(tracker.status(13000)["source"], "last_good")
+        self.assertTrue(tracker.ingest_gpsd(tpv(14), 14000))
+
+    def test_gst_without_optional_time_or_axis_errors_keeps_fix_live(self):
+        epoch = dt.datetime(2026, 10, 20, 12, tzinfo=dt.timezone.utc).timestamp()
+        reference = [epoch]
+        tracker = LocationTracker(utc_reference=lambda: reference[0])
+        gst = {"class": "GST", "device": "configured-gnss-device", "rms": 1.0}
+        for second in range(4):
+            reference[0] = epoch + second
+            self.assertTrue(tracker.ingest_gpsd(tpv(second), second * 1000))
+            partial = dict(gst, time="2026-10-20T12:00:%02d.000Z" % second) if second % 2 else gst
+            self.assertFalse(tracker.ingest_gpsd(partial, second * 1000 + 100))
+            status = tracker.status(second * 1000 + 100)
+            self.assertTrue(status["fresh"])
+            self.assertIsNone(status["reason"])
+            self.assertEqual(status["uncertainty_m"], 4.5)
+        self.assertTrue(tracker.status(3100)["utc_verified"])
+        tracker.ingest_gpsd(dict(gst, time="2026-10-20T12:00:03.000Z", lat="bad", lon=1), 3200)
+        self.assertEqual(tracker.status(3200)["reason"], "GPSD_GST_ERROR")
+
 
 class NmeaTrackingTests(unittest.TestCase):
     def test_official_quectel_rmc_and_gga_examples(self):
@@ -274,6 +324,52 @@ class NmeaTrackingTests(unittest.TestCase):
         self.assertEqual(tracker.status(1000)["age_ms"], 1000)
         self.assertFalse(tracker.status(3000)["fresh"])
 
+    def test_empty_optional_gst_and_zda_fields_do_not_invalidate_live_fix(self):
+        tracker = LocationTracker()
+        tracker.ingest_nmea(rmc(), 0)
+        for sample in (nmea("GNGST,120000.000,1.2,,,,,,"), nmea("GNGST,120000.000,1.2,,,,3.0,,"),
+                       nmea("GNGST,,,,,,3.0,4.0,"), nmea("GNZDA,,,,,,"), nmea("GNZDA,120000.000,,,,,")):
+            with self.subTest(sample=sample):
+                self.assertEqual(tracker.ingest_nmea(sample, 100), 0)
+                status = tracker.status(100)
+                self.assertTrue(status["fresh"])
+                self.assertIsNone(status["reason"])
+                self.assertIsNone(status["uncertainty_m"])
+        tracker.ingest_nmea(nmea("GNGST,120000.000,1.0,1.0,1.0,0.0,x,4.0,5.0"), 200)
+        self.assertEqual(tracker.status(200)["reason"], "NMEA_NUMBER")
+
+    def test_explicit_2d_gsa_does_not_publish_held_gga_altitude(self):
+        for mode, expected in (("2", (None, None)), ("3", (120.0, 155.0)), (None, (120.0, 155.0))):
+            with self.subTest(mode=mode):
+                tracker = LocationTracker()
+                if mode:
+                    tracker.ingest_nmea(nmea(",".join(["GNGSA", "A", mode] + [""] * 12 + ["1.2", "0.9", "1.0"])), 0)
+                self.assertEqual(tracker.ingest_nmea(gga(), 0), 1)
+                status = tracker.status(0)
+                self.assertEqual(status["mode"], int(mode or 2))
+                self.assertEqual((status["alt_msl_m"], status["alt_hae_m"]), expected)
+
+    def test_rmc_zda_discontinuity_reacquires_after_three_consistent_epochs(self):
+        def epoch(second, now):
+            stamp = "12%02d%02d.000" % divmod(second, 60)
+            return tracker.ingest_nmea(nmea("GNZDA,%s,20,10,2026,00,00" % stamp) + rmc(stamp), now)
+        tracker = LocationTracker()
+        self.assertEqual(epoch(0, 0) + epoch(1, 1000), 2)
+        accepted = [epoch(61 + step, 1000 + step * 1000) for step in range(1, 7)]
+        self.assertEqual(accepted, [0, 0, 0, 1, 1, 1])
+        status = tracker.status(7000)
+        self.assertTrue(status["fresh"])
+        self.assertEqual(status["utc"], "2026-10-20T12:01:07.000Z")
+        self.assertIsNone(status["reason"])
+
+    def test_undated_gga_stream_recovers_after_outage_longer_than_half_a_day(self):
+        tracker = LocationTracker()
+        self.assertEqual(tracker.ingest_nmea(gga("120000.000"), 0) + tracker.ingest_nmea(gga("120001.000"), 1000), 2)
+        start = 1000 + 13 * 3600 * 1000
+        accepted = [tracker.ingest_nmea(gga("01%02d%02d.000" % divmod(1 + step, 60)), start + step * 1000) for step in range(1, 6)]
+        self.assertEqual(accepted, [0, 0, 0, 1, 1])
+        self.assertTrue(tracker.status(start + 5000)["fresh"])
+
     def test_time_jumps_and_bad_dates_preserve_last_good(self):
         for sample in (rmc("120010.000"), rmc("115959.000"),
                        rmc(date="310226"), rmc("120060.000")):
@@ -329,6 +425,21 @@ class SelectionAndClockTests(unittest.TestCase):
                              "device": "configured-gnss-device"}, 1000)
         self.assertEqual(tracker.status(1000)["source"], "nmea")
         self.assertTrue(tracker.status(1000)["fresh"])
+
+    def test_recovered_fault_is_history_not_the_current_fallback_reason(self):
+        tracker = LocationTracker()
+        self.assertEqual(tracker.ingest_nmea(b"junk" + rmc(), 0), 1)
+        self.assertIsNone(tracker.status(0)["reason"])
+        status = tracker.manual(50.0001, 20.0001, 10000)
+        self.assertEqual((status["source"], status["reason"], status["last_error"]),
+                         ("manual", "MANUAL_FALLBACK", "NMEA_RESYNC"))
+        tracker = LocationTracker()
+        tracker.ingest_gpsd(tpv(), 0)
+        tracker.ingest_gpsd(tpv(1, lat=51.0), 1000)
+        tracker.ingest_gpsd(tpv(2), 2000)
+        self.assertEqual(tracker.status(6000)["reason"], "STALE")
+        tracker.ingest_gpsd(tpv(7, mode=1), 7000)
+        self.assertEqual(tracker.status(7000)["reason"], "GPSD_NO_FIX")
 
     def test_monotonic_clock_reversal_latches_unknown_age(self):
         tracker = LocationTracker()
@@ -463,6 +574,35 @@ class ClientTests(unittest.TestCase):
             client.start(0)
         client.poll(3000)
         self.assertEqual(client.error, "GPSD_HANDSHAKE_TIMEOUT")
+
+    def test_late_polls_drain_received_handshake_before_deadline(self):
+        version = b'{"class":"VERSION","proto_major":3,"proto_minor":15}\n'
+        ack = b'{"class":"WATCH","enable":true,"json":true}\n' + json.dumps(tpv()).encode() + b"\n"
+        for polls in ((2900, 3000), (5000, 5250)):
+            with self.subTest(polls=polls):
+                fake, tracker = FakeSocket(), LocationTracker()
+                client = GpsdClient(tracker, "127.0.0.1", 2947)
+                with patch("srrx.location.socket.socket", return_value=fake):
+                    client.start(0)
+                fake.incoming.append(version)
+                self.assertEqual(client.poll(polls[0]), 0)
+                self.assertEqual(bytes(fake.sent), client.WATCH)
+                fake.incoming.append(ack)
+                self.assertEqual(client.poll(polls[1]), 1)
+                self.assertTrue(client.watching)
+                self.assertIsNone(client.error)
+        # VERSION without a WATCH acknowledgement still expires (3 s after VERSION).
+        fake, tracker = FakeSocket(), LocationTracker()
+        client = GpsdClient(tracker, "127.0.0.1", 2947)
+        with patch("srrx.location.socket.socket", return_value=fake):
+            client.start(0)
+        fake.incoming.append(version)
+        client.poll(1000)
+        client.poll(3999)
+        self.assertIsNotNone(client.sock)
+        client.poll(4000)
+        self.assertEqual(client.error, "GPSD_HANDSHAKE_TIMEOUT")
+        self.assertIsNone(client.sock)
 
 
 if __name__ == "__main__":

@@ -32,7 +32,7 @@ EGC/DSC не замінені фільтром уже декодованого �
 /прийнятий/шлях/noaa-apt /тимчасовий/input.wav -o /тимчасовий/output.png --map no --rotate no --quiet
 ```
 
-Job не може додати аргументи, оточення, pipeline, URL, SDR-пристрій, gain, bias, TX, shell або output sink. `shell=False`; executable — абсолютний ELF `noaa-apt`, root-owned, без group/world write, з точним SHA256. Скрипти й PATH lookup не приймаються. Не запускаються SatDump live/record, TX-capable GUI або довільний декодер.
+Job не може додати аргументи, оточення, pipeline, URL, SDR-пристрій, gain, bias, TX, shell або output sink. `shell=False`; executable — абсолютний ELF `noaa-apt`, root-owned, без group/world write, з точним SHA256. Усі батьківські каталоги executable і запису встановлення теж мають належати root без group/world write (world-writable дозволено лише зі sticky bit), бо runner повторно хешує файл і запускає його за шляхом: інакше не-root користувач міг би перейменуванням підмінити бінарник між перевіркою та `execve`. Скрипти й PATH lookup не приймаються. Не запускаються SatDump live/record, TX-capable GUI або довільний декодер.
 
 Санітарний звіт і plan manifest містять лише фіксовані поля, hash, розміри й символічні аргументи. Шляхи джерела, evidence text, stdout/stderr і декодовані текстові повідомлення до звіту не потрапляють. Decode stdout/stderr відразу спрямовані в `/dev/null`; лише bounded `--help` тимчасово читається в пам'яті. Тайм-аут декодування 0.05–300 s; окрема перевірка `--help` має до 3 s. При завершенні/тайм-ауті закривається вся створена process group.
 
@@ -67,7 +67,7 @@ Job не може додати аргументи, оточення, pipeline, U
 
 ## Прийняте встановлення та запуск
 
-Запис встановлення — локальний root-owned JSON без group/world write. Його готує адміністратор після перевірки пакета/збірки, а не завдання декодування:
+Запис встановлення — локальний root-owned JSON без group/world write у каталогах із тим самим правилом. Його готує адміністратор після перевірки пакета/збірки, а не завдання декодування:
 
 ```json
 {

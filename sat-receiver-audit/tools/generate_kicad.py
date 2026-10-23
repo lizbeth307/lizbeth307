@@ -8,9 +8,7 @@ layout or certify any of the hardware acceptance gates.
 from __future__ import annotations
 
 import argparse
-from collections import Counter, OrderedDict, defaultdict
-from copy import deepcopy
-from datetime import date
+from collections import OrderedDict, defaultdict
 import json
 import hashlib
 import math
@@ -205,8 +203,9 @@ def validate(graphs):
             for p in c["pins"]:
                 if p.get("type", "passive") not in TYPES:
                     errors.append(f"invalid electrical type {ref}.{p['number']}")
-                if p.get("nc") and p.get("net"):
-                    errors.append(f"NC connected to a net: {ref}.{p['number']}")
+                # place_component draws a no-connect marker and drops the label for either form.
+                if (p.get("nc") or p.get("type") == "no_connect") and p.get("net"):
+                    errors.append(f"NC/no_connect contact connected to a net: {ref}.{p['number']}")
                 if p.get("net"):
                     nodes[p["net"]].append({"ref": ref, "pin": str(p["number"]), "sheet": g["sheet"], "type": p.get("type", "passive")})
     if errors:
@@ -219,7 +218,7 @@ def main():
     ap.add_argument("--design-dir", type=Path, default=BASE / "design")
     ap.add_argument("--output", type=Path, default=BASE / "build/kicad")
     args = ap.parse_args()
-    graphs = [json.loads(p.read_text()) for p in sorted(args.design_dir.glob("E[1-5].json"))]
+    graphs = [json.loads(p.read_text(encoding="utf-8")) for p in sorted(args.design_dir.glob("E[1-5].json"))]
     if not graphs:
         raise SystemExit("No reviewed E1..E5 design graphs found")
     # Explicit supply declarations only, after passive components or at documented
@@ -235,7 +234,7 @@ def main():
     out = args.output
     out.mkdir(parents=True, exist_ok=True)
     all_symbols = [lib_symbol(c, embedded=False)[0] for g in graphs for c in g["components"]]
-    (out / "sr_rx_v2_completed.kicad_sym").write_text('(kicad_symbol_lib (version 20241209) (generator "kicad_symbol_editor")\n' + "\n".join(all_symbols) + "\n)\n")
+    (out / "sr_rx_v2_completed.kicad_sym").write_text('(kicad_symbol_lib (version 20241209) (generator "kicad_symbol_editor")\n' + "\n".join(all_symbols) + "\n)\n", encoding="utf-8", newline="\n")
     pages = []
     for graph in graphs:
         layouts = paginate(graph)
@@ -255,7 +254,7 @@ def main():
                 else:
                     content.append(place_component(item, x, y, path, stem + "/" + item["ref"]))
             content.append(")\n")
-            (out / (stem + ".kicad_sch")).write_text("\n".join(content))
+            (out / (stem + ".kicad_sch")).write_text("\n".join(content), encoding="utf-8", newline="\n")
             pages.append({"stem": stem, "instance": instance, "title": title, "components": len(comps), "sheet": sheet})
     # The overview indexes every actual electrical page, retaining E1..E5 naming.
     root = [header(ROOT_UUID, "SR-RX-v2 - зміст електричної схеми", "A2"), "(lib_symbols)", text("SR-RX-v2: приймач і портативна радіолабораторія", 15.24, 15.24, "root/title", 3.048), text("Лише прийом в ефірі. Інженерна редакція від 4653188. Статус і незакриті ворота: ../../COMPLETION.md та ../../OPEN_ITEMS.md.", 15.24, 25.4, "root/status", 1.524)]
@@ -273,21 +272,21 @@ def main():
     root.append('(sheet_instances (path "/" (page "1")))\n)\n')
     if math.ceil(len(pages) / 4) * 38.1 + 38.1 > 380:
         raise ValueError("Overview page overflow: split required")
-    (out / "sr-rx-v2.kicad_sch").write_text("\n".join(root))
+    (out / "sr-rx-v2.kicad_sch").write_text("\n".join(root), encoding="utf-8", newline="\n")
     table = '(sym_lib_table (version 7)\n'
     for name in ["sr_rx_v2_pwr", "sr_rx_v2_sig", "sr_rx_v2_completed"]:
         table += f' (lib (name "{name}")(type "KiCad")(uri "${{KIPRJMOD}}/{name}.kicad_sym")(options "")(descr "SR-RX-v2"))\n'
-    (out / "sym-lib-table").write_text(table + ")\n")
+    (out / "sym-lib-table").write_text(table + ")\n", encoding="utf-8", newline="\n")
     project_file = out / "sr-rx-v2.kicad_pro"
-    project = json.loads(project_file.read_text()) if project_file.exists() else {}
+    project = json.loads(project_file.read_text(encoding="utf-8")) if project_file.exists() else {}
     project.setdefault("meta", {}).update({"filename": "sr-rx-v2.kicad_pro", "version": 3})
     project["sheets"] = [[ROOT_UUID, "Root"]] + [[uid("document/" + p["stem"]), p["stem"]] for p in pages]
-    project_file.write_text(json.dumps(project, ensure_ascii=False, indent=2) + "\n")
+    project_file.write_text(json.dumps(project, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     physical_nets = {k: [v for v in vs if not v["ref"].startswith("#")] for k, vs in nets.items()}
     manifest = {"base_commit": "465318835e71eae326059f5f66e2b47232169556", "root_uuid": ROOT_UUID, "pages": pages, "components": sum(not r.startswith('#') for r in refs), "supply_annotations": len(flag_nets), "connected_contacts": sum(map(len, physical_nets.values())), "nets": len(nets), "single_contact_nets": {k: v for k, v in physical_nets.items() if len(v) == 1}, "open_items": [dict(item, sheet=g["sheet"]) for g in graphs for item in g.get("open_items", [])]}
     manifest["source_sha256"] = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(args.design_dir.glob("E[1-5].json"))}
-    (out / "generation-manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
-    (out / "expected-netlist.json").write_text(json.dumps(physical_nets, ensure_ascii=False, indent=2) + "\n")
+    (out / "generation-manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+    (out / "expected-netlist.json").write_text(json.dumps(physical_nets, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps({k: v for k, v in manifest.items() if k not in {"single_contact_nets", "open_items", "pages"}}, ensure_ascii=False))
     print(f"Electrical pages: {len(pages)}; explicit open items: {len(manifest['open_items'])}")
 

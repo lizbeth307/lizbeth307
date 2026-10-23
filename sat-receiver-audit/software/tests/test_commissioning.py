@@ -1,14 +1,27 @@
 """Synthetic acceptance exists only in a TemporaryDirectory for validator tests."""
 import copy
+from datetime import datetime, timezone
 import hashlib
+import importlib.util
 import json
 from pathlib import Path
+import shutil
 import tempfile
 import unittest
+from unittest.mock import patch
 import zlib
 
 from srrx.commissioning import (BRANCH_CAPS, CAL_FIELDS, GATE_IDS, RUNTIME_SOURCES,
                                 ValidationError, acceptance_template, load_acceptance)
+from srrx.provision import provision
+
+PICO_CALIBRATION = Path(__file__).resolve().parents[2] / "firmware/pico/calibration.py"
+
+
+class ClockBehind(datetime):
+    @classmethod
+    def now(cls, tz=None):
+        return datetime(2025, 6, 1, tzinfo=timezone.utc)
 
 
 class AcceptanceTests(unittest.TestCase):
@@ -23,6 +36,7 @@ class AcceptanceTests(unittest.TestCase):
         (self.root / "design/readiness-contract.json").write_text(json.dumps({"gate_results": dict.fromkeys(GATE_IDS, "OPEN")}))
         for filename in ("software/srrx/model.py", "firmware/pico/main.py", "firmware/imu/main.py"):
             (self.root / filename).write_text("# synthetic fixture source\n")
+        shutil.copyfile(PICO_CALIBRATION, self.root / "firmware/pico/calibration.py")  # provision validator
         (self.root / "deployment/guard.sh").write_text("# synthetic deployment guard fixture\n")
         (self.root / "measurements/bench.log").write_text("Synthetic validator fixture: not a hardware measurement.\n")
         self.manifest = acceptance_template(self.root)
@@ -44,17 +58,13 @@ class AcceptanceTests(unittest.TestCase):
         for gate in data["gates"].values():
             gate.update(status="PASS", evidence=self.evidence())
         record = {"v": 1, "revision": "E3-v2.1", "serial": data["pico_serial"],
-                  "scale_mv_per_count": .28, "offset_mv": 0.0,
-                  "panel_offset_c": 0.0, "case_offset_c": 0.0,
+                  "scale_nv_per_count": 280000, "offset_uv": 0,
+                  "panel_offset_mc": 0, "case_offset_mc": 0,
                   "reference_id": "DMM-FIXTURE-42"}
         values = []
         for key in CAL_FIELDS:
             value = record[key]
-            if type(value) is float:
-                value = "%.9f" % value
-            elif type(value) is int:
-                value = str(value)
-            values.append(key + "=" + value)
+            values.append(key + "=" + (str(value) if type(value) is int else value))
         record["crc32"] = "%08x" % (zlib.crc32(("\n".join(values) + "\n").encode()) & 0xffffffff)
         data["battery_adc"] = {"status": "PASS", "record": record, "evidence": self.evidence(),
             "points": [{"raw_count": 40000, "reference_v": 11.2}, {"raw_count": 50000, "reference_v": 14.0}]}
@@ -119,7 +129,10 @@ class AcceptanceTests(unittest.TestCase):
         self.complete_fixture()
         for change in (lambda d: d["battery_adc"].update(status="OPEN"),
                        lambda d: d["battery_adc"]["record"].update(serial="e661000000000000"),
-                       lambda d: d["battery_adc"]["record"].update(scale_mv_per_count=.3),
+                       lambda d: d["battery_adc"]["record"].update(scale_nv_per_count=300000),
+                       lambda d: d["battery_adc"]["record"].update(scale_nv_per_count=280000.0),
+                       lambda d: d["battery_adc"]["record"].update(offset_uv=False),
+                       lambda d: d["battery_adc"]["record"].update(scale_mv_per_count=.28),
                        lambda d: d["battery_adc"]["points"][0].update(reference_v=12.0),
                        lambda d: d["battery_adc"]["points"][1].update(raw_count=True)):
             data = copy.deepcopy(self.manifest)
@@ -155,6 +168,62 @@ class AcceptanceTests(unittest.TestCase):
         self.path.write_text('{"schema_version":1,"schema_version":1}')
         with self.assertRaises(ValidationError):
             load_acceptance(self.path, self.root)
+
+    def test_clock_behind_acceptance_is_distinct_and_runtime_tolerant(self):
+        self.complete_fixture()
+        self.save()
+        with patch("srrx.commissioning.datetime", ClockBehind):
+            with self.assertRaisesRegex(ValidationError, "system clock"):
+                load_acceptance(self.path, self.root)
+            self.assertEqual(load_acceptance(self.path, self.root, clock_check=False)["hardware_unit_id"], "FIXTURE-0042")
+            # Only the wall-clock bound is relaxed; floor and ordering still apply.
+            for change in (lambda d: d.update(accepted_at="2025-12-31T00:00:00Z"),
+                           lambda d: d["gates"]["E1-01"]["evidence"].update(date="2026-01-04T00:00:00Z")):
+                data = copy.deepcopy(self.manifest)
+                change(data)
+                self.save(data)
+                with self.assertRaises(ValidationError):
+                    load_acceptance(self.path, self.root, clock_check=False)
+
+    def pico(self):
+        spec = importlib.util.spec_from_file_location("srrx_test_pico_calibration", PICO_CALIBRATION)
+        module = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(module)
+        return module
+
+    def test_provision_binds_exactly_the_validated_bytes(self):
+        self.complete_fixture()
+        self.save()
+        original = self.path.read_bytes()
+
+        def concurrent_rewrite(*args, **kwargs):
+            result = load_acceptance(*args, **kwargs)
+            self.path.write_bytes(original.replace(b"FIXTURE-0042", b"FIXTURE-0043"))
+            return result
+        output = self.root / "provisioned"
+        with patch("srrx.provision.load_acceptance", side_effect=concurrent_rewrite):
+            summary = provision(self.path, self.root, output)
+        digest = hashlib.sha256(original).hexdigest()
+        cal = json.loads((output / "calibration.json").read_text())
+        record = json.loads((output / "commissioning.json").read_text())
+        self.assertEqual((summary["acceptance_sha256"], record["qualification_record"]), (digest, digest))
+        pico = self.pico()
+        pico.validate(cal, "e6616407e35b8d29")
+        self.assertTrue(pico.commissioning_valid(record, cal, "e6616407e35b8d29"))
+        self.assertEqual(sorted(p.name for p in output.iterdir()), ["calibration.json", "commissioning.json"])
+
+    def test_provision_failure_keeps_previous_pair(self):
+        self.complete_fixture()
+        self.save()
+        output = self.root / "provisioned"
+        output.mkdir()
+        for name in ("calibration.json", "commissioning.json"):
+            (output / name).write_text("previous " + name)
+        with patch("srrx.provision.os.fsync", side_effect=[None, OSError(28, "No space left on device")]):
+            with self.assertRaises(OSError):
+                provision(self.path, self.root, output)
+        self.assertEqual({p.name: p.read_text() for p in output.iterdir()},
+                         {name: "previous " + name for name in ("calibration.json", "commissioning.json")})
 
     def test_lab5_budget_requires_measured_evidence_and_bound(self):
         self.complete_fixture()

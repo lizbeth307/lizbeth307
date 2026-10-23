@@ -2,11 +2,22 @@
 """Import a stopped, successful guest's reports and bind its executed sources."""
 import argparse
 import hashlib
+import importlib.util
 import json
-from pathlib import Path
+import os
+from pathlib import Path, PurePosixPath
 import shutil
+import stat
+import tempfile
 
 PROJECT = Path(__file__).resolve().parents[1]
+# Everything the guest executes or consumes as test input: service/deploy code,
+# locks, patches and byte-exact upstream fixtures, plus the guest test runner.
+BOUND_PREFIXES = ("software/", "firmware/", "deployment/")
+BOUND_SUFFIXES = {".py", ".sh", ".service", ".json", ".toml", ".patch"}
+BOUND_TREES = ("deployment/upstream-fixtures/", "deployment/patches/")
+BOUND_EXTRA = {"tools/check_software.py", "tools/run_tests_offline.py"}
+UNBOUND = ("deployment/linux_lab/build_kit.py", "firmware/dist/")
 
 
 def sha(path):
@@ -14,7 +25,30 @@ def sha(path):
 
 
 def read(path):
-    return json.loads(path.read_text())
+    return json.loads(path.read_text(encoding="utf-8"))
+
+
+def bound(relative):
+    if relative.startswith(UNBOUND) or any(p in {"__pycache__", ".git", "tmp", "qa"} for p in relative.split("/")):
+        return False
+    return (relative in BOUND_EXTRA or relative.startswith(BOUND_TREES)
+            or (relative.startswith(BOUND_PREFIXES) and PurePosixPath(relative).suffix in BOUND_SUFFIXES))
+
+
+def bound_sources(project):
+    """Current in-scope project files; build_bundle requires all of them bound."""
+    return {p.relative_to(project).as_posix() for p in project.rglob("*")
+            if p.is_file() and not p.is_symlink() and bound(p.relative_to(project).as_posix())}
+
+
+def regular_tree(root):
+    """Guest-written results: reject links/special files before anything is read or copied."""
+    for directory, dirs, files in os.walk(root):
+        for name in [""] + dirs + files:
+            path = os.path.join(directory, name) if name else directory
+            mode = os.lstat(path).st_mode
+            if not (stat.S_ISDIR(mode) or stat.S_ISREG(mode)):
+                raise SystemExit("Guest results contain a symlink or special file: " + path)
 
 
 def main():
@@ -27,22 +61,34 @@ def main():
             or report["environment"]["architecture"] != "aarch64"
             or report["hardware_qualified"] is not False or report["physical_tests_performed"] is not False):
         raise SystemExit("Only a successful stopped ARM64 simulation run may be imported")
+    # debugfs rdump recreates guest symlinks on the host; never follow one.
+    regular_tree(work / "results")
     entries = read(work / "results/project-manifest.json")
     executed = {}
-    prefixes = ("software/", "firmware/", "deployment/linux_lab/", "deployment/module_lab/")
     for entry in entries:
         relative = entry["path"]
-        if (relative.startswith(prefixes) and Path(relative).suffix in {".py", ".sh", ".service"}
-                and relative != "deployment/linux_lab/build_kit.py"):
+        if bound(relative):
             path = PROJECT / relative
-            if not path.is_file() or sha(path) != entry["sha256"]:
+            if not path.is_file() or path.is_symlink() or sha(path) != entry["sha256"]:
                 raise SystemExit("Executed source changed after guest preparation: " + relative)
             executed[relative] = entry["sha256"]
     if len(executed) < 50:
         raise SystemExit("Incomplete executed-source manifest")
+    added = sorted(bound_sources(PROJECT) - set(executed))
+    if added:
+        raise SystemExit("Source added after guest preparation: " + ", ".join(added[:12]))
     module_report = read(work / "results/module-lab/report.json")
     if module_report["execution_status"] != "PASS" or module_report["environment"]["architecture"] != "aarch64":
         raise SystemExit("Missing successful ARM64 per-module execution")
+    # Publish no guest-authored page/script: it must equal the bound renderer's output.
+    spec = importlib.util.spec_from_file_location("srrx_module_lab_run", PROJECT / "deployment/module_lab/run.py")
+    lab = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(lab)
+    with tempfile.TemporaryDirectory(prefix="srrx-module-render-") as tmp:
+        lab.render(module_report, Path(tmp))
+        for name in ("module-results.html", "MODULE-RESULTS.md"):
+            if (Path(tmp) / name).read_bytes() != (work / "results/module-lab" / name).read_bytes():
+                raise SystemExit("Guest module page differs from the host render of its report: " + name)
     destination = PROJECT / "verification/linux-lab"
     modules = PROJECT / "verification/module-lab"
     if destination.exists() or modules.exists():
@@ -56,16 +102,18 @@ def main():
             continue
         target = destination / relative
         target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(path, target)
-    shutil.copytree(work / "results/module-lab", modules)
+        shutil.copyfile(path, target, follow_symlinks=False)
+    shutil.copytree(work / "results/module-lab", modules, symlinks=True)
     for name in ("report.json", "run.json", "console.log", "debugfs.log"):
         shutil.copyfile(work / name, destination / name)
+    regular_tree(destination)
+    regular_tree(modules)
     binding = {"schema_version": 1, "source_sha256": executed,
                "guest_source_manifest_sha256": sha(work / "results/project-manifest.json"),
                "module_report_sha256": sha(modules / "report.json"),
                "linux_report_sha256": sha(destination / "report.json"),
-               "scope": "Exact Python, shell and service files present in this executed guest payload; no physical qualification"}
-    (destination / "source-binding.json").write_text(json.dumps(binding, indent=2) + "\n")
+               "scope": "Exact code, locks, patches and upstream fixtures present in this executed guest payload, plus its test runner; no physical qualification"}
+    (destination / "source-binding.json").write_text(json.dumps(binding, indent=2) + "\n", encoding="utf-8", newline="\n")
     units = read(destination / "software-tests.json")
     storage = read(destination / "storage-smoke.json")
     connect = module_report["domains"]["connectivity"]["report"]
@@ -89,7 +137,7 @@ Storage smoke: **{len(storage['cases'])} PASS** на окремому вірту
 
 36 апаратних воріт залишаються OPEN. Фізичне залізо, аналогові RF/живлення, BMS, калібрування, Q6A peripheral pinmux, повний Lime/56MS/s/HTP та виробничий випуск не прийняті.
 """
-    (destination / "README.md").write_text(text)
+    (destination / "README.md").write_text(text, encoding="utf-8", newline="\n")
     print(json.dumps({"status": "IMPORTED", "bound_sources": len(executed), "linux": str(destination), "modules": str(modules)}))
 
 

@@ -20,7 +20,7 @@ ORT 1.31.0 містить увімкнену за замовчуванням 1DS
 
 `load_ort_private()` встановлює цей opt-out до optional imports, статично перевіряє встановлені Privacy.md та наявність control string у native binary, потім імпортує ORT і негайно викликає `disable_telemetry_events()` перед будь-якими provider/session queries. Runtime, завантажений раніше поза guard, відсутній/непрацездатний API або непідтверджена підтримка opt-out блокують model tools. Наразі guard перевірено для Linux 1DS; інші платформи потребують окремого аудиту замість припущення про legacy telemetry backend.
 
-Під час виправлення guard перевірено шістьма ізольованими fake-runtime тестами без import справжнього ORT. Повний запуск виконує root лише через offline launcher із забороненим INET/INET6; цей додатковий бар’єр не замінює pre-init opt-out. Launcher повинен використовувати `load_ort_private()`, а не прямий ORT import. Нові runtime/hardware результати не можна вважати перевіреними тільки через проходження fake tests.
+Під час виправлення guard перевірено шістьма ізольованими fake-runtime тестами без import справжнього ORT. Повний запуск виконує root лише через offline launcher із забороненим INET/INET6; цей додатковий бар’єр не замінює pre-init opt-out. Launcher повинен використовувати `load_ort_private()`, а не прямий ORT import; тест перевіряє, що жоден модуль `srrx` чи тест не імпортує `onnxruntime` напряму. Тести з реальним ORT виконуються лише на Linux: на інших платформах guard навмисно блокує ORT, тому там вони skipped. Нові runtime/hardware результати не можна вважати перевіреними тільки через проходження fake tests.
 
 ## Формат моделі
 
@@ -55,7 +55,9 @@ Export без `--dataset` створює ONNX із `cpu_validated=false`. Пар
 
 Static quantization використовує **тільки training annotation IDs** з provenance. Features повторно виділяються з валідованих masked spectra; випадкові calibration arrays не підставляються. Validation IDs і groups не потрапляють до calibration reader. Сам прапорець `source=HARDWARE` у кадрі залишається заявленим походженням; це не апаратний acceptance certificate.
 
-Викликається ONNX Runtime `quant_pre_process` зі shape inference та без graph optimization, потім `quantize_static` із MinMax calibration, `QuantFormat.QDQ`, signed `QInt8` activations/weights. Перевіряється наявність справжніх `QuantizeLinear`, `DequantizeLinear` та INT8 initializers. Representation містить float operators між Q/DQ; це не твердження про повністю цілочисельне фізичне виконання.
+Викликається ONNX Runtime `quant_pre_process` зі shape inference та без graph optimization, потім `quantize_static` із MinMax calibration, `QuantFormat.QDQ`, signed `QInt8` activations/weights. Після quantization код перевіряє граф: є `QuantizeLinear`/`DequantizeLinear`, кожний zero point Q/DQ є signed INT8 initializer, а кожна квантована вага (initializer на вході `DequantizeLinear`) має тип INT8. Інакше artifact не публікується. `integer_type`, `int8_weights` і `mixed_float_ops` у report виміряні з графа, а не записані константами. Representation містить float operators між Q/DQ; це не твердження про повністю цілочисельне фізичне виконання.
+
+Static quantization бере діапазони активацій лише з training features (MinMax). Тому `validate_cpu` додатково виконує 2 + 2×C синтетичних range probes: кути простору ознак (усі 0 і всі 1), кожний centroid і найвіддаленіший від нього кут. Це не calibration data. Для float32 distances на probes мають збігтися в межах допуску float32. QDQ поза каліброваним діапазоном насичується, тому на probes gate вимагає лише тих самих label/OOD рішень, а похибка, `range_probe_distances_within_tolerance` і `max_range_probe_distance` (фактична межа насичення) записуються в report.
 
 Порівняння виконується через явний `CPUExecutionProvider` на **відкладених capture groups**:
 
@@ -64,7 +66,7 @@ Static quantization використовує **тільки training annotation 
 | Float32 | `2e-6 + 2e-6 × abs(reference)` |
 | INT8 QDQ | `0.01 + 0.02 × abs(reference)` — не слабше за чинний QAIRT adapter |
 
-Додатково мають збігтися всі validation labels і OOD decisions. Якщо QDQ gate не проходить, quantized artifact не публікується; попередній файл output зберігається. Report містить максимальні абсолютну/відносну/нормовану похибки, RMS error, sample counts, IDs/groups, calibration provenance, versions і SHA256.
+Додатково мають збігтися всі validation labels і OOD decisions, а також label/OOD decisions на всіх range probes. Якщо QDQ gate не проходить, quantized artifact не публікується; попередній файл output зберігається. Report містить максимальні абсолютну/відносну/нормовану похибки, RMS error, sample counts, IDs/groups, calibration provenance, versions і SHA256.
 
 ## Фактично виміряний приклад
 
@@ -77,8 +79,11 @@ Static quantization використовує **тільки training annotation 
 | Max normalized error відносно gate | 0.007970 | 0.806200 |
 | Label agreement | 3/3 | 3/3 |
 | OOD agreement | 3/3 | 3/3 |
+| Range probes: max absolute distance error | 5.0456×10⁻⁸ | 0.580624 |
+| Range probes: max distance output | 0.924862 | 0.344238 (насичення) |
+| Range probes: label/OOD agreement | 8/8 | 8/8 |
 
-У QDQ max relative error дорівнює **1.0**: деякі дуже малі distances округлюються до нуля. Абсолютний gate пройдено, але confidence може змінюватися; це не калібрована ймовірність. Інший датасет може не пройти gate і потребуватиме іншої precision/calibration. Висновок не поширюється на весь простір сигналів або на HTP.
+У QDQ max relative error дорівнює **1.0**: деякі дуже малі distances округлюються до нуля. Абсолютний gate пройдено, але confidence може змінюватися; це не калібрована ймовірність. QDQ distances у цьому прикладі насичуються приблизно на 0.344, тож значення поза held-out діапазоном не еквівалентні float32. Radius 0.08 значно нижчий за межу насичення, тому OOD-рішення на probes збереглися; runtime adapter відхиляє такі відстані через допуск, і рішення береться з CPU. Інший датасет може не пройти gate і потребуватиме іншої precision/calibration. Висновок не поширюється на весь простір сигналів або на HTP.
 
 ## Manifest і межа QAIRT
 
@@ -92,7 +97,7 @@ PYTHONPATH=software /tmp/srrx-model-tools/bin/python -m srrx.model_export manife
 
 Signed INT8 QDQ тут перевірено тільки CPU runtime. Документація QNN описує окремі вимоги HTP до precision, supported ops і статичних shapes; поширені QNN configurations використовують unsigned activations. Потрібні належна target-specific quantization/conversion, QAIRT SDK, сумісний backend/SoC та фактичний запуск із забороненим CPU EP fallback. Успішний ONNX checker або CPU error gate не доводить HTP support. QNN blob/context binary не створювався; жодного HTP PASS не записано.
 
-Python API: `dependency_status`, `export_float`, `validate_cpu`, `quantize_static_int8`, `write_qairt_manifest`. API не змінює заморожений `learning.py`.
+Python API: `dependency_status`, `export_float`, `validate_cpu`, `quantize_static_int8`, `write_qairt_manifest`. API використовує ознаки, відстані й рішення з `learning.py` без окремої копії; annotations `unknown_energy` не входять у calibration/validation так само, як у training.
 
 ## Тести
 
@@ -100,6 +105,6 @@ Python API: `dependency_status`, `export_float`, `validate_cpu`, `quantize_stati
 PYTHONPATH=software /tmp/srrx-model-tools/bin/python -m unittest discover -s software/tests -p 'test_model_export.py' -v
 ```
 
-Перевіряються фактичний ONNX Runtime, heldout/edge distances, QDQ nodes/INT8, split provenance, opt-in synthetic calibration, error gate, атомарна заміна, artifact/model binding, external/custom graph rejection, placeholder backend rejection та CLI. Позитивний тест manifest із реальним SDK backend позначений skipped, доки явно не задано `SRRX_QNN_HTP_LIBRARY`; він теж не заявляє апаратний запуск.
+Перевіряються фактичний ONNX Runtime, heldout/edge distances, range probes і насичення QDQ, QDQ nodes і signed INT8 zero points/weights, відсутність прямого ORT import, split provenance, opt-in synthetic calibration, error gate, атомарна заміна, artifact/model binding, external/custom graph rejection, placeholder backend rejection та CLI. Позитивний тест manifest із реальним SDK backend позначений skipped, доки явно не задано `SRRX_QNN_HTP_LIBRARY`; він теж не заявляє апаратний запуск.
 
 Первинні джерела: [ONNX helper API](https://onnx.ai/onnx/api/helper.html), [ONNX Runtime quantization](https://onnxruntime.ai/docs/performance/model-optimizations/quantization.html), [QNN Execution Provider](https://onnxruntime.ai/docs/execution-providers/QNN-ExecutionProvider.html). Export використовує документовані helper constructors і static QDQ calibration API; сумісність HTP перевіряється окремо.

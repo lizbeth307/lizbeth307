@@ -503,11 +503,15 @@ class GuestSmoke:
         self.rpc({"op": "sim", "name": "FAULT_LNA1", "value": False})
         status = self.wait_status(lambda s: not s["policy"]["armed"])
         assert_simulation(status, safe=True)
+        # Any trip disarms; only the injected input proves the fault path.
+        require(status["policy"].get("fault") == "active-low fault: FAULT_LNA1",
+                "fault scenario tripped for a different reason: " + str(status["policy"].get("fault")))
         self.rpc({"op": "sim", "name": "FAULT_LNA1", "value": True})
         time.sleep(.5)
         assert_simulation(self.status(), safe=True)
         self.rpc({"op": "control", "name": "EN_LNA1", "value": True}, expected=False)
-        return {"fault_input": "FAULT_LNA1", "clearing_fault_did_not_rearm": True, "tripped_status": status}
+        return {"fault_input": "FAULT_LNA1", "clearing_fault_did_not_rearm": True,
+                "exact_fault": status["policy"]["fault"], "tripped_status": status}
 
     def link_loss(self):
         self.arm()
@@ -515,6 +519,8 @@ class GuestSmoke:
         self.rpc({"op": "sim", "name": "drop_link", "value": True})
         status = self.wait_status(lambda s: not s["policy"]["armed"])
         assert_simulation(status, safe=True)
+        require(status["policy"].get("fault") == "pico_status_timeout",
+                "link-loss scenario tripped for a different reason: " + str(status["policy"].get("fault")))
         # Leave both wire directions absent beyond the independent model's
         # 750 ms heartbeat timeout, even after the host's 500 ms stale trip.
         time.sleep(.9)
@@ -523,7 +529,7 @@ class GuestSmoke:
         assert_simulation(recovered, safe=True)
         require(recovered["pico"].get("mcp_reset") is True, "Pico model heartbeat timeout must assert MCP reset")
         self.rpc({"op": "control", "name": "EN_LNA1", "value": True}, expected=False)
-        return {"restored_link_did_not_rearm": True, "tripped_status": status}
+        return {"restored_link_did_not_rearm": True, "exact_fault": status["policy"]["fault"], "tripped_status": status}
 
     def lease_expiry(self):
         self.arm()

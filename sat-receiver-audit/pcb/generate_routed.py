@@ -9,7 +9,6 @@ from __future__ import annotations
 import argparse, heapq, importlib.util, json, math, os
 from pathlib import Path
 import shutil, subprocess, sys, tempfile
-from collections import defaultdict
 
 BASE=Path(__file__).resolve().parents[1]
 spec=importlib.util.spec_from_file_location('starter_helpers',BASE/'pcb/generate_layout.py')
@@ -222,14 +221,14 @@ def main():
     import numpy
     from scipy.ndimage import maximum_filter
     import pcbnew as pcb
-    sourcepath=BASE/'pcb/generated/detector-core-input.json';source=json.loads(sourcepath.read_text())
+    sourcepath=BASE/'pcb/generated/detector-core-input.json';source=json.loads(sourcepath.read_text(encoding='utf-8'))
     starter=BASE/'build/kicad/pcb-preparation/detector-core-placement.kicad_pcb';frozen=helper.digest(starter)
     out=BASE/'build/kicad/pcb-prototype';out.mkdir(parents=True,exist_ok=True)
     report={'status':'ASSESSMENT_IN_PROGRESS','source_input_sha256':helper.digest(sourcepath),'frozen_starter_sha256':frozen,'published_board':False,'external_interfaces_selected':False,'release':'NOT_FOR_FABRICATION','constraints':source['constraints'],'source_preparation_blockers':source['blockers'],'blockers':[b for b in source['blockers'] if not b.startswith('Three explicitly0402')],'resource_gate_resolved':'R0402 resource bundled unmodified from official KiCad 10.0.7; passive production qualification remains open.'}
     auditfile=BASE/'verification/pcb-prototype-review.json'
     try:
         board=pcb.LoadBoard(str(starter));pos=positions()
-        assert {f.GetReference() for f in board.GetFootprints()}==set(pos)
+        if {f.GetReference() for f in board.GetFootprints()}!=set(pos):raise RuntimeError('Starter footprint set differs from routed positions')
         for fp in board.GetFootprints():
             x,y,angle=pos[fp.GetReference()];fp.SetPosition(pcb.VECTOR2I(pcb.FromMM(x),pcb.FromMM(y)));fp.SetOrientationDegrees(angle)
         place_references(pcb,board)
@@ -259,14 +258,14 @@ def main():
             work=Path(tmp);candidate=work/(NAME+'.kicad_pcb')
             pcb.SaveBoard(str(candidate),board)
             helper.atomic_write(work/(NAME+'.kicad_pro'),json.dumps(project(NAME),indent=2)+'\n')
-            table=(BASE/'build/kicad/pcb-preparation/fp-lib-table').read_text()
+            table=(BASE/'build/kicad/pcb-preparation/fp-lib-table').read_text(encoding='utf-8')
             # Temporary work uses absolute library paths; published table is portable.
             helper.atomic_write(work/'fp-lib-table',table.replace('${KIPRJMOD}/../footprints',str(BASE/'build/kicad/footprints')))
             cli=shutil.which(args.kicad_cli) or args.kicad_cli
             command=[str(cli),'pcb','drc','--format','json','--severity-all','--all-track-errors','--exit-code-violations','--refill-zones','--save-board','--output',str(work/'drc-raw.json'),str(candidate)]
             result=subprocess.run(command,capture_output=True,text=True)
             helper.atomic_write(out/'drc-command.log',result.stdout+'\n'+result.stderr)
-            raw=json.loads((work/'drc-raw.json').read_text());helper.atomic_write(out/'drc-raw.json',(work/'drc-raw.json').read_bytes())
+            raw=json.loads((work/'drc-raw.json').read_text(encoding='utf-8'));helper.atomic_write(out/'drc-raw.json',(work/'drc-raw.json').read_bytes())
             counts={k:len(raw.get(k,[])) for k in ('violations','unconnected_items','schematic_parity')}
             report.update(drc={'exit_code':result.returncode,'sections':counts,'ignored_checks':raw.get('ignored_checks',[]),'raw_sha256':helper.digest(out/'drc-raw.json'),'suppressed_or_filtered':False},track_segments=len(router.routes),vias=len(router.vias),routing=router.routes,via_assignments=router.vias,local_ground_escapes=router.ground_stubs,positions=pos)
             reread=helper.audit(pcb,source,candidate)

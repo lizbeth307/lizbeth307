@@ -8,7 +8,7 @@ ConditionPathExists=/etc/srrx/devices.env
 Type=simple
 User=labd
 Group=labd
-SupplementaryGroups=i2c dialout
+SupplementaryGroups=i2c dialout srrx-pico
 WorkingDirectory=/opt/srrx
 Environment=PYTHONPATH=/opt/srrx/software
 EnvironmentFile=/etc/srrx/devices.env

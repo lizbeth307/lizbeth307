@@ -158,7 +158,7 @@ def _require(condition, message):
 
 def _compile(compiler, directory, name, source):
     cfile, library = directory / (name + '.c'), directory / (name + '.so')
-    cfile.write_text(source)
+    cfile.write_text(source, encoding='utf-8')
     result = subprocess.run([compiler, '-std=c99', '-shared', '-fPIC', '-O2', '-Wall',
                              '-Wextra', '-Werror', str(cfile), '-o', str(library)],
                             capture_output=True, text=True, timeout=60)
@@ -344,7 +344,7 @@ def main(argv=None):
     rendered = json.dumps(report, indent=2, allow_nan=False) + '\n'
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(rendered)
+        args.output.write_text(rendered, encoding='utf-8', newline='\n')
     print(rendered, end='')
     return 0 if report['status'] == 'EMULATION_PASS' else 2 if report['status'] == 'UNAVAILABLE' else 1
 

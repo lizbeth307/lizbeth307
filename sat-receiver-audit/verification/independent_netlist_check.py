@@ -36,7 +36,7 @@ def compare(project, netfile, working=None):
         graphs[path.name] = sha256(path)
         if working is not None and path.read_bytes() != (working / path.name).read_bytes():
             working_diffs.append(path.name)
-        doc = json.loads(path.read_text())
+        doc = json.loads(path.read_text(encoding='utf-8'))
         top_level_power_flags.extend(dict(sheet=doc['sheet'], **item) for item in doc.get('power_flags', []))
         for comp in doc['components']:
             ref = comp['ref']
@@ -140,7 +140,7 @@ def main():
     output = args.report or project / 'verification/independent-netlist-review.json'
     result = compare(project, netfile, args.working_design)
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
+    output.write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n', encoding='utf-8', newline='\n')
     print(json.dumps({'passed': result['passed'], 'counts': result['counts'],
                       'failure_counts': {k: len(v) for k, v in result['checks'].items()},
                       'report': str(output)}, ensure_ascii=False, indent=2))

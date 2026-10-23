@@ -21,6 +21,8 @@ from .spectrum import mask_frame, validate_frame
 
 LABELS = ("unknown_energy", "analog_broadcast", "digital_broadcast",
           "weather_satellite", "amateur_digital", "voice_spectrogram")
+# unknown_energy is also the OOD outcome; it may be annotated but never fitted as a class.
+TRAINABLE_LABELS = LABELS[1:]
 POLICY = "spectrum_only_safe_labels_v1"
 FEATURE_VERSION, FEATURE_DIMENSION = "relative_shape_v1", 36
 MAX_ANNOTATIONS, MAX_TOTAL_BINS, MAX_JSON_BYTES = 2000, 1048576, 64 * 1024 * 1024
@@ -79,7 +81,11 @@ def _digest(value):
 
 def _patch(frame, start_bin, end_bin):
     # Reapply mandatory masks even if an input file claims every bin valid.
-    checked = validate_frame(mask_frame(frame))
+    return _slice(validate_frame(mask_frame(frame)), start_bin, end_bin)
+
+
+def _slice(checked, start_bin, end_bin):
+    # Only for a frame just produced by, or proven equal to, validate_frame(mask_frame()).
     if (type(start_bin) is not int or type(end_bin) is not int or
             not 0 <= start_bin < end_bin <= checked["fft_size"] or
             not MIN_PATCH_BINS <= end_bin - start_bin <= MAX_PATCH_BINS):
@@ -163,7 +169,8 @@ def validate_dataset(dataset):
         if not _digest(record["group_sha256"]) or record["frame_sha256"] not in frames:
             raise LearningError("Invalid anonymous capture group or frame reference")
         frame_hash, group = record["frame_sha256"], record["group_sha256"]
-        _, power = _patch(frames[frame_hash], record["start_bin"], record["end_bin"])
+        # Every stored frame was re-masked and compared above; do not redo it per box.
+        _, power = _slice(frames[frame_hash], record["start_bin"], record["end_bin"])
         feature_hash = _hash([round(x, 6) for x in _features(power)])
         if feature_hash != record["feature_sha256"] or record["id"] != _record_id(record) or record["id"] in seen:
             raise LearningError("Changed or duplicate annotation")
@@ -222,11 +229,15 @@ def _atomic_json(path, value):
             os.fsync(stream.fileno())
         os.replace(temporary, path)
         temporary = None
-        directory = os.open(path.parent, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
-        try:
-            os.fsync(directory)
-        finally:
-            os.close(directory)
+        if os.name != "nt":  # Windows has no directory fsync; file data was fsynced above.
+            try:
+                directory = os.open(path.parent, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
+                try:
+                    os.fsync(directory)
+                finally:
+                    os.close(directory)
+            except OSError as error:
+                raise OSError(error.errno, "File replaced, but directory fsync failed; durability not confirmed") from error
     finally:
         if temporary is not None:
             Path(temporary).unlink(missing_ok=True)
@@ -283,10 +294,12 @@ def train(dataset, *, seed=0, validation_fraction=.25):
     dataset = validate_dataset(dataset)
     if type(seed) is not int or not _finite(validation_fraction) or not 0 < validation_fraction <= .5:
         raise LearningError("A deterministic integer seed and 0<holdout<=0.5 are required")
-    records = dataset["annotations"]
+    # unknown_energy boxes stay in the dataset but are not a fitted class: an OOD
+    # rejection must never be scored as a correct "unknown_energy" match.
+    records = [record for record in dataset["annotations"] if record["label"] in TRAINABLE_LABELS]
     labels = sorted({record["label"] for record in records})
     if len(labels) < 2:
-        raise LearningError("At least two allowlisted classes are required")
+        raise LearningError("At least two allowlisted trainable classes (not unknown_energy) are required")
     groups = {}
     label_groups = {label: set() for label in labels}
     for record in records:
@@ -313,7 +326,8 @@ def train(dataset, *, seed=0, validation_fraction=.25):
             validation_groups.add(group)
     train_records = [record for record in records if record["group_sha256"] not in validation_groups]
     validation_records = [record for record in records if record["group_sha256"] in validation_groups]
-    vectors = {record["id"]: extract_features(dataset["frames"][record["frame_sha256"]], record["start_bin"], record["end_bin"])
+    # validate_dataset just re-masked and compared every stored frame.
+    vectors = {record["id"]: _features(_slice(dataset["frames"][record["frame_sha256"]], record["start_bin"], record["end_bin"])[1])
                for record in records}
     centroids, radii = {}, {}
     for label in labels:
@@ -357,7 +371,7 @@ def validate_model(model):
             model["feature_version"] != FEATURE_VERSION or type(model["feature_dimension"]) is not int or model["feature_dimension"] != FEATURE_DIMENSION):
         raise LearningError("Unsupported model format")
     labels = model["labels"]
-    if not isinstance(labels, list) or len(labels) < 2 or any(type(x) is not str or x not in LABELS for x in labels) or len(labels) != len(set(labels)):
+    if not isinstance(labels, list) or len(labels) < 2 or any(type(x) is not str or x not in TRAINABLE_LABELS for x in labels) or len(labels) != len(set(labels)):
         raise LearningError("Model contains prohibited or duplicate labels")
     if not isinstance(model["centroids"], dict) or not isinstance(model["radii"], dict):
         raise LearningError("Centroids and radii must be JSON objects")
@@ -497,7 +511,11 @@ def infer(model, frame, start_bin, end_bin, *, backend="cpu", npu_manifest=None,
             if (len(accelerated) != len(distances) or any(not _finite(x) or x < 0 for x in accelerated) or
                     any(abs(a - b) > .01 + .02 * abs(b) for a, b in zip(accelerated, distances))):
                 raise LearningError("NPU output does not match qualified centroid distance semantics")
-            distances = accelerated
+            # The tolerance can straddle a radius/margin threshold. The decision always
+            # comes from exact CPU distances; HTP counts only if it decides identically.
+            expected, observed = _predict_features(model, feature, distances), _predict_features(model, feature, accelerated)
+            if any(expected[key] != observed[key] for key in ("label", "nearest_label", "ood")):
+                raise LearningError("NPU label/OOD decision disagrees with the CPU control check")
             actual_backend, npu = "QAIRT_QNN_HTP", {"available": True, "reason": "runtime_executed_cpu_ep_fallback_disabled"}
         except Exception as error:
             npu = {"available": False, "reason": type(error).__name__ + ": " + str(error)[:240]}

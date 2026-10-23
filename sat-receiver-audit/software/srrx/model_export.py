@@ -165,11 +165,15 @@ def _atomic_bytes(path, data):
             os.fsync(stream.fileno())
         os.replace(temporary, path)
         temporary = None
-        fd = os.open(path.parent, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
-        try:
-            os.fsync(fd)
-        finally:
-            os.close(fd)
+        if os.name != "nt":  # Windows has no directory fsync; file data was fsynced above.
+            try:
+                fd = os.open(path.parent, os.O_RDONLY | getattr(os, "O_DIRECTORY", 0))
+                try:
+                    os.fsync(fd)
+                finally:
+                    os.close(fd)
+            except OSError as error:
+                raise OSError(error.errno, "Artifact replaced, but directory fsync failed; durability not confirmed") from error
     finally:
         if temporary is not None:
             Path(temporary).unlink(missing_ok=True)
@@ -251,7 +255,8 @@ def _dataset_features(model, dataset):
     provenance = model["provenance"]
     if dataset["sha256"] != provenance["dataset_sha256"]:
         raise ExportError("Calibration/validation dataset SHA256 does not match training")
-    records = {record["id"]: record for record in dataset["annotations"]}
+    # Same record set as learning.train: unknown_energy boxes are never a fitted class.
+    records = {record["id"]: record for record in dataset["annotations"] if record["label"] in learning.TRAINABLE_LABELS}
     train_ids, validation_ids = provenance["train_annotation_ids"], provenance["validation_annotation_ids"]
     if set(train_ids) | set(validation_ids) != set(records):
         raise ExportError("Dataset does not contain the exact recorded training/holdout annotations")
@@ -262,7 +267,8 @@ def _dataset_features(model, dataset):
     counts = Counter(records[identifier]["label"] for identifier in train_ids)
     if any(counts[label] != provenance["class_train_counts"][label] for label in model["labels"]) or any(sources[source] != provenance["source_counts"][source] for source in ("HARDWARE", "SIMULATION")):
         raise ExportError("Training counts do not match source annotation records")
-    vectors = {identifier: learning.extract_features(dataset["frames"][record["frame_sha256"]], record["start_bin"], record["end_bin"])
+    # validate_dataset above re-masked and compared every stored frame once.
+    vectors = {identifier: learning._features(learning._slice(dataset["frames"][record["frame_sha256"]], record["start_bin"], record["end_bin"])[1])
                for identifier, record in records.items()}
     for label in model["labels"]:
         points = [vectors[identifier] for identifier in train_ids if records[identifier]["label"] == label]
@@ -287,15 +293,18 @@ def validate_cpu(artifact, model, dataset, *, atol=None, rtol=None):
     session = ort.InferenceSession(str(artifact), sess_options=options, providers=["CPUExecutionProvider"])
     if session.get_providers() != ["CPUExecutionProvider"]:
         raise ExportError("Validation must execute on explicit CPUExecutionProvider")
-    maximum_abs = maximum_relative = maximum_normalized = 0.0
-    squared, values, agreements, ood_agreements, within = 0.0, 0, 0, 0, True
-    for identifier in validation_ids:
-        vector = vectors[identifier]
+    def run(vector):
         expected = [learning._distance(vector, model["centroids"][label]) for label in model["labels"]]
         observed_array = session.run(["distances"], {"features": np.asarray([vector], dtype=np.float32)})[0]
         if observed_array.shape != (1, len(model["labels"])) or not np.isfinite(observed_array).all() or np.any(observed_array < 0):
             raise ExportError("Invalid ONNX distance output")
-        observed = [float(value) for value in observed_array[0]]
+        return expected, [float(value) for value in observed_array[0]]
+
+    maximum_abs = maximum_relative = maximum_normalized = 0.0
+    squared, values, agreements, ood_agreements, within = 0.0, 0, 0, 0, True
+    for identifier in validation_ids:
+        vector = vectors[identifier]
+        expected, observed = run(vector)
         for value, reference in zip(observed, expected):
             error, allowed = abs(value - reference), atol + rtol * abs(reference)
             maximum_abs = max(maximum_abs, error)
@@ -307,7 +316,25 @@ def validate_cpu(artifact, model, dataset, *, atol=None, rtol=None):
         onnx_result = learning._predict_features(model, vector, observed)
         agreements += cpu_result["label"] == onnx_result["label"]
         ood_agreements += cpu_result["ood"] == onnx_result["ood"]
-    passed = within and agreements == len(validation_ids) and ood_agreements == len(validation_ids)
+    # Synthetic range probes (feature-space corners, each centroid and its farthest
+    # corner), never calibration data. Outside the calibrated activation range QDQ
+    # saturates, so there only label/OOD decisions are gated; float32 must also match
+    # distances. Saturation is reported, not hidden behind the held-out result.
+    centroids = [model["centroids"][label] for label in model["labels"]]
+    probes = ([[0.0] * learning.FEATURE_DIMENSION, [1.0] * learning.FEATURE_DIMENSION] + centroids +
+              [[0.0 if value >= .5 else 1.0 for value in point] for point in centroids])
+    probe_abs, probe_maximum, probe_agreements, probe_within = 0.0, 0.0, 0, True
+    for vector in probes:
+        expected, observed = run(vector)
+        probe_abs = max([probe_abs] + [abs(value - reference) for value, reference in zip(observed, expected)])
+        probe_maximum = max([probe_maximum] + observed)
+        probe_within = probe_within and all(abs(value - reference) <= atol + rtol * abs(reference)
+                                            for value, reference in zip(observed, expected))
+        cpu_result = learning._predict_features(model, vector, expected)
+        onnx_result = learning._predict_features(model, vector, observed)
+        probe_agreements += cpu_result["label"] == onnx_result["label"] and cpu_result["ood"] == onnx_result["ood"]
+    passed = (within and agreements == len(validation_ids) and ood_agreements == len(validation_ids) and
+              probe_agreements == len(probes) and (probe_within or kind == "qdq_int8"))
     return {"artifact_sha256": digest, "model_sha256": model["sha256"], "dataset_sha256": dataset["sha256"],
             "format": "ONNX_QDQ_INT8" if kind == "qdq_int8" else "ONNX_FLOAT32",
             "execution_provider": "CPUExecutionProvider", "samples": len(validation_ids), "distance_values": values,
@@ -315,6 +342,9 @@ def validate_cpu(artifact, model, dataset, *, atol=None, rtol=None):
             "max_absolute_error": maximum_abs, "max_relative_error": maximum_relative,
             "max_normalized_error": maximum_normalized, "rms_error": math.sqrt(squared / values),
             "atol": atol, "rtol": rtol, "label_agreements": agreements, "ood_agreements": ood_agreements,
+            "range_probes": len(probes), "range_probe_decision_agreements": probe_agreements,
+            "range_probe_max_absolute_error": probe_abs, "range_probe_distances_within_tolerance": probe_within,
+            "max_range_probe_distance": probe_maximum, "range_probe_scope": "synthetic_corners_and_centroids_not_calibration",
             "passed": passed, "scope": "recorded_heldout_capture_groups_only", "versions": dependency_status(),
             "npu_qualified": False, "qnn_compiled": False}
 
@@ -361,6 +391,15 @@ def quantize_static_int8(model, dataset, float_artifact, output, *, allow_simula
         dq_nodes = sum(node.op_type == "DequantizeLinear" for node in proto.graph.node)
         if not q_nodes or not dq_nodes:
             raise ExportError("Runtime produced no actual QuantizeLinear/DequantizeLinear nodes")
+        # Measure, do not assume: every Q/DQ zero point and every quantized weight is signed INT8.
+        initializers = {tensor.name: tensor for tensor in proto.graph.initializer}
+        qdq = [node for node in proto.graph.node if node.op_type in ("QuantizeLinear", "DequantizeLinear")]
+        weights = [initializers[node.input[0]] for node in qdq if node.op_type == "DequantizeLinear" and node.input[0] in initializers]
+        if (not weights or any(tensor.data_type != onnx.TensorProto.INT8 for tensor in weights) or
+                any(len(node.input) < 3 or node.input[2] not in initializers or
+                    initializers[node.input[2]].data_type != onnx.TensorProto.INT8 for node in qdq)):
+            raise ExportError("Quantized graph lacks signed INT8 zero points/weights")
+        mixed_float_ops = any(node.op_type not in ("QuantizeLinear", "DequantizeLinear") for node in proto.graph.node)
         onnx.helper.set_model_props(proto, _metadata(model, "qdq_int8"))
         proto = onnx.shape_inference.infer_shapes(proto, strict_mode=True)
         onnx.checker.check_model(proto, full_check=True)
@@ -372,11 +411,11 @@ def quantize_static_int8(model, dataset, float_artifact, output, *, allow_simula
                       calibration_method="MinMax", calibration_scope="recorded_training_annotations_only",
                       simulation_calibration_opt_in=allow_simulation_calibration is True,
                       float_artifact_sha256=original_hash, quantize_nodes=q_nodes, dequantize_nodes=dq_nodes,
-                      integer_type="signed_int8", mixed_float_ops=True)
+                      integer_type="signed_int8", int8_weights=len(weights), mixed_float_ops=mixed_float_ops)
         if set(train_ids) & set(validation_ids):
             raise ExportError("Calibration/validation leakage")
         if not report["passed"]:
-            raise ExportError("QDQ held-out CPU error/label/OOD gate failed; artifact was not published: " + json.dumps(report, sort_keys=True))
+            raise ExportError("QDQ held-out CPU error/label/OOD or range-probe decision gate failed; artifact was not published: " + json.dumps(report, sort_keys=True))
         _atomic_bytes(output, quantized.read_bytes())
     report["artifact"] = str(output)
     return report

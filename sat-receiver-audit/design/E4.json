@@ -91,12 +91,12 @@
     "K1_ON / K2_ON: 00 PARK with receiver and both antennas at 50 Ω; 10 HF; 01 VHF/AIS; 11 forbidden. Pass through 00 and allow ≥10 ms settling on every change. At most one energized coil.",
     "The HF relay cascade has one receiver PARK load. Two independent 50 Ω NC loads on parallel receiver commons would yield 25 Ω and are rejected. HF uses two contacts; VHF uses three. Final PCB loss, return loss and isolation must be measured.",
     "All coax shields join RF GND. Bulkhead shells bond 360° to CHASSIS. W408 passes center and shield through the same cores as coax, not as a series RF inductor.",
-    "P2/P3 must never exceed 5.5 V. BONI13V8 goes only to keyed BNC P5; LNB13V2 only to F P4. Unpowered Uputronics means no useful UHF path.",
+    "P2/P3 must never exceed 5.5 V or go below −0.3 V: through L403/L404 each shares its DC node with E2 TPS2553 OUT, INA3221 inputs and polarized C239/C243. BONI13V8 goes only to keyed BNC P5; LNB13V2 only to F P4. Unpowered Uputronics means no useful UHF path.",
     "Test sources are conducted at internal BENCH only, with receiver input ≤−40 dBm. No source antenna. RTL receiver bias-tees remain OFF.",
     "Receiver USB canonical nets and Lime E5_PCIE_* nets are intentional agreed E4/E5 links. E5 owns host/hub/cabling and the riser; E4 owns the receiver modules.",
     "DCS_UHF/LBAND/HF are real TLV3012B bipolar window circuits. HIGH means unsafe, unknown or off. LOW means both window tests and both reference-good tests passed. Nominal coax thresholds are ±47.080 mV; input hysteresis is 2–8 mV (4–16 mV at coax).",
     "DC preflight is valid only with the corresponding own bias OFF: disable the relevant EN, wait ≥500 ms, require DCS LOW continuously for ≥500 ms, then enable bias. DCS HIGH is expected with own bias ON. Disable bias and repeat preflight before changing antennas or routes.",
-    "Foreign DC design envelope is ±30 V. The 49.8 kΩ tap limits sustained negative clamp current below0.7mA. Upper clamps return to the shunt reference. BAV199 blocks reference-to-Q6A backfeed; a10k rail bleed limits reverse-leakage voltage. Physically verify the OFF 3.3V rail stays below0.1V.",
+    "The ±30 V sustained foreign-DC envelope applies to the detector tap only (49.8 kΩ tap, BAV199 clamps, 996 Ω bleed), not to the assembled sensed port. P2/P3 reach E2 TPS2553 OUT (−0.3…7 V abs max), INA3221 inputs (−0.3…26 V) and polarized 47 µF C239/C243 through L403/L404 and BIAS_CH2/3; HF_CM reaches BONI13V8 (U214 TPS259630 OUT −0.3 V…min(21 V, VIN+0.3 V), U216, polarized C273) through the A406 DC port. Own bias OFF does not isolate them; with EN_BONI low U213 is also off, so U214 VIN≈0. Until each sensed branch has a ±30 V-rated blocking element (E4-06), the assembled-port foreign-DC limit with own bias OFF is −0.3…+5.5 V on P2/P3 and −0.3…+0.3 V on HF_CM. The 49.8 kΩ tap limits sustained negative clamp current below0.7mA. Upper clamps return to the shunt reference. BAV199 blocks reference-to-Q6A backfeed; a10k rail bleed limits reverse-leakage voltage. Physically verify the OFF 3.3V rail stays below0.1V.",
     "Detectors allocate ≤12 mA from3V3_Q6A (about6mA typical), and zero current fromLAB5. This includes the three existing E3 DCS pullups; do not count them twice.",
     "S-band uses the existing helix →0.10mRG316→LaNAWB100845→0.10mRG316→podBLK89→cf2235→1.00mRG316→RX2→retainedBLK89→LimeX4. LaNA uses one1.50m26AWG USB-C power-only cable from protectedBIAS_SB_LNA5V.",
     "S-band LNA and filter belong to an external inline pod at the antenna feed, not the occupied handheld RF bay. Select Hammond1554U2GY, with the filter on a lower tray and LaNA above it. Proof-fit and cable-entry sealing remain required. Pack the pod in the backpack kit; longest part<35cm. Handheld mass excludes this pod.",
@@ -4444,7 +4444,7 @@
       "status": "verified",
       "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
       "notes": [
-        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection."
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
       ],
       "footprint": "Package_TO_SOT_SMD:SOT-23"
     },
@@ -4841,7 +4841,7 @@
       "status": "verified",
       "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
       "notes": [
-        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection."
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
       ],
       "footprint": "Package_TO_SOT_SMD:SOT-23"
     },
@@ -5238,7 +5238,7 @@
       "status": "verified",
       "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
       "notes": [
-        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection."
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
       ],
       "footprint": "Package_TO_SOT_SMD:SOT-23"
     },
@@ -6187,9 +6187,9 @@
     },
     {
       "id": "E4-06",
-      "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification.",
+      "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
       "blocking": true,
-      "resolve": "Verify each DCS LOW at0V and HIGH by±0.100V in both sweep directions over admitted temperature/supply range; record thresholds/hysteresis. Test±30V limited foreignDC with Q6A ON/OFF and require3V3_Q6A<0.1V whenOFF. Measure RFtap IL/RL/NF impact. Require startup/reference-fault HIGH and ownbiasOFF≥500ms beforepreflight; readiness staysfalse untilqualified. Check floating/open antenna as well as0Ω/50ΩDC loads. Include the996Ω bleed load in current baselines and measure its RF loss/parasitics. Reject false-safe at±0.100V; false-unsafe units also fail usability qualification. Also qualify cold minimum-supply reference-feed headroom: the arithmetic model requires D450 Vf≤1.015 V at VDD3.135 V and REF2.072 V for at least80µA LM4040 cathode current. Reference collapse must force HIGH, and must not be misreported as a working detector."
+      "resolve": "Verify each DCS LOW at0V and HIGH by±0.100V in both sweep directions over admitted temperature/supply range; record thresholds/hysteresis. Apply ±30V limited foreign DC with Q6A ON/OFF, requiring3V3_Q6A<0.1V when OFF, only at the detector tap with the bias branch disconnected (L403/L404 not fitted; A406 DC port unplugged from BONI13V8). On an assembled port never exceed −0.3…+5.5V on P2/P3 or −0.3…+0.3V on HF_CM with own bias OFF (TPS2553 OUT −0.3…7V, INA3221 −0.3…26V, TPS259630 OUT ≤VIN+0.3V, polarized C239/C243/C273); the ±0.100V sweep lies inside these limits. Hardware redesign required before this gate can close: a ±30V-rated bidirectional blocking element in each sensed bias branch between the E2 output and the E4 injector (relay contact or back-to-back MOSFETs held open whenever EN_LNA2/EN_LNA3/EN_BONI is low, or a TPS2660-class ±60V eFuse with reverse-polarity and reverse-current blocking), keeping TPS2553/INA3221/U214 and the electrolytics on the protected side; the detector is not that protection. Then repeat ±30V at each assembled port. Measure RFtap IL/RL/NF impact. Require startup/reference-fault HIGH and ownbiasOFF≥500ms beforepreflight; readiness staysfalse untilqualified. Check floating/open antenna as well as0Ω/50ΩDC loads. Include the996Ω bleed load in current baselines and measure its RF loss/parasitics. Reject false-safe at±0.100V; false-unsafe units also fail usability qualification. Also qualify cold minimum-supply reference-feed headroom: the arithmetic model requires D450 Vf≤1.015 V at VDD3.135 V and REF2.072 V for at least80µA LM4040 cathode current. Reference collapse must force HIGH, and must not be misreported as a working detector."
     },
     {
       "id": "E4-07",

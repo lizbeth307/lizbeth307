@@ -80,21 +80,10 @@ class ProductionRegisterTransport:
         self.endpoint.close()
 
 
-class RoutedTransport:
-    """Reflect actual separate Q6A I2C0/I2C2 topology at the driver boundary."""
-    def __init__(self, hardware, bus, transport_class):
-        self.hardware, self.i2c0 = hardware, ProductionRegisterTransport(transport_class, bus, "i2c0")
-
-    def read(self, address, register, count):
-        return (self.i2c0 if address == 0x40 else self.hardware).read(address, register, count)
-
-    def write(self, address, register, data):
-        return (self.i2c0 if address == 0x40 else self.hardware).write(address, register, data)
-
-
 @contextmanager
 def fixture(project, *, initialize=True, prepare=None):
     import srrx.hardware as driver
+    from srrx.runtime_telemetry import ProjectTelemetry
     from srrx.telemetry import SRRXTelemetry
     bus = EmulatedPowerBus(project)
     if prepare:
@@ -109,7 +98,10 @@ def fixture(project, *, initialize=True, prepare=None):
         check(path == "EMULATED_ONLY:i2c2", "fixture must never open a real adapter")
         return ProductionRegisterTransport(transport_class, bus, "i2c2")
     with patch.object(driver, "_I2CTransport", side_effect=factory):
-        reader = SRRXTelemetry(RoutedTransport(hardware, bus, transport_class), clock_ms=bus.clock_ms)
+        # Production I2C0 (INA228) / I2C2 router; a misroute NACKs on the emulated adapter.
+        bridge = ProjectTelemetry("EMULATED_ONLY:i2c0", hardware, None, clock=bus.clock_ms)
+        bridge.bus0 = ProductionRegisterTransport(transport_class, bus, "i2c0")
+        reader = SRRXTelemetry(bridge, clock_ms=bus.clock_ms)
         try:
             if initialize:
                 hardware.initialize_safe()
@@ -135,7 +127,7 @@ def run(project):
     if software not in sys.path:
         sys.path.insert(0, software)
     import srrx.hardware as driver
-    from srrx.telemetry import INA228, INA3221, TelemetryError
+    from srrx.telemetry import TelemetryError
     from srrx.policy import SafetyPolicy, CAPS
     cases = []
     def case(name, module_ids, operation):
@@ -167,10 +159,22 @@ def run(project):
             check(hw.physical is True and type(hw) is driver.LinuxHardware, "must exercise actual LinuxHardware")
             expected_safe = {0x20: b"\0\0", 0x22: b"\0\0", 0x23: b"\0\x10"}
             coverage = []
+            # MCP writes only: 0x0A/0x04 are INA3221/INA228 registers too.
+            writes = [entry for entry in bus.trace if entry["op"] == "write" and entry["address"] in bus.mcp]
+            iocon = [i for i, e in enumerate(writes) if e["register"] == 0x0A]
+            enabled = [i for i, e in enumerate(writes) if e["register"] == 0x04 and int(e["data"], 16)]
+            check(len(iocon) == 3 and enabled and max(iocon) < min(enabled), "MCP_INT enabled before every chip is open-drain")
             for address, device in bus.mcp.items():
-                writes = [entry for entry in bus.trace if entry["op"] == "write" and entry["address"] == address]
-                check([e["register"] for e in writes[:6]] == [0x04, 0x14, 0x00, 0x0A, 0x0C, 0x04],
-                      "golden register order must disable interrupts, preload OLAT, set directions, configure interrupts")
+                own = [e["register"] for e in writes if e["address"] == address]
+                check(own[:9] == [0x04, 0x0A, 0x02, 0x06, 0x08, 0x14, 0x00, 0x0C, 0x04],
+                      "golden register order must disable interrupts, set open-drain IOCON, clear IPOL, set DEFVAL/INTCON, "
+                      "preload OLAT, set directions/pulls, then enable interrupts")
+                faults = [0, 0]
+                for name, p in bus.net_map.items():
+                    if p["address"] == address and p["direction"] == "input" and name.startswith(("FAULT_", "FLT_")):
+                        faults[p["port"]] |= 1 << p["bit"]
+                check(device.reg["GPINTEN"] == device.reg["DEFVAL"] == device.reg["INTCON"] == faults
+                      and device.reg["IPOL"] == [0, 0], "only active-low FAULT_/FLT_ inputs may interrupt, against DEFVAL=1")
                 check(bytes(device.reg["OLAT"]) == expected_safe[address], "literal safe OLAT image differs")
                 check(device.iocon == 0x44 and device.reg["GPPU"] == [0, 0], "MIRROR/ODR or external-pull configuration differs")
                 for port in (0, 1):
@@ -188,7 +192,9 @@ def run(project):
                 pass
             else:
                 raise AssertionError("one reset assertion was reused")
-            return {"driver": "srrx.hardware.LinuxHardware", "register_write_order": [4, 20, 0, 10, 12, 4],
+            return {"driver": "srrx.hardware.LinuxHardware", "register_write_order": [4, 10, 2, 6, 8, 20, 0, 12, 4],
+                    "open_drain_on_all_chips_before_interrupt_enable": True,
+                    "interrupt_sources": "FAULT_/FLT_ inputs only, compared against DEFVAL=1",
                     "safe_olat_hex": {hex(a): v.hex() for a, v in expected_safe.items()}, "all_six_gpio7": coverage,
                     "one_use_reset_assertion": True}
     case("mcp_connect_reset_safe_write_order", mcp_ids, safe_initialization)
@@ -196,12 +202,15 @@ def run(project):
     def every_output():
         with fixture(project) as (hw, bus, reader):
             tested = []
-            for net, physical in sorted(bus.net_map.items()):
-                if physical["direction"] != "output":
-                    continue
+            outputs = {net: p for net, p in bus.net_map.items() if p["direction"] == "output"}
+            safe = {net: net == "CHG_INHIBIT" for net in outputs}
+            for net, physical in sorted(outputs.items()):
                 for high in (False, True, False):
                     hw.apply_outputs({net: high})
-                    check(bus.output_latched(net) is high and bus.pin_level(net) is high, "actual emulated OLAT/GPIO differs for " + net)
+                    # Every other output must keep its safe level: no extra rail may energize.
+                    for other, level in dict(safe, **{net: high}).items():
+                        check(bus.output_latched(other) is level and bus.pin_level(other) is level,
+                              "actual emulated OLAT/GPIO differs for %s while driving %s" % (other, net))
                 hw.all_off()
                 tested.append({"net": net, **physical})
             check(len(tested) == len(hw.mapping["outputs"]), "not every mapped production output was covered")
@@ -212,6 +221,7 @@ def run(project):
             else:
                 raise AssertionError("raw MCP writes bypassed output owner")
             return {"output_count": len(tested), "outputs": tested, "register_and_pin_readback": True,
+                    "all_other_outputs_checked_at_safe_level": True,
                     "raw_mcp_write_rejected": True, "scope": "component pin exercise; no live load or policy permission implied"}
     case("all_mapped_outputs_register_pin_roundtrip", mcp_ids, every_output)
 
@@ -232,15 +242,19 @@ def run(project):
 
     def interrupt_capture():
         with fixture(project) as (hw, bus, reader):
-            hw.read_inputs()
-            bus.set_input("FAULT_LNA1", False)
-            bus.set_input("FAULT_LNA1", True)
-            captured = hw.read_inputs()["FAULT_LNA1"]
-            current = hw.read_inputs()["FAULT_LNA1"]
-            check(captured is False and current is True, "first low INTCAP must survive a recovered GPIO; stale INTCAP without INTF must be ignored")
+            nets = sorted(n for n, p in bus.net_map.items() if p["direction"] == "input" and n.startswith(("FAULT_", "FLT_")))
+            check({bus.net_map[n]["address"] for n in nets} == {0x22, 0x23}, "fault inputs moved off U302/U303")
+            for net in nets:
+                hw.read_inputs(); hw.read_inputs()
+                bus.set_input(net, False)
+                bus.set_input(net, True)
+                captured = hw.read_inputs()[net]
+                current = hw.read_inputs()[net]
+                check(captured is False and current is True,
+                      "first low INTCAP must survive a recovered GPIO; stale INTCAP without INTF must be ignored: " + net)
             return {"short_fault_captured": True, "stale_capture_without_flag_ignored": True,
-                    "intcap_read_clears_flag": True, "net": "FAULT_LNA1"}
-    case("mcp_short_fault_and_stale_intcap", ["E3/U302"], interrupt_capture)
+                    "intcap_read_clears_flag": True, "nets": nets}
+    case("mcp_short_fault_and_stale_intcap", ["E3/U302", "E3/U303"], interrupt_capture)
 
     for address, module in ((0x20, "E3/U301"), (0x22, "E3/U302"), (0x23, "E3/U303")):
         def bank(address=address):
@@ -338,28 +352,36 @@ def run(project):
             near(sample.values["lnb_current_a"], .200, .0004, "actual LNB 0.1 ohm shunt")
             near(sample.values["boni_current_a"], .050, .0002, "actual Boni 0.2 ohm shunt")
             near(sample.values["lna_current_a"], .280, .0008, "all four antenna channels")
+            # Distinct per-branch stimuli: a swapped LNA channel label cannot hide in the sum.
+            for branch, expected in (("lna1", .100), ("lna2", .080), ("lna3", .060), ("lna4", .040)):
+                near(sample.values[branch + "_current_a"], expected, .0004, "per-channel " + branch)
             check(not reader.poll().valid, "reading without a new conversion must not relabel old data fresh")
             return {"driver": "srrx.telemetry.SRRXTelemetry via LinuxHardware for I2C2", "calibration_valid": False,
                     "nominal_shunts_ohm": {"BATTERY": .015, "LNA1": .2, "LNA2": .2, "LNA3": .2, "LNA4": .2, "LNB": .1, "BONI": .2},
                     "values_si": dict(sample.values), "independent_cycle_ms": {"INA228": 12.624, "INA3221": 26.4},
-                    "no_new_conversion_rejected": True, "adapters": {"INA228": "i2c0", "INA3221": "i2c2"}}
+                    "no_new_conversion_rejected": True, "adapters": {"INA228": "i2c0", "INA3221": "i2c2"},
+                    "adapter_router": "srrx.runtime_telemetry.ProjectTelemetry.read/write", "per_channel_lna_currents": True}
     case("monitor_connect_id_config_conversion_decode", adc_ids, monitor_positive)
 
     def negative_current():
+        # Distinct per-channel current and bus voltage, so a channel permutation fails.
+        stimuli = {"LNA1": (-.10, 4.5), "LNA2": (-.08, 4.4), "LNA3": (-.06, 4.3), "LNA4": (-.04, 4.2),
+                   "LNB": (-.12, 13.2), "BONI": (-.03, 13.8)}
         with fixture(project) as (hw, bus, reader):
             nominal_branches(bus)
             bus.set_branch("BATTERY", -2., 14.8)
-            for branch in ("LNA1", "LNA2", "LNA3", "LNA4", "LNB", "BONI"):
-                bus.set_branch(branch, -.1, 4.5)
+            for branch, (current, volts) in stimuli.items():
+                bus.set_branch(branch, current, volts)
             reader.configure(); bus.advance(50)
             sample = reader.poll()
             check(sample.valid and sample.calibration_valid is False, "signed fixture must decode without granting calibration")
             near(sample.values["battery_current_a"], -2., 30e-6, "negative charging current")
             near(sample.values["battery_v"], 14.83, .0003, "charging V_N must exceed VBUS")
-            for branch in ("lna1", "lna2", "lna3", "lna4", "lnb", "boni"):
-                near(sample.values[branch + "_current_a"], -.1, .0004, "13-bit signed " + branch)
+            for branch, (current, volts) in stimuli.items():
+                near(sample.values[branch.lower() + "_current_a"], current, .0004, "13-bit signed " + branch)
+                near(sample.values[branch.lower() + "_bus_v"], volts, .008, "per-channel bus voltage " + branch)
             return {"signed_charge_current_a": sample.values["battery_current_a"], "battery_v": sample.values["battery_v"],
-                    "all_six_signed_branch_channels": True, "calibration_valid": False}
+                    "all_six_signed_branch_channels": True, "distinct_per_channel_stimuli": True, "calibration_valid": False}
     case("signed_charge_and_six_branch_channels", adc_ids, negative_current)
 
     for diagnostic in ("memory_checksum", "math_overflow", "alert_config", "current_shunt_disagreement"):
@@ -440,8 +462,9 @@ def run(project):
                 pass
             else:
                 raise AssertionError("wrong physical adapter unexpectedly ACKed")
-        return {"separate_adapter_address_spaces": True, "unknown_third_ina3221_created": False}
-    case("physical_bus_address_separation", adc_ids, adapter_split)
+        return {"separate_adapter_address_spaces": True, "unknown_third_ina3221_created": False,
+                "scope": "emulator self-test; production routing is exercised by the monitor cases"}
+    case("emulator_adapter_address_separation_self_test", [], adapter_split)
 
     def connected_reset(fallback):
         from srrx.engine import Engine
@@ -561,7 +584,7 @@ def run(project):
     case("connected_lost_uart_independent_heartbeat_reset", mcp_ids, lambda: connected_reset(True))
 
     source_files = ("software/srrx/hardware.py", "software/srrx/telemetry.py", "software/srrx/policy.py",
-                    "design/E1.json", "design/E2.json", "design/E3.json",
+                    "software/srrx/runtime_telemetry.py", "design/E1.json", "design/E2.json", "design/E3.json",
                     "deployment/module_lab/power_bus.py", "deployment/module_lab/power_scenarios.py")
     passed = sum(item["status"] == "EMULATION_PASS" for item in cases)
     return {"schema_version": 1, "status": "EMULATION_PASS" if passed == len(cases) else "EMULATION_FAIL",
@@ -588,7 +611,7 @@ def main(argv=None):
     encoded = json.dumps(report, indent=2, allow_nan=False) + "\n"
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(encoded)
+        args.output.write_text(encoded, encoding="utf-8", newline="\n")
     else:
         print(encoded, end="")
     return 0 if report["status"] == "EMULATION_PASS" else 1

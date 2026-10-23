@@ -38,6 +38,20 @@ def segment_point_distance(a, b, p):
     return math.hypot(p[0] - a[0] - t * dx, p[1] - a[1] - t * dy)
 
 
+def segment_distance(a, b, c, d):
+    """Minimum distance between two closed segments; zero when they cross."""
+    orient = lambda p, q, r: (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0])
+    d1, d2, d3, d4 = orient(c, d, a), orient(c, d, b), orient(a, b, c), orient(a, b, d)
+    if d1 * d2 < 0 and d3 * d4 < 0:
+        return 0.0
+    return min(segment_point_distance(a, b, c), segment_point_distance(a, b, d),
+               segment_point_distance(c, d, a), segment_point_distance(c, d, b))
+
+
+def boxes_meet(x, y):
+    return x[0] <= y[2] and y[0] <= x[2] and x[1] <= y[3] and y[1] <= x[3]
+
+
 def segment_box_distance(a, b, half_x, half_y):
     """Distance between a segment and an axis-aligned centered rectangle."""
     low, high = 0.0, 1.0
@@ -116,7 +130,7 @@ def geometry_with_local_angle(pad, footprint_angle):
     return signature
 
 
-def compare(project, source_path, starter_path, board_path, drc_path):
+def compare(project, source_path, starter_path, board_path, drc_path, review_path=None):
     captured = {}
 
     def read(path):
@@ -131,11 +145,18 @@ def compare(project, source_path, starter_path, board_path, drc_path):
     starter = parse_sexpr(starter_data.decode())
     board = parse_sexpr(read(board_path).decode())
     drc = json.loads(read(drc_path))
+    review = json.loads(read(review_path or project / 'verification/pcb-prototype-review.json'))
     issues = []
 
     def check(condition, category, detail):
         if not condition:
             issues.append(dict(category=category, detail=detail))
+
+    # A clean DRC file counts only for the exact board the routing run checked.
+    check(review.get('published_board') is True and review.get('board_sha256') == digest(read(board_path)),
+          'DRC_board_binding', review.get('board_sha256'))
+    check(review.get('drc', {}).get('raw_sha256') == digest(read(drc_path)),
+          'DRC_report_binding', review.get('drc', {}).get('raw_sha256'))
 
     check(digest(source_data) == FROZEN_INPUT_SHA256, 'frozen_input_hash', digest(source_data))
     check(digest(starter_data) == FROZEN_STARTER_SHA256, 'frozen_starter_hash', digest(starter_data))
@@ -152,7 +173,7 @@ def compare(project, source_path, starter_path, board_path, drc_path):
             check(bool(pin.get('net')) != bool(pin.get('nc')), 'source_net_xor_nc', f'{ref}.{number}')
             pins[number] = pin.get('net') or ''
         expected[ref] = pins
-    actual, footprints, pad_nodes, nc_shapes = {}, {}, {}, []
+    actual, footprints, pad_nodes, nc_shapes, netted_shapes = {}, {}, {}, [], []
     for footprint in children(board, 'footprint'):
         refs = [p[2] for p in children(footprint, 'property') if p[1] == 'Reference']
         if len(refs) != 1:
@@ -168,6 +189,8 @@ def compare(project, source_path, starter_path, board_path, drc_path):
             actual[ref][number], pad_nodes[ref][number] = pad_net(pad), pad
             if not pad_net(pad):
                 nc_shapes.append((f'{ref}.{number}', pad_shape(footprint, pad)))
+            else:
+                netted_shapes.append((f'{ref}.{number}', pad_net(pad), pad_shape(footprint, pad)))
     check(set(actual) == set(expected), 'component_set',
           dict(missing=sorted(set(expected) - set(actual)), extra=sorted(set(actual) - set(expected))))
     for ref, pins in expected.items():
@@ -233,7 +256,12 @@ def compare(project, source_path, starter_path, board_path, drc_path):
     check(not routing['arc'], 'unsupported_copper_arcs', len(routing['arc']))
     sense = {net: dict(segment_count=0, total_track_length_mm=0.0, via_count=0,
                        layers=set(), points=[]) for net in SENSE_NETS}
-    copper_overlaps = []
+    copper_overlaps, copper, shorts = [], [], []
+
+    def add_copper(kind, net, layers, a, b, radius):
+        box = (min(a[0], b[0]) - radius, min(a[1], b[1]) - radius, max(a[0], b[0]) + radius, max(a[1], b[1]) + radius)
+        copper.append(dict(id=f'{kind}{len(copper)}@{a[0]:g},{a[1]:g}', net=net, layers=set(layers), a=a, b=b, r=radius, box=box))
+
     for segment in routing['segment']:
         net = pad_net(segment)
         check(net in net_names, 'unknown_track_net', net)
@@ -241,6 +269,7 @@ def compare(project, source_path, starter_path, board_path, drc_path):
         width = float(child(segment, 'width')[1])
         layer = child(segment, 'layer')[1]
         check(layer in ('F.Cu', 'B.Cu') and width > 0, 'invalid_track_geometry', dict(net=net, layer=layer, width=width))
+        add_copper('segment', net, [layer], a, b, width / 2)
         if net in sense:
             metric = sense[net]
             metric['segment_count'] += 1
@@ -255,6 +284,7 @@ def compare(project, source_path, starter_path, board_path, drc_path):
         check(net in net_names, 'unknown_via_net', net)
         size, drill = float(child(via, 'size')[1]), float(child(via, 'drill')[1])
         check(size > drill > 0, 'invalid_via_geometry', dict(net=net, size=size, drill=drill))
+        add_copper('via', net, ('F.Cu', 'B.Cu'), position, position, size / 2)
         if net in sense:
             sense[net]['via_count'] += 1
         for refpin, shape in nc_shapes:
@@ -280,8 +310,33 @@ def compare(project, source_path, starter_path, board_path, drc_path):
                 if point_in_polygon(shape['center'], points) or any(
                         touches_pad(a, b, 0.0, shape) for a, b in zip(points, points[1:] + points[:1])):
                     copper_overlaps.append(dict(nc_pad=refpin, object='filled_GND_polygon', layer=layer))
+            edges = [(a, b, (min(a[0], b[0]), min(a[1], b[1]), max(a[0], b[0]), max(a[1], b[1])))
+                     for a, b in zip(points, points[1:] + points[:1])]
+            for item in copper:
+                if item['net'] != pad_net(zone) and layer in item['layers'] and (point_in_polygon(item['a'], points) or any(
+                        boxes_meet(item['box'], box) and segment_distance(item['a'], item['b'], a, b) <= item['r'] + EPS
+                        for a, b, box in edges)):
+                    shorts.append(dict(objects=[item['id'], 'filled_polygon'], nets=[item['net'], pad_net(zone)], layer=layer))
+            for refpin, net, shape in netted_shapes:
+                if net != pad_net(zone) and (layer in shape['layers'] or '*.Cu' in shape['layers']) and (
+                        point_in_polygon(shape['center'], points)
+                        or any(touches_pad(a, b, 0.0, shape) for a, b, _ in edges)):
+                    shorts.append(dict(objects=[refpin, 'filled_polygon'], nets=[net, pad_net(zone)], layer=layer))
     check(bool(routing['zone']) and filled_polygon_count > 0, 'missing_filled_GND_zone', filled_polygon_count)
     check(not copper_overlaps, 'NC_pad_copper_overlap', copper_overlaps)
+    # Independent short check: DRC is not trusted alone for contact between nets.
+    for i, item in enumerate(copper):
+        for other in copper[i + 1:]:
+            if (item['net'] != other['net'] and item['layers'] & other['layers'] and boxes_meet(item['box'], other['box'])
+                    and segment_distance(item['a'], item['b'], other['a'], other['b']) <= item['r'] + other['r'] + EPS):
+                shorts.append(dict(objects=[item['id'], other['id']], nets=[item['net'], other['net']]))
+        for refpin, net, shape in netted_shapes:
+            reach = math.hypot(shape['half_x'], shape['half_y']) + shape['radius'] + item['r'] + EPS
+            if (net != item['net'] and (item['layers'] & set(shape['layers']) or '*.Cu' in shape['layers'])
+                    and segment_point_distance(item['a'], item['b'], shape['center']) <= reach
+                    and touches_pad(item['a'], item['b'], item['r'], shape)):
+                shorts.append(dict(objects=[item['id'], refpin], nets=[item['net'], net]))
+    check(not shorts, 'inter_net_copper_contact', shorts[:20])
     for net, metric in sense.items():
         check(metric['segment_count'] > 0, 'unrouted_SENSE_net', net)
         check(metric['via_count'] == 0, 'SENSE_vias', dict(net=net, vias=metric['via_count']))
@@ -312,12 +367,12 @@ def compare(project, source_path, starter_path, board_path, drc_path):
 
     def display(path):
         try:
-            return str(path.relative_to(project.resolve()))
+            return path.relative_to(project.resolve()).as_posix()
         except ValueError:
             return str(path)
 
     return dict(passed=not issues, issues=issues, counts=counts, boundary_net_names=boundary_names,
-                methodology='Independent stdlib S-expression/JSON parsing and NC copper geometry checks; no generator/audit imports.',
+                methodology='Independent stdlib S-expression/JSON parsing, NC-pad and inter-net copper contact geometry, and DRC-to-board hash binding; no generator/audit imports.',
                 scope='Prototype topology and retained copper/DRC checks; physical external interfaces and analog performance remain unqualified.',
                 outline=outline, SENSE_routing=sense,
                 SENSE_metric_note='Track centerline lengths and bounding boxes are measured, not TI layout limits or analog qualification.',
@@ -334,9 +389,11 @@ def main():
     parser.add_argument('--starter', type=Path, default=project / 'build/kicad/pcb-preparation/detector-core-placement.kicad_pcb')
     parser.add_argument('--board', type=Path, default=project / 'build/kicad/pcb-prototype/detector-core-routed-prototype.kicad_pcb')
     parser.add_argument('--drc', type=Path, default=project / 'build/kicad/pcb-prototype/drc-raw.json')
+    parser.add_argument('--review', type=Path, default=project / 'verification/pcb-prototype-review.json',
+                        help='Routing record binding the raw DRC report to the board SHA256')
     args = parser.parse_args()
     try:
-        result = compare(project, args.input, args.starter, args.board, args.drc)
+        result = compare(project, args.input, args.starter, args.board, args.drc, args.review)
     except (OSError, ValueError, TypeError, KeyError, IndexError) as error:
         result = dict(passed=False, issues=[dict(category='parse_or_schema_error', detail=str(error))])
     print(json.dumps(result, indent=2, sort_keys=True))

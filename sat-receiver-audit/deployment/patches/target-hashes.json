@@ -2,7 +2,7 @@
   "rtlsdr": {
     "src/librtlsdr.c": {
       "before_sha256": "8c872716cd6959b3cefb047c4808179b77bedb17dd9572ffc92445d3ded1275c",
-      "after_sha256": "e87deb4eefdc61cf1171f8669f2a8e6d2108310c683c9cd1ec0dfaa47d436e9f"
+      "after_sha256": "2ec12772652b93bf43d64719ac864d1d0695062e56b10b6b6103f20ffdaf35df"
     },
     "src/CMakeLists.txt": {
       "before_sha256": "70ee7266476ce86acd73ef6463c1ffa0fb24e7fa0f48b6ce8b4bb07119f54f6e",

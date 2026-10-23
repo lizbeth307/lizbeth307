@@ -105,8 +105,8 @@ class ConnectionNetModel:
 def read_graphs(project):
     components, pins, connected, nc, snapshots = {}, {}, {}, set(), {}
     for path in sorted((project / "design").glob("E[1-5].json")):
-        snapshots[str(path.relative_to(project))] = sha(path)
-        doc = json.loads(path.read_text())
+        snapshots[path.relative_to(project).as_posix()] = sha(path)
+        doc = json.loads(path.read_text(encoding="utf-8"))
         for comp in doc["components"]:
             ref = comp["ref"]
             check(ref not in components, "duplicate graph reference " + ref)
@@ -169,7 +169,7 @@ def physical_pinout(interface, component):
 
 def _run(project):
     inventory_path = project / "deployment/module_lab/inventory.json"
-    inventory = json.loads(inventory_path.read_text())
+    inventory = json.loads(inventory_path.read_text(encoding="utf-8"))
     components, pins, graph_connections, graph_nc, snapshots = read_graphs(project)
     xml_components, oracle, nc, oracle_meta = read_kicad_oracle(project / "verification/netlist.xml")
     check(set(components) == set(xml_components), "XML and graph component references differ")
@@ -356,7 +356,7 @@ def main(argv=None):
     encoded = json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False) + "\n"
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(encoded)
+        args.output.write_text(encoded, encoding="utf-8", newline="\n")
     else:
         print(encoded, end="")
     return 0 if report["status"] == PASS else 1

@@ -81,13 +81,12 @@ def run():
         calibration_record = {}
         calibration_valid = False
         commissioned = False
-        calibration_error = None
         try:
             calibration_record = load("calibration.json")
             hardware.calibration = validate(calibration_record, serial)
             calibration_valid = True
-        except (OSError, ValueError, KeyError, TypeError) as exc:
-            calibration_error = str(exc)
+        except (OSError, ValueError, KeyError, TypeError):
+            pass  # Missing, corrupt or legacy float record: ARM stays refused.
         if calibration_valid:
             try:
                 commissioned = commissioning_valid(load("commissioning.json"),
@@ -108,6 +107,9 @@ def run():
         imu_uart = machine.UART(1, baudrate=115200, bits=8, parity=None,
                                 stop=1, tx=machine.Pin(8), rx=machine.Pin(9),
                                 timeout=0, timeout_char=0, rxbuf=1024)
+        # Pack link is RX-only. tx= must stay (UART1 default TX is GP4, HMI
+        # SDA); return GP8 to SIO high-Z so it never drives the pack's RX.
+        machine.Pin(8, machine.Pin.IN)
         clock = TickClock(time.ticks_ms, time.ticks_diff)
         hmi = PeripheralPoller(PicoHMITransport())
         tx_session = None
@@ -230,9 +232,8 @@ def run():
                     if sent or event is None:
                         imu_latest = None
                 elif choice == "EVENT":
-                    event = diagnostic_events[0]
-                    kind = "TRIP" if event["event"] == "TRIP" else "EVENT"
-                    sent = transmit(kind, event)
+                    # TRIP is a host->Pico command; Pico diagnostics are EVENTs.
+                    sent = transmit("EVENT", diagnostic_events[0])
                     if sent:
                         diagnostic_events.pop(0)
                 if sent:

@@ -1,6 +1,7 @@
 import json
 import random
 import unittest
+from unittest.mock import patch
 
 from srrx.wire import (
     FRAME_TYPES, MAX_FRAME_BYTES, UINT32_MAX, FrameDecoder,
@@ -111,6 +112,21 @@ class WireTests(unittest.TestCase):
         self.assertEqual(decoder.feed(b"noise\x00\xff" + good), [frame()])
         self.assertGreaterEqual(decoder.errors, 1)
         self.assertEqual(decoder.feed(b'@{"broken":"' + good), [frame()])
+        self.assertEqual(decoder.buffered_bytes, 0)
+
+    def test_suffix_recovery_crc_work_is_linear_per_line(self):
+        crc_bytes = [0]
+        def counting(data):
+            crc_bytes[0] += len(data)
+            return crc16_ccitt_false(data)
+        decoder = FrameDecoder()
+        with patch("srrx.wire.crc16_ccitt_false", side_effect=counting):
+            # Hostile line: every byte is a candidate start sharing one trailer.
+            self.assertEqual(decoder.feed(b"@" * 506 + b"|0000\n"), [])
+            self.assertLessEqual(crc_bytes[0], 3 * MAX_FRAME_BYTES)
+            # Truncated-prefix recovery with '@' inside the valid payload still works.
+            good = encode_frame(frame(p={"note": "a@b@c@d"}))
+            self.assertEqual(decoder.feed(b"@" + b"x" * 40 + good), [frame(p={"note": "a@b@c@d"})])
         self.assertEqual(decoder.buffered_bytes, 0)
 
     def test_invalid_utf8_and_json_recover(self):

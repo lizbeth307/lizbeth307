@@ -15,7 +15,6 @@ import json
 from pathlib import Path, PurePosixPath
 import re
 import stat
-import sys
 from urllib.parse import unquote, urlsplit
 import zipfile
 
@@ -323,21 +322,55 @@ def check_html(path, pdf, archive):
     return {"status": "PASS", "canonical_pdf_and_zip_bytes": "IDENTICAL", **details}
 
 
-def check_pdf(path, expected_pages):
+def check_pdf(path, expected_pages, project=PROJECT):
     with path.open("rb") as source:
         require(source.read(5) == b"%PDF-", "Canonical PDF has no PDF header")
         source.seek(max(0, path.stat().st_size - 4096))
         require(source.read().rstrip().endswith(b"%%EOF"), "Canonical PDF has no final %%EOF")
+    # The export record binds these exact PDF bytes to the schematics KiCad exported.
+    export = read_json((project / "verification/pdf-export.json").read_bytes())
+    require(isinstance(export, dict) and export.get("pdf") == {"file": "build/kicad/sr-rx-v2.pdf", "sha256": digest_file(path)},
+            "Canonical PDF is not the recorded KiCad export")
+    schematics = {p.relative_to(project).as_posix(): digest_file(p) for p in sorted((project / "build/kicad").glob("*.kicad_sch"))}
+    require(schematics and export.get("kicad_sch_sha256") == schematics,
+            "Canonical PDF export is not bound to the current schematics")
     try:
         import fitz
-    except ImportError:
-        return {"status": "PASS", "header_and_eof": "PASS", "page_count": "SKIPPED: PyMuPDF/fitz unavailable"}
+    except ImportError as error:
+        raise InvalidBundle("PyMuPDF/fitz is required to verify the canonical PDF page count") from error
     with fitz.open(path) as document:
         require(not document.is_encrypted, "Canonical PDF is encrypted")
+        require(not document.is_repaired, "Canonical PDF needed parser repair")
         require(len(document) == expected_pages,
                 "Canonical PDF page count is " + str(len(document)) + "; expected " + str(expected_pages))
         return {"status": "PASS", "header_and_eof": "PASS", "pages": len(document),
-                "parser_repaired": bool(document.is_repaired)}
+                "parser_repaired": False, "schematic_export_binding": "PASS"}
+
+
+def check_firmware(project):
+    """Shipped MicroPython packages must hold exactly the current sources."""
+    dist = project / "firmware/dist"
+    roles = ("imu", "pico")
+    record = read_json((dist / "build-manifest.json").read_bytes())
+    require(isinstance(record, dict) and isinstance(record.get("packages"), dict) and set(record["packages"]) == set(roles),
+            "Invalid firmware build manifest")
+    require({p.name for p in dist.glob("*.zip")} == {role + "-micropython-files.zip" for role in roles},
+            "Unexpected firmware package set in firmware/dist")
+    for role in roles:
+        expected = {p.name: p.read_bytes() for p in sorted((project / "firmware" / role).glob("*.py"))}
+        expected["wire.py"] = (project / "software/srrx/wire.py").read_bytes()
+        hashes = {name: hashlib.sha256(data).hexdigest() for name, data in expected.items()}
+        package = dist / (role + "-micropython-files.zip")
+        entry = record["packages"][role]
+        require(isinstance(entry, dict) and entry.get("file") == package.name and entry.get("sha256") == digest_file(package)
+                and entry.get("source_files") == hashes, "Stale firmware build record: " + role)
+        with zipfile.ZipFile(package) as archive:
+            names = archive.namelist()
+            require(len(names) == len(set(names)), "Duplicate firmware package member: " + role)
+            members = {name: archive.read(name) for name in names}
+        sums = read_json(members.pop("SOURCE-SHA256.json", b"null"))
+        require(members == expected and sums == hashes, "Firmware package differs from current sources: " + role)
+    return {"status": "PASS", "packages": list(roles), "current_source_binding": "PASS"}
 
 
 def validate(project, archive, document, pdf, expected_pages=17):
@@ -349,7 +382,7 @@ def validate(project, archive, document, pdf, expected_pages=17):
         except (OSError, ValueError) as error:
             errors.append(str(error))
     stages = (("zip", lambda: check_zip(project, archive)), ("html", lambda: check_html(document, pdf, archive)),
-              ("pdf", lambda: check_pdf(pdf, expected_pages)))
+              ("pdf", lambda: check_pdf(pdf, expected_pages, project)), ("firmware", lambda: check_firmware(project)))
     for name, operation in stages:
         try:
             checks[name] = operation()

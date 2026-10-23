@@ -159,7 +159,10 @@ def _unique(pairs):
 
 
 def _json(text):
-    return json.loads(text, parse_constant=_no_constant, object_pairs_hook=_unique)
+    try:
+        return json.loads(text, parse_constant=_no_constant, object_pairs_hook=_unique)
+    except RecursionError as error:
+        raise ValueError("JSON nesting too deep") from error
 
 
 def load_json(path):
@@ -274,7 +277,9 @@ class ConsoleController:
         self.arm_started = None
         self.arm_fault = None
         self.bench_confirmed = False
+        self.confirmed = dict.fromkeys(CONFIRMATIONS, False)
         self.error = None
+        self.link_error = None
         self.notice = "DISARMED — explicit ARM + HOLD is required"
         self.closed = False
         self._last_time = None
@@ -300,6 +305,7 @@ class ConsoleController:
         self.arm_started = None
         self.last_renew = None
         self.bench_confirmed = False
+        self.confirmed = dict.fromkeys(CONFIRMATIONS, False)
         self.notice = str(reason)[:240]
         if send:
             try:
@@ -353,7 +359,7 @@ class ConsoleController:
                         hmi.update(lux=None, lux_valid=False)
         return {"connected": fresh, "stale": not fresh, "holding": self.holding and fresh,
                 "arming": self.arm_started is not None, "error": self.error, "notice": self.notice,
-                "bench_confirmed": self.bench_confirmed, "data": snapshot}
+                "bench_confirmed": self.bench_confirmed, "confirmations": dict(self.confirmed), "data": snapshot}
 
     def _renew(self, now):
         if self.last_renew is None or now - self.last_renew >= 1.0:
@@ -379,6 +385,11 @@ class ConsoleController:
             self.snapshot = self._validate_status(result.get("data"))
             self.connected, self.last_poll = True, now
             policy, pico = self.snapshot["policy"], self.snapshot["pico"]
+            if self.link_error is not None and not self.holding and not policy["armed"]:
+                # Fresh status shows labd disarmed; clear only the error the link loss set.
+                if self.error == self.link_error:
+                    self.error = None
+                self.link_error = None
             if self.holding:
                 if self.arm_started is not None:
                     if policy["armed"] and not policy.get("fault") and pico.get("state") == "ACTIVE":
@@ -390,6 +401,10 @@ class ConsoleController:
                     elif policy.get("fault") and policy["fault"] != self.arm_fault:
                         self.error = policy["fault"]
                         self._stop("New fault during ARM — HOLD stopped")
+                    elif self.snapshot.get("last_error"):
+                        # labd keeps the first fault; ARM clears last_error and any trip sets it.
+                        self.error = str(self.snapshot["last_error"])[:200]
+                        self._stop("ARM aborted by labd — HOLD stopped")
                 elif policy.get("fault") or not policy["armed"] or pico.get("state") != "ACTIVE":
                     self.error = str(policy.get("fault") or self.snapshot.get("last_error") or "Supervisor permission lost")[:200]
                     self._stop("FAULT — HOLD stopped; no automatic re-arm")
@@ -401,6 +416,7 @@ class ConsoleController:
             self.connected = False
             self.error = str(error)[:240]
             self._stop("Service timeout/error — HOLD stopped", send=was_holding)
+            self.link_error = self.error
             return self.status()
 
     def _ready(self, active=False):
@@ -442,7 +458,7 @@ class ConsoleController:
                     self.arm_started = now
                     self.arm_fault = self.snapshot["policy"].get("fault")
                     self.holding = True
-                    self.bench_confirmed = False
+                    self.bench_confirmed, self.confirmed = False, dict.fromkeys(CONFIRMATIONS, False)
                     self.last_renew = None
                     self.notice = operation.upper() + " requested — outputs remain OFF until ACTIVE"
                     if not self._renew(now):
@@ -487,8 +503,9 @@ class ConsoleController:
                 self.notice = operation + " accepted by labd"
                 if operation == "mode":
                     self.notice = fields["value"].upper() + " staged; explicit ARM is required to apply it"
-                if operation == "confirmations" and "bench_loads" in fields["value"]:
-                    self.bench_confirmed = fields["value"]["bench_loads"]
+                if operation == "confirmations":
+                    self.confirmed.update(fields["value"])
+                    self.bench_confirmed = self.confirmed["bench_loads"]
             else:
                 self.error = str(result.get("error", "Rejected"))[:240]
             return result
@@ -497,6 +514,7 @@ class ConsoleController:
             if isinstance(error, OSError):
                 self.connected = False
                 self._stop("Service connection failed — HOLD stopped", send=self.holding)
+                self.link_error = self.error
             return {"ok": False, "error": self.error}
 
     def _bench_ready(self):
@@ -517,6 +535,9 @@ class ConsoleController:
             return {"ok": False, "error": "Boolean HOLD required"}
         if not enabled:
             return self.disarm()
+        if self.holding and self.arm_started is not None:
+            # poll() keeps the handshake deadline/fault checks; a second press must not cancel ARM.
+            return {"ok": True, "message": "ARM handshake in progress; HOLD already active"}
         try:
             self._ready()
             policy = self.snapshot["policy"]
@@ -575,6 +596,7 @@ class DemoTransport:
         self.selector.register(self.process.stdout, selectors.EVENT_READ)
         self.pending = bytearray()
         self.closed = False
+        self.answered = False
 
     def __call__(self, request):
         if self.closed or self.process.poll() is not None:
@@ -583,7 +605,8 @@ class DemoTransport:
         if len(wire) > 4096:
             raise ValueError("Oversize request")
         self.process.stdin.write(wire)
-        deadline = time.monotonic() + self.timeout
+        # Only the cold-start reply gets a longer wait; no lease exists before it.
+        deadline = time.monotonic() + (self.timeout if self.answered else max(self.timeout, 10.0))
         while b"\n" not in self.pending:
             remaining = deadline - time.monotonic()
             if remaining <= 0 or not self.selector.select(remaining):
@@ -599,6 +622,7 @@ class DemoTransport:
                 raise ValueError("Oversize SIMULATION response")
         line, _, rest = self.pending.partition(b"\n")
         self.pending = bytearray(rest)
+        self.answered = True
         return _json(line)
 
     def close(self):
@@ -795,6 +819,8 @@ def create_window(controller, *, callbacks=None, start_worker=True):
             painter.drawText(8, top + 24, "older rows ↓")
 
     class ConsoleWindow(QtWidgets.QMainWindow):
+        PINNED = "Saved snapshot shown — live updates paused until Return to live position"
+
         def __init__(self):
             super().__init__()
             self.setWindowTitle("SR-RX • local receive console")
@@ -815,6 +841,11 @@ def create_window(controller, *, callbacks=None, start_worker=True):
             self.mark_count = 0
             self.input_message = ""
             self.location = None
+            self.location_pinned = False
+            self.location_status = None
+            self.teach_frame = None
+            self.worker_dead = False
+            self.tab_commands = []
             self.receiver_job = ReceiverSimulation()
             self.setStyleSheet("""
                 QWidget {background:#101821;color:#f6f8fb;font-size:18px;}
@@ -836,12 +867,16 @@ def create_window(controller, *, callbacks=None, start_worker=True):
             self.banner.setMinimumHeight(60)
             layout.addWidget(self.banner)
             actions = QtWidgets.QHBoxLayout()
+            self.command_buttons = {}
             for text, op in (("ARM + HOLD", "arm"), ("RECOVER + ARM", "recover"), ("DISARM / STOP", "disarm")):
                 button = self.button(text, lambda checked=False, value=op: self.action(value))
                 if op == "disarm":
                     button.setStyleSheet("background:#942d2d;border-color:#ffceba;font-size:21px;")
+                else:
+                    self.command_buttons[op] = button
                 actions.addWidget(button)
-            actions.addWidget(self.button("HOLD lease", lambda: self.worker.submit("hold", {"enabled": True})))
+            self.command_buttons["hold"] = self.button("HOLD lease", lambda: self.action("hold", {"enabled": True}))
+            actions.addWidget(self.command_buttons["hold"])
             layout.addLayout(actions)
             self.tabs = QtWidgets.QTabWidget()
             layout.addWidget(self.tabs, 1)
@@ -943,7 +978,13 @@ def create_window(controller, *, callbacks=None, start_worker=True):
             layout.addWidget(explanation)
             self.overview = self.diagnostics(layout, "Controller diagnostics…")
 
-        def action(self, operation):
+        def action(self, operation, fields=None):
+            if self.worker_dead:
+                self.input_message = "Control worker stopped — " + operation.upper() + " not sent; restart the console"
+                return
+            if self.worker.locked and operation not in ("disarm", "shutdown"):
+                self.input_message = "Touch controls locked — " + operation.upper() + " not sent; DISARM remains available"
+                return
             if operation in ("arm", "recover", "shutdown"):
                 text = {"arm": "Request ARM and renew the operator lease while this console is responsive? All loads start OFF.",
                         "recover": "Cause removed and hardware checked? RECOVER performs a new ARM handshake. Loads start OFF.",
@@ -953,15 +994,28 @@ def create_window(controller, *, callbacks=None, start_worker=True):
                     QtWidgets.QMessageBox.StandardButton.No)
                 if answer != QtWidgets.QMessageBox.StandardButton.Yes:
                     return
-            self.worker.submit(operation)
+            self.worker.submit(operation, fields)
+
+        def set_locked(self, locked):
+            self.worker.locked = locked
+            self.tabs.setEnabled(not locked)
+            for button in self.command_buttons.values():
+                button.setEnabled(not locked and not self.worker_dead)
+            for widget in self.tab_commands:
+                widget.setEnabled(not self.worker_dead)
+
+        def tab_button(self, text, handler):
+            # In-tab labd commands go through action(); a dead worker disables them.
+            button = self.button(text, handler)
+            self.tab_commands.append(button)
+            return button
 
         def unlock_touch(self):
             if not self.worker.locked:
                 return
             answer = QtWidgets.QMessageBox.question(self, "Unlock touch", "Unlock touch controls? This does not arm or enable a load.")
             if answer == QtWidgets.QMessageBox.StandardButton.Yes:
-                self.worker.locked = False
-                self.tabs.setEnabled(True)
+                self.set_locked(False)
 
         def _receiver_page(self):
             layout = self.page("Receiver")
@@ -983,12 +1037,12 @@ def create_window(controller, *, callbacks=None, start_worker=True):
                 row.addWidget(QtWidgets.QLabel(receiver))
                 selection = QtWidgets.QComboBox(); selection.addItems(ROUTES)
                 row.addWidget(selection)
-                row.addWidget(self.button("Apply route", lambda checked=False, r=receiver, s=selection:
-                    self.worker.submit("route", {"receiver": r, "value": s.currentText()})))
+                row.addWidget(self.tab_button("Apply route", lambda checked=False, r=receiver, s=selection:
+                    self.action("route", {"receiver": r, "value": s.currentText()})))
                 layout.addLayout(row)
             relay = QtWidgets.QComboBox(); relay.addItems(("PARK", "HF", "VHF"))
             layout.addWidget(relay)
-            layout.addWidget(self.button("Apply HF relay", lambda: self.worker.submit("relay", {"value": relay.currentText()})))
+            layout.addWidget(self.tab_button("Apply HF relay", lambda: self.action("relay", {"value": relay.currentText()})))
             layout.addStretch()
 
         def start_capture(self):
@@ -1007,14 +1061,18 @@ def create_window(controller, *, callbacks=None, start_worker=True):
 
         def accept_frame(self, frame):
             from .spectrum import mask_frame
-            self.frame = mask_frame(frame)
+            previous, self.frame = self.frame, mask_frame(frame)
             self.plot.add(self.frame)
-            valid = sum(self.frame["valid"])
+            size, valid = self.frame["fft_size"], sum(self.frame["valid"])
             self.spec_note.setText(f"{self.frame['source']} snapshot | centre {self.frame['center_hz']:.0f} Hz | "
-                f"rate {self.frame['sample_rate_hz']:.0f} Hz | {valid}/{self.frame['fft_size']} valid bins")
-            self.bin_start.setMaximum(self.frame["fft_size"] - 1)
-            self.bin_end.setMaximum(self.frame["fft_size"])
-            self.bin_end.setValue(min(256, self.frame["fft_size"]))
+                f"rate {self.frame['sample_rate_hz']:.0f} Hz | {valid}/{size} valid bins")
+            self.bin_start.setMaximum(size - 1)
+            self.bin_end.setMaximum(size)
+            if previous is None or any(previous[k] != self.frame[k] for k in ("center_hz", "sample_rate_hz", "fft_size", "source")):
+                # A streamed frame of the same geometry keeps the operator's selection.
+                self.bin_start.setValue(0)
+                self.bin_end.setValue(min(256, size))
+                self.teach_confirm.setChecked(False)
 
         def open_spectrum(self):
             path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Spectrum snapshot", "", "JSON (*.json *.jsonl)")
@@ -1023,7 +1081,7 @@ def create_window(controller, *, callbacks=None, start_worker=True):
                     self.accept_frame(load_spectrum(path))
                     self.frame_file = Path(path)
                     self.frame_version = self.frame_file.stat().st_mtime_ns
-                except (OSError, ValueError, ImportError, TypeError, KeyError) as error:
+                except (OSError, ValueError, ImportError, TypeError, KeyError, RuntimeError) as error:
                     self.spec_note.setText("Rejected: " + str(error))
 
         def _location_page(self):
@@ -1034,7 +1092,13 @@ def create_window(controller, *, callbacks=None, start_worker=True):
             self.location_text.setMinimumHeight(195)
             self.location_text.setStyleSheet("background:#203342;padding:16px;font-size:22px;")
             layout.addWidget(self.location_text)
-            layout.addWidget(self.button("Load saved position…", self.open_location))
+            self.location_note = QtWidgets.QLabel("Live tracker position" if "location" in callbacks else "No live location provider")
+            self.location_note.setTextFormat(QtCore.Qt.TextFormat.PlainText)
+            self.location_note.setWordWrap(True); layout.addWidget(self.location_note)
+            row = QtWidgets.QHBoxLayout()
+            row.addWidget(self.button("Load saved position…", self.open_location))
+            row.addWidget(self.button("Return to live position", self.live_location))
+            layout.addLayout(row)
             form = QtWidgets.QFormLayout()
             self.latitude = QtWidgets.QDoubleSpinBox(); self.latitude.setDecimals(7); self.latitude.setRange(-90, 90)
             self.longitude = QtWidgets.QDoubleSpinBox(); self.longitude.setDecimals(7); self.longitude.setRange(-180, 180)
@@ -1050,8 +1114,42 @@ def create_window(controller, *, callbacks=None, start_worker=True):
                 try:
                     value = load_json(path)
                     self._location_value(value, live=False)
-                except (OSError, ValueError, TypeError) as error:
-                    self.location_text.setText("Position rejected: " + str(error))
+                    self.location_pinned = True
+                    self._location_note(self.PINNED, force=True)
+                except (OSError, ValueError, TypeError, RuntimeError) as error:
+                    self.location_note.setText("Position rejected: " + str(error))
+
+        def live_location(self):
+            if "location" not in callbacks:
+                self.location_note.setText("No live location provider")
+                return
+            self.location_pinned, self.location_status = False, None
+            self._live_location()
+
+        def _live_location(self):
+            # Polled even while pinned, so the gpsd socket keeps draining; only rendering pauses.
+            try:
+                value = callbacks["location"]()
+                if self.location_pinned:
+                    note = self.PINNED
+                else:
+                    self._location_value(value, live=True)
+                    note = "Manual position — not a GNSS fix" if self.location.get("source") == "manual" else "Live tracker position"
+            except (ImportError, OSError, ValueError, TypeError, KeyError, RuntimeError) as error:
+                if self.location_pinned:
+                    note = self.PINNED + "\nLive provider error: " + str(error)[:160]
+                else:
+                    # Never leave an old "Live GNSS fix" on screen when the provider fails.
+                    self.location = None
+                    self.location_text.setText("Location unavailable: " + str(error)[:200])
+                    note = "Live tracker unavailable"
+            self._location_note(note)
+
+        def _location_note(self, text, force=False):
+            # Only a change of the shown state replaces the note; a rejection stays readable.
+            if force or text != self.location_status:
+                self.location_status = text
+                self.location_note.setText(text)
 
         def _location_value(self, value, live=False):
             if not isinstance(value, dict):
@@ -1074,8 +1172,12 @@ def create_window(controller, *, callbacks=None, start_worker=True):
                     callbacks["manual_location"](lat, lon)
                 self._location_value({"available": True, "source": "manual", "lat": lat, "lon": lon,
                     "fresh": False, "live_fix": False, "uncertainty_m": None, "uncertainty_confidence": "unknown"})
+                # The tracker now reports the manual entry, so live refresh resumes;
+                # a later fresh GNSS fix from the tracker replaces this note.
+                self.location_pinned = False
+                self._location_note("Manual position — not a GNSS fix", force=True)
             except (OSError, ValueError, TypeError, RuntimeError) as error:
-                self.location_text.setText(str(error))
+                self.location_note.setText("Manual position rejected: " + str(error))
 
         def _learning_page(self):
             layout = self.page("Teach / Classify")
@@ -1091,6 +1193,10 @@ def create_window(controller, *, callbacks=None, start_worker=True):
             layout.addLayout(row)
             self.teach_confirm = QtWidgets.QCheckBox("I explicitly confirm this coarse label and independent capture grouping")
             layout.addWidget(self.teach_confirm)
+            # Confirmation binds the frame shown now; changing bins or label requires a new one.
+            self.teach_confirm.toggled.connect(self._teach_toggled)
+            for signal in (self.bin_start.valueChanged, self.bin_end.valueChanged, self.label.currentIndexChanged):
+                signal.connect(lambda _=None: self.teach_confirm.setChecked(False))
             row = QtWidgets.QHBoxLayout()
             row.addWidget(self.button("Add annotation", lambda: self.learning_action("annotate")))
             row.addWidget(self.button("Train CPU model", lambda: self.learning_action("train")))
@@ -1111,6 +1217,9 @@ def create_window(controller, *, callbacks=None, start_worker=True):
             layout.addWidget(self.learning_text, 1)
             self.learning_diagnostics = self.diagnostics(layout, "Learning diagnostics…")
 
+        def _teach_toggled(self, checked):
+            self.teach_frame = self.frame if checked else None
+
         def new_group(self):
             answer = QtWidgets.QMessageBox.question(self, "Independent session", "Start a genuinely independent capture session? Relabelling overlapping snapshots does not create independent validation data.")
             if answer == QtWidgets.QMessageBox.StandardButton.Yes:
@@ -1130,9 +1239,9 @@ def create_window(controller, *, callbacks=None, start_worker=True):
                 elif self.frame is None:
                     raise ValueError("Load a masked spectrum first")
                 elif operation == "annotate":
-                    if not self.teach_confirm.isChecked():
+                    if not self.teach_confirm.isChecked() or self.teach_frame is None:
                         raise ValueError("Explicit label/group confirmation required")
-                    self.dataset = learning.annotate(self.dataset, self.frame, self.bin_start.value(), self.bin_end.value(),
+                    self.dataset = learning.annotate(self.dataset, self.teach_frame, self.bin_start.value(), self.bin_end.value(),
                         self.label.currentData(), group_id=self.group_id, user_confirmed=True)
                     self.teach_confirm.setChecked(False)
                     result = self.dataset
@@ -1171,7 +1280,7 @@ def create_window(controller, *, callbacks=None, start_worker=True):
                         setattr(self, kind, value)
                         self.learning_text.setPlainText(learning_summary(value, kind))
                         self.learning_diagnostics.setPlainText(json.dumps(value, indent=2)[:16000])
-            except (ImportError, OSError, ValueError, TypeError, KeyError) as error:
+            except (ImportError, OSError, ValueError, TypeError, KeyError, RuntimeError) as error:
                 self.learning_text.setPlainText("Rejected: " + str(error))
 
         def _bench_page(self):
@@ -1180,7 +1289,7 @@ def create_window(controller, *, callbacks=None, start_worker=True):
             note.setWordWrap(True); layout.addWidget(note)
             row = QtWidgets.QHBoxLayout()
             for mode in ("field", "lab"):
-                row.addWidget(self.button("Stage " + mode.upper(), lambda checked=False, m=mode: self.worker.submit("mode", {"value": m})))
+                row.addWidget(self.tab_button("Stage " + mode.upper(), lambda checked=False, m=mode: self.action("mode", {"value": m})))
             layout.addLayout(row)
             for name, label in (("bench_loads", "Bench loads connected and checked"),
                                 ("boni_connected", "Boni antenna/module connected"), ("boni_profile", "Boni profile/current window checked")):
@@ -1188,8 +1297,9 @@ def create_window(controller, *, callbacks=None, start_worker=True):
                 if not hasattr(self, "confirmation_checks"):
                     self.confirmation_checks = []
                 self.confirmation_checks.append(check)
+                self.tab_commands.append(check)
                 layout.addWidget(check)
-                check.clicked.connect(lambda value, n=name: self.worker.submit("confirmations", {"value": {n: value}}))
+                check.clicked.connect(lambda value, n=name: self.action("confirmations", {"value": {n: value}}))
             grid = QtWidgets.QGridLayout()
             self.output_labels = {}
             self.output_on_buttons = {}
@@ -1197,10 +1307,10 @@ def create_window(controller, *, callbacks=None, start_worker=True):
                 cell = QtWidgets.QWidget(); row = QtWidgets.QHBoxLayout(cell)
                 label = QtWidgets.QLabel(name + " ?"); self.output_labels[name] = label
                 row.addWidget(label)
-                on_button = self.button("ON", lambda checked=False, n=name: self.worker.submit("control", {"name": n, "value": True}))
+                on_button = self.button("ON", lambda checked=False, n=name: self.action("control", {"name": n, "value": True}))
                 self.output_on_buttons[name] = on_button
                 row.addWidget(on_button)
-                row.addWidget(self.button("OFF", lambda checked=False, n=name: self.worker.submit("control", {"name": n, "value": False})))
+                row.addWidget(self.tab_button("OFF", lambda checked=False, n=name: self.action("control", {"name": n, "value": False})))
                 grid.addWidget(cell, index // 2, index % 2)
             layout.addLayout(grid)
             layout.addStretch()
@@ -1209,24 +1319,37 @@ def create_window(controller, *, callbacks=None, start_worker=True):
         def render_state(self, view):
             data = view.get("data", {})
             policy, pico = data.get("policy", {}), data.get("pico", {})
-            live = view.get("connected") is True
+            live = view.get("connected") is True and not self.worker_dead
+            # Pico readouts need labd's own Pico freshness, not only a fresh labd reply.
+            # A labd that omits the field is "unreported": readouts withheld, no stale/ARM claim.
+            freshness = data.get("pico_fresh")
+            pico_live = live and freshness is True
+            holding = view.get("holding") is True and not self.worker_dead
             backend = data.get("mode", "UNKNOWN")
-            state = "NO CONNECTION" if not live else {"ACTIVE": "READY", "SAFE": "STOPPED", "TRIPPED": "PROTECTION STOP",
+            state = "NO CONNECTION" if not live else ("PICO STATUS STALE" if freshness is False else "PICO FRESHNESS UNREPORTED") if not pico_live else {"ACTIVE": "READY", "SAFE": "STOPPED", "TRIPPED": "PROTECTION STOP",
                 "CONFIGURING": "STARTING", "RESETTING": "STARTING", "WARMING": "STARTING", "SHUTTING_DOWN": "SHUTTING DOWN", "OFF": "OFF"}.get(pico.get("state"), "WAITING")
-            fault = view.get("error") or policy.get("fault")
-            self.banner.setText(f"{backend} | {state} | {'CONTROL ARMED' if policy.get('armed') and live else 'CONTROL OFF'} | "
-                f"HOLD {'ON' if view.get('holding') else 'OFF'} | {str(policy.get('mode', '?')).upper()}")
-            self.banner.setStyleSheet("background:" + ("#8a2828" if not live or view.get("error") or policy.get("fault") else "#22493b") + ";padding:10px;font-size:20px;font-weight:700;")
+            control = ("CONTROL ARMED" if policy.get("armed") else "CONTROL OFF") if live else "CONTROL UNKNOWN"
+            mode = str(policy.get("mode", "?")).upper() if live else "MODE UNKNOWN"
+            self.banner.setText(("Control worker stopped — HOLD is OFF; verify labd/Pico state | " if self.worker_dead else "")
+                + f"{backend} | {state} | {control} | HOLD {'ON' if holding else 'OFF'} | {mode}")
+            self.banner.setStyleSheet("background:" + ("#8a2828" if not pico_live or view.get("error") or policy.get("fault") else "#22493b") + ";padding:10px;font-size:20px;font-weight:700;")
             self.notice.setText(str(view.get("notice", "")))
             voltage = pico.get("battery_mv")
-            self.metric_values["battery"].setText(f"{voltage / 1000:.2f} V" if live and _finite(voltage) and voltage >= 0 else "Unavailable")
+            self.metric_values["battery"].setText(f"{voltage / 1000:.2f} V" if pico_live and _finite(voltage) and voltage >= 0 else "Unavailable")
             temperatures = []
             for label, key in (("Case", "case_temp_c"), ("Panel", "panel_temp_c")):
                 temperature = pico.get(key)
-                temperatures.append(f"{label} {temperature:.1f} °C" if live and _finite(temperature) else label + " unavailable")
+                temperatures.append(f"{label} {temperature:.1f} °C" if pico_live and _finite(temperature) else label + " unavailable")
             self.metric_values["temperature"].setText("\n".join(temperatures))
-            self.metric_values["supervisor"].setText(state.title() + "\nLease: " + ("holding" if view.get("holding") else "stopped"))
-            self.fault_text.setText("Connection lost — current power state is unconfirmed." if not live else readable_fault(fault))
+            self.metric_values["supervisor"].setText(state.title() + "\nLease: " + ("holding" if holding else "stopped"))
+            fault = ("Connection lost — current power state is unconfirmed." if not live
+                     else readable_fault(policy.get("fault")) if pico_live
+                     else ("Supervisor status stale — no fresh Pico status; ARM will be refused." if freshness is False
+                           else "labd did not report Pico freshness — Pico readouts withheld; labd checks it before ARM.")
+                     # The labd fault stays visible, but never as "ready" without fresh Pico status.
+                     + ("\n" + readable_fault(policy["fault"]) if policy.get("fault") not in (None, "", "new_pico_session") else ""))
+            # The console's own error never hides the labd protection fault.
+            self.fault_text.setText(fault + ("\nConsole: " + str(view["error"])[:240] if view.get("error") else ""))
             for row, values in enumerate(channel_rows(data, live)):
                 for column, text in enumerate(values):
                     item = self.channel_table.item(row, column)
@@ -1242,15 +1365,16 @@ def create_window(controller, *, callbacks=None, start_worker=True):
             for name, label in self.output_labels.items():
                 value = policy.get("outputs", {}).get(name)
                 label.setText(name + (" ON" if value else " OFF") if live and type(value) is bool else name + " UNKNOWN")
-                enabled = live and view.get("holding") and policy.get("armed") and not policy.get("fault") and pico.get("state") == "ACTIVE"
+                enabled = live and holding and policy.get("armed") and not policy.get("fault") and pico.get("state") == "ACTIVE"
                 if name in ("EN_AUX12", "EN_LABPORT"):
                     enabled = enabled and policy.get("mode") == "lab" and view.get("bench_confirmed")
                 self.output_on_buttons[name].setEnabled(bool(enabled))
-            if not view.get("holding"):
-                for check in self.confirmation_checks:
-                    check.blockSignals(True)
-                    check.setChecked(False)
-                    check.blockSignals(False)
+            # Show only confirmations labd accepted; a rejected click must not stay ticked.
+            accepted = view.get("confirmations") if isinstance(view.get("confirmations"), dict) else {}
+            for name, check in zip(CONFIRMATIONS, self.confirmation_checks):
+                check.blockSignals(True)
+                check.setChecked(holding and accepted.get(name) is True)
+                check.blockSignals(False)
             self.physical_inputs()
 
         def physical_inputs(self):
@@ -1261,8 +1385,7 @@ def create_window(controller, *, callbacks=None, start_worker=True):
             gestures = self.navigation.consume(data.get("hmi") if view.get("connected") else None, data.get("session"))
             for gesture in gestures["events"]:
                 if gesture == "lock":
-                    self.worker.locked = not self.worker.locked
-                    self.tabs.setEnabled(not self.worker.locked)
+                    self.set_locked(not self.worker.locked)
                 elif not self.worker.locked:
                     if gesture == "home":
                         self.tabs.setCurrentIndex(0)
@@ -1291,22 +1414,33 @@ def create_window(controller, *, callbacks=None, start_worker=True):
 
         def _heartbeat(self):
             self.worker.ui_at = time.monotonic()
-            if not self.closing:
-                self.render_state(controller.status())
+            if self.closing:
+                return
+            self.render_state(controller.status())
+            # Independent steps: one failing source must not freeze the others.
+            try:
+                frame = self.receiver_job.poll()
+                if frame is not None:
+                    self.accept_frame(frame)
+                    self.rx_note.setText("SIMULATION snapshot loaded into Spectrum")
+            except (ImportError, OSError, ValueError, TypeError, KeyError, RuntimeError) as error:
+                self.rx_note.setText(str(error))
+            if self.frame_file is not None:
                 try:
-                    frame = self.receiver_job.poll()
-                    if frame is not None:
-                        self.accept_frame(frame)
-                        self.rx_note.setText("SIMULATION snapshot loaded into Spectrum")
-                    if self.frame_file is not None:
-                        version = self.frame_file.stat().st_mtime_ns
-                        if version != self.frame_version:
-                            self.accept_frame(load_spectrum(self.frame_file))
-                            self.frame_version = version
-                    if "location" in callbacks:
-                        self._location_value(callbacks["location"](), live=True)
-                except (ImportError, OSError, ValueError, TypeError, KeyError, RuntimeError) as error:
-                    self.rx_note.setText(str(error))
+                    info = self.frame_file.stat()
+                    if info.st_size > MAX_FILE_BYTES:
+                        self.frame_file = self.frame_version = None
+                        self.spec_note.setText("Tracked file exceeds 2 MiB — tracking stopped; load a survey excerpt")
+                    elif info.st_mtime_ns != self.frame_version:
+                        self.frame_version = info.st_mtime_ns  # A rejected version is not re-read every tick.
+                        self.accept_frame(load_spectrum(self.frame_file))
+                except OSError as error:
+                    self.frame_file = self.frame_version = None
+                    self.spec_note.setText("Tracked file lost — tracking stopped: " + str(error))
+                except (ImportError, ValueError, TypeError, KeyError, RuntimeError) as error:
+                    self.spec_note.setText("Tracked file rejected: " + str(error))
+            if "location" in callbacks:
+                self._live_location()  # Also while pinned: the provider must keep draining gpsd.
 
         def closeEvent(self, event):
             if self.worker_started and self.worker.isRunning():
@@ -1326,7 +1460,11 @@ def create_window(controller, *, callbacks=None, start_worker=True):
             if self.closing:
                 self.close()
             else:
-                self.banner.setText("Control worker stopped — HOLD is OFF; verify labd/Pico state")
+                # Nothing reads the queue any more: drop commands and keep the warning visible.
+                self.worker_dead = True
+                self.worker.stopping.set()
+                self.set_locked(self.worker.locked)
+                self.render_state(controller.status())
 
     return ConsoleWindow()
 

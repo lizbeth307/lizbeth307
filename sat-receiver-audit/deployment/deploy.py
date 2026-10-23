@@ -20,6 +20,7 @@ import subprocess
 import sys
 import tarfile
 
+sys.dont_write_bytecode = True  # imports must not add __pycache__ to the tree verify_build allowlists
 HERE = Path(__file__).resolve().parent
 PROJECT = HERE.parent
 BAD_PARTS = {"channeltx", "samplesink", "samplemimo", "channelmimo", "amarisoft-plugin"}
@@ -28,6 +29,8 @@ BAD_NAMES = {"rtl_biast", "rtl_eeprom", "rtl_tcp", "limegui", "limeflash", "lime
              "direwolf", "urh", "rigctl", "rigctld", "soapysdrserver", "wifi_test", "bt_test"}
 BAD_MODULE_WORDS = ("amarisoft", "soapysdrremote", "hackrf", "bladerf", "redpitaya", "uhd", "lms7",
                     "iq_exporter", "network_sink", "pager_decoder", "recorder", "heatmap", "demodinmarsat")
+# Pico UART group: only labd via SupplementaryGroups; HMI users join labd for the socket, never this.
+PICO_GROUP = "srrx-pico"
 
 
 class DeploymentError(ValueError):
@@ -35,7 +38,9 @@ class DeploymentError(ValueError):
 
 
 def sha(path):
-    return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+    # Streamed: the guard runs inside MemoryMax=64M/128M units and hashes a 1.6 GB image.
+    with open(path, "rb") as handle:
+        return hashlib.file_digest(handle, "sha256").hexdigest()
 
 
 def load(path):
@@ -123,24 +128,42 @@ def _usb(device):
 
 def udev_rules(config):
     validate_devices(config)
-    rules = ["# Candidate only: review udevadm properties on Q6A; no uaccess/world permissions."]
+    rules = ["# Candidate only: review udevadm properties on Q6A; no uaccess/world permissions; " + PICO_GROUP + " has no login members."]
     for name, device in config["usb"].items():
         alias = device["path"][5:]
-        rules.append(f'SUBSYSTEM=="usb", ENV{{DEVTYPE}}=="usb_device", ATTR{{idVendor}}=="{device["vid"]}", ATTR{{idProduct}}=="{device["pid"]}", ATTR{{serial}}=="{device["serial"]}", GROUP="lab", MODE="0660", SYMLINK+="{alias}"')
+        rules.append(f'SUBSYSTEM=="usb", ENV{{DEVTYPE}}=="usb_device", ATTR{{idVendor}}=="{device["vid"]}", ATTR{{idProduct}}=="{device["pid"]}", ATTR{{serial}}=="{device["serial"]}", GROUP="lab", MODE="0660", SYMLINK+="{alias}", TAG+="systemd"')
     pico = config["pico"]
     if pico["kind"] == "platform":
-        rules.append(f'SUBSYSTEM=="tty", KERNELS=="{pico["kernel_parent"]}", GROUP="labd", MODE="0660", SYMLINK+="lab/pico"')
+        rules.append(f'SUBSYSTEM=="tty", KERNELS=="{pico["kernel_parent"]}", GROUP="{PICO_GROUP}", MODE="0660", SYMLINK+="lab/pico", TAG+="systemd"')
     else:
-        rules.append(f'SUBSYSTEM=="tty", ATTRS{{idVendor}}=="{pico["vid"]}", ATTRS{{idProduct}}=="{pico["pid"]}", ATTRS{{serial}}=="{pico["serial"]}", GROUP="labd", MODE="0660", SYMLINK+="lab/pico"')
+        rules.append(f'SUBSYSTEM=="tty", ATTRS{{idVendor}}=="{pico["vid"]}", ATTRS{{idProduct}}=="{pico["pid"]}", ATTRS{{serial}}=="{pico["serial"]}", GROUP="{PICO_GROUP}", MODE="0660", SYMLINK+="lab/pico", TAG+="systemd"')
     return "\n".join(rules) + "\n"
 
 
-def command(args):
+def command(args, limit=100_000):
     try:
         out = subprocess.run(args, capture_output=True, text=True, timeout=10)
-        return {"returncode": out.returncode, "stdout": out.stdout[:100_000], "stderr": out.stderr[:1000]}
+        if len(out.stdout) > limit:  # fail closed: a cut inventory would silently omit packages
+            return {"returncode": -2, "error": "output exceeds bound", "stdout": "", "stderr": ""}
+        return {"returncode": out.returncode, "stdout": out.stdout, "stderr": out.stderr[:1000]}
     except (OSError, subprocess.SubprocessError) as exc:
         return {"returncode": -1, "error": str(exc)}
+
+
+def device_node(name, path):
+    """Live /dev/lab node: no access for others; the Pico UART only via a member-less group."""
+    node = Path(path).stat()
+    if not stat.S_ISCHR(node.st_mode):
+        raise DeploymentError(name + " is not a character device")
+    if node.st_mode & 0o007:
+        raise DeploymentError(name + " grants access to other users")
+    if name == "pico":
+        import grp, pwd
+        group = grp.getgrnam(PICO_GROUP)
+        members = set(group.gr_mem) | {u.pw_name for u in pwd.getpwall() if u.pw_gid == group.gr_gid}
+        if node.st_gid != group.gr_gid or members - {"labd"}:
+            raise DeploymentError("Pico UART must belong to member-less group " + PICO_GROUP)
+    return node
 
 
 def doctor(config=None):
@@ -165,8 +188,8 @@ def doctor(config=None):
         report["issues"].append("distribution is not Ubuntu noble")
     if "radxa,dragon-q6a" not in report["dt_compatible"]:
         report["issues"].append("Q6A DT compatibility not observed")
-    report["packages"] = command(["dpkg-query", "-W", "-f=${binary:Package}\t${Version}\t${db:Status-Status}\n"])
-    installed = {}
+    report["packages"] = command(["dpkg-query", "-W", "-f=${binary:Package}\t${Version}\t${db:Status-Status}\n"], limit=8 * 1024 * 1024)
+    installed, present = {}, set()
     if report["packages"]["returncode"]:
         report["issues"].append("installed package inventory unavailable")
     else:
@@ -174,14 +197,17 @@ def doctor(config=None):
             fields = row.split("\t")
             if len(fields) == 3 and fields[2] == "installed":
                 installed[fields[0].split(":", 1)[0]] = fields[1]
+            # Unpacked/half-configured/triggers-pending packages already have files on disk.
+            if len(fields) == 3 and fields[2] not in ("not-installed", "config-files"):
+                present.add(fields[0].split(":", 1)[0])
         requirements = load(HERE / "dependencies.json")["required_target_packages"]
         for name, versions in requirements.items():
             if installed.get(name) not in versions:
                 report["issues"].append("missing/different pinned package: " + name)
         prohibited = {"wsjtx", "fldigi", "qsstv", "direwolf", "urh", "soapysdr-module-all", "soapysdr0.8-module-all",
                       "soapysdr0.8-module-remote", "limesuiteng-gui", "gr-limesuiteng", "libhamlib-utils"}
-        if prohibited.intersection(installed):
-            report["issues"].append("prohibited packages installed: " + ",".join(sorted(prohibited.intersection(installed))))
+        if prohibited.intersection(present):
+            report["issues"].append("prohibited packages installed: " + ",".join(sorted(prohibited.intersection(present))))
     try:
         report["bios_version"] = Path("/sys/class/dmi/id/bios_version").read_text().strip()
     except OSError:
@@ -206,8 +232,7 @@ def doctor(config=None):
             devices = dict(config["usb"], pico=config["pico"])
             for name, device in devices.items():
                 path = Path(device["path"])
-                if not stat.S_ISCHR(path.stat().st_mode):
-                    raise DeploymentError(name + " is not a character device")
+                device_node(name, path)
                 result = command(["udevadm", "info", "--query=property", "--name", str(path)])
                 if result["returncode"]:
                     raise DeploymentError("udevadm could not identify " + name)
@@ -228,7 +253,7 @@ def doctor(config=None):
                     if actual_usb != (device["vid"], device["pid"], device["serial"]):
                         raise DeploymentError(name + " live raw VID/PID/serial differs")
                 report["observed_devices"][name] = str(path.resolve())
-        except (OSError, ValueError, RuntimeError) as exc:
+        except (OSError, ValueError, RuntimeError, KeyError) as exc:
             report["issues"].append(str(exc))
     report["status"] = "TARGET_METADATA_OK" if not report["issues"] else "BLOCKED"
     return report
@@ -267,17 +292,22 @@ def verify_build(prefix, manifest):
     files = {}
     modules = []
     for path in sorted(root.rglob("*")):
-        if path.is_dir():
+        # is_dir() follows links and rglob does not descend into linked dirs: check targets first.
+        link = path.resolve(strict=True) if path.is_symlink() else None
+        if link is not None and not link.is_relative_to(root):
+            raise DeploymentError("external staged symlink")
+        if link is None and path.is_dir():
             continue
         relative = path.relative_to(root).as_posix()
-        if path.is_symlink():
-            if not path.resolve(strict=True).is_relative_to(root):
-                raise DeploymentError("external staged symlink")
-        if not path.is_file():
+        if not path.is_file() and not (link is not None and link.is_dir()):
             raise DeploymentError("non-regular staged file")
         lower = relative.lower()
         if any(part.lower() in BAD_PARTS for part in path.relative_to(root).parts) or path.name.lower() in BAD_NAMES:
             raise DeploymentError("prohibited TX/control executable or plugin: " + relative)
+        if link is not None and link.is_dir():
+            # Internal alias (e.g. venv lib64 -> lib) is itself allowlisted; its real target is walked.
+            files[relative] = "symlink:" + link.relative_to(root).as_posix()
+            continue
         if ".so" in path.name:
             modules.append(relative)
             if any(term in lower for term in BAD_MODULE_WORDS):
@@ -328,7 +358,7 @@ def stage(destination, config=None):
         shutil.copyfile(unit, units / unit.name)
         dropin = units / (unit.name + ".d")
         dropin.mkdir()
-        (dropin / "20-release-guard.conf").write_text("[Service]\nExecStartPre=/usr/bin/python3 /opt/srrx/deployment/deploy.py release-guard --devices /etc/srrx/devices.json --acceptance /etc/srrx/acceptance.json --release /etc/srrx/release.json --build-manifest /etc/srrx/build-manifest.json --cache /srv/srrx-cache\n")
+        (dropin / "20-release-guard.conf").write_text("[Service]\nExecStartPre=/usr/bin/python3 -B /opt/srrx/deployment/deploy.py release-guard --devices /etc/srrx/devices.json --acceptance /etc/srrx/acceptance.json --release /etc/srrx/release.json --build-manifest /etc/srrx/build-manifest.json --cache /srv/srrx-cache\n")
     for name in ("release.template.json", "build-manifest.template.json", "devices.template.json"):
         shutil.copyfile(HERE / name, etc / name)
     shutil.copyfile(PROJECT / "software/config/acceptance.template.json", etc / "acceptance.template.json")

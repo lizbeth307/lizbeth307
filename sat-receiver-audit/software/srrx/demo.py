@@ -3,12 +3,18 @@ import argparse
 import json
 from pathlib import Path
 from .engine import Engine
-from .hardware import SimHardware
+from .hardware import SimHardware, load_mapping
 from .link import SimLink
 
 
+def require(condition, label):
+    # Explicit checks survive python -O; a stripped assert would report PASS.
+    if not condition:
+        raise RuntimeError("demo scenario failed: " + label)
+
+
 def run_scenario(project):
-    hardware = SimHardware()
+    hardware = SimHardware(load_mapping(Path(project) / "design/E3.json"))
     hardware.set_inputs({n: False for n in hardware.inputs if n.startswith("DCS_")})
     link = SimLink(project)
     engine = Engine(hardware, link)
@@ -29,27 +35,28 @@ def run_scenario(project):
             "LNA2": hardware.outputs["EN_LNA2"], "error": status["last_error"]})
     try:
         engine.tick(now)
-        assert engine.request({"op": "arm"})["ok"]
+        require(engine.request({"op": "arm"})["ok"], "arm request")
         advance(1800)
-        assert engine.policy.armed
-        assert engine.request({"op": "control", "name": "EN_LNA2", "value": True})["ok"]
+        require(engine.policy.armed, "armed")
+        require(engine.request({"op": "control", "name": "EN_LNA2", "value": True})["ok"], "enable LNA2")
         capture("active_bias")
         link.drop_link = True
         advance(1000)
-        assert not hardware.outputs["EN_LNA2"] and link.model.outputs["mcp_reset"]
+        require(not hardware.outputs["EN_LNA2"] and link.model.outputs["mcp_reset"], "UART loss resets outputs")
         capture("uart_lost")
         link.drop_link = False
         advance(1000)
-        assert not engine.policy.armed and not hardware.outputs["EN_LNA2"]
+        require(not engine.policy.armed and not hardware.outputs["EN_LNA2"], "no automatic rearm")
         capture("link_restored_no_auto_rearm")
-        assert engine.request({"op": "recover"})["ok"]
+        require(engine.request({"op": "recover"})["ok"], "explicit recover")
         advance(1800)
-        assert engine.policy.armed and not hardware.outputs["EN_LNA2"]
+        require(engine.policy.armed and not hardware.outputs["EN_LNA2"], "recovery leaves outputs off")
         capture("explicit_recovery_outputs_off")
-        engine.request({"op": "control", "name": "EN_LNA2", "value": True})
-        engine.request({"op": "sim", "name": "FAULT_LNA2", "value": False})
+        require(engine.request({"op": "control", "name": "EN_LNA2", "value": True})["ok"]
+                and hardware.outputs["EN_LNA2"], "re-enable before fault")
+        require(engine.request({"op": "sim", "name": "FAULT_LNA2", "value": False})["ok"], "inject FAULT_LNA2")
         advance(200)
-        assert not hardware.outputs["EN_LNA2"] and link.model.outputs["mcp_reset"]
+        require(not hardware.outputs["EN_LNA2"] and link.model.outputs["mcp_reset"], "fault latched")
         capture("fault_latched")
         return {"status": "PASS", "backend": "SIMULATION", "physical_tests_performed": False,
                 "scenarios": snapshots, "encoded_wire": True}
