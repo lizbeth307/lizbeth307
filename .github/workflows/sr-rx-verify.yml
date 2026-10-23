@@ -124,13 +124,41 @@ jobs:
           kicad-cli version
       - name: Regenerate schematics, netlist, ERC, documents, PDF and SVG
         run: python3 tools/run_checks.py --export
-      - name: Independent netlist and PCB-preparation checks
+      - name: Compare with the committed outputs
+        id: compare
+        # KiCad stamps export dates, absolute source paths and its build
+        # string; those lines and the netlist hashes derived from them are the
+        # only differences tolerated. When nothing else differs, the committed
+        # files are restored so the hash-pinned PCB chain is checked as stored.
+        run: |
+          git add -A .
+          git -c core.quotePath=false diff --cached -U0 -- . ':(exclude)build/kicad/sr-rx-v2.pdf' \
+            | grep -E '^[-+][^-+]' \
+            | grep -vE 'SVG Image created as .* date |<date>|"date": |<source>|<tool>Eeschema |"design_file": |"netlist_sha256": |"sha256": "[0-9a-f]{64}"' \
+            > "$RUNNER_TEMP/cad-unexpected.txt" || true
+          if [ -s "$RUNNER_TEMP/cad-unexpected.txt" ]; then
+            echo "reproducible=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Regenerated CAD outputs differ from the committed ones beyond volatile metadata"
+            head -100 "$RUNNER_TEMP/cad-unexpected.txt"
+          else
+            echo "reproducible=true" >> "$GITHUB_OUTPUT"
+            git reset -q && git checkout -q -- . && git clean -fdq -- .
+            echo "CAD outputs reproduce the committed files apart from volatile metadata"
+          fi
+      - name: Independent netlist and PCB checks on the committed outputs
+        if: steps.compare.outputs.reproducible == 'true'
+        run: |
+          python3 verification/independent_netlist_check.py
+          python3 pcb/prepare.py --check
+          python3 verification/independent_pcb_check.py
+          python3 verification/pcb-prototype-review-check.py
+          git diff --exit-code --stat -- .
+      - name: Regenerate PCB-preparation inputs for changed graphs
+        if: steps.compare.outputs.reproducible == 'false'
         run: |
           python3 verification/independent_netlist_check.py
           python3 pcb/prepare.py
           python3 pcb/prepare.py --check
-          python3 verification/independent_pcb_check.py
-          python3 verification/pcb-prototype-review-check.py
       - name: Collect regenerated outputs
         if: always()
         run: |
@@ -143,20 +171,10 @@ jobs:
           name: cad-regenerated
           path: ${{ runner.temp }}/cad.patch
       - name: Committed CAD outputs match the design graphs
-        # KiCad stamps export dates, absolute source paths and its build
-        # string; those lines and the netlist hashes derived from them are the
-        # only differences allowed. The PDF is binary and carries a date.
+        if: steps.compare.outputs.reproducible == 'false'
         run: |
-          git -c core.quotePath=false diff --cached -U0 -- . ':(exclude)build/kicad/sr-rx-v2.pdf' \
-            | grep -E '^[-+][^-+]' \
-            | grep -vE 'SVG Image created as .* date |<date>|"date": |<source>|<tool>Eeschema |"design_file": |"netlist_sha256": |"sha256": "[0-9a-f]{64}"' \
-            > "$RUNNER_TEMP/cad-unexpected.txt" || true
-          if [ -s "$RUNNER_TEMP/cad-unexpected.txt" ]; then
-            echo "::error::Regenerated CAD outputs differ from the committed ones beyond volatile metadata"
-            head -100 "$RUNNER_TEMP/cad-unexpected.txt"
-            exit 1
-          fi
-          echo "CAD outputs reproduce the committed files apart from volatile metadata"
+          echo "::error::Committed CAD outputs are stale; apply the cad-regenerated patch (and re-freeze the PCB chain if pcb/generated changed)"
+          exit 1
 
   module-lab:
     name: Module lab (${{ matrix.arch }})
