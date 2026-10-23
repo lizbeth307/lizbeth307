@@ -1,0 +1,328 @@
+name: SR-RX verification
+
+# Host regression and CAD/netlist checks for sat-receiver-audit on real Linux
+# (x86_64 and ARM64). The ARM64 QEMU lab is long and runs only on request.
+# None of these jobs produce hardware evidence: physical gates stay OPEN.
+
+on:
+  push:
+    branches: ['codex/**', 'ccr-*']
+    paths: ['sat-receiver-audit/**', '.github/workflows/sr-rx-verify.yml']
+  pull_request:
+    paths: ['sat-receiver-audit/**', '.github/workflows/sr-rx-verify.yml']
+  workflow_dispatch:
+    inputs:
+      linux_lab:
+        description: 'Also run the full ARM64 QEMU Linux lab, finalize and repackage (about 1 h)'
+        type: boolean
+        default: false
+      refreeze_pcb:
+        description: 'If the design graphs changed, also re-place/re-route the DC_CORE PCB chain and re-pin its checks'
+        type: boolean
+        default: false
+      archive_as:
+        description: 'Directory name under verification/linux-attempts for the previously imported run'
+        type: string
+        default: 'run07'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sr-rx-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: sat-receiver-audit
+
+env:
+  PYTHONDONTWRITEBYTECODE: '1'
+  QT_QPA_PLATFORM: offscreen
+  # Same versions as deployment/linux_lab/wheelhouse-requirements.txt (the
+  # ARM64 guest lock); hashes there are aarch64-only, so they are not reused.
+  PY_PINS: >-
+    numpy==2.3.5 onnx==1.23.2 onnxruntime==1.31.0 PySide6==6.12.0
+    lxml==6.1.3 PyMuPDF==2.0
+
+jobs:
+  host:
+    name: Host regression (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # No later step needs authenticated git; keep GITHUB_TOKEN out of .git/config.
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install Qt runtime libraries and compilers
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends \
+            libegl1 libgl1 libopengl0 libxkbcommon0 libfontconfig1 \
+            libdbus-1-3 libglib2.0-0t64 gcc g++
+      - name: Install Python dependencies
+        run: python -m pip install --disable-pip-version-check $PY_PINS
+      - name: Host regression (Internet sockets denied)
+        run: python tools/run_tests_offline.py
+      - name: Summarize regression report
+        if: always()
+        run: |
+          python - <<'EOF'
+          import json
+          r = json.load(open("verification/software-tests.json"))
+          print(r["host_regression_status"], r["tests_discovered"], "discovered,", r["passed"], "passed")
+          print("groups:", r["test_groups"])
+          for kind in ("failures", "errors"):
+              for item in r[kind]:
+                  print("::error title=" + kind + "::" + item["test"])
+          for item in r["skipped"]:
+              print("SKIP", item["test"], "--", item["reason"])
+          EOF
+          cp verification/software-tests.json "$RUNNER_TEMP/software-tests-${{ matrix.arch }}.json"
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: software-tests-${{ matrix.arch }}
+          path: ${{ runner.temp }}/software-tests-${{ matrix.arch }}.json
+      - name: Independent CAD, netlist and electrical checks
+        if: matrix.arch == 'x86_64'
+        run: |
+          git checkout -- verification/software-tests.json
+          python tools/validate_project.py
+          python verification/independent_netlist_check.py
+          python verification/independent_pcb_check.py
+          python verification/pcb-prototype-review-check.py
+          python tools/check_electrical_invariants.py
+          python pcb/prepare.py --check
+      - name: Checks reproduce the committed reports
+        if: matrix.arch == 'x86_64'
+        run: git diff --exit-code -- .
+      - name: Firmware packages match the current MCU sources
+        if: matrix.arch == 'x86_64'
+        run: python tools/build_firmware.py --check
+
+  cad:
+    name: CAD reproduction (KiCad 10.0.7)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    container:
+      image: kicad/kicad:10.0.7
+      options: --user root
+    steps:
+      - name: Install git and pip inside the KiCad image
+        working-directory: .
+        run: |
+          apt-get update -q
+          apt-get install -y -q --no-install-recommends git ca-certificates python3-pip
+      - uses: actions/checkout@v5
+        with:
+          # No later step needs authenticated git; keep GITHUB_TOKEN out of .git/config.
+          persist-credentials: false
+      - name: Python dependencies for the PDF and netlist checks
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          python3 -m pip install --break-system-packages --disable-pip-version-check PyMuPDF==2.0 lxml==6.1.3
+          kicad-cli version
+      - name: Regenerate schematics, netlist, ERC, documents, PDF and SVG
+        run: python3 tools/run_checks.py --export
+      - name: Compare with the committed outputs
+        id: compare
+        # KiCad stamps export dates, absolute source paths and its build
+        # string; those lines and the netlist hashes derived from them are the
+        # only differences tolerated. When nothing else differs, the committed
+        # files are restored so the hash-pinned PCB chain is checked as stored.
+        run: |
+          git add -A .
+          git -c core.quotePath=false diff --cached -U0 -- . ':(exclude)build/kicad/sr-rx-v2.pdf' \
+            | grep -E '^[-+][^-+]' \
+            | grep -vE 'SVG Image created as .* date |<date>|"date": |<source>|<tool>Eeschema |"design_file": |"netlist_sha256": |"sha256": "[0-9a-f]{64}"' \
+            > "$RUNNER_TEMP/cad-unexpected.txt" || true
+          if [ -s "$RUNNER_TEMP/cad-unexpected.txt" ]; then
+            echo "reproducible=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::Regenerated CAD outputs differ from the committed ones beyond volatile metadata"
+            head -100 "$RUNNER_TEMP/cad-unexpected.txt"
+          else
+            echo "reproducible=true" >> "$GITHUB_OUTPUT"
+            git reset -q && git checkout -q -- . && git clean -fdq -- .
+            echo "CAD outputs reproduce the committed files apart from volatile metadata"
+          fi
+      - name: Regenerate PCB-preparation inputs
+        id: pcbprep
+        run: |
+          python3 verification/independent_netlist_check.py
+          python3 pcb/prepare.py
+          python3 pcb/prepare.py --check
+          if git diff --quiet -- pcb/generated; then echo "changed=false" >> "$GITHUB_OUTPUT"; else echo "changed=true" >> "$GITHUB_OUTPUT"; fi
+      - name: Re-freeze the DC_CORE starter and routed prototype
+        # Only on explicit request: places and routes the 71-part core again
+        # from the regenerated input, runs native DRC, then pins the prototype
+        # check to the new input and starter hashes.
+        if: steps.pcbprep.outputs.changed == 'true' && github.event_name == 'workflow_dispatch' && inputs.refreeze_pcb
+        run: |
+          python3 -m pip install --break-system-packages --disable-pip-version-check numpy scipy
+          python3 pcb/generate_layout.py
+          python3 pcb/generate_layout.py --check
+          python3 pcb/generate_routed.py
+          python3 - <<'PYEOF'
+          import hashlib, re
+          from pathlib import Path
+          check = Path("verification/pcb-prototype-review-check.py")
+          sha = lambda p: hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          text = check.read_text(encoding="utf-8")
+          text = re.sub(r"FROZEN_INPUT_SHA256 = '[0-9a-f]{64}'", "FROZEN_INPUT_SHA256 = '%s'" % sha("pcb/generated/detector-core-input.json"), text)
+          text = re.sub(r"FROZEN_STARTER_SHA256 = '[0-9a-f]{64}'", "FROZEN_STARTER_SHA256 = '%s'" % sha("build/kicad/pcb-preparation/detector-core-placement.kicad_pcb"), text)
+          check.write_text(text, encoding="utf-8")
+          PYEOF
+      - name: Independent PCB checks
+        run: |
+          python3 verification/independent_pcb_check.py
+          python3 verification/pcb-prototype-review-check.py
+      - name: Collect regenerated outputs
+        if: always()
+        run: |
+          git add -A .
+          git -c core.quotePath=false diff --cached --stat | tail -40
+          git -c core.quotePath=false diff --cached --binary > "$RUNNER_TEMP/cad.patch"
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: cad-regenerated
+          path: ${{ runner.temp }}/cad.patch
+      - name: Committed CAD outputs match the design graphs
+        if: always()
+        run: |
+          if [ "${{ steps.compare.outputs.reproducible }}" != "true" ] || ! git diff --cached --quiet; then
+            echo "::error::Committed CAD/PCB outputs are stale; apply the cad-regenerated patch (dispatch with refreeze_pcb if pcb/generated changed)"
+            exit 1
+          fi
+
+  module-lab:
+    name: Module lab (${{ matrix.arch }})
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - arch: x86_64
+            runner: ubuntu-24.04
+          - arch: aarch64
+            runner: ubuntu-24.04-arm
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # No later step needs authenticated git; keep GITHUB_TOKEN out of .git/config.
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install Qt runtime libraries and compilers
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends \
+            libegl1 libgl1 libopengl0 libxkbcommon0 libfontconfig1 \
+            libdbus-1-3 libglib2.0-0t64 gcc g++
+      - name: Install Python dependencies
+        run: python -m pip install --disable-pip-version-check $PY_PINS
+      - name: Run module lab
+        run: python deployment/module_lab/run.py --project . --output "$RUNNER_TEMP/module-run"
+      - name: Summarize module lab
+        if: always()
+        run: |
+          python - "$RUNNER_TEMP/module-run/report.json" <<'EOF'
+          import json, sys
+          r = json.load(open(sys.argv[1]))
+          print({k: r[k] for k in r if isinstance(r[k], (str, int, float, bool))})
+          EOF
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: module-lab-${{ matrix.arch }}
+          path: ${{ runner.temp }}/module-run
+
+  linux-lab:
+    name: ARM64 QEMU Linux lab
+    if: github.event_name == 'workflow_dispatch' && inputs.linux_lab
+    runs-on: ubuntu-24.04
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # No later step needs authenticated git; keep GITHUB_TOKEN out of .git/config.
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install host utilities (no QEMU from apt; the lab uses its locked tools)
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends \
+            gpgv ubuntu-keyring ubuntu-cloudimage-keyring e2fsprogs curl pandoc \
+            libegl1 libgl1 libopengl0 libxkbcommon0 libfontconfig1 \
+            libdbus-1-3 libglib2.0-0t64 gcc g++
+          python -m pip install --disable-pip-version-check $PY_PINS
+      - name: Fetch locked QEMU tools and guest assets
+        run: |
+          python deployment/linux_lab/fetch_tools.py --dest "$RUNNER_TEMP/qemu-tools"
+          python deployment/linux_lab/fetch_assets.py --dest "$RUNNER_TEMP/arm64-assets"
+      - name: Prepare guest
+        run: |
+          T="$RUNNER_TEMP/qemu-tools/bin"
+          python deployment/linux_lab/host.py prepare \
+            --assets "$RUNNER_TEMP/arm64-assets" --work "$RUNNER_TEMP/lab-run" \
+            --qemu "$T/qemu-system-aarch64" --qemu-img "$T/qemu-img" --genisoimage "$T/genisoimage"
+      - name: Run guest
+        run: python deployment/linux_lab/host.py run --work "$RUNNER_TEMP/lab-run" --timeout 7200
+      - name: Regenerate host evidence from the same sources
+        run: |
+          python tools/run_tests_offline.py
+          PYTHONPATH=software:. python -m srrx.provision template --output software/config/acceptance.template.json
+          PYTHONPATH=software:. python -m srrx.demo --output verification/software-simulation.json
+          python tools/render_hmi_views.py --output verification/hmi-views
+      - name: Finalize, rebuild documents/firmware and repackage
+        env:
+          # Passed through the environment, never pasted into the script text.
+          ARCHIVE_AS: ${{ inputs.archive_as || 'run07' }}
+        run: |
+          # The previous imported run moves to the attempt archive unchanged.
+          if ! [[ "$ARCHIVE_AS" =~ ^[A-Za-z0-9._-]+$ ]] || [[ "$ARCHIVE_AS" == *..* ]]; then
+            echo "::error::archive_as must be a plain directory name ([A-Za-z0-9._-], no '..')"
+            exit 1
+          fi
+          prev="verification/linux-attempts/$ARCHIVE_AS"
+          test ! -e "$prev"
+          git mv verification/linux-lab "$prev"
+          git mv verification/module-lab "$prev/module-lab"
+          python tools/finalize_linux_lab.py --work "$RUNNER_TEMP/lab-run"
+          python tools/build_documents.py
+          python tools/build_firmware.py
+          python tools/build_bundle.py
+          python -B tools/check_bundle.py
+      - name: Collect evidence patch
+        if: always()
+        run: |
+          git add -A .
+          git -c core.quotePath=false diff --cached --binary > "$RUNNER_TEMP/lab-evidence.patch"
+          git diff --cached --stat | tail -5
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: linux-lab-run
+          path: |
+            ${{ runner.temp }}/lab-evidence.patch
+            ${{ runner.temp }}/lab-run/report.json
+            ${{ runner.temp }}/lab-run/run.json
+            ${{ runner.temp }}/lab-run/console.log
+            ${{ runner.temp }}/lab-run/results

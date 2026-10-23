@@ -12,10 +12,12 @@ try:
 except ImportError:
     np = None
 
-from srrx.spectrum import (DEFAULT_RING_BYTES, FRAME_FIELDS, MASKED_BANDS_HZ,
+from srrx.spectrum import (DEFAULT_RING_BYTES, FRAME_FIELDS, GUARD_BINS, MASKED_BANDS_HZ,
                            MAX_RING_BYTES, MAX_RING_CHUNKS, SampleRing, SpectrumDependencyError,
                            SpectrumError, SpectrumProcessor, append_survey,
                            mask_frame, validate_frame)
+
+GUARD_HZ = GUARD_BINS * 100.0  # raw_frame bins are 100 Hz wide
 
 
 def raw_frame(center=100_000_000.0, rate=1600.0, size=16):
@@ -29,20 +31,21 @@ class FrameBoundaryTests(unittest.TestCase):
     def test_exact_inclusive_lower_and_upper_bandwidth_edges(self):
         for lower, upper in MASKED_BANDS_HZ:
             with self.subTest(band=(lower, upper), edge='lower'):
-                frame = mask_frame(raw_frame(lower - 50.0))  # center bin's upper edge exactly lower
+                # Center bin's upper edge plus the leakage guard lands exactly on lower.
+                frame = mask_frame(raw_frame(lower - 50.0 - GUARD_HZ))
                 self.assertFalse(frame['valid'][8])
                 self.assertIsNone(frame['power_dbfs'][8])
                 self.assertTrue(frame['valid'][7])
             with self.subTest(band=(lower, upper), edge='upper'):
-                frame = mask_frame(raw_frame(upper + 50.0))  # center bin's lower edge exactly upper
+                frame = mask_frame(raw_frame(upper + 50.0 + GUARD_HZ))
                 self.assertFalse(frame['valid'][8])
                 self.assertTrue(frame['valid'][9])
 
     def test_wrapped_nyquist_half_bin_is_masked_at_upper_capture_edge(self):
         for lower, _ in MASKED_BANDS_HZ:
-            # Fs/2=800Hz; upper capture edge is25Hz inside the prohibited band.
-            # Last non-Nyquist bin is still75Hz below it; Nyquist wraps both ends.
-            frame = mask_frame(raw_frame(lower - 775.0))
+            # Fs/2=800Hz; guarded upper capture edge is25Hz inside the prohibited band.
+            # Last non-Nyquist bin's guarded edge is still25Hz below it; Nyquist wraps both ends.
+            frame = mask_frame(raw_frame(lower - 775.0 - GUARD_HZ))
             self.assertFalse(frame['valid'][0])
             self.assertIsNone(frame['power_dbfs'][0])
             self.assertTrue(frame['valid'][-1])
@@ -69,14 +72,16 @@ class FrameBoundaryTests(unittest.TestCase):
         frame['source'] = 'HARDWARE'
         safe = mask_frame(frame)
         width = rate / size
+        guard = GUARD_BINS * width  # leakage guard beyond each band edge
         for index, relative in enumerate(safe['relative_frequency_hz']):
-            low, high = center + relative - width / 2, center + relative + width / 2
+            low = center + relative - width / 2 - guard
+            high = center + relative + width / 2 + guard
             touches = low <= 406_100_000.0 and high >= 406_000_000.0
             with self.subTest(bin=index):
                 self.assertEqual(safe['valid'][index], not touches)
                 if touches:
                     self.assertIsNone(safe['power_dbfs'][index])
-        # Bins fully below 406.0 MHz (up to 405.9 MHz) and above 406.1 MHz stay valid.
+        # Bins clear of 406.0-406.1 MHz plus the guard (405.9 MHz, 406.2 MHz) stay valid.
         def bin_at(hz):
             return round((hz - center) / width) + size // 2
         self.assertTrue(safe['valid'][bin_at(405_900_000.0)])
@@ -88,6 +93,20 @@ class FrameBoundaryTests(unittest.TestCase):
             self.assertEqual(saved, safe)
             stored = json.loads(path.read_text())
             self.assertIsNone(stored['power_dbfs'][bin_at(406_050_000.0)])
+
+    def test_negative_absolute_mirror_of_vlf_band_is_masked(self):
+        # Center9kHz, Fs192kHz: the capture crosses0Hz and |f| falls in3..30kHz.
+        frame = mask_frame(raw_frame(9000.0, 192000.0, 1024))
+        width = 192000.0 / 1024
+        guard = GUARD_BINS * width
+        for f, flag, power in zip(frame['relative_frequency_hz'], frame['valid'], frame['power_dbfs']):
+            low, high = 9000.0 + f - width / 2 - guard, 9000.0 + f + width / 2 + guard
+            if low <= -3000.0 and high >= -30000.0:
+                self.assertFalse(flag)
+                self.assertIsNone(power)
+        valid = [9000.0 + f for f, flag in zip(frame['relative_frequency_hz'], frame['valid']) if flag]
+        self.assertTrue(any(f < -40000 for f in valid) and any(f > 40000 for f in valid))
+        self.assertFalse(any(1500 < abs(f) < 31500 for f in valid))
 
     def test_forged_valid_flags_are_remasked_and_strict_validator_rejects_them(self):
         original = raw_frame(300e6)
@@ -248,12 +267,22 @@ class NumericalSpectrumTests(unittest.TestCase):
                 self.assertEqual(frame['source'], 'HARDWARE')
 
     def test_mixed_band_keeps_original_hardware_frequency_coverage(self):
-        frame = SpectrumProcessor(16).process(np.ones(16), 225e6, 1.6e6, 'HARDWARE')
+        frame = SpectrumProcessor(64).process(np.ones(64), 225e6, 1.6e6, 'HARDWARE')
         self.assertTrue(any(frame['valid']))
         self.assertFalse(all(frame['valid']))
         self.assertEqual(frame['relative_frequency_hz'][0], -800000)
-        self.assertEqual(frame['relative_frequency_hz'][-1], 700000)
+        self.assertEqual(frame['relative_frequency_hz'][-1], 775000)
         self.assertEqual(frame['sample_rate_hz'], 1.6e6)
+
+    def test_strong_emitter_inside_band_edge_does_not_leak_into_valid_bins(self):
+        n, rate, center = 1024, 1.024e6, 224.9e6
+        tone = .9 * np.exp(2j * np.pi * (225.0006e6 - center) / rate * np.arange(n))
+        frame = SpectrumProcessor(n).process(tone, center, rate, 'HARDWARE')
+        valid = [p for p, flag in zip(frame['power_dbfs'], frame['valid']) if flag]
+        self.assertGreater(len(valid), n // 2)
+        # Unguarded, the 224.999MHz neighbour read about-19dBFS; now the guard masks it.
+        self.assertFalse(frame['valid'][n // 2 + 99])
+        self.assertLess(max(valid), -60)
 
     def test_invalid_samples_fail_and_clear_buffer(self):
         bad = ([complex(float('nan'), 0)] * 16, [float('inf')] * 16,

@@ -11,6 +11,6 @@ Pin(20, Pin.OUT, value=0)   # Piezo silent.
 Pin(21, Pin.OUT, value=1)   # Safe/fault indicator.
 Pin(0, Pin.IN)             # Q6A-bound TX high impedance until its 3V3 is present.
 Pin(1, Pin.IN)
-Pin(8, Pin.IN)             # IMU UART not implemented; do not send unframed bytes.
+Pin(8, Pin.IN)             # IMU pack link is RX-only (GP9); GP8 stays high-Z.
 Pin(9, Pin.IN)
 Pin(15, Pin.IN)            # SAFE_BOOT also high impedance while Q6A is off.

@@ -405,14 +405,14 @@
           "expected_error_observed": true
         },
         {
-          "name": "bounded_queue_overflow",
+          "name": "consumer_lag_drops_new_transfer_marks_gap",
           "status": "EMULATION_PASS",
           "requested_serial_hex": "3070123456789abc",
           "close_calls": 1,
           "stop_calls": 1,
           "bias_on_calls": 0,
-          "sample_count_ram_only": null,
-          "expected_error_observed": true
+          "sample_count_ram_only": 16,
+          "expected_error_observed": false
         },
         {
           "name": "silent_stream_timeout",
@@ -1283,9 +1283,9 @@
         "native_read_entered": true,
         "exception_type": "OSError",
         "exception": "RTL read failed (-71)",
-        "elapsed_s": 0.178,
-        "close_duration_s": 0.003,
-        "worker_exitcode": -15,
+        "elapsed_s": 0.18,
+        "close_duration_s": 0.025,
+        "worker_exitcode": 0,
         "worker_alive_after_close": false,
         "actual_read_observer_checks": 1,
         "production_capture_cleanup_exercised": true,
@@ -1307,11 +1307,11 @@
         "native_read_entered": true,
         "exception_type": "TimeoutError",
         "exception": "No fresh RX block within one second",
-        "elapsed_s": 1.7,
-        "close_duration_s": 0.503,
+        "elapsed_s": 2.156,
+        "close_duration_s": 1.004,
         "worker_exitcode": -9,
         "worker_alive_after_close": false,
-        "actual_read_observer_checks": 20,
+        "actual_read_observer_checks": 21,
         "production_capture_cleanup_exercised": true,
         "clean_error_boundary": true,
         "branch_off_request_observed": true,
@@ -1331,7 +1331,7 @@
         "native_read_entered": true,
         "exception_type": "OSError",
         "exception": "RX worker pipe closed before a complete block",
-        "elapsed_s": 0.148,
+        "elapsed_s": 0.144,
         "close_duration_s": 0.0,
         "worker_exitcode": -11,
         "worker_alive_after_close": false,
@@ -1355,9 +1355,9 @@
         "native_read_entered": true,
         "exception_type": "OSError",
         "exception": "Invalid/empty RTL IQ block",
-        "elapsed_s": 0.147,
-        "close_duration_s": 0.002,
-        "worker_exitcode": -15,
+        "elapsed_s": 0.174,
+        "close_duration_s": 0.03,
+        "worker_exitcode": 0,
         "worker_alive_after_close": false,
         "actual_read_observer_checks": 1,
         "production_capture_cleanup_exercised": true,
@@ -1379,9 +1379,9 @@
         "native_read_entered": true,
         "exception_type": null,
         "exception": null,
-        "elapsed_s": 0.146,
-        "close_duration_s": 0.002,
-        "worker_exitcode": -15,
+        "elapsed_s": 0.207,
+        "close_duration_s": 0.043,
+        "worker_exitcode": 0,
         "worker_alive_after_close": false,
         "actual_read_observer_checks": 1,
         "production_capture_cleanup_exercised": false,
@@ -1408,10 +1408,10 @@
     "acceptance_created": false,
     "production_mode_used": "SIMULATION",
     "production_sources_sha256": {
-      "software/srrx/policy.py": "bfffff805fd6392055ea61d608a502728d9fb884704c7c75e32c23e1b23557f1",
-      "software/srrx/hardware.py": "0dbf351d7cea86b6743ec4479ae8d78604c351009dae8a9b87715b039eb133ba",
-      "deployment/deploy.py": "68068cac59d2b78938baa6251fd6f47a8602ac62b93f7f431f335bb684d9b61c",
-      "deployment/vendor_patch.py": "24b2fe1cb3f2e2a9aa1af35396f1e6dbeb890080e18e8f70ba8fa6bdd1152be3",
+      "software/srrx/policy.py": "5f51c31a82f5b810f7d899135fa135203034baecdb3637c4bf0af13cc74dd3dc",
+      "software/srrx/hardware.py": "13f2a5c1ab1a63d1345f57f9a3ca1f39ffbd3c779be9d4e050c85634974279ee",
+      "deployment/deploy.py": "7357ed840e465be57cf5ffe7cb9059f0c9aac6784f9a1ab7bc96958c5cdb73e5",
+      "deployment/vendor_patch.py": "449375110754ca75e0dba8336c6b611ee0a87de1f5fd509ccd65b47d289121be",
       "deployment/patches/limesuiteng-rx-only.patch": "e6e3f7abd3dd3cff21c0d7baa98e92f812bd88068a984298a7bebcf5517bc033"
     },
     "limits": [
@@ -1421,11 +1421,11 @@
   },
   "fixture_source_sha256": {
     "rtl": "ef9df6894237257779cd0f624a5809dbdfd14e49df9a89a26a835b45a341a830",
-    "airspyhf": "a140d7578433568d5eae9123bbff32a207a28ffcc6ce5a6d7077893a9fe31b0b"
+    "airspyhf": "e6f654fb7a3011733a313a27f380e0286d3b0ecb048ebb36ce8c66bab1bbfc59"
   },
   "production_sources_sha256": {
-    "software/srrx/receivers.py": "71e4cee0e7d603a4b3710a8017cb9ca1feb967dca5a2cc6727eb83848e2127ed",
-    "software/srrx/labrx.py": "3f34632d4104c8a6e1b6691f9e97e65adc7fbd6c64f253409d01c258576590dc"
+    "software/srrx/receivers.py": "0b12412357126ac04731f0ed5e664d44ac9d95d058ad8a8d24a790c14b9447fc",
+    "software/srrx/labrx.py": "28f26d881d629e28240119d6c24948e21530f8ca5e1676dfc93e0edba7b41c86"
   },
   "physical_verified": false,
   "raw_iq_persisted": false,

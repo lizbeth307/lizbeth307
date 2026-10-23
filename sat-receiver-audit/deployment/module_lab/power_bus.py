@@ -258,7 +258,7 @@ class EmulatedPowerBus:
         self.ina3221 = {0x41: INA3221((.2, .2, .2)), 0x43: INA3221((.2, .1, .2))}
         self.devices = {**self.mcp, **self.ina228, **self.ina3221}
         self.net_map, self.modules = {}, {}
-        graph = json.loads((self.project / "design/E3.json").read_text())
+        graph = json.loads((self.project / "design/E3.json").read_text(encoding="utf-8"))
         for component in graph["components"]:
             if component["ref"] not in {"U301", "U302", "U303"}:
                 continue

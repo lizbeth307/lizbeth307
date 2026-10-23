@@ -54,6 +54,9 @@ CONSTRAINTS = [
 ]
 
 def dump(value): return json.dumps(value, ensure_ascii=False, indent=2) + '\n'
+def require(ok, detail):
+    # Not assert: python -O must not strip an audit and still print PASS.
+    if not ok: raise SystemExit('PCB preparation audit FAIL: ' + str(detail))
 def sha(path): return hashlib.sha256(path.read_bytes()).hexdigest()
 def sort_ref(s):
     m=re.fullmatch(r'([^0-9]+)([0-9]+)',s)
@@ -91,23 +94,23 @@ def main():
     ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--check',action='store_true');args=ap.parse_args()
     components=[];sources=[];graph_paths=[]
     for i in range(1,6):
-        path=ROOT/f'design/E{i}.json';j=json.loads(path.read_text());graph_paths.append(path)
+        path=ROOT/f'design/E{i}.json';j=json.loads(path.read_text(encoding='utf-8'));graph_paths.append(path)
         sources.extend(j['sources'])
         for c in j['components']:components.append({**c,'_sheet':f'E{i}'})
-    refs=[c['ref'] for c in components];assert len(refs)==len(set(refs)), 'Duplicate schematic reference'
+    refs=[c['ref'] for c in components];require(len(refs)==len(set(refs)), 'Duplicate schematic reference')
     manifest_path=ROOT/'build/kicad/footprints/manifest.json'
-    manifest=json.loads(manifest_path.read_text());fps={f['footprint']:f for f in manifest['footprints']}
+    manifest=json.loads(manifest_path.read_text(encoding='utf-8'));fps={f['footprint']:f for f in manifest['footprints']}
     for fp in fps.values():
-        path=ROOT/fp['file'];assert sha(path)==fp['sha256'],f'Portable footprint hash mismatch: {path}'
+        path=ROOT/fp['file'];require(sha(path)==fp['sha256'],f'Portable footprint hash mismatch: {path}')
         # Independently parse actual pad IDs, not just manifest claims.
-        pads=set(re.findall(r'\(pad\s+"([^"]+)"',path.read_text()))
-        assert set(fp['pads'])<=pads,(fp['file'],pads,fp['pads'])
+        pads=set(re.findall(r'\(pad\s+"([^"]+)"',path.read_text(encoding='utf-8')))
+        require(set(fp['pads'])<=pads,(fp['file'],pads,fp['pads']))
     all_nodes={};net_nodes=collections.defaultdict(list);rows=[];issues=[];core=[]
     for c in components:
         ref=c['ref'];cat,owner,why=category(c);domain=board(c,cat);pin_nums=[str(p['number']) for p in c['pins']]
-        assert len(pin_nums)==len(set(pin_nums)),f'Duplicate pin: {ref}'
+        require(len(pin_nums)==len(set(pin_nums)),f'Duplicate pin: {ref}')
         for p in c['pins']:
-            assert bool(p.get('net'))!=bool(p.get('nc')),f'Net/NC ambiguity: {ref}.{p["number"]}'
+            require(bool(p.get('net'))!=bool(p.get('nc')),f'Net/NC ambiguity: {ref}.{p["number"]}')
             if p.get('net'):
                 all_nodes[(ref,str(p['number']))]=p['net'];net_nodes[p['net']].append({'ref':ref,'pin':str(p['number']),'sheet':c['_sheet'],'name':p['name']})
         fp=c.get('footprint','');portable=fp in fps
@@ -128,7 +131,7 @@ def main():
             if not candidate:
                 if c['kind']=='resistor':candidate='Resistor_SMD:R_0402_1005Metric' if '0402' in c['value'] else 'Resistor_SMD:R_0603_1608Metric'
                 elif c['kind']=='capacitor':candidate='Capacitor_SMD:C_0603_1608Metric'
-            assert candidate, f'Core part lacks a footprint candidate: {ref}'
+            require(candidate, f'Core part lacks a footprint candidate: {ref}')
             core.append({k:v for k,v in c.items() if k!='_sheet'}|{'sheet':c['_sheet'],'placement_footprint':candidate,'placement_footprint_status':status,'placement_footprint_file':fps[candidate]['file'] if candidate in fps else None,'placement_blockers':[] if portable else ['Manufacturer MPN/land pattern approval required before production','Fetch official portable footprint first'] if candidate not in fps else ['Manufacturer MPN/package/land pattern approval required before production']})
     rows.sort(key=lambda r:sort_ref(r['ref']));core.sort(key=lambda c:sort_ref(c['ref']))
     # Audit source graph against the actual final KiCad-exported XML at every connected pin.
@@ -139,27 +142,27 @@ def main():
             key=(node.attrib['ref'],node.attrib['pin'])
             if key in all_nodes:xml_nodes[key]=n.attrib['name']
     mismatches=[{'ref':ref,'pin':pin,'graph_net':net,'xml_net':xml_nodes.get((ref,pin))} for (ref,pin),net in all_nodes.items() if xml_nodes.get((ref,pin))!=net]
-    assert not mismatches,f'Schematic/XML mismatch: {mismatches[:5]}'
+    require(not mismatches,f'Schematic/XML mismatch: {mismatches[:5]}')
     core_refs={c['ref'] for c in core};core_nets={p['net'] for c in core for p in c['pins'] if p.get('net')}
     boundary=[]
     for net in sorted(core_nets):
         inside=[n for n in net_nodes[net] if n['ref'] in core_refs];outside=[n for n in net_nodes[net] if n['ref'] not in core_refs]
         if outside:boundary.append({'net':net,'core_nodes':inside,'external_nodes':outside,'connector_or_wire_pad_selected':False})
     expected_boundary={'3V3_Q6A','GND','DCS_UHF','DCS_LBAND','DCS_HF','E4_DCS_UHF_TAP','E4_DCS_LBAND_TAP','E4_DCS_HF_TAP'}
-    assert {b['net'] for b in boundary}==expected_boundary
-    assert len(core)==71, len(core)
+    require({b['net'] for b in boundary}==expected_boundary, sorted(b['net'] for b in boundary))
+    require(len(core)==71, len(core))
     connected_core=sum(bool(p.get('net')) for c in core for p in c['pins'])
     summary={'status':'PREPARATION_ONLY_NOT_FOR_FABRICATION','components':len(rows),'schematic_contacts':sum(len(c['pins']) for c in components),'connected_contacts':len(all_nodes),'nets':len(net_nodes),'categories':dict(sorted(collections.Counter(r['category'] for r in rows).items())),'board_candidates':dict(sorted(collections.Counter(r['board_candidate'] for r in rows if r['board_candidate']).items())),'graph_assigned_footprints':sum(bool(r['footprint']) for r in rows),'portable_graph_assignments':sum(r['portable_footprint'] for r in rows),'bare_parts_without_footprint':sum(r['category']=='bare_board_part' and not r['footprint'] and not r['dnp'] for r in rows),'pin_pad_mismatches':sum(i['type']=='pin_pad_mismatch' for i in issues),'xml_connected_pin_audit':'PASS','xml_compared_connected_pins':len(all_nodes),'core_parts':len(core),'core_connected_pins':connected_core,'core_boundary_nets':len(boundary),'core_graph_assigned_footprints':sum(c['placement_footprint_status']=='graph_assigned_portable' for c in core),'core_proposed_footprints':sum(c['placement_footprint_status']!='graph_assigned_portable' for c in core),'blocking_issue_records':len(issues)}
-    provenance={'inputs':[{'file':str(p.relative_to(ROOT)),'sha256':sha(p)} for p in graph_paths+[manifest_path,xml_path]],'source_documents':sorted({s['url'] for s in sources}),'generator':'pcb/prepare.py','note':'All classification/board splits are new controlled engineering proposals. They do not change E1..E5, claim module pin order, or authorize production.'}
+    provenance={'inputs':[{'file':p.relative_to(ROOT).as_posix(),'sha256':sha(p)} for p in graph_paths+[manifest_path,xml_path]],'source_documents':sorted({s['url'] for s in sources}),'generator':'pcb/prepare.py','note':'All classification/board splits are new controlled engineering proposals. They do not change E1..E5, claim module pin order, or authorize production.'}
     package={'summary':summary,'provenance':provenance,'boards':BOARDS,'constraints':CONSTRAINTS,'parts':rows,'unresolved':issues}
     detector={'board_id':'DC_CORE','status':'UNROUTED_PLACEMENT_INPUT_NOT_FABRICATION','part_count':len(core),'components':core,'nets':{n:[x for x in net_nodes[n] if x['ref'] in core_refs] for n in sorted(core_nets)},'external_boundary':boundary,'must_remain_at_RF_port':sorted(RF_TAP|RF_BLEED,key=sort_ref),'constraints':[c for c in CONSTRAINTS if 'DC_CORE' in c['boards']],'blockers':['50 passive land patterns are placement proposals, not approved production MPN selections.','Three explicitly0402 resistor footprints must be fetched from official KiCad if absent.','Eight-net connector/wire-pad implementation, mounting/outline and cable routing are unselected.','RF-port tap/bleed assemblies are excluded from this core and must be placed on the RF substrate.','Prototype threshold/leakage/temperature/ground-offset/RF/rail-off tests remain mandatory.'],'source_node_audit':{'source_graph':'design/E4.json','actual_xml':'verification/netlist.xml','connected_pins_checked':connected_core,'status':'PASS','all_pins':sum(len(c['pins']) for c in core),'nc_pins':sum(bool(p.get('nc')) for c in core for p in c['pins'])},'provenance':provenance}
     files={'partition.json':dump(package),'components.csv':csv_text(rows,['ref','sheet','value','kind','category','assembly_owner','board_candidate','dnp','footprint','portable_footprint','pad_coverage','pin_count','source','classification_reason']),'unresolved.csv':csv_text([{**i,'detail':json.dumps(i['detail'],ensure_ascii=False) if not isinstance(i['detail'],str) else i['detail']} for i in issues],['ref','type','blocking','detail']),'constraints.json':dump(CONSTRAINTS),'detector-core-input.json':dump(detector),'summary.json':dump(summary),'provenance.json':dump(provenance),'detector-core-nodes.csv':csv_text([{'ref':c['ref'],'pin':p['number'],'name':p['name'],'net':p.get('net',''),'nc':p.get('nc',False),'placement_footprint':c['placement_footprint'],'footprint_status':c['placement_footprint_status']} for c in core for p in c['pins']],['ref','pin','name','net','nc','placement_footprint','footprint_status'])}
     if args.check:
-        stale=[name for name,content in files.items() if not (OUT/name).exists() or (OUT/name).read_text()!=content]
-        assert not stale,'Stale generated output: '+', '.join(stale)
+        stale=[name for name,content in files.items() if not (OUT/name).exists() or (OUT/name).read_text(encoding='utf-8')!=content]
+        require(not stale,'Stale generated output: '+', '.join(stale))
     else:
         OUT.mkdir(parents=True,exist_ok=True)
-        for name,content in files.items():(OUT/name).write_text(content)
+        for name,content in files.items():(OUT/name).write_text(content,encoding='utf-8',newline='\n')
     print(dump(summary),end='')
 
 if __name__=='__main__': main()

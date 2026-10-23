@@ -146,6 +146,8 @@ def run():
                             quiet_at = clock.now_ms()
                         elif clock.now_ms() - quiet_at >= 10:
                             break
+                        # A health EVENT queued here must still meet its 100ms deadline.
+                        publisher.pump(clock.now_ms())
                         time.sleep_ms(1)
                     session.reset(clock.now_ms())
                     commands = [session.first_command()]

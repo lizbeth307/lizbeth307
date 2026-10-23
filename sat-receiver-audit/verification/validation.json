@@ -1,6 +1,6 @@
 {
   "graph_netlist_comparison": "PASS",
-  "electrical_sheets": 14,
+  "electrical_sheets": 15,
   "physical_components": 750,
   "connected_physical_contacts": 2181,
   "named_nets": 466,
@@ -13,25 +13,42 @@
     "R304"
   ],
   "erc_counts": {},
+  "erc_ignored_checks": [
+    "footprint_filter",
+    "four_way_junction",
+    "simulation_model_issue",
+    "single_global_label"
+  ],
   "erc_errors": [],
   "comparison_errors": [],
   "hardware_acceptance": "NOT_PERFORMED",
   "production_release": false,
   "reason": "Structural checks and ERC do not close manufacturer-revision, charging, RF, thermal, PCB-layout, or physical acceptance gates.",
   "sha256": {
-    "build/kicad/E1.kicad_sch": "942ddbe2ea50e8abaec9ee2b75bcf403ed7409750c2cedb59fb7dbb1dfa3a8ba",
-    "build/kicad/E2.kicad_sch": "c2a05ba93e825f98e760198ab163a2bbbc9a55374865cf28e596cf4318ba5bcb",
-    "build/kicad/E2_02.kicad_sch": "08ab6bbf77342da917fc0636dd78d17087e0b352f1cbd6bc11a26056fc82cd9f",
-    "build/kicad/E2_03.kicad_sch": "ac34f13c0701cfe9f4209d3a51a4c99afc39609d5c4db7c964fdf7c4fe9aa9a8",
+    "build/kicad/E1.kicad_sch": "1c5c8647957ecbb36f384fd95600dd6282309cf1bd87db83df28539cefa39a23",
+    "build/kicad/E1_02.kicad_sch": "5db5840fada42092cd16df66841759fc1f073b18f757ecbc95c00e51adb3b847",
+    "build/kicad/E2.kicad_sch": "7bc3a39b09ca151863589a483994d73449efff2fa6f126a958669b4efca55364",
+    "build/kicad/E2_02.kicad_sch": "b8da6c89fdfd45e13ef1f450267ac7208ef62db2ca8380a16277719ea14bd639",
+    "build/kicad/E2_03.kicad_sch": "e07328234eabc3df970046408967c9a14a604926636b79c81c494ae567755806",
     "build/kicad/E2_04.kicad_sch": "fe2413da9d54c44ee6f84d7d5a778f9723694bd815d5ed72ba1eec082e8157af",
     "build/kicad/E3.kicad_sch": "6efbf1244a7e75a0a261675c789468ff8dd4a4ca8a9ca95eebcf13f8e84e9cba",
-    "build/kicad/E3_02.kicad_sch": "08a6bc56c87a80ea6be81cbd2318d914aae0abaf253b7b92f10adab8bf1bf76d",
+    "build/kicad/E3_02.kicad_sch": "c4411809713a6f2284577b55f9816bf53b48ea2e9f003735f40ba198b8b56f29",
     "build/kicad/E4.kicad_sch": "f0a2ac1567d83f7639a8c388dc83657c786f032c386b39968f249827e8ee3dce",
     "build/kicad/E4_02.kicad_sch": "5804388a5f675ab26c88ddee5c66d12c0379e686e3086a2be2f4d9f370770769",
-    "build/kicad/E4_03.kicad_sch": "79644a295e69865b886265f46f926688495edcffcf9a7faafd0c941efa4a386f",
-    "build/kicad/E4_04.kicad_sch": "c7f1ef9eec4abcd4d60cb59e6ff1d13da9c131299659c4da83070c9c500199ea",
-    "build/kicad/E5.kicad_sch": "8b17b6ddb8096caa2a4398ae19850eb6067f0e2ad6791871dfffa9bef529d1b4",
+    "build/kicad/E4_03.kicad_sch": "f53c8f6d6c616bb8b781cb27aa4750a535dc55421faa8628a1034e77ecee8d56",
+    "build/kicad/E4_04.kicad_sch": "42b739bf9caa397a243d2d65c4dd1a36ca9e488610b753ece0757c679746ff9f",
+    "build/kicad/E5.kicad_sch": "55ade0281fba4b8b9d034a3888ceb962acc8d1ce95e93d004ca31f0d0a81fcf3",
     "build/kicad/E5_02.kicad_sch": "9e9f82e9b6395001af150d4f4195e8ecefb1e54ad5090e6d8da703eacf1737ec",
-    "build/kicad/sr-rx-v2.kicad_sch": "13e0cecdcffdceddb4125fc8cf10b1527c09e3d362a98c38044d24f920df7985"
-  }
+    "build/kicad/sr-rx-v2.kicad_sch": "f40c1a338c5b68af566e59bdf910c23bd989addb7dc9344c09b27f5cda8f9012"
+  },
+  "input_files": [
+    {
+      "file": "verification/erc.json",
+      "sha256": "9c42fd93da028e08ccdbb592ac00f5cce7843372e69e938d477e0566cc27d83e"
+    },
+    {
+      "file": "verification/netlist.xml",
+      "sha256": "1b767be74bfa489331abdf482bd143c5203dc46af3e47f2fb834a5c2fffeb871"
+    }
+  ]
 }

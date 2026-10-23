@@ -415,7 +415,7 @@
         }
       ],
       "notes": [
-        "Single ALERT pullup to switched Q6A3V3; never AON."
+        "Single populated ALERT pullup to switched Q6A3V3; never AON. The duplicate E1 R102 pullup was removed in v2.1; do not fit a second pullup in parallel."
       ]
     },
     {
@@ -4521,7 +4521,7 @@
         "Provisional startup budget is0.50A, a project qualification limit rather than a manufacturer guarantee. Delta explicitly requires peak-current measurement with an oscilloscope. Capture starting/stalled/auto-restart current and LAB5 droop at both5V rail limits.",
         "Manufacturer body envelope is30.0+/-0.5 by30.0+/-0.5 by10.0+/-0.5mm; mounting hole spacing24.0+/-0.3mm, two holesdiameter2.4+/-0.3mm; lead length145+/-10mm. Allocate at least32x32x12mm for the body as a design fit gate, plus intake/outlet duct clearance and lead strain relief.",
         "Maker free-air airflow1.45CFM nominal/min1.17CFM and zero-flow pressure0.285inH2O nominal/min0.182inH2O are curve endpoints, not simultaneous installed performance. Qualify the separate display duct, inlet pressure drop<=5Pa, closed-cover thermal limits and RF noise. Operating range-10 to70C.",
-        "LAB5 aggregate, including concurrency with RTL-B, remains unqualified. If measured steady demand exceeds2.5A, follow STACK load-shedding/D36V50F5 plusfuse review before commissioning."
+        "LAB5 aggregate, including concurrency with RTL-B, remains unqualified. LAB5 acceptance is E1-05: <=3.2A continuous and <=4A transient with the default D36V50F5 + F102 4A; if measured aggregate demand exceeds that budget, apply a formal concurrency cap per R-E2-17 before commissioning. The old 2.5A gate belongs only to the legacy D36V28F5."
       ],
       "description": "Concrete BOM candidate: Delta BFB0305HA-C two-wire centrifugal blower. Factory red wire positive, black wire negative; no invented connector numbering. Mechanical integration and qualification remain open."
     },
@@ -5112,7 +5112,7 @@
       "id": "E3-03",
       "description": "BOM candidate Delta BFB0305HA-C is selected; final mechanical fit, installed airflow, start/stall current, LAB5 concurrency and noise remain unqualified.",
       "blocking": true,
-      "resolve": "Fit the body envelope 30.5x30.5x10.5 mm plus duct/lead clearance into CAD before cutting the enclosure. Measure the 0.25 A design continuous reserve and the provisional 0.50 A startup limit rather than claiming peak from the datasheet. Confirm LAB5 under 2.5 A in allowed concurrency, or implement the STACK shedding / upgraded converter-fuse path. Run the 45 min closed-cover solar thermal test and RF A/B noise checks; inlet drop <=5 Pa at the required flow.",
+      "resolve": "Fit the body envelope 30.5x30.5x10.5 mm plus duct/lead clearance into CAD before cutting the enclosure. Measure the 0.25 A design continuous reserve and the provisional 0.50 A startup limit rather than claiming peak from the datasheet. Confirm LAB5 within E1-05 (<=3.2 A continuous, <=4 A transient with default D36V50F5 + F102 4 A) in allowed concurrency; over budget means a formal concurrency cap per R-E2-17. Run the 45 min closed-cover solar thermal test and RF A/B noise checks; inlet drop <=5 Pa at the required flow.",
       "stack": "§5.6; §8 (тепло); §8.1 (потік повітря)",
       "refs": [
         "FAN302"
@@ -5152,9 +5152,9 @@
     },
     {
       "id": "E3-07",
-      "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about +/-0.28 V near 12.9 V; a nominal ADC code does not establish the 12.9 +/-0.1 V cutoff.",
+      "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about +/-0.28 V near 13.05 V; a nominal ADC code does not establish the 13.05 +/-0.1 V cutoff. The software window 12.95-13.15 V must stay above the E1-04 hardware AON UV trip window 12.8 +/-0.1 V on every unit.",
       "blocking": true,
-      "resolve": "Calibrate gain/offset against a calibrated voltmeter at two pack-equivalent voltages such as 12.6 V and 16.4 V; cross-check INA228. Independently verify the physical 12.9 V software cutoff within +/-0.1 V, including 5 s dwell, at 12.8/12.9/13.0 V across the specified temperature and load states. Store calibrated coefficients with revision/CRC. No commissioning pass until met; the hardware AON UV supervisor remains an independent backup.",
+      "resolve": "Calibrate gain/offset against a calibrated voltmeter at two pack-equivalent voltages such as 12.6 V and 16.4 V; cross-check INA228. Independently verify the physical 13.05 V software cutoff (labd and Pico fallback both 13050 mV) within +/-0.1 V, including 5 s dwell, at 12.95/13.05/13.15 V across the specified temperature and load states. Per unit, at maximum and minimum load: the measured software cutoff referred to E1_N minus the measured E1-04 hardware trip must be >=0.10 V, and during a controlled discharge the graceful shutdown (5 s dwell plus Linux shutdown) must complete before the hardware UV trip asserts OFF; otherwise re-trim or reject. Store calibrated coefficients with revision/CRC. No commissioning pass until met; the hardware AON UV supervisor remains an independent backup.",
       "stack": "§5.1; §5.2; §8 (Pico ADC)",
       "refs": [
         "U307"

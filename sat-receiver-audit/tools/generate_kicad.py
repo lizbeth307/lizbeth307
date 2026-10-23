@@ -2000,8 +2000,9 @@ def validate(graphs):
             for p in c["pins"]:
                 if p.get("type", "passive") not in TYPES:
                     errors.append(f"invalid electrical type {ref}.{p['number']}")
-                if p.get("nc") and p.get("net"):
-                    errors.append(f"NC connected to a net: {ref}.{p['number']}")
+                # place_component draws a no-connect marker and drops the label for either form.
+                if (p.get("nc") or p.get("type") == "no_connect") and p.get("net"):
+                    errors.append(f"NC/no_connect contact connected to a net: {ref}.{p['number']}")
                 if p.get("net"):
                     nodes[p["net"]].append({"ref": ref, "pin": str(p["number"]), "sheet": g["sheet"], "type": p.get("type", "passive")})
     if errors:
@@ -2014,7 +2015,7 @@ def main():
     ap.add_argument("--design-dir", type=Path, default=BASE / "design")
     ap.add_argument("--output", type=Path, default=BASE / "build/kicad")
     args = ap.parse_args()
-    graphs = [json.loads(p.read_text()) for p in sorted(args.design_dir.glob("E[1-5].json"))]
+    graphs = [json.loads(p.read_text(encoding="utf-8")) for p in sorted(args.design_dir.glob("E[1-5].json"))]
     if not graphs:
         raise SystemExit("No reviewed E1..E5 design graphs found")
     # Explicit supply declarations only, after passive components or at documented
@@ -2070,7 +2071,7 @@ def main():
             content.append(")\n")
             sch = "\n".join(content)
             check_glyphs(sch, stem)
-            (out / (stem + ".kicad_sch")).write_text(sch)
+            (out / (stem + ".kicad_sch")).write_text(sch, encoding="utf-8", newline="\n")
             stats.update(page_stats)
             pages.append({"stem": stem, "instance": instance, "title": title, "components": comps, "sheet": sheet,
                           "notes": notes_here, "drawing": dict(sorted(page_stats.items()))})
@@ -2078,7 +2079,7 @@ def main():
     declared = [x["id"] for g in graphs for x in g.get("open_items", []) + g.get("drawing_notes", [])]
     if sorted(placed.elements()) != sorted(declared):
         raise ValueError(f"notes not placed exactly once: placed={dict(placed)}, declared={declared}")
-    (out / "sr_rx_v2_completed.kicad_sym").write_text('(kicad_symbol_lib (version 20241209) (generator "kicad_symbol_editor")\n' + "\n".join(lib_symbol(all_syms[k], embedded=False) for k in sorted(all_syms)) + "\n)\n")
+    (out / "sr_rx_v2_completed.kicad_sym").write_text('(kicad_symbol_lib (version 20241209) (generator "kicad_symbol_editor")\n' + "\n".join(lib_symbol(all_syms[k], embedded=False) for k in sorted(all_syms)) + "\n)\n", encoding="utf-8", newline="\n")
     # The overview indexes every actual electrical page, retaining E1..E5 naming.
     root = [header(ROOT_UUID, "SR-RX-v2 - зміст електричної схеми", f"{COMPANY} — зміст E1–E5", "A2"), "(lib_symbols)", text("SR-RX-v2: приймач і портативна радіолабораторія", 15.24, 15.24, "root/title", 3.048), text("Лише прийом в ефірі. Інженерна редакція від 4653188. Статус і незакриті ворота: ../../COMPLETION.md та ../../OPEN_ITEMS.md.", 15.24, 25.4, "root/status", 1.524)]
     for i, p in enumerate(pages):
@@ -2096,7 +2097,7 @@ def main():
     if math.ceil(len(pages) / 4) * 38.1 + 38.1 > 380:
         raise ValueError("Overview page overflow: split required")
     check_glyphs("\n".join(root), "sr-rx-v2")
-    (out / "sr-rx-v2.kicad_sch").write_text("\n".join(root))
+    (out / "sr-rx-v2.kicad_sch").write_text("\n".join(root), encoding="utf-8", newline="\n")
     # A page that the current graphs no longer produce must not linger beside the live set.
     live = {p["stem"] + ".kicad_sch" for p in pages}
     for stale in out.glob("E*.kicad_sch"):
@@ -2110,17 +2111,17 @@ def main():
     table = '(sym_lib_table (version 7)\n'
     for name in ["sr_rx_v2_pwr", "sr_rx_v2_sig", "sr_rx_v2_completed"]:
         table += f' (lib (name "{name}")(type "KiCad")(uri "${{KIPRJMOD}}/{name}.kicad_sym")(options "")(descr "SR-RX-v2"))\n'
-    (out / "sym-lib-table").write_text(table + ")\n")
+    (out / "sym-lib-table").write_text(table + ")\n", encoding="utf-8", newline="\n")
     project_file = out / "sr-rx-v2.kicad_pro"
-    project = json.loads(project_file.read_text()) if project_file.exists() else {}
+    project = json.loads(project_file.read_text(encoding="utf-8")) if project_file.exists() else {}
     project.setdefault("meta", {}).update({"filename": "sr-rx-v2.kicad_pro", "version": 3})
     project["sheets"] = [[ROOT_UUID, "Root"]] + [[uid("document/" + p["stem"]), p["stem"]] for p in pages]
-    project_file.write_text(json.dumps(project, ensure_ascii=False, indent=2) + "\n")
+    project_file.write_text(json.dumps(project, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     physical_nets = {k: [v for v in vs if not v["ref"].startswith("#")] for k, vs in nets.items()}
     manifest = {"base_commit": "465318835e71eae326059f5f66e2b47232169556", "root_uuid": ROOT_UUID, "pages": pages, "components": sum(not r.startswith('#') for r in refs), "supply_annotations": len(flag_nets), "connected_contacts": sum(map(len, physical_nets.values())), "nets": len(nets), "drawing": dict(sorted(stats.items())), "single_contact_nets": {k: v for k, v in physical_nets.items() if len(v) == 1}, "open_items": [dict(item, sheet=g["sheet"]) for g in graphs for item in g.get("open_items", [])], "drawing_notes": [dict(item, sheet=g["sheet"]) for g in graphs for item in g.get("drawing_notes", [])], "title_block": {"date": DESIGN_DATE, "rev": REVISION, "comments": [COMPANY + "-E<n>", *TITLE_COMMENTS]}}
     manifest["source_sha256"] = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(args.design_dir.glob("E[1-5].json"))}
-    (out / "generation-manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n")
-    (out / "expected-netlist.json").write_text(json.dumps(physical_nets, ensure_ascii=False, indent=2) + "\n")
+    (out / "generation-manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+    (out / "expected-netlist.json").write_text(json.dumps(physical_nets, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps({k: v for k, v in manifest.items() if k not in {"single_contact_nets", "open_items", "drawing_notes", "pages"}}, ensure_ascii=False))
     print(f"Electrical pages: {len(pages)}; explicit open items: {len(manifest['open_items'])}; drawing notes: {len(manifest['drawing_notes'])}; all placed on their pages")
 

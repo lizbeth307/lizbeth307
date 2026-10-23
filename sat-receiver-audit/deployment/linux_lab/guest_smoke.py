@@ -18,6 +18,7 @@ import os
 from pathlib import Path
 import platform
 import pwd
+import re
 import select
 import stat
 import subprocess
@@ -67,6 +68,18 @@ def validate_guest_facts(facts, marker):
     return facts
 
 
+def validate_pico_group(group, client):
+    """srrx-pico guards the Pico UART: labd gets it only via SupplementaryGroups, no login user holds it."""
+    require(client.pw_name not in group.gr_mem and client.pw_gid != group.gr_gid, "labclient must not be in srrx-pico")
+    require(not group.gr_mem, "srrx-pico must be a member-less group: " + ",".join(group.gr_mem))
+    return group
+
+
+def release_guard_exited_2(exec_start_pre):
+    """systemctl show prints 'status=2' for the guard's exit 2; 216 (GROUP) or a signal must not match."""
+    return re.search(r"\bstatus=2(?![\d/])", exec_start_pre) is not None
+
+
 def guard_environment(project, marker_path):
     require(project == Path("/opt/srrx"), "project must be the installed /opt/srrx tree")
     require(project.is_dir() and not project.is_symlink(), "/opt/srrx must be a real directory")
@@ -87,11 +100,13 @@ def guard_environment(project, marker_path):
     require(Path("/run/systemd/private").exists(), "systemd manager socket is missing")
     require(not list(Path("/dev").glob("i2c-*")) and not Path("/dev/lab/pico").exists(),
             "physical SR-RX device nodes must not be present in the guest")
-    for group in ("labd", "i2c", "dialout"):
+    # srrx.service has SupplementaryGroups=i2c dialout srrx-pico: a missing group is 216/GROUP, not the guard.
+    for group in ("labd", "i2c", "dialout", "srrx-pico"):
         grp.getgrnam(group)
     user, group = pwd.getpwnam("labclient"), grp.getgrnam("labd")
     require(user.pw_uid != 0 and pwd.getpwnam("labd").pw_uid != 0, "lab users must be unprivileged")
     require(group.gr_gid == user.pw_gid or "labclient" in group.gr_mem, "labclient must be a member of labd")
+    validate_pico_group(grp.getgrnam("srrx-pico"), user)
     return facts
 
 
@@ -417,7 +432,7 @@ class GuestSmoke:
             props = self.properties("srrx.service")
             require(start.returncode != 0 and props["ConditionResult"] == "yes" and props["ExecMainPID"] == "0"
                     and props["ExecMainStartTimestampMonotonic"] == "0"
-                    and "release-guard" in props["ExecStartPre"] and "status=2" in props["ExecStartPre"],
+                    and "release-guard" in props["ExecStartPre"] and release_guard_exited_2(props["ExecStartPre"]),
                     "OPEN records must fail the actual release guard before ExecStart: " + str(props))
             # Also invoke the installed entrypoint: OPEN acceptance is rejected
             # before any intentionally nonexistent physical device is opened.
@@ -505,11 +520,15 @@ class GuestSmoke:
         self.rpc({"op": "sim", "name": "FAULT_LNA1", "value": False})
         status = self.wait_status(lambda s: not s["policy"]["armed"])
         assert_simulation(status, safe=True)
+        # Any trip disarms; only the injected input proves the fault path.
+        require(status["policy"].get("fault") == "active-low fault: FAULT_LNA1",
+                "fault scenario tripped for a different reason: " + str(status["policy"].get("fault")))
         self.rpc({"op": "sim", "name": "FAULT_LNA1", "value": True})
         time.sleep(.5)
         assert_simulation(self.status(), safe=True)
         self.rpc({"op": "control", "name": "EN_LNA1", "value": True}, expected=False)
-        return {"fault_input": "FAULT_LNA1", "clearing_fault_did_not_rearm": True, "tripped_status": status}
+        return {"fault_input": "FAULT_LNA1", "clearing_fault_did_not_rearm": True,
+                "exact_fault": status["policy"]["fault"], "tripped_status": status}
 
     def link_loss(self):
         self.arm()
@@ -517,6 +536,8 @@ class GuestSmoke:
         self.rpc({"op": "sim", "name": "drop_link", "value": True})
         status = self.wait_status(lambda s: not s["policy"]["armed"])
         assert_simulation(status, safe=True)
+        require(status["policy"].get("fault") == "pico_status_timeout",
+                "link-loss scenario tripped for a different reason: " + str(status["policy"].get("fault")))
         # Leave both wire directions absent beyond the independent model's
         # 750 ms heartbeat timeout, even after the host's 500 ms stale trip.
         time.sleep(.9)
@@ -525,7 +546,7 @@ class GuestSmoke:
         assert_simulation(recovered, safe=True)
         require(recovered["pico"].get("mcp_reset") is True, "Pico model heartbeat timeout must assert MCP reset")
         self.rpc({"op": "control", "name": "EN_LNA1", "value": True}, expected=False)
-        return {"restored_link_did_not_rearm": True, "tripped_status": status}
+        return {"restored_link_did_not_rearm": True, "exact_fault": status["policy"]["fault"], "tripped_status": status}
 
     def lease_expiry(self):
         self.arm()

@@ -1892,9 +1892,9 @@
     }
   ],
   "input_file": "pcb/generated/detector-core-input.json",
-  "input_sha256": "e0fb2d49421ffe4ac388af1e239a5342cb782f46ec4ab00048a3459b0ee428d9",
+  "input_sha256": "71c6cdf80d099af840e65888803452d5594ffacd6a918030bc71ccbf113a8289",
   "board_file": "build/kicad/pcb-preparation/detector-core-placement.kicad_pcb",
-  "board_sha256": "2fe4de9b11293c0af930ee4e919f6f832fb0fc8994c51a132b2c9053df9fc862",
+  "board_sha256": "98dafb6b796b87d6ac68b4d534c754c9ffb045661a877b8dbcc96d14b85b5a2e",
   "kicad_version": "10.0.7",
   "outline_candidate_mm": {
     "x": 125.0,
@@ -2496,7 +2496,7 @@
   "drc": {
     "exit_code": 5,
     "raw_file": "build/kicad/pcb-preparation/drc-raw.json",
-    "raw_sha256": "9bdefbcc05e1bca61744ac41f8295396b992390fdd6dc194f731192fcb18aa18",
+    "raw_sha256": "2cea2d39a7e46ed7a6ae219cbccecc55ca8ae7a37dc35e814d2e359d69ebde8a",
     "counts": {
       "unconnected_items": 140
     },
@@ -2516,112 +2516,5 @@
     ],
     "suppressed_or_filtered": false,
     "release_status": "NOT_RELEASED_UNROUTED"
-  },
-  "independent_parse": {
-    "counts": {
-      "board_components": 71,
-      "board_pads": 187,
-      "boundary_nets": 8,
-      "connected_pins": 180,
-      "excluded_RF_port_references": 18,
-      "nc_pads": 7,
-      "nets": 40,
-      "source_components": 71,
-      "source_pins": 187,
-      "unique_library_candidates": 5,
-      "unique_uuids": 1381,
-      "uuids": 1381
-    },
-    "issues": [],
-    "methodology": "Independent stdlib S-expression and JSON parsers; no generator or audit imports.",
-    "nc_pads": [
-      {
-        "pin": "2",
-        "ref": "D450"
-      },
-      {
-        "pin": "5",
-        "ref": "U450"
-      },
-      {
-        "pin": "5",
-        "ref": "U451"
-      },
-      {
-        "pin": "5",
-        "ref": "U452"
-      },
-      {
-        "pin": "5",
-        "ref": "U453"
-      },
-      {
-        "pin": "5",
-        "ref": "U454"
-      },
-      {
-        "pin": "5",
-        "ref": "U455"
-      }
-    ],
-    "outline": {
-      "closed": true,
-      "height_mm": 115.0,
-      "segment_count": 4,
-      "vertices": [
-        [
-          20.0,
-          20.0
-        ],
-        [
-          145.0,
-          20.0
-        ],
-        [
-          145.0,
-          135.0
-        ],
-        [
-          20.0,
-          135.0
-        ]
-      ],
-      "width_mm": 125.0
-    },
-    "passed": true,
-    "raw_DRC": {
-      "date": "2026-10-20T17:46:49",
-      "expected_unconnected_items": 140,
-      "ignored_checks": [],
-      "included_severities": [
-        "error",
-        "warning",
-        "exclusion"
-      ],
-      "schematic_parity": 0,
-      "unconnected_items": 140,
-      "unconnected_severities": {
-        "error": 140
-      },
-      "version": "10.0.7",
-      "violations": 0
-    },
-    "routing": {
-      "arc": 0,
-      "segment": 0,
-      "via": 0,
-      "zone": 0
-    },
-    "sha256": {
-      "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod": "fe0dbfefbb181a0466f93a8de52d84ba7b00fcd9acdbb69575f4128a0af4e405",
-      "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod": "f341c73aac9dcb553456f68bf3fee3d26eb14acf6d8a1cae82b50418fe1d71ca",
-      "build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23.kicad_mod": "0d88c86c1b6d8c1aae4aa8c09386264c089d4451a128b6ccd63ed253f4300b15",
-      "build/kicad/footprints/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod": "e05c7605248c220836f642ed1f526133edf0374acdfd5bb2631e58b4e377acfb",
-      "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod": "7190ac4a00125b807e54129ef0d87d87f2a658eeb74d025a7028203419b09f23",
-      "build/kicad/pcb-preparation/detector-core-placement.kicad_pcb": "2fe4de9b11293c0af930ee4e919f6f832fb0fc8994c51a132b2c9053df9fc862",
-      "build/kicad/pcb-preparation/drc-raw.json": "9bdefbcc05e1bca61744ac41f8295396b992390fdd6dc194f731192fcb18aa18",
-      "build/kicad/pcb-preparation/fp-lib-table": "3c70de3a601572184b4711b493dbe13a6a7aaa9ea21b98fb5654d8f660fc1119",
-      "pcb/generated/detector-core-input.json": "e0fb2d49421ffe4ac388af1e239a5342cb782f46ec4ab00048a3459b0ee428d9"
-    }
   }
 }

@@ -53,7 +53,7 @@ are RP2040 GPIO, with physical Pico header numbers in parentheses.
 | Function | GPIO (header) | State and polarity |
 |---|---|---|
 | MCP reset actuator | GP17 (22) | HIGH asserts all three MCP pin18 RESET low; actively LOW releases |
-| Display eFuse | GP16 (21) | HIGH enables, only in ACTIVE with Q6A 3V3 present |
+| Display eFuse | GP16 (21) | HIGH enables with Q6A 3V3 present in SAFE/WARMING/CONFIGURING/ACTIVE/TRIPPED; LOW in SHUTTING_DOWN/OFF, after a CASE_HOT or FAN_STALLED trip until the next accepted ARM or physical restart, at panel NTC >=68 C or invalid/stale, re-enabled at <=60 C |
 | SAFE_BOOT | GP15 (20) | HIGH asserts; input/high impedance while Q6A is off |
 | Noctua high-side driver | GP18 (24) | HIGH enables DC power; no fan PWM |
 | Delta two-wire blower | GP19 (25) | HIGH enables DC power |
@@ -65,7 +65,7 @@ are RP2040 GPIO, with physical Pico header numbers in parentheses.
 | Fan tachometer | GP22 (29) | Falling-edge IRQ, external pullup to Pico 3V3 |
 | ADC panel/battery/case | GP26/27/28 (31/32/34) | Three external ADC inputs; battery divider belongs to E1 |
 | Host UART0 TX/RX | GP0/1 (1/2) | 115200; TX input/high impedance while Q6A is off |
-| IMU UART1 TX/RX | GP8/9 (11/12) | 115200; framed pack telemetry, independent of Q6A power |
+| IMU UART1 RX | GP9 (12); GP8 (11) | 115200 RX-only framed pack telemetry, independent of Q6A power; GP8 (pack RX) is returned to high-Z input after UART1 setup |
 
 GP2/3 and GP6/7 read the two encoders; GP4/5 and GP10 serve the local HMI
 I2C/interrupt. `hmi.py` implements the PI4IOE5V9555 keys and VEML7700 sensor,
@@ -84,7 +84,9 @@ monotonically increasing milliseconds. `TickClock` uses `ticks_diff` to unwrap
 MicroPython's wrapping counter before calling the model. Its sampling gap must
 remain below half the ticks period; a reversed/ambiguous clock fails closed.
 
-1. Boot is SAFE: MCP reset asserted, DISP off, both fans on. The Pico chooses a
+1. Boot is SAFE: MCP reset asserted, both fans on. DISP12 powers the operator
+   console whenever Q6A 3V3 is present and the panel NTC is valid and cool
+   (Display eFuse row above); it is never an ARM output. The Pico chooses a
    new nonzero uint32 session using `os.urandom`. HELLO is the first frame of
    each session. It includes the same state/reset/sensor fields as STATUS plus
    the actual Pico serial and exact local `calibration_crc32` (None if invalid).
@@ -92,7 +94,7 @@ remain below half the ticks period; a reversed/ambiguous clock fails closed.
 2. Host sends ARM with `p.qualified=true`, current Pico session and a strictly
    increasing uint32 sequence. Pico separately requires a validated local ADC
    calibration, a local commissioning record, Q6A power, fresh valid sensors,
-   battery above 12.9 V, panel below 68 C and case at most 60 C. Refused ARM
+   battery above 13.05 V, panel below 68 C and case at most 60 C. Refused ARM
    leaves reset asserted and reports its reason.
 3. WARMING holds reset for at least 100 ms and waits for two distinct fresh HB
    observations after ARM. Multiple packets received at one timestamp count as
@@ -104,10 +106,17 @@ remain below half the ticks period; a reversed/ambiguous clock fails closed.
    configure IOCON ODR/MIRROR before GPINTEN;
    honor the MCP23017 IO7 output restriction. CONFIGURED is a host assertion,
    not an independent Pico readback of the I2C bus.
-5. ACTIVE permits DISP12; host independently controls its qualified MCP loads.
-   An HB gap of **750 ms or greater**, stale/invalid local sensor, loss of Q6A,
-   hot panel/case, tach stall, bad configuration or host TRIP asserts reset,
-   turns DISP off and restores full cooling. The trip rotates the nonce and
+5. ACTIVE keeps reset released; host independently controls its qualified MCP
+   loads. An HB gap of **750 ms or greater**, stale/invalid local sensor, loss
+   of Q6A, hot panel/case, tach stall, bad configuration or host TRIP asserts
+   reset and restores full cooling. Low battery while armed is left to the host
+   dwell, but never masks the panel/case/tach trips. DISP12 stays on in TRIPPED
+   so the console can show the fault and RECOVER + ARM, unless Q6A is off, the
+   panel is hot, or the trip was CASE_HOT or FAN_STALLED. Those two remove the
+   display load until a new ARM is accepted (which itself needs case <=60 C and
+   no stall) or a physical restart; a later host TRIP relabelling the fault does
+   not relight it. With the console dark, recover through the local CLI
+   (`labctl recover` or `labctl arm`). The trip rotates the nonce and
    clears accepted host sequence/HB state. Old-session frames and duplicate or
    decreasing sequences cannot refresh HB. Sequence numbers never wrap.
 6. New-session heartbeat alone never recovers power. A new explicit, qualified
@@ -126,14 +135,14 @@ The bounded subset of STACK sections 5.1/5.6 is implemented as follows:
 | Condition | Action |
 |---|---|
 | SHUTDOWN `phase=ARM_OFF` | SHUTTING_DOWN, immediate MCP reset and DISP off; emit SHUTDOWN_REQUEST |
-| SHUTDOWN `phase=OFF_NOW`, after ARM_OFF | Cut Pololu after exactly 20 s model grace; repeated OFF_NOW cannot postpone it |
+| SHUTDOWN `phase=OFF_NOW`, after ARM_OFF | Cut Pololu after exactly 20 s model grace; repeated OFF_NOW cannot postpone it; each new ARM_OFF or button shutdown starts without a previous OFF_NOW timestamp |
 | No HB after ARM_OFF | Cut after 60 s from last shutdown HB or ARM_OFF, whichever is later |
 | Q6A 3V3 falls after being observed on | Reset immediately; Pololu OFF after 3 s |
-| Calibrated battery <=12.9 V with no fresh HB | Pololu OFF after continuous 5 s; recovery or fresh HB resets dwell |
+| Calibrated battery <=13.05 V with no fresh HB | Pololu OFF after continuous 5 s; recovery or fresh HB resets dwell. Same 13050 mV as the host graceful cutoff, above the 12.8 V hardware UV trip |
 | Battery low with live HB | Host implements the INA228/Linux graceful shutdown policy; this fallback does not replace it |
 | Physical button | 30 ms debounce; short release emits POWER_BUTTON, 1.5 s hold requests graceful shutdown |
 | Restart after OFF | Physical button edge and battery >=13.6 V clear software latch; remote ARM alone cannot restart |
-| Host maximum SoC temperature | Fan on at60 C, off at50 C; missing/nonfinite value or stale HB forces full cooling |
+| Host maximum SoC temperature | In hardware mode labd sends `soc_temp_c` in every HB: the hottest Linux thermal zone in C, 0.1 C steps, re-read at most once a second (`software/PROTOCOL.md`). Fan on at60 C, off at50 C. labd omits the field when a zone is unreadable or out of range and in simulation; a missing/nonfinite value or stale HB forces full cooling (fan on) |
 | Panel NTC | Blower on at45 C, off at40 C; invalid sensor forces full cooling |
 | Fan tach | Ignore while off and first2 s on; no edge for >2 s thereafter is FAN_STALLED |
 
@@ -141,8 +150,10 @@ OFF is software latched after a 250 ms GP13 pulse; physical hardware must remove
 LAB5. Software does not claim that case NTC is a battery-cell sensor. Cell
 temperature and charger inhibition remain host/charger/AON responsibilities.
 `brightness_limit_pct` requests 50% at60 C and20% at68 C, but there is no proven
-DDC/KEY path here. The supervisor instead removes DISP12 at68 C. It does not
-pretend to dim GP17 or modify an undocumented panel interface.
+DDC/KEY path here. The supervisor instead removes DISP12 at68 C, or when the
+panel NTC reading is missing, invalid or older than 250 ms, and restores it only
+after a fresh valid reading of at most60 C. It does not pretend to dim GP17 or
+modify an undocumented panel interface.
 
 ## Calibration and commissioning
 
@@ -160,11 +171,15 @@ python firmware/pico/calibration.py --serial ACTUAL_PICO_HEX_ID \
   --reference-id INSTRUMENT_AND_LOG_ID --output calibration.json
 ```
 
-The helper derives scale in mV/count and offset in mV. It writes a CRC32 record
-bound to exact revision `E3-v2.1` and Pico serial, with no nominal valid defaults.
-The fixed canonical CRC field order is in `calibration.py`; float fields use
-nine decimal places so CPython/MicroPython JSON formatting differences do not
-change integrity checks. CRC is corruption detection, not authentication.
+The helper derives the fit and seals integer fixed-point fields: `scale_nv_per_count`
+(220000..340000 nV/count), `offset_uv` (+/-1000000 uV) and `panel_offset_mc`/`case_offset_mc`
+(+/-10000 milli-C). It writes a CRC32 record bound to exact revision `E3-v2.1` and
+Pico serial, with no nominal valid defaults. The fixed canonical CRC field order is
+in `calibration.py`. The record contains no floats: single-precision RP2040
+MicroPython cannot reproduce CPython float text, so a float field cannot be sealed
+and fails validation. Integer canonical text and the integer battery-mV formula are
+identical on CPython and the Pico. Records sealed with the old float fields must be
+regenerated. CRC is corruption detection, not authentication.
 
 NTC conversion interpolates logarithmic resistance between selected points in
 the actual Semiware MF52A103F3950 RevA2.0 R/T table. It never substitutes a generic
@@ -172,11 +187,12 @@ beta curve or extrapolates outside -20..120 C. Rail counts and implausible value
 become None, inhibit ARM and trip an active system. Mounted-sensor lag/offset
 must still pass25/60/68 C acceptance.
 
-Initial divider/reference tolerance can contribute about +/-0.28 V near12.9 V.
+Initial divider/reference tolerance can contribute about +/-0.28 V near13.05 V.
 **Two coefficients alone do not prove the cutoff gate.** Independently verify
-the physical12.9 V cutoff to +/-0.1 V at12.8/12.9/13.0 V, including5 s dwell,
-load and temperature. Cross-check INA228 against the meter. Record results,
-not a nominal checkbox. E1's AON UV protection is independent backup.
+the physical13.05 V cutoff to +/-0.1 V at12.95/13.05/13.15 V, including5 s dwell,
+load and temperature, so it stays above the 12.8+/-0.1 V hardware UV trip.
+Cross-check INA228 against the meter. Record results, not a nominal checkbox.
+E1's AON UV protection is independent backup.
 
 After all host acceptance gates pass, provision the separately sealed local
 `commissioning.json` with fields `v`, `revision`, `serial`,
@@ -232,6 +248,11 @@ PYTHONPATH=software python -m unittest discover -s software/tests -p test_superv
 The tests exercise ARM gates, exact deadline edges, replay/session rejection,
 sensor/clock faults, shutdown/UV behavior, ADC record corruption, NTC reference
 points, GPIO polarity/order, short UART writes, ticks wrap and IMU stale recovery.
+`test_pico_main.py` drives the real `main.run()` loop with injected `machine`/`time`
+(TRIP diagnostics sent as EVENT, GP8 high-Z, GP16 level checked against the model
+state at each write; every sleep counts, so an early exception fails instead of
+hanging) and checks that HMI
+key-bus errors and lux failures stay separate.
 Actual GPIO, ADC accuracy, interrupt latency, UART timing and watchdog reset
 behavior require device tests and remain unqualified.
 

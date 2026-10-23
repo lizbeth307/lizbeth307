@@ -195,6 +195,33 @@ class PolicyTests(unittest.TestCase):
         self.assertFalse(self.policy.armed)
         self.assertFalse(self.policy.command("EN_LNA1", True, 0)["ok"])
 
+    def test_integer_beyond_float_range_is_rejected_not_raised(self):
+        huge = 10 ** 400  # math.isfinite(huge) raises OverflowError.
+        with self.assertRaises(ValueError):
+            self.policy.configure_power_budget(always_on_a=huge)
+        self.arm()
+        result = self.policy.command("lease", {"owner": "daemon", "ttl_ms": huge}, 0)
+        self.assertFalse(result["ok"])
+        self.assertTrue(self.policy.armed)
+        self.assertTrue(self.policy.command("EN_LNA1", True, 0)["ok"])
+        self.policy.refresh_telemetry({"LNA1": {"current_a": huge, "voltage_v": 4.5, "timestamp_ms": 0}}, 0)
+        self.assertIn("ceiling", self.policy.fault)
+        self.assertFalse(self.hardware.outputs["EN_LNA1"])
+
+    def test_repeated_unconfirmed_safe_write_does_not_grow_fault(self):
+        self.arm()
+        with patch.object(self.hardware, "all_off", side_effect=OSError("MCP held in RESET")):
+            for _ in range(1000):
+                self.policy.trip("pico_TRIPPED")
+        self.assertEqual(self.policy.fault, "pico_TRIPPED; safe write unconfirmed: Pico MCP RESET required")
+
+    def test_explicit_recovery_clears_confirmations_given_before_arm(self):
+        # No lease is held at boot; a statement made then must not carry into a session.
+        self.assertTrue(self.policy.command("confirmations", {"bench_loads": True, "boni_connected": True}, 0)["ok"])
+        self.policy.set_readiness(pico_active=True, commissioned=True)
+        self.assertTrue(self.policy.clear_fault(0))
+        self.assertFalse(any(self.policy.confirmations.values()))
+
     def test_bad_control_type_is_rejected_without_gpio_write(self):
         count = len(self.hardware.trace)
         self.assertFalse(self.policy.command(None, True, 0)["ok"])

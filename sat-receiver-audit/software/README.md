@@ -2,7 +2,7 @@
 
 У цій редакції реалізовано Python-службу `labd`, CLI `labctl`, переносний протокол UART, Pico Supervisor і прошивку зовнішнього RP2040-Zero/BNO085. Linux-служба має реальний I²C/UART backend та окремий режим SIMULATION. За замовчуванням запускається симуляція. Апаратного приймання, встановлення на Q6A або прошивання MCU не виконано.
 
-Додано [labrx](RX.md) з RTL/HF+ bindings і FFT, [маскований спектр](SPECTRUM.md), [GNSS](LOCATION.md), [навчання](LEARNING.md), [Qt-меню](HMI.md), [декодерні адаптери](DECODERS.md) та [встановлення](DEPLOYMENT.md). Для цих функцій потрібні додаткові залежності; labd лишається на стандартній бібліотеці. Шість сторінок меню перевірено справжнім Qt offscreen. Знімки та hashes — `verification/hmi-views/`; це SIMULATION, не робота приймача на столі.
+Додано [labrx](RX.md) з RTL/HF+ bindings і FFT, [маскований спектр](SPECTRUM.md), [GNSS](LOCATION.md), [навчання](LEARNING.md), [Qt-меню](HMI.md), [декодерні адаптери](DECODERS.md) та [встановлення](DEPLOYMENT.md). Для цих функцій потрібні додаткові залежності; labd лишається на стандартній бібліотеці. Шість сторінок меню перевірено справжнім Qt offscreen. Знімки та hashes — `verification/hmi-views/`; це SIMULATION, не робота приймача на столі. Їх генерує `python3 tools/render_hmi_views.py` на Linux лише після успішного `test_hmi.py`; знімки, чий `hmi_sha256` не збігається з поточним `software/srrx/hmi.py`, передують цій ревізії HMI, доки їх не перегенеровано (див. [HMI.md](HMI.md)).
 
 ## Швидкий запуск меню
 
@@ -55,7 +55,7 @@ PYTHONPATH=software:. python3 -m srrx.cli status
 
 Для LNA2 спершу зачекати щонайменше 1 s після safe initialization: 500 ms OFF settling і 500 ms безперервного LOW DCS. Після FAULT один лише HIGH або повернення UART не відновлює виходи. Прибрати причину, завершити старий `hold`, явно виконати `recover`, далі підтримувати нову оренду; всі попередні навантаження залишаються OFF.
 
-Оренда належить локальному UID, отриманому ядром через SO_PEERCRED, та має строк не більше 5 s. `hold` поновлює її раз на секунду; Ctrl-C робить disarm. Статус не поновлює оренду. Інший owner не може ввімкнути навантаження, але вимкнення залишається доступним. Сервер слухає лише Unix-сокет; мережевого HTTP/TCP endpoint немає.
+Оренда належить локальному UID, отриманому ядром через SO_PEERCRED, та має строк не більше 5 s. `hold` поновлює її раз на секунду; Ctrl-C робить disarm. Статус не поновлює оренду. Поки інший UID тримає оренду, labd відхиляє `arm`, `recover`, `mode`, `route`, `relay`, `confirmations` і `set … on`; `set … off`, `disarm` і `shutdown` доступні будь-якому локальному оператору без оренди. Поки ARM одного UID чекає підтвердження Pico (без нього через 1 s ARM скасовується як `pico_arm_not_acknowledged`), `arm`, `recover` і `lease` інших UID також відхиляються. `labctl hold` при виході робить disarm лише сесії, яку цей виклик сам armed або орендував і ще може тримати. Після відмови в поновленні (оренду має інший owner або власна вже спливла й спрацювала) чи якщо від останнього підтвердженого поновлення минуло ≥5 s, disarm не надсилається: сесія вже може належати іншому оператору, а власну вимкнуло спливання оренди. Сервер слухає лише Unix-сокет; мережевого HTTP/TCP endpoint немає.
 
 На хості створення AF_UNIX заборонене, тому відповідний хостовий тест має явний SKIP. Окреме [середовище Ubuntu ARM64](../deployment/linux_lab/README.md) запускає справжні systemd, Unix-сокети, SO_PEERCRED і перевірки доступу двох користувачів; його результат зберігається окремо від хостового. Реальний дочірній процес через pipes перевірений:
 
@@ -67,10 +67,10 @@ PYTHONPATH=software:. python3 -m srrx.daemon --simulate --stdio
 
 ## Що робить фізичний backend
 
-1. Перевіряє unit ID, 37 апаратних gates із локальними доказами, точні SHA256 графів/ПЗ, ADC, прошивки, струмові вікна й бюджет LAB5.
+1. Перевіряє unit ID, 37 апаратних gates із локальними доказами, точні SHA256 графів/ПЗ, ADC, прошивки, струмові вікна й бюджет LAB5. Під час запуску labd і labrx системний годинник, що відстає від `accepted_at` (офлайн-unit із RTC позаду), старт не блокує: labd лише попереджає в stderr. Нижня межа 2026 і порядок «докази не пізніше приймання» перевіряються завжди; `srrx.provision` лишається строгим.
 2. Відкриває лише явно задані I²C0/I²C2/UART7. Номери `/dev/i2c-*` не вгадуються.
 3. Отримує свіжий Pico HELLO та звіряє живі serial/calibration CRC із прийнятим записом. CRC виявляє пошкодження; це не криптографічна автентифікація.
-4. Після явного ARM Pico утримує RESET ≥100 ms і чекає два нові HB. У CONFIGURING Linux перевіряє справжній reset image MCP, записує safe OLAT (**CHG_INHIBIT=1**, інші керовані виходи LOW), IODIR, ODR/MIRROR та GPINTEN, перевіряє readback. CONFIGURED має завершитись за 1 s.
+4. Після явного ARM Pico утримує RESET ≥100 ms і чекає два нові HB. У CONFIGURING Linux перевіряє справжній reset image MCP, спершу на всіх чипах вимикає GPINTEN і вмикає ODR/MIRROR, далі очищує IPOL, задає DEFVAL/INTCON так, що переривання дають лише входи FAULT_/FLT_ (порівняння з DEFVAL=1), записує safe OLAT (**CHG_INHIBIT=1**, інші керовані виходи LOW), IODIR, GPPU і лише тоді GPINTEN, перевіряє readback. Образ IODIR…GPPU повторно звіряється при кожному опитуванні входів; його втрата (тихий reset MCP) фіксує fault. CONFIGURED має завершитись за 1 s.
 5. Лише після ACTIVE, свіжих справних входів і нової оренди політика дозволяє конкретні EN/route/relay. HB іде кожні 200 ms; Pico timeout 750 ms, host timeout STATUS >500 ms. I²C write не вважається успішним після помилки; незалежний MCP RESET виконує Pico.
 
 INA228 рахує `V_N = VBUS − signed VSHUNT`. INA3221 фізично вимірює лише LNA1–4/LNB/BONI. Для решти гілок статус показує невідомий поточний струм і прийнятий фіксований резерв. Дані ADC для USB/S-band не вигадуються. Номінальне перетворення шунта саме по собі не має `calibration_valid=true`: runtime bridge застосовує прийняті unit-specific коефіцієнти до свіжих вимірів.
@@ -98,7 +98,7 @@ python3 tools/build_firmware.py
 
 Для Q6A зберегти проєкт у `/opt/srrx`, створити системного користувача `labd` і підтвердити доступ до потрібних I²C/UART. `systemd/srrx.service` використовує `/etc/srrx/acceptance.json` та перевірені шляхи з `/etc/srrx/devices.env`; example навмисно UNVERIFIED. Оператору потрібен доступ до групи локального control socket. Units перевірено `systemd-analyze verify`; запуск, доступи, pinmux і kernel/PMIC на Q6A ще не випробувані. Автоматичне встановлення/enable units тут не виконувалось.
 
-`srrx-poweroff.service` — окремий root bridge. Лише в HARDWARE із прийнятим і живо прив'язаним unit та станом SHUTTING_DOWN він просить OFF_NOW і виконує `systemctl poweroff`. Pico дає фіксовані 20 s; повторні запити не продовжують строк. За замовчуванням модуль `srrx.poweroff` працює dry run; реальна дія вимагає `--execute`. У SIMULATION вимкнення ОС не виконується.
+`srrx-poweroff.service` — окремий root bridge. У HARDWARE зі станом Pico SHUTTING_DOWN він виконує `systemctl poweroff`; OFF_NOW (фіксовані 20 s у Pico, повторні запити не продовжують строк) він просить лише для прийнятого і живо прив'язаного unit. Для неприйнятого зв'язку OFF_NOW не надсилається: після зупинки labd HB зникає, і Pico вимикає живлення за Q6A_POWER_OFF або ARM_OFF_HEARTBEAT_LOST. За замовчуванням модуль `srrx.poweroff` працює dry run; реальна дія вимагає `--execute`. У SIMULATION вимкнення ОС не виконується.
 
 ## Межа цієї реалізації
 

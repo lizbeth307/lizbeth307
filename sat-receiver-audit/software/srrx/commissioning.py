@@ -22,8 +22,8 @@ GATE_IDS = tuple([f"E1-{i:02}" for i in range(1, 8)]
                  + [f"E3-{i:02}" for i in range(1, 9)]
                  + [f"E4-{i:02}" for i in (1, 3, 4, 5, 6, 7, 8)]
                  + [f"E5-{i:02}" for i in range(1, 11)])  # E5-10: W1-2 WIFI_PWR_EN hold
-CAL_FIELDS = ("v", "revision", "serial", "scale_mv_per_count", "offset_mv",
-              "panel_offset_c", "case_offset_c", "reference_id")
+CAL_FIELDS = ("v", "revision", "serial", "scale_nv_per_count", "offset_uv",
+              "panel_offset_mc", "case_offset_mc", "reference_id")
 PLACEHOLDERS = {"tbd", "todo", "unknown", "none", "n/a", "na", "placeholder",
                 "example", "test", "sim", "simulation", "open", "pending",
                 "replace_me", "changeme", "0000"}
@@ -32,6 +32,7 @@ BRANCH_CAPS = {"LNA1": (.265, 5.5), "LNA2": (.265, 5.5), "LNA3": (.265, 5.5),
                "SB_LNA": (.065, 5.5), "RTLA": (.544, 5.5), "RTLB": (.4, 5.5),
                "HFP": (.825, 5.5), "LIME3V3": (1.8, 3.63), "T7": (1.512, 5.5),
                "LABPORT": (.678, 5.5), "AUX12": (.75, 13)}
+MAX_ARTIFACT_BYTES = 64 * 1024 * 1024
 RUNTIME_SOURCES = {"LNA1": "INA3221:0x41:1", "LNA2": "INA3221:0x41:2",
                    "LNA3": "INA3221:0x41:3", "LNA4": "INA3221:0x43:1",
                    "LNB": "INA3221:0x43:2", "BONI": "INA3221:0x43:3"}
@@ -56,27 +57,46 @@ def _text(value, label, minimum=1):
 
 
 def _number(value, low, high, label):
-    if type(value) not in (int, float) or not math.isfinite(value) or not low <= value <= high:
+    # math.isfinite would raise OverflowError on an int beyond float range.
+    if not (type(value) is int or type(value) is float and math.isfinite(value)) or not low <= value <= high:
         raise ValidationError(label + " is not a finite in-range number")
     return value
 
 
-def _date(value, label):
+def _integer(value, low, high, label):
+    if type(value) is not int or not low <= value <= high:
+        raise ValidationError(label + " is not an in-range integer")
+    return value
+
+
+def _date(value, label, latest=None):
     _text(value, label)
     try:
         result = datetime.fromisoformat(value.replace("Z", "+00:00"))
         if result.tzinfo is None:
             raise ValueError("timezone missing")
         result = result.astimezone(timezone.utc)
-        if not datetime(2026, 1, 1, tzinfo=timezone.utc) <= result <= datetime.now(timezone.utc):
-            raise ValueError("date outside current project lifetime or in future")
-        return result
+        if result < datetime(2026, 1, 1, tzinfo=timezone.utc):
+            raise ValueError("date before current project lifetime")
     except (ValueError, TypeError) as exc:
-        raise ValidationError(label + " requires a real, non-future ISO8601 date with timezone") from exc
+        raise ValidationError(label + " requires a real ISO8601 date with timezone, not before 2026") from exc
+    if latest is not None and result > latest:
+        raise ValidationError(label + " is later than the system clock; fix RTC/time sync or the record")
+    return result
 
 
 def _digest(path):
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    # Streamed in 1 MiB blocks: the release guard runs under MemoryMax=64M. The
+    # bytes hashed are the bytes read; a file grown past the limit after
+    # _local_file's size check is refused rather than hashed without bound.
+    digest, total = hashlib.sha256(), 0
+    with open(path, "rb") as source:
+        while block := source.read(1024 * 1024):
+            total += len(block)
+            if total > MAX_ARTIFACT_BYTES:
+                raise ValidationError("artifact exceeds 64 MiB while hashing: " + path.name)
+            digest.update(block)
+    return digest.hexdigest()
 
 
 def _local_file(root, relative):
@@ -84,7 +104,7 @@ def _local_file(root, relative):
         raise ValidationError("artifact path must stay inside project")
     try:
         path = (root / relative).resolve(strict=True)
-        if not path.is_relative_to(root) or not path.is_file() or not 0 < path.stat().st_size <= 64 * 1024 * 1024:
+        if not path.is_relative_to(root) or not path.is_file() or not 0 < path.stat().st_size <= MAX_ARTIFACT_BYTES:
             raise ValueError("invalid file")
         return path
     except (OSError, ValueError, RuntimeError) as exc:
@@ -123,11 +143,15 @@ def _pairs(items):
     return result
 
 
-def _read_json(path):
+def _read_json(path, raw=None):
     try:
-        if not 0 < path.stat().st_size <= 2 * 1024 * 1024:
+        if raw is None:
+            if not 0 < path.stat().st_size <= 2 * 1024 * 1024:
+                raise ValueError("size")
+            raw = path.read_bytes()
+        if type(raw) is not bytes or not 0 < len(raw) <= 2 * 1024 * 1024:
             raise ValueError("size")
-        return json.loads(path.read_text(encoding="utf-8"), object_pairs_hook=_pairs,
+        return json.loads(raw.decode("utf-8"), object_pairs_hook=_pairs,
                           parse_constant=lambda _: (_ for _ in ()).throw(ValidationError("nonfinite JSON value")))
     except (OSError, ValueError, UnicodeError, RecursionError) as exc:
         raise ValidationError("cannot read valid acceptance JSON: " + str(path)) from exc
@@ -156,17 +180,17 @@ def _calibration(record, serial):
     if (type(record["v"]) is not int or record["v"] != 1
             or record["revision"] != "E3-v2.1" or record["serial"] != serial):
         raise ValidationError("ADC version/revision/Pico serial mismatch")
-    _number(record["scale_mv_per_count"], 0.22, 0.34, "ADC scale")
-    _number(record["offset_mv"], -1000, 1000, "ADC offset")
-    for key in ("panel_offset_c", "case_offset_c"):
-        _number(record[key], -10, 10, key)
+    # Integer fixed point only: the Pico recomputes this CRC in single-precision
+    # MicroPython, where float text can never match a CPython-sealed value.
+    _integer(record["scale_nv_per_count"], 220000, 340000, "ADC scale nV/count")
+    _integer(record["offset_uv"], -1000000, 1000000, "ADC offset uV")
+    for key in ("panel_offset_mc", "case_offset_mc"):
+        _integer(record[key], -10000, 10000, key)
     _text(record["reference_id"], "ADC reference instrument/log ID", 3)
     values = []
     for key in CAL_FIELDS:
         value = record[key]
-        if type(value) is float:
-            value = "%.9f" % value
-        elif type(value) is int:
+        if type(value) is int:
             value = str(value)
         if type(value) is not str or "\n" in value or "\r" in value:
             raise ValidationError("invalid calibration canonical value")
@@ -176,18 +200,22 @@ def _calibration(record, serial):
         raise ValidationError("ADC coefficient CRC mismatch")
 
 
-def load_acceptance(path, project_root):
+def load_acceptance(path, project_root, raw=None, clock_check=True):
     """Return a complete matching manifest or raise ValidationError (BLOCKED).
 
     The hardware caller must also check the live Pico serial and calibration CRC
     against this record before arming. Merely loading this file does not identify
     attached hardware or prove that deployed firmware matches recorded artifacts.
+    `raw` validates exactly these bytes of `path`, so a caller can hash what passed.
+    Creation/provisioning keeps `clock_check`; a runtime start may pass False so an
+    offline unit whose RTC is behind accepted_at is not blocked. The 2026 floor and
+    evidence-before-acceptance ordering are always enforced.
     """
     try:
         root = Path(project_root).resolve(strict=True)
         if path is None:
             raise ValidationError("acceptance file missing; hardware BLOCKED")
-        data = _read_json(Path(path))
+        data = _read_json(Path(path), raw)
         _keys(data, ("schema_version", "project_revision", "hardware_unit_id", "pico_serial",
                      "accepted_at", "graph_sha256", "source_sha256", "gates", "battery_adc", "firmware", "branch_limits", "lab5_budget"), "acceptance")
         if type(data["schema_version"]) is not int or data["schema_version"] != 1 or data["project_revision"] != PROJECT_REVISION:
@@ -197,7 +225,8 @@ def load_acceptance(path, project_root):
             raise ValidationError("invalid hardware unit ID")
         if type(data["pico_serial"]) is not str or not re.fullmatch(r"[0-9a-f]{8,64}", data["pico_serial"]) or set(data["pico_serial"]) == {"0"}:
             raise ValidationError("actual Pico unique_id hex required")
-        accepted = _date(data["accepted_at"], "acceptance timestamp")
+        accepted = _date(data["accepted_at"], "acceptance timestamp",
+                         datetime.now(timezone.utc) if clock_check else None)
         graphs, sources = project_hashes(root)
         if data["graph_sha256"] != graphs or data["source_sha256"] != sources:
             raise ValidationError("graph/software/firmware revision SHA256 mismatch")
@@ -220,7 +249,7 @@ def load_acceptance(path, project_root):
             if type(point["raw_count"]) is not int or not 16 < point["raw_count"] < 65519:
                 raise ValidationError("ADC point must contain actual read_u16 count")
             _number(point["reference_v"], 10, 17, "ADC point reference volts")
-            predicted = (point["raw_count"] * adc["record"]["scale_mv_per_count"] + adc["record"]["offset_mv"]) / 1000
+            predicted = (point["raw_count"] * adc["record"]["scale_nv_per_count"] + adc["record"]["offset_uv"] * 1000) / 1e9
             if abs(predicted - point["reference_v"]) > 0.025:
                 raise ValidationError("ADC coefficients do not fit measured points")
         low, high = adc["points"]

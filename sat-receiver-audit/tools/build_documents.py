@@ -22,17 +22,17 @@ def md(value):
 
 
 def main():
-    graphs = [json.loads(p.read_text()) for p in sorted((BASE / "design").glob("E[1-5].json"))]
-    report = json.loads((BASE / "verification/validation.json").read_text())
-    generated = json.loads((BASE / "build/kicad/generation-manifest.json").read_text())
+    graphs = [json.loads(p.read_text(encoding="utf-8")) for p in sorted((BASE / "design").glob("E[1-5].json"))]
+    report = json.loads((BASE / "verification/validation.json").read_text(encoding="utf-8"))
+    generated = json.loads((BASE / "build/kicad/generation-manifest.json").read_text(encoding="utf-8"))
     software_path = BASE / "verification/software-tests.json"
-    software = json.loads(software_path.read_text()) if software_path.exists() else {}
+    software = json.loads(software_path.read_text(encoding="utf-8")) if software_path.exists() else {}
     linux_path = BASE / "verification/linux-lab/report.json"
-    linux = json.loads(linux_path.read_text()) if linux_path.exists() else {}
+    linux = json.loads(linux_path.read_text(encoding="utf-8")) if linux_path.exists() else {}
     module_path = BASE / "verification/module-lab/report.json"
-    modules = json.loads(module_path.read_text()) if module_path.exists() else {}
+    modules = json.loads(module_path.read_text(encoding="utf-8")) if module_path.exists() else {}
     binding_path = BASE / "verification/linux-lab/source-binding.json"
-    binding = json.loads(binding_path.read_text()) if binding_path.exists() else {}
+    binding = json.loads(binding_path.read_text(encoding="utf-8")) if binding_path.exists() else {}
     # A Linux result binds the exact executed sources; after any change it is only
     # a record of the earlier run and must not be presented as current evidence.
     changed = sorted(rel for rel, digest in binding.get("source_sha256", {}).items()
@@ -58,14 +58,14 @@ def main():
     lines = ["# Ворота приймання SR-RX-v2.1", "", "Жоден стендовий тест не виконано. `OPEN` не означає, що виявлено несправність конкретного екземпляра: це умова, без підтвердження якої його не можна приймати чи підключати. Стан апаратного випуску — **BLOCKED**.", "", "Основні інструкції українською наведено в аудитах [E1](design/E1-review.md), [E2](design/E2-review.md), [E3](design/E3-review.md), [E4](design/E4-review.md), [E5](design/E5-review.md) та [таблицях монтажу](design/E5-connection-guide.md). Нижче — повний реєстр ідентифікаторів із машинного контракту.", ""]
     for item in items:
         lines += [f"## {item['id']} — {'OPEN / блокує випуск' if item.get('blocking') else 'умова окремої опції'}", "", md(item["description"]), "", "**Умова закриття:** " + md(item.get("resolve", "")), ""]
-    lines += ["## Додаткова калібровка аварійного ADC", "", "Дільник E1 100 kΩ / 20 kΩ з допуском 1% та LM4040C30 0.5% не дають точного батарейного порога без калібровки. Початкова похибка біля 12.9 V може становити приблизно ±0.28 V. Перед штатним запуском потрібні дві опорні напруги, запис scale/offset із серійним номером пристрою та перевірка відсічки 12.9±0.1 V за кімнатної і підвищеної температури. Немає чинної калібровки — штатний режим заборонений.", "", "## Правило звітності", "", "Синтаксично валідний KiCad, збіг переліків з'єднань і навіть ERC без помилок не закривають ці ворота. Заборонено записувати PASS без виміряних даних, умов тесту, приладу й дати."]
-    (BASE / "OPEN_ITEMS.md").write_text("\n".join(lines) + "\n")
+    lines += ["## Додаткова калібровка аварійного ADC", "", "Дільник E1 100 kΩ / 20 kΩ з допуском 1% та LM4040C30 0.5% не дають точного батарейного порога без калібровки. Початкова похибка біля 13.05 V може становити приблизно ±0.28 V. Перед штатним запуском потрібні дві опорні напруги, запис scale/offset із серійним номером пристрою та перевірка відсічки 13.05±0.1 V за кімнатної і підвищеної температури. Немає чинної калібровки — штатний режим заборонений.", "", "## Правило звітності", "", "Синтаксично валідний KiCad, збіг переліків з'єднань і навіть ERC без помилок не закривають ці ворота. Заборонено записувати PASS без виміряних даних, умов тесту, приладу й дати."]
+    (BASE / "OPEN_ITEMS.md").write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
 
     rows = []
     for g in graphs:
         for c in g["components"]:
             rows.append([g["sheet"], c["ref"], c["value"], c.get("kind", ""), c.get("status", ""), "DNP" if c.get("dnp") else "", c.get("footprint", ""), c.get("source", ""), "; ".join(c.get("notes", []))])
-    with (BASE / "build/11-schematic-bom.csv").open("w", newline="") as f:
+    with (BASE / "build/11-schematic-bom.csv").open("w", encoding="utf-8", newline="") as f:
         w = csv.writer(f, quoting=csv.QUOTE_ALL, lineterminator="\n")
         w.writerow(["Аркуш", "Позначення", "Деталь / номінал", "Тип", "Статус", "Не монтувати", "Посадкове місце", "Джерело", "Примітки"])
         w.writerows(rows)
@@ -80,7 +80,7 @@ def main():
 Початковий кошторис [10-bom.md](10-bom.md) і [10-bom.csv](10-bom.csv) залишається оцінкою редакції v2 від 18.10.2026. Він не є підтвердженою ціною оновлених схем. Заміни перетворювача, додаткові захисти, детектори, пасиви та конструктивні зміни мають бути включені в остаточний кошик за конкретними MPN і кількостями, без подвійного обліку деталей модулів. Непідтверджені ціни не прирівняно до нуля.
 
 Джерела і розрахунки змін: [E1](../design/E1-review.md), [E2](../design/E2-review.md), [E3](../design/E3-review.md), [E4](../design/E4-review.md), [E5](../design/E5-review.md).
-""")
+""", encoding="utf-8", newline="\n")
     # Explicitly conservative reference contract. It is data for the future
     # firmware implementation, not a service that writes GPIOs.
     controls = {}
@@ -126,9 +126,13 @@ def main():
             "Сервісна зарядка через ISDT/raw balance вимкнена до E1-02; main OFF і запобіжник не доводять ізоляцію B0/P−.",
         ],
     }
-    (BASE / "design/readiness-contract.json").write_text(json.dumps(readiness, ensure_ascii=False, indent=2) + "\n")
+    (BASE / "design/readiness-contract.json").write_text(json.dumps(readiness, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     errors = report.get("erc_errors", [])
     status = "без помилок" if not errors else f"{len(errors)} помилок; див. сирий звіт і пояснення"
+    erc = json.loads((BASE / "verification/erc.json").read_text(encoding="utf-8"))
+    pcb = json.loads((BASE / "verification/pcb-review.json").read_text(encoding="utf-8"))
+    host_failed = len(software.get("failures", [])) + len(software.get("errors", []))
+    host_status = "" if software.get("host_regression_status") == "PASS" else f", **{software.get('host_regression_status', 'NOT_RUN')}: {host_failed} FAIL/ERROR**"
     completion = f"""# SR-RX-v2.1 — передача перевіреного інженерного комплекту
 
 Редакція від 20.10.2026, оновлено 23.10.2026. Вихідний репозиторій: [lizbeth307/lizbeth307](https://github.com/lizbeth307/lizbeth307), гілка Claude `ccr-1537979d-cj7q9t`, останній збережений коміт `465318835e71eae326059f5f66e2b47232169556`.
@@ -142,7 +146,7 @@ def main():
 - Заповнено всі п'ять розділів схеми. Для читабельності вони розбиті на {len(generated['pages'])} електричних сторінок і кореневий зміст.
 - На схемах {report['physical_components']} позначених елементів; {report['connected_physical_contacts']} підключених фізичних/явно функціональних контактів у {report['named_nets']} іменованих мережах. Повний експорт KiCad зіставлено з графами: **{report['graph_netlist_comparison']}**.
 - Збережено початкові бібліотеки, додано самодостатню бібліотеку елементів нових схем, відносні таблиці бібліотек, підтверджені стандартні посадкові місця й джерела.
-- ERC виконано справжнім KiCad 10.0.7: **{status}**. [Сирий ERC](verification/erc.json) не відфільтровано. [Незалежна звірка](verification/validation.json) містить точні лічильники й SHA256 файлів.
+- ERC виконано справжнім KiCad {erc.get("kicad_version", "?")}: **{status}**. [Сирий ERC](verification/erc.json) не відфільтровано. [Незалежна звірка](verification/validation.json) містить точні лічильники й SHA256 файлів.
 - [PDF](build/kicad/sr-rx-v2.pdf), SVG, XML-netlist, [перелік елементів](build/11-schematic-bom.csv), [таблиці монтажу](design/E5-connection-guide.md) і відтворювані генератори входять у комплект.
 
 ## Матеріальні виправлення
@@ -155,9 +159,9 @@ def main():
 
 Це інженерна схема та пакет перевірок. **Пристрій не зібрано, стендові результати відсутні, виробничий випуск заблоковано.** У реєстрі {len(blockers)} блокувальних умов, багато з яких стосуються одного приймального тесту або ревізії плати. Не можна перетворювати їх на PASS за результатом програмної перевірки.
 
-Початковий `sr-rx-v2.kicad_pcb` є порожнім шаблоном. Gerber, виробнича PCB та підтверджені механічні файли виготовлення не заявлені. Наявні 8 креслень розміщення — теоретичні ескізи, які мають бути звірені з новими розмірами деталей. Додано [PCB-підготовку](build/13-pcb-preparation.md), нерозведений starter DC_CORE (71 компонент/187 контактів, verification/pcb-review.json) та окремий [прототип внутрішнього розведення](build/kicad/pcb-prototype/README.md). Його точний raw DRC і незалежна звірка містяться у verification/pcb-prototype-review.json. Навіть нуль внутрішніх DRC findings не визначає зовнішні роз'єми, MPN, корпус або фізичну точність детектора.
+Початковий `sr-rx-v2.kicad_pcb` є порожнім шаблоном. Gerber, виробнича PCB та підтверджені механічні файли виготовлення не заявлені. Наявні 8 креслень розміщення — теоретичні ескізи, які мають бути звірені з новими розмірами деталей. Додано [PCB-підготовку](build/13-pcb-preparation.md), нерозведений starter DC_CORE ({pcb["components"]} компонент/{pcb["source_pins"]} контактів, verification/pcb-review.json) та окремий [прототип внутрішнього розведення](build/kicad/pcb-prototype/README.md). Його точний raw DRC і незалежна звірка містяться у verification/pcb-prototype-review.json. Навіть нуль внутрішніх DRC findings не визначає зовнішні роз'єми, MPN, корпус або фізичну точність детектора.
 
-Реалізовано [керування й меню](software/README.md), Pico Supervisor, RP2040-Zero/BNO085, UART/CRC, I²C-монітори, інтерлоки, калібрування, приймальні записи та systemd units. Додано [RX/FFT](software/RX.md), [GNSS](software/LOCATION.md), [спектральне навчання](software/LEARNING.md), [touch-консоль](software/HMI.md), [декодерні адаптери](software/DECODERS.md) та [staging встановлення](software/DEPLOYMENT.md). Хостові перевірки: **{software.get("passed", 0)} PASS**, **{len(software.get("skipped", []))} SKIP**; фізичне встановлення/прошивання не виконано. Сервіс перевіряється справжніми процесами; GUI — справжнім Qt. Обмеження Unix socket хоста відокремлено від перевірок у Linux guest.
+Реалізовано [керування й меню](software/README.md), Pico Supervisor, RP2040-Zero/BNO085, UART/CRC, I²C-монітори, інтерлоки, калібрування, приймальні записи та systemd units. Додано [RX/FFT](software/RX.md), [GNSS](software/LOCATION.md), [спектральне навчання](software/LEARNING.md), [touch-консоль](software/HMI.md), [декодерні адаптери](software/DECODERS.md) та [staging встановлення](software/DEPLOYMENT.md). Хостові перевірки: **{software.get("passed", 0)} PASS**, **{len(software.get("skipped", []))} SKIP**{host_status}; фізичне встановлення/прошивання не виконано. Сервіс перевіряється справжніми процесами; GUI — справжнім Qt. Обмеження Unix socket хоста відокремлено від перевірок у Linux guest.
 
 ## Перевірка без фізичної плати
 
@@ -178,7 +182,7 @@ def main():
 
 Жорсткі правила з USER_REQUIREMENTS збережено: лише прийом в ефірі, без приватного змісту/військових трактів, без рамок/тарілок, місце з GNSS. Схема передбачає термінування Lime TX; експериментальний source patch закриває перевірені високорівневі TX entry points. Повного native/raw-register аудиту та фізичного підтвердження немає, тому Lime runtime залишається заблокованим.
 """
-    (BASE / "COMPLETION.md").write_text(completion)
+    (BASE / "COMPLETION.md").write_text(completion, encoding="utf-8", newline="\n")
     print(f"Wrote component inventory, readiness contract and {len(blockers)} blocking gate records")
 
 

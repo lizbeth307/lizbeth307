@@ -33,6 +33,12 @@ ControlGuard лишається observer: сам не ARM/recover і не пон
 - Root переніс створення hardware source під try/finally та забезпечив branch OFF attempt навіть за source-open/source-close failures; окремі capture cleanup regressions перевірено root. Наш session-change тест додатково підтверджує cleanup на межі read→FFT/export.
 - HMI-agent узгодив ReceiverSimulation/Qt input bounds із capture CLI: integer center0…6GHz, rate48k…56MHz. Попередня HMI minimum8k могла запускати child, який гарантовано відмовляв. Whole-valued Qt floats перетворюються на integer CLI arguments.
 
+Доповнення 23 жовтня 2026 (межа HMI → learning, перевірено в `tests/test_hmi.py`):
+
+- Явне підтвердження анотації прив'язане до кадру, показаного в момент позначки. Потоковий кадр тієї ж геометрії (SIM capture, відстежуваний survey) більше не скидає вибрані bins на `[start,256)` і не підміняє кадр, що потрапляє в датасет; зміна bins/мітки чи новий кадр іншої геометрії знімає підтвердження.
+- Глибоко вкладений JSON відхиляється HMI loader як `ValueError`, а не `RecursionError`, що раніше виходила з Qt slot без повідомлення «Rejected».
+- `test_console_integration.py` імпортує `srrx.labrx` (POSIX `resource`) і виконується лише на Linux; кількість наскрізних тестів не змінилася.
+
 Після цих виправлень у перевірених cross-module сценаріях відкритого дефекту не виявлено. Цей огляд не включає візуальну оцінку Qt на фізичному дисплеї, фізичні SDR-бібліотеки/серійні номери, hardware calibration, GP/NPU виконання чи фактичний GNSS fix. Вони не виводяться з успіху simulation pipeline.
 
 Відтворення:

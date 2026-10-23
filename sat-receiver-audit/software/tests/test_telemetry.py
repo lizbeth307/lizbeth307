@@ -139,6 +139,45 @@ class TelemetryTests(unittest.TestCase):
         monitor.clock_ms = lambda: next(times)
         self.assertFalse(monitor.read_snapshot().valid)
 
+    def test_ina228_conversion_landing_mid_burst_is_reread_not_torn(self):
+        class TearingBus(RegisterBus):
+            tears = 0
+            def read(self, addr, reg, count):
+                if addr == 0x40 and reg == 5 and self.tears:
+                    # A newer averaged result lands between VSHUNT and CURRENT.
+                    self.tears -= 1
+                    self.battery(2.1)
+                return super().read(addr, reg, count)
+        bus = TearingBus()
+        monitor = INA228(bus, clock_ms=self.clock)
+        monitor.configure()
+        bus.battery(2.0)
+        bus.tears = 1
+        sample = monitor.read_snapshot()
+        self.assertTrue(sample.valid, sample.error)
+        self.assertAlmostEqual(sample.values["battery_current_a"], 2.1, places=3)
+        self.assertAlmostEqual(sample.values["battery_shunt_current_a"], 2.1, places=3)
+        # A conversion during every burst is never reported as one measurement.
+        bus.battery(2.0)
+        bus.tears = 2
+        sample = monitor.read_snapshot()
+        self.assertFalse(sample.valid)
+        self.assertIn("read burst", sample.error)
+
+    def test_ina3221_idle_bus_offset_below_zero_is_not_invalid_data(self):
+        monitor = INA3221(self.bus, 0x41, (.2, .2, .2), clock_ms=self.clock)
+        monitor.configure()
+        self.bus.branches(0x41, (.2, .2, .2), 0)
+        for lsb in (1, 2):
+            self.bus.reg[0x41, 0x0F] = 3
+            self.bus.reg[0x41, 2] = (-lsb & 0x1FFF) << 3
+            sample = monitor.read_snapshot()
+            self.assertTrue(sample.valid, sample.error)
+            self.assertAlmostEqual(sample.values["ch1_bus_v"], -.008 * lsb)
+        self.bus.reg[0x41, 0x0F] = 3
+        self.bus.reg[0x41, 2] = (-3 & 0x1FFF) << 3
+        self.assertFalse(monitor.read_snapshot().valid)
+
     def test_short_read_and_impossible_bus_are_invalid(self):
         monitor = INA3221(self.bus, 0x41, (.2, .2, .2), clock_ms=self.clock)
         monitor.configure()

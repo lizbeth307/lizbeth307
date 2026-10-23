@@ -27,6 +27,7 @@ COSPAS_SARSAT_DOWNLINK_HZ = (1_544_000_000.0, 1_545_000_000.0)
 MASKED_BANDS_HZ = ((3_000.0, 30_000.0), (225_000_000.0, 400_000_000.0),
                    COSPAS_SARSAT_UPLINK_HZ,
                    (1_530_000_000.0, 1_660_000_000.0))
+GUARD_BINS = 8  # periodic-Hann leakage guard beyond each band edge; residual in SPECTRUM.md
 FRAME_FIELDS = frozenset(('v', 'kind', 'center_hz', 'sample_rate_hz', 'fft_size',
                          'power_dbfs', 'valid', 'relative_frequency_hz', 'source', 'sample_count'))
 
@@ -82,10 +83,15 @@ def _geometry(center_hz, sample_rate_hz, fft_size):
     return center, rate, size, width
 
 
-def _touches_mask(center, relative, width):
+def _hits(low, high):
+    # A real RF input also appears at -f in complex baseband, so |f| is masked too.
+    return any(a <= upper and b >= lower for a, b in ((low, high), (-high, -low))
+               for lower, upper in MASKED_BANDS_HZ)
+
+
+def _touches_mask(center, relative, width, guard=0.0):
     frequency = center + relative
-    low, high = frequency - width / 2, frequency + width / 2
-    return any(low <= upper and high >= lower for lower, upper in MASKED_BANDS_HZ)
+    return _hits(frequency - width / 2 - guard, frequency + width / 2 + guard)
 
 
 def _checked_frame(frame, enforce_masks):
@@ -101,6 +107,7 @@ def _checked_frame(frame, enforce_masks):
         if type(frame[name]) is not list or len(frame[name]) != size:
             raise SpectrumError(name + ' must be an fft_size-length JSON array')
     frequencies, powers, valid = [], [], []
+    guard = GUARD_BINS * width
     for index, (relative, power, flag) in enumerate(zip(frame['relative_frequency_hz'], frame['power_dbfs'], frame['valid'])):
         expected = (index - size // 2) * width
         if _finite(relative, 'relative frequency') != expected:
@@ -109,11 +116,9 @@ def _checked_frame(frame, enforce_masks):
             raise SpectrumError('valid entries must be boolean')
         number = None if power is None else _finite(power, 'power_dbfs')
         # The even-FFT Nyquist bin also spans the upper wrapped half-bin.
-        wrapped_mask = index == 0 and any(
-            center + rate / 2 >= lower and center + rate / 2 - width / 2 <= upper
-            for lower, upper in MASKED_BANDS_HZ)
+        wrapped_mask = index == 0 and _hits(center + rate / 2 - width / 2 - guard, center + rate / 2 + guard)
         permitted = flag and number is not None and count == size and not (
-            _touches_mask(center, expected, width) or wrapped_mask)
+            _touches_mask(center, expected, width, guard) or wrapped_mask)
         canonical_power = number if permitted else None
         if enforce_masks and (flag != permitted or power != canonical_power):
             raise SpectrumError('frame violates mandatory no-data masks or invalid-bin null representation')

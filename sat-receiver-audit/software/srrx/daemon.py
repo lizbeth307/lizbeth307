@@ -1,6 +1,6 @@
 """Local single-writer control service. Simulation is the default backend."""
 import argparse
-import errno
+from datetime import datetime, timezone
 import fcntl
 import json
 import os
@@ -11,6 +11,7 @@ import socket
 import stat
 import struct
 import sys
+import threading
 import time
 import select
 from .engine import Engine
@@ -23,6 +24,47 @@ MAX_CLIENTS = 16
 
 def reject_constant(value):
     raise ValueError("Non-finite JSON constant")
+
+
+def soc_temp_c(root="/sys/class/thermal"):
+    """Hottest Linux thermal zone in C. Any unreadable zone leaves it unknown."""
+    zones = sorted(Path(root).glob("thermal_zone*/temp"))
+    if not zones:
+        raise OSError("no Linux thermal zone")
+    return max(int(zone.read_text()) for zone in zones) / 1000
+
+
+class SocTempSampler:
+    """Reads soc_temp_c() on its own thread at most once a second, never in the 20 ms tick.
+
+    PMIC ADC-TM or I2C-backed zones convert on every read; a slow or hung zone
+    only ages the cached sample. A failed read or a sample older than max_age_s
+    is unknown: HB then omits soc_temp_c and the Pico keeps its fan forced on.
+    """
+    def __init__(self, reader=soc_temp_c, period_s=1.0, max_age_s=3.0):
+        self.reader, self.period_s, self.max_age_s = reader, period_s, max_age_s
+        self.sample = None  # (celsius or None, monotonic s), replaced as one reference
+        self.stopping = threading.Event()
+        self.thread = threading.Thread(target=self._run, name="srrx-soc-temp", daemon=True)
+        self.thread.start()
+
+    def _run(self):
+        while not self.stopping.is_set():
+            try:
+                value = self.reader()
+            except Exception:
+                value = None
+            self.sample = (value, time.monotonic())
+            self.stopping.wait(self.period_s)
+
+    def __call__(self):
+        sample = self.sample
+        if sample is None or sample[0] is None or not 0 <= time.monotonic() - sample[1] <= self.max_age_s:
+            raise OSError("SoC temperature unknown or stale")
+        return sample[0]
+
+    def close(self):
+        self.stopping.set()
 
 
 def request_once(path, request, timeout=2.0):
@@ -48,6 +90,11 @@ class Server:
     def __init__(self, path, engine):
         self.path, self.engine = Path(path), engine
         self.path.parent.mkdir(parents=True, exist_ok=True, mode=0o700)
+        # mkdir accepts an existing directory as is; another user who owns it
+        # could replace the bound socket and receive operator requests.
+        info = os.lstat(self.path.parent)
+        if not stat.S_ISDIR(info.st_mode) or info.st_uid != os.geteuid() or info.st_mode & 0o022:
+            raise RuntimeError("Control socket directory must be ours and not group/other writable")
         self.selector = selectors.DefaultSelector()
         self.clients, self.running = {}, True
         self.lock_fd = os.open(str(self.path) + ".lock", os.O_CREAT | os.O_RDWR | os.O_CLOEXEC | os.O_NOFOLLOW, 0o600)
@@ -93,8 +140,8 @@ class Server:
             if request.get("op") == "off_now" and state["uid"] != 0:
                 result = {"ok": False, "error": "OFF_NOW is restricted to the root shutdown bridge"}
             else:
-                result = self.engine.request(request)
-        except (ValueError, TypeError, RecursionError, OSError, RuntimeError) as exc:
+                result = self.engine.request(request, int(time.monotonic() * 1000))
+        except (ValueError, TypeError, RecursionError, OverflowError, OSError, RuntimeError) as exc:
             result = {"ok": False, "error": str(exc)[:200]}
         state["tx"] = bytearray(json.dumps(result, allow_nan=False, separators=(",", ":")).encode() + b"\n")
 
@@ -177,8 +224,8 @@ def run_stdio(engine):
                     if request.get("op") == "off_now" and os.geteuid() != 0:
                         result = {"ok": False, "error": "OFF_NOW requires root"}
                     else:
-                        result = engine.request(request)
-                except (ValueError, TypeError, RecursionError, OSError, RuntimeError) as exc:
+                        result = engine.request(request, int(time.monotonic() * 1000))
+                except (ValueError, TypeError, RecursionError, OverflowError, OSError, RuntimeError) as exc:
                     result = {"ok": False, "error": str(exc)[:200]}
                 print(json.dumps(result, allow_nan=False, separators=(",", ":")), flush=True)
     finally:
@@ -204,7 +251,12 @@ def main(argv=None):
             from .commissioning import load_acceptance
             if not all((args.acceptance, args.i2c, args.i2c0, args.pico)):
                 ap.error("Hardware requires --acceptance, --i2c, --i2c0 and --pico; no guessed device paths")
-            acceptance = load_acceptance(args.acceptance, args.project)
+            # A runtime start tolerates an RTC behind accepted_at (offline unit); the
+            # 2026 floor and evidence-before-acceptance ordering still apply.
+            acceptance = load_acceptance(args.acceptance, args.project, clock_check=False)
+            if datetime.fromisoformat(acceptance["accepted_at"].replace("Z", "+00:00")) > datetime.now(timezone.utc):
+                print("labd: system clock is behind acceptance accepted_at; check RTC/time sync",
+                      file=sys.stderr, flush=True)
             mapping = load_mapping(args.project / "design/E3.json")
             mapping.update(hardware_accepted=True, reset_confirmed=False)
             hardware = LinuxHardware(args.i2c, mapping)
@@ -213,7 +265,8 @@ def main(argv=None):
             # ever substituted in the physical backend.
             from .runtime_telemetry import ProjectTelemetry
             telemetry = ProjectTelemetry(args.i2c0, hardware, acceptance)
-            engine = Engine(hardware, link, simulated=False, acceptance=acceptance, telemetry_reader=telemetry)
+            engine = Engine(hardware, link, simulated=False, acceptance=acceptance, telemetry_reader=telemetry,
+                            soc_temp_reader=SocTempSampler())
         else:
             hardware = SimHardware(load_mapping(args.project / "design/E3.json"))
             # Synthetic detector idle levels and power-good signals are labelled

@@ -28,8 +28,7 @@
         "short_read_monitor_0x40",
         "stale_conversion_monitor_0x40",
         "unexpected_reset_monitor_0x40",
-        "reserved_bits_monitor_0x40",
-        "physical_bus_address_separation"
+        "reserved_bits_monitor_0x40"
       ]
     },
     {
@@ -43,8 +42,7 @@
         "stale_conversion_monitor_0x41",
         "unexpected_reset_monitor_0x41",
         "reserved_bits_monitor_0x41",
-        "overcurrent_decode_cannot_bypass_calibration",
-        "physical_bus_address_separation"
+        "overcurrent_decode_cannot_bypass_calibration"
       ]
     },
     {
@@ -57,8 +55,7 @@
         "short_read_monitor_0x43",
         "stale_conversion_monitor_0x43",
         "unexpected_reset_monitor_0x43",
-        "reserved_bits_monitor_0x43",
-        "physical_bus_address_separation"
+        "reserved_bits_monitor_0x43"
       ]
     },
     {
@@ -101,6 +98,7 @@
         "mcp_connect_reset_safe_write_order",
         "all_mapped_outputs_register_pin_roundtrip",
         "all_mapped_inputs_register_roundtrip",
+        "mcp_short_fault_and_stale_intcap",
         "bank_mismatch_0x23",
         "unplug_nack_requires_external_reset_0x23",
         "short_mcp_read_0x23",
@@ -138,12 +136,17 @@
         "driver": "srrx.hardware.LinuxHardware",
         "register_write_order": [
           4,
+          10,
+          2,
+          6,
+          8,
           20,
           0,
-          10,
           12,
           4
         ],
+        "open_drain_on_all_chips_before_interrupt_enable": true,
+        "interrupt_sources": "FAULT_/FLT_ inputs only, compared against DEFVAL=1",
         "safe_olat_hex": {
           "0x20": "0000",
           "0x22": "0000",
@@ -425,6 +428,7 @@
           }
         ],
         "register_and_pin_readback": true,
+        "all_other_outputs_checked_at_safe_level": true,
         "raw_mcp_write_rejected": true,
         "scope": "component pin exercise; no live load or policy permission implied"
       }
@@ -627,14 +631,28 @@
     {
       "id": "mcp_short_fault_and_stale_intcap",
       "module_ids": [
-        "E3/U302"
+        "E3/U302",
+        "E3/U303"
       ],
       "status": "EMULATION_PASS",
       "evidence": {
         "short_fault_captured": true,
         "stale_capture_without_flag_ignored": true,
         "intcap_read_clears_flag": true,
-        "net": "FAULT_LNA1"
+        "nets": [
+          "FAULT_HFP",
+          "FAULT_LABPORT",
+          "FAULT_LNA1",
+          "FAULT_LNA2",
+          "FAULT_LNA3",
+          "FAULT_LNA4",
+          "FAULT_RTLA",
+          "FAULT_RTLB",
+          "FLT_BONI",
+          "FLT_LIME3V3",
+          "FLT_LNB",
+          "FLT_SB_LNA"
+        ]
       }
     },
     {
@@ -870,7 +888,9 @@
         "adapters": {
           "INA228": "i2c0",
           "INA3221": "i2c2"
-        }
+        },
+        "adapter_router": "srrx.runtime_telemetry.ProjectTelemetry.read/write",
+        "per_channel_lna_currents": true
       }
     },
     {
@@ -885,6 +905,7 @@
         "signed_charge_current_a": -1.9999986165364583,
         "battery_v": 14.83,
         "all_six_signed_branch_channels": true,
+        "distinct_per_channel_stimuli": true,
         "calibration_valid": false
       }
     },
@@ -1195,16 +1216,13 @@
       }
     },
     {
-      "id": "physical_bus_address_separation",
-      "module_ids": [
-        "E1/U102",
-        "E2/U215",
-        "E2/U216"
-      ],
+      "id": "emulator_adapter_address_separation_self_test",
+      "module_ids": [],
       "status": "EMULATION_PASS",
       "evidence": {
         "separate_adapter_address_spaces": true,
-        "unknown_third_ina3221_created": false
+        "unknown_third_ina3221_created": false,
+        "scope": "emulator self-test; production routing is exercised by the monitor cases"
       }
     },
     {
@@ -1308,14 +1326,15 @@
     }
   },
   "source_sha256": {
-    "software/srrx/hardware.py": "0dbf351d7cea86b6743ec4479ae8d78604c351009dae8a9b87715b039eb133ba",
-    "software/srrx/telemetry.py": "2427c56deab13eea2bf8f9e949982985f69e63e1d4c4bbe4b32a54d90f1a1220",
-    "software/srrx/policy.py": "bfffff805fd6392055ea61d608a502728d9fb884704c7c75e32c23e1b23557f1",
-    "design/E1.json": "f535a839afd70def8f35f43380153cb00723f97c634be51d9159d1bfe4630591",
-    "design/E2.json": "bb2ac6a37392689b462a570d7334aa257aaad8e4a006c5df1e934c3dd794d40c",
-    "design/E3.json": "f2ac2171727824e36b5e4d7780677d4fc46ec0840d0a57a59053451132c92be4",
-    "deployment/module_lab/power_bus.py": "263dd47a794cbe283cd0fb47bf4d268068198090deabacead0a3269f56dcc0bd",
-    "deployment/module_lab/power_scenarios.py": "99678c970b1f839c76107b40b464861139af4fe8e80c9b95eea91376e6563436"
+    "software/srrx/hardware.py": "13f2a5c1ab1a63d1345f57f9a3ca1f39ffbd3c779be9d4e050c85634974279ee",
+    "software/srrx/telemetry.py": "418148d2427cddf48dabb51c05a54071d465e5697b8727116043c1252e6dfa60",
+    "software/srrx/policy.py": "5f51c31a82f5b810f7d899135fa135203034baecdb3637c4bf0af13cc74dd3dc",
+    "software/srrx/runtime_telemetry.py": "d55b8b1192b8a18953993323fd173ca2f1013fcbe97f28d7e8cbe4ea907b24b5",
+    "design/E1.json": "bc1faf3dd485a8ab55fdb2bc0b9bf1266d160997044f45c725aa79a59c83de11",
+    "design/E2.json": "e07b78094f9f60547614c08e04943801401e63b177f68b77228f7786bb56c0ad",
+    "design/E3.json": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0",
+    "deployment/module_lab/power_bus.py": "1f0d1cc97edd745cfd2182d07e2e62e15e49413016e790560c5a19b76a11b1e5",
+    "deployment/module_lab/power_scenarios.py": "20eba2dcbf0603f4fa05d92caae8f1daf1a028b0c654a91b4e68e1cfedbf59a0"
   },
   "limits": [
     "No actual I2C electrical timing, kernel ioctl, power waveform, thermal, calibration, BMS or RF qualification is proved.",

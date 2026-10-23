@@ -1,5 +1,5 @@
 {
-  "elapsed_s": 1.294,
+  "elapsed_s": 1.303,
   "modules": [
     {
       "description": "Waveshare LC76G GNSS24370 NMEA output over Linux PTY",
@@ -23,7 +23,7 @@
           "status": "EMULATION_PASS"
         },
         {
-          "elapsed_s": 0.01,
+          "elapsed_s": 0.011,
           "observed": {
             "checksum_rejected": true,
             "invalid_fix_rejected": true,
@@ -90,7 +90,7 @@
       ],
       "scenarios": [
         {
-          "elapsed_s": 0.47,
+          "elapsed_s": 0.481,
           "observed": {
             "connections": 2,
             "fragmented_tpv_bytes": true,
@@ -104,7 +104,7 @@
           "status": "EMULATION_PASS"
         },
         {
-          "elapsed_s": 0.294,
+          "elapsed_s": 0.295,
           "observed": {
             "duplicate_json_keys_rejected": true,
             "freshness_ms": 180,
@@ -115,7 +115,7 @@
           "status": "EMULATION_PASS"
         },
         {
-          "elapsed_s": 0.241,
+          "elapsed_s": 0.23,
           "observed": {
             "duplicate_epoch_not_distinct": true,
             "real_gnss_utc_qualified": false,
@@ -165,9 +165,9 @@
   },
   "source_sha256": {
     "deployment/module_lab/location_modules.py": "3de8c604783190577c49183ee86d6a2efe9d97f0c89d90e16dc23ff39ed993be",
-    "deployment/module_lab/location_scenarios.py": "ec2e915418c55a83eef309256426225c650cc21e2b59340d7207e0cb79990170",
-    "design/E3.json": "f2ac2171727824e36b5e4d7780677d4fc46ec0840d0a57a59053451132c92be4",
-    "software/srrx/location.py": "774ea8feeaff585774a09058af96b2b46485c78f2bfacfacfcc506138b301299"
+    "deployment/module_lab/location_scenarios.py": "5aa4d87d9745394bea178d93b082138addc1abf9446106c254a131b386c2874d",
+    "design/E3.json": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0",
+    "software/srrx/location.py": "bb261e5e494c3ce72ffa1c0f723a1e2e7337e5d81251718359a5cb2d2cb89a26"
   },
   "status": "EMULATION_PASS",
   "suite": "location_module_emulation",

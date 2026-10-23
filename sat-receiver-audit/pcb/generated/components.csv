@@ -571,7 +571,7 @@ R506,E5,100k,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608M
 R508,E5,10k,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
 R509,E5,RILIM TBD (start 28.7k 1%),resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
 R510,E5,100k,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
-R512,E5,1Ohm 0.5W,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
+R512,E5,1Ohm 0.5W,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_1210_3225Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
 R513,E5,10k,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
 R514,E5,RILIM TBD (start 15.8k 1%),resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
 R515,E5,100k,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.

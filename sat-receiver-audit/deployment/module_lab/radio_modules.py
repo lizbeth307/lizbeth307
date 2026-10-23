@@ -127,11 +127,13 @@ int airspyhf_start(void *d,int (*cb)(transfer*),void *ctx){
  (void)d;started++;callback=cb;context=ctx;
  if(mode==3)return -7;
  if(mode==8)return 0;
- if(mode==7){send_block(0);send_block(0);send_block(0);return 0;}
+ /* 64 transfers fill the bounded queue; the 65th is dropped (callback still 0). */
+ if(mode==7){for(int i=0;i<65;i++)if(send_block(0))return -9;return 0;}
  /* Callback failure is asynchronous in a real driver, not a start() return. */
  send_block(mode);return 0;
 }
 int fixture_inject_drop(void){return callback?send_block(4):-1;}
+int fixture_send_block(void){return callback?send_block(0):-1;}
 '''
 
 
@@ -158,7 +160,7 @@ def _require(condition, message):
 
 def _compile(compiler, directory, name, source):
     cfile, library = directory / (name + '.c'), directory / (name + '.so')
-    cfile.write_text(source)
+    cfile.write_text(source, encoding='utf-8')
     result = subprocess.run([compiler, '-std=c99', '-shared', '-fPIC', '-O2', '-Wall',
                              '-Wextra', '-Werror', str(cfile), '-o', str(library)],
                             capture_output=True, text=True, timeout=60)
@@ -234,7 +236,7 @@ def _hf_cases(library, lib):
     definitions = [('serial_selected_callback_copy', 0, None), ('selected_serial_unplugged', 1, 'open serial'),
                    ('vendor_rejects_duplicate_identity', 2, 'open serial'), ('native_start_error', 3, 'start failed'),
                    ('dropped_samples_rejected', 4, 'dropped samples'), ('null_callback_samples_rejected', 5, 'null samples'),
-                   ('empty_callback_block_rejected', 6, 'invalid block'), ('bounded_queue_overflow', 7, 'queue overflow'),
+                   ('empty_callback_block_rejected', 6, 'invalid block'), ('consumer_lag_drops_new_transfer_marks_gap', 7, None),
                    ('silent_stream_timeout', 8, 'sample timeout'), ('unsupported_live_rate_rejected', 9, 'absent'),
                    ('rate_query_disconnect', 10, 'rate count failed'), ('drop_after_initial_block', 11, 'dropped samples')]
     for name, mode, expected in definitions:
@@ -245,7 +247,16 @@ def _hf_cases(library, lib):
                 receiver = AirspyHFReceiver(record, 10_000_000, 768_000)
                 if mode == 11:
                     lib.fixture_inject_drop()
+                if mode == 7:
+                    # Consumer lag is not fatal: the full queue keeps its 64 contiguous
+                    # blocks, the 65th transfer is dropped and the next queued block is marked.
+                    for _ in range(64):
+                        receiver.read()
+                        _require(receiver.discontinuity is False, 'Queued HF backlog was marked as a gap')
+                    _require(lib.fixture_send_block() == 0, 'Consumer lag stopped the HF stream')
                 samples = receiver.read()
+                if mode == 7:
+                    _require(receiver.discontinuity is True, 'Consumer-lag drop was not marked on the next queued block')
                 count = int(samples.size)
                 _require(samples.dtype == np.dtype('complex64') and count == 16,
                          'HF callback complex64 ABI/length mismatch')
@@ -344,7 +355,7 @@ def main(argv=None):
     rendered = json.dumps(report, indent=2, allow_nan=False) + '\n'
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)
-        args.output.write_text(rendered)
+        args.output.write_text(rendered, encoding='utf-8', newline='\n')
     print(rendered, end='')
     return 0 if report['status'] == 'EMULATION_PASS' else 2 if report['status'] == 'UNAVAILABLE' else 1
 

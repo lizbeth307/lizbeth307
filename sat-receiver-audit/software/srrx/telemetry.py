@@ -133,21 +133,32 @@ class INA228(_Monitor):
                 or self._read(0x02) != self.shunt_cal):
             raise TelemetryError("INA228 reset or configuration mismatch")
 
-    def _sample(self):
-        self._assert_config()
+    def _diag(self):
         diag = self._read(0x0B)
         if diag & 0xF000 != self.diag_config or not diag & 1 or diag & 0x200:
             raise TelemetryError("INA228 diagnostic/configuration fault")
-        if not diag & 2:
+        return diag
+
+    def _sample(self):
+        self._assert_config()
+        if not self._diag() & 2:
             raise TelemetryError("INA228 has no new complete conversion")
-        shunt_raw, bus_raw, current_raw = (self._read(r, 3) for r in (4, 5, 7))
+        # Separate register reads are not atomic. ALATCH=1: CNVRF set again
+        # after the burst means a newer result may have torn it; retry once.
+        for _ in range(2):
+            shunt_raw, bus_raw, current_raw, die_raw, power_raw = (
+                self._read(r, n) for r, n in ((4, 3), (5, 3), (7, 3), (6, 2), (8, 3)))
+            if not self._diag() & 2:
+                break
+        else:
+            raise TelemetryError("INA228 conversion completed during every read burst")
         if (shunt_raw | bus_raw | current_raw) & 15:
             raise TelemetryError("INA228 reserved measurement bits set")
         shunt = _signed(shunt_raw >> 4, 20) * 312.5e-9
         bus = _signed(bus_raw >> 4, 20) * 195.3125e-6
         current = _signed(current_raw >> 4, 20) * self.current_lsb
-        die = _signed(self._read(6), 16) * 0.0078125
-        power = self._read(8, 3) * 3.2 * self.current_lsb
+        die = _signed(die_raw, 16) * 0.0078125
+        power = power_raw * 3.2 * self.current_lsb
         values = {"battery_vbus_v": bus, "battery_shunt_v": shunt,
                   "battery_v": bus - shunt, "battery_current_a": current,
                   "battery_shunt_current_a": shunt / self.shunt_ohms,
@@ -207,7 +218,8 @@ class INA3221(_Monitor):
             values.update({name + "_shunt_v": shunt, name + "_bus_v": bus,
                            name + "_current_a": shunt / resistance})
             bounds.update({name + "_shunt_v": (-0.16384, 0.16384),
-                           name + "_bus_v": (0, 26),
+                           # An OFF output may read -1..-2 LSB (8 mV) of offset.
+                           name + "_bus_v": (-2 * 0.008, 26),
                            name + "_current_a": (-0.16384 / resistance, 0.16384 / resistance)})
         self._check(values, bounds)
         return values

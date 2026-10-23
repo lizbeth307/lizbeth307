@@ -1,8 +1,8 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-10-20T18:41:05.466996+00:00",
+  "generated_at_utc": "2026-10-23T17:27:39.580024+00:00",
   "status": "PASS_OFFSCREEN_SIMULATION",
-  "python": "3.12.14",
+  "python": "3.13.16",
   "pyside6": "6.12.0",
   "qt": "6.12.0",
   "qt_platform": "offscreen",
@@ -14,10 +14,10 @@
   "spectrum": "actual srrx.labrx --simulate CLI output; canonical masked FFT frame",
   "learning": "actual learning.demo grouped toy-spectrum CPU model; infer on SIM FFT; no field accuracy claim",
   "location": "no GNSS endpoint configured; tracker reports no live fix",
-  "hmi_sha256": "471ce62782c7403b4171eeb59666a5a52f24af17434ab4ed4a6bed08283c2949",
+  "hmi_sha256": "9e6c757047889d07b36cacbf05d8177b8c763175d4e18933c50ac7de558ee004",
   "targeted_tests": {
-    "total": 30,
-    "passed": 30,
+    "total": 51,
+    "passed": 51,
     "skipped": 0,
     "qt_render": true,
     "real_qt_worker_close": true
@@ -34,48 +34,48 @@
       "path": "verification/hmi-views/01-overview.png",
       "width": 1100,
       "height": 800,
-      "bytes": 120268,
-      "sha256": "91eb5cece846a65f9836e9adb198d8d3c7ed9fd81a0f1b26ca7fd6ed84213e86"
+      "bytes": 119839,
+      "sha256": "42b32ee1d9b7a26bc3519b3adabffa81d6f924f1852b873d6e90e41cd3b5ef54"
     },
     {
       "page": "receiver",
       "path": "verification/hmi-views/02-receiver.png",
       "width": 1100,
       "height": 800,
-      "bytes": 104864,
-      "sha256": "430a926edcef2f7214a3707f52505218fd6bbb451d580dfc90a4e50285ffc4ab"
+      "bytes": 104215,
+      "sha256": "e188413413198efd44347cc0acd1631cad080a12e5ab45a85252dd1317ac21fc"
     },
     {
       "page": "spectrum",
       "path": "verification/hmi-views/03-spectrum.png",
       "width": 1100,
       "height": 800,
-      "bytes": 82407,
-      "sha256": "a017eb39a84bc7304c925fcc7f2aab594826df8b556faa98214de9ca09bf2f6b"
+      "bytes": 85459,
+      "sha256": "128bf999c49444a9ff521a6aa32508320f7812c3a22f657082338526e6469b6b"
     },
     {
       "page": "location",
       "path": "verification/hmi-views/04-location.png",
       "width": 1100,
       "height": 800,
-      "bytes": 95282,
-      "sha256": "1c5ee463538ac6aadf8d6a916a73c9cadf38b865caab9073097d26b2eadf2117"
+      "bytes": 99767,
+      "sha256": "3d60a8a413bfcd0077267c3d932f93c10a15915bc5489c198ed27d87a190fdf5"
     },
     {
       "page": "teach-classify",
       "path": "verification/hmi-views/05-teach-classify.png",
       "width": 1100,
       "height": 800,
-      "bytes": 115051,
-      "sha256": "39251979e42020ba5228fbe6aa2d7d77385521e3d5e01354949872d19fc6a66a"
+      "bytes": 109194,
+      "sha256": "94c48d809c003694743554e6322eecae349acbadc172706f40641ccd8e007d39"
     },
     {
       "page": "bench",
       "path": "verification/hmi-views/06-bench.png",
       "width": 1100,
       "height": 800,
-      "bytes": 106477,
-      "sha256": "b1924c3b9d24c4194d00506d49a547affb86dff1178e4ca14497c2ef4a0d712c"
+      "bytes": 108462,
+      "sha256": "6f12ce97245846e9e039aaf9bc14fc0f98935b9cbda165135851ea8645986921"
     }
   ],
   "limitations": [

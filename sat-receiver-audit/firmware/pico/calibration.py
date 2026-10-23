@@ -10,8 +10,9 @@ except ImportError:
 import math
 
 REVISION = "E3-v2.1"
-CAL_FIELDS = ("v", "revision", "serial", "scale_mv_per_count", "offset_mv",
-              "panel_offset_c", "case_offset_c", "reference_id")
+# Integer fixed point: nV/count, uV and milli-degC. No float is ever sealed.
+CAL_FIELDS = ("v", "revision", "serial", "scale_nv_per_count", "offset_uv",
+              "panel_offset_mc", "case_offset_mc", "reference_id")
 COMMISSION_FIELDS = ("v", "revision", "serial", "calibration_crc32",
                      "hardware_commissioned", "qualification_record")
 
@@ -27,13 +28,12 @@ def crc32(data):
 
 def _canonical(record, fields):
     # A fixed field list avoids reliance on JSON sort_keys in MicroPython.
+    # Floats are rejected: RP2040 MicroPython is single precision, so float
+    # text cannot reproduce a CPython-sealed CRC. int/str/bool text is exact.
     values = []
     for key in fields:
         value = record[key]
-        if type(value) is float:
-            # Stable across CPython/MicroPython JSON float formatting differences.
-            value = "%.9f" % value
-        elif type(value) is int:
+        if type(value) is int:
             value = str(value)
         elif type(value) is bool:
             value = "true" if value else "false"
@@ -61,18 +61,23 @@ def _finite(value, low, high):
     return type(value) in (int, float) and value == value and low <= value <= high
 
 
+def _integer(value, low, high):
+    return type(value) is int and low <= value <= high
+
+
 def validate(record, serial, revision=REVISION):
-    if not isinstance(record, dict) or not _valid_crc(record, CAL_FIELDS):
+    if (not isinstance(record, dict) or set(record) != set(CAL_FIELDS + ("crc32",))
+            or not _valid_crc(record, CAL_FIELDS)):
         raise ValueError("calibration CRC or fields invalid")
     if (type(record["v"]) is not int or record["v"] != 1
             or record["revision"] != revision or record["serial"] != serial):
         raise ValueError("calibration revision or device mismatch")
-    if not _finite(record["scale_mv_per_count"], 0.22, 0.34):
+    if not _integer(record["scale_nv_per_count"], 220000, 340000):
         raise ValueError("ADC scale outside plausible 1:6/3.0V range")
-    if not _finite(record["offset_mv"], -1000, 1000):
+    if not _integer(record["offset_uv"], -1000000, 1000000):
         raise ValueError("ADC offset invalid")
-    for field in ("panel_offset_c", "case_offset_c"):
-        if not _finite(record[field], -10, 10):
+    for field in ("panel_offset_mc", "case_offset_mc"):
+        if not _integer(record[field], -10000, 10000):
             raise ValueError("NTC offset invalid")
     if not record["reference_id"]:
         raise ValueError("reference instrument/log ID required")
@@ -131,13 +136,14 @@ class Calibration:
     def battery_mv(self, raw_u16):
         if type(raw_u16) is not int or not 16 < raw_u16 < 65519:
             return None
-        result = raw_u16 * self.record["scale_mv_per_count"] + self.record["offset_mv"]
-        return int(round(result)) if 8000 <= result <= 17500 else None
+        # Exact integer nV, identical on CPython and single-precision Pico.
+        nv = raw_u16 * self.record["scale_nv_per_count"] + self.record["offset_uv"] * 1000
+        return (nv + 500000) // 1000000 if 8000000000 <= nv <= 17500000000 else None
 
     def temperature_c(self, raw_u16, sensor):
         if sensor not in ("panel", "case"):
             raise ValueError("unknown NTC")
-        return ntc_temperature(raw_u16, self.record[sensor + "_offset_c"])
+        return ntc_temperature(raw_u16, self.record[sensor + "_offset_mc"] / 1000)
 
 
 def from_two_points(serial, raw_low, mv_low, raw_high, mv_high,
@@ -148,12 +154,14 @@ def from_two_points(serial, raw_low, mv_low, raw_high, mv_high,
             or not _finite(mv_high, 13000, 17000)
             or mv_high - mv_low < 2000):
         raise ValueError("two measured points must span at least 2000mV")
-    scale = (mv_high - mv_low) / (raw_high - raw_low)
+    if not _finite(panel_offset_c, -10, 10) or not _finite(case_offset_c, -10, 10):
+        raise ValueError("NTC offset invalid")
+    scale = int(round((mv_high - mv_low) * 1000000 / (raw_high - raw_low)))
     record = seal({"v": 1, "revision": REVISION, "serial": serial,
-                   "scale_mv_per_count": float(scale),
-                   "offset_mv": float(mv_low - raw_low * scale),
-                   "panel_offset_c": float(panel_offset_c),
-                   "case_offset_c": float(case_offset_c),
+                   "scale_nv_per_count": scale,
+                   "offset_uv": int(round(mv_low * 1000 - raw_low * scale / 1000)),
+                   "panel_offset_mc": int(round(panel_offset_c * 1000)),
+                   "case_offset_mc": int(round(case_offset_c * 1000)),
                    "reference_id": reference_id})
     validate(record, serial)
     return record

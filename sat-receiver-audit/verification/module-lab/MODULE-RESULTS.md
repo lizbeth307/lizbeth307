@@ -73,9 +73,9 @@ PASS означає виконані сценарії конкретного д�
 | TPD4E1U06DBVR | U312 | analog_or_discrete_control_ic | PASS | Лише з’єднання / не реалізовано |  / verified |
 | TPD4E1U06DBVR | U313 | analog_or_discrete_control_ic | PASS | Лише з’єднання / не реалізовано |  / verified |
 | Adafruit4162 VEML7700 0x10 | U308 | i2c_registers | PASS | Драйвер / модель: PASS |  / module |
-| CPT-1207-3TH | BZ301 | piezo_drive_output | PASS | Драйвер / модель: PASS |  / module |
+| CPT-1207-3TH | BZ301 | piezo_drive_output | PASS | Лише з’єднання / не реалізовано |  / module |
 | NoctuaNF-A4x10 5V nonPWM | FAN301 | motor_power_and_tach | PASS | Драйвер / модель: PASS |  / module |
-| Delta BFB0305HA-C 5V 2wire | FAN302 | motor_power_and_tach | PASS | Драйвер / модель: PASS |  / module |
+| Delta BFB0305HA-C 5V 2wire | FAN302 | motor_power_and_tach | PASS | Лише з’єднання / не реалізовано |  / module |
 | Waveshare RP2040-Zero 20187 | U309 | project_uart_and_spi_mcu | PASS | Драйвер / модель: PASS |  / module |
 | Adafruit 4754 BNO085 SPI | U314 | spi_shtp_sensor | PASS | Драйвер / модель: PASS |  / module |
 | Flamingo+ FM v2 #1 | A401 | analog_rf_functional_ports | PASS | Лише з’єднання / не реалізовано |  / module |
@@ -149,16 +149,16 @@ PASS означає виконані сценарії конкретного д�
 | Q6A J21 existing header pads | J521 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / verified |
 | J21 service harness 3pin locking | J503 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано | project serviceharness assignment; physical qualification required / design |
 | Q6A J5 stacked USB3 lower / USB2 upper | J511 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / verified |
-| Q6A J2 stacked USB2 bank1 P3 / bank2 P2 | J512 | passive_connector_or_named_boundary | PASS | Драйвер / модель: PASS |  / verified |
-| Adafruit5997 CH334F revC board | U510 | usb_hub_connectivity | PASS | Драйвер / модель: PASS |  / module |
-| LAB USB-A panel receptacle | J501 | passive_connector_or_named_boundary | PASS | Драйвер / модель: PASS |  / design |
+| Q6A J2 stacked USB2 bank1 P3 / bank2 P2 | J512 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / verified |
+| Adafruit5997 CH334F revC board | U510 | usb_hub_connectivity | PASS | Лише з’єднання / не реалізовано |  / module |
+| LAB USB-A panel receptacle | J501 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / design |
 | RTL-A USB cable endpoint | J543 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / design |
 | RTL-B split-VBUS USB cable endpoint | J541 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / design |
 | HF+ microUSB-B cable endpoint | J544 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / design |
 | TPS2553DBVR-1 | U501 | analog_or_discrete_control_ic | PASS | Лише з’єднання / не реалізовано |  / design |
 | TPS2553DBVR-1 | U502 | analog_or_discrete_control_ic | PASS | Лише з’єднання / не реалізовано |  / design |
 | TPS2553DBVR-1 | U503 | analog_or_discrete_control_ic | PASS | Лише з’єднання / не реалізовано |  / design |
-| TPS2553DRVR | U505 | analog_or_discrete_control_ic | PASS | Драйвер / модель: PASS |  / design |
+| TPS2553DRVR | U505 | analog_or_discrete_control_ic | PASS | Лише з’єднання / не реалізовано |  / design |
 | Samsung T7 + intact A-to-C USB3 cable | U540 | usb_storage_block_device | PASS | Драйвер / модель: PASS |  / module |
 | Q6A HDMI Type-A existing port | J520 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / verified |
 | Wisecoco display/controller assembly | U520 | hdmi_touch_vendor_backlight_unknown | PASS | Драйвер / модель: PASS | E3-02,E5-01 received display touch/DC/brightness interfaces unresolved / module |

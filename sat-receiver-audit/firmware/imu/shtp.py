@@ -138,6 +138,13 @@ def parse_product_id(payload):
             "part": part, "build": u32(payload, 8), "patch": u16(payload, 12)}
 
 
+def parse_product_ids(payload):
+    # CEVA sh2.c walks one control cargo; SH-2 may pack several 16-byte F8 entries.
+    if not payload or len(payload) % 16:
+        raise ImuError("product_id_length")
+    return [parse_product_id(payload[at:at + 16]) for at in range(0, len(payload), 16)]
+
+
 def set_feature(report_id=ROTATION_VECTOR, interval_us=REPORT_INTERVAL_US):
     if report_id not in (ROTATION_VECTOR, GAME_ROTATION_VECTOR):
         raise ImuError("unsupported_feature")

@@ -11,6 +11,7 @@ import itertools
 import json
 import math
 import re
+import sys
 from pathlib import Path
 
 
@@ -27,7 +28,8 @@ def main() -> None:
     parser.add_argument('--design', type=Path, default=Path(__file__).with_name('E4.json'))
     parser.add_argument('--json', action='store_true', help='Emit machine-readable JSON to stdout')
     args = parser.parse_args()
-    design = json.loads(args.design.read_text())
+    sys.stdout.reconfigure(encoding='utf-8')  # UTF-8 report text on every host, not the locale codepage.
+    design = json.loads(args.design.read_text(encoding='utf-8'))
     parts = {c['ref']: c for c in design['components']}
     r = lambda ref: ohms(parts[ref])
     tolerance = 0.001  # Initial resistor tolerance only. See explicit exclusions below.
@@ -42,7 +44,8 @@ def main() -> None:
     # The other two channel networks must really contain the same nominal values.
     for offset in (10, 20):
         for ref in ('R4420', 'R4421', 'R4422'):
-            assert r('R' + str(int(ref[1:]) + offset)) == r(ref)
+            if r('R' + str(int(ref[1:]) + offset)) != r(ref):
+                raise SystemExit(f'Channel network value differs from {ref}')
 
     def corners(reference_range: tuple[float, float]) -> dict:
         lower, upper = [], []
@@ -189,8 +192,11 @@ def main() -> None:
         print(f"Conservative3.3V current: {total_max_a*1000:.3f} mA")
         print(f"Minimum-feed condition: diode VF must be≤{diode_vf_limit_v:.3f} V; cold headroom qualification OPEN")
         print('Hardware qualification: OPEN. Assumptions and exclusions: rerun with --json.')
-    assert expanded['max_abs_trip_v'] < .1, 'Listed arithmetic assumptions no longer meet100mV rejection target'
-    assert total_max_a < .012, 'Detector budget exceeds12mA allocation'
+    # Explicit exits, not assert: python -O must not hide a failed target.
+    if not expanded['max_abs_trip_v'] < .1:
+        raise SystemExit('Listed arithmetic assumptions no longer meet100mV rejection target')
+    if not total_max_a < .012:
+        raise SystemExit('Detector budget exceeds12mA allocation')
 
 
 if __name__ == '__main__':

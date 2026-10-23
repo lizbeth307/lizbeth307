@@ -79,6 +79,17 @@ def _file(path, *, executable=False):
         _refuse("FILE_UNAVAILABLE")
 
 
+def _admin_directories(path):
+    """Only root may rename a trusted file's path between its hash check and use."""
+    for parent in path.parents:
+        try:
+            info = os.lstat(parent)
+        except OSError:
+            _refuse("FILE_UNAVAILABLE")
+        if info.st_uid != 0 or (info.st_mode & 0o022 and not info.st_mode & stat.S_ISVTX):
+            _refuse("ADMIN_OWNED_DIRECTORY_REQUIRED")
+
+
 def _hash_file(path, limit):
     digest, count = hashlib.sha256(), 0
     with path.open("rb") as stream:
@@ -121,6 +132,7 @@ def _validate_installation(record):
     path = _file(record["executable"], executable=True)
     if path.name != "noaa-apt":
         _refuse("EXECUTABLE_NOT_ALLOWLISTED")
+    _admin_directories(path)  # execute() runs this path after re-hashing it
     # No script/interpreter or PATH lookup can be smuggled in as a tool.
     with path.open("rb") as stream:
         if stream.read(4) != b"\x7fELF":
@@ -137,6 +149,7 @@ def load_installation(path):
     info = path.stat()
     if info.st_uid != 0 or info.st_mode & 0o022 or info.st_size > 8192:
         _refuse("TRUSTED_ADMIN_INSTALLATION_RECORD_REQUIRED")
+    _admin_directories(path)
     try:
         record = json.loads(path.read_text())
     except (OSError, UnicodeError, ValueError):

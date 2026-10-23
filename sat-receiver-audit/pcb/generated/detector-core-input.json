@@ -614,7 +614,7 @@
       "status": "verified",
       "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
       "notes": [
-        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection."
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
       ],
       "footprint": "Package_TO_SOT_SMD:SOT-23",
       "sheet": "E4",
@@ -651,7 +651,7 @@
       "status": "verified",
       "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
       "notes": [
-        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection."
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
       ],
       "footprint": "Package_TO_SOT_SMD:SOT-23",
       "sheet": "E4",
@@ -688,7 +688,7 @@
       "status": "verified",
       "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
       "notes": [
-        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection."
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
       ],
       "footprint": "Package_TO_SOT_SMD:SOT-23",
       "sheet": "E4",
@@ -7889,31 +7889,31 @@
     "inputs": [
       {
         "file": "design/E1.json",
-        "sha256": "f535a839afd70def8f35f43380153cb00723f97c634be51d9159d1bfe4630591"
+        "sha256": "bc1faf3dd485a8ab55fdb2bc0b9bf1266d160997044f45c725aa79a59c83de11"
       },
       {
         "file": "design/E2.json",
-        "sha256": "bb2ac6a37392689b462a570d7334aa257aaad8e4a006c5df1e934c3dd794d40c"
+        "sha256": "e07b78094f9f60547614c08e04943801401e63b177f68b77228f7786bb56c0ad"
       },
       {
         "file": "design/E3.json",
-        "sha256": "f2ac2171727824e36b5e4d7780677d4fc46ec0840d0a57a59053451132c92be4"
+        "sha256": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0"
       },
       {
         "file": "design/E4.json",
-        "sha256": "0935bbfe204728620575ba2e6713185799862050f5d8c2c465c028606c5612bf"
+        "sha256": "60c0f73c66737853033eea13c28b013d9e8559d1e0df57f2b7902af0da757797"
       },
       {
         "file": "design/E5.json",
-        "sha256": "d0366fa9440ba2488b352bcf24ca31b1b8e117afb1c2aa2453dd214d711c3dd6"
+        "sha256": "9d61ff10e75417c806afda7ab923ac06de7faf9b6ff5b53acce57477b3960212"
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "ce1fb1ff826e661d7a65d5f786bd2d7366e0c5727882cbbc39afac63e84bca4b"
+        "sha256": "a8b1fcf3b427bf805eebe40a1e4193555c18d729e6d9498576e323730d98560c"
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "40b90a9858e57fbf6a868c93afe2ae321fc7bea9fee6f144b7cd76a151ccccc2"
+        "sha256": "1b767be74bfa489331abdf482bd143c5203dc46af3e47f2fb834a5c2fffeb871"
       }
     ],
     "source_documents": [

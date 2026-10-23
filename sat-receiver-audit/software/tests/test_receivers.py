@@ -1,16 +1,17 @@
-import copy
 import ctypes as C
 import errno
 import hashlib
 import json
 import os
 from pathlib import Path
+import signal
 import subprocess
 import sys
 import tempfile
 import textwrap
+import time
 import unittest
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 from types import SimpleNamespace
 
 import numpy as np
@@ -220,6 +221,263 @@ class CaptureTests(unittest.TestCase):
         finally:
             reader.close()
 
+    def test_rtl_fft_larger_than_one_read_is_refused_before_control_observation(self):
+        from srrx.labrx import run_capture
+        transport, factory = Mock(), Mock()
+        with self.assertRaisesRegex(ValueError, "8192"):
+            run_capture(fft_size=16384, record={"backend":"rtl","branch":"RTLA"},
+                        transport=transport, source_factory=factory)
+        transport.assert_not_called()
+        factory.assert_not_called()
+
+    def test_successive_rtl_reads_and_reported_gaps_never_join_into_one_fft(self):
+        from srrx.labrx import run_capture
+        cases = (("rtl", "RTLA", 1024000, [False, False, False], [512, 512, 512]),
+                 ("airspyhf", "HFP", 768000, [False, False, True], [512, 1024, 512]))
+        for backend, branch, rate, gaps, counts in cases:
+            with self.subTest(backend=backend), tempfile.TemporaryDirectory() as temporary:
+                reply = ready()
+                reply["data"]["policy"]["outputs"] = {"EN_" + branch: True}
+                pending = list(gaps)
+                class Source:
+                    discontinuity = False
+                    def read(self, guard):
+                        self.discontinuity = pending.pop(0)
+                        return np.ones(512, dtype=np.complex64)
+                    def close(self):
+                        pass
+                survey = Path(temporary)/"survey.jsonl"
+                with patch("srrx.labrx._disable_worker_core_dumps"):
+                    result = run_capture(sample_rate=rate, fft_size=1024, frames=3, survey=survey,
+                                         record={"backend":backend,"branch":branch},
+                                         transport=lambda request: reply, source_factory=lambda *a: Source())
+                lines = [json.loads(line) for line in survey.read_text().splitlines()]
+                self.assertEqual([line["sample_count"] for line in lines], counts)
+                self.assertEqual([any(line["valid"]) for line in lines], [count == 1024 for count in counts])
+                self.assertIs(result["branch_off_confirmed"], True)
+
+    def test_refused_branch_off_is_reported_and_cli_exits_nonzero(self):
+        import contextlib
+        import io
+        import srrx.labrx as labrx
+        def transport(request):
+            return ready() if request["op"] == "status" else {"ok": False, "error": "fixture I2C refusal"}
+        class Source:
+            def read(self, guard):
+                return np.ones(64, dtype=np.complex64)
+            def close(self):
+                pass
+        stderr = io.StringIO()
+        with patch.object(labrx, "_disable_worker_core_dumps"), contextlib.redirect_stderr(stderr):
+            result = labrx.run_capture(fft_size=64, frames=1, record={"backend":"rtl","branch":"RTLA"},
+                                       transport=transport, source_factory=lambda *a: Source())
+        self.assertIs(result["branch_off_confirmed"], False)
+        self.assertIn("EN_RTLA OFF was not confirmed", stderr.getvalue())
+        self.assertIsNone(labrx.run_capture(fft_size=64, frames=1)["branch_off_confirmed"])
+        with patch.object(labrx, "run_capture", return_value=dict(result)), \
+             contextlib.redirect_stdout(io.StringIO()):
+            self.assertEqual(labrx.main(["--simulate"]), 3)
+
+    @unittest.skipUnless(sys.platform == 'linux', 'POSIX stop signals to a fresh capture process')
+    def test_sigterm_and_sighup_still_close_source_and_request_branch_off(self):
+        code = textwrap.dedent('''
+            import json, os, signal, time
+            from unittest.mock import patch
+            import srrx.labrx as labrx
+            calls, events = [], []
+            class FixtureGuard:
+                def __init__(self, transport, branch): pass
+                def check(self): return {'scope': 'signal-fixture-no-hardware-status'}
+            class BlockingSource:
+                def __init__(self, *arguments): pass
+                def read(self, guard):
+                    print('READING', flush=True)
+                    time.sleep(60)
+                def close(self):
+                    events.append('close')
+                    os.kill(os.getpid(), signal.SIGTERM)  # a repeated stop cannot abort cleanup
+                    events.append('after-repeat')
+            def transport(request):
+                calls.append(request)
+                return {'ok': True}
+            real = labrx.run_capture
+            def capture(**options):
+                return real(fft_size=64, frames=0, record={'backend': 'rtl', 'branch': 'RTLA'},
+                            transport=transport, source_factory=BlockingSource)
+            for number in (signal.SIGTERM, signal.SIGHUP):
+                signal.signal(number, signal.SIG_DFL)  # independent of the runner's own dispositions
+            with patch.object(labrx, 'ControlGuard', FixtureGuard), patch.object(labrx, 'run_capture', capture):
+                code = labrx.main(['--simulate'])
+            print(json.dumps({'code': code, 'calls': calls, 'events': events,
+                              'restored': [signal.getsignal(s) == signal.SIG_DFL for s in (signal.SIGTERM, signal.SIGHUP)]}))
+        ''')
+        project = Path(__file__).resolve().parents[2]
+        for number in (signal.SIGTERM, signal.SIGHUP):
+            with self.subTest(signal=number):
+                process = subprocess.Popen([sys.executable, '-c', code], cwd=project, stdout=subprocess.PIPE,
+                                           stderr=subprocess.PIPE, text=True,
+                                           env=dict(os.environ, PYTHONPATH=str(project/'software'), OPENBLAS_NUM_THREADS='1'))
+                try:
+                    self.assertEqual(process.stdout.readline().strip(), 'READING')
+                    process.send_signal(number)
+                    out, err = process.communicate(timeout=30)
+                finally:
+                    if process.poll() is None:
+                        process.kill()
+                        process.wait()
+                self.assertEqual(process.returncode, 0, err)
+                result = json.loads(out.strip().splitlines()[-1])
+                self.assertEqual(result['code'], 128 + number)
+                self.assertEqual(result['events'], ['close', 'after-repeat'])
+                self.assertEqual(result['calls'], [{'op': 'control', 'name': 'EN_RTLA', 'value': False}])
+                self.assertEqual(result['restored'], [True, True])
+
+    def test_cli_installs_stop_handlers_but_keeps_an_inherited_nohup_ignore(self):
+        import contextlib
+        import io
+        import srrx.labrx as labrx
+        seen = {}
+        def capture(**options):
+            seen.update(term=signal.getsignal(signal.SIGTERM), hup=signal.getsignal(signal.SIGHUP))
+            return {"frames": 0, "branch_off_confirmed": None, "last_frame": None}
+        term, hup = signal.getsignal(signal.SIGTERM), signal.signal(signal.SIGHUP, signal.SIG_IGN)
+        try:
+            with patch.object(labrx, "run_capture", side_effect=capture), contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(labrx.main(["--simulate"]), 0)
+            self.assertIs(seen["term"], labrx._stop)
+            self.assertIs(seen["hup"], signal.SIG_IGN)
+            self.assertIs(signal.getsignal(signal.SIGTERM), term)
+            self.assertIs(signal.getsignal(signal.SIGHUP), signal.SIG_IGN)
+        finally:
+            signal.signal(signal.SIGHUP, hup)
+
+    @unittest.skipUnless(hasattr(signal, "SIGHUP"), "POSIX stop signals")
+    def test_first_stop_inside_cleanup_cannot_abort_branch_off_or_raise_from_a_dead_tty(self):
+        import srrx.labrx as labrx
+        numbers = (signal.SIGTERM, signal.SIGHUP, signal.SIGINT)
+        saved = {number: signal.getsignal(number) for number in numbers}
+        class DeadTTY:
+            def write(self, text):
+                raise OSError(errno.EIO, "fixture hung-up terminal")
+            def flush(self):
+                pass
+        try:
+            for where, number in (("close", signal.SIGHUP), ("off", signal.SIGTERM), ("off", signal.SIGINT)):
+                with self.subTest(where=where, signal=number):
+                    for each in numbers:
+                        signal.signal(each, labrx._stop)
+                    calls = []
+                    def transport(request):
+                        if request["op"] != "control":
+                            return ready()
+                        if where == "off":
+                            labrx._stop(number, None)  # the handler runs while the OFF request is in flight
+                        calls.append(request)
+                        return {"ok": False, "error": "fixture refusal"}
+                    class Source:
+                        def read(self, guard):
+                            return np.ones(64, dtype=np.complex64)
+                        def close(self):
+                            if where == "close":
+                                labrx._stop(number, None)
+                    try:
+                        with patch.object(labrx, "_disable_worker_core_dumps"), patch.object(sys, "stderr", DeadTTY()):
+                            result = labrx.run_capture(fft_size=64, frames=1, record={"backend": "rtl", "branch": "RTLA"},
+                                                       transport=transport, source_factory=lambda *a: Source())
+                    except (KeyboardInterrupt, OSError) as exc:
+                        self.fail("cleanup was aborted: " + repr(exc))
+                    self.assertEqual(calls, [{"op": "control", "name": "EN_RTLA", "value": False}])
+                    self.assertIs(result["branch_off_confirmed"], False)
+                    self.assertTrue(all(signal.getsignal(each) is signal.SIG_IGN for each in numbers))  # one-shot
+                    self.assertFalse(labrx._STOP["cleanup"])
+                    for each in numbers:
+                        signal.signal(each, labrx._stop)
+                    with self.assertRaises(KeyboardInterrupt) as stop:
+                        labrx._stop(number, None)  # outside cleanup a first stop still interrupts capture
+                    self.assertEqual(stop.exception.args, (128 + number,))
+        finally:
+            for number, handler in saved.items():
+                signal.signal(number, handler)
+
+
+class WorkerProtocolTests(unittest.TestCase):
+    """Real unidirectional pipe; the worker process is a stub, never a driver."""
+    def setUp(self):
+        import multiprocessing as mp
+        import srrx.labrx as labrx
+        self.labrx = labrx
+        self.reader, self.sender = mp.get_context("spawn").Pipe(duplex=False)
+        self.addCleanup(self.reader.close)
+        self.addCleanup(self.sender.close)
+        self.worker = object.__new__(labrx.WorkerSource)
+        self.worker.reader = self.reader
+        self.worker.process = SimpleNamespace(is_alive=lambda: True)
+        self.checks = []
+        self.guard = SimpleNamespace(check=lambda: self.checks.append(1))
+
+    def send(self, kind, values=()):
+        self.sender.send_bytes(kind + np.asarray(values, dtype="<c8").tobytes())
+
+    def test_ready_then_contiguous_blocks_are_joined_without_gap(self):
+        self.send(b"R"); self.send(b"I", [1, 2]); self.send(b"I", [3])
+        np.testing.assert_array_equal(self.worker.read(self.guard), [1, 2, 3])
+        self.assertTrue(self.worker.ready)
+        self.assertFalse(self.worker.discontinuity)
+        self.assertTrue(self.checks)
+
+    def test_gap_marker_discards_older_blocks_and_reports_discontinuity(self):
+        self.send(b"R"); self.send(b"I", [1, 2]); self.send(b"D", [5, 6]); self.send(b"I", [7])
+        np.testing.assert_array_equal(self.worker.read(self.guard), [5, 6, 7])
+        self.assertTrue(self.worker.discontinuity)
+        self.send(b"I", [8])
+        np.testing.assert_array_equal(self.worker.read(self.guard), [8])
+        self.assertFalse(self.worker.discontinuity)
+
+    def test_stale_backlog_keeps_only_the_newest_full_fft_window(self):
+        self.send(b"R")
+        for start in range(0, 8, 2):
+            self.send(b"I", [start, start + 1])
+        with patch.object(self.labrx, "MAX_FFT_SIZE", 4):
+            np.testing.assert_array_equal(self.worker.read(self.guard), [4, 5, 6, 7])
+        self.assertTrue(self.worker.discontinuity)
+
+    def test_protocol_violations_fail_without_echoing_sample_bytes(self):
+        self.send(b"I", [1 + 2j])  # a block before the ready handshake
+        with self.assertRaisesRegex(OSError, "^Invalid RX worker message$"):
+            self.worker.read(self.guard)
+        self.send(b"R"); self.sender.send_bytes(b"Xsecret-sample-bytes")
+        with self.assertRaisesRegex(OSError, "^Invalid RX worker message$"):
+            self.worker.read(self.guard)
+        self.sender.send_bytes(b"I" + b"\x00" * 7)
+        with self.assertRaisesRegex(OSError, "complex64 block"):
+            self.worker.read(self.guard)
+        self.sender.send_bytes(b"Efixture driver error")
+        with self.assertRaisesRegex(OSError, "^fixture driver error$"):
+            self.worker.read(self.guard)
+
+    def test_startup_deadline_is_separate_from_block_freshness(self):
+        with patch.object(self.labrx, "STARTUP_TIMEOUT_S", .2):
+            started = time.monotonic()
+            with self.assertRaisesRegex(TimeoutError, "did not open"):
+                self.worker.read(self.guard, timeout_s=.01)
+            self.assertGreaterEqual(time.monotonic() - started, .2)
+        self.send(b"R")
+        with self.assertRaisesRegex(TimeoutError, "No fresh RX block"):
+            self.worker.read(self.guard, timeout_s=.1)
+        self.assertTrue(self.worker.ready)
+
+    def test_close_waits_for_clean_worker_exit_before_signalling(self):
+        for states, expected in (([True, False, False], [("join", .5)]),
+                                 ([True] * 3, [("join", .5), "terminate", ("join", .5), "kill", ("join", .5)])):
+            with self.subTest(expected=expected):
+                events, alive = [], iter(states)
+                self.worker.process = SimpleNamespace(is_alive=lambda: next(alive),
+                    join=lambda timeout: events.append(("join", timeout)),
+                    terminate=lambda: events.append("terminate"), kill=lambda: events.append("kill"))
+                self.worker.close()
+                self.assertTrue(self.reader.closed)
+                self.assertEqual(events, expected)
+
 
 class WorkerCorePrivacyTests(unittest.TestCase):
     def fake_prctl(self, *results):
@@ -265,13 +523,16 @@ class WorkerCorePrivacyTests(unittest.TestCase):
                 _disable_worker_core_dumps(libc=SimpleNamespace())
         self.assertEqual(raised.exception.errno, errno.ENOSYS)
 
-    def run_worker_boundary(self, guard_results):
+    def run_worker_boundary(self, guard_results, blocks=(), discontinuity=False, during_load=None):
         import srrx.labrx as labrx
-        from unittest.mock import Mock
         events, replies = [], []
         receiver = Mock()
+        receiver.discontinuity = discontinuity
+        pending = list(blocks)
         def read():
             events.append('read')
+            if pending:
+                return pending.pop(0)
             raise OSError('fixture read end')
         receiver.read.side_effect = read
         receiver.close.side_effect = lambda: events.append('close')
@@ -282,8 +543,10 @@ class WorkerCorePrivacyTests(unittest.TestCase):
             value = next(results)
             if isinstance(value, Exception):
                 raise value
-        def load(*arguments):
+        def load(record, center_hz, sample_rate, *, loader):
             events.append('driver_load')
+            if during_load is not None:
+                during_load(path, loader)
             return receiver
         with tempfile.TemporaryDirectory() as temporary:
             path = Path(temporary)/'fixture.so'
@@ -297,9 +560,55 @@ class WorkerCorePrivacyTests(unittest.TestCase):
     def test_worker_privacy_guard_precedes_driver_load_and_first_read(self):
         events, replies, receiver = self.run_worker_boundary([None, None])
         self.assertEqual(events, ['guard','driver_load','guard','read','close','pipe_close'])
-        self.assertEqual(len(replies), 1)
-        self.assertTrue(replies[0].startswith(b'E'))
+        self.assertEqual(replies[0], b'R')  # ready only after the post-init privacy check
+        self.assertEqual(len(replies), 2)
+        self.assertTrue(replies[1].startswith(b'E'))
         receiver.close.assert_called_once_with()
+
+    def test_worker_marks_contiguous_and_discontinuous_blocks(self):
+        block = np.array([1+2j, 3-4j], dtype=np.complex64)
+        for discontinuity, kind in ((False, b'I'), (True, b'D')):
+            with self.subTest(discontinuity=discontinuity):
+                _, replies, _ = self.run_worker_boundary([None, None], [block], discontinuity)
+                self.assertEqual(replies[1], kind + block.astype('<c8').tobytes())
+                self.assertTrue(replies[2].startswith(b'E'))
+        self.assertIs(RTLReceiver.discontinuity, True)  # independent read_sync blocks
+
+    def test_driver_is_loaded_from_the_hashed_inode_even_if_the_path_is_swapped(self):
+        observed = {}
+        def swap_then_load(path, loader):
+            hashed = path.stat().st_ino
+            replacement = path.with_name('replacement.so')
+            replacement.write_bytes(b'unreviewed replacement bytes')
+            os.replace(replacement, path)  # attacker rename in a writable parent
+            with patch('srrx.labrx.C.CDLL', side_effect=lambda name: name):
+                name = loader(str(path))
+            observed.update(hashed=hashed, swapped=path.stat().st_ino, loaded=os.stat(name).st_ino, name=name)
+        events, _, _ = self.run_worker_boundary([None, None], during_load=swap_then_load)
+        self.assertIn('driver_load', events)
+        self.assertTrue(observed['name'].startswith('/proc/self/fd/'))
+        self.assertEqual(observed['loaded'], observed['hashed'])
+        self.assertNotEqual(observed['loaded'], observed['swapped'])
+
+    def test_symlinked_or_changed_driver_never_loads(self):
+        import srrx.labrx as labrx
+        with tempfile.TemporaryDirectory() as temporary:
+            target = Path(temporary)/'real.so'
+            target.write_bytes(b'fixture')
+            link = Path(temporary)/'link.so'
+            link.symlink_to(target)
+            digest = hashlib.sha256(b'fixture').hexdigest()
+            for path, sha in ((link, digest), (target, '0' * 64)):
+                with self.subTest(path=path.name):
+                    replies = []
+                    connection = SimpleNamespace(send_bytes=replies.append, close=lambda: None)
+                    with patch.object(labrx, '_disable_worker_core_dumps'), \
+                         patch.object(labrx, 'RTLReceiver') as driver:
+                        labrx._worker(connection, {'backend':'rtl','library_path':str(path),'library_sha256':sha},
+                                      100000000, 1024000)
+                    driver.assert_not_called()
+                    self.assertEqual(len(replies), 1)
+                    self.assertTrue(replies[0].startswith(b'E'))
 
     def test_preload_privacy_failure_never_opens_driver(self):
         events, replies, receiver = self.run_worker_boundary([OSError('privacy unavailable')])

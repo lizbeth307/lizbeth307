@@ -10,6 +10,8 @@ except ImportError:  # Older MicroPython builds expose only ujson.
 
 MAX_FRAME_BYTES = 512
 UINT32_MAX = 0xFFFFFFFF
+_INT_LIMIT = 10 ** MAX_FRAME_BYTES  # Once, not a bigint power per value.
+_INT_MIN = -_INT_LIMIT  # Nor a bigint negation per validated int.
 FRAME_TYPES = ("HELLO", "HB", "ARM", "CONFIGURED", "TRIP", "SHUTDOWN", "STATUS", "EVENT")
 _FIELDS = ("v", "t", "s", "q", "p")
 _HEX = b"0123456789ABCDEF"
@@ -76,7 +78,7 @@ def _validate_json_values(value):
             lower_size += 4 if obj else 5
         elif kind is int:
             # A huge bigint must not allocate a huge decimal string in dumps.
-            if obj > 10 ** MAX_FRAME_BYTES or obj < -(10 ** MAX_FRAME_BYTES):
+            if obj > _INT_LIMIT or obj < _INT_MIN:
                 raise ValueError("integer is too large")
             lower_size += len(str(obj))
         elif kind is float:
@@ -221,6 +223,7 @@ class FrameDecoder:
         self._buffer = bytearray()
         self.errors = 0
         self._noise = False
+        self._budget = 0
 
     @property
     def buffered_bytes(self):
@@ -243,8 +246,14 @@ class FrameDecoder:
             self._error()
         # Recover a valid suffix after malformed/truncated prefix, without
         # mistaking '@' in a valid payload string for an unconditional reset.
+        # The summed suffix length is bounded per feed() call, shared by all of
+        # its lines: one UART read of many short '@' lines must not multiply
+        # the CRC work on the Pico (1 s WDT, 20 ms loop).
         for start in range(len(candidate) - 1, 0, -1):
             if candidate[start] == 64:
+                self._budget -= len(candidate) - start
+                if self._budget < 0:
+                    break
                 try:
                     return _parse_candidate(candidate[start:])
                 except Exception:
@@ -258,6 +267,7 @@ class FrameDecoder:
         if not isinstance(data, (bytes, bytearray, memoryview)):
             self._error()
             return frames
+        self._budget = 2 * MAX_FRAME_BYTES  # Suffix-recovery CRC bytes for this whole read.
         for byte in data:
             if type(byte) is not int or byte < 0 or byte > 255:
                 self._error()

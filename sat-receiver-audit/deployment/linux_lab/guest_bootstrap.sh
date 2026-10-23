@@ -32,10 +32,19 @@ finish() {
 import json,platform,sys,hashlib
 from pathlib import Path
 p=Path(sys.argv[1]);reports={}
-for name in ('software-tests.json','system-smoke.json','pty-smoke.json','gui-smoke.json','xcb-smoke.json','rx-worker-smoke.json','storage-smoke.json','module-lab/report.json'):
+for name in ('dependency-verification.json','software-tests.json','system-smoke.json','pty-smoke.json','gui-smoke.json','xcb-smoke.json','rx-worker-smoke.json','storage-smoke.json','module-lab/report.json'):
  try:reports[name]=json.loads((p/name).read_text())
  except (OSError,ValueError):reports[name]={'status':'MISSING_OR_INVALID'}
-states={k:v.get('status',v.get('host_regression_status','UNKNOWN')) for k,v in reports.items()}
+states={k:v.get('status',v.get('host_regression_status','UNKNOWN')) if type(v) is dict else 'INVALID' for k,v in reports.items()}
+# wasSuccessful() ignores skips. Only documented gaps outside the locked guest
+# wheelhouse may skip, each once; NumPy/Qt/ORT/compiler skips fail the run.
+allowed={'Actual QNN HTP SDK library unavailable; no real manifest was generated',
+ 'PyMuPDF is not installed in this environment'}
+u=reports['software-tests.json'];skipped=u.get('skipped',[]) if type(u) is dict else None
+if states['software-tests.json']=='PASS' and (u.get('failures') or u.get('errors') or type(skipped) is not list
+  or any(type(s) is not dict for s in skipped) or len({s.get('reason') for s in skipped})!=len(skipped)
+  or any(s.get('reason') not in allowed for s in skipped)):
+ states['software-tests.json']='PASS_WITH_UNEXPECTED_SKIPS'
 expected={k:'PASS' for k in states};expected['gui-smoke.json']='PASS_LINUX_OFFSCREEN_SIMULATION'
 expected['module-lab/report.json']='EMULATION_PASS_WITH_GAPS'
 ok=int(sys.argv[2])==0 and states==expected
@@ -62,15 +71,24 @@ for x in json.loads((p/'payload-manifest.json').read_text()):
   raise SystemExit('Payload integrity mismatch: '+x['path'])
 print('Payload hashes PASS')
 PY
+umask 022
+# A cached guest's packages/venv are never trusted: reinstall every locked,
+# hash-verified deb (no same-version skip) and recreate the venv below.
 if compgen -G "$payload/debs/*.deb" > /dev/null; then
-    dpkg -i --skip-same-version "$payload"/debs/*.deb > "$results/dpkg-install.log" 2>&1
+    dpkg -i "$payload"/debs/*.deb > "$results/dpkg-install.log" 2>&1
 fi
-systemctl stop srrx-linux-lab-sim.service 2>/dev/null || true
-# A cached guest may contain previous source files. Keep only the verified
-# offline dependency venv; replace the source tree with this exact manifest.
+systemctl stop srrx-linux-lab-sim.service srrx.service 2>/dev/null || true
+# In this marked guest only, these fixed lab unit/record paths are removed
+# unconditionally, whoever created them, so changed units are reinstalled;
+# guest_smoke's refuse-to-overwrite guards only catch state created after this.
+rm -f /etc/systemd/system/srrx.service /etc/systemd/system/srrx-linux-lab-sim.service
+rm -rf /etc/systemd/system/srrx.service.d
+rm -f /etc/srrx/acceptance.json /etc/srrx/devices.json /etc/srrx/devices.env /etc/srrx/release.json /etc/srrx/build-manifest.json
+systemctl daemon-reload
+# Replace previous sources and venv with this exact manifest, owned by root.
 mkdir -p /opt/srrx
-find /opt/srrx -mindepth 1 -maxdepth 1 ! -name venv -exec rm -rf -- {} +
-tar -xzf "$payload/project.tar.gz" -C /opt/srrx
+find /opt/srrx -mindepth 1 -maxdepth 1 -exec rm -rf -- {} +
+tar --no-same-owner --no-same-permissions -xzf "$payload/project.tar.gz" -C /opt/srrx
 python3 - "$payload" <<'PY'
 import hashlib,json,sys
 from pathlib import Path
@@ -84,16 +102,41 @@ PY
 groupadd -f labd
 groupadd -f i2c
 groupadd -f dialout
+# Pico UART group: system group with NO members (labd gets it only via the unit's SupplementaryGroups).
+groupadd -f --system srrx-pico
 id labd >/dev/null 2>&1 || useradd --system --gid labd --home-dir /var/lib/srrx --shell /usr/sbin/nologin labd
 id labclient >/dev/null 2>&1 || useradd --create-home --groups labd --shell /bin/bash labclient
 cat > /etc/srrx-linux-lab.json <<'JSON'
 {"schema_version":1,"environment":"qemu-arm64-linux-lab","hardware_passthrough":false}
 JSON
-python3 -m venv --without-pip /opt/srrx/venv
+python3 -m venv --clear --without-pip /opt/srrx/venv
 pipwheel=$(find "$payload/wheels" -maxdepth 1 -name 'pip-*.whl' -print -quit)
 test -n "$pipwheel"
 PYTHONPATH="$pipwheel" /opt/srrx/venv/bin/python3 -m pip install --no-index --find-links "$payload/wheels" pip setuptools wheel > "$results/pip-bootstrap.log" 2>&1
-/opt/srrx/venv/bin/python3 -m pip install --no-index --find-links "$payload/wheels" --require-hashes -r "$payload/wheelhouse-requirements.txt" > "$results/pip-dependencies.log" 2>&1
+# pip hashes only archives it installs: force every locked wheel through --require-hashes.
+/opt/srrx/venv/bin/python3 -m pip install --no-index --find-links "$payload/wheels" --require-hashes --force-reinstall -r "$payload/wheelhouse-requirements.txt" > "$results/pip-dependencies.log" 2>&1
+/opt/srrx/venv/bin/python3 -I -B - /opt/srrx/deployment/linux_lab "$payload" "$results/dependency-verification.json" <<'PY'
+import json,re,subprocess,sys
+from importlib.metadata import distributions
+from pathlib import Path
+lock,payload,out=Path(sys.argv[1]),Path(sys.argv[2]),Path(sys.argv[3])
+req=(lock/'wheelhouse-requirements.txt').read_bytes()
+if (payload/'wheelhouse-requirements.txt').read_bytes()!=req:raise SystemExit('Payload wheel lock differs from the installed project lock')
+norm=lambda n:re.sub(r'[-_.]+','-',n).lower()
+want={norm(l.split('==',1)[0]):l.split('==',1)[1].split()[0] for l in req.decode().splitlines() if '==' in l}
+have={norm(d.metadata['Name']):d.version for d in distributions()}
+if have!=want:raise SystemExit('Venv distributions differ from the wheel lock: '+str(sorted(set(have.items())^set(want.items())))[:2000])
+rows=subprocess.run(['dpkg-query','-W','--showformat=${Package}\t${Architecture}\t${Version}\t${db:Status-Abbrev}\n'],capture_output=True,text=True,check=True).stdout
+installed={}
+for row in rows.splitlines():
+ name,arch,version,state=row.split('\t');installed[(name,arch)]=(version,state.strip())
+debs=json.loads((lock/'guest-packages.lock.json').read_text())['packages']
+bad=[x['package'] for x in debs if installed.get((x['package'],x['architecture']))!=(x['version'],'ii')]
+if bad:raise SystemExit('Installed guest packages differ from the lock: '+', '.join(bad[:20]))
+out.write_text(json.dumps({'status':'PASS','wheels':len(want),'debs':len(debs),'cached_dependency_state_trusted':False,
+ 'method':'venv recreated; every locked deb and wheel reinstalled from the hash-verified payload; installed versions equal both locks'},indent=2)+'\n')
+print('Locked dependency reinstall and versions PASS')
+PY
 /opt/srrx/venv/bin/python3 -m pip install --no-index --no-cache-dir --force-reinstall --no-deps --no-build-isolation '/opt/srrx/software[radio,hmi,model]' > "$results/pip-install.log" 2>&1
 /opt/srrx/venv/bin/python3 -m pip check
 /opt/srrx/venv/bin/python3 -m pip freeze --all > "$results/python-packages.txt"

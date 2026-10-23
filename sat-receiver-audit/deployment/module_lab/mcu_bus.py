@@ -533,6 +533,7 @@ class Watchdog:
     def feed(self):
         self.version += 1
         version = self.version
+        self.machine.trace.append((self.machine.clock.us, "wdt_feed", self.timeout))
         def expire():
             if self.version == version:
                 self.machine.reset("WDT")

@@ -20,8 +20,21 @@ class HardwareError(RuntimeError):
 
 
 ADDRESSES = (0x20, 0x22, 0x23)
-IODIR, GPINTEN, IOCON, GPPU, GPIO, OLAT = 0x00, 0x04, 0x0A, 0x0C, 0x12, 0x14
+IODIR, IPOL, GPINTEN, DEFVAL, INTCON, IOCON, GPPU = 0x00, 0x02, 0x04, 0x06, 0x08, 0x0A, 0x0C
+INTF, INTCAP, GPIO, OLAT = 0x0E, 0x10, 0x12, 0x14
+RESET_CONFIG = b"\xff\xff" + bytes(12)  # IODIR..GPPU after a real RESET
 I2C_SLAVE = 0x0703
+TRACE_LIMIT = 256
+
+
+class _Trace(list):
+    """Diagnostic event log keeping the newest TRACE_LIMIT entries (MemoryMax=128M).
+
+    A list, not a deque: callers slice, compare and JSON-encode it.
+    """
+    def append(self, item):
+        super().append(item)
+        del self[:-TRACE_LIMIT]
 
 
 def load_mapping(path=None):
@@ -82,7 +95,7 @@ class SimHardware:
         self.outputs = _safe(self.mapping)
         self.inputs = {net: net.startswith(("FAULT_", "FLT_", "DCS_")) or net == "SLED_DET"
                        for net in self.mapping["inputs"]}
-        self.trace = []
+        self.trace = _Trace()
         self.initialized = False
         self.faulted = False
         self.closed = False
@@ -180,6 +193,7 @@ class LinuxHardware(SimHardware):
         self.i2c_path = i2c_path
         self._transport = None
         self._bank_verified = False
+        self._config = {}
 
     def _image(self, values):
         image = {address: bytearray(2) for address in ADDRESSES}
@@ -203,30 +217,44 @@ class LinuxHardware(SimHardware):
                 self._transport.close()
                 self._transport = None
             self.initialized = self._bank_verified = False
+            self._config = {}
             self._transport = _I2CTransport(self.i2c_path)
             safe_image = self._image(_safe(self.mapping))
             input_masks = {address: bytearray(2) for address in ADDRESSES}
-            for pin in self.mapping["inputs"].values():
+            fault_masks = {address: bytearray(2) for address in ADDRESSES}
+            for net, pin in self.mapping["inputs"].items():
                 input_masks[pin["address"]][pin["port"]] |= 1 << pin["bit"]
+                if net.startswith(("FAULT_", "FLT_")):
+                    fault_masks[pin["address"]][pin["port"]] |= 1 << pin["bit"]
             for address in ADDRESSES:
-                if (self._transport.read(address, IODIR, 2) != b"\xff\xff" or
-                        self._transport.read(address, IOCON, 2) != b"\x00\x00" or
+                # Sequential IODIR..GPPU read also proves IPOL/DEFVAL/INTCON reset.
+                if (self._transport.read(address, IODIR, INTF) != RESET_CONFIG or
                         self._transport.read(address, OLAT, 2) != b"\x00\x00"):
                     raise HardwareError("MCP does not have its BANK0 reset register image")
             self._bank_verified = True
+            # Only active-low FAULT_/FLT_ pins interrupt, compared with DEFVAL=1:
+            # PG/DCS/OVP edges or a fault's recovery cannot occupy INTF/INTCAP.
+            self._config = {address: bytes(input_masks[address]) + b"\x00\x00" + bytes(fault_masks[address]) * 3
+                            + b"\x44\x44\x00\x00" for address in ADDRESSES}
             for address in ADDRESSES:
+                # Open-drain MIRROR on every chip before any chip enables MCP_INT.
                 self._transport.write(address, GPINTEN, b"\x00\x00")
+                self._transport.write(address, IOCON, b"\x44")  # MIRROR | ODR, BANK=0, SEQOP=0
+                if self._transport.read(address, IOCON, 2) != b"\x44\x44":
+                    raise HardwareError("MCP IOCON readback mismatch")
+            for address in ADDRESSES:
+                config = self._config[address]
+                self._transport.write(address, IPOL, b"\x00\x00")
+                self._transport.write(address, DEFVAL, config[DEFVAL:DEFVAL + 2])
+                self._transport.write(address, INTCON, config[INTCON:INTCON + 2])
                 self._transport.write(address, OLAT, bytes(safe_image[address]))
-                self._transport.write(address, IODIR, bytes(input_masks[address]))
-                self._transport.write(address, IOCON, b"\x44")  # MIRROR | ODR, BANK=0
+                self._transport.write(address, IODIR, config[IODIR:IODIR + 2])
                 self._transport.write(address, GPPU, b"\x00\x00")  # external pulls only
-                self._transport.write(address, GPINTEN, bytes(input_masks[address]))
-                for register, expected in ((OLAT, bytes(safe_image[address])),
-                                           (IODIR, bytes(input_masks[address])),
-                                           (IOCON, b"\x44\x44"), (GPPU, b"\x00\x00"),
-                                           (GPINTEN, bytes(input_masks[address]))):
-                    if self._transport.read(address, register, len(expected)) != expected:
-                        raise HardwareError("MCP configuration readback mismatch")
+            for address in ADDRESSES:
+                self._transport.write(address, GPINTEN, self._config[address][GPINTEN:GPINTEN + 2])
+                if (self._transport.read(address, IODIR, INTF) != self._config[address] or
+                        self._transport.read(address, OLAT, 2) != bytes(safe_image[address])):
+                    raise HardwareError("MCP configuration readback mismatch")
             self.outputs = _safe(self.mapping)
             self.initialized = True
             self.faulted = False
@@ -248,17 +276,21 @@ class LinuxHardware(SimHardware):
     def read_inputs(self):
         self._ready()
         try:
+            # One sequential IODIR..GPIO read per chip (SEQOP=0). It re-proves the
+            # configuration, so a silent MCP reset (Hi-Z CHG_INHIBIT, no capture)
+            # latches a fault, and keeps INTF->INTCAP->GPIO a few bit times apart.
             # INTCAP preserves a short fault that disappeared before polling.
             # Only an asserted bit in INTF qualifies that captured input.
-            flags = {address: self._transport.read(address, 0x0E, 2) for address in ADDRESSES}
-            captured = {address: self._transport.read(address, 0x10, 2) for address in ADDRESSES}
-            registers = {address: self._transport.read(address, GPIO, 2) for address in ADDRESSES}
+            # Residual: one pin per port is captured until the next poll.
+            blobs = {address: self._transport.read(address, IODIR, GPIO + 2) for address in ADDRESSES}
+            if any(blob[:INTF] != self._config.get(address) for address, blob in blobs.items()):
+                raise HardwareError("MCP configuration lost (unexpected reset); Pico MCP RESET required")
             result = {}
             for net, pin in self.mapping["inputs"].items():
-                address, port, bit = pin["address"], pin["port"], 1 << pin["bit"]
-                high = bool(registers[address][port] & bit)
-                if net.startswith(("FAULT_", "FLT_")) and flags[address][port] & bit:
-                    high = high and bool(captured[address][port] & bit)
+                blob, port, bit = blobs[pin["address"]], pin["port"], 1 << pin["bit"]
+                high = bool(blob[GPIO + port] & bit)
+                if net.startswith(("FAULT_", "FLT_")) and blob[INTF + port] & bit:
+                    high = high and bool(blob[INTCAP + port] & bit)
                 result[net] = high
             return result
         except Exception as error:
@@ -286,6 +318,9 @@ class LinuxHardware(SimHardware):
                     self._transport.write(address, OLAT, bytes(image))
                     if self._transport.read(address, OLAT, 2) != bytes(image):
                         raise HardwareError("Safe-output readback mismatch")
+                    # OLAT reads back even after a silent reset; IODIR proves drive.
+                    if self._transport.read(address, IODIR, 2) != self._config.get(address, b"")[:2]:
+                        raise HardwareError("Safe-output direction not confirmed")
                 except Exception as error:
                     errors.append(error)
         super().all_off()

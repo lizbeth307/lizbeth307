@@ -20,11 +20,15 @@ HERE = Path(__file__).resolve().parent
 DOMAINS = {"power": "power_scenarios.py", "mcu": "mcu_scenarios.py",
            "radio": "radio_modules.py", "location": "location_scenarios.py", "io": "io_scenarios.py",
            "connectivity": "connectivity.py"}
+# Only parts a case exercises: no case drives the BZ301 piezo (GP20) or the
+# tachless FAN302 blower, so they stay CONNECTION_MODEL_ONLY.
 MCU_REFS = {"bno085_spi_shtp": ["U314"], "external_imu_uart": ["U309", "U305"],
-            "pico_adc_ntc_battery": ["U305"], "pico_gpio_supervisor": ["U305", "Q306", "BZ301"],
-            "pico_fan_tach": ["U305", "FAN301", "FAN302"], "pico_watchdog_clock": ["U305"],
+            "pico_adc_ntc_battery": ["U305"], "pico_gpio_supervisor": ["U305", "Q306"],
+            "pico_fan_tach": ["U305", "FAN301"], "pico_watchdog_clock": ["U305"],
             "pico_uart": ["U305"], "pi4io9555_keys": ["U306"],
             "pico_encoders": ["ENC301", "ENC302"], "veml7700": ["U308"]}
+# Lab self-tests of its own fixture reader: listed under models, never coverage.
+FIXTURE_LEVELS = {"FILESYSTEM_FIXTURE"}
 
 
 def sha(path):
@@ -32,13 +36,15 @@ def sha(path):
 
 
 def read(path):
-    return json.loads(Path(path).read_text(), parse_constant=lambda _: (_ for _ in ()).throw(ValueError("Nonfinite JSON")))
+    return json.loads(Path(path).read_text(encoding="utf-8"),
+                      parse_constant=lambda _: (_ for _ in ()).throw(ValueError("Nonfinite JSON")))
 
 
 def write(path, value):
     path.parent.mkdir(parents=True, exist_ok=True)
     stage = path.with_suffix(".tmp")
-    stage.write_text(json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False) + "\n")
+    stage.write_text(json.dumps(value, ensure_ascii=False, indent=2, allow_nan=False) + "\n",
+                     encoding="utf-8", newline="\n")
     stage.replace(path)
 
 
@@ -86,7 +92,7 @@ def coverage(project, inventory, domains):
         if path.stat().st_size != record["bytes"] or sha(path) != record["sha256"]:
             raise ValueError("Inventory source snapshot is stale: " + relative)
     for path in sorted((project / "design").glob("E[1-5].json")):
-        graph_hashes[str(path.relative_to(project))] = sha(path)
+        graph_hashes[path.relative_to(project).as_posix()] = sha(path)
         for item in read(path)["components"]:
             if item["ref"] in known:
                 raise ValueError("Duplicate graph component ref")
@@ -96,6 +102,10 @@ def coverage(project, inventory, domains):
         raise ValueError("Inventory does not partition the exact current schematic refs")
     models = [normalized_record(name, m, result.get("report", {})) for name, result in domains.items()
               for m in result.get("report", {}).get("modules", [])]
+    # A failed/crashed connectivity domain reports no rows; it must not read NOT_CHECKED.
+    links = domains.get("connectivity")
+    links_failed = links is not None and (links.get("exit_code") != 0 or
+                                          links.get("report", {}).get("status") != "CONNECTION_MODEL_PASS")
     rows = []
     for interface in inventory["subinterfaces"]:
         ref = interface["ref"]
@@ -104,9 +114,10 @@ def coverage(project, inventory, domains):
         if interface["source_pins"] != known[ref]["pins"] or interface["value"] != known[ref]["value"]:
             raise ValueError("Inventory module pins/value differ from graph: " + ref)
         matching = [x for x in models if ref in x["refs"]]
-        exercised = [x for x in matching if success(x["status"])]
+        exercised = [x for x in matching if success(x["status"]) and x["coverage_level"] not in FIXTURE_LEVELS]
         failures = [x for x in matching if x["status"] in {"FAIL", "EMULATION_FAIL"}]
-        gaps = [x for x in matching if "UNSUPPORTED" in x["status"] and not success(x["status"])]
+        gaps = [x for x in matching if ("UNSUPPORTED" in x["status"] or "UNAVAILABLE" in x["status"])
+                and not success(x["status"])]
         connection = [x for x in matching if x["coverage_level"] == "connection_net_model"]
         status = "EMULATION_FAIL" if failures else "EMULATION_PASS" if exercised else "CONNECTION_MODEL_ONLY"
         rows.append({"id": interface["module_id"], "ref": ref, "value": interface["value"],
@@ -114,7 +125,7 @@ def coverage(project, inventory, domains):
             "source_status": interface["source_status"], "pinout_gate": interface["pinout_gate"],
             "source_description": interface["source_description"], "source_notes": interface["source_notes"],
             "status": status, "models": matching, "exercised_model_count": len(exercised),
-            "connection_status": ("FAIL" if any(x["status"] == "CONNECTION_MODEL_FAIL" for x in connection)
+            "connection_status": ("FAIL" if links_failed or any(x["status"] == "CONNECTION_MODEL_FAIL" for x in connection)
                 else "PASS" if connection and all(x["status"] == "CONNECTION_MODEL_PASS" for x in connection) else "NOT_CHECKED"),
             "unmodeled_records": gaps, "constraints": interface["coverage_constraints"],
             "pinout_status": interface["pinout_status"], "pins": interface["source_pins"],
@@ -156,7 +167,7 @@ def render(report, output):
     for entity in catalogue:
         cells = [entity["name"], entity["interface"], entity["scope"], "CATALOGUE_ONLY / NOT_TESTED"]
         lines.append("| " + " | ".join(x.replace("|", "\\|").replace("\n", " ") for x in cells) + " |")
-    (output / "MODULE-RESULTS.md").write_text("\n".join(lines) + "\n")
+    (output / "MODULE-RESULTS.md").write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
     data = json.dumps(report, ensure_ascii=False, allow_nan=False).replace("<", "\\u003c")
     catalogue_html = '<details><summary>Каталожні та заводські вузли: ' + str(len(catalogue)) + ' · NOT_TESTED</summary><p>Окремі vendor interfaces цих сутностей не емульовані. Перевірка пов’язаного ref або файлової системи не підтверджує внутрішній контролер.</p>'
     for entity in catalogue:
@@ -183,7 +194,17 @@ const tr=document.createElement('tr');for(const text of [row.ref+' · '+row.valu
 const td=document.createElement('td'),details=document.createElement('details'),summary=document.createElement('summary'),pre=document.createElement('pre');summary.textContent=row.models.length+' моделей · фізично НЕ ПЕРЕВІРЕНО';pre.textContent=JSON.stringify({source_status:row.source_status,gate:row.pinout_gate,source_description:row.source_description,source_notes:row.source_notes,models:row.models,constraints:row.constraints,pinout:row.pinout_status,pins:row.pins},null,2);details.append(summary,pre);td.append(details);tr.append(td);body.append(tr);}}
 document.getElementById('search').addEventListener('input',draw);document.getElementById('filter').addEventListener('change',draw);draw();
 </script></html>'''
-    (output / "module-results.html").write_text(page)
+    (output / "module-results.html").write_text(page, encoding="utf-8", newline="\n")
+
+
+def child_environment(project, base=None):
+    environment = dict(os.environ if base is None else base)
+    # No empty entry: CPython would turn it into the caller's cwd ahead of the stdlib.
+    parts = [str(project / "software"), str(project)] + environment.get("PYTHONPATH", "").split(os.pathsep)
+    environment["PYTHONPATH"] = os.pathsep.join(p for p in parts if p)
+    environment.update(QT_QPA_PLATFORM="offscreen", ORT_DISABLE_TELEMETRY="1",
+                       OPENBLAS_NUM_THREADS="1", OMP_NUM_THREADS="1")
+    return environment
 
 
 def run(args):
@@ -193,10 +214,7 @@ def run(args):
         raise ValueError("Use a new empty result directory")
     inventory = read(HERE / "inventory.json")
     domains = {}
-    environment = dict(os.environ)
-    environment["PYTHONPATH"] = os.pathsep.join([str(project / "software"), str(project), environment.get("PYTHONPATH", "")])
-    environment.update(QT_QPA_PLATFORM="offscreen", ORT_DISABLE_TELEMETRY="1",
-                       OPENBLAS_NUM_THREADS="1", OMP_NUM_THREADS="1")
+    environment = child_environment(project)
     for name, filename in DOMAINS.items():
         started = time.monotonic()
         path = output / (name + ".json")

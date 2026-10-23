@@ -3,30 +3,54 @@ import argparse
 import hashlib
 import importlib.util
 import json
+import os
 from pathlib import Path
-from .commissioning import acceptance_template, load_acceptance
+from .commissioning import ValidationError, acceptance_template, load_acceptance
 
 
 def provision(acceptance_path, project, output):
     project, output = Path(project), Path(output)
-    accepted = load_acceptance(acceptance_path, project)
+    # One read is both validated and hashed: qualification_record names exactly
+    # the accepted bytes, even if the file is rewritten concurrently.
+    try:
+        with open(acceptance_path, "rb") as handle:
+            raw = handle.read(2 * 1024 * 1024 + 1)
+    except (OSError, TypeError) as exc:
+        raise ValidationError("cannot read acceptance; hardware BLOCKED") from exc
+    accepted = load_acceptance(acceptance_path, project, raw=raw)
     cal = accepted["battery_adc"]["record"]
     path = project / "firmware/pico/calibration.py"
     spec = importlib.util.spec_from_file_location("srrx_provision_calibration", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     module.validate(cal, accepted["pico_serial"])
-    record_hash = hashlib.sha256(Path(acceptance_path).read_bytes()).hexdigest()
+    record_hash = hashlib.sha256(raw).hexdigest()
     record = module.seal({"v": 1, "revision": module.REVISION,
         "serial": accepted["pico_serial"], "calibration_crc32": cal["crc32"],
         "hardware_commissioned": True, "qualification_record": record_hash}, commissioning=True)
     # No output directory/file is created until all acceptance validation passes.
     output.mkdir(parents=True, exist_ok=True)
-    for name, value in [("calibration.json", cal), ("commissioning.json", record)]:
-        target = output / name
-        stage = target.with_suffix(".tmp")
-        stage.write_text(json.dumps(value, indent=2) + "\n")
-        stage.replace(target)
+    staged = [((output / name).with_suffix(".tmp"), output / name, value)
+              for name, value in (("calibration.json", cal), ("commissioning.json", record))]
+    try:
+        # Both files are fsynced before either replaces the old pair: a staging
+        # error keeps the previous pair; only two back-to-back renames remain.
+        for stage, target, value in staged:
+            with open(stage, "w", encoding="utf-8") as handle:
+                handle.write(json.dumps(value, indent=2) + "\n")
+                handle.flush()
+                os.fsync(handle.fileno())
+        for stage, target, value in staged:
+            os.replace(stage, target)
+    finally:
+        for stage, target, value in staged:
+            stage.unlink(missing_ok=True)
+    if hasattr(os, "O_DIRECTORY"):  # POSIX: persist both renames.
+        fd = os.open(output, os.O_RDONLY | os.O_DIRECTORY)
+        try:
+            os.fsync(fd)
+        finally:
+            os.close(fd)
     return {"unit": accepted["hardware_unit_id"], "serial": accepted["pico_serial"],
             "acceptance_sha256": record_hash, "files": ["calibration.json", "commissioning.json"]}
 

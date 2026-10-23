@@ -1,6 +1,5 @@
 """Single-writer host state machine. Requests never write GPIO directly."""
-import math
-from .policy import SafetyPolicy, CAPS
+from .policy import SafetyPolicy, CAPS, _number
 
 BRANCHES = {"LNA1": 4.5, "LNA2": 4.5, "LNA3": 4.5, "LNA4": 4.5,
             "LNB": 13.2, "BONI": 13.8, "SB_LNA": 5.0, "RTLA": 5.0,
@@ -9,14 +8,18 @@ BRANCHES = {"LNA1": 4.5, "LNA2": 4.5, "LNA3": 4.5, "LNA4": 4.5,
 
 
 class Engine:
-    def __init__(self, hardware, link, *, simulated=True, acceptance=None, telemetry_reader=None):
+    def __init__(self, hardware, link, *, simulated=True, acceptance=None, telemetry_reader=None,
+                 soc_temp_reader=None):
         self.hardware, self.link = hardware, link
         self.simulated, self.acceptance = simulated, acceptance
         self.telemetry_reader = telemetry_reader
+        self.soc_temp_reader = soc_temp_reader
+        self.soc_temp = self.soc_temp_ms = None
         self.policy = SafetyPolicy(hardware)
         self.session, self.rx_seq, self.tx_seq = None, -1, 0
         self.pico = {}
         self.last_status_ms = self.last_hb_ms = self.last_telemetry_ms = None
+        self.last_trip_tx_ms = self.arm_requested_ms = None
         self.pending_arm, self.configured = False, False
         self.last_error, self.closed = None, False
         self.now_ms = 0
@@ -56,6 +59,7 @@ class Engine:
             self.events = self.events[-32:]
         self.policy.trip(str(reason))
         if notify and self.session is not None:
+            self.last_trip_tx_ms = self.now_ms
             try:
                 self._send("TRIP", {"reason": str(reason)[:80]})
             except (OSError, ValueError, RuntimeError):
@@ -102,8 +106,14 @@ class Engine:
         if status["state"] == "ACTIVE" and any(status.get(k) is not True for k in ("q6a_on", "calibration_valid", "hardware_commissioned", "hb_fresh")):
             self.trip("unqualified_pico_active_state")
             return
+        prev = self.pico
         self.rx_seq, self.pico, self.last_status_ms = frame["q"], status, self.now_ms
-        if status["state"] in {"TRIPPED", "SHUTTING_DOWN", "OFF"}:
+        # A repeat of the same latched report is no news. It can predate a
+        # queued ARM, and re-tripping would rerun all_off against MCPs that the
+        # Pico already holds in RESET. Every Pico trip rotates the session.
+        if status["state"] in {"TRIPPED", "SHUTTING_DOWN", "OFF"} and (
+                self.configured or self.policy.armed or prev.get("state") != status["state"]
+                or prev.get("fault") != status.get("fault")):
             self.trip("pico_" + str(status.get("fault") or status["state"]), notify=False)
 
     def tick(self, now_ms):
@@ -119,8 +129,20 @@ class Engine:
             self.last_tick_ms = self.now_ms
             for frame in self.link.poll(self.now_ms):
                 self._receive(frame)
-            if self.session is not None and (self.last_hb_ms is None or self.now_ms - self.last_hb_ms >= 200):
-                self._send("HB")
+            if (self.session is not None and not (self.pending_arm or self.configured)
+                    and self.pico.get("state") in {"WARMING", "CONFIGURING", "ACTIVE"}):
+                # Our TRIP was lost: withhold HB so the independent Pico timeout
+                # asserts MCP RESET, and repeat TRIP until the Pico reports it.
+                if self.last_trip_tx_ms is None or self.now_ms - self.last_trip_tx_ms >= 200:
+                    self.last_trip_tx_ms = self.now_ms
+                    self._send("TRIP", {"reason": "host_not_armed"})
+            elif self.session is not None and (self.last_hb_ms is None or self.now_ms - self.last_hb_ms >= 200):
+                # The reader must not block this 20 ms tick: labd passes a SocTempSampler
+                # whose sysfs reads run on its own thread; this only takes its cached value.
+                if self.soc_temp_reader and (self.soc_temp_ms is None or self.now_ms - self.soc_temp_ms >= 1000):
+                    self.soc_temp, self.soc_temp_ms = self._read_soc_temp(), self.now_ms
+                # Omitted when unknown; the Pico then keeps its fan forced on.
+                self._send("HB", None if self.soc_temp is None else {"soc_temp_c": self.soc_temp})
                 self.last_hb_ms = self.now_ms
             if self.last_status_ms is None or self.now_ms - self.last_status_ms > 500:
                 if self.configured or self.pending_arm:
@@ -128,6 +150,10 @@ class Engine:
                 self.policy.set_readiness(pico_active=False, commissioned=False)
                 return
             state = self.pico.get("state")
+            if self.pending_arm and state in {"SAFE", "TRIPPED"} and self.now_ms - self.arm_requested_ms >= 1000:
+                # Refused or lost ARM (the Pico's ARM_REFUSED event names why).
+                # A late acceptance is revoked by the not-owned path above.
+                self.trip("pico_arm_not_acknowledged", notify=False)
             if state == "CONFIGURING" and self.pending_arm and not self.configured:
                 if self.pico["mcp_reset"]:
                     raise RuntimeError("Pico has not released MCP reset")
@@ -173,7 +199,7 @@ class Engine:
             if active and self.policy.status().get("fault"):
                 self.trip("host_policy_fault")
             low = self.pico.get("battery_mv")
-            if self.pico.get("q6a_on") is True and self.pico.get("calibration_valid") is True and type(low) in {int, float} and 8000 <= low <= 12900:
+            if self.pico.get("q6a_on") is True and self.pico.get("calibration_valid") is True and type(low) in {int, float} and 8000 <= low <= 13050:
                 if self.uv_since is None:
                     self.uv_since = self.now_ms
                 elif self.now_ms - self.uv_since >= 5000:
@@ -184,7 +210,17 @@ class Engine:
         except (OSError, ValueError, RuntimeError) as exc:
             self.trip(type(exc).__name__ + ": " + str(exc))
 
-    def request(self, request):
+    def _read_soc_temp(self):
+        try:
+            value = self.soc_temp_reader()
+        except Exception:
+            return None
+        return round(float(value), 1) if _number(value) and -40 <= value <= 130 else None
+
+    def request(self, request, now_ms=None):
+        if now_ms is not None:
+            # Time each request when it is handled, not at the earlier tick.
+            self.now_ms = max(self.now_ms, int(now_ms))
         if not isinstance(request, dict):
             return {"ok": False, "error": "request must be an object"}
         op = request.get("op")
@@ -193,6 +229,9 @@ class Engine:
         owner = request.get("_owner", "direct-test")
         if op == "status":
             return {"ok": True, "data": self.status()}
+        if op in {"arm", "recover", "mode", "control", "relay", "route", "confirmations"} and self.policy.owner not in (None, owner):
+            if op != "control" or request.get("value") is not False:
+                return {"ok": False, "error": "another local operator owns the lease"}
         if op in {"arm", "recover"}:
             if self.session is None or self.last_status_ms is None or self.now_ms - self.last_status_ms > 500:
                 return {"ok": False, "error": "fresh Pico HELLO/status required"}
@@ -202,8 +241,10 @@ class Engine:
                 return {"ok": False, "error": "hardware acceptance missing"}
             if not self.identity_ok:
                 return {"ok": False, "error": "live Pico serial/calibration binding failed"}
+            if self.pending_arm and self.arm_owner != owner:
+                return {"ok": False, "error": "another local operator's arm is pending"}
             self.pending_arm, self.configured = True, False
-            self.arm_owner = owner
+            self.arm_owner, self.arm_requested_ms = owner, self.now_ms
             self._send("ARM", {"qualified": True})
             self.last_error = None
             return {"ok": True, "state": "arm_requested"}
@@ -223,6 +264,8 @@ class Engine:
             value = request.get("value")
             if not isinstance(value, dict) or set(value) != {"ttl_ms"}:
                 return {"ok": False, "error": "lease requires {ttl_ms:1..5000}; owner is assigned by the server"}
+            if self.pending_arm and self.arm_owner != owner:
+                return {"ok": False, "error": "another local operator's arm is pending"}
             return self.policy.command("lease", {"owner": owner, "ttl_ms": value["ttl_ms"]}, self.now_ms)
         if op == "mode":
             value = request.get("value")
@@ -232,9 +275,6 @@ class Engine:
                 return {"ok": False, "error": "disarm before changing operating mode"}
             self.requested_mode = value
             return {"ok": True, "mode": value, "applied_on_next_arm": True}
-        if op in {"control", "mode", "relay", "route", "confirmations"} and self.policy.owner not in (None, owner):
-            if op != "control" or request.get("value") is not False:
-                return {"ok": False, "error": "another local operator owns the lease"}
         if op == "control":
             name, value = request.get("name"), request.get("value")
             if not isinstance(name, str) or not name.startswith("EN_") or type(value) is not bool:
@@ -255,7 +295,7 @@ class Engine:
                 return {"ok": False, "error": "simulation variable must be a string"}
             if name == "drop_link" and type(value) is bool:
                 self.link.drop_link = value
-            elif name in {"battery_mv", "panel_temp_c", "case_temp_c"} and type(value) in {int, float} and math.isfinite(value):
+            elif name in {"battery_mv", "panel_temp_c", "case_temp_c"} and _number(value):
                 self.link.inputs[name] = value
             elif name == "q6a_on" and type(value) is bool:
                 self.link.inputs[name] = value
@@ -297,7 +337,7 @@ class Engine:
         la = sample.get("lux_age_ms")
         la = la + self.now_ms - received + 100 if type(la) is int and la >= 0 else 3000
         lux = sample.get("lux")
-        if not (sample["lux_valid"] and type(lux) in (int, float) and math.isfinite(lux)
+        if not (sample["lux_valid"] and _number(lux)
                 and 0 <= lux <= 200000 and 0 <= la < 2000):
             result.update(lux=None, lux_valid=False, lux_age_ms=None)
         else:
@@ -315,7 +355,7 @@ class Engine:
                     and type(source_age) is int and 0 <= source_age < 500 and 0 <= age < 500
                     and self.last_status_ms is not None and self.now_ms - self.last_status_ms <= 500
                     and isinstance(quaternion, list) and len(quaternion) == 4
-                    and all(type(v) in (int, float) and math.isfinite(v) and -1.1 <= v <= 1.1 for v in quaternion)
+                    and all(_number(v) and -1.1 <= v <= 1.1 for v in quaternion)
                     and .7 <= sum(v * v for v in quaternion) <= 1.3
                     and type(sample.get("status")) is int and 1 <= sample["status"] <= 3
                     and sample.get("report_id") == 5):
@@ -323,6 +363,9 @@ class Engine:
         return {"mode": "SIMULATION" if self.simulated else "HARDWARE", "pico": self.pico,
             "requested_operating_mode": self.requested_mode,
             "session": self.session, "configured": self.configured, "last_error": self.last_error,
+            # The same 500 ms bound as the ARM refusal and the tick status timeout.
+            "pico_fresh": self.last_status_ms is not None and 0 <= self.now_ms - self.last_status_ms <= 500,
+            "pico_age_ms": None if self.last_status_ms is None else max(0, self.now_ms - self.last_status_ms),
             "policy": self.policy.status(), "events": list(self.events),
             "imu": imu, "hmi": self._hmi_status(),
             "live_identity_verified": self.identity_ok,
@@ -340,7 +383,8 @@ class Engine:
                         self.hardware.close()
                     finally:
                         try:
-                            if self.telemetry_reader and hasattr(self.telemetry_reader, "close"):
-                                self.telemetry_reader.close()
+                            for reader in (self.soc_temp_reader, self.telemetry_reader):
+                                if reader and hasattr(reader, "close"):
+                                    reader.close()
                         finally:
                             self.closed = True

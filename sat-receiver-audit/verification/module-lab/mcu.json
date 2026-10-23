@@ -58,14 +58,32 @@
       "case": "pico_watchdog_ticks_uart",
       "details": {
         "backpressure_timeout_ms": 100,
+        "firmware_wdt_construction_and_feed_policy": "NOT_EXERCISED_HERE",
         "instruction_level_restart": "UNSUPPORTED",
         "short_write_bytes": 400,
         "ticks_wrap": true,
-        "watchdog_pad_reset_ms": 1000
+        "watchdog_model_self_test_ms": 1000
       },
       "modules": [
         "pico_watchdog_clock",
         "pico_uart"
+      ],
+      "status": "EMULATION_PASS"
+    },
+    {
+      "case": "pico_main_watchdog_feed_policy",
+      "details": {
+        "each_feed_after_fresh_sensing_and_outputs": true,
+        "entrypoint": "firmware/pico/main.py run()",
+        "normal_loops_without_reset": 60,
+        "physical_watchdog": "UNSUPPORTED",
+        "reset_pad_high_z_asserts_mcp_reset": true,
+        "stall_1000ms_reset": "WDT",
+        "stall_999ms_reset": false,
+        "wdt_timeout_ms": 1000
+      },
+      "modules": [
+        "pico_watchdog_clock"
       ],
       "status": "EMULATION_PASS"
     },
@@ -365,7 +383,8 @@
     {
       "cases": [
         "graph_connections",
-        "pico_watchdog_ticks_uart"
+        "pico_watchdog_ticks_uart",
+        "pico_main_watchdog_feed_policy"
       ],
       "module": "pico_watchdog_clock",
       "physical_qualified": false,
@@ -415,19 +434,19 @@
     "wdt": "https://docs.micropython.org/en/v1.26.0/library/machine.WDT.html"
   },
   "source_sha256": {
-    "design/E3.json": "f2ac2171727824e36b5e4d7780677d4fc46ec0840d0a57a59053451132c92be4",
-    "design/E5.json": "d0366fa9440ba2488b352bcf24ca31b1b8e117afb1c2aa2453dd214d711c3dd6",
+    "design/E3.json": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0",
+    "design/E5.json": "9d61ff10e75417c806afda7ab923ac06de7faf9b6ff5b53acce57477b3960212",
     "firmware/imu/device.py": "02a9a2b6e93074716375617137cdfe1bb6df9d22e5021768c59cf273aeafea2e",
-    "firmware/imu/session.py": "350484a09ad30255d7a0f44b3c0d631726de96f5639a59443d96377bcccd424d",
-    "firmware/imu/shtp.py": "f23f08679f9847fd64a14fc73171b2e5191016b1cd665c8c5d66f90e4ee26525",
+    "firmware/imu/session.py": "89b85991719f5261624adc9a3834b3b0af8bf23ce8ca0a881ec725af1c7a5bcb",
+    "firmware/imu/shtp.py": "5c737d0fc01166f04a4fdcba6676b00603fcc80997546cf2969b51d0ad2727dc",
     "firmware/pico/adapter.py": "f405206c2279fcf8cf6b4225f185c9fc93d87fd23ac9a2ebf763b6fb9db2954a",
-    "firmware/pico/calibration.py": "a7106862c928540c20fa4239e3242b83ae1c25e9ae28a98248adc12996b4610d",
-    "firmware/pico/hmi.py": "c3f6c1c3fae841e940d6b04eda3efe1b77e12185ef415272e0b23ad35a19c174",
+    "firmware/pico/calibration.py": "385222bc0d2ea4588e14606d36ea340f2853fd5aaa873990291bac0f0e8c91ab",
+    "firmware/pico/hmi.py": "ec1d7bc85d18bf9e2d23689d94a7aebc8922cbe2328f4c2f7488c6fc6ad67208",
     "firmware/pico/imu_relay.py": "192f8bc43cc932c036c13cdf70cc4548eb0f56fa3f7af9c940d42aabc6b6d820",
-    "firmware/pico/main.py": "77c2942efa4fc76ae44799b966df8be719e3f8ff004d739ab16eff8ff2f34554",
-    "firmware/pico/supervisor.py": "18e8c6989c256a6de403156291ca55ef1c2f46b81c9d7c362e72b3d78d2b9764",
+    "firmware/pico/main.py": "08ce811fb869b4c33a76fd3cf39608b97bf76cacb0f4f0409ea9576e9d8a0c98",
+    "firmware/pico/supervisor.py": "b62b0aefad7bbc2afb5647022a786ed473065ebad4a27bc5f8f4854bb39d4746",
     "software/srrx/peripherals.py": "a4e2f614aa969ddbfb4c3465ce1927146825c260a818d82cc5431590de1b7e6b",
-    "software/srrx/wire.py": "00d61272927fa8dfe389cd595649c5075321b5ecc83a2ecc857cc25b6756e4f4"
+    "software/srrx/wire.py": "f4ba993cbca9312c4639d3f6e8ddad083f7219017647026cb97b3e52a2f8fe3f"
   },
   "status": "EMULATION_PASS",
   "unsupported": [

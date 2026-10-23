@@ -303,7 +303,7 @@ def compare(project, input_path, board_path, drc_path):
 
     def display(path):
         try:
-            return str(path.resolve().relative_to(project.resolve()))
+            return path.resolve().relative_to(project.resolve()).as_posix()
         except ValueError:
             return str(path)
 

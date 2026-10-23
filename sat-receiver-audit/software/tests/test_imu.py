@@ -5,7 +5,7 @@ import unittest
 
 from firmware.imu.shtp import (
     ImuError, SHTPDecoder, header_length, make_packet, parse_product_id,
-    product_id_request, set_feature, get_feature, validate_feature_response,
+    parse_product_ids, product_id_request, set_feature, get_feature, validate_feature_response,
     parse_sensor_cargo,
 )
 from firmware.imu.session import ImuSession
@@ -117,6 +117,10 @@ class SHTPTests(unittest.TestCase):
                 set_feature(interval_us=value)
         with self.assertRaises(ImuError):
             get_feature(9)
+        self.assertEqual(parse_product_ids(PRODUCT * 4), [parse_product_id(PRODUCT)] * 4)
+        for value in (b"", PRODUCT + PRODUCT[:8], PRODUCT + FEATURE[:16]):
+            with self.assertRaisesRegex(ImuError, "product_id_length"):
+                parse_product_ids(value)
 
     def test_signed_q14_and_q12_units_and_status(self):
         report = parse_sensor_cargo(cargo(quat=(-8192, 8192, -8192, 8192), status=2))[0]
@@ -196,10 +200,29 @@ class SessionTests(unittest.TestCase):
         session = ImuSession()
         self.assertEqual(session.receive(1, b"\x01", 1), ([], []))
         init = bytearray(16)
-        init[0], init[2] = 0xF1, 4
+        init[0], init[2], init[6] = 0xF1, 0x84, 1  # sh2.c: INITIALIZE|UNSOLICITED, SYSTEM.
         self.assertEqual(session.receive(2, init, 2), ([], []))
+        self.assertEqual(session.state, "WAIT_PRODUCT")
         session.receive(2, PRODUCT, 10)
         self.assert_health(session.receive(1, b"\x01", 11)[1], "sensor_reset")
+        for command, reason in ((0x84, "sensor_reset"), (0x04, "sensor_reset"),
+                                (0x85, "unexpected_control_report")):
+            init[2] = command
+            self.assert_health(configured().receive(2, init, 30)[1], reason)
+        init[2] = 0x04
+        self.assertEqual(ImuSession().receive(2, init, 2), ([], []))
+
+    def test_concatenated_product_id_entries_use_first_and_fail_closed(self):
+        second = bytearray(PRODUCT)
+        second[4:8] = b"\x99\x00\x00\x00"
+        session = ImuSession()
+        commands, events = session.receive(2, PRODUCT + bytes(second) * 3, 10)
+        self.assertEqual(commands, [(2, set_feature()), (2, get_feature())])
+        self.assertEqual(events, [])
+        self.assertEqual(session.product, parse_product_id(PRODUCT))
+        self.assertEqual(session.receive(2, bytes(second) * 2, 15), ([], []))
+        for bad in (PRODUCT + PRODUCT[:8], PRODUCT + FEATURE[:16]):
+            self.assert_health(ImuSession().receive(2, bad, 10)[1], "product_id_length")
 
     def test_sequence_duplicate_gap_and_wrap(self):
         for next_seq in (7, 9):

@@ -338,7 +338,7 @@ def run(project):
     """Unified-registry entry: no files written, only fresh PTYs/loopback sockets."""
     project = Path(project).resolve(strict=True)
     started = time.monotonic()
-    graph = json.loads((project / "design/E3.json").read_text())
+    graph = json.loads((project / "design/E3.json").read_text(encoding="utf-8"))
     component = next(item for item in graph["components"] if item["ref"] == "U304")
     pins = {item["number"]: item.get("net") for item in component["pins"]}
     check("LC76G" in component["value"] and pins.get("P1.3") == "UART6_RX" and pins.get("P1.4") == "UART6_TX",
@@ -399,7 +399,7 @@ def main(argv=None):
     output.parent.mkdir(parents=True, exist_ok=True)
     temporary = None
     try:
-        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", dir=output.parent,
+        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", newline="\n", dir=output.parent,
                                          prefix=".location-emulation-", suffix=".json", delete=False) as stream:
             temporary = Path(stream.name)
             json.dump(report, stream, indent=2, sort_keys=True, allow_nan=False)

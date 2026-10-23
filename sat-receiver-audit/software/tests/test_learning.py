@@ -1,7 +1,9 @@
 import contextlib
 import copy
+import errno
 import io
 import json
+import os
 from pathlib import Path
 import tempfile
 import unittest
@@ -197,6 +199,96 @@ class LearningTests(unittest.TestCase):
         result = ml.infer(self.model, ml._demo_frame(99, 0), 0, 256, backend="npu", npu_runner=lambda _: [0, 1, 1])
         self.assertEqual(result["backend"], "CPU")
         self.assertFalse(result["npu"]["available"])
+
+    def test_npu_decision_must_equal_cpu_decision_inside_distance_tolerance(self):
+        class Runtime(ml.QairtAdapter):
+            def __init__(self, model_sha256, values):
+                self.model_sha256, self.values = model_sha256, values
+            def __call__(self, feature):
+                return list(self.values)
+        frame = ml._demo_frame(99, 0)
+        feature = ml.extract_features(frame, 32, 224)
+        exact = [ml._distance(feature, self.model["centroids"][label]) for label in self.model["labels"]]
+        best = min(range(len(exact)), key=exact.__getitem__)
+        # Radius .004 from the CPU distance; HTP output .008 off, inside .01 + 2%.
+        for side, cpu_ood in ((-1, True), (1, False)):
+            with self.subTest(cpu_ood=cpu_ood):
+                model = copy.deepcopy(self.model)
+                model["radii"][model["labels"][best]] = exact[best] + side * .004
+                model = ml.validate_model(ml._seal(model))
+                cpu = ml.infer(model, frame, 32, 224)
+                self.assertEqual(cpu["ood"], cpu_ood)
+                shifted = [value + side * .008 if index == best else value for index, value in enumerate(exact)]
+                result = ml.infer(model, frame, 32, 224, backend="npu", npu_runner=Runtime(model["sha256"], shifted))
+                self.assertEqual(result["backend"], "CPU")
+                self.assertFalse(result["npu"]["available"])
+                self.assertIn("disagrees", result["npu"]["reason"])
+                self.assertEqual({key: result[key] for key in ("label", "ood", "distance", "confidence")},
+                                 {key: cpu[key] for key in ("label", "ood", "distance", "confidence")})
+        # Agreeing HTP output is labelled as such, but the decision values stay exact CPU values.
+        feature = ml.extract_features(frame, 0, 256)
+        exact = [ml._distance(feature, self.model["centroids"][label]) for label in self.model["labels"]]
+        best = min(range(len(exact)), key=exact.__getitem__)
+        result = ml.infer(self.model, frame, 0, 256, backend="npu",
+                          npu_runner=Runtime(self.model["sha256"], [value + .005 for value in exact]))
+        self.assertEqual(result["backend"], "QAIRT_QNN_HTP")
+        self.assertTrue(result["npu"]["available"])
+        self.assertEqual(result["distance"], round(exact[best], 9))
+
+    def test_unknown_energy_is_annotatable_but_reserved_as_the_ood_outcome(self):
+        result = ml.empty_dataset()
+        for family, label in enumerate(("analog_broadcast", "digital_broadcast", "unknown_energy")):
+            for index in range(3):
+                result = ml.annotate(result, ml._demo_frame(index, family), 0, 256, label,
+                                     group_id=uuid.UUID(int=family * 100 + index + 1), user_confirmed=True)
+        model = ml.train(result, seed=7)
+        self.assertEqual(model["labels"], ["analog_broadcast", "digital_broadcast"])
+        self.assertEqual(model["validation"]["samples"], len(model["provenance"]["validation_annotation_ids"]))
+        used = set(model["provenance"]["train_annotation_ids"]) | set(model["provenance"]["validation_annotation_ids"])
+        reserved = {record["id"] for record in result["annotations"] if record["label"] == "unknown_energy"}
+        self.assertEqual(len(reserved), 3)
+        self.assertFalse(used & reserved)
+        # An OOD rejection can never be scored as a correct class match.
+        self.assertEqual(model["validation"]["correct"],
+                         sum(model["validation"]["confusion"][label][label] for label in model["labels"]))
+        forged = copy.deepcopy(self.model)
+        old = forged["labels"][0]
+        forged["labels"][0] = "unknown_energy"
+        for key in ("centroids", "radii"):
+            forged[key]["unknown_energy"] = forged[key].pop(old)
+        with self.assertRaises(ml.LearningError):
+            ml.validate_model(ml._seal(forged))
+        only = ml.empty_dataset()
+        for family, label in enumerate(("analog_broadcast", "unknown_energy")):
+            for index in range(2):
+                only = ml.annotate(only, ml._demo_frame(index, family), 0, 256, label,
+                                   group_id=uuid.UUID(int=family * 100 + index + 1), user_confirmed=True)
+        with self.assertRaisesRegex(ml.LearningError, "trainable"):
+            ml.train(only)
+
+    def test_stored_frames_are_remasked_once_per_validation_not_once_per_box(self):
+        result = ml.empty_dataset()
+        frame = ml._demo_frame(1, 0)
+        for start in range(0, 256, 32):
+            result = ml.annotate(result, frame, start, start + 32, "analog_broadcast",
+                                 group_id=uuid.UUID(int=1), user_confirmed=True)
+        self.assertEqual((len(result["frames"]), len(result["annotations"])), (1, 8))
+        with patch("srrx.learning.mask_frame", wraps=ml.mask_frame) as masked:
+            self.assertEqual(ml.validate_dataset(result), result)
+        self.assertEqual(masked.call_count, 1)
+        with patch("srrx.learning.mask_frame", wraps=ml.mask_frame) as masked:
+            ml.train(self.dataset, seed=7)
+        self.assertEqual(masked.call_count, len(self.dataset["frames"]))
+
+    @unittest.skipIf(os.name == "nt", "POSIX directory fsync path")
+    def test_directory_fsync_failure_after_replace_is_reported_as_unconfirmed_durability(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "annotations.json"
+            with patch("srrx.learning.os.fsync", side_effect=[None, OSError(errno.EIO, "I/O error")]):
+                with self.assertRaisesRegex(OSError, "durability not confirmed"):
+                    ml.save_dataset(path, self.dataset)
+            self.assertEqual(ml.load_dataset(path), self.dataset)
+            self.assertFalse(list(Path(directory).glob(".srrx-*")))
 
     def test_npu_manifest_must_match_model_before_any_runtime_load(self):
         with tempfile.TemporaryDirectory() as directory:

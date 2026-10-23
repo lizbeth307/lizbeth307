@@ -24,7 +24,7 @@
     </sheet>
     <sheet number="2" name="/E1/" tstamps="/a943ccec-2813-5b6f-9c47-b1bcb52cee7f/">
       <title_block>
-        <title>E1 - Акумулятор, заряд, AON і головні перетворювачі (1/1)</title>
+        <title>E1 - Акумулятор, заряд, AON і головні перетворювачі (1/2)</title>
         <company>SR-RX-v2</company>
         <rev>v2.1</rev>
         <date>2026-10-23</date>
@@ -40,7 +40,25 @@
         <comment number="9" value=""/>
       </title_block>
     </sheet>
-    <sheet number="3" name="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/">
+    <sheet number="3" name="/E1_02/" tstamps="/18b3b3ad-34e0-53cc-9f25-c4ecb6dfa9a2/">
+      <title_block>
+        <title>E1 - Акумулятор, заряд, AON і головні перетворювачі (2/2)</title>
+        <company>SR-RX-v2</company>
+        <rev>v2.1</rev>
+        <date>2026-10-23</date>
+        <source>E1_02.kicad_sch</source>
+        <comment number="1" value="SR-RX-v2-E1"/>
+        <comment number="2" value="Теоретичний проєкт — перевірити на стенді"/>
+        <comment number="3" value="Джерело: STACK.md v2"/>
+        <comment number="4" value="Не є комплектом для виробництва PCB; див. OPEN_ITEMS.md"/>
+        <comment number="5" value=""/>
+        <comment number="6" value=""/>
+        <comment number="7" value=""/>
+        <comment number="8" value=""/>
+        <comment number="9" value=""/>
+      </title_block>
+    </sheet>
+    <sheet number="4" name="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/">
       <title_block>
         <title>E2 - Захищені рейки, LNA і моніторинг струму (1/4)</title>
         <company>SR-RX-v2</company>
@@ -58,7 +76,7 @@
         <comment number="9" value=""/>
       </title_block>
     </sheet>
-    <sheet number="4" name="/E2_02/" tstamps="/def01337-c22c-581d-ab21-3e0f48197e81/">
+    <sheet number="5" name="/E2_02/" tstamps="/def01337-c22c-581d-ab21-3e0f48197e81/">
       <title_block>
         <title>E2 - Захищені рейки, LNA і моніторинг струму (2/4)</title>
         <company>SR-RX-v2</company>
@@ -76,7 +94,7 @@
         <comment number="9" value=""/>
       </title_block>
     </sheet>
-    <sheet number="5" name="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/">
+    <sheet number="6" name="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/">
       <title_block>
         <title>E2 - Захищені рейки, LNA і моніторинг струму (3/4)</title>
         <company>SR-RX-v2</company>
@@ -94,7 +112,7 @@
         <comment number="9" value=""/>
       </title_block>
     </sheet>
-    <sheet number="6" name="/E2_04/" tstamps="/b86a610c-9540-56eb-9a94-fee3a23ee226/">
+    <sheet number="7" name="/E2_04/" tstamps="/b86a610c-9540-56eb-9a94-fee3a23ee226/">
       <title_block>
         <title>E2 - Захищені рейки, LNA і моніторинг струму (4/4)</title>
         <company>SR-RX-v2</company>
@@ -112,7 +130,7 @@
         <comment number="9" value=""/>
       </title_block>
     </sheet>
-    <sheet number="7" name="/E3/" tstamps="/815659b2-9f99-5caa-9e97-34b4cd398135/">
+    <sheet number="8" name="/E3/" tstamps="/815659b2-9f99-5caa-9e97-34b4cd398135/">
       <title_block>
         <title>E3 - Керування, Pico HMI, GPIO, GNSS і IMU (1/2)</title>
         <company>SR-RX-v2</company>
@@ -130,7 +148,7 @@
         <comment number="9" value=""/>
       </title_block>
     </sheet>
-    <sheet number="8" name="/E3_02/" tstamps="/047fcfd6-7912-5c2d-b6e9-2eba49e8ffe0/">
+    <sheet number="9" name="/E3_02/" tstamps="/047fcfd6-7912-5c2d-b6e9-2eba49e8ffe0/">
       <title_block>
         <title>E3 - Керування, Pico HMI, GPIO, GNSS і IMU (2/2)</title>
         <company>SR-RX-v2</company>
@@ -148,7 +166,7 @@
         <comment number="9" value=""/>
       </title_block>
     </sheet>
-    <sheet number="9" name="/E4/" tstamps="/8f7e80ea-aee4-5257-bec3-c2e6ba73b52d/">
+    <sheet number="10" name="/E4/" tstamps="/8f7e80ea-aee4-5257-bec3-c2e6ba73b52d/">
       <title_block>
         <title>E4 - РЧ-тракт: DC-розв'язка, перемикачі, приймачі (1/4)</title>
         <company>SR-RX-v2</company>
@@ -166,7 +184,7 @@
         <comment number="9" value=""/>
       </title_block>
     </sheet>
-    <sheet number="10" name="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/">
+    <sheet number="11" name="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/">
       <title_block>
         <title>E4 - РЧ-тракт: DC-розв'язка, перемикачі, приймачі (2/4)</title>
         <company>SR-RX-v2</company>
@@ -184,7 +202,7 @@
         <comment number="9" value=""/>
       </title_block>
     </sheet>
-    <sheet number="11" name="/E4_03/" tstamps="/4dd92141-48db-50ea-8b51-bae65ea8ecfb/">
+    <sheet number="12" name="/E4_03/" tstamps="/4dd92141-48db-50ea-8b51-bae65ea8ecfb/">
       <title_block>
         <title>E4 - РЧ-тракт: DC-розв'язка, перемикачі, приймачі (3/4)</title>
         <company>SR-RX-v2</company>
@@ -202,7 +220,7 @@
         <comment number="9" value=""/>
       </title_block>
     </sheet>
-    <sheet number="12" name="/E4_04/" tstamps="/9df58c55-738d-55e8-9cee-b8959598c250/">
+    <sheet number="13" name="/E4_04/" tstamps="/9df58c55-738d-55e8-9cee-b8959598c250/">
       <title_block>
         <title>E4 - РЧ-тракт: DC-розв'язка, перемикачі, приймачі (4/4)</title>
         <company>SR-RX-v2</company>
@@ -220,7 +238,7 @@
         <comment number="9" value=""/>
       </title_block>
     </sheet>
-    <sheet number="13" name="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/">
+    <sheet number="14" name="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/">
       <title_block>
         <title>E5 - USB, VBUS, PCIe та корпусні інтерфейси (1/2)</title>
         <company>SR-RX-v2</company>
@@ -238,7 +256,7 @@
         <comment number="9" value=""/>
       </title_block>
     </sheet>
-    <sheet number="14" name="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/">
+    <sheet number="15" name="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/">
       <title_block>
         <title>E5 - USB, VBUS, PCIe та корпусні інтерфейси (2/2)</title>
         <company>SR-RX-v2</company>
@@ -766,30 +784,6 @@
         </unit>
       </units>
     </comp>
-    <comp ref="C118">
-      <value>100nF50VnearNTCpad</value>
-      <datasheet>STACK §2.7,§5.1</datasheet>
-      <fields>
-        <field name="ReviewStatus">TBD</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK §2.7,§5.1</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C118" description="| TBD |"/>
-      <property name="ReviewStatus" value="TBD"/>
-      <property name="Sheetname" value="E1"/>
-      <property name="Sheetfile" value="E1.kicad_sch"/>
-      <sheetpath names="/E1/" tstamps="/a943ccec-2813-5b6f-9c47-b1bcb52cee7f/"/>
-      <tstamps>ca0ff536-7c5a-5e7c-be4e-9a24012fb291</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
     <comp ref="D101">
       <value>BAT54,215</value>
       <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
@@ -1040,34 +1034,6 @@
             <pin num="B2"/>
             <pin num="B3"/>
             <pin num="B4"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="J103">
-      <value>USB-C PD заряд</value>
-      <datasheet>STACK §2.7,§5.1</datasheet>
-      <description>Функціональний корпусний USB-C feedthrough. D+/D−/SS не потрібні. Фізичний VBUS/CC кабель обрати й продзвонити.</description>
-      <fields>
-        <field name="ReviewStatus">module</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK §2.7,§5.1</field>
-        <field name="Description">Функціональний корпусний USB-C feedthrough. D+/D−/SS не потрібні. Фізичний VBUS/CC кабель обрати й продзвонити.</field>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J103" description="Функціональний корпусний USB-C feedthrough. D+/D−/SS не потрібні. Фізичний VBUS/CC кабель обрати й продзвонити. | module | CC підключено прямо до IP2368. На зовнішньому роз’ємі не дублювати Rd 5.1 kΩ. eFuse стоїть тільки у VBUS."/>
-      <property name="ReviewStatus" value="module"/>
-      <property name="Sheetname" value="E1"/>
-      <property name="Sheetfile" value="E1.kicad_sch"/>
-      <sheetpath names="/E1/" tstamps="/a943ccec-2813-5b6f-9c47-b1bcb52cee7f/"/>
-      <tstamps>ca7a4708-7134-552f-b026-98bbfc5a75ea</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="VBUS"/>
-            <pin num="GND"/>
-            <pin num="CC1"/>
-            <pin num="CC2"/>
-            <pin num="SHIELD"/>
           </pins>
         </unit>
       </units>
@@ -1482,102 +1448,6 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R117">
-      <value>5.10k1% replacesR4</value>
-      <datasheet>STACK §2.7,§5.1</datasheet>
-      <fields>
-        <field name="ReviewStatus">TBD</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK §2.7,§5.1</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R117" description="| TBD | Ціль близько 16.4 V; попередня модель STACK 16.25…16.57 V. Підтвердити на COUT."/>
-      <property name="ReviewStatus" value="TBD"/>
-      <property name="Sheetname" value="E1"/>
-      <property name="Sheetfile" value="E1.kicad_sch"/>
-      <sheetpath names="/E1/" tstamps="/a943ccec-2813-5b6f-9c47-b1bcb52cee7f/"/>
-      <tstamps>73856f2a-f81f-5046-9e6d-d1b697c42681</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R118">
-      <value>15.0k1% replacesR3</value>
-      <datasheet>STACK §2.7,§5.1</datasheet>
-      <fields>
-        <field name="ReviewStatus">TBD</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK §2.7,§5.1</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R118" description="| TBD | Ціль 3 A на батарейному боці при ISET_MODE low. Це окрема межа від вхідного eFuse 3.5 A."/>
-      <property name="ReviewStatus" value="TBD"/>
-      <property name="Sheetname" value="E1"/>
-      <property name="Sheetfile" value="E1.kicad_sch"/>
-      <sheetpath names="/E1/" tstamps="/a943ccec-2813-5b6f-9c47-b1bcb52cee7f/"/>
-      <tstamps>4618033d-0e91-5b5b-a18b-3620ccc8f698</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R119">
-      <value>1.00k1% ISET_MODE</value>
-      <datasheet>STACK §2.7,§5.1</datasheet>
-      <fields>
-        <field name="ReviewStatus">TBD</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK §2.7,§5.1</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R119" description="| TBD |"/>
-      <property name="ReviewStatus" value="TBD"/>
-      <property name="Sheetname" value="E1"/>
-      <property name="Sheetfile" value="E1.kicad_sch"/>
-      <sheetpath names="/E1/" tstamps="/a943ccec-2813-5b6f-9c47-b1bcb52cee7f/"/>
-      <tstamps>f3dc4159-b544-5452-b7ea-8422cfc86357</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R120">
-      <value>13.0k1%4Scellset</value>
-      <datasheet>STACK §2.7,§5.1</datasheet>
-      <fields>
-        <field name="ReviewStatus">TBD</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK §2.7,§5.1</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R120" description="| TBD |"/>
-      <property name="ReviewStatus" value="TBD"/>
-      <property name="Sheetname" value="E1"/>
-      <property name="Sheetfile" value="E1.kicad_sch"/>
-      <sheetpath names="/E1/" tstamps="/a943ccec-2813-5b6f-9c47-b1bcb52cee7f/"/>
-      <tstamps>c94e9571-7b49-53d8-9c0d-1ee07535ce8f</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
     <comp ref="R121">
       <value>2.20k1%</value>
       <datasheet>STACK §2.7,§5.1</datasheet>
@@ -1641,30 +1511,6 @@
       <property name="Sheetfile" value="E1.kicad_sch"/>
       <sheetpath names="/E1/" tstamps="/a943ccec-2813-5b6f-9c47-b1bcb52cee7f/"/>
       <tstamps>7dc720cb-20b4-5791-b645-5c77ee6abb83</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="TH101">
-      <value>NTC 10 kΩ B3380 при 25 °C</value>
-      <datasheet>STACK §2.7,§5.1</datasheet>
-      <fields>
-        <field name="ReviewStatus">TBD</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK §2.7,§5.1</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_TH101" description="| TBD | Розташувати на комірці. Перевірити обрив і КЗ. Передавальну функцію COUT для 0…45 °C ще потрібно підтвердити."/>
-      <property name="ReviewStatus" value="TBD"/>
-      <property name="Sheetname" value="E1"/>
-      <property name="Sheetfile" value="E1.kicad_sch"/>
-      <sheetpath names="/E1/" tstamps="/a943ccec-2813-5b6f-9c47-b1bcb52cee7f/"/>
-      <tstamps>c49134eb-05df-5ddf-af08-b33109320f27</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -2123,6 +1969,178 @@
         </unit>
       </units>
     </comp>
+    <comp ref="C118">
+      <value>100nF50VnearNTCpad</value>
+      <datasheet>STACK §2.7,§5.1</datasheet>
+      <fields>
+        <field name="ReviewStatus">TBD</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK §2.7,§5.1</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C118" description="| TBD |"/>
+      <property name="ReviewStatus" value="TBD"/>
+      <property name="Sheetname" value="E1_02"/>
+      <property name="Sheetfile" value="E1_02.kicad_sch"/>
+      <sheetpath names="/E1_02/" tstamps="/18b3b3ad-34e0-53cc-9f25-c4ecb6dfa9a2/"/>
+      <tstamps>39cdefff-a262-5111-81b3-b6890f60135e</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J103">
+      <value>USB-C PD заряд</value>
+      <datasheet>STACK §2.7,§5.1</datasheet>
+      <description>Функціональний корпусний USB-C feedthrough. D+/D−/SS не потрібні. Фізичний VBUS/CC кабель обрати й продзвонити.</description>
+      <fields>
+        <field name="ReviewStatus">module</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK §2.7,§5.1</field>
+        <field name="Description">Функціональний корпусний USB-C feedthrough. D+/D−/SS не потрібні. Фізичний VBUS/CC кабель обрати й продзвонити.</field>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_J103" description="Функціональний корпусний USB-C feedthrough. D+/D−/SS не потрібні. Фізичний VBUS/CC кабель обрати й продзвонити. | module | CC підключено прямо до IP2368. На зовнішньому роз’ємі не дублювати Rd 5.1 kΩ. eFuse стоїть тільки у VBUS."/>
+      <property name="ReviewStatus" value="module"/>
+      <property name="Sheetname" value="E1_02"/>
+      <property name="Sheetfile" value="E1_02.kicad_sch"/>
+      <sheetpath names="/E1_02/" tstamps="/18b3b3ad-34e0-53cc-9f25-c4ecb6dfa9a2/"/>
+      <tstamps>e2d71c34-4358-5e80-a332-d416d92dd222</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="VBUS"/>
+            <pin num="GND"/>
+            <pin num="CC1"/>
+            <pin num="CC2"/>
+            <pin num="SHIELD"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R117">
+      <value>5.10k1% replacesR4</value>
+      <datasheet>STACK §2.7,§5.1</datasheet>
+      <fields>
+        <field name="ReviewStatus">TBD</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK §2.7,§5.1</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R117" description="| TBD | Ціль близько 16.4 V; попередня модель STACK 16.25…16.57 V. Підтвердити на COUT."/>
+      <property name="ReviewStatus" value="TBD"/>
+      <property name="Sheetname" value="E1_02"/>
+      <property name="Sheetfile" value="E1_02.kicad_sch"/>
+      <sheetpath names="/E1_02/" tstamps="/18b3b3ad-34e0-53cc-9f25-c4ecb6dfa9a2/"/>
+      <tstamps>54eff70e-59b7-5502-8a7a-d565e680e02b</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R118">
+      <value>15.0k1% replacesR3</value>
+      <datasheet>STACK §2.7,§5.1</datasheet>
+      <fields>
+        <field name="ReviewStatus">TBD</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK §2.7,§5.1</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R118" description="| TBD | Ціль 3 A на батарейному боці при ISET_MODE low. Це окрема межа від вхідного eFuse 3.5 A."/>
+      <property name="ReviewStatus" value="TBD"/>
+      <property name="Sheetname" value="E1_02"/>
+      <property name="Sheetfile" value="E1_02.kicad_sch"/>
+      <sheetpath names="/E1_02/" tstamps="/18b3b3ad-34e0-53cc-9f25-c4ecb6dfa9a2/"/>
+      <tstamps>16134b08-68c9-5acb-b917-f7ef47949c64</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R119">
+      <value>1.00k1% ISET_MODE</value>
+      <datasheet>STACK §2.7,§5.1</datasheet>
+      <fields>
+        <field name="ReviewStatus">TBD</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK §2.7,§5.1</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R119" description="| TBD |"/>
+      <property name="ReviewStatus" value="TBD"/>
+      <property name="Sheetname" value="E1_02"/>
+      <property name="Sheetfile" value="E1_02.kicad_sch"/>
+      <sheetpath names="/E1_02/" tstamps="/18b3b3ad-34e0-53cc-9f25-c4ecb6dfa9a2/"/>
+      <tstamps>f571999e-04da-588e-84fe-da279f3ba551</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R120">
+      <value>13.0k1%4Scellset</value>
+      <datasheet>STACK §2.7,§5.1</datasheet>
+      <fields>
+        <field name="ReviewStatus">TBD</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK §2.7,§5.1</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R120" description="| TBD |"/>
+      <property name="ReviewStatus" value="TBD"/>
+      <property name="Sheetname" value="E1_02"/>
+      <property name="Sheetfile" value="E1_02.kicad_sch"/>
+      <sheetpath names="/E1_02/" tstamps="/18b3b3ad-34e0-53cc-9f25-c4ecb6dfa9a2/"/>
+      <tstamps>5dbeb529-6b79-5b6c-b410-93bcef43af61</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TH101">
+      <value>NTC 10 kΩ B3380 при 25 °C</value>
+      <datasheet>STACK §2.7,§5.1</datasheet>
+      <fields>
+        <field name="ReviewStatus">TBD</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK §2.7,§5.1</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_TH101" description="| TBD | Розташувати на комірці. Перевірити обрив і КЗ. Передавальну функцію COUT для 0…45 °C ще потрібно підтвердити."/>
+      <property name="ReviewStatus" value="TBD"/>
+      <property name="Sheetname" value="E1_02"/>
+      <property name="Sheetfile" value="E1_02.kicad_sch"/>
+      <sheetpath names="/E1_02/" tstamps="/18b3b3ad-34e0-53cc-9f25-c4ecb6dfa9a2/"/>
+      <tstamps>64c6c90d-e76e-5cbd-b38a-9c7c30c7c52e</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
     <comp ref="U110">
       <value>IP2368 COUT 4S retail board</value>
       <datasheet>STACK §2.7,§5.1</datasheet>
@@ -2135,10 +2153,10 @@
       </fields>
       <libsource lib="sr_rx_v2_completed" part="C_U110" description="Назви описують функції та місця заміни резисторів, а не підтверджені зовнішні роз’єми. Офіційна схема COUT не знайдена; внутрішня силова частина готового модуля не дублюється. | module | Замінити stock R4 на RVSET 5.1 kΩ; R3 на RISET 15 kΩ; R7 CELLSET 13 kΩ для 4S; ISET_MODE через 1 kΩ на GND; R6 замінити справжнім 10 kΩ B3380.; До E1-01 обов’язково підтвердити місця модифікацій фото і continuity, маркування LDO та ревізію IP2368. Не підключати NTC або VSET навгад.; Заряд лише при 0…45 °C комірок; KSD 70 °C NO на MOSFET. Quiet inhibit діє тільки після успішного стендового тесту."/>
       <property name="ReviewStatus" value="module"/>
-      <property name="Sheetname" value="E1"/>
-      <property name="Sheetfile" value="E1.kicad_sch"/>
-      <sheetpath names="/E1/" tstamps="/a943ccec-2813-5b6f-9c47-b1bcb52cee7f/"/>
-      <tstamps>fc49ed18-d345-5655-8f4e-91a760970d70</tstamps>
+      <property name="Sheetname" value="E1_02"/>
+      <property name="Sheetfile" value="E1_02.kicad_sch"/>
+      <sheetpath names="/E1_02/" tstamps="/18b3b3ad-34e0-53cc-9f25-c4ecb6dfa9a2/"/>
+      <tstamps>40d048c0-9fa7-59d0-913c-10ec86416823</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -3274,7 +3292,7 @@
         <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R201" description="| design | Локальне стягування EN до GND; забезпечує вимкнення при старті та знеструмлених контролерах."/>
+      <libsource lib="sr_rx_v2_completed" part="C_R201" description="| design | Верх UVLO-дільника EN/UVLO разом із R202 33.2k: J21 вмикається автоматично при ≈1.2V×(1+100k/33.2k)≈4.8V наростання на E2_J21_FUSED; жоден контролер не керує E2_J21_EN. Це не pulldown і не тримає J21 вимкненим при старті; автоматичне живлення Q6A навмисне. Справжній UVLO J21≈10.6V потребував би R202≈12.7k (рекомендація, не застосовано)."/>
       <property name="ReviewStatus" value="design"/>
       <property name="Sheetname" value="E2"/>
       <property name="Sheetfile" value="E2.kicad_sch"/>
@@ -3298,7 +3316,7 @@
         <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R202" description="| design | Номінал і допуск є інженерним вибором для показаного дільника або керувального кола; перевірити відповідний розрахунок у E2-review.md."/>
+      <libsource lib="sr_rx_v2_completed" part="C_R202" description="| design | Низ UVLO-дільника J21 з R201 100k: ≈4.8V наростання на E2_J21_FUSED; розрахунок у E2-review.md."/>
       <property name="ReviewStatus" value="design"/>
       <property name="Sheetname" value="E2"/>
       <property name="Sheetfile" value="E2.kicad_sch"/>
@@ -4657,7 +4675,7 @@
         <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C230" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі.; CSET збільшено до 10uF: номінальний запуск приблизно 225ms. До перевірки LNA labd очікує щонайменше 500ms."/>
+      <libsource lib="sr_rx_v2_completed" part="C_C230" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі.; CSET 10uF: τ = RSET×CSET = 22.5k×10uF = 225ms (fast start-up вимкнено, PGFB = IN); 4.01V (89%) за 0.5s, 99% ≈1.04s. LNA4V5 стартує разом із LAB5 при ввімкненні E1, задовго до labd. Вікно labd 500ms (policy.py) рахується від EN гілки TPS2553, а не від старту LNA4V5."/>
       <property name="ReviewStatus" value="design"/>
       <property name="Sheetname" value="E2_02"/>
       <property name="Sheetfile" value="E2_02.kicad_sch"/>
@@ -7368,7 +7386,7 @@
         <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tps2596.pdf</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_U214" description="| design | RILM = 7.87k відповідає 0.113–0.139 A; OVLO 112k/10k 0.1% усуває перекриття зі штатною смугою 13.8 V.; dVdt 100 nF початково задає приблизно 0.42 V/ms і 33 ms наростання. Врахувати 65 mA типового струму Boni та ємність bias-tee.; FLT не замінює струмове вікно INA3221; PTC на цій шині не встановлюється."/>
+      <libsource lib="sr_rx_v2_completed" part="C_U214" description="| design | RILM = 7.87k відповідає 0.113–0.139 A; OVLO 112k/10k 0.1% усуває перекриття зі штатною смугою 13.8 V.; dVdt 100 nF початково задає приблизно 0.42 V/ms і 33 ms наростання. Сталий струм = 65 mA Boni + 13.86 mA bleed E4 996 Ω = 78.9 mA, плюс заряд ємності bias-tee (≈0.42 V/ms×C). Мінімальний ILIM 0.113 A &lt; 1.5×78.9 mA = 0.118 A: правило E2-03 1.5–2× на папері не виконано (1.43–1.76×). Рекомендовано RILM≈7.15k (≈0.124–0.153 A, 1.58–1.94×) після звірки з рівнянням і таблицею допусків TPS2596 та струмовою межею bias-tee Boni; до виміру E2-03 не застосовано.; FLT не замінює струмове вікно INA3221; PTC на цій шині не встановлюється."/>
       <property name="ReviewStatus" value="design"/>
       <property name="Sheetname" value="E2_03"/>
       <property name="Sheetfile" value="E2_03.kicad_sch"/>
@@ -10814,7 +10832,7 @@
         <field name="Datasheet">https://www.delta-fan.com/Download/Spec/BFB0305HA-C.pdf</field>
         <field name="Description">Concrete BOM candidate: Delta BFB0305HA-C two-wire centrifugal blower. Factory red wire positive, black wire negative; no invented connector numbering. Mechanical integration and qualification remain open.</field>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_FAN302" description="Concrete BOM candidate: Delta BFB0305HA-C two-wire centrifugal blower. Factory red wire positive, black wire negative; no invented connector numbering. Mechanical integration and qualification remain open. | module | Maker PDF rev00 specifies5.0V nominal,4.5-5.5V operating,0.13A average nominal/0.20A maximum average,0.65W nominal/1.00W maximum; these are not startup peak ratings. The drawing label artwork also shows0.24A, so the design budget reserves0.25A continuous until the actual label/current is checked.; Use existing AO3400A low-side switch: this exact suffix has two wires and no tach output. Red=LAB5, black=switched return. Keep flyback SS14 and fit10uF plus100nF directly across the blower leads.; Provisional startup budget is0.50A, a project qualification limit rather than a manufacturer guarantee. Delta explicitly requires peak-current measurement with an oscilloscope. Capture starting/stalled/auto-restart current and LAB5 droop at both5V rail limits.; Manufacturer body envelope is30.0+/-0.5 by30.0+/-0.5 by10.0+/-0.5mm; mounting hole spacing24.0+/-0.3mm, two holesdiameter2.4+/-0.3mm; lead length145+/-10mm. Allocate at least32x32x12mm for the body as a design fit gate, plus intake/outlet duct clearance and lead strain relief.; Maker free-air airflow1.45CFM nominal/min1.17CFM and zero-flow pressure0.285inH2O nominal/min0.182inH2O are curve endpoints, not simultaneous installed performance. Qualify the separate display duct, inlet pressure drop&lt;=5Pa, closed-cover thermal limits and RF noise. Operating range-10 to70C.; LAB5 aggregate, including concurrency with RTL-B, remains unqualified. If measured steady demand exceeds2.5A, follow STACK load-shedding/D36V50F5 plusfuse review before commissioning."/>
+      <libsource lib="sr_rx_v2_completed" part="C_FAN302" description="Concrete BOM candidate: Delta BFB0305HA-C two-wire centrifugal blower. Factory red wire positive, black wire negative; no invented connector numbering. Mechanical integration and qualification remain open. | module | Maker PDF rev00 specifies5.0V nominal,4.5-5.5V operating,0.13A average nominal/0.20A maximum average,0.65W nominal/1.00W maximum; these are not startup peak ratings. The drawing label artwork also shows0.24A, so the design budget reserves0.25A continuous until the actual label/current is checked.; Use existing AO3400A low-side switch: this exact suffix has two wires and no tach output. Red=LAB5, black=switched return. Keep flyback SS14 and fit10uF plus100nF directly across the blower leads.; Provisional startup budget is0.50A, a project qualification limit rather than a manufacturer guarantee. Delta explicitly requires peak-current measurement with an oscilloscope. Capture starting/stalled/auto-restart current and LAB5 droop at both5V rail limits.; Manufacturer body envelope is30.0+/-0.5 by30.0+/-0.5 by10.0+/-0.5mm; mounting hole spacing24.0+/-0.3mm, two holesdiameter2.4+/-0.3mm; lead length145+/-10mm. Allocate at least32x32x12mm for the body as a design fit gate, plus intake/outlet duct clearance and lead strain relief.; Maker free-air airflow1.45CFM nominal/min1.17CFM and zero-flow pressure0.285inH2O nominal/min0.182inH2O are curve endpoints, not simultaneous installed performance. Qualify the separate display duct, inlet pressure drop&lt;=5Pa, closed-cover thermal limits and RF noise. Operating range-10 to70C.; LAB5 aggregate, including concurrency with RTL-B, remains unqualified. LAB5 acceptance is E1-05: &lt;=3.2A continuous and &lt;=4A transient with the default D36V50F5 + F102 4A; if measured aggregate demand exceeds that budget, apply a formal concurrency cap per R-E2-17 before commissioning. The old 2.5A gate belongs only to the legacy D36V28F5."/>
       <property name="ReviewStatus" value="module"/>
       <property name="Sheetname" value="E3_02"/>
       <property name="Sheetfile" value="E3_02.kicad_sch"/>
@@ -11057,7 +11075,7 @@
         <field name="Datasheet">STACK.md §5.2; project design</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R301" description="| design | Single ALERT pullup to switched Q6A3V3; never AON."/>
+      <libsource lib="sr_rx_v2_completed" part="C_R301" description="| design | Single populated ALERT pullup to switched Q6A3V3; never AON. The duplicate E1 R102 pullup was removed in v2.1; do not fit a second pullup in parallel."/>
       <property name="ReviewStatus" value="design"/>
       <property name="Sheetname" value="E3_02"/>
       <property name="Sheetfile" value="E3_02.kicad_sch"/>
@@ -15636,7 +15654,7 @@
         <field name="Datasheet">https://assets.nexperia.com/documents/data-sheet/BAV199.pdf</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_D452" description="| verified | Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection."/>
+      <libsource lib="sr_rx_v2_completed" part="C_D452" description="| verified | Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."/>
       <property name="ReviewStatus" value="verified"/>
       <property name="Sheetname" value="E4_03"/>
       <property name="Sheetfile" value="E4_03.kicad_sch"/>
@@ -16608,7 +16626,7 @@
         <field name="Datasheet">https://assets.nexperia.com/documents/data-sheet/BAV199.pdf</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_D451" description="| verified | Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection."/>
+      <libsource lib="sr_rx_v2_completed" part="C_D451" description="| verified | Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."/>
       <property name="ReviewStatus" value="verified"/>
       <property name="Sheetname" value="E4_04"/>
       <property name="Sheetfile" value="E4_04.kicad_sch"/>
@@ -16634,7 +16652,7 @@
         <field name="Datasheet">https://assets.nexperia.com/documents/data-sheet/BAV199.pdf</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_D453" description="| verified | Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection."/>
+      <libsource lib="sr_rx_v2_completed" part="C_D453" description="| verified | Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."/>
       <property name="ReviewStatus" value="verified"/>
       <property name="Sheetname" value="E4_04"/>
       <property name="Sheetfile" value="E4_04.kicad_sch"/>
@@ -18327,15 +18345,15 @@
     </comp>
     <comp ref="R512">
       <value>1Ohm 0.5W</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <footprint>Resistor_SMD:R_1210_3225Metric</footprint>
       <datasheet>STACK.md §5.2 / engineering design</datasheet>
       <fields>
         <field name="ReviewStatus">design</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Footprint">Resistor_SMD:R_1210_3225Metric</field>
         <field name="Datasheet">STACK.md §5.2 / engineering design</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R512" description="| design | Series RC damping branch, parallel to main100uF. Not in DC receiver power path."/>
+      <libsource lib="sr_rx_v2_completed" part="C_R512" description="| design | Series RC damping branch, parallel to main100uF. Not in DC receiver power path.; 1210 package for the 0.5 W rating, as for the ≥0.5 W E4 R44xx bleeds; a standard 0603 part is only about 0.1 W. Startup charge of C512 dissipates at most ½×220 uF×(5 V)² ≈ 2.75 mJ in R512; check it against the chosen part's single-pulse curve."/>
       <property name="ReviewStatus" value="design"/>
       <property name="Sheetname" value="E5"/>
       <property name="Sheetfile" value="E5.kicad_sch"/>
@@ -20520,14 +20538,14 @@
       </pins>
     </libpart>
     <libpart lib="sr_rx_v2_completed" part="C_C230">
-      <description>| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі.; CSET збільшено до 10uF: номінальний запуск приблизно 225ms. До перевірки LNA labd очікує щонайменше 500ms.</description>
+      <description>| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі.; CSET 10uF: τ = RSET×CSET = 22.5k×10uF = 225ms (fast start-up вимкнено, PGFB = IN); 4.01V (89%) за 0.5s, 99% ≈1.04s. LNA4V5 стартує разом із LAB5 при ввімкненні E1, задовго до labd. Вікно labd 500ms (policy.py) рахується від EN гілки TPS2553, а не від старту LNA4V5.</description>
       <docs>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC</docs>
       <fields>
         <field name="Reference">C230</field>
         <field name="Value">10uF 50V X7R C3225X7R1H106K250AC</field>
         <field name="Footprint">Capacitor_SMD:C_1210_3225Metric</field>
         <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC</field>
-        <field name="Description">| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі.; CSET збільшено до 10uF: номінальний запуск приблизно 225ms. До перевірки LNA labd очікує щонайменше 500ms.</field>
+        <field name="Description">| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі.; CSET 10uF: τ = RSET×CSET = 22.5k×10uF = 225ms (fast start-up вимкнено, PGFB = IN); 4.01V (89%) за 0.5s, 99% ≈1.04s. LNA4V5 стартує разом із LAB5 при ввімкненні E1, задовго до labd. Вікно labd 500ms (policy.py) рахується від EN гілки TPS2553, а не від старту LNA4V5.</field>
       </fields>
       <pins>
         <pin num="1" name="1" type="passive"/>
@@ -23302,14 +23320,14 @@
       </pins>
     </libpart>
     <libpart lib="sr_rx_v2_completed" part="C_D451">
-      <description>| verified | Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection.</description>
+      <description>| verified | Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection.</description>
       <docs>https://assets.nexperia.com/documents/data-sheet/BAV199.pdf</docs>
       <fields>
         <field name="Reference">D451</field>
         <field name="Value">BAV199 sense clamps</field>
         <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
         <field name="Datasheet">https://assets.nexperia.com/documents/data-sheet/BAV199.pdf</field>
-        <field name="Description">| verified | Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection.</field>
+        <field name="Description">| verified | Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection.</field>
       </fields>
       <pins>
         <pin num="1" name="A1" type="passive"/>
@@ -23318,14 +23336,14 @@
       </pins>
     </libpart>
     <libpart lib="sr_rx_v2_completed" part="C_D452">
-      <description>| verified | Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection.</description>
+      <description>| verified | Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection.</description>
       <docs>https://assets.nexperia.com/documents/data-sheet/BAV199.pdf</docs>
       <fields>
         <field name="Reference">D452</field>
         <field name="Value">BAV199 sense clamps</field>
         <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
         <field name="Datasheet">https://assets.nexperia.com/documents/data-sheet/BAV199.pdf</field>
-        <field name="Description">| verified | Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection.</field>
+        <field name="Description">| verified | Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection.</field>
       </fields>
       <pins>
         <pin num="1" name="A1" type="passive"/>
@@ -23334,14 +23352,14 @@
       </pins>
     </libpart>
     <libpart lib="sr_rx_v2_completed" part="C_D453">
-      <description>| verified | Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection.</description>
+      <description>| verified | Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection.</description>
       <docs>https://assets.nexperia.com/documents/data-sheet/BAV199.pdf</docs>
       <fields>
         <field name="Reference">D453</field>
         <field name="Value">BAV199 sense clamps</field>
         <field name="Footprint">Package_TO_SOT_SMD:SOT-23</field>
         <field name="Datasheet">https://assets.nexperia.com/documents/data-sheet/BAV199.pdf</field>
-        <field name="Description">| verified | Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection.</field>
+        <field name="Description">| verified | Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection.</field>
       </fields>
       <pins>
         <pin num="1" name="A1" type="passive"/>
@@ -23488,14 +23506,14 @@
       </pins>
     </libpart>
     <libpart lib="sr_rx_v2_completed" part="C_FAN302">
-      <description>Concrete BOM candidate: Delta BFB0305HA-C two-wire centrifugal blower. Factory red wire positive, black wire negative; no invented connector numbering. Mechanical integration and qualification remain open. | module | Maker PDF rev00 specifies5.0V nominal,4.5-5.5V operating,0.13A average nominal/0.20A maximum average,0.65W nominal/1.00W maximum; these are not startup peak ratings. The drawing label artwork also shows0.24A, so the design budget reserves0.25A continuous until the actual label/current is checked.; Use existing AO3400A low-side switch: this exact suffix has two wires and no tach output. Red=LAB5, black=switched return. Keep flyback SS14 and fit10uF plus100nF directly across the blower leads.; Provisional startup budget is0.50A, a project qualification limit rather than a manufacturer guarantee. Delta explicitly requires peak-current measurement with an oscilloscope. Capture starting/stalled/auto-restart current and LAB5 droop at both5V rail limits.; Manufacturer body envelope is30.0+/-0.5 by30.0+/-0.5 by10.0+/-0.5mm; mounting hole spacing24.0+/-0.3mm, two holesdiameter2.4+/-0.3mm; lead length145+/-10mm. Allocate at least32x32x12mm for the body as a design fit gate, plus intake/outlet duct clearance and lead strain relief.; Maker free-air airflow1.45CFM nominal/min1.17CFM and zero-flow pressure0.285inH2O nominal/min0.182inH2O are curve endpoints, not simultaneous installed performance. Qualify the separate display duct, inlet pressure drop&lt;=5Pa, closed-cover thermal limits and RF noise. Operating range-10 to70C.; LAB5 aggregate, including concurrency with RTL-B, remains unqualified. If measured steady demand exceeds2.5A, follow STACK load-shedding/D36V50F5 plusfuse review before commissioning.</description>
+      <description>Concrete BOM candidate: Delta BFB0305HA-C two-wire centrifugal blower. Factory red wire positive, black wire negative; no invented connector numbering. Mechanical integration and qualification remain open. | module | Maker PDF rev00 specifies5.0V nominal,4.5-5.5V operating,0.13A average nominal/0.20A maximum average,0.65W nominal/1.00W maximum; these are not startup peak ratings. The drawing label artwork also shows0.24A, so the design budget reserves0.25A continuous until the actual label/current is checked.; Use existing AO3400A low-side switch: this exact suffix has two wires and no tach output. Red=LAB5, black=switched return. Keep flyback SS14 and fit10uF plus100nF directly across the blower leads.; Provisional startup budget is0.50A, a project qualification limit rather than a manufacturer guarantee. Delta explicitly requires peak-current measurement with an oscilloscope. Capture starting/stalled/auto-restart current and LAB5 droop at both5V rail limits.; Manufacturer body envelope is30.0+/-0.5 by30.0+/-0.5 by10.0+/-0.5mm; mounting hole spacing24.0+/-0.3mm, two holesdiameter2.4+/-0.3mm; lead length145+/-10mm. Allocate at least32x32x12mm for the body as a design fit gate, plus intake/outlet duct clearance and lead strain relief.; Maker free-air airflow1.45CFM nominal/min1.17CFM and zero-flow pressure0.285inH2O nominal/min0.182inH2O are curve endpoints, not simultaneous installed performance. Qualify the separate display duct, inlet pressure drop&lt;=5Pa, closed-cover thermal limits and RF noise. Operating range-10 to70C.; LAB5 aggregate, including concurrency with RTL-B, remains unqualified. LAB5 acceptance is E1-05: &lt;=3.2A continuous and &lt;=4A transient with the default D36V50F5 + F102 4A; if measured aggregate demand exceeds that budget, apply a formal concurrency cap per R-E2-17 before commissioning. The old 2.5A gate belongs only to the legacy D36V28F5.</description>
       <docs>https://www.delta-fan.com/Download/Spec/BFB0305HA-C.pdf</docs>
       <fields>
         <field name="Reference">FAN302</field>
         <field name="Value">Delta BFB0305HA-C 5V 2wire</field>
         <field name="Footprint"/>
         <field name="Datasheet">https://www.delta-fan.com/Download/Spec/BFB0305HA-C.pdf</field>
-        <field name="Description">Concrete BOM candidate: Delta BFB0305HA-C two-wire centrifugal blower. Factory red wire positive, black wire negative; no invented connector numbering. Mechanical integration and qualification remain open. | module | Maker PDF rev00 specifies5.0V nominal,4.5-5.5V operating,0.13A average nominal/0.20A maximum average,0.65W nominal/1.00W maximum; these are not startup peak ratings. The drawing label artwork also shows0.24A, so the design budget reserves0.25A continuous until the actual label/current is checked.; Use existing AO3400A low-side switch: this exact suffix has two wires and no tach output. Red=LAB5, black=switched return. Keep flyback SS14 and fit10uF plus100nF directly across the blower leads.; Provisional startup budget is0.50A, a project qualification limit rather than a manufacturer guarantee. Delta explicitly requires peak-current measurement with an oscilloscope. Capture starting/stalled/auto-restart current and LAB5 droop at both5V rail limits.; Manufacturer body envelope is30.0+/-0.5 by30.0+/-0.5 by10.0+/-0.5mm; mounting hole spacing24.0+/-0.3mm, two holesdiameter2.4+/-0.3mm; lead length145+/-10mm. Allocate at least32x32x12mm for the body as a design fit gate, plus intake/outlet duct clearance and lead strain relief.; Maker free-air airflow1.45CFM nominal/min1.17CFM and zero-flow pressure0.285inH2O nominal/min0.182inH2O are curve endpoints, not simultaneous installed performance. Qualify the separate display duct, inlet pressure drop&lt;=5Pa, closed-cover thermal limits and RF noise. Operating range-10 to70C.; LAB5 aggregate, including concurrency with RTL-B, remains unqualified. If measured steady demand exceeds2.5A, follow STACK load-shedding/D36V50F5 plusfuse review before commissioning.</field>
+        <field name="Description">Concrete BOM candidate: Delta BFB0305HA-C two-wire centrifugal blower. Factory red wire positive, black wire negative; no invented connector numbering. Mechanical integration and qualification remain open. | module | Maker PDF rev00 specifies5.0V nominal,4.5-5.5V operating,0.13A average nominal/0.20A maximum average,0.65W nominal/1.00W maximum; these are not startup peak ratings. The drawing label artwork also shows0.24A, so the design budget reserves0.25A continuous until the actual label/current is checked.; Use existing AO3400A low-side switch: this exact suffix has two wires and no tach output. Red=LAB5, black=switched return. Keep flyback SS14 and fit10uF plus100nF directly across the blower leads.; Provisional startup budget is0.50A, a project qualification limit rather than a manufacturer guarantee. Delta explicitly requires peak-current measurement with an oscilloscope. Capture starting/stalled/auto-restart current and LAB5 droop at both5V rail limits.; Manufacturer body envelope is30.0+/-0.5 by30.0+/-0.5 by10.0+/-0.5mm; mounting hole spacing24.0+/-0.3mm, two holesdiameter2.4+/-0.3mm; lead length145+/-10mm. Allocate at least32x32x12mm for the body as a design fit gate, plus intake/outlet duct clearance and lead strain relief.; Maker free-air airflow1.45CFM nominal/min1.17CFM and zero-flow pressure0.285inH2O nominal/min0.182inH2O are curve endpoints, not simultaneous installed performance. Qualify the separate display duct, inlet pressure drop&lt;=5Pa, closed-cover thermal limits and RF noise. Operating range-10 to70C.; LAB5 aggregate, including concurrency with RTL-B, remains unqualified. LAB5 acceptance is E1-05: &lt;=3.2A continuous and &lt;=4A transient with the default D36V50F5 + F102 4A; if measured aggregate demand exceeds that budget, apply a formal concurrency cap per R-E2-17 before commissioning. The old 2.5A gate belongs only to the legacy D36V28F5.</field>
       </fields>
       <pins>
         <pin num="BLACK" name="BLACK_MINUS" type="passive"/>
@@ -25249,14 +25267,14 @@
       </pins>
     </libpart>
     <libpart lib="sr_rx_v2_completed" part="C_R201">
-      <description>| design | Локальне стягування EN до GND; забезпечує вимкнення при старті та знеструмлених контролерах.</description>
+      <description>| design | Верх UVLO-дільника EN/UVLO разом із R202 33.2k: J21 вмикається автоматично при ≈1.2V×(1+100k/33.2k)≈4.8V наростання на E2_J21_FUSED; жоден контролер не керує E2_J21_EN. Це не pulldown і не тримає J21 вимкненим при старті; автоматичне живлення Q6A навмисне. Справжній UVLO J21≈10.6V потребував би R202≈12.7k (рекомендація, не застосовано).</description>
       <docs>STACK.md §§2.7, 5.1; інженерна деталізація E2</docs>
       <fields>
         <field name="Reference">R201</field>
         <field name="Value">100k 1%</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
-        <field name="Description">| design | Локальне стягування EN до GND; забезпечує вимкнення при старті та знеструмлених контролерах.</field>
+        <field name="Description">| design | Верх UVLO-дільника EN/UVLO разом із R202 33.2k: J21 вмикається автоматично при ≈1.2V×(1+100k/33.2k)≈4.8V наростання на E2_J21_FUSED; жоден контролер не керує E2_J21_EN. Це не pulldown і не тримає J21 вимкненим при старті; автоматичне живлення Q6A навмисне. Справжній UVLO J21≈10.6V потребував би R202≈12.7k (рекомендація, не застосовано).</field>
       </fields>
       <pins>
         <pin num="1" name="1" type="passive"/>
@@ -25264,14 +25282,14 @@
       </pins>
     </libpart>
     <libpart lib="sr_rx_v2_completed" part="C_R202">
-      <description>| design | Номінал і допуск є інженерним вибором для показаного дільника або керувального кола; перевірити відповідний розрахунок у E2-review.md.</description>
+      <description>| design | Низ UVLO-дільника J21 з R201 100k: ≈4.8V наростання на E2_J21_FUSED; розрахунок у E2-review.md.</description>
       <docs>STACK.md §§2.7, 5.1; інженерна деталізація E2</docs>
       <fields>
         <field name="Reference">R202</field>
         <field name="Value">33.2k 1%</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
-        <field name="Description">| design | Номінал і допуск є інженерним вибором для показаного дільника або керувального кола; перевірити відповідний розрахунок у E2-review.md.</field>
+        <field name="Description">| design | Низ UVLO-дільника J21 з R201 100k: ≈4.8V наростання на E2_J21_FUSED; розрахунок у E2-review.md.</field>
       </fields>
       <pins>
         <pin num="1" name="1" type="passive"/>
@@ -26524,14 +26542,14 @@
       </pins>
     </libpart>
     <libpart lib="sr_rx_v2_completed" part="C_R301">
-      <description>| design | Single ALERT pullup to switched Q6A3V3; never AON.</description>
+      <description>| design | Single populated ALERT pullup to switched Q6A3V3; never AON. The duplicate E1 R102 pullup was removed in v2.1; do not fit a second pullup in parallel.</description>
       <docs>STACK.md §5.2; project design</docs>
       <fields>
         <field name="Reference">R301</field>
         <field name="Value">10k</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK.md §5.2; project design</field>
-        <field name="Description">| design | Single ALERT pullup to switched Q6A3V3; never AON.</field>
+        <field name="Description">| design | Single populated ALERT pullup to switched Q6A3V3; never AON. The duplicate E1 R102 pullup was removed in v2.1; do not fit a second pullup in parallel.</field>
       </fields>
       <pins>
         <pin num="1" name="1" type="passive"/>
@@ -28849,14 +28867,14 @@
       </pins>
     </libpart>
     <libpart lib="sr_rx_v2_completed" part="C_R512">
-      <description>| design | Series RC damping branch, parallel to main100uF. Not in DC receiver power path.</description>
+      <description>| design | Series RC damping branch, parallel to main100uF. Not in DC receiver power path.; 1210 package for the 0.5 W rating, as for the ≥0.5 W E4 R44xx bleeds; a standard 0603 part is only about 0.1 W. Startup charge of C512 dissipates at most ½×220 uF×(5 V)² ≈ 2.75 mJ in R512; check it against the chosen part's single-pulse curve.</description>
       <docs>STACK.md §5.2 / engineering design</docs>
       <fields>
         <field name="Reference">R512</field>
         <field name="Value">1Ohm 0.5W</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Footprint">Resistor_SMD:R_1210_3225Metric</field>
         <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description">| design | Series RC damping branch, parallel to main100uF. Not in DC receiver power path.</field>
+        <field name="Description">| design | Series RC damping branch, parallel to main100uF. Not in DC receiver power path.; 1210 package for the 0.5 W rating, as for the ≥0.5 W E4 R44xx bleeds; a standard 0603 part is only about 0.1 W. Startup charge of C512 dissipates at most ½×220 uF×(5 V)² ≈ 2.75 mJ in R512; check it against the chosen part's single-pulse curve.</field>
       </fields>
       <pins>
         <pin num="1" name="1" type="passive"/>
@@ -30049,14 +30067,14 @@
       </pins>
     </libpart>
     <libpart lib="sr_rx_v2_completed" part="C_U214">
-      <description>| design | RILM = 7.87k відповідає 0.113–0.139 A; OVLO 112k/10k 0.1% усуває перекриття зі штатною смугою 13.8 V.; dVdt 100 nF початково задає приблизно 0.42 V/ms і 33 ms наростання. Врахувати 65 mA типового струму Boni та ємність bias-tee.; FLT не замінює струмове вікно INA3221; PTC на цій шині не встановлюється.</description>
+      <description>| design | RILM = 7.87k відповідає 0.113–0.139 A; OVLO 112k/10k 0.1% усуває перекриття зі штатною смугою 13.8 V.; dVdt 100 nF початково задає приблизно 0.42 V/ms і 33 ms наростання. Сталий струм = 65 mA Boni + 13.86 mA bleed E4 996 Ω = 78.9 mA, плюс заряд ємності bias-tee (≈0.42 V/ms×C). Мінімальний ILIM 0.113 A &lt; 1.5×78.9 mA = 0.118 A: правило E2-03 1.5–2× на папері не виконано (1.43–1.76×). Рекомендовано RILM≈7.15k (≈0.124–0.153 A, 1.58–1.94×) після звірки з рівнянням і таблицею допусків TPS2596 та струмовою межею bias-tee Boni; до виміру E2-03 не застосовано.; FLT не замінює струмове вікно INA3221; PTC на цій шині не встановлюється.</description>
       <docs>https://www.ti.com/lit/ds/symlink/tps2596.pdf</docs>
       <fields>
         <field name="Reference">U214</field>
         <field name="Value">TPS259630DDAR</field>
         <field name="Footprint"/>
         <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tps2596.pdf</field>
-        <field name="Description">| design | RILM = 7.87k відповідає 0.113–0.139 A; OVLO 112k/10k 0.1% усуває перекриття зі штатною смугою 13.8 V.; dVdt 100 nF початково задає приблизно 0.42 V/ms і 33 ms наростання. Врахувати 65 mA типового струму Boni та ємність bias-tee.; FLT не замінює струмове вікно INA3221; PTC на цій шині не встановлюється.</field>
+        <field name="Description">| design | RILM = 7.87k відповідає 0.113–0.139 A; OVLO 112k/10k 0.1% усуває перекриття зі штатною смугою 13.8 V.; dVdt 100 nF початково задає приблизно 0.42 V/ms і 33 ms наростання. Сталий струм = 65 mA Boni + 13.86 mA bleed E4 996 Ω = 78.9 mA, плюс заряд ємності bias-tee (≈0.42 V/ms×C). Мінімальний ILIM 0.113 A &lt; 1.5×78.9 mA = 0.118 A: правило E2-03 1.5–2× на папері не виконано (1.43–1.76×). Рекомендовано RILM≈7.15k (≈0.124–0.153 A, 1.58–1.94×) після звірки з рівнянням і таблицею допусків TPS2596 та струмовою межею bias-tee Boni; до виміру E2-03 не застосовано.; FLT не замінює струмове вікно INA3221; PTC на цій шині не встановлюється.</field>
       </fields>
       <pins>
         <pin num="1" name="GND" type="power_in"/>

@@ -29,7 +29,11 @@ current = tracker.manual(latitude_degrees, longitude_degrees, now_ms)
 current = tracker.status(now_ms)
 ```
 
-`now_ms` is a nonnegative integer from a monotonic clock. Calls may share the
+`now_ms` is a nonnegative integer from a monotonic clock. On Linux prefer the
+suspend-aware `CLOCK_BOOTTIME`: `CLOCK_MONOTONIC` stops during suspend, so after
+resume the receiver's UTC looks like a time jump and an old fix looks fresh.
+`srrx.hmi` passes one `CLOCK_BOOTTIME` millisecond clock (monotonic only where
+it is absent) to both the tracker and its `GpsdClient`. Calls may share the
 same timestamp but must never go backwards. A backwards timestamp latches a
 clock fault: GNSS becomes unavailable as a live source and fallback ages become
 unknown. Construct a new tracker after repairing the caller's clock domain;
@@ -70,7 +74,7 @@ instance; monotonic ages are not silently persisted across process/boot resets.
 | `speed_mps`, `track_deg` | Reported ground motion for live fixes; None for fallback |
 | `hdop`, `satellites` | Reported GGA geometry/count; optional, not an accuracy guarantee |
 | `device` | Actual/explicit gpsd device identity, not a guessed path |
-| `reason`, `last_error` | Selection/failure reason and last diagnostic code |
+| `reason`, `last_error` | `reason` is None for a live fix. For a fallback it is a still-unrecovered fault: first that of the fallback record's own source, else that of another GNSS source; otherwise `MANUAL_FALLBACK`, `STALE` or `NO_LOCATION`. Faults are kept per source, and only an accepted fix from the same source clears one: an NMEA fix does not hide an unrecovered gpsd handshake timeout. `last_error` keeps the latest diagnostic code even after recovery |
 | `rejected_count`, `ignored_count` | Rejected input and irrelevant/partial/duplicate records |
 
 An available fallback is **not** a current GNSS fix. Stale position uncertainty
@@ -93,8 +97,27 @@ within two seconds by default. Backwards epochs and larger time jumps are
 rejected. Repeated epochs can enrich uncertainty/altitude metadata but never
 refresh position age. Contradictory same-epoch positions are rejected. A bad
 fix does not destroy the last good coordinates or turn them into a fresh fix.
-After a genuine receiver clock/date discontinuity, explicitly reconstruct the
-tracker and reacquire rather than silently accepting the discontinuity.
+A single jump never passes and never moves the time reference. Rejected jump
+epochs form a candidate chain per source: each new distinct epoch must progress,
+relative to the previous candidate, consistently with monotonic receipt (to the
+same two seconds), or the chain restarts at one. The third consistent candidate,
+e.g. after a host suspend under `CLOCK_MONOTONIC`, a receiver UTC correction, or
+an undated GGA outage longer than 12 h, is still rejected, but the source then
+drops its old reference and NMEA date anchor. The next record, including a
+same-epoch repeat of that third epoch, is a first fix again: it is still checked
+against the last good position, and `utc_verified` restarts from zero. Only an
+accepted fix clears the chain; other rejections of the same source in between
+and the time between candidates do not reset it, but every candidate must still
+agree with receipt time. Unstable or alternating timelines never reacquire.
+
+A ZDA is compared with the date anchor only within the same 120 s window in
+which that anchor may date GGA/RMC. A disagreeing ZDA is rejected
+(`NMEA_DATE_JUMP`) and never moves the anchor alone. Three distinct ZDAs that
+agree with each other on one new timeline retire the anchor: the third becomes
+the new anchor and the next NMEA position is a first fix on that date. A
+GGA+ZDA stream (no RMC) thus follows a receiver date correction, which accepted
+GGAs, dated from the old anchor, would otherwise hide indefinitely. A ZDA that
+agrees with the anchor restarts the ZDA chain.
 
 There is no assumed trustworthy system wall clock. The first coherent received
 position may be accepted while `utc_verified` remains False. If an independent
@@ -122,13 +145,19 @@ fields, hemisphere, numbers and dates. It implements:
   the application filter rejects HDOP above20 rather than assigning accuracy.
 - GSA: matching talker fix dimension and explicit loss of fix.
 - GST: same-epoch axis-error estimates enrich the position without refreshing age.
-- ZDA: full date/time anchor; it never creates a position alone.
+  Empty time or axis-error fields mean "estimate unavailable" and are ignored;
+  malformed non-empty values still invalidate the source. A gpsd GST without
+  `time`, `lat` or `lon` is ignored in the same way.
+- ZDA: full date/time anchor; it never creates a position alone. A ZDA with empty
+  time/date fields (receiver without time yet) is ignored.
 
 LC76G's RMC trailing NavStatus `V` is documented as unsupported and is not confused
 with the separate RMC validity Status. Unknown talkers/proprietary commands and
 unimplemented sentences are ignored; the code sends no LC76G configuration or
 reset command. GGA altitude is a reported MSL value; without a matching 3D GSA,
-the parser does not infer a 3D fix solely from its presence.
+the parser does not infer a 3D fix solely from its presence. When a fresh
+matching GSA explicitly reports 2D, GGA altitude is held or assumed, so
+`alt_msl_m` and `alt_hae_m` are None, as for a gpsd 2D TPV.
 
 ## Optional live gpsd transport
 
@@ -153,8 +182,11 @@ ignores other devices. The caller remains responsible for configuring gpsd to
 read the actual LC76G UART/udev identity.
 
 The client uses nonblocking connect/read/write, checks protocol major3, sends
-JSON WATCH, and waits for its acknowledgement before ingesting TPV/GST. A failed
-handshake expires at3 seconds. Short WATCH writes are retained for the next poll.
+JSON WATCH, and waits for its acknowledgement before ingesting TPV/GST. The
+connection and VERSION must arrive within 3 seconds of `start`, and the WATCH
+acknowledgement within 3 seconds of VERSION. Each poll drains already-received
+bytes before checking the deadline, so a late first poll does not discard a
+waiting handshake. Short WATCH writes are retained for the next poll.
 Each poll reads at most four4096-byte chunks. Disconnect, malformed JSON or an
 explicit server error invalidates live gpsd data immediately; the tracker can
 still select another healthy GNSS source or a labelled fallback. Reconnection
@@ -189,8 +221,11 @@ PYTHONPATH=software python -m unittest discover -s software/tests -p test_locati
 Tests cover official NMEA examples, every fragmentation boundary, malformed and
 nonfinite data, checksum failure, missing fields, duplicate/stale epochs,
 impossible coordinates/movement, dateline crossing, midnight and leap labels,
-manual/last-good selection, time jumps, bounded JSON and mocked gpsd handshake,
-short writes and disconnect. Device qualification still requires real UART
+manual/last-good selection and per-source fallback reasons, time jumps and
+three-epoch timeline reacquisition, GGA+ZDA date correction, single or unstable
+ZDA date jumps, empty optional GST/ZDA fields, explicit 2D altitude,
+bounded JSON and mocked gpsd handshake including late polls, short writes and
+disconnect. Device qualification still requires real UART
 recordings and live gpsd tests; no satellite lock or accuracy result is claimed.
 
 ## Primary sources checked20 October2026

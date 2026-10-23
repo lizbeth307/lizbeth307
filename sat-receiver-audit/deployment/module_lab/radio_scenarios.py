@@ -134,7 +134,7 @@ def _relays(project):
 
 def _dc_and_bias(project):
     from srrx.policy import DCS
-    graph = json.loads((project/'design/E4.json').read_text())
+    graph = json.loads((project/'design/E4.json').read_text(encoding='utf-8'))
     result = []
     for branch, dcs in DCS.items():
         def action(branch=branch, dcs=dcs):
@@ -215,8 +215,8 @@ def _lime(project):
             root = Path(temporary)
             receipt = vendor.apply_to_copy('limesuiteng', project/'deployment/upstream-fixtures/limesuiteng',
                                            root/'patched', fixture=True)
-            streaming = (root/'patched/plugins/soapysdr/Streaming.cpp').read_text()
-            micro = (root/'patched/src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp').read_text()
+            streaming = (root/'patched/plugins/soapysdr/Streaming.cpp').read_text(encoding='utf-8')
+            micro = (root/'patched/src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp').read_text(encoding='utf-8')
             setup = _body(streaming, 'SoapySDR::Stream* Soapy_limesuiteng::setupStream(').split('std::unique_lock', 1)[0]
             native = _body(micro, 'std::unique_ptr<lime::RFStream> LimeSDR_Micro::StreamCreate(').split('if (!la9310', 1)[0]
             configure = _body(micro, 'OpStatus LimeSDR_Micro::Configure(').split('OpStatus status;', 1)[0]
@@ -242,7 +242,7 @@ def _lime(project):
                     'assert(calibrate(TRXDir::Tx)==OpStatus::NotSupported);assert(calibrate(TRXDir::Rx)==OpStatus::Success);'
                     'assert(write()==SOAPY_SDR_NOT_SUPPORTED);assert(waveform()==OpStatus::NotSupported);}')
             source, binary = root/'guards.cpp', root/'guards'
-            source.write_text(code)
+            source.write_text(code, encoding='utf-8')
             compiled = subprocess.run([compiler, '-std=c++20', '-Wall', '-Werror', str(source), '-o', str(binary)],
                                       capture_output=True, text=True, timeout=60)
             _require(compiled.returncode == 0, 'Guard compile failed: '+compiled.stderr[:1000])
@@ -261,7 +261,7 @@ def _lime(project):
 def _inventory(project):
     deploy = _load('srrx_module_deploy', project/'deployment/deploy.py')
     def rules():
-        config = json.loads((project/'deployment/devices.template.json').read_text())
+        config = json.loads((project/'deployment/devices.template.json').read_text(encoding='utf-8'))
         config['i2c'] = {'ina228': {'path': '/dev/i2c-1', 'of_fullname': '/soc/i2c@1'},
                          'control': {'path': '/dev/i2c-2', 'of_fullname': '/soc/i2c@2'}}
         config['pico']['kernel_parent'] = 'c880000.serial'
@@ -293,7 +293,7 @@ def _inventory(project):
         result.append({'id': identifier, 'design_refs': refs, 'name': label, 'model_level': 'unsupported',
                        'status': 'UNSUPPORTED', 'physical_verified': False, 'scenarios': [],
                        'inventory_only': True, 'reason': reason})
-    graph = json.loads((project/'design/E4.json').read_text())
+    graph = json.loads((project/'design/E4.json').read_text(encoding='utf-8'))
     for part in graph['components']:
         if part['kind'] != 'module' or part['ref'] in ('A411', 'A412', 'A414', 'A415'):
             continue
@@ -337,7 +337,7 @@ def main(argv=None):
                   'physical_verified': False}
     rendered = json.dumps(report, indent=2, allow_nan=False)+'\n'
     if args.output:
-        args.output.parent.mkdir(parents=True, exist_ok=True); args.output.write_text(rendered)
+        args.output.parent.mkdir(parents=True, exist_ok=True); args.output.write_text(rendered, encoding='utf-8', newline='\n')
     print(rendered, end='')
     return 0 if report['status'] == 'EMULATION_PASS' else 1
 

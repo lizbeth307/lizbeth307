@@ -10,6 +10,7 @@ import argparse
 from dataclasses import dataclass
 import errno
 import hashlib
+import importlib.util
 import io
 import json
 import os
@@ -263,6 +264,52 @@ def locked_file(path, record, size_key="bytes"):
     return path
 
 
+def fetch_tools():
+    spec = importlib.util.spec_from_file_location("srrx_fetch_tools", Path(__file__).with_name("fetch_tools.py"))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def runtime_tree(root):
+    """Relative path -> type, content hash/link target and executable bit."""
+    tree = {}
+    for path in sorted(root.rglob("*")):
+        relative = path.relative_to(root).as_posix()
+        if path.is_symlink():
+            tree[relative] = ("symlink", os.readlink(path))
+        elif path.is_file():
+            tree[relative] = ("file", digest(path), path.stat().st_size, bool(path.stat().st_mode & 0o111))
+        else:
+            tree[relative] = ("directory",) if path.is_dir() else ("special",)
+    return tree
+
+
+def check_runtime(tools, packages):
+    """tools/root must equal a fresh lock-ordered unpack of the hash-locked
+    debs (fetch_tools.py procedure); tools/bin must be its exact wrappers."""
+    helper = fetch_tools()
+    for record in packages:
+        if safe_name(record["filename"]).name != record["filename"]:
+            raise ValueError("Unsafe locked host package name")
+        locked_file(tools / "debs" / record["filename"], record)
+    with tempfile.TemporaryDirectory(prefix="srrx-kit-runtime-") as temporary:
+        try:
+            helper.unpack(tools / "debs", packages, Path(temporary))
+        except RuntimeError as error:
+            raise ValueError(str(error)) from error
+        expected = runtime_tree(Path(temporary))
+    actual = runtime_tree(tools / "root")
+    changed = sorted(name for name in set(actual) | set(expected) if actual.get(name) != expected.get(name))
+    if changed:
+        raise ValueError("tools/root differs from the locked host debs: " + ", ".join(changed[:10]))
+    wrappers = helper.wrapper_texts()
+    if {p.name for p in (tools / "bin").iterdir()} != set(wrappers) or any(
+            (tools / "bin" / name).is_symlink() or (tools / "bin" / name).read_text() != text for name, text in wrappers.items()):
+        raise ValueError("tools/bin differs from the fetch_tools.py wrappers")
+    return expected
+
+
 def project_locks(path):
     with zipfile.ZipFile(path) as archive:
         seen = set()
@@ -341,17 +388,10 @@ def assemble(args):
     for name, data in raw.items():
         entries.append(Entry("locks/" + name, data=data))
     entries.append(Entry("tools/host-packages.lock.json", data=raw["host-packages.lock.json"]))
-    combined = []
-    for name in ("package-manifest.json", "genisoimage-manifest.json"):
-        path = tools / name
-        combined.extend(json.loads(path.read_text())["packages"])
-        entries.append(Entry("tools/" + name, source=path))
-    expected = {r["name"]: r for r in host["packages"]}
-    if len(combined) != 87 or {r["name"] for r in combined} != set(expected):
-        raise ValueError("Runtime provenance must cover all 87 locked host packages")
-    for record in combined:
-        if any(record[key] != expected[record["name"]][key] for key in ("version", "url", "sha256", "bytes")):
-            raise ValueError("Runtime provenance differs from project host lock")
+    if (tools / "host-packages.lock.json").read_bytes() != raw["host-packages.lock.json"]:
+        raise ValueError("Tools directory was not fetched for the project host lock")
+    # Bind the shipped bytes to the hash-locked debs, not to self-declared JSON.
+    tree = check_runtime(tools, host["packages"])
     runtime = tools / "root"
     runtime_directories = []
     for directory in (tools / "bin", runtime):
@@ -363,16 +403,15 @@ def assemble(args):
                     raise ValueError("Nonportable runtime symlink: " + relative)
                 entries.append(Entry("tools/" + relative, target=target))
             elif path.is_file():
-                entries.append(Entry("tools/" + relative, source=path, mode=0o755 if path.stat().st_mode & 0o111 else 0o644))
+                known = tree.get(path.relative_to(runtime).as_posix()) if directory == runtime else None
+                entries.append(Entry("tools/" + relative, source=path, mode=0o755 if path.stat().st_mode & 0o111 else 0o644,
+                                     expected_sha256=known and known[1], expected_bytes=known and known[2]))
             elif path.is_dir():
                 runtime_directories.append("tools/" + relative)
             else:
                 raise ValueError("Special runtime file: " + relative)
     for name in ("qemu-system-aarch64", "qemu-img", "genisoimage"):
-        wrapper = tools / "bin" / name
-        if 'tools_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)' not in wrapper.read_text():
-            raise ValueError("Runtime wrapper is not relative: " + name)
-        subprocess.run([str(wrapper), "--version"], stdout=subprocess.DEVNULL, check=True)
+        subprocess.run([str(tools / "bin" / name), "--version"], stdout=subprocess.DEVNULL, check=True)
     entries.sort(key=lambda x: x.name)
     records = [entry.record() for entry in entries]
     if len({r["path"] for r in records}) != len(records):
@@ -472,8 +511,8 @@ def check_archive(path, manifest):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--assets", type=Path, required=True, help="Existing verified image/wheel/deb cache")
-    parser.add_argument("--tools", type=Path, required=True, help="Existing extracted runtime with bin/, root/ and package manifests")
+    parser.add_argument("--assets", type=Path, required=True, help="Existing fetch_assets.py image/manifest/wheel/deb cache")
+    parser.add_argument("--tools", type=Path, required=True, help="Existing fetch_tools.py output with debs/, root/, bin/ and host-packages.lock.json")
     parser.add_argument("--project-zip", type=Path, required=True, help="Final full project ZIP; its locks select all payload inputs")
     parser.add_argument("--output", type=Path, required=True, help="New .tar.zst path outside the source checkout")
     parser.add_argument("--keyring", type=Path, default=Path("/usr/share/keyrings/ubuntu-cloudimage-keyring.gpg"))
@@ -486,7 +525,7 @@ def main():
         parser.error("--output must end with .tar.zst")
     if not output.parent.is_dir():
         parser.error("--output parent directory must already exist")
-    for utility in ("gpgv", "zstd"):
+    for utility in ("gpgv", "zstd", "dpkg-deb", "tar"):
         if not shutil.which(utility):
             parser.error("Missing existing builder utility: " + utility)
     print("Validating signed/locked inputs and recording runtime files...", flush=True)

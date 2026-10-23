@@ -52,7 +52,7 @@ Linux ігнорує `RLIMIT_CORE` для core dump, переданого чер
 
 Новий opt-in [StorageGuard](../../software/srrx/storage.py) підключено до [labrx](../../software/srrx/labrx.py) і [spectrum persistence](../../software/srrx/spectrum.py). CLI приймає пару `--storage-root`/`--storage-device`: наявний точний mountpoint і явно вказаний block device. Guard звіряє `/proc/self/mountinfo`, FD `mnt_id`, `st_dev`, inode каталогу та identity пристрою; підміна mount із тим самим `st_dev` теж відкликає поточну сесію. Нові output parent directories не створюються. Після втрати/підміни/помилки сесія відкликається назавжди; повернення носія потребує нового явного guard. Автоматичного запису на rootfs немає.
 
-Запис використовує pinned dirfd, `O_NOFOLLOW`, staging, перевірку identity перед replace і atomic bounded copy+append для JSONL. ENOSPC або втрата mount **до commit** залишають попередній файл незмінним. Перша filesystem-помилка зберігає початковий `OSError`/errno; наступні звернення дають `StorageRevoked`. Це не гарантія проти зникнення живлення після commit, privileged mount manipulation або стороннього процесу, який має право змінювати той самий output directory. Guard сам не форматує, не монтує й не вмикає живлення носія. Linux metadata — [proc filesystem](https://www.kernel.org/doc/html/latest/filesystems/proc.html).
+Запис використовує pinned dirfd, `O_NOFOLLOW`, staging, перевірку identity перед replace. Існуючий JSONL дописується лише новим рядком у той самий перевірений inode (`O_APPEND` через `/proc/self/fd`), помилка write/fsync обрізає файл до попередніх повних рядків, обірваний останній рядок після втрати живлення не продовжується; новий файл — staging+atomic replace. ENOSPC або втрата mount **до commit** залишають попередній файл незмінним. Перша filesystem-помилка зберігає початковий `OSError`/errno; наступні звернення дають `StorageRevoked`. Це не гарантія проти зникнення живлення після commit, privileged mount manipulation або стороннього процесу, який має право змінювати той самий output directory. Guard сам не форматує, не монтує й не вмикає живлення носія. Linux metadata — [proc filesystem](https://www.kernel.org/doc/html/latest/filesystems/proc.html).
 
 Точні регресії у [test_storage.py](../../software/tests/test_storage.py): `test_mount_id_replacement_same_st_dev_is_rejected`, `test_partial_enospc_preserves_previous_atomic_and_jsonl_files`, `test_mount_loss_after_staging_before_commit_preserves_previous_file`, `test_parent_symlink_swap_after_staging_is_rejected`, `test_capture_storage_loss_closes_source_and_requests_branch_off`.
 
@@ -68,6 +68,19 @@ Linux ігнорує `RLIMIT_CORE` для core dump, переданого чер
 | PTY fixture покладався на readable/фіксовану паузу та надсилав HELLO лише раз на session | [pty_smoke.py](pty_smoke.py) спостерігає повну kernel queue через FIONREAD, підтверджує прийняття останнього frame перед replay baseline та поточну TRIPPED session перед recovery. Peer повторює HELLO кожні1000ms у SAFE/TRIPPED/OFF, як firmware; дев’ятий сценарій навмисно втрачає перший HELLO і перевіряє resync без ARM. Real clock, production timers і HUP лишилися чинними; failures мають структурний trace. Mutation once-only HELLO справді відмовила, але точну причину старого run05 timeout без trace не приписуємо заднім числом. |
 | Один read-only Unix status запит XCB observer перевищив1s під час холодного Qt startup | [xcb_smoke.py](xcb_smoke.py) повторює лише визначені transport misses в межах чинного загального deadline дочірнього процесу. Unsafe/rejected/malformed відповіді та permission/missing socket одразу FAIL; initial/final і post-child successful probes обов’язкові. Report показує кількість успішних samples, timeouts і gaps; пропущена відповідь не підтверджує readiness або безперервно безпечний стан. |
 | ENOSPC scenario спочатку очікував `StorageRevoked` на першій помилці запису | [storage_smoke.py](storage_smoke.py) перевіряє справжній початковий `OSError` з errno ENOSPC, незмінність попереднього запису і permanent revocation; `StorageRevoked` очікується на наступному зверненні. Production contract не змінено заради PASS. |
+
+## Посилення harness після run07 (потребує нового ARM64 запуску)
+
+Ці зміни внесено після run07 і ще не виконано в ARM64 guest; результати run07 вони не змінюють і не підтверджують. Production timers, freshness deadlines і safety guards не послаблені.
+
+- Кешований overlay більше не означає неперевірені залежності: guest перевстановлює всі locked DEB (без `--skip-same-version`), заново створює venv і примусово проводить кожний wheel через `--require-hashes`; `dependency-verification.json` порівнює встановлені версії з обома lock і входить до загального PASS. Run07 фактично використав кешовані DEB/wheels попередніх VM.
+- Host приймає overlay лише від прогону з записаним summary і `qemu_exit_code=0`, записує backing chain із SHA256 кожного шару та генерує новий cloud-init instance-id. Поле `previous_clean_shutdown` прибрано: воно не мало доказів.
+- `explicit_arm_and_fault` і `link_loss_latched` вимагають точної першої причини trip, як уже вимагав lease-сценарій; PTY HUP записує фактичну причину; RX failure-сценарії відхиляють будь-який тип помилки поза публічною межею CLI.
+- PTY peer відправляє STATUS/HELLO за `TelemetrySchedule` прошивки (200 ms / 1000 ms) замість 75 ms. Це зменшує запас fixture до реального: host stall понад приблизно 300 ms із TCIFLUSH може коректно спричинити `pico_status_timeout`. Таку відмову слід аналізувати (діагностика містить `max_pump_loop_gap_ms`), а не послаблювати 500 ms deadline.
+- Підсумок guest приймає лише задокументовані SKIP (QNN HTP SDK, PyMuPDF поза wheelhouse), кожен один раз; `host_regression_status=PASS` з іншими SKIP більше не дає PASS. Host відхиляє symlink/спеціальні файли в результатах guest і робочі шляхи з пробілами; архів джерел належить root.
+- Host і finalize обходять результати guest через `os.walk` з `onerror`: каталог без права читання (debugfs відновлює режими guest) зупиняє імпорт, а не пропускається; корінь перевіряється `lstat` першим. Finalize також вимагає `dependency-verification.json` зі статусом PASS.
+- `srrx.service` тепер має `SupplementaryGroups=i2c dialout srrx-pico`: bootstrap створює системну групу `srrx-pico` без членів, `guest_smoke` вимагає її наявність і відсутність labclient. OPEN-записи мають завершити саме release guard кодом 2: перевірка `status=2` більше не збігається з `status=216` (GROUP), коли група відсутня і guard не запускався.
+- HF+ module fixture моделює відставання споживача без фатальної помилки: 64 блоки заповнюють чергу, 65-й transfer відкидається, а наступний блок у черзі позначається `discontinuity`. PTY lost-HELLO звіт записує кількість повторів HELLO до ресинхронізації, тож 2000/3000 ms не читаються як відхилення інтервалу прошивки.
 
 ## Переносимість автономного комплекту
 
@@ -107,14 +120,16 @@ gzip -t /tmp/SR-RX-v2.1-git.patch.gz
 
 Patch відображає лише commits до HEAD, тому його не будувати до commit поточних змін. Інструкція застосування — [RESTORE-GIT](../../RESTORE-GIT.md). Відмова remote push не заважає віддати ZIP і patch, але не є успішною публікацією.
 
-4. Після фінального ZIP створити offline kit. Наведені assets/tools — поточні локальні caches; на іншому хості їхні шляхи слід замінити. `--output` має бути новим `.tar.zst` поза checkout, а його parent directory має вже існувати.
+4. Після фінального ZIP створити offline kit. Усі вхідні каталоги створюють скрипти репозиторію: `fetch_tools.py` (locked host DEB, розпакований `root/`, wrappers `bin/`, `host-packages.lock.json`) і `fetch_assets.py` (image/kernel/initrd, підписаний `ubuntu-24.04-server-cloudimg-arm64.manifest`, wheels, guest DEB). `--tools`/`--dest` мають бути новими каталогами поза checkout; `--output` — новим `.tar.zst` поза checkout, а його parent directory має вже існувати. Builder потребує `gpgv`, `zstd`, `dpkg-deb` і `tar`.
 
 ```sh
+python3 deployment/linux_lab/fetch_tools.py --dest /tmp/srrx-qemu-tools
+python3 deployment/linux_lab/fetch_assets.py --dest /tmp/srrx-arm64-assets
 python3 deployment/linux_lab/build_kit.py \
-  --assets /workspace/scratch/63085b43f730/linux-lab-assets \
-  --tools /workspace/scratch/63085b43f730/linux-lab-tools \
+  --assets /tmp/srrx-arm64-assets \
+  --tools /tmp/srrx-qemu-tools \
   --project-zip SR-RX-v2-project.zip \
   --output /tmp/SR-RX-Linux-Lab.tar.zst
 ```
 
-Builder звіряє signed/locked inputs та кожний archive payload hash. Його PASS означає цілісність kit; він **не завантажує guest**. Після розпакування використовуйте `launch.py --verify-only`, потім новий workspace для `--prepare-only` або повного запуску. Kit не містить попередній writable overlay як runnable input і стартує з pinned base image; це окрема перевірка від cached run07. Фінально звірити manifest/CRC архівів, додати checksums і передати project ZIP/HTML, Git patch та offline kit із фактичними verification reports.
+Builder звіряє signed/locked inputs та кожний archive payload hash. `tools/root` має точно збігатися з новим розпакуванням hash-locked host DEB у порядку lock (файли, SHA256, executable bit, symlink targets), а `tools/bin` — із wrappers `fetch_tools.py`; самодекларовані JSON-маніфести більше не приймаються як provenance. Wrappers запускають locked `ld.so` з `--inhibit-cache`, а `fetch_tools.py` перевіряє через `ld.so --list`, що жодна DT_NEEDED бібліотека QEMU/genisoimage не береться з хоста. Його PASS означає цілісність kit; він **не завантажує guest**. Після розпакування використовуйте `launch.py --verify-only`, потім новий workspace для `--prepare-only` або повного запуску. Kit не містить попередній writable overlay як runnable input і стартує з pinned base image; це окрема перевірка від cached run07. Фінально звірити manifest/CRC архівів, додати checksums і передати project ZIP/HTML, Git patch та offline kit із фактичними verification reports.

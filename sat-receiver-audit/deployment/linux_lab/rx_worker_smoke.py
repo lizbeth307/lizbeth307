@@ -102,6 +102,21 @@ int rtlsdr_read_sync(void *d,void *buffer,int length,int *count) {
 #endif
 }
 '''
+# The labrx CLI boundary handles exactly these; any other type is a traceback.
+CLEAN_ERRORS=(OSError,ValueError,RuntimeError)
+BRANCH_OFF=[{'op':'control','name':'EN_RTLA','value':False}]
+
+
+def failure_issues(name,error,calls):
+    """Public-error contract for the four failure fixtures; pure for unit tests."""
+    messages=[]
+    if error is None or isinstance(error,AssertionError): messages.append('Expected bounded worker failure was not observed')
+    elif isinstance(error,EOFError): messages.append('Raw pipe EOF escaped the production clean-error boundary')
+    elif not isinstance(error,CLEAN_ERRORS): messages.append('Unclean public error type escaped run_capture: '+type(error).__name__)
+    elif name=='hang_ignoring_sigterm' and not isinstance(error,TimeoutError):
+        messages.append('Native hang did not surface as the production read TimeoutError: '+type(error).__name__)
+    if calls!=BRANCH_OFF: messages.append('Capture cleanup did not request exactly branch OFF')
+    return messages
 
 
 def main(argv=None):
@@ -259,10 +274,10 @@ def main(argv=None):
                 if name=='valid_even_short_read':
                     if error is not None: messages.append(type(error).__name__+': '+str(error))
                     if sample_count!=1: messages.append('Expected one in-memory complex sample')
+                    # worker.close() must run the worker's driver-close finally (rtlsdr_close).
+                    if 'CLOSE\n' not in text: messages.append('Native driver close did not run after worker.close()')
                 else:
-                    if error is None or isinstance(error,AssertionError): messages.append('Expected bounded worker failure was not observed')
-                    if isinstance(error,EOFError): messages.append('Raw pipe EOF escaped the production clean-error boundary')
-                    if calls!=[{'op':'control','name':'EN_RTLA','value':False}]: messages.append('Capture cleanup did not request exactly branch OFF')
+                    messages.extend(failure_issues(name,error,calls))
                 if name=='hang_ignoring_sigterm' and worker:
                     if 'TERM_IGNORED\n' not in text: messages.append('Native SIGTERM-ignoring hang was not exercised')
                     if worker.process.exitcode!=-signal.SIGKILL: messages.append('Hung worker did not require/receive SIGKILL fallback')
@@ -281,8 +296,8 @@ def main(argv=None):
                     'worker_alive_after_close':bool(worker and worker.process.is_alive()),
                     'actual_read_observer_checks':0 if not worker else worker.actual_read_guard_checks,
                     'production_capture_cleanup_exercised':name!='valid_even_short_read',
-                    'clean_error_boundary':error is None or isinstance(error,(OSError,ValueError,RuntimeError)),
-                    'branch_off_request_observed':calls==[{'op':'control','name':'EN_RTLA','value':False}],
+                    'clean_error_boundary':error is None or isinstance(error,CLEAN_ERRORS),
+                    'branch_off_request_observed':calls==BRANCH_OFF,
                     'branch_off_electrically_tested':False,'fixture_short_sample_count':sample_count,
                     'core_rlimit_confirmed_zero':'CORE_LIMIT=0\n' in text,
                     'worker_dumpable_confirmed_zero':'DUMPABLE=0\n' in text,

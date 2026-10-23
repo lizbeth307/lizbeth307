@@ -21,6 +21,11 @@ def digest(path):
     return value.hexdigest()
 
 
+def signed_sums(path):
+    return {line.split(maxsplit=1)[1].lstrip("*"): line.split()[0]
+            for line in path.read_text().splitlines() if line.strip()}
+
+
 def fetch(url, path, expected=None, size=None):
     if expected and path.is_file() and digest(path) == expected and (size is None or path.stat().st_size == size):
         return
@@ -62,14 +67,19 @@ def main():
                         str(dest / section / "SHA256SUMS")], check=True)
     for x in lock["ubuntu_assets"]:
         folder = "ubuntu" if x["name"].endswith(".img") else "unpacked"
-        checks = {line.split(maxsplit=1)[1].lstrip("*"): line.split()[0]
-                  for line in (dest / folder / "SHA256SUMS").read_text().splitlines() if line.strip()}
-        if checks.get(x["name"]) != x["sha256"]:
+        if signed_sums(dest / folder / "SHA256SUMS").get(x["name"]) != x["sha256"]:
             raise ValueError("Pinned asset differs from the signed Ubuntu manifest")
         path = dest / folder / x["name"]
         fetch(x["url"], path, x["sha256"], x["bytes"])
         records.append({**x, "file": str(path), "expected_sha256": x["sha256"]})
         print("Verified", x["name"], flush=True)
+    # build_kit.py also ships the signed package-state manifest the guest lock was resolved from.
+    guest = json.loads((HERE / "guest-packages.lock.json").read_text())
+    name = "ubuntu-24.04-server-cloudimg-arm64.manifest"
+    if signed_sums(dest / "ubuntu" / "SHA256SUMS").get(name) != guest["guest_manifest_sha256"]:
+        raise ValueError("Guest package-state manifest lock differs from the signed Ubuntu manifest")
+    fetch(lock["primary_base_url"] + name, dest / "ubuntu" / name, guest["guest_manifest_sha256"])
+    print("Verified", name, flush=True)
     (dest / "ubuntu-assets.json").write_text(json.dumps({"image_release": lock["image_release"], "assets": records}, indent=2) + "\n")
     wheels = json.loads((HERE / "wheelhouse-manifest.json").read_text())
     for x in wheels["wheels"]:

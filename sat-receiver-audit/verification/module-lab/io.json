@@ -22,6 +22,7 @@
       "status": "PASS",
       "physical_verified": false,
       "accepted": false,
+      "case_count": 1,
       "evidence": {
         "connected": {
           "devices": [
@@ -106,15 +107,13 @@
       "design_refs": [
         "design/E5.json:U510",
         "design/E5.json:J512",
-        "build/12-revision-v2.1.md",
-        "design/E5.json:J501",
-        "STACK.md:3.1 Hantek 6022BE",
-        "STACK.md:P17"
+        "build/12-revision-v2.1.md"
       ],
       "coverage_level": "FILESYSTEM_FIXTURE",
       "status": "PASS",
       "physical_verified": false,
       "accepted": false,
+      "case_count": 1,
       "evidence": {
         "unknown": {
           "device": "1-3",
@@ -143,16 +142,15 @@
         "design/E5.json:J512",
         "build/12-revision-v2.1.md",
         "design/E5.json:U520",
-        "design/E5.json:J512",
         "design/E5-connection-guide.md",
         "design/E5.json:U540",
-        "design/E5.json:U505",
         "design/E5.json:EN_T7"
       ],
       "coverage_level": "FILESYSTEM_FIXTURE",
       "status": "PASS",
       "physical_verified": false,
       "accepted": false,
+      "case_count": 1,
       "evidence": {
         "removed": [
           "1-2",
@@ -177,6 +175,7 @@
       "status": "PASS",
       "physical_verified": false,
       "accepted": false,
+      "case_count": 1,
       "evidence": {
         "max_devices": 64,
         "max_descriptor_bytes": 256,
@@ -188,13 +187,13 @@
       "id": "IO-T7-METADATA-PERSISTENCE",
       "design_refs": [
         "design/E5.json:U540",
-        "design/E5.json:U505",
         "design/E5.json:EN_T7"
       ],
       "coverage_level": "PRODUCTION_SOFTWARE_ON_TEMP_FILESYSTEM",
       "status": "PASS",
       "physical_verified": false,
       "accepted": false,
+      "case_count": 1,
       "evidence": {
         "implementation": "srrx.labrx.run_capture + spectrum.validate_frame",
         "simulated_frames": 2,
@@ -211,13 +210,13 @@
       "id": "IO-T7-WRITE-ERROR",
       "design_refs": [
         "design/E5.json:U540",
-        "design/E5.json:U505",
         "design/E5.json:EN_T7"
       ],
       "coverage_level": "PRODUCTION_SOFTWARE_FAULT_INJECTION",
       "status": "PASS",
       "physical_verified": false,
       "accepted": false,
+      "case_count": 1,
       "evidence": {
         "implementation": "srrx.labrx.atomic_json",
         "injected_errno": "ENOSPC",
@@ -232,20 +231,20 @@
       "id": "IO-T7-GUARDED-METADATA",
       "design_refs": [
         "design/E5.json:U540",
-        "design/E5.json:U505",
         "design/E5.json:EN_T7"
       ],
       "coverage_level": "PRODUCTION_GUARD_WITH_INJECTED_MOUNT_BLOCK_INVENTORY",
       "status": "PASS",
       "physical_verified": false,
       "accepted": false,
+      "case_count": 1,
       "evidence": {
         "implementation": "StorageGuard + labrx.run_capture + spectrum.append_survey",
         "real_dirfd_nofollow_io": true,
         "simulated_frames": 2,
         "block_identity_and_mountinfo": "fixture injection, not real block hardware",
         "raw_iq_persisted": false,
-        "atomic_jsonl": true,
+        "jsonl_append_rollback_on_error": true,
         "actual_mount_created": false
       },
       "limitation": "Real block-device/mount binding requires the separate Linux virtual-disk test, then actual T7 acceptance."
@@ -254,13 +253,13 @@
       "id": "IO-T7-GUARDED-MOUNT-LOSS",
       "design_refs": [
         "design/E5.json:U540",
-        "design/E5.json:U505",
         "design/E5.json:EN_T7"
       ],
       "coverage_level": "PRODUCTION_GUARD_WITH_INJECTED_MOUNT_BLOCK_INVENTORY",
       "status": "PASS",
       "physical_verified": false,
       "accepted": false,
+      "case_count": 1,
       "evidence": {
         "configured_path_replaced": true,
         "mount_inventory_removed": true,
@@ -275,13 +274,13 @@
       "id": "IO-QT-TOUCH-MOUSE-MENU",
       "design_refs": [
         "design/E5.json:U520",
-        "design/E5.json:J512",
         "design/E5-connection-guide.md"
       ],
       "coverage_level": "PRODUCTION_QT_INPUT_EVENTS",
       "status": "PASS",
       "physical_verified": false,
       "accepted": false,
+      "case_count": 1,
       "evidence": {
         "entrypoint": "srrx.hmi.create_window + real Worker + DemoTransport subprocess",
         "qt_platform": "offscreen",
@@ -319,7 +318,7 @@
           "raw_status_before_controller_poll": true,
           "cold_start_timeout_s": 20.0,
           "ordinary_timeout_s": 5.0,
-          "elapsed_s": 0.047035,
+          "elapsed_s": 0.058103,
           "mode": "SIMULATION",
           "production_deadlines_changed": false
         },
@@ -335,16 +334,15 @@
       "id": "IO-QT-CONTROL-LINK-DISCONNECT",
       "design_refs": [
         "design/E5.json:U520",
-        "design/E5.json:J512",
         "design/E5-connection-guide.md",
         "design/E5.json:U540",
-        "design/E5.json:U505",
         "design/E5.json:EN_T7"
       ],
       "coverage_level": "PRODUCTION_SOFTWARE_TRANSPORT_FAULT_INJECTION",
       "status": "PASS",
       "physical_verified": false,
       "accepted": false,
+      "case_count": 1,
       "evidence": {
         "link_error_injected": true,
         "banner_no_connection": true,
@@ -361,13 +359,13 @@
       "id": "IO-WISECOCO-PHYSICAL",
       "design_refs": [
         "design/E5.json:U520",
-        "design/E5.json:J512",
         "design/E5-connection-guide.md"
       ],
       "coverage_level": "UNSUPPORTED",
       "status": "UNSUPPORTED",
       "physical_verified": false,
       "accepted": false,
+      "case_count": 0,
       "evidence": {
         "driver_or_acceptance": "not present",
         "factory_touch_pinout_verified": false
@@ -378,13 +376,13 @@
       "id": "IO-DISPLAY-USB-HOTPLUG-INTERLOCK",
       "design_refs": [
         "design/E5.json:U520",
-        "design/E5.json:J512",
         "design/E5-connection-guide.md"
       ],
       "coverage_level": "UNSUPPORTED",
       "status": "UNSUPPORTED",
       "physical_verified": false,
       "accepted": false,
+      "case_count": 0,
       "evidence": {
         "production_usb_display_inventory_service": false,
         "automatic_disarm_on_display_departure": false
@@ -402,6 +400,7 @@
       "status": "UNSUPPORTED",
       "physical_verified": false,
       "accepted": false,
+      "case_count": 0,
       "evidence": {
         "kernel_usb_driver_exercised": false,
         "physical_hub": false
@@ -419,6 +418,7 @@
       "status": "UNSUPPORTED",
       "physical_verified": false,
       "accepted": false,
+      "case_count": 0,
       "evidence": {
         "srrx_driver": null,
         "openhantek_executed": false,
@@ -430,13 +430,13 @@
       "id": "IO-T7-REMOVABLE-STORAGE",
       "design_refs": [
         "design/E5.json:U540",
-        "design/E5.json:U505",
         "design/E5.json:EN_T7"
       ],
       "coverage_level": "UNSUPPORTED",
       "status": "UNSUPPORTED",
       "physical_verified": false,
       "accepted": false,
+      "case_count": 0,
       "evidence": {
         "mount_identity_guard": "implemented, opt-in StorageGuard; fixture tested",
         "guarded_capture_source_cleanup": "implemented; unit tested with injected source",
@@ -450,14 +450,15 @@
   "counts": {
     "PASS": 10,
     "FAIL": 0,
-    "UNSUPPORTED": 5
+    "UNSUPPORTED": 5,
+    "UNAVAILABLE": 0
   },
   "source_sha256": {
     "deployment/module_lab/io_modules.py": "3a2a53f360b6530cf1bb2b6cf073bc6404a4ce759b09867654e41ec1d3b894a4",
-    "deployment/module_lab/io_scenarios.py": "b7cec8da94a78f03f20b0e750a58906edf6481593873c6a4fd9f526ab282eff3",
-    "software/srrx/hmi.py": "471ce62782c7403b4171eeb59666a5a52f24af17434ab4ed4a6bed08283c2949",
-    "software/srrx/labrx.py": "3f34632d4104c8a6e1b6691f9e97e65adc7fbd6c64f253409d01c258576590dc",
-    "software/srrx/spectrum.py": "be1833e25671f54151551606eb067f11ffc7ef7589984437850218cff68eb949",
-    "software/srrx/storage.py": "ab4b09a469fd569eb298f6311660f9bc6bd294b31532f3001670ca9b52fe9f3c"
+    "deployment/module_lab/io_scenarios.py": "f00a48a7367cf67357bbfe4b75df36703af2f54250aec8c1addcdd661ada2e87",
+    "software/srrx/hmi.py": "9e6c757047889d07b36cacbf05d8177b8c763175d4e18933c50ac7de558ee004",
+    "software/srrx/labrx.py": "28f26d881d629e28240119d6c24948e21530f8ca5e1676dfc93e0edba7b41c86",
+    "software/srrx/spectrum.py": "95700d52cc9484b9facb337cbbf272deab5f12c594c9662e9a2e7da49297b522",
+    "software/srrx/storage.py": "775fdd716796c15f6fd1b7f9e9105c408bd67c33f45129e4996a6cdaab5ebcd8"
   }
 }

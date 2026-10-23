@@ -1,8 +1,12 @@
 """Unit checks for lab guard and service derivation; no fake systemd PASS."""
+import ast
 import copy
 import importlib.util
 from pathlib import Path
+import re
+import types
 import unittest
+from unittest import mock
 
 SPEC = importlib.util.spec_from_file_location("srrx_guest_smoke", Path(__file__).with_name("guest_smoke.py"))
 smoke = importlib.util.module_from_spec(SPEC)
@@ -25,6 +29,27 @@ class GuestBoundaryTests(unittest.TestCase):
                         {"distribution": {"ID": "ubuntu", "VERSION_ID": "22.04", "VERSION_CODENAME": "jammy"}}):
             with self.subTest(changes=changes), self.assertRaises(smoke.SmokeError):
                 smoke.validate_guest_facts(dict(self.facts, **changes), self.marker)
+
+    def test_pico_group_must_exist_without_labclient_or_any_member(self):
+        client = types.SimpleNamespace(pw_name="labclient", pw_gid=1001)
+        group = lambda *members, gid=998: types.SimpleNamespace(gr_gid=gid, gr_mem=list(members))
+        self.assertEqual(smoke.validate_pico_group(group(), client).gr_gid, 998)
+        for bad in (group("labclient"), group("labd"), group(gid=1001)):
+            with self.subTest(members=bad.gr_mem, gid=bad.gr_gid), self.assertRaises(smoke.SmokeError):
+                smoke.validate_pico_group(bad, client)
+        source = Path(SPEC.origin).read_text()
+        self.assertIn('for group in ("labd", "i2c", "dialout", "srrx-pico"):', source)
+        bootstrap = Path(SPEC.origin).with_name("guest_bootstrap.sh").read_text()
+        self.assertIn("groupadd -f --system srrx-pico\n", bootstrap)
+        self.assertNotIn("srrx-pico", next(l for l in bootstrap.splitlines() if "useradd" in l and "labclient" in l))
+
+    def test_open_records_must_reach_the_release_guard_exit_2(self):
+        show = "{ path=/usr/bin/python3 ; argv[]=/usr/bin/python3 -B /opt/srrx/deployment/deploy.py release-guard ; ignore_errors=no ; pid=812 ; code=exited ; status=%s }"
+        self.assertTrue(smoke.release_guard_exited_2(show % "2"))
+        # 216/GROUP: a missing SupplementaryGroups group fails before the guard ever runs.
+        for status in ("216", "216/GROUP", "20", "2/INT", "12"):
+            with self.subTest(status=status):
+                self.assertFalse(smoke.release_guard_exited_2(show % status))
 
     def test_missing_marker_or_passthrough_never_authorizes_guest_mutation(self):
         for marker in ({}, [], {**self.marker, "hardware_passthrough": True},
@@ -71,11 +96,57 @@ class ServiceBoundaryTests(unittest.TestCase):
                 smoke.assert_simulation(changed, safe=True)
 
     def test_no_poweroff_command_or_enable_command_is_issued(self):
-        source = Path(SPEC.origin).read_text()
-        self.assertNotIn('self.systemctl("enable"', source)
-        self.assertNotIn('self.systemctl("poweroff"', source)
-        self.assertNotIn('self.systemctl("start", "srrx-poweroff.service"', source)
+        # Every string constant reachable from any call, so list-form argv,
+        # concatenation and other spellings are covered, not three literals.
+        forbidden = {"enable", "poweroff", "reboot", "halt", "kexec"}
+        def bad(value):
+            words = {value, value.rsplit("/", 1)[-1], value.split(".", 1)[0]}
+            return bool(words & forbidden) or "srrx-poweroff" in value or re.search(
+                r"\bsystemctl\b.*\b(?:enable|poweroff|reboot|halt|kexec)\b", value) is not None
+        tree = ast.parse(Path(SPEC.origin).read_text())
+        calls = [node for node in ast.walk(tree) if isinstance(node, ast.Call)]
+        self.assertGreater(len(calls), 100)
+        for node in calls:
+            constants = [item.value for item in ast.walk(node) if isinstance(item, ast.Constant) and type(item.value) is str]
+            self.assertFalse(any(bad(value) for value in constants), ast.unparse(node)[:300])
+        for sample in ('["/usr/bin/systemctl", "enable", SIM_UNIT]', '"srrx-poweroff" + ".service"', '"/usr/sbin/poweroff"',
+                       '"systemctl poweroff"', '"reboot.target"'):
+            with self.subTest(sample=sample):
+                values = [item.value for item in ast.walk(ast.parse(sample)) if isinstance(item, ast.Constant)]
+                self.assertTrue(any(bad(value) for value in values))
         self.assertEqual(smoke.REQUIRED_STEPS[-1], "gui_handoff")
+
+
+class TripCauseTests(unittest.TestCase):
+    """Every trip disarms; fault/link-loss steps must prove their own cause."""
+    def runner(self, fault):
+        tripped = {"mode": "SIMULATION", "hardware_qualified": False,
+                   "pico": {"state": "TRIPPED", "mcp_reset": True},
+                   "policy": {"simulation": True, "armed": False, "fault": fault,
+                              "outputs": {"CHG_INHIBIT": True, "EN_LNA1": False}}}
+        guest = smoke.GuestSmoke.__new__(smoke.GuestSmoke)
+        guest.arm = guest.enable_lna = lambda: None
+        guest.rpc = lambda request, expected=True: {"ok": expected}
+        guest.status = lambda: copy.deepcopy(tripped)
+        def wait_status(predicate, timeout=10, context=""):
+            self.assertTrue(predicate(tripped))
+            return copy.deepcopy(tripped)
+        guest.wait_status = wait_status
+        return guest
+
+    def test_fault_step_requires_injected_input_as_first_fault(self):
+        with mock.patch.object(smoke.time, "sleep"):
+            self.assertEqual(self.runner("active-low fault: FAULT_LNA1").fault()["exact_fault"], "active-low fault: FAULT_LNA1")
+            for other in ("GPIO inputs stale", "pico_status_timeout", "active-low fault: FAULT_LABPORT", None):
+                with self.subTest(other=other), self.assertRaisesRegex(smoke.SmokeError, "different reason"):
+                    self.runner(other).fault()
+
+    def test_link_loss_step_requires_status_deadline_as_first_fault(self):
+        with mock.patch.object(smoke.time, "sleep"):
+            self.assertEqual(self.runner("pico_status_timeout").link_loss()["exact_fault"], "pico_status_timeout")
+            for other in ("GPIO inputs stale", "active-low fault: FAULT_LNA1", "owner lease expired", None):
+                with self.subTest(other=other), self.assertRaisesRegex(smoke.SmokeError, "different reason"):
+                    self.runner(other).link_loss()
 
 
 if __name__ == "__main__":

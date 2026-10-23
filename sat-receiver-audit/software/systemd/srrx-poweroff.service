@@ -1,7 +1,8 @@
 [Unit]
 Description=SR-RX qualified shutdown bridge
 After=srrx.service
-Requires=srrx.service
+Wants=srrx.service
+PartOf=srrx.service
 ConditionPathExists=/etc/srrx/acceptance.json
 
 [Service]
