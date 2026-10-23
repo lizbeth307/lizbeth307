@@ -16,6 +16,10 @@ on:
         description: 'Also run the full ARM64 QEMU Linux lab, finalize and repackage (about 1 h)'
         type: boolean
         default: false
+      refreeze_pcb:
+        description: 'If the design graphs changed, also re-place/re-route the DC_CORE PCB chain and re-pin its checks'
+        type: boolean
+        default: false
       archive_as:
         description: 'Directory name under verification/linux-attempts for the previously imported run'
         type: string
@@ -159,6 +163,28 @@ jobs:
           python3 verification/independent_netlist_check.py
           python3 pcb/prepare.py
           python3 pcb/prepare.py --check
+      - name: Re-freeze the DC_CORE starter and routed prototype
+        # Only on explicit request: places and routes the 71-part core again
+        # from the regenerated input, runs native DRC, then pins the prototype
+        # check to the new input and starter hashes and re-runs every check.
+        if: steps.compare.outputs.reproducible == 'false' && github.event_name == 'workflow_dispatch' && inputs.refreeze_pcb
+        run: |
+          python3 -m pip install --break-system-packages --disable-pip-version-check numpy scipy
+          python3 pcb/generate_layout.py
+          python3 pcb/generate_layout.py --check
+          python3 pcb/generate_routed.py
+          python3 - <<'EOF'
+          import hashlib, re
+          from pathlib import Path
+          check = Path("verification/pcb-prototype-review-check.py")
+          sha = lambda p: hashlib.sha256(Path(p).read_bytes()).hexdigest()
+          text = check.read_text(encoding="utf-8")
+          text = re.sub(r"FROZEN_INPUT_SHA256 = '[0-9a-f]{64}'", "FROZEN_INPUT_SHA256 = '%s'" % sha("pcb/generated/detector-core-input.json"), text)
+          text = re.sub(r"FROZEN_STARTER_SHA256 = '[0-9a-f]{64}'", "FROZEN_STARTER_SHA256 = '%s'" % sha("build/kicad/pcb-preparation/detector-core-placement.kicad_pcb"), text)
+          check.write_text(text, encoding="utf-8")
+          EOF
+          python3 verification/independent_pcb_check.py
+          python3 verification/pcb-prototype-review-check.py
       - name: Collect regenerated outputs
         if: always()
         run: |
