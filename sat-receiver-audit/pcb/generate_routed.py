@@ -172,7 +172,9 @@ class Router:
             direction=d;last=node
         self.track(name,last[2],self.point(run[:2]),self.point(last[:2]));self.track(name,0,self.point(path[-1][:2]),b)
     def route_net(self,name,forced=(),front_only=False):
-        pins=[key for key,pad in self.pad.items() if pad.GetNetname()==name]
+        # Sorted, not board-file order: KiCad orders saved items by random UUID,
+        # which would otherwise flip a->b route directions between runs.
+        pins=sorted(key for key,pad in self.pad.items() if pad.GetNetname()==name)
         if len(pins)<2:return
         parent={p:p for p in pins}
         def root(p):
