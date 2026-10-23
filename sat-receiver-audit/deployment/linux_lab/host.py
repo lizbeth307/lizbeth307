@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import shutil
 import stat
@@ -82,11 +83,17 @@ def overlay_record(qemu_img, base, image_sha256):
 
 
 def check_results(result):
-    """debugfs recreates guest symlinks; never follow guest-written links on the host."""
-    for path in [result, *result.rglob("*")]:
-        mode = path.lstat().st_mode
+    """debugfs recreates guest symlinks and modes; never follow a guest link or skip an unlistable directory."""
+    def unreadable(error):
+        raise ValueError("Unreadable guest results: " + str(error))
+    def regular(path):
+        mode = os.lstat(path).st_mode
         if not (stat.S_ISREG(mode) or stat.S_ISDIR(mode)):
-            raise ValueError("Guest results contain a symlink or special file: " + path.relative_to(result).as_posix())
+            raise ValueError("Guest results contain a symlink or special file: " + Path(path).relative_to(result).as_posix())
+    regular(result)  # the root itself first: os.walk would not report a linked root
+    for directory, dirs, files in os.walk(result, onerror=unreadable):
+        for name in dirs + files:
+            regular(os.path.join(directory, name))
 
 
 def prepare(args):

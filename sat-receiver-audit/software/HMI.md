@@ -14,6 +14,14 @@ Python 3.11+, Linux; PySide6 встановлюється окремо в опе
 PYTHONPATH=software:. python3 -m srrx.hmi --socket /tmp/srrx/control.sock --fullscreen
 ```
 
+Для dev-запуску з `--socket /tmp/srrx/control.sock` labd відмовляє в старті,
+якщо каталог сокета не належить його ефективному UID або доступний на запис
+групі чи іншим: інакше чужий власник міг би підмінити сокет і отримувати
+запити оператора. Застарілий `/tmp/srrx`, залишений іншим користувачем, треба
+спершу видалити. Новий каталог labd створює з правами 0700, тому консоль
+запускають від того самого користувача; у системній службі доступ дає група
+`/run/srrx` (`RuntimeDirectoryMode=0750`).
+
 Явна демонстрація без апаратних пристроїв:
 
 ```sh
@@ -69,9 +77,12 @@ labd, консоль бачить через `last_error` (ARM його очищ
 Без свіжого статусу labd банер показує `CONTROL UNKNOWN` і `MODE UNKNOWN`, а не
 OFF. Батарея, температури й стан Pico показуються лише тоді, коли labd
 повідомляє `pico_fresh=true` (поле `Engine.status()` з тією самою межею 500 мс,
-що й відмова ARM). `pico_fresh=false` дає `PICO STATUS STALE` і попередження, що
-ARM буде відхилено. Якщо labd поля не повідомляє, показники приховуються з
-`PICO FRESHNESS UNREPORTED`, без твердження про stale чи відмову ARM. В обох
+що й відмова ARM; поруч `pico_age_ms` — вік останнього прийнятого статусу Pico
+або null). `pico_fresh=false` дає `PICO STATUS STALE` і попередження з цим віком,
+що ARM буде відхилено. Якщо labd старішої ревізії поля не повідомляє, показники
+приховуються з `PICO FRESHNESS UNREPORTED`, без твердження про stale чи відмову
+ARM. Числа поза діапазоном float (валідні JSON int) показуються як недоступні,
+а не обривають рендер. В обох
 випадках захисний fault labd лишається видимим, але без свіжого Pico консоль
 ніколи не пише «ready for an explicit start». Помилка консолі виводиться окремим рядком `Console:` під
 захисним fault labd і не приховує його. Помилку зв'язку прибирає перший свіжий
@@ -113,6 +124,9 @@ HARDWARE. Якщо відстежуваний файл зник або пере�
 перечитується щотику. Кроки heartbeat (SIM capture, файл, location) незалежні:
 збій одного не зупиняє інші.
 
+Tracker і gpsd client отримують час від одного годинника: на Linux
+`CLOCK_BOOTTIME`, який рахує й suspend (без нього — monotonic). Після сну хоста
+старий fix не виглядає свіжим, а UTC приймача не виглядає стрибком часу.
 Файлова Location завжди позначена snapshot і не стає live GNSS. Ручні
 координати мають source=manual, live_fix=false та невідому uncertainty; ручний
 ввід передається tracker і відновлює live-оновлення. Лише tracker/gpsd визначає
@@ -184,14 +198,31 @@ ARM через справжній Engine (first-fault latch), HOLD під час
 provider, примітка Location за показаним джерелом, незалежні кроки
 heartbeat, прив'язка анотації до підтвердженого кадру, read-back підтверджень
 Bench, LOCK без діалогів і стійке попередження про зупинений worker із
-вимкненими командами вкладок. Тести справжнього stdio daemon, labrx subprocess
-і справжнього Engine виконуються лише на Linux/POSIX. Offscreen PNG та JSON
-звіту у [verification/hmi-views](../verification/hmi-views/) передують цій
-ревізії HMI: вони показують старі тексти банера й fault (наприклад, `CONTROL OFF`
-без зв'язку, без рядка `Console:`, без примітки Location і кнопки **Return to
-live position**) і старий набір тестів. Їх потрібно перегенерувати на Linux
-після внесення змін HMI та `Engine.status()`; до того вони не є записом
-перевірки поточного `hmi.py`.
+вимкненими командами вкладок, спільний suspend-aware годинник location, числа
+поза діапазоном float і ворота генератора знімків. Тести справжнього stdio
+daemon, labrx subprocess і справжнього Engine виконуються лише на Linux/POSIX.
+
+Offscreen PNG та JSON звіту у [verification/hmi-views](../verification/hmi-views/)
+передують цій ревізії HMI, доки їх не перегенеровано: вони показують старі
+тексти банера й fault (наприклад, `CONTROL OFF` без зв'язку, без рядка
+`Console:`, без примітки Location і кнопки **Return to live position**) і
+старий набір тестів. До перегенерації вони не є записом перевірки поточного
+`hmi.py`. Перегенерація на Linux:
+
+```sh
+python3 tools/render_hmi_views.py --output verification/hmi-views
+```
+
+Інструмент спершу запускає `software/tests/test_hmi.py` в окремому offscreen
+процесі й нічого не записує, якщо хоч один тест не пройшов або не виконано
+справжній offscreen render і закриття реального Qt worker. Потім він запускає
+справжнє вікно проти дочірнього `srrx.daemon --simulate --stdio`, бере
+seeded кадр `srrx.labrx --simulate` і модель `learning.demo`, робить один явний
+SIM ARM+HOLD, знімає шість сторінок у стані READY/CONTROL ARMED, закриває
+консоль (DISARM) і лише тоді кодує PNG. `report.json` записується останнім.
+Запис чинний лише тоді, коли `hmi_sha256` у ньому дорівнює SHA256 поточного
+`software/srrx/hmi.py`.
+
 Натискання в рукавицях, сонячне освітлення, DPI/орієнтація дисплея, latency
 на Q6A, фізичні клавіші/енкодери/VEML7700 ще потребують апаратного приймання.
 Розмір кнопок/контраст і scroll закладені в UI, але польових вимірів немає.

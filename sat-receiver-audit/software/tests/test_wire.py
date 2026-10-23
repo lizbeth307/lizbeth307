@@ -129,6 +129,23 @@ class WireTests(unittest.TestCase):
             self.assertEqual(decoder.feed(b"@" + b"x" * 40 + good), [frame(p={"note": "a@b@c@d"})])
         self.assertEqual(decoder.buffered_bytes, 0)
 
+    def test_suffix_recovery_budget_is_shared_by_every_line_of_one_feed(self):
+        crc_bytes = [0]
+        def counting(data):
+            crc_bytes[0] += len(data)
+            return crc16_ccitt_false(data)
+        hostile = (b"@" * 40 + b"|0000\n") * 11  # One 506-byte UART read of short hostile lines.
+        decoder = FrameDecoder()
+        with patch("srrx.wire.crc16_ccitt_false", side_effect=counting):
+            self.assertEqual(decoder.feed(hostile + encode_frame(frame())), [frame()])
+            # First parses (<= the bytes fed) plus one shared 1024-byte suffix budget;
+            # a per-line budget cost 8580 CRC bytes here.
+            self.assertLessEqual(crc_bytes[0], len(hostile) + len(encode_frame(frame())) + 2 * MAX_FRAME_BYTES)
+            crc_bytes[0] = 0
+            # The budget is per feed(): the next read recovers a truncated prefix again.
+            self.assertEqual(decoder.feed(b"@" + b"x" * 40 + encode_frame(frame())), [frame()])
+        self.assertEqual(decoder.errors, 12)
+
     def test_invalid_utf8_and_json_recover(self):
         bad = [b'\xff', b'{', b'{}junk', b'[]', b'null',
                b'{"v":1,"t":"HB","s":0,"q":0,"p":{]}}']

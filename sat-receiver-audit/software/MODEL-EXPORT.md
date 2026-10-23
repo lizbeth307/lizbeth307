@@ -72,6 +72,8 @@ Static quantization бере діапазони активацій лише з t
 
 Тестовий synthetic few-shot набір: 12 annotations, 3 класи, 9 training/calibration records і 3 незалежні validation records, 9 порівнюваних distances. Це перевірка чисельного export, не точність польового розпізнавання.
 
+Рядки range probes виміряно чинним `validate_cpu` на збережених artifacts із `software/examples/onnx-simulation`. Збережені там `float-report.json` і `int8-report.json` створила попередня версія коду: у них немає полів `range_probe_*` та `int8_weights`, а `mixed_float_ops` записано константою, не виміряно з графа. Тому ці три рядки таблиці у збережених звітах не знайти; після регенерації на Linux звіти міститимуть ці поля, а їхні байти зміняться.
+
 | Показник | Float32 ONNX CPU | Signed INT8 QDQ ONNX CPU |
 |---|---:|---:|
 | Max absolute distance error | 2.1397×10⁻⁸ | 0.00819412 |

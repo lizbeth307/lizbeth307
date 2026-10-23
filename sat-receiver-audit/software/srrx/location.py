@@ -1,6 +1,7 @@
 """Receive-only, bounded GNSS location tracking; no city or transmitter lookup.
 
-All public timestamps are caller-supplied monotonic integer milliseconds.
+All public timestamps are caller-supplied monotonic integer milliseconds, from
+one clock per tracker; on Linux a suspend-aware CLOCK_BOOTTIME (srrx.hmi uses it).
 Receiver UTC is checked separately and never sets the system clock.
 """
 import calendar
@@ -210,7 +211,9 @@ class LocationTracker:
         self._gsa = {}
         self._gst = None
         self._candidate = {}
-        self._active_fault = None
+        self._zda_candidate = None
+        # Per source: an accepted fix clears only its own source's fault.
+        self._active_fault = {"gpsd": None, "nmea": None}
         self.last_error = None
         self.rejected_count = 0
         self.ignored_count = 0
@@ -231,7 +234,7 @@ class LocationTracker:
             raise ValueError("unknown GNSS source")
         self._healthy[source] = False
         self._good_3d[source] = 0
-        self.last_error = self._active_fault = str(reason)[:64]
+        self.last_error = self._active_fault[source] = str(reason)[:64]
         self.rejected_count += 1
         return False
 
@@ -257,7 +260,7 @@ class LocationTracker:
             self._fixes.pop(source, None)
             self._candidate.pop(source, None)
             if source == "nmea":
-                self._nmea_date = None
+                self._nmea_date = self._zda_candidate = None
         return self.invalidate(source, reason)
 
     def _record(self, source, lat, lon, now_ms, **extra):
@@ -318,7 +321,7 @@ class LocationTracker:
         self._last_good = record
         self._healthy[source] = True
         self._candidate.pop(source, None)
-        self._active_fault = None
+        self._active_fault[source] = None
         self._good_3d[source] = self._good_3d[source] + 1 if record["mode"] == 3 else 0
         record["utc_verified"] = (self.utc_reference is not None and record["utc_s"] is not None
                                   and self._good_3d[source] >= 3 and not record["leap_second"])
@@ -455,7 +458,24 @@ class LocationTracker:
                 # Only the same <=120 s anchor window that may date GGA/RMC is checked.
                 if (previous and now_ms - previous[1] <= 120000
                         and abs(epoch - previous[0] - (now_ms - previous[1]) / 1000) > self.utc_tolerance_s):
-                    raise ValueError("NMEA_DATE_JUMP")
+                    # As for positions: one jump never moves the anchor, but three
+                    # distinct ZDAs consistent on one new timeline retire it. Accepted
+                    # GGAs keep refreshing the old anchor, so a GGA+ZDA stream would
+                    # otherwise never follow a receiver date correction.
+                    candidate = self._zda_candidate
+                    delta = None if candidate is None else epoch - candidate[0]
+                    if delta is None or abs(delta) > 0.000001:
+                        consistent = delta is not None and delta > 0 and abs(
+                            delta - (now_ms - candidate[1]) / 1000) <= self.utc_tolerance_s
+                        candidate = self._zda_candidate = (epoch, now_ms, candidate[2] + 1 if consistent else 1)
+                    if candidate[2] < 3:
+                        raise ValueError("NMEA_DATE_JUMP")
+                    # The next NMEA position is a first fix on the new date (UTC/3D restart).
+                    self._fixes.pop("nmea", None)
+                    self._candidate.pop("nmea", None)
+                    self._zda_candidate, self._nmea_date = None, (epoch, now_ms)
+                    return self.invalidate("nmea", "NMEA_DATE_JUMP")
+                self._zda_candidate = None
                 self._nmea_date = (epoch, now_ms)
                 self.ignored_count += 1
                 return False
@@ -646,9 +666,12 @@ class LocationTracker:
             record = max(fallback, key=lambda value: (value["received_ms"], value["origin"] == "manual")) if fallback else None
             source = "manual" if record and record["origin"] == "manual" else "last_good" if record else "none"
             fresh = False
-            # last_error is history; only an unrecovered fault explains a fallback.
-            reason = ("MONOTONIC_TIME_REVERSED" if self._clock_fault else
-                      self._active_fault or ("MANUAL_FALLBACK" if source == "manual" else "STALE" if record else "NO_LOCATION"))
+            # last_error is history; only an unrecovered fault explains a fallback:
+            # first that of the fallback record's own source, else another source's.
+            faults = [self._active_fault[name] for name in (record and record["origin"], "gpsd", "nmea")
+                      if self._active_fault.get(name)]
+            reason = ("MONOTONIC_TIME_REVERSED" if self._clock_fault else faults[0] if faults else
+                      "MANUAL_FALLBACK" if source == "manual" else "STALE" if record else "NO_LOCATION")
         result = {"available": record is not None, "source": source,
                   "origin": record["origin"] if record else None,
                   "fresh": fresh, "live_fix": fresh, "age_ms": None,

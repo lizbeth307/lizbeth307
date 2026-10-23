@@ -12,8 +12,6 @@ import tempfile
 import os
 import zipfile
 import sys
-from lxml import html, etree
-import fitz
 
 BASE = Path(__file__).resolve().parents[1]
 
@@ -44,6 +42,7 @@ def section_id(path):
 
 
 def markdown(path):
+    from lxml import html, etree
     p = BASE / path
     rendered = subprocess.run(["pandoc", "-f", "gfm", "-t", "html5", "--wrap=none"], input=p.read_text(encoding="utf-8"), encoding="utf-8", capture_output=True, check=True).stdout
     fragment = html.fragment_fromstring(rendered, create_parent="div")
@@ -166,12 +165,13 @@ CORE = [
 INCLUDED = {p for _, p in CORE}
 
 
-def main():
-    sys.path[:0] = [str(BASE / "software"), str(BASE / "tools")]
+def release_gates(base):
+    """Every pre-archive gate: current, bound and passing reports, else SystemExit."""
     from srrx.commissioning import project_hashes
     from finalize_linux_lab import bound_sources
+    report = lambda relative: json.loads((base / relative).read_text(encoding="utf-8"))
     software = report("verification/software-tests.json")
-    graphs, sources = project_hashes(BASE)
+    graphs, sources = project_hashes(base)
     if (software.get("host_regression_status") != "PASS" or software.get("graph_sha256") != graphs
             or software.get("source_sha256") != sources
             or software.get("test_environment", {}).get("internet_sockets_denied") is not True):
@@ -182,67 +182,77 @@ def main():
         raise SystemExit("Package only after Linux and module-lab PASS")
     lab_binding = report("verification/linux-lab/source-binding.json")
     for relative, expected in lab_binding["source_sha256"].items():
-        if hashlib.sha256((BASE / relative).read_bytes()).hexdigest() != expected:
+        if hashlib.sha256((base / relative).read_bytes()).hexdigest() != expected:
             raise SystemExit("Linux execution result is stale: " + relative)
-    unbound = sorted(bound_sources(BASE) - set(lab_binding["source_sha256"]))
+    unbound = sorted(bound_sources(base) - set(lab_binding["source_sha256"]))
     if unbound:
         raise SystemExit("Linux execution result does not cover current sources: " + ", ".join(unbound[:12]))
     for relative, key in (("verification/module-lab/report.json", "module_report_sha256"),
                           ("verification/linux-lab/report.json", "linux_report_sha256")):
-        if hashlib.sha256((BASE / relative).read_bytes()).hexdigest() != lab_binding[key]:
+        if hashlib.sha256((base / relative).read_bytes()).hexdigest() != lab_binding[key]:
             raise SystemExit("Linux/module report binding changed: " + relative)
-    models = BASE / "deployment/module_lab"
+    models = base / "deployment/module_lab"
     if module_report["inventory_sha256"] != hashlib.sha256((models / "inventory.json").read_bytes()).hexdigest():
         raise SystemExit("Module inventory result is stale")
     if module_report["model_sha256"] != {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(models.glob("*.py"))}:
         raise SystemExit("Module models changed after their run")
     for relative, expected in module_report["coverage"]["graph_sha256"].items():
-        if hashlib.sha256((BASE / relative).read_bytes()).hexdigest() != expected:
+        if hashlib.sha256((base / relative).read_bytes()).hexdigest() != expected:
             raise SystemExit("Module graph result is stale: " + relative)
     verification = report("verification/validation.json")
     if verification["graph_netlist_comparison"] != "PASS" or verification["erc_counts"]:
         raise SystemExit("Package only after graph comparison and ERC with no reported violations")
-    schematics = {p.relative_to(BASE).as_posix(): sha(p) for p in sorted((BASE / "build/kicad").glob("*.kicad_sch"))}
+    schematics = {p.relative_to(base).as_posix(): sha(p) for p in sorted((base / "build/kicad").glob("*.kicad_sch"))}
     if verification["sha256"] != schematics:
         raise SystemExit("CAD verification is stale: validated schematics differ from build/kicad")
     inputs = {r["file"]: r["sha256"] for r in verification.get("input_files", [])}
-    if set(inputs) != {"verification/erc.json", "verification/netlist.xml"} or any(sha(BASE / f) != h for f, h in inputs.items()):
+    if set(inputs) != {"verification/erc.json", "verification/netlist.xml"} or any(sha(base / f) != h for f, h in inputs.items()):
         raise SystemExit("CAD verification is not bound to the current ERC/netlist; rerun tools/run_checks.py")
     # Every shipped CAD/PCB PASS report must be bound to the files it checked.
-    design = {p.relative_to(BASE).as_posix(): sha(p) for p in sorted((BASE / "design").glob("E[1-5].json"))}
+    design = {p.relative_to(base).as_posix(): sha(p) for p in sorted((base / "design").glob("E[1-5].json"))}
     invariants = report("verification/electrical-invariants.json")
     if invariants.get("status") != "PASS" or invariants.get("input_sha256") != design:
         raise SystemExit("Electrical invariant report is stale or failed; rerun tools/run_checks.py")
     independent = report("verification/independent-netlist-review.json")
-    if (independent.get("passed") is not True or independent.get("netlist_sha256") != sha(BASE / "verification/netlist.xml")
+    if (independent.get("passed") is not True or independent.get("netlist_sha256") != sha(base / "verification/netlist.xml")
             or independent.get("graph_sha256") != {Path(f).name: h for f, h in design.items()}):
         raise SystemExit("Independent netlist review is stale or failed; rerun tools/run_checks.py")
-    detector = subprocess.run([sys.executable, "-X", "utf8", str(BASE / "design/E4-detector-analysis.py"), "--json"], cwd=BASE, encoding="utf-8", capture_output=True, check=True).stdout
+    detector = subprocess.run([sys.executable, "-X", "utf8", str(base / "design/E4-detector-analysis.py"), "--json"], cwd=base, encoding="utf-8", capture_output=True, check=True).stdout
     if {k: v for k, v in json.loads(detector).items() if k != "design_file"} != {k: v for k, v in report("verification/dc-detector-analysis.json").items() if k != "design_file"}:
         raise SystemExit("DC-detector analysis report is stale; rerun tools/run_checks.py")
     starter = report("verification/pcb-review.json")
-    if (starter.get("passed") is not True or starter["board_sha256"] != sha(BASE / starter["board_file"])
-            or starter["input_sha256"] != sha(BASE / starter["input_file"]) or starter["drc"]["raw_sha256"] != sha(BASE / starter["drc"]["raw_file"])):
+    if (starter.get("passed") is not True or starter["board_sha256"] != sha(base / starter["board_file"])
+            or starter["input_sha256"] != sha(base / starter["input_file"]) or starter["drc"]["raw_sha256"] != sha(base / starter["drc"]["raw_file"])):
         raise SystemExit("PCB placement review is stale or failed; rerun pcb/generate_layout.py")
-    routed_board = BASE / "build/kicad/pcb-prototype/detector-core-routed-prototype.kicad_pcb"
+    routed_board = base / "build/kicad/pcb-prototype/detector-core-routed-prototype.kicad_pcb"
     proto = report("verification/pcb-prototype-review.json")
     drc = proto.get("drc", {})
     if (proto.get("status") != "ROUTED_INTERNAL_PROTOTYPE_NOT_FOR_FABRICATION" or proto.get("published_board") is not True
-            or proto.get("board_sha256") != sha(routed_board) or drc.get("raw_sha256") != sha(BASE / "build/kicad/pcb-prototype/drc-raw.json")
+            or proto.get("board_sha256") != sha(routed_board) or drc.get("raw_sha256") != sha(base / "build/kicad/pcb-prototype/drc-raw.json")
             or drc.get("exit_code") != 0 or any(drc["sections"].values()) or drc["ignored_checks"] or proto["source_pad_audit"]["passed"] is not True):
         raise SystemExit("Routed prototype review is stale or not clean; rerun pcb/generate_routed.py")
-    if subprocess.run([sys.executable, str(BASE / "tools/build_firmware.py"), "--check"], cwd=BASE).returncode:
+    if subprocess.run([sys.executable, str(base / "tools/build_firmware.py"), "--check"], cwd=base).returncode:
         raise SystemExit("Firmware packages are stale; rerun tools/build_firmware.py")
-    pdf = BASE / "build/kicad/sr-rx-v2.pdf"
+    pdf = base / "build/kicad/sr-rx-v2.pdf"
     if not pdf.read_bytes().rstrip().endswith(b"%%EOF"):
         raise SystemExit("PDF is incomplete; regenerate it before packaging")
     # The PDF has no hash of its own in validation.json; its export record binds it.
     export = report("verification/pdf-export.json")
     if export.get("pdf") != {"file": "build/kicad/sr-rx-v2.pdf", "sha256": sha(pdf)} or export.get("kicad_sch_sha256") != schematics:
         raise SystemExit("Schematic PDF is not the export of the current verified schematics; run tools/run_checks.py --export")
-    missing_core = [p for _, p in CORE if not (BASE / p).is_file()]
+    missing_core = [p for _, p in CORE if not (base / p).is_file()]
     if missing_core:
         raise SystemExit("Missing CORE documents: " + ", ".join(missing_core))
+    return {"starter": starter, "proto": proto, "pdf": pdf}
+
+
+def main():
+    sys.path[:0] = [str(BASE / "software"), str(BASE / "tools")]
+    gates = release_gates(BASE)
+    starter, proto, pdf = gates["starter"], gates["proto"], gates["pdf"]
+    drc = proto["drc"]
+    from lxml import html, etree
+    import fitz
     source_zip, manifest = archive()
     generated = report("build/kicad/generation-manifest.json")
     nav = [f'<li><a href="#{section_id(p)}">{escape_html.escape(title)}</a></li>' for title, p in CORE]

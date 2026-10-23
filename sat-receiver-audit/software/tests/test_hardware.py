@@ -1,9 +1,10 @@
 import copy
+import json
 import unittest
 from unittest.mock import patch
 
 from srrx.hardware import (ADDRESSES, DEFVAL, GPINTEN, GPIO, GPPU, INTCON, IOCON, IODIR, IPOL, OLAT,
-                           HardwareError, LinuxHardware, SimHardware, load_mapping)
+                           TRACE_LIMIT, HardwareError, LinuxHardware, SimHardware, load_mapping)
 
 
 class FakeBus:
@@ -61,6 +62,19 @@ class HardwareTests(unittest.TestCase):
             hardware.read(0x41, 0, 2)
         with self.assertRaises(HardwareError):
             hardware.apply_outputs({"TX_ENABLE": True})
+
+    def test_trace_keeps_only_the_newest_events_and_stays_a_list(self):
+        hardware = SimHardware()
+        hardware.initialize_safe()
+        before = len(hardware.trace)
+        hardware.apply_outputs({"EN_LNA1": True})
+        self.assertEqual([e["event"] for e in hardware.trace[before:]], ["outputs"])  # Callers slice it.
+        for _ in range(TRACE_LIMIT * 4):
+            hardware.all_off()
+        self.assertEqual(len(hardware.trace), TRACE_LIMIT)
+        self.assertEqual(hardware.trace[-1]["event"], "all_off")
+        self.assertNotIn("initialize_safe", [e["event"] for e in hardware.trace])
+        json.dumps(hardware.trace)  # Still plain JSON-serialisable diagnostics.
 
     def test_unaccepted_physical_mode_never_opens_bus(self):
         hardware = LinuxHardware("/dev/fake", self.mapping)

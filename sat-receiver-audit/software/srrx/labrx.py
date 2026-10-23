@@ -319,7 +319,8 @@ def main(argv=None):
         if args.hardware:
             from .commissioning import load_acceptance
             from .daemon import request_once
-            accepted = load_acceptance(args.acceptance, args.project)
+            # Runtime use: an RTC behind accepted_at does not block; floor/ordering still apply.
+            accepted = load_acceptance(args.acceptance, args.project, clock_check=False)
             if args.driver_record is None:
                 raise ValueError("Hardware driver record required")
             record = load_driver_record(args.driver_record, args.project, accepted)

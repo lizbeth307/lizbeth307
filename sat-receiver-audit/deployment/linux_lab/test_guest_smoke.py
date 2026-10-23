@@ -4,6 +4,7 @@ import copy
 import importlib.util
 from pathlib import Path
 import re
+import types
 import unittest
 from unittest import mock
 
@@ -28,6 +29,27 @@ class GuestBoundaryTests(unittest.TestCase):
                         {"distribution": {"ID": "ubuntu", "VERSION_ID": "22.04", "VERSION_CODENAME": "jammy"}}):
             with self.subTest(changes=changes), self.assertRaises(smoke.SmokeError):
                 smoke.validate_guest_facts(dict(self.facts, **changes), self.marker)
+
+    def test_pico_group_must_exist_without_labclient_or_any_member(self):
+        client = types.SimpleNamespace(pw_name="labclient", pw_gid=1001)
+        group = lambda *members, gid=998: types.SimpleNamespace(gr_gid=gid, gr_mem=list(members))
+        self.assertEqual(smoke.validate_pico_group(group(), client).gr_gid, 998)
+        for bad in (group("labclient"), group("labd"), group(gid=1001)):
+            with self.subTest(members=bad.gr_mem, gid=bad.gr_gid), self.assertRaises(smoke.SmokeError):
+                smoke.validate_pico_group(bad, client)
+        source = Path(SPEC.origin).read_text()
+        self.assertIn('for group in ("labd", "i2c", "dialout", "srrx-pico"):', source)
+        bootstrap = Path(SPEC.origin).with_name("guest_bootstrap.sh").read_text()
+        self.assertIn("groupadd -f --system srrx-pico\n", bootstrap)
+        self.assertNotIn("srrx-pico", next(l for l in bootstrap.splitlines() if "useradd" in l and "labclient" in l))
+
+    def test_open_records_must_reach_the_release_guard_exit_2(self):
+        show = "{ path=/usr/bin/python3 ; argv[]=/usr/bin/python3 -B /opt/srrx/deployment/deploy.py release-guard ; ignore_errors=no ; pid=812 ; code=exited ; status=%s }"
+        self.assertTrue(smoke.release_guard_exited_2(show % "2"))
+        # 216/GROUP: a missing SupplementaryGroups group fails before the guard ever runs.
+        for status in ("216", "216/GROUP", "20", "2/INT", "12"):
+            with self.subTest(status=status):
+                self.assertFalse(smoke.release_guard_exited_2(show % status))
 
     def test_missing_marker_or_passthrough_never_authorizes_guest_mutation(self):
         for marker in ({}, [], {**self.marker, "hardware_passthrough": True},

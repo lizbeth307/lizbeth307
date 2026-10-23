@@ -13,6 +13,7 @@ import tarfile
 import tempfile
 import types
 import unittest
+from unittest import mock
 
 HERE = Path(__file__).resolve().parent
 BOOTSTRAP = HERE / "guest_bootstrap.sh"
@@ -104,6 +105,21 @@ class HostBoundaryTests(unittest.TestCase):
             os.mkfifo(self.root / "pipe.log")
             with self.assertRaisesRegex(ValueError, "pipe.log"):
                 host.check_results(self.root)
+
+    def test_unlistable_guest_directory_is_refused_not_skipped(self):
+        (self.root / "module-lab").mkdir()
+        (self.root / "summary.json").write_text("{}\n")
+        real = os.scandir
+        # debugfs re-applies guest modes (0311: traversable, not listable); injected so root also runs it.
+        for blocked in (self.root / "module-lab", self.root):
+            def scandir(path, blocked=blocked):
+                if Path(path) == blocked:
+                    raise PermissionError(13, "Permission denied", str(path))
+                return real(path)
+            with self.subTest(blocked=blocked.name), mock.patch.object(os, "scandir", scandir):
+                with self.assertRaisesRegex(ValueError, "Unreadable guest results"):
+                    host.check_results(self.root)
+        host.check_results(self.root)
 
     @unittest.skipUnless(os.name == "posix" and Path("/bin/sh").exists(), "POSIX shell fake qemu-img required")
     def test_base_overlay_requires_written_summary_exit0_and_locked_chain(self):

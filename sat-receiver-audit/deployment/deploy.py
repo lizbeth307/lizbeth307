@@ -133,10 +133,11 @@ def udev_rules(config):
         alias = device["path"][5:]
         rules.append(f'SUBSYSTEM=="usb", ENV{{DEVTYPE}}=="usb_device", ATTR{{idVendor}}=="{device["vid"]}", ATTR{{idProduct}}=="{device["pid"]}", ATTR{{serial}}=="{device["serial"]}", GROUP="lab", MODE="0660", SYMLINK+="{alias}", TAG+="systemd"')
     pico = config["pico"]
+    # labd holds the Pico tty exclusively (TIOCEXCL + flock); ModemManager must not probe it with AT commands.
     if pico["kind"] == "platform":
-        rules.append(f'SUBSYSTEM=="tty", KERNELS=="{pico["kernel_parent"]}", GROUP="{PICO_GROUP}", MODE="0660", SYMLINK+="lab/pico", TAG+="systemd"')
+        rules.append(f'SUBSYSTEM=="tty", KERNELS=="{pico["kernel_parent"]}", GROUP="{PICO_GROUP}", MODE="0660", ENV{{ID_MM_DEVICE_IGNORE}}="1", SYMLINK+="lab/pico", TAG+="systemd"')
     else:
-        rules.append(f'SUBSYSTEM=="tty", ATTRS{{idVendor}}=="{pico["vid"]}", ATTRS{{idProduct}}=="{pico["pid"]}", ATTRS{{serial}}=="{pico["serial"]}", GROUP="{PICO_GROUP}", MODE="0660", SYMLINK+="lab/pico", TAG+="systemd"')
+        rules.append(f'SUBSYSTEM=="tty", ATTRS{{idVendor}}=="{pico["vid"]}", ATTRS{{idProduct}}=="{pico["pid"]}", ATTRS{{serial}}=="{pico["serial"]}", GROUP="{PICO_GROUP}", MODE="0660", ENV{{ID_MM_DEVICE_IGNORE}}="1", SYMLINK+="lab/pico", TAG+="systemd"')
     return "\n".join(rules) + "\n"
 
 
@@ -381,7 +382,8 @@ def release_guard(devices, acceptance, release, build_manifest, cache):
         raise DeploymentError("target doctor blocked: " + "; ".join(report["issues"]))
     sys.path.insert(0, str(PROJECT / "software"))
     from srrx.commissioning import load_acceptance
-    accepted = load_acceptance(acceptance, PROJECT)
+    # Runs at every start: an offline RTC behind accepted_at must not block; floor/ordering still apply.
+    accepted = load_acceptance(acceptance, PROJECT, clock_check=False)
     record = load(release)
     keys(record, ("schema_version", "status", "hardware_unit_id", "device_bindings_sha256", "build_manifest_sha256", "source_lock_sha256", "profile", "base_image_sha256", "offline_snapshot"), "release")
     if (record["schema_version"] != 1 or record["status"] != "REVIEWED" or record["profile"] != "controller"

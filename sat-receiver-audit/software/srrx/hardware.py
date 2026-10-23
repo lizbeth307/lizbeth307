@@ -24,6 +24,17 @@ IODIR, IPOL, GPINTEN, DEFVAL, INTCON, IOCON, GPPU = 0x00, 0x02, 0x04, 0x06, 0x08
 INTF, INTCAP, GPIO, OLAT = 0x0E, 0x10, 0x12, 0x14
 RESET_CONFIG = b"\xff\xff" + bytes(12)  # IODIR..GPPU after a real RESET
 I2C_SLAVE = 0x0703
+TRACE_LIMIT = 256
+
+
+class _Trace(list):
+    """Diagnostic event log keeping the newest TRACE_LIMIT entries (MemoryMax=128M).
+
+    A list, not a deque: callers slice, compare and JSON-encode it.
+    """
+    def append(self, item):
+        super().append(item)
+        del self[:-TRACE_LIMIT]
 
 
 def load_mapping(path=None):
@@ -84,7 +95,7 @@ class SimHardware:
         self.outputs = _safe(self.mapping)
         self.inputs = {net: net.startswith(("FAULT_", "FLT_", "DCS_")) or net == "SLED_DET"
                        for net in self.mapping["inputs"]}
-        self.trace = []
+        self.trace = _Trace()
         self.initialized = False
         self.faulted = False
         self.closed = False

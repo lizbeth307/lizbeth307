@@ -53,7 +53,7 @@ are RP2040 GPIO, with physical Pico header numbers in parentheses.
 | Function | GPIO (header) | State and polarity |
 |---|---|---|
 | MCP reset actuator | GP17 (22) | HIGH asserts all three MCP pin18 RESET low; actively LOW releases |
-| Display eFuse | GP16 (21) | HIGH enables with Q6A 3V3 present in SAFE/WARMING/CONFIGURING/ACTIVE/TRIPPED; LOW in SHUTTING_DOWN/OFF, at panel NTC >=68 C or invalid/stale, re-enabled at <=60 C |
+| Display eFuse | GP16 (21) | HIGH enables with Q6A 3V3 present in SAFE/WARMING/CONFIGURING/ACTIVE/TRIPPED; LOW in SHUTTING_DOWN/OFF, after a CASE_HOT or FAN_STALLED trip until the next accepted ARM or physical restart, at panel NTC >=68 C or invalid/stale, re-enabled at <=60 C |
 | SAFE_BOOT | GP15 (20) | HIGH asserts; input/high impedance while Q6A is off |
 | Noctua high-side driver | GP18 (24) | HIGH enables DC power; no fan PWM |
 | Delta two-wire blower | GP19 (25) | HIGH enables DC power |
@@ -111,8 +111,12 @@ remain below half the ticks period; a reversed/ambiguous clock fails closed.
    of Q6A, hot panel/case, tach stall, bad configuration or host TRIP asserts
    reset and restores full cooling. Low battery while armed is left to the host
    dwell, but never masks the panel/case/tach trips. DISP12 stays on in TRIPPED
-   so the console can show the fault and RECOVER + ARM, unless Q6A is off or the
-   panel is hot. The trip rotates the nonce and
+   so the console can show the fault and RECOVER + ARM, unless Q6A is off, the
+   panel is hot, or the trip was CASE_HOT or FAN_STALLED. Those two remove the
+   display load until a new ARM is accepted (which itself needs case <=60 C and
+   no stall) or a physical restart; a later host TRIP relabelling the fault does
+   not relight it. With the console dark, recover through the local CLI
+   (`labctl recover` or `labctl arm`). The trip rotates the nonce and
    clears accepted host sequence/HB state. Old-session frames and duplicate or
    decreasing sequences cannot refresh HB. Sequence numbers never wrap.
 6. New-session heartbeat alone never recovers power. A new explicit, qualified
@@ -138,7 +142,7 @@ The bounded subset of STACK sections 5.1/5.6 is implemented as follows:
 | Battery low with live HB | Host implements the INA228/Linux graceful shutdown policy; this fallback does not replace it |
 | Physical button | 30 ms debounce; short release emits POWER_BUTTON, 1.5 s hold requests graceful shutdown |
 | Restart after OFF | Physical button edge and battery >=13.6 V clear software latch; remote ARM alone cannot restart |
-| Host maximum SoC temperature | Fan on at60 C, off at50 C; missing/nonfinite value or stale HB forces full cooling |
+| Host maximum SoC temperature | In hardware mode labd sends `soc_temp_c` in every HB: the hottest Linux thermal zone in C, 0.1 C steps, re-read at most once a second (`software/PROTOCOL.md`). Fan on at60 C, off at50 C. labd omits the field when a zone is unreadable or out of range and in simulation; a missing/nonfinite value or stale HB forces full cooling (fan on) |
 | Panel NTC | Blower on at45 C, off at40 C; invalid sensor forces full cooling |
 | Fan tach | Ignore while off and first2 s on; no edge for >2 s thereafter is FAN_STALLED |
 
@@ -245,7 +249,9 @@ The tests exercise ARM gates, exact deadline edges, replay/session rejection,
 sensor/clock faults, shutdown/UV behavior, ADC record corruption, NTC reference
 points, GPIO polarity/order, short UART writes, ticks wrap and IMU stale recovery.
 `test_pico_main.py` drives the real `main.run()` loop with injected `machine`/`time`
-(TRIP diagnostics sent as EVENT, GP8 high-Z, display policy) and checks that HMI
+(TRIP diagnostics sent as EVENT, GP8 high-Z, GP16 level checked against the model
+state at each write; every sleep counts, so an early exception fails instead of
+hanging) and checks that HMI
 key-bus errors and lux failures stay separate.
 Actual GPIO, ADC accuracy, interrupt latency, UART timing and watchdog reset
 behavior require device tests and remain unqualified.

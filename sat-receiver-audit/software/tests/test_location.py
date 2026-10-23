@@ -356,11 +356,40 @@ class NmeaTrackingTests(unittest.TestCase):
         tracker = LocationTracker()
         self.assertEqual(epoch(0, 0) + epoch(1, 1000), 2)
         accepted = [epoch(61 + step, 1000 + step * 1000) for step in range(1, 7)]
-        self.assertEqual(accepted, [0, 0, 0, 1, 1, 1])
+        # The third consistent ZDA retires the old anchor before that epoch's RMC,
+        # which is then a first fix, still checked against the last good position.
+        self.assertEqual(accepted, [0, 0, 1, 1, 1, 1])
         status = tracker.status(7000)
         self.assertTrue(status["fresh"])
         self.assertEqual(status["utc"], "2026-10-20T12:01:07.000Z")
         self.assertIsNone(status["reason"])
+
+    def test_gga_zda_stream_follows_a_receiver_date_correction_after_three_zdas(self):
+        def epoch(second, now, day):
+            stamp = "1200%02d.000" % second
+            return tracker.ingest_nmea(nmea("GNZDA,%s,%02d,10,2026,00,00" % (stamp, day)) + gga(stamp), now)
+        tracker = LocationTracker()
+        self.assertEqual(epoch(0, 0, 20) + epoch(1, 1000, 20), 2)
+        # Date-only correction: time of day continues, ZDA now reports the 21st.
+        accepted = [epoch(1 + step, 1000 + step * 1000, 21) for step in range(1, 7)]
+        self.assertEqual(accepted, [1, 1, 1, 1, 1, 1])  # Positions keep their own timeline.
+        status = tracker.status(7000)
+        self.assertTrue(status["fresh"])
+        self.assertEqual(status["utc"], "2026-10-21T12:00:07.000Z")  # Not locked to the old day.
+        rejected = tracker.rejected_count
+        epoch(8, 8000, 21)
+        self.assertEqual(tracker.rejected_count, rejected)  # No NMEA_DATE_JUMP every second.
+
+    def test_single_or_unstable_zda_date_jumps_never_move_the_anchor(self):
+        def epoch(second, now, day):
+            stamp = "1200%02d.000" % second
+            return tracker.ingest_nmea(nmea("GNZDA,%s,%02d,10,2026,00,00" % (stamp, day)) + gga(stamp), now)
+        tracker = LocationTracker()
+        epoch(0, 0, 20)
+        for step, day in enumerate((21, 20, 22, 20, 21, 20, 23, 24), 1):
+            self.assertEqual(epoch(step, step * 1000, day), 1)
+        self.assertEqual(tracker.status(8000)["utc"], "2026-10-20T12:00:08.000Z")
+        self.assertEqual(tracker.last_error, "NMEA_DATE_JUMP")
 
     def test_undated_gga_stream_recovers_after_outage_longer_than_half_a_day(self):
         tracker = LocationTracker()
@@ -440,6 +469,20 @@ class SelectionAndClockTests(unittest.TestCase):
         self.assertEqual(tracker.status(6000)["reason"], "STALE")
         tracker.ingest_gpsd(tpv(7, mode=1), 7000)
         self.assertEqual(tracker.status(7000)["reason"], "GPSD_NO_FIX")
+
+    def test_unrecovered_fault_of_one_source_survives_another_source_fix(self):
+        tracker = LocationTracker()
+        tracker.ingest_gpsd(tpv(), 0)
+        tracker.invalidate("gpsd", "GPSD_HANDSHAKE_TIMEOUT")  # GpsdClient: no auto-reconnect.
+        self.assertEqual(tracker.ingest_nmea(rmc("120001.000"), 1000), 1)
+        self.assertIsNone(tracker.status(1000)["reason"])  # Live NMEA fix.
+        status = tracker.status(5000)
+        self.assertEqual((status["source"], status["origin"]), ("last_good", "nmea"))
+        self.assertEqual(status["reason"], "GPSD_HANDSHAKE_TIMEOUT")
+        tracker.ingest_nmea(rmc("120002.000", **{"2": "V"}), 5100)
+        self.assertEqual(tracker.status(5100)["reason"], "NMEA_NO_FIX")  # The fallback's own source first.
+        self.assertTrue(tracker.ingest_gpsd(tpv(6), 6000))
+        self.assertEqual(tracker.status(9500)["reason"], "NMEA_NO_FIX")
 
     def test_monotonic_clock_reversal_latches_unknown_age(self):
         tracker = LocationTracker()

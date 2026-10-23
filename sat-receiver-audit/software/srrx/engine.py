@@ -137,6 +137,8 @@ class Engine:
                     self.last_trip_tx_ms = self.now_ms
                     self._send("TRIP", {"reason": "host_not_armed"})
             elif self.session is not None and (self.last_hb_ms is None or self.now_ms - self.last_hb_ms >= 200):
+                # The reader must not block this 20 ms tick: labd passes a SocTempSampler
+                # whose sysfs reads run on its own thread; this only takes its cached value.
                 if self.soc_temp_reader and (self.soc_temp_ms is None or self.now_ms - self.soc_temp_ms >= 1000):
                     self.soc_temp, self.soc_temp_ms = self._read_soc_temp(), self.now_ms
                 # Omitted when unknown; the Pico then keeps its fan forced on.
@@ -361,6 +363,9 @@ class Engine:
         return {"mode": "SIMULATION" if self.simulated else "HARDWARE", "pico": self.pico,
             "requested_operating_mode": self.requested_mode,
             "session": self.session, "configured": self.configured, "last_error": self.last_error,
+            # The same 500 ms bound as the ARM refusal and the tick status timeout.
+            "pico_fresh": self.last_status_ms is not None and 0 <= self.now_ms - self.last_status_ms <= 500,
+            "pico_age_ms": None if self.last_status_ms is None else max(0, self.now_ms - self.last_status_ms),
             "policy": self.policy.status(), "events": list(self.events),
             "imu": imu, "hmi": self._hmi_status(),
             "live_identity_verified": self.identity_ok,
@@ -378,7 +383,8 @@ class Engine:
                         self.hardware.close()
                     finally:
                         try:
-                            if self.telemetry_reader and hasattr(self.telemetry_reader, "close"):
-                                self.telemetry_reader.close()
+                            for reader in (self.soc_temp_reader, self.telemetry_reader):
+                                if reader and hasattr(reader, "close"):
+                                    reader.close()
                         finally:
                             self.closed = True

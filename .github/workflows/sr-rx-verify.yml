@@ -106,6 +106,9 @@ jobs:
       - name: Checks reproduce the committed reports
         if: matrix.arch == 'x86_64'
         run: git diff --exit-code -- .
+      - name: Firmware packages match the current MCU sources
+        if: matrix.arch == 'x86_64'
+        run: python tools/build_firmware.py --check
 
   cad:
     name: CAD reproduction (KiCad 10.0.7)
@@ -149,31 +152,24 @@ jobs:
             git reset -q && git checkout -q -- . && git clean -fdq -- .
             echo "CAD outputs reproduce the committed files apart from volatile metadata"
           fi
-      - name: Independent netlist and PCB checks on the committed outputs
-        if: steps.compare.outputs.reproducible == 'true'
-        run: |
-          python3 verification/independent_netlist_check.py
-          python3 pcb/prepare.py --check
-          python3 verification/independent_pcb_check.py
-          python3 verification/pcb-prototype-review-check.py
-          git diff --exit-code --stat -- .
-      - name: Regenerate PCB-preparation inputs for changed graphs
-        if: steps.compare.outputs.reproducible == 'false'
+      - name: Regenerate PCB-preparation inputs
+        id: pcbprep
         run: |
           python3 verification/independent_netlist_check.py
           python3 pcb/prepare.py
           python3 pcb/prepare.py --check
+          if git diff --quiet -- pcb/generated; then echo "changed=false" >> "$GITHUB_OUTPUT"; else echo "changed=true" >> "$GITHUB_OUTPUT"; fi
       - name: Re-freeze the DC_CORE starter and routed prototype
         # Only on explicit request: places and routes the 71-part core again
         # from the regenerated input, runs native DRC, then pins the prototype
-        # check to the new input and starter hashes and re-runs every check.
-        if: steps.compare.outputs.reproducible == 'false' && github.event_name == 'workflow_dispatch' && inputs.refreeze_pcb
+        # check to the new input and starter hashes.
+        if: steps.pcbprep.outputs.changed == 'true' && github.event_name == 'workflow_dispatch' && inputs.refreeze_pcb
         run: |
           python3 -m pip install --break-system-packages --disable-pip-version-check numpy scipy
           python3 pcb/generate_layout.py
           python3 pcb/generate_layout.py --check
           python3 pcb/generate_routed.py
-          python3 - <<'EOF'
+          python3 - <<'PYEOF'
           import hashlib, re
           from pathlib import Path
           check = Path("verification/pcb-prototype-review-check.py")
@@ -182,7 +178,9 @@ jobs:
           text = re.sub(r"FROZEN_INPUT_SHA256 = '[0-9a-f]{64}'", "FROZEN_INPUT_SHA256 = '%s'" % sha("pcb/generated/detector-core-input.json"), text)
           text = re.sub(r"FROZEN_STARTER_SHA256 = '[0-9a-f]{64}'", "FROZEN_STARTER_SHA256 = '%s'" % sha("build/kicad/pcb-preparation/detector-core-placement.kicad_pcb"), text)
           check.write_text(text, encoding="utf-8")
-          EOF
+          PYEOF
+      - name: Independent PCB checks
+        run: |
           python3 verification/independent_pcb_check.py
           python3 verification/pcb-prototype-review-check.py
       - name: Collect regenerated outputs
@@ -197,10 +195,12 @@ jobs:
           name: cad-regenerated
           path: ${{ runner.temp }}/cad.patch
       - name: Committed CAD outputs match the design graphs
-        if: steps.compare.outputs.reproducible == 'false'
+        if: always()
         run: |
-          echo "::error::Committed CAD outputs are stale; apply the cad-regenerated patch (and re-freeze the PCB chain if pcb/generated changed)"
-          exit 1
+          if [ "${{ steps.compare.outputs.reproducible }}" != "true" ] || ! git diff --cached --quiet; then
+            echo "::error::Committed CAD/PCB outputs are stale; apply the cad-regenerated patch (dispatch with refreeze_pcb if pcb/generated changed)"
+            exit 1
+          fi
 
   module-lab:
     name: Module lab (${{ matrix.arch }})
@@ -246,9 +246,8 @@ jobs:
   linux-lab:
     name: ARM64 QEMU Linux lab
     if: github.event_name == 'workflow_dispatch' && inputs.linux_lab
-    needs: host
     runs-on: ubuntu-24.04
-    timeout-minutes: 180
+    timeout-minutes: 240
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-python@v6
@@ -258,7 +257,7 @@ jobs:
         run: |
           sudo apt-get update -q
           sudo apt-get install -y -q --no-install-recommends \
-            gpgv ubuntu-keyring ubuntu-cloudimage-keyring e2fsprogs curl \
+            gpgv ubuntu-keyring ubuntu-cloudimage-keyring e2fsprogs curl pandoc \
             libegl1 libgl1 libopengl0 libxkbcommon0 libfontconfig1 \
             libdbus-1-3 libglib2.0-0t64 gcc g++
           python -m pip install --disable-pip-version-check $PY_PINS
@@ -274,9 +273,14 @@ jobs:
             --qemu "$T/qemu-system-aarch64" --qemu-img "$T/qemu-img" --genisoimage "$T/genisoimage"
       - name: Run guest
         run: python deployment/linux_lab/host.py run --work "$RUNNER_TEMP/lab-run" --timeout 7200
-      - name: Finalize, rebuild documents/firmware and repackage
+      - name: Regenerate host evidence from the same sources
         run: |
           python tools/run_tests_offline.py
+          PYTHONPATH=software:. python -m srrx.provision template --output software/config/acceptance.template.json
+          PYTHONPATH=software:. python -m srrx.demo --output verification/software-simulation.json
+          python tools/render_hmi_views.py --output verification/hmi-views
+      - name: Finalize, rebuild documents/firmware and repackage
+        run: |
           # The previous imported run moves to the attempt archive unchanged.
           prev="verification/linux-attempts/${{ github.event.inputs.archive_as || 'previous' }}"
           test ! -e "$prev"
@@ -287,6 +291,9 @@ jobs:
           python tools/build_firmware.py
           python tools/build_bundle.py
           python -B tools/check_bundle.py
+      - name: Collect evidence patch
+        if: always()
+        run: |
           git add -A .
           git -c core.quotePath=false diff --cached --binary > "$RUNNER_TEMP/lab-evidence.patch"
           git diff --cached --stat | tail -5

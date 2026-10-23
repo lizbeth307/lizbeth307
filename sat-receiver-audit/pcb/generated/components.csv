@@ -357,7 +357,7 @@ Q455,E4,AO3400A,nfet,bare_board_part,,DC_CORE,False,Package_TO_SOT_SMD:SOT-23,Tr
 Q456,E4,AO3400A,nfet,bare_board_part,,DC_CORE,False,Package_TO_SOT_SMD:SOT-23,True,PASS,3,https://www.aosmd.com/res/data_sheets/AO3400A.pdf,Physical IC/passive/device for a custom board candidate.
 Q457,E4,AO3400A,nfet,bare_board_part,,DC_CORE,False,Package_TO_SOT_SMD:SOT-23,True,PASS,3,https://www.aosmd.com/res/data_sheets/AO3400A.pdf,Physical IC/passive/device for a custom board candidate.
 R101,E1,15 mΩ 1% 2 W (Adafruit R1),resistor,purchased_module_internal_detail,Adafruit5832,,False,,False,UNASSIGNED,2,https://github.com/adafruit/Adafruit-INA228-PCB/blob/main/Adafruit%20INA228%20I2C%20Power%20Monitor.sch,Existing purchased-breakout detail; do not buy/place a second INA228/shunt/capacitor.
-R102,E1,10k1%,resistor,bare_board_part,,PWR_MAIN,False,,False,UNASSIGNED,2,"STACK §2.7,§5.1",Physical IC/passive/device for a custom board candidate.
+R102,E1,10k1%,resistor,bare_board_part,,PWR_MAIN,True,,False,UNASSIGNED,2,"STACK §2.7,§5.1",Physical IC/passive/device for a custom board candidate.
 R103,E1,3.30M0.1%25ppm,resistor,bare_board_part,,PWR_MAIN,False,,False,UNASSIGNED,2,"STACK §2.7,§5.1",Physical IC/passive/device for a custom board candidate.
 R104,E1,332k0.1%25ppm,resistor,bare_board_part,,PWR_MAIN,False,,False,UNASSIGNED,2,"STACK §2.7,§5.1",Physical IC/passive/device for a custom board candidate.
 R105,E1,4.02k0.1%25ppm TRIM,resistor,bare_board_part,,PWR_MAIN,False,,False,UNASSIGNED,2,"STACK §2.7,§5.1",Physical IC/passive/device for a custom board candidate.
@@ -575,7 +575,7 @@ R508,E5,10k,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Me
 R509,E5,28.7k 1%,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
 R510,E5,100k,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
 R511,E5,10k,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
-R512,E5,1Ohm 0.5W,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
+R512,E5,1Ohm 0.5W,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_1210_3225Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
 R513,E5,10k,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
 R514,E5,15.8k 1%,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
 R515,E5,100k,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.

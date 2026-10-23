@@ -60,6 +60,7 @@ class Supervisor:
         self._fan_latch = True
         self._blower_latch = True
         self._disp_hot = True  # Unknown panel temperature keeps DISP12 off.
+        self._thermal_trip = False  # CASE_HOT/FAN_STALLED trip keeps DISP12 off.
         self.events = []
         self.outputs = {}
         self._render_outputs()
@@ -138,6 +139,10 @@ class Supervisor:
             return
         self.state = "TRIPPED"
         self.fault = reason
+        if reason in ("CASE_HOT", "FAN_STALLED"):
+            # Hot enclosure or lost airflow: drop the display load until the
+            # fault clears (ARM/restart); a later HOST_TRIP relabel cannot relight.
+            self._thermal_trip = True
         self._arm_at = self._config_at = None
         self._warm_hbs = 0
         self._last_hb = None
@@ -215,6 +220,7 @@ class Supervisor:
             else:
                 self.state = "WARMING"
                 self.fault = None
+                self._thermal_trip = False  # Readiness above proved case <=60 C, no stall.
                 self._arm_at = self._now
                 self._last_hb = None
                 self._warm_hbs = 0
@@ -287,6 +293,7 @@ class Supervisor:
                     # This clears the software latch; it never powers on remotely.
                     self.state = "SAFE"
                     self.fault = None
+                    self._thermal_trip = False
                     self._q6a_seen = False
                     self._q6a_off_at = None
                     self._off_at = None
@@ -362,7 +369,8 @@ class Supervisor:
         if _number(panel, -20, 120):
             brightness = 20 if panel >= 68 else 50 if panel >= 60 else 100
         # DISP12 is the operator console, not an ARM output. Missing, invalid or
-        # stale panel NTC counts as hot; it re-enables only at <=60 C.
+        # stale panel NTC counts as hot; it re-enables only at <=60 C. A CASE_HOT
+        # or FAN_STALLED trip also removes it until that fault is cleared.
         if (self._inputs_at is None or self._now - self._inputs_at > SENSOR_MAX_AGE_MS
                 or not _number(panel, -20, 120) or panel >= 68):
             self._disp_hot = True
@@ -370,7 +378,7 @@ class Supervisor:
             self._disp_hot = False
         self.outputs = {
             "mcp_reset": not (self.state in ("CONFIGURING", "ACTIVE")),
-            "disp_en": (q6a_on and not self._disp_hot
+            "disp_en": (q6a_on and not self._disp_hot and not self._thermal_trip
                         and self.state not in ("OFF", "SHUTTING_DOWN")),
             "safe_boot": not active,
             "fan_en": self._fan_latch,

@@ -58,6 +58,31 @@ class DeploymentTests(unittest.TestCase):
         config = self.devices()
         config["pico"].update(kind="usb", kernel_parent=None, vid="2e8a", pid="000a", serial="E6614C311B7A1234")
         self.assertIn('ATTRS{serial}=="E6614C311B7A1234", GROUP="srrx-pico"', deploy.udev_rules(config))
+        # labd opens the Pico tty with TIOCEXCL + flock; a ModemManager AT probe must not race it.
+        for text in (rules, deploy.udev_rules(config)):
+            pico = [line for line in text.splitlines() if 'SYMLINK+="lab/pico"' in line]
+            self.assertEqual(len(pico), 1)
+            self.assertIn('ENV{ID_MM_DEVICE_IGNORE}="1"', pico[0])
+            self.assertEqual(text.count("ID_MM_DEVICE_IGNORE"), 1)
+        documented = (deploy.PROJECT / "software/DEPLOYMENT.md").read_text(encoding="utf-8")
+        self.assertIn("TIOCEXCL", documented)
+        self.assertIn("ID_MM_DEVICE_IGNORE", documented)
+
+    def test_release_guard_does_not_block_an_offline_clock_behind_acceptance(self):
+        devices = self.root / "devices.json"
+        devices.write_text(json.dumps(self.devices()))
+        sys.path.insert(0, str(deploy.PROJECT / "software"))
+        import srrx.commissioning as commissioning
+        seen = {}
+        def accepted(path, project, raw=None, clock_check=True):
+            seen.update(path=Path(path), clock_check=clock_check)
+            raise deploy.DeploymentError("acceptance stop")
+        with patch.object(deploy, "doctor", return_value={"issues": []}), patch.object(commissioning, "load_acceptance", accepted):
+            with self.assertRaisesRegex(deploy.DeploymentError, "acceptance stop"):
+                deploy.release_guard(devices, self.root / "acceptance.json", self.root / "release.json",
+                                     self.root / "build-manifest.json", self.root / "cache")
+        # ExecStartPre runs at every start; the 2026 floor and evidence ordering stay in load_acceptance.
+        self.assertEqual(seen, {"path": self.root / "acceptance.json", "clock_check": False})
 
     @unittest.skipUnless(os.name == "posix", "grp/pwd are POSIX-only")
     def test_live_pico_node_must_not_be_reachable_by_hmi_users(self):

@@ -37,16 +37,19 @@ def main(argv=None):
                 result = request_once(args.socket, {"op": "arm"})
                 if not result.get("ok"):
                     print(json.dumps(result)); return 2
-            # Disarm on exit only a session this invocation armed or leased;
-            # a refused lease must never trip another operator's session.
+            # Disarm on exit only a session this invocation armed or leased and may
+            # still hold. A refused renewal (another owner, or ours already expired
+            # and tripped) or >=5 s since the last confirmed one means the session
+            # may now be another operator's: lease expiry has already disarmed ours.
             owned = bool(args.arm)
-            started = time.monotonic()
+            started = renewed = time.monotonic()
             try:
                 while not args.seconds or time.monotonic() - started < args.seconds:
                     result = request_once(args.socket, {"op": "lease", "value": {"ttl_ms": 5000}})
                     if not result.get("ok"):
+                        owned = False
                         print(json.dumps(result)); return 2
-                    owned = True
+                    owned, renewed = True, time.monotonic()
                     status = request_once(args.socket, {"op": "status"})["data"]
                     if time.monotonic() - started > 2 and status["pico"].get("state") != "ACTIVE":
                         print(json.dumps(status)); return 2
@@ -54,7 +57,7 @@ def main(argv=None):
             except KeyboardInterrupt:
                 pass
             finally:
-                if owned:
+                if owned and time.monotonic() - renewed < 5:
                     request_once(args.socket, {"op": "disarm"})
             return 0
         if args.op == "set":

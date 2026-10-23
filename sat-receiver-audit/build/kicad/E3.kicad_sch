@@ -26,7 +26,7 @@
 (property "Value" "10k" (at 0 7.62 0) (effects (font (size 1.016 1.016)) ))
 (property "Footprint" "" (at 0 0 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (property "Datasheet" "STACK.md §5.2; project design" (at 0 0 0) (effects (font (size 1.016 1.016)) (hide yes)))
-(property "Description" " | design | Single ALERT pullup to switched Q6A3V3; never AON." (at 0 0 0) (effects (font (size 1.016 1.016)) (hide yes)))
+(property "Description" " | design | Single populated ALERT pullup to switched Q6A3V3; never AON. E1 R102 is a DNP placeholder and must not be fitted in parallel." (at 0 0 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (symbol "C_R301_0_1" (rectangle (start -5.08 1.27) (end 5.08 -1.27) (stroke (width 0.254) (type default)) (fill (type background))) (polyline (pts (xy -7.62 0) (xy -5.08 0)) (stroke (width 0.254) (type default)) (fill (type none))) (polyline (pts (xy 5.08 0) (xy 7.62 0)) (stroke (width 0.254) (type default)) (fill (type none))))
 (symbol "C_R301_1_1" (pin passive line (at -10.16 0 0) (length 2.54) (name "1" (effects (font (size 0.889 0.889)) )) (number "1" (effects (font (size 0.889 0.889)) ))) (pin passive line (at 10.16 0 180) (length 2.54) (name "2" (effects (font (size 0.889 0.889)) )) (number "2" (effects (font (size 0.889 0.889)) )))))
 (symbol "sr_rx_v2_completed:C_R302"  (pin_names (offset 0.508)) (exclude_from_sim no) (in_bom yes) (on_board yes)

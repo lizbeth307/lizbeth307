@@ -78,8 +78,9 @@ if compgen -G "$payload/debs/*.deb" > /dev/null; then
     dpkg -i "$payload"/debs/*.deb > "$results/dpkg-install.log" 2>&1
 fi
 systemctl stop srrx-linux-lab-sim.service srrx.service 2>/dev/null || true
-# Remove only state that earlier lab smokes created in this marked guest, so
-# changed units are reinstalled; guest_smoke still refuses foreign units/records.
+# In this marked guest only, these fixed lab unit/record paths are removed
+# unconditionally, whoever created them, so changed units are reinstalled;
+# guest_smoke's refuse-to-overwrite guards only catch state created after this.
 rm -f /etc/systemd/system/srrx.service /etc/systemd/system/srrx-linux-lab-sim.service
 rm -rf /etc/systemd/system/srrx.service.d
 rm -f /etc/srrx/acceptance.json /etc/srrx/devices.json /etc/srrx/devices.env /etc/srrx/release.json /etc/srrx/build-manifest.json
@@ -101,6 +102,8 @@ PY
 groupadd -f labd
 groupadd -f i2c
 groupadd -f dialout
+# Pico UART group: system group with NO members (labd gets it only via the unit's SupplementaryGroups).
+groupadd -f --system srrx-pico
 id labd >/dev/null 2>&1 || useradd --system --gid labd --home-dir /var/lib/srrx --shell /usr/sbin/nologin labd
 id labclient >/dev/null 2>&1 || useradd --create-home --groups labd --shell /bin/bash labclient
 cat > /etc/srrx-linux-lab.json <<'JSON'

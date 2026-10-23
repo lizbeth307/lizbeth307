@@ -1,6 +1,6 @@
 {
   "model": "E4 arithmetic corner sweep; not SPICE or prototype qualification",
-  "design_file": "/workspace/scratch/63085b43f730/git-source/sat-receiver-audit/design/E4.json",
+  "design_file": "/__w/lizbeth307/lizbeth307/sat-receiver-audit/design/E4.json",
   "assumptions": {
     "initial_resistor_tolerance_fraction": 0.001,
     "comparator_input_error_allowance_v": 0.011,

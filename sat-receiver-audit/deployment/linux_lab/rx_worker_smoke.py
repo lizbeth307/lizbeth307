@@ -274,6 +274,8 @@ def main(argv=None):
                 if name=='valid_even_short_read':
                     if error is not None: messages.append(type(error).__name__+': '+str(error))
                     if sample_count!=1: messages.append('Expected one in-memory complex sample')
+                    # worker.close() must run the worker's driver-close finally (rtlsdr_close).
+                    if 'CLOSE\n' not in text: messages.append('Native driver close did not run after worker.close()')
                 else:
                     messages.extend(failure_issues(name,error,calls))
                 if name=='hang_ignoring_sigterm' and worker:

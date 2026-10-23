@@ -185,6 +185,31 @@ class AcceptanceTests(unittest.TestCase):
                 with self.assertRaises(ValidationError):
                     load_acceptance(self.path, self.root, clock_check=False)
 
+    def test_integer_beyond_float_range_is_a_validation_error(self):
+        self.complete_fixture()
+        for change in (lambda d: d["lab5_budget"].update(always_on_a=10 ** 400),
+                       lambda d: d["branch_limits"]["LNA1"]["calibration"].update(current_offset_a=-10 ** 400)):
+            data = copy.deepcopy(self.manifest)
+            change(data)
+            self.save(data)
+            with self.assertRaisesRegex(ValidationError, "not a finite in-range number"):
+                load_acceptance(self.path, self.root)
+
+    def test_artifact_digest_streams_and_refuses_growth_after_size_check(self):
+        from srrx import commissioning
+        path = self.root / "measurements/bench.log"
+        expected = hashlib.sha256(path.read_bytes()).hexdigest()
+        with patch.object(Path, "read_bytes", side_effect=AssertionError("whole-file read")):
+            self.assertEqual(commissioning._digest(path), expected)
+        with patch.object(commissioning, "MAX_ARTIFACT_BYTES", path.stat().st_size - 1):
+            with self.assertRaisesRegex(ValidationError, "exceeds 64 MiB while hashing"):
+                commissioning._digest(path)
+        self.complete_fixture()
+        self.save()
+        with patch.object(commissioning, "MAX_ARTIFACT_BYTES", 8):
+            with self.assertRaises(ValidationError):
+                load_acceptance(self.path, self.root)
+
     def pico(self):
         spec = importlib.util.spec_from_file_location("srrx_test_pico_calibration", PICO_CALIBRATION)
         module = importlib.util.module_from_spec(spec)

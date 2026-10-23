@@ -166,7 +166,7 @@ class Peer:
         self.received_types = []
         self.last_frame = None
         self.last_session = None
-        self.last_hello, self.hello_seq = -1000, None
+        self.last_hello, self.hello_seq, self.hellos_sent = -1000, None, 0
         self.tx_sequence = 0
         self.inputs = {"q6a_on": True, "battery_mv": 14800,
                        "panel_temp_c": 25.0, "case_temp_c": 25.0,
@@ -211,6 +211,7 @@ class Peer:
         self.schedule.sent(kind, stamp, self.model.state)
         if kind == "HELLO":
             self.last_hello, self.hello_seq = stamp, outgoing["q"]
+            self.hellos_sent += 1
 
 
 def pump(endpoint, peer, predicate=lambda: False, *, timeout=1, emit=True, replay=None):
@@ -476,7 +477,7 @@ def lost_hello_repeats_and_resynchronizes_without_arm():
         peer = Peer(endpoint)
         peer.tick(now_ms())
         first = peer.last_frame
-        first_hello_at = peer.last_hello
+        first_hello_at, first_hellos = peer.last_hello, peer.hellos_sent
         handshake_check(first["t"] == "HELLO", "Initial peer frame was not HELLO", endpoint, peer)
         wait_queued_input(endpoint.link.fd, len(encode_frame(first)))
         endpoint.link.discard_input()
@@ -511,8 +512,12 @@ def lost_hello_repeats_and_resynchronizes_without_arm():
         check(endpoint.engine.status()["mode"] == "SIMULATION"
               and endpoint.engine.status()["hardware_qualified"] is False,
               "Lost-HELLO fixture unexpectedly qualified physical hardware")
+        # Up to three repeats may be needed (a delayed-tick flush can drop one), so
+        # 2000/3000 ms from first to resync is not one firmware interval deviation.
+        repeats = peer.hellos_sent - first_hellos
         return {"first_hello_deliberately_tciflush": True, "unknown_session_status_ignored": True,
-                "real_hello_repeat_interval_ms": peer.last_hello-first_hello_at,
+                "first_to_resync_hello_ms": peer.last_hello-first_hello_at, "hello_repeats_before_resync": repeats,
+                "mean_hello_repeat_interval_ms": round((peer.last_hello-first_hello_at) / repeats) if repeats else None,
                 "restored_session": endpoint.engine.session, "repeated_hello_seq": peer.hello_seq,
                 "automatic_arm": False, "previous_loads_restored": False}
 

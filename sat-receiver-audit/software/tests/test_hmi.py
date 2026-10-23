@@ -456,6 +456,52 @@ class MetadataTests(unittest.TestCase):
         finally:
             close()
 
+    def test_location_tracker_and_gpsd_client_share_one_suspend_aware_clock(self):
+        class Socket:
+            closed = False
+            def setblocking(self, value): pass
+            def connect_ex(self, address): return 0
+            def recv(self, size): raise BlockingIOError
+            def close(self): self.closed = True
+        fake, now_ns, clocks = Socket(), [5_000_000_000_000], []
+        def gettime_ns(clock):
+            clocks.append(clock)
+            return now_ns[0]
+        with patch.object(time, "CLOCK_BOOTTIME", 7, create=True), \
+             patch.object(time, "clock_gettime_ns", gettime_ns, create=True), \
+             patch("srrx.location.socket.socket", return_value=fake):
+            callbacks, close = location_callbacks("127.0.0.1", 2947)
+            try:
+                callbacks["manual_location"](50.0, 30.0)
+                self.assertFalse(callbacks["location"]()["live_fix"])
+                self.assertFalse(fake.closed)  # start() and poll() read the same clock domain.
+                now_ns[0] += 3600 * 10 ** 9  # One hour of host suspend: CLOCK_BOOTTIME keeps counting.
+                value = callbacks["location"]()
+                self.assertEqual((value["source"], value["age_ms"]), ("manual", 3_600_000))
+                self.assertTrue(fake.closed)  # The gpsd handshake deadline includes the suspend.
+            finally:
+                close()
+        self.assertEqual(set(clocks), {7})
+        with patch.object(time, "CLOCK_BOOTTIME", None, create=True):
+            callbacks, close = location_callbacks()  # Fallback where CLOCK_BOOTTIME is absent.
+            try:
+                callbacks["manual_location"](50.0, 30.0)
+                self.assertEqual(callbacks["location"]()["source"], "manual")
+            finally:
+                close()
+
+    def test_numbers_beyond_float_range_are_unavailable_not_overflow(self):
+        huge = 10 ** 400  # Codec-valid JSON integers; float(huge) raises OverflowError.
+        data = {"policy": {"outputs": {}, "branch_observability": {"RTLA": {"reservation_a": huge}}}}
+        self.assertEqual(next(row for row in channel_rows(data, True) if row[0] == "RTL-A receiver")[4], "Not set")
+        summary = location_summary({"available": True, "source": "gpsd", "lat": 1.0, "lon": 2.0,
+                                    "age_ms": huge, "uncertainty_m": -huge})
+        self.assertEqual(summary["age"], "Unknown")
+        self.assertTrue(summary["uncertainty"].startswith("Unknown"))
+        text = learning_summary({"label": "unknown_energy", "confidence": huge}, "infer", {"validation": {"accuracy": huge}})
+        self.assertIn("Heuristic score unavailable", text)
+        self.assertNotIn("Held-out check", text)
+
     def test_json_limits_duplicates_and_nonfinite(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "meta.json"
@@ -777,11 +823,17 @@ class QtTests(unittest.TestCase):
             window.render_state(controller.status())
             self.assertEqual(window.metric_values["battery"].text(), "14.80 V")
             self.assertIn("CONTROL ARMED", window.banner.text())
+            backend.data["pico"]["battery_mv"] = 10 ** 400  # Codec-valid; beyond float range.
+            clock.now += .25
+            controller.poll()
+            window.render_state(controller.status())
+            self.assertEqual(window.metric_values["battery"].text(), "Unavailable")
+            backend.data["pico"]["battery_mv"] = 14800
             for stale in (False, None):
                 if stale is None:
                     del backend.data["pico_fresh"]
                 else:
-                    backend.data["pico_fresh"] = stale
+                    backend.data.update(pico_fresh=stale, pico_age_ms=1200)
                 clock.now += .25
                 controller.poll()
                 window.render_state(controller.status())
@@ -794,7 +846,7 @@ class QtTests(unittest.TestCase):
                     self.assertNotIn("ARM will be refused", window.fault_text.text())
                 else:
                     self.assertIn("PICO STATUS STALE", window.banner.text())
-                    self.assertIn("ARM will be refused", window.fault_text.text())
+                    self.assertIn("last Pico status 1.2 s ago; ARM will be refused", window.fault_text.text())
             backend.data["pico_fresh"] = True
             backend.failure = OSError("timed out")  # labd stays armed; DISARM cannot be confirmed.
             clock.now += .25
@@ -1011,6 +1063,63 @@ class QtTests(unittest.TestCase):
             window.worker.wait(1500)
             transport.close()
             window.close(); app.processEvents()
+
+
+def view_renderer():
+    spec = importlib.util.spec_from_file_location("srrx_tool_render_hmi_views", ROOT / "tools/render_hmi_views.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+class ViewRendererTests(unittest.TestCase):
+    """tools/render_hmi_views.py gates; the full render itself runs only as the Linux tool."""
+    def test_refuses_to_write_when_targeted_tests_fail(self):
+        renderer = view_renderer()
+        with tempfile.TemporaryDirectory() as directory:
+            output = Path(directory) / "views"
+            with patch.object(renderer.sys, "platform", "linux"), \
+                 patch.object(renderer, "targeted_tests", side_effect=renderer.RenderFailure("1 failed")), \
+                 patch.object(renderer, "render", side_effect=AssertionError("rendered after failed tests")), \
+                 patch("builtins.print"):
+                self.assertEqual(renderer.main(["--output", str(output)]), 1)
+            self.assertFalse(output.exists())
+
+    def test_targeted_summary_must_show_every_test_passing(self):
+        renderer = view_renderer()
+        good = {"total": 52, "passed": 52, "skipped": 0, "failed": 0, "qt_render": True, "real_qt_worker_close": True}
+        for change, accepted in (({}, True), ({"failed": 1, "passed": 51}, False), ({"skipped": 2, "passed": 50}, True),
+                                 ({"qt_render": False}, False), ({"real_qt_worker_close": False}, False),
+                                 ({"total": 0, "passed": 0}, False), ({"passed": 51}, False)):
+            with self.subTest(change=change):
+                summary = dict(good, **change)
+                completed = subprocess.CompletedProcess([], 0, stdout=b"noise\n" + json.dumps(summary).encode() + b"\n")
+                with patch.object(renderer.subprocess, "run", return_value=completed):
+                    if accepted:
+                        self.assertEqual(renderer.targeted_tests(), {key: summary[key] for key in
+                                         ("total", "passed", "skipped", "qt_render", "real_qt_worker_close")})
+                    else:
+                        with self.assertRaises(renderer.RenderFailure):
+                            renderer.targeted_tests()
+        with patch.object(renderer.subprocess, "run", return_value=subprocess.CompletedProcess([], 1, stdout=b"")):
+            with self.assertRaises(renderer.RenderFailure):
+                renderer.targeted_tests()
+
+    def test_report_keeps_the_committed_hmi_views_schema(self):
+        renderer = view_renderer()
+        committed = json.loads((ROOT / "verification/hmi-views/report.json").read_text(encoding="utf-8"))
+        views = [{"page": page, "file": "%02d-%s.png" % (index, page), "width": 1100, "height": 800,
+                  "bytes": 1, "sha256": "0" * 64} for index, page in enumerate(renderer.PAGES, 1)]
+        value = renderer.report(views, {"pyside6": "6", "qt": "6", "qt_platform": "offscreen", "backend": "SIMULATION"},
+                                {"total": 1, "passed": 1, "skipped": 0, "qt_render": True, "real_qt_worker_close": True},
+                                "0" * 64, ROOT / "verification/hmi-views")
+        self.assertEqual(list(value), list(committed))
+        self.assertEqual(set(value["targeted_tests"]), set(committed["targeted_tests"]))
+        self.assertEqual([(v["page"], v["path"]) for v in value["views"]],
+                         [(v["page"], v["path"]) for v in committed["views"]])
+        self.assertEqual([set(v) for v in value["views"]], [set(v) for v in committed["views"]])
+        self.assertEqual((value["status"], value["physical_tests_performed"], value["hardware_devices_opened"]),
+                         ("PASS_OFFSCREEN_SIMULATION", False, False))
 
 
 if __name__ == "__main__":

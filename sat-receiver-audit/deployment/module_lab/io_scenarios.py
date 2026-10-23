@@ -232,7 +232,7 @@ def guarded_storage_scenarios(root):
                       {"implementation": "StorageGuard + labrx.run_capture + spectrum.append_survey",
                        "real_dirfd_nofollow_io": True, "simulated_frames": 2,
                        "block_identity_and_mountinfo": "fixture injection, not real block hardware",
-                       "raw_iq_persisted": False, "atomic_jsonl": True,
+                       "raw_iq_persisted": False, "jsonl_append_rollback_on_error": True,
                        "actual_mount_created": False},
                       "Real block-device/mount binding requires the separate Linux virtual-disk test, then actual T7 acceptance.")
     loss = record("IO-T7-GUARDED-MOUNT-LOSS", REFS["t7"],

@@ -9,32 +9,32 @@
   ],
   "source_snapshots": {
     "design/E1.json": {
-      "sha256": "e87f79db4da0d9be7e74aa1ad2816ea99ae4ed8fd6e723ba375c1559bfd51392",
-      "bytes": 78721
+      "sha256": "26527a217f51449d9dca7583de3cf50e30821b1f9cc0f9cf39f2cec96d16e492",
+      "bytes": 80894
     },
     "design/E2.json": {
-      "sha256": "adc5b67b6b53977143847d688f657364a5e300a80761d74e1dc82e34bd703c16",
-      "bytes": 270037
+      "sha256": "fcbededee4702839177adbea0b37f0fcbecfb7b676a40aed135ac14353d45e07",
+      "bytes": 272622
     },
     "design/E3.json": {
-      "sha256": "0a2e2e60ede923b2d0a1aa0f8484a97513c1ef36ae389d3aee365fbcf90aaac5",
-      "bytes": 137043
+      "sha256": "7f206d558aa9ad61a1d5bd20d80664c9c1b58401eee27b5f3d85ad871af9d664",
+      "bytes": 137820
     },
     "design/E4.json": {
-      "sha256": "b05555c7a6729029f779df3ca3d0a62d71e206520a33cf7e34ffa3e2c081344d",
-      "bytes": 173850
+      "sha256": "29a40332b06c1158bff1c207967ef3971af6fcfced465a897159d6f2d6db1d2b",
+      "bytes": 176019
     },
     "design/E5.json": {
-      "sha256": "86a9099809fbcdf365c82ecf4a239531b1b55715ee17cd1c5fb5a776c979ca05",
-      "bytes": 84591
+      "sha256": "84ff5acf0e28fb55444d8615cf5f5b809505ae86f7f750e0838d2809f5526704",
+      "bytes": 84854
     },
     "STACK.md": {
-      "sha256": "baa6dc6651a3f33f68b0cf98659f0da6169eaedc6acf3b7e4e17ccc8c95a7f2d",
-      "bytes": 1945562
+      "sha256": "0bfabfb009cddef859e6a03bf84cabfc7e7258cb9ae3a83d08838635e291746a",
+      "bytes": 1945593
     },
     "build/12-revision-v2.1.md": {
-      "sha256": "29c9e8b48f58f0b3957891f9188a544743364ab787a55ebca3d105c18b29e38c",
-      "bytes": 10377
+      "sha256": "ac3e8df0b70d160cc27777b1fa4080c89eab29baf3f2d8ada5398e63b788a5f0",
+      "bytes": 11369
     }
   },
   "scope": {
@@ -12570,7 +12570,7 @@
       "source_description": "",
       "source_notes": [
         "RILM = 7.87k відповідає 0.113–0.139 A; OVLO 112k/10k 0.1% усуває перекриття зі штатною смугою 13.8 V.",
-        "dVdt 100 nF початково задає приблизно 0.42 V/ms і 33 ms наростання. Врахувати 65 mA типового струму Boni та ємність bias-tee.",
+        "dVdt 100 nF початково задає приблизно 0.42 V/ms і 33 ms наростання. Сталий струм = 65 mA Boni + 13.86 mA bleed E4 996 Ω = 78.9 mA, плюс заряд ємності bias-tee (≈0.42 V/ms×C). Мінімальний ILIM 0.113 A < 1.5×78.9 mA = 0.118 A: правило E2-03 1.5–2× на папері не виконано (1.43–1.76×). Рекомендовано RILM≈7.15k (≈0.124–0.153 A, 1.58–1.94×) після звірки з рівнянням і таблицею допусків TPS2596 та струмовою межею bias-tee Boni; до виміру E2-03 не застосовано.",
         "FLT не замінює струмове вікно INA3221; PTC на цій шині не встановлюється."
       ],
       "coverage_constraints": [
@@ -16127,7 +16127,7 @@
         "Provisional startup budget is0.50A, a project qualification limit rather than a manufacturer guarantee. Delta explicitly requires peak-current measurement with an oscilloscope. Capture starting/stalled/auto-restart current and LAB5 droop at both5V rail limits.",
         "Manufacturer body envelope is30.0+/-0.5 by30.0+/-0.5 by10.0+/-0.5mm; mounting hole spacing24.0+/-0.3mm, two holesdiameter2.4+/-0.3mm; lead length145+/-10mm. Allocate at least32x32x12mm for the body as a design fit gate, plus intake/outlet duct clearance and lead strain relief.",
         "Maker free-air airflow1.45CFM nominal/min1.17CFM and zero-flow pressure0.285inH2O nominal/min0.182inH2O are curve endpoints, not simultaneous installed performance. Qualify the separate display duct, inlet pressure drop<=5Pa, closed-cover thermal limits and RF noise. Operating range-10 to70C.",
-        "LAB5 aggregate, including concurrency with RTL-B, remains unqualified. If measured steady demand exceeds2.5A, follow STACK load-shedding/D36V50F5 plusfuse review before commissioning."
+        "LAB5 aggregate, including concurrency with RTL-B, remains unqualified. LAB5 acceptance is E1-05: <=3.2A continuous and <=4A transient with the default D36V50F5 + F102 4A; if measured aggregate demand exceeds that budget, apply a formal concurrency cap per R-E2-17 before commissioning. The old 2.5A gate belongs only to the legacy D36V28F5."
       ],
       "coverage_constraints": [
         "Power/stall/start current and tach if physically present; no invented RPM/PWMregisters.",

@@ -8,7 +8,7 @@ PICO = Path(__file__).resolve().parents[2] / "firmware" / "pico"
 sys.path.insert(0, str(PICO))
 from supervisor import Supervisor
 from adapter import Hardware, TickClock, write_all
-from calibration import (Calibration, REVISION, commissioning_valid, crc32,
+from calibration import (REVISION, commissioning_valid, crc32,
                          from_two_points, ntc_temperature, seal, validate)
 from imu_relay import IMURelay
 from main import hello_payload, status_payload
@@ -368,6 +368,42 @@ class SupervisorTests(unittest.TestCase):
             self.assertTrue(rig.model.outputs["mcp_reset"])
             self.assertTrue(rig.model.outputs["fan_en"])
             self.assertTrue(rig.model.outputs["blower_en"])
+            self.assertFalse(rig.model.outputs["disp_en"], field)  # Thermal trips drop DISP12.
+
+    def test_case_hot_and_fan_stall_trips_keep_display_off_until_new_arm(self):
+        for field, value, reason in (("case_temp_c", 61, "CASE_HOT"),
+                                     ("fan_stalled", True, "FAN_STALLED")):
+            rig = Rig().activate()
+            self.assertTrue(rig.model.outputs["disp_en"])
+            rig.inputs[field] = value
+            rig.advance(220, heartbeat=True)
+            self.assertEqual((rig.model.state, rig.model.fault), ("TRIPPED", reason))
+            self.assertFalse(rig.model.outputs["disp_en"], field)
+            rig.inputs[field] = READY.get(field, False)  # Cooled / tach back: still latched.
+            rig.advance(1000)
+            self.assertFalse(rig.model.outputs["disp_en"], field)
+            self.assertTrue(rig.send("TRIP"))  # Relabelled fault cannot relight the console.
+            self.assertEqual(rig.model.fault, "HOST_TRIP")
+            rig.advance(1020)
+            self.assertFalse(rig.model.outputs["disp_en"], field)
+            self.assertTrue(rig.send("ARM", {"qualified": True}))
+            self.assertEqual(rig.model.state, "WARMING")
+            self.assertTrue(rig.model.outputs["disp_en"], field)
+
+    def test_physical_restart_after_thermal_trip_and_off_relights_console(self):
+        rig = Rig().activate()
+        rig.inputs["case_temp_c"] = 75
+        rig.advance(220, heartbeat=True)
+        self.assertEqual(rig.model.fault, "CASE_HOT")
+        self.assertTrue(rig.send("SHUTDOWN", {"phase": "ARM_OFF"}))
+        rig.inputs["case_temp_c"] = 25.0
+        rig.advance(60220)
+        self.assertEqual(rig.model.fault, "ARM_OFF_HEARTBEAT_LOST")
+        self.assertFalse(rig.model.outputs["disp_en"])
+        rig.inputs["button_pressed"] = True
+        rig.advance(60320)
+        self.assertEqual((rig.model.state, rig.model.fault), ("SAFE", None))
+        self.assertTrue(rig.model.outputs["disp_en"])
 
     def test_shutdown_after_physical_restart_gets_full_grace(self):
         for trigger in ("host", "button"):

@@ -24,15 +24,15 @@ Balance B0 = raw B− може шунтувати Daly через спільну
 
 ## E1-04 — OPEN / блокує випуск
 
-UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки ще не перевірено.
+UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки, старт SYS12 після release і порядок із програмною відсічкою E3-07 ще не перевірені.
 
-**Умова закриття:** До батареї current-limited sweep 14→12→14 V при 25 і 50 °C: trip 12.8±0.1 V, release 13.6±0.1 V, drift≤50 mV. Калібрувати R105. AON без INA ≤11 µA. Утримуванням кнопки не можна обійти UV. 20 PD cycles без самозапуску. При провалі fallback TLV3012 із нижнім плечем 346.04 kΩ і повним повтором тесту.
+**Умова закриття:** До батареї current-limited sweep 14→12→14 V при 25 і 50 °C: trip 12.8±0.1 V, release 13.6±0.1 V, drift≤50 mV. Калібрувати R105. AON без INA ≤11 µA. Утримуванням кнопки не можна обійти UV. 20 PD cycles без самозапуску. При провалі fallback TLV3012 із нижнім плечем 346.04 kΩ і повним повтором тесту. Після UV release і натискання кнопки E1_PG_SYS12 мусить з'явитися без подальшого заряду: EN-резерв SYS12 R108/R109 має wake 13.39…13.86 V на E1_SW лише з допусками резисторів (без допуску внутрішніх 100 kΩ і порога EN), тобто може бути вищим за release; якщо PG_SYS12 не з'являється, E1-04 не пройдено. Рекомендована зміна, не застосована: R107 4.22M→2.87M і нижнє плече≈332.0k (R104 324k + R105 8.06k trim) дає trip≈12.79 V, release≈14.01 V, критерій release 14.0±0.1 V; R109 не зменшувати, бо це знижує резервний sleep. Порядок порогів на кожному екземплярі, разом з E3-07: за максимального й мінімального навантаження виміряна програмна відсічка, приведена до E1_N (13.05±0.1 V), мінус виміряний тут trip ≥0.10 V, а під час контрольованого розряду graceful shutdown (5 s dwell + завершення Linux) завершується до апаратного UV trip. Інакше — повторний trim R105 або reject.
 
 ## E1-05 — OPEN / блокує випуск
 
 Default LAB5: D36V50F5 +4 A fuse; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.
 
-**Умова закриття:** U108 D36V50F5 #4091; F102 4 A; L101 XAL6060-103MEC; C111/C112 35SVPF22M; C113 16SVPC100M; R110 WSL2512R3300FEA. Звірити площу, висоту і land patterns. Виміряти всі режими: LAB5 ≤3.2 A continuous; blower reserve 0.25 A continuous /0.50 A startup; SB_LNA 65 mA враховувати один раз у I_ANT≤1 A. Додаткова policy: I_ANT+0.83 A×EN_LAB≤1.5 A. За 5 V та 0…50 °C підтвердити C111/C112 effective ≥10 µF; C113 початково ≥80 µF; step 10…90% без осциляцій; 5 V±5% на КОЖНОМУ пристрої після switch/кабелю. Термо 30 min при 3.2 A і середовищі 50 °C; до 4 A transient із логом запобіжника та пульсацій. Вихід модуля 5 V±4% та drop L101 не гарантують USB 4.75 V у всіх допусках: low unit відбракувати або переробити живлення. Якщо actual сума перевищує бюджет — формальний concurrency cap/rail redesign із повтором тестів.
+**Умова закриття:** U108 D36V50F5 #4091; F102 4 A; L101 XAL6060-103MEC; C111/C112 35SVPF22M; C113 16SVPC100M; R110 WSL2512R3300FEA. Звірити площу, висоту і land patterns. Виміряти всі режими: LAB5 ≤3.2 A continuous; blower reserve 0.25 A continuous /0.50 A startup; SB_LNA 65 mA враховувати один раз у I_ANT≤1 A. Додаткова policy: I_ANT+0.83 A×EN_LAB≤1.5 A. За 5 V та 0…50 °C підтвердити C111/C112 effective ≥10 µF; C113 початково ≥80 µF; step 10…90% без осциляцій; 5 V±5% на КОЖНОМУ пристрої після switch/кабелю. Термо 30 min при 3.2 A і середовищі 50 °C; до 4 A transient із логом запобіжника та пульсацій. Вихід модуля 5 V±4% та drop L101 не гарантують USB 4.75 V у всіх допусках: low unit відбракувати або переробити живлення. Для пари LT3045 (E2-04) потрібно LAB5 ≥4.90 V на виході модуля при 3.2 A, інакше LNA4V5 у dropout. Якщо actual сума перевищує бюджет — формальний concurrency cap/rail redesign із повтором тестів.
 
 ## E1-06 — OPEN / блокує випуск
 
@@ -62,13 +62,13 @@ MPN L/C і діодів обрані. Ефективна ємність, ESR/ESL
 
 Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована.
 
-**Умова закриття:** FNB58/INA228/INA3221: 20 холодних і теплих пусків, струми стримінгу, КЗ і SOA. Установити ILIM 1.5–2× виміряного струму з допусками. Загальний LAB5 тестується за новими воротами E1 для D36V50F5 + запобіжник 4A; старі 2.5A не є лімітом default-збірки.
+**Умова закриття:** FNB58/INA228/INA3221: 20 холодних і теплих пусків, струми стримінгу, КЗ і SOA. Установити ILIM 1.5–2× виміряного струму з допусками. Boni: baseline включає bleed E4 13.86 mA (сталий ≈78.9 mA); поточний RILM 7.87k (ILIM min 0.113 A) нижче 1.5×, тож до кваліфікації перерахувати (рекомендовано≈7.15k). Загальний LAB5 тестується за новими воротами E1 для D36V50F5 + запобіжник 4A; старі 2.5A не є лімітом default-збірки.
 
 ## E2-04 — OPEN / блокує випуск
 
-Потрібне підтвердження запасу напруги, розподілу струму й температури пари LT3045 на 4.5V. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.
+Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.
 
-**Умова закриття:** Перевірити LAB5 min, навантаження пари до 1A, температуру кожного LT3045 та спад до антени. Дотримуватися контракту R-E2-17: сума INA LNA1–4 + резерв 65mA S-band ≤1A; разом із резервом LAB-порту ≤1.5A.
+**Умова закриття:** Перевірити LAB5 min, навантаження пари до 1A, температуру кожного LT3045 та спад до антени. Дотримуватися контракту R-E2-17: сума INA LNA1–4 + резерв 65mA S-band ≤1A; разом із резервом LAB-порту ≤1.5A. Приймання: при 3.2A LAB5 і 1A на пару виміряти E2_LNA_IN, OUTS і LNA4V5; LT3045 мусять бути в регулюванні, тобто V(E2_LNA_IN)−V(OUTS) більше виміряного dropout. Інакше модуль LAB5 відбракувати (вимога LAB5 ≥4.90V на виході модуля при 3.2A) або застосувати рекомендовану зміну (не застосовано): a) R227 22.5k→21.5k (4.30V) після підтвердження мінімального живлення кожного LNA після TPS2553, шунта й кабелю; b) межа пари 0.5A сумарно в R-E2-17 (dropout ≈130mV тип.).
 
 ## E2-05 — OPEN / блокує випуск
 
@@ -92,7 +92,7 @@ Brightness control requires confirmed DDC/CI support or an exact Wisecoco KEY/Ba
 
 BOM candidate Delta BFB0305HA-C is selected; final mechanical fit, installed airflow, start/stall current, LAB5 concurrency and noise remain unqualified.
 
-**Умова закриття:** Fit body envelope30.5x30.5x10.5mm plus duct/lead clearance into CAD before cutting enclosure. Measure0.25A design continuous reserve and provisional0.50A startup limit rather than claiming peak from datasheet. Confirm LAB5 under2.5A in allowed concurrency, or implement STACK shedding/upgradedconverter-fuse path. Run45min closed-cover solar thermal test and RF A/B noise checks; inlet drop<=5Pa at requiredflow.
+**Умова закриття:** Fit body envelope30.5x30.5x10.5mm plus duct/lead clearance into CAD before cutting enclosure. Measure0.25A design continuous reserve and provisional0.50A startup limit rather than claiming peak from datasheet. Confirm LAB5 within E1-05 (<=3.2A continuous, <=4A transient with default D36V50F5 + F102 4A) in allowed concurrency; over budget means a formal concurrency cap per R-E2-17. Run45min closed-cover solar thermal test and RF A/B noise checks; inlet drop<=5Pa at requiredflow.
 
 ## E3-04 — OPEN / блокує випуск
 
@@ -114,9 +114,9 @@ BOM candidate Semiware MF52A103F3950 is selected for both NTCs; purchased-lot cu
 
 ## E3-07 — OPEN / блокує випуск
 
-Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.
+Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near13.05V; nominal ADC code does not establish the13.05+/-0.1V cutoff. The software window 12.95-13.15V must stay above the E1-04 hardware AON UV trip window 12.8+/-0.1V on every unit.
 
-**Умова закриття:** Calibrate gain/offset against a calibrated voltmeter at two pack-equivalent voltages such as12.6V and16.4V; cross-checkINA228. Independently verify physical12.9V software cutoff within+/-0.1V, including5s dwell, at12.8/12.9/13.0V across specifiedtemperature and load states. Store calibratedcoefficients with revision/CRC. No commissioningpassuntilmet; hardwareAON UVsupervisor remains independentbackup.
+**Умова закриття:** Calibrate gain/offset against a calibrated voltmeter at two pack-equivalent voltages such as12.6V and16.4V; cross-checkINA228. Independently verify physical13.05V software cutoff (labd and Pico fallback both 13050 mV) within+/-0.1V, including5s dwell, at12.95/13.05/13.15V across specifiedtemperature and load states. Per unit, at maximum and minimum load: the measured software cutoff referred to E1_N minus the measured E1-04 hardware trip must be >=0.10V, and during a controlled discharge the graceful shutdown (5s dwell plus Linux shutdown) must complete before the hardware UV trip asserts OFF; otherwise re-trim or reject. Store calibratedcoefficients with revision/CRC. No commissioningpassuntilmet; hardwareAON UVsupervisor remains independentbackup.
 
 ## E3-08 — OPEN / блокує випуск
 
@@ -150,9 +150,9 @@ Lime X2/X4 are verified RX ports for v1.2; supplied-board channel A/B and cable 
 
 ## E4-06 — OPEN / блокує випуск
 
-Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification.
+Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.
 
-**Умова закриття:** Verify each DCS LOW at0V and HIGH by±0.100V in both sweep directions over admitted temperature/supply range; record thresholds/hysteresis. Test±30V limited foreignDC with Q6A ON/OFF and require3V3_Q6A<0.1V whenOFF. Measure RFtap IL/RL/NF impact. Require startup/reference-fault HIGH and ownbiasOFF≥500ms beforepreflight; readiness staysfalse untilqualified. Check floating/open antenna as well as0Ω/50ΩDC loads. Include the996Ω bleed load in current baselines and measure its RF loss/parasitics. Reject false-safe at±0.100V; false-unsafe units also fail usability qualification. Also qualify cold minimum-supply reference-feed headroom: the arithmetic model requires D450 Vf≤1.015 V at VDD3.135 V and REF2.072 V for at least80µA LM4040 cathode current. Reference collapse must force HIGH, and must not be misreported as a working detector.
+**Умова закриття:** Verify each DCS LOW at0V and HIGH by±0.100V in both sweep directions over admitted temperature/supply range; record thresholds/hysteresis. Apply ±30V limited foreign DC with Q6A ON/OFF, requiring3V3_Q6A<0.1V when OFF, only at the detector tap with the bias branch disconnected (L403/L404 not fitted; A406 DC port unplugged from BONI13V8). On an assembled port never exceed −0.3…+5.5V on P2/P3 or −0.3…+0.3V on HF_CM with own bias OFF (TPS2553 OUT −0.3…7V, INA3221 −0.3…26V, TPS259630 OUT ≤VIN+0.3V, polarized C239/C243/C273); the ±0.100V sweep lies inside these limits. Hardware redesign required before this gate can close: a ±30V-rated bidirectional blocking element in each sensed bias branch between the E2 output and the E4 injector (relay contact or back-to-back MOSFETs held open whenever EN_LNA2/EN_LNA3/EN_BONI is low, or a TPS2660-class ±60V eFuse with reverse-polarity and reverse-current blocking), keeping TPS2553/INA3221/U214 and the electrolytics on the protected side; the detector is not that protection. Then repeat ±30V at each assembled port. Measure RFtap IL/RL/NF impact. Require startup/reference-fault HIGH and ownbiasOFF≥500ms beforepreflight; readiness staysfalse untilqualified. Check floating/open antenna as well as0Ω/50ΩDC loads. Include the996Ω bleed load in current baselines and measure its RF loss/parasitics. Reject false-safe at±0.100V; false-unsafe units also fail usability qualification. Also qualify cold minimum-supply reference-feed headroom: the arithmetic model requires D450 Vf≤1.015 V at VDD3.135 V and REF2.072 V for at least80µA LM4040 cathode current. Reference collapse must force HIGH, and must not be misreported as a working detector.
 
 ## E4-07 — OPEN / блокує випуск
 
@@ -228,7 +228,7 @@ Radiated-noise behavior and USB2touch enumeration are physical integration gates
 
 ## Додаткова калібровка аварійного ADC
 
-Дільник E1 100 kΩ / 20 kΩ з допуском 1% та LM4040C30 0.5% не дають точного батарейного порога без калібровки. Початкова похибка біля 12.9 V може становити приблизно ±0.28 V. Перед штатним запуском потрібні дві опорні напруги, запис scale/offset із серійним номером пристрою та перевірка відсічки 12.9±0.1 V за кімнатної і підвищеної температури. Немає чинної калібровки — штатний режим заборонений.
+Дільник E1 100 kΩ / 20 kΩ з допуском 1% та LM4040C30 0.5% не дають точного батарейного порога без калібровки. Початкова похибка біля 13.05 V може становити приблизно ±0.28 V. Перед штатним запуском потрібні дві опорні напруги, запис scale/offset із серійним номером пристрою та перевірка відсічки 13.05±0.1 V за кімнатної і підвищеної температури. Немає чинної калібровки — штатний режим заборонений.
 
 ## Правило звітності
 

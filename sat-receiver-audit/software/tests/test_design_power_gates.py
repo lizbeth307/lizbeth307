@@ -91,6 +91,9 @@ class DesignPowerGateTest(unittest.TestCase):
         self.assertIn("E2_LNA_IN", dc_reach(self.comps, "LAB5"))
         self.assertIn("E2_LNA2_SW", dc_reach(self.comps, "E2_LNA2_SHUNT"))
         self.assertNotIn("GND", dc_reach(self.comps, "E4_P2"))
+        # Full port-to-switch-OUT paths (TPS2553 U207/U208, TPS2596 U214).
+        for port, node in (("E4_P2", "E2_LNA2_SW"), ("E4_P3", "E2_LNA3_SW"), ("E4_HF_CM", "E2_BONI_EF")):
+            self.assertIn(node, dc_reach(self.comps, port), port)
 
     def test_foreign_dc_gate_matches_exposed_bias_switches(self):
         outs = {p["net"] for c in self.comps.values() if c["value"].startswith(("TPS2553", "TPS2596"))
@@ -98,14 +101,17 @@ class DesignPowerGateTest(unittest.TestCase):
         exposed = [port for port in SENSED_PORTS if dc_reach(self.comps, port) & outs]
         e4 = self.graphs["E4"]
         resolve = self.gates["E4-06"]["resolve"]
-        if exposed:
-            # The protected branch shares the port node: ±30 V is only a detector-tap test
-            # until a blocking element exists, and the gate must demand that redesign.
-            self.assertIn("only at the detector tap", resolve)
-            self.assertIn("Hardware redesign required", resolve)
-            self.assertNotIn("Test±30V limited foreignDC", resolve)
-            self.assertFalse(any(n.startswith("Foreign DC design envelope is ±30 V") for n in e4["notes"]))
-            self.assertTrue(any("detector tap only" in n for n in e4["notes"]))
+        # Current topology: every sensed port shares its DC node with a bias-switch OUT.
+        # A walk regression must fail here, not skip the gate text; a real blocking
+        # element must change this list and the E4-06 text together.
+        self.assertEqual(exposed, list(SENSED_PORTS))
+        # The protected branch shares the port node: ±30 V is only a detector-tap test
+        # until a blocking element exists, and the gate must demand that redesign.
+        self.assertIn("only at the detector tap", resolve)
+        self.assertIn("Hardware redesign required", resolve)
+        self.assertNotIn("Test±30V limited foreignDC", resolve)
+        self.assertFalse(any(n.startswith("Foreign DC design envelope is ±30 V") for n in e4["notes"]))
+        self.assertTrue(any("detector tap only" in n for n in e4["notes"]))
 
 
 if __name__ == "__main__":

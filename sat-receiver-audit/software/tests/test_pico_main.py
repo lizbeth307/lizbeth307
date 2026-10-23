@@ -23,18 +23,26 @@ def _load(name, filename):
 
 pico_main = _load("pico_main_loop_under_test", "main.py")
 hmi = _load("pico_hmi_errors_under_test", "hmi.py")
+supervisor = _load("pico_supervisor_main_under_test", "supervisor.py")
 
 
 class _Stop(BaseException):
     """Leaves run()'s endless loops; run() never catches BaseException."""
 
 
+class _Hang(BaseException):
+    """run() left its 20 ms loop early (fail-safe idle) or ran past the bound."""
+
+
 class Board:
     """Q6A powered, no calibration records, empty HMI bus, ADC at 25 C NTC."""
     def __init__(self, loops=14):
         self.levels = {14: 1, 11: 1, 22: 1, 10: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1}
-        self.log, self.writes, self.uarts = [], [], {}
-        self.now, self.loops, self.injected = 0, loops, False
+        self.log, self.writes, self.uarts, self.display = [], [], {}, []
+        self.now, self.loops, self.injected, self.model = 0, loops, False, None
+        # Every sleep and tick read counts: an early firmware exception or a
+        # non-sleeping spin raises _Hang instead of hanging or passing vacuously.
+        self.ticks, self.max_ticks = 0, 100 * loops
         board = self
 
         class Pin:
@@ -53,6 +61,8 @@ class Board:
                 if value is not None:
                     board.levels[self.gpio] = value
                     board.writes.append((self.gpio, value))
+                    if self.gpio == 16:  # DISP12 eFuse: model state at each write.
+                        board.display.append((board.phase(), value))
                 return board.levels.get(self.gpio, 0)
 
             def irq(self, **kwargs):
@@ -102,33 +112,56 @@ class Board:
             def feed(self):
                 pass
 
+        class Supervisor(supervisor.Supervisor):
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                board.model = self
+
         self.Pin = Pin
+        self.Supervisor = Supervisor
         self.machine = types.SimpleNamespace(
             Pin=Pin, UART=UART, ADC=ADC, SoftI2C=SoftI2C, WDT=WDT,
             freq=lambda value: None, unique_id=lambda: bytes(range(8)),
             disable_irq=lambda: 0, enable_irq=lambda mask: None)
-        self.time = types.SimpleNamespace(ticks_ms=lambda: board.now,
+        self.time = types.SimpleNamespace(ticks_ms=self.ticks_ms,
                                           ticks_diff=lambda new, old: new - old,
                                           sleep_us=lambda value: None, sleep_ms=self.sleep_ms)
+
+    def phase(self):
+        if self.loops <= 0:
+            return "FAIL_SAFE"  # run()'s finally after the budgeted _Stop.
+        return "BOOT" if self.model is None else self.model.state
 
     def frames(self):
         return FrameDecoder().feed(bytes(self.uarts[0].tx)) if 0 in self.uarts else []
 
+    def ticks_ms(self):
+        self.ticks += 1
+        if self.ticks > self.max_ticks:
+            raise _Hang("ticks_ms read %d times with %d loops left" % (self.ticks, self.loops))
+        return self.now
+
     def sleep_ms(self, value):
         self.now += value
-        if value == 20:
-            self.loops -= 1
-            hello = [frame for frame in self.frames() if frame["t"] == "HELLO"]
-            if hello and not self.injected:
-                # Host TRIP in the current Pico session: forces a supervisor TRIP event.
-                self.uarts[0].rx.extend(encode_frame({"v": 1, "t": "TRIP", "s": hello[-1]["s"],
-                                                      "q": 0, "p": {}}))
-                self.injected = True
+        if self.loops <= 0:
+            raise _Stop()  # fail_safe() idle loop after the budgeted stop below.
+        if value != 20:
+            # Only the main loop sleeps 20 ms; 50 ms is run()'s fail-safe idle
+            # loop after an exception, which the traceback keeps as context.
+            raise _Hang("sleep_ms(%d) with %d loops left" % (value, self.loops))
+        self.loops -= 1
+        hello = [frame for frame in self.frames() if frame["t"] == "HELLO"]
+        if hello and not self.injected:
+            # Host TRIP in the current Pico session: forces a supervisor TRIP event.
+            self.uarts[0].rx.extend(encode_frame({"v": 1, "t": "TRIP", "s": hello[-1]["s"],
+                                                  "q": 0, "p": {}}))
+            self.injected = True
         if self.loops <= 0:
             raise _Stop()
 
     def run(self):
         modules = {"machine": self.machine, "time": self.time, "wire": wire,
+                   "supervisor": types.SimpleNamespace(Supervisor=self.Supervisor),
                    "micropython": types.SimpleNamespace(alloc_emergency_exception_buf=lambda size: None)}
         cwd = os.getcwd()
         with tempfile.TemporaryDirectory() as folder, mock.patch.dict(sys.modules, modules):
@@ -162,10 +195,27 @@ class MainLoopTests(unittest.TestCase):
         self.assertEqual(self.board.uarts[1].tx, bytearray())
 
     def test_console_powered_in_safe_and_tripped_while_reset_stays_asserted(self):
-        writes = self.board.writes
-        self.assertIn((16, 1), writes)  # DISP12 eFuse with Q6A on and a 25 C panel.
-        self.assertNotIn((17, 0), writes)  # MCP reset never released without ARM.
-        self.assertEqual([value for gpio, value in writes if gpio == 16][-1], 0)  # fail_safe()
+        display = self.board.display  # (model state, level) at every GP16 write.
+        self.assertEqual(display[0], ("BOOT", 0))  # Hardware() safe pins before the model.
+        # DISP12 eFuse with Q6A on and a 25 C panel: HIGH at every write in each state.
+        for state in ("SAFE", "TRIPPED"):
+            levels = [value for phase, value in display if phase == state]
+            self.assertTrue(levels, state)
+            self.assertEqual(set(levels), {1}, state)
+        self.assertEqual({phase for phase, value in display},
+                         {"BOOT", "SAFE", "TRIPPED", "FAIL_SAFE"})
+        self.assertEqual(self.board.model.fault, "HOST_TRIP")
+        self.assertEqual(display[-1], ("FAIL_SAFE", 0))  # fail_safe() after the loop budget.
+        self.assertNotIn((17, 0), self.board.writes)  # MCP reset never released without ARM.
+
+    def test_early_firmware_exception_fails_instead_of_hanging(self):
+        board = Board()
+        del board.machine.UART  # Fails inside run()'s try, before the 20 ms loop.
+        with self.assertRaises(_Hang) as caught:
+            board.run()
+        self.assertIsInstance(caught.exception.__context__, AttributeError)
+        self.assertEqual(board.loops, 14)
+        self.assertEqual(board.display[-1][1], 0)  # fail_safe() still drops DISP12.
 
 
 class Bus:

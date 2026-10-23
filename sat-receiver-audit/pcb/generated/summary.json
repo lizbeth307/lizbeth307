@@ -27,7 +27,7 @@
   },
   "graph_assigned_footprints": 176,
   "portable_graph_assignments": 176,
-  "bare_parts_without_footprint": 425,
+  "bare_parts_without_footprint": 424,
   "pin_pad_mismatches": 0,
   "xml_connected_pin_audit": "PASS",
   "xml_compared_connected_pins": 2189,
@@ -36,5 +36,5 @@
   "core_boundary_nets": 8,
   "core_graph_assigned_footprints": 21,
   "core_proposed_footprints": 50,
-  "blocking_issue_records": 469
+  "blocking_issue_records": 468
 }

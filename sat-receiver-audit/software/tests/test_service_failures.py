@@ -12,6 +12,7 @@ import select
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 import unittest
 from unittest.mock import patch
@@ -148,6 +149,29 @@ class EngineFailureTests(unittest.TestCase):
         self.link.silence_status = False
         self.assert_stays_latched()
 
+    def test_status_reports_pico_freshness_with_the_arm_refusal_bound(self):
+        hardware, link = SimHardware(), FaultLink()
+        engine = Engine(hardware, link, simulated=True)
+        try:
+            status = engine.status()
+            self.assertEqual((status['pico_fresh'], status['pico_age_ms']), (False, None))
+        finally:
+            engine.close()
+        self.advance(600)
+        status = self.engine.status()
+        self.assertIs(status['pico_fresh'], True)
+        self.assertTrue(0 <= status['pico_age_ms'] <= 500)
+        self.link.silence_status = True
+        self.advance(self.now + 600)
+        status = self.engine.status()
+        self.assertIs(status['pico_fresh'], False)
+        self.assertGreater(status['pico_age_ms'], 500)
+        # The console's freshness claim and labd's ARM refusal agree.
+        self.assertEqual(self.engine.request({'op': 'arm'})['error'], 'fresh Pico HELLO/status required')
+        self.link.silence_status = False
+        self.advance(self.now + 200)
+        self.assertIs(self.engine.status()['pico_fresh'], True)
+
     def test_replayed_status_does_not_refresh_freshness(self):
         self.arm()
         last_fresh = self.engine.last_status_ms
@@ -166,6 +190,10 @@ class EngineFailureTests(unittest.TestCase):
         # DISP12 is the operator console, not an ARM output; SAFE_BOOT is.
         self.assertTrue(self.link.delegate.model.outputs['safe_boot'])
         self.assertEqual(self.link.delegate.model.state, 'TRIPPED')
+        # HMI-07: a non-thermal trip with Q6A on and a cool panel keeps the console
+        # lit to show the fault (thermal trips such as CASE_HOT switch it off).
+        self.assertEqual(self.link.delegate.model.fault, 'HEARTBEAT_TIMEOUT')
+        self.assertTrue(self.link.delegate.model.outputs['disp_en'])
         self.assert_safe()
         self.link.drop_hb = False
         self.assert_stays_latched()
@@ -553,24 +581,93 @@ class EngineFailureTests(unittest.TestCase):
             with self.assertRaises(ValueError):
                 soc_temp_c(root)
 
+    def test_hung_thermal_zone_never_blocks_the_safety_tick(self):
+        from srrx.daemon import SocTempSampler
+        release = threading.Event()
+        def hung_zone():
+            release.wait(10)  # A PMIC/I2C-backed zone that does not answer.
+            return 47.04
+        sampler = SocTempSampler(hung_zone, period_s=.01)
+        hardware, link = SimHardware(), FaultLink()
+        engine = Engine(hardware, link, simulated=True, soc_temp_reader=sampler)
+        try:
+            started = time.monotonic()
+            for now in range(0, 2001, 20):
+                engine.tick(now)
+            self.assertLess(time.monotonic() - started, 3)  # Not 10 s per synchronous read.
+            payloads = [f['p'] for f in link.sent if f['t'] == 'HB']
+            self.assertTrue(payloads)
+            self.assertTrue(all(p == {} for p in payloads))  # Unknown: omitted, fan forced on.
+            release.set()
+            deadline = time.monotonic() + 5
+            while (sampler.sample is None or sampler.sample[0] is None) and time.monotonic() < deadline:
+                time.sleep(.01)
+            mark = len(link.sent)
+            for now in range(2020, 4001, 20):
+                engine.tick(now)
+            self.assertIn({'soc_temp_c': 47.0}, [f['p'] for f in link.sent[mark:] if f['t'] == 'HB'])
+        finally:
+            release.set()
+            engine.close()
+        self.assertTrue(sampler.stopping.is_set())  # Engine.close stops the sampler thread.
+        sampler.thread.join(2)
+        self.assertFalse(sampler.thread.is_alive())
+        sampler.sample = (47.0, time.monotonic() - 3.5)
+        with self.assertRaises(OSError):
+            sampler()  # A stale sample is unknown, not the last value.
+        sampler.sample = (None, time.monotonic())
+        with self.assertRaises(OSError):
+            sampler()
+
+    def test_runtime_starts_tolerate_rtc_behind_acceptance_time(self):
+        from srrx import commissioning, daemon, labrx
+        seen = []
+        def refuse(*args, **kwargs):
+            seen.append(kwargs.get('clock_check', True))
+            raise commissioning.ValidationError('fixture stops before any device is opened')
+        with patch('srrx.commissioning.load_acceptance', side_effect=refuse), patch('builtins.print'):
+            self.assertEqual(daemon.main(['--hardware', '--acceptance', 'a.json', '--i2c', '/nonexistent/i2c',
+                                          '--i2c0', '/nonexistent/i2c0', '--pico', '/nonexistent/pico']), 1)
+            self.assertEqual(labrx.main(['--hardware', '--acceptance', 'a.json', '--driver-record', 'd.json']), 2)
+        self.assertEqual(seen, [False, False])  # Provisioning alone keeps the wall-clock bound.
+        future = {'accepted_at': '2099-01-01T00:00:00Z', 'branch_limits': {}, 'lab5_budget': {}}
+        with patch('srrx.commissioning.load_acceptance', return_value=future), patch('builtins.print') as output:
+            self.assertEqual(daemon.main(['--hardware', '--acceptance', 'a.json', '--i2c', '/nonexistent/i2c',
+                                          '--i2c0', '/nonexistent/i2c0', '--pico', '/nonexistent/pico']), 1)
+        text = ' '.join(str(call.args[0]) for call in output.call_args_list if call.args)
+        self.assertIn('system clock is behind acceptance accepted_at', text)
+        self.assertIn('labd refused startup', text)
+
     def test_hold_never_disarms_a_session_it_does_not_own(self):
         from srrx import cli
-        for arm, lease_ok, disarmed in ((False, False, False), (True, False, True), (False, True, True)):
-            with self.subTest(arm=arm, lease_ok=lease_ok):
-                sent = []
+        # (arm, leases granted, Pico state, seconds slept per loop, end, disarm expected)
+        for arm, granted, state, stall, end, disarmed in (
+                (False, 0, 'ACTIVE', 1, 2, False),  # Never leased: another operator's session.
+                (True, 0, 'ACTIVE', 1, 2, False),   # Refused right after ARM: not ours, or already tripped.
+                (False, 1, 'ACTIVE', 1, 2, False),  # Renewal refused after a lapse: another owner now.
+                (False, 3, 'ACTIVE', 1, 0, True),   # Ctrl-C while holding: ours, disarm.
+                (False, 9, 'SAFE', 1, 2, True),     # Leased but not ACTIVE: ours, disarm.
+                (False, 1, 'ACTIVE', 6, 0, False)):  # Ctrl-C after a 6 s stall: lease lapsed.
+            with self.subTest(arm=arm, granted=granted, state=state, stall=stall):
+                sent, clock = [], [100.0]
                 def fake(path, request, timeout=2.0):
                     sent.append(request['op'])
                     if request['op'] == 'lease':
-                        if lease_ok and sent.count('lease') == 1:
+                        if sent.count('lease') <= granted:
                             return {'ok': True}
                         return {'ok': False, 'error': 'another owner holds the lease'}
                     if request['op'] == 'status':
-                        return {'ok': True, 'data': {'pico': {'state': 'ACTIVE'}}}
+                        return {'ok': True, 'data': {'pico': {'state': state}}}
                     return {'ok': True}
-                with patch('srrx.cli.request_once', side_effect=fake), patch('srrx.cli.time.sleep'), \
-                     patch('builtins.print'):
+                def sleep(seconds):
+                    clock[0] += stall
+                    if end == 0 and sent.count('lease') >= max(1, granted):
+                        raise KeyboardInterrupt
+                with patch('srrx.cli.request_once', side_effect=fake), \
+                     patch('srrx.cli.time.sleep', side_effect=sleep), \
+                     patch('srrx.cli.time.monotonic', side_effect=lambda: clock[0]), patch('builtins.print'):
                     code = cli.main(['--socket', '/nonexistent', 'hold'] + (['--arm'] if arm else []))
-                self.assertEqual(code, 2)
+                self.assertEqual(code, end)
                 self.assertEqual('disarm' in sent, disarmed)
 
 

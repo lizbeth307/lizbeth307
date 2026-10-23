@@ -32,6 +32,7 @@ BRANCH_CAPS = {"LNA1": (.265, 5.5), "LNA2": (.265, 5.5), "LNA3": (.265, 5.5),
                "SB_LNA": (.065, 5.5), "RTLA": (.544, 5.5), "RTLB": (.4, 5.5),
                "HFP": (.825, 5.5), "LIME3V3": (1.8, 3.63), "T7": (1.512, 5.5),
                "LABPORT": (.678, 5.5), "AUX12": (.75, 13)}
+MAX_ARTIFACT_BYTES = 64 * 1024 * 1024
 RUNTIME_SOURCES = {"LNA1": "INA3221:0x41:1", "LNA2": "INA3221:0x41:2",
                    "LNA3": "INA3221:0x41:3", "LNA4": "INA3221:0x43:1",
                    "LNB": "INA3221:0x43:2", "BONI": "INA3221:0x43:3"}
@@ -56,7 +57,8 @@ def _text(value, label, minimum=1):
 
 
 def _number(value, low, high, label):
-    if type(value) not in (int, float) or not math.isfinite(value) or not low <= value <= high:
+    # math.isfinite would raise OverflowError on an int beyond float range.
+    if not (type(value) is int or type(value) is float and math.isfinite(value)) or not low <= value <= high:
         raise ValidationError(label + " is not a finite in-range number")
     return value
 
@@ -84,7 +86,17 @@ def _date(value, label, latest=None):
 
 
 def _digest(path):
-    return hashlib.sha256(path.read_bytes()).hexdigest()
+    # Streamed in 1 MiB blocks: the release guard runs under MemoryMax=64M. The
+    # bytes hashed are the bytes read; a file grown past the limit after
+    # _local_file's size check is refused rather than hashed without bound.
+    digest, total = hashlib.sha256(), 0
+    with open(path, "rb") as source:
+        while block := source.read(1024 * 1024):
+            total += len(block)
+            if total > MAX_ARTIFACT_BYTES:
+                raise ValidationError("artifact exceeds 64 MiB while hashing: " + path.name)
+            digest.update(block)
+    return digest.hexdigest()
 
 
 def _local_file(root, relative):
@@ -92,7 +104,7 @@ def _local_file(root, relative):
         raise ValidationError("artifact path must stay inside project")
     try:
         path = (root / relative).resolve(strict=True)
-        if not path.is_relative_to(root) or not path.is_file() or not 0 < path.stat().st_size <= 64 * 1024 * 1024:
+        if not path.is_relative_to(root) or not path.is_file() or not 0 < path.stat().st_size <= MAX_ARTIFACT_BYTES:
             raise ValueError("invalid file")
         return path
     except (OSError, ValueError, RuntimeError) as exc:

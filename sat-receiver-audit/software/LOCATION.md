@@ -31,7 +31,9 @@ current = tracker.status(now_ms)
 
 `now_ms` is a nonnegative integer from a monotonic clock. On Linux prefer the
 suspend-aware `CLOCK_BOOTTIME`: `CLOCK_MONOTONIC` stops during suspend, so after
-resume the receiver's UTC looks like a time jump. Calls may share the
+resume the receiver's UTC looks like a time jump and an old fix looks fresh.
+`srrx.hmi` passes one `CLOCK_BOOTTIME` millisecond clock (monotonic only where
+it is absent) to both the tracker and its `GpsdClient`. Calls may share the
 same timestamp but must never go backwards. A backwards timestamp latches a
 clock fault: GNSS becomes unavailable as a live source and fallback ages become
 unknown. Construct a new tracker after repairing the caller's clock domain;
@@ -72,7 +74,7 @@ instance; monotonic ages are not silently persisted across process/boot resets.
 | `speed_mps`, `track_deg` | Reported ground motion for live fixes; None for fallback |
 | `hdop`, `satellites` | Reported GGA geometry/count; optional, not an accuracy guarantee |
 | `device` | Actual/explicit gpsd device identity, not a guessed path |
-| `reason`, `last_error` | `reason` is None for a live fix; for a fallback it is the still-unrecovered fault, otherwise `MANUAL_FALLBACK`, `STALE` or `NO_LOCATION`. `last_error` keeps the latest diagnostic code even after recovery |
+| `reason`, `last_error` | `reason` is None for a live fix. For a fallback it is a still-unrecovered fault: first that of the fallback record's own source, else that of another GNSS source; otherwise `MANUAL_FALLBACK`, `STALE` or `NO_LOCATION`. Faults are kept per source, and only an accepted fix from the same source clears one: an NMEA fix does not hide an unrecovered gpsd handshake timeout. `last_error` keeps the latest diagnostic code even after recovery |
 | `rejected_count`, `ignored_count` | Rejected input and irrelevant/partial/duplicate records |
 
 An available fallback is **not** a current GNSS fix. Stale position uncertainty
@@ -95,15 +97,27 @@ within two seconds by default. Backwards epochs and larger time jumps are
 rejected. Repeated epochs can enrich uncertainty/altitude metadata but never
 refresh position age. Contradictory same-epoch positions are rejected. A bad
 fix does not destroy the last good coordinates or turn them into a fresh fix.
-A single jump never passes and never moves the time reference. A source
-reacquires only after three consecutive distinct epochs that progress
-consistently with monotonic receipt on the new timeline, e.g. after a host
-suspend under `CLOCK_MONOTONIC`, a receiver UTC correction, or an undated GGA
-outage longer than 12 h. That source then drops its old reference and NMEA date
-anchor, and the next epoch is a first fix again: it is still checked against the
-last good position, and `utc_verified` restarts from zero. Unstable or
-alternating timelines never reacquire. A ZDA is compared with the date anchor
-only within the same 120 s window in which that anchor may date GGA/RMC.
+A single jump never passes and never moves the time reference. Rejected jump
+epochs form a candidate chain per source: each new distinct epoch must progress,
+relative to the previous candidate, consistently with monotonic receipt (to the
+same two seconds), or the chain restarts at one. The third consistent candidate,
+e.g. after a host suspend under `CLOCK_MONOTONIC`, a receiver UTC correction, or
+an undated GGA outage longer than 12 h, is still rejected, but the source then
+drops its old reference and NMEA date anchor. The next record, including a
+same-epoch repeat of that third epoch, is a first fix again: it is still checked
+against the last good position, and `utc_verified` restarts from zero. Only an
+accepted fix clears the chain; other rejections of the same source in between
+and the time between candidates do not reset it, but every candidate must still
+agree with receipt time. Unstable or alternating timelines never reacquire.
+
+A ZDA is compared with the date anchor only within the same 120 s window in
+which that anchor may date GGA/RMC. A disagreeing ZDA is rejected
+(`NMEA_DATE_JUMP`) and never moves the anchor alone. Three distinct ZDAs that
+agree with each other on one new timeline retire the anchor: the third becomes
+the new anchor and the next NMEA position is a first fix on that date. A
+GGA+ZDA stream (no RMC) thus follows a receiver date correction, which accepted
+GGAs, dated from the old anchor, would otherwise hide indefinitely. A ZDA that
+agrees with the anchor restarts the ZDA chain.
 
 There is no assumed trustworthy system wall clock. The first coherent received
 position may be accepted while `utc_verified` remains False. If an independent
@@ -207,8 +221,9 @@ PYTHONPATH=software python -m unittest discover -s software/tests -p test_locati
 Tests cover official NMEA examples, every fragmentation boundary, malformed and
 nonfinite data, checksum failure, missing fields, duplicate/stale epochs,
 impossible coordinates/movement, dateline crossing, midnight and leap labels,
-manual/last-good selection and fallback reasons, time jumps and three-epoch
-timeline reacquisition, empty optional GST/ZDA fields, explicit 2D altitude,
+manual/last-good selection and per-source fallback reasons, time jumps and
+three-epoch timeline reacquisition, GGA+ZDA date correction, single or unstable
+ZDA date jumps, empty optional GST/ZDA fields, explicit 2D altitude,
 bounded JSON and mocked gpsd handshake including late polls, short writes and
 disconnect. Device qualification still requires real UART
 recordings and live gpsd tests; no satellite lock or accuracy result is claimed.

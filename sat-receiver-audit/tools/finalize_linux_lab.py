@@ -42,13 +42,30 @@ def bound_sources(project):
 
 
 def regular_tree(root):
-    """Guest-written results: reject links/special files before anything is read or copied."""
-    for directory, dirs, files in os.walk(root):
-        for name in [""] + dirs + files:
-            path = os.path.join(directory, name) if name else directory
-            mode = os.lstat(path).st_mode
-            if not (stat.S_ISDIR(mode) or stat.S_ISREG(mode)):
-                raise SystemExit("Guest results contain a symlink or special file: " + path)
+    """Guest-written results: reject links/special files before anything is read or copied.
+
+    debugfs rdump re-applies guest modes; an unlistable directory fails closed
+    instead of being skipped by os.walk, and the root itself is lstat'ed first."""
+    def unreadable(error):
+        raise SystemExit("Unreadable guest results: " + str(error))
+    def regular(path):
+        mode = os.lstat(path).st_mode
+        if not (stat.S_ISDIR(mode) or stat.S_ISREG(mode)):
+            raise SystemExit("Guest results contain a symlink or special file: " + str(path))
+    regular(root)
+    for directory, dirs, files in os.walk(root, onerror=unreadable):
+        for name in dirs + files:
+            regular(os.path.join(directory, name))
+
+
+def lineage_text(base):
+    """README sentence for run.json's base_overlay: OS cache lineage only, never a clean-image claim."""
+    if base is None:
+        return "Прогін почато з незмінного locked Ubuntu image без OS cache (`base_overlay: null` у `run.json`)."
+    chain = base["backing_chain"]
+    return (f"`run.json` записує походження OS cache: попередній прогін `previous_status` {base['previous_status']}, "
+            f"`previous_qemu_exit_code` {base['previous_qemu_exit_code']} і `backing_chain` із SHA256 кожного з {len(chain)} шарів; "
+            "нижній шар — locked Ubuntu image. Журнал файлової системи відновлює саме Linux guest. Це не прогін із чистого базового образу.")
 
 
 def main():
@@ -80,6 +97,14 @@ def main():
     module_report = read(work / "results/module-lab/report.json")
     if module_report["execution_status"] != "PASS" or module_report["environment"]["architecture"] != "aarch64":
         raise SystemExit("Missing successful ARM64 per-module execution")
+    # The README states that locked dependencies were reinstalled; require the guest's own proof.
+    dependencies = read(work / "results/dependency-verification.json")
+    if dependencies.get("status") != "PASS" or dependencies.get("cached_dependency_state_trusted") is not False:
+        raise SystemExit("Missing locked dependency reinstall verification")
+    lineage = read(work / "run.json").get("base_overlay")
+    locked = {x["name"]: x["sha256"] for x in read(PROJECT / "deployment/linux_lab/assets.lock.json")["ubuntu_assets"]}
+    if lineage is not None and lineage["backing_chain"][-1]["sha256"] != locked["ubuntu-24.04-server-cloudimg-arm64.img"]:
+        raise SystemExit("OS cache lineage does not end at the locked Ubuntu image")
     # Publish no guest-authored page/script: it must equal the bound renderer's output.
     spec = importlib.util.spec_from_file_location("srrx_module_lab_run", PROJECT / "deployment/module_lab/run.py")
     lab = importlib.util.module_from_spec(spec)
@@ -117,6 +142,7 @@ def main():
     units = read(destination / "software-tests.json")
     storage = read(destination / "storage-smoke.json")
     connect = module_report["domains"]["connectivity"]["report"]
+    origin = lineage_text(lineage)
     text = f"""# ARM64 Linux — фактичний результат
 
 Загальний стан **{report['status']}**. Справжній ARM64 Linux `{report['environment']['kernel']}`, systemd як PID1, QEMU TCG/Cortex-A76, 4 vCPU/3 GiB. Мережевих карт, USB passthrough та спільних каталогів хоста немає; loopback використовується локальними GPSD fixtures. ОС Ubuntu24.04 з generic kernel, а не цільовий Q6A образ/ядро.
@@ -133,7 +159,7 @@ Storage smoke: **{len(storage['cases'])} PASS** на окремому вірту
 
 [Таблиця модулів](../module-lab/MODULE-RESULTS.md) та автономний `../module-lab/module-results.html` відокремлюють програмні драйвери від моделі з'єднань. Повний `../module-lab/report.json` зберігає всі сценарії та обмеження. Модель з'єднань: `{connect['status']}`; її точні лічильники — в `../module-lab/connectivity.json`.
 
-`run.json` записує походження OS/dependency cache, зокрема попередній перерваний прогін, якщо використано кеш. Журнал файлової системи відновлює саме Linux guest; усі поточні вихідні файли замінено, перевірено SHA256, пакет перевстановлено, усі набори виконано повторно. Це не прогін із чистого базового образу. `source-binding.json` і `project-manifest.json` дозволяють звірити реально виконаний код. Годинник задається з host preparation timestamp; це не GNSS/PPS/RTC qualification.
+{origin} Усі locked DEB і wheels перевстановлено з hash-перевіреного payload, а `dependency-verification.json` підтверджує, що встановлені версії точно збігаються з обома lock. Усі поточні вихідні файли замінено й перевірено за SHA256, пакет перевстановлено, усі набори виконано повторно. `source-binding.json` і `project-manifest.json` дозволяють звірити реально виконаний код. Годинник задається з host preparation timestamp; це не GNSS/PPS/RTC qualification.
 
 36 апаратних воріт залишаються OPEN. Фізичне залізо, аналогові RF/живлення, BMS, калібрування, Q6A peripheral pinmux, повний Lime/56MS/s/HTP та виробничий випуск не прийняті.
 """

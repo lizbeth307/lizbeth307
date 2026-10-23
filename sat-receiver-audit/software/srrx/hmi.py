@@ -142,7 +142,9 @@ class ServiceError(OSError):
 
 
 def _finite(value):
-    return type(value) in (int, float) and math.isfinite(value)
+    # A codec-valid labd int may exceed float range: math.isfinite would raise
+    # OverflowError and display arithmetic (/1000, *1000, :.2f) must not either.
+    return type(value) is int and -1e300 < value < 1e300 or type(value) is float and math.isfinite(value)
 
 
 def _no_constant(value):
@@ -568,19 +570,24 @@ def location_callbacks(host=None, port=None, device=None):
     from .location import LocationTracker, GpsdClient
     if (host is None) != (port is None):
         raise ValueError("Specify both gpsd host and port")
+    # One suspend-aware clock for tracker and gpsd client: CLOCK_MONOTONIC stops
+    # in suspend, so receiver UTC would look like a jump and an old fix fresh.
+    clock = getattr(time, "CLOCK_BOOTTIME", None)
+    now_ms = ((lambda: time.clock_gettime_ns(clock) // 1000000) if clock is not None
+              else (lambda: int(time.monotonic() * 1000)))
     tracker = LocationTracker(device=device)
     client = GpsdClient(tracker, host, port) if host is not None else None
     if client is not None:
-        client.start(int(time.monotonic() * 1000))
+        client.start(now_ms())
 
     def current():
-        now = int(time.monotonic() * 1000)
+        now = now_ms()
         if client is not None:
             client.poll(now)
         return tracker.status(now)
 
     def manual(lat, lon):
-        tracker.manual(lat, lon, int(time.monotonic() * 1000))
+        tracker.manual(lat, lon, now_ms())
 
     return {"location": current, "manual_location": manual}, (client.close if client is not None else lambda: None)
 
@@ -1322,7 +1329,7 @@ def create_window(controller, *, callbacks=None, start_worker=True):
             live = view.get("connected") is True and not self.worker_dead
             # Pico readouts need labd's own Pico freshness, not only a fresh labd reply.
             # A labd that omits the field is "unreported": readouts withheld, no stale/ARM claim.
-            freshness = data.get("pico_fresh")
+            freshness, pico_age = data.get("pico_fresh"), data.get("pico_age_ms")
             pico_live = live and freshness is True
             holding = view.get("holding") is True and not self.worker_dead
             backend = data.get("mode", "UNKNOWN")
@@ -1344,7 +1351,9 @@ def create_window(controller, *, callbacks=None, start_worker=True):
             self.metric_values["supervisor"].setText(state.title() + "\nLease: " + ("holding" if holding else "stopped"))
             fault = ("Connection lost — current power state is unconfirmed." if not live
                      else readable_fault(policy.get("fault")) if pico_live
-                     else ("Supervisor status stale — no fresh Pico status; ARM will be refused." if freshness is False
+                     else (("Supervisor status stale — " + (f"last Pico status {pico_age / 1000:.1f} s ago"
+                            if type(pico_age) is int and 0 <= pico_age < 1e12 else "no fresh Pico status")
+                            + "; ARM will be refused.") if freshness is False
                            else "labd did not report Pico freshness — Pico readouts withheld; labd checks it before ARM.")
                      # The labd fault stays visible, but never as "ready" without fresh Pico status.
                      + ("\n" + readable_fault(policy["fault"]) if policy.get("fault") not in (None, "", "new_pico_session") else ""))

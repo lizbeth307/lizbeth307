@@ -1,4 +1,3 @@
-import copy
 import ctypes as C
 import errno
 import hashlib

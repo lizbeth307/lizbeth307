@@ -614,7 +614,7 @@
       "status": "verified",
       "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
       "notes": [
-        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection."
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
       ],
       "footprint": "Package_TO_SOT_SMD:SOT-23",
       "sheet": "E4",
@@ -651,7 +651,7 @@
       "status": "verified",
       "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
       "notes": [
-        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection."
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
       ],
       "footprint": "Package_TO_SOT_SMD:SOT-23",
       "sheet": "E4",
@@ -688,7 +688,7 @@
       "status": "verified",
       "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
       "notes": [
-        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC design envelope, not lightning protection."
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
       ],
       "footprint": "Package_TO_SOT_SMD:SOT-23",
       "sheet": "E4",
@@ -7913,23 +7913,23 @@
     "inputs": [
       {
         "file": "design/E1.json",
-        "sha256": "e87f79db4da0d9be7e74aa1ad2816ea99ae4ed8fd6e723ba375c1559bfd51392"
+        "sha256": "26527a217f51449d9dca7583de3cf50e30821b1f9cc0f9cf39f2cec96d16e492"
       },
       {
         "file": "design/E2.json",
-        "sha256": "adc5b67b6b53977143847d688f657364a5e300a80761d74e1dc82e34bd703c16"
+        "sha256": "fcbededee4702839177adbea0b37f0fcbecfb7b676a40aed135ac14353d45e07"
       },
       {
         "file": "design/E3.json",
-        "sha256": "0a2e2e60ede923b2d0a1aa0f8484a97513c1ef36ae389d3aee365fbcf90aaac5"
+        "sha256": "7f206d558aa9ad61a1d5bd20d80664c9c1b58401eee27b5f3d85ad871af9d664"
       },
       {
         "file": "design/E4.json",
-        "sha256": "b05555c7a6729029f779df3ca3d0a62d71e206520a33cf7e34ffa3e2c081344d"
+        "sha256": "29a40332b06c1158bff1c207967ef3971af6fcfced465a897159d6f2d6db1d2b"
       },
       {
         "file": "design/E5.json",
-        "sha256": "86a9099809fbcdf365c82ecf4a239531b1b55715ee17cd1c5fb5a776c979ca05"
+        "sha256": "84ff5acf0e28fb55444d8615cf5f5b809505ae86f7f750e0838d2809f5526704"
       },
       {
         "file": "build/kicad/footprints/manifest.json",
@@ -7937,7 +7937,7 @@
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "cfc4adf58ca9ee86ab88963e6c04321012092c60a8f328b37782e1ded8c415d5"
+        "sha256": "d0a53112ded816915e1aeeef16bfbdd174e7c3e6e544a37fe3ad345db31a471a"
       }
     ],
     "source_documents": [

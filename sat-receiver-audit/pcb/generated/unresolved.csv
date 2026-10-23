@@ -1,5 +1,4 @@
 ref,type,blocking,detail
-R102,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 C103,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 C104,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 C105,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
