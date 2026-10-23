@@ -55,8 +55,8 @@ jobs:
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 40
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
       - name: Install Qt runtime libraries and compilers
@@ -84,7 +84,7 @@ jobs:
               print("SKIP", item["test"], "--", item["reason"])
           EOF
           cp verification/software-tests.json "$RUNNER_TEMP/software-tests-${{ matrix.arch }}.json"
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: always()
         with:
           name: software-tests-${{ matrix.arch }}
@@ -103,6 +103,48 @@ jobs:
         if: matrix.arch == 'x86_64'
         run: git diff --exit-code -- .
 
+  cad:
+    name: CAD reproduction (KiCad 10.0.7)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    container:
+      image: kicad/kicad:10.0.7
+      options: --user root
+    steps:
+      - name: Install git and pip inside the KiCad image
+        working-directory: .
+        run: |
+          apt-get update -q
+          apt-get install -y -q --no-install-recommends git ca-certificates python3-pip
+      - uses: actions/checkout@v5
+      - name: Python dependencies for the PDF and netlist checks
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          python3 -m pip install --break-system-packages --disable-pip-version-check PyMuPDF lxml
+          kicad-cli version
+      - name: Regenerate schematics, netlist, ERC, documents, PDF and SVG
+        run: python3 tools/run_checks.py --export
+      - name: Independent netlist and PCB-preparation checks
+        run: |
+          python3 verification/independent_netlist_check.py
+          python3 pcb/prepare.py
+          python3 pcb/prepare.py --check
+          python3 verification/independent_pcb_check.py
+          python3 verification/pcb-prototype-review-check.py
+      - name: Collect regenerated outputs
+        if: always()
+        run: |
+          git add -A .
+          git -c core.quotePath=false diff --cached --stat | tail -40
+          git -c core.quotePath=false diff --cached --binary > "$RUNNER_TEMP/cad.patch"
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: cad-regenerated
+          path: ${{ runner.temp }}/cad.patch
+      - name: Committed CAD outputs match the design graphs
+        run: git diff --cached --exit-code --stat
+
   module-lab:
     name: Module lab (${{ matrix.arch }})
     strategy:
@@ -116,8 +158,8 @@ jobs:
     runs-on: ${{ matrix.runner }}
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
       - name: Install Qt runtime libraries and compilers
@@ -138,7 +180,7 @@ jobs:
           r = json.load(open(sys.argv[1]))
           print({k: r[k] for k in r if isinstance(r[k], (str, int, float, bool))})
           EOF
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: always()
         with:
           name: module-lab-${{ matrix.arch }}
@@ -151,8 +193,8 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 180
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v6
         with:
           python-version: '3.12'
       - name: Install host utilities (no QEMU from apt; the lab uses its locked tools)
@@ -191,7 +233,7 @@ jobs:
           git add -A .
           git -c core.quotePath=false diff --cached --binary > "$RUNNER_TEMP/lab-evidence.patch"
           git diff --cached --stat | tail -5
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v5
         if: always()
         with:
           name: linux-lab-run
