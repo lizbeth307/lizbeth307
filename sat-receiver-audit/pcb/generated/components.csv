@@ -290,7 +290,7 @@ J409,E4,BENCH internal SMA,connector,physical_interface_boundary,,,False,,False,
 J410,E4,RTL-A RF internal SMA,connector,physical_interface_boundary,,,False,,False,UNASSIGNED,2,STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md,Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately.
 J411,E4,RTL-B RF internal SMA,connector,physical_interface_boundary,,,False,,False,UNASSIGNED,2,STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md,Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately.
 J412,E4,RX1 edge SMA,connector,physical_interface_boundary,,,False,,False,UNASSIGNED,2,STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md,Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately.
-J413,E4,RX1 panel SMA: captive loop,connector,physical_interface_boundary,,,False,,False,UNASSIGNED,2,STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md,Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately.
+J413,E4,RX1 panel SMA: captive coax assembly,connector,physical_interface_boundary,,,False,,False,UNASSIGNED,2,STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md,Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately.
 J414,E4,RX2 panel SMA,connector,physical_interface_boundary,,,False,,False,UNASSIGNED,2,STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md,Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately.
 J415,E4,REF IN panel SMA,connector,physical_interface_boundary,,,False,,False,UNASSIGNED,2,STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md,Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately.
 J416,E4,UHF antenna feed / A418 input interface,connector,physical_interface_boundary,,,False,,False,UNASSIGNED,2,STACK §5.3; assembly boundary of external Uputronics 440 LNA and selected UHF antenna,Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately.
@@ -357,7 +357,6 @@ Q455,E4,AO3400A,nfet,bare_board_part,,DC_CORE,False,Package_TO_SOT_SMD:SOT-23,Tr
 Q456,E4,AO3400A,nfet,bare_board_part,,DC_CORE,False,Package_TO_SOT_SMD:SOT-23,True,PASS,3,https://www.aosmd.com/res/data_sheets/AO3400A.pdf,Physical IC/passive/device for a custom board candidate.
 Q457,E4,AO3400A,nfet,bare_board_part,,DC_CORE,False,Package_TO_SOT_SMD:SOT-23,True,PASS,3,https://www.aosmd.com/res/data_sheets/AO3400A.pdf,Physical IC/passive/device for a custom board candidate.
 R101,E1,15 mΩ 1% 2 W (Adafruit R1),resistor,purchased_module_internal_detail,Adafruit5832,,False,,False,UNASSIGNED,2,https://github.com/adafruit/Adafruit-INA228-PCB/blob/main/Adafruit%20INA228%20I2C%20Power%20Monitor.sch,Existing purchased-breakout detail; do not buy/place a second INA228/shunt/capacitor.
-R102,E1,10k1%,resistor,bare_board_part,,PWR_MAIN,False,,False,UNASSIGNED,2,"STACK §2.7,§5.1",Physical IC/passive/device for a custom board candidate.
 R103,E1,3.30M0.1%25ppm,resistor,bare_board_part,,PWR_MAIN,False,,False,UNASSIGNED,2,"STACK §2.7,§5.1",Physical IC/passive/device for a custom board candidate.
 R104,E1,332k0.1%25ppm,resistor,bare_board_part,,PWR_MAIN,False,,False,UNASSIGNED,2,"STACK §2.7,§5.1",Physical IC/passive/device for a custom board candidate.
 R105,E1,4.02k0.1%25ppm TRIM,resistor,bare_board_part,,PWR_MAIN,False,,False,UNASSIGNED,2,"STACK §2.7,§5.1",Physical IC/passive/device for a custom board candidate.
@@ -421,7 +420,7 @@ R243,E2,162k 1%,resistor,bare_board_part,,PWR_BRANCH,False,,False,UNASSIGNED,2,"
 R244,E2,100k 1%,resistor,bare_board_part,,PWR_BRANCH,False,,False,UNASSIGNED,2,"STACK.md §§2.7, 5.1; інженерна деталізація E2",Physical IC/passive/device for a custom board candidate.
 R246,E2,0.200R 0.1% 0.25W Kelvin,resistor,bare_board_part,,PWR_BRANCH,False,,False,UNASSIGNED,2,"STACK.md §§2.7, 5.1; інженерна деталізація E2",Physical IC/passive/device for a custom board candidate.
 R247,E2,0.22R 1% 0.25W,resistor,bare_board_part,,PWR_BRANCH,False,,False,UNASSIGNED,2,"STACK.md §§2.7, 5.1; інженерна деталізація E2",Physical IC/passive/device for a custom board candidate.
-R248,E2,56.2k 1%,resistor,bare_board_part,,PWR_BRANCH,False,,False,UNASSIGNED,2,"STACK.md §§2.7, 5.1; інженерна деталізація E2",Physical IC/passive/device for a custom board candidate.
+R248,E2,RILIM TBD (start 56.2k 1%),resistor,bare_board_part,,PWR_BRANCH,False,,False,UNASSIGNED,2,"STACK.md §§2.7, 5.1; інженерна деталізація E2",Physical IC/passive/device for a custom board candidate.
 R249,E2,100k 1%,resistor,bare_board_part,,PWR_BRANCH,False,,False,UNASSIGNED,2,"STACK.md §§2.7, 5.1; інженерна деталізація E2",Physical IC/passive/device for a custom board candidate.
 R251,E2,0.22R 1% 0.25W,resistor,bare_board_part,,PWR_BRANCH,False,,False,UNASSIGNED,2,"STACK.md §§2.7, 5.1; інженерна деталізація E2",Physical IC/passive/device for a custom board candidate.
 R252,E2,0.22R 1% 0.25W,resistor,bare_board_part,,PWR_BRANCH,False,,False,UNASSIGNED,2,"STACK.md §§2.7, 5.1; інженерна деталізація E2",Physical IC/passive/device for a custom board candidate.
@@ -434,8 +433,8 @@ R259,E2,0.22R 1% 0.25W,resistor,bare_board_part,,PWR_BRANCH,False,,False,UNASSIG
 R260,E2,0.22R 1% 0.25W,resistor,bare_board_part,,PWR_BRANCH,False,,False,UNASSIGNED,2,"STACK.md §§2.7, 5.1; інженерна деталізація E2",Physical IC/passive/device for a custom board candidate.
 R261,E2,100k 1%,resistor,bare_board_part,,PWR_BRANCH,False,,False,UNASSIGNED,2,"STACK.md §§2.7, 5.1; інженерна деталізація E2",Physical IC/passive/device for a custom board candidate.
 R262,E2,7.87k 1%,resistor,bare_board_part,,PWR_BRANCH,False,,False,UNASSIGNED,2,"STACK.md §§2.7, 5.1; інженерна деталізація E2",Physical IC/passive/device for a custom board candidate.
-R263,E2,112k 0.1%,resistor,bare_board_part,,PWR_BRANCH,False,,False,UNASSIGNED,2,"STACK.md §§2.7, 5.1; інженерна деталізація E2",Physical IC/passive/device for a custom board candidate.
-R264,E2,10.0k 0.1%,resistor,bare_board_part,,PWR_BRANCH,False,,False,UNASSIGNED,2,"STACK.md §§2.7, 5.1; інженерна деталізація E2",Physical IC/passive/device for a custom board candidate.
+R263,E2,OVLO TBD (start 112k 0.1%),resistor,bare_board_part,,PWR_BRANCH,False,,False,UNASSIGNED,2,"STACK.md §§2.7, 5.1; інженерна деталізація E2",Physical IC/passive/device for a custom board candidate.
+R264,E2,OVLO TBD (start 10.0k 0.1%),resistor,bare_board_part,,PWR_BRANCH,False,,False,UNASSIGNED,2,"STACK.md §§2.7, 5.1; інженерна деталізація E2",Physical IC/passive/device for a custom board candidate.
 R266,E2,0.200R 0.1% 0.25W Kelvin,resistor,bare_board_part,,PWR_BRANCH,False,,False,UNASSIGNED,2,"STACK.md §§2.7, 5.1; інженерна деталізація E2",Physical IC/passive/device for a custom board candidate.
 R267,E2,0.22R 1% 0.25W,resistor,bare_board_part,,PWR_BRANCH,False,,False,UNASSIGNED,2,"STACK.md §§2.7, 5.1; інженерна деталізація E2",Physical IC/passive/device for a custom board candidate.
 R268,E2,10.0R 1%,resistor,bare_board_part,,PWR_BRANCH,False,,False,UNASSIGNED,2,"STACK.md §§2.7, 5.1; інженерна деталізація E2",Physical IC/passive/device for a custom board candidate.
@@ -564,20 +563,17 @@ R442,E4,1kΩ 1% ,resistor,bare_board_part,,RF_HMC,False,,False,UNASSIGNED,2,STAC
 R443,E4,1kΩ 1% ,resistor,bare_board_part,,RF_HMC,False,,False,UNASSIGNED,2,STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md,Physical IC/passive/device for a custom board candidate.
 R444,E4,1kΩ 1% ,resistor,bare_board_part,,RF_HMC,False,,False,UNASSIGNED,2,STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md,Physical IC/passive/device for a custom board candidate.
 R445,E4,1kΩ 1% ,resistor,bare_board_part,,RF_HMC,False,,False,UNASSIGNED,2,STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md,Physical IC/passive/device for a custom board candidate.
-R501,E5,43.2k 1%,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
+R501,E5,RILIM TBD (start 43.2k 1%),resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
 R502,E5,100k,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
-R503,E5,10k,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
 R504,E5,10k,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
 R505,E5,34.8k 1%,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
 R506,E5,100k,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
-R507,E5,10k,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
 R508,E5,10k,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
-R509,E5,28.7k 1%,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
+R509,E5,RILIM TBD (start 28.7k 1%),resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
 R510,E5,100k,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
-R511,E5,10k,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
 R512,E5,1Ohm 0.5W,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
 R513,E5,10k,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
-R514,E5,15.8k 1%,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
+R514,E5,RILIM TBD (start 15.8k 1%),resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
 R515,E5,100k,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
 R516,E5,10k,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
 R517,E5,10k,resistor,bare_board_part,,USB_POWER,False,Resistor_SMD:R_0603_1608Metric,True,PASS,2,STACK.md §5.2 / engineering design,Physical IC/passive/device for a custom board candidate.
@@ -730,7 +726,7 @@ U458,E4,LM4040A20IDBZR 2.048 V 0.1% shunt,ic,bare_board_part,,DC_CORE,False,Pack
 U500,E5,Q6A onboard peripheral rail sources,module,purchased_module_internal_detail,Radxa_Q6A,,False,,False,UNASSIGNED,4,https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf,Existing Q6A onboard rail-source detail; no second power module or PCB part is procured.
 U501,E5,TPS2553DBVR-1,ic,bare_board_part,,USB_POWER,False,Package_TO_SOT_SMD:SOT-23-6,True,PASS,6,https://www.ti.com/lit/gpn/tps2553,Physical IC/passive/device for a custom board candidate.
 U502,E5,TPS2553DBVR-1,ic,bare_board_part,,USB_POWER,False,Package_TO_SOT_SMD:SOT-23-6,True,PASS,6,https://www.ti.com/lit/gpn/tps2553,Physical IC/passive/device for a custom board candidate.
-U503,E5,TPS2553DBVR,ic,bare_board_part,,USB_POWER,False,Package_TO_SOT_SMD:SOT-23-6,True,PASS,6,https://www.ti.com/lit/gpn/tps2553,Physical IC/passive/device for a custom board candidate.
+U503,E5,TPS2553DBVR-1,ic,bare_board_part,,USB_POWER,False,Package_TO_SOT_SMD:SOT-23-6,True,PASS,6,https://www.ti.com/lit/gpn/tps2553,Physical IC/passive/device for a custom board candidate.
 U505,E5,TPS2553DRVR,ic,bare_board_part,,USB_POWER,False,Package_SON:WSON-6-1EP_2x2mm_P0.65mm_EP1x1.6mm,True,PASS,7,https://www.ti.com/lit/gpn/tps2553,Physical IC/passive/device for a custom board candidate.
 U506,E5,LM66100DCKR HDMI5V ideal diode,ic,bare_board_part,,USB_POWER,False,Package_TO_SOT_SMD:SOT-363_SC-70-6,True,PASS,6,https://www.ti.com/lit/ds/symlink/lm66100.pdf,Physical IC/passive/device for a custom board candidate.
 U507,E5,TCA9517DR,ic,bare_board_part,,USB_POWER,False,Package_SO:SOIC-8_3.9x4.9mm_P1.27mm,True,PASS,8,https://www.ti.com/lit/ds/symlink/tca9517.pdf,Physical IC/passive/device for a custom board candidate.

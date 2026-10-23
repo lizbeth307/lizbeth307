@@ -1,14 +1,26 @@
 # HANDOFF — поточний стан SR-RX-v2.1
 
+## Стан 23.10.2026 — перегенерований і перевірений комплект
+
+Джерело істини — [STACK.md](STACK.md). Цей розділ оновлює лічильники нижчих історичних розділів; цифри взято з фактичних прогонів 23.10.2026.
+
+- Схема (`tools/run_checks.py --export`, KiCad 10.0.7): **750 елементів, 2181 підключений контакт, 466 іменованих мереж, 137 явних NC**; **13 електричних сторінок і кореневий зміст**, PDF — **14 сторінок A2**. ERC — **0 помилок, 0 попереджень**; графи проти XML-netlist — **PASS**; повторний прогін побайтово відтворюваний. Незалежна звірка `verification/independent_netlist_check.py` — PASS.
+- Ворота: **37 блокувальних, усі OPEN** (+1 умова опції E4-09). Додано **E5-10** — стендові ворота W1-2: апаратне утримання WIFI_PWR_EN для Wi-Fi/BT Q6A; до їх закриття Wi-Fi/BT вимкнені лише програмно (blacklist, udev authorized=0 на порту 4 FE1.1s, rfkill). Поле `wifi_bt.fe11s_port4_usb_path` у `devices.json` описано в [DEPLOYMENT](software/DEPLOYMENT.md).
+- Хостова регресія `tools/run_tests_offline.py`: **432 тести, 431 PASS, 1 SKIP** (відсутня справжня QNN HTP SDK library); `deployment/test.sh` — PASS.
+- [Емуляція модулів](verification/module-lab/MODULE-RESULTS.md) перегенерована 23.10.2026 **на хості x86_64**, не в ARM64 guest: **750 refs, 64 збірки, 166 інтерфейсів**, **40 функціональних PASS, 0 FAIL, 126 CONNECTION_MODEL_ONLY**; окремо **3737/3737** topology/fault scenarios PASS. `deployment/module_lab/inventory.json` синхронізовано з поточними графами.
+- ARM64 Linux lab (run07, 20.10.2026) — **лише запис попереднього прогону**: виконаний код відтоді змінено, а повторний прогін тут неможливий (launcher завантажує QEMU й Ubuntu-образ; QEMU у середовищі редакції немає). Див. [verification/linux-lab](verification/linux-lab/README.md).
+- PCB: `pcb/prepare.py` перегенеровано (`--check` PASS; 750 refs, 2181 підключених контактів). Нерозведений starter і розведений прототип DC_CORE не перегенеровано: ядро (71 компонент, 187 контактів, 8 межових мереж) не змінилося, незалежна перевірка starter проти нового входу — PASS; перевірка прототипу структурно збігається, але її frozen-input hash навмисно не збігається до повторного `pcb/generate_routed.py`, якому потрібна робоча SciPy (у цьому середовищі вона зламана).
+- Апаратний випуск **BLOCKED**; жодного стендового PASS немає.
+
 ## Поточна передача ПЗ 0.3.1 — 20.10.2026
 
-Цей розділ має пріоритет над нижчими історичними статусами. Хостова регресія: **421 тест, 419 PASS, 2 SKIP**; причини пропусків є у [verification/software-tests.json](verification/software-tests.json). **ARM64 run07: PASS, QEMU exit 0**, 1434.289 s. Усі вісім наборів завершені: регресії **420 PASS / 1 SKIP із 421**, systemd **14 PASS**, PTY **9 PASS**, обидва GUI failure-сценарії, XCB, native RX **5 PASS**, storage **5 PASS** та всі шість модульних domain processes. Єдиний ARM64 SKIP — відсутня справжня QNN HTP SDK library. [Первинні результати та 86 SHA-bound джерел](verification/linux-lab/README.md) імпортовані після штатного вимкнення VM. [Таблиця модулів](verification/module-lab/MODULE-RESULTS.md): **754 refs, 64 збірки, 166 інтерфейсів**, із них **40 функціональних PASS**, **126 CONNECTION_MODEL_ONLY**; окремо **3749/3749** topology/fault scenarios PASS.
+Цей розділ новіший за нижчі історичні статуси; лічильники в ньому — стан 20.10.2026, актуальні наведено вище. Хостова регресія: **421 тест, 419 PASS, 2 SKIP**; причини пропусків є у [verification/software-tests.json](verification/software-tests.json). **ARM64 run07: PASS, QEMU exit 0**, 1434.289 s. Усі вісім наборів завершені: регресії **420 PASS / 1 SKIP із 421**, systemd **14 PASS**, PTY **9 PASS**, обидва GUI failure-сценарії, XCB, native RX **5 PASS**, storage **5 PASS** та всі шість модульних domain processes. Єдиний ARM64 SKIP — відсутня справжня QNN HTP SDK library. [Первинні результати та 86 SHA-bound джерел](verification/linux-lab/README.md) імпортовані після штатного вимкнення VM. Таблиця модулів run07 (ARM64): **754 refs, 64 збірки, 166 інтерфейсів**, із них **40 функціональних PASS**, **126 CONNECTION_MODEL_ONLY**; окремо **3749/3749** topology/fault scenarios PASS (поточна таблиця — у розділі 23.10.2026 вище).
 
 Production-виправлення: UART `termios.error`/EIO тепер доходить до безпечного обробника Engine як `OSError`, partial decoder скидається, FD закривається при невдалому старті; native RX pipe EOF стає чистим `OSError` із cleanup/OFF request; parent і worker RX підтверджують Linux `dumpable=0` перед IQ, worker повторно після driver init; новий opt-in StorageGuard прив'язує запис до точного mount/device, зберігає попередній файл при pre-commit відмові та не переходить на rootfs. Хостовий native SIGSEGV fixture справді завершився −11; його 5 сценаріїв і цільовий набір Receiver/Capture/WorkerCorePrivacy із 21 тесту пройдені. Це не фізичний SDR або ARM64 PASS.
 
 Окремо виправлені часові припущення harness: screenshots лише disarmed/SAFE з очікуванням природного Qt heartbeat, XCB first-paint retry за фактичним CLI PID та перевірка початкового ENOSPC як `OSError`. System smoke використовує один bounded persistent unprivileged RPC helper замість нового Python process на кожний запит; кожне з’єднання все одно справжнє AF_UNIX з kernel peer UID, lease-expiry cause перевіряється точно. Production lease/acceptance guards не послаблено. Джерела, точні назви регресій, відмінність production/harness і **послідовність finalizer → bundle → commit/Git patch → offline kit** наведені у [Linux FINDINGS](deployment/linux_lab/FINDINGS.md).
 
-Усі **36 фізичних воріт OPEN**, hardware release **BLOCKED**. Q6A board/kernel/DT, фізичні RF/живлення/BMS/калібрування, весь Lime SDK/56 MS/s, кваліфікований HTP, повний каталог декодерів та затверджений target image залишаються непідтвердженими. J102 залишається DNP/service-only до E1-02. Не змінювати Python/shell/service або module models після guest preparation й не приписувати старим звітам нові source hashes; змінені виконувані джерела потребують нового запуску. Git remote раніше повернув HTTP 403; успішний push не заявлено.
+Усі **37 фізичних воріт OPEN** (з 23.10.2026, разом з E5-10), hardware release **BLOCKED**. Q6A board/kernel/DT, фізичні RF/живлення/BMS/калібрування, весь Lime SDK/56 MS/s, кваліфікований HTP, повний каталог декодерів та затверджений target image залишаються непідтвердженими. J102 залишається DNP/service-only до E1-02. Не змінювати Python/shell/service або module models після guest preparation й не приписувати старим звітам нові source hashes; змінені виконувані джерела потребують нового запуску. Гілку `codex/sr-rx-v2-completion` опубліковано; 23.10.2026 її fast-forward злито в `ccr-1537979d-cj7q9t` (див. [RESTORE-GIT](RESTORE-GIT.md)).
 
 > **Оновлення 20.10.2026, ПЗ0.3:** керування/Pico/IMU, RX/FFT, GNSS, навчання і touch-меню реалізовані; [запуск](software/README.md), [deployment](software/DEPLOYMENT.md). [Внутрішній прототип DC_CORE](build/kicad/pcb-prototype/README.md) розведено й перевірено. Початковий starter і історичні матеріали збережені окремо; фактичні обмеження й тести — у COMPLETION та verification.
 
@@ -20,8 +32,8 @@ Production-виправлення: UART `termios.error`/EIO тепер дохо�
 
 ## Що читати й відтворювати
 
-1. [Поправки v2.1](build/12-revision-v2.1.md) мають пріоритет над суперечливими параметрами v2: більший LAB5 D36V50F5, зовнішній S-band вузол, DC-sense, watchdog, контактні карти й зарядні блокування.
-2. Фінальна послідовність 19.10.2026 завершена: 754 елементи, 2189 контактів, 466 мереж, 16 електричних сторінок і кореневий зміст. KiCad 10.0.7 ERC: **0 помилок, 0 попереджень**; графи проти XML-netlist — **PASS**. [COMPLETION](COMPLETION.md), [OPEN_ITEMS](OPEN_ITEMS.md), `verification/validation.json`, `verification/erc.json` і `verification/electrical-invariants.json` містять результати й обмеження. Зміна графів вимагає нового запуску.
+1. Джерело істини — [STACK.md](STACK.md); поправки v2.1 зафіксовано на його початку, подробиці — у [поправках v2.1](build/12-revision-v2.1.md): більший LAB5 D36V50F5, зовнішній S-band вузол, DC-sense, watchdog, контактні карти й зарядні блокування.
+2. Фінальна послідовність 23.10.2026 завершена: 750 елементів, 2181 підключений контакт, 466 мереж, 13 електричних сторінок і кореневий зміст (PDF — 14 сторінок). KiCad 10.0.7 ERC: **0 помилок, 0 попереджень**; графи проти XML-netlist — **PASS**. [COMPLETION](COMPLETION.md), [OPEN_ITEMS](OPEN_ITEMS.md), `verification/validation.json`, `verification/erc.json` і `verification/electrical-invariants.json` містять результати й обмеження. Зміна графів вимагає нового запуску.
 3. Джерело схеми — `design/E1.json`–`E5.json`; пояснення — `design/E#-review.md`, монтаж — [E5 connection guide](design/E5-connection-guide.md). Згенеровані схеми/бібліотека — `build/kicad/`, новий перелік — `build/11-schematic-bom.csv`.
 4. Після зміни графів: `python3 tools/run_checks.py --export`, актуалізація сімох source snapshots і pin/ref inventory моделей, потім повний цикл host regression → новий ARM64 Linux/module run → finalizer → документи/firmware → bundle за [Linux FINDINGS](deployment/linux_lab/FINDINGS.md). Потрібний KiCad 10 CLI; нестандартний шлях задається `--kicad-cli PATH`. CAD-порядок та обмеження — [KiCad README](build/kicad/README.md); старі Linux/source bindings для зміненого коду непридатні.
 
@@ -33,13 +45,13 @@ Production-виправлення: UART `termios.error`/EIO тепер дохо�
 
 Реалізовані labd/labctl, Pico/BNO085, спектральний RX/FFT, GNSS, навчання й меню мають хостові тести. Повний C++56MS/s/Lime, весь каталог декодерів, кваліфікований HTP і встановлений системний образ не заявлені як завершені. Фізична кваліфікація GP17/Q306 та пристрою не виконана. `readiness-contract.json` фіксує цей стан; дані контракту не є GPIO-драйвером.
 
-Push у вихідний remote повернув HTTP 403. Зміни залишаються локальним комплектом/патчем; це не успішно опублікований коміт у Git. Подальші зміни виконувати у графах, повторювати перевірки та фіксувати результати апаратного приймання окремо з приладами, датою й умовами.
+Редакцію опубліковано в Git: гілка `codex/sr-rx-v2-completion`, 23.10.2026 fast-forward злита в `ccr-1537979d-cj7q9t`. Подальші зміни виконувати у графах, повторювати перевірки та фіксувати результати апаратного приймання окремо з приладами, датою й умовами.
 
 ---
 
 ## Історична передача v2 від Claude — збережено для простежуваності
 
-Нижче — оригінальний текст. Його старі «готово», строки, ціни, розміри, правило пріоритету лише STACK v2 та критерій обов'язкового push не є поточним статусом або дозволом до складання/зарядки.
+Нижче — оригінальний текст. Його старі «готово», строки, ціни, розміри та критерій обов'язкового push не є поточним статусом або дозволом до складання/зарядки. Правило «джерело істини — STACK.md» чинне; поправки v2.1 зафіксовано в STACK.
 
 # HANDOFF: супутниковий приймач лише на прийом + портативна радіолабораторія
 

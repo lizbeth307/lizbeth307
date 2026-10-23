@@ -2,7 +2,7 @@
 
 Date: 2026-10-19. Runtime: KiCad 10.0.7.
 
-The current graphs contain **176 footprint assignments**, resolved by **16 official footprint files** in **6 project-local libraries**. No footprint assignments were removed to silence ERC. The exact selected files, SHA256 values, component references and pad numbers are in `build/kicad/footprints/manifest.json`.
+The current graphs contain **173 footprint assignments** (176 before the duplicate FAULT pull-ups R503/R507/R511 were removed on 2026-10-23), resolved by **16 official footprint files** in **6 project-local libraries**. No footprint assignments were removed to silence ERC. The exact selected files, SHA256 values, component references and pad numbers are in `build/kicad/footprints/manifest.json`.
 
 | Project-local library | Selected footprint files |
 |---|---:|

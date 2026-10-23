@@ -1,5 +1,7 @@
 # ARM64 Linux — фактичний результат
 
+> **ЗАПИС ПОПЕРЕДНЬОГО ПРОГОНУ (run07, 20.10.2026), а не результат поточної редакції.** Нижче без змін наведено те, що виконав ARM64 guest того дня. Станом на 23.10.2026 змінено 7 з 86 виконаних і прив’язаних у `source-binding.json` файлів (`software/srrx/spectrum.py`, `software/srrx/commissioning.py`, `deployment/module_lab/radio_scenarios.py`, `deployment/linux_lab/guest_smoke.py` і три тести), додано нові (`software/srrx/rfkill.py` та його тести), змінено `deployment/deploy.py`, видалено сторінки схеми E1_02/E2_05/E3_03 і додано ворота E5-10 — тепер їх 37. Тому цей PASS не переноситься на поточний код. Повторний ARM64 прогін у середовищі редакції неможливий: launcher спершу завантажує QEMU tools і підписаний Ubuntu cloud image, а QEMU й мережевого кешу assets там немає. `project-manifest.json` позначено як `RECORD_OF_EARLIER_RUN`: з нього вилучено записи файлів, яких більше немає; дослівний manifest ідентифікує SHA256 у `source-binding.json` і зберігає історія Git. Посилання нижче на `../module-lab/` тепер ведуть до таблиці, перегенерованої 23.10.2026 **на хості x86_64** (див. її `report.json`), а не до ARM64-результату run07, від якого залишився лише SHA256 у `source-binding.json`.
+
 Загальний стан **PASS**. Справжній ARM64 Linux `6.8.0-147-generic`, systemd як PID1, QEMU TCG/Cortex-A76, 4 vCPU/3 GiB. Мережевих карт, USB passthrough та спільних каталогів хоста немає; loopback використовується локальними GPSD fixtures. ОС Ubuntu24.04 з generic kernel, а не цільовий Q6A образ/ядро.
 
 | Набір | Фактичний стан |

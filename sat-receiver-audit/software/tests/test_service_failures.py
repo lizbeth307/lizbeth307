@@ -3,6 +3,7 @@
 The fake clock drives the actual Engine, SimLink wire codecs and Pico Supervisor.
 A separate smoke test uses the real Unix socket service in a child process.
 """
+import contextlib
 import copy
 import json
 import os
@@ -23,6 +24,30 @@ from srrx.link import SimLink
 from srrx.wire import FrameDecoder, encode_frame
 
 PROJECT = Path(__file__).resolve().parents[2]
+# Linux sockaddr_un.sun_path holds 108 bytes including the terminating NUL.
+UNIX_PATH_MAX = 108
+
+
+@contextlib.contextmanager
+def short_socket_directory(prefix):
+    """Temporary directory whose ctl.sock path fits in sun_path, or None.
+
+    A long TMPDIR (CI workspaces, nested sandboxes) pushes the socket path past
+    the AF_UNIX limit and the daemon then refuses to start. Try TMPDIR first,
+    then the short system temp directory /tmp.
+    """
+    for base in (None, '/tmp'):
+        if base is not None and not os.path.isdir(base):
+            continue
+        try:
+            directory = tempfile.TemporaryDirectory(prefix=prefix, dir=base)
+        except OSError:
+            continue
+        with directory as name:
+            if len(os.fsencode(os.path.join(name, 'ctl.sock'))) < UNIX_PATH_MAX:
+                yield Path(name)
+                return
+    yield None
 
 
 class FaultLink:
@@ -390,8 +415,12 @@ class UnixServiceFailureTests(unittest.TestCase):
             self.skipTest('Execution environment forbids AF_UNIX socket creation: ' + str(exc))
         else:
             probe.close()
-        with tempfile.TemporaryDirectory(prefix='srrx-rpc-') as directory:
-            path = Path(directory) / 'ctl.sock'
+        with short_socket_directory('srrx-rpc-') as directory:
+            if directory is None:
+                self.skipTest('No temporary directory gives an AF_UNIX socket path under %d bytes '
+                              '(TMPDIR=%r is too long and /tmp is unusable); set a shorter TMPDIR'
+                              % (UNIX_PATH_MAX, os.environ.get('TMPDIR')))
+            path = directory / 'ctl.sock'
             env = dict(os.environ, PYTHONPATH=str(PROJECT / 'software'))
             process = subprocess.Popen([sys.executable, '-m', 'srrx.daemon', '--simulate',
                                         '--project', str(PROJECT), '--socket', str(path)],
@@ -403,7 +432,11 @@ class UnixServiceFailureTests(unittest.TestCase):
                 deadline = time.monotonic() + 20
                 while not path.exists() and process.poll() is None and time.monotonic() < deadline:
                     time.sleep(.01)
-                self.assertIsNone(process.poll(), 'daemon exited before creating its socket')
+                if process.poll() is not None:
+                    stdout, stderr = process.communicate(timeout=4)
+                    self.fail('daemon exited (code %s) before creating its socket %s (%d bytes): %s'
+                              % (process.returncode, path, len(os.fsencode(str(path))),
+                                 (stdout + stderr).strip()[-2000:] or 'no output'))
                 self.assertTrue(path.exists(), 'daemon socket startup timed out')
                 startup_complete = True
                 malformed = [b'not json\n', b'[]\n', b'{"op":[]}\n',

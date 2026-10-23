@@ -1,6 +1,6 @@
 {
   "kicad_version": "10.0.7",
-  "assignments": 176,
+  "assignments": 173,
   "footprints": [
     {
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
@@ -390,15 +390,12 @@
       "refs": [
         "R501",
         "R502",
-        "R503",
         "R504",
         "R505",
         "R506",
-        "R507",
         "R508",
         "R509",
         "R510",
-        "R511",
         "R512",
         "R513",
         "R514",

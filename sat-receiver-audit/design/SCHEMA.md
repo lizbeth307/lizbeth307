@@ -8,9 +8,13 @@ Each agent owns E#.json and E#-review.md ONLY. JSON:
    "pins":[{"number":"9","name":"VDD","net":"3V3_Q6A","type":"power_in"}, {"number":"1","name":"GPB0","net":"EN_LNB","type":"bidirectional"}, {"number":"14","name":"NC","nc":true,"type":"no_connect"}]
   }
  ],
- "open_items":[{"id":"E3-01","description":"...","blocking":true,"resolve":"exact measurement/doc needed"}],
+ "open_items":[{"id":"E3-01","description":"...","blocking":true,"resolve":"exact measurement/doc needed","stack":"§5.2; §8.1 (UART7)","refs":["J301"]}],
+ "drawing_notes":[{"id":"N-E3-01","refs":["R301"],"stack":"§5.2","text":"short visible note, e.g. why a value is TBD and which gate closes it"}],
  "decisions":[{"id":"R-E3-01","description":"engineering assignment chosen here, not originally verified hardware","source":"reason"}]
 }
+Every open item and drawing note needs `stack` (the STACK.md section and bench gate it rests on) and `refs` (parts on this sheet it concerns). The generator prints it as a framed note directly before the first of those parts, so it appears on the page that shows them; a missing `stack`, an unknown ref or a note that is not placed fails generation.
+Values that STACK leaves open are written as `RILIM TBD (start 56.2k 1%)` / `OVLO TBD (start …)`: the drawing must not present a starting value as the specified one.
+Reference designators: E1 100–199, E2 200–299, E3 300–399, E4 400–499 plus the documented DC-detector extension 4400–4499, E5 500–599. The generator rejects anything else.
 Kinds: module, ic, connector, resistor, capacitor, inductor, diode, nfet, pfet, relay, fuse, switch, battery, net_tie, testpoint.
 Allowed pin electrical types match KiCad: input, output, bidirectional, tri_state, passive, free, unspecified, power_in, power_out, open_collector, open_emitter, no_connect.
 Every pin needs a unique number within its component. For commercial modules/cables where contact numbers are not documented: use meaningful logical identifiers e.g. VIN, GND, RF; status module, description explicitly says functional interface, no implied physical pin numbers; never assign arbitrary physical numbering.

@@ -1,10 +1,12 @@
 # Linux lab — виправлення та передача ПЗ 0.3.1
 
+> **23.10.2026:** нижче — стан і результати ARM64 run07 від 20.10.2026. Після нього змінено виконані джерела (зокрема `software/srrx`, тести, `deployment/module_lab`, `guest_smoke.py`), тому run07 — лише запис попереднього прогону; повторний ARM64 прогін ще потрібен. Поточні [модульні результати](../../verification/module-lab/MODULE-RESULTS.md) перегенеровано 23.10.2026 на хості x86_64 (750 refs / 64 збірки / 166 інтерфейсів; 40 PASS, 0 FAIL, 126 CONNECTION_MODEL_ONLY; 3737/3737 topology/fault scenarios). Поточна хостова регресія — 432 тести, 431 PASS, 1 SKIP ([звіт](../../verification/software-tests.json)).
+
 Стан на 20.10.2026: production-виправлення нижче внесені, хостова регресія має **421 виявлений тест: 419 PASS, 2 SKIP**. [Машинний звіт](../../verification/software-tests.json) містить причини SKIP: відсутня справжня QNN HTP SDK library та заборонений у хостовому середовищі AF_UNIX socket для одного service-тесту. SKIP не зараховані як PASS.
 
 **ARM64 run07: PASS, QEMU exit 0**, 1434.289 s. Ubuntu24.04.5 aarch64, kernel6.8.0-147-generic, systemd PID1. Усі вісім наборів завершені: **420 PASS / 1 SKIP із 421** регресій, **14** systemd scenarios, **9** PTY cases, **2** GUI failure cases, XCB/Xvfb, **5** native RX worker cases, **5** virtual-block storage cases та **6** module domains. Єдиний ARM64 SKIP — справжня QNN HTP SDK library відсутня. [Первинні результати](../../verification/linux-lab/README.md) імпортовані після штатного poweroff; `source-binding.json` зв'язує **86** виконуваних джерел із guest manifest. Попередні невдалі/перервані спроби збережені окремо в [linux-attempts](../../verification/linux-attempts/README.md).
 
-[Модульні результати](../../verification/module-lab/MODULE-RESULTS.md): **754 refs / 64 збірки / 166 інтерфейсів**. Функціонально: **40 PASS, 0 FAIL, 126 CONNECTION_MODEL_ONLY**; окремо всі **166** interfaces мають CONNECTION_MODEL_PASS, виконано **3749/3749** topology/fault scenarios. XCB observer отримав **267** успішних samples, **0** transport misses; найбільший проміжок без sample — **0.574 s**. Це виміряна вибіркова перевірка, не твердження про безперервний стан між samples. Опис середовища й відтворення — [README](README.md); деталізація моделей — [module lab](../module_lab/README.md).
+Модульні результати run07 (ARM64): **754 refs / 64 збірки / 166 інтерфейсів**. Функціонально: **40 PASS, 0 FAIL, 126 CONNECTION_MODEL_ONLY**; окремо всі **166** interfaces мають CONNECTION_MODEL_PASS, виконано **3749/3749** topology/fault scenarios. XCB observer отримав **267** успішних samples, **0** transport misses; найбільший проміжок без sample — **0.574 s**. Це виміряна вибіркова перевірка, не твердження про безперервний стан між samples. Опис середовища й відтворення — [README](README.md); деталізація моделей — [module lab](../module_lab/README.md).
 
 ## Що виправлено у production-коді
 
@@ -73,7 +75,7 @@ Linux ігнорує `RLIMIT_CORE` для core dump, переданого чер
 
 ## Незмінні межі
 
-Усі **36 апаратних воріт OPEN**, hardware release **BLOCKED**. Generic ARM64 Linux VM не є Q6A kernel/DT/driver image. Фізичні UART/I²C/GPIO, RF/аналогові тракти, заряд/BMS, температура/калібрування, реальні touch/HDMI/USB і фізичний OFF ще не прийняті. Повний Lime SDK/backend, гарантований тракт 56 MS/s, кваліфікований QNN HTP, весь каталог декодерів та затверджений цільовий системний образ залишаються прогалинами. Наявність пакета MicroPython source не означає UF2/runtime build або прошитий пристрій. Вихідний Git remote раніше повернув HTTP 403; успішний push цієї редакції не заявлено.
+Усі **37 апаратних воріт OPEN** (з 23.10.2026 додано E5-10 — W1-2 WIFI_PWR_EN), hardware release **BLOCKED**. Generic ARM64 Linux VM не є Q6A kernel/DT/driver image. Фізичні UART/I²C/GPIO, RF/аналогові тракти, заряд/BMS, температура/калібрування, реальні touch/HDMI/USB і фізичний OFF ще не прийняті. Повний Lime SDK/backend, гарантований тракт 56 MS/s, кваліфікований QNN HTP, весь каталог декодерів та затверджений цільовий системний образ залишаються прогалинами. Наявність пакета MicroPython source не означає UF2/runtime build або прошитий пристрій. Вихідний Git remote раніше повернув HTTP 403; пізніше редакцію опубліковано (див. [RESTORE-GIT](../../RESTORE-GIT.md)).
 
 Connectivity `CONNECTION_MODEL_PASS` означає виконані topology/fault scenarios проти KiCad XML. Він не перетворює непокритий драйвер на `EMULATION_PASS`, не закриває DNP/TBD gates і не підтверджує фізичні pinouts. Відкриті умови J102/E1-02, IP2368/E1-01, Wisecoco/E3-02/E5-01 та DC polarity/DC block Boni мають залишатися у видимих row details звітів.
 
@@ -93,6 +95,8 @@ python3 -B tools/check_bundle.py
 ```
 
 `build_bundle.py` вимагає актуальних host regression, Linux/module PASS, точних hashes виконаних Python/shell/service джерел, module inventory/models/графів і CAD verification. Виправлення production/model Python після підготовки guest потребує нового виконання guest; не переписувати source binding вручну. Якщо змінено джерела хостових перевірок або readiness contract, повторити `python3 tools/run_tests_offline.py` перед bundle. Якщо змінено схеми, спочатку повторити CAD export/перевірки за [KiCad README](../../build/kicad/README.md).
+
+Виняток для середовища без ARM64 lab: якщо виконаний код змінено, а новий guest-прогін неможливий, `build_bundle.py` пакує лише тоді, коли сам проєкт позначає `verification/linux-lab/project-manifest.json` як `RECORD_OF_EARLIER_RUN` (а README Linux-результату має відповідне попередження). Тоді HTML показує окреме попередження «лише запис попереднього прогону» з кількістю змінених виконаних файлів і архітектурою поточного module-lab прогону. Решта перевірок (host regression, module inventory/models/графи, CAD) залишаються суворими; source binding вручну не переписується.
 
 3. Переглянути `git status --short`, додати лише призначені до передачі джерела/звіти, виконати `git diff --cached --check` та створити локальний commit. Після нього сформувати патч усіх локальних комітів від точної Claude-бази:
 

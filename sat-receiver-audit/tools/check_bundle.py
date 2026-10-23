@@ -3,6 +3,13 @@
 
 Read-only: no bundle generation, CAD export, downloads or report-file writes.
 Relative artifact arguments are resolved under --project.
+
+The stand-alone SR-RX-v2-project.zip is written by tools/build_bundle.py and is
+not tracked in git. When --archive is not given and that file is absent (for
+example on a clean checkout), the ZIP embedded in the HTML (#source-archive) is
+checked against the current tree instead; the report then says
+"archive_source": "html#source-archive". In that mode the HTML-to-ZIP byte
+comparison is self-referential, so only the ZIP-to-tree binding is evidence.
 """
 from __future__ import annotations
 
@@ -11,6 +18,7 @@ import base64
 import binascii
 from collections import Counter
 import hashlib
+import io
 import json
 from pathlib import Path, PurePosixPath
 import re
@@ -22,6 +30,8 @@ import zipfile
 PROJECT = Path(__file__).resolve().parents[1]
 ROOT = "SR-RX-v2"
 MANIFEST = "ARCHIVE-MANIFEST.json"
+ARCHIVE_NAME = "SR-RX-v2-project.zip"
+EMBEDDED = "html#source-archive"
 
 
 class InvalidBundle(ValueError):
@@ -63,7 +73,7 @@ def safe_path(value, directory=False):
 
 def eligible(relative):
     """Independent explicit release-file policy; never import the generator."""
-    if any(part in {".git", "tmp", "qa", "__pycache__"} for part in relative.parts):
+    if any(part in {".git", "tmp", "qa", "__pycache__", ".ruff_cache", ".pytest_cache", ".mypy_cache", ".venv", "venv"} for part in relative.parts):
         return False
     suffix = relative.suffix.lower()
     if suffix in {".pyc", ".kicad_prl", ".lck", ".tmp"}:
@@ -114,8 +124,11 @@ def validate_manifest(records):
 
 
 def check_zip(project, path):
+    """path is a ZIP file path or, for the HTML-embedded archive, its bytes."""
     current = project_files(project)
-    with zipfile.ZipFile(path) as archive:
+    archive_name = ARCHIVE_NAME if isinstance(path, bytes) else path.name
+    source = io.BytesIO(path) if isinstance(path, bytes) else path
+    with zipfile.ZipFile(source) as archive:
         members = {}
         seen = set()
         for item in archive.infolist():
@@ -132,7 +145,7 @@ def check_zip(project, path):
             if item.is_dir():
                 continue
             relative = PurePosixPath(*member.parts[1:]).as_posix()
-            require(relative != path.name and relative != "SR-RX-v2-ves-proekt.html",
+            require(relative not in {archive_name, ARCHIVE_NAME, "SR-RX-v2-ves-proekt.html"},
                     "Recursive release artifact inside ZIP: " + relative)
             require(not relative.endswith(".zip") or PurePosixPath(relative).parts[:2] == ("firmware", "dist"),
                     "Unexpected nested ZIP: " + relative)
@@ -162,7 +175,6 @@ def check_zip(project, path):
                 # still recursion and is never a firmware distribution.
                 with archive.open(members[name]) as stream:
                     nested = stream.read()
-                import io
                 with zipfile.ZipFile(io.BytesIO(nested)) as inner:
                     require(not any(PurePosixPath(n).name == MANIFEST for n in inner.namelist()),
                             "Nested project release archive: " + name)
@@ -291,6 +303,8 @@ def check_document(tree, label="HTML", svg=False):
 
 
 def equal_bytes(data, canonical):
+    if isinstance(canonical, bytes):
+        return data == canonical
     if len(data) != canonical.stat().st_size:
         return False
     with canonical.open("rb") as stream:
@@ -323,16 +337,34 @@ def check_html(path, pdf, archive):
     return {"status": "PASS", "canonical_pdf_and_zip_bytes": "IDENTICAL", **details}
 
 
+def import_pymupdf():
+    try:
+        import pymupdf
+    except ImportError:
+        import fitz as pymupdf  # PyMuPDF < 1.24.3 only has the legacy name
+    return pymupdf
+
+
+def embedded_archive(document):
+    """Decode the single #source-archive ZIP of the HTML, without writing it anywhere."""
+    from lxml import html
+    parser = html.HTMLParser(huge_tree=True, no_network=True)
+    tree = html.parse(str(document), parser=parser).getroot()
+    nodes = tree.xpath('//*[@id="source-archive"]')
+    require(len(nodes) == 1 and local_name(nodes[0].tag) == "a", "Missing/ambiguous attachment: source-archive")
+    return decode_data_uri(nodes[0].get("href"), "application/zip")[1]
+
+
 def check_pdf(path, expected_pages):
     with path.open("rb") as source:
         require(source.read(5) == b"%PDF-", "Canonical PDF has no PDF header")
         source.seek(max(0, path.stat().st_size - 4096))
         require(source.read().rstrip().endswith(b"%%EOF"), "Canonical PDF has no final %%EOF")
     try:
-        import fitz
+        pymupdf = import_pymupdf()
     except ImportError:
-        return {"status": "PASS", "header_and_eof": "PASS", "page_count": "SKIPPED: PyMuPDF/fitz unavailable"}
-    with fitz.open(path) as document:
+        return {"status": "PASS", "header_and_eof": "PASS", "page_count": "SKIPPED: PyMuPDF unavailable"}
+    with pymupdf.open(path) as document:
         require(not document.is_encrypted, "Canonical PDF is encrypted")
         require(len(document) == expected_pages,
                 "Canonical PDF page count is " + str(len(document)) + "; expected " + str(expected_pages))
@@ -340,14 +372,33 @@ def check_pdf(path, expected_pages):
                 "parser_repaired": bool(document.is_repaired)}
 
 
-def validate(project, archive, document, pdf, expected_pages=17):
+def generated_pages(project):
+    """Contents page plus every electrical page of the generated KiCad project."""
+    manifest = json.loads((project / "build/kicad/generation-manifest.json").read_text())
+    return len(manifest["pages"]) + 1
+
+
+def validate(project, archive, document, pdf, expected_pages=None):
+    """archive is a ZIP path, or None to check the ZIP embedded in the HTML."""
     checks, errors, before = {}, [], {}
-    for name, path in (("archive", archive), ("html", document), ("pdf", pdf)):
+    if expected_pages is None:
+        expected_pages = generated_pages(project)
+    files = [("html", document), ("pdf", pdf)] + ([("archive", archive)] if archive is not None else [])
+    for name, path in files:
         try:
             require(path.is_file(), "Missing canonical artifact: " + str(path))
             before[name] = {"bytes": path.stat().st_size, "sha256": digest_file(path)}
         except (OSError, ValueError) as error:
             errors.append(str(error))
+    if archive is None:
+        try:
+            require("html" in before, "No HTML to take the embedded archive from")
+            archive = embedded_archive(document)
+            before["archive"] = {"source": EMBEDDED, "bytes": len(archive),
+                                 "sha256": hashlib.sha256(archive).hexdigest()}
+        except Exception as error:
+            errors.append("archive: " + type(error).__name__ + ": " + str(error))
+            archive = b""
     stages = (("zip", lambda: check_zip(project, archive)), ("html", lambda: check_html(document, pdf, archive)),
               ("pdf", lambda: check_pdf(pdf, expected_pages)))
     for name, operation in stages:
@@ -358,7 +409,7 @@ def validate(project, archive, document, pdf, expected_pages=17):
             # base64, ZIP or JSON; failures are visible and never become PASS.
             errors.append(name + ": " + type(error).__name__ + ": " + str(error))
             checks[name] = {"status": "FAIL"}
-    for name, path in (("archive", archive), ("html", document), ("pdf", pdf)):
+    for name, path in files:
         if name in before:
             try:
                 require(before[name] == {"bytes": path.stat().st_size, "sha256": digest_file(path)},
@@ -366,23 +417,34 @@ def validate(project, archive, document, pdf, expected_pages=17):
             except (OSError, ValueError) as error:
                 errors.append(str(error))
     return {"status": "FAIL" if errors else "PASS", "read_only": True,
+            "archive_source": EMBEDDED if isinstance(archive, bytes) else "file",
             "artifacts": before, "checks": checks, "errors": errors}
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--project", type=Path, default=PROJECT)
-    parser.add_argument("--archive", type=Path, default=Path("SR-RX-v2-project.zip"))
+    parser.add_argument("--archive", type=Path, default=None,
+                        help="Project ZIP from tools/build_bundle.py (default: " + ARCHIVE_NAME +
+                             " if present, else the ZIP embedded in the HTML)")
+    parser.add_argument("--embedded-archive", action="store_true",
+                        help="Check the ZIP embedded in the HTML even if " + ARCHIVE_NAME + " exists")
     parser.add_argument("--html", type=Path, default=Path("SR-RX-v2-ves-proekt.html"))
     parser.add_argument("--pdf", type=Path, default=Path("build/kicad/sr-rx-v2.pdf"))
-    parser.add_argument("--expected-pages", type=int, default=17)
+    parser.add_argument("--expected-pages", type=int, default=None,
+                        help="Default: contents page + electrical pages in build/kicad/generation-manifest.json")
     args = parser.parse_args()
     project = args.project.expanduser().resolve()
-    if not project.is_dir() or args.expected_pages < 1:
+    if not project.is_dir() or (args.expected_pages is not None and args.expected_pages < 1):
         parser.error("Existing --project directory and positive --expected-pages required")
+    if args.archive and args.embedded_archive:
+        parser.error("--archive and --embedded-archive are mutually exclusive")
     def artifact(path):
         return (path if path.is_absolute() else project / path).resolve()
-    report = validate(project, artifact(args.archive), artifact(args.html), artifact(args.pdf), args.expected_pages)
+    archive = artifact(args.archive or Path(ARCHIVE_NAME))
+    if args.embedded_archive or (args.archive is None and not archive.is_file()):
+        archive = None
+    report = validate(project, archive, artifact(args.html), artifact(args.pdf), args.expected_pages)
     print(json.dumps(report, ensure_ascii=False, indent=2, allow_nan=False))
     return 0 if report["status"] == "PASS" else 1
 

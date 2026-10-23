@@ -367,7 +367,9 @@ class GuestSmoke:
         require(digest(menu) == digest(self.project / "software/systemd/srrx-menu.service"), "staged menu differs from source")
         template = json.loads((rootfs / "etc/srrx/acceptance.template.json").read_text())
         gates = template["gates"]
-        require(len(gates) == 36 and all(g["status"] == "OPEN" for g in gates.values()), "all 36 physical gates must remain OPEN")
+        contract = json.loads((self.project / "design/readiness-contract.json").read_text())["gate_results"]
+        require(set(gates) == set(contract) and all(g["status"] == "OPEN" for g in gates.values()),
+                f"all {len(contract)} physical gates must remain OPEN")
         unit_paths = sorted((rootfs / "etc/systemd/system").glob("*.service")) + [menu]
         self.command(["/usr/bin/systemd-analyze", "verify", *unit_paths], timeout=60)
         # Install only the guarded hardware unit in this marked guest. Never

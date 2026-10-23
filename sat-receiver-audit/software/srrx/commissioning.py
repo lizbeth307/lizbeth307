@@ -21,7 +21,7 @@ GATE_IDS = tuple([f"E1-{i:02}" for i in range(1, 8)]
                  + [f"E2-{i:02}" for i in range(1, 6)]
                  + [f"E3-{i:02}" for i in range(1, 9)]
                  + [f"E4-{i:02}" for i in (1, 3, 4, 5, 6, 7, 8)]
-                 + [f"E5-{i:02}" for i in range(1, 10)])
+                 + [f"E5-{i:02}" for i in range(1, 11)])  # E5-10: W1-2 WIFI_PWR_EN hold
 CAL_FIELDS = ("v", "revision", "serial", "scale_mv_per_count", "offset_mv",
               "panel_offset_c", "case_offset_c", "reference_id")
 PLACEHOLDERS = {"tbd", "todo", "unknown", "none", "n/a", "na", "placeholder",
@@ -147,7 +147,7 @@ def project_hashes(project_root):
                      for p in sources}
     contract = _read_json(_local_file(root, "design/readiness-contract.json"))
     if type(contract.get("gate_results")) is not dict or set(contract["gate_results"]) != set(GATE_IDS):
-        raise ValidationError("readiness contract does not contain the exact 36 blocking gates")
+        raise ValidationError(f"readiness contract does not contain the exact {len(GATE_IDS)} blocking gates")
     return graphs, source_hashes
 
 
@@ -201,7 +201,7 @@ def load_acceptance(path, project_root):
         graphs, sources = project_hashes(root)
         if data["graph_sha256"] != graphs or data["source_sha256"] != sources:
             raise ValidationError("graph/software/firmware revision SHA256 mismatch")
-        _keys(data["gates"], GATE_IDS, "36 blocking gates")
+        _keys(data["gates"], GATE_IDS, f"{len(GATE_IDS)} blocking gates")
         for gate_id, gate in data["gates"].items():
             _keys(gate, ("status", "evidence"), gate_id)
             if gate["status"] != "PASS":

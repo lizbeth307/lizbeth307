@@ -72,7 +72,7 @@ class AcceptanceTests(unittest.TestCase):
         self.path.write_text(json.dumps(self.manifest if data is None else data))
 
     def test_template_never_manufactures_pass_or_coefficients(self):
-        self.assertEqual(len(self.manifest["gates"]), 36)
+        self.assertEqual(len(self.manifest["gates"]), 37)
         self.assertTrue(all(g["status"] == "OPEN" for g in self.manifest["gates"].values()))
         self.assertEqual(self.manifest["battery_adc"]["record"], {})
         self.save()
@@ -80,6 +80,16 @@ class AcceptanceTests(unittest.TestCase):
             load_acceptance(self.path, self.root)
         with self.assertRaises(ValidationError):
             load_acceptance(None, self.root)
+
+    def test_gate_list_matches_blocking_open_items_of_design_graphs(self):
+        # The hard-coded list must follow the graphs that generate OPEN_ITEMS.md
+        # and design/readiness-contract.json, including E5-10 (W1-2 WIFI_PWR_EN).
+        project = Path(__file__).resolve().parents[2]
+        blocking = [item["id"] for n in range(1, 6)
+                    for item in json.loads((project / f"design/E{n}.json").read_text())["open_items"]
+                    if item.get("blocking")]
+        self.assertEqual(list(GATE_IDS), blocking)
+        self.assertIn("E5-10", GATE_IDS)
 
     def test_complete_synthetic_fixture_round_trip(self):
         self.complete_fixture()
@@ -95,7 +105,8 @@ class AcceptanceTests(unittest.TestCase):
                        lambda d: d["gates"]["E2-01"]["evidence"].update(instrument="TBD"),
                        lambda d: d["gates"]["E3-01"]["evidence"].update(artifacts=[]),
                        lambda d: d.update(hardware_unit_id="example"),
-                       lambda d: d["gates"].pop("E5-09")):
+                       lambda d: d["gates"].pop("E5-09"),
+                       lambda d: d["gates"].pop("E5-10")):
             with self.subTest(change=change):
                 data = copy.deepcopy(self.manifest)
                 change(data)

@@ -1,6 +1,6 @@
 # Selected KiCad 10.0.7 footprints
 
-These 16 unmodified footprints support the 176 existing footprint assignments in the schematic graphs. The project fp-lib-table uses ${KIPRJMOD} relative paths.
+These 17 unmodified footprints are all referenced by the project: 16 support the 173 existing footprint assignments in the schematic graphs, and R_0402_1005Metric is used by the PCB starter and routed prototype (pcb/prepare.py). The project fp-lib-table uses ${KIPRJMOD} relative paths.
 
 Source: https://ppa.launchpadcontent.net/kicad/kicad-10.0-releases/ubuntu/pool/main/k/kicad-library-footprints/kicad-footprints_10.0.7~ubuntu24.04.1_all.deb
 

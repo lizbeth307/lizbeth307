@@ -2,31 +2,31 @@
   "inputs": [
     {
       "file": "design/E1.json",
-      "sha256": "e87f79db4da0d9be7e74aa1ad2816ea99ae4ed8fd6e723ba375c1559bfd51392"
+      "sha256": "f535a839afd70def8f35f43380153cb00723f97c634be51d9159d1bfe4630591"
     },
     {
       "file": "design/E2.json",
-      "sha256": "adc5b67b6b53977143847d688f657364a5e300a80761d74e1dc82e34bd703c16"
+      "sha256": "bb2ac6a37392689b462a570d7334aa257aaad8e4a006c5df1e934c3dd794d40c"
     },
     {
       "file": "design/E3.json",
-      "sha256": "0a2e2e60ede923b2d0a1aa0f8484a97513c1ef36ae389d3aee365fbcf90aaac5"
+      "sha256": "f2ac2171727824e36b5e4d7780677d4fc46ec0840d0a57a59053451132c92be4"
     },
     {
       "file": "design/E4.json",
-      "sha256": "b05555c7a6729029f779df3ca3d0a62d71e206520a33cf7e34ffa3e2c081344d"
+      "sha256": "0935bbfe204728620575ba2e6713185799862050f5d8c2c465c028606c5612bf"
     },
     {
       "file": "design/E5.json",
-      "sha256": "86a9099809fbcdf365c82ecf4a239531b1b55715ee17cd1c5fb5a776c979ca05"
+      "sha256": "d0366fa9440ba2488b352bcf24ca31b1b8e117afb1c2aa2453dd214d711c3dd6"
     },
     {
       "file": "build/kicad/footprints/manifest.json",
-      "sha256": "9b87ab7f6bbf7bfb1a2abc13e49093a3060cb98360707bd8d4b148814de77daf"
+      "sha256": "ce1fb1ff826e661d7a65d5f786bd2d7366e0c5727882cbbc39afac63e84bca4b"
     },
     {
       "file": "verification/netlist.xml",
-      "sha256": "cfc4adf58ca9ee86ab88963e6c04321012092c60a8f328b37782e1ded8c415d5"
+      "sha256": "40b90a9858e57fbf6a868c93afe2ae321fc7bea9fee6f144b7cd76a151ccccc2"
     }
   ],
   "source_documents": [

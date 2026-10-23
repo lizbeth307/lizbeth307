@@ -5,8 +5,8 @@
   "custom_firmware_implemented_and_tested": false,
   "custom_firmware_source_implemented": true,
   "host_regression_status": "PASS",
-  "host_tests_passed": 419,
-  "host_tests_skipped": 2,
+  "host_tests_passed": 431,
+  "host_tests_skipped": 1,
   "firmware_flashed_and_hardware_qualified": false,
   "software_components": {
     "supervised_control": {
@@ -79,7 +79,8 @@
     "E5-06": "OPEN",
     "E5-07": "OPEN",
     "E5-08": "OPEN",
-    "E5-09": "OPEN"
+    "E5-09": "OPEN",
+    "E5-10": "OPEN"
   },
   "startup_output_requests": {
     "CHG_INHIBIT": 1,

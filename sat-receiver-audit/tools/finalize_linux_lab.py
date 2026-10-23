@@ -87,7 +87,7 @@ Storage smoke: **{len(storage['cases'])} PASS** на окремому вірту
 
 `run.json` записує походження OS/dependency cache, зокрема попередній перерваний прогін, якщо використано кеш. Журнал файлової системи відновлює саме Linux guest; усі поточні вихідні файли замінено, перевірено SHA256, пакет перевстановлено, усі набори виконано повторно. Це не прогін із чистого базового образу. `source-binding.json` і `project-manifest.json` дозволяють звірити реально виконаний код. Годинник задається з host preparation timestamp; це не GNSS/PPS/RTC qualification.
 
-36 апаратних воріт залишаються OPEN. Фізичне залізо, аналогові RF/живлення, BMS, калібрування, Q6A peripheral pinmux, повний Lime/56MS/s/HTP та виробничий випуск не прийняті.
+{len(read(PROJECT / 'design/readiness-contract.json')['gate_results'])} апаратних воріт залишаються OPEN. Фізичне залізо, аналогові RF/живлення, BMS, калібрування, Q6A peripheral pinmux, повний Lime/56MS/s/HTP та виробничий випуск не прийняті.
 """
     (destination / "README.md").write_text(text)
     print(json.dumps({"status": "IMPORTED", "bound_sources": len(executed), "linux": str(destination), "modules": str(modules)}))

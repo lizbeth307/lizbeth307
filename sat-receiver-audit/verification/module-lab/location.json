@@ -1,5 +1,5 @@
 {
-  "elapsed_s": 4.034,
+  "elapsed_s": 1.294,
   "modules": [
     {
       "description": "Waveshare LC76G GNSS24370 NMEA output over Linux PTY",
@@ -9,7 +9,7 @@
       ],
       "scenarios": [
         {
-          "elapsed_s": 0.249,
+          "elapsed_s": 0.007,
           "observed": {
             "fragment_size_bytes": 1,
             "gnss_utc_qualified": false,
@@ -23,7 +23,7 @@
           "status": "EMULATION_PASS"
         },
         {
-          "elapsed_s": 0.355,
+          "elapsed_s": 0.01,
           "observed": {
             "checksum_rejected": true,
             "invalid_fix_rejected": true,
@@ -34,18 +34,18 @@
           "status": "EMULATION_PASS"
         },
         {
-          "elapsed_s": 0.419,
+          "elapsed_s": 0.246,
           "observed": {
             "fallback_current_accuracy": "unknown",
             "freshness_ms": 180,
-            "observed_stale_age_ms": 379,
+            "observed_stale_age_ms": 245,
             "replay_does_not_refresh_receipt_time": true
           },
           "scenario": "nmea_replayed_epoch_and_stale",
           "status": "EMULATION_PASS"
         },
         {
-          "elapsed_s": 0.141,
+          "elapsed_s": 0.005,
           "observed": {
             "disconnect_detection_owner": "fixture_transport_glue_not_a_production_raw_uart_driver",
             "explicit_new_endpoint": true,
@@ -56,7 +56,7 @@
           "status": "EMULATION_PASS"
         },
         {
-          "elapsed_s": 0.605,
+          "elapsed_s": 0.015,
           "observed": {
             "duplicate_not_distinct": true,
             "real_gnss_utc_qualified": false,
@@ -90,7 +90,7 @@
       ],
       "scenarios": [
         {
-          "elapsed_s": 1.138,
+          "elapsed_s": 0.47,
           "observed": {
             "connections": 2,
             "fragmented_tpv_bytes": true,
@@ -104,7 +104,7 @@
           "status": "EMULATION_PASS"
         },
         {
-          "elapsed_s": 0.42,
+          "elapsed_s": 0.294,
           "observed": {
             "duplicate_json_keys_rejected": true,
             "freshness_ms": 180,
@@ -115,7 +115,7 @@
           "status": "EMULATION_PASS"
         },
         {
-          "elapsed_s": 0.534,
+          "elapsed_s": 0.241,
           "observed": {
             "duplicate_epoch_not_distinct": true,
             "real_gnss_utc_qualified": false,
@@ -166,7 +166,7 @@
   "source_sha256": {
     "deployment/module_lab/location_modules.py": "3de8c604783190577c49183ee86d6a2efe9d97f0c89d90e16dc23ff39ed993be",
     "deployment/module_lab/location_scenarios.py": "ec2e915418c55a83eef309256426225c650cc21e2b59340d7207e0cb79990170",
-    "design/E3.json": "0a2e2e60ede923b2d0a1aa0f8484a97513c1ef36ae389d3aee365fbcf90aaac5",
+    "design/E3.json": "f2ac2171727824e36b5e4d7780677d4fc46ec0840d0a57a59053451132c92be4",
     "software/srrx/location.py": "774ea8feeaff585774a09058af96b2b46485c78f2bfacfacfcc506138b301299"
   },
   "status": "EMULATION_PASS",

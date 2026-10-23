@@ -60,9 +60,9 @@ MPN L/C і діодів обрані. Ефективна ємність, ESR/ESL
 
 ## E2-03 — OPEN / блокує випуск
 
-Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована.
+Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.
 
-**Умова закриття:** FNB58/INA228/INA3221: 20 холодних і теплих пусків, струми стримінгу, КЗ і SOA. Установити ILIM 1.5–2× виміряного струму з допусками. Загальний LAB5 тестується за новими воротами E1 для D36V50F5 + запобіжник 4A; старі 2.5A не є лімітом default-збірки.
+**Умова закриття:** FNB58/INA228/INA3221: 20 холодних і теплих пусків, струми стримінгу, КЗ і SOA. Установити ILIM 1.5–2× виміряного струму з допусками. Загальний LAB5 тестується за новими воротами E1 для D36V50F5 + запобіжник 4A; старі 2.5A не є лімітом default-збірки. OVLO Boni (STACK §8.1 HF-8/RF-5): без Boni-Whip і зі струмовим обмеженням — повільна розгортка вузла E2_BONI_LDO (вхід eFuse U214) 13.8→15.5→13.8 V, записати пороги спрацювання й відпускання; OVLO не спрацьовує в смузі 13.8 V, поріг вище 14.145 V (макс. LDO) і нижче 15 V (межа Boni). Поза вікном — перерахувати R263/R264 і повторити.
 
 ## E2-04 — OPEN / блокує випуск
 
@@ -86,13 +86,13 @@ IMU assembly and two metre single-ended UART need bench verification. Internal n
 
 Brightness control requires confirmed DDC/CI support or an exact Wisecoco KEY/Backlight interface. Pico GP17 is now reserved for MCP watchdog reset and unavailable for brightness.
 
-**Умова закриття:** Demonstrate ddcutil brightness through the specified RA620 link, or obtain exact KEY/Backlight revision pinout and design a new interface using a free MCPGPIO if suitable. Verify thermal dimming; do not reuse PicoGP17.
+**Умова закриття:** Demonstrate ddcutil brightness through the specified RA620 link, or obtain the exact KEY/Backlight revision pinout and design a new interface using a free MCP GPIO if suitable. Verify thermal dimming; do not reuse Pico GP17.
 
 ## E3-03 — OPEN / блокує випуск
 
 BOM candidate Delta BFB0305HA-C is selected; final mechanical fit, installed airflow, start/stall current, LAB5 concurrency and noise remain unqualified.
 
-**Умова закриття:** Fit body envelope30.5x30.5x10.5mm plus duct/lead clearance into CAD before cutting enclosure. Measure0.25A design continuous reserve and provisional0.50A startup limit rather than claiming peak from datasheet. Confirm LAB5 under2.5A in allowed concurrency, or implement STACK shedding/upgradedconverter-fuse path. Run45min closed-cover solar thermal test and RF A/B noise checks; inlet drop<=5Pa at requiredflow.
+**Умова закриття:** Fit the body envelope 30.5x30.5x10.5 mm plus duct/lead clearance into CAD before cutting the enclosure. Measure the 0.25 A design continuous reserve and the provisional 0.50 A startup limit rather than claiming peak from the datasheet. Confirm LAB5 under 2.5 A in allowed concurrency, or implement the STACK shedding / upgraded converter-fuse path. Run the 45 min closed-cover solar thermal test and RF A/B noise checks; inlet drop <=5 Pa at the required flow.
 
 ## E3-04 — OPEN / блокує випуск
 
@@ -110,13 +110,13 @@ Shared MCP interrupt requires open-drain configuration before interrupts are ena
 
 BOM candidate Semiware MF52A103F3950 is selected for both NTCs; purchased-lot curve, attachment, lag and installed calibration remain unqualified.
 
-**Умова закриття:** Verify10k+/-1% at25C and manufacturerB25/50=3950+/-1%; use exactmakerRTtable. Fit insulated bead/strainrelief on panel spreader and frame, check25/60/68C against reference thermometer, qualify lag and open/short/stale fail-safe behavior. Remain inside-20..120C sensorrange.
+**Умова закриття:** Verify 10k +/-1% at 25 C and manufacturer B25/50 = 3950 +/-1%; use the exact maker R/T table. Fit an insulated bead/strain relief on the panel spreader and frame, check 25/60/68 C against a reference thermometer, qualify lag and open/short/stale fail-safe behavior. Remain inside the -20..120 C sensor range.
 
 ## E3-07 — OPEN / блокує випуск
 
-Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.
+Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about +/-0.28 V near 12.9 V; a nominal ADC code does not establish the 12.9 +/-0.1 V cutoff.
 
-**Умова закриття:** Calibrate gain/offset against a calibrated voltmeter at two pack-equivalent voltages such as12.6V and16.4V; cross-checkINA228. Independently verify physical12.9V software cutoff within+/-0.1V, including5s dwell, at12.8/12.9/13.0V across specifiedtemperature and load states. Store calibratedcoefficients with revision/CRC. No commissioningpassuntilmet; hardwareAON UVsupervisor remains independentbackup.
+**Умова закриття:** Calibrate gain/offset against a calibrated voltmeter at two pack-equivalent voltages such as 12.6 V and 16.4 V; cross-check INA228. Independently verify the physical 12.9 V software cutoff within +/-0.1 V, including 5 s dwell, at 12.8/12.9/13.0 V across the specified temperature and load states. Store calibrated coefficients with revision/CRC. No commissioning pass until met; the hardware AON UV supervisor remains an independent backup.
 
 ## E3-08 — OPEN / блокує випуск
 
@@ -140,11 +140,11 @@ Boni supplied bias-tee port labels, DC socket polarity and receiver DC block req
 
 S-band module and supply selection are complete; external inline pod assembly, cable loss, gain/NF and thermal/current measurements remain unqualified.
 
-**Умова закриття:** Build specified LaNAWB100845 + cf2235 + DC blocks in Hammond1554U2GY pod; verify stacked fit/cable bends, weather seals and strain relief. Measure LaNA current/inrush at protected5V, 2.2–2.3GHz S21/NF/linearity, and receiver protection. Do not substitute generic nominal NF for the actual S-band measurement.
+**Умова закриття:** Build the specified LaNA WB 100845 + cf2235 + DC blocks in the Hammond 1554U2GY pod; verify stacked fit/cable bends, weather seals and strain relief. Measure LaNA current/inrush at protected 5 V, 2.2–2.3 GHz S21/NF/linearity, and receiver protection. Do not substitute generic nominal NF for the actual S-band measurement.
 
 ## E4-05 — OPEN / блокує випуск
 
-Lime X2/X4 are verified RX ports for v1.2; supplied-board channel A/B and cable labels need confirmation.
+Lime X2/X4 are the v1.2 RX ports, but which of them is RX-A and which RX-B is TBD (STACK §2.11.1, §8.1 L-12: check against the board marking). Pins are named X2_RX/X4_RX and nets E4_LIME_X2_RX/E4_LIME_X4_RX, so the drawing fixes no channel; supplied-board cable labels need confirmation.
 
 **Умова закриття:** Check the exact revision schematic and conduct a one-port-at-a-time RX test. Generic setup X3 wording is not evidence.
 
@@ -152,7 +152,7 @@ Lime X2/X4 are verified RX ports for v1.2; supplied-board channel A/B and cable 
 
 Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification.
 
-**Умова закриття:** Verify each DCS LOW at0V and HIGH by±0.100V in both sweep directions over admitted temperature/supply range; record thresholds/hysteresis. Test±30V limited foreignDC with Q6A ON/OFF and require3V3_Q6A<0.1V whenOFF. Measure RFtap IL/RL/NF impact. Require startup/reference-fault HIGH and ownbiasOFF≥500ms beforepreflight; readiness staysfalse untilqualified. Check floating/open antenna as well as0Ω/50ΩDC loads. Include the996Ω bleed load in current baselines and measure its RF loss/parasitics. Reject false-safe at±0.100V; false-unsafe units also fail usability qualification. Also qualify cold minimum-supply reference-feed headroom: the arithmetic model requires D450 Vf≤1.015 V at VDD3.135 V and REF2.072 V for at least80µA LM4040 cathode current. Reference collapse must force HIGH, and must not be misreported as a working detector.
+**Умова закриття:** Verify each DCS LOW at 0 V and HIGH by ±0.100 V in both sweep directions over the admitted temperature/supply range; record thresholds/hysteresis. Test ±30 V limited foreign DC with Q6A ON/OFF and require 3V3_Q6A <0.1 V when OFF. Measure RF tap IL/RL/NF impact. Require startup/reference-fault HIGH and own bias OFF ≥500 ms before preflight; readiness stays false until qualified. Check floating/open antenna as well as 0 Ω/50 Ω DC loads. Include the 996 Ω bleed load in current baselines and measure its RF loss/parasitics. Reject false-safe at ±0.100 V; false-unsafe units also fail usability qualification. Also qualify cold minimum-supply reference-feed headroom: the arithmetic model requires D450 Vf ≤1.015 V at VDD 3.135 V and REF 2.072 V for at least 80 µA LM4040 cathode current. Reference collapse must force HIGH, and must not be misreported as a working detector.
 
 ## E4-07 — OPEN / блокує випуск
 
@@ -176,7 +176,7 @@ BENCH RF sled is not delivered as a separate HMC7992 + PE4312 PCB here.
 
 Received Wisecoco board DC barrel size/polarity and USBTP/USB-C touch wiring still undocumented; no-VBUS enumeration must work.
 
-**Умова закриття:** Obtain exact board photo/schematic, DMM mapping, vendor confirmation and enumerate with onlyD+/D−/GND. Never substitute guessed connector numbering.
+**Умова закриття:** Obtain the exact board photo/schematic, DMM mapping, vendor confirmation and enumerate with only D+/D−/GND. Never substitute guessed connector numbering.
 
 ## E5-02 — OPEN / блокує випуск
 
@@ -186,33 +186,33 @@ IMU cable and exact received board revisions are unverified physical assemblies;
 
 ## E5-03 — OPEN / блокує випуск
 
-ADT-Link R44SF connector variant and removal of ALL host3.3V paths are not yet confirmed.
+ADT-Link R44SF connector variant and removal of ALL host 3.3 V paths are not yet confirmed.
 
-**Умова закриття:** Confirm part withADT-Link; continuity test every3.3V contact after modification. Validate8GT/sx1, cold/warm boots andzeroAER. Validate genuine power-cycle withLIME3V3 off including signal backfeed.
+**Умова закриття:** Confirm the part with ADT-Link; continuity-test every 3.3 V contact after modification. Validate 8 GT/s x1, cold/warm boots and zero AER. Validate a genuine power-cycle with LIME3V3 off, including signal backfeed.
 
 ## E5-04 — OPEN / блокує випуск
 
-Current-setting resistors are engineering starting values, no measured device steady/startup currents or hot-corner proof.
+Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.
 
-**Умова закриття:** Measure current/inrush, setRTL/HF limits1.5–2times measured asSTACK, confirmHFminimumstartup>=0.75A; retry/latch test at all battery states; scopeLCovershoot.
+**Умова закриття:** Measure current/inrush; set the RTL-A/HF+/T7 limits to 1.5–2× the measured current as STACK §5.1 requires; confirm HF+ minimum startup ≥0.75 A. Run the STACK §8 TPS2553DBVR-1 item 3 inrush test on latching U503 (HF+ LC 100 µH/100 µF + 220 µF damper) at final RILIM; only if it latches, fit TPS2553DBVR (constant-current) on this channel alone. Retry/latch test at all battery states; scope LC overshoot.
 
 ## E5-05 — OPEN / блокує випуск
 
 T7 VBUS rail capacity and modified cable SuperSpeed signal integrity untested.
 
-**Умова закриття:** WithrealT7 proveJ5load<1.5A expected operating budget, VCC_5V_PERI<=14W,5000M/UAS,noUSBresets,fio,hot-cornerTJ<=105C for1.5A. Reevaluate rail/switch/cable if failed.
+**Умова закриття:** With a real T7 prove J5 load <1.5 A expected operating budget, VCC_5V_PERI <=14 W, 5000M/UAS, no USB resets, fio, hot-corner TJ <=105 C for 1.5 A. Re-evaluate rail/switch/cable if failed.
 
 ## E5-06 — OPEN / блокує випуск
 
 HDMI/display/hub and receiver backfeed paths through signal lines need physical power-state validation.
 
-**Умова закриття:** VerifyQ6Aoff/LAB5on/displayon combinations usingDMM/FNB58. HDMI5VQ6A andQ6AUSBVBUS shouldremain0V withinmeasurementresolution. CheckDDC/HPD afterU506installation andno phantom receiverpower.
+**Умова закриття:** Verify Q6A off / LAB5 on / display on combinations using DMM/FNB58. Q6A HDMI 5 V and Q6A USB VBUS should remain 0 V within measurement resolution. Check DDC/HPD after U506 installation and no phantom receiver power.
 
 ## E5-07 — OPEN / блокує випуск
 
-EDL factory button pads and cable orientation not physically located on exact receivedQ6A.
+EDL factory button pads and cable orientation not physically located on the exact received Q6A.
 
-**Умова закриття:** Use factory button first; continuity-identify its two switch nets before fittingparallelSW501. UnplugT7 forEDL and confirm05c6:9008.
+**Умова закриття:** Use the factory button first; continuity-identify its two switch nets before fitting parallel SW501. Unplug T7 for EDL and confirm 05c6:9008.
 
 ## E5-08 — OPEN / блокує випуск
 
@@ -222,9 +222,15 @@ Project locking connector/GX16 numbers have been assigned but final keyed part f
 
 ## E5-09 — OPEN / блокує випуск
 
-Radiated-noise behavior and USB2touch enumeration are physical integration gates, not determined by netlist.
+Radiated-noise behavior and USB2 touch enumeration are physical integration gates, not determined by netlist.
 
-**Умова закриття:** RunSTACK A/B noise matrix (HF+,GNSS,Lband,T7authorized=0/off), cable strain relief andenvironmental tests; do not markproductionready beforepasses.
+**Умова закриття:** Run the STACK A/B noise matrix (HF+, GNSS, L-band, T7 authorized=0/off), cable strain relief and environmental tests; do not mark production-ready before passes.
+
+## E5-10 — OPEN / блокує випуск
+
+Wi-Fi/BT Q6A (FCU760K, AIC8800 на порту 4 FE1.1s) у польовому/QUIET root вимкнено лише програмно: blacklist з install /bin/false, udev authorized=0 за шляхом порту 4 і rfkill як другий шар. Апаратне утримання WIFI_PWR_EN (GPIO TLMM через CJ3134K до WIFI_PWR_EN_3V3, схема Radxa v1.21, с. 4) на отриманій платі не знайдено; gpio-hog у польовому DTBO не створено й не виміряно.
+
+**Умова закриття:** W1-2 (STACK §8): домашній root з увімкненим Wi-Fi, тепле, а потім холодне перезавантаження в польовий root — на порту 4 FE1.1s немає пристрою (lsusb -t), немає мережевого пристрою wlan і hci0. Знайти лінію TLMM WIFI_PWR_EN, застосувати gpio-hog output-low у польовому DTBO, виміряти 0 V на живленні модуля й підтвердити, що домашнє розблокування працює; dpkg -l aicrf-test — пакет відсутній. До закриття authorized=0 без прив’язаного драйвера не вважати апаратним вимкненням.
 
 ## Додаткова калібровка аварійного ADC
 

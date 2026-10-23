@@ -30,7 +30,7 @@ NumPy — optional dependency. Поточна перевірка викорис�
 
 ## Прив'язка запису до змонтованого тому
 
-Для removable storage можна передати `storage_guard=guard`, де `guard = StorageGuard(root, device)` із `srrx.storage`. `root` — точна вже змонтована точка, `device` — явний block device тому, бажано шлях `/dev/disk/by-uuid/…` з UUID, який перевірив оператор. UUID T7 не вигадується. Відносний шлях у guarded API лежить під root, абсолютний також мусить бути всередині; батьківські каталоги мають вже існувати. Приклад API після зовнішнього налаштування й перевірки тому:
+Для removable storage можна передати `storage_guard=guard`, де `guard = StorageGuard(root, device)` із `srrx.storage`. `root` — точна вже змонтована точка, `device` — явний block device тому, бажано шлях `/dev/disk/by-uuid/…` з UUID, перевіреним оператором. UUID T7 не вигадується. Відносний шлях у guarded API лежить під root, абсолютний також мусить бути всередині; батьківські каталоги мають вже існувати. Приклад API після зовнішнього налаштування й перевірки тому:
 
 ```python
 from srrx.storage import StorageGuard
@@ -84,7 +84,8 @@ Guarded append — bounded atomic copy+append з лімітом **64 MiB на ф
 |---|---|
 | 3…30 kHz | no-data |
 | 225…400 MHz | no-data |
-| 1530…1660 MHz, private/MSS | no-data |
+| 406.0…406.1 MHz, Cospas-Sarsat | no-data |
+| 1530…1660 MHz, private/MSS (включно з Cospas-Sarsat 1544.0…1545.0 MHz) | no-data |
 
 Обидві межі включені. Маскується кожний бін, чия **повна ширина** `center+relative ± sample_rate/(2N)` торкається діапазону, навіть коли сам центр біна ще зовні. Перший even-FFT Nyquist-бін має також wrapped half-bin на верхній межі capture; ця частина теж перевіряється. Маскування не змінює center/sample_rate/relative-frequency coverage SDR: воно прибирає значення відповідних bins. `valid=False` завжди відповідає `power_dbfs=None`.
 

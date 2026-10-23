@@ -67,7 +67,7 @@ PYTHONPATH=software:. python3 -m srrx.daemon --simulate --stdio
 
 ## Що робить фізичний backend
 
-1. Перевіряє unit ID, 36 апаратних gates із локальними доказами, точні SHA256 графів/ПЗ, ADC, прошивки, струмові вікна й бюджет LAB5.
+1. Перевіряє unit ID, 37 апаратних gates із локальними доказами, точні SHA256 графів/ПЗ, ADC, прошивки, струмові вікна й бюджет LAB5.
 2. Відкриває лише явно задані I²C0/I²C2/UART7. Номери `/dev/i2c-*` не вгадуються.
 3. Отримує свіжий Pico HELLO та звіряє живі serial/calibration CRC із прийнятим записом. CRC виявляє пошкодження; це не криптографічна автентифікація.
 4. Після явного ARM Pico утримує RESET ≥100 ms і чекає два нові HB. У CONFIGURING Linux перевіряє справжній reset image MCP, записує safe OLAT (**CHG_INHIBIT=1**, інші керовані виходи LOW), IODIR, ODR/MIRROR та GPINTEN, перевіряє readback. CONFIGURED має завершитись за 1 s.

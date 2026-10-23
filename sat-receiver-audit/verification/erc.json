@@ -1,7 +1,7 @@
 {
     "$schema": "https://schemas.kicad.org/erc.v1.json",
     "coordinate_units": "mm",
-    "date": "2026-10-20T17:46:02",
+    "date": "2026-10-23T00:00:00",
     "ignored_checks": [
         {
             "description": "Global label only appears once in the schematic",
@@ -38,11 +38,6 @@
             "violations": []
         },
         {
-            "path": "/E1_02/",
-            "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25/18b3b3ad-34e0-53cc-9f25-c4ecb6dfa9a2",
-            "violations": []
-        },
-        {
             "path": "/E2/",
             "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25/81984160-ffc1-5150-93ba-690a49e1cc5c",
             "violations": []
@@ -63,11 +58,6 @@
             "violations": []
         },
         {
-            "path": "/E2_05/",
-            "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25/3b171c1f-559e-51e7-80e8-e40d3812ba35",
-            "violations": []
-        },
-        {
             "path": "/E3/",
             "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25/815659b2-9f99-5caa-9e97-34b4cd398135",
             "violations": []
@@ -75,11 +65,6 @@
         {
             "path": "/E3_02/",
             "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25/047fcfd6-7912-5c2d-b6e9-2eba49e8ffe0",
-            "violations": []
-        },
-        {
-            "path": "/E3_03/",
-            "uuid_path": "/fb9ec709-453b-5b24-a782-9cee42ec6d25/c85ad7f8-a0d1-5e29-929c-feed1fd251ab",
             "violations": []
         },
         {

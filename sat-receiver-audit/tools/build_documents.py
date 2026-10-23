@@ -1,10 +1,20 @@
 #!/usr/bin/env python3
 """Assemble review, connection and component inventories from the reviewed graphs."""
 import csv
+import hashlib
 import json
 from pathlib import Path
 
 BASE = Path(__file__).resolve().parents[1]
+
+
+def plural(n, one, few, many):
+    """Ukrainian count agreement: 1 елемент, 2–4 елементи, 5–20 елементів."""
+    if n % 10 == 1 and n % 100 != 11:
+        return f"{n} {one}"
+    if 2 <= n % 10 <= 4 and not 12 <= n % 100 <= 14:
+        return f"{n} {few}"
+    return f"{n} {many}"
 
 
 def md(value):
@@ -21,10 +31,25 @@ def main():
     linux = json.loads(linux_path.read_text()) if linux_path.exists() else {}
     module_path = BASE / "verification/module-lab/report.json"
     modules = json.loads(module_path.read_text()) if module_path.exists() else {}
-    linux_note = (f"Фактичний ARM64 Linux/systemd прогін: **{linux.get('status', 'NOT_RUN')}**. "
-                  "Окремий звіт і журнали: [Linux lab](verification/linux-lab/README.md).") if linux else "ARM64 Linux lab підготовлено; фактичні результати потрібно читати в окремому звіті після запуску."
-    module_note = (f"Емуляція модулів: **{modules['execution_status']}**, "
-                   f"{modules['coverage']['component_count']} елементи, {modules['coverage']['assembly_count']} вузли, "
+    binding_path = BASE / "verification/linux-lab/source-binding.json"
+    binding = json.loads(binding_path.read_text()) if binding_path.exists() else {}
+    # A Linux result binds the exact executed sources; after any change it is only
+    # a record of the earlier run and must not be presented as current evidence.
+    changed = sorted(rel for rel, digest in binding.get("source_sha256", {}).items()
+                     if not (BASE / rel).is_file() or hashlib.sha256((BASE / rel).read_bytes()).hexdigest() != digest)
+    if linux and binding and not changed:
+        linux_note = (f"Фактичний ARM64 Linux/systemd прогін: **{linux.get('status', 'NOT_RUN')}**. "
+                      "Окремий звіт і журнали: [Linux lab](verification/linux-lab/README.md).")
+    elif linux:
+        linux_note = (f"ARM64 Linux/systemd: **{linux.get('status', 'NOT_RUN')} лише як запис попереднього прогону**; "
+                      f"після нього змінено {len(changed)} з {len(binding.get('source_sha256', {}))} виконаних файлів, тому результат "
+                      "не переноситься на поточний код, а повторний ARM64 прогін не виконано. "
+                      "[Запис і журнали](verification/linux-lab/README.md).")
+    else:
+        linux_note = "ARM64 Linux lab підготовлено; фактичні результати потрібно читати в окремому звіті після запуску."
+    module_note = (f"Емуляція модулів ({modules.get('environment', {}).get('architecture', '?')}, "
+                   f"{modules.get('created_at_utc', '')[:10]}): **{modules['execution_status']}**, "
+                   f"{plural(modules['coverage']['component_count'], 'елемент', 'елементи', 'елементів')}, {plural(modules['coverage']['assembly_count'], 'вузол', 'вузли', 'вузлів')}, "
                    f"{modules['coverage']['interface_count']} інтерфейсів. "
                    f"Функціональні моделі покрили {modules['coverage']['counts']['EMULATION_PASS']} інтерфейсів; "
                    "інші функції залишаються непідтвердженими. [Таблиця](verification/module-lab/MODULE-RESULTS.md).") if modules else "Результати модулів зберігаються окремо; сам інвентар не доводить успішну емуляцію."
@@ -106,7 +131,7 @@ def main():
     status = "без помилок" if not errors else f"{len(errors)} помилок; див. сирий звіт і пояснення"
     completion = f"""# SR-RX-v2.1 — передача перевіреного інженерного комплекту
 
-Редакція від 20.10.2026. Вихідний репозиторій: [lizbeth307/lizbeth307](https://github.com/lizbeth307/lizbeth307), гілка Claude `ccr-1537979d-cj7q9t`, останній збережений коміт `465318835e71eae326059f5f66e2b47232169556`.
+Редакція від 20.10.2026, оновлено 23.10.2026. Вихідний репозиторій: [lizbeth307/lizbeth307](https://github.com/lizbeth307/lizbeth307), гілка Claude `ccr-1537979d-cj7q9t`, останній збережений коміт `465318835e71eae326059f5f66e2b47232169556`.
 
 ## Що фактично передано від Claude
 
@@ -122,7 +147,7 @@ def main():
 
 ## Матеріальні виправлення
 
-Перевірено фізичні контакти Q6A J2/J5/J21, нумерацію Adafruit CH334F, повні pinouts мікросхем і NC, розподіл MCP, ізоляцію HDMI, драйвери реле та PARK, живлення IMU, допуски ILIM/OVLO, паралельні LT3045, фільтри живлення й запас струму LAB5. Проєктні призначення джгутів позначені як нові рішення; їх не видано за фабричну розпіновку невідомої плати.
+Звірено нумерацію контактів Q6A J2/J5/J21 за схемою Radxa v1.21 (не виміряно), нумерацію Adafruit CH334F, повні pinouts мікросхем і NC, розподіл MCP, ізоляцію HDMI, драйвери реле та PARK, живлення IMU, допуски ILIM/OVLO, паралельні LT3045, фільтри живлення й запас струму LAB5. Проєктні призначення джгутів позначені як нові рішення; їх не видано за фабричну розпіновку невідомої плати.
 
 Окремо усунено помилку двох паралельних навантажень HF+ у PARK. Для сервісної зарядки виявлено непідтверджений шлях B0/P−; цей режим заблоковано до підтвердження топології, а не оголошено захищеним.
 
@@ -148,7 +173,7 @@ def main():
 
 1. Відкрити `build/kicad/sr-rx-v2.kicad_pro` у KiCad 10; коренева схема індексує всі сторінки.
 2. Прочитати [актуальні ворота](OPEN_ITEMS.md) та відповідні `design/E#-review.md` до купівлі, модифікації чи підключення заліза.
-3. Звіряти монтаж за [E5 connection guide](design/E5-connection-guide.md), а вимоги безпеки — за [STACK](STACK.md) з пріоритетною поправкою v2.1 на початку.
+3. Звіряти монтаж за [E5 connection guide](design/E5-connection-guide.md), а вимоги безпеки — за [STACK](STACK.md) (джерело істини; поправки v2.1 зафіксовано на його початку).
 4. Записувати фактичні результати приймання окремо з приладами, датою, умовами й ревізіями. Після зміни графа повторити генерацію, ERC і звірку netlist.
 
 Жорсткі правила з USER_REQUIREMENTS збережено: лише прийом в ефірі, без приватного змісту/військових трактів, без рамок/тарілок, місце з GNSS. Схема передбачає термінування Lime TX; експериментальний source patch закриває перевірені високорівневі TX entry points. Повного native/raw-register аудиту та фізичного підтвердження немає, тому Lime runtime залишається заблокованим.

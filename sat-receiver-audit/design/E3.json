@@ -5091,49 +5091,84 @@
       "id": "E3-01",
       "description": "IMU assembly and two metre single-ended UART need bench verification. Internal named-pad wiring is specified, but no physical harness has been measured.",
       "blocking": true,
-      "resolve": "Check actual module revision, GX16 plug/socket viewing direction and continuity to E5 design pinout; validate input Schottky and TVS at both ends; 1e6 frames with zero CRC errors. Upgrade to differential interface if errors occur."
+      "resolve": "Check actual module revision, GX16 plug/socket viewing direction and continuity to E5 design pinout; validate input Schottky and TVS at both ends; 1e6 frames with zero CRC errors. Upgrade to differential interface if errors occur.",
+      "stack": "§2.8; §5.2; §8 (пак IMU); §8.1 (пак IMU)",
+      "refs": [
+        "U309",
+        "U314"
+      ]
     },
     {
       "id": "E3-02",
       "description": "Brightness control requires confirmed DDC/CI support or an exact Wisecoco KEY/Backlight interface. Pico GP17 is now reserved for MCP watchdog reset and unavailable for brightness.",
       "blocking": true,
-      "resolve": "Demonstrate ddcutil brightness through the specified RA620 link, or obtain exact KEY/Backlight revision pinout and design a new interface using a free MCPGPIO if suitable. Verify thermal dimming; do not reuse PicoGP17."
+      "resolve": "Demonstrate ddcutil brightness through the specified RA620 link, or obtain the exact KEY/Backlight revision pinout and design a new interface using a free MCP GPIO if suitable. Verify thermal dimming; do not reuse Pico GP17.",
+      "stack": "§2.6; §5.2; §8.1 (шлях димінгу)",
+      "refs": [
+        "U305"
+      ]
     },
     {
       "id": "E3-03",
       "description": "BOM candidate Delta BFB0305HA-C is selected; final mechanical fit, installed airflow, start/stall current, LAB5 concurrency and noise remain unqualified.",
       "blocking": true,
-      "resolve": "Fit body envelope30.5x30.5x10.5mm plus duct/lead clearance into CAD before cutting enclosure. Measure0.25A design continuous reserve and provisional0.50A startup limit rather than claiming peak from datasheet. Confirm LAB5 under2.5A in allowed concurrency, or implement STACK shedding/upgradedconverter-fuse path. Run45min closed-cover solar thermal test and RF A/B noise checks; inlet drop<=5Pa at requiredflow."
+      "resolve": "Fit the body envelope 30.5x30.5x10.5 mm plus duct/lead clearance into CAD before cutting the enclosure. Measure the 0.25 A design continuous reserve and the provisional 0.50 A startup limit rather than claiming peak from the datasheet. Confirm LAB5 under 2.5 A in allowed concurrency, or implement the STACK shedding / upgraded converter-fuse path. Run the 45 min closed-cover solar thermal test and RF A/B noise checks; inlet drop <=5 Pa at the required flow.",
+      "stack": "§5.6; §8 (тепло); §8.1 (потік повітря)",
+      "refs": [
+        "FAN302"
+      ]
     },
     {
       "id": "E3-04",
       "description": "UM3304 UART7/PPS/SWD cable capacitance and power-off behavior cannot be proven by ERC.",
       "blocking": true,
-      "resolve": "Check <=20cm wiring, UART7 loopback, boot glitches and absence of Q6A backfeed with Pico on/Q6A off. Verify TX high-impedance sequencing or add hardware isolation."
+      "resolve": "Check <=20cm wiring, UART7 loopback, boot glitches and absence of Q6A backfeed with Pico on/Q6A off. Verify TX high-impedance sequencing or add hardware isolation.",
+      "stack": "§5.2 (UART7, PPS, SWD); §8.1 (UART7; PPS)",
+      "refs": [
+        "J301"
+      ]
     },
     {
       "id": "E3-05",
       "description": "Shared MCP interrupt requires open-drain configuration before interrupts are enabled, plus measured I2C rise time and VOL.",
       "blocking": true,
-      "resolve": "Set ODR=1 and MIRROR=1 first. Validate 100kHz, rise <=1000ns, 1e6 reads under load, 20 cold/20 warm boots, and 10us FAULT capture."
+      "resolve": "Set ODR=1 and MIRROR=1 first. Validate 100kHz, rise <=1000ns, 1e6 reads under load, 20 cold/20 warm boots, and 10us FAULT capture.",
+      "stack": "§5.2 (MCP23017 #3/#4)",
+      "refs": [
+        "U302",
+        "U303"
+      ]
     },
     {
       "id": "E3-06",
       "description": "BOM candidate Semiware MF52A103F3950 is selected for both NTCs; purchased-lot curve, attachment, lag and installed calibration remain unqualified.",
       "blocking": true,
-      "resolve": "Verify10k+/-1% at25C and manufacturerB25/50=3950+/-1%; use exactmakerRTtable. Fit insulated bead/strainrelief on panel spreader and frame, check25/60/68C against reference thermometer, qualify lag and open/short/stale fail-safe behavior. Remain inside-20..120C sensorrange."
+      "resolve": "Verify 10k +/-1% at 25 C and manufacturer B25/50 = 3950 +/-1%; use the exact maker R/T table. Fit an insulated bead/strain relief on the panel spreader and frame, check 25/60/68 C against a reference thermometer, qualify lag and open/short/stale fail-safe behavior. Remain inside the -20..120 C sensor range.",
+      "stack": "§5.6; §8 (тепло)",
+      "refs": [
+        "TH301",
+        "TH302"
+      ]
     },
     {
       "id": "E3-07",
-      "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+      "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about +/-0.28 V near 12.9 V; a nominal ADC code does not establish the 12.9 +/-0.1 V cutoff.",
       "blocking": true,
-      "resolve": "Calibrate gain/offset against a calibrated voltmeter at two pack-equivalent voltages such as12.6V and16.4V; cross-checkINA228. Independently verify physical12.9V software cutoff within+/-0.1V, including5s dwell, at12.8/12.9/13.0V across specifiedtemperature and load states. Store calibratedcoefficients with revision/CRC. No commissioningpassuntilmet; hardwareAON UVsupervisor remains independentbackup."
+      "resolve": "Calibrate gain/offset against a calibrated voltmeter at two pack-equivalent voltages such as 12.6 V and 16.4 V; cross-check INA228. Independently verify the physical 12.9 V software cutoff within +/-0.1 V, including 5 s dwell, at 12.8/12.9/13.0 V across the specified temperature and load states. Store calibrated coefficients with revision/CRC. No commissioning pass until met; the hardware AON UV supervisor remains an independent backup.",
+      "stack": "§5.1; §5.2; §8 (Pico ADC)",
+      "refs": [
+        "U307"
+      ]
     },
     {
       "id": "E3-08",
       "description": "Pico watchdog, MicroPython GPIO/UART adapter and host handshake implemented 20.10.2026 and tested on the host. Actual GPIO timing, reset levels, WDT/brownout behavior and Linux/serial fault recovery have not been qualified on the device.",
       "blocking": true,
-      "resolve": "Run the implemented firmware with the actual accepted Pico/Q6A assembly: scope MCP RESET assertion/release, safe output image including CHG_INHIBIT=1 after initialization, 100ms guard, 750ms heartbeat deadline plus measured latency, explicit fresh-session recovery, Linux kill/hang, UART loss/corruption, WDT/brownout and GPIO current/backfeed. Complete Pico power loss with Q6A alive remains outside Q306 coverage; no software test closes this boundary."
+      "resolve": "Run the implemented firmware with the actual accepted Pico/Q6A assembly: scope MCP RESET assertion/release, safe output image including CHG_INHIBIT=1 after initialization, 100ms guard, 750ms heartbeat deadline plus measured latency, explicit fresh-session recovery, Linux kill/hang, UART loss/corruption, WDT/brownout and GPIO current/backfeed. Complete Pico power loss with Q6A alive remains outside Q306 coverage; no software test closes this boundary.",
+      "stack": "§5.2; §5.4",
+      "refs": [
+        "Q306"
+      ]
     }
   ],
   "decisions": [

@@ -18,5 +18,6 @@
     "rtl_b": {"vid": "0bda", "pid": "2838", "serial": "LABRXB", "path": "/dev/lab/rtlb"},
     "hfplus": {"vid": "03eb", "pid": "800c", "serial": null, "path": "/dev/lab/hfplus"}
   },
-  "lime": {"enabled": false, "pci_address": null, "device_path": null}
+  "lime": {"enabled": false, "pci_address": null, "device_path": null},
+  "wifi_bt": {"fe11s_port4_usb_path": null}
 }

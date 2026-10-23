@@ -2,15 +2,15 @@
   "schema_version": 1,
   "execution_status": "PASS",
   "status": "EMULATION_PASS_WITH_GAPS",
-  "created_at_utc": "2026-10-20T21:41:47.709508+00:00",
+  "created_at_utc": "2026-10-23T16:10:09.076785+00:00",
   "environment": {
-    "architecture": "aarch64",
-    "kernel": "6.8.0-147-generic",
-    "python": "3.12.3"
+    "architecture": "x86_64",
+    "kernel": "6.18.44-fc-v153",
+    "python": "3.13.16"
   },
   "physical_tests_performed": false,
   "hardware_qualified": false,
-  "inventory_sha256": "638dc04f7d36a8958a4e6200e6e1cae1db52dd0ee3cf4d5874dac03c5969d41f",
+  "inventory_sha256": "4d62e9a7f739a81deda750855c5c0506f528e21e2c3c01e8b151c753055fad1a",
   "model_sha256": {
     "connectivity.py": "885e545497026626938ac0cb7fa50249a71c724a03fb5f44cebf7110c03bf8a1",
     "io_modules.py": "3a2a53f360b6530cf1bb2b6cf073bc6404a4ce759b09867654e41ec1d3b894a4",
@@ -22,13 +22,13 @@
     "power_bus.py": "263dd47a794cbe283cd0fb47bf4d268068198090deabacead0a3269f56dcc0bd",
     "power_scenarios.py": "99678c970b1f839c76107b40b464861139af4fe8e80c9b95eea91376e6563436",
     "radio_modules.py": "02dd455cce1c921dd0dfc52950314e780741ffe16f07da76dd199aaff28d5092",
-    "radio_scenarios.py": "b2bf14d5971c017ade5de5053144c43daecde63447c09016c717d02b58a318e6",
+    "radio_scenarios.py": "3d596f3ea4e72ed16581c1b0b8dc0483995f51eb041d92e9f5ec0841f4692f35",
     "run.py": "94df253b8a8d4fb0e3be1fe1cf3a743c2e9f9c1047c052efed810fec8498a9c1"
   },
   "domains": {
     "power": {
       "exit_code": 0,
-      "elapsed_s": 60.97,
+      "elapsed_s": 1.622,
       "report": {
         "schema_version": 1,
         "status": "EMULATION_PASS",
@@ -1342,9 +1342,9 @@
           "software/srrx/hardware.py": "0dbf351d7cea86b6743ec4479ae8d78604c351009dae8a9b87715b039eb133ba",
           "software/srrx/telemetry.py": "2427c56deab13eea2bf8f9e949982985f69e63e1d4c4bbe4b32a54d90f1a1220",
           "software/srrx/policy.py": "bfffff805fd6392055ea61d608a502728d9fb884704c7c75e32c23e1b23557f1",
-          "design/E1.json": "e87f79db4da0d9be7e74aa1ad2816ea99ae4ed8fd6e723ba375c1559bfd51392",
-          "design/E2.json": "adc5b67b6b53977143847d688f657364a5e300a80761d74e1dc82e34bd703c16",
-          "design/E3.json": "0a2e2e60ede923b2d0a1aa0f8484a97513c1ef36ae389d3aee365fbcf90aaac5",
+          "design/E1.json": "f535a839afd70def8f35f43380153cb00723f97c634be51d9159d1bfe4630591",
+          "design/E2.json": "bb2ac6a37392689b462a570d7334aa257aaad8e4a006c5df1e934c3dd794d40c",
+          "design/E3.json": "f2ac2171727824e36b5e4d7780677d4fc46ec0840d0a57a59053451132c92be4",
           "deployment/module_lab/power_bus.py": "263dd47a794cbe283cd0fb47bf4d268068198090deabacead0a3269f56dcc0bd",
           "deployment/module_lab/power_scenarios.py": "99678c970b1f839c76107b40b464861139af4fe8e80c9b95eea91376e6563436"
         },
@@ -1359,7 +1359,7 @@
     },
     "mcu": {
       "exit_code": 0,
-      "elapsed_s": 2.586,
+      "elapsed_s": 0.116,
       "report": {
         "cases": [
           {
@@ -1777,8 +1777,8 @@
           "wdt": "https://docs.micropython.org/en/v1.26.0/library/machine.WDT.html"
         },
         "source_sha256": {
-          "design/E3.json": "0a2e2e60ede923b2d0a1aa0f8484a97513c1ef36ae389d3aee365fbcf90aaac5",
-          "design/E5.json": "86a9099809fbcdf365c82ecf4a239531b1b55715ee17cd1c5fb5a776c979ca05",
+          "design/E3.json": "f2ac2171727824e36b5e4d7780677d4fc46ec0840d0a57a59053451132c92be4",
+          "design/E5.json": "d0366fa9440ba2488b352bcf24ca31b1b8e117afb1c2aa2453dd214d711c3dd6",
           "firmware/imu/device.py": "02a9a2b6e93074716375617137cdfe1bb6df9d22e5021768c59cf273aeafea2e",
           "firmware/imu/session.py": "350484a09ad30255d7a0f44b3c0d631726de96f5639a59443d96377bcccd424d",
           "firmware/imu/shtp.py": "f23f08679f9847fd64a14fc73171b2e5191016b1cd665c8c5d66f90e4ee26525",
@@ -1807,13 +1807,13 @@
     },
     "radio": {
       "exit_code": 0,
-      "elapsed_s": 94.36,
+      "elapsed_s": 4.852,
       "report": {
         "schema_version": 1,
         "status": "EMULATION_PASS",
         "scope": "native-driver-ABI-and-control-emulation-no-real-USB-or-analog-RF",
-        "architecture": "aarch64",
-        "python": "3.12.3",
+        "architecture": "x86_64",
+        "python": "3.13.16",
         "numpy": "2.3.5",
         "modules": [
           {
@@ -3066,15 +3066,15 @@
         "worker_failure_lifecycle": {
           "status": "PASS",
           "scope": "spawned-worker-native-ABI-component-only-no-RF-no-accepted-hardware",
-          "architecture": "aarch64",
-          "kernel": "6.8.0-147-generic",
-          "python": "3.12.3",
+          "architecture": "x86_64",
+          "kernel": "6.18.44-fc-v153",
+          "python": "3.13.16",
           "fixture_source_sha256": "17b0dfec527087d3f508d34d29458f74ddb52e1b0c061ae779cd6b1060e30b07",
           "startup_deadline_s": 60.0,
           "production_read_deadline_s": 1.0,
           "native_compile_performed": true,
           "control_guard_replaced_only_in_test": true,
-          "kernel_core_pattern": "|/usr/share/apport/apport -p%p -s%s -c%c -d%d -P%P -u%u -g%g -F%F -- %E",
+          "kernel_core_pattern": "core",
           "kernel_core_pattern_read_error": null,
           "core_protection_references": [
             "https://man7.org/linux/man-pages/man5/core.5.html",
@@ -3093,8 +3093,8 @@
               "native_read_entered": true,
               "exception_type": "OSError",
               "exception": "RTL read failed (-71)",
-              "elapsed_s": 8.749,
-              "close_duration_s": 0.02,
+              "elapsed_s": 0.178,
+              "close_duration_s": 0.003,
               "worker_exitcode": -15,
               "worker_alive_after_close": false,
               "actual_read_observer_checks": 1,
@@ -3108,7 +3108,7 @@
               "only_case_artifact": [
                 "lifecycle.txt"
               ],
-              "elf_machine": 183
+              "elf_machine": 62
             },
             {
               "case": "hang_ignoring_sigterm",
@@ -3117,8 +3117,8 @@
               "native_read_entered": true,
               "exception_type": "TimeoutError",
               "exception": "No fresh RX block within one second",
-              "elapsed_s": 6.496,
-              "close_duration_s": 0.52,
+              "elapsed_s": 1.7,
+              "close_duration_s": 0.503,
               "worker_exitcode": -9,
               "worker_alive_after_close": false,
               "actual_read_observer_checks": 20,
@@ -3132,7 +3132,7 @@
               "only_case_artifact": [
                 "lifecycle.txt"
               ],
-              "elf_machine": 183
+              "elf_machine": 62
             },
             {
               "case": "crash_sigsegv",
@@ -3141,8 +3141,8 @@
               "native_read_entered": true,
               "exception_type": "OSError",
               "exception": "RX worker pipe closed before a complete block",
-              "elapsed_s": 5.523,
-              "close_duration_s": 0.002,
+              "elapsed_s": 0.148,
+              "close_duration_s": 0.0,
               "worker_exitcode": -11,
               "worker_alive_after_close": false,
               "actual_read_observer_checks": 1,
@@ -3156,7 +3156,7 @@
               "only_case_artifact": [
                 "lifecycle.txt"
               ],
-              "elf_machine": 183
+              "elf_machine": 62
             },
             {
               "case": "invalid_odd_short_read",
@@ -3165,8 +3165,8 @@
               "native_read_entered": true,
               "exception_type": "OSError",
               "exception": "Invalid/empty RTL IQ block",
-              "elapsed_s": 5.161,
-              "close_duration_s": 0.041,
+              "elapsed_s": 0.147,
+              "close_duration_s": 0.002,
               "worker_exitcode": -15,
               "worker_alive_after_close": false,
               "actual_read_observer_checks": 1,
@@ -3180,7 +3180,7 @@
               "only_case_artifact": [
                 "lifecycle.txt"
               ],
-              "elf_machine": 183
+              "elf_machine": 62
             },
             {
               "case": "valid_even_short_read",
@@ -3189,8 +3189,8 @@
               "native_read_entered": true,
               "exception_type": null,
               "exception": null,
-              "elapsed_s": 4.53,
-              "close_duration_s": 0.019,
+              "elapsed_s": 0.146,
+              "close_duration_s": 0.002,
               "worker_exitcode": -15,
               "worker_alive_after_close": false,
               "actual_read_observer_checks": 1,
@@ -3204,7 +3204,7 @@
               "only_case_artifact": [
                 "lifecycle.txt"
               ],
-              "elf_machine": 183
+              "elf_machine": 62
             }
           ]
         },
@@ -3220,7 +3220,7 @@
           "production_sources_sha256": {
             "software/srrx/policy.py": "bfffff805fd6392055ea61d608a502728d9fb884704c7c75e32c23e1b23557f1",
             "software/srrx/hardware.py": "0dbf351d7cea86b6743ec4479ae8d78604c351009dae8a9b87715b039eb133ba",
-            "deployment/deploy.py": "6ff56ea1e25d77d5a7d3ad948762b70d3ba6b88d16f9d61812d0182744b4ee2a",
+            "deployment/deploy.py": "68068cac59d2b78938baa6251fd6f47a8602ac62b93f7f431f335bb684d9b61c",
             "deployment/vendor_patch.py": "24b2fe1cb3f2e2a9aa1af35396f1e6dbeb890080e18e8f70ba8fa6bdd1152be3",
             "deployment/patches/limesuiteng-rx-only.patch": "e6e3f7abd3dd3cff21c0d7baa98e92f812bd88068a984298a7bebcf5517bc033"
           },
@@ -3250,9 +3250,9 @@
     },
     "location": {
       "exit_code": 0,
-      "elapsed_s": 6.992,
+      "elapsed_s": 1.372,
       "report": {
-        "elapsed_s": 4.034,
+        "elapsed_s": 1.294,
         "modules": [
           {
             "description": "Waveshare LC76G GNSS24370 NMEA output over Linux PTY",
@@ -3262,7 +3262,7 @@
             ],
             "scenarios": [
               {
-                "elapsed_s": 0.249,
+                "elapsed_s": 0.007,
                 "observed": {
                   "fragment_size_bytes": 1,
                   "gnss_utc_qualified": false,
@@ -3276,7 +3276,7 @@
                 "status": "EMULATION_PASS"
               },
               {
-                "elapsed_s": 0.355,
+                "elapsed_s": 0.01,
                 "observed": {
                   "checksum_rejected": true,
                   "invalid_fix_rejected": true,
@@ -3287,18 +3287,18 @@
                 "status": "EMULATION_PASS"
               },
               {
-                "elapsed_s": 0.419,
+                "elapsed_s": 0.246,
                 "observed": {
                   "fallback_current_accuracy": "unknown",
                   "freshness_ms": 180,
-                  "observed_stale_age_ms": 379,
+                  "observed_stale_age_ms": 245,
                   "replay_does_not_refresh_receipt_time": true
                 },
                 "scenario": "nmea_replayed_epoch_and_stale",
                 "status": "EMULATION_PASS"
               },
               {
-                "elapsed_s": 0.141,
+                "elapsed_s": 0.005,
                 "observed": {
                   "disconnect_detection_owner": "fixture_transport_glue_not_a_production_raw_uart_driver",
                   "explicit_new_endpoint": true,
@@ -3309,7 +3309,7 @@
                 "status": "EMULATION_PASS"
               },
               {
-                "elapsed_s": 0.605,
+                "elapsed_s": 0.015,
                 "observed": {
                   "duplicate_not_distinct": true,
                   "real_gnss_utc_qualified": false,
@@ -3343,7 +3343,7 @@
             ],
             "scenarios": [
               {
-                "elapsed_s": 1.138,
+                "elapsed_s": 0.47,
                 "observed": {
                   "connections": 2,
                   "fragmented_tpv_bytes": true,
@@ -3357,7 +3357,7 @@
                 "status": "EMULATION_PASS"
               },
               {
-                "elapsed_s": 0.42,
+                "elapsed_s": 0.294,
                 "observed": {
                   "duplicate_json_keys_rejected": true,
                   "freshness_ms": 180,
@@ -3368,7 +3368,7 @@
                 "status": "EMULATION_PASS"
               },
               {
-                "elapsed_s": 0.534,
+                "elapsed_s": 0.241,
                 "observed": {
                   "duplicate_epoch_not_distinct": true,
                   "real_gnss_utc_qualified": false,
@@ -3419,7 +3419,7 @@
         "source_sha256": {
           "deployment/module_lab/location_modules.py": "3de8c604783190577c49183ee86d6a2efe9d97f0c89d90e16dc23ff39ed993be",
           "deployment/module_lab/location_scenarios.py": "ec2e915418c55a83eef309256426225c650cc21e2b59340d7207e0cb79990170",
-          "design/E3.json": "0a2e2e60ede923b2d0a1aa0f8484a97513c1ef36ae389d3aee365fbcf90aaac5",
+          "design/E3.json": "f2ac2171727824e36b5e4d7780677d4fc46ec0840d0a57a59053451132c92be4",
           "software/srrx/location.py": "774ea8feeaff585774a09058af96b2b46485c78f2bfacfacfcc506138b301299"
         },
         "status": "EMULATION_PASS",
@@ -3429,7 +3429,7 @@
     },
     "io": {
       "exit_code": 0,
-      "elapsed_s": 29.573,
+      "elapsed_s": 2.192,
       "report": {
         "suite": "io_modules",
         "status": "EMULATION_PASS_WITH_UNSUPPORTED",
@@ -3439,7 +3439,7 @@
         "accepted": false,
         "environment": {
           "system": "Linux",
-          "machine": "aarch64",
+          "machine": "x86_64",
           "uid": 0
         },
         "modules": [
@@ -3751,7 +3751,7 @@
                 "raw_status_before_controller_poll": true,
                 "cold_start_timeout_s": 20.0,
                 "ordinary_timeout_s": 5.0,
-                "elapsed_s": 1.567845,
+                "elapsed_s": 0.047035,
                 "mode": "SIMULATION",
                 "production_deadlines_changed": false
               },
@@ -3785,7 +3785,7 @@
               "disabled_tap_issues_no_control": true,
               "reconnect_auto_arm": false,
               "lease_created": false,
-              "worker_connected_snapshots": 23
+              "worker_connected_snapshots": 3
             },
             "limitation": "The fault is the controller transport, not a USB/HDMI removal signal. Production USB display-departure detection is absent."
           },
@@ -3889,14 +3889,14 @@
           "deployment/module_lab/io_scenarios.py": "b7cec8da94a78f03f20b0e750a58906edf6481593873c6a4fd9f526ab282eff3",
           "software/srrx/hmi.py": "471ce62782c7403b4171eeb59666a5a52f24af17434ab4ed4a6bed08283c2949",
           "software/srrx/labrx.py": "3f34632d4104c8a6e1b6691f9e97e65adc7fbd6c64f253409d01c258576590dc",
-          "software/srrx/spectrum.py": "87e49d8a6801c87d22b75f4045162e50c4f60b297cb172bd519e623e339028d3",
+          "software/srrx/spectrum.py": "be1833e25671f54151551606eb067f11ffc7ef7589984437850218cff68eb949",
           "software/srrx/storage.py": "ab4b09a469fd569eb298f6311660f9bc6bd294b31532f3001670ca9b52fe9f3c"
         }
       }
     },
     "connectivity": {
       "exit_code": 0,
-      "elapsed_s": 37.979,
+      "elapsed_s": 1.555,
       "report": {
         "schema_version": 1,
         "status": "CONNECTION_MODEL_PASS",
@@ -3906,31 +3906,31 @@
         "physical_tests_performed": false,
         "source_graphs_changed": false,
         "summary": {
-          "components": 754,
-          "declared_pins": 2326,
-          "connected_pins": 2189,
+          "components": 750,
+          "declared_pins": 2318,
+          "connected_pins": 2181,
           "intentional_nc_pins": 137,
           "canonical_nets": 466,
           "assemblies": 64,
           "interfaces": 166,
-          "cases": 3749,
+          "cases": 3737,
           "failed": 0,
           "cases_by_category": {
             "cross_net_short": 466,
             "independent_baseline": 1,
-            "individual_connected_pin_open": 2189,
+            "individual_connected_pin_open": 2181,
             "intentional_nc_distinguished": 137,
             "nc_accidental_connection": 137,
             "validator_negative_controls": 1,
             "whole_assembly_unplug": 64,
-            "whole_component_unplug": 754
+            "whole_component_unplug": 750
           },
           "physical_or_TBD_interfaces_preserved": 94
         },
         "independent_netlist": {
           "tool": "Eeschema 10.0.7-10.0.7~ubuntu24.04.1",
-          "sha256": "cfc4adf58ca9ee86ab88963e6c04321012092c60a8f328b37782e1ded8c415d5",
-          "xml_pin_nodes": 2326,
+          "sha256": "40b90a9858e57fbf6a868c93afe2ae321fc7bea9fee6f144b7cd76a151ccccc2",
+          "xml_pin_nodes": 2318,
           "canonical_nets": 466,
           "nc_nodes": 137,
           "methodology": "Separate stdlib XML parser; no import of graph generator, existing netlist checker, register models or production drivers.",
@@ -4281,7 +4281,7 @@
                 "pin": "3",
                 "name": "ALERT",
                 "net": "INA228_ALERT",
-                "dynamic_peer_count": 3
+                "dynamic_peer_count": 2
               },
               {
                 "pin": "4",
@@ -6900,7 +6900,7 @@
                 "pin": "16",
                 "name": "VPU",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -6918,13 +6918,13 @@
                 "pin": "4",
                 "name": "VS",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "5",
                 "name": "A0",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "6",
@@ -7053,7 +7053,7 @@
                 "pin": "16",
                 "name": "VPU",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -7071,7 +7071,7 @@
                 "pin": "4",
                 "name": "VS",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "5",
@@ -7206,7 +7206,7 @@
                 "pin": "6",
                 "name": "V+",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -7292,7 +7292,7 @@
                 "pin": "6",
                 "name": "V+",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -7378,7 +7378,7 @@
                 "pin": "6",
                 "name": "V+",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -7603,7 +7603,7 @@
                 "pin": "1",
                 "name": "3V3",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "10",
@@ -7645,7 +7645,7 @@
                 "pin": "17",
                 "name": "3V3",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "18",
@@ -7693,7 +7693,7 @@
                 "pin": "3",
                 "name": "GPIO24",
                 "net": "INA228_ALERT",
-                "dynamic_peer_count": 3
+                "dynamic_peer_count": 2
               },
               {
                 "pin": "30",
@@ -7904,7 +7904,7 @@
                 "pin": "1",
                 "name": "3V3_Q6A",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -8121,7 +8121,7 @@
                 "pin": "9",
                 "name": "VDD",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [
@@ -8259,7 +8259,7 @@
                 "pin": "16",
                 "name": "A1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "17",
@@ -8295,7 +8295,7 @@
                 "pin": "21",
                 "name": "GPA0",
                 "net": "FAULT_LABPORT",
-                "dynamic_peer_count": 3
+                "dynamic_peer_count": 2
               },
               {
                 "pin": "22",
@@ -8379,7 +8379,7 @@
                 "pin": "9",
                 "name": "VDD",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [
@@ -8513,13 +8513,13 @@
                 "pin": "15",
                 "name": "A0",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "16",
                 "name": "A1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "17",
@@ -8543,7 +8543,7 @@
                 "pin": "2",
                 "name": "GPB1",
                 "net": "FAULT_HFP",
-                "dynamic_peer_count": 3
+                "dynamic_peer_count": 2
               },
               {
                 "pin": "20",
@@ -8591,7 +8591,7 @@
                 "pin": "3",
                 "name": "GPB2",
                 "net": "FAULT_RTLA",
-                "dynamic_peer_count": 3
+                "dynamic_peer_count": 2
               },
               {
                 "pin": "4",
@@ -8615,7 +8615,7 @@
                 "pin": "9",
                 "name": "VDD",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [
@@ -11631,7 +11631,7 @@
               "open:A409:OUT",
               "open:A409:SHIELDS",
               "net-short:E4_LIME_RFSPARE:E4_LIME_RX2",
-              "net-short:E4_LIME_RX2:E4_LIME_RXA",
+              "net-short:E4_LIME_RX2:E4_LIME_TO_RTLB",
               "net-short:E4_RX2_ANT:E4_RX2_BLK",
               "net-short:E4_RX2_BLK:E4_SB_FILTER_IN",
               "net-short:FLT_SB_LNA:GND",
@@ -11971,7 +11971,7 @@
               "source_pinout_status": "source_named_functional_terminals_not_a_complete_physical_connector_numbering",
               "physical_numbering_status": "FUNCTIONAL_TERMINALS_PHYSICAL_MAPPING_UNKNOWN",
               "pinout_gate": null,
-              "source_TBD_preserved": false,
+              "source_TBD_preserved": true,
               "physical_verified": false,
               "dnp": false,
               "functional_pin_identifiers_unchanged": true
@@ -11990,15 +11990,15 @@
                 "dynamic_peer_count": 1
               },
               {
-                "pin": "X2_RX_A",
-                "name": "X2_RX_A",
-                "net": "E4_LIME_RXA",
+                "pin": "X2_RX",
+                "name": "X2_RX",
+                "net": "E4_LIME_X2_RX",
                 "dynamic_peer_count": 1
               },
               {
-                "pin": "X4_RX_B",
-                "name": "X4_RX_B",
-                "net": "E4_LIME_RXB",
+                "pin": "X4_RX",
+                "name": "X4_RX",
+                "net": "E4_LIME_X4_RX",
                 "dynamic_peer_count": 1
               },
               {
@@ -12069,13 +12069,13 @@
               }
             ],
             "intentional_nc_pins": [],
-            "case_count": 39,
+            "case_count": 38,
             "case_ids": [
               "independent-xml-baseline",
               "open:A415:J4_REF_IN",
               "open:A415:X1_TX",
-              "open:A415:X2_RX_A",
-              "open:A415:X4_RX_B",
+              "open:A415:X2_RX",
+              "open:A415:X4_RX",
               "open:A415:X9_3V3",
               "open:A415:X9_CLKREQ_N",
               "open:A415:X9_GND",
@@ -12089,11 +12089,10 @@
               "open:A415:X9_WAKE_N",
               "net-short:E4_LIME_CTL_B:E4_LIME_REF",
               "net-short:E4_LIME_REF:E4_LIME_RF1",
-              "net-short:E4_LIME_RX2:E4_LIME_RXA",
-              "net-short:E4_LIME_RXA:E4_LIME_RXB",
-              "net-short:E4_LIME_RXB:E4_LIME_TO_RTLB",
               "net-short:E4_LIME_TO_RTLB:E4_LIME_TX",
-              "net-short:E4_LIME_TX:E4_LNB_IF",
+              "net-short:E4_LIME_TX:E4_LIME_X2_RX",
+              "net-short:E4_LIME_X2_RX:E4_LIME_X4_RX",
+              "net-short:E4_LIME_X4_RX:E4_LNB_IF",
               "net-short:E5_LABPORT_DP:E5_PCIE_CLKREQ_N",
               "net-short:E5_PCIE_CLKREQ_N:E5_PCIE_PERST_N",
               "net-short:E5_PCIE_PERST_N:E5_PCIE_REFCLK_N",
@@ -12286,7 +12285,7 @@
               "open:A420:IF",
               "open:A420:REF25",
               "open:A420:SHIELDS",
-              "net-short:E4_LIME_TX:E4_LNB_IF",
+              "net-short:E4_LIME_X4_RX:E4_LNB_IF",
               "net-short:E4_LNB_IF:E4_LNB_REF25",
               "net-short:E4_LNB_REF25:E4_P1",
               "net-short:FLT_SB_LNA:GND",
@@ -13064,7 +13063,7 @@
             "functional_status": "UNCHANGED_NOT_ASSESSED",
             "hardware_qualified": false,
             "assembly": "E4-CIR-01",
-            "value": "RX1 panel SMA: captive loop",
+            "value": "RX1 panel SMA: captive coax assembly",
             "pinout": {
               "source_pinout_status": "source_named_functional_terminals_not_a_complete_physical_connector_numbering",
               "physical_numbering_status": "FUNCTIONAL_TERMINALS_PHYSICAL_MAPPING_UNKNOWN",
@@ -13148,7 +13147,7 @@
               "open:J414:CENTER",
               "open:J414:SHIELD",
               "net-short:E4_LIME_RFSPARE:E4_LIME_RX2",
-              "net-short:E4_LIME_RX2:E4_LIME_RXA",
+              "net-short:E4_LIME_RX2:E4_LIME_TO_RTLB",
               "net-short:FLT_SB_LNA:GND",
               "net-short:GND:GNSS_ANT",
               "unplug-ref:J414",
@@ -13366,7 +13365,7 @@
               "open:W401:END_A",
               "open:W401:END_B",
               "open:W401:SHIELDS",
-              "net-short:E4_LIME_TX:E4_LNB_IF",
+              "net-short:E4_LIME_X4_RX:E4_LNB_IF",
               "net-short:E4_LNB_IF:E4_LNB_REF25",
               "net-short:E4_P3_ANT:E4_P4",
               "net-short:E4_P4:E4_P5",
@@ -13473,7 +13472,7 @@
               {
                 "pin": "END_B",
                 "name": "END_B",
-                "net": "E4_LIME_RXA",
+                "net": "E4_LIME_X2_RX",
                 "dynamic_peer_count": 1
               },
               {
@@ -13490,8 +13489,8 @@
               "open:W403:END_A",
               "open:W403:END_B",
               "open:W403:SHIELDS",
-              "net-short:E4_LIME_RX2:E4_LIME_RXA",
-              "net-short:E4_LIME_RXA:E4_LIME_RXB",
+              "net-short:E4_LIME_TX:E4_LIME_X2_RX",
+              "net-short:E4_LIME_X2_RX:E4_LIME_X4_RX",
               "net-short:E4_RX1_PAD:E4_RX1_PANEL",
               "net-short:E4_RX1_PANEL:E4_RX2_ANT",
               "net-short:FLT_SB_LNA:GND",
@@ -13535,7 +13534,7 @@
               {
                 "pin": "END_B",
                 "name": "END_B",
-                "net": "E4_LIME_RXB",
+                "net": "E4_LIME_X4_RX",
                 "dynamic_peer_count": 1
               },
               {
@@ -13552,8 +13551,8 @@
               "open:W404:END_A",
               "open:W404:END_B",
               "open:W404:SHIELDS",
-              "net-short:E4_LIME_RXA:E4_LIME_RXB",
-              "net-short:E4_LIME_RXB:E4_LIME_TO_RTLB",
+              "net-short:E4_LIME_X2_RX:E4_LIME_X4_RX",
+              "net-short:E4_LIME_X4_RX:E4_LNB_IF",
               "net-short:E4_RX2_ANT:E4_RX2_BLK",
               "net-short:E4_RX2_BLK:E4_SB_FILTER_IN",
               "net-short:FLT_SB_LNA:GND",
@@ -13677,7 +13676,7 @@
               "open:W406:END_B",
               "open:W406:SHIELDS",
               "net-short:E4_LIME_TO_RTLB:E4_LIME_TX",
-              "net-short:E4_LIME_TX:E4_LNB_IF",
+              "net-short:E4_LIME_TX:E4_LIME_X2_RX",
               "net-short:E4_SB_PREBLOCK:E4_TX_LOAD",
               "net-short:E4_TX_LOAD:E4_VHF_LINK",
               "net-short:FLT_SB_LNA:GND",
@@ -14189,7 +14188,7 @@
               "open:W424:PANEL",
               "open:W424:SHIELDS",
               "net-short:E4_LIME_RFSPARE:E4_LIME_RX2",
-              "net-short:E4_LIME_RX2:E4_LIME_RXA",
+              "net-short:E4_LIME_RX2:E4_LIME_TO_RTLB",
               "net-short:E4_SB_FILTER_IN:E4_SB_FILTER_OUT",
               "net-short:E4_SB_FILTER_OUT:E4_SB_LNA_IN",
               "net-short:FLT_SB_LNA:GND",
@@ -14724,7 +14723,7 @@
                 "pin": "6",
                 "name": "VDD",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "7",
@@ -14890,7 +14889,7 @@
                 "pin": "6",
                 "name": "VDD",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "7",
@@ -15056,7 +15055,7 @@
                 "pin": "6",
                 "name": "VDD",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "7",
@@ -15113,7 +15112,7 @@
               "net-short:E4_LIME_RF3:E4_LIME_RFC",
               "net-short:E4_LIME_RFC:E4_LIME_RFSPARE",
               "net-short:E4_LIME_RFSPARE:E4_LIME_RX2",
-              "net-short:E4_LIME_RXB:E4_LIME_TO_RTLB",
+              "net-short:E4_LIME_RX2:E4_LIME_TO_RTLB",
               "net-short:E4_LIME_TO_RTLB:E4_LIME_TX",
               "net-short:FLT_SB_LNA:GND",
               "net-short:GND:GNSS_ANT",
@@ -15242,7 +15241,7 @@
                 "pin": "6",
                 "name": "V+",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -15329,7 +15328,7 @@
                 "pin": "6",
                 "name": "V+",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -15410,7 +15409,7 @@
                 "pin": "6",
                 "name": "V+",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [
@@ -15493,7 +15492,7 @@
                 "pin": "6",
                 "name": "V+",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [
@@ -15577,7 +15576,7 @@
                 "pin": "6",
                 "name": "V+",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [
@@ -15660,7 +15659,7 @@
                 "pin": "6",
                 "name": "V+",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [
@@ -15744,7 +15743,7 @@
                 "pin": "6",
                 "name": "V+",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [
@@ -15827,7 +15826,7 @@
                 "pin": "6",
                 "name": "V+",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [
@@ -16850,7 +16849,7 @@
                 "pin": "4",
                 "name": "FAULT_N",
                 "net": "FAULT_RTLA",
-                "dynamic_peer_count": 3
+                "dynamic_peer_count": 2
               },
               {
                 "pin": "5",
@@ -16939,7 +16938,7 @@
                 "pin": "4",
                 "name": "FAULT_N",
                 "net": "FAULT_LABPORT",
-                "dynamic_peer_count": 3
+                "dynamic_peer_count": 2
               },
               {
                 "pin": "5",
@@ -16995,7 +16994,7 @@
             "functional_status": "UNCHANGED_NOT_ASSESSED",
             "hardware_qualified": false,
             "assembly": "E5-CIR-04",
-            "value": "TPS2553DBVR",
+            "value": "TPS2553DBVR-1",
             "pinout": {
               "source_pinout_status": "source_numbered_pin_map",
               "physical_numbering_status": "DECLARED_NUMBERS_NOT_PHYSICALLY_VERIFIED",
@@ -17028,7 +17027,7 @@
                 "pin": "4",
                 "name": "FAULT_N",
                 "net": "FAULT_HFP",
-                "dynamic_peer_count": 3
+                "dynamic_peer_count": 2
               },
               {
                 "pin": "5",
@@ -18663,7 +18662,7 @@
                 "pin": "1",
                 "name": "VCCA",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -18687,7 +18686,7 @@
                 "pin": "5",
                 "name": "EN",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "6",
@@ -18705,7 +18704,7 @@
                 "pin": "8",
                 "name": "VCCB",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -19387,15 +19386,15 @@
                 "dynamic_peer_count": 1
               },
               {
-                "pin": "X2_RX_A",
-                "name": "X2_RX_A",
-                "net": "E4_LIME_RXA",
+                "pin": "X2_RX",
+                "name": "X2_RX",
+                "net": "E4_LIME_X2_RX",
                 "dynamic_peer_count": 1
               },
               {
-                "pin": "X4_RX_B",
-                "name": "X4_RX_B",
-                "net": "E4_LIME_RXB",
+                "pin": "X4_RX",
+                "name": "X4_RX",
+                "net": "E4_LIME_X4_RX",
                 "dynamic_peer_count": 1
               },
               {
@@ -19470,12 +19469,12 @@
               "source_pinout_status": "source_named_functional_terminals_not_a_complete_physical_connector_numbering",
               "physical_numbering_status": "FUNCTIONAL_TERMINALS_PHYSICAL_MAPPING_UNKNOWN",
               "pinout_gate": null,
-              "source_TBD_preserved": false,
+              "source_TBD_preserved": true,
               "physical_verified": false,
               "dnp": false,
               "functional_pin_identifiers_unchanged": true
             },
-            "case_count": 39
+            "case_count": 38
           },
           {
             "id": "E4/A418",
@@ -23436,7 +23435,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -23580,7 +23579,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -23652,7 +23651,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -23724,7 +23723,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -23796,7 +23795,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -24228,7 +24227,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -24264,7 +24263,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -24300,7 +24299,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -24336,7 +24335,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -24372,7 +24371,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -24408,7 +24407,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -25920,7 +25919,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -26208,7 +26207,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -26244,7 +26243,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -26280,7 +26279,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -26316,7 +26315,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -26352,7 +26351,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -26388,7 +26387,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -26424,7 +26423,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -26460,7 +26459,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -26496,7 +26495,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -26532,7 +26531,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -27756,7 +27755,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -27792,7 +27791,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -28384,7 +28383,7 @@
                 "pin": "1",
                 "name": "A1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "3",
@@ -29070,7 +29069,7 @@
                 "pin": "1",
                 "name": "3V3",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "10",
@@ -29112,7 +29111,7 @@
                 "pin": "17",
                 "name": "3V3",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "18",
@@ -29160,7 +29159,7 @@
                 "pin": "3",
                 "name": "GPIO24",
                 "net": "INA228_ALERT",
-                "dynamic_peer_count": 3
+                "dynamic_peer_count": 2
               },
               {
                 "pin": "30",
@@ -29280,7 +29279,7 @@
                 "pin": "1",
                 "name": "3V3_Q6A",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -32833,42 +32832,6 @@
             "case_count": 9
           },
           {
-            "id": "E1/R102",
-            "refs": [
-              "R102"
-            ],
-            "status": "CONNECTION_MODEL_PASS",
-            "coverage_level": "connection_net_model",
-            "functional_status": "UNCHANGED_NOT_ASSESSED",
-            "hardware_qualified": false,
-            "declared_schematic_population": "DESIGN_DECLARATION_ONLY",
-            "connected_pins": [
-              {
-                "pin": "1",
-                "name": "1",
-                "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
-              },
-              {
-                "pin": "2",
-                "name": "2",
-                "net": "INA228_ALERT",
-                "dynamic_peer_count": 3
-              }
-            ],
-            "intentional_nc_pins": [],
-            "pinout": {
-              "source_pinout_status": "not_catalogued_as_separate_interface",
-              "physical_numbering_status": "FUNCTIONAL_TERMINALS_PHYSICAL_MAPPING_UNKNOWN",
-              "pinout_gate": null,
-              "source_TBD_preserved": false,
-              "physical_verified": false,
-              "dnp": false,
-              "functional_pin_identifiers_unchanged": true
-            },
-            "case_count": 9
-          },
-          {
             "id": "E1/R103",
             "refs": [
               "R103"
@@ -33825,7 +33788,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -34041,7 +34004,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -35165,7 +35128,7 @@
               "source_pinout_status": "not_catalogued_as_separate_interface",
               "physical_numbering_status": "FUNCTIONAL_TERMINALS_PHYSICAL_MAPPING_UNKNOWN",
               "pinout_gate": null,
-              "source_TBD_preserved": false,
+              "source_TBD_preserved": true,
               "physical_verified": false,
               "dnp": false,
               "functional_pin_identifiers_unchanged": true
@@ -35633,7 +35596,7 @@
               "source_pinout_status": "not_catalogued_as_separate_interface",
               "physical_numbering_status": "FUNCTIONAL_TERMINALS_PHYSICAL_MAPPING_UNKNOWN",
               "pinout_gate": null,
-              "source_TBD_preserved": false,
+              "source_TBD_preserved": true,
               "physical_verified": false,
               "dnp": false,
               "functional_pin_identifiers_unchanged": true
@@ -35669,7 +35632,7 @@
               "source_pinout_status": "not_catalogued_as_separate_interface",
               "physical_numbering_status": "FUNCTIONAL_TERMINALS_PHYSICAL_MAPPING_UNKNOWN",
               "pinout_gate": null,
-              "source_TBD_preserved": false,
+              "source_TBD_preserved": true,
               "physical_verified": false,
               "dnp": false,
               "functional_pin_identifiers_unchanged": true
@@ -36699,13 +36662,13 @@
                 "pin": "1",
                 "name": "1",
                 "net": "INA228_ALERT",
-                "dynamic_peer_count": 3
+                "dynamic_peer_count": 2
               },
               {
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -36741,7 +36704,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -36777,7 +36740,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -36813,7 +36776,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -36849,7 +36812,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -36885,7 +36848,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -36921,7 +36884,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -36951,13 +36914,13 @@
                 "pin": "1",
                 "name": "1",
                 "net": "FAULT_LABPORT",
-                "dynamic_peer_count": 3
+                "dynamic_peer_count": 2
               },
               {
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -36993,7 +36956,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -37029,7 +36992,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -37065,7 +37028,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -37101,7 +37064,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -37137,7 +37100,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -37173,7 +37136,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -37209,7 +37172,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -37245,7 +37208,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -37281,7 +37244,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -37317,7 +37280,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -37353,7 +37316,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -37389,7 +37352,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -37425,7 +37388,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -37461,7 +37424,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -37491,13 +37454,13 @@
                 "pin": "1",
                 "name": "1",
                 "net": "FAULT_HFP",
-                "dynamic_peer_count": 3
+                "dynamic_peer_count": 2
               },
               {
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -37527,13 +37490,13 @@
                 "pin": "1",
                 "name": "1",
                 "net": "FAULT_RTLA",
-                "dynamic_peer_count": 3
+                "dynamic_peer_count": 2
               },
               {
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -37569,7 +37532,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -37671,7 +37634,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -39333,7 +39296,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -40155,7 +40118,7 @@
                 "pin": "1",
                 "name": "1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -42005,7 +41968,7 @@
               "source_pinout_status": "not_catalogued_as_separate_interface",
               "physical_numbering_status": "FUNCTIONAL_TERMINALS_PHYSICAL_MAPPING_UNKNOWN",
               "pinout_gate": null,
-              "source_TBD_preserved": false,
+              "source_TBD_preserved": true,
               "physical_verified": false,
               "dnp": false,
               "functional_pin_identifiers_unchanged": true
@@ -42034,42 +41997,6 @@
                 "name": "2",
                 "net": "GND",
                 "dynamic_peer_count": 585
-              }
-            ],
-            "intentional_nc_pins": [],
-            "pinout": {
-              "source_pinout_status": "not_catalogued_as_separate_interface",
-              "physical_numbering_status": "FUNCTIONAL_TERMINALS_PHYSICAL_MAPPING_UNKNOWN",
-              "pinout_gate": null,
-              "source_TBD_preserved": false,
-              "physical_verified": false,
-              "dnp": false,
-              "functional_pin_identifiers_unchanged": true
-            },
-            "case_count": 9
-          },
-          {
-            "id": "E5/R503",
-            "refs": [
-              "R503"
-            ],
-            "status": "CONNECTION_MODEL_PASS",
-            "coverage_level": "connection_net_model",
-            "functional_status": "UNCHANGED_NOT_ASSESSED",
-            "hardware_qualified": false,
-            "declared_schematic_population": "DESIGN_DECLARATION_ONLY",
-            "connected_pins": [
-              {
-                "pin": "1",
-                "name": "1",
-                "net": "FAULT_RTLA",
-                "dynamic_peer_count": 3
-              },
-              {
-                "pin": "2",
-                "name": "2",
-                "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
               }
             ],
             "intentional_nc_pins": [],
@@ -42193,42 +42120,6 @@
             "case_count": 9
           },
           {
-            "id": "E5/R507",
-            "refs": [
-              "R507"
-            ],
-            "status": "CONNECTION_MODEL_PASS",
-            "coverage_level": "connection_net_model",
-            "functional_status": "UNCHANGED_NOT_ASSESSED",
-            "hardware_qualified": false,
-            "declared_schematic_population": "DESIGN_DECLARATION_ONLY",
-            "connected_pins": [
-              {
-                "pin": "1",
-                "name": "1",
-                "net": "FAULT_LABPORT",
-                "dynamic_peer_count": 3
-              },
-              {
-                "pin": "2",
-                "name": "2",
-                "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
-              }
-            ],
-            "intentional_nc_pins": [],
-            "pinout": {
-              "source_pinout_status": "not_catalogued_as_separate_interface",
-              "physical_numbering_status": "FUNCTIONAL_TERMINALS_PHYSICAL_MAPPING_UNKNOWN",
-              "pinout_gate": null,
-              "source_TBD_preserved": false,
-              "physical_verified": false,
-              "dnp": false,
-              "functional_pin_identifiers_unchanged": true
-            },
-            "case_count": 9
-          },
-          {
             "id": "E5/R508",
             "refs": [
               "R508"
@@ -42293,7 +42184,7 @@
               "source_pinout_status": "not_catalogued_as_separate_interface",
               "physical_numbering_status": "FUNCTIONAL_TERMINALS_PHYSICAL_MAPPING_UNKNOWN",
               "pinout_gate": null,
-              "source_TBD_preserved": false,
+              "source_TBD_preserved": true,
               "physical_verified": false,
               "dnp": false,
               "functional_pin_identifiers_unchanged": true
@@ -42322,42 +42213,6 @@
                 "name": "2",
                 "net": "GND",
                 "dynamic_peer_count": 585
-              }
-            ],
-            "intentional_nc_pins": [],
-            "pinout": {
-              "source_pinout_status": "not_catalogued_as_separate_interface",
-              "physical_numbering_status": "FUNCTIONAL_TERMINALS_PHYSICAL_MAPPING_UNKNOWN",
-              "pinout_gate": null,
-              "source_TBD_preserved": false,
-              "physical_verified": false,
-              "dnp": false,
-              "functional_pin_identifiers_unchanged": true
-            },
-            "case_count": 9
-          },
-          {
-            "id": "E5/R511",
-            "refs": [
-              "R511"
-            ],
-            "status": "CONNECTION_MODEL_PASS",
-            "coverage_level": "connection_net_model",
-            "functional_status": "UNCHANGED_NOT_ASSESSED",
-            "hardware_qualified": false,
-            "declared_schematic_population": "DESIGN_DECLARATION_ONLY",
-            "connected_pins": [
-              {
-                "pin": "1",
-                "name": "1",
-                "net": "FAULT_HFP",
-                "dynamic_peer_count": 3
-              },
-              {
-                "pin": "2",
-                "name": "2",
-                "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
               }
             ],
             "intentional_nc_pins": [],
@@ -42473,7 +42328,7 @@
               "source_pinout_status": "not_catalogued_as_separate_interface",
               "physical_numbering_status": "FUNCTIONAL_TERMINALS_PHYSICAL_MAPPING_UNKNOWN",
               "pinout_gate": null,
-              "source_TBD_preserved": false,
+              "source_TBD_preserved": true,
               "physical_verified": false,
               "dnp": false,
               "functional_pin_identifiers_unchanged": true
@@ -42537,7 +42392,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -42609,7 +42464,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -42645,7 +42500,7 @@
                 "pin": "2",
                 "name": "2",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -44079,7 +43934,7 @@
                 "pin": "3",
                 "name": "ALERT",
                 "net": "INA228_ALERT",
-                "dynamic_peer_count": 3
+                "dynamic_peer_count": 2
               },
               {
                 "pin": "4",
@@ -45713,7 +45568,7 @@
                 "pin": "16",
                 "name": "VPU",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -45731,13 +45586,13 @@
                 "pin": "4",
                 "name": "VS",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "5",
                 "name": "A0",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "6",
@@ -45820,7 +45675,7 @@
                 "pin": "16",
                 "name": "VPU",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -45838,7 +45693,7 @@
                 "pin": "4",
                 "name": "VS",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "5",
@@ -45927,7 +45782,7 @@
                 "pin": "6",
                 "name": "V+",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -45987,7 +45842,7 @@
                 "pin": "6",
                 "name": "V+",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -46047,7 +45902,7 @@
                 "pin": "6",
                 "name": "V+",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -46331,7 +46186,7 @@
                 "pin": "9",
                 "name": "VDD",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [
@@ -46396,7 +46251,7 @@
                 "pin": "16",
                 "name": "A1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "17",
@@ -46432,7 +46287,7 @@
                 "pin": "21",
                 "name": "GPA0",
                 "net": "FAULT_LABPORT",
-                "dynamic_peer_count": 3
+                "dynamic_peer_count": 2
               },
               {
                 "pin": "22",
@@ -46516,7 +46371,7 @@
                 "pin": "9",
                 "name": "VDD",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [
@@ -46573,13 +46428,13 @@
                 "pin": "15",
                 "name": "A0",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "16",
                 "name": "A1",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "17",
@@ -46603,7 +46458,7 @@
                 "pin": "2",
                 "name": "GPB1",
                 "net": "FAULT_HFP",
-                "dynamic_peer_count": 3
+                "dynamic_peer_count": 2
               },
               {
                 "pin": "20",
@@ -46651,7 +46506,7 @@
                 "pin": "3",
                 "name": "GPB2",
                 "net": "FAULT_RTLA",
-                "dynamic_peer_count": 3
+                "dynamic_peer_count": 2
               },
               {
                 "pin": "4",
@@ -46675,7 +46530,7 @@
                 "pin": "9",
                 "name": "VDD",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [
@@ -47783,7 +47638,7 @@
                 "pin": "6",
                 "name": "VDD",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "7",
@@ -47909,7 +47764,7 @@
                 "pin": "6",
                 "name": "VDD",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "7",
@@ -48035,7 +47890,7 @@
                 "pin": "6",
                 "name": "VDD",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "7",
@@ -48113,7 +47968,7 @@
                 "pin": "6",
                 "name": "V+",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [
@@ -48169,7 +48024,7 @@
                 "pin": "6",
                 "name": "V+",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [
@@ -48225,7 +48080,7 @@
                 "pin": "6",
                 "name": "V+",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [
@@ -48281,7 +48136,7 @@
                 "pin": "6",
                 "name": "V+",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [
@@ -48337,7 +48192,7 @@
                 "pin": "6",
                 "name": "V+",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [
@@ -48393,7 +48248,7 @@
                 "pin": "6",
                 "name": "V+",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [
@@ -48455,7 +48310,7 @@
                 "pin": "6",
                 "name": "V+",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -48515,7 +48370,7 @@
                 "pin": "6",
                 "name": "V+",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -48653,7 +48508,7 @@
                 "pin": "4",
                 "name": "FAULT_N",
                 "net": "FAULT_RTLA",
-                "dynamic_peer_count": 3
+                "dynamic_peer_count": 2
               },
               {
                 "pin": "5",
@@ -48713,7 +48568,7 @@
                 "pin": "4",
                 "name": "FAULT_N",
                 "net": "FAULT_LABPORT",
-                "dynamic_peer_count": 3
+                "dynamic_peer_count": 2
               },
               {
                 "pin": "5",
@@ -48773,7 +48628,7 @@
                 "pin": "4",
                 "name": "FAULT_N",
                 "net": "FAULT_HFP",
-                "dynamic_peer_count": 3
+                "dynamic_peer_count": 2
               },
               {
                 "pin": "5",
@@ -48937,7 +48792,7 @@
                 "pin": "1",
                 "name": "VCCA",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "2",
@@ -48961,7 +48816,7 @@
                 "pin": "5",
                 "name": "EN",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               },
               {
                 "pin": "6",
@@ -48979,7 +48834,7 @@
                 "pin": "8",
                 "name": "VCCB",
                 "net": "3V3_Q6A",
-                "dynamic_peer_count": 92
+                "dynamic_peer_count": 88
               }
             ],
             "intentional_nc_pins": [],
@@ -49704,7 +49559,7 @@
               {
                 "pin": "END_B",
                 "name": "END_B",
-                "net": "E4_LIME_RXA",
+                "net": "E4_LIME_X2_RX",
                 "dynamic_peer_count": 1
               },
               {
@@ -49746,7 +49601,7 @@
               {
                 "pin": "END_B",
                 "name": "END_B",
-                "net": "E4_LIME_RXB",
+                "net": "E4_LIME_X4_RX",
                 "dynamic_peer_count": 1
               },
               {
@@ -50183,13 +50038,12 @@
               "R101",
               "U102",
               "C101",
-              "C102",
-              "R102"
+              "C102"
             ],
             "status": "CONNECTION_MODEL_PASS",
             "coverage_level": "connection_net_model",
             "functional_status": "UNCHANGED_NOT_ASSESSED",
-            "connected_pin_count": 18,
+            "connected_pin_count": 16,
             "case_id": "unplug-assembly:E1-CIR-02",
             "hardware_qualified": false
           },
@@ -51482,7 +51336,6 @@
               "U501",
               "R501",
               "R502",
-              "R503",
               "C501",
               "C502",
               "C503",
@@ -51490,7 +51343,6 @@
               "U502",
               "R505",
               "R506",
-              "R507",
               "C504",
               "C505",
               "C506",
@@ -51500,7 +51352,7 @@
             "status": "CONNECTION_MODEL_PASS",
             "coverage_level": "connection_net_model",
             "functional_status": "UNCHANGED_NOT_ASSESSED",
-            "connected_pin_count": 42,
+            "connected_pin_count": 38,
             "case_id": "unplug-assembly:E5-CIR-03",
             "hardware_qualified": false
           },
@@ -51510,7 +51362,6 @@
               "U503",
               "R509",
               "R510",
-              "R511",
               "C508",
               "C509",
               "C510",
@@ -51524,7 +51375,7 @@
             "status": "CONNECTION_MODEL_PASS",
             "coverage_level": "connection_net_model",
             "functional_status": "UNCHANGED_NOT_ASSESSED",
-            "connected_pin_count": 30,
+            "connected_pin_count": 28,
             "case_id": "unplug-assembly:E5-CIR-04",
             "hardware_qualified": false
           },
@@ -51736,10 +51587,6 @@
                 "pin": "1"
               },
               {
-                "ref": "R102",
-                "pin": "1"
-              },
-              {
                 "ref": "R206",
                 "pin": "2"
               },
@@ -51858,18 +51705,6 @@
               {
                 "ref": "R4401",
                 "pin": "1"
-              },
-              {
-                "ref": "R503",
-                "pin": "2"
-              },
-              {
-                "ref": "R507",
-                "pin": "2"
-              },
-              {
-                "ref": "R511",
-                "pin": "2"
               },
               {
                 "ref": "R516",
@@ -56948,32 +56783,6 @@
             ]
           },
           {
-            "net": "E4_LIME_RXA",
-            "endpoints": [
-              {
-                "ref": "A415",
-                "pin": "X2_RX_A"
-              },
-              {
-                "ref": "W403",
-                "pin": "END_B"
-              }
-            ]
-          },
-          {
-            "net": "E4_LIME_RXB",
-            "endpoints": [
-              {
-                "ref": "A415",
-                "pin": "X4_RX_B"
-              },
-              {
-                "ref": "W404",
-                "pin": "END_B"
-              }
-            ]
-          },
-          {
             "net": "E4_LIME_TO_RTLB",
             "endpoints": [
               {
@@ -56996,6 +56805,32 @@
               {
                 "ref": "W406",
                 "pin": "END_A"
+              }
+            ]
+          },
+          {
+            "net": "E4_LIME_X2_RX",
+            "endpoints": [
+              {
+                "ref": "A415",
+                "pin": "X2_RX"
+              },
+              {
+                "ref": "W403",
+                "pin": "END_B"
+              }
+            ]
+          },
+          {
+            "net": "E4_LIME_X4_RX",
+            "endpoints": [
+              {
+                "ref": "A415",
+                "pin": "X4_RX"
+              },
+              {
+                "ref": "W404",
+                "pin": "END_B"
               }
             ]
           },
@@ -58872,10 +58707,6 @@
                 "pin": "1"
               },
               {
-                "ref": "R511",
-                "pin": "1"
-              },
-              {
                 "ref": "U303",
                 "pin": "2"
               },
@@ -58890,10 +58721,6 @@
             "endpoints": [
               {
                 "ref": "R308",
-                "pin": "1"
-              },
-              {
-                "ref": "R507",
                 "pin": "1"
               },
               {
@@ -58979,10 +58806,6 @@
             "endpoints": [
               {
                 "ref": "R324",
-                "pin": "1"
-              },
-              {
-                "ref": "R503",
                 "pin": "1"
               },
               {
@@ -61696,10 +61519,6 @@
                 "pin": "3"
               },
               {
-                "ref": "R102",
-                "pin": "2"
-              },
-              {
                 "ref": "R301",
                 "pin": "1"
               },
@@ -63083,7 +62902,6 @@
               "Q456",
               "Q457",
               "R101",
-              "R102",
               "R103",
               "R104",
               "R105",
@@ -63339,15 +63157,12 @@
               "R4471",
               "R501",
               "R502",
-              "R503",
               "R504",
               "R505",
               "R506",
-              "R507",
               "R508",
               "R509",
               "R510",
-              "R511",
               "R512",
               "R513",
               "R514",
@@ -64347,7 +64162,7 @@
             "restored": true
           },
           {
-            "id": "open:A415:X2_RX_A",
+            "id": "open:A415:X2_RX",
             "category": "individual_connected_pin_open",
             "status": "CONNECTION_MODEL_PASS",
             "refs": [
@@ -64355,15 +64170,15 @@
             ],
             "endpoint": {
               "ref": "A415",
-              "pin": "X2_RX_A"
+              "pin": "X2_RX"
             },
-            "expected_net": "E4_LIME_RXA",
+            "expected_net": "E4_LIME_X2_RX",
             "fault_verdict": "OPEN_CONNECTION",
             "restored_peer_count": 1,
             "restored": true
           },
           {
-            "id": "open:A415:X4_RX_B",
+            "id": "open:A415:X4_RX",
             "category": "individual_connected_pin_open",
             "status": "CONNECTION_MODEL_PASS",
             "refs": [
@@ -64371,9 +64186,9 @@
             ],
             "endpoint": {
               "ref": "A415",
-              "pin": "X4_RX_B"
+              "pin": "X4_RX"
             },
-            "expected_net": "E4_LIME_RXB",
+            "expected_net": "E4_LIME_X4_RX",
             "fault_verdict": "OPEN_CONNECTION",
             "restored_peer_count": 1,
             "restored": true
@@ -68167,7 +67982,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -68295,7 +68110,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -68359,7 +68174,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -68423,7 +68238,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -68487,7 +68302,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -68871,7 +68686,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -68903,7 +68718,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -68935,7 +68750,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -68967,7 +68782,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -68999,7 +68814,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -69031,7 +68846,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -70375,7 +70190,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -70631,7 +70446,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -70663,7 +70478,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -70695,7 +70510,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -70727,7 +70542,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -70759,7 +70574,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -70791,7 +70606,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -70823,7 +70638,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -70855,7 +70670,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -70887,7 +70702,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -70919,7 +70734,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -72007,7 +71822,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -72039,7 +71854,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -72567,7 +72382,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -73303,7 +73118,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -73415,7 +73230,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -73543,7 +73358,7 @@
             },
             "expected_net": "INA228_ALERT",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 3,
+            "restored_peer_count": 2,
             "restored": true
           },
           {
@@ -73767,7 +73582,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -78059,38 +77874,6 @@
             "restored": true
           },
           {
-            "id": "open:R102:1",
-            "category": "individual_connected_pin_open",
-            "status": "CONNECTION_MODEL_PASS",
-            "refs": [
-              "R102"
-            ],
-            "endpoint": {
-              "ref": "R102",
-              "pin": "1"
-            },
-            "expected_net": "3V3_Q6A",
-            "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
-            "restored": true
-          },
-          {
-            "id": "open:R102:2",
-            "category": "individual_connected_pin_open",
-            "status": "CONNECTION_MODEL_PASS",
-            "refs": [
-              "R102"
-            ],
-            "endpoint": {
-              "ref": "R102",
-              "pin": "2"
-            },
-            "expected_net": "INA228_ALERT",
-            "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 3,
-            "restored": true
-          },
-          {
             "id": "open:R103:1",
             "category": "individual_connected_pin_open",
             "status": "CONNECTION_MODEL_PASS",
@@ -78951,7 +78734,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -79143,7 +78926,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -81495,7 +81278,7 @@
             },
             "expected_net": "INA228_ALERT",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 3,
+            "restored_peer_count": 2,
             "restored": true
           },
           {
@@ -81511,7 +81294,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -81543,7 +81326,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -81575,7 +81358,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -81607,7 +81390,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -81639,7 +81422,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -81671,7 +81454,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -81703,7 +81486,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -81719,7 +81502,7 @@
             },
             "expected_net": "FAULT_LABPORT",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 3,
+            "restored_peer_count": 2,
             "restored": true
           },
           {
@@ -81735,7 +81518,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -81767,7 +81550,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -81799,7 +81582,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -81831,7 +81614,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -81863,7 +81646,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -81895,7 +81678,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -81927,7 +81710,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -81959,7 +81742,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -81991,7 +81774,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -82023,7 +81806,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -82055,7 +81838,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -82087,7 +81870,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -82119,7 +81902,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -82151,7 +81934,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -82183,7 +81966,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -82199,7 +81982,7 @@
             },
             "expected_net": "FAULT_HFP",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 3,
+            "restored_peer_count": 2,
             "restored": true
           },
           {
@@ -82215,7 +81998,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -82231,7 +82014,7 @@
             },
             "expected_net": "FAULT_RTLA",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 3,
+            "restored_peer_count": 2,
             "restored": true
           },
           {
@@ -82247,7 +82030,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -82279,7 +82062,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -82359,7 +82142,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -83847,7 +83630,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -84567,7 +84350,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -86251,38 +86034,6 @@
             "restored": true
           },
           {
-            "id": "open:R503:1",
-            "category": "individual_connected_pin_open",
-            "status": "CONNECTION_MODEL_PASS",
-            "refs": [
-              "R503"
-            ],
-            "endpoint": {
-              "ref": "R503",
-              "pin": "1"
-            },
-            "expected_net": "FAULT_RTLA",
-            "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 3,
-            "restored": true
-          },
-          {
-            "id": "open:R503:2",
-            "category": "individual_connected_pin_open",
-            "status": "CONNECTION_MODEL_PASS",
-            "refs": [
-              "R503"
-            ],
-            "endpoint": {
-              "ref": "R503",
-              "pin": "2"
-            },
-            "expected_net": "3V3_Q6A",
-            "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
-            "restored": true
-          },
-          {
             "id": "open:R504:1",
             "category": "individual_connected_pin_open",
             "status": "CONNECTION_MODEL_PASS",
@@ -86379,38 +86130,6 @@
             "restored": true
           },
           {
-            "id": "open:R507:1",
-            "category": "individual_connected_pin_open",
-            "status": "CONNECTION_MODEL_PASS",
-            "refs": [
-              "R507"
-            ],
-            "endpoint": {
-              "ref": "R507",
-              "pin": "1"
-            },
-            "expected_net": "FAULT_LABPORT",
-            "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 3,
-            "restored": true
-          },
-          {
-            "id": "open:R507:2",
-            "category": "individual_connected_pin_open",
-            "status": "CONNECTION_MODEL_PASS",
-            "refs": [
-              "R507"
-            ],
-            "endpoint": {
-              "ref": "R507",
-              "pin": "2"
-            },
-            "expected_net": "3V3_Q6A",
-            "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
-            "restored": true
-          },
-          {
             "id": "open:R508:1",
             "category": "individual_connected_pin_open",
             "status": "CONNECTION_MODEL_PASS",
@@ -86504,38 +86223,6 @@
             "expected_net": "GND",
             "fault_verdict": "OPEN_CONNECTION",
             "restored_peer_count": 585,
-            "restored": true
-          },
-          {
-            "id": "open:R511:1",
-            "category": "individual_connected_pin_open",
-            "status": "CONNECTION_MODEL_PASS",
-            "refs": [
-              "R511"
-            ],
-            "endpoint": {
-              "ref": "R511",
-              "pin": "1"
-            },
-            "expected_net": "FAULT_HFP",
-            "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 3,
-            "restored": true
-          },
-          {
-            "id": "open:R511:2",
-            "category": "individual_connected_pin_open",
-            "status": "CONNECTION_MODEL_PASS",
-            "refs": [
-              "R511"
-            ],
-            "endpoint": {
-              "ref": "R511",
-              "pin": "2"
-            },
-            "expected_net": "3V3_Q6A",
-            "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
             "restored": true
           },
           {
@@ -86695,7 +86382,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -86759,7 +86446,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -86791,7 +86478,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -87863,7 +87550,7 @@
             },
             "expected_net": "INA228_ALERT",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 3,
+            "restored_peer_count": 2,
             "restored": true
           },
           {
@@ -90695,7 +90382,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -90743,7 +90430,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -90759,7 +90446,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -90903,7 +90590,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -90951,7 +90638,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -91111,7 +90798,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -91207,7 +90894,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -91303,7 +90990,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -91863,7 +91550,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -91959,7 +91646,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -92055,7 +91742,7 @@
             },
             "expected_net": "FAULT_LABPORT",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 3,
+            "restored_peer_count": 2,
             "restored": true
           },
           {
@@ -92279,7 +91966,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -92359,7 +92046,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -92375,7 +92062,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -92439,7 +92126,7 @@
             },
             "expected_net": "FAULT_HFP",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 3,
+            "restored_peer_count": 2,
             "restored": true
           },
           {
@@ -92567,7 +92254,7 @@
             },
             "expected_net": "FAULT_RTLA",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 3,
+            "restored_peer_count": 2,
             "restored": true
           },
           {
@@ -92631,7 +92318,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -94663,7 +94350,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -94935,7 +94622,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -95207,7 +94894,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -95351,7 +95038,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -95431,7 +95118,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -95511,7 +95198,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -95591,7 +95278,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -95671,7 +95358,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -95751,7 +95438,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -95847,7 +95534,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -95943,7 +95630,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -96119,7 +95806,7 @@
             },
             "expected_net": "FAULT_RTLA",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 3,
+            "restored_peer_count": 2,
             "restored": true
           },
           {
@@ -96215,7 +95902,7 @@
             },
             "expected_net": "FAULT_LABPORT",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 3,
+            "restored_peer_count": 2,
             "restored": true
           },
           {
@@ -96311,7 +95998,7 @@
             },
             "expected_net": "FAULT_HFP",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 3,
+            "restored_peer_count": 2,
             "restored": true
           },
           {
@@ -96551,7 +96238,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -96615,7 +96302,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -96663,7 +96350,7 @@
             },
             "expected_net": "3V3_Q6A",
             "fault_verdict": "OPEN_CONNECTION",
-            "restored_peer_count": 92,
+            "restored_peer_count": 88,
             "restored": true
           },
           {
@@ -97973,7 +97660,7 @@
               "ref": "W403",
               "pin": "END_B"
             },
-            "expected_net": "E4_LIME_RXA",
+            "expected_net": "E4_LIME_X2_RX",
             "fault_verdict": "OPEN_CONNECTION",
             "restored_peer_count": 1,
             "restored": true
@@ -98021,7 +97708,7 @@
               "ref": "W404",
               "pin": "END_B"
             },
-            "expected_net": "E4_LIME_RXB",
+            "expected_net": "E4_LIME_X4_RX",
             "fault_verdict": "OPEN_CONNECTION",
             "restored_peer_count": 1,
             "restored": true
@@ -102515,7 +102202,6 @@
               "D450",
               "J301",
               "J302",
-              "R102",
               "R206",
               "R212",
               "R301",
@@ -102546,9 +102232,6 @@
               "R328",
               "R392",
               "R4401",
-              "R503",
-              "R507",
-              "R511",
               "R516",
               "R550",
               "R551",
@@ -102582,7 +102265,7 @@
               "AON3V3"
             ],
             "fault_verdict": "CROSS_NET_SHORT",
-            "affected_endpoint_count": 101,
+            "affected_endpoint_count": 97,
             "restored": true
           },
           {
@@ -107928,57 +107611,22 @@
             "restored": true
           },
           {
-            "id": "net-short:E4_LIME_RX2:E4_LIME_RXA",
+            "id": "net-short:E4_LIME_RX2:E4_LIME_TO_RTLB",
             "category": "cross_net_short",
             "status": "CONNECTION_MODEL_PASS",
             "refs": [
               "A409",
-              "A415",
+              "C416",
               "J414",
-              "W403",
+              "U407",
               "W424"
             ],
             "injected_nets": [
               "E4_LIME_RX2",
-              "E4_LIME_RXA"
-            ],
-            "fault_verdict": "CROSS_NET_SHORT",
-            "affected_endpoint_count": 5,
-            "restored": true
-          },
-          {
-            "id": "net-short:E4_LIME_RXA:E4_LIME_RXB",
-            "category": "cross_net_short",
-            "status": "CONNECTION_MODEL_PASS",
-            "refs": [
-              "A415",
-              "W403",
-              "W404"
-            ],
-            "injected_nets": [
-              "E4_LIME_RXA",
-              "E4_LIME_RXB"
-            ],
-            "fault_verdict": "CROSS_NET_SHORT",
-            "affected_endpoint_count": 4,
-            "restored": true
-          },
-          {
-            "id": "net-short:E4_LIME_RXB:E4_LIME_TO_RTLB",
-            "category": "cross_net_short",
-            "status": "CONNECTION_MODEL_PASS",
-            "refs": [
-              "A415",
-              "C416",
-              "U407",
-              "W404"
-            ],
-            "injected_nets": [
-              "E4_LIME_RXB",
               "E4_LIME_TO_RTLB"
             ],
             "fault_verdict": "CROSS_NET_SHORT",
-            "affected_endpoint_count": 4,
+            "affected_endpoint_count": 5,
             "restored": true
           },
           {
@@ -108000,17 +107648,51 @@
             "restored": true
           },
           {
-            "id": "net-short:E4_LIME_TX:E4_LNB_IF",
+            "id": "net-short:E4_LIME_TX:E4_LIME_X2_RX",
+            "category": "cross_net_short",
+            "status": "CONNECTION_MODEL_PASS",
+            "refs": [
+              "A415",
+              "W403",
+              "W406"
+            ],
+            "injected_nets": [
+              "E4_LIME_TX",
+              "E4_LIME_X2_RX"
+            ],
+            "fault_verdict": "CROSS_NET_SHORT",
+            "affected_endpoint_count": 4,
+            "restored": true
+          },
+          {
+            "id": "net-short:E4_LIME_X2_RX:E4_LIME_X4_RX",
+            "category": "cross_net_short",
+            "status": "CONNECTION_MODEL_PASS",
+            "refs": [
+              "A415",
+              "W403",
+              "W404"
+            ],
+            "injected_nets": [
+              "E4_LIME_X2_RX",
+              "E4_LIME_X4_RX"
+            ],
+            "fault_verdict": "CROSS_NET_SHORT",
+            "affected_endpoint_count": 4,
+            "restored": true
+          },
+          {
+            "id": "net-short:E4_LIME_X4_RX:E4_LNB_IF",
             "category": "cross_net_short",
             "status": "CONNECTION_MODEL_PASS",
             "refs": [
               "A415",
               "A420",
               "W401",
-              "W406"
+              "W404"
             ],
             "injected_nets": [
-              "E4_LIME_TX",
+              "E4_LIME_X4_RX",
               "E4_LNB_IF"
             ],
             "fault_verdict": "CROSS_NET_SHORT",
@@ -110209,7 +109891,6 @@
             "status": "CONNECTION_MODEL_PASS",
             "refs": [
               "R323",
-              "R511",
               "R515",
               "U302",
               "U303",
@@ -110221,7 +109902,7 @@
               "FAULT_HFP"
             ],
             "fault_verdict": "CROSS_NET_SHORT",
-            "affected_endpoint_count": 7,
+            "affected_endpoint_count": 6,
             "restored": true
           },
           {
@@ -110231,8 +109912,6 @@
             "refs": [
               "R308",
               "R323",
-              "R507",
-              "R511",
               "U302",
               "U303",
               "U502",
@@ -110243,7 +109922,7 @@
               "FAULT_LABPORT"
             ],
             "fault_verdict": "CROSS_NET_SHORT",
-            "affected_endpoint_count": 8,
+            "affected_endpoint_count": 6,
             "restored": true
           },
           {
@@ -110253,7 +109932,6 @@
             "refs": [
               "R308",
               "R309",
-              "R507",
               "U206",
               "U302",
               "U502"
@@ -110263,7 +109941,7 @@
               "FAULT_LNA1"
             ],
             "fault_verdict": "CROSS_NET_SHORT",
-            "affected_endpoint_count": 7,
+            "affected_endpoint_count": 6,
             "restored": true
           },
           {
@@ -110330,7 +110008,6 @@
             "refs": [
               "R312",
               "R324",
-              "R503",
               "U209",
               "U302",
               "U303",
@@ -110341,7 +110018,7 @@
               "FAULT_RTLA"
             ],
             "fault_verdict": "CROSS_NET_SHORT",
-            "affected_endpoint_count": 7,
+            "affected_endpoint_count": 6,
             "restored": true
           },
           {
@@ -110351,7 +110028,6 @@
             "refs": [
               "R322",
               "R324",
-              "R503",
               "U210",
               "U303",
               "U501"
@@ -110361,7 +110037,7 @@
               "FAULT_RTLB"
             ],
             "fault_verdict": "CROSS_NET_SHORT",
-            "affected_endpoint_count": 7,
+            "affected_endpoint_count": 6,
             "restored": true
           },
           {
@@ -111623,7 +111299,6 @@
               "J301",
               "J504",
               "J550",
-              "R102",
               "R301",
               "U102",
               "U305",
@@ -111636,7 +111311,7 @@
               "INA228_ALERT"
             ],
             "fault_verdict": "CROSS_NET_SHORT",
-            "affected_endpoint_count": 10,
+            "affected_endpoint_count": 9,
             "restored": true
           },
           {
@@ -111651,7 +111326,6 @@
               "J503",
               "J521",
               "L201",
-              "R102",
               "R207",
               "R301",
               "TP201",
@@ -111663,7 +111337,7 @@
               "J21"
             ],
             "fault_verdict": "CROSS_NET_SHORT",
-            "affected_endpoint_count": 13,
+            "affected_endpoint_count": 12,
             "restored": true
           },
           {
@@ -112654,7 +112328,6 @@
               "D450",
               "J301",
               "J302",
-              "R102",
               "R206",
               "R212",
               "R301",
@@ -112685,9 +112358,6 @@
               "R328",
               "R392",
               "R4401",
-              "R503",
-              "R507",
-              "R511",
               "R516",
               "R550",
               "R551",
@@ -112719,7 +112389,7 @@
               "3V3_Q6A"
             ],
             "fault_verdict": "CROSS_NET_SHORT",
-            "affected_endpoint_count": 97,
+            "affected_endpoint_count": 93,
             "restored": true
           },
           {
@@ -116661,17 +116331,6 @@
             "restored": true
           },
           {
-            "id": "unplug-ref:R102",
-            "category": "whole_component_unplug",
-            "status": "CONNECTION_MODEL_PASS",
-            "refs": [
-              "R102"
-            ],
-            "connected_pins_removed": 2,
-            "opens_detected": 2,
-            "restored": true
-          },
-          {
             "id": "unplug-ref:R103",
             "category": "whole_component_unplug",
             "status": "CONNECTION_MODEL_PASS",
@@ -119477,17 +119136,6 @@
             "restored": true
           },
           {
-            "id": "unplug-ref:R503",
-            "category": "whole_component_unplug",
-            "status": "CONNECTION_MODEL_PASS",
-            "refs": [
-              "R503"
-            ],
-            "connected_pins_removed": 2,
-            "opens_detected": 2,
-            "restored": true
-          },
-          {
             "id": "unplug-ref:R504",
             "category": "whole_component_unplug",
             "status": "CONNECTION_MODEL_PASS",
@@ -119521,17 +119169,6 @@
             "restored": true
           },
           {
-            "id": "unplug-ref:R507",
-            "category": "whole_component_unplug",
-            "status": "CONNECTION_MODEL_PASS",
-            "refs": [
-              "R507"
-            ],
-            "connected_pins_removed": 2,
-            "opens_detected": 2,
-            "restored": true
-          },
-          {
             "id": "unplug-ref:R508",
             "category": "whole_component_unplug",
             "status": "CONNECTION_MODEL_PASS",
@@ -119559,17 +119196,6 @@
             "status": "CONNECTION_MODEL_PASS",
             "refs": [
               "R510"
-            ],
-            "connected_pins_removed": 2,
-            "opens_detected": 2,
-            "restored": true
-          },
-          {
-            "id": "unplug-ref:R511",
-            "category": "whole_component_unplug",
-            "status": "CONNECTION_MODEL_PASS",
-            "refs": [
-              "R511"
             ],
             "connected_pins_removed": 2,
             "opens_detected": 2,
@@ -121039,10 +120665,9 @@
               "C101",
               "C102",
               "R101",
-              "R102",
               "U102"
             ],
-            "opens_detected": 18,
+            "opens_detected": 16,
             "restored": true
           },
           {
@@ -122232,16 +121857,14 @@
               "C507",
               "R501",
               "R502",
-              "R503",
               "R504",
               "R505",
               "R506",
-              "R507",
               "R508",
               "U501",
               "U502"
             ],
-            "opens_detected": 42,
+            "opens_detected": 38,
             "restored": true
           },
           {
@@ -122258,12 +121881,11 @@
               "L501",
               "R509",
               "R510",
-              "R511",
               "R512",
               "R513",
               "U503"
             ],
-            "opens_detected": 30,
+            "opens_detected": 28,
             "restored": true
           },
           {
@@ -122348,13 +121970,13 @@
           }
         ],
         "source_sha256": {
-          "design/E1.json": "e87f79db4da0d9be7e74aa1ad2816ea99ae4ed8fd6e723ba375c1559bfd51392",
-          "design/E2.json": "adc5b67b6b53977143847d688f657364a5e300a80761d74e1dc82e34bd703c16",
-          "design/E3.json": "0a2e2e60ede923b2d0a1aa0f8484a97513c1ef36ae389d3aee365fbcf90aaac5",
-          "design/E4.json": "b05555c7a6729029f779df3ca3d0a62d71e206520a33cf7e34ffa3e2c081344d",
-          "design/E5.json": "86a9099809fbcdf365c82ecf4a239531b1b55715ee17cd1c5fb5a776c979ca05",
-          "deployment/module_lab/inventory.json": "638dc04f7d36a8958a4e6200e6e1cae1db52dd0ee3cf4d5874dac03c5969d41f",
-          "verification/netlist.xml": "cfc4adf58ca9ee86ab88963e6c04321012092c60a8f328b37782e1ded8c415d5",
+          "design/E1.json": "f535a839afd70def8f35f43380153cb00723f97c634be51d9159d1bfe4630591",
+          "design/E2.json": "bb2ac6a37392689b462a570d7334aa257aaad8e4a006c5df1e934c3dd794d40c",
+          "design/E3.json": "f2ac2171727824e36b5e4d7780677d4fc46ec0840d0a57a59053451132c92be4",
+          "design/E4.json": "0935bbfe204728620575ba2e6713185799862050f5d8c2c465c028606c5612bf",
+          "design/E5.json": "d0366fa9440ba2488b352bcf24ca31b1b8e117afb1c2aa2453dd214d711c3dd6",
+          "deployment/module_lab/inventory.json": "4d62e9a7f739a81deda750855c5c0506f528e21e2c3c01e8b151c753055fad1a",
+          "verification/netlist.xml": "40b90a9858e57fbf6a868c93afe2ae321fc7bea9fee6f144b7cd76a151ccccc2",
           "deployment/module_lab/connectivity.py": "885e545497026626938ac0cb7fa50249a71c724a03fb5f44cebf7110c03bf8a1"
         },
         "limits": [
@@ -122371,13 +121993,13 @@
   },
   "coverage": {
     "graph_sha256": {
-      "design/E1.json": "e87f79db4da0d9be7e74aa1ad2816ea99ae4ed8fd6e723ba375c1559bfd51392",
-      "design/E2.json": "adc5b67b6b53977143847d688f657364a5e300a80761d74e1dc82e34bd703c16",
-      "design/E3.json": "0a2e2e60ede923b2d0a1aa0f8484a97513c1ef36ae389d3aee365fbcf90aaac5",
-      "design/E4.json": "b05555c7a6729029f779df3ca3d0a62d71e206520a33cf7e34ffa3e2c081344d",
-      "design/E5.json": "86a9099809fbcdf365c82ecf4a239531b1b55715ee17cd1c5fb5a776c979ca05"
+      "design/E1.json": "f535a839afd70def8f35f43380153cb00723f97c634be51d9159d1bfe4630591",
+      "design/E2.json": "bb2ac6a37392689b462a570d7334aa257aaad8e4a006c5df1e934c3dd794d40c",
+      "design/E3.json": "f2ac2171727824e36b5e4d7780677d4fc46ec0840d0a57a59053451132c92be4",
+      "design/E4.json": "0935bbfe204728620575ba2e6713185799862050f5d8c2c465c028606c5612bf",
+      "design/E5.json": "d0366fa9440ba2488b352bcf24ca31b1b8e117afb1c2aa2453dd214d711c3dd6"
     },
-    "component_count": 754,
+    "component_count": 750,
     "assembly_count": 64,
     "interface_count": 166,
     "assemblies": [
@@ -122410,10 +122032,9 @@
           "R101",
           "U102",
           "C101",
-          "C102",
-          "R102"
+          "C102"
         ],
-        "component_count": 5,
+        "component_count": 4,
         "interfaces_exercised": 1,
         "interface_count": 1,
         "physical_status": "NOT_TESTED",
@@ -123933,7 +123554,6 @@
           "U501",
           "R501",
           "R502",
-          "R503",
           "C501",
           "C502",
           "C503",
@@ -123941,14 +123561,13 @@
           "U502",
           "R505",
           "R506",
-          "R507",
           "C504",
           "C505",
           "C506",
           "C507",
           "R508"
         ],
-        "component_count": 17,
+        "component_count": 15,
         "interfaces_exercised": 0,
         "interface_count": 2,
         "physical_status": "NOT_TESTED",
@@ -123965,7 +123584,6 @@
           "U503",
           "R509",
           "R510",
-          "R511",
           "C508",
           "C509",
           "C510",
@@ -123976,7 +123594,7 @@
           "C513",
           "R513"
         ],
-        "component_count": 13,
+        "component_count": 12,
         "interfaces_exercised": 0,
         "interface_count": 1,
         "physical_status": "NOT_TESTED",
@@ -133477,7 +133095,7 @@
         "pinout_gate": null,
         "source_description": "Functional interface with logical connector names; no implied physical PCB pin numbering.",
         "source_notes": [
-          "X1 TX is permanently loaded. X2/X4 are the v1.2 receive ports; validate channel A/B mapping on the supplied board. J4 is a reference input, not an antenna."
+          "X1 TX is permanently loaded (W406 → A410 ANNE-50+). X2/X4 are the v1.2 receive ports; which of them is RX-A and which RX-B is TBD per STACK §2.11.1 / §8.1 L-12 (open item E4-05), so pins and nets carry only the port names."
         ],
         "status": "EMULATION_PASS",
         "models": [
@@ -133510,12 +133128,12 @@
               "source_pinout_status": "source_named_functional_terminals_not_a_complete_physical_connector_numbering",
               "physical_numbering_status": "FUNCTIONAL_TERMINALS_PHYSICAL_MAPPING_UNKNOWN",
               "pinout_gate": null,
-              "source_TBD_preserved": false,
+              "source_TBD_preserved": true,
               "physical_verified": false,
               "dnp": false,
               "functional_pin_identifiers_unchanged": true
             },
-            "scenario_count": 39,
+            "scenario_count": 38,
             "limitations": [
               "Only named schematic connection/fault topology is exercised; functional model coverage is unchanged.",
               "Unknown/TBD physical mapping and hardware gates remain unresolved."
@@ -133544,15 +133162,15 @@
             "type": "passive"
           },
           {
-            "number": "X2_RX_A",
-            "name": "X2_RX_A",
-            "net": "E4_LIME_RXA",
+            "number": "X2_RX",
+            "name": "X2_RX",
+            "net": "E4_LIME_X2_RX",
             "type": "passive"
           },
           {
-            "number": "X4_RX_B",
-            "name": "X4_RX_B",
-            "net": "E4_LIME_RXB",
+            "number": "X4_RX",
+            "name": "X4_RX",
+            "net": "E4_LIME_X4_RX",
             "type": "passive"
           },
           {
@@ -134931,7 +134549,7 @@
       {
         "id": "E4/J413",
         "ref": "J413",
-        "value": "RX1 panel SMA: captive loop",
+        "value": "RX1 panel SMA: captive coax assembly",
         "interface_family": "passive_connector_or_named_boundary",
         "assembly": "E4-CIR-01",
         "source_status": "module",
@@ -135516,7 +135134,7 @@
           {
             "number": "END_B",
             "name": "END_B",
-            "net": "E4_LIME_RXA",
+            "net": "E4_LIME_X2_RX",
             "type": "passive"
           },
           {
@@ -135611,7 +135229,7 @@
           {
             "number": "END_B",
             "name": "END_B",
-            "net": "E4_LIME_RXB",
+            "net": "E4_LIME_X4_RX",
             "type": "passive"
           },
           {
@@ -139761,7 +139379,7 @@
         "pinout_gate": null,
         "source_description": "",
         "source_notes": [
-          "RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; no pulls to AON or LAB5.",
+          "RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; its only 10k pull-up to 3V3_Q6A is R324 on E3.",
           "Latch-off version; software reset by EN low then high."
         ],
         "status": "CONNECTION_MODEL_ONLY",
@@ -139850,7 +139468,7 @@
         "pinout_gate": null,
         "source_description": "",
         "source_notes": [
-          "RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; no pulls to AON or LAB5.",
+          "RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; its only 10k pull-up to 3V3_Q6A is R308 on E3.",
           "Latch-off version; software reset by EN low then high."
         ],
         "status": "CONNECTION_MODEL_ONLY",
@@ -139932,15 +139550,15 @@
       {
         "id": "E5/U503",
         "ref": "U503",
-        "value": "TPS2553DBVR",
+        "value": "TPS2553DBVR-1",
         "interface_family": "analog_or_discrete_control_ic",
         "assembly": "E5-CIR-04",
         "source_status": "design",
         "pinout_gate": null,
         "source_description": "",
         "source_notes": [
-          "RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; no pulls to AON or LAB5.",
-          "Non-latching constant-current version selected for large capacitive/device startup."
+          "RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; its only 10k pull-up to 3V3_Q6A is R323 on E3.",
+          "Latch-off -1 version, as STACK §5.1/§5.2 specify for VBUS HF+. TPS2553DBVR (constant-current, LCSC C55266) only on this channel and only if it fails the STACK §8 TPS2553DBVR-1 item 3 inrush test at final RILIM (open item E5-04)."
         ],
         "status": "CONNECTION_MODEL_ONLY",
         "models": [
@@ -145370,12 +144988,12 @@
           "source_pinout_status": "source_named_functional_terminals_not_a_complete_physical_connector_numbering",
           "physical_numbering_status": "FUNCTIONAL_TERMINALS_PHYSICAL_MAPPING_UNKNOWN",
           "pinout_gate": null,
-          "source_TBD_preserved": false,
+          "source_TBD_preserved": true,
           "physical_verified": false,
           "dnp": false,
           "functional_pin_identifiers_unchanged": true
         },
-        "scenario_count": 39,
+        "scenario_count": 38,
         "limitations": [
           "Only named schematic connection/fault topology is exercised; functional model coverage is unchanged.",
           "Unknown/TBD physical mapping and hardware gates remain unresolved."

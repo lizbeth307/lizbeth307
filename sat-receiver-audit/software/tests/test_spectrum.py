@@ -47,6 +47,48 @@ class FrameBoundaryTests(unittest.TestCase):
             self.assertIsNone(frame['power_dbfs'][0])
             self.assertTrue(frame['valid'][-1])
 
+    def test_cospas_sarsat_distress_bands_are_mandatory_no_data(self):
+        # STACK.md v2: 406.0-406.1 MHz and 1544.0-1545.0 MHz are masked as no data.
+        self.assertIn((406_000_000.0, 406_100_000.0), MASKED_BANDS_HZ)
+        self.assertTrue(any(lower <= 1_544_000_000.0 and 1_545_000_000.0 <= upper
+                            for lower, upper in MASKED_BANDS_HZ))
+        for center in (406_001_000.0, 406_050_000.0, 406_099_000.0, 1_544_500_000.0):
+            with self.subTest(center=center):
+                frame = raw_frame(center)
+                frame['source'] = 'HARDWARE'
+                safe = mask_frame(frame)
+                self.assertFalse(any(safe['valid']))
+                self.assertEqual(safe['power_dbfs'], [None] * 16)
+                with self.assertRaises(SpectrumError):
+                    validate_frame(frame)
+
+    def test_radiosonde_survey_keeps_405_9_but_blanks_beacon_uplink(self):
+        # A 2 MS/s radiosonde survey centred at 405.5 MHz spans 404.5-406.5 MHz.
+        size, rate, center = 1024, 2_000_000.0, 405_500_000.0
+        frame = raw_frame(center, rate, size)
+        frame['source'] = 'HARDWARE'
+        safe = mask_frame(frame)
+        width = rate / size
+        for index, relative in enumerate(safe['relative_frequency_hz']):
+            low, high = center + relative - width / 2, center + relative + width / 2
+            touches = low <= 406_100_000.0 and high >= 406_000_000.0
+            with self.subTest(bin=index):
+                self.assertEqual(safe['valid'][index], not touches)
+                if touches:
+                    self.assertIsNone(safe['power_dbfs'][index])
+        # Bins fully below 406.0 MHz (up to 405.9 MHz) and above 406.1 MHz stay valid.
+        def bin_at(hz):
+            return round((hz - center) / width) + size // 2
+        self.assertTrue(safe['valid'][bin_at(405_900_000.0)])
+        self.assertTrue(safe['valid'][bin_at(406_200_000.0)])
+        self.assertFalse(safe['valid'][bin_at(406_050_000.0)])
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'survey.jsonl'
+            saved = append_survey(path, frame)
+            self.assertEqual(saved, safe)
+            stored = json.loads(path.read_text())
+            self.assertIsNone(stored['power_dbfs'][bin_at(406_050_000.0)])
+
     def test_forged_valid_flags_are_remasked_and_strict_validator_rejects_them(self):
         original = raw_frame(300e6)
         untouched = copy.deepcopy(original)

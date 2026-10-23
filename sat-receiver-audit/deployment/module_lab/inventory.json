@@ -2,50 +2,50 @@
   "schema_version": 1,
   "purpose": "Independent module/interface inventory for behavioral-emulation registry; no production/source edits and no implementation/PASS claims.",
   "source_priority": [
-    "Finaldesign/E1..E5.json graphdefinescurrentrefs/nets/pins.",
-    "v2.1revisionandcurrentOPEN_ITEMSoverridehistoricalSTACKv2selections.",
-    "Componentcatalogueishistoricalsupportingresearch;alternatives/spares/benchitemsarenotautomaticallyinstalled.",
-    "Actualsoftware/modeltestcoveragemustcomefromdomainimplementationsandtests,notthisinventory."
+    "STACK.md is the source of truth; the v2.1 changes are recorded in STACK.md (detail in build/12-revision-v2.1.md).",
+    "Final design/E1..E5.json graphs define the current refs/nets/pins and must match STACK.md; a mismatch is a graph error or an open item, not an override.",
+    "Component catalogue is historical supporting research; alternatives/spares/bench items are not automatically installed.",
+    "Actual software/model test coverage must come from domain implementations and tests, not this inventory."
   ],
   "source_snapshots": {
     "design/E1.json": {
-      "sha256": "e87f79db4da0d9be7e74aa1ad2816ea99ae4ed8fd6e723ba375c1559bfd51392",
-      "bytes": 78721
+      "sha256": "f535a839afd70def8f35f43380153cb00723f97c634be51d9159d1bfe4630591",
+      "bytes": 78952
     },
     "design/E2.json": {
-      "sha256": "adc5b67b6b53977143847d688f657364a5e300a80761d74e1dc82e34bd703c16",
-      "bytes": 270037
+      "sha256": "bb2ac6a37392689b462a570d7334aa257aaad8e4a006c5df1e934c3dd794d40c",
+      "bytes": 272983
     },
     "design/E3.json": {
-      "sha256": "0a2e2e60ede923b2d0a1aa0f8484a97513c1ef36ae389d3aee365fbcf90aaac5",
-      "bytes": 137043
+      "sha256": "f2ac2171727824e36b5e4d7780677d4fc46ec0840d0a57a59053451132c92be4",
+      "bytes": 137986
     },
     "design/E4.json": {
-      "sha256": "b05555c7a6729029f779df3ca3d0a62d71e206520a33cf7e34ffa3e2c081344d",
-      "bytes": 173850
+      "sha256": "0935bbfe204728620575ba2e6713185799862050f5d8c2c465c028606c5612bf",
+      "bytes": 176694
     },
     "design/E5.json": {
-      "sha256": "86a9099809fbcdf365c82ecf4a239531b1b55715ee17cd1c5fb5a776c979ca05",
-      "bytes": 84591
+      "sha256": "d0366fa9440ba2488b352bcf24ca31b1b8e117afb1c2aa2453dd214d711c3dd6",
+      "bytes": 88192
     },
     "STACK.md": {
-      "sha256": "baa6dc6651a3f33f68b0cf98659f0da6169eaedc6acf3b7e4e17ccc8c95a7f2d",
-      "bytes": 1945562
+      "sha256": "2736f7dd3a30a34341d634880684f2c25003af39cd3785797d08f45e29a58f14",
+      "bytes": 1945021
     },
     "build/12-revision-v2.1.md": {
-      "sha256": "29c9e8b48f58f0b3957891f9188a544743364ab787a55ebca3d105c18b29e38c",
-      "bytes": 10377
+      "sha256": "bca99ec08af53cbdcfb049f1bafda3fe1b703676a6d5d62d911467d8e2f3c1e0",
+      "bytes": 10527
     }
   },
   "scope": {
-    "graph_components": 754,
-    "graph_pins": 2326,
+    "graph_components": 750,
+    "graph_pins": 2318,
     "graph_sheets": {
-      "E1": 77,
+      "E1": 76,
       "E2": 242,
       "E3": 147,
       "E4": 213,
-      "E5": 75
+      "E5": 72
     },
     "top_level_circuit_assemblies": 64,
     "source_kind_module_count": 57,
@@ -55,13 +55,13 @@
     "partition_refs_assigned_exactly_once": true,
     "missing_refs": [],
     "duplicate_refs": [],
-    "graph_connected_pins": 2189,
+    "graph_connected_pins": 2181,
     "graph_nc_pins": 137,
     "canonical_nets": 466,
     "cross_assembly_nets": 212
   },
   "critical_constraints": [
-    "Every one of the 754 source component references is assigned exactly once to a circuit assembly. Circuit passives remain parameters, not fictitious software registers.",
+    "Every one of the 750 source component references is assigned exactly once to a circuit assembly. Circuit passives remain parameters, not fictitious software registers.",
     "Analog power and RF assemblies need state, fault and connectivity models; they do not automatically have a vendor command protocol.",
     "Declare the boundary: project packet or native API behavior can be modeled without emulating complete vendor firmware, USB descriptors, FPGA/MMIO, analog transients or RF physics.",
     "Known functional terminal names are distinct from qualified physical connector numbering. The received module revision, cable orientation and continuity gates remain explicit.",
@@ -125,7 +125,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -179,12 +179,10 @@
         "R101",
         "U102",
         "C101",
-        "C102",
-        "R102"
+        "C102"
       ],
-      "component_count": 5,
+      "component_count": 4,
       "named_nets": [
-        "3V3_Q6A",
         "AON3V3",
         "E1_N",
         "E1_SHUNT_P",
@@ -217,12 +215,6 @@
           "kind": "capacitor",
           "value": "10 µF (Adafruit C2)",
           "status": "verified"
-        },
-        {
-          "ref": "R102",
-          "kind": "resistor",
-          "value": "10k1%",
-          "status": "design"
         }
       ],
       "required_model_behaviors": [
@@ -236,7 +228,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -387,7 +379,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -495,7 +487,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -608,7 +600,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -751,7 +743,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -838,7 +830,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -932,7 +924,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -1062,7 +1054,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -1197,7 +1189,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -1301,7 +1293,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -1411,7 +1403,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -1627,7 +1619,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -1643,7 +1635,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -1804,7 +1796,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -1820,7 +1812,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -1966,7 +1958,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -1982,7 +1974,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -2119,7 +2111,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -2135,7 +2127,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -2323,7 +2315,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -2339,7 +2331,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -2464,7 +2456,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -2480,7 +2472,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -2605,7 +2597,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -2621,7 +2613,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -2746,7 +2738,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -2762,7 +2754,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -2887,7 +2879,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -2903,7 +2895,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -2956,7 +2948,7 @@
         {
           "ref": "R248",
           "kind": "resistor",
-          "value": "56.2k 1%",
+          "value": "RILIM TBD (start 56.2k 1%)",
           "status": "design"
         },
         {
@@ -3019,7 +3011,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -3035,7 +3027,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -3259,7 +3251,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -3275,7 +3267,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -3416,13 +3408,13 @@
         {
           "ref": "R263",
           "kind": "resistor",
-          "value": "112k 0.1%",
+          "value": "OVLO TBD (start 112k 0.1%)",
           "status": "design"
         },
         {
           "ref": "R264",
           "kind": "resistor",
-          "value": "10.0k 0.1%",
+          "value": "OVLO TBD (start 10.0k 0.1%)",
           "status": "design"
         },
         {
@@ -3498,7 +3490,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -3514,7 +3506,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -3648,7 +3640,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -3664,7 +3656,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -3798,7 +3790,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -3814,7 +3806,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -3894,7 +3886,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -3910,7 +3902,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -3990,7 +3982,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -4006,7 +3998,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -4085,7 +4077,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -4101,7 +4093,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -4203,7 +4195,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -4219,7 +4211,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -4335,7 +4327,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -4351,7 +4343,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -4445,7 +4437,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -4481,7 +4473,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about +/-0.28 V near 12.9 V; a nominal ADC code does not establish the 12.9 +/-0.1 V cutoff.",
           "blocking": true
         },
         {
@@ -4774,7 +4766,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -4810,7 +4802,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about +/-0.28 V near 12.9 V; a nominal ADC code does not establish the 12.9 +/-0.1 V cutoff.",
           "blocking": true
         },
         {
@@ -4876,7 +4868,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -4912,7 +4904,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about +/-0.28 V near 12.9 V; a nominal ADC code does not establish the 12.9 +/-0.1 V cutoff.",
           "blocking": true
         },
         {
@@ -4954,7 +4946,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -4990,7 +4982,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about +/-0.28 V near 12.9 V; a nominal ADC code does not establish the 12.9 +/-0.1 V cutoff.",
           "blocking": true
         },
         {
@@ -5119,7 +5111,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -5155,7 +5147,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about +/-0.28 V near 12.9 V; a nominal ADC code does not establish the 12.9 +/-0.1 V cutoff.",
           "blocking": true
         },
         {
@@ -5236,7 +5228,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -5272,7 +5264,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about +/-0.28 V near 12.9 V; a nominal ADC code does not establish the 12.9 +/-0.1 V cutoff.",
           "blocking": true
         },
         {
@@ -5357,7 +5349,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -5393,7 +5385,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about +/-0.28 V near 12.9 V; a nominal ADC code does not establish the 12.9 +/-0.1 V cutoff.",
           "blocking": true
         },
         {
@@ -5599,7 +5591,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -5635,7 +5627,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about +/-0.28 V near 12.9 V; a nominal ADC code does not establish the 12.9 +/-0.1 V cutoff.",
           "blocking": true
         },
         {
@@ -5774,7 +5766,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -5810,7 +5802,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about +/-0.28 V near 12.9 V; a nominal ADC code does not establish the 12.9 +/-0.1 V cutoff.",
           "blocking": true
         },
         {
@@ -5889,7 +5881,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -5925,7 +5917,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about +/-0.28 V near 12.9 V; a nominal ADC code does not establish the 12.9 +/-0.1 V cutoff.",
           "blocking": true
         },
         {
@@ -5993,7 +5985,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -6029,7 +6021,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about +/-0.28 V near 12.9 V; a nominal ADC code does not establish the 12.9 +/-0.1 V cutoff.",
           "blocking": true
         },
         {
@@ -6205,7 +6197,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -6241,7 +6233,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about +/-0.28 V near 12.9 V; a nominal ADC code does not establish the 12.9 +/-0.1 V cutoff.",
           "blocking": true
         },
         {
@@ -6328,7 +6320,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -6364,7 +6356,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about +/-0.28 V near 12.9 V; a nominal ADC code does not establish the 12.9 +/-0.1 V cutoff.",
           "blocking": true
         },
         {
@@ -6437,7 +6429,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -6473,7 +6465,7 @@
         },
         {
           "id": "E3-07",
-          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+          "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about +/-0.28 V near 12.9 V; a nominal ADC code does not establish the 12.9 +/-0.1 V cutoff.",
           "blocking": true
         },
         {
@@ -6550,9 +6542,9 @@
         "E4_HF_CM",
         "E4_LIME_REF",
         "E4_LIME_RX2",
-        "E4_LIME_RXA",
-        "E4_LIME_RXB",
         "E4_LIME_TX",
+        "E4_LIME_X2_RX",
+        "E4_LIME_X4_RX",
         "E4_LNB_IF",
         "E4_LNB_REF25",
         "E4_P1",
@@ -6652,7 +6644,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -6673,7 +6665,7 @@
         },
         {
           "id": "E4-05",
-          "description": "Lime X2/X4 are verified RX ports for v1.2; supplied-board channel A/B and cable labels need confirmation.",
+          "description": "Lime X2/X4 are the v1.2 RX ports, but which of them is RX-A and which RX-B is TBD (STACK §2.11.1, §8.1 L-12: check against the board marking). Pins are named X2_RX/X4_RX and nets E4_LIME_X2_RX/E4_LIME_X4_RX, so the drawing fixes no channel; supplied-board cable labels need confirmation.",
           "blocking": true
         },
         {
@@ -6753,7 +6745,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -6774,7 +6766,7 @@
         },
         {
           "id": "E4-05",
-          "description": "Lime X2/X4 are verified RX ports for v1.2; supplied-board channel A/B and cable labels need confirmation.",
+          "description": "Lime X2/X4 are the v1.2 RX ports, but which of them is RX-A and which RX-B is TBD (STACK §2.11.1, §8.1 L-12: check against the board marking). Pins are named X2_RX/X4_RX and nets E4_LIME_X2_RX/E4_LIME_X4_RX, so the drawing fixes no channel; supplied-board cable labels need confirmation.",
           "blocking": true
         },
         {
@@ -7321,7 +7313,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -7342,7 +7334,7 @@
         },
         {
           "id": "E4-05",
-          "description": "Lime X2/X4 are verified RX ports for v1.2; supplied-board channel A/B and cable labels need confirmation.",
+          "description": "Lime X2/X4 are the v1.2 RX ports, but which of them is RX-A and which RX-B is TBD (STACK §2.11.1, §8.1 L-12: check against the board marking). Pins are named X2_RX/X4_RX and nets E4_LIME_X2_RX/E4_LIME_X4_RX, so the drawing fixes no channel; supplied-board cable labels need confirmation.",
           "blocking": true
         },
         {
@@ -7422,7 +7414,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -7443,7 +7435,7 @@
         },
         {
           "id": "E4-05",
-          "description": "Lime X2/X4 are verified RX ports for v1.2; supplied-board channel A/B and cable labels need confirmation.",
+          "description": "Lime X2/X4 are the v1.2 RX ports, but which of them is RX-A and which RX-B is TBD (STACK §2.11.1, §8.1 L-12: check against the board marking). Pins are named X2_RX/X4_RX and nets E4_LIME_X2_RX/E4_LIME_X4_RX, so the drawing fixes no channel; supplied-board cable labels need confirmation.",
           "blocking": true
         },
         {
@@ -7686,7 +7678,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -7707,7 +7699,7 @@
         },
         {
           "id": "E4-05",
-          "description": "Lime X2/X4 are verified RX ports for v1.2; supplied-board channel A/B and cable labels need confirmation.",
+          "description": "Lime X2/X4 are the v1.2 RX ports, but which of them is RX-A and which RX-B is TBD (STACK §2.11.1, §8.1 L-12: check against the board marking). Pins are named X2_RX/X4_RX and nets E4_LIME_X2_RX/E4_LIME_X4_RX, so the drawing fixes no channel; supplied-board cable labels need confirmation.",
           "blocking": true
         },
         {
@@ -7895,7 +7887,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -7916,7 +7908,7 @@
         },
         {
           "id": "E4-05",
-          "description": "Lime X2/X4 are verified RX ports for v1.2; supplied-board channel A/B and cable labels need confirmation.",
+          "description": "Lime X2/X4 are the v1.2 RX ports, but which of them is RX-A and which RX-B is TBD (STACK §2.11.1, §8.1 L-12: check against the board marking). Pins are named X2_RX/X4_RX and nets E4_LIME_X2_RX/E4_LIME_X4_RX, so the drawing fixes no channel; supplied-board cable labels need confirmation.",
           "blocking": true
         },
         {
@@ -8104,7 +8096,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -8125,7 +8117,7 @@
         },
         {
           "id": "E4-05",
-          "description": "Lime X2/X4 are verified RX ports for v1.2; supplied-board channel A/B and cable labels need confirmation.",
+          "description": "Lime X2/X4 are the v1.2 RX ports, but which of them is RX-A and which RX-B is TBD (STACK §2.11.1, §8.1 L-12: check against the board marking). Pins are named X2_RX/X4_RX and nets E4_LIME_X2_RX/E4_LIME_X4_RX, so the drawing fixes no channel; supplied-board cable labels need confirmation.",
           "blocking": true
         },
         {
@@ -8313,7 +8305,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -8334,7 +8326,7 @@
         },
         {
           "id": "E4-05",
-          "description": "Lime X2/X4 are verified RX ports for v1.2; supplied-board channel A/B and cable labels need confirmation.",
+          "description": "Lime X2/X4 are the v1.2 RX ports, but which of them is RX-A and which RX-B is TBD (STACK §2.11.1, §8.1 L-12: check against the board marking). Pins are named X2_RX/X4_RX and nets E4_LIME_X2_RX/E4_LIME_X4_RX, so the drawing fixes no channel; supplied-board cable labels need confirmation.",
           "blocking": true
         },
         {
@@ -8448,7 +8440,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -8469,7 +8461,7 @@
         },
         {
           "id": "E4-05",
-          "description": "Lime X2/X4 are verified RX ports for v1.2; supplied-board channel A/B and cable labels need confirmation.",
+          "description": "Lime X2/X4 are the v1.2 RX ports, but which of them is RX-A and which RX-B is TBD (STACK §2.11.1, §8.1 L-12: check against the board marking). Pins are named X2_RX/X4_RX and nets E4_LIME_X2_RX/E4_LIME_X4_RX, so the drawing fixes no channel; supplied-board cable labels need confirmation.",
           "blocking": true
         },
         {
@@ -8570,7 +8562,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -8591,7 +8583,7 @@
         },
         {
           "id": "E4-05",
-          "description": "Lime X2/X4 are verified RX ports for v1.2; supplied-board channel A/B and cable labels need confirmation.",
+          "description": "Lime X2/X4 are the v1.2 RX ports, but which of them is RX-A and which RX-B is TBD (STACK §2.11.1, §8.1 L-12: check against the board marking). Pins are named X2_RX/X4_RX and nets E4_LIME_X2_RX/E4_LIME_X4_RX, so the drawing fixes no channel; supplied-board cable labels need confirmation.",
           "blocking": true
         },
         {
@@ -8672,7 +8664,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -8688,12 +8680,12 @@
         },
         {
           "id": "E5-03",
-          "description": "ADT-Link R44SF connector variant and removal of ALL host3.3V paths are not yet confirmed.",
+          "description": "ADT-Link R44SF connector variant and removal of ALL host 3.3 V paths are not yet confirmed.",
           "blocking": true
         },
         {
           "id": "E5-04",
-          "description": "Current-setting resistors are engineering starting values, no measured device steady/startup currents or hot-corner proof.",
+          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
           "blocking": true
         },
         {
@@ -8708,7 +8700,7 @@
         },
         {
           "id": "E5-07",
-          "description": "EDL factory button pads and cable orientation not physically located on exact receivedQ6A.",
+          "description": "EDL factory button pads and cable orientation not physically located on the exact received Q6A.",
           "blocking": true
         },
         {
@@ -8718,7 +8710,12 @@
         },
         {
           "id": "E5-09",
-          "description": "Radiated-noise behavior and USB2touch enumeration are physical integration gates, not determined by netlist.",
+          "description": "Radiated-noise behavior and USB2 touch enumeration are physical integration gates, not determined by netlist.",
+          "blocking": true
+        },
+        {
+          "id": "E5-10",
+          "description": "Wi-Fi/BT Q6A (FCU760K, AIC8800 на порту 4 FE1.1s) у польовому/QUIET root вимкнено лише програмно: blacklist з install /bin/false, udev authorized=0 за шляхом порту 4 і rfkill як другий шар. Апаратне утримання WIFI_PWR_EN (GPIO TLMM через CJ3134K до WIFI_PWR_EN_3V3, схема Radxa v1.21, с. 4) на отриманій платі не знайдено; gpio-hog у польовому DTBO не створено й не виміряно.",
           "blocking": true
         }
       ],
@@ -8777,7 +8774,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -8793,12 +8790,12 @@
         },
         {
           "id": "E5-03",
-          "description": "ADT-Link R44SF connector variant and removal of ALL host3.3V paths are not yet confirmed.",
+          "description": "ADT-Link R44SF connector variant and removal of ALL host 3.3 V paths are not yet confirmed.",
           "blocking": true
         },
         {
           "id": "E5-04",
-          "description": "Current-setting resistors are engineering starting values, no measured device steady/startup currents or hot-corner proof.",
+          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
           "blocking": true
         },
         {
@@ -8813,7 +8810,7 @@
         },
         {
           "id": "E5-07",
-          "description": "EDL factory button pads and cable orientation not physically located on exact receivedQ6A.",
+          "description": "EDL factory button pads and cable orientation not physically located on the exact received Q6A.",
           "blocking": true
         },
         {
@@ -8823,7 +8820,12 @@
         },
         {
           "id": "E5-09",
-          "description": "Radiated-noise behavior and USB2touch enumeration are physical integration gates, not determined by netlist.",
+          "description": "Radiated-noise behavior and USB2 touch enumeration are physical integration gates, not determined by netlist.",
+          "blocking": true
+        },
+        {
+          "id": "E5-10",
+          "description": "Wi-Fi/BT Q6A (FCU760K, AIC8800 на порту 4 FE1.1s) у польовому/QUIET root вимкнено лише програмно: blacklist з install /bin/false, udev authorized=0 за шляхом порту 4 і rfkill як другий шар. Апаратне утримання WIFI_PWR_EN (GPIO TLMM через CJ3134K до WIFI_PWR_EN_3V3, схема Radxa v1.21, с. 4) на отриманій платі не знайдено; gpio-hog у польовому DTBO не створено й не виміряно.",
           "blocking": true
         }
       ],
@@ -8841,7 +8843,6 @@
         "U501",
         "R501",
         "R502",
-        "R503",
         "C501",
         "C502",
         "C503",
@@ -8849,16 +8850,14 @@
         "U502",
         "R505",
         "R506",
-        "R507",
         "C504",
         "C505",
         "C506",
         "C507",
         "R508"
       ],
-      "component_count": 17,
+      "component_count": 15,
       "named_nets": [
-        "3V3_Q6A",
         "E5_U501_ILIM",
         "E5_U502_ILIM",
         "EN_LABPORT",
@@ -8876,19 +8875,13 @@
         {
           "ref": "R501",
           "kind": "resistor",
-          "value": "43.2k 1%",
+          "value": "RILIM TBD (start 43.2k 1%)",
           "status": "design"
         },
         {
           "ref": "R502",
           "kind": "resistor",
           "value": "100k",
-          "status": "design"
-        },
-        {
-          "ref": "R503",
-          "kind": "resistor",
-          "value": "10k",
           "status": "design"
         },
         {
@@ -8925,12 +8918,6 @@
           "ref": "R506",
           "kind": "resistor",
           "value": "100k",
-          "status": "design"
-        },
-        {
-          "ref": "R507",
-          "kind": "resistor",
-          "value": "10k",
           "status": "design"
         },
         {
@@ -8976,7 +8963,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -8992,12 +8979,12 @@
         },
         {
           "id": "E5-03",
-          "description": "ADT-Link R44SF connector variant and removal of ALL host3.3V paths are not yet confirmed.",
+          "description": "ADT-Link R44SF connector variant and removal of ALL host 3.3 V paths are not yet confirmed.",
           "blocking": true
         },
         {
           "id": "E5-04",
-          "description": "Current-setting resistors are engineering starting values, no measured device steady/startup currents or hot-corner proof.",
+          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
           "blocking": true
         },
         {
@@ -9012,7 +8999,7 @@
         },
         {
           "id": "E5-07",
-          "description": "EDL factory button pads and cable orientation not physically located on exact receivedQ6A.",
+          "description": "EDL factory button pads and cable orientation not physically located on the exact received Q6A.",
           "blocking": true
         },
         {
@@ -9022,7 +9009,12 @@
         },
         {
           "id": "E5-09",
-          "description": "Radiated-noise behavior and USB2touch enumeration are physical integration gates, not determined by netlist.",
+          "description": "Radiated-noise behavior and USB2 touch enumeration are physical integration gates, not determined by netlist.",
+          "blocking": true
+        },
+        {
+          "id": "E5-10",
+          "description": "Wi-Fi/BT Q6A (FCU760K, AIC8800 на порту 4 FE1.1s) у польовому/QUIET root вимкнено лише програмно: blacklist з install /bin/false, udev authorized=0 за шляхом порту 4 і rfkill як другий шар. Апаратне утримання WIFI_PWR_EN (GPIO TLMM через CJ3134K до WIFI_PWR_EN_3V3, схема Radxa v1.21, с. 4) на отриманій платі не знайдено; gpio-hog у польовому DTBO не створено й не виміряно.",
           "blocking": true
         }
       ],
@@ -9040,7 +9032,6 @@
         "U503",
         "R509",
         "R510",
-        "R511",
         "C508",
         "C509",
         "C510",
@@ -9051,9 +9042,8 @@
         "C513",
         "R513"
       ],
-      "component_count": 13,
+      "component_count": 12,
       "named_nets": [
-        "3V3_Q6A",
         "E5_HFP_DAMP",
         "E5_U503_ILIM",
         "E5_VBUS_HFP_SW",
@@ -9069,19 +9059,13 @@
         {
           "ref": "R509",
           "kind": "resistor",
-          "value": "28.7k 1%",
+          "value": "RILIM TBD (start 28.7k 1%)",
           "status": "design"
         },
         {
           "ref": "R510",
           "kind": "resistor",
           "value": "100k",
-          "status": "design"
-        },
-        {
-          "ref": "R511",
-          "kind": "resistor",
-          "value": "10k",
           "status": "design"
         },
         {
@@ -9151,7 +9135,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -9167,12 +9151,12 @@
         },
         {
           "id": "E5-03",
-          "description": "ADT-Link R44SF connector variant and removal of ALL host3.3V paths are not yet confirmed.",
+          "description": "ADT-Link R44SF connector variant and removal of ALL host 3.3 V paths are not yet confirmed.",
           "blocking": true
         },
         {
           "id": "E5-04",
-          "description": "Current-setting resistors are engineering starting values, no measured device steady/startup currents or hot-corner proof.",
+          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
           "blocking": true
         },
         {
@@ -9187,7 +9171,7 @@
         },
         {
           "id": "E5-07",
-          "description": "EDL factory button pads and cable orientation not physically located on exact receivedQ6A.",
+          "description": "EDL factory button pads and cable orientation not physically located on the exact received Q6A.",
           "blocking": true
         },
         {
@@ -9197,7 +9181,12 @@
         },
         {
           "id": "E5-09",
-          "description": "Radiated-noise behavior and USB2touch enumeration are physical integration gates, not determined by netlist.",
+          "description": "Radiated-noise behavior and USB2 touch enumeration are physical integration gates, not determined by netlist.",
+          "blocking": true
+        },
+        {
+          "id": "E5-10",
+          "description": "Wi-Fi/BT Q6A (FCU760K, AIC8800 на порту 4 FE1.1s) у польовому/QUIET root вимкнено лише програмно: blacklist з install /bin/false, udev authorized=0 за шляхом порту 4 і rfkill як другий шар. Апаратне утримання WIFI_PWR_EN (GPIO TLMM через CJ3134K до WIFI_PWR_EN_3V3, схема Radxa v1.21, с. 4) на отриманій платі не знайдено; gpio-hog у польовому DTBO не створено й не виміряно.",
           "blocking": true
         }
       ],
@@ -9249,7 +9238,7 @@
         {
           "ref": "R514",
           "kind": "resistor",
-          "value": "15.8k 1%",
+          "value": "RILIM TBD (start 15.8k 1%)",
           "status": "design"
         },
         {
@@ -9307,7 +9296,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -9323,12 +9312,12 @@
         },
         {
           "id": "E5-03",
-          "description": "ADT-Link R44SF connector variant and removal of ALL host3.3V paths are not yet confirmed.",
+          "description": "ADT-Link R44SF connector variant and removal of ALL host 3.3 V paths are not yet confirmed.",
           "blocking": true
         },
         {
           "id": "E5-04",
-          "description": "Current-setting resistors are engineering starting values, no measured device steady/startup currents or hot-corner proof.",
+          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
           "blocking": true
         },
         {
@@ -9343,7 +9332,7 @@
         },
         {
           "id": "E5-07",
-          "description": "EDL factory button pads and cable orientation not physically located on exact receivedQ6A.",
+          "description": "EDL factory button pads and cable orientation not physically located on the exact received Q6A.",
           "blocking": true
         },
         {
@@ -9353,7 +9342,12 @@
         },
         {
           "id": "E5-09",
-          "description": "Radiated-noise behavior and USB2touch enumeration are physical integration gates, not determined by netlist.",
+          "description": "Radiated-noise behavior and USB2 touch enumeration are physical integration gates, not determined by netlist.",
+          "blocking": true
+        },
+        {
+          "id": "E5-10",
+          "description": "Wi-Fi/BT Q6A (FCU760K, AIC8800 на порту 4 FE1.1s) у польовому/QUIET root вимкнено лише програмно: blacklist з install /bin/false, udev authorized=0 за шляхом порту 4 і rfkill як другий шар. Апаратне утримання WIFI_PWR_EN (GPIO TLMM через CJ3134K до WIFI_PWR_EN_3V3, схема Radxa v1.21, с. 4) на отриманій платі не знайдено; gpio-hog у польовому DTBO не створено й не виміряно.",
           "blocking": true
         }
       ],
@@ -9442,7 +9436,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -9458,12 +9452,12 @@
         },
         {
           "id": "E5-03",
-          "description": "ADT-Link R44SF connector variant and removal of ALL host3.3V paths are not yet confirmed.",
+          "description": "ADT-Link R44SF connector variant and removal of ALL host 3.3 V paths are not yet confirmed.",
           "blocking": true
         },
         {
           "id": "E5-04",
-          "description": "Current-setting resistors are engineering starting values, no measured device steady/startup currents or hot-corner proof.",
+          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
           "blocking": true
         },
         {
@@ -9478,7 +9472,7 @@
         },
         {
           "id": "E5-07",
-          "description": "EDL factory button pads and cable orientation not physically located on exact receivedQ6A.",
+          "description": "EDL factory button pads and cable orientation not physically located on the exact received Q6A.",
           "blocking": true
         },
         {
@@ -9488,7 +9482,12 @@
         },
         {
           "id": "E5-09",
-          "description": "Radiated-noise behavior and USB2touch enumeration are physical integration gates, not determined by netlist.",
+          "description": "Radiated-noise behavior and USB2 touch enumeration are physical integration gates, not determined by netlist.",
+          "blocking": true
+        },
+        {
+          "id": "E5-10",
+          "description": "Wi-Fi/BT Q6A (FCU760K, AIC8800 на порту 4 FE1.1s) у польовому/QUIET root вимкнено лише програмно: blacklist з install /bin/false, udev authorized=0 за шляхом порту 4 і rfkill як другий шар. Апаратне утримання WIFI_PWR_EN (GPIO TLMM через CJ3134K до WIFI_PWR_EN_3V3, схема Radxa v1.21, с. 4) на отриманій платі не знайдено; gpio-hog у польовому DTBO не створено й не виміряно.",
           "blocking": true
         }
       ],
@@ -9541,7 +9540,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -9557,12 +9556,12 @@
         },
         {
           "id": "E5-03",
-          "description": "ADT-Link R44SF connector variant and removal of ALL host3.3V paths are not yet confirmed.",
+          "description": "ADT-Link R44SF connector variant and removal of ALL host 3.3 V paths are not yet confirmed.",
           "blocking": true
         },
         {
           "id": "E5-04",
-          "description": "Current-setting resistors are engineering starting values, no measured device steady/startup currents or hot-corner proof.",
+          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
           "blocking": true
         },
         {
@@ -9577,7 +9576,7 @@
         },
         {
           "id": "E5-07",
-          "description": "EDL factory button pads and cable orientation not physically located on exact receivedQ6A.",
+          "description": "EDL factory button pads and cable orientation not physically located on the exact received Q6A.",
           "blocking": true
         },
         {
@@ -9587,7 +9586,12 @@
         },
         {
           "id": "E5-09",
-          "description": "Radiated-noise behavior and USB2touch enumeration are physical integration gates, not determined by netlist.",
+          "description": "Radiated-noise behavior and USB2 touch enumeration are physical integration gates, not determined by netlist.",
+          "blocking": true
+        },
+        {
+          "id": "E5-10",
+          "description": "Wi-Fi/BT Q6A (FCU760K, AIC8800 на порту 4 FE1.1s) у польовому/QUIET root вимкнено лише програмно: blacklist з install /bin/false, udev authorized=0 за шляхом порту 4 і rfkill як другий шар. Апаратне утримання WIFI_PWR_EN (GPIO TLMM через CJ3134K до WIFI_PWR_EN_3V3, схема Radxa v1.21, с. 4) на отриманій платі не знайдено; gpio-hog у польовому DTBO не створено й не виміряно.",
           "blocking": true
         }
       ],
@@ -9667,7 +9671,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -9683,12 +9687,12 @@
         },
         {
           "id": "E5-03",
-          "description": "ADT-Link R44SF connector variant and removal of ALL host3.3V paths are not yet confirmed.",
+          "description": "ADT-Link R44SF connector variant and removal of ALL host 3.3 V paths are not yet confirmed.",
           "blocking": true
         },
         {
           "id": "E5-04",
-          "description": "Current-setting resistors are engineering starting values, no measured device steady/startup currents or hot-corner proof.",
+          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
           "blocking": true
         },
         {
@@ -9703,7 +9707,7 @@
         },
         {
           "id": "E5-07",
-          "description": "EDL factory button pads and cable orientation not physically located on exact receivedQ6A.",
+          "description": "EDL factory button pads and cable orientation not physically located on the exact received Q6A.",
           "blocking": true
         },
         {
@@ -9713,7 +9717,12 @@
         },
         {
           "id": "E5-09",
-          "description": "Radiated-noise behavior and USB2touch enumeration are physical integration gates, not determined by netlist.",
+          "description": "Radiated-noise behavior and USB2 touch enumeration are physical integration gates, not determined by netlist.",
+          "blocking": true
+        },
+        {
+          "id": "E5-10",
+          "description": "Wi-Fi/BT Q6A (FCU760K, AIC8800 на порту 4 FE1.1s) у польовому/QUIET root вимкнено лише програмно: blacklist з install /bin/false, udev authorized=0 за шляхом порту 4 і rfkill як другий шар. Апаратне утримання WIFI_PWR_EN (GPIO TLMM через CJ3134K до WIFI_PWR_EN_3V3, схема Radxa v1.21, с. 4) на отриманій платі не знайдено; gpio-hog у польовому DTBO не створено й не виміряно.",
           "blocking": true
         }
       ],
@@ -9785,7 +9794,7 @@
         },
         {
           "path": "STACK.md",
-          "precedence": "v2.1noticeandfinalgraphsoverridehistoricaltext"
+          "precedence": "STACK.md is the source of truth; v2.1 changes are recorded in it; final graphs must match it"
         }
       ],
       "sheet_hardware_gates": [
@@ -9801,12 +9810,12 @@
         },
         {
           "id": "E5-03",
-          "description": "ADT-Link R44SF connector variant and removal of ALL host3.3V paths are not yet confirmed.",
+          "description": "ADT-Link R44SF connector variant and removal of ALL host 3.3 V paths are not yet confirmed.",
           "blocking": true
         },
         {
           "id": "E5-04",
-          "description": "Current-setting resistors are engineering starting values, no measured device steady/startup currents or hot-corner proof.",
+          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
           "blocking": true
         },
         {
@@ -9821,7 +9830,7 @@
         },
         {
           "id": "E5-07",
-          "description": "EDL factory button pads and cable orientation not physically located on exact receivedQ6A.",
+          "description": "EDL factory button pads and cable orientation not physically located on the exact received Q6A.",
           "blocking": true
         },
         {
@@ -9831,7 +9840,12 @@
         },
         {
           "id": "E5-09",
-          "description": "Radiated-noise behavior and USB2touch enumeration are physical integration gates, not determined by netlist.",
+          "description": "Radiated-noise behavior and USB2 touch enumeration are physical integration gates, not determined by netlist.",
+          "blocking": true
+        },
+        {
+          "id": "E5-10",
+          "description": "Wi-Fi/BT Q6A (FCU760K, AIC8800 на порту 4 FE1.1s) у польовому/QUIET root вимкнено лише програмно: blacklist з install /bin/false, udev authorized=0 за шляхом порту 4 і rfkill як другий шар. Апаратне утримання WIFI_PWR_EN (GPIO TLMM через CJ3134K до WIFI_PWR_EN_3V3, схема Radxa v1.21, с. 4) на отриманій платі не знайдено; gpio-hog у польовому DTBO не створено й не виміряно.",
           "blocking": true
         }
       ],
@@ -17393,8 +17407,8 @@
         "E5_PCIE_TX0_P",
         "E5_PCIE_RX0_P",
         "E5_PCIE_PERST_N",
-        "E4_LIME_RXA",
-        "E4_LIME_RXB",
+        "E4_LIME_X2_RX",
+        "E4_LIME_X4_RX",
         "E4_LIME_TX",
         "E4_LIME_REF"
       ],
@@ -17418,15 +17432,15 @@
           "type": "passive"
         },
         {
-          "number": "X2_RX_A",
-          "name": "X2_RX_A",
-          "net": "E4_LIME_RXA",
+          "number": "X2_RX",
+          "name": "X2_RX",
+          "net": "E4_LIME_X2_RX",
           "type": "passive"
         },
         {
-          "number": "X4_RX_B",
-          "name": "X4_RX_B",
-          "net": "E4_LIME_RXB",
+          "number": "X4_RX",
+          "name": "X4_RX",
+          "net": "E4_LIME_X4_RX",
           "type": "passive"
         },
         {
@@ -17517,7 +17531,7 @@
       ],
       "source_description": "Functional interface with logical connector names; no implied physical PCB pin numbering.",
       "source_notes": [
-        "X1 TX is permanently loaded. X2/X4 are the v1.2 receive ports; validate channel A/B mapping on the supplied board. J4 is a reference input, not an antenna."
+        "X1 TX is permanently loaded (W406 → A410 ANNE-50+). X2/X4 are the v1.2 receive ports; which of them is RX-A and which RX-B is TBD per STACK §2.11.1 / §8.1 L-12 (open item E4-05), so pins and nets carry only the port names."
       ],
       "coverage_constraints": [
         "Model state/RX API/sample/fault/clock behavior; do not replace with USB-Lime or claim exact PCIe/FPGA/firmware/MMIO implementation.",
@@ -18393,7 +18407,7 @@
       "module_id": "E4/J413",
       "parent_assembly": "E4-CIR-01",
       "ref": "J413",
-      "value": "RX1 panel SMA: captive loop",
+      "value": "RX1 panel SMA: captive coax assembly",
       "source_kind": "connector",
       "source_status": "module",
       "interface_family": "passive_connector_or_named_boundary",
@@ -18762,7 +18776,7 @@
       "software_interface_specified": false,
       "interface_signals": [
         "E4_RX1_PANEL",
-        "E4_LIME_RXA",
+        "E4_LIME_X2_RX",
         "GND"
       ],
       "configuration_from_source": {},
@@ -18778,7 +18792,7 @@
         {
           "number": "END_B",
           "name": "END_B",
-          "net": "E4_LIME_RXA",
+          "net": "E4_LIME_X2_RX",
           "type": "passive"
         },
         {
@@ -18817,7 +18831,7 @@
       "software_interface_specified": false,
       "interface_signals": [
         "E4_RX2_BLK",
-        "E4_LIME_RXB",
+        "E4_LIME_X4_RX",
         "GND"
       ],
       "configuration_from_source": {},
@@ -18833,7 +18847,7 @@
         {
           "number": "END_B",
           "name": "END_B",
-          "net": "E4_LIME_RXB",
+          "net": "E4_LIME_X4_RX",
           "type": "passive"
         },
         {
@@ -21900,7 +21914,7 @@
       ],
       "source_description": "",
       "source_notes": [
-        "RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; no pulls to AON or LAB5.",
+        "RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; its only 10k pull-up to 3V3_Q6A is R324 on E3.",
         "Latch-off version; software reset by EN low then high."
       ],
       "coverage_constraints": [
@@ -21979,7 +21993,7 @@
       ],
       "source_description": "",
       "source_notes": [
-        "RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; no pulls to AON or LAB5.",
+        "RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; its only 10k pull-up to 3V3_Q6A is R308 on E3.",
         "Latch-off version; software reset by EN low then high."
       ],
       "coverage_constraints": [
@@ -21992,7 +22006,7 @@
       "module_id": "E5/U503",
       "parent_assembly": "E5-CIR-04",
       "ref": "U503",
-      "value": "TPS2553DBVR",
+      "value": "TPS2553DBVR-1",
       "source_kind": "ic",
       "source_status": "design",
       "interface_family": "analog_or_discrete_control_ic",
@@ -22058,8 +22072,8 @@
       ],
       "source_description": "",
       "source_notes": [
-        "RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; no pulls to AON or LAB5.",
-        "Non-latching constant-current version selected for large capacitive/device startup."
+        "RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; its only 10k pull-up to 3V3_Q6A is R323 on E3.",
+        "Latch-off -1 version, as STACK §5.1/§5.2 specify for VBUS HF+. TPS2553DBVR (constant-current, LCSC C55266) only on this channel and only if it fails the STACK §8 TPS2553DBVR-1 item 3 inrush test at final RILIM (open item E5-04)."
       ],
       "coverage_constraints": [
         "Model analog rail/comparator/ESD/control-pin effects within the parent circuit; no software register interface is specified.",
@@ -25405,7 +25419,6 @@
     "U102": "E1-CIR-02",
     "C101": "E1-CIR-02",
     "C102": "E1-CIR-02",
-    "R102": "E1-CIR-02",
     "U103": "E1-CIR-03",
     "C103": "E1-CIR-03",
     "C104": "E1-CIR-03",
@@ -26087,7 +26100,6 @@
     "U501": "E5-CIR-03",
     "R501": "E5-CIR-03",
     "R502": "E5-CIR-03",
-    "R503": "E5-CIR-03",
     "C501": "E5-CIR-03",
     "C502": "E5-CIR-03",
     "C503": "E5-CIR-03",
@@ -26095,7 +26107,6 @@
     "U502": "E5-CIR-03",
     "R505": "E5-CIR-03",
     "R506": "E5-CIR-03",
-    "R507": "E5-CIR-03",
     "C504": "E5-CIR-03",
     "C505": "E5-CIR-03",
     "C506": "E5-CIR-03",
@@ -26104,7 +26115,6 @@
     "U503": "E5-CIR-04",
     "R509": "E5-CIR-04",
     "R510": "E5-CIR-04",
-    "R511": "E5-CIR-04",
     "C508": "E5-CIR-04",
     "C509": "E5-CIR-04",
     "C510": "E5-CIR-04",
@@ -26155,14 +26165,6 @@
     {
       "net": "3V3_Q6A",
       "pins": [
-        {
-          "sheet": "E1",
-          "ref": "R102",
-          "pin": "1",
-          "name": "1",
-          "electrical_type": "passive",
-          "assembly": "E1-CIR-02"
-        },
         {
           "sheet": "E2",
           "ref": "R206",
@@ -26813,30 +26815,6 @@
         },
         {
           "sheet": "E5",
-          "ref": "R503",
-          "pin": "2",
-          "name": "2",
-          "electrical_type": "passive",
-          "assembly": "E5-CIR-03"
-        },
-        {
-          "sheet": "E5",
-          "ref": "R507",
-          "pin": "2",
-          "name": "2",
-          "electrical_type": "passive",
-          "assembly": "E5-CIR-03"
-        },
-        {
-          "sheet": "E5",
-          "ref": "R511",
-          "pin": "2",
-          "name": "2",
-          "electrical_type": "passive",
-          "assembly": "E5-CIR-04"
-        },
-        {
-          "sheet": "E5",
           "ref": "R516",
           "pin": "2",
           "name": "2",
@@ -26901,7 +26879,6 @@
         }
       ],
       "assemblies": [
-        "E1-CIR-02",
         "E2-CIR-01",
         "E2-CIR-02",
         "E2-CIR-13",
@@ -26919,8 +26896,6 @@
         "E4-CIR-07",
         "E4-CIR-08",
         "E4-CIR-09",
-        "E5-CIR-03",
-        "E5-CIR-04",
         "E5-CIR-05",
         "E5-CIR-09"
       ],
@@ -36672,56 +36647,6 @@
       "cross_assembly": true
     },
     {
-      "net": "E4_LIME_RXA",
-      "pins": [
-        {
-          "sheet": "E4",
-          "ref": "A415",
-          "pin": "X2_RX_A",
-          "name": "X2_RX_A",
-          "electrical_type": "passive",
-          "assembly": "E4-CIR-01"
-        },
-        {
-          "sheet": "E4",
-          "ref": "W403",
-          "pin": "END_B",
-          "name": "END_B",
-          "electrical_type": "passive",
-          "assembly": "E4-CIR-01"
-        }
-      ],
-      "assemblies": [
-        "E4-CIR-01"
-      ],
-      "cross_assembly": false
-    },
-    {
-      "net": "E4_LIME_RXB",
-      "pins": [
-        {
-          "sheet": "E4",
-          "ref": "A415",
-          "pin": "X4_RX_B",
-          "name": "X4_RX_B",
-          "electrical_type": "passive",
-          "assembly": "E4-CIR-01"
-        },
-        {
-          "sheet": "E4",
-          "ref": "W404",
-          "pin": "END_B",
-          "name": "END_B",
-          "electrical_type": "passive",
-          "assembly": "E4-CIR-01"
-        }
-      ],
-      "assemblies": [
-        "E4-CIR-01"
-      ],
-      "cross_assembly": false
-    },
-    {
       "net": "E4_LIME_TO_RTLB",
       "pins": [
         {
@@ -36763,6 +36688,56 @@
           "ref": "W406",
           "pin": "END_A",
           "name": "END_A",
+          "electrical_type": "passive",
+          "assembly": "E4-CIR-01"
+        }
+      ],
+      "assemblies": [
+        "E4-CIR-01"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E4_LIME_X2_RX",
+      "pins": [
+        {
+          "sheet": "E4",
+          "ref": "A415",
+          "pin": "X2_RX",
+          "name": "X2_RX",
+          "electrical_type": "passive",
+          "assembly": "E4-CIR-01"
+        },
+        {
+          "sheet": "E4",
+          "ref": "W403",
+          "pin": "END_B",
+          "name": "END_B",
+          "electrical_type": "passive",
+          "assembly": "E4-CIR-01"
+        }
+      ],
+      "assemblies": [
+        "E4-CIR-01"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E4_LIME_X4_RX",
+      "pins": [
+        {
+          "sheet": "E4",
+          "ref": "A415",
+          "pin": "X4_RX",
+          "name": "X4_RX",
+          "electrical_type": "passive",
+          "assembly": "E4-CIR-01"
+        },
+        {
+          "sheet": "E4",
+          "ref": "W404",
+          "pin": "END_B",
+          "name": "END_B",
           "electrical_type": "passive",
           "assembly": "E4-CIR-01"
         }
@@ -40472,14 +40447,6 @@
           "name": "FAULT_N",
           "electrical_type": "open_collector",
           "assembly": "E5-CIR-04"
-        },
-        {
-          "sheet": "E5",
-          "ref": "R511",
-          "pin": "1",
-          "name": "1",
-          "electrical_type": "passive",
-          "assembly": "E5-CIR-04"
         }
       ],
       "assemblies": [
@@ -40513,14 +40480,6 @@
           "pin": "4",
           "name": "FAULT_N",
           "electrical_type": "open_collector",
-          "assembly": "E5-CIR-03"
-        },
-        {
-          "sheet": "E5",
-          "ref": "R507",
-          "pin": "1",
-          "name": "1",
-          "electrical_type": "passive",
           "assembly": "E5-CIR-03"
         }
       ],
@@ -40691,14 +40650,6 @@
           "pin": "4",
           "name": "FAULT_N",
           "electrical_type": "open_collector",
-          "assembly": "E5-CIR-03"
-        },
-        {
-          "sheet": "E5",
-          "ref": "R503",
-          "pin": "1",
-          "name": "1",
-          "electrical_type": "passive",
           "assembly": "E5-CIR-03"
         }
       ],
@@ -46176,14 +46127,6 @@
           "assembly": "E1-CIR-02"
         },
         {
-          "sheet": "E1",
-          "ref": "R102",
-          "pin": "2",
-          "name": "2",
-          "electrical_type": "passive",
-          "assembly": "E1-CIR-02"
-        },
-        {
           "sheet": "E3",
           "ref": "J301",
           "pin": "3",
@@ -49420,11 +49363,12 @@
   "validation": {
     "status": "PASS",
     "source_snapshot_hashes_unchanged": true,
-    "all754refs_assigned_once": true,
-    "all2189connected_pin_net_triples_exact": true,
+    "all750refs_assigned_once": true,
+    "all2181connected_pin_net_triples_exact": true,
     "all137NCpins_exact": true,
     "all166subinterface_pin_arrays_exact": true,
     "all_catalogue_sources_exist": true,
-    "no_project_files_written_by_inventory_task": true
+    "no_project_files_written_by_inventory_task": true,
+    "synchronised": "23.10.2026 with the current design graphs: refs removed from the graphs dropped, renamed nets followed, graph-derived fields recomputed; curated fields unchanged"
   }
 }

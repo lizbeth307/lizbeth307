@@ -1,12 +1,12 @@
 {
   "summary": {
     "status": "PREPARATION_ONLY_NOT_FOR_FABRICATION",
-    "components": 754,
-    "schematic_contacts": 2326,
-    "connected_contacts": 2189,
+    "components": 750,
+    "schematic_contacts": 2318,
+    "connected_contacts": 2181,
     "nets": 466,
     "categories": {
-      "bare_board_part": 604,
+      "bare_board_part": 600,
       "bond_implementation_requirement": 1,
       "harness_assembly": 13,
       "mechanical_or_remote_part": 22,
@@ -20,54 +20,54 @@
       "CTRL_HMI": 124,
       "DC_CORE": 71,
       "PWR_BRANCH": 224,
-      "PWR_MAIN": 43,
+      "PWR_MAIN": 42,
       "RF_HF": 13,
       "RF_HMC": 46,
       "RF_INJECTOR": 31,
-      "USB_POWER": 52
+      "USB_POWER": 49
     },
-    "graph_assigned_footprints": 176,
-    "portable_graph_assignments": 176,
-    "bare_parts_without_footprint": 425,
+    "graph_assigned_footprints": 173,
+    "portable_graph_assignments": 173,
+    "bare_parts_without_footprint": 424,
     "pin_pad_mismatches": 0,
     "xml_connected_pin_audit": "PASS",
-    "xml_compared_connected_pins": 2189,
+    "xml_compared_connected_pins": 2181,
     "core_parts": 71,
     "core_connected_pins": 180,
     "core_boundary_nets": 8,
     "core_graph_assigned_footprints": 21,
     "core_proposed_footprints": 50,
-    "blocking_issue_records": 469
+    "blocking_issue_records": 468
   },
   "provenance": {
     "inputs": [
       {
         "file": "design/E1.json",
-        "sha256": "e87f79db4da0d9be7e74aa1ad2816ea99ae4ed8fd6e723ba375c1559bfd51392"
+        "sha256": "f535a839afd70def8f35f43380153cb00723f97c634be51d9159d1bfe4630591"
       },
       {
         "file": "design/E2.json",
-        "sha256": "adc5b67b6b53977143847d688f657364a5e300a80761d74e1dc82e34bd703c16"
+        "sha256": "bb2ac6a37392689b462a570d7334aa257aaad8e4a006c5df1e934c3dd794d40c"
       },
       {
         "file": "design/E3.json",
-        "sha256": "0a2e2e60ede923b2d0a1aa0f8484a97513c1ef36ae389d3aee365fbcf90aaac5"
+        "sha256": "f2ac2171727824e36b5e4d7780677d4fc46ec0840d0a57a59053451132c92be4"
       },
       {
         "file": "design/E4.json",
-        "sha256": "b05555c7a6729029f779df3ca3d0a62d71e206520a33cf7e34ffa3e2c081344d"
+        "sha256": "0935bbfe204728620575ba2e6713185799862050f5d8c2c465c028606c5612bf"
       },
       {
         "file": "design/E5.json",
-        "sha256": "86a9099809fbcdf365c82ecf4a239531b1b55715ee17cd1c5fb5a776c979ca05"
+        "sha256": "d0366fa9440ba2488b352bcf24ca31b1b8e117afb1c2aa2453dd214d711c3dd6"
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "9b87ab7f6bbf7bfb1a2abc13e49093a3060cb98360707bd8d4b148814de77daf"
+        "sha256": "ce1fb1ff826e661d7a65d5f786bd2d7366e0c5727882cbbc39afac63e84bca4b"
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "cfc4adf58ca9ee86ab88963e6c04321012092c60a8f328b37782e1ded8c415d5"
+        "sha256": "40b90a9858e57fbf6a868c93afe2ae321fc7bea9fee6f144b7cd76a151ccccc2"
       }
     ],
     "source_documents": [
@@ -5007,7 +5007,7 @@
     {
       "ref": "J413",
       "sheet": "E4",
-      "value": "RX1 panel SMA: captive loop",
+      "value": "RX1 panel SMA: captive coax assembly",
       "kind": "connector",
       "category": "physical_interface_boundary",
       "assembly_owner": "",
@@ -6077,22 +6077,6 @@
       "classification_reason": "Existing purchased-breakout detail; do not buy/place a second INA228/shunt/capacitor."
     },
     {
-      "ref": "R102",
-      "sheet": "E1",
-      "value": "10k1%",
-      "kind": "resistor",
-      "category": "bare_board_part",
-      "assembly_owner": "",
-      "board_candidate": "PWR_MAIN",
-      "dnp": false,
-      "footprint": "",
-      "portable_footprint": false,
-      "pad_coverage": "UNASSIGNED",
-      "pin_count": 2,
-      "source": "STACK §2.7,§5.1",
-      "classification_reason": "Physical IC/passive/device for a custom board candidate."
-    },
-    {
       "ref": "R103",
       "sheet": "E1",
       "value": "3.30M0.1%25ppm",
@@ -7103,7 +7087,7 @@
     {
       "ref": "R248",
       "sheet": "E2",
-      "value": "56.2k 1%",
+      "value": "RILIM TBD (start 56.2k 1%)",
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -7311,7 +7295,7 @@
     {
       "ref": "R263",
       "sheet": "E2",
-      "value": "112k 0.1%",
+      "value": "OVLO TBD (start 112k 0.1%)",
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -7327,7 +7311,7 @@
     {
       "ref": "R264",
       "sheet": "E2",
-      "value": "10.0k 0.1%",
+      "value": "OVLO TBD (start 10.0k 0.1%)",
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -9391,7 +9375,7 @@
     {
       "ref": "R501",
       "sheet": "E5",
-      "value": "43.2k 1%",
+      "value": "RILIM TBD (start 43.2k 1%)",
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -9408,22 +9392,6 @@
       "ref": "R502",
       "sheet": "E5",
       "value": "100k",
-      "kind": "resistor",
-      "category": "bare_board_part",
-      "assembly_owner": "",
-      "board_candidate": "USB_POWER",
-      "dnp": false,
-      "footprint": "Resistor_SMD:R_0603_1608Metric",
-      "portable_footprint": true,
-      "pad_coverage": "PASS",
-      "pin_count": 2,
-      "source": "STACK.md §5.2 / engineering design",
-      "classification_reason": "Physical IC/passive/device for a custom board candidate."
-    },
-    {
-      "ref": "R503",
-      "sheet": "E5",
-      "value": "10k",
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -9485,22 +9453,6 @@
       "classification_reason": "Physical IC/passive/device for a custom board candidate."
     },
     {
-      "ref": "R507",
-      "sheet": "E5",
-      "value": "10k",
-      "kind": "resistor",
-      "category": "bare_board_part",
-      "assembly_owner": "",
-      "board_candidate": "USB_POWER",
-      "dnp": false,
-      "footprint": "Resistor_SMD:R_0603_1608Metric",
-      "portable_footprint": true,
-      "pad_coverage": "PASS",
-      "pin_count": 2,
-      "source": "STACK.md §5.2 / engineering design",
-      "classification_reason": "Physical IC/passive/device for a custom board candidate."
-    },
-    {
       "ref": "R508",
       "sheet": "E5",
       "value": "10k",
@@ -9519,7 +9471,7 @@
     {
       "ref": "R509",
       "sheet": "E5",
-      "value": "28.7k 1%",
+      "value": "RILIM TBD (start 28.7k 1%)",
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -9536,22 +9488,6 @@
       "ref": "R510",
       "sheet": "E5",
       "value": "100k",
-      "kind": "resistor",
-      "category": "bare_board_part",
-      "assembly_owner": "",
-      "board_candidate": "USB_POWER",
-      "dnp": false,
-      "footprint": "Resistor_SMD:R_0603_1608Metric",
-      "portable_footprint": true,
-      "pad_coverage": "PASS",
-      "pin_count": 2,
-      "source": "STACK.md §5.2 / engineering design",
-      "classification_reason": "Physical IC/passive/device for a custom board candidate."
-    },
-    {
-      "ref": "R511",
-      "sheet": "E5",
-      "value": "10k",
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -9599,7 +9535,7 @@
     {
       "ref": "R514",
       "sheet": "E5",
-      "value": "15.8k 1%",
+      "value": "RILIM TBD (start 15.8k 1%)",
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -12047,7 +11983,7 @@
     {
       "ref": "U503",
       "sheet": "E5",
-      "value": "TPS2553DBVR",
+      "value": "TPS2553DBVR-1",
       "kind": "ic",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -12414,12 +12350,6 @@
     }
   ],
   "unresolved": [
-    {
-      "ref": "R102",
-      "type": "missing_physical_footprint",
-      "blocking": true,
-      "detail": "Manufacturer land pattern/package and selected PCB footprint are not fixed."
-    },
     {
       "ref": "C103",
       "type": "missing_physical_footprint",

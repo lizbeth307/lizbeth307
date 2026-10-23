@@ -698,14 +698,14 @@
         }
       ],
       "notes": [
-        "RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; no pulls to AON or LAB5.",
+        "RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; its only 10k pull-up to 3V3_Q6A is R324 on E3.",
         "Latch-off version; software reset by EN low then high."
       ],
       "footprint": "Package_TO_SOT_SMD:SOT-23-6"
     },
     {
       "ref": "R501",
-      "value": "43.2k 1%",
+      "value": "RILIM TBD (start 43.2k 1%)",
       "kind": "resistor",
       "group": "VBUS RTL-A і LAB PORT",
       "source": "STACK.md §5.2 / engineering design",
@@ -724,7 +724,10 @@
           "net": "GND"
         }
       ],
-      "footprint": "Resistor_SMD:R_0603_1608Metric"
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "notes": [
+        "STACK gives no RILIM value for this channel, only the rule 1.5–2× measured current (§5.1). Starting value per R-E5-03; bench gate E5-04."
+      ]
     },
     {
       "ref": "R502",
@@ -753,32 +756,6 @@
       "footprint": "Resistor_SMD:R_0603_1608Metric"
     },
     {
-      "ref": "R503",
-      "value": "10k",
-      "kind": "resistor",
-      "group": "VBUS RTL-A і LAB PORT",
-      "source": "STACK.md §5.2 / engineering design",
-      "status": "design",
-      "pins": [
-        {
-          "number": "1",
-          "name": "1",
-          "type": "passive",
-          "net": "FAULT_RTLA"
-        },
-        {
-          "number": "2",
-          "name": "2",
-          "type": "passive",
-          "net": "3V3_Q6A"
-        }
-      ],
-      "notes": [
-        "Only Q6A-switched3.3V pull-up avoids back-power of unpowered MCP."
-      ],
-      "footprint": "Resistor_SMD:R_0603_1608Metric"
-    },
-    {
       "ref": "C501",
       "value": "100nF X7R 10V",
       "kind": "capacitor",
@@ -800,7 +777,7 @@
         }
       ],
       "notes": [
-        "Place at IN/GND pins, short loop."
+        "Place at IN/GND pins with the shortest current path."
       ]
     },
     {
@@ -919,7 +896,7 @@
         }
       ],
       "notes": [
-        "RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; no pulls to AON or LAB5.",
+        "RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; its only 10k pull-up to 3V3_Q6A is R308 on E3.",
         "Latch-off version; software reset by EN low then high."
       ],
       "footprint": "Package_TO_SOT_SMD:SOT-23-6"
@@ -974,32 +951,6 @@
       "footprint": "Resistor_SMD:R_0603_1608Metric"
     },
     {
-      "ref": "R507",
-      "value": "10k",
-      "kind": "resistor",
-      "group": "VBUS RTL-A і LAB PORT",
-      "source": "STACK.md §5.2 / engineering design",
-      "status": "design",
-      "pins": [
-        {
-          "number": "1",
-          "name": "1",
-          "type": "passive",
-          "net": "FAULT_LABPORT"
-        },
-        {
-          "number": "2",
-          "name": "2",
-          "type": "passive",
-          "net": "3V3_Q6A"
-        }
-      ],
-      "notes": [
-        "Only Q6A-switched3.3V pull-up avoids back-power of unpowered MCP."
-      ],
-      "footprint": "Resistor_SMD:R_0603_1608Metric"
-    },
-    {
       "ref": "C504",
       "value": "100nF X7R 10V",
       "kind": "capacitor",
@@ -1021,7 +972,7 @@
         }
       ],
       "notes": [
-        "Place at IN/GND pins, short loop."
+        "Place at IN/GND pins with the shortest current path."
       ]
     },
     {
@@ -1118,7 +1069,7 @@
     },
     {
       "ref": "U503",
-      "value": "TPS2553DBVR",
+      "value": "TPS2553DBVR-1",
       "kind": "ic",
       "group": "VBUS HF+ з демпфованим LC",
       "source": "https://www.ti.com/lit/gpn/tps2553",
@@ -1162,14 +1113,14 @@
         }
       ],
       "notes": [
-        "RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; no pulls to AON or LAB5.",
-        "Non-latching constant-current version selected for large capacitive/device startup."
+        "RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; its only 10k pull-up to 3V3_Q6A is R323 on E3.",
+        "Latch-off -1 version, as STACK §5.1/§5.2 specify for VBUS HF+. TPS2553DBVR (constant-current, LCSC C55266) only on this channel and only if it fails the STACK §8 TPS2553DBVR-1 item 3 inrush test at final RILIM (open item E5-04)."
       ],
       "footprint": "Package_TO_SOT_SMD:SOT-23-6"
     },
     {
       "ref": "R509",
-      "value": "28.7k 1%",
+      "value": "RILIM TBD (start 28.7k 1%)",
       "kind": "resistor",
       "group": "VBUS HF+ з демпфованим LC",
       "source": "STACK.md §5.2 / engineering design",
@@ -1188,7 +1139,10 @@
           "net": "GND"
         }
       ],
-      "footprint": "Resistor_SMD:R_0603_1608Metric"
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "notes": [
+        "STACK gives no RILIM value for this channel, only the rule 1.5–2× measured current (§5.1). Starting value per R-E5-03; bench gate E5-04."
+      ]
     },
     {
       "ref": "R510",
@@ -1217,32 +1171,6 @@
       "footprint": "Resistor_SMD:R_0603_1608Metric"
     },
     {
-      "ref": "R511",
-      "value": "10k",
-      "kind": "resistor",
-      "group": "VBUS HF+ з демпфованим LC",
-      "source": "STACK.md §5.2 / engineering design",
-      "status": "design",
-      "pins": [
-        {
-          "number": "1",
-          "name": "1",
-          "type": "passive",
-          "net": "FAULT_HFP"
-        },
-        {
-          "number": "2",
-          "name": "2",
-          "type": "passive",
-          "net": "3V3_Q6A"
-        }
-      ],
-      "notes": [
-        "Only Q6A-switched3.3V pull-up avoids back-power of unpowered MCP."
-      ],
-      "footprint": "Resistor_SMD:R_0603_1608Metric"
-    },
-    {
       "ref": "C508",
       "value": "100nF X7R 10V",
       "kind": "capacitor",
@@ -1264,7 +1192,7 @@
         }
       ],
       "notes": [
-        "Place at IN/GND pins, short loop."
+        "Place at IN/GND pins with the shortest current path."
       ]
     },
     {
@@ -1510,7 +1438,7 @@
     },
     {
       "ref": "R514",
-      "value": "15.8k 1%",
+      "value": "RILIM TBD (start 15.8k 1%)",
       "kind": "resistor",
       "group": "T7 USB3 VBUS",
       "source": "STACK.md §5.2 / engineering design",
@@ -1529,7 +1457,10 @@
           "net": "GND"
         }
       ],
-      "footprint": "Resistor_SMD:R_0603_1608Metric"
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "notes": [
+        "STACK gives no RILIM value for this channel, only the rule 1.5–2× measured current (§5.1). Starting value per R-E5-03; bench gate E5-04."
+      ]
     },
     {
       "ref": "R515",
@@ -1605,7 +1536,7 @@
         }
       ],
       "notes": [
-        "Place at IN/GND pins, short loop."
+        "Place at IN/GND pins with the shortest current path."
       ]
     },
     {
@@ -2968,55 +2899,109 @@
       "id": "E5-01",
       "description": "Received Wisecoco board DC barrel size/polarity and USBTP/USB-C touch wiring still undocumented; no-VBUS enumeration must work.",
       "blocking": true,
-      "resolve": "Obtain exact board photo/schematic, DMM mapping, vendor confirmation and enumerate with onlyD+/D−/GND. Never substitute guessed connector numbering."
+      "resolve": "Obtain the exact board photo/schematic, DMM mapping, vendor confirmation and enumerate with only D+/D−/GND. Never substitute guessed connector numbering.",
+      "stack": "§2.6; §8 (плата дисплея, D5)",
+      "refs": [
+        "U520"
+      ]
     },
     {
       "id": "E5-02",
       "description": "IMU cable and exact received board revisions are unverified physical assemblies; E3 now defines RP2040-Zero/BNO085 internal wiring.",
       "blocking": true,
-      "resolve": "Verify E3 board-pad map on received revisions; confirm chosen GX16 harness orientation, 3.3V UART and diode-fed E5_IMU_VIN; run 1e6 CRC-clean frames and 100 cold starts."
+      "resolve": "Verify E3 board-pad map on received revisions; confirm chosen GX16 harness orientation, 3.3V UART and diode-fed E5_IMU_VIN; run 1e6 CRC-clean frames and 100 cold starts.",
+      "stack": "§2.8; §5.2; §8 (пак IMU)",
+      "refs": [
+        "J504",
+        "J550"
+      ]
     },
     {
       "id": "E5-03",
-      "description": "ADT-Link R44SF connector variant and removal of ALL host3.3V paths are not yet confirmed.",
+      "description": "ADT-Link R44SF connector variant and removal of ALL host 3.3 V paths are not yet confirmed.",
       "blocking": true,
-      "resolve": "Confirm part withADT-Link; continuity test every3.3V contact after modification. Validate8GT/sx1, cold/warm boots andzeroAER. Validate genuine power-cycle withLIME3V3 off including signal backfeed."
+      "resolve": "Confirm the part with ADT-Link; continuity-test every 3.3 V contact after modification. Validate 8 GT/s x1, cold/warm boots and zero AER. Validate a genuine power-cycle with LIME3V3 off, including signal backfeed.",
+      "stack": "§2.11.1; §8.1 L-1, L-12",
+      "refs": [
+        "U530"
+      ]
     },
     {
       "id": "E5-04",
-      "description": "Current-setting resistors are engineering starting values, no measured device steady/startup currents or hot-corner proof.",
+      "description": "Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
       "blocking": true,
-      "resolve": "Measure current/inrush, setRTL/HF limits1.5–2times measured asSTACK, confirmHFminimumstartup>=0.75A; retry/latch test at all battery states; scopeLCovershoot."
+      "resolve": "Measure current/inrush; set the RTL-A/HF+/T7 limits to 1.5–2× the measured current as STACK §5.1 requires; confirm HF+ minimum startup ≥0.75 A. Run the STACK §8 TPS2553DBVR-1 item 3 inrush test on latching U503 (HF+ LC 100 µH/100 µF + 220 µF damper) at final RILIM; only if it latches, fit TPS2553DBVR (constant-current) on this channel alone. Retry/latch test at all battery states; scope LC overshoot.",
+      "stack": "§5.1 (VBUS RTL-A, HF+); §8 (TPS2553DBVR-1 п. 2–3)",
+      "refs": [
+        "U501",
+        "R501",
+        "R509",
+        "R514"
+      ]
     },
     {
       "id": "E5-05",
       "description": "T7 VBUS rail capacity and modified cable SuperSpeed signal integrity untested.",
       "blocking": true,
-      "resolve": "WithrealT7 proveJ5load<1.5A expected operating budget, VCC_5V_PERI<=14W,5000M/UAS,noUSBresets,fio,hot-cornerTJ<=105C for1.5A. Reevaluate rail/switch/cable if failed."
+      "resolve": "With a real T7 prove J5 load <1.5 A expected operating budget, VCC_5V_PERI <=14 W, 5000M/UAS, no USB resets, fio, hot-corner TJ <=105 C for 1.5 A. Re-evaluate rail/switch/cable if failed.",
+      "stack": "§5.1; §5.2; §8.1 (T7)",
+      "refs": [
+        "U505",
+        "U540"
+      ]
     },
     {
       "id": "E5-06",
       "description": "HDMI/display/hub and receiver backfeed paths through signal lines need physical power-state validation.",
       "blocking": true,
-      "resolve": "VerifyQ6Aoff/LAB5on/displayon combinations usingDMM/FNB58. HDMI5VQ6A andQ6AUSBVBUS shouldremain0V withinmeasurementresolution. CheckDDC/HPD afterU506installation andno phantom receiverpower."
+      "resolve": "Verify Q6A off / LAB5 on / display on combinations using DMM/FNB58. Q6A HDMI 5 V and Q6A USB VBUS should remain 0 V within measurement resolution. Check DDC/HPD after U506 installation and no phantom receiver power.",
+      "stack": "§5.2; §8 (зворотне живлення)",
+      "refs": [
+        "U506"
+      ]
     },
     {
       "id": "E5-07",
-      "description": "EDL factory button pads and cable orientation not physically located on exact receivedQ6A.",
+      "description": "EDL factory button pads and cable orientation not physically located on the exact received Q6A.",
       "blocking": true,
-      "resolve": "Use factory button first; continuity-identify its two switch nets before fittingparallelSW501. UnplugT7 forEDL and confirm05c6:9008."
+      "resolve": "Use the factory button first; continuity-identify its two switch nets before fitting parallel SW501. Unplug T7 for EDL and confirm 05c6:9008.",
+      "stack": "§5.2; §8.1 (EDL)",
+      "refs": [
+        "SW501",
+        "J522"
+      ]
     },
     {
       "id": "E5-08",
       "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released.",
       "blocking": true,
-      "resolve": "Record exact supplier part numbers, face-view and wire-color tables; no-power continuity plus first energization current limit."
+      "resolve": "Record exact supplier part numbers, face-view and wire-color tables; no-power continuity plus first energization current limit.",
+      "stack": "§2.9; §5.8",
+      "refs": [
+        "J502",
+        "J505",
+        "J504"
+      ]
     },
     {
       "id": "E5-09",
-      "description": "Radiated-noise behavior and USB2touch enumeration are physical integration gates, not determined by netlist.",
+      "description": "Radiated-noise behavior and USB2 touch enumeration are physical integration gates, not determined by netlist.",
       "blocking": true,
-      "resolve": "RunSTACK A/B noise matrix (HF+,GNSS,Lband,T7authorized=0/off), cable strain relief andenvironmental tests; do not markproductionready beforepasses."
+      "resolve": "Run the STACK A/B noise matrix (HF+, GNSS, L-band, T7 authorized=0/off), cable strain relief and environmental tests; do not mark production-ready before passes.",
+      "stack": "§5.7; §8 (A/B-матриця); §8.2",
+      "refs": [
+        "U510"
+      ]
+    },
+    {
+      "id": "E5-10",
+      "description": "Wi-Fi/BT Q6A (FCU760K, AIC8800 на порту 4 FE1.1s) у польовому/QUIET root вимкнено лише програмно: blacklist з install /bin/false, udev authorized=0 за шляхом порту 4 і rfkill як другий шар. Апаратне утримання WIFI_PWR_EN (GPIO TLMM через CJ3134K до WIFI_PWR_EN_3V3, схема Radxa v1.21, с. 4) на отриманій платі не знайдено; gpio-hog у польовому DTBO не створено й не виміряно.",
+      "blocking": true,
+      "resolve": "W1-2 (STACK §8): домашній root з увімкненим Wi-Fi, тепле, а потім холодне перезавантаження в польовий root — на порту 4 FE1.1s немає пристрою (lsusb -t), немає мережевого пристрою wlan і hci0. Знайти лінію TLMM WIFI_PWR_EN, застосувати gpio-hog output-low у польовому DTBO, виміряти 0 V на живленні модуля й підтвердити, що домашнє розблокування працює; dpkg -l aicrf-test — пакет відсутній. До закриття authorized=0 без прив’язаного драйвера не вважати апаратним вимкненням.",
+      "stack": "§5.2 (FE1.1s P4, WIFI_PWR_EN); §5.7 (рівень плати); §8 (блокування Wi-Fi/BT, W1-2); §1.2 (#8)",
+      "refs": [
+        "U500"
+      ]
     }
   ],
   "decisions": [
@@ -3032,7 +3017,7 @@
     },
     {
       "id": "R-E5-03",
-      "description": "Initial current limits: RTL-A43.2k,LAB34.8k,HF28.7k,T7DRV15.8k. HFP andT7 use nonlatching versions for startup; RTL-A/LAB retain latch-off.",
+      "description": "Initial current limits (RILIM TBD, starting values): RTL-A 43.2k, LAB 34.8k (STACK value), HF+ 28.7k, T7 DRV 15.8k. RTL-A, LAB and HF+ use latch-off TPS2553DBVR-1 as STACK §5.1/§5.2 specify; HF+ moves to non-latching TPS2553DBVR only if the STACK §8 inrush test fails. T7 (not a STACK TPS2553 position) uses non-latching TPS2553DRVR for startup.",
       "source": "https://www.ti.com/lit/gpn/tps2553; bench-current and thermal tests still required."
     },
     {
@@ -3066,6 +3051,33 @@
       "net": "E5_IMU_VIN",
       "reason": "Known power after D502 Schottky: LAB5→SS14 anode→cathode E5_IMU_VIN supplies E3 IMU MCU. Flag declares powered-after-passive path only.",
       "source": "STACK.md §5.1 reverse-feed rules; D502 in E5.json; https://www.vishay.com/doc?88746="
+    }
+  ],
+  "drawing_notes": [
+    {
+      "id": "N-E5-01",
+      "refs": [
+        "R501"
+      ],
+      "stack": "§5.1 (VBUS RTL-A); §8 (TPS2553DBVR-1 п. 2–3)",
+      "text": "R501 = RILIM TBD (старт 43.2k 1%, 0.544–0.673 A). STACK для VBUS RTL-A задає лише правило RILIM = 1.5–2× виміряного струму; номінал STACK є тільки для порту LAB (R505 34.8k). Ворота: E5-04."
+    },
+    {
+      "id": "N-E5-02",
+      "refs": [
+        "U503",
+        "R509"
+      ],
+      "stack": "§5.1, §5.2 (VBUS HF+); §8 (TPS2553DBVR-1 п. 3)",
+      "text": "U503 = TPS2553DBVR-1 (засувка), як у STACK §5.1/§5.2. TPS2553DBVR зі сталим струмом (LCSC C55266) — лише на цьому каналі й лише якщо канал HF+ не пройде тест пускового струму STACK §8 (TPS2553DBVR-1, п. 3) при остаточному RILIM: LC 100 µH/100 µF + демпфер 220 µF ≈ 5.3 ms проти мін. deglitch 5 ms. R509 = RILIM TBD (старт 28.7k 1%). Ворота: E5-04."
+    },
+    {
+      "id": "N-E5-03",
+      "refs": [
+        "R514"
+      ],
+      "stack": "§5.1; §8.1 (T7)",
+      "text": "R514 = RILIM TBD (старт 15.8k 1%, 1.51–1.73 A). STACK не задає RILIM для ключа T7 (U505 TPS2553DRVR без засувки — проєктне рішення R-E5-03/R-E5-04). Ворота: E5-04, E5-05."
     }
   ]
 }

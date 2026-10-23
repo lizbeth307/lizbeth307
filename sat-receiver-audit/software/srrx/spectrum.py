@@ -17,7 +17,15 @@ MAX_RING_BYTES = 4 * 1024**3
 DEFAULT_RING_BYTES = 8 * 1024**2
 MAX_FFT_SIZE = 1024**2
 MAX_RING_CHUNKS = 8192
+# Mandatory no-data bands (STACK.md v2, C16 and the excluded-services row):
+# 3-30 kHz, 225-400 MHz, Cospas-Sarsat 406.0-406.1 MHz uplink (beacon IDs and
+# positions of people in distress) and 1530-1660 MHz, which contains the
+# Cospas-Sarsat MEOSAR/LEOSAR downlink 1544.0-1545.0 MHz. Bounds are inclusive;
+# any bin that touches a band becomes valid=False, power_dbfs=None.
+COSPAS_SARSAT_UPLINK_HZ = (406_000_000.0, 406_100_000.0)
+COSPAS_SARSAT_DOWNLINK_HZ = (1_544_000_000.0, 1_545_000_000.0)
 MASKED_BANDS_HZ = ((3_000.0, 30_000.0), (225_000_000.0, 400_000_000.0),
+                   COSPAS_SARSAT_UPLINK_HZ,
                    (1_530_000_000.0, 1_660_000_000.0))
 FRAME_FIELDS = frozenset(('v', 'kind', 'center_hz', 'sample_rate_hz', 'fft_size',
                          'power_dbfs', 'valid', 'relative_frequency_hz', 'source', 'sample_count'))

@@ -1,6 +1,6 @@
 {
   "sheet": "E4",
-  "title": "РЧ-тракт: DC-розвʼязка, перемикачі, реле та приймачі",
+  "title": "РЧ-тракт: DC-розв'язка, перемикачі, приймачі",
   "sources": [
     {
       "url": "https://www.analog.com/media/en/technical-documentation/data-sheets/hmc7992.pdf",
@@ -594,15 +594,15 @@
           "type": "passive"
         },
         {
-          "number": "X2_RX_A",
-          "name": "X2_RX_A",
-          "net": "E4_LIME_RXA",
+          "number": "X2_RX",
+          "name": "X2_RX",
+          "net": "E4_LIME_X2_RX",
           "type": "passive"
         },
         {
-          "number": "X4_RX_B",
-          "name": "X4_RX_B",
-          "net": "E4_LIME_RXB",
+          "number": "X4_RX",
+          "name": "X4_RX",
+          "net": "E4_LIME_X4_RX",
           "type": "passive"
         },
         {
@@ -674,7 +674,7 @@
       ],
       "description": "Functional interface with logical connector names; no implied physical PCB pin numbering.",
       "notes": [
-        "X1 TX is permanently loaded. X2/X4 are the v1.2 receive ports; validate channel A/B mapping on the supplied board. J4 is a reference input, not an antenna."
+        "X1 TX is permanently loaded (W406 → A410 ANNE-50+). X2/X4 are the v1.2 receive ports; which of them is RX-A and which RX-B is TBD per STACK §2.11.1 / §8.1 L-12 (open item E4-05), so pins and nets carry only the port names."
       ]
     },
     {
@@ -1810,7 +1810,7 @@
     },
     {
       "ref": "J413",
-      "value": "RX1 panel SMA: captive loop",
+      "value": "RX1 panel SMA: captive coax assembly",
       "kind": "connector",
       "group": "RF and receiver interfaces",
       "status": "module",
@@ -3226,7 +3226,7 @@
         {
           "number": "END_B",
           "name": "END_B",
-          "net": "E4_LIME_RXA",
+          "net": "E4_LIME_X2_RX",
           "type": "passive"
         },
         {
@@ -3255,7 +3255,7 @@
         {
           "number": "END_B",
           "name": "END_B",
-          "net": "E4_LIME_RXB",
+          "net": "E4_LIME_X4_RX",
           "type": "passive"
         },
         {
@@ -6165,49 +6165,93 @@
       "id": "E4-01",
       "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional static bleeds stay DNP.",
       "blocking": true,
-      "resolve": "Verify selected 0805LS-471XGRC / 0805HP-221XGRC / 0603HP-47NXGRW manufacturer land patterns and target-band impedance under bias. VNA qualify IL/RL/isolation and DC heating at actual/worst protected current. The current Coilcraft 0603HP PDF confirms the 2.3 GHz typical SRF; no documentary SRF question remains. L401/L407 stay optional DNP until separately qualified."
+      "resolve": "Verify selected 0805LS-471XGRC / 0805HP-221XGRC / 0603HP-47NXGRW manufacturer land patterns and target-band impedance under bias. VNA qualify IL/RL/isolation and DC heating at actual/worst protected current. The current Coilcraft 0603HP PDF confirms the 2.3 GHz typical SRF; no documentary SRF question remains. L401/L407 stay optional DNP until separately qualified.",
+      "stack": "§5.3; §8 (РЧ-деталі); §8.1 RF-10",
+      "refs": [
+        "L402",
+        "L403",
+        "L404"
+      ]
     },
     {
       "id": "E4-03",
       "description": "Boni supplied bias-tee port labels, DC socket polarity and receiver DC block require actual hardware.",
       "blocking": true,
-      "resolve": "Measure continuity/polarity, antenna DC and RADIO port <0.1 V before connecting HF+."
+      "resolve": "Measure continuity/polarity, antenna DC and RADIO port <0.1 V before connecting HF+.",
+      "stack": "§5.3; §8.1 HF-9, HF-11",
+      "refs": [
+        "A406"
+      ]
     },
     {
       "id": "E4-04",
       "description": "S-band module and supply selection are complete; external inline pod assembly, cable loss, gain/NF and thermal/current measurements remain unqualified.",
       "blocking": true,
-      "resolve": "Build specified LaNAWB100845 + cf2235 + DC blocks in Hammond1554U2GY pod; verify stacked fit/cable bends, weather seals and strain relief. Measure LaNA current/inrush at protected5V, 2.2–2.3GHz S21/NF/linearity, and receiver protection. Do not substitute generic nominal NF for the actual S-band measurement."
+      "resolve": "Build the specified LaNA WB 100845 + cf2235 + DC blocks in the Hammond 1554U2GY pod; verify stacked fit/cable bends, weather seals and strain relief. Measure LaNA current/inrush at protected 5 V, 2.2–2.3 GHz S21/NF/linearity, and receiver protection. Do not substitute generic nominal NF for the actual S-band measurement.",
+      "stack": "§5.3 (S-band); поправки v2.1 (LaNA WB, cf2235-kt30)",
+      "refs": [
+        "A422",
+        "A423"
+      ]
     },
     {
       "id": "E4-05",
-      "description": "Lime X2/X4 are verified RX ports for v1.2; supplied-board channel A/B and cable labels need confirmation.",
+      "description": "Lime X2/X4 are the v1.2 RX ports, but which of them is RX-A and which RX-B is TBD (STACK §2.11.1, §8.1 L-12: check against the board marking). Pins are named X2_RX/X4_RX and nets E4_LIME_X2_RX/E4_LIME_X4_RX, so the drawing fixes no channel; supplied-board cable labels need confirmation.",
       "blocking": true,
-      "resolve": "Check the exact revision schematic and conduct a one-port-at-a-time RX test. Generic setup X3 wording is not evidence."
+      "resolve": "Check the exact revision schematic and conduct a one-port-at-a-time RX test. Generic setup X3 wording is not evidence.",
+      "stack": "§2.11.1; §8.1 L-12",
+      "refs": [
+        "A415",
+        "W403",
+        "W404"
+      ]
     },
     {
       "id": "E4-06",
       "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification.",
       "blocking": true,
-      "resolve": "Verify each DCS LOW at0V and HIGH by±0.100V in both sweep directions over admitted temperature/supply range; record thresholds/hysteresis. Test±30V limited foreignDC with Q6A ON/OFF and require3V3_Q6A<0.1V whenOFF. Measure RFtap IL/RL/NF impact. Require startup/reference-fault HIGH and ownbiasOFF≥500ms beforepreflight; readiness staysfalse untilqualified. Check floating/open antenna as well as0Ω/50ΩDC loads. Include the996Ω bleed load in current baselines and measure its RF loss/parasitics. Reject false-safe at±0.100V; false-unsafe units also fail usability qualification. Also qualify cold minimum-supply reference-feed headroom: the arithmetic model requires D450 Vf≤1.015 V at VDD3.135 V and REF2.072 V for at least80µA LM4040 cathode current. Reference collapse must force HIGH, and must not be misreported as a working detector."
+      "resolve": "Verify each DCS LOW at 0 V and HIGH by ±0.100 V in both sweep directions over the admitted temperature/supply range; record thresholds/hysteresis. Test ±30 V limited foreign DC with Q6A ON/OFF and require 3V3_Q6A <0.1 V when OFF. Measure RF tap IL/RL/NF impact. Require startup/reference-fault HIGH and own bias OFF ≥500 ms before preflight; readiness stays false until qualified. Check floating/open antenna as well as 0 Ω/50 Ω DC loads. Include the 996 Ω bleed load in current baselines and measure its RF loss/parasitics. Reject false-safe at ±0.100 V; false-unsafe units also fail usability qualification. Also qualify cold minimum-supply reference-feed headroom: the arithmetic model requires D450 Vf ≤1.015 V at VDD 3.135 V and REF 2.072 V for at least 80 µA LM4040 cathode current. Reference collapse must force HIGH, and must not be misreported as a working detector.",
+      "stack": "§5.3 (DC-sense); §8.1 HF-10",
+      "refs": [
+        "D450",
+        "U458"
+      ]
     },
     {
       "id": "E4-07",
       "description": "RF PCB, relay insertion loss, isolation, return loss and startup PARK are unmeasured.",
       "blocking": true,
-      "resolve": "VNA: HF selector 10 kHz–260 MHz IL ≤0.3 dB, RL ≥21 dB, isolation ≥35 dB at 162–260 MHz plus STACK LF/HF gates. HMC ≥40 dB isolation at 0.1–1.7 GHz (37–40 dB conditional and recorded); verify all DC blocks and startup. Check all SMT footprint pad numbers, dimensions, orientation and ground/exposed-pad implementation against the now-verified manufacturer maps."
+      "resolve": "VNA: HF selector 10 kHz–260 MHz IL ≤0.3 dB, RL ≥21 dB, isolation ≥35 dB at 162–260 MHz plus STACK LF/HF gates. HMC ≥40 dB isolation at 0.1–1.7 GHz (37–40 dB conditional and recorded); verify all DC blocks and startup. Check all SMT footprint pad numbers, dimensions, orientation and ground/exposed-pad implementation against the now-verified manufacturer maps.",
+      "stack": "§5.3; §8 (HMC7992LP3DE; G6K-2F-RF-S); §8.1 RF-0/RF-1, HF-13",
+      "refs": [
+        "K401",
+        "K402",
+        "U405"
+      ]
     },
     {
       "id": "E4-08",
       "description": "RX1 captive edge/pad/panel assembly and H1 attenuation have not been measured.",
       "blocking": true,
-      "resolve": "Confirm edge → pad → panel → X2 without bypass. YAT 10±0.5 dB and RL ≥20 dB; H1 total ≥12.0 dB at 1420 MHz, using 3 dB pad if the 2 dB pad fails."
+      "resolve": "Confirm edge → pad → panel → X2 without bypass. YAT 10±0.5 dB and RL ≥20 dB; H1 total ≥12.0 dB at 1420 MHz, using 3 dB pad if the 2 dB pad fails.",
+      "stack": "§5.3 (RX1, YAT-10A+, H1)",
+      "refs": [
+        "J412",
+        "J413",
+        "W409",
+        "A407",
+        "A408"
+      ]
     },
     {
       "id": "E4-09",
       "description": "BENCH RF sled is not delivered as a separate HMC7992 + PE4312 PCB here.",
       "blocking": false,
-      "resolve": "Deliver its PCB/netlist, controls and 31.5 dB startup test if installed. Until then use the internal BENCH SMA with a qualified external conducted source."
+      "resolve": "Deliver its PCB/netlist, controls and 31.5 dB startup test if installed. Until then use the internal BENCH SMA with a qualified external conducted source.",
+      "stack": "§3.1; §5.3 (BENCH); §8.1 RF-11",
+      "refs": [
+        "J409"
+      ]
     }
   ],
   "decisions": [
@@ -6255,6 +6299,83 @@
       "id": "R-E4-09",
       "description": "Select ch1 0805LS-471XGRC, ch2 0805HP-221XGRC, ch3 0603HP-47NXGRW, with local100pF+10nF DC-end RF bypass. All listed current references meet≥0.5A; do not treat their15°C-rise Irms as absolute maximum current.",
       "source": "Independent Coilcraft primary specifications; band-specific final PCB VNA/thermal qualification remains hardware acceptance."
+    }
+  ],
+  "drawing_notes": [
+    {
+      "id": "N-E4-01",
+      "refs": [
+        "R4400",
+        "R4401",
+        "C4400",
+        "R4402",
+        "R4403",
+        "R4404",
+        "R4405",
+        "R4406",
+        "R4407",
+        "R4408",
+        "R4409",
+        "C4401",
+        "C4402",
+        "C4405",
+        "C4406",
+        "C4403",
+        "C4404",
+        "R4450",
+        "R4451",
+        "R4452",
+        "R4453",
+        "R4420",
+        "R4421",
+        "R4422",
+        "C4420",
+        "C4421",
+        "R4423",
+        "R4424",
+        "R4425",
+        "R4426",
+        "R4430",
+        "R4431",
+        "R4432",
+        "C4430",
+        "C4431",
+        "R4433",
+        "R4434",
+        "R4435",
+        "R4436",
+        "R4440",
+        "R4441",
+        "R4442",
+        "C4440",
+        "C4441",
+        "R4443",
+        "R4444",
+        "R4445",
+        "R4446",
+        "C4410",
+        "C4411",
+        "C4412",
+        "C4413",
+        "C4414",
+        "C4415",
+        "C4416",
+        "C4417",
+        "R4460",
+        "R4461",
+        "R4462",
+        "R4463",
+        "R4464",
+        "R4465",
+        "R4466",
+        "R4467",
+        "R4468",
+        "R4469",
+        "R4470",
+        "R4471"
+      ],
+      "stack": "§5.3 (DC-sense)",
+      "text": "Позначення R44xx/C44xx (4400–4499) — задокументований розширений діапазон E4 для DC-детекторів (design/E4-review.md), щоб не перетинатися з E5. Решта позначень E4 — у діапазоні 400–499."
     }
   ]
 }

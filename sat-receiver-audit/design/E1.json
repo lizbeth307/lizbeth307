@@ -427,31 +427,6 @@
       ]
     },
     {
-      "ref": "R102",
-      "value": "10k1%",
-      "kind": "resistor",
-      "group": "Лічильник заряду",
-      "status": "design",
-      "source": "STACK §2.7,§5.1",
-      "pins": [
-        {
-          "number": "1",
-          "name": "1",
-          "type": "passive",
-          "net": "3V3_Q6A"
-        },
-        {
-          "number": "2",
-          "name": "2",
-          "type": "passive",
-          "net": "INA228_ALERT"
-        }
-      ],
-      "notes": [
-        "ALERT підтягнуто тільки до 3V3_Q6A. I2C0 pull-up належить E3 і також живиться від 3V3_Q6A."
-      ]
-    },
-    {
       "ref": "U103",
       "value": "TPS70933DBVR",
       "kind": "ic",
@@ -2268,43 +2243,77 @@
       "id": "E1-01",
       "description": "Ревізія COUT і місця NTC/VSET/ISET/ISET_MODE/CELLSET не підтверджені офіційною схемою. Вікно 0…45 °C та inhibit не перевірені.",
       "blocking": true,
-      "resolve": "До модифікацій отримати ревізійну схему або фото обох боків з continuity до IC. Стенд: NTC 0/45 °C, обрив/КЗ, зупинка charge і reverse boost, 2 h при 3 A, 20 PD cycles, зовнішній VBUS=0 V, startup 5→20 V, CV кожної комірки. При провалі цей модуль не використовувати; ISDT лише після E1-02."
+      "resolve": "До модифікацій отримати ревізійну схему або фото обох боків з continuity до IC. Стенд: NTC 0/45 °C, обрив/КЗ, зупинка charge і reverse boost, 2 h при 3 A, 20 PD cycles, зовнішній VBUS=0 V, startup 5→20 V, CV кожної комірки. При провалі цей модуль не використовувати; ISDT лише після E1-02.",
+      "stack": "§2.7 (IP2368); §5.1; §8 (IP2368); §8.1 (IP2368, матриця DRP)",
+      "refs": [
+        "U110",
+        "TH101"
+      ]
     },
     {
       "id": "E1-02",
       "description": "Balance B0 = raw B− може шунтувати Daly через спільну землю ISDT 608PD і пропускати силовий струм по тонкому sense-дроту.",
       "blocking": true,
-      "resolve": "J102 позначено DNP/service-only; місячний баланс ISDT вимкнути до затвердженого інтерфейсу. До підключення перевірити DMM ізоляцію output−/balance B0 ISDT без живлення та отримати принципову схему виробника. При спільній землі потрібне перепроєктування з явним аналізом усіх струмових шляхів і незалежним захистом; ані main OFF, ані 5 A fuse не доводять безпеку. Не виправляти перенесенням B0→P− чи XT30−→raw B−. Внутрішній sense harness Daly лишається. Див. design/charger-bms-review.md. Низька continuity є reject; високий опір без живлення не є pass, бо стан може змінитися при роботі чи через USB. Для закриття потрібне підтвердження топології виробником або redesign із fault validation відсічки BMS в усіх струмових шляхах."
+      "resolve": "J102 позначено DNP/service-only; місячний баланс ISDT вимкнути до затвердженого інтерфейсу. До підключення перевірити DMM ізоляцію output−/balance B0 ISDT без живлення та отримати принципову схему виробника. При спільній землі потрібне перепроєктування з явним аналізом усіх струмових шляхів і незалежним захистом; ані main OFF, ані 5 A fuse не доводять безпеку. Не виправляти перенесенням B0→P− чи XT30−→raw B−. Внутрішній sense harness Daly лишається. Див. design/charger-bms-review.md. Низька continuity є reject; високий опір без живлення не є pass, бо стан може змінитися при роботі чи через USB. Для закриття потрібне підтвердження топології виробником або redesign із fault validation відсічки BMS в усіх струмових шляхах.",
+      "stack": "§2.7; §5.1; §8 (Daly DL-J05G; ISDT 608PD)",
+      "refs": [
+        "J102"
+      ]
     },
     {
       "id": "E1-03",
       "description": "Фізичний PHB2.0 pin order Daly та ревізія J05G/J04G3 нез’ясовані.",
       "blocking": true,
-      "resolve": "На прийманні звірити маркування з Daly DS саме цієї ревізії. Продзвонити B0…B4 зі знятим sense-штекером; послідовні напруги 3…4.2 V, сумарно 4S. Пробудження зарядником 3/3. До цього підключення sense заборонене."
+      "resolve": "На прийманні звірити маркування з Daly DS саме цієї ревізії. Продзвонити B0…B4 зі знятим sense-штекером; послідовні напруги 3…4.2 V, сумарно 4S. Пробудження зарядником 3/3. До цього підключення sense заборонене.",
+      "stack": "§2.7 (Daly); §8 (Daly DL-J05G)",
+      "refs": [
+        "U101"
+      ]
     },
     {
       "id": "E1-04",
       "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки ще не перевірено.",
       "blocking": true,
-      "resolve": "До батареї current-limited sweep 14→12→14 V при 25 і 50 °C: trip 12.8±0.1 V, release 13.6±0.1 V, drift≤50 mV. Калібрувати R105. AON без INA ≤11 µA. Утримуванням кнопки не можна обійти UV. 20 PD cycles без самозапуску. При провалі fallback TLV3012 із нижнім плечем 346.04 kΩ і повним повтором тесту."
+      "resolve": "До батареї current-limited sweep 14→12→14 V при 25 і 50 °C: trip 12.8±0.1 V, release 13.6±0.1 V, drift≤50 mV. Калібрувати R105. AON без INA ≤11 µA. Утримуванням кнопки не можна обійти UV. 20 PD cycles без самозапуску. При провалі fallback TLV3012 із нижнім плечем 346.04 kΩ і повним повтором тесту.",
+      "stack": "§5.1 (AON, UV); §8 (Супервізор AON)",
+      "refs": [
+        "U104",
+        "R105"
+      ]
     },
     {
       "id": "E1-05",
       "description": "Default LAB5: D36V50F5 +4 A fuse; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
       "blocking": true,
-      "resolve": "U108 D36V50F5 #4091; F102 4 A; L101 XAL6060-103MEC; C111/C112 35SVPF22M; C113 16SVPC100M; R110 WSL2512R3300FEA. Звірити площу, висоту і land patterns. Виміряти всі режими: LAB5 ≤3.2 A continuous; blower reserve 0.25 A continuous /0.50 A startup; SB_LNA 65 mA враховувати один раз у I_ANT≤1 A. Додаткова policy: I_ANT+0.83 A×EN_LAB≤1.5 A. За 5 V та 0…50 °C підтвердити C111/C112 effective ≥10 µF; C113 початково ≥80 µF; step 10…90% без осциляцій; 5 V±5% на КОЖНОМУ пристрої після switch/кабелю. Термо 30 min при 3.2 A і середовищі 50 °C; до 4 A transient із логом запобіжника та пульсацій. Вихід модуля 5 V±4% та drop L101 не гарантують USB 4.75 V у всіх допусках: low unit відбракувати або переробити живлення. Якщо actual сума перевищує бюджет — формальний concurrency cap/rail redesign із повтором тестів."
+      "resolve": "U108 D36V50F5 #4091; F102 4 A; L101 XAL6060-103MEC; C111/C112 35SVPF22M; C113 16SVPC100M; R110 WSL2512R3300FEA. Звірити площу, висоту і land patterns. Виміряти всі режими: LAB5 ≤3.2 A continuous; blower reserve 0.25 A continuous /0.50 A startup; SB_LNA 65 mA враховувати один раз у I_ANT≤1 A. Додаткова policy: I_ANT+0.83 A×EN_LAB≤1.5 A. За 5 V та 0…50 °C підтвердити C111/C112 effective ≥10 µF; C113 початково ≥80 µF; step 10…90% без осциляцій; 5 V±5% на КОЖНОМУ пристрої після switch/кабелю. Термо 30 min при 3.2 A і середовищі 50 °C; до 4 A transient із логом запобіжника та пульсацій. Вихід модуля 5 V±4% та drop L101 не гарантують USB 4.75 V у всіх допусках: low unit відбракувати або переробити живлення. Якщо actual сума перевищує бюджет — формальний concurrency cap/rail redesign із повтором тестів.",
+      "stack": "§5.1 (LAB5); §8 (LAB5); §8.1 (нагрів запобіжників)",
+      "refs": [
+        "U108",
+        "F102",
+        "L101"
+      ]
     },
     {
       "id": "E1-06",
       "description": "Термо, transient, ESD та узгодження захистів не доведені на реальному PCB.",
       "blocking": true,
-      "resolve": "Силова плата reflow. Перевірити USB-PD OVLO≈22 V, ILIM≈3.5 A, hot-plug 0→20 V і reverse blocking. TVS E1_SW не вважати гарантією захисту 28 V eFuse. SYS12: C4 RF A/B і 60 min при 4.2 A, входи 14/16.4 V; батарейний шлях 4.6 A при case 50 °C. Перед виготовленням PCB потрібні layout, ERC і DRC."
+      "resolve": "Силова плата reflow. Перевірити USB-PD OVLO≈22 V, ILIM≈3.5 A, hot-plug 0→20 V і reverse blocking. TVS E1_SW не вважати гарантією захисту 28 V eFuse. SYS12: C4 RF A/B і 60 min при 4.2 A, входи 14/16.4 V; батарейний шлях 4.6 A при case 50 °C. Перед виготовленням PCB потрібні layout, ERC і DRC.",
+      "stack": "§5.1; §5.6; §8.1 (J21 і USB-C; просідання дисплея і Q6A)",
+      "refs": [
+        "U109"
+      ]
     },
     {
       "id": "E1-07",
       "description": "USB-C feedthrough, XT30 та BMS мають функціональні контакти; механічні parts і land patterns не задано.",
       "blocking": true,
-      "resolve": "Перед PCB вибрати конкретні частини, відобразити їхні фізичні контакти на functional nets і незалежно перевірити pin mapping. Ця JSON описує схему, а не Gerber."
+      "resolve": "Перед PCB вибрати конкретні частини, відобразити їхні фізичні контакти на functional nets і незалежно перевірити pin mapping. Ця JSON описує схему, а не Gerber.",
+      "stack": "§5.8; §8 (PCB, P5 G3)",
+      "refs": [
+        "J103",
+        "J101",
+        "U101"
+      ]
     }
   ],
   "decisions": [

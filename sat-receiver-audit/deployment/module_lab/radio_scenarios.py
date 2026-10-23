@@ -266,6 +266,7 @@ def _inventory(project):
                          'control': {'path': '/dev/i2c-2', 'of_fullname': '/soc/i2c@2'}}
         config['pico']['kernel_parent'] = 'c880000.serial'
         config['usb']['hfplus']['serial'] = 'AIRSPYHF SN:3070123456789abc'
+        config['wifi_bt']['fe11s_port4_usb_path'] = '1-1.4'
         generated = deploy.udev_rules(config)
         _require('LABRXA' in generated and 'LABRXB' in generated and '3070123456789abc' in generated,
                  'Serial-bound receiver rules missing')

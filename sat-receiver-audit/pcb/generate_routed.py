@@ -213,10 +213,7 @@ def project(name):
 def main():
     parser=argparse.ArgumentParser(description=__doc__);parser.add_argument('--runtime-root',type=Path);parser.add_argument('--kicad-cli',default='kicad-cli');args=parser.parse_args()
     if args.runtime_root and not os.environ.get('SR_RX_ROUTED_RUNTIME_ACTIVE'):
-        env=dict(os.environ);runtime=args.runtime_root.resolve()
-        env['LD_LIBRARY_PATH']=str(runtime/'usr/lib/x86_64-linux-gnu')+':'+env.get('LD_LIBRARY_PATH','')
-        env['PYTHONPATH']=str(runtime/'usr/lib/python3/dist-packages')+':'+env.get('PYTHONPATH','')
-        env['SR_RX_ROUTED_RUNTIME_ACTIVE']='1'
+        env=helper.runtime_environment(args.runtime_root,'SR_RX_ROUTED_RUNTIME_ACTIVE')
         os.execve(sys.executable,[sys.executable,str(Path(__file__).resolve()),*sys.argv[1:]],env)
     # SciPy's extension modules must initialize before KiCad's SWIG registry.
     import numpy
@@ -283,9 +280,9 @@ def main():
             if bottom.returncode:raise RuntimeError(bottom.stderr)
             helper.atomic_write(out/(NAME+'-bottom.svg'),(work/'prototype-bottom.svg').read_bytes())
             try:
-                import fitz
-                doc=fitz.open(out/(NAME+'.svg'));helper.atomic_write(out/(NAME+'.png'),doc[0].get_pixmap(matrix=fitz.Matrix(3,3),alpha=False).tobytes('png'))
-                back=fitz.open(out/(NAME+'-bottom.svg'));helper.atomic_write(out/(NAME+'-bottom.png'),back[0].get_pixmap(matrix=fitz.Matrix(3,3),alpha=False).tobytes('png'))
+                pymupdf=helper.import_pymupdf()
+                doc=pymupdf.open(out/(NAME+'.svg'));helper.atomic_write(out/(NAME+'.png'),doc[0].get_pixmap(matrix=pymupdf.Matrix(3,3),alpha=False).tobytes('png'))
+                back=pymupdf.open(out/(NAME+'-bottom.svg'));helper.atomic_write(out/(NAME+'-bottom.png'),back[0].get_pixmap(matrix=pymupdf.Matrix(3,3),alpha=False).tobytes('png'))
             except ImportError:pass
             report.update(status=STATUS,published_board=True,board_sha256=helper.digest(out/candidate.name))
     except Exception as exc:

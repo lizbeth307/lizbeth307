@@ -31,6 +31,9 @@ Staging потребує нового каталогу поза checkout і си
 3. Pico прив’язати або до спостереженого platform UART parent, або до USB VID/PID/повного серійного номера. У USB-режимі platform parent має бути null. Потрібен стабільний `/dev/lab/pico`.
 4. RTL-A/B — лише LABRXA/LABRXB; HF+ — точний сирий USB serial, включно з `AIRSPYHF SN:`. EEPROM ці скрипти не змінюють. Фізичний запасний RTL-C не отримує доступу автоматично.
 5. Lime `enabled=false`; сирий PCIe-шлях не видається. Зовнішній S-band вузол та TX навантаження визначає схема, а не udev.
+6. `wifi_bt.fe11s_port4_usb_path` — обов’язкове поле: kernel-ім’я USB-пристрою на порту 4 хаба FE1.1s, де на Q6A підключено Wi-Fi/BT FCU760K (AIC8800). Його зчитують на справжній платі (`lsusb -t`, `/sys/bus/usb/devices`), наприклад `1-1.4`; формат перевіряється як `<шина>-<порт>[.<порт>…].4`, а null із шаблону не проходить перевірку. За цим шляхом `stage` пише `/etc/udev/rules.d/60-srrx-wifi-bt-deauthorize.rules` з `ATTR{authorized}="0"` для будь-якого VID на цьому порту.
+
+Staged root — польовий/QUIET: Wi-Fi/BT у ньому вимкнені в кожному профілі, розблокувати Wi-Fi може лише окремий домашній root. Незалежно від `devices.json` `stage` завжди пише `/etc/modprobe.d/60-srrx-radio-off.conf` (`blacklist` і `install … /bin/false` для aic_load_fw(_usb), aic8800_fdrv(_usb), aic_btusb(_usb) та btusb) і `srrx-radio-off.service` — rfkill block wlan і bluetooth як другий шар через `srrx.rfkill`; drop-in `10-radio-off.conf` робить його обов’язковим для `srrx.service`. `doctor` і `release-guard` блокують запуск, якщо blacklist відсутній чи змінений, модулі aic/btusb завантажені або їх список не читається, rfkill wlan/bluetooth не заблоковано, є бездротовий мережевий пристрій чи `hci0`, авторизовано пристрій із VID a69c/368b, правило порту 4 відсутнє чи змінене або пристрій на порту 4 авторизований чи має прив’язаний драйвер. Апаратне утримання WIFI_PWR_EN (gpio-hog low у польовому DTBO) — стендові ворота W1-2, у реєстрі `E5-10` OPEN; цей пакет його не генерує. До закриття W1-2 деавторизований пристрій без драйвера на порту 4 не є доказом апаратного вимкнення: критерій STACK — на порту 4 взагалі немає пристрою.
 
 ```sh
 python3 deployment/deploy.py udev --devices /path/to/observed-devices.json > /tmp/70-srrx-serial-bound.rules
@@ -136,4 +139,4 @@ python3 deployment/deploy.py stage-ab --config /path/to/observed-ab-config.json 
 | Повні +lab privacy/build recipes SDRangel/SatDump/OpenWebRX/readsb/AIS та їхні fixtures | План build07; не підмінені generic name scan |
 | Lime native/raw TX audit, SDK arm64,56MHz/RAM/thermal/PCIe/firmware | OPEN, runtime disabled |
 | Phase0 FastRPC/QAIRT/firmware/DKMS/EDID/PPS, A/B rollback, physical installation | OPEN |
-|36 фізичних blocking gates і двоточкова ADC/branch калібровка | Жодного PASS не створено |
+|37 фізичних blocking gates (з них E5-10 — W1-2 WIFI_PWR_EN) і двоточкова ADC/branch калібровка | Жодного PASS не створено |

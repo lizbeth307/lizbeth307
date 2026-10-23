@@ -2,7 +2,7 @@
 
 Це результати програмних моделей, а не дозвіл підключати залізо. Усі фізичні модулі мають стан NOT_TESTED.
 
-Виконання наборів: **PASS**. Реєстр охоплює 754 елементи, 64 вузли та 166 деталізованих інтерфейсів.
+Виконання наборів: **PASS**. Реєстр охоплює 750 елементи, 64 вузли та 166 деталізованих інтерфейсів.
 
 PASS означає виконані сценарії конкретного драйвера або моделі. Відсутність реального USB/kernel, аналогового RF, калібрування, живлення або механіки залишається явно записаною в JSON та окремих звітах.
 
@@ -109,7 +109,7 @@ PASS означає виконані сценарії конкретного д�
 | RTL-A RF internal SMA | J410 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / module |
 | RTL-B RF internal SMA | J411 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / module |
 | RX1 edge SMA | J412 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / module |
-| RX1 panel SMA: captive loop | J413 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / module |
+| RX1 panel SMA: captive coax assembly | J413 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / module |
 | RX2 panel SMA | J414 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / module |
 | REF IN panel SMA | J415 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / module |
 | UHF antenna feed / A418 input interface | J416 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / module |
@@ -157,7 +157,7 @@ PASS означає виконані сценарії конкретного д�
 | HF+ microUSB-B cable endpoint | J544 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / design |
 | TPS2553DBVR-1 | U501 | analog_or_discrete_control_ic | PASS | Лише з’єднання / не реалізовано |  / design |
 | TPS2553DBVR-1 | U502 | analog_or_discrete_control_ic | PASS | Лише з’єднання / не реалізовано |  / design |
-| TPS2553DBVR | U503 | analog_or_discrete_control_ic | PASS | Лише з’єднання / не реалізовано |  / design |
+| TPS2553DBVR-1 | U503 | analog_or_discrete_control_ic | PASS | Лише з’єднання / не реалізовано |  / design |
 | TPS2553DRVR | U505 | analog_or_discrete_control_ic | PASS | Драйвер / модель: PASS |  / design |
 | Samsung T7 + intact A-to-C USB3 cable | U540 | usb_storage_block_device | PASS | Драйвер / модель: PASS |  / module |
 | Q6A HDMI Type-A existing port | J520 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / verified |

@@ -5,120 +5,265 @@
     {
       "stem": "E1",
       "instance": "a943ccec-2813-5b6f-9c47-b1bcb52cee7f",
-      "title": "E1 - Акумулятор, заряд, AON і головні перетворювачі (1/2)",
-      "components": 51,
-      "sheet": "E1"
-    },
-    {
-      "stem": "E1_02",
-      "instance": "18b3b3ad-34e0-53cc-9f25-c4ecb6dfa9a2",
-      "title": "E1 - Акумулятор, заряд, AON і головні перетворювачі (2/2)",
-      "components": 30,
-      "sheet": "E1"
+      "title": "E1 - Акумулятор, заряд, AON і головні перетворювачі (1/1)",
+      "components": 80,
+      "sheet": "E1",
+      "notes": [
+        "E1-03",
+        "E1-07",
+        "E1-04",
+        "E1-05",
+        "E1-02",
+        "E1-01",
+        "E1-06"
+      ],
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 81,
+        "ground_symbols": 46,
+        "junctions": 31,
+        "wires": 216
+      }
     },
     {
       "stem": "E2",
       "instance": "81984160-ffc1-5150-93ba-690a49e1cc5c",
-      "title": "E2 - Захищені рейки, LNA і моніторинг струму (1/5)",
-      "components": 58,
-      "sheet": "E2"
+      "title": "E2 - Захищені рейки, LNA і моніторинг струму (1/4)",
+      "components": 111,
+      "sheet": "E2",
+      "notes": [
+        "E2-05"
+      ],
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 87,
+        "ground_symbols": 59,
+        "junctions": 40,
+        "wires": 246
+      }
     },
     {
       "stem": "E2_02",
       "instance": "def01337-c22c-581d-ab21-3e0f48197e81",
-      "title": "E2 - Захищені рейки, LNA і моніторинг струму (2/5)",
-      "components": 58,
-      "sheet": "E2"
+      "title": "E2 - Захищені рейки, LNA і моніторинг струму (2/4)",
+      "components": 66,
+      "sheet": "E2",
+      "notes": [
+        "E2-01",
+        "E2-04",
+        "E2-03",
+        "N-E2-01"
+      ],
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 49,
+        "ground_symbols": 45,
+        "junctions": 36,
+        "wires": 185
+      }
     },
     {
       "stem": "E2_03",
       "instance": "c4c82d69-a1e5-5cf1-924c-73422e522133",
-      "title": "E2 - Захищені рейки, LNA і моніторинг струму (3/5)",
-      "components": 56,
-      "sheet": "E2"
+      "title": "E2 - Захищені рейки, LNA і моніторинг струму (3/4)",
+      "components": 50,
+      "sheet": "E2",
+      "notes": [
+        "E2-02",
+        "N-E2-02"
+      ],
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 37,
+        "ground_symbols": 36,
+        "junctions": 32,
+        "wires": 149
+      }
     },
     {
       "stem": "E2_04",
       "instance": "b86a610c-9540-56eb-9a94-fee3a23ee226",
-      "title": "E2 - Захищені рейки, LNA і моніторинг струму (4/5)",
-      "components": 54,
-      "sheet": "E2"
-    },
-    {
-      "stem": "E2_05",
-      "instance": "3b171c1f-559e-51e7-80e8-e40d3812ba35",
-      "title": "E2 - Захищені рейки, LNA і моніторинг струму (5/5)",
-      "components": 33,
-      "sheet": "E2"
+      "title": "E2 - Захищені рейки, LNA і моніторинг струму (4/4)",
+      "components": 32,
+      "sheet": "E2",
+      "notes": [],
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 44,
+        "ground_symbols": 11,
+        "junctions": 15,
+        "wires": 111
+      }
     },
     {
       "stem": "E3",
       "instance": "815659b2-9f99-5caa-9e97-34b4cd398135",
-      "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (1/3)",
-      "components": 46,
-      "sheet": "E3"
+      "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (1/2)",
+      "components": 81,
+      "sheet": "E3",
+      "notes": [
+        "E3-05",
+        "E3-01",
+        "E3-08",
+        "E3-06"
+      ],
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 118,
+        "ground_symbols": 34,
+        "junctions": 62,
+        "wires": 349
+      }
     },
     {
       "stem": "E3_02",
       "instance": "047fcfd6-7912-5c2d-b6e9-2eba49e8ffe0",
-      "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (2/3)",
-      "components": 56,
-      "sheet": "E3"
-    },
-    {
-      "stem": "E3_03",
-      "instance": "c85ad7f8-a0d1-5e29-929c-feed1fd251ab",
-      "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (3/3)",
-      "components": 47,
-      "sheet": "E3"
+      "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (2/2)",
+      "components": 68,
+      "sheet": "E3",
+      "notes": [
+        "E3-03",
+        "E3-02",
+        "E3-07",
+        "E3-04"
+      ],
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 106,
+        "ground_symbols": 35,
+        "junctions": 47,
+        "wires": 307
+      }
     },
     {
       "stem": "E4",
       "instance": "8f7e80ea-aee4-5257-bec3-c2e6ba73b52d",
-      "title": "E4 - РЧ-тракт: DC-розвʼязка, перемикачі, реле та приймачі (1/4)",
-      "components": 50,
-      "sheet": "E4"
+      "title": "E4 - РЧ-тракт: DC-розв'язка, перемикачі, приймачі (1/4)",
+      "components": 43,
+      "sheet": "E4",
+      "notes": [
+        "E4-08",
+        "E4-03",
+        "E4-09",
+        "E4-05"
+      ],
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 62,
+        "ground_symbols": 42,
+        "junctions": 22,
+        "wires": 133
+      }
     },
     {
       "stem": "E4_02",
       "instance": "29d9ed3f-1ac6-5216-98b0-395a68609862",
-      "title": "E4 - РЧ-тракт: DC-розвʼязка, перемикачі, реле та приймачі (2/4)",
-      "components": 58,
-      "sheet": "E4"
+      "title": "E4 - РЧ-тракт: DC-розв'язка, перемикачі, приймачі (2/4)",
+      "components": 89,
+      "sheet": "E4",
+      "notes": [
+        "E4-01",
+        "E4-07",
+        "E4-04"
+      ],
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 119,
+        "ground_symbols": 59,
+        "junctions": 52,
+        "wires": 273
+      }
     },
     {
       "stem": "E4_03",
       "instance": "4dd92141-48db-50ea-8b51-bae65ea8ecfb",
-      "title": "E4 - РЧ-тракт: DC-розвʼязка, перемикачі, реле та приймачі (3/4)",
-      "components": 53,
-      "sheet": "E4"
+      "title": "E4 - РЧ-тракт: DC-розв'язка, перемикачі, приймачі (3/4)",
+      "components": 45,
+      "sheet": "E4",
+      "notes": [
+        "N-E4-01",
+        "E4-06"
+      ],
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 43,
+        "ground_symbols": 27,
+        "junctions": 14,
+        "wires": 136
+      }
     },
     {
       "stem": "E4_04",
       "instance": "9df58c55-738d-55e8-9cee-b8959598c250",
-      "title": "E4 - РЧ-тракт: DC-розвʼязка, перемикачі, реле та приймачі (4/4)",
-      "components": 52,
-      "sheet": "E4"
+      "title": "E4 - РЧ-тракт: DC-розв'язка, перемикачі, приймачі (4/4)",
+      "components": 36,
+      "sheet": "E4",
+      "notes": [],
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 40,
+        "ground_symbols": 16,
+        "junctions": 10,
+        "wires": 114
+      }
     },
     {
       "stem": "E5",
       "instance": "7961f449-97be-5318-9750-0d1b8f253ccf",
       "title": "E5 - USB, VBUS, PCIe та корпусні інтерфейси (1/2)",
-      "components": 51,
-      "sheet": "E5"
+      "components": 56,
+      "sheet": "E5",
+      "notes": [
+        "E5-10",
+        "E5-09",
+        "E5-04",
+        "N-E5-01",
+        "N-E5-02",
+        "E5-05",
+        "N-E5-03",
+        "E5-03"
+      ],
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 91,
+        "ground_symbols": 48,
+        "junctions": 45,
+        "wires": 256
+      }
     },
     {
       "stem": "E5_02",
       "instance": "2f560f15-377c-5a7b-8d16-c38c753251d6",
       "title": "E5 - USB, VBUS, PCIe та корпусні інтерфейси (2/2)",
-      "components": 26,
-      "sheet": "E5"
+      "components": 18,
+      "sheet": "E5",
+      "notes": [
+        "E5-01",
+        "E5-06",
+        "E5-08",
+        "E5-02",
+        "E5-07"
+      ],
+      "drawing": {
+        "fallback_labels": 4,
+        "global_labels": 39,
+        "ground_symbols": 13,
+        "junctions": 23,
+        "wires": 121
+      }
     }
   ],
-  "components": 754,
+  "components": 750,
   "supply_annotations": 25,
-  "connected_contacts": 2189,
+  "connected_contacts": 2181,
   "nets": 466,
+  "drawing": {
+    "fallback_labels": 4,
+    "global_labels": 916,
+    "ground_symbols": 471,
+    "junctions": 429,
+    "wires": 2596
+  },
   "single_contact_nets": {},
   "open_items": [
     {
@@ -126,6 +271,11 @@
       "description": "Ревізія COUT і місця NTC/VSET/ISET/ISET_MODE/CELLSET не підтверджені офіційною схемою. Вікно 0…45 °C та inhibit не перевірені.",
       "blocking": true,
       "resolve": "До модифікацій отримати ревізійну схему або фото обох боків з continuity до IC. Стенд: NTC 0/45 °C, обрив/КЗ, зупинка charge і reverse boost, 2 h при 3 A, 20 PD cycles, зовнішній VBUS=0 V, startup 5→20 V, CV кожної комірки. При провалі цей модуль не використовувати; ISDT лише після E1-02.",
+      "stack": "§2.7 (IP2368); §5.1; §8 (IP2368); §8.1 (IP2368, матриця DRP)",
+      "refs": [
+        "U110",
+        "TH101"
+      ],
       "sheet": "E1"
     },
     {
@@ -133,6 +283,10 @@
       "description": "Balance B0 = raw B− може шунтувати Daly через спільну землю ISDT 608PD і пропускати силовий струм по тонкому sense-дроту.",
       "blocking": true,
       "resolve": "J102 позначено DNP/service-only; місячний баланс ISDT вимкнути до затвердженого інтерфейсу. До підключення перевірити DMM ізоляцію output−/balance B0 ISDT без живлення та отримати принципову схему виробника. При спільній землі потрібне перепроєктування з явним аналізом усіх струмових шляхів і незалежним захистом; ані main OFF, ані 5 A fuse не доводять безпеку. Не виправляти перенесенням B0→P− чи XT30−→raw B−. Внутрішній sense harness Daly лишається. Див. design/charger-bms-review.md. Низька continuity є reject; високий опір без живлення не є pass, бо стан може змінитися при роботі чи через USB. Для закриття потрібне підтвердження топології виробником або redesign із fault validation відсічки BMS в усіх струмових шляхах.",
+      "stack": "§2.7; §5.1; §8 (Daly DL-J05G; ISDT 608PD)",
+      "refs": [
+        "J102"
+      ],
       "sheet": "E1"
     },
     {
@@ -140,6 +294,10 @@
       "description": "Фізичний PHB2.0 pin order Daly та ревізія J05G/J04G3 нез’ясовані.",
       "blocking": true,
       "resolve": "На прийманні звірити маркування з Daly DS саме цієї ревізії. Продзвонити B0…B4 зі знятим sense-штекером; послідовні напруги 3…4.2 V, сумарно 4S. Пробудження зарядником 3/3. До цього підключення sense заборонене.",
+      "stack": "§2.7 (Daly); §8 (Daly DL-J05G)",
+      "refs": [
+        "U101"
+      ],
       "sheet": "E1"
     },
     {
@@ -147,6 +305,11 @@
       "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки ще не перевірено.",
       "blocking": true,
       "resolve": "До батареї current-limited sweep 14→12→14 V при 25 і 50 °C: trip 12.8±0.1 V, release 13.6±0.1 V, drift≤50 mV. Калібрувати R105. AON без INA ≤11 µA. Утримуванням кнопки не можна обійти UV. 20 PD cycles без самозапуску. При провалі fallback TLV3012 із нижнім плечем 346.04 kΩ і повним повтором тесту.",
+      "stack": "§5.1 (AON, UV); §8 (Супервізор AON)",
+      "refs": [
+        "U104",
+        "R105"
+      ],
       "sheet": "E1"
     },
     {
@@ -154,6 +317,12 @@
       "description": "Default LAB5: D36V50F5 +4 A fuse; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
       "blocking": true,
       "resolve": "U108 D36V50F5 #4091; F102 4 A; L101 XAL6060-103MEC; C111/C112 35SVPF22M; C113 16SVPC100M; R110 WSL2512R3300FEA. Звірити площу, висоту і land patterns. Виміряти всі режими: LAB5 ≤3.2 A continuous; blower reserve 0.25 A continuous /0.50 A startup; SB_LNA 65 mA враховувати один раз у I_ANT≤1 A. Додаткова policy: I_ANT+0.83 A×EN_LAB≤1.5 A. За 5 V та 0…50 °C підтвердити C111/C112 effective ≥10 µF; C113 початково ≥80 µF; step 10…90% без осциляцій; 5 V±5% на КОЖНОМУ пристрої після switch/кабелю. Термо 30 min при 3.2 A і середовищі 50 °C; до 4 A transient із логом запобіжника та пульсацій. Вихід модуля 5 V±4% та drop L101 не гарантують USB 4.75 V у всіх допусках: low unit відбракувати або переробити живлення. Якщо actual сума перевищує бюджет — формальний concurrency cap/rail redesign із повтором тестів.",
+      "stack": "§5.1 (LAB5); §8 (LAB5); §8.1 (нагрів запобіжників)",
+      "refs": [
+        "U108",
+        "F102",
+        "L101"
+      ],
       "sheet": "E1"
     },
     {
@@ -161,6 +330,10 @@
       "description": "Термо, transient, ESD та узгодження захистів не доведені на реальному PCB.",
       "blocking": true,
       "resolve": "Силова плата reflow. Перевірити USB-PD OVLO≈22 V, ILIM≈3.5 A, hot-plug 0→20 V і reverse blocking. TVS E1_SW не вважати гарантією захисту 28 V eFuse. SYS12: C4 RF A/B і 60 min при 4.2 A, входи 14/16.4 V; батарейний шлях 4.6 A при case 50 °C. Перед виготовленням PCB потрібні layout, ERC і DRC.",
+      "stack": "§5.1; §5.6; §8.1 (J21 і USB-C; просідання дисплея і Q6A)",
+      "refs": [
+        "U109"
+      ],
       "sheet": "E1"
     },
     {
@@ -168,6 +341,12 @@
       "description": "USB-C feedthrough, XT30 та BMS мають функціональні контакти; механічні parts і land patterns не задано.",
       "blocking": true,
       "resolve": "Перед PCB вибрати конкретні частини, відобразити їхні фізичні контакти на functional nets і незалежно перевірити pin mapping. Ця JSON описує схему, а не Gerber.",
+      "stack": "§5.8; §8 (PCB, P5 G3)",
+      "refs": [
+        "J103",
+        "J101",
+        "U101"
+      ],
       "sheet": "E1"
     },
     {
@@ -175,6 +354,10 @@
       "description": "MPN L/C і діодів обрані. Ефективна ємність, ESR/ESL, демпфування LC та від’ємний викид OUT залежать від розведення і реальних деталей.",
       "blocking": true,
       "resolve": "Перевірити COUT ≥10uF при робочому bias/температурі, ESR LT3045 <20mR і ESL <2nH; виконати тести ступінчастого навантаження, RF-шуму та від’ємного OUT ≥−0.4V.",
+      "stack": "§5.1 (LNA4V5, LNB13V2, BONI13V8); §8 (пара LT3045; TPS7A4701)",
+      "refs": [
+        "U204"
+      ],
       "sheet": "E2"
     },
     {
@@ -182,13 +365,26 @@
       "description": "Статичне вікно OVP LNB закрито TPS3701: 13.56–13.96V. Швидкий викид при відмові LDO не обмежено гарантованим максимальним часом у даташитах: 9.9µs компаратора і близько 12µs EN-off eFuse задані лише типово.",
       "blocking": true,
       "resolve": "Без LNB і зі струмовим обмеженням подати на вузол LDO контрольований стрибок 13.2→16.4V; осцилографувати F-вихід при мін./макс. навантаженні, на холоді й при 50°C. Отримати граничні імпульсні параметри Bullseye; якщо потрібно, додати швидке відсікання/обмеження з гарантованим часом.",
+      "stack": "§5.1 (LNB13V2); §8 (TPS7A4701); §8.1 RF-4",
+      "refs": [
+        "U220",
+        "U212"
+      ],
       "sheet": "E2"
     },
     {
       "id": "E2-03",
-      "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована.",
+      "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
       "blocking": true,
-      "resolve": "FNB58/INA228/INA3221: 20 холодних і теплих пусків, струми стримінгу, КЗ і SOA. Установити ILIM 1.5–2× виміряного струму з допусками. Загальний LAB5 тестується за новими воротами E1 для D36V50F5 + запобіжник 4A; старі 2.5A не є лімітом default-збірки.",
+      "resolve": "FNB58/INA228/INA3221: 20 холодних і теплих пусків, струми стримінгу, КЗ і SOA. Установити ILIM 1.5–2× виміряного струму з допусками. Загальний LAB5 тестується за новими воротами E1 для D36V50F5 + запобіжник 4A; старі 2.5A не є лімітом default-збірки. OVLO Boni (STACK §8.1 HF-8/RF-5): без Boni-Whip і зі струмовим обмеженням — повільна розгортка вузла E2_BONI_LDO (вхід eFuse U214) 13.8→15.5→13.8 V, записати пороги спрацювання й відпускання; OVLO не спрацьовує в смузі 13.8 V, поріг вище 14.145 V (макс. LDO) і нижче 15 V (межа Boni). Поза вікном — перерахувати R263/R264 і повторити.",
+      "stack": "§5.1 (VBUS RTL-B, BONI13V8); §8 (струми; TPS2553DBVR-1 п. 3); §8.1 RF-2, HF-8/RF-5",
+      "refs": [
+        "U210",
+        "R248",
+        "R263",
+        "R264",
+        "U214"
+      ],
       "sheet": "E2"
     },
     {
@@ -196,6 +392,10 @@
       "description": "Потрібне підтвердження запасу напруги, розподілу струму й температури пари LT3045 на 4.5V. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
       "blocking": true,
       "resolve": "Перевірити LAB5 min, навантаження пари до 1A, температуру кожного LT3045 та спад до антени. Дотримуватися контракту R-E2-17: сума INA LNA1–4 + резерв 65mA S-band ≤1A; разом із резервом LAB-порту ≤1.5A.",
+      "stack": "§5.1 (LNA4V5); §8 (пара LT3045); §8.1 RF-3",
+      "refs": [
+        "U205"
+      ],
       "sheet": "E2"
     },
     {
@@ -203,6 +403,10 @@
       "description": "Відсутність фантомного живлення Q6A, вимкнення дисплея та фізична правильність кінцевих кабелів потребують перевірки з реальним обладнанням.",
       "blocking": true,
       "resolve": "За активної LAB5 і вимкненої Q6A: 3V3_Q6A та upstream VBUS близько 0V, PICO_DISP_EN низький. Продзвонити розрізаний VBUS, ключовані роз’єми E3/E5 та сигнал PWR_ON_KEY.",
+      "stack": "§5.1 (DISP12); §5.2; §8 (зворотне живлення)",
+      "refs": [
+        "U202"
+      ],
       "sheet": "E2"
     },
     {
@@ -210,20 +414,33 @@
       "description": "IMU assembly and two metre single-ended UART need bench verification. Internal named-pad wiring is specified, but no physical harness has been measured.",
       "blocking": true,
       "resolve": "Check actual module revision, GX16 plug/socket viewing direction and continuity to E5 design pinout; validate input Schottky and TVS at both ends; 1e6 frames with zero CRC errors. Upgrade to differential interface if errors occur.",
+      "stack": "§2.8; §5.2; §8 (пак IMU); §8.1 (пак IMU)",
+      "refs": [
+        "U309",
+        "U314"
+      ],
       "sheet": "E3"
     },
     {
       "id": "E3-02",
       "description": "Brightness control requires confirmed DDC/CI support or an exact Wisecoco KEY/Backlight interface. Pico GP17 is now reserved for MCP watchdog reset and unavailable for brightness.",
       "blocking": true,
-      "resolve": "Demonstrate ddcutil brightness through the specified RA620 link, or obtain exact KEY/Backlight revision pinout and design a new interface using a free MCPGPIO if suitable. Verify thermal dimming; do not reuse PicoGP17.",
+      "resolve": "Demonstrate ddcutil brightness through the specified RA620 link, or obtain the exact KEY/Backlight revision pinout and design a new interface using a free MCP GPIO if suitable. Verify thermal dimming; do not reuse Pico GP17.",
+      "stack": "§2.6; §5.2; §8.1 (шлях димінгу)",
+      "refs": [
+        "U305"
+      ],
       "sheet": "E3"
     },
     {
       "id": "E3-03",
       "description": "BOM candidate Delta BFB0305HA-C is selected; final mechanical fit, installed airflow, start/stall current, LAB5 concurrency and noise remain unqualified.",
       "blocking": true,
-      "resolve": "Fit body envelope30.5x30.5x10.5mm plus duct/lead clearance into CAD before cutting enclosure. Measure0.25A design continuous reserve and provisional0.50A startup limit rather than claiming peak from datasheet. Confirm LAB5 under2.5A in allowed concurrency, or implement STACK shedding/upgradedconverter-fuse path. Run45min closed-cover solar thermal test and RF A/B noise checks; inlet drop<=5Pa at requiredflow.",
+      "resolve": "Fit the body envelope 30.5x30.5x10.5 mm plus duct/lead clearance into CAD before cutting the enclosure. Measure the 0.25 A design continuous reserve and the provisional 0.50 A startup limit rather than claiming peak from the datasheet. Confirm LAB5 under 2.5 A in allowed concurrency, or implement the STACK shedding / upgraded converter-fuse path. Run the 45 min closed-cover solar thermal test and RF A/B noise checks; inlet drop <=5 Pa at the required flow.",
+      "stack": "§5.6; §8 (тепло); §8.1 (потік повітря)",
+      "refs": [
+        "FAN302"
+      ],
       "sheet": "E3"
     },
     {
@@ -231,6 +448,10 @@
       "description": "UM3304 UART7/PPS/SWD cable capacitance and power-off behavior cannot be proven by ERC.",
       "blocking": true,
       "resolve": "Check <=20cm wiring, UART7 loopback, boot glitches and absence of Q6A backfeed with Pico on/Q6A off. Verify TX high-impedance sequencing or add hardware isolation.",
+      "stack": "§5.2 (UART7, PPS, SWD); §8.1 (UART7; PPS)",
+      "refs": [
+        "J301"
+      ],
       "sheet": "E3"
     },
     {
@@ -238,20 +459,34 @@
       "description": "Shared MCP interrupt requires open-drain configuration before interrupts are enabled, plus measured I2C rise time and VOL.",
       "blocking": true,
       "resolve": "Set ODR=1 and MIRROR=1 first. Validate 100kHz, rise <=1000ns, 1e6 reads under load, 20 cold/20 warm boots, and 10us FAULT capture.",
+      "stack": "§5.2 (MCP23017 #3/#4)",
+      "refs": [
+        "U302",
+        "U303"
+      ],
       "sheet": "E3"
     },
     {
       "id": "E3-06",
       "description": "BOM candidate Semiware MF52A103F3950 is selected for both NTCs; purchased-lot curve, attachment, lag and installed calibration remain unqualified.",
       "blocking": true,
-      "resolve": "Verify10k+/-1% at25C and manufacturerB25/50=3950+/-1%; use exactmakerRTtable. Fit insulated bead/strainrelief on panel spreader and frame, check25/60/68C against reference thermometer, qualify lag and open/short/stale fail-safe behavior. Remain inside-20..120C sensorrange.",
+      "resolve": "Verify 10k +/-1% at 25 C and manufacturer B25/50 = 3950 +/-1%; use the exact maker R/T table. Fit an insulated bead/strain relief on the panel spreader and frame, check 25/60/68 C against a reference thermometer, qualify lag and open/short/stale fail-safe behavior. Remain inside the -20..120 C sensor range.",
+      "stack": "§5.6; §8 (тепло)",
+      "refs": [
+        "TH301",
+        "TH302"
+      ],
       "sheet": "E3"
     },
     {
       "id": "E3-07",
-      "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about+/-0.28V near12.9V; nominal ADC code does not establish12.9+/-0.1V cutoff.",
+      "description": "Battery ADC shutdown accuracy must be calibrated. Divider/reference initial tolerances can contribute about +/-0.28 V near 12.9 V; a nominal ADC code does not establish the 12.9 +/-0.1 V cutoff.",
       "blocking": true,
-      "resolve": "Calibrate gain/offset against a calibrated voltmeter at two pack-equivalent voltages such as12.6V and16.4V; cross-checkINA228. Independently verify physical12.9V software cutoff within+/-0.1V, including5s dwell, at12.8/12.9/13.0V across specifiedtemperature and load states. Store calibratedcoefficients with revision/CRC. No commissioningpassuntilmet; hardwareAON UVsupervisor remains independentbackup.",
+      "resolve": "Calibrate gain/offset against a calibrated voltmeter at two pack-equivalent voltages such as 12.6 V and 16.4 V; cross-check INA228. Independently verify the physical 12.9 V software cutoff within +/-0.1 V, including 5 s dwell, at 12.8/12.9/13.0 V across the specified temperature and load states. Store calibrated coefficients with revision/CRC. No commissioning pass until met; the hardware AON UV supervisor remains an independent backup.",
+      "stack": "§5.1; §5.2; §8 (Pico ADC)",
+      "refs": [
+        "U307"
+      ],
       "sheet": "E3"
     },
     {
@@ -259,6 +494,10 @@
       "description": "Pico watchdog, MicroPython GPIO/UART adapter and host handshake implemented 20.10.2026 and tested on the host. Actual GPIO timing, reset levels, WDT/brownout behavior and Linux/serial fault recovery have not been qualified on the device.",
       "blocking": true,
       "resolve": "Run the implemented firmware with the actual accepted Pico/Q6A assembly: scope MCP RESET assertion/release, safe output image including CHG_INHIBIT=1 after initialization, 100ms guard, 750ms heartbeat deadline plus measured latency, explicit fresh-session recovery, Linux kill/hang, UART loss/corruption, WDT/brownout and GPIO current/backfeed. Complete Pico power loss with Q6A alive remains outside Q306 coverage; no software test closes this boundary.",
+      "stack": "§5.2; §5.4",
+      "refs": [
+        "Q306"
+      ],
       "sheet": "E3"
     },
     {
@@ -266,6 +505,12 @@
       "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional static bleeds stay DNP.",
       "blocking": true,
       "resolve": "Verify selected 0805LS-471XGRC / 0805HP-221XGRC / 0603HP-47NXGRW manufacturer land patterns and target-band impedance under bias. VNA qualify IL/RL/isolation and DC heating at actual/worst protected current. The current Coilcraft 0603HP PDF confirms the 2.3 GHz typical SRF; no documentary SRF question remains. L401/L407 stay optional DNP until separately qualified.",
+      "stack": "§5.3; §8 (РЧ-деталі); §8.1 RF-10",
+      "refs": [
+        "L402",
+        "L403",
+        "L404"
+      ],
       "sheet": "E4"
     },
     {
@@ -273,27 +518,47 @@
       "description": "Boni supplied bias-tee port labels, DC socket polarity and receiver DC block require actual hardware.",
       "blocking": true,
       "resolve": "Measure continuity/polarity, antenna DC and RADIO port <0.1 V before connecting HF+.",
+      "stack": "§5.3; §8.1 HF-9, HF-11",
+      "refs": [
+        "A406"
+      ],
       "sheet": "E4"
     },
     {
       "id": "E4-04",
       "description": "S-band module and supply selection are complete; external inline pod assembly, cable loss, gain/NF and thermal/current measurements remain unqualified.",
       "blocking": true,
-      "resolve": "Build specified LaNAWB100845 + cf2235 + DC blocks in Hammond1554U2GY pod; verify stacked fit/cable bends, weather seals and strain relief. Measure LaNA current/inrush at protected5V, 2.2–2.3GHz S21/NF/linearity, and receiver protection. Do not substitute generic nominal NF for the actual S-band measurement.",
+      "resolve": "Build the specified LaNA WB 100845 + cf2235 + DC blocks in the Hammond 1554U2GY pod; verify stacked fit/cable bends, weather seals and strain relief. Measure LaNA current/inrush at protected 5 V, 2.2–2.3 GHz S21/NF/linearity, and receiver protection. Do not substitute generic nominal NF for the actual S-band measurement.",
+      "stack": "§5.3 (S-band); поправки v2.1 (LaNA WB, cf2235-kt30)",
+      "refs": [
+        "A422",
+        "A423"
+      ],
       "sheet": "E4"
     },
     {
       "id": "E4-05",
-      "description": "Lime X2/X4 are verified RX ports for v1.2; supplied-board channel A/B and cable labels need confirmation.",
+      "description": "Lime X2/X4 are the v1.2 RX ports, but which of them is RX-A and which RX-B is TBD (STACK §2.11.1, §8.1 L-12: check against the board marking). Pins are named X2_RX/X4_RX and nets E4_LIME_X2_RX/E4_LIME_X4_RX, so the drawing fixes no channel; supplied-board cable labels need confirmation.",
       "blocking": true,
       "resolve": "Check the exact revision schematic and conduct a one-port-at-a-time RX test. Generic setup X3 wording is not evidence.",
+      "stack": "§2.11.1; §8.1 L-12",
+      "refs": [
+        "A415",
+        "W403",
+        "W404"
+      ],
       "sheet": "E4"
     },
     {
       "id": "E4-06",
       "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification.",
       "blocking": true,
-      "resolve": "Verify each DCS LOW at0V and HIGH by±0.100V in both sweep directions over admitted temperature/supply range; record thresholds/hysteresis. Test±30V limited foreignDC with Q6A ON/OFF and require3V3_Q6A<0.1V whenOFF. Measure RFtap IL/RL/NF impact. Require startup/reference-fault HIGH and ownbiasOFF≥500ms beforepreflight; readiness staysfalse untilqualified. Check floating/open antenna as well as0Ω/50ΩDC loads. Include the996Ω bleed load in current baselines and measure its RF loss/parasitics. Reject false-safe at±0.100V; false-unsafe units also fail usability qualification. Also qualify cold minimum-supply reference-feed headroom: the arithmetic model requires D450 Vf≤1.015 V at VDD3.135 V and REF2.072 V for at least80µA LM4040 cathode current. Reference collapse must force HIGH, and must not be misreported as a working detector.",
+      "resolve": "Verify each DCS LOW at 0 V and HIGH by ±0.100 V in both sweep directions over the admitted temperature/supply range; record thresholds/hysteresis. Test ±30 V limited foreign DC with Q6A ON/OFF and require 3V3_Q6A <0.1 V when OFF. Measure RF tap IL/RL/NF impact. Require startup/reference-fault HIGH and own bias OFF ≥500 ms before preflight; readiness stays false until qualified. Check floating/open antenna as well as 0 Ω/50 Ω DC loads. Include the 996 Ω bleed load in current baselines and measure its RF loss/parasitics. Reject false-safe at ±0.100 V; false-unsafe units also fail usability qualification. Also qualify cold minimum-supply reference-feed headroom: the arithmetic model requires D450 Vf ≤1.015 V at VDD 3.135 V and REF 2.072 V for at least 80 µA LM4040 cathode current. Reference collapse must force HIGH, and must not be misreported as a working detector.",
+      "stack": "§5.3 (DC-sense); §8.1 HF-10",
+      "refs": [
+        "D450",
+        "U458"
+      ],
       "sheet": "E4"
     },
     {
@@ -301,6 +566,12 @@
       "description": "RF PCB, relay insertion loss, isolation, return loss and startup PARK are unmeasured.",
       "blocking": true,
       "resolve": "VNA: HF selector 10 kHz–260 MHz IL ≤0.3 dB, RL ≥21 dB, isolation ≥35 dB at 162–260 MHz plus STACK LF/HF gates. HMC ≥40 dB isolation at 0.1–1.7 GHz (37–40 dB conditional and recorded); verify all DC blocks and startup. Check all SMT footprint pad numbers, dimensions, orientation and ground/exposed-pad implementation against the now-verified manufacturer maps.",
+      "stack": "§5.3; §8 (HMC7992LP3DE; G6K-2F-RF-S); §8.1 RF-0/RF-1, HF-13",
+      "refs": [
+        "K401",
+        "K402",
+        "U405"
+      ],
       "sheet": "E4"
     },
     {
@@ -308,6 +579,14 @@
       "description": "RX1 captive edge/pad/panel assembly and H1 attenuation have not been measured.",
       "blocking": true,
       "resolve": "Confirm edge → pad → panel → X2 without bypass. YAT 10±0.5 dB and RL ≥20 dB; H1 total ≥12.0 dB at 1420 MHz, using 3 dB pad if the 2 dB pad fails.",
+      "stack": "§5.3 (RX1, YAT-10A+, H1)",
+      "refs": [
+        "J412",
+        "J413",
+        "W409",
+        "A407",
+        "A408"
+      ],
       "sheet": "E4"
     },
     {
@@ -315,13 +594,21 @@
       "description": "BENCH RF sled is not delivered as a separate HMC7992 + PE4312 PCB here.",
       "blocking": false,
       "resolve": "Deliver its PCB/netlist, controls and 31.5 dB startup test if installed. Until then use the internal BENCH SMA with a qualified external conducted source.",
+      "stack": "§3.1; §5.3 (BENCH); §8.1 RF-11",
+      "refs": [
+        "J409"
+      ],
       "sheet": "E4"
     },
     {
       "id": "E5-01",
       "description": "Received Wisecoco board DC barrel size/polarity and USBTP/USB-C touch wiring still undocumented; no-VBUS enumeration must work.",
       "blocking": true,
-      "resolve": "Obtain exact board photo/schematic, DMM mapping, vendor confirmation and enumerate with onlyD+/D−/GND. Never substitute guessed connector numbering.",
+      "resolve": "Obtain the exact board photo/schematic, DMM mapping, vendor confirmation and enumerate with only D+/D−/GND. Never substitute guessed connector numbering.",
+      "stack": "§2.6; §8 (плата дисплея, D5)",
+      "refs": [
+        "U520"
+      ],
       "sheet": "E5"
     },
     {
@@ -329,41 +616,71 @@
       "description": "IMU cable and exact received board revisions are unverified physical assemblies; E3 now defines RP2040-Zero/BNO085 internal wiring.",
       "blocking": true,
       "resolve": "Verify E3 board-pad map on received revisions; confirm chosen GX16 harness orientation, 3.3V UART and diode-fed E5_IMU_VIN; run 1e6 CRC-clean frames and 100 cold starts.",
+      "stack": "§2.8; §5.2; §8 (пак IMU)",
+      "refs": [
+        "J504",
+        "J550"
+      ],
       "sheet": "E5"
     },
     {
       "id": "E5-03",
-      "description": "ADT-Link R44SF connector variant and removal of ALL host3.3V paths are not yet confirmed.",
+      "description": "ADT-Link R44SF connector variant and removal of ALL host 3.3 V paths are not yet confirmed.",
       "blocking": true,
-      "resolve": "Confirm part withADT-Link; continuity test every3.3V contact after modification. Validate8GT/sx1, cold/warm boots andzeroAER. Validate genuine power-cycle withLIME3V3 off including signal backfeed.",
+      "resolve": "Confirm the part with ADT-Link; continuity-test every 3.3 V contact after modification. Validate 8 GT/s x1, cold/warm boots and zero AER. Validate a genuine power-cycle with LIME3V3 off, including signal backfeed.",
+      "stack": "§2.11.1; §8.1 L-1, L-12",
+      "refs": [
+        "U530"
+      ],
       "sheet": "E5"
     },
     {
       "id": "E5-04",
-      "description": "Current-setting resistors are engineering starting values, no measured device steady/startup currents or hot-corner proof.",
+      "description": "Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
       "blocking": true,
-      "resolve": "Measure current/inrush, setRTL/HF limits1.5–2times measured asSTACK, confirmHFminimumstartup>=0.75A; retry/latch test at all battery states; scopeLCovershoot.",
+      "resolve": "Measure current/inrush; set the RTL-A/HF+/T7 limits to 1.5–2× the measured current as STACK §5.1 requires; confirm HF+ minimum startup ≥0.75 A. Run the STACK §8 TPS2553DBVR-1 item 3 inrush test on latching U503 (HF+ LC 100 µH/100 µF + 220 µF damper) at final RILIM; only if it latches, fit TPS2553DBVR (constant-current) on this channel alone. Retry/latch test at all battery states; scope LC overshoot.",
+      "stack": "§5.1 (VBUS RTL-A, HF+); §8 (TPS2553DBVR-1 п. 2–3)",
+      "refs": [
+        "U501",
+        "R501",
+        "R509",
+        "R514"
+      ],
       "sheet": "E5"
     },
     {
       "id": "E5-05",
       "description": "T7 VBUS rail capacity and modified cable SuperSpeed signal integrity untested.",
       "blocking": true,
-      "resolve": "WithrealT7 proveJ5load<1.5A expected operating budget, VCC_5V_PERI<=14W,5000M/UAS,noUSBresets,fio,hot-cornerTJ<=105C for1.5A. Reevaluate rail/switch/cable if failed.",
+      "resolve": "With a real T7 prove J5 load <1.5 A expected operating budget, VCC_5V_PERI <=14 W, 5000M/UAS, no USB resets, fio, hot-corner TJ <=105 C for 1.5 A. Re-evaluate rail/switch/cable if failed.",
+      "stack": "§5.1; §5.2; §8.1 (T7)",
+      "refs": [
+        "U505",
+        "U540"
+      ],
       "sheet": "E5"
     },
     {
       "id": "E5-06",
       "description": "HDMI/display/hub and receiver backfeed paths through signal lines need physical power-state validation.",
       "blocking": true,
-      "resolve": "VerifyQ6Aoff/LAB5on/displayon combinations usingDMM/FNB58. HDMI5VQ6A andQ6AUSBVBUS shouldremain0V withinmeasurementresolution. CheckDDC/HPD afterU506installation andno phantom receiverpower.",
+      "resolve": "Verify Q6A off / LAB5 on / display on combinations using DMM/FNB58. Q6A HDMI 5 V and Q6A USB VBUS should remain 0 V within measurement resolution. Check DDC/HPD after U506 installation and no phantom receiver power.",
+      "stack": "§5.2; §8 (зворотне живлення)",
+      "refs": [
+        "U506"
+      ],
       "sheet": "E5"
     },
     {
       "id": "E5-07",
-      "description": "EDL factory button pads and cable orientation not physically located on exact receivedQ6A.",
+      "description": "EDL factory button pads and cable orientation not physically located on the exact received Q6A.",
       "blocking": true,
-      "resolve": "Use factory button first; continuity-identify its two switch nets before fittingparallelSW501. UnplugT7 forEDL and confirm05c6:9008.",
+      "resolve": "Use the factory button first; continuity-identify its two switch nets before fitting parallel SW501. Unplug T7 for EDL and confirm 05c6:9008.",
+      "stack": "§5.2; §8.1 (EDL)",
+      "refs": [
+        "SW501",
+        "J522"
+      ],
       "sheet": "E5"
     },
     {
@@ -371,21 +688,177 @@
       "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released.",
       "blocking": true,
       "resolve": "Record exact supplier part numbers, face-view and wire-color tables; no-power continuity plus first energization current limit.",
+      "stack": "§2.9; §5.8",
+      "refs": [
+        "J502",
+        "J505",
+        "J504"
+      ],
       "sheet": "E5"
     },
     {
       "id": "E5-09",
-      "description": "Radiated-noise behavior and USB2touch enumeration are physical integration gates, not determined by netlist.",
+      "description": "Radiated-noise behavior and USB2 touch enumeration are physical integration gates, not determined by netlist.",
       "blocking": true,
-      "resolve": "RunSTACK A/B noise matrix (HF+,GNSS,Lband,T7authorized=0/off), cable strain relief andenvironmental tests; do not markproductionready beforepasses.",
+      "resolve": "Run the STACK A/B noise matrix (HF+, GNSS, L-band, T7 authorized=0/off), cable strain relief and environmental tests; do not mark production-ready before passes.",
+      "stack": "§5.7; §8 (A/B-матриця); §8.2",
+      "refs": [
+        "U510"
+      ],
+      "sheet": "E5"
+    },
+    {
+      "id": "E5-10",
+      "description": "Wi-Fi/BT Q6A (FCU760K, AIC8800 на порту 4 FE1.1s) у польовому/QUIET root вимкнено лише програмно: blacklist з install /bin/false, udev authorized=0 за шляхом порту 4 і rfkill як другий шар. Апаратне утримання WIFI_PWR_EN (GPIO TLMM через CJ3134K до WIFI_PWR_EN_3V3, схема Radxa v1.21, с. 4) на отриманій платі не знайдено; gpio-hog у польовому DTBO не створено й не виміряно.",
+      "blocking": true,
+      "resolve": "W1-2 (STACK §8): домашній root з увімкненим Wi-Fi, тепле, а потім холодне перезавантаження в польовий root — на порту 4 FE1.1s немає пристрою (lsusb -t), немає мережевого пристрою wlan і hci0. Знайти лінію TLMM WIFI_PWR_EN, застосувати gpio-hog output-low у польовому DTBO, виміряти 0 V на живленні модуля й підтвердити, що домашнє розблокування працює; dpkg -l aicrf-test — пакет відсутній. До закриття authorized=0 без прив’язаного драйвера не вважати апаратним вимкненням.",
+      "stack": "§5.2 (FE1.1s P4, WIFI_PWR_EN); §5.7 (рівень плати); §8 (блокування Wi-Fi/BT, W1-2); §1.2 (#8)",
+      "refs": [
+        "U500"
+      ],
       "sheet": "E5"
     }
   ],
+  "drawing_notes": [
+    {
+      "id": "N-E2-01",
+      "refs": [
+        "R248"
+      ],
+      "stack": "§5.1 (VBUS RTL-B); §8 (TPS2553DBVR-1 п. 3)",
+      "text": "R248 = RILIM TBD (старт 56.2k 1%, ≈0.47 A ном.). STACK не задає номінал для VBUS RTL-B, лише правило: RILIM = 1.5–2× виміряного струму. Ворота: E2-03 (20 холодних і теплих пусків, пусковий струм до deglitch 5 ms).",
+      "sheet": "E2"
+    },
+    {
+      "id": "N-E2-02",
+      "refs": [
+        "R263",
+        "R264"
+      ],
+      "stack": "§5.1 (BONI13V8); §8.1 HF-8/RF-5",
+      "text": "R263/R264 = OVLO TBD (старт 112k/10.0k 0.1%: 14.64 V ном., ≈14.24–14.92 V за R-E2-02). STACK §5.1 (BONI13V8): «OVLO перерахувати для 13.8 V» — номіналу в STACK немає. Ворота: E2-03 (стенд STACK §8.1 HF-8/RF-5: OVLO не спрацьовує в смузі 13.8 V; поріг вище 14.145 V і нижче 15 V).",
+      "sheet": "E2"
+    },
+    {
+      "id": "N-E4-01",
+      "refs": [
+        "R4400",
+        "R4401",
+        "C4400",
+        "R4402",
+        "R4403",
+        "R4404",
+        "R4405",
+        "R4406",
+        "R4407",
+        "R4408",
+        "R4409",
+        "C4401",
+        "C4402",
+        "C4405",
+        "C4406",
+        "C4403",
+        "C4404",
+        "R4450",
+        "R4451",
+        "R4452",
+        "R4453",
+        "R4420",
+        "R4421",
+        "R4422",
+        "C4420",
+        "C4421",
+        "R4423",
+        "R4424",
+        "R4425",
+        "R4426",
+        "R4430",
+        "R4431",
+        "R4432",
+        "C4430",
+        "C4431",
+        "R4433",
+        "R4434",
+        "R4435",
+        "R4436",
+        "R4440",
+        "R4441",
+        "R4442",
+        "C4440",
+        "C4441",
+        "R4443",
+        "R4444",
+        "R4445",
+        "R4446",
+        "C4410",
+        "C4411",
+        "C4412",
+        "C4413",
+        "C4414",
+        "C4415",
+        "C4416",
+        "C4417",
+        "R4460",
+        "R4461",
+        "R4462",
+        "R4463",
+        "R4464",
+        "R4465",
+        "R4466",
+        "R4467",
+        "R4468",
+        "R4469",
+        "R4470",
+        "R4471"
+      ],
+      "stack": "§5.3 (DC-sense)",
+      "text": "Позначення R44xx/C44xx (4400–4499) — задокументований розширений діапазон E4 для DC-детекторів (design/E4-review.md), щоб не перетинатися з E5. Решта позначень E4 — у діапазоні 400–499.",
+      "sheet": "E4"
+    },
+    {
+      "id": "N-E5-01",
+      "refs": [
+        "R501"
+      ],
+      "stack": "§5.1 (VBUS RTL-A); §8 (TPS2553DBVR-1 п. 2–3)",
+      "text": "R501 = RILIM TBD (старт 43.2k 1%, 0.544–0.673 A). STACK для VBUS RTL-A задає лише правило RILIM = 1.5–2× виміряного струму; номінал STACK є тільки для порту LAB (R505 34.8k). Ворота: E5-04.",
+      "sheet": "E5"
+    },
+    {
+      "id": "N-E5-02",
+      "refs": [
+        "U503",
+        "R509"
+      ],
+      "stack": "§5.1, §5.2 (VBUS HF+); §8 (TPS2553DBVR-1 п. 3)",
+      "text": "U503 = TPS2553DBVR-1 (засувка), як у STACK §5.1/§5.2. TPS2553DBVR зі сталим струмом (LCSC C55266) — лише на цьому каналі й лише якщо канал HF+ не пройде тест пускового струму STACK §8 (TPS2553DBVR-1, п. 3) при остаточному RILIM: LC 100 µH/100 µF + демпфер 220 µF ≈ 5.3 ms проти мін. deglitch 5 ms. R509 = RILIM TBD (старт 28.7k 1%). Ворота: E5-04.",
+      "sheet": "E5"
+    },
+    {
+      "id": "N-E5-03",
+      "refs": [
+        "R514"
+      ],
+      "stack": "§5.1; §8.1 (T7)",
+      "text": "R514 = RILIM TBD (старт 15.8k 1%, 1.51–1.73 A). STACK не задає RILIM для ключа T7 (U505 TPS2553DRVR без засувки — проєктне рішення R-E5-03/R-E5-04). Ворота: E5-04, E5-05.",
+      "sheet": "E5"
+    }
+  ],
+  "title_block": {
+    "date": "2026-10-23",
+    "rev": "v2.1",
+    "comments": [
+      "SR-RX-v2-E<n>",
+      "Теоретичний проєкт — перевірити на стенді",
+      "Джерело: STACK.md v2",
+      "Не є комплектом для виробництва PCB; див. OPEN_ITEMS.md"
+    ]
+  },
   "source_sha256": {
-    "E1.json": "e87f79db4da0d9be7e74aa1ad2816ea99ae4ed8fd6e723ba375c1559bfd51392",
-    "E2.json": "adc5b67b6b53977143847d688f657364a5e300a80761d74e1dc82e34bd703c16",
-    "E3.json": "0a2e2e60ede923b2d0a1aa0f8484a97513c1ef36ae389d3aee365fbcf90aaac5",
-    "E4.json": "b05555c7a6729029f779df3ca3d0a62d71e206520a33cf7e34ffa3e2c081344d",
-    "E5.json": "86a9099809fbcdf365c82ecf4a239531b1b55715ee17cd1c5fb5a776c979ca05"
+    "E1.json": "f535a839afd70def8f35f43380153cb00723f97c634be51d9159d1bfe4630591",
+    "E2.json": "bb2ac6a37392689b462a570d7334aa257aaad8e4a006c5df1e934c3dd794d40c",
+    "E3.json": "f2ac2171727824e36b5e4d7780677d4fc46ec0840d0a57a59053451132c92be4",
+    "E4.json": "0935bbfe204728620575ba2e6713185799862050f5d8c2c465c028606c5612bf",
+    "E5.json": "d0366fa9440ba2488b352bcf24ca31b1b8e117afb1c2aa2453dd214d711c3dd6"
   }
 }

@@ -1,9 +1,9 @@
 # Independent graph-to-netlist verification
 
-Result: **PASS**. Checked on 2026-10-19 using an independent standard-library JSON/XML parser, without importing the project generator or validator.
+Result: **PASS**. Re-run on 2026-10-23 after the schematic drawing was re-laid out with wires (the exported `<nets>` section is byte-identical to the previous export), using an independent standard-library JSON/XML parser, without importing the project generator or validator.
 
-- Hardware components: **754** in both the reviewed graphs and KiCad XML.
-- Physical / functional pin declarations: **2326**, comprising **2189** connected pins and **137** declared NC pins.
+- Hardware components: **750** in both the reviewed graphs and KiCad XML.
+- Physical / functional pin declarations: **2318**, comprising **2181** connected pins and **137** declared NC pins.
 - Intended connected nets: **466**. The XML has **603** total net entries because it also emits named entries for the 137 unconnected pins.
 - Explicit power-source annotations: **25**; recorded separately from physical components.
 - Missing pins, wrong net names, extra connected pins, duplicate node assignments, unexpectedly connected NC pins, missing/extra hardware components, semantic value changes, and raw Daly B0/B− tied to system GND: **0**.

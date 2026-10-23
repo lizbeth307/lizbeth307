@@ -7,6 +7,7 @@ Doctor reads metadata; it never opens I2C, SDR or UART data channels.
 """
 import argparse
 import ast
+import fnmatch
 import gzip
 import hashlib
 import json
@@ -28,6 +29,54 @@ BAD_NAMES = {"rtl_biast", "rtl_eeprom", "rtl_tcp", "limegui", "limeflash", "lime
              "direwolf", "urh", "rigctl", "rigctld", "soapysdrserver", "wifi_test", "bt_test"}
 BAD_MODULE_WORDS = ("amarisoft", "soapysdrremote", "hackrf", "bladerf", "redpitaya", "uhd", "lms7",
                     "iq_exporter", "network_sink", "pager_decoder", "recorder", "heatmap", "demodinmarsat")
+
+# Device self-check denylist (STACK.md v2 §5.4 "Заборонено" and "Закріплено на -1",
+# 1.2 #10, 4.3 excluded services, 5.2 FE1.1s P4). Only TX-capable tools, decoders
+# of private content and their codec/driver packages are listed here; kernel and
+# Qualcomm firmware pins are version locks, checked elsewhere. Region is Europe,
+# so the US-only profile packages (multimon-ng EAS, nrsc5, dump978-fa,
+# skyaware978) are never installed on this root.
+PROHIBITED_PACKAGES = frozenset({
+    # Hamlib/WSJT/TX-capable applications
+    "wsjtx", "js8call", "python3-js8py", "fldigi", "qsstv", "direwolf", "urh",
+    # SoapyRemote, unaudited Soapy/Lime modules and Lime GUI/GNU Radio blocks
+    "soapysdr-module-all", "soapysdr0.8-module-all", "soapysdr0.8-module-remote", "soapysdr-module-remote",
+    "soapysdr0.8-module-lms7", "soapysdr-module-lms7", "soapysdr0.8-module-hackrf", "soapysdr-module-hackrf",
+    "soapysdr0.8-module-bladerf", "soapysdr-module-bladerf", "soapysdr0.8-module-uhd", "soapysdr-module-uhd",
+    "soapysdr0.8-module-redpitaya", "soapysdr-module-redpitaya", "limesuite", "limesuiteng-gui", "gr-limesuiteng",
+    # GSM/Iridium/pager/trunking/TETRA/ACARS and other private-content decoders
+    "gr-gsm", "gr-iridium", "kalibrate-rtl", "kalibrate-hackrf", "kalibrate-bladerf", "multimon-ng",
+    "dsd", "dsdcc", "libdsdcc1", "rtl-433", "acarsdec", "dumphfdl", "dumpvdl2", "dxlaprs-lora",
+    "python3-digiham", "python3-meshtastic", "python3-bleak", "m17-demod", "hpsdrconnector",
+    "dump1090-fa", "dump1090-fa-minimal", "skyaware978", "piaware", "nrsc5", "lame", "python3-paho-mqtt",
+    # Q6A AIC8800 RF test tool (/usr/bin/wifi_test, bt_test)
+    "aicrf-test",
+})
+PROHIBITED_PACKAGE_GLOBS = ("libhamlib*", "libsoapysdr0.9*", "kalibrate*", "gr-gsm*", "gr-iridium*", "digiham*",
+                            "codecserver*", "libacars*", "dxlaprs-tetra*", "dump978-fa*", "trunk-recorder*",
+                            "sdrtrunk*", "op25*")
+# Distro/upstream builds carry TX plugins, pager modes or the rtl-sdr-blog fork;
+# only the patched RX-only local repository builds (+labN) are allowed.
+LAB_BUILD_ONLY_PACKAGES = frozenset({"dream", "librtlsdr0", "librtlsdr2", "rtl-sdr", "sdrangel", "sdrangelsrv",
+                                     "sdrpp", "openwebrx", "satdump", "gpredict", "gr-satellites",
+                                     "limesuiteng-cli"})
+PROHIBITED_EXECUTABLES = frozenset({"wifi_test", "bt_test", "rigctl", "rigctld", "rtl_tcp", "soapysdrserver",
+                                    "limegui", "limespi", "limei2c", "limecsr", "limeoem", "limeflash",
+                                    "limevspa", "limeppsdo", "multimon-ng", "kal", "grgsm_livemon",
+                                    "grgsm_decode", "iridium-extractor", "wsjtx", "fldigi", "qsstv", "direwolf", "urh"})
+EXECUTABLE_DIRS = ("usr/bin", "usr/sbin", "usr/local/bin", "usr/local/sbin", "bin", "sbin")
+
+# Q6A FCU760K Wi-Fi/BT (AIC8800, FE1.1s hub port 4). This staged root is the
+# field/QUIET root: Wi-Fi/BT stay off in every profile it runs; only a separate
+# home root may unblock Wi-Fi. Layers: modprobe blacklist + install /bin/false,
+# udev authorized=0 on the observed FE1.1s port-4 path (any VID), WIFI_PWR_EN
+# gpio-hog (bench gate W1-2, OPEN, not generated here), rfkill as second layer.
+AIC8800_MODULES = ("aic_load_fw", "aic_load_fw_usb", "aic8800_fdrv", "aic8800_fdrv_usb",
+                   "aic_btusb", "aic_btusb_usb", "btusb")
+WIFI_BT_USB_VENDORS = frozenset({"a69c", "368b"})
+RADIO_OFF_MODPROBE = "etc/modprobe.d/60-srrx-radio-off.conf"
+RADIO_OFF_UDEV = "etc/udev/rules.d/60-srrx-wifi-bt-deauthorize.rules"
+RADIO_OFF_UNIT = "srrx-radio-off.service"
 
 
 class DeploymentError(ValueError):
@@ -64,7 +113,7 @@ def _string(value, pattern, label):
 
 
 def validate_devices(config):
-    keys(config, ("schema_version", "board_compatible", "i2c", "pico", "usb", "lime"), "device bindings")
+    keys(config, ("schema_version", "board_compatible", "i2c", "pico", "usb", "lime", "wifi_bt"), "device bindings")
     if type(config["schema_version"]) is not int or config["schema_version"] != 1 or config["board_compatible"] != "radxa,dragon-q6a":
         raise DeploymentError("only the explicit Q6A revision is supported")
     keys(config["i2c"], ("ina228", "control"), "I2C buses")
@@ -108,6 +157,11 @@ def validate_devices(config):
         raise DeploymentError("Lime runtime release is disabled pending full native TX audit and hardware gates")
     if config["lime"]["pci_address"] is not None or config["lime"]["device_path"] is not None:
         raise DeploymentError("disabled Lime binding must not grant a raw device path")
+    keys(config["wifi_bt"], ("fe11s_port4_usb_path",), "Wi-Fi/BT radio-off binding")
+    # Kernel USB device name of FE1.1s port 4 as observed on the unit (lsusb -t,
+    # /sys/bus/usb/devices), e.g. 1-1.4. udev deauthorizes any VID on this port.
+    _string(config["wifi_bt"]["fe11s_port4_usb_path"], r"[1-9][0-9]*-[0-9]+(?:\.[0-9]+)*\.4",
+            "observed FE1.1s port-4 USB path")
     return config
 
 
@@ -133,6 +187,102 @@ def udev_rules(config):
     else:
         rules.append(f'SUBSYSTEM=="tty", ATTRS{{idVendor}}=="{pico["vid"]}", ATTRS{{idProduct}}=="{pico["pid"]}", ATTRS{{serial}}=="{pico["serial"]}", GROUP="labd", MODE="0660", SYMLINK+="lab/pico"')
     return "\n".join(rules) + "\n"
+
+
+def radio_off_modprobe():
+    """Field/QUIET root: the AIC8800 Wi-Fi/BT drivers and btusb can never load."""
+    lines = ["# SR-RX field/QUIET root (STACK.md v2 5.2 FE1.1s P4, 1.2 #8): receive-only.",
+             "# Q6A FCU760K Wi-Fi/BT (AIC8800) and btusb never load; rfkill is only the second layer."]
+    for module in AIC8800_MODULES:
+        lines += ["blacklist " + module, "install " + module + " /bin/false"]
+    return "\n".join(lines) + "\n"
+
+
+def radio_off_udev(config):
+    validate_devices(config)
+    path = config["wifi_bt"]["fe11s_port4_usb_path"]
+    return ("# SR-RX field/QUIET root: deauthorize any USB device on FE1.1s port 4 (Q6A Wi-Fi/BT), by port path, not VID:PID.\n"
+            f'ACTION=="add", SUBSYSTEM=="usb", ENV{{DEVTYPE}}=="usb_device", KERNEL=="{path}", ATTR{{authorized}}="0"\n')
+
+
+def radio_off_unit():
+    # Same kernel call as `rfkill block wlan|bluetooth`; util-linux rfkill is not
+    # in every Ubuntu image, so the project's own module writes /dev/rfkill.
+    return ("[Unit]\nDescription=SR-RX receive-only: rfkill block wlan and bluetooth (second layer)\n"
+            "DefaultDependencies=no\nAfter=systemd-rfkill.service\nBefore=srrx.service network-pre.target\n"
+            "Wants=network-pre.target\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\n"
+            "Environment=PYTHONPATH=/opt/srrx/software\n"
+            "ExecStart=/usr/bin/python3 -m srrx.rfkill block\n\n"
+            "[Install]\nWantedBy=sysinit.target\n")
+
+
+def _read(path):
+    try:
+        return Path(path).read_text().strip()
+    except (OSError, UnicodeError):
+        return None
+
+
+def radio_off_issues(config=None, root=Path("/")):
+    """Read-only receive-only self-check of the Q6A Wi-Fi/BT radio; fails closed."""
+    root = Path(root)
+    issues = []
+    if _read(root / RADIO_OFF_MODPROBE) != radio_off_modprobe().strip():
+        issues.append("Wi-Fi/BT modprobe blacklist with install /bin/false missing or modified: /" + RADIO_OFF_MODPROBE)
+    modules = _read(root / "proc/modules")
+    if modules is None:
+        issues.append("loaded kernel module list unavailable; Wi-Fi/BT radio-off unverified")
+    else:
+        loaded = {line.split()[0].replace("-", "_") for line in modules.splitlines() if line.split()}
+        found = sorted(loaded.intersection(AIC8800_MODULES))
+        if found:
+            issues.append("Wi-Fi/BT kernel modules loaded: " + ",".join(found))
+    for device in sorted((root / "sys/class/rfkill").glob("rfkill*")):
+        kind = _read(device / "type")
+        if kind in ("wlan", "bluetooth") and "1" not in (_read(device / "soft"), _read(device / "hard")):
+            issues.append("rfkill " + kind + " not blocked: " + device.name)
+    for netdev in sorted((root / "sys/class/net").glob("*")):
+        if (netdev / "wireless").exists() or (netdev / "phy80211").exists():
+            issues.append("wireless network device present: " + netdev.name)
+    if any((root / "sys/class/bluetooth").glob("hci*")):
+        issues.append("Bluetooth hci device present")
+    for device in sorted((root / "sys/bus/usb/devices").glob("*")):
+        if (_read(device / "idVendor") or "").lower() in WIFI_BT_USB_VENDORS and _read(device / "authorized") != "0":
+            issues.append("Wi-Fi/BT USB device authorized: " + device.name)
+    if config is not None:
+        try:
+            expected_rule = radio_off_udev(config).strip()
+        except (ValueError, KeyError, TypeError) as exc:
+            issues.append("Wi-Fi/BT radio-off binding invalid: " + str(exc))
+        else:
+            if _read(root / RADIO_OFF_UDEV) != expected_rule:
+                issues.append("FE1.1s port-4 authorized=0 udev rule missing or modified: /" + RADIO_OFF_UDEV)
+            port = root / "sys/bus/usb/devices" / config["wifi_bt"]["fe11s_port4_usb_path"]
+            if port.exists() and (_read(port / "authorized") != "0" or any(port.glob("*:*/driver"))):
+                issues.append("USB device on FE1.1s port 4 is authorized or has a bound driver")
+    return issues
+
+
+def prohibited_installed(installed):
+    """Names of installed packages that the receive-only/privacy rules forbid."""
+    found = set()
+    for name, version in installed.items():
+        if name in PROHIBITED_PACKAGES or any(fnmatch.fnmatchcase(name, pattern) for pattern in PROHIBITED_PACKAGE_GLOBS):
+            found.add(name)
+        elif name in LAB_BUILD_ONLY_PACKAGES and not re.search(r"\+lab[0-9]*", version or ""):
+            found.add(name + " (not a +lab RX-only build)")
+    return sorted(found)
+
+
+def prohibited_executables(root=Path("/")):
+    found = set()
+    for directory in EXECUTABLE_DIRS:
+        try:
+            names = [p.name for p in (Path(root) / directory).iterdir()]
+        except OSError:
+            continue
+        found.update("/" + directory + "/" + n for n in names if n.lower() in PROHIBITED_EXECUTABLES)
+    return sorted(found)
 
 
 def command(args):
@@ -178,10 +328,16 @@ def doctor(config=None):
         for name, versions in requirements.items():
             if installed.get(name) not in versions:
                 report["issues"].append("missing/different pinned package: " + name)
-        prohibited = {"wsjtx", "fldigi", "qsstv", "direwolf", "urh", "soapysdr-module-all", "soapysdr0.8-module-all",
-                      "soapysdr0.8-module-remote", "limesuiteng-gui", "gr-limesuiteng", "libhamlib-utils"}
-        if prohibited.intersection(installed):
-            report["issues"].append("prohibited packages installed: " + ",".join(sorted(prohibited.intersection(installed))))
+        prohibited = prohibited_installed(installed)
+        if prohibited:
+            report["issues"].append("prohibited packages installed: " + ",".join(prohibited))
+    executables = prohibited_executables()
+    if executables:
+        report["issues"].append("prohibited TX/private-content executables present: " + ",".join(executables))
+    radio = radio_off_issues(config)
+    report["radio_off"] = {"status": "BLOCKED" if radio else "RADIO_OFF_OBSERVED", "issues": radio,
+                           "wifi_pwr_en_hog": "OPEN (bench gate W1-2)"}
+    report["issues"].extend(radio)
     try:
         report["bios_version"] = Path("/sys/class/dmi/id/bios_version").read_text().strip()
     except OSError:
@@ -328,7 +484,12 @@ def stage(destination, config=None):
         shutil.copyfile(unit, units / unit.name)
         dropin = units / (unit.name + ".d")
         dropin.mkdir()
+        (dropin / "10-radio-off.conf").write_text("[Unit]\nRequires=" + RADIO_OFF_UNIT + "\nAfter=" + RADIO_OFF_UNIT + "\n")
         (dropin / "20-release-guard.conf").write_text("[Service]\nExecStartPre=/usr/bin/python3 /opt/srrx/deployment/deploy.py release-guard --devices /etc/srrx/devices.json --acceptance /etc/srrx/acceptance.json --release /etc/srrx/release.json --build-manifest /etc/srrx/build-manifest.json --cache /srv/srrx-cache\n")
+    (units / RADIO_OFF_UNIT).write_text(radio_off_unit())
+    modprobe = rootfs / RADIO_OFF_MODPROBE
+    modprobe.parent.mkdir(parents=True)
+    modprobe.write_text(radio_off_modprobe())
     for name in ("release.template.json", "build-manifest.template.json", "devices.template.json"):
         shutil.copyfile(HERE / name, etc / name)
     shutil.copyfile(PROJECT / "software/config/acceptance.template.json", etc / "acceptance.template.json")
@@ -338,9 +499,10 @@ def stage(destination, config=None):
         rules = rootfs / "etc/udev/rules.d"
         rules.mkdir(parents=True)
         (rules / "70-srrx-serial-bound.rules").write_text(udev_rules(config))
+        (rootfs / RADIO_OFF_UDEV).write_text(radio_off_udev(config))
     files = {p.relative_to(rootfs).as_posix(): sha(p) for p in sorted(rootfs.rglob("*")) if p.is_file()}
     (destination / "stage-files.json").write_text(json.dumps({"schema_version": 1, "status": "STAGED_ONLY", "files": files}, indent=2) + "\n")
-    (destination / "INSTALL_PLAN.txt").write_text("STAGED ONLY. No services enabled and no hardware acceptance supplied.\nReview software/DEPLOYMENT.md, run doctor and all release guards, then package rootfs via signed local repository.\nDo not copy over /etc acceptance files, repartition UFS, flash BIOS, run rsetup or auto-enable units.\nA/B installation is a separate bench/recovery procedure; no activation command is generated here.\n")
+    (destination / "INSTALL_PLAN.txt").write_text("STAGED ONLY. No services enabled and no hardware acceptance supplied.\nReview software/DEPLOYMENT.md, run doctor and all release guards, then package rootfs via signed local repository.\nField/QUIET root: Wi-Fi/BT modprobe blacklist (install /bin/false), FE1.1s port-4 authorized=0 rule and rfkill unit are staged; the WIFI_PWR_EN gpio-hog (W1-2) is OPEN and not generated.\nDo not copy over /etc acceptance files, repartition UFS, flash BIOS, run rsetup or auto-enable units.\nA/B installation is a separate bench/recovery procedure; no activation command is generated here.\n")
     return {"status": "STAGED_ONLY", "directory": str(destination), "files": len(files), "hardware_ready": False, "services_enabled": False}
 
 

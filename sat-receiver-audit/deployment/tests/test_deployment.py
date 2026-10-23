@@ -38,6 +38,7 @@ class DeploymentTests(unittest.TestCase):
         config["i2c"]["control"] = {"path": "/dev/i2c-9", "of_fullname": "/soc@0/test-control"}
         config["pico"]["kernel_parent"] = "99c000.serial"
         config["usb"]["hfplus"]["serial"] = "AIRSPYHF SN:0123456789ABCDEF"
+        config["wifi_bt"]["fe11s_port4_usb_path"] = "1-1.4"
         return config
 
     def test_template_is_rejected_and_serial_rules_are_exact(self):
@@ -54,7 +55,11 @@ class DeploymentTests(unittest.TestCase):
                        lambda c: c["usb"]["rtl_b"].update(serial="LABRXA"),
                        lambda c: c["usb"]["hfplus"].update(serial='x", RUN+="bad'),
                        lambda c: c["pico"].update(kernel_parent="*"),
-                       lambda c: c["lime"].update(enabled=True)):
+                       lambda c: c["lime"].update(enabled=True),
+                       lambda c: c["wifi_bt"].update(fe11s_port4_usb_path=None),
+                       lambda c: c["wifi_bt"].update(fe11s_port4_usb_path="1-1.3"),
+                       lambda c: c["wifi_bt"].update(fe11s_port4_usb_path='1-1.4", RUN+="bad'),
+                       lambda c: c.pop("wifi_bt")):
             config = self.devices()
             mutate(config)
             with self.assertRaises(deploy.DeploymentError):
@@ -73,8 +78,136 @@ class DeploymentTests(unittest.TestCase):
         guard = (rootfs / "etc/systemd/system/srrx.service.d/20-release-guard.conf").read_text()
         self.assertIn("ExecStartPre=", guard)
         self.assertIn("release-guard", guard)
+        files = json.loads((self.root / "candidate/stage-files.json").read_text())["files"]
+        for path in (deploy.RADIO_OFF_MODPROBE, deploy.RADIO_OFF_UDEV, "etc/systemd/system/" + deploy.RADIO_OFF_UNIT):
+            self.assertIn(path, files)
         with self.assertRaises(deploy.DeploymentError):
             deploy.stage(self.root / "candidate")
+
+    def test_stage_disables_q6a_wifi_bt_for_field_and_quiet_root(self):
+        deploy.stage(self.root / "candidate", self.devices())
+        rootfs = self.root / "candidate/rootfs"
+        modprobe = (rootfs / deploy.RADIO_OFF_MODPROBE).read_text().splitlines()
+        for module in ("aic_load_fw", "aic_load_fw_usb", "aic8800_fdrv", "aic8800_fdrv_usb",
+                       "aic_btusb", "aic_btusb_usb", "btusb"):
+            self.assertIn("blacklist " + module, modprobe)
+            self.assertIn("install " + module + " /bin/false", modprobe)
+        rule = (rootfs / deploy.RADIO_OFF_UDEV).read_text()
+        self.assertIn('KERNEL=="1-1.4", ATTR{authorized}="0"', rule)
+        self.assertNotIn("idVendor", rule)  # by port path, any VID
+        unit = (rootfs / "etc/systemd/system" / deploy.RADIO_OFF_UNIT).read_text()
+        self.assertIn("ExecStart=/usr/bin/python3 -m srrx.rfkill block", unit)
+        self.assertTrue((rootfs / "opt/srrx/software/srrx/rfkill.py").is_file())
+        self.assertIn("Before=srrx.service", unit)
+        dropin = (rootfs / "etc/systemd/system/srrx.service.d/10-radio-off.conf").read_text()
+        self.assertIn("Requires=" + deploy.RADIO_OFF_UNIT, dropin)
+        self.assertIn("After=" + deploy.RADIO_OFF_UNIT, dropin)
+        self.assertNotIn("unblock", unit + dropin + "\n".join(modprobe))
+
+    def radio_root(self, config=None):
+        root = self.root / "target"
+        (root / "proc").mkdir(parents=True)
+        (root / "proc/modules").write_text("i2c_dev 24576 0 - Live 0x0\nusbserial 45056 0 - Live 0x0\n")
+        (root / deploy.RADIO_OFF_MODPROBE).parent.mkdir(parents=True)
+        (root / deploy.RADIO_OFF_MODPROBE).write_text(deploy.radio_off_modprobe())
+        if config is not None:
+            (root / deploy.RADIO_OFF_UDEV).parent.mkdir(parents=True)
+            (root / deploy.RADIO_OFF_UDEV).write_text(deploy.radio_off_udev(config))
+        for name, kind, soft in (("rfkill0", "wlan", "1"), ("rfkill1", "bluetooth", "1")):
+            (root / "sys/class/rfkill" / name).mkdir(parents=True)
+            (root / "sys/class/rfkill" / name / "type").write_text(kind + "\n")
+            (root / "sys/class/rfkill" / name / "soft").write_text(soft + "\n")
+            (root / "sys/class/rfkill" / name / "hard").write_text("0\n")
+        (root / "sys/class/net/eth0").mkdir(parents=True)
+        (root / "sys/bus/usb/devices/1-1").mkdir(parents=True)
+        (root / "sys/bus/usb/devices/1-1/idVendor").write_text("1a86\n")
+        (root / "sys/bus/usb/devices/1-1/authorized").write_text("1\n")
+        return root
+
+    def test_radio_self_check_passes_only_when_wifi_bt_is_off(self):
+        config = self.devices()
+        root = self.radio_root(config)
+        self.assertEqual(deploy.radio_off_issues(config, root), [])
+        port = root / "sys/bus/usb/devices/1-1.4"
+        port.mkdir()
+        (port / "idVendor").write_text("a69c\n")
+        (port / "authorized").write_text("0\n")
+        self.assertEqual(deploy.radio_off_issues(config, root), [])  # present but deauthorized, no driver
+        cases = {
+            "module": lambda r: (r / "proc/modules").write_text("aic8800_fdrv_usb 1 0 - Live 0x0\nbtusb 1 0 - Live 0x0\n"),
+            "module-list": lambda r: (r / "proc/modules").unlink(),
+            "blacklist": lambda r: (r / deploy.RADIO_OFF_MODPROBE).write_text("blacklist btusb\n"),
+            "udev": lambda r: (r / deploy.RADIO_OFF_UDEV).unlink(),
+            "rfkill": lambda r: (r / "sys/class/rfkill/rfkill0/soft").write_text("0\n"),
+            "wlan": lambda r: (r / "sys/class/net/wlan0/wireless").mkdir(parents=True),
+            "hci": lambda r: (r / "sys/class/bluetooth/hci0").mkdir(parents=True),
+            "authorized": lambda r: (r / "sys/bus/usb/devices/1-1.4/authorized").write_text("1\n"),
+            "driver": lambda r: (r / "sys/bus/usb/devices/1-1.4/1-1.4:1.0/driver").mkdir(parents=True),
+            "other-vid": lambda r: [(r / "sys/bus/usb/devices/2-1").mkdir(),
+                                    (r / "sys/bus/usb/devices/2-1/idVendor").write_text("368b\n")],
+        }
+        for label, mutate in cases.items():
+            with self.subTest(case=label):
+                shutil.rmtree(root)
+                root = self.radio_root(config)
+                port = root / "sys/bus/usb/devices/1-1.4"
+                port.mkdir()
+                (port / "idVendor").write_text("a69c\n")
+                (port / "authorized").write_text("0\n")
+                mutate(root)
+                self.assertTrue(deploy.radio_off_issues(config, root))
+        shutil.rmtree(root)
+        root = self.radio_root(config)
+        self.assertEqual(deploy.radio_off_issues(None, root), [])
+        broken = self.devices()
+        broken["wifi_bt"]["fe11s_port4_usb_path"] = None
+        self.assertTrue(deploy.radio_off_issues(broken, root))
+
+    def test_doctor_and_release_guard_block_on_radio_issue(self):
+        issue = "Wi-Fi/BT kernel modules loaded: aic8800_fdrv_usb"
+        devices = self.root / "devices.json"
+        devices.write_text(json.dumps(self.devices()))
+        quiet = lambda args: {"returncode": 0, "stdout": "", "stderr": ""}
+        with patch.object(deploy, "command", quiet), patch.object(deploy, "radio_off_issues", return_value=[issue]):
+            report = deploy.doctor()
+            self.assertIn(issue, report["issues"])
+            self.assertEqual(report["radio_off"]["status"], "BLOCKED")
+            self.assertEqual(report["status"], "BLOCKED")
+            with self.assertRaisesRegex(deploy.DeploymentError, "aic8800_fdrv_usb"):
+                deploy.release_guard(devices, self.root / "a", self.root / "r", self.root / "b", self.root / "c")
+
+    def test_prohibited_package_list_covers_stack_and_keeps_required_packages(self):
+        banned = {"wsjtx": "2.6.1", "js8call": "2.2.0", "fldigi": "4.2", "qsstv": "9.5", "direwolf": "1.7",
+                  "urh": "2.9", "libhamlib-utils": "4.5", "libhamlib4t64": "4.5", "soapysdr0.8-module-remote": "0.5",
+                  "soapysdr0.8-module-lms7": "20", "libsoapysdr0.9": "0.9", "limesuite": "20", "limesuiteng-gui": "1",
+                  "gr-limesuiteng": "1", "gr-gsm": "1.0", "gr-iridium": "1.0", "kalibrate-rtl": "0.4",
+                  "multimon-ng": "1.3.0", "dsdcc": "1.9", "rtl-433": "23.11", "acarsdec": "3.7", "dumphfdl": "1.4",
+                  "dumpvdl2": "2.3", "libacars-tools": "2.2", "libacars2": "2.2", "digiham": "0.6",
+                  "python3-digiham": "0.6", "codecserver": "0.2", "codecserver-driver-ambe3k": "0.2",
+                  "dxlaprs-tetra": "1", "dxlaprs-lora": "1", "m17-demod": "1", "python3-meshtastic": "2",
+                  "dump1090-fa": "9", "dump978-fa": "9", "skyaware978": "9", "piaware": "9", "nrsc5": "1",
+                  "hpsdrconnector": "1", "lame": "3.100", "python3-paho-mqtt": "1.6", "aicrf-test": "4.0"}
+        found = deploy.prohibited_installed(banned)
+        self.assertEqual(found, sorted(banned))
+        lab_only = {"dream": "2.1.1-2", "librtlsdr0": "2.0.1-2build1", "librtlsdr2": "2.0.1-2build1",
+                    "sdrangel": "7.17.2-1", "openwebrx": "1.2.126", "gpredict": "2.3-115-g0f3beb6-3build3"}
+        self.assertEqual(len(deploy.prohibited_installed(lab_only)), len(lab_only))
+        allowed = {"dream": "2.1.1-2+lab1", "librtlsdr2": "2.0.3-0+lab1", "sdrangel": "7.27.2-1+lab1",
+                   "openwebrx": "1.2.126+lab1", "gpredict": "2.3-115-g1d80049+lab", "aic8800-usb-dkms": "4.0"}
+        dependencies = deploy.load(HERE / "dependencies.json")
+        for name, versions in dependencies["required_target_packages"].items():
+            allowed[name] = versions[0]
+        for name, version in dependencies["additional_stack_package_versions"].items():
+            allowed[name] = version or ""
+        self.assertEqual(deploy.prohibited_installed(allowed), [])
+
+    def test_prohibited_executables_on_target_are_reported(self):
+        root = self.root / "target"
+        (root / "usr/bin").mkdir(parents=True)
+        for name in ("wifi_test", "bt_test", "rigctld", "rtl_tcp", "rtl_sdr", "python3"):
+            (root / "usr/bin" / name).write_text("")
+        self.assertEqual(deploy.prohibited_executables(root),
+                         ["/usr/bin/bt_test", "/usr/bin/rigctld", "/usr/bin/rtl_tcp", "/usr/bin/wifi_test"])
 
     def test_bundle_is_deterministic_and_changed_stage_rejected(self):
         staging = self.root / "staging"

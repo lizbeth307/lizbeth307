@@ -15,6 +15,7 @@ import json
 import os
 from pathlib import Path
 import shutil
+import stat
 import subprocess
 import sys
 import tempfile
@@ -47,13 +48,61 @@ def atomic_write(path, data):
             os.unlink(temp)
 
 
+def import_pymupdf():
+    try:
+        import pymupdf
+    except ImportError:
+        import fitz as pymupdf  # PyMuPDF < 1.24.3 only has the legacy name
+    return pymupdf
+
+
+def prepend_search_path(env, key, entry):
+    """Put entry first in a ':'-separated search path.
+
+    An empty element in LD_LIBRARY_PATH or PYTHONPATH means the current
+    directory, so an unset or empty old value must not leave a trailing ':'.
+    """
+    old = env.get(key)
+    env[key] = entry + os.pathsep + old if old else entry
+
+
+def trusted_directory(path):
+    """Refuse a library/module directory that another local user could modify.
+
+    The runtime is put on LD_LIBRARY_PATH and PYTHONPATH, so a writable
+    directory there would let another account run code as this user. The
+    directory itself must not be world-writable; its parents may be only if
+    they are sticky (as /tmp is), and every level must belong to root or us.
+    """
+    uid = os.getuid()
+    for level, part in enumerate((path, *path.parents)):
+        info = part.stat()
+        if not stat.S_ISDIR(info.st_mode):
+            raise SystemExit(f'--runtime-root: {part} is not a directory')
+        if info.st_uid not in (0, uid):
+            raise SystemExit(f'Refusing --runtime-root: {part} belongs to uid {info.st_uid}, not root or this user')
+        if info.st_mode & stat.S_IWOTH and (level == 0 or not info.st_mode & stat.S_ISVTX):
+            raise SystemExit(f'Refusing --runtime-root: {part} is world-writable; use a private directory '
+                             '(for example under $HOME, or mkdir -m 700 under /tmp)')
+
+
+def runtime_environment(runtime_root, marker):
+    """Environment that runs this script again on an unpacked KiCad runtime."""
+    runtime = Path(runtime_root).resolve()
+    libraries = runtime / 'usr/lib/x86_64-linux-gnu'
+    modules = runtime / 'usr/lib/python3/dist-packages'
+    for directory in (libraries, modules):
+        trusted_directory(directory)
+    env = dict(os.environ)
+    prepend_search_path(env, 'LD_LIBRARY_PATH', str(libraries))
+    prepend_search_path(env, 'PYTHONPATH', str(modules))
+    env[marker] = '1'
+    return env
+
+
 def native_module(runtime_root):
     if runtime_root and not os.environ.get('SR_RX_PCB_RUNTIME_ACTIVE'):
-        runtime = Path(runtime_root).resolve()
-        env = dict(os.environ)
-        env['LD_LIBRARY_PATH'] = str(runtime / 'usr/lib/x86_64-linux-gnu') + ':' + env.get('LD_LIBRARY_PATH', '')
-        env['PYTHONPATH'] = str(runtime / 'usr/lib/python3/dist-packages') + ':' + env.get('PYTHONPATH', '')
-        env['SR_RX_PCB_RUNTIME_ACTIVE'] = '1'
+        env = runtime_environment(runtime_root, 'SR_RX_PCB_RUNTIME_ACTIVE')
         os.execve(sys.executable, [sys.executable, str(Path(__file__).resolve()), *sys.argv[1:]], env)
     try:
         import pcbnew
@@ -281,9 +330,9 @@ def main():
         ET.fromstring(preview.read_bytes())
         atomic_write(out/(BOARD_NAME+'.svg'),preview.read_bytes())
     try:
-        import fitz
-        image_doc=fitz.open(out/(BOARD_NAME+'.svg'))
-        atomic_write(out/(BOARD_NAME+'.png'),image_doc[0].get_pixmap(matrix=fitz.Matrix(3,3),alpha=False).tobytes('png'))
+        pymupdf=import_pymupdf()
+        image_doc=pymupdf.open(out/(BOARD_NAME+'.svg'))
+        atomic_write(out/(BOARD_NAME+'.png'),image_doc[0].get_pixmap(matrix=pymupdf.Matrix(3,3),alpha=False).tobytes('png'))
     except ImportError:
         pass # The native vector SVG remains available without optional PyMuPDF.
     provenance=dict(resource='build/kicad/footprints/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod',sha256=digest(BASE/'build/kicad/footprints/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod'),source='https://ppa.launchpadcontent.net/kicad/kicad-10.0-releases/ubuntu/pool/main/k/kicad-library-footprints/kicad-footprints_10.0.7~ubuntu24.04.1_all.deb',package_sha256='a1c25a690348180d572b73496668cffafdaecf284d6555279fa89d5e4fefa46c',license='build/kicad/footprints/LICENSE.md',content_modified=False,qualification='Placement candidate only, not approved MPN/land pattern')

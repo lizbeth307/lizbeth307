@@ -415,8 +415,8 @@
     "wdt": "https://docs.micropython.org/en/v1.26.0/library/machine.WDT.html"
   },
   "source_sha256": {
-    "design/E3.json": "0a2e2e60ede923b2d0a1aa0f8484a97513c1ef36ae389d3aee365fbcf90aaac5",
-    "design/E5.json": "86a9099809fbcdf365c82ecf4a239531b1b55715ee17cd1c5fb5a776c979ca05",
+    "design/E3.json": "f2ac2171727824e36b5e4d7780677d4fc46ec0840d0a57a59053451132c92be4",
+    "design/E5.json": "d0366fa9440ba2488b352bcf24ca31b1b8e117afb1c2aa2453dd214d711c3dd6",
     "firmware/imu/device.py": "02a9a2b6e93074716375617137cdfe1bb6df9d22e5021768c59cf273aeafea2e",
     "firmware/imu/session.py": "350484a09ad30255d7a0f44b3c0d631726de96f5639a59443d96377bcccd424d",
     "firmware/imu/shtp.py": "f23f08679f9847fd64a14fc73171b2e5191016b1cd665c8c5d66f90e4ee26525",

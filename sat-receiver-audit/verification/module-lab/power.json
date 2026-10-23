@@ -1311,9 +1311,9 @@
     "software/srrx/hardware.py": "0dbf351d7cea86b6743ec4479ae8d78604c351009dae8a9b87715b039eb133ba",
     "software/srrx/telemetry.py": "2427c56deab13eea2bf8f9e949982985f69e63e1d4c4bbe4b32a54d90f1a1220",
     "software/srrx/policy.py": "bfffff805fd6392055ea61d608a502728d9fb884704c7c75e32c23e1b23557f1",
-    "design/E1.json": "e87f79db4da0d9be7e74aa1ad2816ea99ae4ed8fd6e723ba375c1559bfd51392",
-    "design/E2.json": "adc5b67b6b53977143847d688f657364a5e300a80761d74e1dc82e34bd703c16",
-    "design/E3.json": "0a2e2e60ede923b2d0a1aa0f8484a97513c1ef36ae389d3aee365fbcf90aaac5",
+    "design/E1.json": "f535a839afd70def8f35f43380153cb00723f97c634be51d9159d1bfe4630591",
+    "design/E2.json": "bb2ac6a37392689b462a570d7334aa257aaad8e4a006c5df1e934c3dd794d40c",
+    "design/E3.json": "f2ac2171727824e36b5e4d7780677d4fc46ec0840d0a57a59053451132c92be4",
     "deployment/module_lab/power_bus.py": "263dd47a794cbe283cd0fb47bf4d268068198090deabacead0a3269f56dcc0bd",
     "deployment/module_lab/power_scenarios.py": "99678c970b1f839c76107b40b464861139af4fe8e80c9b95eea91376e6563436"
   },

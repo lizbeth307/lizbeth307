@@ -5,32 +5,28 @@
     "ort_disable_telemetry_preimport": true
   },
   "test_groups": {
-    "software": 401,
-    "deployment": 13,
+    "software": 407,
+    "deployment": 18,
     "linux_lab": 7
   },
-  "tests_discovered": 421,
-  "passed": 419,
+  "tests_discovered": 432,
+  "passed": 431,
   "failures": [],
   "errors": [],
   "skipped": [
     {
       "test": "test_manifest_binds_actual_opted_in_backend_bytes_without_claiming_qualification (test_model_export.ModelExportTests.test_manifest_binds_actual_opted_in_backend_bytes_without_claiming_qualification)",
       "reason": "Actual QNN HTP SDK library unavailable; no real manifest was generated"
-    },
-    {
-      "test": "test_invalid_rpc_is_bounded_and_service_remains_disarmed (test_service_failures.UnixServiceFailureTests.test_invalid_rpc_is_bounded_and_service_remains_disarmed)",
-      "reason": "Execution environment forbids AF_UNIX socket creation: [Errno 1] Operation not permitted"
     }
   ],
-  "elapsed_s": 11.752,
+  "elapsed_s": 10.851,
   "graph_sha256": {
-    "design/E1.json": "e87f79db4da0d9be7e74aa1ad2816ea99ae4ed8fd6e723ba375c1559bfd51392",
-    "design/E2.json": "adc5b67b6b53977143847d688f657364a5e300a80761d74e1dc82e34bd703c16",
-    "design/E3.json": "0a2e2e60ede923b2d0a1aa0f8484a97513c1ef36ae389d3aee365fbcf90aaac5",
-    "design/E4.json": "b05555c7a6729029f779df3ca3d0a62d71e206520a33cf7e34ffa3e2c081344d",
-    "design/E5.json": "86a9099809fbcdf365c82ecf4a239531b1b55715ee17cd1c5fb5a776c979ca05",
-    "design/readiness-contract.json": "b662bc51ca844d8e77dd0e57a2799b744d8eeee93388abd18064745c412ea12b"
+    "design/E1.json": "f535a839afd70def8f35f43380153cb00723f97c634be51d9159d1bfe4630591",
+    "design/E2.json": "bb2ac6a37392689b462a570d7334aa257aaad8e4a006c5df1e934c3dd794d40c",
+    "design/E3.json": "f2ac2171727824e36b5e4d7780677d4fc46ec0840d0a57a59053451132c92be4",
+    "design/E4.json": "0935bbfe204728620575ba2e6713185799862050f5d8c2c465c028606c5612bf",
+    "design/E5.json": "d0366fa9440ba2488b352bcf24ca31b1b8e117afb1c2aa2453dd214d711c3dd6",
+    "design/readiness-contract.json": "75266eb2c5e51b28189fa005d9a2146fb627c3f9332c1bd28925c293265bcb90"
   },
   "source_sha256": {
     "deployment/ab.template.json": "463b5597015d43f010c205d3f5df841651254fb78dbb90be9e535e6277eab5fe",
@@ -38,8 +34,8 @@
     "deployment/build-vendor.sh": "5c9a598f25e032f0db79f823824b69dc11278334c2909982a0cb836d164b07f2",
     "deployment/build.sh": "4d7c94c6bb802fd9a1fbe602c9bae89a4809648ead014adb35d9e1428f954dd3",
     "deployment/dependencies.json": "1c7749fae6044402f2d8f93be38b28720c05002b69081224647262044f60bd9e",
-    "deployment/deploy.py": "6ff56ea1e25d77d5a7d3ad948762b70d3ba6b88d16f9d61812d0182744b4ee2a",
-    "deployment/devices.template.json": "a1e823bb14ed9947dbc4e5f0e87338d8f4c43e8bae39989c352750435b1818b2",
+    "deployment/deploy.py": "68068cac59d2b78938baa6251fd6f47a8602ac62b93f7f431f335bb684d9b61c",
+    "deployment/devices.template.json": "cb6f78fe0bc5295099700eacbeef3306ce2c23df06cf18651093ae52ef14e135",
     "deployment/extra-pins.json": "10a15a7ddcddcca93b9844ad64eefa04f2b3e6812e3a9f8ca97e203ef80451af",
     "deployment/patches/limesuiteng-rx-only.patch": "e6e3f7abd3dd3cff21c0d7baa98e92f812bd88068a984298a7bebcf5517bc033",
     "deployment/patches/rtlsdr-rx-only.patch": "08e9235b31da580b4f017665b3a80f96a8e41163267a8926aa215b9aeff10eed",
@@ -64,7 +60,7 @@
     "software/pyproject.toml": "afb0da21d0e11bf7ddeffa234bdca5e4cfde3672c428885f157b551f2d8d317b",
     "software/srrx/__init__.py": "01af4d5ce201fe636a52f3849d25f4bdaadd04e7fad722e569ceeaf4b4f3949b",
     "software/srrx/cli.py": "806fb2d9ab96db8e9b39d1f3ab4c380ef529878d5505a789a1d2d7aab3b4e712",
-    "software/srrx/commissioning.py": "b170c4d43197d811d3b9e5554fb7e64cba670aac590d3a28c108fc6a430348e5",
+    "software/srrx/commissioning.py": "60e40cda9a5c76befec9e4355020388ccbc7810dded42283df897a2b7e996029",
     "software/srrx/daemon.py": "2b6e32eb91e79a0130c4abab9dc58d5d347d503e8d7180166ca7fe16b33160d2",
     "software/srrx/decoder_policy.py": "2e528d9b921e77c96394cbd074cdb52f93e84cb01ca0777fe797a8f4463e2974",
     "software/srrx/demo.py": "9421ed3f95ffdc819b192d9cb9d9beb3fb6f48230ff412c1af0591a1498da0cb",
@@ -81,8 +77,9 @@
     "software/srrx/poweroff.py": "b7b9b1f78a75cae654971eebf64ec45e7d92ee45065936444b9b6040300e1046",
     "software/srrx/provision.py": "bf4eaa04c4f28b937911014a41b8de0f1e2039519542e3a87f5e066632ae9faa",
     "software/srrx/receivers.py": "71e4cee0e7d603a4b3710a8017cb9ca1feb967dca5a2cc6727eb83848e2127ed",
+    "software/srrx/rfkill.py": "dbe7341d1f37d44fd03b9ecb34cf9fbd5e82070e34a8923b1166d0e392de270e",
     "software/srrx/runtime_telemetry.py": "fd5abc6bbf9eb356b0640ece7f89132531b890e2beafdf2c40d387306797ff44",
-    "software/srrx/spectrum.py": "87e49d8a6801c87d22b75f4045162e50c4f60b297cb172bd519e623e339028d3",
+    "software/srrx/spectrum.py": "be1833e25671f54151551606eb067f11ffc7ef7589984437850218cff68eb949",
     "software/srrx/storage.py": "ab4b09a469fd569eb298f6311660f9bc6bd294b31532f3001670ca9b52fe9f3c",
     "software/srrx/telemetry.py": "2427c56deab13eea2bf8f9e949982985f69e63e1d4c4bbe4b32a54d90f1a1220",
     "software/srrx/wire.py": "00d61272927fa8dfe389cd595649c5075321b5ecc83a2ecc857cc25b6756e4f4",
