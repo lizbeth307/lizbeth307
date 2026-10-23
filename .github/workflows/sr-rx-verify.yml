@@ -143,7 +143,20 @@ jobs:
           name: cad-regenerated
           path: ${{ runner.temp }}/cad.patch
       - name: Committed CAD outputs match the design graphs
-        run: git diff --cached --exit-code --stat
+        # KiCad stamps export dates, absolute source paths and its build
+        # string; those lines and the netlist hashes derived from them are the
+        # only differences allowed. The PDF is binary and carries a date.
+        run: |
+          git -c core.quotePath=false diff --cached -U0 -- . ':(exclude)build/kicad/sr-rx-v2.pdf' \
+            | grep -E '^[-+][^-+]' \
+            | grep -vE 'SVG Image created as .* date |<date>|"date": |<source>|<tool>Eeschema |"design_file": |"netlist_sha256": |"sha256": "[0-9a-f]{64}"' \
+            > "$RUNNER_TEMP/cad-unexpected.txt" || true
+          if [ -s "$RUNNER_TEMP/cad-unexpected.txt" ]; then
+            echo "::error::Regenerated CAD outputs differ from the committed ones beyond volatile metadata"
+            head -100 "$RUNNER_TEMP/cad-unexpected.txt"
+            exit 1
+          fi
+          echo "CAD outputs reproduce the committed files apart from volatile metadata"
 
   module-lab:
     name: Module lab (${{ matrix.arch }})
