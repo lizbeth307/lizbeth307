@@ -328,8 +328,10 @@ def build_deb(package, version, files, staged, epoch, depends, out, scratch):
     control = root / "DEBIAN"
     control.mkdir()
     size_kib = (sum((root / f).stat().st_size for f in files if not (root / f).is_symlink()) + 1023) // 1024
+    relations = [d.strip() for d in depends.split(",") if d.strip()]
+    relations += [d for d in (x.replace("{version}", version) for x in package["depends"]) if d not in relations]
     fields = [("Package", package["name"]), ("Version", version), ("Architecture", "arm64"), ("Maintainer", MAINTAINER),
-              ("Installed-Size", str(size_kib)), ("Depends", ", ".join([d for d in [depends] + [x.replace("{version}", version) for x in package["depends"]] if d])),
+              ("Installed-Size", str(size_kib)), ("Depends", ", ".join(relations)),
               ("Section", package["section"]), ("Priority", "optional"),
               ("Description", package["description"].split("\n")[0] + "\n SR-RX-v2.1 receive-only +lab build (deployment/recipes/README.md).")]
     (control / "control").write_text("".join(k + ": " + v + "\n" for k, v in fields if v), encoding="utf-8", newline="\n")

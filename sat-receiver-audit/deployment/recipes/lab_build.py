@@ -32,7 +32,9 @@ BASE_PACKAGES = ("python3", "git", "cmake", "pkgconf")
 BUILDER_UID = 1000
 # Inside new mount and PID namespaces: private mounts, /dev and /proc for the toolchain, then the
 # chroot as the unprivileged builder with a clean environment. The network namespace is new and empty.
+# sysfs is mounted from inside the new network namespace, so /sys/class/net lists only its interfaces.
 INNER = ('set -eu; c=$1; shift; mount --make-rprivate /; mount --rbind /dev "$c/dev"; mount -t proc proc "$c/proc"; '
+         'mount -t sysfs -o ro sysfs "$c/sys"; '
          'exec chroot --userspec=%d:%d "$c" /usr/bin/env -i PATH=/usr/sbin:/usr/bin:/sbin:/bin HOME=/work LANG=C.UTF-8 "$@"'
          % (BUILDER_UID, BUILDER_UID))
 

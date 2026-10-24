@@ -117,6 +117,13 @@ jobs:
           if [ "$tag_tree" = "$tar_tree" ]; then verdict=EQUAL; else verdict=DIFFERENT; fi
           echo "wsjtx-2.7.0 tag commit $tag_commit tree $tag_tree; release src/wsjtx.tgz tree $tar_tree: $verdict" | tee "$RUNNER_TEMP/wsjtx-tree.txt"
           echo "WSJT-X src/wsjtx.tgz vs tag tree: $verdict ($tar_tree / $tag_tree)" >> "$GITHUB_STEP_SUMMARY"
+          # Which paths differ (content, missing or extra), so a reviewer can decide what the tarball is.
+          mkdir "$RUNNER_TEMP/wsjtx-outer" "$RUNNER_TEMP/wsjtx-inner"
+          tar -xzf "$RUNNER_TEMP/cache/sources/wsjt-decoders.tar.gz" -C "$RUNNER_TEMP/wsjtx-outer"
+          tar -xzf "$RUNNER_TEMP/wsjtx-outer/wsjtx-2.7.0/src/wsjtx.tgz" -C "$RUNNER_TEMP/wsjtx-inner"
+          diff -rq --exclude=.git "$RUNNER_TEMP/wsjtx-git" "$RUNNER_TEMP/wsjtx-inner/wsjtx" \
+            | sed "s#$RUNNER_TEMP/##g" | tee "$RUNNER_TEMP/wsjtx-tree-diff.txt" | head -60 || true
+          echo "differing paths: $(wc -l < "$RUNNER_TEMP/wsjtx-tree-diff.txt")" | tee -a "$RUNNER_TEMP/wsjtx-tree.txt"
       - uses: actions/upload-artifact@v5
         if: always()
         with:
@@ -128,6 +135,7 @@ jobs:
             ${{ runner.temp }}/trees.json
             ${{ runner.temp }}/verify-debian.json
             ${{ runner.temp }}/wsjtx-tree.txt
+            ${{ runner.temp }}/wsjtx-tree-diff.txt
 
   lab-build:
     name: +lab packages, test-signed repository
