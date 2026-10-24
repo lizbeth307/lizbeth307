@@ -640,7 +640,7 @@ class SelftestTests(unittest.TestCase):
         cases = ((("baseband_policy_constant", "CLASS_CAP_BYTES"), {(bb, "CLASS_CAP_BYTES"): 4 * 1024 ** 3}),
                  (("baseband_policy_constant", "LIVE_HOST"), {(bb, "LIVE_HOST"): "0.0.0.0"}),
                  (("baseband_policy_constant", "RETENTION_S"), {(bb, "RETENTION_S"): 7 * 86400}),
-                 (("channel_filter_spec", "137900000/72000"), {(bb, "design_taps"): lambda c, r: np.array([1.0])}),
+                 (("channel_filter_spec", "137900000:72000"), {(bb, "design_taps"): lambda c, r: np.array([1.0])}),
                  (("decode_unit_properties", None), {(glue, "_COMMON"): tuple(p for p in glue._COMMON if p != "ProtectHome=yes")}),
                  (("live_argv", None), {(glue, "live_argv"): lambda *a: ["/usr/bin/satdump", "legacy", "live", "x", "/o",
                                                                          "--source", "net_source", "--http_server", "0.0.0.0:80"]}))
@@ -651,10 +651,17 @@ class SelftestTests(unittest.TestCase):
                 self.assertIn(rule, {f["rule"] for f in result["findings"]})
                 if item:
                     self.assertIn(item, {f.get("item") for f in result["findings"] if f["rule"] == rule})
-        # A channel that passed out-of-window energy into the file is caught by the synthetic tone.
+        # A chain that passed out-of-window energy into the file is caught by the synthetic tone. Both
+        # layers are bypassed: the voice mask alone already stores these tones as zeros.
+        voice = self.checker_module("voice_mask")
         leaky = lambda self_, samples: np.asarray(samples, np.complex128)[::4]
+        result = rx({(bb.ChannelDecimator, "push"): leaky,
+                     (voice.VoiceExcisor, "push"): lambda self_, samples: np.asarray(samples)})
+        self.assertEqual(result["status"], "FAIL", result)
+        self.assertEqual({f.get("item") for f in result["findings"] if f["rule"] == "out_of_window_tone_stored"},
+                         {"+150kHz", "-110kHz"})
         result = rx({(bb.ChannelDecimator, "push"): leaky})
-        self.assertIn("out_of_window_tone_stored", {f["rule"] for f in result["findings"]})
+        self.assertEqual(result["status"], "PASS", result)  # the voice mask layer still holds
         self.put("etc/tmpfiles.d/srrx-satdump.conf", glue.tmpfiles().replace("2750", "2777"))
         self.assert_flips("RX-04-bb", "baseband_tmpfiles_differs")
         self.put("etc/tmpfiles.d/srrx-satdump.conf", glue.tmpfiles())

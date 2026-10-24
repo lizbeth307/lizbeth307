@@ -1821,7 +1821,7 @@ def check_04bb(ctx, r):
                 if not 137e6 < low < high < 138e6:
                     raise bb.BasebandRefused("span")
             except bb.BasebandRefused:
-                r.fail(where, "channel_filter_spec", "%d/%d" % (center, rate))
+                r.fail(where, "channel_filter_spec", "%d:%d" % (center, rate))
     window = bb.window(1, "Meteor-M N2-3", 137_900_000, 72_000, 1e9, 1e9 + 600, bb.iso_utc(1e9), bb.iso_utc(1e9 + 600))
     t = np.arange(bb.INPUT_RATE_HZ // 4) / bb.INPUT_RATE_HZ
     for offset, inside in ((150_000.0, False), (-110_000.0, False), (20_000.0, True)):
@@ -1829,9 +1829,9 @@ def check_04bb(ctx, r):
         tone = (0.99 * np.exp(2j * np.pi * offset * t)).astype(np.complex64)
         stored = np.concatenate([chain.push(tone[k:k + 8192]) for k in range(0, tone.size, 8192)] + [chain.flush()])
         if not inside and np.count_nonzero(stored):
-            r.fail(where, "out_of_window_tone_stored", "%+d kHz" % (offset / 1e3))
+            r.fail(where, "out_of_window_tone_stored", "%+dkHz" % (offset / 1e3))
         if inside and abs(np.sqrt(np.mean(stored.astype(np.float64) ** 2 * 2)) / bb.CI16_SCALE - 0.99) > 0.01:
-            r.fail(where, "in_window_tone_not_kept", "%+d kHz" % (offset / 1e3))
+            r.fail(where, "in_window_tone_not_kept", "%+dkHz" % (offset / 1e3))
     ident = "0" * 16
     decode = glue.unit_properties("decode", ident, work_dir="/data/products/satdump/.satdump-" + ident,
                                   input_path="/data/raw/baseband-lrpt/lrpt-" + ident + ".sigmf-data")
