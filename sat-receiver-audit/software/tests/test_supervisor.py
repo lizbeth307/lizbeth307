@@ -1,4 +1,5 @@
 """Executable supervisor/adapter safety boundaries without importing machine."""
+import hashlib
 import json
 from pathlib import Path
 import sys
@@ -11,7 +12,7 @@ from adapter import Hardware, TickClock, write_all
 from calibration import (REVISION, commissioning_valid, crc32,
                          from_two_points, ntc_temperature, seal, validate)
 from imu_relay import IMURelay
-from main import hello_payload, status_payload
+from main import HELLO_FIELDS, hello_payload, status_payload
 from srrx.wire import FrameDecoder, encode_frame
 
 
@@ -518,14 +519,22 @@ class CalibrationTests(unittest.TestCase):
 
     def test_commissioning_bound_to_calibration_and_device(self):
         calibration = self.record()
-        record = seal({"v": 1, "revision": REVISION, "serial": "abc123",
-                       "calibration_crc32": calibration["crc32"],
-                       "hardware_commissioned": True,
-                       "qualification_record": "acceptance/unit-001.json"}, commissioning=True)
+        fields = {"v": 1, "revision": REVISION, "serial": "abc123",
+                  "calibration_crc32": calibration["crc32"], "hardware_commissioned": True,
+                  "qualification_record": hashlib.sha256(b"fixture").hexdigest()}
+        record = seal(fields, commissioning=True)
         self.assertTrue(commissioning_valid(record, calibration, "abc123"))
         self.assertFalse(commissioning_valid(record, calibration, "other"))
         record["hardware_commissioned"] = False
         self.assertFalse(commissioning_valid(record, calibration, "abc123"))
+        # Only the sha256 hex that srrx.provision seals; resealing does not help.
+        digest = fields["qualification_record"]
+        self.assertNotEqual(digest, digest.upper())
+        for value in (digest[:63], digest + "0", digest.upper(), "g" + digest[1:],
+                      "acceptance/unit-001.json", "a" * 4000, 7):
+            with self.subTest(value=str(value)[:70]):
+                record = seal(dict(fields, qualification_record=value), commissioning=True)
+                self.assertFalse(commissioning_valid(record, calibration, "abc123"))
 
 
 class AdapterTests(unittest.TestCase):
@@ -537,7 +546,7 @@ class AdapterTests(unittest.TestCase):
         model.state = "SHUTTING_DOWN"
         model.fault = "UNDERVOLTAGE_NO_HEARTBEAT"
         model.reject_reason = "CONFIGURED_UNEXPECTED_OR_UNSAFE"
-        for kind, payload in (("HELLO", hello_payload(model, "0123456789abcdef", "1234abcd")),
+        for kind, payload in (("HELLO", hello_payload(model, "0123456789abcdef", "1234abcd", "f" * 64)),
                               ("STATUS", status_payload(model, {"panel": 65535,
                                                                "battery": 65535, "case": 65535}))):
             frame = {"v": 1, "t": kind, "s": 0xffffffff, "q": 0xfffffffe, "p": payload}
@@ -545,6 +554,27 @@ class AdapterTests(unittest.TestCase):
             self.assertLessEqual(len(packet), 512)
             self.assertEqual(FrameDecoder().feed(packet), [frame])
             self.assertIn("mcp_reset", payload)
+
+    def test_hello_carries_qualification_record_and_no_sensor_reading(self):
+        model = Supervisor()
+        model.step(0, {"q6a_on": True, "battery_mv": 17500,
+                       "panel_temp_c": -19.999999999999996, "case_temp_c": 119.99999999999999})
+        payload = hello_payload(model, "0123456789abcdef", "1234abcd", "f" * 64)
+        self.assertEqual(set(payload), set(HELLO_FIELDS) | {"revision", "serial", "calibration_crc32",
+                                                            "qualification_record"})
+        self.assertEqual(payload["qualification_record"], "f" * 64)
+        # No float text: the size is the same on single-precision MicroPython.
+        self.assertFalse([key for key, value in payload.items() if type(value) is float])
+        self.assertIsNone(hello_payload(model, "0123456789abcdef")["qualification_record"])
+        # Longest supervisor literals and the longest serial acceptance admits.
+        model.state, model.fault = "SHUTTING_DOWN", "CONFIGURED_UNEXPECTED_OR_UNSAFE"
+        model.reject_reason = "CONFIGURED_UNEXPECTED_OR_UNSAFE"
+        for serial, limit in (("0123456789abcdef", 460), ("f" * 64, 512)):
+            frame = {"v": 1, "t": "HELLO", "s": 0xffffffff, "q": 0xffffffff,
+                     "p": hello_payload(model, serial, "1234abcd", "f" * 64)}
+            packet = encode_frame(frame)
+            self.assertLessEqual(len(packet), limit)
+            self.assertEqual(FrameDecoder().feed(packet), [frame])
 
     def test_tick_wrap_unwraps_before_state_model(self):
         ticks = iter((250, 254, 3, 8))

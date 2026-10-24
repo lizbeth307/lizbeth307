@@ -41,8 +41,8 @@ mpremote reset
 
 Copy the reviewed `boot.py` first and `main.py` last. No receiver load should be
 connected during first flash. GP17 must remain HIGH and the display supply OFF.
-With no records, HELLO/STATUS report false commissioning/calibration gates;
-STATUS supplies `adc_raw` for bench work. Use UART7/115200 8N1 with the host, not
+With no records, HELLO/STATUS report false commissioning/calibration gates and
+HELLO a null `qualification_record`; STATUS supplies `adc_raw` for bench work. Use UART7/115200 8N1 with the host, not
 REPL text. USB REPL remains a service path, subject to the LAB5 isolation rule.
 
 ## Hardware outputs
@@ -88,9 +88,14 @@ remain below half the ticks period; a reversed/ambiguous clock fails closed.
    console whenever Q6A 3V3 is present and the panel NTC is valid and cool
    (Display eFuse row above); it is never an ARM output. The Pico chooses a
    new nonzero uint32 session using `os.urandom`. HELLO is the first frame of
-   each session. It includes the same state/reset/sensor fields as STATUS plus
-   the actual Pico serial and exact local `calibration_crc32` (None if invalid).
-   Host acceptance must match both live identity fields before ARM.
+   each session. It carries the STATUS state/readiness fields
+   (`main.HELLO_FIELDS`) but no sensor readings, plus the actual Pico serial,
+   the exact local `calibration_crc32` (None if invalid) and the
+   `qualification_record` of a valid local commissioning record (None
+   otherwise). Battery, temperatures, fan and brightness follow in STATUS
+   within 200 ms. The worst-case HELLO is at most 452 of 512 bytes and holds
+   no float. labd must match serial, calibration CRC and qualification record
+   against its acceptance file before ARM.
 2. Host sends ARM with `p.qualified=true`, current Pico session and a strictly
    increasing uint32 sequence. Pico separately requires a validated local ADC
    calibration, a local commissioning record, Q6A power, fresh valid sensors,
@@ -198,14 +203,21 @@ After all host acceptance gates pass, provision the separately sealed local
 `commissioning.json` with fields `v`, `revision`, `serial`,
 `calibration_crc32`, `hardware_commissioned=true`, `qualification_record` and
 `crc32`. Use `seal(record, commissioning=True)` from this module. The serial,
-revision and calibration CRC must match. `qualification_record` must identify
-the validated unit acceptance artifact and its evidence. Open as of 23.10.2026:
-this binding is not yet checked end to end. HELLO does not report
-`qualification_record`, and labd compares only the serial and the calibration
-CRC, so a provisioned Pico is accepted with any other valid acceptance record
-that has the same serial and calibration CRC. Do not provision this
-record from a model run or CLI simulation. Copy records only through the trusted
-service path; no UART message can create or override them. Replacing a calibrated
+revision and calibration CRC must match. `qualification_record` is the SHA256
+(exactly 64 lowercase hex) of the validated acceptance file bytes, as
+`srrx.provision prepare` writes it; any other value leaves the Pico
+uncommissioned. HELLO reports it, and labd compares it with the SHA256 of the
+bytes it validated from `--acceptance` at start
+(`commissioning.load_acceptance_bound`). A mismatch, a missing field (older
+firmware) or `hardware_commissioned=false` refuses ARM with
+`pico_qualification_record_mismatch`. The Pico therefore pins exactly one
+acceptance file: a re-saved or different `/etc/srrx/acceptance.json` blocks ARM
+until the Pico is provisioned again. Like the UART CRC this detects a wrong
+pairing, not a forged Pico. Implemented and host-tested in software; the check
+on a flashed Pico over the real UART7 stays OPEN under the E3 gates. Do not
+provision this record from a model run or CLI simulation. Copy records only
+through the trusted service path; no UART message can create or override
+them. Replacing a calibrated
 Pico, reference, divider, or sensor requires recalibration and acceptance again.
 
 ## IMU forwarding

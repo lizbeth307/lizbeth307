@@ -1,30 +1,24 @@
 """Create OPEN acceptance templates or provision from a fully accepted record."""
 import argparse
-import hashlib
 import importlib.util
 import json
 import os
 from pathlib import Path
-from .commissioning import ValidationError, acceptance_template, load_acceptance
+from .commissioning import acceptance_template, load_acceptance_bound
 
 
 def provision(acceptance_path, project, output):
     project, output = Path(project), Path(output)
     # One read is both validated and hashed: qualification_record names exactly
-    # the accepted bytes, even if the file is rewritten concurrently.
-    try:
-        with open(acceptance_path, "rb") as handle:
-            raw = handle.read(2 * 1024 * 1024 + 1)
-    except (OSError, TypeError) as exc:
-        raise ValidationError("cannot read acceptance; hardware BLOCKED") from exc
-    accepted = load_acceptance(acceptance_path, project, raw=raw)
+    # the accepted bytes, even if the file is rewritten concurrently. labd
+    # recomputes the same digest from /etc/srrx/acceptance.json at start.
+    accepted, record_hash = load_acceptance_bound(acceptance_path, project)
     cal = accepted["battery_adc"]["record"]
     path = project / "firmware/pico/calibration.py"
     spec = importlib.util.spec_from_file_location("srrx_provision_calibration", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     module.validate(cal, accepted["pico_serial"])
-    record_hash = hashlib.sha256(raw).hexdigest()
     record = module.seal({"v": 1, "revision": module.REVISION,
         "serial": accepted["pico_serial"], "calibration_crc32": cal["crc32"],
         "hardware_commissioned": True, "qualification_record": record_hash}, commissioning=True)

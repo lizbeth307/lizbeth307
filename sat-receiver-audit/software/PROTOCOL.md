@@ -38,6 +38,21 @@ Pico видає поточний сесійний nonce. Controllers мають 
 
 **Decoder цих перевірок не робить.** Він навмисно поверне два синтаксично справні кадри з однаковим `q` або кадри з різними `s`: це дає контролерам можливість зафіксувати порушення та перейти у безпечний стан. Encoder лише перевіряє, що кожне окреме `s`/`q` входить у uint32, і не має прихованого лічильника.
 
+## HELLO від Pico і прив'язка до приймання
+
+HELLO — перший кадр кожного сеансу Pico; у SAFE/TRIPPED/OFF він повторюється раз на 1 s. Його `p` має лише поля стану й готовності зі STATUS (`state`, `fault`, `mcp_reset`, `calibration_valid`, `hardware_commissioned`, `reject_reason`, `hb_fresh`, `q6a_on`, перелік `HELLO_FIELDS` у `firmware/pico/main.py`) і поля ідентичності:
+
+| Поле | Значення |
+|---|---|
+| `revision` | `"E3-v2.1"` |
+| `serial` | hex `machine.unique_id()` |
+| `calibration_crc32` | CRC дійсного локального `calibration.json` або `null` |
+| `qualification_record` | 64 малі hex-символи SHA256 із дійсного локального `commissioning.json` або `null` |
+
+Виміри (`battery_mv`, `panel_temp_c`, `case_temp_c`, `fan_stalled`, `brightness_limit_pct`, `adc_raw`) передає лише STATUS, який Pico надсилає не пізніше ніж за 200 ms після HELLO. Так digest вміщується в кадр: найгірший HELLO (найдовші рядки supervisor в обох полях `fault` і `reject_reason`, `s`/`q` = uint32 max) займає не більше 452 з 512 байтів, а з 64-символьним serial — 500. HELLO не містить float, тож розмір той самий і на MicroPython з одинарною точністю.
+
+У hardware-режимі labd дозволяє ARM лише тоді, коли HELLO поточного сеансу має serial і calibration CRC із прийнятого запису, `hardware_commissioned=true` і `qualification_record`, що дорівнює SHA256 точних байтів `--acceptance`, перевірених під час старту (`commissioning.load_acceptance_bound`; ці самі байти хешує `srrx.provision`). Невідповідність serial/CRC дає trip `pico_identity_or_calibration_mismatch`, хибний чи відсутній digest або `hardware_commissioned=false` — `pico_qualification_record_mismatch`. Прошивка без цього поля теж не проходить (fail-closed). Повторний HELLO того самого сеансу зберігає в статусі labd останні виміри STATUS; HELLO нового сеансу їх відкидає, а UV-витримка labd без виміру не скидається. Як і CRC, рівність digest виявляє хибну пару Pico і запису приймання, а не підроблений Pico.
+
 ## Heartbeat хоста та повторний TRIP
 
 У hardware-режимі хост додає до `HB` поле `soc_temp_c`: найвищу температуру з `/sys/class/thermal/thermal_zone*/temp` у °C, з кроком 0,1 °C. Зони читає окремий потік labd (`SocTempSampler`) не частіше ніж раз на 1 s, поза 20 ms циклом безпеки: повільна чи зависла PMIC/I²C-зона лише старить кешоване значення, а `Engine.tick` бере його не частіше ніж раз на 1 s. Якщо будь-яку зону не прочитано, зразок старший за 3 s або значення поза −40…130 °C, поле пропускається, і Pico тримає вентилятор увімкненим. У симуляції поля немає.

@@ -302,6 +302,22 @@ def load_acceptance(path, project_root, raw=None, clock_check=True):
         raise ValidationError("malformed acceptance; hardware BLOCKED") from exc
 
 
+def load_acceptance_bound(path, project_root, clock_check=True):
+    """Return (validated record, sha256 hex of exactly the validated bytes).
+
+    srrx.provision seals this digest as the Pico qualification_record; labd
+    compares it with the live HELLO. One read is both validated and hashed, so
+    a concurrent rewrite can never pair a digest with other accepted content.
+    """
+    try:
+        with open(path, "rb") as handle:
+            raw = handle.read(2 * 1024 * 1024 + 1)
+    except (OSError, TypeError) as exc:
+        raise ValidationError("cannot read acceptance; hardware BLOCKED") from exc
+    data = load_acceptance(path, project_root, raw=raw, clock_check=clock_check)
+    return data, hashlib.sha256(raw).hexdigest()
+
+
 def acceptance_template(project_root):
     """Create an unaccepted template, never a synthetic PASS or nominal ADC fit."""
     graphs, sources = project_hashes(project_root)

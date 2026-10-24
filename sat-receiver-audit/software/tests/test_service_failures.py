@@ -5,6 +5,7 @@ A separate smoke test uses the real Unix socket service in a child process.
 """
 import contextlib
 import copy
+import hashlib
 import json
 import os
 from pathlib import Path
@@ -342,36 +343,86 @@ class EngineFailureTests(unittest.TestCase):
         class PhysicalBoundaryFake(SimHardware):
             physical = True
         class IdentityLink(FaultLink):
-            def __init__(self, serial, crc):
+            def __init__(self, serial, crc, qualification, commissioned):
                 super().__init__()
-                self.serial, self.crc = serial, crc
+                self.identity = {'serial': serial, 'calibration_crc32': crc,
+                                 'qualification_record': qualification, 'hardware_commissioned': commissioned}
             def poll(self, now_ms):
                 frames = super().poll(now_ms)
                 for frame in frames:
                     if frame['t'] == 'HELLO':
-                        frame['p'].update(serial=self.serial, calibration_crc32=self.crc)
+                        frame['p'].update({k: v for k, v in self.identity.items() if v is not ...})
                 return frames
         # This is an in-memory Engine unit fixture, never a commissioned file.
         acceptance = {'branch_limits': copy.deepcopy(self.engine.policy.limits),
                       'lab5_budget': {'always_on_a': .6, 'max_lab5_a': 3.2},
                       'pico_serial': 'e661000000001234',
                       'battery_adc': {'record': {'crc32': '7bd013af'}}}
-        for serial, crc, allowed in ((None, None, False),
-                                     ('e661000000005678', '7bd013af', False),
-                                     ('e661000000001234', '00000000', False),
-                                     ('e661000000001234', '7bd013af', True)):
-            with self.subTest(serial=serial, crc=crc):
-                hardware, link = PhysicalBoundaryFake(), IdentityLink(serial, crc)
-                engine = Engine(hardware, link, simulated=False, acceptance=acceptance)
+        digest = hashlib.sha256(b'synthetic acceptance bytes').hexdigest()
+        serial_crc = 'pico_identity_or_calibration_mismatch'
+        record = 'pico_qualification_record_mismatch'
+        # (serial, crc, HELLO qualification_record, HELLO commissioned, labd digest, reason)
+        for serial, crc, reported, commissioned, expected, reason in (
+                (None, None, digest, True, digest, serial_crc),
+                ('e661000000005678', '7bd013af', digest, True, digest, serial_crc),
+                ('e661000000001234', '00000000', digest, True, digest, serial_crc),
+                ('e661000000001234', '7bd013af', ..., True, digest, record),  # Old firmware: no field.
+                ('e661000000001234', '7bd013af', None, True, digest, record),
+                ('e661000000001234', '7bd013af', 'f' * 64, True, digest, record),
+                ('e661000000001234', '7bd013af', digest, False, digest, record),
+                ('e661000000001234', '7bd013af', digest, True, None, record),  # labd has no digest.
+                ('e661000000001234', '7bd013af', 'acceptance/unit-001.json', True,
+                 'acceptance/unit-001.json', record),  # Not a sha256: never trusted.
+                ('e661000000001234', '7bd013af', digest, True, digest, None)):
+            allowed = reason is None
+            with self.subTest(serial=serial, crc=crc, reported=reported, commissioned=commissioned,
+                              expected=expected):
+                hardware = PhysicalBoundaryFake()
+                link = IdentityLink(serial, crc, reported, commissioned)
+                engine = Engine(hardware, link, simulated=False, acceptance=acceptance,
+                                qualification_record=expected)
                 try:
                     engine.tick(0)
                     result = engine.request({'op': 'arm'})
                     self.assertEqual(result['ok'], allowed, result)
                     self.assertEqual(any(f['t'] == 'ARM' for f in link.sent), allowed)
                     self.assertEqual(engine.status()['live_identity_verified'], allowed)
+                    self.assertEqual(engine.status()['qualification_record_verified'], allowed)
+                    reasons = {event.get('reason') for event in engine.events}
+                    self.assertEqual(reasons & {serial_crc, record}, {reason} - {None})
                     self.assertFalse(hardware.initialized)  # No MCP write before full handshake.
                 finally:
                     engine.close()
+
+    def test_repeated_hello_keeps_status_readings_and_new_session_drops_them(self):
+        # The Pico HELLO carries no sensor readings (512-byte frame); see test_supervisor.
+        slim = ('state', 'fault', 'mcp_reset', 'calibration_valid', 'hardware_commissioned',
+                'reject_reason', 'hb_fresh', 'q6a_on')
+        self.link.inputs['battery_mv'] = 12900  # Low: the host UV dwell is running.
+        self.advance(self.now + 300)
+        self.assertEqual(self.engine.pico['battery_mv'], 12900)
+        since = self.engine.uv_since
+        self.assertIsNotNone(since)
+
+        def hello(session):
+            payload = {key: self.engine.pico[key] for key in slim}
+            payload.update(revision='E3-v2.1', serial='e661000000001234',
+                           calibration_crc32=None, qualification_record=None)
+            frame = {'v': 1, 't': 'HELLO', 's': session, 'q': self.engine.rx_seq + 100, 'p': payload}
+            self.link.injected.extend(FrameDecoder().feed(encode_frame(frame)))
+            self.now += 20
+            self.engine.tick(self.now)
+
+        hello(self.engine.session)
+        for key in ('battery_mv', 'panel_temp_c', 'case_temp_c', 'fan_stalled', 'brightness_limit_pct'):
+            self.assertIn(key, self.engine.status()['pico'], key)
+        self.assertEqual(self.engine.pico['battery_mv'], 12900)
+        self.assertEqual(self.engine.uv_since, since)
+        hello(self.engine.session + 1)  # A new session must not reuse old readings.
+        self.assertNotIn('battery_mv', self.engine.status()['pico'])
+        self.assertEqual(self.engine.uv_since, since)  # No reading is no news for the dwell.
+        self.assertIn('new_pico_session', self.engine.last_error)
+        self.assert_safe()
 
     def test_close_still_releases_hardware_and_telemetry_when_link_close_raises(self):
         class Reader:
@@ -650,14 +701,19 @@ class EngineFailureTests(unittest.TestCase):
         def refuse(*args, **kwargs):
             seen.append(kwargs.get('clock_check', True))
             raise commissioning.ValidationError('fixture stops before any device is opened')
+        # labd hashes the bytes it validates, so the (synthetic) file must exist.
+        folder = tempfile.TemporaryDirectory()
+        self.addCleanup(folder.cleanup)
+        accepted = os.path.join(folder.name, 'a.json')
+        Path(accepted).write_text('{"synthetic": "not an acceptance record"}\n')
         with patch('srrx.commissioning.load_acceptance', side_effect=refuse), patch('builtins.print'):
-            self.assertEqual(daemon.main(['--hardware', '--acceptance', 'a.json', '--i2c', '/nonexistent/i2c',
+            self.assertEqual(daemon.main(['--hardware', '--acceptance', accepted, '--i2c', '/nonexistent/i2c',
                                           '--i2c0', '/nonexistent/i2c0', '--pico', '/nonexistent/pico']), 1)
             self.assertEqual(labrx.main(['--hardware', '--acceptance', 'a.json', '--driver-record', 'd.json']), 2)
         self.assertEqual(seen, [False, False])  # Provisioning alone keeps the wall-clock bound.
         future = {'accepted_at': '2099-01-01T00:00:00Z', 'branch_limits': {}, 'lab5_budget': {}}
         with patch('srrx.commissioning.load_acceptance', return_value=future), patch('builtins.print') as output:
-            self.assertEqual(daemon.main(['--hardware', '--acceptance', 'a.json', '--i2c', '/nonexistent/i2c',
+            self.assertEqual(daemon.main(['--hardware', '--acceptance', accepted, '--i2c', '/nonexistent/i2c',
                                           '--i2c0', '/nonexistent/i2c0', '--pico', '/nonexistent/pico']), 1)
         text = ' '.join(str(call.args[0]) for call in output.call_args_list if call.args)
         self.assertIn('system clock is behind acceptance accepted_at', text)

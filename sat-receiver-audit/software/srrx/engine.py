@@ -5,13 +5,26 @@ BRANCHES = {"LNA1": 4.5, "LNA2": 4.5, "LNA3": 4.5, "LNA4": 4.5,
             "LNB": 13.2, "BONI": 13.8, "SB_LNA": 5.0, "RTLA": 5.0,
             "RTLB": 5.0, "HFP": 5.0, "LIME3V3": 3.3, "T7": 5.0,
             "LABPORT": 5.0, "AUX12": 12.0}
+# HELLO omits the sensor readings to fit its qualification_record in 512 bytes
+# (firmware/pico/main.py HELLO_FIELDS); a same-session HELLO keeps these.
+STATUS_ONLY = ("battery_mv", "panel_temp_c", "case_temp_c", "fan_stalled",
+               "brightness_limit_pct", "adc_raw")
+
+
+def _sha256_hex(value):
+    return type(value) is str and len(value) == 64 and set(value) <= set("0123456789abcdef")
 
 
 class Engine:
     def __init__(self, hardware, link, *, simulated=True, acceptance=None, telemetry_reader=None,
-                 soc_temp_reader=None):
+                 soc_temp_reader=None, qualification_record=None):
         self.hardware, self.link = hardware, link
         self.simulated, self.acceptance = simulated, acceptance
+        # sha256 of the exact acceptance bytes (commissioning.load_acceptance_bound),
+        # as srrx.provision sealed it into the Pico commissioning.json. Without
+        # it a hardware HELLO can never verify, so ARM stays refused.
+        self.qualification_record = qualification_record if _sha256_hex(qualification_record) else None
+        self.qualification_ok = False
         self.telemetry_reader = telemetry_reader
         self.soc_temp_reader = soc_temp_reader
         self.soc_temp = self.soc_temp_ms = None
@@ -69,7 +82,8 @@ class Engine:
         if frame["t"] not in {"HELLO", "STATUS", "EVENT"}:
             return
         status = frame["p"]
-        if frame["s"] != self.session:
+        new_session = frame["s"] != self.session
+        if new_session:
             if frame["t"] != "HELLO":
                 return
             self.trip("new_pico_session", notify=False)
@@ -79,11 +93,21 @@ class Engine:
         if frame["q"] <= self.rx_seq:
             return
         if frame["t"] == "HELLO" and not self.simulated:
-            self.identity_ok = bool(self.acceptance and
+            bound = bool(self.acceptance and
                 status.get("serial") == self.acceptance["pico_serial"] and
                 status.get("calibration_crc32") == self.acceptance["battery_adc"]["record"]["crc32"])
-            if not self.identity_ok:
+            # The Pico reports its digest only with a valid local commissioning
+            # record. Equality pairs this Pico with exactly these acceptance bytes;
+            # like the UART CRC it detects a wrong pairing, not a forged Pico.
+            self.qualification_ok = bool(bound and self.qualification_record is not None
+                and status.get("hardware_commissioned") is True
+                and status.get("qualification_record") == self.qualification_record)
+            self.identity_ok = self.qualification_ok
+            if not bound:
                 self.trip("pico_identity_or_calibration_mismatch")
+                return
+            if not self.qualification_ok:
+                self.trip("pico_qualification_record_mismatch")
                 return
         if frame["t"] == "EVENT":
             self.rx_seq = frame["q"]
@@ -107,6 +131,10 @@ class Engine:
             self.trip("unqualified_pico_active_state")
             return
         prev = self.pico
+        if frame["t"] == "HELLO" and not new_session:
+            # Keep this session's last STATUS readings; a repeated HELLO must not
+            # blank battery/temperature rows for up to 200 ms each second.
+            status = dict({k: prev[k] for k in STATUS_ONLY if k in prev}, **status)
         self.rx_seq, self.pico, self.last_status_ms = frame["q"], status, self.now_ms
         # A repeat of the same latched report is no news. It can predate a
         # queued ARM, and re-tripping would rerun all_off against MCPs that the
@@ -201,7 +229,9 @@ class Engine:
             if active and self.policy.status().get("fault"):
                 self.trip("host_policy_fault")
             low = self.pico.get("battery_mv")
-            if self.pico.get("q6a_on") is True and self.pico.get("calibration_valid") is True and type(low) in {int, float} and 8000 <= low <= 13050:
+            if "battery_mv" not in self.pico:
+                pass  # A new-session HELLO has no reading yet; its STATUS follows within 200 ms.
+            elif self.pico.get("q6a_on") is True and self.pico.get("calibration_valid") is True and type(low) in {int, float} and 8000 <= low <= 13050:
                 if self.uv_since is None:
                     self.uv_since = self.now_ms
                 elif self.now_ms - self.uv_since >= 5000:
@@ -242,7 +272,7 @@ class Engine:
             if not self.simulated and not self.acceptance:
                 return {"ok": False, "error": "hardware acceptance missing"}
             if not self.identity_ok:
-                return {"ok": False, "error": "live Pico serial/calibration binding failed"}
+                return {"ok": False, "error": "live Pico serial/calibration/qualification binding failed"}
             if self.pending_arm and self.arm_owner != owner:
                 return {"ok": False, "error": "another local operator's arm is pending"}
             self.pending_arm, self.configured = True, False
@@ -383,6 +413,7 @@ class Engine:
             "policy": self.policy.status(), "events": list(self.events),
             "imu": imu, "hmi": self._hmi_status(),
             "live_identity_verified": self.identity_ok,
+            "qualification_record_verified": self.qualification_ok and not self.simulated,
             "hardware_qualified": bool(self.acceptance) and self.identity_ok and not self.simulated}
 
     def close(self):

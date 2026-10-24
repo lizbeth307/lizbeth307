@@ -12,7 +12,8 @@ from unittest.mock import patch
 import zlib
 
 from srrx.commissioning import (BRANCH_CAPS, CAL_FIELDS, GATE_IDS, RUNTIME_SOURCES,
-                                ValidationError, acceptance_template, load_acceptance)
+                                ValidationError, acceptance_template, load_acceptance,
+                                load_acceptance_bound)
 from srrx.provision import provision
 
 PICO_CALIBRATION = Path(__file__).resolve().parents[2] / "firmware/pico/calibration.py"
@@ -231,8 +232,9 @@ class AcceptanceTests(unittest.TestCase):
             with self.assertRaises(ValidationError):
                 load_acceptance(self.path, self.root)
 
-    def pico(self):
-        spec = importlib.util.spec_from_file_location("srrx_test_pico_calibration", PICO_CALIBRATION)
+    def pico(self, name="calibration.py"):
+        spec = importlib.util.spec_from_file_location("srrx_test_pico_" + name[:-3],
+                                                      PICO_CALIBRATION.parent / name)
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         return module
@@ -247,7 +249,7 @@ class AcceptanceTests(unittest.TestCase):
             self.path.write_bytes(original.replace(b"FIXTURE-0042", b"FIXTURE-0043"))
             return result
         output = self.root / "provisioned"
-        with patch("srrx.provision.load_acceptance", side_effect=concurrent_rewrite):
+        with patch("srrx.commissioning.load_acceptance", side_effect=concurrent_rewrite):
             summary = provision(self.path, self.root, output)
         digest = hashlib.sha256(original).hexdigest()
         cal = json.loads((output / "calibration.json").read_text())
@@ -257,6 +259,94 @@ class AcceptanceTests(unittest.TestCase):
         pico.validate(cal, "e6616407e35b8d29")
         self.assertTrue(pico.commissioning_valid(record, cal, "e6616407e35b8d29"))
         self.assertEqual(sorted(p.name for p in output.iterdir()), ["calibration.json", "commissioning.json"])
+
+    def test_runtime_digest_is_of_exactly_the_validated_bytes(self):
+        self.complete_fixture()
+        self.save()
+        original = self.path.read_bytes()
+        seen = []
+
+        def concurrent_rewrite(*args, **kwargs):
+            seen.append((kwargs.get("raw"), kwargs.get("clock_check")))
+            result = load_acceptance(*args, **kwargs)
+            self.path.write_bytes(original.replace(b"FIXTURE-0042", b"FIXTURE-0043"))
+            return result
+        with patch("srrx.commissioning.load_acceptance", side_effect=concurrent_rewrite):
+            data, digest = load_acceptance_bound(self.path, self.root, clock_check=False)
+        self.assertEqual(seen, [(original, False)])
+        self.assertEqual((data["hardware_unit_id"], digest),
+                         ("FIXTURE-0042", hashlib.sha256(original).hexdigest()))
+        self.assertNotEqual(hashlib.sha256(self.path.read_bytes()).hexdigest(), digest)
+        for path in (None, self.root / "missing.json"):
+            with self.assertRaises(ValidationError):
+                load_acceptance_bound(path, self.root)
+        self.path.write_bytes(b" " * (2 * 1024 * 1024 + 1))
+        with self.assertRaises(ValidationError):
+            load_acceptance_bound(self.path, self.root)
+
+    def test_provisioned_pico_hello_arms_only_with_its_own_acceptance_bytes(self):
+        # provision -> the firmware's own record check and HELLO -> UART codec -> Engine.
+        from srrx.engine import Engine
+        from srrx.hardware import SimHardware
+        from srrx.wire import FrameDecoder, encode_frame
+        pico, main, supervisor = (self.pico(), self.pico("main.py"), self.pico("supervisor.py"))
+
+        class PhysicalBoundaryFake(SimHardware):
+            physical = True
+
+        class PicoLink:
+            """The Pico side of UART7 for one session, as main.run() sends it."""
+            def __init__(self, serial, cal_crc, qualification):
+                self.identity, self.sent, self.sizes, self.q = (serial, cal_crc, qualification), [], [], 0
+                self.model = supervisor.Supervisor(calibration_valid=True, hardware_commissioned=True)
+
+            def send(self, frame, now_ms=None):
+                self.sent.append(frame)
+
+            def poll(self, now_ms):
+                self.model.step(now_ms, {"q6a_on": True, "battery_mv": 14800, "panel_temp_c": 25.0,
+                                         "case_temp_c": 25.0, "button_pressed": False})
+                kind, payload = (("HELLO", main.hello_payload(self.model, *self.identity)) if self.q == 0
+                                 else ("STATUS", main.status_payload(self.model, {})))
+                packet = encode_frame({"v": 1, "t": kind, "s": self.model.session, "q": self.q, "p": payload})
+                self.q += 1
+                self.sizes.append(len(packet))
+                return FrameDecoder().feed(packet)
+
+            def close(self):
+                pass
+
+        self.complete_fixture()
+        self.save()
+        output = self.root / "provisioned"
+        summary = provision(self.path, self.root, output)
+        cal = json.loads((output / "calibration.json").read_text())
+        record = json.loads((output / "commissioning.json").read_text())
+        serial = self.manifest["pico_serial"]
+        pico.validate(cal, serial)
+        self.assertTrue(pico.commissioning_valid(record, cal, serial))
+        other = self.root / "other-acceptance.json"  # Valid, but not the provisioned bytes.
+        other.write_bytes(self.path.read_bytes().replace(b"FIXTURE-0042", b"FIXTURE-0043"))
+        for path, allowed in ((self.path, True), (other, False)):
+            with self.subTest(acceptance=path.name):
+                acceptance, digest = load_acceptance_bound(path, self.root)
+                self.assertEqual(digest == summary["acceptance_sha256"], allowed)
+                link = PicoLink(serial, cal["crc32"], record["qualification_record"])
+                engine = Engine(PhysicalBoundaryFake(), link, simulated=False,
+                                acceptance=acceptance, qualification_record=digest)
+                try:
+                    engine.tick(0)
+                    engine.tick(20)
+                    self.assertEqual((len(link.sizes), max(link.sizes) <= 512), (2, True))
+                    result = engine.request({"op": "arm"})
+                    self.assertEqual(result["ok"], allowed, result)
+                    self.assertEqual(engine.status()["qualification_record_verified"], allowed)
+                    self.assertEqual(any(f["t"] == "ARM" for f in link.sent), allowed)
+                    reasons = [event.get("reason") for event in engine.events]
+                    self.assertEqual("pico_qualification_record_mismatch" in reasons, not allowed)
+                    self.assertNotIn("pico_identity_or_calibration_mismatch", reasons)
+                finally:
+                    engine.close()
 
     def test_provision_failure_keeps_previous_pair(self):
         self.complete_fixture()

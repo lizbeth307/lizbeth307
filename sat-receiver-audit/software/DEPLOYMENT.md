@@ -149,6 +149,8 @@ python3 deployment/deploy.py stage-ab --config /path/to/observed-ab-config.json 
 
 `deployment/ab.template.json` має null для PARTUUID/kernel/initrd/merged-DTB paths і не проходить перевірку. Після заповнення generator створить stable current-slot entry, `+3` trial для іншого слота та rescue entry, з явними linux/initrd/devicetree; поточний default не змінюється. Це **не інсталятор завантажувача**. Type#1/EFI-stub/initramfs/DTB firmware й фактичний rollback потребують bench test; жодний конфіг не слід переносити в ESP до перевірки шляхів і rescue medium.
 
+Pico прив'язаний рівно до одного файла приймання: `qualification_record` у його `commissioning.json` є SHA256 байтів, з яких `srrx.provision prepare` його створив, і labd звіряє цей digest із SHA256 `/etc/srrx/acceptance.json` ([PROTOCOL](PROTOCOL.md)). Тому `sha256sum /etc/srrx/acceptance.json` має дорівнювати `acceptance_sha256` з виводу provision. Будь-яке перезбереження файла (CRLF, інше форматування) або перемикання A/B на слот з іншим acceptance блокує ARM (`pico_qualification_record_mismatch`), доки Pico не отримає новий `commissioning.json` (fail-closed).
+
 Початковий план UFS: native4K, ESP1GiB, rootA/rootB по22GiB, решта /data. Перед операціями з розміткою/BIOS — два однакових повних SPI32MiB dumps, recovery media, зафіксовані UEFI/pinmux/base cmdline, перевірка4K geometry і резервна копія. Образ UFS4096 відрізняється від512. Ні ці параметри, ні generator не дозволяють автоматичне repartition/flash. У build07 збережено RouteB fallback; його write-back механізм теж не впроваджено цим пакетом.
 
 ## Що конкретно залишається до повного образу
