@@ -1021,7 +1021,7 @@
       "tag_object": "d2d9c46a1e5061a8ab489ebf473e71fa070dc4e7",
       "source_archive_size": 26603107,
       "source_archive_url": "https://downloads.sourceforge.net/project/wsjt/wsjtx-2.7.0/wsjtx-2.7.0.tgz",
-      "archive_note": "Official release tarball (superbuild: src/wsjtx.tgz plus src/hamlib-4.6.1.tar.gz, Hamlib for the build chroot only, build/07 section 2). Size and MD5 fd558b60fdd6df7ac0436a0cc5daaa28 equal the SourceForge file metadata (https://sourceforge.net/projects/wsjt/rss?path=/wsjtx-2.7.0, read 2026-10-24); SHA-256 measured from the bytes. Tag wsjtx-2.7.0 (tag object d2d9c46a) peels to the commit (git ls-remote https://git.code.sf.net/p/wsjt/wsjtx, 2026-10-24). The tarball names no commit; its tree is compared with the tag in CI (sr-rx-packages.yml), not here."
+      "archive_note": "Official release tarball (superbuild: src/wsjtx.tgz plus src/hamlib-4.6.1.tar.gz, Hamlib for the build chroot only, build/07 section 2). Size and MD5 fd558b60fdd6df7ac0436a0cc5daaa28 equal the SourceForge file metadata (https://sourceforge.net/projects/wsjt/rss?path=/wsjtx-2.7.0, read 2026-10-24); SHA-256 measured from the bytes. Tag wsjtx-2.7.0 (tag object d2d9c46a) peels to the commit (git ls-remote https://git.code.sf.net/p/wsjt/wsjtx, 2026-10-24). The tarball names no commit. CI (sr-rx-packages.yml run 40113667357, 2026-10-24) compared src/wsjtx.tgz with a clone of the tag: every common file is byte-identical, and the release lacks only .gitattributes, plots/ and samples/ (git tree a545dbd5 of the release against 3f01398e of the tag)."
     },
     {
       "id": "nanovna-saver",
