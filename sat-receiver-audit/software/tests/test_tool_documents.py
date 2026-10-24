@@ -27,21 +27,14 @@ def sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
 
-def lxml_html():
-    try:
-        from lxml import html
-    except ImportError:
-        raise unittest.SkipTest("lxml is not installed in this environment")
-    return html
-
-
-kicad = load("srrx_doc_generate_kicad", "tools/generate_kicad.py")
+kicad =load("srrx_doc_generate_kicad", "tools/generate_kicad.py")
 uk = load("srrx_doc_uk_text", "tools/uk_text.py")
 finalize = load("srrx_doc_finalize_linux_lab", "tools/finalize_linux_lab.py")
 documents = load("srrx_doc_build_documents", "tools/build_documents.py")
 packer = load("srrx_doc_build_bundle", "tools/build_bundle.py")
 checker = load("srrx_doc_check_bundle", "tools/check_bundle.py")
 lab_run = load("srrx_doc_module_lab_run", "deployment/module_lab/run.py")
+checks = load("srrx_doc_run_checks", "tools/run_checks.py")
 U = kicad.U
 WORDS = ("Ревізія COUT і місця NTC/VSET/ISET не підтверджені офіційною схемою; вікно 0…45 °C та inhibit "
          "не перевірені, тому модуль не використовувати до стенду. ") * 12
@@ -65,6 +58,7 @@ class PluralTests(unittest.TestCase):
             self.assertEqual(documents.plural(n, *self.FORMS), expected)
             self.assertEqual(lab_run._plural(n, *self.FORMS), expected)
             self.assertEqual(f"{n} {checker.counted_form(n, *self.FORMS)}", expected)
+        self.assertEqual(lab_run._plural(2.5, *self.FORMS), uk.plural(2.5, *self.FORMS))
 
 
 class ModuleLabWordingTests(unittest.TestCase):
@@ -145,7 +139,8 @@ class StaleRecordCountTests(unittest.TestCase):
 
 class BundleTextTests(unittest.TestCase):
     def setUp(self):
-        self.html = lxml_html()
+        from lxml import html
+        self.html = html
 
     def page(self, completion, notice=""):
         return self.html.fromstring(f'<html><body><main>{notice}<section id="file-COMPLETION-md"><p>{completion}</p></section>'
@@ -185,6 +180,14 @@ class BundleTextTests(unittest.TestCase):
             with self.subTest(text=text), self.assertRaisesRegex(checker.InvalidBundle, message):
                 checker.check_generated_text(self.page(text))
         checker.check_generated_text(self.page("750 елементів, 64 вузли, 0,5 V, K1=1,K2=1, 2181 підключений контакт."))
+
+
+# The bundle tools parse HTML with lxml, which the host jobs install (PY_PINS: lxml 6.1.3)
+# and run these tests with. The ARM64 guest runs software/tests too, but its locked
+# wheelhouse has no lxml and guest_bootstrap.sh accepts only two documented skip reasons,
+# so without lxml the class is dropped instead of skipped.
+if importlib.util.find_spec("lxml") is None:
+    del BundleTextTests
 
 
 class SchematicSheetCountTests(unittest.TestCase):
@@ -243,6 +246,14 @@ class NoteWrapTests(unittest.TestCase):
         self.assertLess(wide["height"], standard["height"])
         self.assertEqual(" ".join(standard["lines"]).split(), " ".join(wide["lines"]).split())
 
+    def test_a_narrow_group_keeps_a_narrower_wrap_than_the_sheet_cap(self):
+        # The manifest's note_wrap_chars records this per note; note_wrap_cap is only the bound.
+        for width, chars in ((400, 130), (140, 121), (100, kicad.NOTE_CHARS)):
+            row = SimpleNamespace(box=(0, 0, width, 40), refs=["U901"], notes=[])
+            (block,) = kicad.make_blocks([("Група", [row])], {"U901": [self.NOTE]}, 130)
+            self.assertEqual(block.rows[0].notes[0]["chars"], chars, width)
+            self.assertTrue(all(len(line) <= chars for line in block.rows[0].notes[0]["lines"]))
+
 
 class SparsePageTests(unittest.TestCase):
     """A sheet whose last page would hold one small block is packed again with wider notes."""
@@ -261,7 +272,7 @@ class SparsePageTests(unittest.TestCase):
         self.assertLess(kicad.page_fill(standard[-1]), kicad.SPARSE_LAST_PAGE)
         pages, chars = kicad.layout_sheet(groups, notes)
         self.assertEqual((len(pages), chars), (1, kicad.NOTE_WIDE_CHARS[0]))
-        self.assertEqual(pages[0][0][0].rows[0].notes[0]["w"], kicad.note_width(chars))
+        self.assertEqual((pages[0][0][0].rows[0].notes[0]["w"], pages[0][0][0].rows[0].notes[0]["chars"]), (kicad.note_width(chars), chars))
         self.assertEqual(groups[0][1][0].notes, [])  # the routed rows are shared, never rewritten
 
     def test_a_reasonably_filled_last_page_keeps_the_standard_notes(self):
@@ -269,6 +280,31 @@ class SparsePageTests(unittest.TestCase):
         pages, chars = kicad.layout_sheet(groups, notes)
         self.assertEqual((len(pages), chars), (2, kicad.NOTE_CHARS))
         self.assertGreaterEqual(kicad.page_fill(pages[-1]), kicad.SPARSE_LAST_PAGE)
+
+
+class DrawingGateTests(unittest.TestCase):
+    """run_checks.py stops before the netlist export on a sparse page or a fallback label."""
+
+    def gate(self, manifest):
+        with tempfile.TemporaryDirectory() as folder:
+            path = Path(folder) / "generation-manifest.json"
+            path.write_text(json.dumps(manifest), encoding="utf-8")
+            return checks.drawing_gate(path)
+
+    def manifest(self, sparse=(), fallback=0):
+        return {"sparse_last_pages": list(sparse), "drawing": {"fallback_labels": fallback, "wire_crossings": 3}}
+
+    def test_sparse_pages_and_fallback_labels_fail(self):
+        for manifest, message in ((self.manifest(["E9_02"]), "sparse last pages E9_02; fallback labels 0"),
+                                  (self.manifest(fallback=1), "sparse last pages none; fallback labels 1")):
+            with self.subTest(message=message), self.assertRaisesRegex(SystemExit, "Schematic drawing gate: " + message):
+                self.gate(manifest)
+        self.assertEqual(self.gate(self.manifest())["drawing"]["wire_crossings"], 3)  # crossings are recorded, not gated
+
+    def test_a_manifest_without_the_fields_fails(self):
+        for manifest in ({"drawing": {"fallback_labels": 0}}, {"sparse_last_pages": [], "drawing": {}}, {"sparse_last_pages": []}):
+            with self.subTest(manifest=manifest), self.assertRaisesRegex(SystemExit, "Schematic drawing gate: .* has no"):
+                self.gate(manifest)
 
 
 class DrawnEdgeTests(unittest.TestCase):

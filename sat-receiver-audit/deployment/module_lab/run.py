@@ -49,8 +49,9 @@ def write(path, value):
 
 
 def _plural(n, one, few, many):
-    """'n noun' in the Ukrainian form (as tools/uk_text.plural; the guest runs this file without tools/)."""
-    tail, tens = n % 10, n % 100
+    """'n noun' in the Ukrainian form, as tools/uk_text.plural. A copy, not an import: the
+    report's model_sha256 hashes only deployment/module_lab/*.py, so it covers all this renders with."""
+    tail, tens = (n % 10, n % 100) if type(n) is int else (0, 0)
     return f"{n} {one if tail == 1 and tens != 11 else few if 2 <= tail <= 4 and not 12 <= tens <= 14 else many}"
 
 

@@ -15,17 +15,19 @@ Drawing conventions (stack v2 brief, "Conventions: layout"):
 * inside a row every net with two or more contacts is drawn with orthogonal wires
   found by a grid maze router, with junction dots at T joins; a contact that cannot
   be reached within a short detour keeps a label instead (no long wire runs);
-* where two boxes face each other over a bus, its contacts are spaced one grid line
-  apart if that is what gives every bus wire its own label without crossing the
-  others (route_group);
+* a row with fallback labels or wire crossings is laid out once more with a free grid
+  line next to each bus contact between two boxes that face each other; that spread
+  variant is kept only if it has fewer fallback labels, or as many and at most half
+  the wire crossings (route_group), so a kept spread row can still have crossings;
 * every drawn wire tree carries exactly one global label with the canonical net
   name. Local labels would be renamed "/<sheet>/<name>" by KiCad and change the
   exported netlist, so nets that stay inside their group use the small "passive"
   label shape and nets that leave the group the "bidirectional" one. Ground uses
   power symbols;
 * a sheet does not end on a nearly empty page if wider notes save that page
-  (layout_sheet); the manifest records each page's fill, note wrap, fallback labels
-  and wire crossings, and run_checks.py refuses sparse last pages and fallback labels.
+  (layout_sheet); the manifest records each page's fill, note wrap cap, the wrap each
+  note actually got (no wider than its group's drawing), fallback labels and wire
+  crossings, and run_checks.py refuses sparse last pages and fallback labels.
 The generator re-derives the connectivity of every page from the emitted geometry
 (wire ends, pins, labels, ground symbols) and refuses to write a page whose drawn
 connectivity differs from the design graph.
@@ -1822,7 +1824,8 @@ def wrap_note(note, chars=NOTE_CHARS):
     # the bold header is wider: same ratio as at the standard wrap
     heads = textwrap.wrap(note["head"], width=chars * NOTE_HEAD_CHARS // NOTE_CHARS, break_long_words=False, break_on_hyphens=False)
     height = U * math.ceil((2 * NOTE_PAD + NOTE_LINE * (len(heads) + len(lines))) / U)
-    return {"id": note["id"], "kind": note["kind"], "head": heads, "lines": lines, "height": height, "w": note_width(chars)}
+    return {"id": note["id"], "kind": note["kind"], "head": heads, "lines": lines, "height": height, "w": note_width(chars),
+            "chars": chars}
 
 
 def note_block(note, x, y, key):
@@ -2192,7 +2195,7 @@ def main():
             title = f"{sheet} - {graph['title']} ({n}/{len(layouts)})"
             used, body, page_stats = {}, [], Counter()
             checks = {"pins": [], "labels": [], "power": [], "wires": []}
-            comps, notes_here = 0, []
+            comps, notes_here, wraps = 0, [], {}
             for block, bx, by in layout:
                 body.append(text(block.title, bx, by, f"{stem}/group/{block.group}/{block.part}", GROUP_SIZE))
                 y = by + 2 * U
@@ -2200,6 +2203,7 @@ def main():
                     for note in rd.notes:
                         body.append(note_block(note, bx - U, y, stem + "/note/" + note["id"]))
                         notes_here.append(note["id"])
+                        wraps[note["id"]] = note["chars"]
                         y += note["height"] + NOTE_GAP
                     ox = math.ceil((bx - rd.box[0]) / U - 1e-9)
                     oy = math.ceil((y - rd.box[1]) / U - 1e-9)
@@ -2217,7 +2221,8 @@ def main():
             (out / (stem + ".kicad_sch")).write_text(sch, encoding="utf-8", newline="\n")
             stats.update(page_stats)
             pages.append({"stem": stem, "instance": instance, "title": title, "components": comps, "sheet": sheet,
-                          "notes": notes_here, "note_wrap_chars": note_chars, "fill": round(page_fill(layout), 3),
+                          # the sheet's wrap cap; each note gets at most what its group's drawing is wide enough for
+                          "notes": notes_here, "note_wrap_cap": note_chars, "note_wrap_chars": wraps, "fill": round(page_fill(layout), 3),
                           "drawing": dict(sorted(page_stats.items()))})
     placed = Counter(note for p in pages for note in p["notes"])
     declared = [x["id"] for g in graphs for x in g.get("open_items", []) + g.get("drawing_notes", [])]

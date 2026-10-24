@@ -1,7 +1,8 @@
 """Ukrainian wording shared by the document generators in tools/ (not bound to any run).
 
-deployment/module_lab/run.py renders inside the ARM64 guest and keeps its own copy of
-plural() so that the guest payload does not depend on tools/.
+deployment/module_lab/run.py keeps its own copy of plural(): the module report's
+model_sha256 hashes only deployment/module_lab/*.py, and importing this file would let
+the rendered module results depend on a file that hash does not cover.
 """
 
 
