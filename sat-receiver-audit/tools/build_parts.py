@@ -546,13 +546,25 @@ class Model:
                 by_board[self.board_of(prep, r)].append(r)
             for b, refs in sorted(by_board.items()):
                 rows.append({'Board': b, 'Comment': p.get('mpn', ''), 'Designator': ','.join(sorted(refs, key=sort_ref)), 'Footprint': p['footprint'].split(':', 1)[1],
-                             'LCSC Part #': (p.get('sku') or {}).get('lcsc', ''), 'Mount': 'SMD' if p['mount'] == 'pcb_smt' else 'THT'})
+                             'LCSC Part #': (p.get('sku') or {}).get('lcsc', ''), 'Mount': 'SMD' if p['mount'] == 'pcb_smt' else 'THT',
+                             'LCSC stock': '' if self.lcsc_rec(p) is None else self.lcsc_rec(p).get('stock'), 'LCSC alternate': self.stocked_alternate(p)})
         rows.sort(key=lambda r: (r['Board'], r['Mount'], r['Comment']))
         return rows
 
+    def stocked_alternate(self, p):
+        """First alternate with LCSC stock when the primary has none (a hint for the JLC order, not an approval)."""
+        rec = self.lcsc_rec(p)
+        if rec is not None and rec.get('stock'):
+            return ''
+        for a in p.get('alternates', []):
+            arec = self.lcsc_rec(a)
+            if arec is not None and arec.get('stock'):
+                return f'{(a.get("sku") or {})["lcsc"]} {a["mpn"]}' + (' (see note)' if a.get('note') else '')
+        return ''
+
     def coverage(self, prep):
         mounts = collections.Counter(self.part_of[r]['mount'] for r in self.comps)
-        bare = [r for r, (s, c) in self.comps.items() if prep.category({**c, '_sheet': s})[0] == 'bare_board_part']
+        bare = [r for r, (s, c) in self.comps.items() if prep.category({**c, '_sheet': s, '_mount': self.part_of[r]['mount']})[0] == 'bare_board_part']
         pcb_refs = [r for r in self.comps if self.part_of[r]['mount'] in PCB_MOUNTS]
         buy_refs = [r for r in self.comps if self.part_of[r]['mount'] in BUY_MOUNTS and not self.comps[r][1].get('dnp')]
         state = collections.Counter(self.availability(self.part_of[r])[0] for r in buy_refs)
@@ -580,10 +592,10 @@ class Model:
 
 
 OPEN_ITEMS = [
-    'SW308/SW309 are the push switches inside ENC301/ENC302: the graph keeps them as separate refs, so the encoder pads S1/S2 stay unconnected in the netlist until the E3 owner moves the switch nets onto encoder pins.',
-    'Board-side connectors of harnesses that have no graph ref yet (power-board end of J302, LAB BUS header behind J505, fan, buzzer-less HMI leads, NTC TH301/TH302 leads, inter-board links of the three-board split) are bought as extras where named; their schematic refs are pending (PCB/partition owner).',
-    'Panel parts without MPN (SMA/F/BNC bulkheads, USB-A/USB-C feedthroughs, power and EDL buttons) wait for the IP-rating selection of the mechanics package (MECH-07).',
-    'HMC7992LP3DE exposed-pad size and CPT-1207-3TH pin pitch must be checked against the manufacturer drawings before PCB release (see SR_RX_Custom/provenance.json).',
+    'SW308/SW309 — це кнопки всередині енкодерів ENC301/ENC302: граф тримає їх окремими позначеннями, тому контакти S1/S2 футпринта енкодера лишаються без кола в netlist, доки власник E3 не перенесе кола кнопок на виводи енкодера.',
+    'Роз’єми з боку плати для джгутів, які ще не мають позначень у графі (кінець J302 на силовій платі, гніздо LAB BUS за J505, вентилятор, виводи NTC TH301/TH302, міжплатні з’єднання поділу на три плати), куплено як супутні деталі там, де їх названо; позначення на схемі чекають власника поділу плат.',
+    'Панельні деталі без MPN (SMA/F/BNC-розетки, прохідні USB-A/USB-C, кнопки живлення й EDL) чекають вибору ступеня IP у механічному пакеті (MECH-07).',
+    'Розмір відкритої площадки HMC7992LP3DE і крок виводів CPT-1207-3TH треба звірити з кресленнями виробника до випуску PCB (див. SR_RX_Custom.pretty/provenance.json; analog.com 24.10.2026 не відповідав).',
 ]
 
 
@@ -662,7 +674,7 @@ def main():
     csv.writer(head, quoting=csv.QUOTE_ALL, lineterminator='\n').writerow([BOM_HEAD[f] for f in BOM_FIELDS])
     files[ROOT / 'build/10-zakupivlia.csv'] = head.getvalue() + csv_text(rows, BOM_FIELDS).split('\n', 1)[1]
     files[ROOT / 'build/10-zakupivlia.md'] = bom_md(model, rows, cov)
-    files[ROOT / 'build/10-jlc-bom.csv'] = csv_text(model.jlc_rows(prep), ['Board', 'Comment', 'Designator', 'Footprint', 'LCSC Part #', 'Mount'])
+    files[ROOT / 'build/10-jlc-bom.csv'] = csv_text(model.jlc_rows(prep), ['Board', 'Comment', 'Designator', 'Footprint', 'LCSC Part #', 'Mount', 'LCSC stock', 'LCSC alternate'])
     files[ROOT / 'build/10-parts-coverage.json'] = json.dumps(cov, ensure_ascii=False, indent=1) + '\n'
     for w in model.warnings:
         print('WARNING:', w)
