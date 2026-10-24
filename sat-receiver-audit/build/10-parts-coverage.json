@@ -34,10 +34,10 @@
  "purchased_refs": 721,
  "purchased_refs_by_availability": {
   "TBD": 28,
-  "в наявності": 579,
+  "в наявності": 586,
   "з 10-bom": 16,
-  "склад 0": 57,
-  "у каталозі": 41
+  "склад 0": 58,
+  "у каталозі": 33
  },
  "purchased_refs_with_mpn": 697,
  "tbd": [

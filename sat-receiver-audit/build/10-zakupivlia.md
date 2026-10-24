@@ -11,7 +11,7 @@
 
 - Позначень на схемі: 777; записів бази: 225.
 - Позначень на платах з посадковим місцем: 674 з 674 (KiCad 10.0.7: 639, власні/похідні SR_RX_Custom: 35).
-- Позначень, що купуються (без DNP): 721; з MPN: 697; за станом: TBD — 28, в наявності — 579, з 10-bom — 16, склад 0 — 57, у каталозі — 41.
+- Позначень, що купуються (без DNP): 721; з MPN: 697; за станом: TBD — 28, в наявності — 586, з 10-bom — 16, склад 0 — 58, у каталозі — 33.
 - Правило запасу для пасивних на платах: +10 %, щонайменше 5 шт. Дистриб’ютори: LCSC, DigiKey DE, Mouser, TME.
 
 Стан: «в наявності» — є на складі хоча б в одного прочитаного дистриб’ютора; «у каталозі» — сторінку прочитано, кількість не показано; «склад 0» — лише нульовий склад; «з 10-bom» — продавець з оцінки v2 (18.10.2026), сторінку не перечитано; «TBD» — MPN не підтверджено, причина в примітці.
@@ -59,7 +59,7 @@
 | 4 | D301 D305 D306 D502 | Vishay General Semiconductor | SS14-E3/61T | C47460 | в наявності |
 | 1 | F202 | Bourns | MF-MSMF075/24-2 | C208467 | в наявності |
 | 4 | J409 J410 J411 J412 | Molex | 0732511153 | C5859238 / 900-0732511153-ND | в наявності |
-| 2 | K401 K402 | Omron (Aratas) | G6K-2F-RF-S DC5 | C2750987 / G6K-2F-RF-S DC5 | в наявності |
+| 2 | K401 K402 | Omron (Aratas) | G6K-2F-RF-S DC5 | C2750987 / Z2828-ND | в наявності |
 | 6 | L404 | Coilcraft | 0603HP-47NXGRW | — | TBD |
 | 6 | L403 | Coilcraft | 0805HP-221XGRC | — | TBD |
 | 6 | L402 | Coilcraft | 0805LS-471XGRC | 4652-0805LS-471XGRC-ND | в наявності |
@@ -129,14 +129,14 @@
 | 20 | R207 R208 R219 R223 R224 R232 R237 R242 R247 R251 R252 R2… | UNI-ROYAL | 1206W4F220LT5E | C25336 | в наявності |
 | 7 | R225 R226 | Milliohm | HoLR1206-1W-20mR-1%-75ppm | C601099 | в наявності |
 | 6 | R103 | Vishay Beyschlag | MCA1206MD3304BP500 | C4168316 | в наявності |
-| 6 | R258 | Vishay Dale | WSL1206R1000DEA | C4235539 / WSL1206R1000DEA | у каталозі |
-| 10 | R231 R236 R241 R246 R266 | Vishay Dale | WSL1206R2000DEA | C4296612 / WSL1206R2000DEA | у каталозі |
+| 6 | R258 | Vishay Dale | WSL1206R1000DEA | C4235539 / 541-WSL1206R1000DEACT-ND | в наявності |
+| 10 | R231 R236 R241 R246 R266 | Vishay Dale | WSL1206R2000DEA | C4296612 / WSL1206R2000DEA-ND | у каталозі |
 | 6 | R512 | UNI-ROYAL | 1210W2F100KT5E | C78022 | в наявності |
 | 7 | R2911 R2912 | UNI-ROYAL | 1210W2F4701T5E | C52443 | в наявності |
 | 17 | R4460 R4461 R4462 R4463 R4464 R4465 R4466 R4467 R4468 R44… | YAGEO | AC1210FR-07249RL | C230131 | в наявності |
 | 6 | R110 | Vishay Dale | WSL2512R3300FEA | C2073866 | в наявності |
 | 6 | SW302 SW303 SW304 SW305 SW306 SW307 | E-Switch | TL3145BF350QJ | C2886884 / 141-TL3145BF350QJCT-ND | в наявності |
-| 3 | U405 U406 U407 | Analog Devices | HMC7992LP3DE | C208307 / HMC7992LP3DE | в наявності |
+| 3 | U405 U406 U407 | Analog Devices | HMC7992LP3DE | C208307 / 505-HMC7992LP3DE-ND | в наявності |
 | 2 | U215 U216 | Texas Instruments | INA3221AIRGVR | C181255 | в наявності |
 | 1 | U458 | Texas Instruments | LM4040A20IDBZR | C127070 | в наявності |
 | 1 | U307 | Texas Instruments | LM4040C30IDBZR | C181416 | в наявності |
@@ -162,10 +162,10 @@
 | замовити | позначення | виробник | MPN | LCSC / DigiKey / інше | стан |
 |---:|---|---|---|---|---|
 | 1 | BZ301 | Same Sky | CPT-1207-3TH | 2223-CPT-1207-3TH-ND | в наявності |
-| 6 | C511 | Panasonic | EEU-FR1C101 | C278532 / EEU-FR1C101 | в наявності |
-| 6 | C512 | Panasonic | EEU-FR1C221 | EEU-FR1C221 | у каталозі |
-| 20 | C206 C210 C219 C222 C225 C235 C239 C243 C247 C251 C254 C2… | Panasonic | EEU-FR1H470 | C407950 / EEU-FR1H470 | в наявності |
-| 6 | C207 | Nichicon | UHE1E221MPD | C116228 / UHE1E221MPD | в наявності |
+| 6 | C511 | Panasonic | EEU-FR1C101 | C278532 / P14391-ND | в наявності |
+| 6 | C512 | Panasonic | EEU-FR1C221 | P14393-ND | склад 0 |
+| 20 | C206 C210 C219 C222 C225 C235 C239 C243 C247 C251 C254 C2… | Panasonic | EEU-FR1H470 | C407950 / P124235-ND | в наявності |
+| 6 | C207 | Nichicon | UHE1E221MPD | C116228 / 493-1549-ND | в наявності |
 | 1 | D304 | Kingbright | WP7113LSECK/J3 | C6001438 / 754-1916-ND | в наявності |
 | 2 | ENC301 ENC302 | Bourns | PEC11R-4220F-S0024 | C143797 | в наявності |
 | 2 | F102 F201 | Littelfuse | 0297004.WXNV | C178940 | в наявності |
@@ -201,7 +201,7 @@
 | 1 | A402 | Nooelec | 100800 | nooelec-100800 | у каталозі |
 | 1 | A418 | Uputronics | HAB-FPA440 (case V3 / board Rev 3.0) | див. CSV | з 10-bom |
 | 1 | A405 | Mini-Circuits | VAT-20W2+ | minicircuits-VAT-20W2 | у каталозі |
-| 1 | FAN302 | Delta Electronics | BFB0305HA-C | BFB0305HA-C | у каталозі |
+| 1 | FAN302 | Delta Electronics | BFB0305HA-C | 603-2111-ND | в наявності |
 | 1 | FAN301 | Noctua | NF-A4x10 5V | див. CSV | з 10-bom |
 | 1 | U308 | Adafruit | 4162 | adafruit-4162 | у каталозі |
 | 1 | U314 | Adafruit | 4754 | adafruit-4754 | у каталозі |
@@ -237,8 +237,8 @@
 | замовити | позначення | виробник | MPN | LCSC / DigiKey / інше | стан |
 |---:|---|---|---|---|---|
 | 1 | J101 | Changzhou Amass | XT30U-F | C99102 | в наявності |
-| 4 | W403 W404 W405 W406 | Taoglas | CAB.01075 | CAB.01075 / taoglas-cab01075 | у каталозі |
-| 1 | W407 | Taoglas | CAB.011 | CAB.011 | у каталозі |
+| 4 | W403 W404 W405 W406 | Taoglas | CAB.01075 | 931-CAB.01075-ND / taoglas-cab01075 | в наявності |
+| 1 | W407 | Taoglas | CAB.011 | 931-1098-ND | в наявності |
 | 1 | W401 | Goobay | 58814 | див. CSV | з 10-bom |
 | 1 | W408 | SR-RX build-to-print | W408 common-mode choke assembly | — | TBD |
 | 1 | J544 | — | — | — | TBD |
@@ -288,7 +288,7 @@
 | 1 | A405 | Mini-Circuits | VAT-30W2+ | minicircuits-VAT-30W2 | у каталозі |
 | 1 | W408 | Fair-Rite | 5977003801 | 1934-1130-ND | в наявності |
 | 1 | W408 | Fair-Rite | 2631102002 | 1934-1355-ND | в наявності |
-| 2 | J541 J543 | Würth Elektronik | 74271112 | 74271112 | у каталозі |
+| 2 | J541 J543 | Würth Elektronik | 74271112 | 732-1503-ND | в наявності |
 | 2 | J544 | Fair-Rite | 2631480002 | 1934-1377-ND | в наявності |
 | 1 | U520 | Adafruit | 2420 | adafruit-2420 | у каталозі |
 | 2 | U520 | Fair-Rite | 0431164281 | 1934-1464-ND | в наявності |
