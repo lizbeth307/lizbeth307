@@ -13,6 +13,7 @@ import argparse
 from datetime import datetime, timezone
 import grp
 import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path
@@ -30,8 +31,15 @@ SIM_UNIT = "srrx-linux-lab-sim.service"
 SOCKET = "/run/srrx-linux-lab/control.sock"
 MARKER = "/etc/srrx-linux-lab.json"
 REPORT = "/var/lib/srrx-linux-lab/system-smoke.json"
+UNIT_DIR = Path("/etc/systemd/system")
+# DEP-11 probe: a /dev/lab node that never appears in this guest, two throwaway units
+# (removed again; guest_bootstrap.sh also clears these fixed paths) and a short device timeout.
+DEVICE_PROBE = "/dev/lab/srrxabsent"
+DEVWAIT_UNIT = "srrx-linux-lab-devwait.service"
+DEVRETRY_UNIT = "srrx-linux-lab-devretry.service"
+PROBE_TIMEOUT_S = 3
 REQUIRED_STEPS = (
-    "guest_boundary", "candidate_stage", "hardware_missing_records",
+    "guest_boundary", "candidate_stage", "systemd_device_wait_bounded", "hardware_missing_records",
     "hardware_open_records", "installed_entrypoints_stdio", "systemd_simulation",
     "single_writer", "client_permissions", "explicit_arm_and_fault",
     "link_loss_latched", "lease_expiry_latched", "simulation_shutdown",
@@ -130,6 +138,22 @@ def simulation_unit(shipped):
     text = "\n".join(lines).rstrip() + "\nPrivateDevices=yes\nDevicePolicy=closed\nCapabilityBoundingSet=\n"
     require("--hardware" not in text and "[Install]" not in text, "simulation unit has a hardware/enable path")
     return text
+
+
+def load_deploy(project):
+    """The installed generator itself (deployment/deploy.py), not a copy of its drop-in text."""
+    spec = importlib.util.spec_from_file_location("srrx_guest_deploy", Path(project) / "deployment/deploy.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def device_probe_units():
+    """Throwaway units that carry the generated srrx.service device ordering; no hardware, no [Install]."""
+    head = "[Unit]\nDescription=SR-RX Linux lab device-wait probe (no hardware)\n\n[Service]\n"
+    return {DEVWAIT_UNIT: head + "Type=oneshot\nExecStart=/bin/true\n",
+            # Same shape as the release guard: ExecStartPre fails, Restart=on-failure retries.
+            DEVRETRY_UNIT: head + "Type=simple\nExecStartPre=/bin/false\nExecStart=/bin/true\nRestart=on-failure\nRestartSec=1\n"}
 
 
 def assert_simulation(status, safe=False):
@@ -401,6 +425,60 @@ class GuestSmoke:
                 "manifest_sha256": digest(self.stage / "stage-files.json"),
                 "physical_gates_open": len(gates), "menu_user_unit": True, "systemd_verify": "PASS"}
 
+    def device_wait(self):
+        """DEP-11 on this guest's real systemd: the generated Wants=/After= drop-in waits for an absent
+        /dev/lab node only up to the device timeout, and each automatic restart waits again, so a
+        failing guard does not run into start-limit-hit. The hardware unit is not involved."""
+        deploy = load_deploy(self.project)
+        escaped = {}
+        for path in ("/dev/lab/rtla", "/dev/lab/rtlb", "/dev/lab/hfplus", "/dev/lab/pico", DEVICE_PROBE):
+            escaped[path] = self.command(["/usr/bin/systemd-escape", "--path", "--suffix=device", path]).stdout.strip()
+            require(escaped[path] == deploy.device_unit(path), "device unit name differs from systemd-escape: " + path)
+        require(not os.path.lexists(DEVICE_PROBE), "device-wait probe node unexpectedly exists")
+        probe = deploy.device_unit(DEVICE_PROBE)
+        dropin = deploy.lab_device_dropin([DEVICE_PROBE])
+        files = {UNIT_DIR / (probe + ".d") / deploy.DEVICE_TIMEOUT_DROPIN: deploy.device_timeout_dropin(PROBE_TIMEOUT_S)}
+        for name, text in device_probe_units().items():
+            files[UNIT_DIR / name] = text
+            files[UNIT_DIR / (name + ".d") / deploy.LAB_DEVICE_DROPIN] = dropin
+        for path in files:  # checked before the first write: cleanup below removes only files created here
+            require(not os.path.lexists(path), "refusing to replace an existing unit file: " + str(path))
+        try:
+            for path, text in files.items():
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_text(text)
+            self.systemctl("daemon-reload")
+            started = time.monotonic()
+            self.systemctl("start", DEVWAIT_UNIT)
+            waited = round(time.monotonic() - started, 3)
+            wait = self.properties(DEVWAIT_UNIT)
+            shown = self.systemctl("show", probe, "--property=ActiveState", "--property=JobRunningTimeoutUSec")
+            device = dict(line.split("=", 1) for line in shown.stdout.splitlines() if "=" in line)
+            require(PROBE_TIMEOUT_S - .5 <= waited <= 15 and wait["Result"] == "success"
+                    and device.get("JobRunningTimeoutUSec") in (str(PROBE_TIMEOUT_S) + "s", str(PROBE_TIMEOUT_S * 1_000_000))
+                    and device.get("ActiveState") != "active",
+                    f"absent device wait not bounded by its timeout: waited {waited} s, {wait}, {device}")
+            self.systemctl("start", "--no-block", DEVRETRY_UNIT)
+            time.sleep(15)
+            retry = self.properties(DEVRETRY_UNIT)
+            # Default StartLimitBurst=5 per 10 s: a 1 s retry without the device wait would hit it.
+            require(1 <= int(retry["NRestarts"]) <= 4 and retry["Result"] != "start-limit-hit" and retry["ActiveState"] != "failed",
+                    "restarts must wait for the device job again instead of reaching start-limit-hit: " + str(retry))
+            return {"systemd_escape": escaped, "probe_device_unit": probe, "dropin": dropin,
+                    "device_timeout_s": PROBE_TIMEOUT_S, "oneshot_wait_s": waited, "oneshot_result": wait["Result"],
+                    "device": device, "restart_probe_after_15_s": {k: retry[k] for k in ("ActiveState", "SubState", "NRestarts", "Result")},
+                    "hardware_unit_used": False}
+        finally:
+            for name in (DEVRETRY_UNIT, DEVWAIT_UNIT):
+                self.systemctl("stop", name, accepted=(0, 1, 5))
+                self.systemctl("reset-failed", name, accepted=(0, 1, 5))
+            for path in files:
+                if path.is_file() and not path.is_symlink():
+                    path.unlink()
+                if path.parent != UNIT_DIR and path.parent.is_dir() and not any(path.parent.iterdir()):
+                    path.parent.rmdir()
+            self.systemctl("daemon-reload")
+
     def hardware_missing(self):
         etc = Path("/etc/srrx")
         require(not any((etc / name).exists() for name in ("acceptance.json", "devices.env", "devices.json", "release.json", "build-manifest.json")),
@@ -618,6 +696,7 @@ class GuestSmoke:
 
     def execute(self, facts):
         tasks = (("guest_boundary", lambda: facts), ("candidate_stage", self.stage_candidate),
+                 ("systemd_device_wait_bounded", self.device_wait),
                  ("hardware_missing_records", self.hardware_missing), ("hardware_open_records", self.hardware_open),
                  ("installed_entrypoints_stdio", self.entrypoints), ("systemd_simulation", self.start_simulation),
                  ("single_writer", self.single_writer), ("client_permissions", self.permissions),
@@ -645,10 +724,11 @@ class GuestSmoke:
                 self.data["rpc_helper"].update(requests=self.rpc_client.requests,
                     exit_code=self.rpc_client.process.poll(), cleaned_up=self.rpc_client.process.poll() is not None)
             self.data["finished_at"] = datetime.now(timezone.utc).isoformat()
-            self.data["source_sha256"] = {str(path.relative_to(self.project)): digest(path) for path in (
+            # The readiness contract is the gate set candidate_stage compared; finalize binds it (TOOL-07).
+            self.data["source_sha256"] = {path.relative_to(self.project).as_posix(): digest(path) for path in (
                 self.project / "software/srrx/daemon.py", self.project / "software/srrx/engine.py",
                 self.project / "software/systemd/srrx.service", self.project / "design/E3.json",
-                self.project / "deployment/linux_lab/guest_smoke.py")}
+                self.project / "design/readiness-contract.json", self.project / "deployment/linux_lab/guest_smoke.py")}
             self.report_path.parent.mkdir(parents=True, exist_ok=True)
             temporary = self.report_path.with_suffix(".tmp")
             temporary.write_text(json.dumps(self.data, indent=2, allow_nan=False) + "\n")

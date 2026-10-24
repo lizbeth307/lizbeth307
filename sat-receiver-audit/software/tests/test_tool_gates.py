@@ -247,15 +247,75 @@ class LinuxLabImportTests(TempProject):
         for name in ("deployment/deploy.py", "deployment/build.sh", "deployment/sources.lock.json",
                      "deployment/patches/rtlsdr-rx-only.patch", "deployment/upstream-fixtures/rtl-sdr/COPYING",
                      "deployment/tests/test_deployment.py", "software/pyproject.toml", "tools/check_software.py",
-                     "tools/run_tests_offline.py", "firmware/pico/supervisor.py", "software/systemd/srrx.service"):
+                     "tools/run_tests_offline.py", "firmware/pico/supervisor.py", "software/systemd/srrx.service",
+                     "design/readiness-contract.json"):
             self.assertTrue(finalize.bound(name), name)
+        # Host evidence sinks stay unbound: software-tests.json carries elapsed_s and the contract hash.
         for name in ("deployment/linux_lab/build_kit.py", "firmware/dist/pico-micropython-files.zip",
-                     "software/srrx/__pycache__/wire.py", "design/E1-review.md", "tools/build_bundle.py"):
+                     "software/srrx/__pycache__/wire.py", "design/E1-review.md", "tools/build_bundle.py",
+                     "verification/software-tests.json", "verification/linux-lab/source-binding.json", "design/E1.json"):
             self.assertFalse(finalize.bound(name), name)
         (self.root / "deployment").mkdir()
+        (self.root / "design").mkdir()
         (self.root / "deployment/new_guard.py").write_text("# added later\n", encoding="utf-8")
         (self.root / "deployment/NOTES.md").write_text("prose\n", encoding="utf-8")
-        self.assertEqual(finalize.bound_sources(self.root), {"deployment/new_guard.py"})
+        (self.root / "design/readiness-contract.json").write_text("{}\n", encoding="utf-8")
+        (self.root / "design/E1-review.md").write_text("prose\n", encoding="utf-8")
+        self.assertEqual(finalize.bound_sources(self.root), {"deployment/new_guard.py", "design/readiness-contract.json"})
+
+    def test_executed_binding_covers_the_readiness_contract_bytes(self):
+        (self.root / "deployment").mkdir()
+        (self.root / "design").mkdir()
+        for index in range(50):
+            (self.root / f"deployment/guard_{index:02}.py").write_text(f"# guard {index}\n", encoding="utf-8")
+        contract = self.root / "design/readiness-contract.json"
+        contract.write_text('{"gate_results": {"E1-01": "OPEN"}}\n', encoding="utf-8")
+        entries = [{"path": p.relative_to(self.root).as_posix(), "sha256": sha(p)} for p in sorted(self.root.rglob("*")) if p.is_file()]
+        executed = finalize.bind_executed(entries, self.root)
+        self.assertEqual(executed["design/readiness-contract.json"], sha(contract))
+        self.assertEqual(len(executed), 51)
+        contract.write_text('{"gate_results": {}}\n', encoding="utf-8")  # e.g. a regenerated contract after guest prep
+        with self.assertRaisesRegex(SystemExit, "Executed source changed after guest preparation: design/readiness-contract.json"):
+            finalize.bind_executed(entries, self.root)
+        with self.assertRaisesRegex(SystemExit, "Source added after guest preparation: design/readiness-contract.json"):
+            finalize.bind_executed([e for e in entries if e["path"] != "design/readiness-contract.json"], self.root)
+
+    def test_guest_smoke_must_attest_the_bound_bytes_it_read(self):
+        contract, unit, other = "design/readiness-contract.json", "software/systemd/srrx.service", "1" * 64
+        executed = {contract: "a" * 64, unit: "b" * 64, "software/srrx/daemon.py": "c" * 64}
+        smoke = {contract: "a" * 64, unit: "b" * 64, "design/E3.json": other}  # E3 is recorded, not bound
+        self.assertIs(finalize.smoke_attests(smoke, executed), smoke)
+        for case, record in (("contract missing", {unit: "b" * 64}), ("no record", None),
+                             ("other contract", dict(smoke, **{contract: other})), ("unit differs", dict(smoke, **{unit: other})),
+                             ("bound file outside the binding", dict(smoke, **{"software/srrx/engine.py": other}))):
+            with self.subTest(case), self.assertRaisesRegex(SystemExit, "Guest smoke did not re"):
+                finalize.smoke_attests(record, executed)
+        with self.assertRaisesRegex(SystemExit, "read the bound sources: software/systemd/srrx.service$"):
+            finalize.smoke_attests(dict(smoke, **{unit: other}), executed)
+
+    def test_readiness_contract_carries_no_lab_binding_state(self):
+        # No-cycle rule: the contract is a sink of host test counts and is bound by source-binding.json;
+        # a field derived from that binding or the Linux status would make the two depend on each other.
+        contract = json.loads((BASE / "design/readiness-contract.json").read_text(encoding="utf-8"))
+        self.assertEqual(set(contract), {
+            "schema_version", "hardware_readiness", "production_release", "custom_firmware_implemented_and_tested",
+            "custom_firmware_source_implemented", "host_regression_status", "host_tests_passed", "host_tests_skipped",
+            "firmware_flashed_and_hardware_qualified", "software_components", "battery_adc_calibration_valid",
+            "gate_results", "startup_output_requests", "control_contacts", "rules"})
+        self.assertEqual(finalize.CONTRACT, "design/readiness-contract.json")
+
+    def test_import_requires_a_clean_nonvacuous_qemu_loader_audit(self):
+        audit = {"status": "PASS", "objects": 61, "dlopened": [], "outside_tools_root": [], "sha256": "0" * 64}
+        report = {"status": "PASS", "environment": {"architecture": "aarch64"}, "hardware_qualified": False,
+                  "physical_tests_performed": False, "host": {"qemu_exit_code": 0, "loader_audit": audit}}
+        self.assertIs(finalize.importable(report), report)
+        for change in ({"loader_audit": None}, {"loader_audit": dict(audit, outside_tools_root=["/usr/lib/x86_64-linux-gnu/libz.so.1"])},
+                       {"loader_audit": dict(audit, objects=0)}, {"loader_audit": dict(audit, status="FAIL")},
+                       {"loader_audit": dict(audit, outside_tools_root=None)}):
+            with self.subTest(change=change), self.assertRaisesRegex(SystemExit, "QEMU loader audit"):
+                finalize.importable(dict(report, host=dict(report["host"], **change)))
+        with self.assertRaisesRegex(SystemExit, "Only a successful stopped ARM64"):
+            finalize.importable(dict(report, host=dict(report["host"], qemu_exit_code=1)))
 
 
 class OfflineAttestationTests(unittest.TestCase):
