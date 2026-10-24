@@ -248,12 +248,13 @@ def main(argv=None):
     hardware = link = None
     try:
         if args.hardware:
-            from .commissioning import load_acceptance
+            from .commissioning import load_acceptance_bound
             if not all((args.acceptance, args.i2c, args.i2c0, args.pico)):
                 ap.error("Hardware requires --acceptance, --i2c, --i2c0 and --pico; no guessed device paths")
             # A runtime start tolerates an RTC behind accepted_at (offline unit); the
-            # 2026 floor and evidence-before-acceptance ordering still apply.
-            acceptance = load_acceptance(args.acceptance, args.project, clock_check=False)
+            # 2026 floor and evidence-before-acceptance ordering still apply. The
+            # digest of these exact bytes must equal the Pico qualification_record.
+            acceptance, qualification = load_acceptance_bound(args.acceptance, args.project, clock_check=False)
             if datetime.fromisoformat(acceptance["accepted_at"].replace("Z", "+00:00")) > datetime.now(timezone.utc):
                 print("labd: system clock is behind acceptance accepted_at; check RTC/time sync",
                       file=sys.stderr, flush=True)
@@ -266,7 +267,7 @@ def main(argv=None):
             from .runtime_telemetry import ProjectTelemetry
             telemetry = ProjectTelemetry(args.i2c0, hardware, acceptance)
             engine = Engine(hardware, link, simulated=False, acceptance=acceptance, telemetry_reader=telemetry,
-                            soc_temp_reader=SocTempSampler())
+                            soc_temp_reader=SocTempSampler(), qualification_record=qualification)
         else:
             hardware = SimHardware(load_mapping(args.project / "design/E3.json"))
             # Synthetic detector idle levels and power-good signals are labelled

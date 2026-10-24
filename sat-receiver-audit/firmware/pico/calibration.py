@@ -84,14 +84,24 @@ def validate(record, serial, revision=REVISION):
     return Calibration(record)
 
 
+def _sha256_hex(value):
+    # srrx.provision seals sha256 of the exact accepted bytes. A plain loop, not
+    # MicroPython re; exactly 64 lowercase hex also bounds the HELLO field.
+    if not isinstance(value, str) or len(value) != 64:
+        return False
+    for char in value:
+        if char not in "0123456789abcdef":
+            return False
+    return True
+
+
 def commissioning_valid(record, calibration_record, serial, revision=REVISION):
     return (isinstance(record, dict) and _valid_crc(record, COMMISSION_FIELDS)
             and type(record.get("v")) is int and record["v"] == 1
             and record.get("revision") == revision and record.get("serial") == serial
             and record.get("calibration_crc32") == calibration_record.get("crc32")
             and record.get("hardware_commissioned") is True
-            and isinstance(record.get("qualification_record"), str)
-            and bool(record["qualification_record"].strip()))
+            and _sha256_hex(record.get("qualification_record")))
 
 
 def load(path):

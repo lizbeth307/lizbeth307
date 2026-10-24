@@ -1,5 +1,5 @@
 {
-  "elapsed_s": 3.125,
+  "elapsed_s": 3.212,
   "modules": [
     {
       "description": "Waveshare LC76G GNSS24370 NMEA output over Linux PTY into the production read-only UART reader",
@@ -9,7 +9,7 @@
       ],
       "scenarios": [
         {
-          "elapsed_s": 0.194,
+          "elapsed_s": 0.206,
           "observed": {
             "fragment_size_bytes": 1,
             "gnss_utc_qualified": false,
@@ -24,7 +24,7 @@
           "status": "EMULATION_PASS"
         },
         {
-          "elapsed_s": 0.247,
+          "elapsed_s": 0.269,
           "observed": {
             "checksum_rejected": true,
             "invalid_fix_rejected": true,
@@ -35,18 +35,18 @@
           "status": "EMULATION_PASS"
         },
         {
-          "elapsed_s": 0.354,
+          "elapsed_s": 0.357,
           "observed": {
             "fallback_current_accuracy": "unknown",
             "freshness_ms": 180,
-            "observed_stale_age_ms": 320,
+            "observed_stale_age_ms": 324,
             "replay_does_not_refresh_receipt_time": true
           },
           "scenario": "nmea_replayed_epoch_and_stale",
           "status": "EMULATION_PASS"
         },
         {
-          "elapsed_s": 0.123,
+          "elapsed_s": 0.124,
           "observed": {
             "automatic_reopen": false,
             "disconnect_detection_owner": "production_gnss_uart_NmeaUartReader_pollhup",
@@ -58,7 +58,7 @@
           "status": "EMULATION_PASS"
         },
         {
-          "elapsed_s": 0.44,
+          "elapsed_s": 0.47,
           "observed": {
             "duplicate_not_distinct": true,
             "real_gnss_utc_qualified": false,
@@ -92,7 +92,7 @@
       ],
       "scenarios": [
         {
-          "elapsed_s": 0.82,
+          "elapsed_s": 0.844,
           "observed": {
             "connections": 2,
             "fragmented_tpv_bytes": true,
@@ -106,7 +106,7 @@
           "status": "EMULATION_PASS"
         },
         {
-          "elapsed_s": 0.398,
+          "elapsed_s": 0.403,
           "observed": {
             "duplicate_json_keys_rejected": true,
             "freshness_ms": 180,
@@ -117,7 +117,7 @@
           "status": "EMULATION_PASS"
         },
         {
-          "elapsed_s": 0.461,
+          "elapsed_s": 0.432,
           "observed": {
             "duplicate_epoch_not_distinct": true,
             "real_gnss_utc_qualified": false,

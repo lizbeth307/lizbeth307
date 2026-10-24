@@ -82,6 +82,12 @@ class SimLink:
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
         self.model = module.Supervisor(calibration_valid=True, hardware_commissioned=True)
+        # The firmware's own HELLO shape: state/readiness fields, no readings, and
+        # no serial, calibration CRC or qualification_record for a model.
+        spec = importlib.util.spec_from_file_location("srrx_pico_main_model", path.with_name("main.py"))
+        main = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(main)
+        self.hello_payload = main.hello_payload
         self.host_decoder, self.device_decoder = FrameDecoder(), FrameDecoder()
         self.tx_seq, self.last_status_ms, self.last_session = 0, -1000, None
         self.inputs = {"q6a_on": True, "battery_mv": 14800,
@@ -100,16 +106,22 @@ class SimLink:
             return []
         session = self.model.session
         if session != self.last_session:
-            self.last_session, self.tx_seq, self.last_status_ms = session, 0, -1000
-            kind = "HELLO"
+            # The firmware sends STATUS in its next 20 ms loop after a HELLO;
+            # the model delivers both in this poll. HELLO is not repeated.
+            self.last_session, self.tx_seq = session, 0
+            kinds = ("HELLO", "STATUS")
         elif now_ms - self.last_status_ms >= 100:
-            kind = "STATUS"
+            kinds = ("STATUS",)
         else:
             return []
-        frame = {"v": 1, "t": kind, "s": session, "q": self.tx_seq, "p": self.model.status()}
-        self.tx_seq += 1
+        frames = []
+        for kind in kinds:
+            payload = self.hello_payload(self.model, None) if kind == "HELLO" else self.model.status()
+            frame = {"v": 1, "t": kind, "s": session, "q": self.tx_seq, "p": payload}
+            self.tx_seq += 1
+            frames.extend(self.device_decoder.feed(encode_frame(frame)))
         self.last_status_ms = now_ms
-        return self.device_decoder.feed(encode_frame(frame))
+        return frames
 
     def close(self):
         pass

@@ -82,7 +82,9 @@ systemctl stop srrx-linux-lab-sim.service srrx.service 2>/dev/null || true
 # unconditionally, whoever created them, so changed units are reinstalled;
 # guest_smoke's refuse-to-overwrite guards only catch state created after this.
 rm -f /etc/systemd/system/srrx.service /etc/systemd/system/srrx-linux-lab-sim.service
-rm -rf /etc/systemd/system/srrx.service.d
+rm -f /etc/systemd/system/srrx-linux-lab-devwait.service /etc/systemd/system/srrx-linux-lab-devretry.service
+rm -rf /etc/systemd/system/srrx.service.d /etc/systemd/system/srrx-linux-lab-devwait.service.d \
+    /etc/systemd/system/srrx-linux-lab-devretry.service.d /etc/systemd/system/dev-lab-srrxabsent.device.d
 rm -f /etc/srrx/acceptance.json /etc/srrx/devices.json /etc/srrx/devices.env /etc/srrx/release.json /etc/srrx/build-manifest.json
 systemctl daemon-reload
 # Replace previous sources and venv with this exact manifest, owned by root.

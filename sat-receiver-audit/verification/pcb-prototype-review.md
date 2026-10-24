@@ -67,12 +67,12 @@ The portable repeat is the same native command against the published project:
 kicad-cli pcb drc --format json --severity-all --all-track-errors --exit-code-violations --output build/kicad/pcb-prototype/drc-portable-raw.json build/kicad/pcb-prototype/detector-core-routed-prototype.kicad_pcb
 ```
 
-The router sorts each net's pins before routing, so its geometry no longer depends on KiCad's UUID-ordered board files: two independent CI re-freezes on 23.10.2026 produced identical track endpoints (2800 start/end records), differing only in native UUIDs. In the CI workflow the re-freeze runs on manual dispatch with `refreeze_pcb=true`. Reviewed SHA-256 after the 23.10.2026 re-freeze (the 20.10 values are in Git history):
+The router sorts each net's pins before routing, so its geometry no longer depends on KiCad's UUID-ordered board files: two independent CI re-freezes on 23.10.2026 produced identical track endpoints (2800 start/end records), differing only in native UUIDs. In the CI workflow the re-freeze runs on manual dispatch with `refreeze_pcb=true`. Reviewed SHA-256 after the 24.10.2026 re-freeze for the v2.1 owner decisions (earlier values are in Git history):
 
-- Source input: `e1f11f659704c558b1f98bef9aadcfb795d2d2443ef2a84e4ea529eb447f2746`
-- Frozen starter: `baf16f51f6b56cb41e33f486c94d556fbab217542a32202d8e8b7c76b0769d48`
-- Routed prototype: `5a517890b3661f4e291fefd61053610ab2699c20fde2cc0b501a30411c189c1f`
-- Generation raw DRC: `45a44d7cc66ea094d7d9cc381c1dfc231db135f6a3595a0b71c3f5d02435824b`
-- Portable repeat DRC: `797614bbb38f27a2bd40744fa422afebd985c12a40b3927d40395e0b1498eb5c`
+- Source input: `14a5d3988a0e6e33a5e7b7134292d833edd25feafd3629fe5a69fc78db302892`
+- Frozen starter: `25f586a5ec5ed50ef954a659732321277c03267a7f446fefc1e16512c8183ec6`
+- Routed prototype: `c2f73cb5524ef7783850d42c32922f3c42f5933985d0e9ec603b51e2cdd9c295`
+- Generation raw DRC: `c1ce0beedc7b06325880a63a0cb7a710b7a90b8891b9ab5ca6c38c9c830b84c3`
+- Portable repeat DRC: `82467fea26668fb6c0b0c444c4b372e75a45c413ce8d940b562ffcce8485800a`
 
 `pcb-prototype-review.json` retains the full native routing inventory and independent audit. Re-run the checks after any geometry, resource or input change; regeneration changes native UUIDs.

@@ -100,9 +100,9 @@ Waveshare LC76G 24370 → UART6 (/dev/lab/gnss), PPS → пін 7 (pps-gpio, /de
 - **Вузол N.** На ньому: IP2368 COUT (USB-C → TPS259470A), AON TPS70933 3.3 V з UV-компаратором MCP65R41T-1202E/CHY, сервісний порт 5 A, SMBJ17A. Далі — Pololu #2813 HP → вузол SW (другий SMBJ17A).
 - **Від SW:**
   - D36V50F12 → SYS12: J21 (Q6A), DISP12 і AUX12 (лише BENCH);
-  - D36V28F5 → LAB5 (запобіжник 3 A): Pico, CH334F, пак IMU, вентилятори, HF+, LAB USB-A, VBUS RTL-B і LNA4V5 (2× LT3045 4.5 V);
+  - D36V28F5 → LAB5 (запобіжник 3 A): Pico, CH334F, пак IMU, вентилятори, HF+, LAB USB-A, VBUS RTL-B і LNA4V5 (2× LT3045 4.3 V, v2.1);
   - TPS7A4701 → eFuse TPS259630DDAR → INA3221 → LNB13V2 13.2 V (з Bullseye; 12.5 V для обох LNB перемичками ANY-OUT, якщо куплено QRO.cz — §8 «Рішення про шину LNB»);
-  - TPS7A4701 → eFuse TPS259630DDAR (RILM 7.87k) → INA3221 → BONI13V8 13.8 V, без PTC (§1.1 C17, §8 «Відкриті рішення щодо живлення» (b)).
+  - TPS7A4701 → eFuse TPS259630DDAR (RILM 7.15k, v2.1) → INA3221 → BONI13V8 13.8 V → блокувальний елемент E4-06 (v2.1), без PTC (§1.1 C17, §8 «Відкриті рішення щодо живлення» (b)).
 - **LIME3V3.** M.2 3.3 V Q6A → ключ навантаження TI TPS259470ARPWR (4-й екземпляр тієї самої деталі; стартовий RILM 1.65 kOhm = ILIM 1.80-2.20 A, остаточний — 1.5-2× виміряного струму Lime; EN — MCP #4 GPA0, FLT — MCP #4 GPB3) → R44SF (§5.1, §2.11.1, §8 «Відкриті рішення щодо живлення» (a)).
 - **Бюджет (модель).** Збірка з Lime: пік батареї 4.6 A; режим H — 30.8 W, близько 1.9 год. Режим B без Lime — 17.6 W, близько 3.3 год.
 

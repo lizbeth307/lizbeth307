@@ -70,10 +70,10 @@ kicad-cli pcb drc --format json --severity-all --all-track-errors --exit-code-vi
 
 Its complete JSON is retained unmodified in `drc-raw.json`. A generation run is successful when a valid starter and raw DRC are produced; the explicit DRC exit 5 and NOT FOR FABRICATION status remain in the review. The `--check` command only performs the source/board/resource consistency audit and does not claim a DRC release.
 
-Snapshot SHA-256 values after the 23.10.2026 re-freeze (`input_sha256`, `board_sha256` and `drc.raw_sha256` in `verification/pcb-review.json`; the 19.10 snapshot is in Git history):
+Snapshot SHA-256 values after the 24.10.2026 re-freeze (`input_sha256`, `board_sha256` and `drc.raw_sha256` in `verification/pcb-review.json`; the 19.10 snapshot is in Git history):
 
-- Input: `e1f11f659704c558b1f98bef9aadcfb795d2d2443ef2a84e4ea529eb447f2746`
-- Board: `baf16f51f6b56cb41e33f486c94d556fbab217542a32202d8e8b7c76b0769d48`
-- Final raw DRC: `6bdaacc844f13fcdcee24da517559cdbda7b144c62ae06f9f6fea3607a6fa294`
+- Input: `14a5d3988a0e6e33a5e7b7134292d833edd25feafd3629fe5a69fc78db302892`
+- Board: `25f586a5ec5ed50ef954a659732321277c03267a7f446fefc1e16512c8183ec6`
+- Final raw DRC: `180d2bc5c8508800952577d6db541a4b0d5ca84a26d04047be8ce87327480201`
 
 These hashes identify the reviewed snapshot; if they differ from the JSON, the JSON is authoritative. Regeneration uses new native UUIDs, so re-run the audit after any source or board change.

@@ -7,7 +7,7 @@ Running full software regression
 Software regression exit: 0; running systemd/Unix IPC smoke
 {"status": "PASS", "report": "/var/lib/srrx-linux-lab/results/system-smoke.json", "hardware_qualified": false}
 System smoke exit: 0; running real PTY smoke
-{"suite": "real_linux_pty_smoke", "status": "PASS", "passed": 9, "failed": 0, "elapsed_s": 5.231}
+{"suite": "real_linux_pty_smoke", "status": "PASS", "passed": 9, "failed": 0, "elapsed_s": 5.016}
 PTY smoke exit: 0; running offscreen Qt process-failure smoke
 {"status": "PASS_LINUX_OFFSCREEN_SIMULATION", "report": "/var/lib/srrx-linux-lab/results/gui/report.json"}
 Offscreen Qt exit: 0; running XCB/Xvfb production menu

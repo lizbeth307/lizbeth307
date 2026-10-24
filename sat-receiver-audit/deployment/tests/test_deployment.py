@@ -119,6 +119,68 @@ class DeploymentTests(unittest.TestCase):
         self.assertFalse(any(l.startswith(("Requires=", "BindsTo=")) for l in bridge))
         for line in ("After=srrx.service", "Wants=srrx.service", "PartOf=srrx.service", "Restart=on-failure"):
             self.assertIn(line, bridge)
+        # Device ordering lives only in the generated drop-in: guest_smoke.simulation_unit copies these
+        # [Unit] lines, and a QEMU guest without /dev/lab nodes would wait for every device job.
+        text = (units / "srrx.service").read_text()
+        self.assertNotIn("dev-lab", text)
+        self.assertFalse([l for l in text.splitlines() if l.startswith(("Wants=", "Requires=", "BindsTo="))])
+
+    def test_stage_orders_receiver_after_lab_device_units(self):
+        deploy.stage(self.root / "candidate", self.devices())
+        units = self.root / "candidate/rootfs/etc/systemd/system"
+        expected = {"dev-lab-rtla.device", "dev-lab-rtlb.device", "dev-lab-hfplus.device", "dev-lab-pico.device"}
+        dropin = (units / "srrx.service.d" / deploy.LAB_DEVICE_DROPIN).read_text()
+        fields = {}
+        for line in dropin.splitlines():
+            if "=" in line and not line.startswith("#"):
+                key, value = line.split("=", 1)
+                fields.setdefault(key, []).extend(value.split())
+        self.assertEqual(set(fields), {"Wants", "After"})
+        self.assertEqual(set(fields["Wants"]), expected)
+        self.assertEqual(set(fields["After"]), expected)
+        # A missing receiver stays a guard failure (exit 2) in doctor, never a dependency error or a stop.
+        for word in ("Requires=", "BindsTo=", "Requisite=", "PartOf=", "dev-lab-gnss", "i2c"):
+            self.assertNotIn(word, dropin)
+        files = json.loads((self.root / "candidate/stage-files.json").read_text())["files"]
+        self.assertIn("etc/systemd/system/srrx.service.d/" + deploy.LAB_DEVICE_DROPIN, files)
+        timeouts = sorted(p.relative_to(units).as_posix() for p in units.glob("*.device.d/*"))
+        self.assertEqual(timeouts, sorted(unit + ".d/" + deploy.DEVICE_TIMEOUT_DROPIN for unit in expected))
+        for relative in timeouts:
+            self.assertEqual((units / relative).read_text(), "[Unit]\nJobRunningTimeoutSec=30s\n")
+            self.assertIn("etc/systemd/system/" + relative, files)
+        self.assertEqual(deploy.LAB_DEVICE_TIMEOUT_S, 30)
+        # Neither the shutdown bridge nor the radio-off unit gains device lines.
+        for path in units.rglob("*"):
+            if path.is_file() and "srrx.service.d" not in path.parts and not path.parent.name.endswith(".device.d"):
+                self.assertNotIn("dev-lab", path.read_text(), path)
+        # Config-less staging (the QEMU guest's candidate) ships no device wait at all.
+        deploy.stage(self.root / "plain")
+        plain = self.root / "plain/rootfs/etc/systemd/system"
+        self.assertFalse((plain / "srrx.service.d" / deploy.LAB_DEVICE_DROPIN).exists())
+        self.assertFalse(list(plain.glob("*.device.d")))
+        self.assertNotIn("dev-lab", (self.root / "plain/stage-files.json").read_text())
+
+    def test_device_ordering_equals_the_udev_systemd_tags_and_the_doctor_set(self):
+        config = self.devices()
+        tagged = {"/dev/" + line.split('SYMLINK+="', 1)[1].split('"', 1)[0]
+                  for line in deploy.udev_rules(config).splitlines() if 'TAG+="systemd"' in line}
+        guarded = deploy.guarded_device_paths(config)
+        self.assertEqual(list(guarded), ["rtl_a", "rtl_b", "hfplus", "pico"])
+        self.assertEqual(tagged, set(guarded.values()))
+        self.assertEqual(set(deploy.guarded_devices(config)), set(guarded))
+        self.assertEqual({deploy.device_unit(p) for p in guarded.values()},
+                         set(deploy.lab_device_dropin(guarded.values()).splitlines()[2].split("=", 1)[1].split()))
+        # lab/gnss is tagged by its own rule but is neither guarded nor ordered.
+        self.assertIn('SYMLINK+="lab/gnss", TAG+="systemd"', deploy.gnss_udev_rules())
+        self.assertNotIn("/dev/lab/gnss", guarded.values())
+        self.assertEqual(deploy.device_unit("/dev/lab/hfplus"), "dev-lab-hfplus.device")
+        for bad in ("/dev/lab/rt-la", "/dev/lab/../x", "/dev/i2c-7", "/dev/lab/", "/dev/lab/Rtla", "/dev/lab/a/b", None):
+            with self.subTest(path=bad), self.assertRaises(deploy.DeploymentError):
+                deploy.device_unit(bad)
+        self.assertEqual(deploy.device_timeout_dropin(3), "[Unit]\nJobRunningTimeoutSec=3s\n")
+        for bad in (0, 301, 2.5, "30", True):
+            with self.subTest(seconds=bad), self.assertRaises(deploy.DeploymentError):
+                deploy.device_timeout_dropin(bad)
 
     def test_device_ambiguity_injection_and_lime_are_rejected(self):
         for mutate in (lambda c: c["i2c"]["control"].update(path="/dev/i2c-7"),

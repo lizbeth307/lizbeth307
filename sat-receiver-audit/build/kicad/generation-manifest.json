@@ -5,8 +5,8 @@
     {
       "stem": "E1",
       "instance": "a943ccec-2813-5b6f-9c47-b1bcb52cee7f",
-      "title": "E1 - Акумулятор, заряд, AON і головні перетворювачі (1/2)",
-      "components": 72,
+      "title": "E1 - Акумулятор, заряд, AON і головні перетворювачі (1/1)",
+      "components": 80,
       "sheet": "E1",
       "notes": [
         "E1-03",
@@ -14,148 +14,213 @@
         "E1-04",
         "E1-05",
         "E1-02",
+        "E1-01",
         "E1-06"
       ],
+      "note_wrap_cap": 180,
+      "note_wrap_chars": {
+        "E1-03": 180,
+        "E1-07": 180,
+        "E1-04": 180,
+        "E1-05": 180,
+        "E1-02": 121,
+        "E1-01": 180,
+        "E1-06": 110
+      },
+      "fill": 0.683,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 70,
-        "ground_symbols": 38,
-        "junctions": 28,
-        "wires": 193
-      }
-    },
-    {
-      "stem": "E1_02",
-      "instance": "18b3b3ad-34e0-53cc-9f25-c4ecb6dfa9a2",
-      "title": "E1 - Акумулятор, заряд, AON і головні перетворювачі (2/2)",
-      "components": 8,
-      "sheet": "E1",
-      "notes": [
-        "E1-01"
-      ],
-      "drawing": {
-        "fallback_labels": 0,
-        "global_labels": 11,
-        "ground_symbols": 8,
-        "junctions": 3,
-        "wires": 23
+        "global_labels": 81,
+        "ground_symbols": 46,
+        "junctions": 31,
+        "wire_crossings": 4,
+        "wires": 215
       }
     },
     {
       "stem": "E2",
       "instance": "81984160-ffc1-5150-93ba-690a49e1cc5c",
-      "title": "E2 - Захищені рейки, LNA і моніторинг струму (1/4)",
-      "components": 111,
+      "title": "E2 - Захищені рейки, LNA і моніторинг струму (1/5)",
+      "components": 94,
       "sheet": "E2",
       "notes": [
         "E2-05"
       ],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {
+        "E2-05": 110
+      },
+      "fill": 0.729,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 87,
+        "global_labels": 70,
         "ground_symbols": 59,
-        "junctions": 40,
-        "wires": 246
+        "junctions": 41,
+        "wire_crossings": 2,
+        "wires": 230
       }
     },
     {
       "stem": "E2_02",
       "instance": "def01337-c22c-581d-ab21-3e0f48197e81",
-      "title": "E2 - Захищені рейки, LNA і моніторинг струму (2/4)",
-      "components": 66,
+      "title": "E2 - Захищені рейки, LNA і моніторинг струму (2/5)",
+      "components": 54,
       "sheet": "E2",
       "notes": [
         "E2-01",
         "E2-04",
-        "E2-03",
-        "N-E2-01"
+        "N-E2-03"
       ],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {
+        "E2-01": 110,
+        "E2-04": 110,
+        "N-E2-03": 110
+      },
+      "fill": 0.731,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 49,
-        "ground_symbols": 45,
-        "junctions": 36,
-        "wires": 185
+        "global_labels": 39,
+        "ground_symbols": 34,
+        "junctions": 42,
+        "wire_crossings": 3,
+        "wires": 184
       }
     },
     {
       "stem": "E2_03",
       "instance": "c4c82d69-a1e5-5cf1-924c-73422e522133",
-      "title": "E2 - Захищені рейки, LNA і моніторинг струму (3/4)",
-      "components": 50,
+      "title": "E2 - Захищені рейки, LNA і моніторинг струму (3/5)",
+      "components": 62,
       "sheet": "E2",
       "notes": [
-        "E2-02",
-        "N-E2-02"
+        "E2-03",
+        "N-E2-01"
       ],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {
+        "E2-03": 110,
+        "N-E2-01": 110
+      },
+      "fill": 0.723,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 37,
-        "ground_symbols": 36,
-        "junctions": 32,
-        "wires": 149
+        "global_labels": 66,
+        "ground_symbols": 28,
+        "junctions": 33,
+        "wire_crossings": 7,
+        "wires": 198
       }
     },
     {
       "stem": "E2_04",
       "instance": "b86a610c-9540-56eb-9a94-fee3a23ee226",
-      "title": "E2 - Захищені рейки, LNA і моніторинг струму (4/4)",
-      "components": 32,
+      "title": "E2 - Захищені рейки, LNA і моніторинг струму (4/5)",
+      "components": 42,
       "sheet": "E2",
-      "notes": [],
+      "notes": [
+        "E2-02"
+      ],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {
+        "E2-02": 110
+      },
+      "fill": 0.364,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 44,
-        "ground_symbols": 11,
-        "junctions": 15,
-        "wires": 111
+        "global_labels": 36,
+        "ground_symbols": 18,
+        "junctions": 16,
+        "wire_crossings": 0,
+        "wires": 91
+      }
+    },
+    {
+      "stem": "E2_05",
+      "instance": "3b171c1f-559e-51e7-80e8-e40d3812ba35",
+      "title": "E2 - Захищені рейки, LNA і моніторинг струму (5/5)",
+      "components": 34,
+      "sheet": "E2",
+      "notes": [
+        "N-E2-02"
+      ],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {
+        "N-E2-02": 110
+      },
+      "fill": 0.441,
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 24,
+        "ground_symbols": 21,
+        "junctions": 27,
+        "wire_crossings": 3,
+        "wires": 120
       }
     },
     {
       "stem": "E3",
       "instance": "815659b2-9f99-5caa-9e97-34b4cd398135",
       "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (1/2)",
-      "components": 81,
+      "components": 87,
       "sheet": "E3",
       "notes": [
         "E3-05",
-        "E3-01",
+        "E3-04",
         "E3-08",
         "E3-06"
       ],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {
+        "E3-05": 110,
+        "E3-04": 110,
+        "E3-08": 110,
+        "E3-06": 110
+      },
+      "fill": 0.804,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 118,
-        "ground_symbols": 34,
-        "junctions": 62,
-        "wires": 349
+        "global_labels": 130,
+        "ground_symbols": 35,
+        "junctions": 66,
+        "wire_crossings": 10,
+        "wires": 390
       }
     },
     {
       "stem": "E3_02",
       "instance": "047fcfd6-7912-5c2d-b6e9-2eba49e8ffe0",
       "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (2/2)",
-      "components": 68,
+      "components": 62,
       "sheet": "E3",
       "notes": [
         "E3-03",
         "E3-02",
         "E3-07",
-        "E3-04"
+        "E3-01"
       ],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {
+        "E3-03": 110,
+        "E3-02": 110,
+        "E3-07": 110,
+        "E3-01": 110
+      },
+      "fill": 0.608,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 106,
-        "ground_symbols": 35,
-        "junctions": 47,
-        "wires": 307
+        "global_labels": 94,
+        "ground_symbols": 34,
+        "junctions": 43,
+        "wire_crossings": 13,
+        "wires": 267
       }
     },
     {
       "stem": "E4",
       "instance": "8f7e80ea-aee4-5257-bec3-c2e6ba73b52d",
       "title": "E4 - РЧ-тракт: DC-розв'язка, перемикачі, приймачі (1/4)",
-      "components": 43,
+      "components": 38,
       "sheet": "E4",
       "notes": [
         "E4-08",
@@ -163,31 +228,48 @@
         "E4-09",
         "E4-05"
       ],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {
+        "E4-08": 110,
+        "E4-03": 110,
+        "E4-09": 110,
+        "E4-05": 110
+      },
+      "fill": 0.57,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 62,
-        "ground_symbols": 42,
-        "junctions": 22,
-        "wires": 133
+        "global_labels": 57,
+        "ground_symbols": 37,
+        "junctions": 19,
+        "wire_crossings": 0,
+        "wires": 122
       }
     },
     {
       "stem": "E4_02",
       "instance": "29d9ed3f-1ac6-5216-98b0-395a68609862",
       "title": "E4 - РЧ-тракт: DC-розв'язка, перемикачі, приймачі (2/4)",
-      "components": 89,
+      "components": 81,
       "sheet": "E4",
       "notes": [
         "E4-01",
         "E4-07",
         "E4-04"
       ],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {
+        "E4-01": 110,
+        "E4-07": 110,
+        "E4-04": 110
+      },
+      "fill": 0.687,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 119,
-        "ground_symbols": 59,
-        "junctions": 52,
-        "wires": 273
+        "global_labels": 112,
+        "ground_symbols": 51,
+        "junctions": 46,
+        "wire_crossings": 1,
+        "wires": 261
       }
     },
     {
@@ -200,11 +282,18 @@
         "N-E4-01",
         "E4-06"
       ],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {
+        "N-E4-01": 110,
+        "E4-06": 110
+      },
+      "fill": 0.613,
       "drawing": {
         "fallback_labels": 0,
         "global_labels": 43,
         "ground_symbols": 27,
         "junctions": 14,
+        "wire_crossings": 0,
         "wires": 136
       }
     },
@@ -212,15 +301,19 @@
       "stem": "E4_04",
       "instance": "9df58c55-738d-55e8-9cee-b8959598c250",
       "title": "E4 - РЧ-тракт: DC-розв'язка, перемикачі, приймачі (4/4)",
-      "components": 36,
+      "components": 49,
       "sheet": "E4",
       "notes": [],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {},
+      "fill": 0.494,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 40,
-        "ground_symbols": 16,
-        "junctions": 10,
-        "wires": 114
+        "global_labels": 51,
+        "ground_symbols": 29,
+        "junctions": 18,
+        "wire_crossings": 0,
+        "wires": 141
       }
     },
     {
@@ -239,12 +332,25 @@
         "N-E5-03",
         "E5-03"
       ],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {
+        "E5-10": 110,
+        "E5-09": 110,
+        "E5-04": 110,
+        "N-E5-01": 110,
+        "N-E5-02": 110,
+        "E5-05": 110,
+        "N-E5-03": 110,
+        "E5-03": 110
+      },
+      "fill": 0.727,
       "drawing": {
         "fallback_labels": 0,
         "global_labels": 91,
         "ground_symbols": 48,
-        "junctions": 45,
-        "wires": 256
+        "junctions": 36,
+        "wire_crossings": 2,
+        "wires": 255
       }
     },
     {
@@ -260,26 +366,38 @@
         "E5-02",
         "E5-07"
       ],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {
+        "E5-01": 110,
+        "E5-06": 110,
+        "E5-08": 110,
+        "E5-02": 110,
+        "E5-07": 110
+      },
+      "fill": 0.387,
       "drawing": {
-        "fallback_labels": 4,
+        "fallback_labels": 0,
         "global_labels": 39,
         "ground_symbols": 13,
-        "junctions": 23,
-        "wires": 121
+        "junctions": 28,
+        "wire_crossings": 0,
+        "wires": 126
       }
     }
   ],
-  "components": 750,
+  "components": 777,
   "supply_annotations": 25,
-  "connected_contacts": 2181,
-  "nets": 466,
+  "connected_contacts": 2253,
+  "nets": 478,
   "drawing": {
-    "fallback_labels": 4,
-    "global_labels": 916,
-    "ground_symbols": 471,
-    "junctions": 429,
-    "wires": 2596
+    "fallback_labels": 0,
+    "global_labels": 933,
+    "ground_symbols": 480,
+    "junctions": 460,
+    "wire_crossings": 45,
+    "wires": 2736
   },
+  "sparse_last_pages": [],
   "single_contact_nets": {},
   "open_items": [
     {
@@ -320,7 +438,7 @@
       "id": "E1-04",
       "description": "UV ±0.1 V потребує індивідуальної калібровки; held OFF проти кнопки, старт SYS12 після release і порядок із програмною відсічкою E3-07 ще не перевірені.",
       "blocking": true,
-      "resolve": "До батареї current-limited sweep 14→12→14 V при 25 і 50 °C: trip 12.8±0.1 V, release 13.6±0.1 V, drift≤50 mV. Калібрувати R105. AON без INA ≤11 µA. Утримуванням кнопки не можна обійти UV. 20 PD cycles без самозапуску. При провалі fallback TLV3012 із нижнім плечем 346.04 kΩ і повним повтором тесту. Після UV release і натискання кнопки E1_PG_SYS12 мусить з'явитися без подальшого заряду: EN-резерв SYS12 R108/R109 має wake 13.39…13.86 V на E1_SW лише з допусками резисторів (без допуску внутрішніх 100 kΩ і порога EN), тобто може бути вищим за release; якщо PG_SYS12 не з'являється, E1-04 не пройдено. Рекомендована зміна, не застосована: R107 4.22M→2.87M і нижнє плече≈332.0k (R104 324k + R105 8.06k trim) дає trip≈12.79 V, release≈14.01 V, критерій release 14.0±0.1 V; R109 не зменшувати, бо це знижує резервний sleep. Порядок порогів на кожному екземплярі, разом з E3-07: за максимального й мінімального навантаження виміряна програмна відсічка, приведена до E1_N (13.05±0.1 V), мінус виміряний тут trip ≥0.10 V, а під час контрольованого розряду graceful shutdown (5 s dwell + завершення Linux) завершується до апаратного UV trip. Інакше — повторний trim R105 або reject.",
+      "resolve": "До батареї current-limited sweep 14→12→14 V при 25 і 50 °C: trip 12.8±0.1 V, release 13.6±0.1 V, drift≤50 mV. Калібрувати R105. AON без INA ≤11 µA. Утримуванням кнопки не можна обійти UV. 20 PD cycles без самозапуску. При провалі fallback TLV3012 із нижнім плечем 346.04 kΩ і повним повтором тесту. Після UV release (13.5…13.7 V у спокої) одне натискання кнопки мусить одразу дати E1_PG_SYS12 без подальшого заряду — з реальним пусковим навантаженням (LAB5 з примусово ввімкненими вентиляторами, старт Q6A) при 25 і 50 °C, без повторного UV trip і без циклу програмної відсічки 13.05 V; інакше E1-04 не пройдено. v2.1, рішення власника: EN-резерв SYS12 R108 4.99k / R109 562R 0.1% 25 ppm/K, UV-мережа R103–R107 без змін; wake ≤13.27 V на E1_SW навіть за внутрішніх 100 kΩ ±20% і припущених ±3% порога EN. Порядок release > wake + спад E1_N→E1_SW (≈0.06 V) чинний, доки фактичний поріг EN наростання не більш як на 4.3% вище 1.35 V; його вимірює Ж-03 (wake >13.30 V → R109 576R і повторна розгортка; після перепаювання wake ≤13.30 V і sleep ≥10.9 V, інакше reject). Резервний sleep 10.9…11.8 V нижче точки стабільності Q6A 11.5 V: при відмові UV і Pico резерв уже не знімає SYS12 до просідання Q6A, тож основним відсіченням лишається UV trip U104. Якщо кнопка на піні A обходить утримуваний OFF, SYS12 тепер стартує вже від ≈12.2…13.3 V — тоді кнопку вести через супервізор. Симуляція відмови UV (вихід компаратора примусово low): резерв знімає SYS12 при 10.9…11.8 V без циклів sleep/wake. Порядок порогів на кожному екземплярі, разом з E3-07: за максимального й мінімального навантаження виміряна програмна відсічка, приведена до E1_N (13.05±0.1 V), мінус виміряний тут trip ≥0.10 V, а під час контрольованого розряду graceful shutdown (5 s dwell + завершення Linux) завершується до апаратного UV trip. Інакше — повторний trim R105 або reject.",
       "stack": "§5.1 (AON, UV); §8 (Супервізор AON)",
       "refs": [
         "U104",
@@ -332,7 +450,7 @@
       "id": "E1-05",
       "description": "Default LAB5: D36V50F5 +4 A fuse; конкретні parts фільтра обрані. Агрегатний струм, converter/filter stability, температура і напруги на кінцевих навантаженнях не підтверджені.",
       "blocking": true,
-      "resolve": "U108 D36V50F5 #4091; F102 4 A; L101 XAL6060-103MEC; C111/C112 35SVPF22M; C113 16SVPC100M; R110 WSL2512R3300FEA. Звірити площу, висоту і land patterns. Виміряти всі режими: LAB5 ≤3.2 A continuous; blower reserve 0.25 A continuous /0.50 A startup; SB_LNA 65 mA враховувати один раз у I_ANT≤1 A. Додаткова policy: I_ANT+0.83 A×EN_LAB≤1.5 A. За 5 V та 0…50 °C підтвердити C111/C112 effective ≥10 µF; C113 початково ≥80 µF; step 10…90% без осциляцій; 5 V±5% на КОЖНОМУ пристрої після switch/кабелю. Термо 30 min при 3.2 A і середовищі 50 °C; до 4 A transient із логом запобіжника та пульсацій. Вихід модуля 5 V±4% та drop L101 не гарантують USB 4.75 V у всіх допусках: low unit відбракувати або переробити живлення. Для пари LT3045 (E2-04) потрібно LAB5 ≥4.90 V на виході модуля при 3.2 A, інакше LNA4V5 у dropout. Якщо actual сума перевищує бюджет — формальний concurrency cap/rail redesign із повтором тестів.",
+      "resolve": "U108 D36V50F5 #4091; F102 4 A; L101 XAL6060-103MEC; C111/C112 35SVPF22M; C113 16SVPC100M; R110 WSL2512R3300FEA. Звірити площу, висоту і land patterns. Виміряти всі режими: LAB5 ≤3.2 A continuous; blower reserve 0.25 A continuous /0.50 A startup; SB_LNA 65 mA враховувати один раз у I_ANT≤1 A. Додаткова policy: I_ANT+0.83 A×EN_LAB≤1.5 A. За 5 V та 0…50 °C підтвердити C111/C112 effective ≥10 µF; C113 початково ≥80 µF; step 10…90% без осциляцій; 5 V±5% на КОЖНОМУ пристрої після switch/кабелю. Термо 30 min при 3.2 A і середовищі 50 °C; до 4 A transient із логом запобіжника та пульсацій. Вихід модуля 5 V±4% та drop L101 не гарантують USB 4.75 V у всіх допусках: low unit відбракувати або переробити живлення. Пара LT3045 (E2-04, v2.1 VSET 4.30 V) окремої вимоги до LAB5 не має: її приймання — виміряний V(E2_LNA_IN)−V(OUTS) ≥0.40 V при 3.2 A LAB5 / 1 A пари / 50 °C. Відкрито: MPN F102 з холодним опором ≤10 mΩ і опір з'єднання LAB5 E1→E2 ≤10 mΩ (кожні 10 mΩ — 32 mV при 3.2 A). Якщо actual сума перевищує бюджет — формальний concurrency cap/rail redesign із повтором тестів.",
       "stack": "§5.1 (LAB5); §8 (LAB5); §8.1 (нагрів запобіжників)",
       "refs": [
         "U108",
@@ -392,7 +510,7 @@
       "id": "E2-03",
       "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
       "blocking": true,
-      "resolve": "FNB58/INA228/INA3221: 20 холодних і теплих пусків, струми стримінгу, КЗ і SOA. Установити ILIM 1.5–2× виміряного струму з допусками. Boni: baseline включає bleed E4 13.86 mA (сталий ≈78.9 mA); поточний RILM 7.87k (ILIM min 0.113 A) нижче 1.5×, тож до кваліфікації перерахувати (рекомендовано ≈7.15k). Загальний LAB5 тестується за новими воротами E1 для D36V50F5 + запобіжник 4A; старі 2.5A не є лімітом default-збірки. OVLO Boni (STACK §8.1 HF-8/RF-5): без Boni-Whip і зі струмовим обмеженням — повільна розгортка вузла E2_BONI_LDO (вхід eFuse U214) 13.8→15.5→13.8 V, записати пороги спрацювання й відпускання; OVLO не спрацьовує в смузі 13.8 V, поріг вище 14.145 V (макс. LDO) і нижче 15 V (межа Boni). Поза вікном — перерахувати R263/R264 і повторити.",
+      "resolve": "FNB58/INA228/INA3221: 20 холодних і теплих пусків, струми стримінгу, КЗ і SOA. Установити ILIM 1.5–2× виміряного струму з допусками. Boni (v2.1, R-E2-19): RILM 7.15k 1% ≤100 ppm/K → ILIM 0.122…0.153 A (0.1215…0.154 A з TCR) проти найгіршого сталого ≈79.7 mA (Boni 65 mA тип. + bleed E4 до 14.35 mA + R283/R284 і DCS tap), тобто 1.53…1.92×; з блокувальним елементом E4-06 (+≈1.6 mA) ≈81.3 mA і 1.5× = 0.122 A — на межі ILIM min. Після HF-9 (струм Boni-Whip холодним і гарячим при 13.8 і 14.1 V) перерахувати RILM = 903/(ILIM−0.0112): ILIM min ≥1.5×, ILIM max ≤ min(2×, DC-рейтинг bias-tee ≥0.16 A). Електронне навантаження на BONI13V8 при 13.8 V: спрацювання в межах 0.122…0.153 A, поведінка понад TA 80 °C. Тверде КЗ на P5 при ввімкненому bias (v2.1, Q2903 послідовно): пара Q2903 самозміщується біля VGS(th) і тримає BONI13V8 на ≈1.2…4.4 V; струм U214 — між foldback ≈0.09…0.115 A (Figure 22, VOUT = 0) і ILIM, U214 ≈0.9…1.9 W, Q2903 ≈0.1…0.7 W у лінійному режимі; FLT мовчить — записати BONI13V8, струм, температуру корпусу Q2903 і поведінку U214 (обмеження чи TSD) до зняття EN_BONI та підтвердити, що labd знімає EN_BONI за min_voltage_v і PG_BONI ≤2 s. Межа labd 0.113 A не змінюється. Загальний LAB5 тестується за новими воротами E1 для D36V50F5 + запобіжник 4A; старі 2.5A не є лімітом default-збірки. OVLO Boni (STACK §8.1 HF-8/RF-5): без Boni-Whip і зі струмовим обмеженням — повільна розгортка вузла E2_BONI_LDO (вхід eFuse U214) 13.8→15.5→13.8 V, записати пороги спрацювання й відпускання; OVLO не спрацьовує в смузі 13.8 V, поріг вище 14.145 V (макс. LDO) і нижче 15 V (межа Boni). Поза вікном — перерахувати R263/R264 і повторити.",
       "stack": "§5.1 (VBUS RTL-B, BONI13V8); §8 (струми; TPS2553DBVR-1 п. 3); §8.1 RF-2, HF-8/RF-5",
       "refs": [
         "U210",
@@ -405,9 +523,9 @@
     },
     {
       "id": "E2-04",
-      "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+      "description": "v2.1, рішення власника (R-E2-18): R227 21.5k задає LNA4V5 4.30V (4.208…4.392V). Запас на папері: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN, тобто 0.395V над VSET: +135mV проти типового dropout 260mV (500mA на ІС), +45mV проти 350mV max при 25°C, −55mV проти 450mV max у повному діапазоні температур — ще до F102 і з'єднання E1→E2 (кожні 10mΩ — −32mV при 3.2A). Близько 0.4V — коліно PSRR. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
       "blocking": true,
-      "resolve": "Перевірити LAB5 min, навантаження пари до 1A, температуру кожного LT3045 та спад до антени. Дотримуватися контракту R-E2-17: сума INA LNA1–4 + резерв 65mA S-band ≤1A; разом із резервом LAB-порту ≤1.5A. Приймання: при 3.2A LAB5 і 1A на пару виміряти E2_LNA_IN, OUTS і LNA4V5; LT3045 мусять бути в регулюванні, тобто V(E2_LNA_IN)−V(OUTS) більше виміряного dropout. Інакше модуль LAB5 відбракувати (вимога LAB5 ≥4.90V на виході модуля при 3.2A) або застосувати рекомендовану зміну (не застосовано): a) R227 22.5k→21.5k (4.30V) після підтвердження мінімального живлення кожного LNA після TPS2553, шунта й кабелю; b) межа пари 0.5A сумарно в R-E2-17 (dropout ≈130mV тип.).",
+      "resolve": "Перевірити LAB5 min, навантаження пари до 1A, температуру кожного LT3045 та спад до антени. Дотримуватися контракту R-E2-17: сума INA LNA1–4 + резерв 65mA S-band ≤1A; разом із резервом LAB-порту ≤1.5A. Приймання: при 3.2A LAB5, 1A на пару і 50°C виміряти E2_LNA_IN, OUTS і LNA4V5; вимога — виміряний V(E2_LNA_IN)−V(OUTS) ≥0.40V, LNA4V5 на TP205 4.19…4.39V при 1A пари (VSET 4.208…4.392V мінус до 12mV на баласті 20mΩ при 600mA); пульсації та спури 500kHz…2MHz на портах LNA при 0.17A і 0.6A. Окремої вимоги LAB5 ≥4.90V для E2-04 немає; E1-05 лишає відбір low LAB5 для USB. Відкрито: MPN F102 з холодним опором ≤10mΩ і з'єднання E1→E2 ≤10mΩ. Кожен LNA має працювати при зниженому зміщенні: найгірше ≈3.95V на LNA (≥0.45V над 3.5V Uputronics 440); базові струми INA3221 (RF-3) переміряти при 4.3V. Невиконання — reject модуля LAB5 або перепроєктування рейки.",
       "stack": "§5.1 (LNA4V5); §8 (пара LT3045); §8.1 RF-3",
       "refs": [
         "U205"
@@ -418,10 +536,12 @@
       "id": "E2-05",
       "description": "Відсутність фантомного живлення Q6A, вимкнення дисплея та фізична правильність кінцевих кабелів потребують перевірки з реальним обладнанням.",
       "blocking": true,
-      "resolve": "За активної LAB5 і вимкненої Q6A: 3V3_Q6A та upstream VBUS близько 0V, PICO_DISP_EN низький. Продзвонити розрізаний VBUS, ключовані роз’єми E3/E5 та сигнал PWR_ON_KEY.",
+      "resolve": "За активної LAB5 і вимкненої Q6A: 3V3_Q6A та upstream VBUS близько 0V, PICO_DISP_EN низький. Продзвонити розрізаний VBUS, ключовані роз’єми E3/E5 та сигнал PWR_ON_KEY. UVLO J21 (v2.1, R202 13.0k): джерело з обмеженням струму на E2_J21_FUSED, Q6A або e-load на J21, повільна розгортка 0→12.5→0 V при 25 і 50 °C — увімкнення 10.09…10.83 V, вимкнення 9.18…9.88 V (з TCR 9.99…10.95 / 9.08…9.99 V), без брязкоту OUT/FLT під час пуску; кроки навантаження SYS12 0.3→3 A при SYS12 = 11.0 V і біля UV trip — мінімум E2_J21_FUSED вище виміряного порога вимкнення, без FLT і скидання Q6A. Спрацювання UVLO вимикає Q6A, і Pico через 3 s відкриває #2813 (засувка OFF, перезапуск лише кнопкою при ≥13.6 V) — очікувана поведінка. Імпульс Pico на PWR_ON_KEY не реалізований (firmware/pico/supervisor.py тримає q6a_key=False): B11 (автостарт, імпульс 20/20) спершу потребує доробки прошивки — відкритий пункт.",
       "stack": "§5.1 (DISP12); §5.2; §8 (зворотне живлення)",
       "refs": [
-        "U202"
+        "U202",
+        "U201",
+        "R202"
       ],
       "sheet": "E2"
     },
@@ -533,7 +653,7 @@
       "id": "E4-03",
       "description": "Boni supplied bias-tee port labels, DC socket polarity and receiver DC block require actual hardware.",
       "blocking": true,
-      "resolve": "Measure continuity/polarity, antenna DC and RADIO port <0.1 V before connecting HF+.",
+      "resolve": "Measure continuity/polarity, antenna DC and RADIO port <0.1 V before connecting HF+. v2.1: A406 DC is BONI13V8_PORT behind the E2 blocking element Q2903 — confirm on the supplied Einspeiseweiche a DC current rating ≥0.16 A (ILIM max 0.153 A, 0.154 A with TCR, RILM 7.15k) and DC-block/choke voltage ratings ≥30 V; otherwise use the homemade 2.2 mH bias-tee with a choke Irms and Isat ≥0.20 A and count its DCR in the 12.0 V barrel gate.",
       "stack": "§5.3; §8.1 HF-9, HF-11",
       "refs": [
         "A406"
@@ -567,9 +687,9 @@
     },
     {
       "id": "E4-06",
-      "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
+      "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
       "blocking": true,
-      "resolve": "Verify each DCS LOW at 0 V and HIGH by ±0.100 V in both sweep directions over the admitted temperature/supply range; record thresholds/hysteresis. Apply ±30 V limited foreign DC with Q6A ON/OFF, requiring 3V3_Q6A <0.1 V when OFF, only at the detector tap with the bias branch disconnected (L403/L404 not fitted; A406 DC port unplugged from BONI13V8). On an assembled port never exceed −0.3…+5.5 V on P2/P3 or −0.3…+0.3 V on HF_CM with own bias OFF (TPS2553 OUT −0.3…7 V, INA3221 −0.3…26 V, TPS259630 OUT ≤VIN+0.3 V, polarized C239/C243/C273); the ±0.100 V sweep lies inside these limits. Hardware redesign required before this gate can close: a ±30 V-rated bidirectional blocking element in each sensed bias branch between the E2 output and the E4 injector (relay contact or back-to-back MOSFETs held open whenever EN_LNA2/EN_LNA3/EN_BONI is low, or a TPS2660-class ±60 V eFuse with reverse-polarity and reverse-current blocking), keeping TPS2553/INA3221/U214 and the electrolytics on the protected side; the detector is not that protection. Then repeat ±30 V at each assembled port. Measure RF tap IL/RL/NF impact. Require startup/reference-fault HIGH and own bias OFF ≥500 ms before preflight; readiness stays false until qualified. Check floating/open antenna as well as 0 Ω/50 Ω DC loads. Include the 996 Ω bleed load in current baselines and measure its RF loss/parasitics. Reject false-safe at ±0.100 V; false-unsafe units also fail usability qualification. Also qualify cold minimum-supply reference-feed headroom: the arithmetic model requires D450 Vf ≤1.015 V at VDD 3.135 V and REF 2.072 V for at least 80 µA LM4040 cathode current. Reference collapse must force HIGH, and must not be misreported as a working detector.",
+      "resolve": "Verify each DCS LOW at 0 V and HIGH by ±0.100 V in both sweep directions over the admitted temperature/supply range; record thresholds/hysteresis. With own bias OFF and Q6A ON/OFF (3V3_Q6A <0.1 V when OFF), apply foreign DC at each assembled port P2/P3/HF_CM: (1) slow ±30 V limited DC; (2) fast-edge hot plug — a pre-energised current-limited ±12/±24/±30 V source switched onto the port through a coax plug or relay. Pass: BIAS_CH2/BIAS_CH3/BONI13V8 (TPS2553 OUT, INA3221 inputs, U214 OUT) stay within −0.3…+0.3 V, no INA/MCP fault; repeat at 0 °C and 50 °C. The DPS-150 cannot reach 30 V from the project's 20 V PD or 4S sources; use a source that really delivers 30 V. Hot plug while own bias is ON is not covered and must not be tested destructively. Also measure off-state leakage (protected-node rise <0.1 V at 50 °C), the on-state drop at 184.5/54.5/80 mA including the cold VGS(th) corner (VGS ≈−4.2 V on the 4.30 V rail; total ≤0.25 V to the antenna), turn-on with and without trapped charge (the ≈48 µF protected reservoir dumps into the port outside the TPS2553/U214 limit) and unchanged soft-start/ILIM. A shorted FET is not detectable; an open element on LNA2/LNA3 is silent. Measure RF tap and element IL/RL/NF impact. Require startup/reference-fault HIGH and own bias OFF ≥500 ms before preflight; readiness stays false until qualified. Check floating/open antenna as well as 0 Ω/50 Ω DC loads. Include the 996 Ω bleed load in current baselines and measure its RF loss/parasitics. Reject false-safe at ±0.100 V; false-unsafe units also fail usability qualification. Also qualify cold minimum-supply reference-feed headroom: the arithmetic model requires D450 Vf ≤1.015 V at VDD 3.135 V and REF 2.072 V for at least 80 µA LM4040 cathode current. Reference collapse must force HIGH, and must not be misreported as a working detector.",
       "stack": "§5.3 (DC-sense); §8.1 HF-10",
       "refs": [
         "D450",
@@ -756,6 +876,17 @@
       "sheet": "E2"
     },
     {
+      "id": "N-E2-03",
+      "refs": [
+        "Q2901",
+        "Q2902",
+        "Q2903"
+      ],
+      "stack": "§5.3 (DC-sense); §8.1 HF-10",
+      "text": "Q2901–Q2903 (DMP6050SSD-13) — двобічні блокувальні елементи ±30 V воріт E4-06 між захищеним вузлом E2 і портом E4; закриті при низькому EN_LNA2/EN_LNA3/EN_BONI. Позначення 2900–2999 — задокументований розширений діапазон E2 (R-E2-21). Ворота: E4-06 (повільний і швидкий hot-plug на зібраному порту).",
+      "sheet": "E2"
+    },
+    {
       "id": "N-E4-01",
       "refs": [
         "R4400",
@@ -871,10 +1002,10 @@
     ]
   },
   "source_sha256": {
-    "E1.json": "bc1faf3dd485a8ab55fdb2bc0b9bf1266d160997044f45c725aa79a59c83de11",
-    "E2.json": "e07b78094f9f60547614c08e04943801401e63b177f68b77228f7786bb56c0ad",
+    "E1.json": "3d216840beed9e5692858718915e100fba00f9b73aeb57248841f1ecbc76aa5a",
+    "E2.json": "19b2247f3b32a547ba1478b37f31177b057f85f213b273e2407ac06a05189196",
     "E3.json": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0",
-    "E4.json": "60c0f73c66737853033eea13c28b013d9e8559d1e0df57f2b7902af0da757797",
+    "E4.json": "a3122809dacd86b312516df5b53f932bd0ab95b48122e5cf08351610f538e56b",
     "E5.json": "9d61ff10e75417c806afda7ab923ac06de7faf9b6ff5b53acce57477b3960212"
   }
 }

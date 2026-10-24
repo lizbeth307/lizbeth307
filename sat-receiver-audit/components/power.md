@@ -2295,7 +2295,7 @@ _Run `wf_d9388111-e66`_
   
   **SYS12**
   - Pololu D36V50F12 ($39.95, buy 2), from SW.
-  - Backup EN: 10.0 k (SW to EN) / 1.00 k (EN to GND), 1%. Sleep about 12.1 V, wake about 13.6 V (model; calibrate).
+  - Backup EN: 10.0 k (SW to EN) / 1.00 k (EN to GND), 1%. Sleep about 12.1 V, wake about 13.6 V (model; calibrate). v2.1 owner decision: 4.99 k / 562 Ohm 0.1% 25 ppm/K, sleep about 11.35 V (10.9-11.8 V), wake about 12.77 V (at most 13.27 V, below the UV release); E1-04, Zh-03.
   - C4 gates: (1) NAVTEX/LF A/B; (2) 60 min at 4.2 A in the closed enclosure at 14.0 and 16.4 V.
   - Fallback: LM61460AANRJRR synced on EN/SYNC (FPWM, clock 1.8-2.1 MHz from the harmonic scan).
   
@@ -2317,7 +2317,7 @@ _Run `wf_d9388111-e66`_
   - D36V50F5 ($39.95) if LAB5 exceeds 2.5 A.
   
   **LNA4V5**
-  - LAB5, LC, 2x LT3045EDD#PBF in parallel (LCSC, about $8.63 each, not re-checked).
+  - LAB5, LC, 2x LT3045EDD#PBF in parallel (LCSC, about $8.63 each, not re-checked). v2.1: 2x LT3045EMSE#PBF at 4.30 V (RSET 21.5k), see E2-04.
   - TPS2553 per channel, RILIM 88.7k (265/299/339 mA). LAB USB-A TPS2553 RILIM 34.8k (685/747/817 mA). TPS2553-1 if latch-off is preferred.
   
   **LNB13V2 / BONI12V5**
@@ -2370,7 +2370,7 @@ _Run `wf_d9388111-e66`_
   - Apply 5.1 V, current-limited to 50 mA, to LAB5. The SW node must stay below 17 V.
   - Plug the Pico USB into a PC, then the IMU-pack USB. LAB5 must stay below 0.5 V and the SW node near 0 V.
   - Q6A poweroff: after 'systemctl poweroff', log J21 current with the INA228 for 2 min, record whether the header 3.3 V falls, and confirm the Pico opens #2813. Repeat after every rsetup/SPI update. A cold power-on must reach the login with no keyboard.
-  - D36V50F12 backup EN (10.0k/1.00k): sweep SW from 14 V down to 11 V and back with a bench supply. Record sleep and wake (targets about 12.1 / 13.6 V).
+  - D36V50F12 backup EN (10.0k/1.00k): sweep SW from 14 V down to 11 V and back with a bench supply. Record sleep and wake (targets about 12.1 / 13.6 V). v2.1: with 4.99k/562 Ohm sweep down to 10.5 V; accept wake at most 13.30 V, sleep 10.9-12.0 V.
   - TLV3012 supervisor:
   - Sweep N from 14.0 V to 12.0 V and back; record trip and release (targets 12.8 / 13.6 V).
   - With OFF held high, press the button on A: the switch must stay off.
@@ -2395,7 +2395,7 @@ _Run `wf_d9388111-e66`_
   - Bullseye current: size the PTC at 1.5-2x at 60 C and fix the heat-sink attachment.
   - Boni-Whip current.
   - Rail-good comparators trip at about 90%.
-  - LT3045 rail: 500 kHz ripple and spurs on the 4.5 V LNA rail with LAB5 trimmed to 4.8 V, at 0.17 and 0.6 A load.
+  - LT3045 rail: 500 kHz ripple and spurs on the 4.5 V LNA rail with LAB5 trimmed to 4.8 V, at 0.17 and 0.6 A load. v2.1: the rail is 4.30 V (RSET 21.5k); also measure V(E2_LNA_IN)-V(OUTS) of at least 0.40 V at 3.2 A LAB5 / 1 A pair / 50 C.
   - Fuse heat: 7.5 A fuse at 4.6 A and LAB5 3 A fuse at 2.3 A, 30 min each in a 50 C enclosure. Measure the fuse-holder temperature rise.
   - Cells: capacity at 1 A to 2.5 V (at least 4.85 Ah), mass 68-71 g, 1 kHz AC IR. Cold-soaked pack at 0 C: log a mode-H run with the INA228 to replace the 50 Wh cold model.
   - Display and Q6A brown-out: SYS12 at 11.0 V (display stable) and at 11.5 V (Q6A stable), with J21 fed through the TPS259470A.

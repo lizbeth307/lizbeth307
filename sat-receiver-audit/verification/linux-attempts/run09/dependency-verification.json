@@ -1,0 +1,7 @@
+{
+  "status": "PASS",
+  "wheels": 23,
+  "debs": 82,
+  "cached_dependency_state_trusted": false,
+  "method": "venv recreated; every locked deb and wheel reinstalled from the hash-verified payload; installed versions equal both locks"
+}

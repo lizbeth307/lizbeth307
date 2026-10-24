@@ -158,8 +158,8 @@
 <rect x="20" y="712" width="400" height="70" rx="4" ry="4" fill="#fff6e0" stroke="#333" stroke-width="1.2"/>
 <text x="26" y="730" font-size="12" font-weight="bold" text-anchor="start" fill="#111">U1 Pololu D36V50F12 (#4095) → SYS12</text>
 <text x="26" y="745" font-size="12" font-weight="normal" text-anchor="start" fill="#111">12.0 V ±4%; ≈500 kHz; OCP/OTP, PG</text>
-<text x="26" y="760" font-size="12" font-weight="normal" text-anchor="start" fill="#111">запасний EN: 10.0k (SW→EN) / 1.00k (EN→GND) 1%</text>
-<text x="26" y="775" font-size="12" font-weight="normal" text-anchor="start" fill="#111">сон ≈12.1 V, пробудження ≈13.6 V (модель)</text>
+<text x="26" y="760" font-size="12" font-weight="normal" text-anchor="start" fill="#111">запасний EN: 4.99k (SW→EN) / 562 Ω (EN→GND) 0.1%</text>
+<text x="26" y="775" font-size="12" font-weight="normal" text-anchor="start" fill="#111">сон ≈11.35 V, пробудження ≈12.77 V (модель, v2.1)</text>
 <line x1="220" y1="782" x2="220" y2="798" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
 <path d="M170,801 h47 l10,11 l-10,11 h-47 z" fill="#ffffff" stroke="#b00020" stroke-width="1.4"/>
 <text x="176" y="816" font-size="12" font-weight="bold" text-anchor="start" fill="#b00020">SYS12</text>
@@ -242,7 +242,7 @@
 <rect x="922" y="712" width="328" height="55" rx="4" ry="4" fill="#e6f7e9" stroke="#333" stroke-width="1.2"/>
 <text x="928" y="730" font-size="12" font-weight="bold" text-anchor="start" fill="#111">LC → U5, U6 2× ADI</text>
 <text x="928" y="745" font-size="12" font-weight="normal" text-anchor="start" fill="#111">LT3045EMSE#PBF паралельно</text>
-<text x="928" y="760" font-size="12" font-weight="normal" text-anchor="start" fill="#111">4.5 V (MSOP-12-EP)</text>
+<text x="928" y="760" font-size="12" font-weight="normal" text-anchor="start" fill="#111">4.3 V (MSOP-12-EP)</text>
 <line x1="1050" y1="767" x2="1050" y2="783" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
 <path d="M980,786 h55 l10,11 l-10,11 h-55 z" fill="#ffffff" stroke="#b00020" stroke-width="1.4"/>
 <text x="986" y="801" font-size="12" font-weight="bold" text-anchor="start" fill="#b00020">LNA4V5</text>
@@ -312,7 +312,7 @@
 <text x="1746" y="775" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Schottky OUT→GND; EN ← GPB1</text>
 <rect x="1680" y="798" width="400" height="55" rx="4" ry="4" fill="#fff4c2" stroke="#333" stroke-width="1.2"/>
 <text x="1686" y="816" font-size="12" font-weight="bold" text-anchor="start" fill="#111">U10 eFuse TPS259630DDAR (EN ← MCP #1 GPB1)</text>
-<text x="1686" y="831" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RILM 7.87 kΩ: 0.113-0.139 A; без PTC (§8)</text>
+<text x="1686" y="831" font-size="12" font-weight="normal" text-anchor="start" fill="#111">RILM 7.15 kΩ: 0.122-0.153 A; без PTC (v2.1)</text>
 <text x="1686" y="846" font-size="12" font-weight="normal" text-anchor="start" fill="#111">OVLO — перерахувати для 13.8 V: TBD (§5.1)</text>
 <line x1="1880" y1="853" x2="1880" y2="867" stroke="#333" stroke-width="1.6" marker-end="url(#arr)"/>
 <rect x="1680" y="869" width="400" height="40" rx="4" ry="4" fill="#efe6ff" stroke="#333" stroke-width="1.2"/>
@@ -386,7 +386,7 @@
 <text x="560" y="1445" font-size="12" font-weight="normal" text-anchor="start" fill="#111">• Вимкнення Linux: SoC 3% або V_N ≤ 13.2 V 10 с → poweroff (ніколи halt)</text>
 <text x="560" y="1462" font-size="12" font-weight="normal" text-anchor="start" fill="#111">• Аварійно Pico: дільник 1:6 від SW ≤ 12.9 V 5 с без heartbeat → S1 OFF</text>
 <text x="560" y="1479" font-size="12" font-weight="normal" text-anchor="start" fill="#111">• UV-компаратор (AON): ≈12.8 V тримати OFF; відпуск. 13.6 V у спокої</text>
-<text x="560" y="1496" font-size="12" font-weight="normal" text-anchor="start" fill="#111">• Запасний EN D36V50F12: ≈12.1 V сон (пробудження ≈13.6 V)</text>
+<text x="560" y="1496" font-size="12" font-weight="normal" text-anchor="start" fill="#111">• Запасний EN D36V50F12: ≈11.35 V сон (пробудження ≈12.77 V)</text>
 <text x="560" y="1513" font-size="12" font-weight="normal" text-anchor="start" fill="#111">• BMS: 2.65-2.75 V/ел. — останній рубіж; DOCP/КЗ — витягти F1</text>
 <text x="560" y="1530" font-size="12" font-weight="normal" text-anchor="start" fill="#111">• Перезапуск: лише кнопкою, батарея від 13.6 V у спокої</text>
 <text x="560" y="1547" font-size="12" font-weight="normal" text-anchor="start" fill="#111">• Вимір NF шумовим джерелом: заблоковано при V_N &lt; 13.6 V</text>

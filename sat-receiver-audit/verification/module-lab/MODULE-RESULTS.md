@@ -2,7 +2,7 @@
 
 Це результати програмних моделей, а не дозвіл підключати залізо. Усі фізичні модулі мають стан NOT_TESTED.
 
-Виконання наборів: **PASS**. Реєстр охоплює 750 елементи, 64 вузли та 166 деталізованих інтерфейсів.
+Виконання наборів: **PASS**. Реєстр охоплює 777 елементів, 64 вузли та 166 деталізованих інтерфейсів.
 
 PASS означає виконані сценарії конкретного драйвера або моделі. Відсутність реального USB/kernel, аналогового RF, калібрування, живлення або механіки залишається явно записаною в JSON та окремих звітах.
 
@@ -98,8 +98,8 @@ PASS означає виконані сценарії конкретного д�
 | AXING CFA 11-00 DC-isolated 75 Ω load | A421 | analog_rf_functional_ports | PASS | Лише з’єднання / не реалізовано |  / module |
 | TCBT-2R5G+ ch4 | A424 | analog_rf_functional_ports | PASS | Драйвер / модель: PASS |  / verified |
 | P1 VHF137 SMA: no DC | J401 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / module |
-| P2 UHF SMA: 4.5 V | J402 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / module |
-| P3 L-band SMA: 4.5 V | J403 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / module |
+| P2 UHF SMA: 4.3 V | J402 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / module |
+| P3 L-band SMA: 4.3 V | J403 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / module |
 | P4 LNB F: 13.2 V | J404 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / module |
 | P5 HF BNC: 13.8 V | J405 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / module |
 | P6 VHF/AIS SMA: no DC | J406 | passive_connector_or_named_boundary | PASS | Лише з’єднання / не реалізовано |  / module |

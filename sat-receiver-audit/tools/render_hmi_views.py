@@ -173,6 +173,8 @@ def render(stage):
             window.tabs.setCurrentIndex(index)
             if page == "teach-classify":
                 window.learning_action("infer")
+                # A background job: natural heartbeats keep HOLD and commit the result.
+                _wait(application, lambda: not window.learning_runner.busy, 30, "SIM inference did not finish")
                 if window.learning_text.toPlainText().startswith("Rejected"):
                     raise RenderFailure("SIM inference was rejected: " + window.learning_text.toPlainText())
             for _ in range(5):

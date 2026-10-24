@@ -53,10 +53,19 @@
   "network_devices": [],
   "host_device_passthrough": [],
   "shared_host_directories": [],
-  "source_manifest_sha256": "724550d16239bc52530086794c7ac69f99957de3500178a534be478662d30cfa",
-  "payload_manifest_sha256": "28b4a95118ba8ef56c8a996aef2316952cbff27c5ec3f51d1ccc7d13ec9f336d",
-  "cloud_init_instance_id": "srrx-arm64-lab-fdd0146c4b28488486d5ed4ab0ee0f6f",
+  "source_manifest_sha256": "159a711f452520f7bb0846509c7c38c6580a4d66efb368899a43d0c1187804b6",
+  "payload_manifest_sha256": "761bb3f677c6b70b1d95fc0738c863008d85cc3fca8a7a17a69c56023b3df4aa",
+  "cloud_init_instance_id": "srrx-arm64-lab-8eab7beb0899480592ff1d1358afec04",
   "hardware_qualification": false,
   "q6a_peripherals_emulated": false,
+  "qemu_runtime": {
+    "tools_root": "/home/runner/work/_temp/qemu-tools",
+    "version": "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1)",
+    "program_libraries_sha256": "0be50614c06edc4badc896dba22b9969dccc07ae048eca2152421ff6c59bd97a",
+    "module_count": 13,
+    "closure_sha256": "3885863590df7ee0f18620ce3b7592ce8fe8bd75949f0fe416df283dbc0b0082",
+    "module_upgrade_dir": "/var/run/qemu/Debian_1_8.2.2+ds-0ubuntu1",
+    "module_upgrade_dir_present": false
+  },
   "base_overlay": null
 }

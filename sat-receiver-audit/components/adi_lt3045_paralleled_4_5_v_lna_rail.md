@@ -6,7 +6,7 @@
 
 _Run `wf_a268b76e-da0`_
 
-- **Part:** ADI LT3045, 2 in parallel, 4.5 V LNA bias rail (LNA4V5: LAB5 D36V28F5 -> LC -> 2x LT3045 -> 4x TPS2553 -> bias tees). Real load 0.17-0.6 A; labd LNA budget 1.0 A.
+- **Part:** ADI LT3045, 2 in parallel, 4.5 V LNA bias rail (v2.1 owner decision 24.10.2026: set to 4.30 V with a shared RSET of 21.5k 0.1%; acceptance is a measured V(E2_LNA_IN)-V(OUTS) of at least 0.40 V at 3.2 A LAB5 / 1 A pair / 50 C, E2-04) (LNA4V5: LAB5 D36V28F5 -> LC -> 2x LT3045 -> 4x TPS2553 -> bias tees). Real load 0.17-0.6 A; labd LNA budget 1.0 A.
 - **Current pick:** ADI LT3045EMSE#PBF (MSOP-12E), qty 2, LCSC C580012. Note: re-audit D wrote 'LT3045EDD#PBF (DFN)' only because that was the LCSC link it found, without giving a reason. This check shows the MSOP is the better choice (see stack_changes).
 - **Current price usd:** 16.67 for 2 ($8.3329 each at qty 1, 1,603 in stock). Re-checked through the LCSC product API on 18 Oct 2026. Excludes EU import VAT, shipping, the EUR 3 duty per tariff line, and the EUR 2 Union handling fee (UHF) from about 1 Nov 2026. LCSC is not ADI-franchised. The authorised price at DigiKey is $10.00 each (16,667 in stock).
 - **Decision:** keep

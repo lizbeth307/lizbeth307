@@ -263,7 +263,9 @@ def check_document(tree, label="HTML", svg=False):
                     anchors += 1
                 elif tag == "a":
                     scheme = urlsplit(url).scheme.lower()
-                    require(scheme in {"http", "https", "mailto", "data"} or url.startswith("//"),
+                    # No document authors an e-mail link; GFM autolinks text like 5V@1.2A.
+                    require(scheme != "mailto", label + " e-mail/autolinked hyperlink in offline bundle: " + url[:180])
+                    require(scheme in {"http", "https", "data"} or url.startswith("//"),
                             label + " non-self-contained/unsafe hyperlink: " + url[:180])
                 else:
                     require(tag in svg_resources, label + " unsupported automatic href element: " + tag)
@@ -301,6 +303,50 @@ def check_document(tree, label="HTML", svg=False):
             "external_automatic_resources": 0}
 
 
+LAB_NOTICE = "ARM64 Linux lab — лише запис попереднього прогону."
+LAB_STALE = "ARM64 прогін не підтверджує поточний код"
+# Nouns the generators count, in the forms a number takes: 1 елемент, 2 елементи, 5 елементів.
+COUNTED = (("елемент", "елементи", "елементів"), ("вузол", "вузли", "вузлів"), ("інтерфейс", "інтерфейси", "інтерфейсів"),
+           ("компонент", "компоненти", "компонентів"), ("контакт", "контакти", "контактів"), ("модель", "моделі", "моделей"),
+           ("файл", "файли", "файлів"), ("набір", "набори", "наборів"), ("помилка", "помилки", "помилок"))
+
+
+def counted_form(n, one, few, many):
+    tail, tens = n % 10, n % 100
+    return one if tail == 1 and tens != 11 else few if 2 <= tail <= 4 and not 12 <= tens <= 14 else many
+
+
+def check_generated_text(tree):
+    """Wording written at packaging time: COMPLETION.md, the notices and the schematic and
+    download sections. Imported run records keep the text their run wrote.
+
+    The ARM64 notice and COMPLETION.md must give the same count of stale records."""
+    def flat(node):
+        return " ".join(node.text_content().split())
+    sections = tree.xpath('//section[@id="file-COMPLETION-md"]')
+    require(len(sections) == 1, "Missing/duplicate COMPLETION section")
+    completion = flat(sections[0])
+    notices = [flat(n) for n in tree.xpath('//div[@class="notice"]')]
+    lab = [n for n in notices if LAB_NOTICE in n]
+    require(len(lab) <= 1, "Duplicate ARM64 record notice")
+    if lab:
+        drift = re.search(r"Після нього (.+?)\. Його PASS", lab[0])
+        require(drift is not None and "Після прогону " + drift.group(1) + "." in completion,
+                "ARM64 notice and COMPLETION.md count the stale records differently")
+    else:
+        require(LAB_STALE not in completion, "COMPLETION.md marks the ARM64 run stale, the bundle has no notice")
+    texts = [completion] + notices + [flat(n) for n in tree.xpath('//section[@id="schematics" or @id="downloads"]')]
+    for text in texts:
+        glued = re.search(r"\b(?:Ubuntu|kernel|plane|DRC)\d|[^\W\d_],\d", text)
+        if glued:
+            raise InvalidBundle("Missing space in generated text: " + repr(text[max(0, glued.start() - 40):glued.end() + 20]))
+        for match in re.finditer(r"(?<![\d.,])(\d+) (\w+)", text):
+            for forms in COUNTED:
+                require(match.group(2) not in forms or match.group(2) == counted_form(int(match.group(1)), *forms),
+                        "Number and noun disagree in generated text: " + match.group(0))
+    return {"generated_text": "PASS", "arm64_record": "RECORD_OF_EARLIER_RUN" if lab else "CURRENT"}
+
+
 def equal_bytes(data, canonical):
     if isinstance(canonical, bytes):
         return data == canonical
@@ -317,7 +363,7 @@ def check_html(path, pdf, archive):
     from lxml import html
     parser = html.HTMLParser(huge_tree=True, no_network=True)
     tree = html.parse(str(path), parser=parser).getroot()
-    details = check_document(tree)
+    details = dict(check_document(tree), **check_generated_text(tree))
     attachments = {"application/pdf": [], "application/zip": []}
     for node in tree.xpath('//a[@href]'):
         value = clean_url(node.get("href"))

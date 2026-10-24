@@ -12,7 +12,7 @@
         "raw_iq_persisted": false,
         "cli_exit": 0
       },
-      "elapsed_s": 3.757
+      "elapsed_s": 3.548
     },
     {
       "id": "wrong_device_refused",
@@ -30,7 +30,7 @@
         "same_st_dev_replacement_detected": true,
         "automatic_recovery": false
       },
-      "elapsed_s": 0.251
+      "elapsed_s": 0.238
     },
     {
       "id": "real_ENOSPC_preserves_previous_record",
@@ -40,7 +40,7 @@
         "error": "[Errno 28] No space left on device",
         "previous_sha256": "545161cb7fffde39dcc24ca63e4e08aa9c06b5e21c22092ad5942b3f4824de3e"
       },
-      "elapsed_s": 0.791
+      "elapsed_s": 0.873
     },
     {
       "id": "actual_mount_loss_no_rootfs_fallback",
@@ -50,7 +50,7 @@
         "fallback_file_created": false,
         "permanent_revocation": true
       },
-      "elapsed_s": 0.036
+      "elapsed_s": 0.019
     }
   ],
   "identity": {

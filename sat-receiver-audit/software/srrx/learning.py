@@ -34,6 +34,23 @@ class LearningError(ValueError):
     pass
 
 
+class LearningCancelled(Exception):
+    """Raised by a caller's checkpoint to stop a job. Deliberately not a
+    ValueError/RuntimeError/OSError, so it is never reported as "Rejected"."""
+
+
+def _tick(checkpoint, stage, done, total):
+    # checkpoint(stage, done, total) sees names and counts only, never data.
+    if checkpoint is not None:
+        checkpoint(stage, done, total)
+
+
+def _stage(checkpoint, prefix):
+    if checkpoint is None:
+        return None
+    return lambda stage, done, total: checkpoint(prefix + stage, done, total)
+
+
 def _finite(value):
     return type(value) in (float, int) and math.isfinite(value)
 
@@ -85,12 +102,16 @@ def _patch(frame, start_bin, end_bin):
     return _slice(validate_frame(mask_frame(frame)), start_bin, end_bin)
 
 
-def _slice(checked, start_bin, end_bin):
-    # Only for a frame just produced by, or proven equal to, validate_frame(mask_frame()).
+def _bounds(checked, start_bin, end_bin):
     if (type(start_bin) is not int or type(end_bin) is not int or
             not 0 <= start_bin < end_bin <= checked["fft_size"] or
             not MIN_PATCH_BINS <= end_bin - start_bin <= MAX_PATCH_BINS):
         raise LearningError("Annotation must select 8..4096 consecutive bins, end exclusive")
+
+
+def _slice(checked, start_bin, end_bin):
+    # Only for a frame just produced by, or proven equal to, validate_frame(mask_frame()).
+    _bounds(checked, start_bin, end_bin)
     valid = checked["valid"][start_bin:end_bin]
     power = checked["power_dbfs"][start_bin:end_bin]
     if not all(valid) or any(value is None for value in power):
@@ -140,8 +161,13 @@ def _record_id(record):
     return _hash({k: v for k, v in record.items() if k not in ("id", "created_at_utc")})
 
 
-def validate_dataset(dataset):
+def validate_dataset(dataset, *, checkpoint=None):
+    """Return a checked deep copy. checkpoint(stage, done, total), if given, is
+    called before the seal check, once per stored frame and annotation and
+    before the final copy; it may raise (LearningCancelled) to abort. The
+    result does not depend on it."""
     _keys(dataset, ("schema_version", "kind", "policy", "created_at_utc", "frames", "annotations", "sha256"))
+    _tick(checkpoint, "seal", 0, 1)
     _check_seal(dataset)
     if type(dataset["schema_version"]) is not int or dataset["schema_version"] != 1 or dataset["kind"] != "srrx_spectrum_annotations" or dataset["policy"] != POLICY:
         raise LearningError("Unsupported annotation schema/policy")
@@ -152,7 +178,8 @@ def validate_dataset(dataset):
     if len(frames) > MAX_ANNOTATIONS:
         raise LearningError("Too many spectrum frames")
     total = 0
-    for digest, frame in frames.items():
+    for index, (digest, frame) in enumerate(frames.items()):
+        _tick(checkpoint, "frames", index, len(frames))
         # A tampered file cannot recover or use excluded bins at training time.
         canonical = validate_frame(mask_frame(frame))
         if canonical != frame or _hash(canonical) != digest:
@@ -161,7 +188,8 @@ def validate_dataset(dataset):
         if total > MAX_TOTAL_BINS:
             raise LearningError("Dataset spectrum-bin limit exceeded")
     seen, patch_hashes, used_frames, frame_groups, intervals = set(), set(), set(), {}, {}
-    for record in annotations:
+    for index, record in enumerate(annotations):
+        _tick(checkpoint, "annotations", index, len(annotations))
         _keys(record, ("id", "frame_sha256", "group_sha256", "start_bin", "end_bin", "label",
                        "annotation_origin", "created_at_utc", "feature_sha256"))
         if record["label"] not in LABELS or record["annotation_origin"] != "explicit_user":
@@ -190,7 +218,19 @@ def validate_dataset(dataset):
         patch_hashes.add(feature_hash)
     if used_frames != set(frames):
         raise LearningError("Unreferenced spectrum frames are not allowed")
+    _tick(checkpoint, "copy", 0, 1)
     return copy.deepcopy(dataset)
+
+
+def box_spans(frame, start_bin, end_bin):
+    """RF spans the scope check covers for a box, for an early UI refusal only.
+
+    frame must be a mask_frame() result (canonical geometry); it is not masked
+    again here. Bounds are checked as for an annotation; annotate/train/infer
+    still run their own scope check.
+    """
+    _bounds(frame, start_bin, end_bin)
+    return _box_spans(frame, start_bin, end_bin)
 
 
 def _box_spans(checked, start_bin, end_bin):
@@ -223,11 +263,14 @@ def _scope_guard(checked, start_bin, end_bin, scope, message="Annotation span is
         raise LearningError(message)  # no frequency in the message
 
 
-def annotate(dataset, frame, start_bin, end_bin, label, *, group_id, user_confirmed=False, scope=None):
+def annotate(dataset, frame, start_bin, end_bin, label, *, group_id, user_confirmed=False, scope=None,
+             checkpoint=None):
     """Return a new dataset; calling code must require a deliberate user action.
 
     scope is the session scope_policy.ScopeLatch; an Artemis stop on the box
     span refuses the label. Without it the masked-band stop still applies.
+    checkpoint is passed to both dataset validations (stages "input ..." and
+    "output ..."), at most 2 x (frames + annotations) + 8 calls.
     """
     if user_confirmed is not True or label not in LABELS:
         raise LearningError("Explicit user confirmation and an allowlisted label are required")
@@ -235,7 +278,7 @@ def annotate(dataset, frame, start_bin, end_bin, label, *, group_id, user_confir
         anonymous = uuid.UUID(str(group_id)).hex
     except (ValueError, AttributeError, TypeError):
         raise LearningError("group_id must be an anonymous UUID, never an emitter identifier") from None
-    result = validate_dataset(dataset)
+    result = validate_dataset(dataset, checkpoint=_stage(checkpoint, "input "))
     checked, power = _patch(frame, start_bin, end_bin)
     _scope_guard(checked, start_bin, end_bin, scope)
     digest = _hash(checked)
@@ -246,7 +289,8 @@ def annotate(dataset, frame, start_bin, end_bin, label, *, group_id, user_confir
               "feature_sha256": _hash([round(x, 6) for x in _features(power)])}
     record["id"] = _record_id(record)
     result["annotations"].append(record)
-    return validate_dataset(_seal(result))
+    _tick(checkpoint, "seal", 0, 1)
+    return validate_dataset(_seal(result), checkpoint=_stage(checkpoint, "output "))
 
 
 def _atomic_json(path, value):
@@ -299,8 +343,9 @@ def _read_json(path):
         raise LearningError("Invalid JSON") from error
 
 
-def save_dataset(path, dataset):
-    _atomic_json(path, validate_dataset(dataset))
+def save_dataset(path, dataset, *, checkpoint=None):
+    # checkpoint runs only during validation, before the file is touched.
+    _atomic_json(path, validate_dataset(dataset, checkpoint=checkpoint))
 
 
 def load_dataset(path):
@@ -326,11 +371,13 @@ def _predict_features(model, feature, distances=None):
             "distance": round(best, 9), "ood": ood}
 
 
-def train(dataset, *, seed=0, validation_fraction=.25, scope=None):
+def train(dataset, *, seed=0, validation_fraction=.25, scope=None, checkpoint=None):
     """Fit and hold-out check a model. scope (the session ScopeLatch) must permit
     'label' on every trainable box span, so a latched span never feeds a model.
+    checkpoint as in validate_dataset ("dataset ..."), then once per trainable
+    record in the scope, feature and hold-out passes; the model does not depend on it.
     """
-    dataset = validate_dataset(dataset)
+    dataset = validate_dataset(dataset, checkpoint=_stage(checkpoint, "dataset "))
     if type(seed) is not int or not _finite(validation_fraction) or not 0 < validation_fraction <= .5:
         raise LearningError("A deterministic integer seed and 0<holdout<=0.5 are required")
     # unknown_energy boxes stay in the dataset but are not a fitted class: an OOD
@@ -338,7 +385,8 @@ def train(dataset, *, seed=0, validation_fraction=.25, scope=None):
     records = [record for record in dataset["annotations"] if record["label"] in TRAINABLE_LABELS]
     if scope is not None:
         # validate_dataset re-masked every frame, and annotate ran the masked-band check.
-        for record in records:
+        for index, record in enumerate(records):
+            _tick(checkpoint, "scope", index, len(records))
             _scope_guard(dataset["frames"][record["frame_sha256"]], record["start_bin"], record["end_bin"],
                          scope, "Training annotation span is out of scope", always=False)
     labels = sorted({record["label"] for record in records})
@@ -371,8 +419,11 @@ def train(dataset, *, seed=0, validation_fraction=.25, scope=None):
     train_records = [record for record in records if record["group_sha256"] not in validation_groups]
     validation_records = [record for record in records if record["group_sha256"] in validation_groups]
     # validate_dataset just re-masked and compared every stored frame.
-    vectors = {record["id"]: _features(_slice(dataset["frames"][record["frame_sha256"]], record["start_bin"], record["end_bin"])[1])
-               for record in records}
+    vectors = {}
+    for index, record in enumerate(records):
+        _tick(checkpoint, "features", index, len(records))
+        vectors[record["id"]] = _features(_slice(dataset["frames"][record["frame_sha256"]],
+                                                 record["start_bin"], record["end_bin"])[1])
     centroids, radii = {}, {}
     for label in labels:
         points = [vectors[record["id"]] for record in train_records if record["label"] == label]
@@ -393,7 +444,8 @@ def train(dataset, *, seed=0, validation_fraction=.25, scope=None):
              "validation": {}}
     correct, rejected = 0, 0
     confusion = {label: {other: 0 for other in set(labels) | {"unknown_energy"}} for label in labels}
-    for record in validation_records:
+    for index, record in enumerate(validation_records):
+        _tick(checkpoint, "holdout", index, len(validation_records))
         result = _predict_features(model, vectors[record["id"]])
         correct += result["label"] == record["label"]
         rejected += result["ood"]
@@ -401,6 +453,7 @@ def train(dataset, *, seed=0, validation_fraction=.25, scope=None):
     model["validation"] = {"samples": len(validation_records), "correct": correct, "ood": rejected,
                            "accuracy": correct / len(validation_records), "confusion": confusion,
                            "scope": "held_out_capture_groups_only_not_field_accuracy"}
+    _tick(checkpoint, "model", 0, 1)
     return validate_model(_seal(model))
 
 

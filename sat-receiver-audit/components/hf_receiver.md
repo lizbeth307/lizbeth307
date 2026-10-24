@@ -175,7 +175,7 @@ _Run `wf_feb0e95a-cfc`_
     - **Claim in stack:** Internal bias tee for the Boni-Whip near the HF+ shield, DC up the HF coax, relay K1 to the HF+; DC-sense locks bias when the 9:1 balun (DC short) is attached (C17, 5.3).
     - **Finding:** Airspy publishes no DC tolerance for the input, so DC must be blocked toward the HF+ and the relay. For 20 kHz with ≤0.5 dB loss in 50 Ω (model), the feed choke needs ≥0.6 mH (≥1.3 mH for 9 kHz) and the DC block ≥0.7 uF. One choke cannot also stay inductive to 30 MHz, so use a series large-L + small-L stack. Bonito's supplied inserter is built for this whip's range and could be mounted inside the shield instead of a DIY tee.
     - **Verdict:** new_option
-    - **Action:** Either use the Bonito inserter (internally, with its BNC output adapted to SMA) or specify the DIY tee: about 2.2 mH (≥0.15 A, low DCR) + about 10 uH series choke and a 1 uF C0G/film DC block. Measure S21 at 20 kHz-30 MHz on the LiteVNA, conducted only. Keep the DC-sense interlock.
+    - **Action:** Either use the Bonito inserter (internally, with its BNC output adapted to SMA) or specify the DIY tee: about 2.2 mH (Irms and Isat ≥0.20 A since v2.1, low DCR) + about 10 uH series choke and a 1 uF C0G/film DC block. Measure S21 at 20 kHz-30 MHz on the LiteVNA, conducted only. Keep the DC-sense interlock.
     - **Impact:** Avoids LF loss or HF resonance in a DIY tee.
     - **Sources:**
       - https://bonito.net/en/boni-whip-2/
@@ -422,7 +422,7 @@ _Run `wf_feb0e95a-cfc`_
     - **Claim in stack:** Stage 1 bias tee: about 2.2 mH + about 10 uH series choke, 1 uF C0G/film DC block; L ≥0.6 mH and C ≥0.7 uF for ≤0.5 dB at 20 kHz.
     - **Finding:** Model: for 0.5 dB each alone at 20 kHz, L ≥0.57 mH and C ≥0.23 uF; with a 0.25 dB split, ≥0.82 mH and ≥0.33 uF; at 9 kHz, 1.27-1.82 mH and 0.51-0.73 uF. Stage 1's values hold with margin. X7R is a poor choice for a DC block carrying 13.8 V bias in the signal path (voltage coefficient, piezo).
     - **Verdict:** confirmed
-    - **Action:** Keep 2.2 mH (≥0.15 A, low DCR) + about 10 uH, and use a 1 uF PPS/PEN film or C0G DC block, not X7R. Or use Bonito's Einspeiseweiche if it fits inside the shield (size unpublished). Measure S21 at 20 kHz-30 MHz conducted on the LiteVNA, and DC leakage at the HF+ SMA.
+    - **Action:** Keep 2.2 mH (≥0.15 A, low DCR; v2.1: Irms and Isat ≥0.20 A for RILM 7.15k) + about 10 uH, and use a 1 uF PPS/PEN film or C0G DC block, not X7R. Or use Bonito's Einspeiseweiche if it fits inside the shield (size unpublished). Measure S21 at 20 kHz-30 MHz conducted on the LiteVNA, and DC leakage at the HF+ SMA.
     - **Impact:** None.
     - **Sources:**
       - https://bonito.net/en/boni-whip-2/
@@ -588,7 +588,7 @@ _Run `wf_feb0e95a-cfc`_
   - Boni-Whip: buy from Bonito (hamradioshop.net, EUR 149 ≈ $167.49, in stock), WiMo (EUR 159, from 20.11.2026) as second source. 20 kHz-300 MHz, 12-15 V at the 5.5/2.1 mm barrel of the supplied Einspeiseweiche, 65 mA typ (vendor), about 17 cm body, BNC. BOM adds a BNC-SMA lead and a barrel plug.
   - Boni-Whip mounting: mast ≥2 m, ground stake or counterpoise; two-stage common-mode choke (FT-240-77 + FT-240-31) near P5; the bulkhead is bonded to the plate.
   - BONI13V8 rail: battery SW, then LC, then TPS7A4701 at 13.8 V ±0.2 V (EN on MCP #1 GPB1, PG on MCP #3), then PTC 0.15-0.2 A hold, then the Einspeiseweiche barrel inside the shield (or a DIY tee).
-  - DIY tee: 2.2 mH (≥0.15 A, low DCR) + about 10 uH series choke and a 1 uF PPS/PEN film or C0G DC block (not X7R). Targets: ≤0.5 dB from 20 kHz to 30 MHz; ≤10 mV DC at the HF+ SMA.
+  - DIY tee: 2.2 mH (Irms and Isat ≥0.20 A since v2.1, low DCR) + about 10 uH series choke and a 1 uF PPS/PEN film or C0G DC block (not X7R). Targets: ≤0.5 dB from 20 kHz to 30 MHz; ≤10 mV DC at the HF+ SMA.
   - Interlock: Boni profile only. DC-sense locks the rail below about 10 Ω at about 1 mA (set from the measured balun DCR). After enable, a current window of 30-150 mA (set from measurement) must hold, else the rail goes off.
   - Boni gate: ≥12.0 V at the barrel with the pack at 13.2 V; antenna-end voltage recorded. Energy model about 0.90 W.
   

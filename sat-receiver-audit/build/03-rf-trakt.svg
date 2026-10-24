@@ -19,7 +19,7 @@
 <text x="486.0" y="159.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Flamingo+ FM #1 (100813)</text>
 <text x="486.0" y="174.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">→ SAWbird+ NOAA (100800)</text>
 <rect x="795.0" y="108.0" width="300.0" height="73.0" rx="4" fill="#fdeeee" stroke="#333" stroke-width="1.2"/>
-<text x="801.0" y="126.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Інжектор ch1, 4.5 V</text>
+<text x="801.0" y="126.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Інжектор ch1, 4.3 V</text>
 <text x="801.0" y="144.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">TPS2553DBVR-1, RILIM 88.7k:</text>
 <text x="801.0" y="159.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">265/299/339 mA; EN MCP #1 GPA5</text>
 <text x="801.0" y="174.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">зміщення — на вихід SAWbird+</text>
@@ -38,7 +38,7 @@
 <text x="26.0" y="261.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">(3.5-5.5 V, ≈50 mA) → перемичка</text>
 <rect x="325.0" y="195.0" width="140.0" height="58.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
 <text x="331.0" y="213.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">P2 UHF</text>
-<text x="331.0" y="231.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">SMA, 4.5 V назовні</text>
+<text x="331.0" y="231.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">SMA, 4.3 V назовні</text>
 <text x="331.0" y="246.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">після DC-sense</text>
 <rect x="480.0" y="195.0" width="300.0" height="73.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
 <text x="486.0" y="213.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Без каскадів у корпусі</text>
@@ -46,7 +46,7 @@
 <text x="486.0" y="246.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">(обмежувач → ФВЧ → LNA → SAW)</text>
 <text x="486.0" y="261.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">ніколи понад 5.5 V на P2</text>
 <rect x="795.0" y="195.0" width="300.0" height="73.0" rx="4" fill="#fdeeee" stroke="#333" stroke-width="1.2"/>
-<text x="801.0" y="213.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Інжектор ch2, 4.5 V</text>
+<text x="801.0" y="213.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Інжектор ch2, 4.3 V</text>
 <text x="801.0" y="231.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">TPS2553DBVR-1, RILIM 88.7k</text>
 <text x="801.0" y="246.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">EN MCP #1 GPA6; DC-sense UHF</text>
 <text x="801.0" y="261.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">UI: «ch2 off = no UHF»</text>
@@ -70,7 +70,7 @@
 <text x="486.0" y="318.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Flamingo+ FM #2 (§2.11.3)</text>
 <text x="486.0" y="333.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">→ стендовий LNA V2</text>
 <rect x="795.0" y="282.0" width="300.0" height="73.0" rx="4" fill="#fdeeee" stroke="#333" stroke-width="1.2"/>
-<text x="801.0" y="300.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Інжектор ch4, 4.5 V</text>
+<text x="801.0" y="300.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Інжектор ch4, 4.3 V</text>
 <text x="801.0" y="318.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">TCBT-2R5G+, RILIM 162k:</text>
 <text x="801.0" y="333.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">144/166/192 mA; EN MCP #3 GPA7</text>
 <text x="801.0" y="348.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">hairpin без LNA: зміщення заблок.</text>
@@ -113,7 +113,7 @@
 <text x="26.0" y="467.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">живлення; або активний патч 20 mA</text>
 <rect x="325.0" y="401.0" width="140.0" height="58.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
 <text x="331.0" y="419.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">P3 L-BAND</text>
-<text x="331.0" y="437.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">SMA, 4.5 V назовні</text>
+<text x="331.0" y="437.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">SMA, 4.3 V назовні</text>
 <text x="331.0" y="452.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">після DC-sense</text>
 <rect x="480.0" y="401.0" width="300.0" height="73.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
 <text x="486.0" y="419.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Без каскадів у корпусі</text>
@@ -121,7 +121,7 @@
 <text x="486.0" y="452.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">статичний відвід на вході GOES</text>
 <text x="486.0" y="467.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">TVS на P2/P3 — опц., деталь TBD</text>
 <rect x="795.0" y="401.0" width="300.0" height="73.0" rx="4" fill="#fdeeee" stroke="#333" stroke-width="1.2"/>
-<text x="801.0" y="419.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Інжектор ch3, 4.5 V</text>
+<text x="801.0" y="419.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Інжектор ch3, 4.3 V</text>
 <text x="801.0" y="437.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">TPS2553DBVR-1, RILIM 88.7k</text>
 <text x="801.0" y="452.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">на межі 300 mA, без TCBT</text>
 <text x="801.0" y="467.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">EN MCP #1 GPA7; DC-sense L-band</text>
@@ -314,7 +314,7 @@
 <rect x="795.0" y="1089.0" width="300.0" height="73.0" rx="4" fill="#fdeeee" stroke="#333" stroke-width="1.2"/>
 <text x="801.0" y="1107.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Bias-tee Boni-Whip (усередині)</text>
 <text x="801.0" y="1125.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">← BONI13V8 13.8 V: TPS7A4701 →</text>
-<text x="801.0" y="1140.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">TPS259630DDAR (RILM 7.87k) →</text>
+<text x="801.0" y="1140.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">TPS259630DDAR (RILM 7.15k) →</text>
 <text x="801.0" y="1155.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">INA3221 0.2 Ohm; EN MCP #1 GPB1</text>
 <path d="M 310.0 1110.0 L 325.0 1110.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
 <path d="M 465.0 1110.0 L 480.0 1110.0" fill="none" stroke="#111111" stroke-width="1.6" marker-end="url(#arr_111111)"/>
@@ -442,7 +442,7 @@
 <text x="1906.0" y="616.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Σ 3 × 299 + 166 mA ≈ 1.06 A (модель) — більше</text>
 <text x="1906.0" y="631.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  за ≈1 A пари LT3045; бюджет labd LNA ≤1.0 A</text>
 <text x="1906.0" y="646.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">LNB eFuse: RILM 2.05k → 0.405-0.499 A</text>
-<text x="1906.0" y="661.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Boni eFuse: RILM 7.87k → 0.113-0.139 A</text>
+<text x="1906.0" y="661.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">Boni eFuse: RILM 7.15k → 0.122-0.153 A</text>
 <text x="1906.0" y="676.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">INA3221: тривога понад базовий рівень +20 %</text>
 <rect x="1900.0" y="695.0" width="380.0" height="148.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
 <text x="1906.0" y="713.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">Лише прийом (§1, §5.3, §5.4)</text>

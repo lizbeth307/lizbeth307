@@ -4,9 +4,11 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import stat
 import subprocess
@@ -82,6 +84,87 @@ def overlay_record(qemu_img, base, image_sha256):
             "purpose": "stopped OS cache; locked debs/wheels reinstall from this payload; Linux replays its filesystem journal if needed; not a clean-image rerun"}
 
 
+def fetch_tools():
+    spec = importlib.util.spec_from_file_location("srrx_lab_fetch_tools", Path(__file__).with_name("fetch_tools.py"))
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def qemu_runtime(qemu, qemu_img, genisoimage):
+    """The selected tools must be the fetch_tools.py wrappers of one locked runtime: only they run the
+    locked ld.so (no host loader cache). The DT_NEEDED closure of the three programs and of every QEMU
+    module is listed again here (a kit ships no tools-verification.json); a host module-upgrade directory
+    QEMU would also search is refused. The run's loader audit covers qemu-system-aarch64 only."""
+    helper = fetch_tools()
+    tools = Path(qemu).resolve().parents[1]
+    selected = {"qemu-system-aarch64": qemu, "qemu-img": qemu_img, "genisoimage": genisoimage}
+    for name, chosen in selected.items():
+        path = Path(chosen).resolve()
+        if path != tools / "bin" / name or path.read_bytes() != helper.wrapper_texts()[name].encode():
+            raise ValueError("Select the fetch_tools.py wrappers of one locked tools directory: " + name)
+    try:
+        programs = {name: helper.resolved_libraries(tools, name) for name in selected}
+        closure = helper.module_closure(tools)
+        version = call([qemu, "--version"], capture_output=True, text=True).stdout.strip().splitlines()[0]
+        upgrade = helper.module_upgrade_dir(version)
+    except (RuntimeError, IndexError, subprocess.CalledProcessError) as error:
+        raise ValueError("Locked QEMU runtime check failed: " + str(error)) from error
+    if os.path.lexists(upgrade):
+        raise ValueError("Host QEMU module-upgrade directory would be searched for missing modules: " + upgrade)
+
+    def canonical(value):
+        return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    return {"tools_root": str(tools), "version": version, "program_libraries_sha256": canonical(programs),
+            "module_count": len(closure), "closure_sha256": canonical(closure), "module_upgrade_dir": upgrade,
+            "module_upgrade_dir_present": False}
+
+
+LOADER_LINE = re.compile(r"\s*(\d+):\t?(.*)")
+
+
+def loader_objects(logs):
+    """Objects a glibc 2.39 LD_DEBUG=files,libs log (elf/dl-load.c, rtld.c) shows mapped.
+
+    'generating link map' names the requested object: a path for the program and for dlopen() by
+    path, else a soname, whose file is the last 'trying file=' of that search. A soname without one
+    stays unresolved, which the audit counts as outside the locked root (fail closed)."""
+    mapped, dlopened, unresolved = set(), set(), set()
+    for text in logs:
+        trying = {}
+        for raw in text.splitlines():
+            match = LOADER_LINE.fullmatch(raw)
+            if not match:
+                continue
+            pid, line = match.group(1), match.group(2).strip()
+            if line.startswith("find library="):
+                trying.pop(pid, None)
+            elif line.startswith("trying file="):
+                trying[pid] = line[len("trying file="):]
+            elif (found := re.fullmatch(r"file=(.+) \[\d+\];\s+dynamically loaded by .*", line)):
+                dlopened.add(found.group(1))
+            elif (found := re.fullmatch(r"file=(.+) \[\d+\];\s+generating link map", line)):
+                name = found.group(1)
+                path = name if "/" in name else trying.pop(pid, None)
+                (mapped.add(path) if path and path.startswith("/") else unresolved.add(name))
+            elif (found := re.fullmatch(r"calling (?:init|fini): (/.+?)(?: \[\d+\])?", line)):
+                mapped.add(found.group(1))
+    return mapped, dlopened, unresolved
+
+
+def loader_audit(logs, root, program):
+    """Every object the locked loader mapped must resolve inside root; no record of the program is vacuous."""
+    root = Path(root).resolve()
+    mapped, dlopened, unresolved = loader_objects(logs)
+    resolved = {Path(p).resolve() for p in mapped}
+    inside = sorted(p.relative_to(root).as_posix() for p in resolved if p.is_relative_to(root))
+    outside = sorted({str(p) for p in resolved if not p.is_relative_to(root)} | {n + " (unresolved)" for n in unresolved})
+    program_seen = Path(program).resolve() in resolved
+    return {"status": "PASS" if program_seen and not outside else "FAIL", "loader": "LD_DEBUG=files,libs (locked glibc ld.so)",
+            "objects": len(resolved), "program_mapped": program_seen, "mapped_inside_tools_root": inside,
+            "dlopened": sorted(dlopened), "outside_tools_root": outside, "logs": len(logs)}
+
+
 def check_results(result):
     """debugfs recreates guest symlinks and modes; never follow a guest link or skip an unlistable directory."""
     def unreadable(error):
@@ -125,6 +208,7 @@ def prepare(args):
     for tool in (args.qemu, args.qemu_img, args.genisoimage):
         if not Path(tool).is_file():
             raise ValueError("Missing explicitly selected host tool: " + str(tool))
+    runtime = qemu_runtime(args.qemu, args.qemu_img, args.genisoimage)
     image = found[IMAGE]
     base_record = None
     if args.base_overlay:
@@ -222,7 +306,7 @@ final_message: SRRX ARM64 Linux lab cloud-init completed
               "source_manifest_sha256": sha(payload / "project-manifest.json"),
               "payload_manifest_sha256": sha(payload / "payload-manifest.json"),
               "cloud_init_instance_id": instance_id,
-              "hardware_qualification": False, "q6a_peripherals_emulated": False}
+              "hardware_qualification": False, "q6a_peripherals_emulated": False, "qemu_runtime": runtime}
     record["base_overlay"] = base_record
     (work / "run.json").write_text(json.dumps(record, indent=2) + "\n")
     print(json.dumps({"prepared": str(work), "files": len(entries), "offline": True}))
@@ -235,10 +319,14 @@ def run(args):
         raise ValueError("Lab definition grants unexpected external access")
     if any(c.isspace() for c in str(work)):
         raise ValueError("Work path must not contain whitespace (debugfs request)")
+    tools = Path(record["command"][0]).resolve().parents[1]
+    audit = work / "loader-audit"
+    audit.mkdir()
     started = time.monotonic()
     with (work / "console.log").open("wb") as console:
-        proc = subprocess.Popen(record["command"], stdin=subprocess.DEVNULL,
-                                stdout=console, stderr=subprocess.STDOUT)
+        # The wrapper turns this into LD_DEBUG for the locked ld.so: one log per process, qemu.<pid>.
+        proc = subprocess.Popen(record["command"], stdin=subprocess.DEVNULL, stdout=console, stderr=subprocess.STDOUT,
+                                env=dict(os.environ, SRRX_LOADER_AUDIT=str(audit / "qemu")))
         try:
             code = proc.wait(timeout=args.timeout)
         except subprocess.TimeoutExpired:
@@ -256,12 +344,19 @@ def run(args):
              stdout=subprocess.DEVNULL, stderr=log)
     check_results(result)
     report = json.loads((result / "summary.json").read_text())
+    logs = sorted(audit.glob("qemu.*"))
+    loaded = loader_audit([p.read_text(errors="replace") for p in logs], tools / "root",
+                          tools / "root/usr/bin/qemu-system-aarch64")
+    (work / "qemu-loaded-objects.json").write_text(json.dumps(dict(loaded, tools_root=str(tools)), indent=2) + "\n")
     report["host"] = {"qemu_exit_code": code, "elapsed_s": round(time.monotonic() - started, 3),
                       "run_manifest_sha256": sha(work / "run.json"),
-                      "console_sha256": sha(work / "console.log")}
+                      "console_sha256": sha(work / "console.log"),
+                      "loader_audit": {"status": loaded["status"], "objects": loaded["objects"],
+                                       "dlopened": loaded["dlopened"], "outside_tools_root": loaded["outside_tools_root"],
+                                       "sha256": sha(work / "qemu-loaded-objects.json")}}
     (work / "report.json").write_text(json.dumps(report, indent=2) + "\n")
     print(json.dumps(report, ensure_ascii=False, indent=2))
-    return 0 if report.get("status") == "PASS" and code == 0 else 1
+    return 0 if report.get("status") == "PASS" and code == 0 and loaded["status"] == "PASS" else 1
 
 
 def main():

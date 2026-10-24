@@ -41,8 +41,8 @@ mpremote reset
 
 Copy the reviewed `boot.py` first and `main.py` last. No receiver load should be
 connected during first flash. GP17 must remain HIGH and the display supply OFF.
-With no records, HELLO/STATUS report false commissioning/calibration gates;
-STATUS supplies `adc_raw` for bench work. Use UART7/115200 8N1 with the host, not
+With no records, HELLO/STATUS report false commissioning/calibration gates and
+HELLO a null `qualification_record`; STATUS supplies `adc_raw` for bench work. Use UART7/115200 8N1 with the host, not
 REPL text. USB REPL remains a service path, subject to the LAB5 isolation rule.
 
 ## Hardware outputs
@@ -88,9 +88,14 @@ remain below half the ticks period; a reversed/ambiguous clock fails closed.
    console whenever Q6A 3V3 is present and the panel NTC is valid and cool
    (Display eFuse row above); it is never an ARM output. The Pico chooses a
    new nonzero uint32 session using `os.urandom`. HELLO is the first frame of
-   each session. It includes the same state/reset/sensor fields as STATUS plus
-   the actual Pico serial and exact local `calibration_crc32` (None if invalid).
-   Host acceptance must match both live identity fields before ARM.
+   each session. It carries the STATUS state/readiness fields
+   (`main.HELLO_FIELDS`) but no sensor readings, plus the actual Pico serial,
+   the exact local `calibration_crc32` (None if invalid) and the
+   `qualification_record` of a valid local commissioning record (None
+   otherwise). Battery, temperatures, fan and brightness follow in STATUS
+   within 200 ms. The worst-case HELLO is at most 452 of 512 bytes and holds
+   no float. labd must match serial, calibration CRC and qualification record
+   against its acceptance file before ARM.
 2. Host sends ARM with `p.qualified=true`, current Pico session and a strictly
    increasing uint32 sequence. Pico separately requires a validated local ADC
    calibration, a local commissioning record, Q6A power, fresh valid sensors,
@@ -98,7 +103,8 @@ remain below half the ticks period; a reversed/ambiguous clock fails closed.
    leaves reset asserted and reports its reason.
 3. WARMING holds reset for at least 100 ms and waits for two distinct fresh HB
    observations after ARM. Multiple packets received at one timestamp count as
-   one observation. Host sends HB every 200 ms.
+   one observation. Host sends HB every 200 ms while its STATUS readings are
+   fresh (<=500 ms).
 4. Pico actively drives GP17 LOW and enters CONFIGURING. Host must write safe
    MCP registers and reply CONFIGURED with `p.safe=true` within 1000 ms. Reset
    defaults and application pulldowns must be measured, not inferred from ACK.
@@ -139,7 +145,7 @@ The bounded subset of STACK sections 5.1/5.6 is implemented as follows:
 | No HB after ARM_OFF | Cut after 60 s from last shutdown HB or ARM_OFF, whichever is later |
 | Q6A 3V3 falls after being observed on | Reset immediately; Pololu OFF after 3 s |
 | Calibrated battery <=13.05 V with no fresh HB | Pololu OFF after continuous 5 s; recovery or fresh HB resets dwell. Same 13050 mV as the host graceful cutoff, above the 12.8 V hardware UV trip |
-| Battery low with live HB | Host implements the INA228/Linux graceful shutdown policy; this fallback does not replace it |
+| Battery low with live HB | Host implements the INA228/Linux graceful shutdown policy; this fallback does not replace it. labd sends HB only while it holds STATUS readings no older than 500 ms (a HELLO carries none), so a host that cannot see the battery leaves this fallback active |
 | Physical button | 30 ms debounce; short release emits POWER_BUTTON, 1.5 s hold requests graceful shutdown |
 | Restart after OFF | Physical button edge and battery >=13.6 V clear software latch; remote ARM alone cannot restart |
 | Host maximum SoC temperature | In hardware mode labd sends `soc_temp_c` in every HB: the hottest Linux thermal zone in C, 0.1 C steps, re-read at most once a second on a separate labd thread (`SocTempSampler`), outside the 20 ms safety tick (`software/PROTOCOL.md`). Fan on at60 C, off at50 C. labd omits the field when a zone is unreadable or out of range, when the cached sample is older than 3 s, and in simulation; a missing/nonfinite value or stale HB forces full cooling (fan on) |
@@ -198,14 +204,21 @@ After all host acceptance gates pass, provision the separately sealed local
 `commissioning.json` with fields `v`, `revision`, `serial`,
 `calibration_crc32`, `hardware_commissioned=true`, `qualification_record` and
 `crc32`. Use `seal(record, commissioning=True)` from this module. The serial,
-revision and calibration CRC must match. `qualification_record` must identify
-the validated unit acceptance artifact and its evidence. Open as of 23.10.2026:
-this binding is not yet checked end to end. HELLO does not report
-`qualification_record`, and labd compares only the serial and the calibration
-CRC, so a provisioned Pico is accepted with any other valid acceptance record
-that has the same serial and calibration CRC. Do not provision this
-record from a model run or CLI simulation. Copy records only through the trusted
-service path; no UART message can create or override them. Replacing a calibrated
+revision and calibration CRC must match. `qualification_record` is the SHA256
+(exactly 64 lowercase hex) of the validated acceptance file bytes, as
+`srrx.provision prepare` writes it; any other value leaves the Pico
+uncommissioned. HELLO reports it, and labd compares it with the SHA256 of the
+bytes it validated from `--acceptance` at start
+(`commissioning.load_acceptance_bound`). A mismatch, a missing field (older
+firmware) or `hardware_commissioned=false` refuses ARM with
+`pico_qualification_record_mismatch`. The Pico therefore pins exactly one
+acceptance file: a re-saved or different `/etc/srrx/acceptance.json` blocks ARM
+until the Pico is provisioned again. Like the UART CRC this detects a wrong
+pairing, not a forged Pico. Implemented and host-tested in software; the check
+on a flashed Pico over the real UART7 stays OPEN under the E3 gates. Do not
+provision this record from a model run or CLI simulation. Copy records only
+through the trusted service path; no UART message can create or override
+them. Replacing a calibrated
 Pico, reference, divider, or sensor requires recalibration and acceptance again.
 
 ## IMU forwarding

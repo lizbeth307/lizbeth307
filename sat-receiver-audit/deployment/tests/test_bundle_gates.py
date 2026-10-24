@@ -52,6 +52,7 @@ class ReleaseGateTests(unittest.TestCase):
             self.put(relative, "# fixture\n")
         for sheet in ("E1", "E2", "E3", "E4", "E5"):
             self.put("design/" + sheet + ".json", {"sheet": sheet})
+        self.put("design/readiness-contract.json", {"gate_results": {"E1-01": "OPEN"}})  # bound: the guest reads it
         self.put("design/E4-detector-analysis.py", "# replaced by the fake runner\n")
         for relative, text in (("deployment/deploy.py", "# bound guard\n"), ("deployment/module_lab/run.py", "# model\n"),
                                ("deployment/module_lab/inventory.json", "{}\n"), ("build/kicad/E1.kicad_sch", "(kicad_sch)\n"),
@@ -129,6 +130,7 @@ class ReleaseGateTests(unittest.TestCase):
             ("current-source software regression", edit("software-tests.json", lambda r: r.update(source_sha256={})), None),
             ("Linux and module-lab PASS", edit("module-lab/report.json", lambda r: r.update(execution_status="FAIL")), None),
             ("Linux execution result is stale", None, touch("deployment/deploy.py")),
+            ("Linux execution result is stale", None, touch("design/readiness-contract.json")),
             ("does not cover current sources", None, touch("deployment/new_guard.py")),
             ("report binding changed", None, touch("verification/linux-lab/report.json", b'{"status": "PASS"} \n')),
             ("Module inventory result is stale", edit("module-lab/report.json", lambda r: r.update(inventory_sha256="0" * 64)), None),
@@ -160,6 +162,16 @@ class ReleaseGateTests(unittest.TestCase):
         self.firmware_code = 1
         with self.assertRaisesRegex(SystemExit, "Firmware packages are stale"):
             self.gates()
+
+    def test_record_of_an_earlier_run_states_its_drift_like_completion(self):
+        def drift(root):
+            (root / "deployment/deploy.py").write_bytes(b"# changed guard\n")
+            (root / "deployment/added_guard.py").write_bytes(b"# new\n")
+            (root / "verification/linux-lab/project-manifest.json").write_text('{"record_status": "RECORD_OF_EARLIER_RUN"}', encoding="utf-8")
+        self.build(after=drift)
+        # build_documents.lab_evidence prints the same sentence after "Після прогону".
+        self.assertIn("Після нього з 4 прив’язаних виконуваних файлів змінено 1, вилучено 0; додано 1 новий файл. Його PASS",
+                      self.gates()["linux_notice"])
 
 
 class BundleDocumentTests(unittest.TestCase):

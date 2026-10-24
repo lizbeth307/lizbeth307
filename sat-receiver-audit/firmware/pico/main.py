@@ -1,10 +1,18 @@
 """Deployed MicroPython entry point. No automatic ARM and no nominal ADC unlock."""
 
+# HELLO repeats the STATUS state/readiness fields but no sensor readings, so
+# the 64-hex qualification_record fits the 512-byte frame with no float text.
+# STATUS follows within 200 ms with battery, temperatures, fan and brightness.
+HELLO_FIELDS = ("state", "fault", "mcp_reset", "calibration_valid",
+                "hardware_commissioned", "reject_reason", "hb_fresh", "q6a_on")
 
-def hello_payload(supervisor, serial, calibration_crc32=None):
-    result = supervisor.status()
+
+def hello_payload(supervisor, serial, calibration_crc32=None, qualification_record=None):
+    status = supervisor.status()
+    result = {key: status[key] for key in HELLO_FIELDS}
     result.update({"revision": "E3-v2.1", "serial": serial,
-                   "calibration_crc32": calibration_crc32})
+                   "calibration_crc32": calibration_crc32,
+                   "qualification_record": qualification_record})
     return result
 
 
@@ -81,6 +89,7 @@ def run():
         calibration_record = {}
         calibration_valid = False
         commissioned = False
+        local_qualification = None
         try:
             calibration_record = load("calibration.json")
             hardware.calibration = validate(calibration_record, serial)
@@ -89,8 +98,12 @@ def run():
             pass  # Missing, corrupt or legacy float record: ARM stays refused.
         if calibration_valid:
             try:
-                commissioned = commissioning_valid(load("commissioning.json"),
+                commission_record = load("commissioning.json")
+                commissioned = commissioning_valid(commission_record,
                                                     calibration_record, serial)
+                if commissioned:
+                    # labd pairs this digest with the sha256 of its acceptance file.
+                    local_qualification = commission_record["qualification_record"]
             except (OSError, ValueError, KeyError, TypeError):
                 commissioned = False
         local_cal_crc = hardware.calibration.record["crc32"] if calibration_valid else None
@@ -131,10 +144,12 @@ def run():
             if hardware.uart is None:
                 return False
             if tx_session != supervisor.session and kind != "HELLO":
-                transmit("HELLO", hello_payload(supervisor, serial, local_cal_crc))
+                transmit("HELLO", hello_payload(supervisor, serial, local_cal_crc,
+                                                local_qualification))
                 return False
             if kind == "HELLO":
-                payload = hello_payload(supervisor, serial, local_cal_crc)
+                payload = hello_payload(supervisor, serial, local_cal_crc,
+                                        local_qualification)
             elif kind == "STATUS":
                 payload = status_payload(supervisor, hardware.raw)
             elif kind == "EVENT" and "hmi" in payload:
@@ -219,7 +234,8 @@ def run():
                                          imu_latest is not None, bool(diagnostic_events))
                 sent = False
                 if choice == "HELLO":
-                    sent = transmit("HELLO", hello_payload(supervisor, serial, local_cal_crc))
+                    sent = transmit("HELLO", hello_payload(supervisor, serial, local_cal_crc,
+                                                           local_qualification))
                 elif choice == "STATUS":
                     sent = transmit("STATUS", status_payload(supervisor, hardware.raw))
                 elif choice == "HMI":

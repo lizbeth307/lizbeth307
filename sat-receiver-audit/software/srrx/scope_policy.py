@@ -679,6 +679,9 @@ class ScopeLatch:
     most MAX_CALLBACKS are live at once over any session length. The journal
     holds MAX_LOG_LINES undrained lines; older ones are counted, never dropped
     silently: the first drained line then says how many were lost.
+
+    Not thread-safe: a background job gets a detached_copy() and the owner
+    thread adopt()s it when the job ends.
     """
     OPERATIONS = frozenset(("mark", "record", "label", "decode", "export"))
     MAX_LATCHES, MAX_CALLBACKS, MAX_LOG_LINES = 64, 16, 64
@@ -689,13 +692,56 @@ class ScopeLatch:
         self._db, self._clock = db, clock
         self._latched, self._aborts, self._log = [], {}, deque()
         self.log_dropped = 0
+        # Counts new latches (a retune release does not count: it only widens permission).
+        self.latch_generation = 0
+        # Set only on a detached copy: its owner, the owner's generation then, and the new stops.
+        self._source, self.base_generation, self._added = None, None, []
 
     @property
     def stopped(self):
         return bool(self._latched)
 
+    def detached_copy(self):
+        """Copy for one background job thread: same database and latches, no aborts.
+
+        The ArtemisDB is never modified after load, so the copy shares it. A stop
+        the copy finds latches only there; adopt() on the owner thread then runs
+        the abort callbacks and journals it. Confine the copy to one thread.
+        """
+        if self._source is not None:
+            _refuse("DETACHED_COPY")
+        detached = ScopeLatch(self._db, clock=self._clock)
+        detached._latched = list(self._latched)
+        detached._source, detached.base_generation = self, self.latch_generation
+        return detached
+
+    def adopt(self, detached):
+        """Owner thread only: latch here every stop the detached copy found.
+
+        True when nothing was latched here since the copy was made, so a result
+        computed against the copy is still current. Every adopted stop runs the
+        abort callbacks and journals one line, as a stop found here does; a failed
+        callback still raises ABORT_CALLBACK_FAILED after all stops are latched.
+        A second adopt() of the same copy adds nothing.
+        """
+        if not isinstance(detached, ScopeLatch) or detached._source is not self:
+            _refuse("DETACHED_COPY_INVALID")
+        unchanged = self.latch_generation == detached.base_generation
+        added, detached._added = detached._added, []
+        failure = None
+        for low, high in added:
+            try:
+                self._latch(low, high)
+            except ScopeRefused as error:
+                failure = failure or error
+        if failure is not None:
+            raise failure
+        return unchanged
+
     def register_abort(self, callback):
         """Return the token that unregister_abort() takes when the recording ends."""
+        if self._source is not None:
+            _refuse("DETACHED_COPY")
         if not callable(callback):
             _refuse("ABORT_CALLBACK_INVALID")
         if len(self._aborts) >= self.MAX_CALLBACKS:
@@ -726,6 +772,10 @@ class ScopeLatch:
         self._latched.append((low, high))
         if len(self._latched) > self.MAX_LATCHES:  # fail closed: one hull covering all
             self._latched = [(min(a for a, _ in self._latched), max(b for _, b in self._latched))]
+        self.latch_generation += 1
+        if self._source is not None:
+            self._added.append((low, high))  # aborts and journal run at adopt() on the owner
+            return
         failed = False
         for callback in list(self._aborts.values()):  # aborts first: a bad clock must not skip them
             try:

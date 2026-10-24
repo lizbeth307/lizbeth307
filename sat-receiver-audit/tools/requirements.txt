@@ -8,8 +8,12 @@
 #     .venv/bin/pip install --require-hashes -r tools/requirements.txt
 #
 # Not covered here, by design:
-#   * KiCad 10 (kicad-cli, and pcbnew/numpy/scipy for pcb/*.py) and Pandoc are
-#     system packages, not PyPI wheels.
+#   * KiCad 10 (kicad-cli, and pcbnew for pcb/*.py) and Pandoc are system
+#     packages, not PyPI wheels.
+#   * pcb/generate_routed.py also imports numpy and scipy: numpy==2.3.5 and
+#     scipy==1.18.1, which the DC_CORE re-freeze step of
+#     .github/workflows/sr-rx-verify.yml installs next to the KiCad image's
+#     own pcbnew (no hashes there; scipy 1.18.1 has cp312/cp313 wheels).
 #   * Dependencies of the software under test (numpy, onnx, onnxruntime,
 #     PySide6 for tools/run_tests_offline.py and tools/check_software.py) are
 #     declared in software/pyproject.toml; the guest wheelhouse is locked in

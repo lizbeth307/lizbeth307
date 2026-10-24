@@ -1,5 +1,7 @@
 """Deployed Pico main.run() loop and HMI core with injected machine/time; no hardware PASS."""
+import hashlib
 import importlib.util
+import json
 import os
 from pathlib import Path
 import sys
@@ -24,6 +26,7 @@ def _load(name, filename):
 pico_main = _load("pico_main_loop_under_test", "main.py")
 hmi = _load("pico_hmi_errors_under_test", "hmi.py")
 supervisor = _load("pico_supervisor_main_under_test", "supervisor.py")
+calibration = _load("pico_calibration_main_under_test", "calibration.py")
 
 
 class _Stop(BaseException):
@@ -36,7 +39,8 @@ class _Hang(BaseException):
 
 class Board:
     """Q6A powered, no calibration records, empty HMI bus, ADC at 25 C NTC."""
-    def __init__(self, loops=14):
+    def __init__(self, loops=14, records=None):
+        self.records = records or {}  # File name -> JSON object in run()'s working folder.
         self.levels = {14: 1, 11: 1, 22: 1, 10: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1}
         self.log, self.writes, self.uarts, self.display = [], [], {}, []
         self.now, self.loops, self.injected, self.model = 0, loops, False, None
@@ -166,6 +170,8 @@ class Board:
         cwd = os.getcwd()
         with tempfile.TemporaryDirectory() as folder, mock.patch.dict(sys.modules, modules):
             os.chdir(folder)  # No calibration.json/commissioning.json: ARM stays refused.
+            for name, record in self.records.items():
+                Path(folder, name).write_text(json.dumps(record), encoding="utf-8")
             try:
                 pico_main.run()
             finally:
@@ -207,6 +213,40 @@ class MainLoopTests(unittest.TestCase):
         self.assertEqual(self.board.model.fault, "HOST_TRIP")
         self.assertEqual(display[-1], ("FAIL_SAFE", 0))  # fail_safe() after the loop budget.
         self.assertNotIn((17, 0), self.board.writes)  # MCP reset never released without ARM.
+
+    def test_hello_without_records_reports_no_qualification_record(self):
+        hello = self.board.frames()[0]
+        self.assertEqual(hello["t"], "HELLO")
+        self.assertIsNone(hello["p"]["qualification_record"])
+        self.assertIs(hello["p"]["hardware_commissioned"], False)
+
+    def test_hello_carries_the_sealed_qualification_record_only(self):
+        serial = bytes(range(8)).hex()  # Board.machine.unique_id
+        cal = calibration.seal({"v": 1, "revision": calibration.REVISION, "serial": serial,
+                                "scale_nv_per_count": 280000, "offset_uv": 0, "panel_offset_mc": 0,
+                                "case_offset_mc": 0, "reference_id": "DMM-FIXTURE-42"})
+        digest = hashlib.sha256(b"synthetic acceptance bytes, not a hardware record").hexdigest()
+        record = calibration.seal({"v": 1, "revision": calibration.REVISION, "serial": serial,
+                                   "calibration_crc32": cal["crc32"], "hardware_commissioned": True,
+                                   "qualification_record": digest}, commissioning=True)
+        edited = dict(record, qualification_record=digest[:-1] + ("0" if digest[-1] != "0" else "1"))
+        for records, expected, commissioned in (
+                ({"calibration.json": cal, "commissioning.json": record}, digest, True),
+                ({"calibration.json": cal, "commissioning.json": edited}, None, False),  # Not resealed.
+                ({"commissioning.json": record}, None, False)):  # No calibration, no commissioning.
+            with self.subTest(records=sorted(records), expected=expected):
+                board = Board(records=records)
+                with self.assertRaises(_Stop):
+                    board.run()
+                hello = board.frames()[0]
+                self.assertEqual(hello["t"], "HELLO")
+                self.assertEqual(hello["p"]["qualification_record"], expected)
+                self.assertIs(hello["p"]["hardware_commissioned"], commissioned)
+                self.assertEqual(hello["p"]["calibration_crc32"],
+                                 cal["crc32"] if "calibration.json" in records else None)
+                self.assertNotIn("battery_mv", hello["p"])  # Readings travel in STATUS.
+                status = [frame for frame in board.frames() if frame["t"] == "STATUS"]
+                self.assertTrue(status and "battery_mv" in status[0]["p"])
 
     def test_early_firmware_exception_fails_instead_of_hanging(self):
         board = Board()

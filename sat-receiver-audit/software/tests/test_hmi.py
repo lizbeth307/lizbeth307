@@ -2,12 +2,14 @@ import contextlib
 import copy
 import hashlib
 import importlib.util
+import io
 import json
 import os
 from pathlib import Path
 import subprocess
 import sys
 import tempfile
+import threading
 import time
 import unittest
 from unittest.mock import patch
@@ -16,7 +18,8 @@ import uuid
 from srrx.hmi import (ConsoleController, DemoTransport, EN_OUTPUTS, ReceiverSimulation,
                       create_window, load_json, load_spectrum, spectrum_columns, location_callbacks, HMINavigation,
                       channel_rows, location_summary, learning_summary, pointing_summary, pass_plan_summary,
-                      load_pass_plan, gnss_reset_summary)
+                      load_pass_plan, gnss_reset_summary, LearningJob, LearningRunner, learning_diagnostics,
+                      run_learning_job, console_file_bytes, LEARNING_BUSY)
 
 ROOT = Path(__file__).resolve().parents[2]
 LINUX = sys.platform.startswith("linux")
@@ -124,6 +127,25 @@ class SimpleProcess:
         self.terminated = True
 
 
+class GatedJob:
+    """Stand-in learning call: blocks until released (at most 20 s), polling its checkpoint."""
+    def __init__(self, result=None, checkpoints=True):
+        self.release, self.started = threading.Event(), threading.Event()
+        self.result, self.checkpoints, self.calls, self.thread = result, checkpoints, [], None
+
+    def __call__(self, *args, checkpoint=None, **kwargs):
+        self.calls.append(kwargs)
+        self.thread = threading.get_ident()
+        deadline = time.monotonic() + 20
+        if self.checkpoints:
+            checkpoint("fake", 0, 0)
+        self.started.set()
+        while not self.release.wait(.005) and time.monotonic() < deadline:
+            if self.checkpoints:
+                checkpoint("fake", 0, 0)
+        return self.result() if callable(self.result) else self.result
+
+
 def trained_model():
     from srrx import learning
     dataset = learning.empty_dataset()
@@ -138,6 +160,17 @@ def qt_app():
     os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
     from PySide6.QtWidgets import QApplication
     return QApplication.instance() or QApplication([])
+
+
+def finish_learning(app, window, seconds=10):
+    """Let the background learning job end and commit through the UI-thread poll."""
+    deadline = time.monotonic() + seconds
+    while window.learning_runner.busy:
+        if time.monotonic() > deadline:
+            raise AssertionError("Learning job did not finish in %g s" % seconds)
+        window._poll_learning()
+        app.processEvents()
+        time.sleep(.01)
 
 
 def panel(sequence=1, presses=None, encoders=None, **changes):
@@ -767,6 +800,121 @@ class MetadataTests(unittest.TestCase):
             job.close()
 
 
+class LearningRunnerTests(unittest.TestCase):
+    """The Qt-free background learning runner: one job in flight, cancel, close, outcomes."""
+    def job(self, operation="train"):
+        return LearningJob(operation, {"dataset": None, "scope": None}, base=(None, None))
+
+    def test_one_job_in_flight_is_never_queued_and_is_returned_once(self):
+        gate, runner = GatedJob(result="model", checkpoints=False), LearningRunner()
+        with patch("srrx.learning.train", side_effect=gate), patch("srrx.hmi.learning_summary", return_value="ok"), \
+                patch("srrx.hmi.learning_diagnostics", return_value=""):
+            try:
+                first = self.job()
+                self.assertTrue(runner.submit(first))
+                self.assertTrue(gate.started.wait(5))
+                self.assertNotEqual(gate.thread, threading.get_ident())
+                self.assertFalse(runner.submit(self.job()))
+                runner.cancel()  # no checkpoint follows: the job is still finishing
+                self.assertFalse(runner.submit(self.job()))
+                self.assertIsNone(runner.poll())
+            finally:
+                gate.release.set()
+            runner.thread.join(5)
+            self.assertTrue(runner.busy)  # until the UI thread has polled the result
+            self.assertFalse(runner.submit(self.job()))
+            self.assertIs(runner.poll(), first)
+            self.assertIsNone(runner.poll())
+            self.assertEqual((first.outcome, first.value["result"], first.cancel.is_set()), ("ok", "model", True))
+            self.assertEqual(len(gate.calls), 1)
+            self.assertTrue(runner.submit(self.job()))
+            runner.thread.join(5)
+
+    def test_cancel_takes_effect_at_the_next_checkpoint_and_leaves_inputs_unchanged(self):
+        from srrx import learning
+        dataset = learning.annotate(learning.empty_dataset(), learning._demo_frame(1, 0), 0, 256, "analog_broadcast",
+                                    group_id=uuid.UUID(int=1), user_confirmed=True)
+        before = copy.deepcopy(dataset)
+        job = LearningJob("annotate", {"dataset": dataset, "frame": learning._demo_frame(2, 1), "start": 0, "end": 256,
+                                       "label": "digital_broadcast", "group_id": str(uuid.UUID(int=2)), "scope": None})
+        job.cancel.set()
+        runner = LearningRunner(start_thread=lambda target: target())  # synchronous
+        self.assertTrue(runner.submit(job))
+        self.assertIs(runner.poll(), job)
+        self.assertEqual((job.outcome, job.value), ("cancelled", None))
+        self.assertEqual(dataset, before)
+        gate, runner = GatedJob(result="model"), LearningRunner()
+        with patch("srrx.learning.train", side_effect=gate):
+            try:
+                job = self.job()
+                runner.submit(job)
+                self.assertTrue(gate.started.wait(5))
+                self.assertEqual(job.progress(), ("fake", 0, 0))
+                runner.cancel()
+                runner.thread.join(5)  # ends at its next checkpoint, not at release
+                self.assertFalse(runner.thread.is_alive())
+            finally:
+                gate.release.set()
+        self.assertEqual(runner.poll().outcome, "cancelled")
+
+    def test_progress_reports_the_latest_checkpoint(self):
+        job = self.job()
+        self.assertEqual(job.progress(), ("starting", 0, 0))
+        job.checkpoint("dataset frames", 3, 10)
+        job.checkpoint("features", 4, 9)
+        self.assertEqual(job.progress(), ("features", 4, 9))
+        job.cancel.set()
+        from srrx.learning import LearningCancelled
+        with self.assertRaises(LearningCancelled):
+            job.checkpoint("holdout", 0, 1)
+        self.assertEqual(job.progress(), ("features", 4, 9))
+
+    def test_close_returns_at_once_and_the_thread_ends_when_released(self):
+        gate, runner = GatedJob(checkpoints=False), LearningRunner()
+        with patch("srrx.learning.train", side_effect=gate):
+            try:
+                runner.submit(self.job())
+                self.assertTrue(gate.started.wait(5))
+                started = time.monotonic()
+                runner.close()
+                self.assertLess(time.monotonic() - started, .1)
+                self.assertTrue(runner.thread.is_alive())
+                self.assertFalse(runner.submit(self.job()))
+            finally:
+                gate.release.set()
+            runner.thread.join(2)
+            self.assertFalse(runner.thread.is_alive())
+
+    def test_unexpected_exceptions_come_back_as_error_outcomes(self):
+        runner = LearningRunner(start_thread=lambda target: target())
+        for error in (ZeroDivisionError("boom"), MemoryError(), ValueError("Rejected value")):
+            with self.subTest(error=type(error).__name__), patch("srrx.learning.train", side_effect=error):
+                job = self.job()
+                runner.submit(job)
+                self.assertIs(runner.poll(), job)
+                self.assertEqual(job.outcome, "error")
+                self.assertIs(job.error, error)
+        with self.assertRaisesRegex(ValueError, "Unknown learning operation"):
+            LearningJob("delete_dataset", {})
+        with self.assertRaisesRegex(ValueError, "Unknown learning operation"):
+            run_learning_job("transmit", {}, None)
+
+    def test_learning_diagnostics_summarise_a_dataset_within_the_pane_limit(self):
+        from srrx import learning
+        dataset = learning.empty_dataset()
+        for index in range(25):
+            dataset = learning.annotate(dataset, learning._demo_frame(index, index % 3), 0, 256, "analog_broadcast",
+                                        group_id=uuid.UUID(int=index + 1), user_confirmed=True)
+        text = learning_diagnostics(dataset)
+        self.assertLessEqual(len(text), 16000)
+        value = json.loads(text)
+        self.assertEqual((value["frames"], value["annotations"], value["sha256"]), (25, 25, dataset["sha256"]))
+        self.assertEqual(value["last_annotations"], dataset["annotations"][-20:])
+        self.assertNotIn("power_dbfs", text)
+        model = trained_model()
+        self.assertEqual(learning_diagnostics(model), json.dumps(model, indent=2, ensure_ascii=False)[:16000])
+
+
 @unittest.skipUnless(importlib.util.find_spec("PySide6"), "optional PySide6 is not installed")
 class QtTests(unittest.TestCase):
     def test_panel_lock_rec_and_navigation_issue_no_power_request(self):
@@ -829,6 +977,7 @@ class QtTests(unittest.TestCase):
             self.assertEqual(window.channel_table.rowCount(), 14)
             window.teach_confirm.setChecked(True)
             window.learning_action("annotate")
+            finish_learning(app, window)
             self.assertEqual(window.dataset["annotations"][0]["label"], "unknown_energy")
             self.assertTrue(window.learning_text.toPlainText().startswith("Dataset ready"))
             self.assertTrue(window.learning_diagnostics.isHidden())
@@ -1101,8 +1250,11 @@ class QtTests(unittest.TestCase):
                     stack.enter_context(patch.object(learning, name, side_effect=spy))
                 for operation in ("annotate", "infer", "train"):
                     window.learning_action(operation)
-            self.assertEqual([(name, scope is latch) for name, scope in seen],
-                             [("annotate", True), ("infer", True), ("train", True)])
+                    finish_learning(app, window)
+            # Each background job gets its own detached copy; the UI thread keeps the latch.
+            self.assertEqual([(name, isinstance(scope, scope_policy.ScopeLatch) and scope is not latch)
+                              for name, scope in seen], [("annotate", True), ("infer", True), ("train", True)])
+            self.assertEqual({scope.base_generation for _, scope in seen}, {latch.latch_generation})
             self.assertEqual(len(window.dataset["annotations"]), 1)
             # A stop latched elsewhere in the session (e.g. on the tuned span) refuses the label.
             latch.stop(99.99e6, 100.01e6)
@@ -1274,6 +1426,7 @@ class QtTests(unittest.TestCase):
             self.assertEqual((window.bin_start.value(), window.bin_end.value()), (10, 600))
             self.assertTrue(window.teach_confirm.isChecked())
             window.learning_action("annotate")
+            finish_learning(app, window)
             record = window.dataset["annotations"][0]
             self.assertEqual((record["start_bin"], record["end_bin"]), (10, 600))
             self.assertEqual(window.dataset["frames"][record["frame_sha256"]]["power_dbfs"][10], -70.0)
@@ -1352,6 +1505,8 @@ class QtTests(unittest.TestCase):
                 while time.monotonic() < deadline and not predicate():
                     app.processEvents(); time.sleep(.02)
             wait(lambda: controller.status()["connected"])
+            mark = window.worker.ui_at  # one natural GUI heartbeat before ARM (slow hosts)
+            wait(lambda: window.worker.ui_at != mark)
             window.worker.submit("arm")  # Explicit operator ARM through the running worker.
             wait(lambda: controller.holding)
             backend.data["policy"]["armed"] = True
@@ -1371,6 +1526,348 @@ class QtTests(unittest.TestCase):
                 app.processEvents(); time.sleep(.02)
             window.worker.stopping.set()
             window.worker.wait(1500)
+            window.close(); app.processEvents()
+
+    def test_long_learning_job_keeps_ui_heartbeat_and_hold(self):
+        # The real worker, heartbeat and monotonic lease clock; only the learning call is a
+        # 3 s pure-Python CPU loop.
+        app = qt_app()
+        from srrx import learning
+        class ArmingBackend(Backend):
+            # As labd with a responsive Pico: ACTIVE right after ARM, so the 2.5 s real-time ARM
+            # handshake does not also wait for the test thread (too slow under emulation).
+            def __call__(self, request):
+                result = super().__call__(request)
+                if request["op"] == "arm":
+                    self.data["policy"]["armed"] = True
+                    self.data["pico"]["state"] = "ACTIVE"
+                return result
+        backend = ArmingBackend()
+        controller = ConsoleController(backend)
+        # Before the window: its worker and 250 ms heartbeat timer start in create_window, and
+        # trained_model() is seconds of CPU under emulation with no event loop.
+        model = trained_model()
+        window = create_window(controller)
+        def busy_train(dataset, *, checkpoint=None, **kwargs):
+            end, count, value = time.monotonic() + 3.0, 0, 1
+            while time.monotonic() < end:
+                count += 1
+                value = (value * 31 + count) % 1000003
+                if count % 1000 == 0:
+                    checkpoint("busy", 0, 0)
+            return model
+        try:
+            def wait(predicate, seconds=10):
+                deadline = time.monotonic() + seconds
+                while time.monotonic() < deadline and not predicate():
+                    app.processEvents(); time.sleep(.02)
+                return predicate()
+            def why():
+                return "%s / %s / last UI heartbeat %.3f s ago" % (
+                    controller.notice, controller.error, time.monotonic() - window.worker.ui_at)
+            def heartbeat(seconds):
+                """Largest gap between GUI heartbeats over the period, and whether HOLD stayed on."""
+                marks, held = [window.worker.ui_at], True
+                end = time.monotonic() + seconds
+                while time.monotonic() < end:
+                    app.processEvents(); time.sleep(.02)
+                    if window.worker.ui_at != marks[-1]:
+                        marks.append(window.worker.ui_at)
+                    held = held and controller.holding
+                marks.append(time.monotonic())
+                return max(b - a for a, b in zip(marks, marks[1:])), held
+            self.assertTrue(wait(lambda: controller.status()["connected"]), why())
+            # One natural GUI heartbeat before ARM: wait() returns at once when the worker has
+            # already polled, and the tick fires only after processEvents delivered the queued
+            # worker states. So the 1.5 s stop measures the GUI loop, not test set-up time.
+            mark = window.worker.ui_at
+            self.assertTrue(wait(lambda: window.worker.ui_at != mark), "no GUI heartbeat before ARM")
+            window.worker.submit("arm")  # Explicit operator ARM through the running worker.
+            self.assertTrue(wait(lambda: controller.holding and controller.arm_started is None), why())
+            natural, held = heartbeat(1.0)
+            self.assertTrue(held, why())
+            leases = sum(request["op"] == "lease" for request in backend.requests)
+            with patch.object(learning, "train", side_effect=busy_train):
+                window.learning_action("train")
+                self.assertTrue(window.learning_runner.busy)
+                during, held = heartbeat(3.5)
+                finish_learning(app, window)
+            self.assertTrue(held, why() + "; gap %.3f s, natural %.3f s" % (during, natural))
+            self.assertNotIn({"op": "disarm"}, backend.requests)
+            self.assertGreaterEqual(sum(request["op"] == "lease" for request in backend.requests) - leases, 2)
+            # Margin against the 1.5 s limit: under 1 s natively; a slow (emulated) host may add at most 0.5 s.
+            self.assertLess(during, max(1.0, natural + .5), "heartbeat gap %.3f s, natural %.3f s" % (during, natural))
+            self.assertIs(window.model, model)
+            self.assertTrue(window.learning_text.toPlainText().startswith("Model ready"))
+        finally:
+            window.close()
+            deadline = time.monotonic() + 3
+            while time.monotonic() < deadline and window.worker.isRunning():
+                app.processEvents(); time.sleep(.02)
+            window.worker.stopping.set()
+            window.worker.wait(1500)
+            window.close(); app.processEvents()
+
+    def test_learning_job_busy_state_refuses_a_second_job_and_cancels_cleanly(self):
+        app = qt_app()
+        from srrx import learning
+        controller = ConsoleController(Backend(), Clock())
+        controller.poll()
+        window = create_window(controller, start_worker=False)
+        gate = GatedJob(result=trained_model)
+        try:
+            self.assertEqual(len(window.learning_buttons), 7)
+            self.assertFalse(window.learning_cancel.isEnabled())
+            self.assertTrue(window.learning_progress.isHidden())
+            with patch.object(learning, "train", side_effect=gate):
+                window.learning_action("train")
+                self.assertTrue(gate.started.wait(5))
+                dataset = window.dataset
+                self.assertEqual(window.learning_text.toPlainText(), "Training CPU model… — HOLD and DISARM stay available")
+                self.assertFalse(any(button.isEnabled() for button in window.learning_buttons))
+                self.assertTrue(window.learning_cancel.isEnabled())
+                self.assertFalse(window.learning_progress.isHidden())
+                window._poll_learning()
+                self.assertRegex(window.learning_progress_note.text(), r"\Afake · \d+ s\Z")
+                for second in (lambda: window.learning_action("infer"), lambda: window.learning_file("dataset", False)):
+                    second()
+                    self.assertEqual(window.learning_text.toPlainText(), LEARNING_BUSY)
+                self.assertEqual(len(gate.calls), 1)
+                window.learning_cancel.click()
+                self.assertEqual(window.learning_text.toPlainText(), "Cancelling — the current step finishes first")
+                finish_learning(app, window)
+            self.assertEqual(window.learning_text.toPlainText(), "Cancelled — dataset and model unchanged")
+            self.assertIs(window.dataset, dataset)
+            self.assertIsNone(window.model)
+            self.assertTrue(all(button.isEnabled() for button in window.learning_buttons))
+            self.assertFalse(window.learning_cancel.isEnabled())
+            self.assertTrue(window.learning_progress.isHidden())
+        finally:
+            gate.release.set()
+            window.close(); app.processEvents()
+
+    def test_scope_stop_while_a_job_runs_discards_its_result(self):
+        app = qt_app()
+        from srrx import learning, scope_policy
+        controller = ConsoleController(Backend(), Clock())
+        controller.poll()
+        latch = scope_policy.ScopeLatch()
+        window = create_window(controller, start_worker=False, scope_latch=latch)
+        gate, real = GatedJob(checkpoints=False), learning.annotate
+        def slow_annotate(*args, **kwargs):
+            gate(*args, **kwargs)
+            return real(*args, **kwargs)
+        try:
+            self.assertTrue(window.accept_frame(frame()))
+            before = window.dataset = learning.empty_dataset()
+            window.teach_confirm.setChecked(True)
+            with patch.object(learning, "annotate", side_effect=slow_annotate):
+                window.learning_action("annotate")
+                self.assertTrue(gate.started.wait(5))
+                latch.stop(170e6, 171e6)  # an operator stop elsewhere in the session, mid-job
+                gate.release.set()
+                finish_learning(app, window)
+            text = window.learning_text.toPlainText()
+            self.assertEqual(text, "Rejected: scope stop added while the job ran — run it again")
+            self.assertNotRegex(text, r"\d")
+            self.assertIs(window.dataset, before)
+            # A classification of a frame that was replaced meanwhile is not shown for the new one.
+            window.model, gate, real = trained_model(), GatedJob(checkpoints=False), learning.infer
+            def slow_infer(*args, **kwargs):
+                gate(*args, **kwargs)
+                return real(*args, **kwargs)
+            with patch.object(learning, "infer", side_effect=slow_infer):
+                window.learning_action("infer")
+                self.assertTrue(gate.started.wait(5))
+                streamed = frame()
+                streamed["power_dbfs"] = [-60.0] * 16
+                self.assertTrue(window.accept_frame(streamed))
+                gate.release.set()
+                finish_learning(app, window)
+            self.assertEqual(window.learning_text.toPlainText(), "Rejected: spectrum changed while classifying — run it again")
+        finally:
+            gate.release.set()
+            window.close(); app.processEvents()
+
+    def test_stop_found_by_background_training_latches_and_aborts_on_the_ui_thread(self):
+        app = qt_app()
+        from srrx import learning, scope_policy
+        controller = ConsoleController(Backend(), Clock())
+        controller.poll()
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "artemis.json"
+            data = json.dumps({"v": 1, "kind": "srrx_artemis_mirror", "source": "artemis-db", "db_version": "v74",
+                               "entries": [{"name": "Fixture", "categories": ["Military"],
+                                            "ranges_hz": [[150.001e6, 150.002e6]]}]}).encode()
+            path.write_bytes(data)
+            latch = scope_policy.ScopeLatch(scope_policy.ArtemisDB.load(path, hashlib.sha256(data).hexdigest()))
+        # Labelled in an earlier session without the database: only training meets the stop.
+        dataset = learning.annotate(learning.empty_dataset(), frame(center=150000000), 0, 16, "analog_broadcast",
+                                    group_id=uuid.uuid4(), user_confirmed=True)
+        window = create_window(controller, start_worker=False, scope_latch=latch)
+        class Process(SimpleProcess):
+            thread = None
+            def terminate(self):
+                self.thread = threading.get_ident()
+                super().terminate()
+        try:
+            window.dataset, process = dataset, Process()
+            window.receiver_job.process = process  # a SIM capture is running
+            window.learning_action("train")
+            deadline = time.monotonic() + 10
+            while not window.learning_runner.current.finished.is_set() and time.monotonic() < deadline:
+                time.sleep(.01)
+            self.assertEqual(window.learning_runner.current.outcome, "error")
+            self.assertEqual((latch.stopped, process.terminated), (False, False))  # not until the UI thread adopts
+            # On a slow host a heartbeat tick inside finish_learning may already drain the stop
+            # journal; the explicit tick drains the rest. Exactly one line either way.
+            with contextlib.redirect_stderr(io.StringIO()) as journal:
+                finish_learning(app, window)
+                window._heartbeat()
+            self.assertEqual(window.learning_text.toPlainText(), "Rejected: Training annotation span is out of scope")
+            self.assertTrue(latch.stopped)
+            self.assertTrue(process.terminated)
+            self.assertEqual(process.thread, threading.get_ident())
+            self.assertIsNone(window.model)
+            self.assertIs(window.dataset, dataset)
+            self.assertRegex(journal.getvalue(), r"\A\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ out of scope\n\Z")
+        finally:
+            window.close(); app.processEvents()
+
+    def test_close_during_a_learning_job_disarms_without_waiting(self):
+        app = qt_app()
+        from srrx import learning
+        backend = Backend()
+        controller = ConsoleController(backend, Clock())
+        controller.poll()
+        window = create_window(controller, start_worker=False)
+        gate = GatedJob(checkpoints=False)
+        try:
+            with patch.object(learning, "train", side_effect=gate):
+                window.learning_action("train")
+                self.assertTrue(gate.started.wait(5))
+                thread = window.learning_runner.thread
+                # Time only the close (closeEvent runs inside it), not the backlog of
+                # construction events the first processEvents delivers on a slow host.
+                started = time.monotonic()
+                window.close()
+                self.assertLess(time.monotonic() - started, .5)
+                app.processEvents()
+                self.assertEqual(backend.requests[-1], {"op": "disarm"})
+                self.assertTrue(thread.is_alive())  # the close never waited for the job
+                gate.release.set()
+                thread.join(2)
+                self.assertFalse(thread.is_alive())
+        finally:
+            gate.release.set()
+            window.close(); app.processEvents()
+
+    def test_learning_job_over_the_time_limit_is_cancelled(self):
+        app = qt_app()
+        from srrx import learning
+        controller = ConsoleController(Backend(), Clock())
+        controller.poll()
+        window = create_window(controller, start_worker=False)
+        gate = GatedJob(result=trained_model)
+        try:
+            with patch("srrx.hmi.LEARNING_JOB_MAX_S", .2), patch.object(learning, "train", side_effect=gate):
+                window.learning_action("train")
+                finish_learning(app, window)
+            self.assertEqual(window.learning_text.toPlainText(), "Learning job exceeded 0.2 s — cancelled")
+            self.assertIsNone(window.model)
+        finally:
+            gate.release.set()
+            window.close(); app.processEvents()
+
+    def test_dataset_and_model_files_go_through_the_runner_off_the_control_thread(self):
+        app = qt_app()
+        from PySide6.QtWidgets import QFileDialog
+        threads = []
+        class Spy(Backend):
+            def __call__(self, request):
+                threads.append(threading.get_ident())
+                return super().__call__(request)
+        controller = ConsoleController(Spy(), Clock())
+        controller.poll()
+        window = create_window(controller, start_worker=False)
+        def file(kind, save, path):
+            name = "getSaveFileName" if save else "getOpenFileName"
+            with patch.object(QFileDialog, name, return_value=(str(path), "")):
+                window.learning_file(kind, save)
+                finish_learning(app, window)
+            return window.learning_text.toPlainText()
+        try:
+            with tempfile.TemporaryDirectory() as directory:
+                directory = Path(directory)
+                window.model = model = trained_model()
+                self.assertTrue(window.accept_frame(frame(size=1024)))
+                window.teach_confirm.setChecked(True)
+                window.learning_action("annotate")
+                finish_learning(app, window)
+                window.learning_action("infer")
+                finish_learning(app, window)
+                self.assertTrue(window.learning_text.toPlainText().startswith(("UNKNOWN", "Analog", "Digital")))
+                saved = window.dataset
+                self.assertEqual(file("dataset", True, directory / "dataset.json"), "Dataset saved")
+                self.assertEqual(console_file_bytes(saved), (directory / "dataset.json").stat().st_size)
+                self.assertEqual(file("model", True, directory / "model.json"), "Model saved")
+                window.dataset = window.model = None
+                self.assertTrue(file("dataset", False, directory / "dataset.json").startswith("Dataset ready"))
+                self.assertEqual(window.dataset, saved)
+                self.assertNotIn("power_dbfs", window.learning_diagnostics.toPlainText())
+                self.assertTrue(file("model", False, directory / "model.json").startswith("Model ready"))
+                self.assertEqual(window.model, model)
+                # Over the console limit a save is still refused, and nothing is written.
+                with patch("srrx.hmi.MAX_FILE_BYTES", console_file_bytes(saved) - 1):
+                    self.assertEqual(file("dataset", True, directory / "big.json"),
+                                     "Rejected: Metadata exceeds console size limit")
+                self.assertFalse((directory / "big.json").exists())
+                (directory / "bad.json").write_text('{"v": 1, "v": 2}')
+                current = window.dataset
+                self.assertEqual(file("dataset", False, directory / "bad.json"), "Rejected: Duplicate JSON key")
+                self.assertIs(window.dataset, current)
+        finally:
+            window.close(); app.processEvents()
+        self.assertEqual(set(threads), {threading.get_ident()})  # labd is only ever called from this thread
+
+    def test_in_session_dataset_is_capped_at_the_console_file_limit(self):
+        app = qt_app()
+        from srrx import learning
+        from PySide6.QtWidgets import QFileDialog
+        controller = ConsoleController(Backend(), Clock())
+        controller.poll()
+        window = create_window(controller, start_worker=False)
+        shaped = frame(size=1024)
+        shaped["power_dbfs"] = [-90.0 + (index * 7919 % 101) / 5 for index in range(1024)]  # distinct boxes
+        try:
+            self.assertTrue(window.accept_frame(shaped))
+            window.teach_confirm.setChecked(True)
+            window.learning_action("annotate")
+            finish_learning(app, window)
+            limit = console_file_bytes(window.dataset) + 64  # room for one frame, not one more box
+            window.dataset = learning.empty_dataset()
+            with patch("srrx.hmi.MAX_FILE_BYTES", limit):
+                window.teach_confirm.setChecked(True)
+                window.learning_action("annotate")
+                finish_learning(app, window)
+                accepted = window.dataset
+                self.assertEqual(len(accepted["annotations"]), 1)
+                window.bin_start.setValue(300); window.bin_end.setValue(556)
+                window.teach_confirm.setChecked(True)
+                window.learning_action("annotate")
+                finish_learning(app, window)
+                self.assertEqual(window.learning_text.toPlainText(), "Rejected: Dataset would exceed the 2 MiB console "
+                                 "limit — save it; larger datasets need the learning CLI")
+                self.assertIs(window.dataset, accepted)
+                with tempfile.TemporaryDirectory() as directory:
+                    path = Path(directory) / "dataset.json"
+                    with patch.object(QFileDialog, "getSaveFileName", return_value=(str(path), "")):
+                        window.learning_file("dataset", True)
+                        finish_learning(app, window)
+                    self.assertEqual(window.learning_text.toPlainText(), "Dataset saved")
+                    self.assertLessEqual(path.stat().st_size, limit)
+                    self.assertEqual(learning.validate_dataset(load_json(path)), accepted)  # the console reads it back
+        finally:
             window.close(); app.processEvents()
 
     @unittest.skipUnless(LINUX, "stdio daemon pipes need Linux selectors")

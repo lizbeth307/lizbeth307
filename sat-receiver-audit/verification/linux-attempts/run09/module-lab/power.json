@@ -1,0 +1,1346 @@
+{
+  "schema_version": 1,
+  "status": "EMULATION_PASS",
+  "scope": "independent register models with actual production LinuxHardware, I2CTransport read/write and telemetry methods",
+  "hardware_qualified": false,
+  "physical_tests_performed": false,
+  "acceptance_records_created": false,
+  "production_release_guards_changed": false,
+  "fixture_permissions": "private mapping hardware_accepted/reset_confirmed assertions; never persisted",
+  "summary": {
+    "cases": 48,
+    "passed": 48,
+    "failed": 0,
+    "modules": 6
+  },
+  "modules": [
+    {
+      "module_id": "E1/U102",
+      "case_ids": [
+        "monitor_connect_id_config_conversion_decode",
+        "signed_charge_and_six_branch_channels",
+        "ina228_memory_checksum",
+        "ina228_math_overflow",
+        "ina228_alert_config",
+        "ina228_current_shunt_disagreement",
+        "corrupt_monitor_id_0x40",
+        "unplug_nack_monitor_0x40",
+        "short_read_monitor_0x40",
+        "stale_conversion_monitor_0x40",
+        "unexpected_reset_monitor_0x40",
+        "reserved_bits_monitor_0x40"
+      ]
+    },
+    {
+      "module_id": "E2/U215",
+      "case_ids": [
+        "monitor_connect_id_config_conversion_decode",
+        "signed_charge_and_six_branch_channels",
+        "corrupt_monitor_id_0x41",
+        "unplug_nack_monitor_0x41",
+        "short_read_monitor_0x41",
+        "stale_conversion_monitor_0x41",
+        "unexpected_reset_monitor_0x41",
+        "reserved_bits_monitor_0x41",
+        "overcurrent_decode_cannot_bypass_calibration"
+      ]
+    },
+    {
+      "module_id": "E2/U216",
+      "case_ids": [
+        "monitor_connect_id_config_conversion_decode",
+        "signed_charge_and_six_branch_channels",
+        "corrupt_monitor_id_0x43",
+        "unplug_nack_monitor_0x43",
+        "short_read_monitor_0x43",
+        "stale_conversion_monitor_0x43",
+        "unexpected_reset_monitor_0x43",
+        "reserved_bits_monitor_0x43"
+      ]
+    },
+    {
+      "module_id": "E3/U301",
+      "case_ids": [
+        "physical_acceptance_guard_not_bypassed",
+        "mcp_connect_reset_safe_write_order",
+        "all_mapped_outputs_register_pin_roundtrip",
+        "all_mapped_inputs_register_roundtrip",
+        "bank_mismatch_0x20",
+        "unplug_nack_requires_external_reset_0x20",
+        "short_mcp_read_0x20",
+        "short_mcp_write_0x20",
+        "mcp_configuration_readback_0x20",
+        "connected_engine_uart_trip_clears_mcp_latches",
+        "connected_lost_uart_independent_heartbeat_reset"
+      ]
+    },
+    {
+      "module_id": "E3/U302",
+      "case_ids": [
+        "physical_acceptance_guard_not_bypassed",
+        "mcp_connect_reset_safe_write_order",
+        "all_mapped_outputs_register_pin_roundtrip",
+        "all_mapped_inputs_register_roundtrip",
+        "mcp_short_fault_and_stale_intcap",
+        "bank_mismatch_0x22",
+        "unplug_nack_requires_external_reset_0x22",
+        "short_mcp_read_0x22",
+        "short_mcp_write_0x22",
+        "mcp_configuration_readback_0x22",
+        "connected_engine_uart_trip_clears_mcp_latches",
+        "connected_lost_uart_independent_heartbeat_reset"
+      ]
+    },
+    {
+      "module_id": "E3/U303",
+      "case_ids": [
+        "physical_acceptance_guard_not_bypassed",
+        "mcp_connect_reset_safe_write_order",
+        "all_mapped_outputs_register_pin_roundtrip",
+        "all_mapped_inputs_register_roundtrip",
+        "mcp_short_fault_and_stale_intcap",
+        "bank_mismatch_0x23",
+        "unplug_nack_requires_external_reset_0x23",
+        "short_mcp_read_0x23",
+        "short_mcp_write_0x23",
+        "mcp_configuration_readback_0x23",
+        "connected_engine_uart_trip_clears_mcp_latches",
+        "connected_lost_uart_independent_heartbeat_reset"
+      ]
+    }
+  ],
+  "cases": [
+    {
+      "id": "physical_acceptance_guard_not_bypassed",
+      "module_ids": [
+        "E3/U301",
+        "E3/U302",
+        "E3/U303"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "production_guard_intact": true,
+        "transport_open_count": 0,
+        "acceptance_record_created": false
+      }
+    },
+    {
+      "id": "mcp_connect_reset_safe_write_order",
+      "module_ids": [
+        "E3/U301",
+        "E3/U302",
+        "E3/U303"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "driver": "srrx.hardware.LinuxHardware",
+        "register_write_order": [
+          4,
+          10,
+          2,
+          6,
+          8,
+          20,
+          0,
+          12,
+          4
+        ],
+        "open_drain_on_all_chips_before_interrupt_enable": true,
+        "interrupt_sources": "FAULT_/FLT_ inputs only, compared against DEFVAL=1",
+        "safe_olat_hex": {
+          "0x20": "0000",
+          "0x22": "0000",
+          "0x23": "0010"
+        },
+        "all_six_gpio7": [
+          {
+            "module_id": "E3/U301",
+            "port": "A",
+            "bit": 7,
+            "direction": "output",
+            "net": "EN_LNA3"
+          },
+          {
+            "module_id": "E3/U301",
+            "port": "B",
+            "bit": 7,
+            "direction": "output",
+            "net": "SW_RTLB_B"
+          },
+          {
+            "module_id": "E3/U302",
+            "port": "A",
+            "bit": 7,
+            "direction": "output",
+            "net": "EN_LNA4"
+          },
+          {
+            "module_id": "E3/U302",
+            "port": "B",
+            "bit": 7,
+            "direction": "output",
+            "net": "EN_T7"
+          },
+          {
+            "module_id": "E3/U303",
+            "port": "A",
+            "bit": 7,
+            "direction": "output",
+            "net": null
+          },
+          {
+            "module_id": "E3/U303",
+            "port": "B",
+            "bit": 7,
+            "direction": "output",
+            "net": null
+          }
+        ],
+        "one_use_reset_assertion": true
+      }
+    },
+    {
+      "id": "all_mapped_outputs_register_pin_roundtrip",
+      "module_ids": [
+        "E3/U301",
+        "E3/U302",
+        "E3/U303"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "output_count": 24,
+        "outputs": [
+          {
+            "net": "CHG_INHIBIT",
+            "address": 35,
+            "port": 1,
+            "bit": 4,
+            "direction": "output",
+            "module_id": "E3/U303",
+            "pin": 5
+          },
+          {
+            "net": "E3_GNSS_RESET_GATE",
+            "address": 35,
+            "port": 0,
+            "bit": 1,
+            "direction": "output",
+            "module_id": "E3/U303",
+            "pin": 22
+          },
+          {
+            "net": "EN_AUX12",
+            "address": 32,
+            "port": 0,
+            "bit": 1,
+            "direction": "output",
+            "module_id": "E3/U301",
+            "pin": 22
+          },
+          {
+            "net": "EN_BONI",
+            "address": 32,
+            "port": 1,
+            "bit": 1,
+            "direction": "output",
+            "module_id": "E3/U301",
+            "pin": 2
+          },
+          {
+            "net": "EN_HFP",
+            "address": 32,
+            "port": 0,
+            "bit": 4,
+            "direction": "output",
+            "module_id": "E3/U301",
+            "pin": 25
+          },
+          {
+            "net": "EN_LABPORT",
+            "address": 32,
+            "port": 0,
+            "bit": 0,
+            "direction": "output",
+            "module_id": "E3/U301",
+            "pin": 21
+          },
+          {
+            "net": "EN_LIME3V3",
+            "address": 35,
+            "port": 0,
+            "bit": 0,
+            "direction": "output",
+            "module_id": "E3/U303",
+            "pin": 21
+          },
+          {
+            "net": "EN_LNA1",
+            "address": 32,
+            "port": 0,
+            "bit": 5,
+            "direction": "output",
+            "module_id": "E3/U301",
+            "pin": 26
+          },
+          {
+            "net": "EN_LNA2",
+            "address": 32,
+            "port": 0,
+            "bit": 6,
+            "direction": "output",
+            "module_id": "E3/U301",
+            "pin": 27
+          },
+          {
+            "net": "EN_LNA3",
+            "address": 32,
+            "port": 0,
+            "bit": 7,
+            "direction": "output",
+            "module_id": "E3/U301",
+            "pin": 28
+          },
+          {
+            "net": "EN_LNA4",
+            "address": 34,
+            "port": 0,
+            "bit": 7,
+            "direction": "output",
+            "module_id": "E3/U302",
+            "pin": 28
+          },
+          {
+            "net": "EN_LNB",
+            "address": 32,
+            "port": 1,
+            "bit": 0,
+            "direction": "output",
+            "module_id": "E3/U301",
+            "pin": 1
+          },
+          {
+            "net": "EN_RTLA",
+            "address": 32,
+            "port": 0,
+            "bit": 2,
+            "direction": "output",
+            "module_id": "E3/U301",
+            "pin": 23
+          },
+          {
+            "net": "EN_RTLB",
+            "address": 32,
+            "port": 0,
+            "bit": 3,
+            "direction": "output",
+            "module_id": "E3/U301",
+            "pin": 24
+          },
+          {
+            "net": "EN_SB_LNA",
+            "address": 35,
+            "port": 0,
+            "bit": 4,
+            "direction": "output",
+            "module_id": "E3/U303",
+            "pin": 25
+          },
+          {
+            "net": "EN_T7",
+            "address": 34,
+            "port": 1,
+            "bit": 7,
+            "direction": "output",
+            "module_id": "E3/U302",
+            "pin": 8
+          },
+          {
+            "net": "K1_ON",
+            "address": 32,
+            "port": 1,
+            "bit": 2,
+            "direction": "output",
+            "module_id": "E3/U301",
+            "pin": 3
+          },
+          {
+            "net": "K2_ON",
+            "address": 32,
+            "port": 1,
+            "bit": 3,
+            "direction": "output",
+            "module_id": "E3/U301",
+            "pin": 4
+          },
+          {
+            "net": "SW_LIME_A",
+            "address": 35,
+            "port": 0,
+            "bit": 2,
+            "direction": "output",
+            "module_id": "E3/U303",
+            "pin": 23
+          },
+          {
+            "net": "SW_LIME_B",
+            "address": 35,
+            "port": 0,
+            "bit": 3,
+            "direction": "output",
+            "module_id": "E3/U303",
+            "pin": 24
+          },
+          {
+            "net": "SW_RTLA_A",
+            "address": 32,
+            "port": 1,
+            "bit": 4,
+            "direction": "output",
+            "module_id": "E3/U301",
+            "pin": 5
+          },
+          {
+            "net": "SW_RTLA_B",
+            "address": 32,
+            "port": 1,
+            "bit": 5,
+            "direction": "output",
+            "module_id": "E3/U301",
+            "pin": 6
+          },
+          {
+            "net": "SW_RTLB_A",
+            "address": 32,
+            "port": 1,
+            "bit": 6,
+            "direction": "output",
+            "module_id": "E3/U301",
+            "pin": 7
+          },
+          {
+            "net": "SW_RTLB_B",
+            "address": 32,
+            "port": 1,
+            "bit": 7,
+            "direction": "output",
+            "module_id": "E3/U301",
+            "pin": 8
+          }
+        ],
+        "register_and_pin_readback": true,
+        "all_other_outputs_checked_at_safe_level": true,
+        "raw_mcp_write_rejected": true,
+        "scope": "component pin exercise; no live load or policy permission implied"
+      }
+    },
+    {
+      "id": "all_mapped_inputs_register_roundtrip",
+      "module_ids": [
+        "E3/U301",
+        "E3/U302",
+        "E3/U303"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "input_count": 20,
+        "inputs": [
+          {
+            "net": "DCS_HF",
+            "address": 34,
+            "port": 1,
+            "bit": 4,
+            "direction": "input",
+            "module_id": "E3/U302",
+            "pin": 5
+          },
+          {
+            "net": "DCS_LBAND",
+            "address": 34,
+            "port": 1,
+            "bit": 3,
+            "direction": "input",
+            "module_id": "E3/U302",
+            "pin": 4
+          },
+          {
+            "net": "DCS_UHF",
+            "address": 34,
+            "port": 1,
+            "bit": 2,
+            "direction": "input",
+            "module_id": "E3/U302",
+            "pin": 3
+          },
+          {
+            "net": "FAULT_HFP",
+            "address": 35,
+            "port": 1,
+            "bit": 1,
+            "direction": "input",
+            "module_id": "E3/U303",
+            "pin": 2
+          },
+          {
+            "net": "FAULT_LABPORT",
+            "address": 34,
+            "port": 0,
+            "bit": 0,
+            "direction": "input",
+            "module_id": "E3/U302",
+            "pin": 21
+          },
+          {
+            "net": "FAULT_LNA1",
+            "address": 34,
+            "port": 0,
+            "bit": 1,
+            "direction": "input",
+            "module_id": "E3/U302",
+            "pin": 22
+          },
+          {
+            "net": "FAULT_LNA2",
+            "address": 34,
+            "port": 0,
+            "bit": 2,
+            "direction": "input",
+            "module_id": "E3/U302",
+            "pin": 23
+          },
+          {
+            "net": "FAULT_LNA3",
+            "address": 34,
+            "port": 0,
+            "bit": 3,
+            "direction": "input",
+            "module_id": "E3/U302",
+            "pin": 24
+          },
+          {
+            "net": "FAULT_LNA4",
+            "address": 34,
+            "port": 0,
+            "bit": 4,
+            "direction": "input",
+            "module_id": "E3/U302",
+            "pin": 25
+          },
+          {
+            "net": "FAULT_RTLA",
+            "address": 35,
+            "port": 1,
+            "bit": 2,
+            "direction": "input",
+            "module_id": "E3/U303",
+            "pin": 3
+          },
+          {
+            "net": "FAULT_RTLB",
+            "address": 35,
+            "port": 1,
+            "bit": 0,
+            "direction": "input",
+            "module_id": "E3/U303",
+            "pin": 1
+          },
+          {
+            "net": "FLT_BONI",
+            "address": 34,
+            "port": 0,
+            "bit": 6,
+            "direction": "input",
+            "module_id": "E3/U302",
+            "pin": 27
+          },
+          {
+            "net": "FLT_LIME3V3",
+            "address": 35,
+            "port": 1,
+            "bit": 3,
+            "direction": "input",
+            "module_id": "E3/U303",
+            "pin": 4
+          },
+          {
+            "net": "FLT_LNB",
+            "address": 34,
+            "port": 0,
+            "bit": 5,
+            "direction": "input",
+            "module_id": "E3/U302",
+            "pin": 26
+          },
+          {
+            "net": "FLT_SB_LNA",
+            "address": 35,
+            "port": 0,
+            "bit": 5,
+            "direction": "input",
+            "module_id": "E3/U303",
+            "pin": 26
+          },
+          {
+            "net": "OVP_LNB_N",
+            "address": 35,
+            "port": 1,
+            "bit": 5,
+            "direction": "input",
+            "module_id": "E3/U303",
+            "pin": 6
+          },
+          {
+            "net": "PG_BONI",
+            "address": 34,
+            "port": 1,
+            "bit": 1,
+            "direction": "input",
+            "module_id": "E3/U302",
+            "pin": 2
+          },
+          {
+            "net": "PG_LNB",
+            "address": 34,
+            "port": 1,
+            "bit": 0,
+            "direction": "input",
+            "module_id": "E3/U302",
+            "pin": 1
+          },
+          {
+            "net": "PTC_AUX",
+            "address": 34,
+            "port": 1,
+            "bit": 5,
+            "direction": "input",
+            "module_id": "E3/U302",
+            "pin": 6
+          },
+          {
+            "net": "SLED_DET",
+            "address": 34,
+            "port": 1,
+            "bit": 6,
+            "direction": "input",
+            "module_id": "E3/U302",
+            "pin": 7
+          }
+        ],
+        "actual_gpio_reads": true
+      }
+    },
+    {
+      "id": "mcp_short_fault_and_stale_intcap",
+      "module_ids": [
+        "E3/U302",
+        "E3/U303"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "short_fault_captured": true,
+        "stale_capture_without_flag_ignored": true,
+        "intcap_read_clears_flag": true,
+        "nets": [
+          "FAULT_HFP",
+          "FAULT_LABPORT",
+          "FAULT_LNA1",
+          "FAULT_LNA2",
+          "FAULT_LNA3",
+          "FAULT_LNA4",
+          "FAULT_RTLA",
+          "FAULT_RTLB",
+          "FLT_BONI",
+          "FLT_LIME3V3",
+          "FLT_LNB",
+          "FLT_SB_LNA"
+        ]
+      }
+    },
+    {
+      "id": "bank_mismatch_0x20",
+      "module_ids": [
+        "E3/U301"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "bank1_rejected_before_any_write": true,
+        "fault_latched": true
+      }
+    },
+    {
+      "id": "unplug_nack_requires_external_reset_0x20",
+      "module_ids": [
+        "E3/U301"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "unplug_nack_latched": true,
+        "previous_output_persists_until_external_reset": "EN_LNB",
+        "cached_safe_state_is_not_pin_confirmation": true,
+        "external_reset_then_explicit_reinitialize": true,
+        "charger_reset_boundary": "CHG_INHIBIT high impedance during MCP reset does not inhibit hardware charging"
+      }
+    },
+    {
+      "id": "short_mcp_read_0x20",
+      "module_ids": [
+        "E3/U301"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "short_read_rejected": true,
+        "fault_latched": true
+      }
+    },
+    {
+      "id": "short_mcp_write_0x20",
+      "module_ids": [
+        "E3/U301"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "actual_i2c_transport_short_write_rejected": true,
+        "fault_latched": true,
+        "safe_write_confirmation_available": false
+      }
+    },
+    {
+      "id": "mcp_configuration_readback_0x20",
+      "module_ids": [
+        "E3/U301"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "acked_but_ignored_iodir_write_detected": true,
+        "initialization_blocked": true
+      }
+    },
+    {
+      "id": "bank_mismatch_0x22",
+      "module_ids": [
+        "E3/U302"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "bank1_rejected_before_any_write": true,
+        "fault_latched": true
+      }
+    },
+    {
+      "id": "unplug_nack_requires_external_reset_0x22",
+      "module_ids": [
+        "E3/U302"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "unplug_nack_latched": true,
+        "previous_output_persists_until_external_reset": "EN_T7",
+        "cached_safe_state_is_not_pin_confirmation": true,
+        "external_reset_then_explicit_reinitialize": true,
+        "charger_reset_boundary": "CHG_INHIBIT high impedance during MCP reset does not inhibit hardware charging"
+      }
+    },
+    {
+      "id": "short_mcp_read_0x22",
+      "module_ids": [
+        "E3/U302"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "short_read_rejected": true,
+        "fault_latched": true
+      }
+    },
+    {
+      "id": "short_mcp_write_0x22",
+      "module_ids": [
+        "E3/U302"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "actual_i2c_transport_short_write_rejected": true,
+        "fault_latched": true,
+        "safe_write_confirmation_available": false
+      }
+    },
+    {
+      "id": "mcp_configuration_readback_0x22",
+      "module_ids": [
+        "E3/U302"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "acked_but_ignored_iodir_write_detected": true,
+        "initialization_blocked": true
+      }
+    },
+    {
+      "id": "bank_mismatch_0x23",
+      "module_ids": [
+        "E3/U303"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "bank1_rejected_before_any_write": true,
+        "fault_latched": true
+      }
+    },
+    {
+      "id": "unplug_nack_requires_external_reset_0x23",
+      "module_ids": [
+        "E3/U303"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "unplug_nack_latched": true,
+        "previous_output_persists_until_external_reset": "EN_LIME3V3",
+        "cached_safe_state_is_not_pin_confirmation": true,
+        "external_reset_then_explicit_reinitialize": true,
+        "charger_reset_boundary": "CHG_INHIBIT high impedance during MCP reset does not inhibit hardware charging"
+      }
+    },
+    {
+      "id": "short_mcp_read_0x23",
+      "module_ids": [
+        "E3/U303"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "short_read_rejected": true,
+        "fault_latched": true
+      }
+    },
+    {
+      "id": "short_mcp_write_0x23",
+      "module_ids": [
+        "E3/U303"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "actual_i2c_transport_short_write_rejected": true,
+        "fault_latched": true,
+        "safe_write_confirmation_available": false
+      }
+    },
+    {
+      "id": "mcp_configuration_readback_0x23",
+      "module_ids": [
+        "E3/U303"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "acked_but_ignored_iodir_write_detected": true,
+        "initialization_blocked": true
+      }
+    },
+    {
+      "id": "monitor_connect_id_config_conversion_decode",
+      "module_ids": [
+        "E1/U102",
+        "E2/U215",
+        "E2/U216"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "driver": "srrx.telemetry.SRRXTelemetry via LinuxHardware for I2C2",
+        "calibration_valid": false,
+        "nominal_shunts_ohm": {
+          "BATTERY": 0.015,
+          "LNA1": 0.2,
+          "LNA2": 0.2,
+          "LNA3": 0.2,
+          "LNA4": 0.2,
+          "LNB": 0.1,
+          "BONI": 0.2
+        },
+        "values_si": {
+          "battery_vbus_v": 14.8,
+          "battery_shunt_v": 0.030000000000000002,
+          "battery_v": 14.770000000000001,
+          "battery_current_a": 1.9999986165364583,
+          "battery_shunt_current_a": 2.0000000000000004,
+          "battery_power_w": 29.6000115234375,
+          "ina228_die_temp_c": 25.0,
+          "lna1_shunt_v": 0.02,
+          "lna1_bus_v": 4.496,
+          "lna1_current_a": 0.09999999999999999,
+          "lna2_shunt_v": 0.016,
+          "lna2_bus_v": 4.496,
+          "lna2_current_a": 0.08,
+          "lna3_shunt_v": 0.012,
+          "lna3_bus_v": 4.496,
+          "lna3_current_a": 0.06,
+          "lna4_shunt_v": 0.008,
+          "lna4_bus_v": 4.496,
+          "lna4_current_a": 0.04,
+          "lnb_shunt_v": 0.02,
+          "lnb_bus_v": 13.200000000000001,
+          "lnb_current_a": 0.19999999999999998,
+          "boni_shunt_v": 0.01,
+          "boni_bus_v": 13.8,
+          "boni_current_a": 0.049999999999999996,
+          "lna_current_a": 0.27999999999999997
+        },
+        "independent_cycle_ms": {
+          "INA228": 12.624,
+          "INA3221": 26.4
+        },
+        "no_new_conversion_rejected": true,
+        "adapters": {
+          "INA228": "i2c0",
+          "INA3221": "i2c2"
+        },
+        "adapter_router": "srrx.runtime_telemetry.ProjectTelemetry.read/write",
+        "per_channel_lna_currents": true
+      }
+    },
+    {
+      "id": "signed_charge_and_six_branch_channels",
+      "module_ids": [
+        "E1/U102",
+        "E2/U215",
+        "E2/U216"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "signed_charge_current_a": -1.9999986165364583,
+        "battery_v": 14.83,
+        "all_six_signed_branch_channels": true,
+        "distinct_per_channel_stimuli": true,
+        "calibration_valid": false
+      }
+    },
+    {
+      "id": "ina228_memory_checksum",
+      "module_ids": [
+        "E1/U102"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "injection": "memory_checksum",
+        "aggregate_invalid": true,
+        "error": "INA228 diagnostic/configuration fault"
+      }
+    },
+    {
+      "id": "ina228_math_overflow",
+      "module_ids": [
+        "E1/U102"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "injection": "math_overflow",
+        "aggregate_invalid": true,
+        "error": "INA228 diagnostic/configuration fault"
+      }
+    },
+    {
+      "id": "ina228_alert_config",
+      "module_ids": [
+        "E1/U102"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "injection": "alert_config",
+        "aggregate_invalid": true,
+        "error": "INA228 diagnostic/configuration fault"
+      }
+    },
+    {
+      "id": "ina228_current_shunt_disagreement",
+      "module_ids": [
+        "E1/U102"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "injection": "current_shunt_disagreement",
+        "aggregate_invalid": true,
+        "error": "INA228 current/shunt disagreement"
+      }
+    },
+    {
+      "id": "corrupt_monitor_id_0x40",
+      "module_ids": [
+        "E1/U102"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "corrupt_identity_rejected": true,
+        "register": "0x3f"
+      }
+    },
+    {
+      "id": "unplug_nack_monitor_0x40",
+      "module_ids": [
+        "E1/U102"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "injection": "unplug_nack",
+        "aggregate_invalid": true,
+        "no_last_good_retimestamp": true,
+        "calibration_valid": false,
+        "error": "[Errno 6] emulated I2C unplug/NACK"
+      }
+    },
+    {
+      "id": "short_read_monitor_0x40",
+      "module_ids": [
+        "E1/U102"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "injection": "short_read",
+        "aggregate_invalid": true,
+        "no_last_good_retimestamp": true,
+        "calibration_valid": false,
+        "error": "Short I2C register read"
+      }
+    },
+    {
+      "id": "stale_conversion_monitor_0x40",
+      "module_ids": [
+        "E1/U102"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "injection": "stale_conversion",
+        "aggregate_invalid": true,
+        "no_last_good_retimestamp": true,
+        "calibration_valid": false,
+        "error": "INA228 has no new complete conversion"
+      }
+    },
+    {
+      "id": "unexpected_reset_monitor_0x40",
+      "module_ids": [
+        "E1/U102"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "injection": "unexpected_reset",
+        "aggregate_invalid": true,
+        "no_last_good_retimestamp": true,
+        "calibration_valid": false,
+        "error": "INA228 reset or configuration mismatch"
+      }
+    },
+    {
+      "id": "reserved_bits_monitor_0x40",
+      "module_ids": [
+        "E1/U102"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "injection": "reserved_bits",
+        "aggregate_invalid": true,
+        "no_last_good_retimestamp": true,
+        "calibration_valid": false,
+        "error": "INA228 reserved measurement bits set"
+      }
+    },
+    {
+      "id": "corrupt_monitor_id_0x41",
+      "module_ids": [
+        "E2/U215"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "corrupt_identity_rejected": true,
+        "register": "0xff"
+      }
+    },
+    {
+      "id": "unplug_nack_monitor_0x41",
+      "module_ids": [
+        "E2/U215"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "injection": "unplug_nack",
+        "aggregate_invalid": true,
+        "no_last_good_retimestamp": true,
+        "calibration_valid": false,
+        "error": "[Errno 6] emulated I2C unplug/NACK; Hardware unavailable or fault latched"
+      }
+    },
+    {
+      "id": "short_read_monitor_0x41",
+      "module_ids": [
+        "E2/U215"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "injection": "short_read",
+        "aggregate_invalid": true,
+        "no_last_good_retimestamp": true,
+        "calibration_valid": false,
+        "error": "Short I2C register read; Hardware unavailable or fault latched"
+      }
+    },
+    {
+      "id": "stale_conversion_monitor_0x41",
+      "module_ids": [
+        "E2/U215"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "injection": "stale_conversion",
+        "aggregate_invalid": true,
+        "no_last_good_retimestamp": true,
+        "calibration_valid": false,
+        "error": "INA3221 has no new complete conversion"
+      }
+    },
+    {
+      "id": "unexpected_reset_monitor_0x41",
+      "module_ids": [
+        "E2/U215"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "injection": "unexpected_reset",
+        "aggregate_invalid": true,
+        "no_last_good_retimestamp": true,
+        "calibration_valid": false,
+        "error": "INA3221 reset or configuration mismatch"
+      }
+    },
+    {
+      "id": "reserved_bits_monitor_0x41",
+      "module_ids": [
+        "E2/U215"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "injection": "reserved_bits",
+        "aggregate_invalid": true,
+        "no_last_good_retimestamp": true,
+        "calibration_valid": false,
+        "error": "INA3221 reserved measurement bits set"
+      }
+    },
+    {
+      "id": "corrupt_monitor_id_0x43",
+      "module_ids": [
+        "E2/U216"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "corrupt_identity_rejected": true,
+        "register": "0xff"
+      }
+    },
+    {
+      "id": "unplug_nack_monitor_0x43",
+      "module_ids": [
+        "E2/U216"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "injection": "unplug_nack",
+        "aggregate_invalid": true,
+        "no_last_good_retimestamp": true,
+        "calibration_valid": false,
+        "error": "[Errno 6] emulated I2C unplug/NACK"
+      }
+    },
+    {
+      "id": "short_read_monitor_0x43",
+      "module_ids": [
+        "E2/U216"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "injection": "short_read",
+        "aggregate_invalid": true,
+        "no_last_good_retimestamp": true,
+        "calibration_valid": false,
+        "error": "Short I2C register read"
+      }
+    },
+    {
+      "id": "stale_conversion_monitor_0x43",
+      "module_ids": [
+        "E2/U216"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "injection": "stale_conversion",
+        "aggregate_invalid": true,
+        "no_last_good_retimestamp": true,
+        "calibration_valid": false,
+        "error": "INA3221 has no new complete conversion"
+      }
+    },
+    {
+      "id": "unexpected_reset_monitor_0x43",
+      "module_ids": [
+        "E2/U216"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "injection": "unexpected_reset",
+        "aggregate_invalid": true,
+        "no_last_good_retimestamp": true,
+        "calibration_valid": false,
+        "error": "INA3221 reset or configuration mismatch"
+      }
+    },
+    {
+      "id": "reserved_bits_monitor_0x43",
+      "module_ids": [
+        "E2/U216"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "injection": "reserved_bits",
+        "aggregate_invalid": true,
+        "no_last_good_retimestamp": true,
+        "calibration_valid": false,
+        "error": "INA3221 reserved measurement bits set"
+      }
+    },
+    {
+      "id": "overcurrent_decode_cannot_bypass_calibration",
+      "module_ids": [
+        "E2/U215"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "decoded_current_a": 0.3,
+        "graph_operating_cap_a": 0.265,
+        "calibration_valid": false,
+        "uncalibrated_data_rejected_by_real_policy": true,
+        "arm_blocked": true,
+        "scope": "decoding plus calibration gate; no fabricated accepted calibration or physical current trip"
+      }
+    },
+    {
+      "id": "emulator_adapter_address_separation_self_test",
+      "module_ids": [],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "separate_adapter_address_spaces": true,
+        "unknown_third_ina3221_created": false,
+        "scope": "emulator self-test; production routing is exercised by the monitor cases"
+      }
+    },
+    {
+      "id": "connected_engine_uart_trip_clears_mcp_latches",
+      "module_ids": [
+        "E3/U301",
+        "E3/U302",
+        "E3/U303"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "engine": "actual srrx.engine.Engine(simulated=True)",
+        "component_driver": "actual LinuxHardware(physical=True)",
+        "transport": "actual I2CTransport.read/write over emulated syscall boundary",
+        "supervisor": "actual SimLink UART codecs and firmware/pico/Supervisor",
+        "model_only_facade": true,
+        "synthetic_engine_telemetry_is_not_calibration": true,
+        "injection": "I2C NACK with intact UART",
+        "fallback": "wire TRIP to HOST_TRIP",
+        "all_olat_cleared_by_reset": true,
+        "bus_still_faulted": true,
+        "automatic_rearm": false,
+        "hardware_qualified": false,
+        "cached_safe_image_before_reset_not_sufficient": true,
+        "final_pico_state": "TRIPPED",
+        "close_safe_writes_unconfirmed_on_broken_bus": true,
+        "reset_events": [
+          {
+            "op": "mcp_reset_assert",
+            "at_ms": 1000.0
+          },
+          {
+            "op": "mcp_reset_release",
+            "at_ms": 1400.0
+          },
+          {
+            "op": "mcp_reset_assert",
+            "at_ms": 2020.0
+          }
+        ],
+        "charger_reset_boundary": "CHG_INHIBIT becomes high impedance; hardware charging may proceed during MCP reset"
+      }
+    },
+    {
+      "id": "connected_lost_uart_independent_heartbeat_reset",
+      "module_ids": [
+        "E3/U301",
+        "E3/U302",
+        "E3/U303"
+      ],
+      "status": "EMULATION_PASS",
+      "evidence": {
+        "engine": "actual srrx.engine.Engine(simulated=True)",
+        "component_driver": "actual LinuxHardware(physical=True)",
+        "transport": "actual I2CTransport.read/write over emulated syscall boundary",
+        "supervisor": "actual SimLink UART codecs and firmware/pico/Supervisor",
+        "model_only_facade": true,
+        "synthetic_engine_telemetry_is_not_calibration": true,
+        "injection": "I2C NACK plus lost UART/HB",
+        "fallback": "HEARTBEAT_TIMEOUT",
+        "all_olat_cleared_by_reset": true,
+        "bus_still_faulted": true,
+        "automatic_rearm": false,
+        "hardware_qualified": false,
+        "cached_safe_image_before_reset_not_sufficient": true,
+        "final_pico_state": "TRIPPED",
+        "close_safe_writes_unconfirmed_on_broken_bus": true,
+        "reset_events": [
+          {
+            "op": "mcp_reset_assert",
+            "at_ms": 1000.0
+          },
+          {
+            "op": "mcp_reset_release",
+            "at_ms": 1400.0
+          },
+          {
+            "op": "mcp_reset_assert",
+            "at_ms": 2760.0
+          }
+        ],
+        "charger_reset_boundary": "CHG_INHIBIT becomes high impedance; hardware charging may proceed during MCP reset"
+      }
+    }
+  ],
+  "primary_sources": {
+    "MCP23017": {
+      "url": "https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf",
+      "revision": "DS20001952D, 2022",
+      "sections": "3.1, 3.2.1, Tables 3-1/3-3, 3.5.8-3.6.5"
+    },
+    "INA228": {
+      "url": "https://www.ti.com/lit/ds/symlink/ina228.pdf",
+      "revision": "SLYS021A, May 2022",
+      "sections": "7.3.2, 7.6.1, Tables 7-5 through 7-16, 8.1.2"
+    },
+    "INA3221": {
+      "url": "https://www.ti.com/lit/ds/symlink/ina3221.pdf",
+      "revision": "SBOS576C, September 2026",
+      "sections": "7.3.1, 8.1, 8.2; CVRF clear, signed 13-bit voltage registers"
+    }
+  },
+  "source_sha256": {
+    "software/srrx/hardware.py": "13f2a5c1ab1a63d1345f57f9a3ca1f39ffbd3c779be9d4e050c85634974279ee",
+    "software/srrx/telemetry.py": "418148d2427cddf48dabb51c05a54071d465e5697b8727116043c1252e6dfa60",
+    "software/srrx/policy.py": "0bd60d9734653f24e49606cf46e70895b0a7c7ab8b580c2667aa41e08011d34b",
+    "software/srrx/runtime_telemetry.py": "d55b8b1192b8a18953993323fd173ca2f1013fcbe97f28d7e8cbe4ea907b24b5",
+    "design/E1.json": "bc1faf3dd485a8ab55fdb2bc0b9bf1266d160997044f45c725aa79a59c83de11",
+    "design/E2.json": "e07b78094f9f60547614c08e04943801401e63b177f68b77228f7786bb56c0ad",
+    "design/E3.json": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0",
+    "deployment/module_lab/power_bus.py": "1f0d1cc97edd745cfd2182d07e2e62e15e49413016e790560c5a19b76a11b1e5",
+    "deployment/module_lab/power_scenarios.py": "20eba2dcbf0603f4fa05d92caae8f1daf1a028b0c654a91b4e68e1cfedbf59a0"
+  },
+  "limits": [
+    "No actual I2C electrical timing, kernel ioctl, power waveform, thermal, calibration, BMS or RF qualification is proved.",
+    "Functional model implements the register subset used by current drivers; alert limit comparator behavior, accumulators and silicon errata are outside this proof.",
+    "Broken I2C can leave emulated output latches energized until independent reset; cached all-off is not physical pin confirmation.",
+    "No third INA3221 exists in the graph; exactly two monitors cover six branch channels.",
+    "Nominal SHUNT_CAL arithmetic is device scaling only; all returned snapshots retain calibration_valid=false."
+  ]
+}

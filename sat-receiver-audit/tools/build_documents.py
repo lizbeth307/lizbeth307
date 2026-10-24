@@ -8,6 +8,9 @@ from pathlib import Path
 import sys
 
 BASE = Path(__file__).resolve().parents[1]
+if str(BASE / "tools") not in sys.path:
+    sys.path.append(str(BASE / "tools"))
+from uk_text import drift_sentence, plural  # noqa: E402  (plural re-exported for earlier callers)
 
 
 def md(value):
@@ -21,12 +24,6 @@ def read_optional(relative):
 
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-def plural(n, one, few, many):
-    """'n noun' in the Ukrainian form: 1/21 one, 2-4/22-24 few, 0/5-20/11-14 many; a non-integer takes many."""
-    tail, tens = (n % 10, n % 100) if type(n) is int else (0, 0)
-    return f"{n} {one if tail == 1 and tens != 11 else few if 2 <= tail <= 4 and not 12 <= tens <= 14 else many}"
 
 
 def current_for(recorded, current):
@@ -44,6 +41,28 @@ def evidence_note(current, subject):
     return "" if current else f" **Отримано для попередньої редакції джерел:** {subject} не підтверджує поточний код, потрібен новий запуск."
 
 
+def electrical_pages(report, generated):
+    """Pages of the generated schematic; the netlist must show as many sheets with parts
+    (validate_project does not count the root index)."""
+    pages = len(generated["pages"])
+    if report.get("electrical_sheets") != pages:
+        raise SystemExit(f"verification/validation.json electrical_sheets={report.get('electrical_sheets')} differs from "
+                         f"{pages} pages in build/kicad/generation-manifest.json; rerun tools/run_checks.py")
+    return pages
+
+
+def lab_evidence(binding, base=BASE):
+    """evidence_note of the ARM64 run, with the drift sentence the bundle notice repeats."""
+    try:
+        from finalize_linux_lab import binding_drift
+        drift = drift_sentence(binding_drift(base, binding)) if binding.get("source_sha256") else None
+    except (OSError, ValueError, KeyError, ImportError):
+        drift = None
+    if drift is None:
+        return evidence_note(None, "ARM64 прогін")
+    return evidence_note(False, "ARM64 прогін") + " Після прогону " + drift + "." if drift else ""
+
+
 def main():
     graphs = [json.loads(p.read_text(encoding="utf-8")) for p in sorted((BASE / "design").glob("E[1-5].json"))]
     report = json.loads((BASE / "verification/validation.json").read_text(encoding="utf-8"))
@@ -55,24 +74,10 @@ def main():
     modules = read_optional("verification/module-lab/report.json")
     sys.path[:0] = [str(BASE / "software"), str(BASE / "tools")]
 
-    def lab_sources():
-        from finalize_linux_lab import bound_sources
-        return {name: sha(BASE / name) for name in bound_sources(BASE)}
-
     def module_sources():
         lab = BASE / "deployment/module_lab"
         return {"inventory": sha(lab / "inventory.json"), "models": {p.name: sha(p) for p in sorted(lab.glob("*.py"))},
                 "graphs": {name: sha(BASE / name) for name in modules["coverage"]["graph_sha256"]}}
-    if linux:
-        host, suites = linux.get("host", {}), Counter(linux.get("suites", {}).values())
-        guest_tests = (f" Регресії в guest: **{guest.get('passed', 0)} PASS**, **{len(guest.get('skipped', []))} SKIP** із {guest.get('tests_discovered', 0)}; "
-                       "пропуски не зараховані як PASS.") if guest else ""
-        linux_note = (f"Фактичний ARM64 Linux/systemd прогін: **{linux.get('status', 'NOT_RUN')}**, QEMU exit {host.get('qemu_exit_code', '?')}, {host.get('elapsed_s', '?')} s; "
-                      + plural(sum(suites.values()), "набір", "набори", "наборів") + ": " + ", ".join(f"{n} {s}" for s, n in sorted(suites.items())) + "." + guest_tests
-                      + evidence_note(current_for(binding.get("source_sha256"), lab_sources), "ARM64 прогін")
-                      + " Окремий звіт і журнали: [Linux lab](verification/linux-lab/README.md).")
-    else:
-        linux_note = "ARM64 Linux lab підготовлено; фактичні результати потрібно читати в окремому звіті після запуску."
     if modules:
         coverage, connect = modules["coverage"], modules.get("domains", {}).get("connectivity", {}).get("report", {})
         counts, connect_counts = coverage.get("counts", {}), connect.get("summary", {})
@@ -162,7 +167,7 @@ def main():
     }
     (BASE / "design/readiness-contract.json").write_text(json.dumps(readiness, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     errors = report.get("erc_errors", [])
-    status = "без помилок" if not errors else f"{len(errors)} помилок; див. сирий звіт і пояснення"
+    status = "без помилок" if not errors else plural(len(errors), "помилка", "помилки", "помилок") + "; див. сирий звіт і пояснення"
     erc = json.loads((BASE / "verification/erc.json").read_text(encoding="utf-8"))
     pcb = json.loads((BASE / "verification/pcb-review.json").read_text(encoding="utf-8"))
     host_failed = len(software.get("failures", [])) + len(software.get("errors", []))
@@ -175,8 +180,18 @@ def main():
     # Read after the readiness contract above is written: it is one of the bound graphs.
     host_note = evidence_note(current_for(software and {**software.get("graph_sha256", {}), **software.get("source_sha256", {})}, host_sources),
                               "звіт `verification/software-tests.json`")
-    pages = len(generated["pages"])
-    sheets_note = f" (поле `electrical_sheets`={report['electrical_sheets']} у `verification/validation.json` рахує й кореневий аркуш)" if report.get("electrical_sheets") == pages + 1 else ""
+    # Also after the contract write: the ARM64 binding covers design/readiness-contract.json (TOOL-07).
+    if linux:
+        host, suites = linux.get("host", {}), Counter(linux.get("suites", {}).values())
+        guest_tests = (f" Регресії в guest: **{guest.get('passed', 0)} PASS**, **{len(guest.get('skipped', []))} SKIP** із {guest.get('tests_discovered', 0)}; "
+                       "пропуски не зараховані як PASS.") if guest else ""
+        linux_note = (f"Фактичний ARM64 Linux/systemd прогін: **{linux.get('status', 'NOT_RUN')}**, QEMU exit {host.get('qemu_exit_code', '?')}, {host.get('elapsed_s', '?')} s; "
+                      + plural(sum(suites.values()), "набір", "набори", "наборів") + ": " + ", ".join(f"{n} {s}" for s, n in sorted(suites.items())) + "." + guest_tests
+                      + lab_evidence(binding)
+                      + " Окремий звіт і журнали: [Linux lab](verification/linux-lab/README.md).")
+    else:
+        linux_note = "ARM64 Linux lab підготовлено; фактичні результати потрібно читати в окремому звіті після запуску."
+    pages = electrical_pages(report, generated)
     ignored = report.get("erc_ignored_checks", [])
     ignored_note = (" KiCad за замовчуванням не виконує перевірок " + ", ".join(f"`{name}`" for name in ignored)
                     + "; їх перелічено в `erc_ignored_checks`, тож «без помилок» стосується лише виконаних правил.") if ignored else ""
@@ -184,7 +199,7 @@ def main():
     placement = [name for name in drawings if name.startswith("05-roztashuvannia-")]
     completion = f"""# SR-RX-v2.1 — передача перевіреного інженерного комплекту
 
-Редакція від 24.10.2026. Вихідний репозиторій: [lizbeth307/lizbeth307](https://github.com/lizbeth307/lizbeth307), основна опублікована гілка `ccr-1537979d-cj7q9t` (`git clone --branch ccr-1537979d-cj7q9t https://github.com/lizbeth307/lizbeth307.git`, [відновлення](RESTORE-GIT.md)). Гілки `codex/sr-rx-v2-completion` і `wip/review-fixes` застаріли: їхній вміст злито в `ccr-1537979d-cj7q9t`, тож їх можна видалити. Базовий коміт редакції — `465318835e71eae326059f5f66e2b47232169556` (основа гілки `ccr-1537979d-cj7q9t` до переписування її історії 23.10.2026). Коміти Codex — лише `05f0019`…`87e1e90`; пізнішу роботу виконано в сесії Claude: злиття часткових аркушів Claude `e95fec4` (E1/E2/E5, намальовані поза `design/E*.json`) без зміни дерева, тож збережено згенерований набір, що проходить ERC; далі Linux/KiCad CI, виправлення findings, пункти плану A–D і докази CI. Того ж дня хмарна сесія Claude переписала історію гілки `ccr-1537979d-cj7q9t` і додала читабельні схеми, STACK.md знову як джерело істини, вилучення R102/R503/R507/R511, ворота E5-10, вимкнення Wi-Fi/BT, маску Cospas-Sarsat і відтворюваний `run_checks.py`. Обидві лінії злито, узгоджений результат закомічено поверх `ccr-1537979d-cj7q9t`; CAD і PCB перегенеровано з об'єднаних джерел, а ARM64 Linux run для них пройшов 24.10.2026 (GitHub run 40043380590, **PASS**). Зведення ревізій 23–24.10.2026, CI і відкриті пункти — у [HANDOFF](HANDOFF.md).
+Редакція від 24.10.2026. Вихідний репозиторій: [lizbeth307/lizbeth307](https://github.com/lizbeth307/lizbeth307), основна опублікована гілка `ccr-1537979d-cj7q9t` (`git clone --branch ccr-1537979d-cj7q9t https://github.com/lizbeth307/lizbeth307.git`, [відновлення](RESTORE-GIT.md)). Гілки `codex/sr-rx-v2-completion` і `wip/review-fixes` злито в `ccr-1537979d-cj7q9t` і 24.10.2026 видалено з origin. Базовий коміт редакції — `465318835e71eae326059f5f66e2b47232169556` (основа гілки `ccr-1537979d-cj7q9t` до переписування її історії 23.10.2026). Коміти Codex — лише `05f0019`…`87e1e90`; пізнішу роботу виконано в сесії Claude: злиття часткових аркушів Claude `e95fec4` (E1/E2/E5, намальовані поза `design/E*.json`) без зміни дерева, тож збережено згенерований набір, що проходить ERC; далі Linux/KiCad CI, виправлення findings, пункти плану A–D і докази CI. Того ж дня хмарна сесія Claude переписала історію гілки `ccr-1537979d-cj7q9t` і додала читабельні схеми, STACK.md знову як джерело істини, вилучення R102/R503/R507/R511, ворота E5-10, вимкнення Wi-Fi/BT, маску Cospas-Sarsat і відтворюваний `run_checks.py`. Обидві лінії злито, узгоджений результат закомічено поверх `ccr-1537979d-cj7q9t`; CAD і PCB перегенеровано з об'єднаних джерел, а ARM64 Linux run для них пройшов 24.10.2026 (GitHub run 40043380590, **PASS**). Того ж дня внесено етап 2 і рішення власника v2.1 (номінали SYS12, LT3045, RILM і UVLO J21, захист ±30 V, політика baseband/IQ); ARM64 run цієї редакції — GitHub run 40099774142, **PASS**. Зведення ревізій 23–24.10.2026, CI і відкриті пункти — у [HANDOFF](HANDOFF.md).
 
 ## Що фактично передано від Claude
 
@@ -192,7 +207,7 @@ def main():
 
 ## Результат цієї редакції
 
-- Заповнено всі п'ять розділів схеми. Для читабельності вони розбиті на {plural(pages, 'електричну сторінку', 'електричні сторінки', 'електричних сторінок')} і кореневий зміст{sheets_note}.
+- Заповнено всі п'ять розділів схеми. Для читабельності вони розбиті на {plural(pages, 'електричну сторінку', 'електричні сторінки', 'електричних сторінок')} і кореневий зміст.
 - На схемах {plural(report['physical_components'], 'позначений елемент', 'позначені елементи', 'позначених елементів')}; {plural(report['connected_physical_contacts'], 'підключений фізичний/явно функціональний контакт', 'підключені фізичні/явно функціональні контакти', 'підключених фізичних/явно функціональних контактів')} у {plural(report['named_nets'], 'іменованій мережі', 'іменованих мережах', 'іменованих мережах')}. Повний експорт KiCad зіставлено з графами: **{report['graph_netlist_comparison']}**.
 - Збережено початкові бібліотеки, додано самодостатню бібліотеку елементів нових схем, відносні таблиці бібліотек, підтверджені стандартні посадкові місця й джерела.
 - ERC виконано справжнім KiCad {erc.get("kicad_version", "?")}: **{status}**. [Сирий ERC](verification/erc.json) не відфільтровано.{ignored_note} [Незалежна звірка](verification/validation.json) містить точні лічильники й SHA256 файлів.
@@ -218,7 +233,7 @@ def main():
 
 {module_note} Моделі з'єднань використовують незалежний експорт KiCad; навмисні обриви, замикання та підключення NC не є фізичними вимірюваннями. Реальні USB/PCIe/HDMI, RF, BMS, калібрування, тактування Q6A та фізичний T7 залишаються відкритими.
 
-Повний C++ data plane56MS/s/Lime, весь початковий каталог декодерів, апаратний HTP/QAIRT та встановлений A/B образ не оголошено завершеними. Experimental vendor patches і вихідні генератори мають пройти native/API та стендове приймання; EGC/DSC вимкнені без перевірених pre-payload parsers. [readiness-contract.json](design/readiness-contract.json) фіксує межу; його дані самі не керують GPIO.
+Повний C++ data plane 56 MS/s/Lime, весь початковий каталог декодерів, апаратний HTP/QAIRT та встановлений A/B образ не оголошено завершеними. Experimental vendor patches і вихідні генератори мають пройти native/API та стендове приймання; EGC/DSC вимкнені без перевірених pre-payload parsers. [readiness-contract.json](design/readiness-contract.json) фіксує межу; його дані самі не керують GPIO.
 
 Ціни v2 від 18.10 залишено як історичну оцінку. Нові схеми мають окремий BOM-аудит; їх не названо підтвердженим кошторисом покупок.
 

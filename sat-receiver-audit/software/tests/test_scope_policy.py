@@ -7,6 +7,7 @@ from pathlib import Path
 import re
 import stat
 import tempfile
+import threading
 import time
 import unittest
 from unittest import mock
@@ -617,6 +618,85 @@ class ScopeLatchTests(Fixture):
         result = learning.annotate(learning.empty_dataset(), frame, 0, 256, "analog_broadcast",
                                    group_id=uuid.UUID(int=1), user_confirmed=True, scope=benign)
         self.assertEqual(len(result["annotations"]), 1)
+
+    def test_detached_copy_blocks_the_same_spans_and_stops_on_the_same_database(self):
+        self.assertTrue(self.latch.retune(149e6, 151e6)["stop"])
+        copy = self.latch.detached_copy()
+        self.assertIsInstance(copy, sp.ScopeLatch)
+        self.assertEqual(copy.base_generation, self.latch.latch_generation)
+        self.assertFalse(copy.permits("label", (149.0e6, 149.5e6)))  # latched in the original
+        self.assertTrue(copy.permits("label", (160.0e6, 160.1e6)))
+        self.assertFalse(copy.permits("label", (300e6, 301e6)))  # masked band, no database needed
+        self.latch.retune(170e6, 171e6)  # releases the original only
+        self.assertFalse(copy.permits("label", (149.0e6, 149.5e6)))
+        self.assertTrue(self.latch.permits("label", (149.0e6, 149.5e6)))
+
+    def test_stop_in_a_copy_aborts_and_journals_only_at_adopt_on_the_calling_thread(self):
+        calls = []
+        self.latch.register_abort(lambda: calls.append(threading.get_ident()))
+        copy = self.latch.detached_copy()
+        found = []
+        job = threading.Thread(target=lambda: found.append(copy.permits("label", (150.0e6, 150.05e6))))
+        job.start(); job.join(5)
+        self.assertEqual(found, [False])  # Artemis stop on the job thread
+        self.assertEqual((calls, self.latch.drain_log(), self.latch.stopped), ([], [], False))
+        self.assertTrue(self.latch.adopt(copy))
+        self.assertEqual(calls, [threading.get_ident()])  # once, on the owner thread
+        self.assertEqual(self.latch.drain_log(), ["2026-10-20T08:00:00Z out of scope"])
+        self.assertFalse(self.latch.permits("record", (150.0e6, 150.05e6)))
+        self.assertFalse(self.latch.adopt(copy))  # a second adopt adds nothing (and the copy is stale)
+        self.assertEqual((len(calls), self.latch.drain_log()), (1, []))
+
+    def test_adopt_reports_a_latch_added_meanwhile_but_not_a_release(self):
+        self.latch.retune(149e6, 151e6)
+        copy = self.latch.detached_copy()
+        self.latch.retune(159e6, 161e6)  # release only: a result computed against the copy stays fail-closed
+        self.assertTrue(self.latch.adopt(copy))
+        copy = self.latch.detached_copy()
+        self.latch.stop(170e6, 171e6)
+        self.assertFalse(self.latch.adopt(copy))
+        copy = self.latch.detached_copy()
+        self.latch.stop(170.2e6, 170.3e6)  # inside an existing latch: nothing new
+        self.assertTrue(self.latch.adopt(copy))
+
+    def test_adopt_accepts_only_its_own_copy_and_a_copy_registers_no_abort(self):
+        other = sp.ScopeLatch(self.military)
+        copy = self.latch.detached_copy()
+        for value in (other.detached_copy(), other, self.latch, None, object()):
+            with self.subTest(value=type(value).__name__), self.assertRaisesRegex(sp.ScopeRefused, "DETACHED_COPY_INVALID"):
+                self.latch.adopt(value)
+        with self.assertRaisesRegex(sp.ScopeRefused, "DETACHED_COPY"):
+            copy.register_abort(lambda: None)
+        with self.assertRaisesRegex(sp.ScopeRefused, "DETACHED_COPY"):
+            copy.detached_copy()
+
+    def test_hull_merged_copy_is_adopted_and_failed_aborts_still_latch_every_stop(self):
+        copy = self.latch.detached_copy()
+        for index in range(sp.ScopeLatch.MAX_LATCHES + 1):
+            copy.stop(500e6 + index * 1e6, 500e6 + index * 1e6 + 1e3)
+        self.assertEqual(len(copy._latched), 1)  # the copy merged into one hull
+        aborted = []
+        self.latch.register_abort(mock.Mock(side_effect=RuntimeError("abort failed")))
+        self.latch.register_abort(lambda: aborted.append(True))
+        with self.assertRaisesRegex(sp.ScopeRefused, "ABORT_CALLBACK_FAILED"):
+            self.latch.adopt(copy)
+        self.assertEqual(len(aborted), sp.ScopeLatch.MAX_LATCHES + 1)
+        for index in (0, sp.ScopeLatch.MAX_LATCHES):
+            self.assertFalse(self.latch.permits("record", (500e6 + index * 1e6, 500e6 + index * 1e6 + 1e3)))
+        self.assertFalse(self.latch.permits("record", (500.5e6, 500.6e6)))  # the original merged too
+        self.assertEqual(len(self.latch.drain_log()), sp.ScopeLatch.MAX_LOG_LINES)
+
+    def test_training_accepts_a_detached_copy_as_the_session_latch(self):
+        frame = learning._demo_frame(1, 0)
+        dataset = learning.empty_dataset()
+        for family, label in enumerate(("analog_broadcast", "digital_broadcast")):
+            for index in range(2):
+                dataset = learning.annotate(dataset, learning._demo_frame(index, family), 0, 256, label,
+                                            group_id=uuid.UUID(int=1 + family * 100 + index), user_confirmed=True)
+        copy = sp.ScopeLatch(self.military).detached_copy()
+        self.assertEqual(learning.train(dataset, seed=7, scope=copy)["labels"], ["analog_broadcast", "digital_broadcast"])
+        self.assertEqual(len(learning.annotate(learning.empty_dataset(), frame, 0, 256, "analog_broadcast",
+                                               group_id=uuid.UUID(int=1), user_confirmed=True, scope=copy)["annotations"]), 1)
 
 
 if __name__ == "__main__":

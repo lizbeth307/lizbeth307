@@ -3,11 +3,26 @@ from __future__ import annotations
 
 import ctypes as C
 import hashlib
+import os
 from pathlib import Path
 import queue
 import re
+import stat
 
 import numpy as np
+
+from .commissioning import GATE_IDS, _read_json
+
+# Review finding RX-10: a driver record binds only through the RX gate whose
+# current/inrush measurement used that driver build (E5-04: R501 RTL-A and R509
+# HF+; E2-03: U210 RTL-B). RTLA and HFP share E5-04; the record's branch separates them.
+DRIVER_GATES = {"RTLA": "E5-04", "RTLB": "E2-03", "HFP": "E5-04"}
+if not set(DRIVER_GATES.values()) <= set(GATE_IDS):
+    raise RuntimeError("Driver gate is not an acceptance gate")
+# Only these UIDs may own a driver library and its directories. Deliberately no
+# CLI flag or environment variable; only component tests pass another set in code.
+TRUSTED_LIBRARY_UIDS = frozenset({0})
+MAX_LIBRARY_BYTES = 64 * 1024 * 1024
 
 
 def _check(result, operation):
@@ -21,23 +36,63 @@ def _bind(lib, name, args, result=C.c_int):
     return function
 
 
-def load_driver_record(path, project, accepted):
+def check_library(path, trusted_uids, opened=None):
+    """Refuse a driver library that an untrusted principal could change.
+
+    The path must be absolute and canonical: no component is a symlink (on merged
+    /usr, /lib/... is one). The file must be a regular, trusted-owned file without
+    group/world write or setuid/setgid. Every parent must be a trusted-owned
+    directory without group/world write (sticky allowed), as decoder_policy and
+    scope_policy require. Metadata comes from lstat, so a FIFO or device is never
+    opened. opened is os.fstat of the descriptor to hash and load: it must be the
+    same checked inode, so its bytes cannot be rewritten in place by another user.
+    """
+    if (type(trusted_uids) is not frozenset or not trusted_uids
+            or not all(type(uid) is int and uid >= 0 for uid in trusted_uids)):
+        raise ValueError("Trusted library UIDs must be a non-empty frozenset")
+    text = os.fspath(path)
+    if type(text) is not str or not os.path.isabs(text) or os.path.realpath(text) != text:
+        raise ValueError("Driver library path must be absolute and canonical, without symlinks")
+    try:
+        info = os.lstat(text)
+        folders = [os.lstat(parent) for parent in Path(text).parents]
+    except OSError as exc:
+        raise ValueError("Driver library is unavailable") from exc
+    def trusted_file(item):
+        return (stat.S_ISREG(item.st_mode) and item.st_uid in trusted_uids and not item.st_mode & 0o022
+                and not item.st_mode & (stat.S_ISUID | stat.S_ISGID) and 0 < item.st_size <= MAX_LIBRARY_BYTES)
+    if not trusted_file(info):
+        raise ValueError("Driver library must be a regular file of a trusted UID, without group/world write or setuid/setgid")
+    for folder in folders:
+        if (not stat.S_ISDIR(folder.st_mode) or folder.st_uid not in trusted_uids
+                or folder.st_mode & 0o022 and not folder.st_mode & stat.S_ISVTX):
+            raise ValueError("Driver library directories must be owned by a trusted UID, without group/world write")
+    if opened is not None and (not trusted_file(opened)
+                               or (opened.st_dev, opened.st_ino) != (info.st_dev, info.st_ino)):
+        raise ValueError("Opened driver library is not the checked file")
+    return info
+
+
+def load_driver_record(path, project, accepted, *, trusted_uids=TRUSTED_LIBRARY_UIDS):
     """Internal: accepted is the already validated commissioning record.
 
-    The driver record must itself be a hashed artifact in that record. A digest
-    binds reviewed bytes; it does not prove an ELF or its dependencies are safe.
+    The driver record must itself be a hashed artifact of its branch's RX gate
+    (DRIVER_GATES). A digest binds reviewed bytes; it does not prove an ELF or
+    its dependencies are safe.
     """
     project, path = Path(project).resolve(strict=True), Path(path).resolve(strict=True)
-    if not path.is_relative_to(project) or not 0 < path.stat().st_size <= 16384:
+    if not path.is_relative_to(project) or not path.is_file():
         raise ValueError("Driver record must be a small project-local artifact")
-    digest = hashlib.sha256(path.read_bytes()).hexdigest()
-    relative = path.relative_to(project).as_posix()
+    with path.open("rb") as stream:
+        raw = stream.read(16385)  # read once: the bytes parsed are the bytes hashed
+    if not 0 < len(raw) <= 16384:
+        raise ValueError("Driver record must be a small project-local artifact")
+    entry = {"path": path.relative_to(project).as_posix(), "sha256": hashlib.sha256(raw).hexdigest()}
     artifacts = [a for gate in accepted["gates"].values()
                  for a in gate["evidence"]["artifacts"]]
-    if {"path": relative, "sha256": digest} not in artifacts:
+    if entry not in artifacts:
         raise ValueError("Driver record is not bound to hardware acceptance")
-    from .commissioning import _read_json
-    record = _read_json(path)
+    record = _read_json(path, raw)
     fields = {"v", "backend", "branch", "serial", "library_path", "library_sha256",
               "rx_only_reviewed", "bias_disabled_verified", "dependencies_reviewed"}
     if (type(record) is not dict or set(record) != fields or type(record["v"]) is not int or record["v"] != 1
@@ -51,14 +106,34 @@ def load_driver_record(path, project, accepted):
         raise ValueError("Explicit hardware serial required")
     if record["backend"] == "airspyhf" and not re.fullmatch(r"[0-9a-fA-F]{16}", record["serial"]):
         raise ValueError("AirspyHF serial must contain exactly 16 hex digits")
-    library = Path(record["library_path"])
-    if (not library.is_absolute() or library.is_symlink() or not library.is_file()
-            or not 0 < library.stat().st_size <= 64 * 1024 * 1024
-            or type(record["library_sha256"]) is not str
-            or not re.fullmatch(r"[0-9a-f]{64}", record["library_sha256"])
-            or hashlib.sha256(library.read_bytes()).hexdigest() != record["library_sha256"]):
-        raise ValueError("Driver library path/digest mismatch")
+    gate = DRIVER_GATES[record["branch"]]
+    if entry not in accepted["gates"].get(gate, {}).get("evidence", {}).get("artifacts", []):
+        raise ValueError(f"Driver record is not bound to acceptance gate {gate} of branch {record['branch']}")
+    verify_library(record["library_path"], record["library_sha256"], trusted_uids)
     return record
+
+
+def verify_library(path, sha256, trusted_uids=TRUSTED_LIBRARY_UIDS):
+    """check_library, then the streamed SHA256 of that same open inode."""
+    if type(path) is not str or type(sha256) is not str or not re.fullmatch(r"[0-9a-f]{64}", sha256):
+        raise ValueError("Driver library path/digest mismatch")
+    check_library(path, trusted_uids)
+    try:
+        fd = os.open(path, os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC)
+    except OSError as exc:
+        raise ValueError("Driver library is unavailable") from exc
+    try:
+        check_library(path, trusted_uids, opened=os.fstat(fd))
+        digest, size = hashlib.sha256(), 0
+        for block in iter(lambda: os.read(fd, 1024 * 1024), b""):  # 1 MiB blocks, bounded
+            size += len(block)
+            if size > MAX_LIBRARY_BYTES:
+                raise ValueError("Driver library path/digest mismatch")
+            digest.update(block)
+    finally:
+        os.close(fd)
+    if digest.hexdigest() != sha256:
+        raise ValueError("Driver library path/digest mismatch")
 
 
 def validate_tuning(backend, center_hz, sample_rate):

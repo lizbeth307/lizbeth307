@@ -314,6 +314,142 @@ class ToolRuntimeTests(unittest.TestCase):
             self.assertEqual(tools.host_library_leaks(listing, root),
                              ["libpixman-1.so.0 => /usr/lib/x86_64-linux-gnu/libpixman-1.so.0", "libmissing.so.2 => not found"])
 
+    def test_wrapper_loader_audit_is_opt_in_and_set_only_for_the_locked_loader(self):
+        for text in tools.wrapper_texts().values():
+            lines = text.splitlines()
+            audit = [i for i, line in enumerate(lines) if "SRRX_LOADER_AUDIT" in line]
+            root = next(i for i, line in enumerate(lines) if line.startswith("tools_root="))
+            run = next(i for i, line in enumerate(lines) if line.startswith("exec "))
+            self.assertEqual(len(audit), 1)
+            self.assertTrue(root < audit[0] < run)  # after the host sh/dirname/subshell, before the locked ld.so
+            self.assertEqual(lines[audit[0]], 'if [ -n "${SRRX_LOADER_AUDIT:-}" ]; then export LD_DEBUG=files,libs '
+                                              'LD_DEBUG_OUTPUT="$SRRX_LOADER_AUDIT"; fi')
+            self.assertEqual(sum("LD_DEBUG" in line for line in lines), 1)
+            self.assertIn('export QEMU_MODULE_DIR="$tools_root/root/' + tools.MODULE_DIR + '"', lines)
+            self.assertIn('ld-linux-x86-64.so.2" --inhibit-cache --library-path', lines[run])
+
+    def test_every_unpacked_qemu_module_must_resolve_inside_the_locked_root(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            dest = Path(temporary)
+            modules = dest / "root" / tools.MODULE_DIR
+            modules.mkdir(parents=True)
+            with self.assertRaisesRegex(RuntimeError, "No QEMU modules unpacked"):
+                tools.module_closure(dest)  # a layout change must not pass vacuously
+            (modules / "hw-usb-host.so").write_bytes(b"\x7fELF fixture")
+            (modules / "ui-curses.so").write_bytes(b"\x7fELF fixture")
+            inside = "\tlibusb-1.0.so.0 => %s (0x1)\n\t/lib64/ld-linux-x86-64.so.2 => %s (0x2)\n" % (
+                dest / "root/usr/lib/x86_64-linux-gnu/libusb-1.0.so.0", dest / "root/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2")
+            listings = {"hw-usb-host.so": inside, "ui-curses.so": "\tlinux-vdso.so.1 (0x3)\n"}
+            with mock.patch.object(tools, "_ld_list", lambda d, target: listings[Path(target).name]):
+                self.assertEqual(tools.module_closure(dest), {"hw-usb-host.so": ["/lib64/ld-linux-x86-64.so.2", "libusb-1.0.so.0"],
+                                                              "ui-curses.so": []})
+                for leak in ("\tlibusb-1.0.so.0 => /usr/lib/x86_64-linux-gnu/libusb-1.0.so.0 (0x1)\n", "\tlibusb-1.0.so.0 => not found\n"):
+                    listings["hw-usb-host.so"] = leak
+                    with self.subTest(leak=leak), self.assertRaisesRegex(RuntimeError, "QEMU module .*: hw-usb-host.so: libusb"):
+                        tools.module_closure(dest)
+
+    def test_module_upgrade_directory_uses_the_canonical_package_version(self):
+        self.assertEqual(tools.module_upgrade_dir("QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1)"),
+                         "/var/run/qemu/Debian_1_8.2.2+ds-0ubuntu1")
+        self.assertEqual(tools.module_upgrade_dir("QEMU emulator version 9.0 (a b/c~d)"), "/var/run/qemu/a_b_c~d")
+        with self.assertRaisesRegex(RuntimeError, "no package version"):
+            tools.module_upgrade_dir("QEMU emulator version 8.2.2")
+
+    def test_loader_log_parser_resolves_sonames_dlopens_and_fails_closed(self):
+        # glibc logs POSIX paths; this fixture root never exists, so nothing resolves through a link.
+        root = Path("/srrx-lab-fixture/tools/root")
+        lib, program = (root / "usr/lib/x86_64-linux-gnu").as_posix(), (root / "usr/bin/qemu-system-aarch64").as_posix()
+        log = "\n".join(["     71:\tfile=%s [0];  generating link map" % program,
+                         "     71:\t  dynamic: 0x1  base: 0x0   size: 0x2",
+                         "     71:\tfile=libglib-2.0.so.0 [0];  needed by %s [0]" % program,
+                         "     71:\tfind library=libglib-2.0.so.0 [0]; searching",
+                         "     71:\t search path=%s/glibc-hwcaps/x86-64-v3:%s\t\t(LD_LIBRARY_PATH)" % (lib, lib),
+                         "     71:\t  trying file=%s/glibc-hwcaps/x86-64-v3/libglib-2.0.so.0" % lib,
+                         "     71:\t  trying file=%s/libglib-2.0.so.0" % lib,
+                         "     71:\t", "     71:\tfile=libglib-2.0.so.0 [0];  generating link map",
+                         "     71:\tfile=%s/qemu/hw-usb-host.so [0];  dynamically loaded by %s/libgmodule-2.0.so.0 [0]" % (lib, lib),
+                         "     71:\tfile=%s/qemu/hw-usb-host.so [0];  generating link map" % lib,
+                         "     71:\tcalling init: %s/libgmodule-2.0.so.0" % lib, ""])
+        audit = host.loader_audit([log], root, program)
+        self.assertEqual((audit["status"], audit["objects"], audit["outside_tools_root"]), ("PASS", 4, []))
+        self.assertEqual(audit["mapped_inside_tools_root"], sorted(["usr/bin/qemu-system-aarch64", "usr/lib/x86_64-linux-gnu/libglib-2.0.so.0",
+                                                                    "usr/lib/x86_64-linux-gnu/qemu/hw-usb-host.so", "usr/lib/x86_64-linux-gnu/libgmodule-2.0.so.0"]))
+        self.assertEqual(audit["dlopened"], [lib + "/qemu/hw-usb-host.so"])
+        host_nss = log + "\n".join(["     72:\tfind library=libnss_files.so.2 [0]; searching",
+                                    "     72:\t  trying file=/lib/x86_64-linux-gnu/libnss_files.so.2",
+                                    "     72:\tfile=libnss_files.so.2 [0];  generating link map", ""])
+        audit = host.loader_audit([host_nss], root, program)
+        self.assertEqual((audit["status"], audit["outside_tools_root"]), ("FAIL", [str(Path("/lib/x86_64-linux-gnu/libnss_files.so.2").resolve())]))
+        # A soname without its own search (stale 'trying' discarded) and a log without the program both fail.
+        unresolved = "     73:\t  trying file=%s/libz.so.1\n     73:\tfind library=libx.so.1 [0]; searching\n     73:\tfile=libx.so.1 [0];  generating link map\n" % lib
+        audit = host.loader_audit([log, unresolved], root, program)
+        self.assertEqual(audit["outside_tools_root"], ["libx.so.1 (unresolved)"])
+        audit = host.loader_audit([log.split("\n", 1)[1]], root, program)
+        self.assertEqual((audit["status"], audit["program_mapped"]), ("FAIL", False))
+        self.assertEqual(host.loader_audit([], root, program)["status"], "FAIL")
+
+    @unittest.skipUnless(LINUX and any(Path(p).exists() for p in ("/lib64/ld-linux-x86-64.so.2", "/lib/ld-linux-aarch64.so.1")),
+                         "Linux glibc loader required")
+    def test_loader_log_parser_reads_the_real_glibc_format(self):
+        # Format drift guard on the CI hosts and in the ARM64 guest (glibc 2.39, as the locked ld.so).
+        ldso = next(p for p in ("/lib64/ld-linux-x86-64.so.2", "/lib/ld-linux-aarch64.so.1") if Path(p).exists())
+        with tempfile.TemporaryDirectory() as temporary:
+            env = dict(os.environ, LD_DEBUG="files,libs", LD_DEBUG_OUTPUT=str(Path(temporary) / "x"))
+            subprocess.run([ldso, "/bin/true"], env=env, check=True, capture_output=True, timeout=30)
+            logs = [p.read_text(errors="replace") for p in sorted(Path(temporary).glob("x.*"))]
+            self.assertTrue(logs)
+            audit = host.loader_audit(logs, Path(temporary) / "empty-root", "/bin/true")
+            mapped, _, unresolved = host.loader_objects(logs)
+        self.assertTrue(audit["program_mapped"])
+        self.assertEqual(unresolved, set())
+        libc = {Path(p).resolve() for p in mapped if Path(p).name == "libc.so.6"}
+        self.assertEqual(len(libc), 1)
+        self.assertTrue(next(iter(libc)).is_file())
+        self.assertIn(str(next(iter(libc))), audit["outside_tools_root"])  # the host libc is outside this root
+        self.assertEqual(audit["status"], "FAIL")
+
+    def test_prepare_accepts_only_the_locked_wrappers_and_no_module_upgrade_dir(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            bin_dir = Path(temporary) / "qemu-tools/bin"
+            bin_dir.mkdir(parents=True)
+            for name, text in tools.wrapper_texts().items():
+                (bin_dir / name).write_text(text, newline="\n")
+            selected = [bin_dir / name for name in ("qemu-system-aarch64", "qemu-img", "genisoimage")]
+            upgrade = Path(temporary) / "var-run-qemu"
+            listed = []
+            helper = types.SimpleNamespace(wrapper_texts=tools.wrapper_texts, module_closure=lambda dest: {"hw-usb-host.so": ["libusb-1.0.so.0"]},
+                                           resolved_libraries=lambda dest, name: listed.append((dest, name)) or ["libc.so.6"],
+                                           module_upgrade_dir=lambda version: str(upgrade))
+            version = subprocess.CompletedProcess([], 0, "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1)\n", "")
+            with mock.patch.object(host, "fetch_tools", lambda: helper), mock.patch.object(host, "call", lambda *a, **k: version):
+                record = host.qemu_runtime(*selected)
+                self.assertEqual((record["module_count"], record["module_upgrade_dir_present"]), (1, False))
+                self.assertEqual(record["tools_root"], str((Path(temporary) / "qemu-tools").resolve()))
+                # prepare lists the programs again too, not only the modules (a kit has no tools-verification.json)
+                self.assertEqual(listed, [((Path(temporary) / "qemu-tools").resolve(), name) for name in ("qemu-system-aarch64", "qemu-img", "genisoimage")])
+                self.assertEqual(record["program_libraries_sha256"], sha(json.dumps(
+                    {name: ["libc.so.6"] for name in tools.wrapper_texts()}, sort_keys=True, separators=(",", ":")).encode()))
+                helper.resolved_libraries = lambda dest, name: (_ for _ in ()).throw(RuntimeError("Tool resolves a library outside the locked runtime: " + name))
+                with self.assertRaisesRegex(ValueError, "Locked QEMU runtime check failed: Tool resolves .*qemu-system-aarch64"):
+                    host.qemu_runtime(*selected)
+                helper.resolved_libraries = lambda dest, name: ["libc.so.6"]
+                upgrade.mkdir()
+                with self.assertRaisesRegex(ValueError, "module-upgrade directory"):
+                    host.qemu_runtime(*selected)
+                upgrade.rmdir()
+                (bin_dir / "qemu-img").write_text("#!/bin/sh\nexec /usr/bin/qemu-img \"$@\"\n")
+                with self.assertRaisesRegex(ValueError, "wrappers of one locked tools directory: qemu-img"):
+                    host.qemu_runtime(*selected)
+                (bin_dir / "qemu-img").write_text(tools.wrapper_texts()["qemu-img"], newline="\n")
+                other = Path(temporary) / "other/bin"
+                other.mkdir(parents=True)
+                shutil.copyfile(bin_dir / "genisoimage", other / "genisoimage")
+                with self.assertRaisesRegex(ValueError, "genisoimage"):
+                    host.qemu_runtime(selected[0], selected[1], other / "genisoimage")
+                helper.module_closure = lambda dest: (_ for _ in ()).throw(RuntimeError("QEMU module resolves a library outside"))
+                with self.assertRaisesRegex(ValueError, "Locked QEMU runtime check failed"):
+                    host.qemu_runtime(*selected)
+
     @unittest.skipUnless(LINUX and shutil.which("dpkg-deb") and shutil.which("tar"), "dpkg-deb and GNU tar required")
     def test_kit_runtime_must_equal_a_fresh_unpack_of_the_locked_debs(self):
         with tempfile.TemporaryDirectory() as temporary:

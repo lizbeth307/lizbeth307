@@ -10,8 +10,6 @@ R107,missing_physical_footprint,True,Manufacturer land pattern/package and selec
 C106,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 D104,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 D105,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
-R108,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
-R109,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 C107,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 C108,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 C109,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
@@ -44,7 +42,6 @@ R121,missing_physical_footprint,True,Manufacturer land pattern/package and selec
 R122,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 R123,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 R201,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
-R202,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 U201,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 R203,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 R204,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
@@ -87,7 +84,6 @@ U204,missing_physical_footprint,True,Manufacturer land pattern/package and selec
 R225,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 U205,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 R226,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
-R227,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 U206,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 R228,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 R229,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
@@ -141,7 +137,6 @@ C265,missing_physical_footprint,True,Manufacturer land pattern/package and selec
 U213,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 R261,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 U214,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
-R262,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 R263,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 R264,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.
 R266,missing_physical_footprint,True,Manufacturer land pattern/package and selected PCB footprint are not fixed.

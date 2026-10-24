@@ -1,0 +1,1439 @@
+{
+  "schema_version": 1,
+  "status": "EMULATION_PASS",
+  "scope": "native-driver-ABI-and-control-emulation-no-real-USB-or-analog-RF",
+  "architecture": "aarch64",
+  "python": "3.12.3",
+  "numpy": "2.3.5",
+  "modules": [
+    {
+      "id": "RTLA",
+      "design_refs": [
+        "E4/A411"
+      ],
+      "model_level": "native_driver_abi",
+      "production_entrypoint": "srrx.receivers.RTLReceiver",
+      "status": "EMULATION_PASS",
+      "physical_verified": false,
+      "scenarios": [
+        {
+          "name": "serial_selected_stream",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXA",
+          "opened_index": 0,
+          "open_calls": 1,
+          "close_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": 16,
+          "expected_error_observed": false
+        },
+        {
+          "name": "serial_selection_survives_index_reorder",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXA",
+          "opened_index": 1,
+          "open_calls": 1,
+          "close_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": 16,
+          "expected_error_observed": false
+        },
+        {
+          "name": "unplugged_selected_serial_no_index_fallback",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXA",
+          "opened_index": -1,
+          "open_calls": 0,
+          "close_calls": 0,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "duplicate_serial_no_index_fallback",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXA",
+          "opened_index": -1,
+          "open_calls": 0,
+          "close_calls": 0,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "serial_changed_after_open",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXA",
+          "opened_index": 0,
+          "open_calls": 1,
+          "close_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "native_open_error",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXA",
+          "opened_index": 0,
+          "open_calls": 1,
+          "close_calls": 0,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "enumeration_disconnect",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXA",
+          "opened_index": -1,
+          "open_calls": 0,
+          "close_calls": 0,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "native_stream_error",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXA",
+          "opened_index": 0,
+          "open_calls": 1,
+          "close_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "odd_short_read_rejected",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXA",
+          "opened_index": 0,
+          "open_calls": 1,
+          "close_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "empty_read_rejected",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXA",
+          "opened_index": 0,
+          "open_calls": 1,
+          "close_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "rate_readback_mismatch",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXA",
+          "opened_index": 0,
+          "open_calls": 1,
+          "close_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "stream_unplug",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXA",
+          "opened_index": 0,
+          "open_calls": 1,
+          "close_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "even_short_read_accepted_in_ram",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXA",
+          "opened_index": 0,
+          "open_calls": 1,
+          "close_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": 1,
+          "expected_error_observed": false
+        }
+      ],
+      "limits": [
+        "Emulated librtlsdr ABI, no real USB enumeration/tuner/RF.",
+        "Internal fixture record bypasses hardware acceptance by design; this is not a physical capture."
+      ]
+    },
+    {
+      "id": "RTLB",
+      "design_refs": [
+        "E4/A412"
+      ],
+      "model_level": "native_driver_abi",
+      "production_entrypoint": "srrx.receivers.RTLReceiver",
+      "status": "EMULATION_PASS",
+      "physical_verified": false,
+      "scenarios": [
+        {
+          "name": "serial_selected_stream",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXB",
+          "opened_index": 1,
+          "open_calls": 1,
+          "close_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": 16,
+          "expected_error_observed": false
+        },
+        {
+          "name": "serial_selection_survives_index_reorder",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXB",
+          "opened_index": 0,
+          "open_calls": 1,
+          "close_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": 16,
+          "expected_error_observed": false
+        },
+        {
+          "name": "unplugged_selected_serial_no_index_fallback",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXB",
+          "opened_index": -1,
+          "open_calls": 0,
+          "close_calls": 0,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "duplicate_serial_no_index_fallback",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXB",
+          "opened_index": -1,
+          "open_calls": 0,
+          "close_calls": 0,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "serial_changed_after_open",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXB",
+          "opened_index": 1,
+          "open_calls": 1,
+          "close_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "native_open_error",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXB",
+          "opened_index": 1,
+          "open_calls": 1,
+          "close_calls": 0,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "enumeration_disconnect",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXB",
+          "opened_index": -1,
+          "open_calls": 0,
+          "close_calls": 0,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "native_stream_error",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXB",
+          "opened_index": 1,
+          "open_calls": 1,
+          "close_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "odd_short_read_rejected",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXB",
+          "opened_index": 1,
+          "open_calls": 1,
+          "close_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "empty_read_rejected",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXB",
+          "opened_index": 1,
+          "open_calls": 1,
+          "close_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "rate_readback_mismatch",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXB",
+          "opened_index": 1,
+          "open_calls": 1,
+          "close_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "stream_unplug",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXB",
+          "opened_index": 1,
+          "open_calls": 1,
+          "close_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "even_short_read_accepted_in_ram",
+          "status": "EMULATION_PASS",
+          "requested_serial": "LABRXB",
+          "opened_index": 1,
+          "open_calls": 1,
+          "close_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": 1,
+          "expected_error_observed": false
+        }
+      ],
+      "limits": [
+        "Emulated librtlsdr ABI, no real USB enumeration/tuner/RF.",
+        "Internal fixture record bypasses hardware acceptance by design; this is not a physical capture."
+      ]
+    },
+    {
+      "id": "HFPLUS",
+      "design_refs": [
+        "E4/A414"
+      ],
+      "model_level": "native_driver_abi",
+      "production_entrypoint": "srrx.receivers.AirspyHFReceiver",
+      "status": "EMULATION_PASS",
+      "physical_verified": false,
+      "scenarios": [
+        {
+          "name": "serial_selected_callback_copy",
+          "status": "EMULATION_PASS",
+          "requested_serial_hex": "3070123456789abc",
+          "close_calls": 1,
+          "stop_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": 16,
+          "expected_error_observed": false
+        },
+        {
+          "name": "selected_serial_unplugged",
+          "status": "EMULATION_PASS",
+          "requested_serial_hex": "3070123456789abc",
+          "close_calls": 0,
+          "stop_calls": 0,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "vendor_rejects_duplicate_identity",
+          "status": "EMULATION_PASS",
+          "requested_serial_hex": "3070123456789abc",
+          "close_calls": 0,
+          "stop_calls": 0,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "native_start_error",
+          "status": "EMULATION_PASS",
+          "requested_serial_hex": "3070123456789abc",
+          "close_calls": 1,
+          "stop_calls": 0,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "dropped_samples_rejected",
+          "status": "EMULATION_PASS",
+          "requested_serial_hex": "3070123456789abc",
+          "close_calls": 1,
+          "stop_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "null_callback_samples_rejected",
+          "status": "EMULATION_PASS",
+          "requested_serial_hex": "3070123456789abc",
+          "close_calls": 1,
+          "stop_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "empty_callback_block_rejected",
+          "status": "EMULATION_PASS",
+          "requested_serial_hex": "3070123456789abc",
+          "close_calls": 1,
+          "stop_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "consumer_lag_drops_new_transfer_marks_gap",
+          "status": "EMULATION_PASS",
+          "requested_serial_hex": "3070123456789abc",
+          "close_calls": 1,
+          "stop_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": 16,
+          "expected_error_observed": false
+        },
+        {
+          "name": "silent_stream_timeout",
+          "status": "EMULATION_PASS",
+          "requested_serial_hex": "3070123456789abc",
+          "close_calls": 1,
+          "stop_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "unsupported_live_rate_rejected",
+          "status": "EMULATION_PASS",
+          "requested_serial_hex": "3070123456789abc",
+          "close_calls": 1,
+          "stop_calls": 0,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "rate_query_disconnect",
+          "status": "EMULATION_PASS",
+          "requested_serial_hex": "3070123456789abc",
+          "close_calls": 1,
+          "stop_calls": 0,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        },
+        {
+          "name": "drop_after_initial_block",
+          "status": "EMULATION_PASS",
+          "requested_serial_hex": "3070123456789abc",
+          "close_calls": 1,
+          "stop_calls": 1,
+          "bias_on_calls": 0,
+          "sample_count_ram_only": null,
+          "expected_error_observed": true
+        }
+      ],
+      "limits": [
+        "Official open_sn callback ABI is emulated; no real USB or RF.",
+        "Duplicate serial rejection belongs to the vendor open_sn API; production has no independent HF enumeration API.",
+        "Callbacks use transient C stack buffers; native USB thread scheduling is not reproduced."
+      ]
+    },
+    {
+      "id": "HMC7992_RTLA",
+      "design_refs": [
+        "E4/U405"
+      ],
+      "model_level": "control_logic",
+      "status": "EMULATION_PASS",
+      "physical_verified": false,
+      "scenarios": [
+        {
+          "name": "actual_policy_truth_table_and_park_before_switch",
+          "status": "EMULATION_PASS",
+          "truth_table": [
+            {
+              "route": "RF4",
+              "A": true,
+              "B": true
+            },
+            {
+              "route": "RF3",
+              "A": false,
+              "B": true
+            },
+            {
+              "route": "RF2",
+              "A": true,
+              "B": false
+            },
+            {
+              "route": "PARK",
+              "A": false,
+              "B": false
+            }
+          ],
+          "explicit_park_before_active": true,
+          "analog_rf_simulated": false
+        },
+        {
+          "name": "raw_gpio_tx_and_fault_latch",
+          "status": "EMULATION_PASS",
+          "raw_gpio_and_tx_rejected": true,
+          "fault_latch_no_auto_route": true
+        }
+      ],
+      "limits": [
+        "Actual SafetyPolicy and graph-derived SimHardware mapping only.",
+        "00 PARK is RF1 termination by design; RF impedance, isolation and switching transients require hardware."
+      ]
+    },
+    {
+      "id": "HMC7992_RTLB",
+      "design_refs": [
+        "E4/U406"
+      ],
+      "model_level": "control_logic",
+      "status": "EMULATION_PASS",
+      "physical_verified": false,
+      "scenarios": [
+        {
+          "name": "actual_policy_truth_table_and_park_before_switch",
+          "status": "EMULATION_PASS",
+          "truth_table": [
+            {
+              "route": "RF4",
+              "A": true,
+              "B": true
+            },
+            {
+              "route": "RF3",
+              "A": false,
+              "B": true
+            },
+            {
+              "route": "RF2",
+              "A": true,
+              "B": false
+            },
+            {
+              "route": "PARK",
+              "A": false,
+              "B": false
+            }
+          ],
+          "explicit_park_before_active": true,
+          "analog_rf_simulated": false
+        },
+        {
+          "name": "raw_gpio_tx_and_fault_latch",
+          "status": "EMULATION_PASS",
+          "raw_gpio_and_tx_rejected": true,
+          "fault_latch_no_auto_route": true
+        }
+      ],
+      "limits": [
+        "Actual SafetyPolicy and graph-derived SimHardware mapping only.",
+        "00 PARK is RF1 termination by design; RF impedance, isolation and switching transients require hardware."
+      ]
+    },
+    {
+      "id": "HMC7992_LIME",
+      "design_refs": [
+        "E4/U407"
+      ],
+      "model_level": "control_logic",
+      "status": "EMULATION_PASS",
+      "physical_verified": false,
+      "scenarios": [
+        {
+          "name": "actual_policy_truth_table_and_park_before_switch",
+          "status": "EMULATION_PASS",
+          "truth_table": [
+            {
+              "route": "RF4",
+              "A": true,
+              "B": true
+            },
+            {
+              "route": "RF3",
+              "A": false,
+              "B": true
+            },
+            {
+              "route": "RF2",
+              "A": true,
+              "B": false
+            },
+            {
+              "route": "PARK",
+              "A": false,
+              "B": false
+            }
+          ],
+          "explicit_park_before_active": true,
+          "analog_rf_simulated": false
+        },
+        {
+          "name": "raw_gpio_tx_and_fault_latch",
+          "status": "EMULATION_PASS",
+          "raw_gpio_and_tx_rejected": true,
+          "fault_latch_no_auto_route": true
+        }
+      ],
+      "limits": [
+        "Actual SafetyPolicy and graph-derived SimHardware mapping only.",
+        "00 PARK is RF1 termination by design; RF impedance, isolation and switching transients require hardware."
+      ]
+    },
+    {
+      "id": "RF_RELAYS",
+      "design_refs": [
+        "E4/K401",
+        "E4/K402"
+      ],
+      "model_level": "control_logic",
+      "status": "EMULATION_PASS",
+      "physical_verified": false,
+      "scenarios": [
+        {
+          "name": "hf_vhf_park_never_11",
+          "status": "EMULATION_PASS",
+          "break_before_make_ms": 10,
+          "relay_11_observed": false,
+          "trip_park_observed": true
+        }
+      ],
+      "limits": [
+        "Relay coil commands only, no coil current/contact bounce or RF path emulation."
+      ]
+    },
+    {
+      "id": "DC_PREFLIGHT_LNA2",
+      "design_refs": [
+        "E4/Q450",
+        "E4/A418"
+      ],
+      "model_level": "control_logic",
+      "status": "EMULATION_PASS",
+      "physical_verified": false,
+      "scenarios": [
+        {
+          "name": "unsafe_off_low_dwell_own_bias_off",
+          "status": "EMULATION_PASS",
+          "unsafe_high_blocks_enable": true,
+          "off_settling_ms": 500,
+          "continuous_safe_low_ms": 500,
+          "own_bias_high_is_not_foreign_dc": true,
+          "analog_voltage_threshold_tested": false
+        }
+      ],
+      "limits": [
+        "HIGH models unsafe, unknown, detector-off or open line; LOW is a digital fixture input.",
+        "Comparator threshold, hysteresis, RF loading and power-off leakage are not physically emulated."
+      ]
+    },
+    {
+      "id": "DC_PREFLIGHT_LNA3",
+      "design_refs": [
+        "E4/Q452",
+        "E4/A419"
+      ],
+      "model_level": "control_logic",
+      "status": "EMULATION_PASS",
+      "physical_verified": false,
+      "scenarios": [
+        {
+          "name": "unsafe_off_low_dwell_own_bias_off",
+          "status": "EMULATION_PASS",
+          "unsafe_high_blocks_enable": true,
+          "off_settling_ms": 500,
+          "continuous_safe_low_ms": 500,
+          "own_bias_high_is_not_foreign_dc": true,
+          "analog_voltage_threshold_tested": false
+        }
+      ],
+      "limits": [
+        "HIGH models unsafe, unknown, detector-off or open line; LOW is a digital fixture input.",
+        "Comparator threshold, hysteresis, RF loading and power-off leakage are not physically emulated.",
+        "A419 denotes the selected GOES / H1 / iO / active-patch profile boundary; no interchangeable profile or LNA is physically qualified by this check."
+      ]
+    },
+    {
+      "id": "DC_PREFLIGHT_BONI",
+      "design_refs": [
+        "E4/Q454",
+        "E4/A406"
+      ],
+      "model_level": "control_logic",
+      "status": "EMULATION_PASS",
+      "physical_verified": false,
+      "scenarios": [
+        {
+          "name": "unsafe_off_low_dwell_own_bias_off",
+          "status": "EMULATION_PASS",
+          "unsafe_high_blocks_enable": true,
+          "off_settling_ms": 500,
+          "continuous_safe_low_ms": 500,
+          "own_bias_high_is_not_foreign_dc": true,
+          "analog_voltage_threshold_tested": false
+        }
+      ],
+      "limits": [
+        "HIGH models unsafe, unknown, detector-off or open line; LOW is a digital fixture input.",
+        "Comparator threshold, hysteresis, RF loading and power-off leakage are not physically emulated."
+      ]
+    },
+    {
+      "id": "RF_BRANCH_ENABLES",
+      "design_refs": [
+        "E4/A402",
+        "E4/A404",
+        "E4/A424",
+        "E4/A422",
+        "E4/A411",
+        "E4/A412",
+        "E4/A414",
+        "E4/A420"
+      ],
+      "model_level": "control_logic",
+      "status": "EMULATION_PASS",
+      "physical_verified": false,
+      "scenarios": [
+        {
+          "name": "actual_policy_bias_receiver_and_lnb_interlocks",
+          "status": "EMULATION_PASS",
+          "sequential_enable_off_branches": [
+            "LNA1",
+            "LNA4",
+            "SB_LNA",
+            "RTLA",
+            "RTLB",
+            "HFP"
+          ],
+          "lnb_requires_rf3": true,
+          "lnb_park_disables_bias": true,
+          "physical_current_measured": false
+        }
+      ],
+      "limits": [
+        "Monitored values/limits are explicitly synthetic policy inputs; no ADC or analog module gain measured."
+      ]
+    },
+    {
+      "id": "LIME",
+      "design_refs": [
+        "E4/A415"
+      ],
+      "model_level": "control_logic",
+      "status": "EMULATION_PASS",
+      "physical_verified": false,
+      "scenarios": [
+        {
+          "name": "exact_patched_guard_snippets_native_compile",
+          "status": "EMULATION_PASS",
+          "exact_patch_sha256": "e6e3f7abd3dd3cff21c0d7baa98e92f812bd88068a984298a7bebcf5517bc033",
+          "upstream_commit": "37cb1833e35955f7072c0fb91642d14ae5515f28",
+          "compiled_actual_guard_snippets": true,
+          "full_sdk_compiled": false,
+          "tx_entrypoints_rejected": [
+            "Soapy setupStream",
+            "Soapy writeStream",
+            "Micro Configure TX0/TX1",
+            "Micro StreamCreate TX",
+            "Micro Calibrate TX",
+            "Micro UploadTxWaveform"
+          ],
+          "rx_guard_paths_allowed": true,
+          "runtime_receiver_backend_enabled": false
+        }
+      ],
+      "limits": [
+        "Exact patched source snippets compiled with minimal types; not a complete LimeSuiteNG build or ABI.",
+        "Raw register/firmware paths, PCIe enumeration and RF cannot be qualified here; production Lime RX backend remains blocked."
+      ]
+    },
+    {
+      "id": "RECEIVER_USB_IDENTITY_RULES",
+      "design_refs": [
+        "E4/A411",
+        "E4/A412",
+        "E4/A414"
+      ],
+      "model_level": "control_logic",
+      "status": "EMULATION_PASS",
+      "physical_verified": false,
+      "scenarios": [
+        {
+          "name": "serial_bound_inventory_rejects_duplicate_wrong_vid_and_lime",
+          "status": "EMULATION_PASS",
+          "production_selector": "deployment.deploy.validate_devices/udev_rules",
+          "synthetic_inventory_only": true,
+          "rules_installed": false,
+          "kernel_usb_enumeration_tested": false
+        }
+      ],
+      "limits": [
+        "Candidate udev rule generation, not device discovery against sysfs."
+      ]
+    },
+    {
+      "id": "USB_HUB_CH334F",
+      "design_refs": [
+        "E5/U510"
+      ],
+      "name": "Adafruit5997 CH334F revC",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "No project USB-hub/kernel enumeration driver implemented."
+    },
+    {
+      "id": "DISPLAY_TOUCH",
+      "design_refs": [
+        "E5/U520"
+      ],
+      "name": "Wisecoco display/controller/touch assembly",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Qt events and display metadata are not a USB HID/display hardware driver emulation."
+    },
+    {
+      "id": "SSD_T7",
+      "design_refs": [
+        "E5/U540"
+      ],
+      "name": "Samsung T7",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "No USB mass-storage/UAS/SCSI or SSD failure emulation implemented."
+    },
+    {
+      "id": "HANTEK",
+      "design_refs": [],
+      "name": "Optional Hantek bench scope",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "No Hantek acquisition driver or fixed schematic module is implemented."
+    },
+    {
+      "id": "RF_ASSEMBLY_A401",
+      "design_refs": [
+        "E4/A401"
+      ],
+      "name": "Flamingo+ FM v2 #1",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_A402",
+      "design_refs": [
+        "E4/A402"
+      ],
+      "name": "SAWbird+ NOAA 100800",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_A403",
+      "design_refs": [
+        "E4/A403"
+      ],
+      "name": "Flamingo+ FM v2 #2 optional",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_A404",
+      "design_refs": [
+        "E4/A404"
+      ],
+      "name": "LNA V2 optional",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_A405",
+      "design_refs": [
+        "E4/A405"
+      ],
+      "name": "SMA attenuator 15/20/30 dB: bench selection",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_A406",
+      "design_refs": [
+        "E4/A406"
+      ],
+      "name": "Boni-Whip supplied bias-tee",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_A407",
+      "design_refs": [
+        "E4/A407"
+      ],
+      "name": "YAT-10A+ 10 dB",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_A408",
+      "design_refs": [
+        "E4/A408"
+      ],
+      "name": "H1 SMA pad 0/2/3 dB",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_A409",
+      "design_refs": [
+        "E4/A409"
+      ],
+      "name": "BLK-89-S+",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_A410",
+      "design_refs": [
+        "E4/A410"
+      ],
+      "name": "ANNE-50+ 50 \u03a9 load",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_A418",
+      "design_refs": [
+        "E4/A418"
+      ],
+      "name": "Uputronics 440 Rev 3.0 external LNA",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_A419",
+      "design_refs": [
+        "E4/A419"
+      ],
+      "name": "GOES / H1 / iO / active patch external LNA",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_A420",
+      "design_refs": [
+        "E4/A420"
+      ],
+      "name": "Othernet Bullseye LNB",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_A421",
+      "design_refs": [
+        "E4/A421"
+      ],
+      "name": "AXING CFA 11-00 DC-isolated 75 \u03a9 load",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_A422",
+      "design_refs": [
+        "E4/A422"
+      ],
+      "name": "Nooelec LaNA WB 100845",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_A423",
+      "design_refs": [
+        "E4/A423"
+      ],
+      "name": "sysmocom cf2235-kt30 2170\u20132300 MHz",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_A424",
+      "design_refs": [
+        "E4/A424"
+      ],
+      "name": "TCBT-2R5G+ ch4",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_W401",
+      "design_refs": [
+        "E4/W401"
+      ],
+      "name": "Goobay 58814 75 \u03a9 F-F 1 m",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_W402",
+      "design_refs": [
+        "E4/W402"
+      ],
+      "name": "75 \u03a9 shielded internal IF coax",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_W403",
+      "design_refs": [
+        "E4/W403"
+      ],
+      "name": "RX1 panel \u2192 Lime X2 MHF4 coax",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_W404",
+      "design_refs": [
+        "E4/W404"
+      ],
+      "name": "RX2 \u2192 Lime X4 MHF4 coax",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_W405",
+      "design_refs": [
+        "E4/W405"
+      ],
+      "name": "REF IN \u2192 J4 MHF4 coax",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_W406",
+      "design_refs": [
+        "E4/W406"
+      ],
+      "name": "CAB.01075 X1 \u2192 ANNE-50+ captive coax",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_W407",
+      "design_refs": [
+        "E4/W407"
+      ],
+      "name": "P7 SMA \u2192 LC76G IPEX coax",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_W408",
+      "design_refs": [
+        "E4/W408"
+      ],
+      "name": "RG316 common-mode choke FT240-77 +2631102002",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_W409",
+      "design_refs": [
+        "E4/W409"
+      ],
+      "name": "Captive RX1 edge \u2192 profile pad coax",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_W422",
+      "design_refs": [
+        "E4/W422"
+      ],
+      "name": "RG316 SMA-M/M 0.10 m helix \u2192 LaNA",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_W423",
+      "design_refs": [
+        "E4/W423"
+      ],
+      "name": "RG316 SMA-M/M 0.10 m LaNA \u2192 DC block",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_W424",
+      "design_refs": [
+        "E4/W424"
+      ],
+      "name": "RG316 SMA-M/M 1.00 m pod \u2192 RX2",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_W425",
+      "design_refs": [
+        "E4/W425"
+      ],
+      "name": "USB-C power-only 1.50 m, 26 AWG pair",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    },
+    {
+      "id": "RF_ASSEMBLY_A425",
+      "design_refs": [
+        "E4/A425"
+      ],
+      "name": "Mini-Circuits BLK-89-S+ pod DC block",
+      "model_level": "unsupported",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "scenarios": [],
+      "inventory_only": true,
+      "reason": "Passive/active analog RF assembly: graph inventory only. Bias control coverage does not model gain, noise, matching or RF transfer."
+    }
+  ],
+  "worker_failure_lifecycle": {
+    "status": "PASS",
+    "scope": "spawned-worker-native-ABI-component-only-no-RF-no-accepted-hardware",
+    "architecture": "aarch64",
+    "kernel": "6.8.0-147-generic",
+    "python": "3.12.3",
+    "fixture_source_sha256": "17b0dfec527087d3f508d34d29458f74ddb52e1b0c061ae779cd6b1060e30b07",
+    "startup_deadline_s": 60.0,
+    "production_read_deadline_s": 1.0,
+    "native_compile_performed": true,
+    "control_guard_replaced_only_in_test": true,
+    "kernel_core_pattern": "|/usr/share/apport/apport -p%p -s%s -c%c -d%d -P%P -u%u -g%g -F%F -- %E",
+    "kernel_core_pattern_read_error": null,
+    "core_protection_references": [
+      "https://man7.org/linux/man-pages/man5/core.5.html",
+      "https://man7.org/linux/man-pages/man2/pr_set_dumpable.2const.html"
+    ],
+    "acceptance_file_created": false,
+    "physical_receiver_tested": false,
+    "physical_control_outputs_tested": false,
+    "rf_transmitted": false,
+    "raw_iq_persisted": false,
+    "cases": [
+      {
+        "case": "driver_error",
+        "status": "PASS",
+        "issues": [],
+        "native_read_entered": true,
+        "exception_type": "OSError",
+        "exception": "RTL read failed (-71)",
+        "elapsed_s": 4.19,
+        "close_duration_s": 0.243,
+        "worker_exitcode": 0,
+        "worker_alive_after_close": false,
+        "actual_read_observer_checks": 1,
+        "production_capture_cleanup_exercised": true,
+        "clean_error_boundary": true,
+        "branch_off_request_observed": true,
+        "branch_off_electrically_tested": false,
+        "fixture_short_sample_count": null,
+        "core_rlimit_confirmed_zero": true,
+        "worker_dumpable_confirmed_zero": true,
+        "only_case_artifact": [
+          "lifecycle.txt"
+        ],
+        "elf_machine": 183
+      },
+      {
+        "case": "hang_ignoring_sigterm",
+        "status": "PASS",
+        "issues": [],
+        "native_read_entered": true,
+        "exception_type": "TimeoutError",
+        "exception": "No fresh RX block within one second",
+        "elapsed_s": 5.754,
+        "close_duration_s": 1.028,
+        "worker_exitcode": -9,
+        "worker_alive_after_close": false,
+        "actual_read_observer_checks": 21,
+        "production_capture_cleanup_exercised": true,
+        "clean_error_boundary": true,
+        "branch_off_request_observed": true,
+        "branch_off_electrically_tested": false,
+        "fixture_short_sample_count": null,
+        "core_rlimit_confirmed_zero": true,
+        "worker_dumpable_confirmed_zero": true,
+        "only_case_artifact": [
+          "lifecycle.txt"
+        ],
+        "elf_machine": 183
+      },
+      {
+        "case": "crash_sigsegv",
+        "status": "PASS",
+        "issues": [],
+        "native_read_entered": true,
+        "exception_type": "OSError",
+        "exception": "RX worker pipe closed before a complete block",
+        "elapsed_s": 3.75,
+        "close_duration_s": 0.001,
+        "worker_exitcode": -11,
+        "worker_alive_after_close": false,
+        "actual_read_observer_checks": 2,
+        "production_capture_cleanup_exercised": true,
+        "clean_error_boundary": true,
+        "branch_off_request_observed": true,
+        "branch_off_electrically_tested": false,
+        "fixture_short_sample_count": null,
+        "core_rlimit_confirmed_zero": true,
+        "worker_dumpable_confirmed_zero": true,
+        "only_case_artifact": [
+          "lifecycle.txt"
+        ],
+        "elf_machine": 183
+      },
+      {
+        "case": "invalid_odd_short_read",
+        "status": "PASS",
+        "issues": [],
+        "native_read_entered": true,
+        "exception_type": "OSError",
+        "exception": "Invalid/empty RTL IQ block",
+        "elapsed_s": 4.022,
+        "close_duration_s": 0.26,
+        "worker_exitcode": 0,
+        "worker_alive_after_close": false,
+        "actual_read_observer_checks": 1,
+        "production_capture_cleanup_exercised": true,
+        "clean_error_boundary": true,
+        "branch_off_request_observed": true,
+        "branch_off_electrically_tested": false,
+        "fixture_short_sample_count": null,
+        "core_rlimit_confirmed_zero": true,
+        "worker_dumpable_confirmed_zero": true,
+        "only_case_artifact": [
+          "lifecycle.txt"
+        ],
+        "elf_machine": 183
+      },
+      {
+        "case": "valid_even_short_read",
+        "status": "PASS",
+        "issues": [],
+        "native_read_entered": true,
+        "exception_type": null,
+        "exception": null,
+        "elapsed_s": 4.048,
+        "close_duration_s": 0.254,
+        "worker_exitcode": 0,
+        "worker_alive_after_close": false,
+        "actual_read_observer_checks": 2,
+        "production_capture_cleanup_exercised": false,
+        "clean_error_boundary": true,
+        "branch_off_request_observed": false,
+        "branch_off_electrically_tested": false,
+        "fixture_short_sample_count": 1,
+        "core_rlimit_confirmed_zero": true,
+        "worker_dumpable_confirmed_zero": true,
+        "only_case_artifact": [
+          "lifecycle.txt"
+        ],
+        "elf_machine": 183
+      }
+    ]
+  },
+  "control_report": {
+    "schema_version": 1,
+    "status": "EMULATION_PASS",
+    "scope": "production-control-policy-and-exact-TX-guard-source-emulation",
+    "physical_verified": false,
+    "analog_rf_simulated": false,
+    "raw_iq_persisted": false,
+    "acceptance_created": false,
+    "production_mode_used": "SIMULATION",
+    "production_sources_sha256": {
+      "software/srrx/policy.py": "0bd60d9734653f24e49606cf46e70895b0a7c7ab8b580c2667aa41e08011d34b",
+      "software/srrx/hardware.py": "13f2a5c1ab1a63d1345f57f9a3ca1f39ffbd3c779be9d4e050c85634974279ee",
+      "deployment/deploy.py": "5fde2cfdd4e3b692dc42a013d809cf2e3a0ac2a51b5fea7cad8249207bc2c790",
+      "deployment/vendor_patch.py": "449375110754ca75e0dba8336c6b611ee0a87de1f5fd509ccd65b47d289121be",
+      "deployment/patches/limesuiteng-rx-only.patch": "e6e3f7abd3dd3cff21c0d7baa98e92f812bd88068a984298a7bebcf5517bc033"
+    },
+    "limits": [
+      "Synthetic readiness/limits/telemetry exist only inside SimHardware; no live HARDWARE status returned.",
+      "UNSUPPORTED records are inventory coverage, not successful device-driver or analog emulation."
+    ]
+  },
+  "fixture_source_sha256": {
+    "rtl": "ef9df6894237257779cd0f624a5809dbdfd14e49df9a89a26a835b45a341a830",
+    "airspyhf": "e6f654fb7a3011733a313a27f380e0286d3b0ecb048ebb36ce8c66bab1bbfc59"
+  },
+  "production_sources_sha256": {
+    "software/srrx/receivers.py": "0b12412357126ac04731f0ed5e664d44ac9d95d058ad8a8d24a790c14b9447fc",
+    "software/srrx/labrx.py": "b969582eb65ba942dff214a02260550ee1bc03123f97fbe39b25f4a4238ce06c"
+  },
+  "physical_verified": false,
+  "raw_iq_persisted": false,
+  "rf_transmitted": false,
+  "acceptance_created": false,
+  "live_hardware_status_fabricated": false,
+  "limits": [
+    "An EMULATION_PASS is not hardware qualification or proof of analog gain/isolation/matching.",
+    "Unsupported inventory-only modules are explicitly reported rather than counted as driver emulation."
+  ]
+}

@@ -1851,7 +1851,7 @@ _Run `wf_feb0e95a-cfc`_
     - **Verdict:** corrected
     - **Action:** Each rail becomes: TPS7A4701 (ANY-OUT) → TPS259630DDAR (latch-off after thermal shutdown) → INA3221 shunt → choke.
   - LNB: RILM 2.05 kOhm 1% gives 0.405-0.499 A. Reset it to 1.5-2 times the measured Bullseye current.
-  - Boni: RILM 7.87 kOhm gives 0.113-0.139 A (datasheet point). Stage 2's 7.5 kOhm gives about 0.132 A; the equation asks for 7.94 kOhm, above the 7869 Ohm maximum.
+  - Boni: RILM 7.87 kOhm gives 0.113-0.139 A (datasheet point). v2.1 owner decision: 7.15 kOhm 1%, 0.122-0.153 A, so the 1.5-2x rule holds on paper (E2-03). Stage 2's 7.5 kOhm gives about 0.132 A; the equation asks for 7.94 kOhm, above the 7869 Ohm maximum.
   - OVLO divider 110 kOhm / 10.0 kOhm 0.5% on both rails: trip 13.91-14.77 V (model), above the 13.53 V rail maximum and below the 16 V horizontal threshold.
   - FLT to MCP #3 through a pull-up. labd latches any FLT in software.
   - Drop the PTCs. Change the tolerance to ±0.33 V.
@@ -2071,7 +2071,7 @@ _Run `wf_feb0e95a-cfc`_
   - RTL-A gain: default 5-10 dB, range 0-15 dB.
   
   **LNA bias channels ch1-ch4**
-  Chain: LNA4V5 4.5 V → TPS2553DBVR-1 (latch-off, $1.06) → INA3221 shunt → 0.5 A choke on the injector PCB.
+  Chain: LNA4V5 4.5 V (4.30 V since v2.1) → TPS2553DBVR-1 (latch-off, $1.06) → INA3221 shunt → 0.5 A choke on the injector PCB.
   - RILIM 88.7 kOhm 1% gives IOS 262-342 mA (model).
   - On a channel that uses a TCBT-2R5G+ (ch2 or ch4 only; $9.05 at qty 10+), RILIM is 162 kOhm, giving 144-192 mA (model).
   - EN from MCP #1, FAULT to MCP #3. labd resets a latch by toggling EN.
@@ -2100,7 +2100,7 @@ _Run `wf_feb0e95a-cfc`_
   - Bullseye BE01 $29.95. Reference port: terminator only if it measures 0 V DC, otherwise a dust cap.
   
   **BONI rail and P5**
-  - Rail: TPS7A4701 at 12.5 V (optional 13.0 V) → TPS259630DDAR with RILM 7.87 kOhm (0.113-0.139 A) and the same OVLO divider → INA3221 → Boni bias tee → G6K K1.
+  - Rail: TPS7A4701 at 12.5 V (optional 13.0 V) → TPS259630DDAR with RILM 7.87 kOhm (0.113-0.139 A; 7.15 kOhm, 0.122-0.153 A since v2.1) and the same OVLO divider → INA3221 → Boni bias tee → G6K K1.
   - P5 becomes a BNC bulkhead, keyed against SMA LNAs. DC-sense plus a 'Boni attached' confirmation.
   - Boni-Whip: WiMo EUR 133.61 net / 159.00 incl. VAT, available 20.11.2026; supply 12-15 V.
   

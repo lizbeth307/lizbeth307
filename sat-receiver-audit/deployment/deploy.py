@@ -92,6 +92,12 @@ WIFI_BT_USB_VENDORS = frozenset({"a69c", "368b"})
 RADIO_OFF_MODPROBE = "etc/modprobe.d/60-srrx-radio-off.conf"
 RADIO_OFF_UDEV = "etc/udev/rules.d/60-srrx-wifi-bt-deauthorize.rules"
 RADIO_OFF_UNIT = "srrx-radio-off.service"
+# srrx.service waits (Wants=+After=) for the udev-tagged /dev/lab nodes its release guard stats, at
+# most LAB_DEVICE_TIMEOUT_S per device unit instead of DefaultDeviceTimeoutSec (90 s). Config-only:
+# the static unit stays device-free, so the QEMU simulation unit never waits for absent devices.
+LAB_DEVICE_DROPIN = "30-lab-devices.conf"
+DEVICE_TIMEOUT_DROPIN = "50-srrx-device-timeout.conf"
+LAB_DEVICE_TIMEOUT_S = 30
 
 
 class DeploymentError(ValueError):
@@ -262,6 +268,41 @@ def radio_off_dropin():
     """srrx.service only: the receiver never starts unless the rfkill second layer ran first. The
     shutdown bridge gets no such drop-in: a failed oneshot must not fail it with a dependency error."""
     return "[Unit]\nRequires=" + RADIO_OFF_UNIT + "\nAfter=" + RADIO_OFF_UNIT + "\n"
+
+
+def guarded_devices(config):
+    """The /dev/lab nodes doctor stats at every release-guard run: the three receivers and the Pico UART.
+    lab/gnss is not one (labd never opens it; the gpsd chain owns it), nor are the /dev/i2c-N buses."""
+    return dict(config["usb"], pico=config["pico"])
+
+
+def guarded_device_paths(config):
+    return {name: device["path"] for name, device in guarded_devices(config).items()}
+
+
+def device_unit(path):
+    """`systemd-escape --path --suffix=device` of a plain /dev/lab node. A name that would need
+    \\x escaping (any '-' or other byte) is refused rather than escaped by hand."""
+    if type(path) is not str or not re.fullmatch(r"/dev/lab/[a-z0-9]+", path):
+        raise DeploymentError("device unit only for a plain /dev/lab/[a-z0-9]+ node: " + repr(path))
+    return "dev-lab-" + path[len("/dev/lab/"):] + ".device"
+
+
+def lab_device_dropin(paths):
+    """srrx.service.d ordering after the device units of `paths`. Wants= only: a device that never
+    appears times out its own job and the guard then fails closed in doctor (exit 2); never
+    Requires=/BindsTo=, which would turn a missing receiver into a dependency failure or a stop."""
+    units = " ".join(device_unit(path) for path in paths)
+    return ("[Unit]\n# release guard (doctor) stats these udev-tagged /dev/lab nodes\n"
+            "Wants=" + units + "\nAfter=" + units + "\n")
+
+
+def device_timeout_dropin(seconds):
+    """<device>.d drop-in bounding the wait for an absent node, the systemd-fstab-generator
+    x-systemd.device-timeout mechanism (a device job otherwise waits DefaultDeviceTimeoutSec)."""
+    if type(seconds) is not int or not 1 <= seconds <= 300:
+        raise DeploymentError("device timeout must be 1..300 s")
+    return "[Unit]\nJobRunningTimeoutSec=" + str(seconds) + "s\n"
 
 
 def _read(path):
@@ -589,8 +630,7 @@ def doctor(config=None):
                 actual = "/" + node.resolve(strict=True).as_posix().split("/sys/firmware/devicetree/base/", 1)[-1]
                 if actual != bus["of_fullname"]:
                     raise DeploymentError(label + " OF node differs from declared wiring")
-            devices = dict(config["usb"], pico=config["pico"])
-            for name, device in devices.items():
+            for name, device in guarded_devices(config).items():  # = the srrx.service device ordering
                 path = Path(device["path"])
                 device_node(name, path)
                 result = command(["udevadm", "info", "--query=property", "--name", str(path)])
@@ -736,6 +776,13 @@ def stage(destination, config=None):
         (rules / "70-srrx-serial-bound.rules").write_text(udev_rules(config), newline="\n")
         (rules / "71-srrx-gnss.rules").write_text(gnss_udev_rules(), newline="\n")
         (rootfs / RADIO_OFF_UDEV).write_text(radio_off_udev(config), newline="\n")
+        # Only with the udev candidate that tags these nodes TAG+="systemd" (DEPLOYMENT.md, DEP-11).
+        paths = list(guarded_device_paths(config).values())
+        (units / "srrx.service.d" / LAB_DEVICE_DROPIN).write_text(lab_device_dropin(paths), newline="\n")
+        for path in paths:
+            timeout = units / (device_unit(path) + ".d")
+            timeout.mkdir()
+            (timeout / DEVICE_TIMEOUT_DROPIN).write_text(device_timeout_dropin(LAB_DEVICE_TIMEOUT_S), newline="\n")
     files = {p.relative_to(rootfs).as_posix(): sha(p) for p in sorted(rootfs.rglob("*")) if p.is_file()}
     (destination / "stage-files.json").write_text(json.dumps({"schema_version": 1, "status": "STAGED_ONLY", "files": files}, indent=2) + "\n", newline="\n")
     (destination / "INSTALL_PLAN.txt").write_text("STAGED ONLY. No services enabled and no hardware acceptance supplied.\nReview software/DEPLOYMENT.md, run doctor and all release guards, then package rootfs via signed local repository.\nField/QUIET root: Wi-Fi/BT modprobe blacklist (install /bin/false), FE1.1s port-4 authorized=0 rule and rfkill unit are staged; the WIFI_PWR_EN gpio-hog (W1-2) is OPEN and not generated.\nDo not copy over /etc acceptance files, repartition UFS, flash BIOS, run rsetup or auto-enable units.\nA/B installation is a separate bench/recovery procedure; no activation command is generated here.\n", newline="\n")
