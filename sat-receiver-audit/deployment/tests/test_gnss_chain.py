@@ -5,6 +5,7 @@ The live behaviour (polkit on noble, _chrony, gpsd -n re-open, dev-lab-gnss.devi
 a QEMU guest and Q6A item, never claimed by these tests.
 """
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -181,6 +182,18 @@ class GnssChainTests(unittest.TestCase):
         self.assertEqual(deploy.gnss_mode_issues(root), ["raw mode: srrx-locationd lacks its 40-gnss-mode.conf drop-in"])
         env.write_text("SRRX_GNSS=off\n")
         self.assertEqual(deploy.gnss_mode_issues(root), [])
+
+    def test_unreadable_reader_configuration_blocks(self):
+        if os.geteuid() == 0:
+            self.skipTest("root reads a 0000 file")
+        root = self.root / "target"
+        env = self.put(root, "etc/srrx/devices.env", "SRRX_GNSS=gpsd\n")
+        env.chmod(0)
+        self.addCleanup(env.chmod, 0o644)
+        issues = deploy.gnss_mode_issues(root)
+        self.assertEqual(len(issues), 1)
+        self.assertTrue(issues[0].startswith("GNSS reader configuration unreadable: "), issues)
+        self.assertIn("PermissionError", issues[0])
 
     def test_staged_gpsd_root_with_the_build07_defaults_passes(self):
         rootfs, unused = self.staged("gpsd", "gpsd-doctor")

@@ -53,7 +53,7 @@ PYTHONPATH=software:. python3 -m srrx.cli sim FAULT_LNA2 false
 PYTHONPATH=software:. python3 -m srrx.cli status
 ```
 
-`PYTHONPATH=software:. python3 -m srrx.cli gnss_reset --width-ms 200` — один обмежений імпульс RESET LC76G (100..500 ms, ≥30 s після попереднього, ≤3 за 15 хв) лише для власника чинної оренди; деталі — [GNSS-UART.md](GNSS-UART.md).
+`PYTHONPATH=software:. python3 -m srrx.cli gnss_reset --width-ms 200` — один обмежений імпульс RESET LC76G (100..500 ms, ≥30 s після попереднього, ≤3 за 15 хв) лише для власника чинної оренди; деталі — [GNSS-UART.md](GNSS-UART.md). Якщо labd запущено з `--gnss gpsd` або `--gnss raw`, цей запит оркеструється: PPS у chrony знімається з вибору до імпульсу і обирається знову лише після читання назад налаштувань LC76G і кваліфікованого фіксу; `PYTHONPATH=software:. python3 -m srrx.cli gnss_config` повторює читання назад і ворота PPS без імпульсу ([оркестрація](GNSS-UART.md#оркестрація-в-labd-srrxgnss_orchestrator)).
 
 Для LNA2 спершу зачекати щонайменше 1 s після safe initialization: 500 ms OFF settling і 500 ms безперервного LOW DCS. Після FAULT один лише HIGH або повернення UART не відновлює виходи. Прибрати причину, завершити старий `hold`, явно виконати `recover`, далі підтримувати нову оренду; всі попередні навантаження залишаються OFF.
 
@@ -101,6 +101,8 @@ python3 tools/build_firmware.py
 Для Q6A зберегти проєкт у `/opt/srrx`, створити системного користувача `labd` і підтвердити доступ до потрібних I²C/UART. `systemd/srrx.service` використовує `/etc/srrx/acceptance.json` та перевірені шляхи з `/etc/srrx/devices.env`; example навмисно UNVERIFIED. Оператору потрібен доступ до групи локального control socket. Units перевірено `systemd-analyze verify`; запуск, доступи, pinmux і kernel/PMIC на Q6A ще не випробувані. Автоматичне встановлення/enable units тут не виконувалось.
 
 `srrx-poweroff.service` — окремий root bridge. У HARDWARE зі станом Pico SHUTTING_DOWN він виконує `systemctl poweroff`; OFF_NOW (фіксовані 20 s у Pico, повторні запити не продовжують строк) він просить лише для прийнятого і живо прив'язаного unit. Для неприйнятого зв'язку OFF_NOW не надсилається: після зупинки labd HB зникає, і Pico вимикає живлення за Q6A_POWER_OFF або ARM_OFF_HEARTBEAT_LOST. За замовчуванням модуль `srrx.poweroff` працює dry run; реальна дія вимагає `--execute`. У SIMULATION вимкнення ОС не виконується.
+
+`srrx-locationd.service` (єдиний читач позиції, знімки на `/run/srrx-loc/location.sock`), `srrx-timegate.service` (лише `chronyc selectopts PPS ±noselect` для labd) і `srrx-gnss-config.service` (root oneshot: налаштування LC76G з читанням назад; labd запускає його через polkit) утворюють ланцюг часу й місця GNSS; режим задає `SRRX_GNSS` у `devices.env`. Деталі, розгортання й відкриті перевірки — [GNSS-UART.md](GNSS-UART.md#ланцюг-часу-й-місця-srrx-locationd-srrx-timegate-srrx-gnss-config-і-оркестрація-labd).
 
 ## Межа цієї реалізації
 

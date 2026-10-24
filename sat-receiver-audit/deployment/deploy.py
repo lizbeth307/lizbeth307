@@ -368,13 +368,17 @@ def gnss_mode_issues(root=Path("/")):
     links and the staged locationd drop-in. srrx-locationd itself also refuses raw mode while
     gpsd is active; the live check of both is a Q6A item (RUNTIME_ONLY)."""
     root = Path(root)
-    env = _assignments(root / "etc/srrx/devices.env")
+    try:
+        # The release guard runs as labd: devices.env must be readable by it (systemd itself reads it as root).
+        env = _assignments(root / "etc/srrx/devices.env")
+        defaults = _assignments(root / "etc/default/gpsd")
+    except OSError as exc:
+        return ["GNSS reader configuration unreadable: " + (exc.filename or "") + " " + type(exc).__name__]
     if env is None:
         return []  # no deployment record: doctor reports the missing bindings elsewhere
     mode = env.get("SRRX_GNSS")
     if mode not in GNSS_MODES:
         return ["SRRX_GNSS missing or invalid in /etc/srrx/devices.env (gpsd, raw or off)"]
-    defaults = _assignments(root / "etc/default/gpsd")
     devices = (defaults or {}).get("DEVICES", "").split()
     units = root / "etc/systemd/system"
     enabled = sorted({link.name for pattern in ("*.wants/gpsd.service", "*.wants/gpsd.socket")
