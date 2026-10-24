@@ -17,15 +17,36 @@ with a 1000 ms RP2040 hardware watchdog. `calibration.py` validates device-bound
 records and provides a CPython calibration CLI. `imu_relay.py` validates the
 separate IMU-pack stream; its SPI/sensor firmware lives in `firmware/imu/`.
 
-Use a genuine Pico UF2 from the official
-[RPI_PICO download](https://micropython.org/download/RPI_PICO/). The API reference
-target is MicroPython **v1.26.0**; record the actual UF2 version and SHA-256 in the
-unit acceptance log. Run the device tests with that exact build. Do not deploy a
-Pico W/Pico 2 or overclocked build. The code explicitly sets 125 MHz and leaves
-GP23 and USB clocks at their default settings pending the STACK RF A/B test.
+Use the pinned official UF2 `RPI_PICO-20250809-v1.26.0.uf2` from the
+[RPI_PICO download](https://micropython.org/download/RPI_PICO/) (MicroPython
+**v1.26.0**, the API reference target): 668,672 bytes, SHA-256
+`3fb807524074c75694bd4b13a587dc8673e0815d393a5bdfc250c7cd561b34df`, recorded with
+the erase image and the mpremote version in `firmware/runtime.lock.json`. Copy the
+SHA-256 into the unit acceptance log and run the device tests with that exact build.
+Do not deploy a Pico W/Pico 2 or overclocked build. The code explicitly sets 125 MHz
+and leaves GP23 and USB clocks at their default settings pending the STACK RF A/B test.
 
-With the main switch on or the Pico physically isolated from LAB5, copy these
-files to the Pico filesystem root using your installed `mpremote`:
+With the main switch on or the Pico physically isolated from LAB5, and no receiver
+load connected, flash with `tools/flash_mcu.py` (software/DEPLOYMENT.md, "Прошивання
+MCU"). Every command is a dry run without `--execute`; mpremote must be the locked
+1.26.0 from `firmware/mpremote-requirements.txt`:
+
+```sh
+# 1. BOOTSEL held while plugging USB: the RPI-RP2 drive appears. A Pico that already
+#    runs main.py has a 1000 ms WDT that a REPL cannot stop, so erase it first:
+python3 tools/flash_mcu.py uf2 --role pico --image erase --file nuke_universal.uf2 --drive /media/$USER/RPI-RP2 --execute
+# 2. When RPI-RP2 is back (or after BOOTSEL again), the pinned MicroPython:
+python3 tools/flash_mcu.py uf2 --role pico --file RPI_PICO-20250809-v1.26.0.uf2 --drive /media/$USER/RPI-RP2 --execute
+# 3. Serial for provisioning (srrx.provision prepare, calibration.py --serial):
+python3 tools/flash_mcu.py serial --port /dev/ttyACM0
+# 4. Files from firmware/dist/pico-micropython-files.zip in order, records only if they
+#    validate for this unit_id, on-device SHA-256 of every file, then reset:
+python3 tools/flash_mcu.py install --role pico --port /dev/ttyACM0 [--records /path/to/provisioned] --execute
+```
+
+`install` refuses a different mpremote, MicroPython release or board name, a
+non-empty filesystem, records sealed for another serial and any extra or different
+file after copying. The manual equivalent it replaces, for review only:
 
 ```sh
 mpremote fs cp firmware/pico/boot.py :boot.py

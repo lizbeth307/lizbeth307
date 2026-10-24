@@ -1,0 +1,31 @@
+{
+  "schema_version": 1,
+  "kind": "srrx_qnn_runtime_layout",
+  "note": "QAIRT 2.42.0.251225 runtime of qcom-qnn-sdk-v68 0.1.0-2 laid out as /opt/lab/npu/2.42/{lib,dsp} (STACK.md:867, :875). The deb and every file of it are Qualcomm-licensed: they are never committed, cached or uploaded by this repository or its CI; only digests are. The QAIRT SDK zip (1,543,955,191 B, STACK.md:923) is not used here at all.",
+  "package": {
+    "name": "qcom-qnn-sdk-v68",
+    "version": "0.1.0-2",
+    "qairt": "2.42.0.251225",
+    "url": "https://radxa-repo.github.io/qcs6490-noble/pool/main/q/qcom-qairt/qcom-qnn-sdk-v68_0.1.0-2_all.deb",
+    "sha256": "306fd647b88902d170831980ca68a31d77d77923534e2070783fbeca132a6e54",
+    "size": 44221844,
+    "verified": "deb SHA-256 equals components/compute_os.md:160 and STACK.md:867 (44,221,844 B); bytes downloaded and members hashed 2026-10-24"
+  },
+  "prefix": "opt/lab/npu/2.42",
+  "install": {
+    "usr/lib/aarch64-linux-gnu/libQnnHtp.so": {"dest": "lib/libQnnHtp.so", "sha256": "6a04a4b8e276b863eb1ea8550f6855a3f8345412c5548f5679d26d7c2609b02a", "size": 2316960, "role": "HTP backend (QairtAdapter backend_path)"},
+    "usr/lib/aarch64-linux-gnu/libQnnHtpV68Stub.so": {"dest": "lib/libQnnHtpV68Stub.so", "sha256": "1436f5337f6d469cb6aca1095fc7426ab1ac61d030c4a39b2cdf013fe17d9ec4", "size": 391168, "role": "CPU-side FastRPC stub for v68"},
+    "usr/lib/aarch64-linux-gnu/libQnnSystem.so": {"dest": "lib/libQnnSystem.so", "sha256": "9c2692c5cbc5d062beede749480cf3448fa9aa0267dfcb94933ad63078cf356d", "size": 3599096, "role": "context-binary metadata"},
+    "usr/lib/aarch64-linux-gnu/libQnnHtpV68Skel.so": {"dest": "dsp/libQnnHtpV68Skel.so", "sha256": "2cf8b6662cd9c98049c6ac0285d83c4b6966e6a1c9abb00aa843cb8e7e706b3c", "size": 9040240, "role": "CDSP skel (ADSP_LIBRARY_PATH, read-only golden copy)"},
+    "usr/share/doc/qcom-qnn-sdk-v68/copyright": {"dest": "share/doc/copyright", "sha256": "6db5fea9a6779c756228ac22995cb049b7b1ec4e53c44ceb66f23396aefef65e", "size": 1321, "role": "licence notice kept with the copies"},
+    "usr/share/doc/qcom-qnn-sdk-v68/LICENSE.pdf.gz": {"dest": "share/doc/LICENSE.pdf.gz", "sha256": "b0d60b1b60214ef2275a741f69542c80613259ed50f576201756c23f941775a6", "size": 136015, "role": "licence kept with the copies"}
+  },
+  "excluded": {
+    "usr/lib/aarch64-linux-gnu/libQnnHtpPrepare.so": "online graph prepare is forbidden on the device (STACK.md:875: offline context binaries only)",
+    "usr/lib/aarch64-linux-gnu/libQnnModelDlc.so": "no DLC on the device (STACK.md:875)",
+    "usr/bin/qnn-context-binary-generator": "no context generator on the device (STACK.md:875)",
+    "usr/bin/qnn-net-run": "HTP invocation path (ORT QNN EP from source or a QNN C-API runner) is an OPEN owner decision; nothing runs graphs until it is made",
+    "usr/lib/aarch64-linux-gnu/libQnnHtpNetRunExtensions.so": "belongs to qnn-net-run (same OPEN decision)",
+    "other": "CPU/GPU/DSP/HTA/LPAI/GenAI/TFLite/Saver/IR backends, profiling readers, validators and tools are not part of the HTP runtime"
+  }
+}

@@ -1,0 +1,344 @@
+name: SR-RX system files, device tree, DKMS, NPU layout and MCU runtime
+
+# CI models for deployment/system and tools/flash_mcu.py on freshly downloaded pinned
+# inputs: the field EDID, staged system files under real systemd/udev/initramfs tools,
+# the lab/field DTB merge, the pps-gpio module against the held 6.18.2-4-qcom headers,
+# the QNN runtime layout and the MCU UF2/mpremote pins. Results are CI evidence only:
+# nothing is installed on a Q6A or flashed to an MCU, and every bench gate stays OPEN.
+# Qualcomm files (QNN deb, DSP firmware) are downloaded, checked and discarded; only
+# JSON records with digests are uploaded, never the files themselves.
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'sat-receiver-audit/deployment/system/**'
+      - 'sat-receiver-audit/tools/flash_mcu.py'
+      - 'sat-receiver-audit/firmware/runtime.lock.json'
+      - 'sat-receiver-audit/firmware/mpremote-requirements.txt'
+      - '.github/workflows/sr-rx-system.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sr-rx-system-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: sat-receiver-audit
+
+env:
+  PYTHONDONTWRITEBYTECODE: '1'
+
+jobs:
+  system-files:
+    name: System files under systemd/udev/initramfs tools
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Tools (edid-decode, initramfs-tools, shellcheck; node is preinstalled)
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends edid-decode initramfs-tools shellcheck
+          systemctl --version | head -1
+      - name: Field EDID equals the generator and parses without failures
+        run: |
+          python deployment/system/edid_field.py --check
+          edid-decode --check deployment/system/edid/field.bin | tee "$RUNNER_TEMP/edid-decode.txt"
+          grep -q "151.500000 MHz" "$RUNNER_TEMP/edid-decode.txt"
+          grep -q "127.900000 MHz" "$RUNNER_TEMP/edid-decode.txt"
+      - name: Stage a candidate with fixture device bindings
+        run: |
+          python - <<'EOF'
+          import json, sys
+          sys.path.insert(0, "deployment")
+          import deploy
+          config = deploy.load("deployment/devices.template.json")
+          config["i2c"]["ina228"] = {"path": "/dev/i2c-7", "of_fullname": "/soc@0/ci-ina228"}
+          config["i2c"]["control"] = {"path": "/dev/i2c-9", "of_fullname": "/soc@0/ci-control"}
+          config["pico"]["kernel_parent"] = "99c000.serial"
+          config["usb"]["hfplus"]["serial"] = "AIRSPYHF SN:0123456789ABCDEF"
+          config["wifi_bt"]["fe11s_port4_usb_path"] = "1-1.4"
+          open("/tmp/ci-devices.json", "w").write(json.dumps(config))
+          EOF
+          python deployment/deploy.py stage --dest "$RUNNER_TEMP/stage" --devices /tmp/ci-devices.json
+          python deployment/deploy.py bundle --stage-dir "$RUNNER_TEMP/stage" --output "$RUNNER_TEMP/stage.tar.gz"
+      - name: systemd-sysusers and systemd-tmpfiles create exactly the accounts and directories
+        run: |
+          set -eu
+          root="$RUNNER_TEMP/sysroot"
+          sudo mkdir -p "$root/etc" "$root/usr/lib/sysusers.d" "$root/usr/lib/tmpfiles.d" "$root/etc/tmpfiles.d"
+          # Base accounts as on any noble root (root, dialout, ...), then only the staged config.
+          for f in passwd group shadow gshadow; do sudo cp "/etc/$f" "$root/etc/$f"; done
+          sudo cp "$RUNNER_TEMP/stage/rootfs/usr/lib/sysusers.d/srrx.conf" "$root/usr/lib/sysusers.d/"
+          sudo cp "$RUNNER_TEMP/stage/rootfs/usr/lib/tmpfiles.d/srrx.conf" "$root/usr/lib/tmpfiles.d/"
+          sudo cp "$RUNNER_TEMP/stage/rootfs/etc/tmpfiles.d/srrx-passes.conf" "$root/etc/tmpfiles.d/"
+          sudo systemd-sysusers --root="$root"
+          sudo systemd-tmpfiles --root="$root" --create
+          python - "$root" <<'EOF'
+          import os, pwd, sys
+          root = sys.argv[1]
+          sys.path.insert(0, "deployment/system")
+          import system_files
+          users = {l.split(":")[0]: l.split(":") for l in open(root + "/etc/passwd")}
+          groups = {l.split(":")[0]: l.rstrip("\n").split(":") for l in open(root + "/etc/group")}
+          for kind, name, *_ in system_files.SERVICE_ACCOUNTS:
+              assert name in groups, name
+              if kind == "u":
+                  assert users[name][6].strip() == "/usr/sbin/nologin", users[name]
+          for group in ("srrx-pico", "srrx-gnss"):
+              assert groups[group][3] == "", groups[group]  # no members
+          ids = {v[2]: k for k, v in users.items()}
+          gids = {v[2]: k for k, v in groups.items()}
+          for path, owner, group, mode in (("/data/products", "root", "lab", 0o750), ("/var/lib/srrx/plans", "srrx-passes", "labd", 0o2750)):
+              st = os.stat(root + path)
+              actual = (ids[str(st.st_uid)], gids[str(st.st_gid)], st.st_mode & 0o7777)
+              assert actual == (owner, group, mode), (path, actual)
+          print("sysusers/tmpfiles PASS (CI model):", sorted(n for k, n, *_ in system_files.SERVICE_ACCOUNTS))
+          EOF
+      - name: udev rules, polkit rules and hooks parse
+        run: |
+          set -eu
+          rootfs="$RUNNER_TEMP/stage/rootfs"
+          udevadm verify --resolve-names=never "$rootfs"/etc/udev/rules.d/*.rules
+          for rule in "$rootfs"/etc/polkit-1/rules.d/*.rules; do cp "$rule" "$RUNNER_TEMP/check.js"; node --check "$RUNNER_TEMP/check.js"; done
+          for hook in "$rootfs"/etc/initramfs-tools/hooks/*; do sh -n "$hook"; shellcheck -s sh -e SC1091,SC2154 "$hook"; done
+          tar -tvzf "$RUNNER_TEMP/stage.tar.gz" | grep -E 'etc/initramfs-tools/hooks/' | grep -c '^-rwxr-xr-x' | grep -qx 2
+      - name: inferd-htp.service passes systemd-analyze verify
+        run: |
+          set -eu
+          units="$RUNNER_TEMP/units"
+          mkdir -p "$units"
+          printf '[Unit]\nDescription=CI stand-in\n[Service]\nType=oneshot\nExecStart=/bin/true\n' > "$units/fastrpc.service"
+          cp "$units/fastrpc.service" "$units/cdsprpcd.service"
+          cp deployment/system/npu/inferd-htp.service "$units/"
+          sudo install -D -m 0755 /bin/true /opt/lab/npu/bin/inferd-htp
+          SYSTEMD_UNIT_PATH="$units:" systemd-analyze verify --man=no "$units/inferd-htp.service"
+      - name: Both hooks inside a real mkinitramfs (noble initramfs-tools)
+        run: |
+          set -eu
+          rootfs="$RUNNER_TEMP/stage/rootfs"
+          conf="$RUNNER_TEMP/initramfs-conf"
+          cp -r /etc/initramfs-tools "$conf"
+          cp "$rootfs"/etc/initramfs-tools/hooks/srrx-edid "$rootfs"/etc/initramfs-tools/hooks/lab-dsp-fw "$conf/hooks/"
+          chmod 0755 "$conf"/hooks/*
+          sed -i 's/^MODULES=.*/MODULES=list/' "$conf/initramfs.conf"
+          sudo install -D -m 0644 "$rootfs/usr/lib/firmware/edid/field.bin" /usr/lib/firmware/edid/field.bin
+          sudo mkinitramfs -d "$conf" -o "$RUNNER_TEMP/initrd.img" "$(uname -r)"
+          lsinitramfs "$RUNNER_TEMP/initrd.img" | tee "$RUNNER_TEMP/initrd.txt" | grep -E 'firmware/edid/field.bin$'
+          ! grep -q 'dragon-q6a/cdsp.mbn' "$RUNNER_TEMP/initrd.txt"   # no Phase 0 selection: lab-dsp-fw copies nothing
+          sudo cp /dev/null /usr/lib/firmware/edid/field.bin
+          if sudo mkinitramfs -d "$conf" -o "$RUNNER_TEMP/bad.img" "$(uname -r)"; then echo "::error::wrong EDID accepted"; exit 1; fi
+          echo "initramfs hooks PASS (CI model; the Q6A initramfs itself is a bench step)"
+
+  device-tree:
+    name: Lab/field DTB merge from the locked kernel deb
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Fetch and verify linux-image-6.18.2-4-qcom (sources.lock.json)
+        run: |
+          python - "$RUNNER_TEMP/image.deb" <<'EOF'
+          import hashlib, json, sys, urllib.request
+          lock = json.load(open("deployment/sources.lock.json"))
+          art = next(a for a in lock["artifacts"] if a["id"] == "linux-image-6.18.2-4-qcom")
+          h, n = hashlib.sha256(), 0
+          with urllib.request.urlopen(art["url"], timeout=120) as r, open(sys.argv[1], "wb") as out:
+              while chunk := r.read(1 << 20):
+                  h.update(chunk); n += len(chunk); out.write(chunk)
+          assert (h.hexdigest(), n) == (art["sha256"], art["size"]), (h.hexdigest(), n)
+          print("verified", art["name"], n)
+          EOF
+      - name: Compile the overlays and merge lab.dtb / field.dtb
+        run: |
+          set -eu
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends device-tree-compiler
+          dpkg-deb -x "$RUNNER_TEMP/image.deb" "$RUNNER_TEMP/image"
+          base=$(find "$RUNNER_TEMP/image" -name qcs6490-radxa-dragon-q6a.dtb | head -1)
+          test -n "$base"
+          echo "BASE=$base" >> "$GITHUB_ENV"
+          out="$RUNNER_TEMP/dt"; mkdir -p "$out"
+          dtc --version
+          dtc -@ -I dts -O dtb -o "$out/lab-q6a.dtbo" deployment/system/dt/lab-q6a.dtso
+          dtc -@ -I dts -O dtb -o "$out/field-q6a.dtbo" deployment/system/dt/field-q6a.dtso
+          fdtoverlay -i "$base" -o "$out/lab.dtb" "$out/lab-q6a.dtbo"
+          fdtoverlay -i "$base" -o "$out/field.dtb" "$out/lab-q6a.dtbo" "$out/field-q6a.dtbo"
+      - name: Overlay effects in the merged trees (fdt_check.py and fdtget)
+        run: |
+          set -eu
+          out="$RUNNER_TEMP/dt"
+          python deployment/system/fdt_check.py "$out/lab.dtb" --profile lab
+          python deployment/system/fdt_check.py "$out/field.dtb" --profile field
+          if python deployment/system/fdt_check.py "$BASE" --profile lab; then echo "::error::package DTB passed without overlays"; exit 1; fi
+          test "$(fdtget -t s "$out/lab.dtb" /aliases serial1)" = /soc@0/geniqup@9c0000/serial@998000
+          test "$(fdtget -t s "$out/lab.dtb" /aliases serial2)" = /soc@0/geniqup@9c0000/serial@99c000
+          test "$(fdtget -t s "$out/lab.dtb" /pps-gnss compatible)" = pps-gpio
+          test "$(fdtget -t s "$out/field.dtb" /soc@0/pcie@1c00000 status)" = disabled
+          test "$(fdtget -t s "$out/lab.dtb" /soc@0/pcie@1c00000 status)" = okay
+          test "$(fdtget "$out/lab.dtb" /soc@0/geniqup@9c0000/i2c@988000 clock-frequency)" = 100000
+          python - "$BASE" "$out" <<'EOF'
+          import hashlib, json, pathlib, subprocess, sys
+          base, out = pathlib.Path(sys.argv[1]), pathlib.Path(sys.argv[2])
+          sha = lambda p: hashlib.sha256(p.read_bytes()).hexdigest()
+          record = {"kind": "srrx_dt_ci_record", "status": "CI_MERGE_CHECKED_NOT_BOOTED",
+                    "dtc": subprocess.run(["dtc", "--version"], capture_output=True, text=True).stdout.strip(),
+                    "base_dtb": {"path_in_deb": str(base).split("/image/", 1)[1], "sha256": sha(base)},
+                    "overlays": {p.name: sha(p) for p in sorted(out.glob("*.dtbo"))},
+                    "merged": {p.name: sha(p) for p in sorted(out.glob("*.dtb"))},
+                    "bench": "OPEN: W-10 compares /sys/firmware/fdt node by node (fdt_check.py --reference), pinmux and aliases on the Q6A (build/07 §5.3)"}
+          (out / "dt-manifest.json").write_text(json.dumps(record, indent=2) + "\n")
+          print(json.dumps(record, indent=2))
+          EOF
+      - uses: actions/upload-artifact@v5
+        with:
+          name: dt-manifest
+          path: ${{ runner.temp }}/dt/dt-manifest.json
+
+  pps-gpio-dkms:
+    name: pps-gpio module against the held 6.18.2-4-qcom headers (aarch64)
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Fetch and verify the headers deb and pps-gpio.c
+        run: |
+          python - "$RUNNER_TEMP" <<'EOF'
+          import hashlib, json, sys, urllib.request
+          tmp = sys.argv[1]
+          lock = json.load(open("deployment/sources.lock.json"))
+          art = next(a for a in lock["artifacts"] if a["id"] == "linux-headers-6.18.2-4-qcom")
+          pin = json.load(open("deployment/system/system-sources.lock.json"))["pps_gpio"]
+          for url, sha, size, name in ((art["url"], art["sha256"], art["size"], "headers.deb"), (pin["url"], pin["sha256"], pin["size"], "pps-gpio.c")):
+              data = urllib.request.urlopen(url, timeout=120).read()
+              assert (hashlib.sha256(data).hexdigest(), len(data)) == (sha, size), name
+              open(tmp + "/" + name, "wb").write(data)
+              print("verified", name, len(data))
+          EOF
+      - name: Assemble the DKMS tree and build with gcc-12
+        run: |
+          set -eu
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends gcc-12 make kmod
+          dpkg-deb -x "$RUNNER_TEMP/headers.deb" "$RUNNER_TEMP/headers"
+          kdir="$RUNNER_TEMP/headers/usr/src/linux-headers-6.18.2-4-qcom"
+          test -f "$kdir/Makefile"
+          grep -E 'CONFIG_PPS=|CONFIG_PPS_CLIENT_GPIO|CONFIG_CC_VERSION_TEXT' "$kdir/include/config/auto.conf" || true
+          python deployment/system/pps_dkms.py assemble --source "$RUNNER_TEMP/pps-gpio.c" --dest "$RUNNER_TEMP/dkms"
+          tree="$RUNNER_TEMP/dkms/srrx-pps-gpio-1.2.0+lab1"
+          make -C "$kdir" M="$tree" CC=gcc-12 modules
+          python deployment/system/pps_dkms.py vermagic --module "$tree/pps-gpio.ko" | tee "$RUNNER_TEMP/dkms-result.json"
+          modinfo "$tree/pps-gpio.ko" | grep -E '^(vermagic|name|license|alias):'
+          python - "$tree/pps-gpio.ko" "$RUNNER_TEMP/dkms-result.json" <<'EOF'
+          import hashlib, json, subprocess, sys
+          record = json.load(open(sys.argv[2]))
+          record.update(kind="srrx_pps_gpio_ci_build", status="CI_BUILT_NOT_LOADED",
+                        gcc=subprocess.run(["gcc-12", "--version"], capture_output=True, text=True).stdout.splitlines()[0],
+                        ko_sha256=hashlib.sha256(open(sys.argv[1], "rb").read()).hexdigest(),
+                        bench="OPEN: module load, GPIO96 pinmux owner, /dev/pps-gnss and chrony PPS selection (W1-2)")
+          json.dump(record, open(sys.argv[2], "w"), indent=2)
+          print(json.dumps(record, indent=2))
+          EOF
+      - uses: actions/upload-artifact@v5
+        with:
+          name: pps-gpio-dkms
+          path: ${{ runner.temp }}/dkms-result.json
+
+  npu-layout:
+    name: QNN runtime layout and DSP firmware pins (no redistribution)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Download, verify, lay out, record, discard
+        run: |
+          set -eu
+          python - "$RUNNER_TEMP" <<'EOF'
+          import hashlib, json, sys, urllib.request
+          tmp = sys.argv[1]
+          for lock, name in (("deployment/system/npu/qnn-layout.lock.json", "qnn.deb"), ("deployment/system/npu/dsp-firmware.lock.json", "dsp.deb")):
+              package = json.load(open(lock))["package"]
+              data = urllib.request.urlopen(package["url"], timeout=300).read()
+              assert (hashlib.sha256(data).hexdigest(), len(data)) == (package["sha256"], package["size"]), name
+              open(tmp + "/" + name, "wb").write(data)
+              print("verified", package["name"], package["version"], len(data))
+          EOF
+          mkdir -p "$RUNNER_TEMP/npu-records"
+          python deployment/system/npu_layout.py --deb "$RUNNER_TEMP/qnn.deb" --dest "$RUNNER_TEMP/npu-root" --record "$RUNNER_TEMP/npu-records/LAYOUT.json"
+          python - "$RUNNER_TEMP/dsp.deb" "$RUNNER_TEMP/npu-records/dsp-firmware-check.json" <<'EOF'
+          import json, sys
+          sys.path.insert(0, "deployment/system")
+          import npu_layout
+          lock = json.load(open("deployment/system/npu/dsp-firmware.lock.json"))
+          pinned = dict(lock["initramfs_files"], **lock["runtime_dsp_files"])
+          found = npu_layout.deb_members(sys.argv[1], set(pinned), lock["package"])
+          import hashlib
+          result = {p: hashlib.sha256(found[p]).hexdigest() == e["sha256"] and len(found[p]) == e["size"] for p, e in pinned.items()}
+          assert set(found) == set(pinned) and all(result.values()), result
+          record = {"kind": "srrx_dsp_firmware_ci_check", "status": "CI_PINS_MATCH_PACKAGE", "package": lock["package"]["selection"],
+                    "files": sorted(pinned), "phase0": "OPEN"}
+          json.dump(record, open(sys.argv[2], "w"), indent=2)
+          print(json.dumps(record, indent=2))
+          EOF
+          rm -rf "$RUNNER_TEMP/qnn.deb" "$RUNNER_TEMP/dsp.deb" "$RUNNER_TEMP"/npu-root*
+      - uses: actions/upload-artifact@v5
+        with:
+          name: npu-layout-records
+          path: ${{ runner.temp }}/npu-records/
+
+  mcu-runtime:
+    name: MicroPython UF2 and mpremote pins
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Download each pinned UF2 and check it with tools/flash_mcu.py
+        run: |
+          set -eu
+          python - "$RUNNER_TEMP" <<'EOF'
+          import json, sys, urllib.request
+          lock = json.load(open("firmware/runtime.lock.json"))
+          pins = [b["uf2"] for b in lock["boards"].values()] + [lock["flash_erase"]]
+          for pin in pins:
+              data = urllib.request.urlopen(urllib.request.Request(pin["url"], headers={"User-Agent": "sr-rx-ci"}), timeout=120).read()
+              open(sys.argv[1] + "/" + pin["file"], "wb").write(data)
+          EOF
+          python tools/flash_mcu.py uf2 --role pico --file "$RUNNER_TEMP/RPI_PICO-20250809-v1.26.0.uf2"
+          python tools/flash_mcu.py uf2 --role imu --file "$RUNNER_TEMP/WAVESHARE_RP2040_ZERO-20260406-v1.28.0.uf2"
+          python tools/flash_mcu.py uf2 --role pico --image erase --file "$RUNNER_TEMP/nuke_universal.uf2"
+      - name: Hash-locked mpremote installs and reports the locked version
+        run: |
+          set -eu
+          python -m venv --copies "$RUNNER_TEMP/mcu-venv"
+          "$RUNNER_TEMP/mcu-venv/bin/python" -m pip install --disable-pip-version-check --only-binary=:all: --require-hashes -r firmware/mpremote-requirements.txt
+          test "$("$RUNNER_TEMP/mcu-venv/bin/mpremote" version)" = "mpremote 1.26.0"
+          python tools/flash_mcu.py install --role pico --port /dev/ttyACM0 --records /tmp/records

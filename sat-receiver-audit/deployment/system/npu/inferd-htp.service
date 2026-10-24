@@ -1,0 +1,48 @@
+[Unit]
+Description=SR-RX NPU inference (QNN HTP, offline context binaries only)
+# STACK.md:875, build/07 §21. Candidate: inert until the reviewed runner exists (the HTP
+# invocation path is an OPEN owner decision) and Phase 0 recorded the DSP/FastRPC set.
+# Installed by deployment/system/npu_layout.py, never by deploy.py stage; preset: disabled.
+Requires=fastrpc.service cdsprpcd.service
+After=fastrpc.service cdsprpcd.service
+ConditionPathIsExecutable=/opt/lab/npu/bin/inferd-htp
+ConditionPathExists=/etc/srrx/npu-phase0.env
+ConditionPathExists=/opt/lab/npu/2.42/LAYOUT.json
+
+[Service]
+Type=notify
+NotifyAccess=main
+User=labnpu
+Group=labnpu
+# fastrpc >= 1.0.6 creates the group at start; for 1.0.4-1 sysusers.d/srrx.conf does.
+SupplementaryGroups=fastrpc
+Environment="ADSP_LIBRARY_PATH=/opt/lab/npu/2.42/dsp;/usr/lib/dsp/cdsp"
+Environment=LD_LIBRARY_PATH=/opt/lab/npu/2.42/lib
+ExecStart=/opt/lab/npu/bin/inferd-htp
+WatchdogSec=5
+Restart=on-failure
+RestartSec=2
+MemoryMax=1G
+CPUAffinity=0-3
+OOMScoreAdjust=300
+# No PrivateDevices= (STACK.md:875): the closed device policy allows exactly these nodes.
+DevicePolicy=closed
+DeviceAllow=/dev/fastrpc-cdsp rw
+DeviceAllow=/dev/fastrpc-cdsp-secure rw
+DeviceAllow=/dev/dma_heap/system rw
+RuntimeDirectory=inferd-htp
+RuntimeDirectoryMode=0750
+UMask=0027
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateNetwork=yes
+IPAddressDeny=any
+RestrictAddressFamilies=AF_UNIX
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+CapabilityBoundingSet=
+LockPersonality=yes
+TasksMax=16

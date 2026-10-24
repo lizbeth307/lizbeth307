@@ -39,21 +39,48 @@
 
 ## Файли та встановлення
 
-Цільовий API — MicroPython **v1.26.0, порт RP2**. Конкретний UF2 для
-RP2040-Zero, його контрольна сума, обсяг flash і версія порту ще потребують
-перевірки на платі. CPython використовується для тестів переносних модулів.
+UF2 закріплено в `firmware/runtime.lock.json`: офіційна збірка плати
+`WAVESHARE_RP2040_ZERO-20260406-v1.28.0.uf2` з
+[micropython.org](https://micropython.org/download/WAVESHARE_RP2040_ZERO/),
+672,256 B, SHA-256 `0a982393ab4cbc740bc874e4bb4887841bce95441a44336b107b6ffb891ad5f5`
+(перевірено 24.10.2026). Окрема збірка для RP2040-Zero там є лише з v1.28.0, тож
+цільовий API IMU-pack — MicroPython **v1.28.0, порт RP2** (у Pico лишається v1.26.0).
+UF2 Pico сюди не ставиться: визначення плати в pico-sdk задає для Zero власний
+дільник тактування flash (`PICO_FLASH_SPI_CLKDIV 4`, у Pico — 2), а Waveshare радить
+для своїх RP-плат прошивку плати. Обидві плати мають 2 MiB flash, boot2 W25Q080 і
+1408 KiB файлової системи MicroPython. Що код IMU однаково працює на v1.28.0
+(SPI/UART/Pin/IRQ/freq), перевіряє лише запуск на стенді нижче. CPython
+використовується для тестів переносних модулів.
 
 1. Зняти живлення джгута. Під'єднати pack до USB для прошивання й перевірки;
    можливість одночасного живлення USB/джгутом спочатку перевірити за E5.
-2. Встановити перевірений RP2 MicroPython UF2. Залишити REPL на USB.
-3. Скопіювати в корінь файлової системи Zero п'ять файлів:
-   `main.py`, `shtp.py`, `session.py`, `device.py` з цієї папки та
-   `wire.py` з [software/srrx/wire.py](../../software/srrx/wire.py).
-   `__init__.py` потрібний лише для імпорту пакета в тестах CPython.
-4. Перевірити імена й контрольні суми копій, від'єднати USB, виконати холодний
-   запуск із захищеного входу E5 та записати UART-трасу й сигнали логічного
-   аналізатора. Команди встановлення на віддалений пристрій у цьому репозиторії
-   автоматично не виконуються.
+2. Утримуючи BOOT, натиснути й відпустити RESET (з'явиться диск RPI-RP2) і
+   записати закріплений UF2; плата, на якій уже є файли, спершу отримує
+   закріплений `nuke_universal.uf2`:
+
+   ```sh
+   python3 tools/flash_mcu.py uf2 --role imu --image erase --file nuke_universal.uf2 --drive /media/$USER/RPI-RP2 --execute
+   python3 tools/flash_mcu.py uf2 --role imu --file WAVESHARE_RP2040_ZERO-20260406-v1.28.0.uf2 --drive /media/$USER/RPI-RP2 --execute
+   ```
+
+   REPL лишається на USB.
+3. Скопіювати в корінь файлової системи Zero п'ять файлів з пакета
+   `firmware/dist/imu-micropython-files.zip` у порядку lock: `shtp.py`,
+   `session.py`, `device.py`, `wire.py` (з [software/srrx/wire.py](../../software/srrx/wire.py))
+   і останнім `main.py`. `__init__.py` потрібний лише для імпорту пакета в тестах
+   CPython і на пристрій не копіюється. Без `--execute` команда лише друкує план:
+
+   ```sh
+   python3 tools/flash_mcu.py install --role imu --port /dev/ttyACM1 --execute
+   ```
+
+   Інструмент вимагає закріплений mpremote 1.26.0, реліз 1.28.0 і назву плати
+   «Waveshare RP2040-Zero with RP2040» з `os.uname()`, порожню файлову систему, а
+   після копіювання рахує SHA-256 кожного файла на пристрої й відмовляє за
+   будь-якого зайвого чи іншого файла.
+4. Від'єднати USB, виконати холодний запуск із захищеного входу E5 та записати
+   UART-трасу й сигнали логічного аналізатора. Це стендовий крок; ні CI, ні
+   інструмент його не виконують і плату прошитою чи кваліфікованою не позначають.
 
 `main.py` задає частоту CPU 125 МГц; SPI0 1 МГц, mode 3 (CPOL=1, CPHA=1),
 MSB first; UART0 115200 8N1, RX buffer 128, TX buffer 512. Рівень PS0

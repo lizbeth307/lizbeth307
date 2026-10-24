@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "kind": "srrx_dsp_firmware_set",
+  "status": "PROVISIONAL_PHASE0_DEFAULT",
+  "note": "Phase 0 (STACK.md:861-866, build/07 §6) chooses 0.2.29 or 0.2.42; this lock pins the 0.2.29 set that compute_os.md:139 freezes as the default. lab-dsp-fw copies these files only when /etc/srrx/npu-phase0.env selects this set; 0.2.42 ships its own initramfs hook and lab-dsp-fw then copies nothing. Files are Qualcomm firmware (WHENCE: LICENSE.qcom) and are never committed or uploaded; only their digests are.",
+  "package": {
+    "name": "radxa-firmware-qcs6490",
+    "version": "0.2.29",
+    "selection": "radxa-firmware-qcs6490_0.2.29",
+    "url": "https://github.com/radxa-pkg/radxa-firmware/releases/download/0.2.29/radxa-firmware-qcs6490_0.2.29_all.deb",
+    "sha256": "f59a5e5b14d95650c9d248ae223fa293b753530ebb46bb96e27e635b0f457e98",
+    "size": 12204620,
+    "verified": "deb SHA-256 equals components/compute_os.md:139; bytes downloaded and members hashed 2026-10-24"
+  },
+  "initramfs_files": {
+    "usr/lib/firmware/qcom/qcs6490/radxa/dragon-q6a/adsp.mbn": {"sha256": "01fea79407e512a644fa33a7882af9958b043cfe5389aba81ca91fb74267a5f3", "size": 9871840},
+    "usr/lib/firmware/qcom/qcs6490/radxa/dragon-q6a/cdsp.mbn": {"sha256": "a9645c9418bc8a456fab8e379c9e30b1c6135a32fc2b91e99e77cbded93a1d56", "size": 3612672},
+    "usr/lib/firmware/qcom/qcs6490/radxa/dragon-q6a/adspr.jsn": {"sha256": "66ce8531efb7979d234e0f0eabbe18d038ac97da771a8a194f613df8f0724e81", "size": 513},
+    "usr/lib/firmware/qcom/qcs6490/radxa/dragon-q6a/adspua.jsn": {"sha256": "982a99853495e34726b8e44697fdfad303334de0a67cbf6cde306c8f1731000b", "size": 703},
+    "usr/lib/firmware/qcom/qcs6490/radxa/dragon-q6a/cdspr.jsn": {"sha256": "6d01cd7dce745204d5de20efe57e2511149ca2a5b48ee562fbedefda573ca465", "size": 513},
+    "usr/lib/firmware/qcom/qcs6490/a660_zap.mbn": {"sha256": "5dbe91cb3fc9655ea2f2a9e1e169a0e30877bec84215899136a519444ca62a3d", "size": 1054648}
+  },
+  "runtime_dsp_files": {
+    "usr/lib/dsp/cdsp/fastrpc_shell_3": {"sha256": "d6ef508a4051429bb231b8e1323683d847cb6dcc1b83af187c60f97c36a5a02d", "size": 964992},
+    "usr/lib/dsp/cdsp/fastrpc_shell_unsigned_3": {"sha256": "655a003255ae01d8b9c3eb2e978765d7dacbdf1ac5c7cf7ac8e171ac09f03dff", "size": 960884},
+    "usr/lib/dsp/cdsp/libc++.so.1": {"sha256": "1198a3e1c190831e392cf498a5708373c24941eb10854e79c705cc3343e9ffb8", "size": 3326224},
+    "usr/lib/dsp/cdsp/libc++abi.so.1": {"sha256": "bcc6d45b05b20a46d46c277ee463b44577b5c22f11bc3ba4fd898dbb84f10476", "size": 803096}
+  }
+}
