@@ -14,8 +14,9 @@ it times the production labrx.WorkerSource (spawn, NumPy import, driver open
 with bias OFF) and reads one block that stays in RAM. The guard is a labelled
 no-op because nothing here is powered through SR-RX; it is never a labd status.
 The library must pass the production owner/mode check (review finding RX-10).
-Output is JSON on stdout only: no IQ, spectrum or other file. The physical gate
-stays OPEN; this log is one input to the gate's full procedure, never a PASS.
+Output is JSON on stdout only: no IQ, spectrum, bytecode or other file. The
+physical gate stays OPEN; this log is one input to the gate's full procedure,
+never a PASS.
 """
 from __future__ import annotations
 
@@ -108,6 +109,10 @@ def report(args, runs, budget_s, gate, refusal=None):
 
 def main(argv=None):
     args = parse_args(argv)
+    # A deployed /opt/srrx is verified against an exact file list: no __pycache__
+    # from these imports or from the spawn worker, which inherits the variable.
+    sys.dont_write_bytecode = True
+    os.environ["PYTHONDONTWRITEBYTECODE"] = "1"
     sys.path.insert(0, str(args.project.resolve(strict=True) / "software"))
     from srrx import labrx, receivers
     gate = receivers.DRIVER_GATES[args.branch]

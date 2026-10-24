@@ -9,7 +9,9 @@ IQ exists only in the worker pipe/RAM, never in report/files. Exit0 means these
 component lifecycle checks passed, not that a physical receiver was qualified.
 Every case runs under the unchanged production startup budget
 (labrx.STARTUP_TIMEOUT_S, read here and never assigned) and the production
-driver-library owner/mode check (review finding RX-10).
+driver-library owner/mode check (review finding RX-10). first_read_within_bound
+is measured, not assumed: the case's first production read() returned within
+that budget from spawn plus one read deadline (first_read_issues).
 """
 from __future__ import annotations
 
@@ -126,6 +128,7 @@ CASES=(('driver_error',1,'failure',1),('hang_ignoring_sigterm',2,'failure',1),('
        ('startup_within_production_budget',5,'budget',3),('startup_budget_exceeded',6,'budget',1),
        ('library_not_trusted_owner',5,'untrusted',1),('library_group_writable',5,'untrusted',1))
 UNTRUSTED_OWNER=65534  # nobody; the root guest moves the fixture to it, a non-root runner owns it already
+READ_SLACK_S=1.0  # poll/IPC/TCG scheduling slack, the same 1 s as the exceeded-budget window
 
 
 def failure_issues(name,error,calls):
@@ -159,6 +162,19 @@ def budget_issues(case,error,ready_after_s,budget_s,elapsed_s):
     else:
         messages.append('Unknown startup-budget case: '+str(case))
     return messages
+
+
+def first_read_issues(returned_after_s,budget_s,read_timeout_s):
+    """Production first-read bound (review finding RX-02); pure for unit tests.
+
+    returned_after_s: seconds from the worker spawn to the end of the first read().
+    The budget runs from spawn, so ready or not, that read returns by the budget
+    plus one read deadline: a late or repeated read() gets no extension.
+    """
+    if returned_after_s is None: return ['First production read() did not run']
+    if returned_after_s>budget_s+read_timeout_s+READ_SLACK_S:
+        return ['First read outlasted the production startup budget plus one read deadline']
+    return []
 
 
 def library_issues(error,markers,calls):
@@ -293,7 +309,8 @@ def main(argv=None):
                         try:
                             return super().read(guard,timeout_s=args.read_timeout_s)
                         finally:
-                            self.read_returned_after_s=time.monotonic()-self.started_at
+                            if self.read_returned_after_s is None:  # the first read only
+                                self.read_returned_after_s=time.monotonic()-self.started_at
                             self.actual_read_guard_checks=guard.check_count-before
                             self.native_entry='READ\n' in (marker.read_text() if marker.exists() else '')
                     def close(self):
@@ -340,9 +357,9 @@ def main(argv=None):
                 lines=text.splitlines()
                 worker=workers[0] if workers else None
                 ready_after=None if worker is None else worker.ready_after_s
-                enforced=bool(worker and worker.started_at is not None and labrx.STARTUP_TIMEOUT_S==budget)
-                messages=[]
-                if not enforced: messages.append('Case did not run under the production startup budget')
+                returned_after=None if worker is None else worker.read_returned_after_s
+                messages=first_read_issues(returned_after,budget,args.read_timeout_s)
+                within_bound=not messages
                 if worker and worker.process.is_alive(): messages.append('Worker remained alive after close')
                 if worker and worker.close_duration_s is not None and worker.close_duration_s>3.0:
                     messages.append('Worker close exceeded3s bound')
@@ -350,7 +367,7 @@ def main(argv=None):
                 if kind=='untrusted':
                     messages.extend(library_issues(error,lines,calls))
                 elif name=='startup_budget_exceeded':
-                    messages.extend(budget_issues(name,error,ready_after,budget,worker and worker.read_returned_after_s))
+                    messages.extend(budget_issues(name,error,ready_after,budget,returned_after))
                     if 'LOADED' not in lines or 'OPEN_BLOCKING' not in lines:
                         messages.append('Blocking native driver open was not reached')
                     if 'OPEN' in lines or 'READ' in lines: messages.append('Blocked driver open unexpectedly completed')
@@ -370,7 +387,7 @@ def main(argv=None):
                 elif kind=='failure':
                     messages.extend(failure_issues(name,error,calls))
                 elif name=='startup_within_production_budget':
-                    messages.extend(budget_issues(name,error,ready_after,budget,worker and worker.read_returned_after_s))
+                    messages.extend(budget_issues(name,error,ready_after,budget,returned_after))
                     if not result or result.get('frames')!=1: messages.append('Production capture did not complete one frame')
                     elif result.get('worker_startup_s') is None or not result['worker_startup_s']<budget:
                         messages.append('run_capture did not report the measured worker startup')
@@ -387,11 +404,11 @@ def main(argv=None):
                 info=library.stat()
                 cases.append({'case':name,'run':run,'fixture_mode':mode,
                     'status':'PASS' if not messages else 'FAIL','issues':messages,
-                    'production_budget_enforced':enforced,
                     'ready_after_s':None if ready_after is None else round(ready_after,3),
                     'budget_margin_s':None if ready_after is None else round(budget-ready_after,3),
-                    'first_read_returned_after_s':None if not worker or worker.read_returned_after_s is None
-                        else round(worker.read_returned_after_s,3),
+                    'first_read_returned_after_s':None if returned_after is None else round(returned_after,3),
+                    'first_read_bound_s':round(budget+args.read_timeout_s+READ_SLACK_S,3),
+                    'first_read_within_bound':within_bound,
                     'capture_worker_startup_s':None if not result else result.get('worker_startup_s'),
                     'page_cache_dropped':page_cache_dropped,
                     'trusted_library_uids':'production_default' if trusted is None else sorted(trusted),
@@ -414,8 +431,7 @@ def main(argv=None):
                     'only_case_artifact':artifacts,'elf_machine':elf_machine})
         finally:
             os.chdir(original_cwd)
-        report={'status':'PASS' if cases and all(c['status']=='PASS' and c['production_budget_enforced'] for c in cases)
-                    else 'FAIL',
+        report={'status':'PASS' if cases and all(c['status']=='PASS' for c in cases) else 'FAIL',
                 'scope':'spawned-worker-native-ABI-component-only-no-RF-no-accepted-hardware',
                 'architecture':platform.machine(),'kernel':platform.release(),'python':platform.python_version(),
                 'fixture_source_sha256':hashlib.sha256(C_FIXTURE.encode()).hexdigest(),

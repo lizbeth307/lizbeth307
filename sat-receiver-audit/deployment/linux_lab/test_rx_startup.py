@@ -62,6 +62,19 @@ class BudgetContractTests(unittest.TestCase):
         self.assertIn("Blocked driver open unexpectedly reported ready", rx.budget_issues(name, error, 2.0, 10.0, 10.05))
         self.assertTrue(rx.budget_issues("other", None, 1.0, 10.0, 1.0))
 
+    def test_every_first_read_is_bounded_from_spawn_by_budget_and_one_read_deadline(self):
+        # Measured per case (review RX-R2): a ready worker's read ends by ready + deadline < budget + deadline,
+        # a never-ready one by the budget; 1 s slack as in the exceeded-budget window.
+        self.assertEqual(rx.READ_SLACK_S, 1.0)
+        for returned in (0.4, 10.05, 12.0):
+            with self.subTest(returned=returned):
+                self.assertEqual(rx.first_read_issues(returned, 10.0, 1.0), [])
+        for late, deadline in ((12.01, 1.0), (30.0, 1.0), (11.6, 0.5)):
+            with self.subTest(returned=late, deadline=deadline):
+                self.assertEqual(rx.first_read_issues(late, 10.0, deadline),
+                                 ["First read outlasted the production startup budget plus one read deadline"])
+        self.assertEqual(rx.first_read_issues(None, 10.0, 1.0), ["First production read() did not run"])
+
     def test_untrusted_library_must_be_refused_before_dlopen(self):
         refused = OSError("Driver library must be a regular file of a trusted UID, without group/world write")
         self.assertEqual(rx.library_issues(refused, [], OFF), [])
@@ -82,6 +95,7 @@ class BudgetContractTests(unittest.TestCase):
             with self.subTest(pattern=pattern):
                 self.assertIsNone(re.search(pattern, source))
         self.assertIn("budget=labrx.STARTUP_TIMEOUT_S", source)
+        self.assertNotIn("production_budget_enforced", source)  # was true whenever a worker existed
         names = [name for name, _, _, _ in rx.CASES]
         for name in ("startup_within_production_budget", "startup_budget_exceeded",
                      "library_not_trusted_owner", "library_group_writable"):
@@ -109,7 +123,9 @@ class BudgetContractTests(unittest.TestCase):
         self.assertNotIn("startup_deadline_s", report)
         self.assertFalse(report["raw_iq_persisted"] or report["physical_receiver_tested"])
         short, refused = report["cases"]
-        self.assertTrue(all(case["production_budget_enforced"] for case in report["cases"]))
+        for case in report["cases"]:
+            self.assertEqual((case["first_read_bound_s"], case["first_read_within_bound"]), (12.0, True))
+            self.assertLessEqual(case["first_read_returned_after_s"], case["first_read_bound_s"])
         self.assertTrue(0 < short["ready_after_s"] < 10.0 and short["library_loaded"])
         self.assertAlmostEqual(short["budget_margin_s"], 10.0 - short["ready_after_s"], places=2)
         self.assertEqual((refused["library_loaded"], refused["native_read_entered"], refused["library_mode"]),
@@ -140,9 +156,12 @@ class BenchScriptTests(unittest.TestCase):
         self.assertEqual(bench.parse_args(self.args(**{"--condition": "cold", "--runs": "1"})).runs, 1)
         source = (HERE / "rx_startup_bench.py").read_text(encoding="utf-8")
         # Only the production receivers bindings (bias OFF) are used: no direct C call, override or acceptance file.
-        for forbidden in ("ctypes", "cdll", "bias_tee", "eeprom", "--trusted", "trusted_library_uids", "environ",
+        for forbidden in ("ctypes", "cdll", "bias_tee", "eeprom", "--trusted", "trusted_library_uids",
                           "load_acceptance", "acceptance.json"):
             self.assertNotIn(forbidden, source.lower())
+        # The one environment use is the bytecode opt-out the spawn worker inherits; nothing is read from it.
+        self.assertEqual([line.strip() for line in source.splitlines() if "environ" in line.lower()],
+                         ['os.environ["PYTHONDONTWRITEBYTECODE"] = "1"'])
 
     def run_main(self, argv, worker=None):
         out = io.StringIO()
@@ -150,7 +169,9 @@ class BenchScriptTests(unittest.TestCase):
             cwd = os.getcwd()
             os.chdir(temporary)
             try:
-                patches = [mock.patch("srrx.labrx._disable_worker_core_dumps")]
+                # main() turns bytecode off for itself and its spawn worker; restore both here.
+                patches = [mock.patch("srrx.labrx._disable_worker_core_dumps"), mock.patch.dict(os.environ),
+                           mock.patch.object(sys, "dont_write_bytecode", sys.dont_write_bytecode)]
                 if worker is not None:
                     patches += [mock.patch("srrx.labrx.WorkerSource", worker),
                                 mock.patch("srrx.receivers.verify_library")]
@@ -158,6 +179,7 @@ class BenchScriptTests(unittest.TestCase):
                     for item in patches:
                         stack.enter_context(item)
                     code = bench.main(argv)
+                    self.bytecode = (sys.dont_write_bytecode, os.environ.get("PYTHONDONTWRITEBYTECODE"))
                 left = sorted(os.listdir(temporary))
             finally:
                 os.chdir(cwd)
@@ -176,6 +198,42 @@ class BenchScriptTests(unittest.TestCase):
         self.assertTrue(report["refusal"])
         self.assertEqual((report["runs"], left), ([], []))
 
+    @unittest.skipUnless(LINUX, "the RX modules need Linux")
+    def test_bench_writes_no_bytecode_into_the_project_tree(self):
+        # Review RX-R3: a deployed /opt/srrx is verified against an exact file list.
+        # A fresh interpreter without -B or PYTHONDONTWRITEBYTECODE imports srrx from a copy.
+        code = textwrap.dedent('''
+            import os, runpy, sys
+            sys.argv, status = sys.argv[1:], None
+            try:
+                runpy.run_path(sys.argv[0], run_name='__main__')
+            except SystemExit as exc:
+                status = exc.code
+            print(sys.dont_write_bytecode, os.environ.get('PYTHONDONTWRITEBYTECODE'),
+                  sys.modules['srrx.labrx'].__file__, file=sys.stderr)
+            raise SystemExit(status)
+        ''')
+        with tempfile.TemporaryDirectory() as temporary:
+            project = Path(temporary) / "project"
+            shutil.copytree(PROJECT / "software" / "srrx", project / "software" / "srrx",
+                            ignore=shutil.ignore_patterns("__pycache__"))
+            library = Path(temporary) / "librtlsdr.so.2.0.2"
+            library.write_bytes(b"bench fixture, never loaded")
+            library.chmod(0o666)  # refused after the srrx imports, before any worker
+            digest = hashlib.sha256(library.read_bytes()).hexdigest()
+            env = {key: value for key, value in os.environ.items()
+                   if key not in ("PYTHONDONTWRITEBYTECODE", "PYTHONPATH")}
+            result = subprocess.run([sys.executable, "-c", code, str(HERE / "rx_startup_bench.py"),
+                                     "--project", str(project)]
+                                    + self.args(**{"--library-path": str(library), "--library-sha256": digest}),
+                                    capture_output=True, text=True, timeout=120, env=env, cwd=temporary)
+            self.assertEqual(result.returncode, 2, result.stdout[-2000:] + result.stderr[-2000:])
+            self.assertEqual(json.loads(result.stdout)["status"], "REFUSED")
+            flag, variable, labrx_file = result.stderr.split()[-3:]
+            self.assertEqual((flag, variable), ("True", "1"))
+            self.assertTrue(Path(labrx_file).is_relative_to(project.resolve()), labrx_file)
+            self.assertEqual(sorted(str(path) for path in project.rglob("__pycache__")), [])
+
     def test_measurement_prints_json_only_and_keeps_the_gate_open(self):
         import numpy as np
         created = []
@@ -191,6 +249,7 @@ class BenchScriptTests(unittest.TestCase):
                 self.closed = True
         code, report, left = self.run_main(self.args(), Worker)
         self.assertEqual((code, report["status"], left), (0, "MEASURED", []))
+        self.assertEqual(self.bytecode, (True, "1"))  # also for the spawn worker it would start
         self.assertEqual(report["ready_after_s"], {"count": 3, "min": 1.25, "p50": 2.5, "max": 4.0})
         self.assertIsNone(report["within_proposed_cold_limit"])  # warm runs are informative only
         self.assertEqual((report["gate"], report["physical_gate"], report["production_startup_budget_s"]),
