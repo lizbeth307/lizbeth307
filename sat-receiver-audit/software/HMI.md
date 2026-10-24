@@ -213,6 +213,54 @@ source) знімає підтвердження; потокові кадри т�
 Використовуються лише coarse labels, CPU baseline і heuristic score;
 польова точність та NPU acceleration не оголошуються виміряними.
 
+## Декларативна модель меню (selftest RX-11)
+
+`srrx.menu_model` — чисті дані без Qt, I/O і викликів labd. `PAGES` задає шість
+сторінок у порядку вкладок; `LEAVES` — кожен лист консолі: напис, як його показує
+консоль, бекенд, прапорці `needs_lime`/`needs_t7` з `fallback_text`, ознаку
+`critical` і входи `controls` (touch; клавіші Pico `HOME BACK REC MARK FN LOCK
+ENC1_PRESS ENC2_PRESS`, енкодери `ENC1`/`ENC2`). Види бекенда: `labd_op` — операція
+`Engine.request`; `page_only` — модуль srrx, що виконує дію в консолі (для SIM
+capture — `srrx.labrx --simulate` окремим процесом); `engine_unit` — unit systemd і
+його програма; `decoder_preset` — пресет `decoder_policy.availability()`. Листи
+консолі мають лише `labd_op` і `page_only`; два інші види — для майбутніх хабів Lab
+Shell (наприклад, WEFAX → режим fax OpenWebRX+, STACK.md:884). Сама консоль
+залежить від двох unit: `srrx.service` (labd, `-m srrx.daemon`) і користувацького
+`srrx-menu.service` (`-m srrx.hmi`).
+
+`create_window` будує вкладки в порядку `PAGES` і відмовляє в старті
+(`RuntimeError`), якщо побудована вкладка має інший напис; інших змін поведінки
+немає. `software/tests/test_menu_model.py` в offscreen Qt перевіряє, що кожен
+touch-лист є кнопкою чи галочкою на своїй сторінці (або в рамці вікна), а кожна
+кнопка чи галочка вікна — листом моделі; пари ON/OFF на Bench — рядки `EN_*`.
+Той самий тест натискає віджет кожного touch-листа з записувальним labd. Лист
+`labd_op` має надіслати саме свою операцію через `action()`, чергу worker і
+`ConsoleController`: ARM/RECOVER одразу поновлюють оренду, Shutdown спершу дає
+disarm, «Close + DISARM» — disarm. Лист `page_only` не надсилає нічого (діалоги
+скасовано, SIM capture і навчальні задачі підмінено). Там само: `KEYS` дорівнює
+`KEY_NAMES` прошивки Pico, `GESTURES` — `HMINavigation.NAMES`, `OUTPUTS` — `EN_OUTPUTS`,
+а набір операцій листів дорівнює тому, який може надіслати `ConsoleController`
+(ключі таблиці `required` у `command()` і літерали `{"op": …}` класу, розбір `hmi.py`).
+
+Збірка без Lime і без T7: маршрут LIME і EN_LIME3V3 оголошують бекенд без Lime
+(LIME лишається PARK, EN_LIME3V3 — OFF; OFF і PARK labd приймає без оренди), EN_T7 —
+бекенд без T7 (OFF; сховище — UFS і microSD V30, STACK.md:977). Це декларація для
+перевірки: консоль цей текст не показує й нічого не ховає. Перевірка можливостей,
+що ховає пункти лише для Lime (STACK.md:884), належить Lab Shell, а не цій консолі.
+
+Критичні листи — дії, потрібні в рукавицях, коли ємнісна панель не працює
+(STACK.md:110): навігація HOME/BACK/FN/ENC1/ENC2/ENC1_PRESS/ENC2_PRESS, LOCK,
+Overview (статус і захисний fault за HOME) і **DISARM / STOP**. Фізичні входи лише
+навігують, блокують і показують статус: вхідне ядро Pico не має API живлення
+(`firmware/pico/hmi.py`), тому DISARM сьогодні — лише touch-дія. Selftest RX-11
+через це дає BLOCKED `critical_leaf_touch_only` (`frame.disarm`). Це відкрите
+проєктне рішення, а не порушення «лише прийом». Потрібен фізичний шлях DISARM, що
+діє лише в бік вимкнення (окрема клавіша або утримання LOCK), зі змінами прошивки
+Pico, labd і консолі та рецензією. До того без touch лишається `labctl disarm` з
+локального терміналу. Оренду консоль поновлює, поки GUI відповідає, тож зупинка
+GUI знімає HOLD через 1,5 с, а TTL 3 с і Pico обмежують решту. Shutdown критичним
+листом не вважається: RF він не вимикає швидше за DISARM, а без touch є `labctl shutdown`.
+
 ## Фізичні клавіші й енкодери
 
 Використовується лише перевірений `status.hmi` від labd:
@@ -250,6 +298,8 @@ LOCK або підтверджене **Unlock touch** розблоковує UI 
 PYTHONPATH=software:. python3 -m unittest discover -s software/tests -p test_hmi.py -v
 QT_QPA_PLATFORM=offscreen PYTHONPATH=/tmp/srrx-qt:software:. \
   python3 -m unittest discover -s software/tests -p test_hmi.py -v
+QT_QPA_PLATFORM=offscreen PYTHONPATH=/tmp/srrx-qt:software:. \
+  python3 -m unittest discover -s software/tests -p test_menu_model.py -v
 ```
 
 Перевірені faults/lease/clock, strict requests, bench, stale IMU/HMI, counter
