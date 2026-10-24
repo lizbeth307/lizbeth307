@@ -83,7 +83,7 @@ class Log:
 
     def write(self, text):
         line = time.strftime("%H:%M:%S ") + text
-        print(line, flush=True)
+        print(line, file=sys.stderr, flush=True)  # stdout carries only the JSON result
         if self.path:
             with open(self.path, "a", encoding="utf-8") as handle:
                 handle.write(line + "\n")
