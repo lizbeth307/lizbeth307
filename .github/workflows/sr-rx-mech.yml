@@ -52,7 +52,7 @@ jobs:
       - name: Fetch pinned vendor STEP models (SHA-256 checked, never committed)
         run: python mechanical/build.py --fetch-vendor "$RUNNER_TEMP/vendor-step"
       - name: Unit tests
-        run: python -m unittest discover -s mechanical/tests -t mechanical -v
+        run: python -m unittest discover -s mechanical/tests -v
       - name: Regenerate and compare with the committed outputs
         id: check
         run: python mechanical/build.py --check --vendor-cache "$RUNNER_TEMP/vendor-step" --offline

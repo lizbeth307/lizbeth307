@@ -102,7 +102,7 @@ def all_sheets(P, vendor_fit):
         groups["boards"].append(boards.board_sheet(P, bid))
     ant, checks = antennas.sheets(P)
     groups["antennas"] += ant
-    groups["pod-imu"] += [antennas.pod_sheet(P), antennas.imu_sheet(P)]
+    groups["pod-imu"] += [antennas.pod_sheet(P), antennas.pod_walls_sheet(P), antennas.imu_sheet(P)]
     return groups, checks
 
 
