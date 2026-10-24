@@ -231,6 +231,18 @@
       "status": "datasheet",
       "src": "https://www.globaloring.com/o-ring-groove-design/ (read 2026-10-24: static seals typically 15-30 % squeeze; design for 60-85 % groove fill; face-seal table -1XX 0.103 in: depth .088-.090 in, width .140 in liquids)"
     },
+    "pem_f_m3_1": {
+      "name": "PEM F-M3-1 self-clinching flush nut (300-series stainless)",
+      "hole_d": 4.37, "hole_tol": [0.0, 0.08], "shank": 1.53, "sheet": [1.53, 2.32], "edge_min": 6.0,
+      "status": "datasheet",
+      "src": "https://catalogue.zygology.com/printitems/pemsert--self-clinching-flush-fasteners---type-f/msert-self-clinching-flush-fasteners-type-f-metric (PEM table, read 2026-10-24: shank 1.53 max, sheet 1.53-2.32 mm, hole 4.37 +0.08, 'both the top and the bottom of the sheet remain smooth'); edge_min 6.00 mm from the PEM product-finder text quoted in a web search 2026-10-24 (page body not readable): confirm on the PEM bulletin before drilling"
+    },
+    "pem_so_m3_3": {
+      "name": "PEM SO-M3-3ZI thru-hole threaded standoff, 3 mm (SOS-M3-3 stainless alternative)",
+      "hole_d": 4.22, "hole_tol": [0.0, 0.08], "length": 3.0, "sheet_min": 1.0, "edge_min": 6.0, "head_d": 4.8,
+      "status": "datasheet",
+      "src": "https://catalogue.zygology.com/item/thru-hole-threaded-standoffs-types-so-soa-sos/ru-hole-threaded-standoffs-types-so-soa-sos-metric/so-m3-12zi (PEM family data on the SO-M3-12ZI page, read 2026-10-24: min sheet 1.00 mm, hole 4.22 +0.08, H 4.8, min distance hole C/L to edge 6.00 mm, sheet HRB 80 / HB 150 or less, 'installed with their heads flush with one surface of the mounting sheet'); the 3 mm length code is taken from the PEM SO family listing in a web search 2026-10-24: confirm the exact part number before ordering"
+    },
     "vhb_4910": {
       "name": "3M VHB 4910 clear acrylic foam tape (glass to bezel)",
       "t": 1.0,

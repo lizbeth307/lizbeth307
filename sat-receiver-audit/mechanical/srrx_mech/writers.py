@@ -89,8 +89,10 @@ def _dxf_text(s):
     return "".join(out)
 
 
-def to_dxf(sheet):
-    """AutoCAD R12 ASCII DXF, model space only, units mm, layers as in geom2d."""
+def to_dxf(sheet, only=None):
+    """AutoCAD R12 ASCII DXF, model space only, units mm, layers as in geom2d.
+
+    only: restrict to these layers (the board Edge.Cuts files keep CUT and HOLE)."""
     f = lambda v: fmt(v, 4)
     out = ["0", "SECTION", "2", "HEADER", "9", "$ACADVER", "1", "AC1009", "9", "$INSBASE", "10", "0.0", "20", "0.0", "30", "0.0",
            "9", "$EXTMIN", "10", "0.0", "20", "0.0", "9", "$EXTMAX", "10", "1000.0", "20", "1000.0", "0", "ENDSEC",
@@ -99,6 +101,8 @@ def to_dxf(sheet):
         out += ["0", "LAYER", "2", name, "70", "0", "62", str(col), "6", "CONTINUOUS"]
     out += ["0", "ENDTAB", "0", "ENDSEC", "0", "SECTION", "2", "ENTITIES"]
     for kind, layer, d in sheet.items:
+        if only and layer not in only:
+            continue
         if kind == "line":
             (a, b) = d
             out += ["0", "LINE", "8", layer, "10", f(a[0]), "20", f(a[1]), "30", "0", "11", f(b[0]), "21", f(b[1]), "31", "0"]

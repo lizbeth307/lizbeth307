@@ -45,6 +45,7 @@ class Sheet:
         self.kind = kind
         self.items = []        # (kind, layer, data) in model space
         self.paper = []        # same tuples in paper space (frame, title block, notes)
+        self._labels = []      # model-space boxes of placed labels, for label()
 
     # ---- model space -------------------------------------------------
     def line(self, p, q, layer="CUT"):
@@ -87,12 +88,36 @@ class Sheet:
         self.line((x - size, y), (x + size, y), "CENTER")
         self.line((x, y - size), (x, y + size), "CENTER")
 
+    def text_box(self, p, s, h, anchor="start"):
+        """Approximate model-space box of a text (DejaVu Sans: about 0.75 x font size per character)."""
+        w = len(s) * 0.75 * h * 1.4 / self.scale
+        hh = h * 1.4 / self.scale
+        x0 = p[0] - (w / 2 if anchor == "middle" else w if anchor == "end" else 0.0)
+        return (x0, p[1] - 0.25 * hh, x0 + w, p[1] + 0.85 * hh)
+
+    def label(self, p, s, h=2.5, alternatives=()):
+        """Place a label at p, or at the first alternative position whose box does not overlap an earlier label."""
+        for q in (p,) + tuple(alternatives):
+            b = self.text_box(q, s, h)
+            if not any(b[0] < o[2] and o[0] < b[2] and b[1] < o[3] and o[1] < b[3] for o in self._labels):
+                break
+        else:
+            q, b = p, self.text_box(p, s, h)
+        self._labels.append(b)
+        self.text(q, s, h, "TEXT")
+
     def hole(self, c, d, label=None, h=2.5, dx=None, dy=None):
         self.circle(c, d / 2.0, "HOLE")
         self.center_mark(c, max(2.0, d / 2.0 + 1.5))
         if label:
             off = d / 2.0 + 1.5
-            self.text((c[0] + (off if dx is None else dx), c[1] + (off if dy is None else dy)), label, h, "TEXT")
+            p = (c[0] + (off if dx is None else dx), c[1] + (off if dy is None else dy))
+            step = h * 1.4 / self.scale + 0.6
+            w = self.text_box(p, label, h)[2] - p[0]
+            alts = [(c[0] + off, c[1] + off), (c[0] + off, c[1] - off - step), (c[0] - off - w, c[1] + off),
+                    (c[0] - off - w, c[1] - off - step)]
+            alts += [(a[0], a[1] + k * step * s) for k in (1, 2, 3) for s in (1, -1) for a in alts[:2]]
+            self.label(p, label, h, alts)
 
     def dim(self, p, q, off, text=None, h=2.5, nd=1):
         """Aligned dimension between p and q, dimension line shifted by off (model mm, signed, normal)."""
@@ -170,10 +195,17 @@ class Sheet:
         self.pline((tx, ty), (tx, ty + th)); self.pline((tx, ty + th), (tx + tw, ty + th))
         for k in (1, 2, 3, 4):
             self.pline((tx, ty + k * 7.0), (tx + tw, ty + k * 7.0), "THIN")
-        self.ptext((tx + 2.0, ty + th - 6.0), self.title, 3.2)
-        self.ptext((tx + 2.0, ty + 4 * 7.0 + 2.0), self.subtitle, 2.3)
+        def fit(s, h, width=tw - 4.0):
+            n = int(width / (0.75 * h * 1.4))
+            return s if len(s) <= n else s[:n - 1].rstrip() + "…"
+
+        self.ptext((tx + 2.0, ty + th - 6.0), fit(self.title, 3.2), 3.2)
+        self.ptext((tx + 2.0, ty + 4 * 7.0 + 2.0), fit(self.subtitle, 2.3), 2.3)
         self.ptext((tx + 2.0, ty + 3 * 7.0 + 2.0), f"Креслення {self.sid} · масштаб {meta['scale']} · мм · допуск ±0.2, якщо не вказано", 2.3)
-        self.ptext((tx + 2.0, ty + 2 * 7.0 + 2.0), f"Матеріал: {self.material or '—'}", 2.3)
+        mat = f"Матеріал: {self.material or '—'}"
+        self.ptext((tx + 2.0, ty + 2 * 7.0 + 2.0), fit(mat, 2.3), 2.3)
+        if fit(mat, 2.3) != mat:
+            self.notes.append(mat)
         self.ptext((tx + 2.0, ty + 1 * 7.0 + 2.0), "SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN", 2.3)
         self.ptext((tx + 2.0, ty + 2.0), f"mechanical/build.py · params {meta['params']} · v{meta['version']}", 2.0)
         # notes, top left

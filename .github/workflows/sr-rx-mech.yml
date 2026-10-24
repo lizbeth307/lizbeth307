@@ -1,0 +1,73 @@
+name: SR-RX mechanical model
+
+# Regenerates the parametric enclosure, board outlines, antenna fabrication
+# patterns and dimensioned drawings from sat-receiver-audit/mechanical/params
+# and compares them byte for byte with the committed mechanical/generated tree.
+# Every result is MODEL FIT ONLY: no physical fit, sealing, thermal or drop gate
+# is closed by this workflow, and nothing here is hardware evidence.
+
+on:
+  push:
+    branches: ['codex/**', 'ccr-*']
+    paths: ['sat-receiver-audit/mechanical/**', 'sat-receiver-audit/pcb/generated/components.csv', '.github/workflows/sr-rx-mech.yml']
+  pull_request:
+    paths: ['sat-receiver-audit/mechanical/**', 'sat-receiver-audit/pcb/generated/components.csv', '.github/workflows/sr-rx-mech.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sr-rx-mech-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: sat-receiver-audit
+
+env:
+  PYTHONDONTWRITEBYTECODE: '1'
+  MPLBACKEND: Agg
+
+jobs:
+  mech:
+    name: Mechanical model (x86_64)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # No later step needs authenticated git; keep GITHUB_TOKEN out of .git/config.
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install the pinned CAD stack (wheels only, every hash checked)
+        run: python -m pip install --disable-pip-version-check --require-hashes --only-binary=:all: -r mechanical/requirements-mech.txt
+      - name: Restore the vendor STEP cache
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/vendor-step
+          key: srrx-vendor-step-${{ hashFiles('sat-receiver-audit/mechanical/params/vendor-models.json') }}
+      - name: Fetch pinned vendor STEP models (SHA-256 checked, never committed)
+        run: python mechanical/build.py --fetch-vendor "$RUNNER_TEMP/vendor-step"
+      - name: Unit tests
+        run: python -m unittest discover -s mechanical/tests -t mechanical -v
+      - name: Regenerate and compare with the committed outputs
+        id: check
+        run: python mechanical/build.py --check --vendor-cache "$RUNNER_TEMP/vendor-step" --offline
+      - name: Model-fit gate (envelopes, part-size rules, vendor STEP cross-check)
+        if: always() && steps.check.outcome != 'skipped'
+        run: python mechanical/build.py --gate
+      - name: Collect regenerated outputs
+        if: failure() && steps.check.outcome == 'failure'
+        run: |
+          python mechanical/build.py --vendor-cache "$RUNNER_TEMP/vendor-step" --offline
+          git add -A mechanical/generated
+          git -c core.quotePath=false diff --cached --stat -- mechanical/generated | tail -40
+          git -c core.quotePath=false diff --cached --binary -- mechanical/generated > "$RUNNER_TEMP/mech.patch"
+      - uses: actions/upload-artifact@v5
+        if: failure() && steps.check.outcome == 'failure'
+        with:
+          name: mech-regenerated
+          path: ${{ runner.temp }}/mech.patch

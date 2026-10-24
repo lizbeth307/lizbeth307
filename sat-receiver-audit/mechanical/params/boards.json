@@ -7,14 +7,16 @@
     "PWR": {
       "name": "power board (PWR_MAIN + PWR_BRANCH + USB_POWER)",
       "domains": ["PWR_MAIN", "PWR_BRANCH", "USB_POWER"],
-      "outline": [[0, 0], [136, 0], [136, 35], [42, 35], [42, 112], [0, 112]],
-      "rects": [[0, 0, 136, 35], [0, 35, 42, 77]],
-      "place": {"origin": [6.0, 38.0], "z_bottom": 41.0, "facing": "+z", "mount": "plate front face through a 0.5 mm Gelid pad"},
-      "holes": [[4, 4], [132, 4], [132, 31], [46, 31], [4, 108], [38, 108], [21, 56]],
+      "outline": [[0, 0], [136, 0], [136, 35], [42, 35], [42, 110], [0, 110]],
+      "rects": [[0, 0, 136, 35], [0, 35, 42, 75]],
+      "place": {"origin": [6.0, 38.0], "z_bottom": 40.9, "facing": "+z", "mount": "plate front face; Gelid 0.5 mm pads under the thermal_bond zones, gap 0.4 mm set by shim washers (mechanical.json pwr_bond)"},
+      "holes": [[4, 6], [132, 6], [132, 31], [46, 31], [4, 106], [38, 106], [38, 56]],
+      "plate_fastener": "pem_f_m3_1", "screw": "M3 x 4 ISO 14580 A2 TX10 from the component side (board 1.6 + shim 0.4 + plate 2.0: the tip ends flush with the plate rear face)",
       "hole_d": 3.2, "hole_keepout_d": 7.0,
       "max_height": 9.0,
       "height_zones": [],
-      "thermal_bond": [[0, 0, 136, 35], [0, 35, 42, 40]],
+      "thermal_bond": [[9, 4, 60, 23], [72, 4, 56, 23], [4, 38, 30, 30], [4, 70, 30, 30]],
+      "_thermal_bond_note": "placement contract for the PCB work: TPS7A4701 x2 and LT3045 x2 inside the two lower zones, D36V50F12 and D36V50F5 inside the two zones of the left leg (exposed pads stitched to bottom copper); each zone gets one Gelid pad of the same size",
       "modules_on_board": [
         {"id": "D36V50F12", "part": "pololu_d36v50", "at": [8, 40]},
         {"id": "D36V50F5", "part": "pololu_d36v50", "at": [8, 72]}
@@ -24,15 +26,16 @@
         {"edge": "right", "span": [0, 35], "use": "blower, BMS, column harness (JST PH)"},
         {"edge": "top", "span": [0, 42], "use": "DISP12 to the HDMI board, rails through the plate slot to the rear layer (Micro-Fit 3.0 for >=2 A)"}
       ],
-      "notes": "Fastening: M3 into self-clinching flush nuts in the plate (no cut thread in the plate, STACK 5.8); clinch-nut MPN TBD (MECH-04). The IP2368 retail board sits on the plate in the HMI column (layout item ip2368). Area check: fit-report 'board_area'."
+      "notes": "Fastening: M3 into PEM F-M3-1 self-clinching flush nuts in the plate (flush on both faces, so nothing reaches the RF side; no cut thread in the plate, STACK 5.8). The IP2368 retail board sits on the plate in the HMI column (layout item ip2368). Area check: fit-report 'board_area'."
     },
     "RF": {
       "name": "RF / detector board (RF_HMC + RF_HF + RF_INJECTOR + DC_CORE)",
       "domains": ["RF_HMC", "RF_HF", "RF_INJECTOR", "DC_CORE"],
       "outline": [[0, 0], [184, 0], [184, 44.5], [0, 44.5]],
       "rects": [[0, 0, 184, 44.5]],
-      "place": {"origin": [17.6, 99.0], "z_bottom": 35.5, "facing": "-z", "mount": "3.0 mm metal standoffs on the plate rear face; single RF GND/CHASSIS bond at BOND-RF"},
-      "holes": [[4, 4], [92, 4], [180, 4], [4, 40.5], [92, 40.5], [180, 40.5]],
+      "place": {"origin": [17.6, 99.0], "z_bottom": 35.5, "facing": "-z", "mount": "PEM SO-M3-3 thru-hole standoffs (3 mm) clinched into the plate, heads flush with the plate front face; single RF GND/CHASSIS bond at BOND-RF"},
+      "holes": [[4, 4], [92, 4], [176, 8], [4, 40.5], [92, 40.5], [180, 40.5]],
+      "plate_fastener": "pem_so_m3_3", "screw": "M3 x 5 ISO 14580 A2 TX10 from the component side into the standoff",
       "hole_d": 3.2, "hole_keepout_d": 7.0,
       "max_height": 5.5,
       "height_zones": [],
