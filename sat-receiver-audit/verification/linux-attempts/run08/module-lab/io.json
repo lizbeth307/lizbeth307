@@ -1,0 +1,464 @@
+{
+  "suite": "io_modules",
+  "status": "EMULATION_PASS_WITH_UNSUPPORTED",
+  "execution_status": "PASS",
+  "schema_version": 1,
+  "physical_verified": false,
+  "accepted": false,
+  "environment": {
+    "system": "Linux",
+    "machine": "aarch64",
+    "uid": 0
+  },
+  "modules": [
+    {
+      "id": "IO-USB-TOPOLOGY",
+      "design_refs": [
+        "design/E5.json:U510",
+        "design/E5.json:J512",
+        "build/12-revision-v2.1.md"
+      ],
+      "coverage_level": "FILESYSTEM_FIXTURE",
+      "status": "PASS",
+      "physical_verified": false,
+      "accepted": false,
+      "case_count": 1,
+      "evidence": {
+        "connected": {
+          "devices": [
+            {
+              "device": "1-2",
+              "vid": "ffee",
+              "pid": "1000",
+              "device_class": "09",
+              "serial": "fixture-only",
+              "product": "Synthetic CH334F-role hub",
+              "speed_mbps": 480.0,
+              "authorized": true,
+              "observed_driver": "hub",
+              "binding": "UNSUPPORTED",
+              "driver_selected": false,
+              "synthetic": true
+            },
+            {
+              "device": "1-2.1",
+              "vid": "ffee",
+              "pid": "1001",
+              "device_class": "03",
+              "serial": "fixture-only",
+              "product": "Synthetic generic touch HID",
+              "speed_mbps": 12.0,
+              "authorized": true,
+              "observed_driver": "usbhid",
+              "binding": "UNSUPPORTED",
+              "driver_selected": false,
+              "synthetic": true
+            },
+            {
+              "device": "1-2.2",
+              "vid": "ffee",
+              "pid": "1002",
+              "device_class": "00",
+              "serial": "fixture-only",
+              "product": "Synthetic Hantek-role accessory",
+              "speed_mbps": 480.0,
+              "authorized": true,
+              "observed_driver": null,
+              "binding": "UNSUPPORTED",
+              "driver_selected": false,
+              "synthetic": true
+            },
+            {
+              "device": "2-1",
+              "vid": "ffee",
+              "pid": "1003",
+              "device_class": "08",
+              "serial": "fixture-only",
+              "product": "Synthetic T7-role storage",
+              "speed_mbps": 5000.0,
+              "authorized": true,
+              "observed_driver": "uas",
+              "binding": "UNSUPPORTED",
+              "driver_selected": false,
+              "synthetic": true
+            }
+          ],
+          "errors": [],
+          "truncated": false,
+          "synthetic": true,
+          "auto_bind": false
+        },
+        "events": {
+          "added": [
+            "1-2",
+            "1-2.1",
+            "1-2.2",
+            "2-1"
+          ],
+          "removed": [],
+          "changed": []
+        },
+        "kernel_uevents": false
+      },
+      "limitation": "Observed driver names are synthetic symlink text. No kernel hub, USB transfers or CH334F silicon are emulated."
+    },
+    {
+      "id": "IO-USB-UNKNOWN-ERROR",
+      "design_refs": [
+        "design/E5.json:U510",
+        "design/E5.json:J512",
+        "build/12-revision-v2.1.md"
+      ],
+      "coverage_level": "FILESYSTEM_FIXTURE",
+      "status": "PASS",
+      "physical_verified": false,
+      "accepted": false,
+      "case_count": 1,
+      "evidence": {
+        "unknown": {
+          "device": "1-3",
+          "vid": "ffff",
+          "pid": "ffff",
+          "device_class": "00",
+          "serial": "fixture-only",
+          "product": "Unknown USB device",
+          "speed_mbps": 480.0,
+          "authorized": true,
+          "observed_driver": null,
+          "binding": "UNSUPPORTED",
+          "driver_selected": false,
+          "synthetic": true
+        },
+        "malformed_rejected": true,
+        "oversize_rejected": true,
+        "descriptor_symlink_rejected": true,
+        "auto_bind": false
+      }
+    },
+    {
+      "id": "IO-USB-REMOVE-RECONNECT",
+      "design_refs": [
+        "design/E5.json:U510",
+        "design/E5.json:J512",
+        "build/12-revision-v2.1.md",
+        "design/E5.json:U520",
+        "design/E5-connection-guide.md",
+        "design/E5.json:U540",
+        "design/E5.json:EN_T7"
+      ],
+      "coverage_level": "FILESYSTEM_FIXTURE",
+      "status": "PASS",
+      "physical_verified": false,
+      "accepted": false,
+      "case_count": 1,
+      "evidence": {
+        "removed": [
+          "1-2",
+          "1-2.1",
+          "1-2.2"
+        ],
+        "remaining": [
+          "2-1"
+        ],
+        "reconnected_without_cached_binding": true,
+        "kernel_hotplug": false
+      }
+    },
+    {
+      "id": "IO-USB-INVENTORY-BOUNDS",
+      "design_refs": [
+        "design/E5.json:U510",
+        "design/E5.json:J512",
+        "build/12-revision-v2.1.md"
+      ],
+      "coverage_level": "FILESYSTEM_FIXTURE",
+      "status": "PASS",
+      "physical_verified": false,
+      "accepted": false,
+      "case_count": 1,
+      "evidence": {
+        "max_devices": 64,
+        "max_descriptor_bytes": 256,
+        "excess_entries_truncated": true,
+        "inventory_gone_is_error_not_present": true
+      }
+    },
+    {
+      "id": "IO-T7-METADATA-PERSISTENCE",
+      "design_refs": [
+        "design/E5.json:U540",
+        "design/E5.json:EN_T7"
+      ],
+      "coverage_level": "PRODUCTION_SOFTWARE_ON_TEMP_FILESYSTEM",
+      "status": "PASS",
+      "physical_verified": false,
+      "accepted": false,
+      "case_count": 1,
+      "evidence": {
+        "implementation": "srrx.labrx.run_capture + spectrum.validate_frame",
+        "simulated_frames": 2,
+        "files": [
+          "spectrum.json",
+          "survey.jsonl"
+        ],
+        "raw_iq_persisted": false,
+        "source": "SIMULATION",
+        "physical_ssd": false
+      }
+    },
+    {
+      "id": "IO-T7-WRITE-ERROR",
+      "design_refs": [
+        "design/E5.json:U540",
+        "design/E5.json:EN_T7"
+      ],
+      "coverage_level": "PRODUCTION_SOFTWARE_FAULT_INJECTION",
+      "status": "PASS",
+      "physical_verified": false,
+      "accepted": false,
+      "case_count": 1,
+      "evidence": {
+        "implementation": "srrx.labrx.atomic_json",
+        "injected_errno": "ENOSPC",
+        "error_propagated": true,
+        "last_atomic_snapshot_preserved": true,
+        "temporary_file_cleaned": true,
+        "invalid_parent_fails": true
+      },
+      "limitation": "A local injected write failure is not USB removal, SSD endurance, fsync power-loss, or mount-identity qualification."
+    },
+    {
+      "id": "IO-T7-GUARDED-METADATA",
+      "design_refs": [
+        "design/E5.json:U540",
+        "design/E5.json:EN_T7"
+      ],
+      "coverage_level": "PRODUCTION_GUARD_WITH_INJECTED_MOUNT_BLOCK_INVENTORY",
+      "status": "PASS",
+      "physical_verified": false,
+      "accepted": false,
+      "case_count": 1,
+      "evidence": {
+        "implementation": "StorageGuard + labrx.run_capture + spectrum.append_survey",
+        "real_dirfd_nofollow_io": true,
+        "simulated_frames": 2,
+        "block_identity_and_mountinfo": "fixture injection, not real block hardware",
+        "raw_iq_persisted": false,
+        "jsonl_append_rollback_on_error": true,
+        "actual_mount_created": false
+      },
+      "limitation": "Real block-device/mount binding requires the separate Linux virtual-disk test, then actual T7 acceptance."
+    },
+    {
+      "id": "IO-T7-GUARDED-MOUNT-LOSS",
+      "design_refs": [
+        "design/E5.json:U540",
+        "design/E5.json:EN_T7"
+      ],
+      "coverage_level": "PRODUCTION_GUARD_WITH_INJECTED_MOUNT_BLOCK_INVENTORY",
+      "status": "PASS",
+      "physical_verified": false,
+      "accepted": false,
+      "case_count": 1,
+      "evidence": {
+        "configured_path_replaced": true,
+        "mount_inventory_removed": true,
+        "guard_permanently_revoked": true,
+        "replacement_root_files": [],
+        "missing_parent_autocreated": false,
+        "revoked_capture_restart_refused": true,
+        "physical_usb_removal": false
+      }
+    },
+    {
+      "id": "IO-QT-TOUCH-MOUSE-MENU",
+      "design_refs": [
+        "design/E5.json:U520",
+        "design/E5-connection-guide.md"
+      ],
+      "coverage_level": "PRODUCTION_QT_INPUT_EVENTS",
+      "status": "PASS",
+      "physical_verified": false,
+      "accepted": false,
+      "case_count": 1,
+      "evidence": {
+        "entrypoint": "srrx.hmi.create_window + real Worker + DemoTransport subprocess",
+        "qt_platform": "offscreen",
+        "qt": "6.12.0",
+        "pyside6": "6.12.0",
+        "mouse_receiver_navigation": true,
+        "touch_spectrum_navigation": true,
+        "production_diagnostics_button": true,
+        "touch_events_observed": [
+          194,
+          196
+        ],
+        "mouse_events_observed": [
+          2,
+          3,
+          2,
+          2,
+          3,
+          3,
+          2,
+          3
+        ],
+        "mouse_sources": [
+          "MouseEventSource.MouseEventNotSynthesized",
+          "MouseEventSource.MouseEventNotSynthesized",
+          "MouseEventSource.MouseEventSynthesizedByQt",
+          "MouseEventSource.MouseEventSynthesizedByQt",
+          "MouseEventSource.MouseEventSynthesizedByQt",
+          "MouseEventSource.MouseEventSynthesizedByQt",
+          "MouseEventSource.MouseEventNotSynthesized",
+          "MouseEventSource.MouseEventNotSynthesized"
+        ],
+        "touch_delivery": "QTest touchscreen events; QWidget may consume Qt-synthesized mouse events",
+        "startup": {
+          "raw_status_before_controller_poll": true,
+          "cold_start_timeout_s": 20.0,
+          "ordinary_timeout_s": 5.0,
+          "elapsed_s": 0.647873,
+          "mode": "SIMULATION",
+          "production_deadlines_changed": false
+        },
+        "power_requests": [],
+        "sources": [
+          "https://doc.qt.io/qt-6/qtest-qtoucheventsequence.html",
+          "https://doc.qt.io/qtforpython-6/PySide6/QtGui/QInputDevice.html"
+        ]
+      },
+      "limitation": "QTest injects generic Qt input. No Linux HID driver, USB touch packet, panel calibration, or Wisecoco factory wiring is qualified."
+    },
+    {
+      "id": "IO-QT-CONTROL-LINK-DISCONNECT",
+      "design_refs": [
+        "design/E5.json:U520",
+        "design/E5-connection-guide.md",
+        "design/E5.json:U540",
+        "design/E5.json:EN_T7"
+      ],
+      "coverage_level": "PRODUCTION_SOFTWARE_TRANSPORT_FAULT_INJECTION",
+      "status": "PASS",
+      "physical_verified": false,
+      "accepted": false,
+      "case_count": 1,
+      "evidence": {
+        "link_error_injected": true,
+        "banner_no_connection": true,
+        "power_state_unconfirmed": true,
+        "all_enable_buttons_disabled": true,
+        "disabled_tap_issues_no_control": true,
+        "reconnect_auto_arm": false,
+        "lease_created": false,
+        "worker_connected_snapshots": 7
+      },
+      "limitation": "The fault is the controller transport, not a USB/HDMI removal signal. Production USB display-departure detection is absent."
+    },
+    {
+      "id": "IO-WISECOCO-PHYSICAL",
+      "design_refs": [
+        "design/E5.json:U520",
+        "design/E5-connection-guide.md"
+      ],
+      "coverage_level": "UNSUPPORTED",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "accepted": false,
+      "case_count": 0,
+      "evidence": {
+        "driver_or_acceptance": "not present",
+        "factory_touch_pinout_verified": false
+      },
+      "limitation": "No physical Wisecoco display/touch firmware, EDID modes, brightness wiring, HDMI backfeed, latency or factory connector pinout acceptance. Generic Qt navigation is a separate result."
+    },
+    {
+      "id": "IO-DISPLAY-USB-HOTPLUG-INTERLOCK",
+      "design_refs": [
+        "design/E5.json:U520",
+        "design/E5-connection-guide.md"
+      ],
+      "coverage_level": "UNSUPPORTED",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "accepted": false,
+      "case_count": 0,
+      "evidence": {
+        "production_usb_display_inventory_service": false,
+        "automatic_disarm_on_display_departure": false
+      },
+      "limitation": "Production HMI does not consume this synthetic inventory. Do not infer USB/HDMI removal interlocks from the control-link outage scenario."
+    },
+    {
+      "id": "IO-CH334F-KERNEL",
+      "design_refs": [
+        "design/E5.json:U510",
+        "design/E5.json:J512",
+        "build/12-revision-v2.1.md"
+      ],
+      "coverage_level": "UNSUPPORTED",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "accepted": false,
+      "case_count": 0,
+      "evidence": {
+        "kernel_usb_driver_exercised": false,
+        "physical_hub": false
+      },
+      "limitation": "No USB kernel hotplug, TT/MTT scheduling, endpoint transfers, port power/overcurrent, hub depth or backfeed verification in this no-USB guest."
+    },
+    {
+      "id": "IO-HANTEK-DRIVER",
+      "design_refs": [
+        "design/E5.json:J501",
+        "STACK.md:3.1 Hantek 6022BE",
+        "STACK.md:P17"
+      ],
+      "coverage_level": "UNSUPPORTED",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "accepted": false,
+      "case_count": 0,
+      "evidence": {
+        "srrx_driver": null,
+        "openhantek_executed": false,
+        "firmware_uploaded": false
+      },
+      "limitation": "No in-project Hantek6022BE driver or accepted OpenHantek/FW0210 runtime. Inventory descriptors cannot validate acquisition, voltage calibration or safe electrical connections."
+    },
+    {
+      "id": "IO-T7-REMOVABLE-STORAGE",
+      "design_refs": [
+        "design/E5.json:U540",
+        "design/E5.json:EN_T7"
+      ],
+      "coverage_level": "UNSUPPORTED",
+      "status": "UNSUPPORTED",
+      "physical_verified": false,
+      "accepted": false,
+      "case_count": 0,
+      "evidence": {
+        "mount_identity_guard": "implemented, opt-in StorageGuard; fixture tested",
+        "guarded_capture_source_cleanup": "implemented; unit tested with injected source",
+        "sync_unmount_before_EN_T7_off": false,
+        "uas_or_usb3_verified": false
+      },
+      "limitation": "Physical USB/T7 removal, sustained writes, sync/unmount/power-off and UAS/USB3 remain unqualified. For removable outputs explicitly pair --storage-root/--storage-device; default local writers still create parent directories and must not be mistaken for guarded T7 recording. The guard does not mount, unmount, format or cut power."
+    }
+  ],
+  "scope": "private filesystem USB descriptors + production software/Qt SIMULATION; no host USB or physical hardware",
+  "counts": {
+    "PASS": 10,
+    "FAIL": 0,
+    "UNSUPPORTED": 5,
+    "UNAVAILABLE": 0
+  },
+  "source_sha256": {
+    "deployment/module_lab/io_modules.py": "3a2a53f360b6530cf1bb2b6cf073bc6404a4ce759b09867654e41ec1d3b894a4",
+    "deployment/module_lab/io_scenarios.py": "f00a48a7367cf67357bbfe4b75df36703af2f54250aec8c1addcdd661ada2e87",
+    "software/srrx/hmi.py": "12bf7ac65c1a90e99c89f13af980118dedaaa5ab569bba8c3d5682f015e57dd6",
+    "software/srrx/labrx.py": "b969582eb65ba942dff214a02260550ee1bc03123f97fbe39b25f4a4238ce06c",
+    "software/srrx/spectrum.py": "a99254927f0e82b4752d8fdd848eadc7f4887313330d258139c2e71de949b591",
+    "software/srrx/storage.py": "775fdd716796c15f6fd1b7f9e9105c408bd67c33f45129e4996a6cdaab5ebcd8"
+  }
+}

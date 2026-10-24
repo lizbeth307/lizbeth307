@@ -16,14 +16,18 @@ on:
         description: 'Also run the full ARM64 QEMU Linux lab, finalize and repackage (about 1 h)'
         type: boolean
         default: false
+      bundle_only:
+        description: 'Rebuild generated documents and the offline HTML bundle from committed evidence (no QEMU)'
+        type: boolean
+        default: false
       refreeze_pcb:
         description: 'If the design graphs changed, also re-place/re-route the DC_CORE PCB chain and re-pin its checks'
         type: boolean
         default: false
       archive_as:
-        description: 'Directory name under verification/linux-attempts for the previously imported run'
+        description: 'Directory name under verification/linux-attempts for the previously imported run (empty: the next free runNN)'
         type: string
-        default: 'run07'
+        default: ''
 
 permissions:
   contents: read
@@ -43,6 +47,7 @@ env:
   # ARM64 guest lock); hashes there are aarch64-only, so they are not reused.
   PY_PINS: >-
     numpy==2.3.5 onnx==1.23.2 onnxruntime==1.31.0 PySide6==6.12.0
+    skyfield==1.55 sgp4==2.27 jplephem==2.24 certifi==2026.10.19
     lxml==6.1.3 PyMuPDF==2.0
 
 jobs:
@@ -96,6 +101,10 @@ jobs:
         with:
           name: software-tests-${{ matrix.arch }}
           path: ${{ runner.temp }}/software-tests-${{ matrix.arch }}.json
+      - name: Deployment test runner as documented (deployment/test.sh)
+        # The same deployment tests through their own offline entry point; writes nothing into the tree.
+        if: matrix.arch == 'x86_64'
+        run: sh deployment/test.sh
       - name: Independent CAD, netlist and electrical checks
         if: matrix.arch == 'x86_64'
         run: |
@@ -171,7 +180,8 @@ jobs:
         # check to the new input and starter hashes.
         if: steps.pcbprep.outputs.changed == 'true' && github.event_name == 'workflow_dispatch' && inputs.refreeze_pcb
         run: |
-          python3 -m pip install --break-system-packages --disable-pip-version-check numpy scipy
+          # numpy as PY_PINS; scipy 1.18.1 (numpy>=2.0,<2.8) has cp312/cp313 wheels (the image's Python is 3.13).
+          python3 -m pip install --break-system-packages --disable-pip-version-check numpy==2.3.5 scipy==1.18.1
           python3 pcb/generate_layout.py
           python3 pcb/generate_layout.py --check
           python3 pcb/generate_routed.py
@@ -273,6 +283,23 @@ jobs:
             libegl1 libgl1 libopengl0 libxkbcommon0 libfontconfig1 \
             libdbus-1-3 libglib2.0-0t64 gcc g++
           python -m pip install --disable-pip-version-check $PY_PINS
+      - name: Host evidence at a fixed point, before the guest binds sources
+        # design/readiness-contract.json carries the host test counts and is a
+        # bound graph of software-tests.json and the acceptance template, which
+        # the guest binds. Regression -> documents -> regression -> documents
+        # reaches the fixed point; then the template and packages are frozen.
+        run: |
+          python tools/run_tests_offline.py
+          python tools/build_documents.py
+          python tools/run_tests_offline.py
+          python tools/build_documents.py
+          PYTHONPATH=software:. python -m srrx.provision template --output software/config/acceptance.template.json
+          PYTHONPATH=software:. python -m srrx.demo --output verification/software-simulation.json
+          python tools/render_hmi_views.py --output verification/hmi-views
+          python tools/build_firmware.py
+          python tools/build_firmware.py --check
+          cp design/readiness-contract.json "$RUNNER_TEMP/contract.json"
+          cp software/config/acceptance.template.json "$RUNNER_TEMP/template.json"
       - name: Fetch locked QEMU tools and guest assets
         run: |
           python deployment/linux_lab/fetch_tools.py --dest "$RUNNER_TEMP/qemu-tools"
@@ -285,19 +312,18 @@ jobs:
             --qemu "$T/qemu-system-aarch64" --qemu-img "$T/qemu-img" --genisoimage "$T/genisoimage"
       - name: Run guest
         run: python deployment/linux_lab/host.py run --work "$RUNNER_TEMP/lab-run" --timeout 7200
-      - name: Regenerate host evidence from the same sources
-        run: |
-          python tools/run_tests_offline.py
-          PYTHONPATH=software:. python -m srrx.provision template --output software/config/acceptance.template.json
-          PYTHONPATH=software:. python -m srrx.demo --output verification/software-simulation.json
-          python tools/render_hmi_views.py --output verification/hmi-views
-      - name: Finalize, rebuild documents/firmware and repackage
+      - name: Finalize and repackage
         env:
           # Passed through the environment, never pasted into the script text.
-          ARCHIVE_AS: ${{ inputs.archive_as || 'run07' }}
+          ARCHIVE_AS: ${{ inputs.archive_as }}
         run: |
           # The previous imported run moves to the attempt archive unchanged.
-          if ! [[ "$ARCHIVE_AS" =~ ^[A-Za-z0-9._-]+$ ]] || [[ "$ARCHIVE_AS" == *..* ]]; then
+          if [ -z "$ARCHIVE_AS" ]; then
+            last=$(find verification/linux-attempts -mindepth 1 -maxdepth 1 -type d -name 'run[0-9]*' -printf '%f\n' \
+              | sed -n 's/^run\([0-9][0-9]*\)$/\1/p' | sort -n | tail -1)
+            ARCHIVE_AS=$(printf 'run%02d' $((10#${last:-0} + 1)))
+            echo "archive_as not given: archiving the previous run as $ARCHIVE_AS"
+          elif ! [[ "$ARCHIVE_AS" =~ ^[A-Za-z0-9._-]+$ ]] || [[ "$ARCHIVE_AS" == *..* ]]; then
             echo "::error::archive_as must be a plain directory name ([A-Za-z0-9._-], no '..')"
             exit 1
           fi
@@ -307,7 +333,8 @@ jobs:
           git mv verification/module-lab "$prev/module-lab"
           python tools/finalize_linux_lab.py --work "$RUNNER_TEMP/lab-run"
           python tools/build_documents.py
-          python tools/build_firmware.py
+          cmp design/readiness-contract.json "$RUNNER_TEMP/contract.json"
+          cmp software/config/acceptance.template.json "$RUNNER_TEMP/template.json"
           python tools/build_bundle.py
           python -B tools/check_bundle.py
       - name: Collect evidence patch
@@ -326,3 +353,39 @@ jobs:
             ${{ runner.temp }}/lab-run/run.json
             ${{ runner.temp }}/lab-run/console.log
             ${{ runner.temp }}/lab-run/results
+
+  bundle:
+    name: Rebuild documents and bundle
+    if: github.event_name == 'workflow_dispatch' && inputs.bundle_only
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # No later step needs authenticated git; keep GITHUB_TOKEN out of .git/config.
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Install pandoc and Python dependencies
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends pandoc
+          python -m pip install --disable-pip-version-check $PY_PINS
+      - name: Documents must not change bound evidence; rebuild and check the bundle
+        run: |
+          python tools/build_documents.py
+          git diff --exit-code -- design/readiness-contract.json software/config/acceptance.template.json
+          python tools/build_bundle.py
+          python -B tools/check_bundle.py
+      - name: Collect bundle patch
+        if: always()
+        run: |
+          git add -A .
+          git -c core.quotePath=false diff --cached --binary > "$RUNNER_TEMP/bundle.patch"
+          git diff --cached --stat | tail -5
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: bundle-rebuild
+          path: ${{ runner.temp }}/bundle.patch

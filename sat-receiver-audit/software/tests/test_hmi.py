@@ -1,4 +1,6 @@
+import contextlib
 import copy
+import hashlib
 import importlib.util
 import json
 import os
@@ -9,10 +11,12 @@ import tempfile
 import time
 import unittest
 from unittest.mock import patch
+import uuid
 
 from srrx.hmi import (ConsoleController, DemoTransport, EN_OUTPUTS, ReceiverSimulation,
                       create_window, load_json, load_spectrum, spectrum_columns, location_callbacks, HMINavigation,
-                      channel_rows, location_summary, learning_summary)
+                      channel_rows, location_summary, learning_summary, pointing_summary, pass_plan_summary,
+                      load_pass_plan, gnss_reset_summary)
 
 ROOT = Path(__file__).resolve().parents[2]
 LINUX = sys.platform.startswith("linux")
@@ -72,6 +76,62 @@ def frame(center=100000000, size=16):
             "fft_size": size, "power_dbfs": [-70.0] * size, "valid": [True] * size,
             "relative_frequency_hz": [(index - size // 2) * 16000 / size for index in range(size)],
             "source": "SIMULATION", "sample_count": size}
+
+
+def gnss(**changes):
+    """Live NMEA status at an unnamed test point (no city table)."""
+    value = {"available": True, "source": "nmea", "origin": "nmea", "fresh": True, "live_fix": True, "mode": 3,
+             "satellites": 8, "lat": 50.0, "lon": 10.0, "age_ms": 400, "reason": None}
+    value.update(changes)
+    return value
+
+
+def pass_plan(**changes):
+    entry = {"norad_id": 90100, "name": "ALIAS LRPT", "aos_utc": "2026-10-20T18:16:39.113Z",
+             "tca_utc": "2026-10-20T18:24:16.572Z", "los_utc": "2026-10-20T18:31:51.583Z", "max_el_deg": 69.8,
+             "aos_az_deg": 12.8, "tca_az_deg": 100.0, "los_az_deg": 204.8, "duration_s": 912.5,
+             "omm_epoch_utc": "2026-10-20T06:00:00.000000Z", "omm_age_days": 0.5, "omm_age_warning": False,
+             "time_verified": False, "observer_source": "nmea", "observer_age_ms": 300, "v_dipole_hint": "BISECTOR_NS",
+             "predictor": {"skyfield": "1.55", "sgp4": "2.27"}}
+    plan = {"schema_version": 1, "kind": "srrx_pass_plan", "start_utc": "2026-10-20T18:00:00.000Z", "hours": 24.0,
+            "min_el_deg": 0.0, "time_verified": False,
+            "observer": {"lat_rounded": 50.0, "lon_rounded": 10.0, "alt_rounded_m": 200.0, "rounding_deg": 0.1,
+                         "source": "nmea", "age_ms": 300, "qualified_fix": False, "qualification_failures": []},
+            "predictor": {"skyfield": "1.55", "sgp4": "2.27", "reference_versions_match": True},
+            "passes": [entry, dict(entry, aos_utc="2026-10-20T19:57:10.761Z", tca_utc="2026-10-20T20:03:16.931Z",
+                                   los_utc="2026-10-20T20:09:22.709Z", max_el_deg=14.2, v_dipole_hint="TIPS_NS",
+                                   omm_age_warning=True)],
+            "skipped": [], "window_edge_partial_passes": 1, "truncated": False,
+            "scope": "Reference prediction from local OMM only."}
+    plan.update(changes)
+    return plan
+
+
+class SimpleProcess:
+    """A running SIM capture stand-in: records termination, starts nothing."""
+    terminated = False
+
+    def poll(self):
+        return 0 if self.terminated else None
+
+    def terminate(self):
+        self.terminated = True
+
+    def wait(self, timeout=None):
+        return 0
+
+    def kill(self):
+        self.terminated = True
+
+
+def trained_model():
+    from srrx import learning
+    dataset = learning.empty_dataset()
+    for family, label in enumerate(("analog_broadcast", "digital_broadcast")):
+        for index in range(3):
+            dataset = learning.annotate(dataset, learning._demo_frame(index, family), 0, 256, label,
+                                        group_id=uuid.UUID(int=1 + family * 100 + index), user_confirmed=True)
+    return learning.train(dataset, seed=7)
 
 
 def qt_app():
@@ -502,6 +562,90 @@ class MetadataTests(unittest.TestCase):
         self.assertIn("Heuristic score unavailable", text)
         self.assertNotIn("Held-out check", text)
 
+    def test_pointing_group_text_follows_the_location_gate(self):
+        text = pointing_summary(gnss(), live=True, first_fix_stable=True)
+        self.assertIn("Azimuth 159.6° (true north, not magnetic) · Elevation 30.7°", text)
+        self.assertIn("rotate LNB +13.1° (+ = CCW viewed from behind", text)
+        self.assertIn("Position: qualified GNSS fix (3D, >=6 satellites)", text)
+        self.assertIn("not confirmed — elevation ≥5° but nominal slot 25.9E; TLE not verified", text)
+        self.assertIn("beacon C/N0 in 5° steps", text)
+        self.assertIn("Position age: 0.4 s", text)
+        self.assertNotIn("50.0", text)  # Angles only; the position stays in the Location text above.
+        gated = pointing_summary(gnss(mode=2, satellites=5), live=True, first_fix_stable=True)
+        self.assertIn("GNSS fix not qualified — not a 3D fix; fewer than 6 satellites", gated)
+        self.assertIn("Elevation 30.7°", gated)  # Shown, but labelled.
+        self.assertIn("satellite count not reported", pointing_summary(gnss(satellites=None), live=True, first_fix_stable=True))
+        self.assertIn("first-run 5 min stability window not complete", pointing_summary(gnss(), live=True))
+        snapshot = pointing_summary(gnss(), live=False, first_fix_stable=True)
+        self.assertTrue(snapshot.startswith("QO-100 · nominal slot 25.9°E · snapshot"))
+        self.assertIn("fix not fresh", snapshot)
+        self.assertNotIn("qualified GNSS fix (3D", snapshot)
+        manual = pointing_summary({"available": True, "source": "manual", "lat": 38.0, "lon": -9.0, "fresh": False,
+                                   "live_fix": False}, live=False, first_fix_stable=True)
+        self.assertTrue(manual.startswith("QO-100 · nominal slot 25.9°E · manual entry"))
+        self.assertIn("Position: not a GNSS fix (manual entry)", manual)
+        self.assertIn("rotate LNB +36.5°", manual)
+        self.assertEqual(pointing_summary({"available": False, "source": "none"}),
+                         "QO-100 pointing unavailable — no usable position")
+        self.assertEqual(pointing_summary(gnss(reason="MONOTONIC_TIME_REVERSED"), live=True),
+                         "QO-100 pointing unavailable — location clock fault")
+        self.assertIn("undefined within 1° of the equator", pointing_summary(gnss(lat=0.5), live=True))
+        polar = pointing_summary(gnss(lat=85.0), live=True)
+        self.assertIn("Visible from here: no — below the horizon", polar)
+        self.assertIn("not applicable", polar)
+        self.assertIn("Position age: Unknown", pointing_summary(gnss(age_ms=10 ** 400), live=True))
+        jumped = pointing_summary(gnss(), live=True, first_fix_stable=True, jump_unconfirmed=True)
+        self.assertIn("GNSS fix not qualified — moved more than 100 km from the last good fix — confirm the move", jumped)
+        self.assertNotIn("confirm the move", pointing_summary(gnss(), live=False, first_fix_stable=True, jump_unconfirmed=True))
+        self.assertIn("Elevation 30.7°", pointing_summary(gnss(alt_hae_m=10 ** 400), live=True, first_fix_stable=True))
+
+    def test_gnss_reset_status_is_read_only_text(self):
+        idle = {"state": "IDLE", "last_ms": 1000, "width_ms": 200, "release_ms": 1200, "last_width_ms": 200,
+                "last_error": None, "release_due_ms": None, "pulses_15min": 1}
+        self.assertEqual(gnss_reset_summary(idle, True),
+                         "GNSS reset pulse: idle · last release proven · last pulse 200 ms · 1/3 pulses in 15 min")
+        unproven = dict(idle, state="RELEASE_UNCONFIRMED", release_ms=None, last_width_ms=None,
+                        last_error="GNSS_RESET_RELEASE_UNCONFIRMED")
+        self.assertEqual(gnss_reset_summary(unproven, True),
+                         "GNSS reset pulse: release not proven (Pico MCP RESET required) · 1/3 pulses in 15 min · "
+                         "last error GNSS_RESET_RELEASE_UNCONFIRMED")
+        recovered = dict(idle, last_width_ms=None, last_error="GNSS_RESET_RELEASE_UNCONFIRMED")
+        self.assertIn("last release proven · pulse width unknown", gnss_reset_summary(recovered, True))
+        self.assertIn("release time unknown", gnss_reset_summary(dict(idle, release_ms=None), True))
+        self.assertIn("pulse in progress", gnss_reset_summary(dict(idle, state="ASSERTED"), True))
+        self.assertEqual(gnss_reset_summary({"state": "IDLE", "last_ms": None, "release_ms": None, "pulses_15min": 0}, True),
+                         "GNSS reset pulse: idle · no pulse in this labd session · 0/3 pulses in 15 min")
+        for value, live in ((idle, False), (None, True), ([], True)):
+            self.assertEqual(gnss_reset_summary(value, live), "GNSS reset pulse: status unavailable")
+        odd = gnss_reset_summary(dict(idle, state="ARMED?", last_width_ms=10 ** 400, pulses_15min=10 ** 400,
+                                      last_error="bad text\nwith lines"), True)
+        self.assertEqual(odd, "GNSS reset pulse: unrecognised state · last error unrecognised")
+
+    def test_pass_plan_snapshot_is_labelled_and_strictly_loaded(self):
+        text = pass_plan_summary(pass_plan())
+        self.assertTrue(text.startswith("Pass plan snapshot — not live · from 2026-10-20 18:00 UTC · 24 h · above 0°"))
+        self.assertIn("Predictor Skyfield 1.55 / sgp4 2.27", text)
+        self.assertIn("UTC not verified — times are provisional", text)
+        self.assertIn("Observer rounded to 0.1°: 50.0, 10.0 · not a qualified fix", text)
+        self.assertIn("ALIAS LRPT · AOS 10-20 18:16:39 · max 70° · LOS 18:31:51 · V-dipole bisector N-S", text)
+        self.assertIn("V-dipole tips N-S", text)
+        self.assertIn("elements old", text)
+        self.assertIn("No complete pass", pass_plan_summary(pass_plan(passes=[])))
+        self.assertIn("… 1 more passes", pass_plan_summary(pass_plan(), limit=1))
+        self.assertIn("not the 1.55/2.27 reference", pass_plan_summary(pass_plan(predictor={"skyfield": "1.54", "sgp4": "2.27"})))
+        with tempfile.TemporaryDirectory() as directory:
+            good, bad = Path(directory) / "plan.json", Path(directory) / "bad.json"
+            good.write_text(json.dumps(pass_plan()))
+            self.assertEqual(load_pass_plan(good)["kind"], "srrx_pass_plan")
+            observer = dict(pass_plan()["observer"], lat_rounded=50.012345)
+            for value in (pass_plan(observer=observer), pass_plan(kind="other"), [1]):
+                bad.write_text(json.dumps(value))
+                with self.assertRaises(ValueError):
+                    load_pass_plan(bad)
+            bad.write_text('{"schema_version": 1, "schema_version": 1}')
+            with self.assertRaises(ValueError):
+                load_pass_plan(bad)
+
     def test_json_limits_duplicates_and_nonfinite(self):
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "meta.json"
@@ -773,6 +917,205 @@ class QtTests(unittest.TestCase):
             self.assertEqual(window.location_note.text(), "Live tracker position")
         finally:
             window.close(); app.processEvents()
+
+    def test_pointing_group_follows_live_gate_snapshot_manual_and_failures(self):
+        app = qt_app()
+        from PySide6.QtWidgets import QFileDialog
+        state = {"value": gnss(), "error": None}
+        def location():
+            if state["error"]:
+                raise OSError(state["error"])
+            return dict(state["value"])
+        callbacks = {"location": location, "manual_location": lambda lat, lon: state.update(
+            value={"available": True, "source": "manual", "lat": lat, "lon": lon, "fresh": False, "live_fix": False})}
+        clock = [1000]
+        controller = ConsoleController(Backend(), Clock())
+        controller.poll()
+        with patch("srrx.hmi._boot_ms", side_effect=lambda: clock[0]):
+            window = create_window(controller, callbacks=callbacks, start_worker=False)
+            try:
+                self.assertIn("unavailable", window.pointing_text.text())
+                window._heartbeat()
+                self.assertIn("Elevation 30.7°", window.pointing_text.text())
+                self.assertIn("first-run 5 min stability window not complete", window.pointing_text.text())
+                for _ in range(300):  # Five minutes of a stable live 3D, 8-satellite fix, one sample per second.
+                    clock[0] += 1000
+                    window._live_location()
+                self.assertIn("Position: qualified GNSS fix (3D, >=6 satellites)", window.pointing_text.text())
+                self.assertIn("TLE not verified", window.pointing_text.text())
+                with tempfile.TemporaryDirectory() as directory:
+                    saved = Path(directory) / "position.json"
+                    saved.write_text(json.dumps(gnss(lat=35.0, lon=33.0)))
+                    with patch.object(QFileDialog, "getOpenFileName", return_value=(str(saved), "")):
+                        window.open_location()
+                    window._heartbeat()  # Pinned: the provider is polled, the snapshot stays shown.
+                    text = window.pointing_text.text()
+                    self.assertTrue(text.startswith("QO-100 · nominal slot 25.9°E · snapshot"))
+                    self.assertIn("rotate LNB -10.1°", text)
+                    self.assertIn("fix not fresh", text)
+                    self.assertNotIn("Position: qualified", text)
+                    plan, bad = Path(directory) / "plan.json", Path(directory) / "bad.json"
+                    plan.write_text(json.dumps(pass_plan()))
+                    bad.write_text(json.dumps(pass_plan(observer=dict(pass_plan()["observer"], lon_rounded=10.04))))
+                    with patch.object(QFileDialog, "getOpenFileName", return_value=(str(plan), "")):
+                        window.open_pass_plan()
+                    self.assertTrue(window.pass_plan_text.text().startswith("Pass plan snapshot — not live"))
+                    with patch.object(QFileDialog, "getOpenFileName", return_value=(str(bad), "")):
+                        window.open_pass_plan()
+                    self.assertIn("Pass plan rejected", window.pass_plan_text.text())
+                window.live_location()
+                self.assertIn("Position: qualified GNSS fix", window.pointing_text.text())
+                state["error"] = "gpsd gone"
+                window._heartbeat()
+                self.assertEqual(window.pointing_text.text(), "QO-100 pointing unavailable — location provider failed")
+                state["error"] = None
+                window.latitude.setValue(38.0); window.longitude.setValue(-9.0)
+                window.manual_location()
+                self.assertIn("Position: not a GNSS fix (manual entry)", window.pointing_text.text())
+                window._heartbeat()
+                self.assertIn("rotate LNB +36.5°", window.pointing_text.text())
+                self.assertIn("not a GNSS fix (manual entry)", window.pointing_text.text())
+            finally:
+                window.close(); app.processEvents()
+
+    def test_provider_outage_restarts_the_first_run_window_and_jumps_need_confirmation(self):
+        app = qt_app()
+        from PySide6.QtWidgets import QMessageBox
+        state = {"value": gnss(), "error": None}
+        def location():
+            if state["error"]:
+                raise OSError(state["error"])
+            return dict(state["value"])
+        clock = [1000]
+        controller = ConsoleController(Backend(), Clock())
+        controller.poll()
+        with patch("srrx.hmi._boot_ms", side_effect=lambda: clock[0]):
+            window = create_window(controller, callbacks={"location": location}, start_worker=False)
+            try:
+                def run(seconds):
+                    for _ in range(seconds):
+                        clock[0] += 1000
+                        window._live_location()
+                run(200)
+                state["error"] = "gpsd gone"  # shorter than the 5 s gap rule, still a failed sample
+                run(1)
+                state["error"] = None
+                run(299)  # 499 s of good samples in all, but the outage restarted the window
+                self.assertIn("first-run 5 min stability window not complete", window.pointing_text.text())
+                run(2)  # 300 s after the first good sample that followed the outage
+                self.assertIn("Position: qualified GNSS fix", window.pointing_text.text())
+                self.assertFalse(window.jump_button.isEnabled())
+                state["value"] = gnss(lat=51.35)  # ~150 km from the last good fix
+                run(1)
+                self.assertIn("confirm the move", window.pointing_text.text())
+                self.assertNotIn("Position: qualified", window.pointing_text.text())
+                self.assertTrue(window.jump_button.isEnabled())
+                with patch.object(QMessageBox, "question", return_value=QMessageBox.StandardButton.No):
+                    window.confirm_position_jump()
+                run(1)
+                self.assertIn("confirm the move", window.pointing_text.text())
+                with patch.object(QMessageBox, "question", return_value=QMessageBox.StandardButton.Yes):
+                    window.confirm_position_jump()
+                self.assertIn("Position: qualified GNSS fix", window.pointing_text.text())
+                self.assertFalse(window.jump_button.isEnabled())
+                run(1)
+                self.assertIn("Position: qualified GNSS fix", window.pointing_text.text())
+            finally:
+                window.close(); app.processEvents()
+
+    def test_gnss_reset_status_on_the_location_page_follows_labd(self):
+        app = qt_app()
+        controller, backend, clock = active()
+        backend.data["policy"]["gnss_reset"] = {"state": "RELEASE_UNCONFIRMED", "last_ms": 1000, "width_ms": 200,
+                                                "release_ms": None, "last_width_ms": None, "pulses_15min": 1,
+                                                "release_due_ms": None, "last_error": "GNSS_RESET_RELEASE_UNCONFIRMED"}
+        clock.now += .25
+        controller.poll()
+        window = create_window(controller, start_worker=False)
+        try:
+            window.render_state(controller.status())
+            self.assertIn("release not proven (Pico MCP RESET required)", window.gnss_reset_text.text())
+            backend.failure = OSError("timed out")
+            clock.now += .25
+            controller.poll()
+            window.render_state(controller.status())
+            self.assertEqual(window.gnss_reset_text.text(), "GNSS reset pulse: status unavailable")
+            # Display only: no control on the page sends a gnss_reset request.
+            from PySide6.QtWidgets import QPushButton
+            self.assertFalse([b for b in window.findChildren(QPushButton) if "reset" in b.text().lower()])
+            self.assertFalse(any(r.get("op") == "gnss_reset" for r in backend.requests))
+        finally:
+            window.close(); app.processEvents()
+
+    def test_session_scope_latch_shows_only_out_of_scope_and_guards_learning(self):
+        app = qt_app()
+        from srrx import learning, scope_policy
+        controller = ConsoleController(Backend(), Clock())
+        controller.poll()
+        with self.assertRaisesRegex(ValueError, "ScopeLatch"):
+            create_window(controller, start_worker=False, scope_latch=object())
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "artemis.json"
+            data = json.dumps({"v": 1, "kind": "srrx_artemis_mirror", "source": "artemis-db", "db_version": "v74",
+                               "entries": [{"name": "Fixture", "categories": ["Military"],
+                                            "ranges_hz": [[150.001e6, 150.002e6]]}]}).encode()
+            path.write_bytes(data)
+            latch = scope_policy.ScopeLatch(scope_policy.ArtemisDB.load(path, hashlib.sha256(data).hexdigest()))
+        window = create_window(controller, start_worker=False, scope_latch=latch)
+        try:
+            self.assertIs(window.scope_latch, latch)
+            self.assertTrue(window.accept_frame(frame()))  # 100 MHz: shown as before
+            self.assertIn("centre 100000000 Hz", window.spec_note.text())
+            window.teach_confirm.setChecked(True)
+            # The SIM capture runs; a new stop aborts it and discards its frame file.
+            window.receiver_job.path.write_text("{}")
+            process = SimpleProcess()
+            window.receiver_job.process = process
+            for stopped in (frame(center=150000000), frame(center=300000000)):  # Artemis stop; masked band
+                with self.subTest(center=stopped["center_hz"]):
+                    self.assertFalse(window.accept_frame(stopped))
+                    self.assertEqual(window.spec_note.text(), "out of scope")
+                    self.assertIsNone(window.frame)
+                    self.assertFalse(window.teach_confirm.isChecked())
+                    self.assertEqual((window.plot.rows, window.plot.message), ([], "out of scope"))
+                    window.learning_action("infer")
+                    self.assertNotRegex(window.learning_text.toPlainText(), r"\d")
+            self.assertTrue(process.terminated)
+            self.assertFalse(window.receiver_job.path.exists())
+            self.assertIsNone(window.receiver_job.process)
+            # Starting a SIM capture on a stopped span is refused before any process starts.
+            window.center.setValue(150000000)
+            window.rate.setValue(48000)
+            with patch("srrx.hmi.subprocess.Popen", side_effect=AssertionError("capture started")):
+                window.start_capture()
+            self.assertEqual(window.rx_note.text(), "out of scope")
+            # Annotate, train and classify all receive the session latch.
+            self.assertTrue(window.accept_frame(frame()))
+            window.teach_confirm.setChecked(True)
+            window.model, seen = trained_model(), []
+            with contextlib.ExitStack() as stack:
+                for name in ("annotate", "train", "infer"):
+                    def spy(*args, _real=getattr(learning, name), _name=name, **kwargs):
+                        seen.append((_name, kwargs.get("scope")))
+                        return _real(*args, **kwargs)
+                    stack.enter_context(patch.object(learning, name, side_effect=spy))
+                for operation in ("annotate", "infer", "train"):
+                    window.learning_action(operation)
+            self.assertEqual([(name, scope is latch) for name, scope in seen],
+                             [("annotate", True), ("infer", True), ("train", True)])
+            self.assertEqual(len(window.dataset["annotations"]), 1)
+            # A stop latched elsewhere in the session (e.g. on the tuned span) refuses the label.
+            latch.stop(99.99e6, 100.01e6)
+            window.teach_confirm.setChecked(True)
+            before = window.dataset
+            window.learning_action("annotate")
+            self.assertEqual(window.learning_text.toPlainText(), "Rejected: Annotation span is out of scope")
+            self.assertIs(window.dataset, before)
+            window.learning_action("infer")
+            self.assertEqual(window.learning_text.toPlainText(), "Rejected: Classification span is out of scope")
+        finally:
+            window.close(); app.processEvents()
+        self.assertFalse(latch.unregister_abort(window.scope_abort))  # unregistered on close
 
     def test_heartbeat_sources_fail_independently(self):
         app = qt_app()

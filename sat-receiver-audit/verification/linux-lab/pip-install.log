@@ -4,12 +4,8 @@ Processing ./opt/srrx/software
 Building wheels for collected packages: srrx-control
   Building wheel for srrx-control (pyproject.toml): started
   Building wheel for srrx-control (pyproject.toml): finished with status 'done'
-  Created wheel for srrx-control: filename=srrx_control-0.3.1-py3-none-any.whl size=108813 sha256=131a6e1a8387ca2166e94de8f1f0fcac5d2633c7b0edd0802a8c19304a053882
-  Stored in directory: /tmp/pip-ephem-wheel-cache-lratozy1/wheels/fd/02/89/ca683fbcb1796fd73501d754465d4554a23dff74d91e18ead7
+  Created wheel for srrx-control: filename=srrx_control-0.3.1-py3-none-any.whl size=172916 sha256=0e216cc0217ae8b671a3c949be1538a589df750c2c073eb3dae0e49a7152c865
+  Stored in directory: /tmp/pip-ephem-wheel-cache-j7acuikd/wheels/fd/02/89/ca683fbcb1796fd73501d754465d4554a23dff74d91e18ead7
 Successfully built srrx-control
 Installing collected packages: srrx-control
-  Attempting uninstall: srrx-control
-    Found existing installation: srrx-control 0.3.1
-    Uninstalling srrx-control-0.3.1:
-      Successfully uninstalled srrx-control-0.3.1
 Successfully installed srrx-control-0.3.1

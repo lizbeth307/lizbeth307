@@ -469,7 +469,7 @@ _Run `wf_9603e249-d87`_
       - https://www.freedesktop.org/software/systemd/man/latest/systemd.resource-control.html
   8.
     - **Claim in stack:** (Stage 2) Pico ADC fixes: drive GPIO23 high, fit an LM4040, and 'tie a spare ADC input to GND for offset subtraction'.
-    - **Finding:** The datasheet supports GPIO23 high, the LM4040 3.0 V shunt (about 1.5 mA, range 0-3.0 V) and the grounded-channel method. STACK's Pico map uses all three external ADC inputs (GP26 panel NTC, GP27 battery divider 1:6, GP28 case NTC); ADC3/GP29 is VSYS/3 on the board. There is no spare channel. Model: with the 30 mV reference drop, a 1:6 divider reads high by 0.118 V at 12.9 V. With an LM4040 the full scale is 18.0 V; 12.9, 13.2 and 16.8 V map to codes 2935, 3004 and 3823, clear of the E11 DNL peaks (2560 = 11.25 V, 3584 = 15.75 V).
+    - **Finding:** The datasheet supports GPIO23 high, the LM4040 3.0 V shunt (about 1.5 mA, range 0-3.0 V) and the grounded-channel method. STACK's Pico map uses all three external ADC inputs (GP26 panel NTC, GP27 battery divider 1:6, GP28 case NTC); ADC3/GP29 is VSYS/3 on the board. There is no spare channel. Model: with the 30 mV reference drop, a 1:6 divider reads high by 0.118 V at 12.9 V. With an LM4040 the full scale is 18.0 V; 12.9, 13.2 and 16.8 V map to codes 2935, 3004 and 3823, clear of the E11 DNL peaks (2560 = 11.25 V, 3584 = 15.75 V). (v2.1: the cutoff is now 13.05 V, code about 2970; the same model reads about 0.12 V high there.)
     - **Verdict:** corrected
     - **Action:** Fit the LM4040 3.0 V on ADC_VREF (or remove R7 and feed a reference). As an alternative or in addition, labd cross-calibrates against the INA228 at boot and stores gain and offset in Pico flash. Do not use a grounded channel unless one NTC moves to an I2C sensor. Drive GPIO23 high, and add the RT6150 switching frequency to the harmonic scan (frequency not in the Pico datasheet; measure it).
     - **Impact:** An accurate undervoltage backstop with the existing pin map.
@@ -674,8 +674,8 @@ _Run `wf_9603e249-d87`_
   - Firmware:
     - PIO quadrature_encoder.pio at origin 0, two state machines (GP2/3, GP6/7);
     - GPIO23 high (PWM);
-    - ADC with an LM4040 3.0 V on ADC_VREF (full scale 18 V at 1:6; 12.9 V = code 2935, 13.2 V = 3004), plus labd INA228 cross-calibration stored in flash;
-    - undervoltage backstop at 12.9 V for 5 s without heartbeat.
+    - ADC with an LM4040 3.0 V on ADC_VREF (full scale 18 V at 1:6; 13.05 V = code about 2970, 13.2 V = 3004), plus labd INA228 cross-calibration stored in flash;
+    - undervoltage backstop at 13.05 V for 5 s without heartbeat (v2.1, the same 13050 mV as the labd graceful cutoff and above the 12.8 +/-0.1 V hardware UV trip; was 12.9 V).
   - I2C0 (GP4/5): TCA9555 at 0x20 (replaces PCA9555) and VEML7700 at 0x10, with theme hysteresis below 100 klx. Pin map otherwise as in STACK 5.2.
   - Encoders: Bourns PEC11R-4215F-S0024 x3 at $2.95 (one spare; $2.375 each at qty 10). O-ring or boot behind the panel. Main encoder on a connectorized daughterboard. P5: price a sealed panel encoder for tuning (unverified).
   - Knobs: Adafruit 2055 x2 at $0.95 (fit on the 6 mm flatted shaft to be checked).
@@ -747,7 +747,7 @@ _Run `wf_9603e249-d87`_
   - OpenWebRX+ audit: install 1.2.126+lab1 with the -1 pins and query the running feature and mode report. Expect no dsc, tetra, p25, dmr, page, selcall, eas, ism, wmbus, lora-*, mesh*, speech, adsb or ais. Settings must read allow_center_freq_changes=false, allow_audio_recording=false, allow_chat=false, speech_url=''. Selecting the WEFAX profile must decode a civil WEFAX recording in 'fax' mode.
   - Policy recordings: replay a mixed SigMF set (ADS-B with and without a DB, an AIS vessel with ship type 35 and with a late static message, DSC routine and distress, an Artemis Military entry and an untagged entry at 300 MHz). Expect only allowed objects to be shown or logged, and nothing stored inside the masked bands.
   - Glove/sun/rain acceptance: 3 glove types; at least 95 % first-hit accuracy on 15/20 mm targets and on keys at 19-21 mm pitch; LOCK under water spray (no touch events, LOCK still set after a touch USB re-enumeration); readable values at 100 klx with VEML7700 lux logged; theme hysteresis with no flapping.
-  - Pico ADC: compare the Pico battery reading with the INA228 from 11.0 to 16.8 V in 0.1 V steps, before and after fitting the LM4040, with GPIO23 high. Require error at most 0.05 V at 12.9 V and 13.2 V, -20 to +50 C. Scan HF and VHF for RT6150 PWM harmonics.
+  - Pico ADC: compare the Pico battery reading with the INA228 from 11.0 to 16.8 V in 0.1 V steps, before and after fitting the LM4040, with GPIO23 high. Require error at most 0.05 V at 13.05 V (v2.1 cutoff; was 12.9 V) and 13.2 V, -20 to +50 C. Scan HF and VHF for RT6150 PWM harmonics.
   - UART7 link: verify the UEFI QUPV3 mode for SE7, then a 1e6-frame CRC loop at the chosen baud with zero errors. Check that pinmux-pins shows a single owner for pins 29/32.
   - FFT backend: FFTW against VkFFT at N=65536, 1709 FFT/s (LIME-W, 50 % overlap). Measure A78 core load for FFTW and run an 8 h VkFFT soak with zero VK_ERROR_DEVICE_LOST before enabling VkFFT.
   - XWayland touch: on labwc 0.7.4, test SDR++ (GLFW/X11) taps, slider drags and waterfall pans with touch. If pointer emulation is missing or broken, try the 0.8.4 fallback.

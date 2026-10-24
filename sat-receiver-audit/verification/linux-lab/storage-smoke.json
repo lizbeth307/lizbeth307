@@ -12,7 +12,7 @@
         "raw_iq_persisted": false,
         "cli_exit": 0
       },
-      "elapsed_s": 5.913
+      "elapsed_s": 3.757
     },
     {
       "id": "wrong_device_refused",
@@ -20,7 +20,7 @@
       "evidence": {
         "error": "[Errno 19] Storage guard revoked: Mounted device differs from explicit binding"
       },
-      "elapsed_s": 0.025
+      "elapsed_s": 0.013
     },
     {
       "id": "same_device_mount_id_change_revokes",
@@ -30,7 +30,7 @@
         "same_st_dev_replacement_detected": true,
         "automatic_recovery": false
       },
-      "elapsed_s": 0.359
+      "elapsed_s": 0.251
     },
     {
       "id": "real_ENOSPC_preserves_previous_record",
@@ -40,7 +40,7 @@
         "error": "[Errno 28] No space left on device",
         "previous_sha256": "545161cb7fffde39dcc24ca63e4e08aa9c06b5e21c22092ad5942b3f4824de3e"
       },
-      "elapsed_s": 0.912
+      "elapsed_s": 0.791
     },
     {
       "id": "actual_mount_loss_no_rootfs_fallback",
@@ -50,14 +50,14 @@
         "fallback_file_created": false,
         "permanent_revocation": true
       },
-      "elapsed_s": 0.018
+      "elapsed_s": 0.036
     }
   ],
   "identity": {
     "root": "/mnt/srrx-t7-model",
     "device": "/dev/disk/by-label/SRRXT7",
     "resolved_device": "/dev/vde",
-    "mount_id": 147,
+    "mount_id": 91,
     "major": 253,
     "minor": 64,
     "mount_root": "/",

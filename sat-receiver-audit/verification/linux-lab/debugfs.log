@@ -1,20 +1,57 @@
 debugfs 1.47.0 (5-Feb-2023)
-dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//gui/pause-qt.stderr.log
-dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//gui/pause-startup-disarmed.png
-dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//gui/kill-qt.stderr.log
-dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//gui/fixture-pause.json
-dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//gui/pause-resumed-disarmed.png
-dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//gui/kill-startup-disarmed.png
-dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//gui/fixture-kill.json
-dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//gui/report.json
-rdump: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//gui
-dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//xcb/production-cli.stderr.log
-dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//xcb/cli-screen.stderr.log
-dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//xcb/production-cli-xcb.png
-dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//xcb/menu-fixture.json
-dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//xcb/cli-screen.json
-dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//xcb/menu-fixture.stderr.log
-dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//xcb/production-menu-widget-xcb.png
-dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//xcb/production-menu-xserver-xcb.png
-dump_file: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//xcb/report.json
-rdump: Invalid argument while changing ownership of /tmp/srrx-linux-lab-run07/results//xcb
+rdump: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//lost+found
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//bootstrap.log
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//dpkg-install.log
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//pip-bootstrap.log
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//pip-dependencies.log
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//dependency-verification.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//pip-install.log
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//python-packages.txt
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//debian-packages.txt
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//project-manifest.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//payload-manifest.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//unit-tests.log
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//software-tests.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//pty-smoke.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//system-smoke.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//gui/pause-qt.stderr.log
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//gui/pause-startup-disarmed.png
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//gui/kill-qt.stderr.log
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//gui/fixture-pause.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//gui/pause-resumed-disarmed.png
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//gui/kill-startup-disarmed.png
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//gui/fixture-kill.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//gui/report.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//gui-smoke.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//xcb/xvfb.log
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//xcb/production-cli.stderr.log
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//xcb/cli-screen.stderr.log
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//xcb/production-cli-xcb.png
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//xcb/menu-fixture.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//xcb/cli-screen.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//xcb/menu-fixture.stderr.log
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//xcb/production-menu-widget-xcb.png
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//xcb/production-menu-xserver-xcb.png
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//xcb/report.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//xcb-smoke.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//rx-worker-smoke.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//storage-smoke.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//module-lab/power.log
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//module-lab/power.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//module-lab/mcu.log
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//module-lab/mcu.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//module-lab/radio.log
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//module-lab/radio.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//module-lab/location.log
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//module-lab/io.log
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//module-lab/io.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//module-lab/location.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//module-lab/connectivity.log
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//module-lab/connectivity.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//module-lab/report.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//module-lab/MODULE-RESULTS.md
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//module-lab/module-results.html
+rdump: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//module-lab
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//suite-exit-codes.json
+dump_file: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results//summary.json
+rdump: Operation not permitted while changing ownership of /home/runner/work/_temp/lab-run/results/

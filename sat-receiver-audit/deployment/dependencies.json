@@ -61,8 +61,15 @@
     "faiss-cpu": "1.15.1",
     "scikit-learn": "1.9.1",
     "pygeomag": "1.1.0",
+    "aarch64_locked_wheels": {
+      "source": "deployment/linux_lab/wheelhouse-manifest.json (CPython 3.12/aarch64 guest wheelhouse, amendment 2026-10-23T16:56:12Z; primary PyPI JSON SHA-256/size, no package execution)",
+      "skyfield": {"version": "1.55", "filename": "skyfield-1.55-py3-none-any.whl", "sha256": "9f98964855067460c94aa81a337194136f4a97a62ba8bbbfac1b8556f2b66ad4"},
+      "sgp4": {"version": "2.27", "filename": "sgp4-2.27-cp311-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl", "sha256": "ef915c124cdd9807a4eae0abe655ade89076c2cee5df0392cad172aef456cd0e"},
+      "jplephem": {"version": "2.24", "filename": "jplephem-2.24-py3-none-any.whl", "sha256": "2de15608a0f13010a71a0a8af8765646d5884402006dac0dd7639d7db13629ac"},
+      "certifi": {"version": "2026.10.19", "filename": "certifi-2026.10.19-py3-none-any.whl", "sha256": "42d35340cc5b9ba78e818ddbff0c5b1c2b779de448a340fd1b989f5fa8670e1b"}
+    },
     "wheel_sha256": null,
-    "status": "OPEN: do not use pip without a fully hashed offline wheelhouse and transitive lock"
+    "status": "OPEN: do not use pip without a fully hashed offline wheelhouse and transitive lock. Only skyfield/sgp4 and their runtime dependencies jplephem/certifi have locked aarch64 hashes (aarch64_locked_wheels, from the test wheelhouse); the lab-venv lock (numpy<2, GNU Radio and every other package above) is still unresolved"
   },
   "upstream_primary_urls": [
     "https://docs.radxa.com/en/dragon/q6a/download",

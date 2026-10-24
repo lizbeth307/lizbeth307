@@ -17,6 +17,7 @@ import socket
 MAX_NMEA_BYTES = 256
 MAX_GPSD_BYTES = 10240
 MAX_INPUT_BYTES = 65536
+SKY_CARRY_MS = 1500  # one 1 Hz epoch plus slack: gpsd's SKY follows its TPV
 TALKERS = {"GP", "GN", "GL", "GA", "GB", "BD", "GQ"}
 _DECIMAL = re.compile(r"^\d+(?:\.\d+)?$")
 _UTC = re.compile(r"^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2}):(\d{2})(\.\d{1,9})?(?:Z|\+00:00)$")
@@ -210,6 +211,8 @@ class LocationTracker:
         self._nmea_date = None
         self._gsa = {}
         self._gst = None
+        self._sky = None  # (device, epoch, satellites used, received_ms) awaiting its TPV
+        self._sky_count = None  # (device, satellites used, received_ms) last applied to a gpsd fix
         self._candidate = {}
         self._zda_candidate = None
         # Per source: an accepted fix clears only its own source's fault.
@@ -234,6 +237,8 @@ class LocationTracker:
             raise ValueError("unknown GNSS source")
         self._healthy[source] = False
         self._good_3d[source] = 0
+        if source == "gpsd":  # no satellite count survives a gpsd fault
+            self._sky = self._sky_count = None
         self.last_error = self._active_fault[source] = str(reason)[:64]
         self.rejected_count += 1
         return False
@@ -353,6 +358,8 @@ class LocationTracker:
                 return False
             except (ValueError, TypeError, OverflowError):
                 return self.invalidate("gpsd", "GPSD_GST_ERROR")
+        if report.get("class") == "SKY":
+            return self._gpsd_sky(report, now_ms)
         if report.get("class") != "TPV":
             self.ignored_count += 1
             return False
@@ -403,12 +410,64 @@ class LocationTracker:
                                   utc=report["time"], leap_second=leap, mode=mode,
                                   uncertainty_m=uncertainty, uncertainty_basis=basis,
                                   device=device, **extra)
+            sky, last = self._sky, self._sky_count
+            if (sky is not None and sky[0] == device and abs(sky[1] - epoch) <= 0.5
+                    and 0 <= now_ms - sky[3] < self.fresh_ms):
+                record["satellites"], self._sky = sky[2], None  # a SKY of this epoch came before its TPV
+                self._sky_count = (device, sky[2], now_ms)
+            elif last is not None and last[0] == device and 0 <= now_ms - last[2] <= SKY_CARRY_MS:
+                # gpsd sends SKY after its TPV: the previous epoch's count bridges at most
+                # SKY_CARRY_MS until this epoch's SKY replaces it; then it is unknown again.
+                record["satellites"] = last[1]
             accepted = self._accept(record)
             if accepted and self._bound_device is None:
                 self._bound_device = device
             return accepted
         except (ValueError, OverflowError, TypeError) as exc:
             return self.invalidate("gpsd", str(exc) or "GPSD_INVALID")
+
+    def _gpsd_sky(self, report, now_ms):
+        """Satellites used in the solution: SKY uSat, else the count of used=true entries.
+
+        Bound like GST: same device as the gpsd fix and the same epoch (SKY time
+        within 0.5 s of the TPV time); a SKY that comes before its TPV waits at
+        most fresh_ms. The next TPV keeps the last applied count for at most
+        SKY_CARRY_MS (gpsd sends SKY after its TPV), never longer. A SKY without
+        time or without a count is ignored, so such a fix keeps an unknown count
+        (never a qualified fix). Never a new fix.
+        """
+        device = report.get("device")
+        if ((device is not None and (not isinstance(device, str) or len(device) > 256))
+                or (self._bound_device is not None and device != self._bound_device) or "time" not in report):
+            self.ignored_count += 1
+            return False
+        try:
+            epoch, unused = _gpsd_time(report["time"])
+            counts = []
+            if "uSat" in report:
+                if type(report["uSat"]) is not int or not 0 <= report["uSat"] <= 1000:
+                    raise ValueError("GPSD_SKY")
+                counts.append(report["uSat"])
+            if "satellites" in report:
+                satellites = report["satellites"]
+                if (not isinstance(satellites, list) or len(satellites) > 1000
+                        or any(not isinstance(item, dict) or type(item.get("used")) is not bool for item in satellites)):
+                    raise ValueError("GPSD_SKY")
+                counts.append(sum(item["used"] for item in satellites))
+        except (ValueError, TypeError, OverflowError):
+            return self.invalidate("gpsd", "GPSD_SKY")
+        self.ignored_count += 1
+        if not counts:
+            return False
+        used = min(counts)  # uSat and the list disagree: the smaller count (fail closed)
+        current = self._fixes.get("gpsd")
+        if (current is not None and current["device"] == device and current["utc_s"] is not None
+                and abs(epoch - current["utc_s"]) <= 0.5 and now_ms - current["received_ms"] < self.fresh_ms):
+            current["satellites"], self._sky = used, None
+            self._sky_count = (device, used, now_ms)
+        else:
+            self._sky = (device, epoch, used, now_ms)
+        return False
 
     def _nmea_epoch(self, value, now_ms, explicit_date=None):
         hour, minute, second = _tod(value)
@@ -806,7 +865,7 @@ class GpsdClient:
                     elif frame.get("class") == "ERROR":
                         self.close("GPSD_SERVER_ERROR")
                         return count
-                    elif frame.get("class") in ("TPV", "GST") and self.watching:
+                    elif frame.get("class") in ("TPV", "GST", "SKY") and self.watching:
                         count += int(self.tracker.ingest_gpsd(frame, now_ms))
             if self._pending:
                 try:

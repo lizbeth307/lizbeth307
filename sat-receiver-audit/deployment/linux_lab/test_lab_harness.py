@@ -5,6 +5,7 @@ import io
 import json
 import os
 from pathlib import Path
+import re
 import shutil
 import socket
 import subprocess
@@ -236,6 +237,42 @@ class DependencyVerificationTests(unittest.TestCase):
         result, out, _ = self.run_block(good, payload_requirements=requirements + "x==1\n")
         self.assertIn("Payload wheel lock differs", result.stderr)
         self.assertIsNone(out)
+
+
+def satisfies(version, clauses):
+    """Numeric PEP 440 subset used by software/pyproject.toml extras (>=, <=, ==, <, >)."""
+    key = lambda text: tuple(int(x) for x in text.split("."))
+    for clause in filter(None, (c.strip() for c in clauses.split(","))):
+        op, bound = re.fullmatch(r"(>=|<=|==|<|>)\s*([0-9]+(?:\.[0-9]+)*)", clause).groups()
+        a, b = key(version), key(bound)
+        a, b = a + (0,) * (len(b) - len(a)), b + (0,) * (len(a) - len(b))
+        if not {">=": a >= b, "<=": a <= b, "==": a == b, "<": a < b, ">": a > b}[op]:
+            return False
+    return True
+
+
+class ProjectExtrasTests(unittest.TestCase):
+    def test_guest_project_extras_are_defined_and_fully_locked(self):
+        import tomllib
+        line = next(l for l in BOOTSTRAP.read_text().splitlines() if "'/opt/srrx/software[" in l)
+        extras = re.search(r"'/opt/srrx/software\[([a-z,]+)\]'", line).group(1).split(",")
+        project = tomllib.loads((HERE.parents[1] / "software/pyproject.toml").read_text(encoding="utf-8"))["project"]
+        optional = project["optional-dependencies"]
+        self.assertIn("orbits", extras)  # srrx.passes (Skyfield/sgp4) is installed like the other extras
+        self.assertLessEqual(set(extras), set(optional))
+        manifest = json.loads((HERE / "wheelhouse-manifest.json").read_text())
+        self.assertEqual(manifest["dependency_closure"]["extras"], extras)
+        norm = lambda n: re.sub(r"[-_.]+", "-", n).lower()
+        locked = {norm(w["name"]): w["version"] for w in manifest["wheels"]}
+        closure = {(r["owner"], r["requirement"]): r["resolved_version"] for r in manifest["dependency_closure"]["requirements"]}
+        for extra in extras:
+            for requirement in optional[extra]:
+                name = re.match(r"[A-Za-z0-9_.-]+", requirement).group(0)
+                with self.subTest(extra=extra, requirement=requirement):
+                    self.assertIn(norm(name), locked)  # --no-deps install: pip check needs every extra wheel locked
+                    self.assertTrue(satisfies(locked[norm(name)], requirement[len(name):]), (requirement, locked[norm(name)]))
+                    self.assertEqual(closure[(project["name"] + "[" + extra + "]", requirement)], locked[norm(name)])
+        self.assertTrue(satisfies("2.3.5", ">=1.26,<3") and not satisfies("3.0", ">=1.26,<3") and not satisfies("1.25.9", ">=1.26"))
 
 
 class RxWorkerContractTests(unittest.TestCase):

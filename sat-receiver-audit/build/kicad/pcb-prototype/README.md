@@ -4,14 +4,13 @@
 
 Open `detector-core-routed-prototype.kicad_pcb` with its adjacent `.kicad_pro` and relative `fp-lib-table`. The exact source mapping is retained: 71 components, 187 pads, 180 connected pads, seven NC pads and 40 nets. No connector pads, new components or substitute pin numbers were added. Eighteen RF-port tap/bleed references remain outside this board.
 
-The prototype copy compacts the three SENSE islands, reference network and bypasses. It has 753 track segments (regenerated 23.10.2026), 93 vias and one filled B.Cu GND zone. SENSE uses F.Cu only with zero vias; each island's track bounds are 5.125 × 7.05 mm. These are measured geometry, not precision qualification or TI acceptance limits. The 125 × 115 mm outline and two-layer configuration remain candidates.
+The prototype copy compacts the three SENSE islands, reference network and bypasses. The 23.10.2026 re-freeze (deterministic pin order, CI KiCad 10.0.7) has 753 track segments, 93 vias and one filled B.Cu GND zone; the 20.10.2026 copy had 729 segments. SENSE uses F.Cu only with zero vias; exact per-island track bounds are measured by `verification/pcb-prototype-review-check.py`. These are measured geometry, not precision qualification or TI acceptance limits. The 125 × 115 mm outline and two-layer configuration remain candidates.
 
 Two real KiCad 10.0.7 checks passed with **0 violations, 0 unconnected items and 0 ignored checks**, including all warning/error/exclusion severities. The five normally ignored categories are enabled as warnings. `drc-raw.json` is the unfiltered generation report; `drc-portable-raw.json` is the unfiltered repeat against the published portable project. Full-project schematic parity was not requested for this subset: exact source-node/pad fidelity is checked separately.
 
 Previews:
 
 - `detector-core-routed-prototype.svg` / `.png`: F.Cu, silkscreen and outline.
-- `detector-core-routed-prototype-detail.png`: enlarged circuit area.
 - `detector-core-routed-prototype-bottom.svg` / `.png`: B.Cu plane and crossover routes, viewed from the top for layer alignment.
 
 Review: `../../../verification/pcb-prototype-review.md` and `.json`.

@@ -142,7 +142,7 @@ The bounded subset of STACK sections 5.1/5.6 is implemented as follows:
 | Battery low with live HB | Host implements the INA228/Linux graceful shutdown policy; this fallback does not replace it |
 | Physical button | 30 ms debounce; short release emits POWER_BUTTON, 1.5 s hold requests graceful shutdown |
 | Restart after OFF | Physical button edge and battery >=13.6 V clear software latch; remote ARM alone cannot restart |
-| Host maximum SoC temperature | In hardware mode labd sends `soc_temp_c` in every HB: the hottest Linux thermal zone in C, 0.1 C steps, re-read at most once a second (`software/PROTOCOL.md`). Fan on at60 C, off at50 C. labd omits the field when a zone is unreadable or out of range and in simulation; a missing/nonfinite value or stale HB forces full cooling (fan on) |
+| Host maximum SoC temperature | In hardware mode labd sends `soc_temp_c` in every HB: the hottest Linux thermal zone in C, 0.1 C steps, re-read at most once a second on a separate labd thread (`SocTempSampler`), outside the 20 ms safety tick (`software/PROTOCOL.md`). Fan on at60 C, off at50 C. labd omits the field when a zone is unreadable or out of range, when the cached sample is older than 3 s, and in simulation; a missing/nonfinite value or stale HB forces full cooling (fan on) |
 | Panel NTC | Blower on at45 C, off at40 C; invalid sensor forces full cooling |
 | Fan tach | Ignore while off and first2 s on; no edge for >2 s thereafter is FAN_STALLED |
 
@@ -199,7 +199,11 @@ After all host acceptance gates pass, provision the separately sealed local
 `calibration_crc32`, `hardware_commissioned=true`, `qualification_record` and
 `crc32`. Use `seal(record, commissioning=True)` from this module. The serial,
 revision and calibration CRC must match. `qualification_record` must identify
-the validated unit acceptance artifact and its evidence. Do not provision this
+the validated unit acceptance artifact and its evidence. Open as of 23.10.2026:
+this binding is not yet checked end to end. HELLO does not report
+`qualification_record`, and labd compares only the serial and the calibration
+CRC, so a provisioned Pico is accepted with any other valid acceptance record
+that has the same serial and calibration CRC. Do not provision this
 record from a model run or CLI simulation. Copy records only through the trusted
 service path; no UART message can create or override them. Replacing a calibrated
 Pico, reference, divider, or sensor requires recalibration and acceptance again.
@@ -264,4 +268,4 @@ behavior require device tests and remain unqualified.
 - [MicroPython time API](https://docs.micropython.org/en/latest/library/time.html): ticks_diff half-period and wrap semantics.
 - [MicroPython v1.26.0 WDT](https://docs.micropython.org/en/v1.26.0/library/machine.WDT.html): non-stoppable watchdog; RP2040 maximum8388 ms.
 - [Semiware MF52A103F3950 RevA2.0](https://semiware.com/uploads/datasheet/MF52A103F3950.pdf): selected R/T table and operating range.
-- Project `STACK.md`5.1/5.2/5.6 and `design/E3.json` provide system thresholds and physical wiring; GP17 watchdog assignment supersedes the older brightness row.
+- Project `STACK.md`5.1/5.2/5.6 and `design/E3.json` provide system thresholds and physical wiring; GP17 watchdog assignment supersedes the older brightness row. The DISP12 policy, the 13.05 V cutoff with its per-unit ordering against the hardware UV trip (E3-07/E1-04) and the integer fixed-point calibration record above are recorded in the STACK v2.1 notice block; the D1 and #15 rows that still say 12.9 V carry a v2.1 remark.

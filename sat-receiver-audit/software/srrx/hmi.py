@@ -96,6 +96,106 @@ def location_summary(value, live=False):
             "fix": fix, "age": age_text, "uncertainty": uncertainty_text}
 
 
+POINTING_FAILURES = {"GNSS_FIX_NOT_FRESH": "fix not fresh", "FIX_NOT_3D": "not a 3D fix",
+                     "SATELLITE_COUNT_UNKNOWN": "satellite count not reported",
+                     "FEWER_THAN_6_SATELLITES": "fewer than 6 satellites",
+                     "FIRST_FIX_STABILITY_NOT_ESTABLISHED": "first-run 5 min stability window not complete",
+                     "POSITION_JUMP_UNCONFIRMED": "moved more than 100 km from the last good fix — confirm the move"}
+GNSS_RESET_STATES = {"IDLE": "idle", "ASSERTED": "pulse in progress",
+                     "RELEASE_UNCONFIRMED": "release not proven (Pico MCP RESET required)"}
+
+
+def gnss_reset_summary(value, live=False):
+    """Read-only LC76G RESET pulse status from labd policy["gnss_reset"]; never a control.
+
+    labd's release_ms is its own monotonic time, so it is shown only as proven or
+    unknown, never as a clock time.
+    """
+    if not live or not isinstance(value, dict):
+        return "GNSS reset pulse: status unavailable"
+    state = value.get("state")
+    parts = ["GNSS reset pulse: " + GNSS_RESET_STATES.get(state, "unrecognised state")]
+    if state == "IDLE":
+        if value.get("last_ms") is None and value.get("release_ms") is None:
+            parts.append("no pulse in this labd session")
+        else:
+            parts.append("last release proven" if type(value.get("release_ms")) is int else "release time unknown")
+            width = value.get("last_width_ms")
+            parts.append(f"last pulse {width} ms" if type(width) is int and 0 <= width <= 100000 else "pulse width unknown")
+    pulses = value.get("pulses_15min")
+    if type(pulses) is int and 0 <= pulses <= 1000:
+        parts.append(f"{pulses}/3 pulses in 15 min")
+    error = value.get("last_error")
+    if error is not None:
+        known = type(error) is str and 0 < len(error) <= 64 and all(c.isascii() and (c.isupper() or c.isdigit() or c == "_") for c in error)
+        parts.append("last error " + (error if known else "unrecognised"))
+    return " · ".join(parts)
+
+
+def _boot_ms():
+    # Same suspend-aware clock domain as location_callbacks (CLOCK_BOOTTIME on Linux).
+    clock = getattr(time, "CLOCK_BOOTTIME", None)
+    return time.clock_gettime_ns(clock) // 1000000 if clock is not None else int(time.monotonic() * 1000)
+
+
+def pointing_summary(value, live=False, first_fix_stable=False, jump_unconfirmed=False):
+    """Read-only QO-100 pointing text; a snapshot or manual entry is never a qualified fix."""
+    from .geo_look import pointing_from_status
+    status = dict(value) if isinstance(value, dict) else {}
+    if not live:
+        status.update(fresh=False, live_fix=False)
+    result = pointing_from_status(status, first_fix_stable=live and first_fix_stable is True,
+                                  jump_unconfirmed=live and jump_unconfirmed is not False)
+    if not result["available"]:
+        reason = {"MONOTONIC_TIME_REVERSED": "location clock fault"}.get(result["reason"], "no usable position")
+        return "QO-100 pointing unavailable — " + reason
+    if result["visible_from_here"]:
+        visible = "yes — stationary allowlisted TLE, elevation ≥5°"
+    elif result["geometry_visible_5deg"]:
+        visible = "not confirmed — elevation ≥5° but " + result["tle_status"]
+    else:
+        visible = "no — below 5° elevation" if result["above_horizon"] else "no — below the horizon"
+    skew = result["lnb_hint"] if result["skew_deg"] is not None else (
+        "LNB skew undefined within 1° of the equator" if result["skew_reason"] == "SKEW_UNDEFINED_NEAR_EQUATOR"
+        else "LNB skew not applicable (satellite below the horizon)")
+    reasons = [POINTING_FAILURES[name] for name in result["qualification_failures"] if name in POINTING_FAILURES]
+    fix = result["fix_label"] + (" — " + "; ".join(reasons) if reasons and result["observer_source"] in ("gpsd", "nmea") else "")
+    age = result["observer_age_ms"]
+    shown = "manual entry" if result["observer_source"] == "manual" else "live" if live else "snapshot"
+    return "\n".join((f"QO-100 · nominal slot 25.9°E · {shown}",
+                      f"Azimuth {result['az_deg']:.1f}° (true north, not magnetic) · Elevation {result['el_deg']:.1f}°",
+                      skew, "Visible from here: " + visible, "Position: " + fix,
+                      "Position age: " + (f"{age / 1000:.1f} s" if _finite(age) and age >= 0 else "Unknown"),
+                      "Start point only — peak the beacon C/N0 in 5° steps on the bench."))
+
+
+def load_pass_plan(path):
+    from .passes import validate_plan
+    return validate_plan(load_json(path))
+
+
+def pass_plan_summary(plan, limit=6):
+    from .geo_look import DIPOLE_TEXT
+    predictor, observer = plan["predictor"], plan["observer"]
+    lines = [f"Pass plan snapshot — not live · from {plan['start_utc'][:16].replace('T', ' ')} UTC · "
+             f"{plan['hours']:g} h · above {plan['min_el_deg']:g}°",
+             f"Predictor Skyfield {predictor['skyfield']} / sgp4 {predictor['sgp4']}"
+             + ("" if predictor.get("reference_versions_match") is True else " · not the 1.55/2.27 reference"),
+             "UTC verified" if plan["time_verified"] else "UTC not verified — times are provisional",
+             f"Observer rounded to 0.1°: {observer['lat_rounded']:.1f}, {observer['lon_rounded']:.1f}"
+             + ("" if observer["qualified_fix"] else " · not a qualified fix")]
+    for item in plan["passes"][:limit]:
+        hint = DIPOLE_TEXT.get(item["v_dipole_hint"])
+        lines.append(f"{item['name']} · AOS {item['aos_utc'][5:19].replace('T', ' ')} · max {item['max_el_deg']:.0f}° · "
+                     f"LOS {item['los_utc'][11:19]}" + (" · " + hint if hint else "")
+                     + (" · elements old" if item["omm_age_warning"] else ""))
+    if not plan["passes"]:
+        lines.append("No complete pass inside the window")
+    elif len(plan["passes"]) > limit:
+        lines.append(f"… {len(plan['passes']) - limit} more passes")
+    return "\n".join(lines)
+
+
 def learning_summary(value, operation, model=None):
     if operation == "infer":
         label = value.get("label", "unknown_energy")
@@ -705,17 +805,33 @@ class ReceiverSimulation:
                     self.process.wait(timeout=1)
             self.process = None
 
+    def abort(self):
+        """Scope-latch abort: stop the capture and discard its unpublished frame file."""
+        self._stop()
+        self.path.unlink(missing_ok=True)
+        self.last_version = None
+
     def close(self):
         self._stop()
         self.directory.cleanup()
 
 
-def create_window(controller, *, callbacks=None, start_worker=True):
-    """Lazy Qt entry point. callbacks may supply location() / manual_location()."""
+def create_window(controller, *, callbacks=None, start_worker=True, scope_latch=None):
+    """Lazy Qt entry point. callbacks may supply location() / manual_location().
+
+    scope_latch is the session's one scope_policy.ScopeLatch (default: a latch
+    without an Artemis database; the masked-band stop still applies). Every
+    shown frame retunes it, and annotate/train/classify get it.
+    """
     try:
         from PySide6 import QtCore, QtGui, QtWidgets
     except ImportError as error:
         raise RuntimeError("Touch UI needs optional PySide6; the controller remains usable without Qt") from error
+    from .geo_look import FirstFixGate
+    from .scope_policy import OUT_OF_SCOPE, ScopeLatch
+    scope_latch = ScopeLatch() if scope_latch is None else scope_latch
+    if not isinstance(scope_latch, ScopeLatch):
+        raise ValueError("scope_latch must be the session ScopeLatch")
     callbacks = callbacks or {}
 
     class Worker(QtCore.QThread):
@@ -773,14 +889,22 @@ def create_window(controller, *, callbacks=None, start_worker=True):
                     controller.transport.close()
 
     class Plot(QtWidgets.QWidget):
+        EMPTY = "Load a masked SpectrumFrame — no live data"
+
         def __init__(self):
             super().__init__()
             self.rows = []
             self.geometry = None
+            self.message = self.EMPTY
             self.setMinimumHeight(270)
             self.setAccessibleName("Masked spectrum and waterfall")
 
+        def clear(self, message):
+            self.rows, self.geometry, self.message = [], None, message
+            self.update()
+
         def add(self, frame):
+            self.message = self.EMPTY
             geometry = (frame["center_hz"], frame["sample_rate_hz"], frame["fft_size"], frame["source"])
             if geometry != self.geometry:
                 self.rows = []
@@ -794,7 +918,7 @@ def create_window(controller, *, callbacks=None, start_worker=True):
             painter.fillRect(self.rect(), QtGui.QColor("#080c11"))
             if not self.rows:
                 painter.setPen(QtGui.QColor("#ffffff"))
-                painter.drawText(self.rect(), QtCore.Qt.AlignmentFlag.AlignCenter, "Load a masked SpectrumFrame — no live data")
+                painter.drawText(self.rect(), QtCore.Qt.AlignmentFlag.AlignCenter, self.message)
                 return
             width, top = self.width(), self.height() // 2
             row = self.rows[-1]
@@ -850,10 +974,15 @@ def create_window(controller, *, callbacks=None, start_worker=True):
             self.location = None
             self.location_pinned = False
             self.location_status = None
+            self.location_live = False
+            self.first_fix = FirstFixGate()
             self.teach_frame = None
             self.worker_dead = False
             self.tab_commands = []
             self.receiver_job = ReceiverSimulation()
+            # One latch per session; a new stop also aborts the running SIM capture.
+            self.scope_latch = scope_latch
+            self.scope_abort = scope_latch.register_abort(self.receiver_job.abort)
             self.setStyleSheet("""
                 QWidget {background:#101821;color:#f6f8fb;font-size:18px;}
                 QPushButton {background:#263e51;border:2px solid #9bb7cb;border-radius:8px;
@@ -1053,8 +1182,16 @@ def create_window(controller, *, callbacks=None, start_worker=True):
             layout.addStretch()
 
         def start_capture(self):
+            center, rate = self.center.value(), self.rate.value()
             try:
-                self.receiver_job.start(self.center.value(), self.rate.value())
+                stopped = self.scope_latch.retune(center - rate / 2, center + rate / 2)["stop"]
+            except ValueError:
+                stopped = True  # fail closed; the refusal code is not shown either
+            if stopped:
+                self.rx_note.setText(OUT_OF_SCOPE)
+                return
+            try:
+                self.receiver_job.start(center, rate)
                 self.rx_note.setText("SIMULATION capture running; RF hardware remains controlled by labd")
             except (OSError, ValueError, RuntimeError) as error:
                 self.rx_note.setText(str(error))
@@ -1067,8 +1204,22 @@ def create_window(controller, *, callbacks=None, start_worker=True):
             self.plot = Plot(); layout.addWidget(self.plot, 1)
 
         def accept_frame(self, frame):
+            """Show a masked frame; False when its tuned span is out of scope (nothing shown)."""
             from .spectrum import mask_frame
-            previous, self.frame = self.frame, mask_frame(frame)
+            safe = mask_frame(frame)
+            try:
+                stopped = self.scope_latch.retune(safe["center_hz"] - safe["sample_rate_hz"] / 2,
+                                                  safe["center_hz"] + safe["sample_rate_hz"] / 2)["stop"]
+            except ValueError:
+                stopped = True  # fail closed
+            if stopped:
+                # Only "out of scope": no frequency, rate, position or plot of the stopped span.
+                self.frame = self.teach_frame = None
+                self.teach_confirm.setChecked(False)
+                self.plot.clear(OUT_OF_SCOPE)
+                self.spec_note.setText(OUT_OF_SCOPE)
+                return False
+            previous, self.frame = self.frame, safe
             self.plot.add(self.frame)
             size, valid = self.frame["fft_size"], sum(self.frame["valid"])
             self.spec_note.setText(f"{self.frame['source']} snapshot | centre {self.frame['center_hz']:.0f} Hz | "
@@ -1080,6 +1231,7 @@ def create_window(controller, *, callbacks=None, start_worker=True):
                 self.bin_start.setValue(0)
                 self.bin_end.setValue(min(256, size))
                 self.teach_confirm.setChecked(False)
+            return True
 
         def open_spectrum(self):
             path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Spectrum snapshot", "", "JSON (*.json *.jsonl)")
@@ -1113,7 +1265,64 @@ def create_window(controller, *, callbacks=None, start_worker=True):
             form.addRow("Manual longitude (degrees)", self.longitude)
             layout.addLayout(form)
             layout.addWidget(self.button("Use manual location", self.manual_location))
+            # Read-only: shows angles and hints, never moves hardware or enables a load.
+            group = QtWidgets.QGroupBox("Pointing — QO-100 (read-only)")
+            pointing = QtWidgets.QVBoxLayout(group)
+            self.pointing_text = QtWidgets.QLabel("QO-100 pointing unavailable — no usable position")
+            self.pointing_text.setTextFormat(QtCore.Qt.TextFormat.PlainText)
+            self.pointing_text.setWordWrap(True)
+            self.pointing_text.setStyleSheet("background:#1b2c3a;padding:12px;font-size:19px;")
+            pointing.addWidget(self.pointing_text)
+            # Confirms only the display gate's last good position; it moves or enables nothing.
+            self.jump_button = self.button("Confirm position move (>100 km)…", self.confirm_position_jump)
+            self.jump_button.setEnabled(False)
+            pointing.addWidget(self.jump_button)
+            pointing.addWidget(self.button("Load pass plan…", self.open_pass_plan))
+            self.pass_plan_text = QtWidgets.QLabel("No pass plan loaded. Plans are snapshots from the lab-venv predictor.")
+            self.pass_plan_text.setTextFormat(QtCore.Qt.TextFormat.PlainText)
+            self.pass_plan_text.setWordWrap(True)
+            pointing.addWidget(self.pass_plan_text)
+            layout.addWidget(group)
+            # Read-only labd status of the bounded LC76G RESET pulse; the pulse is a labctl operation only.
+            self.gnss_reset_text = QtWidgets.QLabel(gnss_reset_summary(None))
+            self.gnss_reset_text.setTextFormat(QtCore.Qt.TextFormat.PlainText)
+            self.gnss_reset_text.setWordWrap(True)
+            layout.addWidget(self.gnss_reset_text)
             self.location_diagnostics = self.diagnostics(layout, "Location diagnostics…")
+
+        def open_pass_plan(self):
+            path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Pass plan snapshot", "", "JSON (*.json)")
+            if path:
+                try:
+                    self.pass_plan_text.setText(pass_plan_summary(load_pass_plan(path)))
+                except (OSError, ValueError, TypeError, KeyError, RuntimeError) as error:
+                    self.pass_plan_text.setText("Pass plan rejected: " + str(error)[:200])
+
+        def _pointing(self, live):
+            try:
+                text = pointing_summary(self.location, live, self.first_fix.stable, self.first_fix.jump_pending)
+            except (ValueError, TypeError, KeyError) as error:
+                text = "QO-100 pointing unavailable — " + str(error)[:160]
+            self.pointing_text.setText(text)
+            self.jump_button.setEnabled(self.first_fix.jump_pending)
+
+        def confirm_position_jump(self):
+            if not self.first_fix.jump_pending:
+                return
+            answer = QtWidgets.QMessageBox.question(self, "Position move",
+                "The live GNSS fix is more than 100 km from the last good fix. Confirm that the receiver really moved?",
+                QtWidgets.QMessageBox.StandardButton.Yes | QtWidgets.QMessageBox.StandardButton.No,
+                QtWidgets.QMessageBox.StandardButton.No)
+            if answer == QtWidgets.QMessageBox.StandardButton.Yes and self.first_fix.confirm_jump():
+                self.jump_button.setEnabled(False)
+                if self.location is not None:
+                    self._pointing(self.location_live)
+
+        def _feed_first_fix(self, value):
+            try:
+                self.first_fix.feed(value, _boot_ms())
+            except ValueError:
+                pass  # A clock without a valid ms value never opens the gate.
 
         def open_location(self):
             path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Location snapshot", "", "JSON (*.json)")
@@ -1137,18 +1346,21 @@ def create_window(controller, *, callbacks=None, start_worker=True):
             # Polled even while pinned, so the gpsd socket keeps draining; only rendering pauses.
             try:
                 value = callbacks["location"]()
+                self._feed_first_fix(value)  # The first-run window follows the live provider, pinned or not.
                 if self.location_pinned:
                     note = self.PINNED
                 else:
                     self._location_value(value, live=True)
                     note = "Manual position — not a GNSS fix" if self.location.get("source") == "manual" else "Live tracker position"
             except (ImportError, OSError, ValueError, TypeError, KeyError, RuntimeError) as error:
+                self._feed_first_fix(None)  # A provider failure is a failed sample: the first-run window restarts.
                 if self.location_pinned:
                     note = self.PINNED + "\nLive provider error: " + str(error)[:160]
                 else:
                     # Never leave an old "Live GNSS fix" on screen when the provider fails.
                     self.location = None
                     self.location_text.setText("Location unavailable: " + str(error)[:200])
+                    self.pointing_text.setText("QO-100 pointing unavailable — location provider failed")
                     note = "Live tracker unavailable"
             self._location_note(note)
 
@@ -1164,12 +1376,13 @@ def create_window(controller, *, callbacks=None, start_worker=True):
             if value.get("available") is True:
                 if not _finite(value.get("lat")) or not -90 <= value["lat"] <= 90 or not _finite(value.get("lon")) or not -180 <= value["lon"] <= 180:
                     raise ValueError("Finite latitude/longitude required")
-            self.location = copy.deepcopy(value)
+            self.location, self.location_live = copy.deepcopy(value), live
             if not live:
                 self.location.update(fresh=False, live_fix=False)
             summary = location_summary(self.location, live)
             self.location_text.setText(summary["position"] + "\n\n" + summary["fix"] + "\nSource: " + summary["source"]
                 + ("\nFix age: " if live else "\nAge at capture: ") + summary["age"] + "\nAccuracy: " + summary["uncertainty"])
+            self._pointing(live)
             self.location_diagnostics.setPlainText(json.dumps(self.location, indent=2, ensure_ascii=False, allow_nan=False))
 
         def manual_location(self):
@@ -1240,8 +1453,9 @@ def create_window(controller, *, callbacks=None, start_worker=True):
                 from . import learning
                 if self.dataset is None:
                     self.dataset = learning.empty_dataset()
+                # The session latch: a stopped span is never labelled, trained on or classified.
                 if operation == "train":
-                    self.model = learning.train(self.dataset, seed=0, validation_fraction=.25)
+                    self.model = learning.train(self.dataset, seed=0, validation_fraction=.25, scope=self.scope_latch)
                     result = self.model
                 elif self.frame is None:
                     raise ValueError("Load a masked spectrum first")
@@ -1249,13 +1463,14 @@ def create_window(controller, *, callbacks=None, start_worker=True):
                     if not self.teach_confirm.isChecked() or self.teach_frame is None:
                         raise ValueError("Explicit label/group confirmation required")
                     self.dataset = learning.annotate(self.dataset, self.teach_frame, self.bin_start.value(), self.bin_end.value(),
-                        self.label.currentData(), group_id=self.group_id, user_confirmed=True)
+                        self.label.currentData(), group_id=self.group_id, user_confirmed=True, scope=self.scope_latch)
                     self.teach_confirm.setChecked(False)
                     result = self.dataset
                 else:
                     if self.model is None:
                         raise ValueError("Load/train a model first")
-                    result = learning.infer(self.model, self.frame, self.bin_start.value(), self.bin_end.value(), backend="cpu")
+                    result = learning.infer(self.model, self.frame, self.bin_start.value(), self.bin_end.value(), backend="cpu",
+                                            scope=self.scope_latch)
                 self.learning_text.setPlainText(learning_summary(result, operation, self.model))
                 self.learning_diagnostics.setPlainText(json.dumps(result, indent=2, ensure_ascii=False, allow_nan=False)[:16000])
             except (ImportError, OSError, ValueError, TypeError, KeyError, RuntimeError) as error:
@@ -1359,6 +1574,7 @@ def create_window(controller, *, callbacks=None, start_worker=True):
                      + ("\n" + readable_fault(policy["fault"]) if policy.get("fault") not in (None, "", "new_pico_session") else ""))
             # The console's own error never hides the labd protection fault.
             self.fault_text.setText(fault + ("\nConsole: " + str(view["error"])[:240] if view.get("error") else ""))
+            self.gnss_reset_text.setText(gnss_reset_summary(policy.get("gnss_reset"), live))
             for row, values in enumerate(channel_rows(data, live)):
                 for column, text in enumerate(values):
                     item = self.channel_table.item(row, column)
@@ -1426,12 +1642,15 @@ def create_window(controller, *, callbacks=None, start_worker=True):
             if self.closing:
                 return
             self.render_state(controller.status())
+            # The stop journal holds only UTC + "out of scope"; srrx-menu's stderr
+            # goes to the user journal.
+            for line in self.scope_latch.drain_log():
+                print(line, file=sys.stderr, flush=True)
             # Independent steps: one failing source must not freeze the others.
             try:
                 frame = self.receiver_job.poll()
                 if frame is not None:
-                    self.accept_frame(frame)
-                    self.rx_note.setText("SIMULATION snapshot loaded into Spectrum")
+                    self.rx_note.setText("SIMULATION snapshot loaded into Spectrum" if self.accept_frame(frame) else OUT_OF_SCOPE)
             except (ImportError, OSError, ValueError, TypeError, KeyError, RuntimeError) as error:
                 self.rx_note.setText(str(error))
             if self.frame_file is not None:
@@ -1462,6 +1681,7 @@ def create_window(controller, *, callbacks=None, start_worker=True):
                 self.timer.stop()
                 if not self.worker_started:
                     controller.close()
+                self.scope_latch.unregister_abort(self.scope_abort)
                 self.receiver_job.close()
                 event.accept()
 
@@ -1486,7 +1706,11 @@ def main(argv=None):
     parser.add_argument("--gpsd-host", help="Explicit numeric loopback or localhost; no automatic GNSS connection")
     parser.add_argument("--gpsd-port", type=int)
     parser.add_argument("--gpsd-device", help="Optional verified gpsd device identity")
+    parser.add_argument("--artemis-db", type=Path, help="Reviewed srrx_artemis_mirror_v1 file; pair with --artemis-acceptance")
+    parser.add_argument("--artemis-acceptance", type=Path, help="Root-owned acceptance record binding its SHA256")
     args = parser.parse_args(argv)
+    if (args.artemis_db is None) != (args.artemis_acceptance is None):
+        parser.error("--artemis-db and --artemis-acceptance must be supplied together")
     try:
         from PySide6.QtWidgets import QApplication
     except ImportError:
@@ -1499,10 +1723,17 @@ def main(argv=None):
     except (ImportError, OSError, ValueError) as error:
         print("srrx.hmi: location provider: " + str(error), file=sys.stderr)
         return 2
+    from .scope_policy import ArtemisDB, ScopeLatch
+    database = None
+    if args.artemis_db is not None:
+        # Never raises: an unaccepted or missing mirror identifies nothing; masked bands still stop.
+        database = ArtemisDB.load_accepted(args.artemis_db, args.artemis_acceptance)
+        if not database.available:
+            print("srrx.hmi: Artemis identification unavailable: " + database.status, file=sys.stderr)
     transport = DemoTransport() if args.demo else socket_transport(args.socket)
     controller = ConsoleController(transport)
     application = QApplication.instance() or QApplication(sys.argv[:1])
-    window = create_window(controller, callbacks=callbacks)
+    window = create_window(controller, callbacks=callbacks, scope_latch=ScopeLatch(database))
     window.showFullScreen() if args.fullscreen else window.show()
     try:
         return application.exec()

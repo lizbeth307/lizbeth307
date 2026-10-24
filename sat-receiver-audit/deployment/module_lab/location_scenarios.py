@@ -3,6 +3,9 @@
 
 CLI: python3 location_scenarios.py --project REPOSITORY --output REPORT.json
 Registry API: run(project) -> per-module EMULATION_PASS / FAIL / UNSUPPORTED.
+NMEA bytes cross a real PTY into the production srrx.gnss_uart reader
+(configure_raw_115200 read-back, NmeaUartReader) and LocationTracker; only the
+udev/sysfs binding of open_lc76g needs the Q6A and is not exercised here.
 The GPSD endpoint is a protocol emulator, not a real gpsd installation. The
 synthetic reference used to test the UTC gate never qualifies GNSS/system UTC.
 """
@@ -19,16 +22,18 @@ import os
 from pathlib import Path
 import select
 import tempfile
+import termios
 import time
+from types import SimpleNamespace
 
 try:
-    from .location_modules import (GpsdAPIServer, LC76GPTY, NMEAReader,
+    from .location_modules import (GpsdAPIServer, LC76GPTY,
                                    PRIMARY_SOURCES, SYNTHETIC_DEVICE, SYNTHETIC_EPOCH,
                                    SYNTHETIC_LATITUDE, SYNTHETIC_LONGITUDE,
                                    UnsupportedEnvironment, epoch_sentences, gsa, rmc, tpv)
 except ImportError:
     sys.path.insert(0, str(Path(__file__).resolve().parent))
-    from location_modules import (GpsdAPIServer, LC76GPTY, NMEAReader,
+    from location_modules import (GpsdAPIServer, LC76GPTY,
                                   PRIMARY_SOURCES, SYNTHETIC_DEVICE, SYNTHETIC_EPOCH,
                                   SYNTHETIC_LATITUDE, SYNTHETIC_LONGITUDE,
                                   UnsupportedEnvironment, epoch_sentences, gsa, rmc, tpv)
@@ -43,49 +48,84 @@ def check(condition, message):
         raise AssertionError(message)
 
 
-def _production(project):
-    path = project / "software/srrx/location.py"
-    spec = importlib.util.spec_from_file_location("srrx_module_lab_production_location", path)
+def _load(project, relative, name):
+    spec = importlib.util.spec_from_file_location(name, project / relative)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
 
 
-def _nmea_feed(reader, payload, *, fragment=7):
+def _production(project):
+    location = _load(project, "software/srrx/location.py", "srrx_module_lab_production_location")
+    uart = _load(project, "software/srrx/gnss_uart.py", "srrx_module_lab_production_gnss_uart")
+    return SimpleNamespace(LocationTracker=location.LocationTracker, GpsdClient=location.GpsdClient,
+                           NmeaUartReader=uart.NmeaUartReader, configure_raw_115200=uart.configure_raw_115200,
+                           raw_115200=uart.raw_115200)
+
+
+def _reader(api, emulator, tracker):
+    """Production reader on its own duplicate of the PTY slave, never the emulator's fd.
+
+    Production configure_raw_115200 sets and reads back the line discipline; the
+    reader owns, and on HUP closes, only the duplicate. Its first poll only
+    flushes (bytes queued since open have no receipt time), so it runs here,
+    before a scenario writes.
+    """
+    fd = os.dup(emulator.slave)
+    try:
+        api.configure_raw_115200(fd)
+        reader = api.NmeaUartReader(fd, tracker)
+    except BaseException:
+        os.close(fd)
+        raise
+    try:
+        check(reader.poll(now_ms()) == 0 and reader.flushes == 1 and reader.bytes_received == 0
+              and reader.state == "STARTING" and not reader.disconnected,
+              "Production reader's first poll was not a start flush")
+    except BaseException:
+        reader.close("MODULE_LAB_SETUP_FAILED")
+        raise
+    return reader
+
+
+def _nmea_feed(emulator, reader, payload, *, fragment=7):
     accepted = 0
     for offset in range(0, len(payload), fragment):
         part = payload[offset:offset + fragment]
         before = reader.bytes_received
-        reader.emulator.write(part)
+        emulator.write(part)
         deadline = time.monotonic() + .5
         while reader.bytes_received < before + len(part):
-            if time.monotonic() > deadline:
+            if time.monotonic() > deadline or reader.disconnected:
                 raise TimeoutError("NMEA PTY receive deadline")
-            select.select([reader.emulator.slave], [], [], .01)
+            select.select([reader.fileno()], [], [], .01)
             accepted += reader.poll(now_ms())
     return accepted
 
 
 def nmea_valid_and_fragmented(api):
     tracker = api.LocationTracker()
-    with LC76GPTY() as emulator:
-        reader = NMEAReader(emulator, tracker)
-        check(_nmea_feed(reader, gsa(), fragment=3) == 0, "GSA invented a position")
+    with LC76GPTY() as emulator, _reader(api, emulator, tracker) as reader:
+        check(api.raw_115200(termios.tcgetattr(reader.fileno())),
+              "Production raw115200 read-back did not hold on the PTY")
+        check(_nmea_feed(emulator, reader, gsa(), fragment=3) == 0, "GSA invented a position")
         message = rmc()
-        check(_nmea_feed(reader, message[:-1], fragment=1) == 0, "Fragmented sentence released a fix before LF")
-        check(_nmea_feed(reader, message[-1:], fragment=1) == 1, "Complete RMC did not reach production parser")
+        check(_nmea_feed(emulator, reader, message[:-1], fragment=1) == 0, "Fragmented sentence released a fix before LF")
+        check(_nmea_feed(emulator, reader, message[-1:], fragment=1) == 1, "Complete RMC did not reach production parser")
         state = tracker.status(now_ms())
         check(state["source"] == "nmea" and state["fresh"] and state["mode"] == 3,
               "Valid PTY GNSS output did not produce a live3D NMEA fix")
         check((state["lat"], state["lon"]) == (SYNTHETIC_LATITUDE, SYNTHETIC_LONGITUDE),
               "Synthetic NMEA coordinate decoding mismatch")
         check(state["utc_verified"] is False, "GNSS UTC became verified without an independent reference")
-        check(_nmea_feed(reader, epoch_sentences(1)) == 1,
+        check(_nmea_feed(emulator, reader, epoch_sentences(1)) == 1,
               "Same-epoch RMC/GGA incorrectly counted as several distinct positions")
         enriched = tracker.status(now_ms())
         check(enriched["uncertainty_m"] == 5.0 and enriched["alt_msl_m"] == 12.3,
               "GGA/GST fields were not associated with the same synthetic epoch")
-        return {"transport": "real_linux_pty_raw115200", "production_api": "LocationTracker.ingest_nmea",
+        return {"transport": "real_linux_pty_raw115200",
+                "production_api": "gnss_uart.configure_raw_115200+NmeaUartReader -> LocationTracker.ingest_nmea",
+                "termios_read_back": True,
                 "synthetic_input": True, "fragment_size_bytes": 1,
                 "three_dimensional_fix": True, "gst_axis_rss_m": enriched["uncertainty_m"],
                 "gnss_utc_qualified": False}
@@ -93,21 +133,20 @@ def nmea_valid_and_fragmented(api):
 
 def nmea_checksum_invalid_fix_and_resync(api):
     tracker = api.LocationTracker()
-    with LC76GPTY() as emulator:
-        reader = NMEAReader(emulator, tracker)
-        _nmea_feed(reader, epoch_sentences())
+    with LC76GPTY() as emulator, _reader(api, emulator, tracker) as reader:
+        _nmea_feed(emulator, reader, epoch_sentences())
         corrupt = bytearray(rmc(1))
         corrupt[-3] = ord("0") if corrupt[-3] != ord("0") else ord("1")
-        check(_nmea_feed(reader, bytes(corrupt)) == 0, "Corrupt NMEA checksum was accepted")
+        check(_nmea_feed(emulator, reader, bytes(corrupt)) == 0, "Corrupt NMEA checksum was accepted")
         state = tracker.status(now_ms())
         check(not state["fresh"] and state["source"] == "last_good" and state["reason"] == "NMEA_CHECKSUM",
               "Checksum fault did not invalidate live fix while preserving fallback")
-        check(_nmea_feed(reader, rmc(1, valid=False)) == 0, "Invalid RMC navigation status was accepted")
+        check(_nmea_feed(emulator, reader, rmc(1, valid=False)) == 0, "Invalid RMC navigation status was accepted")
         check(tracker.status(now_ms())["reason"] == "NMEA_NO_FIX", "Invalid navigation state was not reported")
-        check(_nmea_feed(reader, epoch_sentences(1)) == 1, "Valid NMEA did not recover after checksum/no-fix faults")
-        _nmea_feed(reader, b"$" + b"A" * 400 + b"\r\n")
+        check(_nmea_feed(emulator, reader, epoch_sentences(1)) == 1, "Valid NMEA did not recover after checksum/no-fix faults")
+        _nmea_feed(emulator, reader, b"$" + b"A" * 400 + b"\r\n")
         check(not tracker.status(now_ms())["fresh"], "Oversize NMEA line retained a live fix")
-        check(_nmea_feed(reader, epoch_sentences(2)) == 1 and tracker.status(now_ms())["fresh"],
+        check(_nmea_feed(emulator, reader, epoch_sentences(2)) == 1 and tracker.status(now_ms())["fresh"],
               "Production stream parser did not resynchronize after an oversized sentence")
         return {"checksum_rejected": True, "invalid_fix_rejected": True,
                 "oversize_rejected": True, "next_valid_epoch_recovers": True}
@@ -115,13 +154,12 @@ def nmea_checksum_invalid_fix_and_resync(api):
 
 def nmea_replayed_epoch_and_stale(api):
     tracker = api.LocationTracker(fresh_ms=180)
-    with LC76GPTY() as emulator:
-        reader = NMEAReader(emulator, tracker)
-        _nmea_feed(reader, epoch_sentences())
+    with LC76GPTY() as emulator, _reader(api, emulator, tracker) as reader:
+        _nmea_feed(emulator, reader, epoch_sentences())
         initial_now = now_ms()
         initial_received = initial_now - tracker.status(initial_now)["age_ms"]
         time.sleep(.05)
-        check(_nmea_feed(reader, epoch_sentences()) == 0, "Replayed NMEA epoch was counted as a new fix")
+        check(_nmea_feed(emulator, reader, epoch_sentences()) == 0, "Replayed NMEA epoch was counted as a new fix")
         stamp = now_ms()
         check(stamp - tracker.status(stamp)["age_ms"] == initial_received,
               "Replayed epoch refreshed position receipt time")
@@ -136,51 +174,51 @@ def nmea_replayed_epoch_and_stale(api):
 
 def nmea_drop_and_explicit_reopen(api):
     tracker = api.LocationTracker()
-    with LC76GPTY() as emulator:
-        reader = NMEAReader(emulator, tracker)
-        _nmea_feed(reader, epoch_sentences())
-        _nmea_feed(reader, rmc(1)[:17])
+    with LC76GPTY() as emulator, _reader(api, emulator, tracker) as reader:
+        _nmea_feed(emulator, reader, epoch_sentences())
+        _nmea_feed(emulator, reader, rmc(1)[:17])
         emulator.disconnect()
         reader.poll(now_ms())
-        check(reader.disconnected and not tracker.status(now_ms())["fresh"],
-              "Fixture PTY HUP did not invalidate its production tracker input")
-    with LC76GPTY() as replacement:
-        reader = NMEAReader(replacement, tracker)
-        check(_nmea_feed(reader, epoch_sentences(1)) == 1 and tracker.status(now_ms())["fresh"],
+        state = tracker.status(now_ms())
+        check(reader.disconnected and reader.state == "DISCONNECTED" and reader.fileno() == -1
+              and not state["fresh"] and state["reason"] == "NMEA_UART_LOST",
+              "Production reader did not turn PTY HUP into NMEA_UART_LOST")
+        check(reader.poll(now_ms()) == 0 and reader.disconnected, "Disconnected production reader reopened or read again")
+    with LC76GPTY() as replacement, _reader(api, replacement, tracker) as reader:
+        check(_nmea_feed(replacement, reader, epoch_sentences(1)) == 1 and tracker.status(now_ms())["fresh"],
               "Explicit fresh PTY transport could not recover after a partial sentence and HUP")
     return {"real_pty_hup": True, "explicit_new_endpoint": True, "partial_stream_resynchronized": True,
-            "disconnect_detection_owner": "fixture_transport_glue_not_a_production_raw_uart_driver"}
+            "automatic_reopen": False,
+            "disconnect_detection_owner": "production_gnss_uart_NmeaUartReader_pollhup"}
 
 
 def nmea_synthetic_utc_three_distinct_3d_gates(api):
     reference = [SYNTHETIC_EPOCH]
     tracker = api.LocationTracker(utc_reference=lambda: reference[0])
     states = []
-    with LC76GPTY() as emulator:
-        reader = NMEAReader(emulator, tracker)
+    with LC76GPTY() as emulator, _reader(api, emulator, tracker) as reader:
         for second in range(2):
             reference[0] = SYNTHETIC_EPOCH + second
-            check(_nmea_feed(reader, epoch_sentences(second)) == 1, "Synthetic3D position was rejected")
+            check(_nmea_feed(emulator, reader, epoch_sentences(second)) == 1, "Synthetic3D position was rejected")
             states.append(tracker.status(now_ms())["utc_verified"])
-        _nmea_feed(reader, epoch_sentences(1))
+        _nmea_feed(emulator, reader, epoch_sentences(1))
         check(tracker.status(now_ms())["utc_verified"] is False, "Duplicate epoch satisfied the third-fix UTC gate")
         reference[0] = SYNTHETIC_EPOCH + 2
-        _nmea_feed(reader, epoch_sentences(2))
+        _nmea_feed(emulator, reader, epoch_sentences(2))
         states.append(tracker.status(now_ms())["utc_verified"])
         check(states == [False, False, True], "Three-distinct-3D UTC policy gate behaved incorrectly")
         reference[0] = SYNTHETIC_EPOCH + 1000
-        _nmea_feed(reader, epoch_sentences(3))
+        _nmea_feed(emulator, reader, epoch_sentences(3))
         mismatch = tracker.status(now_ms())
         check(not mismatch["fresh"] and not mismatch["utc_verified"] and mismatch["last_error"] == "UTC_REFERENCE_MISMATCH",
               "Untrusted UTC mismatch passed the independent-reference policy")
     # Three distinct2D positions must not pass the same gate.
     reference[0] = SYNTHETIC_EPOCH
     tracker = api.LocationTracker(utc_reference=lambda: reference[0])
-    with LC76GPTY() as emulator:
-        reader = NMEAReader(emulator, tracker)
+    with LC76GPTY() as emulator, _reader(api, emulator, tracker) as reader:
         for second in range(3):
             reference[0] = SYNTHETIC_EPOCH + second
-            _nmea_feed(reader, epoch_sentences(second, mode=2))
+            _nmea_feed(emulator, reader, epoch_sentences(second, mode=2))
         check(tracker.status(now_ms())["utc_verified"] is False, "Three2D fixes passed the3D UTC policy")
     return {"synthetic_reference_gate_sequence": states, "duplicate_not_distinct": True,
             "two_dimensional_fixes_rejected_for_utc_gate": True, "reference_mismatch_rejected": True,
@@ -346,12 +384,12 @@ def run(project):
     api = _production(project)
     modules = []
     for module_id, cases, description, unsupported in (
-        ("lc76g_u304", NMEA_CASES, "Waveshare LC76G GNSS24370 NMEA output over Linux PTY",
+        ("lc76g_u304", NMEA_CASES, "Waveshare LC76G GNSS24370 NMEA output over Linux PTY into the production read-only UART reader",
          ["GNSS RF acquisition, constellation tracking, sensitivity and physical accuracy",
           "PPS edges/phase/jitter, oscillator and GNSS UTC qualification",
           "Physical Q6A UART6 pinmux/baud/electrical levels and reset circuit",
-          "Proprietary PAIR/PQTM configuration, flash/NVM and firmware updates",
-          "Production raw-UART reader: tested transport glue is a fixture feeding production ingest_nmea"]),
+          "Live udev /dev/lab/gnss and sysfs 998000.serial binding of open_lc76g (Q6A only)",
+          "Proprietary PAIR/PQTM configuration, flash/NVM and firmware updates"]),
         ("gpsd_client_protocol", GPSD_CASES, "Production GpsdClient against independent loopback GPSD API emulator",
          ["Actual gpsd executable/device discovery/driver operation",
           "Real GNSS UTC, kernel PPS, chrony and host clock discipline"]),
@@ -362,6 +400,7 @@ def run(project):
     status = "FAIL" if any(item["status"] == "FAIL" for item in modules) else (
         "UNSUPPORTED" if any(item["status"] == "UNSUPPORTED" for item in modules) else "EMULATION_PASS")
     paths = {"software/srrx/location.py": project / "software/srrx/location.py",
+             "software/srrx/gnss_uart.py": project / "software/srrx/gnss_uart.py",
              "design/E3.json": project / "design/E3.json",
              "deployment/module_lab/location_modules.py": Path(__file__).with_name("location_modules.py"),
              "deployment/module_lab/location_scenarios.py": Path(__file__)}

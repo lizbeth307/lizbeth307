@@ -1,0 +1,444 @@
+{
+  "cases": [
+    {
+      "case": "graph_connections",
+      "details": {
+        "graph": "design/E3.json",
+        "hmi_derived_mapping": true,
+        "imu_spi_and_crossed_uart": true,
+        "pico_uart_adc_fan_gpio": true,
+        "powered_reset_bias": "R395 1k Pico3V3 -> GP17/Q306 gate via R393"
+      },
+      "modules": [
+        "pico_gpio_supervisor",
+        "pi4io9555_keys",
+        "pico_encoders",
+        "veml7700",
+        "pico_adc_ntc_battery",
+        "pico_fan_tach",
+        "pico_watchdog_clock",
+        "pico_uart",
+        "bno085_spi_shtp",
+        "external_imu_uart"
+      ],
+      "status": "EMULATION_PASS"
+    },
+    {
+      "case": "pico_safe_gpio_and_adc",
+      "details": {
+        "arm_refused": "NOT_COMMISSIONED",
+        "open_short_invalid": true,
+        "synthetic_valid_records_created": 0,
+        "uncalibrated_battery": null
+      },
+      "modules": [
+        "pico_adc_ntc_battery",
+        "pico_gpio_supervisor"
+      ],
+      "status": "EMULATION_PASS"
+    },
+    {
+      "case": "pico_power_uart_and_tach",
+      "details": {
+        "fan_mechanical_performance": "UNSUPPORTED",
+        "q6a_off_pins_hiz": [
+          0,
+          1,
+          15
+        ],
+        "tach_irq": true
+      },
+      "modules": [
+        "pico_gpio_supervisor",
+        "pico_fan_tach"
+      ],
+      "status": "EMULATION_PASS"
+    },
+    {
+      "case": "pico_watchdog_ticks_uart",
+      "details": {
+        "backpressure_timeout_ms": 100,
+        "instruction_level_restart": "UNSUPPORTED",
+        "short_write_bytes": 400,
+        "ticks_wrap": true,
+        "watchdog_pad_reset_ms": 1000
+      },
+      "modules": [
+        "pico_watchdog_clock",
+        "pico_uart"
+      ],
+      "status": "EMULATION_PASS"
+    },
+    {
+      "case": "pi4io_keys_encoders",
+      "details": {
+        "active_low_interrupt": true,
+        "encoder_cycles": [
+          3,
+          -2
+        ],
+        "invalid_transition_rebaseline": true,
+        "key_order": [
+          "HOME",
+          "BACK",
+          "REC",
+          "MARK",
+          "FN",
+          "LOCK",
+          "ENC1_PRESS",
+          "ENC2_PRESS"
+        ]
+      },
+      "modules": [
+        "pi4io9555_keys",
+        "pico_encoders"
+      ],
+      "status": "EMULATION_PASS"
+    },
+    {
+      "case": "pi4io_fault_recovery",
+      "details": {
+        "faults": [
+          "unplug",
+          "register_reset",
+          "short_read",
+          "nack",
+          "corrupt_read",
+          "scl_stuck"
+        ],
+        "held_key_replay": false,
+        "recovery": true
+      },
+      "modules": [
+        "pi4io9555_keys",
+        "pico_encoders"
+      ],
+      "status": "EMULATION_PASS"
+    },
+    {
+      "case": "veml_conversion_fault_age",
+      "details": {
+        "faults": [
+          "unplug",
+          "stale",
+          "saturation"
+        ],
+        "integration_tolerance_percent": 30,
+        "little_endian": true,
+        "optical_accuracy": "UNSUPPORTED",
+        "profiles": [
+          "gain1/8_IT25",
+          "gain2_IT800"
+        ],
+        "source_uart_budget_ms": 100
+      },
+      "modules": [
+        "veml7700"
+      ],
+      "status": "EMULATION_PASS"
+    },
+    {
+      "case": "bno_spi_handshake_and_reports",
+      "details": {
+        "commands": [
+          "ProductID",
+          "SetFeature0x05",
+          "GetFeature0x05"
+        ],
+        "q12": true,
+        "q14": true,
+        "report_gap_invalid": true,
+        "sensor_fusion_and_calibration": "UNSUPPORTED",
+        "status0_invalid": true,
+        "synthetic_product_id": "0xe0000001"
+      },
+      "modules": [
+        "bno085_spi_shtp"
+      ],
+      "status": "EMULATION_PASS"
+    },
+    {
+      "case": "bno_spi_fault_reset_recovery",
+      "details": {
+        "faults": [
+          "spi_unplug",
+          "missing_interrupt",
+          "reserved_length",
+          "continuation_unsupported",
+          "packet_length",
+          "sensor_age500",
+          "silence500"
+        ],
+        "reset_and_exact_rehandshake": true,
+        "startup_timeout_ms": 1030
+      },
+      "modules": [
+        "bno085_spi_shtp"
+      ],
+      "status": "EMULATION_PASS"
+    },
+    {
+      "case": "imu_uart_to_pico_relay",
+      "details": {
+        "actual_paths": [
+          "SPITransport",
+          "SHTPDecoder",
+          "ImuSession",
+          "UARTPublisher",
+          "FrameDecoder",
+          "IMURelay"
+        ],
+        "partial_write_limit": 13,
+        "pico_rx_budget_ms": 100,
+        "replay_rejected": true,
+        "sensor_values": "SYNTHETIC_TEST_FIXTURE",
+        "source_budget_ms": 150,
+        "unplug": true,
+        "wait_age_added_ms": 70
+      },
+      "modules": [
+        "external_imu_uart",
+        "pico_uart"
+      ],
+      "status": "EMULATION_PASS"
+    }
+  ],
+  "commissioning_records_created": 0,
+  "modules": [
+    {
+      "cases": [
+        "graph_connections",
+        "bno_spi_handshake_and_reports",
+        "bno_spi_fault_reset_recovery"
+      ],
+      "module": "bno085_spi_shtp",
+      "physical_qualified": false,
+      "source_refs": {
+        "bno": "https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf",
+        "graph": "design/E3.json; design/E5.json",
+        "micropython": "https://docs.micropython.org/en/v1.26.0/rp2/quickref.html",
+        "ntc": "https://semiware.com/uploads/datasheet/MF52A103F3950.pdf",
+        "pi4io": "https://www.diodes.com/datasheet/download/PI4IOE5V9555.pdf",
+        "sh2": "https://www.ceva-ip.com/wp-content/uploads/SH-2-Reference-Manual.pdf",
+        "veml": "https://www.vishay.com/docs/84286/veml7700.pdf",
+        "wdt": "https://docs.micropython.org/en/v1.26.0/library/machine.WDT.html"
+      },
+      "status": "EMULATION_PASS"
+    },
+    {
+      "cases": [
+        "graph_connections",
+        "imu_uart_to_pico_relay"
+      ],
+      "module": "external_imu_uart",
+      "physical_qualified": false,
+      "source_refs": {
+        "bno": "https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf",
+        "graph": "design/E3.json; design/E5.json",
+        "micropython": "https://docs.micropython.org/en/v1.26.0/rp2/quickref.html",
+        "ntc": "https://semiware.com/uploads/datasheet/MF52A103F3950.pdf",
+        "pi4io": "https://www.diodes.com/datasheet/download/PI4IOE5V9555.pdf",
+        "sh2": "https://www.ceva-ip.com/wp-content/uploads/SH-2-Reference-Manual.pdf",
+        "veml": "https://www.vishay.com/docs/84286/veml7700.pdf",
+        "wdt": "https://docs.micropython.org/en/v1.26.0/library/machine.WDT.html"
+      },
+      "status": "EMULATION_PASS"
+    },
+    {
+      "cases": [
+        "graph_connections",
+        "pi4io_keys_encoders",
+        "pi4io_fault_recovery"
+      ],
+      "module": "pi4io9555_keys",
+      "physical_qualified": false,
+      "source_refs": {
+        "bno": "https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf",
+        "graph": "design/E3.json; design/E5.json",
+        "micropython": "https://docs.micropython.org/en/v1.26.0/rp2/quickref.html",
+        "ntc": "https://semiware.com/uploads/datasheet/MF52A103F3950.pdf",
+        "pi4io": "https://www.diodes.com/datasheet/download/PI4IOE5V9555.pdf",
+        "sh2": "https://www.ceva-ip.com/wp-content/uploads/SH-2-Reference-Manual.pdf",
+        "veml": "https://www.vishay.com/docs/84286/veml7700.pdf",
+        "wdt": "https://docs.micropython.org/en/v1.26.0/library/machine.WDT.html"
+      },
+      "status": "EMULATION_PASS"
+    },
+    {
+      "cases": [
+        "graph_connections",
+        "pico_safe_gpio_and_adc"
+      ],
+      "module": "pico_adc_ntc_battery",
+      "physical_qualified": false,
+      "source_refs": {
+        "bno": "https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf",
+        "graph": "design/E3.json; design/E5.json",
+        "micropython": "https://docs.micropython.org/en/v1.26.0/rp2/quickref.html",
+        "ntc": "https://semiware.com/uploads/datasheet/MF52A103F3950.pdf",
+        "pi4io": "https://www.diodes.com/datasheet/download/PI4IOE5V9555.pdf",
+        "sh2": "https://www.ceva-ip.com/wp-content/uploads/SH-2-Reference-Manual.pdf",
+        "veml": "https://www.vishay.com/docs/84286/veml7700.pdf",
+        "wdt": "https://docs.micropython.org/en/v1.26.0/library/machine.WDT.html"
+      },
+      "status": "EMULATION_PASS"
+    },
+    {
+      "cases": [
+        "graph_connections",
+        "pi4io_keys_encoders",
+        "pi4io_fault_recovery"
+      ],
+      "module": "pico_encoders",
+      "physical_qualified": false,
+      "source_refs": {
+        "bno": "https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf",
+        "graph": "design/E3.json; design/E5.json",
+        "micropython": "https://docs.micropython.org/en/v1.26.0/rp2/quickref.html",
+        "ntc": "https://semiware.com/uploads/datasheet/MF52A103F3950.pdf",
+        "pi4io": "https://www.diodes.com/datasheet/download/PI4IOE5V9555.pdf",
+        "sh2": "https://www.ceva-ip.com/wp-content/uploads/SH-2-Reference-Manual.pdf",
+        "veml": "https://www.vishay.com/docs/84286/veml7700.pdf",
+        "wdt": "https://docs.micropython.org/en/v1.26.0/library/machine.WDT.html"
+      },
+      "status": "EMULATION_PASS"
+    },
+    {
+      "cases": [
+        "graph_connections",
+        "pico_power_uart_and_tach"
+      ],
+      "module": "pico_fan_tach",
+      "physical_qualified": false,
+      "source_refs": {
+        "bno": "https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf",
+        "graph": "design/E3.json; design/E5.json",
+        "micropython": "https://docs.micropython.org/en/v1.26.0/rp2/quickref.html",
+        "ntc": "https://semiware.com/uploads/datasheet/MF52A103F3950.pdf",
+        "pi4io": "https://www.diodes.com/datasheet/download/PI4IOE5V9555.pdf",
+        "sh2": "https://www.ceva-ip.com/wp-content/uploads/SH-2-Reference-Manual.pdf",
+        "veml": "https://www.vishay.com/docs/84286/veml7700.pdf",
+        "wdt": "https://docs.micropython.org/en/v1.26.0/library/machine.WDT.html"
+      },
+      "status": "EMULATION_PASS"
+    },
+    {
+      "cases": [
+        "graph_connections",
+        "pico_safe_gpio_and_adc",
+        "pico_power_uart_and_tach"
+      ],
+      "module": "pico_gpio_supervisor",
+      "physical_qualified": false,
+      "source_refs": {
+        "bno": "https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf",
+        "graph": "design/E3.json; design/E5.json",
+        "micropython": "https://docs.micropython.org/en/v1.26.0/rp2/quickref.html",
+        "ntc": "https://semiware.com/uploads/datasheet/MF52A103F3950.pdf",
+        "pi4io": "https://www.diodes.com/datasheet/download/PI4IOE5V9555.pdf",
+        "sh2": "https://www.ceva-ip.com/wp-content/uploads/SH-2-Reference-Manual.pdf",
+        "veml": "https://www.vishay.com/docs/84286/veml7700.pdf",
+        "wdt": "https://docs.micropython.org/en/v1.26.0/library/machine.WDT.html"
+      },
+      "status": "EMULATION_PASS"
+    },
+    {
+      "cases": [
+        "graph_connections",
+        "pico_watchdog_ticks_uart",
+        "imu_uart_to_pico_relay"
+      ],
+      "module": "pico_uart",
+      "physical_qualified": false,
+      "source_refs": {
+        "bno": "https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf",
+        "graph": "design/E3.json; design/E5.json",
+        "micropython": "https://docs.micropython.org/en/v1.26.0/rp2/quickref.html",
+        "ntc": "https://semiware.com/uploads/datasheet/MF52A103F3950.pdf",
+        "pi4io": "https://www.diodes.com/datasheet/download/PI4IOE5V9555.pdf",
+        "sh2": "https://www.ceva-ip.com/wp-content/uploads/SH-2-Reference-Manual.pdf",
+        "veml": "https://www.vishay.com/docs/84286/veml7700.pdf",
+        "wdt": "https://docs.micropython.org/en/v1.26.0/library/machine.WDT.html"
+      },
+      "status": "EMULATION_PASS"
+    },
+    {
+      "cases": [
+        "graph_connections",
+        "pico_watchdog_ticks_uart"
+      ],
+      "module": "pico_watchdog_clock",
+      "physical_qualified": false,
+      "source_refs": {
+        "bno": "https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf",
+        "graph": "design/E3.json; design/E5.json",
+        "micropython": "https://docs.micropython.org/en/v1.26.0/rp2/quickref.html",
+        "ntc": "https://semiware.com/uploads/datasheet/MF52A103F3950.pdf",
+        "pi4io": "https://www.diodes.com/datasheet/download/PI4IOE5V9555.pdf",
+        "sh2": "https://www.ceva-ip.com/wp-content/uploads/SH-2-Reference-Manual.pdf",
+        "veml": "https://www.vishay.com/docs/84286/veml7700.pdf",
+        "wdt": "https://docs.micropython.org/en/v1.26.0/library/machine.WDT.html"
+      },
+      "status": "EMULATION_PASS"
+    },
+    {
+      "cases": [
+        "graph_connections",
+        "veml_conversion_fault_age"
+      ],
+      "module": "veml7700",
+      "physical_qualified": false,
+      "source_refs": {
+        "bno": "https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf",
+        "graph": "design/E3.json; design/E5.json",
+        "micropython": "https://docs.micropython.org/en/v1.26.0/rp2/quickref.html",
+        "ntc": "https://semiware.com/uploads/datasheet/MF52A103F3950.pdf",
+        "pi4io": "https://www.diodes.com/datasheet/download/PI4IOE5V9555.pdf",
+        "sh2": "https://www.ceva-ip.com/wp-content/uploads/SH-2-Reference-Manual.pdf",
+        "veml": "https://www.vishay.com/docs/84286/veml7700.pdf",
+        "wdt": "https://docs.micropython.org/en/v1.26.0/library/machine.WDT.html"
+      },
+      "status": "EMULATION_PASS"
+    }
+  ],
+  "physical_qualified": false,
+  "schema": 1,
+  "scope": "actual portable Pico/IMU drivers connected to independent host MCU/register models",
+  "source_refs": {
+    "bno": "https://www.ceva-ip.com/wp-content/uploads/BNO080_085-Datasheet.pdf",
+    "graph": "design/E3.json; design/E5.json",
+    "micropython": "https://docs.micropython.org/en/v1.26.0/rp2/quickref.html",
+    "ntc": "https://semiware.com/uploads/datasheet/MF52A103F3950.pdf",
+    "pi4io": "https://www.diodes.com/datasheet/download/PI4IOE5V9555.pdf",
+    "sh2": "https://www.ceva-ip.com/wp-content/uploads/SH-2-Reference-Manual.pdf",
+    "veml": "https://www.vishay.com/docs/84286/veml7700.pdf",
+    "wdt": "https://docs.micropython.org/en/v1.26.0/library/machine.WDT.html"
+  },
+  "source_sha256": {
+    "design/E3.json": "0a2e2e60ede923b2d0a1aa0f8484a97513c1ef36ae389d3aee365fbcf90aaac5",
+    "design/E5.json": "86a9099809fbcdf365c82ecf4a239531b1b55715ee17cd1c5fb5a776c979ca05",
+    "firmware/imu/device.py": "02a9a2b6e93074716375617137cdfe1bb6df9d22e5021768c59cf273aeafea2e",
+    "firmware/imu/session.py": "350484a09ad30255d7a0f44b3c0d631726de96f5639a59443d96377bcccd424d",
+    "firmware/imu/shtp.py": "f23f08679f9847fd64a14fc73171b2e5191016b1cd665c8c5d66f90e4ee26525",
+    "firmware/pico/adapter.py": "f405206c2279fcf8cf6b4225f185c9fc93d87fd23ac9a2ebf763b6fb9db2954a",
+    "firmware/pico/calibration.py": "a7106862c928540c20fa4239e3242b83ae1c25e9ae28a98248adc12996b4610d",
+    "firmware/pico/hmi.py": "c3f6c1c3fae841e940d6b04eda3efe1b77e12185ef415272e0b23ad35a19c174",
+    "firmware/pico/imu_relay.py": "192f8bc43cc932c036c13cdf70cc4548eb0f56fa3f7af9c940d42aabc6b6d820",
+    "firmware/pico/main.py": "77c2942efa4fc76ae44799b966df8be719e3f8ff004d739ab16eff8ff2f34554",
+    "firmware/pico/supervisor.py": "18e8c6989c256a6de403156291ca55ef1c2f46b81c9d7c362e72b3d78d2b9764",
+    "software/srrx/peripherals.py": "a4e2f614aa969ddbfb4c3465ce1927146825c260a818d82cc5431590de1b7e6b",
+    "software/srrx/wire.py": "00d61272927fa8dfe389cd595649c5075321b5ecc83a2ecc857cc25b6756e4f4"
+  },
+  "status": "EMULATION_PASS",
+  "unsupported": [
+    "instruction-level RP2040/MicroPython execution",
+    "UF2/USB boot/flash",
+    "complete power loss/brownout/electrical backfeed",
+    "IRQ latency under real GC",
+    "electrical SPI/I2C timing and signal integrity",
+    "ADC calibration or acceptance",
+    "BNO sensor fusion/magnetics/calibration",
+    "optical/thermal/fan mechanics",
+    "USB touch"
+  ]
+}

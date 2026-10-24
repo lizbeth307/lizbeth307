@@ -174,6 +174,22 @@ Copy `hmi.py` alongside the existing Pico `main.py`, `adapter.py`, `supervisor.p
 changes require the host commissioning manifest to be regenerated and accepted;
 software tests do not authorize hardware operation.
 
+## Q6A-side LC76G UART and reset (not a Pico peripheral)
+
+The LC76G GNSS receiver (U304) is wired to Q6A UART6 and its RESET_N to MCP23017
+#4 GPA1 through Q301; neither passes through the Pico. See
+[GNSS-UART.md](GNSS-UART.md) for the receive-only `srrx.gnss_uart` reader
+(`/dev/lab/gnss` bound by `KERNELS=="998000.serial"`, `O_RDONLY`, `TIOCEXCL`,
+raw 115200 with read-back, bounded nonblocking polls, no reopen) and the
+policy-checked labd `gnss_reset` pulse (integer 100..500 ms, 30 s spacing after
+release, at most 3 per 15 min, 1000 ms hard deadline). Through labd/labctl the
+pulse needs the caller's own lease inside an armed, configured session; a
+release counts only when a read-back write proves it (otherwise the status is
+`RELEASE_UNCONFIRMED`, never a software-image `IDLE`). The raw
+`E3_GNSS_RESET_GATE` net stays outside the control whitelist. These are host
+software and PTY/simulation tests only: UART6 pinmux, baud rate, the reset scope
+trace and the Pico/Q306/R326 release path remain open hardware items.
+
 ## Verification and sources
 
 Run from the repository:

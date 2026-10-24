@@ -21,6 +21,8 @@ def main(argv=None):
     route = sub.add_parser("route")
     route.add_argument("receiver", choices=["RTLA", "RTLB", "LIME"])
     route.add_argument("value", help="JSON routing selection")
+    gnss = sub.add_parser("gnss_reset", help="One bounded LC76G RESET_N pulse; needs your own valid lease (e.g. while hold runs)")
+    gnss.add_argument("--width-ms", type=int, default=200, help="100..500 ms; labd enforces range, 30 s spacing and 3 per 15 min")
     sim = sub.add_parser("sim")
     sim.add_argument("name")
     sim.add_argument("value", help="JSON value; unavailable on the physical backend")
@@ -62,6 +64,8 @@ def main(argv=None):
             return 0
         if args.op == "set":
             request.update(op="control", name=args.name, value=args.value == "on")
+        elif args.op == "gnss_reset":
+            request["value"] = {"width_ms": args.width_ms}
         elif args.op in {"mode", "lease", "relay", "route", "sim", "confirmations"}:
             request["value"] = json.loads(args.value)
             if args.op == "route":

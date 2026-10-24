@@ -1,5 +1,8 @@
 Looking in links: /mnt/srrx-payload/wheels
-Requirement already satisfied: pip in ./opt/srrx/venv/lib/python3.12/site-packages (26.2.2)
-Requirement already satisfied: setuptools in ./opt/srrx/venv/lib/python3.12/site-packages (84.2.1)
-Requirement already satisfied: wheel in ./opt/srrx/venv/lib/python3.12/site-packages (0.48.0)
-Requirement already satisfied: packaging>=24.0 in ./opt/srrx/venv/lib/python3.12/site-packages (from wheel) (26.3)
+Processing ./mnt/srrx-payload/wheels/pip-26.2.2-py3-none-any.whl
+Processing ./mnt/srrx-payload/wheels/setuptools-84.2.1-py3-none-any.whl
+Processing ./mnt/srrx-payload/wheels/wheel-0.48.0-py3-none-any.whl
+Processing ./mnt/srrx-payload/wheels/packaging-26.3-py3-none-any.whl (from wheel)
+Installing collected packages: setuptools, pip, packaging, wheel
+
+Successfully installed packaging-26.3 pip-26.2.2 setuptools-84.2.1 wheel-0.48.0

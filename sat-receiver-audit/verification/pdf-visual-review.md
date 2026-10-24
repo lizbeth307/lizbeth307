@@ -1,8 +1,8 @@
 # Independent PDF visual verification
 
-Result: **PASS**, 2026-10-23 (after the schematic was redrawn with wires).
+Result: **PASS**, 2026-10-23, for the PDF of the redrawn schematic on branch `ccr-1537979d-cj7q9t` (14 A2 pages, 764,564 bytes) only. After that branch was merged into `codex/sr-rx-v2-completion`, CI regenerates the schematics and the PDF from the merged design graphs; `verification/pdf-export.json` binds the current PDF to them, but the visual PASS does not transfer to it until the pages are inspected again.
 
-The PDF opens cleanly in Poppler and PyMuPDF: **14 A2 pages** (contents page plus 13 electrical pages), **764,564 bytes**, no repair needed. No text span lies outside a page, no page title leaves the drawing frame and there are no replacement glyphs on any page.
+The ccr-branch PDF opened cleanly in Poppler and PyMuPDF with no repair needed. No text span lay outside a page, no page title left the drawing frame and there were no replacement glyphs on any page.
 
 What was inspected: all 14 pages in a Poppler contact sheet; the first page of E1, E2, E3, E4 and E5 at 75 dpi; and the dense areas in 110–160 dpi crops while the layout was tuned (E1 AON/UV and IP2368, E2 eFuse and LNA groups, E3 MCP23017 pull-up bank and Q6A header, E4 RF chains and DC detectors, E5 PCIe riser and HDMI pass-through). No missing pages, cut-off components or overlapping group blocks were found. An automated check of the generator geometry found no overlap between symbol bodies, reference/value texts and labels.
 

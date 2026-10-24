@@ -91,6 +91,8 @@ Guarded append до наявного файла дописує лише нови
 
 Захисна смуга прибирає головну пелюстку й ближні бічні пелюстки periodic Hann від потужного випромінювача біля межі: тон −0.9 dBFS усередині 225 MHz давав −19 dBFS у сусідньому valid біні, тепер найближчий valid бін ≈ −70 dBFS. Залишкові дальні бічні пелюстки, циклічний leakage через протилежний край capture, aliasing сигналів поза capture та IMD приймача маска не усуває. Маскування не змінює center/sample_rate/relative-frequency coverage SDR: воно прибирає значення відповідних bins. `valid=False` завжди відповідає `power_dbfs=None`.
 
+Маскування бінів — лише шар `srrx.spectrum`. Засувка сеансу `ScopeLatch` ([SCOPE-POLICY](SCOPE-POLICY.md); HMI-сеанс і `labrx.run_capture(..., scope=…)`) відхиляє як «out of scope» **усю** налаштовану смугу, що торкається замаскованого діапазону, зокрема 406.0–406.1 MHz, а не лише її біни. Тому захоплення радіозондів тримають `400.0 MHz < center − rate/2` і `center + rate/2 < 406.0 MHz` (скан 400.0–405.9 MHz, STACK.md:600; 225–400 MHz теж замасковано); CLI `python -m srrx.labrx` засувки не створює, і там діє тільки маска бінів.
+
 Це проєктні межі даних для generic survey/annotation/training. API не декодує повідомлень, не надає каналів приватного вмісту і не створює журналів GNSS/окремих емітерів. Координати, raw samples, emitter IDs або довільні annotations не можна додати до spectrum frame як extra metadata.
 
 ## Межа пам'яті
@@ -105,6 +107,6 @@ Guarded append до наявного файла дописує лише нови
 PYTHONPATH=software python -m unittest discover -s software/tests -p test_spectrum.py -v
 ```
 
-**28 тестів PASS**: справжні positive/negative tones і dBFS, finite zero floor, часткові/порожні блоки, retune/source flush, усі маски, включені межі з захисною смугою, обов'язкові смуги Cospas-Sarsat 406.0–406.1 MHz і 1544–1545 MHz (radiosonde-огляд біля 405.5 MHz лишає 405.9 MHz валідним), Nyquist wrap, дзеркало від'ємних частот біля 0 Hz, leakage потужного тона біля межі, forged `valid`, підмінений grid, NaN/Inf/extra fields, remasking перед JSONL, відсутність IQ persistence calls, точне витіснення/owned copies, bounded chunk metadata та lazy4GiB validation. Тести не доводять калібрування приймача або натурні RF-вимірювання.
+**28 тестів PASS**: справжні positive/negative tones і dBFS, finite zero floor, часткові/порожні блоки, retune/source flush, усі маски, включені межі з захисною смугою, обов'язкові смуги Cospas-Sarsat 406.0–406.1 MHz і 1544–1545 MHz (маска бінів кадру 2 MS/s біля 405.5 MHz лишає 405.9 MHz валідним; такий захват із засувкою сеансу відхиляється цілком, див. вище), Nyquist wrap, дзеркало від'ємних частот біля 0 Hz, leakage потужного тона біля межі, forged `valid`, підмінений grid, NaN/Inf/extra fields, remasking перед JSONL, відсутність IQ persistence calls, точне витіснення/owned copies, bounded chunk metadata та lazy4GiB validation. Тести не доводять калібрування приймача або натурні RF-вимірювання.
 
 Первинна документація NumPy: [fft](https://numpy.org/doc/stable/reference/generated/numpy.fft.fft.html), [fftshift](https://numpy.org/doc/stable/reference/generated/numpy.fft.fftshift.html), [Hann/hanning](https://numpy.org/doc/stable/reference/generated/numpy.hanning.html). Implementation використовує базові API без версійних `out=` оптимізацій; відсутність dependency перевірено окремо.

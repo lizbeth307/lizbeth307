@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "fixture": "pause",
-  "pid": 1781,
+  "pid": 2612,
   "uid": 1001,
   "stage": "HOLD_STOPPED",
   "qt_platform": "offscreen",
@@ -17,10 +17,10 @@
     },
     {
       "path": "pause-resumed-disarmed.png",
-      "bytes": 109796,
+      "bytes": 121234,
       "width": 1100,
       "height": 800,
-      "sha256": "ccab91c7e1d4c8a3e3cc128877b602b856abe84fc32aa82166c210e59aa4710f"
+      "sha256": "36b79ece86c950e87d541ef52d80f6e7a4a646fafa185ad2c79c8623625df36e"
     }
   ],
   "scope": "real full Qt window/worker; semantic queue actions, no touch injection",
@@ -28,47 +28,46 @@
   "action_log": [
     {
       "operation": "recover",
-      "at_s": 7.589703,
+      "at_s": 8.832263,
       "name": null,
       "value": null
     },
     {
       "operation": "control",
-      "at_s": 8.350542,
+      "at_s": 9.416533,
       "name": "EN_RTLA",
       "value": true
     },
     {
       "operation": "disarm",
-      "at_s": 12.969823,
+      "at_s": 13.144869,
       "name": null,
       "value": null
     },
     {
       "operation": "disarm",
-      "at_s": 16.116766,
+      "at_s": 15.950025,
       "name": null,
       "value": null
     }
   ],
-  "elapsed_s": 16.242675,
+  "elapsed_s": 15.990857,
   "request_counts": {
-    "status": 27,
+    "status": 25,
     "recover": 1,
-    "lease": 3,
+    "lease": 2,
     "control": 1,
     "disarm": 2
   },
   "accepted_lease_at_s": [
-    7.656134,
-    8.752714,
-    12.892095
+    8.89386,
+    10.084638
   ],
   "qt_timer": {
     "interval_ms": 100,
-    "ticks": 47,
-    "mean_gap_ms": 345.589,
-    "max_gap_ms_including_SIGSTOP": 5406.727
+    "ticks": 46,
+    "mean_gap_ms": 347.627,
+    "max_gap_ms_including_SIGSTOP": 7240.692
   },
   "service": {
     "mode": "SIMULATION",
@@ -107,18 +106,18 @@
   "holding": false,
   "controller_notice": "Console closed \u2014 DISARM requested",
   "controller_error": null,
-  "warmup_finished_s": 6.859572,
-  "natural_heartbeat_s": 7.377119,
-  "fresh_poll_s": 7.401132,
-  "arm_requested_s": 7.575825,
-  "active_s": 8.321194,
-  "stable_s": 9.670897,
-  "remaining_lease_ms": 2075,
-  "hold_stopped_s": 13.130098,
+  "warmup_finished_s": 8.233947,
+  "natural_heartbeat_s": 8.601504,
+  "fresh_poll_s": 8.523576,
+  "arm_requested_s": 8.782693,
+  "active_s": 9.37287,
+  "stable_s": 10.695878,
+  "remaining_lease_ms": 2385,
+  "hold_stopped_s": 13.197934,
   "exit_requests": {
-    "status": 27,
+    "status": 25,
     "recover": 1,
-    "lease": 3,
+    "lease": 2,
     "control": 1,
     "disarm": 2
   },

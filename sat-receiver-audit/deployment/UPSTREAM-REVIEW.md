@@ -30,7 +30,7 @@ Six additional preserved STACK pins were resolved through official commit APIs (
 
 The actual complete Lime archive (`818cb504284991acf69cc214469d695eff35b35244b73ace23768a95c7d9c749`,13,197,691bytes) was additionally checked through `vendor_patch.py --archive`, safely extracted and patched with all expected target/post hashes. This extends the small-fixture application test to the acquired full tree. No SDK build or hardware TX test is implied.
 
-SatDump's101,357,307-byte source archive was acquired; SDRangel exceeded the128MiB acquisition cap and its archive hash remains null.11 of30 full source archive hashes remain unresolved. Large Radxa image/kernel binaries were not downloaded merely to obtain a hash; their official release asset metadata provided it. All cache-byte verification and source-application results are separate from the36 physical acceptance gates.
+SatDump's101,357,307-byte source archive was acquired; SDRangel exceeded the128MiB acquisition cap and its archive hash remains null.11 of30 full source archive hashes remain unresolved. Large Radxa image/kernel binaries were not downloaded merely to obtain a hash; their official release asset metadata provided it. All cache-byte verification and source-application results are separate from the 37 physical acceptance gates.
 
 Radxa official downloads documentation explicitly links r2 UFS4096 image: https://docs.radxa.com/en/dragon/q6a/download . Release APIs provided actual asset SHA256/size for that image and kernel6.18.2-4 packages:
 

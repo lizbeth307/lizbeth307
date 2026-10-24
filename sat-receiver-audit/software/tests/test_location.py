@@ -119,6 +119,75 @@ class GpsdTrackingTests(unittest.TestCase):
         tracker.ingest_gpsd(dict(gst, time="2026-10-20T12:00:01Z", lat=20), 1100)
         self.assertEqual(tracker.status(1100)["uncertainty_m"], 5)
 
+    def test_gpsd_sky_reports_satellites_used_for_the_same_epoch_only(self):
+        def sky(second=0, **updates):
+            report = {"class": "SKY", "device": "configured-gnss-device", "time": "2026-10-20T12:00:%02d.000Z" % second,
+                      "nSat": 12, "uSat": 9,
+                      "satellites": [{"PRN": index, "used": index < 9} for index in range(12)]}
+            report.update(updates)
+            return report
+        tracker = LocationTracker()
+        self.assertTrue(tracker.ingest_gpsd(tpv(), 0))
+        self.assertIsNone(tracker.status(10)["satellites"])  # a TPV alone carries no count
+        self.assertFalse(tracker.ingest_gpsd(sky(), 100))  # enriches; never a new fix
+        status = tracker.status(200)
+        self.assertEqual((status["satellites"], status["age_ms"], status["fresh"]), (9, 200, True))
+        # The list alone counts used=true entries; disagreeing counts give the smaller.
+        report = sky(0, satellites=[{"PRN": n, "used": n < 7} for n in range(12)])
+        tracker.ingest_gpsd(report, 300)
+        self.assertEqual(tracker.status(300)["satellites"], 7)
+        del report["uSat"]
+        report["satellites"] = [{"PRN": n, "used": n < 8} for n in range(10)]
+        tracker.ingest_gpsd(report, 400)
+        self.assertEqual(tracker.status(400)["satellites"], 8)
+        # Another epoch, another device, no time or no count: ignored, never applied to this fix.
+        for other in (sky(5, uSat=3), sky(uSat=3, device="other-device"), {"class": "SKY", "device": "configured-gnss-device", "uSat": 3},
+                      {"class": "SKY", "device": "configured-gnss-device", "time": "2026-10-20T12:00:00.000Z"}):
+            with self.subTest(other=other):
+                ignored = tracker.ignored_count
+                self.assertFalse(tracker.ingest_gpsd(other, 500))
+                self.assertEqual(tracker.status(500)["satellites"], 8)
+                self.assertEqual(tracker.ignored_count, ignored + 1)
+                self.assertTrue(tracker.status(500)["fresh"])
+        # A SKY that arrives before its TPV is applied when that TPV comes.
+        tracker.ingest_gpsd(sky(1, uSat=10, satellites=[{"PRN": n, "used": True} for n in range(10)]), 900)
+        self.assertTrue(tracker.ingest_gpsd(tpv(1), 1000))
+        self.assertEqual(tracker.status(1000)["satellites"], 10)
+        # gpsd sends SKY after its TPV: the last count bridges at most 1.5 s, then it is unknown.
+        self.assertTrue(tracker.ingest_gpsd(tpv(2), 2000))
+        self.assertEqual(tracker.status(2000)["satellites"], 10)
+        tracker.ingest_gpsd(sky(2, uSat=6), 2100)
+        self.assertEqual(tracker.status(2100)["satellites"], 6)
+        self.assertTrue(tracker.ingest_gpsd(tpv(3), 3700))  # 1.6 s after the last SKY
+        self.assertIsNone(tracker.status(3700)["satellites"])
+        tracker.ingest_gpsd(sky(3, uSat=9), 3800)
+        tracker.invalidate("gpsd", "GPSD_DISCONNECTED")  # a gpsd fault drops every pending count
+        self.assertTrue(tracker.ingest_gpsd(tpv(4), 4300))
+        self.assertIsNone(tracker.status(4300)["satellites"])
+        # Malformed counts invalidate the gpsd source (fail closed), like a bad GST.
+        for bad in ({"uSat": True}, {"uSat": -1}, {"uSat": 10 ** 400}, {"uSat": 2.0},
+                    {"satellites": [{"PRN": 1}]}, {"satellites": [{"PRN": 1, "used": 1}]}, {"satellites": {}},
+                    {"time": "not-a-time"}):
+            with self.subTest(bad=bad):
+                tracker = LocationTracker()
+                tracker.ingest_gpsd(tpv(), 0)
+                self.assertFalse(tracker.ingest_gpsd(sky(**bad), 100))
+                status = tracker.status(100)
+                self.assertEqual((status["fresh"], status["reason"], status["satellites"]), (False, "GPSD_SKY", None))
+
+    def test_gpsd_client_passes_sky_reports_to_the_tracker(self):
+        fake, tracker = FakeSocket(), LocationTracker()
+        client = GpsdClient(tracker, "127.0.0.1", 2947)
+        with patch("srrx.location.socket.socket", return_value=fake):
+            client.start(0)
+        fake.incoming.append(b'{"class":"VERSION","proto_major":3,"proto_minor":15}\n')
+        client.poll(10)
+        sky = {"class": "SKY", "device": "configured-gnss-device", "time": "2026-10-20T12:00:00.000Z", "uSat": 8}
+        fake.incoming.append(b'{"class":"WATCH","enable":true,"json":true}\n' + json.dumps(tpv()).encode() + b"\n"
+                             + json.dumps(sky).encode() + b"\n")
+        self.assertEqual(client.poll(20), 1)  # one new fix; the SKY only adds its count
+        self.assertEqual(tracker.status(30)["satellites"], 8)
+
     def test_two_dimensional_fix_does_not_reuse_deprecated_or_stale_altitude(self):
         tracker = LocationTracker()
         tracker.ingest_gpsd(tpv(mode=2, alt=9999), 0)

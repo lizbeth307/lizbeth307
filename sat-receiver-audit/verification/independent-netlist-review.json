@@ -8,7 +8,7 @@
     "E4.json": "60c0f73c66737853033eea13c28b013d9e8559d1e0df57f2b7902af0da757797",
     "E5.json": "9d61ff10e75417c806afda7ab923ac06de7faf9b6ff5b53acce57477b3960212"
   },
-  "netlist_sha256": "1b767be74bfa489331abdf482bd143c5203dc46af3e47f2fb834a5c2fffeb871",
+  "netlist_sha256": "acaa61986e3af7799a99696bb000775fc0afe2a53cb0b6cc3d2473f255ee9312",
   "counts": {
     "hardware_components": 750,
     "hardware_pin_declarations": 2318,

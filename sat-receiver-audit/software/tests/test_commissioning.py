@@ -101,6 +101,16 @@ class AcceptanceTests(unittest.TestCase):
         self.assertEqual(list(GATE_IDS), blocking)
         self.assertIn("E5-10", GATE_IDS)
 
+    def test_committed_template_lists_exactly_the_blocking_gates(self):
+        # deploy.stage ships this file to /etc/srrx and build_bundle packs it: a stale gate set must fail
+        # on every host run, not only in the linux_lab fixed point that regenerates it (gate set only:
+        # its source hashes follow the CI fixed point).
+        project = Path(__file__).resolve().parents[2]
+        template = json.loads((project / "software/config/acceptance.template.json").read_text(encoding="utf-8"))
+        self.assertEqual(set(template["gates"]), set(GATE_IDS))
+        self.assertEqual(len(template["gates"]), len(GATE_IDS))
+        self.assertTrue(all(gate["status"] == "OPEN" for gate in template["gates"].values()))
+
     def test_complete_synthetic_fixture_round_trip(self):
         self.complete_fixture()
         self.save()

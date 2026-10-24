@@ -1,0 +1,178 @@
+{
+  "elapsed_s": 2.324,
+  "modules": [
+    {
+      "description": "Waveshare LC76G GNSS24370 NMEA output over Linux PTY into the production read-only UART reader",
+      "module_id": "lc76g_u304",
+      "refs": [
+        "U304"
+      ],
+      "scenarios": [
+        {
+          "elapsed_s": 0.116,
+          "observed": {
+            "fragment_size_bytes": 1,
+            "gnss_utc_qualified": false,
+            "gst_axis_rss_m": 5.0,
+            "production_api": "gnss_uart.configure_raw_115200+NmeaUartReader -> LocationTracker.ingest_nmea",
+            "synthetic_input": true,
+            "termios_read_back": true,
+            "three_dimensional_fix": true,
+            "transport": "real_linux_pty_raw115200"
+          },
+          "scenario": "nmea_valid_and_fragmented",
+          "status": "EMULATION_PASS"
+        },
+        {
+          "elapsed_s": 0.147,
+          "observed": {
+            "checksum_rejected": true,
+            "invalid_fix_rejected": true,
+            "next_valid_epoch_recovers": true,
+            "oversize_rejected": true
+          },
+          "scenario": "nmea_checksum_invalid_fix_and_resync",
+          "status": "EMULATION_PASS"
+        },
+        {
+          "elapsed_s": 0.302,
+          "observed": {
+            "fallback_current_accuracy": "unknown",
+            "freshness_ms": 180,
+            "observed_stale_age_ms": 283,
+            "replay_does_not_refresh_receipt_time": true
+          },
+          "scenario": "nmea_replayed_epoch_and_stale",
+          "status": "EMULATION_PASS"
+        },
+        {
+          "elapsed_s": 0.069,
+          "observed": {
+            "automatic_reopen": false,
+            "disconnect_detection_owner": "production_gnss_uart_NmeaUartReader_pollhup",
+            "explicit_new_endpoint": true,
+            "partial_stream_resynchronized": true,
+            "real_pty_hup": true
+          },
+          "scenario": "nmea_drop_and_explicit_reopen",
+          "status": "EMULATION_PASS"
+        },
+        {
+          "elapsed_s": 0.249,
+          "observed": {
+            "duplicate_not_distinct": true,
+            "real_gnss_utc_qualified": false,
+            "reference_mismatch_rejected": true,
+            "synthetic_reference_gate_sequence": [
+              false,
+              false,
+              true
+            ],
+            "system_clock_modified": false,
+            "two_dimensional_fixes_rejected_for_utc_gate": true
+          },
+          "scenario": "nmea_synthetic_utc_three_distinct_3d_gates",
+          "status": "EMULATION_PASS"
+        }
+      ],
+      "status": "EMULATION_PASS",
+      "unsupported": [
+        "GNSS RF acquisition, constellation tracking, sensitivity and physical accuracy",
+        "PPS edges/phase/jitter, oscillator and GNSS UTC qualification",
+        "Physical Q6A UART6 pinmux/baud/electrical levels and reset circuit",
+        "Live udev /dev/lab/gnss and sysfs 998000.serial binding of open_lc76g (Q6A only)",
+        "Proprietary PAIR/PQTM configuration, flash/NVM and firmware updates"
+      ]
+    },
+    {
+      "description": "Production GpsdClient against independent loopback GPSD API emulator",
+      "module_id": "gpsd_client_protocol",
+      "refs": [
+        "U304"
+      ],
+      "scenarios": [
+        {
+          "elapsed_s": 0.701,
+          "observed": {
+            "connections": 2,
+            "fragmented_tpv_bytes": true,
+            "observed_watch_requests": 2,
+            "real_gpsd_binary": false,
+            "real_loopback_tcp": true,
+            "reconnect_requires_explicit_start": true,
+            "server_implementation": "independent_gpsd_api_emulator"
+          },
+          "scenario": "gpsd_watch_fragmented_tpv_and_no_autoreconnect",
+          "status": "EMULATION_PASS"
+        },
+        {
+          "elapsed_s": 0.354,
+          "observed": {
+            "duplicate_json_keys_rejected": true,
+            "freshness_ms": 180,
+            "repeated_epoch_does_not_refresh": true,
+            "stale_fallback_labelled": true
+          },
+          "scenario": "gpsd_invalid_json_replay_and_stale",
+          "status": "EMULATION_PASS"
+        },
+        {
+          "elapsed_s": 0.334,
+          "observed": {
+            "duplicate_epoch_not_distinct": true,
+            "real_gnss_utc_qualified": false,
+            "reference_mismatch_rejected": true,
+            "synthetic_reference_gate_sequence": [
+              false,
+              false,
+              true
+            ],
+            "system_clock_modified": false,
+            "two_dimensional_fix_not_utc_verified": true,
+            "unsupported_protocol_refused": true
+          },
+          "scenario": "gpsd_synthetic_utc_gate_and_wrong_protocol",
+          "status": "EMULATION_PASS"
+        }
+      ],
+      "status": "EMULATION_PASS",
+      "unsupported": [
+        "Actual gpsd executable/device discovery/driver operation",
+        "Real GNSS UTC, kernel PPS, chrony and host clock discipline"
+      ]
+    }
+  ],
+  "primary_sources": {
+    "gpsd_json": "https://gpsd.io/gpsd_json.html",
+    "lc76g_board": "https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf",
+    "lc76g_nmea": "https://www.quectel.com/content/uploads/2024/04/Quectel_LC26GLC26G-TLC76GLC86G_Series_GNSS_Protocol_Specification_V1.5.pdf"
+  },
+  "scenario_counts": {
+    "failed": 0,
+    "passed": 8,
+    "total": 8,
+    "unsupported": 0
+  },
+  "scope": {
+    "acceptance_records_created": false,
+    "gnss_utc_qualified": false,
+    "gpsd_api_emulation_not_real_gpsd": true,
+    "hardware_release": "BLOCKED",
+    "loopback_address": "127.0.0.1",
+    "physical_gnss": false,
+    "real_linux_pty": true,
+    "real_loopback_tcp": true,
+    "synthetic_lab_coordinates_only": true,
+    "system_clock_modified": false
+  },
+  "source_sha256": {
+    "deployment/module_lab/location_modules.py": "6884737b40ef837d33746fce97100e4b0d53f64bb46dec3c118c6d9bfa4b96e4",
+    "deployment/module_lab/location_scenarios.py": "48b4407ce4e9f26dab4616546ec66ce9b8c16b80fe5a67ca9a3859311b2adf72",
+    "design/E3.json": "7f206d558aa9ad61a1d5bd20d80664c9c1b58401eee27b5f3d85ad871af9d664",
+    "software/srrx/gnss_uart.py": "b54d7fd8bce48c9a6e0846b4f532b676206855f29bc26d73442f2e4bc4727e38",
+    "software/srrx/location.py": "f76fc0ad81f017596f569df502b7d6839028f31be77d37abe018b1d719b25dfb"
+  },
+  "status": "EMULATION_PASS",
+  "suite": "location_module_emulation",
+  "v": 1
+}

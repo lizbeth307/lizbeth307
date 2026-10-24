@@ -14,6 +14,7 @@ import wave
 import zlib
 
 from srrx import decoder_policy as d
+from srrx import scope_policy
 
 
 HELP = b"Decode NOAA APT images from WAV files. input_filename --output --map --rotate --quiet"
@@ -230,6 +231,61 @@ class DecoderPolicyTests(unittest.TestCase):
         with mock.patch.object(d, "_validate_installation", return_value=Path(self.install["executable"])):
             with self.assertRaisesRegex(d.DecoderRefused, "NEW_ABSOLUTE_OUTPUT"):
                 d.execute(d.PRESET, self.wav, self.meta, self.install, self.root)
+
+    def latch(self, category):
+        data = json.dumps({"v": 1, "kind": "srrx_artemis_mirror", "source": "artemis-db", "db_version": "v74",
+                           "entries": [{"name": "Fixture", "categories": [category],
+                                        "ranges_hz": [[137.5e6, 137.52e6]]}]}).encode()
+        path = self.root / "artemis.json"
+        path.write_bytes(data)
+        return scope_policy.ScopeLatch(scope_policy.ArtemisDB.load(path, hashlib.sha256(data).hexdigest()))
+
+    def test_egc_safetynet_stays_disabled_although_the_gate_module_exists(self):
+        from srrx import egc_gate
+        packet = bytes((0xB1, 4, 0x04, 0x00, 0x00, 0x04))
+        self.assertTrue(egc_gate.classify(packet).accept)  # unit-level gate behaviour only
+        expected = "DISABLED_NO_VERIFIED_HEADER_PARSER_AND_TEST_VECTORS"
+        self.assertEqual(d.availability()["egc-safetynet"], expected)
+        self.assertEqual(d.availability(self.install)["egc-safetynet"], expected)
+        self.assertTrue(egc_gate.gate_status().startswith("DISABLED"))
+        with mock.patch.object(d, "_file", side_effect=AssertionError("must not inspect payload")), \
+                self.assertRaisesRegex(d.DecoderRefused, expected):
+            d.make_plan("egc-safetynet", None, None, None, scope=scope_policy.ScopeLatch())
+
+    def test_scope_stop_refuses_plan_before_installation_or_source_access(self):
+        latch = self.latch("Military")
+        with mock.patch.object(d, "_validate_installation", side_effect=AssertionError("must refuse first")), \
+                mock.patch.object(d, "_file", side_effect=AssertionError("must refuse first")), \
+                self.assertRaisesRegex(d.DecoderRefused, "OUT_OF_SCOPE"):
+            d.make_plan(d.PRESET, self.wav, self.meta, self.install, scope=latch)
+        self.assertTrue(latch.stopped)
+        with mock.patch.object(d, "_validate_installation", return_value=Path(self.install["executable"])):
+            self.assertEqual(d.make_plan(d.PRESET, self.wav, self.meta, self.install,
+                                         scope=self.latch("Broadcast"))["preset"], d.PRESET)
+        for scope in (object(), True, {"permits": True}):
+            with self.subTest(scope=scope), self.assertRaisesRegex(d.DecoderRefused, "SCOPE_LATCH_REQUIRED"):
+                d.make_plan(d.PRESET, self.wav, self.meta, self.install, scope=scope)
+        stop = {"stop": True, "reason": "MASKED_BAND", "reasons": ["MASKED_BAND"], "identify": "WITHHELD",
+                "display": "out of scope"}
+        with mock.patch.object(d, "scope_check", return_value=stop), \
+                self.assertRaisesRegex(d.DecoderRefused, "OUT_OF_SCOPE"):
+            self.plan()  # the masked-band rule applies without any latch
+
+    def test_scope_stop_during_run_discards_unpublished_output(self):
+        latch = scope_policy.ScopeLatch()
+        def fake_vendor(argv, cwd, timeout_s, *, capture_probe=False):
+            if capture_probe:
+                return 0, HELP
+            (cwd / "output.png").write_bytes(png())
+            latch.stop(*d.APT_SPAN_HZ)  # e.g. identification stop while decoding
+            return 0, b""
+        dest = self.root / "result"
+        with mock.patch.object(d, "_validate_installation", return_value=Path(self.install["executable"])), \
+                mock.patch.object(d, "_bounded_process", side_effect=fake_vendor), \
+                self.assertRaisesRegex(d.DecoderRefused, "OUT_OF_SCOPE"):
+            d.execute(d.PRESET, self.wav, self.meta, self.install, dest, scope=latch)
+        self.assertFalse(dest.exists())
+        self.assertEqual([p.name for p in self.root.iterdir()], ["recording.wav"])
 
     def test_cli_disabled_gate_does_not_even_read_metadata(self):
         stdout = io.StringIO()

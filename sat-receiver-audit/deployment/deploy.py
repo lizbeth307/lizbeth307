@@ -32,12 +32,25 @@ BAD_MODULE_WORDS = ("amarisoft", "soapysdrremote", "hackrf", "bladerf", "redpita
                     "iq_exporter", "network_sink", "pager_decoder", "recorder", "heatmap", "demodinmarsat")
 # Pico UART group: only labd via SupplementaryGroups; HMI users join labd for the socket, never this.
 PICO_GROUP = "srrx-pico"
+# LC76G on the board's fixed UART6 (alias serial1 = .../serial@998000, build/04 pinout): its rule
+# needs no devices.json entry. devices.json schema_version 1 is still an exact key set, and that set
+# includes wifi_bt (the FE1.1s port-4 radio-off binding). Read-only group.
+GNSS_GROUP, GNSS_KERNEL_PARENT = "srrx-gnss", "998000.serial"
+# Single source of the forbidden packages (names, globs, version rules such as "+lab builds only")
+# and of the extra forbidden basenames, for doctor and for selftest.py RX-01a/RX-01b.
+POLICY = HERE / "receive-only-policy.json"
+VERSION_RULE_KEYS = ("allow_only", "allow_only_globs", "forbid_globs", "forbid_at_least", "require_substring", "require_lab_build")
+# require_lab_build: the version ends in the local repository's +labN marker, or in the -0labN Debian
+# revision of a locked lab rebuild (gr-satellites 5.10.0~git20260922-0lab1, sources.lock.json).
+LAB_BUILD = re.compile(r"(?:\+lab|-0lab)[1-9][0-9]*\Z")
+VERSION_NOTE = " (version not allowed by the receive-only policy)"
 
-# Device self-check denylist (STACK.md v2 §5.4 "Заборонено" and "Закріплено на -1",
-# 1.2 #10, 4.3 excluded services, 5.2 FE1.1s P4). Only TX-capable tools, decoders
-# of private content and their codec/driver packages are listed here; kernel and
-# Qualcomm firmware pins are version locks, checked elsewhere. Region is Europe,
-# so the US-only profile packages (multimon-ng EAS, nrsc5, dump978-fa,
+# Floor of the policy (STACK.md v2 §5.4 "Заборонено" and "Закріплено на -1", 1.2 #10, 4.3
+# excluded services, 5.2 FE1.1s P4): tests require receive-only-policy.json to keep covering
+# every name and glob here. Doctor never applies these two on their own, so it cannot reach
+# another verdict than RX-01a. Only TX-capable tools, decoders of private content and their
+# codec/driver packages are listed; kernel and Qualcomm firmware pins are version locks.
+# Region is Europe, so the US-only profile packages (multimon-ng EAS, nrsc5, dump978-fa,
 # skyaware978) are never installed on this root.
 PROHIBITED_PACKAGES = frozenset({
     # Hamlib/WSJT/TX-capable applications
@@ -58,11 +71,10 @@ PROHIBITED_PACKAGES = frozenset({
 PROHIBITED_PACKAGE_GLOBS = ("libhamlib*", "libsoapysdr0.9*", "kalibrate*", "gr-gsm*", "gr-iridium*", "digiham*",
                             "codecserver*", "libacars*", "dxlaprs-tetra*", "dump978-fa*", "trunk-recorder*",
                             "sdrtrunk*", "op25*")
-# Distro/upstream builds carry TX plugins, pager modes or the rtl-sdr-blog fork;
-# only the patched RX-only local repository builds (+labN) are allowed.
-LAB_BUILD_ONLY_PACKAGES = frozenset({"dream", "librtlsdr0", "librtlsdr2", "rtl-sdr", "sdrangel", "sdrangelsrv",
-                                     "sdrpp", "openwebrx", "satdump", "gpredict", "gr-satellites",
-                                     "limesuiteng-cli"})
+# Distro/upstream builds carry TX plugins, pager modes or the rtl-sdr-blog fork: only the patched
+# RX-only local repository builds are allowed. That rule lives in the policy (version_rule
+# require_lab_build); deploy.LAB_BUILD_ONLY_PACKAGES is derived from it on access (__getattr__).
+# Doctor checks these basenames together with BAD_NAMES and the policy forbidden_basenames.
 PROHIBITED_EXECUTABLES = frozenset({"wifi_test", "bt_test", "rigctl", "rigctld", "rtl_tcp", "soapysdrserver",
                                     "limegui", "limespi", "limei2c", "limecsr", "limeoem", "limeflash",
                                     "limevspa", "limeppsdo", "multimon-ng", "kal", "grgsm_livemon",
@@ -118,6 +130,8 @@ def _string(value, pattern, label):
 
 
 def validate_devices(config):
+    if type(config) is dict and "wifi_bt" not in config:
+        raise DeploymentError("devices.json predates the radio-off binding: add wifi_bt.fe11s_port4_usb_path")
     keys(config, ("schema_version", "board_compatible", "i2c", "pico", "usb", "lime", "wifi_bt"), "device bindings")
     if type(config["schema_version"]) is not int or config["schema_version"] != 1 or config["board_compatible"] != "radxa,dragon-q6a":
         raise DeploymentError("only the explicit Q6A revision is supported")
@@ -136,6 +150,9 @@ def validate_devices(config):
         raise DeploymentError("Pico must use its validated /dev/lab/pico binding")
     if pico["kind"] == "platform":
         _string(pico["kernel_parent"], r"[0-9a-f]+\.serial", "Pico UART platform parent")
+        if pico["kernel_parent"] == GNSS_KERNEL_PARENT:
+            # 71-srrx-gnss.rules would re-own that tty (srrx-gnss 0640) and alias it as lab/gnss.
+            raise DeploymentError("Pico UART parent is the fixed LC76G UART6 " + GNSS_KERNEL_PARENT)
         if any(pico[k] is not None for k in ("vid", "pid", "serial")):
             raise DeploymentError("platform Pico binding cannot contain USB selectors")
     elif pico["kind"] == "usb":
@@ -157,6 +174,9 @@ def validate_devices(config):
             raise DeploymentError("receiver VID/PID differs from the specified hardware")
     if config["usb"]["rtl_a"]["serial"] != "LABRXA" or config["usb"]["rtl_b"]["serial"] != "LABRXB" or len(set(identities)) != 3:
         raise DeploymentError("receiver identities are duplicate or differ from assigned A/B serials")
+    if pico["kind"] == "usb" and (pico["vid"], pico["pid"], pico["serial"]) in identities:
+        # Its usb_device would also get the receiver rule (GROUP lab, raw usbfs writes past srrx-pico).
+        raise DeploymentError("USB Pico identity equals a receiver: one device would get two bindings")
     keys(config["lime"], ("enabled", "pci_address", "device_path"), "Lime")
     if config["lime"]["enabled"] is not False:
         raise DeploymentError("Lime runtime release is disabled pending full native TX audit and hardware gates")
@@ -195,6 +215,20 @@ def udev_rules(config):
     return "\n".join(rules) + "\n"
 
 
+def gnss_udev_rules():
+    """/dev/lab/gnss by UART6 platform parent, never by ttyHS number (probe order).
+
+    0640: the group reads, nobody else; srrx.gnss_uart opens O_RDONLY and gpsd runs
+    with -b (no receiver writes, STACK.md gpsd row). No ModemManager AT probe. Create
+    the group before installing the rule: udev logs an unresolved GROUP and keeps the
+    node's previous group, so the rule alone is not a fail-closed guarantee. The live
+    mode is a Q6A check (RUNTIME_ONLY).
+    """
+    return ("# Candidate only: LC76G UART6; " + GNSS_GROUP + " is a system group without login members;"
+            " the raw reader and gpsd -b are exclusive by configuration.\n"
+            f'SUBSYSTEM=="tty", KERNELS=="{GNSS_KERNEL_PARENT}", GROUP="{GNSS_GROUP}", MODE="0640", ENV{{ID_MM_DEVICE_IGNORE}}="1", SYMLINK+="lab/gnss", TAG+="systemd"\n')
+
+
 def radio_off_modprobe():
     """Field/QUIET root: the AIC8800 Wi-Fi/BT drivers and btusb can never load."""
     lines = ["# SR-RX field/QUIET root (STACK.md v2 5.2 FE1.1s P4, 1.2 #8): receive-only.",
@@ -214,12 +248,20 @@ def radio_off_udev(config):
 def radio_off_unit():
     # Same kernel call as `rfkill block wlan|bluetooth`; util-linux rfkill is not
     # in every Ubuntu image, so the project's own module writes /dev/rfkill.
+    # DefaultDependencies=no: RequiresMountsFor= keeps it after the mount holding /opt/srrx.
     return ("[Unit]\nDescription=SR-RX receive-only: rfkill block wlan and bluetooth (second layer)\n"
-            "DefaultDependencies=no\nAfter=systemd-rfkill.service\nBefore=srrx.service network-pre.target\n"
+            "DefaultDependencies=no\nRequiresMountsFor=/opt/srrx\nAfter=systemd-rfkill.service\nBefore=srrx.service network-pre.target\n"
             "Wants=network-pre.target\n\n[Service]\nType=oneshot\nRemainAfterExit=yes\n"
-            "Environment=PYTHONPATH=/opt/srrx/software\n"
-            "ExecStart=/usr/bin/python3 -m srrx.rfkill block\n\n"
+            "Environment=PYTHONPATH=/opt/srrx/software PYTHONDONTWRITEBYTECODE=1\n"
+            # -B and a read-only system: never a __pycache__ in the hash-verified /opt/srrx tree.
+            "ProtectSystem=strict\nExecStart=/usr/bin/python3 -B -m srrx.rfkill block\n\n"
             "[Install]\nWantedBy=sysinit.target\n")
+
+
+def radio_off_dropin():
+    """srrx.service only: the receiver never starts unless the rfkill second layer ran first. The
+    shutdown bridge gets no such drop-in: a failed oneshot must not fail it with a dependency error."""
+    return "[Unit]\nRequires=" + RADIO_OFF_UNIT + "\nAfter=" + RADIO_OFF_UNIT + "\n"
 
 
 def _read(path):
@@ -227,6 +269,15 @@ def _read(path):
         return Path(path).read_text().strip()
     except (OSError, UnicodeError):
         return None
+
+
+def _bound_interface(port):
+    """An interface directory (<port>:<config>.<n>) with a driver link; unreadable counts as bound.
+    No glob: "*:*" is a drive pattern on a Windows host."""
+    try:
+        return any(":" in p.name and os.path.lexists(p / "driver") for p in port.iterdir())
+    except OSError:
+        return True
 
 
 def radio_off_issues(config=None, root=Path("/")):
@@ -264,30 +315,171 @@ def radio_off_issues(config=None, root=Path("/")):
             if _read(root / RADIO_OFF_UDEV) != expected_rule:
                 issues.append("FE1.1s port-4 authorized=0 udev rule missing or modified: /" + RADIO_OFF_UDEV)
             port = root / "sys/bus/usb/devices" / config["wifi_bt"]["fe11s_port4_usb_path"]
-            if port.exists() and (_read(port / "authorized") != "0" or any(port.glob("*:*/driver"))):
+            if port.exists() and (_read(port / "authorized") != "0" or _bound_interface(port)):
                 issues.append("USB device on FE1.1s port 4 is authorized or has a bound driver")
     return issues
 
 
-def prohibited_installed(installed):
-    """Names of installed packages that the receive-only/privacy rules forbid."""
+def _order(c):
+    if c == "~":
+        return -1
+    if c in "0123456789":
+        return 0
+    return ord(c) if c.isascii() and c.isalpha() else ord(c) + 256
+
+
+def _verrevcmp(a, b):
+    i = j = 0
+    while i < len(a) or j < len(b):
+        while (i < len(a) and a[i] not in "0123456789") or (j < len(b) and b[j] not in "0123456789"):
+            ac, bc = _order(a[i]) if i < len(a) else 0, _order(b[j]) if j < len(b) else 0
+            if ac != bc:
+                return ac - bc
+            i, j = i + 1, j + 1
+        while i < len(a) and a[i] == "0":
+            i += 1
+        while j < len(b) and b[j] == "0":
+            j += 1
+        first = 0
+        while i < len(a) and j < len(b) and a[i] in "0123456789" and b[j] in "0123456789":
+            first = first or ord(a[i]) - ord(b[j])
+            i, j = i + 1, j + 1
+        if i < len(a) and a[i] in "0123456789":
+            return 1
+        if j < len(b) and b[j] in "0123456789":
+            return -1
+        if first:
+            return first
+    return 0
+
+
+def deb_compare(a, b):
+    """dpkg version ordering (epoch:upstream-revision, '~' sorts first)."""
+    def split(version):
+        if len(version) > 256:
+            raise ValueError("version string too long")
+        epoch, colon, rest = version.partition(":")
+        if not colon:
+            epoch, rest = "0", version
+        if not epoch.isdigit():
+            raise ValueError("invalid epoch")
+        upstream, dash, revision = rest.rpartition("-")
+        return (int(epoch), upstream, revision) if dash else (int(epoch), rest, "")
+    (ea, ua, ra), (eb, ub, rb) = split(a), split(b)
+    return (ea > eb) - (ea < eb) or _verrevcmp(ua, ub) or _verrevcmp(ra, rb)
+
+
+def check_version_rule(rule, label):
+    """The one version_rule vocabulary of the policy (doctor and selftest.load_policy)."""
+    if type(rule) is not dict or not rule or set(rule) - set(VERSION_RULE_KEYS):
+        raise DeploymentError(label + " version_rule has missing or unknown fields")
+    for key, item in rule.items():
+        if key == "require_lab_build":
+            valid = item is True
+        elif key in ("forbid_at_least", "require_substring"):
+            valid = type(item) is str and bool(item)
+        else:
+            valid = type(item) is list and bool(item) and all(type(x) is str and x for x in item)
+        if not valid:
+            raise DeploymentError(label + " version_rule." + key + " has the wrong type or is empty")
+
+
+def version_forbidden(rule, version):
+    """True when a present version breaks its policy version_rule; None means presence alone."""
+    if rule is None:
+        return True
+    if type(rule) is not dict or set(rule) - set(VERSION_RULE_KEYS) or type(version) is not str:
+        return True  # unknown vocabulary or no version text: conservative
+    try:
+        return (("allow_only" in rule and version not in rule["allow_only"])
+                or ("allow_only_globs" in rule and not any(fnmatch.fnmatchcase(version, p) for p in rule["allow_only_globs"]))
+                or ("forbid_globs" in rule and any(fnmatch.fnmatchcase(version, p) for p in rule["forbid_globs"]))
+                or ("forbid_at_least" in rule and deb_compare(version, rule["forbid_at_least"]) >= 0)
+                or ("require_substring" in rule and rule["require_substring"] not in version)
+                or ("require_lab_build" in rule and not LAB_BUILD.search(version)))
+    except (ValueError, TypeError):
+        return True  # unparsable target version: conservative
+
+
+def receive_only_policy(path=None):
+    """The policy's package and basename rules, read with the strict bounded load (duplicate keys,
+    NaN/Infinity and files of 4 MiB or more are refused); any malformed entry fails closed."""
+    policy = load(POLICY if path is None else path)
+    entries = policy.get("forbidden_packages") if type(policy) is dict else None
+    if type(entries) is not list or not entries:
+        raise DeploymentError("receive-only policy lists no forbidden packages")
+    for entry in entries:
+        kind = [k for k in ("name", "glob") if type(entry) is dict and k in entry]
+        if len(kind) != 1 or entry.get("check") not in ("presence", "pin_only") or type(entry[kind[0]]) is not str or not entry[kind[0]]:
+            raise DeploymentError("receive-only policy has a malformed forbidden package entry")
+        if "version_rule" in entry:
+            check_version_rule(entry["version_rule"], "receive-only policy " + entry[kind[0]])
+    basenames = policy.get("forbidden_basenames")
+    if type(basenames) is not list or not all(type(e) is dict and type(e.get("name")) is str and e["name"] for e in basenames):
+        raise DeploymentError("receive-only policy has malformed forbidden basenames")
+    return policy
+
+
+def prohibited_packages(path=None):
+    """(names, globs) whose mere presence the receive-only policy forbids. Entries with a
+    version_rule are decided per version (prohibited_installed, the same rule as selftest.py
+    RX-01a); pin_only entries are RX-01a BLOCKED findings, not doctor issues."""
+    names, globs = set(), set()
+    for entry in receive_only_policy(path)["forbidden_packages"]:
+        if entry["check"] == "presence" and "version_rule" not in entry:
+            (names.add(entry["name"].lower()) if "name" in entry else globs.add(entry["glob"].lower()))
+    return names, globs
+
+
+def lab_build_only_packages(path=None):
+    """Names the policy allows only as patched RX-only local builds (version_rule require_lab_build)."""
+    return frozenset(e["name"].lower() for e in receive_only_policy(path)["forbidden_packages"]
+                     if "name" in e and e["check"] == "presence" and (e.get("version_rule") or {}).get("require_lab_build") is True)
+
+
+def __getattr__(name):
+    if name == "LAB_BUILD_ONLY_PACKAGES":  # derived from the policy on every access, never a second list
+        return lab_build_only_packages()
+    raise AttributeError("module 'deploy' has no attribute " + repr(name))
+
+
+def prohibited_installed(installed, identifiers=False, policy=None):
+    """Present packages ({name: version}) that the receive-only policy forbids by presence or version.
+
+    identifiers=True reports the matching rule (exact name or glob, plus VERSION_NOTE for a
+    version rule) instead of the dpkg name, so doctor never echoes text that no rule names.
+    """
+    entries = [e for e in (policy or receive_only_policy())["forbidden_packages"] if e["check"] == "presence"]
     found = set()
-    for name, version in installed.items():
-        if name in PROHIBITED_PACKAGES or any(fnmatch.fnmatchcase(name, pattern) for pattern in PROHIBITED_PACKAGE_GLOBS):
-            found.add(name)
-        elif name in LAB_BUILD_ONLY_PACKAGES and not re.search(r"\+lab[0-9]*", version or ""):
-            found.add(name + " (not a +lab RX-only build)")
+    for raw, version in installed.items():
+        name = raw.split(":", 1)[0].lower()
+        for entry in entries:
+            rule = entry.get("name") or entry["glob"]
+            if not (name == rule.lower() if "name" in entry else fnmatch.fnmatchcase(name, rule.lower())):
+                continue
+            if "version_rule" not in entry:
+                found.add(rule.lower() if identifiers else raw)
+            elif version_forbidden(entry["version_rule"], version or ""):
+                found.add(rule.lower() + VERSION_NOTE if identifiers else raw)
     return sorted(found)
 
 
-def prohibited_executables(root=Path("/")):
+def forbidden_basenames(policy=None):
+    """Lower-case basenames doctor forbids: PROHIBITED_EXECUTABLES, BAD_NAMES (verify_build) and the
+    policy forbidden_basenames, the same set selftest.py RX-01b uses."""
+    extra = (policy or receive_only_policy())["forbidden_basenames"]
+    return {n.lower() for n in PROHIBITED_EXECUTABLES | BAD_NAMES} | {e["name"].lower() for e in extra}
+
+
+def prohibited_executables(root=Path("/"), names=None):
+    names = forbidden_basenames() if names is None else names
     found = set()
     for directory in EXECUTABLE_DIRS:
         try:
-            names = [p.name for p in (Path(root) / directory).iterdir()]
+            entries = [p.name for p in (Path(root) / directory).iterdir()]
         except OSError:
             continue
-        found.update("/" + directory + "/" + n for n in names if n.lower() in PROHIBITED_EXECUTABLES)
+        found.update("/" + directory + "/" + n for n in entries if n.lower() in names)
     return sorted(found)
 
 
@@ -339,6 +531,11 @@ def doctor(config=None):
         report["issues"].append("distribution is not Ubuntu noble")
     if "radxa,dragon-q6a" not in report["dt_compatible"]:
         report["issues"].append("Q6A DT compatibility not observed")
+    try:
+        policy = receive_only_policy()
+    except (OSError, ValueError) as exc:  # fail closed: no policy, no forbidden-package or basename verdict
+        report["issues"].append("receive-only policy unavailable: " + str(exc))
+        policy = None
     report["packages"] = command(["dpkg-query", "-W", "-f=${binary:Package}\t${Version}\t${db:Status-Status}\n"], limit=8 * 1024 * 1024)
     installed, present = {}, {}
     if report["packages"]["returncode"]:
@@ -355,10 +552,16 @@ def doctor(config=None):
         for name, versions in requirements.items():
             if installed.get(name) not in versions:
                 report["issues"].append("missing/different pinned package: " + name)
-        prohibited = prohibited_installed(present)
-        if prohibited:
-            report["issues"].append("prohibited packages installed: " + ",".join(prohibited))
-    executables = prohibited_executables()
+        # Rule identifiers only (name, glob, or either + VERSION_NOTE): dpkg text is never echoed.
+        found = set(prohibited_installed(present, identifiers=True, policy=policy) if policy else [])
+        # Legacy floor (a test keeps it a subset of the policy): still reported if the policy is edited.
+        found |= {p.lower() for p in present if p.lower() in PROHIBITED_PACKAGES}
+        found |= {g for g in PROHIBITED_PACKAGE_GLOBS if any(fnmatch.fnmatchcase(p.lower(), g) for p in present)}
+        found = sorted(found)
+        if found:
+            report["issues"].append("prohibited packages installed: " + ",".join(found))
+    executables = prohibited_executables(names=forbidden_basenames(policy) if policy else
+                                         {n.lower() for n in PROHIBITED_EXECUTABLES | BAD_NAMES})
     if executables:
         report["issues"].append("prohibited TX/private-content executables present: " + ",".join(executables))
     radio = radio_off_issues(config)
@@ -515,25 +718,27 @@ def stage(destination, config=None):
         shutil.copyfile(unit, units / unit.name)
         dropin = units / (unit.name + ".d")
         dropin.mkdir()
-        (dropin / "10-radio-off.conf").write_text("[Unit]\nRequires=" + RADIO_OFF_UNIT + "\nAfter=" + RADIO_OFF_UNIT + "\n")
-        (dropin / "20-release-guard.conf").write_text("[Service]\nExecStartPre=/usr/bin/python3 -B /opt/srrx/deployment/deploy.py release-guard --devices /etc/srrx/devices.json --acceptance /etc/srrx/acceptance.json --release /etc/srrx/release.json --build-manifest /etc/srrx/build-manifest.json --cache /srv/srrx-cache\n")
-    (units / RADIO_OFF_UNIT).write_text(radio_off_unit())
+        if unit.name == "srrx.service":  # only the receiver; the shutdown bridge never Requires= it (DEPLOYMENT.md)
+            (dropin / "10-radio-off.conf").write_text(radio_off_dropin(), newline="\n")
+        (dropin / "20-release-guard.conf").write_text("[Service]\nExecStartPre=/usr/bin/python3 -B /opt/srrx/deployment/deploy.py release-guard --devices /etc/srrx/devices.json --acceptance /etc/srrx/acceptance.json --release /etc/srrx/release.json --build-manifest /etc/srrx/build-manifest.json --cache /srv/srrx-cache\n", newline="\n")
+    (units / RADIO_OFF_UNIT).write_text(radio_off_unit(), newline="\n")
     modprobe = rootfs / RADIO_OFF_MODPROBE
     modprobe.parent.mkdir(parents=True)
-    modprobe.write_text(radio_off_modprobe())
+    modprobe.write_text(radio_off_modprobe(), newline="\n")
     for name in ("release.template.json", "build-manifest.template.json", "devices.template.json"):
         shutil.copyfile(HERE / name, etc / name)
     shutil.copyfile(PROJECT / "software/config/acceptance.template.json", etc / "acceptance.template.json")
     if config:
-        (etc / "devices.json").write_text(json.dumps(config, indent=2) + "\n")
-        (etc / "devices.env").write_text("SRRX_I2C0=" + config["i2c"]["ina228"]["path"] + "\nSRRX_I2C2=" + config["i2c"]["control"]["path"] + "\nSRRX_PICO=/dev/lab/pico\n")
+        (etc / "devices.json").write_text(json.dumps(config, indent=2) + "\n", newline="\n")
+        (etc / "devices.env").write_text("SRRX_I2C0=" + config["i2c"]["ina228"]["path"] + "\nSRRX_I2C2=" + config["i2c"]["control"]["path"] + "\nSRRX_PICO=/dev/lab/pico\n", newline="\n")
         rules = rootfs / "etc/udev/rules.d"
         rules.mkdir(parents=True)
-        (rules / "70-srrx-serial-bound.rules").write_text(udev_rules(config))
-        (rootfs / RADIO_OFF_UDEV).write_text(radio_off_udev(config))
+        (rules / "70-srrx-serial-bound.rules").write_text(udev_rules(config), newline="\n")
+        (rules / "71-srrx-gnss.rules").write_text(gnss_udev_rules(), newline="\n")
+        (rootfs / RADIO_OFF_UDEV).write_text(radio_off_udev(config), newline="\n")
     files = {p.relative_to(rootfs).as_posix(): sha(p) for p in sorted(rootfs.rglob("*")) if p.is_file()}
-    (destination / "stage-files.json").write_text(json.dumps({"schema_version": 1, "status": "STAGED_ONLY", "files": files}, indent=2) + "\n")
-    (destination / "INSTALL_PLAN.txt").write_text("STAGED ONLY. No services enabled and no hardware acceptance supplied.\nReview software/DEPLOYMENT.md, run doctor and all release guards, then package rootfs via signed local repository.\nField/QUIET root: Wi-Fi/BT modprobe blacklist (install /bin/false), FE1.1s port-4 authorized=0 rule and rfkill unit are staged; the WIFI_PWR_EN gpio-hog (W1-2) is OPEN and not generated.\nDo not copy over /etc acceptance files, repartition UFS, flash BIOS, run rsetup or auto-enable units.\nA/B installation is a separate bench/recovery procedure; no activation command is generated here.\n")
+    (destination / "stage-files.json").write_text(json.dumps({"schema_version": 1, "status": "STAGED_ONLY", "files": files}, indent=2) + "\n", newline="\n")
+    (destination / "INSTALL_PLAN.txt").write_text("STAGED ONLY. No services enabled and no hardware acceptance supplied.\nReview software/DEPLOYMENT.md, run doctor and all release guards, then package rootfs via signed local repository.\nField/QUIET root: Wi-Fi/BT modprobe blacklist (install /bin/false), FE1.1s port-4 authorized=0 rule and rfkill unit are staged; the WIFI_PWR_EN gpio-hog (W1-2) is OPEN and not generated.\nDo not copy over /etc acceptance files, repartition UFS, flash BIOS, run rsetup or auto-enable units.\nA/B installation is a separate bench/recovery procedure; no activation command is generated here.\n", newline="\n")
     return {"status": "STAGED_ONLY", "directory": str(destination), "files": len(files), "hardware_ready": False, "services_enabled": False}
 
 
@@ -649,6 +854,7 @@ def check():
             _string(component["commit"], "[0-9a-f]{40}", "full pinned commit")
         if component["source_archive_sha256"] is not None:
             _string(component["source_archive_sha256"], "[0-9a-f]{64}", "archive SHA256")
+    receive_only_policy()  # doctor would otherwise only report the broken policy on the target
     from vendor_patch import check_fixtures
     check_fixtures()
     return {"status": "STAGING_TOOLS_CHECKED", "hardware_ready": False, "unresolved_source_archives": sum(c["source_archive_sha256"] is None for c in lock["components"])}
@@ -665,6 +871,7 @@ def main():
     staging.add_argument("--devices", type=Path)
     rules = commands.add_parser("udev")
     rules.add_argument("--devices", type=Path, required=True)
+    commands.add_parser("udev-gnss", help="print the fixed UART6 /dev/lab/gnss candidate rule")
     cache = commands.add_parser("verify-cache")
     cache.add_argument("--cache", type=Path, required=True)
     cache.add_argument("--component", action="append")
@@ -687,6 +894,7 @@ def main():
         elif args.operation == "doctor": result = doctor(load(args.devices) if args.devices else None)
         elif args.operation == "stage": result = stage(args.dest, load(args.devices) if args.devices else None)
         elif args.operation == "udev": print(udev_rules(load(args.devices)), end=""); return
+        elif args.operation == "udev-gnss": print(gnss_udev_rules(), end=""); return
         elif args.operation == "verify-cache": result = verify_cache(args.cache, args.component, not args.sources_only)
         elif args.operation == "verify-build": result = verify_build(args.prefix, load(args.manifest))
         elif args.operation == "stage-ab": result = stage_ab(load(args.config), args.dest)

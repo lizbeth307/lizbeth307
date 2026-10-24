@@ -1,6 +1,6 @@
 # Independent graph-to-netlist verification
 
-Result: **PASS**. Re-run on 2026-10-23 after the schematic drawing was re-laid out with wires (the exported `<nets>` section is byte-identical to the previous export), using an independent standard-library JSON/XML parser, without importing the project generator or validator.
+Result: **PASS**. Re-run on 2026-10-23 after the schematic drawing was re-laid out with wires (the exported `<nets>` section is byte-identical to the previous export), using an independent standard-library JSON/XML parser, without importing the project generator or validator. After the merge of that branch into `codex/sr-rx-v2-completion`, the CI workflow re-runs this check on every push and fails if the committed report differs.
 
 - Hardware components: **750** in both the reviewed graphs and KiCad XML.
 - Physical / functional pin declarations: **2318**, comprising **2181** connected pins and **137** declared NC pins.

@@ -1,12 +1,12 @@
 # Linux lab — виправлення та передача ПЗ 0.3.1
 
-> **23.10.2026:** нижче — стан і результати ARM64 run07 від 20.10.2026. Після нього змінено виконані джерела (зокрема `software/srrx`, тести, `deployment/module_lab`, `guest_smoke.py`), тому run07 — лише запис попереднього прогону; повторний ARM64 прогін ще потрібен. Поточні [модульні результати](../../verification/module-lab/MODULE-RESULTS.md) перегенеровано 23.10.2026 на хості x86_64 (750 refs / 64 збірки / 166 інтерфейсів; 40 PASS, 0 FAIL, 126 CONNECTION_MODEL_ONLY; 3737/3737 topology/fault scenarios). Поточна хостова регресія — 432 тести, 431 PASS, 1 SKIP ([звіт](../../verification/software-tests.json)).
+> **Ревізія 23.10.2026.** Після run07 змінено production-код, моделі модулів, harness і графи (виправлення findings, пункти плану A–D, злиття гілки `ccr-1537979d-cj7q9t`; див. [HANDOFF](../../HANDOFF.md#ревізія-23102026-claude-перевірка-виправлення-ci-план)). Тому run07 нижче — історичний доказ для джерел 20.10.2026; його первинні результати перенесено без змін до [linux-attempts/run07](../../verification/linux-attempts/run07/). Наступний ARM64 run виконано 23.10.2026 у CI (workflow «SR-RX verification», тоді з `-f linux_lab=true -f archive_as=run07`, GitHub run 40016984543) для джерел до злиття з `ccr-1537979d-cj7q9t`: **PASS**, QEMU exit 0; його звіт і прив'язка джерел імпортовано в [verification/linux-lab](../../verification/linux-lab/README.md), модулі — у [verification/module-lab](../../verification/module-lab/MODULE-RESULTS.md). Після злиття змінено виконувані джерела й графи, тому той імпорт перенесено в [linux-attempts/run08](../../verification/linux-attempts/run08/), а чинний ARM64 run для об'єднаних джерел виконано 24.10.2026 (GitHub run 40043380590): **PASS**, QEMU exit 0 ([звіт](../../verification/linux-lab/README.md)). Наступний запуск: `gh workflow run sr-rx-verify.yml --ref ccr-1537979d-cj7q9t -f linux_lab=true`; без `archive_as` job переносить попередній імпорт у наступний вільний `verification/linux-attempts/runNN`. Лічильники нижче, що стосуються run07, описують джерела 20.10.2026.
 
-Стан на 20.10.2026: production-виправлення нижче внесені, хостова регресія має **421 виявлений тест: 419 PASS, 2 SKIP**. [Машинний звіт](../../verification/software-tests.json) містить причини SKIP: відсутня справжня QNN HTP SDK library та заборонений у хостовому середовищі AF_UNIX socket для одного service-тесту. SKIP не зараховані як PASS.
+Стан на 20.10.2026: production-виправлення нижче внесені, хостова регресія має **421 виявлений тест: 419 PASS, 2 SKIP**. Тодішній машинний звіт (`verification/software-tests.json` редакції 20.10.2026, є в історії Git) містив причини SKIP: відсутня справжня QNN HTP SDK library та заборонений у хостовому середовищі AF_UNIX socket для одного service-тесту. SKIP не зараховані як PASS.
 
-**ARM64 run07: PASS, QEMU exit 0**, 1434.289 s. Ubuntu24.04.5 aarch64, kernel6.8.0-147-generic, systemd PID1. Усі вісім наборів завершені: **420 PASS / 1 SKIP із 421** регресій, **14** systemd scenarios, **9** PTY cases, **2** GUI failure cases, XCB/Xvfb, **5** native RX worker cases, **5** virtual-block storage cases та **6** module domains. Єдиний ARM64 SKIP — справжня QNN HTP SDK library відсутня. [Первинні результати](../../verification/linux-lab/README.md) імпортовані після штатного poweroff; `source-binding.json` зв'язує **86** виконуваних джерел із guest manifest. Попередні невдалі/перервані спроби збережені окремо в [linux-attempts](../../verification/linux-attempts/README.md).
+**ARM64 run07: PASS, QEMU exit 0**, 1434.289 s. Ubuntu24.04.5 aarch64, kernel6.8.0-147-generic, systemd PID1. Усі вісім наборів завершені: **420 PASS / 1 SKIP із 421** регресій, **14** systemd scenarios, **9** PTY cases, **2** GUI failure cases, XCB/Xvfb, **5** native RX worker cases, **5** virtual-block storage cases та **6** module domains. Єдиний ARM64 SKIP — справжня QNN HTP SDK library відсутня. [Первинні результати](../../verification/linux-attempts/run07/README.md) імпортовані після штатного poweroff; `source-binding.json` зв'язує **86** виконуваних джерел із guest manifest. Попередні невдалі/перервані спроби збережені окремо в [linux-attempts](../../verification/linux-attempts/README.md).
 
-Модульні результати run07 (ARM64): **754 refs / 64 збірки / 166 інтерфейсів**. Функціонально: **40 PASS, 0 FAIL, 126 CONNECTION_MODEL_ONLY**; окремо всі **166** interfaces мають CONNECTION_MODEL_PASS, виконано **3749/3749** topology/fault scenarios. XCB observer отримав **267** успішних samples, **0** transport misses; найбільший проміжок без sample — **0.574 s**. Це виміряна вибіркова перевірка, не твердження про безперервний стан між samples. Опис середовища й відтворення — [README](README.md); деталізація моделей — [module lab](../module_lab/README.md).
+[Модульні результати](../../verification/linux-attempts/run07/module-lab/MODULE-RESULTS.md): **754 refs / 64 збірки / 166 інтерфейсів**. Функціонально в run07: **40 PASS, 0 FAIL, 126 CONNECTION_MODEL_ONLY**. Після run07 fixture self-tests (`FILESYSTEM_FIXTURE`) і не виконані інтерфейси більше не зараховуються як `EMULATION_PASS`, тому чинний звіт (CI run 40043380590, 750 refs) дає **34 `EMULATION_PASS`, 0 FAIL, 132 `CONNECTION_MODEL_ONLY`** ([таблиця](../../verification/module-lab/MODULE-RESULTS.md)). Окремо всі **166** interfaces мають CONNECTION_MODEL_PASS, виконано **3749/3749** topology/fault scenarios. XCB observer отримав **267** успішних samples, **0** transport misses; найбільший проміжок без sample — **0.574 s**. Це виміряна вибіркова перевірка, не твердження про безперервний стан між samples. Опис середовища й відтворення — [README](README.md); деталізація моделей — [module lab](../module_lab/README.md).
 
 ## Що виправлено у production-коді
 
@@ -69,9 +69,9 @@ Linux ігнорує `RLIMIT_CORE` для core dump, переданого чер
 | Один read-only Unix status запит XCB observer перевищив1s під час холодного Qt startup | [xcb_smoke.py](xcb_smoke.py) повторює лише визначені transport misses в межах чинного загального deadline дочірнього процесу. Unsafe/rejected/malformed відповіді та permission/missing socket одразу FAIL; initial/final і post-child successful probes обов’язкові. Report показує кількість успішних samples, timeouts і gaps; пропущена відповідь не підтверджує readiness або безперервно безпечний стан. |
 | ENOSPC scenario спочатку очікував `StorageRevoked` на першій помилці запису | [storage_smoke.py](storage_smoke.py) перевіряє справжній початковий `OSError` з errno ENOSPC, незмінність попереднього запису і permanent revocation; `StorageRevoked` очікується на наступному зверненні. Production contract не змінено заради PASS. |
 
-## Посилення harness після run07 (потребує нового ARM64 запуску)
+## Посилення harness після run07 (виконано в ARM64 run08 і чинному run)
 
-Ці зміни внесено після run07 і ще не виконано в ARM64 guest; результати run07 вони не змінюють і не підтверджують. Production timers, freshness deadlines і safety guards не послаблені.
+Ці зміни внесено після run07; в ARM64 guest їх виконано в CI run 40016984543 (run08, джерела до злиття) і в чинному CI run 40043380590. Результати run07 вони не змінюють і не підтверджують. Production timers, freshness deadlines і safety guards не послаблені.
 
 - Кешований overlay більше не означає неперевірені залежності: guest перевстановлює всі locked DEB (без `--skip-same-version`), заново створює venv і примусово проводить кожний wheel через `--require-hashes`; `dependency-verification.json` порівнює встановлені версії з обома lock і входить до загального PASS. Run07 фактично використав кешовані DEB/wheels попередніх VM.
 - Host приймає overlay лише від прогону з записаним summary і `qemu_exit_code=0`, записує backing chain із SHA256 кожного шару та генерує новий cloud-init instance-id. Поле `previous_clean_shutdown` прибрано: воно не мало доказів.
@@ -88,37 +88,53 @@ Linux ігнорує `RLIMIT_CORE` для core dump, переданого чер
 
 ## Незмінні межі
 
-Усі **37 апаратних воріт OPEN** (з 23.10.2026 додано E5-10 — W1-2 WIFI_PWR_EN), hardware release **BLOCKED**. Generic ARM64 Linux VM не є Q6A kernel/DT/driver image. Фізичні UART/I²C/GPIO, RF/аналогові тракти, заряд/BMS, температура/калібрування, реальні touch/HDMI/USB і фізичний OFF ще не прийняті. Повний Lime SDK/backend, гарантований тракт 56 MS/s, кваліфікований QNN HTP, весь каталог декодерів та затверджений цільовий системний образ залишаються прогалинами. Наявність пакета MicroPython source не означає UF2/runtime build або прошитий пристрій. Вихідний Git remote раніше повернув HTTP 403; пізніше редакцію опубліковано (див. [RESTORE-GIT](../../RESTORE-GIT.md)).
+Усі **37 апаратних воріт OPEN** (з 23.10.2026 додано E5-10 — W1-2 WIFI_PWR_EN), hardware release **BLOCKED**. Generic ARM64 Linux VM не є Q6A kernel/DT/driver image. Фізичні UART/I²C/GPIO, RF/аналогові тракти, заряд/BMS, температура/калібрування, реальні touch/HDMI/USB і фізичний OFF ще не прийняті. Повний Lime SDK/backend, гарантований тракт 56 MS/s, кваліфікований QNN HTP, весь каталог декодерів та затверджений цільовий системний образ залишаються прогалинами. Наявність пакета MicroPython source не означає UF2/runtime build або прошитий пристрій. Ранній push повертав HTTP 403; згодом гілку `codex/sr-rx-v2-completion` опубліковано в origin (див. [RESTORE-GIT](../../RESTORE-GIT.md)).
 
 Connectivity `CONNECTION_MODEL_PASS` означає виконані topology/fault scenarios проти KiCad XML. Він не перетворює непокритий драйвер на `EMULATION_PASS`, не закриває DNP/TBD gates і не підтверджує фізичні pinouts. Відкриті умови J102/E1-02, IP2368/E1-01, Wisecoco/E3-02/E5-01 та DC polarity/DC block Boni мають залишатися у видимих row details звітів.
 
 ## Відтворення перевірки та пакування
 
-Команди нижче виконуються з кореня `sat-receiver-audit` і описують відтворення. Поточний run07 завершено та імпортовано; наступне виконання потребує нового work-каталогу. Пакувальник і незалежний validator відхиляють неактуальні hashes та неповний ZIP.
+Команди нижче виконуються з кореня `sat-receiver-audit` і описують відтворення. Run07, CI run 40016984543 (run08 в архіві спроб) і чинний CI run 40043380590 завершено та імпортовано; наступне виконання потребує нового work-каталогу. CI-job `linux-lab` виконує описаний нижче порядок повністю, але нічого не комітить: його `lab-evidence.patch` переглядають і застосовують окремо. Пакувальник і незалежний validator відхиляють неактуальні hashes та неповний ZIP.
 
-1. Для нового запуску дочекатися завершення VM. Перевірити його `report.json`: загальний PASS, `qemu_exit_code=0`, архітектура aarch64, усі очікувані suites, `physical_tests_performed=false`, `hardware_qualified=false`. Не імпортувати проміжні логи як PASS. Поточний run07 має саме ці terminal значення.
+1. Для нового запуску дочекатися завершення VM. Перевірити його `report.json`: загальний PASS, `qemu_exit_code=0`, архітектура aarch64, усі очікувані suites, `physical_tests_performed=false`, `hardware_qualified=false`. Не імпортувати проміжні логи як PASS. Імпортований CI run 40016984543 має саме ці terminal значення (для джерел до злиття).
 2. Імпортувати execution evidence і source binding. `finalize_linux_lab.py` вимагає нових `verification/linux-lab` та `verification/module-lab` каталогів; якщо існують старі результати, спершу окремо зберегти їх, не змішувати прогони.
 
+Спершу, ще до `host.py prepare`, хостові докази доводять до нерухомої точки. `design/readiness-contract.json` містить лічильники host regression (`host_tests_passed`, `host_tests_skipped`) і водночас входить до hash цієї регресії (`commissioning.GRAPH_PATHS`) та до `software/config/acceptance.template.json`, який як `software/**/*.json` входить до виконаних guest джерел (`finalize_linux_lab.bound`):
+
 ```sh
-python3 tools/finalize_linux_lab.py --work /tmp/srrx-linux-lab-run07
-python3 tools/build_documents.py
+python3 tools/run_tests_offline.py
+python3 tools/build_documents.py     # записує лічильники в контракт
+python3 tools/run_tests_offline.py   # прив'язує регресію до нового контракту
+python3 tools/build_documents.py     # контракт уже не змінюється; COMPLETION бачить актуальну регресію
+PYTHONPATH=software:. python3 -m srrx.provision template --output software/config/acceptance.template.json
+PYTHONPATH=software:. python3 -m srrx.demo --output verification/software-simulation.json
+python3 tools/render_hmi_views.py --output verification/hmi-views
 python3 tools/build_firmware.py
+```
+
+Якщо останній `build_documents.py` знову змінив контракт (регресія в іншому середовищі дала інші SKIP), пару «регресія → `build_documents.py`» повторюють, доки контракт не перестане змінюватися. Лише потім готують і запускають guest. Після нього:
+
+```sh
+python3 tools/finalize_linux_lab.py --work /tmp/srrx-linux-lab-runNN
+python3 tools/build_documents.py     # контракт і шаблон мають лишитися побайтово тими самими
 python3 tools/build_bundle.py
 python3 -B tools/check_bundle.py
 ```
 
-`build_bundle.py` вимагає актуальних host regression, Linux/module PASS, точних hashes виконаних Python/shell/service джерел, module inventory/models/графів і CAD verification. Виправлення production/model Python після підготовки guest потребує нового виконання guest; не переписувати source binding вручну. Якщо змінено джерела хостових перевірок або readiness contract, повторити `python3 tools/run_tests_offline.py` перед bundle. Якщо змінено схеми, спочатку повторити CAD export/перевірки за [KiCad README](../../build/kicad/README.md).
+CI-job зберігає копії контракту й шаблону перед підготовкою guest і після finalizer звіряє їх через `cmp`; розбіжність зупиняє job до пакування. Шаблон після підготовки guest не перегенеровують: будь-яка його зміна дає «Linux execution result is stale».
+
+`build_bundle.py` вимагає актуальних host regression, Linux/module PASS, точних hashes виконаних Python/shell/service джерел, module inventory/models/графів і CAD verification. Виправлення production/model Python після підготовки guest потребує нового виконання guest; не переписувати source binding вручну. Якщо змінено джерела хостових перевірок або readiness contract, перед bundle повторити `python3 tools/run_tests_offline.py`, а після нього `python3 tools/build_documents.py`. Якщо змінено схеми, спочатку повторити CAD export/перевірки за [KiCad README](../../build/kicad/README.md).
 
 Виняток для середовища без ARM64 lab: якщо виконаний код змінено, а новий guest-прогін неможливий, `build_bundle.py` пакує лише тоді, коли сам проєкт позначає `verification/linux-lab/project-manifest.json` як `RECORD_OF_EARLIER_RUN` (а README Linux-результату має відповідне попередження). Тоді HTML показує окреме попередження «лише запис попереднього прогону» з кількістю змінених виконаних файлів і архітектурою поточного module-lab прогону. Решта перевірок (host regression, module inventory/models/графи, CAD) залишаються суворими; source binding вручну не переписується.
 
-3. Переглянути `git status --short`, додати лише призначені до передачі джерела/звіти, виконати `git diff --cached --check` та створити локальний commit. Після нього сформувати патч усіх локальних комітів від точної Claude-бази:
+3. Переглянути `git status --short`, додати лише призначені до передачі джерела/звіти, виконати `git diff --cached --check`, створити commit і опублікувати гілку `ccr-1537979d-cj7q9t` в origin. Ця опублікована гілка є основним способом передачі; ZIP/bundle — додаткові. Гілки `codex/sr-rx-v2-completion` і `wip/review-fixes` застаріли: їхній вміст злито в `ccr-1537979d-cj7q9t`, тож їх можна видалити; історію комітів (Codex — `05f0019`…`87e1e90`, далі — сесії Claude) описано в [HANDOFF](../../HANDOFF.md#ревізія-23102026-claude-перевірка-виправлення-ci-план). Для офлайн-переносу історії використовувати bundle, а не `git format-patch`, який пропускає merge-коміти:
 
 ```sh
-git format-patch --stdout 465318835e71eae326059f5f66e2b47232169556..HEAD | gzip -n > /tmp/SR-RX-v2.1-git.patch.gz
-gzip -t /tmp/SR-RX-v2.1-git.patch.gz
+git bundle create /tmp/SR-RX-v2.1.bundle ccr-1537979d-cj7q9t
+git bundle verify /tmp/SR-RX-v2.1.bundle
 ```
 
-Patch відображає лише commits до HEAD, тому його не будувати до commit поточних змін. Інструкція застосування — [RESTORE-GIT](../../RESTORE-GIT.md). Відмова remote push не заважає віддати ZIP і patch, але не є успішною публікацією.
+Bundle відображає лише закомічене, тому його не будувати до commit поточних змін. Інструкції відновлення, зокрема `git clone --branch ccr-1537979d-cj7q9t` з bundle, — [RESTORE-GIT](../../RESTORE-GIT.md).
 
 4. Після фінального ZIP створити offline kit. Усі вхідні каталоги створюють скрипти репозиторію: `fetch_tools.py` (locked host DEB, розпакований `root/`, wrappers `bin/`, `host-packages.lock.json`) і `fetch_assets.py` (image/kernel/initrd, підписаний `ubuntu-24.04-server-cloudimg-arm64.manifest`, wheels, guest DEB). `--tools`/`--dest` мають бути новими каталогами поза checkout; `--output` — новим `.tar.zst` поза checkout, а його parent directory має вже існувати. Builder потребує `gpgv`, `zstd`, `dpkg-deb` і `tar`.
 
@@ -132,4 +148,4 @@ python3 deployment/linux_lab/build_kit.py \
   --output /tmp/SR-RX-Linux-Lab.tar.zst
 ```
 
-Builder звіряє signed/locked inputs та кожний archive payload hash. `tools/root` має точно збігатися з новим розпакуванням hash-locked host DEB у порядку lock (файли, SHA256, executable bit, symlink targets), а `tools/bin` — із wrappers `fetch_tools.py`; самодекларовані JSON-маніфести більше не приймаються як provenance. Wrappers запускають locked `ld.so` з `--inhibit-cache`, а `fetch_tools.py` перевіряє через `ld.so --list`, що жодна DT_NEEDED бібліотека QEMU/genisoimage не береться з хоста. Його PASS означає цілісність kit; він **не завантажує guest**. Після розпакування використовуйте `launch.py --verify-only`, потім новий workspace для `--prepare-only` або повного запуску. Kit не містить попередній writable overlay як runnable input і стартує з pinned base image; це окрема перевірка від cached run07. Фінально звірити manifest/CRC архівів, додати checksums і передати project ZIP/HTML, Git patch та offline kit із фактичними verification reports.
+Builder звіряє signed/locked inputs та кожний archive payload hash. `tools/root` має точно збігатися з новим розпакуванням hash-locked host DEB у порядку lock (файли, SHA256, executable bit, symlink targets), а `tools/bin` — із wrappers `fetch_tools.py`; самодекларовані JSON-маніфести більше не приймаються як provenance. Wrappers запускають locked `ld.so` з `--inhibit-cache`, а `fetch_tools.py` перевіряє через `ld.so --list`, що жодна DT_NEEDED бібліотека QEMU/genisoimage не береться з хоста. Його PASS означає цілісність kit; він **не завантажує guest**. Після розпакування використовуйте `launch.py --verify-only`, потім новий workspace для `--prepare-only` або повного запуску. Kit не містить попередній writable overlay як runnable input і стартує з pinned base image; це окрема перевірка від cached run07. Фінально звірити manifest/CRC архівів, додати checksums і передати опубліковану гілку, а за потреби project ZIP/HTML, Git bundle та offline kit із фактичними verification reports.

@@ -196,7 +196,13 @@ class WorkerSource:
 
 def run_capture(*, center_hz=100000000, sample_rate=1024000, fft_size=1024,
                 frames=10, output=None, survey=None, record=None, transport=None,
-                source_factory=WorkerSource, storage_guard=None):
+                source_factory=WorkerSource, storage_guard=None, scope=None):
+    """scope: the session scope_policy.ScopeLatch. It is retuned to the tuned span
+    before any receiver or control access and must permit 'record' for that span
+    before every frame is published or appended; otherwise ValueError("out of
+    scope"), with no frequency, and nothing more is written.
+    """
+    from .scope_policy import OUT_OF_SCOPE, ScopeLatch
     from .spectrum import SpectrumProcessor, append_survey
     if type(frames) is not int or not 0 <= frames <= 1000000:
         raise ValueError("frames must be 0 (until stopped) or 1..1000000")
@@ -206,6 +212,13 @@ def run_capture(*, center_hz=100000000, sample_rate=1024000, fft_size=1024,
         raise ValueError("Integer center in 0..6GHz required")
     if type(sample_rate) is not int or not 48000 <= sample_rate <= 56000000:
         raise ValueError("Integer sample rate in 48k..56M required")
+    if scope is not None and not isinstance(scope, ScopeLatch):
+        raise ValueError("scope must be the session ScopeLatch")
+    span = (center_hz - sample_rate / 2, center_hz + sample_rate / 2)
+    if scope is not None:
+        scope.retune(*span)  # a stop latches here, before any branch is powered
+        if not scope.permits("record", span):
+            raise ValueError(OUT_OF_SCOPE)
     processor = SpectrumProcessor(fft_size=fft_size)
     source, guard, completed, last = None, None, 0, None
     observed, off_confirmed = False, None
@@ -240,6 +253,10 @@ def run_capture(*, center_hz=100000000, sample_rate=1024000, fft_size=1024,
             # and has no IQ/audio recorder or socket sample-export endpoint.
             last = processor.process(samples[-fft_size:], center_hz, sample_rate,
                                      source="SIMULATION" if record is None else "HARDWARE")
+            # A stop latched during the run (e.g. an operator or identification stop)
+            # ends it before this frame is published; cleanup below still runs.
+            if scope is not None and not scope.permits("record", span):
+                raise ValueError(OUT_OF_SCOPE)
             if output is not None:
                 atomic_json(output, last, storage_guard=storage_guard)
             if survey is not None:

@@ -1,7 +1,7 @@
 {
   "status": "ROUTED_INTERNAL_PROTOTYPE_NOT_FOR_FABRICATION",
-  "source_input_sha256": "71c6cdf80d099af840e65888803452d5594ffacd6a918030bc71ccbf113a8289",
-  "frozen_starter_sha256": "98dafb6b796b87d6ac68b4d534c754c9ffb045661a877b8dbcc96d14b85b5a2e",
+  "source_input_sha256": "e1f11f659704c558b1f98bef9aadcfb795d2d2443ef2a84e4ea529eb447f2746",
+  "frozen_starter_sha256": "baf16f51f6b56cb41e33f486c94d556fbab217542a32202d8e8b7c76b0769d48",
   "published_board": true,
   "external_interfaces_selected": false,
   "release": "NOT_FOR_FABRICATION",
@@ -66,7 +66,6 @@
   ],
   "source_preparation_blockers": [
     "50 passive land patterns are placement proposals, not approved production MPN selections.",
-    "Three explicitly0402 resistor footprints must be fetched from official KiCad if absent.",
     "Eight-net connector/wire-pad implementation, mounting/outline and cable routing are unselected.",
     "RF-port tap/bleed assemblies are excluded from this core and must be placed on the RF substrate.",
     "Prototype threshold/leakage/temperature/ground-offset/RF/rail-off tests remain mandatory."
@@ -86,7 +85,7 @@
       "schematic_parity": 0
     },
     "ignored_checks": [],
-    "raw_sha256": "ff2d2202c300eec94f8df16c078f7702e1a2de8e79f3f61f10e7243b2ea59fc2",
+    "raw_sha256": "45a44d7cc66ea094d7d9cc381c1dfc231db135f6a3595a0b71c3f5d02435824b",
     "suppressed_or_filtered": false
   },
   "track_segments": 753,
@@ -11307,6 +11306,16 @@
     "netted": 180,
     "nc": 7
   },
-  "board_sha256": "9b8673b42eaa217dc60fad26034928d98339485c2a74f2f0755c2d06f769d6c6",
+  "drc_portable": {
+    "exit_code": 0,
+    "sections": {
+      "violations": 0,
+      "unconnected_items": 0,
+      "schematic_parity": 0
+    },
+    "ignored_checks": [],
+    "raw_sha256": "797614bbb38f27a2bd40744fa422afebd985c12a40b3927d40395e0b1498eb5c"
+  },
+  "board_sha256": "5a517890b3661f4e291fefd61053610ab2699c20fde2cc0b501a30411c189c1f",
   "frozen_starter_unchanged": true
 }

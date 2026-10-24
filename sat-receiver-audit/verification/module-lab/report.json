@@ -2,21 +2,21 @@
   "schema_version": 1,
   "execution_status": "PASS",
   "status": "EMULATION_PASS_WITH_GAPS",
-  "created_at_utc": "2026-10-23T17:26:52.011751+00:00",
+  "created_at_utc": "2026-10-24T00:52:29.026119+00:00",
   "environment": {
-    "architecture": "x86_64",
-    "kernel": "6.18.44-fc-v153",
-    "python": "3.13.16"
+    "architecture": "aarch64",
+    "kernel": "6.8.0-147-generic",
+    "python": "3.12.3"
   },
   "physical_tests_performed": false,
   "hardware_qualified": false,
-  "inventory_sha256": "f0be38a4bd41d989018d05a29e409cd821f90b48ed3df2ebb135d3f5f41c0137",
+  "inventory_sha256": "24bca1e37cf557ec0d29739ad5ef8732699892008adb8b056143798a1d5f7c34",
   "model_sha256": {
     "connectivity.py": "e779cef97cf4e41c37ae299e54828e0cd165b2edba8e17265dfdd7f24a2cfd5f",
     "io_modules.py": "3a2a53f360b6530cf1bb2b6cf073bc6404a4ce759b09867654e41ec1d3b894a4",
     "io_scenarios.py": "f00a48a7367cf67357bbfe4b75df36703af2f54250aec8c1addcdd661ada2e87",
-    "location_modules.py": "3de8c604783190577c49183ee86d6a2efe9d97f0c89d90e16dc23ff39ed993be",
-    "location_scenarios.py": "5aa4d87d9745394bea178d93b082138addc1abf9446106c254a131b386c2874d",
+    "location_modules.py": "6884737b40ef837d33746fce97100e4b0d53f64bb46dec3c118c6d9bfa4b96e4",
+    "location_scenarios.py": "48b4407ce4e9f26dab4616546ec66ce9b8c16b80fe5a67ca9a3859311b2adf72",
     "mcu_bus.py": "b32d6845eacf0dbccb25304b51056dadf00e54aaf645f43e548c0e8c8c4646c7",
     "mcu_scenarios.py": "44c167c4c8af1796b54f3c3465d6627d13aef7458086d4e7bef7963a62de99df",
     "power_bus.py": "1f0d1cc97edd745cfd2182d07e2e62e15e49413016e790560c5a19b76a11b1e5",
@@ -29,7 +29,7 @@
   "domains": {
     "power": {
       "exit_code": 0,
-      "elapsed_s": 1.624,
+      "elapsed_s": 41.361,
       "report": {
         "schema_version": 1,
         "status": "EMULATION_PASS",
@@ -1360,7 +1360,7 @@
         "source_sha256": {
           "software/srrx/hardware.py": "13f2a5c1ab1a63d1345f57f9a3ca1f39ffbd3c779be9d4e050c85634974279ee",
           "software/srrx/telemetry.py": "418148d2427cddf48dabb51c05a54071d465e5697b8727116043c1252e6dfa60",
-          "software/srrx/policy.py": "5f51c31a82f5b810f7d899135fa135203034baecdb3637c4bf0af13cc74dd3dc",
+          "software/srrx/policy.py": "0bd60d9734653f24e49606cf46e70895b0a7c7ab8b580c2667aa41e08011d34b",
           "software/srrx/runtime_telemetry.py": "d55b8b1192b8a18953993323fd173ca2f1013fcbe97f28d7e8cbe4ea907b24b5",
           "design/E1.json": "bc1faf3dd485a8ab55fdb2bc0b9bf1266d160997044f45c725aa79a59c83de11",
           "design/E2.json": "e07b78094f9f60547614c08e04943801401e63b177f68b77228f7786bb56c0ad",
@@ -1379,7 +1379,7 @@
     },
     "mcu": {
       "exit_code": 0,
-      "elapsed_s": 0.216,
+      "elapsed_s": 3.043,
       "report": {
         "cases": [
           {
@@ -1846,13 +1846,13 @@
     },
     "radio": {
       "exit_code": 0,
-      "elapsed_s": 4.625,
+      "elapsed_s": 64.019,
       "report": {
         "schema_version": 1,
         "status": "EMULATION_PASS",
         "scope": "native-driver-ABI-and-control-emulation-no-real-USB-or-analog-RF",
-        "architecture": "x86_64",
-        "python": "3.13.16",
+        "architecture": "aarch64",
+        "python": "3.12.3",
         "numpy": "2.3.5",
         "modules": [
           {
@@ -3105,15 +3105,15 @@
         "worker_failure_lifecycle": {
           "status": "PASS",
           "scope": "spawned-worker-native-ABI-component-only-no-RF-no-accepted-hardware",
-          "architecture": "x86_64",
-          "kernel": "6.18.44-fc-v153",
-          "python": "3.13.16",
+          "architecture": "aarch64",
+          "kernel": "6.8.0-147-generic",
+          "python": "3.12.3",
           "fixture_source_sha256": "17b0dfec527087d3f508d34d29458f74ddb52e1b0c061ae779cd6b1060e30b07",
           "startup_deadline_s": 60.0,
           "production_read_deadline_s": 1.0,
           "native_compile_performed": true,
           "control_guard_replaced_only_in_test": true,
-          "kernel_core_pattern": "core",
+          "kernel_core_pattern": "|/usr/share/apport/apport -p%p -s%s -c%c -d%d -P%P -u%u -g%g -F%F -- %E",
           "kernel_core_pattern_read_error": null,
           "core_protection_references": [
             "https://man7.org/linux/man-pages/man5/core.5.html",
@@ -3132,8 +3132,8 @@
               "native_read_entered": true,
               "exception_type": "OSError",
               "exception": "RTL read failed (-71)",
-              "elapsed_s": 0.18,
-              "close_duration_s": 0.025,
+              "elapsed_s": 4.19,
+              "close_duration_s": 0.243,
               "worker_exitcode": 0,
               "worker_alive_after_close": false,
               "actual_read_observer_checks": 1,
@@ -3147,7 +3147,7 @@
               "only_case_artifact": [
                 "lifecycle.txt"
               ],
-              "elf_machine": 62
+              "elf_machine": 183
             },
             {
               "case": "hang_ignoring_sigterm",
@@ -3156,8 +3156,8 @@
               "native_read_entered": true,
               "exception_type": "TimeoutError",
               "exception": "No fresh RX block within one second",
-              "elapsed_s": 2.156,
-              "close_duration_s": 1.004,
+              "elapsed_s": 5.754,
+              "close_duration_s": 1.028,
               "worker_exitcode": -9,
               "worker_alive_after_close": false,
               "actual_read_observer_checks": 21,
@@ -3171,7 +3171,7 @@
               "only_case_artifact": [
                 "lifecycle.txt"
               ],
-              "elf_machine": 62
+              "elf_machine": 183
             },
             {
               "case": "crash_sigsegv",
@@ -3180,11 +3180,11 @@
               "native_read_entered": true,
               "exception_type": "OSError",
               "exception": "RX worker pipe closed before a complete block",
-              "elapsed_s": 0.144,
-              "close_duration_s": 0.0,
+              "elapsed_s": 3.75,
+              "close_duration_s": 0.001,
               "worker_exitcode": -11,
               "worker_alive_after_close": false,
-              "actual_read_observer_checks": 1,
+              "actual_read_observer_checks": 2,
               "production_capture_cleanup_exercised": true,
               "clean_error_boundary": true,
               "branch_off_request_observed": true,
@@ -3195,7 +3195,7 @@
               "only_case_artifact": [
                 "lifecycle.txt"
               ],
-              "elf_machine": 62
+              "elf_machine": 183
             },
             {
               "case": "invalid_odd_short_read",
@@ -3204,8 +3204,8 @@
               "native_read_entered": true,
               "exception_type": "OSError",
               "exception": "Invalid/empty RTL IQ block",
-              "elapsed_s": 0.174,
-              "close_duration_s": 0.03,
+              "elapsed_s": 4.022,
+              "close_duration_s": 0.26,
               "worker_exitcode": 0,
               "worker_alive_after_close": false,
               "actual_read_observer_checks": 1,
@@ -3219,7 +3219,7 @@
               "only_case_artifact": [
                 "lifecycle.txt"
               ],
-              "elf_machine": 62
+              "elf_machine": 183
             },
             {
               "case": "valid_even_short_read",
@@ -3228,11 +3228,11 @@
               "native_read_entered": true,
               "exception_type": null,
               "exception": null,
-              "elapsed_s": 0.207,
-              "close_duration_s": 0.043,
+              "elapsed_s": 4.048,
+              "close_duration_s": 0.254,
               "worker_exitcode": 0,
               "worker_alive_after_close": false,
-              "actual_read_observer_checks": 1,
+              "actual_read_observer_checks": 2,
               "production_capture_cleanup_exercised": false,
               "clean_error_boundary": true,
               "branch_off_request_observed": false,
@@ -3243,7 +3243,7 @@
               "only_case_artifact": [
                 "lifecycle.txt"
               ],
-              "elf_machine": 62
+              "elf_machine": 183
             }
           ]
         },
@@ -3257,9 +3257,9 @@
           "acceptance_created": false,
           "production_mode_used": "SIMULATION",
           "production_sources_sha256": {
-            "software/srrx/policy.py": "5f51c31a82f5b810f7d899135fa135203034baecdb3637c4bf0af13cc74dd3dc",
+            "software/srrx/policy.py": "0bd60d9734653f24e49606cf46e70895b0a7c7ab8b580c2667aa41e08011d34b",
             "software/srrx/hardware.py": "13f2a5c1ab1a63d1345f57f9a3ca1f39ffbd3c779be9d4e050c85634974279ee",
-            "deployment/deploy.py": "7357ed840e465be57cf5ffe7cb9059f0c9aac6784f9a1ab7bc96958c5cdb73e5",
+            "deployment/deploy.py": "5fde2cfdd4e3b692dc42a013d809cf2e3a0ac2a51b5fea7cad8249207bc2c790",
             "deployment/vendor_patch.py": "449375110754ca75e0dba8336c6b611ee0a87de1f5fd509ccd65b47d289121be",
             "deployment/patches/limesuiteng-rx-only.patch": "e6e3f7abd3dd3cff21c0d7baa98e92f812bd88068a984298a7bebcf5517bc033"
           },
@@ -3274,7 +3274,7 @@
         },
         "production_sources_sha256": {
           "software/srrx/receivers.py": "0b12412357126ac04731f0ed5e664d44ac9d95d058ad8a8d24a790c14b9447fc",
-          "software/srrx/labrx.py": "28f26d881d629e28240119d6c24948e21530f8ca5e1676dfc93e0edba7b41c86"
+          "software/srrx/labrx.py": "b969582eb65ba942dff214a02260550ee1bc03123f97fbe39b25f4a4238ce06c"
         },
         "physical_verified": false,
         "raw_iq_persisted": false,
@@ -3289,25 +3289,26 @@
     },
     "location": {
       "exit_code": 0,
-      "elapsed_s": 1.371,
+      "elapsed_s": 4.652,
       "report": {
-        "elapsed_s": 1.303,
+        "elapsed_s": 3.125,
         "modules": [
           {
-            "description": "Waveshare LC76G GNSS24370 NMEA output over Linux PTY",
+            "description": "Waveshare LC76G GNSS24370 NMEA output over Linux PTY into the production read-only UART reader",
             "module_id": "lc76g_u304",
             "refs": [
               "U304"
             ],
             "scenarios": [
               {
-                "elapsed_s": 0.007,
+                "elapsed_s": 0.194,
                 "observed": {
                   "fragment_size_bytes": 1,
                   "gnss_utc_qualified": false,
                   "gst_axis_rss_m": 5.0,
-                  "production_api": "LocationTracker.ingest_nmea",
+                  "production_api": "gnss_uart.configure_raw_115200+NmeaUartReader -> LocationTracker.ingest_nmea",
                   "synthetic_input": true,
+                  "termios_read_back": true,
                   "three_dimensional_fix": true,
                   "transport": "real_linux_pty_raw115200"
                 },
@@ -3315,7 +3316,7 @@
                 "status": "EMULATION_PASS"
               },
               {
-                "elapsed_s": 0.011,
+                "elapsed_s": 0.247,
                 "observed": {
                   "checksum_rejected": true,
                   "invalid_fix_rejected": true,
@@ -3326,20 +3327,21 @@
                 "status": "EMULATION_PASS"
               },
               {
-                "elapsed_s": 0.246,
+                "elapsed_s": 0.354,
                 "observed": {
                   "fallback_current_accuracy": "unknown",
                   "freshness_ms": 180,
-                  "observed_stale_age_ms": 245,
+                  "observed_stale_age_ms": 320,
                   "replay_does_not_refresh_receipt_time": true
                 },
                 "scenario": "nmea_replayed_epoch_and_stale",
                 "status": "EMULATION_PASS"
               },
               {
-                "elapsed_s": 0.005,
+                "elapsed_s": 0.123,
                 "observed": {
-                  "disconnect_detection_owner": "fixture_transport_glue_not_a_production_raw_uart_driver",
+                  "automatic_reopen": false,
+                  "disconnect_detection_owner": "production_gnss_uart_NmeaUartReader_pollhup",
                   "explicit_new_endpoint": true,
                   "partial_stream_resynchronized": true,
                   "real_pty_hup": true
@@ -3348,7 +3350,7 @@
                 "status": "EMULATION_PASS"
               },
               {
-                "elapsed_s": 0.015,
+                "elapsed_s": 0.44,
                 "observed": {
                   "duplicate_not_distinct": true,
                   "real_gnss_utc_qualified": false,
@@ -3370,8 +3372,8 @@
               "GNSS RF acquisition, constellation tracking, sensitivity and physical accuracy",
               "PPS edges/phase/jitter, oscillator and GNSS UTC qualification",
               "Physical Q6A UART6 pinmux/baud/electrical levels and reset circuit",
-              "Proprietary PAIR/PQTM configuration, flash/NVM and firmware updates",
-              "Production raw-UART reader: tested transport glue is a fixture feeding production ingest_nmea"
+              "Live udev /dev/lab/gnss and sysfs 998000.serial binding of open_lc76g (Q6A only)",
+              "Proprietary PAIR/PQTM configuration, flash/NVM and firmware updates"
             ]
           },
           {
@@ -3382,7 +3384,7 @@
             ],
             "scenarios": [
               {
-                "elapsed_s": 0.481,
+                "elapsed_s": 0.82,
                 "observed": {
                   "connections": 2,
                   "fragmented_tpv_bytes": true,
@@ -3396,7 +3398,7 @@
                 "status": "EMULATION_PASS"
               },
               {
-                "elapsed_s": 0.295,
+                "elapsed_s": 0.398,
                 "observed": {
                   "duplicate_json_keys_rejected": true,
                   "freshness_ms": 180,
@@ -3407,7 +3409,7 @@
                 "status": "EMULATION_PASS"
               },
               {
-                "elapsed_s": 0.23,
+                "elapsed_s": 0.461,
                 "observed": {
                   "duplicate_epoch_not_distinct": true,
                   "real_gnss_utc_qualified": false,
@@ -3456,10 +3458,11 @@
           "system_clock_modified": false
         },
         "source_sha256": {
-          "deployment/module_lab/location_modules.py": "3de8c604783190577c49183ee86d6a2efe9d97f0c89d90e16dc23ff39ed993be",
-          "deployment/module_lab/location_scenarios.py": "5aa4d87d9745394bea178d93b082138addc1abf9446106c254a131b386c2874d",
+          "deployment/module_lab/location_modules.py": "6884737b40ef837d33746fce97100e4b0d53f64bb46dec3c118c6d9bfa4b96e4",
+          "deployment/module_lab/location_scenarios.py": "48b4407ce4e9f26dab4616546ec66ce9b8c16b80fe5a67ca9a3859311b2adf72",
           "design/E3.json": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0",
-          "software/srrx/location.py": "bb261e5e494c3ce72ffa1c0f723a1e2e7337e5d81251718359a5cb2d2cb89a26"
+          "software/srrx/gnss_uart.py": "b54d7fd8bce48c9a6e0846b4f532b676206855f29bc26d73442f2e4bc4727e38",
+          "software/srrx/location.py": "f76fc0ad81f017596f569df502b7d6839028f31be77d37abe018b1d719b25dfb"
         },
         "status": "EMULATION_PASS",
         "suite": "location_module_emulation",
@@ -3468,7 +3471,7 @@
     },
     "io": {
       "exit_code": 0,
-      "elapsed_s": 2.175,
+      "elapsed_s": 17.77,
       "report": {
         "suite": "io_modules",
         "status": "EMULATION_PASS_WITH_UNSUPPORTED",
@@ -3478,7 +3481,7 @@
         "accepted": false,
         "environment": {
           "system": "Linux",
-          "machine": "x86_64",
+          "machine": "aarch64",
           "uid": 0
         },
         "modules": [
@@ -3789,7 +3792,7 @@
                 "raw_status_before_controller_poll": true,
                 "cold_start_timeout_s": 20.0,
                 "ordinary_timeout_s": 5.0,
-                "elapsed_s": 0.058103,
+                "elapsed_s": 1.090943,
                 "mode": "SIMULATION",
                 "production_deadlines_changed": false
               },
@@ -3822,7 +3825,7 @@
               "disabled_tap_issues_no_control": true,
               "reconnect_auto_arm": false,
               "lease_created": false,
-              "worker_connected_snapshots": 3
+              "worker_connected_snapshots": 11
             },
             "limitation": "The fault is the controller transport, not a USB/HDMI removal signal. Production USB display-departure detection is absent."
           },
@@ -3927,8 +3930,8 @@
         "source_sha256": {
           "deployment/module_lab/io_modules.py": "3a2a53f360b6530cf1bb2b6cf073bc6404a4ce759b09867654e41ec1d3b894a4",
           "deployment/module_lab/io_scenarios.py": "f00a48a7367cf67357bbfe4b75df36703af2f54250aec8c1addcdd661ada2e87",
-          "software/srrx/hmi.py": "9e6c757047889d07b36cacbf05d8177b8c763175d4e18933c50ac7de558ee004",
-          "software/srrx/labrx.py": "28f26d881d629e28240119d6c24948e21530f8ca5e1676dfc93e0edba7b41c86",
+          "software/srrx/hmi.py": "12bf7ac65c1a90e99c89f13af980118dedaaa5ab569bba8c3d5682f015e57dd6",
+          "software/srrx/labrx.py": "b969582eb65ba942dff214a02260550ee1bc03123f97fbe39b25f4a4238ce06c",
           "software/srrx/spectrum.py": "95700d52cc9484b9facb337cbbf272deab5f12c594c9662e9a2e7da49297b522",
           "software/srrx/storage.py": "775fdd716796c15f6fd1b7f9e9105c408bd67c33f45129e4996a6cdaab5ebcd8"
         }
@@ -3936,7 +3939,7 @@
     },
     "connectivity": {
       "exit_code": 0,
-      "elapsed_s": 1.508,
+      "elapsed_s": 34.256,
       "report": {
         "schema_version": 1,
         "status": "CONNECTION_MODEL_PASS",
@@ -3968,8 +3971,8 @@
           "physical_or_TBD_interfaces_preserved": 94
         },
         "independent_netlist": {
-          "tool": "Eeschema 10.0.7-10.0.7~ubuntu24.04.1",
-          "sha256": "1b767be74bfa489331abdf482bd143c5203dc46af3e47f2fb834a5c2fffeb871",
+          "tool": "Eeschema 10.0.7",
+          "sha256": "acaa61986e3af7799a99696bb000775fc0afe2a53cb0b6cc3d2473f255ee9312",
           "xml_pin_nodes": 2318,
           "canonical_nets": 466,
           "nc_nodes": 137,
@@ -122015,8 +122018,8 @@
           "design/E3.json": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0",
           "design/E4.json": "60c0f73c66737853033eea13c28b013d9e8559d1e0df57f2b7902af0da757797",
           "design/E5.json": "9d61ff10e75417c806afda7ab923ac06de7faf9b6ff5b53acce57477b3960212",
-          "deployment/module_lab/inventory.json": "f0be38a4bd41d989018d05a29e409cd821f90b48ed3df2ebb135d3f5f41c0137",
-          "verification/netlist.xml": "1b767be74bfa489331abdf482bd143c5203dc46af3e47f2fb834a5c2fffeb871",
+          "deployment/module_lab/inventory.json": "24bca1e37cf557ec0d29739ad5ef8732699892008adb8b056143798a1d5f7c34",
+          "verification/netlist.xml": "acaa61986e3af7799a99696bb000775fc0afe2a53cb0b6cc3d2473f255ee9312",
           "deployment/module_lab/connectivity.py": "e779cef97cf4e41c37ae299e54828e0cd165b2edba8e17265dfdd7f24a2cfd5f"
         },
         "limits": [
@@ -128767,8 +128770,8 @@
               "GNSS RF acquisition, constellation tracking, sensitivity and physical accuracy",
               "PPS edges/phase/jitter, oscillator and GNSS UTC qualification",
               "Physical Q6A UART6 pinmux/baud/electrical levels and reset circuit",
-              "Proprietary PAIR/PQTM configuration, flash/NVM and firmware updates",
-              "Production raw-UART reader: tested transport glue is a fixture feeding production ingest_nmea"
+              "Live udev /dev/lab/gnss and sysfs 998000.serial binding of open_lc76g (Q6A only)",
+              "Proprietary PAIR/PQTM configuration, flash/NVM and firmware updates"
             ]
           },
           {
@@ -142493,8 +142496,8 @@
           "GNSS RF acquisition, constellation tracking, sensitivity and physical accuracy",
           "PPS edges/phase/jitter, oscillator and GNSS UTC qualification",
           "Physical Q6A UART6 pinmux/baud/electrical levels and reset circuit",
-          "Proprietary PAIR/PQTM configuration, flash/NVM and firmware updates",
-          "Production raw-UART reader: tested transport glue is a fixture feeding production ingest_nmea"
+          "Live udev /dev/lab/gnss and sysfs 998000.serial binding of open_lc76g (Q6A only)",
+          "Proprietary PAIR/PQTM configuration, flash/NVM and firmware updates"
         ]
       },
       {

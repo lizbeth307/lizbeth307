@@ -7872,7 +7872,6 @@
   ],
   "blockers": [
     "50 passive land patterns are placement proposals, not approved production MPN selections.",
-    "Three explicitly0402 resistor footprints must be fetched from official KiCad if absent.",
     "Eight-net connector/wire-pad implementation, mounting/outline and cable routing are unselected.",
     "RF-port tap/bleed assemblies are excluded from this core and must be placed on the RF substrate.",
     "Prototype threshold/leakage/temperature/ground-offset/RF/rail-off tests remain mandatory."
@@ -7913,7 +7912,7 @@
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "1b767be74bfa489331abdf482bd143c5203dc46af3e47f2fb834a5c2fffeb871"
+        "sha256": "acaa61986e3af7799a99696bb000775fc0afe2a53cb0b6cc3d2473f255ee9312"
       }
     ],
     "source_documents": [

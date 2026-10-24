@@ -1,6 +1,7 @@
 import contextlib
 import copy
 import errno
+import hashlib
 import io
 import json
 import os
@@ -279,6 +280,105 @@ class LearningTests(unittest.TestCase):
         with patch("srrx.learning.mask_frame", wraps=ml.mask_frame) as masked:
             ml.train(self.dataset, seed=7)
         self.assertEqual(masked.call_count, len(self.dataset["frames"]))
+
+    def test_scope_stop_refuses_annotation_without_frequency_in_the_error(self):
+        from srrx import scope_policy
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "artemis.json"
+            data = json.dumps({"v": 1, "kind": "srrx_artemis_mirror", "source": "artemis-db", "db_version": "v74",
+                               "entries": [{"name": "Fixture", "categories": ["Military"],
+                                            "ranges_hz": [[137.70e6, 137.71e6]]}]}).encode()
+            path.write_bytes(data)
+            db = scope_policy.ArtemisDB.load(path, hashlib.sha256(data).hexdigest())
+        latch = scope_policy.ScopeLatch(db)
+        before = copy.deepcopy(self.dataset)
+        with self.assertRaisesRegex(ml.LearningError, "out of scope") as caught:
+            ml.annotate(self.dataset, ml._demo_frame(5, 0), 0, 256, "analog_broadcast",
+                        group_id=uuid.uuid4(), user_confirmed=True, scope=latch)
+        self.assertNotRegex(str(caught.exception), r"\d")
+        self.assertEqual(self.dataset, before)
+        # A box away from the stop entry in the same (latched) tuning is refused too.
+        with self.assertRaises(ml.LearningError):
+            ml.annotate(ml.empty_dataset(), ml._demo_frame(5, 0), 0, 64, "analog_broadcast",
+                        group_id=uuid.uuid4(), user_confirmed=True, scope=latch)
+        clear = ml.annotate(ml.empty_dataset(), ml._demo_frame(5, 0), 0, 64, "analog_broadcast",
+                            group_id=uuid.uuid4(), user_confirmed=True, scope=scope_policy.ScopeLatch(db))
+        self.assertEqual(len(clear["annotations"]), 1)
+        for scope in (object(), {"permits": True}, True):
+            with self.subTest(scope=scope), self.assertRaisesRegex(ml.LearningError, "ScopeLatch"):
+                ml.annotate(ml.empty_dataset(), ml._demo_frame(5, 0), 0, 256, "analog_broadcast",
+                            group_id=uuid.uuid4(), user_confirmed=True, scope=scope)
+
+    def test_masked_band_scope_check_runs_on_the_box_span_even_without_a_latch(self):
+        frame = ml._demo_frame(1, 0)  # 137.0-138.0 MHz, 256 bins
+        width = frame["sample_rate_hz"] / frame["fft_size"]
+        stop = {"stop": True, "reason": "MASKED_BAND", "reasons": ["MASKED_BAND"], "identify": "WITHHELD",
+                "display": "out of scope"}
+        with patch("srrx.learning.scope_check", return_value=stop) as check:
+            with self.assertRaisesRegex(ml.LearningError, "out of scope"):
+                self.annotate(frame)
+        check.assert_called_once_with(frame["center_hz"] - 128 * width - width / 2,
+                                      frame["center_hz"] + 127 * width + width / 2)
+        with patch("srrx.learning.scope_check", wraps=ml.scope_check) as check:
+            self.annotate(frame)
+        # Bin 0 is the even-FFT Nyquist bin: its wrapped upper half-bin is checked too.
+        self.assertEqual([call.args for call in check.call_args_list],
+                         [(frame["center_hz"] - 128 * width - width / 2, frame["center_hz"] + 127 * width + width / 2),
+                          (frame["center_hz"] + 128 * width - width / 2, frame["center_hz"] + 128 * width)])
+        with patch("srrx.learning.scope_check", wraps=ml.scope_check) as check:
+            ml.annotate(ml.empty_dataset(), frame, 1, 65, "analog_broadcast", group_id=uuid.UUID(int=1), user_confirmed=True)
+        self.assertEqual(check.call_count, 1)
+
+    def scope_db(self, *entries):
+        from srrx import scope_policy
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "artemis.json"
+            data = json.dumps({"v": 1, "kind": "srrx_artemis_mirror", "source": "artemis-db", "db_version": "v74",
+                               "entries": [{"name": "Fixture %d" % index, "categories": [category], "ranges_hz": [list(span)]}
+                                           for index, (category, span) in enumerate(entries)]}).encode()
+            path.write_bytes(data)
+            return scope_policy.ArtemisDB.load(path, hashlib.sha256(data).hexdigest())
+
+    def test_wrapped_nyquist_half_bin_of_a_box_from_bin_zero_is_scope_checked(self):
+        from srrx import scope_policy
+        frame = ml._demo_frame(1, 0)  # 137.0-138.0 MHz; bin 0 also holds 137.998-138.0 MHz
+        db = self.scope_db(("Military", (137.999e6, 138.0e6)))
+        latch = scope_policy.ScopeLatch(db)
+        with self.assertRaisesRegex(ml.LearningError, "out of scope") as caught:
+            ml.annotate(ml.empty_dataset(), frame, 0, 64, "analog_broadcast", group_id=uuid.uuid4(),
+                        user_confirmed=True, scope=latch)
+        self.assertNotRegex(str(caught.exception), r"\d")
+        self.assertTrue(latch.stopped)  # only the wrapped half-bin span latched
+        result = ml.annotate(ml.empty_dataset(), frame, 1, 65, "analog_broadcast", group_id=uuid.uuid4(),
+                             user_confirmed=True, scope=latch)
+        self.assertEqual(len(result["annotations"]), 1)  # a box from bin 1 has no wrapped content
+
+    def test_train_and_infer_honour_the_session_scope_latch(self):
+        from srrx import scope_policy
+        benign = scope_policy.ScopeLatch(self.scope_db(("Broadcast", (137.4e6, 137.6e6))))
+        model = ml.train(self.dataset, seed=7, scope=benign)
+        self.assertEqual(model["labels"], self.model["labels"])
+        self.assertEqual(ml.infer(model, ml._demo_frame(99, 0), 0, 256, scope=benign)["label"],
+                         ml.infer(model, ml._demo_frame(99, 0), 0, 256)["label"])
+        stopped = scope_policy.ScopeLatch(self.scope_db(("Radar", (137.4e6, 137.6e6))))
+        for call in (lambda: ml.train(self.dataset, seed=7, scope=stopped),
+                     lambda: ml.infer(model, ml._demo_frame(99, 0), 0, 256, scope=stopped)):
+            with self.assertRaisesRegex(ml.LearningError, "out of scope") as caught:
+                call()
+            self.assertNotRegex(str(caught.exception), r"\d")
+        self.assertTrue(stopped.stopped)
+        # A latch from a stop elsewhere in the session refuses training on those spans too.
+        latch = scope_policy.ScopeLatch()
+        latch.stop(137.9e6, 137.95e6)
+        with self.assertRaisesRegex(ml.LearningError, "Training annotation span is out of scope"):
+            ml.train(self.dataset, seed=7, scope=latch)
+        latch.retune(400.5e6, 401e6)  # retuned away: the latch is released
+        self.assertEqual(ml.train(self.dataset, seed=7, scope=latch)["labels"], self.model["labels"])
+        for scope in (object(), True):
+            with self.subTest(scope=scope), self.assertRaisesRegex(ml.LearningError, "ScopeLatch"):
+                ml.train(self.dataset, seed=7, scope=scope)
+            with self.subTest(scope=scope), self.assertRaisesRegex(ml.LearningError, "ScopeLatch"):
+                ml.infer(model, ml._demo_frame(99, 0), 0, 256, scope=scope)
 
     @unittest.skipIf(os.name == "nt", "POSIX directory fsync path")
     def test_directory_fsync_failure_after_replace_is_reported_as_unconfirmed_durability(self):

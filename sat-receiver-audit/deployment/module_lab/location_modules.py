@@ -3,6 +3,8 @@
 All positions, epochs and receiver reports are synthetic laboratory inputs.
 LC76G emulation covers its documented NMEA output subset, not RF acquisition,
 PPS accuracy, proprietary configuration, analog behavior or physical UART.
+The PTY is only the receiver side: the host reader, its raw 115200 line
+discipline and disconnect handling are production srrx.gnss_uart code.
 The loopback server emulates the gpsd JSON API and is not a gpsd executable.
 """
 from __future__ import annotations
@@ -15,7 +17,6 @@ import pty
 import queue
 import select
 import socket
-import termios
 import threading
 import time
 
@@ -114,7 +115,11 @@ def json_line(value):
 
 
 class LC76GPTY:
-    """Independent GNSS output endpoint with a real Linux PTY and raw115200."""
+    """Independent GNSS output endpoint on a real Linux PTY.
+
+    The slave is opened read-only and nonblocking but left unconfigured: the
+    scenario's production configure_raw_115200 must set and read back raw115200.
+    """
     def __init__(self):
         self.master = self.slave = None
         original_slave = None
@@ -125,13 +130,6 @@ class LC76GPTY:
             if not self.path.startswith("/dev/pts/"):
                 raise UnsupportedEnvironment("Expected a fresh Linux /dev/pts endpoint")
             self.slave = os.open(self.path, os.O_RDONLY | os.O_NOCTTY | os.O_NONBLOCK)
-            attrs = termios.tcgetattr(self.slave)
-            attrs[0] = attrs[1] = attrs[3] = 0
-            attrs[2] = termios.CS8 | termios.CREAD | termios.CLOCAL
-            attrs[4] = attrs[5] = termios.B115200
-            attrs[6][termios.VMIN] = attrs[6][termios.VTIME] = 0
-            termios.tcsetattr(self.slave, termios.TCSANOW, attrs)
-            termios.tcflush(self.slave, termios.TCIFLUSH)
             os.set_blocking(self.master, False)
         except OSError as error:
             self.close()
@@ -172,37 +170,6 @@ class LC76GPTY:
         if self.slave is not None:
             os.close(self.slave)
             self.slave = None
-
-
-class NMEAReader:
-    """Fixture transport glue; parsing/freshness is the production tracker.
-
-    The production API consumes bytes and does not itself open a raw LC76G UART.
-    Disconnect invalidation here belongs to the test adapter, not a claimed
-    production UART-driver implementation.
-    """
-    def __init__(self, emulator, tracker):
-        self.emulator, self.tracker = emulator, tracker
-        self.disconnected = False
-        self.bytes_received = 0
-
-    def poll(self, now_ms):
-        try:
-            data = os.read(self.emulator.slave, 4096)
-        except BlockingIOError:
-            return 0
-        except OSError as error:
-            if error.errno not in (errno.EIO, errno.EBADF):
-                raise
-            data = b""
-        if not data:
-            # With VMIN=VTIME=0, an empty read is not proof of disconnection.
-            if self.emulator.master is None:
-                self.disconnected = True
-                self.tracker.invalidate("nmea", "EMULATION_TRANSPORT_DISCONNECTED")
-            return 0
-        self.bytes_received += len(data)
-        return self.tracker.ingest_nmea(data, now_ms)
 
 
 class GpsdAPIServer:

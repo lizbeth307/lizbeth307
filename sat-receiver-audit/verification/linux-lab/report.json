@@ -10,6 +10,7 @@
     "clock_source": "host preparation timestamp plus guest uptime; not GNSS qualification"
   },
   "suites": {
+    "dependency-verification.json": "PASS",
     "software-tests.json": "PASS",
     "system-smoke.json": "PASS",
     "pty-smoke.json": "PASS",
@@ -25,8 +26,8 @@
   "q6a_peripherals_emulated": false,
   "host": {
     "qemu_exit_code": 0,
-    "elapsed_s": 1434.289,
-    "run_manifest_sha256": "8b61b7a59b51e142b0ecbf9b3c9374277bba33d83ad4f5bbf2dffe95411cbc01",
-    "console_sha256": "85f8c668e5f96f542841e275fb94ec6899ae606be40f8792bbb058f891156dca"
+    "elapsed_s": 2165.994,
+    "run_manifest_sha256": "4ba6d2512198c8fc2a2eaeb2e4dd17ba56000ded52caa191f3717eca2b1d642c",
+    "console_sha256": "0999bce5df0074817f5b171b9c1af4512596615a2828dab69ae6b7243eb3c676"
   }
 }

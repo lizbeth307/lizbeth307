@@ -23,6 +23,8 @@ import time
 import wave
 import zlib
 
+from .scope_policy import ScopeLatch, scope_check
+
 
 NOAA_COMMIT = "48a9eb8321f722634aafd1f9dcf4d80e9bfe274d"
 NOAA_VERSION = "1.4.1"
@@ -37,7 +39,10 @@ _SOURCE_FIELDS = {"v", "sha256", "purpose", "satellite", "origin", "evidence_id"
                   "iq_retained", "format"}
 _INSTALL_FIELDS = {"v", "tool_id", "version", "source_commit", "executable",
                    "sha256", "evidence_id"}
+# Whole 137-138 MHz VHF weather-satellite band: any scope stop in it refuses APT decode/export.
+APT_SPAN_HZ = (137_000_000.0, 138_000_000.0)
 _DISABLED = {
+    # srrx.egc_gate exists but stays unreleased (C2 table, ПОЛ-06, checksum unverified).
     "egc-safetynet": "DISABLED_NO_VERIFIED_HEADER_PARSER_AND_TEST_VECTORS",
     "dsc-safety": "DISABLED_NO_VERIFIED_FORMAT_CATEGORY_PARSER_AND_TEST_VECTORS",
     "satdump-weather": "DISABLED_NO_QUALIFIED_RX_ONLY_BUILD_AND_VERSIONED_CLI",
@@ -190,7 +195,20 @@ def _wav_info(path):
         _refuse("MONO_PCM16_APT_WAV_REQUIRED")
 
 
-def make_plan(preset, source, metadata, installation):
+def _scope_permits(scope, operation):
+    """Only adds refusals: masked-band stop always; the session Artemis latch when given."""
+    if scope is not None and not isinstance(scope, ScopeLatch):
+        _refuse("SCOPE_LATCH_REQUIRED")
+    try:
+        stopped = scope_check(*APT_SPAN_HZ)["stop"] or (
+            scope is not None and scope.permits(operation, APT_SPAN_HZ) is not True)
+    except ValueError:
+        stopped = True
+    if stopped:
+        _refuse("OUT_OF_SCOPE")
+
+
+def make_plan(preset, source, metadata, installation, *, scope=None):
     """Return a reviewable manifest, never a caller-editable executable plan."""
     if not isinstance(preset, str):
         _refuse("PRESET_NOT_ALLOWLISTED")
@@ -199,6 +217,7 @@ def make_plan(preset, source, metadata, installation):
     if preset != PRESET:
         _refuse("PRESET_NOT_ALLOWLISTED")
     _validate_source(metadata)
+    _scope_permits(scope, "decode")  # before any installation or source file access
     _validate_installation(installation)
     source = _file(source)
     actual, size = _hash_file(source, MAX_INPUT_BYTES)
@@ -302,17 +321,18 @@ def _sanitized_png(path):
     return bytes(result), {"width": width, "height": height}
 
 
-def execute(preset, source, metadata, installation, output_directory, *, timeout_s=60):
+def execute(preset, source, metadata, installation, output_directory, *, timeout_s=60, scope=None):
     """Revalidate a job and run only the fixed vendor WAV→PNG command.
 
     No argv, shell, environment, device, pipeline name or decoded-text sink can
     be supplied by a job. The output directory must not exist; failed runs leave
     no result directory. The installation record is administrator-trusted input.
+    A scope stop latched during the run discards the temporary output unpublished.
     """
     if (isinstance(timeout_s, bool) or not isinstance(timeout_s, (float, int)) or
             not math.isfinite(timeout_s) or not 0.05 <= timeout_s <= 300):
         _refuse("TIMEOUT_RANGE")
-    plan = make_plan(preset, source, metadata, installation)
+    plan = make_plan(preset, source, metadata, installation, scope=scope)
     target = Path(output_directory)
     if not target.is_absolute() or target.exists() or target.is_symlink():
         _refuse("NEW_ABSOLUTE_OUTPUT_DIRECTORY_REQUIRED")
@@ -364,6 +384,7 @@ def execute(preset, source, metadata, installation, output_directory, *, timeout
         # Refuse a destination concurrently created by another operation.
         if target.exists() or target.is_symlink():
             _refuse("OUTPUT_DESTINATION_CHANGED")
+        _scope_permits(scope, "export")  # a stop during the run leaves no published result
         os.rename(publication, target)
         return report
 

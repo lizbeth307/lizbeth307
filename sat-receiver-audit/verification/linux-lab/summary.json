@@ -10,6 +10,7 @@
     "clock_source": "host preparation timestamp plus guest uptime; not GNSS qualification"
   },
   "suites": {
+    "dependency-verification.json": "PASS",
     "software-tests.json": "PASS",
     "system-smoke.json": "PASS",
     "pty-smoke.json": "PASS",

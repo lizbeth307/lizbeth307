@@ -1,5 +1,6 @@
 """Temporary-directory fixtures never represent accepted hardware/releases."""
 import copy
+import fnmatch
 import hashlib
 import json
 import os
@@ -133,6 +134,38 @@ class DeploymentTests(unittest.TestCase):
             mutate(config)
             with self.assertRaises(deploy.DeploymentError):
                 deploy.validate_devices(config)
+        # A devices.json written before the radio-off binding gets a specific, actionable refusal.
+        config = self.devices()
+        config.pop("wifi_bt")
+        with self.assertRaisesRegex(deploy.DeploymentError, "predates the radio-off binding: add wifi_bt.fe11s_port4_usb_path"):
+            deploy.validate_devices(config)
+
+    def test_no_tty_or_usb_device_gets_two_binding_rules(self):
+        # 71-srrx-gnss.rules binds UART6 998000.serial: a Pico there would be re-owned srrx-gnss 0640 and aliased lab/gnss.
+        config = self.devices()
+        config["pico"]["kernel_parent"] = deploy.GNSS_KERNEL_PARENT
+        for build in (deploy.validate_devices, deploy.udev_rules):
+            with self.subTest(build=build.__name__), self.assertRaisesRegex(deploy.DeploymentError, "998000.serial"):
+                build(config)
+        with self.assertRaises(deploy.DeploymentError):
+            deploy.stage(self.root / "gnss-parent", config)
+        self.assertFalse((self.root / "gnss-parent").exists())  # refused before anything is created
+        # A USB Pico carrying a receiver identity would also match that receiver's usb_device rule (GROUP lab).
+        for name in ("rtl_a", "rtl_b", "hfplus"):
+            config = self.devices()
+            receiver = config["usb"][name]
+            config["pico"].update(kind="usb", kernel_parent=None, vid=receiver["vid"], pid=receiver["pid"], serial=receiver["serial"])
+            with self.subTest(receiver=name), self.assertRaisesRegex(deploy.DeploymentError, "two bindings"):
+                deploy.udev_rules(config)
+        config = self.devices()
+        config["pico"].update(kind="usb", kernel_parent=None, vid="0bda", pid="2838", serial="LABPICO1")
+        rules = deploy.udev_rules(config)  # same VID/PID, other serial: the exact ATTR{serial} rules stay disjoint
+        self.assertEqual(rules.count('SYMLINK+="lab/pico"'), 1)
+        rules = (deploy.udev_rules(self.devices()) + deploy.gnss_udev_rules()).splitlines()
+        aliases = [line.split('SYMLINK+="', 1)[1].split('"', 1)[0] for line in rules if "SYMLINK+=" in line]
+        self.assertEqual(sorted(aliases), ["lab/gnss", "lab/hfplus", "lab/pico", "lab/rtla", "lab/rtlb"])
+        parents = [line.split('KERNELS=="', 1)[1].split('"', 1)[0] for line in rules if "KERNELS==" in line]
+        self.assertEqual(sorted(parents), ["998000.serial", "99c000.serial"])
 
     def test_stage_does_not_enable_or_create_acceptance(self):
         result = deploy.stage(self.root / "candidate", self.devices())
@@ -167,13 +200,23 @@ class DeploymentTests(unittest.TestCase):
         self.assertIn('KERNEL=="1-1.4", ATTR{authorized}="0"', rule)
         self.assertNotIn("idVendor", rule)  # by port path, any VID
         unit = (rootfs / "etc/systemd/system" / deploy.RADIO_OFF_UNIT).read_text()
-        self.assertIn("ExecStart=/usr/bin/python3 -m srrx.rfkill block", unit)
+        self.assertIn("ExecStart=/usr/bin/python3 -B -m srrx.rfkill block", unit)
+        self.assertIn("PYTHONDONTWRITEBYTECODE=1", unit)  # no __pycache__ in the verified tree
+        self.assertIn("ProtectSystem=strict", unit)
         self.assertTrue((rootfs / "opt/srrx/software/srrx/rfkill.py").is_file())
         self.assertIn("Before=srrx.service", unit)
         dropin = (rootfs / "etc/systemd/system/srrx.service.d/10-radio-off.conf").read_text()
         self.assertIn("Requires=" + deploy.RADIO_OFF_UNIT, dropin)
         self.assertIn("After=" + deploy.RADIO_OFF_UNIT, dropin)
         self.assertNotIn("unblock", unit + dropin + "\n".join(modprobe))
+        # DefaultDependencies=no: python runs from /opt, so the mount holding it comes first.
+        self.assertIn("RequiresMountsFor=/opt/srrx", unit.splitlines())
+        # The shutdown bridge must stay recoverable: no staged drop-in may give it a hard dependency.
+        bridge = rootfs / "etc/systemd/system/srrx-poweroff.service.d"
+        self.assertTrue(bridge.is_dir())
+        lines = [line for path in sorted(bridge.rglob("*")) if path.is_file() for line in path.read_text().splitlines()]
+        self.assertFalse([line for line in lines if line.startswith(("Requires=", "BindsTo=", "Requisite="))], lines)
+        self.assertFalse((bridge / "10-radio-off.conf").exists())
 
     def radio_root(self, config=None):
         root = self.root / "target"
@@ -261,10 +304,21 @@ class DeploymentTests(unittest.TestCase):
         found = deploy.prohibited_installed(banned)
         self.assertEqual(found, sorted(banned))
         lab_only = {"dream": "2.1.1-2", "librtlsdr0": "2.0.1-2build1", "librtlsdr2": "2.0.1-2build1",
-                    "sdrangel": "7.17.2-1", "openwebrx": "1.2.126", "gpredict": "2.3-115-g0f3beb6-3build3"}
-        self.assertEqual(len(deploy.prohibited_installed(lab_only)), len(lab_only))
+                    "sdrangel": "7.17.2-1", "sdrangelsrv": "7.17.2-1", "sdrpp": "1.1.0-1", "openwebrx": "1.2.126",
+                    "satdump": "1.2.2-1", "rtl-sdr": "2.0.1-2build1", "gpredict": "2.3-115-g0f3beb6-3build3",
+                    "gr-satellites": "5.5.0-2build2", "limesuiteng-cli": "1.0.0+lab1"}
+        self.assertEqual(deploy.prohibited_installed(lab_only), sorted(lab_only))
+        # The "+lab builds only" rule is the policy's (require_lab_build); librtlsdr0/limesuiteng-cli are forbidden outright.
+        self.assertEqual(deploy.LAB_BUILD_ONLY_PACKAGES, deploy.lab_build_only_packages())
+        self.assertLessEqual({"sdrangel", "sdrangelsrv", "sdrpp", "openwebrx", "satdump", "rtl-sdr", "gpredict", "gr-satellites"},
+                             deploy.LAB_BUILD_ONLY_PACKAGES)
+        self.assertFalse({"librtlsdr0", "limesuiteng-cli"} & deploy.LAB_BUILD_ONLY_PACKAGES)
+        # Locked +lab versions (sources.lock.json) are the allowed ones, gr-satellites' -0lab1 revision included.
+        lock = {c["id"]: c["version"] for c in deploy.load(HERE / "sources.lock.json")["components"]}
         allowed = {"dream": "2.1.1-2+lab1", "librtlsdr2": "2.0.3-0+lab1", "sdrangel": "7.27.2-1+lab1",
-                   "openwebrx": "1.2.126+lab1", "gpredict": "2.3-115-g1d80049+lab", "aic8800-usb-dkms": "4.0"}
+                   "openwebrx": "1.2.126+lab1", "gpredict": lock["gpredict"], "gr-satellites": lock["gr-satellites"],
+                   "satdump": "2.0.0~alpha+git20260929+lab1", "sdrpp": "git8c9f5ee+lab1", "aic8800-usb-dkms": "4.0"}
+        self.assertEqual(lock["gpredict"], "2.6+git20261011+lab1")
         dependencies = deploy.load(HERE / "dependencies.json")
         for name, versions in dependencies["required_target_packages"].items():
             allowed[name] = versions[0]
@@ -275,10 +329,17 @@ class DeploymentTests(unittest.TestCase):
     def test_prohibited_executables_on_target_are_reported(self):
         root = self.root / "target"
         (root / "usr/bin").mkdir(parents=True)
-        for name in ("wifi_test", "bt_test", "rigctld", "rtl_tcp", "rtl_sdr", "python3"):
+        (root / "usr/sbin").mkdir(parents=True)
+        for name in ("wifi_test", "bt_test", "rigctld", "rtl_tcp", "rtl_sdr", "python3", "rtl_biast", "rotctld", "LimeGUI", "satdump"):
             (root / "usr/bin" / name).write_text("")
+        (root / "usr/sbin/RTL_EEPROM").write_text("")
+        # Same set as verify_build (BAD_NAMES) and selftest RX-01b (policy forbidden_basenames), case-insensitive.
         self.assertEqual(deploy.prohibited_executables(root),
-                         ["/usr/bin/bt_test", "/usr/bin/rigctld", "/usr/bin/rtl_tcp", "/usr/bin/wifi_test"])
+                         ["/usr/bin/LimeGUI", "/usr/bin/bt_test", "/usr/bin/rigctld", "/usr/bin/rotctld", "/usr/bin/rtl_biast",
+                          "/usr/bin/rtl_tcp", "/usr/bin/wifi_test", "/usr/sbin/RTL_EEPROM"])
+        policy = deploy.load(HERE / "receive-only-policy.json")
+        self.assertEqual(deploy.forbidden_basenames(), {n.lower() for n in deploy.PROHIBITED_EXECUTABLES | deploy.BAD_NAMES}
+                         | {e["name"].lower() for e in policy["forbidden_basenames"]})
 
     def test_bundle_is_deterministic_and_changed_stage_rejected(self):
         staging = self.root / "staging"
@@ -465,6 +526,75 @@ class DeploymentTests(unittest.TestCase):
         self.assertNotIn("installed package inventory unavailable", issues)
         self.assertFalse([i for i in issues if i.startswith("missing/different pinned package")])
         self.assertIn("prohibited packages installed: urh,wsjtx", issues)
+
+    def test_doctor_forbidden_packages_are_the_receive_only_policy(self):
+        policy = deploy.load(HERE / "receive-only-policy.json")["forbidden_packages"]
+        unconditional = [p for p in policy if p["check"] == "presence" and "version_rule" not in p]
+        names, globs = deploy.prohibited_packages()
+        self.assertEqual(names, {p["name"] for p in unconditional if "name" in p})
+        self.assertEqual(globs, {p["glob"] for p in unconditional if "glob" in p})
+        # Nothing doctor blocked with its former own list is lost.
+        self.assertLessEqual({"wsjtx", "fldigi", "qsstv", "direwolf", "urh", "soapysdr-module-all", "soapysdr0.8-module-all",
+                              "soapysdr0.8-module-remote", "limesuiteng-gui", "gr-limesuiteng", "libhamlib-utils"}, names)
+        requirements = deploy.load(HERE / "dependencies.json")["required_target_packages"]
+        rows = ["%s\t%s\tinstalled" % (name, versions[0]) for name, versions in requirements.items()]
+        rows += ["%s:arm64\t1.0-1\tunpacked" % name for name in sorted(names)]
+        # Glob hits and version rules (doctor applies them as RX-01a does); pin_only entries are RX-01a BLOCKED findings only.
+        rows += ["digiham-tools\t1.0\tinstalled", "linux-image-7.0.0-1-qcom\t7.0.0-1\thalf-configured", "librtlsdr2\t2.0.3-0+lab1\tinstalled",
+                 "gpredict\t2.3-115-g0f3beb6-3build3\tinstalled", "qcom-fastrpc1\t1.0\tinstalled", "libqnn1\t2.40\tinstalled",
+                 "codecserver\t0.2\tconfig-files"]
+        inventory = "\n".join(rows) + "\n"
+        def run(policy_path=None):
+            listing = lambda args, limit=100_000: {"returncode": 0, "stdout": inventory if args[0] == "dpkg-query" else "", "stderr": ""}
+            with patch.object(deploy, "command", listing), patch.object(deploy, "POLICY", policy_path or deploy.POLICY):
+                return deploy.doctor()
+        report = run()
+        issue = [i for i in report["issues"] if i.startswith("prohibited packages installed: ")]
+        self.assertEqual(len(issue), 1)
+        reported = set(issue[0].split(": ", 1)[1].split(","))
+        self.assertLessEqual(names | {"digiham*", "linux-image-7.*"}, reported)
+        self.assertFalse(reported & {"librtlsdr2", "gpredict", "qcom-fastrpc*", "libqnn*", "codecserver*"}, reported)
+        listed = [r.split("\t") for r in rows if not r.endswith("config-files")]
+        # Version rules come from the same policy entries (identifier + VERSION_NOTE): no doctor-only list remains.
+        ruled = [p for p in policy if p["check"] == "presence" and "version_rule" in p]
+        versioned = {(p.get("name") or p["glob"]) + deploy.VERSION_NOTE for p in ruled for n, v, _ in listed
+                     if (n.split(":")[0] == p["name"] if "name" in p else fnmatch.fnmatchcase(n.split(":")[0], p["glob"]))
+                     and deploy.version_forbidden(p["version_rule"], v)}
+        self.assertEqual(versioned, {"gpredict" + deploy.VERSION_NOTE})  # librtlsdr2 2.0.3-0+lab1 is the allowed build
+        self.assertEqual(reported - names - versioned, {g for g in globs if any(fnmatch.fnmatchcase(n.split(":")[0], g) for n, _, _ in listed)})
+        self.assertLessEqual(set(deploy.PROHIBITED_PACKAGES), names)  # one denylist source
+        self.assertLessEqual(set(deploy.PROHIBITED_PACKAGE_GLOBS), globs)
+        self.assertNotIn("digiham-tools", issue[0])  # policy identifiers only, never dpkg text
+        self.assertEqual(report["status"], "BLOCKED")
+        # Strict bounded JSON: a broken policy is a doctor issue (BLOCKED), never an empty forbidden set.
+        text = (HERE / "receive-only-policy.json").read_text(encoding="utf-8")
+        for label, broken in (("duplicate", text.replace('"status": "DRAFT",', '"status": "DRAFT", "status": "DRAFT",', 1)),
+                              ("nonfinite", text.replace('"schema_version": 1', '"schema_version": NaN', 1)),
+                              ("empty", json.dumps({"forbidden_packages": []})), ("not-object", "[]"),
+                              ("entry", json.dumps({"forbidden_packages": [{"name": "", "check": "presence"}]})),
+                              ("oversized", " " * (4 * 1024 * 1024) + "{}")):
+            path = self.root / ("policy-" + label + ".json")
+            path.write_text(broken, encoding="utf-8")
+            self.assertNotEqual(path.read_text(encoding="utf-8"), text)
+            with self.subTest(policy=label):
+                report = run(path)
+                self.assertTrue(any(i.startswith("receive-only policy unavailable: ") for i in report["issues"]), report["issues"])
+                self.assertEqual(report["status"], "BLOCKED")
+                with self.assertRaises(deploy.DeploymentError):
+                    deploy.prohibited_packages(path)
+        with patch.object(deploy, "POLICY", self.root / "policy-entry.json"), self.assertRaises(deploy.DeploymentError):
+            deploy.check()  # build.sh --check refuses a broken policy before it ships
+
+    def test_full_plan_orbit_wheels_equal_the_locked_wheelhouse(self):
+        plan = deploy.load(HERE / "dependencies.json")["python_full_plan_constraints"]
+        locked = {w["name"]: w for w in deploy.load(HERE / "linux_lab/wheelhouse-manifest.json")["wheels"]}
+        recorded = plan["aarch64_locked_wheels"]
+        self.assertEqual(set(recorded) - {"source"}, {"skyfield", "sgp4", "jplephem", "certifi"})
+        for name, record in recorded.items():
+            if name != "source":
+                self.assertEqual(record, {k: locked[name][k] for k in ("version", "filename", "sha256")}, name)
+        self.assertEqual((plan["skyfield"], plan["sgp4"]), (recorded["skyfield"]["version"], recorded["sgp4"]["version"]))
+        self.assertTrue(plan["status"].startswith("OPEN"))  # the lab-venv lock (numpy<2, GNU Radio) is still open
 
 
 class VendorPatchTests(unittest.TestCase):

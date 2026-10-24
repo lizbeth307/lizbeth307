@@ -1,0 +1,292 @@
+{
+  "schema_version": 1,
+  "generated_at_utc": "2026-10-23T20:30:49.974542+00:00",
+  "status": "PASS",
+  "qualification": "LINUX_XCB_XVFB_SIMULATION",
+  "environment": {
+    "system": "Linux",
+    "machine": "aarch64",
+    "kernel": "6.8.0-147-generic",
+    "os_id": "ubuntu",
+    "os_version": "24.04",
+    "python": "3.12.3",
+    "uid": 1001,
+    "user": "labclient",
+    "groups": [
+      "labclient",
+      "labd"
+    ]
+  },
+  "socket": "/run/srrx-linux-lab/control.sock",
+  "display": ":99",
+  "source_sha256": "1808b5dc14d0f88b4d223bbb5709ff867e8ae19bc0407cc5dfdcaec12a571229",
+  "physical_tests_performed": false,
+  "q6a_tests_performed": false,
+  "xvfb_started_or_stopped_by_this_script": false,
+  "scope": "Actual XCB/Xvfb visible Qt widgets and Unix SIM service; no physical display/touch or hardware qualification",
+  "references": [
+    "https://doc.qt.io/qt-6/qscreen.html",
+    "https://xorg.freedesktop.org/releases/X11R6.9.0/doc/html/Xserver.1.html",
+    "https://www.x.org/releases/X11R7.6/doc/libX11/specs/libX11/libX11.html",
+    "https://specifications.freedesktop.org/wm/latest/ar01s05.html"
+  ],
+  "xvfb": {
+    "display": ":99",
+    "unix_socket": "/tmp/.X11-unix/X99",
+    "unix_socket_uid": 1001,
+    "servers": [
+      {
+        "pid": 2656,
+        "uid": 1001,
+        "argv": [
+          "/usr/bin/Xvfb",
+          ":99",
+          "-screen",
+          "0",
+          "1280x800x24",
+          "-nolisten",
+          "tcp"
+        ]
+      }
+    ],
+    "explicit_nolisten_tcp": true,
+    "display_tcp_listener": false
+  },
+  "initial_service": {
+    "mode": "SIMULATION",
+    "pico_state": "TRIPPED",
+    "pico_reset_asserted": true,
+    "armed": false,
+    "fault": "owner lease expired",
+    "owner": null,
+    "lease_deadline_ms": null,
+    "outputs": {
+      "EN_LNB": false,
+      "EN_BONI": false,
+      "K1_ON": false,
+      "K2_ON": false,
+      "SW_RTLA_A": false,
+      "SW_RTLA_B": false,
+      "SW_RTLB_A": false,
+      "SW_RTLB_B": false,
+      "EN_LABPORT": false,
+      "EN_AUX12": false,
+      "EN_RTLA": false,
+      "EN_RTLB": false,
+      "EN_HFP": false,
+      "EN_LNA1": false,
+      "EN_LNA2": false,
+      "EN_LNA3": false,
+      "EN_T7": false,
+      "EN_LNA4": false,
+      "EN_LIME3V3": false,
+      "SW_LIME_A": false,
+      "SW_LIME_B": false,
+      "EN_SB_LNA": false
+    },
+    "energized": []
+  },
+  "unmodified_cli": {
+    "command": [
+      "/opt/srrx/venv/bin/python3",
+      "-m",
+      "srrx.hmi",
+      "--socket",
+      "/run/srrx-linux-lab/control.sock"
+    ],
+    "pid": 2662,
+    "alive_after_s": 8.172649,
+    "screen": {
+      "schema_version": 1,
+      "status": "PASS",
+      "environment": {
+        "system": "Linux",
+        "machine": "aarch64",
+        "kernel": "6.8.0-147-generic",
+        "os_id": "ubuntu",
+        "os_version": "24.04",
+        "python": "3.12.3",
+        "uid": 1001,
+        "user": "labclient",
+        "groups": [
+          "labclient",
+          "labd"
+        ]
+      },
+      "pyside6": "6.12.0",
+      "qt": "6.12.0",
+      "mode": "cli-screen",
+      "physical_tests_performed": false,
+      "qt_platform": "xcb",
+      "screen": {
+        "name": "screen",
+        "width": 1280,
+        "height": 800
+      },
+      "production_window": {
+        "window_id": 6291463,
+        "pid": 2662,
+        "title": "SR-RX \u2022 local receive console",
+        "map_state": "IsViewable",
+        "width": 1100,
+        "height": 800
+      },
+      "screen_capture": {
+        "path": "production-cli-xcb.png",
+        "bytes": 123403,
+        "width": 1280,
+        "height": 800,
+        "sampled_distinct_colors": 135,
+        "sha256": "af312dd4a6e05cfb4e05b21ede42c8b2a16bbd1a93a7f546bc83cb3eea4e62ff"
+      },
+      "frame_readiness_attempts": 37,
+      "frame_ready_after_s": 4.83978
+    },
+    "returncode": -15,
+    "termination": "SIGTERM with bounded SIGKILL fallback after unarmed startup probe; clean close is established separately by production-main fixture"
+  },
+  "production_main_fixture": {
+    "schema_version": 1,
+    "status": "PASS",
+    "environment": {
+      "system": "Linux",
+      "machine": "aarch64",
+      "kernel": "6.8.0-147-generic",
+      "os_id": "ubuntu",
+      "os_version": "24.04",
+      "python": "3.12.3",
+      "uid": 1001,
+      "user": "labclient",
+      "groups": [
+        "labclient",
+        "labd"
+      ]
+    },
+    "pyside6": "6.12.0",
+    "qt": "6.12.0",
+    "mode": "menu-fixture",
+    "physical_tests_performed": false,
+    "qt_platform": "xcb",
+    "screen": {
+      "name": "screen",
+      "width": 1280,
+      "height": 800
+    },
+    "entrypoint": "unmodified srrx.hmi.main([--socket,...]) with observation/close timers",
+    "hmi_sha256": "12bf7ac65c1a90e99c89f13af980118dedaaa5ab569bba8c3d5682f015e57dd6",
+    "touch_events_injected": false,
+    "arm_or_control_requests_injected": false,
+    "latest_service": {
+      "mode": "SIMULATION",
+      "pico_state": "TRIPPED",
+      "pico_reset_asserted": true,
+      "armed": false,
+      "fault": "owner lease expired",
+      "owner": null,
+      "lease_deadline_ms": null,
+      "outputs": {
+        "EN_LNB": false,
+        "EN_BONI": false,
+        "K1_ON": false,
+        "K2_ON": false,
+        "SW_RTLA_A": false,
+        "SW_RTLA_B": false,
+        "SW_RTLB_A": false,
+        "SW_RTLB_B": false,
+        "EN_LABPORT": false,
+        "EN_AUX12": false,
+        "EN_RTLA": false,
+        "EN_RTLB": false,
+        "EN_HFP": false,
+        "EN_LNA1": false,
+        "EN_LNA2": false,
+        "EN_LNA3": false,
+        "EN_T7": false,
+        "EN_LNA4": false,
+        "EN_LIME3V3": false,
+        "SW_LIME_A": false,
+        "SW_LIME_B": false,
+        "EN_SB_LNA": false
+      },
+      "energized": []
+    },
+    "window_capture": {
+      "path": "production-menu-widget-xcb.png",
+      "bytes": 122059,
+      "width": 1100,
+      "height": 800,
+      "sampled_distinct_colors": 139,
+      "sha256": "1cbe18ce2f07230e5cd3a337a5a6ee8b8db81f5ad8bef543ad7320685b6cbfe9"
+    },
+    "xserver_capture": {
+      "path": "production-menu-xserver-xcb.png",
+      "bytes": 122059,
+      "width": 1100,
+      "height": 800,
+      "sampled_distinct_colors": 139,
+      "sha256": "1cbe18ce2f07230e5cd3a337a5a6ee8b8db81f5ad8bef543ad7320685b6cbfe9"
+    },
+    "connected_views": 3,
+    "first_connected_s": 3.980496,
+    "capture_after_s": 4.313755,
+    "banner": "SIMULATION | PROTECTION STOP | CONTROL OFF | HOLD OFF | FIELD",
+    "menu_pages": 6,
+    "entrypoint_returncode": 0,
+    "clean_close": true,
+    "elapsed_s": 5.252247
+  },
+  "qt_platform": "xcb",
+  "qt": "6.12.0",
+  "pyside6": "6.12.0",
+  "connection_simulation": true,
+  "no_armed_or_energized_samples": true,
+  "auto_arm_observation": "No armed or energized state in successful independent Unix status samples and actual GUI worker status samples; unsampled intervals are not continuous observation",
+  "cleanup_disarm_requested": true,
+  "final_service": {
+    "mode": "SIMULATION",
+    "pico_state": "TRIPPED",
+    "pico_reset_asserted": true,
+    "armed": false,
+    "fault": "owner lease expired",
+    "owner": null,
+    "lease_deadline_ms": null,
+    "outputs": {
+      "EN_LNB": false,
+      "EN_BONI": false,
+      "K1_ON": false,
+      "K2_ON": false,
+      "SW_RTLA_A": false,
+      "SW_RTLA_B": false,
+      "SW_RTLB_A": false,
+      "SW_RTLB_B": false,
+      "EN_LABPORT": false,
+      "EN_AUX12": false,
+      "EN_RTLA": false,
+      "EN_RTLB": false,
+      "EN_HFP": false,
+      "EN_LNA1": false,
+      "EN_LNA2": false,
+      "EN_LNA3": false,
+      "EN_T7": false,
+      "EN_LNA4": false,
+      "EN_LIME3V3": false,
+      "SW_LIME_A": false,
+      "SW_LIME_B": false,
+      "EN_SB_LNA": false
+    },
+    "energized": []
+  },
+  "read_only_observation": {
+    "attempts": 161,
+    "successful_samples": 161,
+    "timeouts": 0,
+    "transient_os_errors": 0,
+    "max_consecutive_misses": 0,
+    "max_success_gap_s": 0.170278,
+    "coverage": "Successful read-only Unix status samples only; missing replies do not establish readiness or service state",
+    "first_success_after_s": 0.064343,
+    "elapsed_s": 17.405074,
+    "last_success_age_s": 5.9e-05,
+    "max_unsampled_gap_s": 0.170278
+  }
+}

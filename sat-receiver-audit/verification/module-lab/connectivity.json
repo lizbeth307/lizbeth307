@@ -29,8 +29,8 @@
     "physical_or_TBD_interfaces_preserved": 94
   },
   "independent_netlist": {
-    "tool": "Eeschema 10.0.7-10.0.7~ubuntu24.04.1",
-    "sha256": "1b767be74bfa489331abdf482bd143c5203dc46af3e47f2fb834a5c2fffeb871",
+    "tool": "Eeschema 10.0.7",
+    "sha256": "acaa61986e3af7799a99696bb000775fc0afe2a53cb0b6cc3d2473f255ee9312",
     "xml_pin_nodes": 2318,
     "canonical_nets": 466,
     "nc_nodes": 137,
@@ -118076,8 +118076,8 @@
     "design/E3.json": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0",
     "design/E4.json": "60c0f73c66737853033eea13c28b013d9e8559d1e0df57f2b7902af0da757797",
     "design/E5.json": "9d61ff10e75417c806afda7ab923ac06de7faf9b6ff5b53acce57477b3960212",
-    "deployment/module_lab/inventory.json": "f0be38a4bd41d989018d05a29e409cd821f90b48ed3df2ebb135d3f5f41c0137",
-    "verification/netlist.xml": "1b767be74bfa489331abdf482bd143c5203dc46af3e47f2fb834a5c2fffeb871",
+    "deployment/module_lab/inventory.json": "24bca1e37cf557ec0d29739ad5ef8732699892008adb8b056143798a1d5f7c34",
+    "verification/netlist.xml": "acaa61986e3af7799a99696bb000775fc0afe2a53cb0b6cc3d2473f255ee9312",
     "deployment/module_lab/connectivity.py": "e779cef97cf4e41c37ae299e54828e0cd165b2edba8e17265dfdd7f24a2cfd5f"
   },
   "limits": [

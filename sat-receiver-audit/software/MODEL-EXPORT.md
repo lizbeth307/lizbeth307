@@ -8,11 +8,11 @@
 
 ```sh
 python -m venv --system-site-packages /tmp/srrx-model-tools
-/tmp/srrx-model-tools/bin/python -m pip install 'onnx>=1.16,<2' 'onnxruntime>=1.18,<2'
+/tmp/srrx-model-tools/bin/python -m pip install 'onnx>=1.17,<2' 'onnxruntime>=1.20,<2'
 PYTHONPATH=software /tmp/srrx-model-tools/bin/python -m srrx.model_export dependencies
 ```
 
-У цій перевірці окреме середовище містило ONNX 1.23.2, ONNX Runtime 1.31.0 та NumPy 2.3.5. Доступні providers: Azure і CPU; QNN provider недоступний. За відсутності optional dependencies модуль імпортується, `--help` працює, export повертає явне повідомлення й exit code 3. Тести, що потребують справжнього runtime, позначаються skipped.
+Межі версій збігаються з extra `model` у `software/pyproject.toml`; замість окремих пакетів можна встановити `'./software[model]'`. У цій перевірці окреме середовище містило ONNX 1.23.2, ONNX Runtime 1.31.0 та NumPy 2.3.5. Доступні providers: Azure і CPU; QNN provider недоступний. За відсутності optional dependencies модуль імпортується, `--help` працює, export повертає явне повідомлення й exit code 3. Тести, що потребують справжнього runtime, позначаються skipped.
 
 ## Вимкнення телеметрії до initialization
 

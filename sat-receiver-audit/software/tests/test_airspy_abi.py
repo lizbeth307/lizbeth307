@@ -74,13 +74,14 @@ class AirspyCallbackQueueTests(unittest.TestCase):
         import sys
         import threading
         import time
-        rx, received, done = self.receiver(), [], threading.Event()
+        rx, received, done, latest = self.receiver(), [], threading.Event(), [0]
         def produce():
             try:
                 for seq in range(1, 10001):
                     pointer, keep = self.transfer(float(seq))
                     if rx._receive(pointer):
                         break
+                    latest[0] = seq
             finally:
                 done.set()
         interval = sys.getswitchinterval()
@@ -95,7 +96,12 @@ class AirspyCallbackQueueTests(unittest.TestCase):
                     continue
                 received.append((rx.discontinuity, int(block[0].real)))
                 if len(received) % 32 == 0:
-                    time.sleep(.001)  # a lagging consumer, like a slow fsync
+                    # A lagging consumer, like a slow fsync: wait until the producer has run more
+                    # than the queue holds past this block, so a drop happens at any CPU speed
+                    # (QEMU TCG included) instead of depending on scheduler timing.
+                    target, deadline = received[-1][1] + rx.blocks.maxsize + 2, time.monotonic() + 10
+                    while latest[0] < target and not done.is_set() and time.monotonic() < deadline:
+                        time.sleep(.0005)
             producer.join()
         finally:
             sys.setswitchinterval(interval)

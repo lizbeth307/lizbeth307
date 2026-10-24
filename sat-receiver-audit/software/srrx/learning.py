@@ -17,6 +17,7 @@ import random
 import tempfile
 import uuid
 
+from .scope_policy import ScopeLatch, scope_check
 from .spectrum import mask_frame, validate_frame
 
 LABELS = ("unknown_energy", "analog_broadcast", "digital_broadcast",
@@ -192,8 +193,42 @@ def validate_dataset(dataset):
     return copy.deepcopy(dataset)
 
 
-def annotate(dataset, frame, start_bin, end_bin, label, *, group_id, user_confirmed=False):
-    """Return a new dataset; calling code must require a deliberate user action."""
+def _box_spans(checked, start_bin, end_bin):
+    """RF spans a box covers; bin 0 also carries the wrapped upper half-bin.
+
+    As spectrum._checked_frame: the even-FFT Nyquist bin 0 holds energy from
+    [center + rate/2 - width/2, center + rate/2] too, so a box from bin 0 is
+    checked on both spans.
+    """
+    center, rate = checked["center_hz"], checked["sample_rate_hz"]
+    width = rate / checked["fft_size"]
+    spans = [(center + checked["relative_frequency_hz"][start_bin] - width / 2,
+              center + checked["relative_frequency_hz"][end_bin - 1] + width / 2)]
+    if start_bin == 0:
+        spans.append((center + rate / 2 - width / 2, center + rate / 2))
+    return spans
+
+
+def _scope_guard(checked, start_bin, end_bin, scope, message="Annotation span is out of scope", *, always=True):
+    """Only adds refusals: masked-band stop (unless always=False), plus the session Artemis latch if given."""
+    if scope is not None and not isinstance(scope, ScopeLatch):
+        raise LearningError("scope must be the session ScopeLatch")
+    try:
+        stopped = any((always and scope_check(*span)["stop"]) or
+                      (scope is not None and scope.permits("label", span) is not True)
+                      for span in _box_spans(checked, start_bin, end_bin))
+    except ValueError:
+        stopped = True
+    if stopped:
+        raise LearningError(message)  # no frequency in the message
+
+
+def annotate(dataset, frame, start_bin, end_bin, label, *, group_id, user_confirmed=False, scope=None):
+    """Return a new dataset; calling code must require a deliberate user action.
+
+    scope is the session scope_policy.ScopeLatch; an Artemis stop on the box
+    span refuses the label. Without it the masked-band stop still applies.
+    """
     if user_confirmed is not True or label not in LABELS:
         raise LearningError("Explicit user confirmation and an allowlisted label are required")
     try:
@@ -202,6 +237,7 @@ def annotate(dataset, frame, start_bin, end_bin, label, *, group_id, user_confir
         raise LearningError("group_id must be an anonymous UUID, never an emitter identifier") from None
     result = validate_dataset(dataset)
     checked, power = _patch(frame, start_bin, end_bin)
+    _scope_guard(checked, start_bin, end_bin, scope)
     digest = _hash(checked)
     result["frames"][digest] = checked
     record = {"frame_sha256": digest, "group_sha256": _hash(anonymous),
@@ -290,13 +326,21 @@ def _predict_features(model, feature, distances=None):
             "distance": round(best, 9), "ood": ood}
 
 
-def train(dataset, *, seed=0, validation_fraction=.25):
+def train(dataset, *, seed=0, validation_fraction=.25, scope=None):
+    """Fit and hold-out check a model. scope (the session ScopeLatch) must permit
+    'label' on every trainable box span, so a latched span never feeds a model.
+    """
     dataset = validate_dataset(dataset)
     if type(seed) is not int or not _finite(validation_fraction) or not 0 < validation_fraction <= .5:
         raise LearningError("A deterministic integer seed and 0<holdout<=0.5 are required")
     # unknown_energy boxes stay in the dataset but are not a fitted class: an OOD
     # rejection must never be scored as a correct "unknown_energy" match.
     records = [record for record in dataset["annotations"] if record["label"] in TRAINABLE_LABELS]
+    if scope is not None:
+        # validate_dataset re-masked every frame, and annotate ran the masked-band check.
+        for record in records:
+            _scope_guard(dataset["frames"][record["frame_sha256"]], record["start_bin"], record["end_bin"],
+                         scope, "Training annotation span is out of scope", always=False)
     labels = sorted({record["label"] for record in records})
     if len(labels) < 2:
         raise LearningError("At least two allowlisted trainable classes (not unknown_energy) are required")
@@ -494,11 +538,15 @@ class QairtAdapter:
         return [float(x) for x in result[0]]
 
 
-def infer(model, frame, start_bin, end_bin, *, backend="cpu", npu_manifest=None, npu_runner=None):
+def infer(model, frame, start_bin, end_bin, *, backend="cpu", npu_manifest=None, npu_runner=None, scope=None):
+    """Classify one box. With scope (the session ScopeLatch) a stopped span gives no label."""
     model = validate_model(model)
     if backend not in ("cpu", "npu", "auto"):
         raise LearningError("Backend must be cpu, npu, or auto")
-    feature = extract_features(frame, start_bin, end_bin)
+    checked, power = _patch(frame, start_bin, end_bin)
+    if scope is not None:
+        _scope_guard(checked, start_bin, end_bin, scope, "Classification span is out of scope")
+    feature = _features(power)
     distances = [_distance(feature, model["centroids"][label]) for label in model["labels"]]
     actual_backend = "CPU"
     npu = {"available": False, "reason": "not_requested"}

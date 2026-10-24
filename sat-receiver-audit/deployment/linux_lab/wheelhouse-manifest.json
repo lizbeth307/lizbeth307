@@ -11,8 +11,8 @@
   "host_install_performed": false,
   "native_runtime_import_performed": false,
   "verification_scope": "ZIP_metadata_compatible_tags_and_primary_PyPI_JSON_SHA256_size_no_package_execution",
-  "wheel_count": 19,
-  "total_size_bytes": 313191203,
+  "wheel_count": 23,
+  "total_size_bytes": 313967759,
   "wheels": [
     {
       "name": "build",
@@ -46,6 +46,28 @@
       "inspected_native_elf_machine": null
     },
     {
+      "name": "certifi",
+      "version": "2026.10.19",
+      "filename": "certifi-2026.10.19-py3-none-any.whl",
+      "size_bytes": 136464,
+      "sha256": "42d35340cc5b9ba78e818ddbff0c5b1c2b779de448a340fd1b989f5fa8670e1b",
+      "url": "https://files.pythonhosted.org/packages/c4/51/29046e48f693c54e5b7412216d447a1d8362c9653148d98c02cdf65fa733/certifi-2026.10.19-py3-none-any.whl",
+      "pypi_json_url": "https://pypi.org/pypi/certifi/2026.10.19/json",
+      "pypi_json_file": "pypi-metadata/certifi-2026.10.19.json",
+      "pypi_json_sha256": "ff912753725b147f8da6250d871b07cc801030bdee0b6e3ce1354ff8ddc6ed43",
+      "pypi_sha256": "42d35340cc5b9ba78e818ddbff0c5b1c2b779de448a340fd1b989f5fa8670e1b",
+      "pypi_size_bytes": 136464,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2026-10-20T02:24:15.072385Z",
+      "wheel_tags": [
+        "py3-none-any"
+      ],
+      "requires_python": ">=3.7",
+      "requires_dist": [],
+      "inspected_native_elf_count": 0,
+      "inspected_native_elf_machine": null
+    },
+    {
       "name": "flatbuffers",
       "version": "25.12.19",
       "filename": "flatbuffers-25.12.19-py2.py3-none-any.whl",
@@ -65,6 +87,30 @@
       ],
       "requires_python": null,
       "requires_dist": [],
+      "inspected_native_elf_count": 0,
+      "inspected_native_elf_machine": null
+    },
+    {
+      "name": "jplephem",
+      "version": "2.24",
+      "filename": "jplephem-2.24-py3-none-any.whl",
+      "size_bytes": 49585,
+      "sha256": "2de15608a0f13010a71a0a8af8765646d5884402006dac0dd7639d7db13629ac",
+      "url": "https://files.pythonhosted.org/packages/9d/3f/b9d5739352badc11ca637c8f72525d519458622936bc3313ddefdc7dee96/jplephem-2.24-py3-none-any.whl",
+      "pypi_json_url": "https://pypi.org/pypi/jplephem/2.24/json",
+      "pypi_json_file": "pypi-metadata/jplephem-2.24.json",
+      "pypi_json_sha256": "0afc99225ad0215852b78bf2862ec92fe09c18ff8e4fd41240de89d6d18e12a9",
+      "pypi_sha256": "2de15608a0f13010a71a0a8af8765646d5884402006dac0dd7639d7db13629ac",
+      "pypi_size_bytes": 49585,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2026-01-23T21:03:00.079863Z",
+      "wheel_tags": [
+        "py3-none-any"
+      ],
+      "requires_python": null,
+      "requires_dist": [
+        "numpy"
+      ],
       "inspected_native_elf_count": 0,
       "inspected_native_elf_machine": null
     },
@@ -470,6 +516,30 @@
       "inspected_native_elf_machine": null
     },
     {
+      "name": "sgp4",
+      "version": "2.27",
+      "filename": "sgp4-2.27-cp311-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl",
+      "size_bytes": 219370,
+      "sha256": "ef915c124cdd9807a4eae0abe655ade89076c2cee5df0392cad172aef456cd0e",
+      "url": "https://files.pythonhosted.org/packages/bc/bf/a279758ff3eb290cc5658f035845d3107d9728e1d2d52629c9683845313a/sgp4-2.27-cp311-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl",
+      "pypi_json_url": "https://pypi.org/pypi/sgp4/2.27/json",
+      "pypi_json_file": "pypi-metadata/sgp4-2.27.json",
+      "pypi_json_sha256": "5dacc693e69672eec4f296a227ea94036dd24e3b50143445d06f346a52173404",
+      "pypi_sha256": "ef915c124cdd9807a4eae0abe655ade89076c2cee5df0392cad172aef456cd0e",
+      "pypi_size_bytes": 219370,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2026-07-03T12:54:44.453428Z",
+      "wheel_tags": [
+        "cp311-abi3-manylinux_2_17_aarch64",
+        "cp311-abi3-manylinux2014_aarch64",
+        "cp311-abi3-manylinux_2_28_aarch64"
+      ],
+      "requires_python": "!=3.0.*,!=3.1.*,!=3.2.*,!=3.3.*,!=3.4.*,!=3.5.*,!=3.6.*,!=3.7.*,!=3.8.*,!=3.9.*,>=2.7",
+      "requires_dist": [],
+      "inspected_native_elf_count": 1,
+      "inspected_native_elf_machine": "EM_AARCH64"
+    },
+    {
       "name": "shiboken6",
       "version": "6.12.0",
       "filename": "shiboken6-6.12.0-cp310-abi3-manylinux_2_39_aarch64.whl",
@@ -490,6 +560,33 @@
       "requires_dist": [],
       "inspected_native_elf_count": 2,
       "inspected_native_elf_machine": "EM_AARCH64"
+    },
+    {
+      "name": "skyfield",
+      "version": "1.55",
+      "filename": "skyfield-1.55-py3-none-any.whl",
+      "size_bytes": 371137,
+      "sha256": "9f98964855067460c94aa81a337194136f4a97a62ba8bbbfac1b8556f2b66ad4",
+      "url": "https://files.pythonhosted.org/packages/8d/5a/c4cc09d4421de255ca0504485efceb3646a4e5381bfb665647e39bea5cb1/skyfield-1.55-py3-none-any.whl",
+      "pypi_json_url": "https://pypi.org/pypi/skyfield/1.55/json",
+      "pypi_json_file": "pypi-metadata/skyfield-1.55.json",
+      "pypi_json_sha256": "a0b7973b7b7f603a32be4aa09a69e103593625b4017e1eb654ea670348d0bd56",
+      "pypi_sha256": "9f98964855067460c94aa81a337194136f4a97a62ba8bbbfac1b8556f2b66ad4",
+      "pypi_size_bytes": 371137,
+      "hash_verified": true,
+      "upload_time_iso_8601": "2026-08-07T20:16:50.825990Z",
+      "wheel_tags": [
+        "py3-none-any"
+      ],
+      "requires_python": null,
+      "requires_dist": [
+        "certifi >=2017.4.17",
+        "jplephem >=2.13",
+        "numpy",
+        "sgp4 >=2.13"
+      ],
+      "inspected_native_elf_count": 0,
+      "inspected_native_elf_machine": null
     },
     {
       "name": "typing_extensions",
@@ -540,13 +637,14 @@
   ],
   "dependency_closure": {
     "complete_for_target": true,
-    "project_pyproject_sha256": "0b553aa04753b09482684e6222d977f9f69eb283b68e6095c501619943f615d0",
+    "project_pyproject_sha256": "4abba2900a05bbf5148e572cb8fb58ad2538827b03b5abefa1a9e7c21b2ad190",
     "extras": [
       "radio",
       "hmi",
-      "model"
+      "model",
+      "orbits"
     ],
-    "active_requirements_checked": 27,
+    "active_requirements_checked": 35,
     "requirements": [
       {
         "owner": "build",
@@ -557,6 +655,11 @@
         "owner": "build",
         "requirement": "pyproject_hooks",
         "resolved_version": "1.3.3"
+      },
+      {
+        "owner": "jplephem",
+        "requirement": "numpy",
+        "resolved_version": "2.3.5"
       },
       {
         "owner": "ml_dtypes",
@@ -644,6 +747,26 @@
         "resolved_version": "6.12.0"
       },
       {
+        "owner": "skyfield",
+        "requirement": "certifi>=2017.4.17",
+        "resolved_version": "2026.10.19"
+      },
+      {
+        "owner": "skyfield",
+        "requirement": "jplephem>=2.13",
+        "resolved_version": "2.24"
+      },
+      {
+        "owner": "skyfield",
+        "requirement": "numpy",
+        "resolved_version": "2.3.5"
+      },
+      {
+        "owner": "skyfield",
+        "requirement": "sgp4>=2.13",
+        "resolved_version": "2.27"
+      },
+      {
         "owner": "wheel",
         "requirement": "packaging >= 24.0",
         "resolved_version": "26.3"
@@ -679,6 +802,21 @@
         "resolved_version": "1.31.0"
       },
       {
+        "owner": "srrx-control[orbits]",
+        "requirement": "numpy>=1.26,<3",
+        "resolved_version": "2.3.5"
+      },
+      {
+        "owner": "srrx-control[orbits]",
+        "requirement": "skyfield>=1.55,<2",
+        "resolved_version": "1.55"
+      },
+      {
+        "owner": "srrx-control[orbits]",
+        "requirement": "sgp4>=2.27,<3",
+        "resolved_version": "2.27"
+      },
+      {
         "owner": "srrx build-system",
         "requirement": "setuptools",
         "resolved_version": "84.2.1"
@@ -688,7 +826,22 @@
   "native_architecture_inspection": {
     "elf_machine": 183,
     "elf_machine_name": "EM_AARCH64",
-    "elf_count": 495,
+    "elf_count": 496,
     "scope": "ELF headers of .so/bin/libexec members read from ZIP, no native import or execution"
-  }
+  },
+  "amendments": [
+    {
+      "verified_at_utc": "2026-10-23T16:56:12+00:00",
+      "added_wheels": [
+        "certifi-2026.10.19-py3-none-any.whl",
+        "jplephem-2.24-py3-none-any.whl",
+        "sgp4-2.27-cp311-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl",
+        "skyfield-1.55-py3-none-any.whl"
+      ],
+      "reason": "Reference pass predictor (srrx.passes): Skyfield 1.55 and sgp4 2.27 pinned by build/07:517 plus their runtime dependencies jplephem and certifi",
+      "selection": "skyfield/sgp4: exact plan pins, also the latest PyPI releases; jplephem: latest; certifi: 2026.10.19, the first release fixing GHSA-6q48-6c7w-9gw2 (not the same-day 2026.10.23 upload)",
+      "verification_scope": "ZIP_metadata_compatible_tags_and_primary_PyPI_JSON_SHA256_size_no_package_execution",
+      "earlier_wheels_reverified": false
+    }
+  ]
 }

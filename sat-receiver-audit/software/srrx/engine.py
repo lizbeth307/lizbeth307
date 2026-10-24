@@ -148,6 +148,8 @@ class Engine:
                 if self.configured or self.pending_arm:
                     self.trip("pico_status_timeout")
                 self.policy.set_readiness(pico_active=False, commissioned=False)
+                if self.policy.gnss_reset["state"] == "ASSERTED":
+                    self.policy.tick(self.now_ms)  # A GNSS reset release never waits for Pico status.
                 return
             state = self.pico.get("state")
             if self.pending_arm and state in {"SAFE", "TRIPPED"} and self.now_ms - self.arm_requested_ms >= 1000:
@@ -282,6 +284,18 @@ class Engine:
             return self.policy.command(name, value, self.now_ms)
         if op in {"relay", "confirmations"}:
             return self.policy.command(op, request.get("value"), self.now_ms)
+        if op == "gnss_reset":
+            # Mutating: only the caller's own unexpired lease (no lease is no owner).
+            # The policy rechecks fault, width, spacing, rate and the MCP image.
+            if (self.policy.owner != owner or self.policy.lease_deadline_ms is None
+                    or self.now_ms >= self.policy.lease_deadline_ms):
+                return {"ok": False, "error": "gnss_reset requires the caller's own valid lease"}
+            if not self.configured or self.pending_arm:
+                return {"ok": False, "error": "gnss_reset requires configured MCP outputs and no pending arm"}
+            if (self.pico.get("mcp_reset") is not False or self.last_status_ms is None
+                    or not 0 <= self.now_ms - self.last_status_ms <= 500):
+                return {"ok": False, "error": "gnss_reset requires fresh Pico status with MCP RESET released"}
+            return self.policy.command("gnss_reset", request.get("value"), self.now_ms)
         if op == "route":
             receiver = request.get("receiver")
             if type(receiver) is not str or receiver not in {"RTLA", "RTLB", "LIME"}:

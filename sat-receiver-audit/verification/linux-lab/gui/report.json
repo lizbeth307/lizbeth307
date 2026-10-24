@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-10-20T21:35:21.224972+00:00",
+  "generated_at_utc": "2026-10-24T00:47:40.836549+00:00",
   "status": "PASS_LINUX_OFFSCREEN_SIMULATION",
   "environment": {
     "system": "Linux",
@@ -33,7 +33,7 @@
       "fixture_before": {
         "schema_version": 1,
         "fixture": "pause",
-        "pid": 1781,
+        "pid": 2612,
         "uid": 1001,
         "stage": "ACTIVE_STABLE",
         "qt_platform": "offscreen",
@@ -53,33 +53,33 @@
         "action_log": [
           {
             "operation": "recover",
-            "at_s": 7.589703,
+            "at_s": 8.832263,
             "name": null,
             "value": null
           },
           {
             "operation": "control",
-            "at_s": 8.350542,
+            "at_s": 9.416533,
             "name": "EN_RTLA",
             "value": true
           }
         ],
-        "elapsed_s": 9.710545,
+        "elapsed_s": 10.695878,
         "request_counts": {
-          "status": 15,
+          "status": 14,
           "recover": 1,
           "lease": 2,
           "control": 1
         },
         "accepted_lease_at_s": [
-          7.656134,
-          8.752714
+          8.89386,
+          10.084638
         ],
         "qt_timer": {
           "interval_ms": 100,
-          "ticks": 25,
-          "mean_gap_ms": 388.422,
-          "max_gap_ms_including_SIGSTOP": 5406.727
+          "ticks": 23,
+          "mean_gap_ms": 465.038,
+          "max_gap_ms_including_SIGSTOP": 7240.692
         },
         "service": {
           "mode": "SIMULATION",
@@ -88,7 +88,7 @@
           "armed": true,
           "fault": null,
           "owner": "uid:1001",
-          "lease_deadline_ms": 976936,
+          "lease_deadline_ms": 1845419,
           "outputs": {
             "EN_LNB": false,
             "EN_BONI": false,
@@ -120,13 +120,13 @@
         "holding": true,
         "controller_notice": "control accepted by labd",
         "controller_error": null,
-        "warmup_finished_s": 6.859572,
-        "natural_heartbeat_s": 7.377119,
-        "fresh_poll_s": 7.401132,
-        "arm_requested_s": 7.575825,
-        "active_s": 8.321194,
-        "stable_s": 9.670897,
-        "remaining_lease_ms": 2075
+        "warmup_finished_s": 8.233947,
+        "natural_heartbeat_s": 8.601504,
+        "fresh_poll_s": 8.523576,
+        "arm_requested_s": 8.782693,
+        "active_s": 9.37287,
+        "stable_s": 10.695878,
+        "remaining_lease_ms": 2385
       },
       "service_before": {
         "mode": "SIMULATION",
@@ -135,7 +135,7 @@
         "armed": true,
         "fault": null,
         "owner": "uid:1001",
-        "lease_deadline_ms": 976936,
+        "lease_deadline_ms": 1845419,
         "outputs": {
           "EN_LNB": false,
           "EN_BONI": false,
@@ -170,14 +170,14 @@
         "lease_expiry_cause_confirmed": true,
         "observations": [
           {
-            "elapsed_s": 0.02257,
+            "elapsed_s": 0.01788,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
+            "lease_deadline_ms": 1845419,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -207,14 +207,14 @@
             ]
           },
           {
-            "elapsed_s": 0.136204,
+            "elapsed_s": 0.129979,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
+            "lease_deadline_ms": 1845419,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -244,14 +244,14 @@
             ]
           },
           {
-            "elapsed_s": 0.256662,
+            "elapsed_s": 0.244626,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
+            "lease_deadline_ms": 1845419,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -281,14 +281,14 @@
             ]
           },
           {
-            "elapsed_s": 0.36979,
+            "elapsed_s": 0.35608,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
+            "lease_deadline_ms": 1845419,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -318,14 +318,14 @@
             ]
           },
           {
-            "elapsed_s": 0.491187,
+            "elapsed_s": 0.470673,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
+            "lease_deadline_ms": 1845419,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -355,14 +355,14 @@
             ]
           },
           {
-            "elapsed_s": 0.604149,
+            "elapsed_s": 0.58346,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
+            "lease_deadline_ms": 1845419,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -392,14 +392,14 @@
             ]
           },
           {
-            "elapsed_s": 0.722002,
+            "elapsed_s": 0.69799,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
+            "lease_deadline_ms": 1845419,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -429,14 +429,14 @@
             ]
           },
           {
-            "elapsed_s": 0.838863,
+            "elapsed_s": 0.810194,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
+            "lease_deadline_ms": 1845419,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -466,14 +466,14 @@
             ]
           },
           {
-            "elapsed_s": 0.950996,
+            "elapsed_s": 0.924269,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
+            "lease_deadline_ms": 1845419,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -503,14 +503,14 @@
             ]
           },
           {
-            "elapsed_s": 1.064852,
+            "elapsed_s": 1.037246,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
+            "lease_deadline_ms": 1845419,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -540,14 +540,14 @@
             ]
           },
           {
-            "elapsed_s": 1.175704,
+            "elapsed_s": 1.152932,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
+            "lease_deadline_ms": 1845419,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -577,14 +577,14 @@
             ]
           },
           {
-            "elapsed_s": 1.289032,
+            "elapsed_s": 1.266156,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
+            "lease_deadline_ms": 1845419,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -614,14 +614,14 @@
             ]
           },
           {
-            "elapsed_s": 1.400652,
+            "elapsed_s": 1.381168,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
+            "lease_deadline_ms": 1845419,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -651,14 +651,14 @@
             ]
           },
           {
-            "elapsed_s": 1.513059,
+            "elapsed_s": 1.493359,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
+            "lease_deadline_ms": 1845419,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -688,14 +688,14 @@
             ]
           },
           {
-            "elapsed_s": 1.630706,
+            "elapsed_s": 1.608583,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
+            "lease_deadline_ms": 1845419,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -725,14 +725,14 @@
             ]
           },
           {
-            "elapsed_s": 1.752699,
+            "elapsed_s": 1.719984,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
+            "lease_deadline_ms": 1845419,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -762,14 +762,14 @@
             ]
           },
           {
-            "elapsed_s": 1.86682,
+            "elapsed_s": 1.833415,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
+            "lease_deadline_ms": 1845419,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -799,14 +799,14 @@
             ]
           },
           {
-            "elapsed_s": 1.985959,
+            "elapsed_s": 1.946479,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
+            "lease_deadline_ms": 1845419,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -836,14 +836,14 @@
             ]
           },
           {
-            "elapsed_s": 2.09818,
+            "elapsed_s": 2.060375,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
+            "lease_deadline_ms": 1845419,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -873,14 +873,14 @@
             ]
           },
           {
-            "elapsed_s": 2.209709,
+            "elapsed_s": 2.172045,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
+            "lease_deadline_ms": 1845419,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -910,14 +910,14 @@
             ]
           },
           {
-            "elapsed_s": 2.321654,
+            "elapsed_s": 2.286328,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
+            "lease_deadline_ms": 1845419,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -947,192 +947,7 @@
             ]
           },
           {
-            "elapsed_s": 2.433815,
-            "mode": "SIMULATION",
-            "pico_state": "ACTIVE",
-            "pico_reset_asserted": false,
-            "armed": true,
-            "fault": null,
-            "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
-            "outputs": {
-              "EN_LNB": false,
-              "EN_BONI": false,
-              "K1_ON": false,
-              "K2_ON": false,
-              "SW_RTLA_A": false,
-              "SW_RTLA_B": false,
-              "SW_RTLB_A": false,
-              "SW_RTLB_B": false,
-              "EN_LABPORT": false,
-              "EN_AUX12": false,
-              "EN_RTLA": true,
-              "EN_RTLB": false,
-              "EN_HFP": false,
-              "EN_LNA1": false,
-              "EN_LNA2": false,
-              "EN_LNA3": false,
-              "EN_T7": false,
-              "EN_LNA4": false,
-              "EN_LIME3V3": false,
-              "SW_LIME_A": false,
-              "SW_LIME_B": false,
-              "EN_SB_LNA": false
-            },
-            "energized": [
-              "EN_RTLA"
-            ]
-          },
-          {
-            "elapsed_s": 2.549034,
-            "mode": "SIMULATION",
-            "pico_state": "ACTIVE",
-            "pico_reset_asserted": false,
-            "armed": true,
-            "fault": null,
-            "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
-            "outputs": {
-              "EN_LNB": false,
-              "EN_BONI": false,
-              "K1_ON": false,
-              "K2_ON": false,
-              "SW_RTLA_A": false,
-              "SW_RTLA_B": false,
-              "SW_RTLB_A": false,
-              "SW_RTLB_B": false,
-              "EN_LABPORT": false,
-              "EN_AUX12": false,
-              "EN_RTLA": true,
-              "EN_RTLB": false,
-              "EN_HFP": false,
-              "EN_LNA1": false,
-              "EN_LNA2": false,
-              "EN_LNA3": false,
-              "EN_T7": false,
-              "EN_LNA4": false,
-              "EN_LIME3V3": false,
-              "SW_LIME_A": false,
-              "SW_LIME_B": false,
-              "EN_SB_LNA": false
-            },
-            "energized": [
-              "EN_RTLA"
-            ]
-          },
-          {
-            "elapsed_s": 2.660793,
-            "mode": "SIMULATION",
-            "pico_state": "ACTIVE",
-            "pico_reset_asserted": false,
-            "armed": true,
-            "fault": null,
-            "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
-            "outputs": {
-              "EN_LNB": false,
-              "EN_BONI": false,
-              "K1_ON": false,
-              "K2_ON": false,
-              "SW_RTLA_A": false,
-              "SW_RTLA_B": false,
-              "SW_RTLB_A": false,
-              "SW_RTLB_B": false,
-              "EN_LABPORT": false,
-              "EN_AUX12": false,
-              "EN_RTLA": true,
-              "EN_RTLB": false,
-              "EN_HFP": false,
-              "EN_LNA1": false,
-              "EN_LNA2": false,
-              "EN_LNA3": false,
-              "EN_T7": false,
-              "EN_LNA4": false,
-              "EN_LIME3V3": false,
-              "SW_LIME_A": false,
-              "SW_LIME_B": false,
-              "EN_SB_LNA": false
-            },
-            "energized": [
-              "EN_RTLA"
-            ]
-          },
-          {
-            "elapsed_s": 2.775131,
-            "mode": "SIMULATION",
-            "pico_state": "ACTIVE",
-            "pico_reset_asserted": false,
-            "armed": true,
-            "fault": null,
-            "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
-            "outputs": {
-              "EN_LNB": false,
-              "EN_BONI": false,
-              "K1_ON": false,
-              "K2_ON": false,
-              "SW_RTLA_A": false,
-              "SW_RTLA_B": false,
-              "SW_RTLB_A": false,
-              "SW_RTLB_B": false,
-              "EN_LABPORT": false,
-              "EN_AUX12": false,
-              "EN_RTLA": true,
-              "EN_RTLB": false,
-              "EN_HFP": false,
-              "EN_LNA1": false,
-              "EN_LNA2": false,
-              "EN_LNA3": false,
-              "EN_T7": false,
-              "EN_LNA4": false,
-              "EN_LIME3V3": false,
-              "SW_LIME_A": false,
-              "SW_LIME_B": false,
-              "EN_SB_LNA": false
-            },
-            "energized": [
-              "EN_RTLA"
-            ]
-          },
-          {
-            "elapsed_s": 2.890063,
-            "mode": "SIMULATION",
-            "pico_state": "ACTIVE",
-            "pico_reset_asserted": false,
-            "armed": true,
-            "fault": null,
-            "owner": "uid:1001",
-            "lease_deadline_ms": 978005,
-            "outputs": {
-              "EN_LNB": false,
-              "EN_BONI": false,
-              "K1_ON": false,
-              "K2_ON": false,
-              "SW_RTLA_A": false,
-              "SW_RTLA_B": false,
-              "SW_RTLB_A": false,
-              "SW_RTLB_B": false,
-              "EN_LABPORT": false,
-              "EN_AUX12": false,
-              "EN_RTLA": true,
-              "EN_RTLB": false,
-              "EN_HFP": false,
-              "EN_LNA1": false,
-              "EN_LNA2": false,
-              "EN_LNA3": false,
-              "EN_T7": false,
-              "EN_LNA4": false,
-              "EN_LIME3V3": false,
-              "SW_LIME_A": false,
-              "SW_LIME_B": false,
-              "EN_SB_LNA": false
-            },
-            "energized": [
-              "EN_RTLA"
-            ]
-          },
-          {
-            "elapsed_s": 3.028769,
+            "elapsed_s": 2.418546,
             "mode": "SIMULATION",
             "pico_state": "TRIPPED",
             "pico_reset_asserted": true,
@@ -1167,8 +982,8 @@
             "energized": []
           }
         ],
-        "policy_off_after_s": 3.028769,
-        "reset_observed_after_s": 3.028769,
+        "policy_off_after_s": 2.418546,
+        "reset_observed_after_s": 2.418546,
         "final": {
           "mode": "SIMULATION",
           "pico_state": "TRIPPED",
@@ -1205,11 +1020,11 @@
         }
       },
       "stopped_process_alive": true,
-      "resume_observed_after_s": 3.160052,
+      "resume_observed_after_s": 2.754059,
       "fixture_after_resume": {
         "schema_version": 1,
         "fixture": "pause",
-        "pid": 1781,
+        "pid": 2612,
         "uid": 1001,
         "stage": "HOLD_STOPPED",
         "qt_platform": "offscreen",
@@ -1225,10 +1040,10 @@
           },
           {
             "path": "pause-resumed-disarmed.png",
-            "bytes": 109796,
+            "bytes": 121234,
             "width": 1100,
             "height": 800,
-            "sha256": "ccab91c7e1d4c8a3e3cc128877b602b856abe84fc32aa82166c210e59aa4710f"
+            "sha256": "36b79ece86c950e87d541ef52d80f6e7a4a646fafa185ad2c79c8623625df36e"
           }
         ],
         "scope": "real full Qt window/worker; semantic queue actions, no touch injection",
@@ -1236,41 +1051,40 @@
         "action_log": [
           {
             "operation": "recover",
-            "at_s": 7.589703,
+            "at_s": 8.832263,
             "name": null,
             "value": null
           },
           {
             "operation": "control",
-            "at_s": 8.350542,
+            "at_s": 9.416533,
             "name": "EN_RTLA",
             "value": true
           },
           {
             "operation": "disarm",
-            "at_s": 12.969823,
+            "at_s": 13.144869,
             "name": null,
             "value": null
           }
         ],
-        "elapsed_s": 13.130098,
+        "elapsed_s": 13.197934,
         "request_counts": {
-          "status": 17,
+          "status": 15,
           "recover": 1,
-          "lease": 3,
+          "lease": 2,
           "control": 1,
           "disarm": 1
         },
         "accepted_lease_at_s": [
-          7.656134,
-          8.752714,
-          12.892095
+          8.89386,
+          10.084638
         ],
         "qt_timer": {
           "interval_ms": 100,
-          "ticks": 27,
-          "mean_gap_ms": 486.3,
-          "max_gap_ms_including_SIGSTOP": 5406.727
+          "ticks": 24,
+          "mean_gap_ms": 549.914,
+          "max_gap_ms_including_SIGSTOP": 7240.692
         },
         "service": {
           "mode": "SIMULATION",
@@ -1309,14 +1123,14 @@
         "holding": false,
         "controller_notice": "Touch UI heartbeat lost \u2014 HOLD stopped",
         "controller_error": null,
-        "warmup_finished_s": 6.859572,
-        "natural_heartbeat_s": 7.377119,
-        "fresh_poll_s": 7.401132,
-        "arm_requested_s": 7.575825,
-        "active_s": 8.321194,
-        "stable_s": 9.670897,
-        "remaining_lease_ms": 2075,
-        "hold_stopped_s": 13.130098
+        "warmup_finished_s": 8.233947,
+        "natural_heartbeat_s": 8.601504,
+        "fresh_poll_s": 8.523576,
+        "arm_requested_s": 8.782693,
+        "active_s": 9.37287,
+        "stable_s": 10.695878,
+        "remaining_lease_ms": 2385,
+        "hold_stopped_s": 13.197934
       }
     },
     {
@@ -1325,7 +1139,7 @@
       "fixture_before": {
         "schema_version": 1,
         "fixture": "kill",
-        "pid": 1787,
+        "pid": 2645,
         "uid": 1001,
         "stage": "ACTIVE_STABLE",
         "qt_platform": "offscreen",
@@ -1345,33 +1159,33 @@
         "action_log": [
           {
             "operation": "recover",
-            "at_s": 7.626211,
+            "at_s": 7.284968,
             "name": null,
             "value": null
           },
           {
             "operation": "control",
-            "at_s": 8.350432,
+            "at_s": 7.801757,
             "name": "EN_RTLA",
             "value": true
           }
         ],
-        "elapsed_s": 9.690855,
+        "elapsed_s": 8.990077,
         "request_counts": {
-          "status": 15,
+          "status": 13,
           "recover": 1,
           "lease": 2,
           "control": 1
         },
         "accepted_lease_at_s": [
-          7.650113,
-          8.758804
+          7.332395,
+          8.319879
         ],
         "qt_timer": {
           "interval_ms": 100,
-          "ticks": 25,
-          "mean_gap_ms": 387.634,
-          "max_gap_ms_including_SIGSTOP": 5090.676
+          "ticks": 21,
+          "mean_gap_ms": 428.099,
+          "max_gap_ms_including_SIGSTOP": 5661.87
         },
         "service": {
           "mode": "SIMULATION",
@@ -1380,7 +1194,7 @@
           "armed": true,
           "fault": null,
           "owner": "uid:1001",
-          "lease_deadline_ms": 999163,
+          "lease_deadline_ms": 1863853,
           "outputs": {
             "EN_LNB": false,
             "EN_BONI": false,
@@ -1412,13 +1226,13 @@
         "holding": true,
         "controller_notice": "control accepted by labd",
         "controller_error": null,
-        "warmup_finished_s": 6.914315,
-        "natural_heartbeat_s": 7.446257,
-        "fresh_poll_s": 7.386972,
-        "arm_requested_s": 7.61598,
-        "active_s": 8.336016,
-        "stable_s": 9.636066,
-        "remaining_lease_ms": 2117
+        "warmup_finished_s": 6.644449,
+        "natural_heartbeat_s": 7.062647,
+        "fresh_poll_s": 6.956542,
+        "arm_requested_s": 7.270761,
+        "active_s": 7.767054,
+        "stable_s": 8.990077,
+        "remaining_lease_ms": 2326
       },
       "service_before": {
         "mode": "SIMULATION",
@@ -1427,7 +1241,7 @@
         "armed": true,
         "fault": null,
         "owner": "uid:1001",
-        "lease_deadline_ms": 999163,
+        "lease_deadline_ms": 1863853,
         "outputs": {
           "EN_LNB": false,
           "EN_BONI": false,
@@ -1462,14 +1276,14 @@
         "lease_expiry_cause_confirmed": true,
         "observations": [
           {
-            "elapsed_s": 0.096539,
+            "elapsed_s": 0.09307,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 999163,
+            "lease_deadline_ms": 1863853,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -1499,14 +1313,14 @@
             ]
           },
           {
-            "elapsed_s": 0.229904,
+            "elapsed_s": 0.20561,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 999163,
+            "lease_deadline_ms": 1863853,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -1536,14 +1350,14 @@
             ]
           },
           {
-            "elapsed_s": 0.344894,
+            "elapsed_s": 0.321017,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 999163,
+            "lease_deadline_ms": 1863853,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -1573,14 +1387,14 @@
             ]
           },
           {
-            "elapsed_s": 0.462625,
+            "elapsed_s": 0.43614,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 999163,
+            "lease_deadline_ms": 1863853,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -1610,14 +1424,14 @@
             ]
           },
           {
-            "elapsed_s": 0.575971,
+            "elapsed_s": 0.547262,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 999163,
+            "lease_deadline_ms": 1863853,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -1647,14 +1461,14 @@
             ]
           },
           {
-            "elapsed_s": 0.68798,
+            "elapsed_s": 0.662544,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 999163,
+            "lease_deadline_ms": 1863853,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -1684,14 +1498,14 @@
             ]
           },
           {
-            "elapsed_s": 0.801895,
+            "elapsed_s": 0.774447,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 999163,
+            "lease_deadline_ms": 1863853,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -1721,14 +1535,14 @@
             ]
           },
           {
-            "elapsed_s": 0.915957,
+            "elapsed_s": 0.889045,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 999163,
+            "lease_deadline_ms": 1863853,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -1758,14 +1572,14 @@
             ]
           },
           {
-            "elapsed_s": 1.029624,
+            "elapsed_s": 1.000912,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 999163,
+            "lease_deadline_ms": 1863853,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -1795,14 +1609,14 @@
             ]
           },
           {
-            "elapsed_s": 1.141036,
+            "elapsed_s": 1.115198,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 999163,
+            "lease_deadline_ms": 1863853,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -1832,14 +1646,14 @@
             ]
           },
           {
-            "elapsed_s": 1.25552,
+            "elapsed_s": 1.227263,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 999163,
+            "lease_deadline_ms": 1863853,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -1869,14 +1683,14 @@
             ]
           },
           {
-            "elapsed_s": 1.375028,
+            "elapsed_s": 1.340367,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 999163,
+            "lease_deadline_ms": 1863853,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -1906,14 +1720,14 @@
             ]
           },
           {
-            "elapsed_s": 1.488643,
+            "elapsed_s": 1.454259,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 999163,
+            "lease_deadline_ms": 1863853,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -1943,14 +1757,14 @@
             ]
           },
           {
-            "elapsed_s": 1.600478,
+            "elapsed_s": 1.565285,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 999163,
+            "lease_deadline_ms": 1863853,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -1980,14 +1794,14 @@
             ]
           },
           {
-            "elapsed_s": 1.717944,
+            "elapsed_s": 1.679435,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 999163,
+            "lease_deadline_ms": 1863853,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -2017,14 +1831,14 @@
             ]
           },
           {
-            "elapsed_s": 1.828963,
+            "elapsed_s": 1.791521,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 999163,
+            "lease_deadline_ms": 1863853,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -2054,14 +1868,14 @@
             ]
           },
           {
-            "elapsed_s": 1.941631,
+            "elapsed_s": 1.906088,
             "mode": "SIMULATION",
             "pico_state": "ACTIVE",
             "pico_reset_asserted": false,
             "armed": true,
             "fault": null,
             "owner": "uid:1001",
-            "lease_deadline_ms": 999163,
+            "lease_deadline_ms": 1863853,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -2091,7 +1905,118 @@
             ]
           },
           {
-            "elapsed_s": 2.05686,
+            "elapsed_s": 2.017571,
+            "mode": "SIMULATION",
+            "pico_state": "ACTIVE",
+            "pico_reset_asserted": false,
+            "armed": true,
+            "fault": null,
+            "owner": "uid:1001",
+            "lease_deadline_ms": 1863853,
+            "outputs": {
+              "EN_LNB": false,
+              "EN_BONI": false,
+              "K1_ON": false,
+              "K2_ON": false,
+              "SW_RTLA_A": false,
+              "SW_RTLA_B": false,
+              "SW_RTLB_A": false,
+              "SW_RTLB_B": false,
+              "EN_LABPORT": false,
+              "EN_AUX12": false,
+              "EN_RTLA": true,
+              "EN_RTLB": false,
+              "EN_HFP": false,
+              "EN_LNA1": false,
+              "EN_LNA2": false,
+              "EN_LNA3": false,
+              "EN_T7": false,
+              "EN_LNA4": false,
+              "EN_LIME3V3": false,
+              "SW_LIME_A": false,
+              "SW_LIME_B": false,
+              "EN_SB_LNA": false
+            },
+            "energized": [
+              "EN_RTLA"
+            ]
+          },
+          {
+            "elapsed_s": 2.130325,
+            "mode": "SIMULATION",
+            "pico_state": "ACTIVE",
+            "pico_reset_asserted": false,
+            "armed": true,
+            "fault": null,
+            "owner": "uid:1001",
+            "lease_deadline_ms": 1863853,
+            "outputs": {
+              "EN_LNB": false,
+              "EN_BONI": false,
+              "K1_ON": false,
+              "K2_ON": false,
+              "SW_RTLA_A": false,
+              "SW_RTLA_B": false,
+              "SW_RTLB_A": false,
+              "SW_RTLB_B": false,
+              "EN_LABPORT": false,
+              "EN_AUX12": false,
+              "EN_RTLA": true,
+              "EN_RTLB": false,
+              "EN_HFP": false,
+              "EN_LNA1": false,
+              "EN_LNA2": false,
+              "EN_LNA3": false,
+              "EN_T7": false,
+              "EN_LNA4": false,
+              "EN_LIME3V3": false,
+              "SW_LIME_A": false,
+              "SW_LIME_B": false,
+              "EN_SB_LNA": false
+            },
+            "energized": [
+              "EN_RTLA"
+            ]
+          },
+          {
+            "elapsed_s": 2.241548,
+            "mode": "SIMULATION",
+            "pico_state": "ACTIVE",
+            "pico_reset_asserted": false,
+            "armed": true,
+            "fault": null,
+            "owner": "uid:1001",
+            "lease_deadline_ms": 1863853,
+            "outputs": {
+              "EN_LNB": false,
+              "EN_BONI": false,
+              "K1_ON": false,
+              "K2_ON": false,
+              "SW_RTLA_A": false,
+              "SW_RTLA_B": false,
+              "SW_RTLB_A": false,
+              "SW_RTLB_B": false,
+              "EN_LABPORT": false,
+              "EN_AUX12": false,
+              "EN_RTLA": true,
+              "EN_RTLB": false,
+              "EN_HFP": false,
+              "EN_LNA1": false,
+              "EN_LNA2": false,
+              "EN_LNA3": false,
+              "EN_T7": false,
+              "EN_LNA4": false,
+              "EN_LIME3V3": false,
+              "SW_LIME_A": false,
+              "SW_LIME_B": false,
+              "EN_SB_LNA": false
+            },
+            "energized": [
+              "EN_RTLA"
+            ]
+          },
+          {
+            "elapsed_s": 2.352225,
             "mode": "SIMULATION",
             "pico_state": "TRIPPED",
             "pico_reset_asserted": true,
@@ -2126,8 +2051,8 @@
             "energized": []
           }
         ],
-        "policy_off_after_s": 2.05686,
-        "reset_observed_after_s": 2.05686,
+        "policy_off_after_s": 2.352225,
+        "reset_observed_after_s": 2.352225,
         "final": {
           "mode": "SIMULATION",
           "pico_state": "TRIPPED",
@@ -2240,10 +2165,10 @@
     "energized": []
   },
   "independent_unix_status_rtt_ms": {
-    "samples": 66,
-    "min": 9.04,
-    "median": 13.103,
-    "p95": 34.785,
-    "max": 79.329
+    "samples": 65,
+    "min": 8.307,
+    "median": 11.726,
+    "p95": 17.21,
+    "max": 31.302
   }
 }

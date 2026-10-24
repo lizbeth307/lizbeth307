@@ -2341,7 +2341,7 @@ _Run `wf_d9388111-e66`_
   
   **Cutoffs**
   - Economy: 14.0 V / 20%. Linux poweroff: 13.2 V under load for 10 s, or 3%.
-  - Pico emergency: 12.9 V for 5 s. TLV3012: 12.8 V hold OFF, 13.6 V release.
+  - Pico emergency: 13.05 V for 5 s (v2.1, the same 13050 mV as the labd graceful cutoff; was 12.9 V). TLV3012: 12.8 V hold OFF, 13.6 V release.
   - D36V50F12 EN: about 12.1 V. BMS UVP: 2.70 V/cell.
   - Pico second OFF trigger: OFF-NOW frame plus 20-30 s, or 60 s heartbeat loss after ARM-OFF.
   - Pico battery divider (1:6) taps SW, not N.

@@ -221,6 +221,86 @@ class CaptureTests(unittest.TestCase):
         finally:
             reader.close()
 
+    @staticmethod
+    def scope_latch(*entries):
+        from srrx import scope_policy
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "artemis.json"
+            data = json.dumps({"v": 1, "kind": "srrx_artemis_mirror", "source": "artemis-db", "db_version": "v74",
+                               "entries": [{"name": "Fixture %d" % index, "categories": [category], "ranges_hz": [list(span)]}
+                                           for index, (category, span) in enumerate(entries)]}).encode()
+            path.write_bytes(data)
+            db = scope_policy.ArtemisDB.load(path, hashlib.sha256(data).hexdigest())
+        return scope_policy.ScopeLatch(db, clock=lambda: 1792454400.0)  # 2026-10-20T00:00:00Z
+
+    def test_scope_stop_on_the_tuned_span_refuses_before_control_or_output(self):
+        from srrx.labrx import run_capture
+        cases = ((lambda: self.scope_latch(("Military", (100.2e6, 100.3e6))), 100000000),
+                 (lambda: self.scope_latch(), 300000000))  # an Artemis stop entry; the masked band alone
+        for record in (None, {"backend": "rtl", "branch": "RTLA"}):
+            for make, center in cases:
+                latch = make()
+                with self.subTest(record=record, center=center), tempfile.TemporaryDirectory() as tmp:
+                    output, survey = Path(tmp) / "latest.json", Path(tmp) / "survey.jsonl"
+                    transport, factory = Mock(return_value=ready()), Mock()
+                    with patch("srrx.labrx._disable_worker_core_dumps") as privacy, \
+                            self.assertRaisesRegex(ValueError, "out of scope") as caught:
+                        run_capture(center_hz=center, frames=2, fft_size=64, output=output, survey=survey,
+                                    record=record, transport=transport if record else None,
+                                    source_factory=factory, scope=latch)
+                    self.assertEqual(str(caught.exception), "out of scope")  # no frequency, no entry text
+                    transport.assert_not_called()
+                    factory.assert_not_called()
+                    privacy.assert_not_called()
+                    self.assertEqual(list(Path(tmp).iterdir()), [])
+                    self.assertTrue(latch.stopped)
+                    self.assertEqual(latch.drain_log(), ["2026-10-20T00:00:00Z out of scope"])
+        # Without a latch the existing masked-frame capture is unchanged; a benign latch permits it.
+        for scope in (None, self.scope_latch(("Broadcast", (100.2e6, 100.3e6)))):
+            with tempfile.TemporaryDirectory() as tmp:
+                result = run_capture(frames=2, fft_size=64, survey=Path(tmp) / "survey.jsonl", scope=scope)
+                self.assertEqual(result["frames"], 2)
+                self.assertEqual(len((Path(tmp) / "survey.jsonl").read_text().splitlines()), 2)
+        for scope in (object(), {"permits": True}, True):
+            with self.subTest(scope=scope), self.assertRaisesRegex(ValueError, "ScopeLatch"):
+                run_capture(frames=1, fft_size=64, scope=scope)
+
+    def test_stop_latched_during_capture_publishes_nothing_more_and_still_powers_off(self):
+        from srrx import spectrum
+        import srrx.labrx as labrx
+        real = spectrum.append_survey
+        for record in (None, {"backend": "rtl", "branch": "RTLA"}):
+            with self.subTest(record=record), tempfile.TemporaryDirectory() as tmp:
+                latch, calls = self.scope_latch(), []
+                aborted = []
+                latch.register_abort(lambda: aborted.append(True))
+                def append(path, frame, **kwargs):
+                    value = real(path, frame, **kwargs)
+                    latch.stop(99.9e6, 100.1e6)  # an operator stop while the capture runs
+                    return value
+                def transport(request):
+                    calls.append(request)
+                    return ready()
+                class Source:
+                    def read(self, guard):
+                        return np.ones(64, dtype=np.complex64)
+                    def close(self):
+                        calls.append("closed")
+                output, survey = Path(tmp) / "latest.json", Path(tmp) / "survey.jsonl"
+                with patch("srrx.spectrum.append_survey", side_effect=append), \
+                        patch.object(labrx, "_disable_worker_core_dumps"), \
+                        self.assertRaisesRegex(ValueError, "out of scope"):
+                    labrx.run_capture(frames=5, fft_size=64, output=output, survey=survey, record=record,
+                                      transport=transport if record else None,
+                                      source_factory=lambda *a: Source(), scope=latch)
+                self.assertEqual(len(survey.read_text().splitlines()), 1)  # only the frame before the stop
+                self.assertEqual(json.loads(output.read_text())["center_hz"], 100000000.0)
+                self.assertEqual(sorted(p.name for p in Path(tmp).iterdir()), ["latest.json", "survey.jsonl"])
+                self.assertEqual(aborted, [True])
+                if record:
+                    self.assertIn("closed", calls)
+                    self.assertEqual(calls[-1], {"op": "control", "name": "EN_RTLA", "value": False})
+
     def test_rtl_fft_larger_than_one_read_is_refused_before_control_observation(self):
         from srrx.labrx import run_capture
         transport, factory = Mock(), Mock()

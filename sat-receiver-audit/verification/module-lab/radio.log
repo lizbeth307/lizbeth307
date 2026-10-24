@@ -2,8 +2,8 @@
   "schema_version": 1,
   "status": "EMULATION_PASS",
   "scope": "native-driver-ABI-and-control-emulation-no-real-USB-or-analog-RF",
-  "architecture": "x86_64",
-  "python": "3.13.16",
+  "architecture": "aarch64",
+  "python": "3.12.3",
   "numpy": "2.3.5",
   "modules": [
     {
@@ -1256,15 +1256,15 @@
   "worker_failure_lifecycle": {
     "status": "PASS",
     "scope": "spawned-worker-native-ABI-component-only-no-RF-no-accepted-hardware",
-    "architecture": "x86_64",
-    "kernel": "6.18.44-fc-v153",
-    "python": "3.13.16",
+    "architecture": "aarch64",
+    "kernel": "6.8.0-147-generic",
+    "python": "3.12.3",
     "fixture_source_sha256": "17b0dfec527087d3f508d34d29458f74ddb52e1b0c061ae779cd6b1060e30b07",
     "startup_deadline_s": 60.0,
     "production_read_deadline_s": 1.0,
     "native_compile_performed": true,
     "control_guard_replaced_only_in_test": true,
-    "kernel_core_pattern": "core",
+    "kernel_core_pattern": "|/usr/share/apport/apport -p%p -s%s -c%c -d%d -P%P -u%u -g%g -F%F -- %E",
     "kernel_core_pattern_read_error": null,
     "core_protection_references": [
       "https://man7.org/linux/man-pages/man5/core.5.html",
@@ -1283,8 +1283,8 @@
         "native_read_entered": true,
         "exception_type": "OSError",
         "exception": "RTL read failed (-71)",
-        "elapsed_s": 0.18,
-        "close_duration_s": 0.025,
+        "elapsed_s": 4.19,
+        "close_duration_s": 0.243,
         "worker_exitcode": 0,
         "worker_alive_after_close": false,
         "actual_read_observer_checks": 1,
@@ -1298,7 +1298,7 @@
         "only_case_artifact": [
           "lifecycle.txt"
         ],
-        "elf_machine": 62
+        "elf_machine": 183
       },
       {
         "case": "hang_ignoring_sigterm",
@@ -1307,8 +1307,8 @@
         "native_read_entered": true,
         "exception_type": "TimeoutError",
         "exception": "No fresh RX block within one second",
-        "elapsed_s": 2.156,
-        "close_duration_s": 1.004,
+        "elapsed_s": 5.754,
+        "close_duration_s": 1.028,
         "worker_exitcode": -9,
         "worker_alive_after_close": false,
         "actual_read_observer_checks": 21,
@@ -1322,7 +1322,7 @@
         "only_case_artifact": [
           "lifecycle.txt"
         ],
-        "elf_machine": 62
+        "elf_machine": 183
       },
       {
         "case": "crash_sigsegv",
@@ -1331,11 +1331,11 @@
         "native_read_entered": true,
         "exception_type": "OSError",
         "exception": "RX worker pipe closed before a complete block",
-        "elapsed_s": 0.144,
-        "close_duration_s": 0.0,
+        "elapsed_s": 3.75,
+        "close_duration_s": 0.001,
         "worker_exitcode": -11,
         "worker_alive_after_close": false,
-        "actual_read_observer_checks": 1,
+        "actual_read_observer_checks": 2,
         "production_capture_cleanup_exercised": true,
         "clean_error_boundary": true,
         "branch_off_request_observed": true,
@@ -1346,7 +1346,7 @@
         "only_case_artifact": [
           "lifecycle.txt"
         ],
-        "elf_machine": 62
+        "elf_machine": 183
       },
       {
         "case": "invalid_odd_short_read",
@@ -1355,8 +1355,8 @@
         "native_read_entered": true,
         "exception_type": "OSError",
         "exception": "Invalid/empty RTL IQ block",
-        "elapsed_s": 0.174,
-        "close_duration_s": 0.03,
+        "elapsed_s": 4.022,
+        "close_duration_s": 0.26,
         "worker_exitcode": 0,
         "worker_alive_after_close": false,
         "actual_read_observer_checks": 1,
@@ -1370,7 +1370,7 @@
         "only_case_artifact": [
           "lifecycle.txt"
         ],
-        "elf_machine": 62
+        "elf_machine": 183
       },
       {
         "case": "valid_even_short_read",
@@ -1379,11 +1379,11 @@
         "native_read_entered": true,
         "exception_type": null,
         "exception": null,
-        "elapsed_s": 0.207,
-        "close_duration_s": 0.043,
+        "elapsed_s": 4.048,
+        "close_duration_s": 0.254,
         "worker_exitcode": 0,
         "worker_alive_after_close": false,
-        "actual_read_observer_checks": 1,
+        "actual_read_observer_checks": 2,
         "production_capture_cleanup_exercised": false,
         "clean_error_boundary": true,
         "branch_off_request_observed": false,
@@ -1394,7 +1394,7 @@
         "only_case_artifact": [
           "lifecycle.txt"
         ],
-        "elf_machine": 62
+        "elf_machine": 183
       }
     ]
   },
@@ -1408,9 +1408,9 @@
     "acceptance_created": false,
     "production_mode_used": "SIMULATION",
     "production_sources_sha256": {
-      "software/srrx/policy.py": "5f51c31a82f5b810f7d899135fa135203034baecdb3637c4bf0af13cc74dd3dc",
+      "software/srrx/policy.py": "0bd60d9734653f24e49606cf46e70895b0a7c7ab8b580c2667aa41e08011d34b",
       "software/srrx/hardware.py": "13f2a5c1ab1a63d1345f57f9a3ca1f39ffbd3c779be9d4e050c85634974279ee",
-      "deployment/deploy.py": "7357ed840e465be57cf5ffe7cb9059f0c9aac6784f9a1ab7bc96958c5cdb73e5",
+      "deployment/deploy.py": "5fde2cfdd4e3b692dc42a013d809cf2e3a0ac2a51b5fea7cad8249207bc2c790",
       "deployment/vendor_patch.py": "449375110754ca75e0dba8336c6b611ee0a87de1f5fd509ccd65b47d289121be",
       "deployment/patches/limesuiteng-rx-only.patch": "e6e3f7abd3dd3cff21c0d7baa98e92f812bd88068a984298a7bebcf5517bc033"
     },
@@ -1425,7 +1425,7 @@
   },
   "production_sources_sha256": {
     "software/srrx/receivers.py": "0b12412357126ac04731f0ed5e664d44ac9d95d058ad8a8d24a790c14b9447fc",
-    "software/srrx/labrx.py": "28f26d881d629e28240119d6c24948e21530f8ca5e1676dfc93e0edba7b41c86"
+    "software/srrx/labrx.py": "b969582eb65ba942dff214a02260550ee1bc03123f97fbe39b25f4a4238ce06c"
   },
   "physical_verified": false,
   "raw_iq_persisted": false,

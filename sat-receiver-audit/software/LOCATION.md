@@ -161,6 +161,13 @@ matching GSA explicitly reports 2D, GGA altitude is held or assumed, so
 
 ## Optional live gpsd transport
 
+In the deployed time/location chain from STACK (STACK.md:124, :879), gpsd
+(`-n -b -s 115200`) reads `/dev/lab/gnss` and chrony disciplines the clock from
+gpsd's SHM NMEA and from PPS on `/dev/pps-gnss`; this client is how a consumer
+reads that gpsd. The raw `srrx.gnss_uart` reader ([GNSS-UART.md](GNSS-UART.md))
+is only the alternative when gpsd is not used; the two never read the UART at
+the same time.
+
 ```python
 client = GpsdClient(tracker, host=config["gpsd_host"], port=config["gpsd_port"])
 client.start(monotonic_ms())
@@ -227,6 +234,103 @@ ZDA date jumps, empty optional GST/ZDA fields, explicit 2D altitude,
 bounded JSON and mocked gpsd handshake including late polls, short writes and
 disconnect. Device qualification still requires real UART
 recordings and live gpsd tests; no satellite lock or accuracy result is claimed.
+
+## Pointing from the receiver's own fix
+
+`srrx.geo_look` (stdlib) turns a tracker status into QO-100 / Es'hail-2 look
+angles for the nominal slot 25.9E (STACK.md:24, :185). There is still no city
+table: the observer is this tracker's status, and tests use unnamed lat/lon
+points only.
+
+```python
+from srrx.geo_look import FirstFixGate, geo_look_angles, pointing_from_status
+
+look = geo_look_angles(lat, lon, alt_m=0.0, sat_lon_deg=25.9, model="wgs84")  # or model="sphere"
+gate = FirstFixGate(); gate.feed(tracker.status(now_ms), now_ms)              # same monotonic clock
+view = pointing_from_status(tracker.status(now_ms), first_fix_stable=gate.stable, qo100_omm=None)
+```
+
+- `sphere` is the STACK model (Re/r = 0.15127, GEO radius 42164 km); `wgs84`
+  (default) places a geodetic observer in ECEF and the satellite at
+  (r cos lon_s, r sin lon_s, 0). Azimuth is from true north, not magnetic.
+  Over 34-70N, 25W-45E both agree within 0.04 deg in elevation and azimuth.
+- Skew: STACK gives only `tan psi = sin dlon / tan lat`. The sign convention is
+  derived by vector projection (the satellite's V polarisation is parallel to
+  Earth's spin axis, compared with the local vertical plane): **+ means the LNB is
+  turned counter-clockwise as seen from behind it, looking toward the satellite**,
+  on the +/-45 deg neck scale. A northern observer west of 25.9E gets a positive
+  value; the southern hemisphere flips the sign. Within 1 deg of the equator skew
+  is undefined (`SKEW_UNDEFINED_NEAR_EQUATOR`); below the horizon it is not
+  given. The tan formula (sphere) and the projection (WGS84) agree in sign and
+  within 0.31 deg over the same area. The bench peak search on the beacon C/N0 in 5 deg steps (P-09) is the
+  final authority; the hint is a starting point.
+- Qualified fix (build/07:503): fresh live `gpsd`/`nmea`, `mode == 3`,
+  `satellites >= 6`, and the first-run window (3D, >= 8 satellites, within
+  50 m for 5 min, `FirstFixGate`). The tracker itself accepts as few as three
+  satellites, so the gate is not optional. Conservative choices: an unknown
+  satellite count never qualifies (a gpsd TPV carries no count, so a gpsd-only
+  fix stays unqualified until SKY counts are wired); the first-run window is per
+  process, never persisted, and restarts after any failed sample or a gap of more
+  than 5 s between samples; a backwards clock latches the gate closed.
+- Manual and last-good positions still give angles, labelled "not a GNSS fix".
+  No position or a monotonic clock fault (`MONOTONIC_TIME_REVERSED`) gives no
+  angles. The pointing result carries no observer coordinates.
+- "Visible from here" needs a stationary allowlisted QO100 OMM record
+  (`|n - 1.00274| < 0.0005` rev/day, both edges exclusive) and elevation
+  >= 5 deg. Without one the geometry is shown as "nominal slot 25.9E; TLE not
+  verified" and `visible_from_here` stays false. Old elements or an unverified
+  clock clear `auto_pointing_allowed`; display and reception are unaffected.
+- `v_dipole_hint(max_el)`: >= 35 deg bisector N-S, <= 30 deg tips N-S; 30-35 deg
+  is not specified by STACK, so the unattended default (bisector N-S) is used.
+
+## Orbit elements and pass prediction
+
+`srrx.orbits` (stdlib) reads a local CelesTrak OMM file copied in over home Wi-Fi
+or USB/microSD; it has no network code. It accepts a JSON array or a CSV whose
+header names the 17 OMM fields, at most 4 MiB, rejects duplicate keys,
+NaN/Infinity, missing or extra fields, out-of-range values, non-SGP4
+`EPHEMERIS_TYPE`, classified sets and NORAD ids outside 1..999999. Only NORAD ids
+from the allowlist file survive:
+
+```json
+{"schema_version": 1, "kind": "srrx_orbit_allowlist",
+ "targets": [{"norad_id": 12345, "name": "ALIAS", "role": "LRPT"}]}
+```
+
+Roles: `QO100` (at most one), `ISS` (3-day age warning), `LRPT` (V-dipole hint),
+`GEO`, `OTHER` (7-day warning). No real ids are shipped or hard-coded. One record
+per NORAD id survives (newest epoch; identical duplicates dropped; the same epoch
+with different elements rejects the file). Age is a warning, never a refusal.
+`export_satdump_csv(records, path)` atomically replaces the SatDump OMM CSV
+(header plus 17 columns in CelesTrak order). That column order has not yet been
+checked against SatDump 1aedd60's reader (POL-10, BUILDER).
+
+`srrx.passes` is the reference predictor for the lab venv only: Skyfield 1.55
+and sgp4 2.27 (`EarthSatellite.from_omm`, `find_events`), imported lazily;
+without them `PassDependencyError` is raised and labd stays stdlib-only. The
+timescale is Skyfield's built-in table (no download) and no ephemeris file is
+used. The observer is rounded to 0.1 deg before prediction, so a saved plan holds
+only the rounded position. Every pass carries AOS/TCA/LOS UTC, azimuths, maximum
+elevation, OMM epoch/age/warning, `time_verified` (false unless the caller's UTC
+is verified), observer source/age and, for LRPT, the V-dipole hint. Only complete
+passes are listed; passes cut by the window edge are counted. sgp4 2.27 accepts
+NORAD ids up to 339999 (Alpha-5); larger ids are listed in `skipped`. CLI for a
+bounded lab-venv subprocess (refuses an existing output):
+
+```sh
+python3 -m srrx.passes --omm gp.json --allowlist orbit-allowlist.json --location where.json \
+  --start-utc 2026-10-24T00:00:00Z --hours 24 --output new-plan.json
+```
+
+Agreement with Gpredict within 1 s is POL-11 (BUILDER) and is not claimed.
+The guest lock pins `skyfield==1.55`, `sgp4==2.27`, `jplephem==2.24` and
+`certifi==2026.10.19` with hashes (`deployment/linux_lab/wheelhouse-requirements.txt`).
+
+```sh
+for name in geo_look orbits passes; do
+  PYTHONPATH=software python -m unittest discover -s software/tests -p "test_$name.py" -v
+done
+```
 
 ## Primary sources checked20 October2026
 

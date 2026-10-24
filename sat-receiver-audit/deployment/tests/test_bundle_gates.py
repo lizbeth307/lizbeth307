@@ -162,6 +162,17 @@ class ReleaseGateTests(unittest.TestCase):
             self.gates()
 
 
+class BundleDocumentTests(unittest.TestCase):
+    def test_core_lists_each_document_once_with_the_gnss_uart_and_scope_policy_docs(self):
+        paths = [p for _, p in bundle.CORE]
+        self.assertEqual((len(set(paths)), len({t for t, _ in bundle.CORE})), (len(paths), len(paths)))  # unique section ids/titles
+        for doc in ("software/GNSS-UART.md", "software/SCOPE-POLICY.md"):
+            self.assertIn(doc, bundle.INCLUDED)
+            self.assertTrue((BASE / doc).is_file(), doc)
+        # Links from LOCATION.md/DEPLOYMENT.md to GNSS-UART.md now resolve to its section, not to the ZIP.
+        self.assertEqual(paths.index("software/GNSS-UART.md"), paths.index("software/LOCATION.md") + 1)
+
+
 class LinuxImportTests(unittest.TestCase):
     def test_readme_lineage_follows_run_json_without_a_clean_image_claim(self):
         self.assertIn("`base_overlay: null`", finalize.lineage_text(None))

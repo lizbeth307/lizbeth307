@@ -180,7 +180,7 @@ if __name__ == "__main__":
 README = """# Offline SR-RX ARM64 Linux lab
 
 This kit contains the pinned Ubuntu 24.04 ARM64 base image, direct-boot kernel
-and initrd, 19 Python wheels, 82 guest packages, isolated x86_64 QEMU/ISO runtime,
+and initrd, 23 Python wheels, 82 guest packages, isolated x86_64 QEMU/ISO runtime,
 the public Ubuntu cloud-image keyring, and the complete final project ZIP.
 All payload files and symlink targets are recorded in `kit-manifest.json`.
 No cache directories, APT indexes, VM overlay, user credentials or prior VM
@@ -345,8 +345,8 @@ def assemble(args):
     wheels = locks["wheelhouse-manifest.json"]
     guest = locks["guest-packages.lock.json"]
     host = locks["host-packages.lock.json"]
-    if len(images["ubuntu_assets"]) != 3 or len(wheels["wheels"]) != 19 or len(guest["packages"]) != 82 or len(host["packages"]) != 87:
-        raise ValueError("Unexpected locked input counts; expected 3 Ubuntu assets, 19 wheels, 82 guest and 87 host packages")
+    if len(images["ubuntu_assets"]) != 3 or len(wheels["wheels"]) != 23 or len(guest["packages"]) != 82 or len(host["packages"]) != 87:
+        raise ValueError("Unexpected locked input counts; expected 3 Ubuntu assets, 23 wheels, 82 guest and 87 host packages")
     entries = [Entry("launch.py", data=LAUNCHER.encode(), mode=0o755), Entry("README.md", data=README.encode()),
                Entry("project/SR-RX-v2-project.zip", source=project_zip, expected_sha256=project_sha, expected_bytes=project_size),
                Entry("trust/ubuntu-cloudimage-keyring.gpg", source=keyring)]
@@ -418,7 +418,7 @@ def assemble(args):
         raise ValueError("Duplicate kit payload path")
     manifest = {"schema_version": 1, "purpose": "offline generic ARM64 Linux tests; no physical hardware qualification",
                 "project_zip_root": project_root, "image_release": images["image_release"],
-                "locked_counts": {"ubuntu_assets": 3, "wheels": 19, "guest_packages": 82, "host_packages": 87},
+                "locked_counts": {"ubuntu_assets": 3, "wheels": 23, "guest_packages": 82, "host_packages": 87},
                 "manifest_self_excluded": True, "files": records,
                 "directories": sorted(runtime_directories)}
     entries.append(Entry("kit-manifest.json", data=(json.dumps(manifest, indent=2, ensure_ascii=False) + "\n").encode()))

@@ -3,6 +3,8 @@
 Only the daemon owns this object and the I2C adapter. Its bounded lease must
 be renewed by that owner; a trip clears permission, never automatically re-arms.
 Pico ACTIVE and hardware commissioning are independent supervisor assertions.
+The only pulse output is the named gnss_reset op (LC76G RESET_N via Q301): it
+energizes nothing, is timed by tick(), and its raw net stays outside the whitelist.
 """
 from __future__ import annotations
 
@@ -33,6 +35,14 @@ ROUTES = {"PARK": (False, False), "RF1": (False, False),
           "RF2": (True, False), "RF3": (False, True), "RF4": (True, True)}
 MAX_INPUT_AGE_MS, MAX_TELEMETRY_AGE_MS, MAX_LEASE_MS = 250, 1000, 5000
 SAFE_UNCONFIRMED = "; safe write unconfirmed: Pico MCP RESET required"
+# LC76G RESET_N pulse: MCP #4 GPA1 -> Q301 gate (high = reset, R326 holds it low,
+# safe image low). Quectel needs >=100 ms low (E3.json U304 notes); cold TTFF 28 s
+# (09-testy GNSS-01) sets the 30 s spacing, counted from the previous release (the
+# longer reading). A tick strictly after the 1000 ms hard deadline records an overrun.
+GNSS_RESET_GATE = "E3_GNSS_RESET_GATE"
+GNSS_RESET_WIDTH_MS, GNSS_RESET_MIN_MS, GNSS_RESET_MAX_MS = 200, 100, 500
+GNSS_RESET_DEADLINE_MS, GNSS_RESET_SPACING_MS = 1000, 30000
+GNSS_RESET_WINDOW_MS, GNSS_RESET_MAX_PULSES = 900000, 3
 
 
 def _number(value):
@@ -61,6 +71,9 @@ class SafetyPolicy:
         self.confirmations = {"boni_connected": False, "boni_profile": False, "bench_loads": False}
         self.always_on_a = 0.0 if not hardware.physical else None
         self.max_lab5_a = 3.2
+        self.gnss_reset = {"state": "IDLE", "last_ms": None, "width_ms": None, "release_ms": None,
+                           "last_width_ms": None, "last_error": None}
+        self._gnss_starts = []
         try:
             if not hardware.initialized and not hardware.physical:
                 hardware.initialize_safe()
@@ -85,6 +98,7 @@ class SafetyPolicy:
             self.hardware.all_off()
         except Exception:
             return False
+        self._gnss_released(now, "GNSS_RESET_ABORTED", self._release_proven())
         self.fault = None
         self.enabled_since.clear()
         self.bias_off_since = {branch: now for branch in DCS}
@@ -213,9 +227,106 @@ class SafetyPolicy:
         self.confirmations = dict.fromkeys(self.confirmations, False)
         try:
             self.hardware.all_off()
+            proven = self._release_proven()
         except Exception:
+            proven = False
             if not self.fault.endswith(SAFE_UNCONFIRMED):
                 self.fault += SAFE_UNCONFIRMED
+        # The safe image holds the GNSS reset gate low; a pulse in progress ends here.
+        self._gnss_released(self.now_ms, "GNSS_RESET_ABORTED", proven)
+
+    def _release_proven(self):
+        """Called right after all_off() returned: did it prove the safe image?
+
+        LinuxHardware.all_off resets the software image before it raises, so
+        the image never proves the gate low. It writes and reads back OLAT and
+        IODIR of every chip only on an initialized, open adapter (initialized
+        is cleared for a re-initialization and set only after its read-back).
+        """
+        return self.hardware.initialized is True and not getattr(self.hardware, "closed", False)
+
+    def _gnss_released(self, now, error, proven):
+        """End a pulse only on a read-back write; otherwise RELEASE_UNCONFIRMED.
+
+        Unproven: release_ms/last_width_ms stay None (never the intended times).
+        A later proven release (a successful all_off in trip, disarm or
+        clear_fault) moves it to IDLE with release_ms at that proof, so the 30 s
+        spacing counts from it; last_error keeps GNSS_RESET_RELEASE_UNCONFIRMED.
+        """
+        pulse = self.gnss_reset
+        if pulse["state"] == "IDLE":
+            return
+        if not proven:
+            # Only a Pico MCP RESET (outputs high-Z, R326) can then release the gate.
+            pulse.update(state="RELEASE_UNCONFIRMED", release_ms=None, last_width_ms=None,
+                         last_error="GNSS_RESET_RELEASE_UNCONFIRMED")
+            return
+        if pulse["state"] == "ASSERTED":
+            pulse.update(release_ms=now, last_width_ms=now - pulse["last_ms"], last_error=error)
+        elif pulse["state"] == "ASSERTING":  # The assert write itself failed, then all_off read back.
+            pulse.update(release_ms=now, last_error="GNSS_RESET_ASSERT_FAILED")
+        else:
+            pulse["release_ms"] = now
+        pulse["state"] = "IDLE"
+
+    def _gnss_service(self, now):
+        """De-assert at the first tick >= start+width; a later tick still releases at once."""
+        pulse = self.gnss_reset
+        if pulse["state"] != "ASSERTED":
+            return
+        if not self.outputs.get(GNSS_RESET_GATE):
+            # Released outside the policy. Only a safe re-initialization (read back,
+            # adapter latch clear) proves it; LinuxHardware._fail resets the image too.
+            self._gnss_released(now, "GNSS_RESET_ABORTED",
+                                self._release_proven() and not getattr(self.hardware, "faulted", False))
+            return
+        elapsed = now - pulse["last_ms"]
+        if elapsed < pulse["width_ms"]:
+            return
+        try:
+            self.hardware.apply_outputs({GNSS_RESET_GATE: False})
+        except Exception as error:
+            # trip() ends the pulse: IDLE only if its all_off read back, else RELEASE_UNCONFIRMED.
+            self.trip("GNSS reset de-assert failed: " + str(error))
+            if pulse["state"] == "IDLE":
+                pulse["last_error"] = "GNSS_RESET_DEASSERT_FAILED"
+            return
+        self._gnss_released(now, "GNSS_RESET_OVERRUN" if elapsed > GNSS_RESET_DEADLINE_MS else None, True)
+
+    def _gnss_pulse(self, value, now):
+        """Bounded LC76G RESET_N pulse. Energizes nothing, so it is allowed disarmed.
+
+        Never escalates or repeats by itself; the raw net stays outside the whitelist.
+        """
+        self._gnss_service(now)
+        if self.fault:
+            return self._reject("fault latched: " + self.fault)
+        value = {} if value is None else value
+        if type(value) is not dict or set(value) - {"width_ms"}:
+            return self._reject("gnss_reset value must be {width_ms}")
+        width = value.get("width_ms", GNSS_RESET_WIDTH_MS)
+        if type(width) is not int or not GNSS_RESET_MIN_MS <= width <= GNSS_RESET_MAX_MS:
+            return self._reject("GNSS_RESET_WIDTH: integer 100..500 ms required")
+        if (not self.hardware.initialized or getattr(self.hardware, "faulted", False)
+                or GNSS_RESET_GATE not in self.outputs):
+            return self._reject("GNSS_RESET_HARDWARE: initialized MCP outputs required")
+        pulse = self.gnss_reset
+        if pulse["state"] != "IDLE" or self.outputs.get(GNSS_RESET_GATE):
+            return self._reject("GNSS_RESET_IN_PROGRESS")
+        if pulse["release_ms"] is not None and now - pulse["release_ms"] < GNSS_RESET_SPACING_MS:
+            return self._reject("GNSS_RESET_SPACING: 30 s after the previous release required")
+        self._gnss_starts = [start for start in self._gnss_starts if now - start < GNSS_RESET_WINDOW_MS]
+        if len(self._gnss_starts) >= GNSS_RESET_MAX_PULSES:
+            return self._reject("GNSS_RESET_RATE_LIMIT: at most 3 pulses per 15 min")
+        # Counted and marked before the write: a failed OLAT write may still have
+        # reached the MCP before its read-back failed (ASSERTING exists only here).
+        self._gnss_starts.append(now)
+        pulse.update(state="ASSERTING", last_ms=now, width_ms=width, release_ms=None,
+                     last_width_ms=None, last_error=None)
+        if not self._write({GNSS_RESET_GATE: True}):
+            return self._reject(self.fault)  # trip() ended it: IDLE/ASSERT_FAILED or RELEASE_UNCONFIRMED
+        pulse["state"] = "ASSERTED"
+        return {"ok": True, "state": "ASSERTED", "width_ms": width, "release_due_ms": now + width}
 
     def _budget_ok(self, proposed, now):
         antenna = 0.0
@@ -275,6 +386,7 @@ class SafetyPolicy:
 
     def tick(self, now_ms=None):
         now = self._time(now_ms)
+        self._gnss_service(now)
         if self.armed:
             if self.lease_deadline_ms is None or now >= self.lease_deadline_ms:
                 self.trip("owner lease expired")
@@ -306,8 +418,9 @@ class SafetyPolicy:
             try:
                 self.hardware.all_off()
             except Exception as error:
-                self.trip(str(error))
+                self.trip(str(error))  # Its own all_off result decides the GNSS release.
                 return self._reject(str(error))
+            self._gnss_released(now, "GNSS_RESET_ABORTED", self._release_proven())
             return {"ok": True}
         if ((name.startswith("EN_") and name.removeprefix("EN_") in CAPS and value is False)
                 or (name == "CHG_INHIBIT" and value is True)):
@@ -364,6 +477,8 @@ class SafetyPolicy:
             if self.armed:
                 self.trip("owner lease expired")
             return self._reject("valid owner lease required")
+        if name == "gnss_reset":
+            return self._gnss_pulse(value, now)
         if name == "arm":
             if value is not True or not (self.pico_active and self.commissioned):
                 return self._reject("Pico ACTIVE and commissioning required")
@@ -444,7 +559,11 @@ class SafetyPolicy:
         return {"ok": True}
 
     def status(self):
-        return {"armed": self.armed, "fault": self.fault, "mode": self.mode,
+        pulse, now = self.gnss_reset, self.now_ms
+        gnss_reset = dict(pulse, release_due_ms=pulse["last_ms"] + pulse["width_ms"] if pulse["state"] == "ASSERTED" else None,
+                          pulses_15min=sum(now is not None and 0 <= now - start < GNSS_RESET_WINDOW_MS
+                                           for start in self._gnss_starts))
+        return {"armed": self.armed, "fault": self.fault, "mode": self.mode, "gnss_reset": gnss_reset,
                 "pico_active": self.pico_active, "commissioned": self.commissioned,
                 "owner": self.owner, "lease_deadline_ms": self.lease_deadline_ms,
                 "outputs": dict(self.outputs), "inputs": dict(self.inputs),

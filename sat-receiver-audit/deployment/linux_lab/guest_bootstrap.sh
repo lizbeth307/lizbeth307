@@ -137,7 +137,7 @@ out.write_text(json.dumps({'status':'PASS','wheels':len(want),'debs':len(debs),'
  'method':'venv recreated; every locked deb and wheel reinstalled from the hash-verified payload; installed versions equal both locks'},indent=2)+'\n')
 print('Locked dependency reinstall and versions PASS')
 PY
-/opt/srrx/venv/bin/python3 -m pip install --no-index --no-cache-dir --force-reinstall --no-deps --no-build-isolation '/opt/srrx/software[radio,hmi,model]' > "$results/pip-install.log" 2>&1
+/opt/srrx/venv/bin/python3 -m pip install --no-index --no-cache-dir --force-reinstall --no-deps --no-build-isolation '/opt/srrx/software[radio,hmi,model,orbits]' > "$results/pip-install.log" 2>&1
 /opt/srrx/venv/bin/python3 -m pip check
 /opt/srrx/venv/bin/python3 -m pip freeze --all > "$results/python-packages.txt"
 dpkg-query -W > "$results/debian-packages.txt"

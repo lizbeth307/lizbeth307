@@ -285,6 +285,13 @@ def main():
                 doc=pymupdf.open(out/(NAME+'.svg'));helper.atomic_write(out/(NAME+'.png'),doc[0].get_pixmap(matrix=pymupdf.Matrix(3,3),alpha=False).tobytes('png'))
                 back=pymupdf.open(out/(NAME+'-bottom.svg'));helper.atomic_write(out/(NAME+'-bottom.png'),back[0].get_pixmap(matrix=pymupdf.Matrix(3,3),alpha=False).tobytes('png'))
             except ImportError:pass
+            # Repeat native DRC on the published copy, which resolves footprints through
+            # the portable relative fp-lib-table rather than the temporary absolute one.
+            portable=subprocess.run([str(cli),'pcb','drc','--format','json','--severity-all','--all-track-errors','--exit-code-violations','--output',str(out/'drc-portable-raw.json'),str(out/candidate.name)],capture_output=True,text=True)
+            praw=json.loads((out/'drc-portable-raw.json').read_text(encoding='utf-8'))
+            pcounts={k:len(praw.get(k,[])) for k in ('violations','unconnected_items','schematic_parity')}
+            report['drc_portable']={'exit_code':portable.returncode,'sections':pcounts,'ignored_checks':praw.get('ignored_checks',[]),'raw_sha256':helper.digest(out/'drc-portable-raw.json')}
+            if portable.returncode or any(pcounts.values()) or praw.get('ignored_checks'):raise RuntimeError('Portable-project DRC failed: '+json.dumps(report['drc_portable']))
             report.update(status=STATUS,published_board=True,board_sha256=helper.digest(out/candidate.name))
     except Exception as exc:
         report.update(status='BLOCKED_ROUTING_ASSESSMENT',error=str(exc));print(type(exc).__name__+': '+str(exc),flush=True)

@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "fixture": "pause",
+  "pid": 2632,
+  "uid": 1001,
+  "stage": "HOLD_STOPPED",
+  "qt_platform": "offscreen",
+  "pyside6": "6.12.0",
+  "qt": "6.12.0",
+  "screenshots": [
+    {
+      "path": "pause-startup-disarmed.png",
+      "bytes": 122442,
+      "width": 1100,
+      "height": 800,
+      "sha256": "f95cf9957a835ca9fc4f163809b7fd99ae1cf4e355339178e246136a192a6a13"
+    },
+    {
+      "path": "pause-resumed-disarmed.png",
+      "bytes": 121234,
+      "width": 1100,
+      "height": 800,
+      "sha256": "36b79ece86c950e87d541ef52d80f6e7a4a646fafa185ad2c79c8623625df36e"
+    }
+  ],
+  "scope": "real full Qt window/worker; semantic queue actions, no touch injection",
+  "physical_tests_performed": false,
+  "action_log": [
+    {
+      "operation": "recover",
+      "at_s": 4.394121,
+      "name": null,
+      "value": null
+    },
+    {
+      "operation": "control",
+      "at_s": 5.113815,
+      "name": "EN_RTLA",
+      "value": true
+    },
+    {
+      "operation": "disarm",
+      "at_s": 8.705639,
+      "name": null,
+      "value": null
+    },
+    {
+      "operation": "disarm",
+      "at_s": 11.202894,
+      "name": null,
+      "value": null
+    }
+  ],
+  "elapsed_s": 11.228236,
+  "request_counts": {
+    "status": 23,
+    "recover": 1,
+    "lease": 2,
+    "control": 1,
+    "disarm": 2
+  },
+  "accepted_lease_at_s": [
+    4.408201,
+    5.573044
+  ],
+  "qt_timer": {
+    "interval_ms": 100,
+    "ticks": 44,
+    "mean_gap_ms": 255.187,
+    "max_gap_ms_including_SIGSTOP": 3713.257
+  },
+  "service": {
+    "mode": "SIMULATION",
+    "pico_state": "TRIPPED",
+    "pico_reset_asserted": true,
+    "armed": false,
+    "fault": "owner lease expired",
+    "owner": null,
+    "lease_deadline_ms": null,
+    "outputs": {
+      "EN_LNB": false,
+      "EN_BONI": false,
+      "K1_ON": false,
+      "K2_ON": false,
+      "SW_RTLA_A": false,
+      "SW_RTLA_B": false,
+      "SW_RTLB_A": false,
+      "SW_RTLB_B": false,
+      "EN_LABPORT": false,
+      "EN_AUX12": false,
+      "EN_RTLA": false,
+      "EN_RTLB": false,
+      "EN_HFP": false,
+      "EN_LNA1": false,
+      "EN_LNA2": false,
+      "EN_LNA3": false,
+      "EN_T7": false,
+      "EN_LNA4": false,
+      "EN_LIME3V3": false,
+      "SW_LIME_A": false,
+      "SW_LIME_B": false,
+      "EN_SB_LNA": false
+    },
+    "energized": []
+  },
+  "holding": false,
+  "controller_notice": "Console closed \u2014 DISARM requested",
+  "controller_error": null,
+  "warmup_finished_s": 4.218253,
+  "natural_heartbeat_s": 4.283727,
+  "fresh_poll_s": 4.254898,
+  "arm_requested_s": 4.38882,
+  "active_s": 5.099288,
+  "stable_s": 6.309723,
+  "remaining_lease_ms": 2261,
+  "hold_stopped_s": 8.740103,
+  "exit_requests": {
+    "status": 23,
+    "recover": 1,
+    "lease": 2,
+    "control": 1,
+    "disarm": 2
+  },
+  "closed": true
+}
