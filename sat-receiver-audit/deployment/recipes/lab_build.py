@@ -103,7 +103,7 @@ def lab_build(component, cache, work, out, jobs=4, repeat=False):
         result["first_debs"] = runs[0]
     (out / (component + ".reproducibility.json")).write_text(json.dumps(result, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     owner = int(os.environ.get("SUDO_UID", "0")), int(os.environ.get("SUDO_GID", "0"))
-    for path in [out] + list(out.rglob("*")):
+    for path in [out.parent, out] + list(out.rglob("*")):  # the caller (sudo) owns the whole output tree
         os.chown(path, *owner, follow_symlinks=False)
     return result
 
