@@ -405,7 +405,7 @@ _Run `wf_d3593e9c-5ce`_
     - 4.5 dBic on a 12 cm ground plane, so it needs a ground plate of at least 10-12 cm.
     - Choose it for robustness, not sensitivity (model system NF 2.3-3.0 dB, against about 2.0 dB for the 25346).
   
-  ### 2. L-band (P3, ch3 at 4.5 V after DC-sense, which accepts 15-20 mA)
+  ### 2. L-band (P3, ch3 at 4.5 V, 4.30 V since v2.1, after DC-sense, which accepts 15-20 mA)
   - **Antenna:** RTL-SDR Blog Active L-Band 1525-1660 MHz Patch Antenna Set, v2 (gray), $59.95 (buy page add-to-cart 35592; AliExpress 4000311955837).
     - RHCP; 175x175 mm patch; LNA then SAW.
     - 3.3-5 V, 15-20 mA (20 mA maximum).
@@ -422,7 +422,7 @@ _Run `wf_d3593e9c-5ce`_
   - **Logging:** record 1.43-1.52 GHz and 1.616-1.66 GHz power alongside NCS C/N0 (adjacent SDL and in-band uplink blockers).
   - **Optional, user confirmation needed:** folding aluminium shroud plus back plate (pieces ≤20 cm), anecdotal +4-5 dB.
   
-  ### 3. 70 cm (P2, ch2 at 4.5 V after DC-sense, which accepts about 50 mA)
+  ### 3. 70 cm (P2, ch2 at 4.5 V, 4.30 V since v2.1, after DC-sense, which accepts about 50 mA)
   - **Preamp:** Uputronics Filtered Preamp, 440 MHz CubeSAT variant, GBP 51.59 (about $68.71).
     - 3.5-5.5 V, about 50 mA; NF 0.75 dB; gain at least 19 dB.
     - Passband about 427-452 MHz at -3.4 dB (vendor plot).
@@ -457,11 +457,11 @@ _Run `wf_d3593e9c-5ce`_
   - P7 DC margin. With the LC76G VCC on 3V3, then on 5 V, put a 150 ohm DC load (about 20 mA at 3.0 V) on P7 and read the volts; then repeat with the 25346 connected through an SMA DC-pass tee. Accept at least 3.05 V. Also read LC76G VCC at the module, expecting 3.26 V on 3V3 and 3.30 V on 5 V. DC only, nothing radiated.
   - GNSS C/N0 acceptance (receive-only, LC76G GSV, open sky, 10 min each). Step 1: 25346 against the LC76G's included ceramic antenna, and against the ANN-MB5 if bought. Step 2: USB 3 SSD idle versus streaming, and HDMI or display off versus on. Accept ≤1 dB-Hz loss. If it fails, repeat with the drive in USB 2 mode or shielded. Record per-constellation C/N0, including GLONASS, to settle the 25346 G1 question.
   - Magnet check: BNO085 heading change with the 25346 puck at 10, 20 and 30 cm in four orientations. Accept less than 1°, otherwise use the tape mount.
-  - L-band patch on arrival: inspect the case seal and screw bosses and record the connector gender. With ch3 at 4.5 V, check that DC-sense reads 15-20 mA.
+  - L-band patch on arrival: inspect the case seal and screw bosses and record the connector gender. With ch3 at 4.30 V (v2.1; was 4.5 V), check that DC-sense reads 15-20 mA.
   - L-band patch noise-floor step on RTL-B T1 (receive-only): first a 50 ohm load at P3, then the patch powered and aimed at clear sky away from the GEO arc, on the 2 m lead at least 1 m from the device. A step of 8 dB or more shows the patch LNA dominates the chain NF.
   - Inmarsat-C acquisition (receive-only, power-only). Run the 1537-1545 MHz scan with IMU az/el, then sweep tilt and rotation by hand and lock at peak NCS C/N0. Log NCS C/N0 together with 1.43-1.52 GHz and 1.616-1.66 GHz band power. Repeat at a second site near an LTE/NR SDL cell if one is known. Demodulate only through egc-gate after its mixed-recording test.
   - Dipole kit on arrival (DC ohmmeter, no RF). Centre to shield must read open (>1 MΩ), each element must have continuity to its own conductor, and the M5 threads must engage cleanly.
-  - Uputronics 440, conducted bench only. Check that DC-sense reads about 50 mA at 4.5 V. Use the tinySA as a source at ≤ -40 dBm into the ANT port (Bench mode, 50 ohm terminations, conducted) to check gain of at least 19 dB at 437.5 MHz and the -3 dB edges near 427/452 MHz. Check that unpowered, the path is heavily attenuated.
+  - Uputronics 440, conducted bench only. Check that DC-sense reads about 50 mA at 4.30 V (v2.1; was 4.5 V). Use the tinySA as a source at ≤ -40 dBm into the ANT port (Bench mode, 50 ohm terminations, conducted) to check gain of at least 19 dB at 437.5 MHz and the -3 dB edges near 427/452 MHz. Check that unpowered, the path is heavily attenuated.
   - 70 cm A/B (receive-only, on air) during ISS SSTV Series 34, 22-25 Oct 2026, 437.55 MHz, Doppler tracking on. Alternate the kit #1 short-element dipole and the SRH-701 on the Uputronics on successive passes, or on beacons in the same pass, and log carrier SNR at matched elevation. Adopt the dipole as default if it is at least 0 dB better; record the decoded image as the first field confirmation of 'reliable'.
   - Optional shroud (only if the user approves it): NCS C/N0 before and after fitting, same pointing procedure; keep it only if the gain is at least 2 dB.
 - **Confidence:** medium

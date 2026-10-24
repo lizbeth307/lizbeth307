@@ -75,7 +75,7 @@ _Run `wf_a268b76e-da0`_
 - **Conditions or tests:** No new tests; the part is unchanged. The existing gates still apply to the units as delivered:
   - C4 gate (1): HF+ narrowband A/B with SYS12/LAB5 load steps 0.3-3 A and the charger on/off. No line 3 dB or more above the floor within ±5 kHz of 40, 60, 77.5, 162, 490, 518 or 4209.5 kHz, nor at the 1/7/14 MHz checks.
   - C4 gate (2): 60 min at 4.2 A in the closed case at 14.0 and 16.4 V in, logging D36V50F12, #2813 and fuse temperatures.
-  - EN divider sweep: 10.0k/1.00k, targets sleep about 12.1 V and wake about 13.6 V. v2.1: 4.99k/562 Ohm, sweep 14 -> 10.5 -> 14 V at 25 and 50 C on every unit including the spare; accept wake at most 13.30 V and sleep 10.9-12.0 V; above 13.30 V fit R109 576 Ohm if the measured sleep stays at or above 10.9 V, otherwise reject the module (Zh-03).
+  - EN divider sweep: 10.0k/1.00k, targets sleep about 12.1 V and wake about 13.6 V. v2.1: 4.99k/562 Ohm, sweep 14 -> 10.5 -> 14 V at 25 and 50 C on every unit including the spare; accept wake at most 13.30 V and sleep 10.9-12.0 V; above 13.30 V fit R109 576 Ohm (both thresholds drop by about 2.2%) and repeat the sweep; accept only if the re-measured wake is at most 13.30 V and sleep at least 10.9 V, otherwise reject the module (Zh-03).
   
   Goods-in: check the Pololu silkscreen and #4095 marking, and that the output is 12 V ±4% unloaded.
   

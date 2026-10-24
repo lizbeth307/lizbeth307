@@ -32,7 +32,7 @@ _Run `wf_e32114dd-52d`_
   - Fewer interfaces: each path loses one SMA pair (the separate bulkhead). That is about 0.03-0.07 dB less loss and one reflection fewer per path (angle B's literature figure).
   - Cable: same RG316 class as the current jumpers. Habia RG316/C gives 0.54/0.86/1.29 dB/m at 0.4/1/2 GHz, so 20 cm costs 0.11/0.17/0.26 dB.
   - P1 at 137 MHz, before the LNA: about 0.06 dB, at the bottom of the 0.06-0.36 dB model.
-  - DC: same centre conductor. P2/P3 at 4.5 V, 0.3 A drop about 20 mV (model).
+  - DC: same centre conductor. P2/P3 at 4.5 V (4.30 V since v2.1), 0.3 A drop about 20 mV (model).
   - Shielding: single braid, same as the baseline.
   - O-ring: stated on the listing. This is better than the unspecified generic bulkhead for IPX4/IP54.
   - Not provable on paper: VSWR, plating, pin depth, braid coverage, thread length, D-flat, durability. The current generic bulkheads and jumpers are also unproven on these, so the tie is broken only by the per-unit acceptance tests. Any unit that fails is replaced with a branded part, so the set can never end up below the current quality.

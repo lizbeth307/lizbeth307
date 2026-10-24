@@ -68,7 +68,7 @@ python pcb/prepare.py --check
 
 Перевіряються унікальні refs/pins, net/NC, footprint hashes, реальні pad IDs, граф проти XML і точна восьмимережна межа core. `--check` також перевіряє, що всі вивантажені CSV/JSON актуальні. Вихідні SHA256 і primary URLs записані в provenance. Заміна графу або KiCad XML вимагає повторного запуску.
 
-Залишаються конкретні PCB-рішення: 424 активних bare parts без footprint (точне число — `pcb/generated/summary.json`); 50 пасивних core land patterns як пропозиції; MPN та їхні електричні/теплові ratings; фізичні роз'єми й механіка; stackup/50 Ω geometry; thermal/current/via design; реальне трасування; DRC і схемно-платна звірка вже після появи CAD. Записи unresolved можуть стосуватися одного компонента з різних причин; їх не слід читати як кількість незалежних вузлів.
+Залишаються конкретні PCB-рішення: 419 активних bare parts без footprint (точне число — `pcb/generated/summary.json`); 50 пасивних core land patterns як пропозиції; MPN та їхні електричні/теплові ratings; фізичні роз'єми й механіка; stackup/50 Ω geometry; thermal/current/via design; реальне трасування; DRC і схемно-платна звірка вже після появи CAD. Записи unresolved можуть стосуватися одного компонента з різних причин; їх не слід читати як кількість незалежних вузлів.
 
 Створено [справжній KiCad starter](kicad/pcb-preparation/README.md) із 71 компонентом/187 площадками, мережами та кандидатом контуру 125×115 mm. Native KiCad і незалежний parser підтвердили відповідність; трас, via та copper zones немає. Повний raw DRC: **140 непідключень, 0 інших порушень, 0 вимкнених перевірок**. Це не завершений PCB і не DRC PASS. Цей пакет не містить Gerber/drill для виробництва.
 
