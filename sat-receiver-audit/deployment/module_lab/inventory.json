@@ -13,8 +13,8 @@
       "bytes": 85810
     },
     "design/E2.json": {
-      "sha256": "19b2247f3b32a547ba1478b37f31177b057f85f213b273e2407ac06a05189196",
-      "bytes": 319508
+      "sha256": "7af9822b4f8402f845fad8bb31358d90aa19ae5effcba0c4fd87d52334fc83d6",
+      "bytes": 319923
     },
     "design/E3.json": {
       "sha256": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0",
@@ -29,8 +29,8 @@
       "bytes": 88455
     },
     "STACK.md": {
-      "sha256": "038cbb0a49c80bf3e6c8737bb8934bd3f750274048e9eab7275cc2fbfb810fe6",
-      "bytes": 1961476
+      "sha256": "e3b8d7f6eefb8c389355a7dfce5291ca0ba6e7844fba73c564b3090d1a6a5d86",
+      "bytes": 1963685
     },
     "build/12-revision-v2.1.md": {
       "sha256": "81bd6302ec9649abc5b4f489aefc33a0c21b36bf7390d628842386a54ed24f93",

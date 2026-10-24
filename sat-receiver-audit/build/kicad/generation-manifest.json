@@ -41,7 +41,7 @@
       "stem": "E2",
       "instance": "81984160-ffc1-5150-93ba-690a49e1cc5c",
       "title": "E2 - Захищені рейки, LNA і моніторинг струму (1/5)",
-      "components": 94,
+      "components": 88,
       "sheet": "E2",
       "notes": [
         "E2-05"
@@ -50,21 +50,21 @@
       "note_wrap_chars": {
         "E2-05": 110
       },
-      "fill": 0.729,
+      "fill": 0.699,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 70,
-        "ground_symbols": 59,
-        "junctions": 41,
+        "global_labels": 67,
+        "ground_symbols": 56,
+        "junctions": 40,
         "wire_crossings": 2,
-        "wires": 230
+        "wires": 219
       }
     },
     {
       "stem": "E2_02",
       "instance": "def01337-c22c-581d-ab21-3e0f48197e81",
       "title": "E2 - Захищені рейки, LNA і моніторинг струму (2/5)",
-      "components": 54,
+      "components": 49,
       "sheet": "E2",
       "notes": [
         "E2-01",
@@ -77,14 +77,14 @@
         "E2-04": 110,
         "N-E2-03": 110
       },
-      "fill": 0.731,
+      "fill": 0.695,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 39,
-        "ground_symbols": 34,
-        "junctions": 42,
+        "global_labels": 33,
+        "ground_symbols": 30,
+        "junctions": 40,
         "wire_crossings": 3,
-        "wires": 184
+        "wires": 171
       }
     },
     {
@@ -102,21 +102,21 @@
         "E2-03": 110,
         "N-E2-01": 110
       },
-      "fill": 0.723,
+      "fill": 0.668,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 66,
-        "ground_symbols": 28,
-        "junctions": 33,
-        "wire_crossings": 7,
-        "wires": 198
+        "global_labels": 57,
+        "ground_symbols": 33,
+        "junctions": 30,
+        "wire_crossings": 5,
+        "wires": 176
       }
     },
     {
       "stem": "E2_04",
       "instance": "b86a610c-9540-56eb-9a94-fee3a23ee226",
       "title": "E2 - Захищені рейки, LNA і моніторинг струму (4/5)",
-      "components": 42,
+      "components": 53,
       "sheet": "E2",
       "notes": [
         "E2-02"
@@ -125,14 +125,14 @@
       "note_wrap_chars": {
         "E2-02": 110
       },
-      "fill": 0.364,
+      "fill": 0.494,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 36,
-        "ground_symbols": 18,
-        "junctions": 16,
-        "wire_crossings": 0,
-        "wires": 91
+        "global_labels": 54,
+        "ground_symbols": 20,
+        "junctions": 22,
+        "wire_crossings": 2,
+        "wires": 137
       }
     },
     {
@@ -536,7 +536,7 @@
       "id": "E2-05",
       "description": "Відсутність фантомного живлення Q6A, вимкнення дисплея та фізична правильність кінцевих кабелів потребують перевірки з реальним обладнанням.",
       "blocking": true,
-      "resolve": "За активної LAB5 і вимкненої Q6A: 3V3_Q6A та upstream VBUS близько 0V, PICO_DISP_EN низький. Продзвонити розрізаний VBUS, ключовані роз’єми E3/E5 та сигнал PWR_ON_KEY. UVLO J21 (v2.1, R202 13.0k): джерело з обмеженням струму на E2_J21_FUSED, Q6A або e-load на J21, повільна розгортка 0→12.5→0 V при 25 і 50 °C — увімкнення 10.09…10.83 V, вимкнення 9.18…9.88 V (з TCR 9.99…10.95 / 9.08…9.99 V), без брязкоту OUT/FLT під час пуску; кроки навантаження SYS12 0.3→3 A при SYS12 = 11.0 V і біля UV trip — мінімум E2_J21_FUSED вище виміряного порога вимкнення, без FLT і скидання Q6A. Спрацювання UVLO вимикає Q6A, і Pico через 3 s відкриває #2813 (засувка OFF, перезапуск лише кнопкою при ≥13.6 V) — очікувана поведінка. Імпульс Pico на PWR_ON_KEY не реалізований (firmware/pico/supervisor.py тримає q6a_key=False): B11 (автостарт, імпульс 20/20) спершу потребує доробки прошивки — відкритий пункт.",
+      "resolve": "За активної LAB5 і вимкненої Q6A: 3V3_Q6A та upstream VBUS близько 0V, PICO_DISP_EN низький. Продзвонити розрізаний VBUS, ключовані роз’єми E3/E5 та сигнал PWR_ON_KEY. UVLO J21 (v2.1, R202 13.0k): джерело з обмеженням струму на E2_J21_FUSED, Q6A або e-load на J21, повільна розгортка 0→12.5→0 V при 25 і 50 °C — увімкнення 10.09…10.83 V, вимкнення 9.18…9.88 V (з TCR 9.99…10.95 / 9.08…9.99 V), без брязкоту OUT/FLT під час пуску; кроки навантаження SYS12 0.3→3 A при SYS12 = 11.0 V і біля UV trip — мінімум E2_J21_FUSED вище виміряного порога вимкнення, без FLT і скидання Q6A. Спрацювання UVLO вимикає Q6A, і Pico через 3 s відкриває #2813 (засувка OFF, перезапуск лише кнопкою при ≥13.6 V) — очікувана поведінка. Імпульс Pico на PWR_ON_KEY реалізований у прошивці (firmware/pico/README.md, «Q6A power-on key»: 900 ms через 1.5 s без 3V3 Q6A, до 3 спроб через 5 s, лише після power-on Pico або перезапуску кнопкою; у 3-секундному вікні OFF після UVLO клавіша не натискається, і після перезавантаження WDT теж): B11 (автостарт, імпульс 20/20, build/09-testy.md Ж-02/Ж-02a) — відкритий стендовий пункт.",
       "stack": "§5.1 (DISP12); §5.2; §8 (зворотне живлення)",
       "refs": [
         "U202",
@@ -1003,7 +1003,7 @@
   },
   "source_sha256": {
     "E1.json": "3d216840beed9e5692858718915e100fba00f9b73aeb57248841f1ecbc76aa5a",
-    "E2.json": "19b2247f3b32a547ba1478b37f31177b057f85f213b273e2407ac06a05189196",
+    "E2.json": "7af9822b4f8402f845fad8bb31358d90aa19ae5effcba0c4fd87d52334fc83d6",
     "E3.json": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0",
     "E4.json": "a3122809dacd86b312516df5b53f932bd0ab95b48122e5cf08351610f538e56b",
     "E5.json": "9d61ff10e75417c806afda7ab923ac06de7faf9b6ff5b53acce57477b3960212"
