@@ -1,0 +1,23 @@
+SR-RX recipe patch 0003 (+lab): net::UDPServer binds 127.0.0.1 instead of INADDR_ANY.
+Pinned SatDump 1aedd60 binds every UDPServer to INADDR_ANY (src-core/common/net/udp.h); the
+transient live unit's IPAddressDeny=any + IPAddressAllow=localhost stays the primary control.
+SatDump is GPL-3.0 (upstream LICENSE, git blob f288702d2fa16d3cdf0035b15a9fcbc552cd88e7). This change is distributed under the same licence.
+---
+diff --git a/src-core/common/net/udp.h b/src-core/common/net/udp.h
+--- a/src-core/common/net/udp.h
++++ b/src-core/common/net/udp.h
+@@ -102,11 +102,12 @@
+ 
+             memset((char *)&sock_addr, 0, sizeof(sock_addr));
+             sock_addr.sin_family = AF_INET;
+-            sock_addr.sin_addr.s_addr = INADDR_ANY;
++            // SR-RX +lab: every UDPServer (net_source included) listens on loopback only.
++            sock_addr.sin_addr.s_addr = htonl(INADDR_LOOPBACK);
+             sock_addr.sin_port = htons(port);
+ 
+ #if defined(_WIN32)
+-            sock_addr.sin_addr.S_un.S_addr = INADDR_ANY;
++            sock_addr.sin_addr.S_un.S_addr = htonl(INADDR_LOOPBACK);
+ #endif
+             if (bind(sock, (struct sockaddr *)&sock_addr, sizeof(sock_addr)) < 0)
+                 throw std::runtime_error("Couldn't connect to UDP socket!");

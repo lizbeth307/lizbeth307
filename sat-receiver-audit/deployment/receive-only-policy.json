@@ -231,15 +231,15 @@
     },
     "satdump": {
       "footprint": ["usr/bin/satdump*", "usr/local/bin/satdump*", "usr/lib/satdump", "usr/local/lib/satdump", "usr/share/satdump", "usr/local/share/satdump"],
-      "plugin_dirs": ["usr/lib/satdump/plugins", "usr/local/lib/satdump/plugins"],
+      "plugin_dirs": ["usr/lib/satdump/plugins", "usr/local/lib/satdump/plugins", "usr/lib/*/satdump/plugins"],
       "allow_plugins": ["meteor", "noaa_metop", "aws", "elektro_arktika", "xrit", "fy2", "net_source"],
       "deny_tokens": ["sdr_sink", "audio_sink", "hackrf", "bladerf", "airspy", "rtlsdr", "rtltcp", "rtl_tcp", "spyserver", "sdrpp_server", "remote_sdr", "soapy", "limesuite", "inmarsat", "orbcomm", "dmsp", "wsf", "spacex", "bluewalker", "webhook", "autotrack", "sdr_server", "gk2a", "fy3", "fy4", "goes", "metopsg", "analog", "cubesat", "radiosonde", "himawari", "geonetcast", "experimental", "tools_app", "wipsettings"],
       "config_paths": ["usr/share/satdump/satdump_cfg.json", "usr/local/share/satdump/satdump_cfg.json", "etc/satdump/*.json", "home/*/.config/satdump/*.json", "root/.config/satdump/*.json"],
-      "pipeline_dirs": ["usr/share/satdump/pipelines", "usr/local/share/satdump/pipelines"],
+      "pipeline_dirs": ["usr/share/satdump/pipelines", "usr/local/share/satdump/pipelines", "usr/share/satdump/resources/pipelines", "usr/local/share/satdump/resources/pipelines"],
       "allow_pipelines": ["Meteor-M.json", "MetOp.json", "AWS.json", "FengYun-2.json", "Elektro_Arktika.json"],
       "pipeline_deny_tokens": ["mqtt", "cosmos", "dmsp", "yunhai", "encrypted", "syracuse", "wsf", "angels", "inmarsat", "orbcomm"],
       "required_settings": {"kepler_update_interval": "Never"},
-      "sources": ["build/07-pz-vstanovlennia.md:362-389", "build/07-pz-vstanovlennia.md:549", "STACK.md:886", "build/09-testy.md:78"]
+      "sources": ["build/07-pz-vstanovlennia.md:362-389", "build/07-pz-vstanovlennia.md:549", "STACK.md:886", "build/09-testy.md:78", "deployment/recipes/satdump/recipe.json (1aedd60 installs pipelines to share/satdump/resources/pipelines and plugins to ${CMAKE_INSTALL_LIBDIR}/satdump/plugins)"]
     },
     "openwebrx": {
       "footprint": ["usr/bin/openwebrx", "usr/lib/python3/dist-packages/owrx", "usr/local/lib/python3*/dist-packages/owrx", "opt/openwebrx"],

@@ -1,0 +1,318 @@
+{
+ "schema_version": 1,
+ "kind": "srrx_build_recipe",
+ "id": "satdump",
+ "status": "PENDING_BUILDER",
+ "status_note": "Structure, option completeness and patch fit are checked offline (deployment/tests/test_satdump_recipe.py, patches against the pinned files on 2026-10-24); no arm64 build, plugin trace or decode fixture has run yet (the +lab package builder is a separate package).",
+ "source": {
+  "lock_id": "satdump",
+  "repo": "SatDump/SatDump",
+  "commit": "1aedd602055c154401384a8cc7876713bb371254",
+  "archive_sha256": "122267dbf038c541a78ea19c50071eec585c8fafb769617dcb7a4cb4c6f73235",
+  "archive_top": "SatDump-1aedd602055c154401384a8cc7876713bb371254",
+  "license": "GPL-3.0",
+  "license_blob": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+ },
+ "package": {
+  "name": "satdump",
+  "version": "2.0.0~alpha+git20260929+lab1",
+  "architecture": "arm64",
+  "distribution": "noble"
+ },
+ "upstream_files": {
+  "CMakeLists.txt": "daca96be5dbcbe89b28c2b6a541a44691f8c45a4",
+  "plugins/CMakeLists.txt": "1f75d761e472550e4a769ba1f1c84951d549cd25",
+  "satdump_cfg.json": "e3099214a2048ff2c219faa9afb516c43b50f853",
+  "src-core/common/net/udp.h": "dcb71736163e788fc047145fd2592c1c3c188702",
+  "src-core/common/cli_utils.cpp": "b389e22ca974fd8bb056686bea54bc6f1e95d865",
+  "src-core/core/cli/pipeline.cpp": "d3c4e383d931ff839103528a0ed04c44995d84ca",
+  "src-core/core/plugin.cpp": "7726add7014bc3ba8c74c1c60aa68eaa647796e8",
+  "src-core/pipeline/pipeline.cpp": "25ea1f8aac6aadbac4c89563a7bb5989c53cbc32",
+  "src-core/init.cpp": "65237ed135d4711692c5808d5ff16347ac67bcaf",
+  "plugins/sdr_sources/net_source_support/net_source.cpp": "95b10b22fdcf3ef0f9e23da80bc49a741b2c1707",
+  "src-core/common/dsp/io/baseband_interface.h": "5fdc328f60ee7de0f8f36c4a7fbc6e03526605a5",
+  "src-cli/legacy/live.cpp": "56f1c8327e4d5bd51bc9e2fe7c5ebe8b3f7d4aed",
+  "resources/pipelines/Meteor-M.json": "9f77ff43d45fe370a21d4abd2ab77d7c61a55fc5",
+  "resources/pipelines/MetOp.json": "bdece1f3c0802561804092703660196ca6feb7e9",
+  "resources/pipelines/AWS.json": "cce89d53f695a21450d56c4514f8c2a645465434",
+  "resources/pipelines/FengYun-2.json": "bd47ba9a013cdcaf38cbb2d419743ffda52e3a72",
+  "resources/pipelines/Elektro_Arktika.json": "c36b3f80f3b41fec601e6213bdc7b43aabba6dbf"
+ },
+ "patches": [
+  {
+   "file": "patches/0001-cli-add-option-c0b6f88.patch",
+   "sha256": "650e666a30c79130d51a932aac7f5d1d8d5c300fcce3d48f1d8347b06dd1c517",
+   "kind": "cherry-pick",
+   "strip": 1,
+   "targets": {
+    "src-core/core/cli/pipeline.cpp": "d3c4e383d931ff839103528a0ed04c44995d84ca"
+   },
+   "summary": "pipeline options take \"--key value\" as well as \"--key=value\" (#1191)",
+   "upstream_commit": "c0b6f8876c514990c2f22ca98b2a6c8a6f290a5d"
+  },
+  {
+   "file": "patches/0002-clock-recovery-free-6b5957f.patch",
+   "sha256": "377b3017be3055919d4d3b4cf1f4073651a04026b8e1208e00aba0bcfb41a78b",
+   "kind": "cherry-pick",
+   "strip": 1,
+   "targets": {
+    "src-core/dsp/clock_recovery/clock_recovery_gardner.cpp": "a65691ad322273014f9ca29b421169b5832b2c76",
+    "src-core/dsp/clock_recovery/clock_recovery_mm.cpp": "1b33f71ba8faa5f672ec3c53f6e0f62d48e9d5e2",
+    "src-core/dsp/clock_recovery/clock_recovery_mm_fast.cpp": "fa04ee44727da09a912e7a184c5a4b3a76b24070"
+   },
+   "summary": "clock recovery blocks free their sample buffer",
+   "upstream_commit": "6b5957fa52688c0a1395696b17e8d0a212bf0b72"
+  },
+  {
+   "file": "patches/0003-lab-udp-loopback.patch",
+   "sha256": "e04d131fe58a16ec48e0cfcd17316183ec49164a1a024e7586206d24cf840faa",
+   "kind": "lab",
+   "strip": 1,
+   "targets": {
+    "src-core/common/net/udp.h": "dcb71736163e788fc047145fd2592c1c3c188702"
+   },
+   "summary": "net::UDPServer binds 127.0.0.1 (second layer under the live unit's IPAddressDeny=any)"
+  }
+ ],
+ "cmake": {
+  "options_manifest": "upstream-options.json",
+  "definitions": {
+   "CMAKE_BUILD_TYPE": "Release",
+   "CMAKE_INSTALL_PREFIX": "/usr",
+   "CMAKE_INSTALL_LIBDIR": "lib",
+   "EXTERNAL_PLUGINS": "",
+   "BUILD_GUI": "OFF",
+   "BUILD_TESTING": "OFF",
+   "BUILD_TOOLS": "OFF",
+   "BUILD_ZIQ": "OFF",
+   "BUILD_ZIQ2": "OFF",
+   "BUILD_OPENCL": "OFF",
+   "BUILD_OPENMP": "ON",
+   "BUILD_DOCS": "OFF",
+   "ENABLE_INSTALL": "ON",
+   "ENABLE_I18N": "OFF",
+   "ENABLE_CRASHDUMP": "OFF",
+   "PLUGINS_ALL": "OFF",
+   "PLUGIN_SPACEX": "OFF",
+   "PLUGIN_SCRIPTING": "OFF",
+   "PLUGIN_FY2": "ON",
+   "PLUGIN_FY3": "OFF",
+   "PLUGIN_FY4": "OFF",
+   "PLUGIN_PROBA": "OFF",
+   "PLUGIN_EOS": "OFF",
+   "PLUGIN_METEOR": "ON",
+   "PLUGIN_JPSS": "OFF",
+   "PLUGIN_GOES": "OFF",
+   "PLUGIN_ELEKTRO_ARKTIKA": "ON",
+   "PLUGIN_GK2A": "OFF",
+   "PLUGIN_XRIT": "ON",
+   "PLUGIN_NOAA_METOP": "ON",
+   "PLUGIN_METOPSG": "OFF",
+   "PLUGIN_DMSP": "OFF",
+   "PLUGIN_JASON3": "OFF",
+   "PLUGIN_AIM": "OFF",
+   "PLUGIN_WSF": "OFF",
+   "PLUGIN_AWS": "ON",
+   "PLUGIN_MATS": "OFF",
+   "PLUGIN_HINODE": "OFF",
+   "PLUGIN_OCEANSAT": "OFF",
+   "PLUGIN_LANDSAT": "OFF",
+   "PLUGIN_HIMAWARI": "OFF",
+   "PLUGIN_GEONETCAST": "OFF",
+   "PLUGIN_BLUEWALKER3": "OFF",
+   "PLUGIN_UVSQ": "OFF",
+   "PLUGIN_ANALOG": "OFF",
+   "PLUGIN_ORBCOMM": "OFF",
+   "PLUGIN_GCOM": "OFF",
+   "PLUGIN_TUBSAT": "OFF",
+   "PLUGIN_UMKA": "OFF",
+   "PLUGIN_DSCOVR": "OFF",
+   "PLUGIN_STEREO": "OFF",
+   "PLUGIN_INMARSAT": "OFF",
+   "PLUGIN_CUBESAT": "OFF",
+   "PLUGIN_OTHERS": "OFF",
+   "PLUGIN_FIRSTPARTY_SUPPORT": "OFF",
+   "PLUGIN_DVB": "OFF",
+   "PLUGIN_CLUSTER": "OFF",
+   "PLUGIN_METEOSAT": "OFF",
+   "PLUGIN_EARTHCARE": "OFF",
+   "PLUGIN_SEAWIFS": "OFF",
+   "PLUGIN_KANOPUS": "OFF",
+   "PLUGIN_INSAT": "OFF",
+   "PLUGIN_RADIOSONDE": "OFF",
+   "PLUGIN_SIMD_SSE41": "OFF",
+   "PLUGIN_SIMD_NEON": "OFF",
+   "PLUGIN_SIMD_AVX2": "OFF",
+   "PLUGIN_AIRSPY_SDR_SUPPORT": "OFF",
+   "PLUGIN_HYDRASDR_SDR_SUPPORT": "OFF",
+   "PLUGIN_AIRSPYHF_SDR_SUPPORT": "OFF",
+   "PLUGIN_HACKRF_SDR_SUPPORT": "OFF",
+   "PLUGIN_LIMESDR_SDR_SUPPORT": "OFF",
+   "PLUGIN_SDRPLAY_SDR_SUPPORT": "OFF",
+   "PLUGIN_PLUTOSDR_SDR_SUPPORT": "OFF",
+   "PLUGIN_BLADERF_SDR_SUPPORT": "OFF",
+   "PLUGIN_LITEXM2SDR_SDR_SUPPORT": "OFF",
+   "PLUGIN_USRP_SDR_SUPPORT": "OFF",
+   "PLUGIN_RTLSDR_SDR_SUPPORT": "OFF",
+   "PLUGIN_MIRISDR_SDR_SUPPORT": "OFF",
+   "PLUGIN_SPYSERVER_SUPPORT": "OFF",
+   "PLUGIN_RTLTCP_SUPPORT": "OFF",
+   "PLUGIN_SDRPP_SERVER_SUPPORT": "OFF",
+   "PLUGIN_AARONIA_SDR_SUPPORT": "OFF",
+   "PLUGIN_HAROGIC_SDR_SUPPORT": "OFF",
+   "PLUGIN_RFNM_SDR_SUPPORT": "OFF",
+   "PLUGIN_FOBOSSDR_SDR_SUPPORT": "OFF",
+   "PLUGIN_RTAUDIO_SDR_SUPPORT": "OFF",
+   "PLUGIN_NET_SOURCE_SDR_SUPPORT": "ON",
+   "PLUGIN_REMOTE_SDR_SUPPORT": "OFF",
+   "PLUGIN_SDDC_SDR_SUPPORT": "OFF",
+   "PLUGIN_SOAPY_SDR_SUPPORT": "OFF",
+   "PLUGIN_RTAUDIO_SINK": "OFF",
+   "PLUGIN_PORTAUDIO_SINK": "OFF",
+   "PLUGIN_AAUDIO_SINK": "OFF",
+   "PLUGIN_BOCHUM_SUPPORT": "OFF",
+   "PLUGIN_EXPERIMENTAL_DEVICES_SUPPORT": "OFF",
+   "PLUGIN_BITVIEW_APP": "OFF",
+   "PLUGIN_TOOLS_APP": "OFF",
+   "PLUGIN_WIPTRACKING_APP": "OFF",
+   "PLUGIN_WIPSETTINGS_EDITOR_APP": "OFF",
+   "PLUGIN_WEBHOOK_APP": "OFF",
+   "USE_SIMD_OPTIMIZATIONS": "OFF",
+   "USE_DEBUG_ASAN": "OFF",
+   "USE_VIDEO_ENCODER": "OFF",
+   "BUILD_GLES": "OFF",
+   "NFD_PORTAL": "OFF",
+   "NFD_USE_ALLOWEDCONTENTTYPES_IF_AVAILABLE": "OFF",
+   "NFD_APPEND_EXTENSION": "OFF",
+   "NFD_CASE_SENSITIVE_FILTER": "OFF",
+   "NFD_OVERRIDE_RECENT_WITH_DEFAULT": "OFF"
+  },
+  "on_plugins_policy": "deployment/receive-only-policy.json components.satdump.allow_plugins"
+ },
+ "build": {
+  "network": "none",
+  "isolation": "unshare --user --map-root-user --net (as deployment/build-vendor.sh)",
+  "jobs": 4,
+  "steps": [
+   "verify archive sha256",
+   "extract",
+   "check_recipe.py verify-source",
+   "apply patches -p1",
+   "cmake -S . -B build -G Ninja <definitions>",
+   "cmake --build build -j4",
+   "DESTDIR=<stage> cmake --install build",
+   "check_recipe.py package --root <stage>"
+  ]
+ },
+ "install": {
+  "executable": "usr/bin/satdump",
+  "plugin_dir": "usr/lib/satdump/plugins",
+  "pipeline_dir": "usr/share/satdump/resources/pipelines",
+  "config": "usr/share/satdump/satdump_cfg.json",
+  "expected_plugins": [
+   "libmeteor_support.so",
+   "libnoaa_metop_support.so",
+   "libaws_support.so",
+   "libelektro_arktika_support.so",
+   "libxrit_support.so",
+   "libfy2_support.so",
+   "libnet_source_support.so"
+  ],
+  "keep_pipelines": [
+   "Meteor-M.json",
+   "MetOp.json",
+   "AWS.json",
+   "FengYun-2.json",
+   "Elektro_Arktika.json"
+  ],
+  "remove_pipeline_ids": {
+   "Elektro_Arktika.json": [
+    "elektro_ggak_mqtt"
+   ]
+  },
+  "config_set": [
+   {
+    "path": [
+     "satdump_general",
+     "kepler_update_interval",
+     "value"
+    ],
+    "value": "Never"
+   },
+   {
+    "path": [
+     "kepler_settings",
+     "urls_to_fetch"
+    ],
+    "value": []
+   },
+   {
+    "path": [
+     "kepler_settings",
+     "norads_to_fetch"
+    ],
+    "value": []
+   }
+  ],
+  "remove_trees": [
+   "usr/include",
+   "usr/share/applications",
+   "usr/share/icons"
+  ]
+ },
+ "builder_checks": [
+  {
+   "id": "plugin-set",
+   "how": "strace -f -e trace=openat satdump pipeline meteor_m2-x_lrpt --help: loaded *.so of the plugin dir == expected_plugins",
+   "status": "PENDING_BUILDER"
+  },
+  {
+   "id": "no-connect",
+   "how": "strace -f -e trace=connect on one file decode: zero connect() outside AF_UNIX",
+   "status": "PENDING_BUILDER"
+  },
+  {
+   "id": "ldd",
+   "how": "ldd of satdump, libsatdump_core.so and every plugin: no librtlsdr, LimeSuite, SoapySDR, libusb, libhackrf, libbladeRF, portaudio",
+   "status": "PENDING_BUILDER"
+  },
+  {
+   "id": "lrpt-fixture",
+   "how": "decode one sha-pinned ci16 256 kS/s LRPT fixture through srrx.satdump_pass (CI-only asset, never in Git)",
+   "status": "PENDING_BUILDER"
+  },
+  {
+   "id": "cli-forms",
+   "how": "both --samplerate=256000 and --samplerate 256000 decode the fixture after patch 0001 (STACK.md:1481)",
+   "status": "PENDING_BUILDER"
+  },
+  {
+   "id": "planted-pipelines-json",
+   "how": "a pipelines.json with syracuse3_tlm in the working and home directory is not loaded by the unit",
+   "status": "PENDING_BUILDER"
+  },
+  {
+   "id": "lrpt-cadu-cut",
+   "how": "LRPT CADU replay after dd bs=8192 skip=4 (#1212)",
+   "status": "PENDING_BUILDER"
+  },
+  {
+   "id": "omm-csv",
+   "how": "orbits.export_satdump_csv column order against the pinned reader",
+   "status": "PENDING_BUILDER"
+  },
+  {
+   "id": "live-localhost",
+   "how": "live unit receives 127.0.0.1 datagrams and drops a datagram from another address",
+   "status": "PENDING_DEVICE"
+  }
+ ],
+ "sources": [
+  "STACK.md:142",
+  "STACK.md:886",
+  "STACK.md:977",
+  "build/07-pz-vstanovlennia.md:362-389",
+  "build/15-rishennia-komplektu.md",
+  "deployment/sources.lock.json"
+ ]
+}

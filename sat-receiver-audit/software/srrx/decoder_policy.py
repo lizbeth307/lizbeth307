@@ -3,6 +3,14 @@
 Installation records are trusted administrator acceptance data, not job parameters.
 Metadata binds an approved recording to its digest; it is not a content classifier.
 EGC/DSC are unavailable: no unverified packet format is parsed by this module.
+
+satdump-weather (v2.1, build/15 decision 6) is installation-gated, not disabled: an accepted
+record binds the SatDump ELF, the exact plugin set (deployment/recipes/satdump allowlist),
+the five allowlisted pipeline files and the packaged config (kepler_update_interval Never)
+by SHA256; satdump_plan() accepts only an srrx.baseband recording (Meteor-M LRPT, ci16
+256 kS/s, made by labrx under the v2.1 policy) for the pipelines of baseband.PIPELINES, and
+satdump_publish() releases only sanitized PNG images and a fixed-schema report. The unit
+and argv are srrx.satdump_pass; nothing here launches SatDump.
 """
 from __future__ import annotations
 
@@ -45,7 +53,6 @@ _DISABLED = {
     # srrx.egc_gate exists but stays unreleased (C2 table, ПОЛ-06, checksum unverified).
     "egc-safetynet": "DISABLED_NO_VERIFIED_HEADER_PARSER_AND_TEST_VECTORS",
     "dsc-safety": "DISABLED_NO_VERIFIED_FORMAT_CATEGORY_PARSER_AND_TEST_VECTORS",
-    "satdump-weather": "DISABLED_NO_QUALIFIED_RX_ONLY_BUILD_AND_VERSIONED_CLI",
     "amateur-digital": "DISABLED_NO_VERIFIED_DECODE_ONLY_PRESET",
     "ais-public": "DISABLED_NO_VERIFIED_PRE_PAYLOAD_MILITARY_FILTER",
     "adsb-public": "DISABLED_NO_QUALIFIED_DATABASE_AND_MILITARY_FILTER",
@@ -163,7 +170,7 @@ def load_installation(path):
     return record
 
 
-def availability(installation=None):
+def availability(installation=None, satdump_installation=None):
     """No device probing, decoder launch, header parsing or PATH discovery."""
     status = "UNAVAILABLE_NO_ACCEPTED_INSTALLATION"
     if installation is not None:
@@ -172,7 +179,203 @@ def availability(installation=None):
             status = "FILE_PRESET_ACCEPTED_INTERFACE_PROBE_REQUIRED_AT_RUN"
         except (DecoderRefused, OSError):
             status = "UNAVAILABLE_INSTALLATION_NOT_QUALIFIED"
-    return {PRESET: status, **_DISABLED}
+    satdump = "UNAVAILABLE_NO_ACCEPTED_INSTALLATION"
+    if satdump_installation is not None:
+        try:
+            _validate_satdump_installation(satdump_installation)
+            satdump = "LRPT_FILE_PRESET_ACCEPTED_INTERFACE_PROBE_REQUIRED_AT_RUN"
+        except (DecoderRefused, OSError):
+            satdump = "UNAVAILABLE_INSTALLATION_NOT_QUALIFIED"
+    return {PRESET: status, SATDUMP_PRESET: satdump, **_DISABLED}
+
+
+# ---------------------------------------------------------------- satdump-weather (v2.1)
+
+SATDUMP_PRESET = "satdump-weather"
+SATDUMP_COMMIT = "1aedd602055c154401384a8cc7876713bb371254"
+SATDUMP_VERSION = "2.0.0~alpha+git20260929+lab1"
+# deployment/receive-only-policy.json components.satdump.allow_plugins; upstream names the
+# library lib<id>_support.so (plugins/*/CMakeLists.txt at 1aedd60).
+SATDUMP_PLUGINS = ("meteor", "noaa_metop", "aws", "elektro_arktika", "xrit", "fy2", "net_source")
+SATDUMP_PIPELINE_FILES = ("Meteor-M.json", "MetOp.json", "AWS.json", "FengYun-2.json", "Elektro_Arktika.json")
+SATDUMP_PLUGIN_DIR = "/usr/lib/satdump/plugins"
+SATDUMP_PIPELINE_DIR = "/usr/share/satdump/resources/pipelines"
+SATDUMP_CONFIG = "/usr/share/satdump/satdump_cfg.json"
+MAX_PRODUCTS = 64
+MAX_PRODUCT_TOTAL_BYTES = 256 * 1024 * 1024
+_SATDUMP_FIELDS = {"v", "tool_id", "version", "source_commit", "executable", "sha256", "evidence_id",
+                   "plugins", "pipelines", "config_sha256", "recipe_sha256"}
+
+
+def _plugin_file(name):
+    return "lib" + name + "_support.so"
+
+
+def _admin_owned(info):
+    return info.st_uid == 0 and not info.st_mode & 0o022
+
+
+def _admin_file(path, limit):
+    """Root-owned, not group/world-writable regular file below root-owned directories; its SHA256."""
+    path = _file(path)
+    if not _admin_owned(path.lstat()):
+        _refuse("ADMIN_OWNED_FILE_REQUIRED")
+    _admin_directories(path)
+    return _hash_file(path, limit)[0]
+
+
+def _exact_directory(directory, expected):
+    try:
+        names = {entry.name for entry in os.scandir(directory)}
+    except OSError:
+        _refuse("FILE_UNAVAILABLE")
+    if names != set(expected):
+        _refuse("SATDUMP_FILE_SET_NOT_ALLOWLISTED")
+
+
+def _validate_satdump_installation(record):
+    _keys(record, _SATDUMP_FIELDS, "INSTALLATION_SCHEMA")
+    if (type(record["v"]) is not int or record["v"] != 1 or record["tool_id"] != "satdump" or
+            record["version"] != SATDUMP_VERSION or record["source_commit"] != SATDUMP_COMMIT or
+            not _digest(record["sha256"]) or not _digest(record["config_sha256"]) or
+            not _digest(record["recipe_sha256"]) or not isinstance(record["evidence_id"], str) or
+            not _EVIDENCE.fullmatch(record["evidence_id"])):
+        _refuse("INSTALLATION_VERSION_OR_PROVENANCE_UNVERIFIED")
+    plugins, pipelines = record["plugins"], record["pipelines"]
+    if (not isinstance(plugins, dict) or set(plugins) != {_plugin_file(name) for name in SATDUMP_PLUGINS} or
+            not isinstance(pipelines, dict) or set(pipelines) != set(SATDUMP_PIPELINE_FILES) or
+            not all(_digest(value) for value in list(plugins.values()) + list(pipelines.values()))):
+        _refuse("SATDUMP_FILE_SET_NOT_ALLOWLISTED")
+    if not isinstance(record["executable"], str) or len(record["executable"]) > 4096:
+        _refuse("INSTALLATION_SCHEMA")
+    path = _file(record["executable"], executable=True)
+    if path.name != "satdump":
+        _refuse("EXECUTABLE_NOT_ALLOWLISTED")
+    _admin_directories(path)
+    with path.open("rb") as stream:
+        if stream.read(4) != b"\x7fELF":
+            _refuse("NATIVE_VENDOR_EXECUTABLE_REQUIRED")
+    if _hash_file(path, MAX_INPUT_BYTES)[0] != record["sha256"]:
+        _refuse("EXECUTABLE_DIGEST_CHANGED")
+    # The loader takes every file of the plugin directory and every *.json of the pipeline
+    # tree (src-core/core/plugin.cpp, src-core/pipeline/pipeline.cpp): both must be exactly the set.
+    _exact_directory(SATDUMP_PLUGIN_DIR, plugins)
+    _exact_directory(SATDUMP_PIPELINE_DIR, pipelines)
+    for directory, files in ((SATDUMP_PLUGIN_DIR, plugins), (SATDUMP_PIPELINE_DIR, pipelines)):
+        for name, digest in sorted(files.items()):
+            if _admin_file(Path(directory) / name, MAX_INPUT_BYTES) != digest:
+                _refuse("SATDUMP_FILE_DIGEST_CHANGED")
+    if _admin_file(Path(SATDUMP_CONFIG), 1024 * 1024) != record["config_sha256"]:
+        _refuse("SATDUMP_CONFIG_DIGEST_CHANGED")
+    try:
+        config = json.loads(Path(SATDUMP_CONFIG).read_text(encoding="utf-8"))
+        never = config["satdump_general"]["kepler_update_interval"]["value"] == "Never"
+    except (OSError, UnicodeError, ValueError, KeyError, TypeError):
+        never = False
+    if not never:
+        _refuse("SATDUMP_KEPLER_UPDATE_NOT_NEVER")
+    return path
+
+
+def load_satdump_installation(path):
+    """One root-owned, non-writable SatDump installation record (deployment/recipes/satdump)."""
+    path = _file(path)
+    info = path.stat()
+    if info.st_uid != 0 or info.st_mode & 0o022 or info.st_size > 8192:
+        _refuse("TRUSTED_ADMIN_INSTALLATION_RECORD_REQUIRED")
+    _admin_directories(path)
+    try:
+        record = json.loads(path.read_text())
+    except (OSError, UnicodeError, ValueError):
+        _refuse("INSTALLATION_SCHEMA")
+    _validate_satdump_installation(record)
+    return record
+
+
+def satdump_executable(installation):
+    """Revalidate the installation (ELF, plugin and pipeline sets, config); the ELF path."""
+    return _validate_satdump_installation(installation)
+
+
+def satdump_plan(recording, installation, *, scope=None):
+    """Reviewable manifest of one LRPT file decode; recording is srrx.baseband metadata."""
+    from . import baseband
+    try:
+        meta = baseband.validate_metadata(recording)["global"]
+    except baseband.BasebandRefused:
+        _refuse("SOURCE_NOT_APPROVED_LRPT_BASEBAND")
+    if meta["srrx:pipeline"] not in baseband.PIPELINES.values() or meta["srrx:target"] not in baseband.METEOR_TARGETS:
+        _refuse("SOURCE_NOT_APPROVED_LRPT_BASEBAND")
+    _scope_permits(scope, "decode")  # the whole 137-138 MHz band, as APT; before any installation access
+    _validate_satdump_installation(installation)
+    return {"v": 1, "preset": SATDUMP_PRESET, "tool_id": "satdump", "version": SATDUMP_VERSION,
+            "source_commit": SATDUMP_COMMIT, "pipeline": meta["srrx:pipeline"], "source_sha512": meta["core:sha512"],
+            "executable_sha256": installation["sha256"], "samples": meta["srrx:samples"],
+            "argv_template": ["${ACCEPTED_SATDUMP}", "pipeline", meta["srrx:pipeline"], "baseband", "${APPROVED_BASEBAND}",
+                              "${OUTPUT_DIR}", "--samplerate=%d" % baseband.OUTPUT_RATE_HZ, "--baseband_format=cs16"],
+            "shell": False, "live_source": False, "stdout_stored": False, "stderr_stored": False,
+            "output": "weather_png_without_text_metadata", "hardware_qualified": False}
+
+
+def satdump_publish(output_directory, target, plan, *, scope=None):
+    """Publish only sanitized PNG images of a SatDump output tree, then a fixed-schema report.
+
+    Symlinks and special files are never followed; CADU, soft symbols, products.cbor and
+    logs stay in the work tree, which the caller removes. target must not exist.
+    """
+    source, target = Path(output_directory), Path(target)
+    if not target.is_absolute() or target.exists() or target.is_symlink():
+        _refuse("NEW_ABSOLUTE_OUTPUT_DIRECTORY_REQUIRED")
+    if not source.is_dir() or source.is_symlink():
+        _refuse("SATDUMP_OUTPUT_MISSING")
+    images, total, seen = [], 0, 0
+    stack = [source]
+    while stack:
+        directory = stack.pop()
+        for entry in sorted(os.scandir(directory), key=lambda item: item.name):
+            seen += 1
+            if seen > 4096:
+                _refuse("SATDUMP_OUTPUT_LIMIT")
+            if entry.is_dir(follow_symlinks=False):
+                if len(stack) < 64:
+                    stack.append(Path(entry.path))
+                continue
+            if not entry.is_file(follow_symlinks=False) or not entry.name.lower().endswith(".png"):
+                continue
+            image, dimensions = _sanitized_png(Path(entry.path))
+            total += len(image)
+            if len(images) >= MAX_PRODUCTS or total > MAX_PRODUCT_TOTAL_BYTES:
+                _refuse("SATDUMP_OUTPUT_LIMIT")
+            images.append((image, dimensions))
+    if not images:
+        _refuse("SATDUMP_NO_IMAGE_PRODUCT")
+    publication = target.parent / ("." + target.name + ".publishing")
+    if publication.exists() or publication.is_symlink():
+        _refuse("OUTPUT_DESTINATION_CHANGED")
+    publication.mkdir()
+    try:
+        entries = []
+        for index, (image, dimensions) in enumerate(images):
+            name = "image-%02d.png" % index
+            (publication / name).write_bytes(image)
+            entries.append({"file": name, "sha256": hashlib.sha256(image).hexdigest(), "bytes": len(image),
+                            "image": dimensions})
+        report = {"v": 1, "status": "FILE_DECODE_COMPLETED", "preset": SATDUMP_PRESET, "pipeline": plan["pipeline"],
+                  "source_sha512": plan["source_sha512"], "executable_sha256": plan["executable_sha256"],
+                  "source_commit": SATDUMP_COMMIT, "images": entries, "stdout_stored": False, "stderr_stored": False,
+                  "input_iq": True, "input_iq_deleted_after_decode": True, "physical_tests_performed": False}
+        (publication / "report.json").write_text(json.dumps(report, indent=2) + "\n")
+        if target.exists() or target.is_symlink():
+            _refuse("OUTPUT_DESTINATION_CHANGED")
+        _scope_permits(scope, "export")  # a stop during the run leaves no published result
+        os.rename(publication, target)
+        return report
+    except BaseException:
+        for child in publication.iterdir() if publication.is_dir() else ():
+            child.unlink()
+        if publication.is_dir():
+            publication.rmdir()
+        raise
 
 
 def _wav_info(path):
@@ -214,6 +417,8 @@ def make_plan(preset, source, metadata, installation, *, scope=None):
         _refuse("PRESET_NOT_ALLOWLISTED")
     if preset in _DISABLED:
         _refuse(_DISABLED[preset])  # Happens before source/header/address access.
+    if preset == SATDUMP_PRESET:
+        _refuse("SATDUMP_PRESET_IS_SATDUMP_PLAN")  # LRPT baseband only, through srrx.satdump_pass
     if preset != PRESET:
         _refuse("PRESET_NOT_ALLOWLISTED")
     _validate_source(metadata)
@@ -409,6 +614,8 @@ def main(argv=None):
         else:
             if args.preset in _DISABLED:
                 _refuse(_DISABLED[args.preset])
+            if args.preset == SATDUMP_PRESET:
+                _refuse("SATDUMP_PRESET_IS_SATDUMP_PLAN")
             if args.metadata.stat().st_size > 8192:
                 _refuse("SOURCE_METADATA_SCHEMA")
             metadata = json.loads(args.metadata.read_text())

@@ -566,7 +566,8 @@ class SelftestTests(unittest.TestCase):
     def test_target_module_copy_must_match_the_checker(self):
         # Each row needs the target copy of its module AND of every srrx module that module imports.
         users = {"RX-11": ("menu_model", "hmi", "daemon", "labrx"), "RX-13": ("spectrum", "learning"), "RX-14": ("voice_mask",),
-                 "RX-15": ("learning",), "RX-S1": ("decoder_policy",), "RX-S2": ("rfkill",)}
+                 "RX-15": ("learning",), "RX-S1": ("decoder_policy",), "RX-S2": ("rfkill",),
+                 "RX-04-bb": ("baseband", "satdump_pass")}
         closure = {check: set().union(*(selftest.srrx_closure(m) for m in modules)) for check, modules in users.items()}
         self.assertTrue({"__init__", "learning", "scope_policy", "spectrum"} <= closure["RX-15"], closure)
         self.assertTrue({"__init__", "decoder_policy", "scope_policy"} <= closure["RX-S1"], closure)
@@ -616,6 +617,50 @@ class SelftestTests(unittest.TestCase):
             gate = self.check(self.run_check(rootfs=self.clean), "RX-S1")
         self.assertEqual(gate["status"], "FAIL")
         self.assertEqual(gate["findings"][0]["item"], "ais-public")
+        # satdump-weather is installation-gated: offline it reads UNAVAILABLE, and that passes.
+        self.assertTrue(decoder_policy.availability()["satdump-weather"].startswith("UNAVAILABLE"))
+        accepted = dict(decoder_policy.availability(), **{"satdump-weather": "LRPT_FILE_PRESET_ACCEPTED_FIXTURE"})
+        with patch.object(decoder_policy, "availability", return_value=accepted):
+            gate = self.check(self.run_check(rootfs=self.clean), "RX-S1")
+        self.assertEqual((gate["status"], gate["findings"][0]["item"]), ("FAIL", "satdump-weather"))
+
+    def test_baseband_recorder_row_is_really_evaluated(self):
+        import numpy as np
+        bb, glue = self.checker_module("baseband"), self.checker_module("satdump_pass")
+        row = self.check(self.run_check(rootfs=self.clean), "RX-04-bb")
+        self.assertEqual(row["status"], "PASS", row)
+        self.assertTrue({"baseband_tmpfiles_not_staged", "live_localhost_behaviour_is_RX-04-live",
+                         "device_recording_needs_labd_utc_verified"} <= set(row["notes"]), row["notes"])
+
+        def rx(patches):
+            with contextlib.ExitStack() as stack:
+                for (module, name), value in patches.items():
+                    stack.enter_context(patch.object(module, name, value))
+                return self.check(self.run_check(rootfs=self.clean), "RX-04-bb")
+        cases = ((("baseband_policy_constant", "CLASS_CAP_BYTES"), {(bb, "CLASS_CAP_BYTES"): 4 * 1024 ** 3}),
+                 (("baseband_policy_constant", "LIVE_HOST"), {(bb, "LIVE_HOST"): "0.0.0.0"}),
+                 (("baseband_policy_constant", "RETENTION_S"), {(bb, "RETENTION_S"): 7 * 86400}),
+                 (("channel_filter_spec", "137900000/72000"), {(bb, "design_taps"): lambda c, r: np.array([1.0])}),
+                 (("decode_unit_properties", None), {(glue, "_COMMON"): tuple(p for p in glue._COMMON if p != "ProtectHome=yes")}),
+                 (("live_argv", None), {(glue, "live_argv"): lambda *a: ["/usr/bin/satdump", "legacy", "live", "x", "/o",
+                                                                         "--source", "net_source", "--http_server", "0.0.0.0:80"]}))
+        for (rule, item), patches in cases:
+            with self.subTest(rule=rule, item=item):
+                result = rx(patches)
+                self.assertEqual(result["status"], "FAIL", result)
+                self.assertIn(rule, {f["rule"] for f in result["findings"]})
+                if item:
+                    self.assertIn(item, {f.get("item") for f in result["findings"] if f["rule"] == rule})
+        # A channel that passed out-of-window energy into the file is caught by the synthetic tone.
+        leaky = lambda self_, samples: np.asarray(samples, np.complex128)[::4]
+        result = rx({(bb.ChannelDecimator, "push"): leaky})
+        self.assertIn("out_of_window_tone_stored", {f["rule"] for f in result["findings"]})
+        self.put("etc/tmpfiles.d/srrx-satdump.conf", glue.tmpfiles().replace("2750", "2777"))
+        self.assert_flips("RX-04-bb", "baseband_tmpfiles_differs")
+        self.put("etc/tmpfiles.d/srrx-satdump.conf", glue.tmpfiles())
+        staged = self.check(self.run_check(), "RX-04-bb")
+        self.assertEqual(staged["status"], "PASS")
+        self.assertNotIn("baseband_tmpfiles_not_staged", staged["notes"])
 
     @staticmethod
     def checker_module(name):

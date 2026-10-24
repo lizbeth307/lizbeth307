@@ -364,29 +364,29 @@ cmake -B build -DBUILD_PLUGINS_AMARISOFT=OFF -DBUILD_GUI=OFF
 SatDump не відкриває жодного SDR: його зібрано без апаратних джерел SDR і без мережевих SDR-серверів, єдиний живий вхід — net_source з labrx (за замовчуванням — декодування записаного файлу labrx).
 
 ```sh
-git clone <SatDump> && cd SatDump
-git checkout 1aedd602055c154401384a8cc7876713bb371254
-git cherry-pick c0b6f88 6b5957f          # 96bb626 — опційно, лише HRIT
-cmake -B build -DPLUGINS_ALL=OFF \
+# рецепт: deployment/recipes/satdump/recipe.json (стан PENDING_BUILDER; check_recipe.py check | verify-source | package)
+# джерело: архів 1aedd602055c154401384a8cc7876713bb371254 із sha256 sources.lock.json; patches/0001 = c0b6f88, 0002 = 6b5957f, 0003 = +lab bind 127.0.0.1
+patch -p1 < patches/0001-cli-add-option-c0b6f88.patch   # далі 0002 і 0003; 96bb626 (лише HRIT) у рецепт не входить
+cmake -S . -B build -G Ninja -DPLUGINS_ALL=OFF -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_INSTALL_LIBDIR=lib \
   -DPLUGIN_METEOR=ON -DPLUGIN_NOAA_METOP=ON -DPLUGIN_AWS=ON \
   -DPLUGIN_ELEKTRO_ARKTIKA=ON -DPLUGIN_XRIT=ON -DPLUGIN_FY2=ON \
-  -DPLUGIN_NET_SOURCE_SDR_SUPPORT=ON
-# точні імена опцій звірити з CMakeLists.txt коміту 1aedd60; збірка -j4 із zram
-# пакет: 2.0.0~alpha+git20260929+lab1 (без inmarsat_support)
+  -DPLUGIN_NET_SOURCE_SDR_SUPPORT=ON  # і кожна з решти 105 опцій 1aedd60 поіменно: recipe.json cmake.definitions
+# на 1aedd60 PLUGINS_ALL типово ON, а SDR-джерела, PORTAUDIO/AAUDIO sink, TOOLS/WIPSETTINGS/WEBHOOK/EXPERIMENTAL — option(... ON), тож OFF задано явно
+# пакет 2.0.0~alpha+git20260929+lab1 (без inmarsat_support); -j4 із zram, без мережі (unshare --user --map-root-user --net)
 ```
 
 | вимкнено (OFF) | |
 |---|---|
-| плагіни | GK2A, FY3, FY4, GOES, METOPSG, ANALOG, CUBESAT, RADIOSONDE, HIMAWARI, GEONETCAST; ніколи INMARSAT, ORBCOMM, DMSP, WSF, SPACEX, BLUEWALKER3 |
-| sdr_sources | усі апаратні PLUGIN_*_SDR_SUPPORT, Soapy, LimeSuiteNG, SPYSERVER, RTLTCP, SDRPP_SERVER, REMOTE_SDR |
-| застосунки | EXPERIMENTAL_DEVICES, WEBHOOK_APP, TOOLS_APP, WIPSETTINGS_EDITOR_APP; без autotrack і satdump_sdr_server; `*_sdr_sink` і audio sink |
+| плагіни | 47 опцій під PLUGINS_ALL, ON лише METEOR, NOAA_METOP, AWS, ELEKTRO_ARKTIKA, XRIT, FY2; OFF — зокрема GK2A, FY3, FY4, GOES, METOPSG, ANALOG, CUBESAT, RADIOSONDE, HIMAWARI, GEONETCAST; ніколи INMARSAT, ORBCOMM, DMSP, WSF, SPACEX, BLUEWALKER3 |
+| sdr_sources | 24 опції: усі апаратні PLUGIN_*_SDR_SUPPORT (на 1aedd60 здебільшого типово ON), Soapy, SDDC, HAROGIC, RTAUDIO, SPYSERVER, RTLTCP, SDRPP_SERVER, REMOTE_SDR; ON лише NET_SOURCE |
+| застосунки | EXPERIMENTAL_DEVICES, WEBHOOK_APP, TOOLS_APP, WIPSETTINGS_EDITOR_APP, BITVIEW_APP, WIPTRACKING_APP, SCRIPTING, BOCHUM; SIMD_SSE41/AVX2/NEON (simd_neon немає в алоу-листі плагінів STACK; вмикати — лише рішенням після заміру CPU на Q6A); без autotrack і satdump_sdr_server; `*_sdr_sink`, PORTAUDIO/AAUDIO/RTAUDIO sink |
 
-- Алоу-лист конвеєрів поіменно: лише Meteor-M.json, MetOp.json, AWS.json, FengYun-2.json і Elektro_Arktika.json (з вилученим elektro_ggak_mqtt); конвеєри GOES, GK-2A і FY-4 у європейську збірку не входять; жодних інших JSON чи .json.inc. Приховано: Cosmos-2558 dump, DMSP RTD, Yunhai AHRPT, syracuse3_tlm, wsf_m_db, angels_l_band і все військове або шифроване.
-- Вхід: за замовчуванням — декодування записаного файлу labrx; наживо — net_source слухає **лише 127.0.0.1** і отримує cf32 UDP від labrx після масок (8-байтові відліки блоками по 8192; застаріла CLI `satdump live`). Точні аргументи CLI живого режиму — TBD (STACK.md 5.4 їх не наводить); CLI завжди «--key=value».
-- satdump_cfg.json: `kepler_update_interval` = «Never»; TLE/OMM постачає labd (CSV на 17 стовпців або JSON); запис вимкнено (record off).
-- Unit проходу: один обмежений у часі `systemd-run` на прохід, окремий користувач без HOME-конфігу, порожній WorkingDirectory у власності root, ProtectHome=yes, LC_ALL=C.UTF-8, PrivateNetwork=yes для файлу (наживо — IPAddressDeny=any з входом лише UDP з localhost), провал unit при «CALCEPH ERROR».
-- Повтор LRPT на CADU: `dd bs=8192 skip=4` (#1212).
-- CI на arm64 декодує один збережений базовий файл на кожен дозволений конвеєр.
+- Алоу-лист конвеєрів поіменно: лише Meteor-M.json, MetOp.json, AWS.json, FengYun-2.json і Elektro_Arktika.json (з вилученим elektro_ggak_mqtt); конвеєри GOES, GK-2A і FY-4 у європейську збірку не входять; жодних інших JSON чи .json.inc (крок `package` рецепта видаляє решту `share/satdump/resources/pipelines`). Приховано: Cosmos-2558 dump, DMSP RTD, Yunhai AHRPT, syracuse3_tlm, wsf_m_db, angels_l_band і все військове або шифроване.
+- Вхід: файл labrx — лише вузький baseband LRPT ci16 256 kS/s за політикою v2.1 (`satdump pipeline <id> baseband <файл> <вихід> --samplerate=256000 --baseband_format=cs16`, srrx.satdump_pass); наживо — `satdump legacy live <id> <вихід> --source net_source --mode udp --port P --samplerate 256000 --frequency F --timeout T` (legacy-парсер 1aedd60 читає лише «--key value»), cf32 UDP від labrx після масок, ≤8188 відліків на датаграму (8192 × 8 B > 65 507 B); net_source на 1aedd60 слухає INADDR_ANY, тож localhost тримає unit (IPAddressDeny=any + IPAddressAllow=localhost), а +lab patch 0003 — другий шар.
+- satdump_cfg.json: крок `package` пише строгий JSON: `satdump_general.kepler_update_interval` = «Never», `kepler_settings.urls_to_fetch` і `norads_to_fetch` порожні; запис вимкнено (record off); TLE/OMM постачає labd (CSV на 17 стовпців або JSON) — передачу в unit ще не реалізовано (BUILDER omm-csv).
+- Unit проходу: один transient `systemd-run` (srrx.satdump_pass.unit_properties): користувач srrx-satdump, порожній root-owned WorkingDirectory /var/lib/srrx-satdump/empty, HOME — приватний RuntimeDirectory (без pipelines.json і конфігу користувача), /data — порожній tmpfs з одним baseband лише для читання, ProtectHome=yes, LC_ALL=C.UTF-8, PrivateNetwork=yes для файлу (наживо — IPAddressDeny=any з входом лише з localhost), провал при «CALCEPH ERROR»; після будь-якої спроби декодування baseband видаляється.
+- Повтор LRPT на CADU: `dd bs=8192 skip=4` (#1212) — перевірка BUILDER.
+- CI на arm64 декодує один збережений базовий файл на кожен дозволений конвеєр — перевірки BUILDER у recipe.json; збирача пакетів ще немає, тож це не виконано.
 
 ---
 

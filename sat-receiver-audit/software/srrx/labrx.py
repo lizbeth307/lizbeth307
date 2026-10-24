@@ -1,4 +1,8 @@
-"""Supervised RX-to-spectrum pipeline. Default input is synthetic, never RF TX."""
+"""Supervised RX-to-spectrum pipeline. Default input is synthetic, never RF TX.
+
+run_capture computes spectra only. run_baseband is the one IQ writer: the v2.1 bounded
+Meteor-M LRPT pass recorder and its localhost cf32 live path (srrx.baseband, software/RX.md).
+"""
 from __future__ import annotations
 
 import argparse
@@ -135,6 +139,7 @@ def _worker(connection, record, center_hz, sample_rate, trusted_uids):
 class WorkerSource:
     ready = discontinuity = False
     started_at = ready_after_s = None  # monotonic spawn time; seconds from spawn to the ready handshake
+    dropped_blocks = 0  # stale worker blocks dropped by read() (a gap in the stream)
 
     def __init__(self, record, center_hz, sample_rate, *, trusted_library_uids=TRUSTED_LIBRARY_UIDS):
         ctx = mp.get_context("spawn")
@@ -150,10 +155,11 @@ class WorkerSource:
         finally:
             sender.close()
 
-    def read(self, guard, *, timeout_s=1.0):
+    def read(self, guard, *, timeout_s=1.0, keep=MAX_FFT_SIZE):
         """Newest contiguous worker samples; a stale backlog is dropped, never spliced.
 
-        discontinuity is True when this result does not continue the previous one.
+        discontinuity is True when this result does not continue the previous one. keep bounds
+        the backlog kept per call (the baseband recorder keeps one second, run_capture one FFT).
         """
         now = time.monotonic()
         if self.ready:
@@ -183,8 +189,9 @@ class WorkerSource:
                             blocks, size, gap = [], 0, True
                         blocks.append(np.frombuffer(data, dtype="<c8", offset=1).copy())
                         size += len(blocks[-1])
-                        while size - len(blocks[0]) >= MAX_FFT_SIZE:
+                        while size - len(blocks[0]) >= keep:
                             size, gap = size - len(blocks.pop(0)), True
+                            self.dropped_blocks += 1
                     else:
                         raise OSError("Invalid RX worker message")  # never echo sample bytes
                     if not self.reader.poll(0):
@@ -208,6 +215,34 @@ class WorkerSource:
         if self.process.is_alive():
             self.process.kill()
             self.process.join(.5)
+
+
+def _close_and_branch_off(source, observed, transport, record):
+    """Close the worker, then ask labd for branch OFF once; None when no branch was observed."""
+    off_confirmed = None
+    _STOP["cleanup"] = True  # a plain store: no Python signal handler can run before it
+    try:
+        try:
+            if source is not None:
+                source.close()
+        finally:
+            if observed:
+                reply = None
+                try:
+                    reply = transport({"op": "control", "name": "EN_" + record["branch"], "value": False})
+                except (OSError, RuntimeError, ValueError):
+                    pass
+                # labd reports a refused OFF as a value, not an exception. Warn, never raise here.
+                off_confirmed = type(reply) is dict and reply.get("ok") is True
+                if not off_confirmed:
+                    try:
+                        print("labrx: EN_" + record["branch"] + " OFF was not confirmed by labd; branch may still be powered",
+                              file=sys.stderr)
+                    except OSError:  # dead tty after an SSH hangup; branch_off_confirmed still says False
+                        pass
+    finally:
+        _STOP["cleanup"] = False
+    return off_confirmed
 
 
 def run_capture(*, center_hz=100000000, sample_rate=1024000, fft_size=1024,
@@ -281,33 +316,154 @@ def run_capture(*, center_hz=100000000, sample_rate=1024000, fft_size=1024,
             if source is None and frames == 0:
                 time.sleep(.1)
     finally:
-        _STOP["cleanup"] = True  # a plain store: no Python signal handler can run before it
-        try:
-            try:
-                if source is not None:
-                    source.close()
-            finally:
-                if observed:
-                    reply = None
-                    try:
-                        reply = transport({"op": "control", "name": "EN_" + record["branch"], "value": False})
-                    except (OSError, RuntimeError, ValueError):
-                        pass
-                    # labd reports a refused OFF as a value, not an exception. Warn, never raise here.
-                    off_confirmed = type(reply) is dict and reply.get("ok") is True
-                    if not off_confirmed:
-                        try:
-                            print("labrx: EN_" + record["branch"] + " OFF was not confirmed by labd; branch may still be powered",
-                                  file=sys.stderr)
-                        except OSError:  # dead tty after an SSH hangup; branch_off_confirmed still says False
-                            pass
-        finally:
-            _STOP["cleanup"] = False
+        off_confirmed = _close_and_branch_off(source, observed, transport, record)
     startup = getattr(source, "ready_after_s", None)  # measured production spawn-to-ready time
     return {"frames": completed, "source": "SIMULATION" if record is None else "HARDWARE",
             "raw_iq_persisted": False, "physical_tests_performed": False,
             "branch_off_confirmed": off_confirmed,
             "worker_startup_s": round(startup, 3) if type(startup) is float else None, "last_frame": last}
+
+
+class _StatusTap:
+    """ControlGuard wrapper that keeps the last labd status for the recorder's UTC check."""
+
+    def __init__(self, guard):
+        self.guard, self.data = guard, {}
+
+    def check(self):
+        self.data = self.guard.check()
+        return self.data
+
+
+def run_baseband(window, store, *, scope, record=None, transport=None, source_factory=WorkerSource,
+                 clock=time.time, utc_verified=None, live_port=None, live_socket_factory=None, synthetic=None,
+                 max_blocks=None):
+    """Record one v2.1 Meteor-M LRPT pass window (srrx.baseband) and optionally stream it live.
+
+    window: an srrx.baseband window (srrx.satdump_pass.select_windows); store: a BasebandStore on a
+    StorageGuard; scope: the session ScopeLatch, retuned to the receiver span and asked
+    permits('record', window span) before every block is written. Samples before the window
+    start are discarded; the window end, the reserved size or max_blocks ends the recording.
+    Verified UTC is required at the start and on every block: on hardware it is labd's status
+    field utc_verified (absent means not verified, so today every hardware start is refused),
+    in simulation the utc_verified callable. Any stop other than those ends (an error, a scope
+    stop, a lost guard or UTC, a signal) deletes the partial file. synthetic: complex64 blocks
+    at 1.024 MS/s for record=None; never RF. The live path sends exactly the stored samples.
+    """
+    from . import baseband as bb
+    from .scope_policy import OUT_OF_SCOPE, ScopeLatch
+    checked = bb.validate_window(window)
+    span = bb.channel_span(checked["center_hz"], checked["symbol_rate"])
+    if not isinstance(scope, ScopeLatch):
+        raise ValueError("scope must be the session ScopeLatch")
+    if record is None and synthetic is None:
+        raise ValueError("Simulation needs synthetic IQ blocks")
+    if record is not None:
+        if transport is None:
+            raise ValueError("Hardware requires a live control observer")
+        if record.get("backend") != "rtl":
+            raise ValueError("LRPT baseband needs an RTL branch")
+        validate_tuning("rtl", checked["center_hz"], bb.INPUT_RATE_HZ)
+    if max_blocks is not None and (type(max_blocks) is not int or max_blocks < 1):
+        raise ValueError("max_blocks must be a positive integer")
+    scope.retune(checked["center_hz"] - bb.INPUT_RATE_HZ / 2, checked["center_hz"] + bb.INPUT_RATE_HZ / 2)
+    if not scope.permits("record", span):
+        raise ValueError(OUT_OF_SCOPE)
+    now = clock()
+    if now > checked["end_unix_s"]:
+        raise ValueError("WINDOW_OVER")
+    if now < checked["start_unix_s"] - bb.EARLY_START_S:
+        raise ValueError("WINDOW_NOT_STARTED")
+    aborted = []
+    token = scope.register_abort(lambda: aborted.append(True))
+    source, tap, observed, recording, live, off_confirmed = None, None, False, None, None, None
+    blocks = joins = 0
+    first_block_s, stop_reason, meta = None, None, None
+    try:
+        if record is not None:
+            _disable_worker_core_dumps()  # this process holds IQ blocks and filter buffers
+            tap = _StatusTap(ControlGuard(transport, record["branch"]))
+            tap.check()
+            observed = True
+        verified = (lambda: tap.data.get("utc_verified") is True) if tap is not None else (utc_verified or (lambda: False))
+        if verified() is not True:
+            raise ValueError("UTC_NOT_VERIFIED")
+        recording = store.begin(checked)  # sweep, class cap / raw quota / free space for planned x 1.1
+        chain = bb.ChannelChain(checked)
+        if live_port is not None:
+            live = (bb.LiveUdpSink(live_port) if live_socket_factory is None
+                    else bb.LiveUdpSink(live_port, socket_factory=live_socket_factory))
+        if record is not None:
+            source = source_factory(record, checked["center_hz"], bb.INPUT_RATE_HZ)
+        dropped = 0
+        while True:
+            if aborted:
+                raise ValueError(OUT_OF_SCOPE)
+            store.guard.check()
+            if source is None:
+                try:
+                    samples = next(synthetic)
+                except StopIteration:
+                    stop_reason = "BLOCK_LIMIT"
+                    break
+            else:
+                samples = source.read(tap, keep=bb.INPUT_RATE_HZ)
+                joins += getattr(source, "discontinuity", False) is not False
+            if verified() is not True:
+                raise ValueError("UTC_NOT_VERIFIED")
+            now = clock()
+            if now < checked["start_unix_s"]:
+                continue  # before AOS-60 s: never written
+            if now > checked["end_unix_s"]:
+                stop_reason = "WINDOW_END"
+                break
+            if aborted or not scope.permits("record", span):
+                raise ValueError(OUT_OF_SCOPE)
+            if first_block_s is None:
+                first_block_s = now
+            out = chain.push(samples)
+            written = recording.write(out)
+            if live is not None and written:
+                live.send(bb.ci16_to_cf32(out[:2 * written]))
+            blocks += 1
+            if recording.full:
+                stop_reason = "RESERVED_SIZE"
+                break
+            if max_blocks is not None and blocks >= max_blocks:
+                stop_reason = "BLOCK_LIMIT"
+                break
+        if first_block_s is None:
+            raise ValueError("NO_SAMPLES_IN_WINDOW")
+        if not scope.permits("record", span) or aborted:
+            raise ValueError(OUT_OF_SCOPE)
+        tail = chain.flush()
+        written = recording.write(tail)
+        if live is not None and written:
+            live.send(bb.ci16_to_cf32(tail[:2 * written]))
+        store.guard.check()
+        dropped = getattr(source, "dropped_blocks", 0) if source is not None else 0
+        meta = recording.finish(created_s=first_block_s, first_block_s=first_block_s, clipped=chain.clipped,
+                                gaps=dropped, joins=joins, source="SIMULATION" if record is None else "HARDWARE",
+                                group_delay=chain.group_delay_samples, stop_reason=stop_reason)
+    except BaseException:
+        if recording is not None:
+            recording.abort()  # a stop of any other kind deletes the partial file
+        raise
+    finally:
+        try:
+            scope.unregister_abort(token)
+            if live is not None:
+                live.close()
+            store.end()
+        finally:
+            off_confirmed = _close_and_branch_off(source, observed, transport, record)
+    glob = meta["global"]
+    return {"recording_id": glob["srrx:recording_id"], "samples": glob["srrx:samples"],
+            "bytes": glob["srrx:samples"] * bb.BYTES_PER_SAMPLE, "stop_reason": stop_reason,
+            "pipeline": glob["srrx:pipeline"], "delete_after_utc": glob["srrx:delete_after_utc"],
+            "source": glob["srrx:source"], "raw_iq_persisted": True, "export": False,
+            "live": None if live is None else live.status(), "branch_off_confirmed": off_confirmed,
+            "physical_tests_performed": False}
 
 
 def _stop(signum, frame):
@@ -338,6 +494,12 @@ def main(argv=None):
     p.add_argument("--acceptance", type=Path)
     p.add_argument("--driver-record", type=Path)
     p.add_argument("--socket", default="/tmp/srrx/control.sock")
+    bb = p.add_argument_group("v2.1 Meteor-M LRPT pass recording (srrx.baseband; --hardware and storage binding)")
+    bb.add_argument("--baseband-plan", type=Path, help="saved srrx.passes plan whose window contains now")
+    bb.add_argument("--orbit-allowlist", type=Path, help="accepted srrx orbit allowlist (srrx.norad_allowlist)")
+    bb.add_argument("--orbit-allowlist-record", type=Path, help="its root-owned acceptance record")
+    bb.add_argument("--symbol-rate", type=int, help="72000 or 80000 (with --center-hz 137100000/137900000/137912500)")
+    bb.add_argument("--live-port", type=int, help="also send the recorded samples as cf32 UDP to 127.0.0.1:PORT")
     args = p.parse_args(argv)
     storage_guard = None
     # kill/systemd stop/SSH hangup/Ctrl-C must still run run_capture's close + branch OFF;
@@ -362,6 +524,26 @@ def main(argv=None):
             transport = lambda request: request_once(args.socket, request, timeout=.2)
         elif args.acceptance is not None or args.driver_record is not None:
             raise ValueError("Physical options require explicit --hardware")
+        baseband_options = (args.orbit_allowlist, args.orbit_allowlist_record, args.symbol_rate, args.live_port)
+        if args.baseband_plan is None and any(value is not None for value in baseband_options):
+            raise ValueError("Baseband options require --baseband-plan")
+        if args.baseband_plan is not None:
+            from . import baseband, norad_allowlist, satdump_pass
+            from .scope_policy import ScopeLatch
+            if not args.hardware or storage_guard is None:
+                raise ValueError("A baseband pass recording needs --hardware and --storage-root/--storage-device")
+            if args.output is not None or args.survey is not None:
+                raise ValueError("A baseband pass recording writes no spectrum output")
+            accepted = norad_allowlist.load_accepted(args.orbit_allowlist, args.orbit_allowlist_record)
+            selected = satdump_pass.select_windows(satdump_pass.load_plan(args.baseband_plan), accepted,
+                                                   args.center_hz, args.symbol_rate)
+            window = satdump_pass.window_at(selected["windows"], time.time())
+            if window is None:
+                raise ValueError(selected["reason"] or "NO_WINDOW_NOW")
+            result = run_baseband(window, baseband.BasebandStore(storage_guard), scope=ScopeLatch(), record=record,
+                                  transport=transport, live_port=args.live_port)
+            print(json.dumps(result, allow_nan=False))
+            return 3 if result.get("branch_off_confirmed") is False else 0
         result = run_capture(center_hz=args.center_hz, sample_rate=args.sample_rate,
                              fft_size=args.fft_size, frames=args.frames, output=args.output,
                              survey=args.survey, record=record, transport=transport,

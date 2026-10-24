@@ -10,7 +10,7 @@ PYTHONPATH=software:. python3 -m unittest discover -s software/tests -p test_dec
 | Профіль | Стан і межа |
 |---|---|
 | `noaa-apt-weather` | Реалізований file-only runner для **noaa-apt 1.4.1**, вихід — лише погодне PNG і звіт фіксованої структури; потрібні прийняте встановлення та погоджений mono PCM16 WAV |
-| `satdump-weather` | Недоступний: конкретний встановлений RX-only build і відповідна версія CLI не кваліфіковані |
+| `satdump-weather` | Залежить від прийнятого встановлення (v2.1): лише baseband LRPT Meteor-M, записаний `labrx.run_baseband`, декодується в transient unit `srrx.satdump_pass`, вихід — лише санітизовані PNG і звіт; без прийнятого запису встановлення (зараз) — `UNAVAILABLE_NO_ACCEPTED_INSTALLATION`. Збірка за `deployment/recipes/satdump` — PENDING_BUILDER |
 | `egc-safetynet` | Вимкнений. Окремий модуль `srrx.egc_gate` класифікує заголовки за правилами egc-gate на синтетичних пакетах, але цей профіль його не імпортує і жодних байтів пакетів не читає; вмикання — лише після перевірки таблиці C2, змішаного запису ПОЛ-06 і алгоритму контрольної суми ([SCOPE-POLICY.md](SCOPE-POLICY.md)) |
 | `dsc-safety` | Вимкнений до перевіреного парсера format/category і тестових векторів; жодні адреси/MMSI або payload не читаються |
 | `amateur-digital` | Недоступний: конкретний decode-only профіль і версія CLI не кваліфіковані |
@@ -101,3 +101,14 @@ PYTHONPATH=software:. python3 -m srrx.decoder_policy run \
 ```
 
 Батьківська папка результату має існувати; папка нового сеансу — ще ні. Публікуються лише `weather.png` і `report.json`. PNG перевіряється на структуру/CRC/розміри, ancillary text/EXIF chunks видаляються, решта тимчасових файлів декодера не передається. Це не оцінка правильності метеорологічного зображення. Тести використовують синтетичний PNG та підміну vendor boundary; окремі process tests справді запускають bounded дочірній процес. Вони не видаються за встановлений або випробуваний noaa-apt на Q6A.
+
+## Профіль `satdump-weather` (v2.1, baseband LRPT)
+
+Профіль більше не вимкнений, але його доступність залежить від прийнятого встановлення: без root-owned запису встановлення `availability()` повертає `UNAVAILABLE_NO_ACCEPTED_INSTALLATION`. Рядок самоперевірки RX-S1 приймає офлайн лише `DISABLED_*` або `UNAVAILABLE_*`. Меж прийому профіль не змінює: SatDump не відкриває SDR. Вхід — лише запис `labrx.run_baseband` за політикою v2.1 ([RX.md](RX.md), розділ «Запис baseband LRPT (v2.1)»).
+
+- **Запис встановлення** (`load_satdump_installation`, root-owned, ≤8 KiB) прив'язує за SHA256 ELF `satdump`, точний набір плагінів у `/usr/lib/satdump/plugins` (`lib<id>_support.so` для meteor, noaa_metop, aws, elektro_arktika, xrit, fy2, net_source), рівно п'ять файлів у `/usr/share/satdump/resources/pipelines` і пакетний `satdump_cfg.json` з `kepler_update_interval` = «Never». Також він фіксує версію `2.0.0~alpha+git20260929+lab1`, коміт 1aedd60 і SHA256 рецепта. Зайвий або відсутній файл — `SATDUMP_FILE_SET_NOT_ALLOWLISTED`; змінений — `SATDUMP_FILE_DIGEST_CHANGED`. Перевірка повторюється перед кожним запуском і після `--help`. Каталоги взято з розкладки встановлення 1aedd60: `resources/pipelines` під `share/satdump`, плагіни в `${CMAKE_INSTALL_LIBDIR}/satdump/plugins`. Рецепт задає `CMAKE_INSTALL_LIBDIR=lib`; `receive-only-policy.json` тепер охоплює і цю розкладку.
+- **План** (`satdump_plan`): метадані мають точно пройти `srrx.baseband.validate_metadata` (ci16 256 kS/s, Meteor-M N2-3/N2-4, `srrx:export` і `srrx:pinned` = false, UTC перевірено), конвеєр — лише `meteor_m2-x_lrpt` (72k) або `meteor_m2-x_lrpt_80k` (80k). Стоп меж сеансу перевіряється для всієї смуги 137–138 MHz до доступу до встановлення. Шаблон argv: `${ACCEPTED_SATDUMP} pipeline <id> baseband ${APPROVED_BASEBAND} ${OUTPUT_DIR} --samplerate=256000 --baseband_format=cs16`.
+- **Запуск** — лише `srrx.satdump_pass.run_decode`. Unit, обмежене читання виводу й видалення baseband після кожної спроби описано в RX.md. `decoder_policy.make_plan` і CLI цього модуля для `satdump-weather` відмовляють (`SATDUMP_PRESET_IS_SATDUMP_PLAN`).
+- **Публікація** (`satdump_publish`): з вихідного дерева SatDump беруться лише PNG (≤64, разом ≤256 MiB). Symlink і спеціальні файли не відкриваються, тексти й EXIF вилучаються. CADU, soft-символи, `products.cbor`, `dataset.json` і журнали лишаються в робочому каталозі, а `run_decode` його видаляє. Стоп меж сеансу перед атомарним перейменуванням не залишає опублікованого результату.
+
+Не виконано: справжня збірка SatDump за рецептом, перевірка `--help` на зібраному бінарнику та декодування фікстури LRPT на arm64 (`builder_checks` у `deployment/recipes/satdump/recipe.json`) — PENDING_BUILDER. Справжній прохід на Q6A — пристрій.

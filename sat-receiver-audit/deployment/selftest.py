@@ -88,6 +88,10 @@ CATALOGUE = (
     ("RX-03", 3, "OFFLINE", "SDR++: no recorder/iq_exporter/network_sink/pager_decoder, ON list only, no sdrpp --server", (_B07 + ":401-409", _B07 + ":548", "STACK.md:890")),
     ("RX-04", 4, "OFFLINE", "SatDump: allowlisted plugins and five pipelines, no sinks/sources/mqtt, kepler Never", (_B07 + ":362-389", _B07 + ":549", "STACK.md:886", _B09 + ":78")),
     ("RX-04-decode", 4, "BUILDER", "SatDump baseline decode of one stored file per allowlisted pipeline", (_B07 + ":389", _B07 + ":549")),
+    ("RX-04-bb", 4, "OFFLINE", "v2.1 LRPT baseband recorder: policy constants, computed channel filter, out-of-window tone stored as zeros, fixed SatDump units",
+     ("STACK.md:977", "STACK.md:882", "build/12-revision-v2.1.md:71", "software/srrx/baseband.py", "software/srrx/satdump_pass.py")),
+    ("RX-04-live", 4, "DEVICE", "SatDump live unit on the Q6A: only 127.0.0.1 datagrams reach net_source; live products equal the file decode",
+     ("STACK.md:1480", "software/srrx/satdump_pass.py unit_properties")),
     ("RX-05", 5, "OFFLINE", "OpenWebRX+: static modes subset of allowlist, locked settings, admin password present", (_B07 + ":426-433", _B07 + ":550", _B09 + ":79")),
     ("RX-05-live", 5, "DEVICE", "OpenWebRX+ live feature/mode list", (_B07 + ":433", _B07 + ":550")),
     ("RX-06", 6, "OFFLINE", "Soapy modules0.8 exactly rtlsdr/airspyhf, no Lime module, no 0.9, no plugin path override", (_B07 + ":328-338", _B07 + ":551", "deployment/deploy.py validate_devices")),
@@ -114,7 +118,8 @@ CATALOGUE = (
     ("RX-17", 17, "OFFLINE", "/etc/kernel/cmdline SHA-256 equals the reviewed record", (_B07 + ":181-193", _B07 + ":562")),
     ("RX-17-proc", 17, "DEVICE", "/proc/cmdline on the running device", (_B07 + ":193", _B07 + ":562")),
     ("RX-18", 18, "DEVICE", "labbar visible over every full-screen Expert GUI", (_B07 + ":563", "STACK.md:884")),
-    ("RX-S1", None, "OFFLINE", "decoder_policy.availability(): EGC, DSC, SatDump, AIS, ADS-B presets disabled", ("software/srrx/decoder_policy.py availability", "STACK.md:85")),
+    ("RX-S1", None, "OFFLINE", "decoder_policy.availability(): EGC, DSC, AIS, ADS-B presets disabled; SatDump installation-gated (unavailable offline)",
+     ("software/srrx/decoder_policy.py availability", "STACK.md:85")),
     ("RX-S2", None, "OFFLINE", "Field/QUIET Wi-Fi/BT off as staged: AIC8800/btusb blacklist + install /bin/false, FE1.1s port-4 authorized=0 rule, "
      "rfkill oneshot required by srrx.service only", ("STACK.md:726", "STACK.md:2167", "STACK.md:125", _B09 + ":69", "deployment/deploy.py stage")),
     ("RX-S2-runtime", None, "DEVICE", "Live rfkill block, no wlan/hci device, AIC8800 modules unloaded, port 4 deauthorized (deploy.py doctor radio_off)",
@@ -1773,11 +1778,86 @@ def check_s1(ctx, r):
     module = _target_module(ctx, r, "decoder_policy")
     if module is None:
         return
-    available = module.availability()
+    available = module.availability()  # offline: no installation record, so nothing may read as accepted
     for preset in ctx.policy["decoder_gated_presets"]:
         value = available.get(preset)
-        if type(value) is not str or not value.startswith("DISABLED"):
+        if type(value) is not str or not value.startswith(("DISABLED", "UNAVAILABLE")):
             r.fail("software/srrx/decoder_policy.py", "gated_preset_enabled", preset)
+
+
+# STACK.md:977 and build/12-revision-v2.1.md:71 (owner decision 24.10.2026), reviewed values.
+_BASEBAND_POLICY = {"INPUT_RATE_HZ": 1_024_000, "DECIMATION": 4, "OUTPUT_RATE_HZ": 256_000, "CI16_SCALE": 32767,
+                    "CLASS_CAP_BYTES": 3 * 512 * 1024 * 1024, "RAW_QUOTA_BYTES": 30 * 1024 ** 3, "RESERVE_FACTOR": 1.1,
+                    "RETENTION_S": 86400, "MAX_FILE_S": 1200, "MARGIN_S": 60.0, "GUARD_HZ": 20_000.0,
+                    "LIVE_HOST": "127.0.0.1", "LIVE_MAX_SAMPLES": 8188, "STOPBAND_DB": -100.0,
+                    "METEOR_TARGETS": ("Meteor-M N2-3", "Meteor-M N2-4"),
+                    "CENTERS_HZ": (137_100_000, 137_900_000, 137_912_500)}
+_LIVE_FORBIDDEN_ARGS = ("--http_server", "--client", "--server_address", "--server_port", "--multi_vfo", "--fft_enable",
+                        "--source_id")
+
+
+def check_04bb(ctx, r):
+    """srrx.baseband and srrx.satdump_pass as staged: the v2.1 constants, the channel filter of every
+    allowed tuning (stopband <= -100 dB beyond the window), a synthetic out-of-window tone that is stored
+    as zeros, and the fixed SatDump unit properties and argv. Recorder runs on the device are RX-04-live."""
+    bb, glue = _target_module(ctx, r, "baseband"), _target_module(ctx, r, "satdump_pass")
+    if bb is None or glue is None:
+        return
+    try:
+        import numpy as np
+    except ImportError:
+        return r.block(".", "numpy_unavailable")
+    where, units = "software/srrx/baseband.py", "software/srrx/satdump_pass.py"
+    for name, value in _BASEBAND_POLICY.items():
+        if getattr(bb, name, None) != value:
+            r.fail(where, "baseband_policy_constant", name)
+    if bb.LIVE_MAX_SAMPLES * 8 > 65507 or set(bb.PIPELINES.values()) != {"meteor_m2-x_lrpt", "meteor_m2-x_lrpt_80k"}:
+        r.fail(where, "baseband_policy_constant", "LIVE_OR_PIPELINES")
+    for center in bb.CENTERS_HZ:
+        for rate in sorted(bb.PIPELINES):
+            try:
+                low, high = bb.channel_span(center, rate)
+                bb.verify_taps(bb.design_taps(center, rate), center, rate)
+                if not 137e6 < low < high < 138e6:
+                    raise bb.BasebandRefused("span")
+            except bb.BasebandRefused:
+                r.fail(where, "channel_filter_spec", "%d/%d" % (center, rate))
+    window = bb.window(1, "Meteor-M N2-3", 137_900_000, 72_000, 1e9, 1e9 + 600, bb.iso_utc(1e9), bb.iso_utc(1e9 + 600))
+    t = np.arange(bb.INPUT_RATE_HZ // 4) / bb.INPUT_RATE_HZ
+    for offset, inside in ((150_000.0, False), (-110_000.0, False), (20_000.0, True)):
+        chain = bb.ChannelChain(window)
+        tone = (0.99 * np.exp(2j * np.pi * offset * t)).astype(np.complex64)
+        stored = np.concatenate([chain.push(tone[k:k + 8192]) for k in range(0, tone.size, 8192)] + [chain.flush()])
+        if not inside and np.count_nonzero(stored):
+            r.fail(where, "out_of_window_tone_stored", "%+d kHz" % (offset / 1e3))
+        if inside and abs(np.sqrt(np.mean(stored.astype(np.float64) ** 2 * 2)) / bb.CI16_SCALE - 0.99) > 0.01:
+            r.fail(where, "in_window_tone_not_kept", "%+d kHz" % (offset / 1e3))
+    ident = "0" * 16
+    decode = glue.unit_properties("decode", ident, work_dir="/data/products/satdump/.satdump-" + ident,
+                                  input_path="/data/raw/baseband-lrpt/lrpt-" + ident + ".sigmf-data")
+    live = glue.unit_properties("live", ident, work_dir="/data/products/satdump/.satdump-" + ident)
+    common = {"ProtectHome=yes", "ProtectSystem=strict", "NoNewPrivileges=yes", "Environment=LC_ALL=C.UTF-8",
+              "WorkingDirectory=" + glue.EMPTY_WORKDIR, "TemporaryFileSystem=/data:ro", "IPAddressDeny=any",
+              "User=" + glue.UNIT_USER}
+    if not common | {"PrivateNetwork=yes", "RestrictAddressFamilies=AF_UNIX"} <= set(decode) or any(
+            p.startswith("IPAddressAllow=") for p in decode):
+        r.fail(units, "decode_unit_properties")
+    if not common | {"IPAddressAllow=localhost"} <= set(live) or "PrivateNetwork=yes" in live:
+        r.fail(units, "live_unit_properties")
+    argv = glue.decode_argv("/usr/bin/satdump", "meteor_m2-x_lrpt", "/data/raw/baseband-lrpt/x", "/data/products/x")
+    if argv[1:4] != ["pipeline", "meteor_m2-x_lrpt", "baseband"] or argv[-2:] != ["--samplerate=256000", "--baseband_format=cs16"]:
+        r.fail(units, "decode_argv")
+    command = glue.live_argv("/usr/bin/satdump", window, "/data/products/x", 8877)
+    if command[1:3] != ["legacy", "live"] or command[command.index("--source") + 1] != "net_source" or any(
+            a in command for a in _LIVE_FORBIDDEN_ARGS):
+        r.fail(units, "live_argv")
+    staged = ctx.file("etc/tmpfiles.d/srrx-satdump.conf")
+    if staged is None:
+        r.note("baseband_tmpfiles_not_staged")
+    elif ctx.read(staged, 64 * 1024).decode("utf-8", "replace") != glue.tmpfiles():
+        r.fail("etc/tmpfiles.d/srrx-satdump.conf", "baseband_tmpfiles_differs")
+    r.note("live_localhost_behaviour_is_RX-04-live")
+    r.note("device_recording_needs_labd_utc_verified")
 
 
 # kmod and udev read these persistent directories in this precedence order (/run is runtime state).
@@ -2100,12 +2180,12 @@ def check_14(ctx, r):
             before = _band_power(np, capture, centre, rate, frequency, 1e3)
             if _band_power(np, out, centre, rate, frequency, 1e3) < before * 10 ** (-_CONTROL_LOSS_DB / 10):
                 r.block(where, "voice_mask_control_removed", label)
-    r.note("recorder_wiring_is_IQ-1")
+    r.note("recorder_excises_through_srrx.baseband_RX-04-bb")
     r.note("repeater_pass_recording_is_device_evidence")
 
 
 CHECKS = {"RX-00": check_00, "RX-01a": check_01a, "RX-01b": check_01b, "RX-01c": check_01c, "RX-02": check_02, "RX-03": check_03,
-          "RX-04": check_04, "RX-05": check_05, "RX-06": check_06, "RX-07": check_07, "RX-08": check_08, "RX-09": check_09,
+          "RX-04": check_04, "RX-04-bb": check_04bb, "RX-05": check_05, "RX-06": check_06, "RX-07": check_07, "RX-08": check_08, "RX-09": check_09,
           "RX-10": check_10, "RX-11": check_11, "RX-12": check_12, "RX-13": check_13, "RX-14": check_14, "RX-15": check_15,
           "RX-16": check_16, "RX-17": check_17, "RX-S1": check_s1, "RX-S2": check_s2}
 

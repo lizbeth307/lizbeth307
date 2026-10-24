@@ -345,6 +345,13 @@ class StorageGuard:
             os.close(fd)
         self.check()
 
+    def open_directory(self, path):
+        """O_NOFOLLOW descriptor of an existing directory below the root, on the bound mount
+        (srrx.baseband: dirfd-relative raw writes). The caller closes it."""
+        parts = self._parts(path)
+        self.check()
+        return self._parent(tuple(parts) + ("",))  # _parent opens every component but the last
+
     def atomic_json(self, path, value):
         encoded = (json.dumps(value, allow_nan=False, separators=(",", ":")) + "\n").encode("utf-8")
         self._commit(path, encoded, False)
