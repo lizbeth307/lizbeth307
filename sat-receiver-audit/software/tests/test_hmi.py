@@ -1505,6 +1505,8 @@ class QtTests(unittest.TestCase):
                 while time.monotonic() < deadline and not predicate():
                     app.processEvents(); time.sleep(.02)
             wait(lambda: controller.status()["connected"])
+            mark = window.worker.ui_at  # one natural GUI heartbeat before ARM (slow hosts)
+            wait(lambda: window.worker.ui_at != mark)
             window.worker.submit("arm")  # Explicit operator ARM through the running worker.
             wait(lambda: controller.holding)
             backend.data["policy"]["armed"] = True
@@ -1542,8 +1544,10 @@ class QtTests(unittest.TestCase):
                 return result
         backend = ArmingBackend()
         controller = ConsoleController(backend)
-        window = create_window(controller)
+        # Before the window: its worker and 250 ms heartbeat timer start in create_window, and
+        # trained_model() is seconds of CPU under emulation with no event loop.
         model = trained_model()
+        window = create_window(controller)
         def busy_train(dataset, *, checkpoint=None, **kwargs):
             end, count, value = time.monotonic() + 3.0, 0, 1
             while time.monotonic() < end:
@@ -1557,6 +1561,10 @@ class QtTests(unittest.TestCase):
                 deadline = time.monotonic() + seconds
                 while time.monotonic() < deadline and not predicate():
                     app.processEvents(); time.sleep(.02)
+                return predicate()
+            def why():
+                return "%s / %s / last UI heartbeat %.3f s ago" % (
+                    controller.notice, controller.error, time.monotonic() - window.worker.ui_at)
             def heartbeat(seconds):
                 """Largest gap between GUI heartbeats over the period, and whether HOLD stayed on."""
                 marks, held = [window.worker.ui_at], True
@@ -1568,18 +1576,23 @@ class QtTests(unittest.TestCase):
                     held = held and controller.holding
                 marks.append(time.monotonic())
                 return max(b - a for a, b in zip(marks, marks[1:])), held
-            wait(lambda: controller.status()["connected"])
+            self.assertTrue(wait(lambda: controller.status()["connected"]), why())
+            # One natural GUI heartbeat before ARM: wait() returns at once when the worker has
+            # already polled, and the tick fires only after processEvents delivered the queued
+            # worker states. So the 1.5 s stop measures the GUI loop, not test set-up time.
+            mark = window.worker.ui_at
+            self.assertTrue(wait(lambda: window.worker.ui_at != mark), "no GUI heartbeat before ARM")
             window.worker.submit("arm")  # Explicit operator ARM through the running worker.
-            wait(lambda: controller.holding and controller.arm_started is None)
+            self.assertTrue(wait(lambda: controller.holding and controller.arm_started is None), why())
             natural, held = heartbeat(1.0)
-            self.assertTrue(held, "%s / %s" % (controller.notice, controller.error))
+            self.assertTrue(held, why())
             leases = sum(request["op"] == "lease" for request in backend.requests)
             with patch.object(learning, "train", side_effect=busy_train):
                 window.learning_action("train")
                 self.assertTrue(window.learning_runner.busy)
                 during, held = heartbeat(3.5)
                 finish_learning(app, window)
-            self.assertTrue(held, "%s / %s" % (controller.notice, controller.error))
+            self.assertTrue(held, why() + "; gap %.3f s, natural %.3f s" % (during, natural))
             self.assertNotIn({"op": "disarm"}, backend.requests)
             self.assertGreaterEqual(sum(request["op"] == "lease" for request in backend.requests) - leases, 2)
             # Margin against the 1.5 s limit: under 1 s natively; a slow (emulated) host may add at most 0.5 s.
@@ -1734,9 +1747,12 @@ class QtTests(unittest.TestCase):
                 window.learning_action("train")
                 self.assertTrue(gate.started.wait(5))
                 thread = window.learning_runner.thread
+                # Time only the close (closeEvent runs inside it), not the backlog of
+                # construction events the first processEvents delivers on a slow host.
                 started = time.monotonic()
-                window.close(); app.processEvents()
+                window.close()
                 self.assertLess(time.monotonic() - started, .5)
+                app.processEvents()
                 self.assertEqual(backend.requests[-1], {"op": "disarm"})
                 self.assertTrue(thread.is_alive())  # the close never waited for the job
                 gate.release.set()
