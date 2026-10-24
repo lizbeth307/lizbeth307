@@ -19,8 +19,10 @@ def _sha256_hex(value):
 
 class Engine:
     def __init__(self, hardware, link, *, simulated=True, acceptance=None, telemetry_reader=None,
-                 soc_temp_reader=None, qualification_record=None):
+                 soc_temp_reader=None, qualification_record=None, gnss=None):
         self.hardware, self.link = hardware, link
+        # srrx.gnss_orchestrator.GnssOrchestrator (daemon --gnss gpsd|raw), or None for --gnss off.
+        self.gnss = gnss
         self.simulated, self.acceptance = simulated, acceptance
         # sha256 of the exact acceptance bytes (commissioning.load_acceptance_bound),
         # as srrx.provision sealed it into the Pico commissioning.json. Without
@@ -163,6 +165,8 @@ class Engine:
 
     def tick(self, now_ms):
         self.now_ms = int(now_ms)
+        if self.gnss is not None:
+            self._gnss_tick()
         try:
             if self.last_tick_ms is not None and self.now_ms - self.last_tick_ms > 100:
                 self.imu_sample = None
@@ -265,6 +269,35 @@ class Engine:
         except (OSError, ValueError, RuntimeError) as exc:
             self.trip(type(exc).__name__ + ": " + str(exc))
 
+    def _gnss_reset_refusal(self, owner):
+        """Engine preconditions of a gnss_reset pulse for owner, else None."""
+        # Mutating: only the caller's own unexpired lease (no lease is no owner).
+        # The policy rechecks fault, width, spacing, rate and the MCP image.
+        if (self.policy.owner != owner or self.policy.lease_deadline_ms is None
+                or self.now_ms >= self.policy.lease_deadline_ms):
+            return "gnss_reset requires the caller's own valid lease"
+        if not self.configured or self.pending_arm:
+            return "gnss_reset requires configured MCP outputs and no pending arm"
+        if (self.pico.get("mcp_reset") is not False or self.last_status_ms is None
+                or not 0 <= self.now_ms - self.last_status_ms <= 500):
+            return "gnss_reset requires fresh Pico status with MCP RESET released"
+        return None
+
+    def _gnss_pulse(self, owner, value):
+        """The orchestrated pulse: the same checks for the requesting owner, at pulse time."""
+        error = self._gnss_reset_refusal(owner)
+        if error is not None:
+            return {"ok": False, "error": error}
+        return self.policy.command("gnss_reset", value, self.now_ms)
+
+    def _gnss_tick(self):
+        # Before the Pico freshness return below: orchestration effects never block, and
+        # an orchestration error is recorded there, never a trip of the power policy.
+        try:
+            self.gnss.tick(self.now_ms, dict(self.policy.gnss_reset), self._gnss_pulse)
+        except Exception as exc:
+            self.gnss.fault("GNSS_ORCHESTRATOR_ERROR: " + type(exc).__name__, self.now_ms)
+
     def _read_soc_temp(self):
         try:
             value = self.soc_temp_reader()
@@ -344,17 +377,24 @@ class Engine:
         if op in {"relay", "confirmations"}:
             return self.policy.command(op, request.get("value"), self.now_ms)
         if op == "gnss_reset":
-            # Mutating: only the caller's own unexpired lease (no lease is no owner).
-            # The policy rechecks fault, width, spacing, rate and the MCP image.
+            error = self._gnss_reset_refusal(owner)
+            if error is not None:
+                return {"ok": False, "error": error}
+            if self.gnss is None:
+                return self.policy.command("gnss_reset", request.get("value"), self.now_ms)
+            # Orchestrated: refused now if the pulse itself would be; else PPS is deselected
+            # first and the same owner's checked pulse follows from tick (_gnss_pulse).
+            error = self.policy.gnss_reset_refusal(request.get("value"), self.now_ms)
+            if error is not None:
+                return {"ok": False, "error": error}
+            return self.gnss.request_reset(owner, request.get("value"), self.now_ms)
+        if op == "gnss_config":
+            if self.gnss is None:
+                return {"ok": False, "error": "GNSS_ORCHESTRATION_OFF: labd runs with --gnss off"}
             if (self.policy.owner != owner or self.policy.lease_deadline_ms is None
                     or self.now_ms >= self.policy.lease_deadline_ms):
-                return {"ok": False, "error": "gnss_reset requires the caller's own valid lease"}
-            if not self.configured or self.pending_arm:
-                return {"ok": False, "error": "gnss_reset requires configured MCP outputs and no pending arm"}
-            if (self.pico.get("mcp_reset") is not False or self.last_status_ms is None
-                    or not 0 <= self.now_ms - self.last_status_ms <= 500):
-                return {"ok": False, "error": "gnss_reset requires fresh Pico status with MCP RESET released"}
-            return self.policy.command("gnss_reset", request.get("value"), self.now_ms)
+                return {"ok": False, "error": "gnss_config requires the caller's own valid lease"}
+            return self.gnss.request_config(owner, self.now_ms)
         if op == "route":
             receiver = request.get("receiver")
             if type(receiver) is not str or receiver not in {"RTLA", "RTLB", "LIME"}:
@@ -444,6 +484,7 @@ class Engine:
             "policy": self.policy.status(), "events": list(self.events),
             "imu": imu, "hmi": self._hmi_status(),
             "passes": self.passes.status(self.now_ms) if self.passes else {"enabled": False, "state": "DISABLED"},
+            "gnss": None if self.gnss is None else self.gnss.status(),
             "live_identity_verified": self.identity_ok,
             "qualification_record_verified": self.qualification_ok and not self.simulated,
             "hardware_qualified": bool(self.acceptance) and self.identity_ok and not self.simulated}

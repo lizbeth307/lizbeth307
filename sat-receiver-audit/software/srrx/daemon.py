@@ -244,8 +244,20 @@ def main(argv=None):
     ap.add_argument("--i2c", help="Verified I2C2 device, e.g. from actual Q6A sysfs")
     ap.add_argument("--i2c0", help="Verified I2C0 device for INA228")
     ap.add_argument("--pico", help="Verified UART7 /dev/lab/pico symlink")
+    ap.add_argument("--gnss", choices=("gpsd", "raw", "off"), default="off",
+                    help="GNSS time orchestration around gnss_reset (srrx.gnss_orchestrator); off: plain pulse")
+    ap.add_argument("--location-socket", default="/run/srrx-loc/location.sock")
+    ap.add_argument("--timegate-socket", default="/run/srrx-timegate/timegate.sock")
+    ap.add_argument("--gnss-latch", default="/var/lib/srrx-gnss/jamming-latch.json",
+                    help="JAMMED latch across restarts (srrx.service StateDirectory=srrx-gnss)")
     args = ap.parse_args(argv)
-    hardware = link = None
+    hardware = link = gnss = None
+    if args.gnss != "off":
+        # AF_UNIX requests to srrx-locationd and srrx-timegate plus one polkit-allowed
+        # `systemctl start srrx-gnss-config.service`; labd itself opens no UART or chrony socket.
+        from .gnss_orchestrator import GnssOrchestrator, JamLatchFile, LinuxGnssEffects
+        gnss = GnssOrchestrator(LinuxGnssEffects(args.location_socket, args.timegate_socket), mode=args.gnss,
+                                latch=JamLatchFile(args.gnss_latch))
     try:
         if args.hardware:
             from .commissioning import load_acceptance_bound
@@ -267,7 +279,7 @@ def main(argv=None):
             from .runtime_telemetry import ProjectTelemetry
             telemetry = ProjectTelemetry(args.i2c0, hardware, acceptance)
             engine = Engine(hardware, link, simulated=False, acceptance=acceptance, telemetry_reader=telemetry,
-                            soc_temp_reader=SocTempSampler(), qualification_record=qualification)
+                            soc_temp_reader=SocTempSampler(), qualification_record=qualification, gnss=gnss)
             # Pass plans: the sandboxed srrx-passes@.service through polkit, never in labd's cgroup (LOCATION.md).
             from .pass_jobs import PassPlanner
             engine.passes = PassPlanner()
@@ -277,7 +289,7 @@ def main(argv=None):
             # simulation in every response, never recorded as measurements.
             hardware.set_inputs({n: False for n in hardware.inputs if n.startswith("DCS_")})
             link = SimLink(args.project)
-            engine = Engine(hardware, link, simulated=True)
+            engine = Engine(hardware, link, simulated=True, gnss=gnss)
         if args.stdio:
             return run_stdio(engine) or 0
         server = Server(args.socket, engine)

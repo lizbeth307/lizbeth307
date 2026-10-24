@@ -28,6 +28,7 @@ def main(argv=None):
                       "stored form rounded to 0.1 deg is sent")
     plan.add_argument("--hours", type=float, default=24.0, help="window (0, 72] h from labd's clock")
     plan.add_argument("--min-el", type=float, default=0.0, help="minimum elevation [0, 90) deg")
+    sub.add_parser("gnss_config", help="Re-run the LC76G read-back/config and the PPS gate (labd --gnss gpsd|raw); needs your own lease; after a jamming flag only gnss_reset")
     sim = sub.add_parser("sim")
     sim.add_argument("name")
     sim.add_argument("value", help="JSON value; unavailable on the physical backend")

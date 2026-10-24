@@ -12,12 +12,14 @@ SupplementaryGroups=i2c dialout srrx-pico
 WorkingDirectory=/opt/srrx
 Environment=PYTHONPATH=/opt/srrx/software
 EnvironmentFile=/etc/srrx/devices.env
-ExecStart=/usr/bin/python3 -m srrx.daemon --hardware --project /opt/srrx --acceptance /etc/srrx/acceptance.json --socket /run/srrx/control.sock --i2c ${SRRX_I2C2} --i2c0 ${SRRX_I2C0} --pico ${SRRX_PICO}
+ExecStart=/usr/bin/python3 -m srrx.daemon --hardware --project /opt/srrx --acceptance /etc/srrx/acceptance.json --socket /run/srrx/control.sock --i2c ${SRRX_I2C2} --i2c0 ${SRRX_I2C0} --pico ${SRRX_PICO} --gnss ${SRRX_GNSS}
 Restart=on-failure
 RestartSec=2
 TimeoutStopSec=3
 RuntimeDirectory=srrx
 RuntimeDirectoryMode=0750
+StateDirectory=srrx-gnss
+StateDirectoryMode=0700
 UMask=0007
 NoNewPrivileges=yes
 ProtectSystem=strict
