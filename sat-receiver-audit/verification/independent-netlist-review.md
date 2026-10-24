@@ -1,10 +1,10 @@
 # Independent graph-to-netlist verification
 
-Result: **PASS**. Re-run on 2026-10-23 after the schematic drawing was re-laid out with wires (the exported `<nets>` section is byte-identical to the previous export), using an independent standard-library JSON/XML parser, without importing the project generator or validator. After the merge of that branch into `codex/sr-rx-v2-completion`, the CI workflow re-runs this check on every push and fails if the committed report differs.
+Result: **PASS**. Re-run on 2026-10-24 for stage 2 and the v2.1 owner decisions (CAD regenerated in CI run 40094234222); earlier re-run on 2026-10-23 after the schematic drawing was re-laid out with wires (the exported `<nets>` section is byte-identical to the previous export), using an independent standard-library JSON/XML parser, without importing the project generator or validator. After the merge of that branch into `codex/sr-rx-v2-completion`, the CI workflow re-runs this check on every push and fails if the committed report differs.
 
-- Hardware components: **750** in both the reviewed graphs and KiCad XML.
-- Physical / functional pin declarations: **2318**, comprising **2181** connected pins and **137** declared NC pins.
-- Intended connected nets: **466**. The XML has **603** total net entries because it also emits named entries for the 137 unconnected pins.
+- Hardware components: **777** in both the reviewed graphs and KiCad XML.
+- Physical / functional pin declarations: **2393**, comprising **2253** connected pins and **140** declared NC pins.
+- Intended connected nets: **478**. The XML has **618** total net entries because it also emits named entries for the 140 unconnected pins.
 - Explicit power-source annotations: **25**; recorded separately from physical components.
 - Missing pins, wrong net names, extra connected pins, duplicate node assignments, unexpectedly connected NC pins, missing/extra hardware components, semantic value changes, and raw Daly B0/B− tied to system GND: **0**.
 - Final staged graphs were byte-identical to the reviewed working E1–E5 graphs at the time of this check.

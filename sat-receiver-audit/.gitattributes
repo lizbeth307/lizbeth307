@@ -10,3 +10,6 @@ build/kicad/pcb-prototype/*-command.log -whitespace
 deployment/patches/*.patch -text -whitespace
 # Primary upstream source fixtures are byte-for-byte patch inputs.
 deployment/upstream-fixtures/** -text -whitespace
+# Raw serial console captures from the ARM64 guest keep the console's CR bytes.
+verification/linux-lab/console.log -whitespace
+verification/linux-attempts/*/console.log -whitespace
