@@ -22,6 +22,8 @@ ASSEMBLY_DETAIL = {'U102', 'R101', 'C101', 'C102'}
 EXISTING_BOARD_DETAIL = {'U500'}
 MODULE_REWORK = {'R117', 'R118', 'R119', 'R120', 'C118'}
 SMT_MODULES = {'A407', 'A424'}  # Documented physical SMT pad maps, despite kind=module.
+PARTS_DB = ROOT / 'design/parts/parts.json'
+BOARD_MOUNTS = {'pcb_smt', 'pcb_tht', 'pcb_module'}
 RF_TAP = {'R4420', 'R4430', 'R4440', 'C4420', 'C4430', 'C4440'}
 RF_BLEED = {f'R{i}' for i in range(4460, 4472)}
 RELAY_REFS = {'K401','K402','Q401','Q402','D401','R412','R413','R414','R415','R417','R418','R419','L407'}
@@ -66,8 +68,17 @@ def csv_text(rows, fields):
     w.writeheader();w.writerows({k:r.get(k,'') for k in fields} for r in rows)
     return stream.getvalue()
 
+def parts_db():
+    # Mount decision per ref (design/parts/parts.json, tools/build_parts.py): which refs are board parts.
+    db=json.loads(PARTS_DB.read_text(encoding='utf-8'))
+    return {r:p for p in db['parts'] for r in p['refs']}
+
 def category(c):
-    ref=c['ref'];kind=c['kind']
+    ref=c['ref'];kind=c['kind'];mount=c.get('_mount')
+    if mount in BOARD_MOUNTS and ref not in ASSEMBLY_DETAIL|EXISTING_BOARD_DETAIL|MODULE_REWORK:
+        return 'bare_board_part','', f'Board part, mount {mount} in design/parts/parts.json.'
+    if mount=='remote':return 'mechanical_or_remote_part','', 'Leaded/remote part on wires (mount remote in design/parts/parts.json); not a PCB footprint.'
+    if mount=='virtual':return 'integral_to_host_part','', 'Contact of another board part (host in design/parts/parts.json); not bought or placed separately.'
     if ref in ASSEMBLY_DETAIL: return 'purchased_module_internal_detail', 'Adafruit5832', 'Existing purchased-breakout detail; do not buy/place a second INA228/shunt/capacitor.'
     if ref in EXISTING_BOARD_DETAIL:return 'purchased_module_internal_detail', 'Radxa_Q6A', 'Existing Q6A onboard rail-source detail; no second power module or PCB part is procured.'
     if ref.startswith('J'):return 'physical_interface_boundary','', 'Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately.'
@@ -92,11 +103,11 @@ def board(c,cat):
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--check',action='store_true');args=ap.parse_args()
-    components=[];sources=[];graph_paths=[]
+    components=[];sources=[];graph_paths=[];db=parts_db()
     for i in range(1,6):
         path=ROOT/f'design/E{i}.json';j=json.loads(path.read_text(encoding='utf-8'));graph_paths.append(path)
         sources.extend(j['sources'])
-        for c in j['components']:components.append({**c,'_sheet':f'E{i}'})
+        for c in j['components']:components.append({**c,'_sheet':f'E{i}','_mount':db[c['ref']]['mount'] if c['ref'] in db else None})
     refs=[c['ref'] for c in components];require(len(refs)==len(set(refs)), 'Duplicate schematic reference')
     manifest_path=ROOT/'build/kicad/footprints/manifest.json'
     manifest=json.loads(manifest_path.read_text(encoding='utf-8'));fps={f['footprint']:f for f in manifest['footprints']}
@@ -119,12 +130,13 @@ def main():
         active=not c.get('dnp',False)
         if cat=='bare_board_part' and active and not fp:issues.append({'ref':ref,'type':'missing_physical_footprint','blocking':True,'detail':'Manufacturer land pattern/package and selected PCB footprint are not fixed.'})
         elif cat=='bare_board_part' and active and not portable:issues.append({'ref':ref,'type':'footprint_not_portable','blocking':True,'detail':fp})
-        if cat in ('physical_interface_boundary','module_rework_part'):
-            issues.append({'ref':ref,'type':'physical_interface_or_rework_unresolved','blocking':True,'detail':why})
+        if cat=='module_rework_part' or (cat=='physical_interface_boundary' and (ref not in db or db[ref].get('tbd'))):
+            issues.append({'ref':ref,'type':'physical_interface_or_rework_unresolved','blocking':True,'detail':why if ref not in db or not db[ref].get('tbd') else why+' Parts database: '+db[ref]['tbd']})
         if cat=='bare_board_part' and active and c.get('status')=='TBD':issues.append({'ref':ref,'type':'schematic_component_TBD','blocking':True,'detail':c['value']})
-        row={'ref':ref,'sheet':c['_sheet'],'value':c['value'],'kind':c['kind'],'category':cat,'assembly_owner':owner,'board_candidate':domain,'dnp':not active,'footprint':fp,'portable_footprint':portable,'pad_coverage':'PASS' if portable and not missing else 'UNASSIGNED' if not fp else 'FAIL','pin_count':len(pin_nums),'source':c.get('source',''),'classification_reason':why}
+        row={'ref':ref,'sheet':c['_sheet'],'mount':c['_mount'] or '','value':c['value'],'kind':c['kind'],'category':cat,'assembly_owner':owner,'board_candidate':domain,'dnp':not active,'footprint':fp,'portable_footprint':portable,'pad_coverage':'PASS' if portable and not missing else 'UNASSIGNED' if not fp else 'FAIL','pin_count':len(pin_nums),'source':c.get('source',''),'classification_reason':why}
         rows.append(row)
         if domain=='DC_CORE':
+            c={k:v for k,v in c.items() if k!='_mount'}
             # Physical package selection is separate from verification/procurement readiness.
             candidate=fp
             status='graph_assigned_portable' if portable else 'proposed_not_production_qualified'
@@ -153,10 +165,10 @@ def main():
     require(len(core)==71, len(core))
     connected_core=sum(bool(p.get('net')) for c in core for p in c['pins'])
     summary={'status':'PREPARATION_ONLY_NOT_FOR_FABRICATION','components':len(rows),'schematic_contacts':sum(len(c['pins']) for c in components),'connected_contacts':len(all_nodes),'nets':len(net_nodes),'categories':dict(sorted(collections.Counter(r['category'] for r in rows).items())),'board_candidates':dict(sorted(collections.Counter(r['board_candidate'] for r in rows if r['board_candidate']).items())),'graph_assigned_footprints':sum(bool(r['footprint']) for r in rows),'portable_graph_assignments':sum(r['portable_footprint'] for r in rows),'bare_parts_without_footprint':sum(r['category']=='bare_board_part' and not r['footprint'] and not r['dnp'] for r in rows),'pin_pad_mismatches':sum(i['type']=='pin_pad_mismatch' for i in issues),'xml_connected_pin_audit':'PASS','xml_compared_connected_pins':len(all_nodes),'core_parts':len(core),'core_connected_pins':connected_core,'core_boundary_nets':len(boundary),'core_graph_assigned_footprints':sum(c['placement_footprint_status']=='graph_assigned_portable' for c in core),'core_proposed_footprints':sum(c['placement_footprint_status']!='graph_assigned_portable' for c in core),'blocking_issue_records':len(issues)}
-    provenance={'inputs':[{'file':p.relative_to(ROOT).as_posix(),'sha256':sha(p)} for p in graph_paths+[manifest_path,xml_path]],'source_documents':sorted({s['url'] for s in sources}),'generator':'pcb/prepare.py','note':'All classification/board splits are new controlled engineering proposals. They do not change E1..E5, claim module pin order, or authorize production.'}
+    provenance={'inputs':[{'file':p.relative_to(ROOT).as_posix(),'sha256':sha(p)} for p in graph_paths+[PARTS_DB,manifest_path,xml_path]],'source_documents':sorted({s['url'] for s in sources}),'generator':'pcb/prepare.py','note':'All classification/board splits are new controlled engineering proposals. They do not change E1..E5, claim module pin order, or authorize production.'}
     package={'summary':summary,'provenance':provenance,'boards':BOARDS,'constraints':CONSTRAINTS,'parts':rows,'unresolved':issues}
     detector={'board_id':'DC_CORE','status':'UNROUTED_PLACEMENT_INPUT_NOT_FABRICATION','part_count':len(core),'components':core,'nets':{n:[x for x in net_nodes[n] if x['ref'] in core_refs] for n in sorted(core_nets)},'external_boundary':boundary,'must_remain_at_RF_port':sorted(RF_TAP|RF_BLEED,key=sort_ref),'constraints':[c for c in CONSTRAINTS if 'DC_CORE' in c['boards']],'blockers':['50 passive land patterns are placement proposals, not approved production MPN selections.',*(['Three explicitly0402 resistor footprints must be fetched from official KiCad if absent.'] if not (ROOT/'build/kicad/footprints/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod').is_file() else []),'Eight-net connector/wire-pad implementation, mounting/outline and cable routing are unselected.','RF-port tap/bleed assemblies are excluded from this core and must be placed on the RF substrate.','Prototype threshold/leakage/temperature/ground-offset/RF/rail-off tests remain mandatory.'],'source_node_audit':{'source_graph':'design/E4.json','actual_xml':'verification/netlist.xml','connected_pins_checked':connected_core,'status':'PASS','all_pins':sum(len(c['pins']) for c in core),'nc_pins':sum(bool(p.get('nc')) for c in core for p in c['pins'])},'provenance':provenance}
-    files={'partition.json':dump(package),'components.csv':csv_text(rows,['ref','sheet','value','kind','category','assembly_owner','board_candidate','dnp','footprint','portable_footprint','pad_coverage','pin_count','source','classification_reason']),'unresolved.csv':csv_text([{**i,'detail':json.dumps(i['detail'],ensure_ascii=False) if not isinstance(i['detail'],str) else i['detail']} for i in issues],['ref','type','blocking','detail']),'constraints.json':dump(CONSTRAINTS),'detector-core-input.json':dump(detector),'summary.json':dump(summary),'provenance.json':dump(provenance),'detector-core-nodes.csv':csv_text([{'ref':c['ref'],'pin':p['number'],'name':p['name'],'net':p.get('net',''),'nc':p.get('nc',False),'placement_footprint':c['placement_footprint'],'footprint_status':c['placement_footprint_status']} for c in core for p in c['pins']],['ref','pin','name','net','nc','placement_footprint','footprint_status'])}
+    files={'partition.json':dump(package),'components.csv':csv_text(rows,['ref','sheet','value','kind','mount','category','assembly_owner','board_candidate','dnp','footprint','portable_footprint','pad_coverage','pin_count','source','classification_reason']),'unresolved.csv':csv_text([{**i,'detail':json.dumps(i['detail'],ensure_ascii=False) if not isinstance(i['detail'],str) else i['detail']} for i in issues],['ref','type','blocking','detail']),'constraints.json':dump(CONSTRAINTS),'detector-core-input.json':dump(detector),'summary.json':dump(summary),'provenance.json':dump(provenance),'detector-core-nodes.csv':csv_text([{'ref':c['ref'],'pin':p['number'],'name':p['name'],'net':p.get('net',''),'nc':p.get('nc',False),'placement_footprint':c['placement_footprint'],'footprint_status':c['placement_footprint_status']} for c in core for p in c['pins']],['ref','pin','name','net','nc','placement_footprint','footprint_status'])}
     if args.check:
         stale=[name for name,content in files.items() if not (OUT/name).exists() or (OUT/name).read_text(encoding='utf-8')!=content]
         require(not stale,'Stale generated output: '+', '.join(stale))

@@ -118,6 +118,10 @@ def effects(size=1.016, extra=""):
     return f"(effects (font (size {f(size)} {f(size)})) {extra})"
 
 
+# Graph part fields -> KiCad symbol fields (LCSC is the field name JLC assembly BOM tools read).
+PART_FIELDS = (("mpn", "MPN"), ("manufacturer", "Manufacturer"), ("lcsc", "LCSC"), ("alt_mpn", "Alt_MPN"))
+
+
 def prop(k, v, x=0, y=0, hidden=False, size=1.016, justify=""):
     extra = ("(hide yes) " if hidden else "") + (f"(justify {justify})" if justify else "")
     return f"(property {q(k)} {q(v)} (at {fm(x)} {fm(y)} 0) {effects(size, extra.strip())})"
@@ -1996,6 +2000,8 @@ def emit_row(rd, ox, oy, path, stem, counters, used_syms, out, stats, checks):
         body.append(prop("Value", c["value"], X + vx[0], Y + vx[1], False, VALUE_SIZE, vx[2]))
         body += [prop("Footprint", c.get("footprint", ""), X, Y, True), prop("Datasheet", c.get("source", ""), X, Y, True),
                  prop("Description", c.get("description", ""), X, Y, True), prop("ReviewStatus", c.get("status", "TBD"), X, Y, True)]
+        # Procurement fields written into the graphs by tools/build_parts.py (design/parts/parts.json).
+        body += [prop(name, c[field], X, Y, True) for field, name in PART_FIELDS if c.get(field)]
         body += [f"(pin {q(p['number'])} (uuid {uid(key + '/pin/' + str(p['number']))}))" for p in c["pins"]]
         body += [f"(instances (project \"sr-rx-v2\" (path {q(path)} (reference {q(c['ref'])}) (unit 1)))))"]
         out.append("\n".join(body))

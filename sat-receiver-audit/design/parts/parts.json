@@ -110,19 +110,6 @@
     "C105",
     "C106",
     "C114",
-    "C269",
-    "C274",
-    "C275",
-    "C276",
-    "C277",
-    "C278",
-    "C279",
-    "C280",
-    "C281",
-    "C283",
-    "C285",
-    "C287",
-    "C288",
     "C301",
     "C303",
     "C305",
@@ -148,9 +135,6 @@
     "C520",
     "C550",
     "C551",
-    "C2911",
-    "C2912",
-    "C2913",
     "C4400",
     "C4410",
     "C4411",
@@ -160,6 +144,61 @@
     "C4415",
     "C4416",
     "C4417"
+   ]
+  },
+  {
+   "id": "C-0603-C1608X7R1H104K080AA",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "0603",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "manufacturer": "TDK",
+   "mpn": "C1608X7R1H104K080AA",
+   "sku": {
+    "digikey": "445-1314-1-ND"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "CC0603KRX7R9BB104",
+     "sku": {
+      "lcsc": "C14663"
+     },
+     "note": "same LCSC attributes (value, voltage, dielectric, package) and in LCSC stock 2026-10-24; substitute only after the effective-capacitance (DC bias) check the E2 notes require"
+    },
+    {
+     "manufacturer": "TDK",
+     "mpn": "C1608X7R1H104KT000N",
+     "sku": {
+      "lcsc": "C56476"
+     }
+    },
+    {
+     "manufacturer": "Samsung Electro-Mechanics",
+     "mpn": "CL10B104KB8NNNC",
+     "sku": {
+      "lcsc": "C1591"
+     }
+    }
+   ],
+   "note": "MPN chosen by the E2 owner (graph mpn field, E2 notes: exact TDK MPN checked against the manufacturer page); kept primary. Graph value names TDK C1608X7R1H104K080AA; the attribute-checked, stocked equivalent is primary for JLC assembly.",
+   "refs": [
+    "C269",
+    "C274",
+    "C275",
+    "C276",
+    "C277",
+    "C278",
+    "C279",
+    "C280",
+    "C281",
+    "C283",
+    "C285",
+    "C287",
+    "C288",
+    "C2911",
+    "C2912",
+    "C2913"
    ]
   },
   {
@@ -376,7 +415,33 @@
     "C108",
     "C110",
     "C116",
-    "C117",
+    "C117"
+   ]
+  },
+  {
+   "id": "C-0805-C2012X7R1H105K125AB",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "0805",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "manufacturer": "TDK",
+   "mpn": "C2012X7R1H105K125AB",
+   "sku": {
+    "lcsc": "C3867006",
+    "digikey": "445-7547-1-ND"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "AC0805KKX7R9BB105",
+     "sku": {
+      "lcsc": "C726584"
+     },
+     "note": "same LCSC attributes (value, voltage, dielectric, package) and in LCSC stock 2026-10-24; substitute only after the effective-capacitance (DC bias) check the E2 notes require"
+    }
+   ],
+   "note": "MPN chosen by the E2 owner (graph mpn field, E2 notes: exact TDK MPN checked against the manufacturer page); kept primary. Graph value names TDK C2012X7R1H105K125AB; the attribute-checked, stocked equivalent is primary for JLC assembly.",
+   "refs": [
     "C202",
     "C203",
     "C212",
@@ -566,7 +631,33 @@
    ],
    "note": "Graph value names TDK C1608C0G1H332J080AA; the attribute-checked, stocked equivalent is primary for JLC assembly.",
    "refs": [
-    "C115",
+    "C115"
+   ]
+  },
+  {
+   "id": "C-0603-C1608C0G1H332J080AA",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "0603",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "manufacturer": "TDK",
+   "mpn": "C1608C0G1H332J080AA",
+   "sku": {
+    "lcsc": "C3839693",
+    "digikey": "445-1599-1-ND"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "CC0603JRNPO9BN332",
+     "sku": {
+      "lcsc": "C107048"
+     },
+     "note": "same LCSC attributes (value, voltage, dielectric, package) and in LCSC stock 2026-10-24; substitute only after the effective-capacitance (DC bias) check the E2 notes require"
+    }
+   ],
+   "note": "MPN chosen by the E2 owner (graph mpn field, E2 notes: exact TDK MPN checked against the manufacturer page); kept primary. Graph value names TDK C1608C0G1H332J080AA; the attribute-checked, stocked equivalent is primary for JLC assembly.",
+   "refs": [
     "C201",
     "C211",
     "C214"
@@ -906,27 +997,28 @@
    ]
   },
   {
-   "id": "C-1210-CC1210KKX7R9BB106",
+   "id": "C-1210-C3225X7R1H106K250AC",
    "mount": "pcb_smt",
    "kind": "capacitor",
    "package": "1210",
    "footprint": "Capacitor_SMD:C_1210_3225Metric",
-   "manufacturer": "YAGEO",
-   "mpn": "CC1210KKX7R9BB106",
+   "manufacturer": "TDK",
+   "mpn": "C3225X7R1H106K250AC",
    "sku": {
-    "lcsc": "C596319"
+    "lcsc": "C2181731",
+    "digikey": "445-C3225X7R1H106K250ACCT-ND"
    },
    "alternates": [
     {
-     "manufacturer": "TDK",
-     "mpn": "C3225X7R1H106K250AC",
+     "manufacturer": "YAGEO",
+     "mpn": "CC1210KKX7R9BB106",
      "sku": {
-      "lcsc": "C2181731"
+      "lcsc": "C596319"
      },
-     "note": "MPN named in the graph value; LCSC listing without stock on 2026-10-24"
+     "note": "same LCSC attributes (value, voltage, dielectric, package) and in LCSC stock 2026-10-24; substitute only after the effective-capacitance (DC bias) check the E2 notes require"
     }
    ],
-   "note": "Graph value names TDK C3225X7R1H106K250AC; the attribute-checked, stocked equivalent is primary for JLC assembly.",
+   "note": "MPN chosen by the E2 owner (graph mpn field, E2 notes: exact TDK MPN checked against the manufacturer page); kept primary. Graph value names TDK C3225X7R1H106K250AC; the attribute-checked, stocked equivalent is primary for JLC assembly.",
    "refs": [
     "C204",
     "C205",
@@ -1287,27 +1379,28 @@
    ]
   },
   {
-   "id": "C-0603-CC0603KRX7R9BB473",
+   "id": "C-0603-C1608X7R1H473K080AA",
    "mount": "pcb_smt",
    "kind": "capacitor",
    "package": "0603",
    "footprint": "Capacitor_SMD:C_0603_1608Metric",
-   "manufacturer": "YAGEO",
-   "mpn": "CC0603KRX7R9BB473",
+   "manufacturer": "TDK",
+   "mpn": "C1608X7R1H473K080AA",
    "sku": {
-    "lcsc": "C107093"
+    "lcsc": "C1870901",
+    "digikey": "445-C1608X7R1H473K080AACT-ND"
    },
    "alternates": [
     {
-     "manufacturer": "TDK",
-     "mpn": "C1608X7R1H473K080AA",
+     "manufacturer": "YAGEO",
+     "mpn": "CC0603KRX7R9BB473",
      "sku": {
-      "lcsc": "C1870901"
+      "lcsc": "C107093"
      },
-     "note": "MPN named in the graph value; LCSC listing without stock on 2026-10-24"
+     "note": "same LCSC attributes (value, voltage, dielectric, package) and in LCSC stock 2026-10-24; substitute only after the effective-capacitance (DC bias) check the E2 notes require"
     }
    ],
-   "note": "Graph value names TDK C1608X7R1H473K080AA; the attribute-checked, stocked equivalent is primary for JLC assembly.",
+   "note": "MPN chosen by the E2 owner (graph mpn field, E2 notes: exact TDK MPN checked against the manufacturer page); kept primary. Graph value names TDK C1608X7R1H473K080AA; the attribute-checked, stocked equivalent is primary for JLC assembly.",
    "refs": [
     "C258"
    ]
@@ -1434,9 +1527,6 @@
    ],
    "note": "Graph value names TDK C1608C0G1H103J080AA; the attribute-checked, stocked equivalent is primary for JLC assembly.",
    "refs": [
-    "C282",
-    "C284",
-    "C286",
     "C314",
     "C315",
     "C316",
@@ -1451,6 +1541,35 @@
     "C4421",
     "C4431",
     "C4441"
+   ]
+  },
+  {
+   "id": "C-0603-C1608C0G1H103J080AA",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "0603",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "manufacturer": "TDK",
+   "mpn": "C1608C0G1H103J080AA",
+   "sku": {
+    "lcsc": "C2168383",
+    "digikey": "445-7404-1-ND"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Murata Electronics",
+     "mpn": "GRM1885C1H103JA01D",
+     "sku": {
+      "lcsc": "C85973"
+     },
+     "note": "same LCSC attributes (value, voltage, dielectric, package) and in LCSC stock 2026-10-24; substitute only after the effective-capacitance (DC bias) check the E2 notes require"
+    }
+   ],
+   "note": "MPN chosen by the E2 owner (graph mpn field, E2 notes: exact TDK MPN checked against the manufacturer page); kept primary. Graph value names TDK C1608C0G1H103J080AA; the attribute-checked, stocked equivalent is primary for JLC assembly.",
+   "refs": [
+    "C282",
+    "C284",
+    "C286"
    ]
   },
   {
@@ -2323,7 +2442,7 @@
    "deviation": {
     "tolerance_pct": 0.5,
     "decision": "build/15-rishennia-komplektu.md «Шунти 0.1 %»",
-    "reason": "No 0.1 % 0.2 Ω 1206 part with stock found at LCSC (0.5 % parts listed, stock 0) on 2026-10-24; 0.5 % Power Metal Strip with per-unit calibration of each INA3221 channel."
+    "reason": "Шунта 0.2 Ω 1206 з допуском 0.1 % у наявності LCSC 24.10.2026 не знайдено (деталі 0.5 % є в каталозі, склад 0); Power Metal Strip 0.5 % з калібруванням кожного каналу INA3221 на кожному екземплярі."
    },
    "alternates": [
     {
@@ -2358,7 +2477,7 @@
    "deviation": {
     "tolerance_pct": 0.5,
     "decision": "build/15-rishennia-komplektu.md «Шунти 0.1 %»",
-    "reason": "No 0.1 % 0.1 Ω 1206 part with stock found on 2026-10-24; 0.5 % with per-unit calibration."
+    "reason": "Шунта 0.1 Ω 1206 з допуском 0.1 % у наявності 24.10.2026 не знайдено; 0.5 % з калібруванням кожного екземпляра."
    },
    "alternates": [
     {
@@ -2406,7 +2525,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "tbd": "49.8 kΩ is not an E192 value; no 0.1 % catalogue part found at LCSC on 2026-10-24. E4 owner decides: 49.9 kΩ (E192) with a rerun of design/E4-detector-analysis.py (analytical margin 1.37 mV), or 2×24.9 kΩ in series (graph change).",
+   "tbd": "49.8 kΩ не є значенням ряду E192; деталі 0.1 % у каталозі LCSC 24.10.2026 не знайдено. Рішення власника E4: 49.9 kΩ (E192) з повторним прогоном design/E4-detector-analysis.py (аналітичний запас 1.37 мВ) або 2×24.9 kΩ послідовно (зміна графа).",
    "refs": [
     "R4422",
     "R4432",
@@ -2419,7 +2538,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "tbd": "OVLO start value 112 kΩ is not an E192 value (E192: 111k/113k) and the final OVLO divider is gated; no 0.1 % 0603 part found on 2026-10-24.",
+   "tbd": "Стартове значення OVLO 112 kΩ не належить до ряду E192 (найближчі 111k/113k), а остаточний дільник OVLO закривають ворота; деталі 0.1 % 0603 24.10.2026 не знайдено.",
    "refs": [
     "R263"
    ]
@@ -2738,7 +2857,7 @@
    "manufacturer": "Coilcraft",
    "mpn": "0805HP-221XGRC",
    "match": "0805HP-221XGRC",
-   "tbd": "MPN selected in E4; no distributor listing confirmed on 2026-10-24 (DigiKey DE: no result; coilcraft.com returned 403 to automated reads). Order from Coilcraft direct after checking the page manually.",
+   "tbd": "MPN обрано в E4; 24.10.2026 жоден дистриб’ютор його не підтвердив (DigiKey DE — немає результату; coilcraft.com відповідає 403 на автоматичне читання). Замовити напряму в Coilcraft після ручної перевірки сторінки.",
    "refs": [
     "L403"
    ]
@@ -2751,7 +2870,7 @@
    "manufacturer": "Coilcraft",
    "mpn": "0603HP-47NXGRW",
    "match": "0603HP-47NXGRW",
-   "tbd": "MPN selected in E4 (Coilcraft document 225-2); no distributor listing confirmed on 2026-10-24 (DigiKey DE: no result; coilcraft.com 403). Order from Coilcraft direct after checking manually.",
+   "tbd": "MPN обрано в E4 (документ Coilcraft 225-2); 24.10.2026 жоден дистриб’ютор його не підтвердив (DigiKey DE — немає результату; coilcraft.com — 403). Замовити напряму в Coilcraft після ручної перевірки.",
    "refs": [
     "L404"
    ]
@@ -2786,7 +2905,7 @@
    "mount": "pcb_smt",
    "kind": "inductor",
    "footprint": "Inductor_SMD:L_0805_2012Metric",
-   "tbd": "DNP optional bleed choke, part TBD in E4 (SRF >300 MHz); land only. Not purchased.",
+   "tbd": "Необов’язковий дросель відведення (DNP), деталь у E4 не обрано (SRF >300 МГц); на платі лише посадкове місце. Не купується.",
    "refs": [
     "L401",
     "L407"
@@ -4088,7 +4207,7 @@
   {
    "id": "J-BALANCE-DNP",
    "mount": "harness",
-   "tbd": "DNP / service-only until E1-02; no part selected.",
+   "tbd": "DNP / лише сервіс до закриття E1-02; деталь не обрано.",
    "refs": [
     "J102"
    ]
@@ -4096,7 +4215,7 @@
   {
    "id": "J-USBC-PANEL",
    "mount": "panel",
-   "tbd": "Sealed USB-C (power-only PD) panel feedthrough not selected: IP rating vs cost is an owner decision (MECH-07, build/05); no MPN read on 2026-10-24.",
+   "tbd": "Герметичний панельний USB-C (лише живлення PD) не обрано: ступінь IP проти ціни — рішення власника (MECH-07, build/05); MPN 24.10.2026 не прочитано.",
    "refs": [
     "J103"
    ]
@@ -4106,7 +4225,7 @@
    "mount": "module",
    "match": "IP2368",
    "single_source": "Retail board from one seller with a revision gate (build/15 «IP2368»)",
-   "tbd": "Retail AliExpress IP2368 COUT board has no stable MPN; record the seller listing and board revision at purchase (gate E1-01, 10-bom row 60).",
+   "tbd": "Роздрібна плата IP2368 COUT з AliExpress не має сталого MPN; під час купівлі записати оголошення продавця й ревізію плати (ворота E1-01, рядок 60 10-bom).",
    "refs": [
     "U110"
    ]
@@ -4144,7 +4263,7 @@
     "lcsc": "C156512"
    },
    "match": "KSD9700",
-   "tbd": "LCSC listing (Mechanical SPST, 70 °C class) does not state NO/NC; 10-bom row 89 names a NO 70 °C KSD9700 from Piekarz 31610 (not read 24.10.2026). Confirm the normally-open variant before ordering.",
+   "tbd": "Оголошення LCSC (механічний SPST, клас 70 °C) не вказує NO/NC; рядок 89 10-bom називає NO 70 °C KSD9700 від Piekarz 31610 (24.10.2026 не перечитано). Перед замовленням підтвердити нормально розімкнений варіант.",
    "refs": [
     "TH102"
    ]
@@ -4241,7 +4360,7 @@
   {
    "id": "SW-POWER-PANEL",
    "mount": "panel",
-   "tbd": "Sealed 12-16 mm momentary power button: no MPN in STACK/10-bom (row 143 estimate only); selection with IP rating is MECH-07 (build/05).",
+   "tbd": "Герметична кнопка живлення 12-16 мм без фіксації: MPN немає ні в STACK, ні в 10-bom (рядок 143 — лише оцінка); вибір разом зі ступенем IP — MECH-07 (build/05).",
    "refs": [
     "SW301"
    ]
@@ -4582,7 +4701,7 @@
   {
    "id": "J-SMA-PANEL",
    "mount": "panel",
-   "tbd": "Panel SMA jack bulkhead with sealed RG316 pigtail: 10-bom row 91 names only an unspecified AliExpress set; IP67 part to be selected with MECH-07 (build/05). DC-carrying ports keep non-conductive caps (10-bom row 90).",
+   "tbd": "Панельна SMA-розетка з герметичним пігтейлом RG316: рядок 91 10-bom називає лише безіменний набір з AliExpress; деталь IP67 обрати разом з MECH-07 (build/05). Порти з DC лишають непровідні ковпачки (рядок 90 10-bom).",
    "refs": [
     "J401",
     "J402",
@@ -4595,7 +4714,7 @@
   {
    "id": "J-F-PANEL",
    "mount": "panel",
-   "tbd": "75 Ω F-type panel bulkhead not selected (10-bom row 91 is a set estimate).",
+   "tbd": "Панельну F-розетку 75 Ω не обрано (рядок 91 10-bom — оцінка набору).",
    "refs": [
     "J404"
    ]
@@ -4603,7 +4722,7 @@
   {
    "id": "J-BNC-PANEL",
    "mount": "panel",
-   "tbd": "BNC panel bulkhead not selected (10-bom row 91 is a set estimate).",
+   "tbd": "Панельну BNC-розетку не обрано (рядок 91 10-bom — оцінка набору).",
    "refs": [
     "J405"
    ]
@@ -4650,7 +4769,7 @@
   {
    "id": "W-IF-75OHM",
    "mount": "harness",
-   "tbd": "Internal 75 Ω IF coax (F bulkhead to LNB path): cable and connectors not selected.",
+   "tbd": "Внутрішній коаксіал ПЧ 75 Ω (від F-розетки до тракту LNB): кабель і роз’єми не обрано.",
    "refs": [
     "W402"
    ]
@@ -4713,7 +4832,7 @@
      "qty_per_ref": 1
     }
    ],
-   "tbd": "RG316 length (9-11 turns), SMA plugs and bracket are not specified as MPNs (10-bom row 20 \"модель\").",
+   "tbd": "Довжина RG316 (9-11 витків), SMA-вилки й кронштейн не задані як MPN (рядок 20 10-bom — «модель»).",
    "refs": [
     "W408"
    ]
@@ -4721,7 +4840,7 @@
   {
    "id": "W-RX1-EDGE",
    "mount": "harness",
-   "tbd": "Captive RG316 from the RX1 edge SMA to the profile pad: assembly MPN/length not selected.",
+   "tbd": "Невід’ємний RG316 від крайової SMA RX1 до площадки профілю: MPN збірки й довжину не обрано.",
    "refs": [
     "W409"
    ]
@@ -4729,7 +4848,7 @@
   {
    "id": "W-RG316-SMA-MM",
    "mount": "harness",
-   "tbd": "RG316 SMA-M/M assemblies 0.10/0.10/1.00 m: no verified assembly MPN read on 2026-10-24 (10-bom row 91 lists generic pigtails).",
+   "tbd": "Збірки RG316 SMA-M/M 0.10/0.10/1.00 м: перевіреного MPN збірки 24.10.2026 не прочитано (рядок 91 10-bom — загальні пігтейли).",
    "refs": [
     "W422",
     "W423",
@@ -4739,7 +4858,7 @@
   {
    "id": "W-USBC-POWER",
    "mount": "harness",
-   "tbd": "USB-C power-only 1.50 m 26 AWG pair cable: no concrete MPN selected.",
+   "tbd": "Кабель USB-C лише для живлення, 1.50 м, пара 26 AWG: конкретний MPN не обрано.",
    "refs": [
     "W425"
    ]
@@ -4762,7 +4881,7 @@
   {
    "id": "J-USBA-PANEL",
    "mount": "panel",
-   "tbd": "LAB USB-A panel receptacle not selected (MECH-07); no MPN read on 2026-10-24.",
+   "tbd": "Панельну розетку USB-A для LAB не обрано (MECH-07); MPN 24.10.2026 не прочитано.",
    "refs": [
     "J501"
    ]
@@ -4804,7 +4923,7 @@
      "qty_per_ref": 2
     }
    ],
-   "tbd": "HF+ micro-USB cable MPN not selected (10-bom row 19 lists only the ferrites).",
+   "tbd": "MPN кабелю micro-USB для HF+ не обрано (рядок 19 10-bom називає лише ферити).",
    "refs": [
     "J544"
    ]
@@ -4876,7 +4995,7 @@
   {
    "id": "SW-EDL-PANEL",
    "mount": "panel",
-   "tbd": "Recessed EDL momentary button not selected (MECH-07).",
+   "tbd": "Утоплену кнопку EDL без фіксації не обрано (MECH-07).",
    "refs": [
     "SW501"
    ]

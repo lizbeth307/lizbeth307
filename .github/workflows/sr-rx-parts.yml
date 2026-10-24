@@ -1,0 +1,140 @@
+name: SR-RX parts database
+
+# Parts database, purchase BOM and project footprint library of sat-receiver-audit.
+# Offline checks only, except the opt-in availability snapshot (manual dispatch),
+# which is uploaded as an artifact and never committed by CI.
+# None of these jobs qualify a part: hardware gates stay OPEN.
+
+on:
+  push:
+    branches: ['codex/**', 'ccr-*']
+    paths: ['sat-receiver-audit/design/**', 'sat-receiver-audit/build/kicad/footprints/**', 'sat-receiver-audit/tools/build_parts.py',
+            'sat-receiver-audit/tools/make_footprints.py', 'sat-receiver-audit/tools/check_parts_availability.py', '.github/workflows/sr-rx-parts.yml']
+  pull_request:
+    paths: ['sat-receiver-audit/design/**', 'sat-receiver-audit/build/kicad/footprints/**', 'sat-receiver-audit/tools/build_parts.py',
+            'sat-receiver-audit/tools/make_footprints.py', 'sat-receiver-audit/tools/check_parts_availability.py', '.github/workflows/sr-rx-parts.yml']
+  workflow_dispatch:
+    inputs:
+      availability_snapshot:
+        description: 'Also re-read LCSC stock/prices for every LCSC SKU (network) and upload the snapshot as an artifact'
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sr-rx-parts-${{ github.ref }}-${{ github.event_name }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: sat-receiver-audit
+
+env:
+  PYTHONDONTWRITEBYTECODE: '1'
+
+jobs:
+  database:
+    name: Parts database and generated outputs
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Parts database, graph part fields, purchase BOM and footprint manifest
+        run: python tools/build_parts.py --check
+      - name: SR_RX_Custom footprints match their generator
+        run: python tools/make_footprints.py --check
+      - name: PCB preparation reproduces with the database mount decisions
+        run: python pcb/prepare.py --check
+      - name: Nothing above wrote into the tree
+        run: git diff --exit-code -- .
+
+  footprints:
+    name: Footprints against KiCad 10.0.7
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    container:
+      image: kicad/kicad:10.0.7
+      options: --user root
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Official footprints are byte-identical to the KiCad 10.0.7 library
+        run: |
+          kicad-cli version
+          lib="${KICAD10_FOOTPRINT_DIR:-}"
+          for candidate in "$lib" /usr/share/kicad/footprints /usr/local/share/kicad/footprints; do
+            if [ -n "$candidate" ] && [ -d "$candidate/Resistor_SMD.pretty" ]; then lib="$candidate"; break; fi
+          done
+          test -d "$lib/Resistor_SMD.pretty" || { echo "::error::KiCad footprint library not found in the image"; exit 1; }
+          echo "Library: $lib"
+          checked=0
+          for dir in build/kicad/footprints/*.pretty; do
+            name=$(basename "$dir")
+            [ "$name" = "SR_RX_Custom.pretty" ] && continue
+            for file in "$dir"/*.kicad_mod; do
+              cmp "$file" "$lib/$name/$(basename "$file")" || { echo "::error file=$file::differs from KiCad 10.0.7 $name"; exit 1; }
+              checked=$((checked + 1))
+            done
+          done
+          echo "$checked official footprints identical to the image library"
+          # Each derived footprint names its official source; that source must be in the image too.
+          python3 - "$lib" <<'EOF'
+          import json, sys
+          from pathlib import Path
+          lib = Path(sys.argv[1])
+          prov = json.loads(Path("build/kicad/footprints/SR_RX_Custom.pretty/provenance.json").read_text(encoding="utf-8"))
+          for name, rec in prov.items():
+              if rec["kind"] == "derived":
+                  ident = rec["source"].split(" ", 2)[2]
+                  libname, fp = ident.split(":", 1)
+                  assert (lib / f"{libname}.pretty" / f"{fp}.kicad_mod").is_file(), ident
+          print("derived footprint sources present:", sum(r["kind"] == "derived" for r in prov.values()))
+          EOF
+      - name: KiCad parses and renders every project footprint
+        run: |
+          out="$RUNNER_TEMP/fp-svg"
+          for dir in build/kicad/footprints/*.pretty; do
+            mkdir -p "$out/$(basename "$dir")"
+            kicad-cli fp export svg --output "$out/$(basename "$dir")" "$dir"
+            want=$(ls "$dir"/*.kicad_mod | wc -l)
+            got=$(ls "$out/$(basename "$dir")"/*.svg | wc -l)
+            echo "$(basename "$dir"): $got of $want rendered"
+            [ "$got" -ge "$want" ] || { echo "::error::$dir: only $got of $want footprints rendered"; exit 1; }
+          done
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: footprint-svg
+          path: ${{ runner.temp }}/fp-svg
+
+  availability:
+    name: LCSC availability snapshot (network, opt-in)
+    if: github.event_name == 'workflow_dispatch' && inputs.availability_snapshot
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@v6
+        with:
+          python-version: '3.12'
+      - name: Re-read every LCSC SKU of the database
+        run: |
+          day=$(date -u +%F)
+          python tools/check_parts_availability.py --date "$day"
+          mkdir -p "$RUNNER_TEMP/snapshot"
+          cp "design/parts/snapshots/$day-lcsc.json" "$RUNNER_TEMP/snapshot/"
+      - uses: actions/upload-artifact@v5
+        with:
+          name: parts-availability-snapshot
+          path: ${{ runner.temp }}/snapshot
+          retention-days: 30

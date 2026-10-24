@@ -135,6 +135,72 @@
    "status": "Active",
    "price": "EUR 1.32 @1"
   },
+  "digikey:445-1314-1-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=C1608X7R1H104K080AA",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "C1608X7R1H104K080AA",
+   "manufacturer": "TDK",
+   "stock": 469446,
+   "status": "Active",
+   "price": "EUR 0.10 @1"
+  },
+  "digikey:445-1599-1-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=C1608C0G1H332J080AA",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "C1608C0G1H332J080AA",
+   "manufacturer": "TDK",
+   "stock": 0,
+   "status": "Active, 4000 expected 20-Nov-2026",
+   "price": "EUR 0.18 @1"
+  },
+  "digikey:445-7404-1-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=C1608C0G1H103J080AA",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "C1608C0G1H103J080AA",
+   "manufacturer": "TDK",
+   "stock": 0,
+   "status": "Active, 4000 expected 19-Jan-2027",
+   "price": "EUR 0.21 @1"
+  },
+  "digikey:445-7547-1-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=C2012X7R1H105K125AB",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "C2012X7R1H105K125AB",
+   "manufacturer": "TDK",
+   "stock": 0,
+   "status": "Active, 2000 expected 24-Dec-2026",
+   "price": "EUR 0.21 @1"
+  },
+  "digikey:445-C1608X7R1H473K080AACT-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=C1608X7R1H473K080AA",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "C1608X7R1H473K080AA",
+   "manufacturer": "TDK",
+   "stock": 111253,
+   "status": "Active",
+   "price": "EUR 0.09 @1"
+  },
+  "digikey:445-C3225X7R1H106K250ACCT-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=C3225X7R1H106K250AC",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "C3225X7R1H106K250AC",
+   "manufacturer": "TDK",
+   "stock": 258,
+   "status": "Active",
+   "price": "EUR 0.90 @1"
+  },
   "digikey:445-C3225X7R1H226M250ACCT-ND": {
    "distributor": "DigiKey DE",
    "url": "https://www.digikey.de/en/products/result?keywords=C3225X7R1H226M250AC",
