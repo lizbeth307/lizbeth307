@@ -66,6 +66,14 @@ BASE = (
     dict(name="Fixture no frequency", categories=["Utility"], frequencies=[], bandwidths=[1000]),
 )
 EXPECT = ["Fixture LF time=77500", "Fixture AIS=161975000", "Fixture ADS-B=1090000000"]
+# Shapes seen in the upstream v74 JSON (static/<pageid>/signal.json at e54d5c3), with fixture names and texts:
+# a Military entry listed at 3 kHz and 250 GHz without bandwidth, a [0, f] band and a MHz value that Peewee's
+# IntegerField stored as int(452.9375) = 452 next to a value in Hz.
+WIDE_CW = dict(name="Fixture CW", categories=["Amateur Radio", "Military"], frequencies=[3000, 250000000000],
+               bandwidths=[])
+ZERO_EDGE = dict(name="Fixture sferics", categories=["Interfering"], frequencies=[0, 30000000], bandwidths=[])
+TRUNCATED = dict(name="Fixture train telemetry", categories=["Radar"], frequencies=[452, 457937500],
+                 bandwidths=[8000])
 
 
 def build_v74(path, signals=BASE, *, ddl=V74_DDL, info=(("2026-07-18", -1, "SigID", 74),), labels=LABELS,
@@ -132,8 +140,14 @@ class Fixture(unittest.TestCase):
         self.count += 1
         return build_v74(self.root / ("data%d.sqlite" % self.count), signals, **kwargs)
 
-    def convert(self, path=None, expect=EXPECT):
-        return ac.convert(self.db() if path is None else path, expect=expect)
+    def convert(self, path=None, expect=EXPECT, **kwargs):
+        return ac.convert(self.db() if path is None else path, expect=expect, **kwargs)
+
+    def mirror(self, result):
+        self.count += 1
+        path = self.root / ("mirror%d.json" % self.count)
+        path.write_bytes(result["mirror"])
+        return sp.ArtemisDB.load(path, result["sha256"])
 
     def refused(self, code, path, expect=EXPECT):
         with self.assertRaises(ac.ConvertRefused) as caught:
@@ -182,28 +196,117 @@ class ConversionTests(Fixture):
         self.assertIn("UNVERIFIED", report["licence"])
         self.assertNotIn(str(self.root), json.dumps(report))  # hashes and counts, no paths
         self.assertEqual(result["template"]["sha256"], result["sha256"])
+        self.assertEqual((report["envelopes_kept"], report["unit_review"]), ([], []))
+        self.assertEqual(report["counts"]["zero_frequency_rows"], 0)
+        # The military net (Military, so "military" is also a deny term) and the untagged 300 MHz entry stop.
+        self.assertEqual((report["counts"]["stop_entries"], report["counts"]["stop_only_oth"]), (2, 0))
+        self.assertEqual(report["envelope_review"],
+                         [{"name": "Fixture military net", "categories": ["Digital", "Military"],
+                           "reasons": ["CATEGORY", "DENY_REGEX"], "points": 2, "envelope_hz": [149998500, 150101500]}])
+        spans = report["target_spans"]
+        self.assertEqual([span["target"] for span in spans], [target for target, _, _ in ac.TARGET_SPANS_HZ])
+        self.assertEqual((report["counts"]["target_spans_stopped"], {span["stop"] for span in spans}), (0, {False}))
 
-    def test_ranges_are_the_envelope_plus_each_point_and_stay_in_bounds(self):
-        self.assertEqual(ac.ranges_hz([100, 300], [50]), [[75, 125], [75, 325], [275, 325]])
-        self.assertEqual(ac.ranges_hz([300, 100, 100], [50, 10]), [[75, 125], [75, 325], [275, 325]])  # max(B)
-        self.assertEqual(ac.ranges_hz([100, 300], []), [[100, 300]])  # no bandwidth: the envelope only
-        self.assertEqual(ac.ranges_hz([100, 300], [0]), [[100, 300]])
+    def test_ranges_are_the_points_plus_a_kept_envelope_and_stay_in_bounds(self):
+        self.assertEqual(ac.ranges_hz([100, 300], [50]), [[75, 125], [275, 325]])
+        self.assertEqual(ac.ranges_hz([300, 100, 100], [50, 10]), [[75, 125], [275, 325]])  # max(B)
+        self.assertEqual(ac.ranges_hz([100, 300], [50], envelope=True), [[75, 125], [75, 325], [275, 325]])
+        self.assertEqual(ac.ranges_hz([100, 300], []), [[100, 100], [300, 300]])  # no bandwidth: the points
+        self.assertEqual(ac.ranges_hz([100, 300], [0], envelope=True), [[100, 100], [100, 300], [300, 300]])
         self.assertEqual(ac.ranges_hz([100], [3]), [[98, 102]])  # ceil(3 / 2) = 2: never narrower
         self.assertEqual(ac.ranges_hz([10], [100]), [[0, 60]])
         self.assertEqual(ac.ranges_hz([ac.MAX_HZ], [10]), [[ac.MAX_HZ - 5, ac.MAX_HZ]])
+        self.assertEqual(ac.ranges_hz([0, 30000000], []), [[0, 0], [30000000, 30000000]])  # 0: a band edge
         many = ac.ranges_hz(range(1000, 1040), [2])
-        self.assertEqual(many, [[999, 1040]])  # 41 ranges > 32: the envelope covers every point
-        self.assertEqual(len(ac.ranges_hz(range(1000, 1031), [2])), 32)
+        self.assertEqual(many, [[999, 1040]])  # 40 ranges > 32: overlapping ones merge
+        self.assertEqual(ac.ranges_hz(range(1000, 1040), [2], envelope=True), [[999, 1040]])
+        self.assertEqual(len(ac.ranges_hz(range(1000, 1031), [2])), 31)
+        self.assertEqual(len(ac.ranges_hz(range(1000, 1031), [2], envelope=True)), 32)
+        # 35 separate ranges: the three narrowest gaps close, every point stays covered.
+        points = [1000 * index for index in range(1, 32)] + [50000, 50010, 50020, 50030]
+        fitted = ac.ranges_hz(points, [2])
+        self.assertEqual(len(fitted), ac.MAX_RANGES_PER_ENTRY)
+        self.assertEqual(fitted[-1], [49999, 50031])
+        self.assertEqual(fitted[:31], [[1000 * index - 1, 1000 * index + 1] for index in range(1, 32)])
+        self.assertTrue(all(any(low <= point <= high for low, high in fitted) for point in points))
         with self.assertRaisesRegex(ac.ConvertRefused, "NO_FREQUENCY"):
             ac.ranges_hz([], [1])
         military = next(entry for entry in json.loads(self.convert()["mirror"])["entries"]
                         if entry["name"] == "Fixture military net")
+        self.assertEqual(military["ranges_hz"], [[149998500, 150001500], [150098500, 150101500]])
+        kept = self.convert(envelopes=["Fixture military net"])
+        military = next(entry for entry in json.loads(kept["mirror"])["entries"]
+                        if entry["name"] == "Fixture military net")
         self.assertEqual(military["ranges_hz"], [[149998500, 150001500], [149998500, 150101500],
                                                  [150098500, 150101500]])
+        self.assertEqual((kept["report"]["envelopes_kept"], kept["report"]["envelope_review"]),
+                         (["Fixture military net"], []))
         result = ac.convert(self.db(BASE + (dict(name="Fixture wide", categories=["Utility"],
                                                  frequencies=list(range(5000000, 5000040)), bandwidths=[2]),)),
                             expect=EXPECT)
-        self.assertEqual(result["report"]["counts"]["envelope_only"], 1)
+        self.assertEqual(result["report"]["counts"]["ranges_merged"], 1)
+        for envelopes, code in ((["Fixture unknown"], "ENVELOPE_NAME:0"),
+                                (["Fixture AIS", "Fixture no frequency"], "ENVELOPE_NAME:1"),
+                                ("Fixture AIS", "ENVELOPE_FORMAT"), ([" "], "ENVELOPE_FORMAT:0"),
+                                ([None], "ENVELOPE_FORMAT:0")):
+            with self.subTest(envelopes=envelopes), self.assertRaises(ac.ConvertRefused) as caught:
+                self.convert(envelopes=envelopes)
+            self.assertEqual(str(caught.exception), code)
+
+    def test_a_wide_military_entry_stops_at_its_points_unless_a_reviewer_keeps_its_envelope(self):
+        path = self.db(BASE + (WIDE_CW,))
+        result = ac.convert(path, expect=EXPECT)
+        cw = next(entry for entry in json.loads(result["mirror"])["entries"] if entry["name"] == "Fixture CW")
+        self.assertEqual(cw["ranges_hz"], [[3000, 3000], [250000000000, 250000000000]])
+        db = self.mirror(result)
+        self.assertEqual(sp.scope_check(249.9e9, 250.1e9, db)["reason"], "CATEGORY")
+        for low, high in ((137.825e6, 137.975e6), (1089e6, 1091e6), (14.074e6, 14.077e6)):
+            with self.subTest(span=(low, high)):
+                self.assertFalse(sp.scope_check(low, high, db)["stop"])
+        report = result["report"]
+        self.assertIn({"name": "Fixture CW", "categories": ["Amateur Radio", "Military"],
+                       "reasons": ["CATEGORY", "DENY_REGEX"], "points": 2, "envelope_hz": [3000, 250000000000]},
+                      report["envelope_review"])
+        self.assertEqual(report["counts"]["target_spans_stopped"], 0)
+        # Kept, the 3 kHz..250 GHz envelope stops every STACK target span: the report names the cause.
+        kept = ac.convert(path, expect=EXPECT, envelopes=["Fixture CW"])
+        spans = kept["report"]["target_spans"]
+        self.assertEqual(kept["report"]["counts"]["target_spans_stopped"], len(ac.TARGET_SPANS_HZ))
+        self.assertEqual({tuple(span["reasons"]) for span in spans}, {("CATEGORY", "DENY_REGEX")})
+        cause = {"name": "Fixture CW", "categories": ["Amateur Radio", "Military"],
+                 "reasons": ["CATEGORY", "DENY_REGEX"], "deny_terms": ["military"]}
+        self.assertTrue(all(cause in span["causes"] for span in spans))
+        db = self.mirror(kept)
+        for _, low, high in ac.TARGET_SPANS_HZ:
+            with self.subTest(target=low):
+                self.assertTrue(sp.scope_check(low, high, db)["stop"])
+                self.assertFalse(sp.scope_check(low, high)["stop"])  # the spans avoid the masked bands
+        many = [dict(WIDE_CW, name="Fixture CW %d" % index) for index in range(ac.MAX_CAUSES + 2)]
+        crowded = ac.convert(self.db(BASE + tuple(many)), expect=EXPECT,
+                             envelopes=[spec["name"] for spec in many])
+        span = crowded["report"]["target_spans"][0]
+        self.assertEqual((len(span["causes"]), span["causes_total"]), (ac.MAX_CAUSES, ac.MAX_CAUSES + 2))
+
+    def test_zero_edges_and_truncated_mhz_values_are_kept_and_listed(self):
+        elf = dict(name="Fixture ELF", categories=["Utility"], frequencies=[82], bandwidths=[])
+        result = ac.convert(self.db(BASE + (ZERO_EDGE, TRUNCATED, elf)), expect=EXPECT)
+        entries = {entry["name"]: entry for entry in json.loads(result["mirror"])["entries"]}
+        self.assertEqual(entries["Fixture sferics"]["ranges_hz"], [[0, 0], [30000000, 30000000]])
+        self.assertEqual(entries["Fixture ELF"]["ranges_hz"], [[82, 82]])  # no point >= 1 MHz: no readings
+        self.assertEqual(entries["Fixture train telemetry"]["ranges_hz"],
+                         [[0, 4452], [448000, 457000], [451996000, 453004000], [457933500, 457941500],
+                          [451999996000, 453000004000]])  # 452 Hz and its kHz, MHz, GHz readings
+        report = result["report"]
+        self.assertEqual((report["counts"]["zero_frequency_rows"], report["counts"]["unit_suspect_points"]), (1, 1))
+        self.assertEqual(report["unit_review"],
+                         [{"name": "Fixture ELF", "categories": ["Utility"], "points_hz": [82],
+                           "readings_added": False},
+                          {"name": "Fixture train telemetry", "categories": ["Radar"], "points_hz": [452],
+                           "readings_added": True}])
+        db = self.mirror(result)
+        self.assertEqual(sp.scope_check(452.93e6, 452.94e6, db)["reason"], "CATEGORY")  # 452.9375 MHz upstream
+        self.assertEqual(sp.scope_check(457.93e6, 457.94e6, db)["reason"], "CATEGORY")
+        self.assertFalse(sp.scope_check(15e6, 15.1e6, db)["stop"])  # a [0, 30 MHz] edge pair is two points
 
     def test_schema_drift_refuses_the_whole_file(self):
         frequency_text = tuple(statement.replace('"VALUE" INTEGER, FOREIGN', '"VALUE" TEXT, FOREIGN')
@@ -243,7 +346,7 @@ class ConversionTests(Fixture):
             "frequency as text": ([insert + "(1, '137.9 MHz', '')"], "FREQUENCY_VALUE"),
             "frequency as real": ([insert + "(1, 145.8, '')"], "FREQUENCY_VALUE"),
             "frequency null": ([insert + "(1, NULL, '')"], "FREQUENCY_VALUE"),
-            "frequency zero": ([insert + "(1, 0, '')"], "FREQUENCY_VALUE"),
+            "frequency negative": ([insert + "(1, -1, '')"], "FREQUENCY_VALUE"),
             "frequency above 1 THz": ([insert + "(1, 1000000000001, '')"], "FREQUENCY_VALUE"),
             "bandwidth negative": (['INSERT INTO "bandwidth" ("SIG_ID", "VALUE") VALUES (1, -5)'], "BANDWIDTH_VALUE"),
             "bandwidth null": (['INSERT INTO "bandwidth" ("SIG_ID", "VALUE") VALUES (1, NULL)'], "BANDWIDTH_VALUE"),
@@ -266,10 +369,12 @@ class ConversionTests(Fixture):
         for name, (after, code) in cases.items():
             with self.subTest(case=name):
                 self.refused(code, self.db(after=after))
-        # Text columns may be NULL (no text); stored integers in REAL acf values are fine.
+        # Text columns may be NULL (no text); stored integers in REAL acf values are fine; 0 Hz is a band edge.
         result = ac.convert(self.db(after=['INSERT INTO "mode" ("SIG_ID", "VALUE", "DESCRIPTION") VALUES (1, NULL, NULL)',
-                                           'INSERT INTO "acf" ("SIG_ID", "VALUE") VALUES (1, NULL)']), expect=EXPECT)
+                                           'INSERT INTO "acf" ("SIG_ID", "VALUE") VALUES (1, NULL)',
+                                           insert + "(1, 0, '')"]), expect=EXPECT)
         self.assertEqual(result["report"]["counts"]["entries"], len(BASE) - 1)
+        self.assertEqual(result["report"]["counts"]["zero_frequency_rows"], 1)
 
     def test_files_that_are_not_a_clean_v74_sqlite_are_refused(self):
         mirror = self.root / "mirror.json"
@@ -429,10 +534,15 @@ class AcceptanceTests(Fixture):
         self.assertEqual(self.accepted(folder, ac.EVIDENCE_PLACEHOLDER).status, "UNAVAILABLE_NO_ACCEPTANCE_RECORD")
         db = self.accepted(folder)
         self.assertEqual(db.status, "AVAILABLE")
-        military = sp.scope_check(150.05e6, 150.06e6, db)
+        military = sp.scope_check(150.0e6, 150.001e6, db)
         self.assertEqual((military["stop"], military["reason"], military["display"], military["identify"]),
                          (True, "CATEGORY", "out of scope", "WITHHELD"))
         self.assertNotIn("Fixture", json.dumps(military))
+        self.assertFalse(sp.scope_check(150.05e6, 150.06e6, db)["stop"])  # between the points: envelope_review
+        kept = self.root / "kept"
+        kept.mkdir()
+        ac.write_outputs(self.convert(envelopes=["Fixture military net"]), kept)
+        self.assertEqual(sp.scope_check(150.05e6, 150.06e6, self.accepted(kept))["reason"], "CATEGORY")
         untagged = sp.scope_check(299.99e6, 300.01e6, db)
         self.assertEqual(untagged["reasons"], ["UNTAGGED_MASKED", "MASKED_BAND"])
         self.assertEqual(untagged["display"], "out of scope")
@@ -468,7 +578,8 @@ class AcceptanceTests(Fixture):
         with contextlib.redirect_stdout(out):
             self.assertEqual(ac.main(argv), 0)
         summary = json.loads(out.getvalue())
-        self.assertEqual((summary["entries"], summary["spot_checks"], summary["accepted"]), (len(BASE) - 1, 3, False))
+        self.assertEqual((summary["entries"], summary["spot_checks"], summary["target_spans_stopped"],
+                          summary["accepted"]), (len(BASE) - 1, 3, 0, False))
         self.assertEqual(sorted(p.name for p in folder.iterdir()), sorted((ac.MIRROR_FILE, ac.TEMPLATE_FILE,
                                                                            ac.REPORT_FILE)))
         mirror = (folder / ac.MIRROR_FILE).read_bytes()
@@ -479,7 +590,8 @@ class AcceptanceTests(Fixture):
                            (["--sqlite", str(self.root / "missing"), "--output-dir", str(folder)] + argv[4:],
                             "SOURCE_UNAVAILABLE"),
                            (["--sqlite", str(path), "--output-dir", str(self.root / "absent")] + argv[4:],
-                            "OUTPUT_DIRECTORY")):
+                            "OUTPUT_DIRECTORY"),
+                           (argv + ["--envelope", "Fixture unknown"], "ENVELOPE_NAME:0")):
             error = io.StringIO()
             with self.subTest(code=code), contextlib.redirect_stderr(error):
                 self.assertEqual(ac.main(args), 2)

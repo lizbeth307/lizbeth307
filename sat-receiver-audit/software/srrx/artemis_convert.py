@@ -20,21 +20,32 @@ models/model.py at e54d5c3, Peewee 4.1.1 legacy table names); no views or
 triggers, indexes only on those tables; one info row NAME 'SigID', VERSION 74.
 
 Values: frequency.VALUE and bandwidth.VALUE are stored integers taken as Hz
-(1..1e12 and 0..1e12; text, real or NULL refuses); every child row and category
-refers to an existing signal and label; signal names are non-empty text. The
-units are confirmed by at least MIN_SPOT_CHECKS operator spot checks NAME=HZ of
-known civil entries, each an exact frequency point of exactly one signal.
+(0..1e12; 0 is a lower band edge, as in v74; text, real or NULL refuses); every
+child row and category refers to an existing signal and label; signal names are
+non-empty text. The units are confirmed by at least MIN_SPOT_CHECKS operator spot
+checks NAME=HZ of known civil entries, each an exact frequency point of exactly
+one signal. That confirms the file-wide unit only: Peewee's IntegerField stores
+int(value), so a MHz value with a fraction in the upstream JSON arrives as a
+small integer (v74: 452.9375 as 452). Points of 1..999 Hz next to a point of
+1 MHz or more therefore also get their kHz, MHz and GHz readings
+[p * u - h, (p + 1) * u + h]; every entry with points of 1..999 Hz is listed in
+the report for review.
 
-Ranges per signal are conservative (SigID stores frequency points without range
-rows, and two points may be the limits of a band): the envelope
-[min(F) - h, max(F) + h] plus each point [f - h, f + h], h = ceil(max(B) / 2),
-clamped to 0..1e12; with no bandwidth the envelope only; more than 32 ranges
-keeps the envelope only, which covers every point. A signal without frequency
-rows cannot match a span; it is counted, not emitted.
+Ranges per signal: each point [f - h, f + h], h = ceil(max(B) / 2), clamped to
+0..1e12 (a point without bandwidth is [f, f]). SigID stores points without range
+rows; two points may be the limits of a band, but on v74 the envelope
+[min(F) - h, max(F) + h] reaches 3 kHz..250 GHz for one Military entry, so it is
+added only for the entries a reviewer names (envelopes=, --envelope NAME). More
+than 32 ranges: overlapping ones merge, then the narrowest gaps close until 32
+remain (every point stays covered). A signal without frequency rows cannot match
+a span; it is counted, not emitted. The report lists each stop entry whose
+envelope is not emitted and the mirror's stop decision, with its causes, for the
+STACK receive targets in TARGET_SPANS_HZ.
 
 Texts: categories from category -> categorylabel.VALUE; description is the
-signal description plus the descriptions of its acf, bandwidth and frequency
-rows; modulation, mode and location join their VALUE and DESCRIPTION texts.
+signal description (### SUMMARY and ### DETAILS) plus the descriptions of its
+acf, bandwidth and frequency rows, all deny-checked (an owner decision in
+SCOPE-POLICY.md); modulation, mode and location join their VALUE and DESCRIPTION texts.
 Texts are cut to the mirror limits; when a cut loses a scope_policy deny term,
 the description starts with "[srrx: <term>, ...]", so the stop is unchanged
 (scope_policy itself re-checks every entry). Documents and URLs are not copied.
@@ -43,7 +54,7 @@ Output: deterministic sorted JSON (sorted keys and entries, UTF-8) within the
 ArtemisDB limits, loaded back through scope_policy.ArtemisDB before it is
 returned; an acceptance-record template with the locally computed SHA256 whose
 evidence_id placeholder is refused until a person replaces it; a report with
-counts, spot checks and hashes (no paths). The licence of the SigID-derived
+counts, spot checks, review lists and hashes (no paths). The licence of the SigID-derived
 content is unverified: keep the mirror local, never publish or commit it.
 """
 from __future__ import annotations
@@ -68,6 +79,39 @@ MAX_SOURCE_BYTES = 256 * 1024 * 1024
 MAX_ROWS = 1_000_000  # per table
 MAX_HZ = int(_sp.MAX_ABS_HZ)
 MAX_RANGES_PER_ENTRY = 32
+UNIT_STEPS = (1_000, 1_000_000, 1_000_000_000)  # kHz, MHz and GHz readings of a truncated value
+SUSPECT_BELOW_HZ, SUSPECT_NEXT_TO_HZ = 1_000, 1_000_000
+MAX_CAUSES = 16  # stop entries listed per target span in the report
+# STACK receive targets (STACK.md 4.1 rows 552-592, 4.2 rows 598-609; ISS 145.800 at :162), clear of the
+# masked bands, so a stop here comes from the mirror alone.
+TARGET_SPANS_HZ = (
+    ("Meteor-M LRPT 137.100 MHz", 137_025_000, 137_175_000),
+    ("Meteor-M LRPT 137.900 MHz", 137_825_000, 137_975_000),
+    ("ISS SSTV 145.800 MHz", 145_790_000, 145_810_000),
+    ("CubeSat 9k6 435-438 MHz", 435_000_000, 438_000_000),
+    ("ISS SSTV 437.550 MHz", 437_540_000, 437_560_000),
+    ("ISS FM 437.800 MHz", 437_790_000, 437_810_000),
+    ("ISS APRS 437.825 MHz", 437_815_000, 437_835_000),
+    ("Meteor-M HRPT 1700.0 MHz", 1_699_000_000, 1_701_000_000),
+    ("Metop AHRPT 1701.3 MHz", 1_699_700_000, 1_702_900_000),
+    ("AWS 1707 MHz", 1_705_800_000, 1_708_200_000),
+    ("FY-2H carrier 1687.5 MHz", 1_687_450_000, 1_687_550_000),
+    ("FY-2H carrier 1690.5 MHz", 1_690_450_000, 1_690_550_000),
+    ("Elektro-L LRIT 1691 MHz", 1_690_800_000, 1_691_200_000),
+    ("Elektro-L5 GGAK 1693 MHz", 1_692_990_000, 1_693_010_000),
+    ("H1 1420.406 MHz", 1_419_406_000, 1_421_406_000),
+    ("QO-100 NB 10489.5-10490 MHz", 10_489_500_000, 10_490_000_000),
+    ("ADS-B 1090 MHz", 1_089_000_000, 1_091_000_000),
+    ("AIS 161.975 / 162.025 MHz", 161_962_500, 162_037_500),
+    ("Radiosondes 400.5-405.5 MHz", 400_500_000, 405_500_000),
+    ("FM broadcast 87.5-108 MHz", 87_500_000, 108_000_000),
+    ("NAVTEX 490 kHz", 489_750, 490_250),
+    ("NAVTEX 518 kHz", 517_750, 518_250),
+    ("HF FT8 14.074 MHz", 14_074_000, 14_077_000),
+    ("HF WSPR 14.0971 MHz", 14_097_000, 14_097_200),
+    ("DCF77 77.5 kHz", 77_000, 78_000),
+    ("MSF 60 kHz", 59_500, 60_500),
+    ("TDF 162 kHz", 161_500, 162_500))
 MAX_CATEGORIES, MAX_CATEGORY_CHARS = 32, 128
 MIN_SPOT_CHECKS = 3
 SOURCE_NAME, SOURCE_VERSION = "SigID", 74
@@ -286,7 +330,7 @@ def _contents(connection):
         if clb_kind != "integer" or clb_id not in labels:
             _refuse("CATEGORY_REFERENCE")
         signal["categories"].add(labels[clb_id])
-    counts = {}
+    counts = {"zero_frequency_rows": 0}
     for table in ("frequency", "bandwidth", "acf", "modulation", "mode", "location"):
         rows = _rows(connection, 'SELECT typeof("SIG_ID"), "SIG_ID", typeof("VALUE"), "VALUE", typeof("DESCRIPTION"), '
                                  '"DESCRIPTION" FROM "%s"' % table)
@@ -301,10 +345,11 @@ def _contents(connection):
             if table == "acf":
                 if value_kind not in ("integer", "real", "null"):
                     _refuse("ACF_VALUE")
-            elif value_kind != "integer" or not (1 if table == "frequency" else 0) <= value <= MAX_HZ:
+            elif value_kind != "integer" or not 0 <= value <= MAX_HZ:
                 _refuse(table.upper() + "_VALUE")  # Hz integers only: text, real or NULL may hide other units
             elif table == "frequency":
                 signal["points"].add(value)
+                counts["zero_frequency_rows"] += value == 0  # a lower band edge (v74: [0, 30 MHz] and the like)
             else:
                 signal["widths"].append(value)
             if note:
@@ -329,22 +374,70 @@ def _read_database(path):
 
 
 # --- mirror ------------------------------------------------------------------------------
-def ranges_hz(points, widths):
-    """Envelope plus each point +/- ceil(max(B)/2), clamped to 0..1e12; envelope only without bandwidth."""
+def _clamp(value):
+    return min(MAX_HZ, max(0, value))
+
+
+def _half(widths):
+    return (max(widths) + 1) // 2 if widths else 0  # ceil(max(B) / 2): never narrower than the bandwidth
+
+
+def unit_suspects(points):
+    """Points of 1..999 Hz next to a point of 1 MHz or more: likely a value truncated by int()."""
+    points = sorted(set(points))
+    if not points or points[-1] < SUSPECT_NEXT_TO_HZ:
+        return []
+    return [point for point in points if 1 <= point < SUSPECT_BELOW_HZ]
+
+
+def envelope_hz(points, widths):
+    half = _half(widths)
+    return [_clamp(min(points) - half), _clamp(max(points) + half)]
+
+
+def _fit(ranges):
+    """Overlapping ranges merged, then the narrowest gaps closed until MAX_RANGES_PER_ENTRY remain."""
+    merged = []
+    for low, high in sorted(ranges):
+        if merged and low <= merged[-1][1]:
+            merged[-1][1] = max(merged[-1][1], high)
+        else:
+            merged.append([low, high])
+    if len(merged) > MAX_RANGES_PER_ENTRY:
+        widest = sorted(range(len(merged) - 1), key=lambda i: (merged[i][1] - merged[i + 1][0], i))
+        cuts = sorted(widest[:MAX_RANGES_PER_ENTRY - 1])  # keep the widest gaps, close the rest
+        merged = [[merged[start][0], merged[end][1]]
+                  for start, end in zip([0] + [cut + 1 for cut in cuts], cuts + [len(merged) - 1])]
+    return merged
+
+
+def _ranges(points, widths, envelope):
     points = sorted(set(points))
     if not points:
         _refuse("NO_FREQUENCY")
-    half = (max(widths) + 1) // 2 if widths else 0
-
-    def clamp(value):
-        return min(MAX_HZ, max(0, value))
-    envelope = (clamp(points[0] - half), clamp(points[-1] + half))
-    if half == 0:
-        return [list(envelope)]
-    ranges = sorted({envelope} | {(clamp(point - half), clamp(point + half)) for point in points})
+    half = _half(widths)
+    ranges = {(_clamp(point - half), _clamp(point + half)) for point in points}
+    for point in unit_suspects(points):
+        ranges |= {(_clamp(point * step - half), _clamp((point + 1) * step + half)) for step in UNIT_STEPS}
+    if envelope:
+        ranges.add(tuple(envelope_hz(points, widths)))
     if len(ranges) > MAX_RANGES_PER_ENTRY:
-        return [list(envelope)]  # the envelope already covers every point
-    return [list(item) for item in ranges]
+        return _fit(ranges), True
+    return [list(item) for item in sorted(ranges)], False
+
+
+def ranges_hz(points, widths, *, envelope=False):
+    """Each point +/- ceil(max(B)/2) clamped to 0..1e12, unit-suspect readings, the envelope only if asked."""
+    return _ranges(points, widths, envelope)[0]
+
+
+def _ordered(reasons):
+    return [reason for reason in _sp.REASONS if reason in reasons]
+
+
+def _view(checked):
+    """The entry as scope_check would show it: Trunked Radio stays anonymous here too."""
+    return {key: list(value) if isinstance(value, tuple) else value for key, value in checked.view}
 
 
 def _deny_terms(texts):
@@ -354,7 +447,7 @@ def _deny_terms(texts):
     return {term for term, key in zip(_sp.DENY_TERMS, _sp._DENY_FOLDED) if any(key in item for item in folded)}
 
 
-def _entry(signal, counts):
+def _entry(signal, counts, review, envelope):
     categories = sorted(signal["categories"])
     if len(categories) > MAX_CATEGORIES:
         _refuse("CATEGORY_LIMIT")
@@ -362,9 +455,10 @@ def _entry(signal, counts):
     full = {"name": signal["name"], "description": "\n".join(description),
             "modulation": "; ".join(sorted(signal["modulation"])), "mode": "; ".join(sorted(signal["mode"])),
             "location": "; ".join(sorted(signal["location"]))}
-    entry = {"categories": categories, "ranges_hz": ranges_hz(signal["points"], signal["widths"])}
-    counts["envelope_only"] += (max(signal["widths"], default=0) > 0 and len(signal["points"]) > 1 and
-                                len(entry["ranges_hz"]) == 1)  # more than 32 ranges collapsed
+    points, widths = signal["points"], signal["widths"]
+    ranges, merged = _ranges(points, widths, envelope)
+    entry = {"categories": categories, "ranges_hz": ranges}
+    counts["ranges_merged"] += merged
     for key, text in full.items():
         if text:
             entry[key] = text[:TEXT_LIMITS[key]]
@@ -376,15 +470,49 @@ def _entry(signal, counts):
         counts["deny_markers"] += 1
     try:
         checked, _ = _sp._entry(entry)
+        whole, _ = _sp._entry(dict(entry, ranges_hz=[envelope_hz(points, widths)]))
     except _sp.ScopeRefused:
         _refuse("MIRROR_ENTRY_SCHEMA")
     if _deny_terms(full.values()) and "DENY_REGEX" not in checked.reasons:
         _refuse("DENY_TERM_LOST")
+    if not envelope and len(points) > 1 and whole.reasons:  # a stop entry whose interior does not stop
+        review["envelope"].append(dict(_view(checked), reasons=_ordered(whole.reasons), points=len(points),
+                                       envelope_hz=envelope_hz(points, widths)))
+    low = sorted(point for point in points if 1 <= point < SUSPECT_BELOW_HZ)
+    if low:
+        suspects = unit_suspects(points)
+        counts["unit_suspect_points"] += len(suspects)
+        review["unit"].append(dict(_view(checked), points_hz=low, readings_added=bool(suspects)))
     return entry
+
+
+def _target_spans(entries, db, counts):
+    """The accepted mirror's stop decision for each STACK target span, with the stop entries behind it."""
+    stops = []
+    for entry in entries:
+        checked, ranges = _sp._entry(entry)
+        if not checked.reasons:
+            continue
+        terms = sorted(_deny_terms([entry.get(key, "") for key in TEXT_LIMITS] + entry["categories"]))
+        counts["stop_entries"] += 1
+        counts["stop_only_oth"] += checked.reasons == {"DENY_REGEX"} and terms == ["OTH"]
+        stops.append((ranges, dict(_view(checked), reasons=_ordered(checked.reasons), deny_terms=terms)))
+    spans = []
+    for target, low, high in TARGET_SPANS_HZ:
+        decision = _sp.scope_check(low, high, db)
+        causes = [cause for ranges, cause in stops if any(a <= high and b >= low for a, b in ranges)]
+        spans.append({"target": target, "span_hz": [low, high], "stop": decision["stop"],
+                      "reasons": decision["reasons"], "causes": causes[:MAX_CAUSES], "causes_total": len(causes)})
+    counts["target_spans_stopped"] = sum(span["stop"] for span in spans)
+    return spans
 
 
 def _canonical(value):
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
+
+
+def _sorted_views(items):
+    return sorted(items, key=lambda item: (item.get("name", ""), _canonical(item)))
 
 
 def _expectations(expect):
@@ -410,9 +538,20 @@ def _expectations(expect):
     return checks
 
 
-def convert(sqlite_path, *, expect):
+def _envelope_names(envelopes):
+    """Exact signal names whose envelope a reviewer keeps (a reviewed band, as listed in envelope_review)."""
+    if isinstance(envelopes, (str, bytes)) or not isinstance(envelopes, (list, tuple)):
+        _refuse("ENVELOPE_FORMAT")
+    for index, name in enumerate(envelopes):
+        if not isinstance(name, str) or not name.strip():
+            _refuse("ENVELOPE_FORMAT:%d" % index)
+    return list(envelopes)
+
+
+def convert(sqlite_path, *, expect, envelopes=()):
     """Validate a v74 data.sqlite and return the mirror bytes, acceptance template and report."""
     checks = _expectations(expect)
+    kept = _envelope_names(envelopes)
     before, header = _source(sqlite_path)
     _check_header(header)
     date, signals, counts = _read_database(sqlite_path)
@@ -426,9 +565,15 @@ def convert(sqlite_path, *, expect):
             _refuse("SPOT_CHECK_NAME:%d" % index)
         if hz not in by_name[name][0]["points"]:
             _refuse("SPOT_CHECK_FREQUENCY:%d" % index)  # e.g. kHz or MHz stored instead of Hz
-    counts.update(signals=len(signals), truncated_fields=0, deny_markers=0, envelope_only=0,
+    for index, name in enumerate(kept):
+        if len(by_name.get(name, ())) != 1 or not by_name[name][0]["points"]:
+            _refuse("ENVELOPE_NAME:%d" % index)
+    counts.update(signals=len(signals), truncated_fields=0, deny_markers=0, ranges_merged=0, unit_suspect_points=0,
+                  stop_entries=0, stop_only_oth=0,
                   signals_without_frequency=sum(not signal["points"] for signal in signals.values()))
-    entries = [_entry(signal, counts) for signal in signals.values() if signal["points"]]
+    review = {"envelope": [], "unit": []}
+    entries = [_entry(signal, counts, review, signal["name"] in kept)
+               for signal in signals.values() if signal["points"]]
     counts.update(entries=len(entries), ranges=sum(len(entry["ranges_hz"]) for entry in entries))
     if len(entries) > _sp.ArtemisDB.MAX_ENTRIES:
         _refuse("ENTRY_LIMIT")
@@ -446,14 +591,20 @@ def convert(sqlite_path, *, expect):
         loaded = _sp.ArtemisDB.load(probe, digest)
     if not loaded.available or len(loaded) != len(entries):
         _refuse("MIRROR_ROUND_TRIP")
+    spans = _target_spans(entries, loaded, counts)
     template = {"v": 1, "kind": "srrx_artemis_acceptance", "db": "artemis-db", "db_version": "v74",
                 "format": _sp.ARTEMIS_FORMAT, "sha256": digest, "evidence_id": EVIDENCE_PLACEHOLDER}
     report = {"v": 1, "kind": "srrx_artemis_conversion_report", "tool": "srrx.artemis_convert",
               "upstream_model": UPSTREAM_MODEL, "accepted": False, "licence": LICENCE,
               "source": {"sha256": before[4], "bytes": before[2], "info_name": SOURCE_NAME,
                          "info_version": SOURCE_VERSION, "info_date": date},
-              "integrity_check": "ok", "units": "Hz (stored integers), confirmed by the spot checks",
+              "integrity_check": "ok",
+              "units": "Hz (stored integers), file-wide unit confirmed by the spot checks; per entry see unit_review",
+              "rules": {"ranges": "each point +/- ceil(max(B)/2); the envelope only for envelopes_kept",
+                        "deny_text": "signal description (SUMMARY and DETAILS) plus row notes"},
               "spot_checks": [{"name": name, "hz": hz, "result": "PASS"} for name, hz in checks],
+              "envelopes_kept": sorted(set(kept)), "envelope_review": _sorted_views(review["envelope"]),
+              "unit_review": _sorted_views(review["unit"]), "target_spans": spans,
               "counts": dict(sorted(counts.items())),
               "mirror": {"file": MIRROR_FILE, "sha256": digest, "bytes": len(data)}}
     return {"mirror": data, "sha256": digest, "template": template, "report": report}
@@ -503,16 +654,19 @@ def main(argv=None):
     parser.add_argument("--output-dir", type=Path, required=True, help="existing directory; files are never replaced")
     parser.add_argument("--expect", action="append", default=[], metavar="NAME=HZ",
                         help="spot check: exact signal name and one of its frequencies in Hz (at least 3)")
+    parser.add_argument("--envelope", action="append", default=[], metavar="NAME",
+                        help="reviewed band: also stop between this signal's lowest and highest point")
     args = parser.parse_args(argv)
     try:
-        result = convert(args.sqlite, expect=args.expect)
+        result = convert(args.sqlite, expect=args.expect, envelopes=args.envelope)
         write_outputs(result, args.output_dir)
     except ConvertRefused as error:
         print("srrx.artemis_convert: refused: " + str(error), file=sys.stderr)
         return 2
     counts = result["report"]["counts"]
     print(json.dumps({"mirror_sha256": result["sha256"], "entries": counts["entries"], "ranges": counts["ranges"],
-                      "spot_checks": len(result["report"]["spot_checks"]), "accepted": False}, sort_keys=True))
+                      "spot_checks": len(result["report"]["spot_checks"]),
+                      "target_spans_stopped": counts["target_spans_stopped"], "accepted": False}, sort_keys=True))
     return 0
 
 
