@@ -61,6 +61,22 @@ class AssemblyDocsTests(unittest.TestCase):
                 joined.update((a, b))
             self.assertTrue(set(units) <= joined, f"{net}: {sorted(set(units) - joined)} not wired")
 
+    def test_wires_follow_the_exported_netlist(self):
+        # validate_project ties the graphs to the KiCad export; the harness must name the same nets and contacts.
+        import xml.etree.ElementTree as ET
+        root = ET.parse(BASE / "verification/netlist.xml").getroot()
+        nodes = {}
+        for net in root.findall("./nets/net"):
+            for node in net.findall("node"):
+                nodes[(node.get("ref"), node.get("pin"))] = net.get("name")
+        names = set(nodes.values())
+        for wire in self.h.wires:
+            self.assertIn(wire["net"], names, wire["wire"])
+            for key in ("from", "to"):
+                m = re.match(r"(?:пайка: )?([A-Z][A-Z0-9]*\d)\.([A-Za-z0-9_+\-]+)\b", wire[key])
+                if m and (m[1], m[2]) in nodes:
+                    self.assertEqual(nodes[(m[1], m[2])], wire["net"], f"{wire['wire']} {key}")
+
     def test_high_speed_and_rf_nets_are_never_loose_wires(self):
         wired = {w["net"] for w in self.h.wires}
         for nets in self.h.assemblies.values():
@@ -119,6 +135,8 @@ class AssemblyDocsTests(unittest.TestCase):
         for row in rows:
             if row["s4_enable"] != "—":
                 self.assertIn(row["s4_enable"], self.model.nets, row["tp"])
+            if row["net"] != "GND":
+                self.assertNotIn(row["source"], ("", "—"), f"{row['tp']}: expected values need a cited setpoint")
 
     def test_bench_form_lists_every_gate_and_prefills_nothing(self):
         contract = json.loads((BASE / "design/readiness-contract.json").read_text(encoding="utf-8"))
