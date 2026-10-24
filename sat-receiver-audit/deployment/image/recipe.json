@@ -10,6 +10,10 @@
     "linux-headers-radxa-dragon-q6a",
     "linux-libc-dev-radxa-dragon-q6a"
   ],
+  "kernel_install": {
+    "source": "build/07-pz-vstanovlennia.md:68-69 (dpkg -i of the image/headers debs and their two metapackages before any apt run); linux-libc-dev-radxa-dragon-q6a stays in the cache only: it depends on linux-libc-dev-6.18.2-4-qcom, which the lock does not carry (CI image build 2026-10-24)",
+    "artifacts": ["linux-image-6.18.2-4-qcom", "linux-headers-6.18.2-4-qcom", "linux-image-radxa-dragon-q6a", "linux-headers-radxa-dragon-q6a"]
+  },
   "kernel_version": "6.18.2-4-qcom",
   "dtb_name": "qcs6490-radxa-dragon-q6a.dtb",
   "holds": {
@@ -44,8 +48,14 @@
   "ppa_list_tokens_from_policy": "deployment/receive-only-policy.json apt.forbidden_list_name_tokens (STACK.md:894: PPA lists are removed)",
   "kernel_install": {
     "source": "STACK.md:843 (entries only from our kernel-install plugin, never rsetup); systemd v255.4 src/kernel-install/kernel-install.c and 90-loaderentry.install.in (layout=other keeps the stock BLS plugin inert)",
-    "mask": ["90-loaderentry.install", "90-uki-copy.install"],
-    "known": ["50-depmod.install", "55-initrd.install", "60-ukify.install", "90-loaderentry.install", "90-uki-copy.install"]
+    "mask": ["90-loaderentry.install", "90-uki-copy.install", "91-u-boot-menu.install", "99-update-overlay.install"],
+    "known": ["50-depmod.install", "55-initrd.install", "60-ukify.install", "90-loaderentry.install", "90-uki-copy.install",
+              "91-u-boot-menu.install", "99-update-overlay.install", "dkms"],
+    "why_masked": "r2 ships 91-u-boot-menu.install (extlinux) and 99-update-overlay.install (rsetup overlay folders on the ESP); neither belongs to the SR-RX boot chain and STACK.md:845 forbids rsetup (image-facts.json, CI 2026-10-24)"
+  },
+  "divert_hooks": {
+    "source": "r2 links /etc/kernel/postinst.d/yz-update-overlays and postrm.d/yz-update-overlays to /usr/bin/rsetup (image-facts.json, CI 2026-10-24); STACK.md:845 never rsetup. dpkg-divert --local --rename keeps them away across package upgrades; run-parts skips the dotted name",
+    "paths": ["/etc/kernel/postinst.d/yz-update-overlays", "/etc/kernel/postrm.d/yz-update-overlays"]
   },
   "routes": {
     "A": {

@@ -8,6 +8,6 @@ case "$1" in
     prereqs) prereqs; exit 0 ;;
 esac
 . /usr/share/initramfs-tools/hook-functions
-manual_add_modules vfat nls_cp437 nls_iso8859_1
+for module in vfat nls_cp437 nls_iso8859_1; do manual_add_modules "$module" || true; done
 mkdir -p "${DESTDIR}/conf/conf.d"
 /usr/bin/python3 -I -B /opt/srrx/deployment/image/bootchain.py initramfs-env > "${DESTDIR}/conf/conf.d/srrx-ab"

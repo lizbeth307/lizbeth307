@@ -47,7 +47,7 @@ LOCK = DEPLOYMENT / "sources.lock.json"
 POLICY = DEPLOYMENT / "receive-only-policy.json"
 BLOCKDEV_PREFIXES = ("/dev/sd", "/dev/mmcblk", "/dev/nvme", "/dev/disk/", "/dev/vd", "/dev/hd", "/dev/ufs", "/dev/mapper/")
 CONFIG_KEYS = ("CONFIG_VIRTIO_BLK", "CONFIG_VIRTIO_PCI", "CONFIG_VIRTIO_MMIO", "CONFIG_PCI_HOST_GENERIC", "CONFIG_SERIAL_AMBA_PL011",
-               "CONFIG_SERIAL_AMBA_PL011_CONSOLE", "CONFIG_EFI", "CONFIG_EFI_STUB", "CONFIG_EXT4_FS", "CONFIG_VFAT_FS", "CONFIG_NLS_CP437",
+               "CONFIG_SERIAL_AMBA_PL011_CONSOLE", "CONFIG_EFI", "CONFIG_EFI_STUB", "CONFIG_EXT4_FS", "CONFIG_VFAT_FS", "CONFIG_NLS_CODEPAGE_437",
                "CONFIG_NLS_ISO8859_1", "CONFIG_QUOTA", "CONFIG_QFMT_V2", "CONFIG_QUOTACTL", "CONFIG_CGROUP_BPF", "CONFIG_PPS_CLIENT_GPIO",
                "CONFIG_BLK_DEV_LOOP", "CONFIG_RTC_DRV_PL031", "CONFIG_DRM_VIRTIO_GPU", "CONFIG_HW_RANDOM_VIRTIO", "CONFIG_ARM_SMMU_V3")
 INTEREST = re.compile(r"(linux-(image|headers|modules|firmware)|systemd|embloader|sdboot|radxa|rsetup|u-boot|edk2|fastrpc|qcom|qnn|qairt|"
@@ -264,12 +264,22 @@ class Mounts:
             self.stack.remove(target)
 
 
-def minimal_dev(mounts, root):
-    """tmpfs /dev with the character nodes package scripts need; no host block devices."""
+def minimal_dev(mounts, root, partitions=None):
+    """tmpfs /dev with the character nodes package scripts need. The only block devices are the
+    image's own loop partitions (with by-partuuid/by-uuid links), so the initramfs fsck hook can
+    identify the root filesystem; no host disk is visible."""
     dev = Path(root) / "dev"
     mounts.mount("tmpfs", dev, "tmpfs", "mode=0755,nosuid")
     for name, major, minor in (("null", 1, 3), ("zero", 1, 5), ("full", 1, 7), ("random", 1, 8), ("urandom", 1, 9), ("tty", 5, 0)):
         os.mknod(dev / name, 0o666 | stat.S_IFCHR, os.makedev(major, minor))
+    for device, links in (partitions or {}).items():
+        if not re.fullmatch(r"/dev/loop[0-9]+p[0-9]+", device):
+            raise BuildError("only the image's own loop partitions enter the chroot: " + device)
+        node = os.stat(device)
+        os.mknod(dev / Path(device).name, 0o660 | stat.S_IFBLK, node.st_rdev)
+        for link in links:
+            (dev / "disk" / link).parent.mkdir(parents=True, exist_ok=True)
+            os.symlink("../../" + Path(device).name, dev / "disk" / link)
     for name, target in (("fd", "/proc/self/fd"), ("stdin", "/proc/self/fd/0"), ("stdout", "/proc/self/fd/1"),
                          ("stderr", "/proc/self/fd/2"), ("ptmx", "pts/ptmx")):
         os.symlink(target, dev / name)
@@ -277,8 +287,8 @@ def minimal_dev(mounts, root):
     mounts.mount("tmpfs", dev / "shm", "tmpfs", "mode=1777,nosuid,nodev")
 
 
-def chroot_api(mounts, root):
-    minimal_dev(mounts, root)
+def chroot_api(mounts, root, partitions=None):
+    minimal_dev(mounts, root, partitions)
     mounts.mount("proc", Path(root) / "proc", "proc", "nosuid,nodev,noexec")
     mounts.mount("sysfs", Path(root) / "sys", "sysfs", "ro,nosuid,nodev,noexec")
     mounts.mount("tmpfs", Path(root) / "run", "tmpfs", "mode=0755,nosuid,nodev")
@@ -785,6 +795,11 @@ def install_boot_chain(root, route, recipe):
         os.symlink("/dev/null", link)
     unknown = sorted(p.name for d in ("usr/lib/kernel/install.d", "etc/kernel/install.d") if (root / d).is_dir()
                      for p in (root / d).iterdir() if p.name not in recipe["kernel_install"]["known"] and p.name != "90-srrx-bls.install")
+    diverted = []
+    for path in recipe["divert_hooks"]["paths"]:
+        if os.path.lexists(root / path.lstrip("/")):
+            chroot(root, ["dpkg-divert", "--local", "--rename", "--divert", path + ".srrx-disabled", "--add", path])
+            diverted.append(path)
     install_file(FILES / "srrx-boot-check.service", root / "etc/systemd/system/srrx-boot-check.service")
     installed += ["etc/kernel/install.conf", "etc/kernel/install.d/90-srrx-bls.install", "etc/systemd/system/srrx-boot-check.service"]
     if route == "A":
@@ -796,7 +811,8 @@ def install_boot_chain(root, route, recipe):
         install_file(FILES / "initramfs-srrx-ab-writeback", root / "etc/initramfs-tools/scripts/local-premount/srrx-ab-writeback", 0o755)
         installed += ["etc/systemd/system/srrx-ab-commit.service", "etc/initramfs-tools/hooks/srrx-ab",
                       "etc/initramfs-tools/scripts/local-premount/srrx-ab-writeback"]
-    return {"installed": installed, "unknown_kernel_install_plugins": unknown}
+    return {"installed": installed, "unknown_kernel_install_plugins": unknown, "diverted_hooks": diverted,
+            "masked_kernel_install_plugins": recipe["kernel_install"]["mask"]}
 
 
 def policy_rc(root, enable):
@@ -955,7 +971,9 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         if not keep_base:
             (work / "base.raw").unlink()
         LOG.step("root-a-copy", "DONE", used_bytes=os.statvfs(root_a).f_frsize * (os.statvfs(root_a).f_blocks - os.statvfs(root_a).f_bfree))
-        chroot_api(mounts, root_a)
+        partitions = {devices[role]: ["by-partuuid/" + ids["partuuid"][role]] + (["by-uuid/" + ids["fs_uuid"][role]] if role in ids["fs_uuid"] else [])
+                      for role in layoutlib.ROLES}
+        chroot_api(mounts, root_a, partitions)
         policy_rc(root_a, True)
         LOG.step("chroot", "DONE")
         count = extract_bundle(bundle_path, root_a, stage_dir)
@@ -993,13 +1011,13 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         debs_dir.mkdir(parents=True, exist_ok=True)
         artifacts = lock_artifacts()
         names = []
-        for art_id in recipe["kernel_artifacts"]:
+        for art_id in recipe["kernel_install"]["artifacts"]:
             shutil.copyfile(Path(cache) / artifacts[art_id]["cache_path"], debs_dir / artifacts[art_id]["name"])
             names.append("/var/cache/srrx-image/" + artifacts[art_id]["name"])
         extra = {"SRRX_ALLOW_UNMERGED_DTB": "1"} if allow_unmerged_dtb else {}
         dpkg = chroot(root_a, ["dpkg", "-i"] + names, extra_env=extra)
         shutil.rmtree(debs_dir)
-        status = {n: dpkg_installed(root_a, n) for n in recipe["kernel_artifacts"]}
+        status = {n: dpkg_installed(root_a, n) for n in recipe["kernel_install"]["artifacts"]}
         if any(v != "6.18.2-4" for v in status.values()):
             raise BuildError("locked kernel debs not installed at 6.18.2-4: " + json.dumps(status))
         entry_a = sorted(p.name for p in (root_a / "boot/efi/loader/entries").glob("labA*.conf"))
@@ -1008,7 +1026,9 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
             chroot(root_a, ["kernel-install", "add", kver, "/boot/vmlinuz-" + kver, "/boot/initrd.img-" + kver], extra_env=extra)
             entry_a = sorted(p.name for p in (root_a / "boot/efi/loader/entries").glob("labA*.conf"))
         LOG.step("kernel", "DONE", packages=status, slot_a_entry=entry_a, dpkg_tail=dpkg.stdout[-600:])
-        manifest["kernel"] = {"packages": status, "slot_a_plugin_entry": entry_a}
+        manifest["kernel"] = {"packages": status, "slot_a_plugin_entry": entry_a,
+                              "cache_only": sorted(set(recipe["kernel_artifacts"]) - set(recipe["kernel_install"]["artifacts"])),
+                              "why_cache_only": recipe["kernel_install"]["source"]}
         manifest["hardening"] = hardening(root_a, recipe, route)
         LOG.step("hardening", "DONE", held=len(manifest["hardening"]["held"]), masked=manifest["hardening"]["masked"])
         manifest["enabled_units"] = enable_units(root_a, recipe, route)
@@ -1038,7 +1058,7 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         run(["rsync", "-aHAXxS", "--numeric-ids", str(root_a) + "/", str(root_b) + "/"])
         cmdline_sha["B"] = write_slot_files(root_b, config, layout, ids, "B")
         mounts.mount(devices["esp"], root_b / "boot/efi", "vfat", "umask=0077")
-        chroot_api(mounts, root_b)
+        chroot_api(mounts, root_b, partitions)
         chroot(root_b, ["kernel-install", "add", kver, "/boot/vmlinuz-" + kver, "/boot/initrd.img-" + kver], extra_env=extra)
         for sub in ("tmp", "run", "sys", "proc", "dev"):
             mounts.umount_under(root_b / sub)

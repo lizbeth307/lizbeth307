@@ -452,6 +452,40 @@ def route_b_commit(esp=ESP_MOUNT, config_path=BOOT_CONFIG, slot_path=SLOT_FILE):
     return result
 
 
+SMOKE_BEGIN, SMOKE_END = "SRRX-SMOKE-REPORT-BEGIN", "SRRX-SMOKE-REPORT-END"
+
+
+def smoke_report(timeout=900):
+    """QEMU smoke only (deployment/image/smoke_qemu.py passes systemd.run= on the smoke entry): wait
+    until every other boot job has finished, then print one JSON line between markers. Inert otherwise."""
+    import subprocess
+    import time
+
+    def out(argv):
+        try:
+            return subprocess.run(argv, capture_output=True, text=True, timeout=60).stdout.strip()
+        except (OSError, subprocess.SubprocessError) as exc:
+            return "unavailable: " + type(exc).__name__
+
+    deadline = time.monotonic() + timeout
+    while time.monotonic() < deadline:
+        jobs = [line for line in out(["systemctl", "list-jobs", "--no-legend", "--plain"]).splitlines()
+                if line.strip() and "kernel-command-line" not in line]
+        if not jobs:
+            break
+        time.sleep(5)
+    units = ("srrx-boot-check.service", "boot-complete.target", "systemd-bless-boot.service", "srrx-radio-off.service",
+             "srrx.service", "systemd-sysusers.service", "systemd-tmpfiles-setup.service")
+    report = {"pending_jobs": jobs, "uname_r": platform.release(),
+              "proc_cmdline": Path("/proc/cmdline").read_text(errors="replace").strip(),
+              "units": {u: out(["systemctl", "show", "--property=ActiveState,SubState,Result,UnitFileState", u]).replace("\n", ";") for u in units},
+              "failed_units": out(["systemctl", "--failed", "--no-legend", "--plain"]).splitlines(),
+              "bless_boot_status": out(["/usr/lib/systemd/systemd-bless-boot", "status"]),
+              "boot_check": boot_check()}
+    print(SMOKE_BEGIN + json.dumps(report, sort_keys=True) + SMOKE_END, flush=True)
+    return 0
+
+
 def initramfs_env(config_path=BOOT_CONFIG):
     """Shell assignments for the Route B initramfs script (values are validated PARTUUIDs)."""
     config = load_config(config_path)
@@ -466,6 +500,7 @@ def main(argv=None):
     plugin.add_argument("args", nargs=argparse.REMAINDER)
     env = sub.add_parser("initramfs-env", help="Route B: /conf/conf.d/srrx-ab for the initramfs")
     env.add_argument("--config", type=Path, default=BOOT_CONFIG)
+    sub.add_parser("smoke-report", help="QEMU smoke only: report the boot after every other job finished")
     golden = sub.add_parser("golden-entries")
     golden.add_argument("--esp", type=Path, default=ESP_MOUNT)
     golden.add_argument("--config", type=Path, default=BOOT_CONFIG)
@@ -483,6 +518,8 @@ def main(argv=None):
         if args.op == "initramfs-env":
             print(initramfs_env(args.config), end="")
             return 0
+        if args.op == "smoke-report":
+            return smoke_report()
         if args.op == "cmdline":
             config = load_config(args.config)
             print(cmdline(config["base_cmdline_without_root"], root_partuuid(config, args.slot), config["lime_build"]))
