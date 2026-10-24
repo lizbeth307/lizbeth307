@@ -1,10 +1,11 @@
 """Reference LEO pass prediction: Skyfield EarthSatellite.from_omm + find_events.
 
-Skyfield 1.55 / sgp4 2.27 (build/07:517, STACK.md:900) live in a venv of their
-own (/opt/srrx/passes-venv), never in labd: they are imported lazily on the first
-prediction and a missing install raises PassDependencyError. labd stays
-stdlib-only and runs the CLI below only through the sandboxed oneshot
-srrx-passes@.service (srrx.pass_jobs). There is no project-owned SGP4.
+Skyfield 1.55 / sgp4 2.27 (the version pins of build/07:517 and STACK.md:900) live
+in a venv of their own, never in labd: /opt/srrx/passes-venv with numpy 2.3.5 and a
+hashed lock (software/DEPLOYMENT.md), not the numpy<2 lab-venv of build/07. They are
+imported lazily on the first prediction and a missing install raises
+PassDependencyError. labd stays stdlib-only and runs the CLI below only through the
+sandboxed oneshot srrx-passes@.service (srrx.pass_jobs). There is no project-owned SGP4.
 
 No downloads: the timescale is Skyfield's built-in table (builtin=True) and no
 ephemeris file is opened; elements come only from srrx.orbits records. sgp4 2.27
@@ -60,7 +61,11 @@ MAX_REQUEST_BYTES = 64 * 1024
 PLAN_MODES = (0o600, 0o640)
 PLAN_NAME = re.compile(r"[0-9a-f]{16}\.json\Z")  # labd job ids (srrx.pass_jobs); --keep removes no other name
 MAX_KEEP = 64
-BASEBAND_ROLE = "LRPT"  # v2.1 bounded baseband policy: Meteor-M N2-3/N2-4 LRPT only (build/12-revision-v2.1.md)
+# Window pre-filter of the v2.1 bounded baseband policy, which allows Meteor-M N2-3/N2-4 LRPT only
+# (build/12-revision-v2.1.md). It is the operator allowlist's role label, bound to no NORAD id (none
+# is hard-coded); the reviewed allowlist must give it only to those two, and the future recorder
+# must enforce the Meteor-only set itself (an open item of the recorder package).
+BASEBAND_ROLE = "LRPT"
 _runtime = None
 
 
@@ -81,7 +86,8 @@ def _skyfield():
             versions = {"skyfield": version("skyfield"), "sgp4": version("sgp4")}
         except ImportError as error:
             raise PassDependencyError("Skyfield 1.55 and sgp4 2.27 are required for pass prediction; "
-                                      "install the locked lab-venv wheels (optional extra 'orbits')") from error
+                                      "install the hashed passes lock into /opt/srrx/passes-venv "
+                                      "(software/DEPLOYMENT.md)") from error
         except Exception as error:  # e.g. PackageNotFoundError or a broken native extension.
             raise PassDependencyError("Skyfield/sgp4 failed to load: " + type(error).__name__) from error
         _runtime = {"EarthSatellite": EarthSatellite, "timescale": load.timescale(builtin=True),
@@ -424,7 +430,8 @@ def baseband_windows(plan, norad_ids):
     [AOS, LOS] of one complete pass of such a target in a plan that passes validate_plan;
     passes cut by the plan window are not listed, so they never give a window. Fails
     closed: a plan without verified UTC gives no window at all (UTC_NOT_VERIFIED), since
-    its times are provisional. This is the window source only; no recorder exists.
+    its times are provisional. This is the window source only; no recorder exists, and
+    the Meteor-only target set is not checked here (BASEBAND_ROLE).
     """
     stored = validate_plan(plan)
     if not isinstance(norad_ids, (set, frozenset, list, tuple)) or not all(

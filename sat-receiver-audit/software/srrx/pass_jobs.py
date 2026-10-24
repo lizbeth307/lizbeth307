@@ -10,14 +10,16 @@ One job at a time, and at most one accepted request per RATE_LIMIT_MS:
 1. request() checks the small JSON request in labd's loop: window hours, minimum
    elevation and the caller's srrx.location status. The position is reduced to the
    plan's own rounding (0.1 deg, altitude 100 m) and labelled stored, never live,
-   before it is written anywhere. The configured allowlist must validate.
+   before it is written anywhere. The configured allowlist must validate and hold at
+   most passes.MAX_RECORDS targets, the bound of the unit's predict().
 2. A worker thread writes request.json and the validated allowlist (0600) under
    /run/srrx/passes/<id>/ in labd's runtime directory. PID 1 hands both to the unit
    as credentials (LoadCredential=), so the unit user reads nothing of labd's.
 3. `systemctl --no-ask-password start srrx-passes@<id>.service` blocks only that
    worker, never the 20 ms tick, until the oneshot ends. The unit is bounded by its
    TimeoutStartSec=120 and labd by JOB_TIMEOUT_S; the input directory is removed.
-4. labd reads /var/lib/srrx/plans/<id>.json (0640, setgid group labd), runs
+4. labd reads /var/lib/srrx/plans/<id>.json (0640, setgid group labd; opened
+   non-blocking, so a FIFO left there cannot stall the worker), runs
    passes.validate_plan and checks that the plan answers this job: start, window,
    UTC state, rounded observer, allowlisted NORAD ids and names. Anything else fails
    closed, and the previous valid plan stays current.
@@ -27,7 +29,10 @@ stable codes (ERRORS) and never carry the position or file contents. UTC counts 
 verified only through an injected utc_verified() source; none is wired yet, so labd
 plans say time_verified=false. The plan is the window source of the v2.1 bounded
 baseband policy: windows() returns passes.baseband_windows() for the allowlisted
-LRPT targets (none without verified UTC). Nothing here records.
+LRPT targets (none without verified UTC). The LRPT role is the allowlist's own label,
+a pre-filter only: nothing here checks that those targets are Meteor-M N2-3/N2-4, so
+the future recorder must enforce that set itself (passes.BASEBAND_ROLE). Nothing here
+records.
 """
 from datetime import datetime, timezone
 import json
@@ -66,11 +71,14 @@ UPCOMING_FIELDS = ("norad_id", "name", "aos_utc", "tca_utc", "los_utc", "max_el_
 STATES = ("IDLE", "RUNNING", "READY", "FAILED")
 ERRORS = ("PASSES_DISABLED", "PASSES_CLOSED", "PASSES_BAD_REQUEST", "PASSES_LOCATION_UNUSABLE", "PASSES_BUSY",
           "PASSES_RATE_LIMITED", "PASSES_RUNTIME_MISSING", "PASSES_OMM_MISSING", "PASSES_OMM_INVALID",
-          "PASSES_ALLOWLIST_MISSING", "PASSES_ALLOWLIST_INVALID", "PASSES_PLAN_DIR_MISSING", "PASSES_CLOCK_INVALID",
-          "PASSES_INPUT_FAILED", "PASSES_UNIT_START_FAILED", "PASSES_UNIT_FAILED", "PASSES_TIMEOUT",
-          "PASSES_PLAN_MISSING", "PASSES_PLAN_INVALID", "PASSES_PLAN_MISMATCH", "PASSES_INTERNAL")
+          "PASSES_ALLOWLIST_MISSING", "PASSES_ALLOWLIST_INVALID", "PASSES_ALLOWLIST_TOO_LARGE",
+          "PASSES_PLAN_DIR_MISSING", "PASSES_CLOCK_INVALID", "PASSES_INPUT_FAILED", "PASSES_UNIT_START_FAILED",
+          "PASSES_UNIT_FAILED", "PASSES_TIMEOUT", "PASSES_PLAN_MISSING", "PASSES_PLAN_INVALID", "PASSES_PLAN_MISMATCH",
+          "PASSES_INTERNAL")
 _SYSTEMCTL_ENV = {"PATH": "/usr/bin:/bin", "LC_ALL": "C", "SYSTEMD_PAGER": "", "SYSTEMD_COLORS": "0"}
 _O_FLAGS = getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_CLOEXEC", 0) | getattr(os, "O_BINARY", 0)
+# The unit user owns the plan directory and could leave a FIFO there: opening it must never block.
+_O_READ_PLAN = os.O_RDONLY | _O_FLAGS | getattr(os, "O_NONBLOCK", 0)
 _PLAN_TIME = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z\Z", re.ASCII)
 
 
@@ -283,7 +291,11 @@ class PassPlanner:
         return 0 if self._last_accept_ms is None else max(0, RATE_LIMIT_MS - (now_ms - self._last_accept_ms))
 
     def _preflight(self):
-        """Cheap checks in labd's loop: stats and the <= 64 KiB allowlist. The OMM content is the unit's."""
+        """Cheap checks in labd's loop: stats and the <= 64 KiB allowlist. The OMM content is the unit's.
+
+        srrx.orbits accepts up to orbits.MAX_TARGETS allowlist entries, but the unit's predict()
+        takes at most passes.MAX_RECORDS records; a larger allowlist would fail inside every job.
+        """
         if not (self.interpreter.is_file() and os.access(self.interpreter, os.X_OK)):
             return "PASSES_RUNTIME_MISSING", None
         try:
@@ -300,6 +312,8 @@ class PassPlanner:
             return "PASSES_ALLOWLIST_MISSING", None
         except (OSError, ValueError, RecursionError):
             return "PASSES_ALLOWLIST_INVALID", None
+        if len(targets) > passes.MAX_RECORDS:
+            return "PASSES_ALLOWLIST_TOO_LARGE", None
         if not self.plan_root.is_dir():
             return "PASSES_PLAN_DIR_MISSING", None
         return None, targets
@@ -392,7 +406,7 @@ class PassPlanner:
     def _read_plan(self, job):
         """(current, None) for a plan that validates and answers this job, else (None, code)."""
         try:
-            descriptor = os.open(self.plan_root / (job["id"] + ".json"), os.O_RDONLY | _O_FLAGS)
+            descriptor = os.open(self.plan_root / (job["id"] + ".json"), _O_READ_PLAN)
         except FileNotFoundError:
             return None, "PASSES_PLAN_MISSING"
         except OSError:

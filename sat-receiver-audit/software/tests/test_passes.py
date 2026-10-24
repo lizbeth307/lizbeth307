@@ -1,7 +1,8 @@
 """Reference pass prediction (Skyfield from_omm/find_events) and its stdlib guards.
 
-The Skyfield cases need the locked lab-venv wheels (Skyfield 1.55, sgp4 2.27,
-jplephem, certifi; deployment/linux_lab/wheelhouse-requirements.txt). A skip is
+The Skyfield cases need the passes-venv packages (Skyfield 1.55, sgp4 2.27,
+jplephem, certifi; software/DEPLOYMENT.md, hashes in
+deployment/linux_lab/wheelhouse-requirements.txt). A skip is
 not evidence. Element sets and catalogue numbers are synthetic; the observer is
 an unnamed lat/lon point. Gpredict agreement within 1 s is POL-11 (BUILDER).
 """
@@ -237,7 +238,7 @@ class StdlibGuardTests(unittest.TestCase):
             self.assertIs(passes._link, os.link)
 
 
-@unittest.skipUnless(HAVE_SKYFIELD, "Skyfield 1.55/sgp4 2.27 lab-venv predictor is not installed (a skip is not evidence)")
+@unittest.skipUnless(HAVE_SKYFIELD, "Skyfield 1.55/sgp4 2.27 passes-venv predictor is not installed (a skip is not evidence)")
 class SkyfieldPassTests(unittest.TestCase):
     @classmethod
     def setUpClass(cls):

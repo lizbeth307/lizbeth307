@@ -1480,7 +1480,7 @@ def create_window(controller, *, callbacks=None, start_worker=True, scope_latch=
             self.jump_button.setEnabled(False)
             pointing.addWidget(self.jump_button)
             pointing.addWidget(self.button("Load pass plan…", self.open_pass_plan))
-            self.pass_plan_text = QtWidgets.QLabel("No pass plan loaded. Plans are snapshots from the lab-venv predictor.")
+            self.pass_plan_text = QtWidgets.QLabel("No pass plan loaded. Plans are snapshots from the passes-venv predictor.")
             self.pass_plan_text.setTextFormat(QtCore.Qt.TextFormat.PlainText)
             self.pass_plan_text.setWordWrap(True)
             pointing.addWidget(self.pass_plan_text)

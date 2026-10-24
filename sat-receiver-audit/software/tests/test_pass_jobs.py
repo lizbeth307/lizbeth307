@@ -23,7 +23,7 @@ import threading
 import unittest
 from unittest.mock import patch
 
-from srrx import cli, geo_look, orbits, pass_jobs, passes
+from srrx import cli, daemon, geo_look, orbits, pass_jobs, passes
 from srrx.engine import Engine
 from srrx.hardware import SimHardware
 from srrx.hmi import labd_pass_plan_summary
@@ -45,6 +45,11 @@ def raw(norad, **changes):
              "MEAN_MOTION_DOT": 1.2e-06, "MEAN_MOTION_DDOT": 0.0}
     value.update(changes)
     return value
+
+
+def many_targets(count):
+    """count allowlist targets with synthetic NORAD ids from 91000; raw() gives each an element set."""
+    return [{"norad_id": 91000 + index, "name": "ALIAS %d" % index, "role": "OTHER"} for index in range(count)]
 
 
 def location(**changes):
@@ -290,6 +295,10 @@ class RequestTests(unittest.TestCase):
         for text in ("{", json.dumps({"schema_version": 1, "kind": "srrx_orbit_allowlist", "targets": []})):
             self.tree.allowlist.write_text(text)
             expect("PASSES_ALLOWLIST_INVALID")
+        # srrx.orbits accepts up to 256 targets, the unit's predict() at most 64 records.
+        self.tree.write_allowlist(many_targets(passes.MAX_RECORDS + 1))
+        self.assertEqual(len(orbits.load_allowlist(self.tree.allowlist)), passes.MAX_RECORDS + 1)
+        expect("PASSES_ALLOWLIST_TOO_LARGE")
         self.tree.write_allowlist([{"norad_id": LRPT, "name": "ALIAS LRPT", "role": "LRPT"}])
         self.tree.plans.rmdir()
         expect("PASSES_PLAN_DIR_MISSING")
@@ -464,6 +473,30 @@ class RequestTests(unittest.TestCase):
             self.planner.request(request_value(), now)
             self.assertEqual(self.planner.status(now)["error"], "PASSES_PLAN_INVALID")
 
+    @unittest.skipUnless(hasattr(os, "mkfifo"), "FIFOs are POSIX only")
+    def test_a_fifo_plan_never_blocks_the_worker(self):
+        # The unit user owns the plan directory: a unit that exits 0 after leaving a FIFO there
+        # must not hang the job (status RUNNING and PASSES_BUSY until labd restarts).
+        def fifo(unit, timeout):
+            os.mkfifo(self.tree.plans / (unit[len("srrx-passes@"):-len(".service")] + ".json"), 0o640)
+            return 0
+        pending = []
+        planner = self.tree.planner(fifo, start_thread=pending.append)
+        job = planner.request(request_value(), 0)["request_id"]
+        worker = threading.Thread(target=pending.pop(), daemon=True)
+        worker.start()
+        worker.join(10)
+        if worker.is_alive():  # a blocking open(): give it a writer so that this test still ends
+            os.close(os.open(self.tree.plans / (job + ".json"), os.O_WRONLY | os.O_NONBLOCK))
+            worker.join(10)
+            self.fail("opening a FIFO plan blocked the job worker")
+        status = planner.status(0)
+        self.assertEqual((status["state"], status["error"], status["unit_exit"], status["plan"]),
+                         ("FAILED", "PASSES_PLAN_INVALID", 0, None))
+        # The job slot is free again: the next request is only rate limited, never PASSES_BUSY.
+        self.assertEqual(planner.request(request_value(), 1000)["error"], "PASSES_RATE_LIMITED")
+        self.assertTrue(planner.request(request_value(), pass_jobs.RATE_LIMIT_MS)["ok"])
+
     def test_systemctl_runner_argv_timeout_and_close(self):
         calls = []
         class Process:
@@ -564,7 +597,22 @@ class EngineAndClientTests(unittest.TestCase):
             return {"ok": True, "state": "RUNNING", "request_id": "0" * 16}
         with patch.object(cli, "request_once", side_effect=once), redirect_stdout(io.StringIO()):
             self.assertEqual(cli.main(["plan_passes", "--location", str(snapshot), "--hours", "12"]), 0)
-        self.assertEqual(sent, [{"op": "plan_passes", "value": {"location": location(), "hours": 12.0, "min_el_deg": 0.0}}])
+        # Only the reduced snapshot labd keeps crosses the socket; labd's own reduction leaves it unchanged.
+        stored = pass_jobs.stored_location(location())
+        self.assertEqual(sent, [{"op": "plan_passes", "value": {"location": stored, "hours": 12.0, "min_el_deg": 0.0}}])
+        self.assertEqual(pass_jobs.parse_request(sent[0]["value"]), ((12.0, 0.0, stored), None))
+        for precise in ("50.04", "10.01", "263.4", "/dev/lab/gnss", "hdop"):
+            self.assertNotIn(precise, json.dumps(sent))
+        # The 64 KiB file bound is the effective one: a large snapshot still gives a small request.
+        snapshot.write_text(json.dumps(location()) + " " * 60000)
+        sent.clear()
+        with patch.object(cli, "request_once", side_effect=once), redirect_stdout(io.StringIO()):
+            self.assertEqual(cli.main(["plan_passes", "--location", str(snapshot)]), 0)
+        self.assertLess(len(json.dumps(sent[0], separators=(",", ":"))) + 1, daemon.MAX_REQUEST // 4)
+        snapshot.write_text(json.dumps(location(lat=95.0)))  # not usable: refused here, nothing sent
+        with patch.object(cli, "request_once", side_effect=AssertionError("sent")), redirect_stderr(io.StringIO()):
+            self.assertEqual(cli.main(["plan_passes", "--location", str(snapshot)]), 1)
+        snapshot.write_text(json.dumps(location()))
         with patch.object(cli, "request_once", return_value={"ok": False, "error": "PASSES_RATE_LIMITED"}), \
                 redirect_stdout(io.StringIO()) as out:
             self.assertEqual(cli.main(["plan_passes", "--location", str(snapshot)]), 2)
@@ -695,6 +743,21 @@ class UnitChainTests(unittest.TestCase):
         self.assertEqual(list(self.tree.inputs.iterdir()), [])
         self.assertFalse((self.tree.root / "run/credentials").exists() and any((self.tree.root / "run/credentials").iterdir()))
 
+    def test_the_largest_allowed_allowlist_runs_through_the_unit(self):
+        # Every target is in the OMM, so predict() gets exactly passes.MAX_RECORDS records.
+        allowed = many_targets(passes.MAX_RECORDS)
+        self.tree.omm.write_text(json.dumps([raw(target["norad_id"], RA_OF_ASC_NODE=index * 5.5)
+                                             for index, target in enumerate(allowed)]))
+        self.tree.write_allowlist(allowed)
+        planner = self.tree.planner(self.emulator)
+        planner.request(request_value(hours=6), 0)
+        status = planner.status(0)
+        self.assertEqual((status["state"], status["error"], status["unit_exit"]), ("READY", None, 0), status)
+        self.tree.write_allowlist(many_targets(passes.MAX_RECORDS + 1))
+        self.assertEqual(planner.request(request_value(hours=6), pass_jobs.RATE_LIMIT_MS),
+                         {"ok": False, "error": "PASSES_ALLOWLIST_TOO_LARGE"})
+        self.assertEqual(self.emulator.calls, 1)
+
     def test_existing_output_is_refused_and_retention_is_bounded(self):
         with patch.object(pass_jobs.secrets, "token_hex", return_value="0123456789abcdef"):
             (self.tree.plans / "0123456789abcdef.json").write_text("{}")
@@ -756,6 +819,24 @@ class PassesCliTests(unittest.TestCase):
                 self.assertEqual(passes.main(["--omm", "o", "--allowlist", "a", "--request", "r", "--output", name,
                                               "--keep", keep]), 2)
             self.assertEqual(os.listdir(directory), [])
+
+    def test_the_unit_refuses_more_records_than_labd_allows(self):
+        # Why labd bounds the allowlist before a job: with every target in the OMM, the unit's own
+        # predict() refuses more than passes.MAX_RECORDS records (exit 2, before Skyfield is imported).
+        count = passes.MAX_RECORDS + 1
+        record = passes.request_record(START, 6.0, 0.0, False, pass_jobs.stored_location(location()))
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "gp.json").write_text(json.dumps([raw(target["norad_id"]) for target in many_targets(count)]))
+            (root / "allowlist").write_text(json.dumps({"schema_version": 1, "kind": "srrx_orbit_allowlist",
+                                                        "targets": many_targets(count)}))
+            (root / "request").write_text(json.dumps(record))
+            output = root / "0123456789abcdef.json"
+            with redirect_stderr(io.StringIO()) as errors:
+                self.assertEqual(passes.main(["--omm", str(root / "gp.json"), "--allowlist", str(root / "allowlist"),
+                                              "--request", str(root / "request"), "--output", str(output)]), 2)
+            self.assertIn("1..64", errors.getvalue())
+            self.assertFalse(output.exists())
 
     def test_group_readable_plans_and_pruning(self):
         plan = synthetic_plan(passes.request_record(START, 6.0, 0.0, False, pass_jobs.stored_location(location())),

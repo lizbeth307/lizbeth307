@@ -344,6 +344,11 @@ status>, "hours": 24, "min_el_deg": 0}}`; `hours` in (0, 72] and `min_el_deg` in
 [0, 90) are optional. labd accepts at most one request per minute
 (`PASSES_RATE_LIMITED` with `retry_after_ms`) and runs one job at a time
 (`PASSES_BUSY`). The window starts at labd's own clock, in whole seconds.
+`labctl` reads the snapshot file (at most 64 KiB, as `srrx.passes --location`)
+and sends only its reduced form from step 1 (a few hundred bytes; labd takes
+requests of at most 4096 bytes), so the precise position never crosses the
+control socket; a status it cannot reduce is refused locally and nothing is sent.
+labd reduces whatever a client sends in the same way.
 
 1. Before the position is written anywhere, labd reduces it to a stored, never
    live snapshot (`last_good`, or `manual`) rounded exactly as `predict` rounds
@@ -352,7 +357,10 @@ status>, "hours": 24, "min_el_deg": 0}}`; `hours` in (0, 72] and `min_el_deg` in
 2. It checks the runtime `/opt/srrx/passes-venv/bin/python3`, the OMM file
    `/var/lib/srrx/orbits/gp.json` (regular, <= 4 MiB), the allowlist
    `/etc/srrx/orbit-allowlist.json` and the plan directory. A missing or invalid
-   part is a stable code at once and does not use the rate slot.
+   part is a stable code at once and does not use the rate slot. `srrx.orbits`
+   accepts up to 256 allowlist targets, but `predict` takes at most 64 records
+   (`passes.MAX_RECORDS`), so a plan job refuses an allowlist of more than 64
+   targets the same way (`PASSES_ALLOWLIST_TOO_LARGE`).
 3. A worker thread, never the 20 ms tick, writes `request.json` (an
    `srrx_pass_request` v1: start, window, UTC state and the reduced location) and
    the validated allowlist, 0600 in `/run/srrx/passes/<id>/` (0700). PID 1 hands
@@ -367,11 +375,12 @@ status>, "hours": 24, "min_el_deg": 0}}`; `hours` in (0, 72] and `min_el_deg` in
    never replaced; `--keep 8` removes older labd plans, and only names of 16 hex
    digits.
 5. labd reads `/var/lib/srrx/plans/<id>.json` (setgid group `labd`, 0640; no
-   symlink, <= 2 MiB), runs `validate_plan` and checks that the plan answers this
-   job: start, window, minimum elevation, UTC state, rounded observer and source,
-   and only allowlisted NORAD ids under their allowlist names. Anything else fails
-   closed (`PASSES_PLAN_INVALID`, `PASSES_PLAN_MISMATCH`), and the previous valid
-   plan stays current.
+   symlink, a regular file only, opened non-blocking so that a FIFO left by the
+   unit user cannot stall the worker, <= 2 MiB), runs `validate_plan` and checks
+   that the plan answers this job: start, window, minimum elevation, UTC state,
+   rounded observer and source, and only allowlisted NORAD ids under their
+   allowlist names. Anything else fails closed (`PASSES_PLAN_INVALID`,
+   `PASSES_PLAN_MISMATCH`), and the previous valid plan stays current.
 
 `status` carries `passes`: `state` (`IDLE`, `RUNNING`, `READY`, `FAILED`),
 `request_id`, `error`, `unit_exit`, `requested_at_utc`, `completed_at_utc`,
@@ -388,10 +397,15 @@ wired yet (the gpsd/chrony chain, [GNSS-UART](GNSS-UART.md)), so labd plans carr
 policy ([RX](RX.md)): `passes.baseband_windows(plan, ids)` returns exactly AOS..LOS
 of complete passes of allowlisted `LRPT` targets, and no window at all without
 verified UTC (`UTC_NOT_VERIFIED`); `PassPlanner.windows()` serves the current plan.
-No recorder exists. Installation (user, plan directory, polkit rule, venv):
-[DEPLOYMENT](DEPLOYMENT.md). The real transient run under `MemoryMax` with no
-sockets, the polkit decision and the A55 timing are guest/Q6A checks
-(RUNTIME_ONLY, build/09 ПРХ-01). Host tests emulate PID 1 and run the unit's own
+The `LRPT` role is the operator allowlist's own label and is bound to no NORAD id
+(none is hard-coded), so these windows are a pre-filter: the policy's
+Meteor-M N2-3/N2-4 restriction rests on a reviewed allowlist that gives the role
+to those two only, and the future recorder must enforce that target set itself,
+together with the AOS-60 s .. LOS+60 s margins and the 20 min file bound of the
+policy (an open item of the recorder package). No recorder exists. Installation
+(user, plan directory, polkit rule, venv): [DEPLOYMENT](DEPLOYMENT.md). The real
+transient run under `MemoryMax` with no sockets, the polkit decision and the A55
+timing are guest/Q6A checks (RUNTIME_ONLY, build/09 ПРХ-01). Host tests emulate PID 1 and run the unit's own
 `ExecStart` arguments with Skyfield.
 
 ```sh
