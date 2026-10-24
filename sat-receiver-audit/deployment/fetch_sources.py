@@ -85,7 +85,10 @@ def _safe_cache(root, relative):
     return target
 
 
-def fetch(cache, components=None, include_core=True, lock=None):
+def fetch(cache, components=None, include_core=True, lock=None, documented=False):
+    """Locked entries into the cache. documented=True adds documented_artifacts: release-asset
+    digests (held BIOS package, Phase 0 firmware candidates) outside the core cache, so their
+    bytes are checked without making release_guard require them."""
     lock = lock or deploy.load(HERE / "sources.lock.json")
     unresolved = sorted(c["id"] for c in lock["components"] if c["source_archive_sha256"] is None)
     if components is None:
@@ -97,6 +100,8 @@ def fetch(cache, components=None, include_core=True, lock=None):
     root.mkdir(parents=True, exist_ok=True)
     total = fetched = 0
     entries = deploy.cache_entries(lock, components, include_core)
+    if documented:
+        entries += [{"path": a["cache_path"], "sha256": a["sha256"], "size": a["size"], "url": a["url"]} for a in lock["documented_artifacts"]]
     for item in entries:
         if not item.get("url"):
             raise FetchError("lock entry has no URL: " + item["path"])
@@ -105,7 +110,7 @@ def fetch(cache, components=None, include_core=True, lock=None):
         fetched += not result["cached"]
         print(("cached " if result["cached"] else "fetched ") + item["path"], flush=True)
     return {"status": "FETCHED_AND_VERIFIED", "entries": len(entries), "downloaded": fetched, "bytes": total,
-            "components": sorted(components), "includes_core": include_core, "unresolved_in_lock": unresolved,
+            "components": sorted(components), "includes_core": include_core, "includes_documented": documented, "unresolved_in_lock": unresolved,
             "hardware_ready": False}
 
 
@@ -290,6 +295,7 @@ def main():
     get.add_argument("--cache", type=Path, required=True)
     get.add_argument("--component", action="append", help="default: every component with a locked hash")
     get.add_argument("--sources-only", action="store_true", help="skip the core image/kernel artifacts")
+    get.add_argument("--documented", action="store_true", help="also the documented_artifacts (release-asset digests outside the core)")
     get.add_argument("--report", type=Path)
     acquire = commands.add_parser("acquire", help="measure a not yet locked archive (prints, never edits the lock)")
     acquire.add_argument("--url", required=True)
@@ -310,7 +316,7 @@ def main():
     args = parser.parse_args()
     try:
         if args.operation == "fetch":
-            result = fetch(args.cache, args.component, not args.sources_only)
+            result = fetch(args.cache, args.component, not args.sources_only, documented=args.documented)
             if args.report:
                 args.report.write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
         elif args.operation == "acquire":

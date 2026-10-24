@@ -83,7 +83,10 @@ jobs:
           print("ids=" + json.dumps(chosen))
           EOF
       - name: Fetch the locked bytes (streaming, no size cap, SHA-256 and size checked)
-        run: python3 deployment/fetch_sources.py fetch --cache "$RUNNER_TEMP/cache" --sources-only ${{ steps.select.outputs.args }} --report "$RUNNER_TEMP/fetch-report.json"
+        run: |
+          documented=""
+          [ "$ALL_SOURCES" = true ] && documented="--documented"
+          python3 deployment/fetch_sources.py fetch --cache "$RUNNER_TEMP/cache" --sources-only $documented ${{ steps.select.outputs.args }} --report "$RUNNER_TEMP/fetch-report.json"
       - name: deploy.py verify-cache (sources only)
         run: python3 deployment/deploy.py verify-cache --cache "$RUNNER_TEMP/cache" --sources-only ${{ steps.select.outputs.args }} | tee "$RUNNER_TEMP/verify-cache.json"
       - name: Archive contents equal the locked commit trees

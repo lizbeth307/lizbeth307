@@ -1168,6 +1168,74 @@
       "verification": "official release asset digest; downloaded bytes still need cache verification"
     }
   ],
+  "documented_artifacts": [
+    {
+      "id": "edk2-qcs6490_0.1.0-5",
+      "name": "edk2-qcs6490_0.1.0-5_all.deb",
+      "cache_path": "debs/documented/edk2-qcs6490_0.1.0-5_all.deb",
+      "size": 10010516,
+      "sha256": "2a311f20d32ab814b6e624b304011cca822d1bbf3ece0a5904f8b43b3de951ae",
+      "url": "https://github.com/radxa-pkg/edk2-qualcomm/releases/download/0.1.0-5/edk2-qcs6490_0.1.0-5_all.deb",
+      "digest_source": "https://api.github.com/repos/radxa-pkg/edk2-qualcomm/releases/tags/0.1.0-5",
+      "verification": "official release asset digest (GitHub release API, read 2026-10-24); bytes checked only by fetch_sources.py fetch --documented",
+      "role": "held SPI BIOS package of the 6.0.260120 target (build/07 section 0.1); digest equals build/07 section 0.1"
+    },
+    {
+      "id": "edk2-radxa-dragon-q6a_0.1.0-5",
+      "name": "edk2-radxa-dragon-q6a_0.1.0-5_all.deb",
+      "cache_path": "debs/documented/edk2-radxa-dragon-q6a_0.1.0-5_all.deb",
+      "size": 2196,
+      "sha256": "8c2ee86f82e25370c1f40f48cf1011f61e5d6374e44073fa260bacaf1209060d",
+      "url": "https://github.com/radxa-pkg/edk2-qualcomm/releases/download/0.1.0-5/edk2-radxa-dragon-q6a_0.1.0-5_all.deb",
+      "digest_source": "https://api.github.com/repos/radxa-pkg/edk2-qualcomm/releases/tags/0.1.0-5",
+      "verification": "official release asset digest (GitHub release API, read 2026-10-24); bytes checked only by fetch_sources.py fetch --documented",
+      "role": "held board meta package of the BIOS 0.1.0-5 pair (build/07 sections 0.1 and 1.2)"
+    },
+    {
+      "id": "radxa-firmware-qcs6490_0.2.29",
+      "name": "radxa-firmware-qcs6490_0.2.29_all.deb",
+      "cache_path": "debs/documented/radxa-firmware-qcs6490_0.2.29_all.deb",
+      "size": 12204620,
+      "sha256": "f59a5e5b14d95650c9d248ae223fa293b753530ebb46bb96e27e635b0f457e98",
+      "url": "https://github.com/radxa-pkg/radxa-firmware/releases/download/0.2.29/radxa-firmware-qcs6490_0.2.29_all.deb",
+      "digest_source": "https://api.github.com/repos/radxa-pkg/radxa-firmware/releases/tags/0.2.29",
+      "verification": "official release asset digest (GitHub release API, read 2026-10-24); bytes checked only by fetch_sources.py fetch --documented",
+      "role": "Phase 0 candidate firmware 0.2.29 (phase0.firmware_candidates); digest equals components/compute_os.md"
+    },
+    {
+      "id": "radxa-firmware_0.2.29",
+      "name": "radxa-firmware_0.2.29_all.deb",
+      "cache_path": "debs/documented/radxa-firmware_0.2.29_all.deb",
+      "size": 2521456,
+      "sha256": "223ffc7ae365c85ceffdc17319b04acaefdba8f4d6c7604c99d5f4eb00d5dab2",
+      "url": "https://github.com/radxa-pkg/radxa-firmware/releases/download/0.2.29/radxa-firmware_0.2.29_all.deb",
+      "digest_source": "https://api.github.com/repos/radxa-pkg/radxa-firmware/releases/tags/0.2.29",
+      "verification": "official release asset digest (GitHub release API, read 2026-10-24); bytes checked only by fetch_sources.py fetch --documented",
+      "role": "Phase 0 candidate firmware 0.2.29, common part (build/07 section 1.2)"
+    },
+    {
+      "id": "radxa-firmware-qcs6490_0.2.42",
+      "name": "radxa-firmware-qcs6490_0.2.42_all.deb",
+      "cache_path": "debs/documented/radxa-firmware-qcs6490_0.2.42_all.deb",
+      "size": 13394364,
+      "sha256": "20d99dcb241376d62c67e87c4af9c6cf0a44e45aedf68e15d5ba9ebba95261b5",
+      "url": "https://github.com/radxa-pkg/radxa-firmware/releases/download/0.2.42/radxa-firmware-qcs6490_0.2.42_all.deb",
+      "digest_source": "https://api.github.com/repos/radxa-pkg/radxa-firmware/releases/tags/0.2.42",
+      "verification": "official release asset digest (GitHub release API, read 2026-10-24); bytes checked only by fetch_sources.py fetch --documented",
+      "role": "Phase 0 candidate firmware 0.2.42 (phase0.firmware_candidates)"
+    },
+    {
+      "id": "radxa-firmware_0.2.42",
+      "name": "radxa-firmware_0.2.42_all.deb",
+      "cache_path": "debs/documented/radxa-firmware_0.2.42_all.deb",
+      "size": 2736024,
+      "sha256": "4e878b65288d63a74c380f9bf2e2e244895af7a933604317095d9243cf8e6790",
+      "url": "https://github.com/radxa-pkg/radxa-firmware/releases/download/0.2.42/radxa-firmware_0.2.42_all.deb",
+      "digest_source": "https://api.github.com/repos/radxa-pkg/radxa-firmware/releases/tags/0.2.42",
+      "verification": "official release asset digest (GitHub release API, read 2026-10-24); bytes checked only by fetch_sources.py fetch --documented",
+      "role": "Phase 0 candidate firmware 0.2.42, common part"
+    }
+  ],
   "phase0": {
     "firmware_candidates": [
       "radxa-firmware-qcs6490 0.2.29",

@@ -1257,7 +1257,8 @@ def check():
             _string(component["source_archive_sha256"], "[0-9a-f]{64}", "archive SHA256")
     # Every resolved entry is fetchable and checkable: exact SHA-256, positive size, HTTPS URL.
     resolved = [c["id"] for c in lock["components"] if c["source_archive_sha256"] is not None]
-    for item in cache_entries(lock, resolved):
+    documented = [{"path": x["cache_path"], "sha256": x["sha256"], "size": x["size"], "url": x["url"]} for x in lock["documented_artifacts"]]
+    for item in cache_entries(lock, resolved) + documented:
         _string(item["sha256"], "[0-9a-f]{64}", "cache SHA256")
         _string(item["url"], r"https://[!-~]+", "cache URL")
         if type(item["size"]) is not int or item["size"] <= 0:

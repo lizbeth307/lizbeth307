@@ -87,6 +87,18 @@ class LockShapeTests(unittest.TestCase):
         for ref in pins["refs"]:
             self.assertRegex(ref["sha"] or "", "^[0-9a-f]{40}$", ref["repo"])
 
+    def test_documented_release_digests_stay_outside_the_core_cache(self):
+        documented = LOCK["documented_artifacts"]
+        core = {e["path"] for e in deploy.cache_entries(LOCK, [], include_core=True)}
+        self.assertEqual({a["name"] for a in documented} & {Path(p).name for p in core}, set())
+        for item in documented:
+            self.assertTrue(item["digest_source"].startswith("https://api.github.com/repos/radxa-pkg/"), item["name"])
+            self.assertTrue(item["url"].endswith("/" + item["name"]) and item["cache_path"] == "debs/documented/" + item["name"])
+            self.assertIn("release asset digest", item["verification"])
+        self.assertIsNone(LOCK["phase0"]["selection"])  # candidates only: the Phase 0 matrix still decides
+        self.assertEqual({a["name"].split("_")[1] for a in documented if a["name"].startswith("radxa-firmware-qcs6490")},
+                         {c.split()[-1] for c in LOCK["phase0"]["firmware_candidates"]})
+
     def test_deploy_check_counts_one_unresolved_archive(self):
         with patch("vendor_patch.check_fixtures", return_value=[]):
             self.assertEqual(deploy.check()["unresolved_source_archives"], 1)
@@ -177,8 +189,11 @@ class DownloadTests(unittest.TestCase):
         lock = copy.deepcopy(LOCK)
         rtl = next(c for c in lock["components"] if c["id"] == "rtlsdr")
         rtl.update(source_archive_url=self.url, source_archive_sha256=sha(self.data), source_archive_size=len(self.data))
+        lock["documented_artifacts"] = [dict(lock["documented_artifacts"][0], url=self.url, sha256=sha(self.data), size=len(self.data))]
         result = fetch_sources.fetch(self.root / "cache", ["rtlsdr"], include_core=False, lock=lock)
         self.assertEqual((result["entries"], result["downloaded"], result["unresolved_in_lock"]), (1, 1, ["qairt"]))
+        with_documented = fetch_sources.fetch(self.root / "cache", ["rtlsdr"], include_core=False, lock=lock, documented=True)
+        self.assertEqual((with_documented["entries"], with_documented["downloaded"]), (2, 1))
         with patch.object(deploy, "load", return_value=lock):
             self.assertEqual(deploy.verify_cache(self.root / "cache", ["rtlsdr"], include_core=False)["status"], "CACHE_BYTES_VERIFIED")
         with self.assertRaisesRegex(fetch_sources.FetchError, "unresolved"):
