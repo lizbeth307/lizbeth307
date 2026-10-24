@@ -34,6 +34,20 @@ def q6a_boxes(P):
     return out
 
 
+def cu_block_geometry(P):
+    """Cooler-A block in board (u, v) terms: origin, size, LPDDR5 recess and SoC rectangles (block-local mm)."""
+    q = P.parts["q6a"]
+    cb = P.mech["cu_block"]
+    soc, ram = q["soc"]["uv"], q["lpddr5"]["uv"]
+    mg = cb["margin"]
+    u0, v0 = min(soc[0], ram[0]) - mg, min(soc[1], ram[1]) - mg
+    u1, v1 = max(soc[2], ram[2]) + mg, max(soc[3], ram[3]) + mg
+    bw, bh = min(cb["max"][0], u1 - u0), min(cb["max"][1], v1 - v0)
+    recess = (ram[0] - u0 - 0.5, ram[1] - v0 - 0.5, ram[2] - ram[0] + 1.0, ram[3] - ram[1] + 1.0)
+    soc_r = (soc[0] - u0, soc[1] - v0, soc[2] - soc[0], soc[3] - soc[1])
+    return (u0, v0), (bw, bh), recess, soc_r
+
+
 def board_boxes(P, bid, at=None):
     b = P.boards["boards"][bid]
     pl = b["place"]
@@ -44,10 +58,11 @@ def board_boxes(P, bid, at=None):
     t = P.boards["stackup"]["t"]
     z0 = pl["z_bottom"]
     h = b["max_height"]
+    # z0 is the face opposite the components (towards the mounting surface)
     if pl["facing"] == "+z":
         za, zb = z0, z0 + t + h
     else:
-        za, zb = z0 - h, z0 + t
+        za, zb = z0 - t - h, z0
     return [(f"{bid}.r{i}", (ox + r[0], oy + r[1], za, ox + r[0] + r[2], oy + r[1] + r[3], zb)) for i, r in enumerate(b["rects"])]
 
 
@@ -92,8 +107,17 @@ def structure_boxes(P):
     rb = m["rf_bay"]
     x, y, w, h = rb["rect"]
     wt = rb["wall_t"]
-    out.append(("rfbay.wall.left", (x, y, rb["lid_z"][0], x + wt, y + h, pr)))
-    out.append(("rfbay.wall.bottom", (x, y, rb["lid_z"][0], x + w, y + wt, pr)))
+    walls = {"left": (x, y, rb["lid_z"][0], x + wt, y + h, pr),
+             "bottom": (x, y, rb["lid_z"][0], x + w, y + wt, pr),
+             "right": (x + w - wt, y, rb["lid_z"][0], x + w, y + h, pr)}
+    for side in rb["walls"]:
+        out.append((f"rfbay.wall.{side}", walls[side]))
+    # UFS boss on the plate rear face, under the Q6A bottom side (rules.ufs_rect)
+    from .rules import ufs_rect
+    ub = m["ufs_boss"]
+    ux0, uy0, ux1, uy1 = ufs_rect(P)
+    zb = pr - (m["q6a_mount"]["standoff"] - ub["module_below_board"] - ub["pad_gap"])
+    out.append(("plate.ufs_boss", (ux0, uy0, zb, ux1, uy1, pr)))
     out.append(("rfbay.lid", (x, y, rb["lid_z"][0], x + w, y + h, rb["lid_z"][1])))
     return out
 
@@ -121,6 +145,7 @@ ALLOWED = [
     ("tripod_boss", "rear"), ("gx16", "rear"), ("hatch_parts", "rear"), ("q6a_fan_duct", "rear"),
     ("enc_main", "board_ctrl"), ("enc_volume", "board_ctrl"), ("closure.boss", "rfbay.lid"),
     ("q6a.usb_stack", "usb_plug_bay"), ("q6a.hdmi", "hdmi_plug"), ("ferrite_a", "rear"),
+    ("q6a.board", "plate.ufs_boss"),  # contact through the UFS pad by design (thermal T-UFS)
 ]
 
 STRUCT = ("plate.", "angle.", "rfbay.")

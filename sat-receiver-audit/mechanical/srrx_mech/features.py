@@ -83,6 +83,13 @@ def face_features(P):
     tg = rf["t7_gland"]
     F["rear"].append({"id": "T7_GLAND", "kind": "tbd", "u": W - tg["c"][0], "v": tg["c"][1], "d": HOLES["tbd"]["d"], "w": tg["w"], "h": tg["h"],
                       "note": "gland for the T7 lead, MPN TBD (STACK 5.8)"})
+    ss = rf["strap_slots"]
+    for i, y in enumerate(ss["y"]):
+        F["rear"].append({"id": f"STRAP_SLOT_{i + 1}", "kind": "strap", "u": W - ss["x"], "v": y, "w": 22.0, "h": ss["w"],
+                          "note": "tunnel for SmallRig PAC2456, printed with the rear shell (6 mm proud)"})
+    for i, (lx, ly) in enumerate(rf["strap_lugs"]):
+        F["rear"].append({"id": f"LUG_{i + 1}", "kind": "strap", "u": W - lx, "v": ly, "w": 16.0, "h": 5.0,
+                          "note": "neck-strap lug (Peak Design Leash), printed with the rear shell"})
     c = m["closure"]
     for i, (bx, by) in enumerate(c["bosses"]):
         F["rear"].append({"id": f"CLOSURE_{i + 1}", "kind": "closure", "u": W - bx, "v": by, "d": c["clearance_d"],

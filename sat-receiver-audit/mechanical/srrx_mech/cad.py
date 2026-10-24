@@ -10,7 +10,7 @@ from build123d import (Align, Box, Circle, Compound, Cone, Cylinder, Helix, Plan
                        RegularPolygon, Rot, SlotOverall, extrude, sweep)
 
 from .features import HOLES, face_features, to_xyz
-from .layout import board_boxes, item_boxes, q6a_boxes
+from .layout import board_boxes, cu_block_geometry, item_boxes, q6a_boxes
 
 MIN = (Align.MIN, Align.MIN, Align.MIN)
 
@@ -350,21 +350,12 @@ def plate(P):
     x, y, w, h = pl["main"]
     ex, ey, ew, eh = pl["ext"]
     part = box(x, y, sz["plate_rear"], w, h, pl["t"]) + box(ex, ey, sz["plate_rear"], ew, y - ey + 0.01, pl["t"])
-    cutters = [zcyl(bx, by, 0, 100, pl["mount_hole_d"] / 2) for (bx, by) in pl["mount_bosses"]]
+    from .rules import plate_holes
+    cutters = [zcyl(h["c"][0], h["c"][1], 0, 100, h["d"] / 2) for h in plate_holes(P)]
     rw = pl["riser_window"]
     cutters.append(box(rw[0], rw[1], 0, rw[2], rw[3], 100))
     hs = pl["hdmi_slot"]
     cutters.append(box(hs[0], hs[1], 0, hs[2], hs[3], 100))
-    for bp in pl["bond_points"]:
-        cutters.append(zcyl(bp["c"][0], bp["c"][1], 0, 100, 1.7))
-    for bid in ("PWR", "RF"):
-        b = P.boards["boards"][bid]
-        ox, oy = b["place"]["origin"]
-        cutters += [zcyl(ox + hx, oy + hy, 0, 100, 1.7) for hx, hy in b["holes"]]
-    q = P.parts["q6a"]
-    x0, y0 = m["q6a_mount"]["origin"]
-    e, (pu, pv) = q["holes"]["edge"], q["holes"]["pitch"]
-    cutters += [zcyl(x0 + q["board"][0] - u, y0 + v, 0, 100, 1.45) for u in (e, e + pu) for v in (e, e + pv)]
     return cut(part, cutters)
 
 
@@ -423,14 +414,24 @@ def rf_bay(P):
 
 
 def cu_block(P):
-    q = P.parts["q6a"]
-    soc, ram = q["soc"]["uv"], q["lpddr5"]["uv"]
-    u0, v0 = min(soc[0], ram[0]) - 1.0, min(soc[1], ram[1]) - 1.0
-    u1, v1 = max(soc[2], ram[2]) + 1.0, max(soc[3], ram[3]) + 1.0
-    bw, bh = min(35.0, u1 - u0), min(35.0, v1 - v0)
-    base = box(0, 0, 0, bw, bh, 5.0)
-    step = box(ram[0] - u0, ram[1] - v0, -0.5, ram[2] - ram[0], ram[3] - ram[1], 0.51)
-    return base + step
+    """Contact face at z = 0 (towards the board); the face over the LPDDR5 is recessed for its pad."""
+    cb = P.mech["cu_block"]
+    _, (bw, bh), (rx, ry, rw, rh), _ = cu_block_geometry(P)
+    base = box(0, 0, 0, bw, bh, cb["t"])
+    return base - box(rx, ry, -1.0, rw, rh, cb["ram_recess"] + 1.0)
+
+
+def ufs_boss(P):
+    """Al boss on the plate rear face under the UFS module (enclosure frame)."""
+    from .rules import ufs_rect
+    m = P.mech
+    ub = m["ufs_boss"]
+    x0, y0, x1, y1 = ufs_rect(P)
+    pr = m["stack_z"]["plate_rear"]
+    hb = m["q6a_mount"]["standoff"] - ub["module_below_board"] - ub["pad_gap"]
+    cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
+    # two M2.5 tapped holes (tap drill 2.05) for countersunk screws from the plate front face
+    return cut(box(x0, y0, pr - hb, x1 - x0, y1 - y0, hb), [zcyl(cx + s * 5.0, cy, pr - hb - 1, pr + 1, 1.025) for s in (-1, 1)])
 
 
 # ---- assembly ---------------------------------------------------------------------------------

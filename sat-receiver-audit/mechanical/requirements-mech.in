@@ -1,0 +1,9 @@
+# Top-level pins of the mechanical generator (mechanical/build.py). Kept apart from
+# tools/requirements.txt so Host regression never installs the OCCT wheels.
+# requirements-mech.txt is compiled from this file for CPython 3.12 on x86_64 Linux
+# (the sr-rx-mech.yml runner) with every transitive pin and hash:
+#   uv pip compile mechanical/requirements-mech.in --python-version 3.12 \
+#     --python-platform x86_64-manylinux_2_28 --generate-hashes -o mechanical/requirements-mech.txt
+build123d==0.13.0
+cadquery-ocp-novtk==8.0.1.0.0
+matplotlib==3.11.2
