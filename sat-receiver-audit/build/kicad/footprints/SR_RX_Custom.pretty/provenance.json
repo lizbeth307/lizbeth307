@@ -1,0 +1,112 @@
+{
+  "Buzzer_SameSky_CPT-1207-3TH_D12.5mm_P5.0mm": {
+    "drawing": "Recommended PCB Layout (Top View), page 2 (07/22/2025)",
+    "kind": "custom",
+    "read": "2026-10-24",
+    "source": "https://www.sameskydevices.com/product/resource/cpt-1207-3th.pdf"
+  },
+  "D_SMB_KA": {
+    "kind": "derived",
+    "note": "graph diode pins are named A/K",
+    "pad_renames": {
+      "1": "K",
+      "2": "A"
+    },
+    "source": "KiCad 10.0.7 Diode_SMD:D_SMB",
+    "source_sha256": "e25e9f4acef5b55585afebc48c685e151fd0d2f33a5c3c61f9fdf0389e19ae67"
+  },
+  "LED_D5.0mm_KA": {
+    "kind": "derived",
+    "note": "graph LED pins are named A/K",
+    "pad_renames": {
+      "1": "K",
+      "2": "A"
+    },
+    "source": "KiCad 10.0.7 LED_THT:LED_D5.0mm",
+    "source_sha256": "efba51d29b26d31bbf3957a5813ee41872a071099d3f28bf6354a857f7129392"
+  },
+  "MiniCircuits_GU1604_3.81x3.81mm": {
+    "drawing": "Case style GU1604 PCB land pattern (Rev W 02 JUL 24); layout https://www.minicircuits.com/pcb/98-pl146.pdf",
+    "kind": "custom",
+    "read": "2026-10-24",
+    "source": "https://www.minicircuits.com/case_style/GU1604.pdf"
+  },
+  "MiniCircuits_MC1630_MCLP-6-1EP_2x2mm_P0.65mm": {
+    "drawing": "Case style MC1630 PCB land pattern (98-MC Rev H); layout https://www.minicircuits.com/pcb/98-pl586.pdf",
+    "kind": "custom",
+    "read": "2026-10-24",
+    "source": "https://www.minicircuits.com/case_style/MC1630.pdf"
+  },
+  "QFN-16-1EP_3x3mm_P0.5mm_EP1.7x1.7mm_EPAD": {
+    "kind": "derived",
+    "note": "HMC7992LP3DE exposed pad named EPAD; ADI outline not read (analog.com unreachable 24.10.2026): exposed-pad size must be checked against the HMC7992 package drawing before PCB release",
+    "pad_renames": {
+      "17": "EPAD"
+    },
+    "source": "KiCad 10.0.7 Package_DFN_QFN:QFN-16-1EP_3x3mm_P0.5mm_EP1.7x1.7mm",
+    "source_sha256": "a08829ccac50f483f2fc15fef91f2e3870835cbb27424d5a5fbea9a7dff8f4b0"
+  },
+  "RaspberryPi_Pico_SMD_SWD": {
+    "kind": "derived",
+    "note": "debug pads named as the graph pins; order SWCLK/GND/SWDIO from Pico-R3-A4-Pinout.pdf",
+    "pad_renames": {
+      "D1": "SWCLK",
+      "D2": "SWD_GND",
+      "D3": "SWDIO"
+    },
+    "source": "KiCad 10.0.7 Module:RaspberryPi_Pico_SMD",
+    "source_sha256": "b4b6e8c3f30d560dd69cf7306216269a72e45ccf906d4304ace34ee587040701"
+  },
+  "Relay_DPDT_Omron_G6K-2F-RF-S": {
+    "drawing": "G6K-2F-RF-S Mounting Dimensions (Top View), page 4",
+    "kind": "custom",
+    "read": "2026-10-24",
+    "source": "https://omronfs.omron.com/en_US/ecb/products/pdf/en-g6k_2f_rf.pdf"
+  },
+  "RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx": {
+    "drawing": "PEC11R-4xxxF-Sxxxx PCB layout, page 2",
+    "kind": "custom",
+    "read": "2026-10-24",
+    "source": "https://www.bourns.com/docs/Product-Datasheets/PEC11R.pdf"
+  },
+  "SMA_Molex_73251-1153_EdgeMount_Horizontal_CS": {
+    "kind": "derived",
+    "note": "graph coax ports are named CENTER/SHIELD",
+    "pad_renames": {
+      "1": "CENTER",
+      "2": "SHIELD"
+    },
+    "source": "KiCad 10.0.7 Connector_Coaxial:SMA_Molex_73251-1153_EdgeMount_Horizontal",
+    "source_sha256": "109d98146d6d01a82932050c7c1c94acc804b4f1bd13a3911dbd7a6450f165b9"
+  },
+  "SW_E-Switch_TL3145_6.45x6.45mm": {
+    "drawing": "Recommended PCB Layout, page 2 (datasheet 4.2.2024)",
+    "kind": "custom",
+    "read": "2026-10-24",
+    "source": "https://configured-product-images.s3.amazonaws.com/Datasheets/TL3145.pdf"
+  },
+  "TI_DDA0008_HSOP-8-1EP_3.9x4.9mm_P1.27mm_EP2.4x3.1mm": {
+    "drawing": "DDA (R-PDSO-G8) 4206322-6/L and 4208951-6/D (pages 45-46)",
+    "kind": "custom",
+    "read": "2026-10-24",
+    "source": "https://www.ti.com/lit/ds/symlink/tps2596.pdf"
+  },
+  "TI_RGV0016A_VQFN-16-1EP_4x4mm_P0.65mm_EP2.16x2.16mm": {
+    "drawing": "RGV0016A 4219037/A (pages 47-49)",
+    "kind": "custom",
+    "read": "2026-10-24",
+    "source": "https://www.ti.com/lit/ds/symlink/ina3221.pdf"
+  },
+  "TI_RGW0020A_VQFN-20-1EP_5x5mm_P0.65mm_EP3.15x3.15mm": {
+    "drawing": "RGW0020A 4219039/A (pages 29-31)",
+    "kind": "custom",
+    "read": "2026-10-24",
+    "source": "https://www.ti.com/lit/ds/symlink/tps7a47.pdf"
+  },
+  "TI_RPW0010A_VQFN-HR-10_2x2mm_P0.5mm": {
+    "drawing": "RPW0010A land pattern example 4225183/A (page 73)",
+    "kind": "custom",
+    "read": "2026-10-24",
+    "source": "https://www.ti.com/lit/ds/symlink/tps25947.pdf"
+  }
+}
