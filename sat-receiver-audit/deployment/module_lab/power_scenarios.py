@@ -116,8 +116,8 @@ def fixture(project, *, initialize=True, prepare=None):
 
 
 def nominal_branches(bus):
-    for branch, current, volts in (("BATTERY", 2., 14.8), ("LNA1", .100, 4.5), ("LNA2", .080, 4.5),
-                                    ("LNA3", .060, 4.5), ("LNA4", .040, 4.5), ("LNB", .200, 13.2), ("BONI", .050, 13.8)):
+    for branch, current, volts in (("BATTERY", 2., 14.8), ("LNA1", .100, 4.3), ("LNA2", .080, 4.3),
+                                    ("LNA3", .060, 4.3), ("LNA4", .040, 4.3), ("LNB", .200, 13.2), ("BONI", .050, 13.8)):
         bus.set_branch(branch, current, volts)
 
 
@@ -436,7 +436,7 @@ def run(project):
 
     def overcurrent_uncalibrated():
         with fixture(project) as (hw, bus, reader):
-            nominal_branches(bus); bus.set_branch("LNA1", .300, 4.5)
+            nominal_branches(bus); bus.set_branch("LNA1", .300, 4.3)
             reader.configure(); bus.advance(50)
             sample = reader.poll()
             check(sample.valid and sample.calibration_valid is False, "nominal measurement must not claim bench calibration")

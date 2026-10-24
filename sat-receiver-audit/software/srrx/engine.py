@@ -1,7 +1,8 @@
 """Single-writer host state machine. Requests never write GPIO directly."""
 from .policy import SafetyPolicy, CAPS, _number
 
-BRANCHES = {"LNA1": 4.5, "LNA2": 4.5, "LNA3": 4.5, "LNA4": 4.5,
+# LNA1-4 share LNA4V5, 4.30 V since v2.1 (R227 21.5k, E2-04).
+BRANCHES = {"LNA1": 4.3, "LNA2": 4.3, "LNA3": 4.3, "LNA4": 4.3,
             "LNB": 13.2, "BONI": 13.8, "SB_LNA": 5.0, "RTLA": 5.0,
             "RTLB": 5.0, "HFP": 5.0, "LIME3V3": 3.3, "T7": 5.0,
             "LABPORT": 5.0, "AUX12": 12.0}
