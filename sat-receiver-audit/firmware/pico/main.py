@@ -111,9 +111,14 @@ def run():
         def new_session():
             return int.from_bytes(os.urandom(4), "little") or 1
 
+        # PWR_ON_KEY boot assist only after a LAB5 power-on. rp2 reports the
+        # watchdog REASON register: a WDT reboot (or machine.reset()) reads
+        # WDT_RESET, POR and the service RUN line read PWRON_RESET.
+        power_on = machine.reset_cause() == machine.PWRON_RESET
         supervisor = Supervisor(calibration_valid=calibration_valid,
                                 session_factory=new_session,
-                                hardware_commissioned=commissioned)
+                                hardware_commissioned=commissioned,
+                                power_on_reset=power_on)
         decoder = FrameDecoder()
         imu_decoder = FrameDecoder()
         imu_relay = IMURelay()

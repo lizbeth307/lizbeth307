@@ -418,7 +418,8 @@ class EngineFailureTests(unittest.TestCase):
             self.engine.tick(self.now)
 
         hello(self.engine.session)
-        for key in ('battery_mv', 'panel_temp_c', 'case_temp_c', 'fan_stalled', 'brightness_limit_pct'):
+        for key in ('battery_mv', 'panel_temp_c', 'case_temp_c', 'fan_stalled', 'brightness_limit_pct',
+                    'q6a_key_pulses'):
             self.assertIn(key, self.engine.status()['pico'], key)
         self.assertEqual(self.engine.pico['battery_mv'], 12900)
         self.assertEqual(self.engine.uv_since, since)

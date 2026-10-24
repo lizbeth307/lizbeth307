@@ -10,7 +10,7 @@ BRANCHES = {"LNA1": 4.3, "LNA2": 4.3, "LNA3": 4.3, "LNA4": 4.3,
 # (firmware/pico/main.py HELLO_FIELDS); a same-session HELLO keeps these while
 # the STATUS that carried them is at most 500 ms old.
 STATUS_ONLY = ("battery_mv", "panel_temp_c", "case_temp_c", "fan_stalled",
-               "brightness_limit_pct", "adc_raw")
+               "brightness_limit_pct", "adc_raw", "q6a_key_pulses")
 
 
 def _sha256_hex(value):

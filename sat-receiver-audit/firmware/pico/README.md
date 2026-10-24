@@ -58,7 +58,7 @@ are RP2040 GPIO, with physical Pico header numbers in parentheses.
 | Noctua high-side driver | GP18 (24) | HIGH enables DC power; no fan PWM |
 | Delta two-wire blower | GP19 (25) | HIGH enables DC power |
 | Pololu OFF | GP13 (17) | HIGH for 250 ms when cutting power |
-| Q6A key transistor | GP12 (16) | LOW; physical button already reaches PMIC through BAT54 |
+| Q6A key transistor | GP12 (16) | HIGH turns Q302 on and pulls J21 pin 3 (PWR_ON_KEY) low: bounded 900 ms boot-assist pulses only while Q6A 3V3 is absent (see "Q6A power-on key" below); LOW otherwise. The physical button reaches the same node through D303 |
 | Piezo/status LED | GP20 (26)/GP21 (27) | Piezo silent; LED high outside ACTIVE |
 | Q6A power sense | GP14 (19) | Active high, external 10k/100k network |
 | Power button | GP11 (15) | Active low, external pullup/BAT54 |
@@ -143,11 +143,12 @@ The bounded subset of STACK sections 5.1/5.6 is implemented as follows:
 | SHUTDOWN `phase=ARM_OFF` | SHUTTING_DOWN, immediate MCP reset and DISP off; emit SHUTDOWN_REQUEST |
 | SHUTDOWN `phase=OFF_NOW`, after ARM_OFF | Cut Pololu after exactly 20 s model grace; repeated OFF_NOW cannot postpone it; each new ARM_OFF or button shutdown starts without a previous OFF_NOW timestamp |
 | No HB after ARM_OFF | Cut after 60 s from last shutdown HB or ARM_OFF, whichever is later |
-| Q6A 3V3 falls after being observed on | Reset immediately; Pololu OFF after 3 s |
+| Q6A 3V3 falls after being observed on, or is absent at the first sample after a WDT reboot | Reset immediately; Pololu OFF after 3 s |
 | Calibrated battery <=13.05 V with no fresh HB | Pololu OFF after continuous 5 s; recovery or fresh HB resets dwell. Same 13050 mV as the host graceful cutoff, above the 12.8 V hardware UV trip |
 | Battery low with live HB | Host implements the INA228/Linux graceful shutdown policy; this fallback does not replace it. labd sends HB only while it holds STATUS readings no older than 500 ms (a HELLO carries none), so a host that cannot see the battery leaves this fallback active |
 | Physical button | 30 ms debounce; short release emits POWER_BUTTON, 1.5 s hold requests graceful shutdown |
-| Restart after OFF | Physical button edge and battery >=13.6 V clear software latch; remote ARM alone cannot restart |
+| Restart after OFF | Physical button edge and battery >=13.6 V clear software latch and re-arm the PWR_ON_KEY assist; remote ARM alone cannot restart |
+| Q6A 3V3 absent after a Pico power-on or restart | Bounded PWR_ON_KEY pulses on GP12, below |
 | Host maximum SoC temperature | In hardware mode labd sends `soc_temp_c` in every HB: the hottest Linux thermal zone in C, 0.1 C steps, re-read at most once a second on a separate labd thread (`SocTempSampler`), outside the 20 ms safety tick (`software/PROTOCOL.md`). Fan on at60 C, off at50 C. labd omits the field when a zone is unreadable or out of range, when the cached sample is older than 3 s, and in simulation; a missing/nonfinite value or stale HB forces full cooling (fan on) |
 | Panel NTC | Blower on at45 C, off at40 C; invalid sensor forces full cooling |
 | Fan tach | Ignore while off and first2 s on; no edge for >2 s thereafter is FAN_STALLED |
@@ -160,6 +161,57 @@ DDC/KEY path here. The supervisor instead removes DISP12 at68 C, or when the
 panel NTC reading is missing, invalid or older than 250 ms, and restores it only
 after a fresh valid reading of at most60 C. It does not pretend to dim GP17 or
 modify an undocumented panel interface.
+
+## Q6A power-on key (PWR_ON_KEY, B11)
+
+GP12 drives Q302 (2N7002, R331 100k gate pulldown), which pulls J21 pin 3
+(PWR_ON_KEY) low. The case button reaches the same node through D303, so both
+press the Q6A PMIC key; D303 keeps the Pico pulse off GP11. The supervisor
+implements the STACK D3 boot assist as a bounded state machine (the `KEY_*`
+constants in `supervisor.py`):
+
+| Rule | Behavior |
+|---|---|
+| Armed by | The first supervisor sample after a Pico power-on (LAB5 on: `main.run()` passes `power_on_reset` when `machine.reset_cause() == machine.PWRON_RESET`), and a PHYSICAL_RESTART from OFF |
+| Not armed | After a WDT reboot or `machine.reset()` (`WDT_RESET` on rp2): Q6A 3V3 absent at the first sample counts as a Q6A that just went off, so no pulse and the 3 s Pololu OFF follows unless 3V3 appears. Such a reboot can land inside the 3 s window of a poweroff or J21 UVLO trip; a press there would restart the Q6A the user just shut down. MicroPython reports a RUN-pin reset as PWRON_RESET; RUN is a service line from the Q6A, which has 3V3 then |
+| First pulse | Q6A 3V3 (GP14) still absent 1500 ms later. STACK allows 1-2 s; the wait counts from the first sample, MicroPython boot time comes on top and is measured in B11 |
+| Pulse | GP12 HIGH for 900 ms (STACK 0.8-1.0 s, never 2 s; a 6 s hold is the Q6A hard power-off) |
+| Retries | Next pulse 5000 ms after each release, at most 3 pulses; then Q6A_KEY_GAVE_UP and no pulse until a physical restart or the next power-on |
+| Released at once | GP14 high (`Hardware.apply` re-reads it just before the write), any state but SAFE, no sample within 250 ms (that press ends and counts; the next try waits 5000 ms), reversed clock, case button pressed, or, on a calibrated Pico only, battery invalid or <=13.05 V |
+| Postponed | While the case button is pressed (below 1.5 s) or a calibrated battery is invalid or <=13.05 V; the full wait restarts after the release |
+| Ended | A case-button hold of 1.5 s or more, timed from the Pico's first debounced sample, requests the graceful BUTTON shutdown (SHUTTING_DOWN), which ends the assist for this boot; without HB #2813 opens 60 s later (ARM_OFF_HEARTBEAT_LOST). A long power-on press still held when the Pico starts sampling counts too, so keep the power-on press shorter than 1.5 s |
+| Never | After Q6A 3V3 was seen since this power-on or restart: a later loss (poweroff, J21 UVLO) leads to the 3 s Pololu OFF, never to a key press, even if the Pico WDT-reboots in between |
+
+Uncalibrated, the Pico trusts no battery value and pulses anyway; E1's hardware
+UV trip still applies. A calibrated Pico never presses below the 13.05 V cutoff,
+because the no-HB UV fallback would cut a booting Q6A. A hung loop leaves GP12
+HIGH only until the 1000 ms hardware WDT returns the pads to high impedance and
+R331 turns Q302 off: at most 880 + 1000 = 1880 ms, still below 2 s (module-lab
+case `pico_q6a_power_key_pulse`). A Pico that keeps resetting never presses
+again: WDT reboots do not arm the assist, and the first one that finds 3V3
+absent opens #2813 after 3 s, which also ends a WDT boot loop with the Q6A off.
+A WDT reboot during a cold start therefore ends in OFF, and the operator
+restarts with the case button. `boot.py`, `Hardware()` and `fail_safe()` drive
+GP12 LOW.
+
+STATUS reports `q6a_key_pulses` (0..3 since this power-on or restart), so
+`labctl status` shows whether the Q6A started after the Pico pulse (1..3) or
+without one (0): by itself on the 12 V ramp, or from the case-button press,
+which reaches J21 pin 3 through D303. The counter cannot tell those two apart;
+judge 12 V auto-start (Ж-02) with 12 V applied and no button press. Events
+emitted while the Q6A is off are dropped with the unpowered link, so this
+counter is the only record that reaches labd.
+
+J21 UVLO restart path (`design/E2.json` R-E2-20): a UVLO trip removes Q6A power;
+the Pico sees 3V3 fall after it was on, holds MCP reset and opens #2813 after
+3 s (latched OFF), with no key press in that window, also when the Pico
+WDT-reboots inside it. The button restart at >=13.6 V powers LAB5 again and the
+new Pico power-on runs this assist, so a Q6A that does not start by itself on the 12 V
+ramp (11-54 ms in the E2 model, inside the wait) gets the bounded pulse. If the Pico is still
+powered in OFF (LAB5 not removed), the PHYSICAL_RESTART edge re-arms the same
+assist. Model, adapter and deployed loop are host-tested; the pulse width at J21
+pin 3, the PMIC response and the B11 20/20 start stay OPEN (`build/09-testy.md`
+Ж-02 and Ж-02a).
 
 ## Calibration and commissioning
 
@@ -264,11 +316,12 @@ PYTHONPATH=software python -m unittest discover -s software/tests -p test_superv
 
 The tests exercise ARM gates, exact deadline edges, replay/session rejection,
 sensor/clock faults, shutdown/UV behavior, ADC record corruption, NTC reference
-points, GPIO polarity/order, short UART writes, ticks wrap and IMU stale recovery.
+points, GPIO polarity/order, short UART writes, ticks wrap, IMU stale recovery and
+the PWR_ON_KEY timing, retry bound and release conditions (`PowerKeyTests`).
 `test_pico_main.py` drives the real `main.run()` loop with injected `machine`/`time`
 (TRIP diagnostics sent as EVENT, GP8 high-Z, GP16 level checked against the model
 state at each write; every sleep counts, so an early exception fails instead of
-hanging) and checks that HMI
+hanging), the GP12 pulse sequence with Q6A 3V3 absent at boot, and checks that HMI
 key-bus errors and lux failures stay separate.
 Actual GPIO, ADC accuracy, interrupt latency, UART timing and watchdog reset
 behavior require device tests and remain unqualified.
