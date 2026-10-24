@@ -206,6 +206,11 @@ def pads_of(path):
     return sorted({p for p in re.findall(r'\(pad\s+"([^"]*)"', path.read_text(encoding='utf-8')) if p})
 
 
+def by_name(paths):
+    """Case-sensitive name order: Windows Path ordering ignores case, which would reorder the manifest."""
+    return sorted(paths, key=lambda p: p.name)
+
+
 def sort_ref(s):
     m = re.fullmatch(r'([^0-9]+)([0-9]+)', s)
     return (m[1], int(m[2])) if m else (s, 0)
@@ -432,8 +437,8 @@ class Model:
         prov = json.loads((LIBDIR / 'SR_RX_Custom.pretty/provenance.json').read_text(encoding='utf-8'))
         derived_sources = {v['source'].split(' ', 2)[2] for v in prov.values() if v['kind'] == 'derived'}
         rows = []
-        for d in sorted(LIBDIR.glob('*.pretty')):
-            for f in sorted(d.glob('*.kicad_mod')):
+        for d in by_name(LIBDIR.glob('*.pretty')):
+            for f in by_name(d.glob('*.kicad_mod')):
                 ident = f'{d.stem}:{f.stem}'
                 origin = (f'SR_RX_Custom {prov[f.stem]["kind"]}' if d.stem == 'SR_RX_Custom' else f'KiCad {KICAD_TAG} official, unmodified')
                 refs = sorted(uses.get(ident, []), key=sort_ref)
@@ -476,7 +481,7 @@ class Model:
 
     def fp_table_text(self):
         lines = ['(fp_lib_table', '  (version 7)']
-        for d in sorted(LIBDIR.glob('*.pretty')):
+        for d in by_name(LIBDIR.glob('*.pretty')):
             descr = 'SR-RX project footprints (custom and derived, see provenance.json)' if d.stem == 'SR_RX_Custom' else f'Selected official KiCad {KICAD_TAG} footprints'
             lines.append(f'  (lib (name "{d.stem}")(type "KiCad")(uri "${{KIPRJMOD}}/footprints/{d.name}")(options "")(descr "{descr}"))')
         return '\n'.join(lines + [')']) + '\n'
