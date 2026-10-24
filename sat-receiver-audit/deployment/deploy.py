@@ -98,6 +98,16 @@ RADIO_OFF_UNIT = "srrx-radio-off.service"
 LAB_DEVICE_DROPIN = "30-lab-devices.conf"
 DEVICE_TIMEOUT_DROPIN = "50-srrx-device-timeout.conf"
 LAB_DEVICE_TIMEOUT_S = 30
+# GNSS time chain (software/GNSS-UART.md): SRRX_GNSS in devices.env selects the one UART6 reader,
+# gpsd (STACK default) or srrx-locationd raw; off runs neither orchestration nor locationd.
+GNSS_MODES = ("gpsd", "raw", "off")
+GNSS_DEVICE = "/dev/lab/gnss"
+GNSS_MODE_DROPIN = "40-gnss-mode.conf"
+GNSS_CONFIG_UNIT = "srrx-gnss-config.service"
+GNSS_POLKIT_RULE = "etc/polkit-1/rules.d/60-srrx-gnss-config.rules"
+# No release guard for these: they energize nothing, run as srrx-loc/_chrony (no access to the
+# acceptance and cache records), and the oneshot must not hash the cache each time labd starts it.
+RELEASE_GUARD_EXEMPT = frozenset({"srrx-locationd.service", "srrx-timegate.service", GNSS_CONFIG_UNIT})
 
 
 class DeploymentError(ValueError):
@@ -303,6 +313,93 @@ def device_timeout_dropin(seconds):
     if type(seconds) is not int or not 1 <= seconds <= 300:
         raise DeploymentError("device timeout must be 1..300 s")
     return "[Unit]\nJobRunningTimeoutSec=" + str(seconds) + "s\n"
+
+
+def gnss_polkit_rule():
+    """labd may start exactly srrx-gnss-config.service: no stop/restart, no other unit, no other user."""
+    return ("// SR-RX (software/GNSS-UART.md): labd starts only the LC76G read-back/config oneshot.\n"
+            "polkit.addRule(function(action, subject) {\n"
+            '    if (action.id == "org.freedesktop.systemd1.manage-units" &&\n'
+            '        action.lookup("unit") == "' + GNSS_CONFIG_UNIT + '" &&\n'
+            '        action.lookup("verb") == "start" &&\n'
+            '        subject.user == "labd") {\n'
+            "        return polkit.Result.YES;\n"
+            "    }\n"
+            "});\n")
+
+
+def gnss_mode_dropin(mode):
+    """srrx-locationd.service.d: gpsd mode may reach loopback gpsd only; raw mode reads the UART
+    (srrx-gnss group, after dev-lab-gnss.device). The static unit has neither."""
+    if mode == "gpsd":
+        return ("[Unit]\nWants=gpsd.socket\nAfter=gpsd.socket gpsd.service\n\n[Service]\n"
+                "RestrictAddressFamilies=AF_INET AF_INET6\nIPAddressAllow=localhost\n")
+    if mode == "raw":
+        unit = device_unit(GNSS_DEVICE)
+        return ("[Unit]\nWants=" + unit + "\nAfter=" + unit + "\nConflicts=gpsd.service gpsd.socket\n\n"
+                "[Service]\nSupplementaryGroups=" + GNSS_GROUP + "\n")
+    raise DeploymentError("SRRX_GNSS must be gpsd or raw for a locationd drop-in: " + repr(mode))
+
+
+def _assignments(path):
+    """KEY=value lines of an environment/defaults file (quotes stripped); None if absent."""
+    try:
+        text = Path(path).read_text(encoding="utf-8", errors="replace")
+    except FileNotFoundError:
+        return None
+    values = {}
+    for line in text.splitlines():
+        line = line.strip()
+        if line.startswith("export "):
+            line = line[len("export "):]
+        if "=" in line and not line.startswith("#"):
+            key, value = line.split("=", 1)
+            value = value.strip()
+            if len(value) >= 2 and value[0] == value[-1] and value[0] in "\"'":
+                value = value[1:-1]
+            values[key.strip()] = value
+    return values
+
+
+def gnss_mode_issues(root=Path("/")):
+    """Exactly one UART6 reader (build/07 §18): gpsd -n -b on /dev/lab/gnss, or srrx-locationd raw.
+
+    Files only (doctor runs no systemctl): devices.env SRRX_GNSS, /etc/default/gpsd, gpsd enable
+    links and the staged locationd drop-in. srrx-locationd itself also refuses raw mode while
+    gpsd is active; the live check of both is a Q6A item (RUNTIME_ONLY)."""
+    root = Path(root)
+    env = _assignments(root / "etc/srrx/devices.env")
+    if env is None:
+        return []  # no deployment record: doctor reports the missing bindings elsewhere
+    mode = env.get("SRRX_GNSS")
+    if mode not in GNSS_MODES:
+        return ["SRRX_GNSS missing or invalid in /etc/srrx/devices.env (gpsd, raw or off)"]
+    defaults = _assignments(root / "etc/default/gpsd")
+    devices = (defaults or {}).get("DEVICES", "").split()
+    units = root / "etc/systemd/system"
+    enabled = sorted({link.name for pattern in ("*.wants/gpsd.service", "*.wants/gpsd.socket")
+                      for link in units.glob(pattern)})
+    dropin = units / "srrx-locationd.service.d" / GNSS_MODE_DROPIN
+    raw_group = dropin.is_file() and ("SupplementaryGroups=" + GNSS_GROUP) in dropin.read_text()
+    issues = []
+    if mode == "gpsd":
+        options = (defaults or {}).get("GPSD_OPTIONS", "").split()
+        if devices != [GNSS_DEVICE]:
+            issues.append("gpsd mode: /etc/default/gpsd DEVICES must be exactly " + GNSS_DEVICE)
+        if "-b" not in options or "-n" not in options:
+            issues.append("gpsd mode: GPSD_OPTIONS must keep -n -b (gpsd never writes the receiver)")
+        if (defaults or {}).get("USBAUTO") != "false":
+            issues.append('gpsd mode: USBAUTO must be "false" (no hotplug devices)')
+    if mode != "raw" and raw_group:
+        issues.append("srrx-locationd holds " + GNSS_GROUP + " outside raw mode")
+    if mode == "raw":
+        if GNSS_DEVICE in devices:
+            issues.append("raw mode: gpsd DEVICES still lists " + GNSS_DEVICE)
+        if enabled:
+            issues.append("raw mode: gpsd enabled (" + ",".join(enabled) + ")")
+        if not raw_group:
+            issues.append("raw mode: srrx-locationd lacks its " + GNSS_MODE_DROPIN + " drop-in")
+    return issues
 
 
 def _read(path):
@@ -609,6 +706,9 @@ def doctor(config=None):
     report["radio_off"] = {"status": "BLOCKED" if radio else "RADIO_OFF_OBSERVED", "issues": radio,
                            "wifi_pwr_en_hog": "OPEN (bench gate W1-2)"}
     report["issues"].extend(radio)
+    gnss = gnss_mode_issues()
+    report["gnss_readers"] = {"status": "BLOCKED" if gnss else "ONE_READER_CONFIGURED_OR_NO_RECORD", "issues": gnss}
+    report["issues"].extend(gnss)
     try:
         report["bios_version"] = Path("/sys/class/dmi/id/bios_version").read_text().strip()
     except OSError:
@@ -730,7 +830,31 @@ def verify_build(prefix, manifest):
             "scope": "Exact reviewed files and known exclusions checked; hardware/native API behavior requires independent evidence."}
 
 
-def stage(destination, config=None):
+def stage_gnss(rootfs, mode):
+    """GNSS reader chain files of an explicit-config stage (software/GNSS-UART.md): the polkit
+    rule for labd -> srrx-gnss-config, the locationd mode drop-in and the one reader's ordering
+    after dev-lab-gnss.device (gpsd.service in gpsd mode, srrx-locationd in raw mode; DEP-11)."""
+    units = rootfs / "etc/systemd/system"
+    rule = rootfs / GNSS_POLKIT_RULE
+    rule.parent.mkdir(parents=True)
+    rule.write_text(gnss_polkit_rule(), newline="\n")
+    locationd = units / "srrx-locationd.service.d"
+    locationd.mkdir(exist_ok=True)
+    (locationd / GNSS_MODE_DROPIN).write_text(gnss_mode_dropin(mode), newline="\n")
+    if mode == "gpsd":
+        gpsd = units / "gpsd.service.d"
+        gpsd.mkdir()
+        unit = device_unit(GNSS_DEVICE)  # gpsd -n opens the UART at start, not on the first client
+        (gpsd / LAB_DEVICE_DROPIN).write_text("[Unit]\n# gpsd -n opens " + GNSS_DEVICE + " at start (DEP-11)\n"
+                                              "Wants=" + unit + "\nAfter=" + unit + "\n", newline="\n")
+    timeout = units / (device_unit(GNSS_DEVICE) + ".d")
+    timeout.mkdir()
+    (timeout / DEVICE_TIMEOUT_DROPIN).write_text(device_timeout_dropin(LAB_DEVICE_TIMEOUT_S), newline="\n")
+
+
+def stage(destination, config=None, gnss="gpsd"):
+    if gnss not in GNSS_MODES:
+        raise DeploymentError("--gnss must be one of " + ", ".join(GNSS_MODES))
     destination = Path(destination).resolve()
     if destination.exists() or destination.is_relative_to(PROJECT) or PROJECT.is_relative_to(destination) or destination == Path("/"):
         raise DeploymentError("stage needs a NEW directory outside the checkout and host prefixes")
@@ -756,6 +880,8 @@ def stage(destination, config=None):
             shutil.copyfile(unit, user_units / unit.name)
             continue
         shutil.copyfile(unit, units / unit.name)
+        if unit.name in RELEASE_GUARD_EXEMPT:
+            continue
         dropin = units / (unit.name + ".d")
         dropin.mkdir()
         if unit.name == "srrx.service":  # only the receiver; the shutdown bridge never Requires= it (DEPLOYMENT.md)
@@ -770,7 +896,7 @@ def stage(destination, config=None):
     shutil.copyfile(PROJECT / "software/config/acceptance.template.json", etc / "acceptance.template.json")
     if config:
         (etc / "devices.json").write_text(json.dumps(config, indent=2) + "\n", newline="\n")
-        (etc / "devices.env").write_text("SRRX_I2C0=" + config["i2c"]["ina228"]["path"] + "\nSRRX_I2C2=" + config["i2c"]["control"]["path"] + "\nSRRX_PICO=/dev/lab/pico\n", newline="\n")
+        (etc / "devices.env").write_text("SRRX_I2C0=" + config["i2c"]["ina228"]["path"] + "\nSRRX_I2C2=" + config["i2c"]["control"]["path"] + "\nSRRX_PICO=/dev/lab/pico\nSRRX_GNSS=" + gnss + "\n", newline="\n")
         rules = rootfs / "etc/udev/rules.d"
         rules.mkdir(parents=True)
         (rules / "70-srrx-serial-bound.rules").write_text(udev_rules(config), newline="\n")
@@ -783,6 +909,8 @@ def stage(destination, config=None):
             timeout = units / (device_unit(path) + ".d")
             timeout.mkdir()
             (timeout / DEVICE_TIMEOUT_DROPIN).write_text(device_timeout_dropin(LAB_DEVICE_TIMEOUT_S), newline="\n")
+        if gnss != "off":
+            stage_gnss(rootfs, gnss)
     files = {p.relative_to(rootfs).as_posix(): sha(p) for p in sorted(rootfs.rglob("*")) if p.is_file()}
     (destination / "stage-files.json").write_text(json.dumps({"schema_version": 1, "status": "STAGED_ONLY", "files": files}, indent=2) + "\n", newline="\n")
     (destination / "INSTALL_PLAN.txt").write_text("STAGED ONLY. No services enabled and no hardware acceptance supplied.\nReview software/DEPLOYMENT.md, run doctor and all release guards, then package rootfs via signed local repository.\nField/QUIET root: Wi-Fi/BT modprobe blacklist (install /bin/false), FE1.1s port-4 authorized=0 rule and rfkill unit are staged; the WIFI_PWR_EN gpio-hog (W1-2) is OPEN and not generated.\nDo not copy over /etc acceptance files, repartition UFS, flash BIOS, run rsetup or auto-enable units.\nA/B installation is a separate bench/recovery procedure; no activation command is generated here.\n", newline="\n")
@@ -916,6 +1044,8 @@ def main():
     staging = commands.add_parser("stage")
     staging.add_argument("--dest", type=Path, required=True)
     staging.add_argument("--devices", type=Path)
+    staging.add_argument("--gnss", choices=GNSS_MODES, default="gpsd",
+                         help="UART6 reader chain written to devices.env and the GNSS drop-ins (with --devices)")
     rules = commands.add_parser("udev")
     rules.add_argument("--devices", type=Path, required=True)
     commands.add_parser("udev-gnss", help="print the fixed UART6 /dev/lab/gnss candidate rule")
@@ -939,7 +1069,7 @@ def main():
     try:
         if args.operation == "check": result = check()
         elif args.operation == "doctor": result = doctor(load(args.devices) if args.devices else None)
-        elif args.operation == "stage": result = stage(args.dest, load(args.devices) if args.devices else None)
+        elif args.operation == "stage": result = stage(args.dest, load(args.devices) if args.devices else None, args.gnss)
         elif args.operation == "udev": print(udev_rules(load(args.devices)), end=""); return
         elif args.operation == "udev-gnss": print(gnss_udev_rules(), end=""); return
         elif args.operation == "verify-cache": result = verify_cache(args.cache, args.component, not args.sources_only)

@@ -144,15 +144,21 @@ class DeploymentTests(unittest.TestCase):
         files = json.loads((self.root / "candidate/stage-files.json").read_text())["files"]
         self.assertIn("etc/systemd/system/srrx.service.d/" + deploy.LAB_DEVICE_DROPIN, files)
         timeouts = sorted(p.relative_to(units).as_posix() for p in units.glob("*.device.d/*"))
-        self.assertEqual(timeouts, sorted(unit + ".d/" + deploy.DEVICE_TIMEOUT_DROPIN for unit in expected))
+        # dev-lab-gnss.device: the one GNSS reader (gpsd here, the default --gnss) waits for it too.
+        self.assertEqual(timeouts, sorted(unit + ".d/" + deploy.DEVICE_TIMEOUT_DROPIN
+                                          for unit in expected | {"dev-lab-gnss.device"}))
         for relative in timeouts:
             self.assertEqual((units / relative).read_text(), "[Unit]\nJobRunningTimeoutSec=30s\n")
             self.assertIn("etc/systemd/system/" + relative, files)
         self.assertEqual(deploy.LAB_DEVICE_TIMEOUT_S, 30)
-        # Neither the shutdown bridge nor the radio-off unit gains device lines.
+        # Neither the shutdown bridge nor the radio-off unit gains device lines; gpsd waits for the GNSS UART only.
         for path in units.rglob("*"):
-            if path.is_file() and "srrx.service.d" not in path.parts and not path.parent.name.endswith(".device.d"):
+            if (path.is_file() and "srrx.service.d" not in path.parts and "gpsd.service.d" not in path.parts
+                    and not path.parent.name.endswith(".device.d")):
                 self.assertNotIn("dev-lab", path.read_text(), path)
+        gpsd = (units / "gpsd.service.d" / deploy.LAB_DEVICE_DROPIN).read_text().splitlines()
+        self.assertEqual([l for l in gpsd if not l.startswith("#")],
+                         ["[Unit]", "Wants=dev-lab-gnss.device", "After=dev-lab-gnss.device"])
         # Config-less staging (the QEMU guest's candidate) ships no device wait at all.
         deploy.stage(self.root / "plain")
         plain = self.root / "plain/rootfs/etc/systemd/system"

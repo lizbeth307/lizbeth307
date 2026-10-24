@@ -23,6 +23,7 @@ def main(argv=None):
     route.add_argument("value", help="JSON routing selection")
     gnss = sub.add_parser("gnss_reset", help="One bounded LC76G RESET_N pulse; needs your own valid lease (e.g. while hold runs)")
     gnss.add_argument("--width-ms", type=int, default=200, help="100..500 ms; labd enforces range, 30 s spacing and 3 per 15 min")
+    sub.add_parser("gnss_config", help="Re-run the LC76G read-back/config and the PPS gate (labd --gnss gpsd|raw); needs your own lease")
     sim = sub.add_parser("sim")
     sim.add_argument("name")
     sim.add_argument("value", help="JSON value; unavailable on the physical backend")

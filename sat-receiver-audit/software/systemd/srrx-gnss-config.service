@@ -1,0 +1,30 @@
+[Unit]
+Description=SR-RX LC76G allowlisted configuration with read-back (labd starts it through polkit)
+ConditionPathExists=/etc/srrx/devices.env
+
+[Service]
+Type=oneshot
+User=root
+WorkingDirectory=/opt/srrx
+Environment=PYTHONPATH=/opt/srrx/software PYTHONDONTWRITEBYTECODE=1
+EnvironmentFile=/etc/srrx/devices.env
+ExecStart=/usr/bin/python3 -B -m srrx.gnss_config --gnss ${SRRX_GNSS} --result /run/srrx-gnss-config/result.json
+TimeoutStartSec=120
+RuntimeDirectory=srrx-gnss-config
+RuntimeDirectoryMode=0755
+RuntimeDirectoryPreserve=yes
+UMask=0022
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateNetwork=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_UNIX
+IPAddressDeny=any
+CapabilityBoundingSet=CAP_DAC_OVERRIDE
+LockPersonality=yes
+MemoryMax=64M
+TasksMax=8
