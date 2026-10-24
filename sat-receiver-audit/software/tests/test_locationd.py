@@ -269,6 +269,10 @@ class PreflightTests(unittest.TestCase):
             raise FileNotFoundError(argv[0])
         with self.assertRaisesRegex(LocationdError, "LOCATIOND_GPSD_STATE_UNKNOWN"):
             raw_preflight("/dev/lab/gnss", str(self.defaults), missing)
+        # Exit 1 (no bus, access denied), 4 (status unknown) or a signal is not "inactive": fail closed.
+        for code in (1, 4, -15, 255):
+            with self.subTest(code=code), self.assertRaisesRegex(LocationdError, "LOCATIOND_GPSD_STATE_UNKNOWN"):
+                raw_preflight("/dev/lab/gnss", str(self.defaults), lambda argv, code=code: code)
 
     def test_gpsd_mode_refuses_the_raw_uart_group(self):
         group = mock.Mock(gr_gid=4321)

@@ -248,13 +248,16 @@ def main(argv=None):
                     help="GNSS time orchestration around gnss_reset (srrx.gnss_orchestrator); off: plain pulse")
     ap.add_argument("--location-socket", default="/run/srrx-loc/location.sock")
     ap.add_argument("--timegate-socket", default="/run/srrx-timegate/timegate.sock")
+    ap.add_argument("--gnss-latch", default="/var/lib/srrx-gnss/jamming-latch.json",
+                    help="JAMMED latch across restarts (srrx.service StateDirectory=srrx-gnss)")
     args = ap.parse_args(argv)
     hardware = link = gnss = None
     if args.gnss != "off":
         # AF_UNIX requests to srrx-locationd and srrx-timegate plus one polkit-allowed
         # `systemctl start srrx-gnss-config.service`; labd itself opens no UART or chrony socket.
-        from .gnss_orchestrator import GnssOrchestrator, LinuxGnssEffects
-        gnss = GnssOrchestrator(LinuxGnssEffects(args.location_socket, args.timegate_socket), mode=args.gnss)
+        from .gnss_orchestrator import GnssOrchestrator, JamLatchFile, LinuxGnssEffects
+        gnss = GnssOrchestrator(LinuxGnssEffects(args.location_socket, args.timegate_socket), mode=args.gnss,
+                                latch=JamLatchFile(args.gnss_latch))
     try:
         if args.hardware:
             from .commissioning import load_acceptance_bound

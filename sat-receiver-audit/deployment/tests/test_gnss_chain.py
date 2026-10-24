@@ -66,9 +66,11 @@ class GnssChainTests(unittest.TestCase):
         config_text = (UNITS / "srrx-gnss-config.service").read_text()
         config = settings(config_text)
         self.assertNotIn("[Install]", config_text)  # started only by labd through polkit, never enabled
+        # A SIGTERM after TimeoutStartSec still restarts the reader (15 s systemctl bound) before the SIGKILL.
         for key, value in (("Type", "oneshot"), ("User", "root"), ("PrivateNetwork", "yes"),
                            ("RuntimeDirectory", "srrx-gnss-config"), ("RuntimeDirectoryPreserve", "yes"),
-                           ("RestrictAddressFamilies", "AF_UNIX"), ("CapabilityBoundingSet", "CAP_DAC_OVERRIDE")):
+                           ("RestrictAddressFamilies", "AF_UNIX"), ("CapabilityBoundingSet", "CAP_DAC_OVERRIDE"),
+                           ("TimeoutStartSec", "120"), ("TimeoutStopSec", "30")):
             self.assertEqual(config[key], [value], key)
         self.assertIn("-m srrx.gnss_config --gnss ${SRRX_GNSS} --result /run/srrx-gnss-config/result.json",
                       config["ExecStart"][0])
@@ -78,6 +80,8 @@ class GnssChainTests(unittest.TestCase):
         self.assertTrue(service["ExecStart"][0].endswith("--gnss ${SRRX_GNSS}"))
         self.assertEqual(service["SupplementaryGroups"], ["i2c dialout srrx-pico"])  # labd never reads NMEA
         self.assertEqual(service["RestrictAddressFamilies"], ["AF_UNIX"])
+        # The orchestrator's JAMMED latch (/var/lib/srrx-gnss) survives labd restarts and reboots.
+        self.assertEqual((service["StateDirectory"], service["StateDirectoryMode"]), (["srrx-gnss"], ["0700"]))
 
     def test_gpsd_stage_has_the_polkit_rule_loopback_dropin_and_gpsd_device_order(self):
         rootfs, files = self.staged("gpsd")

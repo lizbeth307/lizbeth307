@@ -236,7 +236,11 @@ log, a file or the network.
 labd itself never opens the UART or gpsd: its time orchestration around
 `gnss_reset` (`srrx.gnss_orchestrator`) reads these snapshots, and PPS is selected
 in chrony only through `srrx-timegate` after a matching LC76G read-back
-(`srrx-gnss-config`) and a qualified fix held for 10 s. Details, units and the
+(`srrx-gnss-config`) and a qualified fix held for 10 s, each sample with a fresh
+"good" jamming report (`jamming.status == 1`, at most 5 s old). After a jamming
+flag only a `gnss_reset` with a proven release re-opens that gate, also across
+labd restarts; raw mode never selects PPS, because without gpsd chrony's NMEA SHM
+refclock gets no samples. Details, units and the
 deployment steps are in [GNSS-UART.md](GNSS-UART.md). The touch console still
 reads gpsd directly through `GpsdClient` (gpsd mode only); moving it to these
 snapshots is not done. None of this has run against a live gpsd, chrony or

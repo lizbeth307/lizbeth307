@@ -184,6 +184,10 @@ def raw_preflight(device=DEVICE_PATH, defaults=GPSD_DEFAULTS, runner=run_quiet):
             raise LocationdError("LOCATIOND_GPSD_STATE_UNKNOWN") from None
         if code == 0:
             raise LocationdError("LOCATIOND_GPSD_ACTIVE")
+        if code != 3:
+            # Only 3 (LSB "not running": inactive, failed or no such unit) proves gpsd is off;
+            # 1 (no bus connection, access denied) or anything else proves nothing (fail closed).
+            raise LocationdError("LOCATIOND_GPSD_STATE_UNKNOWN")
 
 
 def gpsd_preflight(group=GNSS_GROUP):

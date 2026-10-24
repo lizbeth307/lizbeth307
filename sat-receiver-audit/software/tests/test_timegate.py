@@ -11,6 +11,7 @@ import socket
 import subprocess
 import tempfile
 import threading
+import time
 import unittest
 from unittest import mock
 
@@ -98,7 +99,7 @@ class SocketTests(unittest.TestCase):
         self.addCleanup(self.listener.close)
         self.calls = []
 
-    def ask(self, gate, payload):
+    def ask(self, gate, payload, outcome=None):
         replies = []
         def client():
             with socket.socket(socket.AF_UNIX, socket.SOCK_STREAM) as sock:
@@ -107,8 +108,16 @@ class SocketTests(unittest.TestCase):
                 try:
                     sock.sendall(payload)
                     replies.append(sock.recv(4096))
+                    if outcome is not None:
+                        outcome.append("closed" if replies[-1] == b"" else "reply")
+                except socket.timeout:
+                    replies.append(b"")
+                    if outcome is not None:
+                        outcome.append("client_timeout")
                 except OSError:
                     replies.append(b"")
+                    if outcome is not None:
+                        outcome.append("error")
         thread = threading.Thread(target=client)
         thread.start()
         served = serve_one(self.listener, gate)
@@ -123,12 +132,24 @@ class SocketTests(unittest.TestCase):
         self.assertTrue(served)
         self.assertEqual(reply, {"ok": True, "command": "PPS_SELECT"})
         self.assertEqual(self.calls[0], BASE + ["selectopts", "PPS", "-noselect"])
-        for bad in (b"PPS_SELECT\nPPS_SELECT\n", b"PPS_SELECT", b"P" * 40 + b"\n"):
+        self.assertEqual(len(self.calls), 2)
+        # Two lines and an oversize line are answered with the framing code, never run.
+        for bad in (b"PPS_SELECT\nPPS_SELECT\n", b"P" * 40 + b"\n", b"PPS_SELECT\n\n"):
             with self.subTest(bad=bad):
                 served, reply = self.ask(self.gate(os.getuid()), bad)
-                if reply is not None:
-                    self.assertEqual(reply, {"ok": False, "error": "TIMEGATE_REQUEST_FRAMING"})
+                self.assertEqual((served, reply), (True, {"ok": False, "error": "TIMEGATE_REQUEST_FRAMING"}))
         self.assertEqual(len(self.calls), 2)  # only the first request ran chronyc
+
+    def test_unterminated_request_is_closed_after_the_read_timeout_without_chronyc(self):
+        outcome = []
+        with mock.patch.object(timegate, "READ_TIMEOUT_S", 0.3):
+            started = time.monotonic()
+            served, reply = self.ask(self.gate(os.getuid()), b"PPS_SELECT", outcome)
+            elapsed = time.monotonic() - started
+        self.assertEqual((served, reply, outcome), (False, None, ["closed"]))  # closed by the server, not the client
+        self.assertGreaterEqual(elapsed, 0.3)
+        self.assertLess(elapsed, 2.5)  # well before the client's own 3 s timeout
+        self.assertEqual(self.calls, [])
 
     def test_other_peers_are_closed_unread(self):
         served, reply = self.ask(self.gate(os.getuid() + 54321), b"PPS_NOSELECT\n")

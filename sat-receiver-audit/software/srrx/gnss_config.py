@@ -3,10 +3,10 @@
 labd starts this unit through polkit (labd may only `start srrx-gnss-config.service`):
 once at labd startup and after each bounded RESET pulse (srrx.gnss_orchestrator). The
 LC76G loses its configuration without power, so every pass reads it back first and
-writes only on a mismatch (build/07-pz-vstanovlennia.md:499). Steps:
+writes only on a mismatch (build/07-pz-vstanovlennia.md:500). Steps:
 
 1. stop the one UART reader: gpsd.socket + gpsd.service (gpsd mode) or srrx-locationd
-   (raw mode); the receiver is written only while nobody else reads it (build/07:486);
+   (raw mode); the receiver is written only while nobody else reads it (build/07:485);
 2. open /dev/lab/gnss O_RDWR with the srrx.gnss_uart binding (udev alias, parent
    998000.serial, sysfs dev = st_rdev), flock + TIOCEXCL, raw 115200 read back;
 3. wait for the first checksum-valid sentence, at most FIRST_SENTENCE_MS (after RESET
@@ -19,6 +19,11 @@ Only srrx.lc76g.ALLOWLIST bytes are ever written; $PAIR007, $PAIR752 and $PAIR75
 refused by name and anything else by the allowlist. Exit 0 only for a matching
 read-back. The result names steps and codes, never a position. labd selects PPS only
 after this read-back and a qualified fix (srrx.gnss_orchestrator).
+
+A SIGTERM (TimeoutStartSec=120 or a manual stop) during steps 1-5 ends them with
+GNSS_CONFIG_TERMINATED, so step 6 still runs. Worst case without it: two systemctl
+calls of SYSTEMCTL_TIMEOUT_S, 40 s for the first sentence and 15 sentences of at most
+WRITE_MS + REPLY_MS each, about 108 s.
 """
 import argparse
 import errno
@@ -27,6 +32,7 @@ import json
 import os
 from pathlib import Path
 import select
+import signal
 import stat
 import subprocess
 import termios
@@ -43,12 +49,30 @@ FIRST_SENTENCE_MS = 40000
 REPLY_MS = 1500
 MAX_LINES = 400  # unrelated NMEA lines skipped while one reply is awaited
 WRITE_MS = 1000
+SYSTEMCTL_TIMEOUT_S = 15  # stopping or starting gpsd / srrx-locationd (TimeoutStopSec=3)
 # The one UART write path, used once in Port.send after the allowlist check (tests parse this).
 _uart_write = os.write
 
 
 class GnssConfigError(RuntimeError):
     """A stable reason code."""
+
+
+class Termination:
+    """SIGTERM handler: while armed (steps 1-5) it raises GNSS_CONFIG_TERMINATED once, so the
+    finally of run() still restarts the reader and writes result.json; during that cleanup a
+    further SIGTERM is only recorded (systemd's SIGKILL after TimeoutStopSec stays final)."""
+    def __init__(self):
+        self.armed = self.received = False
+
+    def __call__(self, signum, frame):
+        self.received = True
+        if self.armed:
+            self.armed = False
+            raise GnssConfigError("GNSS_CONFIG_TERMINATED")
+
+
+TERMINATION = Termination()  # installed by main(); run() arms it around steps 1-5
 
 
 def boottime_ms():
@@ -180,7 +204,7 @@ def configure(port, *, jamming_message=False, first_sentence_ms=FIRST_SENTENCE_M
 
 def systemctl(argv_tail):
     return subprocess.run([SYSTEMCTL, *argv_tail], stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL,
-                          stderr=subprocess.DEVNULL, timeout=60, check=False).returncode
+                          stderr=subprocess.DEVNULL, timeout=SYSTEMCTL_TIMEOUT_S, check=False).returncode
 
 
 def write_result(path, result):
@@ -210,16 +234,21 @@ def run(mode, *, device=DEVICE_PATH, result_path=RESULT_PATH, runner=systemctl, 
     else:
         port = None
         try:
-            if runner(["stop", *units]) != 0:
-                raise GnssConfigError("GNSS_CONFIG_READER_STOP_FAILED")
-            port = Port(opener(device), clock)
-            result.update(configure(port, jamming_message=jamming_message, first_sentence_ms=first_sentence_ms))
-            result["ok"] = True
+            try:
+                TERMINATION.armed = True
+                if runner(["stop", *units]) != 0:
+                    raise GnssConfigError("GNSS_CONFIG_READER_STOP_FAILED")
+                port = Port(opener(device), clock)
+                result.update(configure(port, jamming_message=jamming_message, first_sentence_ms=first_sentence_ms))
+                result["ok"] = True
+            finally:
+                TERMINATION.armed = False
         except (GnssConfigError, GnssUartError) as exc:
-            result["error"] = str(exc)
+            result.update(ok=False, error=str(exc))
         except (OSError, subprocess.SubprocessError) as exc:
             code = getattr(exc, "errno", None)
-            result["error"] = "GNSS_CONFIG_IO_" + (errno.errorcode.get(code, "ERROR") if code else type(exc).__name__.upper())
+            result.update(ok=False, error="GNSS_CONFIG_IO_" + (errno.errorcode.get(code, "ERROR") if code
+                                                                else type(exc).__name__.upper()))
         finally:
             if port is not None:
                 result["sent"] = list(port.sent)
@@ -246,6 +275,7 @@ def main(argv=None):
     ap.add_argument("--jamming-status-message", action="store_true",
                     help="also enable $PQTMJAMMINGSTATUS output (build/07:498, optional)")
     args = ap.parse_args(argv)
+    signal.signal(signal.SIGTERM, TERMINATION)
     code = run(args.gnss, device=args.device, result_path=args.result, jamming_message=args.jamming_status_message)
     print(Path(args.result).read_text(), end="", flush=True)
     return code

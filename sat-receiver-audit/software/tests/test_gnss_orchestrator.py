@@ -2,7 +2,7 @@
 and real AF_UNIX sockets for the nonblocking request helper.
 
 Simulation only: no LC76G, gpsd, chrony or PPS signal. Selecting PPS on a real Q6A
-(chrony selects PPS within 10 min of a 3D fix, build/07:503) stays a Q6A gate.
+(chrony selects PPS within 10 min of a 3D fix, build/07:502) stays a Q6A gate.
 """
 import json
 import os
@@ -13,8 +13,8 @@ import unittest
 
 from srrx import gnss_orchestrator as orchestrator
 from srrx.engine import Engine
-from srrx.gnss_orchestrator import (ConfigRun, Done, GnssOrchestrator, LinuxGnssEffects, POLL_MS, QUALIFY_MS,
-                                    RETRY_MS, UnixLineRequest)
+from srrx.gnss_orchestrator import (ConfigRun, Done, GnssOrchestrator, JamLatchFile, LinuxGnssEffects,
+                                    JAMMING_FRESH_MS, POLL_MS, QUALIFY_MS, RETRY_MS, WATCH_LOST_MS, UnixLineRequest)
 from srrx.hardware import SimHardware
 from srrx.link import SimLink
 from srrx.policy import GNSS_RESET_GATE
@@ -33,10 +33,13 @@ class Later:
         self.cancelled = True
 
 
-def snapshot(qualified=True, jamming=False):
+def snapshot(qualified=True, jamming=False, status=None, reports=5, age_ms=200):
     # One unnamed synthetic point: the orchestrator must never copy it into its status.
     return {"ok": True, "data": {"schema_version": 1, "qualified_fix": qualified,
-                                 "jamming": {"active": jamming, "status": 2 if jamming else 1},
+                                 "jamming": {"active": jamming,
+                                             "status": (2 if jamming else 1) if status is None else status,
+                                             "source": "PAIRSPF", "error": None, "reports": reports,
+                                             "age_ms": age_ms},
                                  "location": {"lat": 0.125, "lon": 0.375, "mode": 3, "satellites": 8}}}
 
 
@@ -73,10 +76,10 @@ class FakeEffects:
 
 
 class Harness:
-    def __init__(self):
+    def __init__(self, mode="gpsd", latch=None):
         self.log = []
         self.effects = FakeEffects(self.log)
-        self.orch = GnssOrchestrator(self.effects)
+        self.orch = GnssOrchestrator(self.effects, mode=mode, latch=latch)
         self.now = 0
         self.reset = {"state": "IDLE", "release_ms": None}
         self.release_at = None
@@ -103,6 +106,12 @@ class Harness:
         self.advance(QUALIFY_MS + 3 * POLL_MS)
         return self.orch.state == "SELECTED"
 
+    def reset_released(self):
+        """Accept a gnss_reset and advance past its proven release."""
+        reply = self.orch.request_reset("uid:1000", None, self.now)
+        self.advance(260)
+        return reply
+
 
 class StateMachineTests(unittest.TestCase):
     def setUp(self):
@@ -112,16 +121,19 @@ class StateMachineTests(unittest.TestCase):
         self.h.advance(20)
         self.assertEqual(self.h.kinds(), [("pps", False), "config"])
         self.assertEqual(self.h.orch.state, "AWAIT_FIX")
-        self.assertFalse(self.h.orch.status()["time_trusted"])
+        self.assertFalse(self.h.orch.status()["pps_gate_open"])
         self.h.advance(QUALIFY_MS - 2 * POLL_MS)
         self.assertNotIn(("pps", True), self.h.kinds())  # not yet held for QUALIFY_MS
         self.h.advance(3 * POLL_MS)
         self.assertEqual(self.h.kinds(), [("pps", False), "config", ("pps", True)])
         status = self.h.orch.status()
-        self.assertEqual((status["state"], status["pps_selected"], status["rtc_stale"], status["time_trusted"]),
+        self.assertEqual((status["state"], status["pps_selected"], status["rtc_stale"], status["pps_gate_open"]),
                          ("SELECTED", True, False, True))
+        self.assertEqual((status["jamming_active"], status["jamming_visible"], status["reset_required"]),
+                         (False, True, False))
         self.assertEqual(status["config"]["version"], "TESTVER1")
         self.assertFalse(status["automatic_reset"])
+        self.assertNotIn("time_trusted", status)  # labd's gate, not chrony's selection (chronyc sources)
 
     def test_one_unqualified_or_missing_sample_restarts_the_qualification_window(self):
         self.h.advance(20 + QUALIFY_MS - 2 * POLL_MS)
@@ -134,6 +146,22 @@ class StateMachineTests(unittest.TestCase):
         self.assertNotIn(("pps", True), self.h.kinds())
         self.h.advance(2 * POLL_MS)
         self.assertIn(("pps", True), self.h.kinds())
+
+    def test_pps_needs_a_fresh_good_jamming_report_not_just_a_qualified_fix(self):
+        # gpsd "raw":1 passthrough or $PAIRSPF output may not work (QEMU/Q6A items): no report, no PPS.
+        for case, reply in (("no report yet", snapshot(reports=0, age_ms=None)),
+                            ("stale report", snapshot(age_ms=JAMMING_FRESH_MS + 1)),
+                            ("status 0 unknown", snapshot(status=0)), ("status True", snapshot(status=True)),
+                            ("no jamming field", {"ok": True, "data": {"schema_version": 1, "qualified_fix": True}})):
+            with self.subTest(case):
+                h = Harness()
+                h.effects.reply = reply
+                h.advance(QUALIFY_MS * 3)
+                self.assertEqual(h.orch.state, "AWAIT_FIX")
+                self.assertNotIn(("pps", True), h.kinds())
+                self.assertFalse(h.orch.status()["jamming_visible"])
+                h.effects.reply = snapshot()
+                self.assertTrue(h.selected())
 
     def test_reset_deselects_pps_before_the_pulse_and_reselects_after_config_and_fix(self):
         self.assertTrue(self.h.selected())
@@ -156,12 +184,21 @@ class StateMachineTests(unittest.TestCase):
         self.assertTrue(self.h.selected())
         self.h.effects.noselect_ok = False
         self.assertTrue(self.h.orch.request_reset("uid:1000", None, self.h.now)["ok"])
-        self.h.advance(60 * 1000)
+        self.h.advance(RETRY_MS * 4 + 100)
         self.assertNotIn("pulse", self.h.kinds())
         status = self.h.orch.status()
+        # The plan ended without a pulse; PPS may still be selected, so only the noselect is retried.
+        self.assertEqual((status["state"], status["last_error"], status["pps_selected"], status["pps_gate_open"]),
+                         ("PPS_NOSELECT_FAULT", "PPS_NOSELECT_FAILED", None, False))
+        self.assertEqual(self.h.kinds().count(("pps", False)), 2 + 4)  # boot, the plan's own, 4 retries
+        self.h.effects.noselect_ok = True
+        self.h.advance(RETRY_MS)
+        status = self.h.orch.status()
         self.assertEqual((status["state"], status["last_error"], status["pps_selected"]),
-                         ("FAILED", "PPS_NOSELECT_FAILED", None))
-        self.assertEqual(sum(1 for item in self.h.kinds() if item == ("pps", False)), 2)  # boot + this one, no retry
+                         ("FAILED", "PPS_NOSELECT_FAILED", False))
+        self.h.advance(RETRY_MS * 3)
+        self.assertEqual(self.h.kinds().count(("pps", False)), 2 + 5)  # confirmed: no further retry
+        self.assertNotIn("pulse", self.h.kinds())
 
     def test_refused_pulse_still_reads_back_and_reselects_without_a_release_step(self):
         self.assertTrue(self.h.selected())
@@ -204,20 +241,114 @@ class StateMachineTests(unittest.TestCase):
         h.advance(60000, step=500)
         self.assertEqual(h.kinds(), [("pps", False), "config"])
 
-    def test_jamming_deselects_pps_and_latches_until_an_operator_plan(self):
+    def test_jamming_latch_needs_a_proven_reset_and_never_a_mere_config(self):
         self.assertTrue(self.h.selected())
         self.h.effects.reply = snapshot(jamming=True)
         self.h.advance(POLL_MS + 20)
         status = self.h.orch.status()
-        self.assertEqual((status["state"], status["last_error"], status["pps_selected"], status["jamming_seen"]),
-                         ("JAMMED", "GNSS_JAMMING", False, True))
+        self.assertEqual((status["state"], status["last_error"], status["pps_selected"], status["jamming_seen"],
+                          status["reset_required"], status["jamming_active"]),
+                         ("JAMMED", "GNSS_JAMMING", False, True, True, True))
         self.assertEqual(self.h.kinds()[-1], ("pps", False))
+        self.h.advance(POLL_MS * 5)
+        self.assertEqual(self.h.kinds().count(("pps", False)), 2)  # a held flag is not deselected again
         self.h.effects.reply = snapshot()
         self.h.advance(QUALIFY_MS * 2)
-        self.assertEqual(self.h.orch.state, "JAMMED")  # a clear flag does not reselect by itself
+        status = self.h.orch.status()
+        self.assertEqual((status["state"], status["jamming_active"]), ("JAMMED", False))  # no reselect by itself
         self.assertNotIn("pulse", self.h.kinds())
-        self.assertTrue(self.h.orch.request_config("uid:1000", self.h.now)["ok"])
+        # build/07:484: after the flag, a cold restart and the settings again before PPS is trusted.
+        reply = self.h.orch.request_config("uid:1000", self.h.now)
+        self.assertFalse(reply["ok"])
+        self.assertTrue(reply["error"].startswith("GNSS_JAMMED_RESET_REQUIRED"))
+        self.assertEqual(self.h.orch.state, "JAMMED")
+        self.h.reset_released()
+        self.assertFalse(self.h.orch.status()["reset_required"])  # cleared by the proven release
         self.assertTrue(self.h.selected())
+        self.assertEqual(self.h.kinds()[-5:], [("invalidate", "GNSS_RESET"), ("pps", False), "pulse", "config",
+                                               ("pps", True)])
+        self.assertEqual(sum(kind == "pulse" for kind in self.h.kinds()), 1)
+        self.assertEqual([e["event"] for e in self.h.orch.events].count("GNSS_JAM_LATCH_CLEARED"), 1)
+
+    def test_a_refused_or_unproven_reset_keeps_the_latch(self):
+        self.h.effects.reply = snapshot(jamming=True)
+        self.h.advance(40)
+        self.assertEqual(self.h.orch.state, "JAMMED")
+        self.h.effects.reply = snapshot()
+        self.h.pulse_result = {"ok": False, "error": "GNSS_RESET_RATE_LIMIT: at most 3 pulses per 15 min"}
+        before = len(self.h.kinds())
+        self.assertTrue(self.h.orch.request_reset("uid:1000", None, self.h.now)["ok"])
+        self.h.advance(40)
+        status = self.h.orch.status()
+        self.assertEqual((status["state"], status["reset_required"]), ("JAMMED", True))
+        self.assertTrue(status["last_error"].startswith("GNSS_RESET_REFUSED: GNSS_RESET_RATE_LIMIT"))
+        self.assertEqual(self.h.kinds()[before:], [("invalidate", "GNSS_RESET"), ("pps", False), "pulse"])  # no config
+        self.h.pulse_result = {"ok": True, "state": "ASSERTED"}
+        self.h.orch.request_reset("uid:1000", None, self.h.now)
+        self.h.advance(20)
+        self.h.reset = {"state": "RELEASE_UNCONFIRMED", "release_ms": None}
+        self.h.release_at = 10 ** 12
+        self.h.advance(40)
+        status = self.h.orch.status()
+        self.assertEqual((status["state"], status["reset_required"]), ("FAILED", True))
+        self.assertFalse(self.h.orch.request_config("uid:1000", self.h.now)["ok"])
+
+    def test_a_reset_while_the_flag_still_holds_latches_again(self):
+        self.assertTrue(self.h.selected())
+        self.h.effects.reply = snapshot(jamming=True)  # locationd holds the flag 60 s after the last report
+        self.h.advance(POLL_MS + 20)
+        self.h.reset_released()
+        self.h.advance(POLL_MS * 2)
+        status = self.h.orch.status()
+        self.assertEqual((status["state"], status["reset_required"]), ("JAMMED", True))
+        self.assertNotIn(("pps", True), self.h.kinds()[3:])  # after the boot select
+
+    def test_the_latch_survives_a_labd_restart_and_boot_never_selects_pps(self):
+        folder = tempfile.TemporaryDirectory(prefix="srrx-jam-latch-")
+        self.addCleanup(folder.cleanup)
+        path = Path(folder.name) / "jamming-latch.json"
+        first = Harness(latch=JamLatchFile(path))
+        self.assertTrue(first.selected())
+        self.assertFalse(path.exists())
+        first.effects.reply = snapshot(jamming=True)
+        first.advance(POLL_MS + 20)
+        self.assertEqual(json.loads(path.read_text()), {"reset_required": True, "schema_version": 1})
+        # labd crashes or is restarted (systemctl restart srrx): the boot plan honours the file.
+        again = Harness(latch=JamLatchFile(path))
+        self.assertTrue(again.orch.status()["reset_required"])
+        again.advance(QUALIFY_MS * 3)
+        status = again.orch.status()
+        self.assertEqual((status["state"], status["last_error"], status["pps_selected"], status["latch_error"]),
+                         ("JAMMED", "GNSS_JAMMED_RESET_REQUIRED", False, None))
+        self.assertEqual(again.kinds(), [("pps", False)])  # deselected; no config, no select
+        self.assertFalse(again.orch.request_config("uid:1000", again.now)["ok"])
+        again.reset_released()
+        self.assertFalse(path.exists())
+        self.assertTrue(again.selected())
+        self.assertFalse(Harness(latch=JamLatchFile(path)).orch.status()["reset_required"])
+
+    def test_the_latch_file_fails_closed(self):
+        folder = tempfile.TemporaryDirectory(prefix="srrx-jam-latch-")
+        self.addCleanup(folder.cleanup)
+        root = Path(folder.name)
+        self.assertEqual(JamLatchFile(root / "absent.json").load(), (False, None))
+        self.assertEqual(JamLatchFile(root / "missing-dir/latch.json").load(), (True, "GNSS_JAM_LATCH_DIRECTORY_MISSING"))
+        for content in (b"", b"{bad", b'{"schema_version":1,"reset_required":false}', b"[1]",
+                        b'{"schema_version":2,"reset_required":true}', b'{"x":NaN}', b"x" * 5000):
+            with self.subTest(content=content[:40]):
+                (root / "odd.json").write_bytes(content)
+                self.assertEqual(JamLatchFile(root / "odd.json").load(), (True, "GNSS_JAM_LATCH_UNREADABLE"))
+        (root / "dir.json").mkdir()
+        self.assertEqual(JamLatchFile(root / "dir.json").load(), (True, "GNSS_JAM_LATCH_UNREADABLE"))
+        latch = JamLatchFile(root / "missing-dir/latch.json")
+        self.assertFalse(latch.store(True))
+        self.assertFalse(latch.store(False))
+        h = Harness(latch=latch)
+        h.advance(QUALIFY_MS * 2)
+        self.assertEqual((h.orch.state, h.orch.status()["latch_error"]), ("JAMMED", "GNSS_JAM_LATCH_DIRECTORY_MISSING"))
+        h.reset_released()
+        self.assertEqual(h.orch.status()["latch_error"], "GNSS_JAM_LATCH_STORE_FAILED")
+        self.assertTrue(h.selected())  # this run saw the proven reset; the next start is latched again
 
     def test_jamming_while_waiting_for_a_fix_never_selects_and_failed_noselect_retries(self):
         h = Harness()
@@ -244,7 +375,7 @@ class StateMachineTests(unittest.TestCase):
         h.effects.noselect_ok = False
         h.advance(RETRY_MS * 2 + 100)
         self.assertEqual(h.kinds().count(("pps", False)), 3)
-        self.assertEqual(h.orch.state, "PPS_NOSELECT")
+        self.assertEqual((h.orch.state, h.orch.last_error), ("PPS_NOSELECT", "PPS_NOSELECT_FAILED"))
         h.effects.noselect_ok = True
         h.effects.config_delay_ms = 60000
         h.advance(RETRY_MS)
@@ -252,12 +383,33 @@ class StateMachineTests(unittest.TestCase):
         for request in (lambda: h.orch.request_reset("uid:1000", None, h.now), lambda: h.orch.request_config("uid:1000", h.now)):
             reply = request()
             self.assertFalse(reply["ok"])
-            self.assertIn("GNSS_ORCHESTRATION_BUSY", reply["error"])
+            self.assertEqual(reply["error"], "GNSS_ORCHESTRATION_BUSY: GNSS_CONFIG")
+
+    def test_an_operator_plan_replaces_the_endless_boot_noselect_retry(self):
+        # timegate, chronyd or the PPS refclock missing: boot keeps retrying, labctl is never locked out.
+        h = Harness()
+        h.effects.noselect_ok = False
+        h.advance(RETRY_MS * 3)
+        self.assertEqual(h.orch.step, "noselect")
+        reply = h.orch.request_config("uid:1000", h.now)
+        self.assertEqual((reply["ok"], reply["orchestration"]), (True, "config"))
+        h.advance(40)
+        status = h.orch.status()
+        # The operator plan fails cleanly (no config without a confirmed noselect) and keeps deselecting.
+        self.assertEqual((status["state"], status["last_error"], status["orchestration"]),
+                         ("PPS_NOSELECT_FAULT", "PPS_NOSELECT_FAILED", "config"))
+        self.assertNotIn("config", h.kinds())
+        self.assertTrue(h.orch.request_reset("uid:1000", None, h.now)["ok"])  # the retry is replaceable too
+        h.advance(40)
+        self.assertNotIn("pulse", h.kinds())
+        h.effects.noselect_ok = True
+        h.advance(RETRY_MS + 40)
+        self.assertEqual((h.orch.state, h.orch.pps_selected), ("FAILED", False))
 
     def test_status_never_carries_coordinates(self):
         self.assertTrue(self.h.selected())
         text = json.dumps(self.h.orch.status())
-        for word in ("lat", "lon", "0.125", "0.375", "location"):
+        for word in ('"lat"', '"lon"', "0.125", "0.375", "location", "satellites"):  # "latch" is no coordinate
             self.assertNotIn(word, text)
 
     def test_select_failure_returns_to_the_fix_gate(self):
@@ -265,9 +417,76 @@ class StateMachineTests(unittest.TestCase):
         h.effects.select_ok = False
         h.advance(QUALIFY_MS + 3 * POLL_MS)
         self.assertEqual((h.orch.state, h.orch.last_error), ("AWAIT_FIX", "PPS_SELECT_FAILED"))
+        self.assertIsNone(h.orch.pps_selected)  # the failed request may still have reached chronyd
         h.effects.select_ok = True
         h.advance(RETRY_MS + QUALIFY_MS + 3 * POLL_MS)
-        self.assertEqual(h.orch.state, "SELECTED")
+        self.assertEqual((h.orch.state, h.orch.last_error), ("SELECTED", None))
+
+    def test_a_fix_timeout_after_a_failed_select_deselects_first(self):
+        h = Harness()
+        h.effects.select_ok = False
+        h.advance(QUALIFY_MS + 3 * POLL_MS)
+        h.effects.reply = snapshot(qualified=False)
+        h.advance(orchestrator.FIX_TIMEOUT_MS + 2000, step=500)
+        status = h.orch.status()
+        self.assertEqual((status["state"], status["last_error"], status["pps_selected"]),
+                         ("FIX_TIMEOUT", "GNSS_FIX_TIMEOUT", False))
+        self.assertEqual(h.kinds()[-1], ("pps", False))
+
+    def test_raw_mode_never_selects_pps_because_chrony_gets_no_nmea(self):
+        # gpsd stopped: 'refclock SHM 0 refid NMEA' gets no samples and 'lock NMEA' drops every pulse.
+        h = Harness(mode="raw")
+        h.advance(QUALIFY_MS * 3)
+        status = h.orch.status()
+        self.assertEqual((status["state"], status["pps_selected"], status["pps_gate_open"], status["rtc_stale"]),
+                         ("POSITION_ONLY", False, False, True))
+        self.assertIn("RAW_MODE_NO_NMEA_SHM", status["warnings"])
+        self.assertEqual(h.kinds(), [("pps", False), "config"])
+        reply = h.orch.request_reset("uid:1000", None, h.now)
+        self.assertEqual(reply["steps"], ["invalidate", "noselect", "stale", "pulse", "release", "config", "position_only"])
+        h.advance(QUALIFY_MS * 3)
+        self.assertEqual(h.orch.state, "POSITION_ONLY")
+        self.assertNotIn(("pps", True), h.kinds())
+        h.effects.reply = snapshot(jamming=True)  # the latch still applies to the receiver itself
+        h.advance(POLL_MS + 20)
+        self.assertEqual((h.orch.state, h.orch.reset_required), ("JAMMED", True))
+        self.assertFalse(h.orch.request_config("uid:1000", h.now)["ok"])
+
+    def test_fault_while_selected_deselects_pps_before_failing(self):
+        self.assertTrue(self.h.selected())
+        self.h.effects.noselect_ok = False
+        self.h.orch.fault("GNSS_ORCHESTRATOR_ERROR: RuntimeError", self.h.now)
+        status = self.h.orch.status()
+        self.assertEqual((status["state"], status["pps_gate_open"]), ("PPS_NOSELECT_FAULT", False))
+        self.h.advance(RETRY_MS * 2 + 100)
+        self.assertEqual((self.h.orch.state, self.h.orch.pps_selected), ("PPS_NOSELECT_FAULT", None))
+        self.h.effects.noselect_ok = True
+        self.h.advance(RETRY_MS)
+        status = self.h.orch.status()
+        self.assertEqual((status["state"], status["last_error"], status["pps_selected"], status["pps_gate_open"]),
+                         ("FAILED", "GNSS_ORCHESTRATOR_ERROR: RuntimeError", False, False))
+        self.h.effects.reply = snapshot(jamming=True)  # still watched for jamming while FAILED
+        self.h.advance(POLL_MS + 20)
+        self.assertEqual((self.h.orch.state, self.h.orch.reset_required), ("JAMMED", True))
+
+    def test_lost_snapshots_or_reports_while_selected_deselect_and_requalify(self):
+        for case, reply in (("locationd down", {"ok": False, "error": "LOCATIOND_UNREACHABLE"}),
+                            ("no fresh jamming report", snapshot(age_ms=JAMMING_FRESH_MS + 500))):
+            with self.subTest(case):
+                h = Harness()
+                self.assertTrue(h.selected())
+                h.effects.reply = reply
+                h.advance(WATCH_LOST_MS - POLL_MS)
+                self.assertEqual(h.orch.state, "SELECTED")  # a short gap is tolerated
+                h.advance(2 * POLL_MS + 40)
+                status = h.orch.status()
+                self.assertEqual((status["state"], status["orchestration"], status["pps_selected"],
+                                  status["pps_gate_open"], status["reset_required"]),
+                                 ("AWAIT_FIX", "watch", False, False, False))
+                self.assertIn("JAMMING_WATCH_LOST", status["warnings"])
+                self.assertEqual(h.kinds()[-1], ("pps", False))
+                h.effects.reply = snapshot()
+                self.assertTrue(h.selected())  # no reset needed: nothing was flagged
 
 
 class EngineIntegrationTests(unittest.TestCase):
@@ -319,13 +538,17 @@ class EngineIntegrationTests(unittest.TestCase):
         self.assertEqual(self.engine.status()["policy"]["gnss_reset"]["last_width_ms"], 200)
         self.advance(QUALIFY_MS + 3 * POLL_MS)
         status = self.engine.status()["gnss"]
-        self.assertEqual((status["state"], status["pps_selected"], status["time_trusted"]), ("SELECTED", True, True))
+        self.assertEqual((status["state"], status["pps_selected"], status["pps_gate_open"]), ("SELECTED", True, True))
         self.assertTrue(self.engine.policy.armed)  # orchestration never touched the power session
 
     def test_gnss_config_needs_the_lease_and_off_mode_refuses(self):
         self.arm()
         self.assertIn("own valid lease", self.request("uid:1001", op="gnss_config")["error"])
         self.assertTrue(self.request("uid:1000", op="gnss_config")["ok"])
+        self.effects.reply = snapshot(jamming=True)
+        self.advance(POLL_MS + 40)
+        self.assertEqual(self.engine.status()["gnss"]["state"], "JAMMED")
+        self.assertIn("GNSS_JAMMED_RESET_REQUIRED", self.request("uid:1000", op="gnss_config")["error"])
         plain = Engine(SimHardware(), SimLink(PROJECT), simulated=True)
         self.addCleanup(plain.close)
         self.assertIn("GNSS_ORCHESTRATION_OFF", plain.request({"op": "gnss_config", "_owner": "uid:1000"}, 0)["error"])

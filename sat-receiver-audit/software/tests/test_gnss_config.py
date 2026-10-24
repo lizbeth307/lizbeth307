@@ -11,8 +11,12 @@ import os
 from pathlib import Path
 import re
 import select
+import signal
+import subprocess
+import sys
 import tempfile
 import termios
+import textwrap
 import threading
 import time
 import unittest
@@ -305,6 +309,54 @@ class RunTests(PtyCase):
         self.log.clear()
         code, result = self.go("off")
         self.assertEqual((code, result["error"], self.log), (2, "GNSS_CONFIG_MODE_OFF", []))
+
+    def test_sigterm_still_restarts_the_reader_and_writes_the_result(self):
+        # TimeoutStartSec=120 or `systemctl stop srrx-gnss-config` while gpsd is being stopped: the
+        # finally of run() must still start the reader and write result.json. A fresh process owns its
+        # signal dispositions; subprocess.run is replaced, so no systemctl runs.
+        code = textwrap.dedent('''
+            import json, os, signal, sys, time
+            from unittest import mock
+            from srrx import gnss_config
+            calls = []
+            def fake_run(argv, **kwargs):
+                calls.append([argv[0], argv[1], kwargs.get("timeout")])
+                if argv[1] == "stop":
+                    print("STOPPING", flush=True)
+                    time.sleep(60)
+                if argv[1] == "start":
+                    os.kill(os.getpid(), signal.SIGTERM)  # a repeated stop cannot abort the restart
+                    time.sleep(.2)
+                return gnss_config.subprocess.CompletedProcess(argv, 0)
+            signal.signal(signal.SIGTERM, signal.SIG_DFL)  # independent of the runner's own dispositions
+            with mock.patch.object(gnss_config.subprocess, "run", fake_run):
+                code = gnss_config.main(["--gnss", "gpsd", "--result", sys.argv[1]])
+            print(json.dumps({"code": code, "calls": calls, "armed": gnss_config.TERMINATION.armed,
+                              "received": gnss_config.TERMINATION.received}), flush=True)
+        ''')
+        software = Path(__file__).resolve().parents[1]
+        process = subprocess.Popen([sys.executable, "-c", code, str(self.result)], cwd=software.parent,
+                                   stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True,
+                                   env=dict(os.environ, PYTHONPATH=str(software)))
+        try:
+            self.assertEqual(process.stdout.readline().strip(), "STOPPING")
+            process.send_signal(signal.SIGTERM)
+            out, err = process.communicate(timeout=30)
+        finally:
+            if process.poll() is None:
+                process.kill()
+                process.communicate()
+        self.assertEqual(process.returncode, 0, err)
+        lines = out.splitlines()
+        result, summary = json.loads(lines[-2]), json.loads(lines[-1])
+        self.assertEqual(json.loads(self.result.read_text()), result)
+        self.assertEqual((result["ok"], result["error"], result["reader_restarted"], result["readback_match"]),
+                         (False, "GNSS_CONFIG_TERMINATED", True, False))
+        self.assertEqual(summary, {"code": 2, "armed": False, "received": True,
+                                   "calls": [["/usr/bin/systemctl", "stop", 15], ["/usr/bin/systemctl", "start", 15]]})
+        # Without a signal the bounded worst case stays below TimeoutStartSec=120.
+        self.assertLess(2 * gnss_config.SYSTEMCTL_TIMEOUT_S + gnss_config.FIRST_SENTENCE_MS / 1000
+                        + 15 * (gnss_config.WRITE_MS + gnss_config.REPLY_MS) / 1000, 110)
 
 
 class OpenTests(PtyCase):
