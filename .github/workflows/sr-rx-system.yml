@@ -131,7 +131,9 @@ jobs:
           cp "$units/fastrpc.service" "$units/cdsprpcd.service"
           cp deployment/system/npu/inferd-htp.service "$units/"
           sudo install -D -m 0755 /bin/true /opt/lab/npu/bin/inferd-htp
-          SYSTEMD_UNIT_PATH="$units:" systemd-analyze verify --man=no "$units/inferd-htp.service"
+          # Any diagnostic (unknown key, bad value, missing program) fails the step.
+          SYSTEMD_UNIT_PATH="$units:" systemd-analyze verify --man=no "$units/inferd-htp.service" > "$RUNNER_TEMP/verify.txt" 2>&1 || { cat "$RUNNER_TEMP/verify.txt"; exit 1; }
+          if [ -s "$RUNNER_TEMP/verify.txt" ]; then cat "$RUNNER_TEMP/verify.txt"; exit 1; fi
       - name: Both hooks inside a real mkinitramfs (noble initramfs-tools)
         run: |
           set -eu

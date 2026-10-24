@@ -5,7 +5,7 @@ Description=SR-RX NPU inference (QNN HTP, offline context binaries only)
 # Installed by deployment/system/npu_layout.py, never by deploy.py stage; preset: disabled.
 Requires=fastrpc.service cdsprpcd.service
 After=fastrpc.service cdsprpcd.service
-ConditionPathIsExecutable=/opt/lab/npu/bin/inferd-htp
+ConditionFileIsExecutable=/opt/lab/npu/bin/inferd-htp
 ConditionPathExists=/etc/srrx/npu-phase0.env
 ConditionPathExists=/opt/lab/npu/2.42/LAYOUT.json
 

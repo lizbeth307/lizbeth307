@@ -250,6 +250,8 @@ class NpuLayoutTests(unittest.TestCase):
             self.assertIn(line, unit.splitlines())  # STACK.md:875
         self.assertNotIn("PrivateDevices", unit.split("[Service]")[1].replace("No PrivateDevices=", ""))
         self.assertNotIn("[Install]", unit)  # never enabled by a preset or by accident
+        # systemd 255 knows ConditionFileIsExecutable=, not ConditionPathIsExecutable= (CI systemd-analyze).
+        self.assertIn("ConditionFileIsExecutable=/opt/lab/npu/bin/inferd-htp", unit.splitlines())
 
     def test_tampered_inputs_are_refused(self):
         with self.assertRaisesRegex(npu_layout.LayoutError, "SHA-256"):

@@ -176,7 +176,7 @@ python3 deployment/system/fdt_check.py field.dtb --profile field
 python3 deployment/system/fdt_check.py /sys/firmware/fdt --profile lab --reference lab.dtb
 ```
 
-`fdt_check.py` — читач FDT на Python без dtc: перевіряє статуси, `pinctrl-0` UART лише з TX/RX, 100 kHz на I²C0/I²C2, aliases, рівно один вузол pps-gpio на `<&tlmm 96 0>` і `pcie0` за профілем. Поправка до build/07 §3.3 і STACK.md:843: SHA-256 усього `/sys/firmware/fdt` не може дорівнювати SHA-256 файла lab.dtb, бо EFI stub дописує `/chosen` (bootargs, initrd, kaslr-seed, мапа пам'яті EFI), а DT fixup UEFI може змінити й інше; тому `--reference` порівнює вузли й властивості поза `/chosen` і перелічує відмінності. Задокументовані SHA-256 lab.dtb і field.dtb — вихід CI (`dt-manifest.json`), а не стендовий результат.
+У deb `linux-image-6.18.2-4-qcom` DTB лежить у `usr/lib/linux-image-6.18.2-4-qcom/qcom/qcs6490-radxa-dragon-q6a.dtb` (CI, 24.10.2026); шлях `/dtbs/6.18.2-4-qcom/qcom/…` зі STACK.md:843 — розташування на встановленій системі, його звіряють на образі. CI компілює обидва оверлеї `dtc` 1.7.0 без попереджень і зливає їх `fdtoverlay` з DTB пакета, тобто мітки `&uart6`, `&tlmm`, `&pcie0` тощо справді є в його `__symbols__`. `fdt_check.py` — читач FDT на Python без dtc: перевіряє статуси, `pinctrl-0` UART лише з TX/RX, 100 kHz на I²C0/I²C2, aliases, рівно один вузол pps-gpio на `<&tlmm 96 0>` і `pcie0` за профілем. Поправка до build/07 §3.3 і STACK.md:843: SHA-256 усього `/sys/firmware/fdt` не може дорівнювати SHA-256 файла lab.dtb, бо EFI stub дописує `/chosen` (bootargs, initrd, kaslr-seed, мапа пам'яті EFI), а DT fixup UEFI може змінити й інше; тому `--reference` порівнює вузли й властивості поза `/chosen` і перелічує відмінності. Задокументовані SHA-256 lab.dtb і field.dtb — вихід CI (`dt-manifest.json`), а не стендовий результат.
 
 DKMS pps-gpio: `deployment/system/dkms/pps-gpio/` має `dkms.conf` (пакет `srrx-pps-gpio` 1.2.0+lab1, `CC=gcc-12`, бо ядро зібране gcc 12.2.0) і `Makefile`; сам `pps-gpio.c` (radxa/kernel 559f4f9, GPL-2.0-or-later) не комітиться — він містить e-mail авторів — а завантажується за закріпленим URL і перевіряється за SHA-256/розміром.
 
@@ -187,7 +187,7 @@ sudo cp -r /tmp/srrx-dkms/srrx-pps-gpio-1.2.0+lab1 /usr/src/ && sudo dkms instal
 python3 deployment/system/pps_dkms.py vermagic --module /path/to/pps-gpio.ko
 ```
 
-CI збирає модуль на нативному aarch64 проти заголовків із закріпленого deb і перевіряє vermagic `6.18.2-4-qcom`; власник GPIO96 у pinmux, `/dev/pps-gnss` і вибір PPS chrony лишаються W1-2.
+CI збирає модуль на нативному aarch64 проти заголовків із закріпленого deb і перевіряє vermagic `6.18.2-4-qcom SMP preempt mod_unload aarch64`; `auto.conf` заголовків підтверджує `CONFIG_CC_VERSION_TEXT=aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0` і `CONFIG_PPS=y` без `PPS_CLIENT_GPIO`, а gcc-12 noble — 12.4.0, тож kbuild лише попереджає про іншу підверсію компілятора; власник GPIO96 у pinmux, `/dev/pps-gnss` і вибір PPS chrony лишаються W1-2.
 
 ### Польовий EDID (`deployment/system/edid_field.py`)
 
