@@ -1,0 +1,566 @@
+{
+ "schema": 1,
+ "date": "2026-10-24",
+ "note": "Pages read on this date with WebFetch or a plain HTTP GET. A row records what the page showed; \"stock not shown\" means unknown, not zero.",
+ "entries": {
+  "digikey:141-TL3145BF350QJCT-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=TL3145BF350QJ",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "TL3145BF350QJ",
+   "manufacturer": "E-Switch",
+   "stock": 5989,
+   "status": "Active",
+   "price": "EUR 0.37 @1"
+  },
+  "digikey:1934-1130-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=5977003801",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "5977003801",
+   "manufacturer": "Fair-Rite Products Corp.",
+   "stock": 410,
+   "status": "Active",
+   "price": "EUR 9.46 @1"
+  },
+  "digikey:1934-1355-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=2631102002",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "2631102002",
+   "manufacturer": "Fair-Rite Products Corp.",
+   "stock": 73775,
+   "status": "Active",
+   "price": "EUR 2.58 @1"
+  },
+  "digikey:1934-1377-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=2631480002",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "2631480002",
+   "manufacturer": "Fair-Rite Products Corp.",
+   "stock": 59123,
+   "status": "Active",
+   "price": "EUR 1.12 @1"
+  },
+  "digikey:1934-1464-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=0431164281",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "0431164281",
+   "manufacturer": "Fair-Rite Products Corp.",
+   "stock": 102408,
+   "status": "Active",
+   "price": "EUR 2.50 @1"
+  },
+  "digikey:2223-CPT-1207-3TH-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=CPT-1207-3TH",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "CPT-1207-3TH",
+   "manufacturer": "Same Sky (Formerly CUI Devices)",
+   "stock": 2173,
+   "status": "Active",
+   "price": "EUR 0.54 @1"
+  },
+  "digikey:2648-SC0915CT-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=SC0915",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "SC0915",
+   "manufacturer": "Raspberry Pi",
+   "stock": 40148,
+   "status": "Active",
+   "price": "EUR 4.03 @1"
+  },
+  "digikey:296-37224-2-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=TPS7A4701RGWT",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "TPS7A4701RGWR",
+   "manufacturer": "Texas Instruments",
+   "stock": 0,
+   "status": "250 expected 16-Nov-2026",
+   "price": "EUR 5.93 @1"
+  },
+  "digikey:296-37243-1-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=TPS7A4701RGWT",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "TPS7A4701RGWT",
+   "manufacturer": "Texas Instruments",
+   "stock": 0,
+   "status": "Active (out of stock, backorder)",
+   "price": "EUR 6.99 @1"
+  },
+  "digikey:296-TPS259470ARPWRCT-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=TPS259470ARPWR",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "TPS259470ARPWR",
+   "manufacturer": "Texas Instruments",
+   "stock": 76405,
+   "status": "Active",
+   "price": "EUR 1.81 @1"
+  },
+  "digikey:31-PI4IOE5V9555LEXCT-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=PI4IOE5V9555LEX",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "PI4IOE5V9555LEX",
+   "manufacturer": "Diodes Incorporated",
+   "stock": 3021,
+   "status": "Active",
+   "price": "EUR 1.30 @1"
+  },
+  "digikey:36-3568-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=36-3568-ND",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "3568",
+   "manufacturer": "Keystone Electronics",
+   "stock": 98603,
+   "status": "Active",
+   "price": "EUR 1.32 @1"
+  },
+  "digikey:445-C3225X7R1H226M250ACCT-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=C3225X7R1H226M250AC",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "C3225X7R1H226M250AC",
+   "manufacturer": "TDK",
+   "stock": 0,
+   "status": "Active, 1000 expected 12-Apr-2027",
+   "price": "EUR 1.31 @1"
+  },
+  "digikey:4652-0805LS-471XGRC-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=0805LS-471XGRC",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "0805LS-471XGRC",
+   "manufacturer": "Coilcraft",
+   "stock": 735,
+   "status": "Active",
+   "price": "EUR 1.56 @1"
+  },
+  "digikey:541-TNPW080510K0BYEACT-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=TNPW080510K0BYEA",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "TNPW080510K0BYEA",
+   "manufacturer": "Vishay Dale",
+   "stock": 0,
+   "status": "Active, 5000 expected 01-Dec-2026",
+   "price": "EUR 0.63 @1"
+  },
+  "digikey:541-TNPW08052K00BYEACT-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=TNPW08052K00BYEA",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "TNPW08052K00BYEA",
+   "manufacturer": "Vishay Dale",
+   "stock": null,
+   "status": "Active (stock not shown; substitute TNPW08052K00BYEN 3336 in stock)",
+   "price": "EUR 0.67 @1"
+  },
+  "digikey:74271112": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=74271112",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "74271112",
+   "manufacturer": "Würth Elektronik",
+   "stock": null,
+   "status": "listed (stock not shown)",
+   "price": "EUR 3.85"
+  },
+  "digikey:754-1916-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=WP7113LSECK%2FJ3",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "WP7113LSECK/J3",
+   "manufacturer": "Kingbright",
+   "stock": 28104,
+   "status": "Active",
+   "price": "EUR 0.47 @1"
+  },
+  "digikey:900-0732511153-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=732511153",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "0732511153",
+   "manufacturer": "Molex",
+   "stock": 7894,
+   "status": "Active",
+   "price": "EUR 3.82 @1"
+  },
+  "digikey:BFB0305HA-C": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=BFB0305HA-C",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "BFB0305HA-C",
+   "manufacturer": "Delta Electronics",
+   "stock": null,
+   "status": "listed (stock not shown)",
+   "price": "EUR 12.90"
+  },
+  "digikey:CAB.01075": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=CAB.01075",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "CAB.01075",
+   "manufacturer": "Taoglas Limited",
+   "stock": null,
+   "status": "listed (stock not shown)",
+   "price": "EUR 4.03"
+  },
+  "digikey:CAB.011": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=CAB.011",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "CAB.011",
+   "manufacturer": "Taoglas Limited",
+   "stock": null,
+   "status": "listed (stock not shown)",
+   "price": "EUR 3.90"
+  },
+  "digikey:DMP6050SSD-13DICT-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=DMP6050SSD-13",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "DMP6050SSD-13",
+   "manufacturer": "Diodes Incorporated",
+   "stock": 0,
+   "status": "Active",
+   "price": "EUR 1.26 @1"
+  },
+  "digikey:EEU-FR1C101": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=EEU-FR1C101",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "EEU-FR1C101",
+   "manufacturer": "Panasonic Industry",
+   "stock": null,
+   "status": "listed (stock not shown)",
+   "price": "EUR 0.36"
+  },
+  "digikey:EEU-FR1C221": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=EEU-FR1C221",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "EEU-FR1C221",
+   "manufacturer": "Panasonic Industry",
+   "stock": null,
+   "status": "listed (stock not shown)",
+   "price": "EUR 0.40"
+  },
+  "digikey:EEU-FR1H470": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=EEU-FR1H470",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "EEU-FR1H470",
+   "manufacturer": "Panasonic Industry",
+   "stock": null,
+   "status": "listed (stock not shown)",
+   "price": "EUR 0.41"
+  },
+  "digikey:G6K-2F-RF-S DC5": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=G6K-2F-RF-S%20DC5",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "G6K-2F-RF-S DC5",
+   "manufacturer": "Aratas (Formerly Omron Components)",
+   "stock": null,
+   "status": "listed (stock not shown)",
+   "price": "EUR 17.29"
+  },
+  "digikey:HMC7992LP3DE": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=HMC7992LP3DE",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "HMC7992LP3DE",
+   "manufacturer": "Analog Devices",
+   "stock": null,
+   "status": "listed (stock not shown)",
+   "price": "EUR 11.50"
+  },
+  "digikey:TNPW0805332KBYEA-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=TNPW0805332KBYEA",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "TNPW0805332KBYEA",
+   "manufacturer": "Vishay Dale",
+   "stock": 0,
+   "status": "Active, not kept in stock",
+   "price": "EUR 0.32106 @10"
+  },
+  "digikey:UHE1E221MPD": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=UHE1E221MPD",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "UHE1E221MPD",
+   "manufacturer": "Nichicon",
+   "stock": null,
+   "status": "listed (stock not shown)",
+   "price": "EUR 0.55"
+  },
+  "digikey:WSL1206R1000DEA": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=WSL1206R1000DEA",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "WSL1206R1000DEA",
+   "manufacturer": "Vishay Dale",
+   "stock": null,
+   "status": "listed (stock not shown)",
+   "price": "EUR 1.92"
+  },
+  "digikey:WSL1206R2000DEA": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=WSL1206R2000DEA",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE search/product page",
+   "mpn": "WSL1206R2000DEA",
+   "manufacturer": "Vishay Dale",
+   "stock": null,
+   "status": "listed (stock not shown)",
+   "price": "EUR 0.67079"
+  },
+  "web:adafruit-2420": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.adafruit.com/product/2420",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "Slim HDMI Cable - 450mm / 1.5 feet long : Adafruit Industries, Unique & fun DIY electronics and kits"
+  },
+  "web:adafruit-4162": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.adafruit.com/product/4162",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "Adafruit VEML7700 Lux Sensor - I2C Light Sensor [STEMMA QT / Qwiic] : Adafruit Industries, Unique & fun DIY electronics and kits"
+  },
+  "web:adafruit-4754": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.adafruit.com/product/4754",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "Adafruit 9-DOF Orientation IMU Fusion Breakout - BNO085 (BNO080) [STEMMA QT / Qwiic] : Adafruit Industries, Unique & fun DIY electronics and kits"
+  },
+  "web:adafruit-5832": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.adafruit.com/product/5832",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "Adafruit INA228 - I2C 85V, 20-bit High or Low Side Power Monitor [STEMMA QT / Qwiic] : Adafruit Industries, Unique & fun DIY electronics and kits"
+  },
+  "web:adafruit-5997": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.adafruit.com/product/5997",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "Adafruit CH334F Mini 4-Port USB Hub Breakout : Adafruit Industries, Unique & fun DIY electronics and kits"
+  },
+  "web:adt-link-r44sf": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.adt.link/product/R44SF.html",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "R44SF M.2 NVMe Extension Cable"
+  },
+  "web:airspy-hf-discovery": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://airspy.com/airspy-hf-discovery/",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "Airspy HF+ Discovery - AIRSPY"
+  },
+  "web:crowdsupply-limesdr-micro": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.crowdsupply.com/lime-micro/limesdr-micro",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "LimeSDR Micro | Crowd Supply"
+  },
+  "web:minicircuits-ANNE-50": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.minicircuits.com/WebStore/dashboard.html?model=ANNE-50%2B",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "TERM / SMA-M / 18GHZ RoHS | ANNE-50+ | Mini-Circuits"
+  },
+  "web:minicircuits-BLK-89-S": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.minicircuits.com/WebStore/dashboard.html?model=BLK-89-S%2B",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "DC BLOCK / SMA-F / SMA-M /RoHS | BLK-89-S+ | Mini-Circuits"
+  },
+  "web:minicircuits-VAT-15W2": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.minicircuits.com/WebStore/dashboard.html?model=VAT-15W2%2B",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "15 dB Fixed Attenuator, DC - 6000 MHz, 50Ω | VAT-15W2+ | Mini-Circuits"
+  },
+  "web:minicircuits-VAT-20W2": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.minicircuits.com/WebStore/dashboard.html?model=VAT-20W2%2B",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "20 dB Fixed Attenuator, DC - 6000 MHz, 50Ω | VAT-20W2+ | Mini-Circuits"
+  },
+  "web:minicircuits-VAT-30W2": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.minicircuits.com/WebStore/dashboard.html?model=VAT-30W2%2B",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "30 dB Fixed Attenuator, DC - 6000 MHz, 50Ω | VAT-30W2+ | Mini-Circuits"
+  },
+  "web:nooelec-100792": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.nooelec.com/store/sawbird-goes.html",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "Nooelec - Nooelec SAWbird GOES Barebones - Premium Dual Ultra-Low Noise Amplifier (LNA) & SAW Filter Module for NOAA (GOES/LRIT/HRIT/HPRT) Applications. 1688MHz Center Frequency"
+  },
+  "web:nooelec-100800": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.nooelec.com/store/sawbird-noaa.html",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "Nooelec - Nooelec SAWbird NOAA - Premium LNA and SAW Filter for Weather Satellite Applications. 137MHz Center Frequency, 20dB Gain"
+  },
+  "web:nooelec-100813": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.nooelec.com/store/flamingo-fm.html",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "Nooelec - Flamingo FM - Broadcast FM Bandstop Filter for Software Defined Radio (SDR) Applications"
+  },
+  "web:nooelec-100845": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://nooelec.com/store/sdr/sdr-addons/rf-blocks/lana-wb.html",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "Nooelec - Nooelec LaNA WB - Ultra-Low Noise Amplifier (LNA) Module for RF & Software Defined Radio (SDR) with Enclosure & Accessories. Wideband 300MHz-8000MHz Frequency Capability w/ BiasTee & USB Pow"
+  },
+  "web:olimex-gx16-4": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.olimex.com/Products/Components/Connectors/CONNECTOR-GX16-4/",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "CONNECTOR-GX16-4",
+   "stock_text": "In Stock"
+  },
+  "web:passionradio-bullseye": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.passion-radio.com/lnb/bullseye-978.html",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "Othernet Bullseye TCXO LNB 25Mhz for Oscar 100",
+   "stock_text": "In stock"
+  },
+  "web:pololu-2813": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.pololu.com/product/2813",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "Pololu - Big Pushbutton Power Switch with Reverse Voltage Protection, HP",
+   "stock_text": "Rationed"
+  },
+  "web:pololu-4091": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.pololu.com/product/4091",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "Pololu - 5V, 5.5A Step-Down Voltage Regulator D36V50F5",
+   "stock_text": "Rationed"
+  },
+  "web:pololu-4095": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.pololu.com/product/4095",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "Pololu - 12V, 4.5A Step-Down Voltage Regulator D36V50F12",
+   "stock_text": "Rationed"
+  },
+  "web:rtl-sdr-shop": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.rtl-sdr.com/buy-rtl-sdr-dvb-t-dongles/",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "Buy RTL-SDR Dongles (RTL2832U)"
+  },
+  "web:sysmocom-cf2235-kt30": {
+   "distributor": "sysmocom shop",
+   "url": "https://shop.sysmocom.de/S-Band-cavity-filter-2170-2300-MHz/cf2235-kt30",
+   "read": "2026-10-24",
+   "method": "WebSearch result summary of the shop page",
+   "title": "cf2235-kt30 S-band cavity filter 2170-2300 MHz",
+   "price": "EUR 65.45",
+   "note": "stock not stated; non-stock filters need 6-8 weeks"
+  },
+  "web:taoglas-cab01075": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.taoglas.com/product/cab-01075/",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "100mm I-PEX® MHF4L to SMA(F) Bulkhead Coax Cable"
+  },
+  "web:tinytronics-005102": {
+   "distributor": "TinyTronics NL",
+   "url": "https://www.tinytronics.nl/en/power/bms-and-chargers/bms/daly-bms-li-ion-li-po-protection-circuit-4s-15a-with-balancing",
+   "read": "2026-10-24",
+   "method": "WebFetch",
+   "title": "DALY BMS Li-ion-Li-Po Protection Circuit - 4S 15A - with Balancing",
+   "sku": "005102",
+   "price": "EUR 8.00 incl. VAT",
+   "stock_text": "Only 9 pieces in stock",
+   "note": "tags list DL-J05G-L4S15ATJ; the linked datasheet file is named DL-J04G3-L04S15ATJ"
+  },
+  "web:waveshare-lc76g": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.waveshare.com/lc76g-gnss-module.htm",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "LC76G Multi-GNSS Module, Supports GPS, BDS, GLONASS, Galileo, QZSS | LC76G GNSS Module"
+  },
+  "web:waveshare-rp2040-zero": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.waveshare.com/rp2040-zero.htm",
+   "read": "2026-10-24",
+   "method": "HTTP GET, status 200",
+   "title": "RP2040-Zero, A Low-Cost, High-Performance Pico-Like MCU Board Based On Raspberry Pi Microcontroller RP2040"
+  }
+ }
+}

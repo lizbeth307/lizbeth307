@@ -1,0 +1,4959 @@
+{
+ "schema": 1,
+ "title": "SR-RX-v2.1 parts database",
+ "updated": "2026-10-24",
+ "policy": {
+  "distributors": [
+   "LCSC",
+   "DigiKey DE",
+   "Mouser",
+   "TME"
+  ],
+  "spares": {
+   "passive_pct": 10,
+   "passive_min": 5
+  },
+  "snapshot_max_age_days": 180,
+  "decisions": "build/15-rishennia-komplektu.md"
+ },
+ "snapshots": [
+  "design/parts/snapshots/2026-10-24-lcsc.json",
+  "design/parts/snapshots/2026-10-24-manual.json"
+ ],
+ "parts": [
+  {
+   "id": "C-1206-CL31B225KBHNNNE",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "1206",
+   "footprint": "Capacitor_SMD:C_1206_3216Metric",
+   "manufacturer": "Samsung Electro-Mechanics",
+   "mpn": "CL31B225KBHNNNE",
+   "sku": {
+    "lcsc": "C50254"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "CC1206KKX7R0BB225",
+     "sku": {
+      "lcsc": "C577211"
+     }
+    }
+   ],
+   "refs": [
+    "C103"
+   ]
+  },
+  {
+   "id": "C-0805-CC0805KKX7R8BB475",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "0805",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "CC0805KKX7R8BB475",
+   "sku": {
+    "lcsc": "C354262"
+   },
+   "alternates": [
+    {
+     "manufacturer": "TDK",
+     "mpn": "C2012X7R1E475KT000N",
+     "sku": {
+      "lcsc": "C76642"
+     }
+    }
+   ],
+   "refs": [
+    "C104",
+    "C502",
+    "C505",
+    "C509",
+    "C515"
+   ]
+  },
+  {
+   "id": "C-0603-CC0603KRX7R9BB104",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "0603",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "CC0603KRX7R9BB104",
+   "sku": {
+    "lcsc": "C14663"
+   },
+   "alternates": [
+    {
+     "manufacturer": "TDK",
+     "mpn": "C1608X7R1H104K080AA",
+     "note": "MPN named in the graph value; no exact LCSC listing found on 2026-10-24"
+    },
+    {
+     "manufacturer": "TDK",
+     "mpn": "C1608X7R1H104KT000N",
+     "sku": {
+      "lcsc": "C56476"
+     }
+    },
+    {
+     "manufacturer": "Samsung Electro-Mechanics",
+     "mpn": "CL10B104KB8NNNC",
+     "sku": {
+      "lcsc": "C1591"
+     }
+    }
+   ],
+   "note": "Graph value names TDK C1608X7R1H104K080AA; the attribute-checked, stocked equivalent is primary for JLC assembly.",
+   "refs": [
+    "C105",
+    "C106",
+    "C114",
+    "C269",
+    "C274",
+    "C275",
+    "C276",
+    "C277",
+    "C278",
+    "C279",
+    "C280",
+    "C281",
+    "C283",
+    "C285",
+    "C287",
+    "C288",
+    "C301",
+    "C303",
+    "C305",
+    "C308",
+    "C309",
+    "C310",
+    "C311",
+    "C312",
+    "C319",
+    "C341",
+    "C343",
+    "C440",
+    "C441",
+    "C442",
+    "C501",
+    "C504",
+    "C507",
+    "C508",
+    "C513",
+    "C514",
+    "C517",
+    "C518",
+    "C520",
+    "C550",
+    "C551",
+    "C2911",
+    "C2912",
+    "C2913",
+    "C4400",
+    "C4410",
+    "C4411",
+    "C4412",
+    "C4413",
+    "C4414",
+    "C4415",
+    "C4416",
+    "C4417"
+   ]
+  },
+  {
+   "id": "R-0603-RT0603BRD07332KL",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "RT0603BRD07332KL",
+   "sku": {
+    "lcsc": "C861329"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Vishay Intertech",
+     "mpn": "TNPW0603332KBEEA",
+     "sku": {
+      "lcsc": "C4351218"
+     }
+    }
+   ],
+   "refs": [
+    "R104"
+   ]
+  },
+  {
+   "id": "R-0603-ERA3AEB4021V",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "PANASONIC",
+   "mpn": "ERA3AEB4021V",
+   "sku": {
+    "lcsc": "C491130"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RT0603BRD074K02L",
+     "sku": {
+      "lcsc": "C705781"
+     }
+    }
+   ],
+   "refs": [
+    "R105"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF1003T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF1003T5E",
+   "sku": {
+    "lcsc": "C25803"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-07100KL",
+     "sku": {
+      "lcsc": "C14675"
+     }
+    }
+   ],
+   "refs": [
+    "R106",
+    "R111",
+    "R123",
+    "R201",
+    "R213",
+    "R218",
+    "R220",
+    "R229",
+    "R234",
+    "R239",
+    "R244",
+    "R249",
+    "R253",
+    "R261",
+    "R292",
+    "R294",
+    "R326",
+    "R329",
+    "R331",
+    "R366",
+    "R367",
+    "R371",
+    "R394",
+    "R408",
+    "R409",
+    "R410",
+    "R411",
+    "R414",
+    "R415",
+    "R434",
+    "R435",
+    "R502",
+    "R506",
+    "R510",
+    "R515",
+    "R552",
+    "R2903",
+    "R4424",
+    "R4426",
+    "R4434",
+    "R4436",
+    "R4444",
+    "R4446",
+    "R4451",
+    "R4453"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF4224T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF4224T5E",
+   "sku": {
+    "lcsc": "C422927"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Vishay Intertech",
+     "mpn": "CRCW06034M22FKEA",
+     "sku": {
+      "lcsc": "C3009313"
+     }
+    }
+   ],
+   "refs": [
+    "R107"
+   ]
+  },
+  {
+   "id": "R-0603-RT0603BRD074K99L",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "RT0603BRD074K99L",
+   "sku": {
+    "lcsc": "C723532"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Vishay Intertech",
+     "mpn": "TNPW06034K99BEEA",
+     "sku": {
+      "lcsc": "C844461"
+     }
+    }
+   ],
+   "refs": [
+    "R108"
+   ]
+  },
+  {
+   "id": "R-0603-PTFR0603B562RP9",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "RESI",
+   "mpn": "PTFR0603B562RP9",
+   "sku": {
+    "lcsc": "C47115902"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RT0603BRD07562RL",
+     "sku": {
+      "lcsc": "C513658"
+     }
+    }
+   ],
+   "refs": [
+    "R109"
+   ]
+  },
+  {
+   "id": "C-0805-AC0805KKX7R9BB105",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "0805",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "AC0805KKX7R9BB105",
+   "sku": {
+    "lcsc": "C726584"
+   },
+   "alternates": [
+    {
+     "manufacturer": "TDK",
+     "mpn": "C2012X7R1H105K125AB",
+     "sku": {
+      "lcsc": "C3867006"
+     },
+     "note": "MPN named in the graph value; LCSC listing without stock on 2026-10-24"
+    }
+   ],
+   "note": "Graph value names TDK C2012X7R1H105K125AB; the attribute-checked, stocked equivalent is primary for JLC assembly.",
+   "refs": [
+    "C108",
+    "C110",
+    "C116",
+    "C117",
+    "C202",
+    "C203",
+    "C212",
+    "C213",
+    "C215",
+    "C216",
+    "C232",
+    "C233",
+    "C234",
+    "C236",
+    "C237",
+    "C238",
+    "C240",
+    "C241",
+    "C242",
+    "C244",
+    "C245",
+    "C246",
+    "C248",
+    "C249",
+    "C250",
+    "C257",
+    "C259",
+    "C260",
+    "C261",
+    "C268",
+    "C270",
+    "C271",
+    "C272",
+    "C295",
+    "C296",
+    "C297",
+    "C2901",
+    "C2902",
+    "C2903"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF2002T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF2002T5E",
+   "sku": {
+    "lcsc": "C4184"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-0720KL",
+     "sku": {
+      "lcsc": "C105575"
+     }
+    }
+   ],
+   "refs": [
+    "R112"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF4703T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF4703T5E",
+   "sku": {
+    "lcsc": "C23178"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-07470KL",
+     "sku": {
+      "lcsc": "C114622"
+     }
+    }
+   ],
+   "refs": [
+    "R113"
+   ]
+  },
+  {
+   "id": "R-0603-RT0603BRD07174KL",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "RT0603BRD07174KL",
+   "sku": {
+    "lcsc": "C861163"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Vishay Intertech",
+     "mpn": "TNPW0603174KBEEA",
+     "sku": {
+      "lcsc": "C1870358"
+     }
+    }
+   ],
+   "refs": [
+    "R114"
+   ]
+  },
+  {
+   "id": "R-0603-RT0603BRD0710KL",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "RT0603BRD0710KL",
+   "sku": {
+    "lcsc": "C95204"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Viking Tech",
+     "mpn": "ARG03BTC1002",
+     "sku": {
+      "lcsc": "C309083"
+     }
+    }
+   ],
+   "refs": [
+    "R115",
+    "R205",
+    "R211",
+    "R216",
+    "R256",
+    "R264",
+    "R281",
+    "R284",
+    "R287",
+    "R4406"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF9530T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF9530T5E",
+   "sku": {
+    "lcsc": "C93622"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RT0603FRE07953RL",
+     "sku": {
+      "lcsc": "C863979"
+     }
+    }
+   ],
+   "refs": [
+    "R116"
+   ]
+  },
+  {
+   "id": "C-0603-CC0603JRNPO9BN332",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "0603",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "CC0603JRNPO9BN332",
+   "sku": {
+    "lcsc": "C107048"
+   },
+   "alternates": [
+    {
+     "manufacturer": "TDK",
+     "mpn": "C1608C0G1H332J080AA",
+     "sku": {
+      "lcsc": "C3839693"
+     },
+     "note": "MPN named in the graph value; LCSC listing without stock on 2026-10-24"
+    }
+   ],
+   "note": "Graph value names TDK C1608C0G1H332J080AA; the attribute-checked, stocked equivalent is primary for JLC assembly.",
+   "refs": [
+    "C115",
+    "C201",
+    "C211",
+    "C214"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF5101T5E-rework",
+   "mount": "rework",
+   "kind": "resistor",
+   "package": "0603",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF5101T5E",
+   "sku": {
+    "lcsc": "C23186"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-075K1L",
+     "sku": {
+      "lcsc": "C105580"
+     }
+    }
+   ],
+   "note": "Fitted on the purchased IP2368 board during rework; pad size of the received board revision is unverified (0603 assumed, check before ordering).",
+   "refs": [
+    "R117"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF1502T5E-rework",
+   "mount": "rework",
+   "kind": "resistor",
+   "package": "0603",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF1502T5E",
+   "sku": {
+    "lcsc": "C22809"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "AC0603FR-0715KL",
+     "sku": {
+      "lcsc": "C125928"
+     }
+    }
+   ],
+   "note": "Fitted on the purchased IP2368 board during rework; pad size of the received board revision is unverified (0603 assumed, check before ordering).",
+   "refs": [
+    "R118"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF1001T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF1001T5E",
+   "sku": {
+    "lcsc": "C21190"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-071KL",
+     "sku": {
+      "lcsc": "C22548"
+     }
+    }
+   ],
+   "refs": [
+    "R122",
+    "R391",
+    "R395",
+    "R440",
+    "R441",
+    "R442",
+    "R443",
+    "R444",
+    "R445"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF1001T5E-rework",
+   "mount": "rework",
+   "kind": "resistor",
+   "package": "0603",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF1001T5E",
+   "sku": {
+    "lcsc": "C21190"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-071KL",
+     "sku": {
+      "lcsc": "C22548"
+     }
+    }
+   ],
+   "note": "Fitted on the purchased IP2368 board during rework; pad size of the received board revision is unverified (0603 assumed, check before ordering).",
+   "refs": [
+    "R119"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF1302T5E-rework",
+   "mount": "rework",
+   "kind": "resistor",
+   "package": "0603",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF1302T5E",
+   "sku": {
+    "lcsc": "C22797"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-0713KL",
+     "sku": {
+      "lcsc": "C137796"
+     }
+    }
+   ],
+   "note": "Fitted on the purchased IP2368 board during rework; pad size of the received board revision is unverified (0603 assumed, check before ordering).",
+   "refs": [
+    "R120"
+   ]
+  },
+  {
+   "id": "C-0603-CC0603KRX7R9BB104-rework",
+   "mount": "rework",
+   "kind": "capacitor",
+   "package": "0603",
+   "manufacturer": "YAGEO",
+   "mpn": "CC0603KRX7R9BB104",
+   "sku": {
+    "lcsc": "C14663"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Samsung Electro-Mechanics",
+     "mpn": "CL10B104KB8NNNC",
+     "sku": {
+      "lcsc": "C1591"
+     }
+    }
+   ],
+   "note": "Fitted on the purchased IP2368 board during rework; pad size of the received board revision is unverified (0603 assumed, check before ordering).",
+   "refs": [
+    "C118"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF2201T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF2201T5E",
+   "sku": {
+    "lcsc": "C4190"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-072K2L",
+     "sku": {
+      "lcsc": "C114662"
+     }
+    }
+   ],
+   "refs": [
+    "R121",
+    "R335",
+    "R337",
+    "R339",
+    "R341",
+    "R343",
+    "R345",
+    "R347",
+    "R349",
+    "R369"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF1302T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF1302T5E",
+   "sku": {
+    "lcsc": "C22797"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-0713KL",
+     "sku": {
+      "lcsc": "C137796"
+     }
+    }
+   ],
+   "refs": [
+    "R202"
+   ]
+  },
+  {
+   "id": "R-0603-RT0603FRE07825RL",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "RT0603FRE07825RL",
+   "sku": {
+    "lcsc": "C706193"
+   },
+   "alternates": [
+    {
+     "manufacturer": "KOA Speer Elec",
+     "mpn": "RK73H1JTTD8250F",
+     "sku": {
+      "lcsc": "C830359"
+     }
+    }
+   ],
+   "refs": [
+    "R203"
+   ]
+  },
+  {
+   "id": "R-0603-RT0603BRD07102KL",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "RT0603BRD07102KL",
+   "sku": {
+    "lcsc": "C861068"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Viking Tech",
+     "mpn": "ARG03BTC1023",
+     "sku": {
+      "lcsc": "C5151919"
+     }
+    }
+   ],
+   "refs": [
+    "R204",
+    "R210"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF1002T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF1002T5E",
+   "sku": {
+    "lcsc": "C25804"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-0710KL",
+     "sku": {
+      "lcsc": "C98220"
+     }
+    }
+   ],
+   "refs": [
+    "R206",
+    "R212",
+    "R221",
+    "R222",
+    "R301",
+    "R302",
+    "R303",
+    "R304",
+    "R305",
+    "R306",
+    "R307",
+    "R308",
+    "R309",
+    "R310",
+    "R311",
+    "R312",
+    "R313",
+    "R314",
+    "R315",
+    "R316",
+    "R317",
+    "R318",
+    "R319",
+    "R320",
+    "R321",
+    "R322",
+    "R323",
+    "R324",
+    "R325",
+    "R328",
+    "R330",
+    "R332",
+    "R333",
+    "R334",
+    "R351",
+    "R352",
+    "R353",
+    "R354",
+    "R355",
+    "R356",
+    "R357",
+    "R358",
+    "R368",
+    "R390",
+    "R392",
+    "R504",
+    "R508",
+    "R513",
+    "R516",
+    "R517",
+    "R2923",
+    "R4401"
+   ]
+  },
+  {
+   "id": "C-1210-CC1210KKX7R9BB106",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "1210",
+   "footprint": "Capacitor_SMD:C_1210_3225Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "CC1210KKX7R9BB106",
+   "sku": {
+    "lcsc": "C596319"
+   },
+   "alternates": [
+    {
+     "manufacturer": "TDK",
+     "mpn": "C3225X7R1H106K250AC",
+     "sku": {
+      "lcsc": "C2181731"
+     },
+     "note": "MPN named in the graph value; LCSC listing without stock on 2026-10-24"
+    }
+   ],
+   "note": "Graph value names TDK C3225X7R1H106K250AC; the attribute-checked, stocked equivalent is primary for JLC assembly.",
+   "refs": [
+    "C204",
+    "C205",
+    "C208",
+    "C209",
+    "C217",
+    "C218",
+    "C220",
+    "C221",
+    "C226",
+    "C228",
+    "C230",
+    "C252",
+    "C253",
+    "C255",
+    "C263",
+    "C264",
+    "C266",
+    "C289",
+    "C291"
+   ]
+  },
+  {
+   "id": "R-1206-1206W4F220LT5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "1206",
+   "footprint": "Resistor_SMD:R_1206_3216Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "1206W4F220LT5E",
+   "sku": {
+    "lcsc": "C25336"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RL1206FR-7W0R22L",
+     "sku": {
+      "lcsc": "C327006"
+     }
+    }
+   ],
+   "refs": [
+    "R207",
+    "R208",
+    "R219",
+    "R223",
+    "R224",
+    "R232",
+    "R237",
+    "R242",
+    "R247",
+    "R251",
+    "R252",
+    "R259",
+    "R260",
+    "R267",
+    "R295"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF1961T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF1961T5E",
+   "sku": {
+    "lcsc": "C22854"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Viking Tech",
+     "mpn": "ARG03FTC1961",
+     "sku": {
+      "lcsc": "C217859"
+     }
+    }
+   ],
+   "refs": [
+    "R209"
+   ]
+  },
+  {
+   "id": "R-0603-RC0603FR-071K65L",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "RC0603FR-071K65L",
+   "sku": {
+    "lcsc": "C185357"
+   },
+   "alternates": [
+    {
+     "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+     "mpn": "0603WAF1651T5E",
+     "sku": {
+      "lcsc": "C22845"
+     }
+    }
+   ],
+   "refs": [
+    "R214"
+   ]
+  },
+  {
+   "id": "R-0603-RT0603BRD0719K6L",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "RT0603BRD0719K6L",
+   "sku": {
+    "lcsc": "C861185"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Vishay Intertech",
+     "mpn": "TNPW060319K6BEEA",
+     "sku": {
+      "lcsc": "C2079053"
+     }
+    }
+   ],
+   "refs": [
+    "R215"
+   ]
+  },
+  {
+   "id": "R-0603-AR03BTCX2152",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "Viking Tech",
+   "mpn": "AR03BTCX2152",
+   "sku": {
+    "lcsc": "C3013545"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RT0603BRB0721K5L",
+     "sku": {
+      "lcsc": "C860223"
+     }
+    }
+   ],
+   "refs": [
+    "R227"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF8872T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF8872T5E",
+   "sku": {
+    "lcsc": "C23258"
+   },
+   "alternates": [
+    {
+     "manufacturer": "BOURNS",
+     "mpn": "CR0603-FX-8872ELF",
+     "sku": {
+      "lcsc": "C203875"
+     }
+    }
+   ],
+   "refs": [
+    "R228",
+    "R233",
+    "R238"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF2203T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF2203T5E",
+   "sku": {
+    "lcsc": "C22961"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-07220KL",
+     "sku": {
+      "lcsc": "C123420"
+     }
+    }
+   ],
+   "refs": [
+    "R2901",
+    "R2902"
+   ]
+  },
+  {
+   "id": "R-1210-1210W2F4701T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "1210",
+   "footprint": "Resistor_SMD:R_1210_3225Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "1210W2F4701T5E",
+   "sku": {
+    "lcsc": "C52443"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Vishay Intertech",
+     "mpn": "CRCW12104K70FKEA",
+     "sku": {
+      "lcsc": "C844245"
+     }
+    }
+   ],
+   "refs": [
+    "R2911",
+    "R2912"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF4701T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF4701T5E",
+   "sku": {
+    "lcsc": "C23162"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-074K7L",
+     "sku": {
+      "lcsc": "C99782"
+     }
+    }
+   ],
+   "refs": [
+    "R291",
+    "R361",
+    "R362",
+    "R550",
+    "R551",
+    "R2921",
+    "R2922"
+   ]
+  },
+  {
+   "id": "R-0603-RC0603FR-07162KL",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "RC0603FR-07162KL",
+   "sku": {
+    "lcsc": "C165760"
+   },
+   "alternates": [
+    {
+     "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+     "mpn": "0603WAF1623T5E",
+     "sku": {
+      "lcsc": "C22815"
+     }
+    }
+   ],
+   "refs": [
+    "R243",
+    "R293"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF5622T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF5622T5E",
+   "sku": {
+    "lcsc": "C23080"
+   },
+   "alternates": [
+    {
+     "manufacturer": "PANASONIC",
+     "mpn": "ERJ3EKF5622V",
+     "sku": {
+      "lcsc": "C403280"
+     }
+    }
+   ],
+   "refs": [
+    "R248"
+   ]
+  },
+  {
+   "id": "R-0603-RK73H1JTTD2051F",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "KOA Speer Elec",
+   "mpn": "RK73H1JTTD2051F",
+   "sku": {
+    "lcsc": "C830313"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Viking Tech",
+     "mpn": "ARG03FTC2051",
+     "sku": {
+      "lcsc": "C217936"
+     }
+    }
+   ],
+   "refs": [
+    "R254"
+   ]
+  },
+  {
+   "id": "R-0603-RT0603BRD07110KL",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "RT0603BRD07110KL",
+   "sku": {
+    "lcsc": "C326736"
+   },
+   "alternates": [
+    {
+     "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+     "mpn": "0603WAD1103T5E",
+     "sku": {
+      "lcsc": "C423090"
+     }
+    }
+   ],
+   "refs": [
+    "R255"
+   ]
+  },
+  {
+   "id": "C-0603-CC0603KRX7R9BB473",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "0603",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "CC0603KRX7R9BB473",
+   "sku": {
+    "lcsc": "C107093"
+   },
+   "alternates": [
+    {
+     "manufacturer": "TDK",
+     "mpn": "C1608X7R1H473K080AA",
+     "sku": {
+      "lcsc": "C1870901"
+     },
+     "note": "MPN named in the graph value; LCSC listing without stock on 2026-10-24"
+    }
+   ],
+   "note": "Graph value names TDK C1608X7R1H473K080AA; the attribute-checked, stocked equivalent is primary for JLC assembly.",
+   "refs": [
+    "C258"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF7151T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF7151T5E",
+   "sku": {
+    "lcsc": "C25980"
+   },
+   "alternates": [
+    {
+     "manufacturer": "PANASONIC",
+     "mpn": "ERJ3EKF7151V",
+     "sku": {
+      "lcsc": "C403337"
+     }
+    }
+   ],
+   "refs": [
+    "R262"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF2202T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF2202T5E",
+   "sku": {
+    "lcsc": "C31850"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-0722KL",
+     "sku": {
+      "lcsc": "C114065"
+     }
+    }
+   ],
+   "refs": [
+    "R2913"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF100JT5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF100JT5E",
+   "sku": {
+    "lcsc": "C22859"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-0710RL",
+     "sku": {
+      "lcsc": "C109318"
+     }
+    }
+   ],
+   "refs": [
+    "R268",
+    "R269",
+    "R270",
+    "R271",
+    "R272",
+    "R273",
+    "R274",
+    "R275",
+    "R276",
+    "R277",
+    "R278",
+    "R279"
+   ]
+  },
+  {
+   "id": "R-0603-RN73H1JTTD8562B25",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "KOA Speer Elec",
+   "mpn": "RN73H1JTTD8562B25",
+   "sku": {
+    "lcsc": "C6407688"
+   },
+   "single_source": "Only 0.1 % 85.6 kΩ 0603 found at LCSC on 2026-10-24 (KOA, 58 pcs); ERA-3AEB8562V not listed",
+   "refs": [
+    "R280"
+   ]
+  },
+  {
+   "id": "C-0603-GRM1885C1H103JA01D",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "0603",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "manufacturer": "Murata Electronics",
+   "mpn": "GRM1885C1H103JA01D",
+   "sku": {
+    "lcsc": "C85973"
+   },
+   "alternates": [
+    {
+     "manufacturer": "TDK",
+     "mpn": "C1608C0G1H103J080AA",
+     "sku": {
+      "lcsc": "C2168383"
+     },
+     "note": "MPN named in the graph value; LCSC listing without stock on 2026-10-24"
+    }
+   ],
+   "note": "Graph value names TDK C1608C0G1H103J080AA; the attribute-checked, stocked equivalent is primary for JLC assembly.",
+   "refs": [
+    "C282",
+    "C284",
+    "C286",
+    "C314",
+    "C315",
+    "C316",
+    "C317",
+    "C448",
+    "C450",
+    "C452",
+    "C4401",
+    "C4402",
+    "C4405",
+    "C4406",
+    "C4421",
+    "C4431",
+    "C4441"
+   ]
+  },
+  {
+   "id": "R-0603-RT0603BRE0790K9L",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "RT0603BRE0790K9L",
+   "sku": {
+    "lcsc": "C326737"
+   },
+   "alternates": [
+    {
+     "manufacturer": "PANASONIC",
+     "mpn": "ERJPB3B9092V",
+     "sku": {
+      "lcsc": "C189497"
+     }
+    }
+   ],
+   "refs": [
+    "R283"
+   ]
+  },
+  {
+   "id": "R-0603-RT0603BRE0773K2L",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "RT0603BRE0773K2L",
+   "sku": {
+    "lcsc": "C862276"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RT0603BRD0773K2L",
+     "sku": {
+      "lcsc": "C861548"
+     },
+     "note": "25 ppm grade"
+    }
+   ],
+   "refs": [
+    "R286"
+   ]
+  },
+  {
+   "id": "C-0805-CL21A106KAYNNNE",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "0805",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "manufacturer": "Samsung Electro-Mechanics",
+   "mpn": "CL21A106KAYNNNE",
+   "sku": {
+    "lcsc": "C15850"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Murata Electronics",
+     "mpn": "GRM21BR61C106KE15L",
+     "sku": {
+      "lcsc": "C77075"
+     }
+    }
+   ],
+   "refs": [
+    "C302",
+    "C304",
+    "C306",
+    "C307",
+    "C318",
+    "C320",
+    "C340",
+    "C342"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF2000T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF2000T5E",
+   "sku": {
+    "lcsc": "C8218"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-07200RL",
+     "sku": {
+      "lcsc": "C114664"
+     }
+    }
+   ],
+   "refs": [
+    "R327"
+   ]
+  },
+  {
+   "id": "C-0603-CL10A105KB8NNNC",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "0603",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "manufacturer": "Samsung Electro-Mechanics",
+   "mpn": "CL10A105KB8NNNC",
+   "sku": {
+    "lcsc": "C15849"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "CC0603KRX7R7BB105",
+     "sku": {
+      "lcsc": "C106248"
+     }
+    }
+   ],
+   "refs": [
+    "C313"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF1000T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF1000T5E",
+   "sku": {
+    "lcsc": "C22775"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "AC0603FR-07100RL",
+     "sku": {
+      "lcsc": "C125923"
+     }
+    }
+   ],
+   "refs": [
+    "R336",
+    "R338",
+    "R340",
+    "R342",
+    "R344",
+    "R346",
+    "R348",
+    "R350",
+    "R359",
+    "R360",
+    "R365",
+    "R370",
+    "R393",
+    "R412",
+    "R413",
+    "R4423",
+    "R4425",
+    "R4433",
+    "R4435",
+    "R4443",
+    "R4445",
+    "R4450",
+    "R4452"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF1500T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF1500T5E",
+   "sku": {
+    "lcsc": "C22808"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-07150RL",
+     "sku": {
+      "lcsc": "C114608"
+     }
+    }
+   ],
+   "refs": [
+    "R363"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF6800T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF6800T5E",
+   "sku": {
+    "lcsc": "C23228"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-07680RL",
+     "sku": {
+      "lcsc": "C112310"
+     }
+    }
+   ],
+   "refs": [
+    "R364"
+   ]
+  },
+  {
+   "id": "C-0402-GRM1555C1H102JA01D",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "0402",
+   "footprint": "Capacitor_SMD:C_0402_1005Metric",
+   "manufacturer": "Murata Electronics",
+   "mpn": "GRM1555C1H102JA01D",
+   "sku": {
+    "lcsc": "C76947"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Walsin Tech Corp",
+     "mpn": "0402N102J500CT",
+     "sku": {
+      "lcsc": "C237166"
+     }
+    }
+   ],
+   "refs": [
+    "C401",
+    "C402",
+    "C403",
+    "C404",
+    "C405"
+   ]
+  },
+  {
+   "id": "C-0402-GRM1555C1H101JA01D",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "0402",
+   "footprint": "Capacitor_SMD:C_0402_1005Metric",
+   "manufacturer": "Murata Electronics",
+   "mpn": "GRM1555C1H101JA01D",
+   "sku": {
+    "lcsc": "C77177"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "CC0402JRNPO9BN101",
+     "sku": {
+      "lcsc": "C106200"
+     }
+    }
+   ],
+   "refs": [
+    "C406",
+    "C407",
+    "C408",
+    "C409",
+    "C410",
+    "C411",
+    "C412",
+    "C414",
+    "C415",
+    "C416",
+    "C417",
+    "C419",
+    "C420",
+    "C421",
+    "C422",
+    "C434",
+    "C435",
+    "C447",
+    "C449",
+    "C451",
+    "C4420",
+    "C4430",
+    "C4440"
+   ]
+  },
+  {
+   "id": "C-0402-GJM1555C1H220JB01D",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "0402",
+   "footprint": "Capacitor_SMD:C_0402_1005Metric",
+   "manufacturer": "Murata Electronics",
+   "mpn": "GJM1555C1H220JB01D",
+   "sku": {
+    "lcsc": "C88882"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "CC0402JRNPO9BN220",
+     "sku": {
+      "lcsc": "C106203"
+     }
+    }
+   ],
+   "refs": [
+    "C418"
+   ]
+  },
+  {
+   "id": "C-0603-CC0603KRX7R9BB103",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "0603",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "CC0603KRX7R9BB103",
+   "sku": {
+    "lcsc": "C100042"
+   },
+   "alternates": [
+    {
+     "manufacturer": "TDK",
+     "mpn": "C1608X7R1H103KT000N",
+     "sku": {
+      "lcsc": "C72452"
+     }
+    }
+   ],
+   "refs": [
+    "C446"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF499JT5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF499JT5E",
+   "sku": {
+    "lcsc": "C23185"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-0749R9L",
+     "sku": {
+      "lcsc": "C114625"
+     }
+    }
+   ],
+   "refs": [
+    "R405",
+    "R406",
+    "R407",
+    "R416",
+    "R417",
+    "R418",
+    "R419"
+   ]
+  },
+  {
+   "id": "R-0603-SR0603FR-7T150RL",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "SR0603FR-7T150RL",
+   "sku": {
+    "lcsc": "C873675"
+   },
+   "alternates": [
+    {
+     "manufacturer": "ROHM Semicon",
+     "mpn": "SDR03EZPF1500",
+     "sku": {
+      "lcsc": "C7356898"
+     }
+    }
+   ],
+   "refs": [
+    "R4400"
+   ]
+  },
+  {
+   "id": "R-0603-RT0603BRD0726K7L",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "RT0603BRD0726K7L",
+   "sku": {
+    "lcsc": "C728587"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Vishay Intertech",
+     "mpn": "TNPW060326K7BEEA",
+     "sku": {
+      "lcsc": "C4036914"
+     }
+    }
+   ],
+   "refs": [
+    "R4402",
+    "R4405"
+   ]
+  },
+  {
+   "id": "R-0603-RT0603BRD0725K5L",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "RT0603BRD0725K5L",
+   "sku": {
+    "lcsc": "C861257"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Vishay Intertech",
+     "mpn": "TNPW060325K5BEEA",
+     "sku": {
+      "lcsc": "C4334516"
+     }
+    }
+   ],
+   "refs": [
+    "R4403",
+    "R4404"
+   ]
+  },
+  {
+   "id": "R-0603-RT0603BRE0724K9L",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "RT0603BRE0724K9L",
+   "sku": {
+    "lcsc": "C861775"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Vishay Intertech",
+     "mpn": "TNPW060324K9BEEA",
+     "sku": {
+      "lcsc": "C3009044"
+     }
+    }
+   ],
+   "refs": [
+    "R4407",
+    "R4408"
+   ]
+  },
+  {
+   "id": "R-0603-RT0603BRD0733K2L",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "RT0603BRD0733K2L",
+   "sku": {
+    "lcsc": "C705767"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Viking Tech",
+     "mpn": "AR03BTDX3322A",
+     "sku": {
+      "lcsc": "C2924141"
+     }
+    }
+   ],
+   "refs": [
+    "R4409"
+   ]
+  },
+  {
+   "id": "C-0603-GRM1885C1H102JA01D",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "0603",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "manufacturer": "Murata Electronics",
+   "mpn": "GRM1885C1H102JA01D",
+   "sku": {
+    "lcsc": "C77026"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "CC0603JRNPO9BN102",
+     "sku": {
+      "lcsc": "C106246"
+     }
+    }
+   ],
+   "refs": [
+    "C4403",
+    "C4404"
+   ]
+  },
+  {
+   "id": "R-0402-RT0402BRD0724K9L",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0402",
+   "footprint": "Resistor_SMD:R_0402_1005Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "RT0402BRD0724K9L",
+   "sku": {
+    "lcsc": "C852664"
+   },
+   "alternates": [
+    {
+     "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+     "mpn": "TC0225D2492TCC",
+     "sku": {
+      "lcsc": "C7431035"
+     }
+    }
+   ],
+   "refs": [
+    "R4420",
+    "R4421",
+    "R4430",
+    "R4431",
+    "R4440",
+    "R4441"
+   ]
+  },
+  {
+   "id": "R-1210-AC1210FR-07249RL",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "1210",
+   "footprint": "Resistor_SMD:R_1210_3225Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "AC1210FR-07249RL",
+   "sku": {
+    "lcsc": "C230131"
+   },
+   "alternates": [
+    {
+     "manufacturer": "KOA Speer Elec",
+     "mpn": "RK73H2ETTD2490F",
+     "sku": {
+      "lcsc": "C2480630"
+     }
+    }
+   ],
+   "refs": [
+    "R4460",
+    "R4461",
+    "R4462",
+    "R4463",
+    "R4464",
+    "R4465",
+    "R4466",
+    "R4467",
+    "R4468",
+    "R4469",
+    "R4470",
+    "R4471"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF4322T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF4322T5E",
+   "sku": {
+    "lcsc": "C23053"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "RC0603FR-0743K2L",
+     "sku": {
+      "lcsc": "C137720"
+     }
+    }
+   ],
+   "refs": [
+    "R501"
+   ]
+  },
+  {
+   "id": "R-0603-AF0603FR-0734K8L",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "AF0603FR-0734K8L",
+   "sku": {
+    "lcsc": "C2098331"
+   },
+   "alternates": [
+    {
+     "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+     "mpn": "0603WAF3482T5E",
+     "sku": {
+      "lcsc": "C23141"
+     }
+    }
+   ],
+   "refs": [
+    "R505"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF2872T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF2872T5E",
+   "sku": {
+    "lcsc": "C22928"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Vishay Intertech",
+     "mpn": "CRCW060328K7FKEA",
+     "sku": {
+      "lcsc": "C2086345"
+     }
+    }
+   ],
+   "refs": [
+    "R509"
+   ]
+  },
+  {
+   "id": "C-0603-CC0603KRX7R9BB105",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "0603",
+   "footprint": "Capacitor_SMD:C_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "CC0603KRX7R9BB105",
+   "sku": {
+    "lcsc": "C559769"
+   },
+   "alternates": [
+    {
+     "manufacturer": "TDK",
+     "mpn": "CGA3E1X7R1E105KT0Y0E",
+     "sku": {
+      "lcsc": "C76708"
+     }
+    }
+   ],
+   "refs": [
+    "C510"
+   ]
+  },
+  {
+   "id": "R-1210-1210W2F100KT5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "1210",
+   "footprint": "Resistor_SMD:R_1210_3225Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "1210W2F100KT5E",
+   "sku": {
+    "lcsc": "C78022"
+   },
+   "alternates": [
+    {
+     "manufacturer": "YAGEO",
+     "mpn": "AC1210FR-071RL",
+     "sku": {
+      "lcsc": "C230105"
+     }
+    }
+   ],
+   "refs": [
+    "R512"
+   ]
+  },
+  {
+   "id": "R-0603-0603WAF1582T5E",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "mpn": "0603WAF1582T5E",
+   "sku": {
+    "lcsc": "C22880"
+   },
+   "alternates": [
+    {
+     "manufacturer": "PANASONIC",
+     "mpn": "ERJ3EKF1582V",
+     "sku": {
+      "lcsc": "C403003"
+     }
+    }
+   ],
+   "refs": [
+    "R514"
+   ]
+  },
+  {
+   "id": "C-0805-CC0805KKX7R7BB106",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "0805",
+   "footprint": "Capacitor_SMD:C_0805_2012Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "CC0805KKX7R7BB106",
+   "sku": {
+    "lcsc": "C326595"
+   },
+   "alternates": [
+    {
+     "manufacturer": "TDK",
+     "mpn": "C2012X7R1A106KT0A0E",
+     "sku": {
+      "lcsc": "C342745"
+     }
+    }
+   ],
+   "refs": [
+    "C519"
+   ]
+  },
+  {
+   "id": "R-2512-WSL2512R3300FEA",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "2512",
+   "footprint": "Resistor_SMD:R_2512_6332Metric",
+   "manufacturer": "Vishay Intertech",
+   "mpn": "WSL2512R3300FEA",
+   "sku": {
+    "lcsc": "C2073866"
+   },
+   "single_source": "Power Metal Strip 2512 named in the graph; no second source checked on 2026-10-24",
+   "refs": [
+    "R110"
+   ]
+  },
+  {
+   "id": "R-1206-MCA1206MD3304BP500",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "1206",
+   "footprint": "Resistor_SMD:R_1206_3216Metric",
+   "manufacturer": "Vishay Intertech",
+   "mpn": "MCA1206MD3304BP500",
+   "sku": {
+    "lcsc": "C4168316"
+   },
+   "alternates": [
+    {
+     "manufacturer": "SUSUMU",
+     "mpn": "RG3216P-3304-B-T5",
+     "sku": {
+      "lcsc": "C1703085"
+     }
+    }
+   ],
+   "note": "3.30 MΩ 0.1 % 25 ppm; 10-bom row 70 names Vishay MCA1206 (LCSC C4168316).",
+   "refs": [
+    "R103"
+   ]
+  },
+  {
+   "id": "R-0805-TNPW080510K0BYEA",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0805",
+   "footprint": "Resistor_SMD:R_0805_2012Metric",
+   "manufacturer": "Vishay Dale",
+   "mpn": "TNPW080510K0BYEA",
+   "sku": {
+    "digikey": "541-TNPW080510K0BYEACT-ND",
+    "lcsc": "C1721548"
+   },
+   "single_source": "TNPW0805 0.1 % 10 ppm named by the E2 OVP design (do not substitute 25 ppm parts without recomputing); LCSC and DigiKey had no stock on 2026-10-24",
+   "note": "Low availability on 2026-10-24: LCSC stock 0; check DigiKey/Mouser lead time before the order.",
+   "refs": [
+    "R290"
+   ]
+  },
+  {
+   "id": "R-0805-TNPW08052K00BYEA",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0805",
+   "footprint": "Resistor_SMD:R_0805_2012Metric",
+   "manufacturer": "Vishay Dale",
+   "mpn": "TNPW08052K00BYEA",
+   "sku": {
+    "digikey": "541-TNPW08052K00BYEACT-ND",
+    "lcsc": "C1720459"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Vishay Dale",
+     "mpn": "TNPW08052K00BYEN",
+     "note": "same part, other packing code (DigiKey substitute shown for TNPW08052K00BYEA 2026-10-24)"
+    }
+   ],
+   "note": "Low availability on 2026-10-24: LCSC stock 0; check DigiKey/Mouser lead time before the order.",
+   "refs": [
+    "R289"
+   ]
+  },
+  {
+   "id": "R-0805-TNPW0805332KBYEA",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0805",
+   "footprint": "Resistor_SMD:R_0805_2012Metric",
+   "manufacturer": "Vishay Dale",
+   "mpn": "TNPW0805332KBYEA",
+   "sku": {
+    "digikey": "TNPW0805332KBYEA-ND",
+    "lcsc": "C1720329"
+   },
+   "single_source": "TNPW0805 0.1 % 10 ppm named by the E2 OVP design (do not substitute 25 ppm parts without recomputing); LCSC and DigiKey had no stock on 2026-10-24",
+   "note": "Low availability on 2026-10-24: LCSC stock 0; check DigiKey/Mouser lead time before the order.",
+   "refs": [
+    "R288"
+   ]
+  },
+  {
+   "id": "R-1206-WSL1206R2000DEA",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "1206",
+   "footprint": "Resistor_SMD:R_1206_3216Metric",
+   "manufacturer": "Vishay Dale",
+   "mpn": "WSL1206R2000DEA",
+   "sku": {
+    "digikey": "WSL1206R2000DEA",
+    "lcsc": "C4296612"
+   },
+   "deviation": {
+    "tolerance_pct": 0.5,
+    "decision": "build/15-rishennia-komplektu.md «Шунти 0.1 %»",
+    "reason": "No 0.1 % 0.2 Ω 1206 part with stock found at LCSC (0.5 % parts listed, stock 0) on 2026-10-24; 0.5 % Power Metal Strip with per-unit calibration of each INA3221 channel."
+   },
+   "alternates": [
+    {
+     "manufacturer": "Ohmite",
+     "mpn": "KDV12DR200ET",
+     "sku": {
+      "lcsc": "C2442607"
+     }
+    }
+   ],
+   "note": "Two-terminal 1206 shunt; Kelvin sense traces are routed from the pad centres (layout), the graph symbol stays two-pin.",
+   "refs": [
+    "R231",
+    "R236",
+    "R241",
+    "R246",
+    "R266"
+   ]
+  },
+  {
+   "id": "R-1206-WSL1206R1000DEA",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "1206",
+   "footprint": "Resistor_SMD:R_1206_3216Metric",
+   "manufacturer": "Vishay Dale",
+   "mpn": "WSL1206R1000DEA",
+   "sku": {
+    "digikey": "WSL1206R1000DEA",
+    "lcsc": "C4235539"
+   },
+   "deviation": {
+    "tolerance_pct": 0.5,
+    "decision": "build/15-rishennia-komplektu.md «Шунти 0.1 %»",
+    "reason": "No 0.1 % 0.1 Ω 1206 part with stock found on 2026-10-24; 0.5 % with per-unit calibration."
+   },
+   "alternates": [
+    {
+     "manufacturer": "Littelfuse",
+     "mpn": "L4CL1206LR100DNR",
+     "sku": {
+      "lcsc": "C20349451"
+     }
+    }
+   ],
+   "note": "Two-terminal 1206 shunt with Kelvin routing.",
+   "refs": [
+    "R258"
+   ]
+  },
+  {
+   "id": "R-1206-HoLR1206-20mR",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "1206",
+   "footprint": "Resistor_SMD:R_1206_3216Metric",
+   "manufacturer": "Milliohm",
+   "mpn": "HoLR1206-1W-20mR-1%-75ppm",
+   "sku": {
+    "lcsc": "C601099"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Milliohm",
+     "mpn": "HoLLR1206-1W-20mR-1%",
+     "sku": {
+      "lcsc": "C2988656"
+     }
+    }
+   ],
+   "note": "LT3045 current-sharing ballast, 20 mΩ 1 % ≥0.25 W.",
+   "refs": [
+    "R225",
+    "R226"
+   ]
+  },
+  {
+   "id": "R-0603-TBD-R4422",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "tbd": "49.8 kΩ is not an E192 value; no 0.1 % catalogue part found at LCSC on 2026-10-24. E4 owner decides: 49.9 kΩ (E192) with a rerun of design/E4-detector-analysis.py (analytical margin 1.37 mV), or 2×24.9 kΩ in series (graph change).",
+   "refs": [
+    "R4422",
+    "R4432",
+    "R4442"
+   ]
+  },
+  {
+   "id": "R-0603-TBD-R263",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "tbd": "OVLO start value 112 kΩ is not an E192 value (E192: 111k/113k) and the final OVLO divider is gated; no 0.1 % 0603 part found on 2026-10-24.",
+   "refs": [
+    "R263"
+   ]
+  },
+  {
+   "id": "C-1210-22u-50V-X7R-TBD",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "1210",
+   "footprint": "Capacitor_SMD:C_1210_3225Metric",
+   "manufacturer": "TDK",
+   "mpn": "C3225X7R1H226M250AC",
+   "sku": {
+    "digikey": "445-C3225X7R1H226M250ACCT-ND"
+   },
+   "match": "C3225X7R1H226M250AC",
+   "tbd": "Graph-named TDK C3225X7R1H226M250AC: DigiKey DE stock 0 (1000 expected 12-Apr-2027) and no LCSC listing (exact or 22 µF/50 V/X7R/1210 search) on 2026-10-24. Select a stocked 22 µF 50 V X7R 1210 with the same DC-bias derating check as E2 before ordering.",
+   "refs": [
+    "C223",
+    "C224",
+    "C227",
+    "C229",
+    "C231",
+    "C256",
+    "C267",
+    "C290",
+    "C292",
+    "C293",
+    "C294"
+   ]
+  },
+  {
+   "id": "C-SMD-EEHZK1V101XP",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "SMD,D6.3xL7.7mm",
+   "footprint": "Capacitor_SMD:CP_Elec_6.3x7.7",
+   "manufacturer": "PANASONIC",
+   "mpn": "EEHZK1V101XP",
+   "sku": {
+    "lcsc": "C454360"
+   },
+   "polarized": true,
+   "alternates": [
+    {
+     "manufacturer": "Lelon",
+     "mpn": "HBV101M1VTR-0608",
+     "sku": {
+      "lcsc": "C967098"
+     },
+     "note": "same D6.3xL7.7 SMD case"
+    }
+   ],
+   "note": "Hybrid polymer, D6.3×L7.7 SMD; \"low ESR\" in the graph value.",
+   "refs": [
+    "C107",
+    "C109"
+   ]
+  },
+  {
+   "id": "C-SMD-35SVPF22M",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "SMD,D6.3xL5.9mm",
+   "footprint": "Capacitor_SMD:CP_Elec_6.3x5.9",
+   "manufacturer": "PANASONIC",
+   "mpn": "35SVPF22M",
+   "sku": {
+    "lcsc": "C88142"
+   },
+   "polarized": true,
+   "single_source": "Named electrolytic/polymer series; a second source with the same land must be qualified (ESR/ripple) before substitution",
+   "note": "OS-CON SVPF D6.3×L5.9 named in the graph.",
+   "refs": [
+    "C111",
+    "C112"
+   ]
+  },
+  {
+   "id": "C-SMD-16SVPC100M",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "SMD,D6.3xL5.9mm",
+   "footprint": "Capacitor_SMD:CP_Elec_6.3x5.9",
+   "manufacturer": "PANASONIC",
+   "mpn": "16SVPC100M",
+   "sku": {
+    "lcsc": "C136275"
+   },
+   "polarized": true,
+   "single_source": "Named electrolytic/polymer series; a second source with the same land must be qualified (ESR/ripple) before substitution",
+   "note": "OS-CON SVPC D6.3×L5.9 named in the graph.",
+   "refs": [
+    "C113"
+   ]
+  },
+  {
+   "id": "C-THT-EEU-FR1H470",
+   "mount": "pcb_tht",
+   "kind": "capacitor",
+   "package": "Plugin,D6.3xL11.2mm",
+   "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+   "manufacturer": "Panasonic",
+   "mpn": "EEU-FR1H470",
+   "sku": {
+    "lcsc": "C407950",
+    "digikey": "EEU-FR1H470"
+   },
+   "polarized": true,
+   "single_source": "Named electrolytic/polymer series; a second source with the same land must be qualified (ESR/ripple) before substitution",
+   "note": "FR radial D6.3×L11.2, lead spacing 2.5 mm (LCSC attributes); LCSC stock 39 on 2026-10-24 is below the 15+spares needed: order at DigiKey.",
+   "refs": [
+    "C206",
+    "C210",
+    "C219",
+    "C222",
+    "C225",
+    "C235",
+    "C239",
+    "C243",
+    "C247",
+    "C251",
+    "C254",
+    "C262",
+    "C265",
+    "C273",
+    "C298"
+   ]
+  },
+  {
+   "id": "C-THT-UHE1E221MPD",
+   "mount": "pcb_tht",
+   "kind": "capacitor",
+   "package": "Plugin,D8xL11.5mm",
+   "footprint": "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm",
+   "manufacturer": "Nichicon",
+   "mpn": "UHE1E221MPD",
+   "sku": {
+    "lcsc": "C116228",
+    "digikey": "UHE1E221MPD"
+   },
+   "polarized": true,
+   "single_source": "Named electrolytic/polymer series; a second source with the same land must be qualified (ESR/ripple) before substitution",
+   "note": "UHE radial D8×L11.5, lead spacing 3.5 mm; LCSC stock 1 on 2026-10-24: order at DigiKey.",
+   "refs": [
+    "C207"
+   ]
+  },
+  {
+   "id": "C-SMD-16SVPG47M",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "SMD,D5xL4.5mm",
+   "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+   "manufacturer": "PANASONIC",
+   "mpn": "16SVPG47M",
+   "sku": {
+    "lcsc": "C2161511"
+   },
+   "polarized": true,
+   "single_source": "Named electrolytic/polymer series; a second source with the same land must be qualified (ESR/ripple) before substitution",
+   "note": "Polymer D5×L4.5 SMD, 16 V for the 10 V requirement.",
+   "refs": [
+    "C503"
+   ]
+  },
+  {
+   "id": "C-SMD-16SVPC150M",
+   "mount": "pcb_smt",
+   "kind": "capacitor",
+   "package": "SMD,D8xL6.9mm",
+   "footprint": "Capacitor_SMD:CP_Elec_8x6.9",
+   "manufacturer": "PANASONIC",
+   "mpn": "16SVPC150M",
+   "sku": {
+    "lcsc": "C190722"
+   },
+   "polarized": true,
+   "alternates": [
+    {
+     "manufacturer": "PANASONIC",
+     "mpn": "10SVQP150M",
+     "sku": {
+      "lcsc": "C347576"
+     },
+     "note": "same D8xL6.9 case, 10 V rating (no margin over the 10 V requirement)"
+    }
+   ],
+   "note": "Polymer D8×L6.9 SMD; ≥120 µF at each external USB port per E5 note.",
+   "refs": [
+    "C506",
+    "C516"
+   ]
+  },
+  {
+   "id": "C-THT-EEU-FR1C101",
+   "mount": "pcb_tht",
+   "kind": "capacitor",
+   "package": "Plugin,D5xL11mm",
+   "footprint": "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm",
+   "manufacturer": "Panasonic",
+   "mpn": "EEU-FR1C101",
+   "sku": {
+    "lcsc": "C278532",
+    "digikey": "EEU-FR1C101"
+   },
+   "polarized": true,
+   "single_source": "Named electrolytic/polymer series; a second source with the same land must be qualified (ESR/ripple) before substitution",
+   "note": "FR radial D5×L11, lead spacing 2 mm (LCSC attributes); HF+ LC filter per 10-bom row 19.",
+   "refs": [
+    "C511"
+   ]
+  },
+  {
+   "id": "C-THT-EEU-FR1C221",
+   "mount": "pcb_tht",
+   "kind": "capacitor",
+   "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+   "manufacturer": "Panasonic",
+   "mpn": "EEU-FR1C221",
+   "sku": {
+    "digikey": "EEU-FR1C221"
+   },
+   "polarized": true,
+   "single_source": "Named electrolytic/polymer series; a second source with the same land must be qualified (ESR/ripple) before substitution",
+   "note": "FR 220 µF 16 V radial, HF+ damper with R512 (10-bom row 19). DigiKey listing read (EUR 0.40); size not shown there — confirm D6.3/2.5 mm with the Panasonic table before PCB release (EEU-FR1C221B at LCSC is the formed-lead 5 mm variant, not this footprint).",
+   "refs": [
+    "C512"
+   ]
+  },
+  {
+   "id": "L-XAL6060-103MEC",
+   "mount": "pcb_smt",
+   "kind": "inductor",
+   "footprint": "Inductor_SMD:L_Coilcraft_XAL6060-XXX",
+   "manufacturer": "Coilcraft",
+   "mpn": "XAL6060-103MEC",
+   "sku": {
+    "lcsc": "C5329540"
+   },
+   "match": "XAL6060-103MEC",
+   "single_source": "Coilcraft XAL6060 named in E1; a second source needs DCR/Isat re-qualification",
+   "refs": [
+    "L101"
+   ]
+  },
+  {
+   "id": "L-XAL5030-102MEC",
+   "mount": "pcb_smt",
+   "kind": "inductor",
+   "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
+   "manufacturer": "Coilcraft",
+   "mpn": "XAL5030-102MEC",
+   "sku": {
+    "lcsc": "C5379798"
+   },
+   "match": "XAL5030-102MEC",
+   "single_source": "Coilcraft XAL5030 named in E2 (15 places); a second source needs DCR/Isat re-qualification",
+   "refs": [
+    "L201",
+    "L202",
+    "L203",
+    "L204",
+    "L205",
+    "L206",
+    "L207",
+    "L208",
+    "L209",
+    "L210",
+    "L211",
+    "L212",
+    "L213",
+    "L214",
+    "L215"
+   ]
+  },
+  {
+   "id": "L-SRR1260-101M",
+   "mount": "pcb_smt",
+   "kind": "inductor",
+   "footprint": "Inductor_SMD:L_Bourns_SRR1260",
+   "manufacturer": "Bourns",
+   "mpn": "SRR1260-101M",
+   "sku": {
+    "lcsc": "C2041335"
+   },
+   "match": "SRR1260-101M",
+   "single_source": "Bourns SRR1260 named for the HF+ LC filter (10-bom row 19)",
+   "refs": [
+    "L501"
+   ]
+  },
+  {
+   "id": "L-0805LS-471XGRC",
+   "mount": "pcb_smt",
+   "kind": "inductor",
+   "footprint": "Inductor_SMD:L_0805_2012Metric",
+   "manufacturer": "Coilcraft",
+   "mpn": "0805LS-471XGRC",
+   "sku": {
+    "digikey": "4652-0805LS-471XGRC-ND"
+   },
+   "match": "0805LS-471XGRC",
+   "single_source": "Coilcraft RF choke selected in E4 (SRF/DCR/Irms)",
+   "note": "Coilcraft land pattern differs slightly from the IPC 0805 footprint: compare before layout release (E4 note).",
+   "refs": [
+    "L402"
+   ]
+  },
+  {
+   "id": "L-0805HP-221XGRC",
+   "mount": "pcb_smt",
+   "kind": "inductor",
+   "footprint": "Inductor_SMD:L_0805_2012Metric",
+   "manufacturer": "Coilcraft",
+   "mpn": "0805HP-221XGRC",
+   "match": "0805HP-221XGRC",
+   "tbd": "MPN selected in E4; no distributor listing confirmed on 2026-10-24 (DigiKey DE: no result; coilcraft.com returned 403 to automated reads). Order from Coilcraft direct after checking the page manually.",
+   "refs": [
+    "L403"
+   ]
+  },
+  {
+   "id": "L-0603HP-47NXGRW",
+   "mount": "pcb_smt",
+   "kind": "inductor",
+   "footprint": "Inductor_SMD:L_0603_1608Metric",
+   "manufacturer": "Coilcraft",
+   "mpn": "0603HP-47NXGRW",
+   "match": "0603HP-47NXGRW",
+   "tbd": "MPN selected in E4 (Coilcraft document 225-2); no distributor listing confirmed on 2026-10-24 (DigiKey DE: no result; coilcraft.com 403). Order from Coilcraft direct after checking manually.",
+   "refs": [
+    "L404"
+   ]
+  },
+  {
+   "id": "L-LQW2UAS68NG00L",
+   "mount": "pcb_smt",
+   "kind": "inductor",
+   "footprint": "Inductor_SMD:L_1008_2520Metric",
+   "manufacturer": "Murata Electronics",
+   "mpn": "LQW2UAS68NG00L",
+   "sku": {
+    "lcsc": "C703709"
+   },
+   "match": "LQW2UAS68NG00L",
+   "alternates": [
+    {
+     "manufacturer": "Murata Electronics",
+     "mpn": "LQW2UAS68NG0CL",
+     "sku": {
+      "lcsc": "C1330567"
+     }
+    }
+   ],
+   "note": "LQW2UA is the 1008 (2520) size per the LCSC listing, not 0805.",
+   "refs": [
+    "L406"
+   ]
+  },
+  {
+   "id": "L-0805-DNP-470nH",
+   "mount": "pcb_smt",
+   "kind": "inductor",
+   "footprint": "Inductor_SMD:L_0805_2012Metric",
+   "tbd": "DNP optional bleed choke, part TBD in E4 (SRF >300 MHz); land only. Not purchased.",
+   "refs": [
+    "L401",
+    "L407"
+   ]
+  },
+  {
+   "id": "U-TPS70933DBVR",
+   "mount": "pcb_smt",
+   "footprint": "Package_TO_SOT_SMD:SOT-23-5",
+   "manufacturer": "Texas Instruments",
+   "mpn": "TPS70933DBVR",
+   "sku": {
+    "lcsc": "C89347"
+   },
+   "match": "TPS70933DBVR",
+   "single_source": "TI-only fixed 3.3 V LDO pinout (TPS709)",
+   "refs": [
+    "U103"
+   ]
+  },
+  {
+   "id": "U-MCP65R41T-1202E-CHY",
+   "mount": "pcb_smt",
+   "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+   "manufacturer": "Microchip",
+   "mpn": "MCP65R41T-1202E/CHY",
+   "sku": {
+    "lcsc": "C219181"
+   },
+   "match": "MCP65R41T-1202E/CHY",
+   "single_source": "Comparator with 1.21 V reference; 10-bom row 70 fallback TLV3012AIDBVR needs a divider change",
+   "refs": [
+    "U104"
+   ]
+  },
+  {
+   "id": "D-BAT54-215",
+   "mount": "pcb_smt",
+   "footprint": "Package_TO_SOT_SMD:SOT-23",
+   "manufacturer": "Nexperia",
+   "mpn": "BAT54,215",
+   "sku": {
+    "lcsc": "C85084"
+   },
+   "match": "BAT54",
+   "alternates": [
+    {
+     "manufacturer": "onsemi",
+     "mpn": "BAT54LT1G",
+     "sku": {
+      "lcsc": "C94399"
+     }
+    }
+   ],
+   "refs": [
+    "D101",
+    "D102",
+    "D103",
+    "D302",
+    "D303"
+   ]
+  },
+  {
+   "id": "D-SMBJ17A-E3-52",
+   "mount": "pcb_smt",
+   "footprint": "SR_RX_Custom:D_SMB_KA",
+   "manufacturer": "Vishay",
+   "mpn": "SMBJ17A-E3/52",
+   "sku": {
+    "lcsc": "C1973197"
+   },
+   "match": "SMBJ17A",
+   "alternates": [
+    {
+     "manufacturer": "Littelfuse",
+     "mpn": "SMBJ17A",
+     "sku": {
+      "lcsc": "C157523"
+     }
+    }
+   ],
+   "refs": [
+    "D104",
+    "D105"
+   ]
+  },
+  {
+   "id": "D-SMBJ13A-E3-52",
+   "mount": "pcb_smt",
+   "footprint": "SR_RX_Custom:D_SMB_KA",
+   "manufacturer": "Vishay",
+   "mpn": "SMBJ13A-E3/52",
+   "sku": {
+    "lcsc": "C968569"
+   },
+   "match": "SMBJ13A",
+   "alternates": [
+    {
+     "manufacturer": "Littelfuse",
+     "mpn": "SMBJ13A",
+     "sku": {
+      "lcsc": "C151252"
+     }
+    }
+   ],
+   "refs": [
+    "D201"
+   ]
+  },
+  {
+   "id": "U-TPS259470ARPWR",
+   "mount": "pcb_smt",
+   "footprint": "SR_RX_Custom:TI_RPW0010A_VQFN-HR-10_2x2mm_P0.5mm",
+   "manufacturer": "Texas Instruments",
+   "mpn": "TPS259470ARPWR",
+   "sku": {
+    "lcsc": "C3662799",
+    "digikey": "296-TPS259470ARPWRCT-ND"
+   },
+   "match": "TPS259470ARPWR",
+   "single_source": "TI eFuse with a TI-specific VQFN-HR pinout; reflow only (10-bom row 71)",
+   "refs": [
+    "U109",
+    "U201",
+    "U202",
+    "U203"
+   ]
+  },
+  {
+   "id": "Q-2N7002-215",
+   "mount": "pcb_smt",
+   "footprint": "Package_TO_SOT_SMD:SOT-23",
+   "manufacturer": "Nexperia",
+   "mpn": "2N7002,215",
+   "sku": {
+    "lcsc": "C65189"
+   },
+   "match": "2N7002",
+   "alternates": [
+    {
+     "manufacturer": "onsemi",
+     "mpn": "2N7002LT1G",
+     "sku": {
+      "lcsc": "C16338"
+     }
+    },
+    {
+     "manufacturer": "Diodes Incorporated",
+     "mpn": "2N7002-7-F",
+     "sku": {
+      "lcsc": "C85049"
+     }
+    }
+   ],
+   "refs": [
+    "Q101",
+    "Q202",
+    "Q301",
+    "Q302",
+    "Q306",
+    "Q2911",
+    "Q2912",
+    "Q2913"
+   ]
+  },
+  {
+   "id": "Q-AO3407A",
+   "mount": "pcb_smt",
+   "footprint": "Package_TO_SOT_SMD:SOT-23",
+   "manufacturer": "Alpha & Omega Semiconductor",
+   "mpn": "AO3407A",
+   "sku": {
+    "lcsc": "C15155"
+   },
+   "match": "AO3407A",
+   "alternates": [
+    {
+     "manufacturer": "UMW",
+     "mpn": "AO3407A",
+     "sku": {
+      "lcsc": "C347478"
+     },
+     "note": "second-source die under the same name; sample-test as for AO3400A (10-bom row 56)"
+    }
+   ],
+   "refs": [
+    "Q201"
+   ]
+  },
+  {
+   "id": "U-LT3045EMSE-PBF",
+   "mount": "pcb_smt",
+   "footprint": "Package_SO:MSOP-12-1EP_3x4.039mm_P0.65mm_EP1.651x2.845mm_ThermalVias",
+   "manufacturer": "Analog Devices",
+   "mpn": "LT3045EMSE#PBF",
+   "sku": {
+    "lcsc": "C580012"
+   },
+   "match": "LT3045EMSE#PBF",
+   "single_source": "ADI/LTC only; never Tokmas LT3045IDD-5 or \"LGYP\" parts (10-bom section 6)",
+   "refs": [
+    "U204",
+    "U205"
+   ]
+  },
+  {
+   "id": "U-TPS2553DBVR-1",
+   "mount": "pcb_smt",
+   "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+   "manufacturer": "Texas Instruments",
+   "mpn": "TPS2553DBVR-1",
+   "sku": {
+    "lcsc": "C111738"
+   },
+   "match": "TPS2553DBVR-1",
+   "single_source": "Latch-off -1 variant required; TPS2553DBVR (auto-retry, LCSC C55266) is only the documented fallback for a channel that latches at start-up (10-bom row 69)",
+   "note": "Accept LCSC lots only with marking CHZ (10-bom row 69).",
+   "refs": [
+    "U206",
+    "U207",
+    "U208",
+    "U209",
+    "U210",
+    "U221",
+    "U501",
+    "U502",
+    "U503"
+   ]
+  },
+  {
+   "id": "Q-DMP6050SSD-13",
+   "mount": "pcb_smt",
+   "footprint": "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm",
+   "manufacturer": "Diodes Incorporated",
+   "mpn": "DMP6050SSD-13",
+   "sku": {
+    "lcsc": "C531158",
+    "digikey": "DMP6050SSD-13DICT-ND"
+   },
+   "match": "DMP6050SSD-13",
+   "single_source": "Dual P-MOSFET of the E2/E4-06 blocking element (Qgd and −60 V VDS are part of the ±30 V calculation); an alternate needs a new E4-06 calculation",
+   "note": "Stock 0 at both LCSC and DigiKey DE on 2026-10-24 (Active): order early / check Mouser.",
+   "refs": [
+    "Q2901",
+    "Q2902",
+    "Q2903"
+   ]
+  },
+  {
+   "id": "D-BZX84C10-7-F",
+   "mount": "pcb_smt",
+   "footprint": "Package_TO_SOT_SMD:SOT-23",
+   "manufacturer": "Diodes Incorporated",
+   "mpn": "BZX84C10-7-F",
+   "sku": {
+    "lcsc": "C500793"
+   },
+   "match": "BZX84C10-7-F",
+   "alternates": [
+    {
+     "manufacturer": "onsemi",
+     "mpn": "BZX84C10LT1G",
+     "sku": {
+      "lcsc": "C82476"
+     }
+    }
+   ],
+   "refs": [
+    "D2901",
+    "D2902",
+    "D2903"
+   ]
+  },
+  {
+   "id": "U-TPS7A4701RGWT",
+   "mount": "pcb_smt",
+   "footprint": "SR_RX_Custom:TI_RGW0020A_VQFN-20-1EP_5x5mm_P0.65mm_EP3.15x3.15mm",
+   "manufacturer": "Texas Instruments",
+   "mpn": "TPS7A4701RGWT",
+   "sku": {
+    "lcsc": "C68214",
+    "digikey": "296-37243-1-ND"
+   },
+   "match": "TPS7A4701RGWT",
+   "alternates": [
+    {
+     "manufacturer": "Texas Instruments",
+     "mpn": "TPS7A4701RGWR",
+     "sku": {
+      "digikey": "296-37224-2-ND"
+     },
+     "note": "same device on a large reel (DigiKey parametric equivalent)"
+    }
+   ],
+   "note": "DigiKey DE out of stock, LCSC 8 pcs on 2026-10-24; never TPS7A4701MRGWREP or TPS7A4700 (10-bom row 65).",
+   "refs": [
+    "U211",
+    "U213"
+   ]
+  },
+  {
+   "id": "D-PMEG4030ER-115",
+   "mount": "pcb_smt",
+   "footprint": "Diode_SMD:Nexperia_CFP3_SOD-123W",
+   "manufacturer": "Nexperia",
+   "mpn": "PMEG4030ER,115",
+   "sku": {
+    "lcsc": "C389355"
+   },
+   "match": "PMEG4030ER",
+   "single_source": "Nexperia CFP3 (SOD-123W) land in the graph; the LCSC part of the same name by Shikues is SOD-123FL",
+   "refs": [
+    "D202",
+    "D203"
+   ]
+  },
+  {
+   "id": "U-TPS259630DDAR",
+   "mount": "pcb_smt",
+   "footprint": "SR_RX_Custom:TI_DDA0008_HSOP-8-1EP_3.9x4.9mm_P1.27mm_EP2.4x3.1mm",
+   "manufacturer": "Texas Instruments",
+   "mpn": "TPS259630DDAR",
+   "sku": {
+    "lcsc": "C2155776"
+   },
+   "match": "TPS259630DDAR",
+   "alternates": [
+    {
+     "manufacturer": "Texas Instruments",
+     "mpn": "TPS259631DDAR",
+     "note": "spare variant named in 10-bom row 67 (not read 2026-10-24)"
+    }
+   ],
+   "refs": [
+    "U212",
+    "U214"
+   ]
+  },
+  {
+   "id": "U-INA3221AIRGVR",
+   "mount": "pcb_smt",
+   "footprint": "SR_RX_Custom:TI_RGV0016A_VQFN-16-1EP_4x4mm_P0.65mm_EP2.16x2.16mm",
+   "manufacturer": "Texas Instruments",
+   "mpn": "INA3221AIRGVR",
+   "sku": {
+    "lcsc": "C181255"
+   },
+   "match": "INA3221AIRGVR",
+   "single_source": "TI-only 3-channel monitor",
+   "refs": [
+    "U215",
+    "U216"
+   ]
+  },
+  {
+   "id": "U-TLV3011BIDBVR",
+   "mount": "pcb_smt",
+   "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+   "manufacturer": "Texas Instruments",
+   "mpn": "TLV3011BIDBVR",
+   "sku": {
+    "lcsc": "C20345920"
+   },
+   "match": "TLV3011BIDBVR",
+   "single_source": "TI comparator with internal reference (B grade)",
+   "refs": [
+    "U217",
+    "U218",
+    "U219"
+   ]
+  },
+  {
+   "id": "U-TPS3701DDCR",
+   "mount": "pcb_smt",
+   "footprint": "Package_TO_SOT_SMD:TSOT-23-6",
+   "manufacturer": "Texas Instruments",
+   "mpn": "TPS3701DDCR",
+   "sku": {
+    "lcsc": "C132788"
+   },
+   "match": "TPS3701DDCR",
+   "single_source": "TI window supervisor, TSOT-23-6 (DDC)",
+   "refs": [
+    "U220"
+   ]
+  },
+  {
+   "id": "U-MCP23017-E-SO",
+   "mount": "pcb_smt",
+   "footprint": "Package_SO:SOIC-28W_7.5x17.9mm_P1.27mm",
+   "manufacturer": "Microchip",
+   "mpn": "MCP23017-E/SO",
+   "sku": {
+    "lcsc": "C47023"
+   },
+   "match": "MCP23017-E/SO",
+   "alternates": [
+    {
+     "manufacturer": "Microchip",
+     "mpn": "MCP23017T-E/SO",
+     "sku": {
+      "lcsc": "C629440"
+     },
+     "note": "same device, tape and reel"
+    }
+   ],
+   "refs": [
+    "U301",
+    "U302",
+    "U303"
+   ]
+  },
+  {
+   "id": "D-SS14-E3-61T",
+   "mount": "pcb_smt",
+   "footprint": "Diode_SMD:D_SMA",
+   "manufacturer": "Vishay",
+   "mpn": "SS14-E3/61T",
+   "sku": {
+    "lcsc": "C47460"
+   },
+   "match": "SS14",
+   "alternates": [
+    {
+     "manufacturer": "Vishay",
+     "mpn": "SS14-E3/5AT",
+     "sku": {
+      "lcsc": "C511349"
+     }
+    },
+    {
+     "manufacturer": "onsemi",
+     "mpn": "SS14",
+     "sku": {
+      "lcsc": "C83852"
+     }
+    }
+   ],
+   "refs": [
+    "D301",
+    "D305",
+    "D306",
+    "D502"
+   ]
+  },
+  {
+   "id": "U-LM4040C30IDBZR",
+   "mount": "pcb_smt",
+   "footprint": "Package_TO_SOT_SMD:SOT-23",
+   "manufacturer": "Texas Instruments",
+   "mpn": "LM4040C30IDBZR",
+   "sku": {
+    "lcsc": "C181416"
+   },
+   "match": "LM4040C30IDBZR",
+   "single_source": "Shunt reference grade C 3.0 V named in E3",
+   "refs": [
+    "U307"
+   ]
+  },
+  {
+   "id": "U-PI4IOE5V9555LEX",
+   "mount": "pcb_smt",
+   "footprint": "Package_SO:TSSOP-24_4.4x7.8mm_P0.65mm",
+   "manufacturer": "Diodes Incorporated",
+   "mpn": "PI4IOE5V9555LEX",
+   "sku": {
+    "lcsc": "C3194482",
+    "digikey": "31-PI4IOE5V9555LEXCT-ND"
+   },
+   "match": "PI4IOE5V9555LEX",
+   "alternates": [
+    {
+     "manufacturer": "Texas Instruments",
+     "mpn": "TCA9555PWR",
+     "sku": {
+      "lcsc": "C465732"
+     },
+     "note": "same TSSOP-24 land per 10-bom row 53; pin compatibility to be confirmed against both datasheets before substitution"
+    }
+   ],
+   "note": "LCSC stock 0, DigiKey DE 3021 pcs on 2026-10-24.",
+   "refs": [
+    "U306"
+   ]
+  },
+  {
+   "id": "U-TPD4E1U06DBVR",
+   "mount": "pcb_smt",
+   "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+   "manufacturer": "Texas Instruments",
+   "mpn": "TPD4E1U06DBVR",
+   "sku": {
+    "lcsc": "C124691"
+   },
+   "match": "TPD4E1U06DBVR",
+   "single_source": "TI ESD array; same-name parts from other makers listed at LCSC need qualification first",
+   "refs": [
+    "U310",
+    "U311",
+    "U312",
+    "U313",
+    "U551",
+    "U552"
+   ]
+  },
+  {
+   "id": "D-WP7113LSECK-J3",
+   "mount": "pcb_tht",
+   "footprint": "SR_RX_Custom:LED_D5.0mm_KA",
+   "manufacturer": "Kingbright",
+   "mpn": "WP7113LSECK/J3",
+   "sku": {
+    "digikey": "754-1916-ND",
+    "lcsc": "C6001438"
+   },
+   "match": "WP7113LSECK/J3",
+   "single_source": "Kingbright 5 mm red LED named in STACK (HMI cart, 10-bom row 53)",
+   "note": "5 mm red LED on the HMI board behind the panel light pipe/window (window part: build/05 mechanics).",
+   "refs": [
+    "D304"
+   ]
+  },
+  {
+   "id": "Q-AO3400A",
+   "mount": "pcb_smt",
+   "footprint": "Package_TO_SOT_SMD:SOT-23",
+   "manufacturer": "Alpha & Omega Semiconductor",
+   "mpn": "AO3400A",
+   "sku": {
+    "lcsc": "C20917"
+   },
+   "match": "AO3400A",
+   "alternates": [
+    {
+     "manufacturer": "BORN",
+     "mpn": "AO3400A",
+     "sku": {
+      "lcsc": "C344010"
+     },
+     "note": "second-source die under the same name; 10-bom row 56 requires a sample test"
+    }
+   ],
+   "refs": [
+    "Q303",
+    "Q305",
+    "Q401",
+    "Q402",
+    "Q450",
+    "Q451",
+    "Q452",
+    "Q453",
+    "Q454",
+    "Q455",
+    "Q456",
+    "Q457"
+   ]
+  },
+  {
+   "id": "Q-AO3401A",
+   "mount": "pcb_smt",
+   "footprint": "Package_TO_SOT_SMD:SOT-23",
+   "manufacturer": "Alpha & Omega Semiconductor",
+   "mpn": "AO3401A",
+   "sku": {
+    "lcsc": "C15127"
+   },
+   "match": "AO3401A",
+   "alternates": [
+    {
+     "manufacturer": "BORN",
+     "mpn": "AO3401A",
+     "sku": {
+      "lcsc": "C306862"
+     }
+    }
+   ],
+   "refs": [
+    "Q304"
+   ]
+  },
+  {
+   "id": "D-BAT54C-215",
+   "mount": "pcb_smt",
+   "footprint": "Package_TO_SOT_SMD:SOT-23",
+   "manufacturer": "Nexperia",
+   "mpn": "BAT54C,215",
+   "sku": {
+    "lcsc": "C37704"
+   },
+   "match": "BAT54C",
+   "alternates": [
+    {
+     "manufacturer": "onsemi",
+     "mpn": "BAT54CLT1G",
+     "sku": {
+      "lcsc": "C14308"
+     }
+    }
+   ],
+   "refs": [
+    "D401"
+   ]
+  },
+  {
+   "id": "U-HMC7992LP3DE",
+   "mount": "pcb_smt",
+   "footprint": "SR_RX_Custom:QFN-16-1EP_3x3mm_P0.5mm_EP1.7x1.7mm_EPAD",
+   "manufacturer": "Analog Devices",
+   "mpn": "HMC7992LP3DE",
+   "sku": {
+    "lcsc": "C208307",
+    "digikey": "HMC7992LP3DE"
+   },
+   "match": "HMC7992LP3DE",
+   "single_source": "ADI SP4T; buy only from authorised distributors (10-bom section 6)",
+   "note": "Footprint exposed pad not yet checked against the ADI outline (see SR_RX_Custom provenance).",
+   "refs": [
+    "U405",
+    "U406",
+    "U407"
+   ]
+  },
+  {
+   "id": "D-BAV199-215",
+   "mount": "pcb_smt",
+   "footprint": "Package_TO_SOT_SMD:SOT-23",
+   "manufacturer": "Nexperia",
+   "mpn": "BAV199,215",
+   "sku": {
+    "lcsc": "C40919"
+   },
+   "match": "BAV199",
+   "alternates": [
+    {
+     "manufacturer": "Diodes Incorporated",
+     "mpn": "BAV199-7-F",
+     "sku": {
+      "lcsc": "C155248"
+     }
+    }
+   ],
+   "refs": [
+    "D450",
+    "D451",
+    "D452",
+    "D453"
+   ]
+  },
+  {
+   "id": "U-LM4040A20IDBZR",
+   "mount": "pcb_smt",
+   "footprint": "Package_TO_SOT_SMD:SOT-23",
+   "manufacturer": "Texas Instruments",
+   "mpn": "LM4040A20IDBZR",
+   "sku": {
+    "lcsc": "C127070"
+   },
+   "match": "LM4040A20IDBZR",
+   "single_source": "0.1 % grade A 2.048 V reference used by the detector model",
+   "note": "LCSC stock 6 on 2026-10-24.",
+   "refs": [
+    "U458"
+   ]
+  },
+  {
+   "id": "U-TLV3012BIDBVR",
+   "mount": "pcb_smt",
+   "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+   "manufacturer": "Texas Instruments",
+   "mpn": "TLV3012BIDBVR",
+   "sku": {
+    "lcsc": "C20345924"
+   },
+   "match": "TLV3012BIDBVR",
+   "single_source": "TI comparator with reference (B grade) in the detector model",
+   "refs": [
+    "U450",
+    "U451",
+    "U452",
+    "U453",
+    "U454",
+    "U455",
+    "U456",
+    "U457"
+   ]
+  },
+  {
+   "id": "U-TPS2553DRVR",
+   "mount": "pcb_smt",
+   "footprint": "Package_SON:WSON-6-1EP_2x2mm_P0.65mm_EP1x1.6mm",
+   "manufacturer": "Texas Instruments",
+   "mpn": "TPS2553DRVR",
+   "sku": {
+    "lcsc": "C138719"
+   },
+   "match": "TPS2553DRVR",
+   "single_source": "T7 VBUS switch package (WSON)",
+   "refs": [
+    "U505"
+   ]
+  },
+  {
+   "id": "U-LM66100DCKR",
+   "mount": "pcb_smt",
+   "footprint": "Package_TO_SOT_SMD:SOT-363_SC-70-6",
+   "manufacturer": "Texas Instruments",
+   "mpn": "LM66100DCKR",
+   "sku": {
+    "lcsc": "C2869734"
+   },
+   "match": "LM66100DCKR",
+   "single_source": "TI ideal diode",
+   "refs": [
+    "U506"
+   ]
+  },
+  {
+   "id": "U-TCA9517DR",
+   "mount": "pcb_smt",
+   "footprint": "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm",
+   "manufacturer": "Texas Instruments",
+   "mpn": "TCA9517DR",
+   "sku": {
+    "lcsc": "C182421"
+   },
+   "match": "TCA9517DR",
+   "alternates": [
+    {
+     "manufacturer": "NXP",
+     "mpn": "PCA9517D,118",
+     "sku": {
+      "lcsc": "C2652395"
+     },
+     "note": "same SO-8 family part; pin compatibility to be confirmed against both datasheets"
+    }
+   ],
+   "refs": [
+    "U507"
+   ]
+  },
+  {
+   "id": "K-G6K-2F-RF-S-DC5",
+   "mount": "pcb_smt",
+   "footprint": "SR_RX_Custom:Relay_DPDT_Omron_G6K-2F-RF-S",
+   "manufacturer": "Omron (Aratas)",
+   "mpn": "G6K-2F-RF-S DC5",
+   "sku": {
+    "lcsc": "C2750987",
+    "digikey": "G6K-2F-RF-S DC5"
+   },
+   "match": "G6K-2F-RF-S",
+   "alternates": [
+    {
+     "manufacturer": "Omron",
+     "mpn": "G6K-2F-RF DC5",
+     "note": "standard-footprint RF version named in 10-bom row 18 (different land, not drop-in); not read 2026-10-24"
+    }
+   ],
+   "single_source": "RF relay with case-ground terminals; the -S land pattern is specific",
+   "note": "DigiKey lists the brand as Aratas (formerly Omron Components).",
+   "refs": [
+    "K401",
+    "K402"
+   ]
+  },
+  {
+   "id": "A-YAT-10A",
+   "mount": "pcb_smt",
+   "footprint": "SR_RX_Custom:MiniCircuits_MC1630_MCLP-6-1EP_2x2mm_P0.65mm",
+   "manufacturer": "Mini-Circuits",
+   "mpn": "YAT-10A+",
+   "sku": {
+    "lcsc": "C5839318"
+   },
+   "match": "YAT-10A+",
+   "single_source": "Mini-Circuits MMIC attenuator; PL-586 layout",
+   "refs": [
+    "A407"
+   ]
+  },
+  {
+   "id": "A-TCBT-2R5G",
+   "mount": "pcb_smt",
+   "footprint": "SR_RX_Custom:MiniCircuits_GU1604_3.81x3.81mm",
+   "manufacturer": "Mini-Circuits",
+   "mpn": "TCBT-2R5G+",
+   "sku": {
+    "lcsc": "C5189220"
+   },
+   "match": "TCBT-2R5G+",
+   "single_source": "Mini-Circuits bias tee; PL-146 layout",
+   "refs": [
+    "A424"
+   ]
+  },
+  {
+   "id": "F-MF-MSMF075-24-2",
+   "mount": "pcb_smt",
+   "footprint": "Fuse:Fuse_1812_4532Metric",
+   "manufacturer": "Bourns",
+   "mpn": "MF-MSMF075/24-2",
+   "sku": {
+    "lcsc": "C208467"
+   },
+   "match": "MF-MSMF075/24-2",
+   "single_source": "PTC named in STACK §2.7; reflow only",
+   "refs": [
+    "F202"
+   ]
+  },
+  {
+   "id": "F-0297007.5-WXNV",
+   "mount": "pcb_tht",
+   "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
+   "manufacturer": "Littelfuse",
+   "mpn": "029707.5WXNV",
+   "match": "7.5 A",
+   "extras": [
+    {
+     "manufacturer": "Keystone Electronics",
+     "mpn": "3568",
+     "sku": {
+      "digikey": "36-3568-ND"
+     },
+     "qty_per_ref": 1,
+     "item": "PCB holder for the mini blade fuse"
+    }
+   ],
+   "tbd": "Exact 029707.5WXNV not found by LCSC search on 2026-10-24 (variants 029707.5U/…WXT listed); 10-bom row 71 names LCSC C178942 — confirm before ordering.",
+   "refs": [
+    "F101"
+   ]
+  },
+  {
+   "id": "F-0297004-WXNV",
+   "mount": "pcb_tht",
+   "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
+   "manufacturer": "Littelfuse",
+   "mpn": "0297004.WXNV",
+   "sku": {
+    "lcsc": "C178940"
+   },
+   "match": "4",
+   "alternates": [
+    {
+     "manufacturer": "Littelfuse",
+     "mpn": "0297004.WXT",
+     "sku": {
+      "lcsc": "C1665100"
+     },
+     "note": "same fuse, other packing code"
+    }
+   ],
+   "single_source": "Littelfuse MINI blade; never clone MINI fuses (10-bom section 6)",
+   "extras": [
+    {
+     "manufacturer": "Keystone Electronics",
+     "mpn": "3568",
+     "sku": {
+      "digikey": "36-3568-ND"
+     },
+     "qty_per_ref": 1,
+     "item": "PCB holder for the mini blade fuse"
+    }
+   ],
+   "note": "F102 is 4 A since the D36V50F5 change (v2.1).",
+   "refs": [
+    "F102",
+    "F201"
+   ]
+  },
+  {
+   "id": "F-0297005-WXNV",
+   "mount": "pcb_tht",
+   "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
+   "manufacturer": "Littelfuse",
+   "mpn": "0297005.WXNV",
+   "sku": {
+    "lcsc": "C151093"
+   },
+   "match": "5",
+   "alternates": [
+    {
+     "manufacturer": "Littelfuse",
+     "mpn": "0297005.WXT",
+     "sku": {
+      "lcsc": "C3662210"
+     },
+     "note": "same fuse, other packing code"
+    }
+   ],
+   "single_source": "Littelfuse MINI blade; never clone MINI fuses",
+   "extras": [
+    {
+     "manufacturer": "Keystone Electronics",
+     "mpn": "3568",
+     "sku": {
+      "digikey": "36-3568-ND"
+     },
+     "qty_per_ref": 1,
+     "item": "PCB holder for the mini blade fuse"
+    }
+   ],
+   "refs": [
+    "F103"
+   ]
+  },
+  {
+   "id": "SW-TL3145BF350QJ",
+   "mount": "pcb_smt",
+   "footprint": "SR_RX_Custom:SW_E-Switch_TL3145_6.45x6.45mm",
+   "manufacturer": "E-Switch",
+   "mpn": "TL3145BF350QJ",
+   "sku": {
+    "digikey": "141-TL3145BF350QJCT-ND",
+    "lcsc": "C2886884"
+   },
+   "single_source": "10-bom row 50 fallback C&K KSC641J LFS needs a different land (not read 2026-10-24)",
+   "note": "On the HMI board behind the silicone keypad; buy 2 extra for tests (10-bom row 50).",
+   "refs": [
+    "SW302",
+    "SW303",
+    "SW304",
+    "SW305",
+    "SW306",
+    "SW307"
+   ]
+  },
+  {
+   "id": "ENC-PEC11R-4220F-S0024",
+   "mount": "pcb_tht",
+   "footprint": "SR_RX_Custom:RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx",
+   "manufacturer": "Bourns",
+   "mpn": "PEC11R-4220F-S0024",
+   "sku": {
+    "lcsc": "C143797"
+   },
+   "match": "PEC11R-4220F",
+   "alternates": [
+    {
+     "manufacturer": "Bourns",
+     "mpn": "PEC11R-4215F-S0024",
+     "sku": {
+      "lcsc": "C143790"
+     },
+     "note": "same land, 15 mm shaft instead of 20 mm (shaft is shortened anyway per 10-bom row 49)"
+    }
+   ],
+   "single_source": "Bourns encoder with push switch named in STACK; the switch contacts are SW308/SW309",
+   "pinmap": {
+    "A": [
+     "A"
+    ],
+    "B": [
+     "B"
+    ],
+    "C": [
+     "C"
+    ],
+    "switch (SW308/SW309)": [
+     "S1",
+     "S2"
+    ],
+    "mounting": [
+     "MP"
+    ]
+   },
+   "note": "S1/S2 pads carry the push switch; in the graph that switch is the separate ref SW308/SW309, so the PCB netlist leaves S1/S2 unconnected until the graph moves the switch onto ENC pins (see coverage open items). 10-bom row 49 buys 3 (1 spare).",
+   "refs": [
+    "ENC301",
+    "ENC302"
+   ]
+  },
+  {
+   "id": "SW-ENC-PUSH-virtual",
+   "mount": "virtual",
+   "note": "Push switch inside ENC301/ENC302 (pads S1/S2 of the encoder footprint); no separate part.",
+   "refs": [
+    "SW308",
+    "SW309"
+   ]
+  },
+  {
+   "id": "BZ-CPT-1207-3TH",
+   "mount": "pcb_tht",
+   "footprint": "SR_RX_Custom:Buzzer_SameSky_CPT-1207-3TH_D12.5mm_P5.0mm",
+   "manufacturer": "Same Sky",
+   "mpn": "CPT-1207-3TH",
+   "sku": {
+    "digikey": "2223-CPT-1207-3TH-ND"
+   },
+   "single_source": "Externally driven piezo named in E3",
+   "note": "Behind the acoustic vent of the panel.",
+   "refs": [
+    "BZ301"
+   ]
+  },
+  {
+   "id": "TP-PAD-D1.5",
+   "mount": "pcb_pad",
+   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+   "note": "Bare copper probe pad; nothing to buy.",
+   "refs": [
+    "TP101",
+    "TP102",
+    "TP103",
+    "TP104",
+    "TP105",
+    "TP106",
+    "TP107",
+    "TP108",
+    "TP201",
+    "TP202",
+    "TP203",
+    "TP204",
+    "TP205",
+    "TP206",
+    "TP207",
+    "TP208",
+    "TP209",
+    "TP210",
+    "TP211",
+    "TP212",
+    "TP213",
+    "TP214",
+    "TP215",
+    "TP216",
+    "TP501",
+    "TP502",
+    "TP2901",
+    "TP2902",
+    "TP2903"
+   ]
+  },
+  {
+   "id": "NT-RF-CHASSIS",
+   "mount": "pcb_pad",
+   "footprint": "NetTie:NetTie-2_SMD_Pad2.0mm",
+   "note": "Copper net tie on the RF board; the chassis side lands on a plated mounting hole and M3 screw (mechanics package).",
+   "refs": [
+    "NT401"
+   ]
+  },
+  {
+   "id": "J-PH-B5B",
+   "mount": "pcb_tht",
+   "footprint": "Connector_JST:JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical",
+   "manufacturer": "JST",
+   "mpn": "B5B-PH-K-S(LF)(SN)",
+   "sku": {
+    "lcsc": "C157993"
+   },
+   "single_source": "JST PH family (build/15)",
+   "extras": [
+    {
+     "item": "mating housing (both harness ends)",
+     "manufacturer": "JST",
+     "mpn": "PHR-5",
+     "sku": {
+      "lcsc": "C157953"
+     },
+     "qty_per_ref": 2
+    },
+    {
+     "manufacturer": "JST",
+     "mpn": "SPH-002T-P0.5S",
+     "sku": {
+      "lcsc": "C111515"
+     },
+     "item": "crimp contacts",
+     "qty_per_ref": 10
+    },
+    {
+     "item": "power-board end header (graph ref pending)",
+     "manufacturer": "JST",
+     "mpn": "B5B-PH-K-S(LF)(SN)",
+     "sku": {
+      "lcsc": "C157993"
+     },
+     "qty_per_ref": 1
+    }
+   ],
+   "refs": [
+    "J302"
+   ]
+  },
+  {
+   "id": "J-PH-B3B",
+   "mount": "pcb_tht",
+   "footprint": "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
+   "manufacturer": "JST",
+   "mpn": "B3B-PH-K-S(LF)(SN)",
+   "sku": {
+    "lcsc": "C131339"
+   },
+   "single_source": "JST PH family (build/15)",
+   "extras": [
+    {
+     "item": "mating housing for the console adapter lead",
+     "manufacturer": "JST",
+     "mpn": "PHR-3",
+     "sku": {
+      "lcsc": "C265393"
+     },
+     "qty_per_ref": 1
+    },
+    {
+     "manufacturer": "JST",
+     "mpn": "SPH-002T-P0.5S",
+     "sku": {
+      "lcsc": "C111515"
+     },
+     "item": "crimp contacts",
+     "qty_per_ref": 3
+    }
+   ],
+   "refs": [
+    "J502"
+   ]
+  },
+  {
+   "id": "J-MICROFIT-3",
+   "mount": "pcb_tht",
+   "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0315_1x03_P3.00mm_Vertical",
+   "manufacturer": "Molex",
+   "mpn": "43650-0315",
+   "sku": {
+    "lcsc": "C293546"
+   },
+   "single_source": "Molex Micro-Fit 3.0 family for ≥2 A (build/15)",
+   "extras": [
+    {
+     "item": "receptacle housing",
+     "manufacturer": "Molex",
+     "mpn": "43645-0300",
+     "sku": {
+      "lcsc": "C259740"
+     },
+     "qty_per_ref": 1
+    },
+    {
+     "item": "crimp terminals 20-24 AWG",
+     "manufacturer": "Molex",
+     "mpn": "43030-0007",
+     "sku": {
+      "lcsc": "C293530"
+     },
+     "qty_per_ref": 3
+    }
+   ],
+   "note": "J21 service harness: 20 AWG twisted pair + KEY 26-28 AWG; the Q6A end is soldered to the J21 pads (J521).",
+   "refs": [
+    "J503"
+   ]
+  },
+  {
+   "id": "J-SMA-EDGE",
+   "mount": "pcb_smt",
+   "footprint": "SR_RX_Custom:SMA_Molex_73251-1153_EdgeMount_Horizontal_CS",
+   "manufacturer": "Molex",
+   "mpn": "0732511153",
+   "sku": {
+    "digikey": "900-0732511153-ND",
+    "lcsc": "C5859238"
+   },
+   "single_source": "Edge-launch SMA whose land is in the KiCad library; an alternate needs a new GCPW transition",
+   "note": "Board-edge SMA on the RF board (build/15 «RF-порти»).",
+   "refs": [
+    "J409",
+    "J410",
+    "J411",
+    "J412"
+   ]
+  },
+  {
+   "id": "BT-P50B",
+   "mount": "remote",
+   "manufacturer": "Molicel",
+   "mpn": "INR21700-P50B",
+   "match": "P50B",
+   "single_source": "Cell chemistry and acceptance limits are cell-specific (≥4.85 Ah, 68-71 g)",
+   "source": "build/10-bom.csv №57 (NKON NL, EAN 6097326477405, checked 18.10.2026; not re-read 24.10.2026)",
+   "note": "Buy 5 (4 + spare), solder tags None; spot-welded pack (build/05).",
+   "refs": [
+    "BT101",
+    "BT102",
+    "BT103",
+    "BT104"
+   ]
+  },
+  {
+   "id": "U-DALY-4S15A",
+   "mount": "module",
+   "manufacturer": "Daly",
+   "mpn": "DL-J05G-L4S15ATJ",
+   "sku": {
+    "web": "tinytronics-005102"
+   },
+   "match": "DL-J05G",
+   "single_source": "Single seller listing (TinyTronics 005102, 9 pcs in stock on 2026-10-24)",
+   "note": "TinyTronics tags the item DL-J05G-L4S15ATJ but its datasheet file is named DL-J04G3-L04S15ATJ: check the label on arrival.",
+   "refs": [
+    "U101"
+   ]
+  },
+  {
+   "id": "U-ADAFRUIT-5832",
+   "mount": "module",
+   "footprint": "Package_SO:MSOP-10_3x3mm_P0.5mm",
+   "manufacturer": "Adafruit",
+   "mpn": "5832",
+   "sku": {
+    "web": "adafruit-5832"
+   },
+   "match": "5832",
+   "single_source": "Breakout carrying the INA228 and the 15 mΩ shunt (R101/C101/C102 are on it)",
+   "note": "U102 represents the purchased breakout; its MSOP-10 footprint field documents the chip package only and is never placed.",
+   "refs": [
+    "U102"
+   ]
+  },
+  {
+   "id": "ON-ADAFRUIT-5832",
+   "mount": "on_module",
+   "note": "Parts of the purchased Adafruit 5832 breakout; never bought or placed separately.",
+   "refs": [
+    "C101",
+    "C102",
+    "R101"
+   ]
+  },
+  {
+   "id": "U-POLOLU-2813",
+   "mount": "module",
+   "manufacturer": "Pololu",
+   "mpn": "2813",
+   "sku": {
+    "web": "pololu-2813"
+   },
+   "match": "2813",
+   "single_source": "Pololu only",
+   "note": "Botland PLL-05117 per 10-bom row 63; Pololu shows \"Rationed\".",
+   "refs": [
+    "U106"
+   ]
+  },
+  {
+   "id": "U-POLOLU-4095",
+   "mount": "module",
+   "manufacturer": "Pololu",
+   "mpn": "D36V50F12",
+   "sku": {
+    "web": "pololu-4095"
+   },
+   "match": "D36V50F12",
+   "single_source": "Pololu only; gate C4 fallback TI LM61460 on a custom board",
+   "note": "Pololu #4095; Botland id 16387 per 10-bom row 61; Pololu shows \"Rationed\".",
+   "refs": [
+    "U107"
+   ]
+  },
+  {
+   "id": "U-POLOLU-4091",
+   "mount": "module",
+   "manufacturer": "Pololu",
+   "mpn": "D36V50F5",
+   "sku": {
+    "web": "pololu-4091"
+   },
+   "match": "D36V50F5",
+   "single_source": "Pololu only",
+   "note": "Pololu #4091 (v2.1 LAB5 default); Pololu shows \"Rationed\".",
+   "refs": [
+    "U108"
+   ]
+  },
+  {
+   "id": "J-XT30U-F",
+   "mount": "harness",
+   "manufacturer": "Changzhou Amass",
+   "mpn": "XT30U-F",
+   "sku": {
+    "lcsc": "C99102"
+   },
+   "match": "XT30",
+   "single_source": "Genuine Amass only (no clone XT30, 10-bom section 6)",
+   "extras": [
+    {
+     "item": "mating plug for the service lead",
+     "manufacturer": "Changzhou Amass",
+     "mpn": "XT30U-M",
+     "sku": {
+      "lcsc": "C99101"
+     },
+     "qty_per_ref": 1
+    }
+   ],
+   "note": "Female on the pack side; pigtail 18 AWG.",
+   "refs": [
+    "J101"
+   ]
+  },
+  {
+   "id": "J-BALANCE-DNP",
+   "mount": "harness",
+   "tbd": "DNP / service-only until E1-02; no part selected.",
+   "refs": [
+    "J102"
+   ]
+  },
+  {
+   "id": "J-USBC-PANEL",
+   "mount": "panel",
+   "tbd": "Sealed USB-C (power-only PD) panel feedthrough not selected: IP rating vs cost is an owner decision (MECH-07, build/05); no MPN read on 2026-10-24.",
+   "refs": [
+    "J103"
+   ]
+  },
+  {
+   "id": "U-IP2368-BOARD",
+   "mount": "module",
+   "match": "IP2368",
+   "single_source": "Retail board from one seller with a revision gate (build/15 «IP2368»)",
+   "tbd": "Retail AliExpress IP2368 COUT board has no stable MPN; record the seller listing and board revision at purchase (gate E1-01, 10-bom row 60).",
+   "refs": [
+    "U110"
+   ]
+  },
+  {
+   "id": "TH-NXFT15XH103FEAB050",
+   "mount": "remote",
+   "manufacturer": "Murata Electronics",
+   "mpn": "NXFT15XH103FEAB050",
+   "sku": {
+    "lcsc": "C17314387"
+   },
+   "match": "B3380",
+   "alternates": [
+    {
+     "manufacturer": "Murata Electronics",
+     "mpn": "NXFT15XH103FEAB025",
+     "sku": {
+      "lcsc": "C3153132"
+     },
+     "note": "same thermistor, 25 mm leads"
+    }
+   ],
+   "note": "Leaded 10 kΩ 1 % B25/50 3380 NTC on the cell, wired to the IP2368 NTC node; NXFT15XH103FA2B050 is obsolete at DigiKey (read 2026-10-24).",
+   "refs": [
+    "TH101"
+   ]
+  },
+  {
+   "id": "TH-KSD9700-70-NO",
+   "mount": "remote",
+   "manufacturer": "Xucheng Elec",
+   "mpn": "KSD9700-70/5JSB/080C",
+   "sku": {
+    "lcsc": "C156512"
+   },
+   "match": "KSD9700",
+   "tbd": "LCSC listing (Mechanical SPST, 70 °C class) does not state NO/NC; 10-bom row 89 names a NO 70 °C KSD9700 from Piekarz 31610 (not read 24.10.2026). Confirm the normally-open variant before ordering.",
+   "refs": [
+    "TH102"
+   ]
+  },
+  {
+   "id": "TH-MF52A103F3950",
+   "mount": "remote",
+   "manufacturer": "Nanjing Shiheng (Semiware)",
+   "mpn": "MF52A103F3950 (A1)",
+   "sku": {
+    "lcsc": "C13879"
+   },
+   "match": "MF52A103F3950",
+   "single_source": "Graph-named NTC whose maker R/T table the firmware uses",
+   "note": "Leaded bead NTC on the panel/case; wired to the HMI board (board-side connector not in the graph yet).",
+   "refs": [
+    "TH301",
+    "TH302"
+   ]
+  },
+  {
+   "id": "J-Q6A-EXISTING",
+   "mount": "existing",
+   "note": "Connectors/pads on the purchased Radxa Q6A; mating cables and leads are separate refs or extras (J301 mating socket: see coverage open items).",
+   "refs": [
+    "J301",
+    "J303",
+    "J511",
+    "J512",
+    "J520",
+    "J521",
+    "J522",
+    "J530"
+   ]
+  },
+  {
+   "id": "ON-Q6A",
+   "mount": "on_module",
+   "note": "Q6A on-board rail sources; nothing to buy.",
+   "refs": [
+    "U500"
+   ]
+  },
+  {
+   "id": "U-WAVESHARE-LC76G",
+   "mount": "module",
+   "manufacturer": "Waveshare",
+   "mpn": "24370",
+   "sku": {
+    "web": "waveshare-lc76g"
+   },
+   "match": "LC76G",
+   "single_source": "Waveshare LC76G board (Botland WSR-23562 per 10-bom row 84)",
+   "refs": [
+    "U304"
+   ]
+  },
+  {
+   "id": "BT-CR2032-LEAD",
+   "mount": "remote",
+   "manufacturer": "Electrokit",
+   "mpn": "41036512",
+   "match": "CR2032",
+   "single_source": "CR2032 with 2-pin 1.25 mm plug; check OCV ≥3.0 V and polarity before J11",
+   "source": "build/10-bom.csv №85 (Electrokit 41036512, checked 18.10.2026; not re-read 24.10.2026)",
+   "refs": [
+    "BT301"
+   ]
+  },
+  {
+   "id": "U-PICO-SC0915",
+   "mount": "pcb_module",
+   "footprint": "SR_RX_Custom:RaspberryPi_Pico_SMD_SWD",
+   "manufacturer": "Raspberry Pi",
+   "mpn": "SC0915",
+   "sku": {
+    "digikey": "2648-SC0915CT-ND"
+   },
+   "match": "SC0915",
+   "single_source": "Non-wireless Pico only (10-bom row 48)",
+   "note": "Castellated module soldered to the HMI board; debug pads used as SWCLK/SWD_GND/SWDIO.",
+   "refs": [
+    "U305"
+   ]
+  },
+  {
+   "id": "SW-POWER-PANEL",
+   "mount": "panel",
+   "tbd": "Sealed 12-16 mm momentary power button: no MPN in STACK/10-bom (row 143 estimate only); selection with IP rating is MECH-07 (build/05).",
+   "refs": [
+    "SW301"
+   ]
+  },
+  {
+   "id": "U-ADAFRUIT-4162",
+   "mount": "module",
+   "manufacturer": "Adafruit",
+   "mpn": "4162",
+   "sku": {
+    "web": "adafruit-4162"
+   },
+   "match": "4162",
+   "alternates": [
+    {
+     "manufacturer": "Adafruit",
+     "mpn": "5378",
+     "note": "equivalent per 10-bom row 47 (not read 24.10.2026)"
+    }
+   ],
+   "refs": [
+    "U308"
+   ]
+  },
+  {
+   "id": "FAN-NF-A4X10-5V",
+   "mount": "module",
+   "manufacturer": "Noctua",
+   "mpn": "NF-A4x10 5V",
+   "match": "NF-A4x10",
+   "single_source": "Noctua 3-wire non-PWM 5 V",
+   "source": "build/10-bom.csv №4 (Alternate.de/QuietPC, checked 18.10.2026); noctua.at returned HTTP 429 on 2026-10-24",
+   "note": "Board-side 3-pin fan connector is not in the graph yet.",
+   "refs": [
+    "FAN301"
+   ]
+  },
+  {
+   "id": "FAN-BFB0305HA-C",
+   "mount": "module",
+   "manufacturer": "Delta Electronics",
+   "mpn": "BFB0305HA-C",
+   "sku": {
+    "digikey": "BFB0305HA-C"
+   },
+   "match": "BFB0305HA-C",
+   "single_source": "Delta blower named in E3 (v2.1)",
+   "note": "DigiKey DE EUR 12.90 @1 on 2026-10-24 (stock not shown).",
+   "refs": [
+    "FAN302"
+   ]
+  },
+  {
+   "id": "U-WAVESHARE-RP2040ZERO",
+   "mount": "module",
+   "manufacturer": "Waveshare",
+   "mpn": "20187",
+   "sku": {
+    "web": "waveshare-rp2040-zero"
+   },
+   "match": "RP2040-Zero",
+   "single_source": "Genuine Waveshare only (no clones, 10-bom section 6)",
+   "refs": [
+    "U309"
+   ]
+  },
+  {
+   "id": "U-ADAFRUIT-4754",
+   "mount": "module",
+   "manufacturer": "Adafruit",
+   "mpn": "4754",
+   "sku": {
+    "web": "adafruit-4754"
+   },
+   "match": "4754",
+   "single_source": "Adafruit/SparkFun only (10-bom row 76)",
+   "refs": [
+    "U314"
+   ]
+  },
+  {
+   "id": "A-FLAMINGO-FM",
+   "mount": "module",
+   "manufacturer": "Nooelec",
+   "mpn": "100813",
+   "sku": {
+    "web": "nooelec-100813"
+   },
+   "match": "Flamingo",
+   "single_source": "Nooelec only; Passion Radio EU reseller per 10-bom row 14",
+   "refs": [
+    "A401",
+    "A403"
+   ]
+  },
+  {
+   "id": "A-SAWBIRD-NOAA",
+   "mount": "module",
+   "manufacturer": "Nooelec",
+   "mpn": "100800",
+   "sku": {
+    "web": "nooelec-100800"
+   },
+   "match": "100800",
+   "single_source": "Nooelec only",
+   "refs": [
+    "A402"
+   ]
+  },
+  {
+   "id": "A-RTLSDR-LNA-V2",
+   "mount": "module",
+   "manufacturer": "RTL-SDR Blog",
+   "mpn": "Wideband LNA V2",
+   "match": "LNA V2",
+   "single_source": "RTL-SDR Blog only",
+   "source": "build/10-bom.csv №123 (official AliExpress / Passion Radio, checked 18.10.2026; not re-read)",
+   "refs": [
+    "A404"
+   ]
+  },
+  {
+   "id": "A-VAT-20W2",
+   "mount": "module",
+   "manufacturer": "Mini-Circuits",
+   "mpn": "VAT-20W2+",
+   "sku": {
+    "web": "minicircuits-VAT-20W2"
+   },
+   "match": "attenuator",
+   "single_source": "Mini-Circuits only",
+   "extras": [
+    {
+     "item": "bench selection 15 dB",
+     "manufacturer": "Mini-Circuits",
+     "mpn": "VAT-15W2+",
+     "sku": {
+      "web": "minicircuits-VAT-15W2"
+     },
+     "qty_per_ref": 1
+    },
+    {
+     "item": "bench selection 30 dB",
+     "manufacturer": "Mini-Circuits",
+     "mpn": "VAT-30W2+",
+     "sku": {
+      "web": "minicircuits-VAT-30W2"
+     },
+     "qty_per_ref": 1
+    }
+   ],
+   "note": "A405 is selected on the bench from 15/20/30 dB: one of each is bought.",
+   "refs": [
+    "A405"
+   ]
+  },
+  {
+   "id": "A-BONI-BIASTEE",
+   "mount": "assembly",
+   "note": "Bias tee supplied with the Boni-Whip antenna (10-bom row 38); no separate purchase.",
+   "refs": [
+    "A406"
+   ]
+  },
+  {
+   "id": "A-NOOELEC-ATT-KIT",
+   "mount": "module",
+   "manufacturer": "Nooelec",
+   "mpn": "100815",
+   "match": "pad",
+   "single_source": "Pads 2/3 dB from the Nooelec kit (10-bom row 116)",
+   "source": "build/10-bom.csv №116 (attenuator kit 1/2/3/6/10/20 dB, checked 18.10.2026; product URL not found 24.10.2026)",
+   "refs": [
+    "A408"
+   ]
+  },
+  {
+   "id": "A-BLK-89-S",
+   "mount": "module",
+   "manufacturer": "Mini-Circuits",
+   "mpn": "BLK-89-S+",
+   "sku": {
+    "web": "minicircuits-BLK-89-S"
+   },
+   "match": "BLK-89-S",
+   "single_source": "Mini-Circuits only",
+   "refs": [
+    "A409",
+    "A425"
+   ]
+  },
+  {
+   "id": "A-ANNE-50",
+   "mount": "module",
+   "manufacturer": "Mini-Circuits",
+   "mpn": "ANNE-50+",
+   "sku": {
+    "web": "minicircuits-ANNE-50"
+   },
+   "match": "ANNE-50",
+   "single_source": "Mini-Circuits only; ANNE-50L+ only with owner consent (10-bom row 99)",
+   "refs": [
+    "A410"
+   ]
+  },
+  {
+   "id": "A-RTLSDR-V4L",
+   "mount": "module",
+   "manufacturer": "RTL-SDR Blog",
+   "mpn": "V4L (R828S)",
+   "sku": {
+    "web": "rtl-sdr-shop"
+   },
+   "match": "V4L",
+   "single_source": "Limited R828S series (455 pcs, 10-bom row 11); official store/eBay/AliExpress only",
+   "note": "Buy 3 (LABRXA, LABRXB, spare LABRXC).",
+   "refs": [
+    "A411",
+    "A412"
+   ]
+  },
+  {
+   "id": "A-AIRSPY-HF-DISCOVERY",
+   "mount": "module",
+   "manufacturer": "Airspy",
+   "mpn": "HF+ Discovery",
+   "sku": {
+    "web": "airspy-hf-discovery"
+   },
+   "match": "HF+ Discovery",
+   "single_source": "airspy.com dealers only (ITEAD DE SKU IM190522001EU per 10-bom row 12)",
+   "refs": [
+    "A414"
+   ]
+  },
+  {
+   "id": "A-LIMESDR-MICRO",
+   "mount": "module",
+   "manufacturer": "Lime Microsystems",
+   "mpn": "LimeSDR Micro M.2 2280 Basic",
+   "sku": {
+    "web": "crowdsupply-limesdr-micro"
+   },
+   "match": "LimeSDR Micro",
+   "single_source": "Crowd Supply only; gate 1.12.2026 (10-bom row 92)",
+   "refs": [
+    "A415"
+   ]
+  },
+  {
+   "id": "A-UPUTRONICS-440",
+   "mount": "module",
+   "manufacturer": "Uputronics",
+   "mpn": "HAB-FPA440 (case V3 / board Rev 3.0)",
+   "match": "Uputronics 440",
+   "single_source": "Uputronics only; never the 434 MHz variant",
+   "source": "build/10-bom.csv №16 (store.uputronics.com EU, checked 18.10.2026; product page not found 24.10.2026)",
+   "refs": [
+    "A418"
+   ]
+  },
+  {
+   "id": "A-SAWBIRD-GOES",
+   "mount": "module",
+   "manufacturer": "Nooelec",
+   "mpn": "100792",
+   "sku": {
+    "web": "nooelec-100792"
+   },
+   "match": "GOES",
+   "single_source": "Nooelec only",
+   "note": "Default L-band profile LNA (10-bom row 27); the alternative profiles H1/iO/active patch are bought only per the profile gates.",
+   "refs": [
+    "A419"
+   ]
+  },
+  {
+   "id": "A-BULLSEYE-LNB",
+   "mount": "module",
+   "manufacturer": "Othernet",
+   "mpn": "Bullseye BE01 TCXO LNB",
+   "sku": {
+    "web": "passionradio-bullseye"
+   },
+   "match": "Bullseye",
+   "single_source": "Last items in stock (10-bom row 31)",
+   "note": "Buy 2 (1 spare).",
+   "refs": [
+    "A420"
+   ]
+  },
+  {
+   "id": "A-AXING-CFA1100",
+   "mount": "module",
+   "manufacturer": "AXING",
+   "mpn": "CFA 11-00",
+   "match": "CFA 11-00",
+   "alternates": [
+    {
+     "manufacturer": "TechniSat",
+     "mpn": "0002/3077",
+     "note": "fallback per 10-bom row 32 (not read)"
+    }
+   ],
+   "source": "build/10-bom.csv №32 (Reichelt, checked 18.10.2026; product URL returned 410 on 24.10.2026)",
+   "refs": [
+    "A421"
+   ]
+  },
+  {
+   "id": "A-LANA-WB",
+   "mount": "module",
+   "manufacturer": "Nooelec",
+   "mpn": "100845",
+   "sku": {
+    "web": "nooelec-100845"
+   },
+   "match": "LaNA WB",
+   "single_source": "Nooelec only",
+   "refs": [
+    "A422"
+   ]
+  },
+  {
+   "id": "A-CF2235-KT30",
+   "mount": "module",
+   "manufacturer": "sysmocom",
+   "mpn": "cf2235-kt30",
+   "sku": {
+    "web": "sysmocom-cf2235-kt30"
+   },
+   "match": "cf2235-kt30",
+   "single_source": "sysmocom only (6-8 weeks if not in stock)",
+   "refs": [
+    "A423"
+   ]
+  },
+  {
+   "id": "J-SMA-PANEL",
+   "mount": "panel",
+   "tbd": "Panel SMA jack bulkhead with sealed RG316 pigtail: 10-bom row 91 names only an unspecified AliExpress set; IP67 part to be selected with MECH-07 (build/05). DC-carrying ports keep non-conductive caps (10-bom row 90).",
+   "refs": [
+    "J401",
+    "J402",
+    "J403",
+    "J406",
+    "J407",
+    "J408"
+   ]
+  },
+  {
+   "id": "J-F-PANEL",
+   "mount": "panel",
+   "tbd": "75 Ω F-type panel bulkhead not selected (10-bom row 91 is a set estimate).",
+   "refs": [
+    "J404"
+   ]
+  },
+  {
+   "id": "J-BNC-PANEL",
+   "mount": "panel",
+   "tbd": "BNC panel bulkhead not selected (10-bom row 91 is a set estimate).",
+   "refs": [
+    "J405"
+   ]
+  },
+  {
+   "id": "J-PANEL-OF-CABLE",
+   "mount": "assembly",
+   "note": "SMA(f) bulkhead end of the Taoglas CAB.01075 cables W403/W404/W405.",
+   "refs": [
+    "J413",
+    "J414",
+    "J415"
+   ]
+  },
+  {
+   "id": "J-ANTENNA-ASSEMBLY",
+   "mount": "assembly",
+   "note": "Input connector of the external A418/A419 assembly; no separate purchase (E4 notes).",
+   "refs": [
+    "J416",
+    "J417"
+   ]
+  },
+  {
+   "id": "J-EXISTING-HELIX",
+   "mount": "existing",
+   "note": "SMA of the existing S-band helix feed.",
+   "refs": [
+    "J422"
+   ]
+  },
+  {
+   "id": "W-GOOBAY-58814",
+   "mount": "harness",
+   "manufacturer": "Goobay",
+   "mpn": "58814",
+   "match": "58814",
+   "single_source": "75 Ω F-F 1 m bought cable from 10-bom; any 75 Ω F-F cable of the same length is electrically equivalent",
+   "source": "build/10-bom.csv №91 (Reichelt, EUR 2.60, checked 18.10.2026; goobay.de unreachable 24.10.2026)",
+   "refs": [
+    "W401"
+   ]
+  },
+  {
+   "id": "W-IF-75OHM",
+   "mount": "harness",
+   "tbd": "Internal 75 Ω IF coax (F bulkhead to LNB path): cable and connectors not selected.",
+   "refs": [
+    "W402"
+   ]
+  },
+  {
+   "id": "W-CAB01075",
+   "mount": "harness",
+   "manufacturer": "Taoglas",
+   "mpn": "CAB.01075",
+   "sku": {
+    "digikey": "CAB.01075",
+    "web": "taoglas-cab01075"
+   },
+   "single_source": "MHF4L to SMA(f) bulkhead 100 mm (10-bom row 93); I-PEX 90609-0001 tool needed",
+   "note": "DigiKey DE EUR 4.03 @1 on 2026-10-24.",
+   "refs": [
+    "W403",
+    "W404",
+    "W405",
+    "W406"
+   ]
+  },
+  {
+   "id": "W-CAB011",
+   "mount": "harness",
+   "manufacturer": "Taoglas",
+   "mpn": "CAB.011",
+   "sku": {
+    "digikey": "CAB.011"
+   },
+   "single_source": "Taoglas U.FL-SMA bulkhead pigtail; length 100 mm",
+   "note": "U.FL (MHF1) to SMA bulkhead; 10-bom row 91 option for P7 → LC76G. DigiKey DE EUR 3.90 @1 on 2026-10-24.",
+   "refs": [
+    "W407"
+   ]
+  },
+  {
+   "id": "W-HF-CM-CHOKE",
+   "mount": "harness",
+   "manufacturer": "SR-RX build-to-print",
+   "mpn": "W408 common-mode choke assembly",
+   "match": "FT240-77",
+   "extras": [
+    {
+     "item": "core FT-240-77",
+     "manufacturer": "Fair-Rite",
+     "mpn": "5977003801",
+     "sku": {
+      "digikey": "1934-1130-ND"
+     },
+     "qty_per_ref": 1
+    },
+    {
+     "item": "core #31 sleeve",
+     "manufacturer": "Fair-Rite",
+     "mpn": "2631102002",
+     "sku": {
+      "digikey": "1934-1355-ND"
+     },
+     "qty_per_ref": 1
+    }
+   ],
+   "tbd": "RG316 length (9-11 turns), SMA plugs and bracket are not specified as MPNs (10-bom row 20 \"модель\").",
+   "refs": [
+    "W408"
+   ]
+  },
+  {
+   "id": "W-RX1-EDGE",
+   "mount": "harness",
+   "tbd": "Captive RG316 from the RX1 edge SMA to the profile pad: assembly MPN/length not selected.",
+   "refs": [
+    "W409"
+   ]
+  },
+  {
+   "id": "W-RG316-SMA-MM",
+   "mount": "harness",
+   "tbd": "RG316 SMA-M/M assemblies 0.10/0.10/1.00 m: no verified assembly MPN read on 2026-10-24 (10-bom row 91 lists generic pigtails).",
+   "refs": [
+    "W422",
+    "W423",
+    "W424"
+   ]
+  },
+  {
+   "id": "W-USBC-POWER",
+   "mount": "harness",
+   "tbd": "USB-C power-only 1.50 m 26 AWG pair cable: no concrete MPN selected.",
+   "refs": [
+    "W425"
+   ]
+  },
+  {
+   "id": "U-ADAFRUIT-5997",
+   "mount": "module",
+   "manufacturer": "Adafruit",
+   "mpn": "5997",
+   "sku": {
+    "web": "adafruit-5997"
+   },
+   "match": "5997",
+   "single_source": "Adafruit only",
+   "note": "Buy 2 (1 spare); DigiKey DE 1528-5997-ND per 10-bom row 54.",
+   "refs": [
+    "U510"
+   ]
+  },
+  {
+   "id": "J-USBA-PANEL",
+   "mount": "panel",
+   "tbd": "LAB USB-A panel receptacle not selected (MECH-07); no MPN read on 2026-10-24.",
+   "refs": [
+    "J501"
+   ]
+  },
+  {
+   "id": "W-LINDY-36700",
+   "mount": "harness",
+   "manufacturer": "Lindy",
+   "mpn": "36700",
+   "single_source": "Cable named in 10-bom row 91",
+   "extras": [
+    {
+     "item": "ferrite on the RTL-B cable (if A/B noise test needs it)",
+     "manufacturer": "Würth Elektronik",
+     "mpn": "74271112",
+     "sku": {
+      "digikey": "74271112"
+     },
+     "qty_per_ref": 1
+    }
+   ],
+   "source": "build/10-bom.csv №91 (2× Lindy 36700 with Würth 74271112, checked 18.10.2026; not re-read)",
+   "refs": [
+    "J541",
+    "J543"
+   ]
+  },
+  {
+   "id": "W-HFP-MICROUSB",
+   "mount": "harness",
+   "extras": [
+    {
+     "item": "common-mode sleeves on the HF+ cable",
+     "manufacturer": "Fair-Rite",
+     "mpn": "2631480002",
+     "sku": {
+      "digikey": "1934-1377-ND"
+     },
+     "qty_per_ref": 2
+    }
+   ],
+   "tbd": "HF+ micro-USB cable MPN not selected (10-bom row 19 lists only the ferrites).",
+   "refs": [
+    "J544"
+   ]
+  },
+  {
+   "id": "U-SAMSUNG-T7",
+   "mount": "module",
+   "manufacturer": "Samsung",
+   "mpn": "MU-PC1T0T/WW",
+   "match": "T7",
+   "single_source": "Samsung T7 1 TB",
+   "source": "build/10-bom.csv №103 (Reichelt, checked 18.10.2026; not re-read)",
+   "refs": [
+    "U540"
+   ]
+  },
+  {
+   "id": "U-WISECOCO-7IN",
+   "mount": "module",
+   "manufacturer": "Wisecoco",
+   "mpn": "SKU 4681 (7\" 1920x1080 2000 nit)",
+   "match": "Wisecoco",
+   "alternates": [
+    {
+     "manufacturer": "4D Systems",
+     "mpn": "4DHDMI-70-1280-800-CT-EAR-1000",
+     "note": "documented downgrade per 10-bom row 42 (not read)"
+    }
+   ],
+   "extras": [
+    {
+     "item": "HDMI cable",
+     "manufacturer": "Adafruit",
+     "mpn": "2420",
+     "sku": {
+      "web": "adafruit-2420"
+     },
+     "qty_per_ref": 1
+    },
+    {
+     "item": "HDMI ferrite",
+     "manufacturer": "Fair-Rite",
+     "mpn": "0431164281",
+     "sku": {
+      "digikey": "1934-1464-ND"
+     },
+     "qty_per_ref": 2
+    }
+   ],
+   "source": "build/10-bom.csv №42 (Wisecoco shop, checked 18.10.2026; site unreachable 24.10.2026)",
+   "refs": [
+    "U520"
+   ]
+  },
+  {
+   "id": "U-ADTLINK-R44SF",
+   "mount": "module",
+   "manufacturer": "ADT-Link",
+   "mpn": "R44SF 5 cm",
+   "sku": {
+    "web": "adt-link-r44sf"
+   },
+   "match": "R44SF",
+   "single_source": "ADT-Link only; confirm the 2230-host/2280 B+M variant (10-bom row 94)",
+   "refs": [
+    "U530"
+   ]
+  },
+  {
+   "id": "SW-EDL-PANEL",
+   "mount": "panel",
+   "tbd": "Recessed EDL momentary button not selected (MECH-07).",
+   "refs": [
+    "SW501"
+   ]
+  },
+  {
+   "id": "J-GX12-6",
+   "mount": "panel",
+   "manufacturer": "Shenzhen Kinghelm",
+   "mpn": "KH-GX12-6P",
+   "sku": {
+    "lcsc": "C18203264"
+   },
+   "match": "LAB BUS",
+   "single_source": "GX12 6-pin set chosen so LAB BUS cannot mate with the GX16-4 IMU connector",
+   "extras": [
+    {
+     "item": "board-side header (graph ref pending)",
+     "manufacturer": "JST",
+     "mpn": "B6B-PH-K-S(LF)(SN)",
+     "sku": {
+      "lcsc": "C131342"
+     },
+     "qty_per_ref": 1
+    },
+    {
+     "item": "harness housing",
+     "manufacturer": "JST",
+     "mpn": "PHR-6",
+     "sku": {
+      "lcsc": "C157952"
+     },
+     "qty_per_ref": 1
+    },
+    {
+     "manufacturer": "JST",
+     "mpn": "SPH-002T-P0.5S",
+     "sku": {
+      "lcsc": "C111515"
+     },
+     "item": "crimp contacts",
+     "qty_per_ref": 6
+    }
+   ],
+   "note": "GX12 6-pin set (male+female) for LAB BUS: a different shell size from the GX16-4 IMU connector, so the two cannot be swapped (MECH-07); IP rating to be checked.",
+   "refs": [
+    "J505"
+   ]
+  },
+  {
+   "id": "J-GX16-4",
+   "mount": "panel",
+   "manufacturer": "Olimex",
+   "mpn": "CONNECTOR-GX16-4",
+   "sku": {
+    "web": "olimex-gx16-4"
+   },
+   "match": "GX16-4",
+   "single_source": "Olimex GX16-4 pair with tethered cap (STACK §1.1 D12)",
+   "refs": [
+    "J504"
+   ]
+  },
+  {
+   "id": "W-IMU-CABLE",
+   "mount": "harness",
+   "manufacturer": "HELU",
+   "mpn": "SUPERTRONIC-C-PURO 4x0.14 (49655)",
+   "single_source": "Cable and gland named in 10-bom rows 80-81",
+   "extras": [
+    {
+     "item": "EMC cable gland",
+     "manufacturer": "LAPP",
+     "mpn": "SKINTOP MS-SC-M12 (53112610)",
+     "qty_per_ref": 1
+    }
+   ],
+   "source": "build/10-bom.csv №80-81 (TME, not checked; not re-read 24.10.2026)",
+   "note": "2 m of cable for the IMU pack.",
+   "refs": [
+    "J550"
+   ]
+  }
+ ]
+}
