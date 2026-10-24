@@ -263,7 +263,15 @@ class PluginTests(unittest.TestCase):
 
 class RecipeTests(unittest.TestCase):
     def test_recipe_names_locked_artifacts_and_shipped_files(self):
+        def unique(items):
+            keys = [k for k, _ in items]
+            self.assertEqual(len(keys), len(set(keys)), "duplicate JSON key in recipe.json")
+            return dict(items)
+        for name in ("recipe.json", "partition-layout.json"):
+            json.loads((HERE / "image" / name).read_text(), object_pairs_hook=unique)
         recipe = json.loads((HERE / "image/recipe.json").read_text())
+        self.assertTrue(set(recipe["kernel_debs_install"]["artifacts"]) < set(recipe["kernel_artifacts"]))
+        self.assertNotIn("linux-libc-dev-radxa-dragon-q6a", recipe["kernel_debs_install"]["artifacts"])  # build/07:68-69
         lock = json.loads((HERE / "sources.lock.json").read_text())
         ids = {a["id"] for a in lock["artifacts"]}
         self.assertIn(recipe["base_artifact"], ids)

@@ -1011,13 +1011,13 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         debs_dir.mkdir(parents=True, exist_ok=True)
         artifacts = lock_artifacts()
         names = []
-        for art_id in recipe["kernel_install"]["artifacts"]:
+        for art_id in recipe["kernel_debs_install"]["artifacts"]:
             shutil.copyfile(Path(cache) / artifacts[art_id]["cache_path"], debs_dir / artifacts[art_id]["name"])
             names.append("/var/cache/srrx-image/" + artifacts[art_id]["name"])
         extra = {"SRRX_ALLOW_UNMERGED_DTB": "1"} if allow_unmerged_dtb else {}
         dpkg = chroot(root_a, ["dpkg", "-i"] + names, extra_env=extra)
         shutil.rmtree(debs_dir)
-        status = {n: dpkg_installed(root_a, n) for n in recipe["kernel_install"]["artifacts"]}
+        status = {n: dpkg_installed(root_a, n) for n in recipe["kernel_debs_install"]["artifacts"]}
         if any(v != "6.18.2-4" for v in status.values()):
             raise BuildError("locked kernel debs not installed at 6.18.2-4: " + json.dumps(status))
         entry_a = sorted(p.name for p in (root_a / "boot/efi/loader/entries").glob("labA*.conf"))
@@ -1027,8 +1027,8 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
             entry_a = sorted(p.name for p in (root_a / "boot/efi/loader/entries").glob("labA*.conf"))
         LOG.step("kernel", "DONE", packages=status, slot_a_entry=entry_a, dpkg_tail=dpkg.stdout[-600:])
         manifest["kernel"] = {"packages": status, "slot_a_plugin_entry": entry_a,
-                              "cache_only": sorted(set(recipe["kernel_artifacts"]) - set(recipe["kernel_install"]["artifacts"])),
-                              "why_cache_only": recipe["kernel_install"]["source"]}
+                              "cache_only": sorted(set(recipe["kernel_artifacts"]) - set(recipe["kernel_debs_install"]["artifacts"])),
+                              "why_cache_only": recipe["kernel_debs_install"]["source"]}
         manifest["hardening"] = hardening(root_a, recipe, route)
         LOG.step("hardening", "DONE", held=len(manifest["hardening"]["held"]), masked=manifest["hardening"]["masked"])
         manifest["enabled_units"] = enable_units(root_a, recipe, route)
@@ -1148,8 +1148,8 @@ def main():
             result = {k: result[k] for k in ("status", "route", "image", "blocking", "hardware_ready")}
         print(json.dumps(result, indent=2, ensure_ascii=False))
         return 0 if result.get("status") not in ("BLOCKED",) else 2
-    except (OSError, ValueError, RuntimeError, subprocess.SubprocessError) as exc:
-        print("BLOCKED: " + str(exc), file=sys.stderr)
+    except (OSError, ValueError, KeyError, RuntimeError, subprocess.SubprocessError) as exc:
+        print("BLOCKED: " + type(exc).__name__ + ": " + str(exc), file=sys.stderr)
         return 2
 
 
