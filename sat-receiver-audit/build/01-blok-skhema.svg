@@ -55,10 +55,10 @@
 <text x="406.0" y="136.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">SMA, без DC</text>
 <rect x="400.0" y="157.0" width="170.0" height="43.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
 <text x="406.0" y="175.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">P2 UHF</text>
-<text x="406.0" y="193.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">SMA, 4.5 V назовні</text>
+<text x="406.0" y="193.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">SMA, 4.3 V назовні</text>
 <rect x="400.0" y="214.0" width="170.0" height="43.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
 <text x="406.0" y="232.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">P3 L-BAND</text>
-<text x="406.0" y="250.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">SMA, 4.5 V назовні</text>
+<text x="406.0" y="250.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">SMA, 4.3 V назовні</text>
 <rect x="400.0" y="271.0" width="170.0" height="43.0" rx="4" fill="#ffffff" stroke="#333" stroke-width="1.2"/>
 <text x="406.0" y="289.0" font-size="12" font-weight="bold" text-anchor="start" fill="#111">P4 LNB (ПЧ)</text>
 <text x="406.0" y="307.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">F, 13.2 / 12.5 V</text>
@@ -309,13 +309,13 @@
 <text x="366.0" y="1107.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">D36V28F5 → LAB5 5.0 V, запобіжник 3 A</text>
 <text x="366.0" y="1122.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  → Pico (Schottky), CH334F, пак IMU, вентилятори</text>
 <text x="366.0" y="1137.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  → HF+, LAB USB-A 0.75 A, VBUS RTL-A (H2) і RTL-B</text>
-<text x="366.0" y="1152.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  → LNA4V5: 2× LT3045 4.5 V → TPS2553 ch1-ch4</text>
+<text x="366.0" y="1152.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  → LNA4V5: 2× LT3045 4.3 V → TPS2553 ch1-ch4</text>
 <rect x="360.0" y="1190.0" width="460.0" height="89.0" rx="4" fill="#fdeeee" stroke="#333" stroke-width="1.2"/>
 <text x="366.0" y="1209.0" font-size="13" font-weight="bold" text-anchor="start" fill="#111">Шини зміщення антен (SW → LDO → eFuse)</text>
 <text x="366.0" y="1227.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">LNB13V2: TPS7A4701 13.2 V → eFuse TPS259630DDAR</text>
 <text x="366.0" y="1242.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  → INA3221 0.1 Ohm → дросель LNB (EN GPB0)</text>
 <text x="366.0" y="1257.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">BONI13V8: TPS7A4701 13.8 V → TPS259630DDAR</text>
-<text x="366.0" y="1272.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  (RILM 7.87k) → INA3221 0.2 Ohm → bias-tee (GPB1)</text>
+<text x="366.0" y="1272.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">  (RILM 7.15k) → INA3221 0.2 Ohm → bias-tee (GPB1)</text>
 <rect x="850.0" y="960.0" width="470.0" height="89.0" rx="4" fill="#fdeeee" stroke="#333" stroke-width="1.2"/>
 <text x="856.0" y="979.0" font-size="13" font-weight="bold" text-anchor="start" fill="#111">LIME3V3 (з Q6A)</text>
 <text x="856.0" y="997.0" font-size="12" font-weight="normal" text-anchor="start" fill="#111">M.2 3.3 V Q6A → TPS259470ARPWR (4-й екз.)</text>

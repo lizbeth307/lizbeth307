@@ -20,7 +20,7 @@ _Run `wf_e5582d4c-0a2`_
   (2) Board noise figure 1 dB or less. Reference: rtl-sdr.com '<1 dB'; Passion Radio '~1 dB'; chip 0.3 dB at 1.9 GHz.
   (3) Gain 15-20 dB, enough for the Friis case and not too much for the 8-bit RTL. Reference: Passion Radio 15-20 dB; chip 19.5 dB at 1.9 GHz (RFMW lists 19.3 dB).
   (4) Linearity. Reference chip: OIP3 +39 dBm at the 65 mA bias setting (39.3 dBm on RFMW), P1dB 22.7 dBm.
-  (5) 3-5 V coax bias at the 4.5 V LNA bus. Current must be 150 mA or less for the TCBT ch4 channel and 90 mA or less for the spare V4L tee. Reference: rtl-sdr.com buy page '3 - 5v, 90mA'; Passion Radio '150 mA max'; chip Id 65 mA.
+  (5) 3-5 V coax bias at the LNA bus (4.30 V since v2.1; was 4.5 V). Current must be 150 mA or less for the TCBT ch4 channel and 90 mA or less for the spare V4L tee. Reference: rtl-sdr.com buy page '3 - 5v, 90mA'; Passion Radio '150 mA max'; chip Id 65 mA.
   (6) Aluminium enclosure with SMA connectors, 46.5x32x15.6 mm (69.8 mm long with SMA).
   (7) Genuine chip in active production. QPL9547 is Qorvo's named replacement for the end-of-life SPF5189Z (stack rule #99).
   (8) No driver needed; receive-only.
@@ -52,7 +52,7 @@ _Run `wf_e5582d4c-0a2`_
     - **Why:** The blog confirms 28-2500 MHz, so it does not cover the bench range up to 3.8-6 GHz and 2.3 GHz is near its edge. About 15-16 dB gain and OIP3 about 34 dBm, both lower than the reference. Bare board with no enclosure. Coax bias needs a solder modification, and the maker no longer supplies the inductor. About EUR 30-33 with shipping (figure from the search pass, not re-verified), so it is not cheaper.
   7.
     - **Name:** F1OPA wideband LNA (PGA-103+), Passion Radio
-    - **Why:** EUR 42. Receive range 50-1500 MHz, so it misses 1.7 and 2.2 GHz. Needs 8-14 V, which does not fit the 4.5 V bias bus.
+    - **Why:** EUR 42. Receive range 50-1500 MHz, so it misses 1.7 and 2.2 GHz. Needs 8-14 V, which does not fit the 4.3-4.5 V bias bus.
   8.
     - **Name:** GPIO Labs PSA4-5043+ inline LNA
     - **Why:** About $60 (from earlier research, not re-fetched). Covers 10 MHz-2 GHz, with only 12 dB at 1 GHz.

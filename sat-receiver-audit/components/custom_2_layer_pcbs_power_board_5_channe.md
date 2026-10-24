@@ -150,7 +150,7 @@ _Run `wf_a268b76e-da0`_
   
   ch4: R27 for 2 m only. For WIDE, TCBT-2R5G+ with RILIM 162 kOhm, the trade already declared.
   
-  No change to rails (LNA4V5 4.5 V, LNB13V2), connectors, drivers (passive hardware) or case. A board larger than 100x100 mm changes only the price, not the case.
+  No change to rails (LNA4V5 4.5 V, set to 4.30 V by the v2.1 owner decision; LNB13V2), connectors, drivers (passive hardware) or case. A board larger than 100x100 mm changes only the price, not the case.
   
   Sourcing rule: no separate LCSC parcel for these parts (traceability, and duty per tariff line).
 - **Sources:**

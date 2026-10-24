@@ -23,7 +23,7 @@ _Run `wf_a268b76e-da0`_
   - PG +20%/-10%; reverse protection to 40 V; OCP, OTP, output OV/UV, soft-start.
   - 25.4 x 25.4 x 9.5 mm, three 0.086 in holes.
   
-  So the 10.0k/1.00k EN divider, PG wiring, plate bonding and both C4 gates stay exactly as specified. Counterfeit risk is minimal (official channel, maker-direct supply).
+  So the 10.0k/1.00k EN divider, PG wiring, plate bonding and both C4 gates stay exactly as specified. (v2.1 owner decision 24.10.2026, E1-04: the EN divider is now 4.99k / 562 Ohm 0.1% 25 ppm/K, wake about 12.77 V and at most 13.27 V, below the UV release; the part itself is unchanged.) Counterfeit risk is minimal (official channel, maker-direct supply).
   
   Adversarial check of the price: the 'not kept in stock / sourced from the manufacturer' text on the Botland page is a hidden template (the hidden attribute is set). The live stock API returns quantity 10, order_mode 'none' and promo_end_ts 0, so this is the regular price, not a sale. The earlier claim of '19% VAT on botland.store' was only partly right: the 26.28 net price is fixed and VAT follows the buyer's country.
   
@@ -75,7 +75,7 @@ _Run `wf_a268b76e-da0`_
 - **Conditions or tests:** No new tests; the part is unchanged. The existing gates still apply to the units as delivered:
   - C4 gate (1): HF+ narrowband A/B with SYS12/LAB5 load steps 0.3-3 A and the charger on/off. No line 3 dB or more above the floor within ±5 kHz of 40, 60, 77.5, 162, 490, 518 or 4209.5 kHz, nor at the 1/7/14 MHz checks.
   - C4 gate (2): 60 min at 4.2 A in the closed case at 14.0 and 16.4 V in, logging D36V50F12, #2813 and fuse temperatures.
-  - EN divider sweep: 10.0k/1.00k, targets sleep about 12.1 V and wake about 13.6 V.
+  - EN divider sweep: 10.0k/1.00k, targets sleep about 12.1 V and wake about 13.6 V. v2.1: 4.99k/562 Ohm, sweep 14 -> 10.5 -> 14 V at 25 and 50 C on every unit including the spare; accept wake at most 13.30 V and sleep 10.9-12.0 V; above 13.30 V fit R109 576 Ohm if the measured sleep stays at or above 10.9 V, otherwise reject the module (Zh-03).
   
   Goods-in: check the Pololu silkscreen and #4095 marking, and that the output is 12 V ±4% unloaded.
   
@@ -92,7 +92,7 @@ _Run `wf_a268b76e-da0`_
   
   2. Shopping order (STACK.md line 1123, week 1): move the 2x D36V50F12 out of the Pololu US order into a Botland order. Also check Botland for the D36V28F5 and 2x #2813 (not verified here). Consolidating would pass the EUR 100 free-shipping threshold on botland.de and avoid the US landed costs in operator note 35 (VAT, EUR 3 per tariff line, EUR 2 UHF, carrier fee).
   
-  3. No change to rails, connectors, EN divider (10.0k/1.00k), PG wiring, TPS259470A/J21 chain, plate bonding, case or drivers.
+  3. No change to rails, connectors, EN divider (10.0k/1.00k; changed later to 4.99k/562 Ohm by the v2.1 owner decision, E1-04), PG wiring, TPS259470A/J21 chain, plate bonding, case or drivers.
   
   4. Fallback correction, only if the D36V50F12 fails C4. My dropout model: an LM61460 synced at 1.8-2.1 MHz (as in the D re-audit) enters minimum-off-time frequency foldback below about 13.6-14.6 V ideal input (tOFF_MIN 65 ns typ / 85 ns max), plus IR drop. That shrinks the regulated window, and in foldback the frequency leaves the clock, which breaks the spur mask at low battery. So:
      - Cap the sync clock at about 1.0 MHz or less (about 12.8-13.1 V ideal), with the exact value from the harmonic scan, keeping n x f clear of the protected list (1/7/14 MHz included).

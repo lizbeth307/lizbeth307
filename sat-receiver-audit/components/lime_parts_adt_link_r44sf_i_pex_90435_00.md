@@ -122,7 +122,7 @@ _Run `wf_206ecd06-fb0`_
   - RL at the edge jack at least 20 dB, and never below 14 dB (the VAT-10A+ VSWR 1.5 limit).
   - On a fail, fit YAT-0A+ in the same footprint and go back to the inline VAT-10A+.
   
-  3. DC check: with ch3 4.5 V bias on, a DMM at the RX1 cable centre pin reads below 10 mV, with the cable unplugged from the Lime. Repeat at power-up with the MCP23017 in reset.
+  3. DC check: with ch3 4.3 V bias on (v2.1), a DMM at the RX1 cable centre pin reads below 10 mV, with the cable unplugged from the Lime. Repeat at power-up with the MCP23017 in reset.
   
   4. The G1 isolation, park and spur tests also cover the 3rd section (RF1 park, isolation at least 30 dB conducted).
   

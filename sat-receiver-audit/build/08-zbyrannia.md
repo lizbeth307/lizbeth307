@@ -133,7 +133,7 @@
 
 ## Крок 4. Силова плата (9.1 кроки 6 (а)-(в), 7 (JLCPCB); 9.2 кроки 3-4; 5.1; 5.2)
 
-**Деталі** (5.1, 5.8): 2× Pololu D36V50F12 (SYS12; один — запас), D36V28F5 (LAB5), Pololu #2813 HP (головний вимикач), 2× TPS7A4701RGWT, 2× LT3045EMSE#PBF (паралельно, LNA4V5), TPS70933DBVR (AON), MCP65R41T-1202E/CHY (UV-супервізор) з дільником 3.3 MOhm (Vishay MCA1206) / 332 k + 4.02 k 0.1 %, 3× MCP23017-E/SO (#1 0x20, #3 0x22, #4 0x23: A2 на GND, A1/A0 на 3V3_Q6A; лінії #4 — GPA0 EN LIME3V3, GPA1 RESET LC76G, GPB0-GPB2 FAULT VBUS RTL-B/HF+/RTL-A, GPB3 FLT ключа LIME3V3, STACK.md 5.2), 2× TPS259630DDAR, 4× TPS259470ARPWR (J21, DISP12, USB-C VBUS, ключ LIME3V3: стартовий RILM 1.65 kOhm, OVLO за VOV(R) 1.20 V — номінали на схемі), 2× INA3221AIRGVR + шунти 0.2/0.1 Ohm, 2× TLV3011, TPS2553DBVR-1 (маркування CHZ), SMBJ13A (LG), 2× SMBJ17A (LR), PTC Bourns MF-MSMF075/24-2, AO3407A + 2N7002 (AUX12), Nichicon UHE1E221MPD, 3× Fair-Rite 0431164281, 2× Schottky зворотного живлення, 2× Schottky OUT→GND, запобіжники 297 .WXNV (4 A J21, 3 A LAB5, 5 A сервісний порт), 4× Keystone 3568, логіка інтерфейсу (TCA9517DR, SN74LVC1G17DBVR, 3× 2N7002,215, 5× AO3400A, 5× BAT54C,215).
+**Деталі** (5.1, 5.8): 2× Pololu D36V50F12 (SYS12; один — запас), D36V28F5 (LAB5), Pololu #2813 HP (головний вимикач), 2× TPS7A4701RGWT, 2× LT3045EMSE#PBF (паралельно, LNA4V5), TPS70933DBVR (AON), MCP65R41T-1202E/CHY (UV-супервізор) з дільником 3.3 MOhm (Vishay MCA1206) / 332 k + 4.02 k 0.1 %, 3× MCP23017-E/SO (#1 0x20, #3 0x22, #4 0x23: A2 на GND, A1/A0 на 3V3_Q6A; лінії #4 — GPA0 EN LIME3V3, GPA1 RESET LC76G, GPB0-GPB2 FAULT VBUS RTL-B/HF+/RTL-A, GPB3 FLT ключа LIME3V3, STACK.md 5.2), 2× TPS259630DDAR, 4× TPS259470ARPWR (J21, DISP12, USB-C VBUS, ключ LIME3V3: стартовий RILM 1.65 kOhm, OVLO за VOV(R) 1.20 V — номінали на схемі), 2× INA3221AIRGVR + шунти 0.2/0.1 Ohm, 2× TLV3011, TPS2553DBVR-1 (маркування CHZ), SMBJ13A (LG), 2× SMBJ17A (LR), PTC Bourns MF-MSMF075/24-2, AO3407A + 2N7002 (AUX12), 3× DMP6050SSD-13 + 3× 2N7002 + 3× BZX84C10-7-F (блокувальні елементи E4-06 на ch2, ch3 і Boni, v2.1), Nichicon UHE1E221MPD, 3× Fair-Rite 0431164281, 2× Schottky зворотного живлення, 2× Schottky OUT→GND, запобіжники 297 .WXNV (4 A J21, 3 A LAB5, 5 A сервісний порт), 4× Keystone 3568, логіка інтерфейсу (TCA9517DR, SN74LVC1G17DBVR, 3× 2N7002,215, 5× AO3400A, 5× BAT54C,215).
 
 **Дія:**
 1. Вхідний контроль деталей (9.2 крок 3) — до монтажу.
@@ -145,14 +145,15 @@
 | LNB13V2, TPS7A4701 ANY-OUT | на землю 6P4V1, 3P2V, 1P6V, 0P4V, 0P2V → 13.2 V (з Bullseye); з купівлею QRO.cz — 6P4V1, 3P2V, 0P8V, 0P4V, 0P2V, 0P1V → 12.5 V для обох LNB (без зміни деталей; точність при IN ≥13.5 V; STACK.md 2.7, 8 «Рішення про шину LNB»); Schottky OUT→GND |
 | BONI13V8, TPS7A4701 ANY-OUT | на землю 6P4V1, 3P2V, 1P6V, 0P8V, 0P4V → 13.8 V; Schottky OUT→GND |
 | eFuse LNB TPS259630DDAR | RILM 2.05 kOhm 1 % (0.405-0.499 A) до виміру I_LNB; остаточно RILM [Ohm] = 903/(ILIM − 0.0112) при ILIM = 1.5-2× виміряного I_LNB — TBD (STACK.md 5.1, 9.1 крок 11); OVLO 110k/10.0k 0.5 % (13.91-14.77 V) |
-| eFuse Boni TPS259630DDAR | RILM 7.87 kOhm (0.113-0.139 A); OVLO для 13.8 V — TBD (STACK.md 5.1: «перерахувати»); PTC немає |
-| J21, TPS259470A | OVLO близько 13.5 V, ILIM близько 4 A (номінали резисторів — TBD, STACK.md 5.1); далі pi-фільтр → SMBJ13A + 220 µF/25 V Nichicon UHE1E221MPD (приклеїти RTV) |
+| eFuse Boni TPS259630DDAR | RILM 7.15 kOhm 1% ≤100 ppm/K (0.122-0.153 A, v2.1); OVLO для 13.8 V — TBD (STACK.md 5.1: «перерахувати»); PTC немає |
+| J21, TPS259470A | OVLO близько 13.5 V, ILIM близько 4 A (номінали резисторів — TBD, STACK.md 5.1); UVLO v2.1: R201 100k / R202 13.0k 1% — увімкнення 10.1-10.8 V, вимкнення 9.2-9.9 V; далі pi-фільтр → SMBJ13A + 220 µF/25 V Nichicon UHE1E221MPD (приклеїти RTV) |
 | DISP12, TPS259470A | ILIM 1.5 A, OVLO близько 13.5 V, EN від Pico GP16 (розглянути ILIM близько 1.7 A номінально — TBD, STACK.md 5.1) |
 | LNA4V5, TPS2553DBVR-1 на канал | RILIM 88.7k 1 % (265/299/339 mA); ch4 WIDE з TCBT-2R5G+ — RILIM 162k 1 % (144/166/192 mA) |
 | LAB USB-A, TPS2553DBVR-1 | RILIM 34.8k (685-817 mA) |
 | VBUS HF+ | ≥0.75 A на запуску, потім 1.5-2× виміряного — TBD (STACK.md 5.1); LC SRR1260-101M + EEU-FR1C101 + демпфер близько 1 Ohm / 220 µF (не більше 220 µF) |
 | VBUS RTL-B, TPS2553DBVR-1 (STACK.md 5.1, 5.2) | EN — MCP #1 GPA3; RILIM 1.5-2× виміряного струму — TBD (STACK.md 5.1) |
-| запасний EN D36V50F12 | 10.0 k (SW→EN) / 1.00 k (EN→GND) 1 % |
+| запасний EN D36V50F12 | 4.99 k (SW→EN) / 562 Ω (EN→GND), 0.1 % 25 ppm/K (v2.1) |
+| Блокувальні елементи E4-06 (ch2, ch3, Boni; v2.1) | DMP6050SSD-13 зустрічно: D1 7/8 — захищений вузол E2 (BIAS_CH2, BIAS_CH3, BONI13V8), D2 5/6 — порт (BIAS_CH2_PORT, BIAS_CH3_PORT, BONI13V8_PORT), S1/S2 разом, G1/G2 разом; R_GS 220k / 220k / 100k, C_GS 100 nF 50 V X7R, BZX84C10 (A — затвор, K — витік); стік затвора 4.7k 1210 / 4.7k 1210 / 22k через 2N7002 від EN_LNA2 / EN_LNA3 / EN_BONI; розряд захищеного боку 4.7k / 4.7k / 10k; 1 µF 50 V на порту (E2 R-E2-21) |
 | AUX12 | AO3407A + дільник затвора 10k/10k + 2N7002; EN — MCP #1 GPA1 |
 | дільник батареї Pico | 1:6 від SW (не від N), 100k/20k |
 
@@ -167,12 +168,12 @@
 | #2813 (HP, не MP #2812) | падіння ≤40 mV при 4.6 A; вимкнено ≤0.2 µA |
 | D36V50F12 | 12 V ±4 % без навантаження |
 | D36V28F5 | 5.0 V ±4 % при 0 і 2.3 A від 16.4 V |
-| LT3045 | dropout ≤280 mV при 300 mA |
+| LT3045 | dropout ≤280 mV при 300 mA; LNA4V5 4.30 V ±2% (v2.1, R227 21.5k); запас V(E2_LNA_IN)−V(OUTS) ≥0.40 V при 3.2 A / 1 A / 50 °C |
 | TPS2553DBVR-1 | маркування CHZ; тести спрацювання і пускового струму; засувка FAULT |
 | канал VBUS HF+ (STACK.md 5.1, 8) | тест пускового струму 100 + 220 µF (близько 5.3 мс) при остаточному RILIM; якщо засувається — на цьому каналі TPS2553DBVR (LCSC C55266) |
 | SMBJ | маркування LG (SMBJ13A; LK — відкинути) / LR (SMBJ17A) |
 | UV-компаратор MCP65R41 | 12.8 ±0.1 V спрацювання / 13.6 ±0.1 V відпускання, при 25 і 50 °C, зсув ≤50 mV; утримуваний OFF блокує кнопку на піні A |
-| запасний EN D36V50F12 | сон близько 12.1 V / пробудження близько 13.6 V |
+| запасний EN D36V50F12 | сон близько 11.35 V (10.9-12.0 V) / пробудження ≤13.30 V (ном. 12.77 V; інакше R109 576 Ω або reject, Ж-03) |
 | гілка AON | ≤11 µA |
 | весь OFF при 14.8 V | ≤1.0 mA з INA228 у роботі, ≤0.25 mA з INA228 у shutdown (без BMS) |
 | шини TPS7A4701 з EN від MCP #1 | вікна від меж навантаження, на роз'ємі навантаження при IN ≥ VO + 1 V і виміряному струмі (вирішено, STACK.md 8 рядок TPS7A4701): LNB — 11.5-14 V на F (смуга ІС 12.87-13.53 V на 13.2 V; з QRO.cz — 12.19-12.81 V на 12.5 V, перевірка при IN ≥13.5 V), Boni — 12-15 V на барелі (смуга ІС 13.455-14.145 V); ±0.2/±0.35 V — проєктна ціль, не причина відбраковки |
@@ -284,7 +285,7 @@
 | подовжувач, A/B фону на навантаженні | підйом менше 0.5 dB (інакше екранований подовжувач 15 см з феритом) |
 | VBUS на кінці подовжувача (V4L-7) | ≥4.75 V при 2.56 Msps |
 | струм SAWbird+ NOAA | 170-180 mA (базовий INA3221 ch1) |
-| Uputronics 440 на ch2 (шина 4.5 V) | ≈50 mA; кондуктивне підсилення ≥19 dB на 437.5 MHz |
+| Uputronics 440 на ch2 (шина 4.3 V) | ≈50 mA; кондуктивне підсилення ≥19 dB на 437.5 MHz |
 | L-band патч на ch3 | DC-sense 15-20 mA |
 | SAWbird+ GOES (ch3) | базовий 120-160 mA, бюджет 180 mA |
 | Flamingo+ | точкові межі і S11 (розділ 8, кондуктивно) |
@@ -341,7 +342,7 @@
 | котушка | близько 21.1 mA, 237 Ohm при 5 V; спрацювання ≤4.0 V при 23 °C |
 | LF/HF-ворота пари G6K (детектор — HF+) | за розділом 8 (запас — G6K-2F-RF DC5) |
 | ворота втулки дроселя 2631102002 | імпеданс синфазного дроселя, 9-11 витків (розділ 8) |
-| Boni: вікно струму | від 30 mA до межі з виміру, нижче мінімального ILIM eFuse 113 mA; 65 mA тип. (виробник) |
+| Boni: вікно струму | від 30 mA до межі з виміру, нижче 113 mA (межа labd; ILIM min eFuse 0.122 A при RILM 7.15k, v2.1); 65 mA тип. (виробник) |
 | тести після Boni-Whip | HF-8..HF-12, HF-14, HF-15, RF-5 (9.2 крок 10) |
 | відвід P6 | 0.02-0.08 dB на 64-260 MHz (модель; перевірити на LiteVNA) |
 
