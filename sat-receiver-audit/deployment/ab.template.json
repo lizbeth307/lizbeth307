@@ -1,13 +1,32 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
+  "route": "A",
   "active_slot": "A",
+  "trial_slot": null,
+  "dt_profile": "lab",
+  "lime_build": true,
+  "kernel_version": "6.18.2-4-qcom",
+  "esp_partuuid": null,
   "root_a_partuuid": null,
   "root_b_partuuid": null,
   "base_cmdline_without_root": null,
-  "kernel_efi_path": null,
-  "initrd_efi_path": null,
-  "lab_dtb_efi_path": null,
-  "rescue_kernel_efi_path": null,
-  "rescue_initrd_efi_path": null,
-  "rescue_dtb_efi_path": null
+  "slots": {
+    "A": {
+      "kernel": "/srrx/A/linux",
+      "initrd": "/srrx/A/initrd.img",
+      "lab_dtb": "/srrx/A/lab.dtb",
+      "field_dtb": "/srrx/A/field.dtb"
+    },
+    "B": {
+      "kernel": "/srrx/B/linux",
+      "initrd": "/srrx/B/initrd.img",
+      "lab_dtb": "/srrx/B/lab.dtb",
+      "field_dtb": "/srrx/B/field.dtb"
+    }
+  },
+  "rescue": {
+    "kernel": null,
+    "initrd": null,
+    "dtb": null
+  }
 }

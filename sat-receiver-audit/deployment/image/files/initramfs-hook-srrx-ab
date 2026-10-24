@@ -1,0 +1,13 @@
+#!/bin/sh
+# SR-RX-v2.1 Route B (STACK.md:844): initramfs-tools hook for the embloader write-back.
+# Adds the vfat modules and /conf/conf.d/srrx-ab (route and the three PARTUUIDs from
+# /etc/srrx/boot.json); the local-premount script srrx-ab-writeback uses them.
+PREREQ=""
+prereqs() { echo "$PREREQ"; }
+case "$1" in
+    prereqs) prereqs; exit 0 ;;
+esac
+. /usr/share/initramfs-tools/hook-functions
+manual_add_modules vfat nls_cp437 nls_iso8859_1
+mkdir -p "${DESTDIR}/conf/conf.d"
+/usr/bin/python3 -I -B /opt/srrx/deployment/image/bootchain.py initramfs-env > "${DESTDIR}/conf/conf.d/srrx-ab"

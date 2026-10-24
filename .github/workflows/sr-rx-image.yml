@@ -1,0 +1,233 @@
+name: SR-RX image
+
+# Golden A/B UFS image recipe of sat-receiver-audit/deployment/image on a native ARM64 runner.
+# recipe: host tests, unit verification, the GPT/mkfs layout round trip and the recovery-kit
+#   write into a 4K loop device over a regular file (never a real disk).
+# image: the locked Radxa OS r2 _4096 image + the controller bundle -> image file, manifest,
+#   extent map and (optionally) a QEMU boot smoke. Only the manifest, facts, logs and map are
+#   uploaded; the image contains Radxa OS and Qualcomm material and is uploaded only from a
+#   PRIVATE repository, with 1-day retention (build/15-rishennia-komplektu.md). None of this is
+#   hardware evidence: bench gates W-01/W-02/W-03/W-08/W-09/W-10 stay OPEN.
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_image:
+        description: 'Build the golden image from the locked r2 image (about 30-60 min per route)'
+        type: boolean
+        default: true
+      routes:
+        description: 'Routes to build: A, B or A B'
+        type: string
+        default: 'A B'
+      smoke:
+        description: 'Boot the Route A image under QEMU (UEFI, TCG unless /dev/kvm exists)'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sr-rx-image-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: sat-receiver-audit
+
+env:
+  PYTHONDONTWRITEBYTECODE: '1'
+
+jobs:
+  recipe:
+    name: Image recipe checks (aarch64)
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Builder tools
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends dosfstools e2fsprogs util-linux fdisk rsync xz-utils device-tree-compiler
+      - name: Runner resources (disk, KVM, sectors)
+        run: |
+          uname -a; nproc; free -h; df -h; lsblk -o NAME,SIZE,LOG-SEC,PHY-SEC,TYPE,MOUNTPOINTS || true
+          ls -l /dev/kvm 2>&1 || true
+          sfdisk --version; mkfs.vfat --help 2>&1 | head -2; losetup --version
+          sfdisk --list-types --label gpt | grep -iE 'C12A7328-F81F-11D2-BA4B-00A0C93EC93B|0FC63DAF-8483-4772-8E79-3D69D8477DE4'
+      - name: Host tests of the image recipe
+        run: python3 -m unittest -v deployment.tests.test_image deployment.tests.test_deployment.DeploymentTests.test_ab_candidates_only_and_no_duplicate_roots
+      - name: systemd-analyze verify of the boot-chain units
+        run: |
+          S="$RUNNER_TEMP/stage"
+          python3 deployment/deploy.py stage --dest "$S" > /dev/null
+          U="$RUNNER_TEMP/units"
+          mkdir -p "$U"
+          cp "$S"/rootfs/etc/systemd/system/srrx-radio-off.service deployment/image/files/*.service "$U"/
+          SYSTEMD_UNIT_PATH="$U:" systemd-analyze verify --man=no "$U"/srrx-boot-check.service "$U"/srrx-ab-commit.service "$U"/srrx-radio-off.service
+      - name: Layout round trip (GPT on 4096-byte sectors, mkfs, mount, fsck) on a loop file
+        run: |
+          W="$RUNNER_TEMP/rt"
+          mkdir -p "$W"
+          sudo python3 deployment/image/build_image.py blank --work "$W" --output "$W/blank.img" --test-sizes | tee "$RUNNER_TEMP/blank.json"
+          grep -q '"status": "BLANK_IMAGE_OK"' "$RUNNER_TEMP/blank.json"
+      - name: Recovery kit write into a 4K loop target, read back, grow /data
+        run: |
+          W="$RUNNER_TEMP/rt"
+          sudo chown -R "$(id -u)" "$W"
+          python3 deployment/image/recovery_kit.py map --image "$W/blank.img" --output "$W/blank.img.map.json"
+          python3 deployment/image/recovery_kit.py assemble --image "$W/blank.img" --map "$W/blank.img.map.json" --out "$W/kit" --link
+          python3 deployment/image/recovery_kit.py verify --kit "$W/kit" | tee "$RUNNER_TEMP/kit-verify.json"
+          grep -q '"status": "KIT_VERIFIED"' "$RUNNER_TEMP/kit-verify.json"
+          size=$(stat -c %s "$W/blank.img")
+          truncate -s $((size + 512*1024*1024)) "$W/target.raw"
+          T=$(sudo losetup --find --show --sector-size 4096 "$W/target.raw")
+          # Negative cases first: a plain /dev/loopN without the CI flag, a 512-byte target, the runner's root disk.
+          if sudo python3 deployment/image/recovery_kit.py write --kit "$W/kit" --target "$T" --execute; then echo "::error::loop target accepted without --test-loop-target"; exit 1; fi
+          truncate -s $((size + 512*1024*1024)) "$W/target512.raw"
+          T512=$(sudo losetup --find --show "$W/target512.raw")
+          if sudo python3 deployment/image/recovery_kit.py write --kit "$W/kit" --target "$T512" --test-loop-target --execute 2>"$RUNNER_TEMP/t512.err"; then echo "::error::512-byte target accepted"; exit 1; fi
+          grep -q "LOG-SEC" "$RUNNER_TEMP/t512.err"
+          sudo losetup -d "$T512"
+          rootdisk=$(lsblk -no PKNAME "$(findmnt -no SOURCE /)" | head -1)
+          link=$(for l in /dev/disk/by-id/*; do [ "$(readlink -f "$l")" = "/dev/$rootdisk" ] && echo "$l" && break; done)
+          if [ -n "$link" ]; then
+            if sudo python3 deployment/image/recovery_kit.py write --kit "$W/kit" --target "$link" 2>"$RUNNER_TEMP/root.err"; then echo "::error::root disk accepted"; exit 1; fi
+            cat "$RUNNER_TEMP/root.err"
+          else
+            echo "no /dev/disk/by-id link for the root disk $rootdisk on this runner"
+          fi
+          sudo python3 deployment/image/recovery_kit.py write --kit "$W/kit" --target "$T" --test-loop-target | tee "$RUNNER_TEMP/dry.json"
+          grep -q '"status": "DRY_RUN_ONLY"' "$RUNNER_TEMP/dry.json"
+          sudo python3 deployment/image/recovery_kit.py write --kit "$W/kit" --target "$T" --test-loop-target --execute | tee "$RUNNER_TEMP/write.json"
+          python3 - "$RUNNER_TEMP/write.json" "$RUNNER_TEMP/blank.json" <<'EOF'
+          import json, sys
+          r, blank = json.load(open(sys.argv[1])), json.load(open(sys.argv[2]))
+          assert r["status"] == "WRITTEN_AND_READ_BACK" and not any(r["checks"].values()), r
+          before = blank["geometry"]["partitions"]["data"]["size"]
+          after = r["partition_table"]["partitions"][3]["size"]
+          assert after > before, (before, after)
+          assert [p["uuid"].lower() for p in r["partition_table"]["partitions"]] == [blank["identifiers"]["partuuid"][k] for k in ("esp", "root_a", "root_b", "data")]
+          print("data partition grown", before, "->", after, "sectors; PARTUUIDs kept")
+          EOF
+          sudo mkdir -p /mnt/srrx-data && sudo mount "${T}p4" /mnt/srrx-data && test -f /mnt/srrx-data/srrx-roundtrip && sudo umount /mnt/srrx-data
+          sudo losetup -d "$T"
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: image-recipe-checks
+          retention-days: 7
+          path: |
+            ${{ runner.temp }}/*.json
+            ${{ runner.temp }}/*.err
+
+  image:
+    name: Golden image (route ${{ matrix.route }})
+    if: inputs.build_image
+    needs: recipe
+    strategy:
+      fail-fast: false
+      matrix:
+        route: [A, B]
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 150
+    steps:
+      - name: Route selected
+        id: sel
+        working-directory: .
+        env:
+          ROUTES: ${{ inputs.routes }}
+        run: |
+          case " $ROUTES " in *" ${{ matrix.route }} "*) echo "run=true" >> "$GITHUB_OUTPUT";; *) echo "run=false" >> "$GITHUB_OUTPUT";; esac
+      - uses: actions/checkout@v5
+        if: steps.sel.outputs.run == 'true'
+        with:
+          persist-credentials: false
+      - name: Builder tools
+        if: steps.sel.outputs.run == 'true'
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends dosfstools e2fsprogs util-linux fdisk rsync xz-utils device-tree-compiler \
+            qemu-system-arm qemu-efi-aarch64 qemu-utils
+      - name: Work directory on the largest free filesystem
+        if: steps.sel.outputs.run == 'true'
+        run: |
+          df -h
+          best="$RUNNER_TEMP"; bestfree=$(df --output=avail -B1 "$RUNNER_TEMP" | tail -1)
+          if [ -d /mnt ] && [ "$(df --output=avail -B1 /mnt | tail -1)" -gt "$bestfree" ]; then best=/mnt; fi
+          sudo mkdir -p "$best/srrx-image"
+          sudo chown "$(id -u)" "$best/srrx-image"
+          echo "W=$best/srrx-image" >> "$GITHUB_ENV"
+          echo "OUT=$best/srrx-image/out" >> "$GITHUB_ENV"
+          echo "CACHE=$HOME/srrx-cache" >> "$GITHUB_ENV"
+          python3 - >> "$GITHUB_ENV" <<'EOF'
+          import hashlib, json
+          arts = json.load(open("deployment/sources.lock.json"))["artifacts"]
+          print("CACHE_KEY=srrx-locked-" + hashlib.sha256(json.dumps(sorted(a["sha256"] for a in arts)).encode()).hexdigest()[:16])
+          EOF
+      - uses: actions/cache@v4
+        if: steps.sel.outputs.run == 'true'
+        with:
+          # Public upstream release files only (Radxa r2 image and kernel debs), never a derived image.
+          path: ~/srrx-cache
+          key: ${{ env.CACHE_KEY }}
+      - name: Fetch and verify the locked base image and kernel debs
+        if: steps.sel.outputs.run == 'true'
+        run: python3 deployment/image/build_image.py fetch --cache "$CACHE"
+      - name: Build the golden image (candidate)
+        if: steps.sel.outputs.run == 'true'
+        run: |
+          mkdir -p "$OUT"
+          sudo python3 deployment/image/build_image.py build --cache "$CACHE" --work "$W/work" --out "$OUT" \
+            --route ${{ matrix.route }} --allow-unmerged-dtb
+      - name: Summarize the manifest and facts
+        if: always() && steps.sel.outputs.run == 'true'
+        run: |
+          sudo chown -R "$(id -u)" "$OUT" || true
+          df -h "$W" || true
+          python3 - "$OUT" <<'EOF'
+          import json, sys
+          from pathlib import Path
+          out = Path(sys.argv[1])
+          for name in ("image-manifest.json", "image-facts.json"):
+              p = out / name
+              if not p.is_file():
+                  print(name, "missing"); continue
+              d = json.loads(p.read_text())
+              if name == "image-manifest.json":
+                  print(json.dumps({k: d.get(k) for k in ("status", "error", "blocking", "kernel", "bootloader", "entries", "enabled_units", "hardening", "selftest_root_a", "filesystem_checks", "image")}, indent=1)[:12000])
+              else:
+                  r = d.get("root", {})
+                  print(json.dumps({"partitions": d.get("partitions"), "base_cmdline_status": d.get("base_cmdline_status"),
+                                    "kernel_cmdline": r.get("kernel_cmdline"), "rescue": d.get("rescue"), "esp_entries": d.get("esp", {}).get("entries"),
+                                    "loader_conf": d.get("esp", {}).get("loader_conf"), "kernel_install_plugins": r.get("kernel_install_plugins"),
+                                    "packages_of_interest": r.get("packages_of_interest"), "diversions": r.get("diversions"), "units": r.get("units"),
+                                    "accounts": r.get("accounts"), "machine_id": r.get("machine_id"), "kernel_deb_config": d.get("kernel_deb_config"),
+                                    "kernel_debs": d.get("kernel_debs"), "fstab": r.get("fstab"), "used_bytes": r.get("used_bytes")}, indent=1)[:30000])
+          EOF
+      - name: QEMU boot smoke of the Route A image
+        if: steps.sel.outputs.run == 'true' && matrix.route == 'A' && inputs.smoke
+        run: |
+          sudo python3 deployment/image/smoke_qemu.py --image "$OUT/srrx-golden-routeA.img" --manifest "$OUT/image-manifest.json" \
+            --work "$W/smoke" --out "$OUT/smoke"
+      - name: Upload the manifest, facts, logs and extent map
+        if: always() && steps.sel.outputs.run == 'true'
+        uses: actions/upload-artifact@v5
+        with:
+          name: image-route-${{ matrix.route }}-manifest
+          retention-days: 7
+          path: |
+            ${{ env.OUT }}/*.json
+            ${{ env.OUT }}/build.log
+            ${{ env.OUT }}/smoke
+      - name: Upload the image (private repository only, 1 day)
+        if: success() && steps.sel.outputs.run == 'true' && github.event.repository.private
+        uses: actions/upload-artifact@v5
+        with:
+          name: image-route-${{ matrix.route }}-PRIVATE
+          retention-days: 1
+          compression-level: 6
+          path: ${{ env.OUT }}/srrx-golden-route${{ matrix.route }}.img

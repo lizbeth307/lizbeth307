@@ -1,0 +1,84 @@
+{
+  "schema_version": 1,
+  "status": "CANDIDATE",
+  "description": "Ordered image recipe of deployment/image/build_image.py: Radxa OS r2 _4096 + the deploy.py controller bundle -> A/B UFS image file. Every list cites its source; build_image.py records what it applied and what was absent in image-manifest.json.",
+  "base_artifact": "radxa-os-r2-ufs4096",
+  "kernel_artifacts": [
+    "linux-image-6.18.2-4-qcom",
+    "linux-headers-6.18.2-4-qcom",
+    "linux-image-radxa-dragon-q6a",
+    "linux-headers-radxa-dragon-q6a",
+    "linux-libc-dev-radxa-dragon-q6a"
+  ],
+  "kernel_version": "6.18.2-4-qcom",
+  "dtb_name": "qcs6490-radxa-dragon-q6a.dtb",
+  "holds": {
+    "source": "build/07-pz-vstanovlennia.md:76-90 (1.2 hold table); STACK.md:137-138",
+    "names": [
+      "linux-image-6.18.2-4-qcom", "linux-headers-6.18.2-4-qcom", "linux-image-radxa-dragon-q6a", "linux-headers-radxa-dragon-q6a",
+      "edk2-qcs6490", "edk2-radxa-dragon-q6a", "edl-ng", "rsetup", "rsetup-config-first-boot",
+      "systemd-boot", "systemd-boot-efi", "u-boot-menu", "radxa-overlays-dkms",
+      "radxa-firmware", "radxa-firmware-qcs6490", "linux-firmware", "linux-firmware-dragonwing", "qcom-iot-defaults",
+      "task-qcs6490", "task-qualcomm", "task-qualcomm-npu", "task-qualcomm-gstreamer", "task-radxa-dragon-q6a",
+      "alsa-ucm-conf", "aic8800-usb-dkms", "aic8800-firmware",
+      "qcom-qnn-sdk-v68", "radxa-qcom-qairt",
+      "libdrm2", "labwc", "xwayland", "pipewire",
+      "librtlsdr2", "libairspyhf1", "libairspy0", "gpsd", "chrony",
+      "fastrpc", "libcdsprpc1"
+    ],
+    "globs": ["radxa-system-config-*", "libgl1-mesa-dri", "mesa-*", "libwlroots*", "qt6-*", "libqt6*"]
+  },
+  "purge": {
+    "source": "build/07-pz-vstanovlennia.md:92-96 (purge unattended-upgrades brltty)",
+    "names": ["unattended-upgrades", "brltty"]
+  },
+  "mask": {
+    "source": "build/07-pz-vstanovlennia.md:92-96; STACK.md:845 (sleep targets); rsetup.service runs `rsetup __on_boot`, which executes /config/before.txt (add_user radxa radxa, resize_root, connect_wi-fi) - https://github.com/radxa-pkg/rsetup debian/rsetup.service and config/before.txt, read 2026-10-24; STACK.md:845 never rsetup in the field",
+    "units": ["apt-daily.timer", "apt-daily-upgrade.timer", "fwupd-refresh.timer", "ModemManager.service",
+              "sleep.target", "suspend.target", "hibernate.target", "hybrid-sleep.target", "rsetup.service"]
+  },
+  "lock_default_password_accounts": {
+    "source": "rsetup config/before.txt creates radxa/radxa and rock/rock at first boot; this image disables first boot and locks any account that already has a usable password hash (accounts and operator access belong to IMG-06)",
+    "min_uid": 1000
+  },
+  "ppa_list_tokens_from_policy": "deployment/receive-only-policy.json apt.forbidden_list_name_tokens (STACK.md:894: PPA lists are removed)",
+  "kernel_install": {
+    "source": "STACK.md:843 (entries only from our kernel-install plugin, never rsetup); systemd v255.4 src/kernel-install/kernel-install.c and 90-loaderentry.install.in (layout=other keeps the stock BLS plugin inert)",
+    "mask": ["90-loaderentry.install", "90-uki-copy.install"],
+    "known": ["50-depmod.install", "55-initrd.install", "60-ukify.install", "90-loaderentry.install", "90-uki-copy.install"]
+  },
+  "routes": {
+    "A": {
+      "source": "STACK.md:843; build/07-pz-vstanovlennia.md:150-163",
+      "purge": ["sdboot-is-embloader"],
+      "bootctl_install": true,
+      "apt_pin_minus_one": ["embloader", "sdboot-is-embloader"],
+      "enable": {"srrx-boot-check.service": "boot-complete.target.requires"}
+    },
+    "B": {
+      "source": "STACK.md:844; build/07-pz-vstanovlennia.md:165-167; embloader tag 0.4 (https://github.com/BigfootACA/embloader, src/sdboot/file.c, src/loader/loader.c, read 2026-10-24)",
+      "purge": [],
+      "bootctl_install": false,
+      "embloader_version": "0.4",
+      "apt_pin_minus_one": [],
+      "enable": {"srrx-boot-check.service": "boot-complete.target.requires", "srrx-ab-commit.service": "multi-user.target.wants"}
+    }
+  },
+  "enable_common": {
+    "source": "deployment/deploy.py radio_off_unit (WantedBy=sysinit.target)",
+    "units": {"srrx-radio-off.service": "sysinit.target.wants"}
+  },
+  "not_enabled": {
+    "srrx.service": "IMG-06 decision (acceptance keeps it inert; DEPLOYMENT.md: no .wants links from staging)",
+    "srrx-poweroff.service": "follows srrx.service"
+  },
+  "dt_overlays": {
+    "source": "STACK.md:843 (fdtoverlay -i <package DTB> -o lab.dtb lab-q6a.dtbo; field.dtb with pcie0 disabled); sources are IMG-05 (not part of this recipe)",
+    "lab": ["deployment/dt/lab-q6a.dtso", "deployment/system/dt/lab-q6a.dtso"],
+    "field": ["deployment/dt/field-q6a.dtso", "deployment/system/dt/field-q6a.dtso"]
+  },
+  "data_cache": {
+    "source": "deployment/deploy.py release_guard (verify_cache of the locked base image and kernel debs at /srv/srrx-cache)",
+    "copy_locked_artifacts": true
+  }
+}

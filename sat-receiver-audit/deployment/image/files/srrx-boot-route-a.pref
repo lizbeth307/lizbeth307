@@ -1,0 +1,5 @@
+# SR-RX-v2.1 Route A (STACK.md:843): after `dpkg --purge sdboot-is-embloader` and
+# `bootctl install`, embloader and its divert package can never come back through apt.
+Package: embloader sdboot-is-embloader
+Pin: release *
+Pin-Priority: -1

@@ -959,38 +959,25 @@ def release_guard(devices, acceptance, release, build_manifest, cache):
 
 
 def stage_ab(config, destination):
-    """Generate BLS candidates only; no partitions, bootctl or activation."""
-    keys(config, ("schema_version", "active_slot", "root_a_partuuid", "root_b_partuuid",
-                  "base_cmdline_without_root", "kernel_efi_path", "initrd_efi_path", "lab_dtb_efi_path",
-                  "rescue_kernel_efi_path", "rescue_initrd_efi_path", "rescue_dtb_efi_path"), "A/B staging")
-    if config["schema_version"] != 1 or config["active_slot"] not in ("A", "B"):
-        raise DeploymentError("invalid A/B schema or observed active slot")
-    for key in ("root_a_partuuid", "root_b_partuuid"):
-        _string(config[key], r"[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}", key)
-    if config["root_a_partuuid"].lower() == config["root_b_partuuid"].lower():
-        raise DeploymentError("A/B PARTUUIDs must be distinct")
-    for key in ("kernel_efi_path", "initrd_efi_path", "lab_dtb_efi_path", "rescue_kernel_efi_path", "rescue_initrd_efi_path", "rescue_dtb_efi_path"):
-        _string(config[key], r"/[A-Za-z0-9_./+-]+", "verified ESP file " + key)
-        if ".." in Path(config[key]).parts:
-            raise DeploymentError("ESP path traversal")
-    _string(config["base_cmdline_without_root"], r"[A-Za-z0-9_.,:/=+ -]+", "observed full base cmdline")
-    tokens = config["base_cmdline_without_root"].split()
-    if any(t.startswith("root=") for t in tokens) or "clk_ignore_unused" in tokens or len(tokens) < 3:
-        raise DeploymentError("base cmdline must preserve observed options, without root= or clk_ignore_unused")
+    """Generate BLS candidates only; no partitions, bootctl or activation.
+
+    ab-config schema 2 (ab.template.json): per-slot kernel/initrd/lab.dtb/field.dtb under
+    /srrx/<slot>/ on the ESP, dt_profile lab|field, route A (systemd-boot) or B (embloader 0.4),
+    per-token cmdline allowlist with '@' (video=HDMI-A-1:1920x1080@60). The generator and the
+    image builder share deployment/image/bootchain.py."""
+    sys.path.insert(0, str(HERE / "image"))
+    import bootchain
+    try:
+        files = bootchain.entries(config)
+    except bootchain.BootChainError as exc:
+        raise DeploymentError(str(exc)) from exc
     destination = Path(destination).resolve()
     if (destination.exists() or str(destination).startswith(("/boot/", "/etc/", "/usr/", "/opt/", "/sys/", "/proc/", "/dev/"))
             or destination.is_relative_to(PROJECT) or PROJECT.is_relative_to(destination)):
         raise DeploymentError("A/B output must be a new independent staging directory")
-    entries = destination / "loader/entries"
-    entries.mkdir(parents=True)
-    for slot in ("A", "B"):
-        name = "lab" + slot + (".conf" if slot == config["active_slot"] else "+3.conf")
-        options = " ".join(tokens) + " root=PARTUUID=" + config["root_" + slot.lower() + "_partuuid"]
-        (entries / name).write_text(f'title SR-RX candidate {slot}\nlinux {config["kernel_efi_path"]}\ninitrd {config["initrd_efi_path"]}\ndevicetree {config["lab_dtb_efi_path"]}\noptions {options}\n')
-    active_root = config["root_" + config["active_slot"].lower() + "_partuuid"]
-    (entries / "rescue.conf").write_text(f'title SR-RX existing 6.18.2-3 rescue candidate\nlinux {config["rescue_kernel_efi_path"]}\ninitrd {config["rescue_initrd_efi_path"]}\ndevicetree {config["rescue_dtb_efi_path"]}\noptions {" ".join(tokens)} root=PARTUUID={active_root}\n')
-    (destination / "loader/loader.conf").write_text("default lab" + config["active_slot"] + ".conf\ntimeout 3\neditor no\n")
+    bootchain.write_tree(destination, files)
     return {"status": "AB_CANDIDATES_ONLY", "directory": str(destination), "active_slot_changed": False,
+            "route": config["route"], "next_boot_slot": config["trial_slot"] or config["active_slot"], "files": sorted(files),
             "warning": "Review actual ESP file formats, initramfs/root mounting, merged DTB and forced-failure rollback on bench; activation unsupported."}
 
 

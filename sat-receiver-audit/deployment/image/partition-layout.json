@@ -1,0 +1,82 @@
+{
+  "schema_version": 1,
+  "status": "CANDIDATE",
+  "description": "SR-RX-v2.1 UFS A/B layout: GPT on 4096-byte logical sectors, ESP + root A + root B + /data. Candidate only: the UFS size, LOG-SEC and boot behaviour are bench gates (W-01, W-03, W-09, W-10).",
+  "sources": [
+    "STACK.md:87 (C18: ESP 1 GiB, root A 22 GiB, root B 22 GiB, UFS 4K-native, ESP FAT32 via mkfs.vfat -S 4096, /data is the rest of the device)",
+    "STACK.md:843 (root=PARTUUID per slot, new filesystem UUID on slot B)",
+    "build/07-pz-vstanovlennia.md:141-148 (UFS 128 GB, about 119 GiB; /data about 74 GiB)",
+    "software/DEPLOYMENT.md, section 'A/B і відновлення' (native 4K, ESP 1 GiB, rootA/rootB 22 GiB each, rest /data)"
+  ],
+  "label": "gpt",
+  "sector_size": 4096,
+  "alignment_bytes": 1048576,
+  "uuid_seed": "SR-RX-v2.1/golden-image/layout-1",
+  "partitions": [
+    {
+      "role": "esp",
+      "gpt_name": "srrx-esp",
+      "type_guid": "C12A7328-F81F-11D2-BA4B-00A0C93EC93B",
+      "size_bytes": 1073741824,
+      "filesystem": "vfat",
+      "fs_label": "SRRX-ESP",
+      "mount": "/boot/efi",
+      "mount_options": "umask=0077,shortname=winnt",
+      "fsck_pass": 2
+    },
+    {
+      "role": "root_a",
+      "gpt_name": "srrx-root-a",
+      "type_guid": "0FC63DAF-8483-4772-8E79-3D69D8477DE4",
+      "size_bytes": 23622320128,
+      "filesystem": "ext4",
+      "fs_label": "srrx-root-a",
+      "mount": "/",
+      "mount_options": "defaults,errors=remount-ro",
+      "fsck_pass": 1
+    },
+    {
+      "role": "root_b",
+      "gpt_name": "srrx-root-b",
+      "type_guid": "0FC63DAF-8483-4772-8E79-3D69D8477DE4",
+      "size_bytes": 23622320128,
+      "filesystem": "ext4",
+      "fs_label": "srrx-root-b",
+      "mount": "/",
+      "mount_options": "defaults,errors=remount-ro",
+      "fsck_pass": 1
+    },
+    {
+      "role": "data",
+      "gpt_name": "srrx-data",
+      "type_guid": "0FC63DAF-8483-4772-8E79-3D69D8477DE4",
+      "size_bytes": null,
+      "image_size_bytes": 4294967296,
+      "filesystem": "ext4",
+      "fs_label": "srrx-data",
+      "mount": "/data",
+      "mount_options": "defaults,nodev,nosuid,noexec,errors=remount-ro",
+      "fsck_pass": 2,
+      "directories": ["products", "srrx-cache"],
+      "grow_on_target": true
+    }
+  ],
+  "binds": [
+    {
+      "source": "/data/srrx-cache",
+      "target": "/srv/srrx-cache",
+      "options": "bind,ro,x-systemd.requires-mounts-for=/data",
+      "why": "release_guard verifies the locked base image and kernel debs at every srrx.service start (deployment/deploy.py release_guard -> verify_cache); the 1.6 GB cache lives on /data, read-only for the root slots"
+    }
+  ],
+  "quota": {
+    "status": "TBD",
+    "why": "build/07-pz-vstanovlennia.md:148 names quotas of 27.4 GiB and about 46.6 GiB for recordings, but not the directories or quota type; ext4 quota is enabled only when the locked kernel config has CONFIG_QUOTA=y (an ext4 with the quota feature cannot be mounted read-write without it)"
+  },
+  "target": {
+    "device": "UFS 128 GB (about 119 GiB), 4096-byte logical sectors",
+    "observed_size_bytes": null,
+    "observed_log_sec": null,
+    "why_null": "measured on the unit before the write (lsblk -o LOG-SEC,SIZE); bench steps W-01/W-09"
+  }
+}
