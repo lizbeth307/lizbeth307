@@ -1,0 +1,328 @@
+{
+ "schema": 1,
+ "generator": "tools/build_parts.py",
+ "database": "design/parts/parts.json",
+ "snapshots": [
+  "design/parts/snapshots/2026-10-24-lcsc.json",
+  "design/parts/snapshots/2026-10-24-manual.json"
+ ],
+ "refs": 777,
+ "parts": 225,
+ "refs_by_mount": {
+  "assembly": 6,
+  "existing": 9,
+  "harness": 19,
+  "module": 35,
+  "on_module": 4,
+  "panel": 14,
+  "pcb_module": 1,
+  "pcb_pad": 30,
+  "pcb_smt": 614,
+  "pcb_tht": 29,
+  "remote": 9,
+  "rework": 5,
+  "virtual": 2
+ },
+ "bare_board_parts": 644,
+ "bare_board_parts_with_footprint": 644,
+ "board_refs": 674,
+ "board_refs_with_footprint": 674,
+ "board_footprint_origin": {
+  "KiCad 10.0.7": 639,
+  "SR_RX_Custom": 35
+ },
+ "purchased_refs": 721,
+ "purchased_refs_by_availability": {
+  "TBD": 28,
+  "в наявності": 579,
+  "з 10-bom": 16,
+  "склад 0": 57,
+  "у каталозі": 41
+ },
+ "purchased_refs_with_mpn": 697,
+ "tbd": [
+  {
+   "part": "R-0603-TBD-R4422",
+   "refs": [
+    "R4422",
+    "R4432",
+    "R4442"
+   ],
+   "reason": "49.8 kΩ не є значенням ряду E192; деталі 0.1 % у каталозі LCSC 24.10.2026 не знайдено. Рішення власника E4: 49.9 kΩ (E192) з повторним прогоном design/E4-detector-analysis.py (аналітичний запас 1.37 мВ) або 2×24.9 kΩ послідовно (зміна графа)."
+  },
+  {
+   "part": "R-0603-TBD-R263",
+   "refs": [
+    "R263"
+   ],
+   "reason": "Стартове значення OVLO 112 kΩ не належить до ряду E192 (найближчі 111k/113k), а остаточний дільник OVLO закривають ворота; деталі 0.1 % 0603 24.10.2026 не знайдено."
+  },
+  {
+   "part": "L-0805HP-221XGRC",
+   "refs": [
+    "L403"
+   ],
+   "reason": "MPN обрано в E4; 24.10.2026 жоден дистриб’ютор його не підтвердив (DigiKey DE — немає результату; coilcraft.com відповідає 403 на автоматичне читання). Замовити напряму в Coilcraft після ручної перевірки сторінки."
+  },
+  {
+   "part": "L-0603HP-47NXGRW",
+   "refs": [
+    "L404"
+   ],
+   "reason": "MPN обрано в E4 (документ Coilcraft 225-2); 24.10.2026 жоден дистриб’ютор його не підтвердив (DigiKey DE — немає результату; coilcraft.com — 403). Замовити напряму в Coilcraft після ручної перевірки."
+  },
+  {
+   "part": "L-0805-DNP-470nH",
+   "refs": [
+    "L401",
+    "L407"
+   ],
+   "reason": "Необов’язковий дросель відведення (DNP), деталь у E4 не обрано (SRF >300 МГц); на платі лише посадкове місце. Не купується."
+  },
+  {
+   "part": "J-BALANCE-DNP",
+   "refs": [
+    "J102"
+   ],
+   "reason": "DNP / лише сервіс до закриття E1-02; деталь не обрано."
+  },
+  {
+   "part": "J-USBC-PANEL",
+   "refs": [
+    "J103"
+   ],
+   "reason": "Герметичний панельний USB-C (лише живлення PD) не обрано: ступінь IP проти ціни — рішення власника (MECH-07, build/05); MPN 24.10.2026 не прочитано."
+  },
+  {
+   "part": "U-IP2368-BOARD",
+   "refs": [
+    "U110"
+   ],
+   "reason": "Роздрібна плата IP2368 COUT з AliExpress не має сталого MPN; під час купівлі записати оголошення продавця й ревізію плати (ворота E1-01, рядок 60 10-bom)."
+  },
+  {
+   "part": "TH-KSD9700-70-NO",
+   "refs": [
+    "TH102"
+   ],
+   "reason": "Оголошення LCSC (механічний SPST, клас 70 °C) не вказує NO/NC; рядок 89 10-bom називає NO 70 °C KSD9700 від Piekarz 31610 (24.10.2026 не перечитано). Перед замовленням підтвердити нормально розімкнений варіант."
+  },
+  {
+   "part": "SW-POWER-PANEL",
+   "refs": [
+    "SW301"
+   ],
+   "reason": "Герметична кнопка живлення 12-16 мм без фіксації: MPN немає ні в STACK, ні в 10-bom (рядок 143 — лише оцінка); вибір разом зі ступенем IP — MECH-07 (build/05)."
+  },
+  {
+   "part": "J-SMA-PANEL",
+   "refs": [
+    "J401",
+    "J402",
+    "J403",
+    "J406",
+    "J407",
+    "J408"
+   ],
+   "reason": "Панельна SMA-розетка з герметичним пігтейлом RG316: рядок 91 10-bom називає лише безіменний набір з AliExpress; деталь IP67 обрати разом з MECH-07 (build/05). Порти з DC лишають непровідні ковпачки (рядок 90 10-bom)."
+  },
+  {
+   "part": "J-F-PANEL",
+   "refs": [
+    "J404"
+   ],
+   "reason": "Панельну F-розетку 75 Ω не обрано (рядок 91 10-bom — оцінка набору)."
+  },
+  {
+   "part": "J-BNC-PANEL",
+   "refs": [
+    "J405"
+   ],
+   "reason": "Панельну BNC-розетку не обрано (рядок 91 10-bom — оцінка набору)."
+  },
+  {
+   "part": "W-IF-75OHM",
+   "refs": [
+    "W402"
+   ],
+   "reason": "Внутрішній коаксіал ПЧ 75 Ω (від F-розетки до тракту LNB): кабель і роз’єми не обрано."
+  },
+  {
+   "part": "W-HF-CM-CHOKE",
+   "refs": [
+    "W408"
+   ],
+   "reason": "Довжина RG316 (9-11 витків), SMA-вилки й кронштейн не задані як MPN (рядок 20 10-bom — «модель»)."
+  },
+  {
+   "part": "W-RX1-EDGE",
+   "refs": [
+    "W409"
+   ],
+   "reason": "Невід’ємний RG316 від крайової SMA RX1 до площадки профілю: MPN збірки й довжину не обрано."
+  },
+  {
+   "part": "W-RG316-SMA-MM",
+   "refs": [
+    "W422",
+    "W423",
+    "W424"
+   ],
+   "reason": "Збірки RG316 SMA-M/M 0.10/0.10/1.00 м: перевіреного MPN збірки 24.10.2026 не прочитано (рядок 91 10-bom — загальні пігтейли)."
+  },
+  {
+   "part": "W-USBC-POWER",
+   "refs": [
+    "W425"
+   ],
+   "reason": "Кабель USB-C лише для живлення, 1.50 м, пара 26 AWG: конкретний MPN не обрано."
+  },
+  {
+   "part": "J-USBA-PANEL",
+   "refs": [
+    "J501"
+   ],
+   "reason": "Панельну розетку USB-A для LAB не обрано (MECH-07); MPN 24.10.2026 не прочитано."
+  },
+  {
+   "part": "W-HFP-MICROUSB",
+   "refs": [
+    "J544"
+   ],
+   "reason": "MPN кабелю micro-USB для HF+ не обрано (рядок 19 10-bom називає лише ферити)."
+  },
+  {
+   "part": "SW-EDL-PANEL",
+   "refs": [
+    "SW501"
+   ],
+   "reason": "Утоплену кнопку EDL без фіксації не обрано (MECH-07)."
+  }
+ ],
+ "carried_from_10_bom": [
+  {
+   "part": "BT-P50B",
+   "refs": [
+    "BT101",
+    "BT102",
+    "BT103",
+    "BT104"
+   ],
+   "source": "build/10-bom.csv №57 (NKON NL, EAN 6097326477405, checked 18.10.2026; not re-read 24.10.2026)"
+  },
+  {
+   "part": "BT-CR2032-LEAD",
+   "refs": [
+    "BT301"
+   ],
+   "source": "build/10-bom.csv №85 (Electrokit 41036512, checked 18.10.2026; not re-read 24.10.2026)"
+  },
+  {
+   "part": "FAN-NF-A4X10-5V",
+   "refs": [
+    "FAN301"
+   ],
+   "source": "build/10-bom.csv №4 (Alternate.de/QuietPC, checked 18.10.2026); noctua.at returned HTTP 429 on 2026-10-24"
+  },
+  {
+   "part": "A-RTLSDR-LNA-V2",
+   "refs": [
+    "A404"
+   ],
+   "source": "build/10-bom.csv №123 (official AliExpress / Passion Radio, checked 18.10.2026; not re-read)"
+  },
+  {
+   "part": "A-NOOELEC-ATT-KIT",
+   "refs": [
+    "A408"
+   ],
+   "source": "build/10-bom.csv №116 (attenuator kit 1/2/3/6/10/20 dB, checked 18.10.2026; product URL not found 24.10.2026)"
+  },
+  {
+   "part": "A-UPUTRONICS-440",
+   "refs": [
+    "A418"
+   ],
+   "source": "build/10-bom.csv №16 (store.uputronics.com EU, checked 18.10.2026; product page not found 24.10.2026)"
+  },
+  {
+   "part": "A-AXING-CFA1100",
+   "refs": [
+    "A421"
+   ],
+   "source": "build/10-bom.csv №32 (Reichelt, checked 18.10.2026; product URL returned 410 on 24.10.2026)"
+  },
+  {
+   "part": "W-GOOBAY-58814",
+   "refs": [
+    "W401"
+   ],
+   "source": "build/10-bom.csv №91 (Reichelt, EUR 2.60, checked 18.10.2026; goobay.de unreachable 24.10.2026)"
+  },
+  {
+   "part": "W-LINDY-36700",
+   "refs": [
+    "J541",
+    "J543"
+   ],
+   "source": "build/10-bom.csv №91 (2× Lindy 36700 with Würth 74271112, checked 18.10.2026; not re-read)"
+  },
+  {
+   "part": "U-SAMSUNG-T7",
+   "refs": [
+    "U540"
+   ],
+   "source": "build/10-bom.csv №103 (Reichelt, checked 18.10.2026; not re-read)"
+  },
+  {
+   "part": "U-WISECOCO-7IN",
+   "refs": [
+    "U520"
+   ],
+   "source": "build/10-bom.csv №42 (Wisecoco shop, checked 18.10.2026; site unreachable 24.10.2026)"
+  },
+  {
+   "part": "W-IMU-CABLE",
+   "refs": [
+    "J550"
+   ],
+   "source": "build/10-bom.csv №80-81 (TME, not checked; not re-read 24.10.2026)"
+  }
+ ],
+ "deviations": [
+  {
+   "part": "R-1206-WSL1206R2000DEA",
+   "refs": [
+    "R231",
+    "R236",
+    "R241",
+    "R246",
+    "R266"
+   ],
+   "tolerance_pct": 0.5,
+   "decision": "build/15-rishennia-komplektu.md «Шунти 0.1 %»",
+   "reason": "Шунта 0.2 Ω 1206 з допуском 0.1 % у наявності LCSC 24.10.2026 не знайдено (деталі 0.5 % є в каталозі, склад 0); Power Metal Strip 0.5 % з калібруванням кожного каналу INA3221 на кожному екземплярі."
+  },
+  {
+   "part": "R-1206-WSL1206R1000DEA",
+   "refs": [
+    "R258"
+   ],
+   "tolerance_pct": 0.5,
+   "decision": "build/15-rishennia-komplektu.md «Шунти 0.1 %»",
+   "reason": "Шунта 0.1 Ω 1206 з допуском 0.1 % у наявності 24.10.2026 не знайдено; 0.5 % з калібруванням кожного екземпляра."
+  }
+ ],
+ "footprint_checks_open": [
+  {
+   "footprint": "SR_RX_Custom:QFN-16-1EP_3x3mm_P0.5mm_EP1.7x1.7mm_EPAD",
+   "note": "HMC7992LP3DE exposed pad named EPAD; ADI outline not read (analog.com unreachable 24.10.2026): exposed-pad size must be checked against the HMC7992 package drawing before PCB release"
+  }
+ ],
+ "open_items": [
+  "SW308/SW309 — це кнопки всередині енкодерів ENC301/ENC302: граф тримає їх окремими позначеннями, тому контакти S1/S2 футпринта енкодера лишаються без кола в netlist, доки власник E3 не перенесе кола кнопок на виводи енкодера.",
+  "Роз’єми з боку плати для джгутів, які ще не мають позначень у графі (кінець J302 на силовій платі, гніздо LAB BUS за J505, вентилятор, виводи NTC TH301/TH302, міжплатні з’єднання поділу на три плати), куплено як супутні деталі там, де їх названо; позначення на схемі чекають власника поділу плат.",
+  "Панельні деталі без MPN (SMA/F/BNC-розетки, прохідні USB-A/USB-C, кнопки живлення й EDL) чекають вибору ступеня IP у механічному пакеті (MECH-07).",
+  "Розмір відкритої площадки HMC7992LP3DE і крок виводів CPT-1207-3TH треба звірити з кресленнями виробника до випуску PCB (див. SR_RX_Custom.pretty/provenance.json; analog.com 24.10.2026 не відповідав)."
+ ]
+}

@@ -113,6 +113,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "100813",
+      "manufacturer": "Nooelec",
       "pins": [
         {
           "number": "IN",
@@ -142,6 +144,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "100800",
+      "manufacturer": "Nooelec",
       "pins": [
         {
           "number": "IN",
@@ -171,6 +175,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "100813",
+      "manufacturer": "Nooelec",
       "pins": [
         {
           "number": "IN",
@@ -200,6 +206,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "Wideband LNA V2",
+      "manufacturer": "RTL-SDR Blog",
       "pins": [
         {
           "number": "IN",
@@ -229,6 +237,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "VAT-20W2+",
+      "manufacturer": "Mini-Circuits",
       "pins": [
         {
           "number": "IN",
@@ -297,6 +307,10 @@
       "group": "RF and receiver interfaces",
       "status": "verified",
       "source": "https://www.minicircuits.com/WebStore/dashboardPdf?model=YAT-10A%2B",
+      "footprint": "SR_RX_Custom:MiniCircuits_MC1630_MCLP-6-1EP_2x2mm_P0.65mm",
+      "mpn": "YAT-10A+",
+      "manufacturer": "Mini-Circuits",
+      "lcsc": "C5839318",
       "pins": [
         {
           "number": "1",
@@ -353,6 +367,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "100815",
+      "manufacturer": "Nooelec",
       "pins": [
         {
           "number": "IN",
@@ -382,6 +398,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "BLK-89-S+",
+      "manufacturer": "Mini-Circuits",
       "pins": [
         {
           "number": "IN",
@@ -411,6 +429,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "ANNE-50+",
+      "manufacturer": "Mini-Circuits",
       "pins": [
         {
           "number": "END_A",
@@ -434,6 +454,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "V4L (R828S)",
+      "manufacturer": "RTL-SDR Blog",
       "pins": [
         {
           "number": "ANT",
@@ -484,6 +506,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "V4L (R828S)",
+      "manufacturer": "RTL-SDR Blog",
       "pins": [
         {
           "number": "ANT",
@@ -534,6 +558,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "HF+ Discovery",
+      "manufacturer": "Airspy",
       "pins": [
         {
           "number": "ANT",
@@ -581,6 +607,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "LimeSDR Micro M.2 2280 Basic",
+      "manufacturer": "Lime Microsystems",
       "pins": [
         {
           "number": "J4_REF_IN",
@@ -685,6 +713,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "HAB-FPA440 (case V3 / board Rev 3.0)",
+      "manufacturer": "Uputronics",
       "pins": [
         {
           "number": "IN",
@@ -714,6 +744,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "100792",
+      "manufacturer": "Nooelec",
       "pins": [
         {
           "number": "IN",
@@ -746,6 +778,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "Bullseye BE01 TCXO LNB",
+      "manufacturer": "Othernet",
       "pins": [
         {
           "number": "IF",
@@ -775,6 +809,9 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "CFA 11-00",
+      "manufacturer": "AXING",
+      "alt_mpn": "TechniSat 0002/3077",
       "pins": [
         {
           "number": "END_A",
@@ -798,6 +835,8 @@
       "group": "S-band external inline pod",
       "status": "module",
       "source": "https://nooelec.com/store/sdr/sdr-addons/rf-blocks/lana-wb.html",
+      "mpn": "100845",
+      "manufacturer": "Nooelec",
       "pins": [
         {
           "number": "SMA_IN",
@@ -844,6 +883,8 @@
       "group": "S-band external inline pod",
       "status": "module",
       "source": "https://www.sysmocom.de/downloads/rf_filter_cf2235-kt30.pdf",
+      "mpn": "cf2235-kt30",
+      "manufacturer": "sysmocom",
       "pins": [
         {
           "number": "SMA_F_A",
@@ -878,6 +919,10 @@
       "group": "RF and receiver interfaces",
       "status": "verified",
       "source": "https://www.minicircuits.com/WebStore/dashboardPdf?model=TCBT-2R5G%2B",
+      "footprint": "SR_RX_Custom:MiniCircuits_GU1604_3.81x3.81mm",
+      "mpn": "TCBT-2R5G+",
+      "manufacturer": "Mini-Circuits",
+      "lcsc": "C5189220",
       "pins": [
         {
           "number": "1",
@@ -917,6 +962,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H102JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C76947",
+      "alt_mpn": "Walsin 0402N102J500CT",
       "pins": [
         {
           "number": "1",
@@ -939,6 +989,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H102JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C76947",
+      "alt_mpn": "Walsin 0402N102J500CT",
       "pins": [
         {
           "number": "1",
@@ -961,6 +1016,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H102JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C76947",
+      "alt_mpn": "Walsin 0402N102J500CT",
       "pins": [
         {
           "number": "1",
@@ -983,6 +1043,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H102JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C76947",
+      "alt_mpn": "Walsin 0402N102J500CT",
       "pins": [
         {
           "number": "1",
@@ -1005,6 +1070,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H102JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C76947",
+      "alt_mpn": "Walsin 0402N102J500CT",
       "pins": [
         {
           "number": "1",
@@ -1027,6 +1097,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -1049,6 +1124,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -1071,6 +1151,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -1093,6 +1178,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -1115,6 +1205,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -1137,6 +1232,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -1159,6 +1259,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -1181,6 +1286,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -1203,6 +1313,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -1225,6 +1340,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -1247,6 +1367,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -1269,6 +1394,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GJM1555C1H220JB01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C88882",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN220",
       "pins": [
         {
           "number": "1",
@@ -1291,6 +1421,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -1313,6 +1448,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -1335,6 +1475,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -1357,6 +1502,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -1379,6 +1529,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -1401,6 +1556,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -1423,6 +1583,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -1445,6 +1610,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -1467,6 +1637,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -1489,6 +1664,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB103",
+      "manufacturer": "YAGEO",
+      "lcsc": "C100042",
+      "alt_mpn": "TDK C1608X7R1H103KT000N",
       "pins": [
         {
           "number": "1",
@@ -1511,6 +1691,10 @@
       "group": "RF passives and drivers",
       "status": "verified",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "BAT54C,215",
+      "manufacturer": "Nexperia",
+      "lcsc": "C37704",
+      "alt_mpn": "onsemi BAT54CLT1G",
       "pins": [
         {
           "number": "1",
@@ -1724,6 +1908,10 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "SR_RX_Custom:SMA_Molex_73251-1153_EdgeMount_Horizontal_CS",
+      "mpn": "0732511153",
+      "manufacturer": "Molex",
+      "lcsc": "C5859238",
       "pins": [
         {
           "number": "CENTER",
@@ -1747,6 +1935,10 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "SR_RX_Custom:SMA_Molex_73251-1153_EdgeMount_Horizontal_CS",
+      "mpn": "0732511153",
+      "manufacturer": "Molex",
+      "lcsc": "C5859238",
       "pins": [
         {
           "number": "CENTER",
@@ -1770,6 +1962,10 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "SR_RX_Custom:SMA_Molex_73251-1153_EdgeMount_Horizontal_CS",
+      "mpn": "0732511153",
+      "manufacturer": "Molex",
+      "lcsc": "C5859238",
       "pins": [
         {
           "number": "CENTER",
@@ -1793,6 +1989,10 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "SR_RX_Custom:SMA_Molex_73251-1153_EdgeMount_Horizontal_CS",
+      "mpn": "0732511153",
+      "manufacturer": "Molex",
+      "lcsc": "C5859238",
       "pins": [
         {
           "number": "CENTER",
@@ -1939,6 +2139,11 @@
       "group": "RF passives and drivers",
       "status": "verified",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "SR_RX_Custom:Relay_DPDT_Omron_G6K-2F-RF-S",
+      "mpn": "G6K-2F-RF-S DC5",
+      "manufacturer": "Omron (Aratas)",
+      "lcsc": "C2750987",
+      "alt_mpn": "Omron G6K-2F-RF DC5",
       "pins": [
         {
           "number": "1",
@@ -2012,6 +2217,11 @@
       "group": "RF passives and drivers",
       "status": "verified",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "SR_RX_Custom:Relay_DPDT_Omron_G6K-2F-RF-S",
+      "mpn": "G6K-2F-RF-S DC5",
+      "manufacturer": "Omron (Aratas)",
+      "lcsc": "C2750987",
+      "alt_mpn": "Omron G6K-2F-RF DC5",
       "pins": [
         {
           "number": "1",
@@ -2085,6 +2295,7 @@
       "group": "RF passives and drivers",
       "status": "TBD",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Inductor_SMD:L_0805_2012Metric",
       "pins": [
         {
           "number": "1",
@@ -2111,6 +2322,9 @@
       "group": "RF passives and drivers",
       "status": "verified",
       "source": "https://www.coilcraft.com/en-us/products/rf/ferrite-core-chip-inductors/0805-(2012)/0805ls/0805ls-471/",
+      "footprint": "Inductor_SMD:L_0805_2012Metric",
+      "mpn": "0805LS-471XGRC",
+      "manufacturer": "Coilcraft",
       "pins": [
         {
           "number": "1",
@@ -2137,6 +2351,9 @@
       "group": "RF passives and drivers",
       "status": "verified",
       "source": "https://www.coilcraft.com/en-us/products/rf/ceramic-core-chip-inductors/0805-(2012)/0805hp/0805hp-221/",
+      "footprint": "Inductor_SMD:L_0805_2012Metric",
+      "mpn": "0805HP-221XGRC",
+      "manufacturer": "Coilcraft",
       "pins": [
         {
           "number": "1",
@@ -2163,6 +2380,9 @@
       "group": "RF passives and drivers",
       "status": "verified",
       "source": "https://www.coilcraft.com/en-us/products/rf/ceramic-core-chip-inductors/0603-(1608)/0603hp/0603hp-47n/",
+      "footprint": "Inductor_SMD:L_0603_1608Metric",
+      "mpn": "0603HP-47NXGRW",
+      "manufacturer": "Coilcraft",
       "pins": [
         {
           "number": "1",
@@ -2189,6 +2409,11 @@
       "group": "RF passives and drivers",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Inductor_SMD:L_1008_2520Metric",
+      "mpn": "LQW2UAS68NG00L",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C703709",
+      "alt_mpn": "Murata Electronics LQW2UAS68NG0CL",
       "pins": [
         {
           "number": "1",
@@ -2211,6 +2436,7 @@
       "group": "RF passives and drivers",
       "status": "TBD",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Inductor_SMD:L_0805_2012Metric",
       "pins": [
         {
           "number": "1",
@@ -2237,6 +2463,7 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "NetTie:NetTie-2_SMD_Pad2.0mm",
       "pins": [
         {
           "number": "1",
@@ -2259,6 +2486,10 @@
       "group": "RF passives and drivers",
       "status": "verified",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "AO3400A",
+      "manufacturer": "Alpha & Omega Semiconductor",
+      "lcsc": "C20917",
+      "alt_mpn": "BORN AO3400A",
       "pins": [
         {
           "number": "1",
@@ -2288,6 +2519,10 @@
       "group": "RF passives and drivers",
       "status": "verified",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "AO3400A",
+      "manufacturer": "Alpha & Omega Semiconductor",
+      "lcsc": "C20917",
+      "alt_mpn": "BORN AO3400A",
       "pins": [
         {
           "number": "1",
@@ -2317,6 +2552,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF499JT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C23185",
+      "alt_mpn": "YAGEO RC0603FR-0749R9L",
       "pins": [
         {
           "number": "1",
@@ -2339,6 +2579,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF499JT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C23185",
+      "alt_mpn": "YAGEO RC0603FR-0749R9L",
       "pins": [
         {
           "number": "1",
@@ -2361,6 +2606,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF499JT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C23185",
+      "alt_mpn": "YAGEO RC0603FR-0749R9L",
       "pins": [
         {
           "number": "1",
@@ -2383,6 +2633,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -2405,6 +2660,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -2427,6 +2687,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -2449,6 +2714,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -2471,6 +2741,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -2493,6 +2768,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -2515,6 +2795,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -2537,6 +2822,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -2559,6 +2849,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF499JT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C23185",
+      "alt_mpn": "YAGEO RC0603FR-0749R9L",
       "pins": [
         {
           "number": "1",
@@ -2581,6 +2876,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF499JT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C23185",
+      "alt_mpn": "YAGEO RC0603FR-0749R9L",
       "pins": [
         {
           "number": "1",
@@ -2603,6 +2903,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF499JT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C23185",
+      "alt_mpn": "YAGEO RC0603FR-0749R9L",
       "pins": [
         {
           "number": "1",
@@ -2625,6 +2930,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF499JT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C23185",
+      "alt_mpn": "YAGEO RC0603FR-0749R9L",
       "pins": [
         {
           "number": "1",
@@ -2647,6 +2957,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -2669,6 +2984,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -2691,6 +3011,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1001T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C21190",
+      "alt_mpn": "YAGEO RC0603FR-071KL",
       "pins": [
         {
           "number": "1",
@@ -2713,6 +3038,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1001T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C21190",
+      "alt_mpn": "YAGEO RC0603FR-071KL",
       "pins": [
         {
           "number": "1",
@@ -2735,6 +3065,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1001T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C21190",
+      "alt_mpn": "YAGEO RC0603FR-071KL",
       "pins": [
         {
           "number": "1",
@@ -2757,6 +3092,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1001T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C21190",
+      "alt_mpn": "YAGEO RC0603FR-071KL",
       "pins": [
         {
           "number": "1",
@@ -2779,6 +3119,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1001T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C21190",
+      "alt_mpn": "YAGEO RC0603FR-071KL",
       "pins": [
         {
           "number": "1",
@@ -2801,6 +3146,11 @@
       "group": "RF passives and drivers",
       "status": "design",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1001T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C21190",
+      "alt_mpn": "YAGEO RC0603FR-071KL",
       "pins": [
         {
           "number": "1",
@@ -2823,6 +3173,10 @@
       "group": "SP4T switches",
       "status": "verified",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "SR_RX_Custom:QFN-16-1EP_3x3mm_P0.5mm_EP1.7x1.7mm_EPAD",
+      "mpn": "HMC7992LP3DE",
+      "manufacturer": "Analog Devices",
+      "lcsc": "C208307",
       "pins": [
         {
           "number": "1",
@@ -2935,6 +3289,10 @@
       "group": "SP4T switches",
       "status": "verified",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "SR_RX_Custom:QFN-16-1EP_3x3mm_P0.5mm_EP1.7x1.7mm_EPAD",
+      "mpn": "HMC7992LP3DE",
+      "manufacturer": "Analog Devices",
+      "lcsc": "C208307",
       "pins": [
         {
           "number": "1",
@@ -3047,6 +3405,10 @@
       "group": "SP4T switches",
       "status": "verified",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "footprint": "SR_RX_Custom:QFN-16-1EP_3x3mm_P0.5mm_EP1.7x1.7mm_EPAD",
+      "mpn": "HMC7992LP3DE",
+      "manufacturer": "Analog Devices",
+      "lcsc": "C208307",
       "pins": [
         {
           "number": "1",
@@ -3159,6 +3521,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "58814",
+      "manufacturer": "Goobay",
       "pins": [
         {
           "number": "END_A",
@@ -3217,6 +3581,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "CAB.01075",
+      "manufacturer": "Taoglas",
       "pins": [
         {
           "number": "END_A",
@@ -3246,6 +3612,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "CAB.01075",
+      "manufacturer": "Taoglas",
       "pins": [
         {
           "number": "END_A",
@@ -3275,6 +3643,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "CAB.01075",
+      "manufacturer": "Taoglas",
       "pins": [
         {
           "number": "END_A",
@@ -3304,6 +3674,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "CAB.01075",
+      "manufacturer": "Taoglas",
       "pins": [
         {
           "number": "END_A",
@@ -3333,6 +3705,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "CAB.011",
+      "manufacturer": "Taoglas",
       "pins": [
         {
           "number": "END_A",
@@ -3362,6 +3736,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "W408 common-mode choke assembly",
+      "manufacturer": "SR-RX build-to-print",
       "pins": [
         {
           "number": "IN_CENTER",
@@ -3584,6 +3960,8 @@
       "value": "Mini-Circuits BLK-89-S+ pod DC block",
       "kind": "module",
       "group": "S-band external inline pod",
+      "mpn": "BLK-89-S+",
+      "manufacturer": "Mini-Circuits",
       "pins": [
         {
           "number": "SMA_A",
@@ -3616,6 +3994,10 @@
       "value": "BAV199 reference reverse-feed isolation",
       "kind": "diode",
       "group": "DC detectors: common reference",
+      "mpn": "BAV199,215",
+      "manufacturer": "Nexperia",
+      "lcsc": "C40919",
+      "alt_mpn": "Diodes Incorporated BAV199-7-F",
       "pins": [
         {
           "number": "1",
@@ -3648,6 +4030,11 @@
       "value": "150 Ω 1% 0.125 W",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "SR0603FR-7T150RL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C873675",
+      "alt_mpn": "ROHM SDR03EZPF1500",
       "pins": [
         {
           "number": "1",
@@ -3670,6 +4057,11 @@
       "value": "10 kΩ 1% Q6A off-state bleed",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -3695,6 +4087,9 @@
       "value": "LM4040A20IDBZR 2.048 V 0.1% shunt",
       "kind": "ic",
       "group": "DC detectors: common reference",
+      "mpn": "LM4040A20IDBZR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C127070",
       "pins": [
         {
           "number": "1",
@@ -3727,6 +4122,11 @@
       "value": "100 nF X7R 10 V",
       "kind": "capacitor",
       "group": "DC detectors: common reference",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -3749,6 +4149,11 @@
       "value": "26.7 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0726K7L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C728587",
+      "alt_mpn": "Vishay Dale TNPW060326K7BEEA",
       "pins": [
         {
           "number": "1",
@@ -3771,6 +4176,11 @@
       "value": "25.5 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0725K5L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C861257",
+      "alt_mpn": "Vishay Dale TNPW060325K5BEEA",
       "pins": [
         {
           "number": "1",
@@ -3793,6 +4203,11 @@
       "value": "25.5 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0725K5L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C861257",
+      "alt_mpn": "Vishay Dale TNPW060325K5BEEA",
       "pins": [
         {
           "number": "1",
@@ -3815,6 +4230,11 @@
       "value": "26.7 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0726K7L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C728587",
+      "alt_mpn": "Vishay Dale TNPW060326K7BEEA",
       "pins": [
         {
           "number": "1",
@@ -3837,6 +4257,11 @@
       "value": "10.0 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0710KL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C95204",
+      "alt_mpn": "Viking Tech ARG03BTC1002",
       "pins": [
         {
           "number": "1",
@@ -3859,6 +4284,11 @@
       "value": "24.9 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRE0724K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C861775",
+      "alt_mpn": "Vishay Dale TNPW060324K9BEEA",
       "pins": [
         {
           "number": "1",
@@ -3881,6 +4311,11 @@
       "value": "24.9 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRE0724K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C861775",
+      "alt_mpn": "Vishay Dale TNPW060324K9BEEA",
       "pins": [
         {
           "number": "1",
@@ -3903,6 +4338,11 @@
       "value": "33.2 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0733K2L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C705767",
+      "alt_mpn": "Viking Tech AR03BTDX3322A",
       "pins": [
         {
           "number": "1",
@@ -3925,6 +4365,11 @@
       "value": "10 nF C0G 50 V",
       "kind": "capacitor",
       "group": "DC detectors: common reference",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H103JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C85973",
+      "alt_mpn": "TDK C1608C0G1H103J080AA",
       "pins": [
         {
           "number": "1",
@@ -3947,6 +4392,11 @@
       "value": "10 nF C0G 50 V",
       "kind": "capacitor",
       "group": "DC detectors: common reference",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H103JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C85973",
+      "alt_mpn": "TDK C1608C0G1H103J080AA",
       "pins": [
         {
           "number": "1",
@@ -3969,6 +4419,11 @@
       "value": "10 nF C0G 50 V",
       "kind": "capacitor",
       "group": "DC detectors: common reference",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H103JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C85973",
+      "alt_mpn": "TDK C1608C0G1H103J080AA",
       "pins": [
         {
           "number": "1",
@@ -3991,6 +4446,11 @@
       "value": "10 nF C0G 50 V",
       "kind": "capacitor",
       "group": "DC detectors: common reference",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H103JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C85973",
+      "alt_mpn": "TDK C1608C0G1H103J080AA",
       "pins": [
         {
           "number": "1",
@@ -4013,6 +4473,9 @@
       "value": "TLV3012BIDBVR",
       "kind": "ic",
       "group": "DC detectors: common reference",
+      "mpn": "TLV3012BIDBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C20345924",
       "pins": [
         {
           "number": "1",
@@ -4063,6 +4526,9 @@
       "value": "TLV3012BIDBVR",
       "kind": "ic",
       "group": "DC detectors: common reference",
+      "mpn": "TLV3012BIDBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C20345924",
       "pins": [
         {
           "number": "1",
@@ -4113,6 +4579,11 @@
       "value": "1 nF C0G 50 V",
       "kind": "capacitor",
       "group": "DC detectors: common reference",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H102JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77026",
+      "alt_mpn": "YAGEO CC0603JRNPO9BN102",
       "pins": [
         {
           "number": "1",
@@ -4135,6 +4606,11 @@
       "value": "1 nF C0G 50 V",
       "kind": "capacitor",
       "group": "DC detectors: common reference",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H102JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77026",
+      "alt_mpn": "YAGEO CC0603JRNPO9BN102",
       "pins": [
         {
           "number": "1",
@@ -4157,6 +4633,11 @@
       "value": "100 Ω",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -4179,6 +4660,11 @@
       "value": "100 kΩ",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -4201,6 +4687,11 @@
       "value": "100 Ω",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -4223,6 +4714,11 @@
       "value": "100 kΩ",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -4245,6 +4741,10 @@
       "value": "AO3400A",
       "kind": "nfet",
       "group": "DC detectors: common reference",
+      "mpn": "AO3400A",
+      "manufacturer": "Alpha & Omega Semiconductor",
+      "lcsc": "C20917",
+      "alt_mpn": "BORN AO3400A",
       "pins": [
         {
           "number": "1",
@@ -4277,6 +4777,10 @@
       "value": "AO3400A",
       "kind": "nfet",
       "group": "DC detectors: common reference",
+      "mpn": "AO3400A",
+      "manufacturer": "Alpha & Omega Semiconductor",
+      "lcsc": "C20917",
+      "alt_mpn": "BORN AO3400A",
       "pins": [
         {
           "number": "1",
@@ -4309,6 +4813,11 @@
       "value": "24.9 kΩ 0.1% 0402 RF tap",
       "kind": "resistor",
       "group": "DC detectors: UHF",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "mpn": "RT0402BRD0724K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C852664",
+      "alt_mpn": "UNI-ROYAL TC0225D2492TCC",
       "pins": [
         {
           "number": "1",
@@ -4334,6 +4843,11 @@
       "value": "24.9 kΩ 0.1% 0402",
       "kind": "resistor",
       "group": "DC detectors: UHF",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "mpn": "RT0402BRD0724K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C852664",
+      "alt_mpn": "UNI-ROYAL TC0225D2492TCC",
       "pins": [
         {
           "number": "1",
@@ -4356,6 +4870,7 @@
       "value": "49.8 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: UHF",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
       "pins": [
         {
           "number": "1",
@@ -4378,6 +4893,11 @@
       "value": "100 pF C0G 50 V",
       "kind": "capacitor",
       "group": "DC detectors: UHF",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -4400,6 +4920,11 @@
       "value": "10 nF C0G 50 V",
       "kind": "capacitor",
       "group": "DC detectors: UHF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H103JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C85973",
+      "alt_mpn": "TDK C1608C0G1H103J080AA",
       "pins": [
         {
           "number": "1",
@@ -4422,6 +4947,10 @@
       "value": "BAV199 sense clamps",
       "kind": "diode",
       "group": "DC detectors: UHF",
+      "mpn": "BAV199,215",
+      "manufacturer": "Nexperia",
+      "lcsc": "C40919",
+      "alt_mpn": "Diodes Incorporated BAV199-7-F",
       "pins": [
         {
           "number": "1",
@@ -4454,6 +4983,9 @@
       "value": "TLV3012BIDBVR",
       "kind": "ic",
       "group": "DC detectors: UHF",
+      "mpn": "TLV3012BIDBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C20345924",
       "pins": [
         {
           "number": "1",
@@ -4504,6 +5036,9 @@
       "value": "TLV3012BIDBVR",
       "kind": "ic",
       "group": "DC detectors: UHF",
+      "mpn": "TLV3012BIDBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C20345924",
       "pins": [
         {
           "number": "1",
@@ -4554,6 +5089,11 @@
       "value": "100 Ω",
       "kind": "resistor",
       "group": "DC detectors: UHF",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -4576,6 +5116,11 @@
       "value": "100 kΩ",
       "kind": "resistor",
       "group": "DC detectors: UHF",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -4598,6 +5143,11 @@
       "value": "100 Ω",
       "kind": "resistor",
       "group": "DC detectors: UHF",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -4620,6 +5170,11 @@
       "value": "100 kΩ",
       "kind": "resistor",
       "group": "DC detectors: UHF",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -4642,6 +5197,10 @@
       "value": "AO3400A",
       "kind": "nfet",
       "group": "DC detectors: UHF",
+      "mpn": "AO3400A",
+      "manufacturer": "Alpha & Omega Semiconductor",
+      "lcsc": "C20917",
+      "alt_mpn": "BORN AO3400A",
       "pins": [
         {
           "number": "1",
@@ -4674,6 +5233,10 @@
       "value": "AO3400A",
       "kind": "nfet",
       "group": "DC detectors: UHF",
+      "mpn": "AO3400A",
+      "manufacturer": "Alpha & Omega Semiconductor",
+      "lcsc": "C20917",
+      "alt_mpn": "BORN AO3400A",
       "pins": [
         {
           "number": "1",
@@ -4706,6 +5269,11 @@
       "value": "24.9 kΩ 0.1% 0402 RF tap",
       "kind": "resistor",
       "group": "DC detectors: LBAND",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "mpn": "RT0402BRD0724K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C852664",
+      "alt_mpn": "UNI-ROYAL TC0225D2492TCC",
       "pins": [
         {
           "number": "1",
@@ -4731,6 +5299,11 @@
       "value": "24.9 kΩ 0.1% 0402",
       "kind": "resistor",
       "group": "DC detectors: LBAND",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "mpn": "RT0402BRD0724K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C852664",
+      "alt_mpn": "UNI-ROYAL TC0225D2492TCC",
       "pins": [
         {
           "number": "1",
@@ -4753,6 +5326,7 @@
       "value": "49.8 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: LBAND",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
       "pins": [
         {
           "number": "1",
@@ -4775,6 +5349,11 @@
       "value": "100 pF C0G 50 V",
       "kind": "capacitor",
       "group": "DC detectors: LBAND",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -4797,6 +5376,11 @@
       "value": "10 nF C0G 50 V",
       "kind": "capacitor",
       "group": "DC detectors: LBAND",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H103JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C85973",
+      "alt_mpn": "TDK C1608C0G1H103J080AA",
       "pins": [
         {
           "number": "1",
@@ -4819,6 +5403,10 @@
       "value": "BAV199 sense clamps",
       "kind": "diode",
       "group": "DC detectors: LBAND",
+      "mpn": "BAV199,215",
+      "manufacturer": "Nexperia",
+      "lcsc": "C40919",
+      "alt_mpn": "Diodes Incorporated BAV199-7-F",
       "pins": [
         {
           "number": "1",
@@ -4851,6 +5439,9 @@
       "value": "TLV3012BIDBVR",
       "kind": "ic",
       "group": "DC detectors: LBAND",
+      "mpn": "TLV3012BIDBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C20345924",
       "pins": [
         {
           "number": "1",
@@ -4901,6 +5492,9 @@
       "value": "TLV3012BIDBVR",
       "kind": "ic",
       "group": "DC detectors: LBAND",
+      "mpn": "TLV3012BIDBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C20345924",
       "pins": [
         {
           "number": "1",
@@ -4951,6 +5545,11 @@
       "value": "100 Ω",
       "kind": "resistor",
       "group": "DC detectors: LBAND",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -4973,6 +5572,11 @@
       "value": "100 kΩ",
       "kind": "resistor",
       "group": "DC detectors: LBAND",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -4995,6 +5599,11 @@
       "value": "100 Ω",
       "kind": "resistor",
       "group": "DC detectors: LBAND",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -5017,6 +5626,11 @@
       "value": "100 kΩ",
       "kind": "resistor",
       "group": "DC detectors: LBAND",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -5039,6 +5653,10 @@
       "value": "AO3400A",
       "kind": "nfet",
       "group": "DC detectors: LBAND",
+      "mpn": "AO3400A",
+      "manufacturer": "Alpha & Omega Semiconductor",
+      "lcsc": "C20917",
+      "alt_mpn": "BORN AO3400A",
       "pins": [
         {
           "number": "1",
@@ -5071,6 +5689,10 @@
       "value": "AO3400A",
       "kind": "nfet",
       "group": "DC detectors: LBAND",
+      "mpn": "AO3400A",
+      "manufacturer": "Alpha & Omega Semiconductor",
+      "lcsc": "C20917",
+      "alt_mpn": "BORN AO3400A",
       "pins": [
         {
           "number": "1",
@@ -5103,6 +5725,11 @@
       "value": "24.9 kΩ 0.1% 0402 RF tap",
       "kind": "resistor",
       "group": "DC detectors: HF",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "mpn": "RT0402BRD0724K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C852664",
+      "alt_mpn": "UNI-ROYAL TC0225D2492TCC",
       "pins": [
         {
           "number": "1",
@@ -5128,6 +5755,11 @@
       "value": "24.9 kΩ 0.1% 0402",
       "kind": "resistor",
       "group": "DC detectors: HF",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "mpn": "RT0402BRD0724K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C852664",
+      "alt_mpn": "UNI-ROYAL TC0225D2492TCC",
       "pins": [
         {
           "number": "1",
@@ -5150,6 +5782,7 @@
       "value": "49.8 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: HF",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
       "pins": [
         {
           "number": "1",
@@ -5172,6 +5805,11 @@
       "value": "100 pF C0G 50 V",
       "kind": "capacitor",
       "group": "DC detectors: HF",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -5194,6 +5832,11 @@
       "value": "10 nF C0G 50 V",
       "kind": "capacitor",
       "group": "DC detectors: HF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H103JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C85973",
+      "alt_mpn": "TDK C1608C0G1H103J080AA",
       "pins": [
         {
           "number": "1",
@@ -5216,6 +5859,10 @@
       "value": "BAV199 sense clamps",
       "kind": "diode",
       "group": "DC detectors: HF",
+      "mpn": "BAV199,215",
+      "manufacturer": "Nexperia",
+      "lcsc": "C40919",
+      "alt_mpn": "Diodes Incorporated BAV199-7-F",
       "pins": [
         {
           "number": "1",
@@ -5248,6 +5895,9 @@
       "value": "TLV3012BIDBVR",
       "kind": "ic",
       "group": "DC detectors: HF",
+      "mpn": "TLV3012BIDBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C20345924",
       "pins": [
         {
           "number": "1",
@@ -5298,6 +5948,9 @@
       "value": "TLV3012BIDBVR",
       "kind": "ic",
       "group": "DC detectors: HF",
+      "mpn": "TLV3012BIDBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C20345924",
       "pins": [
         {
           "number": "1",
@@ -5348,6 +6001,11 @@
       "value": "100 Ω",
       "kind": "resistor",
       "group": "DC detectors: HF",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -5370,6 +6028,11 @@
       "value": "100 kΩ",
       "kind": "resistor",
       "group": "DC detectors: HF",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -5392,6 +6055,11 @@
       "value": "100 Ω",
       "kind": "resistor",
       "group": "DC detectors: HF",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -5414,6 +6082,11 @@
       "value": "100 kΩ",
       "kind": "resistor",
       "group": "DC detectors: HF",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -5436,6 +6109,10 @@
       "value": "AO3400A",
       "kind": "nfet",
       "group": "DC detectors: HF",
+      "mpn": "AO3400A",
+      "manufacturer": "Alpha & Omega Semiconductor",
+      "lcsc": "C20917",
+      "alt_mpn": "BORN AO3400A",
       "pins": [
         {
           "number": "1",
@@ -5468,6 +6145,10 @@
       "value": "AO3400A",
       "kind": "nfet",
       "group": "DC detectors: HF",
+      "mpn": "AO3400A",
+      "manufacturer": "Alpha & Omega Semiconductor",
+      "lcsc": "C20917",
+      "alt_mpn": "BORN AO3400A",
       "pins": [
         {
           "number": "1",
@@ -5500,6 +6181,11 @@
       "value": "100 nF X7R 10 V local decoupling",
       "kind": "capacitor",
       "group": "DC detectors: local power",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -5525,6 +6211,11 @@
       "value": "100 nF X7R 10 V local decoupling",
       "kind": "capacitor",
       "group": "DC detectors: local power",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -5550,6 +6241,11 @@
       "value": "100 nF X7R 10 V local decoupling",
       "kind": "capacitor",
       "group": "DC detectors: local power",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -5575,6 +6271,11 @@
       "value": "100 nF X7R 10 V local decoupling",
       "kind": "capacitor",
       "group": "DC detectors: local power",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -5600,6 +6301,11 @@
       "value": "100 nF X7R 10 V local decoupling",
       "kind": "capacitor",
       "group": "DC detectors: local power",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -5625,6 +6331,11 @@
       "value": "100 nF X7R 10 V local decoupling",
       "kind": "capacitor",
       "group": "DC detectors: local power",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -5650,6 +6361,11 @@
       "value": "100 nF X7R 10 V local decoupling",
       "kind": "capacitor",
       "group": "DC detectors: local power",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -5675,6 +6391,11 @@
       "value": "100 nF X7R 10 V local decoupling",
       "kind": "capacitor",
       "group": "DC detectors: local power",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -5703,6 +6424,10 @@
       "status": "design",
       "source": "E4 bipolar detector DC return design",
       "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "mpn": "AC1210FR-07249RL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C230131",
+      "alt_mpn": "KOA Speer RK73H2ETTD2490F",
       "pins": [
         {
           "number": "1",
@@ -5730,6 +6455,10 @@
       "status": "design",
       "source": "E4 bipolar detector DC return design",
       "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "mpn": "AC1210FR-07249RL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C230131",
+      "alt_mpn": "KOA Speer RK73H2ETTD2490F",
       "pins": [
         {
           "number": "1",
@@ -5756,6 +6485,10 @@
       "status": "design",
       "source": "E4 bipolar detector DC return design",
       "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "mpn": "AC1210FR-07249RL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C230131",
+      "alt_mpn": "KOA Speer RK73H2ETTD2490F",
       "pins": [
         {
           "number": "1",
@@ -5782,6 +6515,10 @@
       "status": "design",
       "source": "E4 bipolar detector DC return design",
       "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "mpn": "AC1210FR-07249RL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C230131",
+      "alt_mpn": "KOA Speer RK73H2ETTD2490F",
       "pins": [
         {
           "number": "1",
@@ -5808,6 +6545,10 @@
       "status": "design",
       "source": "E4 bipolar detector DC return design",
       "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "mpn": "AC1210FR-07249RL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C230131",
+      "alt_mpn": "KOA Speer RK73H2ETTD2490F",
       "pins": [
         {
           "number": "1",
@@ -5835,6 +6576,10 @@
       "status": "design",
       "source": "E4 bipolar detector DC return design",
       "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "mpn": "AC1210FR-07249RL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C230131",
+      "alt_mpn": "KOA Speer RK73H2ETTD2490F",
       "pins": [
         {
           "number": "1",
@@ -5861,6 +6606,10 @@
       "status": "design",
       "source": "E4 bipolar detector DC return design",
       "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "mpn": "AC1210FR-07249RL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C230131",
+      "alt_mpn": "KOA Speer RK73H2ETTD2490F",
       "pins": [
         {
           "number": "1",
@@ -5887,6 +6636,10 @@
       "status": "design",
       "source": "E4 bipolar detector DC return design",
       "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "mpn": "AC1210FR-07249RL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C230131",
+      "alt_mpn": "KOA Speer RK73H2ETTD2490F",
       "pins": [
         {
           "number": "1",
@@ -5913,6 +6666,10 @@
       "status": "design",
       "source": "E4 bipolar detector DC return design",
       "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "mpn": "AC1210FR-07249RL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C230131",
+      "alt_mpn": "KOA Speer RK73H2ETTD2490F",
       "pins": [
         {
           "number": "1",
@@ -5940,6 +6697,10 @@
       "status": "design",
       "source": "E4 bipolar detector DC return design",
       "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "mpn": "AC1210FR-07249RL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C230131",
+      "alt_mpn": "KOA Speer RK73H2ETTD2490F",
       "pins": [
         {
           "number": "1",
@@ -5966,6 +6727,10 @@
       "status": "design",
       "source": "E4 bipolar detector DC return design",
       "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "mpn": "AC1210FR-07249RL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C230131",
+      "alt_mpn": "KOA Speer RK73H2ETTD2490F",
       "pins": [
         {
           "number": "1",
@@ -5992,6 +6757,10 @@
       "status": "design",
       "source": "E4 bipolar detector DC return design",
       "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "mpn": "AC1210FR-07249RL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C230131",
+      "alt_mpn": "KOA Speer RK73H2ETTD2490F",
       "pins": [
         {
           "number": "1",
@@ -6017,6 +6786,11 @@
       "group": "RF bias injector local decoupling",
       "status": "design",
       "source": "Band-specific bias injector design",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -6042,6 +6816,11 @@
       "group": "RF bias injector local decoupling",
       "status": "design",
       "source": "Band-specific bias injector design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H103JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C85973",
+      "alt_mpn": "TDK C1608C0G1H103J080AA",
       "pins": [
         {
           "number": "1",
@@ -6067,6 +6846,11 @@
       "group": "RF bias injector local decoupling",
       "status": "design",
       "source": "Band-specific bias injector design",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -6092,6 +6876,11 @@
       "group": "RF bias injector local decoupling",
       "status": "design",
       "source": "Band-specific bias injector design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H103JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C85973",
+      "alt_mpn": "TDK C1608C0G1H103J080AA",
       "pins": [
         {
           "number": "1",
@@ -6117,6 +6906,11 @@
       "group": "RF bias injector local decoupling",
       "status": "design",
       "source": "Band-specific bias injector design",
+      "footprint": "Capacitor_SMD:C_0402_1005Metric",
+      "mpn": "GRM1555C1H101JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77177",
+      "alt_mpn": "YAGEO CC0402JRNPO9BN101",
       "pins": [
         {
           "number": "1",
@@ -6142,6 +6936,11 @@
       "group": "RF bias injector local decoupling",
       "status": "design",
       "source": "Band-specific bias injector design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H103JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C85973",
+      "alt_mpn": "TDK C1608C0G1H103J080AA",
       "pins": [
         {
           "number": "1",

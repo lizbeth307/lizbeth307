@@ -102,6 +102,8 @@
       "group": "Пак 4S1P",
       "status": "module",
       "source": "https://www.molicel.com/wp-content/uploads/Product-Data-Sheet-of-INR-21700-P50B-80122.pdf",
+      "mpn": "INR21700-P50B",
+      "manufacturer": "Molicel",
       "pins": [
         {
           "number": "+",
@@ -128,6 +130,8 @@
       "group": "Пак 4S1P",
       "status": "module",
       "source": "https://www.molicel.com/wp-content/uploads/Product-Data-Sheet-of-INR-21700-P50B-80122.pdf",
+      "mpn": "INR21700-P50B",
+      "manufacturer": "Molicel",
       "pins": [
         {
           "number": "+",
@@ -154,6 +158,8 @@
       "group": "Пак 4S1P",
       "status": "module",
       "source": "https://www.molicel.com/wp-content/uploads/Product-Data-Sheet-of-INR-21700-P50B-80122.pdf",
+      "mpn": "INR21700-P50B",
+      "manufacturer": "Molicel",
       "pins": [
         {
           "number": "+",
@@ -180,6 +186,8 @@
       "group": "Пак 4S1P",
       "status": "module",
       "source": "https://www.molicel.com/wp-content/uploads/Product-Data-Sheet-of-INR-21700-P50B-80122.pdf",
+      "mpn": "INR21700-P50B",
+      "manufacturer": "Molicel",
       "pins": [
         {
           "number": "+",
@@ -206,6 +214,8 @@
       "group": "Пак 4S1P",
       "status": "module",
       "source": "STACK §2.7,§5.1",
+      "mpn": "DL-J05G-L4S15ATJ",
+      "manufacturer": "Daly",
       "pins": [
         {
           "number": "B-",
@@ -263,6 +273,10 @@
       "group": "Пак 4S1P",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
+      "mpn": "029707.5WXNV",
+      "manufacturer": "Littelfuse",
+      "lcsc": "C178942",
       "pins": [
         {
           "number": "1",
@@ -313,6 +327,8 @@
       "group": "Лічильник заряду",
       "status": "verified",
       "source": "https://www.ti.com/lit/ds/symlink/ina228.pdf",
+      "mpn": "5832",
+      "manufacturer": "Adafruit",
       "pins": [
         {
           "number": "1",
@@ -433,6 +449,9 @@
       "group": "AON і UV",
       "status": "verified",
       "source": "https://www.ti.com/lit/ds/symlink/tps709.pdf",
+      "mpn": "TPS70933DBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C89347",
       "pins": [
         {
           "number": "1",
@@ -477,6 +496,11 @@
       "group": "AON і UV",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Capacitor_SMD:C_1206_3216Metric",
+      "mpn": "CL31B225KBHNNNE",
+      "manufacturer": "Samsung Electro-Mechanics",
+      "lcsc": "C50254",
+      "alt_mpn": "YAGEO CC1206KKX7R0BB225",
       "pins": [
         {
           "number": "1",
@@ -502,6 +526,11 @@
       "group": "AON і UV",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "mpn": "CC0805KKX7R8BB475",
+      "manufacturer": "YAGEO",
+      "lcsc": "C354262",
+      "alt_mpn": "TDK C2012X7R1E475KT000N",
       "pins": [
         {
           "number": "1",
@@ -527,6 +556,9 @@
       "group": "AON і UV",
       "status": "verified",
       "source": "https://ww1.microchip.com/downloads/en/DeviceDoc/22269B.pdf",
+      "mpn": "MCP65R41T-1202E/CHY",
+      "manufacturer": "Microchip",
+      "lcsc": "C219181",
       "pins": [
         {
           "number": "1",
@@ -577,6 +609,11 @@
       "group": "AON і UV",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -599,6 +636,11 @@
       "group": "AON і UV",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "MCA1206MD3304BP500",
+      "manufacturer": "Vishay Beyschlag",
+      "lcsc": "C4168316",
+      "alt_mpn": "Susumu RG3216P-3304-B-T5",
       "pins": [
         {
           "number": "1",
@@ -621,6 +663,11 @@
       "group": "AON і UV",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD07332KL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C861329",
+      "alt_mpn": "Vishay Dale TNPW0603332KBEEA",
       "pins": [
         {
           "number": "1",
@@ -643,6 +690,11 @@
       "group": "AON і UV",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "ERA3AEB4021V",
+      "manufacturer": "Panasonic",
+      "lcsc": "C491130",
+      "alt_mpn": "YAGEO RT0603BRD074K02L",
       "pins": [
         {
           "number": "1",
@@ -665,6 +717,11 @@
       "group": "AON і UV",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -687,6 +744,11 @@
       "group": "AON і UV",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF4224T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C422927",
+      "alt_mpn": "Vishay Dale CRCW06034M22FKEA",
       "pins": [
         {
           "number": "1",
@@ -709,6 +771,11 @@
       "group": "AON і UV",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -734,6 +801,10 @@
       "group": "AON і UV",
       "status": "verified",
       "source": "https://assets.nexperia.com/documents/data-sheet/BAT54.pdf",
+      "mpn": "BAT54,215",
+      "manufacturer": "Nexperia",
+      "lcsc": "C85084",
+      "alt_mpn": "onsemi BAT54LT1G",
       "pins": [
         {
           "number": "1",
@@ -763,6 +834,10 @@
       "group": "Головний вимикач",
       "status": "verified",
       "source": "https://assets.nexperia.com/documents/data-sheet/BAT54.pdf",
+      "mpn": "BAT54,215",
+      "manufacturer": "Nexperia",
+      "lcsc": "C85084",
+      "alt_mpn": "onsemi BAT54LT1G",
       "pins": [
         {
           "number": "1",
@@ -792,6 +867,8 @@
       "group": "Головний вимикач",
       "status": "module",
       "source": "https://www.pololu.com/product/2813",
+      "mpn": "2813",
+      "manufacturer": "Pololu",
       "pins": [
         {
           "number": "VIN",
@@ -854,6 +931,10 @@
       "group": "Головний вимикач",
       "status": "verified",
       "source": "https://assets.nexperia.com/documents/data-sheet/BAT54.pdf",
+      "mpn": "BAT54,215",
+      "manufacturer": "Nexperia",
+      "lcsc": "C85084",
+      "alt_mpn": "onsemi BAT54LT1G",
       "pins": [
         {
           "number": "1",
@@ -883,6 +964,11 @@
       "group": "Головний вимикач",
       "status": "verified",
       "source": "https://www.vishay.com/docs/88392/smbj.pdf",
+      "footprint": "SR_RX_Custom:D_SMB_KA",
+      "mpn": "SMBJ17A-E3/52",
+      "manufacturer": "Vishay General Semiconductor",
+      "lcsc": "C1973197",
+      "alt_mpn": "Littelfuse SMBJ17A",
       "pins": [
         {
           "number": "A",
@@ -906,6 +992,11 @@
       "group": "Головний вимикач",
       "status": "verified",
       "source": "https://www.vishay.com/docs/88392/smbj.pdf",
+      "footprint": "SR_RX_Custom:D_SMB_KA",
+      "mpn": "SMBJ17A-E3/52",
+      "manufacturer": "Vishay General Semiconductor",
+      "lcsc": "C1973197",
+      "alt_mpn": "Littelfuse SMBJ17A",
       "pins": [
         {
           "number": "A",
@@ -929,6 +1020,8 @@
       "group": "SYS12",
       "status": "module",
       "source": "https://www.pololu.com/product/4095",
+      "mpn": "D36V50F12",
+      "manufacturer": "Pololu",
       "pins": [
         {
           "number": "VIN",
@@ -979,6 +1072,10 @@
       "group": "SYS12",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "mpn": "RT0603BRD074K99L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C723532",
+      "alt_mpn": "Vishay Dale TNPW06034K99BEEA",
       "pins": [
         {
           "number": "1",
@@ -1005,6 +1102,10 @@
       "group": "SYS12",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "mpn": "PTFR0603B562RP9",
+      "manufacturer": "RESI",
+      "lcsc": "C47115902",
+      "alt_mpn": "YAGEO RT0603BRD07562RL",
       "pins": [
         {
           "number": "1",
@@ -1032,6 +1133,7 @@
       "group": "SYS12",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -1051,6 +1153,11 @@
       "group": "SYS12",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Capacitor_SMD:CP_Elec_6.3x7.7",
+      "mpn": "EEHZK1V101XP",
+      "manufacturer": "Panasonic",
+      "lcsc": "C454360",
+      "alt_mpn": "Lelon HBV101M1VTR-0608",
       "pins": [
         {
           "number": "1",
@@ -1073,6 +1180,11 @@
       "group": "SYS12",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "mpn": "AC0805KKX7R9BB105",
+      "manufacturer": "YAGEO",
+      "lcsc": "C726584",
+      "alt_mpn": "TDK C2012X7R1H105K125AB",
       "pins": [
         {
           "number": "1",
@@ -1150,6 +1262,11 @@
       "group": "LAB5",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Capacitor_SMD:CP_Elec_6.3x7.7",
+      "mpn": "EEHZK1V101XP",
+      "manufacturer": "Panasonic",
+      "lcsc": "C454360",
+      "alt_mpn": "Lelon HBV101M1VTR-0608",
       "pins": [
         {
           "number": "1",
@@ -1172,6 +1289,11 @@
       "group": "LAB5",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "mpn": "AC0805KKX7R9BB105",
+      "manufacturer": "YAGEO",
+      "lcsc": "C726584",
+      "alt_mpn": "TDK C2012X7R1H105K125AB",
       "pins": [
         {
           "number": "1",
@@ -1194,6 +1316,11 @@
       "group": "LAB5",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
+      "mpn": "0297004.WXNV",
+      "manufacturer": "Littelfuse",
+      "lcsc": "C178940",
+      "alt_mpn": "Littelfuse 0297004.WXT",
       "pins": [
         {
           "number": "1",
@@ -1219,6 +1346,8 @@
       "group": "LAB5",
       "status": "design",
       "source": "https://industrial.panasonic.com/ww/products/pt/os-con/models/35SVPF22M",
+      "footprint": "Capacitor_SMD:CP_Elec_6.3x5.9",
+      "lcsc": "C88142",
       "pins": [
         {
           "number": "1",
@@ -1247,6 +1376,8 @@
       "group": "LAB5",
       "status": "design",
       "source": "https://www.coilcraft.com/en-us/products/power/shielded-inductors/molded-inductor/xal/xal60xx/",
+      "footprint": "Inductor_SMD:L_Coilcraft_XAL6060-XXX",
+      "lcsc": "C5329540",
       "pins": [
         {
           "number": "1",
@@ -1276,6 +1407,8 @@
       "group": "LAB5",
       "status": "design",
       "source": "https://industrial.panasonic.com/ww/products/pt/os-con/models/35SVPF22M",
+      "footprint": "Capacitor_SMD:CP_Elec_6.3x5.9",
+      "lcsc": "C88142",
       "pins": [
         {
           "number": "1",
@@ -1304,6 +1437,8 @@
       "group": "LAB5",
       "status": "design",
       "source": "https://www.vishay.com/docs/30100/wsl.pdf",
+      "footprint": "Resistor_SMD:R_2512_6332Metric",
+      "lcsc": "C2073866",
       "pins": [
         {
           "number": "1",
@@ -1332,6 +1467,8 @@
       "group": "LAB5",
       "status": "design",
       "source": "https://industrial.panasonic.com/ww/products/pt/OS-CON/models/16SVPC100M",
+      "footprint": "Capacitor_SMD:CP_Elec_6.3x5.9",
+      "lcsc": "C136275",
       "pins": [
         {
           "number": "1",
@@ -1360,6 +1497,7 @@
       "group": "LAB5",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -1379,6 +1517,11 @@
       "group": "Сервісний заряд",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
+      "mpn": "0297005.WXNV",
+      "manufacturer": "Littelfuse",
+      "lcsc": "C151093",
+      "alt_mpn": "Littelfuse 0297005.WXT",
       "pins": [
         {
           "number": "1",
@@ -1401,6 +1544,8 @@
       "group": "Сервісний заряд",
       "status": "module",
       "source": "STACK §2.7,§5.1",
+      "mpn": "XT30U-F",
+      "manufacturer": "Changzhou Amass",
       "pins": [
         {
           "number": "+",
@@ -1473,6 +1618,11 @@
       "group": "Аварійний ADC",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -1495,6 +1645,11 @@
       "group": "Аварійний ADC",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF2002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C4184",
+      "alt_mpn": "YAGEO RC0603FR-0720KL",
       "pins": [
         {
           "number": "1",
@@ -1517,6 +1672,11 @@
       "group": "Аварійний ADC",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -1586,6 +1746,10 @@
       "group": "Захист USB-PD",
       "status": "verified",
       "source": "https://www.ti.com/lit/ds/symlink/tps25947.pdf",
+      "footprint": "SR_RX_Custom:TI_RPW0010A_VQFN-HR-10_2x2mm_P0.5mm",
+      "mpn": "TPS259470ARPWR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C3662799",
       "pins": [
         {
           "number": "1",
@@ -1660,6 +1824,11 @@
       "group": "Захист USB-PD",
       "status": "design",
       "source": "https://www.ti.com/lit/ds/symlink/tps25947.pdf",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF4703T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C23178",
+      "alt_mpn": "YAGEO RC0603FR-07470KL",
       "pins": [
         {
           "number": "1",
@@ -1685,6 +1854,11 @@
       "group": "Захист USB-PD",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD07174KL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C861163",
+      "alt_mpn": "Vishay Dale TNPW0603174KBEEA",
       "pins": [
         {
           "number": "1",
@@ -1707,6 +1881,11 @@
       "group": "Захист USB-PD",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0710KL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C95204",
+      "alt_mpn": "Viking Tech ARG03BTC1002",
       "pins": [
         {
           "number": "1",
@@ -1729,6 +1908,11 @@
       "group": "Захист USB-PD",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF9530T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C93622",
+      "alt_mpn": "YAGEO RT0603FRE07953RL",
       "pins": [
         {
           "number": "1",
@@ -1751,6 +1935,11 @@
       "group": "Захист USB-PD",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603JRNPO9BN332",
+      "manufacturer": "YAGEO",
+      "lcsc": "C107048",
+      "alt_mpn": "TDK C1608C0G1H332J080AA",
       "pins": [
         {
           "number": "1",
@@ -1773,6 +1962,11 @@
       "group": "Захист USB-PD",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "mpn": "AC0805KKX7R9BB105",
+      "manufacturer": "YAGEO",
+      "lcsc": "C726584",
+      "alt_mpn": "TDK C2012X7R1H105K125AB",
       "pins": [
         {
           "number": "1",
@@ -1795,6 +1989,11 @@
       "group": "Захист USB-PD",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "mpn": "AC0805KKX7R9BB105",
+      "manufacturer": "YAGEO",
+      "lcsc": "C726584",
+      "alt_mpn": "TDK C2012X7R1H105K125AB",
       "pins": [
         {
           "number": "1",
@@ -1817,6 +2016,7 @@
       "group": "Захист USB-PD",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -1912,6 +2112,9 @@
       "group": "Заряд IP2368",
       "status": "TBD",
       "source": "STACK §2.7,§5.1",
+      "mpn": "0603WAF5101T5E",
+      "manufacturer": "UNI-ROYAL",
+      "alt_mpn": "YAGEO RC0603FR-075K1L",
       "pins": [
         {
           "number": "1",
@@ -1937,6 +2140,9 @@
       "group": "Заряд IP2368",
       "status": "TBD",
       "source": "STACK §2.7,§5.1",
+      "mpn": "0603WAF1502T5E",
+      "manufacturer": "UNI-ROYAL",
+      "alt_mpn": "YAGEO AC0603FR-0715KL",
       "pins": [
         {
           "number": "1",
@@ -1962,6 +2168,9 @@
       "group": "Заряд IP2368",
       "status": "TBD",
       "source": "STACK §2.7,§5.1",
+      "mpn": "0603WAF1001T5E",
+      "manufacturer": "UNI-ROYAL",
+      "alt_mpn": "YAGEO RC0603FR-071KL",
       "pins": [
         {
           "number": "1",
@@ -1984,6 +2193,9 @@
       "group": "Заряд IP2368",
       "status": "TBD",
       "source": "STACK §2.7,§5.1",
+      "mpn": "0603WAF1302T5E",
+      "manufacturer": "UNI-ROYAL",
+      "alt_mpn": "YAGEO RC0603FR-0713KL",
       "pins": [
         {
           "number": "1",
@@ -2006,6 +2218,9 @@
       "group": "Заряд IP2368",
       "status": "TBD",
       "source": "STACK §2.7,§5.1",
+      "mpn": "NXFT15XH103FEAB050",
+      "manufacturer": "Murata Electronics",
+      "alt_mpn": "Murata Electronics NXFT15XH103FEAB025",
       "pins": [
         {
           "number": "1",
@@ -2031,6 +2246,9 @@
       "group": "Заряд IP2368",
       "status": "TBD",
       "source": "STACK §2.7,§5.1",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "alt_mpn": "Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -2053,6 +2271,11 @@
       "group": "Інгібування заряду",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF2201T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C4190",
+      "alt_mpn": "YAGEO RC0603FR-072K2L",
       "pins": [
         {
           "number": "1",
@@ -2075,6 +2298,10 @@
       "group": "Інгібування заряду",
       "status": "verified",
       "source": "https://assets.nexperia.com/documents/data-sheet/2N7002.pdf",
+      "mpn": "2N7002,215",
+      "manufacturer": "Nexperia",
+      "lcsc": "C65189",
+      "alt_mpn": "onsemi 2N7002LT1G; Diodes Incorporated 2N7002-7-F",
       "pins": [
         {
           "number": "1",
@@ -2104,6 +2331,11 @@
       "group": "Інгібування заряду",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1001T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C21190",
+      "alt_mpn": "YAGEO RC0603FR-071KL",
       "pins": [
         {
           "number": "1",
@@ -2126,6 +2358,11 @@
       "group": "Інгібування заряду",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -2148,6 +2385,8 @@
       "group": "Інгібування заряду",
       "status": "module",
       "source": "STACK §2.7,§5.1",
+      "mpn": "KSD9700-70/5JSB/080C",
+      "manufacturer": "Xucheng Electronics",
       "pins": [
         {
           "number": "1",
@@ -2173,6 +2412,7 @@
       "group": "Контрольні точки",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -2189,6 +2429,7 @@
       "group": "Контрольні точки",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -2205,6 +2446,7 @@
       "group": "Контрольні точки",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -2221,6 +2463,7 @@
       "group": "Контрольні точки",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -2237,6 +2480,7 @@
       "group": "Контрольні точки",
       "status": "design",
       "source": "STACK §2.7,§5.1",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",

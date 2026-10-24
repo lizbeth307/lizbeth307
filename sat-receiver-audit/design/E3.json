@@ -357,6 +357,10 @@
       "group": "Q6A header",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Connector_JST:JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical",
+      "mpn": "B5B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C157993",
       "pins": [
         {
           "number": "1",
@@ -400,6 +404,11 @@
       "group": "Q6A header",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -425,6 +434,11 @@
       "group": "Q6A header",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -447,6 +461,11 @@
       "group": "Q6A header",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -473,6 +492,11 @@
       "group": "Q6A header",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -499,6 +523,10 @@
       "group": "MCP23017 control",
       "source": "https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf",
       "status": "verified",
+      "mpn": "MCP23017-E/SO",
+      "manufacturer": "Microchip",
+      "lcsc": "C47023",
+      "alt_mpn": "Microchip MCP23017T-E/SO",
       "pins": [
         {
           "number": "1",
@@ -685,6 +713,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -707,6 +740,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "mpn": "CL21A106KAYNNNE",
+      "manufacturer": "Samsung Electro-Mechanics",
+      "lcsc": "C15850",
+      "alt_mpn": "Murata Electronics GRM21BR61C106KE15L",
       "pins": [
         {
           "number": "1",
@@ -729,6 +767,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -751,6 +794,10 @@
       "group": "MCP23017 control",
       "source": "https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf",
       "status": "design",
+      "mpn": "MCP23017-E/SO",
+      "manufacturer": "Microchip",
+      "lcsc": "C47023",
+      "alt_mpn": "Microchip MCP23017T-E/SO",
       "pins": [
         {
           "number": "1",
@@ -937,6 +984,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -959,6 +1011,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "mpn": "CL21A106KAYNNNE",
+      "manufacturer": "Samsung Electro-Mechanics",
+      "lcsc": "C15850",
+      "alt_mpn": "Murata Electronics GRM21BR61C106KE15L",
       "pins": [
         {
           "number": "1",
@@ -981,6 +1038,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1003,6 +1065,10 @@
       "group": "MCP23017 control",
       "source": "https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf",
       "status": "design",
+      "mpn": "MCP23017-E/SO",
+      "manufacturer": "Microchip",
+      "lcsc": "C47023",
+      "alt_mpn": "Microchip MCP23017T-E/SO",
       "pins": [
         {
           "number": "1",
@@ -1190,6 +1256,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -1212,6 +1283,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "mpn": "CL21A106KAYNNNE",
+      "manufacturer": "Samsung Electro-Mechanics",
+      "lcsc": "C15850",
+      "alt_mpn": "Murata Electronics GRM21BR61C106KE15L",
       "pins": [
         {
           "number": "1",
@@ -1234,6 +1310,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1256,6 +1337,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1278,6 +1364,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1300,6 +1391,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1322,6 +1418,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1344,6 +1445,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1366,6 +1472,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1388,6 +1499,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1410,6 +1526,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1432,6 +1553,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1454,6 +1580,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1476,6 +1607,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1498,6 +1634,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1520,6 +1661,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1542,6 +1688,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1564,6 +1715,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1586,6 +1742,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1608,6 +1769,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1630,6 +1796,11 @@
       "group": "MCP23017 control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1652,6 +1823,8 @@
       "group": "GNSS",
       "source": "https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf",
       "status": "module",
+      "mpn": "24370",
+      "manufacturer": "Waveshare",
       "pins": [
         {
           "number": "P1.1",
@@ -1740,6 +1913,10 @@
       "group": "GNSS",
       "source": "Manufacturer datasheet; STACK.md §5.2",
       "status": "design",
+      "mpn": "2N7002,215",
+      "manufacturer": "Nexperia",
+      "lcsc": "C65189",
+      "alt_mpn": "onsemi 2N7002LT1G; Diodes Incorporated 2N7002-7-F",
       "pins": [
         {
           "number": "1",
@@ -1769,6 +1946,11 @@
       "group": "GNSS",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -1816,6 +1998,8 @@
       "group": "RTC",
       "source": "STACK.md RTC; Radxa officialRTC interface",
       "status": "design",
+      "mpn": "41036512",
+      "manufacturer": "Electrokit",
       "pins": [
         {
           "number": "+",
@@ -1839,6 +2023,9 @@
       "group": "Pico HMI",
       "source": "https://datasheets.raspberrypi.com/pico/Pico-R3-A4-Pinout.pdf",
       "status": "module",
+      "footprint": "SR_RX_Custom:RaspberryPi_Pico_SMD_SWD",
+      "mpn": "SC0915",
+      "manufacturer": "Raspberry Pi",
       "pins": [
         {
           "number": "1",
@@ -2117,6 +2304,10 @@
       "group": "Pico HMI",
       "source": "STACK.md VSYS Schottky; SS14 standardSMA",
       "status": "design",
+      "mpn": "SS14-E3/61T",
+      "manufacturer": "Vishay General Semiconductor",
+      "lcsc": "C47460",
+      "alt_mpn": "Vishay General Semiconductor SS14-E3/5AT; onsemi SS14",
       "pins": [
         {
           "number": "1",
@@ -2140,6 +2331,11 @@
       "group": "Pico HMI",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "mpn": "CL21A106KAYNNNE",
+      "manufacturer": "Samsung Electro-Mechanics",
+      "lcsc": "C15850",
+      "alt_mpn": "Murata Electronics GRM21BR61C106KE15L",
       "pins": [
         {
           "number": "1",
@@ -2162,6 +2358,11 @@
       "group": "Pico HMI",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -2184,6 +2385,11 @@
       "group": "Pico HMI",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF2000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C8218",
+      "alt_mpn": "YAGEO RC0603FR-07200RL",
       "pins": [
         {
           "number": "1",
@@ -2209,6 +2415,9 @@
       "group": "Pico HMI",
       "source": "https://www.ti.com/lit/ds/symlink/lm4040.pdf",
       "status": "verified",
+      "mpn": "LM4040C30IDBZR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C181416",
       "pins": [
         {
           "number": "1",
@@ -2241,6 +2450,11 @@
       "group": "Pico HMI",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -2263,6 +2477,11 @@
       "group": "Pico HMI",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -2285,6 +2504,11 @@
       "group": "Pico HMI",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -2329,6 +2553,11 @@
       "group": "Pico power control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -2351,6 +2580,10 @@
       "group": "Pico power control",
       "source": "https://www.diodes.com/datasheet/download/BAT54.pdf",
       "status": "design",
+      "mpn": "BAT54,215",
+      "manufacturer": "Nexperia",
+      "lcsc": "C85084",
+      "alt_mpn": "onsemi BAT54LT1G",
       "pins": [
         {
           "number": "1",
@@ -2380,6 +2613,10 @@
       "group": "Pico power control",
       "source": "https://www.diodes.com/datasheet/download/BAT54.pdf",
       "status": "design",
+      "mpn": "BAT54,215",
+      "manufacturer": "Nexperia",
+      "lcsc": "C85084",
+      "alt_mpn": "onsemi BAT54LT1G",
       "pins": [
         {
           "number": "1",
@@ -2409,6 +2646,10 @@
       "group": "Pico power control",
       "source": "Manufacturer datasheet; STACK.md §5.2",
       "status": "design",
+      "mpn": "2N7002,215",
+      "manufacturer": "Nexperia",
+      "lcsc": "C65189",
+      "alt_mpn": "onsemi 2N7002LT1G; Diodes Incorporated 2N7002-7-F",
       "pins": [
         {
           "number": "1",
@@ -2438,6 +2679,11 @@
       "group": "Pico power control",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -2460,6 +2706,11 @@
       "group": "Thermal sensors",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -2482,6 +2733,8 @@
       "group": "Thermal sensors",
       "source": "https://semiware.com/uploads/datasheet/MF52A103F3950.pdf",
       "status": "design",
+      "mpn": "MF52A103F3950 (A1)",
+      "manufacturer": "Nanjing Shiheng (Semiware)",
       "pins": [
         {
           "number": "1",
@@ -2511,6 +2764,11 @@
       "group": "Thermal sensors",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -2533,6 +2791,11 @@
       "group": "Thermal sensors",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -2555,6 +2818,8 @@
       "group": "Thermal sensors",
       "source": "https://semiware.com/uploads/datasheet/MF52A103F3950.pdf",
       "status": "design",
+      "mpn": "MF52A103F3950 (A1)",
+      "manufacturer": "Nanjing Shiheng (Semiware)",
       "pins": [
         {
           "number": "1",
@@ -2584,6 +2849,11 @@
       "group": "Thermal sensors",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -2606,6 +2876,10 @@
       "group": "HMI buttons",
       "source": "https://www.diodes.com/datasheet/download/PI4IOE5V9555.pdf",
       "status": "design",
+      "mpn": "PI4IOE5V9555LEX",
+      "manufacturer": "Diodes Incorporated",
+      "lcsc": "C3194482",
+      "alt_mpn": "Texas Instruments TCA9555PWR",
       "pins": [
         {
           "number": "1",
@@ -2766,6 +3040,11 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -2788,6 +3067,11 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CL10A105KB8NNNC",
+      "manufacturer": "Samsung Electro-Mechanics",
+      "lcsc": "C15849",
+      "alt_mpn": "YAGEO CC0603KRX7R7BB105",
       "pins": [
         {
           "number": "1",
@@ -2810,6 +3094,11 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -2832,6 +3121,11 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF2201T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C4190",
+      "alt_mpn": "YAGEO RC0603FR-072K2L",
       "pins": [
         {
           "number": "1",
@@ -2854,6 +3148,11 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -2879,6 +3178,10 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "SR_RX_Custom:SW_E-Switch_TL3145_6.45x6.45mm",
+      "mpn": "TL3145BF350QJ",
+      "manufacturer": "E-Switch",
+      "lcsc": "C2886884",
       "pins": [
         {
           "number": "1",
@@ -2901,6 +3204,11 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF2201T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C4190",
+      "alt_mpn": "YAGEO RC0603FR-072K2L",
       "pins": [
         {
           "number": "1",
@@ -2923,6 +3231,11 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -2948,6 +3261,10 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "SR_RX_Custom:SW_E-Switch_TL3145_6.45x6.45mm",
+      "mpn": "TL3145BF350QJ",
+      "manufacturer": "E-Switch",
+      "lcsc": "C2886884",
       "pins": [
         {
           "number": "1",
@@ -2970,6 +3287,11 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF2201T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C4190",
+      "alt_mpn": "YAGEO RC0603FR-072K2L",
       "pins": [
         {
           "number": "1",
@@ -2992,6 +3314,11 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -3017,6 +3344,10 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "SR_RX_Custom:SW_E-Switch_TL3145_6.45x6.45mm",
+      "mpn": "TL3145BF350QJ",
+      "manufacturer": "E-Switch",
+      "lcsc": "C2886884",
       "pins": [
         {
           "number": "1",
@@ -3039,6 +3370,11 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF2201T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C4190",
+      "alt_mpn": "YAGEO RC0603FR-072K2L",
       "pins": [
         {
           "number": "1",
@@ -3061,6 +3397,11 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -3086,6 +3427,10 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "SR_RX_Custom:SW_E-Switch_TL3145_6.45x6.45mm",
+      "mpn": "TL3145BF350QJ",
+      "manufacturer": "E-Switch",
+      "lcsc": "C2886884",
       "pins": [
         {
           "number": "1",
@@ -3108,6 +3453,11 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF2201T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C4190",
+      "alt_mpn": "YAGEO RC0603FR-072K2L",
       "pins": [
         {
           "number": "1",
@@ -3130,6 +3480,11 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -3155,6 +3510,10 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "SR_RX_Custom:SW_E-Switch_TL3145_6.45x6.45mm",
+      "mpn": "TL3145BF350QJ",
+      "manufacturer": "E-Switch",
+      "lcsc": "C2886884",
       "pins": [
         {
           "number": "1",
@@ -3177,6 +3536,11 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF2201T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C4190",
+      "alt_mpn": "YAGEO RC0603FR-072K2L",
       "pins": [
         {
           "number": "1",
@@ -3199,6 +3563,11 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -3224,6 +3593,10 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "SR_RX_Custom:SW_E-Switch_TL3145_6.45x6.45mm",
+      "mpn": "TL3145BF350QJ",
+      "manufacturer": "E-Switch",
+      "lcsc": "C2886884",
       "pins": [
         {
           "number": "1",
@@ -3246,6 +3619,11 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF2201T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C4190",
+      "alt_mpn": "YAGEO RC0603FR-072K2L",
       "pins": [
         {
           "number": "1",
@@ -3268,6 +3646,11 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -3315,6 +3698,11 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF2201T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C4190",
+      "alt_mpn": "YAGEO RC0603FR-072K2L",
       "pins": [
         {
           "number": "1",
@@ -3337,6 +3725,11 @@
       "group": "HMI buttons",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -3384,6 +3777,9 @@
       "group": "HMI buttons",
       "source": "https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf",
       "status": "verified",
+      "mpn": "TPD4E1U06DBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C124691",
       "pins": [
         {
           "number": "1",
@@ -3431,6 +3827,9 @@
       "group": "HMI buttons",
       "source": "https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf",
       "status": "verified",
+      "mpn": "TPD4E1U06DBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C124691",
       "pins": [
         {
           "number": "1",
@@ -3478,6 +3877,11 @@
       "group": "HMI encoders",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -3500,6 +3904,11 @@
       "group": "HMI encoders",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -3522,6 +3931,11 @@
       "group": "HMI encoders",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H103JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C85973",
+      "alt_mpn": "TDK C1608C0G1H103J080AA",
       "pins": [
         {
           "number": "1",
@@ -3544,6 +3958,11 @@
       "group": "HMI encoders",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -3566,6 +3985,11 @@
       "group": "HMI encoders",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -3588,6 +4012,11 @@
       "group": "HMI encoders",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H103JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C85973",
+      "alt_mpn": "TDK C1608C0G1H103J080AA",
       "pins": [
         {
           "number": "1",
@@ -3610,6 +4039,11 @@
       "group": "HMI encoders",
       "source": "STACK.md §5.2; BournsPEC11R",
       "status": "module",
+      "footprint": "SR_RX_Custom:RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx",
+      "mpn": "PEC11R-4220F-S0024",
+      "manufacturer": "Bourns",
+      "lcsc": "C143797",
+      "alt_mpn": "Bourns PEC11R-4215F-S0024",
       "pins": [
         {
           "number": "A",
@@ -3639,6 +4073,11 @@
       "group": "HMI encoders",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -3661,6 +4100,11 @@
       "group": "HMI encoders",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -3683,6 +4127,11 @@
       "group": "HMI encoders",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H103JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C85973",
+      "alt_mpn": "TDK C1608C0G1H103J080AA",
       "pins": [
         {
           "number": "1",
@@ -3705,6 +4154,11 @@
       "group": "HMI encoders",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -3727,6 +4181,11 @@
       "group": "HMI encoders",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -3749,6 +4208,11 @@
       "group": "HMI encoders",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H103JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C85973",
+      "alt_mpn": "TDK C1608C0G1H103J080AA",
       "pins": [
         {
           "number": "1",
@@ -3771,6 +4235,11 @@
       "group": "HMI encoders",
       "source": "STACK.md §5.2; BournsPEC11R",
       "status": "module",
+      "footprint": "SR_RX_Custom:RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx",
+      "mpn": "PEC11R-4220F-S0024",
+      "manufacturer": "Bourns",
+      "lcsc": "C143797",
+      "alt_mpn": "Bourns PEC11R-4215F-S0024",
       "pins": [
         {
           "number": "A",
@@ -3800,6 +4269,9 @@
       "group": "HMI encoders",
       "source": "https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf",
       "status": "verified",
+      "mpn": "TPD4E1U06DBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C124691",
       "pins": [
         {
           "number": "1",
@@ -3847,6 +4319,11 @@
       "group": "Ambient sensor",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -3869,6 +4346,11 @@
       "group": "Ambient sensor",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -3891,6 +4373,11 @@
       "group": "Ambient sensor",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF4701T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C23162",
+      "alt_mpn": "YAGEO RC0603FR-074K7L",
       "pins": [
         {
           "number": "1",
@@ -3916,6 +4403,11 @@
       "group": "Ambient sensor",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF4701T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C23162",
+      "alt_mpn": "YAGEO RC0603FR-074K7L",
       "pins": [
         {
           "number": "1",
@@ -3938,6 +4430,9 @@
       "group": "Ambient sensor",
       "source": "https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf",
       "status": "verified",
+      "mpn": "TPD4E1U06DBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C124691",
       "pins": [
         {
           "number": "1",
@@ -3985,6 +4480,9 @@
       "group": "Ambient sensor",
       "source": "https://learn.adafruit.com/adafruit-veml7700/pinouts",
       "status": "module",
+      "mpn": "4162",
+      "manufacturer": "Adafruit",
+      "alt_mpn": "Adafruit 5378",
       "pins": [
         {
           "number": "VIN",
@@ -4029,6 +4527,11 @@
       "group": "Indicators",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1500T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22808",
+      "alt_mpn": "YAGEO RC0603FR-07150RL",
       "pins": [
         {
           "number": "1",
@@ -4051,6 +4554,9 @@
       "group": "Indicators",
       "source": "https://www.sameskydevices.com/product/resource/cpt-1207-3th.pdf",
       "status": "module",
+      "footprint": "SR_RX_Custom:Buzzer_SameSky_CPT-1207-3TH_D12.5mm_P5.0mm",
+      "mpn": "CPT-1207-3TH",
+      "manufacturer": "Same Sky",
       "pins": [
         {
           "number": "+",
@@ -4074,6 +4580,11 @@
       "group": "Indicators",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF6800T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C23228",
+      "alt_mpn": "YAGEO RC0603FR-07680RL",
       "pins": [
         {
           "number": "1",
@@ -4096,6 +4607,10 @@
       "group": "Indicators",
       "source": "STACK.md HMI statusLED",
       "status": "module",
+      "footprint": "SR_RX_Custom:LED_D5.0mm_KA",
+      "mpn": "WP7113LSECK/J3",
+      "manufacturer": "Kingbright",
+      "lcsc": "C6001438",
       "pins": [
         {
           "number": "A",
@@ -4119,6 +4634,11 @@
       "group": "Cooling",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -4141,6 +4661,11 @@
       "group": "Cooling",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -4163,6 +4688,10 @@
       "group": "Cooling",
       "source": "Manufacturer datasheet; STACK.md §5.2",
       "status": "design",
+      "mpn": "AO3400A",
+      "manufacturer": "Alpha & Omega Semiconductor",
+      "lcsc": "C20917",
+      "alt_mpn": "BORN AO3400A",
       "pins": [
         {
           "number": "1",
@@ -4192,6 +4721,11 @@
       "group": "Cooling",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -4214,6 +4748,10 @@
       "group": "Cooling",
       "source": "https://aosmd.com/sites/default/files/res/datasheets/AO3401A.pdf",
       "status": "design",
+      "mpn": "AO3401A",
+      "manufacturer": "Alpha & Omega Semiconductor",
+      "lcsc": "C15127",
+      "alt_mpn": "BORN AO3401A",
       "pins": [
         {
           "number": "1",
@@ -4243,6 +4781,10 @@
       "group": "Cooling",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "mpn": "SS14-E3/61T",
+      "manufacturer": "Vishay General Semiconductor",
+      "lcsc": "C47460",
+      "alt_mpn": "Vishay General Semiconductor SS14-E3/5AT; onsemi SS14",
       "pins": [
         {
           "number": "1",
@@ -4266,6 +4808,11 @@
       "group": "Cooling",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "mpn": "CL21A106KAYNNNE",
+      "manufacturer": "Samsung Electro-Mechanics",
+      "lcsc": "C15850",
+      "alt_mpn": "Murata Electronics GRM21BR61C106KE15L",
       "pins": [
         {
           "number": "1",
@@ -4288,6 +4835,11 @@
       "group": "Cooling",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -4310,6 +4862,8 @@
       "group": "Cooling",
       "source": "https://www.noctua.at/en/products/nf-a4x10-5v/specifications",
       "status": "module",
+      "mpn": "NF-A4x10 5V",
+      "manufacturer": "Noctua",
       "pins": [
         {
           "number": "V+",
@@ -4339,6 +4893,11 @@
       "group": "Cooling",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -4361,6 +4920,11 @@
       "group": "Cooling",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF2201T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C4190",
+      "alt_mpn": "YAGEO RC0603FR-072K2L",
       "pins": [
         {
           "number": "1",
@@ -4383,6 +4947,11 @@
       "group": "Cooling",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -4405,6 +4974,11 @@
       "group": "Cooling",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -4427,6 +5001,10 @@
       "group": "Cooling",
       "source": "Manufacturer datasheet; STACK.md §5.2",
       "status": "design",
+      "mpn": "AO3400A",
+      "manufacturer": "Alpha & Omega Semiconductor",
+      "lcsc": "C20917",
+      "alt_mpn": "BORN AO3400A",
       "pins": [
         {
           "number": "1",
@@ -4456,6 +5034,10 @@
       "group": "Cooling",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "mpn": "SS14-E3/61T",
+      "manufacturer": "Vishay General Semiconductor",
+      "lcsc": "C47460",
+      "alt_mpn": "Vishay General Semiconductor SS14-E3/5AT; onsemi SS14",
       "pins": [
         {
           "number": "1",
@@ -4479,6 +5061,11 @@
       "group": "Cooling",
       "source": "STACK.md §5.2; project design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "mpn": "CL21A106KAYNNNE",
+      "manufacturer": "Samsung Electro-Mechanics",
+      "lcsc": "C15850",
+      "alt_mpn": "Murata Electronics GRM21BR61C106KE15L",
       "pins": [
         {
           "number": "1",
@@ -4501,6 +5088,8 @@
       "group": "Cooling",
       "source": "https://www.delta-fan.com/Download/Spec/BFB0305HA-C.pdf",
       "status": "module",
+      "mpn": "BFB0305HA-C",
+      "manufacturer": "Delta Electronics",
       "pins": [
         {
           "number": "RED",
@@ -4538,6 +5127,8 @@
         "GPIO9-28 pads unused; GPIO29 belongs to the onboard RGB LED. E5 owns GX16-4, supply Schottky and ESD at both ends. Connect no USB during deployed operation.",
         "The named-pad interface is physically identified by Waveshare schematic; actual pad orientation and assembled harness continuity must be checked before power."
       ],
+      "mpn": "20187",
+      "manufacturer": "Waveshare",
       "pins": [
         {
           "number": "GP0",
@@ -4747,6 +5338,8 @@
         "The official Adafruit Eagle H_INTN pin is an output connected directly to INT pad. Earlier draft open_collector type was incorrect and is corrected from source, not suppressed for ERC.",
         "PS1 straps high. PS0/WAKE is pulled high through 1k (overrides the module factory10k pulldown) and connected to Zero GP8: keep it high throughout reset and first INT, then pulse low to wake the BNO for host-initiated SPI as required by the CEVA datasheet."
       ],
+      "mpn": "4754",
+      "manufacturer": "Adafruit",
       "pins": [
         {
           "number": "VIN",
@@ -4829,6 +5422,11 @@
       "group": "External IMU",
       "status": "design",
       "source": "Local pack bypass design",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "mpn": "CL21A106KAYNNNE",
+      "manufacturer": "Samsung Electro-Mechanics",
+      "lcsc": "C15850",
+      "alt_mpn": "Murata Electronics GRM21BR61C106KE15L",
       "pins": [
         {
           "number": "1",
@@ -4851,6 +5449,11 @@
       "group": "External IMU",
       "status": "design",
       "source": "Local pack bypass design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -4873,6 +5476,11 @@
       "group": "External IMU",
       "status": "design",
       "source": "SPI CS idle-high design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -4895,6 +5503,11 @@
       "group": "External IMU",
       "source": "Adafruit official Eagle PS0 net has factory 10k pulldown. External 1k pullup overrides it at reset; Zero GP8 sinks about3.3mA during wake.",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1001T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C21190",
+      "alt_mpn": "YAGEO RC0603FR-071KL",
       "pins": [
         {
           "number": "1",
@@ -4920,6 +5533,11 @@
       "group": "MCP23017 control",
       "source": "E2/E4 S-band LNA protection signal assignment",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -4942,6 +5560,11 @@
       "group": "Cooling",
       "source": "https://www.delta-fan.com/Download/Spec/BFB0305HA-C.pdf application notice13; local lead decoupling design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "mpn": "CL21A106KAYNNNE",
+      "manufacturer": "Samsung Electro-Mechanics",
+      "lcsc": "C15850",
+      "alt_mpn": "Murata Electronics GRM21BR61C106KE15L",
       "pins": [
         {
           "number": "1",
@@ -4964,6 +5587,11 @@
       "group": "Cooling",
       "source": "https://www.delta-fan.com/Download/Spec/BFB0305HA-C.pdf application notice13; local lead decoupling design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -4988,6 +5616,10 @@
       "source": "https://assets.nexperia.com/documents/data-sheet/2N7002.pdf; Microchip DS20001952D table1-2",
       "footprint": "Package_TO_SOT_SMD:SOT-23",
       "description": "Open-drain pull-down for the shared active-low reset of all three internal MCP23017 expanders. Gate is driven only by Pico GP17.",
+      "mpn": "2N7002,215",
+      "manufacturer": "Nexperia",
+      "lcsc": "C65189",
+      "alt_mpn": "onsemi 2N7002LT1G; Diodes Incorporated 2N7002-7-F",
       "pins": [
         {
           "number": "1",
@@ -5021,6 +5653,11 @@
       "group": "MCP hardware watchdog reset",
       "status": "design",
       "source": "Pico watchdog gate interface design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -5043,6 +5680,11 @@
       "group": "MCP hardware watchdog reset",
       "status": "design",
       "source": "Defined MOSFET gate state during Pico reset/poweroff",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -5066,6 +5708,11 @@
       "status": "design",
       "source": "Fail-safe default assertion while powered Pico GPIO is highimpedance",
       "description": "Pullup on the GPIO side of gate series resistor: powered Pico reset/highimpedance asserts MCPreset; normal firmware actively sinks GP17 low to release it.",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1001T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C21190",
+      "alt_mpn": "YAGEO RC0603FR-071KL",
       "pins": [
         {
           "number": "1",

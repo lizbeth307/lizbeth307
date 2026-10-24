@@ -125,6 +125,10 @@
       "group": "Q6A порти і живлення",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0315_1x03_P3.00mm_Vertical",
+      "mpn": "43650-0315",
+      "manufacturer": "Molex",
+      "lcsc": "C293546",
       "pins": [
         {
           "number": "1",
@@ -357,6 +361,8 @@
       "group": "CH334F і USB2 кабелі",
       "source": "https://github.com/adafruit/Adafruit-CH334F-Breakout-PCB/blob/main/Adafruit%20CH334F%20Mini%204-Port%20USB%20Hub%20Breakout.sch",
       "status": "module",
+      "mpn": "5997",
+      "manufacturer": "Adafruit",
       "pins": [
         {
           "number": "JP5_1",
@@ -536,6 +542,8 @@
       "group": "CH334F і USB2 кабелі",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "mpn": "36700",
+      "manufacturer": "Lindy",
       "pins": [
         {
           "number": "1",
@@ -573,6 +581,8 @@
       "group": "CH334F і USB2 кабелі",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "mpn": "36700",
+      "manufacturer": "Lindy",
       "pins": [
         {
           "number": "1",
@@ -659,6 +669,9 @@
       "group": "VBUS RTL-A і LAB PORT",
       "source": "https://www.ti.com/lit/gpn/tps2553",
       "status": "design",
+      "mpn": "TPS2553DBVR-1",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C111738",
       "pins": [
         {
           "number": "1",
@@ -710,6 +723,10 @@
       "group": "VBUS RTL-A і LAB PORT",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "mpn": "0603WAF4322T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C23053",
+      "alt_mpn": "YAGEO RC0603FR-0743K2L",
       "pins": [
         {
           "number": "1",
@@ -736,6 +753,10 @@
       "group": "VBUS RTL-A і LAB PORT",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -762,6 +783,11 @@
       "group": "VBUS RTL-A і LAB PORT",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -787,6 +813,11 @@
       "group": "VBUS RTL-A і LAB PORT",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "mpn": "CC0805KKX7R8BB475",
+      "manufacturer": "YAGEO",
+      "lcsc": "C354262",
+      "alt_mpn": "TDK C2012X7R1E475KT000N",
       "pins": [
         {
           "number": "1",
@@ -809,6 +840,10 @@
       "group": "VBUS RTL-A і LAB PORT",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
+      "mpn": "16SVPG47M",
+      "manufacturer": "Panasonic",
+      "lcsc": "C2161511",
       "pins": [
         {
           "number": "1",
@@ -831,6 +866,10 @@
       "group": "VBUS RTL-A і LAB PORT",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -857,6 +896,9 @@
       "group": "VBUS RTL-A і LAB PORT",
       "source": "https://www.ti.com/lit/gpn/tps2553",
       "status": "design",
+      "mpn": "TPS2553DBVR-1",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C111738",
       "pins": [
         {
           "number": "1",
@@ -908,6 +950,10 @@
       "group": "VBUS RTL-A і LAB PORT",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "mpn": "AF0603FR-0734K8L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C2098331",
+      "alt_mpn": "UNI-ROYAL 0603WAF3482T5E",
       "pins": [
         {
           "number": "1",
@@ -931,6 +977,10 @@
       "group": "VBUS RTL-A і LAB PORT",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -957,6 +1007,11 @@
       "group": "VBUS RTL-A і LAB PORT",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -982,6 +1037,11 @@
       "group": "VBUS RTL-A і LAB PORT",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "mpn": "CC0805KKX7R8BB475",
+      "manufacturer": "YAGEO",
+      "lcsc": "C354262",
+      "alt_mpn": "TDK C2012X7R1E475KT000N",
       "pins": [
         {
           "number": "1",
@@ -1004,6 +1064,11 @@
       "group": "VBUS RTL-A і LAB PORT",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "Capacitor_SMD:CP_Elec_8x6.9",
+      "mpn": "16SVPC150M",
+      "manufacturer": "Panasonic",
+      "lcsc": "C190722",
+      "alt_mpn": "Panasonic 10SVQP150M",
       "pins": [
         {
           "number": "1",
@@ -1029,6 +1094,11 @@
       "group": "VBUS RTL-A і LAB PORT",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -1051,6 +1121,10 @@
       "group": "VBUS RTL-A і LAB PORT",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1074,6 +1148,9 @@
       "group": "VBUS HF+ з демпфованим LC",
       "source": "https://www.ti.com/lit/gpn/tps2553",
       "status": "design",
+      "mpn": "TPS2553DBVR-1",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C111738",
       "pins": [
         {
           "number": "1",
@@ -1125,6 +1202,10 @@
       "group": "VBUS HF+ з демпфованим LC",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "mpn": "0603WAF2872T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22928",
+      "alt_mpn": "Vishay Dale CRCW060328K7FKEA",
       "pins": [
         {
           "number": "1",
@@ -1151,6 +1232,10 @@
       "group": "VBUS HF+ з демпфованим LC",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -1177,6 +1262,11 @@
       "group": "VBUS HF+ з демпфованим LC",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -1202,6 +1292,11 @@
       "group": "VBUS HF+ з демпфованим LC",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "mpn": "CC0805KKX7R8BB475",
+      "manufacturer": "YAGEO",
+      "lcsc": "C354262",
+      "alt_mpn": "TDK C2012X7R1E475KT000N",
       "pins": [
         {
           "number": "1",
@@ -1224,6 +1319,11 @@
       "group": "VBUS HF+ з демпфованим LC",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB105",
+      "manufacturer": "YAGEO",
+      "lcsc": "C559769",
+      "alt_mpn": "TDK CGA3E1X7R1E105KT0Y0E",
       "pins": [
         {
           "number": "1",
@@ -1246,6 +1346,10 @@
       "group": "VBUS HF+ з демпфованим LC",
       "source": "https://www.bourns.com/docs/product-datasheets/srr1260.pdf",
       "status": "verified",
+      "footprint": "Inductor_SMD:L_Bourns_SRR1260",
+      "mpn": "SRR1260-101M",
+      "manufacturer": "Bourns",
+      "lcsc": "C2041335",
       "pins": [
         {
           "number": "1",
@@ -1271,6 +1375,10 @@
       "group": "VBUS HF+ з демпфованим LC",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "Capacitor_THT:CP_Radial_D5.0mm_P2.00mm",
+      "mpn": "EEU-FR1C101",
+      "manufacturer": "Panasonic",
+      "lcsc": "C278532",
       "pins": [
         {
           "number": "1",
@@ -1293,6 +1401,10 @@
       "group": "VBUS HF+ з демпфованим LC",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "mpn": "1210W2F100KT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C78022",
+      "alt_mpn": "YAGEO AC1210FR-071RL",
       "pins": [
         {
           "number": "1",
@@ -1320,6 +1432,9 @@
       "group": "VBUS HF+ з демпфованим LC",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "mpn": "EEU-FR1C221",
+      "manufacturer": "Panasonic",
       "pins": [
         {
           "number": "1",
@@ -1342,6 +1457,11 @@
       "group": "VBUS HF+ з демпфованим LC",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -1364,6 +1484,10 @@
       "group": "VBUS HF+ з демпфованим LC",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1387,6 +1511,9 @@
       "group": "T7 USB3 VBUS",
       "source": "https://www.ti.com/lit/gpn/tps2553",
       "status": "design",
+      "mpn": "TPS2553DRVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C138719",
       "pins": [
         {
           "number": "1",
@@ -1444,6 +1571,10 @@
       "group": "T7 USB3 VBUS",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "mpn": "0603WAF1582T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22880",
+      "alt_mpn": "Panasonic ERJ3EKF1582V",
       "pins": [
         {
           "number": "1",
@@ -1470,6 +1601,10 @@
       "group": "T7 USB3 VBUS",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -1496,6 +1631,10 @@
       "group": "T7 USB3 VBUS",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1522,6 +1661,11 @@
       "group": "T7 USB3 VBUS",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -1547,6 +1691,11 @@
       "group": "T7 USB3 VBUS",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "mpn": "CC0805KKX7R8BB475",
+      "manufacturer": "YAGEO",
+      "lcsc": "C354262",
+      "alt_mpn": "TDK C2012X7R1E475KT000N",
       "pins": [
         {
           "number": "1",
@@ -1569,6 +1718,11 @@
       "group": "T7 USB3 VBUS",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "Capacitor_SMD:CP_Elec_8x6.9",
+      "mpn": "16SVPC150M",
+      "manufacturer": "Panasonic",
+      "lcsc": "C190722",
+      "alt_mpn": "Panasonic 10SVQP150M",
       "pins": [
         {
           "number": "1",
@@ -1591,6 +1745,10 @@
       "group": "T7 USB3 VBUS",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1614,6 +1772,7 @@
       "group": "T7 USB3 VBUS",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -1633,6 +1792,8 @@
       "group": "T7 USB3 VBUS",
       "source": "https://download.semiconductor.samsung.com/resources/user-manual/samsung_portable_ssd_t7_user_manual_english.pdf",
       "status": "module",
+      "mpn": "MU-PC1T0T/WW",
+      "manufacturer": "Samsung",
       "pins": [
         {
           "number": "VBUS",
@@ -1829,6 +1990,9 @@
       "group": "Дисплей HDMI, DC і USB touch",
       "source": "STACK.md §2.6,§5.1,§5.2",
       "status": "module",
+      "mpn": "SKU 4681 (7\" 1920x1080 2000 nit)",
+      "manufacturer": "Wisecoco",
+      "alt_mpn": "4D Systems 4DHDMI-70-1280-800-CT-EAR-1000",
       "pins": [
         {
           "number": "HDMI_1",
@@ -1993,6 +2157,9 @@
       "group": "Дисплей HDMI, DC і USB touch",
       "source": "https://www.ti.com/lit/ds/symlink/lm66100.pdf",
       "status": "design",
+      "mpn": "LM66100DCKR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C2869734",
       "pins": [
         {
           "number": "1",
@@ -2044,6 +2211,11 @@
       "group": "Дисплей HDMI, DC і USB touch",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -2066,6 +2238,11 @@
       "group": "Дисплей HDMI, DC і USB touch",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -2162,6 +2339,8 @@
       "group": "PCIe x1 riser та Lime",
       "source": "STACK.md §5.1 LIME3V3, §5.8",
       "status": "module",
+      "mpn": "R44SF 5 cm",
+      "manufacturer": "ADT-Link",
       "pins": [
         {
           "number": "H_TX0_P",
@@ -2303,6 +2482,10 @@
       "group": "Сервіс і зовнішні шини",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
+      "mpn": "B3B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C131339",
       "pins": [
         {
           "number": "1",
@@ -2385,6 +2568,8 @@
       "group": "Сервіс і зовнішні шини",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "mpn": "KH-GX12-6P",
+      "manufacturer": "Shenzhen Kinghelm",
       "pins": [
         {
           "number": "1",
@@ -2434,6 +2619,8 @@
       "group": "Сервіс і зовнішні шини",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "mpn": "CONNECTOR-GX16-4",
+      "manufacturer": "Olimex",
       "pins": [
         {
           "number": "1",
@@ -2477,6 +2664,9 @@
       "group": "Сервіс і зовнішні шини",
       "source": "https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf",
       "status": "verified",
+      "mpn": "TPD4E1U06DBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C124691",
       "pins": [
         {
           "number": "1",
@@ -2527,6 +2717,8 @@
       "group": "Сервіс і зовнішні шини",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "mpn": "SUPERTRONIC-C-PURO 4x0.14 (49655)",
+      "manufacturer": "HELU",
       "pins": [
         {
           "number": "1",
@@ -2570,6 +2762,9 @@
       "group": "Сервіс і зовнішні шини",
       "source": "https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf",
       "status": "verified",
+      "mpn": "TPD4E1U06DBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C124691",
       "pins": [
         {
           "number": "1",
@@ -2620,6 +2815,10 @@
       "group": "Сервіс і зовнішні шини",
       "source": "https://www.vishay.com/doc?88746=",
       "status": "design",
+      "mpn": "SS14-E3/61T",
+      "manufacturer": "Vishay General Semiconductor",
+      "lcsc": "C47460",
+      "alt_mpn": "Vishay General Semiconductor SS14-E3/5AT; onsemi SS14",
       "pins": [
         {
           "number": "1",
@@ -2647,6 +2846,11 @@
       "group": "Сервіс і зовнішні шини",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "mpn": "CC0805KKX7R7BB106",
+      "manufacturer": "YAGEO",
+      "lcsc": "C326595",
+      "alt_mpn": "TDK C2012X7R1A106KT0A0E",
       "pins": [
         {
           "number": "1",
@@ -2669,6 +2873,11 @@
       "group": "Сервіс і зовнішні шини",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -2691,6 +2900,10 @@
       "group": "LAB BUS I2C buffer",
       "source": "https://www.ti.com/lit/ds/symlink/tca9517.pdf",
       "status": "design",
+      "mpn": "TCA9517DR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C182421",
+      "alt_mpn": "NXP PCA9517D,118",
       "pins": [
         {
           "number": "1",
@@ -2754,6 +2967,10 @@
       "group": "LAB BUS I2C buffer",
       "source": "https://www.ti.com/lit/ds/symlink/tca9517.pdf",
       "status": "design",
+      "mpn": "0603WAF4701T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C23162",
+      "alt_mpn": "YAGEO RC0603FR-074K7L",
       "pins": [
         {
           "number": "1",
@@ -2780,6 +2997,10 @@
       "group": "LAB BUS I2C buffer",
       "source": "https://www.ti.com/lit/ds/symlink/tca9517.pdf",
       "status": "design",
+      "mpn": "0603WAF4701T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C23162",
+      "alt_mpn": "YAGEO RC0603FR-074K7L",
       "pins": [
         {
           "number": "1",
@@ -2806,6 +3027,11 @@
       "group": "LAB BUS I2C buffer",
       "source": "https://www.ti.com/lit/ds/symlink/tca9517.pdf",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -2831,6 +3057,11 @@
       "group": "LAB BUS I2C buffer",
       "source": "https://www.ti.com/lit/ds/symlink/tca9517.pdf",
       "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -2857,6 +3088,10 @@
       "source": "https://www.ti.com/lit/ds/symlink/lm66100.pdf",
       "status": "design",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -2882,6 +3117,7 @@
       "group": "Дисплей HDMI, DC і USB touch",
       "source": "https://www.ti.com/lit/ds/symlink/lm66100.pdf",
       "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",

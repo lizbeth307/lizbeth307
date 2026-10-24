@@ -138,6 +138,11 @@
       "group": "J21: захищене живлення 12 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "verified",
+      "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
+      "mpn": "0297004.WXNV",
+      "manufacturer": "Littelfuse",
+      "lcsc": "C178940",
+      "alt_mpn": "Littelfuse 0297004.WXT",
       "pins": [
         {
           "number": "1",
@@ -163,6 +168,11 @@
       "group": "J21: захищене живлення 12 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -188,6 +198,10 @@
       "group": "J21: захищене живлення 12 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "mpn": "0603WAF1302T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22797",
+      "alt_mpn": "YAGEO RC0603FR-0713KL",
       "pins": [
         {
           "number": "1",
@@ -214,6 +228,10 @@
       "group": "J21: захищене живлення 12 V",
       "source": "https://www.ti.com/lit/ds/symlink/tps25947.pdf",
       "status": "design",
+      "footprint": "SR_RX_Custom:TI_RPW0010A_VQFN-HR-10_2x2mm_P0.5mm",
+      "mpn": "TPS259470ARPWR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C3662799",
       "pins": [
         {
           "number": "1",
@@ -288,6 +306,11 @@
       "group": "J21: захищене живлення 12 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603FRE07825RL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C706193",
+      "alt_mpn": "KOA Speer RK73H1JTTD8250F",
       "pins": [
         {
           "number": "1",
@@ -313,6 +336,11 @@
       "group": "J21: захищене живлення 12 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD07102KL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C861068",
+      "alt_mpn": "Viking Tech ARG03BTC1023",
       "pins": [
         {
           "number": "1",
@@ -338,6 +366,11 @@
       "group": "J21: захищене живлення 12 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0710KL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C95204",
+      "alt_mpn": "Viking Tech ARG03BTC1002",
       "pins": [
         {
           "number": "1",
@@ -363,6 +396,9 @@
       "group": "J21: захищене живлення 12 V",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H332J080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3839693",
+      "alt_mpn": "YAGEO CC0603JRNPO9BN332",
       "pins": [
         {
           "number": "1",
@@ -390,6 +426,9 @@
       "group": "J21: захищене живлення 12 V",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -417,6 +456,9 @@
       "group": "J21: захищене живлення 12 V",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -444,6 +486,11 @@
       "group": "J21: захищене живлення 12 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -469,6 +516,9 @@
       "group": "J21: захищене живлення 12 V",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
       "pins": [
         {
           "number": "1",
@@ -496,6 +546,9 @@
       "group": "J21: захищене живлення 12 V",
       "source": "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
       "status": "design",
+      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
+      "manufacturer": "Coilcraft",
+      "lcsc": "C5379798",
       "pins": [
         {
           "number": "1",
@@ -523,6 +576,9 @@
       "group": "J21: захищене живлення 12 V",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
       "pins": [
         {
           "number": "1",
@@ -550,6 +606,11 @@
       "group": "J21: захищене живлення 12 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "1206W4F220LT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25336",
+      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
       "pins": [
         {
           "number": "1",
@@ -575,6 +636,9 @@
       "group": "J21: захищене живлення 12 V",
       "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
       "status": "design",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "manufacturer": "Panasonic",
+      "lcsc": "C407950",
       "pins": [
         {
           "number": "1",
@@ -589,7 +653,7 @@
           "net": "GND"
         }
       ],
-      "mpn": "EEUFR1H470",
+      "mpn": "EEU-FR1H470",
       "notes": [
         "Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.",
         "Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."
@@ -602,6 +666,11 @@
       "group": "J21: захищене живлення 12 V",
       "source": "https://www.vishay.com/docs/88392/smbj.pdf",
       "status": "verified",
+      "footprint": "SR_RX_Custom:D_SMB_KA",
+      "mpn": "SMBJ13A-E3/52",
+      "manufacturer": "Vishay General Semiconductor",
+      "lcsc": "C968569",
+      "alt_mpn": "Littelfuse SMBJ13A",
       "pins": [
         {
           "number": "K",
@@ -628,6 +697,9 @@
       "group": "J21: захищене живлення 12 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Capacitor_THT:CP_Radial_D8.0mm_P3.50mm",
+      "manufacturer": "Nichicon",
+      "lcsc": "C116228",
       "pins": [
         {
           "number": "1",
@@ -654,6 +726,7 @@
       "group": "J21: захищене живлення 12 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -673,6 +746,9 @@
       "group": "Дисплей: захищене живлення 12 V",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
       "pins": [
         {
           "number": "1",
@@ -700,6 +776,9 @@
       "group": "Дисплей: захищене живлення 12 V",
       "source": "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
       "status": "design",
+      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
+      "manufacturer": "Coilcraft",
+      "lcsc": "C5379798",
       "pins": [
         {
           "number": "1",
@@ -727,6 +806,9 @@
       "group": "Дисплей: захищене живлення 12 V",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
       "pins": [
         {
           "number": "1",
@@ -754,6 +836,11 @@
       "group": "Дисплей: захищене живлення 12 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "1206W4F220LT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25336",
+      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
       "pins": [
         {
           "number": "1",
@@ -779,6 +866,9 @@
       "group": "Дисплей: захищене живлення 12 V",
       "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
       "status": "design",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "manufacturer": "Panasonic",
+      "lcsc": "C407950",
       "pins": [
         {
           "number": "1",
@@ -793,7 +883,7 @@
           "net": "GND"
         }
       ],
-      "mpn": "EEUFR1H470",
+      "mpn": "EEU-FR1H470",
       "notes": [
         "Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.",
         "Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."
@@ -806,6 +896,10 @@
       "group": "Дисплей: захищене живлення 12 V",
       "source": "https://www.ti.com/lit/ds/symlink/tps25947.pdf",
       "status": "design",
+      "footprint": "SR_RX_Custom:TI_RPW0010A_VQFN-HR-10_2x2mm_P0.5mm",
+      "mpn": "TPS259470ARPWR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C3662799",
       "pins": [
         {
           "number": "1",
@@ -880,6 +974,11 @@
       "group": "Дисплей: захищене живлення 12 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1961T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22854",
+      "alt_mpn": "Viking Tech ARG03FTC1961",
       "pins": [
         {
           "number": "1",
@@ -905,6 +1004,11 @@
       "group": "Дисплей: захищене живлення 12 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD07102KL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C861068",
+      "alt_mpn": "Viking Tech ARG03BTC1023",
       "pins": [
         {
           "number": "1",
@@ -930,6 +1034,11 @@
       "group": "Дисплей: захищене живлення 12 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0710KL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C95204",
+      "alt_mpn": "Viking Tech ARG03BTC1002",
       "pins": [
         {
           "number": "1",
@@ -955,6 +1064,9 @@
       "group": "Дисплей: захищене живлення 12 V",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H332J080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3839693",
+      "alt_mpn": "YAGEO CC0603JRNPO9BN332",
       "pins": [
         {
           "number": "1",
@@ -982,6 +1094,9 @@
       "group": "Дисплей: захищене живлення 12 V",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -1009,6 +1124,9 @@
       "group": "Дисплей: захищене живлення 12 V",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -1036,6 +1154,11 @@
       "group": "Дисплей: захищене живлення 12 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1061,6 +1184,11 @@
       "group": "Дисплей: захищене живлення 12 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -1086,6 +1214,7 @@
       "group": "Дисплей: захищене живлення 12 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -1105,6 +1234,10 @@
       "group": "Lime M.2: комутована шина 3.3 V",
       "source": "https://www.ti.com/lit/ds/symlink/tps25947.pdf",
       "status": "design",
+      "footprint": "SR_RX_Custom:TI_RPW0010A_VQFN-HR-10_2x2mm_P0.5mm",
+      "mpn": "TPS259470ARPWR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C3662799",
       "pins": [
         {
           "number": "1",
@@ -1179,6 +1312,11 @@
       "group": "Lime M.2: комутована шина 3.3 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RC0603FR-071K65L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C185357",
+      "alt_mpn": "UNI-ROYAL 0603WAF1651T5E",
       "pins": [
         {
           "number": "1",
@@ -1204,6 +1342,11 @@
       "group": "Lime M.2: комутована шина 3.3 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0719K6L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C861185",
+      "alt_mpn": "Vishay Dale TNPW060319K6BEEA",
       "pins": [
         {
           "number": "1",
@@ -1229,6 +1372,11 @@
       "group": "Lime M.2: комутована шина 3.3 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0710KL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C95204",
+      "alt_mpn": "Viking Tech ARG03BTC1002",
       "pins": [
         {
           "number": "1",
@@ -1254,6 +1402,9 @@
       "group": "Lime M.2: комутована шина 3.3 V",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H332J080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3839693",
+      "alt_mpn": "YAGEO CC0603JRNPO9BN332",
       "pins": [
         {
           "number": "1",
@@ -1281,6 +1432,9 @@
       "group": "Lime M.2: комутована шина 3.3 V",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -1308,6 +1462,9 @@
       "group": "Lime M.2: комутована шина 3.3 V",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -1335,6 +1492,11 @@
       "group": "Lime M.2: комутована шина 3.3 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -1360,6 +1522,9 @@
       "group": "Lime M.2: комутована шина 3.3 V",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
       "pins": [
         {
           "number": "1",
@@ -1387,6 +1552,9 @@
       "group": "Lime M.2: комутована шина 3.3 V",
       "source": "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
       "status": "design",
+      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
+      "manufacturer": "Coilcraft",
+      "lcsc": "C5379798",
       "pins": [
         {
           "number": "1",
@@ -1414,6 +1582,9 @@
       "group": "Lime M.2: комутована шина 3.3 V",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
       "pins": [
         {
           "number": "1",
@@ -1441,6 +1612,11 @@
       "group": "Lime M.2: комутована шина 3.3 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "1206W4F220LT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25336",
+      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
       "pins": [
         {
           "number": "1",
@@ -1466,6 +1642,9 @@
       "group": "Lime M.2: комутована шина 3.3 V",
       "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
       "status": "design",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "manufacturer": "Panasonic",
+      "lcsc": "C407950",
       "pins": [
         {
           "number": "1",
@@ -1480,7 +1659,7 @@
           "net": "GND"
         }
       ],
-      "mpn": "EEUFR1H470",
+      "mpn": "EEU-FR1H470",
       "notes": [
         "Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.",
         "Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."
@@ -1493,6 +1672,7 @@
       "group": "Lime M.2: комутована шина 3.3 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -1512,6 +1692,11 @@
       "group": "AUX12: верхній ключ і PTC",
       "source": "https://www.aosmd.com/sites/default/files/res/datasheets/AO3407A.pdf",
       "status": "design",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "mpn": "AO3407A",
+      "manufacturer": "Alpha & Omega Semiconductor",
+      "lcsc": "C15155",
+      "alt_mpn": "UMW AO3407A",
       "pins": [
         {
           "number": "1",
@@ -1543,6 +1728,11 @@
       "group": "AUX12: верхній ключ і PTC",
       "source": "https://assets.nexperia.com/documents/data-sheet/2N7002.pdf",
       "status": "design",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "mpn": "2N7002,215",
+      "manufacturer": "Nexperia",
+      "lcsc": "C65189",
+      "alt_mpn": "onsemi 2N7002LT1G; Diodes Incorporated 2N7002-7-F",
       "pins": [
         {
           "number": "1",
@@ -1574,6 +1764,11 @@
       "group": "AUX12: верхній ключ і PTC",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -1599,6 +1794,11 @@
       "group": "AUX12: верхній ключ і PTC",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1624,6 +1824,11 @@
       "group": "AUX12: верхній ключ і PTC",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1649,6 +1854,10 @@
       "group": "AUX12: верхній ключ і PTC",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Fuse:Fuse_1812_4532Metric",
+      "mpn": "MF-MSMF075/24-2",
+      "manufacturer": "Bourns",
+      "lcsc": "C208467",
       "pins": [
         {
           "number": "1",
@@ -1674,6 +1883,9 @@
       "group": "AUX12: верхній ключ і PTC",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
       "pins": [
         {
           "number": "1",
@@ -1701,6 +1913,9 @@
       "group": "AUX12: верхній ключ і PTC",
       "source": "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
       "status": "design",
+      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
+      "manufacturer": "Coilcraft",
+      "lcsc": "C5379798",
       "pins": [
         {
           "number": "1",
@@ -1728,6 +1943,9 @@
       "group": "AUX12: верхній ключ і PTC",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
       "pins": [
         {
           "number": "1",
@@ -1755,6 +1973,11 @@
       "group": "AUX12: верхній ключ і PTC",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "1206W4F220LT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25336",
+      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
       "pins": [
         {
           "number": "1",
@@ -1780,6 +2003,9 @@
       "group": "AUX12: верхній ключ і PTC",
       "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
       "status": "design",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "manufacturer": "Panasonic",
+      "lcsc": "C407950",
       "pins": [
         {
           "number": "1",
@@ -1794,7 +2020,7 @@
           "net": "GND"
         }
       ],
-      "mpn": "EEUFR1H470",
+      "mpn": "EEU-FR1H470",
       "notes": [
         "Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.",
         "Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."
@@ -1807,6 +2033,7 @@
       "group": "AUX12: верхній ключ і PTC",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -1826,6 +2053,7 @@
       "group": "LNA4V5: паралельні LT3045",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H226M250AC",
       "status": "design",
+      "manufacturer": "TDK",
       "pins": [
         {
           "number": "1",
@@ -1853,6 +2081,9 @@
       "group": "LNA4V5: паралельні LT3045",
       "source": "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
       "status": "design",
+      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
+      "manufacturer": "Coilcraft",
+      "lcsc": "C5379798",
       "pins": [
         {
           "number": "1",
@@ -1880,6 +2111,7 @@
       "group": "LNA4V5: паралельні LT3045",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H226M250AC",
       "status": "design",
+      "manufacturer": "TDK",
       "pins": [
         {
           "number": "1",
@@ -1908,6 +2140,11 @@
       "group": "LNA4V5: паралельні LT3045",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "1206W4F220LT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25336",
+      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
       "pins": [
         {
           "number": "1",
@@ -1933,6 +2170,9 @@
       "group": "LNA4V5: паралельні LT3045",
       "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
       "status": "design",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "manufacturer": "Panasonic",
+      "lcsc": "C407950",
       "pins": [
         {
           "number": "1",
@@ -1947,7 +2187,7 @@
           "net": "GND"
         }
       ],
-      "mpn": "EEUFR1H470",
+      "mpn": "EEU-FR1H470",
       "notes": [
         "Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.",
         "Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."
@@ -1960,6 +2200,10 @@
       "group": "LNA4V5: паралельні LT3045",
       "source": "https://www.analog.com/media/en/technical-documentation/data-sheets/3045fa.pdf",
       "status": "design",
+      "footprint": "Package_SO:MSOP-12-1EP_3x4.039mm_P0.65mm_EP1.651x2.845mm_ThermalVias",
+      "mpn": "LT3045EMSE#PBF",
+      "manufacturer": "Analog Devices",
+      "lcsc": "C580012",
       "pins": [
         {
           "number": "1",
@@ -2053,6 +2297,9 @@
       "group": "LNA4V5: паралельні LT3045",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
       "pins": [
         {
           "number": "1",
@@ -2081,6 +2328,7 @@
       "group": "LNA4V5: паралельні LT3045",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H226M250AC",
       "status": "design",
+      "manufacturer": "TDK",
       "pins": [
         {
           "number": "1",
@@ -2109,6 +2357,11 @@
       "group": "LNA4V5: паралельні LT3045",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "HoLR1206-1W-20mR-1%-75ppm",
+      "manufacturer": "Milliohm",
+      "lcsc": "C601099",
+      "alt_mpn": "Milliohm HoLLR1206-1W-20mR-1%",
       "pins": [
         {
           "number": "1",
@@ -2134,6 +2387,10 @@
       "group": "LNA4V5: паралельні LT3045",
       "source": "https://www.analog.com/media/en/technical-documentation/data-sheets/3045fa.pdf",
       "status": "design",
+      "footprint": "Package_SO:MSOP-12-1EP_3x4.039mm_P0.65mm_EP1.651x2.845mm_ThermalVias",
+      "mpn": "LT3045EMSE#PBF",
+      "manufacturer": "Analog Devices",
+      "lcsc": "C580012",
       "pins": [
         {
           "number": "1",
@@ -2227,6 +2484,9 @@
       "group": "LNA4V5: паралельні LT3045",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
       "pins": [
         {
           "number": "1",
@@ -2255,6 +2515,7 @@
       "group": "LNA4V5: паралельні LT3045",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H226M250AC",
       "status": "design",
+      "manufacturer": "TDK",
       "pins": [
         {
           "number": "1",
@@ -2283,6 +2544,11 @@
       "group": "LNA4V5: паралельні LT3045",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "HoLR1206-1W-20mR-1%-75ppm",
+      "manufacturer": "Milliohm",
+      "lcsc": "C601099",
+      "alt_mpn": "Milliohm HoLLR1206-1W-20mR-1%",
       "pins": [
         {
           "number": "1",
@@ -2308,6 +2574,10 @@
       "group": "LNA4V5: паралельні LT3045",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "mpn": "AR03BTCX2152",
+      "manufacturer": "Viking Tech",
+      "lcsc": "C3013545",
+      "alt_mpn": "YAGEO RT0603BRB0721K5L",
       "pins": [
         {
           "number": "1",
@@ -2334,6 +2604,9 @@
       "group": "LNA4V5: паралельні LT3045",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
       "pins": [
         {
           "number": "1",
@@ -2362,6 +2635,7 @@
       "group": "LNA4V5: паралельні LT3045",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H226M250AC",
       "status": "design",
+      "manufacturer": "TDK",
       "pins": [
         {
           "number": "1",
@@ -2389,6 +2663,7 @@
       "group": "LNA4V5: паралельні LT3045",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -2408,6 +2683,10 @@
       "group": "LNA: канал 1",
       "source": "https://www.ti.com/lit/gpn/tps2553-1",
       "status": "design",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "mpn": "TPS2553DBVR-1",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C111738",
       "pins": [
         {
           "number": "1",
@@ -2458,6 +2737,11 @@
       "group": "LNA: канал 1",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF8872T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C23258",
+      "alt_mpn": "Bourns CR0603-FX-8872ELF",
       "pins": [
         {
           "number": "1",
@@ -2483,6 +2767,9 @@
       "group": "LNA: канал 1",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -2510,6 +2797,11 @@
       "group": "LNA: канал 1",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -2535,6 +2827,11 @@
       "group": "LNA: канал 1",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "WSL1206R2000DEA",
+      "manufacturer": "Vishay Dale",
+      "lcsc": "C4296612",
+      "alt_mpn": "Ohmite KDV12DR200ET",
       "pins": [
         {
           "number": "1",
@@ -2560,6 +2857,9 @@
       "group": "LNA: канал 1",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -2587,6 +2887,9 @@
       "group": "LNA: канал 1",
       "source": "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
       "status": "design",
+      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
+      "manufacturer": "Coilcraft",
+      "lcsc": "C5379798",
       "pins": [
         {
           "number": "1",
@@ -2614,6 +2917,9 @@
       "group": "LNA: канал 1",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -2641,6 +2947,11 @@
       "group": "LNA: канал 1",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "1206W4F220LT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25336",
+      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
       "pins": [
         {
           "number": "1",
@@ -2666,6 +2977,9 @@
       "group": "LNA: канал 1",
       "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
       "status": "design",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "manufacturer": "Panasonic",
+      "lcsc": "C407950",
       "pins": [
         {
           "number": "1",
@@ -2680,7 +2994,7 @@
           "net": "GND"
         }
       ],
-      "mpn": "EEUFR1H470",
+      "mpn": "EEU-FR1H470",
       "notes": [
         "Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.",
         "Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."
@@ -2693,6 +3007,7 @@
       "group": "LNA: канал 1",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -2712,6 +3027,10 @@
       "group": "LNA: канал 2",
       "source": "https://www.ti.com/lit/gpn/tps2553-1",
       "status": "design",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "mpn": "TPS2553DBVR-1",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C111738",
       "pins": [
         {
           "number": "1",
@@ -2762,6 +3081,11 @@
       "group": "LNA: канал 2",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF8872T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C23258",
+      "alt_mpn": "Bourns CR0603-FX-8872ELF",
       "pins": [
         {
           "number": "1",
@@ -2787,6 +3111,9 @@
       "group": "LNA: канал 2",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -2814,6 +3141,11 @@
       "group": "LNA: канал 2",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -2839,6 +3171,11 @@
       "group": "LNA: канал 2",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "WSL1206R2000DEA",
+      "manufacturer": "Vishay Dale",
+      "lcsc": "C4296612",
+      "alt_mpn": "Ohmite KDV12DR200ET",
       "pins": [
         {
           "number": "1",
@@ -2864,6 +3201,9 @@
       "group": "LNA: канал 2",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -2891,6 +3231,9 @@
       "group": "LNA: канал 2",
       "source": "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
       "status": "design",
+      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
+      "manufacturer": "Coilcraft",
+      "lcsc": "C5379798",
       "pins": [
         {
           "number": "1",
@@ -2918,6 +3261,9 @@
       "group": "LNA: канал 2",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -2945,6 +3291,11 @@
       "group": "LNA: канал 2",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "1206W4F220LT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25336",
+      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
       "pins": [
         {
           "number": "1",
@@ -2970,6 +3321,9 @@
       "group": "LNA: канал 2",
       "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
       "status": "design",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "manufacturer": "Panasonic",
+      "lcsc": "C407950",
       "pins": [
         {
           "number": "1",
@@ -2984,7 +3338,7 @@
           "net": "GND"
         }
       ],
-      "mpn": "EEUFR1H470",
+      "mpn": "EEU-FR1H470",
       "notes": [
         "Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.",
         "Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."
@@ -2997,6 +3351,7 @@
       "group": "LNA: канал 2",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -3016,6 +3371,8 @@
       "group": "LNA: канал 2",
       "source": "https://www.diodes.com/assets/Datasheets/DMP6050SSD.pdf",
       "status": "design",
+      "manufacturer": "Diodes Incorporated",
+      "lcsc": "C531158",
       "pins": [
         {
           "number": "1",
@@ -3080,6 +3437,10 @@
       "group": "LNA: канал 2",
       "source": "https://assets.nexperia.com/documents/data-sheet/2N7002.pdf",
       "status": "design",
+      "mpn": "2N7002,215",
+      "manufacturer": "Nexperia",
+      "lcsc": "C65189",
+      "alt_mpn": "onsemi 2N7002LT1G; Diodes Incorporated 2N7002-7-F",
       "pins": [
         {
           "number": "1",
@@ -3112,6 +3473,9 @@
       "group": "LNA: канал 2",
       "source": "https://www.diodes.com/assets/Datasheets/ds18001.pdf",
       "status": "design",
+      "manufacturer": "Diodes Incorporated",
+      "lcsc": "C500793",
+      "alt_mpn": "onsemi BZX84C10LT1G",
       "pins": [
         {
           "number": "1",
@@ -3145,6 +3509,10 @@
       "group": "LNA: канал 2",
       "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
       "status": "design",
+      "mpn": "0603WAF2203T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22961",
+      "alt_mpn": "YAGEO RC0603FR-07220KL",
       "pins": [
         {
           "number": "1",
@@ -3172,6 +3540,10 @@
       "group": "LNA: канал 2",
       "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
       "status": "design",
+      "mpn": "1210W2F4701T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C52443",
+      "alt_mpn": "Vishay Dale CRCW12104K70FKEA",
       "pins": [
         {
           "number": "1",
@@ -3199,6 +3571,10 @@
       "group": "LNA: канал 2",
       "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
       "status": "design",
+      "mpn": "0603WAF4701T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C23162",
+      "alt_mpn": "YAGEO RC0603FR-074K7L",
       "pins": [
         {
           "number": "1",
@@ -3226,6 +3602,9 @@
       "group": "LNA: канал 2",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -3253,6 +3632,8 @@
       "group": "LNA: канал 2",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "alt_mpn": "YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -3281,6 +3662,7 @@
       "group": "LNA: канал 2",
       "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
       "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -3300,6 +3682,10 @@
       "group": "LNA: канал 3",
       "source": "https://www.ti.com/lit/gpn/tps2553-1",
       "status": "design",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "mpn": "TPS2553DBVR-1",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C111738",
       "pins": [
         {
           "number": "1",
@@ -3350,6 +3736,11 @@
       "group": "LNA: канал 3",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF8872T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C23258",
+      "alt_mpn": "Bourns CR0603-FX-8872ELF",
       "pins": [
         {
           "number": "1",
@@ -3375,6 +3766,9 @@
       "group": "LNA: канал 3",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -3402,6 +3796,11 @@
       "group": "LNA: канал 3",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -3427,6 +3826,11 @@
       "group": "LNA: канал 3",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "WSL1206R2000DEA",
+      "manufacturer": "Vishay Dale",
+      "lcsc": "C4296612",
+      "alt_mpn": "Ohmite KDV12DR200ET",
       "pins": [
         {
           "number": "1",
@@ -3452,6 +3856,9 @@
       "group": "LNA: канал 3",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -3479,6 +3886,9 @@
       "group": "LNA: канал 3",
       "source": "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
       "status": "design",
+      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
+      "manufacturer": "Coilcraft",
+      "lcsc": "C5379798",
       "pins": [
         {
           "number": "1",
@@ -3506,6 +3916,9 @@
       "group": "LNA: канал 3",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -3533,6 +3946,11 @@
       "group": "LNA: канал 3",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "1206W4F220LT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25336",
+      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
       "pins": [
         {
           "number": "1",
@@ -3558,6 +3976,9 @@
       "group": "LNA: канал 3",
       "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
       "status": "design",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "manufacturer": "Panasonic",
+      "lcsc": "C407950",
       "pins": [
         {
           "number": "1",
@@ -3572,7 +3993,7 @@
           "net": "GND"
         }
       ],
-      "mpn": "EEUFR1H470",
+      "mpn": "EEU-FR1H470",
       "notes": [
         "Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.",
         "Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."
@@ -3585,6 +4006,7 @@
       "group": "LNA: канал 3",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -3604,6 +4026,8 @@
       "group": "LNA: канал 3",
       "source": "https://www.diodes.com/assets/Datasheets/DMP6050SSD.pdf",
       "status": "design",
+      "manufacturer": "Diodes Incorporated",
+      "lcsc": "C531158",
       "pins": [
         {
           "number": "1",
@@ -3668,6 +4092,10 @@
       "group": "LNA: канал 3",
       "source": "https://assets.nexperia.com/documents/data-sheet/2N7002.pdf",
       "status": "design",
+      "mpn": "2N7002,215",
+      "manufacturer": "Nexperia",
+      "lcsc": "C65189",
+      "alt_mpn": "onsemi 2N7002LT1G; Diodes Incorporated 2N7002-7-F",
       "pins": [
         {
           "number": "1",
@@ -3700,6 +4128,9 @@
       "group": "LNA: канал 3",
       "source": "https://www.diodes.com/assets/Datasheets/ds18001.pdf",
       "status": "design",
+      "manufacturer": "Diodes Incorporated",
+      "lcsc": "C500793",
+      "alt_mpn": "onsemi BZX84C10LT1G",
       "pins": [
         {
           "number": "1",
@@ -3733,6 +4164,10 @@
       "group": "LNA: канал 3",
       "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
       "status": "design",
+      "mpn": "0603WAF2203T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22961",
+      "alt_mpn": "YAGEO RC0603FR-07220KL",
       "pins": [
         {
           "number": "1",
@@ -3760,6 +4195,10 @@
       "group": "LNA: канал 3",
       "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
       "status": "design",
+      "mpn": "1210W2F4701T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C52443",
+      "alt_mpn": "Vishay Dale CRCW12104K70FKEA",
       "pins": [
         {
           "number": "1",
@@ -3787,6 +4226,10 @@
       "group": "LNA: канал 3",
       "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
       "status": "design",
+      "mpn": "0603WAF4701T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C23162",
+      "alt_mpn": "YAGEO RC0603FR-074K7L",
       "pins": [
         {
           "number": "1",
@@ -3814,6 +4257,9 @@
       "group": "LNA: канал 3",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -3841,6 +4287,8 @@
       "group": "LNA: канал 3",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "alt_mpn": "YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -3869,6 +4317,7 @@
       "group": "LNA: канал 3",
       "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
       "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -3888,6 +4337,10 @@
       "group": "LNA: канал 4",
       "source": "https://www.ti.com/lit/gpn/tps2553-1",
       "status": "design",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "mpn": "TPS2553DBVR-1",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C111738",
       "pins": [
         {
           "number": "1",
@@ -3938,6 +4391,11 @@
       "group": "LNA: канал 4",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RC0603FR-07162KL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C165760",
+      "alt_mpn": "UNI-ROYAL 0603WAF1623T5E",
       "pins": [
         {
           "number": "1",
@@ -3963,6 +4421,9 @@
       "group": "LNA: канал 4",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -3990,6 +4451,11 @@
       "group": "LNA: канал 4",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -4015,6 +4481,11 @@
       "group": "LNA: канал 4",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "WSL1206R2000DEA",
+      "manufacturer": "Vishay Dale",
+      "lcsc": "C4296612",
+      "alt_mpn": "Ohmite KDV12DR200ET",
       "pins": [
         {
           "number": "1",
@@ -4040,6 +4511,9 @@
       "group": "LNA: канал 4",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -4067,6 +4541,9 @@
       "group": "LNA: канал 4",
       "source": "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
       "status": "design",
+      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
+      "manufacturer": "Coilcraft",
+      "lcsc": "C5379798",
       "pins": [
         {
           "number": "1",
@@ -4094,6 +4571,9 @@
       "group": "LNA: канал 4",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -4121,6 +4601,11 @@
       "group": "LNA: канал 4",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "1206W4F220LT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25336",
+      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
       "pins": [
         {
           "number": "1",
@@ -4146,6 +4631,9 @@
       "group": "LNA: канал 4",
       "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
       "status": "design",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "manufacturer": "Panasonic",
+      "lcsc": "C407950",
       "pins": [
         {
           "number": "1",
@@ -4160,7 +4648,7 @@
           "net": "GND"
         }
       ],
-      "mpn": "EEUFR1H470",
+      "mpn": "EEU-FR1H470",
       "notes": [
         "Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.",
         "Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."
@@ -4173,6 +4661,7 @@
       "group": "LNA: канал 4",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -4192,6 +4681,10 @@
       "group": "RTL-B: комутований VBUS",
       "source": "https://www.ti.com/lit/gpn/tps2553-1",
       "status": "design",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "mpn": "TPS2553DBVR-1",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C111738",
       "pins": [
         {
           "number": "1",
@@ -4242,6 +4735,11 @@
       "group": "RTL-B: комутований VBUS",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF5622T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C23080",
+      "alt_mpn": "Panasonic ERJ3EKF5622V",
       "pins": [
         {
           "number": "1",
@@ -4268,6 +4766,9 @@
       "group": "RTL-B: комутований VBUS",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -4295,6 +4796,11 @@
       "group": "RTL-B: комутований VBUS",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -4320,6 +4826,9 @@
       "group": "RTL-B: комутований VBUS",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -4347,6 +4856,9 @@
       "group": "RTL-B: комутований VBUS",
       "source": "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
       "status": "design",
+      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
+      "manufacturer": "Coilcraft",
+      "lcsc": "C5379798",
       "pins": [
         {
           "number": "1",
@@ -4374,6 +4886,9 @@
       "group": "RTL-B: комутований VBUS",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -4401,6 +4916,11 @@
       "group": "RTL-B: комутований VBUS",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "1206W4F220LT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25336",
+      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
       "pins": [
         {
           "number": "1",
@@ -4426,6 +4946,9 @@
       "group": "RTL-B: комутований VBUS",
       "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
       "status": "design",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "manufacturer": "Panasonic",
+      "lcsc": "C407950",
       "pins": [
         {
           "number": "1",
@@ -4440,7 +4963,7 @@
           "net": "GND"
         }
       ],
-      "mpn": "EEUFR1H470",
+      "mpn": "EEU-FR1H470",
       "notes": [
         "Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.",
         "Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."
@@ -4453,6 +4976,7 @@
       "group": "RTL-B: комутований VBUS",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -4472,6 +4996,9 @@
       "group": "LNB: малошумна захищена шина",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
       "pins": [
         {
           "number": "1",
@@ -4499,6 +5026,9 @@
       "group": "LNB: малошумна захищена шина",
       "source": "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
       "status": "design",
+      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
+      "manufacturer": "Coilcraft",
+      "lcsc": "C5379798",
       "pins": [
         {
           "number": "1",
@@ -4526,6 +5056,9 @@
       "group": "LNB: малошумна захищена шина",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
       "pins": [
         {
           "number": "1",
@@ -4553,6 +5086,11 @@
       "group": "LNB: малошумна захищена шина",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "1206W4F220LT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25336",
+      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
       "pins": [
         {
           "number": "1",
@@ -4578,6 +5116,9 @@
       "group": "LNB: малошумна захищена шина",
       "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
       "status": "design",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "manufacturer": "Panasonic",
+      "lcsc": "C407950",
       "pins": [
         {
           "number": "1",
@@ -4592,7 +5133,7 @@
           "net": "GND"
         }
       ],
-      "mpn": "EEUFR1H470",
+      "mpn": "EEU-FR1H470",
       "notes": [
         "Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.",
         "Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."
@@ -4605,6 +5146,11 @@
       "group": "LNB: малошумна захищена шина",
       "source": "https://www.ti.com/lit/ds/symlink/tps7a47.pdf",
       "status": "design",
+      "footprint": "SR_RX_Custom:TI_RGW0020A_VQFN-20-1EP_5x5mm_P0.65mm_EP3.15x3.15mm",
+      "mpn": "TPS7A4701RGWT",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C68214",
+      "alt_mpn": "Texas Instruments TPS7A4701RGWR",
       "pins": [
         {
           "number": "1",
@@ -4746,6 +5292,9 @@
       "group": "LNB: малошумна захищена шина",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
       "pins": [
         {
           "number": "1",
@@ -4773,6 +5322,7 @@
       "group": "LNB: малошумна захищена шина",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H226M250AC",
       "status": "design",
+      "manufacturer": "TDK",
       "pins": [
         {
           "number": "1",
@@ -4801,6 +5351,9 @@
       "group": "LNB: малошумна захищена шина",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -4828,6 +5381,11 @@
       "group": "LNB: малошумна захищена шина",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -4853,6 +5411,8 @@
       "group": "LNB: малошумна захищена шина",
       "source": "https://assets.nexperia.com/documents/data-sheet/PMEG4030ER.pdf",
       "status": "design",
+      "manufacturer": "Nexperia",
+      "lcsc": "C389355",
       "pins": [
         {
           "number": "1",
@@ -4871,7 +5431,7 @@
         "Nexperia PMEG4030ER, SOD123W: фізичний 1 = K до OUT, 2 = A до GND. 40V/3A; VF ≤330mV при 100mA і 25°C.",
         "Перевірити від’ємний викид OUT на холоді й при короткому замиканні; рейтинг діода не гарантує −0.4V за довільного струму."
       ],
-      "mpn": "PMEG4030ER",
+      "mpn": "PMEG4030ER,115",
       "footprint": "Diode_SMD:Nexperia_CFP3_SOD-123W"
     },
     {
@@ -4881,6 +5441,11 @@
       "group": "LNB: малошумна захищена шина",
       "source": "https://www.ti.com/lit/ds/symlink/tps2596.pdf",
       "status": "design",
+      "footprint": "SR_RX_Custom:TI_DDA0008_HSOP-8-1EP_3.9x4.9mm_P1.27mm_EP2.4x3.1mm",
+      "mpn": "TPS259630DDAR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C2155776",
+      "alt_mpn": "Texas Instruments TPS259631DDAR",
       "pins": [
         {
           "number": "1",
@@ -4950,6 +5515,11 @@
       "group": "LNB: малошумна захищена шина",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RK73H1JTTD2051F",
+      "manufacturer": "KOA Speer",
+      "lcsc": "C830313",
+      "alt_mpn": "Viking Tech ARG03FTC2051",
       "pins": [
         {
           "number": "1",
@@ -4975,6 +5545,11 @@
       "group": "LNB: малошумна захищена шина",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD07110KL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C326736",
+      "alt_mpn": "UNI-ROYAL 0603WAD1103T5E",
       "pins": [
         {
           "number": "1",
@@ -5000,6 +5575,11 @@
       "group": "LNB: малошумна захищена шина",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0710KL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C95204",
+      "alt_mpn": "Viking Tech ARG03BTC1002",
       "pins": [
         {
           "number": "1",
@@ -5025,6 +5605,9 @@
       "group": "LNB: малошумна захищена шина",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H473K080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C1870901",
+      "alt_mpn": "YAGEO CC0603KRX7R9BB473",
       "pins": [
         {
           "number": "1",
@@ -5052,6 +5635,9 @@
       "group": "LNB: малошумна захищена шина",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -5079,6 +5665,11 @@
       "group": "LNB: малошумна захищена шина",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "WSL1206R1000DEA",
+      "manufacturer": "Vishay Dale",
+      "lcsc": "C4235539",
+      "alt_mpn": "Littelfuse L4CL1206LR100DNR",
       "pins": [
         {
           "number": "1",
@@ -5104,6 +5695,9 @@
       "group": "LNB: малошумна захищена шина",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -5131,6 +5725,9 @@
       "group": "LNB: малошумна захищена шина",
       "source": "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
       "status": "design",
+      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
+      "manufacturer": "Coilcraft",
+      "lcsc": "C5379798",
       "pins": [
         {
           "number": "1",
@@ -5158,6 +5755,9 @@
       "group": "LNB: малошумна захищена шина",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -5185,6 +5785,11 @@
       "group": "LNB: малошумна захищена шина",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "1206W4F220LT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25336",
+      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
       "pins": [
         {
           "number": "1",
@@ -5210,6 +5815,9 @@
       "group": "LNB: малошумна захищена шина",
       "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
       "status": "design",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "manufacturer": "Panasonic",
+      "lcsc": "C407950",
       "pins": [
         {
           "number": "1",
@@ -5224,7 +5832,7 @@
           "net": "GND"
         }
       ],
-      "mpn": "EEUFR1H470",
+      "mpn": "EEU-FR1H470",
       "notes": [
         "Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.",
         "Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."
@@ -5237,6 +5845,7 @@
       "group": "LNB: малошумна захищена шина",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -5256,6 +5865,9 @@
       "group": "Boni: малошумна захищена шина",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
       "pins": [
         {
           "number": "1",
@@ -5283,6 +5895,9 @@
       "group": "Boni: малошумна захищена шина",
       "source": "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
       "status": "design",
+      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
+      "manufacturer": "Coilcraft",
+      "lcsc": "C5379798",
       "pins": [
         {
           "number": "1",
@@ -5310,6 +5925,9 @@
       "group": "Boni: малошумна захищена шина",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
       "pins": [
         {
           "number": "1",
@@ -5337,6 +5955,11 @@
       "group": "Boni: малошумна захищена шина",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "1206W4F220LT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25336",
+      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
       "pins": [
         {
           "number": "1",
@@ -5362,6 +5985,9 @@
       "group": "Boni: малошумна захищена шина",
       "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
       "status": "design",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "manufacturer": "Panasonic",
+      "lcsc": "C407950",
       "pins": [
         {
           "number": "1",
@@ -5376,7 +6002,7 @@
           "net": "GND"
         }
       ],
-      "mpn": "EEUFR1H470",
+      "mpn": "EEU-FR1H470",
       "notes": [
         "Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.",
         "Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."
@@ -5389,6 +6015,11 @@
       "group": "Boni: малошумна захищена шина",
       "source": "https://www.ti.com/lit/ds/symlink/tps7a47.pdf",
       "status": "design",
+      "footprint": "SR_RX_Custom:TI_RGW0020A_VQFN-20-1EP_5x5mm_P0.65mm_EP3.15x3.15mm",
+      "mpn": "TPS7A4701RGWT",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C68214",
+      "alt_mpn": "Texas Instruments TPS7A4701RGWR",
       "pins": [
         {
           "number": "1",
@@ -5530,6 +6161,9 @@
       "group": "Boni: малошумна захищена шина",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
       "pins": [
         {
           "number": "1",
@@ -5557,6 +6191,7 @@
       "group": "Boni: малошумна захищена шина",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H226M250AC",
       "status": "design",
+      "manufacturer": "TDK",
       "pins": [
         {
           "number": "1",
@@ -5585,6 +6220,9 @@
       "group": "Boni: малошумна захищена шина",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -5612,6 +6250,11 @@
       "group": "Boni: малошумна захищена шина",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -5637,6 +6280,8 @@
       "group": "Boni: малошумна захищена шина",
       "source": "https://assets.nexperia.com/documents/data-sheet/PMEG4030ER.pdf",
       "status": "design",
+      "manufacturer": "Nexperia",
+      "lcsc": "C389355",
       "pins": [
         {
           "number": "1",
@@ -5655,7 +6300,7 @@
         "Nexperia PMEG4030ER, SOD123W: фізичний 1 = K до OUT, 2 = A до GND. 40V/3A; VF ≤330mV при 100mA і 25°C.",
         "Перевірити від’ємний викид OUT на холоді й при короткому замиканні; рейтинг діода не гарантує −0.4V за довільного струму."
       ],
-      "mpn": "PMEG4030ER",
+      "mpn": "PMEG4030ER,115",
       "footprint": "Diode_SMD:Nexperia_CFP3_SOD-123W"
     },
     {
@@ -5665,6 +6310,11 @@
       "group": "Boni: малошумна захищена шина",
       "source": "https://www.ti.com/lit/ds/symlink/tps2596.pdf",
       "status": "design",
+      "footprint": "SR_RX_Custom:TI_DDA0008_HSOP-8-1EP_3.9x4.9mm_P1.27mm_EP2.4x3.1mm",
+      "mpn": "TPS259630DDAR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C2155776",
+      "alt_mpn": "Texas Instruments TPS259631DDAR",
       "pins": [
         {
           "number": "1",
@@ -5734,6 +6384,10 @@
       "group": "Boni: малошумна захищена шина",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "mpn": "0603WAF7151T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25980",
+      "alt_mpn": "Panasonic ERJ3EKF7151V",
       "pins": [
         {
           "number": "1",
@@ -5760,6 +6414,7 @@
       "group": "Boni: малошумна захищена шина",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
       "pins": [
         {
           "number": "1",
@@ -5786,6 +6441,11 @@
       "group": "Boni: малошумна захищена шина",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0710KL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C95204",
+      "alt_mpn": "Viking Tech ARG03BTC1002",
       "pins": [
         {
           "number": "1",
@@ -5812,6 +6472,8 @@
       "group": "Boni: малошумна захищена шина",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "alt_mpn": "YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -5839,6 +6501,9 @@
       "group": "Boni: малошумна захищена шина",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -5866,6 +6531,11 @@
       "group": "Boni: малошумна захищена шина",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "WSL1206R2000DEA",
+      "manufacturer": "Vishay Dale",
+      "lcsc": "C4296612",
+      "alt_mpn": "Ohmite KDV12DR200ET",
       "pins": [
         {
           "number": "1",
@@ -5891,6 +6561,9 @@
       "group": "Boni: малошумна захищена шина",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -5918,6 +6591,9 @@
       "group": "Boni: малошумна захищена шина",
       "source": "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
       "status": "design",
+      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
+      "manufacturer": "Coilcraft",
+      "lcsc": "C5379798",
       "pins": [
         {
           "number": "1",
@@ -5945,6 +6621,9 @@
       "group": "Boni: малошумна захищена шина",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -5972,6 +6651,11 @@
       "group": "Boni: малошумна захищена шина",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "1206W4F220LT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25336",
+      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
       "pins": [
         {
           "number": "1",
@@ -5997,6 +6681,9 @@
       "group": "Boni: малошумна захищена шина",
       "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
       "status": "design",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "manufacturer": "Panasonic",
+      "lcsc": "C407950",
       "pins": [
         {
           "number": "1",
@@ -6011,7 +6698,7 @@
           "net": "GND"
         }
       ],
-      "mpn": "EEUFR1H470",
+      "mpn": "EEU-FR1H470",
       "notes": [
         "Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.",
         "Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."
@@ -6024,6 +6711,7 @@
       "group": "Boni: малошумна захищена шина",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -6043,6 +6731,8 @@
       "group": "Boni: малошумна захищена шина",
       "source": "https://www.diodes.com/assets/Datasheets/DMP6050SSD.pdf",
       "status": "design",
+      "manufacturer": "Diodes Incorporated",
+      "lcsc": "C531158",
       "pins": [
         {
           "number": "1",
@@ -6107,6 +6797,10 @@
       "group": "Boni: малошумна захищена шина",
       "source": "https://assets.nexperia.com/documents/data-sheet/2N7002.pdf",
       "status": "design",
+      "mpn": "2N7002,215",
+      "manufacturer": "Nexperia",
+      "lcsc": "C65189",
+      "alt_mpn": "onsemi 2N7002LT1G; Diodes Incorporated 2N7002-7-F",
       "pins": [
         {
           "number": "1",
@@ -6139,6 +6833,9 @@
       "group": "Boni: малошумна захищена шина",
       "source": "https://www.diodes.com/assets/Datasheets/ds18001.pdf",
       "status": "design",
+      "manufacturer": "Diodes Incorporated",
+      "lcsc": "C500793",
+      "alt_mpn": "onsemi BZX84C10LT1G",
       "pins": [
         {
           "number": "1",
@@ -6172,6 +6869,10 @@
       "group": "Boni: малошумна захищена шина",
       "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
       "status": "design",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -6199,6 +6900,10 @@
       "group": "Boni: малошумна захищена шина",
       "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
       "status": "design",
+      "mpn": "0603WAF2202T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C31850",
+      "alt_mpn": "YAGEO RC0603FR-0722KL",
       "pins": [
         {
           "number": "1",
@@ -6226,6 +6931,10 @@
       "group": "Boni: малошумна захищена шина",
       "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
       "status": "design",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -6253,6 +6962,9 @@
       "group": "Boni: малошумна захищена шина",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -6280,6 +6992,8 @@
       "group": "Boni: малошумна захищена шина",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "alt_mpn": "YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -6308,6 +7022,7 @@
       "group": "Boni: малошумна захищена шина",
       "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
       "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -6327,6 +7042,11 @@
       "group": "INA3221: струми LNA1–3",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF100JT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22859",
+      "alt_mpn": "YAGEO RC0603FR-0710RL",
       "pins": [
         {
           "number": "1",
@@ -6352,6 +7072,11 @@
       "group": "INA3221: струми LNA1–3",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF100JT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22859",
+      "alt_mpn": "YAGEO RC0603FR-0710RL",
       "pins": [
         {
           "number": "1",
@@ -6377,6 +7102,8 @@
       "group": "INA3221: струми LNA1–3",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "alt_mpn": "YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -6404,6 +7131,11 @@
       "group": "INA3221: струми LNA1–3",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF100JT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22859",
+      "alt_mpn": "YAGEO RC0603FR-0710RL",
       "pins": [
         {
           "number": "1",
@@ -6429,6 +7161,11 @@
       "group": "INA3221: струми LNA1–3",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF100JT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22859",
+      "alt_mpn": "YAGEO RC0603FR-0710RL",
       "pins": [
         {
           "number": "1",
@@ -6454,6 +7191,8 @@
       "group": "INA3221: струми LNA1–3",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "alt_mpn": "YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -6481,6 +7220,11 @@
       "group": "INA3221: струми LNA1–3",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF100JT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22859",
+      "alt_mpn": "YAGEO RC0603FR-0710RL",
       "pins": [
         {
           "number": "1",
@@ -6506,6 +7250,11 @@
       "group": "INA3221: струми LNA1–3",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF100JT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22859",
+      "alt_mpn": "YAGEO RC0603FR-0710RL",
       "pins": [
         {
           "number": "1",
@@ -6531,6 +7280,8 @@
       "group": "INA3221: струми LNA1–3",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "alt_mpn": "YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -6558,6 +7309,10 @@
       "group": "INA3221: струми LNA1–3",
       "source": "https://www.ti.com/lit/ds/symlink/ina3221.pdf",
       "status": "design",
+      "footprint": "SR_RX_Custom:TI_RGV0016A_VQFN-16-1EP_4x4mm_P0.65mm_EP2.16x2.16mm",
+      "mpn": "INA3221AIRGVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C181255",
       "pins": [
         {
           "number": "1",
@@ -6675,6 +7430,8 @@
       "group": "INA3221: струми LNA1–3",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "alt_mpn": "YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -6702,6 +7459,11 @@
       "group": "INA3221: струми LNA4, LNB і Boni",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF100JT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22859",
+      "alt_mpn": "YAGEO RC0603FR-0710RL",
       "pins": [
         {
           "number": "1",
@@ -6727,6 +7489,11 @@
       "group": "INA3221: струми LNA4, LNB і Boni",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF100JT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22859",
+      "alt_mpn": "YAGEO RC0603FR-0710RL",
       "pins": [
         {
           "number": "1",
@@ -6752,6 +7519,8 @@
       "group": "INA3221: струми LNA4, LNB і Boni",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "alt_mpn": "YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -6779,6 +7548,11 @@
       "group": "INA3221: струми LNA4, LNB і Boni",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF100JT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22859",
+      "alt_mpn": "YAGEO RC0603FR-0710RL",
       "pins": [
         {
           "number": "1",
@@ -6804,6 +7578,11 @@
       "group": "INA3221: струми LNA4, LNB і Boni",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF100JT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22859",
+      "alt_mpn": "YAGEO RC0603FR-0710RL",
       "pins": [
         {
           "number": "1",
@@ -6829,6 +7608,8 @@
       "group": "INA3221: струми LNA4, LNB і Boni",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "alt_mpn": "YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -6856,6 +7637,11 @@
       "group": "INA3221: струми LNA4, LNB і Boni",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF100JT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22859",
+      "alt_mpn": "YAGEO RC0603FR-0710RL",
       "pins": [
         {
           "number": "1",
@@ -6881,6 +7667,11 @@
       "group": "INA3221: струми LNA4, LNB і Boni",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF100JT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22859",
+      "alt_mpn": "YAGEO RC0603FR-0710RL",
       "pins": [
         {
           "number": "1",
@@ -6906,6 +7697,8 @@
       "group": "INA3221: струми LNA4, LNB і Boni",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "alt_mpn": "YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -6933,6 +7726,10 @@
       "group": "INA3221: струми LNA4, LNB і Boni",
       "source": "https://www.ti.com/lit/ds/symlink/ina3221.pdf",
       "status": "design",
+      "footprint": "SR_RX_Custom:TI_RGV0016A_VQFN-16-1EP_4x4mm_P0.65mm_EP2.16x2.16mm",
+      "mpn": "INA3221AIRGVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C181255",
       "pins": [
         {
           "number": "1",
@@ -7050,6 +7847,8 @@
       "group": "INA3221: струми LNA4, LNB і Boni",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "alt_mpn": "YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -7077,6 +7876,10 @@
       "group": "LNB: контроль напруги",
       "source": "https://www.ti.com/lit/ds/symlink/tlv3011.pdf",
       "status": "design",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "mpn": "TLV3011BIDBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C20345920",
       "pins": [
         {
           "number": "1",
@@ -7127,6 +7930,10 @@
       "group": "LNB: контроль напруги",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RN73H1JTTD8562B25",
+      "manufacturer": "KOA Speer",
+      "lcsc": "C6407688",
       "pins": [
         {
           "number": "1",
@@ -7152,6 +7959,11 @@
       "group": "LNB: контроль напруги",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0710KL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C95204",
+      "alt_mpn": "Viking Tech ARG03BTC1002",
       "pins": [
         {
           "number": "1",
@@ -7177,6 +7989,9 @@
       "group": "LNB: контроль напруги",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H103J080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C2168383",
+      "alt_mpn": "Murata Electronics GRM1885C1H103JA01D",
       "pins": [
         {
           "number": "1",
@@ -7204,6 +8019,8 @@
       "group": "LNB: контроль напруги",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "alt_mpn": "YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -7231,6 +8048,10 @@
       "group": "Boni: контроль напруги",
       "source": "https://www.ti.com/lit/ds/symlink/tlv3011.pdf",
       "status": "design",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "mpn": "TLV3011BIDBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C20345920",
       "pins": [
         {
           "number": "1",
@@ -7281,6 +8102,11 @@
       "group": "Boni: контроль напруги",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRE0790K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C326737",
+      "alt_mpn": "Panasonic ERJPB3B9092V",
       "pins": [
         {
           "number": "1",
@@ -7306,6 +8132,11 @@
       "group": "Boni: контроль напруги",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0710KL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C95204",
+      "alt_mpn": "Viking Tech ARG03BTC1002",
       "pins": [
         {
           "number": "1",
@@ -7331,6 +8162,9 @@
       "group": "Boni: контроль напруги",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H103J080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C2168383",
+      "alt_mpn": "Murata Electronics GRM1885C1H103JA01D",
       "pins": [
         {
           "number": "1",
@@ -7358,6 +8192,8 @@
       "group": "Boni: контроль напруги",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "alt_mpn": "YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -7385,6 +8221,10 @@
       "group": "AUX12: контроль напруги після PTC",
       "source": "https://www.ti.com/lit/ds/symlink/tlv3011.pdf",
       "status": "design",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "mpn": "TLV3011BIDBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C20345920",
       "pins": [
         {
           "number": "1",
@@ -7435,6 +8275,11 @@
       "group": "AUX12: контроль напруги після PTC",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRE0773K2L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C862276",
+      "alt_mpn": "YAGEO RT0603BRD0773K2L",
       "pins": [
         {
           "number": "1",
@@ -7460,6 +8305,11 @@
       "group": "AUX12: контроль напруги після PTC",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0710KL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C95204",
+      "alt_mpn": "Viking Tech ARG03BTC1002",
       "pins": [
         {
           "number": "1",
@@ -7485,6 +8335,9 @@
       "group": "AUX12: контроль напруги після PTC",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H103J080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C2168383",
+      "alt_mpn": "Murata Electronics GRM1885C1H103JA01D",
       "pins": [
         {
           "number": "1",
@@ -7512,6 +8365,8 @@
       "group": "AUX12: контроль напруги після PTC",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "alt_mpn": "YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -7539,6 +8394,7 @@
       "group": "J21: захищене живлення 12 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -7558,6 +8414,7 @@
       "group": "Дисплей: захищене живлення 12 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -7577,6 +8434,10 @@
       "group": "LNB: незалежне точне відсікання OVP",
       "source": "https://www.ti.com/lit/ds/symlink/tps3701.pdf",
       "status": "design",
+      "footprint": "Package_TO_SOT_SMD:TSOT-23-6",
+      "mpn": "TPS3701DDCR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C132788",
       "pins": [
         {
           "number": "1",
@@ -7629,6 +8490,10 @@
       "group": "LNB: незалежне точне відсікання OVP",
       "source": "https://www.vishay.com/docs/28758/tnpw_e3.pdf",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0805_2012Metric",
+      "mpn": "TNPW0805332KBYEA",
+      "manufacturer": "Vishay Dale",
+      "lcsc": "C1720329",
       "pins": [
         {
           "number": "1",
@@ -7654,6 +8519,11 @@
       "group": "LNB: незалежне точне відсікання OVP",
       "source": "https://www.vishay.com/docs/28758/tnpw_e3.pdf",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0805_2012Metric",
+      "mpn": "TNPW08052K00BYEA",
+      "manufacturer": "Vishay Dale",
+      "lcsc": "C1720459",
+      "alt_mpn": "Vishay Dale TNPW08052K00BYEN",
       "pins": [
         {
           "number": "1",
@@ -7679,6 +8549,10 @@
       "group": "LNB: незалежне точне відсікання OVP",
       "source": "https://www.vishay.com/docs/28758/tnpw_e3.pdf",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0805_2012Metric",
+      "mpn": "TNPW080510K0BYEA",
+      "manufacturer": "Vishay Dale",
+      "lcsc": "C1721548",
       "pins": [
         {
           "number": "1",
@@ -7704,6 +8578,11 @@
       "group": "LNB: незалежне точне відсікання OVP",
       "source": "https://www.vishay.com/docs/28758/tnpw_e3.pdf",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF4701T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C23162",
+      "alt_mpn": "YAGEO RC0603FR-074K7L",
       "pins": [
         {
           "number": "1",
@@ -7729,6 +8608,11 @@
       "group": "LNB: незалежне точне відсікання OVP",
       "source": "https://www.vishay.com/docs/28758/tnpw_e3.pdf",
       "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -7754,6 +8638,8 @@
       "group": "LNB: незалежне точне відсікання OVP",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA",
       "status": "design",
+      "manufacturer": "TDK",
+      "alt_mpn": "YAGEO CC0603KRX7R9BB104; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -7781,6 +8667,7 @@
       "group": "LNB: незалежне точне відсікання OVP",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
@@ -7800,6 +8687,9 @@
       "group": "LNA4V5: паралельні LT3045",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
       "pins": [
         {
           "number": "1",
@@ -7828,6 +8718,7 @@
       "group": "LNA4V5: паралельні LT3045",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H226M250AC",
       "status": "design",
+      "manufacturer": "TDK",
       "pins": [
         {
           "number": "1",
@@ -7856,6 +8747,9 @@
       "group": "LNA4V5: паралельні LT3045",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H106K250AC",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C2181731",
+      "alt_mpn": "YAGEO CC1210KKX7R9BB106",
       "pins": [
         {
           "number": "1",
@@ -7884,6 +8778,7 @@
       "group": "LNA4V5: паралельні LT3045",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H226M250AC",
       "status": "design",
+      "manufacturer": "TDK",
       "pins": [
         {
           "number": "1",
@@ -7912,6 +8807,7 @@
       "group": "LNB: малошумна захищена шина",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H226M250AC",
       "status": "design",
+      "manufacturer": "TDK",
       "pins": [
         {
           "number": "1",
@@ -7940,6 +8836,7 @@
       "group": "Boni: малошумна захищена шина",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C3225X7R1H226M250AC",
       "status": "design",
+      "manufacturer": "TDK",
       "pins": [
         {
           "number": "1",
@@ -7973,6 +8870,10 @@
         "RILIM = 162k: 144–192 mA. EN_SB_LNA має 100k на GND; підтягування FLT_SB_LNA належить E3.",
         "Виміряти пусковий струм і додати максимум 65 mA до бюджету LAB5. Приймання: LAB5 не перевищує 5.5 V."
       ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "mpn": "TPS2553DBVR-1",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C111738",
       "pins": [
         {
           "number": "1",
@@ -8022,6 +8923,11 @@
       "notes": [
         "Програмування обмеження струму за даташитом відповідного ключа. Підсумковий поріг включає допуски IC і резистора."
       ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RC0603FR-07162KL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C165760",
+      "alt_mpn": "UNI-ROYAL 0603WAF1623T5E",
       "pins": [
         {
           "number": "1",
@@ -8047,6 +8953,11 @@
       "notes": [
         "Локальне стягування EN до GND; забезпечує вимкнення при старті та знеструмлених контролерах."
       ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -8069,6 +8980,9 @@
       "group": "S-band LaNA WB: захищена шина 5 V",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -8096,6 +9010,9 @@
       "group": "S-band LaNA WB: захищена шина 5 V",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -8128,6 +9045,9 @@
         "Обраний XAL5030-102MEC: 1uH ±20%, DCR 8.5mR тип./9.4mR макс. при 25°C, SRF 68MHz тип., Isat 14A тип. при спаді L на 30%.",
         "Irms 8.7A для нагріву на 20°C; фактичні нагрів і придушення шумів перевіряються на платі. Єдиний SKU для 15 фільтрів; врахувати зміну вартості BOM."
       ],
+      "footprint": "Inductor_SMD:L_Coilcraft_XAL5030-XXX",
+      "manufacturer": "Coilcraft",
+      "lcsc": "C5379798",
       "pins": [
         {
           "number": "1",
@@ -8150,6 +9070,9 @@
       "group": "S-band LaNA WB: захищена шина 5 V",
       "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
       "status": "design",
+      "manufacturer": "TDK",
+      "lcsc": "C3867006",
+      "alt_mpn": "YAGEO AC0805KKX7R9BB105",
       "pins": [
         {
           "number": "1",
@@ -8180,6 +9103,11 @@
       "notes": [
         "Послідовний резистор паралельної R-C гілки демпфування; струм навантаження через нього не проходить."
       ],
+      "footprint": "Resistor_SMD:R_1206_3216Metric",
+      "mpn": "1206W4F220LT5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25336",
+      "alt_mpn": "YAGEO RL1206FR-7W0R22L",
       "pins": [
         {
           "number": "1",
@@ -8198,11 +9126,14 @@
     {
       "ref": "C298",
       "value": "47uF 50V EEUFR1H470",
-      "mpn": "EEUFR1H470",
+      "mpn": "EEU-FR1H470",
       "kind": "capacitor",
       "group": "S-band LaNA WB: захищена шина 5 V",
       "source": "https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470",
       "status": "design",
+      "footprint": "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm",
+      "manufacturer": "Panasonic",
+      "lcsc": "C407950",
       "pins": [
         {
           "number": "1",
@@ -8229,6 +9160,7 @@
       "group": "S-band LaNA WB: захищена шина 5 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
       "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
       "pins": [
         {
           "number": "1",
