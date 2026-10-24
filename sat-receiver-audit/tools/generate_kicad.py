@@ -15,11 +15,19 @@ Drawing conventions (stack v2 brief, "Conventions: layout"):
 * inside a row every net with two or more contacts is drawn with orthogonal wires
   found by a grid maze router, with junction dots at T joins; a contact that cannot
   be reached within a short detour keeps a label instead (no long wire runs);
+* a row with fallback labels or wire crossings is laid out once more with a free grid
+  line next to each bus contact between two boxes that face each other; that spread
+  variant is kept only if it has fewer fallback labels, or as many and at most half
+  the wire crossings (route_group), so a kept spread row can still have crossings;
 * every drawn wire tree carries exactly one global label with the canonical net
   name. Local labels would be renamed "/<sheet>/<name>" by KiCad and change the
   exported netlist, so nets that stay inside their group use the small "passive"
   label shape and nets that leave the group the "bidirectional" one. Ground uses
-  power symbols.
+  power symbols;
+* a sheet does not end on a nearly empty page if wider notes save that page
+  (layout_sheet); the manifest records each page's fill, note wrap cap, the wrap each
+  note actually got (no wider than its group's drawing), fallback labels and wire
+  crossings, and run_checks.py refuses sparse last pages and fallback labels.
 The generator re-derives the connectivity of every page from the emitted geometry
 (wire ends, pins, labels, ground symbols) and refuses to write a page whose drawn
 connectivity differs from the design graph.
@@ -28,12 +36,14 @@ from __future__ import annotations
 
 import argparse
 from collections import Counter, OrderedDict, defaultdict
+import copy
 import hashlib
 import heapq
 import json
 import math
 from pathlib import Path
 import re
+import sys
 import textwrap
 from uuid import NAMESPACE_URL, uuid5
 
@@ -65,10 +75,15 @@ NOTE_LINE = 2.1         # line pitch of 1.27 mm KiCad stroke text (measured 2.05
 NOTE_PAD = 1.27
 NOTE_GAP = 2.54
 NOTE_W = 142.24 - 5.08
+NOTE_CYR_MM = 1.11      # advance of one 1.27 mm Cyrillic character (measured): sizes the frame of a wider wrap
+NOTE_WIDE_CHARS = (130, 150, 180)  # wider body wraps, tried narrowest first, when a sheet ends on a sparse page
+SPARSE_LAST_PAGE = 0.20  # a sheet's last page below this share of the drawable area is sparse
 NOTE_COLORS = {"open": "170 0 0 1", "option": "150 90 0 1", "note": "0 60 150 1"}
 # Drawable area of the A2 sheet: inside the frame, below the page title and legend,
-# with the title block corner (bottom right) kept free.
-AREA_X0, AREA_X1, AREA_Y0, AREA_Y1 = 12.7, 581.66, 30.48, 403.86
+# with the title block corner (bottom right) kept free. The right edge stays one grid
+# step inside the 582 mm inner frame line; it bounds the drawn extent of a block,
+# which snapping its rows onto the grid can move right by up to one step.
+AREA_X0, AREA_X1, AREA_Y0, AREA_Y1 = 12.7, 582.0 - U, 30.48, 403.86
 TITLE_BLOCK_X, TITLE_BLOCK_Y = 459.74, 363.22
 BLOCK_GAP = 7.62
 ROW_MAX_U = 120          # chains share a row up to 305 mm, so that two blocks fit side by side
@@ -750,6 +765,7 @@ class Row:
         self.width = 0
         self.gap_nets = []     # nets of the signal line, routed first
         self.n_items = 0       # the first n_items parts sit on the signal line
+        self.spread = 0        # hub sides laid out with a free grid line between contacts
 
 
 def item_width(it, sym):
@@ -846,8 +862,12 @@ def face_neighbours(seq, ctx):
                 b.side[p["number"]] = "L"
 
 
-def plan_row(seq, lows, ups, ctx, key):
-    """Pin order, symbols and zone widths of one row (nothing placed yet)."""
+def plan_row(seq, lows, ups, ctx, key, spread=False):
+    """Pin order, symbols and zone widths of one row (nothing placed yet).
+
+    With `spread`, a hub side that faces a neighbouring hub over two or more nets (a
+    bus) gets one free grid line between its contacts, so that every bus wire can take
+    its label right above it instead of across the other wires."""
     face_neighbours(seq, ctx)
     where, gap = attach_cols(seq, lows + ups, ctx)
     up_pins, down_pins = defaultdict(set), defaultdict(set)
@@ -870,6 +890,24 @@ def plan_row(seq, lows, ups, ctx, key):
 
     def side_nets(it, side):
         return {p.get("net") for p, s in item_pins(it) if s == side and p.get("net") and p["net"] != GROUND}
+
+    def bus(k, side):
+        """Nets that one side of hub k shares with the facing hub, if they form a bus."""
+        j = k - 1 if side == "L" else k + 1
+        if not spread or not 0 <= j < len(seq) or seq[j].style != "hub":
+            return set()
+        shared = side_nets(seq[k], side) & side_nets(seq[j], "R" if side == "L" else "L")
+        return shared if len(shared) > 1 else set()
+
+    def spaced(pins, shared):
+        """A free grid line on either side of every bus contact; other contacts stay packed."""
+        out = []
+        for p in pins:
+            if out and (out[-1].get("net") in shared or p.get("net") in shared):
+                out.append(None)
+            out.append(p)
+        return out
+    spread_sides = 0
     for k, it in enumerate(seq):
         left_chain = gap.get(k)
         right_chain = gap.get(k + 1)
@@ -906,6 +944,15 @@ def plan_row(seq, lows, ups, ctx, key):
             cl = next((i for i, t in enumerate(per["L"]) if t[2]), None)
             cr = next((i for i, t in enumerate(per["R"]) if t[2]), None)
             left, right = [t[1] for t in per["L"]], [t[1] for t in per["R"]]
+            for s, shared in (("L", bus(k, "L")), ("R", bus(k, "R"))):
+                if shared:
+                    spread_sides += 1
+                    if s == "L":
+                        left = spaced(left, shared)
+                        cl = None if cl is None else left.index(per["L"][cl][1])
+                    else:
+                        right = spaced(right, shared)
+                        cr = None if cr is None else right.index(per["R"][cr][1])
             if cl is not None and cr is not None and cl != cr:
                 if cl < cr:
                     left = [None] * (cr - cl) + left
@@ -934,7 +981,7 @@ def plan_row(seq, lows, ups, ctx, key):
             syms.append(build_dser(it.comp))
             chainrow.append(0)
             right_rows.append({p.get("net"): 0 for p, sd in item_pins(it) if sd == "R" and p.get("net")})
-    return where, gap, syms, chainrow, row_nets
+    return where, gap, syms, chainrow, row_nets, spread_sides
 
 
 def side_pin_rows(sym, x, y, side):
@@ -946,23 +993,33 @@ def side_pin_rows(sym, x, y, side):
     return out
 
 
-def layout_row(seq, lows, ups, ctx, key, dry=False, free=True):
+def item_state(seq):
+    """The pin sides and orientation that a layout changes, for restore_items()."""
+    return [(it, dict(it.side), it.first, list(getattr(it, "ends", []))) for it in seq]
+
+
+def restore_items(state):
+    for it, side, first, ends in state:
+        it.side, it.first = side, first
+        if ends:
+            it.ends = ends
+
+
+def layout_row(seq, lows, ups, ctx, key, dry=False, free=True, spread=False):
     if dry:
         # a trial layout must not leave its pin-side changes behind
-        saved = [(it, dict(it.side), it.first, list(getattr(it, "ends", []))) for it in seq]
+        saved = item_state(seq)
         try:
-            return _layout_row(seq, lows, ups, ctx, key, True, free)
+            return _layout_row(seq, lows, ups, ctx, key, True, free, spread)
         finally:
-            for it, side, first, ends in saved:
-                it.side, it.first = side, first
-                if ends:
-                    it.ends = ends
-    return _layout_row(seq, lows, ups, ctx, key, False, free)
+            restore_items(saved)
+    return _layout_row(seq, lows, ups, ctx, key, False, free, spread)
 
 
-def _layout_row(seq, lows, ups, ctx, key, dry, free):
-    where, gap, syms, chainrow, row_nets = plan_row(seq, lows, ups, ctx, key)
+def _layout_row(seq, lows, ups, ctx, key, dry, free, spread=False):
+    where, gap, syms, chainrow, row_nets, spread_sides = plan_row(seq, lows, ups, ctx, key, spread)
     row = Row()
+    row.spread = spread_sides
     zones = defaultdict(lambda: {"low": [], "up": []})
     free_low, free_up = [], []
     for col in lows + ups:
@@ -1140,7 +1197,31 @@ def build_group_rows(comps, ctx, key):
             assigned[-1] = [seq, trial_lo, trial_up]
         else:
             assigned.append([[], [col] if col.kind == "low" else [], [col] if col.kind == "up" else []])
-    return [layout_row(seq, lo, up, ctx, key) for seq, lo, up in assigned if seq or lo or up]
+    return [(seq, lo, up) for seq, lo, up in assigned if seq or lo or up]
+
+
+def route_group(comps, ctx, key):
+    """Lay out and route every row of one group: [(row, board, grounds, ncs, tbd)].
+
+    A row whose labels needed a fallback spot or whose wires cross another net is laid
+    out once more with its buses spread (see plan_row) and routed again. A spread bus
+    is taller, so that variant is kept only for a clear gain: fewer fallback labels,
+    or as many and at most half the crossings."""
+    out = []
+    for seq, lo, up in build_group_rows(comps, ctx, key):
+        state = item_state(seq)
+        row = layout_row(seq, lo, up, ctx, key)
+        routed = (row,) + route_row(row, ctx, key)
+        fallback, crossings = routed[1].fallback, routed[1].crossings()
+        if fallback or crossings:
+            restore_items(state)
+            wide = layout_row(seq, lo, up, ctx, key, spread=True)
+            if wide.spread:
+                alt = (wide,) + route_row(wide, ctx, key)
+                if alt[1].fallback < fallback or (alt[1].fallback == fallback and 2 * alt[1].crossings() <= crossings):
+                    routed = alt
+        out.append(routed)
+    return out
 
 
 # --------------------------------------------------------------------------------------
@@ -1213,6 +1294,16 @@ class Board:
 
     def joinable(self, net, p):
         return p not in self.pin and not self.foreign(net, p) and len(self.own_dirs(net, p)) <= 2
+
+    def crossings(self):
+        """Grid points where a wire of one net runs straight across a wire of another
+        (drawn without a junction, so not connected, but easy to misread)."""
+        n = 0
+        for (k, x, y), net in self.edge.items():
+            if k == "h" and self.edge.get(("h", x - 1, y)) == net:
+                other = self.edge.get(("v", x, y))
+                n += other is not None and other != net and self.edge.get(("v", x, y - 1)) == other
+        return n
 
     def astar(self, net, src, targets, pin_targets, cap, limit=60000):
         pts = list(targets) + list(pin_targets)
@@ -1689,7 +1780,8 @@ def flow_order(graph):
 
 
 def sheet_notes(graph):
-    """Visible notes of one sheet, keyed by the first of their parts in drawing order.
+    """Visible notes of one sheet (header and paragraphs, unwrapped), keyed by the first
+    of their parts in drawing order.
 
     Every open item (blocking or not) and every drawing note must name the STACK
     section and the parts it concerns; it is placed once, at the top of the row that
@@ -1712,21 +1804,33 @@ def sheet_notes(graph):
         if not refs or unknown:
             errors.append(f"{graph['sheet']} {item['id']}: refs missing or not on this sheet: {unknown or refs}")
             continue
-        lines = []
-        for para in body:
-            lines += textwrap.wrap(para, width=NOTE_CHARS, break_long_words=False, break_on_hyphens=False) or [""]
-        heads = textwrap.wrap(head, width=NOTE_HEAD_CHARS, break_long_words=False, break_on_hyphens=False)
-        height = U * math.ceil((2 * NOTE_PAD + NOTE_LINE * (len(heads) + len(lines))) / U)
         anchor = min(refs, key=order.get)
-        anchored[anchor].append({"id": item["id"], "kind": kind, "head": heads, "lines": lines, "height": height})
+        anchored[anchor].append({"id": item["id"], "kind": kind, "head": head, "body": body})
     if errors:
         raise ValueError("\n".join(errors))
     return anchored
 
 
+def note_width(chars):
+    """Frame width of a note wrapped at `chars` body characters (NOTE_W at the standard wrap)."""
+    return max(NOTE_W, U * math.ceil((chars * NOTE_CYR_MM + 2 * NOTE_PAD) / U))
+
+
+def wrap_note(note, chars=NOTE_CHARS):
+    """Header and body lines of one note wrapped at `chars` body characters, with its frame size."""
+    lines = []
+    for para in note["body"]:
+        lines += textwrap.wrap(para, width=chars, break_long_words=False, break_on_hyphens=False) or [""]
+    # the bold header is wider: same ratio as at the standard wrap
+    heads = textwrap.wrap(note["head"], width=chars * NOTE_HEAD_CHARS // NOTE_CHARS, break_long_words=False, break_on_hyphens=False)
+    height = U * math.ceil((2 * NOTE_PAD + NOTE_LINE * (len(heads) + len(lines))) / U)
+    return {"id": note["id"], "kind": note["kind"], "head": heads, "lines": lines, "height": height, "w": note_width(chars),
+            "chars": chars}
+
+
 def note_block(note, x, y, key):
     color = NOTE_COLORS[note["kind"]]
-    x0, x1, y1 = x + 2.54, x + 2.54 + NOTE_W, y + note["height"]
+    x0, x1, y1 = x + 2.54, x + 2.54 + note["w"], y + note["height"]
     head = f"(text {q(chr(10).join(note['head']))} (exclude_from_sim no) (at {fm(x0 + NOTE_PAD)} {fm(y + NOTE_PAD)} 0) (effects (font (size {f(NOTE_SIZE)} {f(NOTE_SIZE)}) (bold yes) (color {color})) (justify left top)) (uuid {uid(key + '/head')}))"
     body = text("\n".join(note["lines"]), x0 + NOTE_PAD, y + NOTE_PAD + NOTE_LINE * len(note["head"]), key + "/body", NOTE_SIZE)
     frame = f"(rectangle (start {fm(x0)} {fm(y)}) (end {fm(x1)} {fm(y1)}) (stroke (width 0.254) (type dash) (color {color})) (fill (type none)) (uuid {uid(key + '/frame')}))"
@@ -1751,18 +1855,27 @@ class RowDraw:
         self.notes = []
 
 
-def make_blocks(graph, ctx, notes):
-    """One block per functional group: [(title, notes, rows)], split only if taller than a page."""
+def route_groups(graph, ctx):
+    """Every functional group of one sheet, laid out and routed once: [(group, [RowDraw])]."""
+    return [(group, [RowDraw(*routed) for routed in route_group(comps, ctx, (graph["sheet"], group))])
+            for group, comps in flow_order(graph).items()]
+
+
+def make_blocks(groups, notes, chars=NOTE_CHARS):
+    """One block per functional group, split only if taller than a page.
+
+    The routed rows are shared; each call gets its own row views with the notes
+    wrapped at up to `chars` body characters, as far as the group's drawing is wide
+    enough to hold the frame, and at NOTE_CHARS otherwise."""
     blocks = []
-    for group, comps in flow_order(graph).items():
-        key = (graph["sheet"], group)
+    for group, routed in groups:
+        width = max(rd.box[2] - rd.box[0] for rd in routed)
+        fit = max(c for c in range(NOTE_CHARS, max(chars, NOTE_CHARS) + 1) if c == NOTE_CHARS or note_width(c) + U <= width)
         rows = []
-        for row in build_group_rows(comps, ctx, key):
-            board, grounds, ncs, tbd = route_row(row, ctx, key)
-            rd = RowDraw(row, board, grounds, ncs, tbd)
-            for ref in rd.refs:
-                rd.notes += notes.get(ref, [])
-            rows.append(rd)
+        for rd in routed:
+            view = copy.copy(rd)
+            view.notes = [wrap_note(n, fit) for ref in rd.refs for n in notes.get(ref, [])]
+            rows.append(view)
         # split into page-sized blocks
         cur, h, part = [], 0.0, 0
         limit = AREA_Y1 - AREA_Y0 - 2 * U
@@ -1787,8 +1900,36 @@ class Block:
         self.group, self.rows, self.part = group, rows, part
         self.title = group if part == 0 else group + " (продовження)"
         w = max([tw(self.title, GROUP_SIZE) + U] + [rd.box[2] - rd.box[0] for rd in rows] +
-                [NOTE_W + U for rd in rows if rd.notes])
+                [n["w"] + U for rd in rows for n in rd.notes])
         self.w, self.h = w, 2 * U + sum(row_height(rd) for rd in rows)
+
+    def right(self, x):
+        """Drawn right edge with the left edge at grid position x: emit snaps each row's
+        origin onto the grid, which moves the row right by less than one grid step."""
+        return max([x + self.w] + [math.ceil((x - rd.box[0]) / U - 1e-9) * U + rd.box[2] for rd in self.rows])
+
+    def fill(self):
+        return self.w * self.h / ((AREA_X1 - AREA_X0) * (AREA_Y1 - AREA_Y0))
+
+
+def page_fill(page):
+    """Share of the drawable area that the blocks of one page take."""
+    return sum(b.fill() for b, _, _ in page)
+
+
+def layout_sheet(groups, notes):
+    """Pages of one sheet ([(block, x, y)] each) and the note wrap they use.
+
+    When the last page would stay sparse (a few blocks that are harder to find than on
+    a fuller page), the notes are wrapped wider, as far as each group's drawing allows,
+    and the narrowest such wrap that saves a page is kept."""
+    pages = pack_pages(make_blocks(groups, notes))
+    if len(pages) > 1 and page_fill(pages[-1]) < SPARSE_LAST_PAGE:
+        for chars in NOTE_WIDE_CHARS:
+            wide = pack_pages(make_blocks(groups, notes, chars))
+            if len(wide) < len(pages):
+                return wide, chars
+    return pages, NOTE_CHARS
 
 
 def pack_pages(blocks):
@@ -1803,9 +1944,10 @@ def pack_first_fit(blocks):
     """Place group blocks in order, each on the first page that has room, at the highest
     (then leftmost) free spot; a block that fits nowhere starts a new page."""
     def free(placed, x, y, b):
-        x1, y1 = x + b.w, y + b.h
+        x1, y1 = b.right(x), y + b.h
         if x1 > AREA_X1 or y1 > AREA_Y1 or (x1 > TITLE_BLOCK_X and y1 > TITLE_BLOCK_Y):
             return False
+        x1 = x + b.w
         return all(x1 + BLOCK_GAP <= px or px + pb.w + BLOCK_GAP <= x or y1 + BLOCK_GAP <= py or py + pb.h + BLOCK_GAP <= y
                    for pb, px, py in placed)
 
@@ -1822,7 +1964,7 @@ def pack_first_fit(blocks):
         return None
     pages = []
     for b in blocks:
-        if b.h > AREA_Y1 - AREA_Y0 or b.w > AREA_X1 - AREA_X0:
+        if b.h > AREA_Y1 - AREA_Y0 or b.right(AREA_X0) > AREA_X1:
             raise ValueError(f"group block {b.title!r} is larger than a page: {b.w:.0f} x {b.h:.0f} mm")
         # first page with room (a continuation never goes before its group's earlier part)
         first = max((i for i, pg in enumerate(pages) for pb, _, _ in pg if pb.group == b.group and pb.part < b.part), default=0)
@@ -1902,6 +2044,7 @@ def emit_row(rd, ox, oy, path, stem, counters, used_syms, out, stats, checks):
         stats["global_labels"] += 1
         checks["labels"].append(((round(X, 3), round(Y, 3)), net))
     stats["fallback_labels"] += b.fallback
+    stats["wire_crossings"] += b.crossings()
 
 
 def check_page(stem, checks):
@@ -2038,9 +2181,12 @@ def main():
     legend = ("Дроти з'єднують контакти всередині функціональної групи; кожне дерево дротів має одну глобальну мітку з канонічною назвою мережі "
               "(рамка-стрілка — мережа виходить за межі групи, пряма рамка — мережа лише цієї групи). Однакові мітки з'єднані на всіх аркушах; земля — символ GND. "
               "Рамки OPEN — незакриті ворота з design/E#.json (повний реєстр: OPEN_ITEMS.md); «TBD» у значенні — STACK номіналу не задає, показано стартове значення до стенду.")
+    sparse = []
     for graph in graphs:
         sheet = graph["sheet"]
-        layouts = pack_pages(make_blocks(graph, ctx, sheet_notes(graph)))
+        layouts, note_chars = layout_sheet(route_groups(graph, ctx), sheet_notes(graph))
+        if len(layouts) > 1 and page_fill(layouts[-1]) < SPARSE_LAST_PAGE:
+            sparse.append(sheet + "_" + str(len(layouts)).zfill(2))
         for n, layout in enumerate(layouts, 1):
             stem = sheet if n == 1 else sheet + "_" + str(n).zfill(2)
             instance = uid("instance/" + stem)
@@ -2049,7 +2195,7 @@ def main():
             title = f"{sheet} - {graph['title']} ({n}/{len(layouts)})"
             used, body, page_stats = {}, [], Counter()
             checks = {"pins": [], "labels": [], "power": [], "wires": []}
-            comps, notes_here = 0, []
+            comps, notes_here, wraps = 0, [], {}
             for block, bx, by in layout:
                 body.append(text(block.title, bx, by, f"{stem}/group/{block.group}/{block.part}", GROUP_SIZE))
                 y = by + 2 * U
@@ -2057,6 +2203,7 @@ def main():
                     for note in rd.notes:
                         body.append(note_block(note, bx - U, y, stem + "/note/" + note["id"]))
                         notes_here.append(note["id"])
+                        wraps[note["id"]] = note["chars"]
                         y += note["height"] + NOTE_GAP
                     ox = math.ceil((bx - rd.box[0]) / U - 1e-9)
                     oy = math.ceil((y - rd.box[1]) / U - 1e-9)
@@ -2074,7 +2221,9 @@ def main():
             (out / (stem + ".kicad_sch")).write_text(sch, encoding="utf-8", newline="\n")
             stats.update(page_stats)
             pages.append({"stem": stem, "instance": instance, "title": title, "components": comps, "sheet": sheet,
-                          "notes": notes_here, "drawing": dict(sorted(page_stats.items()))})
+                          # the sheet's wrap cap; each note gets at most what its group's drawing is wide enough for
+                          "notes": notes_here, "note_wrap_cap": note_chars, "note_wrap_chars": wraps, "fill": round(page_fill(layout), 3),
+                          "drawing": dict(sorted(page_stats.items()))})
     placed = Counter(note for p in pages for note in p["notes"])
     declared = [x["id"] for g in graphs for x in g.get("open_items", []) + g.get("drawing_notes", [])]
     if sorted(placed.elements()) != sorted(declared):
@@ -2118,12 +2267,15 @@ def main():
     project["sheets"] = [[ROOT_UUID, "Root"]] + [[uid("document/" + p["stem"]), p["stem"]] for p in pages]
     project_file.write_text(json.dumps(project, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     physical_nets = {k: [v for v in vs if not v["ref"].startswith("#")] for k, vs in nets.items()}
-    manifest = {"base_commit": "465318835e71eae326059f5f66e2b47232169556", "root_uuid": ROOT_UUID, "pages": pages, "components": sum(not r.startswith('#') for r in refs), "supply_annotations": len(flag_nets), "connected_contacts": sum(map(len, physical_nets.values())), "nets": len(nets), "drawing": dict(sorted(stats.items())), "single_contact_nets": {k: v for k, v in physical_nets.items() if len(v) == 1}, "open_items": [dict(item, sheet=g["sheet"]) for g in graphs for item in g.get("open_items", [])], "drawing_notes": [dict(item, sheet=g["sheet"]) for g in graphs for item in g.get("drawing_notes", [])], "title_block": {"date": DESIGN_DATE, "rev": REVISION, "comments": [COMPANY + "-E<n>", *TITLE_COMMENTS]}}
+    manifest = {"base_commit": "465318835e71eae326059f5f66e2b47232169556", "root_uuid": ROOT_UUID, "pages": pages, "components": sum(not r.startswith('#') for r in refs), "supply_annotations": len(flag_nets), "connected_contacts": sum(map(len, physical_nets.values())), "nets": len(nets), "drawing": dict(sorted(stats.items())), "sparse_last_pages": sparse, "single_contact_nets": {k: v for k, v in physical_nets.items() if len(v) == 1}, "open_items": [dict(item, sheet=g["sheet"]) for g in graphs for item in g.get("open_items", [])], "drawing_notes": [dict(item, sheet=g["sheet"]) for g in graphs for item in g.get("drawing_notes", [])], "title_block": {"date": DESIGN_DATE, "rev": REVISION, "comments": [COMPANY + "-E<n>", *TITLE_COMMENTS]}}
     manifest["source_sha256"] = {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(args.design_dir.glob("E[1-5].json"))}
     (out / "generation-manifest.json").write_text(json.dumps(manifest, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     (out / "expected-netlist.json").write_text(json.dumps(physical_nets, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps({k: v for k, v in manifest.items() if k not in {"single_contact_nets", "open_items", "drawing_notes", "pages"}}, ensure_ascii=False))
     print(f"Electrical pages: {len(pages)}; explicit open items: {len(manifest['open_items'])}; drawing notes: {len(manifest['drawing_notes'])}; all placed on their pages")
+    # Readability, not connectivity: the pages are written, run_checks.py refuses them.
+    if sparse or stats["fallback_labels"]:
+        print(f"WARNING: sparse last pages {sparse}; fallback labels {stats['fallback_labels']}", file=sys.stderr)
 
 
 if __name__ == "__main__":

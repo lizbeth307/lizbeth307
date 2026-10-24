@@ -14,6 +14,9 @@ import zipfile
 import sys
 
 BASE = Path(__file__).resolve().parents[1]
+if str(BASE / "tools") not in sys.path:
+    sys.path.append(str(BASE / "tools"))
+from uk_text import drift_sentence, plural  # noqa: E402
 
 
 def atomic_write(path, data):
@@ -41,17 +44,26 @@ def section_id(path):
     return "file-" + re.sub(r"[^a-zA-Z0-9_-]", "-", str(path))
 
 
+def strip_bare_mailto(fragment):
+    """Unwrap the e-mail autolinks that GFM makes of plain text such as 1920x1080@59.986Hz
+    or 5V@1.2A; the text stays. The bare http(s) autolinks of STACK.md are kept."""
+    for a in fragment.xpath('.//a[starts-with(@href,"mailto:")]'):
+        if len(a) == 0 and (a.text or "") == a.get("href")[len("mailto:"):]:
+            a.drop_tag()
+    return fragment
+
+
 def markdown(path):
     from lxml import html, etree
     p = BASE / path
     rendered = subprocess.run(["pandoc", "-f", "gfm", "-t", "html5", "--wrap=none"], input=p.read_text(encoding="utf-8"), encoding="utf-8", capture_output=True, check=True).stdout
-    fragment = html.fragment_fromstring(rendered, create_parent="div")
+    fragment = strip_bare_mailto(html.fragment_fromstring(rendered, create_parent="div"))
     prefix = section_id(path)
     for node in fragment.xpath('.//*[@id]'):
         node.set("id", prefix + "--" + node.get("id"))
     for a in fragment.xpath('.//a[@href]'):
         href = a.get("href")
-        if href.startswith(("https:", "http:", "mailto:", "data:")):
+        if href.startswith(("https:", "http:", "data:")):
             continue
         if href.startswith("#"):
             a.set("href", "#" + prefix + "--" + href[1:])
@@ -167,10 +179,21 @@ CORE = [
 INCLUDED = {p for _, p in CORE}
 
 
+def record_notice(drift, module_report):
+    """Notice for an ARM64 run kept only as a record; check_bundle finds the same drift
+    sentence in COMPLETION.md (build_documents.lab_evidence)."""
+    environment = module_report.get("environment", {})
+    return ('<div class="notice"><b>ARM64 Linux lab — лише запис попереднього прогону.</b> '
+            f'Після нього {escape_html.escape(drift_sentence(drift))}. Його PASS не переноситься на цю редакцію; '
+            'повторний ARM64 прогін не виконано. Емуляцію модулів перегенеровано на '
+            f'{escape_html.escape(str(environment.get("architecture", "?")))} '
+            f'({escape_html.escape(str(module_report.get("created_at_utc", ""))[:10])}), не в ARM64 guest.</div>')
+
+
 def release_gates(base):
     """Every pre-archive gate: current, bound and passing reports, else SystemExit."""
     from srrx.commissioning import project_hashes
-    from finalize_linux_lab import bound_sources
+    from finalize_linux_lab import binding_drift
     report = lambda relative: json.loads((base / relative).read_text(encoding="utf-8"))
     software = report("verification/software-tests.json")
     graphs, sources = project_hashes(base)
@@ -183,12 +206,11 @@ def release_gates(base):
     if module_report.get("execution_status") != "PASS" or linux_report.get("status") != "PASS":
         raise SystemExit("Package only after Linux and module-lab PASS")
     lab_binding = report("verification/linux-lab/source-binding.json")
-    stale = [relative for relative, expected in lab_binding["source_sha256"].items()
-             if not (base / relative).is_file() or hashlib.sha256((base / relative).read_bytes()).hexdigest() != expected]
-    unbound = sorted(bound_sources(base) - set(lab_binding["source_sha256"]))
+    # The same count as COMPLETION.md (build_documents.lab_evidence).
+    drift = binding_drift(base, lab_binding)
+    stale, unbound, module_rebound = drift["changed"] + drift["missing"], drift["added"], drift["module_rebound"]
     if hashlib.sha256((base / "verification/linux-lab/report.json").read_bytes()).hexdigest() != lab_binding["linux_report_sha256"]:
         raise SystemExit("Linux/module report binding changed: verification/linux-lab/report.json")
-    module_rebound = hashlib.sha256((base / "verification/module-lab/report.json").read_bytes()).hexdigest() != lab_binding["module_report_sha256"]
     # A stale ARM64 result may be packaged only when the project itself marks it as
     # a record of an earlier run; the HTML then says so next to the main notice.
     record_path = base / "verification/linux-lab/project-manifest.json"
@@ -203,13 +225,7 @@ def release_gates(base):
             if unbound:
                 raise SystemExit("Linux execution result does not cover current sources: " + ", ".join(unbound[:12]) + hint)
             raise SystemExit("Linux/module report binding changed: verification/module-lab/report.json" + hint)
-        environment = module_report.get("environment", {})
-        changed = len(stale) + len(unbound)
-        linux_notice = ('<div class="notice"><b>ARM64 Linux lab — лише запис попереднього прогону.</b> '
-                        f'Після нього змінено або додано {changed} виконуваних файлів (прив’язано {len(lab_binding["source_sha256"])}), тож його PASS не переноситься на цю редакцію; '
-                        'повторний ARM64 прогін не виконано. Емуляцію модулів перегенеровано на '
-                        f'{escape_html.escape(str(environment.get("architecture", "?")))} '
-                        f'({escape_html.escape(str(module_report.get("created_at_utc", ""))[:10])}), не в ARM64 guest.</div>')
+        linux_notice = record_notice(drift, module_report)
     models = base / "deployment/module_lab"
     if module_report["inventory_sha256"] != hashlib.sha256((models / "inventory.json").read_bytes()).hexdigest():
         raise SystemExit("Module inventory result is stale")
@@ -293,10 +309,10 @@ def main():
         gallery.append(f'<details><summary>Зміни габаритів і зовнішній S-band вузол v2.1</summary><img loading="lazy" alt="Механічні поправки v2.1; ескіз, не виробниче креслення" src="{data_uri(overlay,"image/svg+xml")}"></details>')
     placement = BASE / "build/kicad/pcb-preparation/detector-core-placement.svg"
     if placement.exists():
-        gallery.append(f'<details><summary>DC_CORE: {starter["components"]} компонент, нерозведений PCB starter</summary><p class="muted">{starter["source_pins"]} контактів зіставлені зі схемою. Трас немає, DRC містить непідключення. Цей макет не призначений для виготовлення.</p><img loading="lazy" alt="DC_CORE unrouted placement candidate" src="{data_uri(placement,"image/svg+xml")}"></details>')
+        gallery.append(f'<details><summary>DC_CORE: {plural(starter["components"], "компонент", "компоненти", "компонентів")}, нерозведений PCB starter</summary><p class="muted">Зі схемою зіставлено {plural(starter["source_pins"], "контакт", "контакти", "контактів")}. Трас немає, DRC містить непідключення. Цей макет не призначений для виготовлення.</p><img loading="lazy" alt="DC_CORE unrouted placement candidate" src="{data_uri(placement,"image/svg+xml")}"></details>')
     routed = BASE / "build/kicad/pcb-prototype/detector-core-routed-prototype.svg"
     if routed.exists():
-        gallery.append(f'<details><summary>DC_CORE: внутрішній розведений прототип, raw DRC{sum(drc["sections"].values())}</summary><p class="muted">{proto["source_pad_audit"]["parts"]} компонент,{proto["source_pad_audit"]["pins"]} контактів. Зовнішні інтерфейси/MPN/механіка й фізична кваліфікація відкриті; НЕ ДЛЯ ВИГОТОВЛЕННЯ.</p><img loading="lazy" alt="Internal routed prototype; not for fabrication" src="{data_uri(routed,"image/svg+xml")}"></details>')
+        gallery.append(f'<details><summary>DC_CORE: внутрішній розведений прототип, raw DRC: {plural(sum(drc["sections"].values()), "порушення", "порушення", "порушень")}</summary><p class="muted">{plural(proto["source_pad_audit"]["parts"], "компонент", "компоненти", "компонентів")}, {plural(proto["source_pad_audit"]["pins"], "контакт", "контакти", "контактів")}. Зовнішні інтерфейси/MPN/механіка й фізична кваліфікація відкриті; НЕ ДЛЯ ВИГОТОВЛЕННЯ.</p><img loading="lazy" alt="Internal routed prototype; not for fabrication" src="{data_uri(routed,"image/svg+xml")}"></details>')
     # Light previews keep this single file practical on a phone. The PDF and ZIP
     # retain the full vector originals; thumbnails are not fabrication drawings.
     with pymupdf.open(pdf) as pdf_doc:
@@ -312,7 +328,7 @@ def main():
 :root{color-scheme:light dark;--bg:#fcfcfa;--fg:#182331;--muted:#5b6672;--line:#d7dee4;--paper:#fff;--accent:#1c5c78;--warn:#fff3d9;--warnfg:#543c09}
 @media(prefers-color-scheme:dark){:root{--bg:#111820;--fg:#e4eaf0;--muted:#a2afbd;--line:#334252;--paper:#1b2530;--accent:#80c7e7;--warn:#392e18;--warnfg:#f9df9c}}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--fg);font:16px/1.65 system-ui,sans-serif}a{color:var(--accent)}nav{position:fixed;width:270px;padding:24px 20px;inset:0 auto 0 0;overflow:auto;border-right:1px solid var(--line)}nav ol{padding-left:20px}nav li{margin:6px 0}main{margin-left:270px;max-width:1280px;padding:32px 40px;overflow-wrap:anywhere}h1{font-size:1.8rem;line-height:1.2}h2{margin-top:1.6em;font-size:1.3rem}h3{font-size:1.08rem}.eyebrow,.muted{color:var(--muted);font-size:.85rem}.eyebrow{text-transform:none;letter-spacing:.03em}section{padding:28px 0;border-top:2px solid var(--line);margin-top:28px}.notice{padding:16px 20px;border-left:4px solid #bd8b28;background:var(--warn);color:var(--warnfg);margin:20px 0}.button{display:inline-block;border:1px solid var(--accent);border-radius:7px;padding:10px 16px;text-decoration:none;margin:5px 8px 5px 0;font-weight:600}table{display:block;max-width:100%;overflow-x:auto;border-collapse:collapse;font-size:.86rem}td,th{border:1px solid var(--line);padding:7px 10px;vertical-align:top;min-width:80px}th{background:var(--paper)}pre{white-space:pre-wrap;overflow-x:auto;padding:14px;background:var(--paper);border:1px solid var(--line);border-radius:6px;font-size:.83rem}code{font-family:ui-monospace,monospace;font-size:.9em}details{padding:12px;border:1px solid var(--line);margin:12px 0;border-radius:6px}summary{cursor:pointer;font-weight:650}img{display:block;width:100%;height:auto;background:#fff;margin-top:12px}blockquote{margin-left:0;padding-left:16px;border-left:3px solid var(--line)}@media(max-width:900px){nav{position:static;width:auto;border:0;border-bottom:1px solid var(--line)}nav ol{columns:2;font-size:.88rem}main{margin:0;padding:20px 16px}}@media print{nav,.button{display:none}main{margin:0;max-width:none;padding:0}details{break-inside:avoid}section{break-before:page}}
-</style></head><body><nav><b>SR-RX-v2.1</b><p class="muted">оновлено 24 жовтня 2026<br>Редагована схема · документація · аудит</p><ol>'''+"".join(nav)+'''<li><a href="#schematics">Огляд схем</a></li><li><a href="#downloads">Вбудовані файли</a></li></ol></nav><main><div class="eyebrow">Інженерна редакція від коміту 4653188</div><h1>Супутниковий приймач і портативна радіолабораторія</h1><p>В ефірі — лише прийом. Автономне ядро Radxa Dragon Q6A, RTL-SDR, HF+ та Lime.</p><div class="notice"><b>Стендове приймання не виконано.</b> Цей комплект містить відновлені й перевірені програмно схеми та конкретні умови їх апаратного приймання. Він не є дозволом на виготовлення PCB або підключення неперевіреного акумуляторного вузла.</div>'''+linux_notice+pdf_link+zip_link+"".join(sections)+'''<section id="schematics"><h1>Огляд електричних схем KiCad</h1><p>Усі сторінки експортовано з редагованого проєкту. З'єднання (дроти, вузли й глобальні мітки) перевірено порівнянням XML-netlist із графами design/E*.json.</p>'''+"".join(gallery)+'''</section><section id="downloads"><h1>Вбудовані файли</h1><p>Кнопки на початку документа працюють без інтернету. ZIP містить усі доступні вихідні документи, первинні журнали аудиту, графи, KiCad, SVG, PDF, BOM, перевірки та генератори. Головний HTML не вкладено в ZIP, щоб уникнути рекурсії; окремий автономний звіт модулів міститься в verification/module-lab/module-results.html.</p><p class="muted">У ZIP '''+str(len(manifest))+''' файлів. Контрольні суми наведені у вкладеному ARCHIVE-MANIFEST.json. Початковий Git збережено історією комітів.</p></section></main></body></html>'''
+</style></head><body><nav><b>SR-RX-v2.1</b><p class="muted">оновлено 24 жовтня 2026<br>Редагована схема · документація · аудит</p><ol>'''+"".join(nav)+'''<li><a href="#schematics">Огляд схем</a></li><li><a href="#downloads">Вбудовані файли</a></li></ol></nav><main><div class="eyebrow">Інженерна редакція від коміту 4653188</div><h1>Супутниковий приймач і портативна радіолабораторія</h1><p>В ефірі — лише прийом. Автономне ядро Radxa Dragon Q6A, RTL-SDR, HF+ та Lime.</p><div class="notice"><b>Стендове приймання не виконано.</b> Цей комплект містить відновлені й перевірені програмно схеми та конкретні умови їх апаратного приймання. Він не є дозволом на виготовлення PCB або підключення неперевіреного акумуляторного вузла.</div>'''+linux_notice+pdf_link+zip_link+"".join(sections)+'''<section id="schematics"><h1>Огляд електричних схем KiCad</h1><p>Усі сторінки експортовано з редагованого проєкту. З'єднання (дроти, вузли й глобальні мітки) перевірено порівнянням XML-netlist із графами design/E*.json.</p>'''+"".join(gallery)+'''</section><section id="downloads"><h1>Вбудовані файли</h1><p>Кнопки на початку документа працюють без інтернету. ZIP містить усі доступні вихідні документи, первинні журнали аудиту, графи, KiCad, SVG, PDF, BOM, перевірки та генератори. Головний HTML не вкладено в ZIP, щоб уникнути рекурсії; окремий автономний звіт модулів міститься в verification/module-lab/module-results.html.</p><p class="muted">У ZIP '''+plural(len(manifest), "файл", "файли", "файлів")+'''. Контрольні суми наведені у вкладеному ARCHIVE-MANIFEST.json. Початковий Git збережено історією комітів.</p></section></main></body></html>'''
     out = BASE / "SR-RX-v2-ves-proekt.html"
     # Verify every data attachment byte-for-byte. Missing CORE documents fail
     # above; stale legacy heading anchors are rerouted below, never left dead.

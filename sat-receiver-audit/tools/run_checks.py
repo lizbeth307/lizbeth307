@@ -29,6 +29,20 @@ def import_pymupdf():
     return pymupdf
 
 
+def drawing_gate(manifest):
+    """Readability gate: the generator writes sparse last pages and fallback labels, but
+    they are not checked further. A manifest without these fields fails as well."""
+    drawing = json.loads(Path(manifest).read_text(encoding="utf-8"))
+    try:
+        sparse, fallback = drawing["sparse_last_pages"], drawing["drawing"]["fallback_labels"]
+    except (KeyError, TypeError) as error:
+        raise SystemExit(f"Schematic drawing gate: {manifest} has no {error}") from None
+    if sparse or fallback:
+        raise SystemExit("Schematic drawing gate: sparse last pages " + (", ".join(sparse) or "none")
+                         + f"; fallback labels {fallback} (see tools/generate_kicad.py)")
+    return drawing
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--kicad-cli", default=os.environ.get("KICAD_CLI", shutil.which("kicad-cli")))
@@ -43,6 +57,7 @@ def main():
     verify.mkdir(exist_ok=True)
     sch = cad / "sr-rx-v2.kicad_sch"
     run(sys.executable, BASE / "tools/generate_kicad.py")
+    drawing_gate(cad / "generation-manifest.json")
     date = normalise.design_date(BASE)
     # Never validate new schematics against an earlier export's netlist or ERC.
     for stale in (verify / "netlist.xml", verify / "erc.json"):

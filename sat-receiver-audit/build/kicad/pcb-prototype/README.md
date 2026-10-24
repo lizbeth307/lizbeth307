@@ -15,7 +15,7 @@ Previews:
 
 Review: `../../../verification/pcb-prototype-review.md` and `.json`.
 
-From the repository root, using Python with KiCad 10 `pcbnew`, NumPy/SciPy and `kicad-cli`:
+From the repository root, using Python with KiCad 10 `pcbnew`, NumPy 2.3.5/SciPy 1.18.1 (the versions the CI re-freeze installs) and `kicad-cli`:
 
 ```sh
 python3 pcb/generate_routed.py

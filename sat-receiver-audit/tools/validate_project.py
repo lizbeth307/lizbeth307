@@ -49,9 +49,19 @@ def main():
     # Hash exactly the bytes compared, so validation.json names its ERC/netlist inputs.
     inputs = {name: (base / name).read_bytes() for name in ("verification/erc.json", "verification/netlist.xml")}
     root = ET.fromstring(inputs["verification/netlist.xml"])
-    actual_refs = {c.get("ref") for c in root.findall("./components/comp") if not c.get("ref", "").startswith("#")}
+    physical = [c for c in root.findall("./components/comp") if not c.get("ref", "").startswith("#")]
+    actual_refs = {c.get("ref") for c in physical}
     if actual_refs != set(refs):
         errors.append(f"Component mismatch: missing={sorted(set(refs)-actual_refs)}, extra={sorted(actual_refs-set(refs))}")
+    # An electrical sheet holds parts; the root sheet only indexes the pages.
+    sheets = [s.get("name") for s in root.findall("./design/sheet")]
+    on_sheet = Counter()
+    for c in physical:
+        path = c.find("sheetpath")
+        name = path.get("names") if path is not None else "/"
+        if name not in sheets:
+            errors.append(f"Component {c.get('ref')} on unknown sheet {name}")
+        on_sheet[name] += 1
     actual = {}
     nc_exported = set()
     for net in root.findall("./nets/net"):
@@ -78,7 +88,9 @@ def main():
     erc_counts = Counter((v["severity"], v["type"]) for v in violations)
     report = {
         "graph_netlist_comparison": "PASS" if not errors else "FAIL",
-        "electrical_sheets": len(root.findall("./design/sheet")),
+        "electrical_sheets": sum(1 for s in sheets if on_sheet[s]),
+        "schematic_sheets": len(sheets),
+        "index_sheets": sorted(s for s in sheets if not on_sheet[s]),
         "physical_components": len(refs),
         "connected_physical_contacts": sum(map(len, expected.values())),
         "named_nets": len(expected),
