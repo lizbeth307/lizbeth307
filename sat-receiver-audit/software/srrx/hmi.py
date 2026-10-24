@@ -198,6 +198,37 @@ def pass_plan_summary(plan, limit=6):
     return "\n".join(lines)
 
 
+LABD_PLAN_STATES = {"IDLE": "none requested", "RUNNING": "prediction running", "READY": "ready",
+                    "FAILED": "last request failed"}
+
+
+def labd_pass_plan_summary(value, live=False, limit=4):
+    """Read-only labd status["passes"] (srrx.pass_jobs); `labctl plan_passes` requests a plan, not this."""
+    if not live or not isinstance(value, dict):
+        return "labd pass plan: status unavailable"
+    if value.get("enabled") is not True:
+        return "labd pass plan: not provided by this labd backend"
+    parts = ["labd pass plan: " + LABD_PLAN_STATES.get(value.get("state"), "unrecognised state")]
+    error = value.get("error")
+    if error is not None:
+        known = type(error) is str and 0 < len(error) <= 64 and all(c.isascii() and (c.isupper() or c.isdigit() or c == "_") for c in error)
+        parts.append("last error " + (error if known else "unrecognised"))
+    lines, plan = [" · ".join(parts)], value.get("plan")
+    if isinstance(plan, dict):
+        lines.append("UTC verified" if plan.get("time_verified") is True
+                     else "UTC not verified — times are provisional; no baseband window")
+        upcoming = plan.get("upcoming") if isinstance(plan.get("upcoming"), list) else []
+        for item in upcoming[:limit]:
+            try:
+                lines.append(f"{str(item['name'])[:64]} · AOS {str(item['aos_utc'])[5:19].replace('T', ' ')} · "
+                             f"max {float(item['max_el_deg']):.0f}° · LOS {str(item['los_utc'])[11:19]}")
+            except (TypeError, KeyError, ValueError):
+                lines.append("unreadable pass entry")
+        if not upcoming:
+            lines.append("No complete pass ahead in this plan")
+    return "\n".join(lines)
+
+
 def learning_summary(value, operation, model=None):
     if operation == "infer":
         label = value.get("label", "unknown_energy")
@@ -1449,10 +1480,15 @@ def create_window(controller, *, callbacks=None, start_worker=True, scope_latch=
             self.jump_button.setEnabled(False)
             pointing.addWidget(self.jump_button)
             pointing.addWidget(self.button("Load pass plan…", self.open_pass_plan))
-            self.pass_plan_text = QtWidgets.QLabel("No pass plan loaded. Plans are snapshots from the lab-venv predictor.")
+            self.pass_plan_text = QtWidgets.QLabel("No pass plan loaded. Plans are snapshots from the passes-venv predictor.")
             self.pass_plan_text.setTextFormat(QtCore.Qt.TextFormat.PlainText)
             self.pass_plan_text.setWordWrap(True)
             pointing.addWidget(self.pass_plan_text)
+            # Read-only: labd's latest plan_passes job; `labctl plan_passes` requests one.
+            self.labd_plan_text = QtWidgets.QLabel(labd_pass_plan_summary(None))
+            self.labd_plan_text.setTextFormat(QtCore.Qt.TextFormat.PlainText)
+            self.labd_plan_text.setWordWrap(True)
+            pointing.addWidget(self.labd_plan_text)
             layout.addWidget(group)
             # Read-only labd status of the bounded LC76G RESET pulse; the pulse is a labctl operation only.
             self.gnss_reset_text = QtWidgets.QLabel(gnss_reset_summary(None))
@@ -1865,6 +1901,7 @@ def create_window(controller, *, callbacks=None, start_worker=True, scope_latch=
             # The console's own error never hides the labd protection fault.
             self.fault_text.setText(fault + ("\nConsole: " + str(view["error"])[:240] if view.get("error") else ""))
             self.gnss_reset_text.setText(gnss_reset_summary(policy.get("gnss_reset"), live))
+            self.labd_plan_text.setText(labd_pass_plan_summary(data.get("passes"), live))
             for row, values in enumerate(channel_rows(data, live)):
                 for column, text in enumerate(values):
                     item = self.channel_table.item(row, column)

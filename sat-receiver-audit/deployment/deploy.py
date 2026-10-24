@@ -756,6 +756,8 @@ def stage(destination, config=None):
             shutil.copyfile(unit, user_units / unit.name)
             continue
         shutil.copyfile(unit, units / unit.name)
+        if unit.name == "srrx-passes@.service":  # started only by labd, after labd's own guard; no device (DEPLOYMENT.md)
+            continue
         dropin = units / (unit.name + ".d")
         dropin.mkdir()
         if unit.name == "srrx.service":  # only the receiver; the shutdown bridge never Requires= it (DEPLOYMENT.md)
@@ -765,6 +767,11 @@ def stage(destination, config=None):
     modprobe = rootfs / RADIO_OFF_MODPROBE
     modprobe.parent.mkdir(parents=True)
     modprobe.write_text(radio_off_modprobe(), newline="\n")
+    sys.path.insert(0, str(PROJECT / "software"))
+    from srrx import pass_jobs  # polkit rule and plan directory of srrx-passes@.service, from one source
+    for relative, text in pass_jobs.staged_files().items():
+        (rootfs / relative).parent.mkdir(parents=True, exist_ok=True)
+        (rootfs / relative).write_text(text, newline="\n")
     for name in ("release.template.json", "build-manifest.template.json", "devices.template.json"):
         shutil.copyfile(HERE / name, etc / name)
     shutil.copyfile(PROJECT / "software/config/acceptance.template.json", etc / "acceptance.template.json")

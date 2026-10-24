@@ -305,7 +305,7 @@ with different elements rejects the file). Age is a warning, never a refusal.
 (header plus 17 columns in CelesTrak order). That column order has not yet been
 checked against SatDump 1aedd60's reader (POL-10, BUILDER).
 
-`srrx.passes` is the reference predictor for the lab venv only: Skyfield 1.55
+`srrx.passes` is the reference predictor for its own venv only, never labd: Skyfield 1.55
 and sgp4 2.27 (`EarthSatellite.from_omm`, `find_events`), imported lazily;
 without them `PassDependencyError` is raised and labd stays stdlib-only. The
 timescale is Skyfield's built-in table (no download) and no ephemeris file is
@@ -314,8 +314,8 @@ only the rounded position. Every pass carries AOS/TCA/LOS UTC, azimuths, maximum
 elevation, OMM epoch/age/warning, `time_verified` (false unless the caller's UTC
 is verified), observer source/age and, for LRPT, the V-dipole hint. Only complete
 passes are listed; passes cut by the window edge are counted. sgp4 2.27 accepts
-NORAD ids up to 339999 (Alpha-5); larger ids are listed in `skipped`. CLI for a
-bounded lab-venv subprocess (refuses an existing output):
+NORAD ids up to 339999 (Alpha-5); larger ids are listed in `skipped`. CLI (refuses
+an existing output; labd runs it only through `srrx-passes@.service`, below):
 
 ```sh
 python3 -m srrx.passes --omm gp.json --allowlist orbit-allowlist.json --location where.json \
@@ -326,8 +326,90 @@ Agreement with Gpredict within 1 s is POL-11 (BUILDER) and is not claimed.
 The guest lock pins `skyfield==1.55`, `sgp4==2.27`, `jplephem==2.24` and
 `certifi==2026.10.19` with hashes (`deployment/linux_lab/wheelhouse-requirements.txt`).
 
+### labd plan jobs (`plan_passes`)
+
+labd itself never predicts: `srrx.service` has `MemoryMax=128M` and `TasksMax=8`,
+too small for a Skyfield/NumPy child in its cgroup. The labd operation
+`plan_passes` is read-only for the hardware (no lease, nothing is switched) and
+starts one sandboxed oneshot instead, `srrx-passes@<id>.service`, through
+`systemctl --no-ask-password start`; `<id>` is 16 random hex digits chosen by
+labd. `srrx.pass_jobs` is the labd side:
+
 ```sh
-for name in geo_look orbits passes; do
+PYTHONPATH=software python3 -m srrx.cli --socket /run/srrx/control.sock plan_passes --location where.json --hours 24
+```
+
+The request is `{"op": "plan_passes", "value": {"location": <srrx.location
+status>, "hours": 24, "min_el_deg": 0}}`; `hours` in (0, 72] and `min_el_deg` in
+[0, 90) are optional. labd accepts at most one request per minute
+(`PASSES_RATE_LIMITED` with `retry_after_ms`) and runs one job at a time
+(`PASSES_BUSY`). The window starts at labd's own clock, in whole seconds.
+`labctl` reads the snapshot file (at most 64 KiB, as `srrx.passes --location`)
+and sends only its reduced form from step 1 (a few hundred bytes; labd takes
+requests of at most 4096 bytes), so the precise position never crosses the
+control socket; a status it cannot reduce is refused locally and nothing is sent.
+labd reduces whatever a client sends in the same way.
+
+1. Before the position is written anywhere, labd reduces it to a stored, never
+   live snapshot (`last_good`, or `manual`) rounded exactly as `predict` rounds
+   the observer (0.1 deg, 100 m HAE). Mode and satellite count stay; every other
+   field is dropped.
+2. It checks the runtime `/opt/srrx/passes-venv/bin/python3`, the OMM file
+   `/var/lib/srrx/orbits/gp.json` (regular, <= 4 MiB), the allowlist
+   `/etc/srrx/orbit-allowlist.json` and the plan directory. A missing or invalid
+   part is a stable code at once and does not use the rate slot. `srrx.orbits`
+   accepts up to 256 allowlist targets, but `predict` takes at most 64 records
+   (`passes.MAX_RECORDS`), so a plan job refuses an allowlist of more than 64
+   targets the same way (`PASSES_ALLOWLIST_TOO_LARGE`).
+3. A worker thread, never the 20 ms tick, writes `request.json` (an
+   `srrx_pass_request` v1: start, window, UTC state and the reduced location) and
+   the validated allowlist, 0600 in `/run/srrx/passes/<id>/` (0700). PID 1 hands
+   both to the unit with `LoadCredential=`, so the unit user reads nothing of labd's.
+4. The unit runs `python3 -I -B -m srrx.passes --request ... --group-readable --keep 8`
+   as the system user `srrx-passes`: `PrivateNetwork=yes`, `IPAddressDeny=any`,
+   `RestrictAddressFamilies=none` (no socket at all), `PrivateDevices=yes`,
+   `ProtectSystem=strict` with only `/var/lib/srrx/plans` writable, no
+   capabilities, `MemoryMax=512M`, `CPUQuota=100%`, `CPUAffinity=0-3` (A55,
+   STACK.md:950), `Nice=10`, `TasksMax=4` and `TimeoutStartSec=120`
+   (`RuntimeMaxSec=` has no effect on `Type=oneshot`). An existing plan file is
+   never replaced; `--keep 8` removes older labd plans, and only names of 16 hex
+   digits.
+5. labd reads `/var/lib/srrx/plans/<id>.json` (setgid group `labd`, 0640; no
+   symlink, a regular file only, opened non-blocking so that a FIFO left by the
+   unit user cannot stall the worker, <= 2 MiB), runs `validate_plan` and checks
+   that the plan answers this job: start, window, minimum elevation, UTC state,
+   rounded observer and source, and only allowlisted NORAD ids under their
+   allowlist names. Anything else fails closed (`PASSES_PLAN_INVALID`,
+   `PASSES_PLAN_MISMATCH`), and the previous valid plan stays current.
+
+`status` carries `passes`: `state` (`IDLE`, `RUNNING`, `READY`, `FAILED`),
+`request_id`, `error`, `unit_exit`, `requested_at_utc`, `completed_at_utc`,
+`retry_after_ms` and a summary of the current plan without any coordinate: start,
+window, UTC state, observer source, predictor versions, counts, at most 8 passes
+whose LOS is still ahead, and the baseband window count. Without a planner
+(simulation) it is `{"enabled": false, "state": "DISABLED"}`. Errors are the codes
+in `pass_jobs.ERRORS`; none carries the position or file contents. The console's
+pointing group shows this status read-only.
+
+UTC counts as verified only through a time source given to the planner. None is
+wired yet (the gpsd/chrony chain, [GNSS-UART](GNSS-UART.md)), so labd plans carry
+`time_verified=false`. The plan is the window source of the v2.1 bounded baseband
+policy ([RX](RX.md)): `passes.baseband_windows(plan, ids)` returns exactly AOS..LOS
+of complete passes of allowlisted `LRPT` targets, and no window at all without
+verified UTC (`UTC_NOT_VERIFIED`); `PassPlanner.windows()` serves the current plan.
+The `LRPT` role is the operator allowlist's own label and is bound to no NORAD id
+(none is hard-coded), so these windows are a pre-filter: the policy's
+Meteor-M N2-3/N2-4 restriction rests on a reviewed allowlist that gives the role
+to those two only, and the future recorder must enforce that target set itself,
+together with the AOS-60 s .. LOS+60 s margins and the 20 min file bound of the
+policy (an open item of the recorder package). No recorder exists. Installation
+(user, plan directory, polkit rule, venv): [DEPLOYMENT](DEPLOYMENT.md). The real
+transient run under `MemoryMax` with no sockets, the polkit decision and the A55
+timing are guest/Q6A checks (RUNTIME_ONLY, build/09 ПРХ-01). Host tests emulate PID 1 and run the unit's own
+`ExecStart` arguments with Skyfield.
+
+```sh
+for name in geo_look orbits passes pass_jobs; do
   PYTHONPATH=software python -m unittest discover -s software/tests -p "test_$name.py" -v
 done
 ```

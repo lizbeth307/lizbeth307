@@ -514,7 +514,7 @@ $PAIR411*3E                        (читання)
 |---|---|
 | NanoVNA-Saver | pipx з git @3445a0a, constraints PySide6==6.11.2, лише за TCP-проксі Bench labd |
 | QtTinySA | v2.0.1 з джерел, pyside6==6.11.0 |
-| lab-venv | scikit-rf[visa]==2.1.0, pyvisa-py 0.8.1, Skyfield 1.55, sgp4 2.27, numpy<2, GNU Radio з apt |
+| lab-venv | scikit-rf[visa]==2.1.0, pyvisa-py 0.8.1, Skyfield 1.55, sgp4 2.27, numpy<2, GNU Radio з apt; прогноз проходів labd (`plan_passes`) працює не тут, а в окремому `/opt/srrx/passes-venv` з тими самими Skyfield 1.55 / sgp4 2.27, але numpy 2.3.5 і без GNU Radio ([DEPLOYMENT](../software/DEPLOYMENT.md)) |
 | inferd-cpu | onnxruntime 1.31.0 cp312 manylinux_2_28_aarch64 (21,420,804 B, sha256 `35758d7606d578ec5b9d65f6e8a1f488013194c3f6097038a3223cb26d35ef9a`) |
 | ступінь 2 | torch 2.14.1+cpu з /whl/cpu (sha256 `2af649994b36dffc627175c3f306d9e513a309b58d4619ac7107577613336454`), faiss-cpu 1.15.1, scikit-learn 1.9.1 |
 

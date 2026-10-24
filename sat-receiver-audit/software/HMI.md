@@ -195,6 +195,10 @@ fix. Без позиції, при збої provider чи збої моното�
 пройшов `srrx.passes.validate_plan` (спостерігач округлений до 0.1°), і позначає
 його як snapshot із версіями Skyfield/sgp4 та станом UTC («UTC not verified —
 times are provisional»); консоль сама проходи не рахує й Skyfield не імпортує.
+Під кнопкою — рядок стану labd `plan_passes` лише для читання (`status["passes"]`:
+стан, код останньої помилки, стан UTC, до чотирьох найближчих проходів, без
+координат); запит плану робить `labctl plan_passes` ([LOCATION](LOCATION.md)),
+не консоль.
 
 IMU й фізичні HMI snapshots
 додатково старіють за часом після GUI poll; старий кватерніон не лишається
