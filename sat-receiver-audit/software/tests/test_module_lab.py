@@ -358,7 +358,11 @@ class MCUScenarioTests(unittest.TestCase):
         for old, new, reason in (("KEY_PULSE_MS = 900", "KEY_PULSE_MS = 1100", "STACK D3 bounds"),
                                  ("KEY_WAIT_MS = 1500", "KEY_WAIT_MS = 0", "STACK D3 bounds"),
                                  ("        if self.key_pulses >= KEY_MAX_PULSES:\n", "        if False:\n",
-                                  "unbounded or mistimed")):
+                                  "unbounded or mistimed"),
+                                 ("            if self._power_on_reset:\n", "            if True:\n",
+                                  "WDT reboot pressed"),
+                                 ("                self._q6a_seen = True\n", "                pass\n",
+                                  "did not finish the poweroff")):
             self.assertEqual(source.count(old), 1, old)
             module = ModuleType("pico_supervisor_mutant")
             exec(compile(source.replace(old, new), "supervisor.py", "exec"), module.__dict__)

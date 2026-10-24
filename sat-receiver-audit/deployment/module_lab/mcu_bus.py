@@ -542,6 +542,8 @@ class Watchdog:
 
 class EmulatedMachine:
     """MicroPython-compatible factories, one independent MCU pin namespace."""
+    PWRON_RESET, WDT_RESET = 1, 3  # MicroPython v1.26 rp2 machine constants.
+
     def __init__(self, clock=None, role="pico"):
         if role not in ("pico", "imu"):
             raise ValueError("unknown MCU role")
@@ -552,6 +554,7 @@ class EmulatedMachine:
         self.Pin = _PinFactory(self)
         self.SPI = _SPIFactory(self)
         self.reset_count, self.reset_reason, self.clock_hz = 0, None, 125000000
+        self.boot_cause = self.PWRON_RESET  # What reset_cause() reports for this boot.
         self.wdt = None
         if role == "pico":
             for gpio in (2, 3, 4, 5, 6, 7, 10, 11, 17, 22):
@@ -614,9 +617,14 @@ class EmulatedMachine:
                 if pin.handler is not None:
                     pin.handler(pin)
 
+    def reset_cause(self):
+        return self.boot_cause
+
     def reset(self, reason="SOFT"):
         self.reset_count += 1
         self.reset_reason = reason
+        if reason == "WDT":
+            self.boot_cause = self.WDT_RESET  # rp2 watchdog REASON survives until POR/RUN.
         for uart in self.uarts.values():
             uart.deinit()
         for pin in self.pins.values():

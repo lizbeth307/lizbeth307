@@ -259,18 +259,23 @@ def pico_main_watchdog_feed_policy(fw, loops=60):
             "reset_pad_high_z_asserts_mcp_reset": True, "physical_watchdog": "UNSUPPORTED"}
 
 
-def _pico_key_run(fw, q6a_rise_ms=None, stall_last_loop=False, until_ms=20000):
+def _pico_key_run(fw, q6a_rise_ms=None, stall_last_loop=False, until_ms=20000, wdt_boot=False):
     """Deployed main.run() from a cold Pico boot with Q6A 3V3 absent (GP14 low).
 
     q6a_rise_ms is a PMIC stand-in: GP14 rises that long after GP12 asserts
     the key, if it is still asserted. stall_last_loop hangs the loop 1000 ms in
     the last 20 ms of the first pulse, so only the WDT pad reset can end it.
-    Returns [(ms, GP12 level, GP14 level)] at each GP12 change, and the run.
+    wdt_boot makes reset_cause() report WDT_RESET instead of PWRON_RESET.
+    Returns [(ms, GP12 level, GP14 level)] at each GP12 change, and the run
+    (seen["off"]: [(ms, GP13 level)] at each Pololu OFF change).
     """
     clock = VirtualClock()
     machine = EmulatedMachine(clock)
+    if wdt_boot:
+        machine.boot_cause = machine.WDT_RESET
     machine.Pin(12).drive(0)  # R331 100k gate pulldown: high-Z GP12 holds Q302 off.
-    edges, seen = [], {"calls": 0, "stop": None, "on_at": None, "reset": None}
+    edges, seen = [], {"calls": 0, "stop": None, "on_at": None, "reset": None, "off": []}
+    machine.Pin(13).observers.append(lambda before, after: seen["off"].append((clock.now_ms(), after)))
     budget_ms, budget_calls = until_ms + 2000, 100 * (until_ms // 20 + 2)
 
     def stop(reason):
@@ -354,9 +359,18 @@ def pico_q6a_power_key_pulse(fw):
     _check(seen["reset"] == (1, "WDT", True, 0), "WDT reset did not return GP12 to high-Z with the key released")
     held = edges[1][0] - edges[0][0]
     _check(edges[0][1] == 1 and edges[1][1] == 0 and held < 2000, "hung-loop press not bounded: %r" % edges)
+    # A WDT reboot can land in the 3 s Q6A_OFF window of a poweroff: no press,
+    # and the absent 3V3 finishes that poweroff with one GP13 Pololu OFF pulse.
+    off_delay, off_pulse = fw.supervisor.Q6A_OFF_DELAY_MS, fw.supervisor.OFF_PULSE_MS
+    edges, seen = _pico_key_run(fw, wdt_boot=True, until_ms=wait + retry + 3 * pulse + off_delay)
+    _check(edges == [], "WDT reboot pressed PWR_ON_KEY: %r" % edges)
+    _check(len(seen["off"]) == 2 and seen["off"][0] == (off_delay, 1) and seen["off"][1][1] == 0
+           and off_pulse <= seen["off"][1][0] - off_delay < off_pulse + 40,
+           "WDT reboot did not finish the poweroff with one Pololu OFF pulse: %r" % seen["off"])
     return {"entrypoint": "firmware/pico/main.py run()", "first_pulse_after_first_sample_ms": wait,
             "pulse_ms": pulse, "retry_gap_ms": retry, "pulses_without_q6a": len(starts),
             "release_after_q6a_3v3_loops": 0, "hung_loop_press_ms": held, "hung_loop_release": "WDT",
+            "wdt_reboot_pulses": 0, "wdt_reboot_pololu_off_ms": off_delay,
             "graph": ["U305 GP12", "Q302", "R331", "D303"], "pmic_power_on": "MODEL_ONLY",
             "physical_pulse_and_b11": "UNSUPPORTED"}
 

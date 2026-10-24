@@ -16,7 +16,7 @@ UV_DWELL_MS = 5000
 OFF_PULSE_MS = 250
 # PWR_ON_KEY boot assist (STACK D3, bench B11): GP12 drives Q302, which pulls
 # J21 pin 3 low. STACK allows 0.8-1.0 s, never 2 s; a 6 s hold is the Q6A
-# hard power-off. Retries are bounded per Pico boot or physical restart.
+# hard power-off. Retries are bounded per Pico power-on or physical restart.
 KEY_WAIT_MS = 1500
 KEY_PULSE_MS = 900
 KEY_RETRY_MS = 5000
@@ -30,10 +30,14 @@ def _number(value, low, high):
 
 class Supervisor:
     def __init__(self, calibration_valid=False, session_factory=None,
-                 hardware_commissioned=False):
+                 hardware_commissioned=False, power_on_reset=True):
         # A remote ARM can never override either locally established gate.
         self.calibration_valid = calibration_valid is True
         self.hardware_commissioned = hardware_commissioned is True
+        # Only a LAB5 power-on arms the PWR_ON_KEY assist at the first sample.
+        # main.run() passes False after a WDT reboot, which may land inside the
+        # 3 s Q6A_OFF window of a poweroff or J21 UVLO trip.
+        self._power_on_reset = power_on_reset is True
         self._session_factory = session_factory
         self._session_counter = 0
         self.session = 0
@@ -276,7 +280,12 @@ class Supervisor:
             if not _number(self._inputs.get(field), low, high):
                 self._inputs[field] = None
         if self._inputs_at is None:
-            self._key_from = self._now  # First sample after boot starts the 3V3 wait.
+            if self._power_on_reset:
+                self._key_from = self._now  # First sample after power-on starts the 3V3 wait.
+            else:
+                # Not a power-on: absent 3V3 is a Q6A that just went off. Never
+                # press; finish that poweroff with the 3 s Pololu OFF below.
+                self._q6a_seen = True
         self._inputs_at = self._now
         if self._inputs.get("q6a_on") is True:
             self._q6a_seen = True
@@ -306,7 +315,7 @@ class Supervisor:
             self._event("Q6A_KEY_GAVE_UP", pulses=self.key_pulses)
 
     def _key_step(self):
-        # Boot assist only: Q6A 3V3 never seen since this boot or physical
+        # Boot assist only: Q6A 3V3 never seen since this power-on or physical
         # restart. A seen Q6A (even if lost again) or any state but SAFE ends it.
         if self._q6a_seen or self.state != "SAFE":
             self._key_from = self._key_at = None
@@ -418,23 +427,24 @@ class Supervisor:
         else:
             self._fan_latch = self._blower_latch = True
         panel = self._inputs.get("panel_temp_c")
+        stale = self._inputs_at is None or self._now - self._inputs_at > SENSOR_MAX_AGE_MS
         brightness = 100
         if _number(panel, -20, 120):
             brightness = 20 if panel >= 68 else 50 if panel >= 60 else 100
         # DISP12 is the operator console, not an ARM output. Missing, invalid or
         # stale panel NTC counts as hot; it re-enables only at <=60 C. A CASE_HOT
         # or FAN_STALLED trip also removes it until that fault is cleared.
-        if (self._inputs_at is None or self._now - self._inputs_at > SENSOR_MAX_AGE_MS
-                or not _number(panel, -20, 120) or panel >= 68):
+        if stale or not _number(panel, -20, 120) or panel >= 68:
             self._disp_hot = True
         elif panel <= 60:
             self._disp_hot = False
         # PWR_ON_KEY needs a fresh sample with Q6A 3V3 absent and is time-bounded
-        # here too, so a missed step() cannot stretch the press.
+        # here too, so a missed step() cannot stretch the press. A stale sample
+        # ends the press for good (counted); the next try waits KEY_RETRY_MS.
+        if self._key_at is not None and stale:
+            self._key_release()
         key = (self._key_at is not None and self.state == "SAFE" and not q6a_on
-               and self._now - self._key_at < KEY_PULSE_MS
-               and self._inputs_at is not None
-               and self._now - self._inputs_at <= SENSOR_MAX_AGE_MS)
+               and self._now - self._key_at < KEY_PULSE_MS)
         self.outputs = {
             "mcp_reset": not (self.state in ("CONFIGURING", "ACTIVE")),
             "disp_en": (q6a_on and not self._disp_hot and not self._thermal_trip

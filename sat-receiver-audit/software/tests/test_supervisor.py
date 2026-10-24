@@ -571,11 +571,43 @@ class PowerKeyTests(unittest.TestCase):
         self.assertTrue(model.outputs["q6a_key"])  # Sample 250 ms old: still fresh.
         model.receive(dict(frame, q=1), 1751)
         self.assertFalse(model.outputs["q6a_key"])  # No fresh GP14 sample: released.
+        # That press is over for good: a fresh sample never resumes it, and the
+        # next pulse waits the full retry gap from the stale release.
+        self.assertEqual(self.drive(model, 8000, inputs, start=1760), [(6760, 7660)])
+        self.assertEqual(model.status()["q6a_key_pulses"], 2)
         model = Supervisor()
         self.assertEqual(self.drive(model, 1600, inputs), [(1500, None)])
         model.step(1580, inputs)
         self.assertEqual((model.fault, model.outputs["q6a_key"]), ("CLOCK_REVERSED", False))
         self.assertEqual(self.drive(model, 20000, inputs, start=1600), [])
+
+    def test_watchdog_reboot_never_presses_and_finishes_the_poweroff(self):
+        # main.run() passes power_on_reset=False after a WDT reboot, which can
+        # land in the 3 s Q6A_OFF window of a poweroff or a J21 UVLO trip.
+        model = Supervisor(power_on_reset=False)
+        inputs = dict(READY, q6a_on=False)
+        self.assertEqual(self.drive(model, 2980, inputs), [])
+        self.assertEqual(model.state, "SAFE")
+        model.step(3000, inputs)
+        self.assertEqual((model.state, model.fault, model.outputs["pico_off"]),
+                         ("OFF", "Q6A_POWER_OFF", True))
+        self.assertEqual(model.status()["q6a_key_pulses"], 0)
+        # 3V3 present at the first sample, or back inside the 3 s: no OFF, no press.
+        for q6a_at in (0, 2000):
+            model = Supervisor(power_on_reset=False)
+            self.assertEqual(self.drive(model, 20000, dict(READY, q6a_on=False), q6a_at=q6a_at), [])
+            self.assertEqual(model.state, "SAFE", q6a_at)
+
+    def test_physical_restart_rearms_after_a_watchdog_reboot(self):
+        model = Supervisor(calibration_valid=True, power_on_reset=False)
+        inputs = dict(READY, q6a_on=False)
+        self.assertEqual(self.drive(model, 3500, inputs), [])
+        self.assertEqual(model.state, "OFF")
+        inputs["button_pressed"] = True
+        self.assertEqual(self.drive(model, 3600, inputs, start=3520), [])
+        self.assertEqual(model.state, "SAFE")
+        inputs["button_pressed"] = False
+        self.assertEqual(self.drive(model, 5500, inputs, start=3620), [(5100, None)])
 
     def test_pulse_count_travels_in_status_not_hello(self):
         model = Supervisor()
