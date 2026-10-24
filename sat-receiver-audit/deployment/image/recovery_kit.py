@@ -271,8 +271,10 @@ def check_target(target, extent_map, image=None, test_loop=False):
             raise KitError("test loop device is not backed by a regular file")
         device = target
     else:
-        if not target.startswith("/dev/disk/by-id/"):
-            raise KitError("target must be named through /dev/disk/by-id/ (never /dev/sdX or a partition)")
+        # Exactly one udev link name directly in /dev/disk/by-id/: no "..", no nested path, no plain node.
+        if (not target.startswith("/dev/disk/by-id/") or os.path.dirname(target) != "/dev/disk/by-id"
+                or Path(target).name in ("", ".", "..") or not os.path.islink(target)):
+            raise KitError("target must be a /dev/disk/by-id/<name> link of a whole disk (never /dev/sdX, a partition or a path with ..)")
         device = os.path.realpath(target)
     st = os.stat(device)
     if not stat.S_ISBLK(st.st_mode):

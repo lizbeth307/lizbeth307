@@ -8,13 +8,20 @@ kernel_deb_config). The smoke works on a sparse COPY of the image; only the copy
 change: no devicetree line (QEMU supplies the virt DT; the Q6A DTB would describe the wrong
 machine), console=ttyAMA0 and a systemd.run= report command. systemd-boot, the slot kernel and
 initramfs, root A/B, fstab, units, srrx-boot-check and systemd-bless-boot run as built.
+systemd.run= redirects default.target to kernel-command-line.target, so the report command
+(bootchain.py smoke-report) first starts multi-user.target, which queues the regular chain
+basic.target -> systemd-bless-boot -> boot-complete.target -> srrx-boot-check; the graphical
+session is outside the model.
 
 Scenarios, one QEMU boot each (-no-reboot; systemd.run_*_action=poweroff ends the boot):
   1 trial-a-blessed  labA+3 newest: boot-check passes, boot-complete.target, bless -> labA.conf
   2 trial-b-fails    labB+1 newest with one required token removed: boot-check fails, no bless,
                      systemd-boot leaves labB+0-1.conf (no tries left)
-  3 fallback-a       the bad labB sorts last: slot A boots again
-Bench gates W-03 (rollback on the Q6A) and W-10 (DTB provenance) stay OPEN.
+  3 fallback-a       the bad labB sorts last: the blessed labA boots again
+Every boot also checks: no pending jobs, srrx.service inactive and disabled, the recipe masks in
+effect; booting slot A, selftest.py offline on the live root gives the same FAIL/BLOCKED rows as
+the build-time run on root A. Bench gates W-03 (rollback on the Q6A) and W-10 (DTB provenance)
+stay OPEN.
 """
 import argparse
 import json
@@ -124,13 +131,57 @@ def qemu(image, vars_file, log, timeout, accel):
     return {"qemu_exit": code, "seconds": round(time.monotonic() - started, 1), "report": report, "console_bytes": len(text)}
 
 
-def check(scenario, result, expect):
+RESCUE_ENTRIES = ["labA-rescue.conf", "labB-rescue.conf"]
+# One QEMU boot each; "entries_after" is the exact lab*.conf set on the ESP after the boot.
+SCENARIOS = (
+    ("trial-a-blessed", {"slot": "A", "boot_check": "BOOT_SELF_CHECK_OK", "boot_complete": "active", "bless": "active",
+                         "bless_status": "good", "entries_after": sorted(["labA.conf", "labB.conf"] + RESCUE_ENTRIES)}),
+    ("trial-b-fails", {"slot": "B", "boot_check": "BLOCKED", "boot_complete": "inactive", "bless": "inactive",
+                       "bless_status": "indeterminate", "entries_after": sorted(["labA.conf", "labB+0-1.conf"] + RESCUE_ENTRIES)}),
+    # A blessed entry has no counter: systemd-bless-boot and boot-complete.target are not queued;
+    # srrx-boot-check still runs (WantedBy=multi-user.target).
+    ("fallback-a", {"slot": "A", "boot_check": "BOOT_SELF_CHECK_OK", "boot_complete": None, "bless": "inactive",
+                    "bless_status": "clean", "entries_after": sorted(["labA.conf", "labB+0-1.conf"] + RESCUE_ENTRIES)}),
+)
+
+
+def check(scenario, result, expect, build_rows=None):
+    """Compare one boot with its expectation; every mismatch is listed (host-testable)."""
     report = result["report"] or {}
     bc = report.get("boot_check") or {}
-    observed = {"slot": bc.get("slot"), "boot_check": bc.get("status"), "entries_after": result["entries_after"]}
-    ok = (result["qemu_exit"] == 0 and observed["slot"] == expect["slot"] and observed["boot_check"] == expect["boot_check"]
-          and expect["entry_after"] in result["entries_after"])
-    return dict(scenario=scenario, status="MODEL_PASS" if ok else "MODEL_FAIL", expected=expect, observed=observed, **result)
+    units = report.get("units") or {}
+
+    def state(unit, key="ActiveState"):
+        return (units.get(unit) or {}).get(key)
+
+    observed = {"slot": bc.get("slot"), "boot_check": bc.get("status"), "boot_check_unit": state("srrx-boot-check.service"),
+                "boot_complete": state("boot-complete.target"), "bless": state("systemd-bless-boot.service"),
+                "bless_status": report.get("bless_boot_status"), "entries_after": result["entries_after"],
+                "pending_jobs": report.get("pending_jobs"), "srrx_service": [state("srrx.service"), state("srrx.service", "UnitFileState")],
+                "selftest": (report.get("selftest") or {}).get("status")}
+    bad = []
+    if result["qemu_exit"] != 0 or not report:
+        bad.append("guest did not power off with a report (qemu exit %s)" % result["qemu_exit"])
+    for key in ("slot", "boot_check", "boot_complete", "bless", "bless_status", "entries_after"):
+        if expect[key] is not None and observed[key] != expect[key]:
+            bad.append("%s: %r, expected %r" % (key, observed[key], expect[key]))
+    want_unit = "active" if expect["boot_check"] == "BOOT_SELF_CHECK_OK" else "failed"
+    if observed["boot_check_unit"] != want_unit:
+        bad.append("srrx-boot-check.service %r, expected %r" % (observed["boot_check_unit"], want_unit))
+    if observed["pending_jobs"]:
+        bad.append("jobs still pending: " + "; ".join(observed["pending_jobs"])[:300])
+    if observed["srrx_service"] != ["inactive", "disabled"]:
+        bad.append("srrx.service must stay inactive and disabled without acceptance (IMG-06): %r" % observed["srrx_service"])
+    masked = report.get("masked_units") or {}
+    not_masked = sorted(u for u, p in masked.items() if (p or {}).get("LoadState") != "masked")
+    if not masked or not_masked:
+        bad.append("recipe masks not in effect: " + (",".join(not_masked) or "no mask report"))
+    if expect["boot_check"] == "BOOT_SELF_CHECK_OK" and build_rows is not None:
+        live = (report.get("selftest") or {}).get("fail_or_blocked_rows")
+        if live is None or sorted(live) != sorted(build_rows):
+            bad.append("live selftest FAIL/BLOCKED rows %r differ from the build-time rows %r" % (sorted(live or {}), sorted(build_rows)))
+    return dict(scenario=scenario, status="MODEL_FAIL" if bad else "MODEL_PASS", expected=expect, observed=observed,
+                mismatches=bad, **result)
 
 
 def smoke(image, manifest_path, facts_path, work, out, timeout=1800):
@@ -161,14 +212,11 @@ def smoke(image, manifest_path, facts_path, work, out, timeout=1800):
         copy.unlink()
     recovery_kit.sparse_copy(image, copy)
     esp_dir = work / "esp"
-    scenarios = (
-        ("trial-a-blessed", {"labA+3.conf": (config, "A", 3, None), "labB.conf": (config, "B", 1, None)},
-         {"slot": "A", "boot_check": "BOOT_SELF_CHECK_OK", "entry_after": "labA.conf"}),
-        ("trial-b-fails", {"labB+1.conf": (config, "B", 4, BROKEN_TOKEN)},
-         {"slot": "B", "boot_check": "BLOCKED", "entry_after": "labB+0-1.conf"}),
-        ("fallback-a", {}, {"slot": "A", "boot_check": "BOOT_SELF_CHECK_OK", "entry_after": "labB+0-1.conf"}),
-    )
-    for index, (name, writes, expect) in enumerate(scenarios, 1):
+    writes_per_scenario = ({"labA+3.conf": (config, "A", 3, None), "labB.conf": (config, "B", 1, None)},
+                           {"labB+1.conf": (config, "B", 4, BROKEN_TOKEN)}, {})
+    build_rows = (manifest.get("selftest_root_a") or {}).get("fail_or_blocked_rows")
+    result["build_selftest_rows"] = build_rows
+    for index, ((name, expect), writes) in enumerate(zip(SCENARIOS, writes_per_scenario), 1):
         with Esp(copy, esp_dir) as esp:
             entries_dir = esp / "loader/entries"
             if writes:
@@ -184,7 +232,7 @@ def smoke(image, manifest_path, facts_path, work, out, timeout=1800):
         run_result = qemu(copy, vars_file, log, timeout, accel)
         with Esp(copy, esp_dir, read_only=True) as esp:
             run_result["entries_before"], run_result["entries_after"] = before, lab_entries(esp)
-        result["scenarios"].append(check(name, run_result, expect))
+        result["scenarios"].append(check(name, run_result, expect, build_rows))
         (out / "smoke-report.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     result["status"] = "MODEL_PASS" if all(s["status"] == "MODEL_PASS" for s in result["scenarios"]) else "MODEL_FAIL"
     (out / "smoke-report.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
@@ -206,8 +254,8 @@ def main():
     except (OSError, ValueError, SmokeError, subprocess.SubprocessError) as exc:
         print("BLOCKED: " + str(exc), file=sys.stderr)
         return 2
-    print(json.dumps({"status": result["status"], "scenarios": [(s["scenario"], s["status"], s["observed"]) for s in result["scenarios"]]},
-                     indent=2))
+    print(json.dumps({"status": result["status"], "scenarios": [(s["scenario"], s["status"], s.get("mismatches"), s["observed"])
+                                                                for s in result["scenarios"]]}, indent=2))
     return 0 if result["status"] in ("MODEL_PASS", "SMOKE_NOT_FEASIBLE") else 1
 
 

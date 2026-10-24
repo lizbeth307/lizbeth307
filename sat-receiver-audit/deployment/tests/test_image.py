@@ -324,6 +324,61 @@ class RecipeTests(unittest.TestCase):
                 self.assertTrue((rootfs / name).is_file(), name)
 
 
+class SmokeModelTests(unittest.TestCase):
+    """smoke_qemu.check: the QEMU expectations themselves (the boots run in sr-rx-image.yml)."""
+
+    def setUp(self):
+        import smoke_qemu
+        self.smoke = smoke_qemu
+        self.recipe = json.loads((HERE / "image/recipe.json").read_text())
+
+    def report(self, slot, ok, boot_complete, bless, bless_status, rows=None):
+        units = {"srrx-boot-check.service": {"ActiveState": "active" if ok else "failed"},
+                 "boot-complete.target": {"ActiveState": boot_complete}, "systemd-bless-boot.service": {"ActiveState": bless},
+                 "srrx.service": {"ActiveState": "inactive", "UnitFileState": "disabled"}}
+        return {"boot_check": {"slot": slot, "status": "BOOT_SELF_CHECK_OK" if ok else "BLOCKED"}, "units": units,
+                "bless_boot_status": bless_status, "pending_jobs": [],
+                "masked_units": {u: {"LoadState": "masked"} for u in self.recipe["mask"]["units"]},
+                "selftest": {"status": "FAIL", "fail_or_blocked_rows": rows if rows is not None else {"RX-16": ["lab_pref_missing"]}}}
+
+    def run_check(self, index, report, entries):
+        name, expect = self.smoke.SCENARIOS[index]
+        result = {"qemu_exit": 0, "report": report, "entries_after": entries}
+        return self.smoke.check(name, result, expect, {"RX-16": ["lab_pref_missing"]})
+
+    def test_expected_boots_pass(self):
+        blessed = sorted(["labA.conf", "labB.conf", "labA-rescue.conf", "labB-rescue.conf"])
+        bad_b = sorted(["labA.conf", "labB+0-1.conf", "labA-rescue.conf", "labB-rescue.conf"])
+        self.assertEqual(self.run_check(0, self.report("A", True, "active", "active", "good"), blessed)["status"], "MODEL_PASS")
+        self.assertEqual(self.run_check(1, self.report("B", False, "inactive", "inactive", "indeterminate"), bad_b)["status"], "MODEL_PASS")
+        self.assertEqual(self.run_check(2, self.report("A", True, "inactive", "inactive", "clean"), bad_b)["status"], "MODEL_PASS")
+
+    def test_the_failure_of_the_first_ci_run_is_a_model_fail(self):
+        # 24.10.2026: systemd.run= alone never queued boot-complete.target, so nothing was blessed.
+        entries = sorted(["labA+2-1.conf", "labB.conf", "labA-rescue.conf", "labB-rescue.conf"])
+        result = self.run_check(0, self.report("A", True, "inactive", "inactive", "indeterminate"), entries)
+        self.assertEqual(result["status"], "MODEL_FAIL")
+        self.assertTrue(any(m.startswith("entries_after") for m in result["mismatches"]))
+        self.assertTrue(any(m.startswith("boot_complete") for m in result["mismatches"]))
+
+    def test_running_service_missing_mask_or_selftest_drift_fail(self):
+        blessed = sorted(["labA.conf", "labB.conf", "labA-rescue.conf", "labB-rescue.conf"])
+        report = self.report("A", True, "active", "active", "good", rows={})
+        report["units"]["srrx.service"] = {"ActiveState": "active", "UnitFileState": "enabled"}
+        report["masked_units"]["rsetup.service"] = {"LoadState": "loaded"}
+        mismatches = self.run_check(0, report, blessed)["mismatches"]
+        self.assertEqual(len(mismatches), 3, mismatches)
+
+    def test_smoke_entry_keeps_the_slot_line_and_adds_only_the_report(self):
+        cfg = bootchain.validate_ab(config())
+        options = self.smoke.smoke_options(cfg, "B", drop=self.smoke.BROKEN_TOKEN).split(" ")
+        line = bootchain.cmdline(BASE, cfg["root_b_partuuid"]).split(" ")
+        self.assertEqual([t for t in options if t in line], [t for t in line if t != self.smoke.BROKEN_TOKEN])
+        self.assertIn("systemd.run_success_action=poweroff", options)
+        self.assertNotIn("devicetree", self.smoke.smoke_entry(cfg, "A", 3))
+        self.assertEqual(bootchain.SMOKE_TARGET, "multi-user.target")
+
+
 @unittest.skipUnless(hasattr(os, "SEEK_DATA") and sys.platform == "linux", "sparse-file extents need Linux SEEK_DATA")
 class RecoveryKitTests(unittest.TestCase):
     def setUp(self):
@@ -357,6 +412,10 @@ class RecoveryKitTests(unittest.TestCase):
         for target, loop in (("/dev/sda", False), (str(self.image), False), ("/dev/disk/by-id/../../sda", False), ("/dev/sda", True)):
             with self.assertRaises((recovery_kit.KitError, OSError)):
                 recovery_kit.check_target(target, data, self.image, test_loop=loop)
+        # The by-id name is refused on its form alone, before the device is looked at (LOG-SEC etc.).
+        for target in ("/dev/disk/by-id/../../sda", "/dev/disk/by-id/x/../../../sda", "/dev/disk/by-id/", "/dev/disk/by-id/not-a-link"):
+            with self.assertRaisesRegex(recovery_kit.KitError, "by-id/<name> link"):
+                recovery_kit.check_target(target, data, self.image)
 
     def test_malformed_maps_are_refused(self):
         data = recovery_kit.make_map(self.image)

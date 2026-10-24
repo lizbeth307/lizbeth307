@@ -3,6 +3,8 @@ Description=SR-RX boot self-check before boot-complete.target (A/B blessing)
 Documentation=file:/opt/srrx/deployment/image/README.md
 # Route A: systemd-bless-boot marks the entry good only after boot-complete.target, and this
 # unit is RequiredBy= it; a failure leaves the tries counter running down (STACK.md:843).
+# boot-complete.target is queued only while boot counting is in effect (systemd-bless-boot
+# pulls it); WantedBy=multi-user.target runs the same check on every boot, blessed or not.
 DefaultDependencies=no
 Wants=srrx-radio-off.service
 After=local-fs.target srrx-radio-off.service systemd-modules-load.service
@@ -26,3 +28,4 @@ MemoryMax=128M
 
 [Install]
 RequiredBy=boot-complete.target
+WantedBy=multi-user.target

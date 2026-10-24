@@ -892,9 +892,10 @@ def enable_units(root, recipe, route):
     for unit in units:
         run(["systemctl", "--root", str(root), "enable", unit])
     root = Path(root)
-    links = {u: sorted(str(p.relative_to(root)) for p in (root / "etc/systemd/system").glob("*/" + u)) for u in units}
-    if any(not v for v in links.values()):
-        raise BuildError("unit enablement produced no links: " + json.dumps(links))
+    links = {u: sorted(p.relative_to(root).as_posix() for p in (root / "etc/systemd/system").glob("*/" + u)) for u in units}
+    expected = {u: sorted("etc/systemd/system/" + d + "/" + u for d in dirs.split()) for u, dirs in units.items()}
+    if links != expected:
+        raise BuildError("unit enablement links differ from the recipe: " + json.dumps({"got": links, "want": expected}))
     return links
 
 
@@ -923,10 +924,8 @@ def selftest(root, cmdline_sha, output):
             "--policy", str(POLICY), "--project", str(PROJECT), "--cmdline-sha256", cmdline_sha, "--output", str(output)]
     done = run(argv, check=False)
     report = load_json(output) if Path(output).is_file() else {}
-    open_rows = {row["id"]: sorted({f.get("rule", "?") for f in row.get("findings", [])})
-                 for row in report.get("checks", []) if row.get("status") in ("FAIL", "BLOCKED")}
     return {"exit_code": done.returncode, "status": report.get("status"), "counts": report.get("counts"),
-            "fail_or_blocked_rows": open_rows, "report_sha256": sha256(output) if Path(output).is_file() else None}
+            "fail_or_blocked_rows": bootchain.fail_or_blocked_rows(report), "report_sha256": sha256(output) if Path(output).is_file() else None}
 
 
 # ---------------------------------------------------------------- build

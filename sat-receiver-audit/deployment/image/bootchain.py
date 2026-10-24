@@ -453,35 +453,76 @@ def route_b_commit(esp=ESP_MOUNT, config_path=BOOT_CONFIG, slot_path=SLOT_FILE):
 
 
 SMOKE_BEGIN, SMOKE_END = "SRRX-SMOKE-REPORT-BEGIN", "SRRX-SMOKE-REPORT-END"
+SMOKE_TARGET = "multi-user.target"
+SMOKE_UNITS = ("srrx-boot-check.service", "boot-complete.target", "systemd-bless-boot.service", "srrx-radio-off.service",
+               "srrx.service", "srrx-poweroff.service", "systemd-sysusers.service", "systemd-tmpfiles-setup.service", SMOKE_TARGET)
 
 
-def smoke_report(timeout=900):
-    """QEMU smoke only (deployment/image/smoke_qemu.py passes systemd.run= on the smoke entry): wait
-    until every other boot job has finished, then print one JSON line between markers. Inert otherwise."""
+def unit_properties(text):
+    """`systemctl show --property=...` output -> {property: value}."""
+    return dict(line.split("=", 1) for line in text.splitlines() if "=" in line)
+
+
+def fail_or_blocked_rows(report):
+    """{row id: sorted rules} of the FAIL/BLOCKED rows of a selftest.py offline report."""
+    return {row["id"]: sorted({f.get("rule", "?") for f in row.get("findings", [])})
+            for row in report.get("checks", []) if row.get("status") in ("FAIL", "BLOCKED")}
+
+
+def smoke_report(timeout=900, root=Path("/")):
+    """QEMU smoke only (deployment/image/smoke_qemu.py passes systemd.run= on the smoke entry). Inert otherwise.
+
+    systemd-run-generator points default.target at kernel-command-line.target, which needs only
+    kernel-command-line.service (After=, not Requires=, basic.target). So the regular transaction
+    (basic.target -> systemd-bless-boot.service -> boot-complete.target -> srrx-boot-check.service)
+    is queued here by starting multi-user.target; the graphical session is not part of the model.
+    Then wait until every other job has finished, run selftest.py offline on the live root, and
+    print one JSON line between markers."""
     import subprocess
     import time
 
-    def out(argv):
+    def out(argv, limit=60):
         try:
-            return subprocess.run(argv, capture_output=True, text=True, timeout=60).stdout.strip()
+            return subprocess.run(argv, capture_output=True, text=True, timeout=limit).stdout.strip()
         except (OSError, subprocess.SubprocessError) as exc:
             return "unavailable: " + type(exc).__name__
 
+    started = out(["systemctl", "start", "--no-block", SMOKE_TARGET])
+    time.sleep(2)
     deadline = time.monotonic() + timeout
-    while time.monotonic() < deadline:
+    while True:
         jobs = [line for line in out(["systemctl", "list-jobs", "--no-legend", "--plain"]).splitlines()
                 if line.strip() and "kernel-command-line" not in line]
-        if not jobs:
+        if not jobs or time.monotonic() > deadline:
             break
         time.sleep(5)
-    units = ("srrx-boot-check.service", "boot-complete.target", "systemd-bless-boot.service", "srrx-radio-off.service",
-             "srrx.service", "systemd-sysusers.service", "systemd-tmpfiles-setup.service")
-    report = {"pending_jobs": jobs, "uname_r": platform.release(),
+    show = "--property=LoadState,ActiveState,SubState,Result,UnitFileState"
+    report = {"started_target": SMOKE_TARGET, "start_output": started, "pending_jobs": jobs, "uname_r": platform.release(),
               "proc_cmdline": Path("/proc/cmdline").read_text(errors="replace").strip(),
-              "units": {u: out(["systemctl", "show", "--property=ActiveState,SubState,Result,UnitFileState", u]).replace("\n", ";") for u in units},
+              "units": {u: unit_properties(out(["systemctl", "show", show, u])) for u in SMOKE_UNITS},
               "failed_units": out(["systemctl", "--failed", "--no-legend", "--plain"]).splitlines(),
               "bless_boot_status": out(["/usr/lib/systemd/systemd-bless-boot", "status"]),
-              "boot_check": boot_check()}
+              "boot_check": boot_check(root)}
+    try:
+        recipe = json.loads((HERE / "recipe.json").read_text(encoding="utf-8"))
+        report["masked_units"] = {u: unit_properties(out(["systemctl", "show", "--property=LoadState,UnitFileState", u]))
+                                  for u in recipe["mask"]["units"]}
+    except (OSError, ValueError, KeyError) as exc:
+        report["masked_units"] = {"unavailable": type(exc).__name__}
+    try:
+        config = load_config(root / BOOT_CONFIG.relative_to("/"))
+        slot = read_slot(root / SLOT_FILE.relative_to("/"))
+        line = cmdline(config["base_cmdline_without_root"], root_partuuid(config, slot), config["lime_build"]) + "\n"
+        output = Path("/run/srrx-smoke-selftest.json")
+        argv = [sys.executable, "-I", "-B", str(DEPLOYMENT / "selftest.py"), "offline", "--rootfs", str(root), "--profile", "controller",
+                "--policy", str(DEPLOYMENT / "receive-only-policy.json"), "--project", str(DEPLOYMENT.parent),
+                "--cmdline-sha256", hashlib.sha256(line.encode()).hexdigest(), "--output", str(output)]
+        done = subprocess.run(argv, capture_output=True, text=True, timeout=600)
+        live = json.loads(output.read_text(encoding="utf-8")) if output.is_file() else {}
+        report["selftest"] = {"exit_code": done.returncode, "status": live.get("status"), "counts": live.get("counts"),
+                              "fail_or_blocked_rows": fail_or_blocked_rows(live), "stderr_tail": done.stderr[-600:]}
+    except (OSError, ValueError, KeyError, subprocess.SubprocessError) as exc:
+        report["selftest"] = {"status": "unavailable: " + type(exc).__name__ + ": " + str(exc)[:300]}
     print(SMOKE_BEGIN + json.dumps(report, sort_keys=True) + SMOKE_END, flush=True)
     return 0
 

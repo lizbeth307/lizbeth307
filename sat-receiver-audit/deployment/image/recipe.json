@@ -63,7 +63,7 @@
       "purge": ["sdboot-is-embloader"],
       "bootctl_install": true,
       "apt_pin_minus_one": ["embloader", "sdboot-is-embloader"],
-      "enable": {"srrx-boot-check.service": "boot-complete.target.requires"}
+      "enable": {"srrx-boot-check.service": "boot-complete.target.requires multi-user.target.wants"}
     },
     "B": {
       "source": "STACK.md:844; build/07-pz-vstanovlennia.md:165-167; embloader tag 0.4 (https://github.com/BigfootACA/embloader, src/sdboot/file.c, src/loader/loader.c, read 2026-10-24)",
@@ -71,7 +71,7 @@
       "bootctl_install": false,
       "embloader_version": "0.4",
       "apt_pin_minus_one": [],
-      "enable": {"srrx-boot-check.service": "boot-complete.target.requires", "srrx-ab-commit.service": "multi-user.target.wants"}
+      "enable": {"srrx-boot-check.service": "boot-complete.target.requires multi-user.target.wants", "srrx-ab-commit.service": "multi-user.target.wants"}
     }
   },
   "enable_common": {
