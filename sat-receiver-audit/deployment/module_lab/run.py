@@ -48,6 +48,12 @@ def write(path, value):
     stage.replace(path)
 
 
+def _plural(n, one, few, many):
+    """'n noun' in the Ukrainian form (as tools/uk_text.plural; the guest runs this file without tools/)."""
+    tail, tens = n % 10, n % 100
+    return f"{n} {one if tail == 1 and tens != 11 else few if 2 <= tail <= 4 and not 12 <= tens <= 14 else many}"
+
+
 def success(status):
     return isinstance(status, str) and (status == "PASS" or status.startswith("EMULATION_PASS"))
 
@@ -151,8 +157,10 @@ def render(report, output):
               "CONNECTION_MODEL_ONLY": "Лише з’єднання / не реалізовано"}
     lines = ["# Перевірка підключення модулів SR-RX", "", 
         "Це результати програмних моделей, а не дозвіл підключати залізо. Усі фізичні модулі мають стан NOT_TESTED.", "",
-        f"Виконання наборів: **{report['execution_status']}**. Реєстр охоплює {report['coverage']['component_count']} елементи, "
-        f"{report['coverage']['assembly_count']} вузли та {len(rows)} деталізованих інтерфейсів.", "",
+        f"Виконання наборів: **{report['execution_status']}**. Реєстр охоплює "
+        f"{_plural(report['coverage']['component_count'], 'елемент', 'елементи', 'елементів')}, "
+        f"{_plural(report['coverage']['assembly_count'], 'вузол', 'вузли', 'вузлів')} та "
+        f"{_plural(len(rows), 'деталізований інтерфейс', 'деталізовані інтерфейси', 'деталізованих інтерфейсів')}.", "",
         "PASS означає виконані сценарії конкретного драйвера або моделі. Відсутність реального USB/kernel, аналогового RF, "
         "калібрування, живлення або механіки залишається явно записаною в JSON та окремих звітах.", "",
         "| Модуль | Позначення | Інтерфейс | З’єднання | Драйвер / функція | Ворота / статус джерела |", "|---|---|---|---|---|---|"]
@@ -185,13 +193,14 @@ table{width:100%;border-collapse:collapse;font-size:.9rem}td,th{padding:10px;bor
 <h2>Набори перевірок</h2><pre id="domains"></pre>'''+catalogue_html+'''</main><script type="application/json" id="data">'''+data+'''</script><script>
 const report=JSON.parse(document.getElementById('data').textContent),all=report.coverage.interfaces;
 const names={EMULATION_PASS:'PASS моделі',EMULATION_FAIL:'Помилка',CONNECTION_MODEL_ONLY:'Лише з’єднання / не реалізовано'};
-document.getElementById('counts').textContent=report.coverage.component_count+' елементи · '+report.coverage.assembly_count+' вузли · '+all.length+' інтерфейсів · з’єднання PASS: '+all.filter(x=>x.connection_status==='PASS').length+' · перевірені функціональні моделі: '+report.coverage.counts.EMULATION_PASS+' · виконання: '+report.execution_status;
+function pl(n,one,few,many){const t=n%10,h=n%100;return n+' '+(t===1&&h!==11?one:t>=2&&t<=4&&!(h>=12&&h<=14)?few:many);}
+document.getElementById('counts').textContent=pl(report.coverage.component_count,'елемент','елементи','елементів')+' · '+pl(report.coverage.assembly_count,'вузол','вузли','вузлів')+' · '+pl(all.length,'інтерфейс','інтерфейси','інтерфейсів')+' · з’єднання PASS: '+all.filter(x=>x.connection_status==='PASS').length+' · перевірені функціональні моделі: '+report.coverage.counts.EMULATION_PASS+' · виконання: '+report.execution_status;
 document.getElementById('domains').textContent=JSON.stringify(Object.fromEntries(Object.entries(report.domains).map(([k,v])=>[k,{exit_code:v.exit_code,status:v.report?.status,error:v.error}])),null,2);
 function draw(){const search=document.getElementById('search').value.toLowerCase(),filter=document.getElementById('filter').value,body=document.getElementById('rows');body.replaceChildren();
 for(const row of all){if(filter&&row.status!==filter)continue;if(search&&!JSON.stringify([row.value,row.ref,row.interface_family,row.pinout_gate,row.source_status,row.source_notes,row.models]).toLowerCase().includes(search))continue;
 const badge=row.pinout_gate?' · Ворота: '+(typeof row.pinout_gate==='string'?row.pinout_gate:JSON.stringify(row.pinout_gate)):'';
 const tr=document.createElement('tr');for(const text of [row.ref+' · '+row.value,typeof row.interface_family==='string'?row.interface_family:JSON.stringify(row.interface_family),row.connection_status+badge,names[row.status]]){const td=document.createElement('td');td.textContent=text;tr.append(td);}tr.children[3].className=row.status==='EMULATION_PASS'?'pass':row.status==='EMULATION_FAIL'?'fail':'partial';
-const td=document.createElement('td'),details=document.createElement('details'),summary=document.createElement('summary'),pre=document.createElement('pre');summary.textContent=row.models.length+' моделей · фізично НЕ ПЕРЕВІРЕНО';pre.textContent=JSON.stringify({source_status:row.source_status,gate:row.pinout_gate,source_description:row.source_description,source_notes:row.source_notes,models:row.models,constraints:row.constraints,pinout:row.pinout_status,pins:row.pins},null,2);details.append(summary,pre);td.append(details);tr.append(td);body.append(tr);}}
+const td=document.createElement('td'),details=document.createElement('details'),summary=document.createElement('summary'),pre=document.createElement('pre');summary.textContent=pl(row.models.length,'модель','моделі','моделей')+' · фізично НЕ ПЕРЕВІРЕНО';pre.textContent=JSON.stringify({source_status:row.source_status,gate:row.pinout_gate,source_description:row.source_description,source_notes:row.source_notes,models:row.models,constraints:row.constraints,pinout:row.pinout_status,pins:row.pins},null,2);details.append(summary,pre);td.append(details);tr.append(td);body.append(tr);}}
 document.getElementById('search').addEventListener('input',draw);document.getElementById('filter').addEventListener('change',draw);draw();
 </script></html>'''
     (output / "module-results.html").write_text(page, encoding="utf-8", newline="\n")

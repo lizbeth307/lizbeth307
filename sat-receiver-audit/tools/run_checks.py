@@ -43,6 +43,11 @@ def main():
     verify.mkdir(exist_ok=True)
     sch = cad / "sr-rx-v2.kicad_sch"
     run(sys.executable, BASE / "tools/generate_kicad.py")
+    # Readability gate: the generator writes such pages, but they are not checked further.
+    drawing = json.loads((cad / "generation-manifest.json").read_text(encoding="utf-8"))
+    if drawing.get("sparse_last_pages") or drawing["drawing"].get("fallback_labels"):
+        raise SystemExit("Schematic drawing gate: sparse last pages " + ", ".join(drawing.get("sparse_last_pages", []))
+                         + f"; fallback labels {drawing['drawing'].get('fallback_labels', 0)} (see tools/generate_kicad.py)")
     date = normalise.design_date(BASE)
     # Never validate new schematics against an earlier export's netlist or ERC.
     for stale in (verify / "netlist.xml", verify / "erc.json"):

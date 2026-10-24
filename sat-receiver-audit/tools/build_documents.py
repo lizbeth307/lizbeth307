@@ -8,6 +8,9 @@ from pathlib import Path
 import sys
 
 BASE = Path(__file__).resolve().parents[1]
+if str(BASE / "tools") not in sys.path:
+    sys.path.append(str(BASE / "tools"))
+from uk_text import drift_sentence, plural  # noqa: E402  (plural re-exported for earlier callers)
 
 
 def md(value):
@@ -21,12 +24,6 @@ def read_optional(relative):
 
 def sha(path):
     return hashlib.sha256(path.read_bytes()).hexdigest()
-
-
-def plural(n, one, few, many):
-    """'n noun' in the Ukrainian form: 1/21 one, 2-4/22-24 few, 0/5-20/11-14 many; a non-integer takes many."""
-    tail, tens = (n % 10, n % 100) if type(n) is int else (0, 0)
-    return f"{n} {one if tail == 1 and tens != 11 else few if 2 <= tail <= 4 and not 12 <= tens <= 14 else many}"
 
 
 def current_for(recorded, current):
@@ -44,6 +41,28 @@ def evidence_note(current, subject):
     return "" if current else f" **Отримано для попередньої редакції джерел:** {subject} не підтверджує поточний код, потрібен новий запуск."
 
 
+def electrical_pages(report, generated):
+    """Pages of the generated schematic; the netlist must show as many sheets with parts
+    (validate_project does not count the root index)."""
+    pages = len(generated["pages"])
+    if report.get("electrical_sheets") != pages:
+        raise SystemExit(f"verification/validation.json electrical_sheets={report.get('electrical_sheets')} differs from "
+                         f"{pages} pages in build/kicad/generation-manifest.json; rerun tools/run_checks.py")
+    return pages
+
+
+def lab_evidence(binding, base=BASE):
+    """evidence_note of the ARM64 run, with the drift sentence the bundle notice repeats."""
+    try:
+        from finalize_linux_lab import binding_drift
+        drift = drift_sentence(binding_drift(base, binding)) if binding.get("source_sha256") else None
+    except (OSError, ValueError, KeyError, ImportError):
+        drift = None
+    if drift is None:
+        return evidence_note(None, "ARM64 прогін")
+    return evidence_note(False, "ARM64 прогін") + " Після прогону " + drift + "." if drift else ""
+
+
 def main():
     graphs = [json.loads(p.read_text(encoding="utf-8")) for p in sorted((BASE / "design").glob("E[1-5].json"))]
     report = json.loads((BASE / "verification/validation.json").read_text(encoding="utf-8"))
@@ -55,10 +74,6 @@ def main():
     modules = read_optional("verification/module-lab/report.json")
     sys.path[:0] = [str(BASE / "software"), str(BASE / "tools")]
 
-    def lab_sources():
-        from finalize_linux_lab import bound_sources
-        return {name: sha(BASE / name) for name in bound_sources(BASE)}
-
     def module_sources():
         lab = BASE / "deployment/module_lab"
         return {"inventory": sha(lab / "inventory.json"), "models": {p.name: sha(p) for p in sorted(lab.glob("*.py"))},
@@ -69,7 +84,7 @@ def main():
                        "пропуски не зараховані як PASS.") if guest else ""
         linux_note = (f"Фактичний ARM64 Linux/systemd прогін: **{linux.get('status', 'NOT_RUN')}**, QEMU exit {host.get('qemu_exit_code', '?')}, {host.get('elapsed_s', '?')} s; "
                       + plural(sum(suites.values()), "набір", "набори", "наборів") + ": " + ", ".join(f"{n} {s}" for s, n in sorted(suites.items())) + "." + guest_tests
-                      + evidence_note(current_for(binding.get("source_sha256"), lab_sources), "ARM64 прогін")
+                      + lab_evidence(binding)
                       + " Окремий звіт і журнали: [Linux lab](verification/linux-lab/README.md).")
     else:
         linux_note = "ARM64 Linux lab підготовлено; фактичні результати потрібно читати в окремому звіті після запуску."
@@ -162,7 +177,7 @@ def main():
     }
     (BASE / "design/readiness-contract.json").write_text(json.dumps(readiness, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     errors = report.get("erc_errors", [])
-    status = "без помилок" if not errors else f"{len(errors)} помилок; див. сирий звіт і пояснення"
+    status = "без помилок" if not errors else plural(len(errors), "помилка", "помилки", "помилок") + "; див. сирий звіт і пояснення"
     erc = json.loads((BASE / "verification/erc.json").read_text(encoding="utf-8"))
     pcb = json.loads((BASE / "verification/pcb-review.json").read_text(encoding="utf-8"))
     host_failed = len(software.get("failures", [])) + len(software.get("errors", []))
@@ -175,8 +190,7 @@ def main():
     # Read after the readiness contract above is written: it is one of the bound graphs.
     host_note = evidence_note(current_for(software and {**software.get("graph_sha256", {}), **software.get("source_sha256", {})}, host_sources),
                               "звіт `verification/software-tests.json`")
-    pages = len(generated["pages"])
-    sheets_note = f" (поле `electrical_sheets`={report['electrical_sheets']} у `verification/validation.json` рахує й кореневий аркуш)" if report.get("electrical_sheets") == pages + 1 else ""
+    pages = electrical_pages(report, generated)
     ignored = report.get("erc_ignored_checks", [])
     ignored_note = (" KiCad за замовчуванням не виконує перевірок " + ", ".join(f"`{name}`" for name in ignored)
                     + "; їх перелічено в `erc_ignored_checks`, тож «без помилок» стосується лише виконаних правил.") if ignored else ""
@@ -192,7 +206,7 @@ def main():
 
 ## Результат цієї редакції
 
-- Заповнено всі п'ять розділів схеми. Для читабельності вони розбиті на {plural(pages, 'електричну сторінку', 'електричні сторінки', 'електричних сторінок')} і кореневий зміст{sheets_note}.
+- Заповнено всі п'ять розділів схеми. Для читабельності вони розбиті на {plural(pages, 'електричну сторінку', 'електричні сторінки', 'електричних сторінок')} і кореневий зміст.
 - На схемах {plural(report['physical_components'], 'позначений елемент', 'позначені елементи', 'позначених елементів')}; {plural(report['connected_physical_contacts'], 'підключений фізичний/явно функціональний контакт', 'підключені фізичні/явно функціональні контакти', 'підключених фізичних/явно функціональних контактів')} у {plural(report['named_nets'], 'іменованій мережі', 'іменованих мережах', 'іменованих мережах')}. Повний експорт KiCad зіставлено з графами: **{report['graph_netlist_comparison']}**.
 - Збережено початкові бібліотеки, додано самодостатню бібліотеку елементів нових схем, відносні таблиці бібліотек, підтверджені стандартні посадкові місця й джерела.
 - ERC виконано справжнім KiCad {erc.get("kicad_version", "?")}: **{status}**. [Сирий ERC](verification/erc.json) не відфільтровано.{ignored_note} [Незалежна звірка](verification/validation.json) містить точні лічильники й SHA256 файлів.
@@ -218,7 +232,7 @@ def main():
 
 {module_note} Моделі з'єднань використовують незалежний експорт KiCad; навмисні обриви, замикання та підключення NC не є фізичними вимірюваннями. Реальні USB/PCIe/HDMI, RF, BMS, калібрування, тактування Q6A та фізичний T7 залишаються відкритими.
 
-Повний C++ data plane56MS/s/Lime, весь початковий каталог декодерів, апаратний HTP/QAIRT та встановлений A/B образ не оголошено завершеними. Experimental vendor patches і вихідні генератори мають пройти native/API та стендове приймання; EGC/DSC вимкнені без перевірених pre-payload parsers. [readiness-contract.json](design/readiness-contract.json) фіксує межу; його дані самі не керують GPIO.
+Повний C++ data plane 56 MS/s/Lime, весь початковий каталог декодерів, апаратний HTP/QAIRT та встановлений A/B образ не оголошено завершеними. Experimental vendor patches і вихідні генератори мають пройти native/API та стендове приймання; EGC/DSC вимкнені без перевірених pre-payload parsers. [readiness-contract.json](design/readiness-contract.json) фіксує межу; його дані самі не керують GPIO.
 
 Ціни v2 від 18.10 залишено як історичну оцінку. Нові схеми мають окремий BOM-аудит; їх не названо підтвердженим кошторисом покупок.
 

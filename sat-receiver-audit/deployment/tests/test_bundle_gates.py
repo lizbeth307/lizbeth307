@@ -161,6 +161,16 @@ class ReleaseGateTests(unittest.TestCase):
         with self.assertRaisesRegex(SystemExit, "Firmware packages are stale"):
             self.gates()
 
+    def test_record_of_an_earlier_run_states_its_drift_like_completion(self):
+        def drift(root):
+            (root / "deployment/deploy.py").write_bytes(b"# changed guard\n")
+            (root / "deployment/added_guard.py").write_bytes(b"# new\n")
+            (root / "verification/linux-lab/project-manifest.json").write_text('{"record_status": "RECORD_OF_EARLIER_RUN"}', encoding="utf-8")
+        self.build(after=drift)
+        # build_documents.lab_evidence prints the same sentence after "Після прогону".
+        self.assertIn("Після нього з 3 прив’язаних виконуваних файлів змінено 1, вилучено 0; додано 1 новий файл. Його PASS",
+                      self.gates()["linux_notice"])
+
 
 class BundleDocumentTests(unittest.TestCase):
     def test_core_lists_each_document_once_with_the_gnss_uart_and_scope_policy_docs(self):

@@ -8,9 +8,14 @@ import os
 from pathlib import Path, PurePosixPath
 import shutil
 import stat
+import sys
 import tempfile
 
 PROJECT = Path(__file__).resolve().parents[1]
+# Shared wording; appended, so a module loaded by file path cannot shadow anything else.
+if str(PROJECT / "tools") not in sys.path:
+    sys.path.append(str(PROJECT / "tools"))
+from uk_text import plural  # noqa: E402
 # Everything the guest executes or consumes as test input: service/deploy code,
 # locks, patches and byte-exact upstream fixtures, plus the guest test runner.
 BOUND_PREFIXES = ("software/", "firmware/", "deployment/")
@@ -41,6 +46,19 @@ def bound_sources(project):
             if p.is_file() and not p.is_symlink() and bound(p.relative_to(project).as_posix())}
 
 
+def binding_drift(project, binding):
+    """How the tree moved from an imported run's source-binding.json: bound files changed
+    or missing, in-scope files it does not cover, and whether the module report was
+    replaced. build_bundle and build_documents both count stale records with this."""
+    recorded = binding["source_sha256"]
+    missing = sorted(r for r in recorded if not (project / r).is_file())
+    changed = sorted(r for r, h in recorded.items() if r not in missing and sha(project / r) != h)
+    report = project / "verification/module-lab/report.json"
+    return {"bound": len(recorded), "changed": changed, "missing": missing,
+            "added": sorted(bound_sources(project) - set(recorded)),
+            "module_rebound": not report.is_file() or sha(report) != binding.get("module_report_sha256")}
+
+
 def regular_tree(root):
     """Guest-written results: reject links/special files before anything is read or copied.
 
@@ -64,7 +82,7 @@ def lineage_text(base):
         return "Прогін почато з незмінного locked Ubuntu image без OS cache (`base_overlay: null` у `run.json`)."
     chain = base["backing_chain"]
     return (f"`run.json` записує походження OS cache: попередній прогін `previous_status` {base['previous_status']}, "
-            f"`previous_qemu_exit_code` {base['previous_qemu_exit_code']} і `backing_chain` із SHA256 кожного з {len(chain)} шарів; "
+            f"`previous_qemu_exit_code` {base['previous_qemu_exit_code']} і `backing_chain` із SHA256 кожного з {plural(len(chain), 'шару', 'шарів', 'шарів')}; "
             "нижній шар — locked Ubuntu image. Журнал файлової системи відновлює саме Linux guest. Це не прогін із чистого базового образу.")
 
 
@@ -145,7 +163,7 @@ def main():
     origin = lineage_text(lineage)
     text = f"""# ARM64 Linux — фактичний результат
 
-Загальний стан **{report['status']}**. Справжній ARM64 Linux `{report['environment']['kernel']}`, systemd як PID1, QEMU TCG/Cortex-A76, 4 vCPU/3 GiB. Мережевих карт, USB passthrough та спільних каталогів хоста немає; loopback використовується локальними GPSD fixtures. ОС Ubuntu24.04 з generic kernel, а не цільовий Q6A образ/ядро.
+Загальний стан **{report['status']}**. Справжній ARM64 Linux `{report['environment']['kernel']}`, systemd як PID1, QEMU TCG/Cortex-A76, 4 vCPU/3 GiB. Мережевих карт, USB passthrough та спільних каталогів хоста немає; loopback використовується локальними GPSD fixtures. ОС Ubuntu 24.04 з generic kernel, а не цільовий Q6A образ/ядро.
 
 | Набір | Фактичний стан |
 |---|---|
@@ -153,7 +171,7 @@ def main():
     text += "\n".join(f"| `{name}` | {status} |" for name, status in report["suites"].items())
     text += f"""
 
-Регресії: **{units['passed']} PASS**, **{len(units['skipped'])} SKIP** із {units['tests_discovered']} тестів. Причини пропусків наведені в `software-tests.json`; пропуски не зараховані як PASS. System smoke перевіряє справжні systemd sandbox/restart/peer UID і відмову запускати hardware service з OPEN/missing records. PTY, Qt offscreen, XCB/Xvfb і native RX worker lifecycle виконуються реальними процесами.
+Регресії: **{units['passed']} PASS**, **{len(units['skipped'])} SKIP** із {plural(units['tests_discovered'], 'тесту', 'тестів', 'тестів')}. Причини пропусків наведені в `software-tests.json`; пропуски не зараховані як PASS. System smoke перевіряє справжні systemd sandbox/restart/peer UID і відмову запускати hardware service з OPEN/missing records. PTY, Qt offscreen, XCB/Xvfb і native RX worker lifecycle виконуються реальними процесами.
 
 Storage smoke: **{len(storage['cases'])} PASS** на окремому віртуальному ext4 block device. Перевірено запис маскованого спектра, неправильний пристрій, підміну mount ID, ENOSPC і втрату mount без запису на rootfs. Це не Samsung T7/USB або перевірка фізичного відключення живлення.
 
@@ -161,7 +179,7 @@ Storage smoke: **{len(storage['cases'])} PASS** на окремому вірту
 
 {origin} Усі locked DEB і wheels перевстановлено з hash-перевіреного payload, а `dependency-verification.json` підтверджує, що встановлені версії точно збігаються з обома lock. Усі поточні вихідні файли замінено й перевірено за SHA256, пакет перевстановлено, усі набори виконано повторно. `source-binding.json` і `project-manifest.json` дозволяють звірити реально виконаний код. Годинник задається з host preparation timestamp; це не GNSS/PPS/RTC qualification.
 
-{len(read(PROJECT / 'design/readiness-contract.json')['gate_results'])} апаратних воріт залишаються OPEN. Фізичне залізо, аналогові RF/живлення, BMS, калібрування, Q6A peripheral pinmux, повний Lime/56MS/s/HTP та виробничий випуск не прийняті.
+Апаратні ворота, що лишаються OPEN: {len(read(PROJECT / 'design/readiness-contract.json')['gate_results'])}. Фізичне залізо, аналогові RF/живлення, BMS, калібрування, Q6A peripheral pinmux, повний Lime/56MS/s/HTP та виробничий випуск не прийняті.
 """
     (destination / "README.md").write_text(text, encoding="utf-8", newline="\n")
     print(json.dumps({"status": "IMPORTED", "bound_sources": len(executed), "linux": str(destination), "modules": str(modules)}))
