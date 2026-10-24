@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "component": "limesuiteng",
+  "summary": "LimeSuiteNG 37cb183 with the reviewed TX-rejecting patch: core library, SoapySDR module and headers; no CLI, GUI, GNU Radio, Amarisoft, firmware, udev or kernel modules",
+  "source": {"patch": "deployment/patches/limesuiteng-rx-only.patch"},
+  "build_depends": ["libusb-1.0-0-dev", "libsoapysdr-dev"],
+  "cmake": {
+    "configure": ["cmake", "-S", "{src}", "-B", "{build}", "-G", "Unix Makefiles"],
+    "options": {
+      "BUILD_CLI": "OFF",
+      "BUILD_CORE": "ON",
+      "BUILD_DOCS": "OFF",
+      "BUILD_DOCS_DOXYGEN": "OFF",
+      "BUILD_DRIVERS": "OFF",
+      "BUILD_DRIVERS_LA9310": "OFF",
+      "BUILD_DRIVERS_LIMEPCIE": "OFF",
+      "BUILD_EXAMPLES": "OFF",
+      "BUILD_GUI": "OFF",
+      "BUILD_LEGACYAPI": "OFF",
+      "BUILD_PLUGINS": "ON",
+      "BUILD_PLUGINS_AMARISOFT": "OFF",
+      "BUILD_PLUGINS_GNURADIO": "OFF",
+      "BUILD_PLUGINS_HDSDR": "OFF",
+      "BUILD_PLUGINS_SOAPYSDR": "ON",
+      "BUILD_SHARED_LIBS": "ON",
+      "CMAKE_AUTOSET_INSTALL_RPATH": "OFF",
+      "CMAKE_BUILD_WITH_INSTALL_RPATH": "OFF",
+      "CMAKE_INSTALL_RPATH_USE_LINK_PATH": "OFF",
+      "CMAKE_SKIP_BUILD_RPATH": "OFF",
+      "CODE_COVERAGE_VERBOSE": "OFF",
+      "ENABLE_DOXYGEN": "OFF",
+      "ENABLE_NEW_GAIN_BEHAVIOUR": "OFF",
+      "ENABLE_OCTAVE": "OFF",
+      "ENABLE_UNIT_TESTS": "OFF",
+      "FTD3XX_STATIC": "ON",
+      "INSTALL_DESKTOP": "OFF",
+      "INSTALL_DEVELOPMENT": "ON",
+      "INSTALL_FIRMWARE": "OFF",
+      "INSTALL_UDEV_RULES": "OFF",
+      "LA9310_LIMESDR_DKMS": "OFF",
+      "LA9310_LIMESDR_INSTALL": "OFF",
+      "LA9410_LIMESDR_RELOAD_ON_INSTALL": "OFF",
+      "LIMEPCIE_DKMS": "OFF",
+      "LIMEPCIE_INSTALL": "OFF",
+      "LIMEPCIE_RELOAD_ON_INSTALL": "OFF",
+      "LIMESUITENG_LA9310": "ON",
+      "LIMESUITENG_PCIE": "ON",
+      "LIMESUITENG_USB_FTDI": "ON",
+      "LIMESUITENG_USB_FX3": "ON",
+      "UDEV_RULES_RELOAD_ON_INSTALL": "OFF"
+    },
+    "variables": {
+      "CMAKE_BUILD_TYPE": "Release",
+      "CMAKE_INSTALL_PREFIX": "/usr",
+      "FETCHCONTENT_FULLY_DISCONNECTED": "ON",
+      "LIB_SUFFIX": "/aarch64-linux-gnu",
+      "LIMESUITENG_EXTVER": "g37cb1833"
+    }
+  },
+  "build": [["cmake", "--build", "{build}", "--parallel", "{jobs}"]],
+  "install": {"cmake_install": true, "copy": []},
+  "packages": [
+    {
+      "name": "liblimesuiteng",
+      "section": "libs",
+      "description": "LimeSuiteNG core library, lab build with TX setupStream rejected (experimental, native TX audit OPEN)",
+      "files": ["usr/lib/aarch64-linux-gnu/liblimesuiteng.so.*"],
+      "depends": [],
+      "shlibs_depends": true
+    },
+    {
+      "name": "limesuiteng-soapysdr",
+      "section": "libs",
+      "description": "LimeSuiteNG SoapySDR module, lab build with TX streams rejected",
+      "files": ["usr/lib/aarch64-linux-gnu/SoapySDR/modules*/*"],
+      "depends": ["liblimesuiteng (= {version})"],
+      "shlibs_depends": true
+    },
+    {
+      "name": "limesuiteng-dev",
+      "section": "libdevel",
+      "description": "LimeSuiteNG headers and CMake/pkg-config files for lab builder chroots only",
+      "files": ["usr/lib/aarch64-linux-gnu/liblimesuiteng.so", "usr/include/*", "usr/lib/aarch64-linux-gnu/cmake/*", "usr/lib/aarch64-linux-gnu/pkgconfig/*"],
+      "depends": ["liblimesuiteng (= {version})"],
+      "shlibs_depends": false
+    }
+  ],
+  "drop": [],
+  "checks": [
+    {"kind": "soname", "file": "usr/lib/aarch64-linux-gnu/liblimesuiteng.so.0.3-1", "equals": "liblimesuiteng.so.0.3-1"},
+    {"kind": "require_paths", "globs": ["usr/lib/aarch64-linux-gnu/SoapySDR/modules0.8/*"]},
+    {"kind": "forbid_paths", "globs": ["usr/bin/*", "usr/sbin/*", "*amarisoft*", "*Amarisoft*", "*gr-limesuiteng*", "*limeGUI*", "*udev*", "*firmware*", "*.ko", "usr/src/*", "*legacyapi*", "*LimeSuite.h"]}
+  ],
+  "notes": [
+    "Options of deployment/build-vendor.sh limesuiteng kept (BUILD_GUI/CLI/DOCS/UNIT_TESTS/AMARISOFT/GNURADIO/HDSDR=OFF, SOAPYSDR=ON, UDEV/FIRMWARE install OFF); every other option the pinned tree declares is set to its upstream default.",
+    "Three deliberate non-defaults: BUILD_DRIVERS=OFF (la9310_limesdr 0.2.1 and la9310_uart_module 1.0.0 are their own DKMS components in sources.lock.json and need linux-headers-6.18.2-4-qcom, not this chroot); BUILD_LEGACYAPI=OFF (build/07 section 10: only when a consumer needs it); RPATH automation OFF as in the upstream debian/rules, so no RPATH enters a system library.",
+    "LIMESUITENG_USB_FX3/FTDI stay at their upstream ON default (USB boards, not on this device); turning them off is a review choice of the open Lime TX audit.",
+    "deploy.py verify_build still rejects every Lime runtime library until the complete native/raw-register TX audit (sources.lock.json release_blockers) is REVIEWED; this build proves only that the patched tree compiles and packages on arm64."
+  ]
+}

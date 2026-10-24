@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "component": "rtlsdr",
+  "summary": "librtlsdr2 2.0.3-0+lab1: osmocom rtl-sdr v2.0.3 (797f814) with the reviewed RX-only patch (SONAME 2 restored, GPIO0 bias gate); library and headers only, no tools",
+  "source": {"patch": "deployment/patches/rtlsdr-rx-only.patch"},
+  "build_depends": ["libusb-1.0-0-dev"],
+  "cmake": {
+    "configure": ["cmake", "-S", "{src}", "-B", "{build}", "-G", "Unix Makefiles"],
+    "options": {
+      "DETACH_KERNEL_DRIVER": "ON",
+      "ENABLE_ZEROCOPY": "OFF",
+      "INSTALL_UDEV_RULES": "OFF"
+    },
+    "variables": {
+      "CMAKE_BUILD_TYPE": "Release",
+      "CMAKE_INSTALL_PREFIX": "/usr",
+      "FETCHCONTENT_FULLY_DISCONNECTED": "ON"
+    }
+  },
+  "build": [["cmake", "--build", "{build}", "--target", "rtlsdr", "--parallel", "{jobs}"]],
+  "install": {
+    "cmake_install": false,
+    "copy": [
+      {"from": "{build}/src/librtlsdr.so*", "to": "usr/lib/aarch64-linux-gnu"},
+      {"from": "{src}/include/rtl-sdr.h", "to": "usr/include"},
+      {"from": "{src}/include/rtl-sdr_export.h", "to": "usr/include"},
+      {"from": "{build}/librtlsdr.pc", "to": "usr/lib/aarch64-linux-gnu/pkgconfig"}
+    ]
+  },
+  "packages": [
+    {
+      "name": "librtlsdr2",
+      "section": "libs",
+      "description": "RTL2832U SDR library, receive-only lab build (SONAME librtlsdr.so.2)",
+      "files": ["usr/lib/aarch64-linux-gnu/librtlsdr.so.2*"],
+      "depends": [],
+      "shlibs_depends": true
+    },
+    {
+      "name": "librtlsdr-dev",
+      "section": "libdevel",
+      "description": "RTL2832U SDR library headers for lab builder chroots only",
+      "files": ["usr/lib/aarch64-linux-gnu/librtlsdr.so", "usr/include/rtl-sdr.h", "usr/include/rtl-sdr_export.h", "usr/lib/aarch64-linux-gnu/pkgconfig/librtlsdr.pc"],
+      "depends": ["librtlsdr2 (= {version})", "libusb-1.0-0-dev"],
+      "shlibs_depends": false
+    }
+  ],
+  "drop": [],
+  "checks": [
+    {"kind": "soname", "file": "usr/lib/aarch64-linux-gnu/librtlsdr.so.2", "equals": "librtlsdr.so.2"},
+    {"kind": "export_count", "file": "usr/lib/aarch64-linux-gnu/librtlsdr.so.2", "prefix": "rtlsdr_", "equals": 37},
+    {"kind": "forbid_strings", "file": "usr/lib/aarch64-linux-gnu/librtlsdr.so.2", "substrings": ["zero-copy"]},
+    {"kind": "forbid_paths", "globs": ["usr/bin/*", "usr/sbin/*", "*rtl_tcp*", "*rtl_biast*", "*rtl_eeprom*", "*udev*", "*.a"]}
+  ],
+  "notes": [
+    "Same cmake options as deployment/build-vendor.sh rtlsdr; DETACH_KERNEL_DRIVER=ON and ENABLE_ZEROCOPY=OFF literally (build/07-pz-vstanovlennia.md section 7.1).",
+    "Prefix /usr and the multiarch libdir instead of the /opt/srrx-vendor candidate of build-vendor.sh, so the package replaces noble librtlsdr2 2.0.1 at the path its consumers load (SoapyRTLSDR, labrx).",
+    "Only the rtlsdr target is built: rtl_tcp, rtl_biast, rtl_eeprom and the other tools are never compiled. Packaging is dpkg-deb from recipe.json, not the noble debian/ directory; porting that packaging stays with the reviewer.",
+    "The SONAME, the 37 rtlsdr_* exports and the absence of zero-copy text are CI checks of the arm64 build; V4L hardware tests (V4L-0..V4L-8) stay OPEN."
+  ]
+}

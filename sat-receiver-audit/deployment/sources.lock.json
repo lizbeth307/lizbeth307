@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "project_revision": "SR-RX-v2.1",
-  "generated_on": "2026-10-20",
+  "generated_on": "2026-10-24",
   "target": {
     "board": "Radxa Dragon Q6A",
     "architecture": "aarch64",
@@ -17,8 +17,80 @@
     "Refs with ref_verified=true were resolved through official repository API. Acquired full source archives record actual SHA256/size/URL; null hashes remain unresolved.",
     "Git commit/blob SHA1 is not an archive SHA256.",
     "Default with Lime remains specified, but Lime runtime backend and hardware release remain disabled pending listed audits.",
-    "Null hashes or unresolved pins prevent offline/release verification; never substitute current/latest."
+    "Null hashes or unresolved pins prevent offline/release verification; never substitute current/latest.",
+    "git_tree_sha1 (with git_submodules gitlinks) is the commit's git tree as the GitHub API reports it; fetch_sources.py tree recomputes it from the archive bytes, so a re-compressed GitHub archive can be re-reviewed by content.",
+    "apt_snapshot pins Ubuntu packages by a fixed snapshot.ubuntu.com timestamp: debian_source and binary_debs come only from gpgv-verified InRelease -> signed index -> Checksums-Sha256/SHA256 (fetch_sources.py resolve-debian / verify-debian)."
   ],
+  "apt_snapshot": {
+    "archive": "https://snapshot.ubuntu.com/ubuntu",
+    "timestamp": "20261020T000000Z",
+    "architecture": "arm64",
+    "suites": [
+      "noble",
+      "noble-updates",
+      "noble-security"
+    ],
+    "areas": [
+      "main",
+      "universe"
+    ],
+    "keyring": "/usr/share/keyrings/ubuntu-archive-keyring.gpg",
+    "signing_fingerprints": [
+      "F6ECB3762474EDA9D21B7022871920D1991BC93C"
+    ],
+    "resolved_on": "2026-10-24",
+    "method": "deployment/fetch_sources.py resolve-debian: gpgv of each suite InRelease against the keyring and the pinned fingerprint, the signed SHA256 list for Sources.xz/Packages.xz, then Checksums-Sha256 of the exact source version and SHA256 of every arm64/all binary built from it. The same timestamp is the lab builder chroot snapshot (.github/workflows/sr-rx-packages.yml).",
+    "releases": [
+      {
+        "suite": "noble",
+        "inrelease_sha256": "cdb2f31d809f589719a53c6ad15f255b27569c4059542ada282aaa21b8e164b0",
+        "size": 255850
+      },
+      {
+        "suite": "noble-updates",
+        "inrelease_sha256": "52bb7e89f40f411a401f8b1954098b5775a7d0d497dec182f323f4bc009612d0",
+        "size": 126125
+      }
+    ],
+    "indices": [
+      {
+        "suite": "noble",
+        "path": "main/binary-arm64/Packages.xz",
+        "sha256": "4a1901e6124fb0a111f5dffc8f5c14474f449e2ecfa71f2eaf0b29917edb53f9",
+        "size": 1376632
+      },
+      {
+        "suite": "noble",
+        "path": "universe/binary-arm64/Packages.xz",
+        "sha256": "6df230cf5cfebcbd59e4e2713b8eed07dc0aaed66fb471ebf046cb70ccb07275",
+        "size": 15313828
+      },
+      {
+        "suite": "noble",
+        "path": "universe/source/Sources.xz",
+        "sha256": "796c4253df46fe9d0b468c5b18259f8d5172bf6c8b3b17451ba98ffc1781f682",
+        "size": 19839948
+      },
+      {
+        "suite": "noble-updates",
+        "path": "main/binary-arm64/Packages.xz",
+        "sha256": "c168dd70c2d336592f3dc6212f77f83e521956e366b97f2087501a3761ad70ee",
+        "size": 1451504
+      },
+      {
+        "suite": "noble-updates",
+        "path": "main/source/Sources.xz",
+        "sha256": "d4c88fc27d775cb6bdfe043da2f74667606c44cdea423ebc0a815c1e4ac303c1",
+        "size": 560400
+      },
+      {
+        "suite": "noble-updates",
+        "path": "universe/binary-arm64/Packages.xz",
+        "sha256": "aef9b3cd0df0e2e421a494ff80beb5ae4aeefa8664c891895b512f5b5e418bfd",
+        "size": 1746548
+      }
+    ]
+  },
   "components": [
     {
       "id": "limesuiteng",
@@ -40,7 +112,8 @@
       "source_cache_path": "sources/limesuiteng.tar.gz",
       "primary_url": "https://github.com/myriadrf/LimeSuiteNG/commit/37cb1833e35955f7072c0fb91642d14ae5515f28",
       "source_archive_size": 13197691,
-      "source_archive_url": "https://github.com/myriadrf/LimeSuiteNG/archive/37cb1833e35955f7072c0fb91642d14ae5515f28.tar.gz"
+      "source_archive_url": "https://github.com/myriadrf/LimeSuiteNG/archive/37cb1833e35955f7072c0fb91642d14ae5515f28.tar.gz",
+      "git_tree_sha1": "7e25b4a2faa0025f2e3c81a6ee50661ae06d3e12"
     },
     {
       "id": "rtlsdr",
@@ -61,7 +134,8 @@
       "primary_url": "https://github.com/osmocom/rtl-sdr/commit/797f8143266d983c56d8f35d2d442527529dd8a5",
       "revert_commit": "7ebcb041f2ce887ef4d1a64607558889a86ff169",
       "source_archive_size": 138362,
-      "source_archive_url": "https://github.com/osmocom/rtl-sdr/archive/797f8143266d983c56d8f35d2d442527529dd8a5.tar.gz"
+      "source_archive_url": "https://github.com/osmocom/rtl-sdr/archive/797f8143266d983c56d8f35d2d442527529dd8a5.tar.gz",
+      "git_tree_sha1": "87f1ed456f2c8ccc987610a37083dd6639571b88"
     },
     {
       "id": "airspyhf",
@@ -80,7 +154,8 @@
       "source_cache_path": "sources/airspyhf.tar.gz",
       "primary_url": "https://github.com/airspy/airspyhf/commit/8891387edddcd185e2949e9814e9ef35f46f0722",
       "source_archive_size": 33550,
-      "source_archive_url": "https://github.com/airspy/airspyhf/archive/8891387edddcd185e2949e9814e9ef35f46f0722.tar.gz"
+      "source_archive_url": "https://github.com/airspy/airspyhf/archive/8891387edddcd185e2949e9814e9ef35f46f0722.tar.gz",
+      "git_tree_sha1": "e43757470eb3c2080c3e780b9dcde7989d4956b1"
     },
     {
       "id": "satdump",
@@ -99,7 +174,12 @@
       "source_cache_path": "sources/satdump.tar.gz",
       "primary_url": "https://github.com/SatDump/SatDump/commit/1aedd602055c154401384a8cc7876713bb371254",
       "source_archive_size": 101357307,
-      "source_archive_url": "https://github.com/SatDump/SatDump/archive/1aedd602055c154401384a8cc7876713bb371254.tar.gz"
+      "source_archive_url": "https://github.com/SatDump/SatDump/archive/1aedd602055c154401384a8cc7876713bb371254.tar.gz",
+      "git_tree_sha1": "0379a88058e9d209435f9a57079019815a71ae82",
+      "git_submodules": {
+        "android/deps": "4b1f699db2e829fa6ee8070fac001b784b111916",
+        "docs/res": "500c986043322a8fcffe125286030d18f6ee9f61"
+      }
     },
     {
       "id": "gr-satellites",
@@ -118,7 +198,11 @@
       "source_cache_path": "sources/gr-satellites.tar.gz",
       "primary_url": "https://github.com/daniestevez/gr-satellites/commit/4210dc45c9725e30d8f612eeec614f3f353cd09c",
       "source_archive_size": 4025462,
-      "source_archive_url": "https://github.com/daniestevez/gr-satellites/archive/4210dc45c9725e30d8f612eeec614f3f353cd09c.tar.gz"
+      "source_archive_url": "https://github.com/daniestevez/gr-satellites/archive/4210dc45c9725e30d8f612eeec614f3f353cd09c.tar.gz",
+      "git_tree_sha1": "0124a93439423a796eb6be565d6f1ae44991d5d0",
+      "git_submodules": {
+        "satellite-recordings": "952ddfe53f62a150c53559249c83370630254cab"
+      }
     },
     {
       "id": "sdrpp",
@@ -137,7 +221,8 @@
       "source_cache_path": "sources/sdrpp.tar.gz",
       "primary_url": "https://github.com/AlexandreRouma/SDRPlusPlus/commit/8c9f5ee8fe405775bfcd62c8c8f8c0fc928a64af",
       "source_archive_size": 3815934,
-      "source_archive_url": "https://github.com/AlexandreRouma/SDRPlusPlus/archive/8c9f5ee8fe405775bfcd62c8c8f8c0fc928a64af.tar.gz"
+      "source_archive_url": "https://github.com/AlexandreRouma/SDRPlusPlus/archive/8c9f5ee8fe405775bfcd62c8c8f8c0fc928a64af.tar.gz",
+      "git_tree_sha1": "a06443ada083a711df4a0d1206df30654a0eabbf"
     },
     {
       "id": "sdrangel",
@@ -148,14 +233,18 @@
       "ref_verified": true,
       "recipe": "Qt5 RX-only plugin allowlist; all channeltx/samplesink/samplemimo/channelmimo excluded",
       "release_blockers": [
-        "source archive hash",
         "packaging/allowlist/privacy patch build and fixture tests"
       ],
       "upstream_url": "https://github.com/f4exb/sdrangel",
-      "source_archive_sha256": null,
+      "source_archive_sha256": "11e599d13e872a922575c70cb6dac59a6ea2fbb448d732c7599836bdf9dd2bf9",
       "source_cache_path": "sources/sdrangel.tar.gz",
       "primary_url": "https://github.com/f4exb/sdrangel/commit/97e9e21fe9754b363ae70caac822802d908e8acd",
-      "archive_acquisition_note": "over128MiBcap"
+      "source_archive_size": 138256778,
+      "source_archive_url": "https://github.com/f4exb/sdrangel/archive/97e9e21fe9754b363ae70caac822802d908e8acd.tar.gz",
+      "git_tree_sha1": "fca678110df66744a17f3e12e14081ab63d7c9c3",
+      "git_submodules": {
+        "external/windows": "72317cca9b2362b8acfd68efcd0d7ad169ce1b7d"
+      }
     },
     {
       "id": "soapyairspyhf",
@@ -174,7 +263,8 @@
       "source_cache_path": "sources/soapyairspyhf.tar.gz",
       "primary_url": "https://github.com/pothosware/SoapyAirspyHF/commit/0b3daf0b47c3c1d0857c873bb184f6a86a37333c",
       "source_archive_size": 12129,
-      "source_archive_url": "https://github.com/pothosware/SoapyAirspyHF/archive/0b3daf0b47c3c1d0857c873bb184f6a86a37333c.tar.gz"
+      "source_archive_url": "https://github.com/pothosware/SoapyAirspyHF/archive/0b3daf0b47c3c1d0857c873bb184f6a86a37333c.tar.gz",
+      "git_tree_sha1": "de673a8526b9460a3b0b562baec455e2ecb46216"
     },
     {
       "id": "readsb",
@@ -193,7 +283,8 @@
       "source_cache_path": "sources/readsb.tar.gz",
       "primary_url": "https://github.com/wiedehopf/readsb/commit/094720939c01943de82b14df6f42f67fff1cd514",
       "source_archive_size": 417062,
-      "source_archive_url": "https://github.com/wiedehopf/readsb/archive/094720939c01943de82b14df6f42f67fff1cd514.tar.gz"
+      "source_archive_url": "https://github.com/wiedehopf/readsb/archive/094720939c01943de82b14df6f42f67fff1cd514.tar.gz",
+      "git_tree_sha1": "d0534387ea15ddbe9fa88aee5dc3364d647c14cd"
     },
     {
       "id": "ais-catcher",
@@ -212,7 +303,8 @@
       "source_cache_path": "sources/ais-catcher.tar.gz",
       "primary_url": "https://github.com/jvde-github/AIS-catcher/commit/8833c64b3da0c42e9a724b9bd13eaab2fffadcca",
       "source_archive_size": 1405086,
-      "source_archive_url": "https://github.com/jvde-github/AIS-catcher/archive/8833c64b3da0c42e9a724b9bd13eaab2fffadcca.tar.gz"
+      "source_archive_url": "https://github.com/jvde-github/AIS-catcher/archive/8833c64b3da0c42e9a724b9bd13eaab2fffadcca.tar.gz",
+      "git_tree_sha1": "6c53879ea81d30f813207e53dc2ad1881c5afa56"
     },
     {
       "id": "radiosonde-auto-rx",
@@ -231,23 +323,30 @@
       "source_cache_path": "sources/radiosonde-auto-rx.tar.gz",
       "primary_url": "https://github.com/projecthorus/radiosonde_auto_rx/commit/53d03c72ad18ce4357c0cedd1f4acf2bf1efb36e",
       "source_archive_size": 1971621,
-      "source_archive_url": "https://github.com/projecthorus/radiosonde_auto_rx/archive/53d03c72ad18ce4357c0cedd1f4acf2bf1efb36e.tar.gz"
+      "source_archive_url": "https://github.com/projecthorus/radiosonde_auto_rx/archive/53d03c72ad18ce4357c0cedd1f4acf2bf1efb36e.tar.gz",
+      "git_tree_sha1": "1d950e4d8a53a33393bc60f320860cfe67f3e491"
     },
     {
       "id": "slowrx",
       "version": "gitc94327a+lab1",
-      "repo": "sjlongland/slowrx-daemon",
+      "repo": "windytan/slowrx",
       "ref": "c94327ae40ab970b0bea20ebb378d71f8e69b98a",
-      "commit": null,
-      "ref_verified": false,
-      "recipe": "decode only; pinned STACK ref returned404, disabled",
+      "commit": "c94327ae40ab970b0bea20ebb378d71f8e69b98a",
+      "ref_verified": true,
+      "recipe": "decode only (slowrxd through snd-aloop, STACK.md decision 56); it was disabled only because the pin did not resolve",
       "release_blockers": [
-        "STACK source ref unresolved: primary404; disabled"
+        "no live primary repository: keep the cached archive",
+        "packaging/allowlist/privacy patch build and fixture tests",
+        "isolated arm64 recipe and acceptance tests"
       ],
       "upstream_url": "https://github.com/sjlongland/slowrx-daemon",
-      "source_archive_sha256": null,
+      "source_archive_sha256": "afa0ac0b872c0e35e93b14526c755072f017ec7e61ea7e61517f677318c936e7",
       "source_cache_path": "sources/slowrx.tar.gz",
-      "primary_url": "https://github.com/sjlongland/slowrx-daemon"
+      "primary_url": "https://github.com/windytan/slowrx/commit/c94327ae40ab970b0bea20ebb378d71f8e69b98a",
+      "source_archive_size": 50640,
+      "source_archive_url": "https://github.com/windytan/slowrx/archive/c94327ae40ab970b0bea20ebb378d71f8e69b98a.tar.gz",
+      "git_tree_sha1": "415a8214e856268b3d5fd5c6dfe09b67d733d01e",
+      "pin_note": "The fork sjlongland/slowrx-daemon returns 404 (GitHub API, 2026-10-24). The pinned commit itself (Stuart Longland, 2024-12-17, 'slowrxd: Re-add -p option', 166 commits ahead of windytan/slowrx master) is still served through the windytan/slowrx fork network (commits API and archive); the archive tree equals the commit tree. Same commit id, so no substitute; the fragile hosting is why the cached archive must be kept."
     },
     {
       "id": "soapysdr",
@@ -266,75 +365,366 @@
       "source_cache_path": "sources/soapysdr.tar.gz",
       "primary_url": "https://github.com/pothosware/SoapySDR/commit/1cf5a539a21414ff509ff7d0eedfc5fa8edb90c6",
       "source_archive_size": 131334,
-      "source_archive_url": "https://github.com/pothosware/SoapySDR/archive/1cf5a539a21414ff509ff7d0eedfc5fa8edb90c6.tar.gz"
+      "source_archive_url": "https://github.com/pothosware/SoapySDR/archive/1cf5a539a21414ff509ff7d0eedfc5fa8edb90c6.tar.gz",
+      "git_tree_sha1": "46f0bbc892f55bcfd546f598173b438ec966a978"
     },
     {
       "id": "la9310-limesdr",
       "version": "0.2.1",
-      "upstream_url": null,
-      "ref": null,
-      "commit": null,
-      "ref_verified": false,
-      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "upstream_url": "https://github.com/myriadrf/LimeSuiteNG",
+      "ref": "37cb1833e35955f7072c0fb91642d14ae5515f28",
+      "commit": "37cb1833e35955f7072c0fb91642d14ae5515f28",
+      "ref_verified": true,
+      "recipe": "local DKMS +lab built with GCC against linux-headers-6.18.2-4-qcom, loaded at boot by modalias (STACK.md decision 49)",
       "release_blockers": [
-        "primary pin/package artifact verification unresolved",
-        "source and binary archive hashes",
+        "full native/raw-register TX audit (with limesuiteng)",
+        "DKMS +lab packaging and vermagic 6.18.2-4-qcom check",
         "isolated arm64 recipe and acceptance tests"
       ],
-      "source_archive_sha256": null,
-      "source_cache_path": "sources/la9310-limesdr.tar.gz",
-      "primary_url": null
+      "source_archive_sha256": "818cb504284991acf69cc214469d695eff35b35244b73ace23768a95c7d9c749",
+      "source_cache_path": "sources/limesuiteng.tar.gz",
+      "primary_url": "https://github.com/myriadrf/LimeSuiteNG/tree/37cb1833e35955f7072c0fb91642d14ae5515f28/drivers/linux/la9310_limesdr",
+      "repo": "myriadrf/LimeSuiteNG",
+      "source_archive_size": 13197691,
+      "source_archive_url": "https://github.com/myriadrf/LimeSuiteNG/archive/37cb1833e35955f7072c0fb91642d14ae5515f28.tar.gz",
+      "git_tree_sha1": "7e25b4a2faa0025f2e3c81a6ee50661ae06d3e12",
+      "source_subdir": "drivers/linux/la9310_limesdr",
+      "pin_note": "The STACK version is defined in the already locked LimeSuiteNG archive (drivers/linux/la9310_limesdr/CMakeLists.txt: project(la9310_limesdr VERSION 0.2.1); read 2026-10-24), so no separate MyriadRF URL is needed."
     },
     {
       "id": "la9310-uart",
       "version": "1.0.0",
-      "upstream_url": null,
-      "ref": null,
-      "commit": null,
-      "ref_verified": false,
-      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "upstream_url": "https://github.com/myriadrf/LimeSuiteNG",
+      "ref": "37cb1833e35955f7072c0fb91642d14ae5515f28",
+      "commit": "37cb1833e35955f7072c0fb91642d14ae5515f28",
+      "ref_verified": true,
+      "recipe": "local DKMS +lab built with GCC against linux-headers-6.18.2-4-qcom, loaded at boot by modalias (STACK.md decision 49)",
       "release_blockers": [
-        "primary pin/package artifact verification unresolved",
-        "source and binary archive hashes",
+        "full native/raw-register TX audit (with limesuiteng)",
+        "DKMS +lab packaging and vermagic 6.18.2-4-qcom check",
         "isolated arm64 recipe and acceptance tests"
       ],
-      "source_archive_sha256": null,
-      "source_cache_path": "sources/la9310-uart.tar.gz",
-      "primary_url": null
+      "source_archive_sha256": "818cb504284991acf69cc214469d695eff35b35244b73ace23768a95c7d9c749",
+      "source_cache_path": "sources/limesuiteng.tar.gz",
+      "primary_url": "https://github.com/myriadrf/LimeSuiteNG/tree/37cb1833e35955f7072c0fb91642d14ae5515f28/drivers/linux/la9310_limesdr",
+      "repo": "myriadrf/LimeSuiteNG",
+      "source_archive_size": 13197691,
+      "source_archive_url": "https://github.com/myriadrf/LimeSuiteNG/archive/37cb1833e35955f7072c0fb91642d14ae5515f28.tar.gz",
+      "git_tree_sha1": "7e25b4a2faa0025f2e3c81a6ee50661ae06d3e12",
+      "source_subdir": "drivers/linux/la9310_limesdr",
+      "pin_note": "The STACK version is defined in the already locked LimeSuiteNG archive (drivers/linux/la9310_limesdr/CMakeLists.txt: add_kernel_module(NAME la9310_uart_module VERSION \"1.0.0\" SOURCES la9310_uart.c la9310_uart.h la9310_base.h); read 2026-10-24), so no separate MyriadRF URL is needed."
     },
     {
       "id": "gnuradio",
       "version": "3.10.9.2-1.1ubuntu2",
       "upstream_url": "https://launchpad.net/ubuntu/+source/gnuradio",
-      "ref": null,
+      "ref": "3.10.9.2-1.1ubuntu2",
       "commit": null,
-      "ref_verified": false,
-      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "ref_verified": true,
+      "recipe": "Ubuntu noble package from the pinned snapshot, not rebuilt; mirrored at priority 990 (build/07 sections 1.2 and 2)",
       "release_blockers": [
-        "primary pin/package artifact verification unresolved",
-        "source and binary archive hashes",
-        "isolated arm64 recipe and acceptance tests"
+        "arm64 install and acceptance tests on the target (RUNTIME_ONLY)"
       ],
-      "source_archive_sha256": null,
-      "source_cache_path": "sources/gnuradio.tar.gz",
-      "primary_url": "https://launchpad.net/ubuntu/+source/gnuradio"
+      "source_archive_sha256": "bcffa9d586c57566781e716b2fe51e81632cb6ffcf0d384387e92f2a0660a32b",
+      "source_cache_path": "sources/gnuradio/gnuradio_3.10.9.2-1.1ubuntu2.dsc",
+      "primary_url": "https://launchpad.net/ubuntu/+source/gnuradio/3.10.9.2-1.1ubuntu2",
+      "debian_source": {
+        "package": "gnuradio",
+        "suite": "noble",
+        "area": "universe",
+        "directory": "pool/universe/g/gnuradio",
+        "files": [
+          {
+            "name": "gnuradio_3.10.9.2-1.1ubuntu2.dsc",
+            "sha256": "bcffa9d586c57566781e716b2fe51e81632cb6ffcf0d384387e92f2a0660a32b",
+            "size": 5636
+          },
+          {
+            "name": "gnuradio_3.10.9.2.orig.tar.gz",
+            "sha256": "7fa154c423d01494cfa4c739faabad70b97f605238cd3fea8907b345b421fea1",
+            "size": 4413832
+          },
+          {
+            "name": "gnuradio_3.10.9.2-1.1ubuntu2.debian.tar.xz",
+            "sha256": "c5c4a90f0392c0cbd7b867414cd45d5023ab844d36b1c6335b1d9eef057de16a",
+            "size": 61948
+          }
+        ]
+      },
+      "binary_debs": [
+        {
+          "package": "gnuradio",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/gnuradio_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "2eca4b01d1cb5acd66ec3df5222b92b50f2e1d57ccbf5487f544638ed1cd05e9",
+          "size": 3391340
+        },
+        {
+          "package": "gnuradio-dev",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/gnuradio-dev_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "3cde2e6292e65b3c73a3bedc2186d32efa00e8b3a86048f9328d87f711a775e5",
+          "size": 322092
+        },
+        {
+          "package": "gnuradio-doc",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "all",
+          "filename": "pool/universe/g/gnuradio/gnuradio-doc_3.10.9.2-1.1ubuntu2_all.deb",
+          "sha256": "eb63cd30664681c7fdfa415b2f7ed8d8ee0e39186f14fdfdedc1c06556dc1f74",
+          "size": 37491638
+        },
+        {
+          "package": "libgnuradio-analog3.10.9t64",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/libgnuradio-analog3.10.9t64_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "2ead3a8e7eb5bcc620e21aea2af011a2eb8a7b19d3808a7dd3ccc5341abf9b4e",
+          "size": 132138
+        },
+        {
+          "package": "libgnuradio-audio3.10.9t64",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/libgnuradio-audio3.10.9t64_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "686b69db2ee94bef27373e237eb24e25f084e50b552e18d9b02c6e4299920954",
+          "size": 106262
+        },
+        {
+          "package": "libgnuradio-blocks3.10.9t64",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/libgnuradio-blocks3.10.9t64_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "bcc8a7a694144df0f27eb96732bb37da54828a9318c0c0ce9d0ba0a5f9957a9a",
+          "size": 438076
+        },
+        {
+          "package": "libgnuradio-channels3.10.9t64",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/libgnuradio-channels3.10.9t64_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "13f1b10eaf6da09548dc715adb0ae3232202dfe3069b04da497243aae654f58d",
+          "size": 66348
+        },
+        {
+          "package": "libgnuradio-digital3.10.9t64",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/libgnuradio-digital3.10.9t64_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "1c1c7b3ad5cdb4ab5826faed95e59d4f7a64fda7df92786efdb52488a1b8a9f2",
+          "size": 294904
+        },
+        {
+          "package": "libgnuradio-dtv3.10.9t64",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/libgnuradio-dtv3.10.9t64_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "257d0ff75b5b837ff1ab747a5be8718a0e6954b724070889057835938699715f",
+          "size": 334148
+        },
+        {
+          "package": "libgnuradio-fec3.10.9t64",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/libgnuradio-fec3.10.9t64_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "e217bc5994974e43ffad17e7ff398da09f695a43e28a18ad7d888d527c6134ee",
+          "size": 192802
+        },
+        {
+          "package": "libgnuradio-fft3.10.9t64",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/libgnuradio-fft3.10.9t64_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "bf0b10f83915f16061bf997995716d6eaddb91b6761ee67b5efdba4915154527",
+          "size": 83996
+        },
+        {
+          "package": "libgnuradio-filter3.10.9t64",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/libgnuradio-filter3.10.9t64_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "39273166a8e13a495e0edbce7cdf2e1a19fb795afc79f40d7de2287f0678adde",
+          "size": 195374
+        },
+        {
+          "package": "libgnuradio-iio3.10.9t64",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/libgnuradio-iio3.10.9t64_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "22a55c2c660b4ff99c44468adc00ca3fbeb49872b2dc7137f5e03a3659f041bd",
+          "size": 115480
+        },
+        {
+          "package": "libgnuradio-network3.10.9t64",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/libgnuradio-network3.10.9t64_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "e29db607c655893be59d2f14e154590eb7ece949fb3c48b21a254e976f78697e",
+          "size": 142324
+        },
+        {
+          "package": "libgnuradio-pdu3.10.9t64",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/libgnuradio-pdu3.10.9t64_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "2625baa590b8835f18f7128c040b1451f31e925c71695e8edb705c823f296884",
+          "size": 119310
+        },
+        {
+          "package": "libgnuradio-pmt3.10.9t64",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/libgnuradio-pmt3.10.9t64_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "a101c79b01dcc7dea5c3cef98254d1607762ed3a169f964d417dc1cc9e211b28",
+          "size": 90296
+        },
+        {
+          "package": "libgnuradio-qtgui3.10.9t64",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/libgnuradio-qtgui3.10.9t64_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "3b2e2b34def24ede7cfc7b9ec8914f5b58fb9c9c6dc2d9b89f29dbf360c41c30",
+          "size": 407080
+        },
+        {
+          "package": "libgnuradio-runtime3.10.9t64",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/libgnuradio-runtime3.10.9t64_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "24eda8b0f41596e41e74fe7f1ded4b7b960edb859f3a880c961a1aed991939cd",
+          "size": 423206
+        },
+        {
+          "package": "libgnuradio-soapy3.10.9t64",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/libgnuradio-soapy3.10.9t64_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "bedb3d020eba175b51cf010acb366653c661d8956f8be5858685ff1430de7bd8",
+          "size": 99324
+        },
+        {
+          "package": "libgnuradio-trellis3.10.9t64",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/libgnuradio-trellis3.10.9t64_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "0859bc75a282d8a5790f952196299c408632b129fd28f2b7988973953adfd80f",
+          "size": 151626
+        },
+        {
+          "package": "libgnuradio-uhd3.10.9t64",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/libgnuradio-uhd3.10.9t64_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "76106366424c8c7f148a85259ffd1a5d964c52da7ef793c58588ceb7ad25eb4b",
+          "size": 155746
+        },
+        {
+          "package": "libgnuradio-video-sdl3.10.9t64",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/libgnuradio-video-sdl3.10.9t64_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "7fb153dbfd9e2dba1d4e2142c278d43c700277e6a14129c3713c942c23914e8d",
+          "size": 60674
+        },
+        {
+          "package": "libgnuradio-vocoder3.10.9t64",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/libgnuradio-vocoder3.10.9t64_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "a7a5fe23f4ff59901a3c08a02d60cc042ae2080848286a93a00e3d2850902d0b",
+          "size": 77404
+        },
+        {
+          "package": "libgnuradio-wavelet3.10.9t64",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/libgnuradio-wavelet3.10.9t64_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "ecb9b771368740bbf68601b32bb3657952bc108115ed0739f09c9334eaf664a0",
+          "size": 18148
+        },
+        {
+          "package": "libgnuradio-zeromq3.10.9t64",
+          "version": "3.10.9.2-1.1ubuntu2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gnuradio/libgnuradio-zeromq3.10.9t64_3.10.9.2-1.1ubuntu2_arm64.deb",
+          "sha256": "de37d729d085af3b6d6fda0d60e18b64a8d6d6891cc391320ff031adfa8a9d67",
+          "size": 79834
+        }
+      ]
     },
     {
       "id": "volk",
       "version": "3.1.2-1.1build1",
       "upstream_url": "https://launchpad.net/ubuntu/+source/volk",
-      "ref": null,
+      "ref": "3.1.2-1.1build1",
       "commit": null,
-      "ref_verified": false,
-      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "ref_verified": true,
+      "recipe": "Ubuntu noble package from the pinned snapshot, not rebuilt; mirrored at priority 990 (build/07 sections 1.2 and 2)",
       "release_blockers": [
-        "primary pin/package artifact verification unresolved",
-        "source and binary archive hashes",
-        "isolated arm64 recipe and acceptance tests"
+        "arm64 install and acceptance tests on the target (RUNTIME_ONLY)"
       ],
-      "source_archive_sha256": null,
-      "source_cache_path": "sources/volk.tar.gz",
-      "primary_url": "https://launchpad.net/ubuntu/+source/volk"
+      "source_archive_sha256": "e606b87e987b85130714b507f3c99779051164316909964a85df44db001fbf73",
+      "source_cache_path": "sources/volk/volk_3.1.2-1.1build1.dsc",
+      "primary_url": "https://launchpad.net/ubuntu/+source/volk/3.1.2-1.1build1",
+      "debian_source": {
+        "package": "volk",
+        "suite": "noble",
+        "area": "universe",
+        "directory": "pool/universe/v/volk",
+        "files": [
+          {
+            "name": "volk_3.1.2-1.1build1.dsc",
+            "sha256": "e606b87e987b85130714b507f3c99779051164316909964a85df44db001fbf73",
+            "size": 2307
+          },
+          {
+            "name": "volk_3.1.2.orig.tar.gz",
+            "sha256": "90082bf68d76d00aa6c35f8bff0e93891b4204d817e1a3ba829486b445f715dc",
+            "size": 382769
+          },
+          {
+            "name": "volk_3.1.2-1.1build1.debian.tar.xz",
+            "sha256": "0f216ace26ba72f91ee7bfe2f2ec5818c1537234b3d824f6300e77a1ee417189",
+            "size": 14620
+          }
+        ]
+      },
+      "binary_debs": [
+        {
+          "package": "libvolk-bin",
+          "version": "3.1.2-1.1build1",
+          "architecture": "arm64",
+          "filename": "pool/universe/v/volk/libvolk-bin_3.1.2-1.1build1_arm64.deb",
+          "sha256": "78e66b7229cb6cb1c7ad19542a26c58771055adfa3c23cdafed5885ab5854df0",
+          "size": 67260
+        },
+        {
+          "package": "libvolk-dev",
+          "version": "3.1.2-1.1build1",
+          "architecture": "arm64",
+          "filename": "pool/universe/v/volk/libvolk-dev_3.1.2-1.1build1_arm64.deb",
+          "sha256": "cd85be1d5ea0729d022d2254723376fbe39b75086a26be5804da1b6457643d50",
+          "size": 128030
+        },
+        {
+          "package": "libvolk-doc",
+          "version": "3.1.2-1.1build1",
+          "architecture": "all",
+          "filename": "pool/universe/v/volk/libvolk-doc_3.1.2-1.1build1_all.deb",
+          "sha256": "12747e7054320b363ee15615bcbb50eef9fbb8cb6ab44c3a2b5ed658142700b1",
+          "size": 648242
+        },
+        {
+          "package": "libvolk3.1t64",
+          "version": "3.1.2-1.1build1",
+          "architecture": "arm64",
+          "filename": "pool/universe/v/volk/libvolk3.1t64_3.1.2-1.1build1_arm64.deb",
+          "sha256": "31b235941764c2f6214141ea9f3174bd7934229418a2db52566e81a7e99e611e",
+          "size": 124498
+        }
+      ]
     },
     {
       "id": "gnss-sdr",
@@ -354,58 +744,180 @@
       "primary_url": "https://github.com/gnss-sdr/gnss-sdr/commit/1ddd4562723040fd66cb334b578a5b69455625f4",
       "repo": "gnss-sdr/gnss-sdr",
       "source_archive_size": 4088619,
-      "source_archive_url": "https://github.com/gnss-sdr/gnss-sdr/archive/1ddd4562723040fd66cb334b578a5b69455625f4.tar.gz"
+      "source_archive_url": "https://github.com/gnss-sdr/gnss-sdr/archive/1ddd4562723040fd66cb334b578a5b69455625f4.tar.gz",
+      "git_tree_sha1": "4191a2135f980742d0f3bbcd8b73649f554fa3ae"
     },
     {
       "id": "virgo",
       "version": "3.8.9",
-      "upstream_url": "https://github.com/varenius/virgo",
-      "ref": null,
-      "commit": null,
-      "ref_verified": false,
+      "upstream_url": "https://github.com/0xCoto/Virgo",
+      "ref": "v3.8.9",
+      "commit": "ac699cb434aca540d454ed07f820f415078958bc",
+      "ref_verified": true,
       "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
       "release_blockers": [
-        "primary pin/package artifact verification unresolved",
-        "source and binary archive hashes",
         "isolated arm64 recipe and acceptance tests"
       ],
-      "source_archive_sha256": null,
+      "source_archive_sha256": "6b99072e232126baf7931f74a39f1d8839cad48b78a3b87cf2e407dc557460dd",
       "source_cache_path": "sources/virgo.tar.gz",
-      "primary_url": "https://github.com/varenius/virgo"
+      "primary_url": "https://github.com/0xCoto/Virgo/commit/ac699cb434aca540d454ed07f820f415078958bc",
+      "repo": "0xCoto/Virgo",
+      "source_archive_size": 58747050,
+      "source_archive_url": "https://github.com/0xCoto/Virgo/archive/ac699cb434aca540d454ed07f820f415078958bc.tar.gz",
+      "git_tree_sha1": "2de46dc820f46bf145d178228768c9d5f76778a8",
+      "pin_note": "STACK.md source list names https://github.com/0xCoto/Virgo; the former upstream_url varenius/virgo returns 404 (GitHub API, 2026-10-24). Lightweight tag v3.8.9 -> ac699cb4 (git/refs/tags API, 2026-10-24)."
     },
     {
       "id": "gpsd",
       "version": "3.25-3ubuntu3.2",
       "upstream_url": "https://launchpad.net/ubuntu/+source/gpsd",
-      "ref": null,
+      "ref": "3.25-3ubuntu3.2",
       "commit": null,
-      "ref_verified": false,
-      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "ref_verified": true,
+      "recipe": "Ubuntu noble-updates package from the pinned snapshot, not rebuilt; held and mirrored at priority 990 (build/07 sections 1.2 and 2)",
       "release_blockers": [
-        "primary pin/package artifact verification unresolved",
-        "source and binary archive hashes",
-        "isolated arm64 recipe and acceptance tests"
+        "arm64 install and acceptance tests on the target (RUNTIME_ONLY)"
       ],
-      "source_archive_sha256": null,
-      "source_cache_path": "sources/gpsd.tar.gz",
-      "primary_url": "https://launchpad.net/ubuntu/+source/gpsd"
+      "source_archive_sha256": "df1c6a54d4fc29b5ffad341120493b59a840293664ac5025c266228a0b766dfe",
+      "source_cache_path": "sources/gpsd/gpsd_3.25-3ubuntu3.2.dsc",
+      "primary_url": "https://launchpad.net/ubuntu/+source/gpsd/3.25-3ubuntu3.2",
+      "debian_source": {
+        "package": "gpsd",
+        "suite": "noble-updates",
+        "area": "main",
+        "directory": "pool/main/g/gpsd",
+        "files": [
+          {
+            "name": "gpsd_3.25.orig.tar.gz",
+            "sha256": "b368b6a305e3f7a6382d23a0cbfc1d78923060b6b7f54cf7987a73c7b4a9afc2",
+            "size": 5225194
+          },
+          {
+            "name": "gpsd_3.25-3ubuntu3.2.debian.tar.xz",
+            "sha256": "192544ab6ee18ca880b2f7f48aa3d9d2e032b665c0e3544a6193b38d92b51a24",
+            "size": 53588
+          },
+          {
+            "name": "gpsd_3.25-3ubuntu3.2.dsc",
+            "sha256": "df1c6a54d4fc29b5ffad341120493b59a840293664ac5025c266228a0b766dfe",
+            "size": 2939
+          }
+        ]
+      },
+      "binary_debs": [
+        {
+          "package": "gpsd",
+          "version": "3.25-3ubuntu3.2",
+          "architecture": "arm64",
+          "filename": "pool/main/g/gpsd/gpsd_3.25-3ubuntu3.2_arm64.deb",
+          "sha256": "cdd35c21666842b9b15846c658b794695fa433e8589d1aac00a84846534b323e",
+          "size": 425062
+        },
+        {
+          "package": "gpsd-clients",
+          "version": "3.25-3ubuntu3.2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gpsd/gpsd-clients_3.25-3ubuntu3.2_arm64.deb",
+          "sha256": "a01ee0184ea33f25597edfab7893f98379835605b6730797b1f1f009148d3615",
+          "size": 506880
+        },
+        {
+          "package": "gpsd-tools",
+          "version": "3.25-3ubuntu3.2",
+          "architecture": "arm64",
+          "filename": "pool/main/g/gpsd/gpsd-tools_3.25-3ubuntu3.2_arm64.deb",
+          "sha256": "6c9ed24f8d500b2fc97c84b065ea0064a28e1cdf1e918c22e15fe1a445792687",
+          "size": 343608
+        },
+        {
+          "package": "libgps-dev",
+          "version": "3.25-3ubuntu3.2",
+          "architecture": "arm64",
+          "filename": "pool/main/g/gpsd/libgps-dev_3.25-3ubuntu3.2_arm64.deb",
+          "sha256": "db23217682a24474ba10e98ed47433f852abbc20587a7fd76887761e57617792",
+          "size": 131398
+        },
+        {
+          "package": "libgps30t64",
+          "version": "3.25-3ubuntu3.2",
+          "architecture": "arm64",
+          "filename": "pool/main/g/gpsd/libgps30t64_3.25-3ubuntu3.2_arm64.deb",
+          "sha256": "d3e85e280fa0d6ac251df3747708eefaa183b665541c406032d5844de431650e",
+          "size": 74982
+        },
+        {
+          "package": "libqgpsmm-dev",
+          "version": "3.25-3ubuntu3.2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gpsd/libqgpsmm-dev_3.25-3ubuntu3.2_arm64.deb",
+          "sha256": "1a42f3a9e7de3b5b3c46286b4b80c1496a3f6e5cef94d85c4a4da5ba456e2861",
+          "size": 5364
+        },
+        {
+          "package": "libqgpsmm30t64",
+          "version": "3.25-3ubuntu3.2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gpsd/libqgpsmm30t64_3.25-3ubuntu3.2_arm64.deb",
+          "sha256": "259902bcff499d3adb81a928128f598598d36798c2aad922bfba8e1e095a62a6",
+          "size": 77472
+        },
+        {
+          "package": "python3-gps",
+          "version": "3.25-3ubuntu3.2",
+          "architecture": "arm64",
+          "filename": "pool/universe/g/gpsd/python3-gps_3.25-3ubuntu3.2_arm64.deb",
+          "sha256": "82d554ce12a1513c06287260cc2083a0ee357f1c6e8a01c3eda4e5cad8d0e7ce",
+          "size": 140390
+        }
+      ]
     },
     {
       "id": "chrony",
       "version": "4.5-1ubuntu4.2",
       "upstream_url": "https://launchpad.net/ubuntu/+source/chrony",
-      "ref": null,
+      "ref": "4.5-1ubuntu4.2",
       "commit": null,
-      "ref_verified": false,
-      "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
+      "ref_verified": true,
+      "recipe": "Ubuntu noble-updates package from the pinned snapshot, not rebuilt; held and mirrored at priority 990 (build/07 sections 1.2 and 2)",
       "release_blockers": [
-        "primary pin/package artifact verification unresolved",
-        "source and binary archive hashes",
-        "isolated arm64 recipe and acceptance tests"
+        "arm64 install and acceptance tests on the target (RUNTIME_ONLY)"
       ],
-      "source_archive_sha256": null,
-      "source_cache_path": "sources/chrony.tar.gz",
-      "primary_url": "https://launchpad.net/ubuntu/+source/chrony"
+      "source_archive_sha256": "a9a973483b17c9ffe21719a0d4f454d01383b9e8502c3adb094c02d2092a940b",
+      "source_cache_path": "sources/chrony/chrony_4.5-1ubuntu4.2.dsc",
+      "primary_url": "https://launchpad.net/ubuntu/+source/chrony/4.5-1ubuntu4.2",
+      "debian_source": {
+        "package": "chrony",
+        "suite": "noble-updates",
+        "area": "main",
+        "directory": "pool/main/c/chrony",
+        "files": [
+          {
+            "name": "chrony_4.5.orig.tar.gz",
+            "sha256": "19fe1d9f4664d445a69a96c71e8fdb60bcd8df24c73d1386e02287f7366ad422",
+            "size": 620287
+          },
+          {
+            "name": "chrony_4.5-1ubuntu4.2.debian.tar.xz",
+            "sha256": "ad09d3f40cfb28ce22cbc0e266d0a4818d8e4f98ee24634a8cc851065f37a29b",
+            "size": 47452
+          },
+          {
+            "name": "chrony_4.5-1ubuntu4.2.dsc",
+            "sha256": "a9a973483b17c9ffe21719a0d4f454d01383b9e8502c3adb094c02d2092a940b",
+            "size": 2465
+          }
+        ]
+      },
+      "binary_debs": [
+        {
+          "package": "chrony",
+          "version": "4.5-1ubuntu4.2",
+          "architecture": "arm64",
+          "filename": "pool/main/c/chrony/chrony_4.5-1ubuntu4.2_arm64.deb",
+          "sha256": "503d1f389dde1d540ae6f2c98bdac98040c70a2ce7d8da1458a8e04cd9dad1fd",
+          "size": 319008
+        }
+      ]
     },
     {
       "id": "openwebrx-plus",
@@ -425,7 +937,8 @@
       "primary_url": "https://github.com/luarvique/openwebrx/commit/f2a8feca17afd9e983af10f1794a3283a146c5bd",
       "repo": "luarvique/openwebrx",
       "source_archive_size": 1528305,
-      "source_archive_url": "https://github.com/luarvique/openwebrx/archive/f2a8feca17afd9e983af10f1794a3283a146c5bd.tar.gz"
+      "source_archive_url": "https://github.com/luarvique/openwebrx/archive/f2a8feca17afd9e983af10f1794a3283a146c5bd.tar.gz",
+      "git_tree_sha1": "5ce7927d53698835db73701bb1de7ec2f61758f4"
     },
     {
       "id": "redsea",
@@ -445,7 +958,8 @@
       "primary_url": "https://github.com/windytan/redsea/commit/4cc27df9939798e800c4ff7cb484be6d9bf68b4d",
       "repo": "windytan/redsea",
       "source_archive_size": 130721,
-      "source_archive_url": "https://github.com/windytan/redsea/archive/4cc27df9939798e800c4ff7cb484be6d9bf68b4d.tar.gz"
+      "source_archive_url": "https://github.com/windytan/redsea/archive/4cc27df9939798e800c4ff7cb484be6d9bf68b4d.tar.gz",
+      "git_tree_sha1": "dc0ff0b5673796fce620b433ca2b3a9c8d8b0a65"
     },
     {
       "id": "welle-io",
@@ -465,7 +979,8 @@
       "primary_url": "https://github.com/AlbrechtL/welle.io/commit/0aacf578d77d79212483cd6fce436fb66523f63f",
       "repo": "AlbrechtL/welle.io",
       "source_archive_size": 6765868,
-      "source_archive_url": "https://github.com/AlbrechtL/welle.io/archive/0aacf578d77d79212483cd6fce436fb66523f63f.tar.gz"
+      "source_archive_url": "https://github.com/AlbrechtL/welle.io/archive/0aacf578d77d79212483cd6fce436fb66523f63f.tar.gz",
+      "git_tree_sha1": "544eb429bdd6eda5386d06ed55b6ccb39dbe9915"
     },
     {
       "id": "gpredict",
@@ -485,24 +1000,28 @@
       "primary_url": "https://github.com/csete/gpredict/commit/1d80049b0fecc06a18378d88f09b1d154a070234",
       "repo": "csete/gpredict",
       "source_archive_size": 7719554,
-      "source_archive_url": "https://github.com/csete/gpredict/archive/1d80049b0fecc06a18378d88f09b1d154a070234.tar.gz"
+      "source_archive_url": "https://github.com/csete/gpredict/archive/1d80049b0fecc06a18378d88f09b1d154a070234.tar.gz",
+      "git_tree_sha1": "133d9c929c3f0fccf56a8b23f0734b584653854c"
     },
     {
       "id": "wsjt-decoders",
       "version": "2.7.0+lab1",
       "upstream_url": "https://git.code.sf.net/p/wsjt/wsjtx",
       "ref": "b4f9a43",
-      "commit": null,
-      "ref_verified": false,
+      "commit": "b4f9a431bcf6449df8f37b56de79d48b665b044c",
+      "ref_verified": true,
       "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
       "release_blockers": [
-        "primary pin/package artifact verification unresolved",
-        "source and binary archive hashes",
         "isolated arm64 recipe and acceptance tests"
       ],
-      "source_archive_sha256": null,
+      "source_archive_sha256": "3788f5df636af792514609ec2b4abe58477aa5f0ad32cb826424866fc21cec93",
       "source_cache_path": "sources/wsjt-decoders.tar.gz",
-      "primary_url": "https://git.code.sf.net/p/wsjt/wsjtx"
+      "primary_url": "https://sourceforge.net/projects/wsjt/files/wsjtx-2.7.0/",
+      "tag": "wsjtx-2.7.0",
+      "tag_object": "d2d9c46a1e5061a8ab489ebf473e71fa070dc4e7",
+      "source_archive_size": 26603107,
+      "source_archive_url": "https://downloads.sourceforge.net/project/wsjt/wsjtx-2.7.0/wsjtx-2.7.0.tgz",
+      "archive_note": "Official release tarball (superbuild: src/wsjtx.tgz plus src/hamlib-4.6.1.tar.gz, Hamlib for the build chroot only, build/07 section 2). Size and MD5 fd558b60fdd6df7ac0436a0cc5daaa28 equal the SourceForge file metadata (https://sourceforge.net/projects/wsjt/rss?path=/wsjtx-2.7.0, read 2026-10-24); SHA-256 measured from the bytes. Tag wsjtx-2.7.0 (tag object d2d9c46a) peels to the commit (git ls-remote https://git.code.sf.net/p/wsjt/wsjtx, 2026-10-24). The tarball names no commit; its tree is compared with the tag in CI (sr-rx-packages.yml), not here."
     },
     {
       "id": "nanovna-saver",
@@ -522,7 +1041,8 @@
       "primary_url": "https://github.com/NanoVNA-Saver/nanovna-saver/commit/3445a0ab86161f9c886c9d6f215eb57cab9b6f45",
       "repo": "NanoVNA-Saver/nanovna-saver",
       "source_archive_size": 683475,
-      "source_archive_url": "https://github.com/NanoVNA-Saver/nanovna-saver/archive/3445a0ab86161f9c886c9d6f215eb57cab9b6f45.tar.gz"
+      "source_archive_url": "https://github.com/NanoVNA-Saver/nanovna-saver/archive/3445a0ab86161f9c886c9d6f215eb57cab9b6f45.tar.gz",
+      "git_tree_sha1": "1772c6dd139983d267361a72028185af72635c2c"
     },
     {
       "id": "qttinysa",
@@ -542,7 +1062,8 @@
       "primary_url": "https://github.com/g4ixt/QtTinySA/commit/4a31b823a98b8200f9bde38e314648c5b22d90e6",
       "repo": "g4ixt/QtTinySA",
       "source_archive_size": 14580140,
-      "source_archive_url": "https://github.com/g4ixt/QtTinySA/archive/4a31b823a98b8200f9bde38e314648c5b22d90e6.tar.gz"
+      "source_archive_url": "https://github.com/g4ixt/QtTinySA/archive/4a31b823a98b8200f9bde38e314648c5b22d90e6.tar.gz",
+      "git_tree_sha1": "fbace97318ca77509475df810a1f724b14ce834a"
     },
     {
       "id": "qairt",
@@ -553,13 +1074,15 @@
       "ref_verified": false,
       "recipe": "Preserve STACK/build07 pin; independently lock exact archive/deb before build.",
       "release_blockers": [
-        "primary pin/package artifact verification unresolved",
-        "source and binary archive hashes",
+        "licensed archive: the owner acquires the bytes under the Qualcomm licence (never redistributed, never fetched in CI)",
         "isolated arm64 recipe and acceptance tests"
       ],
       "source_archive_sha256": null,
       "source_cache_path": "sources/qairt.tar.gz",
-      "primary_url": null
+      "primary_url": null,
+      "documented_sha256": "1a744ed72a813fc9dd4a29e31b1685f784786102fd45414d74915bb3351ae321",
+      "documented_size": 1543955191,
+      "digest_source": "STACK.md decision 39 (QAIRT 2.42 zip: MD5 8afeb63c22bd4bacb721648636c8829c = ETag, SHA-256) and the home-base environment A size; documented digest only: source_archive_sha256 stays null until the owner acquires the licensed bytes"
     },
     {
       "id": "labwc",
@@ -579,7 +1102,8 @@
       "primary_url": "https://github.com/labwc/labwc/commit/6ab9d3fe464b31eed25fe2126d6b0dfb6cd0bff4",
       "repo": "labwc/labwc",
       "source_archive_size": 566087,
-      "source_archive_url": "https://github.com/labwc/labwc/archive/6ab9d3fe464b31eed25fe2126d6b0dfb6cd0bff4.tar.gz"
+      "source_archive_url": "https://github.com/labwc/labwc/archive/6ab9d3fe464b31eed25fe2126d6b0dfb6cd0bff4.tar.gz",
+      "git_tree_sha1": "0dfe93e5f74a6120b1a459b0d3982daeabd8b0de"
     }
   ],
   "artifacts": [

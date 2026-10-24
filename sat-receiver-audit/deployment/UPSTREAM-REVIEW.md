@@ -20,9 +20,9 @@
 | OpenWebRX+1.2.126 |f2a8feca17afd9e983af10f1794a3283a146c5bd|https://api.github.com/repos/luarvique/openwebrx/commits/1.2.126|
 | QtTinySA v2.0.1 |4a31b823a98b8200f9bde38e314648c5b22d90e6|https://api.github.com/repos/g4ixt/QtTinySA/commits/v2.0.1|
 
-Slowrx pin `sjlongland/slowrx-daemon@c94327ae40ab970b0bea20ebb378d71f8e69b98a` returned primary404. No substitute or current branch was silently chosen. LA9310 driver repository URLs and exact QAIRT archives remain unresolved rather than guessed.
+Slowrx pin `sjlongland/slowrx-daemon@c94327ae40ab970b0bea20ebb378d71f8e69b98a` returned primary404 on 20 October; on 24 October the same commit was found through the `windytan/slowrx` fork network (see the closure section below). No substitute or current branch was chosen. The exact QAIRT archive remains unresolved rather than guessed.
 
-Six additional preserved STACK pins were resolved through official commit APIs (also machine-readable in `extra-pins.json`): GNSS-SDR `1ddd4562723040fd66cb334b578a5b69455625f4`, Gpredict `1d80049b0fecc06a18378d88f09b1d154a070234`, NanoVNA-Saver `3445a0ab86161f9c886c9d6f215eb57cab9b6f45`, redsea `4cc27df9939798e800c4ff7cb484be6d9bf68b4d`, welle.io `0aacf578d77d79212483cd6fce436fb66523f63f`, labwc `6ab9d3fe464b31eed25fe2126d6b0dfb6cd0bff4`. Virgo3.8.9 was not resolved through either queried tag spelling and stays disabled/unresolved.
+Six additional preserved STACK pins were resolved through official commit APIs (also machine-readable in `extra-pins.json`): GNSS-SDR `1ddd4562723040fd66cb334b578a5b69455625f4`, Gpredict `1d80049b0fecc06a18378d88f09b1d154a070234`, NanoVNA-Saver `3445a0ab86161f9c886c9d6f215eb57cab9b6f45`, redsea `4cc27df9939798e800c4ff7cb484be6d9bf68b4d`, welle.io `0aacf578d77d79212483cd6fce436fb66523f63f`, labwc `6ab9d3fe464b31eed25fe2126d6b0dfb6cd0bff4`. Virgo3.8.9 was not resolved on 20 October because the lock named `varenius/virgo`; STACK's source list names `0xCoto/Virgo`, where tag v3.8.9 exists (closure section below).
 
 ## Acquired source archive bytes
 
@@ -30,7 +30,7 @@ Six additional preserved STACK pins were resolved through official commit APIs (
 
 The actual complete Lime archive (`818cb504284991acf69cc214469d695eff35b35244b73ace23768a95c7d9c749`,13,197,691bytes) was additionally checked through `vendor_patch.py --archive`, safely extracted and patched with all expected target/post hashes. This extends the small-fixture application test to the acquired full tree. No SDK build or hardware TX test is implied.
 
-SatDump's101,357,307-byte source archive was acquired; SDRangel exceeded the128MiB acquisition cap and its archive hash remains null.11 of30 full source archive hashes remain unresolved. Large Radxa image/kernel binaries were not downloaded merely to obtain a hash; their official release asset metadata provided it. All cache-byte verification and source-application results are separate from the 37 physical acceptance gates.
+SatDump's101,357,307-byte source archive was acquired; SDRangel exceeded the128MiB acquisition cap on 20 October and was acquired on 24 October without a cap (below). 1 of 30 source archive hashes (QAIRT) remains unresolved. Large Radxa image/kernel binaries were not downloaded merely to obtain a hash; their official release asset metadata provided it. All cache-byte verification and source-application results are separate from the 37 physical acceptance gates.
 
 Radxa official downloads documentation explicitly links r2 UFS4096 image: https://docs.radxa.com/en/dragon/q6a/download . Release APIs provided actual asset SHA256/size for that image and kernel6.18.2-4 packages:
 
@@ -64,3 +64,21 @@ Upstream RTL files are GPL-2.0-or-later; LimeSuiteNG COPYING is Apache-2.0. Pres
 
 - https://www.freedesktop.org/software/systemd/man/255/systemd.service.html
 - https://www.freedesktop.org/software/systemd/man/255/udev.html
+
+## Source lock closure, 24 October 2026
+
+`deployment/fetch_sources.py` streams every download through SHA-256 in 1 MiB chunks and moves a file into the cache only when hash and size match the lock; a locked entry can never grow past its locked size, and `acquire` (for a not yet locked archive) has no fixed cap. All 29 resolved components (73 cache files, 445,040,683 bytes) were downloaded again on 24 October and re-read by `verify_cache(..., include_core=False)`: `source-cache-verification.json` now lists 29 components and is bound to the new lock by `source_lock_sha256`. The 19 archives of 20 October were byte-identical.
+
+| Component | Pin | Evidence read on 24 October 2026 |
+|---|---|---|
+| SDRangel v7.27.2 | 97e9e21f, archive 138,256,778 B, SHA-256 11e599d1... | GitHub archive measured by `fetch_sources.py acquire`; content tree equals commit tree fca67811 with gitlink `external/windows` 72317cca (GitHub git/trees API) |
+| WSJT-X 2.7.0 (wsjt-decoders) | b4f9a431 (tag object d2d9c46a), `wsjtx-2.7.0.tgz` 26,603,107 B, SHA-256 3788f5df... | `git ls-remote https://git.code.sf.net/p/wsjt/wsjtx`; size and MD5 fd558b60... equal the SourceForge file metadata (RSS feed of `/wsjtx-2.7.0`). The tarball is a superbuild (src/wsjtx.tgz plus src/hamlib-4.6.1.tar.gz) and names no commit; CI compares src/wsjtx.tgz with the tag tree and reports the result |
+| GNU Radio 3.10.9.2-1.1ubuntu2, VOLK 3.1.2-1.1build1 | noble/universe | gpgv of the snapshot.ubuntu.com 20261020T000000Z InRelease against key F6ECB3762474EDA9D21B7022871920D1991BC93C (the key of the ARM64 lab locks; noble InRelease SHA-256 equals the lab lock), then Sources.xz/Packages.xz from the signed list, then Checksums-Sha256 and every arm64/all binary (25 and 4 .deb) |
+| gpsd 3.25-3ubuntu3.2, chrony 4.5-1ubuntu4.2 | noble-updates/main | the same signed chain (8 and 1 .deb); the snapshot keeps these versions even after newer security uploads |
+| Virgo v3.8.9 | 0xCoto/Virgo ac699cb4, 58,747,050 B | lightweight tag via git/refs API; archive tree equals commit tree 2de46dc8 |
+| slowrx-daemon c94327a | c94327ae (Stuart Longland, 2024-12-17), 50,640 B | the fork `sjlongland/slowrx-daemon` returns 404, but the commit (166 commits ahead of `windytan/slowrx` master) is served through that fork network; archive tree equals commit tree 415a8214. Same commit id, so no substitute; the cached archive must be kept because no live primary remains |
+| la9310_limesdr 0.2.1, la9310_uart_module 1.0.0 | LimeSuiteNG 37cb183, the already locked archive | `drivers/linux/la9310_limesdr/CMakeLists.txt` declares `project(la9310_limesdr VERSION 0.2.1)` and `add_kernel_module(NAME la9310_uart_module VERSION "1.0.0" ...)` |
+
+Every GitHub archive now carries `git_tree_sha1` (and `git_submodules` where the commit has gitlinks): `fetch_sources.py tree` recomputes the git tree from the archive bytes, and all 24 matched the commit trees from the GitHub API. The archives omit submodule contents: SatDump `android/deps` and `docs/res`, gr-satellites `satellite-recordings` and SDRangel `external/windows` are not part of the cached bytes.
+
+Still open: QAIRT 2.42.0.251225 (licensed zip, 1,543,955,191 B, SHA-256 1a744ed7... in STACK) must be acquired by the owner under its licence; it is never redistributed or fetched in CI. The full target package closure of the image (Radxa, Mesa, Qt and the rest) and the Python wheelhouse are separate locks and stay OPEN.

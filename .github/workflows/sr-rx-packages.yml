@@ -1,0 +1,219 @@
+name: SR-RX lab packages
+
+# Builds +lab .deb packages from sat-receiver-audit/deployment/recipes on native arm64
+# (ubuntu-24.04-arm): a fresh noble arm64 chroot per recipe from the snapshot.ubuntu.com
+# timestamp locked in deployment/sources.lock.json, with no network while upstream code
+# configures and compiles (unshare --net). The packages go into a throwaway aptly repository
+# signed by a CI-only TEST key and are checked with deploy.py verify-repo and tamper cases.
+# The sources job re-fetches the locked source bytes and re-derives the signed Ubuntu pins.
+# CI evidence only: nothing here reviews a build, tests hardware or is a release signature.
+
+on:
+  workflow_dispatch:
+    inputs:
+      lab_builds:
+        description: 'Comma-separated recipe ids (deployment/recipes/<id>/recipe.json)'
+        type: string
+        default: 'rtlsdr,limesuiteng'
+      repeat:
+        description: 'Build every recipe twice in the same paths and compare the .deb SHA-256'
+        type: boolean
+        default: true
+      all_sources:
+        description: 'Fetch and verify every resolved source of sources.lock.json (about 450 MB), not only the built ones'
+        type: boolean
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sr-rx-packages-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: sat-receiver-audit
+
+env:
+  PYTHONDONTWRITEBYTECODE: '1'
+  UBUNTU_KEYRING: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+
+jobs:
+  sources:
+    name: Source lock (bytes, git trees, signed Ubuntu pins)
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Host tools
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends gpgv ubuntu-keyring git ca-certificates
+      - name: Select components
+        id: select
+        env:
+          ALL_SOURCES: ${{ inputs.all_sources }}
+          LAB_BUILDS: ${{ inputs.lab_builds }}
+        run: |
+          python3 - <<'EOF' >> "$GITHUB_OUTPUT"
+          import json, os, re
+          lock = json.load(open("deployment/sources.lock.json"))
+          resolved = [c["id"] for c in lock["components"] if c["source_archive_sha256"] is not None]
+          builds = [b.strip() for b in os.environ["LAB_BUILDS"].split(",") if b.strip()]
+          for b in builds:
+              if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", b) or not os.path.isfile("deployment/recipes/%s/recipe.json" % b):
+                  raise SystemExit("unknown recipe id: " + b)
+          chosen = resolved if os.environ["ALL_SOURCES"] == "true" else sorted(set(builds))
+          print("args=" + " ".join("--component " + c for c in chosen))
+          print("ids=" + json.dumps(chosen))
+          EOF
+      - name: Fetch the locked bytes (streaming, no size cap, SHA-256 and size checked)
+        run: python3 deployment/fetch_sources.py fetch --cache "$RUNNER_TEMP/cache" --sources-only ${{ steps.select.outputs.args }} --report "$RUNNER_TEMP/fetch-report.json"
+      - name: deploy.py verify-cache (sources only)
+        run: python3 deployment/deploy.py verify-cache --cache "$RUNNER_TEMP/cache" --sources-only ${{ steps.select.outputs.args }} | tee "$RUNNER_TEMP/verify-cache.json"
+      - name: Archive contents equal the locked commit trees
+        run: python3 deployment/fetch_sources.py tree --cache "$RUNNER_TEMP/cache" | tee "$RUNNER_TEMP/trees.json"
+      - name: Ubuntu pins equal the gpgv-verified snapshot indices
+        run: python3 deployment/fetch_sources.py verify-debian --keyring "$UBUNTU_KEYRING" --work "$RUNNER_TEMP/apt-indices" | tee "$RUNNER_TEMP/verify-debian.json"
+      - name: source-cache-verification.json reproduces from the fetched cache
+        if: inputs.all_sources
+        run: |
+          python3 - "$RUNNER_TEMP/cache" <<'EOF'
+          import json, sys
+          sys.path.insert(0, "deployment")
+          import deploy
+          record = json.load(open("deployment/source-cache-verification.json"))
+          result = deploy.verify_cache(sys.argv[1], record["components"], include_core=False)
+          lock = deploy.load(deploy.HERE / "sources.lock.json")
+          resolved = sorted(c["id"] for c in lock["components"] if c["source_archive_sha256"] is not None)
+          assert sorted(record["components"]) == resolved, "record does not list every resolved component"
+          assert result["entries"] == record["entries"], (result["entries"], record["entries"])
+          assert record["source_lock_sha256"] == deploy.sha(deploy.HERE / "sources.lock.json"), "record is bound to another lock"
+          print("source-cache-verification.json reproduces:", result)
+          EOF
+      - name: WSJT-X release tarball against the wsjtx-2.7.0 tag tree (reported)
+        if: inputs.all_sources
+        run: |
+          git clone -q --depth 1 --branch wsjtx-2.7.0 https://git.code.sf.net/p/wsjt/wsjtx "$RUNNER_TEMP/wsjtx-git"
+          tag_commit=$(git -C "$RUNNER_TEMP/wsjtx-git" rev-parse HEAD)
+          tag_tree=$(git -C "$RUNNER_TEMP/wsjtx-git" rev-parse 'HEAD^{tree}')
+          tar_tree=$(python3 deployment/fetch_sources.py tree --archive "$RUNNER_TEMP/cache/sources/wsjt-decoders.tar.gz" \
+            --member wsjtx-2.7.0/src/wsjtx.tgz | python3 -c 'import json, sys; print(json.load(sys.stdin)["git_tree_sha1"])' || echo unavailable)
+          if [ "$tag_tree" = "$tar_tree" ]; then verdict=EQUAL; else verdict=DIFFERENT; fi
+          echo "wsjtx-2.7.0 tag commit $tag_commit tree $tag_tree; release src/wsjtx.tgz tree $tar_tree: $verdict" | tee "$RUNNER_TEMP/wsjtx-tree.txt"
+          echo "WSJT-X src/wsjtx.tgz vs tag tree: $verdict ($tar_tree / $tag_tree)" >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: source-lock-checks
+          retention-days: 14
+          path: |
+            ${{ runner.temp }}/fetch-report.json
+            ${{ runner.temp }}/verify-cache.json
+            ${{ runner.temp }}/trees.json
+            ${{ runner.temp }}/verify-debian.json
+            ${{ runner.temp }}/wsjtx-tree.txt
+
+  lab-build:
+    name: +lab packages, test-signed repository
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Host tools (the chroot contents come from the pinned snapshot, not from these)
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y -q --no-install-recommends mmdebstrap aptly gnupg gpgv dpkg-dev ubuntu-keyring ca-certificates
+          dpkg-query -W mmdebstrap aptly gnupg dpkg | tee "$RUNNER_TEMP/host-tools.txt"
+      - name: Select recipes
+        id: select
+        env:
+          LAB_BUILDS: ${{ inputs.lab_builds }}
+        run: |
+          python3 - <<'EOF' >> "$GITHUB_OUTPUT"
+          import os, re
+          builds = [b.strip() for b in os.environ["LAB_BUILDS"].split(",") if b.strip()]
+          if not builds:
+              raise SystemExit("lab_builds is empty")
+          for b in builds:
+              if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", b) or not os.path.isfile("deployment/recipes/%s/recipe.json" % b):
+                  raise SystemExit("unknown recipe id: " + b)
+          print("ids=" + " ".join(builds))
+          print("args=" + " ".join("--component " + b for b in builds))
+          EOF
+      - name: Fetch and verify the recipe sources
+        run: |
+          python3 deployment/fetch_sources.py fetch --cache "$RUNNER_TEMP/cache" --sources-only ${{ steps.select.outputs.args }}
+          python3 deployment/deploy.py verify-cache --cache "$RUNNER_TEMP/cache" --sources-only ${{ steps.select.outputs.args }}
+          python3 deployment/fetch_sources.py tree --cache "$RUNNER_TEMP/cache" ${{ steps.select.outputs.args }}
+      - name: Build in noble arm64 chroots, network namespace without a route
+        env:
+          REPEAT: ${{ inputs.repeat }}
+        run: |
+          repeat=""
+          [ "$REPEAT" = true ] && repeat="--repeat"
+          for id in ${{ steps.select.outputs.ids }}; do
+            echo "::group::$id"
+            sudo env PYTHONDONTWRITEBYTECODE=1 python3 -B deployment/recipes/lab_build.py --recipe "$id" --cache "$RUNNER_TEMP/cache" \
+              --work "$RUNNER_TEMP/build" --out "$RUNNER_TEMP/debs" $repeat
+            echo "::endgroup::"
+          done
+          ls -l "$RUNNER_TEMP"/debs/*/
+      - name: Packages match their build records and stay OPEN for verify_build
+        run: python3 deployment/repo/check_repo.py packages --out "$RUNNER_TEMP/debs" | tee "$RUNNER_TEMP/debs/packages-check.json"
+      - name: Reproducibility (same paths, same SOURCE_DATE_EPOCH)
+        run: |
+          python3 - "$RUNNER_TEMP/debs" <<'EOF' | tee -a "$GITHUB_STEP_SUMMARY"
+          import json, pathlib, sys
+          for path in sorted(pathlib.Path(sys.argv[1]).glob("*/*.reproducibility.json")):
+              record = json.load(open(path))
+              print("-", record["component"], "reproducible:", record["reproducible"])
+          EOF
+      - name: Throwaway TEST signing keys (exist only in this job)
+        run: |
+          export GNUPGHOME="$RUNNER_TEMP/gnupg-test"
+          install -d -m 700 "$GNUPGHOME"
+          gpg --batch --pinentry-mode loopback --passphrase '' --quick-gen-key 'SR-RX lab CI TEST KEY - not for release' ed25519 sign 2d
+          gpg --batch --pinentry-mode loopback --passphrase '' --quick-gen-key 'SR-RX lab CI WRONG KEY - tamper case only' ed25519 sign 2d
+          fpr=$(gpg --batch --with-colons --list-keys 'SR-RX lab CI TEST KEY' | awk -F: '$1 == "fpr" {print $10; exit}')
+          wrong=$(gpg --batch --with-colons --list-keys 'SR-RX lab CI WRONG KEY' | awk -F: '$1 == "fpr" {print $10; exit}')
+          gpg --batch --export "$fpr" > "$RUNNER_TEMP/srrx-lab-TEST.gpg"
+          gpg --batch --export "$wrong" > "$RUNNER_TEMP/srrx-lab-WRONG.gpg"
+          echo "TEST_FPR=$fpr" >> "$GITHUB_ENV"
+      - name: Publish a test-signed aptly repository
+        run: |
+          export GNUPGHOME="$RUNNER_TEMP/gnupg-test"
+          sh deployment/repo/publish.sh "$RUNNER_TEMP/aptly" "$TEST_FPR" "$RUNNER_TEMP"/debs/*/*.deb
+      - name: deploy.py verify-repo
+        run: |
+          records=""
+          for r in "$RUNNER_TEMP"/debs/*/*.build-record.json; do records="$records --build-record $r"; done
+          python3 deployment/deploy.py verify-repo --repo "$RUNNER_TEMP/aptly/public" --keyring "$RUNNER_TEMP/srrx-lab-TEST.gpg" \
+            --fingerprint "$TEST_FPR" $records --sources-entry deployment/repo/srrx-lab.sources | tee "$RUNNER_TEMP/verify-repo.json"
+      - name: Tampered copies are refused
+        run: |
+          records=""
+          for r in "$RUNNER_TEMP"/debs/*/*.build-record.json; do records="$records --build-record $r"; done
+          python3 deployment/repo/check_repo.py tamper --repo "$RUNNER_TEMP/aptly/public" --keyring "$RUNNER_TEMP/srrx-lab-TEST.gpg" \
+            --wrong-keyring "$RUNNER_TEMP/srrx-lab-WRONG.gpg" --fingerprint "$TEST_FPR" $records \
+            --sources-entry deployment/repo/srrx-lab.sources | tee "$RUNNER_TEMP/tamper.json"
+      - name: Discard the test private keys
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/gnupg-test"
+      - uses: actions/upload-artifact@v5
+        if: always()
+        with:
+          name: lab-packages-ci
+          retention-days: 14
+          path: |
+            ${{ runner.temp }}/host-tools.txt
+            ${{ runner.temp }}/debs
+            ${{ runner.temp }}/verify-repo.json
+            ${{ runner.temp }}/tamper.json
+            ${{ runner.temp }}/srrx-lab-TEST.gpg
+            ${{ runner.temp }}/aptly/public

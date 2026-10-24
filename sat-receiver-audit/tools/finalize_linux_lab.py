@@ -19,8 +19,11 @@ from uk_text import plural  # noqa: E402
 # Everything the guest executes or consumes as test input: service/deploy code,
 # locks, patches and byte-exact upstream fixtures, plus the guest test runner.
 BOUND_PREFIXES = ("software/", "firmware/", "deployment/")
-BOUND_SUFFIXES = {".py", ".sh", ".service", ".json", ".toml", ".patch"}
-BOUND_TREES = ("deployment/upstream-fixtures/", "deployment/patches/")
+BOUND_SUFFIXES = {".py", ".sh", ".service", ".json", ".toml", ".patch", ".c", ".h", ".cpp", ".hpp", ".cmake", ".in"}
+# Build recipes (debian/ files have no suffix), the lab repository layout and native sources.
+BOUND_TREES = ("deployment/upstream-fixtures/", "deployment/patches/", "deployment/recipes/", "deployment/repo/",
+               "software/labrx-native/")
+BOUND_NAMES = {"CMakeLists.txt"}
 # The guest compares the readiness contract's gate_results with the staged template (guest_smoke.py).
 # It is a sink of host evidence (test counts); never bind verification/software-tests.json itself.
 BOUND_EXTRA = {"tools/check_software.py", "tools/run_tests_offline.py", "design/readiness-contract.json"}
@@ -40,7 +43,8 @@ def bound(relative):
     if relative.startswith(UNBOUND) or any(p in {"__pycache__", ".git", "tmp", "qa"} for p in relative.split("/")):
         return False
     return (relative in BOUND_EXTRA or relative.startswith(BOUND_TREES)
-            or (relative.startswith(BOUND_PREFIXES) and PurePosixPath(relative).suffix in BOUND_SUFFIXES))
+            or (relative.startswith(BOUND_PREFIXES) and (PurePosixPath(relative).suffix in BOUND_SUFFIXES
+                                                         or PurePosixPath(relative).name in BOUND_NAMES)))
 
 
 def bound_sources(project):

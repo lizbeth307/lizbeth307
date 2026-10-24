@@ -46,7 +46,7 @@ Udev-правила — кандидат, який ще треба порівн�
 
 ## Джерела й offline-відтворюваність
 
-`deployment/sources.lock.json` зберігає30 компонентів початкового плану, точні версії/refs, підтверджені full commits та причини блокування. Для20 refs підтверджено офіційний repository API. `source_archive_sha256=null` означає, що байти повного архіву ще не отримані/не затверджені. SHA1 git commit/blob не підміняє SHA256 архіву. Жоден хеш із старого тексту не позначено перевіреним без первинного підтвердження.
+`deployment/sources.lock.json` зберігає 30 компонентів початкового плану, точні версії/refs, підтверджені full commits та причини блокування. `source_archive_sha256=null` означає, що байти повного архіву ще не отримані/не затверджені. SHA1 git commit/blob не підміняє SHA256 архіву, але для кожного архіву GitHub lock містить ще й `git_tree_sha1` (дерево коміту за GitHub API, з gitlink-ами субмодулів у `git_submodules`): `fetch_sources.py tree` обчислює його з байтів архіву, тож перепакований GitHub архів можна перевірити за вмістом. Пакети Ubuntu (GNU Radio, VOLK, gpsd, chrony) закріплено через фіксовану дату знімка `snapshot.ubuntu.com` (`apt_snapshot`): `debian_source` і `binary_debs` беруться лише з InRelease, перевіреного `gpgv` закріпленим ключем архіву, далі з підписаного індексу Sources/Packages. Жоден хеш із старого тексту не позначено перевіреним без первинного підтвердження.
 
 Первинні release asset metadata підтвердили SHA256 для Radxa r2 UFS4096 image та п’яти kernel/meta-deb активів6.18.2-4. Фактичних великих binary downloads у цій сесії не було: `verify-cache` має перевірити отримані байти й розмір. Повний список — lock, разом із точними URL й шляхами кешу.
 
@@ -56,20 +56,26 @@ python3 deployment/deploy.py verify-cache --cache /srv/srrx-cache
 python3 deployment/deploy.py verify-cache --cache /srv/srrx-cache --component rtlsdr
 # Перевірка вже отриманих source bytes без заяви про наявність core image/deb:
 python3 deployment/deploy.py verify-cache --cache /path/to/srrx-upstream-cache --sources-only --component rtlsdr --component limesuiteng
+# Потокове отримання закріплених байтів у кеш (SHA-256 і розмір до переміщення у кеш, без обмеження розміру):
+python3 deployment/fetch_sources.py fetch --cache /path/to/srrx-upstream-cache --sources-only
+python3 deployment/fetch_sources.py tree --cache /path/to/srrx-upstream-cache
+python3 deployment/fetch_sources.py verify-debian --keyring /usr/share/keyrings/ubuntu-archive-keyring.gpg --work /tmp/srrx-apt-indices
+# Новий, ще не закріплений архів лише вимірюється; lock змінює рецензент:
+python3 deployment/fetch_sources.py acquire --url <URL> --output /tmp/new-archive.tar.gz
 ```
 
-Повний cache check зараз BLOCKED:11 source archive SHA256 залишаються null; деякі refs/пакування не закріплені. Для19 повних pinned tarballs реально отримано bytes і записано SHA256/size/URL; серед них Lime, RTL, HF+, SatDump, SDR++, Soapy, gr-satellites та декодери. SDRangel перевищив128MiB acquisition cap і залишається null; великого base image download не було. `slowrx-daemon` за наведеним у STACK репозиторієм/комітом повернув primary404 і вимкнений. Virgo3.8.9 за перевіреними варіантами tag також не підтверджено. URL джерел LA9310/UART та QAIRT не вгадуються — у lock вони null до перевірки. Вимоги Python/wheelhouse, FastRPC/firmware Phase0 і build toolchain зафіксовано в `deployment/dependencies.json`; відсутні точні транзитивні версії/хеші залишені OPEN.
+Повний cache check зараз BLOCKED: лише 1 із 30 компонентів (QAIRT) не має SHA256. 24.10.2026 усі 29 закріплених компонентів (73 файли кешу, близько 445 MB) завантажено ще раз і перевірено `verify_cache(..., include_core=False)`; результат — `deployment/source-cache-verification.json`. Нові закріплення того дня: SDRangel (138,256,778 B, потокове завантаження без обмеження 128 MiB), WSJT-X 2.7.0 (тег `wsjtx-2.7.0` → b4f9a431 за `git ls-remote`; офіційний tarball SourceForge, розмір і MD5 збігаються з метаданими SourceForge), чотири пакети Ubuntu зі знімка `20261020T000000Z`, Virgo v3.8.9 (джерело STACK — `0xCoto/Virgo`; давній `varenius/virgo` повертає 404), slowrx-daemon c94327a (репозиторій-форк видалено, але сам коміт ще віддає мережа форків `windytan/slowrx`; дерево архіву дорівнює дереву коміту) і модулі LA9310 0.2.1 та uart 1.0.0 (визначені в `drivers/linux/la9310_limesdr/CMakeLists.txt` уже закріпленого архіву LimeSuiteNG 37cb183). QAIRT 2.42 (zip 1,543,955,191 B) ліцензійний: його байти отримує власник за ліцензією, і в репозиторій чи CI вони не потрапляють. Великого base image download не було. Вимоги Python/wheelhouse, FastRPC/firmware Phase0 і build toolchain зафіксовано в `deployment/dependencies.json`; відсутні точні транзитивні версії/хеші залишені OPEN.
 
 Підготовка offline release на окремому arm64 builder:
 
 1. Отримати лише зафіксовані image/deb/source refs з їхніх первинних джерел, разом з licenses, git submodules та історією потрібних cherry-picks. Не використовувати `latest`.
-2. Зберегти довірений Ubuntu/Radxa keyring і його fingerprint, підписані InRelease/Release, Packages/Sources індекси та всі транзитивні `.deb`; перевірити `gpgv` і кожний hash з підписаного індексу. Ключ довіряють через окремо перевірений fingerprint, а не через файл із того самого неперевіреного архіву.
+2. Зберегти довірений Ubuntu/Radxa keyring і його fingerprint, підписані InRelease/Release, Packages/Sources індекси та всі транзитивні `.deb`; перевірити `gpgv` і кожний hash з підписаного індексу. Ключ довіряють через окремо перевірений fingerprint, а не через файл із того самого неперевіреного архіву. Для пакетів Ubuntu з lock це робить `fetch_sources.py resolve-debian`/`verify-debian`; повне закриття пакетів цільового образу (Radxa, Mesa, Qt тощо) ще OPEN.
 3. Записати реально отримані SHA256/size в нову reviewed редакцію lock. Не переносити припущені хеші. Для Python — окремі CPython3.12/aarch64 wheelhouse й повний `--require-hashes` lock, включно з транзитивними пакетами; GNU Radio/numpy не підтягувати довільним pip upgrade.
-4. Для кожного +lab рецепта — власний sbuild/chroot, pinned compiler/CMake/dependencies, локальне дзеркало без мережевого fallback, `SOURCE_DATE_EPOCH` від коміту. SDK/DKMS/NPU прошивки — лише після Phase0 matrix, без змішування наборів. Цей репозиторій ще не містить повної підписаної apt-публікації або всіх build recipes.
-5. Двічі зібрати в незалежних chroot, порівняти результат; пояснити різниці, якщо binary reproducibility не досягнута. Створити SBOM/file allowlist, source/build logs та signed aptly snapshot; приватний ключ не класти в пристрій чи репозиторій.
+4. Для кожного +lab рецепта — власний chroot, pinned compiler/CMake/dependencies, без мережі під час збирання, `SOURCE_DATE_EPOCH` від коміту. Реалізовано для `rtlsdr` і `limesuiteng` ([deployment/recipes/README.md](../deployment/recipes/README.md), workflow `sr-rx-packages.yml`: chroot `mmdebstrap` зі знімка lock, `unshare --net`); рецепти SatDump, SDR++, SDRangel та інших ще додаються. SDK/DKMS/NPU прошивки — лише після Phase0 matrix, без змішування наборів.
+5. Двічі зібрати в незалежних chroot, порівняти результат; пояснити різниці, якщо binary reproducibility не досягнута (CI збирає двічі в тих самих шляхах, `<id>.reproducibility.json`). Створити SBOM/file allowlist, source/build logs та signed aptly snapshot (`deployment/repo/publish.sh`, церемонія ключа — [deployment/repo/README.md](../deployment/repo/README.md)); приватний ключ не класти в пристрій чи репозиторій.
 6. Перевірити cache відключеним від мережі, зібрати candidate rootfs, перевірити exact file list і negative TX tests. Hash забезпечує цілісність, а не правдивість журналу вимірювань чи автентичність автора.
 
-Окремий файл `SR-RX-vendor-sources.zip`, переданий поруч з основним комплектом (у Git-репозиторії його немає; це необов'язковий зовнішній файл), містить ці19 перевірених архівів і їхній manifest. Розпакувати його у власний cache root, щоб отримати `sources/`. Це джерела залежностей, а не встановлений образ, wheelhouse або повний офлайн-реліз.
+Окремий файл `SR-RX-vendor-sources.zip`, переданий поруч з основним комплектом (у Git-репозиторії його немає; це необов'язковий зовнішній файл), містить 19 перевірених архівів редакції 20.10.2026 і їхній manifest; решту закріплених байтів отримує `fetch_sources.py fetch`. Розпакувати його у власний cache root, щоб отримати `sources/`. Це джерела залежностей, а не встановлений образ, wheelhouse або повний офлайн-реліз.
 
 
 ## Реальні vendor-патчі та їхня межа
@@ -91,6 +97,17 @@ Lime37cb183: TX `setupStream` відхиляється до allocation/configura
 RTL797f814: GPIO0 ON завжди повертає EPERM; номер GPIO поза 0..7 повертає EINVAL, бо uint8_t-хелпери upstream інакше перетворили б, наприклад, 256 або -256 на GPIO0; GPIO5 та OFF у межах 0..7 працюють як раніше; best-effort GPIO0 OFF додано в open/close; SOVERSION2 відновлено за первинним7ebcb041 diff. Рецепт використовує `ENABLE_ZEROCOPY=OFF`, `DETACH_KERNEL_DRIVER=ON`, перевіряє SONAME,37 exports і відсутність zero-copy text. Усі executable tools, включно з rtl_tcp/rtl_eeprom/rtl_biast, не встановлюються цим вузьким рецептом. **Свідоме суворіше обмеження:** labd token bridge для GPIO0 ще немає; антени використовують зовнішні захищені інжектори схеми. API тест OFF/перемикання V4L і EEPROM default-off лишаються апаратними воротами.
 
 AirspyHF: у підтверджених1.6.8 source/header немає bias-tee API; типова noble1.6.8-4build1 із SONAME1 не замінена upstream make install. Патч для неіснуючої функції не вигадувався. Опційний Airspy Mini й нові AirspyHF API не отримують автоматичного дозволу. Підтверджені джерела/хеші/ліцензії описані в `deployment/UPSTREAM-REVIEW.md`.
+
+## Збирач пакетів +lab і підписаний офлайн-репозиторій
+
+Workflow `.github/workflows/sr-rx-packages.yml` (ручний запуск, вхід `lab_builds`) на нативному arm64 для кожного рецепта створює новий chroot noble arm64 через `mmdebstrap` зі знімка `snapshot.ubuntu.com`, дата якого записана в lock, і збирає рецепт у мережевому просторі без маршруту назовні (`unshare --net`) від непривілейованого користувача. Результат — `.deb`, маніфест `verify_build` кожного пакета (status OPEN) і запис збірки, прив'язаний до lock. Пакети публікуються в тимчасовий репозиторій aptly, підписаний тестовим ключем, що існує лише в цьому job, і перевіряються `deploy.py verify-repo` та випадками підробки. Подробиці — [deployment/recipes/README.md](../deployment/recipes/README.md) і [deployment/repo/README.md](../deployment/repo/README.md).
+
+```sh
+python3 deployment/deploy.py verify-repo --repo /srv/srrx-repo/lab --keyring /usr/share/keyrings/srrx-lab.gpg --fingerprint <40 hex> \
+    --build-record /path/to/rtlsdr.build-record.json --sources-entry /etc/apt/sources.list.d/srrx-lab.sources --inrelease-sha256 <sha256>
+```
+
+`release-guard` тепер перевіряє сам підписаний репозиторій (поле `offline_snapshot` у `release.template.json`), а не хеш одного файла. Release не має `Valid-Until`: пристрій офлайн, а свіжість задає закріплений `inrelease_sha256` запису випуску. Ключ випуску створює власник на офлайн-комп'ютері; його приватна частина ніколи не потрапляє в CI, Git чи на пристрій. Пакети з CI — це доказ збирання, а не рецензія: `verify_build` і далі відхиляє будь-яку бібліотеку Lime до завершення аудиту native TX.
 
 ## Перевірка candidate і системні служби
 
@@ -178,7 +195,8 @@ Pico прив'язаний рівно до одного файла прийма�
 |---|---|
 | Controller staging, doctor, templates, deterministic bundle, patch application/guard tests | Реалізовано; host tests |
 | Q6A image/kernel release digests | Первинні metadata підтверджені; bytes/cache ще перевірити |
-|19 із30 повних source archives отримано/хешовано;11 ще unresolved, transitive apt/wheelhouse/toolchain lock | Offline full suite залишається BLOCKED |
+| 29 із 30 компонентів закріплено й перевірено в кеші (24.10.2026); QAIRT — ліцензійний архів власника; transitive apt цільового образу, wheelhouse і toolchain lock | Offline full suite залишається BLOCKED |
+| CI-збирач +lab (`sr-rx-packages.yml`, рецепти `rtlsdr` і `limesuiteng`), підписаний тестовим ключем репозиторій aptly і `deploy.py verify-repo` | Реалізовано як доказ CI; ключ випуску — церемонія власника, OPEN |
 | Повні +lab privacy/build recipes SDRangel/SatDump/OpenWebRX/readsb/AIS та їхні fixtures | План build07; не підмінені generic name scan |
 | Офлайн-самоперевірка receive-only/privacy (`selftest.py`, політика DRAFT) | Статичні рядки реалізовано, host tests; рядки 11 і 14 BLOCKED, BUILDER/DEVICE/HARDWARE — RUNTIME_ONLY |
 | Lime native/raw TX audit, SDK arm64,56MHz/RAM/thermal/PCIe/firmware | OPEN, runtime disabled |

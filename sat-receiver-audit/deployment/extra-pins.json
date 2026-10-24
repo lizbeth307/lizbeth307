@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "verified_on": "2026-10-20",
+  "verified_on": "2026-10-24",
   "refs": [
     {
       "repo": "gnss-sdr/gnss-sdr",
@@ -8,9 +8,9 @@
       "sha": "1ddd4562723040fd66cb334b578a5b69455625f4"
     },
     {
-      "repo": "varenius/virgo",
+      "repo": "0xCoto/Virgo",
       "ref": "v3.8.9",
-      "sha": null
+      "sha": "ac699cb434aca540d454ed07f820f415078958bc"
     },
     {
       "repo": "csete/gpredict",

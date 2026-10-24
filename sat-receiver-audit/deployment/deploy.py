@@ -20,6 +20,7 @@ import stat
 import subprocess
 import sys
 import tarfile
+import tempfile
 
 sys.dont_write_bytecode = True  # imports must not add __pycache__ to the tree verify_build allowlists
 HERE = Path(__file__).resolve().parent
@@ -764,17 +765,51 @@ def doctor(config=None):
     return report
 
 
-def verify_cache(cache, components=None, include_core=True):
-    lock = load(HERE / "sources.lock.json")
-    selected = set([c["id"] for c in lock["components"]] if components is None else components)
-    if selected - {c["id"] for c in lock["components"]}:
+def cache_entries(lock, components=None, include_core=True):
+    """Every cache file a selection needs, as {path, sha256, size, url}: verify_cache and
+    fetch_sources.py share this one list. A git component is its full pinned archive. A component
+    pinned in a signed Ubuntu snapshot (debian_source, lock apt_snapshot) is its .dsc, the
+    orig/debian tarballs the .dsc names and every locked arm64/all .deb built from it."""
+    known = [c["id"] for c in lock["components"]]
+    selected = set(known if components is None else components)
+    if selected - set(known):
         raise DeploymentError("unknown source component")
-    entries = [{"path": a["cache_path"], "sha256": a["sha256"], "size": a["size"]} for a in lock["artifacts"]] if include_core else []
+    entries = [{"path": a["cache_path"], "sha256": a["sha256"], "size": a["size"], "url": a["url"]} for a in lock["artifacts"]] if include_core else []
     for component in lock["components"]:
-        if component["id"] in selected:
-            if component["commit"] is None or not component["ref_verified"]:
-                raise DeploymentError("primary source pin unresolved: " + component["id"])
-            entries.append({"path": component["source_cache_path"], "sha256": component["source_archive_sha256"], "size": component.get("source_archive_size")})
+        if component["id"] not in selected:
+            continue
+        debian = component.get("debian_source")
+        if not component["ref_verified"] or (component["commit"] is None and debian is None):
+            raise DeploymentError("primary source pin unresolved: " + component["id"])
+        if debian is None:
+            entries.append({"path": component["source_cache_path"], "sha256": component["source_archive_sha256"],
+                            "size": component.get("source_archive_size"), "url": component.get("source_archive_url")})
+            continue
+        snapshot = lock["apt_snapshot"]
+        base = snapshot["archive"] + "/" + snapshot["timestamp"] + "/"
+        dsc = [f for f in debian["files"] if f["name"].endswith(".dsc")]
+        if (len(dsc) != 1 or component["source_archive_sha256"] != dsc[0]["sha256"]
+                or component["source_cache_path"] != "sources/" + component["id"] + "/" + dsc[0]["name"]):
+            raise DeploymentError("Debian source record is inconsistent: " + component["id"])
+        for item in debian["files"]:
+            entries.append({"path": "sources/" + component["id"] + "/" + item["name"], "sha256": item["sha256"],
+                            "size": item["size"], "url": base + debian["directory"] + "/" + item["name"]})
+        for deb in component["binary_debs"]:
+            entries.append({"path": "debs/" + component["id"] + "/" + deb["filename"].rsplit("/", 1)[-1], "sha256": deb["sha256"],
+                            "size": deb["size"], "url": base + deb["filename"]})
+    seen, unique = {}, []  # one archive may hold several components (LimeSuiteNG and its LA9310 modules)
+    for item in entries:
+        if item["path"] in seen:
+            if seen[item["path"]] != (item["sha256"], item["size"]):
+                raise DeploymentError("two locked hashes for one cache path: " + item["path"])
+            continue
+        seen[item["path"]] = (item["sha256"], item["size"])
+        unique.append(item)
+    return unique
+
+
+def verify_cache(cache, components=None, include_core=True):
+    entries = cache_entries(load(HERE / "sources.lock.json"), components, include_core)
     root = Path(cache).resolve(strict=True)
     for item in entries:
         if item["sha256"] is None:
@@ -786,6 +821,179 @@ def verify_cache(cache, components=None, include_core=True):
         if sha(path) != item["sha256"] or (item["size"] is not None and path.stat().st_size != item["size"]):
             raise DeploymentError("offline cache digest/size differs: " + item["path"])
     return {"status": "CACHE_BYTES_VERIFIED", "entries": len(entries), "includes_core": include_core, "hardware_ready": False}
+
+
+# Signed offline package repository (deployment/repo/README.md). One aptly publication of the
+# +labN builds: InRelease signed by the owner's offline key (CI uses only a throwaway test key).
+REPO_POLICY = HERE / "repo/repo-policy.json"
+_FIELD = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.-]*")
+
+
+def deb822(text, label):
+    """Paragraphs of a Debian control-format text (Release, Packages, dpkg status, .sources) as
+    lists of {field (lower case): value}. Continuation lines keep their newline; duplicate or
+    malformed fields fail closed instead of a later field silently winning."""
+    paragraphs, current, last = [], {}, None
+    for line in text.split("\n"):
+        if not line.strip():
+            if current:
+                paragraphs.append(current)
+            current, last = {}, None
+        elif line[0] in " \t":
+            if last is None:
+                raise DeploymentError(label + ": continuation line without a field")
+            current[last] += "\n" + line.strip()
+        elif not line.startswith("#"):
+            name, sep, value = line.partition(":")
+            if not sep or not _FIELD.fullmatch(name) or name.lower() in current:
+                raise DeploymentError(label + ": malformed or duplicate field")
+            last = name.lower()
+            current[last] = value.strip()
+    if current:
+        paragraphs.append(current)
+    return paragraphs
+
+
+def release_files(fields, label):
+    """{path: (sha256, size)} of a Release SHA256 section; a relative safe path each, listed once."""
+    files = {}
+    for line in fields.get("sha256", "").split("\n"):
+        if not line.strip():
+            continue
+        parts = line.split()
+        if (len(parts) != 3 or not re.fullmatch(r"[0-9a-f]{64}", parts[0]) or not parts[1].isdigit()
+                or parts[2].startswith("/") or ".." in parts[2].split("/") or parts[2] in files):
+            raise DeploymentError(label + ": malformed SHA256 entry")
+        files[parts[2]] = (parts[0], int(parts[1]))
+    if not files:
+        raise DeploymentError(label + ": Release has no SHA256 section")
+    return files
+
+
+def gpgv_signed_text(path, keyring, fingerprints):
+    """Only the bytes gpgv reports as signed, after a good signature (VALIDSIG) by one of the
+    pinned primary or signing fingerprints in an explicit keyring: never the default keyring,
+    never text outside the clearsigned block. A missing gpgv blocks (fail closed)."""
+    pinned = {f.upper().replace(" ", "") for f in fingerprints}
+    if not pinned or not all(re.fullmatch(r"[0-9A-F]{40}", f) for f in pinned):
+        raise DeploymentError("signing fingerprint must be a pinned 40-hex fingerprint")
+    with tempfile.TemporaryDirectory(prefix="srrx-gpgv-") as temporary:
+        output = Path(temporary) / "signed"
+        # A private copy, named relative to cwd: gpgv reads a bare name from its home directory
+        # and a drive-letter path as a resource URL, so neither form is passed.
+        shutil.copyfile(Path(keyring).resolve(strict=True), Path(temporary) / "keyring.gpg")
+        try:
+            result = subprocess.run(["gpgv", "--status-fd", "1", "--keyring", "./keyring.gpg",
+                                     "--output", str(output), str(Path(path).resolve(strict=True))],
+                                    capture_output=True, text=True, timeout=120, cwd=temporary)
+        except (OSError, subprocess.SubprocessError) as exc:
+            raise DeploymentError("gpgv unavailable or failed: " + str(exc)) from exc
+        status = [line.split() for line in result.stdout.splitlines() if line.startswith("[GNUPG:] ")]
+        good = [w for w in status if len(w) >= 12 and w[1] == "VALIDSIG" and (w[2] in pinned or w[11] in pinned)]
+        if result.returncode != 0 or not good or any(w[1] in ("BADSIG", "EXPKEYSIG", "REVKEYSIG") for w in status if len(w) > 1):
+            raise DeploymentError("signature is not a good signature by the pinned key: " + Path(path).name)
+        return output.read_bytes().decode("utf-8")
+
+
+def _held(status_file):
+    """{package: version} held (want=hold) in a dpkg status file of the root being updated."""
+    held = {}
+    for paragraph in deb822(Path(status_file).read_text(encoding="utf-8"), "dpkg status"):
+        if paragraph.get("status", "").split()[:1] == ["hold"] and "package" in paragraph:
+            held[paragraph["package"]] = paragraph.get("version", "")
+    return held
+
+
+def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrelease_sha256=None, target_status=None):
+    """Signed lab repository check: gpgv InRelease by the pinned key -> every dists/ file against the
+    signed SHA256 list -> every Packages stanza against a build record (name, version, architecture,
+    SHA-256, size) whose component and source archive are the locked ones -> every pool .deb listed
+    once. Refuses foreign origins, non-+labN versions, receive-only policy packages, kernel/bootloader/
+    SPI/DSP firmware packages, a changed held package (target_status) and an apt entry without
+    Signed-By. Integrity and provenance only; no install, no TX proof."""
+    policy = load(REPO_POLICY)
+    keys(policy, ("schema_version", "status", "origin", "label", "codename", "component", "architecture",
+                  "keyring_path", "never_in_lab_repo_globs", "notes", "sources"), "repository policy")
+    root = Path(repo).resolve(strict=True)
+    dist = root / "dists" / policy["codename"]
+    inrelease = dist / "InRelease"
+    if inrelease_sha256 is not None and sha(inrelease) != inrelease_sha256:
+        raise DeploymentError("InRelease differs from the reviewed release record")
+    paragraphs = deb822(gpgv_signed_text(inrelease, keyring, [fingerprint]), "InRelease")
+    if len(paragraphs) != 1:
+        raise DeploymentError("InRelease must hold exactly one Release paragraph")
+    release = paragraphs[0]
+    expected = {"origin": policy["origin"], "codename": policy["codename"], "components": policy["component"],
+                "architectures": policy["architecture"]}
+    if any(release.get(k) != v for k, v in expected.items()) or release.get("suite", policy["codename"]) != policy["codename"]:
+        raise DeploymentError("foreign or unexpected repository origin/suite/components/architectures")
+    listed = release_files(release, "InRelease")
+    present = {p.relative_to(dist).as_posix() for p in dist.rglob("*") if p.is_file() or p.is_symlink()}
+    extra = present - set(listed) - {"InRelease", "Release", "Release.gpg"}
+    if extra:
+        raise DeploymentError("repository index file not covered by the signed Release: " + sorted(extra)[0])
+    for relative, (digest, size) in listed.items():
+        path = dist / relative
+        if path.is_symlink() or not path.is_file() or path.stat().st_size != size or sha(path) != digest:
+            raise DeploymentError("index differs from the signed Release: " + relative)
+    index = policy["component"] + "/binary-" + policy["architecture"] + "/Packages"
+    if index not in listed:
+        raise DeploymentError("signed Release does not list " + index)
+    lock = load(HERE / "sources.lock.json")
+    components = {c["id"]: c for c in lock["components"]}
+    allowed, records = {}, []
+    for record_path in build_records:
+        record = load(record_path)
+        keys(record, ("schema_version", "kind", "status", "component", "version", "recipe_sha256", "source_archive_sha256",
+                      "apt_snapshot", "build_environment", "packages", "checks", "hardware_ready"), "build record")
+        component = components.get(record["component"])
+        if (record["schema_version"] != 1 or record["kind"] != "srrx_lab_build_record" or component is None
+                or record["source_archive_sha256"] is None or record["source_archive_sha256"] != component["source_archive_sha256"]
+                or record["version"] != component["version"] or record["apt_snapshot"] != lock["apt_snapshot"]["timestamp"]):
+            raise DeploymentError("build record is not bound to the locked component source: " + Path(record_path).name)
+        for package in record["packages"]:
+            keys(package, ("package", "version", "architecture", "filename", "sha256", "size", "build_manifest_sha256"), "build record package")
+            allowed[(package["package"], package["version"], package["architecture"])] = (package["sha256"], package["size"])
+        records.append({"path": str(record_path), "sha256": sha(record_path)})
+    never = [g.lower() for g in policy["never_in_lab_repo_globs"]]
+    held = _held(target_status) if target_status is not None else {}
+    referenced, versions = set(), {}
+    for stanza in deb822((dist / index).read_text(encoding="utf-8"), "Packages"):
+        name, version, arch = stanza.get("package"), stanza.get("version"), stanza.get("architecture")
+        filename = stanza.get("filename", "")
+        if not name or not version or arch not in (policy["architecture"], "all"):
+            raise DeploymentError("Packages stanza lacks package/version or has a foreign architecture")
+        if (not filename.startswith("pool/") or ".." in filename.split("/") or filename in referenced
+                or not stanza.get("size", "").isdigit() or not re.fullmatch(r"[0-9a-f]{64}", stanza.get("sha256", ""))):
+            raise DeploymentError("unsafe, duplicate or unhashed pool entry: " + name)
+        deb = root / filename
+        if deb.is_symlink() or not deb.is_file() or deb.stat().st_size != int(stanza["size"]) or sha(deb) != stanza["sha256"]:
+            raise DeploymentError("pool .deb differs from the signed Packages index: " + filename)
+        if allowed.get((name, version, arch)) != (stanza["sha256"], int(stanza["size"])):
+            raise DeploymentError("package is not one of the build records: " + name + " " + version)
+        if not LAB_BUILD.search(version):
+            raise DeploymentError("lab repository package is not a +labN build: " + name)
+        if any(fnmatch.fnmatchcase(name.lower(), g) for g in never):
+            raise DeploymentError("kernel, bootloader, SPI or DSP firmware package in the lab repository: " + name)
+        if name in held and held[name] != version:
+            raise DeploymentError("update would change a held package: " + name)
+        referenced.add(filename)
+        versions[name] = version
+    if not referenced:
+        raise DeploymentError("signed lab repository lists no packages")
+    forbidden = prohibited_installed(versions, identifiers=True)
+    if forbidden:
+        raise DeploymentError("receive-only policy forbids repository packages: " + ", ".join(forbidden))
+    pool = {p.relative_to(root).as_posix() for p in (root / "pool").rglob("*") if p.is_file() or p.is_symlink()} if (root / "pool").is_dir() else set()
+    if pool != referenced:
+        raise DeploymentError("pool holds a file the signed Packages index does not list: " + sorted(pool - referenced)[0])
+    entries = deb822(Path(sources_entry).read_text(encoding="utf-8"), "apt sources entry")
+    if (len(entries) != 1 or entries[0].get("signed-by") != policy["keyring_path"] or entries[0].get("suites") != policy["codename"]
+            or entries[0].get("components") != policy["component"] or entries[0].get("types") != "deb"):
+        raise DeploymentError("apt entry must be one deb822 stanza with Signed-By " + policy["keyring_path"])
+    return {"status": "SIGNED_REPOSITORY_MATCHES_BUILD_RECORDS", "packages": len(referenced), "inrelease_sha256": sha(inrelease),
+            "signing_fingerprint": fingerprint.upper(), "build_records": records, "hardware_ready": False,
+            "scope": "Signature, index and package hashes, build-record and source-lock binding; no install, no receive-only proof."}
 
 
 def verify_build(prefix, manifest):
@@ -841,7 +1049,7 @@ def stage_gnss(rootfs, mode):
     after dev-lab-gnss.device (gpsd.service in gpsd mode, srrx-locationd in raw mode; DEP-11)."""
     units = rootfs / "etc/systemd/system"
     rule = rootfs / GNSS_POLKIT_RULE
-    rule.parent.mkdir(parents=True)
+    rule.parent.mkdir(parents=True, exist_ok=True)  # pass_jobs.staged_files() may have created rules.d
     rule.write_text(gnss_polkit_rule(), newline="\n")
     locationd = units / "srrx-locationd.service.d"
     locationd.mkdir(exist_ok=True)
@@ -948,9 +1156,17 @@ def release_guard(devices, acceptance, release, build_manifest, cache):
     if lock["target"]["base_image_sha256"] is None or record["base_image_sha256"] != lock["target"]["base_image_sha256"]:
         raise DeploymentError("Radxa OS r2 base image SHA256 binding is missing or mismatched")
     snapshot = record["offline_snapshot"]
-    keys(snapshot, ("status", "path", "sha256"), "offline package snapshot")
-    if snapshot["status"] != "REVIEWED" or sha(snapshot["path"]) != snapshot["sha256"]:
+    keys(snapshot, ("status", "repo", "keyring", "signing_fingerprint", "inrelease_sha256", "sources_entry", "build_records"), "offline package snapshot")
+    if snapshot["status"] != "REVIEWED" or type(snapshot["build_records"]) is not list or not snapshot["build_records"]:
         raise DeploymentError("offline signed repository snapshot metadata not bound")
+    for item in snapshot["build_records"]:
+        keys(item, ("path", "sha256"), "offline snapshot build record")
+        if sha(item["path"]) != item["sha256"]:
+            raise DeploymentError("offline snapshot build record differs: " + str(item["path"]))
+    # The signed repository itself, not a file hash of it (deployment/repo/README.md); held
+    # packages of this root must keep their versions.
+    verify_repo(snapshot["repo"], snapshot["keyring"], snapshot["signing_fingerprint"], [i["path"] for i in snapshot["build_records"]],
+                snapshot["sources_entry"], snapshot["inrelease_sha256"], Path("/var/lib/dpkg/status"))
     # Controller-only deployment needs the immutable base/kernel cache. The
     # full radio application suite has30 separate unresolved source archives.
     verify_cache(cache, components=[])
@@ -1039,6 +1255,13 @@ def check():
             _string(component["commit"], "[0-9a-f]{40}", "full pinned commit")
         if component["source_archive_sha256"] is not None:
             _string(component["source_archive_sha256"], "[0-9a-f]{64}", "archive SHA256")
+    # Every resolved entry is fetchable and checkable: exact SHA-256, positive size, HTTPS URL.
+    resolved = [c["id"] for c in lock["components"] if c["source_archive_sha256"] is not None]
+    for item in cache_entries(lock, resolved):
+        _string(item["sha256"], "[0-9a-f]{64}", "cache SHA256")
+        _string(item["url"], r"https://[!-~]+", "cache URL")
+        if type(item["size"]) is not int or item["size"] <= 0:
+            raise DeploymentError("cache entry without a locked size: " + item["path"])
     receive_only_policy()  # doctor would otherwise only report the broken policy on the target
     from vendor_patch import check_fixtures
     check_fixtures()
@@ -1072,6 +1295,14 @@ def main():
     package = commands.add_parser("bundle")
     package.add_argument("--stage-dir", type=Path, required=True)
     package.add_argument("--output", type=Path, required=True)
+    signed = commands.add_parser("verify-repo", help="check a signed lab repository against build records (deployment/repo/README.md)")
+    signed.add_argument("--repo", type=Path, required=True)
+    signed.add_argument("--keyring", type=Path, required=True)
+    signed.add_argument("--fingerprint", required=True)
+    signed.add_argument("--build-record", type=Path, action="append", required=True)
+    signed.add_argument("--sources-entry", type=Path, required=True)
+    signed.add_argument("--inrelease-sha256")
+    signed.add_argument("--target-status", type=Path, help="dpkg status of the root being updated (held packages)")
     guard = commands.add_parser("release-guard")
     for name in ("devices", "acceptance", "release", "build-manifest", "cache"):
         guard.add_argument("--" + name, type=Path, required=True)
@@ -1086,6 +1317,8 @@ def main():
         elif args.operation == "verify-build": result = verify_build(args.prefix, load(args.manifest))
         elif args.operation == "stage-ab": result = stage_ab(load(args.config), args.dest)
         elif args.operation == "bundle": result = bundle(args.stage_dir, args.output)
+        elif args.operation == "verify-repo": result = verify_repo(args.repo, args.keyring, args.fingerprint, args.build_record, args.sources_entry,
+                                                                args.inrelease_sha256, args.target_status)
         else: result = release_guard(args.devices, args.acceptance, args.release, args.build_manifest, args.cache)
         print(json.dumps(result, indent=2))
         if result.get("status") == "BLOCKED": sys.exit(2)

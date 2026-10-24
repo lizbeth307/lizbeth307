@@ -1,9 +1,9 @@
 {
   "status": "CACHE_BYTES_VERIFIED",
-  "entries": 19,
+  "entries": 73,
   "includes_core": false,
   "hardware_ready": false,
-  "verified_on": "2026-10-20",
+  "verified_on": "2026-10-24",
   "components": [
     "limesuiteng",
     "rtlsdr",
@@ -11,19 +11,29 @@
     "satdump",
     "gr-satellites",
     "sdrpp",
+    "sdrangel",
     "soapyairspyhf",
     "readsb",
     "ais-catcher",
     "radiosonde-auto-rx",
+    "slowrx",
     "soapysdr",
+    "la9310-limesdr",
+    "la9310-uart",
+    "gnuradio",
+    "volk",
     "gnss-sdr",
+    "virgo",
+    "gpsd",
+    "chrony",
     "openwebrx-plus",
     "redsea",
     "welle-io",
     "gpredict",
+    "wsjt-decoders",
     "nanovna-saver",
     "qttinysa",
     "labwc"
   ],
-  "source_lock_sha256": "00a8a889f7508463aba6840162644bb22de55f620fa40e9ba1e47e3571a9f22e"
+  "source_lock_sha256": "067678c0e181357af160ce01862398e3b908cc6562bdcef3dd8af2eaeec4c4cb"
 }
