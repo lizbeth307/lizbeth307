@@ -440,10 +440,10 @@
     "firmware/imu/session.py": "89b85991719f5261624adc9a3834b3b0af8bf23ce8ca0a881ec725af1c7a5bcb",
     "firmware/imu/shtp.py": "5c737d0fc01166f04a4fdcba6676b00603fcc80997546cf2969b51d0ad2727dc",
     "firmware/pico/adapter.py": "f405206c2279fcf8cf6b4225f185c9fc93d87fd23ac9a2ebf763b6fb9db2954a",
-    "firmware/pico/calibration.py": "385222bc0d2ea4588e14606d36ea340f2853fd5aaa873990291bac0f0e8c91ab",
+    "firmware/pico/calibration.py": "f530a3e59ee8c7bd3f9b7a143f326f3a3ab69c1bc1bd55f56751b6be7e6198f6",
     "firmware/pico/hmi.py": "ec1d7bc85d18bf9e2d23689d94a7aebc8922cbe2328f4c2f7488c6fc6ad67208",
     "firmware/pico/imu_relay.py": "192f8bc43cc932c036c13cdf70cc4548eb0f56fa3f7af9c940d42aabc6b6d820",
-    "firmware/pico/main.py": "08ce811fb869b4c33a76fd3cf39608b97bf76cacb0f4f0409ea9576e9d8a0c98",
+    "firmware/pico/main.py": "c537d05b9699b6f1e1b4e12ded656e947e8b8b398b47ee45ccd315bd3e051fb0",
     "firmware/pico/supervisor.py": "b62b0aefad7bbc2afb5647022a786ed473065ebad4a27bc5f8f4854bb39d4746",
     "software/srrx/peripherals.py": "a4e2f614aa969ddbfb4c3465ce1927146825c260a818d82cc5431590de1b7e6b",
     "software/srrx/wire.py": "f4ba993cbca9312c4639d3f6e8ddad083f7219017647026cb97b3e52a2f8fe3f"

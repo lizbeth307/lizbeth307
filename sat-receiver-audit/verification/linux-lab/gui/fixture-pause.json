@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "fixture": "pause",
-  "pid": 2612,
+  "pid": 2802,
   "uid": 1001,
   "stage": "HOLD_STOPPED",
   "qt_platform": "offscreen",
@@ -28,46 +28,46 @@
   "action_log": [
     {
       "operation": "recover",
-      "at_s": 8.832263,
+      "at_s": 7.168819,
       "name": null,
       "value": null
     },
     {
       "operation": "control",
-      "at_s": 9.416533,
+      "at_s": 7.876135,
       "name": "EN_RTLA",
       "value": true
     },
     {
       "operation": "disarm",
-      "at_s": 13.144869,
+      "at_s": 11.348064,
       "name": null,
       "value": null
     },
     {
       "operation": "disarm",
-      "at_s": 15.950025,
+      "at_s": 14.165725,
       "name": null,
       "value": null
     }
   ],
-  "elapsed_s": 15.990857,
+  "elapsed_s": 14.179741,
   "request_counts": {
-    "status": 25,
+    "status": 24,
     "recover": 1,
     "lease": 2,
     "control": 1,
     "disarm": 2
   },
   "accepted_lease_at_s": [
-    8.89386,
-    10.084638
+    7.193876,
+    8.309584
   ],
   "qt_timer": {
     "interval_ms": 100,
     "ticks": 46,
-    "mean_gap_ms": 347.627,
-    "max_gap_ms_including_SIGSTOP": 7240.692
+    "mean_gap_ms": 308.255,
+    "max_gap_ms_including_SIGSTOP": 5658.079
   },
   "service": {
     "mode": "SIMULATION",
@@ -106,16 +106,16 @@
   "holding": false,
   "controller_notice": "Console closed \u2014 DISARM requested",
   "controller_error": null,
-  "warmup_finished_s": 8.233947,
-  "natural_heartbeat_s": 8.601504,
-  "fresh_poll_s": 8.523576,
-  "arm_requested_s": 8.782693,
-  "active_s": 9.37287,
-  "stable_s": 10.695878,
-  "remaining_lease_ms": 2385,
-  "hold_stopped_s": 13.197934,
+  "warmup_finished_s": 6.626474,
+  "natural_heartbeat_s": 6.97698,
+  "fresh_poll_s": 6.93668,
+  "arm_requested_s": 7.155681,
+  "active_s": 7.867613,
+  "stable_s": 9.13245,
+  "remaining_lease_ms": 2145,
+  "hold_stopped_s": 11.403093,
   "exit_requests": {
-    "status": 25,
+    "status": 24,
     "recover": 1,
     "lease": 2,
     "control": 1,

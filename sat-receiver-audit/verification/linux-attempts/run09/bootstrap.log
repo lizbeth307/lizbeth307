@@ -1,0 +1,27 @@
+Software lab clock set from host preparation timestamp; not GNSS
+Payload hashes PASS
+Installed project hashes PASS
+Locked dependency reinstall and versions PASS
+No broken requirements found.
+Running full software regression
+Software regression exit: 0; running systemd/Unix IPC smoke
+{"status": "PASS", "report": "/var/lib/srrx-linux-lab/results/system-smoke.json", "hardware_qualified": false}
+System smoke exit: 0; running real PTY smoke
+{"suite": "real_linux_pty_smoke", "status": "PASS", "passed": 9, "failed": 0, "elapsed_s": 5.231}
+PTY smoke exit: 0; running offscreen Qt process-failure smoke
+{"status": "PASS_LINUX_OFFSCREEN_SIMULATION", "report": "/var/lib/srrx-linux-lab/results/gui/report.json"}
+Offscreen Qt exit: 0; running XCB/Xvfb production menu
+{"status": "PASS", "report": "/var/lib/srrx-linux-lab/results/xcb/report.json"}
+XCB exit: 0; running native RX worker failure smoke
+RX worker exit: 0; running virtual block storage smoke
+{"status": "PASS", "cases": 5, "report": "/var/lib/srrx-linux-lab/results/storage-smoke.json"}
+Storage exit: 0; running all module models
+power 0 EMULATION_PASS
+mcu 0 EMULATION_PASS
+radio 0 EMULATION_PASS
+location 0 EMULATION_PASS
+io 0 EMULATION_PASS_WITH_UNSUPPORTED
+connectivity 0 CONNECTION_MODEL_PASS
+{"status": "EMULATION_PASS_WITH_GAPS", "counts": {"EMULATION_PASS": 34, "EMULATION_FAIL": 0, "CONNECTION_MODEL_ONLY": 132}, "report": "/var/lib/srrx-linux-lab/results/module-lab/report.json"}
+All requested ARM64 Linux lab suites completed
+SRRX_LINUX_LAB_RESULT {"schema_version": 1, "status": "PASS", "bootstrap_exit_code": 0, "environment": {"architecture": "aarch64", "kernel": "6.8.0-147-generic", "pid1": "systemd", "os_release": "PRETTY_NAME=\"Ubuntu 24.04.5 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04.5 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo\n", "clock_source": "host preparation timestamp plus guest uptime; not GNSS qualification"}, "suites": {"dependency-verification.json": "PASS", "software-tests.json": "PASS", "system-smoke.json": "PASS", "pty-smoke.json": "PASS", "gui-smoke.json": "PASS_LINUX_OFFSCREEN_SIMULATION", "xcb-smoke.json": "PASS", "rx-worker-smoke.json": "PASS", "storage-smoke.json": "PASS", "module-lab/report.json": "EMULATION_PASS_WITH_GAPS"}, "physical_tests_performed": false, "hardware_qualified": false, "network_devices": [], "q6a_peripherals_emulated": false}

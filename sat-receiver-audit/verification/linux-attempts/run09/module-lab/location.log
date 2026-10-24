@@ -1,0 +1,1 @@
+{"suite": "location_module_emulation", "status": "EMULATION_PASS", "modules": [{"module_id": "lc76g_u304", "status": "EMULATION_PASS"}, {"module_id": "gpsd_client_protocol", "status": "EMULATION_PASS"}]}

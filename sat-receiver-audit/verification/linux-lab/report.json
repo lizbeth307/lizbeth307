@@ -26,8 +26,15 @@
   "q6a_peripherals_emulated": false,
   "host": {
     "qemu_exit_code": 0,
-    "elapsed_s": 2165.994,
-    "run_manifest_sha256": "4ba6d2512198c8fc2a2eaeb2e4dd17ba56000ded52caa191f3717eca2b1d642c",
-    "console_sha256": "0999bce5df0074817f5b171b9c1af4512596615a2828dab69ae6b7243eb3c676"
+    "elapsed_s": 2476.822,
+    "run_manifest_sha256": "aa9dbd95c276e2ed2a8482c4bd052d376bfce53b43e22f7cae73c4f858fa6b7a",
+    "console_sha256": "c5327c5b8e757cb976b97775dc0b2c003a8a93b3fc04c75de7c7cbe94c7b842d",
+    "loader_audit": {
+      "status": "PASS",
+      "objects": 49,
+      "dlopened": [],
+      "outside_tools_root": [],
+      "sha256": "caacefc042bbbcb7a764ee3ea3b313f5112ca5933dc97df1c1461de8a5cc43c0"
+    }
   }
 }

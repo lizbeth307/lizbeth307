@@ -26,7 +26,7 @@
     "height": 800
   },
   "entrypoint": "unmodified srrx.hmi.main([--socket,...]) with observation/close timers",
-  "hmi_sha256": "12bf7ac65c1a90e99c89f13af980118dedaaa5ab569bba8c3d5682f015e57dd6",
+  "hmi_sha256": "e764c84aa66251e338dc4421a6f8e2a6ca5dfa982f2fb26e1f7e6d50ad546e39",
   "touch_events_injected": false,
   "arm_or_control_requests_injected": false,
   "latest_service": {
@@ -80,11 +80,11 @@
     "sha256": "1cbe18ce2f07230e5cd3a337a5a6ee8b8db81f5ad8bef543ad7320685b6cbfe9"
   },
   "connected_views": 4,
-  "first_connected_s": 6.999189,
-  "capture_after_s": 7.182348,
+  "first_connected_s": 6.693155,
+  "capture_after_s": 6.878075,
   "banner": "SIMULATION | PROTECTION STOP | CONTROL OFF | HOLD OFF | FIELD",
   "menu_pages": 6,
   "entrypoint_returncode": 0,
   "clean_close": true,
-  "elapsed_s": 8.8952
+  "elapsed_s": 8.776511
 }

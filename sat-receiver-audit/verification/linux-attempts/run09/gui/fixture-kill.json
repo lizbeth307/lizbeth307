@@ -1,0 +1,98 @@
+{
+  "schema_version": 1,
+  "fixture": "kill",
+  "pid": 2645,
+  "uid": 1001,
+  "stage": "ACTIVE_STABLE",
+  "qt_platform": "offscreen",
+  "pyside6": "6.12.0",
+  "qt": "6.12.0",
+  "screenshots": [
+    {
+      "path": "kill-startup-disarmed.png",
+      "bytes": 122059,
+      "width": 1100,
+      "height": 800,
+      "sha256": "1cbe18ce2f07230e5cd3a337a5a6ee8b8db81f5ad8bef543ad7320685b6cbfe9"
+    }
+  ],
+  "scope": "real full Qt window/worker; semantic queue actions, no touch injection",
+  "physical_tests_performed": false,
+  "action_log": [
+    {
+      "operation": "recover",
+      "at_s": 7.284968,
+      "name": null,
+      "value": null
+    },
+    {
+      "operation": "control",
+      "at_s": 7.801757,
+      "name": "EN_RTLA",
+      "value": true
+    }
+  ],
+  "elapsed_s": 8.990077,
+  "request_counts": {
+    "status": 13,
+    "recover": 1,
+    "lease": 2,
+    "control": 1
+  },
+  "accepted_lease_at_s": [
+    7.332395,
+    8.319879
+  ],
+  "qt_timer": {
+    "interval_ms": 100,
+    "ticks": 21,
+    "mean_gap_ms": 428.099,
+    "max_gap_ms_including_SIGSTOP": 5661.87
+  },
+  "service": {
+    "mode": "SIMULATION",
+    "pico_state": "ACTIVE",
+    "pico_reset_asserted": false,
+    "armed": true,
+    "fault": null,
+    "owner": "uid:1001",
+    "lease_deadline_ms": 1863853,
+    "outputs": {
+      "EN_LNB": false,
+      "EN_BONI": false,
+      "K1_ON": false,
+      "K2_ON": false,
+      "SW_RTLA_A": false,
+      "SW_RTLA_B": false,
+      "SW_RTLB_A": false,
+      "SW_RTLB_B": false,
+      "EN_LABPORT": false,
+      "EN_AUX12": false,
+      "EN_RTLA": true,
+      "EN_RTLB": false,
+      "EN_HFP": false,
+      "EN_LNA1": false,
+      "EN_LNA2": false,
+      "EN_LNA3": false,
+      "EN_T7": false,
+      "EN_LNA4": false,
+      "EN_LIME3V3": false,
+      "SW_LIME_A": false,
+      "SW_LIME_B": false,
+      "EN_SB_LNA": false
+    },
+    "energized": [
+      "EN_RTLA"
+    ]
+  },
+  "holding": true,
+  "controller_notice": "control accepted by labd",
+  "controller_error": null,
+  "warmup_finished_s": 6.644449,
+  "natural_heartbeat_s": 7.062647,
+  "fresh_poll_s": 6.956542,
+  "arm_requested_s": 7.270761,
+  "active_s": 7.767054,
+  "stable_s": 8.990077,
+  "remaining_lease_ms": 2326
+}

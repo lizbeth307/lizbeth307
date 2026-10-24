@@ -2,7 +2,7 @@
   "schema_version": 1,
   "scope": "QEMU_ARM64_LINUX_SIMULATION_ONLY",
   "status": "PASS",
-  "started_at": "2026-10-24T00:46:28.990417+00:00",
+  "started_at": "2026-10-24T14:26:30.321074+00:00",
   "hardware_qualified": false,
   "hardware_acceptance_generated": false,
   "services_enabled": false,
@@ -31,21 +31,51 @@
     {
       "name": "candidate_stage",
       "status": "PASS",
-      "elapsed_s": 16.24,
+      "elapsed_s": 16.997,
       "evidence": {
-        "stage": "/var/tmp/srrx-linux-lab-fpw42n1e/candidate",
-        "payload_files": 200,
-        "current_source_files_verified": 188,
-        "manifest_sha256": "a9172fb926d9d6533d24642c6f3b44570cdead9e3f0b333eb9e03f5cc1df2263",
+        "stage": "/var/tmp/srrx-linux-lab-6wwmjwkh/candidate",
+        "payload_files": 202,
+        "current_source_files_verified": 190,
+        "manifest_sha256": "b0a9e8fb673d9e0869d934675c3ca3d52a625524a0b139a8623d49efd30d5090",
         "physical_gates_open": 37,
         "menu_user_unit": true,
         "systemd_verify": "PASS"
       }
     },
     {
+      "name": "systemd_device_wait_bounded",
+      "status": "PASS",
+      "elapsed_s": 42.392,
+      "evidence": {
+        "systemd_escape": {
+          "/dev/lab/rtla": "dev-lab-rtla.device",
+          "/dev/lab/rtlb": "dev-lab-rtlb.device",
+          "/dev/lab/hfplus": "dev-lab-hfplus.device",
+          "/dev/lab/pico": "dev-lab-pico.device",
+          "/dev/lab/srrxabsent": "dev-lab-srrxabsent.device"
+        },
+        "probe_device_unit": "dev-lab-srrxabsent.device",
+        "dropin": "[Unit]\n# release guard (doctor) stats these udev-tagged /dev/lab nodes\nWants=dev-lab-srrxabsent.device\nAfter=dev-lab-srrxabsent.device\n",
+        "device_timeout_s": 3,
+        "oneshot_wait_s": 3.966,
+        "oneshot_result": "success",
+        "device": {
+          "ActiveState": "inactive",
+          "JobRunningTimeoutUSec": "3s"
+        },
+        "restart_probe_after_15_s": {
+          "ActiveState": "activating",
+          "SubState": "auto-restart-queued",
+          "NRestarts": "3",
+          "Result": "exit-code"
+        },
+        "hardware_unit_used": false
+      }
+    },
+    {
       "name": "hardware_missing_records",
       "status": "PASS",
-      "elapsed_s": 1.935,
+      "elapsed_s": 1.333,
       "evidence": {
         "MainPID": "0",
         "Result": "success",
@@ -75,7 +105,7 @@
     {
       "name": "hardware_open_records",
       "status": "PASS",
-      "elapsed_s": 5.48,
+      "elapsed_s": 4.642,
       "evidence": {
         "systemd": {
           "MainPID": "0",
@@ -83,7 +113,7 @@
           "NRestarts": "0",
           "ExecMainStartTimestampMonotonic": "0",
           "ExecMainPID": "0",
-          "ExecStartPre": "{ path=/usr/bin/python3 ; argv[]=/usr/bin/python3 -B /opt/srrx/deployment/deploy.py release-guard --devices /etc/srrx/devices.json --acceptance /etc/srrx/acceptance.json --release /etc/srrx/release.json --build-manifest /etc/srrx/build-manifest.json --cache /srv/srrx-cache ; ignore_errors=no ; start_time=[Sat 2026-10-24 00:46:47 UTC] ; stop_time=[Sat 2026-10-24 00:46:50 UTC] ; pid=2418 ; code=exited ; status=2 }",
+          "ExecStartPre": "{ path=/usr/bin/python3 ; argv[]=/usr/bin/python3 -B /opt/srrx/deployment/deploy.py release-guard --devices /etc/srrx/devices.json --acceptance /etc/srrx/acceptance.json --release /etc/srrx/release.json --build-manifest /etc/srrx/build-manifest.json --cache /srv/srrx-cache ; ignore_errors=no ; start_time=[Sat 2026-10-24 14:27:31 UTC] ; stop_time=[Sat 2026-10-24 14:27:33 UTC] ; pid=2714 ; code=exited ; status=2 }",
           "DevicePolicy": "auto",
           "User": "labd",
           "Group": "labd",
@@ -109,7 +139,7 @@
     {
       "name": "installed_entrypoints_stdio",
       "status": "PASS",
-      "elapsed_s": 1.346,
+      "elapsed_s": 1.158,
       "evidence": {
         "installed_prefix": "/opt/srrx/venv",
         "cwd": "/",
@@ -121,14 +151,14 @@
     {
       "name": "systemd_simulation",
       "status": "PASS",
-      "elapsed_s": 14.864,
+      "elapsed_s": 13.835,
       "evidence": {
         "properties": {
-          "MainPID": "2485",
+          "MainPID": "2769",
           "Result": "success",
           "NRestarts": "0",
-          "ExecMainStartTimestampMonotonic": "1793218382",
-          "ExecMainPID": "2485",
+          "ExecMainStartTimestampMonotonic": "2033956551",
+          "ExecMainPID": "2769",
           "DevicePolicy": "closed",
           "User": "labd",
           "Group": "labd",
@@ -170,7 +200,7 @@
           "configured": false,
           "last_error": "new_pico_session",
           "pico_fresh": true,
-          "pico_age_ms": 57,
+          "pico_age_ms": 60,
           "policy": {
             "armed": false,
             "fault": "new_pico_session",
@@ -280,7 +310,7 @@
           },
           "events": [
             {
-              "at_ms": 1795389,
+              "at_ms": 2035935,
               "reason": "new_pico_session"
             }
           ],
@@ -305,6 +335,7 @@
             "error": "HMI_NOT_FRESH"
           },
           "live_identity_verified": true,
+          "qualification_record_verified": false,
           "hardware_qualified": false
         }
       }
@@ -312,17 +343,17 @@
     {
       "name": "single_writer",
       "status": "PASS",
-      "elapsed_s": 1.824,
+      "elapsed_s": 1.77,
       "evidence": {
         "same_uid_flock_rejected": true,
-        "service_pid_unchanged": "2485",
+        "service_pid_unchanged": "2769",
         "stderr": "labd refused startup: [Errno 11] Resource temporarily unavailable\n"
       }
     },
     {
       "name": "client_permissions",
       "status": "PASS",
-      "elapsed_s": 4.16,
+      "elapsed_s": 3.985,
       "evidence": {
         "socket_mode": "0660",
         "directory_mode": "0750",
@@ -335,7 +366,7 @@
     {
       "name": "explicit_arm_and_fault",
       "status": "PASS",
-      "elapsed_s": 1.297,
+      "elapsed_s": 1.272,
       "evidence": {
         "fault_input": "FAULT_LNA1",
         "clearing_fault_did_not_rearm": true,
@@ -362,7 +393,7 @@
           "configured": false,
           "last_error": "pico_HOST_TRIP",
           "pico_fresh": true,
-          "pico_age_ms": 23,
+          "pico_age_ms": 34,
           "policy": {
             "armed": false,
             "fault": "active-low fault: FAULT_LNA1",
@@ -380,7 +411,7 @@
             "pico_active": false,
             "commissioned": true,
             "owner": "uid:1001",
-            "lease_deadline_ms": 1807496,
+            "lease_deadline_ms": 2047789,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -493,19 +524,19 @@
           },
           "events": [
             {
-              "at_ms": 1795389,
+              "at_ms": 2035935,
               "reason": "new_pico_session"
             },
             {
-              "at_ms": 1802551,
+              "at_ms": 2042843,
               "reason": "host_policy_fault"
             },
             {
-              "at_ms": 1802557,
+              "at_ms": 2042850,
               "reason": "new_pico_session"
             },
             {
-              "at_ms": 1802557,
+              "at_ms": 2042850,
               "reason": "pico_HOST_TRIP"
             }
           ],
@@ -530,6 +561,7 @@
             "error": "HMI_NOT_FRESH"
           },
           "live_identity_verified": true,
+          "qualification_record_verified": false,
           "hardware_qualified": false
         }
       }
@@ -537,7 +569,7 @@
     {
       "name": "link_loss_latched",
       "status": "PASS",
-      "elapsed_s": 2.068,
+      "elapsed_s": 2.011,
       "evidence": {
         "restored_link_did_not_rearm": true,
         "exact_fault": "pico_status_timeout",
@@ -563,7 +595,7 @@
           "configured": false,
           "last_error": "pico_status_timeout",
           "pico_fresh": false,
-          "pico_age_ms": 559,
+          "pico_age_ms": 528,
           "policy": {
             "armed": false,
             "fault": "pico_status_timeout",
@@ -581,7 +613,7 @@
             "pico_active": false,
             "commissioned": false,
             "owner": "uid:1001",
-            "lease_deadline_ms": 1808659,
+            "lease_deadline_ms": 2048950,
             "outputs": {
               "EN_LNB": false,
               "EN_BONI": false,
@@ -694,23 +726,23 @@
           },
           "events": [
             {
-              "at_ms": 1795389,
+              "at_ms": 2035935,
               "reason": "new_pico_session"
             },
             {
-              "at_ms": 1802551,
+              "at_ms": 2042843,
               "reason": "host_policy_fault"
             },
             {
-              "at_ms": 1802557,
+              "at_ms": 2042850,
               "reason": "new_pico_session"
             },
             {
-              "at_ms": 1802557,
+              "at_ms": 2042850,
               "reason": "pico_HOST_TRIP"
             },
             {
-              "at_ms": 1804158,
+              "at_ms": 2044440,
               "reason": "pico_status_timeout"
             }
           ],
@@ -735,6 +767,7 @@
             "error": "HMI_NOT_FRESH"
           },
           "live_identity_verified": true,
+          "qualification_record_verified": false,
           "hardware_qualified": false
         }
       }
@@ -742,7 +775,7 @@
     {
       "name": "lease_expiry_latched",
       "status": "PASS",
-      "elapsed_s": 1.781,
+      "elapsed_s": 1.717,
       "evidence": {
         "expired_lease_latched": true,
         "late_renewal_did_not_rearm": true,
@@ -750,13 +783,13 @@
         "tripped_status": {
           "mode": "SIMULATION",
           "pico": {
-            "state": "ACTIVE",
-            "fault": null,
-            "mcp_reset": false,
+            "state": "TRIPPED",
+            "fault": "HOST_TRIP",
+            "mcp_reset": true,
             "calibration_valid": true,
             "hardware_commissioned": true,
             "reject_reason": null,
-            "hb_fresh": true,
+            "hb_fresh": false,
             "q6a_on": true,
             "battery_mv": 14800,
             "panel_temp_c": 25.0,
@@ -765,11 +798,11 @@
             "brightness_limit_pct": 100
           },
           "requested_operating_mode": "field",
-          "session": 9,
+          "session": 14,
           "configured": false,
-          "last_error": "host_policy_fault",
+          "last_error": "pico_HOST_TRIP",
           "pico_fresh": true,
-          "pico_age_ms": 62,
+          "pico_age_ms": 36,
           "policy": {
             "armed": false,
             "fault": "owner lease expired",
@@ -784,7 +817,7 @@
               "release_due_ms": null,
               "pulses_15min": 0
             },
-            "pico_active": true,
+            "pico_active": false,
             "commissioned": true,
             "owner": null,
             "lease_deadline_ms": null,
@@ -900,36 +933,44 @@
           },
           "events": [
             {
-              "at_ms": 1795389,
+              "at_ms": 2035935,
               "reason": "new_pico_session"
             },
             {
-              "at_ms": 1802551,
+              "at_ms": 2042843,
               "reason": "host_policy_fault"
             },
             {
-              "at_ms": 1802557,
+              "at_ms": 2042850,
               "reason": "new_pico_session"
             },
             {
-              "at_ms": 1802557,
+              "at_ms": 2042850,
               "reason": "pico_HOST_TRIP"
             },
             {
-              "at_ms": 1804158,
+              "at_ms": 2044440,
               "reason": "pico_status_timeout"
             },
             {
-              "at_ms": 1805127,
+              "at_ms": 2045379,
               "reason": "new_pico_session"
             },
             {
-              "at_ms": 1805127,
+              "at_ms": 2045379,
               "reason": "pico_HEARTBEAT_TIMEOUT"
             },
             {
-              "at_ms": 1806373,
+              "at_ms": 2046514,
               "reason": "host_policy_fault"
+            },
+            {
+              "at_ms": 2046556,
+              "reason": "new_pico_session"
+            },
+            {
+              "at_ms": 2046556,
+              "reason": "pico_HOST_TRIP"
             }
           ],
           "imu": {
@@ -953,6 +994,7 @@
             "error": "HMI_NOT_FRESH"
           },
           "live_identity_verified": true,
+          "qualification_record_verified": false,
           "hardware_qualified": false
         }
       }
@@ -960,7 +1002,7 @@
     {
       "name": "simulation_shutdown",
       "status": "PASS",
-      "elapsed_s": 3.751,
+      "elapsed_s": 3.053,
       "evidence": {
         "pico_state": "SHUTTING_DOWN",
         "os_poweroff_executed": false,
@@ -970,10 +1012,10 @@
     {
       "name": "systemd_restart_disarmed",
       "status": "PASS",
-      "elapsed_s": 6.059,
+      "elapsed_s": 5.297,
       "evidence": {
-        "old_pid": "2523",
-        "new_pid": "2534",
+        "old_pid": "2781",
+        "new_pid": "2794",
         "restart_count": "1",
         "no_auto_arm": true,
         "status": {
@@ -998,7 +1040,7 @@
           "configured": false,
           "last_error": "new_pico_session",
           "pico_fresh": true,
-          "pico_age_ms": 43,
+          "pico_age_ms": 42,
           "policy": {
             "armed": false,
             "fault": "new_pico_session",
@@ -1108,7 +1150,7 @@
           },
           "events": [
             {
-              "at_ms": 1816720,
+              "at_ms": 2055446,
               "reason": "new_pico_session"
             }
           ],
@@ -1133,6 +1175,7 @@
             "error": "HMI_NOT_FRESH"
           },
           "live_identity_verified": true,
+          "qualification_record_verified": false,
           "hardware_qualified": false
         }
       }
@@ -1140,7 +1183,7 @@
     {
       "name": "gui_handoff",
       "status": "PASS",
-      "elapsed_s": 0.807,
+      "elapsed_s": 0.658,
       "evidence": {
         "unit": "srrx-linux-lab-sim.service",
         "socket": "/run/srrx-linux-lab/control.sock",
@@ -1170,7 +1213,7 @@
           "configured": false,
           "last_error": "new_pico_session",
           "pico_fresh": true,
-          "pico_age_ms": 74,
+          "pico_age_ms": 64,
           "policy": {
             "armed": false,
             "fault": "new_pico_session",
@@ -1280,7 +1323,7 @@
           },
           "events": [
             {
-              "at_ms": 1816720,
+              "at_ms": 2055446,
               "reason": "new_pico_session"
             }
           ],
@@ -1305,6 +1348,7 @@
             "error": "HMI_NOT_FRESH"
           },
           "live_identity_verified": true,
+          "qualification_record_verified": false,
           "hardware_qualified": false
         }
       }
@@ -1313,6 +1357,7 @@
   "required_steps": [
     "guest_boundary",
     "candidate_stage",
+    "systemd_device_wait_bounded",
     "hardware_missing_records",
     "hardware_open_records",
     "installed_entrypoints_stdio",
@@ -1327,23 +1372,24 @@
     "gui_handoff"
   ],
   "rpc_helper": {
-    "pid": 2486,
+    "pid": 2770,
     "uid": 1001,
     "gid": 1003,
     "groups": [
       1001
     ],
     "per_request_unix_connection": true,
-    "requests": 137,
+    "requests": 131,
     "exit_code": 0,
     "cleaned_up": true
   },
-  "finished_at": "2026-10-24T00:47:30.731796+00:00",
+  "finished_at": "2026-10-24T14:28:10.519024+00:00",
   "source_sha256": {
-    "software/srrx/daemon.py": "d2ce94558e47f86a9f6a301c1625bd925227511c71f91642963c029962509474",
-    "software/srrx/engine.py": "5b038ede801e53de961bfa1a61199a5526f511eac73c5c14a0c6a855a74a329f",
+    "software/srrx/daemon.py": "48c1023cdf895f4b3ff8ca812068d18d5bd2dd3e24973466a5c358e0a6c91c75",
+    "software/srrx/engine.py": "0325a6cff092f1eca1c65616fb9735199dd1402697a15fa2a740af8588a36538",
     "software/systemd/srrx.service": "f1c3d403623c759b6d919f42bbf2dcf09c7fdaaa6e417bd1eee25bdd73212e7e",
     "design/E3.json": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0",
-    "deployment/linux_lab/guest_smoke.py": "3d8425d3fa0cd2ef637b34f1a1fef5b45fa8bf60e10f02024f2f4e48bd7e3460"
+    "design/readiness-contract.json": "a5ccc7a0c94d5dbce14ca94535e1d8984b67821460d318a8f95545e17384692f",
+    "deployment/linux_lab/guest_smoke.py": "4090b3f33f42ad0fa4d985d7415ae5b1d4f17da48d78782e06de2d7e6f795969"
   }
 }

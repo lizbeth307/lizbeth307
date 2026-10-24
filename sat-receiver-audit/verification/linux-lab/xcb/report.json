@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_at_utc": "2026-10-24T00:48:20.789161+00:00",
+  "generated_at_utc": "2026-10-24T14:28:57.496507+00:00",
   "status": "PASS",
   "qualification": "LINUX_XCB_XVFB_SIMULATION",
   "environment": {
@@ -36,7 +36,7 @@
     "unix_socket_uid": 1001,
     "servers": [
       {
-        "pid": 2660,
+        "pid": 2827,
         "uid": 1001,
         "argv": [
           "/usr/bin/Xvfb",
@@ -94,8 +94,8 @@
       "--socket",
       "/run/srrx-linux-lab/control.sock"
     ],
-    "pid": 2667,
-    "alive_after_s": 13.690965,
+    "pid": 2833,
+    "alive_after_s": 14.676166,
     "screen": {
       "schema_version": 1,
       "status": "PASS",
@@ -125,7 +125,7 @@
       },
       "production_window": {
         "window_id": 6291463,
-        "pid": 2667,
+        "pid": 2833,
         "title": "SR-RX \u2022 local receive console",
         "map_state": "IsViewable",
         "width": 1100,
@@ -139,8 +139,8 @@
         "sampled_distinct_colors": 135,
         "sha256": "af312dd4a6e05cfb4e05b21ede42c8b2a16bbd1a93a7f546bc83cb3eea4e62ff"
       },
-      "frame_readiness_attempts": 59,
-      "frame_ready_after_s": 8.210083
+      "frame_readiness_attempts": 56,
+      "frame_ready_after_s": 8.383003
     },
     "returncode": -15,
     "termination": "SIGTERM with bounded SIGKILL fallback after unarmed startup probe; clean close is established separately by production-main fixture"
@@ -173,7 +173,7 @@
       "height": 800
     },
     "entrypoint": "unmodified srrx.hmi.main([--socket,...]) with observation/close timers",
-    "hmi_sha256": "12bf7ac65c1a90e99c89f13af980118dedaaa5ab569bba8c3d5682f015e57dd6",
+    "hmi_sha256": "e764c84aa66251e338dc4421a6f8e2a6ca5dfa982f2fb26e1f7e6d50ad546e39",
     "touch_events_injected": false,
     "arm_or_control_requests_injected": false,
     "latest_service": {
@@ -227,13 +227,13 @@
       "sha256": "1cbe18ce2f07230e5cd3a337a5a6ee8b8db81f5ad8bef543ad7320685b6cbfe9"
     },
     "connected_views": 4,
-    "first_connected_s": 6.999189,
-    "capture_after_s": 7.182348,
+    "first_connected_s": 6.693155,
+    "capture_after_s": 6.878075,
     "banner": "SIMULATION | PROTECTION STOP | CONTROL OFF | HOLD OFF | FIELD",
     "menu_pages": 6,
     "entrypoint_returncode": 0,
     "clean_close": true,
-    "elapsed_s": 8.8952
+    "elapsed_s": 8.776511
   },
   "qt_platform": "xcb",
   "qt": "6.12.0",
@@ -277,16 +277,16 @@
     "energized": []
   },
   "read_only_observation": {
-    "attempts": 249,
-    "successful_samples": 249,
+    "attempts": 255,
+    "successful_samples": 255,
     "timeouts": 0,
     "transient_os_errors": 0,
     "max_consecutive_misses": 0,
-    "max_success_gap_s": 0.205923,
+    "max_success_gap_s": 0.257018,
     "coverage": "Successful read-only Unix status samples only; missing replies do not establish readiness or service state",
-    "first_success_after_s": 0.086372,
-    "elapsed_s": 29.174084,
-    "last_success_age_s": 9.7e-05,
-    "max_unsampled_gap_s": 0.205923
+    "first_success_after_s": 0.093651,
+    "elapsed_s": 30.289062,
+    "last_success_age_s": 0.000346,
+    "max_unsampled_gap_s": 0.257018
   }
 }

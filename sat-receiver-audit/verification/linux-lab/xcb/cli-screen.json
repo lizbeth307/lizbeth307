@@ -27,7 +27,7 @@
   },
   "production_window": {
     "window_id": 6291463,
-    "pid": 2667,
+    "pid": 2833,
     "title": "SR-RX \u2022 local receive console",
     "map_state": "IsViewable",
     "width": 1100,
@@ -41,6 +41,6 @@
     "sampled_distinct_colors": 135,
     "sha256": "af312dd4a6e05cfb4e05b21ede42c8b2a16bbd1a93a7f546bc83cb3eea4e62ff"
   },
-  "frame_readiness_attempts": 59,
-  "frame_ready_after_s": 8.210083
+  "frame_readiness_attempts": 56,
+  "frame_ready_after_s": 8.383003
 }

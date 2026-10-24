@@ -1,0 +1,43 @@
+Looking in links: /mnt/srrx-payload/wheels
+Processing ./mnt/srrx-payload/wheels/build-1.6.1-py3-none-any.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 1))
+Processing ./mnt/srrx-payload/wheels/certifi-2026.10.19-py3-none-any.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 2))
+Processing ./mnt/srrx-payload/wheels/flatbuffers-25.12.19-py2.py3-none-any.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 3))
+Processing ./mnt/srrx-payload/wheels/jplephem-2.24-py3-none-any.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 4))
+Processing ./mnt/srrx-payload/wheels/ml_dtypes-0.6.0-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 5))
+Processing ./mnt/srrx-payload/wheels/numpy-2.3.5-cp312-cp312-manylinux_2_27_aarch64.manylinux_2_28_aarch64.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 6))
+Processing ./mnt/srrx-payload/wheels/onnx-1.23.2-cp312-abi3-manylinux_2_26_aarch64.manylinux_2_28_aarch64.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 7))
+Processing ./mnt/srrx-payload/wheels/onnxruntime-1.31.0-cp312-cp312-manylinux_2_28_aarch64.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 8))
+Processing ./mnt/srrx-payload/wheels/packaging-26.3-py3-none-any.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 9))
+Processing ./mnt/srrx-payload/wheels/pip-26.2.2-py3-none-any.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 10))
+Processing ./mnt/srrx-payload/wheels/protobuf-7.36.2-cp310-abi3-manylinux2014_aarch64.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 11))
+Processing ./mnt/srrx-payload/wheels/pyproject_hooks-1.3.3-py3-none-any.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 12))
+Processing ./mnt/srrx-payload/wheels/pyside6-6.12.0-cp310-abi3-manylinux_2_39_aarch64.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 13))
+Processing ./mnt/srrx-payload/wheels/pyside6_addons-6.12.0-cp310-abi3-manylinux_2_39_aarch64.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 14))
+Processing ./mnt/srrx-payload/wheels/pyside6_essentials-6.12.0-cp310-abi3-manylinux_2_39_aarch64.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 15))
+Processing ./mnt/srrx-payload/wheels/pyside6_pdf-6.12.0.140-cp310-abi3-manylinux_2_39_aarch64.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 16))
+Processing ./mnt/srrx-payload/wheels/pyside6_webengine-6.12.0.140-cp310-abi3-manylinux_2_39_aarch64.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 17))
+Processing ./mnt/srrx-payload/wheels/setuptools-84.2.1-py3-none-any.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 18))
+Processing ./mnt/srrx-payload/wheels/sgp4-2.27-cp311-abi3-manylinux2014_aarch64.manylinux_2_17_aarch64.manylinux_2_28_aarch64.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 19))
+Processing ./mnt/srrx-payload/wheels/shiboken6-6.12.0-cp310-abi3-manylinux_2_39_aarch64.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 20))
+Processing ./mnt/srrx-payload/wheels/skyfield-1.55-py3-none-any.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 21))
+Processing ./mnt/srrx-payload/wheels/typing_extensions-4.16.0-py3-none-any.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 22))
+Processing ./mnt/srrx-payload/wheels/wheel-0.48.0-py3-none-any.whl (from -r /mnt/srrx-payload/wheelhouse-requirements.txt (line 23))
+Installing collected packages: flatbuffers, typing_extensions, shiboken6, sgp4, setuptools, pyproject_hooks, protobuf, pip, packaging, numpy, certifi, wheel, PySide6_Essentials, onnxruntime, ml_dtypes, jplephem, build, skyfield, PySide6_Pdf, PySide6_Addons, onnx, PySide6_WebEngine, PySide6
+  Attempting uninstall: setuptools
+    Found existing installation: setuptools 84.2.1
+    Uninstalling setuptools-84.2.1:
+      Successfully uninstalled setuptools-84.2.1
+  Attempting uninstall: pip
+    Found existing installation: pip 26.2.2
+    Uninstalling pip-26.2.2:
+      Successfully uninstalled pip-26.2.2
+  Attempting uninstall: packaging
+    Found existing installation: packaging 26.3
+    Uninstalling packaging-26.3:
+      Successfully uninstalled packaging-26.3
+  Attempting uninstall: wheel
+    Found existing installation: wheel 0.48.0
+    Uninstalling wheel-0.48.0:
+      Successfully uninstalled wheel-0.48.0
+
+Successfully installed PySide6-6.12.0 PySide6_Addons-6.12.0 PySide6_Essentials-6.12.0 PySide6_Pdf-6.12.0.140 PySide6_WebEngine-6.12.0.140 build-1.6.1 certifi-2026.10.19 flatbuffers-25.12.19 jplephem-2.24 ml_dtypes-0.6.0 numpy-2.3.5 onnx-1.23.2 onnxruntime-1.31.0 packaging-26.3 pip-26.2.2 protobuf-7.36.2 pyproject_hooks-1.3.3 setuptools-84.2.1 sgp4-2.27 shiboken6-6.12.0 skyfield-1.55 typing_extensions-4.16.0 wheel-0.48.0

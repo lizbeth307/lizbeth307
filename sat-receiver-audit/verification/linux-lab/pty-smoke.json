@@ -2,7 +2,7 @@
   "cases": [
     {
       "case": "termios_and_fragmented_bidirectional_frames",
-      "elapsed_s": 0.108,
+      "elapsed_s": 0.082,
       "observed": {
         "baud_setting": 115200,
         "directions_checked": 2,
@@ -12,7 +12,7 @@
     },
     {
       "case": "crc_oversize_and_resynchronization",
-      "elapsed_s": 0.014,
+      "elapsed_s": 0.017,
       "observed": {
         "corrupt_crc_rejected": true,
         "next_valid_frame_received": true,
@@ -33,7 +33,7 @@
     },
     {
       "case": "bounded_transmit_queue",
-      "elapsed_s": 0.052,
+      "elapsed_s": 0.056,
       "observed": {
         "maximum_pending_bytes": 2048,
         "overflow_refused": true
@@ -42,7 +42,7 @@
     },
     {
       "case": "supervisor_handshake_and_clean_close",
-      "elapsed_s": 0.751,
+      "elapsed_s": 0.728,
       "observed": {
         "close_deenergizes_model": true,
         "explicit_arm_handshake": true,
@@ -53,7 +53,7 @@
     },
     {
       "case": "replay_timeout_and_explicit_recovery",
-      "elapsed_s": 1.632,
+      "elapsed_s": 1.598,
       "observed": {
         "accepted_replay_baseline": true,
         "current_tripped_session_barrier": true,
@@ -65,7 +65,7 @@
     },
     {
       "case": "new_session_invalidates_old_frames",
-      "elapsed_s": 0.836,
+      "elapsed_s": 0.772,
       "observed": {
         "new_session_revokes_permission": true,
         "old_session_replay_rejected": true
@@ -74,13 +74,13 @@
     },
     {
       "case": "lost_hello_repeats_and_resynchronizes_without_arm",
-      "elapsed_s": 1.106,
+      "elapsed_s": 1.059,
       "observed": {
         "automatic_arm": false,
         "first_hello_deliberately_tciflush": true,
-        "first_to_resync_hello_ms": 1007,
+        "first_to_resync_hello_ms": 1003,
         "hello_repeats_before_resync": 1,
-        "mean_hello_repeat_interval_ms": 1007,
+        "mean_hello_repeat_interval_ms": 1003,
         "previous_loads_restored": false,
         "repeated_hello_seq": 6,
         "restored_session": 301,
@@ -90,10 +90,10 @@
     },
     {
       "case": "master_hup_trips_and_closes",
-      "elapsed_s": 0.714,
+      "elapsed_s": 0.687,
       "observed": {
         "descriptor_closed": true,
-        "hup_to_model_disarm_ms": 134.118,
+        "hup_to_model_disarm_ms": 145.301,
         "real_kernel_hup": true,
         "status_deadline_disarmed_model": false,
         "transport_fault_disarms_model": true,
@@ -103,7 +103,7 @@
       "status": "PASS"
     }
   ],
-  "elapsed_s": 5.231,
+  "elapsed_s": 5.016,
   "failed": 0,
   "passed": 9,
   "platform": "linux",
@@ -121,11 +121,11 @@
   "source_sha256": {
     "deployment/linux_lab/pty_smoke.py": "0335aad771d7329e496f8e4e0c4694a9c640e69fccace6e15faea6b43432bbd0",
     "design/E3.json": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0",
-    "firmware/pico/main.py": "08ce811fb869b4c33a76fd3cf39608b97bf76cacb0f4f0409ea9576e9d8a0c98",
+    "firmware/pico/main.py": "c537d05b9699b6f1e1b4e12ded656e947e8b8b398b47ee45ccd315bd3e051fb0",
     "firmware/pico/supervisor.py": "b62b0aefad7bbc2afb5647022a786ed473065ebad4a27bc5f8f4854bb39d4746",
-    "software/srrx/engine.py": "5b038ede801e53de961bfa1a61199a5526f511eac73c5c14a0c6a855a74a329f",
+    "software/srrx/engine.py": "0325a6cff092f1eca1c65616fb9735199dd1402697a15fa2a740af8588a36538",
     "software/srrx/hardware.py": "13f2a5c1ab1a63d1345f57f9a3ca1f39ffbd3c779be9d4e050c85634974279ee",
-    "software/srrx/link.py": "ef710a13631b5ca2e6272fea4ef387fa73aea0ea0a96ac4b1089af5c8aee88ca",
+    "software/srrx/link.py": "c69988ef4ea3bf4ed58b5baf912e2b6bd852139e66c3f41fe6057cae207b2e4f",
     "software/srrx/policy.py": "0bd60d9734653f24e49606cf46e70895b0a7c7ab8b580c2667aa41e08011d34b",
     "software/srrx/wire.py": "f4ba993cbca9312c4639d3f6e8ddad083f7219017647026cb97b3e52a2f8fe3f"
   },
