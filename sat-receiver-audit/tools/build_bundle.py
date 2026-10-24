@@ -154,6 +154,7 @@ CORE = [
     ("PCB-підготовка", "build/13-pcb-preparation.md"),
     ("Внутрішнє розведення прототипу", "build/kicad/pcb-prototype/README.md"),
     ("Поточний стан ПЗ і PCB", "build/14-control-software.md"),
+    ("Рішення для повного комплекту", "build/15-rishennia-komplektu.md"),
     ("Ворота приймання", "OPEN_ITEMS.md"),
     ("Вимоги", "USER_REQUIREMENTS.md"),
     ("STACK — головний документ", "STACK.md"),

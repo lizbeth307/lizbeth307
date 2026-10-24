@@ -7,7 +7,7 @@
 >
 > Власні labd/labrx, Pico/IMU/HMI і експериментальні бібліотечні патчі реалізовані як вихідний код і перевірені на хості та в ARM64 VM (ПЗ 0.3.1; [software/README](../software/README.md), [14-control-software](14-control-software.md)), але не встановлені, не прошиті й не кваліфіковані на Q6A/MCU; кваліфікованої NPU/HTP-системи немає. `readiness-contract.json` — специфікація, не працюючий GPIO-захист. Остаточні звіти й експорти формуються після фінального запуску `tools/run_checks.py --export`; точні лічильники та висновок ERC беріть із згенерованих звітів, а не з історичного тексту.
 >
-> Файли v2.1 цього каталогу: [11-schematic-bom](11-schematic-bom.md), [12-revision-v2.1](12-revision-v2.1.md), [13-pcb-preparation](13-pcb-preparation.md), [14-control-software](14-control-software.md). Ревізія 23.10.2026 (виправлення findings, CI, R512 1210, R102/R503/R507/R511 вилучено, відсічка 13.05 V) — у [HANDOFF](../HANDOFF.md#ревізія-23102026-claude-перевірка-виправлення-ci-план).
+> Файли v2.1 цього каталогу: [11-schematic-bom](11-schematic-bom.md), [12-revision-v2.1](12-revision-v2.1.md), [13-pcb-preparation](13-pcb-preparation.md), [14-control-software](14-control-software.md), [15-rishennia-komplektu](15-rishennia-komplektu.md) (рішення для повного комплекту документації, 24.10.2026). Ревізія 23.10.2026 (виправлення findings, CI, R512 1210, R102/R503/R507/R511 вилучено, відсічка 13.05 V) — у [HANDOFF](../HANDOFF.md#ревізія-23102026-claude-перевірка-виправлення-ci-план).
 
 ---
 
