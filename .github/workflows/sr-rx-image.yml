@@ -10,6 +10,16 @@ name: SR-RX image
 #   hardware evidence: bench gates W-01/W-02/W-03/W-08/W-09/W-10 stay OPEN.
 
 on:
+  # A push runs the recipe checks; the image build needs a dispatch (or "[image-build]" in the
+  # head commit message, because a workflow that is not on the default branch cannot be dispatched).
+  push:
+    branches: ['wip/**', 'codex/**', 'ccr-*']
+    paths:
+      - 'sat-receiver-audit/deployment/image/**'
+      - 'sat-receiver-audit/deployment/deploy.py'
+      - 'sat-receiver-audit/deployment/ab.template.json'
+      - 'sat-receiver-audit/deployment/tests/test_image.py'
+      - '.github/workflows/sr-rx-image.yml'
   workflow_dispatch:
     inputs:
       build_image:
@@ -126,7 +136,7 @@ jobs:
 
   image:
     name: Golden image (route ${{ matrix.route }})
-    if: inputs.build_image
+    if: (github.event_name == 'workflow_dispatch' && inputs.build_image) || (github.event_name == 'push' && contains(github.event.head_commit.message, '[image-build]'))
     needs: recipe
     strategy:
       fail-fast: false
@@ -139,7 +149,7 @@ jobs:
         id: sel
         working-directory: .
         env:
-          ROUTES: ${{ inputs.routes }}
+          ROUTES: ${{ inputs.routes || 'A B' }}
         run: |
           case " $ROUTES " in *" ${{ matrix.route }} "*) echo "run=true" >> "$GITHUB_OUTPUT";; *) echo "run=false" >> "$GITHUB_OUTPUT";; esac
       - uses: actions/checkout@v5
@@ -209,7 +219,7 @@ jobs:
                                     "kernel_debs": d.get("kernel_debs"), "fstab": r.get("fstab"), "used_bytes": r.get("used_bytes")}, indent=1)[:30000])
           EOF
       - name: QEMU boot smoke of the Route A image
-        if: steps.sel.outputs.run == 'true' && matrix.route == 'A' && inputs.smoke
+        if: steps.sel.outputs.run == 'true' && matrix.route == 'A' && (inputs.smoke || contains(github.event.head_commit.message, '[image-smoke]'))
         run: |
           sudo python3 deployment/image/smoke_qemu.py --image "$OUT/srrx-golden-routeA.img" --manifest "$OUT/image-manifest.json" \
             --work "$W/smoke" --out "$OUT/smoke"
