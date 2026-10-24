@@ -1,0 +1,21 @@
+{
+  "schema": "srrx-vendor-models-v1",
+  "policy": "Vendor 3D models are never committed (licences not stated for redistribution, build/15). CI fetches them by URL and refuses any file whose SHA-256 differs from the pin below; they are used only for the model-fit cross-check (vendor-fit.json).",
+  "models": [
+    {
+      "id": "radxa_q6a_v1.21",
+      "url": "https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_3d_stp_v1.21.zip",
+      "sha256": "eca5877e0327504bc5e2a73bd650c3a5ed331f4738ee32243053451484377a52",
+      "member": "radxa_dragon_q6a_3d_stp_v1.21/radxa_dragon_q6a_3d_stp_v1.21.stp",
+      "member_sha256": "f5532c580b16a31d149db477ee4a7671c9b41003ee1f7542c1d423a858dc54a8",
+      "licence": "not stated on https://docs.radxa.com/en/dragon/q6a/download (read 2026-10-24): fetch only, do not commit",
+      "use": "board outline, connector and SoC/LPDDR5 heights for the Q6A envelope and the cooler gap table"
+    }
+  ],
+  "not_fetched": [
+    {"id": "hammond_1550z101", "page": "https://www.hammfg.com/part/1550Z101", "reason": "STEP download returned HTTP 403 to a scripted client (2026-10-24); the PDF drawing REV 08.07.2024 is used instead (parts.json)"},
+    {"id": "hammond_1554u2gy", "page": "https://www.hammfg.com/part/1554U2GY", "reason": "same as above; PDF drawing REV 28.02.2020 used"},
+    {"id": "limesdr_micro", "page": "https://github.com/myriadrf", "reason": "no STEP located for HW v1.2 in this package (TBD); envelope from STACK 5.8"},
+    {"id": "wisecoco_7in", "page": "STACK D5", "reason": "no vendor drawing in the repo; bezel is parametric (TBD after the panel is received)"}
+  ]
+}

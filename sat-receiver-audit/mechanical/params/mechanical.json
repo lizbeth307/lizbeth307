@@ -1,0 +1,178 @@
+{
+  "schema": "srrx-mech-params-v1",
+  "status": "MODEL_FIT_ONLY",
+  "note": "Single source of the enclosure geometry (mm). Axes: x right and y up as seen from the front, z from the rear outer face (0) towards the front face (outer.d). Values without a _src key are design choices of this package (build/15 decisions, build/05 rules); part envelopes and their sources are in parts.json. Physical fit, sealing, thermal and drop gates stay OPEN.",
+  "outer": {"w": 230.0, "h": 160.0, "d": 66.0, "corner_r": 14.0,
+            "_src": "D15 222.5 x 137.5 x 57.5 grown after the model fit (fit-report.json 'envelope'); decision build/15 'Оболонка D15 може збільшитися'"},
+  "wall": 2.5,
+  "split_z": 14.0,
+  "stack_z": {
+    "_note": "front-to-rear stack in the display region",
+    "front_wall_inner": 63.5,
+    "vhb": 1.0,
+    "module_back": 56.5,
+    "plate_front": 40.5,
+    "plate_t": 2.0,
+    "plate_rear": 38.5,
+    "rear_base": 3.0
+  },
+  "display": {
+    "glass_pocket": [6.0, 50.0, 164.82, 98.58],
+    "window_margin": 0.75,
+    "window_r": 1.5,
+    "locator_rib": {"t": 1.2, "h": 5.0, "gap": 0.3},
+    "clamp_bosses": [[13.0, 46.0], [163.8, 46.0], [13.0, 153.0], [163.8, 153.0]],
+    "clamp": {"t": 2.0, "reach": 6.0, "w": 12.0, "boss_d": 7.5},
+    "_src": "glass outline and active areas: parts.json display_module; window = larger active area + margin; window centred on the glass (assumption, TBD: re-measure the received panel, STACK D5)"
+  },
+  "hmi": {
+    "column_x": [175.0, 226.0],
+    "encoders": {
+      "main": {"c": [200.5, 135.0], "knob_d": 35.0},
+      "volume": {"c": [200.5, 94.0], "knob_d": 34.7}
+    },
+    "encoder_boss": {"wall": 2.6, "oring_t": 1.0, "hole_d": 7.3, "boss_d": 16.0},
+    "buttons": {"pitch": 22.0, "cap_d": 12.0, "hole_d": 12.6, "cols_x": [189.5, 211.5], "rows_y": [64.0, 42.0, 20.0],
+                "labels": [["HOME", "BACK"], ["REC", "MARK"], ["FN", "LOCK"]], "ribbed": ["REC", "LOCK"],
+                "cap_flange_d": 15.0, "cap_flange_t": 1.5, "cap_protrusion": 2.0, "gap_to_switch": 0.3},
+    "_src": "STACK 5.8 (column 38-42 mm, pitch 19-21; 22-25 only if the face height allows: the grown face does, pitch 22); the row order is this package's proposal (STACK lists only the six keys)"
+  },
+  "front_face_small": {
+    "status_led": {"c": [30.0, 154.5], "pilot_d": 3.0, "_src": "SKU TBD (STACK 2.9 open row)"},
+    "piezo_port": {"c": [45.0, 154.5], "pilot_d": 3.0, "_src": "acoustic ePTFE vent SKU TBD (STACK 2.9 open row)"}
+  },
+  "top_face": {
+    "ports_z": 30.0,
+    "ports": [
+      {"id": "P1", "x": 46.0, "kind": "sma_pigtail"},
+      {"id": "P2", "x": 66.0, "kind": "sma_pigtail"},
+      {"id": "P3", "x": 86.0, "kind": "sma_pigtail"},
+      {"id": "P4", "x": 106.0, "kind": "f_bulkhead"},
+      {"id": "P5", "x": 126.0, "kind": "bnc_bulkhead"},
+      {"id": "P6", "x": 146.0, "kind": "sma_pigtail"},
+      {"id": "P7", "x": 166.0, "kind": "sma_k"},
+      {"id": "P8", "x": 186.0, "kind": "sma_pigtail"},
+      {"id": "RX1", "x": 206.0, "kind": "sma_cab01075"}
+    ],
+    "veml7700_window": {"x": 120.0, "z": 60.0, "d": 4.0},
+    "hood_hinge": {"x": [20.0, 92.0, 160.0], "knuckle_w": 8.0, "pin_d": 2.1, "axis_y": 155.0, "axis_z": 69.0},
+    "_src": "port pitch 20 mm, types and the order P1..P8 + RX1: STACK 5.8 / 05 5.1"
+  },
+  "right_face": {
+    "ports": [
+      {"id": "RX2", "y": 142.0, "z": 30.0, "kind": "sma_cab01075"},
+      {"id": "REF_IN", "y": 122.0, "z": 30.0, "kind": "sma_cab01075"}
+    ],
+    "_src": "STACK D15 puts RX2/REF IN on the left wall; this model moves them to the right wall next to the LimeSDR (fit-report 'lime_cables', CAB.01075 is 100 mm long); recorded in build/15"
+  },
+  "left_face": {
+    "vents": [
+      {"id": "V1", "y": 140.0, "z": 50.0, "kind": "m12_vent", "pad_t": 3.0, "_note": "display cavity"},
+      {"id": "V2", "y": 18.0, "z": 32.0, "kind": "m12_vent", "pad_t": 3.0, "_note": "battery compartment"}
+    ],
+    "exhaust": {"y": [62.0, 112.0], "z": [42.5, 54.5], "slot_w": 2.5, "slot_pitch": 5.0},
+    "_src": "path 2 side exhaust (STACK 5.6, side TBD there): left wall downstream of the blower; vents on flat 2.0-3.5 mm pads, never upward (STACK D15)"
+  },
+  "bottom_face": {
+    "ports": [
+      {"id": "USB_C_IN", "x": 176.0, "z": 7.0, "kind": "tbd", "w": 12.0, "h": 6.0, "_note": "IP2368 sealed USB-C feedthrough, MPN TBD (MECH-07)"},
+      {"id": "LAB_USB_A", "x": 190.0, "z": 7.0, "kind": "tbd", "w": 16.0, "h": 8.0, "_note": "MPN TBD (MECH-07)"},
+      {"id": "LAB_BUS", "x": 171.0, "z": 28.0, "kind": "tbd", "w": 16.0, "h": 16.0, "_note": "6-pin locking, MPN TBD (MECH-07)"},
+      {"id": "AUDIO_3V5", "x": 171.0, "z": 52.0, "kind": "tbd", "w": 10.0, "h": 10.0, "_note": "3.5 mm jack, MPN TBD"}
+    ],
+    "intake": {"x": [182.0, 218.4], "z": [41.5, 62.5], "slot_w": 2.5, "slot_pitch": 5.0, "seat_depth": 5.0,
+               "_src": "path 2 bottom intake (STACK 5.6): mesh 316 + Qualtek 09150-M-30 foam cut to 36.4 x 21 in a retaining seat"}
+  },
+  "rear_face": {
+    "gx16": {"c": [215.0, 27.0], "pad_t": 3.0},
+    "tripod": {"c": [100.0, 70.0], "hex_af": 11.3, "hex_depth": 5.8, "outer_wall": 1.0, "hole_d": 6.6, "behind": 3.0, "boss_d": 22.0,
+               "_src": "STACK D15 / 5.8 (captive 1/4-20 UNC steel nut 7/16 in AF, 11.3 AF pocket about 5.8 deep, outer wall <=1.0 with a 6.6 hole, >=3 behind the nut, 100% infill >=4 perimeters)"},
+    "hatch": {"rect": [116.0, 40.0, 22.0, 50.0], "r": 3.0, "seat": 4.0, "screws": [[120.0, 94.0], [134.0, 94.0]], "lip": "bottom edge of the cover hooks under the opening (no screw near the battery)",
+              "content": ["blue USB-A port of the Q6A (reached directly in the plug bay)", "J21 3-pin locking", "UART5 console pigtail (40-pin 8/10 + GND)", "EDL button (or recessed parallel)"],
+              "_src": "STACK 5.8 / D15 service hatch"},
+    "path1_intake": {"rect": [205.0, 52.0, 21.0, 40.0], "slot_w": 2.5, "slot_pitch": 5.0},
+    "path1_exhaust": {"rect": [165.0, 53.5, 36.0, 36.0], "slot_w": 2.5, "slot_pitch": 5.0},
+    "strap_lugs": [[14.0, 150.0], [216.0, 150.0]],
+    "strap_slots": {"w": 12.0, "x": 39.0, "y": [105.0, 140.0], "_src": "STACK 5.8 (two slots <=12 for SmallRig PAC2456 in the rear half); on the left of the rear face so the left hand holds the unit while the right hand works the HMI column"},
+    "t7_gland": {"c": [106.0, 47.0], "w": 14.0, "h": 14.0, "_src": "STACK 5.8 puts the T7 gland on the bottom edge; with the battery strip along the bottom it moves to the rear face next to the T7 holder (fit-report)"},
+    "t7_holder": {"rect": [3.0, 3.0, 71.0, 92.0], "gap": 4.0, "rail": 6.0, "shutter_t": 2.0, "screws": [[6.0, 20.0], [6.0, 80.0], [71.0, 20.0]], "_src": "STACK 5.8 (holder 85 x 57 x 8, gap 3-5, reflective shutter); T7 stands vertical at the rear bottom-left, clear of the tripod plate (disc of 50 mm around the 1/4-20)"}
+  },
+  "closure": {
+    "bosses": [[11.25, 11.25], [166.0, 11.25], [218.75, 11.25], [11.25, 98.0], [218.75, 98.0], [11.25, 148.75], [96.1, 150.0], [180.0, 150.0], [218.75, 148.75]],
+    "boss_d": 7.5, "insert": {"thread": "M3", "hole_d": 4.0, "len": 5.7}, "screw": "M3 ISO 14580 A2 TX10", "front_boss_top": 24.0,
+    "clearance_d": 3.4, "counterbore_d": 6.5, "counterbore_depth": 3.0, "sealing_washer": "M3 bonded seal / EPDM washer under the head (MPN TBD)",
+    "_src": "inserts CNC Kitchen M3x5.7 and ISO 14580 screws: STACK 2.9"
+  },
+  "gasket": {"cord_d": 3.0, "groove_w": 4.0, "groove_depth": 2.3, "rim_w": 7.0, "rim_h": 5.0,
+             "_src": "EPDM cord in a groove (build/15); squeeze and fill rule: parts.json oring_groove_rule"},
+  "plate": {
+    "main": [3.5, 37.5, 223.0, 119.5],
+    "ext": [163.0, 3.0, 63.5, 34.5],
+    "t": 2.0,
+    "material": "EN AW-5754 (AlMg3) 2.0 mm, mill finish; alt. 1050A-H14 or 6082-T6",
+    "mount_bosses": [[8.0, 154.5], [40.0, 154.5], [172.5, 154.5], [225.5, 30.0], [168.0, 6.0]], "mount_boss_top": 54.5,
+    "bottom_edge": "the lower plate edge rests on the battery-tray rib through a 1 mm insulating strip (not screwed)",
+    "mount_hole_d": 3.4,
+    "riser_window": [200.0, 94.0, 26.0, 8.0],
+    "hdmi_slot": [186.0, 30.0, 18.0, 6.0],
+    "bond_points": [{"id": "BOND-RF", "c": [116.0, 96.0], "note": "single RF GND / CHASSIS bond (13-pcb-preparation 'RF GND/CHASSIS bond'): M3 + serrated washer on bare metal"}],
+    "_src": "STACK 5.8 (2.0 mm Al, holes +-0.2, flatness <=0.2 under Q6A, pedestal and regulator pads, no thread cut in the plate; riser window about 26 x 20)"
+  },
+  "layout": {
+    "_note": "Envelope boxes [x, y, z, dx, dy, dz]; mount: plate_rear (hangs from the plate), plate_front, rear_wall, front_wall, rf_lid, free. part = key in parts.json, board = key in boards.json. keep_clear boxes reserve space (plugs, cable bends) and must stay empty.",
+    "items": [
+      {"id": "battery_tray", "part": "battery_pack", "box": [2.8, 2.8, 5.8, 158.4, 33.4, 54.4], "mount": "free"},
+      {"id": "display", "part": "display_module", "box": [6.3, 50.3, 56.5, 164.22, 97.98, 6.0], "mount": "front_wall"},
+      {"id": "hdmi_board", "part": "hdmi_board", "box": [50.0, 75.0, 45.0, 96.2, 82.0, 11.0], "mount": "plate_front"},
+      {"id": "board_pwr", "board": "PWR", "mount": "plate_front"},
+      {"id": "blower", "part": "blower", "box": [144.0, 38.0, 45.0, 30.5, 30.5, 10.5], "mount": "plate_front"},
+      {"id": "board_ctrl", "board": "CTRL", "mount": "front_wall"},
+      {"id": "enc_main", "board": "ENC", "at": "main", "mount": "front_wall"},
+      {"id": "enc_volume", "board": "ENC", "at": "volume", "mount": "front_wall"},
+      {"id": "bms", "part": "daly_bms", "box": [184.0, 14.0, 41.0, 35.0, 61.0, 10.0], "mount": "plate_front"},
+      {"id": "ip2368", "part": "ip2368_board", "box": [177.0, 123.0, 41.0, 48.0, 34.0, 10.0], "mount": "plate_front"},
+      {"id": "lime", "part": "lime", "box": [147.0, 96.0, 40.5, 80.0, 26.0, 13.0], "mount": "plate_front"},
+      {"id": "hfplus", "part": "hfplus_can", "box": [2.6, 37.5, 17.5, 112.0, 56.0, 21.0], "mount": "plate_rear"},
+      {"id": "lc76g", "part": "lc76g", "box": [8.0, 38.5, 3.0, 63.6, 54.0, 13.1], "mount": "rear_wall"},
+      {"id": "tripod_boss", "box": [89.0, 59.0, 0.0, 22.0, 22.0, 9.8], "mount": "rear_wall"},
+      {"id": "q6a", "part": "q6a", "mount": "plate_rear"},
+      {"id": "q6a_fan_duct", "part": "q6a_cooler_zone", "box": [162.1, 52.5, 2.5, 40.0, 40.0, 12.0], "mount": "rear_wall"},
+      {"id": "usb_plug_bay", "box": [116.6, 38.0, 14.65, 22.4, 18.0, 16.0], "mount": "free", "keep_clear": true},
+      {"id": "hdmi_plug", "box": [186.5, 12.0, 22.5, 17.0, 23.0, 10.0], "mount": "free", "keep_clear": true},
+      {"id": "hatch_parts", "box": [116.0, 40.0, 2.5, 22.0, 50.0, 11.0], "mount": "rear_wall"},
+      {"id": "t7_gland_body", "box": [99.0, 40.0, 2.5, 14.0, 14.0, 13.0], "mount": "rear_wall"},
+      {"id": "v4l_a", "part": "v4l", "box": [17.6, 99.0, 4.1, 95.0, 27.0, 13.0], "mount": "rf_lid"},
+      {"id": "v4l_b", "part": "v4l", "box": [114.1, 99.0, 4.1, 95.0, 27.0, 13.0], "mount": "rf_lid"},
+      {"id": "sawbird", "part": "sawbird_noaa", "box": [17.6, 126.5, 4.1, 73.7, 30.6, 18.7], "mount": "rf_lid"},
+      {"id": "flamingo", "part": "flamingo_fm", "box": [100.9, 126.5, 4.1, 73.7, 30.6, 18.7], "mount": "rf_lid"},
+      {"id": "board_rf", "board": "RF", "mount": "plate_rear"},
+      {"id": "gx16", "part": "gx16_socket", "box": [205.0, 17.0, 2.5, 20.0, 20.0, 22.0], "mount": "rear_wall"},
+      {"id": "ferrite_a", "box": [163.5, 17.0, 2.5, 39.5, 20.0, 19.6], "mount": "rear_wall", "_note": "HDMI ferrite pocket 1 (Fair-Rite 0431164281 39.5 x 20 x 19.6, STACK 5.8 about 40 x 20 x 20); pocket 2: no 20 mm deep space left on the cable route in this layout (TBD, build/05 11)"}
+    ]
+  },
+  "rf_bay": {
+    "rect": [15.5, 97.0, 195.7, 60.5],
+    "wall_t": 1.6,
+    "lid_z": [2.5, 4.1],
+    "material": "FR4 copper clad 35/35 um, 1.5-1.6 mm (Bungard 120306Z33 or Scankemi 1.6, STACK 2.9)",
+    "_note": "floor = plate, top side = top Al angle + top wall, right side = right Al angle + wall; FR4 walls on the left and bottom; the FR4 lid carries the modules (rf_lid mount)"
+  },
+  "angles": {
+    "top": {"x": [38.0, 214.0], "leg_plate": 12.0, "leg_wall": 15.0, "t": 2.0},
+    "right": {"y": [116.0, 146.0], "leg_plate": 12.0, "leg_wall": 15.0, "t": 2.0},
+    "material": "EN AW-6060 L angle 15 x 12 x 2 (cut from 20 x 20 x 2 or 2.0 mm 5754 bent), screwed to the plate (STACK 5.8 'стінка 4-5: ASA + 2 мм Al')"
+  },
+  "lime_pedestal": {"rect": [150.0, 98.0, 60.0, 22.0], "h": 5.5, "material": "Al 6082 or 5754 bar (STACK 2.9 blank 25x25x75 or 10 mm 50x50)"},
+  "ufs_boss": {"size": [28.0, 20.0], "_src": "components/storage.md (rib or boss about 28 x 20 mm); height from the Q6A STEP fit (vendor-fit.json)"},
+  "fins": {"x": [52.0, 144.0], "y": [78.0, 154.0], "pitch": 8.0, "h": 3.5, "t": 1.0,
+           "_note": "bonded Al fin strips on the plate front face under the HDMI board, along the path-2 flow (STACK 5.6 'ребра пластини')"},
+  "hood": {"depth": 30.0, "t": 2.5, "x": [6.0, 171.0]},
+  "battery": {"tray_wall": 1.2, "barrier": 1.0, "notch": 11.0},
+  "q6a_mount": {"origin": [142.0, 37.5], "standoff": 6.0, "map": "x = x0 + 85 - u, y = y0 + v (component side towards the rear)",
+                "_src": "Radxa V1.21 2D drawing and STEP (board 85 x 56, holes 3.5 from the edges); SoC/LPDDR5/M.2 J13 positions from the STEP product names BGA1287/BGA315 and components/mechanical_thermal.md"},
+  "print": {
+    "material": "Polymaker ASA White PF01002",
+    "layer": 0.2, "perimeters": 4, "infill": 0.3, "boss_infill": 1.0,
+    "_src": "STACK 2.9 / 5.8 (ASA in a closed ventilated chamber; tripod boss 100 % infill with >=4 perimeters)"
+  }
+}

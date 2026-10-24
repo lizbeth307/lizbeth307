@@ -1,0 +1,42 @@
+{
+  "schema": "srrx-antenna-fab-v1",
+  "status": "MODEL_ONLY",
+  "note": "Fabrication geometry for the receive-only antennas, taken from build/06-anteny.md and STACK 5.8 'Виготовлення антен'. Patterns are computed developments; gain, S11 and pattern stay unmeasured (receive-only acceptance per build/06 section 5). Part-size rule: every part <= 350 mm, folded-kit pieces about 200-230 mm (build/06 0.3).",
+  "rules": {"max_part_mm": 350.0, "horn_segment_max_mm": 187.0, "yagi_part_max_mm": 160.0, "yagi_joint_min_mm": 36.0},
+  "helicone": {
+    "disk_d": 180.0, "disk_t": 1.5, "feed_r": 30.9, "mount_hole_d": 6.6, "feed_hole_d": 6.4,
+    "petals": {"n": 8, "inner_chord": 69.0, "outer_chord": 168.0, "slant": 177.0, "tab": 10.0, "overlap": 10.0, "rivet_d": 3.2, "material": "Al 0.3-0.5 mm"},
+    "petals_t0nito": {"n": 8, "inner_chord": 69.0, "outer_chord": 186.0, "slant": 177.0, "tab": 10.0, "overlap": 10.0,
+                      "_note": "build/06 3.2 gives only the rim chord 18.6 cm and slant about 17.7 cm for the t0nito A/B set (134->440 mm, 88 mm, 29.7 deg); the inner chord is taken equal to the shared 18 cm disk (assumption, check before cutting)"},
+    "mouth_d": 440.0, "depth": 120.0,
+    "_src": "build/06 2.5 and 3.2; STACK 5.8 item 3"
+  },
+  "helix_hrpt": {"d": 61.7, "pitch": 43.0, "turns": 4, "turns_alt": 5, "wire_d": 2.0, "hand": "right (RHCP)",
+                 "_src": "build/06 2.5: rigid RHCP 4 (or 5) turns, 61.7 mm, pitch 43 mm, Cu 2 mm on a printed mandrel, feed 30.9 mm from the disk centre"},
+  "helix_sband": {"d": 46.7, "pitch": 32.5, "turns": 7, "wire_d": 2.0, "hand": "right (RHCP)",
+                  "_src": "build/06 3.2: 7 turns, 46.7 mm, pitch 32.5 mm, 228 mm; wire diameter not given there (2.0 mm assumed, TBD)"},
+  "horn_qo100": {"half_angle": 13.8, "segments_per_ring": 3, "inner_r": [null, 267.0], "outer_r": [255.0, 378.0], "throat_od": 64.0, "throat_od_alt": 60.0,
+                 "seam_overlap": 5.0, "rivet_d": 3.2, "rings_d": [127.0, 180.0], "material": "Al 0.3-0.5 mm",
+                 "_src": "build/06 3.3 / STACK 5.8 item 4: 6 segments of 28.6 deg, half-angle 13.8 deg, inner from r_throat/sin 13.8 to 267 mm, outer 255-378 mm, rings 127/180 mm, overlap >=5 mm; throat OD 64 (Passion Radio) or 60 (F4DAV): measure before printing"},
+  "cone_lnb": {"half_angle": 22.9, "mouth_d": 110.5, "throat_od": 64.0, "seam_overlap": 5.0, "material": "Al 0.3-0.5 mm",
+               "_src": "build/06 2.7: half-angle 22.9 deg, mouth 110.5 mm, R_in = r/sin 22.9 (82-85 mm for a 64-66 mm throat)"},
+  "lnb_neck_adapter": {"neck_d": 40.0, "skew_range_deg": 45, "skew_step_deg": 5, "set_screw": "M3 into a CNC Kitchen M3x5.7 insert",
+                       "_src": "build/06 2.7: printed 40 mm neck adapter with a +-45 deg skew scale and a locking screw"},
+  "throat_ring": {"cap_od": 64.0, "wall": 2.4, "h": 12.0, "flange": 8.0, "holes": 6, "_src": "build/06 2.7: ring on the measured plane of the red cap; do not remove or cut the cap"},
+  "yagi": {
+    "boom": {"section": [20.0, 20.0], "joints": [130.0, 250.0, 400.0, 560.0], "length": 660.0, "material": "PVC/GRP square tube 20 x 20"},
+    "elements_2m": [{"id": "R", "pos": 0.0, "len": 1051.0}, {"id": "DE", "pos": 203.0, "len": 451.0, "split": true, "gap": [19.0, 25.0]}, {"id": "D", "pos": 508.0, "len": 892.0}],
+    "elements_lrpt": [{"id": "R", "len": 1114.0}, {"id": "DE", "len": 478.0, "split": true}, {"id": "D", "len": 946.0}],
+    "elements_70cm": [{"id": "R", "pos": 30.0}, {"id": "DE", "pos": 94.0, "split": true}, {"id": "D1", "pos": 170.0}, {"id": "D2", "pos": 316.0}, {"id": "D3", "pos": 475.0}, {"id": "D4", "pos": 640.0}],
+    "tape_w": 25.0, "tape_drill": 3.5, "rod_d": 3.26, "rod_hole_d": 3.4, "hairpin_2m": 127.0,
+    "_src": "build/06 3.1 / STACK 5.8 item 2 (WB2HOL 3 el., N2SPI 6 el. positions; 70 cm element lengths TBD per N2SPI drawing)"
+  },
+  "sband_pod": {
+    "box": "hammond_1554u2gy", "layer_gap": 5.0, "standoff": 6.0,
+    "ports": [{"id": "RF_IN", "wall": "left_end", "y": 40.0, "z": 45.0, "kind": "sma_bulkhead"},
+              {"id": "RF_OUT", "wall": "right_end", "y": 40.0, "z": 45.0, "kind": "sma_bulkhead"},
+              {"id": "PWR", "wall": "right_end", "y": 80.0, "z": 45.0, "kind": "m12_gland"},
+              {"id": "VENT", "wall": "side_front", "x": 100.0, "z": 30.0, "kind": "m12_vent"}],
+    "_src": "build/12-revision-v2.1 'S-band: зовнішній антенний вузол' (LaNA WB 100845 + cf2235-kt30 in a Hammond 1554U2GY, layers 5 mm apart); E4-04 gate OPEN"
+  }
+}

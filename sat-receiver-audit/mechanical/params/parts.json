@@ -1,0 +1,241 @@
+{
+  "schema": "srrx-mech-parts-v1",
+  "note": "Part envelopes (mm) used by the enclosure model. size = [x, y, z] as placed (front view: x right, y up, z towards the front face). Every value names its source and how it was read. status: datasheet = read from the maker's drawing on the given date; repo = taken from a project research file that cites its own source; listing = seller listing (weaker); assumption = placeholder reserve, NOT a datasheet value, to be measured on the received part (TBD). MODEL FIT ONLY: physical fit gates stay OPEN.",
+  "parts": {
+    "q6a": {
+      "name": "Radxa Dragon Q6A V1.21",
+      "board": [85.0, 56.0, 1.6],
+      "holes": {"d": 3.5, "pitch": [58.0, 49.0], "edge": 3.5},
+      "top_max": 16.25,
+      "bottom_max": 3.7,
+      "connector_overhang": 3.3,
+      "_board_coords": "u right, v up in the top view, origin at the board corner; STEP board corner at (58.68, 27.47) (corner-arc centres at 61.68/30.47 with R3)",
+      "connectors": {
+        "usb_stack": {"uv": [70.29, 0.75, 87.75, 16.42], "top": 16.25},
+        "rj45": {"uv": [67.04, 37.74, 88.29, 53.97], "top": 13.6},
+        "hdmi": {"uv": [24.55, -2.27, 39.55, 9.73], "top": 6.36},
+        "audio": {"uv": [50.17, -2.62, 57.87, 11.38], "top": 5.25},
+        "usb_c": {"uv": [6.69, -1.23, 15.63, 6.12], "top": 3.1},
+        "header40": {"uv": [7.17, 48.64, 57.97, 55.85], "top": 9.65},
+        "j21_3p": {"uv": [16.43, 0.89, 24.05, 3.43], "top": 8.5}
+      },
+      "soc": {"uv": [38.87, 28.03, 50.87, 42.03], "top": 1.0, "name": "BGA1287 14 x 12"},
+      "lpddr5": {"uv": [38.37, 14.34, 53.37, 26.74], "top": 1.0, "name": "BGA315 LPDDR5"},
+      "m2_j13": {"uv": [3.0, 18.0, 25.0, 48.0], "status": "assumption", "src": "components/mechanical_thermal.md: J13 M-key on the top side, top-left under the 40-pin header, card towards the bottom edge; not identified by name in the STEP (TBD: confirm on the board)"},
+      "status": "datasheet",
+      "src": "https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_2d_dimensions_v1.21.pdf (read 2026-10-24: 85.0 x 56.0, 4x d3.5 on 58.0 x 49.0, 3.5 from edges, connector overhang 3.3); heights and connector boxes from https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_3d_stp_v1.21.zip (STEP product names 484060001, LPJG0926HENL, HDMI_1, PJ-332D, USB-16PIN-TYPEC, 1555298, PZ254V-11, BGA1287, BGA315 read with build123d 2026-10-24; heights above the board top face)"
+    },
+    "q6a_cooler_zone": {
+      "name": "Q6A cooler A footprint (stepped Cu block) incl. Noctua NF-A4x10 5V on top",
+      "size": [40.0, 40.0, 16.5],
+      "center_in_board": [43.0, 27.5],
+      "status": "repo",
+      "src": "components/mechanical_thermal.md (heatsink base zone x 26-58, y 12-43 on the V1.21 drawing; Cu block <=35x35 per STACK 5.8); fan 40x40x10 per components/radxa_armor_7056a_heatsink_or_stepped_cu.md (Noctua spec 40x40x10 mm)"
+    },
+    "lime": {
+      "name": "LimeSDR Micro M.2 2280 (HW v1.2) on Al pedestal",
+      "size": [80.0, 22.0, 14.0],
+      "detail": {"board_t": 0.8, "top_max": 4.5, "bottom_max": 1.35, "pedestal_h": 6.0, "pad": 1.0},
+      "status": "repo",
+      "src": "STACK.md 5.8 'Під Lime' (top <=4.5 mm, bottom <=1.35 mm, HW v1.2); 22x80 per components/mech_thermal_storage.md; pedestal height 6.0 and pad 1.0 are model choices (gap table in build/05 7.1)"
+    },
+    "hdmi_board": {
+      "name": "Wisecoco 7in HDMI driver board",
+      "size": [96.2, 82.0, 11.0],
+      "status": "repo+assumption",
+      "src": "96.2 x 82 from components/display_hmi.md (listing photo label); 11.0 mm stack height is an assumption (TBD: measure the received board, STACK D5)"
+    },
+    "display_module": {
+      "name": "Wisecoco 7in bonded panel (glass outline)",
+      "glass": [164.22, 97.98],
+      "active": [155.82, 87.83],
+      "active_alt": [154.368, 86.832],
+      "stack_t": 6.0,
+      "status": "listing+assumption",
+      "src": "outline 164.22 x 97.98 and both active areas from components/display_hmi.md (Wisecoco page, two different values); stack thickness 6.0 mm is an assumption (TBD: measure, STACK 5.8 'безель креслиться лише після приймання панелі')"
+    },
+    "display_alt_4d": {
+      "name": "4D Systems 4DHDMI-70 fallback (parameter set only)",
+      "status": "assumption",
+      "src": "STACK D5 fallback; no drawing was read for this package: the bezel parameters must be replaced from the 4D datasheet before use (TBD)"
+    },
+    "hfplus_can": {
+      "name": "Otto Schubert tinplate housing Art. 6B with lids (HF+ shield)",
+      "size": [112.0, 56.0, 21.0],
+      "body": [111.0, 55.0, 20.0],
+      "status": "repo",
+      "src": "components/tinplate_hf_can_lc_mix_31_on_vbus.md (Art. 6B 111x55x20 outside, inside 109x53x18; about 112x56x21 with lid rims)"
+    },
+    "v4l": {
+      "name": "RTL-SDR Blog V4L dongle (reserve incl. SMA and USB ends)",
+      "size": [95.0, 27.0, 13.0],
+      "status": "listing",
+      "src": "reserve = max of seller figures: WiMo V4 23 x 13 x 69 mm and uelectronics V4 95 x 27 x 10 mm (web search 2026-10-24; the pages themselves returned 403/were not opened). TBD: measure a V4L"
+    },
+    "sawbird_noaa": {
+      "name": "Nooelec SAWbird+ NOAA 100800 (cased)",
+      "size": [73.7, 30.6, 18.7],
+      "status": "repo",
+      "src": "components/nooelec_sawbird_noaa_cased_100800.md (73.7 x 30.6 x 18.7 mm, M3 holes; https://www.nooelec.com/store/sdr/sdr-addons/sawbird/sawbird-plus-noaa-308.html)"
+    },
+    "flamingo_fm": {
+      "name": "Nooelec Flamingo+ FM v2 100813 (cased)",
+      "size": [73.7, 30.6, 18.7],
+      "status": "assumption",
+      "src": "no dimension found in components/nooelec_flamingo_fm_v2_100813.md; reserve = SAWbird+ NOAA case (same Nooelec cased family, assumption). TBD: measure"
+    },
+    "lc76g": {
+      "name": "Waveshare LC76G GNSS board (24370)",
+      "size": [63.6, 54.0, 13.1],
+      "status": "repo",
+      "src": "components/waveshare_lc76g_24370_rtc_cr2032_cell.md (54 x 63.6 x 13.1 mm; https://www.waveshare.com/lc76g-gnss-module.htm)"
+    },
+    "pololu_d36v50": {
+      "name": "Pololu D36V50F12 / D36V50F5 (#4095 / #4091)",
+      "size": [25.4, 25.4, 9.5],
+      "holes": {"count": 3, "d": 2.18, "screw": "#2 or M2"},
+      "status": "datasheet",
+      "src": "https://www.pololu.com/product/4091 (read 2026-10-24: 1 x 1 x 0.375 in = 25.4 x 25.4 x 9.5 mm, three 0.086 in holes for #2/M2; hole positions not given: TBD from the Pololu dimension drawing)"
+    },
+    "ip2368_board": {
+      "name": "IP2368 4S 100 W PD board (retail, charge-only BZ config)",
+      "size": [48.0, 34.0, 10.0],
+      "status": "repo+assumption",
+      "src": "48 x 34 mm from components/ip2368_4s_100_w_pd_board_charge_only_bz.md; 10 mm height is an assumption (TBD: measure)"
+    },
+    "daly_bms": {
+      "name": "Daly 4S 15 A BMS",
+      "size": [61.0, 35.0, 10.0],
+      "status": "repo",
+      "src": "components/daly_4s_15_a_common_port_balancing_bms.md (59 x 34 x 9 datasheet, 61 x 35 x 9 TinyTronics; reserve 61 x 35 x 10)"
+    },
+    "battery_pack": {
+      "name": "4S1P Molicel P50B pack (2x2, bare)",
+      "size": [150.0, 25.0, 46.0],
+      "foam": 3.0,
+      "barrier": 1.0,
+      "status": "repo",
+      "src": "STACK.md D15 / 5.8 (bare pack 46 x 25 x 150, compartment about 54 x 33 x 158 model, 3 mm closed-cell foam, 1 mm FR-4 or mica barrier)"
+    },
+    "blower": {
+      "name": "Delta BFB0305HA-C blower (path 2)",
+      "size": [30.5, 30.5, 10.5],
+      "status": "repo",
+      "src": "design/E3-review.md FAN302 (30 x 30 x 10 mm nominal per the official Delta PDF https://www.delta-fan.com/Download/Spec/BFB0305HA-C.pdf); envelope +0.5 mm reserve"
+    },
+    "gx16_socket": {
+      "name": "Olimex CONNECTOR-GX16-4 panel socket",
+      "panel_hole": 16.0,
+      "nut": 18.8,
+      "size": [20.0, 20.0, 22.0],
+      "status": "repo+assumption",
+      "src": "STACK.md D12/D15 (hole 16 mm, hex nut 18.8 mm, about 46 mm mated); 22 mm inside depth is an assumption (TBD: measure the socket body)"
+    },
+    "t7": {
+      "name": "Samsung T7 1 TB",
+      "size": [85.0, 57.0, 8.0],
+      "status": "repo",
+      "src": "components/samsung_t7_1_tb.md (85 x 57 x 8 mm, Samsung datasheet Rev 2.0)"
+    },
+    "pec11r": {
+      "name": "Bourns PEC11R-4220F-S0024",
+      "bushing": "M7x0.75",
+      "bushing_len": 7.0,
+      "shaft_len": 20.0,
+      "shaft_d": 6.0,
+      "body": [12.5, 13.4],
+      "mount_to_body_rear": 6.5,
+      "nut_af": 10.0,
+      "nut_t": 2.0,
+      "washer": [12.0, 7.1, 0.5],
+      "mounting_torque_max_kgfcm": 10.2,
+      "status": "datasheet",
+      "src": "https://www.bourns.com/docs/Product-Datasheets/PEC11R.pdf REV. 04/26 (read 2026-10-24: 4 = PC pin horizontal / rear facing, 20 = 20 mm shaft, LB 7 mm bushing, M7 x 0.75, nut 10.0 AF x 2.0, washer 12.0/7.1/0.5, mounting torque 10.2 kgf-cm max)"
+    },
+    "knob_2055": {
+      "name": "Adafruit 2055 knob",
+      "d": 34.7,
+      "h": 10.5,
+      "status": "repo",
+      "src": "components/bourns_pec11r_4215f_s0024_x3_c_k_ksc641j.md (34.7 x 10.5 mm)"
+    },
+    "tl3145": {
+      "name": "E-Switch TL3145BF350QJ",
+      "body": [6.45, 6.45],
+      "actuator_h": 5.2,
+      "status": "repo",
+      "src": "STACK.md 5.8 (actuator 5.2 mm, J-lead body 6.45 mm)"
+    },
+    "hammond_1550z101": {
+      "name": "Hammond 1550Z101 die-cast box (IMU pack)",
+      "outside": [50.2, 45.2, 30.4],
+      "inside": [44.28, 39.28, 25.4],
+      "box_h": 24.2,
+      "lid_h": 6.2,
+      "wall": 3.0,
+      "floor": 2.5,
+      "lid_screws": {"pitch": [40.0, 35.0], "thread": "M4-0.7", "diagonal": true},
+      "cover_torque_cNm": [50, 75],
+      "status": "datasheet",
+      "src": "https://www.hammfg.com/files/parts/pdf/1550Z101.pdf REV 08.07.2024 (read 2026-10-24)"
+    },
+    "hammond_1554u2gy": {
+      "name": "Hammond 1554U2GY polycarbonate box (S-band pod)",
+      "outside": [200.0, 120.0, 90.5],
+      "inside": [192.13, 108.13, 84.5],
+      "box_h": 75.5,
+      "lid_h": 15.0,
+      "lid_screws_pitch": [187.0, 107.0],
+      "panel_inserts_m3": [176.0, 45.0],
+      "cover_torque_cNm": [30, 40],
+      "status": "datasheet",
+      "src": "https://www.hammfg.com/files/parts/pdf/1554U2GY.pdf REV 28.02.2020 (read 2026-10-24)"
+    },
+    "cf2235": {
+      "name": "sysmocom cf2235-kt30 filter",
+      "size": [124.0, 47.0, 33.0],
+      "status": "repo",
+      "src": "build/12-revision-v2.1.md (124 x 47 x 33 mm, 186 g)"
+    },
+    "lana_wb": {
+      "name": "Nooelec LaNA WB 100845",
+      "size": [60.0, 38.0, 25.0],
+      "status": "repo",
+      "src": "design/E4-review.md A422 (60 x 38 x 25 mm; https://nooelec.com/store/sdr/sdr-addons/rf-blocks/lana-wb.html)"
+    },
+    "bno085_board": {
+      "name": "Adafruit BNO085 4754 + Waveshare RP2040-Zero side by side",
+      "pair_footprint": [40.7, 25.6],
+      "bno_board": [25.6, 22.7, 4.6],
+      "status": "repo",
+      "src": "components/adafruit_bno085_4754_rp2040_zero_metal_p.md (board 25.6 x 22.7 x 4.6; both boards side by side 40.7 x 25.6)"
+    },
+    "gelid_gp_ultimate": {
+      "name": "Gelid GP-Ultimate thermal pad",
+      "sheet": [90.0, 50.0],
+      "thicknesses": {"0.5": "TP-GP04-A", "1.0": "TP-GP04-B", "1.5": "TP-GP04-C", "2.0": "TP-GP04-D", "3.0": "TP-GP04-E"},
+      "max_compression": 0.30,
+      "status": "datasheet",
+      "src": "https://gelidsolutions.com/product/gp-ultimate-thermal-pad/ (read 2026-10-24: 90 x 50 mm sheet; 0.5/1.0/1.5/2/3 mm; 60-70 Shore OO; 'can compress ... by up to 30% of thickness'; no W/mK figure)"
+    },
+    "epdm_cord": {
+      "name": "EPDM solid cord 3.0 mm, 70 Shore A (seam seal)",
+      "d": 3.0,
+      "status": "assumption",
+      "src": "decision build/15 'Ущільнення: EPDM-шнур у пазу'; diameter is a design choice; MPN/supplier TBD (parts package)"
+    },
+    "oring_groove_rule": {
+      "name": "Static face-seal gland rule",
+      "squeeze": [0.15, 0.30],
+      "fill_max": 0.85,
+      "status": "datasheet",
+      "src": "https://www.globaloring.com/o-ring-groove-design/ (read 2026-10-24: static seals typically 15-30 % squeeze; design for 60-85 % groove fill; face-seal table -1XX 0.103 in: depth .088-.090 in, width .140 in liquids)"
+    },
+    "vhb_4910": {
+      "name": "3M VHB 4910 clear acrylic foam tape (glass to bezel)",
+      "t": 1.0,
+      "status": "listing",
+      "src": "1.0 mm per distributor listings found 2026-10-24 (RS 2186878/2209906 titles); the 3M TDS returned HTTP 403: confirm thickness, surface prep and temperature range on the 3M TDS before ordering (TBD)"
+    }
+  }
+}
