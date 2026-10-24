@@ -17,9 +17,9 @@ Conservative choices where STACK is silent (each is documented in SCOPE-POLICY.m
   spectrum.MASKED_BANDS_HZ and the STACK bands; a stop latches the span until the
   receiver retunes away; a missing or unaccepted database is UNAVAILABLE, never
   "in scope", and the masked-band stop still applies.
-- artemis-db v74 itself is SQLite whose schema is not verified in project
-  sources ("формат перевірити"); it is detected and refused. Only the reviewed
-  normalized mirror (JSON, see SCOPE-POLICY.md) is loaded, by exact SHA256.
+- artemis-db v74 itself is SQLite; labd never parses it: it is detected and
+  refused. srrx.artemis_convert checks the v74 schema and writes the reviewed
+  normalized mirror (JSON, see SCOPE-POLICY.md), which alone is loaded, by exact SHA256.
 """
 from __future__ import annotations
 
@@ -480,7 +480,7 @@ _Entry = namedtuple("_Entry", "reasons view")
 
 
 def detect_format(data):
-    """artemis-db's own SQLite file is recognized but its v74 schema is unverified."""
+    """artemis-db's own SQLite file is recognized and refused; srrx.artemis_convert makes the mirror."""
     if bytes(data[:16]) == SQLITE_MAGIC:
         return "sqlite3"
     if bytes(data[:1]) == b"{":
