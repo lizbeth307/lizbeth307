@@ -9,20 +9,20 @@
   ],
   "source_snapshots": {
     "design/E1.json": {
-      "sha256": "bc1faf3dd485a8ab55fdb2bc0b9bf1266d160997044f45c725aa79a59c83de11",
-      "bytes": 80827
+      "sha256": "5424528c3ad19c40d30330ada0576d4aaaa4fd1b784d4d08f237b1f9759e7e65",
+      "bytes": 85376
     },
     "design/E2.json": {
-      "sha256": "e07b78094f9f60547614c08e04943801401e63b177f68b77228f7786bb56c0ad",
-      "bytes": 275569
+      "sha256": "87a9e1365148276abefc1d87ba6512265a564f53920ee9ecc88563d6f9c050a7",
+      "bytes": 317707
     },
     "design/E3.json": {
       "sha256": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0",
       "bytes": 138783
     },
     "design/E4.json": {
-      "sha256": "60c0f73c66737853033eea13c28b013d9e8559d1e0df57f2b7902af0da757797",
-      "bytes": 178869
+      "sha256": "a3122809dacd86b312516df5b53f932bd0ab95b48122e5cf08351610f538e56b",
+      "bytes": 181010
     },
     "design/E5.json": {
       "sha256": "9d61ff10e75417c806afda7ab923ac06de7faf9b6ff5b53acce57477b3960212",
@@ -38,11 +38,11 @@
     }
   },
   "scope": {
-    "graph_components": 750,
-    "graph_pins": 2318,
+    "graph_components": 777,
+    "graph_pins": 2393,
     "graph_sheets": {
       "E1": 76,
-      "E2": 242,
+      "E2": 269,
       "E3": 147,
       "E4": 213,
       "E5": 72
@@ -55,10 +55,10 @@
     "partition_refs_assigned_exactly_once": true,
     "missing_refs": [],
     "duplicate_refs": [],
-    "graph_connected_pins": 2181,
-    "graph_nc_pins": 137,
-    "canonical_nets": 466,
-    "cross_assembly_nets": 212
+    "graph_connected_pins": 2253,
+    "graph_nc_pins": 140,
+    "canonical_nets": 478,
+    "cross_assembly_nets": 213
   },
   "critical_constraints": [
     "Every one of the 750 source component references is assigned exactly once to a circuit assembly. Circuit passives remain parameters, not fictitious software registers.",
@@ -561,13 +561,13 @@
         {
           "ref": "R108",
           "kind": "resistor",
-          "value": "10.0k1%",
+          "value": "4.99k0.1%25ppm",
           "status": "design"
         },
         {
           "ref": "R109",
           "kind": "resistor",
-          "value": "1.00k1%",
+          "value": "562R0.1%25ppm",
           "status": "design"
         },
         {
@@ -1508,7 +1508,7 @@
         {
           "ref": "R202",
           "kind": "resistor",
-          "value": "33.2k 1%",
+          "value": "13.0k 1% 100ppm",
           "status": "design"
         },
         {
@@ -1640,7 +1640,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "v2.1, рішення власника (R-E2-18): R227 21.5k задає LNA4V5 4.30V (4.208…4.392V). Запас на папері: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN, тобто 0.395V над VSET: +175mV проти типового dropout 220mV, +45mV проти 350mV max при 25°C, −55mV проти 450mV max у повному діапазоні температур — ще до F102 і з'єднання E1→E2 (кожні 10mΩ — −32mV при 3.2A). Близько 0.4V — коліно PSRR. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -1817,7 +1817,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "v2.1, рішення власника (R-E2-18): R227 21.5k задає LNA4V5 4.30V (4.208…4.392V). Запас на папері: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN, тобто 0.395V над VSET: +175mV проти типового dropout 220mV, +45mV проти 350mV max при 25°C, −55mV проти 450mV max у повному діапазоні температур — ще до F102 і з'єднання E1→E2 (кожні 10mΩ — −32mV при 3.2A). Близько 0.4V — коліно PSRR. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -1979,7 +1979,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "v2.1, рішення власника (R-E2-18): R227 21.5k задає LNA4V5 4.30V (4.208…4.392V). Запас на папері: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN, тобто 0.395V над VSET: +175mV проти типового dropout 220mV, +45mV проти 350mV max при 25°C, −55mV проти 450mV max у повному діапазоні температур — ще до F102 і з'єднання E1→E2 (кожні 10mΩ — −32mV при 3.2A). Близько 0.4V — коліно PSRR. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -2132,7 +2132,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "v2.1, рішення власника (R-E2-18): R227 21.5k задає LNA4V5 4.30V (4.208…4.392V). Запас на папері: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN, тобто 0.395V над VSET: +175mV проти типового dropout 220mV, +45mV проти 350mV max при 25°C, −55mV проти 450mV max у повному діапазоні температур — ще до F102 і з'єднання E1→E2 (кожні 10mΩ — −32mV при 3.2A). Близько 0.4V — коліно PSRR. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -2257,7 +2257,7 @@
         {
           "ref": "R227",
           "kind": "resistor",
-          "value": "22.5k 0.1%",
+          "value": "21.5k 0.1% 25ppm",
           "status": "design"
         },
         {
@@ -2336,7 +2336,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "v2.1, рішення власника (R-E2-18): R227 21.5k задає LNA4V5 4.30V (4.208…4.392V). Запас на папері: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN, тобто 0.395V над VSET: +175mV проти типового dropout 220mV, +45mV проти 350mV max при 25°C, −55mV проти 450mV max у повному діапазоні температур — ще до F102 і з'єднання E1→E2 (кожні 10mΩ — −32mV при 3.2A). Близько 0.4V — коліно PSRR. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -2477,7 +2477,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "v2.1, рішення власника (R-E2-18): R227 21.5k задає LNA4V5 4.30V (4.208…4.392V). Запас на папері: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN, тобто 0.395V над VSET: +175mV проти типового dropout 220mV, +45mV проти 350mV max при 25°C, −55mV проти 450mV max у повному діапазоні температур — ще до F102 і з'єднання E1→E2 (кожні 10mΩ — −32mV при 3.2A). Близько 0.4V — коліно PSRR. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -2507,12 +2507,25 @@
         "C238",
         "R237",
         "C239",
-        "TP207"
+        "TP207",
+        "Q2901",
+        "Q2911",
+        "D2901",
+        "R2901",
+        "R2911",
+        "R2921",
+        "C2901",
+        "C2911",
+        "TP2901"
       ],
-      "component_count": 11,
+      "component_count": 20,
       "named_nets": [
         "BIAS_CH2",
         "BIAS_CH2_DAMP",
+        "BIAS_CH2_PORT",
+        "E2_BLK2_G",
+        "E2_BLK2_S",
+        "E2_BLK2_SINK",
         "E2_LNA2_SHUNT",
         "E2_LNA2_SW",
         "E2_U207_ILIM",
@@ -2583,6 +2596,60 @@
           "kind": "testpoint",
           "value": "BIAS_CH2",
           "status": "design"
+        },
+        {
+          "ref": "Q2901",
+          "kind": "pfet",
+          "value": "DMP6050SSD-13",
+          "status": "design"
+        },
+        {
+          "ref": "Q2911",
+          "kind": "nfet",
+          "value": "2N7002",
+          "status": "design"
+        },
+        {
+          "ref": "D2901",
+          "kind": "diode",
+          "value": "BZX84C10-7-F",
+          "status": "design"
+        },
+        {
+          "ref": "R2901",
+          "kind": "resistor",
+          "value": "220k 1%",
+          "status": "design"
+        },
+        {
+          "ref": "R2911",
+          "kind": "resistor",
+          "value": "4.7k 1% ≥0.25W",
+          "status": "design"
+        },
+        {
+          "ref": "R2921",
+          "kind": "resistor",
+          "value": "4.7k 1%",
+          "status": "design"
+        },
+        {
+          "ref": "C2901",
+          "kind": "capacitor",
+          "value": "1uF 50V X7R C2012X7R1H105K125AB",
+          "status": "design"
+        },
+        {
+          "ref": "C2911",
+          "kind": "capacitor",
+          "value": "100nF 50V X7R C1608X7R1H104K080AA",
+          "status": "design"
+        },
+        {
+          "ref": "TP2901",
+          "kind": "testpoint",
+          "value": "BIAS_CH2_PORT",
+          "status": "design"
         }
       ],
       "required_model_behaviors": [
@@ -2618,7 +2685,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "v2.1, рішення власника (R-E2-18): R227 21.5k задає LNA4V5 4.30V (4.208…4.392V). Запас на папері: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN, тобто 0.395V над VSET: +175mV проти типового dropout 220mV, +45mV проти 350mV max при 25°C, −55mV проти 450mV max у повному діапазоні температур — ще до F102 і з'єднання E1→E2 (кожні 10mΩ — −32mV при 3.2A). Близько 0.4V — коліно PSRR. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -2648,12 +2715,25 @@
         "C242",
         "R242",
         "C243",
-        "TP208"
+        "TP208",
+        "Q2902",
+        "Q2912",
+        "D2902",
+        "R2902",
+        "R2912",
+        "R2922",
+        "C2902",
+        "C2912",
+        "TP2902"
       ],
-      "component_count": 11,
+      "component_count": 20,
       "named_nets": [
         "BIAS_CH3",
         "BIAS_CH3_DAMP",
+        "BIAS_CH3_PORT",
+        "E2_BLK3_G",
+        "E2_BLK3_S",
+        "E2_BLK3_SINK",
         "E2_LNA3_SHUNT",
         "E2_LNA3_SW",
         "E2_U208_ILIM",
@@ -2724,6 +2804,60 @@
           "kind": "testpoint",
           "value": "BIAS_CH3",
           "status": "design"
+        },
+        {
+          "ref": "Q2902",
+          "kind": "pfet",
+          "value": "DMP6050SSD-13",
+          "status": "design"
+        },
+        {
+          "ref": "Q2912",
+          "kind": "nfet",
+          "value": "2N7002",
+          "status": "design"
+        },
+        {
+          "ref": "D2902",
+          "kind": "diode",
+          "value": "BZX84C10-7-F",
+          "status": "design"
+        },
+        {
+          "ref": "R2902",
+          "kind": "resistor",
+          "value": "220k 1%",
+          "status": "design"
+        },
+        {
+          "ref": "R2912",
+          "kind": "resistor",
+          "value": "4.7k 1% ≥0.25W",
+          "status": "design"
+        },
+        {
+          "ref": "R2922",
+          "kind": "resistor",
+          "value": "4.7k 1%",
+          "status": "design"
+        },
+        {
+          "ref": "C2902",
+          "kind": "capacitor",
+          "value": "1uF 50V X7R C2012X7R1H105K125AB",
+          "status": "design"
+        },
+        {
+          "ref": "C2912",
+          "kind": "capacitor",
+          "value": "100nF 50V X7R C1608X7R1H104K080AA",
+          "status": "design"
+        },
+        {
+          "ref": "TP2902",
+          "kind": "testpoint",
+          "value": "BIAS_CH3_PORT",
+          "status": "design"
         }
       ],
       "required_model_behaviors": [
@@ -2759,7 +2893,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "v2.1, рішення власника (R-E2-18): R227 21.5k задає LNA4V5 4.30V (4.208…4.392V). Запас на папері: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN, тобто 0.395V над VSET: +175mV проти типового dropout 220mV, +45mV проти 350mV max при 25°C, −55mV проти 450mV max у повному діапазоні температур — ще до F102 і з'єднання E1→E2 (кожні 10mΩ — −32mV при 3.2A). Близько 0.4V — коліно PSRR. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -2900,7 +3034,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "v2.1, рішення власника (R-E2-18): R227 21.5k задає LNA4V5 4.30V (4.208…4.392V). Запас на папері: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN, тобто 0.395V над VSET: +175mV проти типового dropout 220mV, +45mV проти 350mV max при 25°C, −55mV проти 450mV max у повному діапазоні температур — ще до F102 і з'єднання E1→E2 (кожні 10mΩ — −32mV при 3.2A). Близько 0.4V — коліно PSRR. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -3032,7 +3166,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "v2.1, рішення власника (R-E2-18): R227 21.5k задає LNA4V5 4.30V (4.208…4.392V). Запас на папері: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN, тобто 0.395V над VSET: +175mV проти типового dropout 220mV, +45mV проти 350mV max при 25°C, −55mV проти 450mV max у повному діапазоні температур — ще до F102 і з'єднання E1→E2 (кожні 10mΩ — −32mV при 3.2A). Близько 0.4V — коліно PSRR. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -3272,7 +3406,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "v2.1, рішення власника (R-E2-18): R227 21.5k задає LNA4V5 4.30V (4.208…4.392V). Запас на папері: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN, тобто 0.395V над VSET: +175mV проти типового dropout 220mV, +45mV проти 350mV max при 25°C, −55mV проти 450mV max у повному діапазоні температур — ще до F102 і з'єднання E1→E2 (кожні 10mΩ — −32mV при 3.2A). Близько 0.4V — коліно PSRR. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -3316,13 +3450,26 @@
         "R267",
         "C273",
         "TP212",
-        "C294"
+        "C294",
+        "Q2903",
+        "Q2913",
+        "D2903",
+        "R2903",
+        "R2913",
+        "R2923",
+        "C2903",
+        "C2913",
+        "TP2903"
       ],
-      "component_count": 25,
+      "component_count": 34,
       "named_nets": [
         "BONI13V8",
         "BONI13V8_DAMP",
+        "BONI13V8_PORT",
         "E1_SW",
+        "E2_BLKB_G",
+        "E2_BLKB_S",
+        "E2_BLKB_SINK",
         "E2_BONI_DVDT",
         "E2_BONI_EF",
         "E2_BONI_ILM",
@@ -3402,7 +3549,7 @@
         {
           "ref": "R262",
           "kind": "resistor",
-          "value": "7.87k 1%",
+          "value": "7.15k 1% 100ppm",
           "status": "design"
         },
         {
@@ -3476,6 +3623,60 @@
           "kind": "capacitor",
           "value": "22uF 50V X7R C3225X7R1H226M250AC",
           "status": "design"
+        },
+        {
+          "ref": "Q2903",
+          "kind": "pfet",
+          "value": "DMP6050SSD-13",
+          "status": "design"
+        },
+        {
+          "ref": "Q2913",
+          "kind": "nfet",
+          "value": "2N7002",
+          "status": "design"
+        },
+        {
+          "ref": "D2903",
+          "kind": "diode",
+          "value": "BZX84C10-7-F",
+          "status": "design"
+        },
+        {
+          "ref": "R2903",
+          "kind": "resistor",
+          "value": "100k 1%",
+          "status": "design"
+        },
+        {
+          "ref": "R2913",
+          "kind": "resistor",
+          "value": "22k 1%",
+          "status": "design"
+        },
+        {
+          "ref": "R2923",
+          "kind": "resistor",
+          "value": "10.0k 1%",
+          "status": "design"
+        },
+        {
+          "ref": "C2903",
+          "kind": "capacitor",
+          "value": "1uF 50V X7R C2012X7R1H105K125AB",
+          "status": "design"
+        },
+        {
+          "ref": "C2913",
+          "kind": "capacitor",
+          "value": "100nF 50V X7R C1608X7R1H104K080AA",
+          "status": "design"
+        },
+        {
+          "ref": "TP2903",
+          "kind": "testpoint",
+          "value": "BONI13V8_PORT",
+          "status": "design"
         }
       ],
       "required_model_behaviors": [
@@ -3511,7 +3712,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "v2.1, рішення власника (R-E2-18): R227 21.5k задає LNA4V5 4.30V (4.208…4.392V). Запас на папері: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN, тобто 0.395V над VSET: +175mV проти типового dropout 220mV, +45mV проти 350mV max при 25°C, −55mV проти 450mV max у повному діапазоні температур — ще до F102 і з'єднання E1→E2 (кожні 10mΩ — −32mV при 3.2A). Близько 0.4V — коліно PSRR. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -3661,7 +3862,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "v2.1, рішення власника (R-E2-18): R227 21.5k задає LNA4V5 4.30V (4.208…4.392V). Запас на папері: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN, тобто 0.395V над VSET: +175mV проти типового dropout 220mV, +45mV проти 350mV max при 25°C, −55mV проти 450mV max у повному діапазоні температур — ще до F102 і з'єднання E1→E2 (кожні 10mΩ — −32mV при 3.2A). Близько 0.4V — коліно PSRR. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -3811,7 +4012,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "v2.1, рішення власника (R-E2-18): R227 21.5k задає LNA4V5 4.30V (4.208…4.392V). Запас на папері: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN, тобто 0.395V над VSET: +175mV проти типового dropout 220mV, +45mV проти 350mV max при 25°C, −55mV проти 450mV max у повному діапазоні температур — ще до F102 і з'єднання E1→E2 (кожні 10mΩ — −32mV при 3.2A). Близько 0.4V — коліно PSRR. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -3907,7 +4108,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "v2.1, рішення власника (R-E2-18): R227 21.5k задає LNA4V5 4.30V (4.208…4.392V). Запас на папері: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN, тобто 0.395V над VSET: +175mV проти типового dropout 220mV, +45mV проти 350mV max при 25°C, −55mV проти 450mV max у повному діапазоні температур — ще до F102 і з'єднання E1→E2 (кожні 10mΩ — −32mV при 3.2A). Близько 0.4V — коліно PSRR. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -4003,7 +4204,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "v2.1, рішення власника (R-E2-18): R227 21.5k задає LNA4V5 4.30V (4.208…4.392V). Запас на папері: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN, тобто 0.395V над VSET: +175mV проти типового dropout 220mV, +45mV проти 350mV max при 25°C, −55mV проти 450mV max у повному діапазоні температур — ще до F102 і з'єднання E1→E2 (кожні 10mΩ — −32mV при 3.2A). Близько 0.4V — коліно PSRR. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -4098,7 +4299,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "v2.1, рішення власника (R-E2-18): R227 21.5k задає LNA4V5 4.30V (4.208…4.392V). Запас на папері: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN, тобто 0.395V над VSET: +175mV проти типового dropout 220mV, +45mV проти 350mV max при 25°C, −55mV проти 450mV max у повному діапазоні температур — ще до F102 і з'єднання E1→E2 (кожні 10mΩ — −32mV при 3.2A). Близько 0.4V — коліно PSRR. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -4216,7 +4417,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "v2.1, рішення власника (R-E2-18): R227 21.5k задає LNA4V5 4.30V (4.208…4.392V). Запас на папері: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN, тобто 0.395V над VSET: +175mV проти типового dropout 220mV, +45mV проти 350mV max при 25°C, −55mV проти 450mV max у повному діапазоні температур — ще до F102 і з'єднання E1→E2 (кожні 10mΩ — −32mV при 3.2A). Близько 0.4V — коліно PSRR. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -4348,7 +4549,7 @@
         },
         {
           "id": "E2-04",
-          "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+          "description": "v2.1, рішення власника (R-E2-18): R227 21.5k задає LNA4V5 4.30V (4.208…4.392V). Запас на папері: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN, тобто 0.395V над VSET: +175mV проти типового dropout 220mV, +45mV проти 350mV max при 25°C, −55mV проти 450mV max у повному діапазоні температур — ще до F102 і з'єднання E1→E2 (кожні 10mΩ — −32mV при 3.2A). Близько 0.4V — коліно PSRR. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
           "blocking": true
         },
         {
@@ -6534,7 +6735,7 @@
       "component_count": 45,
       "named_nets": [
         "BIAS_CH4",
-        "BONI13V8",
+        "BONI13V8_PORT",
         "E4_BENCH",
         "E4_CH4_RF_ONLY",
         "E4_HFP_ANT",
@@ -6670,7 +6871,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
           "blocking": true
         },
         {
@@ -6771,7 +6972,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
           "blocking": true
         },
         {
@@ -6868,8 +7069,8 @@
       "named_nets": [
         "3V3_Q6A",
         "BIAS_CH1",
-        "BIAS_CH2",
-        "BIAS_CH3",
+        "BIAS_CH2_PORT",
+        "BIAS_CH3_PORT",
         "BIAS_CH4",
         "CHASSIS",
         "E4_BENCH",
@@ -7339,7 +7540,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
           "blocking": true
         },
         {
@@ -7440,7 +7641,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
           "blocking": true
         },
         {
@@ -7704,7 +7905,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
           "blocking": true
         },
         {
@@ -7913,7 +8114,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
           "blocking": true
         },
         {
@@ -8122,7 +8323,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
           "blocking": true
         },
         {
@@ -8331,7 +8532,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
           "blocking": true
         },
         {
@@ -8466,7 +8667,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
           "blocking": true
         },
         {
@@ -8506,8 +8707,8 @@
       "component_count": 6,
       "named_nets": [
         "BIAS_CH1",
-        "BIAS_CH2",
-        "BIAS_CH3",
+        "BIAS_CH2_PORT",
+        "BIAS_CH3_PORT",
         "GND"
       ],
       "protocol_or_special_subinterfaces": [],
@@ -8588,7 +8789,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
           "blocking": true
         },
         {
@@ -11510,7 +11711,7 @@
       "source_notes": [
         "MSOP-12-EP: контакт 13 припаяний до GND з тепловими переходами. OUTS підключений до власного COUT перед баластом 20mR.",
         "OUT 11 і 12 — один внутрішній вузол. Пін 11 представляє power_out для ERC, пін 12 — додатковий фізичний контакт passive. Обидва електрично підключено.",
-        "PG не використовується; PGFB = IN та ILIM = GND згідно з описом функцій. Спільний SET двох IC потребує 22.5k, а не 45k."
+        "PG не використовується; PGFB = IN та ILIM = GND згідно з описом функцій. Спільний SET двох IC потребує 21.5k (4.30V), а не 43k."
       ],
       "coverage_constraints": [
         "Model analog rail/comparator/ESD/control-pin effects within the parent circuit; no software register interface is specified.",
@@ -12583,9 +12784,9 @@
       ],
       "source_description": "",
       "source_notes": [
-        "RILM = 7.87k відповідає 0.113–0.139 A; OVLO 112k/10k 0.1% усуває перекриття зі штатною смугою 13.8 V.",
-        "dVdt 100 nF початково задає приблизно 0.42 V/ms і 33 ms наростання. Сталий струм = 65 mA Boni + 13.86 mA bleed E4 996 Ω = 78.9 mA, плюс заряд ємності bias-tee (≈0.42 V/ms×C). Мінімальний ILIM 0.113 A < 1.5×78.9 mA = 0.118 A: правило E2-03 1.5–2× на папері не виконано (1.43–1.76×). Рекомендовано RILM≈7.15k (≈0.124–0.153 A, 1.58–1.94×) після звірки з рівнянням і таблицею допусків TPS2596 та струмовою межею bias-tee Boni; до виміру E2-03 не застосовано.",
-        "FLT не замінює струмове вікно INA3221; PTC на цій шині не встановлюється."
+        "RILM = 7.15k (v2.1) відповідає 0.122–0.153 A; OVLO 112k/10k 0.1% усуває перекриття зі штатною смугою 13.8 V.",
+        "dVdt 100 nF задає приблизно 0.42 V/ms тип. (до ≈0.66 V/ms з допуском IdVdt і X7R C269) і ≈33 ms наростання. Сталий струм у найгіршому випадку: Boni 65 mA (лише типовий) + bleed E4 996 Ω до 14.35 mA + R283/R284 і DCS tap ≈0.34 mA ≈79.7 mA; з блокувальним елементом E4-06 (+≈1.6 mA) ≈81.3 mA. ILIM min 0.122 A ≈1.50× цього (0.1215 A з TCR — на межі), max 0.153 A ≤1.92×; пусковий запас над відомими 59.4 µF ≈4…7 mA. Остаточний RILM — після HF-9: ILIM min ≥1.5×I_вим., ILIM max ≤ min(2×I_вим., DC-рейтинг bias-tee); резерв 6.98k (0.125…0.157 A).",
+        "FLT не замінює струмове вікно INA3221; PTC на цій шині не встановлюється. Тверде КЗ на P5: foldback TPS2596 (Figure 22) ≈0.09…0.11 A при 7.87k, оцінка ≈0.095…0.115 A при 7.15k, ≈1.3…1.6 W, без засувки за нормального середовища; FLT мовчить. EN_BONI знімає labd за min_voltage_v і PG_BONI (U218), а не за струмовим вікном чи DC-sense."
       ],
       "coverage_constraints": [
         "Model analog rail/comparator/ESD/control-pin effects within the parent circuit; no software register interface is specified.",
@@ -16835,7 +17036,7 @@
       "software_interface_specified": false,
       "interface_signals": [
         "E4_HF_CM",
-        "BONI13V8",
+        "BONI13V8_PORT",
         "E4_HF_BT",
         "GND"
       ],
@@ -16852,7 +17053,7 @@
         {
           "number": "DC",
           "name": "DC",
-          "net": "BONI13V8",
+          "net": "BONI13V8_PORT",
           "type": "passive"
         },
         {
@@ -16883,7 +17084,8 @@
       ],
       "source_description": "Functional interface with logical connector names; no implied physical PCB pin numbering.",
       "source_notes": [
-        "Ports ANT, RF and DC are functional names. Confirm labels, DC connector polarity and the receiver-side DC block on the actual supplied unit."
+        "Ports ANT, RF and DC are functional names. Confirm labels, DC connector polarity and the receiver-side DC block on the actual supplied unit.",
+        "v2.1: the DC port is BONI13V8_PORT, behind the E2 blocking element Q2903; with EN_BONI low it is isolated from BONI13V8. It now sees the Boni ILIM (≤0.154 A with RILM 7.15k) and any foreign DC on HF_CM: E4-03 requires a DC current rating ≥0.16 A and DC-block/choke voltage ratings ≥30 V."
       ],
       "coverage_constraints": [
         "RF/DCconnectivity and parameterized response only; no software register bus is present in the source.",
@@ -17879,7 +18081,7 @@
       "module_id": "E4/J402",
       "parent_assembly": "E4-CIR-01",
       "ref": "J402",
-      "value": "P2 UHF SMA: 4.5 V",
+      "value": "P2 UHF SMA: 4.3 V",
       "source_kind": "connector",
       "source_status": "module",
       "interface_family": "passive_connector_or_named_boundary",
@@ -17927,7 +18129,7 @@
       "module_id": "E4/J403",
       "parent_assembly": "E4-CIR-01",
       "ref": "J403",
-      "value": "P3 L-band SMA: 4.5 V",
+      "value": "P3 L-band SMA: 4.3 V",
       "source_kind": "connector",
       "source_status": "module",
       "interface_family": "passive_connector_or_named_boundary",
@@ -25590,6 +25792,15 @@
     "R237": "E2-CIR-07",
     "C239": "E2-CIR-07",
     "TP207": "E2-CIR-07",
+    "Q2901": "E2-CIR-07",
+    "Q2911": "E2-CIR-07",
+    "D2901": "E2-CIR-07",
+    "R2901": "E2-CIR-07",
+    "R2911": "E2-CIR-07",
+    "R2921": "E2-CIR-07",
+    "C2901": "E2-CIR-07",
+    "C2911": "E2-CIR-07",
+    "TP2901": "E2-CIR-07",
     "U208": "E2-CIR-08",
     "R238": "E2-CIR-08",
     "C240": "E2-CIR-08",
@@ -25601,6 +25812,15 @@
     "R242": "E2-CIR-08",
     "C243": "E2-CIR-08",
     "TP208": "E2-CIR-08",
+    "Q2902": "E2-CIR-08",
+    "Q2912": "E2-CIR-08",
+    "D2902": "E2-CIR-08",
+    "R2902": "E2-CIR-08",
+    "R2912": "E2-CIR-08",
+    "R2922": "E2-CIR-08",
+    "C2902": "E2-CIR-08",
+    "C2912": "E2-CIR-08",
+    "TP2902": "E2-CIR-08",
     "U209": "E2-CIR-09",
     "R243": "E2-CIR-09",
     "C244": "E2-CIR-09",
@@ -25672,6 +25892,15 @@
     "C273": "E2-CIR-12",
     "TP212": "E2-CIR-12",
     "C294": "E2-CIR-12",
+    "Q2903": "E2-CIR-12",
+    "Q2913": "E2-CIR-12",
+    "D2903": "E2-CIR-12",
+    "R2903": "E2-CIR-12",
+    "R2913": "E2-CIR-12",
+    "R2923": "E2-CIR-12",
+    "C2903": "E2-CIR-12",
+    "C2913": "E2-CIR-12",
+    "TP2903": "E2-CIR-12",
     "R268": "E2-CIR-13",
     "R269": "E2-CIR-13",
     "C274": "E2-CIR-13",
@@ -27188,6 +27417,96 @@
           "assembly": "E2-CIR-07"
         },
         {
+          "sheet": "E2",
+          "ref": "Q2901",
+          "pin": "7",
+          "name": "D1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        },
+        {
+          "sheet": "E2",
+          "ref": "Q2901",
+          "pin": "8",
+          "name": "D1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        },
+        {
+          "sheet": "E2",
+          "ref": "R2921",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        }
+      ],
+      "assemblies": [
+        "E2-CIR-07"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "BIAS_CH2_DAMP",
+      "pins": [
+        {
+          "sheet": "E2",
+          "ref": "R237",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        },
+        {
+          "sheet": "E2",
+          "ref": "C239",
+          "pin": "1",
+          "name": "+",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        }
+      ],
+      "assemblies": [
+        "E2-CIR-07"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "BIAS_CH2_PORT",
+      "pins": [
+        {
+          "sheet": "E2",
+          "ref": "Q2901",
+          "pin": "5",
+          "name": "D2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        },
+        {
+          "sheet": "E2",
+          "ref": "Q2901",
+          "pin": "6",
+          "name": "D2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        },
+        {
+          "sheet": "E2",
+          "ref": "C2901",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        },
+        {
+          "sheet": "E2",
+          "ref": "TP2901",
+          "pin": "1",
+          "name": "TP",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        },
+        {
           "sheet": "E4",
           "ref": "L403",
           "pin": "2",
@@ -27218,31 +27537,6 @@
         "E4-CIR-10"
       ],
       "cross_assembly": true
-    },
-    {
-      "net": "BIAS_CH2_DAMP",
-      "pins": [
-        {
-          "sheet": "E2",
-          "ref": "R237",
-          "pin": "2",
-          "name": "2",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-07"
-        },
-        {
-          "sheet": "E2",
-          "ref": "C239",
-          "pin": "1",
-          "name": "+",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-07"
-        }
-      ],
-      "assemblies": [
-        "E2-CIR-07"
-      ],
-      "cross_assembly": false
     },
     {
       "net": "BIAS_CH3",
@@ -27280,6 +27574,96 @@
           "assembly": "E2-CIR-08"
         },
         {
+          "sheet": "E2",
+          "ref": "Q2902",
+          "pin": "7",
+          "name": "D1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        },
+        {
+          "sheet": "E2",
+          "ref": "Q2902",
+          "pin": "8",
+          "name": "D1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        },
+        {
+          "sheet": "E2",
+          "ref": "R2922",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        }
+      ],
+      "assemblies": [
+        "E2-CIR-08"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "BIAS_CH3_DAMP",
+      "pins": [
+        {
+          "sheet": "E2",
+          "ref": "R242",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        },
+        {
+          "sheet": "E2",
+          "ref": "C243",
+          "pin": "1",
+          "name": "+",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        }
+      ],
+      "assemblies": [
+        "E2-CIR-08"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "BIAS_CH3_PORT",
+      "pins": [
+        {
+          "sheet": "E2",
+          "ref": "Q2902",
+          "pin": "5",
+          "name": "D2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        },
+        {
+          "sheet": "E2",
+          "ref": "Q2902",
+          "pin": "6",
+          "name": "D2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        },
+        {
+          "sheet": "E2",
+          "ref": "C2902",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        },
+        {
+          "sheet": "E2",
+          "ref": "TP2902",
+          "pin": "1",
+          "name": "TP",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        },
+        {
           "sheet": "E4",
           "ref": "L404",
           "pin": "2",
@@ -27310,31 +27694,6 @@
         "E4-CIR-10"
       ],
       "cross_assembly": true
-    },
-    {
-      "net": "BIAS_CH3_DAMP",
-      "pins": [
-        {
-          "sheet": "E2",
-          "ref": "R242",
-          "pin": "2",
-          "name": "2",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-08"
-        },
-        {
-          "sheet": "E2",
-          "ref": "C243",
-          "pin": "1",
-          "name": "+",
-          "electrical_type": "passive",
-          "assembly": "E2-CIR-08"
-        }
-      ],
-      "assemblies": [
-        "E2-CIR-08"
-      ],
-      "cross_assembly": false
     },
     {
       "net": "BIAS_CH4",
@@ -27507,25 +27866,40 @@
         },
         {
           "sheet": "E2",
+          "ref": "Q2903",
+          "pin": "7",
+          "name": "D1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-12"
+        },
+        {
+          "sheet": "E2",
+          "ref": "Q2903",
+          "pin": "8",
+          "name": "D1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-12"
+        },
+        {
+          "sheet": "E2",
+          "ref": "R2923",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-12"
+        },
+        {
+          "sheet": "E2",
           "ref": "R283",
           "pin": "1",
           "name": "1",
           "electrical_type": "passive",
           "assembly": "E2-CIR-16"
-        },
-        {
-          "sheet": "E4",
-          "ref": "A406",
-          "pin": "DC",
-          "name": "DC",
-          "electrical_type": "passive",
-          "assembly": "E4-CIR-01"
         }
       ],
       "assemblies": [
         "E2-CIR-12",
-        "E2-CIR-16",
-        "E4-CIR-01"
+        "E2-CIR-16"
       ],
       "cross_assembly": true
     },
@@ -27553,6 +27927,56 @@
         "E2-CIR-12"
       ],
       "cross_assembly": false
+    },
+    {
+      "net": "BONI13V8_PORT",
+      "pins": [
+        {
+          "sheet": "E2",
+          "ref": "Q2903",
+          "pin": "5",
+          "name": "D2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-12"
+        },
+        {
+          "sheet": "E2",
+          "ref": "Q2903",
+          "pin": "6",
+          "name": "D2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-12"
+        },
+        {
+          "sheet": "E2",
+          "ref": "C2903",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-12"
+        },
+        {
+          "sheet": "E2",
+          "ref": "TP2903",
+          "pin": "1",
+          "name": "TP",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-12"
+        },
+        {
+          "sheet": "E4",
+          "ref": "A406",
+          "pin": "DC",
+          "name": "DC",
+          "electrical_type": "passive",
+          "assembly": "E4-CIR-01"
+        }
+      ],
+      "assemblies": [
+        "E2-CIR-12",
+        "E4-CIR-01"
+      ],
+      "cross_assembly": true
     },
     {
       "net": "CHASSIS",
@@ -29311,6 +29735,399 @@
       ],
       "assemblies": [
         "E2-CIR-04"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E2_BLK2_G",
+      "pins": [
+        {
+          "sheet": "E2",
+          "ref": "Q2901",
+          "pin": "2",
+          "name": "G1",
+          "electrical_type": "input",
+          "assembly": "E2-CIR-07"
+        },
+        {
+          "sheet": "E2",
+          "ref": "Q2901",
+          "pin": "4",
+          "name": "G2",
+          "electrical_type": "input",
+          "assembly": "E2-CIR-07"
+        },
+        {
+          "sheet": "E2",
+          "ref": "D2901",
+          "pin": "1",
+          "name": "A",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        },
+        {
+          "sheet": "E2",
+          "ref": "R2901",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        },
+        {
+          "sheet": "E2",
+          "ref": "R2911",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        },
+        {
+          "sheet": "E2",
+          "ref": "C2911",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        }
+      ],
+      "assemblies": [
+        "E2-CIR-07"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E2_BLK2_S",
+      "pins": [
+        {
+          "sheet": "E2",
+          "ref": "Q2901",
+          "pin": "1",
+          "name": "S1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        },
+        {
+          "sheet": "E2",
+          "ref": "Q2901",
+          "pin": "3",
+          "name": "S2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        },
+        {
+          "sheet": "E2",
+          "ref": "D2901",
+          "pin": "3",
+          "name": "K",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        },
+        {
+          "sheet": "E2",
+          "ref": "R2901",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        },
+        {
+          "sheet": "E2",
+          "ref": "C2911",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        }
+      ],
+      "assemblies": [
+        "E2-CIR-07"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E2_BLK2_SINK",
+      "pins": [
+        {
+          "sheet": "E2",
+          "ref": "Q2911",
+          "pin": "3",
+          "name": "D",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        },
+        {
+          "sheet": "E2",
+          "ref": "R2911",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        }
+      ],
+      "assemblies": [
+        "E2-CIR-07"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E2_BLK3_G",
+      "pins": [
+        {
+          "sheet": "E2",
+          "ref": "Q2902",
+          "pin": "2",
+          "name": "G1",
+          "electrical_type": "input",
+          "assembly": "E2-CIR-08"
+        },
+        {
+          "sheet": "E2",
+          "ref": "Q2902",
+          "pin": "4",
+          "name": "G2",
+          "electrical_type": "input",
+          "assembly": "E2-CIR-08"
+        },
+        {
+          "sheet": "E2",
+          "ref": "D2902",
+          "pin": "1",
+          "name": "A",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        },
+        {
+          "sheet": "E2",
+          "ref": "R2902",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        },
+        {
+          "sheet": "E2",
+          "ref": "R2912",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        },
+        {
+          "sheet": "E2",
+          "ref": "C2912",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        }
+      ],
+      "assemblies": [
+        "E2-CIR-08"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E2_BLK3_S",
+      "pins": [
+        {
+          "sheet": "E2",
+          "ref": "Q2902",
+          "pin": "1",
+          "name": "S1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        },
+        {
+          "sheet": "E2",
+          "ref": "Q2902",
+          "pin": "3",
+          "name": "S2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        },
+        {
+          "sheet": "E2",
+          "ref": "D2902",
+          "pin": "3",
+          "name": "K",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        },
+        {
+          "sheet": "E2",
+          "ref": "R2902",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        },
+        {
+          "sheet": "E2",
+          "ref": "C2912",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        }
+      ],
+      "assemblies": [
+        "E2-CIR-08"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E2_BLK3_SINK",
+      "pins": [
+        {
+          "sheet": "E2",
+          "ref": "Q2912",
+          "pin": "3",
+          "name": "D",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        },
+        {
+          "sheet": "E2",
+          "ref": "R2912",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        }
+      ],
+      "assemblies": [
+        "E2-CIR-08"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E2_BLKB_G",
+      "pins": [
+        {
+          "sheet": "E2",
+          "ref": "Q2903",
+          "pin": "2",
+          "name": "G1",
+          "electrical_type": "input",
+          "assembly": "E2-CIR-12"
+        },
+        {
+          "sheet": "E2",
+          "ref": "Q2903",
+          "pin": "4",
+          "name": "G2",
+          "electrical_type": "input",
+          "assembly": "E2-CIR-12"
+        },
+        {
+          "sheet": "E2",
+          "ref": "D2903",
+          "pin": "1",
+          "name": "A",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-12"
+        },
+        {
+          "sheet": "E2",
+          "ref": "R2903",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-12"
+        },
+        {
+          "sheet": "E2",
+          "ref": "R2913",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-12"
+        },
+        {
+          "sheet": "E2",
+          "ref": "C2913",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-12"
+        }
+      ],
+      "assemblies": [
+        "E2-CIR-12"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E2_BLKB_S",
+      "pins": [
+        {
+          "sheet": "E2",
+          "ref": "Q2903",
+          "pin": "1",
+          "name": "S1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-12"
+        },
+        {
+          "sheet": "E2",
+          "ref": "Q2903",
+          "pin": "3",
+          "name": "S2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-12"
+        },
+        {
+          "sheet": "E2",
+          "ref": "D2903",
+          "pin": "3",
+          "name": "K",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-12"
+        },
+        {
+          "sheet": "E2",
+          "ref": "R2903",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-12"
+        },
+        {
+          "sheet": "E2",
+          "ref": "C2913",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-12"
+        }
+      ],
+      "assemblies": [
+        "E2-CIR-12"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E2_BLKB_SINK",
+      "pins": [
+        {
+          "sheet": "E2",
+          "ref": "Q2913",
+          "pin": "3",
+          "name": "D",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-12"
+        },
+        {
+          "sheet": "E2",
+          "ref": "R2913",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-12"
+        }
+      ],
+      "assemblies": [
+        "E2-CIR-12"
       ],
       "cross_assembly": false
     },
@@ -39990,6 +40807,14 @@
           "assembly": "E2-CIR-12"
         },
         {
+          "sheet": "E2",
+          "ref": "Q2913",
+          "pin": "1",
+          "name": "G",
+          "electrical_type": "input",
+          "assembly": "E2-CIR-12"
+        },
+        {
           "sheet": "E3",
           "ref": "U301",
           "pin": "2",
@@ -40160,6 +40985,14 @@
           "assembly": "E2-CIR-07"
         },
         {
+          "sheet": "E2",
+          "ref": "Q2911",
+          "pin": "1",
+          "name": "G",
+          "electrical_type": "input",
+          "assembly": "E2-CIR-07"
+        },
+        {
           "sheet": "E3",
           "ref": "U301",
           "pin": "27",
@@ -40191,6 +41024,14 @@
           "pin": "1",
           "name": "1",
           "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        },
+        {
+          "sheet": "E2",
+          "ref": "Q2912",
+          "pin": "1",
+          "name": "G",
+          "electrical_type": "input",
           "assembly": "E2-CIR-08"
         },
         {
@@ -41746,6 +42587,30 @@
         },
         {
           "sheet": "E2",
+          "ref": "Q2911",
+          "pin": "2",
+          "name": "S",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        },
+        {
+          "sheet": "E2",
+          "ref": "R2921",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        },
+        {
+          "sheet": "E2",
+          "ref": "C2901",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-07"
+        },
+        {
+          "sheet": "E2",
           "ref": "U208",
           "pin": "2",
           "name": "GND",
@@ -41797,6 +42662,30 @@
           "ref": "C243",
           "pin": "2",
           "name": "-",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        },
+        {
+          "sheet": "E2",
+          "ref": "Q2912",
+          "pin": "2",
+          "name": "S",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        },
+        {
+          "sheet": "E2",
+          "ref": "R2922",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-08"
+        },
+        {
+          "sheet": "E2",
+          "ref": "C2902",
+          "pin": "2",
+          "name": "2",
           "electrical_type": "passive",
           "assembly": "E2-CIR-08"
         },
@@ -42293,6 +43182,30 @@
           "ref": "C273",
           "pin": "2",
           "name": "-",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-12"
+        },
+        {
+          "sheet": "E2",
+          "ref": "Q2913",
+          "pin": "2",
+          "name": "S",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-12"
+        },
+        {
+          "sheet": "E2",
+          "ref": "R2923",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E2-CIR-12"
+        },
+        {
+          "sheet": "E2",
+          "ref": "C2903",
+          "pin": "2",
+          "name": "2",
           "electrical_type": "passive",
           "assembly": "E2-CIR-12"
         },
@@ -48334,6 +49247,22 @@
     },
     {
       "sheet": "E2",
+      "ref": "D2901",
+      "pin": "2",
+      "name": "NC",
+      "electrical_type": "no_connect",
+      "assembly": "E2-CIR-07"
+    },
+    {
+      "sheet": "E2",
+      "ref": "D2902",
+      "pin": "2",
+      "name": "NC",
+      "electrical_type": "no_connect",
+      "assembly": "E2-CIR-08"
+    },
+    {
+      "sheet": "E2",
       "ref": "U211",
       "pin": "2",
       "name": "NC",
@@ -48440,6 +49369,14 @@
       "sheet": "E2",
       "ref": "U213",
       "pin": "19",
+      "name": "NC",
+      "electrical_type": "no_connect",
+      "assembly": "E2-CIR-12"
+    },
+    {
+      "sheet": "E2",
+      "ref": "D2903",
+      "pin": "2",
       "name": "NC",
       "electrical_type": "no_connect",
       "assembly": "E2-CIR-12"
@@ -49363,9 +50300,9 @@
   "validation": {
     "status": "PASS",
     "source_snapshot_hashes_unchanged": true,
-    "all750refs_assigned_once": true,
-    "all2181connected_pin_net_triples_exact": true,
-    "all137NCpins_exact": true,
+    "all777refs_assigned_once": true,
+    "all2253connected_pin_net_triples_exact": true,
+    "all140NCpins_exact": true,
     "all166subinterface_pin_arrays_exact": true,
     "all_catalogue_sources_exist": true,
     "no_project_files_written_by_inventory_task": true,

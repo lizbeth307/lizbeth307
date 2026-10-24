@@ -92,9 +92,14 @@ class DesignPowerGateTest(unittest.TestCase):
         self.assertIn("E2_LNA_IN", dc_reach(self.comps, "LAB5"))
         self.assertIn("E2_LNA2_SW", dc_reach(self.comps, "E2_LNA2_SHUNT"))
         self.assertNotIn("GND", dc_reach(self.comps, "E4_P2"))
-        # Full port-to-switch-OUT paths (TPS2553 U207/U208, TPS2596 U214).
-        for port, node in (("E4_P2", "E2_LNA2_SW"), ("E4_P3", "E2_LNA3_SW"), ("E4_HF_CM", "E2_BONI_EF")):
-            self.assertIn(node, dc_reach(self.comps, port), port)
+        # Each sensed port reaches its E2 port node through the injector/bias-tee, and each
+        # protected node reaches its switch OUT (TPS2553 U207/U208, TPS2596 U214); the
+        # E4-06 blocking element (a FET) stops the walk between the two.
+        for port, port_node, protected, out in (("E4_P2", "BIAS_CH2_PORT", "BIAS_CH2", "E2_LNA2_SW"),
+                                                ("E4_P3", "BIAS_CH3_PORT", "BIAS_CH3", "E2_LNA3_SW"),
+                                                ("E4_HF_CM", "BONI13V8_PORT", "BONI13V8", "E2_BONI_EF")):
+            self.assertIn(port_node, dc_reach(self.comps, port), port)
+            self.assertIn(out, dc_reach(self.comps, protected), protected)
 
     def test_foreign_dc_gate_matches_exposed_bias_switches(self):
         outs = {p["net"] for c in self.comps.values() if c["value"].startswith(("TPS2553", "TPS2596"))
@@ -102,17 +107,32 @@ class DesignPowerGateTest(unittest.TestCase):
         exposed = [port for port in SENSED_PORTS if dc_reach(self.comps, port) & outs]
         e4 = self.graphs["E4"]
         resolve = self.gates["E4-06"]["resolve"]
-        # Current topology: every sensed port shares its DC node with a bias-switch OUT.
-        # A walk regression must fail here, not skip the gate text; a real blocking
-        # element must change this list and the E4-06 text together.
-        self.assertEqual(exposed, list(SENSED_PORTS))
-        # The protected branch shares the port node: ±30 V is only a detector-tap test
-        # until a blocking element exists, and the gate must demand that redesign.
-        self.assertIn("only at the detector tap", resolve)
-        self.assertIn("Hardware redesign required", resolve)
-        self.assertNotIn("Test±30V limited foreignDC", resolve)
+        # v2.1: a back-to-back P-MOSFET pair, held open by the branch EN, separates every
+        # sensed port from its bias-switch OUT. A walk regression must fail here, not skip
+        # the gate text; removing an element must change this list and the E4-06 text together.
+        self.assertEqual(exposed, [])
+        for port, protected, en in (("BIAS_CH2_PORT", "BIAS_CH2", "EN_LNA2"), ("BIAS_CH3_PORT", "BIAS_CH3", "EN_LNA3"),
+                                    ("BONI13V8_PORT", "BONI13V8", "EN_BONI")):
+            pair = [c for c in self.comps.values() if c["kind"] == "pfet" and {port, protected} <= set(nets(c))]
+            self.assertEqual(len(pair), 1, port)
+            pins = {p["name"]: p["net"] for p in pair[0]["pins"]}
+            source, gate = pins["S1"], pins["G1"]
+            self.assertEqual((pins["S2"], pins["G2"], pins["D1"], pins["D2"]), (source, gate, protected, port))
+            # Gate held to source (R_GS plus the 100 nF fast-edge capacitor), sunk only by the branch EN.
+            between = [c for c in self.comps.values() if set(nets(c)) - {None} == {source, gate}]
+            self.assertEqual(sorted(c["kind"] for c in between), ["capacitor", "diode", "resistor"], port)
+            self.assertTrue(any(c["kind"] == "capacitor" and c["value"].startswith("100nF 50V") for c in between), port)
+            sink = [c for c in self.comps.values() if c["kind"] == "nfet" and en in nets(c)
+                    and any(gate in nets(r) and set(nets(r)) & set(nets(c)) for r in self.comps.values() if r["kind"] == "resistor")]
+            self.assertEqual(len(sink), 1, port)
+        # The gate demands the assembled-port test, including the fast-edge hot plug,
+        # and no longer offers an eFuse whose OUT pin cannot take −30 V.
+        self.assertIn("at each assembled port", resolve)
+        self.assertIn("fast-edge hot plug", resolve)
+        self.assertNotIn("TPS2660", resolve)
+        self.assertNotIn("Hardware redesign required", resolve)
         self.assertFalse(any(n.startswith("Foreign DC design envelope is ±30 V") for n in e4["notes"]))
-        self.assertTrue(any("detector tap only" in n for n in e4["notes"]))
+        self.assertTrue(any("design target until the E4-06" in n for n in e4["notes"]))
 
 
 if __name__ == "__main__":
