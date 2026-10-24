@@ -11,11 +11,30 @@ def poly_area(pts):
 
 def board_sheet(P, bid):
     b = P.boards["boards"][bid]
-    sh = Sheet(f"B-{bid}", f"Плата {bid}: контур Edge.Cuts і кріпильні отвори", b["name"], (297.0, 210.0), 1.0, (30.0, 40.0),
+    sh = Sheet(f"B-{bid}", f"Плата {bid}: контур Edge.Cuts і кріпильні отвори", b["name"], (420.0, 297.0), 1.0, (40.0, 60.0),
                "FR-4, 4 шари, 1.6 мм (build/15)",
-               ["Координати — від лівого нижнього кута контуру, вид з боку компонентів.",
+               ["Координати — від лівого нижнього кута контуру, вид з боку компонентів (деталі лише зверху, build/15).",
                 f"Отвори ⌀{fmt(b['hole_d'])}, зона заборони міді/деталей ⌀{fmt(b['hole_keepout_d'])}; висота деталей ≤{fmt(b['max_height'])} мм.",
-                "DXF цього аркуша імпортується в KiCad як Edge.Cuts (шар CUT) і отвори (шар HOLE); 1 одиниця = 1 мм."])
+                f"Кріплення: {b['place']['mount']}" + (f"; гвинт {b['screw']}" if b.get("screw") else "") + ".",
+                "boards/<id>-edge-cuts.dxf — лише контур (CUT) і отвори (HOLE) для KiCad Edge.Cuts; 1 одиниця = 1 мм.",
+                "Пунктир: зони термопрокладок, модулі на платі, перемикачі/енкодер; рамки по краях — зони роз'ємів (contract/boards.json)."])
+    for (x, y, w, h) in b.get("thermal_bond", []):
+        sh.rect(x, y, w, h, "HIDDEN")
+        sh.label((x + 1, y + h - 3), "термопрокладка", 1.6)
+    xs0 = [p[0] for p in b["outline"]]
+    ys0 = [p[1] for p in b["outline"]]
+    for i, ez in enumerate(b.get("edge_zones", [])):
+        a0, a1 = ez["span"]
+        if ez["edge"] == "bottom":
+            sh.line((a0, min(ys0) - 2), (a1, min(ys0) - 2), "CENTER")
+            sh.label((a0, min(ys0) - 5.5 - 3.5 * i), f"E{i + 1}: {ez['use'][:70]}", 1.6)
+        elif ez["edge"] == "top":
+            sh.line((a0, max(ys0) + 2), (a1, max(ys0) + 2), "CENTER")
+            sh.label((a0, max(ys0) + 3.5 + 3.5 * i), f"E{i + 1}: {ez['use'][:70]}", 1.6)
+        elif ez["edge"] in ("left", "right"):
+            x = min(xs0) - 2 if ez["edge"] == "left" else max(xs0) + 2
+            sh.line((x, a0), (x, a1), "CENTER")
+            sh.label((x + (1.0 if ez["edge"] == "right" else -60.0), a1 + 1.0 + 3.5 * i), f"E{i + 1}: {ez['use'][:60]}", 1.6)
     sh.poly([tuple(p) for p in b["outline"]], True, "CUT")
     for (x, y, w, h) in b.get("cutouts", []):
         sh.rect(x, y, w, h, "CUT")
