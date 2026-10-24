@@ -3,7 +3,7 @@ import argparse
 import json
 import sys
 import time
-from .daemon import request_once
+from .daemon import reject_constant, request_once
 
 
 def main(argv=None):
@@ -23,6 +23,10 @@ def main(argv=None):
     route.add_argument("value", help="JSON routing selection")
     gnss = sub.add_parser("gnss_reset", help="One bounded LC76G RESET_N pulse; needs your own valid lease (e.g. while hold runs)")
     gnss.add_argument("--width-ms", type=int, default=200, help="100..500 ms; labd enforces range, 30 s spacing and 3 per 15 min")
+    plan = sub.add_parser("plan_passes", help="One sandboxed pass plan (srrx-passes@.service); read-only, at most 1 per minute")
+    plan.add_argument("--location", required=True, help="srrx.location status snapshot JSON; labd rounds it to 0.1 deg")
+    plan.add_argument("--hours", type=float, default=24.0, help="window (0, 72] h from labd's clock")
+    plan.add_argument("--min-el", type=float, default=0.0, help="minimum elevation [0, 90) deg")
     sim = sub.add_parser("sim")
     sim.add_argument("name")
     sim.add_argument("value", help="JSON value; unavailable on the physical backend")
@@ -66,6 +70,13 @@ def main(argv=None):
             request.update(op="control", name=args.name, value=args.value == "on")
         elif args.op == "gnss_reset":
             request["value"] = {"width_ms": args.width_ms}
+        elif args.op == "plan_passes":
+            with open(args.location, "rb") as stream:
+                data = stream.read(65537)
+            if len(data) > 65536:
+                raise ValueError("location snapshot exceeds 64 KiB")
+            request["value"] = {"location": json.loads(data, parse_constant=reject_constant),
+                                "hours": args.hours, "min_el_deg": args.min_el}
         elif args.op in {"mode", "lease", "relay", "route", "sim", "confirmations"}:
             request["value"] = json.loads(args.value)
             if args.op == "route":

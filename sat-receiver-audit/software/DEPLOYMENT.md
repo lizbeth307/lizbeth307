@@ -107,6 +107,17 @@ Candidate містить існуючі `srrx.service`/`srrx-poweroff.service`, 
 
 Опційний `srrx-menu.service` кладеться **окремо в `usr/lib/systemd/user/`**, не до системних служб. Його не вмикають автоматично. Labd користується `/usr/bin/python3` і stdlib; touch GUI потребує ізольованого `/opt/srrx/venv` із NumPy/PySide6. Широкі extras bounds у pyproject не є locked wheelhouse: для випуску зафіксувати exact compatible wheels, транзитивні залежності, build tools і SHA256 на CPython3.12/aarch64. Не змішувати GUI venv з GNU Radio/numpy системного пакування або NPU venv.
 
+**Прогноз проходів: `srrx-passes@.service`.** Labd не рахує проходи у власній cgroup (`MemoryMax=128M`, `TasksMax=8`): операція `plan_passes` запускає одноразовий шаблонний unit `srrx-passes@<16 hex>.service` ([LOCATION](LOCATION.md)). Staging кладе його до `etc/systemd/system/` **без** drop-in release guard: його запускає лише labd через polkit, а guard уже виконався під час старту `srrx.service`; сам unit не відкриває пристроїв, сокетів чи мережі, тоді як guard (doctor, `udevadm`, хешування cache) вимагав би для користувача `srrx-passes` доступу до записів приймання. Staging також генерує з `srrx.pass_jobs` (того самого модуля, яким користується labd) `etc/polkit-1/rules.d/60-srrx-passes.rules` і `etc/tmpfiles.d/srrx-passes.conf`. Правило polkit дозволяє користувачу `labd` лише `start` екземплярів `srrx-passes@<16 hex>.service`; будь-яка інша дія, verb, unit чи користувач ідуть за типовою політикою. Tmpfiles створює `/var/lib/srrx/plans` з режимом 2750 `srrx-passes:labd`: setgid дає планам (0640) групу `labd`, тож їх читають labd і оператори консолі, а писати може лише unit. Labd не отримує ні групи `srrx-passes`, ні нового шляху для запису: вхідні файли лежать у його `/run/srrx/passes/<id>/` (0700, файли 0600), і PID 1 передає їх unit як credentials. Ручний, reviewable план на цілі (staging його не виконує): `useradd --system --no-create-home --home-dir /nonexistent --shell /usr/sbin/nologin srrx-passes` (системна група того самого імені створюється разом із ним), далі `systemd-tmpfiles --create /etc/tmpfiles.d/srrx-passes.conf`; `polkitd` (noble 124) підхоплює нове правило без перезапуску. Окремий venv лише для прогнозу:
+
+```sh
+# План; staging його не виконує.
+python3 -m venv --copies /opt/srrx/passes-venv
+/opt/srrx/passes-venv/bin/python3 -m pip install --no-index --find-links=/srv/srrx-cache/wheels --require-hashes -r /path/to/reviewed-passes-requirements.lock
+/opt/srrx/passes-venv/bin/python3 -m pip install --no-index --no-build-isolation --no-deps /opt/srrx/software
+```
+
+Lock містить рівно `numpy==2.3.5`, `skyfield==1.55`, `sgp4==2.27`, `jplephem==2.24` і `certifi==2026.10.19`. Їхні SHA256 для aarch64 уже є в guest-локу `deployment/linux_lab/wheelhouse-requirements.txt`, але reviewed lock випуску ще не сформовано. Venv окремий, а не lab-venv build07 (numpy<2 і GNU Radio з apt, lock ще відкритий): unit запускає інтерпретатор з `-I`, і йому потрібні лише ці пакети. Наповнення venv змінює reviewed file list, тож build manifest формують після цього кроку, як і для `/opt/srrx/venv`. OMM оператор копіює в `/var/lib/srrx/orbits/gp.json` (root, 0644), allowlist NORAD — у `/etc/srrx/orbit-allowlist.json`; жодного з них staging не постачає. Без runtime, OMM, allowlist чи каталогу планів labd відповідає стабільним кодом (`PASSES_RUNTIME_MISSING`, `PASSES_OMM_MISSING`, `PASSES_ALLOWLIST_MISSING`, `PASSES_PLAN_DIR_MISSING`) і не витрачає хвилинний ліміт. Справжній запуск через systemd і polkit у guest та на Q6A (рішення polkit, `MemoryMax`, нуль сокетів, час на A55) лишається RUNTIME_ONLY (build/09, ПРХ-01).
+
 На цільовій машині **після** перевірки signed offline package/wheel cache й приймання, вручну reviewable план:
 
 ```sh
@@ -166,5 +177,6 @@ Pico прив'язаний рівно до одного файла прийма�
 | Офлайн-самоперевірка receive-only/privacy (`selftest.py`, політика DRAFT) | Статичні рядки реалізовано, host tests; рядки 11 і 14 BLOCKED, BUILDER/DEVICE/HARDWARE — RUNTIME_ONLY |
 | Lime native/raw TX audit, SDK arm64,56MHz/RAM/thermal/PCIe/firmware | OPEN, runtime disabled |
 | Phase0 FastRPC/QAIRT/firmware/DKMS/EDID/PPS, A/B rollback, physical installation | OPEN |
+| `srrx-passes@.service`, правило polkit, tmpfiles каталогу планів і операція labd `plan_passes` | Реалізовано в stage candidate і labd; host tests (емуляція PID 1 з реальним Skyfield); systemd/polkit у guest і на Q6A — RUNTIME_ONLY |
 | Порядок запуску `srrx.service` після `/dev/lab/*` device units (за `--devices`: drop-in `30-lab-devices.conf` з `Wants=`/`After=` і `JobRunningTimeoutSec=30s` для кожного з чотирьох вузлів guard; перезапуски не вичерпують start limit) | Реалізовано в stage candidate; host tests і guest-крок `systemd_device_wait_bounded`; udev/device units на Q6A — RUNTIME_ONLY |
 |37 фізичних blocking gates (з них E5-10 — W1-2 WIFI_PWR_EN) і двоточкова ADC/branch калібровка | Жодного PASS не створено |

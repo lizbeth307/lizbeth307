@@ -268,6 +268,9 @@ def main(argv=None):
             telemetry = ProjectTelemetry(args.i2c0, hardware, acceptance)
             engine = Engine(hardware, link, simulated=False, acceptance=acceptance, telemetry_reader=telemetry,
                             soc_temp_reader=SocTempSampler(), qualification_record=qualification)
+            # Pass plans: the sandboxed srrx-passes@.service through polkit, never in labd's cgroup (LOCATION.md).
+            from .pass_jobs import PassPlanner
+            engine.passes = PassPlanner()
         else:
             hardware = SimHardware(load_mapping(args.project / "design/E3.json"))
             # Synthetic detector idle levels and power-good signals are labelled

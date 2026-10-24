@@ -50,6 +50,8 @@ class Engine:
         self.imu_sample = None
         self.hmi_sample = None
         self.requested_mode = "field"
+        # srrx.pass_jobs.PassPlanner (daemon --hardware); without one, plan_passes is PASSES_DISABLED.
+        self.passes = None
         if simulated:
             # These are explicitly synthetic, never written into acceptance.
             self.policy.configure_limits({b: {"baseline_a": min(.1, CAPS[b][0] * .5),
@@ -282,6 +284,11 @@ class Engine:
         owner = request.get("_owner", "direct-test")
         if op == "status":
             return {"ok": True, "data": self.status()}
+        if op == "plan_passes":
+            # Read-only for hardware: no lease, nothing switched; the planner bounds rate and job (LOCATION.md).
+            if self.passes is None:
+                return {"ok": False, "error": "PASSES_DISABLED"}
+            return self.passes.request(request.get("value"), self.now_ms)
         if op in {"arm", "recover", "mode", "control", "relay", "route", "confirmations"} and self.policy.owner not in (None, owner):
             if op != "control" or request.get("value") is not False:
                 return {"ok": False, "error": "another local operator owns the lease"}
@@ -436,6 +443,7 @@ class Engine:
             "pico_age_ms": None if report_age is None else max(0, report_age),
             "policy": self.policy.status(), "events": list(self.events),
             "imu": imu, "hmi": self._hmi_status(),
+            "passes": self.passes.status(self.now_ms) if self.passes else {"enabled": False, "state": "DISABLED"},
             "live_identity_verified": self.identity_ok,
             "qualification_record_verified": self.qualification_ok and not self.simulated,
             "hardware_qualified": bool(self.acceptance) and self.identity_ok and not self.simulated}
@@ -452,7 +460,7 @@ class Engine:
                         self.hardware.close()
                     finally:
                         try:
-                            for reader in (self.soc_temp_reader, self.telemetry_reader):
+                            for reader in (self.soc_temp_reader, self.telemetry_reader, self.passes):
                                 if reader and hasattr(reader, "close"):
                                     reader.close()
                         finally:
