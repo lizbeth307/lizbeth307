@@ -1,9 +1,11 @@
 """Unit checks for lab guard and service derivation; no fake systemd PASS."""
 import ast
 import copy
+import hashlib
 import importlib.util
 from pathlib import Path
 import re
+import tempfile
 import types
 import unittest
 from unittest import mock
@@ -115,6 +117,74 @@ class ServiceBoundaryTests(unittest.TestCase):
                 values = [item.value for item in ast.walk(ast.parse(sample)) if isinstance(item, ast.Constant)]
                 self.assertTrue(any(bad(value) for value in values))
         self.assertEqual(smoke.REQUIRED_STEPS[-1], "gui_handoff")
+
+
+class DeviceWaitTests(unittest.TestCase):
+    """DEP-11 guest step: only throwaway probe units, the installed generator, and full cleanup."""
+    PROJECT = Path(__file__).resolve().parents[2]
+
+    def guest(self, escape=None, fail=None):
+        guest = smoke.GuestSmoke.__new__(smoke.GuestSmoke)
+        guest.project, self.calls = self.PROJECT, []
+        def command(args, accepted=(0,), **kwargs):
+            args = [str(a) for a in args]
+            self.calls.append(args)
+            if args[0] == "/usr/bin/systemd-escape":
+                out = escape(args[-1]) if escape else "dev-" + args[-1][len("/dev/"):].replace("/", "-") + ".device"
+                return types.SimpleNamespace(returncode=0, stdout=out + "\n", stderr="")
+            if fail and args[1:] == fail:
+                raise smoke.SmokeError("injected systemctl failure")
+            return types.SimpleNamespace(returncode=0, stdout="", stderr="")
+        guest.command = command
+        return guest
+
+    def test_step_runs_after_staging_with_throwaway_units_only(self):
+        self.assertEqual(smoke.REQUIRED_STEPS[smoke.REQUIRED_STEPS.index("candidate_stage") + 1], "systemd_device_wait_bounded")
+        deploy = smoke.load_deploy(self.PROJECT)
+        self.assertNotIn(smoke.DEVICE_PROBE, ("/dev/lab/rtla", "/dev/lab/rtlb", "/dev/lab/hfplus", "/dev/lab/pico", "/dev/lab/gnss"))
+        self.assertEqual(deploy.device_unit(smoke.DEVICE_PROBE), "dev-lab-srrxabsent.device")
+        for name, text in smoke.device_probe_units().items():
+            self.assertTrue(name.startswith("srrx-linux-lab-"), name)
+            for forbidden in ("[Install]", "WantedBy=", "--hardware", "srrx.service", "/dev/"):
+                self.assertNotIn(forbidden, text)
+        bootstrap = Path(SPEC.origin).with_name("guest_bootstrap.sh").read_text()
+        for path in (smoke.DEVWAIT_UNIT, smoke.DEVRETRY_UNIT, smoke.DEVWAIT_UNIT + ".d", smoke.DEVRETRY_UNIT + ".d",
+                     deploy.device_unit(smoke.DEVICE_PROBE) + ".d"):
+            self.assertIn("/etc/systemd/system/" + path, bootstrap)
+
+    def test_escape_mismatch_writes_nothing_and_failure_removes_every_probe_file(self):
+        with tempfile.TemporaryDirectory() as temporary, mock.patch.object(smoke, "UNIT_DIR", Path(temporary)):
+            guest = self.guest(escape=lambda path: "dev-lab-" + path.rsplit("/", 1)[-1])  # no .device suffix
+            with self.assertRaisesRegex(smoke.SmokeError, "differs from systemd-escape"):
+                guest.device_wait()
+            self.assertEqual(list(Path(temporary).iterdir()), [])
+            self.assertTrue(all(call[0] == "/usr/bin/systemd-escape" for call in self.calls))
+            guest = self.guest(fail=["start", smoke.DEVWAIT_UNIT])
+            with self.assertRaisesRegex(smoke.SmokeError, "injected"):
+                guest.device_wait()
+            self.assertEqual(list(Path(temporary).iterdir()), [])
+            commands = [call[1:] for call in self.calls if call[0] == "/usr/bin/systemctl"]
+            for expected in (["stop", smoke.DEVRETRY_UNIT], ["reset-failed", smoke.DEVWAIT_UNIT]):
+                self.assertIn(expected, commands)
+            self.assertEqual(commands[-1], ["daemon-reload"])
+            # A preexisting file is never replaced, and therefore never removed by the cleanup.
+            existing = Path(temporary) / smoke.DEVWAIT_UNIT
+            existing.write_text("[Service]\nExecStart=/bin/true\n")
+            with self.assertRaisesRegex(smoke.SmokeError, "refusing to replace"):
+                self.guest().device_wait()
+            self.assertEqual(existing.read_text(), "[Service]\nExecStart=/bin/true\n")
+
+    def test_report_attests_the_readiness_contract_the_guest_compared(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            guest = smoke.GuestSmoke.__new__(smoke.GuestSmoke)
+            guest.project, guest.report_path = self.PROJECT, Path(temporary) / "system-smoke.json"
+            guest.data, guest.sim_started, guest.rpc_client = {"steps": []}, False, None
+            guest.step = mock.Mock(side_effect=smoke.SmokeError("stopped before any guest action"))
+            data = guest.execute({})
+        self.assertEqual(data["status"], "FAIL")
+        contract = self.PROJECT / "design/readiness-contract.json"
+        self.assertEqual(data["source_sha256"]["design/readiness-contract.json"], hashlib.sha256(contract.read_bytes()).hexdigest())
+        self.assertIn("deployment/linux_lab/guest_smoke.py", data["source_sha256"])
 
 
 class TripCauseTests(unittest.TestCase):

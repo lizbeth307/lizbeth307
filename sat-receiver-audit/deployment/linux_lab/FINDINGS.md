@@ -82,6 +82,14 @@ Linux ігнорує `RLIMIT_CORE` для core dump, переданого чер
 - `srrx.service` тепер має `SupplementaryGroups=i2c dialout srrx-pico`: bootstrap створює системну групу `srrx-pico` без членів, `guest_smoke` вимагає її наявність і відсутність labclient. OPEN-записи мають завершити саме release guard кодом 2: перевірка `status=2` більше не збігається з `status=216` (GROUP), коли група відсутня і guard не запускався.
 - HF+ module fixture моделює відставання споживача без фатальної помилки: 64 блоки заповнюють чергу, 65-й transfer відкидається, а наступний блок у черзі позначається `discontinuity`. PTY lost-HELLO звіт записує кількість повторів HELLO до ресинхронізації, тож 2000/3000 ms не читаються як відхилення інтервалу прошивки.
 
+## Посилення harness для наступного ARM64 run (LAB-17, TOOL-07, DEP-11)
+
+Ці зміни внесено після CI run 40043380590 і в імпортованому ARM64 прогоні ще не виконано; підтвердить їх лише наступний `linux_lab=true` run.
+
+- LAB-17: модулі QEMU, які завантажуються через dlopen, більше не лишаються поза перевіркою. `fetch_tools.py` і `host.py prepare` перевіряють DT_NEEDED closure кожного `usr/lib/x86_64-linux-gnu/qemu/*.so` locked `ld.so --inhibit-cache --list`; порожній каталог модулів, `not found` або бібліотека хоста зупиняють підготовку, виправлення — лише додати пакет до lock або явно записати карантин, ніколи не пропуск. Prepare приймає тільки wrappers `fetch_tools.py` одного tools-каталогу й відмовляє, якщо на хості є `/var/run/qemu/Debian_1_8.2.2+ds-0ubuntu1` (Ubuntu QEMU шукає там відсутні модулі). `host.py run` вмикає через wrapper `LD_DEBUG=files,libs` для locked ld.so і вимагає, щоб усі фактично відображені об'єкти, зокрема NSS/gconv/plugins, лежали в tools root (`qemu-loaded-objects.json`, `host.loader_audit`); finalizer імпортує лише чистий і непорожній аудит.
+- TOOL-07: `design/readiness-contract.json` входить до `source-binding.json` напряму, а не лише через шаблон приймання; `system-smoke.json` записує його SHA256, і finalizer вимагає збігу з прив'язкою.
+- DEP-11: guest-крок `systemd_device_wait_bounded` застосовує drop-ins, згенеровані `deploy.py`, до тимчасових unit-файлів із вузлом, якого немає: oneshot стартує після timeout 3 s, а `Restart=on-failure` з `ExecStartPre=/bin/false` за 15 s не доходить до `start-limit-hit`. Назви device units звірено із `systemd-escape`. Сам `srrx.service` у guest цим кроком не запускається.
+
 ## Переносимість автономного комплекту
 
 Під час перевірки розпакованого комплекту в іншому каталозі launcher виявив відсутній порожній directory target для `tools/root/usr/share/misc/magic → ../file/magic`. Початковий host-only builder включав файли, symlinks та їхні parent directories, але губив порожні каталоги. `build_kit.py` тепер записує runtime directories в manifest, включає їх до tar та звіряє точну множину/режим каталогів. Launcher перевіряє їх до symlink resolution. Це виправлення пакування; воно не змінює виконані guest/model джерела або результати run07. Переносимість підтверджується окремими `--verify-only` і `--prepare-only`, а не повторним завантаженням VM.
@@ -99,7 +107,7 @@ Connectivity `CONNECTION_MODEL_PASS` означає виконані topology/fa
 1. Для нового запуску дочекатися завершення VM. Перевірити його `report.json`: загальний PASS, `qemu_exit_code=0`, архітектура aarch64, усі очікувані suites, `physical_tests_performed=false`, `hardware_qualified=false`. Не імпортувати проміжні логи як PASS. Імпортований CI run 40016984543 має саме ці terminal значення (для джерел до злиття).
 2. Імпортувати execution evidence і source binding. `finalize_linux_lab.py` вимагає нових `verification/linux-lab` та `verification/module-lab` каталогів; якщо існують старі результати, спершу окремо зберегти їх, не змішувати прогони.
 
-Спершу, ще до `host.py prepare`, хостові докази доводять до нерухомої точки. `design/readiness-contract.json` містить лічильники host regression (`host_tests_passed`, `host_tests_skipped`) і водночас входить до hash цієї регресії (`commissioning.GRAPH_PATHS`) та до `software/config/acceptance.template.json`, який як `software/**/*.json` входить до виконаних guest джерел (`finalize_linux_lab.bound`):
+Спершу, ще до `host.py prepare`, хостові докази доводять до нерухомої точки. `design/readiness-contract.json` містить лічильники host regression (`host_tests_passed`, `host_tests_skipped`) і водночас входить до hash цієї регресії (`commissioning.GRAPH_PATHS`) та до `software/config/acceptance.template.json`, який як `software/**/*.json` входить до виконаних guest джерел (`finalize_linux_lab.bound`). Сам контракт тепер прив'язаний і напряму (`BOUND_EXTRA`), бо guest звіряє його `gate_results` зі staged шаблоном; цикл не виникає, доки контракт не містить полів, похідних від `source-binding.json` чи стану Linux lab (це закріплює тест його набору ключів), а `verification/software-tests.json` не прив'язується:
 
 ```sh
 python3 tools/run_tests_offline.py
@@ -121,7 +129,7 @@ python3 tools/build_bundle.py
 python3 -B tools/check_bundle.py
 ```
 
-CI-job зберігає копії контракту й шаблону перед підготовкою guest і після finalizer звіряє їх через `cmp`; розбіжність зупиняє job до пакування. Шаблон після підготовки guest не перегенеровують: будь-яка його зміна дає «Linux execution result is stale».
+CI-job зберігає копії контракту й шаблону перед підготовкою guest і після finalizer звіряє їх через `cmp`; розбіжність зупиняє job до пакування. Шаблон і контракт після підготовки guest не перегенеровують: будь-яка зміна кожного з них дає «Linux execution result is stale».
 
 `build_bundle.py` вимагає актуальних host regression, Linux/module PASS, точних hashes виконаних Python/shell/service джерел, module inventory/models/графів і CAD verification. Виправлення production/model Python після підготовки guest потребує нового виконання guest; не переписувати source binding вручну. Якщо змінено джерела хостових перевірок або readiness contract, перед bundle повторити `python3 tools/run_tests_offline.py`, а після нього `python3 tools/build_documents.py`. Якщо змінено схеми, спочатку повторити CAD export/перевірки за [KiCad README](../../build/kicad/README.md).
 

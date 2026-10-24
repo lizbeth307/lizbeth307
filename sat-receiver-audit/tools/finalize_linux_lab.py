@@ -16,7 +16,10 @@ PROJECT = Path(__file__).resolve().parents[1]
 BOUND_PREFIXES = ("software/", "firmware/", "deployment/")
 BOUND_SUFFIXES = {".py", ".sh", ".service", ".json", ".toml", ".patch"}
 BOUND_TREES = ("deployment/upstream-fixtures/", "deployment/patches/")
-BOUND_EXTRA = {"tools/check_software.py", "tools/run_tests_offline.py"}
+# The guest compares the readiness contract's gate_results with the staged template (guest_smoke.py).
+# It is a sink of host evidence (test counts); never bind verification/software-tests.json itself.
+BOUND_EXTRA = {"tools/check_software.py", "tools/run_tests_offline.py", "design/readiness-contract.json"}
+CONTRACT = "design/readiness-contract.json"
 UNBOUND = ("deployment/linux_lab/build_kit.py", "firmware/dist/")
 
 
@@ -58,6 +61,37 @@ def regular_tree(root):
             regular(os.path.join(directory, name))
 
 
+def importable(report):
+    """Only a successful stopped ARM64 simulation whose QEMU mapped nothing outside its locked tools."""
+    if (report.get("status") != "PASS" or report["host"]["qemu_exit_code"] != 0
+            or report["environment"]["architecture"] != "aarch64"
+            or report["hardware_qualified"] is not False or report["physical_tests_performed"] is not False):
+        raise SystemExit("Only a successful stopped ARM64 simulation run may be imported")
+    audit = report["host"].get("loader_audit")
+    if (type(audit) is not dict or audit.get("status") != "PASS" or audit.get("outside_tools_root") != []
+            or type(audit.get("objects")) is not int or audit["objects"] < 1 or type(audit.get("dlopened")) is not list):
+        raise SystemExit("QEMU loader audit is missing, vacuous or saw objects outside the locked tools root")
+    return report
+
+
+def bind_executed(entries, project):
+    """Bound files of the guest's project manifest: each still has the executed bytes, none was added."""
+    executed = {}
+    for entry in entries:
+        relative = entry["path"]
+        if bound(relative):
+            path = project / relative
+            if not path.is_file() or path.is_symlink() or sha(path) != entry["sha256"]:
+                raise SystemExit("Executed source changed after guest preparation: " + relative)
+            executed[relative] = entry["sha256"]
+    if len(executed) < 50:
+        raise SystemExit("Incomplete executed-source manifest")
+    added = sorted(bound_sources(project) - set(executed))
+    if added:
+        raise SystemExit("Source added after guest preparation: " + ", ".join(added[:12]))
+    return executed
+
+
 def lineage_text(base):
     """README sentence for run.json's base_overlay: OS cache lineage only, never a clean-image claim."""
     if base is None:
@@ -73,27 +107,14 @@ def main():
     parser.add_argument("--work", type=Path, required=True)
     args = parser.parse_args()
     work = args.work.resolve(strict=True)
-    report = read(work / "report.json")
-    if (report.get("status") != "PASS" or report["host"]["qemu_exit_code"] != 0
-            or report["environment"]["architecture"] != "aarch64"
-            or report["hardware_qualified"] is not False or report["physical_tests_performed"] is not False):
-        raise SystemExit("Only a successful stopped ARM64 simulation run may be imported")
+    report = importable(read(work / "report.json"))
     # debugfs rdump recreates guest symlinks on the host; never follow one.
     regular_tree(work / "results")
-    entries = read(work / "results/project-manifest.json")
-    executed = {}
-    for entry in entries:
-        relative = entry["path"]
-        if bound(relative):
-            path = PROJECT / relative
-            if not path.is_file() or path.is_symlink() or sha(path) != entry["sha256"]:
-                raise SystemExit("Executed source changed after guest preparation: " + relative)
-            executed[relative] = entry["sha256"]
-    if len(executed) < 50:
-        raise SystemExit("Incomplete executed-source manifest")
-    added = sorted(bound_sources(PROJECT) - set(executed))
-    if added:
-        raise SystemExit("Source added after guest preparation: " + ", ".join(added[:12]))
+    executed = bind_executed(read(work / "results/project-manifest.json"), PROJECT)
+    # The guest smoke records what it read: the bound contract bytes must be the ones it compared.
+    smoke = read(work / "results/system-smoke.json").get("source_sha256", {})
+    if smoke.get(CONTRACT) is None or any(executed.get(name, value) != value for name, value in smoke.items()):
+        raise SystemExit("Guest smoke did not read the bound sources: " + CONTRACT)
     module_report = read(work / "results/module-lab/report.json")
     if module_report["execution_status"] != "PASS" or module_report["environment"]["architecture"] != "aarch64":
         raise SystemExit("Missing successful ARM64 per-module execution")
@@ -129,7 +150,7 @@ def main():
         target.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(path, target, follow_symlinks=False)
     shutil.copytree(work / "results/module-lab", modules, symlinks=True)
-    for name in ("report.json", "run.json", "console.log", "debugfs.log"):
+    for name in ("report.json", "run.json", "console.log", "debugfs.log", "qemu-loaded-objects.json"):
         shutil.copyfile(work / name, destination / name)
     regular_tree(destination)
     regular_tree(modules)
@@ -137,7 +158,7 @@ def main():
                "guest_source_manifest_sha256": sha(work / "results/project-manifest.json"),
                "module_report_sha256": sha(modules / "report.json"),
                "linux_report_sha256": sha(destination / "report.json"),
-               "scope": "Exact code, locks, patches and upstream fixtures present in this executed guest payload, plus its test runner; no physical qualification"}
+               "scope": "Exact code, locks, patches, upstream fixtures and the readiness contract read by this executed guest payload, plus its test runner; no physical qualification"}
     (destination / "source-binding.json").write_text(json.dumps(binding, indent=2) + "\n", encoding="utf-8", newline="\n")
     units = read(destination / "software-tests.json")
     storage = read(destination / "storage-smoke.json")
@@ -158,6 +179,8 @@ def main():
 Storage smoke: **{len(storage['cases'])} PASS** на окремому віртуальному ext4 block device. Перевірено запис маскованого спектра, неправильний пристрій, підміну mount ID, ENOSPC і втрату mount без запису на rootfs. Це не Samsung T7/USB або перевірка фізичного відключення живлення.
 
 [Таблиця модулів](../module-lab/MODULE-RESULTS.md) та автономний `../module-lab/module-results.html` відокремлюють програмні драйвери від моделі з'єднань. Повний `../module-lab/report.json` зберігає всі сценарії та обмеження. Модель з'єднань: `{connect['status']}`; її точні лічильники — в `../module-lab/connectivity.json`.
+
+Аудит завантажувача QEMU на хості (`qemu-loaded-objects.json`, locked ld.so з `LD_DEBUG=files,libs`): відображених об'єктів — {report['host']['loader_audit']['objects']}, через dlopen — {len(report['host']['loader_audit']['dlopened'])}, поза locked tools root — 0. Модулі QEMU і їхні бібліотеки додатково перевірено статично (`run.json`, `qemu_runtime`).
 
 {origin} Усі locked DEB і wheels перевстановлено з hash-перевіреного payload, а `dependency-verification.json` підтверджує, що встановлені версії точно збігаються з обома lock. Усі поточні вихідні файли замінено й перевірено за SHA256, пакет перевстановлено, усі набори виконано повторно. `source-binding.json` і `project-manifest.json` дозволяють звірити реально виконаний код. Годинник задається з host preparation timestamp; це не GNSS/PPS/RTC qualification.
 

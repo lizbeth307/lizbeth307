@@ -7,7 +7,7 @@ curl, dpkg-deb, tar, gpgv and an existing trusted Ubuntu archive keyring.
 from __future__ import annotations
 import argparse, concurrent.futures, hashlib, json, lzma
 from pathlib import Path
-import platform, shutil, subprocess, sys, urllib.parse
+import platform, re, shutil, subprocess, sys, urllib.parse
 
 PROJECT=Path(__file__).resolve().parents[2]
 LOCK=Path(__file__).with_name('host-packages.lock.json')
@@ -40,14 +40,18 @@ def signed_records(raw):
 
 
 LIBPATH=('usr/lib/x86_64-linux-gnu','lib/x86_64-linux-gnu')
+MODULE_DIR='usr/lib/x86_64-linux-gnu/qemu'
 
 
 def wrapper_texts():
     # --inhibit-cache: never resolve a missing locked library via host ld.so.cache.
+    # SRRX_LOADER_AUDIT (host.py run): only the exec'd locked ld.so (glibc 2.39) logs its loads,
+    # not this host /bin/sh, dirname or the $( ) subshell.
     template='''#!/bin/sh
 set -eu
 tools_root=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
 export QEMU_MODULE_DIR="$tools_root/root/usr/lib/x86_64-linux-gnu/qemu"
+if [ -n "${SRRX_LOADER_AUDIT:-}" ]; then export LD_DEBUG=files,libs LD_DEBUG_OUTPUT="$SRRX_LOADER_AUDIT"; fi
 exec "$tools_root/root/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2" --inhibit-cache --library-path "$tools_root/root/usr/lib/x86_64-linux-gnu:$tools_root/root/lib/x86_64-linux-gnu" "$tools_root/root/usr/bin/PROGRAM" EXTRA "$@"
 '''
     return {program:template.replace('PROGRAM',program).replace('EXTRA',extra) for program,extra in
@@ -83,13 +87,41 @@ def host_library_leaks(listing,root):
     return leaks
 
 
-def resolved_libraries(dest,program):
+def _ld_list(dest,target):
+    """The locked ld.so's DT_NEEDED resolution of any ELF object, with the wrappers' search path."""
     ldso=dest/'root/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2'
-    listing=subprocess.run([str(ldso),'--inhibit-cache','--library-path',':'.join(str(dest/'root'/x) for x in LIBPATH),
-                            '--list',str(dest/'root/usr/bin'/program)],capture_output=True,text=True,check=True).stdout
+    return subprocess.run([str(ldso),'--inhibit-cache','--library-path',':'.join(str(dest/'root'/x) for x in LIBPATH),
+                           '--list',str(target)],capture_output=True,text=True,check=True).stdout
+
+
+def resolved_libraries(dest,program):
+    listing=_ld_list(dest,dest/'root/usr/bin'/program)
     leaks=host_library_leaks(listing,dest/'root')
     if leaks:raise RuntimeError('Tool resolves a library outside the locked runtime: '+program+': '+'; '.join(leaks[:10]))
     return sorted(line.split(' => ',1)[0].strip() for line in listing.splitlines() if ' => ' in line)
+
+
+def module_closure(dest):
+    """QEMU dlopen()s its modules from QEMU_MODULE_DIR; their DT_NEEDED would otherwise fall through
+    to the host default directories at dlopen time. Every unpacked module must resolve inside root."""
+    modules=sorted((dest/'root'/MODULE_DIR).glob('*.so'))
+    if not modules:raise RuntimeError('No QEMU modules unpacked under '+MODULE_DIR+'; the closure check would be vacuous')
+    closure={}
+    for module in modules:
+        listing=_ld_list(dest,module)
+        leaks=host_library_leaks(listing,dest/'root')
+        # Fixed only by locking the missing package or an explicit quarantine, never by skipping.
+        if leaks:raise RuntimeError('QEMU module resolves a library outside the locked runtime: '+module.name+': '+'; '.join(leaks[:10]))
+        closure[module.name]=sorted(line.split(' => ',1)[0].strip() for line in listing.splitlines() if ' => ' in line)
+    return closure
+
+
+def module_upgrade_dir(version):
+    """QEMU 8.2 util/module.c with CONFIG_MODULE_UPGRADES (Ubuntu system builds) also searches
+    /var/run/qemu/<QEMU_PKGVERSION, g_strcanon to [A-Za-z0-9+-.~] with '_'> for a missing module."""
+    match=re.search(r'\((.+)\)\s*$',version)
+    if not match:raise RuntimeError('QEMU version names no package version: '+version[:200])
+    return '/var/run/qemu/'+re.sub(r'[^A-Za-z0-9+\-.~]','_',match.group(1))
 
 
 def main():
@@ -143,7 +175,10 @@ def main():
         libraries[name]=resolved_libraries(dest,name)
         result=subprocess.run([str(dest/'bin'/name),'--version'],capture_output=True,text=True,check=True)
         versions[name]=result.stdout.strip().splitlines()[0]
-    report={'status':'PASS','platform':lock['platform'],'package_count':len(lock['packages']),'download_bytes':lock['download_bytes'],'lock_sha256':digest(LOCK),'versions':versions,'libraries_resolved_inside_root':libraries,'host_installation':False,'scope':'Tool versions and program DT_NEEDED closure (ld.so --inhibit-cache --list) tested; dlopen()ed QEMU modules are not listed; no guest Linux boot, physical-board or security-update qualification claim.'}
+    modules=module_closure(dest)
+    report={'status':'PASS','platform':lock['platform'],'package_count':len(lock['packages']),'download_bytes':lock['download_bytes'],'lock_sha256':digest(LOCK),'versions':versions,'libraries_resolved_inside_root':libraries,
+            'module_count':len(modules),'modules_resolved_inside_root':modules,'module_upgrade_dir':module_upgrade_dir(versions['qemu-system-aarch64']),'host_installation':False,
+            'scope':'Tool versions, program and QEMU module DT_NEEDED closure (ld.so --inhibit-cache --list) tested; runtime dlopen()s (NSS, gconv, plugins) are observed only by the host.py run loader audit; no guest Linux boot, physical-board or security-update qualification claim.'}
     (dest/'tools-verification.json').write_text(json.dumps(report,indent=2)+'\n')
     print(json.dumps(report,indent=2))
 
