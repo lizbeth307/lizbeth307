@@ -164,7 +164,7 @@ matching GSA explicitly reports 2D, GGA altitude is held or assumed, so
 In the deployed time/location chain from STACK (STACK.md:124, :879), gpsd
 (`-n -b -s 115200`) reads `/dev/lab/gnss` and chrony disciplines the clock from
 gpsd's SHM NMEA and from PPS on `/dev/pps-gnss`; this client is how a consumer
-reads that gpsd. The raw `srrx.gnss_uart` reader ([GNSS-UART.md](GNSS-UART.md))
+(`srrx-locationd`, below, and the touch console) reads that gpsd. The raw `srrx.gnss_uart` reader ([GNSS-UART.md](GNSS-UART.md))
 is only the alternative when gpsd is not used; the two never read the UART at
 the same time.
 
@@ -203,6 +203,44 @@ This is a deliberately small protocol3 client required for a stdlib-only
 integration. It does not claim full libgps compatibility. The official gpsd
 documentation recommends its client libraries for broad protocol support; test
 this subset against the actual installed gpsd release before deployment.
+
+## Location service (srrx-locationd)
+
+`srrx.locationd` runs as `srrx-locationd.service` (user `srrx-loc`) and is the
+one GNSS position reader of the deployed system: one `LocationTracker` fed either
+by a loopback `GpsdClient` (`--gnss gpsd`) or by the read-only
+`srrx.gnss_uart.NmeaUartReader` (`--gnss raw`, refused while gpsd lists or runs
+the UART). Consumers ask for a snapshot on `/run/srrx-loc/location.sock`, one
+JSON line each way:
+
+```python
+from srrx.gnss_orchestrator import UnixLineRequest   # nonblocking; or any AF_UNIX client
+job = UnixLineRequest("/run/srrx-loc/location.sock", b'{"op":"snapshot"}\n', now_ms, 2000, "LOCATIOND")
+reply = job.poll(now_ms)   # None until the reply line arrives
+```
+
+The snapshot's `location` is exactly `tracker.status()` above. It adds
+`qualified_fix` (live fresh fix, `mode == 3`, a known satellite count of at least
+six and no jamming flag; build/07:503), the LC76G jamming flag from
+`$PAIRSPF`/`$PQTMJAMMINGSTATUS` (status 2 or more, or a malformed status, held
+60 s), the reader state and the `GNSS_RESET` count. In gpsd mode the client asks
+gpsd for `"raw":1` so that those proprietary sentences arrive next to the JSON;
+JSON lines go unchanged to `GpsdJSONDecoder`, `$` lines only to the jamming
+monitor. `{"op":"invalidate","reason":"GNSS_RESET"}` invalidates both sources;
+the last good position then stays available only as a stale `last_good` with
+reason `GNSS_RESET`. Authorization is the kernel peer credential: labd's UID may
+invalidate, labd and members of its group (the console operators) may read
+snapshots, anyone else is closed before a byte is read. Positions never reach a
+log, a file or the network.
+
+labd itself never opens the UART or gpsd: its time orchestration around
+`gnss_reset` (`srrx.gnss_orchestrator`) reads these snapshots, and PPS is selected
+in chrony only through `srrx-timegate` after a matching LC76G read-back
+(`srrx-gnss-config`) and a qualified fix held for 10 s. Details, units and the
+deployment steps are in [GNSS-UART.md](GNSS-UART.md). The touch console still
+reads gpsd directly through `GpsdClient` (gpsd mode only); moving it to these
+snapshots is not done. None of this has run against a live gpsd, chrony or
+LC76G.
 
 `GpsdJSONDecoder.feed(bytes)` is also available to callers with an existing
 transport. It rejects invalid UTF-8, duplicate keys, nonfinite values, excessive
@@ -268,8 +306,8 @@ view = pointing_from_status(tracker.status(now_ms), first_fix_stable=gate.stable
   `satellites >= 6`, and the first-run window (3D, >= 8 satellites, within
   50 m for 5 min, `FirstFixGate`). The tracker itself accepts as few as three
   satellites, so the gate is not optional. Conservative choices: an unknown
-  satellite count never qualifies (a gpsd TPV carries no count, so a gpsd-only
-  fix stays unqualified until SKY counts are wired); the first-run window is per
+  satellite count never qualifies (a gpsd TPV carries no count: it comes from the
+  same epoch's SKY, so a gpsd fix without one stays unqualified); the first-run window is per
   process, never persisted, and restarts after any failed sample or a gap of more
   than 5 s between samples; a backwards clock latches the gate closed.
 - Manual and last-good positions still give angles, labelled "not a GNSS fix".

@@ -321,6 +321,8 @@ class SocketTests(unittest.TestCase):
                     block = client.recv(65536)
                 except BlockingIOError:
                     continue
+                except ConnectionResetError:
+                    break  # closed with our request unread (refused peer, oversize): no reply
                 if not block:
                     break
                 data.extend(block)
