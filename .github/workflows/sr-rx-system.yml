@@ -10,6 +10,16 @@ name: SR-RX system files, device tree, DKMS, NPU layout and MCU runtime
 
 on:
   workflow_dispatch:
+  # A new workflow can be dispatched only once it is on the default branch; until then a
+  # push to a work branch that touches these paths runs it.
+  push:
+    branches: ['wip/**', 'codex/**', 'ccr-*']
+    paths:
+      - 'sat-receiver-audit/deployment/system/**'
+      - 'sat-receiver-audit/tools/flash_mcu.py'
+      - 'sat-receiver-audit/firmware/runtime.lock.json'
+      - 'sat-receiver-audit/firmware/mpremote-requirements.txt'
+      - '.github/workflows/sr-rx-system.yml'
   pull_request:
     paths:
       - 'sat-receiver-audit/deployment/system/**'
