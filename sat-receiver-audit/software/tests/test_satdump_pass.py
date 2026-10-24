@@ -225,8 +225,9 @@ class DecodeTests(unittest.TestCase):
             if argv[argv.index("--") + 2] == "pipeline" and argv[-1] == "--help":
                 return 0, probe_output
             out = Path(argv[argv.index("--") + 6])
+            out.mkdir(parents=True)  # SatDump creates the output folder even when nothing decodes
             if products:
-                (out / "MSU-MR").mkdir(parents=True)
+                (out / "MSU-MR").mkdir()
                 (out / "MSU-MR" / "msu_mr_rgb_221.png").write_bytes(png())
                 (out / "meteor_m2-x_lrpt.cadu").write_bytes(b"\x1a\xcf\xfc\x1d" * 4)
                 os.symlink("/etc/passwd", out / "MSU-MR" / "link.png")

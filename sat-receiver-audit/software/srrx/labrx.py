@@ -155,12 +155,13 @@ class WorkerSource:
         finally:
             sender.close()
 
-    def read(self, guard, *, timeout_s=1.0, keep=MAX_FFT_SIZE):
+    def read(self, guard, *, timeout_s=1.0, keep=None):
         """Newest contiguous worker samples; a stale backlog is dropped, never spliced.
 
         discontinuity is True when this result does not continue the previous one. keep bounds
         the backlog kept per call (the baseband recorder keeps one second, run_capture one FFT).
         """
+        keep = MAX_FFT_SIZE if keep is None else keep
         now = time.monotonic()
         if self.ready:
             deadline = now + timeout_s
