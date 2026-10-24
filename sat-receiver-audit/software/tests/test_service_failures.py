@@ -352,6 +352,8 @@ class EngineFailureTests(unittest.TestCase):
                 for frame in frames:
                     if frame['t'] == 'HELLO':
                         frame['p'].update({k: v for k, v in self.identity.items() if v is not ...})
+                        for key in [k for k, v in self.identity.items() if v is ...]:
+                            del frame['p'][key]  # SimLink sends the firmware HELLO shape.
                 return frames
         # This is an in-memory Engine unit fixture, never a commissioned file.
         acceptance = {'branch_limits': copy.deepcopy(self.engine.policy.limits),
@@ -393,6 +395,8 @@ class EngineFailureTests(unittest.TestCase):
                     self.assertFalse(hardware.initialized)  # No MCP write before full handshake.
                 finally:
                     engine.close()
+        from srrx.hmi import readable_fault
+        self.assertIn('re-provision the Pico', readable_fault(record))
 
     def test_repeated_hello_keeps_status_readings_and_new_session_drops_them(self):
         # The Pico HELLO carries no sensor readings (512-byte frame); see test_supervisor.
@@ -423,6 +427,84 @@ class EngineFailureTests(unittest.TestCase):
         self.assertEqual(self.engine.uv_since, since)  # No reading is no news for the dwell.
         self.assertIn('new_pico_session', self.engine.last_error)
         self.assert_safe()
+
+    def test_model_link_sends_the_firmware_hello_then_status(self):
+        slim = {'state', 'fault', 'mcp_reset', 'calibration_valid', 'hardware_commissioned',
+                'reject_reason', 'hb_fresh', 'q6a_on'}
+        link = SimLink(PROJECT)
+        frames = link.poll(0)
+        self.assertEqual([(f['t'], f['q']) for f in frames], [('HELLO', 0), ('STATUS', 1)])
+        self.assertEqual(set(frames[0]['p']), slim | {'revision', 'serial', 'calibration_crc32',
+                                                      'qualification_record'})
+        self.assertIsNone(frames[0]['p']['qualification_record'])  # A model is never commissioned.
+        self.assertEqual(frames[1]['p']['battery_mv'], 14800)
+        self.assertEqual(link.poll(20), [])
+        # setUp's first tick took both: fresh readings, so its first HB went out.
+        self.assertEqual([f['t'] for f in self.link.sent], ['HB'])
+        self.assertIs(self.engine.status()['pico_fresh'], True)
+
+    def test_hello_only_stream_goes_stale_and_hands_undervoltage_to_the_pico(self):
+        # STATUS frames are lost while the firmware's 1 s HELLO repeats still
+        # arrive. HELLO carries no readings: labd must not show the last battery
+        # as live, and must stop HB so the Pico's no-HB UV cut takes over.
+        model, delegate = self.link.delegate.model, self.link.delegate
+        self.advance(2000)
+        self.assertIs(self.engine.status()['pico_fresh'], True)
+        lost, mark = self.now, None
+        self.link.inputs['battery_mv'] = 12000  # Below the 13050 mV cutoff.
+        self.link.silence_status = True
+        while self.now < lost + 9100:
+            if (self.now - lost) % 1000 == 0:
+                frame = {'v': 1, 't': 'HELLO', 's': model.session, 'q': delegate.tx_seq,
+                         'p': delegate.hello_payload(model, None)}
+                delegate.tx_seq += 1
+                self.link.injected.extend(FrameDecoder().feed(encode_frame(frame)))
+            self.advance(self.now + 20)
+            status = self.engine.status()
+            if mark is None and not status['pico_fresh']:
+                mark = len(self.link.sent)
+                self.assertGreater(status['pico_age_ms'], 500)
+                self.assertLessEqual(self.now - lost, 540)
+                self.assertEqual(self.engine.request({'op': 'arm'})['error'], 'fresh Pico HELLO/status required')
+            if self.now == lost + 1100:
+                # The HELLO at +1 s refreshed the link and state, not the readings.
+                self.assertLessEqual(self.now - self.engine.last_status_ms, 100)
+                self.assertEqual(status['pico']['state'], 'SAFE')
+                self.assertNotIn('battery_mv', status['pico'])
+                self.assertIs(status['pico_fresh'], False)
+        self.assertIsNotNone(mark)
+        self.assertFalse(any(f['t'] == 'HB' for f in self.link.sent[mark:]))
+        self.assertEqual((model.state, model.fault), ('OFF', 'UNDERVOLTAGE_NO_HEARTBEAT'))
+        # The next HELLO of the new session reports the cut to labd.
+        self.assertEqual(self.engine.last_error, 'pico_UNDERVOLTAGE_NO_HEARTBEAT')
+        self.assert_safe()
+
+    def test_hardware_start_passes_the_acceptance_digest_to_the_engine(self):
+        from srrx import daemon
+        folder = tempfile.TemporaryDirectory()
+        self.addCleanup(folder.cleanup)
+        accepted = Path(folder.name) / 'acceptance.json'
+        raw = b'{"synthetic": "accepted only by the patched validator"}\n'
+        accepted.write_bytes(raw)
+        record, built = {'accepted_at': '2026-01-02T00:00:00Z'}, []
+
+        def engine(*args, **kwargs):
+            built.append(kwargs)
+            raise RuntimeError('fixture stops after the Engine arguments')
+        with patch('srrx.commissioning.load_acceptance', return_value=record) as validator, \
+             patch('srrx.daemon.LinuxHardware') as hardware, patch('srrx.daemon.SerialLink') as link, \
+             patch('srrx.runtime_telemetry.ProjectTelemetry'), patch('srrx.daemon.SocTempSampler'), \
+             patch('srrx.daemon.Engine', side_effect=engine), patch('builtins.print'):
+            self.assertEqual(daemon.main(['--hardware', '--acceptance', str(accepted),
+                                          '--i2c', '/dev/fixture-i2c2', '--i2c0', '/dev/fixture-i2c0',
+                                          '--pico', '/dev/fixture-pico']), 1)
+        self.assertEqual(validator.call_args.kwargs['raw'], raw)  # The hashed bytes were validated.
+        self.assertEqual(len(built), 1)
+        self.assertEqual(built[0]['qualification_record'], hashlib.sha256(raw).hexdigest())
+        self.assertIs(built[0]['acceptance'], record)
+        self.assertIs(built[0]['simulated'], False)
+        link.return_value.close.assert_called_once()
+        hardware.return_value.close.assert_called_once()
 
     def test_close_still_releases_hardware_and_telemetry_when_link_close_raises(self):
         class Reader:

@@ -4,9 +4,11 @@ from datetime import datetime, timezone
 import hashlib
 import importlib.util
 import json
+import os
 from pathlib import Path
 import shutil
 import tempfile
+import threading
 import unittest
 from unittest.mock import patch
 import zlib
@@ -283,6 +285,35 @@ class AcceptanceTests(unittest.TestCase):
         self.path.write_bytes(b" " * (2 * 1024 * 1024 + 1))
         with self.assertRaises(ValidationError):
             load_acceptance_bound(self.path, self.root)
+
+    def test_bound_read_refuses_empty_and_non_regular_paths(self):
+        empty, folder = self.root / "empty.json", self.root / "folder.json"
+        empty.write_bytes(b"")
+        folder.mkdir()
+        for path in (empty, folder):
+            with self.subTest(path=path.name), self.assertRaises(ValidationError) as caught:
+                load_acceptance_bound(path, self.root)
+            self.assertEqual(str(caught.exception), "cannot read acceptance; hardware BLOCKED")
+
+    @unittest.skipUnless(hasattr(os, "mkfifo"), "POSIX FIFO")
+    def test_bound_read_of_a_fifo_fails_instead_of_blocking_labd(self):
+        fifo = self.root / "acceptance.json"
+        os.mkfifo(fifo)
+        outcome = []
+
+        def read():
+            try:
+                load_acceptance_bound(fifo, self.root, clock_check=False)
+            except ValidationError as exc:
+                outcome.append(str(exc))
+        worker = threading.Thread(target=read, daemon=True)
+        worker.start()
+        worker.join(5)
+        if worker.is_alive():
+            # A blocking open() waits for a writer: release it so the run ends.
+            os.close(os.open(fifo, os.O_WRONLY | os.O_NONBLOCK))
+            worker.join(5)
+        self.assertEqual(outcome, ["cannot read acceptance; hardware BLOCKED"])
 
     def test_provisioned_pico_hello_arms_only_with_its_own_acceptance_bytes(self):
         # provision -> the firmware's own record check and HELLO -> UART codec -> Engine.

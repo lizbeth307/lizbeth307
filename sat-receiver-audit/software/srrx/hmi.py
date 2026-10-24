@@ -43,7 +43,9 @@ def readable_fault(value):
         return "No protection fault reported"
     return {"new_pico_session": "Stopped — ready for an explicit start",
             "operator_disarm": "Stopped by operator",
-            "operator_shutdown": "Shutdown requested"}.get(str(value), str(value).replace("_", " ")[:240])
+            "operator_shutdown": "Shutdown requested",
+            "pico_qualification_record_mismatch": "Pico commissioning does not match the labd acceptance file"
+                " — re-provision the Pico (ARM refused)"}.get(str(value), str(value).replace("_", " ")[:240])
 
 
 def channel_rows(data, live):

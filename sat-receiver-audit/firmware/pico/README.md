@@ -103,7 +103,8 @@ remain below half the ticks period; a reversed/ambiguous clock fails closed.
    leaves reset asserted and reports its reason.
 3. WARMING holds reset for at least 100 ms and waits for two distinct fresh HB
    observations after ARM. Multiple packets received at one timestamp count as
-   one observation. Host sends HB every 200 ms.
+   one observation. Host sends HB every 200 ms while its STATUS readings are
+   fresh (<=500 ms).
 4. Pico actively drives GP17 LOW and enters CONFIGURING. Host must write safe
    MCP registers and reply CONFIGURED with `p.safe=true` within 1000 ms. Reset
    defaults and application pulldowns must be measured, not inferred from ACK.
@@ -144,7 +145,7 @@ The bounded subset of STACK sections 5.1/5.6 is implemented as follows:
 | No HB after ARM_OFF | Cut after 60 s from last shutdown HB or ARM_OFF, whichever is later |
 | Q6A 3V3 falls after being observed on | Reset immediately; Pololu OFF after 3 s |
 | Calibrated battery <=13.05 V with no fresh HB | Pololu OFF after continuous 5 s; recovery or fresh HB resets dwell. Same 13050 mV as the host graceful cutoff, above the 12.8 V hardware UV trip |
-| Battery low with live HB | Host implements the INA228/Linux graceful shutdown policy; this fallback does not replace it |
+| Battery low with live HB | Host implements the INA228/Linux graceful shutdown policy; this fallback does not replace it. labd sends HB only while it holds STATUS readings no older than 500 ms (a HELLO carries none), so a host that cannot see the battery leaves this fallback active |
 | Physical button | 30 ms debounce; short release emits POWER_BUTTON, 1.5 s hold requests graceful shutdown |
 | Restart after OFF | Physical button edge and battery >=13.6 V clear software latch; remote ARM alone cannot restart |
 | Host maximum SoC temperature | In hardware mode labd sends `soc_temp_c` in every HB: the hottest Linux thermal zone in C, 0.1 C steps, re-read at most once a second on a separate labd thread (`SocTempSampler`), outside the 20 ms safety tick (`software/PROTOCOL.md`). Fan on at60 C, off at50 C. labd omits the field when a zone is unreadable or out of range, when the cached sample is older than 3 s, and in simulation; a missing/nonfinite value or stale HB forces full cooling (fan on) |

@@ -36,7 +36,7 @@ CHG_INHIBIT=HIGH у таблиці означає програмний safe imag
 
 ## Фізичний режим і симуляція
 
-Default backend — SIMULATION, із synthetic branch samples і явним `hardware_qualified=false`. Тест підтверджує, що симуляція не створює acceptance. Фізичний startup у `daemon.main` має спершу пройти `commissioning.load_acceptance`, отримати явно задані I²C/UART шляхи, а потім свіжий Pico handshake з відповідними serial/calibration CRC. Без acceptance або із mismatch виходи не ініціалізуються й ARM не передається.
+Default backend — SIMULATION, із synthetic branch samples і явним `hardware_qualified=false`. Тест підтверджує, що симуляція не створює acceptance. Фізичний startup у `daemon.main` має спершу пройти `commissioning.load_acceptance_bound` (перевірені байти звичайного файла та їхній SHA256), отримати явно задані I²C/UART шляхи, а потім свіжий HELLO з відповідними serial, calibration CRC, `hardware_commissioned=true` і `qualification_record` (HW-10) та свіжий STATUS із вимірами. Без acceptance або із mismatch виходи не ініціалізуються й ARM не передається.
 
 `Engine` — внутрішній single-writer компонент; його аргумент acceptance є вже перевіреним словником від startup validator. Прямий Python-виклик конструктора з довільним словником не є процедурою hardware commissioning. Тестова fixture не зберігається в acceptance чи вимірювальних файлах. Branches без фізичного ADC залишаються reservations/unknown, а не «виміряними» каналами; це також покривають policy/telemetry тести інших модулів.
 
