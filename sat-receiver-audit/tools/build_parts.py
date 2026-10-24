@@ -36,6 +36,14 @@ PCB_MOUNTS = ('pcb_smt', 'pcb_tht', 'pcb_pad', 'pcb_module')
 BUY_MOUNTS = ('pcb_smt', 'pcb_tht', 'pcb_module', 'module', 'panel', 'harness', 'remote', 'rework')
 MOUNTS = PCB_MOUNTS + ('module', 'panel', 'harness', 'remote', 'rework', 'on_module', 'existing', 'assembly', 'virtual')
 PASSIVE = ('resistor', 'capacitor', 'inductor')
+# Part fields this generator owns in design/E*.json (tools/generate_kicad.py prints them as KiCad fields).
+GRAPH_FIELDS = ('footprint', 'mpn', 'manufacturer', 'lcsc', 'alt_mpn')
+# Schema of design/parts/parts.json (described in design/parts/README.md).
+PART_KEYS = {'id', 'mount', 'refs', 'kind', 'package', 'footprint', 'manufacturer', 'mpn', 'sku', 'alternates', 'extras', 'match',
+             'single_source', 'tbd', 'source', 'note', 'polarized', 'deviation', 'unused_pads', 'host'}
+ALT_KEYS = {'manufacturer', 'mpn', 'sku', 'note'}
+EXTRA_KEYS = {'manufacturer', 'mpn', 'sku', 'qty_per_ref', 'item', 'note'}
+SKU_KEYS = {'lcsc', 'digikey', 'mouser', 'tme', 'web'}
 BOARD3 = {'PWR_MAIN': 'POWER', 'PWR_BRANCH': 'POWER', 'USB_POWER': 'POWER', 'RF_HMC': 'RF', 'RF_HF': 'RF', 'RF_INJECTOR': 'RF', 'DC_CORE': 'RF', 'CTRL_HMI': 'CTRL'}
 SHEET_BOARD = {'E1': 'POWER', 'E2': 'POWER', 'E3': 'CTRL', 'E4': 'RF', 'E5': 'POWER'}
 SECTIONS = [('pcb_smt', 'Плати: SMD (збирання JLC PCBA)'), ('pcb_tht', 'Плати: THT (ручне паяння або THT-збирання)'),
@@ -160,6 +168,10 @@ def requirement_problems(kind, value, attrs, deviation=None):
     return out
 
 
+def alt_text(p):
+    return '; '.join(f'{a.get("manufacturer", "")} {a["mpn"]}'.strip() for a in p.get('alternates', []))
+
+
 def norm_mpn(s):
     """Distributors drop spaces, dashes and leading zeros differently (43650-0315 = 436500315)."""
     return re.sub(r'[\s\-]+', '', s or '').upper().lstrip('0')
@@ -222,6 +234,9 @@ class Model:
     def err(self, msg):
         self.errors.append(msg)
 
+    def part_of_ref(self, ref):
+        return next((p for p in self.db['parts'] if ref in p['refs']), None)
+
     def lcsc_rec(self, entry):
         code = (entry.get('sku') or {}).get('lcsc')
         return self.lcsc.get(code) if code else None
@@ -265,9 +280,37 @@ class Model:
         if age > self.db['policy']['snapshot_max_age_days']:
             self.warnings.append(f'newest availability snapshot is {age} days old ({newest}); run tools/check_parts_availability.py')
 
+    def check_schema(self, p):
+        """design/parts/README.md lists these keys; an unknown key is a typo, not data."""
+        for key in sorted(set(p) - PART_KEYS):
+            self.err(f'{p.get("id")}: unknown key {key}')
+        for k in ('id', 'mount', 'refs'):
+            if not p.get(k):
+                self.err(f'{p.get("id")}: missing {k}')
+        for group, allowed in (('alternates', ALT_KEYS), ('extras', EXTRA_KEYS)):
+            for e in p.get(group, []):
+                for key in sorted(set(e) - allowed):
+                    self.err(f'{p.get("id")}: {group} entry {e.get("mpn")} has unknown key {key}')
+                if not e.get('mpn'):
+                    self.err(f'{p.get("id")}: {group} entry without mpn')
+        for e in [p] + p.get('alternates', []) + p.get('extras', []):
+            for dist in sorted(set(e.get('sku') or {}) - SKU_KEYS):
+                self.err(f'{p.get("id")}: unknown distributor key {dist}')
+
     def check_part(self, p, manifest_fps):
+        self.check_schema(p)
         mount, fp = p['mount'], p.get('footprint')
         refs = [r for r in p['refs'] if r in self.comps]
+        if mount == 'virtual':
+            host = p.get('host') or {}
+            if sorted(host) != sorted(p['refs']):
+                self.err(f'{p["id"]}: a virtual part needs host refs for exactly its refs')
+            for ref, h in host.items():
+                hp = self.part_of_ref(h)
+                if hp is None or hp['mount'] not in PCB_MOUNTS or not hp.get('footprint'):
+                    self.err(f'{p["id"]}: host {h} of {ref} is not a board part with a footprint')
+        elif p.get('host'):
+            self.err(f'{p["id"]}: host is only for mount=virtual')
         if mount in PCB_MOUNTS:
             if not fp:
                 self.err(f'{p["id"]}: board mount {mount} without footprint')
@@ -276,10 +319,23 @@ class Model:
             else:
                 lib, name = fp.split(':', 1)
                 pads = set(pads_of(LIBDIR / f'{lib}.pretty' / f'{name}.kicad_mod'))
+                unused = p.get('unused_pads', {})
                 for ref in refs:
-                    missing = sorted({str(x['number']) for x in self.comps[ref][1]['pins']} - pads)
+                    pins = {str(x['number']) for x in self.comps[ref][1]['pins']}
+                    missing = sorted(pins - pads)
                     if missing:
                         self.err(f'{ref}: pins {missing} have no pad in {fp}')
+                    # Every pad is a graph pin or an explained unused/mechanical pad (PIN-01).
+                    extra = sorted(pads - pins)
+                    unexplained = [x for x in extra if x not in unused]
+                    if unexplained:
+                        self.err(f'{ref}: pads {unexplained} of {fp} are neither graph pins nor listed in unused_pads')
+                    stale = sorted(set(unused) - set(extra))
+                    if stale:
+                        self.err(f'{ref}: unused_pads {stale} are graph pins or not pads of {fp}')
+                for pad, why in unused.items():
+                    if not isinstance(why, str) or not why.strip():
+                        self.err(f'{p["id"]}: unused pad {pad} needs a reason')
         elif fp and fp not in manifest_fps:
             self.err(f'{p["id"]}: footprint {fp} is not vendored')
         if p.get('polarized'):
@@ -344,7 +400,9 @@ class Model:
                     want['manufacturer'] = p['manufacturer']
                 if p['mount'] in ('pcb_smt', 'pcb_tht') and (p.get('sku') or {}).get('lcsc') and not p.get('tbd'):
                     want['lcsc'] = p['sku']['lcsc']
-                for key in ('footprint', 'mpn', 'manufacturer', 'lcsc'):
+                if 'mpn' in want and p.get('alternates'):
+                    want['alt_mpn'] = alt_text(p)
+                for key in GRAPH_FIELDS:
                     if key in want:
                         if key in c:
                             c[key] = want[key]
@@ -391,7 +449,30 @@ class Model:
         manifest = {'kicad_version': KICAD_TAG, 'assignments': sum(len(v) for v in uses.values()), 'footprints': rows,
                     'source': 'https://gitlab.com/kicad/libraries/kicad-footprints/-/tree/' + KICAD_TAG,
                     'generator': 'tools/build_parts.py from design/parts/parts.json'}
+        self.manifest_rows = rows
         return json.dumps(manifest, ensure_ascii=False, indent=2) + '\n'
+
+    def readme_text(self):
+        rows = self.manifest_rows
+        official = [r for r in rows if r['origin'].startswith('KiCad')]
+        custom = [r for r in rows if r['origin'] == 'SR_RX_Custom custom']
+        derived = [r for r in rows if r['origin'] == 'SR_RX_Custom derived']
+        assigned = sum(len(r['refs']) for r in rows)
+        libs = sorted({r['footprint'].split(':', 1)[0] for r in official})
+        return '\n'.join([
+            f'# Project footprint library (KiCad {KICAD_TAG})', '',
+            f'Generated by `tools/build_parts.py` from `design/parts/parts.json`; do not edit by hand. {len(rows)} footprints carry {assigned} '
+            f'footprint assignments of the schematic graphs design/E1..E5.json; `manifest.json` lists each file with its SHA256, pad names and refs.', '',
+            f'- {len(official)} official KiCad {KICAD_TAG} footprints, byte-for-byte unmodified, in {len(libs)} libraries ({", ".join(libs)}). '
+            f'Source: https://gitlab.com/kicad/libraries/kicad-footprints/-/tree/{KICAD_TAG} (the first 17 came from the PPA package '
+            '`kicad-footprints_10.0.7~ubuntu24.04.1_all.deb`, SHA256 a1c25a690348180d572b73496668cffafdaecf284d6555279fa89d5e4fefa46c, which carries the same files). '
+            'The parts workflow compares every one of them with the library inside the kicad/kicad:10.0.7 image.',
+            f'- {len(custom)} custom footprints in `SR_RX_Custom.pretty`, written by `tools/make_footprints.py` from the manufacturer land pattern named in '
+            '`SR_RX_Custom.pretty/provenance.json` (URL, drawing, page, read date).',
+            f'- {len(derived)} derived footprints in `SR_RX_Custom.pretty`: an official footprint with unchanged geometry whose pad numbers are renamed to the '
+            'graph pin names (A/K, CENTER/SHIELD, EPAD, SWD pads); the source SHA256 is in provenance.json.', '',
+            'The project fp-lib-table uses ${KIPRJMOD} relative paths. See LICENSE.md for the KiCad library licence. No 3D models are committed. '
+            'A footprint here is a layout input, not a fabrication release: custom land patterns still need review against the part drawing before an order.', ''])
 
     def fp_table_text(self):
         lines = ['(fp_lib_table', '  (version 7)']
@@ -440,7 +521,7 @@ class Model:
                          'lcsc': (p.get('sku') or {}).get('lcsc', ''), 'digikey': (p.get('sku') or {}).get('digikey', ''),
                          'other': (p.get('sku') or {}).get('web', '') or p.get('source', ''),
                          'lcsc_stock': '' if rec is None else rec.get('stock'), 'lcsc_usd': '' if rec is None else unit_price(rec, qty + spare),
-                         'alternates': '; '.join(f'{a.get("manufacturer", "")} {a["mpn"]}'.strip() for a in p.get('alternates', [])),
+                         'alternates': alt_text(p),
                          'state': state, 'note': '; '.join(x for x in (why if state == 'TBD' else '', p.get('note', ''), p.get('single_source', '') and 'одне джерело: ' + p['single_source']) if x)})
             for ex in p.get('extras', []):
                 rec = self.lcsc_rec(ex)
@@ -573,6 +654,7 @@ def main():
     prep = prepare_module()
     files = dict(model.graph_texts())
     files[LIBDIR / 'manifest.json'] = model.manifest_text()
+    files[LIBDIR / 'README.md'] = model.readme_text()
     files[ROOT / 'build/kicad/fp-lib-table'] = model.fp_table_text()
     rows = model.bom(prep)
     cov = model.coverage(prep)

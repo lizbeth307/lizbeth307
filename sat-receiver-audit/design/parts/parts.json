@@ -175,7 +175,7 @@
    },
    "alternates": [
     {
-     "manufacturer": "Vishay Intertech",
+     "manufacturer": "Vishay Dale",
      "mpn": "TNPW0603332KBEEA",
      "sku": {
       "lcsc": "C4351218"
@@ -192,7 +192,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "PANASONIC",
+   "manufacturer": "Panasonic",
    "mpn": "ERA3AEB4021V",
    "sku": {
     "lcsc": "C491130"
@@ -216,7 +216,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF1003T5E",
    "sku": {
     "lcsc": "C25803"
@@ -284,14 +284,14 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF4224T5E",
    "sku": {
     "lcsc": "C422927"
    },
    "alternates": [
     {
-     "manufacturer": "Vishay Intertech",
+     "manufacturer": "Vishay Dale",
      "mpn": "CRCW06034M22FKEA",
      "sku": {
       "lcsc": "C3009313"
@@ -315,7 +315,7 @@
    },
    "alternates": [
     {
-     "manufacturer": "Vishay Intertech",
+     "manufacturer": "Vishay Dale",
      "mpn": "TNPW06034K99BEEA",
      "sku": {
       "lcsc": "C844461"
@@ -420,7 +420,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF2002T5E",
    "sku": {
     "lcsc": "C4184"
@@ -444,7 +444,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF4703T5E",
    "sku": {
     "lcsc": "C23178"
@@ -475,7 +475,7 @@
    },
    "alternates": [
     {
-     "manufacturer": "Vishay Intertech",
+     "manufacturer": "Vishay Dale",
      "mpn": "TNPW0603174KBEEA",
      "sku": {
       "lcsc": "C1870358"
@@ -525,7 +525,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF9530T5E",
    "sku": {
     "lcsc": "C93622"
@@ -577,7 +577,7 @@
    "mount": "rework",
    "kind": "resistor",
    "package": "0603",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF5101T5E",
    "sku": {
     "lcsc": "C23186"
@@ -601,7 +601,7 @@
    "mount": "rework",
    "kind": "resistor",
    "package": "0603",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF1502T5E",
    "sku": {
     "lcsc": "C22809"
@@ -626,7 +626,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF1001T5E",
    "sku": {
     "lcsc": "C21190"
@@ -657,7 +657,7 @@
    "mount": "rework",
    "kind": "resistor",
    "package": "0603",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF1001T5E",
    "sku": {
     "lcsc": "C21190"
@@ -681,7 +681,7 @@
    "mount": "rework",
    "kind": "resistor",
    "package": "0603",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF1302T5E",
    "sku": {
     "lcsc": "C22797"
@@ -730,7 +730,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF2201T5E",
    "sku": {
     "lcsc": "C4190"
@@ -763,7 +763,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF1302T5E",
    "sku": {
     "lcsc": "C22797"
@@ -794,7 +794,7 @@
    },
    "alternates": [
     {
-     "manufacturer": "KOA Speer Elec",
+     "manufacturer": "KOA Speer",
      "mpn": "RK73H1JTTD8250F",
      "sku": {
       "lcsc": "C830359"
@@ -836,7 +836,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF1002T5E",
    "sku": {
     "lcsc": "C25804"
@@ -955,7 +955,7 @@
    "kind": "resistor",
    "package": "1206",
    "footprint": "Resistor_SMD:R_1206_3216Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "1206W4F220LT5E",
    "sku": {
     "lcsc": "C25336"
@@ -993,7 +993,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF1961T5E",
    "sku": {
     "lcsc": "C22854"
@@ -1024,7 +1024,7 @@
    },
    "alternates": [
     {
-     "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+     "manufacturer": "UNI-ROYAL",
      "mpn": "0603WAF1651T5E",
      "sku": {
       "lcsc": "C22845"
@@ -1048,7 +1048,7 @@
    },
    "alternates": [
     {
-     "manufacturer": "Vishay Intertech",
+     "manufacturer": "Vishay Dale",
      "mpn": "TNPW060319K6BEEA",
      "sku": {
       "lcsc": "C2079053"
@@ -1089,14 +1089,14 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF8872T5E",
    "sku": {
     "lcsc": "C23258"
    },
    "alternates": [
     {
-     "manufacturer": "BOURNS",
+     "manufacturer": "Bourns",
      "mpn": "CR0603-FX-8872ELF",
      "sku": {
       "lcsc": "C203875"
@@ -1115,7 +1115,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF2203T5E",
    "sku": {
     "lcsc": "C22961"
@@ -1140,14 +1140,14 @@
    "kind": "resistor",
    "package": "1210",
    "footprint": "Resistor_SMD:R_1210_3225Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "1210W2F4701T5E",
    "sku": {
     "lcsc": "C52443"
    },
    "alternates": [
     {
-     "manufacturer": "Vishay Intertech",
+     "manufacturer": "Vishay Dale",
      "mpn": "CRCW12104K70FKEA",
      "sku": {
       "lcsc": "C844245"
@@ -1165,7 +1165,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF4701T5E",
    "sku": {
     "lcsc": "C23162"
@@ -1202,7 +1202,7 @@
    },
    "alternates": [
     {
-     "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+     "manufacturer": "UNI-ROYAL",
      "mpn": "0603WAF1623T5E",
      "sku": {
       "lcsc": "C22815"
@@ -1220,14 +1220,14 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF5622T5E",
    "sku": {
     "lcsc": "C23080"
    },
    "alternates": [
     {
-     "manufacturer": "PANASONIC",
+     "manufacturer": "Panasonic",
      "mpn": "ERJ3EKF5622V",
      "sku": {
       "lcsc": "C403280"
@@ -1244,7 +1244,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "KOA Speer Elec",
+   "manufacturer": "KOA Speer",
    "mpn": "RK73H1JTTD2051F",
    "sku": {
     "lcsc": "C830313"
@@ -1275,7 +1275,7 @@
    },
    "alternates": [
     {
-     "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+     "manufacturer": "UNI-ROYAL",
      "mpn": "0603WAD1103T5E",
      "sku": {
       "lcsc": "C423090"
@@ -1318,14 +1318,14 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF7151T5E",
    "sku": {
     "lcsc": "C25980"
    },
    "alternates": [
     {
-     "manufacturer": "PANASONIC",
+     "manufacturer": "Panasonic",
      "mpn": "ERJ3EKF7151V",
      "sku": {
       "lcsc": "C403337"
@@ -1342,7 +1342,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF2202T5E",
    "sku": {
     "lcsc": "C31850"
@@ -1366,7 +1366,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF100JT5E",
    "sku": {
     "lcsc": "C22859"
@@ -1401,7 +1401,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "KOA Speer Elec",
+   "manufacturer": "KOA Speer",
    "mpn": "RN73H1JTTD8562B25",
    "sku": {
     "lcsc": "C6407688"
@@ -1466,7 +1466,7 @@
    },
    "alternates": [
     {
-     "manufacturer": "PANASONIC",
+     "manufacturer": "Panasonic",
      "mpn": "ERJPB3B9092V",
      "sku": {
       "lcsc": "C189497"
@@ -1539,7 +1539,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF2000T5E",
    "sku": {
     "lcsc": "C8218"
@@ -1587,7 +1587,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF1000T5E",
    "sku": {
     "lcsc": "C22775"
@@ -1633,7 +1633,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF1500T5E",
    "sku": {
     "lcsc": "C22808"
@@ -1657,7 +1657,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF6800T5E",
    "sku": {
     "lcsc": "C23228"
@@ -1688,7 +1688,7 @@
    },
    "alternates": [
     {
-     "manufacturer": "Walsin Tech Corp",
+     "manufacturer": "Walsin",
      "mpn": "0402N102J500CT",
      "sku": {
       "lcsc": "C237166"
@@ -1803,7 +1803,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF499JT5E",
    "sku": {
     "lcsc": "C23185"
@@ -1840,7 +1840,7 @@
    },
    "alternates": [
     {
-     "manufacturer": "ROHM Semicon",
+     "manufacturer": "ROHM",
      "mpn": "SDR03EZPF1500",
      "sku": {
       "lcsc": "C7356898"
@@ -1864,7 +1864,7 @@
    },
    "alternates": [
     {
-     "manufacturer": "Vishay Intertech",
+     "manufacturer": "Vishay Dale",
      "mpn": "TNPW060326K7BEEA",
      "sku": {
       "lcsc": "C4036914"
@@ -1889,7 +1889,7 @@
    },
    "alternates": [
     {
-     "manufacturer": "Vishay Intertech",
+     "manufacturer": "Vishay Dale",
      "mpn": "TNPW060325K5BEEA",
      "sku": {
       "lcsc": "C4334516"
@@ -1914,7 +1914,7 @@
    },
    "alternates": [
     {
-     "manufacturer": "Vishay Intertech",
+     "manufacturer": "Vishay Dale",
      "mpn": "TNPW060324K9BEEA",
      "sku": {
       "lcsc": "C3009044"
@@ -1988,7 +1988,7 @@
    },
    "alternates": [
     {
-     "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+     "manufacturer": "UNI-ROYAL",
      "mpn": "TC0225D2492TCC",
      "sku": {
       "lcsc": "C7431035"
@@ -2017,7 +2017,7 @@
    },
    "alternates": [
     {
-     "manufacturer": "KOA Speer Elec",
+     "manufacturer": "KOA Speer",
      "mpn": "RK73H2ETTD2490F",
      "sku": {
       "lcsc": "C2480630"
@@ -2045,7 +2045,7 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF4322T5E",
    "sku": {
     "lcsc": "C23053"
@@ -2076,7 +2076,7 @@
    },
    "alternates": [
     {
-     "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+     "manufacturer": "UNI-ROYAL",
      "mpn": "0603WAF3482T5E",
      "sku": {
       "lcsc": "C23141"
@@ -2093,14 +2093,14 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF2872T5E",
    "sku": {
     "lcsc": "C22928"
    },
    "alternates": [
     {
-     "manufacturer": "Vishay Intertech",
+     "manufacturer": "Vishay Dale",
      "mpn": "CRCW060328K7FKEA",
      "sku": {
       "lcsc": "C2086345"
@@ -2141,7 +2141,7 @@
    "kind": "resistor",
    "package": "1210",
    "footprint": "Resistor_SMD:R_1210_3225Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "1210W2F100KT5E",
    "sku": {
     "lcsc": "C78022"
@@ -2165,14 +2165,14 @@
    "kind": "resistor",
    "package": "0603",
    "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
+   "manufacturer": "UNI-ROYAL",
    "mpn": "0603WAF1582T5E",
    "sku": {
     "lcsc": "C22880"
    },
    "alternates": [
     {
-     "manufacturer": "PANASONIC",
+     "manufacturer": "Panasonic",
      "mpn": "ERJ3EKF1582V",
      "sku": {
       "lcsc": "C403003"
@@ -2213,7 +2213,7 @@
    "kind": "resistor",
    "package": "2512",
    "footprint": "Resistor_SMD:R_2512_6332Metric",
-   "manufacturer": "Vishay Intertech",
+   "manufacturer": "Vishay Dale",
    "mpn": "WSL2512R3300FEA",
    "sku": {
     "lcsc": "C2073866"
@@ -2229,14 +2229,14 @@
    "kind": "resistor",
    "package": "1206",
    "footprint": "Resistor_SMD:R_1206_3216Metric",
-   "manufacturer": "Vishay Intertech",
+   "manufacturer": "Vishay Beyschlag",
    "mpn": "MCA1206MD3304BP500",
    "sku": {
     "lcsc": "C4168316"
    },
    "alternates": [
     {
-     "manufacturer": "SUSUMU",
+     "manufacturer": "Susumu",
      "mpn": "RG3216P-3304-B-T5",
      "sku": {
       "lcsc": "C1703085"
@@ -2425,7 +2425,7 @@
    ]
   },
   {
-   "id": "C-1210-22u-50V-X7R-TBD",
+   "id": "C-1210-C3225X7R1H226M250AC",
    "mount": "pcb_smt",
    "kind": "capacitor",
    "package": "1210",
@@ -2436,7 +2436,8 @@
     "digikey": "445-C3225X7R1H226M250ACCT-ND"
    },
    "match": "C3225X7R1H226M250AC",
-   "tbd": "Graph-named TDK C3225X7R1H226M250AC: DigiKey DE stock 0 (1000 expected 12-Apr-2027) and no LCSC listing (exact or 22 µF/50 V/X7R/1210 search) on 2026-10-24. Select a stocked 22 µF 50 V X7R 1210 with the same DC-bias derating check as E2 before ordering.",
+   "single_source": "graph-named TDK part; no 22 µF 50 V X7R 1210 at LCSC (keyword searches 22uF 50V 1210 / 1210X7R226 / CC1210X7R50V226, JLC parts API 2026-10-24: only 16 V and 25 V parts)",
+   "note": "DigiKey DE showed stock 0 with 1000 expected 12-Apr-2027 on 2026-10-24: order on backorder or select a stocked 22 µF 50 V X7R 1210 after the same DC-bias derating check as E2 (graph owner decision).",
    "refs": [
     "C223",
     "C224",
@@ -2457,7 +2458,7 @@
    "kind": "capacitor",
    "package": "SMD,D6.3xL7.7mm",
    "footprint": "Capacitor_SMD:CP_Elec_6.3x7.7",
-   "manufacturer": "PANASONIC",
+   "manufacturer": "Panasonic",
    "mpn": "EEHZK1V101XP",
    "sku": {
     "lcsc": "C454360"
@@ -2485,7 +2486,7 @@
    "kind": "capacitor",
    "package": "SMD,D6.3xL5.9mm",
    "footprint": "Capacitor_SMD:CP_Elec_6.3x5.9",
-   "manufacturer": "PANASONIC",
+   "manufacturer": "Panasonic",
    "mpn": "35SVPF22M",
    "sku": {
     "lcsc": "C88142"
@@ -2504,7 +2505,7 @@
    "kind": "capacitor",
    "package": "SMD,D6.3xL5.9mm",
    "footprint": "Capacitor_SMD:CP_Elec_6.3x5.9",
-   "manufacturer": "PANASONIC",
+   "manufacturer": "Panasonic",
    "mpn": "16SVPC100M",
    "sku": {
     "lcsc": "C136275"
@@ -2574,7 +2575,7 @@
    "kind": "capacitor",
    "package": "SMD,D5xL4.5mm",
    "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
-   "manufacturer": "PANASONIC",
+   "manufacturer": "Panasonic",
    "mpn": "16SVPG47M",
    "sku": {
     "lcsc": "C2161511"
@@ -2592,7 +2593,7 @@
    "kind": "capacitor",
    "package": "SMD,D8xL6.9mm",
    "footprint": "Capacitor_SMD:CP_Elec_8x6.9",
-   "manufacturer": "PANASONIC",
+   "manufacturer": "Panasonic",
    "mpn": "16SVPC150M",
    "sku": {
     "lcsc": "C190722"
@@ -2600,7 +2601,7 @@
    "polarized": true,
    "alternates": [
     {
-     "manufacturer": "PANASONIC",
+     "manufacturer": "Panasonic",
      "mpn": "10SVQP150M",
      "sku": {
       "lcsc": "C347576"
@@ -2852,7 +2853,7 @@
    "id": "D-SMBJ17A-E3-52",
    "mount": "pcb_smt",
    "footprint": "SR_RX_Custom:D_SMB_KA",
-   "manufacturer": "Vishay",
+   "manufacturer": "Vishay General Semiconductor",
    "mpn": "SMBJ17A-E3/52",
    "sku": {
     "lcsc": "C1973197"
@@ -2876,7 +2877,7 @@
    "id": "D-SMBJ13A-E3-52",
    "mount": "pcb_smt",
    "footprint": "SR_RX_Custom:D_SMB_KA",
-   "manufacturer": "Vishay",
+   "manufacturer": "Vishay General Semiconductor",
    "mpn": "SMBJ13A-E3/52",
    "sku": {
     "lcsc": "C968569"
@@ -3202,7 +3203,7 @@
    "id": "D-SS14-E3-61T",
    "mount": "pcb_smt",
    "footprint": "Diode_SMD:D_SMA",
-   "manufacturer": "Vishay",
+   "manufacturer": "Vishay General Semiconductor",
    "mpn": "SS14-E3/61T",
    "sku": {
     "lcsc": "C47460"
@@ -3210,7 +3211,7 @@
    "match": "SS14",
    "alternates": [
     {
-     "manufacturer": "Vishay",
+     "manufacturer": "Vishay General Semiconductor",
      "mpn": "SS14-E3/5AT",
      "sku": {
       "lcsc": "C511349"
@@ -3603,6 +3604,9 @@
    "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
    "manufacturer": "Littelfuse",
    "mpn": "029707.5WXNV",
+   "sku": {
+    "lcsc": "C178942"
+   },
    "match": "7.5 A",
    "extras": [
     {
@@ -3615,7 +3619,8 @@
      "item": "PCB holder for the mini blade fuse"
     }
    ],
-   "tbd": "Exact 029707.5WXNV not found by LCSC search on 2026-10-24 (variants 029707.5U/…WXT listed); 10-bom row 71 names LCSC C178942 — confirm before ordering.",
+   "single_source": "Littelfuse MINI blade; never clone MINI fuses (10-bom section 6)",
+   "note": "LCSC C178942 (named in 10-bom row 71) is the exact 029707.5WXNV.",
    "refs": [
     "F101"
    ]
@@ -3736,25 +3741,12 @@
     }
    ],
    "single_source": "Bourns encoder with push switch named in STACK; the switch contacts are SW308/SW309",
-   "pinmap": {
-    "A": [
-     "A"
-    ],
-    "B": [
-     "B"
-    ],
-    "C": [
-     "C"
-    ],
-    "switch (SW308/SW309)": [
-     "S1",
-     "S2"
-    ],
-    "mounting": [
-     "MP"
-    ]
-   },
    "note": "S1/S2 pads carry the push switch; in the graph that switch is the separate ref SW308/SW309, so the PCB netlist leaves S1/S2 unconnected until the graph moves the switch onto ENC pins (see coverage open items). 10-bom row 49 buys 3 (1 spare).",
+   "unused_pads": {
+    "S1": "push-switch contact; in the graph the switch is SW308 (ENC301) / SW309 (ENC302), see open items",
+    "S2": "push-switch contact; in the graph the switch is SW308 (ENC301) / SW309 (ENC302), see open items",
+    "MP": "mounting slots (mechanical, no net)"
+   },
    "refs": [
     "ENC301",
     "ENC302"
@@ -3763,7 +3755,11 @@
   {
    "id": "SW-ENC-PUSH-virtual",
    "mount": "virtual",
-   "note": "Push switch inside ENC301/ENC302 (pads S1/S2 of the encoder footprint); no separate part.",
+   "note": "Physically the push switch inside ENC301/ENC302 (pads S1/S2 of the encoder footprint): no separate part is bought or placed. SW308 belongs to ENC301, SW309 to ENC302.",
+   "host": {
+    "SW308": "ENC301",
+    "SW309": "ENC302"
+   },
    "refs": [
     "SW308",
     "SW309"
@@ -4142,7 +4138,7 @@
   {
    "id": "TH-KSD9700-70-NO",
    "mount": "remote",
-   "manufacturer": "Xucheng Elec",
+   "manufacturer": "Xucheng Electronics",
    "mpn": "KSD9700-70/5JSB/080C",
    "sku": {
     "lcsc": "C156512"
@@ -4230,6 +4226,14 @@
    "match": "SC0915",
    "single_source": "Non-wireless Pico only (10-bom row 48)",
    "note": "Castellated module soldered to the HMI board; debug pads used as SWCLK/SWD_GND/SWDIO.",
+   "unused_pads": {
+    "TP1": "Pico module test pad (Pico datasheet TP1-TP6), left unconnected on the carrier",
+    "TP2": "Pico module test pad (Pico datasheet TP1-TP6), left unconnected on the carrier",
+    "TP3": "Pico module test pad (Pico datasheet TP1-TP6), left unconnected on the carrier",
+    "TP4": "Pico module test pad (Pico datasheet TP1-TP6), left unconnected on the carrier",
+    "TP5": "Pico module test pad (Pico datasheet TP1-TP6), left unconnected on the carrier",
+    "TP6": "Pico module test pad (Pico datasheet TP1-TP6), left unconnected on the carrier"
+   },
    "refs": [
     "U305"
    ]
