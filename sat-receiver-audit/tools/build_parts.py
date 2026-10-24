@@ -556,6 +556,32 @@ class Model:
         rows.sort(key=lambda r: (r['Board'], r['Mount'], r['Comment']))
         return rows
 
+    def v2_rows(self):
+        """Rows of the v2 estimate build/10-bom.csv that the schematic database does not replace (MECH-12)."""
+        with (ROOT / 'build/10-bom.csv').open(encoding='utf-8', newline='') as f:
+            table = list(csv.DictReader(f))
+        mapping = self.db.get('bom_v2_rows', {})
+        numbers = {r['№'] for r in table}
+        for no, v in mapping.items():
+            if no not in numbers:
+                self.err(f'bom_v2_rows: 10-bom.csv has no row {no}')
+            if v.get('status') not in ('db', 'partial') or not v.get('note'):
+                self.err(f'bom_v2_rows {no}: status db|partial and a note are required')
+        for p in self.db['parts']:
+            for no in re.findall(r'10-bom\.csv №(\d+)', p.get('source', '')):
+                if no not in mapping:
+                    self.err(f'{p["id"]}: source cites 10-bom row {no}, which bom_v2_rows does not map')
+        out = []
+        for r in table:
+            v = mapping.get(r['№'], {})
+            if v.get('status') == 'db':
+                continue
+            out.append({'row': r['№'], 'group': r['група'], 'level': r['рівень'], 'in_total': r['у підсумку рівня'], 'qty': r['к-сть'],
+                        'item': r['позиція'], 'model': r['модель і номер деталі'], 'seller': r['продавець (основний / запасний)'],
+                        'usd_min': r['USD мін (рядок)'], 'usd_max': r['USD макс (рядок)'], 'status_v2': r['статус'],
+                        'coverage': v.get('note', '') if v.get('status') == 'partial' else ''})
+        return out
+
     def stocked_alternate(self, p):
         """First alternate with LCSC stock when the primary has none (a hint for the JLC order, not an approval)."""
         rec = self.lcsc_rec(p)
@@ -626,13 +652,20 @@ BOM_HEAD = {'section': 'розділ', 'part': 'запис бази', 'qty': 'к
             'lcsc_stock': 'склад LCSC (дата знімка)', 'lcsc_usd': 'ціна LCSC USD за шт. (дата знімка)', 'alternates': 'альтернативи', 'state': 'стан', 'note': 'примітка'}
 
 
+V2_FIELDS = ['row', 'group', 'level', 'in_total', 'qty', 'item', 'model', 'seller', 'usd_min', 'usd_max', 'status_v2', 'coverage']
+V2_HEAD = {'row': '№ у 10-bom', 'group': 'група', 'level': 'рівень', 'in_total': 'у підсумку рівня', 'qty': 'к-сть', 'item': 'позиція',
+           'model': 'модель і номер деталі (v2)', 'seller': 'продавець (v2)', 'usd_min': 'USD мін (v2)', 'usd_max': 'USD макс (v2)',
+           'status_v2': 'статус (v2)', 'coverage': 'що вже в базі деталей'}
+
+
 def bom_md(model, rows, cov):
     date = max(model.snapshot_dates)
     sec = collections.OrderedDict((m, t) for m, t in SECTIONS)
     lines = ['# 10. Закупівля SR-RX-v2.1 (згенеровано з бази деталей)', '',
              f'Файл згенеровано `tools/build_parts.py` з [`design/parts/parts.json`](../design/parts/parts.json) і знімків наявності від {date}. Не редагувати вручну: зміни вносяться в базу деталей, далі `python tools/build_parts.py`.', '',
              'Це закупівельний перелік деталей схеми v2.1 (графи E1–E5) разом із супутніми деталями (тримачі запобіжників, корпуси й контакти роз’ємів, ферити). '
-             'Деталі всередині готових модулів (Adafruit, Q6A) не купуються вдруге. Антени, прилади лабораторії, інструменти, корпус і кріплення лишаються в [10-bom.csv](10-bom.csv) (оцінка v2, рядки за STACK.md).',
+             'Деталі всередині готових модулів (Adafruit, Q6A) не купуються вдруге. Антени, прилади лабораторії, інструменти, корпус, кріплення й запасні модулі зведено нижче в розділі «Решта закупівлі» з рядків оцінки v2 [10-bom.csv](10-bom.csv), без рядків, які вже замінила база, тож цей файл — один перелік закупівлі v2.1. '
+             'Специфікацію замовлення друкованих плат (стек, мідь, покриття) дає PCB-пакет, кріплення з довжинами — механічний пакет.',
              'Склад і ціна — показання дистриб’ютора на дату знімка, а не резерв: перед замовленням перевірити ще раз (`python tools/check_parts_availability.py --date РРРР-ММ-ДД`).', '',
              '**Апаратний випуск BLOCKED.** Наявність MPN не кваліфікує деталь: стендові ворота з OPEN_ITEMS лишаються відкритими.', '',
              '## Зведення', '',
@@ -651,6 +684,19 @@ def bom_md(model, rows, cov):
             src = ' / '.join(x for x in (r['lcsc'], r['digikey'], r['other'] if len(r['other']) < 40 else 'див. CSV') if x)
             lines.append(f'| {r["order"]} | {refs} | {r["manufacturer"] or "—"} | {r["mpn"] or "—"} | {src or "—"} | {r["state"]} |')
         lines.append('')
+    other = model.v2_rows()
+    lines += ['## Решта закупівлі: рядки оцінки v2 поза схемою', '',
+              'Рядки [10-bom.csv](10-bom.csv), деталей яких немає в графах E1–E5 (антени, прилади лабораторії, інструменти, корпус, кріплення, запасні модулі, плата Q6A), '
+              'або які база покриває лише частково. Модель, продавець і ціна — оцінка v2 від 18.10.2026 у USD, не перечитана. '
+              f'Рядків, повністю замінених базою деталей (не купувати за ними вдруге): {sum(1 for v in model.db["bom_v2_rows"].values() if v["status"] == "db")}; '
+              f'частково покритих: {sum(1 for r in other if r["coverage"])}; поза схемою: {sum(1 for r in other if not r["coverage"])}. Відповідність рядків і бази — `bom_v2_rows` у parts.json.', '']
+    for level in sorted({r['level'] for r in other}, key=lambda x: [r['level'] for r in other].index(x)):
+        lines += [f'### {level}', '', '| № | к-сть | позиція | модель і номер деталі | USD (v2) | що вже в базі |', '|---:|---|---|---|---|---|']
+        for r in other:
+            if r['level'] == level:
+                usd = r['usd_min'] if r['usd_min'] == r['usd_max'] else f'{r["usd_min"]}–{r["usd_max"]}'
+                lines.append(f'| {r["row"]} | {r["qty"]} | {md_cell(r["item"])} | {md_cell(r["model"])} | {usd} | {md_cell(r["coverage"]) or "—"} |')
+        lines.append('')
     lines += ['## Відкриті позиції (TBD)', '', '| запис | позначення | причина |', '|---|---|---|']
     for t in cov['tbd']:
         lines.append(f'| {t["part"]} | {" ".join(t["refs"])} | {t["reason"]} |')
@@ -658,8 +704,14 @@ def bom_md(model, rows, cov):
     for d in cov['deviations']:
         lines.append(f'- {d["part"]} ({" ".join(d["refs"])}): допуск {d["tolerance_pct"]} % замість значення графа — {d["reason"]} Рішення: {d["decision"]}.')
     lines += ['', '## Інші відкриті питання', ''] + [f'- {x}' for x in cov['open_items']]
-    lines += ['', 'Повні колонки (запас, ціна, альтернативи, примітки) — у [10-zakupivlia.csv](10-zakupivlia.csv); перелік для JLC PCBA за платами — у [10-jlc-bom.csv](10-jlc-bom.csv); лічильники — у [10-parts-coverage.json](10-parts-coverage.json).', '']
+    lines += ['', 'Повні колонки (запас, ціна, альтернативи, примітки) — у [10-zakupivlia.csv](10-zakupivlia.csv); рядки оцінки v2 поза схемою — у [10-zakupivlia-inshe.csv](10-zakupivlia-inshe.csv); '
+              'перелік для JLC PCBA за платами — у [10-jlc-bom.csv](10-jlc-bom.csv); лічильники — у [10-parts-coverage.json](10-parts-coverage.json).', '']
     return '\n'.join(lines)
+
+
+def md_cell(text):
+    text = (text or '').replace('|', '/').replace('\n', ' ')
+    return text if len(text) <= 110 else text[:107] + '…'
 
 
 def main():
@@ -679,6 +731,10 @@ def main():
     csv.writer(head, quoting=csv.QUOTE_ALL, lineterminator='\n').writerow([BOM_HEAD[f] for f in BOM_FIELDS])
     files[ROOT / 'build/10-zakupivlia.csv'] = head.getvalue() + csv_text(rows, BOM_FIELDS).split('\n', 1)[1]
     files[ROOT / 'build/10-zakupivlia.md'] = bom_md(model, rows, cov)
+    other = csv.writer(head := io.StringIO(), quoting=csv.QUOTE_ALL, lineterminator='\n')
+    other.writerow([V2_HEAD[k] for k in V2_FIELDS])
+    other.writerows([r[k] for k in V2_FIELDS] for r in model.v2_rows())
+    files[ROOT / 'build/10-zakupivlia-inshe.csv'] = head.getvalue()
     files[ROOT / 'build/10-jlc-bom.csv'] = csv_text(model.jlc_rows(prep), ['Board', 'Comment', 'Designator', 'Footprint', 'LCSC Part #', 'Mount', 'LCSC stock', 'LCSC alternate'])
     files[ROOT / 'build/10-parts-coverage.json'] = json.dumps(cov, ensure_ascii=False, indent=1) + '\n'
     for w in model.warnings:
