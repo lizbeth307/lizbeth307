@@ -854,6 +854,22 @@ def hardening(root, recipe, route):
         if any(t in path.name for t in tokens) or any(o in text for o in origins):
             path.unlink()
             removed.append(path.name)
+    # STACK.md:894: the signed aptly publication is the only apt source and only lab.pref pins positively
+    # (selftest RX-16 apt_pin_positive_outside_lab_pref). r2 ships positive pins (local-apt-repository,
+    # ubuntu-pro-esm-*): divert them away from apt (it reads only names without an extension or *.pref).
+    diverted_prefs = []
+    pref_dir = root / "etc/apt/preferences.d"
+    for path in sorted(pref_dir.iterdir()) if pref_dir.is_dir() else []:
+        if path.name in ("lab.pref", "srrx-boot-route-a.pref") or ("." in path.name and not path.name.endswith(".pref")):
+            continue
+        try:
+            text = path.read_text(errors="replace")
+        except OSError:
+            text = ""
+        if any(int(p) > 0 for p in re.findall(r"^Pin-Priority:\s*(-?[0-9]+)", text, re.M)) or not path.is_file():
+            target = "/etc/apt/preferences.d/" + path.name
+            chroot(root, ["dpkg-divert", "--local", "--rename", "--divert", target + ".srrx-disabled", "--add", target])
+            diverted_prefs.append(path.name)
     locked = []
     for account in _accounts(root):
         if account["password_usable"] and (account["uid"] >= recipe["lock_default_password_accounts"]["min_uid"]):
@@ -867,7 +883,8 @@ def hardening(root, recipe, route):
         dbus.unlink()
         os.symlink("/etc/machine-id", dbus)
     return {"held": hold, "hold_names_not_installed": missing, "purged": purge, "masked": masked,
-            "removed_apt_lists": removed, "locked_accounts": locked, "machine_id_before": previous}
+            "removed_apt_lists": removed, "diverted_apt_preferences": diverted_prefs, "locked_accounts": locked,
+            "machine_id_before": previous}
 
 
 def enable_units(root, recipe, route):
@@ -906,12 +923,10 @@ def selftest(root, cmdline_sha, output):
             "--policy", str(POLICY), "--project", str(PROJECT), "--cmdline-sha256", cmdline_sha, "--output", str(output)]
     done = run(argv, check=False)
     report = load_json(output) if Path(output).is_file() else {}
-    rows = report.get("rows") or report.get("results") or []
-    summary = {}
-    for row in rows if isinstance(rows, list) else []:
-        summary[row.get("status", "?")] = summary.get(row.get("status", "?"), 0) + 1
-    return {"exit_code": done.returncode, "status": report.get("status"), "row_status_counts": summary,
-            "report_sha256": sha256(output) if Path(output).is_file() else None}
+    open_rows = {row["id"]: sorted({f.get("rule", "?") for f in row.get("findings", [])})
+                 for row in report.get("checks", []) if row.get("status") in ("FAIL", "BLOCKED")}
+    return {"exit_code": done.returncode, "status": report.get("status"), "counts": report.get("counts"),
+            "fail_or_blocked_rows": open_rows, "report_sha256": sha256(output) if Path(output).is_file() else None}
 
 
 # ---------------------------------------------------------------- build
@@ -1052,8 +1067,9 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         for sub in ("run", "sys", "proc", "dev"):
             mounts.umount_under(root_a / sub)
         manifest["selftest_root_a"] = selftest(root_a, cmdline_sha["A"], out / "selftest-root-a.json")
-        manifest["blocking"].append("selftest root A: " + str(manifest["selftest_root_a"]["status"]) + " (policy DRAFT, rows RUNTIME_ONLY)")
-        LOG.step("selftest", "DONE", **manifest["selftest_root_a"])
+        manifest["blocking"].append("selftest root A " + str(manifest["selftest_root_a"]["status"]) + ": "
+                                    + json.dumps(manifest["selftest_root_a"]["fail_or_blocked_rows"], sort_keys=True))
+        LOG.step("selftest", "DONE", report=manifest["selftest_root_a"])
         mounts.umount_under(root_a / "boot/efi")
         root_b = work / "mnt/root_b"
         mounts.mount(devices["root_b"], root_b, "ext4")

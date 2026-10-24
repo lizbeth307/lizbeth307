@@ -161,7 +161,7 @@ jobs:
         run: |
           sudo apt-get update -q
           sudo apt-get install -y -q --no-install-recommends dosfstools e2fsprogs util-linux fdisk rsync xz-utils device-tree-compiler \
-            qemu-system-arm qemu-efi-aarch64 qemu-utils
+            qemu-system-arm qemu-efi-aarch64 qemu-utils python3-numpy
       - name: Work directory on the largest free filesystem
         if: steps.sel.outputs.run == 'true'
         run: |
