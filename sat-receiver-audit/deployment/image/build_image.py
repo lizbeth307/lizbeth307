@@ -953,13 +953,15 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         if base["rescue"]["status"] != "IDENTIFIED":
             raise BuildError("r2 rescue entry (6.18.2-3) not identified on the base ESP: " + json.dumps(base["rescue"]))
         kernel_tree, kconfig = kernel_deb_config(cache, recipe, work)
-        quota = kconfig.get("CONFIG_QUOTA") == "y"
+        quota = False  # partition-layout.json "quota": TBD, enabled on the unit (the builder kernel may lack quota_v2)
         loop, devices, geo = create_disk(image, layout, ids, data_bytes, quota=quota)
         disk = check_disk(loop, devices, layout, ids, geo)
         if disk["issues"]:
             raise BuildError("new disk check failed: " + "; ".join(disk["issues"]))
         LOG.step("disk", "DONE", total_bytes=geo["total_bytes"], quota_enabled=quota)
-        manifest["geometry"], manifest["data_quota"] = geo, ("prjquota feature" if quota else "not enabled: CONFIG_QUOTA is not y in the locked kernel config")
+        manifest["geometry"] = geo
+        manifest["data_quota"] = {"status": layout["quota"]["status"], "image_feature": None,
+                                  "locked_kernel": {k: kconfig.get(k) for k in ("CONFIG_QUOTA", "CONFIG_QFMT_V2", "CONFIG_QUOTACTL")}}
         root_a = work / "mnt/root_a"
         mounts.mount(devices["root_a"], root_a, "ext4")
         run(["rsync", "-aHAXxS", "--numeric-ids", str(base_root) + "/", str(root_a) + "/"])

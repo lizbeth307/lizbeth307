@@ -71,7 +71,7 @@
   ],
   "quota": {
     "status": "TBD",
-    "why": "build/07-pz-vstanovlennia.md:148 names quotas of 27.4 GiB and about 46.6 GiB for recordings, but not the directories or quota type; ext4 quota is enabled only when the locked kernel config has CONFIG_QUOTA=y (an ext4 with the quota feature cannot be mounted read-write without it)"
+    "why": "build/07-pz-vstanovlennia.md:148 names quotas of 27.4 GiB and about 46.6 GiB for recordings, but not the directories or the quota type, so the image has no ext4 quota feature. The locked kernel has CONFIG_QUOTA=y with CONFIG_QFMT_V2=m (image-facts.json, CI 2026-10-24); a builder kernel without quota_v2 cannot mount such a filesystem (mount: ESRCH on ubuntu-24.04-arm), so quotas are enabled on the unit after the write, offline: tune2fs -O quota,project -Q prjquota <data partition>, then project IDs per directory (IMG-06/labd policy)"
   },
   "target": {
     "device": "UFS 128 GB (about 119 GiB), 4096-byte logical sectors",
