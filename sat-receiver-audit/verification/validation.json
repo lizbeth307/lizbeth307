@@ -1,6 +1,10 @@
 {
   "graph_netlist_comparison": "PASS",
-  "electrical_sheets": 15,
+  "electrical_sheets": 14,
+  "schematic_sheets": 15,
+  "index_sheets": [
+    "/"
+  ],
   "physical_components": 750,
   "connected_physical_contacts": 2181,
   "named_nets": 466,
