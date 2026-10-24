@@ -8,7 +8,18 @@ name: SR-RX lab packages
 # The sources job re-fetches the locked source bytes and re-derives the signed Ubuntu pins.
 # CI evidence only: nothing here reviews a build, tests hardware or is a release signature.
 
+# A workflow_dispatch-only file cannot be dispatched before it reaches the default branch, so
+# pushes that change the packaging inputs run it too (with the defaults below).
 on:
+  push:
+    branches: ['codex/**', 'ccr-*', 'wip/**']
+    paths:
+      - 'sat-receiver-audit/deployment/recipes/**'
+      - 'sat-receiver-audit/deployment/repo/**'
+      - 'sat-receiver-audit/deployment/fetch_sources.py'
+      - 'sat-receiver-audit/deployment/sources.lock.json'
+      - 'sat-receiver-audit/deployment/source-cache-verification.json'
+      - '.github/workflows/sr-rx-packages.yml'
   workflow_dispatch:
     inputs:
       lab_builds:
@@ -38,6 +49,10 @@ defaults:
 env:
   PYTHONDONTWRITEBYTECODE: '1'
   UBUNTU_KEYRING: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+  # On push there are no inputs: the dispatch defaults apply.
+  LAB_BUILDS: ${{ inputs.lab_builds || 'rtlsdr,limesuiteng' }}
+  REPEAT: ${{ github.event_name == 'push' || inputs.repeat }}
+  ALL_SOURCES: ${{ github.event_name == 'push' || inputs.all_sources }}
 
 jobs:
   sources:
@@ -54,9 +69,6 @@ jobs:
           sudo apt-get install -y -q --no-install-recommends gpgv ubuntu-keyring git ca-certificates
       - name: Select components
         id: select
-        env:
-          ALL_SOURCES: ${{ inputs.all_sources }}
-          LAB_BUILDS: ${{ inputs.lab_builds }}
         run: |
           python3 - <<'EOF' >> "$GITHUB_OUTPUT"
           import json, os, re
@@ -79,7 +91,7 @@ jobs:
       - name: Ubuntu pins equal the gpgv-verified snapshot indices
         run: python3 deployment/fetch_sources.py verify-debian --keyring "$UBUNTU_KEYRING" --work "$RUNNER_TEMP/apt-indices" | tee "$RUNNER_TEMP/verify-debian.json"
       - name: source-cache-verification.json reproduces from the fetched cache
-        if: inputs.all_sources
+        if: env.ALL_SOURCES == 'true'
         run: |
           python3 - "$RUNNER_TEMP/cache" <<'EOF'
           import json, sys
@@ -95,7 +107,7 @@ jobs:
           print("source-cache-verification.json reproduces:", result)
           EOF
       - name: WSJT-X release tarball against the wsjtx-2.7.0 tag tree (reported)
-        if: inputs.all_sources
+        if: env.ALL_SOURCES == 'true'
         run: |
           git clone -q --depth 1 --branch wsjtx-2.7.0 https://git.code.sf.net/p/wsjt/wsjtx "$RUNNER_TEMP/wsjtx-git"
           tag_commit=$(git -C "$RUNNER_TEMP/wsjtx-git" rev-parse HEAD)
@@ -132,8 +144,6 @@ jobs:
           dpkg-query -W mmdebstrap aptly gnupg dpkg | tee "$RUNNER_TEMP/host-tools.txt"
       - name: Select recipes
         id: select
-        env:
-          LAB_BUILDS: ${{ inputs.lab_builds }}
         run: |
           python3 - <<'EOF' >> "$GITHUB_OUTPUT"
           import os, re
@@ -152,8 +162,6 @@ jobs:
           python3 deployment/deploy.py verify-cache --cache "$RUNNER_TEMP/cache" --sources-only ${{ steps.select.outputs.args }}
           python3 deployment/fetch_sources.py tree --cache "$RUNNER_TEMP/cache" ${{ steps.select.outputs.args }}
       - name: Build in noble arm64 chroots, network namespace without a route
-        env:
-          REPEAT: ${{ inputs.repeat }}
         run: |
           repeat=""
           [ "$REPEAT" = true ] && repeat="--repeat"
