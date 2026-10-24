@@ -280,6 +280,19 @@ class LinuxLabImportTests(TempProject):
         with self.assertRaisesRegex(SystemExit, "Source added after guest preparation: design/readiness-contract.json"):
             finalize.bind_executed([e for e in entries if e["path"] != "design/readiness-contract.json"], self.root)
 
+    def test_guest_smoke_must_attest_the_bound_bytes_it_read(self):
+        contract, unit, other = "design/readiness-contract.json", "software/systemd/srrx.service", "1" * 64
+        executed = {contract: "a" * 64, unit: "b" * 64, "software/srrx/daemon.py": "c" * 64}
+        smoke = {contract: "a" * 64, unit: "b" * 64, "design/E3.json": other}  # E3 is recorded, not bound
+        self.assertIs(finalize.smoke_attests(smoke, executed), smoke)
+        for case, record in (("contract missing", {unit: "b" * 64}), ("no record", None),
+                             ("other contract", dict(smoke, **{contract: other})), ("unit differs", dict(smoke, **{unit: other})),
+                             ("bound file outside the binding", dict(smoke, **{"software/srrx/engine.py": other}))):
+            with self.subTest(case), self.assertRaisesRegex(SystemExit, "Guest smoke did not re"):
+                finalize.smoke_attests(record, executed)
+        with self.assertRaisesRegex(SystemExit, "read the bound sources: software/systemd/srrx.service$"):
+            finalize.smoke_attests(dict(smoke, **{unit: other}), executed)
+
     def test_readiness_contract_carries_no_lab_binding_state(self):
         # No-cycle rule: the contract is a sink of host test counts and is bound by source-binding.json;
         # a field derived from that binding or the Linux status would make the two depend on each other.

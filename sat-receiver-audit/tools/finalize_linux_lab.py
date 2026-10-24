@@ -92,6 +92,17 @@ def bind_executed(entries, project):
     return executed
 
 
+def smoke_attests(smoke_sha256, executed):
+    """system-smoke.json records what the guest read: the contract and every bound file in that record
+    must carry the executed bytes. Unbound inputs it also records (design/E3.json) are not judged."""
+    if type(smoke_sha256) is not dict or CONTRACT not in smoke_sha256:
+        raise SystemExit("Guest smoke did not record the bound readiness contract: " + CONTRACT)
+    wrong = sorted(name for name, value in smoke_sha256.items() if bound(name) and executed.get(name) != value)
+    if wrong:
+        raise SystemExit("Guest smoke did not read the bound sources: " + ", ".join(wrong[:12]))
+    return smoke_sha256
+
+
 def lineage_text(base):
     """README sentence for run.json's base_overlay: OS cache lineage only, never a clean-image claim."""
     if base is None:
@@ -112,9 +123,7 @@ def main():
     regular_tree(work / "results")
     executed = bind_executed(read(work / "results/project-manifest.json"), PROJECT)
     # The guest smoke records what it read: the bound contract bytes must be the ones it compared.
-    smoke = read(work / "results/system-smoke.json").get("source_sha256", {})
-    if smoke.get(CONTRACT) is None or any(executed.get(name, value) != value for name, value in smoke.items()):
-        raise SystemExit("Guest smoke did not read the bound sources: " + CONTRACT)
+    smoke_attests(read(work / "results/system-smoke.json").get("source_sha256"), executed)
     module_report = read(work / "results/module-lab/report.json")
     if module_report["execution_status"] != "PASS" or module_report["environment"]["architecture"] != "aarch64":
         raise SystemExit("Missing successful ARM64 per-module execution")

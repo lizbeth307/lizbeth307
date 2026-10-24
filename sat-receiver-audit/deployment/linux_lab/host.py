@@ -93,15 +93,18 @@ def fetch_tools():
 
 def qemu_runtime(qemu, qemu_img, genisoimage):
     """The selected tools must be the fetch_tools.py wrappers of one locked runtime: only they run the
-    locked ld.so whose loads the run audits. Static module closure again here (a kit ships no
-    tools-verification.json); a host module-upgrade directory QEMU would also search is refused."""
+    locked ld.so (no host loader cache). The DT_NEEDED closure of the three programs and of every QEMU
+    module is listed again here (a kit ships no tools-verification.json); a host module-upgrade directory
+    QEMU would also search is refused. The run's loader audit covers qemu-system-aarch64 only."""
     helper = fetch_tools()
     tools = Path(qemu).resolve().parents[1]
-    for name, selected in (("qemu-system-aarch64", qemu), ("qemu-img", qemu_img), ("genisoimage", genisoimage)):
-        path = Path(selected).resolve()
+    selected = {"qemu-system-aarch64": qemu, "qemu-img": qemu_img, "genisoimage": genisoimage}
+    for name, chosen in selected.items():
+        path = Path(chosen).resolve()
         if path != tools / "bin" / name or path.read_bytes() != helper.wrapper_texts()[name].encode():
             raise ValueError("Select the fetch_tools.py wrappers of one locked tools directory: " + name)
     try:
+        programs = {name: helper.resolved_libraries(tools, name) for name in selected}
         closure = helper.module_closure(tools)
         version = call([qemu, "--version"], capture_output=True, text=True).stdout.strip().splitlines()[0]
         upgrade = helper.module_upgrade_dir(version)
@@ -109,9 +112,11 @@ def qemu_runtime(qemu, qemu_img, genisoimage):
         raise ValueError("Locked QEMU runtime check failed: " + str(error)) from error
     if os.path.lexists(upgrade):
         raise ValueError("Host QEMU module-upgrade directory would be searched for missing modules: " + upgrade)
-    canonical = json.dumps(closure, sort_keys=True, separators=(",", ":")).encode()
-    return {"tools_root": str(tools), "version": version, "module_count": len(closure),
-            "closure_sha256": hashlib.sha256(canonical).hexdigest(), "module_upgrade_dir": upgrade,
+
+    def canonical(value):
+        return hashlib.sha256(json.dumps(value, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
+    return {"tools_root": str(tools), "version": version, "program_libraries_sha256": canonical(programs),
+            "module_count": len(closure), "closure_sha256": canonical(closure), "module_upgrade_dir": upgrade,
             "module_upgrade_dir_present": False}
 
 

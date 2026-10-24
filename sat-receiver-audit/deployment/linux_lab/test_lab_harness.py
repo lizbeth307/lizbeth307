@@ -416,13 +416,23 @@ class ToolRuntimeTests(unittest.TestCase):
                 (bin_dir / name).write_text(text, newline="\n")
             selected = [bin_dir / name for name in ("qemu-system-aarch64", "qemu-img", "genisoimage")]
             upgrade = Path(temporary) / "var-run-qemu"
+            listed = []
             helper = types.SimpleNamespace(wrapper_texts=tools.wrapper_texts, module_closure=lambda dest: {"hw-usb-host.so": ["libusb-1.0.so.0"]},
+                                           resolved_libraries=lambda dest, name: listed.append((dest, name)) or ["libc.so.6"],
                                            module_upgrade_dir=lambda version: str(upgrade))
             version = subprocess.CompletedProcess([], 0, "QEMU emulator version 8.2.2 (Debian 1:8.2.2+ds-0ubuntu1)\n", "")
             with mock.patch.object(host, "fetch_tools", lambda: helper), mock.patch.object(host, "call", lambda *a, **k: version):
                 record = host.qemu_runtime(*selected)
                 self.assertEqual((record["module_count"], record["module_upgrade_dir_present"]), (1, False))
                 self.assertEqual(record["tools_root"], str((Path(temporary) / "qemu-tools").resolve()))
+                # prepare lists the programs again too, not only the modules (a kit has no tools-verification.json)
+                self.assertEqual(listed, [((Path(temporary) / "qemu-tools").resolve(), name) for name in ("qemu-system-aarch64", "qemu-img", "genisoimage")])
+                self.assertEqual(record["program_libraries_sha256"], sha(json.dumps(
+                    {name: ["libc.so.6"] for name in tools.wrapper_texts()}, sort_keys=True, separators=(",", ":")).encode()))
+                helper.resolved_libraries = lambda dest, name: (_ for _ in ()).throw(RuntimeError("Tool resolves a library outside the locked runtime: " + name))
+                with self.assertRaisesRegex(ValueError, "Locked QEMU runtime check failed: Tool resolves .*qemu-system-aarch64"):
+                    host.qemu_runtime(*selected)
+                helper.resolved_libraries = lambda dest, name: ["libc.so.6"]
                 upgrade.mkdir()
                 with self.assertRaisesRegex(ValueError, "module-upgrade directory"):
                     host.qemu_runtime(*selected)
