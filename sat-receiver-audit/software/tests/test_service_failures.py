@@ -457,6 +457,75 @@ class EngineFailureTests(unittest.TestCase):
                 finally:
                     engine.close()
 
+    def test_corrected_pico_after_a_binding_failure_is_shown_as_recover_not_refused(self):
+        # FIX3A-1: the first-fault latch keeps the failed session's binding reason. After the
+        # operator re-provisions (or replaces) the Pico, the next session's HELLO binds and labd
+        # accepts RECOVER, so the console must not repeat "re-provision the Pico (ARM refused)".
+        from srrx.hmi import ConsoleController, binding_fault, binding_verified, protection_fault_text
+        class PhysicalBoundaryFake(SimHardware):
+            physical = True
+        class IdentityLink(FaultLink):
+            def __init__(self, identity):
+                super().__init__()
+                self.identity = identity
+            def poll(self, now_ms):
+                frames = super().poll(now_ms)
+                for frame in frames:
+                    if frame['t'] == 'HELLO':
+                        frame['p'].update(self.identity)
+                return frames
+        # This is an in-memory Engine unit fixture, never a commissioned file.
+        acceptance = {'branch_limits': copy.deepcopy(self.engine.policy.limits),
+                      'lab5_budget': {'always_on_a': .6, 'max_lab5_a': 3.2},
+                      'pico_serial': 'e661000000001234',
+                      'battery_adc': {'record': {'crc32': '7bd013af'}}}
+        digest = hashlib.sha256(b'synthetic acceptance bytes').hexdigest()
+        good = {'serial': 'e661000000001234', 'calibration_crc32': '7bd013af',
+                'qualification_record': digest, 'hardware_commissioned': True}
+        for reason, changes in (('pico_qualification_record_mismatch', {'qualification_record': 'f' * 64}),
+                                ('pico_identity_or_calibration_mismatch', {'serial': 'e661000000005678'})):
+            with self.subTest(reason=reason):
+                link = IdentityLink(dict(good, **changes))
+                engine = Engine(PhysicalBoundaryFake(), link, simulated=False, acceptance=acceptance,
+                                qualification_record=digest)
+                now = [0]
+                def advance(ms):
+                    end = now[0] + ms
+                    while now[0] < end:
+                        now[0] += 20
+                        engine.tick(now[0])
+                def text():
+                    status = engine.status()
+                    return protection_fault_text(status['policy']['fault'], binding_fault(status),
+                                                 binding_verified(status))
+                controller = ConsoleController(lambda request: json.loads(json.dumps(
+                    engine.request(dict(request, _owner='uid:1000')), allow_nan=False)), lambda: now[0] / 1000)
+                try:
+                    advance(1000)
+                    self.assertEqual(engine.status()['policy']['fault'], reason)
+                    self.assertIn('ARM refused', text())
+                    # The operator corrects the Pico; it boots a new session whose HELLO binds.
+                    link.identity = dict(good)
+                    link.delegate.model._rotate_session()
+                    advance(600)
+                    status = engine.status()
+                    self.assertTrue(status['pico_fresh'])
+                    self.assertTrue(status['live_identity_verified'])
+                    self.assertEqual(status['policy']['fault'], reason)  # Still the first fault.
+                    self.assertIsNone(binding_fault(status))
+                    for refusal in ('ARM refused', 're-provision', 'wrong Pico', 'ready'):
+                        self.assertNotIn(refusal, text())
+                    self.assertIn('RECOVER + ARM required', text())
+                    controller.poll()
+                    self.assertIn('RECOVER + ARM', str(controller.command('arm').get('error')))
+                    self.assertFalse(any(f['t'] == 'ARM' for f in link.sent))
+                    result = controller.command('recover')  # labd accepts it, as the console says.
+                    self.assertTrue(result['ok'], result)
+                    self.assertEqual(result.get('state'), 'arm_requested')
+                    self.assertTrue(any(f['t'] == 'ARM' for f in link.sent))
+                finally:
+                    engine.close()
+
     def test_repeated_hello_keeps_status_readings_and_new_session_drops_them(self):
         # The Pico HELLO carries no sensor readings (512-byte frame); see test_supervisor.
         slim = ('state', 'fault', 'mcp_reset', 'calibration_valid', 'hardware_commissioned',

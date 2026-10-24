@@ -1378,7 +1378,7 @@ class QtTests(unittest.TestCase):
     def test_failed_live_binding_is_never_rendered_as_ready(self):
         # HW10-01: labd refuses ARM when the live HELLO fails the serial/CRC/qualification binding,
         # while its first-fault latch can still hold a benign stop from before that HELLO.
-        from srrx.hmi import readable_fault
+        from srrx.hmi import latched_fault_text, readable_fault
         app = qt_app()
         clock, backend = Clock(), Backend()
         backend.data.update(mode="HARDWARE", live_identity_verified=False,
@@ -1412,7 +1412,23 @@ class QtTests(unittest.TestCase):
             self.assertIn("ARM refused", window.fault_text.text())
             backend.data["live_identity_verified"] = True
             self.assertEqual(render(), "Stopped — ready for an explicit start")
+            # FIX3A-1: the latch keeps an earlier session's reason after the corrected Pico binds;
+            # labd accepts RECOVER then, so the console neither refuses nor asks to re-provision.
+            backend.data["policy"]["fault"] = "pico_qualification_record_mismatch"
+            earlier = latched_fault_text("pico_qualification_record_mismatch", True)
+            self.assertEqual(render(), earlier)
+            self.assertIn("RECOVER + ARM required", earlier)
+            for refusal in ("ARM refused", "re-provision", "ready"):
+                self.assertNotIn(refusal, earlier)
+            backend.data["pico_fresh"] = False  # Stale Pico: the stale line refuses, the latch line does not.
+            self.assertTrue(render().endswith("; ARM will be refused.\n" + earlier))
+            backend.data["pico_fresh"] = True
+            # A different live failure: the latched reason is history, the live refusal follows.
+            backend.data.update(live_identity_verified=False, last_error="pico_identity_or_calibration_mismatch")
+            self.assertEqual(render(), "Earlier Pico binding failure (Pico commissioning did not match the labd"
+                             " acceptance file)\n" + readable_fault("pico_identity_or_calibration_mismatch"))
             backend.data.update(mode="SIMULATION", live_identity_verified=False)  # The simulator binds nothing.
+            backend.data["policy"]["fault"] = "new_pico_session"
             self.assertEqual(render(), "Stopped — ready for an explicit start")
         finally:
             window.close(); app.processEvents()

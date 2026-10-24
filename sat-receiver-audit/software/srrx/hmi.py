@@ -38,7 +38,12 @@ CHANNEL_DISPLAY_ORDER = ("RTLA", "RTLB", "HFP", "LIME3V3", "LNA1", "LNA2", "LNA3
                          "LNB", "BONI", "SB_LNA", "T7", "LABPORT", "AUX12")
 
 
-BINDING_FAULTS = ("pico_identity_or_calibration_mismatch", "pico_qualification_record_mismatch")
+# Past tense: the latched binding fault of an earlier Pico session (labd keeps its first fault).
+EARLIER_BINDING = {"pico_identity_or_calibration_mismatch":
+                       "Pico serial or calibration CRC did not match the labd acceptance file",
+                   "pico_qualification_record_mismatch":
+                       "Pico commissioning did not match the labd acceptance file"}
+BINDING_FAULTS = tuple(EARLIER_BINDING)
 
 
 def readable_fault(value):
@@ -72,13 +77,34 @@ def binding_fault(data):
     return "Live Pico identity is not verified against the labd acceptance file (ARM refused)"
 
 
-def protection_fault_text(fault, binding):
-    """The labd fault line; a failed live binding replaces the benign stop and is never hidden."""
-    text = readable_fault(fault)
+def binding_verified(data):
+    """labd reports HARDWARE and the current Pico HELLO passed the serial/CRC/qualification binding."""
+    return data.get("mode") == "HARDWARE" and data.get("live_identity_verified") is True
+
+
+def latched_fault_text(fault, verified=False):
+    """readable_fault, except for a binding fault latched by an earlier Pico session.
+
+    After the operator re-provisions or replaces the Pico, the new session's HELLO binds while
+    the first-fault latch still holds the old reason. labd then accepts RECOVER, so the line
+    must neither say "ARM refused" nor ask to re-provision again."""
+    if verified and fault in EARLIER_BINDING:
+        return ("Earlier Pico binding failure (" + EARLIER_BINDING[fault]
+                + "); the current Pico HELLO verifies — RECOVER + ARM required")
+    return readable_fault(fault)
+
+
+def protection_fault_text(fault, binding, verified=False):
+    """The labd fault line; a failed live binding replaces the benign stop and is never hidden.
+
+    binding is binding_fault(status) and verified is binding_verified(status)."""
+    text = latched_fault_text(fault, verified)
     if binding is None or binding == text:
         return text
     if fault in (None, "", "new_pico_session"):
         return binding
+    if fault in EARLIER_BINDING:  # Latched by an earlier session; the live refusal follows.
+        text = "Earlier Pico binding failure (" + EARLIER_BINDING[fault] + ")"
     return text + "\n" + binding
 
 
@@ -1924,13 +1950,15 @@ def create_window(controller, *, callbacks=None, start_worker=True, scope_latch=
             self.metric_values["temperature"].setText("\n".join(temperatures))
             self.metric_values["supervisor"].setText(state.title() + "\nLease: " + ("holding" if holding else "stopped"))
             fault = ("Connection lost — current power state is unconfirmed." if not live
-                     else protection_fault_text(policy.get("fault"), binding_fault(data)) if pico_live
+                     else protection_fault_text(policy.get("fault"), binding_fault(data), binding_verified(data))
+                     if pico_live
                      else (("Supervisor status stale — " + (f"last Pico status {pico_age / 1000:.1f} s ago"
                             if type(pico_age) is int and 0 <= pico_age < 1e12 else "no fresh Pico status")
                             + "; ARM will be refused.") if freshness is False
                            else "labd did not report Pico freshness — Pico readouts withheld; labd checks it before ARM.")
                      # The labd fault stays visible, but never as "ready" without fresh Pico status.
-                     + ("\n" + readable_fault(policy["fault"]) if policy.get("fault") not in (None, "", "new_pico_session") else ""))
+                     + ("\n" + latched_fault_text(policy["fault"], binding_verified(data))
+                        if policy.get("fault") not in (None, "", "new_pico_session") else ""))
             # The console's own error never hides the labd protection fault.
             self.fault_text.setText(fault + ("\nConsole: " + str(view["error"])[:240] if view.get("error") else ""))
             self.gnss_reset_text.setText(gnss_reset_summary(policy.get("gnss_reset"), live))

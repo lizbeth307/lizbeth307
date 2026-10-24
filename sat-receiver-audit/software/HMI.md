@@ -124,7 +124,14 @@ HARDWARE, коли labd повідомляє `live_identity_verified=false` (HEL
 доброякісної зупинки консоль показує причину `pico_identity_or_calibration_mismatch`
 чи `pico_qualification_record_mismatch` з `last_error`, журналу подій labd або
 зафіксованого fault (`srrx.hmi.binding_fault`); інший зафіксований fault лишається
-першим рядком. Помилка консолі виводиться окремим рядком `Console:` під
+першим рядком. Після нового provisioning (`srrx.provision`) або заміни Pico HELLO
+нового сеансу проходить звірку (`live_identity_verified=true`), а labd і далі тримає
+стару причину як перший fault, проте вже приймає RECOVER: консоль пише «Earlier Pico
+binding failure (…); the current Pico HELLO verifies — RECOVER + ARM required»
+(`srrx.hmi.latched_fault_text`), без «ARM refused» і без нового «re-provision»;
+ARM + HOLD для цього fault консоль не надсилає, потрібна кнопка RECOVER + ARM.
+Інша причина звірки в поточному сеансі показується окремим рядком під «Earlier Pico
+binding failure (…)». Помилка консолі виводиться окремим рядком `Console:` під
 захисним fault labd і не приховує його. Помилку зв'язку прибирає перший свіжий
 статус, у якому labd disarmed; поки labd ще armed, «Disarm unconfirmed»
 лишається. Якщо Qt worker зупинився не через закриття вікна, банер постійно
