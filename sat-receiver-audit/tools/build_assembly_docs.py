@@ -803,7 +803,7 @@ def form_rows(model):
 def render_form(model):
     rows, contract = form_rows(model)
     lines = [HEAD, "# 20. Бланк стендових записів (на один екземпляр)\n", STATUS,
-             "Друкувати з HTML-комплекту або CSV [20-forma-stendu.csv](20-forma-stendu.csv). Поля результату порожні: їх заповнює стенд. "
+             "Друкувати з цього файлу (pandoc → HTML/PDF) або з CSV [20-forma-stendu.csv](20-forma-stendu.csv). Поля результату порожні: їх заповнює стенд. "
              "PASS заздалегідь не вписаний; ворота з `design/readiness-contract.json` лишаються OPEN, доки доказ не записано за 09 §0 п. 8.\n",
              "\n## 1. Екземпляр\n",
              table(["поле", "значення"], [("серійний номер пристрою", ""), ("ревізії плат PWR / RF / CTRL", ""), ("Q6A S/N, UFS", ""),
