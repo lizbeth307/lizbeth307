@@ -39,6 +39,8 @@ ControlGuard лишається observer: сам не ARM/recover і не пон
 - Глибоко вкладений JSON відхиляється HMI loader як `ValueError`, а не `RecursionError`, що раніше виходила з Qt slot без повідомлення «Rejected».
 - `test_console_integration.py` імпортує `srrx.labrx` (POSIX `resource`) і виконується лише на Linux; кількість наскрізних тестів не змінилася.
 
+Доповнення 24 жовтня 2026 (APP-05): HMI запускає `learning.annotate/train/infer` і load/save датасету й моделі як одну фонову задачу з прогресом і Cancel ([HMI.md](HMI.md)); задача отримує відокремлену копію `ScopeLatch` ([SCOPE-POLICY.md](SCOPE-POLICY.md)), а датасет сеансу обмежено 2 MiB. Контракт learning для CLI і цього наскрізного сценарію не змінився: `checkpoint` необов'язковий і CLI його не передає.
+
 Після цих виправлень у перевірених cross-module сценаріях відкритого дефекту не виявлено. Цей огляд не включає візуальну оцінку Qt на фізичному дисплеї, фізичні SDR-бібліотеки/серійні номери, hardware calibration, GP/NPU виконання чи фактичний GNSS fix. Вони не виводяться з успіху simulation pipeline.
 
 Відтворення:

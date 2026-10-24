@@ -816,12 +816,179 @@ class ReceiverSimulation:
         self.directory.cleanup()
 
 
+# Learning jobs run off the Qt UI thread, so the 1.5 s GUI heartbeat keeps HOLD
+# alive; a job longer than this is cancelled at its next checkpoint.
+LEARNING_JOB_MAX_S = 300.0
+LEARNING_BUSY = "A learning job is already running — wait for it or cancel it"
+LEARNING_SCOPED = ("annotate", "train", "infer")
+LEARNING_OPERATIONS = LEARNING_SCOPED + ("load_dataset", "load_model", "save_dataset", "save_model")
+
+
+def console_file_bytes(value):
+    """Size of the file learning.save_* writes (canonical JSON + newline), as load_json reads it back."""
+    from .learning import _canonical
+    return len(_canonical(value)) + 1
+
+
+def learning_diagnostics(value):
+    """At most 16000 characters; a dataset is summarised, never serialised whole."""
+    if isinstance(value, dict) and value.get("kind") == "srrx_spectrum_annotations":
+        records = value.get("annotations", [])
+        value = {"kind": value["kind"], "sha256": value.get("sha256"), "frames": len(value.get("frames", {})),
+                 "annotations": len(records), "last_annotations": records[-20:]}
+    return json.dumps(value, indent=2, ensure_ascii=False, allow_nan=False)[:16000]
+
+
+def run_learning_job(operation, inputs, checkpoint):
+    """Qt-free body of one learning job: plain data in, {result, summary, diagnostics} out.
+
+    It never touches the controller, transport, worker heartbeat or a Qt object.
+    inputs are only read; a dataset/model/frame is never changed in place.
+    """
+    from . import learning
+    tick = checkpoint or (lambda stage, done, total: None)
+    if operation == "annotate":
+        result = learning.annotate(inputs["dataset"], inputs["frame"], inputs["start"], inputs["end"], inputs["label"],
+                                   group_id=inputs["group_id"], user_confirmed=True, scope=inputs["scope"],
+                                   checkpoint=checkpoint)
+        # The console can save and reload at most MAX_FILE_BYTES; the CLI keeps its own limit.
+        if console_file_bytes(result) > MAX_FILE_BYTES:
+            raise ValueError("Dataset would exceed the 2 MiB console limit — save it; larger datasets need the learning CLI")
+        summary = learning_summary(result, operation)
+    elif operation == "train":
+        result = learning.train(inputs["dataset"], seed=0, validation_fraction=.25, scope=inputs["scope"],
+                                checkpoint=checkpoint)
+        summary = learning_summary(result, operation, result)
+    elif operation == "infer":
+        tick("classify", 0, 1)
+        result = learning.infer(inputs["model"], inputs["frame"], inputs["start"], inputs["end"], backend="cpu",
+                                scope=inputs["scope"])
+        summary = learning_summary(result, operation, inputs["model"])
+    elif operation in ("load_dataset", "load_model"):
+        tick("read", 0, 1)
+        result = load_json(inputs["path"])
+        if operation == "load_dataset":
+            result = learning.validate_dataset(result, checkpoint=checkpoint)
+        else:
+            result = learning.validate_model(result)
+        summary = learning_summary(result, operation[5:])
+    elif operation in ("save_dataset", "save_model"):
+        result = inputs["value"]
+        if console_file_bytes(result) > MAX_FILE_BYTES:
+            raise ValueError("Metadata exceeds console size limit")
+        if operation == "save_dataset":
+            learning.save_dataset(inputs["path"], result, checkpoint=checkpoint)
+        else:
+            learning.save_model(inputs["path"], result)
+        return {"result": result, "summary": operation[5:].capitalize() + " saved", "diagnostics": None}
+    else:
+        raise ValueError("Unknown learning operation")
+    return {"result": result, "summary": summary, "diagnostics": learning_diagnostics(result)}
+
+
+class LearningJob:
+    """One background learning operation; checkpoint() is its only link to the UI thread."""
+    def __init__(self, operation, inputs, base=None):
+        from .learning import LearningCancelled
+        if operation not in LEARNING_OPERATIONS:
+            raise ValueError("Unknown learning operation")
+        self.operation, self.inputs, self.base = operation, inputs, base
+        self.scope = inputs.get("scope")  # detached ScopeLatch copy, adopted by the UI thread
+        self.cancel = threading.Event()
+        self.finished = threading.Event()
+        self.started = time.monotonic()
+        self.timed_out = False
+        self.outcome, self.value, self.error = None, None, None  # outcome: ok / cancelled / error
+        self._cancelled = LearningCancelled
+        self._lock = threading.Lock()
+        self._progress = ("starting", 0, 0)
+
+    def checkpoint(self, stage, done, total):
+        if self.cancel.is_set():
+            raise self._cancelled("Learning job cancelled")
+        with self._lock:
+            self._progress = (str(stage)[:40], done, total)
+
+    def progress(self):
+        with self._lock:
+            return self._progress
+
+
+class LearningRunner:
+    """At most one learning job in flight, never queued; poll() on the UI thread only.
+
+    Each job gets its own non-daemon threading.Thread (not a QThread: the job
+    needs no Qt object, and an unfinished QThread aborts the process when its
+    object is destroyed; not a ThreadPoolExecutor, whose threads are joined at
+    exit before atexit). busy stays True until poll() has returned the finished
+    job, including a cancelled job that is still finishing its current step.
+    """
+    def __init__(self, start_thread=None):
+        self._start_thread = start_thread or self._thread
+        self._job = None
+        self.thread = None
+        self.closed = False
+
+    @staticmethod
+    def _thread(target):
+        thread = threading.Thread(target=target, name="srrx-learning")
+        thread.start()
+        return thread
+
+    @property
+    def busy(self):
+        return self._job is not None
+
+    @property
+    def current(self):
+        return self._job
+
+    def submit(self, job):
+        if self.closed or self._job is not None:
+            return False
+        self._job = job
+        self.thread = self._start_thread(lambda: self._run(job))
+        return True
+
+    @staticmethod
+    def _run(job):
+        try:
+            job.value = run_learning_job(job.operation, job.inputs, job.checkpoint)
+            job.outcome = "ok"
+        except job._cancelled:
+            job.outcome = "cancelled"
+        except Exception as error:  # every failure reaches the UI as an outcome
+            job.outcome, job.error = "error", error
+        finally:
+            if job.outcome is None:
+                job.outcome = "error"
+            job.finished.set()
+
+    def poll(self):
+        """The finished job, exactly once; None while running or idle."""
+        job = self._job
+        if job is None or not job.finished.is_set():
+            return None
+        self._job = None
+        return job
+
+    def cancel(self):
+        if self._job is not None:
+            self._job.cancel.set()
+
+    def close(self):
+        """Cancel and return at once; the job ends at its next checkpoint."""
+        self.closed = True
+        self.cancel()
+
+
 def create_window(controller, *, callbacks=None, start_worker=True, scope_latch=None):
     """Lazy Qt entry point. callbacks may supply location() / manual_location().
 
     scope_latch is the session's one scope_policy.ScopeLatch (default: a latch
     without an Artemis database; the masked-band stop still applies). Every
-    shown frame retunes it, and annotate/train/classify get it.
+    shown frame retunes it. Annotate/train/classify run as one background job
+    at a time against its detached copy; the UI thread adopts the copy's stops.
     """
     try:
         from PySide6 import QtCore, QtGui, QtWidgets
@@ -983,6 +1150,8 @@ def create_window(controller, *, callbacks=None, start_worker=True, scope_latch=
             # One latch per session; a new stop also aborts the running SIM capture.
             self.scope_latch = scope_latch
             self.scope_abort = scope_latch.register_abort(self.receiver_job.abort)
+            # Learning/file jobs off the UI thread: only _heartbeat refreshes worker.ui_at.
+            self.learning_runner = LearningRunner()
             self.setStyleSheet("""
                 QWidget {background:#101821;color:#f6f8fb;font-size:18px;}
                 QPushButton {background:#263e51;border:2px solid #9bb7cb;border-radius:8px;
@@ -1417,20 +1586,39 @@ def create_window(controller, *, callbacks=None, start_worker=True, scope_latch=
             self.teach_confirm.toggled.connect(self._teach_toggled)
             for signal in (self.bin_start.valueChanged, self.bin_end.valueChanged, self.label.currentIndexChanged):
                 signal.connect(lambda _=None: self.teach_confirm.setChecked(False))
+            # One background job at a time: these are disabled while it runs.
+            self.learning_buttons = []
+            def job_button(text, handler):
+                button = self.button(text, handler)
+                self.learning_buttons.append(button)
+                return button
             row = QtWidgets.QHBoxLayout()
-            row.addWidget(self.button("Add annotation", lambda: self.learning_action("annotate")))
-            row.addWidget(self.button("Train CPU model", lambda: self.learning_action("train")))
-            row.addWidget(self.button("Classify selected bins", lambda: self.learning_action("infer")))
+            row.addWidget(job_button("Add annotation", lambda: self.learning_action("annotate")))
+            row.addWidget(job_button("Train CPU model", lambda: self.learning_action("train")))
+            row.addWidget(job_button("Classify selected bins", lambda: self.learning_action("infer")))
             layout.addLayout(row)
             row = QtWidgets.QHBoxLayout()
             row.addWidget(self.button("New independent session…", self.new_group))
-            row.addWidget(self.button("Load dataset", lambda: self.learning_file("dataset", False)))
-            row.addWidget(self.button("Save dataset", lambda: self.learning_file("dataset", True)))
+            row.addWidget(job_button("Load dataset", lambda: self.learning_file("dataset", False)))
+            row.addWidget(job_button("Save dataset", lambda: self.learning_file("dataset", True)))
             layout.addLayout(row)
             row = QtWidgets.QHBoxLayout()
-            row.addWidget(self.button("Load model", lambda: self.learning_file("model", False)))
-            row.addWidget(self.button("Save model", lambda: self.learning_file("model", True)))
+            row.addWidget(job_button("Load model", lambda: self.learning_file("model", False)))
+            row.addWidget(job_button("Save model", lambda: self.learning_file("model", True)))
             layout.addLayout(row)
+            row = QtWidgets.QHBoxLayout()
+            self.learning_progress = QtWidgets.QProgressBar()
+            self.learning_progress.setTextVisible(False)
+            self.learning_progress.setVisible(False)
+            row.addWidget(self.learning_progress, 1)
+            self.learning_cancel = self.button("Cancel learning job", self.cancel_learning)
+            self.learning_cancel.setEnabled(False)
+            row.addWidget(self.learning_cancel)
+            layout.addLayout(row)
+            self.learning_progress_note = QtWidgets.QLabel("")
+            self.learning_progress_note.setTextFormat(QtCore.Qt.TextFormat.PlainText)
+            self.learning_progress_note.setVisible(False)
+            layout.addWidget(self.learning_progress_note)
             self.learning_text = QtWidgets.QPlainTextEdit(); self.learning_text.setReadOnly(True)
             self.learning_text.setStyleSheet("QPlainTextEdit{background:#203342;font-family:sans-serif;font-size:20px;padding:8px;}")
             self.learning_text.setMinimumHeight(300)
@@ -1448,60 +1636,160 @@ def create_window(controller, *, callbacks=None, start_worker=True, scope_latch=
                 self.learning_text.setPlainText("Independent session ready\n\nNew annotations will use this group. Collect genuinely separate capture conditions before adding a validation session.")
                 self.learning_diagnostics.setPlainText("Anonymous group: " + self.group_id)
 
+        LEARNING_STARTED = {"annotate": "Adding annotation…", "train": "Training CPU model…",
+                            "infer": "Classifying…", "load_dataset": "Loading dataset…", "load_model": "Loading model…",
+                            "save_dataset": "Saving dataset…", "save_model": "Saving model…"}
+
         def learning_action(self, operation):
             try:
                 from . import learning
+                if self.learning_runner.busy:
+                    self.learning_text.setPlainText(LEARNING_BUSY)
+                    return
                 if self.dataset is None:
                     self.dataset = learning.empty_dataset()
                 # The session latch: a stopped span is never labelled, trained on or classified.
                 if operation == "train":
-                    self.model = learning.train(self.dataset, seed=0, validation_fraction=.25, scope=self.scope_latch)
-                    result = self.model
+                    inputs = {"dataset": self.dataset}
                 elif self.frame is None:
                     raise ValueError("Load a masked spectrum first")
                 elif operation == "annotate":
                     if not self.teach_confirm.isChecked() or self.teach_frame is None:
                         raise ValueError("Explicit label/group confirmation required")
-                    self.dataset = learning.annotate(self.dataset, self.teach_frame, self.bin_start.value(), self.bin_end.value(),
-                        self.label.currentData(), group_id=self.group_id, user_confirmed=True, scope=self.scope_latch)
-                    self.teach_confirm.setChecked(False)
-                    result = self.dataset
+                    inputs = {"dataset": self.dataset, "frame": self.teach_frame, "start": self.bin_start.value(),
+                              "end": self.bin_end.value(), "label": self.label.currentData(), "group_id": self.group_id}
+                    self._scope_precheck(learning, inputs, "Annotation span is out of scope")
                 else:
                     if self.model is None:
                         raise ValueError("Load/train a model first")
-                    result = learning.infer(self.model, self.frame, self.bin_start.value(), self.bin_end.value(), backend="cpu",
-                                            scope=self.scope_latch)
-                self.learning_text.setPlainText(learning_summary(result, operation, self.model))
-                self.learning_diagnostics.setPlainText(json.dumps(result, indent=2, ensure_ascii=False, allow_nan=False)[:16000])
+                    inputs = {"model": self.model, "frame": self.frame, "start": self.bin_start.value(),
+                              "end": self.bin_end.value()}
+                    self._scope_precheck(learning, inputs, "Classification span is out of scope")
+                self._start_learning(operation, inputs)
             except (ImportError, OSError, ValueError, TypeError, KeyError, RuntimeError) as error:
                 self.learning_text.setPlainText("Rejected: " + str(error))
+            finally:
+                if self.tabs.currentIndex() == 4:
+                    self.tabs.currentWidget().ensureWidgetVisible(self.learning_text)
+
+        def _scope_precheck(self, learning, inputs, message):
+            # Early refusal on the UI thread, as before: a new stop latches here at
+            # once and aborts the SIM capture. The job checks its copy again.
+            spans = learning.box_spans(inputs["frame"], inputs["start"], inputs["end"])
+            try:
+                stopped = any(self.scope_latch.permits("label", span) is not True for span in spans)
+            except ValueError:
+                stopped = True  # fail closed
+            if stopped:
+                raise ValueError(message)  # no frequency in the message
+
+        def _start_learning(self, operation, inputs):
+            if operation in LEARNING_SCOPED:
+                inputs = dict(inputs, scope=self.scope_latch.detached_copy())
+            job = LearningJob(operation, inputs, base=(self.dataset, self.model))
+            if not self.learning_runner.submit(job):
+                raise ValueError(LEARNING_BUSY)
+            self._learning_busy(True)
+            self.learning_text.setPlainText(self.LEARNING_STARTED[operation] + " — HOLD and DISARM stay available")
+
+        def _learning_busy(self, busy):
+            for button in self.learning_buttons:
+                button.setEnabled(not busy)
+            self.learning_cancel.setEnabled(busy)
+            self.learning_progress.setRange(0, 0 if busy else 1)  # indeterminate until the first checkpoint
+            self.learning_progress.setValue(0)
+            self.learning_progress.setVisible(busy)
+            self.learning_progress_note.setText("starting · 0 s" if busy else "")
+            self.learning_progress_note.setVisible(busy)
+
+        def cancel_learning(self):
+            if self.learning_runner.busy:
+                self.learning_runner.cancel()
+                self.learning_text.setPlainText("Cancelling — the current step finishes first")
+
+        def _poll_learning(self):
+            """UI thread, every heartbeat: progress, the time limit, and the finished job."""
+            job = self.learning_runner.poll()
+            if job is not None:
+                self._finish_learning(job)
+                return
+            job = self.learning_runner.current
+            if job is None:
+                return
+            elapsed = time.monotonic() - job.started
+            if elapsed > LEARNING_JOB_MAX_S and not job.cancel.is_set():
+                job.timed_out = True
+                self.learning_runner.cancel()
+            stage, done, total = job.progress()
+            if type(total) is int and type(done) is int and 0 <= done <= total and total > 0:
+                self.learning_progress.setRange(0, total)
+                self.learning_progress.setValue(done)
+                text = f"{stage} {done}/{total} · {elapsed:.0f} s"
+            else:
+                self.learning_progress.setRange(0, 0)  # indeterminate
+                text = f"{stage} · {elapsed:.0f} s"
+            self.learning_progress_note.setText(text + (" · cancelling" if job.cancel.is_set() else ""))
+
+        def _finish_learning(self, job):
+            """Commit a finished job, fail closed: scope stops first, then the outcome."""
+            try:
+                try:
+                    unchanged = self.scope_latch.adopt(job.scope) if job.scope is not None else True
+                except ValueError:
+                    unchanged = None  # the stops are latched; an abort callback or the journal failed
+                value = job.value or {}
+                base_dataset, base_model = job.base
+                saved = job.outcome == "ok" and job.operation.startswith("save_")  # the file is written
+                if unchanged is None:
+                    text = "Rejected: " + OUT_OF_SCOPE
+                elif job.outcome == "cancelled" or job.outcome == "ok" and job.cancel.is_set() and not saved:
+                    # A cancel that arrived after the last checkpoint still discards the result.
+                    text = ("Learning job exceeded %g s — cancelled" % LEARNING_JOB_MAX_S if job.timed_out
+                            else "Cancelled — dataset and model unchanged")
+                elif job.outcome != "ok":
+                    error = job.error
+                    known = isinstance(error, (ImportError, OSError, ValueError, TypeError, KeyError, RuntimeError))
+                    text = "Rejected: " + (str(error) if known else "internal error " + type(error).__name__)
+                elif unchanged is not True:
+                    text = "Rejected: scope stop added while the job ran — run it again"
+                elif base_dataset is not self.dataset or base_model is not self.model:
+                    text = "Rejected: dataset or model changed while the job ran — run it again"
+                elif job.operation == "infer" and job.inputs["frame"] is not self.frame:
+                    text = "Rejected: spectrum changed while classifying — run it again"
+                else:
+                    result = value.get("result")
+                    if job.operation in ("annotate", "load_dataset"):
+                        self.dataset = result
+                    elif job.operation in ("train", "load_model"):
+                        self.model = result
+                    if job.operation == "annotate":
+                        self.teach_confirm.setChecked(False)
+                    text = value.get("summary", "")
+                    if value.get("diagnostics") is not None:
+                        self.learning_diagnostics.setPlainText(value["diagnostics"])
+                self.learning_text.setPlainText(text)
+            finally:
+                self._learning_busy(False)
             if self.tabs.currentIndex() == 4:
                 self.tabs.currentWidget().ensureWidgetVisible(self.learning_text)
 
         def learning_file(self, kind, save):
             try:
-                from . import learning
+                if self.learning_runner.busy:
+                    self.learning_text.setPlainText(LEARNING_BUSY)
+                    return
+                # The dialog stays on the UI thread; reading, validating and writing run as the job.
                 if save:
                     value = getattr(self, kind)
                     if value is None:
                         raise ValueError("No " + kind + " to save")
                     path, _ = QtWidgets.QFileDialog.getSaveFileName(self, "Save " + kind, kind + ".json", "JSON (*.json)")
                     if path:
-                        data = json.dumps(value, indent=2, ensure_ascii=False, allow_nan=False).encode()
-                        if len(data) > MAX_FILE_BYTES:
-                            raise ValueError("Metadata exceeds console size limit")
-                        if kind == "dataset":
-                            learning.save_dataset(path, value)
-                        else:
-                            learning.save_model(path, value)
+                        self._start_learning("save_" + kind, {"value": value, "path": path})
                 else:
                     path, _ = QtWidgets.QFileDialog.getOpenFileName(self, "Load " + kind, "", "JSON (*.json)")
                     if path:
-                        value = load_json(path)
-                        value = learning.validate_dataset(value) if kind == "dataset" else learning.validate_model(value)
-                        setattr(self, kind, value)
-                        self.learning_text.setPlainText(learning_summary(value, kind))
-                        self.learning_diagnostics.setPlainText(json.dumps(value, indent=2)[:16000])
+                        self._start_learning("load_" + kind, {"path": path})
             except (ImportError, OSError, ValueError, TypeError, KeyError, RuntimeError) as error:
                 self.learning_text.setPlainText("Rejected: " + str(error))
 
@@ -1642,6 +1930,11 @@ def create_window(controller, *, callbacks=None, start_worker=True, scope_latch=
             if self.closing:
                 return
             self.render_state(controller.status())
+            # Before the journal drain: a finished job's adopted stops are logged this tick.
+            try:
+                self._poll_learning()
+            except (ImportError, OSError, ValueError, TypeError, KeyError, RuntimeError) as error:
+                self.learning_text.setPlainText("Rejected: " + str(error))
             # The stop journal holds only UTC + "out of scope"; srrx-menu's stderr
             # goes to the user journal.
             for line in self.scope_latch.drain_log():
@@ -1671,6 +1964,8 @@ def create_window(controller, *, callbacks=None, start_worker=True, scope_latch=
                 self._live_location()  # Also while pinned: the provider must keep draining gpsd.
 
         def closeEvent(self, event):
+            # Never waits for a learning job: it only touches metadata and ends at its next checkpoint.
+            self.learning_runner.close()
             if self.worker_started and self.worker.isRunning():
                 self.closing = True
                 self.timer.stop()
