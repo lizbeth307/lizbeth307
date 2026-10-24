@@ -253,7 +253,7 @@ class SelftestTests(unittest.TestCase):
         self.assertEqual(stale["blockers"][0], "POLICY_REVIEW_RECORD_NOT_BOUND")
         # The shipped DRAFT policy blocks first, whatever record is given.
         self.assertEqual(self.run_check(rootfs=self.clean, policy=POLICY)["blockers"][0], "POLICY_NOT_REVIEWED")
-        policy = deploy.load(self.reviewed)
+        policy, lock = deploy.load(self.reviewed), deploy.sha(HERE / "sources.lock.json")
         for change in (lambda r: r.update(status="OPEN"), lambda r: r.update(reviewer="reviewer@example.org"),
                        lambda r: r.update(reviewer=""), lambda r: r.update(reviewed_on="24.10.2026"),
                        lambda r: r.update(reviewed_on="2026-02-30"), lambda r: r.update(builds=[]),
@@ -265,8 +265,17 @@ class SelftestTests(unittest.TestCase):
             path = self.work / "bad-review.json"
             path.write_text(json.dumps(record), encoding="utf-8")
             with self.assertRaises(deploy.DeploymentError):
-                selftest.load_review(path, self.reviewed, policy)
-        self.assertEqual(selftest.load_review(self.review, self.reviewed, policy), "BOUND")
+                selftest.load_review(path, deploy.sha(self.reviewed), policy, lock)
+        self.assertEqual(selftest.load_review(self.review, deploy.sha(self.reviewed), policy, lock), ("BOUND", deploy.sha(self.review)))
+        self.assertEqual(selftest.load_review(self.review, "0" * 64, policy, lock)[0], "NOT_BOUND")
+        # One read per input: the report's digests come from the bytes parsed, not from a later re-read
+        # (a record or policy replaced between two reads could otherwise sit next to BOUND).
+        hashed = []
+        real_sha = deploy.sha
+        with patch.object(deploy, "sha", side_effect=lambda path: hashed.append(Path(path).resolve()) or real_sha(path)):
+            report = self.run_check(rootfs=self.clean)
+        self.assertFalse({self.review.resolve(), self.reviewed.resolve()} & set(hashed), hashed)
+        self.assertEqual((report["policy_sha256"], report["policy_review"]), (real_sha(self.reviewed), {"status": "BOUND", "sha256": real_sha(self.review)}))
 
     def test_missing_cmdline_record_blocks_and_full_profile_requires_components(self):
         report = self.run_check(rootfs=self.clean, cmdline_sha256=None)
@@ -275,8 +284,8 @@ class SelftestTests(unittest.TestCase):
         self.assertEqual(full["status"], "BLOCKED")
         expect = {"RX-01a": "dpkg_database_missing", "RX-02": "component_not_found", "RX-03": "component_not_found",
                   "RX-04": "component_not_found", "RX-05": "component_not_found", "RX-06": "component_not_found",
-                  "RX-09": "librtlsdr_missing", "RX-10": "component_not_found", "RX-12": "lease_units_not_found",
-                  "RX-16": "apt_configuration_missing"}
+                  "RX-09": "librtlsdr_missing", "RX-10": "component_not_found", "RX-11": "unit_interpreter_missing",
+                  "RX-12": "lease_units_not_found", "RX-16": "apt_configuration_missing"}
         for check_id, rule in expect.items():
             check = self.check(full, check_id)
             self.assertEqual(check["status"], "BLOCKED", check)
@@ -618,6 +627,10 @@ class SelftestTests(unittest.TestCase):
         base = self.check(self.run_check(rootfs=self.clean), "RX-11")
         self.assertEqual(base["status"], "BLOCKED")
         self.assertEqual({(f["rule"], f.get("item")) for f in base["findings"]}, {("critical_leaf_touch_only", "frame.disarm")})
+        # Not evaluated here, and said so: the Lab Shell menu (STACK.md:884), unit enablement, and on an
+        # overlay without the base image the interpreters (/usr/bin/python3, the venv).
+        self.assertTrue({"lab_shell_menu_not_modelled", "unit_enablement_is_an_install_step",
+                         "unit_interpreter_absent_controller_overlay"} <= set(base["notes"]), base["notes"])
 
         def rx11(leaves=None, **patches):
             with contextlib.ExitStack() as stack:
@@ -640,7 +653,9 @@ class SelftestTests(unittest.TestCase):
             ([leaf("overview.module", "page_only", "no_such_module")], ("backend_missing", "overview.module")),
             ([leaf("overview.lime", "labd_op", "status", needs_lime=True)], ("no_lime_backend_undeclared", "overview.lime")),
             ([leaf("overview.t7", "labd_op", "status", needs_t7=True)], ("no_t7_backend_undeclared", "overview.t7")),
-            ([leaf("overview.egc", "decoder_preset", "egc-safetynet")], ("disabled_preset_without_fallback", "overview.egc")),
+            ([leaf("overview.egc", "decoder_preset", "egc-safetynet")], ("unavailable_preset_without_fallback", "overview.egc")),
+            # The one file preset is UNAVAILABLE offline too (no accepted installation): it needs a fallback as well.
+            ([leaf("overview.apt", "decoder_preset", "noaa-apt-weather")], ("unavailable_preset_without_fallback", "overview.apt")),
             ([leaf("overview.preset", "decoder_preset", "no-such-preset")], ("backend_missing", "overview.preset")),
             ([engine], ("backend_unit_missing", "overview.engine")),
         ]
@@ -650,6 +665,9 @@ class SelftestTests(unittest.TestCase):
                 status, findings = rx11(menu.LEAVES + tuple(extra))
                 self.assertEqual(status, "FAIL")
                 self.assertIn(finding, findings)
+        self.setUp()
+        apt = leaf("overview.apt", "decoder_preset", "noaa-apt-weather", fallback_text="No accepted APT installation: the WAV stays on file")
+        self.assertEqual(rx11(menu.LEAVES + (apt,)), ("BLOCKED", {("critical_leaf_touch_only", "frame.disarm")}))
         # The engine leaf fails on a unit without its binary and passes once both are staged.
         self.setUp()
         self.put("etc/systemd/system/fixture-engine.service", "[Service]\nExecStart=/usr/bin/fixture-engine --rx-only\n")
@@ -667,6 +685,74 @@ class SelftestTests(unittest.TestCase):
         # With a physical DISARM path (hypothetical model) the row passes.
         glove = tuple(dict(item, controls={"touch": True, "keys": ("LOCK",)}) if item["id"] == "frame.disarm" else item for item in menu.LEAVES)
         self.assertEqual(rx11(glove), ("PASS", set()))
+
+    def test_menu_model_units_follow_the_user_search_path_and_need_their_interpreter(self):
+        menu = self.checker_module("menu_model")
+        # The physical DISARM path of the hypothetical model keeps only the unit findings in view.
+        glove = tuple(dict(item, controls={"touch": True, "keys": ("LOCK",)}) if item["id"] == "frame.disarm" else item for item in menu.LEAVES)
+
+        def rx11():
+            with patch.object(menu, "LEAVES", glove):
+                result = self.check(self.run_check(allow_pass=True), "RX-11")
+            return result["status"], {(f["rule"], f.get("item")) for f in result["findings"]}, result
+
+        other = "[Service]\nExecStart=/usr/bin/env /opt/srrx/venv/bin/python3 -m srrx.other\n"
+        # Directories above usr/lib/systemd/user (systemd.unit(5) with XDG defaults) shadow the shipped unit.
+        for directory in ("etc/xdg/systemd/user", "etc/systemd/user", "usr/local/share/systemd/user", "usr/share/systemd/user",
+                          "usr/local/lib/systemd/user"):
+            with self.subTest(shadow=directory):
+                self.setUp()
+                self.put(directory + "/srrx-menu.service", other)
+                self.assertEqual(rx11()[:2], ("FAIL", {("backend_program_missing", "console")}))
+                self.setUp()
+                self.put(directory + "/srrx-menu.service", "")  # an empty file masks the unit
+                self.assertEqual(rx11()[:2], ("FAIL", {("backend_unit_missing", "console")}))
+                self.setUp()
+                self.put(directory + "/srrx-menu.service.d/50-other.conf", "[Service]\nExecStart=\n" + other.split("\n", 1)[1])
+                self.assertEqual(rx11()[:2], ("FAIL", {("backend_program_missing", "console")}))
+        # A per-user unit, mask or drop-in: the console user's home is not decidable offline.
+        for rel in ("home/lab/.config/systemd/user/srrx-menu.service", "home/lab/.local/share/systemd/user/srrx-menu.service.d/x.conf",
+                    "root/.config/systemd/user.control/srrx-menu.service.d/50-x.conf", "home/lab/.config/systemd/user/service.d/x.conf",
+                    "etc/skel/.config/systemd/user/srrx-menu.service"):
+            with self.subTest(home=rel):
+                self.setUp()
+                self.put(rel, "")
+                listed = rel if rel.endswith(".service") else rel.rsplit("/", 1)[0]
+                self.assertEqual(rx11()[:2], ("BLOCKED", {("user_unit_in_home_directory", None)}))
+                self.assertIn({"path": listed, "rule": "user_unit_in_home_directory", "effect": "BLOCKED"}, rx11()[2]["findings"])
+        self.setUp()
+        self.put("home/lab/.config/systemd/user/other.service", other)  # another user unit is not the console's
+        self.assertEqual(rx11()[:2], ("PASS", set()))
+        # Interpreters: a note on an overlay without a dpkg database, BLOCKED once the image is a full rootfs.
+        self.setUp()
+        status, findings, result = rx11()
+        self.assertEqual((status, findings), ("PASS", set()))
+        self.assertIn("unit_interpreter_absent_controller_overlay", result["notes"])
+        self.put("var/lib/dpkg/status", "Package: base-files\nStatus: install ok installed\nVersion: 13ubuntu10\n\n")
+        self.assertEqual(rx11()[:2], ("BLOCKED", {("unit_interpreter_missing", "console"), ("unit_interpreter_missing", "labd")}))
+        self.put("usr/bin/python3", "#!fixture\n")
+        self.assertEqual(rx11()[:2], ("BLOCKED", {("unit_interpreter_missing", "console")}))  # /usr/bin/env, the venv
+        self.put("usr/bin/env", "#!fixture\n")
+        self.put("opt/srrx/venv/bin/python3", "#!fixture\n")
+        status, findings, result = rx11()
+        self.assertEqual((status, findings), ("PASS", set()))
+        self.assertNotIn("unit_interpreter_absent_controller_overlay", result["notes"])
+        # env options make the command undecidable; a drop-in that drops the venv interpreter is caught too.
+        dropin = "usr/lib/systemd/user/srrx-menu.service.d/50-env.conf"
+        for line, expected in (("/usr/bin/env -S /opt/srrx/venv/bin/python3 -m srrx.hmi", {("unit_interpreter_missing", "console")}),
+                               ("/usr/bin/env QT_QPA_PLATFORM=eglfs /opt/srrx/venv/bin/python3 -m srrx.hmi", set()),
+                               ("/usr/bin/env /opt/other/bin/python3 -m srrx.hmi", {("unit_interpreter_missing", "console")}),
+                               ("python3 -m srrx.hmi", set())):  # a bare name: systemd's search path
+            with self.subTest(exec_start=line):
+                self.put(dropin, "[Service]\nExecStart=\nExecStart=" + line + "\n")
+                self.assertEqual(rx11()[1], expected)
+        # A /dev/null link in a higher directory masks the unit (Linux CI; skipped where links are unavailable).
+        self.setUp()
+        self.symlink(self.rootfs / "etc/xdg/systemd/user/srrx-menu.service", "/dev/null")
+        self.assertEqual(rx11()[:2], ("FAIL", {("backend_unit_missing", "console")}))
+        self.setUp()
+        self.symlink(self.rootfs / "home/lab/.config/systemd/user/srrx-menu.service", "/dev/null")
+        self.assertEqual(rx11()[:2], ("BLOCKED", {("user_unit_in_home_directory", None)}))
 
     def test_voice_mask_row_is_really_evaluated(self):
         mask = self.checker_module("voice_mask")
@@ -1120,6 +1206,8 @@ class SelftestTests(unittest.TestCase):
         self.assertIn("receive-only-policy.json", documented)
         rules = ("pinned_package_present_unreviewed", "modes_py_not_found", "gpredict_binary_not_found", "critical_leaf_touch_only",
                  "backend_unit_missing", "no_lime_backend_undeclared", "voice_residual_above_noise", "voice_mask_control_removed",
+                 "user_unit_in_home_directory", "unit_interpreter_missing", "unit_interpreter_absent_controller_overlay",
+                 "unavailable_preset_without_fallback", "lab_shell_menu_not_modelled",
                  "POLICY_REVIEW_RECORD_MISSING", "POLICY_REVIEW_RECORD_NOT_BOUND", "--policy-review")
         for rule in rules + ("tool_dependencies", "lab-lease@.service.d"):
             self.assertIn(rule, documented)

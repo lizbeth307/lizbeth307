@@ -240,9 +240,34 @@ def _paths(value, label):
                 _paths(item, label + "." + key)
 
 
-def load_policy(path):
-    """Strict deploy.load plus exact schema; DRAFT is valid input but blocks the overall status."""
-    policy = deploy.load(path)
+def _json_once(path, label):
+    """(value, SHA-256) of one bounded read: deploy.load's strict JSON rules (size, duplicate keys,
+    no NaN/Infinity) applied to the very bytes the digest names, so a report never pairs a verdict
+    with the digest of a file replaced between two reads."""
+    with open(path, "rb") as handle:
+        data = handle.read(4 * 1024 * 1024)
+    if not data or len(data) >= 4 * 1024 * 1024:
+        raise DeploymentError(label + " JSON size is invalid")
+
+    def pairs(items):
+        out = {}
+        for key, value in items:
+            if key in out:
+                raise DeploymentError(label + " has a duplicate JSON key")
+            out[key] = value
+        return out
+    try:
+        value = json.loads(data.decode("utf-8"), object_pairs_hook=pairs,
+                           parse_constant=lambda _: (_ for _ in ()).throw(DeploymentError(label + " has nonfinite JSON")))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        raise DeploymentError(label + " is not valid UTF-8 JSON") from None
+    return value, hashlib.sha256(data).hexdigest()
+
+
+def load_policy(path, digest=False):
+    """Strict JSON plus exact schema; DRAFT is valid input but blocks the overall status. With
+    digest=True returns (policy, SHA-256 of the bytes read)."""
+    policy, sha256 = _json_once(path, "receive-only policy")
     _shape(policy, POLICY_SCHEMA, "receive-only policy")
     if policy["schema_version"] != 1 or policy["status"] not in ("DRAFT", "REVIEWED"):
         raise DeploymentError("receive-only policy schema/status is unsupported")
@@ -253,20 +278,22 @@ def load_policy(path):
         _relative(entry["path"], "forbidden_path_prefixes")
     _relative(policy["components"]["sdrangel"]["install_prefix"], "sdrangel.install_prefix")
     _relative(policy["apt"]["pref_path"], "apt.pref_path")
-    return policy
+    return (policy, sha256) if digest else policy
 
 
 REVIEW_FIELDS = ("schema_version", "status", "policy_sha256", "source_lock_sha256", "reviewer", "reviewed_on", "builds", "notes")
 
 
-def load_review(path, policy_path, policy):
+def load_review(path, policy_sha256, policy, source_lock_sha256):
     """Strict review record of a REVIEWED policy, kept apart because load_policy's schema is exact.
 
-    Returns BOUND, or NOT_BOUND when the record answers other policy or source-lock bytes; a
-    malformed record raises. reviewer is a name or role, never an e-mail address; builds are the
-    reviewed build outputs (name, SHA-256); notes answer every policy note by its index.
+    policy_sha256 and source_lock_sha256 are the digests of the bytes the caller parsed. Returns
+    (BOUND, or NOT_BOUND when the record answers other policy or source-lock bytes; the SHA-256 of
+    the record bytes read once and validated); a malformed record raises. reviewer is a name or
+    role, never an e-mail address; builds are the reviewed build outputs (name, SHA-256); notes
+    answer every policy note by its index.
     """
-    record = deploy.load(path)
+    record, digest = _json_once(path, "policy review record")
     deploy.keys(record, REVIEW_FIELDS, "policy review record")
     if record["schema_version"] != 1 or record["status"] != "REVIEWED":
         raise DeploymentError("policy review record schema/status is unsupported")
@@ -293,8 +320,8 @@ def load_review(path, policy_path, policy):
                                       or type(n["resolution"]) is not str or not n["resolution"].strip() for n in notes) \
             or sorted(n["note"] for n in notes) != list(range(len(policy["notes"]))):
         raise DeploymentError("policy review record must resolve every policy note exactly once")
-    bound = record["policy_sha256"] == deploy.sha(policy_path) and record["source_lock_sha256"] == deploy.sha(HERE / "sources.lock.json")
-    return "BOUND" if bound else "NOT_BOUND"
+    bound = record["policy_sha256"] == policy_sha256 and record["source_lock_sha256"] == source_lock_sha256
+    return ("BOUND" if bound else "NOT_BOUND"), digest
 
 
 # ---------------------------------------------------------------- inventory and bounded I/O
@@ -1844,8 +1871,19 @@ def check_s2(ctx, r):
     r.note("live_rfkill_and_usb_state_is_RX-S2-runtime")
 
 
-# systemd --user unit search order for units shipped in the image (no per-user directories).
-_USER_UNIT_DIRS = ("etc/systemd/user", "usr/local/lib/systemd/user", "usr/lib/systemd/user")
+# systemd --user unit search order of the image's persistent directories (systemd.unit(5) "User Unit
+# Search Path", XDG defaults): $XDG_CONFIG_DIRS, /etc, $XDG_DATA_DIRS, then the package paths. /run and
+# $XDG_RUNTIME_DIR are runtime state. The per-user directories rank higher (~/.config/systemd/user.control,
+# ~/.config/systemd/user) or between /etc and $XDG_DATA_DIRS (~/.local/share/systemd/user); which home
+# the console session uses is not decidable offline, so a unit, mask or drop-in there is BLOCKED.
+_USER_UNIT_DIRS = ("etc/xdg/systemd/user", "etc/systemd/user", "usr/local/share/systemd/user", "usr/share/systemd/user",
+                   "usr/local/lib/systemd/user", "usr/lib/systemd/user")
+_USER_HOME_UNIT_DIRS = (".config/systemd/user.control", ".config/systemd/user", ".local/share/systemd/user")
+_USER_HOMES = ("root", "home/*", "etc/skel")  # etc/skel: copied into every new home
+# ExecStart= prefixes (systemd.service(5)) and systemd's fixed search path for a bare executable name.
+_EXEC_PREFIXES = "-@:+!|"
+_EXEC_SEARCH = ("usr/local/sbin", "usr/local/bin", "usr/sbin", "usr/bin")
+_PRESET_ACCEPTED = "FILE_PRESET_ACCEPTED"  # decoder_policy.availability() with an accepted installation
 
 
 def _checker_tree(name):
@@ -1872,11 +1910,49 @@ def _labd_operations():
     return operations
 
 
+def _home_unit_overrides(ctx, r, name):
+    """BLOCKED for each per-user copy, mask or drop-in directory of a user unit (_USER_HOMES)."""
+    names = {name, *_dropin_names(name), name.rpartition(".")[2] + ".d"}
+    for home in ctx.globs(_USER_HOMES):
+        for sub in _USER_HOME_UNIT_DIRS:
+            directory = ctx.resolve_kind(home + "/" + sub, "dir")
+            for child in sorted(names & set(ctx.children(directory))) if directory is not None else ():
+                r.block(home + "/" + sub + "/" + child, "user_unit_in_home_directory")
+
+
+def _exec_chain(words):
+    """Executables an ExecStart command line starts: its first word, and for env(1) also the command
+    after env's NAME=value assignments (None when an env option makes it undecidable)."""
+    if not words:
+        return []
+    chain = [words[0].lstrip(_EXEC_PREFIXES)]
+    if posixpath.basename(chain[0]) == "env":
+        rest = words[1:]
+        while rest and "=" in rest[0] and not rest[0].startswith(("-", "/")):
+            rest = rest[1:]
+        chain.append(rest[0] if rest and not rest[0].startswith("-") else None)
+    return chain
+
+
+def _exec_file(ctx, word):
+    """Rootfs file an executable word names: an absolute path, or a bare name on systemd's search path."""
+    if word is None or not word.startswith("/") and "/" in word:
+        return None
+    if word.startswith("/"):
+        return ctx.file(word.lstrip("/"))
+    return next((f for f in (ctx.file(d + "/" + word) for d in _EXEC_SEARCH) if f is not None), None)
+
+
 def _unit_backend(ctx, r, backend, item):
     """A unit of the backend's scope is effective in the rootfs and its ExecStart runs the declared
-    program: `-m srrx.<module>` with that module staged, or an absolute binary present in the rootfs."""
+    program: `-m srrx.<module>` with that module staged, or an absolute binary present in the rootfs.
+    The executables ExecStart starts (the interpreter, also behind /usr/bin/env) must be files of the
+    rootfs; a controller overlay without a dpkg database lacks the base image and the venv, so a
+    missing one is a note there and BLOCKED otherwise. Enablement is an install step, not checked."""
     where = "software/srrx/menu_model.py"
     paths = ctx.policy["units"]["system_unit_paths"] if backend["scope"] == "system" else _USER_UNIT_DIRS
+    if backend["scope"] == "user":
+        _home_unit_overrides(ctx, r, backend["name"])
     dirs = list(dict.fromkeys(d for d in (ctx.resolve_kind(p, "dir") for p in paths) if d is not None))
     fragment = _unit_fragment(ctx, r, dirs, backend["name"])
     if fragment is None:
@@ -1887,16 +1963,23 @@ def _unit_backend(ctx, r, backend, item):
         runs = any(words[i:i + 2] == ["-m", program] for i in range(len(words)))
         present = ctx.file(ctx.policy["srrx_root"] + "/software/srrx/" + program[5:] + ".py") is not None
     else:
-        runs = program in [w.lstrip("-@:+!|") for w in words[:2]]
+        runs = program in [w.lstrip(_EXEC_PREFIXES) for w in words[:2]]
         present = ctx.file(program.lstrip("/")) is not None
     if not (runs and present):
-        r.fail(fragment[0], "backend_program_missing", item)
+        return r.fail(fragment[0], "backend_program_missing", item)
+    if any(_exec_file(ctx, word) is None for word in _exec_chain(words)):
+        if ctx.profile == "controller" and ctx.file("var/lib/dpkg/status") is None:
+            r.note("unit_interpreter_absent_controller_overlay")
+        else:
+            r.block(fragment[0], "unit_interpreter_missing", item)
 
 
 def check_11(ctx, r):
     """srrx.menu_model against the staged rootfs (build/07 row 11, STACK.md:884): every leaf reaches
     its backend, a Lime/T7 leaf declares its no-Lime/no-T7 backend, a critical leaf has a key or
-    encoder (STACK.md:110). The target console (hmi and its imports) must be the evaluated code."""
+    encoder (STACK.md:110). The target console (hmi and its imports) must be the evaluated code.
+    The model describes only the srrx.hmi touch console: the Lab Shell menu of STACK.md:884 (hubs,
+    Lime capability check) has no code yet and stays outside this row (note, Д-06)."""
     menu = _target_module(ctx, r, "menu_model")
     hmi = _target_module(ctx, r, "hmi") if menu is not None else None  # importing srrx.hmi loads no Qt
     if hmi is None:
@@ -1929,8 +2012,9 @@ def check_11(ctx, r):
                 presets = module.availability() if module is not None else False  # False: BLOCKED above
             if presets is not False and backend["name"] not in presets:
                 r.fail(where, "backend_missing", item)
-            elif presets and str(presets[backend["name"]]).startswith("DISABLED") and not leaf["fallback_text"]:
-                r.fail(where, "disabled_preset_without_fallback", item)
+            elif presets and not str(presets[backend["name"]]).startswith(_PRESET_ACCEPTED) and not leaf["fallback_text"]:
+                # DISABLED_* and UNAVAILABLE_* alike: offline there is no accepted installation either.
+                r.fail(where, "unavailable_preset_without_fallback", item)
         elif ctx.file(ctx.policy["srrx_root"] + "/software/srrx/" + backend["name"] + ".py") is None:
             r.fail(where, "backend_missing", item)  # page_only: the srrx module doing the work
         elif backend["name"] not in imported:
@@ -1943,6 +2027,8 @@ def check_11(ctx, r):
             r.block(where, "critical_leaf_touch_only", item)  # no glove path yet: an open design item
     r.note("fallback_text_is_declared_not_rendered")
     r.note("glove_and_physical_key_operation_is_hardware_acceptance")
+    r.note("unit_enablement_is_an_install_step")
+    r.note("lab_shell_menu_not_modelled")
 
 
 # RX-14 probes (build/07 row 14, ПОЛ-05): label, centre, rate, NFM voices, active windows, bench
@@ -2050,8 +2136,11 @@ def run_offline(rootfs, profile, policy, project=None, manifests=None, keyring=N
         raise DeploymentError("keyring file is missing")
     project = Path(project if project is not None else deploy.PROJECT).resolve(strict=True)
     policy_path = Path(policy)
-    data = load_policy(policy_path)
-    reviewed = load_review(review, policy_path, data) if review is not None else "MISSING"
+    # Each input is read once: the digests in the report name exactly the bytes validated.
+    data, policy_sha256 = load_policy(policy_path, digest=True)
+    source_lock_sha256 = deploy.sha(HERE / "sources.lock.json")
+    reviewed, review_sha256 = (load_review(review, policy_sha256, data, source_lock_sha256) if review is not None
+                               else ("MISSING", None))
     ctx = Ctx(rootfs, profile, data, project, manifests, Path(keyring).resolve() if keyring else None, cmdline_sha256, runner)
     checks = []
     for row in CATALOGUE:
@@ -2079,9 +2168,9 @@ def run_offline(rootfs, profile, policy, project=None, manifests=None, keyring=N
     dependencies = dict(sorted({"deployment/deploy.py": deploy.sha(Path(deploy.__file__).resolve()), **ctx.evaluated}.items()))
     return {"schema_version": 1, "tool": "srrx-selftest", "mode": "offline", "profile": profile,
             "tool_sha256": deploy.sha(Path(__file__).resolve()), "tool_dependencies": dependencies,
-            "policy_sha256": deploy.sha(policy_path), "policy_status": data["status"],
-            "policy_review": {"status": reviewed, "sha256": deploy.sha(Path(review)) if review is not None else None},
-            "source_lock_sha256": deploy.sha(HERE / "sources.lock.json"),
+            "policy_sha256": policy_sha256, "policy_status": data["status"],
+            "policy_review": {"status": reviewed, "sha256": review_sha256},
+            "source_lock_sha256": source_lock_sha256,
             "target": {"rootfs": str(rootfs), "files_scanned": sum(e.kind == "file" for e in ctx.entries.values()),
                        "entries": len(ctx.entries), "inventory_sha256": inventory.hexdigest(), "inventory_complete": ctx.complete},
             "status": "FAIL" if counts["FAIL"] else "BLOCKED" if blockers else "OFFLINE_CHECKS_PASS",

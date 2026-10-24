@@ -1,9 +1,11 @@
 """srrx.menu_model against the console it describes; RX-11 itself is tested in deployment/tests."""
+import ast
 import copy
 import importlib.util
 import os
 from pathlib import Path
 import unittest
+from unittest.mock import patch
 
 from srrx import menu_model
 from srrx.hmi import EN_OUTPUTS, ConsoleController, HMINavigation, create_window
@@ -12,13 +14,53 @@ PROJECT = Path(__file__).resolve().parents[2]
 _spec = importlib.util.spec_from_file_location("pico_hmi_menu_model_test", PROJECT / "firmware/pico/hmi.py")
 pico_hmi = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(pico_hmi)
-# Every labd operation ConsoleController sends: command() plus poll()'s status and the HOLD lease.
-CONSOLE_OPERATIONS = {"arm", "recover", "disarm", "shutdown", "control", "mode", "relay", "route", "confirmations",
-                      "status", "lease"}
+# What one touch leaf makes ConsoleController send, in order, where it is more than [backend name]:
+# ARM/RECOVER start the HOLD lease at once; Shutdown stops HOLD (disarm) before it asks labd.
+SENDS = {"arm": ["arm", "lease"], "recover": ["recover", "lease"], "shutdown": ["disarm", "shutdown"]}
+
+
+def console_operations():
+    """Every labd operation ConsoleController can send, read from srrx/hmi.py: the keys of
+    command()'s `required` table and each {"op": <literal>} request of the class (status, lease,
+    disarm, shutdown). Returns (all operations, the command() table keys)."""
+    tree = ast.parse((PROJECT / "software/srrx/hmi.py").read_text(encoding="utf-8"))
+    cls = next(n for n in tree.body if isinstance(n, ast.ClassDef) and n.name == "ConsoleController")
+    table, literal = set(), set()
+    for node in ast.walk(cls):
+        if (isinstance(node, ast.Assign) and [getattr(t, "id", None) for t in node.targets] == ["required"]
+                and isinstance(node.value, ast.Dict)):
+            table.update(key.value for key in node.value.keys)
+        elif isinstance(node, ast.Dict):
+            literal.update(value.value for key, value in zip(node.keys, node.values)
+                           if isinstance(key, ast.Constant) and key.value == "op" and isinstance(value, ast.Constant))
+    return table | literal, table
 
 
 def leaf(leaf_id):
     return next(item for item in menu_model.LEAVES if item["id"] == leaf_id)
+
+
+class Clock:
+    def __init__(self):
+        self.now = 10.0
+
+    def __call__(self):
+        return self.now
+
+
+class Labd:
+    """Recording labd stand-in: accepts every request and reports the state the test sets."""
+    def __init__(self):
+        self.sent = []
+        self.policy = {"armed": False, "fault": None, "mode": "lab", "outputs": {name: False for name in EN_OUTPUTS}}
+        self.pico = {"state": "SAFE"}
+
+    def __call__(self, request):
+        self.sent.append(copy.deepcopy(request))
+        if request["op"] == "status":
+            return {"ok": True, "data": {"mode": "SIMULATION", "pico": dict(self.pico), "pico_fresh": True,
+                                         "policy": copy.deepcopy(self.policy)}}
+        return {"ok": True}
 
 
 class MenuModelTests(unittest.TestCase):
@@ -39,7 +81,9 @@ class MenuModelTests(unittest.TestCase):
         kinds = {item["backend"]["kind"] for item in menu_model.LEAVES}
         self.assertEqual(kinds, {"labd_op", "page_only"})  # the console has no engine or decoder leaf yet
         operations = {item["backend"]["name"] for item in menu_model.LEAVES if item["backend"]["kind"] == "labd_op"}
-        self.assertEqual(operations, CONSOLE_OPERATIONS)
+        sent, table = console_operations()
+        self.assertTrue({"arm", "disarm", "control", "route", "relay", "mode", "confirmations"} <= table, table)
+        self.assertEqual(operations, sent)  # the console sends no operation the model leaves out, and vice versa
         self.assertEqual({item["id"] for item in menu_model.LEAVES if item["needs_lime"]},
                          {"receiver.route.lime", "bench.output.lime3v3"})
         self.assertEqual({item["id"] for item in menu_model.LEAVES if item["needs_t7"]}, {"bench.output.t7"})
@@ -135,6 +179,115 @@ class MenuModelQtTests(unittest.TestCase):
             self.assertEqual(outputs, list(menu_model.OUTPUTS))
         finally:
             window.close()
+            app.processEvents()
+
+    def test_each_touch_leaf_reaches_its_declared_backend(self):
+        """Clicks every touch leaf's own widget: a labd_op leaf sends exactly its backend operation
+        (through action(), the worker queue and ConsoleController), a page_only leaf sends nothing."""
+        os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+        from PySide6 import QtWidgets
+        app = QtWidgets.QApplication.instance() or QtWidgets.QApplication([])
+        clock, labd = Clock(), Labd()
+        controller = ConsoleController(labd, clock)
+        window = create_window(controller, start_worker=False)
+        closed = False
+
+        def state(active):
+            # Disarmed with fresh status, or explicit ARM + HOLD with the handshake done and lab loads confirmed.
+            controller.command("disarm")
+            labd.policy["armed"], labd.pico["state"] = False, "SAFE"
+            clock.now += .1
+            controller.poll()
+            if active:
+                self.assertTrue(controller.command("arm")["ok"])
+                labd.policy["armed"], labd.pico["state"] = True, "ACTIVE"
+                clock.now += .1
+                controller.poll()
+                self.assertTrue(controller.command("confirmations", value={"bench_loads": True})["ok"])
+            window.render_state(controller.status())
+            labd.sent.clear()
+
+        def press(widget):
+            clock.now += 1.0  # status stays fresh (1.5 s); HOLD may renew its 1 s lease
+            self.assertTrue(widget.isEnabled(), widget.text())
+            widget.click()
+            while not window.worker.commands.empty():
+                operation, fields = window.worker.commands.get_nowait()
+                if operation == "hold":  # the two dispatch branches of the console Worker.run
+                    controller.hold(**fields)
+                else:
+                    controller.command(operation, **fields)
+            sent, labd.sent[:] = list(labd.sent), []
+            return sent
+
+        try:
+            buttons = [b for b in window.findChildren(QtWidgets.QAbstractButton) if b.text()]
+            pages = {page["id"]: [b for b in buttons if window.tabs.widget(index).isAncestorOf(b)]
+                     for index, page in enumerate(menu_model.PAGES)}
+            pages[menu_model.FRAME] = [b for b in buttons if not window.tabs.isAncestorOf(b)]
+            bench = window.tabs.widget(menu_model.page_index("bench"))
+            cells = {w.text().split(" ")[0]: w.parentWidget() for w in bench.findChildren(QtWidgets.QLabel) if w.text().startswith("EN_")}
+            touch = [item for item in menu_model.LEAVES if item["controls"]["touch"]]
+            seen = {}
+
+            def widget(item):
+                # Same-label leaves of one page (the three "Apply route") follow the console's order.
+                key = (item["page"], item["label"])
+                seen[key] = seen.get(key, -1) + 1
+                return [b for b in pages[item["page"]] if b.text() == item["label"]][seen[key]]
+
+            yes = QtWidgets.QMessageBox.StandardButton.Yes
+            close = None
+            with patch.object(QtWidgets.QMessageBox, "question", return_value=yes):
+                for item in touch:
+                    name, suffix = item["backend"]["name"], item["id"].rsplit(".", 1)[1]
+                    if item["backend"]["kind"] != "labd_op":
+                        continue
+                    if item["id"].startswith("bench.output."):
+                        on, off = (next(b for b in cells[item["label"]].findChildren(QtWidgets.QPushButton) if b.text() == text)
+                                   for text in ("ON", "OFF"))
+                        for button, value in ((on, True), (off, False)):
+                            state(active=True)
+                            sent = press(button)
+                            self.assertEqual(sent, [{"op": name, "name": item["label"], "value": value}], item["id"])
+                        continue
+                    target = widget(item)
+                    if item["id"] == "frame.close":
+                        close = (item, target)  # closes the window: pressed last
+                        continue
+                    state(active=item["id"] not in ("frame.arm", "frame.recover") and not item["id"].startswith("bench.mode."))
+                    sent = press(target)
+                    self.assertEqual([r["op"] for r in sent], SENDS.get(name, [name]), item["id"])
+                    own = next(r for r in sent if r["op"] == name)
+                    if name == "route":
+                        self.assertEqual(own["receiver"], suffix.upper(), item["id"])
+                    elif name == "mode":
+                        self.assertEqual(own["value"], suffix, item["id"])
+                    elif name == "confirmations":
+                        self.assertEqual(set(own["value"]), {suffix}, item["id"])
+            # page_only leaves never reach labd: dialogs answer No/cancel, SIM capture and jobs are stubs.
+            with patch.object(QtWidgets.QMessageBox, "question", return_value=QtWidgets.QMessageBox.StandardButton.No), \
+                    patch.object(QtWidgets.QFileDialog, "getOpenFileName", return_value=("", "")), \
+                    patch.object(QtWidgets.QFileDialog, "getSaveFileName", return_value=("", "")), \
+                    patch.object(window.receiver_job, "start") as capture, \
+                    patch.object(window.learning_runner, "submit", return_value=False):
+                state(active=True)
+                for item in touch:
+                    if item["backend"]["kind"] == "page_only":
+                        widget(item).click()
+                        self.assertTrue(window.worker.commands.empty(), item["id"])
+                        self.assertEqual(labd.sent, [], item["id"])
+                self.assertEqual(capture.call_count, 1)  # the SIM capture leaf ran its own handler
+            self.assertEqual(sum(seen.values()) + len(seen), len([i for i in touch if not i["id"].startswith("bench.output.")]))
+            # Close + DISARM closes the window; the controller disarms.
+            item, target = close
+            state(active=True)
+            closed = True
+            self.assertEqual([r["op"] for r in press(target)], [item["backend"]["name"]], item["id"])
+            self.assertTrue(controller.closed)
+        finally:
+            if not closed:
+                window.close()
             app.processEvents()
 
     def test_a_page_that_differs_from_the_model_refuses_to_start(self):

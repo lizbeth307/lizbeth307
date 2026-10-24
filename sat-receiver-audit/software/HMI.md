@@ -229,8 +229,14 @@ Shell (наприклад, WEFAX → режим fax OpenWebRX+, STACK.md:884). �
 немає. `software/tests/test_menu_model.py` в offscreen Qt перевіряє, що кожен
 touch-лист є кнопкою чи галочкою на своїй сторінці (або в рамці вікна), а кожна
 кнопка чи галочка вікна — листом моделі; пари ON/OFF на Bench — рядки `EN_*`.
-Там само: `KEYS` дорівнює `KEY_NAMES` прошивки Pico, `GESTURES` — `HMINavigation.NAMES`,
-`OUTPUTS` — `EN_OUTPUTS`, а операції листів — саме ті, які надсилає `ConsoleController`.
+Той самий тест натискає віджет кожного touch-листа з записувальним labd. Лист
+`labd_op` має надіслати саме свою операцію через `action()`, чергу worker і
+`ConsoleController`: ARM/RECOVER одразу поновлюють оренду, Shutdown спершу дає
+disarm, «Close + DISARM» — disarm. Лист `page_only` не надсилає нічого (діалоги
+скасовано, SIM capture і навчальні задачі підмінено). Там само: `KEYS` дорівнює
+`KEY_NAMES` прошивки Pico, `GESTURES` — `HMINavigation.NAMES`, `OUTPUTS` — `EN_OUTPUTS`,
+а набір операцій листів дорівнює тому, який може надіслати `ConsoleController`
+(ключі таблиці `required` у `command()` і літерали `{"op": …}` класу, розбір `hmi.py`).
 
 Збірка без Lime і без T7: маршрут LIME і EN_LIME3V3 оголошують бекенд без Lime
 (LIME лишається PARK, EN_LIME3V3 — OFF; OFF і PARK labd приймає без оренди), EN_T7 —
