@@ -2702,7 +2702,7 @@
    "manufacturer": "Vishay Dale",
    "mpn": "WSL1206R2000DEA",
    "sku": {
-    "digikey": "WSL1206R2000DEA",
+    "digikey": "WSL1206R2000DEA-ND",
     "lcsc": "C4296612"
    },
    "deviation": {
@@ -2737,7 +2737,7 @@
    "manufacturer": "Vishay Dale",
    "mpn": "WSL1206R1000DEA",
    "sku": {
-    "digikey": "WSL1206R1000DEA",
+    "digikey": "541-WSL1206R1000DEACT-ND",
     "lcsc": "C4235539"
    },
    "deviation": {
@@ -2912,7 +2912,7 @@
    "mpn": "EEU-FR1H470",
    "sku": {
     "lcsc": "C407950",
-    "digikey": "EEU-FR1H470"
+    "digikey": "P124235-ND"
    },
    "polarized": true,
    "single_source": "Named electrolytic/polymer series; a second source with the same land must be qualified (ESR/ripple) before substitution",
@@ -2945,7 +2945,7 @@
    "mpn": "UHE1E221MPD",
    "sku": {
     "lcsc": "C116228",
-    "digikey": "UHE1E221MPD"
+    "digikey": "493-1549-ND"
    },
    "polarized": true,
    "single_source": "Named electrolytic/polymer series; a second source with the same land must be qualified (ESR/ripple) before substitution",
@@ -3010,7 +3010,7 @@
    "mpn": "EEU-FR1C101",
    "sku": {
     "lcsc": "C278532",
-    "digikey": "EEU-FR1C101"
+    "digikey": "P14391-ND"
    },
    "polarized": true,
    "single_source": "Named electrolytic/polymer series; a second source with the same land must be qualified (ESR/ripple) before substitution",
@@ -3027,7 +3027,7 @@
    "manufacturer": "Panasonic",
    "mpn": "EEU-FR1C221",
    "sku": {
-    "digikey": "EEU-FR1C221"
+    "digikey": "P14393-ND"
    },
    "polarized": true,
    "single_source": "Named electrolytic/polymer series; a second source with the same land must be qualified (ESR/ripple) before substitution",
@@ -3784,7 +3784,7 @@
    "mpn": "HMC7992LP3DE",
    "sku": {
     "lcsc": "C208307",
-    "digikey": "HMC7992LP3DE"
+    "digikey": "505-HMC7992LP3DE-ND"
    },
    "match": "HMC7992LP3DE",
    "single_source": "ADI SP4T; buy only from authorised distributors (10-bom section 6)",
@@ -3921,7 +3921,7 @@
    "mpn": "G6K-2F-RF-S DC5",
    "sku": {
     "lcsc": "C2750987",
-    "digikey": "G6K-2F-RF-S DC5"
+    "digikey": "Z2828-ND"
    },
    "match": "G6K-2F-RF-S",
    "alternates": [
@@ -4670,7 +4670,7 @@
    "manufacturer": "Delta Electronics",
    "mpn": "BFB0305HA-C",
    "sku": {
-    "digikey": "BFB0305HA-C"
+    "digikey": "603-2111-ND"
    },
    "match": "BFB0305HA-C",
    "single_source": "Delta blower named in E3 (v2.1)",
@@ -5046,7 +5046,7 @@
    "manufacturer": "Taoglas",
    "mpn": "CAB.01075",
    "sku": {
-    "digikey": "CAB.01075",
+    "digikey": "931-CAB.01075-ND",
     "web": "taoglas-cab01075"
    },
    "single_source": "MHF4L to SMA(f) bulkhead 100 mm (10-bom row 93); I-PEX 90609-0001 tool needed",
@@ -5064,7 +5064,7 @@
    "manufacturer": "Taoglas",
    "mpn": "CAB.011",
    "sku": {
-    "digikey": "CAB.011"
+    "digikey": "931-1098-ND"
    },
    "single_source": "Taoglas U.FL-SMA bulkhead pigtail; length 100 mm",
    "note": "U.FL (MHF1) to SMA bulkhead; 10-bom row 91 option for P7 → LC76G. DigiKey DE EUR 3.90 @1 on 2026-10-24.",
@@ -5164,7 +5164,7 @@
      "manufacturer": "Würth Elektronik",
      "mpn": "74271112",
      "sku": {
-      "digikey": "74271112"
+      "digikey": "732-1503-ND"
      },
      "qty_per_ref": 1
     }

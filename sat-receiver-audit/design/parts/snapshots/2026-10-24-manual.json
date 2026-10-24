@@ -223,6 +223,28 @@
    "status": "Active",
    "price": "EUR 1.56 @1"
   },
+  "digikey:493-1549-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/nichicon/UHE1E221MPD/589290",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "UHE1E221MPD",
+   "manufacturer": "Nichicon",
+   "stock": 13958,
+   "status": "Active",
+   "price": "EUR 0.55 @1"
+  },
+  "digikey:505-HMC7992LP3DE-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/analog-devices-inc/HMC7992LP3DE/5873027",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "HMC7992LP3DE",
+   "manufacturer": "Analog Devices Inc.",
+   "stock": 4680,
+   "status": "Active, manufacturer lead time 10 weeks",
+   "price": "EUR 11.50 @1"
+  },
   "digikey:541-TNPW080510K0BYEACT-ND": {
    "distributor": "DigiKey DE",
    "url": "https://www.digikey.de/en/products/result?keywords=TNPW080510K0BYEA",
@@ -245,16 +267,38 @@
    "status": "Active (stock not shown; substitute TNPW08052K00BYEN 3336 in stock)",
    "price": "EUR 0.67 @1"
   },
-  "digikey:74271112": {
+  "digikey:541-WSL1206R1000DEACT-ND": {
    "distributor": "DigiKey DE",
-   "url": "https://www.digikey.de/en/products/result?keywords=74271112",
+   "url": "https://www.digikey.de/en/products/detail/vishay-dale/WSL1206R1000DEA/9752563",
    "read": "2026-10-24",
-   "method": "WebFetch of the DigiKey DE search/product page",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "WSL1206R1000DEA",
+   "manufacturer": "Vishay Dale",
+   "stock": 6668,
+   "status": "Active",
+   "price": "EUR 1.92 @1"
+  },
+  "digikey:603-2111-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/delta-electronics/BFB0305HA-C/9351777",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "BFB0305HA-C",
+   "manufacturer": "Delta Electronics",
+   "stock": 482,
+   "status": "Active, manufacturer lead time 40 weeks",
+   "price": "EUR 12.90 @1"
+  },
+  "digikey:732-1503-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/w%C3%BCrth-elektronik/74271112/1638907",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE product page",
    "mpn": "74271112",
    "manufacturer": "Würth Elektronik",
-   "stock": null,
-   "status": "listed (stock not shown)",
-   "price": "EUR 3.85"
+   "stock": 49326,
+   "status": "Active",
+   "price": "EUR 3.85 @1"
   },
   "digikey:754-1916-ND": {
    "distributor": "DigiKey DE",
@@ -278,38 +322,27 @@
    "status": "Active",
    "price": "EUR 3.82 @1"
   },
-  "digikey:BFB0305HA-C": {
+  "digikey:931-1098-ND": {
    "distributor": "DigiKey DE",
-   "url": "https://www.digikey.de/en/products/result?keywords=BFB0305HA-C",
+   "url": "https://www.digikey.de/en/products/detail/taoglas-limited/CAB-011/2332725",
    "read": "2026-10-24",
-   "method": "WebFetch of the DigiKey DE search/product page",
-   "mpn": "BFB0305HA-C",
-   "manufacturer": "Delta Electronics",
-   "stock": null,
-   "status": "listed (stock not shown)",
-   "price": "EUR 12.90"
-  },
-  "digikey:CAB.01075": {
-   "distributor": "DigiKey DE",
-   "url": "https://www.digikey.de/en/products/result?keywords=CAB.01075",
-   "read": "2026-10-24",
-   "method": "WebFetch of the DigiKey DE search/product page",
-   "mpn": "CAB.01075",
-   "manufacturer": "Taoglas Limited",
-   "stock": null,
-   "status": "listed (stock not shown)",
-   "price": "EUR 4.03"
-  },
-  "digikey:CAB.011": {
-   "distributor": "DigiKey DE",
-   "url": "https://www.digikey.de/en/products/result?keywords=CAB.011",
-   "read": "2026-10-24",
-   "method": "WebFetch of the DigiKey DE search/product page",
+   "method": "WebFetch of the DigiKey DE product page",
    "mpn": "CAB.011",
    "manufacturer": "Taoglas Limited",
-   "stock": null,
-   "status": "listed (stock not shown)",
-   "price": "EUR 3.90"
+   "stock": 42354,
+   "status": "Active",
+   "price": "EUR 3.90 @1"
+  },
+  "digikey:931-CAB.01075-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/taoglas-limited/CAB-01075/26766217",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "CAB.01075",
+   "manufacturer": "Taoglas Limited",
+   "stock": 1010,
+   "status": "Active",
+   "price": "EUR 4.03 @1"
   },
   "digikey:DMP6050SSD-13DICT-ND": {
    "distributor": "DigiKey DE",
@@ -322,60 +355,38 @@
    "status": "Active",
    "price": "EUR 1.26 @1"
   },
-  "digikey:EEU-FR1C101": {
+  "digikey:P124235-ND": {
    "distributor": "DigiKey DE",
-   "url": "https://www.digikey.de/en/products/result?keywords=EEU-FR1C101",
+   "url": "https://www.digikey.de/en/products/detail/panasonic-industry/EEU-FR1H470/9921029",
    "read": "2026-10-24",
-   "method": "WebFetch of the DigiKey DE search/product page",
-   "mpn": "EEU-FR1C101",
-   "manufacturer": "Panasonic Industry",
-   "stock": null,
-   "status": "listed (stock not shown)",
-   "price": "EUR 0.36"
-  },
-  "digikey:EEU-FR1C221": {
-   "distributor": "DigiKey DE",
-   "url": "https://www.digikey.de/en/products/result?keywords=EEU-FR1C221",
-   "read": "2026-10-24",
-   "method": "WebFetch of the DigiKey DE search/product page",
-   "mpn": "EEU-FR1C221",
-   "manufacturer": "Panasonic Industry",
-   "stock": null,
-   "status": "listed (stock not shown)",
-   "price": "EUR 0.40"
-  },
-  "digikey:EEU-FR1H470": {
-   "distributor": "DigiKey DE",
-   "url": "https://www.digikey.de/en/products/result?keywords=EEU-FR1H470",
-   "read": "2026-10-24",
-   "method": "WebFetch of the DigiKey DE search/product page",
+   "method": "WebFetch of the DigiKey DE product page",
    "mpn": "EEU-FR1H470",
    "manufacturer": "Panasonic Industry",
-   "stock": null,
-   "status": "listed (stock not shown)",
-   "price": "EUR 0.41"
+   "stock": 26680,
+   "status": "Active",
+   "price": "EUR 0.41 @1"
   },
-  "digikey:G6K-2F-RF-S DC5": {
+  "digikey:P14391-ND": {
    "distributor": "DigiKey DE",
-   "url": "https://www.digikey.de/en/products/result?keywords=G6K-2F-RF-S%20DC5",
+   "url": "https://www.digikey.de/en/products/detail/panasonic-industry/EEU-FR1C101/2433525",
    "read": "2026-10-24",
-   "method": "WebFetch of the DigiKey DE search/product page",
-   "mpn": "G6K-2F-RF-S DC5",
-   "manufacturer": "Aratas (Formerly Omron Components)",
-   "stock": null,
-   "status": "listed (stock not shown)",
-   "price": "EUR 17.29"
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "EEU-FR1C101",
+   "manufacturer": "Panasonic Industry",
+   "stock": 852,
+   "status": "Active",
+   "price": "EUR 0.36 @1"
   },
-  "digikey:HMC7992LP3DE": {
+  "digikey:P14393-ND": {
    "distributor": "DigiKey DE",
-   "url": "https://www.digikey.de/en/products/result?keywords=HMC7992LP3DE",
+   "url": "https://www.digikey.de/en/products/detail/panasonic-industry/EEU-FR1C221/2433527",
    "read": "2026-10-24",
-   "method": "WebFetch of the DigiKey DE search/product page",
-   "mpn": "HMC7992LP3DE",
-   "manufacturer": "Analog Devices",
-   "stock": null,
-   "status": "listed (stock not shown)",
-   "price": "EUR 11.50"
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "EEU-FR1C221",
+   "manufacturer": "Panasonic Industry",
+   "stock": 0,
+   "status": "Active",
+   "price": "EUR 0.40 @1"
   },
   "digikey:TNPW0805332KBYEA-ND": {
    "distributor": "DigiKey DE",
@@ -388,38 +399,27 @@
    "status": "Active, not kept in stock",
    "price": "EUR 0.32106 @10"
   },
-  "digikey:UHE1E221MPD": {
+  "digikey:WSL1206R2000DEA-ND": {
    "distributor": "DigiKey DE",
-   "url": "https://www.digikey.de/en/products/result?keywords=UHE1E221MPD",
+   "url": "https://www.digikey.de/en/products/detail/vishay-dale/WSL1206R2000DEA/9752670",
    "read": "2026-10-24",
-   "method": "WebFetch of the DigiKey DE search/product page",
-   "mpn": "UHE1E221MPD",
-   "manufacturer": "Nichicon",
-   "stock": null,
-   "status": "listed (stock not shown)",
-   "price": "EUR 0.55"
-  },
-  "digikey:WSL1206R1000DEA": {
-   "distributor": "DigiKey DE",
-   "url": "https://www.digikey.de/en/products/result?keywords=WSL1206R1000DEA",
-   "read": "2026-10-24",
-   "method": "WebFetch of the DigiKey DE search/product page",
-   "mpn": "WSL1206R1000DEA",
-   "manufacturer": "Vishay Dale",
-   "stock": null,
-   "status": "listed (stock not shown)",
-   "price": "EUR 1.92"
-  },
-  "digikey:WSL1206R2000DEA": {
-   "distributor": "DigiKey DE",
-   "url": "https://www.digikey.de/en/products/result?keywords=WSL1206R2000DEA",
-   "read": "2026-10-24",
-   "method": "WebFetch of the DigiKey DE search/product page",
+   "method": "WebFetch of the DigiKey DE product page",
    "mpn": "WSL1206R2000DEA",
    "manufacturer": "Vishay Dale",
    "stock": null,
-   "status": "listed (stock not shown)",
-   "price": "EUR 0.67079"
+   "status": "Active, tape and reel only (stock not listed), manufacturer lead time 25 weeks",
+   "price": "EUR 0.67079 @4000"
+  },
+  "digikey:Z2828-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/aratas-formerly-omron-components/G6K-2F-RF-S-DC5/1936449",
+   "read": "2026-10-24",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "G6K-2F-RF-S DC5",
+   "manufacturer": "Aratas (formerly Omron Components)",
+   "stock": 1726,
+   "status": "Active, manufacturer lead time 26 weeks",
+   "price": "EUR 17.29 @1"
   },
   "web:adafruit-2420": {
    "distributor": "manufacturer/vendor page",
