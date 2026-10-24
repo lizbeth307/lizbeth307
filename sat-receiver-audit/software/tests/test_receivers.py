@@ -18,6 +18,21 @@ import numpy as np
 
 from srrx.receivers import RTLReceiver, ControlGuard, load_driver_record, validate_tuning
 
+# Test-only trust set: the runner owns its temporary fixtures. Production is {0}.
+TRUSTED = frozenset({0, os.geteuid()}) if hasattr(os, "geteuid") else frozenset({0})
+
+
+def write_library(path, data):
+    """Driver-library fixture with an explicit mode: check_library refuses group
+    write, so a developer umask 002 must not decide the test (runners use 022)."""
+    path.write_bytes(data)
+    path.chmod(0o644)
+
+
+def acceptance_gates():
+    from srrx.commissioning import GATE_IDS
+    return {"gates": {gate: {"evidence": {"artifacts": []}} for gate in GATE_IDS}}
+
 
 def ready():
     return {"ok": True, "data": {"mode": "HARDWARE", "hardware_qualified": True,
@@ -113,19 +128,110 @@ class ReceiverTests(unittest.TestCase):
                      ("lime", 100000000, 56000000), ("rtl", True, 1024000)]:
             with self.assertRaises(ValueError):validate_tuning(*args)
 
+    @unittest.skipUnless(hasattr(os, "geteuid"), "POSIX owner/mode semantics")
     def test_driver_must_be_accepted_artifact_and_bind_library_bytes(self):
         with tempfile.TemporaryDirectory() as tmp:
-            root = Path(tmp); library = root / "lib.so"; library.write_bytes(b"not an ELF; validation fixture only")
+            root = Path(tmp); library = root / "lib.so"; write_library(library, b"not an ELF; validation fixture only")
             record = {"v": 1, "backend": "rtl", "branch": "RTLA", "serial": "307A",
                       "library_path": str(library), "library_sha256": hashlib.sha256(library.read_bytes()).hexdigest(),
                       "rx_only_reviewed": True, "bias_disabled_verified": True, "dependencies_reviewed": True}
             p = root / "driver.json";p.write_text(json.dumps(record))
-            accepted = {"gates": {"E5-fixture": {"evidence": {"artifacts": []}}}}
-            with self.assertRaises(ValueError):load_driver_record(p, root, accepted)
-            accepted["gates"]["E5-fixture"]["evidence"]["artifacts"] = [{"path": "driver.json", "sha256": hashlib.sha256(p.read_bytes()).hexdigest()}]
-            self.assertEqual(load_driver_record(p, root, accepted)["serial"], "307A")
+            accepted = acceptance_gates()
+            with self.assertRaises(ValueError):load_driver_record(p, root, accepted, trusted_uids=TRUSTED)
+            accepted["gates"]["E5-04"]["evidence"]["artifacts"] = [{"path": "driver.json", "sha256": hashlib.sha256(p.read_bytes()).hexdigest()}]
+            self.assertEqual(load_driver_record(p, root, accepted, trusted_uids=TRUSTED)["serial"], "307A")
             library.write_bytes(b"changed")
-            with self.assertRaises(ValueError):load_driver_record(p, root, accepted)
+            with self.assertRaises(ValueError):load_driver_record(p, root, accepted, trusted_uids=TRUSTED)
+
+    @unittest.skipUnless(hasattr(os, "geteuid"), "POSIX owner/mode semantics")
+    def test_driver_record_binds_only_through_its_branch_rx_gate(self):
+        from srrx.commissioning import GATE_IDS
+        from srrx.receivers import DRIVER_GATES
+        self.assertEqual(DRIVER_GATES, {"RTLA": "E5-04", "RTLB": "E2-03", "HFP": "E5-04"})
+        self.assertLessEqual(set(DRIVER_GATES.values()), set(GATE_IDS))
+        cases = (("rtl", "RTLA", "307A", "E1-01", False), ("rtl", "RTLA", "307A", "E5-04", True),
+                 ("rtl", "RTLB", "307B", "E5-04", False), ("rtl", "RTLB", "307B", "E2-03", True),
+                 ("airspyhf", "HFP", "3b52ab5dac5d3d6c", "E5-04", True), ("airspyhf", "HFP", "3b52ab5dac5d3d6c", "E2-03", False))
+        for backend, branch, serial, gate, accepted_here in cases:
+            with self.subTest(branch=branch, gate=gate), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp); library = root / "lib.so"; write_library(library, b"validation fixture only")
+                path = root / "driver.json"
+                path.write_text(json.dumps({"v": 1, "backend": backend, "branch": branch, "serial": serial,
+                    "library_path": str(library), "library_sha256": hashlib.sha256(library.read_bytes()).hexdigest(),
+                    "rx_only_reviewed": True, "bias_disabled_verified": True, "dependencies_reviewed": True}))
+                accepted = acceptance_gates()
+                accepted["gates"][gate]["evidence"]["artifacts"] = [
+                    {"path": "driver.json", "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}]
+                if accepted_here:
+                    self.assertEqual(load_driver_record(path, root, accepted, trusted_uids=TRUSTED)["branch"], branch)
+                else:
+                    with self.assertRaisesRegex(ValueError, "not bound to acceptance gate %s of branch %s"
+                                                % (DRIVER_GATES[branch], branch)):
+                        load_driver_record(path, root, accepted, trusted_uids=TRUSTED)
+
+    @unittest.skipUnless(hasattr(os, "geteuid"), "POSIX owner/mode semantics")
+    def test_driver_record_is_parsed_from_the_bytes_that_were_hashed(self):
+        import srrx.receivers as receivers
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp); library = root / "lib.so"; write_library(library, b"validation fixture only")
+            record = {"v": 1, "backend": "rtl", "branch": "RTLA", "serial": "307A",
+                      "library_path": str(library), "library_sha256": hashlib.sha256(library.read_bytes()).hexdigest(),
+                      "rx_only_reviewed": True, "bias_disabled_verified": True, "dependencies_reviewed": True}
+            path = root / "driver.json"; path.write_text(json.dumps(record))
+            accepted = acceptance_gates()
+            accepted["gates"]["E5-04"]["evidence"]["artifacts"] = [
+                {"path": "driver.json", "sha256": hashlib.sha256(path.read_bytes()).hexdigest()}]
+            real = receivers._read_json
+            def rewrite_then_parse(target, *raw):
+                path.write_text(json.dumps(dict(record, serial="SWAPPED")))  # a writer between hash and parse
+                return real(target, *raw)
+            with patch.object(receivers, "_read_json", side_effect=rewrite_then_parse) as parse:
+                self.assertEqual(load_driver_record(path, root, accepted, trusted_uids=TRUSTED)["serial"], "307A")
+            self.assertEqual(len(parse.call_args.args), 2)  # parsed from the hashed bytes, not a second read
+
+    @unittest.skipUnless(hasattr(os, "geteuid"), "POSIX owner/mode semantics")
+    def test_driver_library_owner_mode_and_canonical_path_matrix(self):
+        import stat
+        from srrx.receivers import TRUSTED_LIBRARY_UIDS, check_library, load_driver_record as loader
+        self.assertEqual(TRUSTED_LIBRARY_UIDS, frozenset({0}))
+        self.assertEqual(loader.__kwdefaults__["trusted_uids"], frozenset({0}))
+        with tempfile.TemporaryDirectory() as tmp:
+            folder = Path(tmp) / "lib"; folder.mkdir(mode=0o755)
+            library = folder / "librtlsdr.so.2.0.2"; library.write_bytes(b"validation fixture only")
+            for mode, good in ((0o644, True), (0o755, True), (0o664, False), (0o646, False), (0o4755, False)):
+                with self.subTest(file_mode=oct(mode)):
+                    library.chmod(mode)
+                    if good:
+                        self.assertEqual(check_library(str(library), TRUSTED).st_ino, library.stat().st_ino)
+                    else:
+                        with self.assertRaisesRegex(ValueError, "trusted UID"):
+                            check_library(str(library), TRUSTED)
+            library.chmod(0o644)
+            for mode, good in ((0o777, False), (0o1777, True), (0o775, False), (0o755, True)):
+                with self.subTest(parent_mode=oct(mode)):
+                    folder.chmod(mode)
+                    if good:
+                        check_library(str(library), TRUSTED)
+                    else:
+                        with self.assertRaisesRegex(ValueError, "directories"):
+                            check_library(str(library), TRUSTED)
+            folder.chmod(0o755)
+            link = Path(tmp) / "linked"; link.symlink_to(folder, target_is_directory=True)
+            for path in (link / library.name, str(folder) + "/./" + library.name, "relative/lib.so"):
+                with self.subTest(path=str(path)), self.assertRaisesRegex(ValueError, "canonical"):
+                    check_library(str(path), TRUSTED)
+            with self.assertRaisesRegex(ValueError, "trusted UID"):
+                check_library(str(library), frozenset({os.geteuid() + 1}))
+            for uids in ({0, os.geteuid()}, frozenset(), frozenset({"0"}), (0,)):
+                with self.subTest(uids=uids), self.assertRaisesRegex(ValueError, "frozenset"):
+                    check_library(str(library), uids)
+            other = folder / "other.so"; write_library(other, b"other inode")
+            with self.assertRaisesRegex(ValueError, "not the checked file"):
+                check_library(str(library), TRUSTED, opened=os.stat(other))
+            fifo = folder / "fifo.so"; os.mkfifo(fifo)  # refused from lstat, never opened (no blocking)
+            with self.assertRaisesRegex(ValueError, "regular file"):
+                check_library(str(fifo), TRUSTED)
+            self.assertTrue(stat.S_ISFIFO(os.lstat(fifo).st_mode))
 
 
 class CaptureTests(unittest.TestCase):
@@ -538,13 +644,85 @@ class WorkerProtocolTests(unittest.TestCase):
     def test_startup_deadline_is_separate_from_block_freshness(self):
         with patch.object(self.labrx, "STARTUP_TIMEOUT_S", .2):
             started = time.monotonic()
-            with self.assertRaisesRegex(TimeoutError, "did not open"):
+            self.worker.started_at = started
+            with self.assertRaisesRegex(TimeoutError, "did not open the receiver within 0.2 s"):
                 self.worker.read(self.guard, timeout_s=.01)
             self.assertGreaterEqual(time.monotonic() - started, .2)
+            self.assertLess(time.monotonic() - started, 1.0)  # from spawn, not extended per read
         self.send(b"R")
         with self.assertRaisesRegex(TimeoutError, "No fresh RX block"):
             self.worker.read(self.guard, timeout_s=.1)
         self.assertTrue(self.worker.ready)
+
+    def test_startup_budget_runs_from_spawn_and_a_late_first_read_gets_no_extension(self):
+        self.assertEqual(self.labrx.STARTUP_TIMEOUT_S, 10.0)
+        clock = [1000.0]
+        self.worker.started_at = 990.5  # spawned 9.5 s before the first read
+        def poll(timeout):
+            clock[0] += .25
+            return False
+        self.worker.reader = SimpleNamespace(poll=poll)
+        with patch.object(self.labrx.time, "monotonic", lambda: clock[0]):
+            with self.assertRaisesRegex(TimeoutError, "did not open the receiver within 10 s"):
+                self.worker.read(self.guard)
+        self.assertEqual(clock[0], 1000.5)  # started_at + 10 s, not first read + 10 s
+        self.assertEqual(len(self.checks), 2)
+        self.worker.started_at = 980.0  # already past the budget: no wait at all
+        with patch.object(self.labrx.time, "monotonic", lambda: clock[0]):
+            with self.assertRaisesRegex(TimeoutError, "within 10 s"):
+                self.worker.read(self.guard)
+        self.assertEqual(clock[0], 1000.5)
+
+    def test_ready_handshake_records_spawn_to_ready_time(self):
+        self.worker.started_at = time.monotonic() - 2.0
+        self.send(b"R"); self.send(b"I", [1])
+        np.testing.assert_array_equal(self.worker.read(self.guard), [1])
+        self.assertGreaterEqual(self.worker.ready_after_s, 2.0)
+        self.assertLess(self.worker.ready_after_s, 9.0)
+        bare = object.__new__(self.labrx.WorkerSource)  # no spawn time: nothing is invented
+        self.assertIsNone(bare.ready_after_s)
+        self.assertIsNone(bare.started_at)
+
+    def test_run_capture_reports_the_measured_worker_startup(self):
+        class Source:
+            ready_after_s = 1.23456
+            def read(self, guard):
+                return np.ones(64, dtype=np.complex64)
+            def close(self):
+                pass
+        with patch.object(self.labrx, "_disable_worker_core_dumps"):
+            result = self.labrx.run_capture(fft_size=64, frames=1, record={"backend": "rtl", "branch": "RTLA"},
+                                            transport=lambda request: ready(), source_factory=lambda *a: Source())
+        self.assertEqual(result["worker_startup_s"], 1.235)
+        self.assertIsNone(self.labrx.run_capture(fft_size=64, frames=1)["worker_startup_s"])
+
+    def test_run_capture_default_worker_uses_the_production_library_trust(self):
+        captured = []
+        class Process:
+            def __init__(self, target, args, daemon):
+                captured.append((target, args))
+            def start(self):
+                pass
+            def is_alive(self):
+                return False
+        class Reader:
+            closed = False
+            def poll(self, timeout):
+                return True
+            def recv_bytes(self, limit):
+                return b"Efixture refusal"
+            def close(self):
+                self.closed = True
+        context = SimpleNamespace(Pipe=lambda duplex: (Reader(), SimpleNamespace(close=lambda: None)), Process=Process)
+        with patch.object(self.labrx.mp, "get_context", return_value=context), \
+             patch.object(self.labrx, "_disable_worker_core_dumps"):
+            with self.assertRaisesRegex(OSError, "fixture refusal"):
+                self.labrx.run_capture(fft_size=64, frames=1, record={"backend": "rtl", "branch": "RTLA"},
+                                       transport=lambda request: ready())
+        (target, args), = captured
+        self.assertIs(target, self.labrx._worker)
+        self.assertEqual(args[-1], frozenset({0}))
+        self.assertIs(type(args[-1]), frozenset)
 
     def test_close_waits_for_clean_worker_exit_before_signalling(self):
         for states, expected in (([True, False, False], [("join", .5)]),
@@ -603,7 +781,8 @@ class WorkerCorePrivacyTests(unittest.TestCase):
                 _disable_worker_core_dumps(libc=SimpleNamespace())
         self.assertEqual(raised.exception.errno, errno.ENOSYS)
 
-    def run_worker_boundary(self, guard_results, blocks=(), discontinuity=False, during_load=None):
+    def run_worker_boundary(self, guard_results, blocks=(), discontinuity=False, during_load=None,
+                            library_mode=None, trusted=TRUSTED):
         import srrx.labrx as labrx
         events, replies = [], []
         receiver = Mock()
@@ -631,10 +810,11 @@ class WorkerCorePrivacyTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temporary:
             path = Path(temporary)/'fixture.so'
             path.write_bytes(b'hash-only unit fixture, never dlopen')
+            path.chmod(0o644 if library_mode is None else library_mode)  # never the umask's choice
             record = {'backend':'rtl','library_path':str(path),'library_sha256':hashlib.sha256(path.read_bytes()).hexdigest()}
             with patch.object(labrx, '_disable_worker_core_dumps', side_effect=guard), \
                  patch.object(labrx, 'RTLReceiver', side_effect=load):
-                labrx._worker(connection, record, 100000000, 1024000)
+                labrx._worker(connection, record, 100000000, 1024000, trusted)
         return events, replies, receiver
 
     def test_worker_privacy_guard_precedes_driver_load_and_first_read(self):
@@ -674,21 +854,70 @@ class WorkerCorePrivacyTests(unittest.TestCase):
         import srrx.labrx as labrx
         with tempfile.TemporaryDirectory() as temporary:
             target = Path(temporary)/'real.so'
-            target.write_bytes(b'fixture')
+            write_library(target, b'fixture')
             link = Path(temporary)/'link.so'
             link.symlink_to(target)
             digest = hashlib.sha256(b'fixture').hexdigest()
-            for path, sha in ((link, digest), (target, '0' * 64)):
+            for path, sha, reason in ((link, digest, b'canonical'), (target, '0' * 64, b'changed before open')):
                 with self.subTest(path=path.name):
                     replies = []
                     connection = SimpleNamespace(send_bytes=replies.append, close=lambda: None)
                     with patch.object(labrx, '_disable_worker_core_dumps'), \
                          patch.object(labrx, 'RTLReceiver') as driver:
                         labrx._worker(connection, {'backend':'rtl','library_path':str(path),'library_sha256':sha},
-                                      100000000, 1024000)
+                                      100000000, 1024000, TRUSTED)
                     driver.assert_not_called()
                     self.assertEqual(len(replies), 1)
                     self.assertTrue(replies[0].startswith(b'E'))
+                    self.assertIn(reason, replies[0])
+
+    @unittest.skipUnless(hasattr(os, 'geteuid'), 'POSIX owner/mode semantics')
+    def test_writable_or_untrusted_library_never_loads(self):
+        for mode, trusted in ((0o666, TRUSTED), (0o664, TRUSTED), (0o644, frozenset({os.geteuid() + 1}))):
+            with self.subTest(mode=oct(mode), trusted=sorted(trusted)):
+                events, replies, receiver = self.run_worker_boundary([None, None], library_mode=mode, trusted=trusted)
+                self.assertNotIn('driver_load', events)
+                self.assertEqual(len(replies), 1)
+                self.assertTrue(replies[0].startswith(b'E'))
+                self.assertIn(b'trusted UID', replies[0])
+                receiver.read.assert_not_called()
+
+    @unittest.skipUnless(hasattr(os, 'geteuid'), 'POSIX owner/mode semantics')
+    def test_library_fixtures_load_under_a_group_writable_umask(self):
+        # Accounts with user-private groups often run under umask 002; the
+        # fixtures set their own mode, so the trusted-library check still passes.
+        from srrx.receivers import check_library
+        previous = os.umask(0o002)
+        try:
+            events, replies, _ = self.run_worker_boundary([None, None])
+            with tempfile.TemporaryDirectory() as temporary:
+                library = Path(temporary)/'lib.so'
+                write_library(library, b'fixture')
+                self.assertEqual(check_library(str(library), TRUSTED).st_mode & 0o777, 0o644)
+        finally:
+            os.umask(previous)
+        self.assertEqual(events, ['guard','driver_load','guard','read','close','pipe_close'])
+        self.assertEqual(replies[0], b'R')
+
+    @unittest.skipUnless(hasattr(os, 'geteuid'), 'POSIX owner/mode semantics')
+    def test_descriptor_owner_is_checked_before_any_hashing(self):
+        import stat
+        import srrx.labrx as labrx
+        real = os.fstat
+        def untrusted(fd):
+            info = real(fd)
+            if not stat.S_ISREG(info.st_mode):
+                return info
+            # The opened inode now belongs to another UID (e.g. chown after the lstat check).
+            return SimpleNamespace(st_mode=info.st_mode, st_uid=os.geteuid() + 1, st_size=info.st_size,
+                                   st_dev=info.st_dev, st_ino=info.st_ino)
+        with patch.object(labrx.os, 'fstat', side_effect=untrusted), \
+             patch.object(labrx.os, 'read', side_effect=AssertionError('hashed before the owner check')) as reads:
+            events, replies, _ = self.run_worker_boundary([None, None], trusted=frozenset({0, os.geteuid()}))
+        reads.assert_not_called()
+        self.assertNotIn('driver_load', events)
+        self.assertTrue(replies[0].startswith(b'E'))
+        self.assertIn(b'not the checked file', replies[0])
 
     def test_preload_privacy_failure_never_opens_driver(self):
         events, replies, receiver = self.run_worker_boundary([OSError('privacy unavailable')])

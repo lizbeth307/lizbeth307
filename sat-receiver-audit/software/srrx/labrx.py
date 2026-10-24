@@ -17,10 +17,13 @@ import time
 
 import numpy as np
 
-from .receivers import AirspyHFReceiver, RTLReceiver, ControlGuard, load_driver_record, validate_tuning
+from .receivers import (AirspyHFReceiver, RTLReceiver, ControlGuard, TRUSTED_LIBRARY_UIDS, check_library,
+                        load_driver_record, validate_tuning)
 
 MAX_FFT_SIZE = 16384
-STARTUP_TIMEOUT_S = 10.0  # spawn + NumPy import + driver open, before the first-block freshness deadline
+# Absolute from process.start(): spawn + NumPy import + driver open, before the
+# first-block freshness deadline. A late first read() gets no extra time.
+STARTUP_TIMEOUT_S = 10.0
 _STOP = {"cleanup": False}  # main thread inside run_capture's close + branch OFF
 
 
@@ -82,15 +85,19 @@ def _disable_worker_core_dumps(*, libc=None):
         raise OSError(code, "RX worker core-dump protection was not confirmed")
 
 
-def _worker(connection, record, center_hz, sample_rate):
+def _worker(connection, record, center_hz, sample_rate, trusted_uids):
     """C driver calls cannot stall the control observer in the parent."""
     receiver = None
     try:
         _disable_worker_core_dumps()
         # Recheck exact library bytes in this process and dlopen that same inode,
         # so a rename in a writable parent cannot swap bytes after hashing.
+        # Owner/mode is checked from lstat before the open and again on the
+        # descriptor, so no untrusted UID can rewrite the inode between hash and mmap.
+        check_library(record["library_path"], trusted_uids)
         fd = os.open(record["library_path"], os.O_RDONLY | os.O_NOFOLLOW | os.O_CLOEXEC)
         try:
+            check_library(record["library_path"], trusted_uids, opened=os.fstat(fd))
             digest, size = hashlib.sha256(), 0
             for block in iter(lambda: os.read(fd, 1024 * 1024), b""):
                 size += len(block)
@@ -127,12 +134,15 @@ def _worker(connection, record, center_hz, sample_rate):
 
 class WorkerSource:
     ready = discontinuity = False
+    started_at = ready_after_s = None  # monotonic spawn time; seconds from spawn to the ready handshake
 
-    def __init__(self, record, center_hz, sample_rate):
+    def __init__(self, record, center_hz, sample_rate, *, trusted_library_uids=TRUSTED_LIBRARY_UIDS):
         ctx = mp.get_context("spawn")
         self.reader, sender = ctx.Pipe(duplex=False)
-        self.process = ctx.Process(target=_worker, args=(sender, record, center_hz, sample_rate), daemon=True)
+        self.process = ctx.Process(target=_worker, args=(sender, record, center_hz, sample_rate,
+                                                         trusted_library_uids), daemon=True)
         try:
+            self.started_at = time.monotonic()  # the startup budget runs from here
             self.process.start()
         except BaseException:
             self.reader.close()
@@ -145,7 +155,11 @@ class WorkerSource:
 
         discontinuity is True when this result does not continue the previous one.
         """
-        deadline = time.monotonic() + (timeout_s if self.ready else STARTUP_TIMEOUT_S)
+        now = time.monotonic()
+        if self.ready:
+            deadline = now + timeout_s
+        else:  # absolute; a stub built without __init__ has no spawn time
+            deadline = (now if self.started_at is None else self.started_at) + STARTUP_TIMEOUT_S
         blocks, size, gap = [], 0, False
         while time.monotonic() < deadline:
             guard.check()
@@ -160,6 +174,8 @@ class WorkerSource:
                         raise OSError(data[1:].decode("utf-8", errors="replace")[:512] or "RX worker failed")
                     if kind == b"R" and len(data) == 1 and not self.ready:
                         self.ready, deadline = True, time.monotonic() + timeout_s
+                        if self.started_at is not None:
+                            self.ready_after_s = time.monotonic() - self.started_at
                     elif kind in (b"I", b"D") and self.ready:
                         if not data[1:] or (len(data) - 1) % 8:
                             raise OSError("Invalid worker complex64 block")
@@ -180,7 +196,7 @@ class WorkerSource:
             if not self.process.is_alive():
                 raise OSError("RX worker exited")
         raise TimeoutError("No fresh RX block within one second" if self.ready
-                           else "RX worker did not open the receiver in time")
+                           else "RX worker did not open the receiver within %g s" % STARTUP_TIMEOUT_S)
 
     def close(self):
         self.reader.close()  # a sending worker gets EPIPE and runs its driver-close finally
@@ -287,9 +303,11 @@ def run_capture(*, center_hz=100000000, sample_rate=1024000, fft_size=1024,
                             pass
         finally:
             _STOP["cleanup"] = False
+    startup = getattr(source, "ready_after_s", None)  # measured production spawn-to-ready time
     return {"frames": completed, "source": "SIMULATION" if record is None else "HARDWARE",
             "raw_iq_persisted": False, "physical_tests_performed": False,
-            "branch_off_confirmed": off_confirmed, "last_frame": last}
+            "branch_off_confirmed": off_confirmed,
+            "worker_startup_s": round(startup, 3) if type(startup) is float else None, "last_frame": last}
 
 
 def _stop(signum, frame):
