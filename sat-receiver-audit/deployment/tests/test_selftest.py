@@ -2,6 +2,7 @@
 import contextlib
 import fnmatch
 import hashlib
+import importlib
 import io
 import json
 import os
@@ -61,6 +62,14 @@ LOCKED = {"allow_center_freq_changes": False, "allow_audio_recording": False, "a
           "mqtt_enabled": False, "rig_enabled": False, "pskreporter_enabled": False, "wsprnet_enabled": False}
 
 
+def review_record(policy_path, policy):
+    """Synthetic review record bound to one policy file: exercises load_review, reviews nothing."""
+    return {"schema_version": 1, "status": "REVIEWED", "policy_sha256": deploy.sha(policy_path),
+            "source_lock_sha256": deploy.sha(HERE / "sources.lock.json"), "reviewer": "fixture reviewer role",
+            "reviewed_on": "2026-10-24", "builds": [{"name": "fixture-build", "sha256": "0" * 64}],
+            "notes": [{"note": index, "resolution": "synthetic fixture"} for index in range(len(policy["notes"]))]}
+
+
 def devices():
     """Synthetic device bindings (as test_deployment): the stage then carries the FE1.1s port-4 rule."""
     config = deploy.load(HERE / "devices.template.json")
@@ -86,6 +95,8 @@ class SelftestTests(unittest.TestCase):
         reviewed["status"] = "REVIEWED"  # synthetic copy: exercises the pass path of the validator only
         cls.reviewed = cls.root / "reviewed-policy.json"
         cls.reviewed.write_text(json.dumps(reviewed, indent=2) + "\n", encoding="utf-8")
+        cls.review = cls.root / "policy-review.json"
+        cls.review.write_text(json.dumps(review_record(cls.reviewed, reviewed), indent=2) + "\n", encoding="utf-8")
         cls.baseline = {}
 
     @classmethod
@@ -120,11 +131,12 @@ class SelftestTests(unittest.TestCase):
 
     def run_check(self, profile="controller", rootfs=None, policy=None, allow_pass=False, **kwargs):
         kwargs.setdefault("cmdline_sha256", self.cmdline)
+        kwargs.setdefault("review", self.review)
         report = selftest.run_offline(rootfs or self.rootfs, profile, policy or self.reviewed, **kwargs)
         # Invariants of every report: no hardware claim, no PASS outside OFFLINE evidence.
         self.assertFalse(report["hardware_ready"])
         self.assertFalse(report["receive_only_proven"])
-        if not allow_pass:  # honest today: rows 11 and 14 have no code
+        if not allow_pass:  # honest today: RX-11 reports the touch-only DISARM leaf
             self.assertNotEqual(report["status"], "OFFLINE_CHECKS_PASS")
         for check in report["checks"]:
             if check["evaluability"] in ("BUILDER", "DEVICE", "HARDWARE"):
@@ -172,18 +184,22 @@ class SelftestTests(unittest.TestCase):
             # Every OFFLINE row has real code; runtime rows have none that could emit a PASS.
             self.assertEqual(check_id in selftest.CHECKS, evaluability in ("OFFLINE", "NOT_IMPLEMENTED"), check_id)
             self.assertTrue(sources)
-        for check_id in ("RX-11", "RX-14"):
-            self.assertEqual(next(e[2] for e in selftest.CATALOGUE if e[0] == check_id), "NOT_IMPLEMENTED")
+        for check_id in ("RX-11", "RX-14"):  # menu model and voice mask have code now
+            self.assertEqual(next(e[2] for e in selftest.CATALOGUE if e[0] == check_id), "OFFLINE")
+        self.assertEqual([e[0] for e in selftest.CATALOGUE if e[2] == "NOT_IMPLEMENTED"], [])
         out = subprocess.run([sys.executable, str(HERE / "selftest.py"), "catalogue"], capture_output=True, text=True, check=True)
         self.assertEqual([c["id"] for c in json.loads(out.stdout)], ids)
 
     def test_clean_staged_tree_passes_offline_rows_but_stays_blocked(self):
         report = self.run_check(rootfs=self.clean)
         self.assertEqual(report["status"], "BLOCKED")
-        self.assertEqual(report["blockers"], ["RX-11", "RX-14"])  # honest today: no menu model, no voice mask
+        self.assertEqual(report["blockers"], ["RX-11"])  # honest today: DISARM has no key or encoder path
         self.assertEqual(report["policy_status"], "REVIEWED")
+        self.assertEqual(report["policy_review"], {"status": "BOUND", "sha256": deploy.sha(self.review)})
+        self.assertEqual(self.check(report, "RX-11")["findings"], [{"path": "software/srrx/menu_model.py", "rule": "critical_leaf_touch_only",
+                                                                   "effect": "BLOCKED", "item": "frame.disarm"}])
         for check in report["checks"]:
-            if check["evaluability"] == "OFFLINE":
+            if check["evaluability"] == "OFFLINE" and check["id"] != "RX-11":
                 self.assertEqual(check["status"], "PASS", check)
         self.assertTrue(report["target"]["inventory_complete"])
         self.assertGreater(report["target"]["files_scanned"], 50)
@@ -193,7 +209,8 @@ class SelftestTests(unittest.TestCase):
         # The verdict also depends on deploy.py and on the checker's own srrx modules that ran.
         dependencies = report["tool_dependencies"]
         self.assertEqual(dependencies["deployment/deploy.py"], deploy.sha(HERE / "deploy.py"))
-        for name in set(selftest.srrx_closure("learning")) | set(selftest.srrx_closure("decoder_policy")):
+        modules = ("learning", "decoder_policy", "menu_model", "hmi", "daemon", "labrx", "voice_mask")
+        for name in set().union(*(selftest.srrx_closure(m) for m in modules)):
             rel = "software/srrx/%s.py" % name
             self.assertEqual(dependencies[rel], deploy.sha(deploy.PROJECT / rel), rel)
         again = self.run_check(rootfs=self.clean)
@@ -222,6 +239,34 @@ class SelftestTests(unittest.TestCase):
         # A DRAFT policy never hides a found violation.
         self.put("usr/bin/rigctld", "#!/bin/sh\n")
         self.assertEqual(self.run_check(policy=POLICY)["status"], "FAIL")
+
+    def test_reviewed_policy_needs_a_bound_review_record(self):
+        missing = self.run_check(rootfs=self.clean, review=None)
+        self.assertEqual((missing["status"], missing["blockers"][0]), ("BLOCKED", "POLICY_REVIEW_RECORD_MISSING"))
+        self.assertEqual(missing["policy_review"], {"status": "MISSING", "sha256": None})
+        # A record of other policy bytes (an edit after the review) does not bind.
+        edited = deploy.load(self.reviewed)
+        edited["notes"][0] += " (edited after review)"
+        other = self.work / "edited-policy.json"
+        other.write_text(json.dumps(edited, indent=2) + "\n", encoding="utf-8")
+        stale = self.run_check(rootfs=self.clean, policy=other)
+        self.assertEqual(stale["blockers"][0], "POLICY_REVIEW_RECORD_NOT_BOUND")
+        # The shipped DRAFT policy blocks first, whatever record is given.
+        self.assertEqual(self.run_check(rootfs=self.clean, policy=POLICY)["blockers"][0], "POLICY_NOT_REVIEWED")
+        policy = deploy.load(self.reviewed)
+        for change in (lambda r: r.update(status="OPEN"), lambda r: r.update(reviewer="reviewer@example.org"),
+                       lambda r: r.update(reviewer=""), lambda r: r.update(reviewed_on="24.10.2026"),
+                       lambda r: r.update(reviewed_on="2026-02-30"), lambda r: r.update(builds=[]),
+                       lambda r: r.update(builds=[{"name": "a", "sha256": "0" * 63}]),
+                       lambda r: r["notes"].pop(), lambda r: r["notes"].append({"note": 0, "resolution": "again"}),
+                       lambda r: r.update(policy_sha256="X" * 64), lambda r: r.update(extra=True)):
+            record = review_record(self.reviewed, policy)
+            change(record)
+            path = self.work / "bad-review.json"
+            path.write_text(json.dumps(record), encoding="utf-8")
+            with self.assertRaises(deploy.DeploymentError):
+                selftest.load_review(path, self.reviewed, policy)
+        self.assertEqual(selftest.load_review(self.review, self.reviewed, policy), "BOUND")
 
     def test_missing_cmdline_record_blocks_and_full_profile_requires_components(self):
         report = self.run_check(rootfs=self.clean, cmdline_sha256=None)
@@ -511,12 +556,15 @@ class SelftestTests(unittest.TestCase):
 
     def test_target_module_copy_must_match_the_checker(self):
         # Each row needs the target copy of its module AND of every srrx module that module imports.
-        users = {"RX-13": ("spectrum", "learning"), "RX-15": ("learning",), "RX-S1": ("decoder_policy",), "RX-S2": ("rfkill",)}
+        users = {"RX-11": ("menu_model", "hmi", "daemon", "labrx"), "RX-13": ("spectrum", "learning"), "RX-14": ("voice_mask",),
+                 "RX-15": ("learning",), "RX-S1": ("decoder_policy",), "RX-S2": ("rfkill",)}
         closure = {check: set().union(*(selftest.srrx_closure(m) for m in modules)) for check, modules in users.items()}
         self.assertTrue({"__init__", "learning", "scope_policy", "spectrum"} <= closure["RX-15"], closure)
         self.assertTrue({"__init__", "decoder_policy", "scope_policy"} <= closure["RX-S1"], closure)
         self.assertEqual(closure["RX-S2"], {"__init__", "rfkill"})
-        for name in ("decoder_policy", "spectrum", "scope_policy", "rfkill", "__init__"):
+        self.assertEqual(closure["RX-14"], {"__init__", "voice_mask", "spectrum"})
+        self.assertTrue({"menu_model", "hmi", "daemon", "engine", "policy", "labrx"} <= closure["RX-11"], closure)
+        for name in ("decoder_policy", "spectrum", "scope_policy", "rfkill", "__init__", "menu_model", "voice_mask"):
             with self.subTest(module=name):
                 self.setUp()
                 path = self.rootfs / "opt/srrx/software/srrx" / (name + ".py")
@@ -524,7 +572,9 @@ class SelftestTests(unittest.TestCase):
                 report = self.run_check()
                 expected = {check for check, deps in closure.items() if name in deps}
                 self.assertTrue(expected)
-                self.assertEqual({k for k, v in self.statuses(report).items() if v != self.base("controller")[k]}, expected)
+                # RX-11 is already BLOCKED (touch-only DISARM): its findings below still show the copy.
+                flips = {check for check in expected if self.base("controller")[check] != "BLOCKED"}
+                self.assertEqual({k for k, v in self.statuses(report).items() if v != self.base("controller")[k]}, flips)
                 for check_id in expected:
                     result = self.check(report, check_id)
                     self.assertEqual(result["status"], "BLOCKED")
@@ -557,6 +607,99 @@ class SelftestTests(unittest.TestCase):
             gate = self.check(self.run_check(rootfs=self.clean), "RX-S1")
         self.assertEqual(gate["status"], "FAIL")
         self.assertEqual(gate["findings"][0]["item"], "ais-public")
+
+    @staticmethod
+    def checker_module(name):
+        sys.path.insert(0, str(deploy.PROJECT / "software"))
+        return importlib.import_module("srrx." + name)
+
+    def test_menu_model_row_reports_each_defect(self):
+        menu = self.checker_module("menu_model")
+        base = self.check(self.run_check(rootfs=self.clean), "RX-11")
+        self.assertEqual(base["status"], "BLOCKED")
+        self.assertEqual({(f["rule"], f.get("item")) for f in base["findings"]}, {("critical_leaf_touch_only", "frame.disarm")})
+
+        def rx11(leaves=None, **patches):
+            with contextlib.ExitStack() as stack:
+                if leaves is not None:
+                    stack.enter_context(patch.object(menu, "LEAVES", tuple(leaves)))
+                for name, value in patches.items():
+                    stack.enter_context(patch.object(menu, name, value))
+                result = self.check(self.run_check(allow_pass=True), "RX-11")  # the glove model below passes
+            return result["status"], {(f["rule"], f.get("item")) for f in result["findings"]}
+
+        def leaf(leaf_id, kind, name, **changes):
+            value = menu._leaf(leaf_id, "overview", "Fixture", kind, name)
+            value.update(changes)
+            return value
+
+        engine = leaf("overview.engine", "engine_unit", "fixture-engine.service")
+        engine["backend"].update(scope="system", program="/usr/bin/fixture-engine")
+        cases = [
+            ([leaf("overview.unknown", "labd_op", "transmit")], ("backend_missing", "overview.unknown")),
+            ([leaf("overview.module", "page_only", "no_such_module")], ("backend_missing", "overview.module")),
+            ([leaf("overview.lime", "labd_op", "status", needs_lime=True)], ("no_lime_backend_undeclared", "overview.lime")),
+            ([leaf("overview.t7", "labd_op", "status", needs_t7=True)], ("no_t7_backend_undeclared", "overview.t7")),
+            ([leaf("overview.egc", "decoder_preset", "egc-safetynet")], ("disabled_preset_without_fallback", "overview.egc")),
+            ([leaf("overview.preset", "decoder_preset", "no-such-preset")], ("backend_missing", "overview.preset")),
+            ([engine], ("backend_unit_missing", "overview.engine")),
+        ]
+        for extra, finding in cases:
+            with self.subTest(finding=finding):
+                self.setUp()
+                status, findings = rx11(menu.LEAVES + tuple(extra))
+                self.assertEqual(status, "FAIL")
+                self.assertIn(finding, findings)
+        # The engine leaf fails on a unit without its binary and passes once both are staged.
+        self.setUp()
+        self.put("etc/systemd/system/fixture-engine.service", "[Service]\nExecStart=/usr/bin/fixture-engine --rx-only\n")
+        self.assertIn(("backend_program_missing", "overview.engine"), rx11(menu.LEAVES + (engine,))[1])
+        self.put("usr/bin/fixture-engine", "#!/bin/sh\n")
+        self.assertEqual(rx11(menu.LEAVES + (engine,)), ("BLOCKED", {("critical_leaf_touch_only", "frame.disarm")}))
+        # A missing console unit, a model defect, gesture drift or a page without builder fail.
+        self.setUp()
+        (self.rootfs / "usr/lib/systemd/user/srrx-menu.service").unlink()
+        self.assert_flips("RX-11", "backend_unit_missing")
+        self.setUp()
+        self.assertIn(("menu_model_invalid", None), rx11(menu.LEAVES + menu.LEAVES[:1])[1])
+        self.assertIn(("physical_controls_drift", None), rx11(GESTURES=menu.GESTURES[::-1])[1])
+        self.assertIn(("page_builder_missing", "radio"), rx11(PAGES=menu.PAGES + ({"id": "radio", "label": "Radio"},))[1])
+        # With a physical DISARM path (hypothetical model) the row passes.
+        glove = tuple(dict(item, controls={"touch": True, "keys": ("LOCK",)}) if item["id"] == "frame.disarm" else item for item in menu.LEAVES)
+        self.assertEqual(rx11(glove), ("PASS", set()))
+
+    def test_voice_mask_row_is_really_evaluated(self):
+        mask = self.checker_module("voice_mask")
+        voices = {"145.500MHz", "145.800MHz", "433.500MHz", "446.006MHz", "437.800MHz", "436.795MHz"}
+
+        def rx14(**patches):
+            with contextlib.ExitStack() as stack:
+                for name, value in patches.items():
+                    stack.enter_context(patch.object(mask, name, value))
+                result = self.check(self.run_check(rootfs=self.clean), "RX-14")
+            return result["status"], {(f["rule"], f.get("item")) for f in result["findings"]}
+
+        self.assertEqual(rx14(), ("PASS", set()))
+        # No excision at all: every voice stays far above the noise floor.
+        status, findings = rx14(excise=lambda samples, *args, **kwargs: samples)
+        self.assertEqual(status, "FAIL")
+        self.assertEqual({item for rule, item in findings if rule == "voice_residual_above_noise"}, voices)
+        # Each rule is load-bearing: static masks, the voice-band list and the satellite-segment limit.
+        self.assertEqual({i for r, i in rx14(_STATIC_HZ=())[1] if r == "voice_residual_above_noise"},
+                         {"145.800MHz", "437.800MHz", "436.795MHz"})
+        self.assertEqual({i for r, i in rx14(_VOICE_HZ=())[1] if r == "voice_residual_above_noise"},
+                         {"145.500MHz", "433.500MHz", "446.006MHz"})
+        self.assertIn(("voice_residual_above_noise", "446.006MHz"),
+                      rx14(AMATEUR_SATELLITE_HZ=mask.AMATEUR_SATELLITE_HZ + ((440e6, 470e6),))[1])
+        # An over-broad mask that zeroes everything cannot pass: the control carriers block.
+        status, findings = rx14(excise=lambda samples, *args, **kwargs: samples * 0)
+        self.assertEqual(status, "BLOCKED")
+        self.assertEqual({item for rule, item in findings}, {"145.500MHz", "433.500MHz", "137.500MHz"})
+        self.assertIn(("voice_mask_refused_capture", "137.500MHz"),
+                      rx14(excise=lambda *args, **kwargs: (_ for _ in ()).throw(mask.VoiceMaskError("FIXTURE")))[1])
+        with patch.dict(sys.modules, {"numpy": None}):
+            self.assertEqual(self.check(self.run_check(rootfs=self.clean), "RX-14")["findings"],
+                             [{"path": ".", "rule": "numpy_unavailable", "effect": "BLOCKED"}])
 
     # ------------------------------------------------------------ component manifests and signatures
 
@@ -725,7 +868,7 @@ class SelftestTests(unittest.TestCase):
         existing = self.work / "existing.json"
         existing.write_text("keep\n")
         base = [sys.executable, str(HERE / "selftest.py"), "offline", "--rootfs", str(self.rootfs), "--profile", "controller",
-                "--policy", str(self.reviewed), "--cmdline-sha256", self.cmdline]
+                "--policy", str(self.reviewed), "--policy-review", str(self.review), "--cmdline-sha256", self.cmdline]
         env = dict(os.environ, PYTHONDONTWRITEBYTECODE="1")
         for output in (existing, self.rootfs / "report.json"):
             out = subprocess.run(base + ["--output", str(output)], capture_output=True, text=True, env=env, timeout=120)
@@ -738,17 +881,21 @@ class SelftestTests(unittest.TestCase):
         self.assertEqual(out.returncode, 2, out.stderr)  # honest BLOCKED: exit 0 only for OFFLINE_CHECKS_PASS
         written = json.loads(fresh.read_text(encoding="utf-8"))
         self.assertEqual((written["tool"], written["status"]), ("srrx-selftest", "BLOCKED"))
+        self.assertEqual((written["policy_review"]["status"], written["blockers"]), ("BOUND", ["RX-11"]))
         self.assertEqual(json.loads(out.stdout)["status"], "BLOCKED")
         bad = subprocess.run(base[:-2] + ["--cmdline-sha256", "XYZ", "--output", str(self.work / "bad.json")], capture_output=True, text=True, env=env, timeout=120)
         self.assertEqual(bad.returncode, 2)
         self.assertFalse((self.work / "bad.json").exists())
 
     def test_all_offline_rows_pass_exit_zero_and_fail_exits_two(self):
-        # Hypothetical catalogue without the two unimplemented rows: RUNTIME_ONLY rows do not block an
-        # all-PASS offline report, which is still no hardware or receive-only proof.
-        implemented = tuple(row for row in selftest.CATALOGUE if row[2] != "NOT_IMPLEMENTED")
-        argv = ["offline", "--rootfs", str(self.rootfs), "--profile", "controller", "--policy", str(self.reviewed), "--cmdline-sha256", self.cmdline]
-        with patch.object(selftest, "CATALOGUE", implemented):
+        # Hypothetical menu model with a physical DISARM path (the one open RX-11 item) and a bound review
+        # record: RUNTIME_ONLY rows do not block an all-PASS offline report, which is still no hardware or
+        # receive-only proof.
+        menu = self.checker_module("menu_model")
+        glove = tuple(dict(item, controls={"touch": True, "keys": ("LOCK",)}) if item["id"] == "frame.disarm" else item for item in menu.LEAVES)
+        argv = ["offline", "--rootfs", str(self.rootfs), "--profile", "controller", "--policy", str(self.reviewed),
+                "--policy-review", str(self.review), "--cmdline-sha256", self.cmdline]
+        with patch.object(menu, "LEAVES", glove):
             report = self.run_check(allow_pass=True)
             self.assertEqual((report["status"], report["blockers"]), ("OFFLINE_CHECKS_PASS", []))
             self.assertGreater(report["counts"]["RUNTIME_ONLY"], 0)
@@ -770,6 +917,9 @@ class SelftestTests(unittest.TestCase):
             self.setUp()
             draft = self.run_check(policy=POLICY)
             self.assertEqual((draft["status"], draft["blockers"]), ("BLOCKED", ["POLICY_NOT_REVIEWED"]))
+            # Nor can a REVIEWED policy without its bound review record.
+            unbound = self.run_check(review=None)
+            self.assertEqual((unbound["status"], unbound["blockers"]), ("BLOCKED", ["POLICY_REVIEW_RECORD_MISSING"]))
 
     def test_symlinked_parents_and_masks_resolve_inside_rootfs(self):
         # A symlinked parent directory (chroot-style absolute target) does not hide its content.
@@ -968,10 +1118,13 @@ class SelftestTests(unittest.TestCase):
         self.assertIn("python3 deployment/selftest.py offline", documented)
         self.assertIn("RUNTIME_ONLY", documented)
         self.assertIn("receive-only-policy.json", documented)
-        for rule in ("tool_dependencies", "pinned_package_present_unreviewed", "modes_py_not_found", "gpredict_binary_not_found", "lab-lease@.service.d"):
+        rules = ("pinned_package_present_unreviewed", "modes_py_not_found", "gpredict_binary_not_found", "critical_leaf_touch_only",
+                 "backend_unit_missing", "no_lime_backend_undeclared", "voice_residual_above_noise", "voice_mask_control_removed",
+                 "POLICY_REVIEW_RECORD_MISSING", "POLICY_REVIEW_RECORD_NOT_BOUND", "--policy-review")
+        for rule in rules + ("tool_dependencies", "lab-lease@.service.d"):
             self.assertIn(rule, documented)
         source = (HERE / "selftest.py").read_text(encoding="utf-8")
-        for rule in ("pinned_package_present_unreviewed", "modes_py_not_found", "gpredict_binary_not_found", '"tool_dependencies"'):
+        for rule in tuple(r for r in rules if not r.startswith("POLICY_")) + ('"tool_dependencies"', '"POLICY_REVIEW_RECORD_" + reviewed'):
             self.assertIn(rule, source)  # the documented ids are the ones the checker emits
 
 

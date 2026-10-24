@@ -1187,12 +1187,11 @@ def create_window(controller, *, callbacks=None, start_worker=True, scope_latch=
             layout.addLayout(actions)
             self.tabs = QtWidgets.QTabWidget()
             layout.addWidget(self.tabs, 1)
-            self._overview_page()
-            self._receiver_page()
-            self._spectrum_page()
-            self._location_page()
-            self._learning_page()
-            self._bench_page()
+            from .menu_model import PAGES  # declarative tab order, evaluated by selftest RX-11
+            for entry in PAGES:
+                getattr(self, "_" + entry["id"] + "_page")()
+                if self.tabs.tabText(self.tabs.count() - 1) != entry["label"]:
+                    raise RuntimeError("Console page differs from srrx.menu_model: " + entry["id"])
             self.notice = QtWidgets.QLabel("Status reads do not arm or renew a lease.")
             self.notice.setTextFormat(QtCore.Qt.TextFormat.PlainText)
             self.notice.setWordWrap(True)
