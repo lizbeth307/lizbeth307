@@ -1,0 +1,17 @@
+{
+  "v": 1,
+  "kind": "srrx_orbit_targets",
+  "targets": [
+    {"satcat_name": "METEOR-M2 3", "launch_date": "2023-06-27", "role": "LRPT", "name": "Meteor-M N2-3"},
+    {"satcat_name": "METEOR-M2 4", "launch_date": "2024-02-29", "role": "LRPT", "name": "Meteor-M N2-4"},
+    {"satcat_name": "METOP-B", "launch_date": "2012-09-17", "role": "OTHER", "name": "MetOp-B"},
+    {"satcat_name": "METOP-C", "launch_date": "2018-11-07", "role": "OTHER", "name": "MetOp-C"},
+    {"satcat_name": "ARCTIC WEATHER SATELLITE", "launch_date": "2024-08-16", "role": "OTHER", "name": "AWS"},
+    {"satcat_name": "ELEKTRO-L 2", "launch_date": "2015-12-11", "role": "GEO", "name": "Elektro-L2"},
+    {"satcat_name": "ELEKTRO-L 3", "launch_date": "2019-12-24", "role": "GEO", "name": "Elektro-L3"},
+    {"satcat_name": "ELEKTRO-L 5", "launch_date": "2026-02-12", "role": "GEO", "name": "Elektro-L5"},
+    {"satcat_name": "FENGYUN 2H", "launch_date": "2018-06-05", "role": "GEO", "name": "FY-2H"},
+    {"satcat_name": "ISS (ZARYA)", "launch_date": "1998-11-20", "role": "ISS", "name": "ISS"},
+    {"satcat_name": "ES'HAIL 2", "launch_date": "2018-11-15", "role": "QO100", "name": "QO-100 (Es'hail-2)"}
+  ]
+}

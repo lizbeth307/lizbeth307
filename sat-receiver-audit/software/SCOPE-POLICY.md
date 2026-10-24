@@ -1,10 +1,12 @@
-# Політики меж labd: маска TDF, ДХ-сигнали часу, стоп Artemis, egc-gate
+# Політики меж labd: маска TDF, ДХ-сигнали часу, стоп Artemis, egc-gate, алоу-лист NORAD
 
-Модулі `srrx.scope_policy` і `srrx.egc_gate` реалізують правила з STACK.md (рядки 120, 121, 125, 631, 873, 880), build/07-pz-vstanovlennia.md (розділ 21, політики labd) і build/09-testy.md (ПОЛ-06, ПОЛ-09, П-12). Обидва модулі — лише стандартна бібліотека, без мережі, без доступу до приймача чи файлів поза явно переданими шляхами. Кожне правило може лише **додати позначку або відмову**; маски `srrx.spectrum` не послаблюються. Тести працюють на синтетичних даних: це не доказ роботи на ефірі, не перевірка artemis-db v74 і не прийняття egc-gate.
+Модулі `srrx.scope_policy` і `srrx.egc_gate` реалізують правила з STACK.md (рядки 120, 121, 125, 631, 873, 880), build/07-pz-vstanovlennia.md (розділ 21, політики labd) і build/09-testy.md (ПОЛ-06, ПОЛ-09, П-12). `srrx.artemis_convert` (artemis-db v74 → дзеркало) і `srrx.norad_allowlist` (алоу-лист NORAD) готують для них дані на домашній базі. Усі чотири модулі — лише стандартна бібліотека, без мережі, без доступу до приймача чи файлів поза явно переданими шляхами. Кожне правило може лише **додати позначку або відмову**; маски `srrx.spectrum` не послаблюються. Тести працюють на синтетичних даних: це не доказ роботи на ефірі, не перевірка справжнього файла artemis-db v74 (її роблять вибіркові перевірки оператора, див. нижче) і не прийняття egc-gate.
 
 ```sh
 PYTHONPATH=software python3 -m unittest discover -s software/tests -p 'test_scope_policy.py' -v
 PYTHONPATH=software python3 -m unittest discover -s software/tests -p 'test_egc_gate.py' -v
+PYTHONPATH=software python3 -m unittest discover -s software/tests -p 'test_artemis_convert.py' -v
+PYTHONPATH=software python3 -m unittest discover -s software/tests -p 'test_norad_allowlist.py' -v
 ```
 
 ## Маска TDF 162 kHz (вівторок 06:00–12:00 UTC)
@@ -73,7 +75,7 @@ API: `tdf_window_status(span_lo_hz, span_hi_hz, t_start_utc, t_end_utc, utc_unce
 
 `ArtemisDB.load(path, accepted_sha256)` читає файл один раз (до 64 MiB), обчислює SHA256 саме цих байтів і порівнює з прийнятим; аналізуються ті самі байти, тож підміни між перевіркою і читанням немає. Модуль ніколи не завантажує базу з мережі. `detect_format()` розпізнає:
 
-- SQLite (`SQLite format 3\0`) — власний файл artemis-db. Схема v74 у джерелах проєкту **не перевірена** (STACK: «формат перевірити»), тому база отримує `UNAVAILABLE_FORMAT_UNVERIFIED_SQLITE` і нічого не ідентифікує. Вгадану схему не закладено.
+- SQLite (`SQLite format 3\0`) — власний файл artemis-db. labd його **ніколи не розбирає**: навіть із прийнятим SHA256 база отримує `UNAVAILABLE_FORMAT_UNVERIFIED_SQLITE` і нічого не ідентифікує. Схему v74 перевіряє й перетворює на дзеркало лише `srrx.artemis_convert` (нижче).
 - нормалізоване дзеркало `srrx_artemis_mirror_v1` (JSON) — єдиний прийнятий формат:
 
 ```json
@@ -105,7 +107,73 @@ API: `tdf_window_status(span_lo_hz, span_hi_hz, t_start_utc, t_end_utc, utc_unce
 }
 ```
 
-Відкрито: перевірений перетворювач artemis-db v74 (SQLite) → дзеркало і перевірка схеми v74 у цьому проході не зроблені; без них база в labd лишається `UNAVAILABLE`, а діє лише стоп замаскованих смуг.
+Без прийнятого дзеркала база в labd лишається `UNAVAILABLE`, а діє лише стоп замаскованих смуг.
+
+### Перетворювач artemis-db v74 → дзеркало
+
+`python3 -m srrx.artemis_convert` (stdlib `sqlite3`, без мережі) перетворює `data.sqlite` з архіву випуску Artemis-DB v74 на `srrx_artemis_mirror_v1`. Схему взято з `models/model.py` і `7.create_sqlite.py` репозиторію AresValley/Artemis-DB на коміті e54d5c3 («Preparing release v74», 18.07.2026; Peewee 4.1.1 за `uv.lock`, типові імена таблиць), звірено 24.10.2026. Випуск v74 — вкладення `v74.tar` (302 172 160 байт; GitHub показує digest `sha256:4ef66d5e0eddbc5430cc102f84de0489efd40b979bc6b78abdf259999d09d052`, станом на 24.10.2026). Архів містить і медіа; конвертеру потрібен лише `data.sqlite`. Ліцензію вмісту, похідного від SigID, не перевірено, а в README Artemis-DB названо лише GPL-3 самого Artemis: дзеркало лишається локальним, не публікується і не комітиться.
+
+Перевірки джерела. Будь-яке відхилення — відмова всього файла зі стабільним кодом (`ConvertRefused`; без вмісту файла, щонайбільше назва таблиці чи номер аргументу):
+
+1. Звичайний файл (lstat; symlink, FIFO, пристрій — `NOT_REGULAR_FILE`) до 256 MiB із заголовком `SQLite format 3\0` у форматі rollback journal (байти 18/19 = 1; WAL — `SQLITE_JOURNAL_MODE`). SHA256, inode, розмір і mtime знімаються до й після читання; зміна — `SOURCE_CHANGED`.
+2. Відкриття `file:…?mode=ro&immutable=1`. Authorizer дозволяє лише читання, `typeof()` і перелічені pragma: без ATTACH, запису й розширень. Також `SQLITE_DBCONFIG_DEFENSIVE`, `trusted_schema=OFF`, тригери й view вимкнено (Python 3.12+). Біля джерела не з'являється жоден файл (`-journal`, `-wal`, `-shm`).
+3. `PRAGMA integrity_check` дає рівно `ok` (`SQLITE_INTEGRITY`; пошкоджені сторінки — `SQLITE_UNREADABLE`).
+4. Точний набір таблиць, стовпців (ім'я, оголошений тип, NOT NULL, default, первинний ключ, без прихованих чи генерованих стовпців) і зовнішніх ключів (`SCHEMA_TABLES`, `SCHEMA_COLUMNS:<таблиця>`, `SCHEMA_FOREIGN_KEYS:<таблиця>`):
+
+| Таблиця | Стовпці | Зовнішні ключі |
+|---|---|---|
+| `info` | DATE TEXT, EDITABLE INTEGER, NAME TEXT, VERSION INTEGER (без первинного ключа) | — |
+| `signals` | SIG_ID INTEGER NOT NULL PK, DESCRIPTION TEXT, NAME TEXT, URL TEXT, SINCE_VERSION INTEGER | — |
+| `acf` | ACF_ID PK, DESCRIPTION TEXT, SIG_ID INTEGER, VALUE REAL | SIG_ID → signals |
+| `bandwidth`, `frequency` | BAND_ID / FREQ_ID PK, DESCRIPTION TEXT, SIG_ID INTEGER, VALUE INTEGER | SIG_ID → signals |
+| `categorylabel` | CLB_ID PK, VALUE TEXT | — |
+| `category` | CAT_ID PK, CLB_ID INTEGER, SIG_ID INTEGER | CLB_ID → categorylabel, SIG_ID → signals |
+| `documents` | DOC_ID PK, DESCRIPTION TEXT, EXTENSION TEXT, NAME TEXT, PREVIEW INTEGER, SIG_ID INTEGER, TYPE TEXT | SIG_ID → signals |
+| `location`, `mode`, `modulation` | LOC_ID / MOD_ID / MDL_ID PK, DESCRIPTION TEXT, SIG_ID INTEGER, VALUE TEXT | SIG_ID → signals |
+
+PK — `INTEGER NOT NULL PRIMARY KEY`, решта стовпців допускає NULL; дії ключів `NO ACTION`. Індекси дозволені лише на цих таблицях. View, тригери, віртуальні таблиці, `sqlite_stat*` чи будь-яка інша таблиця — відмова (`SCHEMA_OBJECTS`, `SCHEMA_TABLE_KIND`, `SCHEMA_TABLES`). Рядок `info` рівно один: NAME `SigID`, VERSION — ціле 74 (`INFO_ROWS`, `INFO_NAME`, `INFO_VERSION`; v73 і майбутня v75 теж відмова, доки їхню схему не перевірено так само).
+
+Правила значень:
+
+- `frequency.VALUE` — збережене ціле 1…10¹² (Hz), `bandwidth.VALUE` — ціле 0…10¹². Текст, дробове число чи NULL — відмова (`FREQUENCY_VALUE`, `BANDWIDTH_VALUE`), бо так можуть ховатися інші одиниці. `acf.VALUE` не використовується, але має бути числом або NULL.
+- Кожен дочірній рядок і кожна категорія посилаються на наявний сигнал і мітку (`ORPHAN_ROW:<таблиця>`, `CATEGORY_REFERENCE`). Мітка — текст до 128 символів, не більше 32 категорій на сигнал. Назва сигналу — непорожній текст (`SIGNAL_NAME`). Інші текстові стовпці — текст або NULL (`TEXT_TYPE:<таблиця>`).
+- Одиниці підтверджує оператор: щонайменше 3 різні вибіркові перевірки `--expect "НАЗВА=HZ"` відомих цивільних записів. Кожна має бути точною частотною точкою рівно одного сигналу (`SPOT_CHECKS_REQUIRED`, `SPOT_CHECK_NAME:<n>`, `SPOT_CHECK_FREQUENCY:<n>`). У вихідних JSON v74 (`static/<pageid>/signal.json` на e54d5c3) значення — цілі Hz: DCF77 — 77500, MSF — 60000, «Automatic Identification System (AIS)» — 161975000, «Automatic Dependent Surveillance-Broadcast (ADS-B)» — 1090000000. Це рекомендовані перевірки; файл у kHz чи MHz їх не пройде.
+
+Діапазони сигналу (консервативно: SigID зберігає точки без рядків діапазонів, а дві точки можуть бути межами смуги):
+
+- h = ⌈max(B)/2⌉; обвідна [min(F) − h, max(F) + h] плюс кожна точка [f − h, f + h], усе в межах 0…10¹². Без смуги (немає рядків або max(B) = 0) — лише обвідна. Понад 32 діапазони — лише обвідна, яка й так покриває всі точки (лічильник `envelope_only`).
+- Сигнал без частоти не перетинає жодної смуги: він рахується в `signals_without_frequency` і в дзеркало не потрапляє.
+- **Наслідок.** Обвідна військових записів із точками на краях КХ зупиняє весь проміжок між ними. У вихідних даних v74 STANAG 4285 (Military) має точки 1.89 і 22.7 MHz, а 4G ALE/WALE (Military) — 3 і 30 MHz, тож із прийнятою базою кожна смуга приблизно між 1.888 і 30.0015 MHz дає стоп `CATEGORY`. Це свідомий надмірний стоп (fail closed). Звузити його (наприклад, лише точки для записів із понад двома точками чи рецензовані діапазони) — окреме рішення власника; у коді такого режиму немає.
+
+Тексти. Категорії — `category → categorylabel.VALUE`. Опис — опис сигналу плюс описи його рядків acf, bandwidth і frequency. Модуляція, режим і місце — їхні VALUE і DESCRIPTION через «; ». Поля обрізаються до меж дзеркала (назва — 256 символів, опис — 16 384, решта — 1 024). Якщо обрізання прибрало deny-термін, опис починається з `[srrx: <термін>] `. Потім `scope_policy` (той самий код, що в labd) повторно перевіряє кожен запис, тож стоп не змінюється (`deny_markers` у звіті). Рядки `documents` і URL не копіюються.
+
+Вихід — три нові файли; наявний файл ніколи не замінюється (`OUTPUT_EXISTS`):
+
+- `artemis-mirror.json` — детермінований JSON (відсортовані ключі й записи, UTF-8) у межах ArtemisDB (≤ 20 000 записів, ≤ 32 діапазони на запис, ≤ 100 000 діапазонів, ≤ 64 MiB). Перед поверненням дзеркало завантажується через `ArtemisDB.load`.
+- `artemis-acceptance.template.json` — шаблон запису прийняття з локально обчисленим SHA256 дзеркала. `evidence_id` — заповнювач `REVIEW REQUIRED: …`; `load_artemis_acceptance` відхиляє його, доки людина не впише справжній ідентифікатор.
+- `artemis-conversion-report.json` — SHA256 і розмір джерела, Info, лічильники, вибіркові перевірки, SHA256 дзеркала; шляхів немає.
+
+Процедура (домашня база або пристрій; мережа для перетворення не потрібна):
+
+```sh
+sha256sum v74.tar                        # звірити з digest випуску v74
+tar -tf v74.tar | grep data.sqlite       # шлях усередині архіву
+tar -xf v74.tar <шлях>/data.sqlite
+PYTHONPATH=software python3 -m srrx.artemis_convert --sqlite <шлях>/data.sqlite --output-dir artemis-out \
+  --expect "DCF77=77500" --expect "MSF=60000" \
+  --expect "Automatic Identification System (AIS)=161975000" \
+  --expect "Automatic Dependent Surveillance-Broadcast (ADS-B)=1090000000"
+```
+
+Рецензент переглядає звіт (`signals`, `entries`, `signals_without_frequency`, `deny_markers`, `truncated_fields`), вибірково звіряє кілька записів Military, Radar і Numbers Stations із SigID і копіює шаблон у запис прийняття з власним `evidence_id` (наприклад, `admin/artemis-db-v74-mirror-001`). Встановлення:
+
+```sh
+sudo install -o root -g root -m 0644 artemis-out/artemis-mirror.json /var/lib/srrx/artemis-mirror.json
+sudo install -o root -g root -m 0644 artemis-acceptance.json /etc/srrx/artemis-acceptance.json
+python3 -m srrx.hmi --artemis-db /var/lib/srrx/artemis-mirror.json --artemis-acceptance /etc/srrx/artemis-acceptance.json
+```
+
+Усі батьківські каталоги запису мають бути root-owned без group/world write. Якщо справжній `data.sqlite` дає `SCHEMA_*`, порівняйте `PRAGMA table_xinfo` і `PRAGMA foreign_key_list` з таблицею вище. Схему змінюють лише окремим перевіреним рішенням разом із тестом. Справжній файл v74 у проєкті не зберігається, тож його перетворення — крок домашньої бази (build/09-testy.md, розділ 17: ПОЛ-09a — CI, ПОЛ-09b — удома).
 
 ## egc-gate (Inmarsat-C EGC SafetyNET)
 
@@ -126,6 +194,49 @@ API: `tdf_window_status(span_lo_hz, span_hi_hz, t_start_utc, t_end_utc, utc_unce
 
 Алгоритм контрольної суми Inmarsat-C у джерелах проєкту відсутній, тому він **лише ін'єктується** (`checksum_ok(packet, algorithm)`, `EgcAssembler(checksum)`); без нього нічого не перевіряється й не пропускається. Тести використовують навмисно іграшкову суму байтів, позначену як фікстура. Декодер кадрів SatDump `module_stdc_decoder`, перевірка таблиці C2 і змішаний запис ПОЛ-06 — відкриті.
 
+## Алоу-лист NORAD для орбіт
+
+Джерело: STACK.md:141, :192, :873, :884; формат `srrx_orbit_allowlist` і ролі — `srrx.orbits` ([LOCATION.md](LOCATION.md#orbit-elements-and-pass-prediction)). NORAD id не пишуться ні в код, ні в репозиторій: `srrx.norad_allowlist` бере їх із локальної копії SATCAT на домашній базі, а людина перевіряє звіт.
+
+Запит — `software/config/orbit-targets.json`. Кожна ціль STACK задана точними `OBJECT_NAME` і `LAUNCH_DATE` із SATCAT, роллю `srrx.orbits.ROLES` і назвою для показу (ключ `norad_id` у запиті — відмова). Назви й дати звірено з CelesTrak SATCAT 24.10.2026:
+
+| Ціль STACK | SATCAT OBJECT_NAME | LAUNCH_DATE | Роль |
+|---|---|---|---|
+| Meteor-M N2-3 | METEOR-M2 3 | 2023-06-27 | LRPT |
+| Meteor-M N2-4 | METEOR-M2 4 | 2024-02-29 | LRPT |
+| MetOp-B, MetOp-C | METOP-B, METOP-C | 2012-09-17, 2018-11-07 | OTHER |
+| AWS | ARCTIC WEATHER SATELLITE | 2024-08-16 | OTHER |
+| Elektro-L2, L3, L5 | ELEKTRO-L 2, ELEKTRO-L 3, ELEKTRO-L 5 | 2015-12-11, 2019-12-24, 2026-02-12 | GEO |
+| FY-2H | FENGYUN 2H | 2018-06-05 | GEO |
+| МКС (437.550, 437.800 MHz SSTV, 437.825 MHz) | ISS (ZARYA) | 1998-11-20 | ISS |
+| QO-100 | ES'HAIL 2 | 2018-11-15 | QO100 |
+
+Правила; будь-який сумнів — відмова всієї збірки (`AllowlistRefused`, код із номером цілі):
+
+- Рівно один об'єкт SATCAT із такою назвою і датою запуску (`SATCAT_NO_MATCH`, `SATCAT_AMBIGUOUS`). Копії того самого рядка з кількох файлів рахуються один раз; розбіжні копії — відмова. Тип `PAY` (`SATCAT_NOT_PAYLOAD`), без DECAY_DATE і не статус `D` (`SATCAT_DECAYED`), COSPAR `YYYY-NNNA`, NORAD 1…999999 (`SATCAT_ROW`). 6-значні номери дозволені; `srrx.passes` пропускає номери понад 339999 із причиною.
+- Для кожного id потрібен набір елементів GP: правила `srrx.orbits.parse_omm`, найновіша епоха з усіх файлів. Його `OBJECT_ID` має збігатися з COSPAR із SATCAT (`GP_MISSING`, `GP_OBJECT_ID_MISMATCH`, `GP_CONTRADICTION`, `GP_SCHEMA`).
+- Результат приймає `srrx.orbits.allowlist` (≤ 256 цілей, не більше однієї QO100); запит перевіряється так само (`TARGETS_QO100`, `TARGET_DUPLICATE`).
+
+Процедура (домашня база; інструмент нічого не завантажує, URL — лише текст для оператора):
+
+```sh
+# 1. SATCAT: повний https://celestrak.org/pub/satcat.csv або записи за назвою
+#    https://celestrak.org/satcat/records.php?NAME=METEOR-M2&FORMAT=CSV (--satcat можна повторювати)
+PYTHONPATH=software python3 -m srrx.norad_allowlist resolve \
+  --targets software/config/orbit-targets.json --satcat satcat.csv
+# 2. GP для кожного id за його gp_query (gp.php?CATNR=<id>&FORMAT=json); група weather не містить
+#    AWS, Elektro-L3 і Elektro-L5
+PYTHONPATH=software python3 -m srrx.norad_allowlist build --targets software/config/orbit-targets.json \
+  --satcat satcat.csv --gp gp-1.json --gp gp-2.json --output-dir orbit-out
+# 3. Рецензія orbit-allowlist.report.json; шаблон -> запис прийняття з власним evidence_id
+sudo install -o root -g root -m 0644 orbit-out/orbit-allowlist.json /etc/srrx/orbit-allowlist.json
+sudo install -o root -g root -m 0644 orbit-allowlist.acceptance.json /etc/srrx/orbit-allowlist.acceptance.json
+python3 -m srrx.norad_allowlist check --allowlist /etc/srrx/orbit-allowlist.json \
+  --record /etc/srrx/orbit-allowlist.acceptance.json
+```
+
+`build` створює три нові файли: `orbit-allowlist.json` (детермінований, цілі за NORAD id), `orbit-allowlist.acceptance.template.json` (SHA256 і заповнювач `evidence_id`, який відхиляється до рецензії) і `orbit-allowlist.report.json` (знайдені рядки SATCAT, ім'я та епоха GP, SHA256 вхідних файлів; без шляхів). `load_accepted(allowlist, record)` читає root-owned запис (ті самі вимоги, що в `decoder_policy`), а алоу-лист — один раз, звіряє SHA256 і повертає відображення `srrx.orbits`. Склад цілей і ролі змінюють лише в `orbit-targets.json` з повторною збіркою й рецензією. Новий запуск (наприклад, Meteor-M N2-5) — нова ціль, а не правка id. Тести — ПОЛ-16 (build/09-testy.md, розділ 17).
+
 ## Споживачі
 
 - `learning.annotate(..., scope=None)`: стоп замаскованої смуги на смузі box застосовується завжди; передана `ScopeLatch` додає стоп Artemis (`label`). `learning.train(..., scope=None)` вимагає дозволу `label` для смуги кожної навчальної анотації, `learning.infer(..., scope=None)` для зупиненої смуги не дає мітки. Помилка не містить частоти.
@@ -133,3 +244,4 @@ API: `tdf_window_status(span_lo_hz, span_hi_hz, t_start_utc, t_end_utc, utc_unce
 - `labrx.run_capture(..., scope=None)`: передана `ScopeLatch` перелаштовується на смугу налаштування ще до доступу до labd чи приймача і має дозволяти `record` перед кожним кадром, який записується в `output`/`survey`. Інакше — `ValueError("out of scope")` без частоти, і нічого більше не записується; стоп під час прогону проходить звичайний cleanup із закриттям джерела й запитом OFF.
 - HMI: `create_window(..., scope_latch=None)` бере одну засувку на сесію (за замовчуванням `ScopeLatch()` без бази; `python -m srrx.hmi --artemis-db … --artemis-acceptance …` передає `ScopeLatch(ArtemisDB.load_accepted(...))`). Засувка перелаштовується при старті захоплення й на кожному показаному кадрі, перериває роботу приймача через `register_abort`, показує лише «out of scope» (без частоти, смуги чи графіка) і передається в `annotate`, `train` та `infer`. Ці дії виконуються фоновою задачею з `detached_copy()`; смуги box для анотації та класифікації GUI thread перевіряє ще до старту (засувка й переривання SIM capture одразу). Стоп, який знайшло лише фонове навчання (наприклад, Artemis-збіг для анотації з попереднього сеансу без бази), засувається, а SIM capture, що перетинається, переривається, коли задача завершилася, скасована чи відхилена — не посеред задачі. Якщо за час задачі засувка сеансу отримала новий стоп, результат відкидається. Якщо вікно закрито під час такої задачі, її рядок журналу втрачається.
 - Ще не підключено: CLI `python -m srrx.labrx` не створює `ScopeLatch` (діють лише маски `srrx.spectrum`); позначка TDF (`tdf_sample_use()`) не має споживача, бо журналу SID у коді ще немає; `model_export` засувку не перевіряє; приймач HMI поки лише `ReceiverSimulation`; служба labd засувки сесії не тримає.
+- Алоу-лист NORAD: `srrx.passes` (`--allowlist`) поки читає його через `orbits.load_allowlist` без запису прийняття; `norad_allowlist.load_accepted()` готовий для labd і планувальника проходів, але ще ними не викликається. Імпортер SatNOGS з алоу-листом (NORAD, частота ±10 kHz, режим; STACK.md:873, :1501) не реалізовано. Перетворення artemis-db запускається вручну: labd дзеркало не будує й не оновлює.
