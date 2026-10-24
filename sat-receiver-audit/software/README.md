@@ -71,7 +71,7 @@ PYTHONPATH=software:. python3 -m srrx.daemon --simulate --stdio
 
 1. Перевіряє unit ID, 37 апаратних gates із локальними доказами, точні SHA256 графів/ПЗ, ADC, прошивки, струмові вікна й бюджет LAB5. Під час запуску labd і labrx системний годинник, що відстає від `accepted_at` (офлайн-unit із RTC позаду), старт не блокує: labd лише попереджає в stderr. Нижня межа 2026 і порядок «докази не пізніше приймання» перевіряються завжди; `srrx.provision` лишається строгим.
 2. Відкриває лише явно задані I²C0/I²C2/UART7. Номери `/dev/i2c-*` не вгадуються.
-3. Отримує свіжий Pico HELLO та звіряє живі serial/calibration CRC із прийнятим записом. CRC виявляє пошкодження; це не криптографічна автентифікація.
+3. Отримує свіжий Pico HELLO та звіряє живі serial/calibration CRC із прийнятим записом, а `qualification_record` — із SHA256 точних байтів `--acceptance`, які labd перевірив під час старту ([PROTOCOL](PROTOCOL.md)). Будь-яка невідповідність блокує ARM. CRC і SHA256 виявляють пошкодження й хибну пару; це не криптографічна автентифікація.
 4. Після явного ARM Pico утримує RESET ≥100 ms і чекає два нові HB. У CONFIGURING Linux перевіряє справжній reset image MCP, спершу на всіх чипах вимикає GPINTEN і вмикає ODR/MIRROR, далі очищує IPOL, задає DEFVAL/INTCON так, що переривання дають лише входи FAULT_/FLT_ (порівняння з DEFVAL=1), записує safe OLAT (**CHG_INHIBIT=1**, інші керовані виходи LOW), IODIR, GPPU і лише тоді GPINTEN, перевіряє readback. Образ IODIR…GPPU повторно звіряється при кожному опитуванні входів; його втрата (тихий reset MCP) фіксує fault. CONFIGURED має завершитись за 1 s.
 5. Лише після ACTIVE, свіжих справних входів і нової оренди політика дозволяє конкретні EN/route/relay. HB іде кожні 200 ms; Pico timeout 750 ms, host timeout STATUS >500 ms. I²C write не вважається успішним після помилки; незалежний MCP RESET виконує Pico.
 
@@ -96,7 +96,7 @@ PYTHONPATH=software:. python3 -m srrx.provision prepare --acceptance /шлях/a
 python3 tools/build_firmware.py
 ```
 
-Перший крок створює калібрування та device-bound commissioning CRC із hash приймального запису. Другий пакує MicroPython source і shared wire.py для обох MCU; **UF2 runtime не входить**, жоден MCU не прошивається автоматично. Інструкції: [Pico](../firmware/pico/README.md), [IMU](../firmware/imu/README.md). У репозиторії немає hardware-enabled commissioning файла.
+Перший крок створює калібрування та device-bound commissioning CRC із hash приймального запису. Цей SHA256 (`acceptance_sha256` у виводі) Pico повідомляє в HELLO, тож у `/etc/srrx/acceptance.json` має лежати побайтово той самий файл. Другий пакує MicroPython source і shared wire.py для обох MCU; **UF2 runtime не входить**, жоден MCU не прошивається автоматично. Інструкції: [Pico](../firmware/pico/README.md), [IMU](../firmware/imu/README.md). У репозиторії немає hardware-enabled commissioning файла.
 
 Для Q6A зберегти проєкт у `/opt/srrx`, створити системного користувача `labd` і підтвердити доступ до потрібних I²C/UART. `systemd/srrx.service` використовує `/etc/srrx/acceptance.json` та перевірені шляхи з `/etc/srrx/devices.env`; example навмисно UNVERIFIED. Оператору потрібен доступ до групи локального control socket. Units перевірено `systemd-analyze verify`; запуск, доступи, pinmux і kernel/PMIC на Q6A ще не випробувані. Автоматичне встановлення/enable units тут не виконувалось.
 

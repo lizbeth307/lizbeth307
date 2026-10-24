@@ -11,8 +11,10 @@ from datetime import datetime, timezone
 import hashlib
 import json
 import math
+import os
 from pathlib import Path
 import re
+import stat
 import zlib
 
 PROJECT_REVISION = "SR-RX-v2.1"
@@ -300,6 +302,33 @@ def load_acceptance(path, project_root, raw=None, clock_check=True):
         raise
     except (OSError, TypeError, ValueError, KeyError, AttributeError, OverflowError) as exc:
         raise ValidationError("malformed acceptance; hardware BLOCKED") from exc
+
+
+def load_acceptance_bound(path, project_root, clock_check=True):
+    """Return (validated record, sha256 hex of exactly the validated bytes).
+
+    srrx.provision seals this digest as the Pico qualification_record; labd
+    compares it with the live HELLO. One read is both validated and hashed, so
+    a concurrent rewrite can never pair a digest with other accepted content.
+    """
+    limit = 2 * 1024 * 1024
+    try:
+        # Nonblocking open: a FIFO or device at the path is refused here, it
+        # never hangs labd in open(). Only a nonempty regular file is read.
+        fd = os.open(path, os.O_RDONLY | getattr(os, "O_NONBLOCK", 0) | getattr(os, "O_NOCTTY", 0)
+                     | getattr(os, "O_CLOEXEC", 0) | getattr(os, "O_BINARY", 0))
+        try:
+            info = os.fstat(fd)
+            if not stat.S_ISREG(info.st_mode) or not 0 < info.st_size <= limit:
+                raise ValueError("not a regular acceptance file of 1 byte..2 MiB")
+            with os.fdopen(fd, "rb", closefd=False) as handle:
+                raw = handle.read(limit + 1)
+        finally:
+            os.close(fd)
+    except (OSError, TypeError, ValueError) as exc:
+        raise ValidationError("cannot read acceptance; hardware BLOCKED") from exc
+    data = load_acceptance(path, project_root, raw=raw, clock_check=clock_check)
+    return data, hashlib.sha256(raw).hexdigest()
 
 
 def acceptance_template(project_root):

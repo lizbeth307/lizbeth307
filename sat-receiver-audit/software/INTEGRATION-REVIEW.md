@@ -29,14 +29,14 @@ CHG_INHIBIT=HIGH у таблиці означає програмний safe imag
 ## Виправлені під час незалежного огляду дефекти
 
 1. **Тип поля `state` у codec-valid STATUS.** Раніше `state=[]` або `{}` потрапляв у membership set і давав uncaught TypeError. Root додав перевірку типу до membership. Регресія пропускає ці payload через реальний encoder/decoder і підтверджує trip без винятку. Також перевірено ACTIVE із RESET HIGH, неправильним типом RESET, false calibration/commissioning/Q6A/HB readiness.
-2. **Live Pico identity перед фізичним ARM.** Тепер HELLO має serial і calibration CRC32; Engine звіряє їх із уже завантаженим acceptance. Missing/wrong serial і wrong CRC блокують ARM до MCP-конфігурації; matching fixture дозволяє розпочати handshake. Це перевірка внутрішньої boundary із in-memory fixture, а не підроблений прийнятий файл чи реальна кваліфікація пристрою.
+2. **Live Pico identity перед фізичним ARM.** Тепер HELLO має serial, calibration CRC32 і `qualification_record`; Engine звіряє перші два з уже завантаженим acceptance, а digest — із SHA256 точних байтів цього acceptance (HW-10; хибний чи відсутній digest дає `pico_qualification_record_mismatch`). Missing/wrong serial і wrong CRC блокують ARM до MCP-конфігурації; matching fixture дозволяє розпочати handshake. Це перевірка внутрішньої boundary із in-memory fixture, а не підроблений прийнятий файл чи реальна кваліфікація пристрою.
 3. **Cleanup при помилці link.close.** Root додав вкладені finally, що забезпечують виклики hardware/telemetry close і позначення closed, навіть коли транспорт кидає виняток. Регресія підтверджує звільнення решти ресурсів і вимкнений стан.
 
 Після цих виправлень відкритого дефекту в перевірених сценаріях не виявлено. Це не замінює ширшого апаратного приймання та перевірки встановлення.
 
 ## Фізичний режим і симуляція
 
-Default backend — SIMULATION, із synthetic branch samples і явним `hardware_qualified=false`. Тест підтверджує, що симуляція не створює acceptance. Фізичний startup у `daemon.main` має спершу пройти `commissioning.load_acceptance`, отримати явно задані I²C/UART шляхи, а потім свіжий Pico handshake з відповідними serial/calibration CRC. Без acceptance або із mismatch виходи не ініціалізуються й ARM не передається.
+Default backend — SIMULATION, із synthetic branch samples і явним `hardware_qualified=false`. Тест підтверджує, що симуляція не створює acceptance. Фізичний startup у `daemon.main` має спершу пройти `commissioning.load_acceptance_bound` (перевірені байти звичайного файла та їхній SHA256), отримати явно задані I²C/UART шляхи, а потім свіжий HELLO з відповідними serial, calibration CRC, `hardware_commissioned=true` і `qualification_record` (HW-10) та свіжий STATUS із вимірами. Без acceptance або із mismatch виходи не ініціалізуються й ARM не передається.
 
 `Engine` — внутрішній single-writer компонент; його аргумент acceptance є вже перевіреним словником від startup validator. Прямий Python-виклик конструктора з довільним словником не є процедурою hardware commissioning. Тестова fixture не зберігається в acceptance чи вимірювальних файлах. Branches без фізичного ADC залишаються reservations/unknown, а не «виміряними» каналами; це також покривають policy/telemetry тести інших модулів.
 
