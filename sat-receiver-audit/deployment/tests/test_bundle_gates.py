@@ -170,7 +170,7 @@ class ReleaseGateTests(unittest.TestCase):
             (root / "verification/linux-lab/project-manifest.json").write_text('{"record_status": "RECORD_OF_EARLIER_RUN"}', encoding="utf-8")
         self.build(after=drift)
         # build_documents.lab_evidence prints the same sentence after "Після прогону".
-        self.assertIn("Після нього з 3 прив’язаних виконуваних файлів змінено 1, вилучено 0; додано 1 новий файл. Його PASS",
+        self.assertIn("Після нього з 4 прив’язаних виконуваних файлів змінено 1, вилучено 0; додано 1 новий файл. Його PASS",
                       self.gates()["linux_notice"])
 
 

@@ -5226,6 +5226,24 @@
           "name": "-"
         },
         {
+          "ref": "Q2911",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "S"
+        },
+        {
+          "ref": "R2921",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C2901",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
           "ref": "U208",
           "pin": "2",
           "sheet": "E2",
@@ -5266,6 +5284,24 @@
           "pin": "2",
           "sheet": "E2",
           "name": "-"
+        },
+        {
+          "ref": "Q2912",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "S"
+        },
+        {
+          "ref": "R2922",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C2902",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
         },
         {
           "ref": "U209",
@@ -5638,6 +5674,24 @@
           "pin": "2",
           "sheet": "E2",
           "name": "-"
+        },
+        {
+          "ref": "Q2913",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "S"
+        },
+        {
+          "ref": "R2923",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
+        },
+        {
+          "ref": "C2903",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "2"
         },
         {
           "ref": "U215",
@@ -7888,11 +7942,11 @@
     "inputs": [
       {
         "file": "design/E1.json",
-        "sha256": "bc1faf3dd485a8ab55fdb2bc0b9bf1266d160997044f45c725aa79a59c83de11"
+        "sha256": "3d216840beed9e5692858718915e100fba00f9b73aeb57248841f1ecbc76aa5a"
       },
       {
         "file": "design/E2.json",
-        "sha256": "e07b78094f9f60547614c08e04943801401e63b177f68b77228f7786bb56c0ad"
+        "sha256": "19b2247f3b32a547ba1478b37f31177b057f85f213b273e2407ac06a05189196"
       },
       {
         "file": "design/E3.json",
@@ -7900,7 +7954,7 @@
       },
       {
         "file": "design/E4.json",
-        "sha256": "60c0f73c66737853033eea13c28b013d9e8559d1e0df57f2b7902af0da757797"
+        "sha256": "a3122809dacd86b312516df5b53f932bd0ab95b48122e5cf08351610f538e56b"
       },
       {
         "file": "design/E5.json",
@@ -7912,7 +7966,7 @@
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "acaa61986e3af7799a99696bb000775fc0afe2a53cb0b6cc3d2473f255ee9312"
+        "sha256": "2fbb74498e079e328ec2a1f243522e68668a87e1905d59fa2d4711cc060a3df1"
       }
     ],
     "source_documents": [
@@ -7968,6 +8022,8 @@
       "https://www.coilcraft.com/getmedia/49bc46c8-4b2c-45b9-9b6c-2eaa235ea698/xal50xx.pdf",
       "https://www.coilcraft.com/getmedia/624a615f-2f4d-4200-95a6-61764a49bbc8/0603hp.pdf",
       "https://www.delta-fan.com/Download/Spec/BFB0305HA-C.pdf",
+      "https://www.diodes.com/assets/Datasheets/DMP6050SSD.pdf",
+      "https://www.diodes.com/assets/Datasheets/ds18001.pdf",
       "https://www.diodes.com/datasheet/download/BAT54.pdf",
       "https://www.diodes.com/datasheet/download/PI4IOE5V9555.pdf",
       "https://www.hammfg.com/part/1554U2GY",
