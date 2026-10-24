@@ -218,6 +218,22 @@ jobs:
           python3 deployment/repo/check_repo.py tamper --repo "$RUNNER_TEMP/aptly/public" --keyring "$RUNNER_TEMP/srrx-lab-TEST.gpg" \
             --wrong-keyring "$RUNNER_TEMP/srrx-lab-WRONG.gpg" --fingerprint "$TEST_FPR" $records \
             --sources-entry deployment/repo/srrx-lab.sources | tee "$RUNNER_TEMP/tamper.json"
+      - name: Staged root with the lab packages through selftest --profile full (reported, not a gate)
+        shell: bash
+        run: |
+          python3 deployment/deploy.py stage --dest "$RUNNER_TEMP/stage" > /dev/null
+          root="$RUNNER_TEMP/stage/rootfs"
+          for deb in "$RUNNER_TEMP"/debs/*/*.deb; do dpkg-deb -x "$deb" "$root"; done
+          install -D -m 644 deployment/repo/lab.pref "$root/etc/apt/preferences.d/lab.pref"
+          install -D -m 644 deployment/repo/srrx-lab.sources "$root/etc/apt/sources.list.d/srrx-lab.sources"
+          install -D -m 644 "$RUNNER_TEMP/srrx-lab-TEST.gpg" "$root/usr/share/keyrings/srrx-lab.gpg"
+          set +e
+          python3 deployment/selftest.py offline --rootfs "$root" --profile full --policy deployment/receive-only-policy.json \
+            --project . --output "$RUNNER_TEMP/selftest-full.json" > "$RUNNER_TEMP/selftest-full-summary.json"
+          code=$?
+          set -e
+          cat "$RUNNER_TEMP/selftest-full-summary.json"
+          echo "selftest --profile full on the staged root: exit $code (0 = OFFLINE_CHECKS_PASS, 2 = BLOCKED/FAIL rows); CI evidence only" | tee -a "$GITHUB_STEP_SUMMARY"
       - name: Discard the test private keys
         if: always()
         run: rm -rf "$RUNNER_TEMP/gnupg-test"
@@ -231,5 +247,7 @@ jobs:
             ${{ runner.temp }}/debs
             ${{ runner.temp }}/verify-repo.json
             ${{ runner.temp }}/tamper.json
+            ${{ runner.temp }}/selftest-full.json
+            ${{ runner.temp }}/selftest-full-summary.json
             ${{ runner.temp }}/srrx-lab-TEST.gpg
             ${{ runner.temp }}/aptly/public
