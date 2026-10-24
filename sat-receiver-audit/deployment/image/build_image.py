@@ -88,9 +88,9 @@ class Log:
             with open(self.path, "a", encoding="utf-8") as handle:
                 handle.write(line + "\n")
 
-    def step(self, step_id, status, **detail):
-        self.steps.append(dict(id=step_id, status=status, **detail))
-        self.write("STEP " + step_id + " " + status + (" " + json.dumps(detail, ensure_ascii=False)[:400] if detail else ""))
+    def step(self, step_id, step_status, **detail):
+        self.steps.append({"id": step_id, "status": step_status, "detail": detail})
+        self.write("STEP " + step_id + " " + step_status + (" " + json.dumps(detail, ensure_ascii=False)[:400] if detail else ""))
 
 
 LOG = Log()
