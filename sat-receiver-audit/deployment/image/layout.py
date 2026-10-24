@@ -136,7 +136,7 @@ def geometry(layout, data_bytes=None):
 
 
 def sfdisk_script(layout, ids, data_bytes=None):
-    """sfdisk input for `sfdisk --sector-size 4096 <image file>` (util-linux >= 2.39)."""
+    """sfdisk input for a 4096-byte-sector device (build_image.py: `losetup --sector-size 4096` of the image file)."""
     geo = geometry(layout, data_bytes)
     lines = ["label: gpt", "label-id: " + ids["disk_guid"].upper(), "unit: sectors",
              "first-lba: " + str(layout["alignment_bytes"] // layout["sector_size"]),

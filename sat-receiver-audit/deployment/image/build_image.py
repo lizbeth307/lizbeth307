@@ -453,9 +453,12 @@ def blkid(device):
     return dict(line.split("=", 1) for line in out.splitlines() if "=" in line)
 
 
-def partition_table(path_or_dev, sector=4096):
-    argv = ["sfdisk", "--json"] + (["--sector-size", str(sector)] if Path(path_or_dev).is_file() else []) + [str(path_or_dev)]
-    return json.loads(run(argv).stdout)["partitiontable"]
+def partition_table(device):
+    """sfdisk --json of a loop device: util-linux 2.39 (noble) sfdisk has no --sector-size for files,
+    so 4096-byte sectors come from `losetup --sector-size 4096`."""
+    if not re.fullmatch(r"/dev/loop[0-9]+", str(device)):
+        raise BuildError("partition tables are read from our own loop devices only")
+    return json.loads(run(["sfdisk", "--json", str(device)]).stdout)["partitiontable"]
 
 
 def deb_facts(cache, recipe):
@@ -493,8 +496,8 @@ def facts(cache, work, output=None, keep_mounted=None):
     if not raw.exists():
         size = sparse_decompress(Path(cache) / art["cache_path"], raw, art["sha256"])
         LOG.step("base-decompress", "DONE", bytes=size)
-    table = partition_table(raw)
     mounts, loop = Mounts(), Loop(raw, read_only=True)
+    table = partition_table(loop.device)
     result = {"schema_version": 1, "generated_at": utc_now(), "base_artifact": {k: art[k] for k in ("id", "name", "sha256", "size", "url")},
               "raw_bytes": raw.stat().st_size, "partition_table": table, "partitions": []}
     try:
@@ -567,7 +570,7 @@ def rescue_from_esp(esp, root):
 STEPS = (
     ("inputs", "verify the locked base image and kernel debs (deploy.verify_cache) and stage + bundle the controller tree (deploy.py stage, bundle)"),
     ("base-facts", "decompress the r2 _4096 image to a sparse file, attach read-only with 4096-byte sectors, record image-facts.json"),
-    ("disk", "new sparse image file, GPT from partition-layout.json (sfdisk --sector-size 4096), mkfs.vfat -S 4096 / mkfs.ext4 with derived UUIDs"),
+    ("disk", "new sparse image file, GPT from partition-layout.json (sfdisk on a losetup --sector-size 4096 device), mkfs.vfat -S 4096 / mkfs.ext4 with derived UUIDs"),
     ("root-a-copy", "rsync -aHAXx the r2 root into root A, copy the r2 ESP into the new ESP, detach and delete the base raw file"),
     ("chroot", "minimal /dev, proc, read-only sys, tmpfs run/tmp, policy-rc.d exit 101"),
     ("bundle", "extract the deterministic controller bundle (/opt/srrx, /etc/srrx templates, units) into root A"),
@@ -600,10 +603,11 @@ def create_disk(image, layout, ids, data_bytes=None, quota=False):
     geo = layoutlib.geometry(layout, data_bytes)
     with open(image, "xb") as handle:
         handle.truncate(geo["total_bytes"])
-    run(["sfdisk", "--sector-size", str(layout["sector_size"]), "--no-reread", "--no-tell-kernel", str(image)],
-        input=layoutlib.sfdisk_script(layout, ids, data_bytes))
-    loop = Loop(image)
+    loop = Loop(image, sector=layout["sector_size"])
     try:
+        # On the 4K loop device (not the file): sfdisk then re-reads the table and the partitions appear.
+        run(["sfdisk", loop.device], input=layoutlib.sfdisk_script(layout, ids, data_bytes))
+        run(["udevadm", "settle"], check=False)
         devices = {role: loop.part(i) for i, role in enumerate(layoutlib.ROLES, 1)}
         env = dict(os.environ, E2FSPROGS_FAKE_TIME=str(int(os.environ.get("SOURCE_DATE_EPOCH", "1792800000"))))
         for role, argv in layoutlib.mkfs_commands(layout, ids, devices, quota=quota).items():
