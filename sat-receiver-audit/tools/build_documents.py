@@ -78,16 +78,6 @@ def main():
         lab = BASE / "deployment/module_lab"
         return {"inventory": sha(lab / "inventory.json"), "models": {p.name: sha(p) for p in sorted(lab.glob("*.py"))},
                 "graphs": {name: sha(BASE / name) for name in modules["coverage"]["graph_sha256"]}}
-    if linux:
-        host, suites = linux.get("host", {}), Counter(linux.get("suites", {}).values())
-        guest_tests = (f" Регресії в guest: **{guest.get('passed', 0)} PASS**, **{len(guest.get('skipped', []))} SKIP** із {guest.get('tests_discovered', 0)}; "
-                       "пропуски не зараховані як PASS.") if guest else ""
-        linux_note = (f"Фактичний ARM64 Linux/systemd прогін: **{linux.get('status', 'NOT_RUN')}**, QEMU exit {host.get('qemu_exit_code', '?')}, {host.get('elapsed_s', '?')} s; "
-                      + plural(sum(suites.values()), "набір", "набори", "наборів") + ": " + ", ".join(f"{n} {s}" for s, n in sorted(suites.items())) + "." + guest_tests
-                      + lab_evidence(binding)
-                      + " Окремий звіт і журнали: [Linux lab](verification/linux-lab/README.md).")
-    else:
-        linux_note = "ARM64 Linux lab підготовлено; фактичні результати потрібно читати в окремому звіті після запуску."
     if modules:
         coverage, connect = modules["coverage"], modules.get("domains", {}).get("connectivity", {}).get("report", {})
         counts, connect_counts = coverage.get("counts", {}), connect.get("summary", {})
@@ -190,6 +180,17 @@ def main():
     # Read after the readiness contract above is written: it is one of the bound graphs.
     host_note = evidence_note(current_for(software and {**software.get("graph_sha256", {}), **software.get("source_sha256", {})}, host_sources),
                               "звіт `verification/software-tests.json`")
+    # Also after the contract write: the ARM64 binding covers design/readiness-contract.json (TOOL-07).
+    if linux:
+        host, suites = linux.get("host", {}), Counter(linux.get("suites", {}).values())
+        guest_tests = (f" Регресії в guest: **{guest.get('passed', 0)} PASS**, **{len(guest.get('skipped', []))} SKIP** із {guest.get('tests_discovered', 0)}; "
+                       "пропуски не зараховані як PASS.") if guest else ""
+        linux_note = (f"Фактичний ARM64 Linux/systemd прогін: **{linux.get('status', 'NOT_RUN')}**, QEMU exit {host.get('qemu_exit_code', '?')}, {host.get('elapsed_s', '?')} s; "
+                      + plural(sum(suites.values()), "набір", "набори", "наборів") + ": " + ", ".join(f"{n} {s}" for s, n in sorted(suites.items())) + "." + guest_tests
+                      + lab_evidence(binding)
+                      + " Окремий звіт і журнали: [Linux lab](verification/linux-lab/README.md).")
+    else:
+        linux_note = "ARM64 Linux lab підготовлено; фактичні результати потрібно читати в окремому звіті після запуску."
     pages = electrical_pages(report, generated)
     ignored = report.get("erc_ignored_checks", [])
     ignored_note = (" KiCad за замовчуванням не виконує перевірок " + ", ".join(f"`{name}`" for name in ignored)
