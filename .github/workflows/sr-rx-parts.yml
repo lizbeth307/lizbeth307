@@ -7,7 +7,8 @@ name: SR-RX parts database
 
 on:
   push:
-    branches: ['codex/**', 'ccr-*']
+    # wip/** as well: a new workflow cannot be dispatched before it reaches the default branch.
+    branches: ['codex/**', 'ccr-*', 'wip/**']
     paths: ['sat-receiver-audit/design/**', 'sat-receiver-audit/build/kicad/footprints/**', 'sat-receiver-audit/tools/build_parts.py',
             'sat-receiver-audit/tools/make_footprints.py', 'sat-receiver-audit/tools/check_parts_availability.py', '.github/workflows/sr-rx-parts.yml']
   pull_request:
