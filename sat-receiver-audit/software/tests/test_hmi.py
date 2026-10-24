@@ -1531,7 +1531,16 @@ class QtTests(unittest.TestCase):
         # 3 s pure-Python CPU loop.
         app = qt_app()
         from srrx import learning
-        backend = Backend()
+        class ArmingBackend(Backend):
+            # As labd with a responsive Pico: ACTIVE right after ARM, so the 2.5 s real-time ARM
+            # handshake does not also wait for the test thread (too slow under emulation).
+            def __call__(self, request):
+                result = super().__call__(request)
+                if request["op"] == "arm":
+                    self.data["policy"]["armed"] = True
+                    self.data["pico"]["state"] = "ACTIVE"
+                return result
+        backend = ArmingBackend()
         controller = ConsoleController(backend)
         window = create_window(controller)
         model = trained_model()
@@ -1561,19 +1570,16 @@ class QtTests(unittest.TestCase):
                 return max(b - a for a, b in zip(marks, marks[1:])), held
             wait(lambda: controller.status()["connected"])
             window.worker.submit("arm")  # Explicit operator ARM through the running worker.
-            wait(lambda: controller.holding)
-            backend.data["policy"]["armed"] = True
-            backend.data["pico"]["state"] = "ACTIVE"
             wait(lambda: controller.holding and controller.arm_started is None)
             natural, held = heartbeat(1.0)
-            self.assertTrue(held)
+            self.assertTrue(held, "%s / %s" % (controller.notice, controller.error))
             leases = sum(request["op"] == "lease" for request in backend.requests)
             with patch.object(learning, "train", side_effect=busy_train):
                 window.learning_action("train")
                 self.assertTrue(window.learning_runner.busy)
                 during, held = heartbeat(3.5)
                 finish_learning(app, window)
-            self.assertTrue(held)
+            self.assertTrue(held, "%s / %s" % (controller.notice, controller.error))
             self.assertNotIn({"op": "disarm"}, backend.requests)
             self.assertGreaterEqual(sum(request["op"] == "lease" for request in backend.requests) - leases, 2)
             # Margin against the 1.5 s limit: under 1 s natively; a slow (emulated) host may add at most 0.5 s.
@@ -1700,15 +1706,17 @@ class QtTests(unittest.TestCase):
                 time.sleep(.01)
             self.assertEqual(window.learning_runner.current.outcome, "error")
             self.assertEqual((latch.stopped, process.terminated), (False, False))  # not until the UI thread adopts
-            finish_learning(app, window)
+            # On a slow host a heartbeat tick inside finish_learning may already drain the stop
+            # journal; the explicit tick drains the rest. Exactly one line either way.
+            with contextlib.redirect_stderr(io.StringIO()) as journal:
+                finish_learning(app, window)
+                window._heartbeat()
             self.assertEqual(window.learning_text.toPlainText(), "Rejected: Training annotation span is out of scope")
             self.assertTrue(latch.stopped)
             self.assertTrue(process.terminated)
             self.assertEqual(process.thread, threading.get_ident())
             self.assertIsNone(window.model)
             self.assertIs(window.dataset, dataset)
-            with contextlib.redirect_stderr(io.StringIO()) as journal:
-                window._heartbeat()
             self.assertRegex(journal.getvalue(), r"\A\d{4}-\d\d-\d\dT\d\d:\d\d:\d\dZ out of scope\n\Z")
         finally:
             window.close(); app.processEvents()
