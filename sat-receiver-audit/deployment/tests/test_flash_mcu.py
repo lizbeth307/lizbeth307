@@ -1,6 +1,8 @@
 """tools/flash_mcu.py against a fake mpremote transport: no board is touched or flashed."""
+import contextlib
 import hashlib
 import importlib.util
+import io
 import json
 from pathlib import Path
 import struct
@@ -175,6 +177,70 @@ class FlashMcuTests(unittest.TestCase):
         self.assertIn("mpremote connect /dev/ttyACM0 fs cp <boot.py from firmware/dist/pico-micropython-files.zip> :boot.py", plan)
         self.assertTrue(plan[-1].endswith("reset"))
         self.assertTrue(any(":commissioning.json" in step for step in plan))
+
+    def run_main(self, argv):
+        out, err = io.StringIO(), io.StringIO()
+        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+            try:
+                code = flash.main(argv)
+            except SystemExit as exc:
+                code = exc.code
+        return code, out.getvalue(), err.getvalue()
+
+    def test_every_device_command_is_a_dry_run_without_execute(self):
+        def no_device(*_args, **_kwargs):
+            raise AssertionError("a dry run must not open a device")
+        with patch.object(flash, "Mpremote", no_device):
+            for argv in (["install", "--role", "pico", "--port", "/dev/ttyACM0"],
+                         ["verify", "--role", "pico", "--port", "/dev/ttyACM0", "--records", "/srv/records"],
+                         ["verify", "--role", "imu", "--port", "/dev/ttyACM1"],
+                         ["serial", "--port", "/dev/ttyACM0"],
+                         ["serial", "--port", "/dev/ttyACM0", "--main-not-running"]):
+                code, out, _err = self.run_main(argv)
+                self.assertEqual(code, 0, argv)
+                result = json.loads(out)
+                self.assertEqual(result["status"], "DRY_RUN", argv)
+                self.assertIn("interrupts", result["connect"])
+                self.assertTrue(result["plan"][0].startswith("mpremote version"))
+        self.assertTrue(json.loads(self.run_main(["serial", "--port", "/dev/ttyACM0"])[1])["plan"][1].endswith("<list files: no main.py (fresh board only)>"))
+
+    def test_execute_needs_the_operator_statement_that_no_main_py_runs(self):
+        def no_device(*_args, **_kwargs):
+            raise AssertionError("refused before connecting")
+        with patch.object(flash, "Mpremote", no_device):
+            for argv in (["install", "--role", "pico", "--port", "/dev/ttyACM0", "--execute"],
+                         ["verify", "--role", "pico", "--port", "/dev/ttyACM0", "--execute"],
+                         ["serial", "--port", "/dev/ttyACM0", "--execute"]):
+                code, out, err = self.run_main(argv)
+                self.assertEqual(code, 2, argv)
+                self.assertEqual(out, "")
+                self.assertIn("--main-not-running", err)
+                self.assertIn("BLOCKED", err)
+        fresh = FakeBoard("pico")
+        with patch.object(flash, "Mpremote", lambda port, command: fresh):
+            code, out, _err = self.run_main(["serial", "--port", "/dev/ttyACM0", "--execute", "--main-not-running"])
+        self.assertEqual((code, json.loads(out)), (0, {"status": "SERIAL_READ", "serial": SERIAL}))
+
+    def test_serial_is_refused_once_main_py_is_on_the_board(self):
+        installed = FakeBoard("pico")
+        flash.install(installed, "pico", staging=self.root)
+        with self.assertRaisesRegex(flash.FlashError, "fresh board"):
+            flash.read_serial(installed)
+        self.assertNotIn(("exec", flash.SERIAL_SCRIPT.split("\n", 1)[0]), installed.log)  # refused before the read
+        with self.assertRaisesRegex(flash.FlashError, "locked"):
+            flash.read_serial(FakeBoard("pico", version="mpremote 1.27.0"))
+        self.assertEqual(flash.read_serial(FakeBoard("imu"))["serial"], SERIAL)
+
+    def test_documented_commands_match_the_tool(self):
+        # Every documented install/verify/serial run that acts on a board carries the statement.
+        for doc in ("software/DEPLOYMENT.md", "firmware/pico/README.md", "firmware/imu/README.md"):
+            for line in (PROJECT / doc).read_text(encoding="utf-8").splitlines():
+                line = line.split("#", 1)[0]  # the command, not its shell comment
+                if "tools/flash_mcu.py " in line and " --execute" in line and any(" " + op + " " in line for op in ("install", "verify", "serial")):
+                    self.assertIn("--main-not-running", line, doc)
+            text = (PROJECT / doc).read_text(encoding="utf-8")
+            self.assertNotIn("Every command is a dry run", text)
+            self.assertNotIn("Кожна підкоманда без `--execute` лише друкує план", text)
 
 
 if __name__ == "__main__":

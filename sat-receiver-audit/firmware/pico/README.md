@@ -28,8 +28,21 @@ and leaves GP23 and USB clocks at their default settings pending the STACK RF A/
 
 With the main switch on or the Pico physically isolated from LAB5, and no receiver
 load connected, flash with `tools/flash_mcu.py` (software/DEPLOYMENT.md, "Прошивання
-MCU"). Every command is a dry run without `--execute`; mpremote must be the locked
-1.26.0 from `firmware/mpremote-requirements.txt`:
+MCU"). Without `--execute` nothing touches the board or the BOOTSEL drive: `uf2`
+only checks the local file, and `install`, `verify` and `serial` only print their
+mpremote steps. mpremote must be the locked 1.26.0 from
+`firmware/mpremote-requirements.txt`.
+
+Every mpremote connection enters the raw REPL with Ctrl-C. On a Pico whose
+`main.py` runs, that interrupts the supervisor: its `finally` block sets the
+fail-safe outputs and leaves the 1000 ms hardware WDT unfed, so the board resets in
+the middle of the session. `install`, `verify` and `serial` are therefore run only on
+a board on which no `main.py` runs (a fresh board after the nuke and MicroPython
+UF2s, or files that `install` copied and has not yet reset), and with `--execute`
+they also need the operator statement `--main-not-running`. There is no override for
+a running supervisor. `install` checks the SHA-256 of every copied file on the board
+before its reset; an installed Pico is re-checked only by erasing it and installing
+again, never with `verify` on the running supervisor.
 
 ```sh
 # 1. BOOTSEL held while plugging USB: the RPI-RP2 drive appears. A Pico that already
@@ -37,11 +50,12 @@ MCU"). Every command is a dry run without `--execute`; mpremote must be the lock
 python3 tools/flash_mcu.py uf2 --role pico --image erase --file nuke_universal.uf2 --drive /media/$USER/RPI-RP2 --execute
 # 2. When RPI-RP2 is back (or after BOOTSEL again), the pinned MicroPython:
 python3 tools/flash_mcu.py uf2 --role pico --file RPI_PICO-20250809-v1.26.0.uf2 --drive /media/$USER/RPI-RP2 --execute
-# 3. Serial for provisioning (srrx.provision prepare, calibration.py --serial):
-python3 tools/flash_mcu.py serial --port /dev/ttyACM0
+# 3. Serial for provisioning (srrx.provision prepare, calibration.py --serial); refused
+#    once a main.py is on the board:
+python3 tools/flash_mcu.py serial --port /dev/ttyACM0 --main-not-running --execute
 # 4. Files from firmware/dist/pico-micropython-files.zip in order, records only if they
 #    validate for this unit_id, on-device SHA-256 of every file, then reset:
-python3 tools/flash_mcu.py install --role pico --port /dev/ttyACM0 [--records /path/to/provisioned] --execute
+python3 tools/flash_mcu.py install --role pico --port /dev/ttyACM0 [--records /path/to/provisioned] --main-not-running --execute
 ```
 
 `install` refuses a different mpremote, MicroPython release or board name, a

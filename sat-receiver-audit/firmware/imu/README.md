@@ -68,10 +68,15 @@ UF2 Pico сюди не ставиться: визначення плати в pi
    `firmware/dist/imu-micropython-files.zip` у порядку lock: `shtp.py`,
    `session.py`, `device.py`, `wire.py` (з [software/srrx/wire.py](../../software/srrx/wire.py))
    і останнім `main.py`. `__init__.py` потрібний лише для імпорту пакета в тестах
-   CPython і на пристрій не копіюється. Без `--execute` команда лише друкує план:
+   CPython і на пристрій не копіюється. Без `--execute` команда лише друкує план.
+   Кожне з'єднання mpremote входить у raw REPL через Ctrl-C, тож на платі з
+   робочим `main.py` воно перериває прошивку: блок `finally` лишає WDT 2000 ms
+   негодованим, і плата скидається посеред сеансу. Тому `install` (як і `verify`
+   та `serial`) запускають лише на свіжій платі після nuke і UF2 MicroPython, а з
+   `--execute` оператор ще підтверджує це прапорцем `--main-not-running`:
 
    ```sh
-   python3 tools/flash_mcu.py install --role imu --port /dev/ttyACM1 --execute
+   python3 tools/flash_mcu.py install --role imu --port /dev/ttyACM1 --main-not-running --execute
    ```
 
    Інструмент вимагає закріплений mpremote 1.26.0, реліз 1.28.0 і назву плати

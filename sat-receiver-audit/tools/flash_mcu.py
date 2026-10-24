@@ -1,20 +1,32 @@
 #!/usr/bin/env python3
 """Pinned MicroPython flashing for the Pico supervisor and the RP2040-Zero IMU pack.
 
-Every subcommand is a dry run that prints its plan unless --execute is given. Inputs are
-checked before anything touches a device: the UF2 against firmware/runtime.lock.json
-(size, SHA-256, UF2 block magic and RP2040 family), the reviewed file package against
-firmware/dist/build-manifest.json and its SOURCE-SHA256.json, mpremote against the locked
-version. The device side then has to match too: MicroPython release and board name from
-os.uname(), an empty filesystem before copying, exactly the role's files after it (each
-SHA-256 computed on the device), and for the Pico the provisioned records bound to its
-machine.unique_id(). Physical steps stay with the operator (BOOTSEL, LAB5 isolation,
-bench checks in firmware/*/README.md); nothing here marks a board flashed or qualified.
+Nothing touches a board or a BOOTSEL drive without --execute: `uf2` then only checks the
+local file and prints the copy, and `install`, `verify` and `serial` only print the
+mpremote steps. Inputs are checked before anything touches a device: the UF2 against
+firmware/runtime.lock.json (size, SHA-256, UF2 block magic and RP2040 family), the reviewed
+file package against firmware/dist/build-manifest.json and its SOURCE-SHA256.json, mpremote
+against the locked version. The device side then has to match too: MicroPython release and
+board name from os.uname(), an empty filesystem before copying, exactly the role's files
+after it (each SHA-256 computed on the device), and for the Pico the provisioned records
+bound to its machine.unique_id(). Physical steps stay with the operator (BOOTSEL, LAB5
+isolation, bench checks in firmware/*/README.md); nothing here marks a board flashed or
+qualified.
+
+Every mpremote connection enters the raw REPL with Ctrl-C, which interrupts a running
+main.py. Both firmwares then run their finally block: safe outputs and an unfed hardware
+WDT (Pico 1000 ms, IMU pack 2000 ms), so the board resets in the middle of the session.
+`install`, `verify` and `serial` therefore act only on a board on which no main.py runs: a
+fresh board after the locked nuke UF2 and the pinned MicroPython UF2, or files copied by
+`install` and not yet reset. The operator states this with --main-not-running; there is no
+override for a running supervisor, because no REPL session can finish on one. `install`
+verifies the copied files itself before its reset; a later re-check of an installed board
+means erase, UF2 and install again.
 
   uf2      verify a UF2 (and with --drive/--execute copy it to the RPI-RP2 BOOTSEL drive)
   install  copy the role's files in order, verify on the device, optionally the records
-  verify   compare the device filesystem with the package (no writes)
-  serial   print machine.unique_id() of the connected board (no writes)
+  verify   compare the device filesystem with the package (no writes; main.py not started)
+  serial   print machine.unique_id() of a fresh board (no writes; refused once main.py exists)
 """
 import argparse
 import hashlib
@@ -35,6 +47,11 @@ UF2_MAGIC = (0x0A324655, 0x9E5D5157, 0x0AB16F30)
 UF2_FAMILY_FLAG = 0x2000
 RP2040_FAMILY = 0xE48BFF56
 TIMEOUT_S = 60
+# Printed with every device plan and every refusal for a missing --main-not-running.
+CONNECT_NOTE = ("mpremote enters the raw REPL with Ctrl-C: on a board whose main.py runs, that interrupts the "
+                "supervisor (Pico: fail-safe outputs, unfed 1000 ms WDT; IMU pack: 2000 ms) and the board resets "
+                "mid-session. Run install/verify/serial only on a fresh board (locked nuke UF2, then the pinned "
+                "MicroPython UF2) or on files copied by install and not yet reset, and state it with --main-not-running.")
 # Runs on the board: SHA-256 of every top-level entry (directories reported as such).
 HASH_SCRIPT = (
     "import os,hashlib,binascii,json\n"
@@ -223,6 +240,32 @@ def plan_install(role, port, records_dir=None):
     return steps
 
 
+def plan_verify(role, port, records_dir=None):
+    pin = board(role)
+    steps = ["mpremote version  # must print: mpremote " + lock()["mpremote"]["version"],
+             "mpremote connect %s exec <os.uname() check: %s on %s>" % (port, pin["micropython"], pin["uname_machine"])]
+    if records_dir:
+        steps.append("mpremote connect %s exec <machine.unique_id() for the records in %s>" % (port, records_dir))
+    steps.append("mpremote connect %s exec <SHA-256 of every file: exactly the package%s>" % (port, " and records" if records_dir else ""))
+    return steps
+
+
+def plan_serial(port):
+    return ["mpremote version  # must print: mpremote " + lock()["mpremote"]["version"],
+            "mpremote connect %s exec <list files: no main.py (fresh board only)>" % port,
+            "mpremote connect %s exec <machine.unique_id()>" % port]
+
+
+def read_serial(transport):
+    """machine.unique_id() of a fresh board: refused once a main.py is on it (CONNECT_NOTE)."""
+    version = transport.version()
+    if version != "mpremote " + lock()["mpremote"]["version"]:
+        raise FlashError("mpremote is not the locked " + lock()["mpremote"]["version"] + ": " + version)
+    if "main.py" in device_files(transport):
+        raise FlashError("main.py is on the board: serial is for a fresh board after the nuke and MicroPython UF2s")
+    return {"status": "SERIAL_READ", "serial": device_serial(transport)}
+
+
 def install(transport, role, records_dir=None, staging=None):
     """Fresh filesystem -> package in order -> optional records -> on-device verification -> reset."""
     check_device(transport, role)
@@ -268,6 +311,9 @@ def main(argv=None):
             p.add_argument("--role", choices=("pico", "imu"), required=True)
         if name in ("install", "verify"):
             p.add_argument("--records", type=Path, help="Pico only: directory from srrx.provision prepare")
+        p.add_argument("--main-not-running", action="store_true",
+                       help="operator statement, required with --execute: no main.py runs on this board (fresh after "
+                            "the nuke and MicroPython UF2s, or copied by install and not yet reset)")
     for p in sub.choices.values():
         p.add_argument("--execute", action="store_true", help="act on the device (default: dry run)")
     args = parser.parse_args(argv)
@@ -280,13 +326,22 @@ def main(argv=None):
                 result["copied"] = True
             elif args.drive:
                 result["plan"] = "copy %s to %s (dry run; add --execute)" % (args.file.name, args.drive)
-        elif not args.execute and args.op == "install":
-            package(args.role)
-            result = {"status": "DRY_RUN", "plan": plan_install(args.role, args.port, args.records)}
+        elif not args.execute:
+            if args.op == "install":
+                package(args.role)
+                plan = plan_install(args.role, args.port, args.records)
+            elif args.op == "verify":
+                package(args.role)
+                plan = plan_verify(args.role, args.port, args.records)
+            else:
+                plan = plan_serial(args.port)
+            result = {"status": "DRY_RUN", "plan": plan, "connect": CONNECT_NOTE}
+        elif not args.main_not_running:
+            raise FlashError(args.op + " --execute needs --main-not-running. " + CONNECT_NOTE)
         else:
             transport = Mpremote(args.port, (args.mpremote,))
             if args.op == "serial":
-                result = {"status": "SERIAL_READ", "serial": device_serial(transport)}
+                result = read_serial(transport)
             elif args.op == "verify":
                 check_device(transport, args.role)
                 records = load_records(args.records, device_serial(transport)) if args.records else None
