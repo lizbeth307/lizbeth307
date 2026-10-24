@@ -416,5 +416,96 @@ class LearningTests(unittest.TestCase):
                     "--frame", str(Path(directory) / "example-spectrum.json"), "--start", "0", "--end", "256"]), 0)
 
 
+FIXED_UTC = "2026-10-24T00:00:00+00:00"
+
+
+def stages(calls):
+    """Stage names in order, consecutive repeats folded."""
+    result = []
+    for stage, _, _ in calls:
+        if not result or result[-1] != stage:
+            result.append(stage)
+    return result
+
+
+class CheckpointTests(unittest.TestCase):
+    """The cooperative progress/cancel hook the HMI background job passes in."""
+    @classmethod
+    def setUpClass(cls):
+        with patch("srrx.learning._utc", return_value=FIXED_UTC):
+            cls.dataset = dataset()
+
+    def annotate(self, **kwargs):
+        return ml.annotate(self.dataset, ml._demo_frame(7, 2), 0, 256, "amateur_digital",
+                           group_id=uuid.UUID(int=9), user_confirmed=True, **kwargs)
+
+    def train(self, **kwargs):
+        from srrx.scope_policy import ScopeLatch
+        return ml.train(self.dataset, seed=7, scope=ScopeLatch(), **kwargs)
+
+    def test_results_are_identical_with_a_checkpoint_and_stages_arrive_in_order(self):
+        calls = []
+        record = lambda stage, done, total: calls.append((stage, done, total))
+        with patch("srrx.learning._utc", return_value=FIXED_UTC):
+            self.assertEqual(self.annotate(checkpoint=record), self.annotate())
+            self.assertEqual(stages(calls), ["input seal", "input frames", "input annotations", "input copy", "seal",
+                                             "output seal", "output frames", "output annotations", "output copy"])
+            self.assertTrue(all(type(done) is int and 0 <= done < total for _, done, total in calls))
+            frames, records = len(self.dataset["frames"]), len(self.dataset["annotations"])
+            self.assertLessEqual(len(calls), 2 * (frames + records) + 8)
+            calls.clear()
+            self.assertEqual(self.train(checkpoint=record), self.train())
+            self.assertEqual(stages(calls), ["dataset seal", "dataset frames", "dataset annotations", "dataset copy",
+                                             "scope", "features", "holdout", "model"])
+            self.assertTrue(all(0 <= done < total for _, done, total in calls))
+            calls.clear()
+            self.assertEqual(ml.validate_dataset(self.dataset, checkpoint=record), self.dataset)
+            self.assertEqual(len(calls), frames + records + 2)
+
+    def test_a_cancelling_checkpoint_aborts_and_leaves_the_input_unchanged(self):
+        before = copy.deepcopy(self.dataset)
+        for name, call in (("validate", lambda hook: ml.validate_dataset(self.dataset, checkpoint=hook)),
+                           ("annotate", lambda hook: self.annotate(checkpoint=hook)),
+                           ("train", lambda hook: self.train(checkpoint=hook))):
+            counted = []
+            call(lambda *args: counted.append(args))
+            for stop in (1, len(counted) // 2, len(counted)):
+                def hook(stage, done, total, seen=[0], stop=stop):
+                    seen[0] += 1
+                    if seen[0] == stop:
+                        raise ml.LearningCancelled("cancelled")
+                with self.subTest(call=name, stop=stop), self.assertRaises(ml.LearningCancelled):
+                    call(hook)
+                self.assertEqual(self.dataset, before)
+        # Never mistaken for a rejection by the CLI or the HMI.
+        for base in (ValueError, RuntimeError, OSError):
+            self.assertFalse(issubclass(ml.LearningCancelled, base))
+        self.assertTrue(issubclass(ml.LearningCancelled, Exception))
+
+    def test_cancelled_save_never_touches_the_file(self):
+        def cancel(stage, done, total):
+            raise ml.LearningCancelled("cancelled")
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "annotations.json"
+            with self.assertRaises(ml.LearningCancelled):
+                ml.save_dataset(path, self.dataset, checkpoint=cancel)
+            self.assertEqual(list(Path(directory).iterdir()), [])
+            ml.save_dataset(path, self.dataset, checkpoint=lambda *args: None)
+            self.assertEqual(ml.load_dataset(path), self.dataset)
+
+    def test_box_spans_are_the_spans_the_scope_guard_checks(self):
+        frame = ml._demo_frame(1, 0)
+        masked = ml.mask_frame(frame)
+        for start, end in ((0, 64), (1, 65), (0, 256), (200, 256)):
+            with self.subTest(box=(start, end)), patch("srrx.learning.scope_check", wraps=ml.scope_check) as check:
+                ml.annotate(ml.empty_dataset(), frame, start, end, "analog_broadcast",
+                            group_id=uuid.UUID(int=1), user_confirmed=True)
+                self.assertEqual(ml.box_spans(masked, start, end), [call.args for call in check.call_args_list])
+        self.assertEqual(len(ml.box_spans(masked, 0, 64)), 2)  # bin 0 also carries the wrapped half-bin
+        for start, end in ((True, 256), (0, 7), (-1, 256), (100, 90), (0, 257)):
+            with self.subTest(box=(start, end)), self.assertRaisesRegex(ml.LearningError, "8..4096"):
+                ml.box_spans(masked, start, end)
+
+
 if __name__ == "__main__":
     unittest.main()

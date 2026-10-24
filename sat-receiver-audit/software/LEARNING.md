@@ -77,7 +77,9 @@ save_model("model.json", model)
 result = infer(model, query_frame, 32, 160, backend="cpu")
 ```
 
-Додаткові API: `extract_features`, `validate_dataset`, `validate_model`, `load_dataset`, `load_model`, `export_interchange`. Annotation повертає новий датасет, не змінює вхідні об’єкти. `train_model` — alias `train`. `export_interchange(path, model)` зберігає той самий валідований навчений JSON; це **не** ONNX і не скомпільована QNN-модель.
+Додаткові API: `extract_features`, `validate_dataset`, `validate_model`, `load_dataset`, `load_model`, `export_interchange`, `box_spans`. Annotation повертає новий датасет, не змінює вхідні об’єкти. `train_model` — alias `train`. `export_interchange(path, model)` зберігає той самий валідований навчений JSON; це **не** ONNX і не скомпільована QNN-модель.
+
+Фонова задача (HMI): `validate_dataset`, `annotate`, `train` і `save_dataset` мають необов'язковий keyword-only `checkpoint=None`. Виклик `checkpoint(stage, done, total)` отримує лише назву етапу й лічильники, ніколи дані: перед перевіркою печатки, на кожен збережений кадр і анотацію, перед фінальною копією, а в `train` ще на кожен навчальний запис у проходах scope, features і holdout. Для `annotate` це не більше ніж 2 × (кадри + анотації) + 8 викликів; `save_dataset` викликає його лише до запису файлу. Результат від checkpoint не залежить. Щоб зупинити задачу, checkpoint піднімає `LearningCancelled`: це не `ValueError`/`RuntimeError`/`OSError`, тож ні CLI, ні HMI не показують його як «Rejected», а вхідні об'єкти лишаються незмінними. Затримку скасування обмежує найбільший неподільний крок: один збережений кадр або перевірка печатки й копія всього датасету. CLI checkpoint не передає. `box_spans(frame, start_bin, end_bin)` повертає RF-смуги, які перевіряє scope guard (для box від bin 0 — також загорнутий верхній пів-bin), для ранньої відмови в UI; `frame` має бути результатом `mask_frame()`, межі bins перевіряються як для анотації.
 
 ## QAIRT / QNN HTP
 
@@ -113,4 +115,4 @@ Manifest JSON має рівно такі поля:
 PYTHONPATH=software python -m unittest discover -s software/tests -p 'test_learning.py' -v
 ```
 
-Тести охоплюють mask bypass, стоп меж сеансу для annotation, invalid capture/geometry, дозволені класи, explicit annotation, gain-copy duplicates, overlap/capture-group leakage, реальний fit/holdout/inference/OOD, зарезервований `unknown_energy`, одне маскування на збережений кадр, atomic persistence і помилку `fsync` каталогу, пошкоджені models/JSON/provenance, чесний NPU fallback, збіг NPU-рішення з CPU та робочі CLI demo/train/infer.
+Тести охоплюють mask bypass, стоп меж сеансу для annotation, invalid capture/geometry, дозволені класи, explicit annotation, gain-copy duplicates, overlap/capture-group leakage, реальний fit/holdout/inference/OOD, зарезервований `unknown_energy`, одне маскування на збережений кадр, atomic persistence і помилку `fsync` каталогу, пошкоджені models/JSON/provenance, чесний NPU fallback, збіг NPU-рішення з CPU та робочі CLI demo/train/infer. `CheckpointTests`: однаковий результат із checkpoint і без, порядок етапів, межа кількості викликів, `LearningCancelled` на першому, середньому й останньому виклику без зміни вхідного датасету, скасоване збереження не торкається файлу, `box_spans` збігається зі смугами scope guard.
