@@ -118,7 +118,13 @@ OFF. Батарея, температури й стан Pico показують�
 ARM. Числа поза діапазоном float (валідні JSON int) показуються як недоступні,
 а не обривають рендер. В обох
 випадках захисний fault labd лишається видимим, але без свіжого Pico консоль
-ніколи не пише «ready for an explicit start». Помилка консолі виводиться окремим рядком `Console:` під
+ніколи не пише «ready for an explicit start». Так само й зі свіжим статусом у режимі
+HARDWARE, коли labd повідомляє `live_identity_verified=false` (HELLO поточного сеансу
+не пройшов звірку serial/CRC/`qualification_record`, і labd відмовляє в ARM): замість
+доброякісної зупинки консоль показує причину `pico_identity_or_calibration_mismatch`
+чи `pico_qualification_record_mismatch` з `last_error`, журналу подій labd або
+зафіксованого fault (`srrx.hmi.binding_fault`); інший зафіксований fault лишається
+першим рядком. Помилка консолі виводиться окремим рядком `Console:` під
 захисним fault labd і не приховує його. Помилку зв'язку прибирає перший свіжий
 статус, у якому labd disarmed; поки labd ще armed, «Disarm unconfirmed»
 лишається. Якщо Qt worker зупинився не через закриття вікна, банер постійно

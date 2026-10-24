@@ -1375,6 +1375,48 @@ class QtTests(unittest.TestCase):
         finally:
             window.close(); app.processEvents()
 
+    def test_failed_live_binding_is_never_rendered_as_ready(self):
+        # HW10-01: labd refuses ARM when the live HELLO fails the serial/CRC/qualification binding,
+        # while its first-fault latch can still hold a benign stop from before that HELLO.
+        from srrx.hmi import readable_fault
+        app = qt_app()
+        clock, backend = Clock(), Backend()
+        backend.data.update(mode="HARDWARE", live_identity_verified=False,
+                            last_error="pico_qualification_record_mismatch")
+        backend.data["policy"]["fault"] = "new_pico_session"
+        controller = ConsoleController(backend, clock)
+        controller.poll()
+        window = create_window(controller, start_worker=False)
+
+        def render():
+            clock.now += .25
+            controller.poll()
+            window.render_state(controller.status())
+            return window.fault_text.text()
+        try:
+            self.assertEqual(render(), readable_fault("pico_qualification_record_mismatch"))
+            self.assertIn("re-provision the Pico", window.fault_text.text())
+            # A later trip overwrote last_error: labd's event list still names the reason.
+            backend.data.update(last_error="pico_HOST_TRIP", events=[
+                {"at_ms": 0, "reason": "pico_identity_or_calibration_mismatch"},
+                {"at_ms": 20, "event": {"type": "ARM_REFUSED"}}, {"at_ms": 40, "reason": "pico_HOST_TRIP"}])
+            backend.data["policy"]["fault"] = "operator_disarm"
+            self.assertEqual(render(), "Stopped by operator\n"
+                             + readable_fault("pico_identity_or_calibration_mismatch"))
+            backend.data["policy"]["fault"] = "pico_identity_or_calibration_mismatch"  # Shown once.
+            self.assertEqual(render(), readable_fault("pico_identity_or_calibration_mismatch"))
+            backend.data.update(events=[])
+            backend.data["policy"]["fault"] = "new_pico_session"
+            self.assertNotIn("ready", render())  # No recorded reason: still the refusal, never "ready".
+            self.assertIn("not verified", window.fault_text.text())
+            self.assertIn("ARM refused", window.fault_text.text())
+            backend.data["live_identity_verified"] = True
+            self.assertEqual(render(), "Stopped — ready for an explicit start")
+            backend.data.update(mode="SIMULATION", live_identity_verified=False)  # The simulator binds nothing.
+            self.assertEqual(render(), "Stopped — ready for an explicit start")
+        finally:
+            window.close(); app.processEvents()
+
     @unittest.skipUnless(os.name == "posix", "srrx.link/srrx.hardware need POSIX termios/fcntl")
     def test_real_engine_pico_readouts_never_contradict_labd_freshness(self):
         app = qt_app()

@@ -38,14 +38,48 @@ CHANNEL_DISPLAY_ORDER = ("RTLA", "RTLB", "HFP", "LIME3V3", "LNA1", "LNA2", "LNA3
                          "LNB", "BONI", "SB_LNA", "T7", "LABPORT", "AUX12")
 
 
+BINDING_FAULTS = ("pico_identity_or_calibration_mismatch", "pico_qualification_record_mismatch")
+
+
 def readable_fault(value):
     if not value:
         return "No protection fault reported"
     return {"new_pico_session": "Stopped — ready for an explicit start",
             "operator_disarm": "Stopped by operator",
             "operator_shutdown": "Shutdown requested",
+            "pico_identity_or_calibration_mismatch": "Pico serial or calibration CRC does not match the labd"
+                " acceptance file — wrong Pico or calibration (ARM refused)",
             "pico_qualification_record_mismatch": "Pico commissioning does not match the labd acceptance file"
                 " — re-provision the Pico (ARM refused)"}.get(str(value), str(value).replace("_", " ")[:240])
+
+
+def binding_fault(data):
+    """Why labd refuses ARM for the live Pico, or None.
+
+    labd latches only its first fault, so the policy fault can still be a benign stop (an
+    older new_pico_session or operator_disarm) while the current session's HELLO failed the
+    serial/CRC/qualification binding; labd then reports live_identity_verified false."""
+    if data.get("mode") != "HARDWARE" or data.get("live_identity_verified") is not False:
+        return None
+    # A later trip (the Pico reporting the host TRIP) overwrites last_error; labd's event list
+    # and its latched fault still name the binding failure.
+    events = data.get("events") if type(data.get("events")) is list else []
+    reasons = [data.get("last_error")] + [event.get("reason") for event in reversed(events)
+                                          if type(event) is dict] + [data.get("policy", {}).get("fault")]
+    for reason in reasons:
+        if reason in BINDING_FAULTS:
+            return readable_fault(reason)
+    return "Live Pico identity is not verified against the labd acceptance file (ARM refused)"
+
+
+def protection_fault_text(fault, binding):
+    """The labd fault line; a failed live binding replaces the benign stop and is never hidden."""
+    text = readable_fault(fault)
+    if binding is None or binding == text:
+        return text
+    if fault in (None, "", "new_pico_session"):
+        return binding
+    return text + "\n" + binding
 
 
 def channel_rows(data, live):
@@ -1890,7 +1924,7 @@ def create_window(controller, *, callbacks=None, start_worker=True, scope_latch=
             self.metric_values["temperature"].setText("\n".join(temperatures))
             self.metric_values["supervisor"].setText(state.title() + "\nLease: " + ("holding" if holding else "stopped"))
             fault = ("Connection lost — current power state is unconfirmed." if not live
-                     else readable_fault(policy.get("fault")) if pico_live
+                     else protection_fault_text(policy.get("fault"), binding_fault(data)) if pico_live
                      else (("Supervisor status stale — " + (f"last Pico status {pico_age / 1000:.1f} s ago"
                             if type(pico_age) is int and 0 <= pico_age < 1e12 else "no fresh Pico status")
                             + "; ARM will be refused.") if freshness is False

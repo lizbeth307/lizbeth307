@@ -398,6 +398,65 @@ class EngineFailureTests(unittest.TestCase):
         from srrx.hmi import readable_fault
         self.assertIn('re-provision the Pico', readable_fault(record))
 
+    def test_first_hello_binding_failure_is_the_fault_the_console_shows(self):
+        # HW10-01: the policy latches only its first fault. A first HELLO that fails the binding
+        # used to latch new_pico_session, so the console read "ready for an explicit start" from
+        # fresh STATUS frames while labd refused ARM. The binding reason is the latched fault now.
+        from srrx.hmi import binding_fault, protection_fault_text, readable_fault
+        class PhysicalBoundaryFake(SimHardware):
+            physical = True
+        class IdentityLink(FaultLink):
+            def __init__(self, identity):
+                super().__init__()
+                self.identity = identity
+            def poll(self, now_ms):
+                frames = super().poll(now_ms)
+                for frame in frames:
+                    if frame['t'] == 'HELLO':
+                        frame['p'].update(self.identity)
+                return frames
+        # This is an in-memory Engine unit fixture, never a commissioned file.
+        acceptance = {'branch_limits': copy.deepcopy(self.engine.policy.limits),
+                      'lab5_budget': {'always_on_a': .6, 'max_lab5_a': 3.2},
+                      'pico_serial': 'e661000000001234',
+                      'battery_adc': {'record': {'crc32': '7bd013af'}}}
+        digest = hashlib.sha256(b'synthetic acceptance bytes').hexdigest()
+        good = {'serial': 'e661000000001234', 'calibration_crc32': '7bd013af',
+                'qualification_record': digest, 'hardware_commissioned': True}
+        for reason, changes in (('pico_identity_or_calibration_mismatch', {'serial': 'e661000000005678'}),
+                                ('pico_identity_or_calibration_mismatch', {'calibration_crc32': '00000000'}),
+                                ('pico_qualification_record_mismatch', {'qualification_record': 'f' * 64}),
+                                ('pico_qualification_record_mismatch', {'hardware_commissioned': False}),
+                                (None, {})):
+            with self.subTest(reason=reason, changes=changes):
+                link = IdentityLink(dict(good, **changes))
+                engine = Engine(PhysicalBoundaryFake(), link, simulated=False, acceptance=acceptance,
+                                qualification_record=digest)
+                try:
+                    for now in range(0, 1001, 20):
+                        engine.tick(now)
+                    status = engine.status()
+                    self.assertTrue(status['pico_fresh'])  # STATUS frames keep the report fresh.
+                    self.assertEqual(status['live_identity_verified'], reason is None)
+                    self.assertEqual(status['policy']['fault'], reason or 'new_pico_session')
+                    reasons = [event['reason'] for event in status['events'] if 'reason' in event]
+                    self.assertEqual(reasons[0], reason or 'new_pico_session')
+                    if reason:  # The benign stop is never recorded for a Pico that fails the binding.
+                        self.assertNotIn('new_pico_session', reasons)
+                    text = protection_fault_text(status['policy']['fault'], binding_fault(status))
+                    if reason is None:
+                        self.assertIsNone(binding_fault(status))
+                        self.assertEqual(text, 'Stopped — ready for an explicit start')
+                    else:
+                        self.assertEqual(text, readable_fault(reason))
+                        self.assertNotIn('ready', text)
+                        self.assertIn('ARM refused', text)
+                    result = engine.request({'op': 'arm'})
+                    self.assertEqual(result['ok'], reason is None, result)
+                    self.assertEqual(any(f['t'] == 'ARM' for f in link.sent), reason is None)
+                finally:
+                    engine.close()
+
     def test_repeated_hello_keeps_status_readings_and_new_session_drops_them(self):
         # The Pico HELLO carries no sensor readings (512-byte frame); see test_supervisor.
         slim = ('state', 'fault', 'mcp_reset', 'calibration_valid', 'hardware_commissioned',
