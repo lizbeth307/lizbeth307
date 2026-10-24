@@ -1,0 +1,78 @@
+{
+  "schema": "srrx-board-mech-v1",
+  "status": "MODEL_FIT_ONLY",
+  "note": "Mechanical interface of the custom boards (build/15: three boards + the encoder daughterboard that STACK 5.8 requires to be replaceable). Board coordinates: origin at the lower-left corner of the board outline as seen from the component side; mm. place.origin = enclosure coordinates of that corner; place.z_bottom = z of the board face opposite the components; place.facing = direction the component side faces (+z towards the front face, -z towards the rear wall). Only the mechanical interface is defined here; routing, footprints and Gerbers belong to the PCB work (pcb/).",
+  "stackup": {"t": 1.6, "layers": 4, "fab": "JLC JLC04161H-7628 (build/15)", "components": "top side only (build/15)"},
+  "boards": {
+    "PWR": {
+      "name": "power board (PWR_MAIN + PWR_BRANCH + USB_POWER)",
+      "domains": ["PWR_MAIN", "PWR_BRANCH", "USB_POWER"],
+      "outline": [[0, 0], [136, 0], [136, 35], [42, 35], [42, 112], [0, 112]],
+      "rects": [[0, 0, 136, 35], [0, 35, 42, 77]],
+      "place": {"origin": [6.0, 38.0], "z_bottom": 41.0, "facing": "+z", "mount": "plate front face through a 0.5 mm Gelid pad"},
+      "holes": [[4, 4], [132, 4], [132, 31], [46, 31], [4, 108], [38, 108], [21, 56]],
+      "hole_d": 3.2, "hole_keepout_d": 7.0,
+      "max_height": 9.0,
+      "height_zones": [],
+      "thermal_bond": [[0, 0, 136, 35], [0, 35, 42, 40]],
+      "modules_on_board": [
+        {"id": "D36V50F12", "part": "pololu_d36v50", "at": [8, 40]},
+        {"id": "D36V50F5", "part": "pololu_d36v50", "at": [8, 72]}
+      ],
+      "edge_zones": [
+        {"edge": "bottom", "span": [0, 136], "use": "battery (Micro-Fit 3.0), BMS and IP2368 leads"},
+        {"edge": "right", "span": [0, 35], "use": "blower, BMS, column harness (JST PH)"},
+        {"edge": "top", "span": [0, 42], "use": "DISP12 to the HDMI board, rails through the plate slot to the rear layer (Micro-Fit 3.0 for >=2 A)"}
+      ],
+      "notes": "Fastening: M3 into self-clinching flush nuts in the plate (no cut thread in the plate, STACK 5.8); clinch-nut MPN TBD (MECH-04). The IP2368 retail board sits on the plate in the HMI column (layout item ip2368). Area check: fit-report 'board_area'."
+    },
+    "RF": {
+      "name": "RF / detector board (RF_HMC + RF_HF + RF_INJECTOR + DC_CORE)",
+      "domains": ["RF_HMC", "RF_HF", "RF_INJECTOR", "DC_CORE"],
+      "outline": [[0, 0], [184, 0], [184, 44.5], [0, 44.5]],
+      "rects": [[0, 0, 184, 44.5]],
+      "place": {"origin": [17.6, 99.0], "z_bottom": 35.5, "facing": "-z", "mount": "3.0 mm metal standoffs on the plate rear face; single RF GND/CHASSIS bond at BOND-RF"},
+      "holes": [[4, 4], [92, 4], [180, 4], [4, 40.5], [92, 40.5], [180, 40.5]],
+      "hole_d": 3.2, "hole_keepout_d": 7.0,
+      "max_height": 5.5,
+      "height_zones": [],
+      "edge_zones": [
+        {"edge": "top", "span": [20, 180], "use": "U.FL / MHF to the panel pigtails P1..P8 (build/15: U.FL + coax to panel SMA where the edge is not on the panel)"},
+        {"edge": "bottom", "span": [0, 100], "use": "K401/K402 outputs and Boni bias feed to the HF+ can (row below)"},
+        {"edge": "bottom", "span": [100, 184], "use": "U.FL to the V4L/Lime paths; DC_CORE 8-net boundary connector (13-pcb-preparation)"}
+      ],
+      "notes": "Single-sided placement faces the rear (towards the module tier on the FR4 lid); 50-ohm GCPW per build/15."
+    },
+    "CTRL": {
+      "name": "control / HMI board (CTRL_HMI)",
+      "domains": ["CTRL_HMI"],
+      "outline": [[0, 0], [50, 0], [50, 144], [0, 144]],
+      "cutouts": [[12.0, 68.5, 25.0, 25.0], [12.0, 109.5, 25.0, 25.0]],
+      "rects": [[0, 0, 50, 68.5], [0, 68.5, 12, 66], [37, 68.5, 13, 66], [0, 93.5, 50, 16], [0, 134.5, 50, 9.5]],
+      "place": {"origin": [176.0, 13.0], "z_bottom": 54.9, "facing": "+z", "mount": "M2.5 screws into front-shell bosses"},
+      "holes": [[3, 3], [47, 3], [3, 141], [47, 141], [3, 100], [47, 100]],
+      "hole_d": 2.7, "hole_keepout_d": 6.0,
+      "max_height": 5.5,
+      "switches": [[13.5, 51.0], [35.5, 51.0], [13.5, 29.0], [35.5, 29.0], [13.5, 7.0], [35.5, 7.0]],
+      "edge_zones": [
+        {"edge": "left", "span": [0, 145], "use": "harness to the power board and Pico/IMU links (JST PH 2.0)"},
+        {"edge": "cutouts", "span": [0, 0], "use": "JST PH to the two ENC daughterboards"}
+      ],
+      "notes": "TL3145BF350QJ switches face the front wall; caps 12 mm, 22 mm pitch (mechanical.json hmi.buttons)."
+    },
+    "ENC": {
+      "name": "encoder daughterboard (PEC11R-4220F-S0024), same design x2 + 1 spare",
+      "domains": ["CTRL_HMI (SW/encoder contacts)"],
+      "outline": [[0, 0], [24, 0], [24, 24], [0, 24]],
+      "rects": [[0, 0, 24, 24]],
+      "place_at": {"main": [188.5, 123.0], "volume": [188.5, 82.0]},
+      "place": {"z_bottom": 54.3, "facing": "+z", "mount": "2x M2.5 into front-shell bosses"},
+      "holes": [[3, 3], [21, 21]],
+      "hole_d": 2.7, "hole_keepout_d": 6.0,
+      "max_height": 6.5,
+      "encoder_at": [12, 12],
+      "edge_zones": [{"edge": "left", "span": [6, 18], "use": "JST PH 2.0 to CTRL"}],
+      "notes": "PEC11R rear-facing pins (type 4); bushing M7x0.75 through the 2.6 mm boss with an O-ring (STACK 5.8)."
+    }
+  }
+}
