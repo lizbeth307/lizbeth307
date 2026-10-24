@@ -259,6 +259,108 @@ def pico_main_watchdog_feed_policy(fw, loops=60):
             "reset_pad_high_z_asserts_mcp_reset": True, "physical_watchdog": "UNSUPPORTED"}
 
 
+def _pico_key_run(fw, q6a_rise_ms=None, stall_last_loop=False, until_ms=20000):
+    """Deployed main.run() from a cold Pico boot with Q6A 3V3 absent (GP14 low).
+
+    q6a_rise_ms is a PMIC stand-in: GP14 rises that long after GP12 asserts
+    the key, if it is still asserted. stall_last_loop hangs the loop 1000 ms in
+    the last 20 ms of the first pulse, so only the WDT pad reset can end it.
+    Returns [(ms, GP12 level, GP14 level)] at each GP12 change, and the run.
+    """
+    clock = VirtualClock()
+    machine = EmulatedMachine(clock)
+    machine.Pin(12).drive(0)  # R331 100k gate pulldown: high-Z GP12 holds Q302 off.
+    edges, seen = [], {"calls": 0, "stop": None, "on_at": None, "reset": None}
+    budget_ms, budget_calls = until_ms + 2000, 100 * (until_ms // 20 + 2)
+
+    def stop(reason):
+        seen["stop"] = seen["stop"] or reason
+        raise _Stop()
+
+    def key_changed(before, after):
+        edges.append((clock.now_ms(), after, machine.Pin(14).value()))
+        seen["on_at"] = clock.now_ms() if after else None
+        if after and q6a_rise_ms is not None:
+            clock.schedule_us(q6a_rise_ms * 1000,
+                              lambda: machine.Pin(12).value() and machine.Pin(14).drive(1))
+    machine.Pin(12).observers.append(key_changed)
+
+    def ticks_ms():
+        seen["calls"] += 1
+        if seen["calls"] > budget_calls or clock.now_ms() > budget_ms:
+            stop("budget exhausted after %d clock calls, %d virtual ms" % (seen["calls"], clock.now_ms()))
+        return clock.ticks_ms()
+
+    def sleep_ms(value):
+        if seen["stop"]:
+            raise _Stop()
+        if value not in (1, 20):  # 1 ms is write_all backoff; 50 ms is the fail-safe idle.
+            stop("sleep_ms(%r): fail-safe or changed loop period" % (value,))
+        if (stall_last_loop and value == 20 and seen["on_at"] is not None
+                and clock.now_ms() - seen["on_at"] >= fw.supervisor.KEY_PULSE_MS - 20):
+            clock.sleep_ms(1000)
+            seen["reset"] = (machine.reset_count, machine.reset_reason,
+                             machine.Pin(12).mode == machine.Pin.IN, machine.Pin(12).value())
+            stop("stalled")
+        if clock.now_ms() >= until_ms:
+            stop("done")
+        clock.sleep_ms(value)
+
+    time_module = SimpleNamespace(ticks_ms=ticks_ms, ticks_diff=clock.ticks_diff,
+                                  sleep_ms=sleep_ms, sleep_us=clock.sleep_us)
+    modules = {"machine": machine, "time": time_module, "adapter": fw.adapter, "supervisor": fw.supervisor,
+               "imu_relay": fw.relay, "micropython": SimpleNamespace(alloc_emergency_exception_buf=lambda size: None)}
+    with tempfile.TemporaryDirectory(prefix="srrx-pico-key-") as folder, contextlib.chdir(folder), \
+            mock.patch.dict(sys.modules, modules):
+        try:
+            fw.main.run()
+        except _Stop as stopped:
+            error = stopped.__context__
+            while isinstance(error, _Stop):
+                error = error.__context__
+        else:
+            raise AssertionError("firmware main loop returned")
+    _check(error is None, "firmware run() raised %s: %s; fail-safe entered" % (type(error).__name__, error))
+    _check(seen["stop"] in ("done", "stalled"), "PWR_ON_KEY run ended early: %s" % seen["stop"])
+    return edges, seen
+
+
+def pico_q6a_power_key_pulse(fw):
+    """GP12 PWR_ON_KEY boot assist (B11) on the deployed loop and the E3 graph."""
+    graph = json.loads((fw.project / "design/E3.json").read_text(encoding="utf-8"))
+    pins = {part["ref"]: {pin["name"]: pin.get("net") for pin in part["pins"]}
+            for part in graph["components"] if part["ref"] in ("U305", "Q302", "R331", "D303")}
+    _check(pins["U305"]["GP12"] == "E3_Q6A_KEY_GATE" and pins["U305"]["GP14"] == "E3_Q6A_ON_SENSE",
+           "Pico GP12/GP14 graph mismatch")
+    _check(pins["Q302"] == {"G": "E3_Q6A_KEY_GATE", "S": "GND", "D": "PWR_ON_KEY"}, "Q302 key FET graph changed")
+    _check(set(pins["R331"].values()) == {"E3_Q6A_KEY_GATE", "GND"}, "R331 gate pulldown missing")
+    _check(pins["D303"]["A"] == "PWR_ON_KEY" and pins["D303"]["K"] == "PWR_BUTTON", "button OR diode changed")
+    pulse, wait, retry = fw.supervisor.KEY_PULSE_MS, fw.supervisor.KEY_WAIT_MS, fw.supervisor.KEY_RETRY_MS
+    # STACK D3: wait 1-2 s, press 0.8-1.0 s, never 2 s even with a hung loop (1000 ms WDT).
+    _check(1000 <= wait <= 2000 and 800 <= pulse <= 1000 and pulse + 1000 < 2000
+           and fw.supervisor.KEY_MAX_PULSES == 3, "PWR_ON_KEY timing outside the STACK D3 bounds")
+    # PMIC stand-in raises Q6A 3V3 300 ms into the first press: one pulse, released at once.
+    edges, unused = _pico_key_run(fw, q6a_rise_ms=300, until_ms=wait + 300 + retry + pulse + 500)
+    _check([(at, key) for at, key, q6a in edges] == [(wait, 1), (wait + 300, 0)],
+           "pulse not released when Q6A 3V3 rose, or pressed again: %r" % edges)
+    _check(not [at for at, key, q6a in edges if key and q6a], "GP12 asserted with Q6A 3V3 present")
+    # No Q6A response: exactly three 900 ms pulses, 5 s apart, then the line stays released.
+    edges, unused = _pico_key_run(fw)
+    starts = [wait, wait + pulse + retry, wait + 2 * (pulse + retry)]
+    _check([(at, key) for at, key, q6a in edges] == [e for s in starts for e in ((s, 1), (s + pulse, 0))],
+           "unbounded or mistimed PWR_ON_KEY retries: %r" % edges)
+    # A loop hung in the last tick of a pulse: the WDT pad reset releases Q302 via R331.
+    edges, seen = _pico_key_run(fw, stall_last_loop=True)
+    _check(seen["reset"] == (1, "WDT", True, 0), "WDT reset did not return GP12 to high-Z with the key released")
+    held = edges[1][0] - edges[0][0]
+    _check(edges[0][1] == 1 and edges[1][1] == 0 and held < 2000, "hung-loop press not bounded: %r" % edges)
+    return {"entrypoint": "firmware/pico/main.py run()", "first_pulse_after_first_sample_ms": wait,
+            "pulse_ms": pulse, "retry_gap_ms": retry, "pulses_without_q6a": len(starts),
+            "release_after_q6a_3v3_loops": 0, "hung_loop_press_ms": held, "hung_loop_release": "WDT",
+            "graph": ["U305 GP12", "Q302", "R331", "D303"], "pmic_power_on": "MODEL_ONLY",
+            "physical_pulse_and_b11": "UNSUPPORTED"}
+
+
 def pi4io_keys_encoders(fw):
     clock, machine, transport, poller = _hmi(fw)
     _check(machine.pi4io.registers[2:] == bytearray((0, 0, 0, 0, 255, 0)),
@@ -550,6 +652,7 @@ CASES = (
     ("pico_power_uart_and_tach", ("pico_gpio_supervisor", "pico_fan_tach"), pico_power_uart_and_tach),
     ("pico_watchdog_ticks_uart", ("pico_watchdog_clock", "pico_uart"), pico_watchdog_ticks_uart),
     ("pico_main_watchdog_feed_policy", ("pico_watchdog_clock",), pico_main_watchdog_feed_policy),
+    ("pico_q6a_power_key_pulse", ("pico_gpio_supervisor", "pico_watchdog_clock"), pico_q6a_power_key_pulse),
     ("pi4io_keys_encoders", ("pi4io9555_keys", "pico_encoders"), pi4io_keys_encoders),
     ("pi4io_fault_recovery", ("pi4io9555_keys", "pico_encoders"), pi4io_fault_recovery),
     ("veml_conversion_fault_age", ("veml7700" ,), veml_conversion_fault_age),

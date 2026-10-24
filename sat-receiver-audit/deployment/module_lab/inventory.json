@@ -29,12 +29,12 @@
       "bytes": 88455
     },
     "STACK.md": {
-      "sha256": "2bfb815a81d924aaf59efe7ea4cb1117f1ad99c283885bcec472d1fdc159e3ef",
-      "bytes": 1960780
+      "sha256": "16ddeb523bfd8b183e9d67ec4f41247b47de9a9e86d3b783f70305ce581187f6",
+      "bytes": 1960923
     },
     "build/12-revision-v2.1.md": {
-      "sha256": "aa45a68934cf84a74da1ebc06a42e55b76cdccf9520698d19114b310938667a2",
-      "bytes": 19651
+      "sha256": "b571c4e6cf731847c2d15027779d9be73be63a9b2c8407ff4c04eddbfa643b18",
+      "bytes": 19993
     }
   },
   "scope": {

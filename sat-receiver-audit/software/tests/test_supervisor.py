@@ -69,6 +69,7 @@ class SupervisorTests(unittest.TestCase):
         self.assertTrue(model.outputs["fan_en"])
         self.assertTrue(model.outputs["blower_en"])
         self.assertFalse(model.outputs["pico_off"])
+        self.assertFalse(model.outputs["q6a_key"])
 
     def test_local_and_host_gates_independently_required(self):
         for flags, expected in (({"hardware_commissioned": False}, "NOT_COMMISSIONED"),
@@ -474,6 +475,115 @@ class SupervisorTests(unittest.TestCase):
         self.assertFalse(rig.model.outputs["disp_en"])
 
 
+class PowerKeyTests(unittest.TestCase):
+    """GP12 PWR_ON_KEY boot assist (STACK D3, B11): bounded, only without Q6A 3V3."""
+    def drive(self, model, until, inputs, start=0, q6a_at=None):
+        """Step every 20 ms; return [(on_ms, off_ms)] of each q6a_key assertion."""
+        pulses, began = [], None
+        for now in range(start, until + 1, 20):
+            if q6a_at is not None and now >= q6a_at:
+                inputs["q6a_on"] = True
+            key = model.step(now, inputs)["q6a_key"]
+            self.assertFalse(key and inputs["q6a_on"], now)
+            if key and began is None:
+                began = now
+            elif not key and began is not None:
+                pulses.append((began, now))
+                began = None
+        return pulses + ([(began, None)] if began is not None else [])
+
+    def test_no_q6a_three_900ms_pulses_five_seconds_apart_then_gives_up(self):
+        model = Supervisor()
+        self.assertEqual(self.drive(model, 60000, dict(READY, q6a_on=False)),
+                         [(1500, 2400), (7400, 8300), (13300, 14200)])
+        self.assertEqual((model.state, model.outputs["pico_off"]), ("SAFE", False))
+        self.assertEqual(model.status()["q6a_key_pulses"], 3)
+        self.assertEqual([(e["event"], e.get("pulse", e.get("pulses"))) for e in model.drain_events()],
+                         [("Q6A_KEY_PULSE", 1), ("Q6A_KEY_PULSE", 2), ("Q6A_KEY_PULSE", 3),
+                          ("Q6A_KEY_GAVE_UP", 3)])
+
+    def test_never_pressed_with_q6a_power_or_after_q6a_was_seen(self):
+        model = Supervisor()
+        self.assertEqual(self.drive(model, 20000, dict(READY)), [])
+        self.assertEqual(model.status()["q6a_key_pulses"], 0)
+        # 3V3 lost after being seen (poweroff or J21 UVLO): Pololu OFF, no key press.
+        inputs = dict(READY, q6a_on=False)
+        self.assertEqual(self.drive(model, 30000, inputs, start=20020), [])
+        self.assertEqual((model.state, model.fault), ("OFF", "Q6A_POWER_OFF"))
+
+    def test_q6a_power_rising_mid_pulse_releases_and_ends_the_assist(self):
+        model = Supervisor()
+        inputs = dict(READY, q6a_on=False)
+        self.assertEqual(self.drive(model, 3000, inputs, q6a_at=1800), [(1500, 1800)])
+        self.assertEqual(model.status()["q6a_key_pulses"], 1)
+        inputs["q6a_on"] = False
+        self.assertEqual(self.drive(model, 20000, inputs, start=3020), [])
+        self.assertEqual(model.state, "OFF")
+
+    def test_operator_button_postpones_or_ends_a_pulse(self):
+        model = Supervisor()
+        inputs = dict(READY, q6a_on=False, button_pressed=True)
+        self.assertEqual(self.drive(model, 1000, inputs), [])  # Below the 1.5 s shutdown hold.
+        inputs["button_pressed"] = False
+        self.assertEqual(self.drive(model, 2600, inputs, start=1020), [(2500, None)])
+        inputs["button_pressed"] = True  # D303 already presses J21 pin 3.
+        self.assertFalse(model.step(2620, inputs)["q6a_key"])
+        inputs["button_pressed"] = False
+        self.assertEqual(self.drive(model, 8000, inputs, start=2640), [(7620, None)])
+        model = Supervisor()
+        inputs = dict(READY, q6a_on=False, button_pressed=True)
+        self.assertEqual(self.drive(model, 30000, inputs), [])
+        self.assertEqual((model.state, model.fault), ("SHUTTING_DOWN", "BUTTON"))
+
+    def test_calibrated_battery_at_or_below_cutoff_or_invalid_never_presses(self):
+        for battery in (13050, 12000, None, float("nan")):
+            model = Supervisor(calibration_valid=True)
+            self.assertEqual(self.drive(model, 20000, dict(READY, q6a_on=False, battery_mv=battery)), [],
+                             battery)
+        model = Supervisor(calibration_valid=True)
+        inputs = dict(READY, q6a_on=False, battery_mv=13051)
+        self.assertEqual(self.drive(model, 1700, inputs), [(1500, None)])
+        inputs["battery_mv"] = 12900  # Sagging under the press: released at once.
+        self.assertFalse(model.step(1720, inputs)["q6a_key"])
+        # Uncalibrated: no trusted battery value; E1's hardware UV trip still applies.
+        self.assertEqual(self.drive(Supervisor(), 2400, dict(READY, q6a_on=False, battery_mv=None)),
+                         [(1500, 2400)])
+
+    def test_physical_restart_rearms_one_bounded_assist(self):
+        model = Supervisor(calibration_valid=True)
+        inputs = dict(READY, q6a_on=False, battery_mv=12800)
+        self.assertEqual(self.drive(model, 6000, inputs), [])
+        self.assertEqual((model.state, model.fault), ("OFF", "UNDERVOLTAGE_NO_HEARTBEAT"))
+        inputs.update(battery_mv=13600, button_pressed=True)
+        self.assertEqual(self.drive(model, 6100, inputs, start=6020), [])
+        self.assertEqual(model.state, "SAFE")
+        inputs["button_pressed"] = False
+        self.assertEqual(self.drive(model, 40000, inputs, start=6120),
+                         [(7600, 8500), (13500, 14400), (19400, 20300)])
+        self.assertEqual(model.status()["q6a_key_pulses"], 3)
+
+    def test_stale_sample_or_reversed_clock_releases_the_key(self):
+        model = Supervisor()
+        inputs = dict(READY, q6a_on=False)
+        self.assertEqual(self.drive(model, 1500, inputs), [(1500, None)])
+        frame = {"v": 1, "t": "HB", "s": model.session, "q": 0, "p": {}}
+        model.receive(frame, 1750)
+        self.assertTrue(model.outputs["q6a_key"])  # Sample 250 ms old: still fresh.
+        model.receive(dict(frame, q=1), 1751)
+        self.assertFalse(model.outputs["q6a_key"])  # No fresh GP14 sample: released.
+        model = Supervisor()
+        self.assertEqual(self.drive(model, 1600, inputs), [(1500, None)])
+        model.step(1580, inputs)
+        self.assertEqual((model.fault, model.outputs["q6a_key"]), ("CLOCK_REVERSED", False))
+        self.assertEqual(self.drive(model, 20000, inputs, start=1600), [])
+
+    def test_pulse_count_travels_in_status_not_hello(self):
+        model = Supervisor()
+        self.drive(model, 1500, dict(READY, q6a_on=False))
+        self.assertEqual(status_payload(model, {})["q6a_key_pulses"], 1)
+        self.assertNotIn("q6a_key_pulses", hello_payload(model, "0123456789abcdef"))
+
+
 class CalibrationTests(unittest.TestCase):
     def record(self):
         return from_two_points("abc123", 46000, 12600, 59900, 16400,
@@ -606,44 +716,8 @@ class AdapterTests(unittest.TestCase):
                       lambda n: None, timeout_ms=5)
 
     def test_gpio_order_reset_polarity_and_q6a_power_off_tx_hiz(self):
-        class Pin:
-            IN, OUT, IRQ_FALLING = 0, 1, 4
-            instances, created = {}, []
-            def __new__(cls, gpio, *args, **kwargs):
-                if gpio in cls.instances:
-                    return cls.instances[gpio]
-                obj = super().__new__(cls)
-                cls.instances[gpio] = obj
-                return obj
-            def __init__(self, gpio, mode=None, value=None):
-                self.gpio = gpio
-                if not hasattr(self, "level"):
-                    self.level = 0
-                self.init(mode, value=value)
-                self.created.append((gpio, mode, value))
-            def init(self, mode, value=None):
-                self.mode = mode
-                if value is not None:
-                    self.level = value
-            def value(self, value=None):
-                if value is not None:
-                    self.level = value
-                return self.level
-            def irq(self, **kwargs):
-                self.handler = kwargs["handler"]
-        class ADC:
-            def __init__(self, pin):
-                self.pin = pin
-            def read_u16(self):
-                return 32768
-        class UART:
-            def __init__(self, *args, **kwargs):
-                self.closed = False
-            def deinit(self):
-                self.closed = True
-        class Machine:
-            pass
-        Machine.Pin, Machine.ADC, Machine.UART = Pin, ADC, UART
+        Machine = _stub_machine()
+        Pin = Machine.Pin
         hardware = Hardware(machine_module=Machine)
         self.assertEqual(Pin.created[:4], [(17, Pin.OUT, 1), (16, Pin.OUT, 0),
                                          (18, Pin.OUT, 1), (19, Pin.OUT, 1)])
@@ -658,6 +732,66 @@ class AdapterTests(unittest.TestCase):
         self.assertEqual(Pin.instances[15].mode, Pin.IN)
         hardware.fail_safe()
         self.assertEqual(Pin.instances[17].value(), 1)
+
+    def test_q6a_key_drive_rereads_q6a_power_and_fails_safe(self):
+        Machine = _stub_machine()
+        key, power = 12, 14
+        hardware = Hardware(machine_module=Machine)
+        self.assertEqual([entry for entry in Machine.Pin.created if entry[0] == key],
+                         [(key, Machine.Pin.OUT, 0)])  # Q302 off from construction.
+        outputs = dict(Supervisor().outputs, q6a_key=True)
+        hardware.apply(outputs)
+        self.assertEqual(Machine.Pin.instances[key].value(), 1)
+        Machine.Pin.instances[power].value(1)  # 3V3 rose after sample(): released now.
+        hardware.apply(outputs)
+        self.assertEqual(Machine.Pin.instances[key].value(), 0)
+        Machine.Pin.instances[power].value(0)
+        hardware.apply(outputs)
+        hardware.fail_safe()
+        self.assertEqual(Machine.Pin.instances[key].value(), 0)
+
+
+def _stub_machine():
+    """machine.Pin/ADC/UART stand-ins, one shared object and level per GPIO."""
+    class Pin:
+        IN, OUT, IRQ_FALLING = 0, 1, 4
+        instances, created = {}, []
+        def __new__(cls, gpio, *args, **kwargs):
+            if gpio in cls.instances:
+                return cls.instances[gpio]
+            obj = super().__new__(cls)
+            cls.instances[gpio] = obj
+            return obj
+        def __init__(self, gpio, mode=None, value=None):
+            self.gpio = gpio
+            if not hasattr(self, "level"):
+                self.level = 0
+            self.init(mode, value=value)
+            self.created.append((gpio, mode, value))
+        def init(self, mode, value=None):
+            self.mode = mode
+            if value is not None:
+                self.level = value
+        def value(self, value=None):
+            if value is not None:
+                self.level = value
+            return self.level
+        def irq(self, **kwargs):
+            self.handler = kwargs["handler"]
+    class ADC:
+        def __init__(self, pin):
+            self.pin = pin
+        def read_u16(self):
+            return 32768
+    class UART:
+        def __init__(self, *args, **kwargs):
+            self.closed = False
+        def deinit(self):
+            self.closed = True
+    class Machine:
+        pass
+    Machine.Pin, Machine.ADC, Machine.UART = Pin, ADC, UART
+    return Machine
 
 
 class IMURelayTests(unittest.TestCase):
