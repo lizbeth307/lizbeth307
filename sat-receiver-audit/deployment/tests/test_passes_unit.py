@@ -63,8 +63,14 @@ class PassesStagingTests(unittest.TestCase):
         self.assertIn("PASSES_ALLOWLIST_TOO_LARGE", pass_jobs.ERRORS)
 
     def test_deploy_skips_the_guard_for_exactly_this_template(self):
-        text = Path(deploy.__file__).read_text(encoding="utf-8")
-        self.assertIn('if unit.name == "' + pass_jobs.UNIT_TEMPLATE + '":', text)
+        # The guard-exempt set is shared with the GNSS units since the stage 3A merge.
+        self.assertIn(pass_jobs.UNIT_TEMPLATE, deploy.RELEASE_GUARD_EXEMPT)
+        self.assertNotIn("srrx.service", deploy.RELEASE_GUARD_EXEMPT)
+        result = deploy.stage(self.root / "candidate")
+        units = self.root / "candidate/rootfs/etc/systemd/system"
+        self.assertFalse((units / (pass_jobs.UNIT_TEMPLATE + ".d")).exists())
+        self.assertTrue((units / "srrx.service.d/20-release-guard.conf").is_file())
+        self.assertFalse(result["services_enabled"])
 
 
 if __name__ == "__main__":
