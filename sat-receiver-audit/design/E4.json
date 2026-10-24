@@ -87,21 +87,21 @@
     "Receive-only: Lime X1 TX is permanently cabled to an internal ANNE-50+ 50 Ω load. No TX antenna path. Software transmit entry points must return an error.",
     "HMC7992 truth table A/B: 00 RF1 PARK; 10 RF2; 01 RF3; 11 RF4. Each of six controls has 1 kΩ series, 100 kΩ pulldown and 100 pF to GND. Supply and MCP controls use 3V3_Q6A. Sequence GND → VDD → controls → RF.",
     "Every HMC RF terminal has its own ≥50 V C0G DC block, including PARK and unused U407 RF4. U405 uses 1 nF; U406/U407 use 100 pF. BENCH down to HF requires 10 nF C0G 0603 at U406 RF4/RFC and fresh measurement.",
-    "BIAS_CH1..4 are the protected, monitored, filtered E2 outputs. E4 has no duplicate TPS2553 switches, ILIM parts or monitor shunts.",
+    "BIAS_CH1, BIAS_CH2_PORT, BIAS_CH3_PORT and BIAS_CH4 are the protected, monitored, filtered E2 outputs; on ch2/ch3 (and BONI13V8_PORT) the port node sits behind the E2 back-to-back P-MOSFET blocking element of E4-06. E4 has no duplicate TPS2553 switches, ILIM parts or monitor shunts.",
     "K1_ON / K2_ON: 00 PARK with receiver and both antennas at 50 Ω; 10 HF; 01 VHF/AIS; 11 forbidden. Pass through 00 and allow ≥10 ms settling on every change. At most one energized coil.",
     "The HF relay cascade has one receiver PARK load. Two independent 50 Ω NC loads on parallel receiver commons would yield 25 Ω and are rejected. HF uses two contacts; VHF uses three. Final PCB loss, return loss and isolation must be measured.",
     "All coax shields join RF GND. Bulkhead shells bond 360° to CHASSIS. W408 passes center and shield through the same cores as coax, not as a series RF inductor.",
-    "P2/P3 must never exceed 5.5 V or go below −0.3 V: through L403/L404 each shares its DC node with E2 TPS2553 OUT, INA3221 inputs and polarized C239/C243. BONI13V8 goes only to keyed BNC P5; LNB13V2 only to F P4. Unpowered Uputronics means no useful UHF path.",
+    "P2/P3 reach only the port side of the E2 blocking elements Q2901/Q2902 through L403/L404. With own bias ON the element is closed and the port shares its DC node with E2 TPS2553 OUT, INA3221 inputs and polarized C239/C243, so P2/P3 must then never exceed 5.5 V or go below −0.3 V. BONI13V8_PORT goes only to keyed BNC P5 through A406; LNB13V2 only to F P4. Unpowered Uputronics means no useful UHF path.",
     "Test sources are conducted at internal BENCH only, with receiver input ≤−40 dBm. No source antenna. RTL receiver bias-tees remain OFF.",
     "Receiver USB canonical nets and Lime E5_PCIE_* nets are intentional agreed E4/E5 links. E5 owns host/hub/cabling and the riser; E4 owns the receiver modules.",
     "DCS_UHF/LBAND/HF are real TLV3012B bipolar window circuits. HIGH means unsafe, unknown or off. LOW means both window tests and both reference-good tests passed. Nominal coax thresholds are ±47.080 mV; input hysteresis is 2–8 mV (4–16 mV at coax).",
     "DC preflight is valid only with the corresponding own bias OFF: disable the relevant EN, wait ≥500 ms, require DCS LOW continuously for ≥500 ms, then enable bias. DCS HIGH is expected with own bias ON. Disable bias and repeat preflight before changing antennas or routes.",
-    "The ±30 V sustained foreign-DC envelope applies to the detector tap only (49.8 kΩ tap, BAV199 clamps, 996 Ω bleed), not to the assembled sensed port. P2/P3 reach E2 TPS2553 OUT (−0.3…7 V abs max), INA3221 inputs (−0.3…26 V) and polarized 47 µF C239/C243 through L403/L404 and BIAS_CH2/3; HF_CM reaches BONI13V8 (U214 TPS259630 OUT −0.3 V…min(21 V, VIN+0.3 V), U216, polarized C273) through the A406 DC port. Own bias OFF does not isolate them; with EN_BONI low U213 is also off, so U214 VIN≈0. Until each sensed branch has a ±30 V-rated blocking element (E4-06), the assembled-port foreign-DC limit with own bias OFF is −0.3…+5.5 V on P2/P3 and −0.3…+0.3 V on HF_CM. The 49.8 kΩ tap limits sustained negative clamp current below0.7mA. Upper clamps return to the shunt reference. BAV199 blocks reference-to-Q6A backfeed; a10k rail bleed limits reverse-leakage voltage. Physically verify the OFF 3.3V rail stays below0.1V.",
+    "The ±30 V sustained foreign-DC envelope applies to the detector tap (49.8 kΩ tap, BAV199 clamps, 996 Ω bleed) and, from v2.1, to the assembled sensed port with own bias OFF: each sensed branch has an E2 back-to-back DMP6050SSD-13 blocking element (Q2901/Q2902/Q2903, −60 V VDS) held open by its low EN_LNA2/EN_LNA3/EN_BONI, so P2/P3 no longer reach TPS2553 OUT (−0.3…7 V abs max), INA3221 inputs (−0.3…26 V) or polarized C239/C243, and HF_CM no longer reaches BONI13V8 (U214 TPS259630 OUT −0.3 V…min(21 V, VIN+0.3 V), U216, polarized C273). This is a design target until the E4-06 slow and fast-edge assembled-port tests pass; a shorted FET is not detectable and would silently restore the old limits (−0.3…+5.5 V on P2/P3, −0.3…+0.3 V on HF_CM). With own bias ON the element is closed and foreign DC stays forbidden. The 49.8 kΩ tap limits sustained negative clamp current below0.7mA. Upper clamps return to the shunt reference. BAV199 blocks reference-to-Q6A backfeed; a10k rail bleed limits reverse-leakage voltage. Physically verify the OFF 3.3V rail stays below0.1V.",
     "Detectors allocate ≤12 mA from3V3_Q6A (about6mA typical), and zero current fromLAB5. This includes the three existing E3 DCS pullups; do not count them twice.",
     "S-band uses the existing helix →0.10mRG316→LaNAWB100845→0.10mRG316→podBLK89→cf2235→1.00mRG316→RX2→retainedBLK89→LimeX4. LaNA uses one1.50m26AWG USB-C power-only cable from protectedBIAS_SB_LNA5V.",
     "S-band LNA and filter belong to an external inline pod at the antenna feed, not the occupied handheld RF bay. Select Hammond1554U2GY, with the filter on a lower tray and LaNA above it. Proof-fit and cable-entry sealing remain required. Pack the pod in the backpack kit; longest part<35cm. Handheld mass excludes this pod.",
     "Sysmocom cf2235 has a2170–2300MHz passband, including2252.5/2284/2285MHz. Retain the mission allowlist as software policy, not a physical-filter rejection claim.",
-    "Each sensed RF port has a996Ω DC bleed (four249Ω≥0.5W resistors). A floating port self-biases to about20.3mV; a50Ω terminated port to about0.98mV. Expected extra own-bias load is4.52mA onP2/P3 and13.86mA onBoni. Include0.215dB ideal50Ω tap loss in RF acceptance/calibration.",
+    "Each sensed RF port has a996Ω DC bleed (four249Ω≥0.5W resistors). A floating port self-biases to about20.3mV; a50Ω terminated port to about0.98mV. Expected extra own-bias load is about4.3mA onP2/P3 (4.30V rail, v2.1) and13.86mA onBoni. Include0.215dB ideal50Ω tap loss in RF acceptance/calibration.",
     "DCS open wire fails HIGH while 3V3_Q6A is present; a short of DCS to GND can imitate SAFE and is not detected by this interface. This is a preflight aid with explicit prototype acceptance, not a certified single-fault safety interlock.",
     "J416/J417 explicitly show the existing external UHF/L-band antenna feed and shield upstream of A418/A419. They belong to the selected antenna/LNA assembly and add no extra purchased connector; an integrated active patch uses an internal feed/return boundary rather than an invented exposed SMA."
   ],
@@ -268,7 +268,7 @@
         {
           "number": "DC",
           "name": "DC",
-          "net": "BONI13V8",
+          "net": "BONI13V8_PORT",
           "type": "passive"
         },
         {
@@ -286,7 +286,8 @@
       ],
       "description": "Functional interface with logical connector names; no implied physical PCB pin numbering.",
       "notes": [
-        "Ports ANT, RF and DC are functional names. Confirm labels, DC connector polarity and the receiver-side DC block on the actual supplied unit."
+        "Ports ANT, RF and DC are functional names. Confirm labels, DC connector polarity and the receiver-side DC block on the actual supplied unit.",
+        "v2.1: the DC port is BONI13V8_PORT, behind the E2 blocking element Q2903; with EN_BONI low it is isolated from BONI13V8. It now sees the Boni ILIM (≤0.154 A with RILM 7.15k) and any foreign DC on HF_CM: E4-03 requires a DC current rating ≥0.16 A and DC-block/choke voltage ratings ≥30 V."
       ]
     },
     {
@@ -1557,7 +1558,7 @@
     },
     {
       "ref": "J402",
-      "value": "P2 UHF SMA: 4.5 V",
+      "value": "P2 UHF SMA: 4.3 V",
       "kind": "connector",
       "group": "RF and receiver interfaces",
       "status": "module",
@@ -1580,7 +1581,7 @@
     },
     {
       "ref": "J403",
-      "value": "P3 L-band SMA: 4.5 V",
+      "value": "P3 L-band SMA: 4.3 V",
       "kind": "connector",
       "group": "RF and receiver interfaces",
       "status": "module",
@@ -2146,7 +2147,7 @@
         {
           "number": "2",
           "name": "2",
-          "net": "BIAS_CH2",
+          "net": "BIAS_CH2_PORT",
           "type": "passive"
         }
       ],
@@ -2172,7 +2173,7 @@
         {
           "number": "2",
           "name": "2",
-          "net": "BIAS_CH3",
+          "net": "BIAS_CH3_PORT",
           "type": "passive"
         }
       ],
@@ -6070,7 +6071,7 @@
         {
           "number": "1",
           "name": "1",
-          "net": "BIAS_CH2",
+          "net": "BIAS_CH2_PORT",
           "type": "passive"
         },
         {
@@ -6095,7 +6096,7 @@
         {
           "number": "1",
           "name": "1",
-          "net": "BIAS_CH2",
+          "net": "BIAS_CH2_PORT",
           "type": "passive"
         },
         {
@@ -6120,7 +6121,7 @@
         {
           "number": "1",
           "name": "1",
-          "net": "BIAS_CH3",
+          "net": "BIAS_CH3_PORT",
           "type": "passive"
         },
         {
@@ -6145,7 +6146,7 @@
         {
           "number": "1",
           "name": "1",
-          "net": "BIAS_CH3",
+          "net": "BIAS_CH3_PORT",
           "type": "passive"
         },
         {
@@ -6177,7 +6178,7 @@
       "id": "E4-03",
       "description": "Boni supplied bias-tee port labels, DC socket polarity and receiver DC block require actual hardware.",
       "blocking": true,
-      "resolve": "Measure continuity/polarity, antenna DC and RADIO port <0.1 V before connecting HF+.",
+      "resolve": "Measure continuity/polarity, antenna DC and RADIO port <0.1 V before connecting HF+. v2.1: A406 DC is BONI13V8_PORT behind the E2 blocking element Q2903 — confirm on the supplied Einspeiseweiche a DC current rating ≥0.16 A (ILIM max 0.153 A, 0.154 A with TCR, RILM 7.15k) and DC-block/choke voltage ratings ≥30 V; otherwise use the homemade 2.2 mH bias-tee with a choke Irms and Isat ≥0.20 A and count its DCR in the 12.0 V barrel gate.",
       "stack": "§5.3; §8.1 HF-9, HF-11",
       "refs": [
         "A406"
@@ -6208,9 +6209,9 @@
     },
     {
       "id": "E4-06",
-      "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. The ±30 V foreign-DC envelope covers the detector tap only: the assembled P2/P3/HF_CM ports share their DC node with E2 TPS2553/INA3221/U214 and polarized capacitors, which own bias OFF does not isolate, so a hardware blocking element is required.",
+      "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
       "blocking": true,
-      "resolve": "Verify each DCS LOW at 0 V and HIGH by ±0.100 V in both sweep directions over the admitted temperature/supply range; record thresholds/hysteresis. Apply ±30 V limited foreign DC with Q6A ON/OFF, requiring 3V3_Q6A <0.1 V when OFF, only at the detector tap with the bias branch disconnected (L403/L404 not fitted; A406 DC port unplugged from BONI13V8). On an assembled port never exceed −0.3…+5.5 V on P2/P3 or −0.3…+0.3 V on HF_CM with own bias OFF (TPS2553 OUT −0.3…7 V, INA3221 −0.3…26 V, TPS259630 OUT ≤VIN+0.3 V, polarized C239/C243/C273); the ±0.100 V sweep lies inside these limits. Hardware redesign required before this gate can close: a ±30 V-rated bidirectional blocking element in each sensed bias branch between the E2 output and the E4 injector (relay contact or back-to-back MOSFETs held open whenever EN_LNA2/EN_LNA3/EN_BONI is low, or a TPS2660-class ±60 V eFuse with reverse-polarity and reverse-current blocking), keeping TPS2553/INA3221/U214 and the electrolytics on the protected side; the detector is not that protection. Then repeat ±30 V at each assembled port. Measure RF tap IL/RL/NF impact. Require startup/reference-fault HIGH and own bias OFF ≥500 ms before preflight; readiness stays false until qualified. Check floating/open antenna as well as 0 Ω/50 Ω DC loads. Include the 996 Ω bleed load in current baselines and measure its RF loss/parasitics. Reject false-safe at ±0.100 V; false-unsafe units also fail usability qualification. Also qualify cold minimum-supply reference-feed headroom: the arithmetic model requires D450 Vf ≤1.015 V at VDD 3.135 V and REF 2.072 V for at least 80 µA LM4040 cathode current. Reference collapse must force HIGH, and must not be misreported as a working detector.",
+      "resolve": "Verify each DCS LOW at 0 V and HIGH by ±0.100 V in both sweep directions over the admitted temperature/supply range; record thresholds/hysteresis. With own bias OFF and Q6A ON/OFF (3V3_Q6A <0.1 V when OFF), apply foreign DC at each assembled port P2/P3/HF_CM: (1) slow ±30 V limited DC; (2) fast-edge hot plug — a pre-energised current-limited ±12/±24/±30 V source switched onto the port through a coax plug or relay. Pass: BIAS_CH2/BIAS_CH3/BONI13V8 (TPS2553 OUT, INA3221 inputs, U214 OUT) stay within −0.3…+0.3 V, no INA/MCP fault; repeat at 0 °C and 50 °C. The DPS-150 cannot reach 30 V from the project's 20 V PD or 4S sources; use a source that really delivers 30 V. Hot plug while own bias is ON is not covered and must not be tested destructively. Also measure off-state leakage (protected-node rise <0.1 V at 50 °C), the on-state drop at 184.5/54.5/80 mA including the cold VGS(th) corner (VGS ≈−4.2 V on the 4.30 V rail; total ≤0.25 V to the antenna), turn-on with and without trapped charge (the ≈48 µF protected reservoir dumps into the port outside the TPS2553/U214 limit) and unchanged soft-start/ILIM. A shorted FET is not detectable; an open element on LNA2/LNA3 is silent. Measure RF tap and element IL/RL/NF impact. Require startup/reference-fault HIGH and own bias OFF ≥500 ms before preflight; readiness stays false until qualified. Check floating/open antenna as well as 0 Ω/50 Ω DC loads. Include the 996 Ω bleed load in current baselines and measure its RF loss/parasitics. Reject false-safe at ±0.100 V; false-unsafe units also fail usability qualification. Also qualify cold minimum-supply reference-feed headroom: the arithmetic model requires D450 Vf ≤1.015 V at VDD 3.135 V and REF 2.072 V for at least 80 µA LM4040 cathode current. Reference collapse must force HIGH, and must not be misreported as a working detector.",
       "stack": "§5.3 (DC-sense); §8.1 HF-10",
       "refs": [
         "D450",
@@ -6299,6 +6300,11 @@
       "id": "R-E4-09",
       "description": "Select ch1 0805LS-471XGRC, ch2 0805HP-221XGRC, ch3 0603HP-47NXGRW, with local100pF+10nF DC-end RF bypass. All listed current references meet≥0.5A; do not treat their15°C-rise Irms as absolute maximum current.",
       "source": "Independent Coilcraft primary specifications; band-specific final PCB VNA/thermal qualification remains hardware acceptance."
+    },
+    {
+      "id": "R-E4-10",
+      "description": "v2.1 owner decision (E4-06): L403.2, C449 and C450 move from BIAS_CH2 to BIAS_CH2_PORT; L404.2, C451 and C452 from BIAS_CH3 to BIAS_CH3_PORT; A406 DC from BONI13V8 to BONI13V8_PORT. The E2 back-to-back P-MOSFET blocking elements Q2901–Q2903 sit between the protected E2 nodes and these port nodes. The DC-end RF bypass stays at the choke, so no RF current flows through the element (expected ΔIL ≈0 dB, unproven). The former 'TPS2660-class eFuse' option is dropped: the foreign source would sit on its OUT pin, rated only −0.3 V to RTN.",
+      "source": "Brief PM30V-BLOCK option B with skeptic corrections, 24.10.2026; TI SLVSDG2G §7.1; design/E2.json R-E2-21."
     }
   ],
   "drawing_notes": [

@@ -570,7 +570,7 @@ _Run `wf_d3593e9c-5ce`_
   3) L-band helix and petal helicone
   - Helix: RHCP for direct reception, 4 turns (17.2 cm; 5 turns 21.5 cm). D 61.7 mm (C = 1.1 lambda at 1.70 GHz), pitch 43 mm (12.5 deg), 2 mm Cu on a printed former, feed 30.9 mm off-centre with a matching strip.
   - Disc: 18 cm x 1.5 mm Al.
-  - LNA: Nooelec SAWbird+ GOES 100792 (USD 49.95; 80 MHz passband around 1688 MHz; at least 30 dB; 180 mA) on SMA under the disc. Bias 4.5 V over coax from injector ch3 (TPS2553, at least 240 mA). Never micro-USB.
+  - LNA: Nooelec SAWbird+ GOES 100792 (USD 49.95; 80 MHz passband around 1688 MHz; at least 30 dB; 180 mA) on SMA under the disc. Bias 4.5 V (4.30 V since v2.1) over coax from injector ch3 (TPS2553, at least 240 mA). Never micro-USB.
   - Cone: 8 petals of 0.3-0.5 mm Al (chords 6.9/16.8 cm, edge slant 17.7 cm, 1 cm tabs, at least 1 cm overlap). Disc 18 cm to mouth 44 cm, 12 cm deep (42.7 deg from the disc plane).
   - Reference geometry (field-proven t0nito): 134 to 440 mm, 88 mm high, 29.7 deg. A t0nito-angle A/B needs its own petal set (rim chord 18.6 cm).
   - Gain budget: 13-15.7 dBic (no measurement exists).

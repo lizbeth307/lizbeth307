@@ -6,7 +6,7 @@
 
 _Run `wf_e32114dd-52d`_
 
-- **Part:** 70 cm (435-438 MHz) filtered preamp, the first part after the UHF antenna on P2, RTL-A T2, bias on ch2 of the 4.5 V LNA rail
+- **Part:** 70 cm (435-438 MHz) filtered preamp, the first part after the UHF antenna on P2, RTL-A T2, bias on ch2 of the 4.5 V LNA rail (4.30 V since v2.1, still within the 3.5-5.5 V input range)
 - **Current pick:** Uputronics FPA "440MHz CubeSAT" filtered preamp (HAB-FPA440). Signal path: limiter, then HPF below 100 MHz, then PSA4-5043+ LNA, then 440 MHz / 30 MHz SAW. V3 aluminium enclosure 69x40x12 mm, SMA-F in and out. Datasheet Rev 3.0 (18/10/2024).
 - **Current price usd:** STACK.md lists 68.71 (GBP 51.59 incl. UK VAT). I re-checked all five Shopify storefronts on 18 Oct 2026 and all show the 440MHz CubeSAT variant as available=true:
   - DE, FR and NL: EUR 52.95, "Shipping, taxes, & promos calculated at checkout". That is 59.52 at 1.1241, before VAT.

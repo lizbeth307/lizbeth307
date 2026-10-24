@@ -105,13 +105,21 @@
     {
       "url": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H473K080AA",
       "note": "Точний MPN MLCC: номінал, рейтинг, діелектрик і корпус перевірено за виробником; типові DC-bias дані не замінюють стендового контролю."
+    },
+    {
+      "url": "https://www.diodes.com/assets/Datasheets/DMP6050SSD.pdf",
+      "note": "DMP6050SSD-13: SO-8, 1 S1, 2 G1, 3 S2, 4 G2, 5–6 D2, 7–8 D1; VDSS −60 V, VGSS ±20 V, VGS(th) −1.0…−3.0 V, RDS(on) ≤55/70 mΩ при −10/−4.5 V, IDSS ≤1 µA, Ciss 1293 pF, Qgd 5.7 nC."
+    },
+    {
+      "url": "https://www.diodes.com/assets/Datasheets/ds18001.pdf",
+      "note": "BZX84C10 (Diodes DS18001): SOT23, 1 анод, 2 NC, 3 катод; VZ 9.4/10/10.6 V при 5 mA, PD 300 mW."
     }
   ],
   "notes": [
     "Джерело істини — актуальний Git sat-receiver-audit, коміт 4653188, STACK.md v2 і build/. Схема E2 деталізована для перевірки; статус не означає готовність PCB до виробництва.",
     "Входи: E1_SW, SYS12 і LAB5 від E1; VCC_3V3_MKEY від E5; 3V3_Q6A і GND. E1 містить основні перетворювачі й INA228; E2 — два INA3221 і пару LT3045.",
-    "Виходи: J21, DISP12, AUX12, LIME3V3, VBUS_RTLB, BIAS_CH1–4, LNB13V2, BONI13V8 і BIAS_SB_LNA. RF-інжектори та приймачі належать E4, кабелі/роз’єми — E5.",
-    "Підтягування спільних FAULT/FLT/PG/PTC_AUX до 3V3_Q6A належать тільки E3. Локальні 100k pulldown на EN належать E2; виняток — J21: R201 100k від E2_J21_FUSED і R202 33.2k до GND утворюють UVLO-дільник, EN ніхто не керує, і U201 вмикається сам при ≈4.8V наростання. PICO_DISP_EN = Pico GP16 і має бути низьким при вимкненій Q6A.",
+    "Виходи: J21, DISP12, AUX12, LIME3V3, VBUS_RTLB, BIAS_CH1, BIAS_CH2_PORT, BIAS_CH3_PORT, BIAS_CH4, LNB13V2, BONI13V8_PORT і BIAS_SB_LNA. v2.1: BIAS_CH2, BIAS_CH3 і BONI13V8 лишаються захищеними вузлами E2 за блокувальними елементами E4-06 (Q2901–Q2903). RF-інжектори та приймачі належать E4, кабелі/роз’єми — E5.",
+    "Підтягування спільних FAULT/FLT/PG/PTC_AUX до 3V3_Q6A належать тільки E3. Локальні 100k pulldown на EN належать E2; виняток — J21: R201 100k від E2_J21_FUSED і R202 13.0k до GND утворюють UVLO-дільник (v2.1), EN ніхто не керує: U201 вмикається сам при ≈10.4V наростання і вимикається при ≈9.5V спаду. PICO_DISP_EN = Pico GP16 і має бути низьким при вимкненій Q6A.",
     "OVP_LNB_N — фізичний дозвіл EN eFuse та зворотне читання MCP4 GPB5: EN_LNB через 4.7k, відкритий стік TPS3701 і 100k до GND. У E3 категорично не встановлювати pullup на цьому вході.",
     "Тільки прийом: LNB живиться для вертикальної поляризації 13.2V, без 18V/22kHz, лише при RTL-B на RF3. Boni потребує DC-sense, підтвердження та струмового вікна за 2s. AUX12 дозволений лише BENCH із навантаженими антенними трактами.",
     "Усі фізичні контакти IC наведені явно; невикористані мають NC. EP означає ненумерований виробником тепловий майданчик; його нумерація у фінальному footprint перевіряється окремо.",
@@ -120,7 +128,7 @@
     "Default LAB5 у E1 оновлено до Pololu D36V50F5 + запобіжник 4A. Фізична стеля пари LT3045 — 1A; S-band живиться окремо від LAB5, але входить до єдиного програмного резерву антен I_ANT. Старі ворота 2.5A належать лише legacy D36V28F5.",
     "I_ANT = сума струмів INA3221 LNA1–4 + 65mA, якщо EN_SB_LNA=1. Програмний контракт: I_ANT ≤1A; I_ANT + 0.83A×EN_LABPORT ≤1.5A. LAB-порт не має runtime-амперметра, тому використовує консервативний резерв, а не середній струм.",
     "DC-сенсори E4 живляться тільки від 3V3_Q6A: резерв 12mA у цій шині, внесок у LAB5 = 0mA. Резерв 65mA S-band вже всередині I_ANT; у верхньому бюджеті LAB5 його не додають вдруге.",
-    "Портові DC-return резистори E4 996Ω споживають близько 4.52mA на BIAS_CH2 та BIAS_CH3 при 4.5V і 13.86mA на BONI13V8 при 13.8V. Це складова фактично виміряного INA струму відповідної гілки, а не додатковий резерв поверх INA; врахувати під час визначення нормального baseline."
+    "Портові DC-return резистори E4 996Ω споживають близько 4.3mA на BIAS_CH2_PORT та BIAS_CH3_PORT при 4.3V і 13.86mA на BONI13V8_PORT при 13.8V. Розрядні резистори та кола затворів блокувальних елементів E4-06 додають ≈0.93mA на BIAS_CH2/BIAS_CH3 і ≈1.55mA на BONI13V8 (разом ≈1.9mA від LNA4V5). Це складова фактично виміряного INA струму відповідної гілки, а не додатковий резерв поверх INA; врахувати під час визначення нормального baseline."
   ],
   "components": [
     {
@@ -170,12 +178,12 @@
         }
       ],
       "notes": [
-        "Верх UVLO-дільника EN/UVLO разом із R202 33.2k: J21 вмикається автоматично при ≈1.2V×(1+100k/33.2k)≈4.8V наростання на E2_J21_FUSED; жоден контролер не керує E2_J21_EN. Це не pulldown і не тримає J21 вимкненим при старті; автоматичне живлення Q6A навмисне. Справжній UVLO J21≈10.6V потребував би R202≈12.7k (рекомендація, не застосовано)."
+        "Верх UVLO-дільника EN/UVLO разом із R202 13.0k (v2.1): J21 вмикається сам при ≈10.4V наростання і вимикається при ≈9.5V спаду на E2_J21_FUSED; жоден контролер не керує E2_J21_EN, автоматичне живлення Q6A вище порога навмисне. 100k менше за ≥350k, які TI рекомендує для pull-up від VIN >5V (TPS25947 §6.3, прим. 2): E2_J21_FUSED — вихід buck SYS12 без зворотної полярності; відхилення записане в R-E2-20."
       ]
     },
     {
       "ref": "R202",
-      "value": "33.2k 1%",
+      "value": "13.0k 1% 100ppm",
       "kind": "resistor",
       "group": "J21: захищене живлення 12 V",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
@@ -195,8 +203,9 @@
         }
       ],
       "notes": [
-        "Низ UVLO-дільника J21 з R201 100k: ≈4.8V наростання на E2_J21_FUSED; розрахунок у E2-review.md."
-      ]
+        "v2.1, рішення власника (R-E2-20): низ UVLO-дільника J21 з R201 100k, k = 8.692. Наростання 10.43V ном. (10.09…10.83V з порогами IC, leakage і 1% резисторами; 9.99…10.95V з TCR/дрейфом ±1.6%), спад 9.47V (9.18…9.88V; 9.08…9.99V). Найгірший гістерезис ≈0.57V. Розрахунок у E2-review.md."
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric"
     },
     {
       "ref": "U201",
@@ -2034,7 +2043,7 @@
       "notes": [
         "MSOP-12-EP: контакт 13 припаяний до GND з тепловими переходами. OUTS підключений до власного COUT перед баластом 20mR.",
         "OUT 11 і 12 — один внутрішній вузол. Пін 11 представляє power_out для ERC, пін 12 — додатковий фізичний контакт passive. Обидва електрично підключено.",
-        "PG не використовується; PGFB = IN та ILIM = GND згідно з описом функцій. Спільний SET двох IC потребує 22.5k, а не 45k."
+        "PG не використовується; PGFB = IN та ILIM = GND згідно з описом функцій. Спільний SET двох IC потребує 21.5k (4.30V), а не 43k."
       ]
     },
     {
@@ -2294,7 +2303,7 @@
     },
     {
       "ref": "R227",
-      "value": "22.5k 0.1%",
+      "value": "21.5k 0.1% 25ppm",
       "kind": "resistor",
       "group": "LNA4V5: паралельні LT3045",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
@@ -2314,8 +2323,9 @@
         }
       ],
       "notes": [
-        "Два джерела SET по 100uA разом: 200uA × 22.5k = 4.5V. Тихе підключення до GND біля CSET."
-      ]
+        "Два джерела SET по 100uA разом: 200uA × 21.5k = 4.30V (v2.1, R-E2-18; було 22.5k/4.5V, 22.5k не є значенням E96/E192). 0.1% ≤25ppm/K, 0603 (кандидат Panasonic ERA-3AEB2152V; MPN не перевірено). Тихе підключення до GND біля CSET."
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric"
     },
     {
       "ref": "C230",
@@ -2342,7 +2352,7 @@
       "footprint": "Capacitor_SMD:C_1210_3225Metric",
       "notes": [
         "Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі.",
-        "CSET 10uF: τ = RSET×CSET = 22.5k×10uF = 225ms (fast start-up вимкнено, PGFB = IN); 4.01V (89%) за 0.5s, 99% ≈1.04s. LNA4V5 стартує разом із LAB5 при ввімкненні E1, задовго до labd. Вікно labd 500ms (policy.py) рахується від EN гілки TPS2553, а не від старту LNA4V5."
+        "CSET 10uF: τ = RSET×CSET = 21.5k×10uF = 215ms (fast start-up вимкнено, PGFB = IN); 3.88V (90%) за 0.5s, 99% ≈0.99s. LNA4V5 стартує разом із LAB5 при ввімкненні E1, задовго до labd. Вікно labd 500ms (policy.py) рахується від EN гілки TPS2553, а не від старту LNA4V5."
       ]
     },
     {
@@ -3000,6 +3010,290 @@
       ]
     },
     {
+      "ref": "Q2901",
+      "value": "DMP6050SSD-13",
+      "kind": "pfet",
+      "group": "LNA: канал 2",
+      "source": "https://www.diodes.com/assets/Datasheets/DMP6050SSD.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "S1",
+          "type": "passive",
+          "net": "E2_BLK2_S"
+        },
+        {
+          "number": "2",
+          "name": "G1",
+          "type": "input",
+          "net": "E2_BLK2_G"
+        },
+        {
+          "number": "3",
+          "name": "S2",
+          "type": "passive",
+          "net": "E2_BLK2_S"
+        },
+        {
+          "number": "4",
+          "name": "G2",
+          "type": "input",
+          "net": "E2_BLK2_G"
+        },
+        {
+          "number": "5",
+          "name": "D2",
+          "type": "passive",
+          "net": "BIAS_CH2_PORT"
+        },
+        {
+          "number": "6",
+          "name": "D2",
+          "type": "passive",
+          "net": "BIAS_CH2_PORT"
+        },
+        {
+          "number": "7",
+          "name": "D1",
+          "type": "passive",
+          "net": "BIAS_CH2"
+        },
+        {
+          "number": "8",
+          "name": "D1",
+          "type": "passive",
+          "net": "BIAS_CH2"
+        }
+      ],
+      "mpn": "DMP6050SSD-13",
+      "footprint": "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm",
+      "notes": [
+        "Зустрічні P-MOSFET зі спільним витоком (E4-06, R-E2-21): D1 7/8 = BIAS_CH2 (захищений бік E2), D2 5/6 = BIAS_CH2_PORT (порт E4), S1/S2 1/3 = E2_BLK2_S, G1/G2 2/4 = E2_BLK2_G. При EN_LNA2 = 0 обидва закриті, тіло-діоди зустрічні: блокуються обидві полярності до −60 V VDS.",
+        "Обрив FET, 2N7002 чи резистора затвора на LNA2 мовчазний: нижньої межі струму для гілок LNA немає, а шина INA3221 вимірює захищений бік. Замкнений FET не виявляється."
+      ]
+    },
+    {
+      "ref": "Q2911",
+      "value": "2N7002",
+      "kind": "nfet",
+      "group": "LNA: канал 2",
+      "source": "https://assets.nexperia.com/documents/data-sheet/2N7002.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "EN_LNA2"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "E2_BLK2_SINK"
+        }
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "notes": [
+        "2N7002: 1 G = EN_LNA2 (наявний 100k pulldown E2), 2 S = GND, 3 D — стік затвора Q2901 через R2911."
+      ]
+    },
+    {
+      "ref": "D2901",
+      "value": "BZX84C10-7-F",
+      "kind": "diode",
+      "group": "LNA: канал 2",
+      "source": "https://www.diodes.com/assets/Datasheets/ds18001.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "net": "E2_BLK2_G"
+        },
+        {
+          "number": "2",
+          "name": "NC",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "3",
+          "name": "K",
+          "type": "passive",
+          "net": "E2_BLK2_S"
+        }
+      ],
+      "mpn": "BZX84C10-7-F",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "notes": [
+        "BZX84C10, SOT23: 1 A = затвор, 2 NC, 3 K = спільний витік. Обмежує VGS ≥ −10 V (VGSS ±20 V), зокрема під час hot-plug сторонньої напруги при ввімкненому bias, і VGS ≤ +0.7 V у прямому напрямку."
+      ]
+    },
+    {
+      "ref": "R2901",
+      "value": "220k 1%",
+      "kind": "resistor",
+      "group": "LNA: канал 2",
+      "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E2_BLK2_S"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E2_BLK2_G"
+        }
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "notes": [
+        "R_GS: тримає Q2901 закритим при EN_LNA2 = 0 (2N7002 закритий).",
+        "Із 4.7k дає VGS ≈−4.2 V на шині 4.3 V — нижче точки −4.5 V, де DS задає RDS(on) ≤70 mΩ; падіння в ON на холоді перевіряє E4-06."
+      ]
+    },
+    {
+      "ref": "R2911",
+      "value": "4.7k 1% ≥0.25W",
+      "kind": "resistor",
+      "group": "LNA: канал 2",
+      "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E2_BLK2_G"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E2_BLK2_SINK"
+        }
+      ],
+      "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "notes": [
+        "Стік затвора Q2901 до Q2911; разом із R2901 задає VGS при EN_LNA2 = 1.",
+        "1210 ≥0.25 W: при hot-plug +30 V з увімкненим bias D2901 обмежує VGS, а резистор розсіює ≈85 mW (≈4.3 mA)."
+      ]
+    },
+    {
+      "ref": "R2921",
+      "value": "4.7k 1%",
+      "kind": "resistor",
+      "group": "LNA: канал 2",
+      "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "BIAS_CH2"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "notes": [
+        "Розряд захищеного вузла BIAS_CH2 після вимкнення, щоб повторне ввімкнення не скидало накопичений заряд у порт. Струм входить у виміряний струм INA цієї гілки.",
+        "≈0.91 mA при 4.3 V; з C238/C239 (≈48 µF) τ ≈0.23 s, через 1 s лишається ≈0.05 V."
+      ]
+    },
+    {
+      "ref": "C2901",
+      "value": "1uF 50V X7R C2012X7R1H105K125AB",
+      "kind": "capacitor",
+      "group": "LNA: канал 2",
+      "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "BIAS_CH2_PORT"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "mpn": "C2012X7R1H105K125AB",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "notes": [
+        "Портовий бік Q2901: ESD/НЧ-шунт стоків (8 kV/150 pF дає ≤2.4 V замість ≈119 V лише на 100 pF + 10 nF DC-кінця інжектора; спрощена модель, не заява відповідності). Розряджається через bleed 996 Ω E4."
+      ]
+    },
+    {
+      "ref": "C2911",
+      "value": "100nF 50V X7R C1608X7R1H104K080AA",
+      "kind": "capacitor",
+      "group": "LNA: канал 2",
+      "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E2_BLK2_S"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E2_BLK2_G"
+        }
+      ],
+      "mpn": "C1608X7R1H104K080AA",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "notes": [
+        "C_GS між витоком і затвором (рішення власника E4-06): тримає VGS проти зв'язку через Cgd на швидкому фронті hot-plug при вимкненому bias (≈−0.06 V замість ≈−2.5 V, модель) і сповільнює відкривання при ввімкненні.",
+        "τ увімкнення ≈0.46 ms, вимкнення ≈22 ms — менше за ≥500 ms вимкнення перед preflight."
+      ]
+    },
+    {
+      "ref": "TP2901",
+      "value": "BIAS_CH2_PORT",
+      "kind": "testpoint",
+      "group": "LNA: канал 2",
+      "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "TP",
+          "type": "passive",
+          "net": "BIAS_CH2_PORT"
+        }
+      ],
+      "notes": [
+        "Контрольна точка мережі BIAS_CH2_PORT (портовий бік блокувального елемента)."
+      ]
+    },
+    {
       "ref": "U208",
       "value": "TPS2553DBVR-1",
       "kind": "ic",
@@ -3301,6 +3595,290 @@
       ],
       "notes": [
         "Контрольна точка мережі BIAS_CH3."
+      ]
+    },
+    {
+      "ref": "Q2902",
+      "value": "DMP6050SSD-13",
+      "kind": "pfet",
+      "group": "LNA: канал 3",
+      "source": "https://www.diodes.com/assets/Datasheets/DMP6050SSD.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "S1",
+          "type": "passive",
+          "net": "E2_BLK3_S"
+        },
+        {
+          "number": "2",
+          "name": "G1",
+          "type": "input",
+          "net": "E2_BLK3_G"
+        },
+        {
+          "number": "3",
+          "name": "S2",
+          "type": "passive",
+          "net": "E2_BLK3_S"
+        },
+        {
+          "number": "4",
+          "name": "G2",
+          "type": "input",
+          "net": "E2_BLK3_G"
+        },
+        {
+          "number": "5",
+          "name": "D2",
+          "type": "passive",
+          "net": "BIAS_CH3_PORT"
+        },
+        {
+          "number": "6",
+          "name": "D2",
+          "type": "passive",
+          "net": "BIAS_CH3_PORT"
+        },
+        {
+          "number": "7",
+          "name": "D1",
+          "type": "passive",
+          "net": "BIAS_CH3"
+        },
+        {
+          "number": "8",
+          "name": "D1",
+          "type": "passive",
+          "net": "BIAS_CH3"
+        }
+      ],
+      "mpn": "DMP6050SSD-13",
+      "footprint": "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm",
+      "notes": [
+        "Зустрічні P-MOSFET зі спільним витоком (E4-06, R-E2-21): D1 7/8 = BIAS_CH3 (захищений бік E2), D2 5/6 = BIAS_CH3_PORT (порт E4), S1/S2 1/3 = E2_BLK3_S, G1/G2 2/4 = E2_BLK3_G. При EN_LNA3 = 0 обидва закриті, тіло-діоди зустрічні: блокуються обидві полярності до −60 V VDS.",
+        "Обрив FET, 2N7002 чи резистора затвора на LNA3 мовчазний: нижньої межі струму для гілок LNA немає, а шина INA3221 вимірює захищений бік. Замкнений FET не виявляється."
+      ]
+    },
+    {
+      "ref": "Q2912",
+      "value": "2N7002",
+      "kind": "nfet",
+      "group": "LNA: канал 3",
+      "source": "https://assets.nexperia.com/documents/data-sheet/2N7002.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "EN_LNA3"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "E2_BLK3_SINK"
+        }
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "notes": [
+        "2N7002: 1 G = EN_LNA3 (наявний 100k pulldown E2), 2 S = GND, 3 D — стік затвора Q2902 через R2912."
+      ]
+    },
+    {
+      "ref": "D2902",
+      "value": "BZX84C10-7-F",
+      "kind": "diode",
+      "group": "LNA: канал 3",
+      "source": "https://www.diodes.com/assets/Datasheets/ds18001.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "net": "E2_BLK3_G"
+        },
+        {
+          "number": "2",
+          "name": "NC",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "3",
+          "name": "K",
+          "type": "passive",
+          "net": "E2_BLK3_S"
+        }
+      ],
+      "mpn": "BZX84C10-7-F",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "notes": [
+        "BZX84C10, SOT23: 1 A = затвор, 2 NC, 3 K = спільний витік. Обмежує VGS ≥ −10 V (VGSS ±20 V), зокрема під час hot-plug сторонньої напруги при ввімкненому bias, і VGS ≤ +0.7 V у прямому напрямку."
+      ]
+    },
+    {
+      "ref": "R2902",
+      "value": "220k 1%",
+      "kind": "resistor",
+      "group": "LNA: канал 3",
+      "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E2_BLK3_S"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E2_BLK3_G"
+        }
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "notes": [
+        "R_GS: тримає Q2902 закритим при EN_LNA3 = 0 (2N7002 закритий).",
+        "Із 4.7k дає VGS ≈−4.2 V на шині 4.3 V — нижче точки −4.5 V, де DS задає RDS(on) ≤70 mΩ; падіння в ON на холоді перевіряє E4-06."
+      ]
+    },
+    {
+      "ref": "R2912",
+      "value": "4.7k 1% ≥0.25W",
+      "kind": "resistor",
+      "group": "LNA: канал 3",
+      "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E2_BLK3_G"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E2_BLK3_SINK"
+        }
+      ],
+      "footprint": "Resistor_SMD:R_1210_3225Metric",
+      "notes": [
+        "Стік затвора Q2902 до Q2912; разом із R2902 задає VGS при EN_LNA3 = 1.",
+        "1210 ≥0.25 W: при hot-plug +30 V з увімкненим bias D2902 обмежує VGS, а резистор розсіює ≈85 mW (≈4.3 mA)."
+      ]
+    },
+    {
+      "ref": "R2922",
+      "value": "4.7k 1%",
+      "kind": "resistor",
+      "group": "LNA: канал 3",
+      "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "BIAS_CH3"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "notes": [
+        "Розряд захищеного вузла BIAS_CH3 після вимкнення, щоб повторне ввімкнення не скидало накопичений заряд у порт. Струм входить у виміряний струм INA цієї гілки.",
+        "≈0.91 mA при 4.3 V; з C242/C243 (≈48 µF) τ ≈0.23 s, через 1 s лишається ≈0.05 V."
+      ]
+    },
+    {
+      "ref": "C2902",
+      "value": "1uF 50V X7R C2012X7R1H105K125AB",
+      "kind": "capacitor",
+      "group": "LNA: канал 3",
+      "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "BIAS_CH3_PORT"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "mpn": "C2012X7R1H105K125AB",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "notes": [
+        "Портовий бік Q2902: ESD/НЧ-шунт стоків (8 kV/150 pF дає ≤2.4 V замість ≈119 V лише на 100 pF + 10 nF DC-кінця інжектора; спрощена модель, не заява відповідності). Розряджається через bleed 996 Ω E4."
+      ]
+    },
+    {
+      "ref": "C2912",
+      "value": "100nF 50V X7R C1608X7R1H104K080AA",
+      "kind": "capacitor",
+      "group": "LNA: канал 3",
+      "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E2_BLK3_S"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E2_BLK3_G"
+        }
+      ],
+      "mpn": "C1608X7R1H104K080AA",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "notes": [
+        "C_GS між витоком і затвором (рішення власника E4-06): тримає VGS проти зв'язку через Cgd на швидкому фронті hot-plug при вимкненому bias (≈−0.06 V замість ≈−2.5 V, модель) і сповільнює відкривання при ввімкненні.",
+        "τ увімкнення ≈0.46 ms, вимкнення ≈22 ms — менше за ≥500 ms вимкнення перед preflight."
+      ]
+    },
+    {
+      "ref": "TP2902",
+      "value": "BIAS_CH3_PORT",
+      "kind": "testpoint",
+      "group": "LNA: канал 3",
+      "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "TP",
+          "type": "passive",
+          "net": "BIAS_CH3_PORT"
+        }
+      ],
+      "notes": [
+        "Контрольна точка мережі BIAS_CH3_PORT (портовий бік блокувального елемента)."
       ]
     },
     {
@@ -5144,14 +5722,14 @@
         }
       ],
       "notes": [
-        "RILM = 7.87k відповідає 0.113–0.139 A; OVLO 112k/10k 0.1% усуває перекриття зі штатною смугою 13.8 V.",
-        "dVdt 100 nF початково задає приблизно 0.42 V/ms і 33 ms наростання. Сталий струм = 65 mA Boni + 13.86 mA bleed E4 996 Ω = 78.9 mA, плюс заряд ємності bias-tee (≈0.42 V/ms×C). Мінімальний ILIM 0.113 A < 1.5×78.9 mA = 0.118 A: правило E2-03 1.5–2× на папері не виконано (1.43–1.76×). Рекомендовано RILM≈7.15k (≈0.124–0.153 A, 1.58–1.94×) після звірки з рівнянням і таблицею допусків TPS2596 та струмовою межею bias-tee Boni; до виміру E2-03 не застосовано.",
-        "FLT не замінює струмове вікно INA3221; PTC на цій шині не встановлюється."
+        "RILM = 7.15k (v2.1) відповідає 0.122–0.153 A; OVLO 112k/10k 0.1% усуває перекриття зі штатною смугою 13.8 V.",
+        "dVdt 100 nF задає приблизно 0.42 V/ms тип. (до ≈0.66 V/ms з допуском IdVdt і X7R C269) і ≈33 ms наростання. Сталий струм у найгіршому випадку: Boni 65 mA (лише типовий) + bleed E4 996 Ω до 14.35 mA + R283/R284 і DCS tap ≈0.34 mA ≈79.7 mA; з блокувальним елементом E4-06 (+≈1.6 mA) ≈81.3 mA. ILIM min 0.122 A ≈1.50× цього (0.1215 A з TCR — на межі), max 0.153 A ≤1.92×; пусковий запас над відомими 59.4 µF ≈4…7 mA. Остаточний RILM — після HF-9: ILIM min ≥1.5×I_вим., ILIM max ≤ min(2×I_вим., DC-рейтинг bias-tee); резерв 6.98k (0.125…0.157 A).",
+        "FLT не замінює струмове вікно INA3221; PTC на цій шині не встановлюється. Тверде КЗ на P5 (v2.1, Q2903 послідовно): при EN_BONI = 1 затвор Q2903 сидить на VS·22k/122k, тобто VGS ≈ −0.82·VS, тож пара самозміщується біля VGS(th) (−1…−3 V) і тримає BONI13V8 (вихід U214) на ≈1.2…4.4 V, а не на 0 V. Foldback TPS2596 з Figure 22 (≈0.09…0.11 A при 7.87k, оцінка ≈0.095…0.115 A при 7.15k) виміряно при VOUT = 0, і цієї робочої точки він уже не описує: струм — між foldback і ILIM (≤0.154 A), U214 розсіює ≈(13.8 V − VOUT)·I ≈0.9…1.9 W, Q2903 у лінійному режимі — ≈0.1…0.7 W до зняття EN_BONI (≤2 s). FLT у струмовому обмеженні мовчить; чи доходить U214 до TSD до зняття EN_BONI, перевіряє E2-03. EN_BONI знімає labd за min_voltage_v і PG_BONI (U218; захищений вузол ≈1.2…4.4 V нижче порога), а не за струмовим вікном чи DC-sense."
       ]
     },
     {
       "ref": "R262",
-      "value": "7.87k 1%",
+      "value": "7.15k 1% 100ppm",
       "kind": "resistor",
       "group": "Boni: малошумна захищена шина",
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
@@ -5171,8 +5749,9 @@
         }
       ],
       "notes": [
-        "Програмування обмеження струму за даташитом відповідного ключа. Підсумковий поріг включає допуски IC і резистора."
-      ]
+        "v2.1, рішення власника (E2-03, R-E2-19): RILM = 903/(ILIM−0.0112); 7.15k дає ILIM 0.1375A тип., 0.122…0.153A з допуском точки 7.87k TPS2596 (TA −40…80°C) і 1% резистора, 0.1215…0.154A з TCR ≤100ppm/K. У рекомендованому діапазоні RILM 453…7869Ω; потужність нехтовна (V_ILM ≈0.65V)."
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric"
     },
     {
       "ref": "R263",
@@ -5455,6 +6034,290 @@
       ],
       "notes": [
         "Контрольна точка мережі BONI13V8."
+      ]
+    },
+    {
+      "ref": "Q2903",
+      "value": "DMP6050SSD-13",
+      "kind": "pfet",
+      "group": "Boni: малошумна захищена шина",
+      "source": "https://www.diodes.com/assets/Datasheets/DMP6050SSD.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "S1",
+          "type": "passive",
+          "net": "E2_BLKB_S"
+        },
+        {
+          "number": "2",
+          "name": "G1",
+          "type": "input",
+          "net": "E2_BLKB_G"
+        },
+        {
+          "number": "3",
+          "name": "S2",
+          "type": "passive",
+          "net": "E2_BLKB_S"
+        },
+        {
+          "number": "4",
+          "name": "G2",
+          "type": "input",
+          "net": "E2_BLKB_G"
+        },
+        {
+          "number": "5",
+          "name": "D2",
+          "type": "passive",
+          "net": "BONI13V8_PORT"
+        },
+        {
+          "number": "6",
+          "name": "D2",
+          "type": "passive",
+          "net": "BONI13V8_PORT"
+        },
+        {
+          "number": "7",
+          "name": "D1",
+          "type": "passive",
+          "net": "BONI13V8"
+        },
+        {
+          "number": "8",
+          "name": "D1",
+          "type": "passive",
+          "net": "BONI13V8"
+        }
+      ],
+      "mpn": "DMP6050SSD-13",
+      "footprint": "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm",
+      "notes": [
+        "Зустрічні P-MOSFET зі спільним витоком (E4-06, R-E2-21): D1 7/8 = BONI13V8 (захищений бік E2), D2 5/6 = BONI13V8_PORT (порт E4), S1/S2 1/3 = E2_BLKB_S, G1/G2 2/4 = E2_BLKB_G. При EN_BONI = 0 обидва закриті, тіло-діоди зустрічні: блокуються обидві полярності до −60 V VDS.",
+        "PG_BONI (U218 через R283) бачить захищений BONI13V8, а не порт: обрив елемента ловить нижня межа струму Boni 30 mA, але PG_BONI портову напругу не доводить. Замкнений FET не виявляється."
+      ]
+    },
+    {
+      "ref": "Q2913",
+      "value": "2N7002",
+      "kind": "nfet",
+      "group": "Boni: малошумна захищена шина",
+      "source": "https://assets.nexperia.com/documents/data-sheet/2N7002.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "G",
+          "type": "input",
+          "net": "EN_BONI"
+        },
+        {
+          "number": "2",
+          "name": "S",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "D",
+          "type": "passive",
+          "net": "E2_BLKB_SINK"
+        }
+      ],
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "notes": [
+        "2N7002: 1 G = EN_BONI (наявний 100k pulldown E2), 2 S = GND, 3 D — стік затвора Q2903 через R2913."
+      ]
+    },
+    {
+      "ref": "D2903",
+      "value": "BZX84C10-7-F",
+      "kind": "diode",
+      "group": "Boni: малошумна захищена шина",
+      "source": "https://www.diodes.com/assets/Datasheets/ds18001.pdf",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "A",
+          "type": "passive",
+          "net": "E2_BLKB_G"
+        },
+        {
+          "number": "2",
+          "name": "NC",
+          "type": "no_connect",
+          "nc": true
+        },
+        {
+          "number": "3",
+          "name": "K",
+          "type": "passive",
+          "net": "E2_BLKB_S"
+        }
+      ],
+      "mpn": "BZX84C10-7-F",
+      "footprint": "Package_TO_SOT_SMD:SOT-23",
+      "notes": [
+        "BZX84C10, SOT23: 1 A = затвор, 2 NC, 3 K = спільний витік. Обмежує VGS ≥ −10 V (VGSS ±20 V), зокрема під час hot-plug сторонньої напруги при ввімкненому bias, і VGS ≤ +0.7 V у прямому напрямку."
+      ]
+    },
+    {
+      "ref": "R2903",
+      "value": "100k 1%",
+      "kind": "resistor",
+      "group": "Boni: малошумна захищена шина",
+      "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E2_BLKB_S"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E2_BLKB_G"
+        }
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "notes": [
+        "R_GS: тримає Q2903 закритим при EN_BONI = 0 (2N7002 закритий).",
+        "100k разом із 22k дали б VGS ≈−11.3 V при 13.8 V; D2903 обмежує ≈−10 V (струм стабілітрона ≈0.07 mA), RDS(on) ≤55…70 mΩ."
+      ]
+    },
+    {
+      "ref": "R2913",
+      "value": "22k 1%",
+      "kind": "resistor",
+      "group": "Boni: малошумна захищена шина",
+      "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E2_BLKB_G"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E2_BLKB_SINK"
+        }
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "notes": [
+        "Стік затвора Q2903 до Q2913; разом із R2903 задає VGS при EN_BONI = 1.",
+        "0603: при 13.8 V ≈0.17 mA; при hot-plug +30 V з увімкненим bias ≈0.9 mA, ≈18 mW."
+      ]
+    },
+    {
+      "ref": "R2923",
+      "value": "10.0k 1%",
+      "kind": "resistor",
+      "group": "Boni: малошумна захищена шина",
+      "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "BONI13V8"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "notes": [
+        "Розряд захищеного вузла BONI13V8 після вимкнення, щоб повторне ввімкнення не скидало накопичений заряд у порт. Струм входить у виміряний струм INA цієї гілки.",
+        "≈1.38 mA при 13.8 V; разом із R283/R284 τ ≈0.44 s, через 1 s лишається ≈1.4 V."
+      ]
+    },
+    {
+      "ref": "C2903",
+      "value": "1uF 50V X7R C2012X7R1H105K125AB",
+      "kind": "capacitor",
+      "group": "Boni: малошумна захищена шина",
+      "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "BONI13V8_PORT"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "mpn": "C2012X7R1H105K125AB",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "notes": [
+        "Портовий бік Q2903: ESD/НЧ-шунт стоків на DC-виводі A406 (8 kV/150 pF дає ≤2.4 V; спрощена модель, не заява відповідності). Пари 100 pF + 10 nF інжектора на цьому порту немає, а ємність DC-кінця A406 не опублікована, тож без C2903 заряд ESD ліг би лише на неї. Розряджається через DC-шлях A406 і bleed 996 Ω E4 на HF_CM."
+      ]
+    },
+    {
+      "ref": "C2913",
+      "value": "100nF 50V X7R C1608X7R1H104K080AA",
+      "kind": "capacitor",
+      "group": "Boni: малошумна захищена шина",
+      "source": "https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E2_BLKB_S"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E2_BLKB_G"
+        }
+      ],
+      "mpn": "C1608X7R1H104K080AA",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "notes": [
+        "C_GS між витоком і затвором (рішення власника E4-06): тримає VGS проти зв'язку через Cgd на швидкому фронті hot-plug при вимкненому bias (≈−0.06 V замість ≈−2.5 V, модель) і сповільнює відкривання при ввімкненні.",
+        "τ увімкнення ≈1.8 ms, вимкнення ≈10 ms — менше за ≥500 ms вимкнення перед preflight."
+      ]
+    },
+    {
+      "ref": "TP2903",
+      "value": "BONI13V8_PORT",
+      "kind": "testpoint",
+      "group": "Boni: малошумна захищена шина",
+      "source": "STACK.md §5.3 (DC-sense), §8.1 HF-10; v2.1 рішення власника E4-06; інженерна деталізація E2",
+      "status": "design",
+      "pins": [
+        {
+          "number": "1",
+          "name": "TP",
+          "type": "passive",
+          "net": "BONI13V8_PORT"
+        }
+      ],
+      "notes": [
+        "Контрольна точка мережі BONI13V8_PORT (портовий бік блокувального елемента)."
       ]
     },
     {
@@ -7405,7 +8268,7 @@
       "id": "E2-03",
       "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
       "blocking": true,
-      "resolve": "FNB58/INA228/INA3221: 20 холодних і теплих пусків, струми стримінгу, КЗ і SOA. Установити ILIM 1.5–2× виміряного струму з допусками. Boni: baseline включає bleed E4 13.86 mA (сталий ≈78.9 mA); поточний RILM 7.87k (ILIM min 0.113 A) нижче 1.5×, тож до кваліфікації перерахувати (рекомендовано ≈7.15k). Загальний LAB5 тестується за новими воротами E1 для D36V50F5 + запобіжник 4A; старі 2.5A не є лімітом default-збірки. OVLO Boni (STACK §8.1 HF-8/RF-5): без Boni-Whip і зі струмовим обмеженням — повільна розгортка вузла E2_BONI_LDO (вхід eFuse U214) 13.8→15.5→13.8 V, записати пороги спрацювання й відпускання; OVLO не спрацьовує в смузі 13.8 V, поріг вище 14.145 V (макс. LDO) і нижче 15 V (межа Boni). Поза вікном — перерахувати R263/R264 і повторити.",
+      "resolve": "FNB58/INA228/INA3221: 20 холодних і теплих пусків, струми стримінгу, КЗ і SOA. Установити ILIM 1.5–2× виміряного струму з допусками. Boni (v2.1, R-E2-19): RILM 7.15k 1% ≤100 ppm/K → ILIM 0.122…0.153 A (0.1215…0.154 A з TCR) проти найгіршого сталого ≈79.7 mA (Boni 65 mA тип. + bleed E4 до 14.35 mA + R283/R284 і DCS tap), тобто 1.53…1.92×; з блокувальним елементом E4-06 (+≈1.6 mA) ≈81.3 mA і 1.5× = 0.122 A — на межі ILIM min. Після HF-9 (струм Boni-Whip холодним і гарячим при 13.8 і 14.1 V) перерахувати RILM = 903/(ILIM−0.0112): ILIM min ≥1.5×, ILIM max ≤ min(2×, DC-рейтинг bias-tee ≥0.16 A). Електронне навантаження на BONI13V8 при 13.8 V: спрацювання в межах 0.122…0.153 A, поведінка понад TA 80 °C. Тверде КЗ на P5 при ввімкненому bias (v2.1, Q2903 послідовно): пара Q2903 самозміщується біля VGS(th) і тримає BONI13V8 на ≈1.2…4.4 V; струм U214 — між foldback ≈0.09…0.115 A (Figure 22, VOUT = 0) і ILIM, U214 ≈0.9…1.9 W, Q2903 ≈0.1…0.7 W у лінійному режимі; FLT мовчить — записати BONI13V8, струм, температуру корпусу Q2903 і поведінку U214 (обмеження чи TSD) до зняття EN_BONI та підтвердити, що labd знімає EN_BONI за min_voltage_v і PG_BONI ≤2 s. Межа labd 0.113 A не змінюється. Загальний LAB5 тестується за новими воротами E1 для D36V50F5 + запобіжник 4A; старі 2.5A не є лімітом default-збірки. OVLO Boni (STACK §8.1 HF-8/RF-5): без Boni-Whip і зі струмовим обмеженням — повільна розгортка вузла E2_BONI_LDO (вхід eFuse U214) 13.8→15.5→13.8 V, записати пороги спрацювання й відпускання; OVLO не спрацьовує в смузі 13.8 V, поріг вище 14.145 V (макс. LDO) і нижче 15 V (межа Boni). Поза вікном — перерахувати R263/R264 і повторити.",
       "stack": "§5.1 (VBUS RTL-B, BONI13V8); §8 (струми; TPS2553DBVR-1 п. 3); §8.1 RF-2, HF-8/RF-5",
       "refs": [
         "U210",
@@ -7417,9 +8280,9 @@
     },
     {
       "id": "E2-04",
-      "description": "Запас напруги пари LT3045 на 4.5V на папері від'ємний: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN (4.684V за моделлю міді 55°C) проти 4.5V + 0.26V типового dropout при 500mA = 4.76V, тобто −65mV ще до спаду на запобіжнику й PCB. Пара в dropout при LAB5 нижче ≈4.865V, PSRR втрачено. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
+      "description": "v2.1, рішення власника (R-E2-18): R227 21.5k задає LNA4V5 4.30V (4.208…4.392V). Запас на папері: LAB5 min 4.80V (5V−4%) − 3.2A×29.8mΩ L101 − 1A×9.4mΩ L205 = 4.695V на E2_LNA_IN, тобто 0.395V над VSET: +135mV проти типового dropout 260mV (500mA на ІС), +45mV проти 350mV max при 25°C, −55mV проти 450mV max у повному діапазоні температур — ще до F102 і з'єднання E1→E2 (кожні 10mΩ — −32mV при 3.2A). Близько 0.4V — коліно PSRR. Розподіл струму й температура не підтверджені. Сума індивідуальних номінальних ILIM LNA більша за 1A пари.",
       "blocking": true,
-      "resolve": "Перевірити LAB5 min, навантаження пари до 1A, температуру кожного LT3045 та спад до антени. Дотримуватися контракту R-E2-17: сума INA LNA1–4 + резерв 65mA S-band ≤1A; разом із резервом LAB-порту ≤1.5A. Приймання: при 3.2A LAB5 і 1A на пару виміряти E2_LNA_IN, OUTS і LNA4V5; LT3045 мусять бути в регулюванні, тобто V(E2_LNA_IN)−V(OUTS) більше виміряного dropout. Інакше модуль LAB5 відбракувати (вимога LAB5 ≥4.90V на виході модуля при 3.2A) або застосувати рекомендовану зміну (не застосовано): a) R227 22.5k→21.5k (4.30V) після підтвердження мінімального живлення кожного LNA після TPS2553, шунта й кабелю; b) межа пари 0.5A сумарно в R-E2-17 (dropout ≈130mV тип.).",
+      "resolve": "Перевірити LAB5 min, навантаження пари до 1A, температуру кожного LT3045 та спад до антени. Дотримуватися контракту R-E2-17: сума INA LNA1–4 + резерв 65mA S-band ≤1A; разом із резервом LAB-порту ≤1.5A. Приймання: при 3.2A LAB5, 1A на пару і 50°C виміряти E2_LNA_IN, OUTS і LNA4V5; вимога — виміряний V(E2_LNA_IN)−V(OUTS) ≥0.40V, LNA4V5 на TP205 4.19…4.39V при 1A пари (VSET 4.208…4.392V мінус до 12mV на баласті 20mΩ при 600mA); пульсації та спури 500kHz…2MHz на портах LNA при 0.17A і 0.6A. Окремої вимоги LAB5 ≥4.90V для E2-04 немає; E1-05 лишає відбір low LAB5 для USB. Відкрито: MPN F102 з холодним опором ≤10mΩ і з'єднання E1→E2 ≤10mΩ. Кожен LNA має працювати при зниженому зміщенні: найгірше ≈3.95V на LNA (≥0.45V над 3.5V Uputronics 440); базові струми INA3221 (RF-3) переміряти при 4.3V. Невиконання — reject модуля LAB5 або перепроєктування рейки.",
       "stack": "§5.1 (LNA4V5); §8 (пара LT3045); §8.1 RF-3",
       "refs": [
         "U205"
@@ -7429,10 +8292,12 @@
       "id": "E2-05",
       "description": "Відсутність фантомного живлення Q6A, вимкнення дисплея та фізична правильність кінцевих кабелів потребують перевірки з реальним обладнанням.",
       "blocking": true,
-      "resolve": "За активної LAB5 і вимкненої Q6A: 3V3_Q6A та upstream VBUS близько 0V, PICO_DISP_EN низький. Продзвонити розрізаний VBUS, ключовані роз’єми E3/E5 та сигнал PWR_ON_KEY.",
+      "resolve": "За активної LAB5 і вимкненої Q6A: 3V3_Q6A та upstream VBUS близько 0V, PICO_DISP_EN низький. Продзвонити розрізаний VBUS, ключовані роз’єми E3/E5 та сигнал PWR_ON_KEY. UVLO J21 (v2.1, R202 13.0k): джерело з обмеженням струму на E2_J21_FUSED, Q6A або e-load на J21, повільна розгортка 0→12.5→0 V при 25 і 50 °C — увімкнення 10.09…10.83 V, вимкнення 9.18…9.88 V (з TCR 9.99…10.95 / 9.08…9.99 V), без брязкоту OUT/FLT під час пуску; кроки навантаження SYS12 0.3→3 A при SYS12 = 11.0 V і біля UV trip — мінімум E2_J21_FUSED вище виміряного порога вимкнення, без FLT і скидання Q6A. Спрацювання UVLO вимикає Q6A, і Pico через 3 s відкриває #2813 (засувка OFF, перезапуск лише кнопкою при ≥13.6 V) — очікувана поведінка. Імпульс Pico на PWR_ON_KEY не реалізований (firmware/pico/supervisor.py тримає q6a_key=False): B11 (автостарт, імпульс 20/20) спершу потребує доробки прошивки — відкритий пункт.",
       "stack": "§5.1 (DISP12); §5.2; §8 (зворотне живлення)",
       "refs": [
-        "U202"
+        "U202",
+        "U201",
+        "R202"
       ]
     }
   ],
@@ -7454,7 +8319,7 @@
     },
     {
       "id": "R-E2-04",
-      "description": "Пара LT3045 має спільні SET, 22.5k і CSET, окремі баласти 20mR та локальний OUTS до кожного баласта. 200uA сумарного SET задають 4.5V перед невеликим спадом на баласті.",
+      "description": "Пара LT3045 має спільні SET, 21.5k і CSET, окремі баласти 20mR та локальний OUTS до кожного баласта. 200uA сумарного SET задають 4.30V (v2.1, R-E2-18) перед невеликим спадом на баласті.",
       "source": "ADI LT3045, Figure 7."
     },
     {
@@ -7504,7 +8369,7 @@
     },
     {
       "id": "R-E2-14",
-      "description": "Виходи LT3045 і TPS7A47 мають 2×22uF/50V TDK C3225X7R1H226M250AC. Консервативна модель ефективної ємності: 44×0.5×0.8×0.85 = 14.96uF >10uF. Входи LT3045 мають локально 2×10uF/50V; модельний мінімум 7.65uF >4.7uF. CSET збільшено до 10uF: τ=225ms, 99% ≈1.04s (PGFB = IN, без fast start-up). LNA4V5 стартує з LAB5 до labd; 500ms labd рахується від EN гілки, не від LNA4V5.",
+      "description": "Виходи LT3045 і TPS7A47 мають 2×22uF/50V TDK C3225X7R1H226M250AC. Консервативна модель ефективної ємності: 44×0.5×0.8×0.85 = 14.96uF >10uF. Входи LT3045 мають локально 2×10uF/50V; модельний мінімум 7.65uF >4.7uF. CSET збільшено до 10uF: τ=215ms (21.5k), 99% ≈0.99s (PGFB = IN, без fast start-up). LNA4V5 стартує з LAB5 до labd; 500ms labd рахується від EN гілки, не від LNA4V5.",
       "source": "Офіційні сторінки TDK; 50% derating рекомендовано TI; вимоги ADI до C/ESR/ESL."
     },
     {
@@ -7521,6 +8386,26 @@
       "id": "R-E2-17",
       "description": "Єдина модель бюджету антен: I_ANT = ΣINA(LNA1–4) + 0.065A×EN_SB_LNA ≤1.0A. S-band фізично обходить LT3045, але цей консервативний загальний контракт гарантує також ≤1A для пари. LAB-порт без INA резервує 0.83A, якщо ввімкнений: I_ANT + 0.83A×EN_LABPORT ≤1.5A. Верхній бюджет E1 враховує весь I_ANT один раз; додаткового рядка 65mA немає. Це програмний розподіл живлення антен/LAB, а не граничний струм D36V50F5. Власний струм двох LT3045 і всіх дев’яти TPS2553 резервується окремо як 52mA LAB5: 2×25mA GND при 500mA біля dropout, 0.204mA SET, до 1.26mA перемикачів та округлення. Типові 2.2mA на LT3045 не замінюють цей worst case.",
       "source": "STACK: початковий контракт; TPS2553 LAB, RILIM 34.8k: 817mA максимум без допуску R, округлено до 830mA; Nooelec LaNA WB: максимум 65mA; узгодження E1/E4. ADI LT3045 Rev D: GND current максимум 25mA при 500mA, Note 6; TI TPS2553: supply current максимум 140uA."
+    },
+    {
+      "id": "R-E2-18",
+      "description": "v2.1, рішення власника (E2-04): R227 22.5k → 21.5k 0.1% ≤25 ppm/K. VSET = 200 µA × 21.5k = 4.30 V (4.208…4.392 V з ISET 98…102 µA, R ±0.1% і VOS ±2 mV) — у вікні 4.3–4.4 V, яке STACK уже дозволяв при запасі <0.4 V; 22.5k не є значенням E96/E192. Запас при LAB5 4.80 V / 3.2 A / 1 A пари: 0.395 V (+135 mV проти типового dropout 260 mV при 500 mA на ІС, +45 mV проти 350 mV max при 25 °C, −55 mV проти 450 mV max повного діапазону) без F102 і з'єднання E1→E2. Приймання — виміряний V(E2_LNA_IN)−V(OUTS) ≥0.40 V при 3.2 A LAB5 / 1 A пари / 50 °C; власного порогу LAB5 ≥4.90 V для E2-04 немає, E1-05 лишає відбір low LAB5 для USB. Відкрито: MPN F102 (холодний опір ≤10 mΩ) і з'єднання E1→E2 ≤10 mΩ. Найгірша напруга на LNA ≈4.208 − 0.012 (баласт) − 0.25 (шлях) ≈3.95 V: ≥0.45 V над 3.5 V Uputronics 440, ≥0.65 V над 3.3 V SAWbird+/патча, ≥0.95 V над 3 V LNA V2. Характеристики LNA і базові струми INA3221 переміряти при 4.3 V.",
+      "source": "ADI LT3045 (dropout 220/280/350 mV при 300 mA, 260/350/450 mV при 500 mA, ISET 98…102 µA); бриф E2-04-LT3045-HEADROOM зі скептичною перевіркою 24.10.2026; STACK §5.1 LNA4V5, §8 пара LT3045."
+    },
+    {
+      "id": "R-E2-19",
+      "description": "v2.1, рішення власника (E2-03): R262 7.87k → 7.15k 1% ≤100 ppm/K 0603. ILIM = 0.0112 + 903/RILM: 0.1375 A тип., 0.122…0.153 A з допуском точки 7.87k (−10.3/+10.4%, TA −40…80 °C) і 1% резистора, 0.1215…0.154 A з TCR; 7.15k знято з межі ROC 7869 Ω. Найгірший сталий струм ≈79.7 mA (Boni 65 mA тип. + bleed E4 до 14.35 mA + R283/R284 + DCS tap) → 1.53…1.92×; із блокувальним елементом E4-06 ≈81.3 mA → ILIM min ≈1.50×, тож остаточний RILM визначає HF-9 (резерв 6.98k: 0.125…0.157 A). Програмна межа labd 0.113 A не змінюється й лишається нижче ILIM min. Самостійний bias-tee: дросель Irms і Isat ≥0.20 A; A406 — DC-рейтинг ≥0.16 A (E4-03). Тверде КЗ на P5: з Q2903 послідовно пара самозміщується біля VGS(th) (VGS ≈ −0.82·VS) і тримає BONI13V8 на ≈1.2…4.4 V, тож foldback TPS2596 ≈0.09…0.115 A (Figure 22, VOUT = 0) робочої точки не описує: струм між foldback і ILIM, U214 ≈0.9…1.9 W, Q2903 ≈0.1…0.7 W до зняття EN_BONI; FLT мовчить, EN_BONI знімає labd за min_voltage_v і PG_BONI, а не за струмовим вікном чи DC-sense; температуру Q2903 і поведінку U214 перевіряє E2-03.",
+      "source": "TI TPS2596 SLVSET8A: RILM 453…7869 Ω, ILIM при 7.87k 0.113/0.125/0.139 A, рівняння 5, Figure 21/22; бриф RILM зі скептичною перевіркою 24.10.2026."
+    },
+    {
+      "id": "R-E2-20",
+      "description": "v2.1, рішення власника: R202 33.2k → 13.0k 1% ≤100 ppm/K, R201 100k без змін. k = 1 + 100/13.0 = 8.692; за VUVLO(R) 1.183/1.20/1.223 V, VUVLO(F) 1.076/1.09/1.116 V і ±0.1 µA leakage: наростання 10.09…10.83 V (10.43 ном.), спад 9.18…9.88 V (9.47 ном.); з TCR/дрейфом ±1.6% — 9.99…10.95 / 9.08…9.99 V. Найгірший гістерезис ≈0.57 V. Запас старту до SYS12 min 11.52 V ≥0.57 V; точка стабільності Q6A D4 — 11.5 V. Початок струмового обмеження при 30 W постійної потужності, приведений до E2_J21_FUSED, ≈8.54…8.97 V (ILIM min 3.56 A з R203 1%): запас 0.2…0.6 V до мінімуму спаду. EN 1.38 V при 12 V, ≈3.3 V при 28.4 V. Відхилення: TI рекомендує ≥350 kΩ від VIN >5 V (TPS25947 §6.3, прим. 2); тут 100 kΩ, бо E2_J21_FUSED — вихід buck без зворотної полярності. Наслідок: спрацювання UVLO вимикає Q6A, після чого Pico через 3 s відкриває #2813 (засувка OFF, перезапуск кнопкою при ≥13.6 V). Імпульс Pico PWR_ON_KEY не реалізований (supervisor.py, q6a_key=False): B11 спершу потребує доробки прошивки. Варіант 12.7k (10.30…11.06 V) — рівноцінна альтернатива з кращим запасом до струмового обмеження; пара 0.1% 100k/13.0k (10.26…10.66 / 9.33…9.73 V) — якщо пік Q6A близько 31 W.",
+      "source": "TI TPS25947 SLVSFC9C: §6.3, §6.5, рівняння 1; Table 8-1 (UV 10.8 V); бриф J21-UVLO зі скептичною перевіркою 24.10.2026."
+    },
+    {
+      "id": "R-E2-21",
+      "description": "v2.1, рішення власника (E4-06): у кожній контрольованій bias-гілці — зустрічні P-MOSFET DMP6050SSD-13 (−60 V) між захищеним вузлом E2 (BIAS_CH2, BIAS_CH3, BONI13V8) і портовим вузлом E4 (BIAS_CH2_PORT, BIAS_CH3_PORT, BONI13V8_PORT), керовані наявними EN_LNA2/EN_LNA3/EN_BONI через 2N7002; R_GS 220k (Boni 100k), стік затвора 4.7k 1210 (Boni 22k), BZX84C10 обмежує VGS ≥−10 V, C_GS 100 nF 50 V X7R C1608X7R1H104K080AA на кожну пару тримає VGS на швидкому фронті (≈−0.06 V замість ≈−2.5 V, модель; τ увімкнення ≈0.46 ms, Boni ≈1.8 ms; вимкнення ≈22 ms, Boni ≈10 ms). На захищеному боці розрядні 4.7k (Boni 10k) після вимкнення; на портовому — 1 µF 50 V X7R. TPS2553, INA3221, U214, U218 і електроліти — на захищеному боці; клас «TPS2660 eFuse» відкинуто (OUT −0.3 V до RTN не витримує −30 V). Поправки до брифу: розрядні резистори й кола затворів беруть ≈1.9 mA від LNA4V5 (≈0.93 mA на ch2/ch3) і ≈1.55 mA на Boni; при ввімкненні FET відкриваються, коли захищений вузол сягає ≈1.7…3.7 V (Boni ≈1.9…4.4 V), і резервуар ≈48 µF скидається в ємність порту поза ILIM TPS2553/U214 — C_GS це сповільнює, вимір у E4-06. Відомі межі: замкнений FET не виявляється; обрив FET, 2N7002 чи резистора затвора на LNA2/LNA3 мовчазний (немає нижньої межі струму, INA3221 бачить захищений бік); на Boni обрив ловить межа 30 mA, а PG_BONI портову напругу не доводить. Hot-plug сторонньої напруги при ввімкненому bias не покрито. VGS ≈−4.2 V на шині 4.3 V нижче точки −4.5 V специфікації RDS(on): падіння ch3 ≈+26 mV (2×70 mΩ при 184.5 mA) — перевірити на холоді. Позначення 2900–2999 — задокументований розширений діапазон E2 для цих елементів (N-E2-03).",
+      "source": "Diodes DMP6050SSD DS37454; Diodes BZX84C DS18001; Nexperia 2N7002; бриф PM30V-BLOCK (варіант B) зі скептичною перевіркою 24.10.2026; STACK §5.3, §8.1 HF-10."
     }
   ],
   "power_flags": [
@@ -7627,6 +8512,16 @@
       ],
       "stack": "§5.1 (BONI13V8); §8.1 HF-8/RF-5",
       "text": "R263/R264 = OVLO TBD (старт 112k/10.0k 0.1%: 14.64 V ном., ≈14.24–14.92 V за R-E2-02). STACK §5.1 (BONI13V8): «OVLO перерахувати для 13.8 V» — номіналу в STACK немає. Ворота: E2-03 (стенд STACK §8.1 HF-8/RF-5: OVLO не спрацьовує в смузі 13.8 V; поріг вище 14.145 V і нижче 15 V)."
+    },
+    {
+      "id": "N-E2-03",
+      "refs": [
+        "Q2901",
+        "Q2902",
+        "Q2903"
+      ],
+      "stack": "§5.3 (DC-sense); §8.1 HF-10",
+      "text": "Q2901–Q2903 (DMP6050SSD-13) — двобічні блокувальні елементи ±30 V воріт E4-06 між захищеним вузлом E2 і портом E4; закриті при низькому EN_LNA2/EN_LNA3/EN_BONI. Позначення 2900–2999 — задокументований розширений діапазон E2 (R-E2-21). Ворота: E4-06 (повільний і швидкий hot-plug на зібраному порту)."
     }
   ]
 }

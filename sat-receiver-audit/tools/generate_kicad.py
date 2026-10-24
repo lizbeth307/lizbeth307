@@ -58,8 +58,9 @@ DESIGN_DATE, REVISION, COMPANY = "2026-10-23", "v2.1", "SR-RX-v2"
 TITLE_COMMENTS = ("Теоретичний проєкт — перевірити на стенді", "Джерело: STACK.md v2",
                   "Не є комплектом для виробництва PCB; див. OPEN_ITEMS.md")
 # Reference designators stay inside their sheet range. E4 also owns the
-# documented 4400-4499 extension for the DC detectors (design/E4-review.md).
-REF_RANGES = {"E1": ((100, 199),), "E2": ((200, 299),), "E3": ((300, 399),),
+# documented 4400-4499 extension for the DC detectors (design/E4-review.md);
+# E2 owns 2900-2999 for the E4-06 bias-branch blocking elements (design/E2-review.md).
+REF_RANGES = {"E1": ((100, 199),), "E2": ((200, 299), (2900, 2999)), "E3": ((300, 399),),
               "E4": ((400, 499), (4400, 4499)), "E5": ((500, 599),)}
 # KiCad's stroke font has no glyph for U+02BC (it renders as a box).
 NO_GLYPH = {"ʼ": "MODIFIER LETTER APOSTROPHE (use an ASCII apostrophe)"}

@@ -59,7 +59,7 @@
 <rect x="1000.0" y="128.0" width="480.0" height="352.0" fill="#f4f8ff" stroke="#000" stroke-width="1.4"/>
 <rect x="1000.0" y="128.0" width="480.0" height="28.0" fill="#ffffff" stroke="#000" stroke-width="1.0"/>
 <text x="1008.0" y="147.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">3. 70 см: основа набору #1 + короткі елементи</text>
-<text x="1008.0" y="174.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">→ 60 см RG174 (ферит) → ANT Uputronics 440 → P2 UHF (ch2 4.5 V)</text>
+<text x="1008.0" y="174.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">→ 60 см RG174 (ферит) → ANT Uputronics 440 → P2 UHF (ch2 4.3 V)</text>
 <line x1="1150.0" y1="184.0" x2="1150.0" y2="390.0" stroke="#999" stroke-width="0.6" stroke-dasharray="3,3"/>
 <text x="1010.0" y="198.0" font-size="12" text-anchor="start" font-weight="bold" fill="#555">ПАКОВАНИЙ</text>
 <text x="1160.0" y="198.0" font-size="12" text-anchor="start" font-weight="bold" fill="#555">РОБОЧИЙ</text>
@@ -89,7 +89,7 @@
 <rect x="20.0" y="490.0" width="480.0" height="352.0" fill="#f4f8ff" stroke="#000" stroke-width="1.4"/>
 <rect x="20.0" y="490.0" width="480.0" height="28.0" fill="#ffffff" stroke="#000" stroke-width="1.0"/>
 <text x="28.0" y="509.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">4. L-band патч RTL-SDR Blog v2 (RHCP)</text>
-<text x="28.0" y="536.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">→ 2 м RG174 → P3 L-BAND (ch3 4.5 V, 15-20 mA)</text>
+<text x="28.0" y="536.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">→ 2 м RG174 → P3 L-BAND (ch3 4.3 V, 15-20 mA)</text>
 <line x1="170.0" y1="546.0" x2="170.0" y2="752.0" stroke="#999" stroke-width="0.6" stroke-dasharray="3,3"/>
 <text x="30.0" y="560.0" font-size="12" text-anchor="start" font-weight="bold" fill="#555">ПАКОВАНИЙ</text>
 <text x="180.0" y="560.0" font-size="12" text-anchor="start" font-weight="bold" fill="#555">РОБОЧИЙ</text>
@@ -112,7 +112,7 @@
 <rect x="510.0" y="490.0" width="480.0" height="352.0" fill="#f4f8ff" stroke="#000" stroke-width="1.4"/>
 <rect x="510.0" y="490.0" width="480.0" height="28.0" fill="#ffffff" stroke="#000" stroke-width="1.0"/>
 <text x="518.0" y="509.0" font-size="13" text-anchor="start" font-weight="bold" fill="#000">5. 4-виткова RHCP спіраль HRPT на диску 18 см</text>
-<text x="518.0" y="536.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">SAWbird+ GOES під диском → P3 L-BAND (ch3 4.5 V по коаксіалу)</text>
+<text x="518.0" y="536.0" font-size="12" text-anchor="start" font-weight="normal" fill="#003c8f">SAWbird+ GOES під диском → P3 L-BAND (ch3 4.3 V по коаксіалу)</text>
 <line x1="660.0" y1="546.0" x2="660.0" y2="752.0" stroke="#999" stroke-width="0.6" stroke-dasharray="3,3"/>
 <text x="520.0" y="560.0" font-size="12" text-anchor="start" font-weight="bold" fill="#555">ПАКОВАНИЙ</text>
 <text x="670.0" y="560.0" font-size="12" text-anchor="start" font-weight="bold" fill="#555">РОБОЧИЙ</text>
