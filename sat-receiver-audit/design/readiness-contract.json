@@ -201,6 +201,11 @@
         "type": "passive"
       },
       {
+        "ref": "Q2911",
+        "pin": "1",
+        "type": "input"
+      },
+      {
         "ref": "U301",
         "pin": "27",
         "type": "output"
@@ -216,6 +221,11 @@
         "ref": "R239",
         "pin": "1",
         "type": "passive"
+      },
+      {
+        "ref": "Q2912",
+        "pin": "1",
+        "type": "input"
       },
       {
         "ref": "U301",
@@ -293,6 +303,11 @@
       {
         "ref": "U214",
         "pin": "3",
+        "type": "input"
+      },
+      {
+        "ref": "Q2913",
+        "pin": "1",
         "type": "input"
       },
       {

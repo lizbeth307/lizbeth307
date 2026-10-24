@@ -1,10 +1,10 @@
 {
   "graph_netlist_comparison": "PASS",
-  "electrical_sheets": 15,
-  "physical_components": 750,
-  "connected_physical_contacts": 2181,
-  "named_nets": 466,
-  "explicit_nc_contacts": 137,
+  "electrical_sheets": 16,
+  "physical_components": 777,
+  "connected_physical_contacts": 2253,
+  "named_nets": 478,
+  "explicit_nc_contacts": 140,
   "dnp_components": [
     "J102",
     "L401",
@@ -25,30 +25,31 @@
   "production_release": false,
   "reason": "Structural checks and ERC do not close manufacturer-revision, charging, RF, thermal, PCB-layout, or physical acceptance gates.",
   "sha256": {
-    "build/kicad/E1.kicad_sch": "1c5c8647957ecbb36f384fd95600dd6282309cf1bd87db83df28539cefa39a23",
+    "build/kicad/E1.kicad_sch": "774c72b4facad8062678d4b58414bde9f563e9616f2a6152a221cdffcb433e56",
     "build/kicad/E1_02.kicad_sch": "5db5840fada42092cd16df66841759fc1f073b18f757ecbc95c00e51adb3b847",
-    "build/kicad/E2.kicad_sch": "7bc3a39b09ca151863589a483994d73449efff2fa6f126a958669b4efca55364",
-    "build/kicad/E2_02.kicad_sch": "b8da6c89fdfd45e13ef1f450267ac7208ef62db2ca8380a16277719ea14bd639",
-    "build/kicad/E2_03.kicad_sch": "e07328234eabc3df970046408967c9a14a604926636b79c81c494ae567755806",
-    "build/kicad/E2_04.kicad_sch": "fe2413da9d54c44ee6f84d7d5a778f9723694bd815d5ed72ba1eec082e8157af",
-    "build/kicad/E3.kicad_sch": "6efbf1244a7e75a0a261675c789468ff8dd4a4ca8a9ca95eebcf13f8e84e9cba",
-    "build/kicad/E3_02.kicad_sch": "c4411809713a6f2284577b55f9816bf53b48ea2e9f003735f40ba198b8b56f29",
-    "build/kicad/E4.kicad_sch": "f0a2ac1567d83f7639a8c388dc83657c786f032c386b39968f249827e8ee3dce",
-    "build/kicad/E4_02.kicad_sch": "5804388a5f675ab26c88ddee5c66d12c0379e686e3086a2be2f4d9f370770769",
-    "build/kicad/E4_03.kicad_sch": "f53c8f6d6c616bb8b781cb27aa4750a535dc55421faa8628a1034e77ecee8d56",
-    "build/kicad/E4_04.kicad_sch": "42b739bf9caa397a243d2d65c4dd1a36ca9e488610b753ece0757c679746ff9f",
-    "build/kicad/E5.kicad_sch": "55ade0281fba4b8b9d034a3888ceb962acc8d1ce95e93d004ca31f0d0a81fcf3",
-    "build/kicad/E5_02.kicad_sch": "9e9f82e9b6395001af150d4f4195e8ecefb1e54ad5090e6d8da703eacf1737ec",
-    "build/kicad/sr-rx-v2.kicad_sch": "f40c1a338c5b68af566e59bdf910c23bd989addb7dc9344c09b27f5cda8f9012"
+    "build/kicad/E2.kicad_sch": "055b5044243a9dac6f7168a3382d8f61a8a1a3c911c4cd4586d23121e31269b9",
+    "build/kicad/E2_02.kicad_sch": "a9f2433e5229c1913ae32f5fe06496d998b40059791bc4dfcd4d87cdb91e62f7",
+    "build/kicad/E2_03.kicad_sch": "f1f139b74caf318454fbc753ad9c2be307b3030c96b793e4275455dcb40d8a05",
+    "build/kicad/E2_04.kicad_sch": "2f6890cfa89bf7e01cf5416f542e63c2aebf4d177978b32b09233fc65963f353",
+    "build/kicad/E2_05.kicad_sch": "678317f251a24050db5065604bc1d73906995cb4dec797c3eea604ec3c80ebde",
+    "build/kicad/E3.kicad_sch": "661cb04fc2db767e205bcb50f8aba7c5bdc123058ea5d9806ed06315bf21baeb",
+    "build/kicad/E3_02.kicad_sch": "3cabc1d6004874edf76e38f241e611d0d7f72663da07beab9c26ce084b32677b",
+    "build/kicad/E4.kicad_sch": "c4d2a84000d577c921f39e4a9ada9c4093b2f53a08b2266fb87ad73d667dafa3",
+    "build/kicad/E4_02.kicad_sch": "5d743215323ed60386e2579b8eb2fc0b34f8245c11209c3e5b70143a398bcbff",
+    "build/kicad/E4_03.kicad_sch": "fd00ca7dbb04764a8b26a55f4feca4fd960708c68cea38f1fe64d0dd5e706cbf",
+    "build/kicad/E4_04.kicad_sch": "6ef65d20b546676f4ed3839eaa26b7fa6e12bfa97914a59a41a0a2903ecb8527",
+    "build/kicad/E5.kicad_sch": "174f80ada4f8ddadf04f93af635f493bd87581c95f9b8400724d6e046f567153",
+    "build/kicad/E5_02.kicad_sch": "1a3b08172dccedbf9a65aec529f622dc38f18fef757e0d276082ec961caf5ac8",
+    "build/kicad/sr-rx-v2.kicad_sch": "8072023d8f2c59a397d7a986faed4936d6ca0fb803a7d49c57aec2e8fa336de5"
   },
   "input_files": [
     {
       "file": "verification/erc.json",
-      "sha256": "9c42fd93da028e08ccdbb592ac00f5cce7843372e69e938d477e0566cc27d83e"
+      "sha256": "31c284bd40865dbbabf5ef6f7b5a01e60a797a7a1abf1742e08d2b75827d3605"
     },
     {
       "file": "verification/netlist.xml",
-      "sha256": "acaa61986e3af7799a99696bb000775fc0afe2a53cb0b6cc3d2473f255ee9312"
+      "sha256": "d62634e081694a3ad76f8d0dff756854cedab987b1092d4fe5fe4c4033b72eb8"
     }
   ]
 }
