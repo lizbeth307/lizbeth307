@@ -841,7 +841,7 @@ def stage_gnss(rootfs, mode):
     after dev-lab-gnss.device (gpsd.service in gpsd mode, srrx-locationd in raw mode; DEP-11)."""
     units = rootfs / "etc/systemd/system"
     rule = rootfs / GNSS_POLKIT_RULE
-    rule.parent.mkdir(parents=True)
+    rule.parent.mkdir(parents=True, exist_ok=True)  # srrx.pass_jobs already wrote its rule there
     rule.write_text(gnss_polkit_rule(), newline="\n")
     locationd = units / "srrx-locationd.service.d"
     locationd.mkdir(exist_ok=True)

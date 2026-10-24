@@ -63,8 +63,10 @@ class PassesStagingTests(unittest.TestCase):
         self.assertIn("PASSES_ALLOWLIST_TOO_LARGE", pass_jobs.ERRORS)
 
     def test_deploy_skips_the_guard_for_exactly_this_template(self):
+        # stage() skips the release-guard drop-in for every RELEASE_GUARD_EXEMPT unit name.
+        self.assertIn(pass_jobs.UNIT_TEMPLATE, deploy.RELEASE_GUARD_EXEMPT)
         text = Path(deploy.__file__).read_text(encoding="utf-8")
-        self.assertIn('if unit.name == "' + pass_jobs.UNIT_TEMPLATE + '":', text)
+        self.assertIn("if unit.name in RELEASE_GUARD_EXEMPT:", text)
 
 
 if __name__ == "__main__":
