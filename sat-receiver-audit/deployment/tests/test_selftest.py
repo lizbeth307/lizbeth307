@@ -659,7 +659,7 @@ class SelftestTests(unittest.TestCase):
                      (voice.VoiceExcisor, "push"): lambda self_, samples: np.asarray(samples)})
         self.assertEqual(result["status"], "FAIL", result)
         self.assertEqual({f.get("item") for f in result["findings"] if f["rule"] == "out_of_window_tone_stored"},
-                         {"+150kHz", "-110kHz"})
+                         {"offset+150kHz", "offset-110kHz"})
         result = rx({(bb.ChannelDecimator, "push"): leaky})
         self.assertEqual(result["status"], "PASS", result)  # the voice mask layer still holds
         self.put("etc/tmpfiles.d/srrx-satdump.conf", glue.tmpfiles().replace("2750", "2777"))

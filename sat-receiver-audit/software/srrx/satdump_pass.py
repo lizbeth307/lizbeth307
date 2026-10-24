@@ -217,6 +217,21 @@ def systemd_run_argv(kind, ident, properties, argv):
     return command + ["--"] + list(argv)
 
 
+def live_command(window_value, port, *, executable=SATDUMP, products_root=None, ident=None):
+    """(unit ident, work dir, full systemd-run argv) of the live SatDump unit for one window.
+
+    The caller starts it before labrx.run_baseband(..., live_port=port) and publishes the
+    work tree's PNGs with decoder_policy.satdump_publish afterwards; RuntimeMaxSec bounds it
+    to the window plus LIVE_EXTRA_S. labd does not orchestrate this yet.
+    """
+    checked = baseband.validate_window(window_value)
+    ident = ident if ident is not None else os.urandom(8).hex()
+    work = Path(products_root if products_root is not None else DATA_ROOT + "/products/satdump") / (".satdump-" + ident)
+    seconds = int(checked["end_unix_s"] - checked["start_unix_s"]) + LIVE_EXTRA_S
+    properties = unit_properties("live", ident, work_dir=work, runtime_max_s=seconds)
+    return ident, work, systemd_run_argv("live", ident, properties, live_argv(executable, checked, work / "out", port))
+
+
 def run_bounded(argv, timeout_s):
     """(exit code, last OUTPUT_LIMIT bytes of stdout+stderr plus every FAIL_MARKERS seen anywhere).
 

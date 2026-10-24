@@ -135,6 +135,17 @@ class CommandTests(unittest.TestCase):
         with self.assertRaises(sp.PassRefused):
             sp.unit_properties("record", self.IDENT, work_dir="/data/x")
 
+    def test_live_command_is_a_localhost_unit_bounded_by_the_window(self):
+        ident, work, argv = sp.live_command(self.window(), 8877, ident=self.IDENT)
+        self.assertEqual((ident, str(work)), (self.IDENT, "/data/products/satdump/.satdump-" + self.IDENT))
+        split = argv.index("--")
+        self.assertIn("--unit=srrx-satdump-live-" + self.IDENT, argv[:split])
+        self.assertIn("IPAddressAllow=localhost", argv[:split])
+        self.assertIn("RuntimeMaxSec=%d" % (840 + sp.LIVE_EXTRA_S), argv[:split])
+        self.assertEqual(argv[split + 1:split + 4], ["/usr/bin/satdump", "legacy", "live"])
+        self.assertEqual(argv[split + 5], str(work / "out"))
+        self.assertEqual(len(sp.live_command(self.window(), 8877)[0]), 16)
+
     def test_systemd_run_command_line(self):
         argv = sp.systemd_run_argv("decode", self.IDENT, ["A=1", "B=2"], ["/usr/bin/satdump", "x"])
         self.assertEqual(argv, ["/usr/bin/systemd-run", "--quiet", "--wait", "--pipe", "--collect", "--service-type=exec",
