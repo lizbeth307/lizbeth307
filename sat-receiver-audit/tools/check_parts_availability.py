@@ -59,11 +59,16 @@ def record(c):
 
 def codes(db):
     out = set()
+    entries = []
     for p in db['parts']:
-        for entry in [p] + p.get('alternates', []) + p.get('extras', []):
-            sku = (entry.get('sku') or {}).get('lcsc')
-            if sku:
-                out.add(sku)
+        entries += [p] + p.get('alternates', []) + p.get('extras', [])
+    for fam in db.get('harness_families', []):
+        entries += [fam['terminal']] if fam.get('terminal') else []
+        entries += [size[role] for size in fam.get('sizes', []) for role in ('header_top', 'header_side', 'housing') if role in size]
+    for entry in entries:
+        sku = (entry.get('sku') or {}).get('lcsc')
+        if sku:
+            out.add(sku)
     return sorted(out)
 
 

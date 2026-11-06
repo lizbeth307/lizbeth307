@@ -98,6 +98,14 @@ jobs:
                   libname, fp = ident.split(":", 1)
                   assert (lib / f"{libname}.pretty" / f"{fp}.kicad_mod").is_file(), ident
           print("derived footprint sources present:", sum(r["kind"] == "derived" for r in prov.values()))
+          # Harness-family headers are named, not vendored, until their J refs exist: the names must be real library files.
+          db = json.loads(Path("design/parts/parts.json").read_text(encoding="utf-8"))
+          names = [size[role]["footprint"] for fam in db.get("harness_families", []) for size in fam["sizes"]
+                   for role in ("header_top", "header_side") if role in size]
+          for ident in names:
+              libname, fp = ident.split(":", 1)
+              assert (lib / f"{libname}.pretty" / f"{fp}.kicad_mod").is_file(), ident
+          print("harness-family footprints present in the image library:", len(names))
           EOF
       - name: KiCad parses and renders every project footprint
         run: |

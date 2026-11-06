@@ -102,6 +102,22 @@ class PartsDatabaseTest(unittest.TestCase):
         self.assertTrue(any("unknown key footprnt" in e for e in errors))
         self.assertTrue(any("unknown mount glued" in e for e in errors))
 
+    def test_harness_family_items_are_snapshot_listings_with_matching_footprints(self):
+        model = parts.Model()
+        model.check()
+        items = model.family_items()
+        self.assertTrue(items)
+        for fam, n, role, item in items:
+            self.assertIn(item["sku"]["lcsc"], model.lcsc, (fam["id"], n, role))
+
+        def wrong_pins(db):
+            db["harness_families"][0]["sizes"][0]["header_top"]["footprint"] = "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical"
+        self.assertTrue(any("is not a KiCad Lib:Name with 2 contacts" in e for e in self.errors_after(wrong_pins)))
+
+        def no_sku(db):
+            db["harness_families"][0]["sizes"][0]["housing"]["sku"] = {"lcsc": "C0"}
+        self.assertTrue(any("lcsc SKU C0 has no snapshot entry" in e for e in self.errors_after(no_sku)))
+
     def test_tbd_needs_a_reason_and_keeps_the_part_open(self):
         model = parts.Model()
         model.check()

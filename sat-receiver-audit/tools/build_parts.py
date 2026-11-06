@@ -11,6 +11,7 @@ Outputs written from it:
   build/kicad/footprints/manifest.json, build/kicad/fp-lib-table
   build/10-zakupivlia.csv, build/10-zakupivlia.md   consolidated v2.1 purchase BOM
   build/10-jlc-bom.csv                              JLC assembly BOM per board (LCSC parts)
+  build/10-dzhgut-rodyny.csv                        harness connector families per pin count (no graph refs yet)
   build/10-parts-coverage.json                      coverage counts and open items
 Nothing here measures hardware: an orderable MPN is a procurement fact, not a qualification.
 """
@@ -44,6 +45,11 @@ PART_KEYS = {'id', 'mount', 'refs', 'kind', 'package', 'footprint', 'manufacture
 ALT_KEYS = {'manufacturer', 'mpn', 'sku', 'note'}
 EXTRA_KEYS = {'manufacturer', 'mpn', 'sku', 'qty_per_ref', 'item', 'note'}
 SKU_KEYS = {'lcsc', 'digikey', 'mouser', 'tme', 'web'}
+# harness_families: connector families of the board-to-board harnesses that have no graph refs yet (build/15, build/16).
+FAMILY_KEYS = {'id', 'title', 'note', 'terminal', 'sizes'}
+FAMILY_ROLES = ('header_top', 'header_side', 'housing')
+FAMILY_ITEM_KEYS = {'manufacturer', 'mpn', 'sku', 'footprint', 'note'}
+FAMILY_FIELDS = ['family', 'pins', 'role', 'manufacturer', 'mpn', 'lcsc', 'lcsc_stock', 'lcsc_usd_1', 'footprint', 'note']
 BOARD3 = {'PWR_MAIN': 'POWER', 'PWR_BRANCH': 'POWER', 'USB_POWER': 'POWER', 'RF_HMC': 'RF', 'RF_HF': 'RF', 'RF_INJECTOR': 'RF', 'DC_CORE': 'RF', 'CTRL_HMI': 'CTRL'}
 SHEET_BOARD = {'E1': 'POWER', 'E2': 'POWER', 'E3': 'CTRL', 'E4': 'RF', 'E5': 'POWER'}
 SECTIONS = [('pcb_smt', 'Плати: SMD (збирання JLC PCBA)'), ('pcb_tht', 'Плати: THT (ручне паяння або THT-збирання)'),
@@ -280,10 +286,62 @@ class Model:
             self.check_part(p, manifest_fps)
         for ref in sorted(set(self.comps) - set(self.part_of), key=sort_ref):
             self.err(f'{ref} has no parts-database entry')
+        self.check_families()
         newest = max(self.snapshot_dates)
         age = (datetime.date.today() - datetime.date.fromisoformat(newest)).days
         if age > self.db['policy']['snapshot_max_age_days']:
             self.warnings.append(f'newest availability snapshot is {age} days old ({newest}); run tools/check_parts_availability.py')
+
+    def family_items(self):
+        """(family, pins, role, item) for every orderable item of harness_families."""
+        out = []
+        for fam in self.db.get('harness_families', []):
+            if fam.get('terminal'):
+                out.append((fam, '', 'terminal', fam['terminal']))
+            for size in fam.get('sizes', []):
+                out += [(fam, size.get('pins'), role, size[role]) for role in FAMILY_ROLES if role in size]
+        return out
+
+    def check_families(self):
+        """Every harness-family item is an LCSC listing of the snapshot; a header names a KiCad footprint with its pin count."""
+        for fam in self.db.get('harness_families', []):
+            fid = fam.get('id')
+            for key in sorted(set(fam) - FAMILY_KEYS):
+                self.err(f'harness family {fid}: unknown key {key}')
+            seen = set()
+            for size in fam.get('sizes', []):
+                n = size.get('pins')
+                if not isinstance(n, int) or n < 1 or n in seen:
+                    self.err(f'harness family {fid}: pin count {n!r} missing or repeated')
+                seen.add(n)
+                for key in sorted(set(size) - set(FAMILY_ROLES) - {'pins', 'note'}):
+                    self.err(f'harness family {fid} {n}: unknown key {key}')
+                if 'header_top' not in size and 'header_side' not in size:
+                    self.err(f'harness family {fid} {n}: no board header')
+        for fam, n, role, item in self.family_items():
+            label = f'harness family {fam.get("id")} {n} {role}'.replace('  ', ' ')
+            for key in sorted(set(item) - FAMILY_ITEM_KEYS):
+                self.err(f'{label}: unknown key {key}')
+            if not (item.get('manufacturer') and item.get('mpn') and (item.get('sku') or {}).get('lcsc')):
+                self.err(f'{label}: needs manufacturer, mpn and an LCSC SKU')
+            if role.startswith('header'):
+                m = re.search(r'_(\d+)x(\d+)', item.get('footprint') or '')
+                if ':' not in (item.get('footprint') or '') or not m or int(m[1]) * int(m[2]) != n:
+                    self.err(f'{label}: footprint {item.get("footprint")!r} is not a KiCad Lib:Name with {n} contacts')
+            elif item.get('footprint'):
+                self.err(f'{label}: only board headers have a footprint')
+            for dist, rec in self.sku_known(item):
+                if rec.get('stock') == 0:
+                    self.warnings.append(f'{label} {item["mpn"]}: {dist} stock 0 on the snapshot date')
+
+    def family_rows(self):
+        rows = []
+        for fam, n, role, item in self.family_items():
+            rec = self.lcsc_rec(item) or {}
+            rows.append({'family': fam['id'], 'pins': n, 'role': role, 'manufacturer': item['manufacturer'], 'mpn': item['mpn'],
+                         'lcsc': item['sku']['lcsc'], 'lcsc_stock': rec.get('stock', ''), 'lcsc_usd_1': unit_price(rec, 1) if rec else '',
+                         'footprint': item.get('footprint', ''), 'note': item.get('note', '')})
+        return rows
 
     def check_schema(self, p):
         """design/parts/README.md lists these keys; an unknown key is a typo, not data."""
@@ -615,6 +673,7 @@ class Model:
             'board_footprint_origin': dict(sorted(origins.items())),
             'purchased_refs': len(buy_refs), 'purchased_refs_by_availability': dict(sorted(state.items())),
             'purchased_refs_with_mpn': sum(bool(self.part_of[r].get('mpn')) for r in buy_refs),
+            'harness_family_items': len(self.family_items()),
             'tbd': tbd, 'carried_from_10_bom': carried,
             'deviations': [{'part': p['id'], 'refs': p['refs'], **p['deviation']} for p in self.db['parts'] if p.get('deviation')],
             'footprint_checks_open': [{'footprint': f'SR_RX_Custom:{k}', 'note': v.get('note') or v.get('drawing')} for k, v in sorted(prov.items())
@@ -625,7 +684,7 @@ class Model:
 
 OPEN_ITEMS = [
     'SW308/SW309 — це кнопки всередині енкодерів ENC301/ENC302: граф тримає їх окремими позначеннями, тому контакти S1/S2 футпринта енкодера лишаються без кола в netlist, доки власник E3 не перенесе кола кнопок на виводи енкодера.',
-    'Роз’єми з боку плати для джгутів, які ще не мають позначень у графі (кінець J302 на силовій платі, гніздо LAB BUS за J505, вентилятор, виводи NTC TH301/TH302, міжплатні з’єднання поділу на три плати), куплено як супутні деталі там, де їх названо; позначення на схемі чекають власника поділу плат.',
+    'Роз’єми з боку плати для джгутів, які ще не мають позначень у графі (кінець J302 на силовій платі, гніздо LAB BUS за J505, вентилятор, виводи NTC TH301/TH302, міжплатні з’єднання поділу на три плати), куплено як супутні деталі там, де їх названо; для решти артикули за кількістю контактів дає розділ «Роз’єми міжплатних джгутів», а позначення J на схемі й кількість чекають PCB-пакета й таблиці джгутів (build/16).',
     'Панельні деталі (SMA, F, BNC, USB-A IP68, USB-C IP67, кнопки PV6 IP65) обрано за сторінками DigiKey DE від 06.11.2026; вирізи, ущільнення, заглушки й заглиблення кнопки EDL — механічний пакет (MECH-07). Внутрішній кабель ПЧ W402 і кабель живлення pod W425 лишаються TBD.',
     'Розмір відкритої площадки HMC7992LP3DE і крок виводів CPT-1207-3TH треба звірити з кресленнями виробника до випуску PCB (див. SR_RX_Custom.pretty/provenance.json; analog.com 24.10.2026 не відповідав).',
 ]
@@ -685,6 +744,25 @@ def bom_md(model, rows, cov):
             src = ' / '.join(x for x in (r['lcsc'], r['digikey'], r['other'] if len(r['other']) < 40 else 'див. CSV') if x)
             lines.append(f'| {r["order"]} | {refs} | {r["manufacturer"] or "—"} | {r["mpn"] or "—"} | {src or "—"} | {r["state"]} |')
         lines.append('')
+    fams = model.db.get('harness_families', [])
+    if fams:
+        lines += ['## Роз’єми міжплатних джгутів (родини)', '',
+                  'Поділ на три плати ([build/15](15-rishennia-komplektu.md)) додає роз’єми джгутів, яких ще немає в графах E1–E5. Нижче — артикули для кожної '
+                  'кількості контактів, перевірені за знімком LCSC; кількість штук і розміщення дає таблиця роз’ємів джгутів пакета складання (build/16), тому '
+                  'в розділи вище й у зведення ці роз’єми не входять. Посадкові місця — назви бібліотеки KiCad ' + KICAD_TAG + '; файли додаються до бібліотеки '
+                  'проєкту разом із позначеннями J. Машинна таблиця — [10-dzhgut-rodyny.csv](10-dzhgut-rodyny.csv).', '']
+        cell = lambda item: f'{item["mpn"]} ({item["sku"]["lcsc"]}, склад {(model.lcsc_rec(item) or {}).get("stock", "—")})'
+        for fam in fams:
+            lines += [f'### {fam["title"]}', '']
+            if fam.get('note'):
+                lines += [fam['note'], '']
+            if fam.get('terminal'):
+                t = fam['terminal']
+                lines += [f'Клема: {t["manufacturer"]} {cell(t)}.', '']
+            lines += ['| контактів | вилка на платі, верхній вхід | вилка, боковий вхід | розетка кабелю | примітка |', '|---:|---|---|---|---|']
+            for s in fam['sizes']:
+                lines.append(f'| {s["pins"]} | ' + ' | '.join(cell(s[r]) if r in s else '—' for r in FAMILY_ROLES) + f' | {s.get("note", "")} |')
+            lines.append('')
     other = model.v2_rows()
     lines += ['## Решта закупівлі: рядки оцінки v2 поза схемою', '',
               'Рядки [10-bom.csv](10-bom.csv), деталей яких немає в графах E1–E5 (антени, прилади лабораторії, інструменти, корпус, кріплення, запасні модулі, плата Q6A), '
@@ -737,6 +815,7 @@ def main():
     other.writerows([r[k] for k in V2_FIELDS] for r in model.v2_rows())
     files[ROOT / 'build/10-zakupivlia-inshe.csv'] = head.getvalue()
     files[ROOT / 'build/10-jlc-bom.csv'] = csv_text(model.jlc_rows(prep), ['Board', 'Comment', 'Designator', 'Footprint', 'LCSC Part #', 'Mount', 'LCSC stock', 'LCSC alternate'])
+    files[ROOT / 'build/10-dzhgut-rodyny.csv'] = csv_text(model.family_rows(), FAMILY_FIELDS)
     files[ROOT / 'build/10-parts-coverage.json'] = json.dumps(cov, ensure_ascii=False, indent=1) + '\n'
     for w in model.warnings:
         print('WARNING:', w)

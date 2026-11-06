@@ -287,6 +287,422 @@
    "note": "кнопка живлення — SW301 у базі (E-Switch PV6F240SS); перемичка XT30 для транспортування — за цим рядком"
   }
  },
+ "harness_families": [
+  {
+   "id": "PH",
+   "title": "JST PH 2.0 мм — сигнальні джгути",
+   "note": "Рішення build/15 «Сигнальні джгути». Контакт 2 A за каталогом LCSC; проєктну межу струму задає пакет складання.",
+   "terminal": {
+    "manufacturer": "JST",
+    "mpn": "SPH-002T-P0.5S",
+    "sku": {
+     "lcsc": "C111515"
+    }
+   },
+   "sizes": [
+    {
+     "pins": 2,
+     "header_top": {
+      "manufacturer": "JST",
+      "mpn": "B2B-PH-K-S(LF)(SN)",
+      "sku": {
+       "lcsc": "C131337"
+      },
+      "footprint": "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical"
+     },
+     "header_side": {
+      "manufacturer": "JST",
+      "mpn": "S2B-PH-K-S(LF)(SN)",
+      "sku": {
+       "lcsc": "C173752"
+      },
+      "footprint": "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal"
+     },
+     "housing": {
+      "manufacturer": "JST",
+      "mpn": "PHR-2",
+      "sku": {
+       "lcsc": "C157955"
+      }
+     }
+    },
+    {
+     "pins": 3,
+     "header_top": {
+      "manufacturer": "JST",
+      "mpn": "B3B-PH-K-S(LF)(SN)",
+      "sku": {
+       "lcsc": "C131339"
+      },
+      "footprint": "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical"
+     },
+     "header_side": {
+      "manufacturer": "JST",
+      "mpn": "S3B-PH-K-S(LF)(SN)",
+      "sku": {
+       "lcsc": "C157929"
+      },
+      "footprint": "Connector_JST:JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal"
+     },
+     "housing": {
+      "manufacturer": "JST",
+      "mpn": "PHR-3",
+      "sku": {
+       "lcsc": "C265393"
+      }
+     }
+    },
+    {
+     "pins": 4,
+     "header_top": {
+      "manufacturer": "JST",
+      "mpn": "B4B-PH-K-S(LF)(SN)",
+      "sku": {
+       "lcsc": "C131334"
+      },
+      "footprint": "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical"
+     },
+     "header_side": {
+      "manufacturer": "JST",
+      "mpn": "S4B-PH-K-S(LF)(SN)",
+      "sku": {
+       "lcsc": "C157926"
+      },
+      "footprint": "Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal"
+     },
+     "housing": {
+      "manufacturer": "JST",
+      "mpn": "PHR-4",
+      "sku": {
+       "lcsc": "C111514"
+      }
+     }
+    },
+    {
+     "pins": 5,
+     "header_top": {
+      "manufacturer": "JST",
+      "mpn": "B5B-PH-K-S(LF)(SN)",
+      "sku": {
+       "lcsc": "C157993"
+      },
+      "footprint": "Connector_JST:JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical"
+     },
+     "header_side": {
+      "manufacturer": "JST",
+      "mpn": "S5B-PH-K-S(LF)(SN)",
+      "sku": {
+       "lcsc": "C157923"
+      },
+      "footprint": "Connector_JST:JST_PH_S5B-PH-K_1x05_P2.00mm_Horizontal"
+     },
+     "housing": {
+      "manufacturer": "JST",
+      "mpn": "PHR-5",
+      "sku": {
+       "lcsc": "C157953"
+      }
+     }
+    },
+    {
+     "pins": 6,
+     "header_top": {
+      "manufacturer": "JST",
+      "mpn": "B6B-PH-K-S(LF)(SN)",
+      "sku": {
+       "lcsc": "C131342"
+      },
+      "footprint": "Connector_JST:JST_PH_B6B-PH-K_1x06_P2.00mm_Vertical"
+     },
+     "header_side": {
+      "manufacturer": "JST",
+      "mpn": "S6B-PH-K-S(LF)(SN)",
+      "sku": {
+       "lcsc": "C157920"
+      },
+      "footprint": "Connector_JST:JST_PH_S6B-PH-K_1x06_P2.00mm_Horizontal"
+     },
+     "housing": {
+      "manufacturer": "JST",
+      "mpn": "PHR-6",
+      "sku": {
+       "lcsc": "C157952"
+      }
+     }
+    },
+    {
+     "pins": 7,
+     "header_top": {
+      "manufacturer": "JST",
+      "mpn": "B7B-PH-K-S(LF)(SN)",
+      "sku": {
+       "lcsc": "C157981"
+      },
+      "footprint": "Connector_JST:JST_PH_B7B-PH-K_1x07_P2.00mm_Vertical"
+     },
+     "header_side": {
+      "manufacturer": "JST",
+      "mpn": "S7B-PH-K-S(LF)(SN)",
+      "sku": {
+       "lcsc": "C157917"
+      },
+      "footprint": "Connector_JST:JST_PH_S7B-PH-K_1x07_P2.00mm_Horizontal"
+     },
+     "housing": {
+      "manufacturer": "JST",
+      "mpn": "PHR-7",
+      "sku": {
+       "lcsc": "C157951"
+      }
+     }
+    },
+    {
+     "pins": 8,
+     "header_top": {
+      "manufacturer": "JST",
+      "mpn": "B8B-PH-K-S(LF)(SN)",
+      "sku": {
+       "lcsc": "C157974"
+      },
+      "footprint": "Connector_JST:JST_PH_B8B-PH-K_1x08_P2.00mm_Vertical"
+     },
+     "header_side": {
+      "manufacturer": "JST",
+      "mpn": "S8B-PH-K-S(LF)(SN)",
+      "sku": {
+       "lcsc": "C157915"
+      },
+      "footprint": "Connector_JST:JST_PH_S8B-PH-K_1x08_P2.00mm_Horizontal"
+     },
+     "housing": {
+      "manufacturer": "JST",
+      "mpn": "PHR-8",
+      "sku": {
+       "lcsc": "C157950"
+      }
+     }
+    },
+    {
+     "pins": 12,
+     "header_top": {
+      "manufacturer": "JST",
+      "mpn": "B12B-PH-K-S(LF)(SN)",
+      "sku": {
+       "lcsc": "C158028"
+      },
+      "footprint": "Connector_JST:JST_PH_B12B-PH-K_1x12_P2.00mm_Vertical"
+     },
+     "header_side": {
+      "manufacturer": "JST",
+      "mpn": "S12B-PH-K-S(LF)(SN)",
+      "sku": {
+       "lcsc": "C157943"
+      },
+      "footprint": "Connector_JST:JST_PH_S12B-PH-K_1x12_P2.00mm_Horizontal"
+     },
+     "housing": {
+      "manufacturer": "JST",
+      "mpn": "PHR-12",
+      "sku": {
+       "lcsc": "C157960"
+      }
+     }
+    },
+    {
+     "pins": 13,
+     "header_top": {
+      "manufacturer": "JST",
+      "mpn": "B13B-PH-K-S(LF)(SN)",
+      "sku": {
+       "lcsc": "C158026"
+      },
+      "footprint": "Connector_JST:JST_PH_B13B-PH-K_1x13_P2.00mm_Vertical"
+     },
+     "header_side": {
+      "manufacturer": "JST",
+      "mpn": "S13B-PH-K-S(LF)(SN)",
+      "sku": {
+       "lcsc": "C157940"
+      },
+      "footprint": "Connector_JST:JST_PH_S13B-PH-K_1x13_P2.00mm_Horizontal"
+     },
+     "housing": {
+      "manufacturer": "JST",
+      "mpn": "PHR-13",
+      "sku": {
+       "lcsc": "C157959"
+      }
+     }
+    },
+    {
+     "pins": 16,
+     "header_top": {
+      "manufacturer": "JST",
+      "mpn": "B16B-PH-K-S(LF)(SN)",
+      "sku": {
+       "lcsc": "C158019"
+      },
+      "footprint": "Connector_JST:JST_PH_B16B-PH-K_1x16_P2.00mm_Vertical"
+     },
+     "note": "S16B-PH-K-S(LF)(SN) у пошуку JLCPCB/LCSC 06.11.2026 не знайдено: лише верхній вхід",
+     "housing": {
+      "manufacturer": "JST",
+      "mpn": "PHR-16",
+      "sku": {
+       "lcsc": "C157956"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "MF",
+   "title": "Molex Micro-Fit 3.0, 1 ряд — живлення ≥2 A",
+   "note": "Рішення build/15 «Живлення ≥2 A». Вертикальна вилка 43650-0n15 (як J503, 43650-0315); 43650-0n00 — кутова.",
+   "terminal": {
+    "manufacturer": "Molex",
+    "mpn": "43030-0007",
+    "sku": {
+     "lcsc": "C293530"
+    }
+   },
+   "sizes": [
+    {
+     "pins": 2,
+     "header_top": {
+      "manufacturer": "Molex",
+      "mpn": "43650-0215",
+      "sku": {
+       "lcsc": "C293740"
+      },
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical"
+     },
+     "housing": {
+      "manufacturer": "Molex",
+      "mpn": "43645-0200",
+      "sku": {
+       "lcsc": "C114089"
+      }
+     }
+    },
+    {
+     "pins": 3,
+     "header_top": {
+      "manufacturer": "Molex",
+      "mpn": "43650-0315",
+      "sku": {
+       "lcsc": "C293546"
+      },
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0315_1x03_P3.00mm_Vertical"
+     },
+     "housing": {
+      "manufacturer": "Molex",
+      "mpn": "43645-0300",
+      "sku": {
+       "lcsc": "C259740"
+      }
+     }
+    },
+    {
+     "pins": 4,
+     "header_top": {
+      "manufacturer": "Molex",
+      "mpn": "43650-0415",
+      "sku": {
+       "lcsc": "C293547"
+      },
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0415_1x04_P3.00mm_Vertical"
+     },
+     "housing": {
+      "manufacturer": "Molex",
+      "mpn": "43645-0400",
+      "sku": {
+       "lcsc": "C277618"
+      }
+     }
+    },
+    {
+     "pins": 5,
+     "header_top": {
+      "manufacturer": "Molex",
+      "mpn": "43650-0515",
+      "sku": {
+       "lcsc": "C505230"
+      },
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0515_1x05_P3.00mm_Vertical"
+     },
+     "housing": {
+      "manufacturer": "Molex",
+      "mpn": "43645-0500",
+      "sku": {
+       "lcsc": "C485319"
+      }
+     }
+    },
+    {
+     "pins": 6,
+     "header_top": {
+      "manufacturer": "Molex",
+      "mpn": "43650-0615",
+      "sku": {
+       "lcsc": "C505231"
+      },
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0615_1x06_P3.00mm_Vertical"
+     },
+     "housing": {
+      "manufacturer": "Molex",
+      "mpn": "43645-0600",
+      "sku": {
+       "lcsc": "C293739"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "IDC",
+   "title": "IDC 2×20, 2.54 мм — стрічка до гребінки Q6A",
+   "note": "Вилка-бокс із ключем на платі CTRL і гніздо IDC на стрічку; марки з каталогу LCSC без даташита виробника в цій базі — перед замовленням звірити креслення.",
+   "sizes": [
+    {
+     "pins": 40,
+     "header_top": {
+      "manufacturer": "Lian Xin Technology",
+      "mpn": "XDFH-0254-2*20P",
+      "sku": {
+       "lcsc": "C19193815"
+      },
+      "footprint": "Connector_IDC:IDC-Header_2x20_P2.54mm_Vertical"
+     },
+     "housing": {
+      "manufacturer": "Lian Xin Technology",
+      "mpn": "XDFH-0258-2*20P",
+      "sku": {
+       "lcsc": "C53309344"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "FAN3",
+   "title": "3-контактна вилка вентилятора 2.54 мм",
+   "note": "Molex KK 254 з фіксатором для штатної вилки кабелю Noctua NF-A4x10 5V; стикування перевірити на отриманому вентиляторі.",
+   "sizes": [
+    {
+     "pins": 3,
+     "header_top": {
+      "manufacturer": "Molex",
+      "mpn": "22-27-2031",
+      "sku": {
+       "lcsc": "C471416"
+      },
+      "footprint": "Connector_Molex:Molex_KK-254_AE-6410-03A_1x03_P2.54mm_Vertical"
+     }
+    }
+   ]
+  }
+ ],
  "parts": [
   {
    "id": "C-1206-CL31B225KBHNNNE",

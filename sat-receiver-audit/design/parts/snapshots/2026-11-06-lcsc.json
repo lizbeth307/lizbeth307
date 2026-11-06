@@ -11,7 +11,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-CC0603KRX7R9BB103_C100042.pdf",
    "description": "10nF 50V X7R ±10% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:46:35Z",
+   "fetched_utc": "2026-11-06T16:55:06Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "CC0603KRX7R9BB103",
@@ -57,7 +57,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-0720KL_C105575.pdf",
    "description": "-55℃~+155℃ 100mW 20kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:46:36Z",
+   "fetched_utc": "2026-11-06T16:55:07Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RC0603FR-0720KL",
@@ -103,7 +103,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-075K1L_C105580.pdf",
    "description": "-55℃~+155℃ 100mW 5.1kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:46:37Z",
+   "fetched_utc": "2026-11-06T16:55:08Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RC0603FR-075K1L",
@@ -146,7 +146,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-CC0402JRNPO9BN101_C106200.pdf",
    "description": "100pF 50V NP0 ±5% 0402 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:46:38Z",
+   "fetched_utc": "2026-11-06T16:55:08Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "CC0402JRNPO9BN101",
@@ -177,7 +177,7 @@
      0.0011
     ]
    ],
-   "stock": 7412790,
+   "stock": 7413050,
    "url": "https://www.lcsc.com/product-detail/multilayer-ceramic-capacitors-mlcc-smd-smt_yageo-cc0402jrnpo9bn101_C106200.html"
   },
   "C106203": {
@@ -189,7 +189,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-CC0402JRNPO9BN220_C106203.pdf",
    "description": "22pF 50V NP0 ±5% 0402 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:46:38Z",
+   "fetched_utc": "2026-11-06T16:55:09Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "CC0402JRNPO9BN220",
@@ -232,7 +232,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1811021411_YAGEO-CC0603JRNPO9BN102_C106246.pdf",
    "description": "1nF 50V NP0 ±5% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:46:39Z",
+   "fetched_utc": "2026-11-06T16:55:10Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "CC0603JRNPO9BN102",
@@ -275,7 +275,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-CC0603KRX7R7BB105_C106248.pdf",
    "description": "16V 1uF X7R ±10% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:46:40Z",
+   "fetched_utc": "2026-11-06T16:55:10Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "CC0603KRX7R7BB105",
@@ -318,7 +318,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-CC0603JRNPO9BN332_C107048.pdf",
    "description": "3.3nF 50V NP0 ±5% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:46:40Z",
+   "fetched_utc": "2026-11-06T16:55:11Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "CC0603JRNPO9BN332",
@@ -361,7 +361,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-CC0603KRX7R9BB473_C107093.pdf",
    "description": "47nF 50V X7R ±10% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:46:41Z",
+   "fetched_utc": "2026-11-06T16:55:12Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "CC0603KRX7R9BB473",
@@ -407,7 +407,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-0710RL_C109318.pdf",
    "description": "-55℃~+155℃ 100mW 10Ω 75V Thick Film Resistor ±1% ±200ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:46:42Z",
+   "fetched_utc": "2026-11-06T16:55:12Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RC0603FR-0710RL",
@@ -441,6 +441,56 @@
    "stock": 5331339,
    "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_yageo-rc0603fr-0710rl_C109318.html"
   },
+  "C111514": {
+   "attributes": {
+    "Color": "White",
+    "Flame Retardant Rating": "UL94V-0",
+    "Holes Structure": "1x4P",
+    "Number of PINs Per Row": "4",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "With Locker": "Non-Latching",
+    "With Wings": "Without Fins"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_JST-PHR-4_C111514.pdf",
+   "description": "-25℃~+85℃ 1 1x4P 2mm 4 Non-Latching PA66 PH UL94V-0 White Without Fins P=2mm Housings (Wire To Board / Wire To Wire ) ROHS",
+   "fetched_utc": "2026-11-06T16:55:13Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "PHR-4",
+   "package": "P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.0167
+    ],
+    [
+     500,
+     0.0129
+    ],
+    [
+     2000,
+     0.0107
+    ],
+    [
+     5000,
+     0.0095
+    ],
+    [
+     25000,
+     0.0083
+    ],
+    [
+     50000,
+     0.0077
+    ]
+   ],
+   "stock": 63703,
+   "url": "https://www.lcsc.com/product-detail/housings-wire-to-board-wire-to-wire_jst-phr-4_C111514.html"
+  },
   "C111515": {
    "attributes": {
     "Contact Material": "Phosphor Bronze",
@@ -454,7 +504,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2301041009_JST-SPH-002T-P0-5S_C111515.pdf",
    "description": "0.05~0.22 0.8mm~1.5mm 24~30 PH Phosphor bronze Tin - Housing Contact ROHS",
-   "fetched_utc": "2026-11-06T16:46:42Z",
+   "fetched_utc": "2026-11-06T16:55:14Z",
    "jlc_library": "extended",
    "manufacturer": "JST",
    "mpn": "SPH-002T-P0.5S",
@@ -501,7 +551,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1809080208_Texas-Instruments-TPS2553DBVR-1_C111738.pdf",
    "description": "-40℃~+150℃ 1 1.5A 2.5V~6.5V 85mΩ Active High High Side Switch 过压保护、软启动、欠压锁定、反向电压保护、集成电荷泵、Overcurrent Protection、Over temperature protection、锁存保护、Short-Circuit  Protection、反向电流阻断 SOT-23-6 Power Distribution Switches ROHS",
-   "fetched_utc": "2026-11-06T16:46:43Z",
+   "fetched_utc": "2026-11-06T16:55:14Z",
    "jlc_library": "extended",
    "manufacturer": "Texas Instruments",
    "mpn": "TPS2553DBVR-1",
@@ -547,7 +597,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-07680RL_C112310.pdf",
    "description": "-55℃~+155℃ 100mW 680Ω 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:46:44Z",
+   "fetched_utc": "2026-11-06T16:55:15Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RC0603FR-07680RL",
@@ -593,7 +643,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-0722KL_C114065.pdf",
    "description": "-55℃~+155℃ 100mW 22kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:46:44Z",
+   "fetched_utc": "2026-11-06T16:55:16Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RC0603FR-0722KL",
@@ -627,6 +677,56 @@
    "stock": 1175649,
    "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_yageo-rc0603fr-0722kl_C114065.html"
   },
+  "C114089": {
+   "attributes": {
+    "Color": "Black",
+    "Flame Retardant Rating": "UL94V-0",
+    "Holes Structure": "1x2P",
+    "Number of PINs Per Row": "2",
+    "Number of Rows": "1",
+    "Operating Temperature": "-40℃~+105℃",
+    "Pitch": "3mm",
+    "Plastic Material": "PA",
+    "Reference Series": "Micro-Fit(MX 3.0)",
+    "With Locker": "Locking",
+    "With Wings": "Without Fins"
+   },
+   "datasheet": "",
+   "description": "-40℃~+105℃ 1 1x2P 2 3mm Black Locking Micro-Fit(MX 3.0) PA UL94V-0 Without Fins P=3mm Housings (Wire To Board / Wire To Wire ) ROHS",
+   "fetched_utc": "2026-11-06T16:55:16Z",
+   "jlc_library": "extended",
+   "manufacturer": "MOLEX",
+   "mpn": "436450200",
+   "package": "P=3mm",
+   "price_usd": [
+    [
+     1,
+     0.1096
+    ],
+    [
+     50,
+     0.0911
+    ],
+    [
+     150,
+     0.0819
+    ],
+    [
+     500,
+     0.0749
+    ],
+    [
+     2500,
+     0.0695
+    ],
+    [
+     5000,
+     0.0667
+    ]
+   ],
+   "stock": 48247,
+   "url": "https://www.lcsc.com/product-detail/housings-wire-to-board-wire-to-wire_molex-436450200_C114089.html"
+  },
   "C114608": {
    "attributes": {
     "Operating Temperature": "-55℃~+155℃",
@@ -639,7 +739,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-07150RL_C114608.pdf",
    "description": "-55℃~+155℃ 100mW 150Ω 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:46:45Z",
+   "fetched_utc": "2026-11-06T16:55:17Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RC0603FR-07150RL",
@@ -685,7 +785,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-07470KL_C114622.pdf",
    "description": "-55℃~+155℃ 100mW 470kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:46:46Z",
+   "fetched_utc": "2026-11-06T16:55:18Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RC0603FR-07470KL",
@@ -731,7 +831,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-0749R9L_C114625.pdf",
    "description": "-55℃~+155℃ 100mW 49.9Ω 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:46:46Z",
+   "fetched_utc": "2026-11-06T16:55:18Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RC0603FR-0749R9L",
@@ -777,7 +877,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-072K2L_C114662.pdf",
    "description": "-55℃~+155℃ 100mW 2.2kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:46:47Z",
+   "fetched_utc": "2026-11-06T16:55:19Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RC0603FR-072K2L",
@@ -823,7 +923,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-07200RL_C114664.pdf",
    "description": "-55℃~+155℃ 100mW 200Ω 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:46:48Z",
+   "fetched_utc": "2026-11-06T16:55:20Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RC0603FR-07200RL",
@@ -872,7 +972,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Nichicon-UHE1E221MPD_C116228.pdf",
    "description": "11.5mm 130mΩ@100kHz 220uF 25V 3.5mm 640mA@100kHz 7000hrs@105℃ 8mm ±20% 插件,D8xL11.5mm Aluminum Electrolytic Capacitors - Leaded ROHS",
-   "fetched_utc": "2026-11-06T16:46:48Z",
+   "fetched_utc": "2026-11-06T16:55:20Z",
    "jlc_library": "extended",
    "manufacturer": "Nichicon",
    "mpn": "UHE1E221MPD",
@@ -918,7 +1018,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-07220KL_C123420.pdf",
    "description": "-55℃~+155℃ 100mW 220kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:46:49Z",
+   "fetched_utc": "2026-11-06T16:55:21Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RC0603FR-07220KL",
@@ -969,7 +1069,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Texas-Instruments-TPD4E1U06DBVR_C124691.pdf",
    "description": "-40℃~+125℃ 0.8pF 10nA 15V 3A@8/20us 45W@8/20us 5.5V 8.5V Four channels IEC 61000-4-2、IEC 61000-4-5、IEC 61000-4-4 TVS Unidirectional SOT-23-6 ESD and Surge Protection (TVS/ESD) ROHS",
-   "fetched_utc": "2026-11-06T16:46:50Z",
+   "fetched_utc": "2026-11-06T16:55:22Z",
    "jlc_library": "extended",
    "manufacturer": "Texas Instruments",
    "mpn": "TPD4E1U06DBVR",
@@ -1015,7 +1115,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-AC0603FR-07100RL_C125923.pdf",
    "description": "-55℃~+155℃ 100mW 100Ω 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:46:50Z",
+   "fetched_utc": "2026-11-06T16:55:22Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "AC0603FR-07100RL",
@@ -1061,7 +1161,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-AC0603FR-0715KL_C125928.pdf",
    "description": "-55℃~+155℃ 100mW 15kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:46:51Z",
+   "fetched_utc": "2026-11-06T16:55:23Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "AC0603FR-0715KL",
@@ -1110,7 +1210,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Texas-Instruments-LM4040A20IDBZR_C127070.pdf",
    "description": "-40℃~+85℃ 100ppm/℃ 15mA 2.048V 35uVrms 45uA 80uA Fixed Parallel ±0.1% SOT-23 Voltage Reference ROHS",
-   "fetched_utc": "2026-11-06T16:46:52Z",
+   "fetched_utc": "2026-11-06T16:55:24Z",
    "jlc_library": "extended",
    "manufacturer": "Texas Instruments",
    "mpn": "LM4040A20IDBZR",
@@ -1144,6 +1244,122 @@
    "stock": 98,
    "url": "https://www.lcsc.com/product-detail/voltage-reference_texas-instruments-lm4040a20idbzr_C127070.html"
   },
+  "C131334": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "2A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Through Hole",
+    "Number of PINs Per Row": "4",
+    "Number of Pins": "4P",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pins Structure": "1x4P",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "Supplementary Features": "K-foot",
+    "Voltage Rating": "100V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "9.9mm",
+    "Y-Width of Bottom Edge on Board": "4.5mm",
+    "Z-Height of the Board": "6mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-B4B-PH-K-S-LF-SN_C131334.pdf",
+   "description": "-25℃~+85℃ 1 100V 1x4P 2A 2mm 4 4.5mm 4P 6mm 9.9mm Brass K Pin PA66 PH Through Hole Tin UL94V-0 White 插件,P=2mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-06T16:55:24Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "B4B-PH-K-S(LF)(SN)",
+   "package": "Plugin,P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.0456
+    ],
+    [
+     100,
+     0.0375
+    ],
+    [
+     300,
+     0.0333
+    ],
+    [
+     1000,
+     0.0298
+    ],
+    [
+     5000,
+     0.0287
+    ],
+    [
+     10000,
+     0.0279
+    ]
+   ],
+   "stock": 143194,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-b4b-ph-k-s-lf-sn_C131334.html"
+  },
+  "C131337": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "2A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Through Hole",
+    "Number of PINs Per Row": "2",
+    "Number of Pins": "2P",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pins Structure": "1x2P",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "Supplementary Features": "K-foot",
+    "Voltage Rating": "100V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "5.9mm",
+    "Y-Width of Bottom Edge on Board": "4.5mm",
+    "Z-Height of the Board": "6mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-B2B-PH-K-S-LF-SN_C131337.pdf",
+   "description": "-25℃~+85℃ 1 100V 1x2P 2 2A 2P 2mm 4.5mm 5.9mm 6mm Brass K Pin PA66 PH Through Hole Tin UL94V-0 White 插件,P=2mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-06T16:55:25Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "B2B-PH-K-S(LF)(SN)",
+   "package": "Plugin,P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.0356
+    ],
+    [
+     200,
+     0.0282
+    ],
+    [
+     1000,
+     0.0248
+    ],
+    [
+     2000,
+     0.0223
+    ],
+    [
+     10000,
+     0.0213
+    ],
+    [
+     20000,
+     0.0207
+    ]
+   ],
+   "stock": 288510,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-b2b-ph-k-s-lf-sn_C131337.html"
+  },
   "C131339": {
    "attributes": {
     "Color": "White",
@@ -1168,7 +1384,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-B3B-PH-K-S-LF-SN_C131339.pdf",
    "description": "-25℃~+85℃ 1 100V 1x3P 2A 2mm 3 3P 4.5mm 6mm 7.9mm Brass K Pin PA66 PH Through Hole Tin UL94V-0 White 插件,P=2mm Wire To Board Connector ROHS",
-   "fetched_utc": "2026-11-06T16:46:52Z",
+   "fetched_utc": "2026-11-06T16:55:26Z",
    "jlc_library": "extended",
    "manufacturer": "JST",
    "mpn": "B3B-PH-K-S(LF)(SN)",
@@ -1226,7 +1442,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1811151524_JST-B6B-PH-K-S-LF-SN_C131342.pdf",
    "description": "-25℃~+85℃ 1 100V 13.9mm 1x6P 2A 2mm 4.5mm 6 6P 6mm Brass K Pin PA66 PH Through Hole Tin UL94V-0 White 插件,P=2mm Wire To Board Connector ROHS",
-   "fetched_utc": "2026-11-06T16:46:53Z",
+   "fetched_utc": "2026-11-06T16:55:26Z",
    "jlc_library": "extended",
    "manufacturer": "JST",
    "mpn": "B6B-PH-K-S(LF)(SN)",
@@ -1276,7 +1492,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1809122021_Texas-Instruments-TPS3701DDCR_C132788.pdf",
    "description": "-40℃~+125℃ 1.8V~36V 1nA 2 2.7us 40V 5.5mV 7uA 9.9us Open-drain TTL、CMOS SOT-23-Thin-6 Comparators ROHS",
-   "fetched_utc": "2026-11-06T16:46:54Z",
+   "fetched_utc": "2026-11-06T16:55:27Z",
    "jlc_library": "extended",
    "manufacturer": "Texas Instruments",
    "mpn": "TPS3701DDCR",
@@ -1320,7 +1536,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2308111537_Murata-Electronics-LQW2UAS68NG0CL_C1330567.pdf",
    "description": "1A 200mΩ 68nH ±2% 1008 Power Inductors ROHS",
-   "fetched_utc": "2026-11-06T16:46:54Z",
+   "fetched_utc": "2026-11-06T16:55:28Z",
    "jlc_library": "extended",
    "manufacturer": "Murata Electronics",
    "mpn": "LQW2UAS68NG0CL",
@@ -1371,7 +1587,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_PANASONIC-16SVPC100M_C136275.pdf",
    "description": "-55℃~+105℃ 100uF 16V 2.49A@100kHz 2000hrs@105℃ 24mΩ@100kHz 5.9mm 6.3mm Polarized Polymer ±20% SMD,D6.3xL5.9mm Polymer Aluminum Capacitors ROHS",
-   "fetched_utc": "2026-11-06T16:46:55Z",
+   "fetched_utc": "2026-11-06T16:55:28Z",
    "jlc_library": "extended",
    "manufacturer": "PANASONIC",
    "mpn": "16SVPC100M",
@@ -1417,7 +1633,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-0743K2L_C137720.pdf",
    "description": "-55℃~+155℃ 100mW 43.2kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:46:56Z",
+   "fetched_utc": "2026-11-06T16:55:29Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RC0603FR-0743K2L",
@@ -1463,7 +1679,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-0713KL_C137796.pdf",
    "description": "-55℃~+155℃ 100mW 13kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:46:56Z",
+   "fetched_utc": "2026-11-06T16:55:30Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RC0603FR-0713KL",
@@ -1510,7 +1726,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1810291812_Texas-Instruments-TPS2553DRVR_C138719.pdf",
    "description": "-40℃~+150℃ 1 1.5A 100mΩ 2.5V~6.5V Active High High Side Switch Overvoltage Protection、Soft-start、Under-voltage lockout、Reverse voltage protection、Integrated charge pump、Overcurrent Protection、Over temperature protection、Latch protection、Short-Circuit  Protection、Reverse current blocking WSON-6-EP(2x2) Power Distribution Switches ROHS",
-   "fetched_utc": "2026-11-06T16:46:57Z",
+   "fetched_utc": "2026-11-06T16:55:30Z",
    "jlc_library": "extended",
    "manufacturer": "Texas Instruments",
    "mpn": "TPS2553DRVR",
@@ -1558,7 +1774,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Nanjing-Shiheng-Elec-MF52A103F3950--A1_C13879.pdf",
    "description": "-55℃~+125℃ 1.7mm 10kΩ 2mW/℃ 3950K 50mW 7s ±1% ±1% Plugin,P=1.7mm NTC Thermistors ROHS",
-   "fetched_utc": "2026-11-06T16:46:58Z",
+   "fetched_utc": "2026-11-06T16:55:31Z",
    "jlc_library": "extended",
    "manufacturer": "Nanjing Shiheng Elec",
    "mpn": "MF52A103F3950 (A1)",
@@ -1604,7 +1820,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1811141711_onsemi-BAT54CLT1G_C14308.pdf",
    "description": "-55℃~+125℃ 1 Pair Common Cathode 200mA 2uA@25V 30V 600mA 800mV@100mA SOT-23 Schottky Diodes ROHS",
-   "fetched_utc": "2026-11-06T16:46:58Z",
+   "fetched_utc": "2026-11-06T16:55:32Z",
    "jlc_library": "extended",
    "manufacturer": "onsemi",
    "mpn": "BAT54CLT1G",
@@ -1650,7 +1866,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_BOURNS-PEC11R-4215F-S0024_C143790.pdf",
    "description": "-30℃~+70℃ 10mA 24/24 5V Incremental Straight Two-phase output 插件 Rotary Encoders ROHS",
-   "fetched_utc": "2026-11-06T16:46:59Z",
+   "fetched_utc": "2026-11-06T16:55:33Z",
    "jlc_library": "extended",
    "manufacturer": "BOURNS",
    "mpn": "PEC11R-4215F-S0024",
@@ -1696,7 +1912,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_BOURNS-PEC11R-4220F-S0024_C143797.pdf",
    "description": "插件 Rotary Encoders ROHS",
-   "fetched_utc": "2026-11-06T16:47:00Z",
+   "fetched_utc": "2026-11-06T16:55:33Z",
    "jlc_library": "extended",
    "manufacturer": "BOURNS",
    "mpn": "PEC11R-4220F-S0024",
@@ -1739,7 +1955,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2211101700_YAGEO-CC0603KRX7R9BB104_C14663.pdf",
    "description": "100nF 50V X7R ±10% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:47:00Z",
+   "fetched_utc": "2026-11-06T16:55:34Z",
    "jlc_library": "basic",
    "manufacturer": "YAGEO",
    "mpn": "CC0603KRX7R9BB104",
@@ -1770,7 +1986,7 @@
      0.0049
     ]
    ],
-   "stock": 34738313,
+   "stock": 34738367,
    "url": "https://www.lcsc.com/product-detail/multilayer-ceramic-capacitors-mlcc-smd-smt_yageo-cc0603krx7r9bb104_C14663.html"
   },
   "C14675": {
@@ -1785,7 +2001,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1809281124_YAGEO-RC0603FR-07100KL_C14675.pdf",
    "description": "-55℃~+155℃ 100kΩ 100mW 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:01Z",
+   "fetched_utc": "2026-11-06T16:55:35Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RC0603FR-07100KL",
@@ -1816,7 +2032,7 @@
      0.0011
     ]
    ],
-   "stock": 11508548,
+   "stock": 11501534,
    "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_yageo-rc0603fr-07100kl_C14675.html"
   },
   "C151093": {
@@ -1832,7 +2048,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_Littelfuse-0297005-WXNV_C151093.pdf",
    "description": "-40℃~+125℃ 129mV 17.75mΩ 1kA@32V 25 32V 5A Blade Fuse - Automotive Fuses ROHS",
-   "fetched_utc": "2026-11-06T16:47:02Z",
+   "fetched_utc": "2026-11-06T16:55:35Z",
    "jlc_library": "extended",
    "manufacturer": "Littelfuse",
    "mpn": "0297005.WXNV",
@@ -1882,7 +2098,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Littelfuse-SMBJ13A_C151252.pdf",
    "description": "-65℃~+150℃ 14V 17.2V 1uA 23.2V 25.9A@10/1000us 600W@10/1000us IEC 61000-4-2 TVS Unidirectional DO-214AA ESD and Surge Protection (TVS/ESD) ROHS",
-   "fetched_utc": "2026-11-06T16:47:02Z",
+   "fetched_utc": "2026-11-06T16:55:36Z",
    "jlc_library": "extended",
    "manufacturer": "Littelfuse",
    "mpn": "SMBJ13A",
@@ -1930,7 +2146,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2412061733_Alpha---Omega-Semicon-AO3401A_C15127.pdf",
    "description": "1 P-Channel 14nC@10V 30V 47mΩ@10V、60mΩ@4.5V、85mΩ@2.5V 4A 55pF 645pF 80pF 900mV SOT-23 MOSFETs ROHS",
-   "fetched_utc": "2026-11-06T16:47:03Z",
+   "fetched_utc": "2026-11-06T16:55:37Z",
    "jlc_library": "basic",
    "manufacturer": "Alpha & Omega Semicon",
    "mpn": "AO3401A",
@@ -1961,7 +2177,7 @@
      0.0452
     ]
    ],
-   "stock": 1702347,
+   "stock": 1702324,
    "url": "https://www.lcsc.com/product-detail/mosfets_alpha-omega-semicon-ao3401a_C15127.html"
   },
   "C15155": {
@@ -1981,7 +2197,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1810231523_Alpha---Omega-Semicon-AO3407A_C15155.pdf",
    "description": "1 P-Channel 16nC@10V 2.5V 30V 4.3A 48mΩ@10V 830pF 92pF SOT-23 MOSFETs ROHS",
-   "fetched_utc": "2026-11-06T16:47:04Z",
+   "fetched_utc": "2026-11-06T16:55:37Z",
    "jlc_library": "extended",
    "manufacturer": "Alpha & Omega Semicon",
    "mpn": "AO3407A",
@@ -2027,7 +2243,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1809081630_Diodes-Incorporated-BAV199-7-F_C155248.pdf",
    "description": "-55℃~+150℃ 1 Pair Series Connection 1.25V@150mA 160mA 4A 5nA@75V 85V SOT-23 Diodes - General Purpose ROHS",
-   "fetched_utc": "2026-11-06T16:47:04Z",
+   "fetched_utc": "2026-11-06T16:55:38Z",
    "jlc_library": "extended",
    "manufacturer": "Diodes Incorporated",
    "mpn": "BAV199-7-F",
@@ -2074,7 +2290,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/1809211026_Xucheng-Elec-KSD9700-70-5JSB-080C_C156512.pdf",
    "description": "1 250V 5A 60℃ 75℃ Mechanical SPST ±5℃ - Thermostat Switches ROHS",
-   "fetched_utc": "2026-11-06T16:47:05Z",
+   "fetched_utc": "2026-11-06T16:55:39Z",
    "jlc_library": "extended",
    "manufacturer": "Xucheng Elec",
    "mpn": "KSD9700-70/5JSB/080C",
@@ -2124,7 +2340,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Littelfuse-SMBJ17A_C157523.pdf",
    "description": "-65℃~+150℃ 17V 1uA 20.9V 21.8A@10/1000us 27.6V 600W@10/1000us IEC 61000-4-2、IEC 61000-4-4 TVS Unidirectional DO-214AA ESD and Surge Protection (TVS/ESD) ROHS",
-   "fetched_utc": "2026-11-06T16:47:06Z",
+   "fetched_utc": "2026-11-06T16:55:39Z",
    "jlc_library": "extended",
    "manufacturer": "Littelfuse",
    "mpn": "SMBJ17A",
@@ -2158,6 +2374,570 @@
    "stock": 1539,
    "url": "https://www.lcsc.com/product-detail/esd-and-surge-protection-tvs-esd_littelfuse-smbj17a_C157523.html"
   },
+  "C157915": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "2A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Right Angle",
+    "Number of PINs Per Row": "8",
+    "Number of Pins": "8P",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pins Structure": "1x8P",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "Supplementary Features": "K-foot",
+    "Voltage Rating": "100V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "17.9mm",
+    "Y-Width of Bottom Edge on Board": "7.6mm",
+    "Z-Height of the Board": "4.8mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-S8B-PH-K-S-LF-SN_C157915.pdf",
+   "description": "-25℃~+85℃ 1 100V 17.9mm 1x8P 2A 2mm 4.8mm 7.6mm 8 8P Brass K Pin PA66 PH Right Angle Tin UL94V-0 White 弯插,P=2mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-06T16:55:40Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "S8B-PH-K-S(LF)(SN)",
+   "package": "Push-Pull,P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.1191
+    ],
+    [
+     50,
+     0.0955
+    ],
+    [
+     250,
+     0.0817
+    ],
+    [
+     500,
+     0.0729
+    ],
+    [
+     2500,
+     0.0659
+    ],
+    [
+     5000,
+     0.0624
+    ]
+   ],
+   "stock": 13978,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-s8b-ph-k-s-lf-sn_C157915.html"
+  },
+  "C157917": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "2A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Right Angle",
+    "Number of PINs Per Row": "7",
+    "Number of Pins": "7P",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pins Structure": "1x7P",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "Supplementary Features": "K-foot",
+    "Voltage Rating": "100V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "15.9mm",
+    "Y-Width of Bottom Edge on Board": "7.6mm",
+    "Z-Height of the Board": "4.8mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-S7B-PH-K-S-LF-SN_C157917.pdf",
+   "description": "-25℃~+85℃ 1 100V 15.9mm 1x7P 2A 2mm 4.8mm 7 7.6mm 7P Brass K Pin PA66 PH Right Angle Tin UL94V-0 White 弯插,P=2mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-06T16:55:41Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "S7B-PH-K-S(LF)(SN)",
+   "package": "Push-Pull,P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.1223
+    ],
+    [
+     50,
+     0.0953
+    ],
+    [
+     150,
+     0.0819
+    ],
+    [
+     500,
+     0.0718
+    ],
+    [
+     2500,
+     0.0637
+    ],
+    [
+     5000,
+     0.0596
+    ]
+   ],
+   "stock": 8530,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-s7b-ph-k-s-lf-sn_C157917.html"
+  },
+  "C157920": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "2A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Right Angle",
+    "Number of PINs Per Row": "6",
+    "Number of Pins": "6P",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pins Structure": "1x6P",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "Supplementary Features": "K-foot",
+    "Voltage Rating": "100V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "13.9mm",
+    "Y-Width of Bottom Edge on Board": "7.6mm",
+    "Z-Height of the Board": "4.8mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-S6B-PH-K-S-LF-SN_C157920.pdf",
+   "description": "-25℃~+85℃ 1 100V 13.9mm 1x6P 2A 2mm 4.8mm 6 6P 7.6mm Brass K Pin PA66 PH Right Angle Tin UL94V-0 White 弯插,P=2mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-06T16:55:41Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "S6B-PH-K-S(LF)(SN)",
+   "package": "Push-Pull,P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.0714
+    ],
+    [
+     100,
+     0.0582
+    ],
+    [
+     500,
+     0.0515
+    ],
+    [
+     1000,
+     0.0465
+    ],
+    [
+     5000,
+     0.0424
+    ],
+    [
+     10000,
+     0.0405
+    ]
+   ],
+   "stock": 77755,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-s6b-ph-k-s-lf-sn_C157920.html"
+  },
+  "C157923": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "2A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Right Angle",
+    "Number of PINs Per Row": "5",
+    "Number of Pins": "5P",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pins Structure": "1x5P",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "Supplementary Features": "K-foot",
+    "Voltage Rating": "100V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "11.9mm",
+    "Y-Width of Bottom Edge on Board": "7.6mm",
+    "Z-Height of the Board": "4.8mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-S5B-PH-K-S-LF-SN_C157923.pdf",
+   "description": "-25℃~+85℃ 1 100V 11.9mm 1x5P 2A 2mm 4.8mm 5 5P 7.6mm Brass K Pin PA66 PH Right Angle Tin UL94V-0 White 弯插,P=2mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-06T16:55:42Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "S5B-PH-K-S(LF)(SN)",
+   "package": "Push-Pull,P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.0776
+    ],
+    [
+     100,
+     0.0636
+    ],
+    [
+     500,
+     0.051
+    ],
+    [
+     1000,
+     0.0457
+    ],
+    [
+     5000,
+     0.0415
+    ],
+    [
+     10000,
+     0.0393
+    ]
+   ],
+   "stock": 58045,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-s5b-ph-k-s-lf-sn_C157923.html"
+  },
+  "C157926": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "2A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Right Angle",
+    "Number of PINs Per Row": "4",
+    "Number of Pins": "4P",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pins Structure": "1x4P",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "Supplementary Features": "K-foot",
+    "Voltage Rating": "100V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "9.9mm",
+    "Y-Width of Bottom Edge on Board": "7.6mm",
+    "Z-Height of the Board": "4.8mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-S4B-PH-K-S-LF-SN_C157926.pdf",
+   "description": "-25℃~+85℃ 1 100V 1x4P 2A 2mm 4 4.8mm 4P 7.6mm 9.9mm Brass K Pin PA66 PH Right Angle Tin UL94V-0 White 弯插,P=2mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-06T16:55:43Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "S4B-PH-K-S(LF)(SN)",
+   "package": "Push-Pull,P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.0703
+    ],
+    [
+     100,
+     0.0591
+    ],
+    [
+     500,
+     0.0519
+    ],
+    [
+     1000,
+     0.0479
+    ],
+    [
+     5000,
+     0.0444
+    ],
+    [
+     10000,
+     0.0428
+    ]
+   ],
+   "stock": 31367,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-s4b-ph-k-s-lf-sn_C157926.html"
+  },
+  "C157929": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "2A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Right Angle",
+    "Number of PINs Per Row": "3",
+    "Number of Pins": "3P",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pins Structure": "1x3P",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "Supplementary Features": "K-foot",
+    "Voltage Rating": "100V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "7.9mm",
+    "Y-Width of Bottom Edge on Board": "7.6mm",
+    "Z-Height of the Board": "4.8mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-S3B-PH-K-S-LF-SN_C157929.pdf",
+   "description": "-25℃~+85℃ 1 100V 1x3P 2A 2mm 3 3P 4.8mm 7.6mm 7.9mm Brass K Pin PA66 PH Right Angle Tin UL94V-0 White 弯插,P=2mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-06T16:55:43Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "S3B-PH-K-S(LF)(SN)",
+   "package": "Push-Pull,P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.037
+    ],
+    [
+     100,
+     0.033
+    ],
+    [
+     300,
+     0.031
+    ],
+    [
+     1000,
+     0.0295
+    ],
+    [
+     5000,
+     0.0284
+    ],
+    [
+     10000,
+     0.0277
+    ]
+   ],
+   "stock": 105183,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-s3b-ph-k-s-lf-sn_C157929.html"
+  },
+  "C157940": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "2A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Right Angle",
+    "Number of PINs Per Row": "13",
+    "Number of Pins": "13P",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pins Structure": "1x13P",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "Supplementary Features": "K-foot",
+    "Voltage Rating": "100V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "27.9mm",
+    "Y-Width of Bottom Edge on Board": "7.6mm",
+    "Z-Height of the Board": "4.8mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1811061213_JST-S13B-PH-K-S-LF-SN_C157940.pdf",
+   "description": "-25℃~+85℃ 1 100V 13 13P 1x13P 27.9mm 2A 2mm 4.8mm 7.6mm Brass K Pin PA66 PH Right Angle Tin UL94V-0 White 弯插,P=2mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-06T16:55:44Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "S13B-PH-K-S(LF)(SN)",
+   "package": "Push-Pull,P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.2107
+    ],
+    [
+     50,
+     0.1675
+    ],
+    [
+     250,
+     0.149
+    ],
+    [
+     500,
+     0.1259
+    ],
+    [
+     2500,
+     0.1156
+    ],
+    [
+     5000,
+     0.1094
+    ]
+   ],
+   "stock": 1073,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-s13b-ph-k-s-lf-sn_C157940.html"
+  },
+  "C157943": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "2A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Right Angle",
+    "Number of PINs Per Row": "12",
+    "Number of Pins": "12P",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pins Structure": "1x12P",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "Supplementary Features": "K-foot",
+    "Voltage Rating": "100V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "25.9mm",
+    "Y-Width of Bottom Edge on Board": "7.6mm",
+    "Z-Height of the Board": "4.8mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-S12B-PH-K-S-LF-SN_C157943.pdf",
+   "description": "-25℃~+85℃ 1 100V 12 12P 1x12P 25.9mm 2A 2mm 4.8mm 7.6mm Brass K Pin PA66 PH Right Angle Tin UL94V-0 White 弯插,P=2mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-06T16:55:45Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "S12B-PH-K-S(LF)(SN)",
+   "package": "Push-Pull,P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.1762
+    ],
+    [
+     50,
+     0.1399
+    ],
+    [
+     250,
+     0.1243
+    ],
+    [
+     500,
+     0.105
+    ],
+    [
+     2500,
+     0.0963
+    ],
+    [
+     5000,
+     0.0911
+    ]
+   ],
+   "stock": 15,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-s12b-ph-k-s-lf-sn_C157943.html"
+  },
+  "C157950": {
+   "attributes": {
+    "Color": "White",
+    "Flame Retardant Rating": "UL94V-0",
+    "Holes Structure": "1x8P",
+    "Number of PINs Per Row": "8",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "With Locker": "Non-Latching",
+    "With Wings": "Without Fins"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_JST-PHR-8_C157950.pdf",
+   "description": "-25℃~+85℃ 1 1x8P 2mm 8 Non-Latching PA66 PH UL94V-0 White Without Fins P=2mm Housings (Wire To Board / Wire To Wire ) ROHS",
+   "fetched_utc": "2026-11-06T16:55:45Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "PHR-8",
+   "package": "P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.029
+    ],
+    [
+     200,
+     0.0223
+    ],
+    [
+     1000,
+     0.0185
+    ],
+    [
+     2000,
+     0.0163
+    ],
+    [
+     10000,
+     0.0143
+    ],
+    [
+     20000,
+     0.0133
+    ]
+   ],
+   "stock": 96674,
+   "url": "https://www.lcsc.com/product-detail/housings-wire-to-board-wire-to-wire_jst-phr-8_C157950.html"
+  },
+  "C157951": {
+   "attributes": {
+    "Color": "White",
+    "Flame Retardant Rating": "UL94V-0",
+    "Holes Structure": "1x7P",
+    "Number of PINs Per Row": "7",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "With Locker": "Non-Latching",
+    "With Wings": "Without Fins"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_JST-PHR-7_C157951.pdf",
+   "description": "-25℃~+85℃ 1 1x7P 2mm 7 Non-Latching PA66 PH UL94V-0 White Without Fins P=2mm Housings (Wire To Board / Wire To Wire ) ROHS",
+   "fetched_utc": "2026-11-06T16:55:46Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "PHR-7",
+   "package": "P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.0256
+    ],
+    [
+     200,
+     0.0205
+    ],
+    [
+     600,
+     0.0177
+    ],
+    [
+     2000,
+     0.0146
+    ],
+    [
+     10000,
+     0.0131
+    ],
+    [
+     20000,
+     0.0123
+    ]
+   ],
+   "stock": 13595,
+   "url": "https://www.lcsc.com/product-detail/housings-wire-to-board-wire-to-wire_jst-phr-7_C157951.html"
+  },
   "C157952": {
    "attributes": {
     "Color": "White",
@@ -2174,7 +2954,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_JST-PHR-6_C157952.pdf",
    "description": "-25℃~+85℃ 1 1x6P 2mm 6 Non-Latching PA66 PH UL94V-0 White Without Fins P=2mm Housings (Wire To Board / Wire To Wire ) ROHS",
-   "fetched_utc": "2026-11-06T16:47:06Z",
+   "fetched_utc": "2026-11-06T16:55:47Z",
    "jlc_library": "extended",
    "manufacturer": "JST",
    "mpn": "PHR-6",
@@ -2224,7 +3004,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_JST-PHR-5_C157953.pdf",
    "description": "-25℃~+85℃ 1 1x5P 2mm 5 Non-Latching PA66 PH UL94V-0 White Without Fins P=2mm Housings (Wire To Board / Wire To Wire ) ROHS",
-   "fetched_utc": "2026-11-06T16:47:07Z",
+   "fetched_utc": "2026-11-06T16:55:47Z",
    "jlc_library": "extended",
    "manufacturer": "JST",
    "mpn": "PHR-5",
@@ -2258,6 +3038,322 @@
    "stock": 10962,
    "url": "https://www.lcsc.com/product-detail/housings-wire-to-board-wire-to-wire_jst-phr-5_C157953.html"
   },
+  "C157955": {
+   "attributes": {
+    "Color": "White",
+    "Flame Retardant Rating": "UL94V-0",
+    "Holes Structure": "1x2P",
+    "Number of PINs Per Row": "2",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "With Locker": "Non-Latching",
+    "With Wings": "Without Fins"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_JST-PHR-2_C157955.pdf",
+   "description": "-25℃~+85℃ 1 1x2P 2 2mm Non-Latching PA66 PH UL94V-0 White Without Fins P=2mm Housings (Wire To Board / Wire To Wire ) ROHS",
+   "fetched_utc": "2026-11-06T16:55:48Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "PHR-2",
+   "package": "P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.0135
+    ],
+    [
+     500,
+     0.0106
+    ],
+    [
+     2000,
+     0.0091
+    ],
+    [
+     5000,
+     0.0081
+    ],
+    [
+     25000,
+     0.0073
+    ],
+    [
+     50000,
+     0.0068
+    ]
+   ],
+   "stock": 185490,
+   "url": "https://www.lcsc.com/product-detail/housings-wire-to-board-wire-to-wire_jst-phr-2_C157955.html"
+  },
+  "C157956": {
+   "attributes": {
+    "Color": "White",
+    "Flame Retardant Rating": "UL94V-0",
+    "Holes Structure": "1x16P",
+    "Number of PINs Per Row": "16",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "With Locker": "Non-Latching",
+    "With Wings": "Without Fins"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_JST-PHR-16_C157956.pdf",
+   "description": "-25℃~+85℃ 1 16 1x16P 2mm Non-Latching PA66 PH UL94V-0 White Without Fins P=2mm Housings (Wire To Board / Wire To Wire ) ROHS",
+   "fetched_utc": "2026-11-06T16:55:49Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "PHR-16",
+   "package": "P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.1061
+    ],
+    [
+     50,
+     0.0848
+    ],
+    [
+     150,
+     0.0742
+    ],
+    [
+     1000,
+     0.0662
+    ],
+    [
+     2000,
+     0.0598
+    ],
+    [
+     5000,
+     0.0565
+    ]
+   ],
+   "stock": 295,
+   "url": "https://www.lcsc.com/product-detail/housings-wire-to-board-wire-to-wire_jst-phr-16_C157956.html"
+  },
+  "C157959": {
+   "attributes": {
+    "Color": "White",
+    "Flame Retardant Rating": "UL94V-0",
+    "Holes Structure": "1x13P",
+    "Number of PINs Per Row": "13",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "With Locker": "Non-Latching",
+    "With Wings": "Without Fins"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_JST-PHR-13_C157959.pdf",
+   "description": "-25℃~+85℃ 1 13 1x13P 2mm Non-Latching PA66 PH UL94V-0 White Without Fins P=2mm Housings (Wire To Board / Wire To Wire ) ROHS",
+   "fetched_utc": "2026-11-06T16:55:49Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "PHR-13",
+   "package": "P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.0609
+    ],
+    [
+     100,
+     0.0483
+    ],
+    [
+     300,
+     0.0421
+    ],
+    [
+     1000,
+     0.0359
+    ],
+    [
+     5000,
+     0.0321
+    ],
+    [
+     10000,
+     0.0302
+    ]
+   ],
+   "stock": 198,
+   "url": "https://www.lcsc.com/product-detail/housings-wire-to-board-wire-to-wire_jst-phr-13_C157959.html"
+  },
+  "C157960": {
+   "attributes": {
+    "Color": "White",
+    "Flame Retardant Rating": "UL94V-0",
+    "Holes Structure": "1x12P",
+    "Number of PINs Per Row": "12",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "With Locker": "Non-Latching",
+    "With Wings": "Without Fins"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_JST-PHR-12_C157960.pdf",
+   "description": "-25℃~+85℃ 1 12 1x12P 2mm Non-Latching PA66 PH UL94V-0 White Without Fins P=2mm Housings (Wire To Board / Wire To Wire ) ROHS",
+   "fetched_utc": "2026-11-06T16:55:50Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "PHR-12",
+   "package": "P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.0955
+    ],
+    [
+     100,
+     0.0758
+    ],
+    [
+     300,
+     0.0659
+    ],
+    [
+     1000,
+     0.0585
+    ],
+    [
+     5000,
+     0.0526
+    ],
+    [
+     10000,
+     0.0497
+    ]
+   ],
+   "stock": 3009,
+   "url": "https://www.lcsc.com/product-detail/housings-wire-to-board-wire-to-wire_jst-phr-12_C157960.html"
+  },
+  "C157974": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "2A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Through Hole",
+    "Number of PINs Per Row": "8",
+    "Number of Pins": "8P",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pins Structure": "1x8P",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "Supplementary Features": "K-foot",
+    "Voltage Rating": "100V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "17.9mm",
+    "Y-Width of Bottom Edge on Board": "4.5mm",
+    "Z-Height of the Board": "6mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-B8B-PH-K-S-LF-SN_C157974.pdf",
+   "description": "-25℃~+85℃ 1 100V 17.9mm 1x8P 2A 2mm 4.5mm 6mm 8 8P Brass K Pin PA66 PH Through Hole Tin UL94V-0 White 插件,P=2mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-06T16:55:51Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "B8B-PH-K-S(LF)(SN)",
+   "package": "Plugin,P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.0865
+    ],
+    [
+     50,
+     0.0683
+    ],
+    [
+     150,
+     0.0593
+    ],
+    [
+     500,
+     0.0526
+    ],
+    [
+     2500,
+     0.0472
+    ],
+    [
+     5000,
+     0.0444
+    ]
+   ],
+   "stock": 50938,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-b8b-ph-k-s-lf-sn_C157974.html"
+  },
+  "C157981": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "2A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Through Hole",
+    "Number of PINs Per Row": "7",
+    "Number of Pins": "7P",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pins Structure": "1x7P",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "Supplementary Features": "K-foot",
+    "Voltage Rating": "100V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "15.9mm",
+    "Y-Width of Bottom Edge on Board": "4.5mm",
+    "Z-Height of the Board": "6mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-B7B-PH-K-S-LF-SN_C157981.pdf",
+   "description": "-25℃~+85℃ 1 100V 15.9mm 1x7P 2A 2mm 4.5mm 6mm 7 7P Brass K Pin PA66 PH Through Hole Tin UL94V-0 White 插件,P=2mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-06T16:55:51Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "B7B-PH-K-S(LF)(SN)",
+   "package": "Plugin,P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.0798
+    ],
+    [
+     50,
+     0.0639
+    ],
+    [
+     150,
+     0.056
+    ],
+    [
+     500,
+     0.05
+    ],
+    [
+     2500,
+     0.0452
+    ],
+    [
+     5000,
+     0.0429
+    ]
+   ],
+   "stock": 19343,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-b7b-ph-k-s-lf-sn_C157981.html"
+  },
   "C157993": {
    "attributes": {
     "Color": "White",
@@ -2282,7 +3378,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-B5B-PH-K-S-LF-SN_C157993.pdf",
    "description": "-25℃~+85℃ 1 100V 11.9mm 1x5P 2A 2mm 4.5mm 5 5P 6mm Brass K Pin PA66 PH Through Hole Tin UL94V-0 White 插件,P=2mm Wire To Board Connector ROHS",
-   "fetched_utc": "2026-11-06T16:47:08Z",
+   "fetched_utc": "2026-11-06T16:55:52Z",
    "jlc_library": "extended",
    "manufacturer": "JST",
    "mpn": "B5B-PH-K-S(LF)(SN)",
@@ -2316,6 +3412,180 @@
    "stock": 130319,
    "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-b5b-ph-k-s-lf-sn_C157993.html"
   },
+  "C158019": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "2A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Through Hole",
+    "Number of PINs Per Row": "16",
+    "Number of Pins": "16P",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pins Structure": "1x16P",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "Supplementary Features": "K-foot",
+    "Voltage Rating": "100V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "33.9mm",
+    "Y-Width of Bottom Edge on Board": "4.5mm",
+    "Z-Height of the Board": "6mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-B16B-PH-K-S-LF-SN_C158019.pdf",
+   "description": "-25℃~+85℃ 1 100V 16 16P 1x16P 2A 2mm 33.9mm 4.5mm 6mm Brass K Pin PA66 PH Through Hole Tin UL94V-0 White 插件,P=2mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-06T16:55:53Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "B16B-PH-K-S(LF)(SN)",
+   "package": "Plugin,P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.1967
+    ],
+    [
+     50,
+     0.1525
+    ],
+    [
+     250,
+     0.1335
+    ],
+    [
+     500,
+     0.1099
+    ],
+    [
+     2500,
+     0.0994
+    ],
+    [
+     5000,
+     0.093
+    ]
+   ],
+   "stock": 4416,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-b16b-ph-k-s-lf-sn_C158019.html"
+  },
+  "C158026": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "2A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Through Hole",
+    "Number of PINs Per Row": "13",
+    "Number of Pins": "13P",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pins Structure": "1x13P",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "Supplementary Features": "K-foot",
+    "Voltage Rating": "100V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "27.9mm",
+    "Y-Width of Bottom Edge on Board": "4.5mm",
+    "Z-Height of the Board": "6mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-B13B-PH-K-S-LF-SN_C158026.pdf",
+   "description": "-25℃~+85℃ 1 100V 13 13P 1x13P 27.9mm 2A 2mm 4.5mm 6mm Brass K Pin PA66 PH Through Hole Tin UL94V-0 White 插件,P=2mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-06T16:55:53Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "B13B-PH-K-S(LF)(SN)",
+   "package": "Plugin,P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.1574
+    ],
+    [
+     50,
+     0.1232
+    ],
+    [
+     250,
+     0.1084
+    ],
+    [
+     500,
+     0.0899
+    ],
+    [
+     2500,
+     0.0817
+    ],
+    [
+     5000,
+     0.0768
+    ]
+   ],
+   "stock": 2751,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-b13b-ph-k-s-lf-sn_C158026.html"
+  },
+  "C158028": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "2A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Through Hole",
+    "Number of PINs Per Row": "12",
+    "Number of Pins": "12P",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pins Structure": "1x12P",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "Supplementary Features": "K-foot",
+    "Voltage Rating": "100V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "25.9mm",
+    "Y-Width of Bottom Edge on Board": "4.5mm",
+    "Z-Height of the Board": "6mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-B12B-PH-K-S-LF-SN_C158028.pdf",
+   "description": "-25℃~+85℃ 1 100V 12 12P 1x12P 25.9mm 2A 2mm 4.5mm 6mm Brass K Pin PA66 PH Through Hole Tin UL94V-0 White 插件,P=2mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-06T16:55:54Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "B12B-PH-K-S(LF)(SN)",
+   "package": "Plugin,P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.1315
+    ],
+    [
+     50,
+     0.1065
+    ],
+    [
+     150,
+     0.0939
+    ],
+    [
+     400,
+     0.0845
+    ],
+    [
+     2400,
+     0.077
+    ],
+    [
+     4800,
+     0.0732
+    ]
+   ],
+   "stock": 7678,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-b12b-ph-k-s-lf-sn_C158028.html"
+  },
   "C15849": {
    "attributes": {
     "Capacitance": "1uF",
@@ -2325,7 +3595,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Samsung-Electro-Mechanics-CL10A105KB8NNNC_C15849.pdf",
    "description": "1uF 50V X5R ±10% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:47:08Z",
+   "fetched_utc": "2026-11-06T16:55:55Z",
    "jlc_library": "basic",
    "manufacturer": "Samsung Electro-Mechanics",
    "mpn": "CL10A105KB8NNNC",
@@ -2356,7 +3626,7 @@
      0.0059
     ]
    ],
-   "stock": 13079569,
+   "stock": 13079849,
    "url": "https://www.lcsc.com/product-detail/multilayer-ceramic-capacitors-mlcc-smd-smt_samsung-electro-mechanics-cl10a105kb8nnnc_C15849.html"
   },
   "C15850": {
@@ -2368,7 +3638,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Samsung-Electro-Mechanics-CL21A106KAYNNNE_C15850.pdf",
    "description": "10uF 25V X5R ±10% 0805 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:47:09Z",
+   "fetched_utc": "2026-11-06T16:55:55Z",
    "jlc_library": "basic",
    "manufacturer": "Samsung Electro-Mechanics",
    "mpn": "CL21A106KAYNNNE",
@@ -2399,7 +3669,7 @@
      0.0154
     ]
    ],
-   "stock": 14136297,
+   "stock": 14136501,
    "url": "https://www.lcsc.com/product-detail/multilayer-ceramic-capacitors-mlcc-smd-smt_samsung-electro-mechanics-cl21a106kaynnne_C15850.html"
   },
   "C1591": {
@@ -2411,7 +3681,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Samsung-Electro-Mechanics-CL10B104KB8NNNC_C1591.pdf",
    "description": "100nF 50V X7R ±10% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:47:10Z",
+   "fetched_utc": "2026-11-06T16:55:56Z",
    "jlc_library": "extended",
    "manufacturer": "Samsung Electro-Mechanics",
    "mpn": "CL10B104KB8NNNC",
@@ -2442,7 +3712,7 @@
      0.0037
     ]
    ],
-   "stock": 3375078,
+   "stock": 3374976,
    "url": "https://www.lcsc.com/product-detail/multilayer-ceramic-capacitors-mlcc-smd-smt_samsung-electro-mechanics-cl10b104kb8nnnc_C1591.html"
   },
   "C16338": {
@@ -2462,7 +3732,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2410122030_onsemi-2N7002LT1G_C16338.pdf",
    "description": "-55℃~+150℃ 1 N-channel 115mA 2.5V 225mW 25pF 50pF 5pF 60V 7.5Ω@10V N-Channel SOT-23 MOSFETs ROHS",
-   "fetched_utc": "2026-11-06T16:47:11Z",
+   "fetched_utc": "2026-11-06T16:55:57Z",
    "jlc_library": "extended",
    "manufacturer": "onsemi",
    "mpn": "2N7002LT1G",
@@ -2508,7 +3778,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-07162KL_C165760.pdf",
    "description": "-55℃~+155℃ 100mW 162kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:11Z",
+   "fetched_utc": "2026-11-06T16:55:57Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RC0603FR-07162KL",
@@ -2554,7 +3824,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_Littelfuse-0297004-WXT_C1665100.pdf",
    "description": "-40℃~+125℃ 17 1kA@32V 23.48mΩ 32V 4A Blade Fuse - Automotive Fuses ROHS",
-   "fetched_utc": "2026-11-06T16:47:12Z",
+   "fetched_utc": "2026-11-06T16:55:58Z",
    "jlc_library": "extended",
    "manufacturer": "Littelfuse",
    "mpn": "0297004.WXT",
@@ -2600,7 +3870,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_SUSUMU-RG3216P-3304-B-T5_C1703085.pdf",
    "description": "-55℃~+155℃ 200V 250mW 3.3MΩ Thin Film Resistor ±0.1% ±25ppm/℃ 1206 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:13Z",
+   "fetched_utc": "2026-11-06T16:55:59Z",
    "jlc_library": "extended",
    "manufacturer": "SUSUMU",
    "mpn": "RG3216P-3304-B-T5",
@@ -2646,7 +3916,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_Vishay-Intertech-TNPW0805332KBYEA_C1720329.pdf",
    "description": "-55℃~+155℃ 150V 200mW 332kΩ Thin Film Resistor ±0.1% ±10ppm/℃ 0805 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:13Z",
+   "fetched_utc": "2026-11-06T16:56:00Z",
    "jlc_library": "extended",
    "manufacturer": "Vishay Intertech",
    "mpn": "TNPW0805332KBYEA",
@@ -2692,7 +3962,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_Vishay-Intertech-TNPW08052K00BYEA_C1720459.pdf",
    "description": "-55℃~+155℃ 150V 200mW 2kΩ Thin Film Resistor ±0.1% ±10ppm/℃ 0805 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:14Z",
+   "fetched_utc": "2026-11-06T16:56:00Z",
    "jlc_library": "extended",
    "manufacturer": "Vishay Intertech",
    "mpn": "TNPW08052K00BYEA",
@@ -2738,7 +4008,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_Vishay-Intertech-TNPW080510K0BYEA_C1721548.pdf",
    "description": "-55℃~+155℃ 10kΩ 150V 200mW Thin Film Resistor ±0.1% ±10ppm/℃ 0805 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:15Z",
+   "fetched_utc": "2026-11-06T16:56:01Z",
    "jlc_library": "extended",
    "manufacturer": "Vishay Intertech",
    "mpn": "TNPW080510K0BYEA",
@@ -2789,7 +4059,7 @@
    },
    "datasheet": "",
    "description": "-40℃~+125℃ 0.6mW/℃ 10kΩ 3380K 3434K 3455K 3mW 3s 50mm 77uA ±1% ±1% - NTC Thermistors ROHS",
-   "fetched_utc": "2026-11-06T16:47:15Z",
+   "fetched_utc": "2026-11-06T16:56:02Z",
    "jlc_library": "extended",
    "manufacturer": "Murata Electronics",
    "mpn": "NXFT15XH103FEAB050",
@@ -2823,6 +4093,64 @@
    "stock": 0,
    "url": "https://www.lcsc.com/product-detail/ntc-thermistors_murata-electronics-nxft15xh103feab050_C17314387.html"
   },
+  "C173752": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "2A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Right Angle",
+    "Number of PINs Per Row": "2",
+    "Number of Pins": "2P",
+    "Number of Rows": "1",
+    "Operating Temperature": "-25℃~+85℃",
+    "Pins Structure": "1x2P",
+    "Pitch": "2mm",
+    "Plastic Material": "PA66",
+    "Reference Series": "PH",
+    "Supplementary Features": "K-foot",
+    "Voltage Rating": "100V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "5.9mm",
+    "Y-Width of Bottom Edge on Board": "7.6mm",
+    "Z-Height of the Board": "4.8mm"
+   },
+   "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_JST-S2B-PH-K-S-LF-SN_C173752.pdf",
+   "description": "-25℃~+85℃ 1 100V 1x2P 2 2A 2P 2mm 4.8mm 5.9mm 7.6mm Brass K Pin PA66 PH Right Angle Tin UL94V-0 White 弯插,P=2mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-06T16:56:02Z",
+   "jlc_library": "extended",
+   "manufacturer": "JST",
+   "mpn": "S2B-PH-K-S(LF)(SN)",
+   "package": "Push-Pull,P=2mm",
+   "price_usd": [
+    [
+     1,
+     0.0397
+    ],
+    [
+     200,
+     0.0318
+    ],
+    [
+     1000,
+     0.0274
+    ],
+    [
+     2000,
+     0.0248
+    ],
+    [
+     10000,
+     0.0225
+    ],
+    [
+     20000,
+     0.0212
+    ]
+   ],
+   "stock": 172826,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-s2b-ph-k-s-lf-sn_C173752.html"
+  },
   "C178940": {
    "attributes": {
     "Current Rating": "4A",
@@ -2836,7 +4164,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_Littelfuse-0297004-WXNV_C178940.pdf",
    "description": "-40℃~+125℃ 121mV 17 1kA@32V 23.48mΩ 32V 4A Blade Fuse - Automotive Fuses ROHS",
-   "fetched_utc": "2026-11-06T16:47:16Z",
+   "fetched_utc": "2026-11-06T16:56:03Z",
    "jlc_library": "extended",
    "manufacturer": "Littelfuse",
    "mpn": "0297004.WXNV",
@@ -2874,7 +4202,7 @@
    "attributes": {},
    "datasheet": null,
    "description": "- Automotive Fuses ROHS",
-   "fetched_utc": "2026-11-06T16:47:17Z",
+   "fetched_utc": "2026-11-06T16:56:04Z",
    "jlc_library": "extended",
    "manufacturer": "Littelfuse",
    "mpn": "029707.5WXNV",
@@ -2924,7 +4252,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1810201521_Texas-Instruments-INA3221AIRGVR_C181255.pdf",
    "description": "-300mV~26V -40℃~+125℃ 0.5uV/℃ 10uA 120dB 2.7V~5.5V 3 350uA 500nV High-side detection、Digital output interface、Programmable threshold alarm、Integrated ADC ±26V QFN-16-EP(4x4) Current Sense Amplifiers ROHS",
-   "fetched_utc": "2026-11-06T16:47:17Z",
+   "fetched_utc": "2026-11-06T16:56:04Z",
    "jlc_library": "extended",
    "manufacturer": "Texas Instruments",
    "mpn": "INA3221AIRGVR",
@@ -2973,7 +4301,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2303021230_Texas-Instruments-LM4040C30IDBZR_C181416.pdf",
    "description": "-40℃~+85℃ 100ppm/℃ 15mA 35uVrms 3V 45uA 45uA Fixed Parallel ±0.5% SOT-23 Voltage Reference ROHS",
-   "fetched_utc": "2026-11-06T16:47:18Z",
+   "fetched_utc": "2026-11-06T16:56:05Z",
    "jlc_library": "extended",
    "manufacturer": "Texas Instruments",
    "mpn": "LM4040C30IDBZR",
@@ -3019,7 +4347,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2309271449_Shenzhen-Kinghelm-Elec-KH-GX12-6P_C18203264.pdf",
    "description": "-20℃~+85℃ 1 Set Male and Female 125V 5A 6P M12 Straight Header 插件 Circular Connectors & Cable Connectors ROHS",
-   "fetched_utc": "2026-11-06T16:47:19Z",
+   "fetched_utc": "2026-11-06T16:56:06Z",
    "jlc_library": "extended",
    "manufacturer": "Shenzhen Kinghelm Elec",
    "mpn": "KH-GX12-6P",
@@ -3069,7 +4397,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2410122031_Texas-Instruments-TCA9517DR_C182421.pdf",
    "description": "-40℃~+85℃ 1 2 2.7V~5.5V 6mA 900mV~5.5V Bidirectional Buffers Open-drain Output enable high-impedance SMBus、I2C SOIC-8 Translators, Level Shifters ROHS",
-   "fetched_utc": "2026-11-06T16:47:19Z",
+   "fetched_utc": "2026-11-06T16:56:06Z",
    "jlc_library": "extended",
    "manufacturer": "Texas Instruments",
    "mpn": "TCA9517DR",
@@ -3115,7 +4443,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-071K65L_C185357.pdf",
    "description": "-55℃~+155℃ 1.65kΩ 100mW 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:20Z",
+   "fetched_utc": "2026-11-06T16:56:07Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RC0603FR-071K65L",
@@ -3161,7 +4489,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_Vishay-Intertech-TNPW0603174KBEEA_C1870358.pdf",
    "description": "-55℃~+155℃ 125mW 174kΩ 75V Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:21Z",
+   "fetched_utc": "2026-11-06T16:56:08Z",
    "jlc_library": "extended",
    "manufacturer": "Vishay Intertech",
    "mpn": "TNPW0603174KBEEA",
@@ -3204,7 +4532,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_TDK-C1608X7R1H473K080AA_C1870901.pdf",
    "description": "47nF 50V X7R ±10% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:47:21Z",
+   "fetched_utc": "2026-11-06T16:56:08Z",
    "jlc_library": "extended",
    "manufacturer": "TDK",
    "mpn": "C1608X7R1H473K080AA",
@@ -3249,7 +4577,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_PANASONIC-ERJPB3B9092V_C189497.pdf",
    "description": "-55℃~+155℃ 200mW 90.9kΩ Thick Film Resistor ±0.1% ±50ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:22Z",
+   "fetched_utc": "2026-11-06T16:56:09Z",
    "jlc_library": "extended",
    "manufacturer": "PANASONIC",
    "mpn": "ERJPB3B9092V",
@@ -3300,7 +4628,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1810011019_PANASONIC-16SVPC150M_C190722.pdf",
    "description": "-55℃~+105℃ 150uF 16V 2000hrs@105℃ 22mΩ@100kHz 3.22A@100kHz 6.9mm 8mm Polarized Polymer SMD ±20% SMD,D8xL6.9mm Polymer Aluminum Capacitors ROHS",
-   "fetched_utc": "2026-11-06T16:47:23Z",
+   "fetched_utc": "2026-11-06T16:56:10Z",
    "jlc_library": "extended",
    "manufacturer": "PANASONIC",
    "mpn": "16SVPC150M",
@@ -3334,6 +4662,56 @@
    "stock": 0,
    "url": "https://www.lcsc.com/product-detail/polymer-aluminum-capacitors_panasonic-16svpc150m_C190722.html"
   },
+  "C19193815": {
+   "attributes": {
+    "Connector Type": "IDC Header",
+    "Contact Material": "Copper",
+    "Contact Plating": "Gold",
+    "Current Rating": "3A",
+    "Holder Type": "Through Hole",
+    "Number of PINs Per Row": "20",
+    "Number of Positions or Pins": "2x20P",
+    "Number of Rows": "2",
+    "Operating Temperature": "-45℃~+105℃",
+    "Pitch": "2.54mm",
+    "Voltage Rating (Max)": "500V"
+   },
+   "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2404110140_Lian-Xin-Technology-XDFH-0254-2-20P_C19193815.pdf",
+   "description": "-45℃~+105℃ 2 2.54mm 20 2x20P 3A 500V Copper Gold IDC Header Through Hole Plugin,P=2.54mm IDC Connectors ROHS",
+   "fetched_utc": "2026-11-06T16:56:10Z",
+   "jlc_library": "extended",
+   "manufacturer": "Lian Xin Technology",
+   "mpn": "XDFH-0254-2*20P",
+   "package": "Plugin,P=2.54mm",
+   "price_usd": [
+    [
+     1,
+     0.5616
+    ],
+    [
+     10,
+     0.4404
+    ],
+    [
+     30,
+     0.3897
+    ],
+    [
+     80,
+     0.3242
+    ],
+    [
+     480,
+     0.2964
+    ],
+    [
+     800,
+     0.2783
+    ]
+   ],
+   "stock": 1469,
+   "url": "https://www.lcsc.com/product-detail/idc-connectors_lian-xin-technology-xdfh-0254-2-20p_C19193815.html"
+  },
   "C1973197": {
    "attributes": {
     "Clamping Voltage": "27.6V",
@@ -3349,7 +4727,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_Vishay-Intertech-SMBJ17A-E3-52_C1973197.pdf",
    "description": "-55℃~+150℃ 17V 1uA 20.9V 21.7A@10/1000us 27.6V 600W@10/1000us TVS Unidirectional SMB(DO-214AA) ESD and Surge Protection (TVS/ESD) ROHS",
-   "fetched_utc": "2026-11-06T16:47:23Z",
+   "fetched_utc": "2026-11-06T16:56:11Z",
    "jlc_library": "extended",
    "manufacturer": "Vishay Intertech",
    "mpn": "SMBJ17A-E3/52",
@@ -3404,7 +4782,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2410121837_Texas-Instruments-TLV3011BIDBVR_C20345920.pdf",
    "description": "-40℃~+125℃ 1 1.65V~5.5V 2.4uA 300uV 4.5pA 4us 74dB 7V 8mV CMOS Fail-safe function、Built-in hysteresis、Built-in reference source Open-drain Rail-to-rail input SOT-23-6 Comparators ROHS",
-   "fetched_utc": "2026-11-06T16:47:24Z",
+   "fetched_utc": "2026-11-06T16:56:12Z",
    "jlc_library": "extended",
    "manufacturer": "Texas Instruments",
    "mpn": "TLV3011BIDBVR",
@@ -3458,7 +4836,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2403281333_Texas-Instruments-TLV3012BIDBVR_C20345924.pdf",
    "description": "-40℃~+125℃ 1 1.65V~5.5V 10ns 12uV/℃ 1pA 2.4uA 300uV 4.5pA 4us 74dB 8mV CMOS Push-pull Rail-to-rail input SOT-23-6 Comparators ROHS",
-   "fetched_utc": "2026-11-06T16:47:25Z",
+   "fetched_utc": "2026-11-06T16:56:12Z",
    "jlc_library": "extended",
    "manufacturer": "Texas Instruments",
    "mpn": "TLV3012BIDBVR",
@@ -3502,7 +4880,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2403281339_Littelfuse-L4CL1206LR100DNR_C20349451.pdf",
    "description": "-55℃~+155℃ 100mΩ 500mW ±0.5% ±30ppm/℃ 1206 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:25Z",
+   "fetched_utc": "2026-11-06T16:56:13Z",
    "jlc_library": "extended",
    "manufacturer": "Littelfuse",
    "mpn": "L4CL1206LR100DNR",
@@ -3548,7 +4926,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_BOURNS-CR0603-FX-8872ELF_C203875.pdf",
    "description": "-55℃~+155℃ 100mW 50V 88.7kΩ Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:26Z",
+   "fetched_utc": "2026-11-06T16:56:14Z",
    "jlc_library": "extended",
    "manufacturer": "BOURNS",
    "mpn": "CR0603-FX-8872ELF",
@@ -3593,7 +4971,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_BOURNS-SRR1260-101M_C2041335.pdf",
    "description": "1.7A 1.7A 100uH 180mΩ ±20% SMD,12.5x12.5mm Power Inductors ROHS",
-   "fetched_utc": "2026-11-06T16:47:27Z",
+   "fetched_utc": "2026-11-06T16:56:14Z",
    "jlc_library": "extended",
    "manufacturer": "BOURNS",
    "mpn": "SRR1260-101M",
@@ -3638,7 +5016,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_Vishay-Intertech-WSL2512R3300FEA_C2073866.pdf",
    "description": "1W 330mΩ Current Sense Resistor SMD ±1% ±75ppm/℃ 2512 Current Sense Resistors / Shunt Resistors ROHS",
-   "fetched_utc": "2026-11-06T16:47:27Z",
+   "fetched_utc": "2026-11-06T16:56:15Z",
    "jlc_library": "extended",
    "manufacturer": "Vishay Intertech",
    "mpn": "WSL2512R3300FEA",
@@ -3684,7 +5062,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_Vishay-Intertech-TNPW060319K6BEEA_C2079053.pdf",
    "description": "-55℃~+155℃ 125mW 19.6kΩ 75V Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:28Z",
+   "fetched_utc": "2026-11-06T16:56:16Z",
    "jlc_library": "extended",
    "manufacturer": "Vishay Intertech",
    "mpn": "TNPW060319K6BEEA",
@@ -3731,7 +5109,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1806102213_Analog-Devices-HMC7992LP3DE_C208307.pdf",
    "description": "-40℃~+105℃ 100MHz~6GHz 1dB 3.3V~5V 35dBm 45dB Integrated control logic、Integrated impedance matching network LFCSP-16(3x3) RF Switches ROHS",
-   "fetched_utc": "2026-11-06T16:47:29Z",
+   "fetched_utc": "2026-11-06T16:56:17Z",
    "jlc_library": "extended",
    "manufacturer": "Analog Devices",
    "mpn": "HMC7992LP3DE",
@@ -3782,7 +5160,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_BOURNS-MF-MSMF075-24-2_C208467.pdf",
    "description": "-40℃~+85℃ 110mΩ 24V 3.2mm 40A 450mΩ 5.4mm 800mW 1812 Resettable Fuses ROHS",
-   "fetched_utc": "2026-11-06T16:47:29Z",
+   "fetched_utc": "2026-11-06T16:56:17Z",
    "jlc_library": "extended",
    "manufacturer": "BOURNS",
    "mpn": "MF-MSMF075/24-2",
@@ -3828,7 +5206,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_Vishay-Intertech-CRCW060328K7FKEA_C2086345.pdf",
    "description": "-55℃~+155℃ 100mW 28.7kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:30Z",
+   "fetched_utc": "2026-11-06T16:56:18Z",
    "jlc_library": "extended",
    "manufacturer": "Vishay Intertech",
    "mpn": "CRCW060328K7FKEA",
@@ -3880,7 +5258,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1811081213_Alpha---Omega-Semicon-AO3400A_C20917.pdf",
    "description": "-55℃~+150℃ 1 N-channel 1.45V 1.4W 30V 48mΩ@2.5V 5.7A 50pF 630pF 75pF 7nC@10V N-Channel SOT-23 MOSFETs ROHS",
-   "fetched_utc": "2026-11-06T16:47:31Z",
+   "fetched_utc": "2026-11-06T16:56:18Z",
    "jlc_library": "basic",
    "manufacturer": "Alpha & Omega Semicon",
    "mpn": "AO3400A",
@@ -3911,7 +5289,7 @@
      0.0513
     ]
    ],
-   "stock": 1078092,
+   "stock": 1078032,
    "url": "https://www.lcsc.com/product-detail/mosfets_alpha-omega-semicon-ao3400a_C20917.html"
   },
   "C2098331": {
@@ -3926,7 +5304,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2202020800_YAGEO-AF0603FR-0734K8L_C2098331.pdf",
    "description": "-55℃~+155℃ 100mW 34.8kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:32Z",
+   "fetched_utc": "2026-11-06T16:56:19Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "AF0603FR-0734K8L",
@@ -3972,7 +5350,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010130_UNI-ROYAL-Uniroyal-Elec-0603WAF1001T5E_C21190.pdf",
    "description": "-55℃~+155℃ 100mW 1kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:32Z",
+   "fetched_utc": "2026-11-06T16:56:20Z",
    "jlc_library": "basic",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF1001T5E",
@@ -4003,7 +5381,7 @@
      0.0009
     ]
    ],
-   "stock": 27636071,
+   "stock": 27636161,
    "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf1001t5e_C21190.html"
   },
   "C2155776": {
@@ -4022,7 +5400,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2302221201_Texas-Instruments-TPS259630DDAR_C2155776.pdf",
    "description": "-40℃~+125℃ 1 1.7mm 2.7V~19V 3.9mm 4.91mm 89mΩ Integrated FET Surface Mount ESOP-8 Surge Protection Devices (SPDs) ROHS",
-   "fetched_utc": "2026-11-06T16:47:33Z",
+   "fetched_utc": "2026-11-06T16:56:21Z",
    "jlc_library": "extended",
    "manufacturer": "Texas Instruments",
    "mpn": "TPS259630DDAR",
@@ -4073,7 +5451,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2403291719_PANASONIC-16SVPG47M_C2161511.pdf",
    "description": "-55℃~+105℃ 160mA@120Hz 16V 25mΩ 4.5mm 47uF 5000hrs@105℃ 5mm Polarized Polymer SMD ±20% SMD,D5xL4.5mm Polymer Aluminum Capacitors ROHS",
-   "fetched_utc": "2026-11-06T16:47:33Z",
+   "fetched_utc": "2026-11-06T16:56:22Z",
    "jlc_library": "extended",
    "manufacturer": "PANASONIC",
    "mpn": "16SVPG47M",
@@ -4116,7 +5494,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2412191904_TDK-C1608C0G1H103J080AA_C2168383.pdf",
    "description": "10nF 50V C0G ±5% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:47:34Z",
+   "fetched_utc": "2026-11-06T16:56:22Z",
    "jlc_library": "extended",
    "manufacturer": "TDK",
    "mpn": "C1608C0G1H103J080AA",
@@ -4162,7 +5540,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Viking-Tech-ARG03FTC1961_C217859.pdf",
    "description": "-55℃~+155℃ 1.96kΩ 100mW 75V Thin Film Resistor ±1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:35Z",
+   "fetched_utc": "2026-11-06T16:56:23Z",
    "jlc_library": "extended",
    "manufacturer": "Viking Tech",
    "mpn": "ARG03FTC1961",
@@ -4208,7 +5586,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Viking-Tech-ARG03FTC2051_C217936.pdf",
    "description": "-55℃~+155℃ 100mW 2.05kΩ 75V Thin Film Resistor ±1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:36Z",
+   "fetched_utc": "2026-11-06T16:56:24Z",
    "jlc_library": "extended",
    "manufacturer": "Viking Tech",
    "mpn": "ARG03FTC2051",
@@ -4251,7 +5629,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_TDK-C3225X7R1H106K250AC_C2181731.pdf",
    "description": "10uF 50V X7R ±10% 1210 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:47:36Z",
+   "fetched_utc": "2026-11-06T16:56:24Z",
    "jlc_library": "extended",
    "manufacturer": "TDK",
    "mpn": "C3225X7R1H106K250AC",
@@ -4307,7 +5685,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1809051537_Microchip-Tech-MCP65R41T-1202E-CHY_C219181.pdf",
    "description": "-40℃~+125℃ 0.85us 1 1.8V~5.5V 10uV/℃ 1pA 1pA 2.5uA 3.3mV 3mV 4us 70dB 7V Built-in hysteresis、Built-in reference source Push-pull Rail-to-rail input TTL、CMOS SOT-23-6 Comparators ROHS",
-   "fetched_utc": "2026-11-06T16:47:37Z",
+   "fetched_utc": "2026-11-06T16:56:25Z",
    "jlc_library": "extended",
    "manufacturer": "Microchip Tech",
    "mpn": "MCP65R41T-1202E/CHY",
@@ -4353,7 +5731,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-071KL_C22548.pdf",
    "description": "-55℃~+155℃ 100mW 1kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:38Z",
+   "fetched_utc": "2026-11-06T16:56:26Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RC0603FR-071KL",
@@ -4399,7 +5777,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2411221126_UNI-ROYAL-Uniroyal-Elec-0603WAF1000T5E_C22775.pdf",
    "description": "-55℃~+155℃ 100mW 100Ω 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:38Z",
+   "fetched_utc": "2026-11-06T16:56:26Z",
    "jlc_library": "basic",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF1000T5E",
@@ -4430,7 +5808,7 @@
      0.0011
     ]
    ],
-   "stock": 9240936,
+   "stock": 9241046,
    "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf1000t5e_C22775.html"
   },
   "C22797": {
@@ -4445,7 +5823,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010130_UNI-ROYAL-Uniroyal-Elec-0603WAF1302T5E_C22797.pdf",
    "description": "-55℃~+155℃ 100mW 13kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:39Z",
+   "fetched_utc": "2026-11-06T16:56:27Z",
    "jlc_library": "basic",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF1302T5E",
@@ -4491,7 +5869,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010130_UNI-ROYAL-Uniroyal-Elec-0603WAF1500T5E_C22808.pdf",
    "description": "-55℃~+155℃ 100mW 150Ω 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:40Z",
+   "fetched_utc": "2026-11-06T16:56:28Z",
    "jlc_library": "basic",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF1500T5E",
@@ -4522,7 +5900,7 @@
      0.0007
     ]
    ],
-   "stock": 1340498,
+   "stock": 1340908,
    "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf1500t5e_C22808.html"
   },
   "C22809": {
@@ -4537,7 +5915,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010130_UNI-ROYAL-Uniroyal-Elec-0603WAF1502T5E_C22809.pdf",
    "description": "-55℃~+155℃ 100mW 15kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:40Z",
+   "fetched_utc": "2026-11-06T16:56:28Z",
    "jlc_library": "basic",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF1502T5E",
@@ -4568,7 +5946,7 @@
      0.0014
     ]
    ],
-   "stock": 3359614,
+   "stock": 3359722,
    "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf1502t5e_C22809.html"
   },
   "C22815": {
@@ -4583,7 +5961,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010130_UNI-ROYAL-Uniroyal-Elec-0603WAF1623T5E_C22815.pdf",
    "description": "-55℃~+155℃ 100mW 162kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:41Z",
+   "fetched_utc": "2026-11-06T16:56:29Z",
    "jlc_library": "extended",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF1623T5E",
@@ -4629,7 +6007,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010130_UNI-ROYAL-Uniroyal-Elec-0603WAF1651T5E_C22845.pdf",
    "description": "-55℃~+155℃ 1.65kΩ 100mW 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:42Z",
+   "fetched_utc": "2026-11-06T16:56:30Z",
    "jlc_library": "extended",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF1651T5E",
@@ -4675,7 +6053,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010130_UNI-ROYAL-Uniroyal-Elec-0603WAF1961T5E_C22854.pdf",
    "description": "-55℃~+155℃ 1.96kΩ 100mW 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:42Z",
+   "fetched_utc": "2026-11-06T16:56:30Z",
    "jlc_library": "extended",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF1961T5E",
@@ -4721,7 +6099,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010130_UNI-ROYAL-Uniroyal-Elec-0603WAF100JT5E_C22859.pdf",
    "description": "-55℃~+155℃ 100mW 10Ω 75V Thick Film Resistor ±1% ±400ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:43Z",
+   "fetched_utc": "2026-11-06T16:56:31Z",
    "jlc_library": "basic",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF100JT5E",
@@ -4752,7 +6130,7 @@
      0.0011
     ]
    ],
-   "stock": 5763367,
+   "stock": 5763501,
    "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf100jt5e_C22859.html"
   },
   "C22880": {
@@ -4767,7 +6145,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010130_UNI-ROYAL-Uniroyal-Elec-0603WAF1582T5E_C22880.pdf",
    "description": "-55℃~+155℃ 100mW 15.8kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:44Z",
+   "fetched_utc": "2026-11-06T16:56:32Z",
    "jlc_library": "extended",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF1582T5E",
@@ -4813,7 +6191,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010130_UNI-ROYAL-Uniroyal-Elec-0603WAF2872T5E_C22928.pdf",
    "description": "-55℃~+155℃ 100mW 28.7kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:44Z",
+   "fetched_utc": "2026-11-06T16:56:32Z",
    "jlc_library": "extended",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF2872T5E",
@@ -4859,7 +6237,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010130_UNI-ROYAL-Uniroyal-Elec-0603WAF2203T5E_C22961.pdf",
    "description": "-55℃~+155℃ 100mW 220kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:45Z",
+   "fetched_utc": "2026-11-06T16:56:33Z",
    "jlc_library": "basic",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF2203T5E",
@@ -4890,7 +6268,7 @@
      0.0008
     ]
    ],
-   "stock": 1041119,
+   "stock": 1041379,
    "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf2203t5e_C22961.html"
   },
   "C230105": {
@@ -4905,7 +6283,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-AC1210FR-071RL_C230105.pdf",
    "description": "-55℃~+155℃ 1Ω 200V 500mW Thick Film Resistor ±1% ±200ppm/℃ 1210 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:46Z",
+   "fetched_utc": "2026-11-06T16:56:34Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "AC1210FR-071RL",
@@ -4951,7 +6329,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-AC1210FR-07249RL_C230131.pdf",
    "description": "-55℃~+155℃ 200V 249Ω 500mW Thick Film Resistor ±1% ±100ppm/℃ 1210 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:46Z",
+   "fetched_utc": "2026-11-06T16:56:35Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "AC1210FR-07249RL",
@@ -4997,7 +6375,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010116_UNI-ROYAL-Uniroyal-Elec-0603WAF4322T5E_C23053.pdf",
    "description": "-55℃~+155℃ 100mW 43.2kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:47Z",
+   "fetched_utc": "2026-11-06T16:56:36Z",
    "jlc_library": "extended",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF4322T5E",
@@ -5043,7 +6421,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010116_UNI-ROYAL-Uniroyal-Elec-0603WAF5622T5E_C23080.pdf",
    "description": "-55℃~+155℃ 100mW 56.2kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:48Z",
+   "fetched_utc": "2026-11-06T16:56:36Z",
    "jlc_library": "extended",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF5622T5E",
@@ -5089,7 +6467,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010116_UNI-ROYAL-Uniroyal-Elec-0603WAF3482T5E_C23141.pdf",
    "description": "-55℃~+155℃ 100mW 34.8kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:48Z",
+   "fetched_utc": "2026-11-06T16:56:37Z",
    "jlc_library": "extended",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF3482T5E",
@@ -5135,7 +6513,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010116_UNI-ROYAL-Uniroyal-Elec-0603WAF4701T5E_C23162.pdf",
    "description": "-55℃~+155℃ 100mW 4.7kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:49Z",
+   "fetched_utc": "2026-11-06T16:56:38Z",
    "jlc_library": "basic",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF4701T5E",
@@ -5166,7 +6544,7 @@
      0.0015
     ]
    ],
-   "stock": 16200679,
+   "stock": 16200597,
    "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf4701t5e_C23162.html"
   },
   "C23178": {
@@ -5181,7 +6559,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010116_UNI-ROYAL-Uniroyal-Elec-0603WAF4703T5E_C23178.pdf",
    "description": "-55℃~+155℃ 100mW 470kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:50Z",
+   "fetched_utc": "2026-11-06T16:56:38Z",
    "jlc_library": "basic",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF4703T5E",
@@ -5227,7 +6605,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010116_UNI-ROYAL-Uniroyal-Elec-0603WAF499JT5E_C23185.pdf",
    "description": "-55℃~+155℃ 100mW 49.9Ω 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:50Z",
+   "fetched_utc": "2026-11-06T16:56:39Z",
    "jlc_library": "basic",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF499JT5E",
@@ -5273,7 +6651,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010116_UNI-ROYAL-Uniroyal-Elec-0603WAF5101T5E_C23186.pdf",
    "description": "-55℃~+155℃ 100mW 5.1kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:51Z",
+   "fetched_utc": "2026-11-06T16:56:40Z",
    "jlc_library": "basic",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF5101T5E",
@@ -5304,7 +6682,7 @@
      0.0007
     ]
    ],
-   "stock": 20432226,
+   "stock": 20432236,
    "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf5101t5e_C23186.html"
   },
   "C23228": {
@@ -5319,7 +6697,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010100_UNI-ROYAL-Uniroyal-Elec-0603WAF6800T5E_C23228.pdf",
    "description": "-55℃~+155℃ 100mW 680Ω 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:52Z",
+   "fetched_utc": "2026-11-06T16:56:40Z",
    "jlc_library": "basic",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF6800T5E",
@@ -5350,7 +6728,7 @@
      0.0011
     ]
    ],
-   "stock": 1684705,
+   "stock": 1684697,
    "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf6800t5e_C23228.html"
   },
   "C23258": {
@@ -5365,7 +6743,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010100_UNI-ROYAL-Uniroyal-Elec-0603WAF8872T5E_C23258.pdf",
    "description": "-55℃~+155℃ 100mW 75V 88.7kΩ Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:52Z",
+   "fetched_utc": "2026-11-06T16:56:41Z",
    "jlc_library": "extended",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF8872T5E",
@@ -5408,7 +6786,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Walsin-Tech-Corp-0402N102J500CT_C237166.pdf",
    "description": "1nF 50V NP0 ±5% 0402 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:47:53Z",
+   "fetched_utc": "2026-11-06T16:56:42Z",
    "jlc_library": "extended",
    "manufacturer": "Walsin Tech Corp",
    "mpn": "0402N102J500CT",
@@ -5454,7 +6832,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_Ohmite-KDV12DR200ET_C2442607.pdf",
    "description": "200mΩ 3.16A 500mW Current Sense Resistor SMD ±0.5% ±50ppm/℃ 1206 Current Sense Resistors / Shunt Resistors ROHS",
-   "fetched_utc": "2026-11-06T16:47:54Z",
+   "fetched_utc": "2026-11-06T16:56:42Z",
    "jlc_library": "extended",
    "manufacturer": "Ohmite",
    "mpn": "KDV12DR200ET",
@@ -5500,7 +6878,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_KOA-Speer-Elec-RK73H2ETTD2490F_C2480630.pdf",
    "description": "-55℃~+155℃ 200V 249Ω 500mW Thick Film Resistor ±1% ±100ppm/℃ 1210 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:54Z",
+   "fetched_utc": "2026-11-06T16:56:43Z",
    "jlc_library": "extended",
    "manufacturer": "KOA Speer Elec",
    "mpn": "RK73H2ETTD2490F",
@@ -5546,7 +6924,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2205311900_UNI-ROYAL-Uniroyal-Elec-1206W4F220LT5E_C25336.pdf",
    "description": "-55℃~+155℃ 200V 220mΩ 250mW Thick Film Resistor ±1% ±800ppm/℃ 1206 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:55Z",
+   "fetched_utc": "2026-11-06T16:56:44Z",
    "jlc_library": "extended",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "1206W4F220LT5E",
@@ -5592,7 +6970,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010045_UNI-ROYAL-Uniroyal-Elec-0603WAF1003T5E_C25803.pdf",
    "description": "-55℃~+155℃ 100kΩ 100mW 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:56Z",
+   "fetched_utc": "2026-11-06T16:56:44Z",
    "jlc_library": "basic",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF1003T5E",
@@ -5623,7 +7001,7 @@
      0.0015
     ]
    ],
-   "stock": 16295179,
+   "stock": 16295369,
    "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf1003t5e_C25803.html"
   },
   "C25804": {
@@ -5638,7 +7016,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010045_UNI-ROYAL-Uniroyal-Elec-0603WAF1002T5E_C25804.pdf",
    "description": "-55℃~+155℃ 100mW 10kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:57Z",
+   "fetched_utc": "2026-11-06T16:56:45Z",
    "jlc_library": "basic",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF1002T5E",
@@ -5669,7 +7047,7 @@
      0.0015
     ]
    ],
-   "stock": 42899597,
+   "stock": 42899112,
    "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf1002t5e_C25804.html"
   },
   "C259740": {
@@ -5688,7 +7066,7 @@
    },
    "datasheet": "",
    "description": "-40℃~+105℃ 1 1x3P 3 3mm Black Locking Micro-Fit(MX 3.0) PA UL94V-0 Without Fins P=3mm Housings (Wire To Board / Wire To Wire ) ROHS",
-   "fetched_utc": "2026-11-06T16:47:57Z",
+   "fetched_utc": "2026-11-06T16:56:46Z",
    "jlc_library": "extended",
    "manufacturer": "MOLEX",
    "mpn": "436450300",
@@ -5734,7 +7112,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010045_UNI-ROYAL-Uniroyal-Elec-0603WAF7151T5E_C25980.pdf",
    "description": "-55℃~+155℃ 100mW 7.15kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:47:58Z",
+   "fetched_utc": "2026-11-06T16:56:46Z",
    "jlc_library": "extended",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF7151T5E",
@@ -5782,7 +7160,7 @@
    },
    "datasheet": "",
    "description": "-40℃~+85℃ 1mA 2 2-Wire Bus 2-Wire Bus 2.7V~5.5V 6pF Auto-enable、Level shifting、Bus capacitance isolation、Power-off isolation Driver、Buffer SOP-8 Signal Buffers, Repeaters, Splitters ROHS",
-   "fetched_utc": "2026-11-06T16:47:59Z",
+   "fetched_utc": "2026-11-06T16:56:47Z",
    "jlc_library": "extended",
    "manufacturer": "NXP Semicon",
    "mpn": "PCA9517D,118",
@@ -5832,7 +7210,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2404021102_JST-PHR-3_C265393.pdf",
    "description": "-25℃~+85℃ 1 1x3P 2mm 3 Non-Latching PA66 PH UL94V-0 White Without Fins P=2mm Housings (Wire To Board / Wire To Wire ) ROHS",
-   "fetched_utc": "2026-11-06T16:47:59Z",
+   "fetched_utc": "2026-11-06T16:56:48Z",
    "jlc_library": "extended",
    "manufacturer": "JST",
    "mpn": "PHR-3",
@@ -5885,7 +7263,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2401301305_Omron-Electronics-G6K-2F-RF-S-DC5_C2750987.pdf",
    "description": "-40℃~+70℃ 100mW 100mΩ 1A 237Ω 300mA@125VAC、1A@30VDC 3ms 3ms 5V 60V@DC、125V@AC Two groups of conversions: 2C(Double-pole double-throw conversion) SMD Signal Relays ROHS",
-   "fetched_utc": "2026-11-06T16:48:00Z",
+   "fetched_utc": "2026-11-06T16:56:48Z",
    "jlc_library": "extended",
    "manufacturer": "Omron Electronics",
    "mpn": "G6K-2F-RF-S DC5",
@@ -5919,6 +7297,55 @@
    "stock": 2,
    "url": "https://www.lcsc.com/product-detail/signal-relays_omron-electronics-g6k-2f-rf-s-dc5_C2750987.html"
   },
+  "C277618": {
+   "attributes": {
+    "Color": "Black",
+    "Flame Retardant Rating": "UL94V-0",
+    "Holes Structure": "1x4P",
+    "Number of PINs Per Row": "4",
+    "Number of Rows": "1",
+    "Operating Temperature": "-40℃~+105℃",
+    "Pitch": "3mm",
+    "Reference Series": "Micro-Fit(MX 3.0)",
+    "With Locker": "Locking",
+    "With Wings": "Without Fins"
+   },
+   "datasheet": "",
+   "description": "-40℃~+105℃ 1 1x4P 3mm 4 Black Locking Micro-Fit(MX 3.0) UL94V-0 Without Fins P=3mm Housings (Wire To Board / Wire To Wire ) ROHS",
+   "fetched_utc": "2026-11-06T16:56:49Z",
+   "jlc_library": "extended",
+   "manufacturer": "MOLEX",
+   "mpn": "436450400",
+   "package": "P=3mm",
+   "price_usd": [
+    [
+     1,
+     0.151
+    ],
+    [
+     50,
+     0.1256
+    ],
+    [
+     150,
+     0.1128
+    ],
+    [
+     500,
+     0.1033
+    ],
+    [
+     3000,
+     0.0957
+    ],
+    [
+     6000,
+     0.0919
+    ]
+   ],
+   "stock": 3013,
+   "url": "https://www.lcsc.com/product-detail/housings-wire-to-board-wire-to-wire_molex-436450400_C277618.html"
+  },
   "C278532": {
    "attributes": {
     "Capacitance": "100uF",
@@ -5934,7 +7361,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1811151600_PANASONIC-EEUFR1C101_C278532.pdf",
    "description": "-40℃~+105℃ 100uF 11mm 16V 280mA@100kHz 2mm 300mΩ@100kHz 5000hrs@105℃ 5mm ±20% 插件,D5xL11mm Aluminum Electrolytic Capacitors - Leaded ROHS",
-   "fetched_utc": "2026-11-06T16:48:01Z",
+   "fetched_utc": "2026-11-06T16:56:50Z",
    "jlc_library": "extended",
    "manufacturer": "PANASONIC",
    "mpn": "EEUFR1C101",
@@ -5981,7 +7408,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2205311630_Texas-Instruments-LM66100DCKR_C2869734.pdf",
    "description": "-40℃~+125℃ 1 1.5A 1.5V~5.5V 150nA 95mΩ Integrated FET Reverse current blocking、Reverse polarity protection、With enable SC-70-6 ORing Controllers ROHS",
-   "fetched_utc": "2026-11-06T16:48:01Z",
+   "fetched_utc": "2026-11-06T16:56:50Z",
    "jlc_library": "extended",
    "manufacturer": "Texas Instruments",
    "mpn": "LM66100DCKR",
@@ -6035,7 +7462,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2109191630_E-Switch-TL3145BF350QJ_C2886884.pdf",
    "description": "-40℃~+85℃ 12V 3.5N 5.2mm 500,000 Cycles 50mA 6.45mm 6.45mm IP67 J-Lead Orange Round Button SPST Surface Mount,Vertical Without Bracket SMD,6.5x6.5mm Tactile Switches ROHS",
-   "fetched_utc": "2026-11-06T16:48:02Z",
+   "fetched_utc": "2026-11-06T16:56:51Z",
    "jlc_library": "extended",
    "manufacturer": "E-Switch",
    "mpn": "TL3145BF350QJ",
@@ -6081,7 +7508,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2111232030_Viking-Tech-AR03BTDX3322A_C2924141.pdf",
    "description": "-55℃~+155℃ 100mW 33.2kΩ 75V Thin Film Resistor ±0.1% ±50ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:03Z",
+   "fetched_utc": "2026-11-06T16:56:52Z",
    "jlc_library": "extended",
    "manufacturer": "Viking Tech",
    "mpn": "AR03BTDX3322A",
@@ -6126,7 +7553,7 @@
    },
    "datasheet": "",
    "description": "1.85mm 20~24 Micro-Fit(MX 3.0) Phosphor bronze Tin - Housing Contact ROHS",
-   "fetched_utc": "2026-11-06T16:48:03Z",
+   "fetched_utc": "2026-11-06T16:56:52Z",
    "jlc_library": "extended",
    "manufacturer": "MOLEX",
    "mpn": "430300007",
@@ -6183,7 +7610,7 @@
    },
    "datasheet": "",
    "description": "-40℃~+105℃ 1 12.65mm 1x3P 3 3P 3mm 5.57mm 600V 8.5A 9.9mm Black Brass K Pin、With post Micro-Fit(MX 3.0) Through Hole Tin UL94V-0 插件,P=3mm Wire To Board Connector ROHS",
-   "fetched_utc": "2026-11-06T16:48:04Z",
+   "fetched_utc": "2026-11-06T16:56:53Z",
    "jlc_library": "extended",
    "manufacturer": "MOLEX",
    "mpn": "436500315",
@@ -6217,6 +7644,169 @@
    "stock": 2026,
    "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_molex-436500315_C293546.html"
   },
+  "C293547": {
+   "attributes": {
+    "Color": "Black",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "8.5A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Through Hole",
+    "Number of PINs Per Row": "4",
+    "Number of Pins": "4P",
+    "Number of Rows": "1",
+    "Operating Temperature": "-40℃~+105℃",
+    "Pins Structure": "1x4P",
+    "Pitch": "3mm",
+    "Reference Series": "Micro-Fit(MX 3.0)",
+    "Supplementary Features": "K-foot、With column",
+    "Voltage Rating": "600V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "15.65mm",
+    "Y-Width of Bottom Edge on Board": "5.57mm",
+    "Z-Height of the Board": "9.9mm"
+   },
+   "datasheet": "",
+   "description": "-40℃~+105℃ 1 15.65mm 1x4P 3mm 4 4P 5.57mm 600V 8.5A 9.9mm Black Brass K Pin、With post Micro-Fit(MX 3.0) Through Hole Tin UL94V-0 插件,P=3mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-06T16:56:54Z",
+   "jlc_library": "extended",
+   "manufacturer": "MOLEX",
+   "mpn": "436500415",
+   "package": "Plugin,P=3mm",
+   "price_usd": [
+    [
+     1,
+     0.8071
+    ],
+    [
+     10,
+     0.6647
+    ],
+    [
+     30,
+     0.5927
+    ],
+    [
+     120,
+     0.5223
+    ],
+    [
+     480,
+     0.4797
+    ],
+    [
+     960,
+     0.4584
+    ]
+   ],
+   "stock": 1487,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_molex-436500415_C293547.html"
+  },
+  "C293739": {
+   "attributes": {
+    "Color": "Black",
+    "Flame Retardant Rating": "UL94V-0",
+    "Holes Structure": "1x6P",
+    "Number of PINs Per Row": "6",
+    "Number of Rows": "1",
+    "Operating Temperature": "-40℃~+105℃",
+    "Pitch": "3mm",
+    "Reference Series": "Micro-Fit(MX 3.0)",
+    "With Locker": "Locking",
+    "With Wings": "Without Fins"
+   },
+   "datasheet": "",
+   "description": "-40℃~+105℃ 1 1x6P 3mm 6 Black Locking Micro-Fit(MX 3.0) UL94V-0 Without Fins P=3mm Housings (Wire To Board / Wire To Wire ) ROHS",
+   "fetched_utc": "2026-11-06T16:56:54Z",
+   "jlc_library": "extended",
+   "manufacturer": "MOLEX",
+   "mpn": "436450600",
+   "package": "P=3mm",
+   "price_usd": [
+    [
+     1,
+     0.1626
+    ],
+    [
+     50,
+     0.1259
+    ],
+    [
+     150,
+     0.1104
+    ],
+    [
+     500,
+     0.0907
+    ],
+    [
+     2000,
+     0.0821
+    ],
+    [
+     4000,
+     0.0768
+    ]
+   ],
+   "stock": 2584,
+   "url": "https://www.lcsc.com/product-detail/housings-wire-to-board-wire-to-wire_molex-436450600_C293739.html"
+  },
+  "C293740": {
+   "attributes": {
+    "Color": "Black",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "8.5A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Through Hole",
+    "Number of PINs Per Row": "2",
+    "Number of Pins": "2P",
+    "Number of Rows": "1",
+    "Operating Temperature": "-40℃~+105℃",
+    "Pins Structure": "1x2P",
+    "Pitch": "3mm",
+    "Reference Series": "Micro-Fit(MX 3.0)",
+    "Supplementary Features": "K-foot、With column",
+    "Voltage Rating": "600V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "9.65mm",
+    "Y-Width of Bottom Edge on Board": "5.57mm",
+    "Z-Height of the Board": "9.9mm"
+   },
+   "datasheet": "",
+   "description": "-40℃~+105℃ 1 1x2P 2 2P 3mm 5.57mm 600V 8.5A 9.65mm 9.9mm Black Brass K Pin、With post Micro-Fit(MX 3.0) Through Hole Tin UL94V-0 插件,P=3mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-06T16:56:55Z",
+   "jlc_library": "extended",
+   "manufacturer": "MOLEX",
+   "mpn": "436500215",
+   "package": "Plugin,P=3mm",
+   "price_usd": [
+    [
+     1,
+     0.6058
+    ],
+    [
+     10,
+     0.4994
+    ],
+    [
+     30,
+     0.4453
+    ],
+    [
+     192,
+     0.3831
+    ],
+    [
+     576,
+     0.3504
+    ],
+    [
+     960,
+     0.334
+    ]
+   ],
+   "stock": 2919,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_molex-436500215_C293740.html"
+  },
   "C2988656": {
    "attributes": {
     "Current Rating": "31.6A",
@@ -6229,7 +7819,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2204071430_Milliohm-HoLLR1206-1W-20mR-1-_C2988656.pdf",
    "description": "1W 20mΩ 31.6A Current Sense Resistor SMD ±1% ±50ppm/℃ 1206 Current Sense Resistors / Shunt Resistors ROHS",
-   "fetched_utc": "2026-11-06T16:48:05Z",
+   "fetched_utc": "2026-11-06T16:56:56Z",
    "jlc_library": "extended",
    "manufacturer": "Milliohm",
    "mpn": "HoLLR1206-1W-20mR-1%",
@@ -6274,7 +7864,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2207151800_Vishay-Intertech-TNPW060324K9BEEA_C3009044.pdf",
    "description": "-55℃~+155℃ 100mW 24.9kΩ Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:05Z",
+   "fetched_utc": "2026-11-06T16:56:56Z",
    "jlc_library": "extended",
    "manufacturer": "Vishay Intertech",
    "mpn": "TNPW060324K9BEEA",
@@ -6319,7 +7909,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2205181716_Vishay-Intertech-CRCW06034M22FKEA_C3009313.pdf",
    "description": "-55℃~+155℃ 100mW 4.22MΩ Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:06Z",
+   "fetched_utc": "2026-11-06T16:56:57Z",
    "jlc_library": "extended",
    "manufacturer": "Vishay Intertech",
    "mpn": "CRCW06034M22FKEA",
@@ -6364,7 +7954,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2205101216_Viking-Tech-AR03BTCX2152_C3013545.pdf",
    "description": "-55℃~+155℃ 100mW 21.5kΩ Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:07Z",
+   "fetched_utc": "2026-11-06T16:56:58Z",
    "jlc_library": "extended",
    "manufacturer": "Viking Tech",
    "mpn": "AR03BTCX2152",
@@ -6412,7 +8002,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1912111437_BORN-AO3401A_C306862.pdf",
    "description": "1 P-Channel 1.4W 115pF 2V 30V 4.2A 85mΩ@2.5V 954pF P-Channel SOT-23 MOSFETs ROHS",
-   "fetched_utc": "2026-11-06T16:48:07Z",
+   "fetched_utc": "2026-11-06T16:56:58Z",
    "jlc_library": "extended",
    "manufacturer": "BORN",
    "mpn": "AO3401A",
@@ -6458,7 +8048,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Viking-Tech-ARG03BTC1002_C309083.pdf",
    "description": "-55℃~+155℃ 100mW 10kΩ 75V Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:08Z",
+   "fetched_utc": "2026-11-06T16:56:59Z",
    "jlc_library": "extended",
    "manufacturer": "Viking Tech",
    "mpn": "ARG03BTC1002",
@@ -6508,7 +8098,7 @@
    },
    "datasheet": "",
    "description": "-40℃~+125℃ 0.6mW/℃ 10kΩ 3380K 3434K 3455K 3mW 3s 77uA ±1% ±1% - NTC Thermistors ROHS",
-   "fetched_utc": "2026-11-06T16:48:09Z",
+   "fetched_utc": "2026-11-06T16:57:00Z",
    "jlc_library": "extended",
    "manufacturer": "Murata Electronics",
    "mpn": "NXFT15XH103FEAB025",
@@ -6554,7 +8144,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010030_UNI-ROYAL-Uniroyal-Elec-0603WAF2202T5E_C31850.pdf",
    "description": "-55℃~+155℃ 100mW 22kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:09Z",
+   "fetched_utc": "2026-11-06T16:57:00Z",
    "jlc_library": "basic",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF2202T5E",
@@ -6585,7 +8175,7 @@
      0.002
     ]
    ],
-   "stock": 2700131,
+   "stock": 2700151,
    "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf2202t5e_C31850.html"
   },
   "C3194482": {
@@ -6599,7 +8189,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2308101545_Diodes-Incorporated-PI4IOE5V9555LEX_C3194482.pdf",
    "description": "-40℃~+85℃ 16 2.3V~5.5V 400kHz I2C、SMBus Interrupt Output TSSOP-24 I/O Expanders ROHS",
-   "fetched_utc": "2026-11-06T16:48:10Z",
+   "fetched_utc": "2026-11-06T16:57:01Z",
    "jlc_library": "extended",
    "manufacturer": "Diodes Incorporated",
    "mpn": "PI4IOE5V9555LEX",
@@ -6642,7 +8232,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1811141240_YAGEO-CC0805KKX7R7BB106_C326595.pdf",
    "description": "10uF 16V X7R ±10% 0805 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:48:11Z",
+   "fetched_utc": "2026-11-06T16:57:02Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "CC0805KKX7R7BB106",
@@ -6688,7 +8278,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/1811031922_YAGEO-RT0603BRD07110KL_C326736.pdf",
    "description": "-55℃~+155℃ 100mW 110kΩ 75V Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:11Z",
+   "fetched_utc": "2026-11-06T16:57:02Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RT0603BRD07110KL",
@@ -6734,7 +8324,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2203071730_YAGEO-RT0603BRE0790K9L_C326737.pdf",
    "description": "-55℃~+155℃ 100mW 75V 90.9kΩ Thin Film Resistor ±0.1% ±50ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:12Z",
+   "fetched_utc": "2026-11-06T16:57:03Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RT0603BRE0790K9L",
@@ -6779,7 +8369,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/1811151427_YAGEO-RL1206FR-7W0R22L_C327006.pdf",
    "description": "-55℃~+125℃ 220mΩ 500mW Thick Film Resistor ±1% ±600ppm/℃ 1206 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:13Z",
+   "fetched_utc": "2026-11-06T16:57:04Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RL1206FR-7W0R22L",
@@ -6822,7 +8412,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_TDK-C2012X7R1A106KT0A0E_C342745.pdf",
    "description": "10V 10uF X7R ±10% 0805 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:48:13Z",
+   "fetched_utc": "2026-11-06T16:57:05Z",
    "jlc_library": "extended",
    "manufacturer": "TDK",
    "mpn": "C2012X7R1A106KT0A0E",
@@ -6872,7 +8462,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1912111437_BORN-AO3400A_C344010.pdf",
    "description": "-55℃~+150℃ 1 N-channel 1.4V 1.4W 30V 32mΩ@10V 5.8A 823pF SOT-23 MOSFETs ROHS",
-   "fetched_utc": "2026-11-06T16:48:14Z",
+   "fetched_utc": "2026-11-06T16:57:05Z",
    "jlc_library": "extended",
    "manufacturer": "BORN",
    "mpn": "AO3400A",
@@ -6920,7 +8510,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2311091734_UMW-Youtai-Semiconductor-Co---Ltd--AO3407A_C347478.pdf",
    "description": "1 P-Channel 1.4W 1.8V 14.3nC@4.5V 30V 37mΩ@10V、52mΩ@4.5V 4.2A 700pF 75pF SOT-23 MOSFETs ROHS",
-   "fetched_utc": "2026-11-06T16:48:15Z",
+   "fetched_utc": "2026-11-06T16:57:06Z",
    "jlc_library": "extended",
    "manufacturer": "UMW(Youtai Semiconductor Co., Ltd.)",
    "mpn": "AO3407A",
@@ -6970,7 +8560,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/1912111437_PANASONIC-10SVQP150M_C347576.pdf",
    "description": "-55℃~+125℃ 1000hrs@125℃ 10V 150uF 6.9mm 810mA@100kHz 8mm Polarized Polymer ±20% SMD,D8xL6.9mm Polymer Aluminum Capacitors ROHS",
-   "fetched_utc": "2026-11-06T16:48:15Z",
+   "fetched_utc": "2026-11-06T16:57:07Z",
    "jlc_library": "extended",
    "manufacturer": "PANASONIC",
    "mpn": "10SVQP150M",
@@ -7021,7 +8611,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1912111437_YAGEO-CC0805KKX7R8BB475_C354262.pdf",
    "description": "25V 4.7uF X7R ±10% 0805 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:48:16Z",
+   "fetched_utc": "2026-11-06T16:57:08Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "CC0805KKX7R8BB475",
@@ -7066,7 +8656,7 @@
    },
    "datasheet": "",
    "description": "-40℃~+125℃ 17.75mΩ 1kA 25 32V 5A - Automotive Fuses ROHS",
-   "fetched_utc": "2026-11-06T16:48:17Z",
+   "fetched_utc": "2026-11-06T16:57:08Z",
    "jlc_library": "extended",
    "manufacturer": "Littelfuse",
    "mpn": "0297005.WXT",
@@ -7116,7 +8706,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2410121729_Texas-Instruments-TPS259470ARPWR_C3662799.pdf",
    "description": "-40℃~+125℃ 1 1mm 2.7V~23V 28.3mΩ 2mm 2mm Integrated FET Surface Mount QFN-10(2x2) Surge Protection Devices (SPDs) ROHS",
-   "fetched_utc": "2026-11-06T16:48:17Z",
+   "fetched_utc": "2026-11-06T16:57:09Z",
    "jlc_library": "extended",
    "manufacturer": "Texas Instruments",
    "mpn": "TPS259470ARPWR",
@@ -7147,7 +8737,7 @@
      0.7269
     ]
    ],
-   "stock": 3605,
+   "stock": 3595,
    "url": "https://www.lcsc.com/product-detail/surge-protection-devices-spds_texas-instruments-tps259470arpwr_C3662799.html"
   },
   "C37704": {
@@ -7161,7 +8751,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2407241028_Nexperia-BAT54C-215_C37704.pdf",
    "description": "1 Pair Common Cathode 200mA 2uA@25V 30V 600mA 800mV@100mA SOT-23 Schottky Diodes ROHS",
-   "fetched_utc": "2026-11-06T16:48:18Z",
+   "fetched_utc": "2026-11-06T16:57:09Z",
    "jlc_library": "preferred",
    "manufacturer": "Nexperia",
    "mpn": "BAT54C,215",
@@ -7204,7 +8794,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2401221250_TDK-C1608C0G1H332J080AA_C3839693.pdf",
    "description": "3.3nF 50V C0G ±5% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:48:19Z",
+   "fetched_utc": "2026-11-06T16:57:10Z",
    "jlc_library": "extended",
    "manufacturer": "TDK",
    "mpn": "C1608C0G1H332J080AA",
@@ -7247,7 +8837,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2401221320_TDK-C2012X7R1H105K125AB_C3867006.pdf",
    "description": "1uF 50V X7R ±10% 0805 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:48:19Z",
+   "fetched_utc": "2026-11-06T16:57:11Z",
    "jlc_library": "extended",
    "manufacturer": "TDK",
    "mpn": "C2012X7R1H105K125AB",
@@ -7292,7 +8882,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2407241028_Nexperia-PMEG4030ER-115_C389355.pdf",
    "description": "1 Independent 100uA@40V 3A 40V 50A 540mV@3A SOD-123 Schottky Diodes ROHS",
-   "fetched_utc": "2026-11-06T16:48:20Z",
+   "fetched_utc": "2026-11-06T16:57:11Z",
    "jlc_library": "extended",
    "manufacturer": "Nexperia",
    "mpn": "PMEG4030ER,115",
@@ -7338,7 +8928,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_PANASONIC-ERJ3EKF1582V_C403003.pdf",
    "description": "-55℃~+155℃ 100mW 15.8kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:21Z",
+   "fetched_utc": "2026-11-06T16:57:12Z",
    "jlc_library": "extended",
    "manufacturer": "PANASONIC",
    "mpn": "ERJ3EKF1582V",
@@ -7384,7 +8974,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_PANASONIC-ERJ3EKF5622V_C403280.pdf",
    "description": "-55℃~+155℃ 100mW 56.2kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:21Z",
+   "fetched_utc": "2026-11-06T16:57:13Z",
    "jlc_library": "extended",
    "manufacturer": "PANASONIC",
    "mpn": "ERJ3EKF5622V",
@@ -7430,7 +9020,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_PANASONIC-ERJ3EKF7151V_C403337.pdf",
    "description": "-55℃~+155℃ 100mW 7.15kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:22Z",
+   "fetched_utc": "2026-11-06T16:57:13Z",
    "jlc_library": "extended",
    "manufacturer": "PANASONIC",
    "mpn": "ERJ3EKF7151V",
@@ -7475,7 +9065,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2312130932_Vishay-Intertech-TNPW060326K7BEEA_C4036914.pdf",
    "description": "-55℃~+155℃ 100mW 26.7kΩ Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:23Z",
+   "fetched_utc": "2026-11-06T16:57:14Z",
    "jlc_library": "extended",
    "manufacturer": "Vishay Intertech",
    "mpn": "TNPW060326K7BEEA",
@@ -7525,7 +9115,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1912111437_PANASONIC-EEUFR1H470_C407950.pdf",
    "description": "-40℃~+105℃ 11.2mm 140mΩ@100kHz 2.5mm 405mA@100kHz 47uF 5000hrs@105℃ 50V 6.3mm ±20% 插件,D6.3xL11.2mm Aluminum Electrolytic Capacitors - Leaded ROHS",
-   "fetched_utc": "2026-11-06T16:48:24Z",
+   "fetched_utc": "2026-11-06T16:57:15Z",
    "jlc_library": "extended",
    "manufacturer": "PANASONIC",
    "mpn": "EEUFR1H470",
@@ -7572,7 +9162,7 @@
    },
    "datasheet": null,
    "description": "220nH 426mΩ 500mA 75@250MHz 930MHz Wire-wound chip inductor ±2% 0805 Inductors (SMD) ROHS",
-   "fetched_utc": "2026-11-06T16:48:24Z",
+   "fetched_utc": "2026-11-06T16:57:15Z",
    "jlc_library": "extended",
    "manufacturer": "Coilcraft",
    "mpn": "0805HP-221XGRC",
@@ -7617,7 +9207,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2302141530_Nexperia-BAV199-215_C40919.pdf",
    "description": "1 Pair Series Connection 1.25V@150mA 160mA 4A 5nA@75V 85V SOT-23 Diodes - General Purpose ROHS",
-   "fetched_utc": "2026-11-06T16:48:25Z",
+   "fetched_utc": "2026-11-06T16:57:16Z",
    "jlc_library": "extended",
    "manufacturer": "Nexperia",
    "mpn": "BAV199,215",
@@ -7662,7 +9252,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2312181447_Vishay-Intertech-MCA1206MD3304BP500_C4168316.pdf",
    "description": "-55℃~+155℃ 250mW 3.3MΩ Thin Film Resistor ±0.1% ±25ppm/℃ 1206 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:26Z",
+   "fetched_utc": "2026-11-06T16:57:17Z",
    "jlc_library": "extended",
    "manufacturer": "Vishay Intertech",
    "mpn": "MCA1206MD3304BP500",
@@ -7708,7 +9298,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010230_UNI-ROYAL-Uniroyal-Elec-0603WAF2002T5E_C4184.pdf",
    "description": "-55℃~+155℃ 100mW 20kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:26Z",
+   "fetched_utc": "2026-11-06T16:57:17Z",
    "jlc_library": "basic",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF2002T5E",
@@ -7739,7 +9329,7 @@
      0.0012
     ]
    ],
-   "stock": 5757971,
+   "stock": 5758045,
    "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf2002t5e_C4184.html"
   },
   "C4190": {
@@ -7754,7 +9344,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010230_UNI-ROYAL-Uniroyal-Elec-0603WAF2201T5E_C4190.pdf",
    "description": "-55℃~+155℃ 100mW 2.2kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:27Z",
+   "fetched_utc": "2026-11-06T16:57:18Z",
    "jlc_library": "basic",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF2201T5E",
@@ -7785,7 +9375,7 @@
      0.0009
     ]
    ],
-   "stock": 5135493,
+   "stock": 5135754,
    "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf2201t5e_C4190.html"
   },
   "C422927": {
@@ -7800,7 +9390,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2205312216_UNI-ROYAL-Uniroyal-Elec-0603WAF4224T5E_C422927.pdf",
    "description": "-55℃~+155℃ 100mW 4.22MΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:28Z",
+   "fetched_utc": "2026-11-06T16:57:19Z",
    "jlc_library": "extended",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF4224T5E",
@@ -7846,7 +9436,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2205312216_UNI-ROYAL-Uniroyal-Elec-0603WAD1103T5E_C423090.pdf",
    "description": "-55℃~+155℃ 100mW 110kΩ 75V Thick Film Resistor ±0.5% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:28Z",
+   "fetched_utc": "2026-11-06T16:57:19Z",
    "jlc_library": "extended",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAD1103T5E",
@@ -7890,7 +9480,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2312181510_Vishay-Intertech-WSL1206R1000DEA_C4235539.pdf",
    "description": "-65℃~+170℃ 100mΩ 250mW ±0.5% ±75ppm/℃ 1206 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:29Z",
+   "fetched_utc": "2026-11-06T16:57:20Z",
    "jlc_library": "extended",
    "manufacturer": "Vishay Intertech",
    "mpn": "WSL1206R1000DEA",
@@ -7934,7 +9524,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2312131140_Vishay-Intertech-WSL1206R2000DEA_C4296612.pdf",
    "description": "-65℃~+170℃ 200mΩ 250mW ±0.5% ±75ppm/℃ 1206 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:30Z",
+   "fetched_utc": "2026-11-06T16:57:21Z",
    "jlc_library": "extended",
    "manufacturer": "Vishay Intertech",
    "mpn": "WSL1206R2000DEA",
@@ -7979,7 +9569,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2312131158_Vishay-Intertech-TNPW060325K5BEEA_C4334516.pdf",
    "description": "-55℃~+155℃ 100mW 25.5kΩ Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:30Z",
+   "fetched_utc": "2026-11-06T16:57:21Z",
    "jlc_library": "extended",
    "manufacturer": "Vishay Intertech",
    "mpn": "TNPW060325K5BEEA",
@@ -8024,7 +9614,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2212221909_Vishay-Intertech-TNPW0603332KBEEA_C4351218.pdf",
    "description": "-55℃~+155℃ 100mW 332kΩ Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:31Z",
+   "fetched_utc": "2026-11-06T16:57:22Z",
    "jlc_library": "extended",
    "manufacturer": "Vishay Intertech",
    "mpn": "TNPW0603332KBEEA",
@@ -8062,7 +9652,7 @@
    "attributes": {},
    "datasheet": null,
    "description": "0603 Inductors (SMD) ROHS",
-   "fetched_utc": "2026-11-06T16:48:32Z",
+   "fetched_utc": "2026-11-06T16:57:23Z",
    "jlc_library": "extended",
    "manufacturer": "Coilcraft",
    "mpn": "0603HP-47NXGRW",
@@ -8110,7 +9700,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2404151014_PANASONIC-EEHZK1V101XP_C454360.pdf",
    "description": "-55℃~+125℃ 100uF 35V 4000hrs@125℃ 6.3mm 7.7mm Polarized SMD ±20% SMD,D6.3xL7.7mm Hybrid Aluminum Electrolytic Capacitors ROHS",
-   "fetched_utc": "2026-11-06T16:48:32Z",
+   "fetched_utc": "2026-11-06T16:57:23Z",
    "jlc_library": "extended",
    "manufacturer": "PANASONIC",
    "mpn": "EEHZK1V101XP",
@@ -8163,7 +9753,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1912111437_Texas-Instruments-TCA9555PWR_C465732.pdf",
    "description": "-40℃~+85℃ 1.65V~5.5V 10mA 16 25mA 3.5uA 400kHz 4V 500mV 8 I2C、SMBus Interrupt Output Push-Pull Reset function、Cascading and address extension、Built-in LED driver TSSOP-24 I/O Expanders ROHS",
-   "fetched_utc": "2026-11-06T16:48:33Z",
+   "fetched_utc": "2026-11-06T16:57:24Z",
    "jlc_library": "extended",
    "manufacturer": "Texas Instruments",
    "mpn": "TCA9555PWR",
@@ -8213,7 +9803,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1809191823_Microchip-Tech-MCP23017-E-SO_C47023.pdf",
    "description": "-40℃~+85℃ 1.7MHz 1.8V~5.5V 16 1uA 600mV 8 8mA I2C Interrupt Output Reset function、Cascade and address expansion SOIC-28-300mil I/O Expanders ROHS",
-   "fetched_utc": "2026-11-06T16:48:33Z",
+   "fetched_utc": "2026-11-06T16:57:25Z",
    "jlc_library": "extended",
    "manufacturer": "Microchip Tech",
    "mpn": "MCP23017-E/SO",
@@ -8259,7 +9849,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2504101957_RESI-PTFR0603B562RP9_C47115902.pdf",
    "description": "-55℃~+155℃ 100V 100mW 562Ω Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:34Z",
+   "fetched_utc": "2026-11-06T16:57:25Z",
    "jlc_library": "extended",
    "manufacturer": "RESI",
    "mpn": "PTFR0603B562RP9",
@@ -8293,6 +9883,61 @@
    "stock": 3086,
    "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_resi-ptfr0603b562rp9_C47115902.html"
   },
+  "C471416": {
+   "attributes": {
+    "Color": "White",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "4A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Through Hole",
+    "Number of PINs Per Row": "3",
+    "Number of Pins": "3P",
+    "Number of Rows": "1",
+    "Pins Structure": "1x3P",
+    "Pitch": "2.54mm",
+    "Plastic Material": "PA",
+    "Voltage Rating": "500V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "7.62mm",
+    "Y-Width of Bottom Edge on Board": "5.8mm",
+    "Z-Height of the Board": "11.7mm"
+   },
+   "datasheet": "",
+   "description": "1 1x3P 2.54mm 3 3P 4A 500V Brass PA Through Hole Tin UL94V-0 White 插件,P=2.54mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-06T16:57:26Z",
+   "jlc_library": "extended",
+   "manufacturer": "MOLEX",
+   "mpn": "22272031",
+   "package": "Plugin,P=2.54mm",
+   "price_usd": [
+    [
+     1,
+     0.1868
+    ],
+    [
+     50,
+     0.1575
+    ],
+    [
+     150,
+     0.1428
+    ],
+    [
+     500,
+     0.1318
+    ],
+    [
+     1900,
+     0.1164
+    ],
+    [
+     5700,
+     0.112
+    ]
+   ],
+   "stock": 11438,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_molex-22272031_C471416.html"
+  },
   "C47460": {
    "attributes": {
     "Current - Rectified": "1A",
@@ -8305,7 +9950,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1810172212_Vishay-Intertech-SS14-E3-61T_C47460.pdf",
    "description": "-65℃~+150℃ 1 Independent 1A 200uA@40V 40A 40V 500mV@1A SMA(DO-214AC) Schottky Diodes ROHS",
-   "fetched_utc": "2026-11-06T16:48:35Z",
+   "fetched_utc": "2026-11-06T16:57:27Z",
    "jlc_library": "extended",
    "manufacturer": "Vishay Intertech",
    "mpn": "SS14-E3/61T",
@@ -8339,6 +9984,55 @@
    "stock": 30571,
    "url": "https://www.lcsc.com/product-detail/schottky-diodes_vishay-intertech-ss14-e3-61t_C47460.html"
   },
+  "C485319": {
+   "attributes": {
+    "Color": "Black",
+    "Flame Retardant Rating": "UL94V-0",
+    "Holes Structure": "1x5P",
+    "Number of PINs Per Row": "5",
+    "Number of Rows": "1",
+    "Operating Temperature": "-40℃~+105℃",
+    "Pitch": "3mm",
+    "Reference Series": "Micro-Fit(MX 3.0)",
+    "With Locker": "Locking",
+    "With Wings": "Without Fins"
+   },
+   "datasheet": "",
+   "description": "-40℃~+105℃ 1 1x5P 3mm 5 Black Locking Micro-Fit(MX 3.0) UL94V-0 Without Fins P=3mm Housings (Wire To Board / Wire To Wire ) ROHS",
+   "fetched_utc": "2026-11-06T16:57:27Z",
+   "jlc_library": "extended",
+   "manufacturer": "MOLEX",
+   "mpn": "436450500",
+   "package": "P=3mm",
+   "price_usd": [
+    [
+     1,
+     0.1644
+    ],
+    [
+     50,
+     0.1343
+    ],
+    [
+     150,
+     0.1194
+    ],
+    [
+     500,
+     0.1081
+    ],
+    [
+     2500,
+     0.0891
+    ],
+    [
+     5000,
+     0.0845
+    ]
+   ],
+   "stock": 2783,
+   "url": "https://www.lcsc.com/product-detail/housings-wire-to-board-wire-to-wire_molex-436450500_C485319.html"
+  },
   "C491130": {
    "attributes": {
     "Operating Temperature": "-55℃~+155℃",
@@ -8351,7 +10045,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2004071109_PANASONIC-ERA3AEB4021V_C491130.pdf",
    "description": "-55℃~+155℃ 100mW 4.02kΩ 75V Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:36Z",
+   "fetched_utc": "2026-11-06T16:57:28Z",
    "jlc_library": "extended",
    "manufacturer": "PANASONIC",
    "mpn": "ERA3AEB4021V",
@@ -8398,7 +10092,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Diodes-Incorporated-BZX84C10-7-F_C500793.pdf",
    "description": "-65℃~+150℃ 1 Independent 10V 150Ω 200nA@1V 20Ω 350mW 9.4V~10.6V SOT-23 Zener Diodes ROHS",
-   "fetched_utc": "2026-11-06T16:48:36Z",
+   "fetched_utc": "2026-11-06T16:57:29Z",
    "jlc_library": "extended",
    "manufacturer": "Diodes Incorporated",
    "mpn": "BZX84C10-7-F",
@@ -8441,7 +10135,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Samsung-Electro-Mechanics-CL31B225KBHNNNE_C50254.pdf",
    "description": "2.2uF 50V X7R ±10% 1206 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:48:37Z",
+   "fetched_utc": "2026-11-06T16:57:29Z",
    "jlc_library": "basic",
    "manufacturer": "Samsung Electro-Mechanics",
    "mpn": "CL31B225KBHNNNE",
@@ -8475,6 +10169,120 @@
    "stock": 412376,
    "url": "https://www.lcsc.com/product-detail/multilayer-ceramic-capacitors-mlcc-smd-smt_samsung-electro-mechanics-cl31b225kbhnnne_C50254.html"
   },
+  "C505230": {
+   "attributes": {
+    "Color": "Black",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "8.5A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Through Hole",
+    "Number of PINs Per Row": "5",
+    "Number of Pins": "5P",
+    "Number of Rows": "1",
+    "Operating Temperature": "-40℃~+105℃",
+    "Pins Structure": "1x5P",
+    "Pitch": "3mm",
+    "Reference Series": "Micro-Fit(MX 3.0)",
+    "Supplementary Features": "K-foot、With column",
+    "Voltage Rating": "600V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "18.65mm",
+    "Y-Width of Bottom Edge on Board": "5.57mm",
+    "Z-Height of the Board": "9.9mm"
+   },
+   "datasheet": "",
+   "description": "-40℃~+105℃ 1 18.65mm 1x5P 3mm 5 5.57mm 5P 600V 8.5A 9.9mm Black Brass K Pin、With post Micro-Fit(MX 3.0) Through Hole Tin UL94V-0 插件,P=3mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-06T16:57:30Z",
+   "jlc_library": "extended",
+   "manufacturer": "MOLEX",
+   "mpn": "436500515",
+   "package": "Plugin,P=3mm",
+   "price_usd": [
+    [
+     1,
+     0.7515
+    ],
+    [
+     10,
+     0.6139
+    ],
+    [
+     30,
+     0.5452
+    ],
+    [
+     102,
+     0.4764
+    ],
+    [
+     510,
+     0.4355
+    ],
+    [
+     1020,
+     0.4142
+    ]
+   ],
+   "stock": 3722,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_molex-436500515_C505230.html"
+  },
+  "C505231": {
+   "attributes": {
+    "Color": "Black",
+    "Contact Material": "Brass",
+    "Contact Plating": "Tin",
+    "Current Rating": "8.5A",
+    "Flame Retardant Rating": "UL94V-0",
+    "Mounting Type": "Through Hole",
+    "Number of PINs Per Row": "6",
+    "Number of Pins": "6P",
+    "Number of Rows": "1",
+    "Operating Temperature": "-40℃~+105℃",
+    "Pins Structure": "1x6P",
+    "Pitch": "3mm",
+    "Reference Series": "Micro-Fit(MX 3.0)",
+    "Supplementary Features": "K-foot、With column",
+    "Voltage Rating": "600V",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "21.65mm",
+    "Y-Width of Bottom Edge on Board": "5.57mm",
+    "Z-Height of the Board": "9.9mm"
+   },
+   "datasheet": "",
+   "description": "-40℃~+105℃ 1 1x6P 21.65mm 3mm 5.57mm 6 600V 6P 8.5A 9.9mm Black Brass K Pin、With column Micro-Fit(MX 3.0) Through Hole Tin UL94V-0 Plugin,P=3mm Wire To Board Connector ROHS",
+   "fetched_utc": "2026-11-06T16:57:31Z",
+   "jlc_library": "extended",
+   "manufacturer": "MOLEX",
+   "mpn": "436500615",
+   "package": "Plugin,P=3mm",
+   "price_usd": [
+    [
+     1,
+     0.8431
+    ],
+    [
+     10,
+     0.704
+    ],
+    [
+     30,
+     0.6352
+    ],
+    [
+     90,
+     0.5665
+    ],
+    [
+     540,
+     0.4912
+    ],
+    [
+     990,
+     0.4699
+    ]
+   ],
+   "stock": 3001,
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_molex-436500615_C505231.html"
+  },
   "C511349": {
    "attributes": {
     "Current - Rectified": "1A",
@@ -8487,7 +10295,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Vishay-Intertech-SS14-E3-5AT_C511349.pdf",
    "description": "-65℃~+150℃ 1 Independent 1A 200uA@40V 40A 40V 500mV@1A SMA(DO-214AC) Schottky Diodes ROHS",
-   "fetched_utc": "2026-11-06T16:48:38Z",
+   "fetched_utc": "2026-11-06T16:57:31Z",
    "jlc_library": "extended",
    "manufacturer": "Vishay Intertech",
    "mpn": "SS14-E3/5AT",
@@ -8533,7 +10341,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2211281000_YAGEO-RT0603BRD07562RL_C513658.pdf",
    "description": "-55℃~+155℃ 100mW 562Ω 75V Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:38Z",
+   "fetched_utc": "2026-11-06T16:57:32Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RT0603BRD07562RL",
@@ -8579,7 +10387,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2208260930_Viking-Tech-ARG03BTC1023_C5151919.pdf",
    "description": "-55℃~+155℃ 100mW 102kΩ 75V Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:39Z",
+   "fetched_utc": "2026-11-06T16:57:33Z",
    "jlc_library": "extended",
    "manufacturer": "Viking Tech",
    "mpn": "ARG03BTC1023",
@@ -8620,7 +10428,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2306061152_Mini-Circuits-TCBT-2R5G-_C5189220.pdf",
    "description": "-40℃~+85℃ 20MHz~2.5GHz SMD-4P RF Misc ICs and Modules ROHS",
-   "fetched_utc": "2026-11-06T16:48:40Z",
+   "fetched_utc": "2026-11-06T16:57:33Z",
    "jlc_library": "extended",
    "manufacturer": "Mini-Circuits",
    "mpn": "TCBT-2R5G+",
@@ -8666,7 +10474,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010000_UNI-ROYAL-Uniroyal-Elec-1210W2F4701T5E_C52443.pdf",
    "description": "-55℃~+155℃ 200V 4.7kΩ 500mW Thick Film Resistor ±1% ±100ppm/℃ 1210 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:40Z",
+   "fetched_utc": "2026-11-06T16:57:34Z",
    "jlc_library": "extended",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "1210W2F4701T5E",
@@ -8718,7 +10526,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2005181005_Diodes-Incorporated-DMP6050SSD-13_C531158.pdf",
    "description": "-55℃~+150℃ 1.293nF 1.2W 11.3A 2 P-Channel 24nC 60V 64.7pF 70mΩ@4.5V SO-8 MOSFETs ROHS",
-   "fetched_utc": "2026-11-06T16:48:41Z",
+   "fetched_utc": "2026-11-06T16:57:34Z",
    "jlc_library": "extended",
    "manufacturer": "Diodes Incorporated",
    "mpn": "DMP6050SSD-13",
@@ -8763,7 +10571,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304031200_Coilcraft-XAL6060-103MEC_C5329540.pdf",
    "description": "10uH 27mΩ 5A 7.6A ±20% SMD,6.6x6.4mm Power Inductors ROHS",
-   "fetched_utc": "2026-11-06T16:48:42Z",
+   "fetched_utc": "2026-11-06T16:57:35Z",
    "jlc_library": "extended",
    "manufacturer": "Coilcraft",
    "mpn": "XAL6060-103MEC",
@@ -8797,6 +10605,56 @@
    "stock": 5,
    "url": "https://www.lcsc.com/product-detail/power-inductors_coilcraft-xal6060-103mec_C5329540.html"
   },
+  "C53309344": {
+   "attributes": {
+    "Color": "Black",
+    "Connector Type": "Pressure fitting head (with reverse flap cover)",
+    "Contact Material": "Brass",
+    "Current Rating": "3A",
+    "Holder Type": "Free Hanging",
+    "Number of PINs Per Row": "20",
+    "Number of Positions or Pins": "2x20P",
+    "Number of Rows": "2",
+    "Operating Temperature": "-55℃~+105℃",
+    "Pitch": "2.54mm",
+    "Row Spacing": "2.54mm"
+   },
+   "datasheet": null,
+   "description": "-55℃~+105℃ 2 2.54mm 2.54mm 20 2x20P 3A Black Brass Free Hanging Pressure fitting head (with reverse flap cover) P=2.54mm IDC Connectors ROHS",
+   "fetched_utc": "2026-11-06T16:57:36Z",
+   "jlc_library": "extended",
+   "manufacturer": "Lian Xin Technology",
+   "mpn": "XDFH-0258-2*20P",
+   "package": "P=2.54mm",
+   "price_usd": [
+    [
+     1,
+     0.2515
+    ],
+    [
+     50,
+     0.1978
+    ],
+    [
+     120,
+     0.1748
+    ],
+    [
+     480,
+     0.1461
+    ],
+    [
+     2520,
+     0.1333
+    ],
+    [
+     4980,
+     0.1258
+    ]
+   ],
+   "stock": 1160,
+   "url": null
+  },
   "C5379798": {
    "attributes": {
     "Application Grade": "Automotive grade",
@@ -8808,7 +10666,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2311161804_Coilcraft-XAL5030-102MEC_C5379798.pdf",
    "description": "11.1A 14A 1uH 8.5mΩ ±20% SMD,5.5x5.3mm Power Inductors ROHS",
-   "fetched_utc": "2026-11-06T16:48:42Z",
+   "fetched_utc": "2026-11-06T16:57:37Z",
    "jlc_library": "extended",
    "manufacturer": "Coilcraft",
    "mpn": "XAL5030-102MEC",
@@ -8851,7 +10709,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2005260932_YAGEO-CC0603KRX7R9BB105_C559769.pdf",
    "description": "1uF 50V X7R ±10% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:48:43Z",
+   "fetched_utc": "2026-11-06T16:57:37Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "CC0603KRX7R9BB105",
@@ -8894,7 +10752,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_TDK-C1608X7R1H104KT000N_C56476.pdf",
    "description": "100nF 50V X7R ±10% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:48:44Z",
+   "fetched_utc": "2026-11-06T16:57:38Z",
    "jlc_library": "extended",
    "manufacturer": "TDK",
    "mpn": "C1608X7R1H104KT000N",
@@ -8937,7 +10795,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2112151030_YAGEO-CC1206KKX7R0BB225_C577211.pdf",
    "description": "100V 2.2uF X7R ±10% 1206 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:48:44Z",
+   "fetched_utc": "2026-11-06T16:57:38Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "CC1206KKX7R0BB225",
@@ -8988,7 +10846,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Analog-Devices-LT3045EMSE-PBF_C580012.pdf",
    "description": "-40℃~+125℃@(Tj) 0.8uVrms 0V~15V 1 2.2mA 20V 260mV 500mA 76dB@(1MHz) Adjustable Over Current Protection、Short Circuit Protection、Thermal shutdown、Enable control、Input under-voltage protection、Operating status indication、Reverse polarity voltage protection、Reverse-polarity current protection、Adjustable current limiting Positive MSOP-12-EP Voltage Regulators - Linear, Low Drop Out (LDO) Regulators ROHS",
-   "fetched_utc": "2026-11-06T16:48:45Z",
+   "fetched_utc": "2026-11-06T16:57:39Z",
    "jlc_library": "extended",
    "manufacturer": "Analog Devices",
    "mpn": "LT3045EMSE#PBF",
@@ -9033,7 +10891,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2410311802_Mini-Circuits-YAT-10A-_C5839318.pdf",
    "description": "-40℃~+85℃ 0Hz~18GHz 1.7W 50Ω Electrostatic protection VDFN-6-EP RF Attenuators ROHS",
-   "fetched_utc": "2026-11-06T16:48:46Z",
+   "fetched_utc": "2026-11-06T16:57:40Z",
    "jlc_library": "extended",
    "manufacturer": "Mini-Circuits",
    "mpn": "YAT-10A+",
@@ -9078,7 +10936,7 @@
    },
    "datasheet": "",
    "description": "1 18GHz 500V 50Ω Board Side SMA - Coaxial Connectors (RF) ROHS",
-   "fetched_utc": "2026-11-06T16:48:46Z",
+   "fetched_utc": "2026-11-06T16:57:40Z",
    "jlc_library": "extended",
    "manufacturer": "MOLEX",
    "mpn": "732511153",
@@ -9121,7 +10979,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2006091815_YAGEO-CC1210KKX7R9BB106_C596319.pdf",
    "description": "10uF 50V X7R ±10% 1210 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:48:47Z",
+   "fetched_utc": "2026-11-06T16:57:41Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "CC1210KKX7R9BB106",
@@ -9168,7 +11026,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2312061935_Kingbright-WP7113LSECK-J3_C6001438.pdf",
    "description": "1.8V 20° 2mA 625nm 640nm Red Water Clear 插件,D=5mm LED Indication - Discrete ROHS",
-   "fetched_utc": "2026-11-06T16:48:48Z",
+   "fetched_utc": "2026-11-06T16:57:42Z",
    "jlc_library": "extended",
    "manufacturer": "Kingbright",
    "mpn": "WP7113LSECK/J3",
@@ -9213,7 +11071,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2006112327_Milliohm-HoLR1206-1W-20mR-1--75ppm_C601099.pdf",
    "description": "1W 20mΩ Current Sense Resistor SMD ±1% ±75ppm/℃ 1206 Current Sense Resistors / Shunt Resistors ROHS",
-   "fetched_utc": "2026-11-06T16:48:48Z",
+   "fetched_utc": "2026-11-06T16:57:42Z",
    "jlc_library": "extended",
    "manufacturer": "Milliohm",
    "mpn": "HoLR1206-1W-20mR-1%-75ppm",
@@ -9264,7 +11122,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2203221230_Microchip-Tech-MCP23017T-E-SO_C629440.pdf",
    "description": "-40℃~+125℃ 1.7MHz 1.8V~5.5V 16 3mA 3uA 600mV 8 8mA I2C Interrupt Output Reset function、Cascading and address extension SOIC-28-300mil I/O Expanders ROHS",
-   "fetched_utc": "2026-11-06T16:48:49Z",
+   "fetched_utc": "2026-11-06T16:57:43Z",
    "jlc_library": "extended",
    "manufacturer": "Microchip Tech",
    "mpn": "MCP23017T-E/SO",
@@ -9309,7 +11167,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2404191325_KOA-Speer-Elec-RN73H1JTTD8562B25_C6407688.pdf",
    "description": "-55℃~+155℃ 100mW 85.6kΩ Metal Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:50Z",
+   "fetched_utc": "2026-11-06T16:57:44Z",
    "jlc_library": "extended",
    "manufacturer": "KOA Speer Elec",
    "mpn": "RN73H1JTTD8562B25",
@@ -9360,7 +11218,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2407241045_Nexperia-2N7002-215_C65189.pdf",
    "description": "-65℃~+150℃ 1 N-channel 2.5V 300mA 50pF 5Ω@10V 60V 830mW SOT-23 MOSFETs ROHS",
-   "fetched_utc": "2026-11-06T16:48:51Z",
+   "fetched_utc": "2026-11-06T16:57:44Z",
    "jlc_library": "extended",
    "manufacturer": "Nexperia",
    "mpn": "2N7002,215",
@@ -9391,7 +11249,7 @@
      0.0089
     ]
    ],
-   "stock": 538391,
+   "stock": 538381,
    "url": "https://www.lcsc.com/product-detail/mosfets_nexperia-2n7002-215_C65189.html"
   },
   "C68214": {
@@ -9411,7 +11269,7 @@
    },
    "datasheet": "https://datasheet.lcsc.com/lcsc/1804240821_Texas-Instruments-TPS7A4701RGWT_C68214.pdf",
    "description": "-40℃~+125℃ 1 1.4V~34V 1A 35V 4.67uVrms 450mV@(1A) 78dB@(1kHz) Adjustable Over Current Protection、Thermal Shutdown、Enable control、Input undervoltage protection Positive VQFN-20-EP(5x5) Voltage Regulators - Linear, Low Drop Out (LDO) Regulators ROHS",
-   "fetched_utc": "2026-11-06T16:48:51Z",
+   "fetched_utc": "2026-11-06T16:57:45Z",
    "jlc_library": "extended",
    "manufacturer": "Texas Instruments",
    "mpn": "TPS7A4701RGWT",
@@ -9456,7 +11314,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_Murata-Electronics-LQW2UAS68NG00L_C703709.pdf",
    "description": "1A 200mΩ 68nH Unshielded Inductor ±2% 1008 Power Inductors ROHS",
-   "fetched_utc": "2026-11-06T16:48:52Z",
+   "fetched_utc": "2026-11-06T16:57:46Z",
    "jlc_library": "extended",
    "manufacturer": "Murata Electronics",
    "mpn": "LQW2UAS68NG00L",
@@ -9502,7 +11360,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2010201904_YAGEO-RT0603BRD0733K2L_C705767.pdf",
    "description": "-55℃~+155℃ 100mW 33.2kΩ 75V Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:53Z",
+   "fetched_utc": "2026-11-06T16:57:46Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RT0603BRD0733K2L",
@@ -9548,7 +11406,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2409292104_YAGEO-RT0603BRD074K02L_C705781.pdf",
    "description": "-55℃~+155℃ 100mW 4.02kΩ 75V Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:53Z",
+   "fetched_utc": "2026-11-06T16:57:47Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RT0603BRD074K02L",
@@ -9594,7 +11452,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2009282137_YAGEO-RT0603FRE07825RL_C706193.pdf",
    "description": "-55℃~+155℃ 100mW 75V 825Ω Thin Film Resistor ±1% ±50ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:54Z",
+   "fetched_utc": "2026-11-06T16:57:48Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RT0603FRE07825RL",
@@ -9640,7 +11498,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2204252015_YAGEO-RT0603BRD074K99L_C723532.pdf",
    "description": "-55℃~+155℃ 100mW 4.99kΩ 75V Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:55Z",
+   "fetched_utc": "2026-11-06T16:57:48Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RT0603BRD074K99L",
@@ -9683,7 +11541,7 @@
    },
    "datasheet": "https://datasheet.lcsc.com/lcsc/1912112237_TDK-C1608X7R1H103KT000N_C72452.pdf",
    "description": "10nF 50V X7R ±10% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:48:55Z",
+   "fetched_utc": "2026-11-06T16:57:49Z",
    "jlc_library": "extended",
    "manufacturer": "TDK",
    "mpn": "C1608X7R1H103KT000N",
@@ -9726,7 +11584,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_YAGEO-AC0805KKX7R9BB105_C726584.pdf",
    "description": "1uF 50V X7R ±10% 0805 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:48:56Z",
+   "fetched_utc": "2026-11-06T16:57:50Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "AC0805KKX7R9BB105",
@@ -9772,7 +11630,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_YAGEO-RT0603BRD0726K7L_C728587.pdf",
    "description": "-55℃~+155℃ 100mW 26.7kΩ 75V Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:57Z",
+   "fetched_utc": "2026-11-06T16:57:50Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RT0603BRD0726K7L",
@@ -9817,7 +11675,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2312272258_ROHM-Semicon-SDR03EZPF1500_C7356898.pdf",
    "description": "-55℃~+155℃ 150Ω 300mW Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:58Z",
+   "fetched_utc": "2026-11-06T16:57:51Z",
    "jlc_library": "extended",
    "manufacturer": "ROHM Semicon",
    "mpn": "SDR03EZPF1500",
@@ -9863,7 +11721,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2307211824_UNI-ROYAL-Uniroyal-Elec-TC0225D2492TCC_C7431035.pdf",
    "description": "-55℃~+155℃ 24.9kΩ 25V 62.5mW Thin Film Resistor ±0.1% ±25ppm/℃ 0402 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:48:58Z",
+   "fetched_utc": "2026-11-06T16:57:52Z",
    "jlc_library": "extended",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "TC0225D2492TCC",
@@ -9906,7 +11764,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_TDK-C2012X7R1E475KT000N_C76642.pdf",
    "description": "25V 4.7uF X7R ±10% 0805 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:48:59Z",
+   "fetched_utc": "2026-11-06T16:57:52Z",
    "jlc_library": "extended",
    "manufacturer": "TDK",
    "mpn": "C2012X7R1E475KT000N",
@@ -9949,7 +11807,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_TDK-CGA3E1X7R1E105KT0Y0E_C76708.pdf",
    "description": "1uF 25V X7R ±10% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:49:00Z",
+   "fetched_utc": "2026-11-06T16:57:53Z",
    "jlc_library": "extended",
    "manufacturer": "TDK",
    "mpn": "CGA3E1X7R1E105KT0Y0E",
@@ -9992,7 +11850,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1811081610_Murata-Electronics-GRM1555C1H102JA01D_C76947.pdf",
    "description": "1nF 50V C0G ±5% 0402 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:49:00Z",
+   "fetched_utc": "2026-11-06T16:57:54Z",
    "jlc_library": "extended",
    "manufacturer": "Murata Electronics",
    "mpn": "GRM1555C1H102JA01D",
@@ -10035,7 +11893,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Murata-Electronics-GRM1885C1H102JA01D_C77026.pdf",
    "description": "1nF 50V C0G ±5% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:49:01Z",
+   "fetched_utc": "2026-11-06T16:57:54Z",
    "jlc_library": "extended",
    "manufacturer": "Murata Electronics",
    "mpn": "GRM1885C1H102JA01D",
@@ -10078,7 +11936,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2410010301_Murata-Electronics-GRM21BR61C106KE15L_C77075.pdf",
    "description": "10uF 16V X5R ±10% 0805 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:49:02Z",
+   "fetched_utc": "2026-11-06T16:57:55Z",
    "jlc_library": "extended",
    "manufacturer": "Murata Electronics",
    "mpn": "GRM21BR61C106KE15L",
@@ -10121,7 +11979,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1811081617_Murata-Electronics-GRM1555C1H101JA01D_C77177.pdf",
    "description": "100pF 50V C0G ±5% 0402 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:49:02Z",
+   "fetched_utc": "2026-11-06T16:57:56Z",
    "jlc_library": "extended",
    "manufacturer": "Murata Electronics",
    "mpn": "GRM1555C1H101JA01D",
@@ -10167,7 +12025,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2205312316_UNI-ROYAL-Uniroyal-Elec-1210W2F100KT5E_C78022.pdf",
    "description": "-55℃~+155℃ 1Ω 200V 500mW Thick Film Resistor ±1% ±200ppm/℃ 1210 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:49:03Z",
+   "fetched_utc": "2026-11-06T16:57:56Z",
    "jlc_library": "extended",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "1210W2F100KT5E",
@@ -10213,7 +12071,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2206010216_UNI-ROYAL-Uniroyal-Elec-0603WAF2000T5E_C8218.pdf",
    "description": "-55℃~+155℃ 100mW 200Ω 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:49:04Z",
+   "fetched_utc": "2026-11-06T16:57:57Z",
    "jlc_library": "basic",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF2000T5E",
@@ -10244,7 +12102,7 @@
      0.0022
     ]
    ],
-   "stock": 1712201,
+   "stock": 1712269,
    "url": "https://www.lcsc.com/product-detail/chip-resistor-surface-mount_uni-royal-uniroyal-elec-0603waf2000t5e_C8218.html"
   },
   "C82476": {
@@ -10259,7 +12117,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_onsemi-BZX84C10LT1G_C82476.pdf",
    "description": "-65℃~+150℃ 10V 200nA@6V 20Ω 250mW 9.4V~10.6V Independent SOT-23 Zener Diodes ROHS",
-   "fetched_utc": "2026-11-06T16:49:05Z",
+   "fetched_utc": "2026-11-06T16:57:58Z",
    "jlc_library": "extended",
    "manufacturer": "onsemi",
    "mpn": "BZX84C10LT1G",
@@ -10305,7 +12163,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_KOA-Speer-Elec-RK73H1JTTD2051F_C830313.pdf",
    "description": "-55℃~+155℃ 100mW 2.05kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:49:05Z",
+   "fetched_utc": "2026-11-06T16:57:58Z",
    "jlc_library": "extended",
    "manufacturer": "KOA Speer Elec",
    "mpn": "RK73H1JTTD2051F",
@@ -10351,7 +12209,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_KOA-Speer-Elec-RK73H1JTTD8250F_C830359.pdf",
    "description": "-55℃~+155℃ 125mW 75V 825Ω Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:49:06Z",
+   "fetched_utc": "2026-11-06T16:57:59Z",
    "jlc_library": "extended",
    "manufacturer": "KOA Speer Elec",
    "mpn": "RK73H1JTTD8250F",
@@ -10397,7 +12255,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1809291420_onsemi-SS14_C83852.pdf",
    "description": "-65℃~+125℃ 1 Independent 1A 200uA@40V 40A 40V 500mV@1A SMA(DO-214AC) Schottky Diodes ROHS",
-   "fetched_utc": "2026-11-06T16:49:06Z",
+   "fetched_utc": "2026-11-06T16:58:00Z",
    "jlc_library": "extended",
    "manufacturer": "onsemi",
    "mpn": "SS14",
@@ -10428,7 +12286,7 @@
      0.0573
     ]
    ],
-   "stock": 141810,
+   "stock": 141796,
    "url": "https://www.lcsc.com/product-detail/schottky-diodes_onsemi-ss14_C83852.html"
   },
   "C844245": {
@@ -10442,7 +12300,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2210190530_Vishay-Intertech-CRCW12104K70FKEA_C844245.pdf",
    "description": "-55℃~+155℃ 4.7kΩ 500mW Thick Film Resistor ±1% ±100ppm/℃ 1210 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:49:07Z",
+   "fetched_utc": "2026-11-06T16:58:00Z",
    "jlc_library": "extended",
    "manufacturer": "Vishay Intertech",
    "mpn": "CRCW12104K70FKEA",
@@ -10487,7 +12345,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2312131902_Vishay-Intertech-TNPW06034K99BEEA_C844461.pdf",
    "description": "-55℃~+155℃ 100mW 4.99kΩ Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:49:08Z",
+   "fetched_utc": "2026-11-06T16:58:01Z",
    "jlc_library": "extended",
    "manufacturer": "Vishay Intertech",
    "mpn": "TNPW06034K99BEEA",
@@ -10536,7 +12394,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1810010310_Diodes-Incorporated-2N7002-7-F_C85049.pdf",
    "description": "-55℃~+150℃ 1 N-channel 2.5V 210mA 223pC@4.5V 370mW 50pF 5pF 60V 7.5Ω@5V SOT-23 MOSFETs ROHS",
-   "fetched_utc": "2026-11-06T16:49:08Z",
+   "fetched_utc": "2026-11-06T16:58:02Z",
    "jlc_library": "extended",
    "manufacturer": "Diodes Incorporated",
    "mpn": "2N7002-7-F",
@@ -10582,7 +12440,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2407241045_Nexperia-BAT54-215_C85084.pdf",
    "description": "1 Independent 200mA 2uA@25V 30V 600mA 800mV@100mA SOT-23 Schottky Diodes ROHS",
-   "fetched_utc": "2026-11-06T16:49:09Z",
+   "fetched_utc": "2026-11-06T16:58:02Z",
    "jlc_library": "extended",
    "manufacturer": "Nexperia",
    "mpn": "BAT54,215",
@@ -10628,7 +12486,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2203300930_YAGEO-RT0402BRD0724K9L_C852664.pdf",
    "description": "-55℃~+155℃ 24.9kΩ 50V 63mW Thin Film Resistor ±0.1% ±25ppm/℃ 0402 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:49:10Z",
+   "fetched_utc": "2026-11-06T16:58:03Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RT0402BRD0724K9L",
@@ -10671,7 +12529,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Murata-Electronics-GRM1885C1H103JA01D_C85973.pdf",
    "description": "10nF 50V C0G ±5% 0603 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:49:11Z",
+   "fetched_utc": "2026-11-06T16:58:04Z",
    "jlc_library": "extended",
    "manufacturer": "Murata Electronics",
    "mpn": "GRM1885C1H103JA01D",
@@ -10717,7 +12575,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2210190100_YAGEO-RT0603BRB0721K5L_C860223.pdf",
    "description": "-55℃~+155℃ 100mW 21.5kΩ 75V Thin Film Resistor ±0.1% ±10ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:49:11Z",
+   "fetched_utc": "2026-11-06T16:58:05Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RT0603BRB0721K5L",
@@ -10763,7 +12621,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2210190030_YAGEO-RT0603BRD07102KL_C861068.pdf",
    "description": "-55℃~+155℃ 100mW 102kΩ 75V Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:49:12Z",
+   "fetched_utc": "2026-11-06T16:58:05Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RT0603BRD07102KL",
@@ -10809,7 +12667,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2311211102_YAGEO-RT0603BRD07174KL_C861163.pdf",
    "description": "-55℃~+155℃ 100mW 174kΩ 75V Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:49:13Z",
+   "fetched_utc": "2026-11-06T16:58:06Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RT0603BRD07174KL",
@@ -10855,7 +12713,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2210190000_YAGEO-RT0603BRD0719K6L_C861185.pdf",
    "description": "-55℃~+155℃ 100mW 19.6kΩ 75V Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:49:13Z",
+   "fetched_utc": "2026-11-06T16:58:07Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RT0603BRD0719K6L",
@@ -10901,7 +12759,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2204130915_YAGEO-RT0603BRD0725K5L_C861257.pdf",
    "description": "-55℃~+155℃ 100mW 25.5kΩ 75V Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:49:14Z",
+   "fetched_utc": "2026-11-06T16:58:08Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RT0603BRD0725K5L",
@@ -10947,7 +12805,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2210190000_YAGEO-RT0603BRD07332KL_C861329.pdf",
    "description": "-55℃~+155℃ 100mW 332kΩ 75V Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:49:15Z",
+   "fetched_utc": "2026-11-06T16:58:08Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RT0603BRD07332KL",
@@ -10993,7 +12851,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2210190000_YAGEO-RT0603BRD0773K2L_C861548.pdf",
    "description": "-55℃~+155℃ 100mW 73.2kΩ 75V Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:49:15Z",
+   "fetched_utc": "2026-11-06T16:58:09Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RT0603BRD0773K2L",
@@ -11039,7 +12897,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2210190000_YAGEO-RT0603BRE0724K9L_C861775.pdf",
    "description": "-55℃~+155℃ 100mW 24.9kΩ 75V Thin Film Resistor ±0.1% ±50ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:49:16Z",
+   "fetched_utc": "2026-11-06T16:58:10Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RT0603BRE0724K9L",
@@ -11085,7 +12943,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2210190000_YAGEO-RT0603BRE0773K2L_C862276.pdf",
    "description": "-55℃~+155℃ 100mW 73.2kΩ 75V Thin Film Resistor ±0.1% ±50ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:49:17Z",
+   "fetched_utc": "2026-11-06T16:58:10Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RT0603BRE0773K2L",
@@ -11130,7 +12988,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2404241520_YAGEO-RT0603FRE07953RL_C863979.pdf",
    "description": "-55℃~+155℃ 100mW 953Ω Thin Film Resistor ±1% ±50ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:49:18Z",
+   "fetched_utc": "2026-11-06T16:58:11Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RT0603FRE07953RL",
@@ -11175,7 +13033,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2404241545_YAGEO-SR0603FR-7T150RL_C873675.pdf",
    "description": "-55℃~+155℃ 150Ω 250mW Thick Film Resistor ±1% ±200ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:49:18Z",
+   "fetched_utc": "2026-11-06T16:58:12Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "SR0603FR-7T150RL",
@@ -11226,7 +13084,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/1810010331_PANASONIC-35SVPF22M_C88142.pdf",
    "description": "-55℃~+105℃ 2.6A@100kHz 22uF 35V 35mΩ@100kHz 5.9mm 5000hrs@105℃ 6.3mm Polarized Polymer ±20% SMD,D6.3xL5.9mm Polymer Aluminum Capacitors ROHS",
-   "fetched_utc": "2026-11-06T16:49:19Z",
+   "fetched_utc": "2026-11-06T16:58:12Z",
    "jlc_library": "extended",
    "manufacturer": "PANASONIC",
    "mpn": "35SVPF22M",
@@ -11269,7 +13127,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2304140030_Murata-Electronics-GJM1555C1H220JB01D_C88882.pdf",
    "description": "22pF 50V C0G ±5% 0402 Multilayer Ceramic Capacitors MLCC - SMD/SMT ROHS",
-   "fetched_utc": "2026-11-06T16:49:20Z",
+   "fetched_utc": "2026-11-06T16:58:13Z",
    "jlc_library": "extended",
    "manufacturer": "Murata Electronics",
    "mpn": "GJM1555C1H220JB01D",
@@ -11320,7 +13178,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1810151811_Texas-Instruments-TPS70933DBVR_C89347.pdf",
    "description": "-40℃~+125℃@(Tj) 1 1.4uA 150mA 190uVrms 3.3V 30V 80dB@(10Hz) 960mV@(150mA) Fixed Over Current Protection、Thermal shutdown、Enable control、Input under-voltage protection、Reverse-polarity current protection Positive SOT-23-5 Voltage Regulators - Linear, Low Drop Out (LDO) Regulators ROHS",
-   "fetched_utc": "2026-11-06T16:49:20Z",
+   "fetched_utc": "2026-11-06T16:58:14Z",
    "jlc_library": "extended",
    "manufacturer": "Texas Instruments",
    "mpn": "TPS70933DBVR",
@@ -11366,7 +13224,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2205312316_UNI-ROYAL-Uniroyal-Elec-0603WAF9530T5E_C93622.pdf",
    "description": "-55℃~+155℃ 100mW 75V 953Ω Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:49:21Z",
+   "fetched_utc": "2026-11-06T16:58:14Z",
    "jlc_library": "extended",
    "manufacturer": "UNI-ROYAL(Uniroyal Elec)",
    "mpn": "0603WAF9530T5E",
@@ -11412,7 +13270,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_1809192121_onsemi-BAT54LT1G_C94399.pdf",
    "description": "-55℃~+125℃ 1 Independent 200mA 2uA@25V 30V 600mA 800mV@100mA SOT-23 Schottky Diodes ROHS",
-   "fetched_utc": "2026-11-06T16:49:22Z",
+   "fetched_utc": "2026-11-06T16:58:15Z",
    "jlc_library": "extended",
    "manufacturer": "onsemi",
    "mpn": "BAT54LT1G",
@@ -11458,7 +13316,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/1811082117_YAGEO-RT0603BRD0710KL_C95204.pdf",
    "description": "-55℃~+155℃ 100mW 10kΩ 75V Thin Film Resistor ±0.1% ±25ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:49:22Z",
+   "fetched_utc": "2026-11-06T16:58:16Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RT0603BRD0710KL",
@@ -11506,7 +13364,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/2309181122_Lelon-HBV101M1VTR-0608_C967098.pdf",
    "description": "-55℃~+105℃ 10000hrs@105℃ 100uF 35V 6.3mm 7.7mm Polarized SMD ±20% SMD,D6.3xL7.7mm Hybrid Aluminum Electrolytic Capacitors ROHS",
-   "fetched_utc": "2026-11-06T16:49:23Z",
+   "fetched_utc": "2026-11-06T16:58:16Z",
    "jlc_library": "extended",
    "manufacturer": "Lelon",
    "mpn": "HBV101M1VTR-0608",
@@ -11555,7 +13413,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Vishay-Intertech-SMBJ13A-E3-52_C968569.pdf",
    "description": "-55℃~+150℃ 13V 14.4V 1uA 21.5V 27.9A 600W TVS Unidirectional SMB(DO-214AA) ESD and Surge Protection (TVS/ESD) ROHS",
-   "fetched_utc": "2026-11-06T16:49:24Z",
+   "fetched_utc": "2026-11-06T16:58:17Z",
    "jlc_library": "extended",
    "manufacturer": "Vishay Intertech",
    "mpn": "SMBJ13A-E3/52",
@@ -11601,7 +13459,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-0710KL_C98220.pdf",
    "description": "-55℃~+155℃ 100mW 10kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:49:24Z",
+   "fetched_utc": "2026-11-06T16:58:18Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RC0603FR-0710KL",
@@ -11643,7 +13501,7 @@
    },
    "datasheet": "https://wmsc.lcsc.com/wmsc/upload/file/pdf/v2/lcsc/1811011911_Changzhou-Amass-Elec-XT30U-M_C99101.pdf",
    "description": "Male Plug、- Yellow - Power connector / plug connector",
-   "fetched_utc": "2026-11-06T16:49:25Z",
+   "fetched_utc": "2026-11-06T16:58:18Z",
    "jlc_library": "extended",
    "manufacturer": "Changzhou Amass Elec",
    "mpn": "XT30U-M",
@@ -11677,7 +13535,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Changzhou-Amass-Elec-XT30U-F_C99102.pdf",
    "description": "Female Plug、- Yellow - Power connector / plug connector",
-   "fetched_utc": "2026-11-06T16:49:26Z",
+   "fetched_utc": "2026-11-06T16:58:19Z",
    "jlc_library": "extended",
    "manufacturer": "Changzhou Amass Elec",
    "mpn": "XT30U-F",
@@ -11715,7 +13573,7 @@
    },
    "datasheet": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_YAGEO-RC0603FR-074K7L_C99782.pdf",
    "description": "-55℃~+155℃ 100mW 4.7kΩ 75V Thick Film Resistor ±1% ±100ppm/℃ 0603 Chip Resistor - Surface Mount ROHS",
-   "fetched_utc": "2026-11-06T16:49:26Z",
+   "fetched_utc": "2026-11-06T16:58:20Z",
    "jlc_library": "extended",
    "manufacturer": "YAGEO",
    "mpn": "RC0603FR-074K7L",
