@@ -334,14 +334,17 @@ class SmokeModelTests(unittest.TestCase):
         self.smoke = smoke_qemu
         self.recipe = json.loads((HERE / "image/recipe.json").read_text())
 
-    def report(self, slot, ok, boot_complete, bless, bless_status, rows=None):
+    def report(self, slot, ok, boot_complete, bless, bless_status, rows=None, selftest=True, numpy=True):
         units = {"srrx-boot-check.service": {"ActiveState": "active" if ok else "failed"},
                  "boot-complete.target": {"ActiveState": boot_complete}, "systemd-bless-boot.service": {"ActiveState": bless},
                  "srrx.service": {"ActiveState": "inactive", "UnitFileState": "disabled"}}
-        return {"boot_check": {"slot": slot, "status": "BOOT_SELF_CHECK_OK" if ok else "BLOCKED"}, "units": units,
-                "bless_boot_status": bless_status, "pending_jobs": [],
-                "masked_units": {u: {"LoadState": "masked"} for u in self.recipe["mask"]["units"]},
-                "selftest": {"status": "FAIL", "fail_or_blocked_rows": rows if rows is not None else {"RX-16": ["lab_pref_missing"]}}}
+        report = {"boot_check": {"slot": slot, "status": "BOOT_SELF_CHECK_OK" if ok else "BLOCKED"}, "units": units,
+                  "bless_boot_status": bless_status, "pending_jobs": [],
+                  "masked_units": {u: {"LoadState": "masked"} for u in self.recipe["mask"]["units"]}}
+        if selftest:
+            report["selftest"] = {"status": "FAIL", "interpreter_numpy": numpy,
+                                  "fail_or_blocked_rows": rows if rows is not None else {"RX-16": ["lab_pref_missing"]}}
+        return report
 
     def run_check(self, index, report, entries):
         name, expect = self.smoke.SCENARIOS[index]
@@ -351,9 +354,52 @@ class SmokeModelTests(unittest.TestCase):
     def test_expected_boots_pass(self):
         blessed = sorted(["labA.conf", "labB.conf", "labA-rescue.conf", "labB-rescue.conf"])
         bad_b = sorted(["labA.conf", "labB+0-1.conf", "labA-rescue.conf", "labB-rescue.conf"])
+        self.assertEqual([s[1]["selftest"] for s in self.smoke.SCENARIOS], [True, False, False])  # once: about 17 min under TCG
         self.assertEqual(self.run_check(0, self.report("A", True, "active", "active", "good"), blessed)["status"], "MODEL_PASS")
-        self.assertEqual(self.run_check(1, self.report("B", False, "inactive", "inactive", "indeterminate"), bad_b)["status"], "MODEL_PASS")
-        self.assertEqual(self.run_check(2, self.report("A", True, "inactive", "inactive", "clean"), bad_b)["status"], "MODEL_PASS")
+        self.assertEqual(self.run_check(1, self.report("B", False, "inactive", "inactive", "indeterminate", selftest=False), bad_b)["status"],
+                         "MODEL_PASS")
+        self.assertEqual(self.run_check(2, self.report("A", True, "inactive", "inactive", "clean", selftest=False), bad_b)["status"], "MODEL_PASS")
+        stray = self.run_check(2, self.report("A", True, "inactive", "inactive", "clean"), bad_b)
+        self.assertEqual(stray["mismatches"], ["selftest ran on a boot that does not ask for it"])
+
+    def test_interpreter_rows_are_expected_only_without_numpy(self):
+        # CI 2026-11-06: the image's python3 has no numpy, so RX-14 blocks live but passed at build time.
+        blessed = sorted(["labA.conf", "labB.conf", "labA-rescue.conf", "labB-rescue.conf"])
+        live = {"RX-14": ["numpy_unavailable"], "RX-16": ["lab_pref_missing"]}
+        cases = ((live, False, "MODEL_PASS"), (live, True, "MODEL_FAIL"), ({"RX-16": ["lab_pref_missing"]}, False, "MODEL_FAIL"),
+                 ({"RX-14": ["voice_residual_above_noise"], "RX-16": ["lab_pref_missing"]}, False, "MODEL_FAIL"),
+                 ({"RX-16": ["lab_pref_missing"]}, True, "MODEL_PASS"))
+        for rows, numpy, status in cases:
+            report = self.report("A", True, "active", "active", "good", rows=rows, numpy=numpy)
+            self.assertEqual(self.run_check(0, report, blessed)["status"], status, (rows, numpy))
+
+    def test_entry_plan_keeps_the_blessed_name_and_runs_the_selftest_once(self):
+        cfg = bootchain.validate_ab(config())
+        plans = self.smoke.entry_plan(cfg)
+        with tempfile.TemporaryDirectory() as temp:
+            entries = Path(temp)
+            for name in ("labA.conf", "labB.conf", "labA-rescue.conf", "labB-rescue.conf"):
+                (entries / name).write_text("golden\n")
+            self.smoke.apply_entry_plan(entries, plans[0])
+            self.assertEqual(sorted(p.name for p in entries.glob("lab*.conf")),
+                             sorted(["labA+3.conf", "labB.conf", "labA-rescue.conf", "labB-rescue.conf"]))
+            self.assertIn(" --selftest\"", (entries / "labA+3.conf").read_text())
+            self.assertNotIn("--selftest", (entries / "labB.conf").read_text())
+            self.assertEqual((entries / "labA-rescue.conf").read_text(), "golden\n")
+            os.replace(entries / "labA+3.conf", entries / "labA.conf")  # what systemd-bless-boot does on a good boot
+            self.smoke.apply_entry_plan(entries, plans[1])
+            self.assertIn("version 4\n", (entries / "labB+1.conf").read_text())
+            self.assertNotIn(self.smoke.BROKEN_TOKEN, (entries / "labB+1.conf").read_text())
+            self.assertFalse((entries / "labB.conf").exists())
+            os.replace(entries / "labB+1.conf", entries / "labB+0-1.conf")  # systemd-boot counted the only try down
+            self.smoke.apply_entry_plan(entries, plans[2])
+            self.assertEqual(sorted(p.name for p in entries.glob("lab*.conf")),
+                             sorted(["labA.conf", "labB+0-1.conf", "labA-rescue.conf", "labB-rescue.conf"]))
+            self.assertNotIn("--selftest", (entries / "labA.conf").read_text())
+            self.assertIn("version 3\n", (entries / "labA.conf").read_text())
+            (entries / "labA.conf").unlink()  # scenario 1 did not bless: scenario 3 creates nothing
+            self.smoke.apply_entry_plan(entries, plans[2])
+            self.assertFalse((entries / "labA.conf").exists())
 
     def test_the_failure_of_the_first_ci_run_is_a_model_fail(self):
         # 24.10.2026: systemd.run= alone never queued boot-complete.target, so nothing was blessed.
@@ -377,6 +423,8 @@ class SmokeModelTests(unittest.TestCase):
         line = bootchain.cmdline(BASE, cfg["root_b_partuuid"]).split(" ")
         self.assertEqual([t for t in options if t in line], [t for t in line if t != self.smoke.BROKEN_TOKEN])
         self.assertIn("systemd.run_success_action=poweroff", options)
+        self.assertNotIn("--selftest", " ".join(options))
+        self.assertIn('bootchain.py smoke-report --selftest" ', self.smoke.smoke_options(cfg, "A", selftest=True))
         self.assertNotIn("devicetree", self.smoke.smoke_entry(cfg, "A", 3))
         self.assertEqual(bootchain.SMOKE_TARGET, "multi-user.target")
 

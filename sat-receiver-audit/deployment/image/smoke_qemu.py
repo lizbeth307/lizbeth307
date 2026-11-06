@@ -19,9 +19,10 @@ Scenarios, one QEMU boot each (-no-reboot; systemd.run_*_action=poweroff ends th
                      systemd-boot leaves labB+0-1.conf (no tries left)
   3 fallback-a       the bad labB sorts last: the blessed labA boots again
 Every boot also checks: no pending jobs, srrx.service inactive and disabled, the recipe masks in
-effect; booting slot A, selftest.py offline on the live root gives the same FAIL/BLOCKED rows as
-the build-time run on root A. Bench gates W-03 (rollback on the Q6A) and W-10 (DTB provenance)
-stay OPEN.
+effect. The first slot A boot also runs selftest.py offline on a read-only view of the booted root
+and ESP (bootchain.live_selftest): its FAIL/BLOCKED rows must equal the build-time rows on root A,
+plus INTERPRETER_ROWS when the image's python3 lacks numpy. Bench gates W-03 (rollback on the Q6A)
+and W-10 (DTB provenance) stay OPEN.
 """
 import argparse
 import json
@@ -85,20 +86,20 @@ class Esp:
         run(["losetup", "-d", self.loop], check=False)
 
 
-def smoke_options(config, slot, drop=None):
+def smoke_options(config, slot, drop=None, selftest=False):
     tokens = bootchain.cmdline(config["base_cmdline_without_root"], bootchain.root_partuuid(config, slot), config["lime_build"]).split(" ")
     if drop:
         tokens.remove(drop)
-    return " ".join(tokens + ["console=ttyAMA0,115200",
-                              'systemd.run="/usr/bin/python3 -I -B /opt/srrx/deployment/image/bootchain.py smoke-report"',
+    report = "/usr/bin/python3 -I -B /opt/srrx/deployment/image/bootchain.py smoke-report" + (" --selftest" if selftest else "")
+    return " ".join(tokens + ["console=ttyAMA0,115200", 'systemd.run="' + report + '"',
                               "systemd.run_success_action=poweroff", "systemd.run_failure_action=poweroff"])
 
 
-def smoke_entry(config, slot, version, drop=None):
+def smoke_entry(config, slot, version, drop=None, selftest=False):
     files = config["slots"][slot]
     return ("title SR-RX slot {s} QEMU smoke ({k})\nsort-key {sk}\nversion {v}\nlinux {l}\ninitrd {i}\noptions {o}\n"
             .format(s=slot, k=config["kernel_version"], sk=bootchain.SORT_KEY, v=version, l=files["kernel"], i=files["initrd"],
-                    o=smoke_options(config, slot, drop)))
+                    o=smoke_options(config, slot, drop, selftest)))
 
 
 def lab_entries(esp):
@@ -133,16 +134,59 @@ def qemu(image, vars_file, log, timeout, accel):
 
 RESCUE_ENTRIES = ["labA-rescue.conf", "labB-rescue.conf"]
 # One QEMU boot each; "entries_after" is the exact lab*.conf set on the ESP after the boot.
+# "selftest": the boot also runs selftest.py offline on the booted root (about 17 min under TCG),
+# once, on the first slot A boot.
 SCENARIOS = (
     ("trial-a-blessed", {"slot": "A", "boot_check": "BOOT_SELF_CHECK_OK", "boot_complete": "active", "bless": "active",
-                         "bless_status": "good", "entries_after": sorted(["labA.conf", "labB.conf"] + RESCUE_ENTRIES)}),
+                         "bless_status": "good", "entries_after": sorted(["labA.conf", "labB.conf"] + RESCUE_ENTRIES), "selftest": True}),
     ("trial-b-fails", {"slot": "B", "boot_check": "BLOCKED", "boot_complete": "inactive", "bless": "inactive",
-                       "bless_status": "indeterminate", "entries_after": sorted(["labA.conf", "labB+0-1.conf"] + RESCUE_ENTRIES)}),
+                       "bless_status": "indeterminate", "entries_after": sorted(["labA.conf", "labB+0-1.conf"] + RESCUE_ENTRIES),
+                       "selftest": False}),
     # A blessed entry has no counter: systemd-bless-boot and boot-complete.target are not queued;
     # srrx-boot-check still runs (WantedBy=multi-user.target).
     ("fallback-a", {"slot": "A", "boot_check": "BOOT_SELF_CHECK_OK", "boot_complete": None, "bless": "inactive",
-                    "bless_status": "clean", "entries_after": sorted(["labA.conf", "labB+0-1.conf"] + RESCUE_ENTRIES)}),
+                    "bless_status": "clean", "entries_after": sorted(["labA.conf", "labB+0-1.conf"] + RESCUE_ENTRIES), "selftest": False}),
 )
+# Rows whose verdict depends on the interpreter that runs selftest.py, not on the root: the builder
+# runs it with its own python3 and python3-numpy; the live run uses the image's python3, which has
+# no numpy (r2 ships none; the HMI venv is IMG-10). Expected live-only exactly when numpy is absent.
+INTERPRETER_ROWS = {"RX-14": ["numpy_unavailable"]}
+
+
+def entry_plan(config):
+    """Per scenario: (lab entries to remove, entries to write, entries to rewrite only if present).
+
+    1: only the smoke pair, labA+3 (with the live selftest) newest and labB blessed.
+    2: labB replaced by labB+1, newest, with a required token removed.
+    3: nothing added; the labA.conf that scenario 1 left (blessed by systemd-bless-boot) is
+       rewritten in place without the selftest, so its name and version stay as blessed. If
+       scenario 1 did not bless it, nothing is created and the check reports the real state."""
+    return (
+        ("lab*", {"labA+3.conf": (config, "A", 3, None, True), "labB.conf": (config, "B", 1, None, False)}, {}),
+        ("labB*", {"labB+1.conf": (config, "B", 4, BROKEN_TOKEN, False)}, {}),
+        ("", {}, {"labA.conf": (config, "A", 3, None, False)}),
+    )
+
+
+def apply_entry_plan(entries_dir, plan):
+    remove, writes, rewrites = plan
+    entries_dir = Path(entries_dir)
+    if remove:
+        for old in entries_dir.glob(remove + ".conf"):
+            if not old.name.endswith("-rescue.conf"):
+                old.unlink()
+    for fname, args in writes.items():
+        (entries_dir / fname).write_text(smoke_entry(*args), encoding="ascii", newline="\n")
+    for fname, args in rewrites.items():
+        if (entries_dir / fname).is_file():
+            (entries_dir / fname).write_text(smoke_entry(*args), encoding="ascii", newline="\n")
+
+
+def expected_live_rows(build_rows, interpreter_numpy):
+    rows = dict(build_rows)
+    if interpreter_numpy is False:
+        rows.update({k: v for k, v in INTERPRETER_ROWS.items() if k not in rows})
+    return rows
 
 
 def check(scenario, result, expect, build_rows=None):
@@ -176,13 +220,19 @@ def check(scenario, result, expect, build_rows=None):
     not_masked = sorted(u for u, p in masked.items() if (p or {}).get("LoadState") != "masked")
     if not masked or not_masked:
         bad.append("recipe masks not in effect: " + (",".join(not_masked) or "no mask report"))
-    if expect["boot_check"] == "BOOT_SELF_CHECK_OK" and build_rows is not None:
-        live = (report.get("selftest") or {}).get("fail_or_blocked_rows")
-        if live is None or sorted(live) != sorted(build_rows):
-            extra = {k: (live or {})[k] for k in sorted(set(live or {}) - set(build_rows))}
-            bad.append("live selftest FAIL/BLOCKED rows %r differ from the build-time rows %r (only live: %s; only build: %r; status %s)"
-                       % (sorted(live or {}), sorted(build_rows), json.dumps(extra)[:400], sorted(set(build_rows) - set(live or {})),
-                          (report.get("selftest") or {}).get("status")))
+    if expect["selftest"]:
+        selftest = report.get("selftest") or {}
+        live = selftest.get("fail_or_blocked_rows")
+        want = expected_live_rows(build_rows or {}, selftest.get("interpreter_numpy"))
+        interpreter_drift = [k for k in INTERPRETER_ROWS if k in want and k not in (build_rows or {}) and (live or {}).get(k) != want[k]]
+        if build_rows is None or live is None or sorted(live) != sorted(want) or interpreter_drift:
+            extra = {k: (live or {})[k] for k in sorted(set(live or {}) - set(want))}
+            bad.append("live selftest FAIL/BLOCKED rows %r differ from the expected rows %r (build-time %r, interpreter numpy %r; "
+                       "only live: %s; missing: %r; status %s)"
+                       % (sorted(live or {}), sorted(want), sorted(build_rows or {}), selftest.get("interpreter_numpy"),
+                          json.dumps(extra)[:400], sorted(set(want) - set(live or {})), selftest.get("status")))
+    elif report.get("selftest") is not None:
+        bad.append("selftest ran on a boot that does not ask for it")
     return dict(scenario=scenario, status="MODEL_FAIL" if bad else "MODEL_PASS", expected=expect, observed=observed,
                 mismatches=bad, **result)
 
@@ -215,24 +265,16 @@ def smoke(image, manifest_path, facts_path, work, out, timeout=1800):
         copy.unlink()
     recovery_kit.sparse_copy(image, copy)
     esp_dir = work / "esp"
-    writes_per_scenario = ({"labA+3.conf": (config, "A", 3, None), "labB.conf": (config, "B", 1, None)},
-                           {"labB+1.conf": (config, "B", 4, BROKEN_TOKEN)}, {})
     build_rows = (manifest.get("selftest_root_a") or {}).get("fail_or_blocked_rows")
     result["build_selftest_rows"] = build_rows
-    for index, ((name, expect), writes) in enumerate(zip(SCENARIOS, writes_per_scenario), 1):
+    for index, ((name, expect), plan) in enumerate(zip(SCENARIOS, entry_plan(config)), 1):
         with Esp(copy, esp_dir) as esp:
-            entries_dir = esp / "loader/entries"
-            if writes:
-                for old in entries_dir.glob("lab*.conf"):
-                    if not old.name.endswith("-rescue.conf") and (index == 1 or old.name.startswith("labB")):
-                        old.unlink()
-                for fname, args in writes.items():
-                    (entries_dir / fname).write_text(smoke_entry(*args), encoding="ascii", newline="\n")
+            apply_entry_plan(esp / "loader/entries", plan)
             before = lab_entries(esp)
         vars_file = work / ("vars-%d.fd" % index)
         shutil.copyfile(FIRMWARE_VARS, vars_file)
         log = out / ("console-%d-%s.log" % (index, name))
-        run_result = qemu(copy, vars_file, log, timeout, accel)
+        run_result = qemu(copy, vars_file, log, timeout + (bootchain.SMOKE_SELFTEST_LIMIT if expect["selftest"] else 0), accel)
         with Esp(copy, esp_dir, read_only=True) as esp:
             run_result["entries_before"], run_result["entries_after"] = before, lab_entries(esp)
         result["scenarios"].append(check(name, run_result, expect, build_rows))

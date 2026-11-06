@@ -469,15 +469,59 @@ def fail_or_blocked_rows(report):
             for row in report.get("checks", []) if row.get("status") in ("FAIL", "BLOCKED")}
 
 
-def smoke_report(timeout=900, root=Path("/")):
+SMOKE_VIEW = Path("/run/srrx-smoke-root")
+SMOKE_SELFTEST_LIMIT = 1500  # seconds; the live run under QEMU TCG took about 17 min on 2026-11-06
+
+
+def live_selftest(config, slot, limit=SMOKE_SELFTEST_LIMIT, view=SMOKE_VIEW):
+    """QEMU smoke only: selftest.py offline on a read-only, non-recursive bind of / with /boot/efi
+    bound in, i.e. the booted slot's root filesystem and the ESP, the scope of the build-time run
+    on root A (no /data, /proc, /run). The CLI writes its report outside that view, in /run, and
+    the run is bounded. interpreter_numpy records whether the image's python3 has numpy: the
+    builder evaluates the target modules with its own python3-numpy."""
+    import importlib.util
+    import subprocess
+    import time
+
+    line = cmdline(config["base_cmdline_without_root"], root_partuuid(config, slot), config["lime_build"]) + "\n"
+    output = view.with_name(view.name + "-selftest.json")
+    result = {"interpreter_numpy": importlib.util.find_spec("numpy") is not None, "scope": "ro bind of / + /boot/efi"}
+    mounted = []
+    try:
+        view.mkdir(exist_ok=True)
+        for source, target in (("/", view), ("/boot/efi", view / "boot/efi")):
+            subprocess.run(["mount", "--bind", source, str(target)], check=True, capture_output=True, timeout=60)
+            mounted.append(target)
+            # private: the ESP bound into the view must not propagate back onto the shared /
+            for options in (["--make-private"], ["-o", "remount,bind,ro"]):
+                subprocess.run(["mount"] + options + [str(target)], check=True, capture_output=True, timeout=60)
+        argv = [sys.executable, "-I", "-B", str(DEPLOYMENT / "selftest.py"), "offline", "--rootfs", str(view), "--profile", "controller",
+                "--policy", str(DEPLOYMENT / "receive-only-policy.json"), "--project", str(DEPLOYMENT.parent),
+                "--cmdline-sha256", hashlib.sha256(line.encode()).hexdigest(), "--output", str(output)]
+        started = time.monotonic()
+        done = subprocess.run(argv, capture_output=True, text=True, timeout=limit)
+        live = json.loads(output.read_text(encoding="utf-8")) if output.is_file() else {}
+        result.update(exit_code=done.returncode, seconds=round(time.monotonic() - started), status=live.get("status"),
+                      counts=live.get("counts"), fail_or_blocked_rows=fail_or_blocked_rows(live), stderr_tail=done.stderr[-600:])
+    except subprocess.TimeoutExpired:
+        result["status"] = "unavailable: selftest exceeded %d s" % limit
+    except (OSError, ValueError, subprocess.SubprocessError) as exc:
+        result["status"] = "unavailable: " + type(exc).__name__ + ": " + str(exc)[:300]
+    finally:
+        for target in reversed(mounted):
+            subprocess.run(["umount", str(target)], capture_output=True, timeout=60)
+    return result
+
+
+def smoke_report(timeout=900, root=Path("/"), selftest=False):
     """QEMU smoke only (deployment/image/smoke_qemu.py passes systemd.run= on the smoke entry). Inert otherwise.
 
     systemd-run-generator points default.target at kernel-command-line.target, which needs only
     kernel-command-line.service (After=, not Requires=, basic.target). So the regular transaction
     (basic.target -> systemd-bless-boot.service -> boot-complete.target -> srrx-boot-check.service)
     is queued here by starting multi-user.target; the graphical session is not part of the model.
-    Then wait until every other job has finished, run selftest.py offline on the live root, and
-    print one JSON line between markers."""
+    Then wait until every other job has finished, with selftest=True run live_selftest, and print
+    one JSON line between markers."""
     import subprocess
     import time
 
@@ -509,18 +553,11 @@ def smoke_report(timeout=900, root=Path("/")):
                                   for u in recipe["mask"]["units"]}
     except (OSError, ValueError, KeyError) as exc:
         report["masked_units"] = {"unavailable": type(exc).__name__}
-    try:
-        config = load_config(root / BOOT_CONFIG.relative_to("/"))
-        slot = read_slot(root / SLOT_FILE.relative_to("/"))
-        line = cmdline(config["base_cmdline_without_root"], root_partuuid(config, slot), config["lime_build"]) + "\n"
-        # In-process: the selftest CLI refuses an --output inside the inspected rootfs, and here it is "/".
-        sys.path.insert(0, str(DEPLOYMENT))
-        import selftest  # noqa: E402  (stdlib-only module of the same tree)
-        live = selftest.run_offline(root, "controller", DEPLOYMENT / "receive-only-policy.json", DEPLOYMENT.parent,
-                                    cmdline_sha256=hashlib.sha256(line.encode()).hexdigest())
-        report["selftest"] = {"status": live.get("status"), "counts": live.get("counts"), "fail_or_blocked_rows": fail_or_blocked_rows(live)}
-    except (ImportError, OSError, ValueError, KeyError, RuntimeError, subprocess.SubprocessError) as exc:
-        report["selftest"] = {"status": "unavailable: " + type(exc).__name__ + ": " + str(exc)[:300]}
+    if selftest:
+        try:
+            report["selftest"] = live_selftest(load_config(root / BOOT_CONFIG.relative_to("/")), read_slot(root / SLOT_FILE.relative_to("/")))
+        except (OSError, ValueError, KeyError) as exc:
+            report["selftest"] = {"status": "unavailable: " + type(exc).__name__ + ": " + str(exc)[:300]}
     print(SMOKE_BEGIN + json.dumps(report, sort_keys=True) + SMOKE_END, flush=True)
     return 0
 
@@ -539,7 +576,8 @@ def main(argv=None):
     plugin.add_argument("args", nargs=argparse.REMAINDER)
     env = sub.add_parser("initramfs-env", help="Route B: /conf/conf.d/srrx-ab for the initramfs")
     env.add_argument("--config", type=Path, default=BOOT_CONFIG)
-    sub.add_parser("smoke-report", help="QEMU smoke only: report the boot after every other job finished")
+    smoke = sub.add_parser("smoke-report", help="QEMU smoke only: report the boot after every other job finished")
+    smoke.add_argument("--selftest", action="store_true", help="also run selftest.py offline on a read-only view of the booted root")
     golden = sub.add_parser("golden-entries")
     golden.add_argument("--esp", type=Path, default=ESP_MOUNT)
     golden.add_argument("--config", type=Path, default=BOOT_CONFIG)
@@ -558,7 +596,7 @@ def main(argv=None):
             print(initramfs_env(args.config), end="")
             return 0
         if args.op == "smoke-report":
-            return smoke_report()
+            return smoke_report(selftest=args.selftest)
         if args.op == "cmdline":
             config = load_config(args.config)
             print(cmdline(config["base_cmdline_without_root"], root_partuuid(config, args.slot), config["lime_build"]))
