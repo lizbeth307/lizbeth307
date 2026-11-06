@@ -4,7 +4,7 @@
   "generator": {
     "version": "1.0.0",
     "params_sha256": "1feb6fd68ccf6038666ebc968a7248d6946df0734eafaffdc8c4994563a1074c",
-    "pcb_components_sha256": "c8a3c561a27ae3c9400089066f6489d3f3893b90f909c70dff76548c88f7b32e"
+    "pcb_components_sha256": "65d7662e271ac683d6b627fcf05060ca14205de0c2b13acc50472575e92ab556"
   },
   "envelope": {
     "model": [
@@ -381,20 +381,20 @@
     "boards": {
       "PWR": {
         "area_mm2": 7910.0,
-        "estimate_mm2": 7743.0,
-        "ratio": 1.02,
+        "estimate_mm2": 7874.0,
+        "ratio": 1.0,
         "result": "PASS (model)"
       },
       "RF": {
         "area_mm2": 8188.0,
-        "estimate_mm2": 2936.0,
-        "ratio": 2.79,
+        "estimate_mm2": 2787.0,
+        "ratio": 2.94,
         "result": "PASS (model)"
       },
       "CTRL": {
         "area_mm2": 5915.0,
-        "estimate_mm2": 2801.0,
-        "ratio": 2.11,
+        "estimate_mm2": 3160.0,
+        "ratio": 1.87,
         "result": "PASS (model)"
       }
     }
