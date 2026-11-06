@@ -1017,12 +1017,12 @@ def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrele
     paragraphs = deb822(gpgv_signed_text(inrelease, keyring, [fingerprint]), "InRelease")
     if len(paragraphs) != 1:
         raise DeploymentError("InRelease must hold exactly one Release paragraph")
-    release = paragraphs[0]
+    signed = paragraphs[0]
     expected = {"origin": policy["origin"], "codename": policy["codename"], "components": policy["component"],
                 "architectures": policy["architecture"]}
-    if any(release.get(k) != v for k, v in expected.items()) or release.get("suite", policy["codename"]) != policy["codename"]:
+    if any(signed.get(k) != v for k, v in expected.items()) or signed.get("suite", policy["codename"]) != policy["codename"]:
         raise DeploymentError("foreign or unexpected repository origin/suite/components/architectures")
-    listed = release_files(release, "InRelease")
+    listed = release_files(signed, "InRelease")
     present = {p.relative_to(dist).as_posix() for p in dist.rglob("*") if p.is_file() or p.is_symlink()}
     extra = present - set(listed) - {"InRelease", "Release", "Release.gpg"}
     if extra:
