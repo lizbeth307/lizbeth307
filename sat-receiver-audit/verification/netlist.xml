@@ -2820,105 +2820,6 @@
         </unit>
       </units>
     </comp>
-    <comp ref="C244">
-      <value>1uF 50V X7R C2012X7R1H105K125AB</value>
-      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
-      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
-        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C244" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>940f5c62-c796-55b4-b208-c14ee2ffa73c</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C245">
-      <value>1uF 50V X7R C2012X7R1H105K125AB</value>
-      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
-      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
-        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C245" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>6b2edb60-ce75-57d4-ac57-11ab57f618fb</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C246">
-      <value>1uF 50V X7R C2012X7R1H105K125AB</value>
-      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
-      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
-        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C246" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>6554df84-296c-5a8a-b968-9404e5a63d26</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C247">
-      <value>47uF 50V EEUFR1H470</value>
-      <datasheet>https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C247" description="| design | Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.; Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>bebc1227-0dfa-5b11-a3d8-f5c3ca3b7262</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
     <comp ref="C282">
       <value>10nF 50V C0G C1608C0G1H103J080AA</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
@@ -3010,6 +2911,56 @@
       <property name="Sheetfile" value="E2.kicad_sch"/>
       <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
       <tstamps>be959f82-3159-5d57-9a89-74eaa5a1c083</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C286">
+      <value>10nF 50V C0G C1608C0G1H103J080AA</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H103J080AA</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H103J080AA</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C286" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2"/>
+      <property name="Sheetfile" value="E2.kicad_sch"/>
+      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
+      <tstamps>dfd508ef-79e8-5519-8bf4-fa6b889e2aa1</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C287">
+      <value>100nF 50V X7R C1608X7R1H104K080AA</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C287" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2"/>
+      <property name="Sheetfile" value="E2.kicad_sch"/>
+      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
+      <tstamps>1fce23c6-f001-5633-a773-8270c254f4e4</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -3202,30 +3153,6 @@
       <property name="Sheetfile" value="E2.kicad_sch"/>
       <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
       <tstamps>67c653ff-2402-58f5-ba2c-44ab86f3813f</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="L209">
-      <value>1uH XAL5030-102MEC</value>
-      <datasheet>https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_L209" description="| design | Обраний XAL5030-102MEC: 1uH ±20%, DCR 8.5mR тип./9.4mR макс. при 25°C, SRF 68MHz тип., Isat 14A тип. при спаді L на 30%.; Irms 8.7A для нагріву на 20°C; фактичні нагрів і придушення шумів перевіряються на платі. Єдиний SKU для 15 фільтрів; врахувати зміну вартості BOM."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>3fbedef6-850b-5748-996d-ea6856068d66</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -3910,102 +3837,6 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R243">
-      <value>162k 1%</value>
-      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R243" description="| design | Програмування обмеження струму за даташитом відповідного ключа. Підсумковий поріг включає допуски IC і резистора."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>6cc16f43-0761-508b-82bd-f6ef00af20cb</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R244">
-      <value>100k 1%</value>
-      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R244" description="| design | Локальне стягування EN до GND; забезпечує вимкнення при старті та знеструмлених контролерах."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>34a58013-3f99-5f8c-904f-a7e54a4be05c</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R246">
-      <value>0.200R 0.1% 0.25W Kelvin</value>
-      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R246" description="| design | Шунт з окремими вимірювальними трасами Кельвіна; силовий струм не проходить по sense-трасах."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>455069db-3cfe-5cc4-a488-ff8f98cc2c28</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R247">
-      <value>0.22R 1% 0.25W</value>
-      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R247" description="| design | Послідовний резистор паралельної R-C гілки демпфування; струм навантаження через нього не проходить."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>dd7bba9e-fc41-5dbb-85e5-97bf9a305ee4</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
     <comp ref="R280">
       <value>85.6k 0.1%</value>
       <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
@@ -4093,6 +3924,54 @@
       <property name="Sheetfile" value="E2.kicad_sch"/>
       <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
       <tstamps>1e6e8914-5c84-53c2-aff2-37af85ce259e</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R286">
+      <value>73.2k 0.1%</value>
+      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R286" description="| design | Номінал і допуск є інженерним вибором для показаного дільника або керувального кола; перевірити відповідний розрахунок у E2-review.md."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2"/>
+      <property name="Sheetfile" value="E2.kicad_sch"/>
+      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
+      <tstamps>e8d40eb3-3fe2-5179-b095-04029ba27d74</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R287">
+      <value>10.0k 0.1%</value>
+      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R287" description="| design | Номінал і допуск є інженерним вибором для показаного дільника або керувального кола; перевірити відповідний розрахунок у E2-review.md."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2"/>
+      <property name="Sheetfile" value="E2.kicad_sch"/>
+      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
+      <tstamps>2f3ce8e2-d8d7-5420-a471-1abe5656e36c</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -4209,29 +4088,6 @@
       <property name="Sheetfile" value="E2.kicad_sch"/>
       <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
       <tstamps>20807494-33c6-5985-b9e8-6cef5fac1115</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="TP209">
-      <value>BIAS_CH4</value>
-      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_TP209" description="| design | Контрольна точка мережі BIAS_CH4."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>0ec73dbc-e9d7-5ac1-a9c5-7fd6b1c9d520</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -4410,34 +4266,6 @@
         </unit>
       </units>
     </comp>
-    <comp ref="U209">
-      <value>TPS2553DBVR-1</value>
-      <datasheet>https://www.ti.com/lit/gpn/tps2553-1</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">https://www.ti.com/lit/gpn/tps2553-1</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_U209" description="| design | Корпус DBV SOT-23-6: 1 IN, 2 GND, 3 EN, 4 FAULT, 5 ILIM, 6 OUT. Суфікс -1 означає засувку.; Локальний 100k на EN задає вимкнення за замовчуванням. FAULT підтягнуто до 3V3_Q6A тільки в E3; скидання EN з обмеженням повторів."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2"/>
-      <property name="Sheetfile" value="E2.kicad_sch"/>
-      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
-      <tstamps>512eb6f0-c605-59cb-a029-f3d8826019e9</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="3"/>
-            <pin num="2"/>
-            <pin num="4"/>
-            <pin num="6"/>
-            <pin num="5"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
     <comp ref="U217">
       <value>TLV3011BIDBVR</value>
       <datasheet>https://www.ti.com/lit/ds/symlink/tlv3011.pdf</datasheet>
@@ -4481,6 +4309,34 @@
       <property name="Sheetfile" value="E2.kicad_sch"/>
       <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
       <tstamps>0cce404d-0645-542e-9943-f6e817fc0eb6</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="3"/>
+            <pin num="4"/>
+            <pin num="6"/>
+            <pin num="2"/>
+            <pin num="1"/>
+            <pin num="5"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="U219">
+      <value>TLV3011BIDBVR</value>
+      <datasheet>https://www.ti.com/lit/ds/symlink/tlv3011.pdf</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tlv3011.pdf</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_U219" description="| design | Проєктна заміна старого TLV3011 на TLV3011B: вхід fail-safe дозволяє sense за вимкненого VDD і усуває фантомне живлення Q6A.; Відкритий стік: високий рівень означає напругу AUX12 вище приблизно 10.33 V. Стан дійсний лише після відповідної команди EN."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2"/>
+      <property name="Sheetfile" value="E2.kicad_sch"/>
+      <sheetpath names="/E2/" tstamps="/81984160-ffc1-5150-93ba-690a49e1cc5c/"/>
+      <tstamps>e59080c6-057c-5bac-8d64-9240e731c747</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -4808,56 +4664,6 @@
       <property name="Sheetfile" value="E2_02.kicad_sch"/>
       <sheetpath names="/E2_02/" tstamps="/def01337-c22c-581d-ab21-3e0f48197e81/"/>
       <tstamps>12b3ee2b-f96e-5944-805d-fb76e3a1c6b0</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C286">
-      <value>10nF 50V C0G C1608C0G1H103J080AA</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
-      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H103J080AA</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
-        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608C0G1H103J080AA</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C286" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2_02"/>
-      <property name="Sheetfile" value="E2_02.kicad_sch"/>
-      <sheetpath names="/E2_02/" tstamps="/def01337-c22c-581d-ab21-3e0f48197e81/"/>
-      <tstamps>0c41e0f9-30b7-5789-96bd-aca39abcb44c</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C287">
-      <value>100nF 50V X7R C1608X7R1H104K080AA</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
-      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
-        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C287" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2_02"/>
-      <property name="Sheetfile" value="E2_02.kicad_sch"/>
-      <sheetpath names="/E2_02/" tstamps="/def01337-c22c-581d-ab21-3e0f48197e81/"/>
-      <tstamps>f1afebe7-6fc8-56b3-bc32-3050f46feac4</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -5366,54 +5172,6 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R286">
-      <value>73.2k 0.1%</value>
-      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R286" description="| design | Номінал і допуск є інженерним вибором для показаного дільника або керувального кола; перевірити відповідний розрахунок у E2-review.md."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2_02"/>
-      <property name="Sheetfile" value="E2_02.kicad_sch"/>
-      <sheetpath names="/E2_02/" tstamps="/def01337-c22c-581d-ab21-3e0f48197e81/"/>
-      <tstamps>266fd774-fba0-57c9-aa6c-258164ff3e37</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R287">
-      <value>10.0k 0.1%</value>
-      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R287" description="| design | Номінал і допуск є інженерним вибором для показаного дільника або керувального кола; перевірити відповідний розрахунок у E2-review.md."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2_02"/>
-      <property name="Sheetfile" value="E2_02.kicad_sch"/>
-      <sheetpath names="/E2_02/" tstamps="/def01337-c22c-581d-ab21-3e0f48197e81/"/>
-      <tstamps>8927036f-7c20-55bf-8c65-d3bf484e747a</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
     <comp ref="R288">
       <value>TNPW0805332KBYEA 332k 0.1%10ppm</value>
       <datasheet>https://www.vishay.com/docs/28758/tnpw_e3.pdf</datasheet>
@@ -5799,34 +5557,6 @@
         </unit>
       </units>
     </comp>
-    <comp ref="U219">
-      <value>TLV3011BIDBVR</value>
-      <datasheet>https://www.ti.com/lit/ds/symlink/tlv3011.pdf</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tlv3011.pdf</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_U219" description="| design | Проєктна заміна старого TLV3011 на TLV3011B: вхід fail-safe дозволяє sense за вимкненого VDD і усуває фантомне живлення Q6A.; Відкритий стік: високий рівень означає напругу AUX12 вище приблизно 10.33 V. Стан дійсний лише після відповідної команди EN."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2_02"/>
-      <property name="Sheetfile" value="E2_02.kicad_sch"/>
-      <sheetpath names="/E2_02/" tstamps="/def01337-c22c-581d-ab21-3e0f48197e81/"/>
-      <tstamps>5d2f9dc6-db87-50ad-b8da-6fea8fc8dba6</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="3"/>
-            <pin num="4"/>
-            <pin num="6"/>
-            <pin num="2"/>
-            <pin num="1"/>
-            <pin num="5"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
     <comp ref="U220">
       <value>TPS3701DDCR</value>
       <datasheet>https://www.ti.com/lit/ds/symlink/tps3701.pdf</datasheet>
@@ -5945,6 +5675,105 @@
       <property name="Sheetfile" value="E2_03.kicad_sch"/>
       <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
       <tstamps>50213eb9-1287-532e-93a0-692bdf44d852</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C244">
+      <value>1uF 50V X7R C2012X7R1H105K125AB</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C244" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>57f616b2-8b0d-5707-9806-bcb7fd15b44a</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C245">
+      <value>1uF 50V X7R C2012X7R1H105K125AB</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C245" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>bc49e2f3-443d-52a8-bd06-dfce48d9f27b</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C246">
+      <value>1uF 50V X7R C2012X7R1H105K125AB</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C2012X7R1H105K125AB</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C246" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>4ee38102-2275-5e1f-a8b3-2d2ad474dd4e</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C247">
+      <value>47uF 50V EEUFR1H470</value>
+      <datasheet>https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">https://industrial.panasonic.com/ww/products/pt/aluminum-cap-lead/models/EEUFR1H470</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C247" description="| design | Полярний алюмінієвий конденсатор 47uF/50V ±20% у паралельній R-C гілці демпфування. Контакт 1 «+» — до резистора, контакт 2 «−» — GND.; Ємність не має характерного для MLCC спаду від DC bias; ESR врахувати у вимірі перехідного процесу."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>e71804cb-9533-5c37-b421-eabdb1a327c0</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -6153,106 +5982,6 @@
         </unit>
       </units>
     </comp>
-    <comp ref="C278">
-      <value>100nF 50V X7R C1608X7R1H104K080AA</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
-      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
-        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C278" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2_03"/>
-      <property name="Sheetfile" value="E2_03.kicad_sch"/>
-      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
-      <tstamps>cd6dbb75-6d4c-5a9d-8e87-015198caa10e</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="2"/>
-            <pin num="1"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C279">
-      <value>100nF 50V X7R C1608X7R1H104K080AA</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
-      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
-        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C279" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2_03"/>
-      <property name="Sheetfile" value="E2_03.kicad_sch"/>
-      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
-      <tstamps>cd023644-d291-5137-a55d-dc1b68b827cb</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="2"/>
-            <pin num="1"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C280">
-      <value>100nF 50V X7R C1608X7R1H104K080AA</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
-      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
-        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C280" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2_03"/>
-      <property name="Sheetfile" value="E2_03.kicad_sch"/>
-      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
-      <tstamps>5e7f4813-2932-570f-8302-dc59421ebb2d</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="2"/>
-            <pin num="1"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C281">
-      <value>100nF 50V X7R C1608X7R1H104K080AA</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
-      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
-        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C281" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2_03"/>
-      <property name="Sheetfile" value="E2_03.kicad_sch"/>
-      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
-      <tstamps>1995cd73-1e84-52dd-a606-aad540040745</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
     <comp ref="C295">
       <value>1uF 50V X7R C2012X7R1H105K125AB</value>
       <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
@@ -6443,6 +6172,30 @@
       <property name="Sheetfile" value="E2_03.kicad_sch"/>
       <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
       <tstamps>d624d46f-aa98-5c01-a3e4-5ffee5c318aa</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="L209">
+      <value>1uH XAL5030-102MEC</value>
+      <datasheet>https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_L209" description="| design | Обраний XAL5030-102MEC: 1uH ±20%, DCR 8.5mR тип./9.4mR макс. при 25°C, SRF 68MHz тип., Isat 14A тип. при спаді L на 30%.; Irms 8.7A для нагріву на 20°C; фактичні нагрів і придушення шумів перевіряються на платі. Єдиний SKU для 15 фільтрів; врахувати зміну вартості BOM."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>da3dc2d7-df2c-5767-8c1d-3f1caeb75b57</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -6644,6 +6397,102 @@
       <property name="Sheetfile" value="E2_03.kicad_sch"/>
       <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
       <tstamps>39bc9eee-9737-5992-94e1-dcc4b97b3f77</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R243">
+      <value>162k 1%</value>
+      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R243" description="| design | Програмування обмеження струму за даташитом відповідного ключа. Підсумковий поріг включає допуски IC і резистора."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>92575645-f7b2-5f74-bca6-ee4410416575</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R244">
+      <value>100k 1%</value>
+      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R244" description="| design | Локальне стягування EN до GND; забезпечує вимкнення при старті та знеструмлених контролерах."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>12203c2e-3c48-58f7-b388-87bd4ba52961</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R246">
+      <value>0.200R 0.1% 0.25W Kelvin</value>
+      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R246" description="| design | Шунт з окремими вимірювальними трасами Кельвіна; силовий струм не проходить по sense-трасах."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>e4e53455-155a-5ae5-a412-241b84926821</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R247">
+      <value>0.22R 1% 0.25W</value>
+      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R247" description="| design | Послідовний резистор паралельної R-C гілки демпфування; струм навантаження через нього не проходить."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>265d5746-abb6-5676-84b4-a43bcd805310</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -6869,150 +6718,6 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R274">
-      <value>10.0R 1%</value>
-      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R274" description="| design | Резистор лише у вимірювальному вході INA3221; симетрична пара 10R з 100nF між входами, без силового струму."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2_03"/>
-      <property name="Sheetfile" value="E2_03.kicad_sch"/>
-      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
-      <tstamps>918329a9-3f4a-5069-975c-7e10810e47a0</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R275">
-      <value>10.0R 1%</value>
-      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R275" description="| design | Резистор лише у вимірювальному вході INA3221; симетрична пара 10R з 100nF між входами, без силового струму."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2_03"/>
-      <property name="Sheetfile" value="E2_03.kicad_sch"/>
-      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
-      <tstamps>a8c41f0b-4128-5692-9ebf-8eaf7537fda1</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R276">
-      <value>10.0R 1%</value>
-      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R276" description="| design | Резистор лише у вимірювальному вході INA3221; симетрична пара 10R з 100nF між входами, без силового струму."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2_03"/>
-      <property name="Sheetfile" value="E2_03.kicad_sch"/>
-      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
-      <tstamps>9ae5264c-ba1a-566d-b2a2-0dfe46fb765b</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R277">
-      <value>10.0R 1%</value>
-      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R277" description="| design | Резистор лише у вимірювальному вході INA3221; симетрична пара 10R з 100nF між входами, без силового струму."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2_03"/>
-      <property name="Sheetfile" value="E2_03.kicad_sch"/>
-      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
-      <tstamps>f681658e-4bff-55ec-a6b0-405008e7a329</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R278">
-      <value>10.0R 1%</value>
-      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R278" description="| design | Резистор лише у вимірювальному вході INA3221; симетрична пара 10R з 100nF між входами, без силового струму."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2_03"/>
-      <property name="Sheetfile" value="E2_03.kicad_sch"/>
-      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
-      <tstamps>8073c14c-bdd8-5860-aa7d-a9d1e3b3653d</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R279">
-      <value>10.0R 1%</value>
-      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R279" description="| design | Резистор лише у вимірювальному вході INA3221; симетрична пара 10R з 100nF між входами, без силового струму."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2_03"/>
-      <property name="Sheetfile" value="E2_03.kicad_sch"/>
-      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
-      <tstamps>fddeaf7f-9f24-5c9e-a40d-b40893be46ca</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
     <comp ref="R293">
       <value>162k 1%</value>
       <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
@@ -7183,6 +6888,29 @@
         </unit>
       </units>
     </comp>
+    <comp ref="TP209">
+      <value>BIAS_CH4</value>
+      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_TP209" description="| design | Контрольна точка мережі BIAS_CH4."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>c826a0f5-6452-52f6-bc07-3ed6c7639372</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
     <comp ref="TP210">
       <value>VBUS_RTLB</value>
       <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
@@ -7280,6 +7008,34 @@
         </unit>
       </units>
     </comp>
+    <comp ref="U209">
+      <value>TPS2553DBVR-1</value>
+      <datasheet>https://www.ti.com/lit/gpn/tps2553-1</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">https://www.ti.com/lit/gpn/tps2553-1</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_U209" description="| design | Корпус DBV SOT-23-6: 1 IN, 2 GND, 3 EN, 4 FAULT, 5 ILIM, 6 OUT. Суфікс -1 означає засувку.; Локальний 100k на EN задає вимкнення за замовчуванням. FAULT підтягнуто до 3V3_Q6A тільки в E3; скидання EN з обмеженням повторів."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2_03"/>
+      <property name="Sheetfile" value="E2_03.kicad_sch"/>
+      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
+      <tstamps>1657c521-6e7f-59f6-a50e-11a3ca8316d2</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="3"/>
+            <pin num="2"/>
+            <pin num="4"/>
+            <pin num="6"/>
+            <pin num="5"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
     <comp ref="U210">
       <value>TPS2553DBVR-1</value>
       <datasheet>https://www.ti.com/lit/gpn/tps2553-1</datasheet>
@@ -7323,45 +7079,6 @@
       <property name="Sheetfile" value="E2_03.kicad_sch"/>
       <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
       <tstamps>6ac9ed82-59f9-5613-930f-0fabbe5fe2d9</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="2"/>
-            <pin num="15"/>
-            <pin num="12"/>
-            <pin num="1"/>
-            <pin num="5"/>
-            <pin num="6"/>
-            <pin num="7"/>
-            <pin num="11"/>
-            <pin num="14"/>
-            <pin num="16"/>
-            <pin num="4"/>
-            <pin num="3"/>
-            <pin num="EP"/>
-            <pin num="8"/>
-            <pin num="9"/>
-            <pin num="10"/>
-            <pin num="13"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="U216">
-      <value>INA3221AIRGVR</value>
-      <datasheet>https://www.ti.com/lit/ds/symlink/ina3221.pdf</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">https://www.ti.com/lit/ds/symlink/ina3221.pdf</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_U216" description="| design | Адреса I2C2 = 0x43: A0 = SCL. Канали 1/2/3 вимірюють LNA4/LNB/Boni.; Шунти: 0.2R для LNA4 і Boni, 0.1R для LNB. На входах — симетричні 10R та 100 nF між входами.; Виводи тривог не використані; labd опитує регістри, порівнює струми з базовою лінією та фіксує перевищення."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E2_03"/>
-      <property name="Sheetfile" value="E2_03.kicad_sch"/>
-      <sheetpath names="/E2_03/" tstamps="/c4c82d69-a1e5-5cf1-924c-73422e522133/"/>
-      <tstamps>1b6da36d-b695-5d08-adde-844ec2b9e3d7</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -7687,6 +7404,106 @@
         </unit>
       </units>
     </comp>
+    <comp ref="C278">
+      <value>100nF 50V X7R C1608X7R1H104K080AA</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C278" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2_04"/>
+      <property name="Sheetfile" value="E2_04.kicad_sch"/>
+      <sheetpath names="/E2_04/" tstamps="/b86a610c-9540-56eb-9a94-fee3a23ee226/"/>
+      <tstamps>ea62915a-44ee-525a-906b-081bfb6cdce1</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="2"/>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C279">
+      <value>100nF 50V X7R C1608X7R1H104K080AA</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C279" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2_04"/>
+      <property name="Sheetfile" value="E2_04.kicad_sch"/>
+      <sheetpath names="/E2_04/" tstamps="/b86a610c-9540-56eb-9a94-fee3a23ee226/"/>
+      <tstamps>eb465e14-a699-5dcf-8b92-19344bab8097</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="2"/>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C280">
+      <value>100nF 50V X7R C1608X7R1H104K080AA</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C280" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2_04"/>
+      <property name="Sheetfile" value="E2_04.kicad_sch"/>
+      <sheetpath names="/E2_04/" tstamps="/b86a610c-9540-56eb-9a94-fee3a23ee226/"/>
+      <tstamps>1e0c0c0b-86d5-558d-aefe-214411b4d72e</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="2"/>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C281">
+      <value>100nF 50V X7R C1608X7R1H104K080AA</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet">https://product.tdk.com/en/search/capacitor/ceramic/mlcc/info?part_no=C1608X7R1H104K080AA</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C281" description="| design | Точний MPN TDK обрано за сторінкою виробника; номінал, напруга, діелектрик і розміри перевірені. Характеристики DC bias є типовими, тому ефективну ємність підтвердити на платі."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2_04"/>
+      <property name="Sheetfile" value="E2_04.kicad_sch"/>
+      <sheetpath names="/E2_04/" tstamps="/b86a610c-9540-56eb-9a94-fee3a23ee226/"/>
+      <tstamps>672d23ed-c599-5073-976d-2bc139d3e8e6</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
     <comp ref="C293">
       <value>22uF 50V X7R C3225X7R1H226M250AC</value>
       <footprint>Capacitor_SMD:C_1210_3225Metric</footprint>
@@ -7953,6 +7770,150 @@
         </unit>
       </units>
     </comp>
+    <comp ref="R274">
+      <value>10.0R 1%</value>
+      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R274" description="| design | Резистор лише у вимірювальному вході INA3221; симетрична пара 10R з 100nF між входами, без силового струму."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2_04"/>
+      <property name="Sheetfile" value="E2_04.kicad_sch"/>
+      <sheetpath names="/E2_04/" tstamps="/b86a610c-9540-56eb-9a94-fee3a23ee226/"/>
+      <tstamps>924dc015-9dd4-58c9-8342-5c317fa66c45</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R275">
+      <value>10.0R 1%</value>
+      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R275" description="| design | Резистор лише у вимірювальному вході INA3221; симетрична пара 10R з 100nF між входами, без силового струму."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2_04"/>
+      <property name="Sheetfile" value="E2_04.kicad_sch"/>
+      <sheetpath names="/E2_04/" tstamps="/b86a610c-9540-56eb-9a94-fee3a23ee226/"/>
+      <tstamps>a4a2f6e5-9930-5dad-92c0-db6e52ff9718</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R276">
+      <value>10.0R 1%</value>
+      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R276" description="| design | Резистор лише у вимірювальному вході INA3221; симетрична пара 10R з 100nF між входами, без силового струму."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2_04"/>
+      <property name="Sheetfile" value="E2_04.kicad_sch"/>
+      <sheetpath names="/E2_04/" tstamps="/b86a610c-9540-56eb-9a94-fee3a23ee226/"/>
+      <tstamps>60a392cc-b090-522b-a35b-fbdaaae7c413</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R277">
+      <value>10.0R 1%</value>
+      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R277" description="| design | Резистор лише у вимірювальному вході INA3221; симетрична пара 10R з 100nF між входами, без силового струму."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2_04"/>
+      <property name="Sheetfile" value="E2_04.kicad_sch"/>
+      <sheetpath names="/E2_04/" tstamps="/b86a610c-9540-56eb-9a94-fee3a23ee226/"/>
+      <tstamps>eb2253af-4e8c-5669-bc70-8aabffd404a5</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R278">
+      <value>10.0R 1%</value>
+      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R278" description="| design | Резистор лише у вимірювальному вході INA3221; симетрична пара 10R з 100nF між входами, без силового струму."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2_04"/>
+      <property name="Sheetfile" value="E2_04.kicad_sch"/>
+      <sheetpath names="/E2_04/" tstamps="/b86a610c-9540-56eb-9a94-fee3a23ee226/"/>
+      <tstamps>952733b8-aced-5d6a-a245-9f1dd5dc66bb</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R279">
+      <value>10.0R 1%</value>
+      <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK.md §§2.7, 5.1; інженерна деталізація E2</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R279" description="| design | Резистор лише у вимірювальному вході INA3221; симетрична пара 10R з 100nF між входами, без силового струму."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2_04"/>
+      <property name="Sheetfile" value="E2_04.kicad_sch"/>
+      <sheetpath names="/E2_04/" tstamps="/b86a610c-9540-56eb-9a94-fee3a23ee226/"/>
+      <tstamps>a5cffcf4-345f-5163-8178-3064b093b49f</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
     <comp ref="TP211">
       <value>LNB13V2</value>
       <datasheet>STACK.md §§2.7, 5.1; інженерна деталізація E2</datasheet>
@@ -8046,6 +8007,45 @@
             <pin num="6"/>
             <pin num="5"/>
             <pin num="7"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="U216">
+      <value>INA3221AIRGVR</value>
+      <datasheet>https://www.ti.com/lit/ds/symlink/ina3221.pdf</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">https://www.ti.com/lit/ds/symlink/ina3221.pdf</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_U216" description="| design | Адреса I2C2 = 0x43: A0 = SCL. Канали 1/2/3 вимірюють LNA4/LNB/Boni.; Шунти: 0.2R для LNA4 і Boni, 0.1R для LNB. На входах — симетричні 10R та 100 nF між входами.; Виводи тривог не використані; labd опитує регістри, порівнює струми з базовою лінією та фіксує перевищення."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E2_04"/>
+      <property name="Sheetfile" value="E2_04.kicad_sch"/>
+      <sheetpath names="/E2_04/" tstamps="/b86a610c-9540-56eb-9a94-fee3a23ee226/"/>
+      <tstamps>b4832396-04ea-59f3-8ec2-02c27f7de8e2</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="2"/>
+            <pin num="15"/>
+            <pin num="12"/>
+            <pin num="1"/>
+            <pin num="5"/>
+            <pin num="6"/>
+            <pin num="7"/>
+            <pin num="11"/>
+            <pin num="14"/>
+            <pin num="16"/>
+            <pin num="4"/>
+            <pin num="3"/>
+            <pin num="EP"/>
+            <pin num="8"/>
+            <pin num="9"/>
+            <pin num="10"/>
+            <pin num="13"/>
           </pins>
         </unit>
       </units>

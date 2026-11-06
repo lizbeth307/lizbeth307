@@ -93,6 +93,20 @@ class Engine:
             return None
         return self.now_ms - min(self.last_status_ms, self.last_readings_ms)
 
+    def _binding_fault(self, hello):
+        """Trip reason of a hardware HELLO that does not bind this Pico to the acceptance, else None."""
+        if not (self.acceptance and
+                hello.get("serial") == self.acceptance["pico_serial"] and
+                hello.get("calibration_crc32") == self.acceptance["battery_adc"]["record"]["crc32"]):
+            return "pico_identity_or_calibration_mismatch"
+        # The Pico reports its digest only with a valid local commissioning
+        # record. Equality pairs this Pico with exactly these acceptance bytes;
+        # like the UART CRC it detects a wrong pairing, not a forged Pico.
+        if not (self.qualification_record is not None and hello.get("hardware_commissioned") is True
+                and hello.get("qualification_record") == self.qualification_record):
+            return "pico_qualification_record_mismatch"
+        return None
+
     def _receive(self, frame):
         if frame["t"] not in {"HELLO", "STATUS", "EVENT"}:
             return
@@ -101,28 +115,20 @@ class Engine:
         if new_session:
             if frame["t"] != "HELLO":
                 return
-            self.trip("new_pico_session", notify=False)
+            # The policy latches the first fault and the console shows it: a HELLO that fails
+            # the binding must not latch as the benign "ready for an explicit start" stop.
+            self.trip((None if self.simulated else self._binding_fault(status)) or "new_pico_session",
+                      notify=False)
             self.imu_sample = self.hmi_sample = None
             self.session, self.rx_seq, self.tx_seq = frame["s"], -1, 0
             self.last_hb_ms = self.last_readings_ms = None
         if frame["q"] <= self.rx_seq:
             return
         if frame["t"] == "HELLO" and not self.simulated:
-            bound = bool(self.acceptance and
-                status.get("serial") == self.acceptance["pico_serial"] and
-                status.get("calibration_crc32") == self.acceptance["battery_adc"]["record"]["crc32"])
-            # The Pico reports its digest only with a valid local commissioning
-            # record. Equality pairs this Pico with exactly these acceptance bytes;
-            # like the UART CRC it detects a wrong pairing, not a forged Pico.
-            self.qualification_ok = bool(bound and self.qualification_record is not None
-                and status.get("hardware_commissioned") is True
-                and status.get("qualification_record") == self.qualification_record)
-            self.identity_ok = self.qualification_ok
-            if not bound:
-                self.trip("pico_identity_or_calibration_mismatch")
-                return
-            if not self.qualification_ok:
-                self.trip("pico_qualification_record_mismatch")
+            fault = self._binding_fault(status)
+            self.qualification_ok = self.identity_ok = fault is None
+            if fault is not None:
+                self.trip(fault)
                 return
         if frame["t"] == "EVENT":
             self.rx_seq = frame["q"]

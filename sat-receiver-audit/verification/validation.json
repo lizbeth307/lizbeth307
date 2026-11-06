@@ -30,10 +30,10 @@
   "reason": "Structural checks and ERC do not close manufacturer-revision, charging, RF, thermal, PCB-layout, or physical acceptance gates.",
   "sha256": {
     "build/kicad/E1.kicad_sch": "f7911d22305d8ef60b149164f1b4fce9b74b6d4b11039ba82069995b8c35311b",
-    "build/kicad/E2.kicad_sch": "055b5044243a9dac6f7168a3382d8f61a8a1a3c911c4cd4586d23121e31269b9",
-    "build/kicad/E2_02.kicad_sch": "a9f2433e5229c1913ae32f5fe06496d998b40059791bc4dfcd4d87cdb91e62f7",
-    "build/kicad/E2_03.kicad_sch": "f1f139b74caf318454fbc753ad9c2be307b3030c96b793e4275455dcb40d8a05",
-    "build/kicad/E2_04.kicad_sch": "2f6890cfa89bf7e01cf5416f542e63c2aebf4d177978b32b09233fc65963f353",
+    "build/kicad/E2.kicad_sch": "c7278c2ca98bea2c35dda90ff11f02228bbcf3bf8067ba0931072618dcb7fb1d",
+    "build/kicad/E2_02.kicad_sch": "aed1cc48aece1194507038c957039e95690d55714142da3f9c335f3471005d9f",
+    "build/kicad/E2_03.kicad_sch": "eff19545eb23aa76f1f9a32ce0f3c7732365e22cadf31ac164065c3ba99612d8",
+    "build/kicad/E2_04.kicad_sch": "d5785edf7317d2593b9de14e63363b761ee1ef7531cbe01bfb77567ce0c6e7a4",
     "build/kicad/E2_05.kicad_sch": "678317f251a24050db5065604bc1d73906995cb4dec797c3eea604ec3c80ebde",
     "build/kicad/E3.kicad_sch": "34039378486311d5d4ce71a132ea3d57a8f4f498d16a0a758ebb03a934bb4c48",
     "build/kicad/E3_02.kicad_sch": "3b3e7da5bd505a62de25f0d7b23b31ffca4cc6b9208013a5b5dbb5925bb360f5",
@@ -52,7 +52,7 @@
     },
     {
       "file": "verification/netlist.xml",
-      "sha256": "2fbb74498e079e328ec2a1f243522e68668a87e1905d59fa2d4711cc060a3df1"
+      "sha256": "ad475def4086bf90f986227d18bd52db534784babd2e66ef70e04fa75b6461e1"
     }
   ]
 }
