@@ -671,7 +671,6 @@
 (property "ReviewStatus" "design" (at 33.02 71.12 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (property "MPN" "029707.5WXNV" (at 33.02 71.12 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (property "Manufacturer" "Littelfuse" (at 33.02 71.12 0) (effects (font (size 1.016 1.016)) (hide yes)))
-(property "LCSC" "C178942" (at 33.02 71.12 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (pin "1" (uuid 7755a85c-f879-5044-8df7-6677a13cf6cf))
 (pin "2" (uuid 4243f79a-75c8-5bf1-bf08-17397cf91d48))
 (instances (project "sr-rx-v2" (path "/fb9ec709-453b-5b24-a782-9cee42ec6d25/a943ccec-2813-5b6f-9c47-b1bcb52cee7f" (reference "F101") (unit 1)))))
