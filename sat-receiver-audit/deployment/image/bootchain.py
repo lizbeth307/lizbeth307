@@ -400,7 +400,8 @@ def boot_check(root=Path("/"), proc_cmdline=Path("/proc/cmdline")):
         issues.append("running root= is not exactly the slot " + slot + " PARTUUID")
     extra = sorted(set(running) - set(expected))
     if extra:
-        notes.append("loader-added tokens (Route B embloader appends its own bootargs): " + ",".join(extra))
+        # systemd-boot adds initrd=<entry initrd> (QEMU model 2026-11-06); embloader on Route B may append its bootargs.
+        notes.append("tokens beyond the slot line (loader-added initrd=, Route B embloader bootargs): " + ",".join(extra))
     for mount, partuuid in (("/", root_partuuid(config, slot)), ("/boot/efi", config["esp_partuuid"])):
         try:
             if _mount_source_dev(root / mount.lstrip("/")) != os.stat(root / "dev/disk/by-partuuid" / partuuid).st_rdev:
