@@ -1,0 +1,18 @@
+{
+  "schema": "srrx-imu-pack-v1",
+  "status": "MODEL_ONLY",
+  "box": "hammond_1550z101",
+  "_src": "STACK D12 (RP2040-Zero + Adafruit BNO085 in a Hammond 1550Z101, brass M4 lid screws, conductive foil over the lid seam, LAPP SKINTOP MS-SC-M12 EMC gland, 1/4-20 brass insert, >=30 cm behind the active elements and >=30 cm from the GNSS antenna)",
+  "boards": {"origin_in_box": [1.8, 6.8], "pair": [40.7, 25.6], "standoff_h": 13.0, "bno_first": true,
+             "_note": "box inside coordinates: x along the 44.28 mm inside length, y along the 39.28 mm inside width, origin at an inside corner; boards on 13 mm standoffs above the carrier so the 12.7 mm 1/4-20 insert fits underneath"},
+  "gland": {"wall": "y_max", "x": 22.14, "z": 13.0, "hole_d": 12.2, "_note": "wall farthest from the BNO085 (components file: the 16 mm locknut must clear floor and lid)"},
+  "tripod": {"hole_d": 6.6, "c": [22.14, 19.64], "carrier_insert": "1/4-20 x 12.7 brass insert in the printed carrier (STACK D15)"},
+  "carrier": {"t": 3.0, "screws": [[6.0, 4.0], [38.28, 4.0]], "screw": "M3 into CNC Kitchen M3x5.7 inserts"},
+  "frame": {
+    "x": "+X_pack = the boresight arrow on the lid (towards the antenna's main beam when mounted on the boom / Arca plate)",
+    "z": "+Z_pack = out of the lid (up when the 1/4-20 face is on the mount)",
+    "y": "+Y_pack = Z x X (right-handed)",
+    "chip_to_pack": [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+    "_note": "design convention of this package; the BNO085 board is mounted so that the chip axes (CEVA BNO08x datasheet axis figure) coincide with the pack axes. Axis signs, the chip orientation on the Adafruit board and the mount-face datum are physical gates (firmware/imu/README.md 'Геометрія й середовище'): OPEN."
+  }
+}

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="297mm" height="420mm" viewBox="0 0 297 420">
+<title>A-02 Гелікон t0nito A/B: пелюстка (8 шт.)</title>
+<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 1feb6fd68ccf</desc>
+<rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
+<line x1="120" y1="310" x2="177" y2="310" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="177" y1="310" x2="180" y2="300" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="180" y1="300" x2="183" y2="300" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="183" y1="300" x2="192.438" y2="303.305" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="192.438" y1="303.305" x2="250.938" y2="136.252" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="250.938" y1="136.252" x2="241.5" y2="132.947" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="241.5" y1="132.947" x2="55.5" y2="132.947" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="55.5" y1="132.947" x2="114" y2="300" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="114" y1="300" x2="117" y2="300" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="117" y1="300" x2="120" y2="310" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="114" y1="300" x2="183" y2="300" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="4 2"/>
+<line x1="183" y1="300" x2="241.5" y2="132.947" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="4 2"/>
+<circle cx="131.25" cy="305" r="1.6" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="128.15" y1="305" x2="134.35" y2="305" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="131.25" y1="308.1" x2="131.25" y2="301.9" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<circle cx="165.75" cy="305" r="1.6" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="162.65" y1="305" x2="168.85" y2="305" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="165.75" y1="308.1" x2="165.75" y2="301.9" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<circle cx="199.419" cy="268.242" r="1.6" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="196.319" y1="268.242" x2="202.519" y2="268.242" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="199.419" y1="271.342" x2="199.419" y2="265.142" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<circle cx="216.969" cy="218.126" r="1.6" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="213.869" y1="218.126" x2="220.069" y2="218.126" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="216.969" y1="221.226" x2="216.969" y2="215.026" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<circle cx="234.519" cy="168.01" r="1.6" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="231.419" y1="168.01" x2="237.619" y2="168.01" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="234.519" y1="171.11" x2="234.519" y2="164.91" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="148.5" y="216.473" font-family="DejaVu Sans, Arial, sans-serif" font-size="4.2" text-anchor="middle" fill="#000">A-02 x8</text>
+<line x1="55.5" y1="132.147" x2="55.5" y2="123.447" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="241.5" y1="132.147" x2="241.5" y2="123.447" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="55.5" y1="124.947" x2="241.5" y2="124.947" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="55.5" y1="124.947" x2="57.7" y2="124.247" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="55.5" y1="124.947" x2="57.7" y2="125.647" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="241.5" y1="124.947" x2="239.3" y2="124.247" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="241.5" y1="124.947" x2="239.3" y2="125.647" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="148.5" y="123.747" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000">186</text>
+<line x1="114" y1="300.8" x2="114" y2="318.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="183" y1="300.8" x2="183" y2="318.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="114" y1="317" x2="183" y2="317" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="114" y1="317" x2="116.2" y2="316.3" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="114" y1="317" x2="116.2" y2="317.7" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="183" y1="317" x2="180.8" y2="316.3" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="183" y1="317" x2="180.8" y2="317.7" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="148.5" y="320.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000">69</text>
+<line x1="149.3" y1="300" x2="257" y2="300" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="149.3" y1="132.947" x2="257" y2="132.947" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="255.5" y1="300" x2="255.5" y2="132.947" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="255.5" y1="300" x2="254.8" y2="297.8" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="255.5" y1="300" x2="256.2" y2="297.8" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="255.5" y1="132.947" x2="254.8" y2="135.147" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="255.5" y1="132.947" x2="256.2" y2="135.147" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="259.2" y="216.473" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000" transform="rotate(-90 259.2 216.473)">167.05</text>
+<line x1="8" y1="412" x2="289" y2="412" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="289" y1="412" x2="289" y2="8" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="289" y1="8" x2="8" y2="8" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="8" y1="8" x2="8" y2="412" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="14" y1="404" x2="114" y2="404" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="14" y1="404" x2="14" y2="400" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="24" y1="404" x2="24" y2="401.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="34" y1="404" x2="34" y2="401.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="44" y1="404" x2="44" y2="401.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="54" y1="404" x2="54" y2="401.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="64" y1="404" x2="64" y2="400" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="74" y1="404" x2="74" y2="401.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="84" y1="404" x2="84" y2="401.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="94" y1="404" x2="94" y2="401.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="104" y1="404" x2="104" y2="401.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="114" y1="404" x2="114" y2="400" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="14" y="408" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.08" text-anchor="start" fill="#000">Контроль масштабу: 100 мм (друкувати 100 %, без підгонки)</text>
+<line x1="139" y1="412" x2="139" y2="370" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="139" y1="370" x2="289" y2="370" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="139" y1="405" x2="289" y2="405" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="139" y1="398" x2="289" y2="398" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="139" y1="391" x2="289" y2="391" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="139" y1="384" x2="289" y2="384" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="141" y="376" font-family="DejaVu Sans, Arial, sans-serif" font-size="4.48" text-anchor="start" fill="#000">Гелікон t0nito A/B: пелюстка (8 шт.)</text>
+<text x="141" y="382" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">розгортка 1:1; згин язичка до диска, нахил пелюстки 42.7° в…</text>
+<text x="141" y="389" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення A-02 · масштаб 1:1 · мм · допуск ±0.2, якщо не вказано</text>
+<text x="141" y="396" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: Al 0.3-0.5 мм (лист), краї зачистити; лише прийом</text>
+<text x="141" y="403" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
+<text x="141" y="410" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 1feb6fd68ccf · v1.0.0</text>
+<text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">Гелікон t0nito A/B: пелюстка (8 шт.)</text>
+<text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">розгортка 1:1; згин язичка до диска, нахил пелюстки 42.7° від площини диска</text>
+<text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Хорди 69/186, похила 177, язичок 10, перекриття 10 (build/06 3.2).</text>
+<text x="12" y="28.6" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Заклепки ⌀3.2 (алюмінієві), шви зверху — струмопровідна Al-стрічка; гострі краї обгорнути.</text>
+<text x="12" y="32.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">build/06 3.2 gives only the rim chord 18.6 cm and slant about 17.7 cm for the t0nito A/B set (134-&gt;440 mm, 88 mm, 29.7 deg); the inner chord is taken equal to the shared 18 cm disk (assumption, check before cutting)</text>
+</svg>
