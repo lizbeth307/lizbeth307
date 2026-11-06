@@ -97,7 +97,7 @@ def ref_key(ref):
 def source_text(key):
     if key in D.SOURCES:
         url, _ = D.SOURCES[key]
-        return f"{key} ({url}, прочитано {D.READ})"
+        return f"{key} ({url}, прочитано {D.READ_ON.get(key, D.READ)})"
     return key
 
 
@@ -143,6 +143,18 @@ class Model:
         if missing:
             fail("components without a physical place (add to tools/assembly_data.py): " + ", ".join(sorted(missing, key=ref_key)))
         self.order = {u: i for i, u in enumerate(self.unit_info)}
+        # Places that contradict the board partition of components.csv must be acknowledged with a reason.
+        self.deviations, unacked = [], []
+        for comp in sorted(self.components, key=lambda c: ref_key(c["ref"])):
+            ref = comp["ref"]
+            candidate = self.partition.get(ref, {}).get("board_candidate", "")
+            board = D.BOARD_OF_DOMAIN.get(candidate)
+            if board and self.unit_of[ref] != board:
+                self.deviations.append((ref, comp["_sheet"], candidate, board, self.unit_of[ref]))
+                if self.unit_of[ref] not in D.PARTITION_DEVIATIONS:
+                    unacked.append(f"{ref} ({candidate} → {self.unit_of[ref]})")
+        if unacked:
+            fail("places that differ from pcb/generated/components.csv without a reason in PARTITION_DEVIATIONS: " + ", ".join(unacked))
 
     def collect_nets(self):
         self.nets = defaultdict(lambda: defaultdict(list))
@@ -243,12 +255,6 @@ def route(model, routed):
     return seg_nets, passthrough, internal
 
 
-def current_of(seg, net):
-    if (seg, net) in D.SEG_CURRENT:
-        return D.SEG_CURRENT[(seg, net)]
-    return D.NET_CURRENT.get(net, SIGNAL)
-
-
 def bundle_factor(n):
     if n <= 1:
         return 1.0
@@ -308,38 +314,65 @@ class Harness:
                 return CONNECTOR_FAMILY.get(ref, "SOLDER")
         return None
 
+    def current(self, sid, net):
+        """Design current of a net in a segment; a segment behind a pass-through panel/cable part inherits the branch budget."""
+        if (sid, net) in D.SEG_CURRENT:
+            return D.SEG_CURRENT[(sid, net)], True
+        seg = self.segments[sid]
+        for unit in seg[1:3]:
+            if self.model.is_board(unit):
+                continue
+            for other, oseg in self.segments.items():
+                if other != sid and unit in oseg[1:3] and net in self.seg_nets[other] and (other, net) in D.SEG_CURRENT:
+                    cont, prot, why, src = D.SEG_CURRENT[(other, net)]
+                    return (cont, prot, why, f"та сама гілка, що {other}: {src}"), True
+        if net in D.NET_CURRENT:
+            return D.NET_CURRENT[net], True
+        return SIGNAL, False
+
     def build_segment(self, sid):
         seg = self.segments[sid]
         a, b = seg[1], seg[2]
         override = seg[4]
         ph_limit = D.FAMILIES["PH"]["rating"] * D.FAMILIES["PH"]["share"]
-        items = []  # [net, cont, prot, protection, source, k_min, family_hint, (fam_a, fam_b, awg, limit)]
+        # item: [net, cont, prot, protection, source, k_min, family_hint, min_awg, declared, result]
+        items = []
         for net in sorted(self.seg_nets[sid]):
-            cont, prot, why, src = current_of(sid, net)
+            (cont, prot, why, src), declared = self.current(sid, net)
             k_min = max(1, len(self.explicit_pins(sid, a, net)), len(self.explicit_pins(sid, b, net)))
             hint = override or ("MF" if cont > ph_limit + 1e-9 or (prot or 0) > D.FAMILIES["PH"]["rating"] else "PH")
-            items.append([net, cont, prot, why, src, k_min, hint])
+            min_awg = D.MIN_AWG.get(net)
+            if not override and min_awg and min(D.FAMILIES[hint]["awg"]) > min_awg:
+                hint = "MFJ"  # Micro-Fit 3.0 takes 20–24 AWG only
+            items.append([net, cont, prot, why, src, k_min, hint, min_awg, declared])
+        if any(i[6] == "MFJ" for i in items):
+            for i in items:  # one power connector family per segment end
+                if i[6] == "MF":
+                    i[6] = "MFJ"
         if self.has_gnd(a) and self.has_gnd(b) and sid not in D.NO_GND:
-            groups = [override] if override else [f for f in ("MF", "PH") if any(i[6] == f for i in items)]
+            groups = [override] if override else [f for f in ("MFJ", "MF", "PH") if any(i[6] == f for i in items)]
             groups = [f for f in groups if (sid, f) not in D.GND_GROUP_SKIP]
             if not (self.model.is_board(a) and self.model.is_board(b)):
                 groups = groups[:1]  # one return to a module or panel part
             for fam in groups:
-                listed = [i for i in items if i[6] == fam and (i[0] in D.NET_CURRENT or (sid, i[0]) in D.SEG_CURRENT)]
+                listed = [i for i in items if i[6] == fam and i[8]]
                 if not listed and len(groups) == 1:
-                    listed = [i for i in items if i[0] in D.NET_CURRENT or (sid, i[0]) in D.SEG_CURRENT]
+                    listed = [i for i in items if i[8]]
                 cont = round(max([0.05] + [i[1] for i in listed]), 3)
                 prot = max(((i[2] or i[1]) for i in listed), default=None)
+                min_awg = min((i[7] for i in listed if i[7]), default=None)
                 if sid in D.GND_CURRENT:
                     cont, prot = D.GND_CURRENT[sid]
+                    min_awg = None
                 k_min = max([1] + [len(self.explicit_pins(sid, end, "GND", fam)) for end in (a, b)])
-                items.append(["GND", cont, prot, "повернення струму мереж цього роз'єму", "найбільший тривалий струм роз'єму", k_min, fam])
+                items.append(["GND", cont, prot, "повернення струму мереж цього роз'єму", "найбільший тривалий струм роз'єму", k_min, fam,
+                              min_awg, cont > SIGNAL[0]])
         k = {id(i): i[5] for i in items}
         for _ in range(8):
             n = sum(k.values())
             changed = False
             for item in items:
-                net, cont, prot, _, _, k_min, hint = item[:7]
+                net, cont, prot, _, _, k_min, hint, min_awg, declared = item[:9]
                 fam_a, fam_b = self.end_family(sid, a, hint), self.end_family(sid, b, hint)
                 allowed = sorted(set(D.FAMILIES[fam_a]["awg"] if fam_a in D.FAMILIES else ANY_AWG)
                                  & set(D.FAMILIES[fam_b]["awg"] if fam_b in D.FAMILIES else ANY_AWG), reverse=True)
@@ -351,12 +384,26 @@ class Harness:
                     allowed = list(D.FAMILIES[override]["awg"])
                 if fixed and fixed not in allowed:
                     fail(f"{sid} {net}: fixed {fixed} AWG is outside {fam_a}/{fam_b}")
+                if min_awg and override not in ("CABLE", "FAN3", "IDC"):
+                    if fixed and fixed > min_awg:
+                        fail(f"{sid} {net}: fixed {fixed} AWG is thinner than the {min_awg} AWG minimum")
+                    allowed = [g for g in allowed if g <= min_awg]
+                    if not allowed:
+                        fail(f"{sid} {net}: {min_awg} AWG minimum is outside {fam_a}/{fam_b}")
                 limits = [D.FAMILIES[f]["rating"] * D.FAMILIES[f]["share"] for f in (fam_a, fam_b)
                           if f in D.FAMILIES and D.FAMILIES[f]["rating"]]
                 contact_limit = min(limits) if limits else None
                 frozen = "IDC" in (fam_a, fam_b) or fixed or override in ("CABLE", "FAN3")
-                signal = net != "GND" and net not in D.NET_CURRENT and (sid, net) not in D.SEG_CURRENT
-                floor = max(D.FAMILIES[f]["signal_awg"] for f in (fam_a, fam_b) if f in D.FAMILIES) if signal else None
+                if net != "GND" and not declared:
+                    floor = max(D.FAMILIES[f]["signal_awg"] for f in (fam_a, fam_b) if f in D.FAMILIES)
+                elif declared:
+                    # a power wire in a rated family uses the gauge the contact rating is given for (JST: #24 only)
+                    rated = [D.FAMILIES[f]["power_awg"] for f in (fam_a, fam_b) if f in D.FAMILIES and D.FAMILIES[f]["rating"]]
+                    floor = min(rated) if rated else None
+                else:
+                    floor = None
+                if floor and fixed and fixed > floor:
+                    floor = fixed  # a gauge STACK names stays as named (reported in §11)
                 item_k = k[id(item)]
                 while True:
                     need_wire = (prot or cont) / item_k
@@ -374,12 +421,13 @@ class Harness:
                 if item_k != k[id(item)]:
                     k[id(item)] = item_k
                     changed = True
-                item[7:] = [(fam_a, fam_b, awg or (fixed or allowed[-1]), contact_limit, bool(awg), ok_contact)]
+                fallback = fixed or min([g for g in allowed if not floor or g <= floor] or allowed)
+                item[9:] = [(fam_a, fam_b, awg or fallback, contact_limit, bool(awg), ok_contact)]
             if not changed:
                 break
         n = sum(k.values())
         for item in items:
-            fam_a, fam_b, awg, limit, ok_wire, ok_contact = item[7]
+            fam_a, fam_b, awg, limit, ok_wire, ok_contact = item[9]
             net, cont, prot = item[:3]
             if not ok_wire:
                 self.warnings.append(f"{sid} {net}: межа захисту {prot or cont:g} A більша за допустимий струм {k[id(item)]}×{awg} AWG "
@@ -387,13 +435,14 @@ class Harness:
             if not ok_contact:
                 self.warnings.append(f"{sid} {net}: {cont:g} A на {k[id(item)]} контакт(и) перевищує проєктну межу {limit:.1f} A")
         counters, rows = defaultdict(int), []
-        for item in sorted(items, key=lambda i: (0 if i[6] == "MF" else 1, 0 if i[0] == "GND" else 1, i[0])):
+        order = {"MFJ": 0, "MF": 1}
+        for item in sorted(items, key=lambda i: (order.get(i[6], 2), 0 if i[0] == "GND" else 1, i[0])):
             net, cont, prot, why, src = item[:5]
-            fam_a, fam_b, awg = item[7][:3]
+            fam_a, fam_b, awg = item[9][:3]
             kk = k[id(item)]
             pa, pb = self.explicit_pins(sid, a, net, fam_a), self.explicit_pins(sid, b, net, fam_b)
             for pins, fam in ((pa, fam_a), (pb, fam_b)):
-                if pins and kk > len(pins) and fam in ("MF", "PH", "IDC"):
+                if pins and kk > len(pins) and fam in ("MFJ", "MF", "PH", "IDC"):
                     self.warnings.append(f"{sid} {net}: потрібно {kk} провідники, а роз'єм має {len(pins)} контакт(и)")
             for idx in range(kk):
                 mirror = (pa or pb)[idx % len(pa or pb)][1] if "IDC" in (fam_a, fam_b) and (pa or pb) else None
@@ -403,12 +452,13 @@ class Harness:
         for num, row in enumerate(rows, 1):
             net, cont, prot, why, src, kk, idx, awg, end_a, end_b, fam_a, fam_b = row
             wid = f"{sid}-{num:02d}"
+            ohm = None if {"CABLE", "IDC"} & {fam_a, fam_b} else D.WIRE_OHM_PER_KM.get(awg)
             self.wires.append(OrderedDict([
                 ("wire", wid), ("segment", sid), ("net", net), ("from_unit", a), ("from", end_a), ("to_unit", b), ("to", end_b),
                 ("family_from", fam_a), ("family_to", fam_b), ("awg", awg), ("parallel", f"{idx + 1}/{kk}"),
                 ("i_cont_a", f"{cont:g}"), ("i_prot_a", f"{prot:g}" if prot else ""), ("protection", why), ("current_source", src),
                 ("bundle_n", n), ("colour", colour(net)), ("insulation", D.INSULATION), ("length_mm", self.segments[sid][5]),
-                ("marker", wid)]))
+                ("conductor_mohm_per_m", f"{ohm:g}" if ohm else "TBD"), ("marker", wid)]))
 
     def end(self, sid, unit, net, family, pins, idx, counters, mirror=None):
         if pins:
@@ -416,7 +466,7 @@ class Harness:
             return f"{ref}.{pin}" + (f" ({name})" if name and name != pin else "")
         local = [f"{r}.{p}" for r, p, _, _ in self.model.nets[net].get(unit, [])]
         if self.model.is_board(unit):
-            kind = {"MF": "P", "PH": "S", "IDC": "I", "FAN3": "F"}.get(family, "C")
+            kind = {"MFJ": "J", "MF": "P", "PH": "S", "IDC": "I", "FAN3": "F"}.get(family, "C")
             limit = D.FAMILIES[family]["max_pins"]
             key = (sid, unit, kind)
             counters[key] += 1
@@ -426,6 +476,8 @@ class Harness:
             conn = self.connectors.setdefault(cid, OrderedDict([("connector", cid), ("unit", unit), ("segment", sid), ("family", family),
                                                                ("pins", 0), ("nets", [])]))
             conn["pins"] = 40 if family == "IDC" else max(conn["pins"], pin, 2)  # PH and Micro-Fit start at 2 circuits
+            if family == "MFJ" and conn["pins"] % 2:
+                conn["pins"] += 1  # Mini-Fit Jr. headers 5566/5569 are dual row
             conn["nets"].append(net)
             where = f" → {', '.join(local[:3])}{' …' if len(local) > 3 else ''}" if local else " (транзит)"
             return f"{cid}.{pin}{where}"
@@ -448,6 +500,9 @@ def connector_parts(conn):
         return f"PHR-{n}", f"S{n}B-PH-K-S (боковий) / B{n}B-PH-K-S (верхній)", "SPH-002T-P0.5S", "JST-PH"
     if fam == "MF":
         return mf_housing(n), f"43650 вертикальна Sn, {n} конт. — parts DB", "0430300007", "MOLEX-43645; MOLEX-43030; MOLEX-43650"
+    if fam == "MFJ":
+        return (f"5557, {n} конт. — код parts DB", f"5566 вертикальна / 5569 кутова, {n} конт. (2×{n // 2}) — код parts DB", "0039000060",
+                "MOLEX-5556; MOLEX-5566")
     fam_d = D.FAMILIES[fam]
     return fam_d["housing"], fam_d["header"], fam_d["terminal"], "—"
 
@@ -457,22 +512,32 @@ def render_harness(model, h):
     lines = [HEAD, "# 16. Джгути: схема з'єднань провід за проводом\n", STATUS,
              "Таблиці нижче згенеровано з графів `design/E[1-5].json` (контакти й мережі), розбиття плат "
              "`pcb/generated/components.csv` і рішень [build/15](15-rishennia-komplektu.md) (три плати; JST PH для сигналів, "
-             "Micro-Fit 3.0 для живлення). Перегенерувати: `python tools/build_assembly_docs.py`. Цей файл замінює кабельний журнал "
+             "Micro-Fit 3.0 для живлення, Mini-Fit Jr. для кола батареї 18 AWG). Перегенерувати: `python tools/build_assembly_docs.py`. Цей файл замінює кабельний журнал "
              "04 §8 (історичний) і доповнює карти контактів [E5](../design/E5-connection-guide.md). Номери контактів — електричні; "
              "кожну жилу прозвонити (E5, вступ).\n"]
     # rules
-    ph, mf = D.FAMILIES["PH"], D.FAMILIES["MF"]
+    ph, mf, mfj = D.FAMILIES["PH"], D.FAMILIES["MF"], D.FAMILIES["MFJ"]
     lines.append("## 1. Правила\n")
     lines.append(table(["правило", "значення", "джерело"], [
         ("Родина сигнальних з'єднань", f"{ph['title']}: розетка PHR-n, клема SPH-002T-P0.5S (AWG 30–24, ⌀ ізоляції 0.8–1.5 мм), "
          "вилка S n B-PH-K-S / B n B-PH-K-S", source_text("JST-PH")),
         ("Родина силових з'єднань", f"{mf['title']}: розетка 43645 з фіксатором, клема 43030 (20–24 AWG, ⌀ ≤1.85 мм), вилка 43650",
          source_text("MOLEX-43645") + "; " + source_text("MOLEX-43030")),
-        ("Проєктна межа контакту", f"PH {ph['rating'] * ph['share']:.1f} A, Micro-Fit {mf['rating'] * mf['share']:.1f} A "
-         "(60 % від каталожних 2 A і 5 A при 50 °C усередині корпусу — рішення asm)", "JST-PH; MOLEX-43030"),
-        ("Вибір родини", "Micro-Fit, якщо тривалий струм > 1.2 A або межа захисту > 2 A; інакше PH (рішення asm за build/15)", "build/15"),
+        ("Родина кола батареї", f"{mfj['title']}: розетка 5557, клема 0039000060 (18–24 AWG, ⌀ 1.30–3.10 мм, 9.0 A), вилка 5566/5569 "
+         "(дворядна) — бо коло батареї 18 AWG, а Micro-Fit 3.0 бере лише 20–24 AWG",
+         source_text("MOLEX-5556") + "; " + source_text("MOLEX-5566")),
+        ("Проєктна межа контакту", f"PH {ph['rating'] * ph['share']:.1f} A, Micro-Fit {mf['rating'] * mf['share']:.1f} A, "
+         f"Mini-Fit Jr. {mfj['rating'] * mfj['share']:.1f} A (60 % від каталожних 2, 5 і 9 A при 50 °C усередині корпусу — рішення asm)",
+         "JST-PH; MOLEX-43030; MOLEX-5556"),
+        ("Вибір родини", "Mini-Fit Jr., якщо в роз'ємі є мережа кола батареї (мінімум 18 AWG), тоді й інші силові мережі цього роз'єму; "
+         "Micro-Fit, якщо тривалий струм > 1.2 A або межа захисту > 2 A; інакше PH (рішення asm за build/15)", "build/15"),
         ("Переріз", "найтонший дріт, для якого Imax(AWG)·k(n) ≥ межі захисту гілки; k(n) = (29−n)/28, n — провідників у сегменті "
          "(0.5 при n ≥ 15); інакше — паралельні контакти (до 4)", source_text("ESCC-3901-001")),
+        ("Переріз силових проводів у роз'ємах", f"мережа з бюджетом струму: у PH — AWG {ph['power_awg']} (JST дає номінал 2 A лише для #24), "
+         f"у Micro-Fit — AWG {mf['power_awg']}, у Mini-Fit Jr. — AWG {mfj['power_awg']} (Molex дає номінал без перерізу — береться найтовщий, "
+         "який приймає клема); сигнали — найтонший дозволений", "JST-PH; MOLEX-43030; MOLEX-5556"),
+        ("Мінімум кола батареї", f"мережі {', '.join(sorted(D.MIN_AWG))} і їхнє повернення GND — не тонше {min(D.MIN_AWG.values())} AWG",
+         D.MIN_AWG_SOURCE),
         ("Перехресна перевірка перерізу", "20 AWG у джгуті ≥15 проводів при 70 °C у вакуумі — 3.7 A на провід", source_text("NASA-19990009916")),
         ("Ізоляція", D.INSULATION, "рішення asm"),
         ("Колір", "чорний GND, коричневий батарея/N/SW, жовтий 12 V, червоний 5 V, помаранчевий 3.3 V, рожевий bias 4.3 V, "
@@ -482,12 +547,17 @@ def render_harness(model, h):
         ("Розвантаження натягу", "стяжка до пластини або бобишки ≤30 мм від кожного роз'єму, далі кожні 50–80 мм; "
          "силові джгути не ближче 20 мм до РЧ-відсіку й фідера GNSS", "рішення asm; STACK §5.8 (S-складка HDMI)"),
         ("Пайка до модулів", "лудити, паяти, термоусадка 2:1 на кожному з'єднанні (як J21, 08 крок 7.7); жилу не згинати біля пайки", "08 крок 7.7"),
-        ("Інструмент", f"Micro-Fit: {mf['tool']}; PH: {ph['tool']}", "MOLEX-43030; JST-PH"),
+        ("Інструмент", f"Mini-Fit Jr.: {mfj['tool']}; Micro-Fit: {mf['tool']}; PH: {ph['tool']}", "MOLEX-5556; MOLEX-43030; JST-PH"),
     ]))
     # units
     lines.append("\n## 2. Вузли\n")
     rows = [(u, info["name"], info["place"]) for u, info in model.unit_info.items() if info["kind"] != "rf"]
     lines.append(table(["вузол", "що це", "місце"], rows))
+    lines.append(f"\nДеталі, місце яких відрізняється від `board_candidate` у `pcb/generated/components.csv` ({len(model.deviations)}). "
+                 "Генератор зупиняється на кожному такому місці без причини в `PARTITION_DEVIATIONS`; `pcb/prepare.py` має дати цим "
+                 "деталям окремий домен (не PWR/CTRL) до наступної перефіксації PCB (§11).\n\n")
+    lines.append(table(["деталь", "аркуш", "board_candidate", "плата за розбиттям", "вузол збирання", "чому"],
+                       [(ref, sheet, cand, board, unit, D.PARTITION_DEVIATIONS[unit]) for ref, sheet, cand, board, unit in model.deviations]))
     # segments
     lines.append("\n## 3. Сегменти джгутів\n")
     seg_rows = []
@@ -498,7 +568,7 @@ def render_harness(model, h):
     lines.append(table(["сегмент", "назва", "кінці", "проводів", "родини", "довжина, мм", "примітка"], seg_rows))
     # connectors
     lines.append("\n## 4. Роз'єми джгутів на платах\n")
-    lines.append("Позначення `X<сегмент><P|S|I|F><n>-<плата>`: P — Micro-Fit, S — PH, I — IDC, F — вентилятор. Ці роз'єми ще не мають "
+    lines.append("Позначення `X<сегмент><J|P|S|I|F><n>-<плата>`: J — Mini-Fit Jr., P — Micro-Fit, S — PH, I — IDC, F — вентилятор. Ці роз'єми ще не мають "
                  "позиційних позначень на схемі; parts DB/PCB додають їх (J-номер) з тим самим розміщенням контактів. Наявні роз'єми графа "
                  "(J302, J501–J505, J541/J543/J544, J550, J101, J103) використано як є.\n\n")
     crow = []
@@ -561,8 +631,60 @@ def render_harness(model, h):
     # warnings
     lines.append("\n## 11. Зауваження до схеми і джгута\n")
     notes = list(dict.fromkeys(h.warnings)) + HARNESS_FINDINGS
+    if model.deviations:
+        moved = defaultdict(list)
+        for ref, _, cand, _, unit in model.deviations:
+            moved[unit].append(ref)
+        notes.append("Розбиття PCB: `pcb/generated/components.csv` ставить на плати деталі, які збираються поза ними — "
+                     + "; ".join(f"{unit}: {', '.join(refs)}" for unit, refs in moved.items())
+                     + ". Потрібна зміна категорій `pcb/prepare.py` (власник parts): окремі домени для вставок T7/HDMI і носійної плати "
+                       "паку IMU, після чого — перефіксація PCB.")
     lines.append("\n".join(f"{i}. {md(n)}" for i, n in enumerate(notes, 1)) + "\n")
+    lines.append(render_resistance(h))
     return "".join(lines)
+
+
+def segment_length_mm(text):
+    m = re.match(r"\s*≤?\s*(\d+)", str(text))
+    return int(m[1]) if m else None
+
+
+def resistance_rows(h):
+    rows = []
+    for w in h.wires:
+        cont = float(w["i_cont_a"])
+        if cont < 0.25:
+            continue
+        ohm = D.WIRE_OHM_PER_KM.get(int(w["awg"])) if w["conductor_mohm_per_m"] != "TBD" else None
+        ends = [f for f in (w["family_from"], w["family_to"]) if f in D.CONTACT_MOHM]
+        known = [D.CONTACT_MOHM[f][0] for f in ends]
+        values = sorted({"TBD" if v is None else f"{v} mΩ" for v in known})
+        contact = f"{len(ends)} × {' / '.join(values)}" if ends else "—"
+        per100 = ohm * 0.1 if ohm else None
+        length = segment_length_mm(w["length_mm"])
+        if ohm and length:
+            r_wire = ohm * length / 1000
+            if any(v is None for v in known):
+                total, drop = f"{r_wire:.1f} mΩ жила + контакти TBD", f"{cont * r_wire:.0f} mV жила + контакти TBD"
+            else:
+                total, drop = f"{r_wire + sum(known):.1f} mΩ", f"{cont * (r_wire + sum(known)):.0f} mV"
+        else:
+            total, drop = "TBD (довжина з CAD)", "TBD"
+        rows.append((w["wire"], w["net"], f"{w['awg']}", f"{ohm:g}" if ohm else "TBD", contact,
+                     f"{per100:.2f} / {cont * per100:.1f}" if per100 else "TBD", w["length_mm"], total, drop))
+    return rows
+
+
+def render_resistance(h):
+    return ("\n## 12. Опір і падіння напруги силових проводів\n\n"
+            "Кожен провід з тривалим струмом ≥0.25 A: опір жили за ESCC 3901/001 табл. 1(a) (20 °C), стикування роз'ємів на кінцях і "
+            "падіння при тривалому струмі. Петля = рядок мережі + рядок GND того самого сегмента; стикування J503 входить і в S14, і в S16 — "
+            "у петлі J21 рахувати один раз. Опір контактів Micro-Fit і Mini-Fit Jr. у прочитаних документах Molex не наведено — TBD; "
+            "PH — 20 mΩ після тесту (JST). Довжини — з CAD; доки їх немає, повна сума — TBD. Бюджети, яких це стосується: E1-05 "
+            "(запас LT3045 — на міді PWR, §11), шина LAB5 після F102, VBUS портів (5 V ±5 % на кожному пристрої, E1-05), J21 "
+            "(Q6A 4.5–16 V, STACK C4) і коло батареї (UV-супервізор вимірює вузол N, а не пак).\n\n"
+            + table(["провід", "мережа", "AWG", "жила, mΩ/м", "стикування", "на 100 мм: mΩ / mV", "довжина, мм", "опір", "падіння"],
+                    resistance_rows(h)))
 
 
 RF_DC = {
@@ -583,7 +705,18 @@ HARNESS_FINDINGS = [
     "рекомендовано PTC/ключ на гілці IMU (власник E5).",
     "J503: тривалий струм J21 2.5 A на одному контакті Micro-Fit (50 % від 5 A); межа захисту 4 A (F201) — 80 %; приймання — прогрів J503 у "
     "тесті Ж-04/Ж-11.",
-    "KEY у S16 — 24 AWG замість 26–28 AWG (STACK §5.8): найтонший переріз, сумісний з клемами Micro-Fit 20–24 AWG у J503.",
+    "KEY у S15 і S16 — 24 AWG замість 26–28 AWG (STACK §5.8; примітки E5 J503/J521 «KEY26–28AWG»): найтонший переріз, сумісний з "
+    "клемами Micro-Fit 20–24 AWG у J503; відхилення записано в build/15, примітку графа E5 має оновити власник E5.",
+    "Коло батареї (S05–S08, S10) — 18 AWG за приміткою E1 F101; клеми Micro-Fit 3.0 беруть лише 20–24 AWG, тому силові роз'єми цих "
+    "сегментів на PWR — Mini-Fit Jr. (клема 0039000060, 18–24 AWG, 9.0 A; вилка 5566/5569) — відхилення від build/15 «Micro-Fit для "
+    "живлення», записане в build/15; MPN розеток і вилок — parts DB.",
+    "F101 стоїть у паку (група E1 «Пак 4S1P», STACK D2 «біля батареї»), тож усі провідники кола батареї поза паком (S05–S08, S10) — "
+    "нижче F101 і розраховані на 7.5 A; провід BT104.+ → F101.1 усередині паку захищає лише BMS (DOCP 40±10 A) — найкоротший, 18 AWG.",
+    "18 AWG у клемах VIN± модуля Adafruit 5832 (S06): сумісність клемника з 18 AWG не перевірено (документ Adafruit не прочитано) — "
+    "інакше паяти до майданчиків VIN± модуля.",
+    "E1-05 (запас LT3045): U108, F102, L101 і пара LT3045 стоять на PWR, тож опір LAB5 E1→E2 ≤10 mΩ (E1-05: «кожні 10 mΩ — 32 mV "
+    "при 3.2 A») — вимога до міді й доріжок PWR (PCB), джгута в цьому шляху немає; холодний опір F102 ≤10 mΩ лишається відкритим (MPN). "
+    "U108 впаяно в PWR замість кріплення до пластини (05 §3 рядок 15) — відхилення записано в build/15.",
     "U506 (HDMI pin 18) і U505 (VBUS T7) потребують прохідних вставок у кабелі — малі окремі плати поза трьома основними (build/15).",
     "IMU-пак містить деталі E5 (U552, D502, C519, C520) і E3 «External IMU» — потрібна мала носійна плата в Hammond 1550Z101 (build/15).",
     "Ввід кабелю живлення S-band pod (BIAS_SB_LNA, W425) у корпус у графах не визначено — потрібен панельний роз'єм або гермоввід (E2/E4).",
@@ -609,7 +742,8 @@ def render_connectors_csv(h):
 def render_fasteners():
     lines = [HEAD, "# 17. Кріплення і моменти затягування\n", STATUS,
              "Моменти — значення даташитів (джерело в рядку), **не виміряні**; TBD — виробник значення не публікує або документ не прочитано. "
-             "Кількості, що залежать від корпусу, — з моделі CAD (пакет механіки). Запас — +10 %, не менше 2 шт. (build/15).\n",
+             "Кількості, що залежать від корпусу, — з моделі CAD (пакет механіки). Запас кріплення — +10 %, не менше 2 шт. (рішення asm; "
+             "правило build/15 «+10 %, щонайменше 5 шт.» стосується пасивних компонентів).\n",
              "\n## 1. Таблиця\n"]
     rows = []
     for f in D.FASTENERS:
@@ -659,7 +793,8 @@ def render_labels(model, h):
              "Макет аркуша 1:1 — [18-markuvannia-arkush.svg](18-markuvannia-arkush.svg).\n\n"]
     lines.append(table(["ID", "місце", "текст", "матеріал", "розмір, мм", "джерело"], rows))
     lines.append("\nПеревірка (CI, `software/tests/test_assembly_docs.py`): кожен панельний РЧ-роз'єм графа має наклейку; жодна панельна наклейка "
-                 "не містить «TX»; кожен провід build/16 має маркер.\n")
+                 "не містить «TX»; кожен провід build/16 має маркер; кожна наклейка аркуша 1:1 має розмір зі стовпця «розмір» — текст, що не "
+                 "вміщується шрифтом ≥1.6 мм, зупиняє генератор.\n")
     return "".join(lines)
 
 
@@ -667,17 +802,50 @@ def render_labels_csv(model, h):
     return csv_text(["id", "place", "text", "material", "size_mm", "source"], label_rows(model, h))
 
 
+LABEL_FONT_MIN, LABEL_FONT_MAX = 1.6, 3.0  # mm cap height range of the 1:1 sheet (рішення asm)
+
+
+def wrap_words(text, chars):
+    """Greedy word wrap at spaces."""
+    lines, line = [], ""
+    for word in text.split(" "):
+        cand = f"{line} {word}".strip()
+        if len(cand) <= chars or not line:
+            line = cand
+        else:
+            lines.append(line)
+            line = word
+    return lines + [line]
+
+
+def label_layouts(text, chars):
+    """Line layouts in order of preference: the name (text before the first " · ") on its own line, then plain wrapping."""
+    name, sep, rest = text.partition(" · ")
+    layouts = [lambda c: [name] + wrap_words(rest, c)] if sep else []
+    return layouts + [lambda c: wrap_words(text, c)]
+
+
+def fit_label(text, w, hh):
+    """Largest font (mm) at which the preferred wrapped layout fits w×hh with 1 mm margins, or None."""
+    for layout in label_layouts(text, 0):
+        fs = LABEL_FONT_MAX
+        while fs >= LABEL_FONT_MIN - 1e-9:
+            chars = int(1.85 * (w - 2) / fs)
+            lines_ = layout(chars)
+            if max(len(s) for s in lines_) <= chars and 1.25 * fs * len(lines_) <= hh - 1.5:
+                return round(fs, 2), lines_
+            fs -= 0.05
+    return None
+
 def render_labels_svg(model, h):
     rows = [r for r in label_rows(model, h) if r[0] not in ("L-WIRE", "L-CONN")]
     width, x, y, out = 190, 10, 14, []
     for lid, _, text, _, size, _ in rows:
         w, hh = (float(v) for v in size.split("×"))
-        parts = [s.strip() for s in text.split(" · ")]
-        lines_ = [parts[0], " · ".join(parts[1:])] if len(parts) > 1 and hh >= 7 else [text]
-        fs = min(3.0, 1.85 * (w - 2) / max(len(s) for s in lines_), (hh - 1.5) / (1.25 * len(lines_)))
-        if fs < 1.6:  # too long for the size: widen the label rather than print unreadable text
-            fs = min(3.0, (hh - 1.5) / (1.25 * len(lines_)))
-            w = round(max(len(s) for s in lines_) * fs / 1.85 + 2)
+        fit = fit_label(text, w, hh)
+        if not fit:  # the artwork must stay at the specified size (build/18 table and CSV)
+            fail(f"label {lid}: text does not fit {size} mm at ≥{LABEL_FONT_MIN} mm — shorten it or change the size in tools/assembly_data.py")
+        fs, lines_ = fit
         if x + w > width:
             x, y = 10, y + 24
         out.append(f'<rect x="{x:g}" y="{y:g}" width="{w:g}" height="{hh:g}" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>')
@@ -735,12 +903,16 @@ def render_bringup(model, h):
     lines.append(table(header, tp_rows(model)))
     lines.append("\n## 4. Порядок запуску кожної плати\n")
     lines.append(
-        "1. **PWR** — стенд на вузлі N (TP104) при вийнятому F101; модулі Pololu, INA228 і #2813 під'єднані джгутами S06–S09 (build/16). "
-        "Ступінь L0 → S0: TP104, TP106, TP105, TP108; потім кнопка → S1: TP201, TP205; TP101/TP102 — лише сервісно з 10k до 3.3 V.\n"
-        "2. **PWR + CTRL** (без Q6A): живлення 3V3_Q6A від стенду 3.3 V з обмеженням 0.1 A на X01I (контакти 1/17) лише для перевірки логіки "
-        "EN: усі EN мають лишатися низькими (100k); по одному EN=1 → стан S4 відповідного рядка §3.\n"
-        "3. **RF** — живлення лише через S03/S04 від PWR; HMC7992 — порядок GND → VDD → керування (08 крок 0); без генератора на портах.\n"
-        "4. Після кожного кроку — бланк build/20.\n")
+        "1. **PWR** (21 крок E2: модулі на пластині, U108 впаяно в PWR, INA228, #2813 і D36V50F12 під'єднані джгутами S06–S08). "
+        "Живлення — лише стендовим проводом у вхідний роз'єм S05 на PWR: розетка Mini-Fit Jr. 5557 (клема 0039000060), 18 AWG, "
+        "≤0.5 м, запобіжник 7.5 A у розриві, бо F101 стоїть у паку; пак від'єднано. TP104 — лише щуп вимірювання, не точка живлення. "
+        "Ступінь L0 → S0: TP104, TP106, TP105, TP108; потім кнопка → S1 (ступінь L1): TP201, TP205; TP101/TP102 — лише сервісно з 10k до 3.3 V.\n"
+        "2. **Q6A на J21** (21 крок E3): ступінь L2 → S2.\n"
+        "3. **PWR + CTRL + Q6A** (21 крок E6, після S01 і S02): у S2 усі EN низькі (100k). EN-тести — з Q6A по I2C2 (i2cset до MCP23017 "
+        "#1 0x20, #3 0x22, #4 0x23 на CTRL за картою E3; labd зупинено): по одному EN=1 → стан S4 відповідного рядка §3; DISP12 "
+        "(GP16 Pico) → S3 зі ступенем L3; кнопки й енкодери — через Pico.\n"
+        "4. **RF** (21 крок E4) — живлення лише через S03/S04 від PWR; HMC7992 — порядок GND → VDD → керування (08 крок 0); без генератора на портах.\n"
+        "5. Після кожного кроку — бланк build/20.\n")
     lines.append("\n## 5. Ступені обмеження струму стенда\n")
     lines.append(table(["ступінь", "конфігурація", "обмеження, A", "очікування (модель)", "джерело"], D.STAGES))
     lines.append("\nМодель стенда й навантаження STACK не називає (08 перелік TBD); уставки вище — проєктні межі для першого ввімкнення, "
@@ -776,9 +948,27 @@ def parse_09(path):
     return rows
 
 
-def short(text, n=140):
-    text = re.sub(r"\*\*|`", "", text).replace("\\|", "/")
-    return text if len(text) <= n else text[: n - 1].rstrip() + "…"
+def plain(text):
+    """Markdown cell → printable text, never shortened (the form carries every criterion in full)."""
+    return re.sub(r"\*\*|`", "", text).replace("\\|", "/")
+
+
+def stale_in(text):
+    return [cur for pattern, cur in D.STALE if re.search(pattern, text)]
+
+
+def v21_row(rid, proc, threshold):
+    """Apply the v2.1 reading of a build/09 row (tools/assembly_data.py FORM_V21); refuse a superseded value without one."""
+    rule = D.FORM_V21.get(rid)
+    if rule and rule[0] == "replace":
+        proc, threshold = rule[1], rule[2]
+    elif rule and rule[0] == "sub":
+        proc, threshold = proc.replace(rule[1], rule[2]), threshold.replace(rule[1], rule[2])
+    elif rule and rule[0] == "note":
+        proc = f"{proc} ({rule[1]})"
+    if stale_in(proc + " " + threshold) and D.FORM_V21_MARK not in proc:
+        fail(f"build/09 {rid} carries a superseded v2 value ({stale_in(proc + ' ' + threshold)}) — add its v2.1 reading to FORM_V21")
+    return proc, threshold
 
 
 def form_rows(model):
@@ -794,9 +984,9 @@ def form_rows(model):
                 rows.append(("TP", f"{tp[0]}/{state[0]}", f"{tp[0]} {tp[2]} у стані {state[0]}", expect))
     for gid in sorted(contract["gate_results"]):
         item = model.open_items.get(gid, {})
-        rows.append(("GATE", gid, short(item.get("description", ""), 160), short(item.get("resolve", ""), 160) or "за графом"))
+        rows.append(("GATE", gid, plain(item.get("description", "")), plain(item.get("resolve", "")) or "за графом"))
     for rid, proc, threshold in parse_09(model.base / "build/09-testy.md"):
-        rows.append(("09", rid, short(proc), short(threshold)))
+        rows.append(("09", rid) + v21_row(rid, plain(proc), plain(threshold)))
     return rows, contract
 
 
@@ -817,7 +1007,12 @@ def render_form(model):
              "09 — рядки плану тестів.\n\n"]
     lines.append(table(["розділ", "ID", "що", "поріг / очікування", "виміряно", "прилад", "результат", "підпис, дата"],
                        [r + ("", "", "", "") for r in rows]))
-    lines.append(f"\nВоріт у контракті: {len(contract['gate_results'])}, усі OPEN на момент генерації.\n")
+    counts = defaultdict(int)
+    for status in contract["gate_results"].values():
+        counts[status] += 1
+    lines.append(f"\nВоріт у контракті: {len(contract['gate_results'])}; стан на момент генерації: "
+                 + ", ".join(f"{status} — {n}" for status, n in sorted(counts.items())) + ". Рядки 09 з v2-значеннями подано в "
+                 "читанні v2.1 (`FORM_V21` у tools/assembly_data.py; 09 §21).\n")
     return "".join(lines)
 
 
