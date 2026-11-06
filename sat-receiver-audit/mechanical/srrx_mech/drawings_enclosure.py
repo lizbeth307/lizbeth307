@@ -156,6 +156,8 @@ def plate_sheet(P):
     sh.label((rw[0], rw[1] + rw[3] + 1), "проріз riser R44SF", 2.0)
     hs = pl["hdmi_slot"]
     sh.rrect(hs[0], hs[1], hs[2], hs[3], hs[3] / 2, "CUT")
+    for (nx, ny, nw, nh) in pl.get("notches", []):
+        sh.label((nx, ny - 3), "виріз під гайку кнопки живлення", 1.8)
     sh.label((hs[0], hs[1] - 3), "проріз кабелю HDMI", 2.0)
     holes = plate_holes(P)
     for h in holes:
@@ -232,9 +234,8 @@ def angles_sheet(P):
     oy2 = 100.0
     sh.rect(0, oy2, L, at["leg_plate"], "CUT")
     sh.text((0, oy2 + at["leg_plate"] + 3), "Верхній кутник: полиця 'пластина'", 2.6)
-    for i in range(5):
-        xh = 8 + i * ((L - 16) / 4)
-        sh.hole((xh, oy2 + at["leg_plate"] / 2), 3.4, None)
+    for xh in at["holes_x"]:
+        sh.hole((xh - at["x"][0], oy2 + at["leg_plate"] / 2), 3.4, None)
     ar = m["angles"]["right"]
     L2 = ar["y"][1] - ar["y"][0]
     ox = 260.0
@@ -428,6 +429,7 @@ def bezel_sheet(P):
 
 
 def seam_sheet(P):
+    from .rules import closure_spans
     m = P.mech
     gk = m["gasket"]
     sq = 1 - gk["groove_depth"] / gk["cord_d"]
@@ -435,23 +437,36 @@ def seam_sheet(P):
     hx, hy, hw, hh = m["rear_face"]["hatch"]["rect"]
     seat = m["rear_face"]["hatch"]["seat"]
     hatch_len = 2 * (hw + seat) + 2 * (hh + seat)
-    sh = Sheet("M-13", "Шов корпусу і лючок: паз ущільнення", "переріз 5:1", (297.0, 210.0), 5.0, (60.0, 90.0),
-               "ASA + EPDM-шнур ⌀3.0 (70 Shore A)",
-               [f"Паз {fmt(gk['groove_w'])} x {fmt(gk['groove_depth'])} мм; шнур ⌀{fmt(gk['cord_d'])}: стиск {fmt(sq * 100, 0)} %, заповнення {fmt(fill * 100, 0)} %",
-                "(правило статичного ущільнення 15-30 % стиску, ≤85 % заповнення — parts.json oring_groove_rule).",
-                "Шнур укласти без натягу, стик — внизу посередині, торці склеїти; кути паза R ≥ 9 мм.",
-                f"Лючок: той самий переріз паза в кришці лючка, шнур близько {fmt(hatch_len, 0)} мм; довжина шнура шва — fit-report 'gasket'.",
-                "Гвинти M3 ISO 14580 з ущільнювальною шайбою під головкою; IPX4 — ворота T-07 OPEN."])
-    rw, rh = gk["rim_w"], gk["rim_h"]
-    t = m["wall"]
-    sh.poly([(0, 0), (rw, 0), (rw, rh), (t, rh), (t, rh + 8), (0, rh + 8)], True, "CUT")
-    gx = (rw - gk["groove_w"]) / 2
-    sh.rect(gx, 0, gk["groove_w"], gk["groove_depth"], "CUT")
-    sh.circle((gx + gk["groove_w"] / 2, gk["groove_depth"] - gk["cord_d"] / 2), gk["cord_d"] / 2, "HIDDEN")
-    sh.poly([(0, 0), (rw, 0), (rw, -4), (t, -4), (t, -10), (0, -10)], True, "CUT")
-    sh.label((rw + 1, 2), "передня оболонка (паз)", 2.2)
-    sh.label((rw + 1, -6), "задня оболонка (площина)", 2.2)
-    sh.label((rw + 1, -1.2), "шнур ⌀3 до стиску (пунктир)", 1.8)
-    sh.dim_h(gx, gx + gk["groove_w"], 0, gk["groove_depth"] + 1.2)
-    sh.dim_v(0, gk["groove_depth"], gx, gx - 1.5)
+    c = m["closure"]
+    cs = closure_spans(P)
+    sh = Sheet("M-13", "Шов корпусу і лючок: пояс, паз ущільнення, гвинти", "переріз 5:1 (x — углиб від зовнішньої грані, z — від площини роз'єму)",
+               (297.0, 210.0), 5.0, (90.0, 105.0), f"ASA + EPDM-шнур ⌀{fmt(gk['cord_d'])} (70 Shore A)",
+               [f"Паз {fmt(gk['groove_w'])} x {fmt(gk['groove_depth'])} мм у лицьовій оболонці; шнур ⌀{fmt(gk['cord_d'])}: стиск {fmt(sq * 100, 0)} %, заповнення {fmt(fill * 100, 0)} %",
+                "(статичне ущільнення: стиск 15-30 %, заповнення ≤85 % — parts.json oring_groove_rule). Пояс — стінка, потовщена назовні, тож паз не заходить усередину.",
+                f"Пояс {fmt(gk['belt'])} мм назовні, висота {fmt(gk['belt_h'])} мм на кожній оболонці; стінки біля паза {fmt(gk['land'])} мм (2 периметри по 0.45).",
+                f"Гвинти шва: {cs['screws']} x {c['screw']} у вставки {c['insert']['thread']}x{fmt(c['insert']['len'])}; бобишки при стінці (вісь 4.5 мм від зовнішньої грані), отвір усередині від паза.",
+                f"Найдовший проліт між гвинтами {fmt(cs['max_span_mm'], 0)} мм — лівий нижній кут (батарея й екран HF+ біля стінок); IPX4 — ворота T-07 OPEN.",
+                f"Шнур укласти без натягу, стик — посередині нижнього краю, торці склеїти; лючок: той самий паз у кришці, шнур близько {fmt(hatch_len, 0)} мм.",
+                "Під головку кожного гвинта — ущільнювальна шайба (MPN TBD): гвинти проходять крізь задню стінку всередині шва."])
+    t, b, bh = m["wall"], gk["belt"], gk["belt_h"]
+    top = 9.0
+    sh.poly([(-b, 0), (t, 0), (t, top), (0, top), (0, bh), (-b, bh)], True, "CUT")
+    sh.poly([(-b, 0), (t, 0), (t, -top), (0, -top), (0, -bh), (-b, -bh)], True, "CUT")
+    g0 = -b + gk["land"]
+    sh.rect(g0, 0, gk["groove_w"], gk["groove_depth"], "CUT")
+    sh.circle((g0 + gk["groove_w"] / 2, gk["groove_depth"] - gk["cord_d"] / 2), gk["cord_d"] / 2, "HIDDEN")
+    hole0 = 4.5 - c["insert"]["hole_d"] / 2
+    sh.rect(hole0, 0, c["insert"]["hole_d"], c["insert"]["len"] + 0.8, "HIDDEN")
+    sh.rect(4.5 - c["boss_d"] / 2, 0, c["boss_d"], top, "HIDDEN")
+    sh.rect(4.5 - c["clearance_d"] / 2, -top, c["clearance_d"], top, "HIDDEN")
+    sh.line((4.5, -top - 1.5), (4.5, top + 1.5), "CENTER")
+    sh.label((t + 6.5, 6.0), "лицьова оболонка: пояс, паз, бобишка зі вставкою (пунктир)", 2.2)
+    sh.label((t + 6.5, -6.5), "задня оболонка: пласка площина, отвір під гвинт", 2.2)
+    sh.label((t + 6.5, -0.6), f"шнур ⌀{fmt(gk['cord_d'])} до стиску (пунктир)", 1.8)
+    sh.dim_h(g0, g0 + gk["groove_w"], gk["groove_depth"], gk["groove_depth"] + 2.0)
+    sh.dim_v(0, gk["groove_depth"], g0, g0 - 1.0)
+    sh.dim_h(-b, 0, -bh, -bh - 1.6)
+    sh.dim_h(0, t, -top, -top - 1.6)
+    sh.dim_h(0, 4.5, top, top + 1.8)
+    sh.dim_v(0, bh, -b, -b - 1.2)
     return sh

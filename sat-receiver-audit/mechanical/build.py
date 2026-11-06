@@ -55,18 +55,20 @@ def write(out, rel, data, files):
 
 def envelope_report(P):
     W, H, D = P.outer
+    belt = P.mech["gasket"]["belt"]
+    Wb, Hb = W + 2 * belt, H + 2 * belt      # over the seam belt
     area = 2 * (W * H + W * D + H * D)
     a15 = 2 * (D15[0] * D15[1] + D15[0] * D15[2] + D15[1] * D15[2])
     return {
-        "model": [W, H, D], "d15": list(D15),
+        "model": [W, H, D], "over_seam_belt": [Wb, Hb, D], "d15": list(D15),
         "growth_mm": [round(W - D15[0], 1), round(H - D15[1], 1), round(D - D15[2], 1)],
         "volume_l": round(W * H * D / 1e6, 3), "volume_l_d15": round(D15[0] * D15[1] * D15[2] / 1e6, 3),
         "surface_m2": round(area / 1e6, 4), "surface_m2_d15": round(a15 / 1e6, 4), "surface_ratio": round(area / a15, 3),
         "front_m2": round(W * H / 1e6, 4), "front_ratio": round(W * H / (D15[0] * D15[1]), 3),
         "fire_bag_23x30cm": {
-            "rule": "flat bag: half-girths W + D <= 300 and H + D <= 230 mm (geometry estimate, model)",
-            "w_plus_d": W + D, "h_plus_d": H + D,
-            "result": "PASS (model)" if (W + D <= 300 and H + D <= 230) else "FAIL (model): charge on a non-flammable surface instead (STACK 5.8 fallback)"},
+            "rule": "flat bag: half-girths W + D <= 300 and H + D <= 230 mm over the seam belt (geometry estimate, model)",
+            "w_plus_d": round(Wb + D, 1), "h_plus_d": round(Hb + D, 1),
+            "result": "PASS (model)" if (Wb + D <= 300 and Hb + D <= 230) else "FAIL (model): charge on a non-flammable surface instead (STACK 5.8 fallback)"},
         "reason": ("height: battery strip (33.4) + middle row with the 112 x 56 HF+ can beside the Q6A + RF bay (60.5) along the top; "
                    "depth: rear layer 36 (Q6A with cooler and fan duct) + plate 2 + front layer 16 (HDMI board, path-2 channel) + display 7; "
                    "width: display glass 164.8 + HMI column 51 (build/05 1.1)"),
@@ -74,19 +76,21 @@ def envelope_report(P):
 
 
 def gasket_report(P):
+    from srrx_mech.features import seam_geometry
     m = P.mech
     gk = m["gasket"]
     W, H, D = P.outer
-    gc = gk["rim_w"] / 2.0
+    gc = seam_geometry(P)["groove_centre"]          # inwards from the outer surface (negative: in the belt)
     R = m["outer"]["corner_r"] - gc
     L = 2 * (W - 2 * gc) + 2 * (H - 2 * gc) - 8 * R + 2 * math.pi * R
     rule = P.parts["oring_groove_rule"]
     sq = 1 - gk["groove_depth"] / gk["cord_d"]
     fill = (math.pi * gk["cord_d"] ** 2 / 4) / (gk["groove_w"] * gk["groove_depth"])
     return {"cord_d": gk["cord_d"], "groove": [gk["groove_w"], gk["groove_depth"]], "squeeze": round(sq, 3), "fill": round(fill, 3),
-            "squeeze_rule": rule["squeeze"], "fill_max": rule["fill_max"],
+            "squeeze_rule": rule["squeeze"], "fill_max": rule["fill_max"], "belt_mm": gk["belt"], "land_mm": gk["land"],
             "result": "PASS (model)" if rule["squeeze"][0] <= sq <= rule["squeeze"][1] and fill <= rule["fill_max"] else "FAIL (model)",
-            "groove_centre_corner_r": round(R, 2), "cord_length_mm": round(L, 0), "cord_order_mm": int(math.ceil(L * 1.05 / 10.0) * 10)}
+            "groove_centre_corner_r": round(R, 2), "cord_length_mm": round(L, 0), "cord_order_mm": int(math.ceil(L * 1.05 / 10.0) * 10),
+            "closure": rules.closure_spans(P)}
 
 
 def all_sheets(P, vendor_fit):
@@ -104,7 +108,7 @@ def all_sheets(P, vendor_fit):
 
 def cad_outputs(P, out, files):
     from build123d import Compound, export_step
-    from srrx_mech import cad, cad_fixtures as fx, export3d
+    from srrx_mech import cad, cad_fixtures as fx, export3d, interference
 
     tmp = Path(tempfile.mkdtemp(prefix="srrx-mech-"))
     vols = {}
@@ -115,7 +119,7 @@ def cad_outputs(P, out, files):
         export_step(part, str(s))
         write(out, f"step/{name}.step", export3d.normalise_step(s.read_bytes()), files)
         bb = part.bounding_box()
-        vols[name] = {"cm3": round(part.volume / 1000.0, 2), "printed": stl,
+        vols[name] = {"cm3": round(part.volume / 1000.0, 2), "printed": stl, "solids": len(part.solids()),
                       "bbox_mm": [round(v, 2) + 0.0 for v in (bb.min.X, bb.min.Y, bb.min.Z, bb.max.X, bb.max.Y, bb.max.Z)]}
         if stl:
             # absolute chordal deflection, single-threaded mesher (export3d)
@@ -167,7 +171,11 @@ def cad_outputs(P, out, files):
     export_step(asm, str(s))
     write(out, "step/assembly.step", export3d.normalise_step(s.read_bytes()), files)
     shutil.rmtree(tmp, ignore_errors=True)
-    return vols
+    feats = {}
+    for side, fn in (("front", cad.front_parts), ("rear", cad.rear_parts)):
+        for name, group in fn(P)[1]:
+            feats[f"{side}.{name}"] = group
+    return vols, interference.check(P, parts, feats)
 
 
 def libraries():
@@ -193,6 +201,8 @@ def summary(report):
         "thermal_open": sum(1 for r in report["thermal_interfaces"]["rows"] if r["result"].startswith("OPEN")),
         "gasket": report["gasket"]["result"],
         "vendor_fit": report["vendor_fit"],
+        "solid_conflicts": len(report["solid_interference"]["conflicts"]) if "solid_interference" in report else None,
+        "disconnected_parts": sorted(k for k, v in report.get("volumes_cm3", {}).items() if v["solids"] != 1) if "volumes_cm3" in report else None,
     }
 
 
@@ -241,7 +251,7 @@ def build(out, vendor_cache=None, skip_cad=False, offline=False):
         "vendor_fit": vendor_fit["result"] if vendor_fit else "NOT RUN (no --vendor-cache)",
     }
     if not skip_cad:
-        vols = cad_outputs(P, out, files)
+        vols, report["solid_interference"] = cad_outputs(P, out, files)
         report["volumes_cm3"] = vols
         report["printed_mass_upper_bound_g"] = {
             "rule": f"solid CAD volume x {ASA_DENSITY} g/cm3 (PolyLite ASA, ISO 1183); real prints with 30 % infill weigh less",
@@ -267,6 +277,10 @@ def gate(out):
         bad.append("gasket")
     if not s["vendor_fit"].startswith("PASS"):
         bad.append("vendor_fit")
+    if s.get("solid_conflicts") is None or s["solid_conflicts"]:
+        bad.append("solid_conflicts")
+    if s.get("disconnected_parts") is None or s["disconnected_parts"]:
+        bad.append("disconnected_parts")   # a part made of several solids has a floating feature
     print(json.dumps(s, ensure_ascii=False))
     print("model-fit gate:", "FAIL " + ", ".join(bad) if bad else "PASS (model fit only; OPEN rows need measured or chosen parts)")
     return 1 if bad else 0

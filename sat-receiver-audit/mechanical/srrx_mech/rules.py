@@ -33,11 +33,44 @@ def _res(ok):
     return "PASS (model)" if ok else "FAIL (model)"
 
 
+def _corner_arc(prev, corner, nxt, centre, r, n=12):
+    """Replace `corner` of a polygon by the arc of radius r about `centre` between its two edges (short way)."""
+    def hit(a, b):
+        dx, dy = b[0] - a[0], b[1] - a[1]
+        fx, fy = a[0] - centre[0], a[1] - centre[1]
+        A, B, C = dx * dx + dy * dy, 2 * (fx * dx + fy * dy), fx * fx + fy * fy - r * r
+        disc = max(0.0, B * B - 4 * A * C)
+        ts = [(-B - math.sqrt(disc)) / (2 * A), (-B + math.sqrt(disc)) / (2 * A)]
+        ts = [t for t in ts if -1e-9 <= t <= 1 + 1e-9]
+        return a[0] + dx * ts[0], a[1] + dy * ts[0]
+    p0 = hit(corner, prev)
+    p1 = hit(corner, nxt)
+    a0 = math.atan2(p0[1] - centre[1], p0[0] - centre[0])
+    a1 = math.atan2(p1[1] - centre[1], p1[0] - centre[0])
+    d = (a1 - a0 + math.pi) % (2 * math.pi) - math.pi
+    return [(centre[0] + r * math.cos(a0 + d * i / n), centre[1] + r * math.sin(a0 + d * i / n)) for i in range(n + 1)]
+
+
 def plate_outline(P):
+    """Plate outline; corners that reach into the rounded shell corners follow the corner arc (inner radius - clearance)."""
     pl = P.mech["plate"]
     x, y, w, h = pl["main"]
     ex, ey, ew, eh = pl["ext"]
-    return [(x, y), (ex, y), (ex, ey), (ex + ew, ey), (x + w, y + h), (x, y + h)]
+    poly = [(x, y), (ex, y), (ex, ey), (ex + ew, ey), (x + w, y + h)]
+    for (nx, ny, nw, nh) in sorted(pl.get("notches", []), reverse=True):   # open notches in the top edge, right to left
+        poly += [(nx + nw, y + h), (nx + nw, ny), (nx, ny), (nx, y + h)]
+    poly.append((x, y + h))
+    W, H, _ = P.outer
+    t, R = P.mech["wall"], P.mech["outer"]["corner_r"]
+    r = R - t - pl["corner_clearance"]
+    centres = [(R, R), (W - R, R), (W - R, H - R), (R, H - R)]
+    out = []
+    for i, c in enumerate(poly):
+        prev, nxt = poly[i - 1], poly[(i + 1) % len(poly)]
+        cc = next((k for k in centres if (c[0] - k[0]) * (k[0] - W / 2) > 0 and (c[1] - k[1]) * (k[1] - H / 2) > 0
+                   and math.hypot(c[0] - k[0], c[1] - k[1]) > r), None)
+        out += _corner_arc(prev, c, nxt, cc, r) if cc else [c]
+    return out
 
 
 def plate_windows(P):
@@ -55,8 +88,8 @@ def plate_holes(P):
     pl = m["plate"]
     H = P.outer
     out = []
-    for i, (bx, by) in enumerate(pl["mount_bosses"]):
-        out.append({"id": f"PM{i + 1}", "c": (bx, by), "d": pl["mount_hole_d"], "use": "M3 screw into the front-shell boss insert"})
+    for i, b in enumerate(pl["mount_bosses"]):
+        out.append({"id": f"PM{i + 1}", "c": tuple(b["c"]), "d": pl["mount_hole_d"], "use": "M3 screw into the front-shell boss insert"})
     for bid in ("PWR", "RF"):
         b = P.boards["boards"][bid]
         f = P.parts[b["plate_fastener"]]
@@ -76,9 +109,8 @@ def plate_holes(P):
     for i, px in enumerate((lp[0] + 5, lp[0] + lp[2] - 5)):
         out.append({"id": f"LP{i + 1}", "c": (px, lp[1] + lp[3] / 2), "d": 3.4, "use": "M3 Lime pedestal (front face)"})
     at = m["angles"]["top"]
-    for i in range(5):
-        out.append({"id": f"AT{i + 1}", "c": (at["x"][0] + 8 + i * ((at["x"][1] - at["x"][0] - 16) / 4), H[1] - m["wall"] - at["leg_plate"] / 2),
-                    "d": 3.4, "use": "M3 + nut, top Al angle"})
+    for i, xh in enumerate(at["holes_x"]):
+        out.append({"id": f"AT{i + 1}", "c": (xh, H[1] - m["wall"] - at["leg_plate"] / 2), "d": 3.4, "use": "M3 + nut, top Al angle"})
     ar = m["angles"]["right"]
     for i, yh in enumerate((ar["y"][0] + 6, (ar["y"][0] + ar["y"][1]) / 2, ar["y"][1] - 6)):
         out.append({"id": f"AR{i + 1}", "c": (H[0] - m["wall"] - ar["leg_plate"] / 2, yh), "d": 3.4, "use": "M3 + nut, right Al angle"})
@@ -168,7 +200,83 @@ def evaluate(P):
     out.append({"id": "R-CLINCH-EDGE", "rule": "self-clinching nut/standoff: hole centre to the nearest plate edge or window (worst hole)",
                 "value_mm": round(worst[1], 2), "limit_mm": worst[2], "hole": worst[0], "result": _res(worst[1] >= worst[2]),
                 "source": "PEM data (parts.json pem_f_m3_1, pem_so_m3_3)"})
+    # Seam: every closure-screw hole stays inboard of the groove by at least the land (the screws are inside the seal).
+    gk = m["gasket"]
+    groove_in = gk["land"] + gk["groove_w"] - gk["belt"]
+    worst = min((outer_depth(P, (bx, by)) - m["closure"]["insert"]["hole_d"] / 2 - groove_in, (bx, by)) for (bx, by) in m["closure"]["bosses"])
+    out.append({"id": "R-SEAM-HOLES", "rule": "closure insert holes inboard of the seam groove (wall left between hole and groove, worst boss)",
+                "value_mm": round(worst[0], 2), "limit_mm": gk["land"], "boss": list(worst[1]), "result": _res(worst[0] >= gk["land"] - 1e-6),
+                "source": "seam design of this package (mechanical.json gasket, closure)"})
+    # Vents: the flat seat thickness must suit the LTW through-hole mounting.
+    lv = P.parts["ltw_vent"]
+    lo, hi = lv["panel_t"]
+    ok = all((v["pad_t"] >= lv["threaded_hole_min"]) if v["kind"].endswith("_threaded") else (lo <= v["pad_t"] <= hi) for v in m["vents"])
+    out.append({"id": "R-VENT-SEAT", "rule": "vent seats: threaded hole >= 4.0 mm, or 2.0-3.5 mm through hole with the nut",
+                "value_mm": {v["id"]: v["pad_t"] for v in m["vents"]}, "limit_mm": {"threaded": lv["threaded_hole_min"], "through": [lo, hi]},
+                "result": _res(ok), "source": "Amphenol LTW vent datasheet (parts.json ltw_vent)"})
+    # Vent threads: the 10 mm thread minus the seat must not reach a part (threaded-hole vents have no nut inside).
+    worst = None
+    for v in m["vents"]:
+        reach = lv["thread_len"] - v["pad_t"]
+        depth = vent_clearance(P, v)
+        if worst is None or depth - reach < worst[0]:
+            worst = (depth - reach, v["id"], round(reach, 2), round(depth, 2))
+    out.append({"id": "R-VENT-REACH", "rule": "space behind each vent seat minus the thread reach (worst vent)", "value_mm": round(worst[0], 2),
+                "limit_mm": 0.5, "vent": worst[1], "thread_reach_mm": worst[2], "space_mm": worst[3], "result": _res(worst[0] >= 0.5),
+                "source": "LTW drawing: thread 10.0 (parts.json ltw_vent); envelopes in mechanical.json layout"})
+    # Power key: the top wall is the PV0 panel.
+    lo, hi = P.parts["pv0_button"]["panel_t"]
+    out.append({"id": "R-PWR-KEY", "rule": "E-Switch PV0 panel thickness at the power key (top wall)", "value_mm": m["wall"], "limit_mm": [lo, hi],
+                "result": _res(lo <= m["wall"] <= hi), "source": "E-Switch PV0 datasheet (parts.json pv0_button)"})
     return out
+
+
+def vent_clearance(P, v):
+    """Free depth along the vent axis from the inner face of its seat to the nearest envelope (excluding the tray it passes)."""
+    W, H, D = P.outer
+    r = 6.0
+    best = 99.0
+    for iid, name, bx, it in item_boxes(P):
+        if it.get("keep_clear") or iid == "battery_tray":
+            continue
+        if v["face"] == "front":
+            if bx[0] - r < v["x"] < bx[3] + r and bx[1] - r < v["y"] < bx[4] + r and bx[5] <= D - v["pad_t"] + 1e-6:
+                best = min(best, D - v["pad_t"] - bx[5])
+        elif v["face"] == "right":
+            if bx[1] - r < v["y"] < bx[4] + r and bx[2] - r < v["z"] < bx[5] + r and bx[3] <= W - v["pad_t"] + 1e-6:
+                best = min(best, W - v["pad_t"] - bx[3])
+        elif v["face"] == "left":
+            if bx[1] - r < v["y"] < bx[4] + r and bx[2] - r < v["z"] < bx[5] + r and bx[0] >= v["pad_t"] - 1e-6:
+                best = min(best, bx[0] - v["pad_t"])
+    return best
+
+
+def outer_depth(P, c):
+    """Distance from a point inside the outline to the outer rounded rectangle of the shells (front view)."""
+    W, H, _ = P.outer
+    R = P.mech["outer"]["corner_r"]
+    x, y = c
+    cx, cy = min(max(x, R), W - R), min(max(y, R), H - R)
+    if (cx, cy) != (x, y) and not (R <= x <= W - R or R <= y <= H - R):
+        return R - math.hypot(x - cx, y - cy)
+    return min(x, W - x, y, H - y)
+
+
+def closure_spans(P):
+    """Seam length between neighbouring closure screws, walked round the outline (front view)."""
+    W, H, _ = P.outer
+    per = 2 * (W + H)
+
+    def pos(c):
+        x, y = c
+        d = {"bottom": y, "right": W - x, "top": H - y, "left": x}
+        side = min(d, key=d.get)
+        return {"bottom": x, "right": W + y, "top": W + H + (W - x), "left": 2 * W + H + (H - y)}[side]
+    s = sorted(pos(tuple(b)) for b in P.mech["closure"]["bosses"])
+    gaps = [((b - a) % per, a, b) for a, b in zip(s, s[1:] + s[:1])]
+    worst = max(gaps)
+    return {"screws": len(s), "max_span_mm": round(worst[0], 1), "mean_span_mm": round(per / len(s), 1),
+            "note": "seam length (outline approximated by its bounding rectangle) between neighbouring screws; the longest span is the lower-left corner, where the battery pack and the HF+ can reach the walls (no boss fits); T-07 decides"}
 
 
 def bay_packing(P):

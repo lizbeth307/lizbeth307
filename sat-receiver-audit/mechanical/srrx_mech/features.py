@@ -16,9 +16,11 @@ HOLES = {
     "f_bulkhead": {"d": 9.7, "basis": "F-type 3/8-32 UNEF thread (IEC 61169-24), 9.525 + clearance; check the chosen F-F bulkhead (TBD)"},
     "bnc_bulkhead": {"d": 9.7, "basis": "BNC bulkhead 3/8-32 UNEF typical, D-flat per part; MPN TBD (MECH-07)"},
     "m12_vent": {"d": 12.2, "basis": "M12x1.5 clearance (design); Amphenol LTW VENT-PS1YBK-O8002"},
+    "m12_vent_threaded": {"d": 10.5, "basis": "Amphenol LTW vent in a threaded hole (pad >= 4.0 mm, no nut): tap drill 10.5, tap M12x1.5"},
     "m12_gland": {"d": 12.2, "basis": "M12x1.5 clearance (design)"},
     "gx16": {"d": 16.0, "basis": "STACK D15: Olimex GX16-4 needs a 16 mm hole (not 12)"},
     "pec11r": {"d": 7.3, "basis": "M7x0.75 bushing (Bourns PEC11R datasheet), 0.3 clearance (design)"},
+    "pv0": {"d": 12.1, "basis": "E-Switch PV0 datasheet 3.16.2026: panel cut-out 12.00 +0.20/-0.00 (drill 12.0, ream to 12.1), panel 1-6 mm"},
     "tbd": {"d": 3.0, "basis": "pilot only: connector MPN not chosen (MECH-07); final cut-out from the chosen part's drawing"},
     "pilot": {"d": 3.0, "basis": "pilot only: SKU TBD"},
 }
@@ -49,14 +51,18 @@ def face_features(P):
     tz = m["top_face"]["ports_z"]
     for p in m["top_face"]["ports"]:
         F["top"].append({"id": p["id"], "kind": p["kind"], "u": p["x"], "v": D - tz, "d": HOLES[p["kind"]]["d"]})
+    pk = m["top_face"]["power_key"]
+    F["top"].append({"id": pk["id"], "kind": pk["kind"], "u": pk["x"], "v": D - pk["z"], "d": HOLES[pk["kind"]]["d"]})
     vw = m["top_face"]["veml7700_window"]
     F["top"].append({"id": "VEML7700", "kind": "window_round", "u": vw["x"], "v": D - vw["z"], "d": vw["d"]})
     # right
     for p in m["right_face"]["ports"]:
         F["right"].append({"id": p["id"], "kind": p["kind"], "u": D - p["z"], "v": p["y"], "d": HOLES[p["kind"]]["d"]})
+    # vents (any face; enclosure coordinates in the params)
+    for v in m["vents"]:
+        u, vv = face_uv(P, v["face"], v.get("x", 0.0), v.get("y", 0.0), v.get("z", 0.0))
+        F[v["face"]].append({"id": v["id"], "kind": v["kind"], "u": u, "v": vv, "d": HOLES[v["kind"]]["d"], "pad_t": v["pad_t"]})
     # left
-    for v in m["left_face"]["vents"]:
-        F["left"].append({"id": v["id"], "kind": v["kind"], "u": v["z"], "v": v["y"], "d": HOLES[v["kind"]]["d"], "pad_t": v["pad_t"]})
     ex = m["left_face"]["exhaust"]
     F["left"].append({"id": "EXHAUST_P2", "kind": "grille", "u": (ex["z"][0] + ex["z"][1]) / 2, "v": (ex["y"][0] + ex["y"][1]) / 2,
                       "w": ex["z"][1] - ex["z"][0], "h": ex["y"][1] - ex["y"][0], "slot_w": ex["slot_w"], "slot_pitch": ex["slot_pitch"], "slots_along": "u"})
@@ -97,6 +103,12 @@ def face_features(P):
     return F
 
 
+def face_uv(P, face, x, y, z):
+    """Inverse of to_xyz for a point on the face (the coordinate along the face normal is ignored)."""
+    W, H, D = P.outer
+    return {"front": (x, y), "rear": (W - x, y), "top": (x, D - z), "bottom": (x, z), "left": (z, y), "right": (D - z, y)}[face]
+
+
 def to_xyz(P, face, u, v, depth=0.0):
     """Point on a face (outer surface) moved `depth` inwards, in enclosure coordinates."""
     W, H, D = P.outer
@@ -121,3 +133,15 @@ FACE_NORMAL = {"front": (0, 0, 1), "rear": (0, 0, -1), "top": (0, 1, 0), "bottom
 def face_size(P, face):
     W, H, D = P.outer
     return {"front": (W, H), "rear": (W, H), "top": (W, D), "bottom": (W, D), "left": (D, H), "right": (D, H)}[face]
+
+
+def seam_geometry(P):
+    """Belt and groove offsets, measured inwards from the outer surface of the shells (negative = outside).
+
+    The seam is a face seal: the EPDM cord lies in a groove cut into the split face of the front shell, inside
+    an external belt (the wall is thickened outwards at the seam, so nothing intrudes into the interior)."""
+    gk = P.mech["gasket"]
+    b = gk["belt"]
+    centre = gk["land"] + gk["groove_w"] / 2.0 - b
+    return {"belt": b, "belt_h": gk["belt_h"], "groove_centre": centre,
+            "groove_out": centre - gk["groove_w"] / 2.0, "groove_in": centre + gk["groove_w"] / 2.0}

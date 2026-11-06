@@ -6,10 +6,10 @@ small loose parts, which are exported at the origin in their print orientation.
 """
 import math
 
-from build123d import (Align, Box, Circle, Compound, Cone, Cylinder, Helix, Plane, Pos, RectangleRounded,
+from build123d import (Align, Box, Circle, Compound, Cylinder, Helix, Plane, Pos, RectangleRounded,
                        RegularPolygon, Rot, SlotOverall, extrude, sweep)
 
-from .features import HOLES, face_features, to_xyz
+from .features import HOLES, face_features, seam_geometry, to_xyz
 from .layout import board_boxes, cu_block_geometry, item_boxes, q6a_boxes
 
 MIN = (Align.MIN, Align.MIN, Align.MIN)
@@ -115,135 +115,153 @@ def feature_cutters(P, face, feats, wall_depth):
 
 
 # ---------------------------------------------------------------------------------------------
-def front_shell(P):
+def _ring(P, o0, o1, z0, h):
+    """Closed band between the inward offsets o0 < o1 of the outer rounded rectangle, z0..z0+h."""
+    W, H, _ = P.outer
+    R = P.mech["outer"]["corner_r"]
+    return rbox(o0, o0, z0, W - 2 * o0, H - 2 * o0, h, R - o0) - rbox(o1, o1, z0 - 1.0, W - 2 * o1, H - 2 * o1, h + 2.0, R - o1)
+
+
+def _web(P, x, y, wall, z0, z1, w):
+    """Rib of width w from (x, y) to the inner face of the given side wall."""
+    W, H, _ = P.outer
+    t = P.mech["wall"]
+    if wall == "top":
+        return box(x - w / 2, y, z0, w, H - t + 0.5 - y, z1 - z0)
+    if wall == "bottom":
+        return box(x - w / 2, t - 0.5, z0, w, y - t + 0.5, z1 - z0)
+    if wall == "left":
+        return box(t - 0.5, y - w / 2, z0, x - t + 0.5, w, z1 - z0)
+    if wall == "right":
+        return box(x, y - w / 2, z0, W - t + 0.5 - x, w, z1 - z0)
+    raise ValueError(wall)
+
+
+def front_parts(P):
+    """Front shell as (shell with belt, [(feature name, [solids])], [cutters]); the names feed the interference check."""
     m = P.mech
     W, H, D = P.outer
     t, R, zs = m["wall"], m["outer"]["corner_r"], m["split_z"]
     gk = m["gasket"]
+    sg = seam_geometry(P)
     sz = m["stack_z"]
     body = rbox(0, 0, zs, W, H, D - zs, R) - rbox(t, t, zs - 1.0, W - 2 * t, H - 2 * t, D - zs - t + 1.0, R - t)
-    # rim band and gasket groove at the split face
-    rw = gk["rim_w"]
-    rim = rbox(t - 0.01, t - 0.01, zs, W - 2 * t + 0.02, H - 2 * t + 0.02, gk["rim_h"], R - t) - rbox(rw, rw, zs - 1, W - 2 * rw, H - 2 * rw, gk["rim_h"] + 2, R - rw)
-    adds = [rim]
-    # closure bosses (insert side)
+    body = body + _ring(P, -sg["belt"], t - 0.01, zs, sg["belt_h"])
+    feats = []
+    # closure bosses (insert side): they hug the side walls, so each grows out of the wall over its whole height
     c = m["closure"]
-    for (bx, by) in c["bosses"]:
-        adds.append(zcyl(bx, by, zs, c["front_boss_top"], c["boss_d"] / 2))
-        adds.append(Pos(bx, by, c["front_boss_top"] + c["boss_d"] / 4) * Cone(c["boss_d"] / 2, 0.01, c["boss_d"] / 2))
-    # plate bosses (wall attached) with 45-degree cone towards the front
-    for (bx, by) in m["plate"]["mount_bosses"]:
-        adds.append(zcyl(bx, by, sz["plate_front"], m["plate"]["mount_boss_top"], 3.5))
-        adds.append(Pos(bx, by, m["plate"]["mount_boss_top"] + 1.75) * Cone(3.5, 0.01, 3.5))
-    # display clamp bosses, CTRL and ENC bosses (from the front wall inner face)
+    feats.append(("closure_bosses", [zcyl(bx, by, zs, c["front_boss_top"], c["boss_d"] / 2) for (bx, by) in c["bosses"]]))
+    # plate bosses, each with a web to the nearest side wall
+    pb = []
+    for b in m["plate"]["mount_bosses"]:
+        bx, by = b["c"]
+        z0, z1 = sz["plate_front"], m["plate"]["mount_boss_top"]
+        pb.append(zcyl(bx, by, z0, z1, m["plate"]["mount_boss_d"] / 2))
+        pb.append(_web(P, bx, by, b["wall"], z0, z1, 3.0))
+    feats.append(("plate_bosses", pb))
     fwi = sz["front_wall_inner"]
-    for (bx, by) in m["display"]["clamp_bosses"]:
-        adds.append(zcyl(bx, by, sz["module_back"], fwi + 0.1, m["display"]["clamp"]["boss_d"] / 2))
-    b = P.boards["boards"]["CTRL"]
-    ox, oy = b["place"]["origin"]
-    ctrl_top = b["place"]["z_bottom"] + P.boards["stackup"]["t"]
-    for (hx, hy) in b["holes"]:
-        adds.append(zcyl(ox + hx, oy + hy, ctrl_top, fwi + 0.1, 3.0))
+    feats.append(("clamp_bosses", [zcyl(bx, by, sz["module_back"], fwi + 0.1, m["display"]["clamp"]["boss_d"] / 2)
+                                   for (bx, by) in m["display"]["clamp_bosses"]]))
+    cb = P.boards["boards"]["CTRL"]
+    ox, oy = cb["place"]["origin"]
+    ctrl_top = cb["place"]["z_bottom"] + P.boards["stackup"]["t"]
+    feats.append(("ctrl_bosses", [zcyl(ox + hx, oy + hy, ctrl_top, fwi + 0.1, 3.0) for (hx, hy) in cb["holes"]]))
     e = P.boards["boards"]["ENC"]
     enc_top = e["place"]["z_bottom"] + P.boards["stackup"]["t"]
-    for at, (ex, ey) in e["place_at"].items():
-        for (hx, hy) in e["holes"]:
-            adds.append(zcyl(ex + hx, ey + hy, enc_top, fwi + 0.1, 3.0))
-    # encoder boss pads (local wall 2.6 mm) and vent pads
+    feats.append(("enc_bosses", [zcyl(ex + hx, ey + hy, enc_top, fwi + 0.1, 3.0) for (ex, ey) in e["place_at"].values() for (hx, hy) in e["holes"]]))
+    # encoder boss pads (local wall 2.6 mm) and vent pads (flat 2.0-3.5 mm seats, LTW datasheet)
     eb = m["hmi"]["encoder_boss"]
-    for enc in m["hmi"]["encoders"].values():
-        adds.append(zcyl(enc["c"][0], enc["c"][1], D - eb["wall"], fwi + 0.1, eb["boss_d"] / 2))
-    for v in m["left_face"]["vents"]:
-        p = to_xyz(P, "left", v["z"], v["y"])
-        adds.append(Pos(t - 0.05, v["y"], v["z"]) * Rot(0, 90, 0) * Cylinder(12.0, v["pad_t"] - t + 0.05, align=(Align.CENTER, Align.CENTER, Align.MIN)))
+    feats.append(("enc_pads", [zcyl(enc["c"][0], enc["c"][1], D - eb["wall"], fwi + 0.1, eb["boss_d"] / 2) for enc in m["hmi"]["encoders"].values()]))
+    feats.append(("vent_pads", [vent_pad(P, v) for v in m["vents"]]))
     # intake foam seat frame on the bottom wall
     it = m["bottom_face"]["intake"]
     sx0, sx1, sz0, sz1 = it["x"][0] - 1.6, it["x"][1] + 1.6, it["z"][0] - 1.6, it["z"][1] + 1.6
-    frame = box(sx0, t, sz0, sx1 - sx0, it["seat_depth"], sz1 - sz0) - box(sx0 + 1.6, t - 1, sz0 + 1.6, sx1 - sx0 - 3.2, it["seat_depth"] + 2, sz1 - sz0 - 3.2)
-    adds.append(frame)
+    feats.append(("intake_seat", [box(sx0, t - 0.01, sz0, sx1 - sx0, it["seat_depth"], sz1 - sz0)
+                                  - box(sx0 + 1.6, t - 1, sz0 + 1.6, sx1 - sx0 - 3.2, it["seat_depth"] + 2, sz1 - sz0 - 3.2)]))
     # hood hinge knuckles on the front face
     hh = m["top_face"]["hood_hinge"]
-    for x in hh["x"]:
-        adds.append(box(x - hh["knuckle_w"] / 2, hh["axis_y"] - 4.0, D - 0.01, hh["knuckle_w"], 8.0, hh["axis_z"] - D + 3.0))
-    body = fuse(body, adds)
+    feats.append(("hinge_knuckles", [box(x - hh["knuckle_w"] / 2, hh["axis_y"] - 4.0, D - 0.01, hh["knuckle_w"], 8.0, hh["axis_z"] - D + 3.0) for x in hh["x"]]))
     # ---- cutters
-    cutters = []
-    gc = (gk["rim_w"]) / 2.0
-    cutters.append(rbox(gc - gk["groove_w"] / 2, gc - gk["groove_w"] / 2, zs - 1.0, W - 2 * gc + gk["groove_w"], H - 2 * gc + gk["groove_w"], gk["groove_depth"] + 1.0, R - gc + gk["groove_w"] / 2)
-                   - rbox(gc + gk["groove_w"] / 2, gc + gk["groove_w"] / 2, zs - 2.0, W - 2 * gc - gk["groove_w"], H - 2 * gc - gk["groove_w"], gk["groove_depth"] + 3.0, R - gc - gk["groove_w"] / 2))
+    cutters = [_ring(P, sg["groove_out"], sg["groove_in"], zs - 1.0, gk["groove_depth"] + 1.0)]
     ins = c["insert"]
-    for (bx, by) in c["bosses"]:
-        cutters.append(zcyl(bx, by, zs - 1.0, zs + ins["len"] + 0.8, ins["hole_d"] / 2))
-    for (bx, by) in m["plate"]["mount_bosses"]:
-        cutters.append(zcyl(bx, by, sz["plate_front"] - 1.0, sz["plate_front"] + 6.5, 2.0))
-    for (bx, by) in m["display"]["clamp_bosses"]:
-        cutters.append(zcyl(bx, by, sz["module_back"] - 1.0, sz["module_back"] + 4.5, 1.8))
-    for (hx, hy) in b["holes"]:
-        cutters.append(zcyl(ox + hx, oy + hy, ctrl_top - 1.0, ctrl_top + 4.5, 1.8))
-    for at, (ex, ey) in e["place_at"].items():
-        for (hx, hy) in e["holes"]:
-            cutters.append(zcyl(ex + hx, ey + hy, enc_top - 1.0, enc_top + 4.5, 1.8))
-    for x in hh["x"]:
-        cutters.append(Pos(x, hh["axis_y"], hh["axis_z"]) * Rot(0, 90, 0) * Cylinder(hh["pin_d"] / 2, hh["knuckle_w"] + 2.0))
+    cutters += [zcyl(bx, by, zs - 1.0, zs + ins["len"] + 0.8, ins["hole_d"] / 2) for (bx, by) in c["bosses"]]
+    cutters += [zcyl(b["c"][0], b["c"][1], sz["plate_front"] - 1.0, sz["plate_front"] + 6.5, 2.0) for b in m["plate"]["mount_bosses"]]
+    cutters += [zcyl(bx, by, sz["module_back"] - 1.0, sz["module_back"] + 4.5, 1.8) for (bx, by) in m["display"]["clamp_bosses"]]
+    cutters += [zcyl(ox + hx, oy + hy, ctrl_top - 1.0, ctrl_top + 4.5, 1.8) for (hx, hy) in cb["holes"]]
+    cutters += [zcyl(ex + hx, ey + hy, enc_top - 1.0, enc_top + 4.5, 1.8) for (ex, ey) in e["place_at"].values() for (hx, hy) in e["holes"]]
+    cutters += [Pos(x, hh["axis_y"], hh["axis_z"]) * Rot(0, 90, 0) * Cylinder(hh["pin_d"] / 2, hh["knuckle_w"] + 2.0) for x in hh["x"]]
     F = face_features(P)
-    for face in ("front", "top", "left", "right"):
-        cutters += feature_cutters(P, face, F[face], 4.0)
-    cutters += feature_cutters(P, "bottom", [f for f in F["bottom"] if f["v"] > zs + 6.0], 6.0)
-    return cut(body, cutters)
+    for face in ("front", "top", "bottom", "left", "right"):
+        cutters += feature_cutters(P, face, F[face], 4.0 + sg["belt"])
+    return body, feats, cutters
 
 
-def rear_shell(P):
+def vent_pad(P, v):
+    """Flat seat on the inner face of the wall: pad_t is the total wall thickness at the vent."""
+    W, H, D = P.outer
+    t = P.mech["wall"]
+    r, h = v["pad_d"] / 2, v["pad_t"] - t + 0.05
+    if v["face"] == "front":
+        return zcyl(v["x"], v["y"], D - v["pad_t"], D - t + 0.05, r)
+    if v["face"] == "right":
+        return Pos(W - v["pad_t"], v["y"], v["z"]) * Rot(0, 90, 0) * Cylinder(r, h, align=(Align.CENTER, Align.CENTER, Align.MIN))
+    if v["face"] == "left":
+        return Pos(t - 0.05, v["y"], v["z"]) * Rot(0, 90, 0) * Cylinder(r, h, align=(Align.CENTER, Align.CENTER, Align.MIN))
+    raise ValueError(v["face"])
+
+
+def front_shell(P):
+    body, feats, cutters = front_parts(P)
+    return cut(fuse(body, [s for _, group in feats for s in group]), cutters)
+
+
+def rear_parts(P):
     m = P.mech
     W, H, D = P.outer
     t, R, zs = m["wall"], m["outer"]["corner_r"], m["split_z"]
-    gk = m["gasket"]
+    sg = seam_geometry(P)
     body = rbox(0, 0, 0, W, H, zs, R) - rbox(t, t, t, W - 2 * t, H - 2 * t, zs, R - t)
-    rw = gk["rim_w"]
-    adds = [rbox(t - 0.01, t - 0.01, zs - gk["rim_h"], W - 2 * t + 0.02, H - 2 * t + 0.02, gk["rim_h"], R - t)
-            - rbox(rw, rw, zs - gk["rim_h"] - 1, W - 2 * rw, H - 2 * rw, gk["rim_h"] + 2, R - rw)]
+    body = body + _ring(P, -sg["belt"], t - 0.01, zs - sg["belt_h"], sg["belt_h"])
+    feats = []
     c = m["closure"]
-    for (bx, by) in c["bosses"]:
-        adds.append(zcyl(bx, by, 0.0, zs, c["boss_d"] / 2))
+    feats.append(("closure_bosses", [zcyl(bx, by, 0.0, zs, c["boss_d"] / 2) for (bx, by) in c["bosses"]]))
     rf = m["rear_face"]
     tp = rf["tripod"]
     tx, ty = tp["c"]
-    adds.append(zcyl(tx, ty, 0.0, tp["outer_wall"] + tp["hex_depth"], tp["boss_d"] / 2))
+    feats.append(("tripod_boss", [zcyl(tx, ty, 0.0, tp["outer_wall"] + tp["hex_depth"], tp["boss_d"] / 2)]))
     gx = rf["gx16"]
-    adds.append(zcyl(gx["c"][0], gx["c"][1], 0.0, gx["pad_t"], 15.0))
+    feats.append(("gx16_pad", [zcyl(gx["c"][0], gx["c"][1], 0.0, gx["pad_t"], gx["pad_d"] / 2)]))
     hx, hy, hw, hh = rf["hatch"]["rect"]
     seat = rf["hatch"]["seat"]
-    adds.append(rbox(hx - seat, hy - seat, 0.0, hw + 2 * seat, hh + 2 * seat, 4.0, rf["hatch"]["r"] + seat))
-    for (sx, sy) in rf["hatch"]["screws"]:
-        adds.append(zcyl(sx, sy, 0.0, 8.0, 3.5))
-    for key in ("path1_intake",):
-        x, y, w, h = rf[key]["rect"]
-        adds.append(box(x - 1.6, y - 1.6, t - 0.01, w + 3.2, h + 3.2, 5.0) - box(x, y, t - 1, w, h, 7.0))
+    feats.append(("hatch_seat", [rbox(hx - seat, hy - seat, 0.0, hw + 2 * seat, hh + 2 * seat, 4.0, rf["hatch"]["r"] + seat)]
+                  + [zcyl(sx, sy, 0.0, 8.0, 3.5) for (sx, sy) in rf["hatch"]["screws"]]))
+    x, y, w, h = rf["path1_intake"]["rect"]
+    feats.append(("intake_seat", [box(x - 1.6, y - 1.6, t - 0.01, w + 3.2, h + 3.2, 5.0) - box(x, y, t - 1, w, h, 7.0)]))
     # strap tunnels and neck lugs on the outer rear face (protrude 6 mm)
-    for (lx, ly) in rf["strap_lugs"]:
-        adds.append(box(lx - 7.0, ly - 5.0, -6.0, 14.0, 10.0, 6.01))
     ss = rf["strap_slots"]
-    for y in ss["y"]:
-        adds.append(box(ss["x"] - 9.0, y - (ss["w"] + 8) / 2, -6.0, 18.0, ss["w"] + 8, 6.01))
-    body = fuse(body, adds)
+    feats.append(("strap_lugs", [box(lx - 7.0, ly - 5.0, -6.0, 14.0, 10.0, 6.01) for (lx, ly) in rf["strap_lugs"]]
+                  + [box(ss["x"] - 9.0, yy - (ss["w"] + 8) / 2, -6.0, 18.0, ss["w"] + 8, 6.01) for yy in ss["y"]]))
     cutters = []
     for (bx, by) in c["bosses"]:
         cutters.append(zcyl(bx, by, -1.0, zs + 1.0, c["clearance_d"] / 2))
         cutters.append(zcyl(bx, by, -1.0, c["counterbore_depth"], c["counterbore_d"] / 2))
     hexr = tp["hex_af"] / 2 / math.cos(math.radians(30))
     cutters.append(Pos(tx, ty, tp["outer_wall"]) * extrude(RegularPolygon(hexr, 6), amount=tp["hex_depth"] + 1.0))
-    for (sx, sy) in rf["hatch"]["screws"]:
-        cutters.append(zcyl(sx, sy, -1.0, 6.5, 2.0))
-    for (lx, ly) in rf["strap_lugs"]:
-        cutters.append(box(lx - 8.0, ly - 2.5, -4.5, 16.0, 5.0, 3.0))
-    for y in ss["y"]:
-        cutters.append(box(ss["x"] - 11.0, y - ss["w"] / 2, -4.5, 22.0, ss["w"], 3.0))
+    cutters += [zcyl(sx, sy, -1.0, 6.5, 2.0) for (sx, sy) in rf["hatch"]["screws"]]
+    cutters += [box(lx - 8.0, ly - 2.5, -4.5, 16.0, 5.0, 3.0) for (lx, ly) in rf["strap_lugs"]]
+    cutters += [box(ss["x"] - 11.0, yy - ss["w"] / 2, -4.5, 22.0, ss["w"], 3.0) for yy in ss["y"]]
     F = face_features(P)
     cutters += feature_cutters(P, "rear", F["rear"], 10.0)
-    cutters += feature_cutters(P, "bottom", [f for f in F["bottom"] if f["v"] < zs - 6.0], 6.0)
+    for face in ("top", "bottom", "left", "right"):
+        cutters += feature_cutters(P, face, F[face], 4.0 + sg["belt"])
     # T7 holder screw holes (screws from inside into the holder's nut traps)
-    for (px, py) in rf["t7_holder"]["screws"]:
-        cutters.append(zcyl(px, py, -1.0, t + 1.0, 1.7))
-    return cut(body, cutters)
+    cutters += [zcyl(px, py, -1.0, t + 1.0, 1.7) for (px, py) in rf["t7_holder"]["screws"]]
+    return body, feats, cutters
+
+
+def rear_shell(P):
+    body, feats, cutters = rear_parts(P)
+    return cut(fuse(body, [s for _, group in feats for s in group]), cutters)
 
 
 def hatch_cover(P):
@@ -253,11 +271,11 @@ def hatch_cover(P):
     seat = rf["hatch"]["seat"]
     tcov = gk["groove_depth"] + 2.2
     cov = rbox(hx - seat + 0.3, hy - seat + 0.3, -tcov, hw + 2 * seat - 0.6, hh + 2 * seat - 0.6, tcov, rf["hatch"]["r"] + seat)
-    lip = box(hx + 2, hy - 1.0, 0.0, hw - 4, 3.0, 3.5)
+    lip = box(hx + 2, hy + 0.3, 0.0, hw - 4, 2.5, 3.5)   # locating tab inside the opening (bottom edge), no screw near the battery
     cov = fuse(cov, [lip])
-    g = (seat) / 2.0
-    groove = rbox(hx - g - 2.0, hy - g - 2.0, -gk["groove_depth"], hw + 2 * g + 4.0, hh + 2 * g + 4.0, gk["groove_depth"] + 1, rf["hatch"]["r"] + g + 2) \
-        - rbox(hx - g + 2.0, hy - g + 2.0, -gk["groove_depth"] - 1, hw + 2 * g - 4.0, hh + 2 * g - 4.0, gk["groove_depth"] + 3, max(0.5, rf["hatch"]["r"] + g - 2))
+    g, gw = seat / 2.0, gk["groove_w"] / 2.0     # same cord and groove section as the seam, centred on the seat
+    groove = rbox(hx - g - gw, hy - g - gw, -gk["groove_depth"], hw + 2 * (g + gw), hh + 2 * (g + gw), gk["groove_depth"] + 1, rf["hatch"]["r"] + g + gw) \
+        - rbox(hx - g + gw, hy - g + gw, -gk["groove_depth"] - 1, hw + 2 * (g - gw), hh + 2 * (g - gw), gk["groove_depth"] + 3, max(0.5, rf["hatch"]["r"] + g - gw))
     cutters = [groove]
     for (sx, sy) in rf["hatch"]["screws"]:
         cutters.append(zcyl(sx, sy, -tcov - 1, 1.0, 1.7))
@@ -286,18 +304,30 @@ def hood(P):
     return cut(part, pins)
 
 
+def interior_clearance(P, gap, z0=-50.0, h=200.0):
+    """Rounded interior of the shells shrunk by `gap`: loose parts are intersected with it so they clear the corner radii."""
+    W, H, _ = P.outer
+    t, R = P.mech["wall"], P.mech["outer"]["corner_r"]
+    o = t + gap
+    return rbox(o, o, z0, W - 2 * o, H - 2 * o, h, R - o)
+
+
 def battery_tray(P):
+    """Printed U-channel tray (open towards the plate) with slots round the wall-hugging closure bosses."""
     m = P.mech
     it = [i for i in m["layout"]["items"] if i["id"] == "battery_tray"][0]
     x, y, z, dx, dy, dz = it["box"]
     wt = m["battery"]["tray_wall"]
-    n = m["battery"]["notch"] + 4.0
     tray = box(x, y, z, dx, dy, dz) - box(x + wt, y + wt, z + wt, dx - 2 * wt, dy, dz - 2 * wt)
-    tray = tray - box(x - 1, y - 1, z - 1, n + 1, n + 1, dz + 2)
-    v2 = [v for v in m["left_face"]["vents"] if v["id"] == "V2"][0]
-    tray = tray - Pos(x, v2["y"], v2["z"]) * Rot(0, 90, 0) * Cylinder(6.1, 6.0)
+    tray = tray & interior_clearance(P, 0.3)
+    for v in m["vents"]:
+        if v["face"] == "front" and x < v["x"] < x + dx and y < v["y"] < y + dy:
+            tray = tray - zcyl(v["x"], v["y"], z + dz - wt - 1.0, z + dz + 1.0, 6.6)   # the vent thread passes the tray front wall
     tray = tray - box(x + dx - 12.0, y + dy - wt - 1, z + dz - 16.0, 10.0, wt + 2, 10.0)
-    return tray
+    c = m["closure"]
+    slots = [zcyl(bx, by, -1.0, 100.0, c["boss_d"] / 2 + 0.5) for (bx, by) in c["bosses"]
+             if x - 5 < bx < x + dx + 5 and y - 5 < by < y + dy + 5]
+    return cut(tray, slots)
 
 
 def t7_holder(P):
@@ -350,12 +380,14 @@ def plate(P):
     x, y, w, h = pl["main"]
     ex, ey, ew, eh = pl["ext"]
     part = box(x, y, sz["plate_rear"], w, h, pl["t"]) + box(ex, ey, sz["plate_rear"], ew, y - ey + 0.01, pl["t"])
+    part = part & interior_clearance(P, pl["corner_clearance"])
     from .rules import plate_holes
     cutters = [zcyl(h["c"][0], h["c"][1], 0, 100, h["d"] / 2) for h in plate_holes(P)]
     rw = pl["riser_window"]
     cutters.append(box(rw[0], rw[1], 0, rw[2], rw[3], 100))
     hs = pl["hdmi_slot"]
     cutters.append(box(hs[0], hs[1], 0, hs[2], hs[3], 100))
+    cutters += [box(nx, ny, 0, nw, nh, 100) for (nx, ny, nw, nh) in pl.get("notches", [])]
     return cut(part, cutters)
 
 
@@ -371,8 +403,7 @@ def angle_top(P):
     for p in m["top_face"]["ports"]:
         if a["x"][0] < p["x"] < a["x"][1]:
             cutters.append(Pos(p["x"], H - t - a["t"] / 2, m["top_face"]["ports_z"]) * Rot(90, 0, 0) * Cylinder(HOLES[p["kind"]]["d"] / 2, 10))
-    for i in range(5):
-        xh = a["x"][0] + 8 + i * ((L - 16) / 4)
+    for xh in a["holes_x"]:
         cutters.append(zcyl(xh, H - t - a["leg_plate"] / 2, 0, 100, 1.7))
     return cut(part, cutters)
 

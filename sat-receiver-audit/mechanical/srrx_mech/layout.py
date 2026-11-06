@@ -102,8 +102,10 @@ def structure_boxes(P):
     r = c["boss_d"] / 2.0
     for i, (bx, by) in enumerate(c["bosses"]):
         out.append((f"closure.boss{i}", (bx - r, by - r, 0.0, bx + r, by + r, c["front_boss_top"])))
-    for i, (bx, by) in enumerate(m["plate"]["mount_bosses"]):
-        out.append((f"plate.boss{i}", (bx - 3.5, by - 3.5, pf, bx + 3.5, by + 3.5, m["plate"]["mount_boss_top"])))
+    r = m["plate"]["mount_boss_d"] / 2.0
+    for i, b in enumerate(m["plate"]["mount_bosses"]):
+        bx, by = b["c"]
+        out.append((f"plate.boss{i}", (bx - r, by - r, pf, bx + r, by + r, m["plate"]["mount_boss_top"])))
     rb = m["rf_bay"]
     x, y, w, h = rb["rect"]
     wt = rb["wall_t"]
@@ -141,7 +143,10 @@ ALLOWED = [
     ("blower", "plate.main"), ("bms", "plate.main"), ("bms", "plate.ext"), ("lime", "plate.main"),
     ("hfplus", "plate.main"), ("q6a", "plate.main"), ("board_rf", "plate.main"),
     ("v4l_a", "rfbay.lid"), ("v4l_b", "rfbay.lid"), ("sawbird", "rfbay.lid"),
-    ("flamingo", "rfbay.lid"), ("battery_tray", "closure.boss0"),
+    ("flamingo", "rfbay.lid"), ("battery_tray", "closure.boss"),   # the tray has slots round the wall-hugging bosses
+    ("battery_pack", "battery_tray"),                                # the pack lies inside its tray
+    ("pwr_key_body", "pwr_key_nut"),                                 # the nut sits on the key thread
+    ("pwr_key_nut", "plate.main"),                                   # the plate has an open notch under the nut (plate.notches; the solid check sees it)
     ("tripod_boss", "rear"), ("gx16", "rear"), ("hatch_parts", "rear"), ("q6a_fan_duct", "rear"),
     ("enc_main", "board_ctrl"), ("enc_volume", "board_ctrl"), ("closure.boss", "rfbay.lid"),
     ("q6a.usb_stack", "usb_plug_bay"), ("q6a.hdmi", "hdmi_plug"), ("ferrite_a", "rear"),
