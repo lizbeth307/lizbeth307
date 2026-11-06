@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297">
+<title>M-02 Корпус: верхня грань і нижня грань</title>
+<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 1feb6fd68ccf</desc>
+<rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
+<line x1="30" y1="127" x2="260" y2="127" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="260" y1="127" x2="260" y2="61" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="260" y1="61" x2="30" y2="61" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="30" y1="61" x2="30" y2="127" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="30" y1="75" x2="260" y2="75" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="4 2"/>
+<line x1="30" y1="70" x2="260" y2="70" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="30" y1="80" x2="260" y2="80" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="30" y1="127.8" x2="30" y2="140.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="260" y1="127.8" x2="260" y2="140.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="30" y1="139" x2="260" y2="139" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="30" y1="139" x2="32.2" y2="138.3" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="30" y1="139" x2="32.2" y2="139.7" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="260" y1="139" x2="257.8" y2="138.3" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="260" y1="139" x2="257.8" y2="139.7" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="145" y="142.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000">230</text>
+<line x1="29.2" y1="127" x2="16.5" y2="127" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="29.2" y1="61" x2="16.5" y2="61" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="18" y1="127" x2="18" y2="61" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="18" y1="127" x2="17.3" y2="124.8" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="18" y1="127" x2="18.7" y2="124.8" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="18" y1="61" x2="17.3" y2="63.2" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="18" y1="61" x2="18.7" y2="63.2" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="16.8" y="94" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000" transform="rotate(-90 16.8 94)">66</text>
+<circle cx="73.5" cy="91" r="3.2" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="68.8" y1="91" x2="78.2" y2="91" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="73.5" y1="95.7" x2="73.5" y2="86.3" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="70.3" y="97.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P1</text>
+<circle cx="93.5" cy="91" r="3.2" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="88.8" y1="91" x2="98.2" y2="91" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="93.5" y1="95.7" x2="93.5" y2="86.3" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="90.3" y="97.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P2</text>
+<circle cx="113.5" cy="91" r="3.2" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="108.8" y1="91" x2="118.2" y2="91" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="113.5" y1="95.7" x2="113.5" y2="86.3" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="110.3" y="97.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P3</text>
+<circle cx="133.5" cy="91" r="4.85" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="127.15" y1="91" x2="139.85" y2="91" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="133.5" y1="97.35" x2="133.5" y2="84.65" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="128.65" y="99.05" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P4</text>
+<circle cx="153.5" cy="91" r="4.85" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="147.15" y1="91" x2="159.85" y2="91" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="153.5" y1="97.35" x2="153.5" y2="84.65" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="148.65" y="99.05" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P5</text>
+<circle cx="173.5" cy="91" r="3.2" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="168.8" y1="91" x2="178.2" y2="91" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="173.5" y1="95.7" x2="173.5" y2="86.3" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="170.3" y="97.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P6</text>
+<circle cx="193.5" cy="91" r="3.2" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="188.8" y1="91" x2="198.2" y2="91" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="193.5" y1="95.7" x2="193.5" y2="86.3" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="190.3" y="97.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P7</text>
+<circle cx="213.5" cy="91" r="3.2" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="208.8" y1="91" x2="218.2" y2="91" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="213.5" y1="95.7" x2="213.5" y2="86.3" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="210.3" y="97.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P8</text>
+<circle cx="233.5" cy="91" r="3.2" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="228.8" y1="91" x2="238.2" y2="91" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="233.5" y1="95.7" x2="233.5" y2="86.3" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="230.3" y="97.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">RX1</text>
+<circle cx="188" cy="109" r="6.05" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="180.45" y1="109" x2="195.55" y2="109" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="188" y1="116.55" x2="188" y2="101.45" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="181.95" y="118.25" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">PWR_KEY</text>
+<circle cx="150" cy="121" r="2" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="146.5" y1="121" x2="153.5" y2="121" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="150" y1="124.5" x2="150" y2="117.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="148" y="126.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">VEML7700</text>
+<text x="30" y="58" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">верхня грань, вид згори (лице внизу)</text>
+<line x1="30" y1="227" x2="260" y2="227" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="260" y1="227" x2="260" y2="161" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="260" y1="161" x2="30" y2="161" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="30" y1="161" x2="30" y2="227" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="30" y1="213" x2="260" y2="213" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="4 2"/>
+<line x1="30" y1="218" x2="260" y2="218" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="30" y1="208" x2="260" y2="208" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="30" y1="227.8" x2="30" y2="240.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="260" y1="227.8" x2="260" y2="240.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="30" y1="239" x2="260" y2="239" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="30" y1="239" x2="32.2" y2="238.3" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="30" y1="239" x2="32.2" y2="239.7" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="260" y1="239" x2="257.8" y2="238.3" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="260" y1="239" x2="257.8" y2="239.7" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="145" y="242.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000">230</text>
+<line x1="29.2" y1="227" x2="16.5" y2="227" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="29.2" y1="161" x2="16.5" y2="161" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="18" y1="227" x2="18" y2="161" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="18" y1="227" x2="17.3" y2="224.8" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="18" y1="227" x2="18.7" y2="224.8" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="18" y1="161" x2="17.3" y2="163.2" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="18" y1="161" x2="18.7" y2="163.2" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="16.8" y="194" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000" transform="rotate(-90 16.8 194)">66</text>
+<line x1="213" y1="206" x2="225" y2="206" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="225" y1="206" x2="225" y2="200" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="225" y1="200" x2="213" y2="200" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="213" y1="200" x2="213" y2="206" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<circle cx="219" cy="203" r="1.5" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="216" y1="203" x2="222" y2="203" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="219" y1="206" x2="219" y2="200" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="222" y="200" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">USB_C_IN TBD</text>
+<line x1="194" y1="207" x2="210" y2="207" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="210" y1="207" x2="210" y2="199" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="210" y1="199" x2="194" y2="199" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="194" y1="199" x2="194" y2="207" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<circle cx="202" cy="203" r="1.5" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="199" y1="203" x2="205" y2="203" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="202" y1="206" x2="202" y2="200" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="205" y="209.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">LAB_USB_A TBD</text>
+<line x1="228" y1="205" x2="244" y2="205" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="244" y1="205" x2="244" y2="189" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="244" y1="189" x2="228" y2="189" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="228" y1="189" x2="228" y2="205" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<circle cx="236" cy="197" r="1.5" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="233" y1="197" x2="239" y2="197" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="236" y1="200" x2="236" y2="194" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="239" y="194" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">LAB_BUS TBD</text>
+<line x1="196" y1="180" x2="206" y2="180" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="206" y1="180" x2="206" y2="170" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="206" y1="170" x2="196" y2="170" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="196" y1="170" x2="196" y2="180" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<circle cx="201" cy="175" r="1.5" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="198" y1="175" x2="204" y2="175" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="201" y1="178" x2="201" y2="172" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="204" y="172" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">AUDIO_3V5 TBD</text>
+<line x1="209.6" y1="184.5" x2="246" y2="184.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="246" y1="184.5" x2="246" y2="164.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="246" y1="164.5" x2="209.6" y2="164.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="209.6" y1="164.5" x2="209.6" y2="184.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="212.35" y1="183.25" x2="243.25" y2="183.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="244.5" y1="182" x2="244.5" y2="182" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="243.25" y1="180.75" x2="212.35" y2="180.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="211.1" y1="182" x2="211.1" y2="182" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 243.25 183.25 A 1.25 1.25 0 0 1 244.5 182" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 244.5 182 A 1.25 1.25 0 0 1 243.25 180.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 212.35 180.75 A 1.25 1.25 0 0 1 211.1 182" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 211.1 182 A 1.25 1.25 0 0 1 212.35 183.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="212.35" y1="178.25" x2="243.25" y2="178.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="244.5" y1="177" x2="244.5" y2="177" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="243.25" y1="175.75" x2="212.35" y2="175.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="211.1" y1="177" x2="211.1" y2="177" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 243.25 178.25 A 1.25 1.25 0 0 1 244.5 177" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 244.5 177 A 1.25 1.25 0 0 1 243.25 175.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 212.35 175.75 A 1.25 1.25 0 0 1 211.1 177" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 211.1 177 A 1.25 1.25 0 0 1 212.35 178.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="212.35" y1="173.25" x2="243.25" y2="173.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="244.5" y1="172" x2="244.5" y2="172" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="243.25" y1="170.75" x2="212.35" y2="170.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="211.1" y1="172" x2="211.1" y2="172" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 243.25 173.25 A 1.25 1.25 0 0 1 244.5 172" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 244.5 172 A 1.25 1.25 0 0 1 243.25 170.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 212.35 170.75 A 1.25 1.25 0 0 1 211.1 172" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 211.1 172 A 1.25 1.25 0 0 1 212.35 173.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="212.35" y1="168.25" x2="243.25" y2="168.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="244.5" y1="167" x2="244.5" y2="167" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="243.25" y1="165.75" x2="212.35" y2="165.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="211.1" y1="167" x2="211.1" y2="167" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 243.25 168.25 A 1.25 1.25 0 0 1 244.5 167" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 244.5 167 A 1.25 1.25 0 0 1 243.25 165.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 212.35 165.75 A 1.25 1.25 0 0 1 211.1 167" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 211.1 167 A 1.25 1.25 0 0 1 212.35 168.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<text x="209.6" y="163" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.08" text-anchor="start" fill="#000">INTAKE_P2 36.4 x 20</text>
+<text x="30" y="158" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">нижня грань, вид знизу (лице вгорі)</text>
+<text x="268" y="75" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.92" text-anchor="start" fill="#000">Таблиця: top</text>
+<text x="268" y="79.5" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">ID                 u       v  розмір</text>
+<text x="268" y="82.9" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P1                43.5      36  ⌀6.4</text>
+<text x="272" y="85.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">1/4-36 UNS bulkhead, STACK 5.8 'близько 6.4 з лискою'; D-flat per received part (TBD)</text>
+<text x="268" y="88.5" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P2                63.5      36  ⌀6.4</text>
+<text x="272" y="91.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">1/4-36 UNS bulkhead, STACK 5.8 'близько 6.4 з лискою'; D-flat per received part (TBD)</text>
+<text x="268" y="94.1" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P3                83.5      36  ⌀6.4</text>
+<text x="272" y="97.1" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">1/4-36 UNS bulkhead, STACK 5.8 'близько 6.4 з лискою'; D-flat per received part (TBD)</text>
+<text x="268" y="99.7" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P4               103.5      36  ⌀9.7</text>
+<text x="272" y="102.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">F-type 3/8-32 UNEF thread (IEC 61169-24), 9.525 + clearance; check the chosen F-F bulkhead (</text>
+<text x="268" y="105.3" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P5               123.5      36  ⌀9.7</text>
+<text x="272" y="108.3" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">BNC bulkhead 3/8-32 UNEF typical, D-flat per part; MPN TBD (MECH-07)</text>
+<text x="268" y="110.9" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P6               143.5      36  ⌀6.4</text>
+<text x="272" y="113.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">1/4-36 UNS bulkhead, STACK 5.8 'близько 6.4 з лискою'; D-flat per received part (TBD)</text>
+<text x="268" y="116.5" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P7               163.5      36  ⌀6.4</text>
+<text x="272" y="119.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">SMA-K through bulkhead, 1/4-36 assumed; check the received part (TBD)</text>
+<text x="268" y="122.1" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P8               183.5      36  ⌀6.4</text>
+<text x="272" y="125.1" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">1/4-36 UNS bulkhead, STACK 5.8 'близько 6.4 з лискою'; D-flat per received part (TBD)</text>
+<text x="268" y="127.7" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">RX1              203.5      36  ⌀6.4</text>
+<text x="272" y="130.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">Taoglas CAB.01075 SMA(f) bulkhead, 1/4-36 assumed; datasheet not readable (403), check the p</text>
+<text x="268" y="133.3" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">PWR_KEY            158      18  ⌀12.1</text>
+<text x="272" y="136.3" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">E-Switch PV0 datasheet 3.16.2026: panel cut-out 12.00 +0.20/-0.00 (drill 12.0, ream to 12.1)</text>
+<text x="268" y="138.9" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">VEML7700           120       6  ⌀4</text>
+<text x="268" y="145.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.92" text-anchor="start" fill="#000">Таблиця: bottom</text>
+<text x="268" y="150.4" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">ID                 u       v  розмір</text>
+<text x="268" y="153.8" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">USB_C_IN           189      24  12 x 6</text>
+<text x="272" y="156.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">pilot only: connector MPN not chosen (MECH-07); final cut-out from the chosen part's drawing</text>
+<text x="268" y="159.4" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">LAB_USB_A          172      24  16 x 8</text>
+<text x="272" y="162.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">pilot only: connector MPN not chosen (MECH-07); final cut-out from the chosen part's drawing</text>
+<text x="268" y="165" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">LAB_BUS            206      30  16 x 16</text>
+<text x="272" y="168" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">pilot only: connector MPN not chosen (MECH-07); final cut-out from the chosen part's drawing</text>
+<text x="268" y="170.6" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">AUDIO_3V5          171      52  10 x 10</text>
+<text x="272" y="173.6" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">pilot only: connector MPN not chosen (MECH-07); final cut-out from the chosen part's drawing</text>
+<text x="268" y="176.2" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">INTAKE_P2        197.8    52.5  36.4 x 20</text>
+<line x1="8" y1="289" x2="412" y2="289" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="412" y1="289" x2="412" y2="8" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="412" y1="8" x2="8" y2="8" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="8" y1="8" x2="8" y2="289" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="14" y1="281" x2="114" y2="281" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="14" y1="281" x2="14" y2="277" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="24" y1="281" x2="24" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="34" y1="281" x2="34" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="44" y1="281" x2="44" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="54" y1="281" x2="54" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="64" y1="281" x2="64" y2="277" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="74" y1="281" x2="74" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="84" y1="281" x2="84" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="94" y1="281" x2="94" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="104" y1="281" x2="104" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="114" y1="281" x2="114" y2="277" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="14" y="285" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.08" text-anchor="start" fill="#000">Контроль масштабу: 100 мм (друкувати 100 %, без підгонки)</text>
+<line x1="262" y1="289" x2="262" y2="247" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="262" y1="247" x2="412" y2="247" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="262" y1="282" x2="412" y2="282" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="262" y1="275" x2="412" y2="275" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="262" y1="268" x2="412" y2="268" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="262" y1="261" x2="412" y2="261" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="264" y="253" font-family="DejaVu Sans, Arial, sans-serif" font-size="4.48" text-anchor="start" fill="#000">Корпус: верхня грань і нижня грань</text>
+<text x="264" y="259" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">свердління/вирізи, 1:1</text>
+<text x="264" y="266" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення M-02 · масштаб 1:1 · мм · допуск ±0.2, якщо не вказано</text>
+<text x="264" y="273" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: ASA (Polymaker PF01002), друк</text>
+<text x="264" y="280" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
+<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 1feb6fd68ccf · v1.0.0</text>
+<text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">Корпус: верхня грань і нижня грань</text>
+<text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">свердління/вирізи, 1:1</text>
+<text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Координати u/v — від лівої (A) і нижньої (B) кромок грані, як видно ззовні. Одиниці мм, допуск ±0.2.</text>
+<text x="12" y="28.6" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Лінія роз'єму корпусу показана штриховою (BEND); отвори ⌀3 'TBD' — лише кернування, остаточний виріз за кресленням обраної деталі.</text>
+<text x="12" y="32.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Пунктир уздовж роз'єму — краї пояса шва (1.9 мм назовні від грані, по 5 мм на кожній оболонці, M-13); отвори в поясі не розміщувати.</text>
+<text x="12" y="35.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">MODEL FIT ONLY: посадку кожної деталі перевірити на стенді (ворота OPEN).</text>
+</svg>
