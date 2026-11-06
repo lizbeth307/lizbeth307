@@ -758,13 +758,15 @@ def journal_ranges(devices, geo):
         runs = block_runs(run(["debugfs", "-R", "blocks <" + inode + ">", devices[role]]).stdout)
         base = geo["partitions"][role]["start"] * sector
         blocks = sum(n for _, n in runs)
-        if not blocks:
-            raise BuildError(role + ": debugfs lists no blocks of the journal inode " + inode)
+        # e2fsprogs 1.47 prints "Total journal blocks" (debugfs also lists extent-tree blocks, so >=)
+        total = header.get("Total journal blocks", "")
+        if not blocks or (total.isdigit() and blocks < int(total)):
+            raise BuildError(role + ": debugfs lists %d blocks of the journal inode %s, dumpe2fs says %s" % (blocks, inode, total or "?"))
         for first, count in runs:
             forced.append({"offset": base + first * int(block), "length": count * int(block),
                            "what": role + " ext4 journal (inode " + inode + ")"})
         summary[role] = {"journal_inode": int(inode), "block_size": int(block), "blocks": blocks, "runs": len(runs),
-                         "journal_size": header.get("Journal size")}
+                         "journal_size": header.get("Total journal size", header.get("Journal size"))}
     return forced, summary
 
 
@@ -1248,12 +1250,15 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         if any(checks.values()) or disk["issues"]:
             raise BuildError("final filesystem or GPT check failed: " + json.dumps({"fsck": checks, "disk": disk["issues"]}))
         import recovery_kit
+        # Journal bytes that SEEK_DATA reports as holes, measured before make_map reads them: ext4
+        # reports an unwritten extent as data once its pages are in the page cache (CI 2026-11-06),
+        # so the plain map was not even deterministic.
+        holes = sum(n for _, n in recovery_kit.uncovered(recovery_kit.data_extents(image)[1], forced))
         extent_map = recovery_kit.make_map(image, layout_sector=layout["sector_size"], forced=forced)
         # Assertion of the map itself: every journal block is written by recovery_kit.py write.
         left = recovery_kit.uncovered(extent_map["extents"], forced)
         if left:
             raise BuildError("extent map leaves ext4 journal blocks unwritten: " + json.dumps(left[:5]))
-        holes = sum(n for _, n in recovery_kit.uncovered(recovery_kit.data_extents(image)[1], forced))
         dump(out / (image.name + ".map.json"), extent_map)
         LOG.step("verify", "DONE", data_bytes=extent_map["data_bytes"], extents=len(extent_map["extents"]),
                  journal_bytes=sum(f["length"] for f in forced), journal_bytes_in_file_holes=holes)

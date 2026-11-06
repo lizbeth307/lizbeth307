@@ -91,18 +91,25 @@ jobs:
           W="$RUNNER_TEMP/rt"
           sudo chown -R "$(id -u)" "$W"
           # The ext4 journals are holes of the image file (mke2fs zeroes them with fallocate): the map forces them.
-          python3 deployment/image/recovery_kit.py map --image "$W/blank.img" --forced "$W/blank.img.forced.json" --output "$W/blank.img.map.json" | tee "$RUNNER_TEMP/map.json"
-          python3 - "$W/blank.img" "$W/blank.img.map.json" > "$RUNNER_TEMP/journal-map.json" <<'EOF'
+          # Measured before the map reads them: ext4 reports unwritten extents as data once their pages are cached.
+          python3 - "$W/blank.img" "$W/blank.img.forced.json" > "$RUNNER_TEMP/journal-holes.json" <<'EOF'
           import json, sys
           sys.path.insert(0, "deployment/image")
           import recovery_kit
-          image, m = sys.argv[1], json.load(open(sys.argv[2]))
+          forced = json.load(open(sys.argv[2]))
+          holes = sum(n for _, n in recovery_kit.uncovered(recovery_kit.data_extents(sys.argv[1])[1], forced))
+          print(json.dumps({"journal_bytes": sum(f["length"] for f in forced), "journal_bytes_in_file_holes": holes}))
+          EOF
+          python3 deployment/image/recovery_kit.py map --image "$W/blank.img" --forced "$W/blank.img.forced.json" --output "$W/blank.img.map.json" | tee "$RUNNER_TEMP/map.json"
+          python3 - "$W/blank.img.map.json" "$RUNNER_TEMP/journal-holes.json" > "$RUNNER_TEMP/journal-map.json" <<'EOF'
+          import json, sys
+          sys.path.insert(0, "deployment/image")
+          import recovery_kit
+          m, before = json.load(open(sys.argv[1])), json.load(open(sys.argv[2]))
           roles = sorted({f["what"].split()[0] for f in m["forced"]})
           assert roles == ["data", "root_a", "root_b"], roles
           assert not recovery_kit.uncovered(m["extents"], m["forced"]), "journal blocks outside the map extents"
-          holes = sum(n for _, n in recovery_kit.uncovered(recovery_kit.data_extents(image)[1], m["forced"]))
-          print(json.dumps({"journal_bytes": sum(f["length"] for f in m["forced"]), "journal_bytes_in_file_holes": holes,
-                            "map_data_bytes": m["data_bytes"]}))
+          print(json.dumps(dict(before, map_data_bytes=m["data_bytes"], journal_covered=True)))
           EOF
           cat "$RUNNER_TEMP/journal-map.json"
           python3 deployment/image/recovery_kit.py assemble --image "$W/blank.img" --map "$W/blank.img.map.json" --out "$W/kit" --link

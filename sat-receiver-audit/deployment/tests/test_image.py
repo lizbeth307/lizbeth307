@@ -705,8 +705,9 @@ class FirstBootAndRecipeTests(unittest.TestCase):
 
     def test_journal_ranges_from_dumpe2fs_and_debugfs_output(self):
         header = build_image.dumpe2fs_header("Filesystem volume name:   srrx-data\nJournal inode:            8\nBlock size:               4096\n"
-                                             "Journal size:             64M\n")
-        self.assertEqual((header["Journal inode"], header["Block size"], header["Journal size"]), ("8", "4096", "64M"))
+                                             "Journal features:         (none)\nTotal journal size:       64M\nTotal journal blocks:     16384\n")
+        self.assertEqual((header["Journal inode"], header["Block size"], header["Total journal size"], header["Total journal blocks"]),
+                         ("8", "4096", "64M", "16384"))
         self.assertEqual(build_image.block_runs("1024 1025 1026 2048\n1027 4000 4001\n"), [(1024, 4), (2048, 1), (4000, 2)])
         self.assertEqual(build_image.block_runs(""), [])
 
