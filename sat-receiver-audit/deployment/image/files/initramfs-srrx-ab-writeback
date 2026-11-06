@@ -1,0 +1,47 @@
+#!/bin/sh
+# SR-RX-v2.1 Route B (STACK.md:844), initramfs-tools local-premount script.
+# embloader 0.4 has no boot counter. When the root being mounted is the slot under trial
+# (ESP srrx/ab/trial) and this is the first trial boot, write loader.conf back to the other
+# slot before anything else can hang: a hang or reset now boots the previous slot. The trial
+# slot becomes the default again only after boot-complete.target (srrx-ab-commit.service).
+# Test hooks: SRRX_AB_CMDLINE (instead of /proc/cmdline), SRRX_AB_ESP_DIR + SRRX_AB_NO_MOUNT=1.
+PREREQ=""
+prereqs() { echo "$PREREQ"; }
+case "$1" in
+    prereqs) prereqs; exit 0 ;;
+esac
+[ -r /scripts/functions ] && . /scripts/functions
+conf=${SRRX_AB_CONF:-/conf/conf.d/srrx-ab}
+[ -r "$conf" ] && . "$conf"
+[ "${SRRX_AB_ROUTE:-}" = B ] || exit 0
+cmdline=${SRRX_AB_CMDLINE:-$(cat /proc/cmdline)}
+self=""
+for arg in $cmdline; do
+    case "$arg" in
+        "root=PARTUUID=$SRRX_ROOT_A") self=A ;;
+        "root=PARTUUID=$SRRX_ROOT_B") self=B ;;
+    esac
+done
+[ -n "$self" ] || exit 0
+if [ "$self" = A ]; then other=B; else other=A; fi
+esp=${SRRX_AB_ESP_DIR:-/run/srrx-esp}
+if [ -z "${SRRX_AB_NO_MOUNT:-}" ]; then
+    mkdir -p "$esp"
+    modprobe -q vfat 2>/dev/null || true
+    if ! mount -t vfat -o rw,noatime "/dev/disk/by-partuuid/$SRRX_ESP" "$esp"; then
+        echo "srrx-ab: ESP not mounted, no write-back" >&2
+        exit 0
+    fi
+fi
+trial=""
+[ -r "$esp/srrx/ab/trial" ] && read -r trial < "$esp/srrx/ab/trial"
+if [ "$trial" = "$self" ] && [ ! -e "$esp/srrx/ab/booting" ]; then
+    printf 'default lab%s\ntimeout 3\neditor no\n' "$other" > "$esp/loader/loader.conf.srrx-new"
+    sync
+    mv "$esp/loader/loader.conf.srrx-new" "$esp/loader/loader.conf"
+    : > "$esp/srrx/ab/booting"
+    sync
+    echo "srrx-ab: trial slot $self booting; loader default written back to lab$other" >&2
+fi
+[ -z "${SRRX_AB_NO_MOUNT:-}" ] && umount "$esp"
+exit 0

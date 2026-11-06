@@ -1,0 +1,6 @@
+#!/bin/sh
+# SR-RX-v2.1 kernel-install plugin (deployment/image/bootchain.py kernel-install).
+# Writes only the entry and the ESP files of this root's slot (/etc/srrx/slot); refuses an
+# unmerged DTB, a cmdline that differs from /etc/srrx/boot.json, a missing ESP or initrd.
+# A refusal fails kernel-install and therefore the package hook (fail closed).
+exec /usr/bin/python3 -I -B /opt/srrx/deployment/image/bootchain.py kernel-install "$@"

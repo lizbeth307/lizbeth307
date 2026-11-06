@@ -1,0 +1,22 @@
+[Unit]
+Description=SR-RX: per-unit SSH host keys before the first sshd start (the golden image ships none)
+Documentation=file:/opt/srrx/deployment/image/README.md
+# rsetup's first boot (config/before.txt: regenerate_ssh_hostkey) does not run in this image
+# (rsetup.service is masked), and the builder removes r2's /etc/ssh/ssh_host_* so that no two
+# units share host keys. ssh.service and ssh.socket stay masked; this unit only matters once
+# IMG-06 enables operator SSH access: ssh.service then pulls it in and starts after it.
+DefaultDependencies=no
+After=local-fs.target
+Before=ssh.service shutdown.target
+Conflicts=shutdown.target
+ConditionPathExists=!/etc/ssh/ssh_host_ed25519_key
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/bin/ssh-keygen -A
+PrivateNetwork=yes
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=ssh.service
