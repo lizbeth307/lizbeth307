@@ -35,17 +35,78 @@ def q6a_boxes(P):
 
 
 def cu_block_geometry(P):
-    """Cooler-A block in board (u, v) terms: origin, size, LPDDR5 recess and SoC rectangles (block-local mm)."""
+    """Cooler-A block in board (u, v) terms: origin, size, LPDDR5 recess and SoC rectangles (block-local mm).
+
+    The block covers SoC and LPDDR5 with cu_block.margin and is clipped to the cooler keep-in
+    (parts.json q6a_cooler_zone keep_in_uv)."""
     q = P.parts["q6a"]
     cb = P.mech["cu_block"]
     soc, ram = q["soc"]["uv"], q["lpddr5"]["uv"]
     mg = cb["margin"]
-    u0, v0 = min(soc[0], ram[0]) - mg, min(soc[1], ram[1]) - mg
-    u1, v1 = max(soc[2], ram[2]) + mg, max(soc[3], ram[3]) + mg
+    ki = P.parts["q6a_cooler_zone"]["keep_in_uv"]
+    u0, v0 = max(ki[0], min(soc[0], ram[0]) - mg), max(ki[1], min(soc[1], ram[1]) - mg)
+    u1, v1 = min(ki[2], max(soc[2], ram[2]) + mg), min(ki[3], max(soc[3], ram[3]) + mg)
     bw, bh = min(cb["max"][0], u1 - u0), min(cb["max"][1], v1 - v0)
     recess = (ram[0] - u0 - 0.5, ram[1] - v0 - 0.5, ram[2] - ram[0] + 1.0, ram[3] - ram[1] + 1.0)
     soc_r = (soc[0] - u0, soc[1] - v0, soc[2] - soc[0], soc[3] - soc[1])
     return (u0, v0), (bw, bh), recess, soc_r
+
+
+def q6a_top_z(P):
+    """z of the Q6A component face (it faces the rear wall)."""
+    m = P.mech["q6a_mount"]
+    return P.mech["stack_z"]["plate_rear"] - m["standoff"] - P.parts["q6a"]["board"][2]
+
+
+def cooler_boxes(P):
+    """Cooler A: Cu block on SoC/LPDDR5, fin/spacer zone in the keep-in up to the fan face, Noctua fan (enclosure boxes)."""
+    q = P.parts["q6a"]
+    cz = P.parts["q6a_cooler_zone"]
+    cb = P.mech["cu_block"]
+    x0, y0 = P.mech["q6a_mount"]["origin"]
+    bu = q["board"][0]
+    zt = q6a_top_z(P)
+
+    def uv(u0, v0, u1, v1):
+        return x0 + bu - u1, y0 + v0, x0 + bu - u0, y0 + v1
+    (u0, v0), (bw, bh), _, _ = cu_block_geometry(P)
+    soc_top = zt - q["soc"]["top"]
+    blk_top = soc_top - cb["t"]
+    fan_face = zt - cb["fan_above_board"]
+    a = uv(u0, v0, u0 + bw, v0 + bh)
+    k = uv(*cz["keep_in_uv"])
+    cu, cv = cz["center_in_board"]
+    fw, fh, ft = cz["fan"]
+    f = uv(cu - fw / 2, cv - fh / 2, cu + fw / 2, cv + fh / 2)
+    return [("cooler_a.block", (a[0], a[1], blk_top, a[2], a[3], soc_top)),
+            ("cooler_a.fins", (k[0], k[1], fan_face, k[2], k[3], blk_top)),
+            ("cooler_a.fan", (f[0], f[1], fan_face - ft, f[2], f[3], fan_face))]
+
+
+SMA_KINDS = ("sma_pigtail", "sma_k", "sma_cab01075")
+
+
+def bulkhead_nut_boxes(P):
+    """Jam nut + lock washer of every SMA bulkhead inside the panel (envelope: parts.json sma_bulkhead_hw)."""
+    m = P.mech
+    W, H, D = P.outer
+    t = m["wall"]
+    hw = P.parts["sma_bulkhead_hw"]
+    r = hw["washer_od"] / 2.0
+    th = hw["washer_t"] + hw["nut_t"]
+    out = []
+    a = m["angles"]["top"]
+    y1 = H - t - a["t"]
+    zc = m["top_face"]["ports_z"]
+    for p in m["top_face"]["ports"]:
+        if p["kind"] in SMA_KINDS:
+            out.append((f"nut.{p['id']}", (p["x"] - r, y1 - th, zc - r, p["x"] + r, y1, zc + r)))
+    a = m["angles"]["right"]
+    x1 = W - t - a["t"]
+    for p in m["right_face"]["ports"]:
+        if p["kind"] in SMA_KINDS:
+            out.append((f"nut.{p['id']}", (x1 - th, p["y"] - r, p["z"] - r, x1, p["y"] + r, p["z"] + r)))
+    return out
 
 
 def board_boxes(P, bid, at=None):
@@ -57,13 +118,16 @@ def board_boxes(P, bid, at=None):
         ox, oy = pl["origin"]
     t = P.boards["stackup"]["t"]
     z0 = pl["z_bottom"]
-    h = b["max_height"]
-    # z0 is the face opposite the components (towards the mounting surface)
-    if pl["facing"] == "+z":
-        za, zb = z0, z0 + t + h
-    else:
-        za, zb = z0 - t - h, z0
-    return [(f"{bid}.r{i}", (ox + r[0], oy + r[1], za, ox + r[0] + r[2], oy + r[1] + r[3], zb)) for i, r in enumerate(b["rects"])]
+    out = []
+    for i, r in enumerate(b["rects"]):
+        # a height zone that overlaps this rectangle raises the whole rectangle (boards.json height_zones)
+        h = max([b["max_height"]] + [zn["max_height"] for zn in b.get("height_zones", [])
+                                     if zn["rect"][0] < r[0] + r[2] and r[0] < zn["rect"][0] + zn["rect"][2]
+                                     and zn["rect"][1] < r[1] + r[3] and r[1] < zn["rect"][1] + zn["rect"][3]])
+        # z0 is the face opposite the components (towards the mounting surface)
+        za, zb = (z0, z0 + t + h) if pl["facing"] == "+z" else (z0 - t - h, z0)
+        out.append((f"{bid}.r{i}", (ox + r[0], oy + r[1], za, ox + r[0] + r[2], oy + r[1] + r[3], zb)))
+    return out
 
 
 def item_boxes(P):
@@ -75,8 +139,13 @@ def item_boxes(P):
         elif it.get("part") == "q6a" and "box" not in it:
             for name, bx in q6a_boxes(P):
                 items.append((it["id"], name, bx, it))
+        elif it.get("derived") == "cooler_a":
+            for name, bx in cooler_boxes(P):
+                items.append((it["id"], name, bx, it))
         else:
             items.append((it["id"], it["id"], _box(it["box"]), it))
+    for name, bx in bulkhead_nut_boxes(P):
+        items.append((name, name, bx, {"id": name, "mount": "angle", "derived": "bulkhead_nut"}))
     return items
 
 
@@ -149,8 +218,13 @@ ALLOWED = [
     ("pwr_key_nut", "plate.main"),                                   # the plate has an open notch under the nut (plate.notches; the solid check sees it)
     ("tripod_boss", "rear"), ("gx16", "rear"), ("hatch_parts", "rear"), ("q6a_fan_duct", "rear"),
     ("enc_main", "board_ctrl"), ("enc_volume", "board_ctrl"), ("closure.boss", "rfbay.lid"),
-    ("q6a.usb_stack", "usb_plug_bay"), ("q6a.hdmi", "hdmi_plug"), ("ferrite_a", "rear"),
+    ("q6a.usb_stack", "usb_plug_bay"), ("q6a.hdmi", "hdmi_plug_ra"),
     ("q6a.board", "plate.ufs_boss"),  # contact through the UFS pad by design (thermal T-UFS)
+    ("cooler_a", "q6a.board"),         # the cooler sits in the generic 7.5 mm component zone of the Q6A envelope
+    ("cooler_a", "q6a_fan_duct"),      # the duct starts at the fan face
+    ("nut.", "angle."),                # bulkhead nut and washer clamp the Al angle
+    ("hdmi_route", "hdmi_plug_ra"), ("hdmi_route", "hdmi_route"), ("hdmi_route", "plate."), ("hdmi_route", "hdmi_board"),
+    ("t7_gland_body", "rear"), ("t7_gland_outside", "rear"),
 ]
 
 STRUCT = ("plate.", "angle.", "rfbay.")
@@ -172,9 +246,9 @@ def fit_checks(P, min_gap=0.5):
     W, H, D = P.outer
     t = P.mech["wall"]
     interior = (t, t, t, W - t, H - t, D - t)
-    boxes = [(iid, name, bx) for iid, name, bx, _ in item_boxes(P)] + [(n, n, bx) for n, bx in structure_boxes(P)]
+    boxes = [(iid, name, bx, it) for iid, name, bx, it in item_boxes(P)] + [(n, n, bx, {}) for n, bx in structure_boxes(P)]
     results = []
-    for (ia, na, ba), (ib, nb, bb) in itertools.combinations(boxes, 2):
+    for (ia, na, ba, _), (ib, nb, bb, _) in itertools.combinations(boxes, 2):
         if ia == ib:
             continue
         if joined(na, nb):
@@ -183,8 +257,8 @@ def fit_checks(P, min_gap=0.5):
         if g < min_gap and not allowed(na, nb) and not allowed(ia, ib):
             results.append({"a": na, "b": nb, "gap_mm": round(g, 2), "result": "FAIL (model)" if g < 0 else "TIGHT (model)"})
     outside = []
-    for iid, name, bx in boxes:
-        if iid.startswith(("tripod_boss", "closure.", "plate.", "angle.")):
+    for iid, name, bx, it in boxes:
+        if iid.startswith(("tripod_boss", "closure.", "plate.", "angle.")) or it.get("outside"):
             continue
         for i, ax in enumerate("xyz"):
             if bx[i] < interior[i] - 1e-6 or bx[i + 3] > interior[i + 3] + 1e-6:

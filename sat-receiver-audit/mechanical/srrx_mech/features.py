@@ -77,7 +77,8 @@ def face_features(P):
     g = rf["gx16"]
     F["rear"].append({"id": "GX16_IMU", "kind": "gx16", "u": W - g["c"][0], "v": g["c"][1], "d": HOLES["gx16"]["d"], "pad_t": g["pad_t"]})
     tp = rf["tripod"]
-    F["rear"].append({"id": "TRIPOD_1/4-20", "kind": "tripod", "u": W - tp["c"][0], "v": tp["c"][1], "d": tp["hole_d"]})
+    F["rear"].append({"id": "TRIPOD_1/4-20", "kind": "tripod", "u": W - tp["c"][0], "v": tp["c"][1], "d": tp["hole_d"],
+                      "plinth_d": tp["plinth_d"], "disc_d": tp["plate_disc_d"], "note": f"plinth {tp['plinth_h']} mm proud"})
     hx, hy, hw, hh = rf["hatch"]["rect"]
     F["rear"].append({"id": "HATCH", "kind": "hatch", "u": W - (hx + hw / 2), "v": hy + hh / 2, "w": hw, "h": hh, "r": rf["hatch"]["r"]})
     for i, (sx, sy) in enumerate(rf["hatch"]["screws"]):
@@ -91,11 +92,16 @@ def face_features(P):
                       "note": "gland for the T7 lead, MPN TBD (STACK 5.8)"})
     ss = rf["strap_slots"]
     for i, y in enumerate(ss["y"]):
-        F["rear"].append({"id": f"STRAP_SLOT_{i + 1}", "kind": "strap", "u": W - ss["x"], "v": y, "w": 22.0, "h": ss["w"],
-                          "note": "tunnel for SmallRig PAC2456, printed with the rear shell (6 mm proud)"})
+        F["rear"].append({"id": f"STRAP_SLOT_{i + 1}", "kind": "strap", "u": W - ss["x"], "v": y, "w": 18.0, "h": ss["w"] + 8.0,
+                          "pw": 22.0, "ph": ss["w"], "note": "tunnel for SmallRig PAC2456, printed with the rear shell (6 mm proud)"})
+    lg = rf["strap_lug"]
     for i, (lx, ly) in enumerate(rf["strap_lugs"]):
-        F["rear"].append({"id": f"LUG_{i + 1}", "kind": "strap", "u": W - lx, "v": ly, "w": 16.0, "h": 5.0,
-                          "note": "neck-strap lug (Peak Design Leash), printed with the rear shell"})
+        F["rear"].append({"id": f"LUG_{i + 1}", "kind": "strap", "u": W - lx, "v": ly, "w": lg["w"], "h": lg["h"], "pw": 16.0, "ph": 5.0,
+                          "note": f"neck-strap lug (Peak Design Leash), solid {lg['w']:g} x {lg['h']:g}, {lg['proud']:g} proud, printed with the rear shell"})
+    th = rf["t7_holder"]
+    for i, (px, py) in enumerate(th["screws"]):
+        F["rear"].append({"id": f"T7_PAD_{i + 1}", "kind": "pad", "u": W - px, "v": py, "d": th["pad_d"], "insert_d": 4.0,
+                          "note": f"pad {th['pad_h']:g} proud with an M3 insert (T7 holder screw from outside)"})
     c = m["closure"]
     for i, (bx, by) in enumerate(c["bosses"]):
         F["rear"].append({"id": f"CLOSURE_{i + 1}", "kind": "closure", "u": W - bx, "v": by, "d": c["clearance_d"],

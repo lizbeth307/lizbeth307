@@ -56,7 +56,10 @@ def plate_outline(P):
     pl = P.mech["plate"]
     x, y, w, h = pl["main"]
     ex, ey, ew, eh = pl["ext"]
-    poly = [(x, y), (ex, y), (ex, ey), (ex + ew, ey), (x + w, y + h)]
+    poly = [(x, y), (ex, y), (ex, ey), (ex + ew, ey)]
+    for (nx, ny, nw, nh) in sorted(pl.get("notches_right", [])):          # open notches in the right edge, bottom to top
+        poly += [(nx + nw, ny), (nx, ny), (nx, ny + nh), (nx + nw, ny + nh)]
+    poly.append((x + w, y + h))
     for (nx, ny, nw, nh) in sorted(pl.get("notches", []), reverse=True):   # open notches in the top edge, right to left
         poly += [(nx + nw, y + h), (nx + nw, ny), (nx, ny), (nx, y + h)]
     poly.append((x, y + h))
@@ -77,6 +80,8 @@ def plate_windows(P):
     pl = P.mech["plate"]
     out = []
     for key in ("riser_window", "hdmi_slot"):
+        if key not in pl:
+            continue
         x, y, w, h = pl[key]
         out.append((key, [(x, y), (x + w, y), (x + w, y + h), (x, y + h)]))
     return out
@@ -108,12 +113,14 @@ def plate_holes(P):
     lp = m["lime_pedestal"]["rect"]
     for i, px in enumerate((lp[0] + 5, lp[0] + lp[2] - 5)):
         out.append({"id": f"LP{i + 1}", "c": (px, lp[1] + lp[3] / 2), "d": 3.4, "use": "M3 Lime pedestal (front face)"})
+    af = P.parts[m["angles"]["fastener"]]
     at = m["angles"]["top"]
-    for i, xh in enumerate(at["holes_x"]):
-        out.append({"id": f"AT{i + 1}", "c": (xh, H[1] - m["wall"] - at["leg_plate"] / 2), "d": 3.4, "use": "M3 + nut, top Al angle"})
-    ar = m["angles"]["right"]
-    for i, yh in enumerate((ar["y"][0] + 6, (ar["y"][0] + ar["y"][1]) / 2, ar["y"][1] - 6)):
-        out.append({"id": f"AR{i + 1}", "c": (H[0] - m["wall"] - ar["leg_plate"] / 2, yh), "d": 3.4, "use": "M3 + nut, right Al angle"})
+    for i, (xh, yh) in enumerate(angle_holes(P, "top")):
+        out.append({"id": f"AT{i + 1}", "c": (xh, yh), "d": af["hole_d"], "edge_min": af["edge_min"],
+                    "use": "PEM F-M3-1; M3 from the rear through the top Al angle"})
+    for i, (xh, yh) in enumerate(angle_holes(P, "right")):
+        out.append({"id": f"AR{i + 1}", "c": (xh, yh), "d": af["hole_d"], "edge_min": af["edge_min"],
+                    "use": "PEM F-M3-1; M3 from the rear through the right Al angle"})
     for bp in pl["bond_points"]:
         out.append({"id": bp["id"], "c": tuple(bp["c"]), "d": 3.4, "use": "M3 + serrated washer, bare metal (RF GND/CHASSIS)"})
     ux0, uy0, ux1, uy1 = ufs_rect(P)
@@ -121,6 +128,19 @@ def plate_holes(P):
         out.append({"id": f"UB{i + 1}", "c": ((ux0 + ux1) / 2 + s * 5.0, (uy0 + uy1) / 2), "d": 2.9,
                     "use": "M2.5 countersunk from the front face into the UFS boss (tapped M2.5)"})
     return out
+
+
+def angle_holes(P, which):
+    """Plate-leg screw axes of the Al angles (enclosure x/y): hole_inset from the free edge of the plate leg."""
+    m = P.mech
+    W, H, _ = P.outer
+    t = m["wall"]
+    a = m["angles"][which]
+    if which == "top":
+        y = H - t - a["leg_plate"] + a["hole_inset"]
+        return [(xh, y) for xh in a["holes_x"]]
+    x = W - t - a["leg_plate"] + a["hole_inset"]
+    return [(x, yh) for yh in a["holes_y"]]
 
 
 def _seg_dist(p, a, b):
@@ -176,10 +196,19 @@ def evaluate(P):
                 "value_mm": [tp["outer_wall"], tp["hex_af"], tp["behind"]], "result": _res(ok), "source": "STACK D15 / 5.8"})
     # Panel bulkheads: thread engagement needs the bulkhead thread length, which no chosen part gives yet.
     wall = m["wall"] + m["angles"]["top"]["t"]
+    hw = P.parts["sma_bulkhead_hw"]
     out.append({"id": "R-SMA-THREAD", "rule": "bulkhead thread through ASA wall + Al angle with O-ring, lock washer and nut, >= 3 full threads left (1/4-36: 3 x 0.706 mm)",
                 "value_mm": wall, "limit_mm": "thread length of the chosen bulkhead >= wall + O-ring + washer + nut + 2.1",
-                "result": "OPEN: bulkhead/pigtail MPN and its thread length not chosen (MECH-07); check on the received part",
-                "source": "STACK 5.8 'стінка 4-5 мм'"})
+                "result": f"OPEN: bulkhead/pigtail MPN and its thread length not chosen (MECH-07); the representative Samtec SMA-J-C-X-ST-BH4 takes a "
+                          f"{hw['panel_max']} mm panel at most, less than this {wall} mm wall: choose a long-thread bulkhead",
+                "source": "STACK 5.8 'стінка 4-5 мм'; parts.json sma_bulkhead_hw"})
+    # Bulkhead nuts inside the panel: SMA ports carry nut envelopes in the envelope check; F and BNC hardware is not known.
+    from .layout import SMA_KINDS
+    other = [p["id"] for p in m["top_face"]["ports"] + m["right_face"]["ports"] if p["kind"] not in SMA_KINDS]
+    out.append({"id": "R-BULKHEAD-NUTS", "rule": "nut and lock washer of every panel bulkhead inside the wall clear of the RF-bay walls and parts (envelope check)",
+                "value_mm": f"SMA: washer d {hw['washer_od']}, {hw['washer_t'] + hw['nut_t']} thick (layout nut.*)",
+                "result": f"OPEN: hardware of {', '.join(other)} not chosen (MPN TBD), no nut envelope" if other else "PASS (model)",
+                "source": "parts.json sma_bulkhead_hw; envelopes in fit-report 'tight' / 'collisions'"})
     # PWR pad zones must stay clear of the screw keep-outs (a pad never needs a hole).
     b = P.boards["boards"]["PWR"]
     kr = b["hole_keepout_d"] / 2
@@ -228,7 +257,7 @@ def evaluate(P):
     from .features import face_features
     W, H, D = P.outer
     R, zs = m["outer"]["corner_r"], m["split_z"]
-    keep = gk["land"] + gk["groove_w"] / 2 + 0.25
+    keep = gk["belt_h"] + 0.5          # the external seam belt (1.9 mm proud, belt_h on each shell) plus a margin
     bad = []
     for face, feats in face_features(P).items():
         if face in ("front", "rear"):
@@ -245,14 +274,81 @@ def evaluate(P):
             if along[0] < R - 1e-6 or along[1] > alen - R + 1e-6:
                 bad.append(f"{f['id']}: on the corner radius")
             if z_lo < zs + keep and z_hi > zs - keep:
-                bad.append(f"{f['id']}: crosses the seam")
-    out.append({"id": "R-PANEL-FLAT", "rule": "side-face cut-outs on the flat face and clear of the seam plane (groove + land)",
+                bad.append(f"{f['id']}: crosses the seam belt")
+    out.append({"id": "R-PANEL-FLAT", "rule": f"side-face cut-outs on the flat face and clear of the seam belt (split plane +- {fmt_mm(keep)} mm)",
                 "value_mm": bad or "none", "result": _res(not bad), "source": "geometry of this model (outer.corner_r, gasket)"})
     # Power key: the top wall is the PV0 panel.
     lo, hi = P.parts["pv0_button"]["panel_t"]
     out.append({"id": "R-PWR-KEY", "rule": "E-Switch PV0 panel thickness at the power key (top wall)", "value_mm": m["wall"], "limit_mm": [lo, hi],
                 "result": _res(lo <= m["wall"] <= hi), "source": "E-Switch PV0 datasheet (parts.json pv0_button)"})
+    out += module_rules(P)
+    out += cooler_rules(P)
+    # Battery-side vents: a thread that ends in the foam layer needs a hole in the foam.
+    bad = []
+    pack = [b for i, n, b, _ in item_boxes(P) if i == "battery_pack"][0]
+    tray = [b for i, n, b, _ in item_boxes(P) if i == "battery_tray"][0]
+    for v in m["vents"]:
+        if v["face"] != "front" or not (tray[0] < v["x"] < tray[3] and tray[1] < v["y"] < tray[4]):
+            continue
+        end = D - v["pad_t"] - (lv["thread_len"] - v["pad_t"])
+        if pack[5] < end + 1e-9 and v.get("foam_cutout_d", 0.0) < 12.0 + 0.5:
+            bad.append(v["id"])
+    out.append({"id": "R-VENT-FOAM", "rule": "battery vent: the thread ends in the 3 mm foam layer, so the foam has a hole >= thread d + 0.5 at the vent",
+                "value_mm": {v["id"]: v.get("foam_cutout_d") for v in m["vents"] if "foam_cutout_d" in v}, "limit_mm": 12.5,
+                "result": _res(not bad), "source": "mechanical.json vents, battery_pack (foam 3.0)"})
+    hr = m["hdmi_route"]
+    out.append({"id": "R-HDMI-ROUTE", "rule": "HDMI cable Q6A to HDMI board: keep-clear route in the envelope check (plug head, bends, plate notch, run)",
+                "value_mm": {"cable_od": hr["cable_od"], "bend_r": hr["bend_r"]},
+                "result": "OPEN: " + hr["_status"], "source": "mechanical.json hdmi_route, layout hdmi_*"})
     return out
+
+
+def fmt_mm(v):
+    return f"{v:g}"
+
+
+def module_rules(P):
+    """Purchased modules on a custom board must stay inside the board envelope height there."""
+    out = []
+    worst = None
+    for bid, b in P.boards["boards"].items():
+        for mo in b.get("modules_on_board", []):
+            part = P.parts[mo["part"]]
+            mx, my = mo["at"]
+            mw, mh, mt = part["size"]
+            need = mt + part.get("mount_standoff", 0.0)
+            have = max([b["max_height"]] + [zn["max_height"] for zn in b.get("height_zones", [])
+                                            if zn["rect"][0] <= mx and mx + mw <= zn["rect"][0] + zn["rect"][2]
+                                            and zn["rect"][1] <= my and my + mh <= zn["rect"][1] + zn["rect"][3]])
+            inside = any(r[0] <= mx and mx + mw <= r[0] + r[2] and r[1] <= my and my + mh <= r[1] + r[3] for r in b["rects"])
+            margin = have - need if inside else -1.0
+            if worst is None or margin < worst[0]:
+                worst = (margin, f"{bid}/{mo['id']}", need, have)
+    if worst:
+        out.append({"id": "R-PWR-MODULES", "rule": "modules on a board (height + mount standoff) inside the board envelope height there (worst module)",
+                    "value_mm": round(worst[2], 2), "limit_mm": worst[3], "module": worst[1], "result": _res(worst[0] >= -1e-9),
+                    "source": "boards.json modules_on_board / height_zones; parts.json pololu_d36v50"})
+    return out
+
+
+def cooler_rules(P):
+    """Cooler A: block inside the keep-in and over SoC + LPDDR5, fan face high enough over the tall connectors."""
+    from .layout import cu_block_geometry
+    q = P.parts["q6a"]
+    cz = P.parts["q6a_cooler_zone"]
+    cb = P.mech["cu_block"]
+    (u0, v0), (bw, bh), _, _ = cu_block_geometry(P)
+    ki = cz["keep_in_uv"]
+    soc, ram = q["soc"]["uv"], q["lpddr5"]["uv"]
+    inside = ki[0] - 1e-9 <= u0 and u0 + bw <= ki[2] + 1e-9 and ki[1] - 1e-9 <= v0 and v0 + bh <= ki[3] + 1e-9
+    cover = min(min(soc[0], ram[0]) - u0, min(soc[1], ram[1]) - v0, u0 + bw - max(soc[2], ram[2]), v0 + bh - max(soc[3], ram[3]))
+    tall = max(c["top"] for k, c in q["connectors"].items() if k in ("header40", "hdr2x2"))
+    fan = cb["fan_above_board"]
+    return [{"id": "R-COOLER-A", "rule": "cooler A: Cu block inside the 32 x 31 keep-in and over SoC + LPDDR5 (cover margin >= 0.5); fan face >= the keep-in minimum and above the 40-pin and 2x2 headers",
+             "value_mm": {"cover_margin": round(cover, 2), "fan_face_above_board": fan, "tallest_header": tall},
+             "limit_mm": {"cover_margin": 0.5, "fan_face_above_board": cz["fan_min_above_board"]},
+             "result": _res(inside and cover >= 0.5 and fan >= cz["fan_min_above_board"] and fan > tall),
+             "source": "parts.json q6a_cooler_zone (components/mechanical_thermal.md), q6a connectors (STEP V1.21)"}]
 
 
 def vent_clearance(P, v):
@@ -261,7 +357,7 @@ def vent_clearance(P, v):
     r = 6.0
     best = 99.0
     for iid, name, bx, it in item_boxes(P):
-        if it.get("keep_clear") or iid == "battery_tray":
+        if iid in ("battery_tray", "usb_plug_bay") or it.get("outside"):
             continue
         if v["face"] == "front":
             if bx[0] - r < v["x"] < bx[3] + r and bx[1] - r < v["y"] < bx[4] + r and bx[5] <= D - v["pad_t"] + 1e-6:
@@ -300,7 +396,7 @@ def closure_spans(P):
     gaps = [((b - a) % per, a, b) for a, b in zip(s, s[1:] + s[:1])]
     worst = max(gaps)
     return {"screws": len(s), "max_span_mm": round(worst[0], 1), "mean_span_mm": round(per / len(s), 1),
-            "note": "seam length (outline approximated by its bounding rectangle) between neighbouring screws; the longest span is the lower-left corner, where the battery pack and the HF+ can reach the walls (no boss fits); T-07 decides"}
+            "note": "seam length (outline approximated by its bounding rectangle) between neighbouring screws; the longest span is the lower-left corner, where the battery pack and the HF+ can reach the walls (no boss fits); T-07 decides; every screw is reachable from outside (R-TOOL-ACCESS, screws 1-2 after the T7 holder is removed)"}
 
 
 def bay_packing(P):

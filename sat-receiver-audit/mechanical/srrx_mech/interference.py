@@ -8,7 +8,9 @@ conflict unless it lies inside a feature that the item is designed to touch
 (a board on its standoffs, the Lime on its pedestal). Envelopes are reserves,
 not vendor geometry: a clean result is a model fit only.
 """
-from build123d import Align, Box, Pos
+import itertools
+
+from build123d import Align, Box, Cylinder, Pos
 
 from .layout import item_boxes
 
@@ -29,14 +31,10 @@ ALLOWED = {
 }
 SKIP_ITEMS = {"battery_tray"}                  # represented by its solid, not by its envelope box
 
-# structure pairs checked solid against solid (fastened parts only touch, so any volume is a conflict)
-STRUCT_PAIRS = [
-    ("plate", "front_shell"), ("plate", "rear_shell"), ("battery_tray", "front_shell"), ("battery_tray", "rear_shell"),
-    ("battery_tray", "plate"), ("angle_top", "front_shell"), ("angle_top", "rear_shell"), ("angle_right", "front_shell"),
-    ("angle_right", "rear_shell"), ("rf_bay_walls", "rear_shell"), ("rf_bay_walls", "front_shell"), ("rf_bay_lid", "rear_shell"),
-    ("lime_pedestal", "front_shell"), ("ufs_boss", "rear_shell"), ("rf_bay_walls", "plate"), ("rf_bay_lid", "rf_bay_walls"),
-    ("hatch_cover", "rear_shell"), ("t7_holder", "rear_shell"),
-]
+# Every pair of structure solids is checked solid against solid: fastened parts only touch, so any volume above
+# TOL_MM3 is a conflict (no pair is skipped because the parts are screwed together).
+def struct_pairs(solids):
+    return list(itertools.combinations(sorted(solids), 2))
 
 
 def _box(b):
@@ -84,14 +82,82 @@ def check(P, solids, features):
             else:
                 row["result"] = "BY DESIGN (model)"
                 allowed_hits.append(row)
-    for a, b in STRUCT_PAIRS:
-        if a not in solids or b not in solids:
-            continue
+    pairs = struct_pairs(solids)
+    for a, b in pairs:
         inter = solids[a] & solids[b]
         v = _vol(inter)
         if v > TOL_MM3:
             rows.append({"item": a, "solid": b, "overlap_mm3": round(v, 1), "bbox_mm": _bb(inter), "result": "FAIL (model)"})
-    return {"method": "B-rep intersection of every envelope with the shells, plate, angles, RF bay, pedestal, UFS boss, tray, hatch and T7 holder; "
-                      f"structure pairs solid against solid; overlaps above {TOL_MM3} mm3 outside by-design features fail",
+    return {"method": "B-rep intersection of every envelope with the shells, plate, angles, RF bay, pedestal, UFS boss, tray, hatch, hood and T7 holder; "
+                      f"all {len(pairs)} pairs of these solids against each other; overlaps above {TOL_MM3} mm3 outside by-design features fail",
             "conflicts": rows, "by_design": allowed_hits,
             "result": "PASS (model fit only)" if not rows else f"FAIL (model): {len(rows)} conflicts"}
+
+
+def _zcyl(x, y, z0, z1, r):
+    return Pos(x, y, min(z0, z1)) * Cylinder(r, abs(z1 - z0), align=(Align.CENTER, Align.CENTER, Align.MIN))
+
+
+def _outside_envelopes(P):
+    return {name: _box(bx) for iid, name, bx, it in item_boxes(P) if it.get("outside")}
+
+
+def access(P, solids):
+    """R-TOOL-ACCESS: every closure, hatch and T7-holder screw has a clear tool path from outside.
+
+    Tool path = the counterbore (closure screws) from the head seat to the outer face, then a cylinder of
+    closure.tool_d for 60 mm outside. A removable outside part (T7 holder, hatch cover) may cover a closure screw only
+    if its own screws are clear; anything else in the path (a lug, a tunnel, a fixed boss) fails."""
+    m = P.mech
+    c = m["closure"]
+    rf = m["rear_face"]
+    tool_r = c["tool_d"] / 2.0
+    tcov = m["gasket"]["groove_depth"] + 2.2
+    th = rf["t7_holder"]
+    depth = th["gap"] + P.parts["t7"]["size"][2] + th["shutter_t"]
+    groups = {"closure": [(f"CLOSURE_{i + 1}", bx, by, c["counterbore_depth"], 0.0, c["counterbore_d"] / 2) for i, (bx, by) in enumerate(c["bosses"])],
+              "hatch_cover": [(f"HATCH_M3_{i + 1}", sx, sy, -tcov, -tcov, None) for i, (sx, sy) in enumerate(rf["hatch"]["screws"])],
+              "t7_holder": [(f"T7_M3_{i + 1}", px, py, -depth, -depth, None) for i, (px, py) in enumerate(th["screws"])]}
+    blockers = {k: v for k, v in solids.items() if k in ("rear_shell", "hatch_cover", "t7_holder", "hood")}
+    blockers.update(_outside_envelopes(P))
+    removable = ("hatch_cover", "t7_holder")
+    found = {}
+    for g, screws in groups.items():
+        for sid, x, y, z_seat, z_face, rcb in screws:
+            path = _zcyl(x, y, z_face - 60.0, z_face, tool_r)
+            if rcb:
+                path = path + _zcyl(x, y, z_face - 0.01, z_seat - 0.05, rcb - 0.05)
+            hit = []
+            for name, solid in blockers.items():
+                if name == g:
+                    continue
+                if _vol(path & solid) > TOL_MM3:
+                    hit.append(name)
+            found[sid] = (g, hit)
+    rows, bad = [], []
+    own_clear = {g: all(not found[sid][1] for sid, *_ in groups[g]) for g in removable}
+    for sid, (g, hit) in found.items():
+        fixed = [h for h in hit if h not in removable or not own_clear[h]]
+        if fixed:
+            bad.append(f"{sid}: {', '.join(fixed)}")
+        elif hit:
+            rows.append(f"{sid}: remove {', '.join(hit)} first")
+    return {"id": "R-TOOL-ACCESS", "rule": f"every closure, hatch and T7-holder screw: clear tool path (counterbore, then d {c['tool_d']} for 60 mm) from outside",
+            "value_mm": bad or (rows or "all clear"), "limit_mm": "no fixed solid in a tool path; removable parts only over closure screws",
+            "result": "FAIL (model): " + "; ".join(bad) if bad else "PASS (model)",
+            "source": "mechanical.json closure, rear_face.hatch, rear_face.t7_holder; B-rep of the rear shell, hatch cover, T7 holder, hood"}
+
+
+def tripod_disc(P, solids):
+    """R-TRIPOD-DISC: nothing stands prouder than the tripod plinth inside the plate disc."""
+    tp = P.mech["rear_face"]["tripod"]
+    tx, ty = tp["c"]
+    ph = tp["plinth_h"]
+    disc = _zcyl(tx, ty, -ph - 80.0, -ph - 0.01, tp["plate_disc_d"] / 2)
+    blockers = {k: v for k, v in solids.items() if k in ("rear_shell", "hatch_cover", "t7_holder")}
+    blockers.update(_outside_envelopes(P))
+    hit = sorted(k for k, v in blockers.items() if _vol(disc & v) > TOL_MM3)
+    return {"id": "R-TRIPOD-DISC", "rule": f"tripod plate disc d {tp['plate_disc_d']} about the 1/4-20: no solid prouder than the plinth face ({ph} mm)",
+            "value_mm": hit or "none", "limit_mm": f"plinth d {tp['plinth_d']}, {ph} proud",
+            "result": "FAIL (model): " + ", ".join(hit) if hit else "PASS (model)",
+            "source": "mechanical.json rear_face.tripod; B-rep of the rear shell, hatch cover, T7 holder; outside envelopes"}

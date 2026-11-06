@@ -44,7 +44,10 @@
     "encoders": {
       "main": {
         "c": [200.5, 135.0],
-        "knob_d": 35.0
+        "knob_d": 35.0,
+        "knob_h": 14.0,
+        "skirt_gap": 0.5,
+        "_knob_note": "own printed knob (STL main_knob), seated skirt_gap above the PEC11R nut (STACK 5.8: skirt >= 0.5 over the nut)"
       },
       "volume": {
         "c": [200.5, 94.0],
@@ -89,47 +92,47 @@
     "ports": [
       {
         "id": "P1",
-        "x": 46.0,
+        "x": 43.5,
         "kind": "sma_pigtail"
       },
       {
         "id": "P2",
-        "x": 66.0,
+        "x": 63.5,
         "kind": "sma_pigtail"
       },
       {
         "id": "P3",
-        "x": 86.0,
+        "x": 83.5,
         "kind": "sma_pigtail"
       },
       {
         "id": "P4",
-        "x": 106.0,
+        "x": 103.5,
         "kind": "f_bulkhead"
       },
       {
         "id": "P5",
-        "x": 126.0,
+        "x": 123.5,
         "kind": "bnc_bulkhead"
       },
       {
         "id": "P6",
-        "x": 146.0,
+        "x": 143.5,
         "kind": "sma_pigtail"
       },
       {
         "id": "P7",
-        "x": 166.0,
+        "x": 163.5,
         "kind": "sma_k"
       },
       {
         "id": "P8",
-        "x": 186.0,
+        "x": 183.5,
         "kind": "sma_pigtail"
       },
       {
         "id": "RX1",
-        "x": 206.0,
+        "x": 203.5,
         "kind": "sma_cab01075"
       }
     ],
@@ -145,7 +148,7 @@
       "axis_y": 155.0,
       "axis_z": 69.0
     },
-    "_src": "port pitch 20 mm, types and the order P1..P8 + RX1: STACK 5.8 / 05 5.1",
+    "_src": "port pitch 20 mm, types and the order P1..P8 + RX1: STACK 5.8 / 05 5.1; the row starts at x 43.5 so that the RX1 bulkhead nut and washer (envelope: Samtec SMA-J-C-X-ST-BH4 hardware, parts.json sma_bulkhead_hw) clear the right FR4 wall of the RF bay (x 209.6) by 1 mm",
     "power_key": {
       "id": "PWR_KEY",
       "x": 158.0,
@@ -181,20 +184,21 @@
     "_src": "path 2 side exhaust (STACK 5.6, side TBD there): left wall downstream of the blower"
   },
   "bottom_face": {
+    "_ports_note": "rear-layer row above the external seam belt (z 9-19 plus margin, rule R-PANEL-FLAT) and below the plate edge (z 38.5)",
     "ports": [
       {
         "id": "USB_C_IN",
-        "x": 176.0,
-        "z": 7.0,
+        "x": 189.0,
+        "z": 24.0,
         "kind": "tbd",
         "w": 12.0,
         "h": 6.0,
-        "_note": "IP2368 sealed USB-C feedthrough, MPN TBD (MECH-07)"
+        "_note": "IP2368 sealed USB-C feedthrough, MPN TBD (MECH-07); internal 100 W PD lead to the IP2368 board at the top right, about 140 mm, route TBD"
       },
       {
         "id": "LAB_USB_A",
-        "x": 190.0,
-        "z": 7.0,
+        "x": 172.0,
+        "z": 24.0,
         "kind": "tbd",
         "w": 16.0,
         "h": 8.0,
@@ -202,7 +206,7 @@
       },
       {
         "id": "LAB_BUS",
-        "x": 178.0,
+        "x": 206.0,
         "z": 30.0,
         "kind": "tbd",
         "w": 16.0,
@@ -230,10 +234,11 @@
   },
   "rear_face": {
     "gx16": {
-      "c": [215.0, 27.0],
+      "c": [175.0, 25.0],
       "pad_t": 3.0,
       "pad_d": 22.0,
-      "_pad_note": "flat seat for the 18.8 mm hex nut (across corners 21.7)"
+      "_pad_note": "flat seat for the 18.8 mm hex nut (across corners 21.7)",
+      "_place_note": "left of the Q6A HDMI plug: the right-angle plug head and the HDMI cable bend take the space below the Q6A HDMI receptacle (layout hdmi_plug_ra, hdmi_route_rear)"
     },
     "tripod": {
       "c": [100.0, 70.0],
@@ -243,7 +248,11 @@
       "hole_d": 6.6,
       "behind": 3.0,
       "boss_d": 22.0,
-      "_src": "STACK D15 / 5.8 (captive 1/4-20 UNC steel nut 7/16 in AF, 11.3 AF pocket about 5.8 deep, outer wall <=1.0 with a 6.6 hole, >=3 behind the nut, 100% infill >=4 perimeters)"
+      "plinth_d": 23.0,
+      "plinth_h": 5.0,
+      "plate_disc_d": 50.0,
+      "_src": "STACK D15 / 5.8 (captive 1/4-20 UNC steel nut 7/16 in AF, 11.3 AF pocket about 5.8 deep, outer wall <=1.0 with a 6.6 hole, >=3 behind the nut, 100% infill >=4 perimeters)",
+      "_plinth_note": "the tripod or quick-release plate seats on a printed plinth (d 23, 5.0 proud; the nut pocket moves out with it, so the outer wall stays 1.0); inside the plate disc (d 50 about the 1/4-20, design reserve of this package) nothing else may stand prouder than the plinth face (rule R-TRIPOD-DISC): the hatch cover is 3.75 proud, the T7 gland moved out of the disc"
     },
     "hatch": {
       "rect": [116.0, 40.0, 22.0, 50.0],
@@ -255,16 +264,23 @@
       "_src": "STACK 5.8 / D15 service hatch"
     },
     "path1_intake": {
-      "rect": [205.0, 52.0, 21.0, 40.0],
+      "rect": [206.5, 52.0, 19.5, 40.0],
       "slot_w": 2.5,
       "slot_pitch": 5.0
     },
     "path1_exhaust": {
-      "rect": [165.0, 54.5, 36.0, 36.0],
+      "rect": [166.0, 48.0, 36.0, 36.0],
       "slot_w": 2.5,
-      "slot_pitch": 5.0
+      "slot_pitch": 5.0,
+      "_note": "centred on the Noctua NF-A4x10 of cooler A (fan centre x 184, y 66 = parts.json q6a_cooler_zone center_in_board)"
     },
-    "strap_lugs": [[14.0, 150.0], [216.0, 150.0]],
+    "strap_lugs": [[20.5, 150.0], [209.5, 150.0]],
+    "strap_lug": {
+      "w": 14.0,
+      "h": 10.0,
+      "proud": 6.0,
+      "_note": "solid lug printed with the rear shell; it must leave a clear tool path over the corner closure screws (rule R-TOOL-ACCESS), so the lugs sit inboard of the corner bosses 9 and 12"
+    },
     "strap_slots": {
       "w": 12.0,
       "x": 39.0,
@@ -272,10 +288,11 @@
       "_src": "STACK 5.8 (two slots <=12 for SmallRig PAC2456 in the rear half); on the left of the rear face so the left hand holds the unit while the right hand works the HMI column"
     },
     "t7_gland": {
-      "c": [104.5, 47.0],
+      "c": [150.0, 66.0],
       "w": 14.0,
       "h": 14.0,
-      "_src": "STACK 5.8 puts the T7 gland on the bottom edge; with the battery strip along the bottom it moves to the rear face next to the T7 holder (fit-report)"
+      "proud": 15.0,
+      "_src": "STACK 5.8 puts the T7 gland on the bottom edge; with the battery strip along the bottom it moves to the rear face, right of the service hatch next to the blue USB-A port, outside the tripod plate disc (fit-report); gland MPN TBD, so the body reserve inside (14 x 14 x 13) and outside (14 x 14, 15 proud) is an assumption"
     },
     "t7_holder": {
       "rect": [3.0, 3.0, 71.0, 92.0],
@@ -283,7 +300,11 @@
       "rail": 6.0,
       "shutter_t": 2.0,
       "screws": [[6.0, 20.0], [6.0, 80.0], [71.0, 20.0]],
-      "_src": "STACK 5.8 (holder 85 x 57 x 8, gap 3-5, reflective shutter); T7 stands vertical at the rear bottom-left, clear of the tripod plate (disc of 50 mm around the 1/4-20)"
+      "pad_d": 7.0,
+      "pad_h": 4.5,
+      "screw": "M3 x 14 ISO 14580 A2 TX10 from outside: head on the shutter face, through the holder rail (9.2) into a CNC Kitchen M3x5.7 insert in a pad printed on the rear face (insert hole 4.0 x 6.5, blind with 0.5 mm skin to the inside; 4.5 mm engagement)",
+      "_src": "STACK 5.8 (holder 85 x 57 x 8, gap 3-5, reflective shutter); T7 stands vertical at the rear bottom-left, clear of the tripod plate disc",
+      "_access_note": "the holder covers closure screws 1 and 2 (x 22 and 60 on the bottom edge), so it is fastened from outside and removed first when the enclosure is opened (rule R-TOOL-ACCESS); the earlier screws from inside were not reachable without opening the box"
     }
   },
   "closure": {
@@ -301,7 +322,9 @@
     "counterbore_depth": 3.0,
     "sealing_washer": "M3 bonded seal / EPDM washer under the head (MPN TBD)",
     "_src": "inserts CNC Kitchen M3x5.7 and ISO 14580 screws: STACK 2.9",
-    "_layout_note": "bosses hug the side walls (centre 4.5 mm from the outer surface, 9.5 mm from the corner-arc centre at the corners); no boss in the lower-left corner and along the left wall below y 99: the battery pack and the HF+ can reach the walls there (seam span about 100 mm, risk for T-07; fit-report 'closure_spans')"
+    "_layout_note": "bosses hug the side walls (centre 4.5 mm from the outer surface, 9.5 mm from the corner-arc centre at the corners); no boss in the lower-left corner and along the left wall below y 99: the battery pack and the HF+ can reach the walls there (longest seam span 121 mm, risk for T-07; fit-report 'closure_spans'); every screw needs a clear tool path from outside (R-TOOL-ACCESS): screws 1 and 2 lie under the T7 holder, which is removed first",
+    "tool_d": 8.0,
+    "_tool_note": "tool path: cylinder of the counterbore diameter from the head seat to the outer face, then tool_d (TX10 driver shank and fingers, design value) to 60 mm outside the enclosure"
   },
   "gasket": {
     "cord_d": 2.0,
@@ -327,7 +350,7 @@
         "wall": "top"
       },
       {
-        "c": [223.0, 30.0],
+        "c": [223.0, 15.0],
         "wall": "right"
       },
       {
@@ -340,7 +363,8 @@
     "mount_hole_d": 3.4,
     "riser_window": [197.5, 94.6, 26.0, 2.4],
     "_riser_window_note": "slot between the Q6A top edge (y 94.5) and the RF-bay bottom wall (y 97): the R44SF card-edge end (about 22 mm wide) is threaded through it; STACK 5.8 estimated about 26 x 20, check on the received riser (TBD)",
-    "hdmi_slot": [186.0, 30.0, 18.0, 6.0],
+    "notches_right": [[215.5, 26.5, 11.0, 7.0]],
+    "_notches_right_note": "open notch in the right edge of the plate extension for the HDMI cable (OD 5.2): the cable slides in from the side, so no plug has to pass the plate; the earlier closed slot x 186-204, y 30-36 lay under the BMS and over the straight plug",
     "bond_points": [
       {
         "id": "BOND-RF",
@@ -413,8 +437,9 @@
       {
         "id": "bms",
         "part": "daly_bms",
-        "box": [184.0, 14.0, 41.0, 35.0, 61.0, 10.0],
-        "mount": "plate_front"
+        "box": [175.0, 9.0, 41.0, 35.0, 61.0, 10.0],
+        "mount": "plate_front",
+        "_note": "left of the HDMI cable riser (hdmi_route_front_up) and below its run to the HDMI board"
       },
       {
         "id": "ip2368",
@@ -443,9 +468,9 @@
       },
       {
         "id": "tripod_boss",
-        "box": [89.0, 59.0, 2.5, 22.0, 22.0, 7.3],
+        "box": [89.0, 59.0, 2.5, 22.0, 22.0, 2.3],
         "mount": "rear_wall",
-        "_note": "boss inside the rear wall (the 1/4-20 nut pocket)"
+        "_note": "inside part of the 1/4-20 nut pocket: the boss starts on the 5 mm plinth outside, so only the nut end and the 3 mm behind it reach past the wall (z 2.5-4.8)"
       },
       {
         "id": "q6a",
@@ -453,10 +478,17 @@
         "mount": "plate_rear"
       },
       {
-        "id": "q6a_fan_duct",
+        "id": "cooler_a",
         "part": "q6a_cooler_zone",
-        "box": [162.1, 53.5, 2.5, 40.0, 40.0, 12.0],
-        "mount": "rear_wall"
+        "derived": "cooler_a",
+        "mount": "q6a",
+        "_note": "cooler A in three envelopes: Cu block on the SoC/LPDDR5 (mechanical.json cu_block), fin/spacer zone inside the 32 x 31 keep-in up to the fan face, Noctua NF-A4x10 with its board-side face cu_block.fan_above_board over the Q6A top face, centred on center_in_board (parts.json q6a_cooler_zone)"
+      },
+      {
+        "id": "q6a_fan_duct",
+        "box": [164.0, 46.0, 2.5, 40.0, 40.0, 7.9],
+        "mount": "rear_wall",
+        "_note": "plenum from the fan face (z 10.4) to the rear wall and the path-1 exhaust grille"
       },
       {
         "id": "usb_plug_bay",
@@ -465,10 +497,39 @@
         "keep_clear": true
       },
       {
-        "id": "hdmi_plug",
-        "box": [186.5, 12.0, 22.5, 16.5, 23.0, 10.0],
+        "id": "hdmi_plug_ra",
+        "box": [186.5, 24.0, 22.2, 24.5, 12.2, 11.0],
         "mount": "free",
-        "keep_clear": true
+        "keep_clear": true,
+        "_note": "right-angle HDMI A plug on the Q6A receptacle, cable leaving towards +x (assumption envelope, MPN TBD): a straight plug points at the bottom wall and leaves about 10 mm, too little for any bend of the 5.2 mm cable"
+      },
+      {
+        "id": "hdmi_route_rear",
+        "box": [211.0, 27.2, 25.0, 10.8, 5.6, 13.5],
+        "mount": "free",
+        "keep_clear": true,
+        "_note": "HDMI cable (OD 5.2) from the plug head to the plate notch: bend towards +z, axis radius hdmi_route.bend_r"
+      },
+      {
+        "id": "hdmi_route_front_up",
+        "box": [216.2, 27.2, 40.5, 5.6, 49.6, 10.8],
+        "mount": "free",
+        "keep_clear": true,
+        "_note": "through the plate notch, bend towards +y, up the right side under the CTRL board"
+      },
+      {
+        "id": "hdmi_route_front_turn",
+        "box": [210.8, 66.0, 45.7, 11.0, 10.8, 5.6],
+        "mount": "free",
+        "keep_clear": true,
+        "_note": "turn towards -x below the V1 vent thread"
+      },
+      {
+        "id": "hdmi_route_front_run",
+        "box": [146.2, 71.2, 45.7, 75.6, 5.6, 5.6],
+        "mount": "free",
+        "keep_clear": true,
+        "_note": "run to the right edge of the HDMI board between the blower/BMS and the ENC boards; HDMI board input position TBD (STACK D5)"
       },
       {
         "id": "hatch_parts",
@@ -477,8 +538,15 @@
       },
       {
         "id": "t7_gland_body",
-        "box": [97.5, 40.0, 2.5, 14.0, 14.0, 13.0],
+        "box": [143.0, 59.0, 2.5, 14.0, 14.0, 13.0],
         "mount": "rear_wall"
+      },
+      {
+        "id": "t7_gland_outside",
+        "box": [143.0, 59.0, -15.0, 14.0, 14.0, 15.0],
+        "mount": "outside",
+        "outside": true,
+        "_note": "gland dome nut and cable entry outside the rear face (assumption, MPN TBD)"
       },
       {
         "id": "v4l_a",
@@ -512,14 +580,8 @@
       {
         "id": "gx16",
         "part": "gx16_socket",
-        "box": [205.0, 17.0, 2.5, 20.0, 20.0, 22.0],
+        "box": [165.0, 15.0, 2.5, 20.0, 20.0, 22.0],
         "mount": "rear_wall"
-      },
-      {
-        "id": "ferrite_a",
-        "box": [163.5, 17.0, 2.5, 39.5, 20.0, 19.6],
-        "mount": "rear_wall",
-        "_note": "HDMI ferrite pocket 1 (Fair-Rite 0431164281 39.5 x 20 x 19.6, STACK 5.8 about 40 x 20 x 20); pocket 2: no 20 mm deep space left on the cable route in this layout (TBD, build/05 11)"
       },
       {
         "id": "pwr_key_body",
@@ -572,24 +634,31 @@
         "use": "RF board power / DC_CORE harness (JST PH) and U.FL to Lime RX1"
       }
     ],
+    "angle_clearance": 0.3,
+    "_angle_clearance_note": "the FR4 side walls run up to the top wall; where the top Al angle crosses a wall (right wall, x 209.6-211.2) both angle legs are notched out of the FR4 with this clearance (M-09)",
     "usb_socket_reserve": [40.0, 16.0, 9.0],
     "_usb_socket_src": "female end of the V4L extension lead (Lindy 36700 or a CH334F pigtail, STACK C5 / 2.10): no drawing read; 40 x 16 x 9 mm is an assumption (TBD: measure) used only by the bay packing check",
     "_note": "floor = plate, top side = top Al angle + top wall; FR4 walls on the left, bottom and right; the FR4 lid carries the modules (rf_lid mount); notches are cut at the lid edge of the bottom wall"
   },
   "angles": {
     "top": {
-      "x": [38.0, 214.0],
+      "x": [36.0, 214.0],
       "leg_plate": 12.0,
       "leg_wall": 15.0,
       "t": 2.0,
-      "holes_x": [46.0, 86.0, 120.0, 144.0, 206.0]
+      "holes_x": [53.5, 93.5, 133.5, 173.5, 193.5],
+      "hole_inset": 4.0
     },
     "right": {
       "y": [116.0, 146.0],
       "leg_plate": 12.0,
       "leg_wall": 15.0,
-      "t": 2.0
+      "t": 2.0,
+      "holes_y": [122.0, 131.0, 140.0],
+      "hole_inset": 4.0
     },
+    "fastener": "pem_f_m3_1",
+    "_fastener_note": "plate-leg screws M3 from the rear side through the angle into PEM F-M3-1 flush nuts in the plate (nothing proud on the front face, where the IP2368, the Lime and the HDMI board sit); holes hole_inset from the free edge of the plate leg so the PEM edge distance (6.0) holds; top-angle screws midway between the panel ports so the screw heads clear the bulkhead nuts",
     "material": "EN AW-6060 L angle 15 x 12 x 2 (cut from 20 x 20 x 2 or 2.0 mm 5754 bent), screwed to the plate (STACK 5.8 'стінка 4-5: ASA + 2 мм Al')"
   },
   "lime_pedestal": {
@@ -619,7 +688,14 @@
     "ram_pad": 1.0,
     "ram_recess": 0.8,
     "gap_tol": 0.1,
-    "_note": "cooler A: flat face on the SoC (paste or PTM7950), face over the LPDDR5 recessed by ram_recess for a Gelid pad (STACK 5.8: never one pad over SoC and RAM); SoC and LPDDR5 tops from the Q6A STEP V1.21 (parts.json q6a); gap_tol is an assumed package/flatness tolerance (TBD)"
+    "fan_above_board": 10.5,
+    "_note": "cooler A: flat face on the SoC (paste or PTM7950), face over the LPDDR5 recessed by ram_recess for a Gelid pad (STACK 5.8: never one pad over SoC and RAM); SoC and LPDDR5 tops from the Q6A STEP V1.21 (parts.json q6a); gap_tol is an assumed package/flatness tolerance (TBD); the block stays inside the keep-in of parts.json q6a_cooler_zone; fan_above_board = board top face to the fan's board-side face (>=10 per parts.json q6a_cooler_zone, +0.5 over the 9.65 mm 40-pin header); the fins/spacer between the 5 mm block and the fan and the fan bracket on the 58 x 49 holes are TBD with the purchased cooler"
+  },
+  "hdmi_route": {
+    "cable_od": 5.2,
+    "bend_r": 8.0,
+    "_src": "Adafruit 2420 OD 5.2 +-0.15 (STACK 2.6 / 11.5, drawing CHDMI-AM-AM-457); bend_r = cable-axis radius used for the keep-clear boxes, an assumption (no bend radius found for the 2420; check on the cable)",
+    "_status": "the route needs a right-angle plug at the Q6A (MPN TBD) and has no 20 mm deep space for the two Fair-Rite 0431164281 snap ferrites (39.5 x 20 x 19.6) or for the S-fold of about 250 mm of excess cable: rule R-HDMI-ROUTE OPEN (decision: angled plug, smaller ferrites, or STACK's FPC fallback Adafruit 3548/3550 + 3560)"
   },
   "pwr_bond": {
     "pad": 0.5,
@@ -678,8 +754,9 @@
       "kind": "m12_vent_threaded",
       "pad_t": 4.0,
       "pad_d": 16.0,
-      "_note": "battery compartment: front face below the display; the thread passes the front wall of the tray and ends in the foam layer, clear of the pack"
+      "foam_cutout_d": 13.0,
+      "_note": "battery compartment: front face below the display; the thread passes the front wall of the tray and ends in the 3 mm foam layer (z 54.2-57.2), clear of the pack; the foam gets a 13 mm hole at the vent axis so the membrane breathes into the pack compartment"
     }
   ],
-  "vents_src": "Amphenol LTW VENT-PS1YBK-O8002 (parts.json ltw_vent): through-hole 2.0-3.5 mm with nut, or threaded hole >= 4.0 mm; never facing up (STACK D15)"
+  "vents_src": "Amphenol LTW M12 plastic vents (parts.json ltw_vent): through-hole 2.0-3.5 mm with nut (VENT-PS1YBK-O8002), or threaded hole >= 4.0 mm without nut (VENT-PS1NBK-O8002, used for V1 and V2); never facing up (STACK D15)"
 }

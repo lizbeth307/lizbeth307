@@ -53,22 +53,49 @@ def write(out, rel, data, files):
     files[rel] = data
 
 
+def closed_depth(P):
+    """z extent of the closed unit (hood folded, plugs out): every fixed protrusion of the rear and front faces."""
+    m = P.mech
+    W, H, D = P.outer
+    rf = m["rear_face"]
+    th = rf["t7_holder"]
+    pec = P.parts["pec11r"]
+    knob = m["hmi"]["encoders"]["main"]
+    hh = m["top_face"]["hood_hinge"]
+    rear = {"strap lugs and tunnels": -rf["strap_lug"]["proud"], "tripod plinth": -rf["tripod"]["plinth_h"],
+            "T7 holder": -(th["gap"] + P.parts["t7"]["size"][2] + th["shutter_t"]),
+            "T7 gland outside (assumption)": -rf["t7_gland"]["proud"]}
+    front = {"front face": D, "hood hinge knuckles (hood folded on them)": hh["axis_z"] + 3.0,
+             "main knob": D + pec["washer"][2] + pec["nut_t"] + knob["skirt_gap"] + knob["knob_h"],
+             "volume knob (Adafruit 2055)": D + pec["washer"][2] + pec["nut_t"] + knob["skirt_gap"] + P.parts["knob_2055"]["h"]}
+    return rear, front
+
+
 def envelope_report(P):
     W, H, D = P.outer
     belt = P.mech["gasket"]["belt"]
     Wb, Hb = W + 2 * belt, H + 2 * belt      # over the seam belt
     area = 2 * (W * H + W * D + H * D)
     a15 = 2 * (D15[0] * D15[1] + D15[0] * D15[2] + D15[1] * D15[2])
+    rear, front = closed_depth(P)
+    z0, z1 = min(rear.values()), max(front.values())
+    Dc = z1 - z0
+    no_t7 = max(front.values()) - min(v for k, v in rear.items() if k != "T7 holder")
+    ok = Wb + Dc <= 300 and Hb + Dc <= 230
     return {
         "model": [W, H, D], "over_seam_belt": [Wb, Hb, D], "d15": list(D15),
         "growth_mm": [round(W - D15[0], 1), round(H - D15[1], 1), round(D - D15[2], 1)],
         "volume_l": round(W * H * D / 1e6, 3), "volume_l_d15": round(D15[0] * D15[1] * D15[2] / 1e6, 3),
         "surface_m2": round(area / 1e6, 4), "surface_m2_d15": round(a15 / 1e6, 4), "surface_ratio": round(area / a15, 3),
         "front_m2": round(W * H / 1e6, 4), "front_ratio": round(W * H / (D15[0] * D15[1]), 3),
+        "closed_bbox_mm": {"x": [-belt, W + belt], "y": [-belt, H + belt], "z": [z0, z1],
+                           "rear_protrusions_z": rear, "front_protrusions_z": front,
+                           "note": "GX16 cap, SMA/F/BNC caps and screw heads on the T7 holder are not counted (parts not chosen)"},
         "fire_bag_23x30cm": {
-            "rule": "flat bag: half-girths W + D <= 300 and H + D <= 230 mm over the seam belt (geometry estimate, model)",
-            "w_plus_d": round(Wb + D, 1), "h_plus_d": round(Hb + D, 1),
-            "result": "PASS (model)" if (Wb + D <= 300 and Hb + D <= 230) else "FAIL (model): charge on a non-flammable surface instead (STACK 5.8 fallback)"},
+            "rule": "flat bag: half-girths W + D <= 300 and H + D <= 230 mm, W/H over the seam belt, D = closed depth with every fixed protrusion (geometry estimate, model)",
+            "depth_mm": round(Dc, 1), "depth_without_t7_holder_mm": round(no_t7, 1),
+            "w_plus_d": round(Wb + Dc, 1), "h_plus_d": round(Hb + Dc, 1),
+            "result": "PASS (model)" if ok else "FAIL (model): charge on a non-flammable surface instead (STACK 5.8 fallback)"},
         "reason": ("height: battery strip (33.4) + middle row with the 112 x 56 HF+ can beside the Q6A + RF bay (60.5) along the top; "
                    "depth: rear layer 36 (Q6A with cooler and fan duct) + plate 2 + front layer 16 (HDMI board, path-2 channel) + display 7; "
                    "width: display glass 164.8 + HMI column 51 (build/05 1.1)"),
@@ -175,7 +202,7 @@ def cad_outputs(P, out, files):
     for side, fn in (("front", cad.front_parts), ("rear", cad.rear_parts)):
         for name, group in fn(P)[1]:
             feats[f"{side}.{name}"] = group
-    return vols, interference.check(P, parts, feats)
+    return vols, interference.check(P, parts, feats), [interference.access(P, parts), interference.tripod_disc(P, parts)]
 
 
 def libraries():
@@ -251,7 +278,8 @@ def build(out, vendor_cache=None, skip_cad=False, offline=False):
         "vendor_fit": vendor_fit["result"] if vendor_fit else "NOT RUN (no --vendor-cache)",
     }
     if not skip_cad:
-        vols, report["solid_interference"] = cad_outputs(P, out, files)
+        vols, report["solid_interference"], cad_rules = cad_outputs(P, out, files)
+        report["rules"] += cad_rules
         report["volumes_cm3"] = vols
         report["printed_mass_upper_bound_g"] = {
             "rule": f"solid CAD volume x {ASA_DENSITY} g/cm3 (PolyLite ASA, ISO 1183); real prints with 30 % infill weigh less",

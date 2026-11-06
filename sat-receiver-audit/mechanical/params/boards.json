@@ -26,9 +26,15 @@
       "hole_d": 3.2,
       "hole_keepout_d": 7.0,
       "max_height": 9.0,
-      "height_zones": [],
+      "height_zones": [
+        {
+          "rect": [0, 35, 42, 75],
+          "max_height": 9.5,
+          "why": "Pololu D36V50F12/F5 soldered flat (parts.json pololu_d36v50: 9.5 + mount_standoff 0.0); rule R-PWR-MODULES"
+        }
+      ],
       "thermal_bond": [[9, 4, 60, 23], [72, 4, 56, 23], [4, 38, 30, 30], [4, 70, 30, 30]],
-      "_thermal_bond_note": "placement contract for the PCB work: TPS7A4701 x2 and LT3045 x2 inside the two lower zones, D36V50F12 and D36V50F5 inside the two zones of the left leg (exposed pads stitched to bottom copper); each zone gets one Gelid pad of the same size",
+      "_thermal_bond_note": "placement contract for the PCB work: TPS7A4701 x2 and LT3045 x2 inside the two lower zones (their exposed pads stitched to bottom copper), D36V50F12 and D36V50F5 inside the two zones of the left leg; the Pololu modules are purchased carrier boards without an exposed pad: their GND/VIN/VOUT pins and the flat-mounted module board conduct into a copper pour that is stitched to bottom copper; each zone gets one Gelid pad of the same size",
       "modules_on_board": [
         {
           "id": "D36V50F12",

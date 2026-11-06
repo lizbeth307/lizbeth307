@@ -220,6 +220,80 @@ class Checks(unittest.TestCase):
                 self.assertTrue(c["result"].startswith("PASS"), c)
 
 
+class Review(unittest.TestCase):
+    """Checks added after the stage-3B review (MECH-R1..R11)."""
+
+    def _copy(self):
+        import copy
+        return copy.deepcopy(P)
+
+    def test_side_cut_outs_keep_off_the_seam_belt(self):
+        Q = self._copy()
+        Q.mech["bottom_face"]["ports"][0]["z"] = 7.0          # the old USB-C position overlapped the belt step
+        r = [x for x in rules.evaluate(Q) if x["id"] == "R-PANEL-FLAT"][0]
+        self.assertTrue(r["result"].startswith("FAIL"), r)
+
+    def test_pwr_modules_must_fit_the_board_envelope(self):
+        Q = self._copy()
+        Q.boards["boards"]["PWR"]["height_zones"] = []        # back to the 9.0 mm board envelope
+        r = [x for x in rules.evaluate(Q) if x["id"] == "R-PWR-MODULES"][0]
+        self.assertTrue(r["result"].startswith("FAIL"), r)
+        r = [x for x in rules.evaluate(P) if x["id"] == "R-PWR-MODULES"][0]
+        self.assertTrue(r["result"].startswith("PASS"), r)
+
+    def test_cooler_a_is_in_the_layout_and_clears_the_headers(self):
+        names = {n for _, n, _, _ in layout.item_boxes(P)}
+        self.assertTrue({"cooler_a.block", "cooler_a.fins", "cooler_a.fan", "q6a.hdr2x2", "q6a.uart5_plug"} <= names)
+        zt = layout.q6a_top_z(P)
+        fan = [b for _, n, b, _ in layout.item_boxes(P) if n == "cooler_a.fan"][0]
+        self.assertLessEqual(fan[5], zt - P.parts["q6a_cooler_zone"]["fan_min_above_board"] + 1e-9)
+
+    def test_rx1_nut_clears_the_rf_bay_wall(self):
+        rb = P.mech["rf_bay"]
+        wall_x = rb["rect"][0] + rb["rect"][2] - rb["wall_t"]
+        nut = [b for _, n, b, _ in layout.item_boxes(P) if n == "nut.RX1"][0]
+        self.assertGreaterEqual(wall_x - nut[3], 0.5)
+        xs = [p["x"] for p in P.mech["top_face"]["ports"]]
+        self.assertEqual({round(b - a, 6) for a, b in zip(xs, xs[1:])}, {20.0})
+
+    def test_angle_screws_sit_between_the_ports(self):
+        hw = P.parts["sma_bulkhead_hw"]
+        ports = [p["x"] for p in P.mech["top_face"]["ports"]]
+        for xh, _ in rules.angle_holes(P, "top"):
+            self.assertGreater(min(abs(xh - x) for x in ports), hw["washer_od"] / 2 + 3.0, xh)
+
+    def test_fire_bag_uses_the_closed_depth(self):
+        sys.path.insert(0, str(HERE))
+        import build
+        bag = build.envelope_report(P)["fire_bag_23x30cm"]
+        self.assertGreater(bag["depth_mm"], P.outer[2] + 20.0)
+        self.assertTrue(bag["result"].startswith("FAIL"), bag)
+
+
+@unittest.skipUnless(importlib.util.find_spec("build123d"), "build123d not installed")
+class ReviewCad(unittest.TestCase):
+    def test_every_closure_screw_is_reachable(self):
+        from srrx_mech import cad, interference
+        solids = {"rear_shell": cad.rear_shell(P), "hatch_cover": cad.hatch_cover(P), "t7_holder": cad.t7_holder(P), "hood": cad.hood(P)}
+        r = interference.access(P, solids)
+        self.assertTrue(r["result"].startswith("PASS"), r)
+        import copy
+        Q = copy.deepcopy(P)
+        Q.mech["rear_face"]["strap_lugs"] = [[14.0, 150.0], [216.0, 150.0]]   # the reviewed lugs buried screws 9 and 12
+        solids["rear_shell"] = cad.rear_shell(Q)
+        r = interference.access(Q, solids)
+        self.assertTrue(r["result"].startswith("FAIL"), r)
+        self.assertIn("CLOSURE_9", r["result"])
+        self.assertIn("CLOSURE_12", r["result"])
+
+    def test_rf_bay_walls_clear_the_top_angle(self):
+        from srrx_mech import cad, interference
+        walls, _ = cad.rf_bay(P)
+        inter = walls & cad.angle_top(P)
+        self.assertLessEqual(interference._vol(inter), interference.TOL_MM3)
+        self.assertIn(("angle_top", "rf_bay_walls"), interference.struct_pairs({"angle_top": 1, "rf_bay_walls": 1, "plate": 1}))
+
+
 class Writers(unittest.TestCase):
     def sheets(self):
         out = de.face_sheets(P) + [de.plate_sheet(P), de.rfbay_sheet(P), de.seam_sheet(P)]

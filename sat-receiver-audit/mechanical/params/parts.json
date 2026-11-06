@@ -42,6 +42,17 @@
         "j21_3p": {
           "uv": [16.43, 0.89, 24.05, 3.43],
           "top": 8.5
+        },
+        "hdr2x2": {
+          "uv": [59.01, 43.86, 64.09, 48.94],
+          "top": 7.5,
+          "src": "2x2 pin header, STEP product 000_4_4_5_1 read with build123d 2026-11-06 (same STEP V1.21); components/mechanical_thermal.md gives x 59-64, y 43.9-48.9, 7.5 mm"
+        },
+        "uart5_plug": {
+          "uv": [7.17, 48.64, 57.97, 55.85],
+          "top": 16.5,
+          "status": "assumption",
+          "src": "UART5 console pigtail plug on the 40-pin header pins 8/10 + GND (STACK 5.8 hatch content): which end of the header pin 1 is on was not read, so the reserve covers the whole header; 16.5 mm (header base 2.5 + a 14 mm crimp housing) is an assumption, TBD with the chosen pigtail"
         }
       },
       "soc": {
@@ -66,8 +77,11 @@
       "name": "Q6A cooler A footprint (stepped Cu block) incl. Noctua NF-A4x10 5V on top",
       "size": [40.0, 40.0, 16.5],
       "center_in_board": [43.0, 27.5],
+      "keep_in_uv": [26.0, 12.0, 58.0, 43.0],
+      "fan": [40.0, 40.0, 10.0],
+      "fan_min_above_board": 10.0,
       "status": "repo",
-      "src": "components/mechanical_thermal.md (heatsink base zone x 26-58, y 12-43 on the V1.21 drawing; Cu block <=35x35 per STACK 5.8); fan 40x40x10 per components/radxa_armor_7056a_heatsink_or_stepped_cu.md (Noctua spec 40x40x10 mm)"
+      "src": "components/mechanical_thermal.md (heatsink base inside x 26-58, y 12-43 on the V1.21 drawing, 32 x 31 keep-in; 'a fan above it at 10 mm or more can overhang' the neighbours; Cu block <=35x35 per STACK 5.8); fan 40x40x10 per components/radxa_armor_7056a_heatsink_or_stepped_cu.md (Noctua spec 40x40x10 mm)"
     },
     "lime": {
       "name": "LimeSDR Micro M.2 2280 (HW v1.2) on Al pedestal",
@@ -142,7 +156,9 @@
         "screw": "#2 or M2"
       },
       "status": "datasheet",
-      "src": "https://www.pololu.com/product/4091 (read 2026-10-24: 1 x 1 x 0.375 in = 25.4 x 25.4 x 9.5 mm, three 0.086 in holes for #2/M2; hole positions not given: TBD from the Pololu dimension drawing)"
+      "mount_standoff": 0.0,
+      "src": "https://www.pololu.com/product/4091 (read 2026-10-24 and 2026-11-06: 'Compact size: 1 x 1 x 0.375 in (25.4 x 25.4 x 9.5 mm)', three 0.086 in holes for #2/M2, connections on a 0.1 in grid, 1x12 or two 1x6 male header strips included, no thermal pad mentioned; the page does not say whether 9.5 includes pins; hole positions not given: TBD from the Pololu dimension drawing)",
+      "_mount_note": "mount_standoff 0.0 = module soldered flat on the PWR board through the 0.1 in holes (header plastic spacer removed), so the module height above the PWR top face is the 9.5 mm of the Pololu page; this needs a module bottom side free of parts (TBD: check the received module); on the supplied header with its plastic spacer the zone grows by the spacer height and the path-2 channel under the display shrinks (fit-report channel_path2)"
     },
     "ip2368_board": {
       "name": "IP2368 4S 100 W PD board (retail, charge-only BZ config)",
@@ -286,7 +302,7 @@
       "squeeze": [0.15, 0.3],
       "fill_max": 0.85,
       "status": "datasheet",
-      "src": "https://www.globaloring.com/o-ring-groove-design/ (read 2026-10-24: static seals typically 15-30 % squeeze; design for 60-85 % groove fill; face-seal table -1XX 0.103 in: depth .088-.090 in, width .140 in liquids)"
+      "src": "https://www.globaloring.com/o-ring-groove-design/ (read 2026-10-24, re-read 2026-11-06: static seals 'typically use about 15-30% squeeze'; 'design for roughly 60-85% groove fill, never 100%'; face-seal table -1XX 0.103 in: depth .088-.090 in, width .140 in +-.003 liquids)"
     },
     "pem_f_m3_1": {
       "name": "PEM F-M3-1 self-clinching flush nut (300-series stainless)",
@@ -309,6 +325,17 @@
       "status": "datasheet",
       "src": "https://catalogue.zygology.com/item/thru-hole-threaded-standoffs-types-so-soa-sos/ru-hole-threaded-standoffs-types-so-soa-sos-metric/so-m3-12zi (PEM family data on the SO-M3-12ZI page, read 2026-10-24: min sheet 1.00 mm, hole 4.22 +0.08, H 4.8, min distance hole C/L to edge 6.00 mm, sheet HRB 80 / HB 150 or less, 'installed with their heads flush with one surface of the mounting sheet'); the 3 mm length code is taken from the PEM SO family listing in a web search 2026-10-24: confirm the exact part number before ordering"
     },
+    "sma_bulkhead_hw": {
+      "name": "SMA bulkhead hardware envelope (1/4-36 UNS jam nut and lock washer), representative part Samtec SMA-J-C-X-ST-BH4",
+      "nut_af": 8.0,
+      "nut_ac": 9.24,
+      "nut_t": 2.0,
+      "washer_od": 10.15,
+      "washer_t": 0.5,
+      "panel_max": 3.8,
+      "status": "datasheet",
+      "src": "https://suddendocs.samtec.com/prints/sma-j-c-x-st-bh4-mkt.pdf (Rev H, read 2026-11-06, sheet 2: hex nut SMA-NUT-001 8.00 AF, 9.24 across corners, 2.00 thick, 1/4-36 UNS-2B; lock washer SMA-LWAS-001 OD 10.15, ID 6.50, 0.50 thick; sheet 1: max. panel thickness 3.80). Used only as the nut envelope inside the panel: the bulkheads of P1-P8, RX1, RX2 and REF IN are not chosen (MECH-07), their own hardware may differ (TBD)"
+    },
     "vhb_4910": {
       "name": "3M VHB 4910 clear acrylic foam tape (glass to bezel)",
       "t": 1.0,
@@ -328,10 +355,12 @@
       "nut_torque_Nm": 0.6,
       "ip": "IP67",
       "status": "datasheet",
-      "src": "https://configured-product-images.s3.amazonaws.com/Datasheets/PV0.pdf (rev. 3.16.2026, read 2026-11-06: panel cut-out 12.00 +0.20/-0.00, panel 1-6 mm, M12 x 0.75 thread, bezel 14.00, bezel 1.50 + actuator 1.50 above the panel, 19.0 +-1.0 below the bezel to the solder terminals, nut torque 0.6 Nm, IP67, SPST off-(on)); the nut size is not on the datasheet (layout reserve 17 x 3 is an assumption, TBD); the full ordering code is built with the E-Switch configurator (parts database)"
+      "src": "https://configured-product-images.s3.amazonaws.com/Datasheets/PV0.pdf (rev. 3.16.2026, read 2026-11-06: panel cut-out 12.00 +0.20/-0.00, panel 1-6 mm, M12 x 0.75 thread, bezel 14.00, bezel 1.50 + actuator 1.50 above the panel, 19.0 +-1.0 below the bezel to the solder terminals, nut torque 0.6 Nm, IP67, SPST off-(on)); the nut size is not on the datasheet (layout reserve 16 x 3 is an assumption, TBD); the full ordering code is built with the E-Switch configurator (parts database)"
     },
     "ltw_vent": {
-      "name": "Amphenol LTW VENT-PS1YBK-O8002 (M12x1.5 vent with nut, oleophobic ePTFE)",
+      "name": "Amphenol LTW VENT-PS1NBK-O8002 (M12x1.5 vent without nut, oleophobic ePTFE) for the threaded seats V1/V2; VENT-PS1YBK-O8002 is the variant with nut for through-holes 2.0-3.5 mm",
+      "mpn_threaded_seat": "VENT-PS1NBK-O8002",
+      "mpn_with_nut": "VENT-PS1YBK-O8002",
       "thread": "M12x1.5",
       "overall_h": 15.8,
       "thread_len": 10.0,
@@ -339,7 +368,7 @@
       "torque_kgfcm": [6.0, 8.0],
       "ip": "IP68 (2 m, 1 h), IP69K",
       "status": "datasheet",
-      "src": "Amphenol LTW Breathable Vent Series, M12 Plastic page, https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/7136/Amphenol%20LTW_Pressure%20Relief%20Vent%20Group.pdf (read 2026-11-06: screw M12x1.5, overall 15.8, thread 10.0, through-hole panel 2.0-3.5 mm, threaded hole min. 4.0 mm, torque 6.0-8.0 kgf.cm, IP68 2 m 1 h / IP69K); nut size not given (TBD)",
+      "src": "Amphenol LTW Breathable Vent Series, M12 Plastic page, https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/7136/Amphenol%20LTW_Pressure%20Relief%20Vent%20Group.pdf (read 2026-11-06: screw M12x1.5, overall 15.8, thread 10.0, through-hole panel 2.0-3.5 mm, threaded hole min. 4.0 mm, torque 6.0-8.0 kgf.cm, IP68 2 m 1 h / IP69K; re-read 2026-11-06, PDF page 7: part-number list marks VENT-PS1NBK-O8002 '* without nut' and VENT-PS1YBK-O8002 '** with nut', oleophobic O series > 1000 ml/min at 7 kPa for 002); nut size not given (TBD)",
       "threaded_hole_min": 4.0
     }
   }

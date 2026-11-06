@@ -34,15 +34,22 @@ def _feature(sh, f, ox=0.0, oy=0.0):
         sh.rect(u - f["w"] / 2, v - f["h"] / 2, f["w"], f["h"], "HIDDEN")
         sh.hole((u, v), f["d"], f"{f['id']} TBD", 2.0)
     elif k == "strap":
-        sh.rect(u - f["w"] / 2, v - f["h"] / 2, f["w"], f["h"], "HIDDEN")
+        sh.rect(u - f["w"] / 2, v - f["h"] / 2, f["w"], f["h"], "THIN")            # solid body printed with the shell
+        sh.rect(u - f["pw"] / 2, v - f["ph"] / 2, f["pw"], f["ph"], "HIDDEN")       # strap passage
         sh.label((u - f["w"] / 2, v + f["h"] / 2 + 1.0), f["id"], 1.8,
                  [(u - f["w"] / 2, v - f["h"] / 2 - 3.5), (u + f["w"] / 2 + 1.0, v)])
+    elif k == "pad":
+        sh.circle((u, v), f["d"] / 2, "THIN")
+        sh.hole((u, v), f["insert_d"], None)
     elif k == "tripod":
         sh.hole((u, v), f["d"], f"⌀{fmt(f['d'])} 1/4-20", 2.2)
         af = 11.3
         r = af / math.sqrt(3)
         pts = [(u + r * math.cos(math.radians(30 + 60 * i)), v + r * math.sin(math.radians(30 + 60 * i))) for i in range(6)]
         sh.poly(pts, True, "HIDDEN")
+        sh.circle((u, v), f["plinth_d"] / 2, "THIN")
+        sh.circle((u, v), f["disc_d"] / 2, "CENTER")
+        sh.text((u - f["disc_d"] / 2, v - f["disc_d"] / 2 - 3.0), f"диск площадки штатива ⌀{fmt(f['disc_d'])}: вище цоколя — нічого", 1.8)
     elif k == "closure":
         sh.circle((u, v), f["cb_d"] / 2, "HIDDEN")
         sh.hole((u, v), f["d"], None)
@@ -127,7 +134,8 @@ def face_sheets(P):
             t7 = P.mech["rear_face"]["t7_holder"]["rect"]
             W = P.outer[0]
             sh.rect(W - t7[0] - t7[2], t7[1], t7[2], t7[3], "HIDDEN")
-            sh.text((W - t7[0] - t7[2] + 2, t7[1] + 2), "тримач T7 (зовні, гвинти M3)", 2.0)
+            sh.text((W - t7[0] - t7[2] + 2, t7[1] + 12), "тримач T7 (зовні): 3 гвинти M3 ззовні", 1.8)
+            sh.text((W - t7[0] - t7[2] + 2, t7[1] + 9), "у вставки майданчиків T7_PAD; знімати першим", 1.8)
         _table(sh, F[face], 268.0, 222.0, "Таблиця отворів")
         sheets.append(sh)
     # top + bottom on one sheet, left + right on another
@@ -157,7 +165,8 @@ def plate_sheet(P):
     sh = Sheet("M-07", "Середня пластина (шасі), шаблон 1:1", "лазер/фрезер; отвори ±0.2; площинність ≤0.2 під Q6A, п'єдесталом і регуляторами",
                (420.0, 297.0), 1.0, (25.0, 60.0), pl["material"],
                ["Контур і отвори — з mechanical/params; DXF того самого аркуша — для різання. Різьбу в пластині не нарізати (STACK 5.8).",
-                "PWR1-7: гайки PEM F-M3-1 врівень з обох боків (отвір 4.37 +0.08); RF1-6: стійки PEM SO-M3-3, голівка врівень з лицьовою гранню (4.22 +0.08).",
+                "PWR1-7, AT1-5, AR1-3: гайки PEM F-M3-1 врівень з обох боків (отвір 4.37 +0.08); RF1-6: стійки PEM SO-M3-3, голівка врівень з лицьовою гранню (4.22 +0.08).",
+                "AT/AR: гвинти M3 Al-кутників з тильного боку; на лицьовій грані нічого не виступає (там IP2368, Lime, HDMI-плата).",
                 "UB1-2: потай M2.5 з лицьової грані в бобишку UFS; Q6A1-4: M2.5 крізь пластину в стійки 6 мм з тильного боку.",
                 "Ребра шляху 2 (смуги Al 1 x 3.5) — на лицьовій грані під HDMI-платою, уздовж потоку; точки з'єднання — голий метал.",
                 "Пунктир: контури плат, Q6A, бобишки UFS (тильна грань), п'єдесталу Lime і зон термопрокладок PWR."])
@@ -165,11 +174,10 @@ def plate_sheet(P):
     rw = pl["riser_window"]
     sh.rect(rw[0], rw[1], rw[2], rw[3], "CUT")
     sh.label((rw[0], rw[1] + rw[3] + 1), "проріз riser R44SF", 2.0)
-    hs = pl["hdmi_slot"]
-    sh.rrect(hs[0], hs[1], hs[2], hs[3], hs[3] / 2, "CUT")
     for (nx, ny, nw, nh) in pl.get("notches", []):
         sh.label((nx, ny - 3), "виріз під гайку кнопки живлення", 1.8)
-    sh.label((hs[0], hs[1] - 3), "проріз кабелю HDMI", 2.0)
+    for (nx, ny, nw, nh) in pl.get("notches_right", []):
+        sh.label((nx - 44, ny + nh / 2 - 1), "відкритий виріз кабелю HDMI", 1.8)
     holes = plate_holes(P)
     for h in holes:
         sh.hole(h["c"], h["d"], h["id"], 1.6)
@@ -215,8 +223,8 @@ def plate_sheet(P):
         line = f"{hrow['id']:7s} {fmt(hrow['c'][0] - dx, 2):>7s} {fmt(hrow['c'][1] - dy, 2):>7s} {fmt(hrow['d'], 2):>5s}  {hrow['use'][:44]}"
         sh.ptext((tx, ty), line, 1.75, layer="TABLE")
         ty -= 2.55
-    for key, label in (("riser_window", "проріз riser"), ("hdmi_slot", "проріз HDMI")):
-        rx, ry, rw_, rh_ = pl[key]
+    wins = [("проріз riser", pl["riser_window"])] + [("виріз HDMI (відкритий)", n) for n in pl.get("notches_right", [])]         + [("виріз під гайку кнопки", n) for n in pl.get("notches", [])]
+    for label, (rx, ry, rw_, rh_) in wins:
         sh.ptext((tx, ty), f"{label}: X {fmt(rx - dx)}..{fmt(rx + rw_ - dx)}, Y {fmt(ry - dy)}..{fmt(ry + rh_ - dy)}", 1.75, layer="TABLE")
         ty -= 2.55
     return sh
@@ -228,7 +236,8 @@ def angles_sheet(P):
     sh = Sheet("M-08", "Алюмінієві кутники роз'ємів (стінка 4-5 мм = ASA + 2 мм Al)", "кутник 20 x 20 x 2, розгортки полиць 1:1",
                (420.0, 297.0), 1.0, (25.0, 40.0), m["angles"]["material"],
                ["Полиця 'стінка' прилягає до стінки корпусу зсередини; отвори збігаються з отворами корпусу (M-02, M-03).",
-                "Полиця 'пластина' кріпиться до тильного боку пластини (M-07) гвинтами M3 з гайками; з'єднання — голий метал.",
+                "Полиця 'пластина' кріпиться до тильного боку пластини (M-07): гвинти M3 з тильного боку у врівень-гайки PEM F-M3-1 пластини; з'єднання — голий метал.",
+                "Гвинти верхнього кутника — посередині між портами, щоб їхні голівки минали гайки й шайби прохідників (⌀10.15 x 2.5, fit-report nut.*).",
                 "Прохідники: ≥3 повні витки різьби після кільця, стопорної шайби й гайки (STACK 5.8)."])
     at = m["angles"]["top"]
     L = at["x"][1] - at["x"][0]
@@ -245,8 +254,9 @@ def angles_sheet(P):
     oy2 = 100.0
     sh.rect(0, oy2, L, at["leg_plate"], "CUT")
     sh.text((0, oy2 + at["leg_plate"] + 3), "Верхній кутник: полиця 'пластина'", 2.6)
-    for xh in at["holes_x"]:
-        sh.hole((xh - at["x"][0], oy2 + at["leg_plate"] / 2), 3.4, None)
+    from .rules import angle_holes
+    for xh, yh in angle_holes(P, "top"):
+        sh.hole((xh - at["x"][0], oy2 + (yh - (H - m["wall"] - at["leg_plate"]))), 3.4, None)
     ar = m["angles"]["right"]
     L2 = ar["y"][1] - ar["y"][0]
     ox = 260.0
@@ -258,8 +268,8 @@ def angles_sheet(P):
     ox2 = 300.0
     sh.rect(ox2, 100.0, ar["leg_plate"], L2, "CUT")
     sh.text((ox2, 100.0 + L2 + 3), "'пластина'", 2.6)
-    for yh in (6, L2 / 2, L2 - 6):
-        sh.hole((ox2 + ar["leg_plate"] / 2, 100.0 + yh), 3.4, None)
+    for xh, yh in angle_holes(P, "right"):
+        sh.hole((ox2 + (xh - (W - m["wall"] - ar["leg_plate"])), 100.0 + yh - ar["y"][0]), 3.4, None)
     sh.dim_v(100.0, 100.0 + L2, ox, ox - 8)
     return sh
 
@@ -310,9 +320,24 @@ def rfbay_sheet(P):
     sh.dim_v(oy, oy + hz, w, w + 8)
     # side walls
     oy2 = oy + hz + 20.0
+    W, H, _ = P.outer
+    at = m["angles"]["top"]
+    cl = rb["angle_clearance"]
     for i, side in enumerate(s for s in rb["walls"] if s != "bottom"):
         ox = i * (h + 25.0)
-        sh.rect(ox, oy2, h, hz, "CUT")
+        wx = x if side == "left" else x + w - rb["wall_t"]
+        crossed = at["x"][0] - cl < wx + rb["wall_t"] and wx < at["x"][1] + cl
+        if crossed:
+            # u along y from the bay's bottom edge, v from the lid edge; notch both legs of the top angle (+ clearance)
+            u_w = H - m["wall"] - at["t"] - cl - y
+            u_p = H - m["wall"] - at["leg_plate"] - cl - y
+            v_w = (pr - at["leg_wall"] - cl) - rb["lid_z"][1]
+            v_p = (pr - at["t"] - cl) - rb["lid_z"][1]
+            sh.poly([(ox, oy2), (ox + h, oy2), (ox + h, oy2 + v_w), (ox + u_w, oy2 + v_w), (ox + u_w, oy2 + v_p),
+                     (ox + u_p, oy2 + v_p), (ox + u_p, oy2 + hz), (ox, oy2 + hz)], True, "CUT")
+            sh.label((ox + u_p - 30, oy2 + hz + 8), f"виріз під Al-кутник: {fmt(h - u_p)} x {fmt(hz - v_p)} і {fmt(h - u_w)} x {fmt(hz - v_w)}", 1.8)
+        else:
+            sh.rect(ox, oy2, h, hz, "CUT")
         sh.label((ox, oy2 + hz + 3), f"{'Ліва' if side == 'left' else 'Права'} стінка {fmt(h)} x {fmt(hz)}, 1 шт.", 2.6)
         sh.dim_h(ox, ox + h, oy2, oy2 - 5)
     tx, ty = 262.0, 150.0

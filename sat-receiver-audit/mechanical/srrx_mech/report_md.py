@@ -29,8 +29,9 @@ def render(P, report, params_short, boards_contract):
         f"| поверхня, m² | {fmt(e['surface_m2'], 4)} | {fmt(e['surface_m2_d15'], 4)} |",
         f"| лице, m² | {fmt(e['front_m2'], 4)} | {fmt(e['d15'][0] * e['d15'][1] / 1e6, 4)} |",
         f"| над поясом шва, мм | {_r(e['over_seam_belt'][0])} x {_r(e['over_seam_belt'][1])} x {_r(e['over_seam_belt'][2])} | — |",
-        f"| мішок 23 x 30 см (W+D ≤ 300, H+D ≤ 230) | {_r(e['fire_bag_23x30cm']['w_plus_d'])} / {_r(e['fire_bag_23x30cm']['h_plus_d'])}: "
-        f"{e['fire_bag_23x30cm']['result']} | — |",
+        f"| мішок 23 x 30 см (W+D ≤ 300, H+D ≤ 230; D — глибина закритого пристрою з усіма виступами"
+        f"{', ' + _r(e['fire_bag_23x30cm']['depth_mm']) + ' мм' if 'depth_mm' in e['fire_bag_23x30cm'] else ''}) | "
+        f"{_r(e['fire_bag_23x30cm']['w_plus_d'])} / {_r(e['fire_bag_23x30cm']['h_plus_d'])}: {e['fire_bag_23x30cm']['result']} | — |",
         "",
         "## Підсумок",
         "",
@@ -47,6 +48,13 @@ def render(P, report, params_short, boards_contract):
         "| ID | правило | значення, мм | межа | результат |",
         "|---|---|---|---|---|",
     ]
+    cb = e.get("closed_bbox_mm")
+    if cb:
+        i = out.index("## Підсумок")
+        out[i:i] = ["Глибина закритого пристрою (козирок складено, штекери вийнято), z від задньої зовнішньої грані:", ""] + [
+            f"- {k}: z {_r(v)}" for k, v in list(cb["rear_protrusions_z"].items()) + list(cb["front_protrusions_z"].items())] + [
+            "", f"Разом z {_r(cb['z'][0])}…{_r(cb['z'][1])}; без тримача T7 — {_r(e['fire_bag_23x30cm']['depth_without_t7_holder_mm'])} мм. "
+            f"Не враховано: {cb['note']}.", ""]
     for r in report["rules"]:
         out.append(f"| {r['id']} | {r['rule']} | {_r(r.get('value_mm', ''))} | {_r(r.get('limit_mm', ''))} | {r['result']} |")
     bp = report["rf_bay_packing"]
@@ -77,7 +85,8 @@ def render(P, report, params_short, boards_contract):
             f"стиск {fmt(g['squeeze'] * 100, 0)} %, заповнення {fmt(g['fill'] * 100, 0)} % — {g['result']}; довжина по осі паза {_r(g['cord_length_mm'])} мм, "
             f"замовити {g['cord_order_mm']} мм.", "",
             f"Гвинтів шва {cl['screws']}, середній проліт {_r(cl['mean_span_mm'])} мм, найдовший {_r(cl['max_span_mm'])} мм (лівий нижній кут: "
-            "батарея й екран HF+ доходять до стінок, бобишка не вміщується; рішення — стенд T-07).", ""]
+            "батарея й екран HF+ доходять до стінок, бобишка не вміщується; рішення — стенд T-07). Доступ інструмента до кожного гвинта — "
+            "рядок R-TOOL-ACCESS (гвинти 1 і 2 — після зняття тримача T7, який кріпиться ззовні).", ""]
     si = report.get("solid_interference")
     if si:
         out += ["## Перетини тіл (B-rep)", "", si["method"] + ".", "", f"Результат: {si['result']}.", ""]

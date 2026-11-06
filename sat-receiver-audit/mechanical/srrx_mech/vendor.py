@@ -8,7 +8,7 @@ from pathlib import Path
 STEP_NAMES = {
     "usb_stack": "484060001", "rj45": "LPJG0926HENL", "hdmi": "HDMI_1_2_5_1", "audio": "AUDIO-SMD_PJ-332D-6A_AUDIO-SMD__ASM",
     "usb_c": "USB-16PIN-TYPEC", "header40": "1555298", "j21_3p": "HDR-TH_3P-P2_54-V-M_PZ254V-11-0_ASM",
-    "soc": "BGA1287", "lpddr5": "BGA315",
+    "soc": "BGA1287", "lpddr5": "BGA315", "hdr2x2": "000_4_4_5_1",
 }
 
 
