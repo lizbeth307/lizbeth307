@@ -179,7 +179,10 @@ def check(scenario, result, expect, build_rows=None):
     if expect["boot_check"] == "BOOT_SELF_CHECK_OK" and build_rows is not None:
         live = (report.get("selftest") or {}).get("fail_or_blocked_rows")
         if live is None or sorted(live) != sorted(build_rows):
-            bad.append("live selftest FAIL/BLOCKED rows %r differ from the build-time rows %r" % (sorted(live or {}), sorted(build_rows)))
+            extra = {k: (live or {})[k] for k in sorted(set(live or {}) - set(build_rows))}
+            bad.append("live selftest FAIL/BLOCKED rows %r differ from the build-time rows %r (only live: %s; only build: %r; status %s)"
+                       % (sorted(live or {}), sorted(build_rows), json.dumps(extra)[:400], sorted(set(build_rows) - set(live or {})),
+                          (report.get("selftest") or {}).get("status")))
     return dict(scenario=scenario, status="MODEL_FAIL" if bad else "MODEL_PASS", expected=expect, observed=observed,
                 mismatches=bad, **result)
 

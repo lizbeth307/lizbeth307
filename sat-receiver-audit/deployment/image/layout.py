@@ -169,9 +169,14 @@ def mkfs_commands(layout, ids, devices, quota=False):
     parts = {p["role"]: p for p in layout["partitions"]}
     cmds = {"esp": ["mkfs.vfat", "-F", "32", "-S", str(layout["sector_size"]), "-n", parts["esp"]["fs_label"],
                     "-i", ids["esp_volume_id"], devices["esp"]]}
+    # recovery_kit.py writes only the data extents of the image: the target keeps its old bytes in
+    # the holes. The journal is therefore zeroed here (lazy_journal_init=0), so it is image data and
+    # a stale journal block from an earlier install can never be replayed. Inode tables may stay
+    # lazy: in block groups without ITABLE_ZEROED e2fsck ignores inodes past bg_itable_unused, the
+    # kernel allocates by the bitmaps and its ext4lazyinit thread zeroes them after the first mount.
     for role in ("root_a", "root_b", "data"):
         argv = ["mkfs.ext4", "-q", "-F", "-b", "4096", "-L", parts[role]["fs_label"], "-U", ids["fs_uuid"][role],
-                "-E", "hash_seed=" + ids["hash_seed"][role] + ",lazy_itable_init=1,lazy_journal_init=1"]
+                "-E", "hash_seed=" + ids["hash_seed"][role] + ",lazy_itable_init=1,lazy_journal_init=0"]
         if role == "data" and quota:
             argv[-1] += ",quotatype=prjquota"
             argv += ["-O", "quota,project", "-I", "256"]

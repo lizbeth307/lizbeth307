@@ -1084,10 +1084,10 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         manifest["entries"] = golden
         # bootctl install writes loader/random-seed; one golden image goes to many units, so no unit
         # may inherit it. systemd-boot-random-seed.service writes a fresh one on the first boot.
-        seed = root_b / "boot/efi/loader/random-seed"
-        manifest["esp_random_seed"] = "removed from the golden image" if seed.exists() else "absent"
-        if seed.exists():
-            seed.unlink()
+        random_seed = root_b / "boot/efi/loader/random-seed"
+        manifest["esp_random_seed"] = "removed from the golden image" if random_seed.exists() else "absent"
+        if random_seed.exists():
+            random_seed.unlink()
         manifest["esp"] = esp_inventory(root_b / "boot/efi")
         manifest["boot_config"] = config
         manifest["cmdline_sha256"] = cmdline_sha

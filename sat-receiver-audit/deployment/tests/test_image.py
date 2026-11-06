@@ -71,6 +71,8 @@ class LayoutTests(unittest.TestCase):
         cmds = layoutlib.mkfs_commands(self.layout, self.ids, {r: "/dev/loop9p%d" % i for i, r in enumerate(layoutlib.ROLES, 1)})
         self.assertEqual(cmds["esp"][:5], ["mkfs.vfat", "-F", "32", "-S", "4096"])
         self.assertIn(self.ids["fs_uuid"]["root_b"], cmds["root_b"])
+        for role in ("root_a", "root_b", "data"):  # the journal is image data: the write leaves holes untouched
+            self.assertIn(",lazy_journal_init=0", cmds[role][cmds[role].index("-E") + 1])
         self.assertNotIn("quota,project", cmds["data"])
         self.assertIn("quota,project", layoutlib.mkfs_commands(self.layout, self.ids, {r: "x" for r in layoutlib.ROLES}, quota=True)["data"])
 

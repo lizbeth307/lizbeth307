@@ -519,7 +519,7 @@ def smoke_report(timeout=900, root=Path("/")):
         live = selftest.run_offline(root, "controller", DEPLOYMENT / "receive-only-policy.json", DEPLOYMENT.parent,
                                     cmdline_sha256=hashlib.sha256(line.encode()).hexdigest())
         report["selftest"] = {"status": live.get("status"), "counts": live.get("counts"), "fail_or_blocked_rows": fail_or_blocked_rows(live)}
-    except (OSError, ValueError, KeyError, RuntimeError, subprocess.SubprocessError) as exc:
+    except (ImportError, OSError, ValueError, KeyError, RuntimeError, subprocess.SubprocessError) as exc:
         report["selftest"] = {"status": "unavailable: " + type(exc).__name__ + ": " + str(exc)[:300]}
     print(SMOKE_BEGIN + json.dumps(report, sort_keys=True) + SMOKE_END, flush=True)
     return 0

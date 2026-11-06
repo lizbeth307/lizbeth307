@@ -94,7 +94,8 @@ def make_map(image, layout_sector=4096):
             rows.append([offset, length, digest.hexdigest()])
     return {"schema_version": 1, "format": "srrx-extent-map", "image": Path(image).name, "image_bytes": size,
             "sector_size": layout_sector, "data_bytes": sum(r[1] for r in rows), "extents": rows,
-            "holes": "read as zero in the image; a write leaves them untouched on the target (free filesystem space)"}
+            "holes": "read as zero in the image; a write leaves them untouched on the target (free filesystem space; "
+                     "the ext4 journals are zeroed image data, mkfs.ext4 -E lazy_journal_init=0)"}
 
 
 def load_map(path):
