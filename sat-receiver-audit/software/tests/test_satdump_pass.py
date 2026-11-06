@@ -3,10 +3,14 @@
 No SatDump binary runs here: the unit runner is replaced, and the products are synthetic PNGs.
 """
 from datetime import datetime, timezone
+import errno
 import json
 import os
 from pathlib import Path
+import shlex
+import stat
 import struct
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -14,7 +18,9 @@ from unittest import mock
 import zlib
 
 from srrx import baseband as bb
-from srrx import decoder_policy, passes, satdump_pass as sp
+from srrx import decoder_policy, pass_jobs, passes, satdump_pass as sp
+
+SOFTWARE = Path(__file__).resolve().parents[1]
 
 START = 1_800_000_000.0
 METEOR3, METEOR4, NOAA, LRPT_OTHER = 40001, 40002, 40003, 40004
@@ -79,14 +85,44 @@ class WindowTests(unittest.TestCase):
         self.assertIsNone(sp.window_at(windows, START + 3600 - 70))
         self.assertEqual(sp.window_at(windows, START + 12000 + 700)["norad_id"], METEOR4)
 
-    def test_load_plan_checks_the_saved_plan(self):
+    @unittest.skipUnless(os.name == "posix", "plan owner and mode checks need POSIX")
+    def test_load_plan_reads_only_plans_of_the_plan_unit(self):
+        self.assertEqual((sp.PLAN_ROOT, sp.PLAN_WRITER), (str(pass_jobs.PLAN_ROOT), pass_jobs.UNIT_USER))
         with tempfile.TemporaryDirectory() as directory:
-            path = Path(directory) / "0123456789abcdef.json"
+            root = Path(directory).resolve() / "plans"
+            root.mkdir(mode=0o750)
+            os.chmod(root, 0o2750)
+            path = root / "0123456789abcdef.json"
             path.write_text(json.dumps(plan()))
-            self.assertEqual(sp.load_plan(path)["kind"], "srrx_pass_plan")
-            path.write_text(json.dumps(dict(plan(), kind="other")))
-            with self.assertRaisesRegex(sp.PassRefused, "PLAN_INVALID"):
-                sp.load_plan(path)
+            os.chmod(path, 0o640)
+            writer = os.geteuid()  # the test user stands in for srrx-passes
+            with mock.patch.object(sp, "PLAN_ROOT", str(root)), \
+                    mock.patch.object(sp, "_plan_writer_uid", lambda: writer):
+                self.assertEqual(sp.load_plan(path)["kind"], "srrx_pass_plan")
+                path.write_text(json.dumps(dict(plan(), kind="other")))
+                with self.assertRaisesRegex(sp.PassRefused, "PLAN_INVALID"):
+                    sp.load_plan(path)
+                path.write_text(json.dumps(plan()))
+                # Any JSON elsewhere, under another name, writable by others or of another owner: refused.
+                other = Path(directory) / "0123456789abcdef.json"
+                other.write_text(json.dumps(plan()))
+                for candidate in (other, root / "plan.json", root / ".." / "plans" / path.name):
+                    with self.subTest(candidate=str(candidate)), self.assertRaisesRegex(sp.PassRefused, "PLAN_NOT_FROM_PLAN_UNIT"):
+                        sp.load_plan(candidate)
+                os.chmod(path, 0o660)
+                with self.assertRaisesRegex(sp.PassRefused, "PLAN_NOT_FROM_PLAN_UNIT"):
+                    sp.load_plan(path)
+                os.chmod(path, 0o640)
+                os.chmod(root, 0o2770)
+                with self.assertRaisesRegex(sp.PassRefused, "PLAN_NOT_FROM_PLAN_UNIT"):
+                    sp.load_plan(path)
+                os.chmod(root, 0o2750)
+            with mock.patch.object(sp, "PLAN_ROOT", str(root)), \
+                    mock.patch.object(sp, "_plan_writer_uid", lambda: writer + 1):
+                with self.assertRaisesRegex(sp.PassRefused, "PLAN_NOT_FROM_PLAN_UNIT"):
+                    sp.load_plan(path)
+        with self.assertRaisesRegex(sp.PassRefused, "PLAN_NOT_FROM_PLAN_UNIT"):
+            sp.load_plan("/tmp/0123456789abcdef.json")
 
 
 class CommandTests(unittest.TestCase):

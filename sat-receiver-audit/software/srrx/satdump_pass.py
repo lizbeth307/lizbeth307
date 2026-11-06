@@ -24,8 +24,14 @@ build/07-pz-vstanovlennia.md section 11, build/12-revision-v2.1.md, build/15 dec
   at 1aedd60 binds INADDR_ANY (src-core/common/net/udp.h; the +lab loopback patch of
   deployment/recipes/satdump is a second layer).
 - run_decode(): decoder_policy.satdump_plan (installation, metadata, scope), the unit, a
-  bounded output scan that fails on "CALCEPH ERROR", sanitized PNG products only
-  (decoder_policy.satdump_publish), and then the baseband is deleted, whatever the outcome.
+  bounded output scan that fails on "CALCEPH ERROR", the baseband deleted before the sanitized
+  PNG products are published (decoder_policy.satdump_publish), and deleted whatever the outcome.
+- The work tree <products>/.satdump-<id> is made 2770 whatever the caller's umask
+  (make_work_dir), for the decode and the live unit alike. The caller (labd) must be a member
+  of group srrx-satdump: it reads the unit's PNGs and removes the unit's directories.
+- load_plan() reads only /var/lib/srrx/plans/<16 hex>.json written by srrx-passes@.service
+  (srrx.pass_jobs: directory 2750 srrx-passes:labd, plans 0640), so the window source is the
+  isolated plan unit, not any JSON a caller names.
 
 labd does not schedule these jobs yet (an open integration item): the CLI below is for an
 administrator, and the polkit rule that would let labd start the transient units is not
@@ -52,7 +58,11 @@ SATDUMP = "/usr/bin/satdump"
 UNIT_USER = "srrx-satdump"
 BASEBAND_GROUP = "srrx-bb"
 EMPTY_WORKDIR = "/var/lib/srrx-satdump/empty"
-DATA_ROOT = "/data"
+DATA_ROOT = baseband.DATA_ROOT
+# srrx.pass_jobs PLAN_ROOT / UNIT_USER (tests check the equality; no import of the labd side here).
+PLAN_ROOT = "/var/lib/srrx/plans"
+PLAN_WRITER = "srrx-passes"
+WORK_MODE = 0o2770
 DECODE_MAX_S = 1800
 LIVE_EXTRA_S = 120
 OUTPUT_LIMIT = 64 * 1024
@@ -130,13 +140,38 @@ def window_at(windows, now):
     return None
 
 
+def _plan_writer_uid():
+    import pwd  # POSIX only, as the plan unit
+    try:
+        return pwd.getpwnam(PLAN_WRITER).pw_uid
+    except KeyError:
+        _refuse("PLAN_WRITER_UNKNOWN")
+
+
 def load_plan(path):
-    """A saved plan file (regular, <= 2 MiB), checked by passes.validate_plan."""
+    """A plan of srrx-passes@.service: PLAN_ROOT/<16 hex>.json, regular, <= 2 MiB, checked by passes.validate_plan.
+
+    time_verified and the pass times are the plan unit's statement, so the file must come from
+    that unit: the directory and the file owned by PLAN_WRITER and writable by nobody else.
+    """
+    path = Path(path)
+    if path.parent != Path(PLAN_ROOT) or not re.fullmatch(r"[0-9a-f]{16}\.json", path.name):
+        _refuse("PLAN_NOT_FROM_PLAN_UNIT")
+    writer = _plan_writer_uid()
+    try:
+        directory = os.lstat(PLAN_ROOT)
+    except OSError:
+        _refuse("PLAN_NOT_FROM_PLAN_UNIT")
+    if not stat.S_ISDIR(directory.st_mode) or directory.st_uid != writer or directory.st_mode & 0o022:
+        _refuse("PLAN_NOT_FROM_PLAN_UNIT")
     descriptor = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
                          | getattr(os, "O_CLOEXEC", 0))
     with os.fdopen(descriptor, "rb") as stream:
-        if not stat.S_ISREG(os.fstat(stream.fileno()).st_mode):
+        info = os.fstat(stream.fileno())
+        if not stat.S_ISREG(info.st_mode):
             _refuse("PLAN_NOT_REGULAR_FILE")
+        if info.st_uid != writer or info.st_mode & 0o022 or info.st_nlink != 1:
+            _refuse("PLAN_NOT_FROM_PLAN_UNIT")
         data = stream.read(passes.MAX_PLAN_BYTES + 1)
     if len(data) > passes.MAX_PLAN_BYTES:
         _refuse("PLAN_SIZE_LIMIT")
@@ -217,19 +252,46 @@ def systemd_run_argv(kind, ident, properties, argv):
     return command + ["--"] + list(argv)
 
 
+def make_work_dir(work):
+    """Create one new work tree with mode WORK_MODE whatever the umask, or refuse.
+
+    mkdir() masks its mode with the caller's umask (labd has none, a shell 022), so the mode is
+    set by chmod() and read back. The setgid bit survives chmod only when the directory's group
+    (srrx-satdump, inherited from the 2770 products directory) is one of the caller's groups:
+    a caller outside group srrx-satdump gets WORK_DIR_MODE here, not a unit that cannot write.
+    """
+    work = Path(work)
+    os.mkdir(work, 0o700)
+    try:
+        os.chmod(work, WORK_MODE)
+        info = os.lstat(work)
+        if not stat.S_ISDIR(info.st_mode) or stat.S_IMODE(info.st_mode) != WORK_MODE:
+            _refuse("WORK_DIR_MODE")
+    except BaseException:
+        os.rmdir(work)
+        raise
+    return work
+
+
 def live_command(window_value, port, *, executable=SATDUMP, products_root=None, ident=None):
     """(unit ident, work dir, full systemd-run argv) of the live SatDump unit for one window.
 
-    The caller starts it before labrx.run_baseband(..., live_port=port) and publishes the
-    work tree's PNGs with decoder_policy.satdump_publish afterwards; RuntimeMaxSec bounds it
-    to the window plus LIVE_EXTRA_S. labd does not orchestrate this yet.
+    Creates the new work dir (make_work_dir): BindPaths= of the unit needs it to exist. The
+    caller starts the unit before labrx.run_baseband(..., live_port=port), publishes the work
+    tree's PNGs with decoder_policy.satdump_publish afterwards and removes the tree;
+    RuntimeMaxSec bounds the unit to the window plus LIVE_EXTRA_S. labd does not orchestrate
+    this yet.
     """
     checked = baseband.validate_window(window_value)
     ident = ident if ident is not None else os.urandom(8).hex()
     work = Path(products_root if products_root is not None else DATA_ROOT + "/products/satdump") / (".satdump-" + ident)
     seconds = int(checked["end_unix_s"] - checked["start_unix_s"]) + LIVE_EXTRA_S
     properties = unit_properties("live", ident, work_dir=work, runtime_max_s=seconds)
-    return ident, work, systemd_run_argv("live", ident, properties, live_argv(executable, checked, work / "out", port))
+    argv = systemd_run_argv("live", ident, properties, live_argv(executable, checked, work / "out", port))
+    if work.exists() or work.is_symlink():
+        _refuse("OUTPUT_EXISTS")
+    make_work_dir(work)
+    return ident, work, argv
 
 
 def run_bounded(argv, timeout_s):
@@ -283,7 +345,10 @@ def run_decode(store, recording_id, installation, products_root, *, scope=None, 
                work_root=None):
     """Decode one recording into sanitized PNG products; the baseband is deleted in every case.
 
-    Returns decoder_policy.satdump_publish's report. Refusals are PassRefused or
+    After a successful unit run the baseband is deleted first and the products are published
+    second, so the report's input_iq_deleted_after_decode states a completed deletion; a failed
+    deletion publishes nothing (the sweep removes the file later). Returns
+    decoder_policy.satdump_publish's report. Refusals are PassRefused or
     decoder_policy.DecoderRefused codes.
     """
     from . import decoder_policy
@@ -291,6 +356,7 @@ def run_decode(store, recording_id, installation, products_root, *, scope=None, 
     products_root = Path(products_root)
     work = Path(work_root if work_root is not None else products_root) / (".satdump-" + ident)
     target = products_root / recording_id
+    deleted = False
     try:
         meta, identity = store.load(recording_id)
         plan = decoder_policy.satdump_plan(meta, installation, scope=scope)
@@ -298,7 +364,7 @@ def run_decode(store, recording_id, installation, products_root, *, scope=None, 
             _refuse("OUTPUT_EXISTS")
         executable = decoder_policy.satdump_executable(installation)
         input_path = store.data_path(recording_id)
-        os.mkdir(work, 0o2770)  # setgid group of the parent: the unit (group srrx-satdump/srrx-bb) writes
+        make_work_dir(work)  # 2770, setgid group srrx-satdump of the parent: the unit writes out/ there
         try:
             probe = systemd_run_argv("probe", ident, unit_properties("decode", ident, work_dir=work,
                                                                        input_path=input_path, runtime_max_s=60),
@@ -317,11 +383,14 @@ def run_decode(store, recording_id, installation, products_root, *, scope=None, 
                 decoder_policy._refuse("SATDUMP_CALCEPH_ERROR")
             if store.identity(recording_id) != identity:
                 decoder_policy._refuse("SOURCE_CHANGED_DURING_DECODE")
-            return decoder_policy.satdump_publish(work / "out", target, plan, scope=scope)
+            store.delete(recording_id)  # raises on failure: nothing is published with a false report
+            deleted = True
+            return decoder_policy.satdump_publish(work / "out", target, plan, input_iq_deleted=True, scope=scope)
         finally:
             _remove_tree(work)
     finally:
-        store.delete(recording_id)  # after decode, or a refused one: never kept for later
+        if not deleted:
+            store.delete(recording_id)  # after a refused decode as well: never kept for later
 
 
 def _remove_tree(path):
@@ -345,22 +414,31 @@ def _remove_tree(path):
 def tmpfiles():
     """tmpfiles.d text: the empty root-owned SatDump working directory and the baseband class directory."""
     return ("# SR-RX SatDump units (srrx.satdump_pass.tmpfiles): an empty, root-owned working directory and the\n"
-            "# products directory, setgid " + UNIT_USER + " so the unit writes its work tree there.\n"
+            "# products directory, setgid " + UNIT_USER + " so the unit writes its work tree there; labd must be a\n"
+            "# member of group " + UNIT_USER + " (it reads the unit's PNGs and removes its work tree).\n"
             "d /var/lib/srrx-satdump 0755 root root -\n"
             "d " + EMPTY_WORKDIR + " 0555 root root -\n"
             "d " + DATA_ROOT + "/products/satdump 2770 labd " + UNIT_USER + " -\n" + baseband.tmpfiles(DATA_ROOT))
 
 
 def sweep_units():
-    """srrx-baseband-sweep.service/.timer text: sweep() every 15 min and after boot (24 h rule)."""
+    """srrx-baseband-sweep.service/.timer text: sweep() every 15 min and after boot (24 h rule).
+
+    The sandbox is the one StorageGuard can work in: python3 without -I (-I implies -E and
+    would drop PYTHONPATH; -P and -s keep the working directory and the user site out), the
+    whole bound mount writable (ProtectSystem=strict remounts it read-only, and a nested
+    ReadWritePaths= bind is a foreign mount to the guard), and /dev visible (the guard stats
+    /dev/disk/by-uuid and the mount source) with DevicePolicy=closed denying every open().
+    """
     service = ("[Unit]\nDescription=SR-RX LRPT baseband sweep (delete >= 24 h, incomplete or invalid recordings)\n"
                "RequiresMountsFor=" + DATA_ROOT + "\n\n[Service]\nType=oneshot\nUser=labd\nGroup=" + BASEBAND_GROUP + "\n"
                "EnvironmentFile=/etc/srrx/baseband.env\n"
-               "ExecStart=/usr/bin/python3 -I -B -m srrx.baseband sweep --storage-root ${SRRX_BB_ROOT} "
-               "--storage-device ${SRRX_BB_DEVICE}\nEnvironment=PYTHONPATH=/opt/srrx/software\n"
-               "ReadWritePaths=" + DATA_ROOT + "/" + baseband.CLASS_DIR + "\nProtectSystem=strict\nProtectHome=yes\n"
+               "Environment=PYTHONPATH=/opt/srrx/software PYTHONDONTWRITEBYTECODE=1\nWorkingDirectory=/\n"
+               "ExecStart=/usr/bin/python3 -P -s -B -m srrx.baseband sweep --storage-root " + DATA_ROOT + " "
+               "--storage-device ${SRRX_BB_DEVICE}\n"
+               "ReadWritePaths=" + DATA_ROOT + "\nProtectSystem=strict\nProtectHome=yes\nPrivateTmp=yes\n"
                "PrivateNetwork=yes\nIPAddressDeny=any\nRestrictAddressFamilies=AF_UNIX\nNoNewPrivileges=yes\n"
-               "PrivateDevices=yes\nTimeoutStartSec=120\n")
+               "DevicePolicy=closed\nCapabilityBoundingSet=\nTimeoutStartSec=120\n")
     timer = ("[Unit]\nDescription=SR-RX LRPT baseband sweep every 15 min\n\n[Timer]\nOnBootSec=2min\n"
              "OnUnitActiveSec=15min\nAccuracySec=1min\nPersistent=false\n\n[Install]\nWantedBy=timers.target\n")
     return {"etc/systemd/system/srrx-baseband-sweep.service": service,

@@ -1774,6 +1774,10 @@ def check_17(ctx, r):
     r.note("proc_cmdline_is_RX-17-proc")
 
 
+# v2.1: only satdump-weather is installation-gated (UNAVAILABLE_* offline); every other gated preset stays DISABLED_*.
+_INSTALLATION_GATED = frozenset(("satdump-weather",))
+
+
 def check_s1(ctx, r):
     module = _target_module(ctx, r, "decoder_policy")
     if module is None:
@@ -1781,7 +1785,8 @@ def check_s1(ctx, r):
     available = module.availability()  # offline: no installation record, so nothing may read as accepted
     for preset in ctx.policy["decoder_gated_presets"]:
         value = available.get(preset)
-        if type(value) is not str or not value.startswith(("DISABLED", "UNAVAILABLE")):
+        allowed = ("DISABLED", "UNAVAILABLE") if preset in _INSTALLATION_GATED else ("DISABLED",)
+        if type(value) is not str or not value.startswith(allowed):
             r.fail("software/srrx/decoder_policy.py", "gated_preset_enabled", preset)
 
 

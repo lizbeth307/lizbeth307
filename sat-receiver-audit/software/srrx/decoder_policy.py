@@ -5,12 +5,13 @@ Metadata binds an approved recording to its digest; it is not a content classifi
 EGC/DSC are unavailable: no unverified packet format is parsed by this module.
 
 satdump-weather (v2.1, build/15 decision 6) is installation-gated, not disabled: an accepted
-record binds the SatDump ELF, the exact plugin set (deployment/recipes/satdump allowlist),
-the five allowlisted pipeline files and the packaged config (kepler_update_interval Never)
-by SHA256; satdump_plan() accepts only an srrx.baseband recording (Meteor-M LRPT, ci16
-256 kS/s, made by labrx under the v2.1 policy) for the pipelines of baseband.PIPELINES, and
-satdump_publish() releases only sanitized PNG images and a fixed-schema report. The unit
-and argv are srrx.satdump_pass; nothing here launches SatDump.
+record binds the SatDump ELF, libsatdump_core.so, the exact plugin set (deployment/recipes/satdump
+allowlist), the five allowlisted pipeline files, a digest of the whole resources tree, the
+packaged config (kepler_update_interval Never) and the deployed recipe by SHA256;
+satdump_plan() accepts only an srrx.baseband recording (Meteor-M LRPT, ci16 256 kS/s, made by
+labrx under the v2.1 policy) for the pipelines of baseband.PIPELINES, and satdump_publish()
+releases only sanitized PNG images and a fixed-schema report. The unit and argv are
+srrx.satdump_pass; nothing here launches SatDump.
 """
 from __future__ import annotations
 
@@ -194,17 +195,25 @@ def availability(installation=None, satdump_installation=None):
 SATDUMP_PRESET = "satdump-weather"
 SATDUMP_COMMIT = "1aedd602055c154401384a8cc7876713bb371254"
 SATDUMP_VERSION = "2.0.0~alpha+git20260929+lab1"
-# deployment/receive-only-policy.json components.satdump.allow_plugins; upstream names the
-# library lib<id>_support.so (plugins/*/CMakeLists.txt at 1aedd60).
-SATDUMP_PLUGINS = ("meteor", "noaa_metop", "aws", "elektro_arktika", "xrit", "fy2", "net_source")
+# deployment/receive-only-policy.json components.satdump.allow_plugins. Each id is the upstream
+# plugin directory without "_support": at 1aedd60 every plugins/<dir>/CMakeLists.txt builds
+# add_library(<dir> SHARED), so PLUGIN_FY2 (plugins/fengyun2_support, its CMakeLists.txt:6) is
+# libfengyun2_support.so (deployment/recipes/satdump/check_recipe.py plugin_library).
+SATDUMP_PLUGINS = ("meteor", "noaa_metop", "aws", "elektro_arktika", "xrit", "fengyun2", "net_source")
 SATDUMP_PIPELINE_FILES = ("Meteor-M.json", "MetOp.json", "AWS.json", "FengYun-2.json", "Elektro_Arktika.json")
 SATDUMP_PLUGIN_DIR = "/usr/lib/satdump/plugins"
-SATDUMP_PIPELINE_DIR = "/usr/share/satdump/resources/pipelines"
+SATDUMP_CORE = "/usr/lib/libsatdump_core.so"  # src-core/CMakeLists.txt:324 install(... ${CMAKE_INSTALL_LIBDIR})
+SATDUMP_RESOURCES = "/usr/share/satdump/resources"
+SATDUMP_PIPELINE_DIR = SATDUMP_RESOURCES + "/pipelines"
 SATDUMP_CONFIG = "/usr/share/satdump/satdump_cfg.json"
+# The recipe of the deployed tree (deploy.stage copies deployment/ to /opt/srrx/deployment).
+SATDUMP_RECIPE = str(Path(__file__).resolve().parents[2] / "deployment/recipes/satdump/recipe.json")
 MAX_PRODUCTS = 64
 MAX_PRODUCT_TOTAL_BYTES = 256 * 1024 * 1024
+MAX_TREE_FILES = 20_000
+MAX_TREE_BYTES = 2 * 1024 * 1024 * 1024
 _SATDUMP_FIELDS = {"v", "tool_id", "version", "source_commit", "executable", "sha256", "evidence_id",
-                   "plugins", "pipelines", "config_sha256", "recipe_sha256"}
+                   "core_sha256", "resources_sha256", "plugins", "pipelines", "config_sha256", "recipe_sha256"}
 
 
 def _plugin_file(name):
@@ -224,6 +233,47 @@ def _admin_file(path, limit):
     return _hash_file(path, limit)[0]
 
 
+def satdump_tree_digest(top, *, admin=True):
+    """SHA256 over "<sha256>  <relative path>\\n" of every regular file below top, sorted by path.
+
+    The same digest as deployment/recipes/satdump/check_recipe.py tree_digest. Every file and
+    directory must be root-owned and not group/world-writable (admin=True); a link, a special
+    file or more than MAX_TREE_FILES / MAX_TREE_BYTES refuses.
+    """
+    top = Path(top)
+    try:
+        info = os.lstat(top)
+    except OSError:
+        _refuse("FILE_UNAVAILABLE")
+    if not stat.S_ISDIR(info.st_mode) or (admin and not _admin_owned(info)):
+        _refuse("SATDUMP_RESOURCES_NOT_ADMIN_TREE")
+    if admin:
+        _admin_directories(top)
+    lines, stack, count, total = [], [(top, "")], 0, 0
+    while stack:
+        directory, prefix = stack.pop()
+        try:
+            entries = sorted(os.scandir(directory), key=lambda item: item.name)
+        except OSError:
+            _refuse("FILE_UNAVAILABLE")
+        for entry in entries:
+            info = entry.stat(follow_symlinks=False)
+            if admin and not _admin_owned(info):
+                _refuse("SATDUMP_RESOURCES_NOT_ADMIN_TREE")
+            relative = prefix + entry.name
+            if stat.S_ISDIR(info.st_mode):
+                stack.append((Path(entry.path), relative + "/"))
+                continue
+            if not stat.S_ISREG(info.st_mode):
+                _refuse("SATDUMP_RESOURCES_NOT_ADMIN_TREE")  # links and special files never bound
+            count, total = count + 1, total + info.st_size
+            if count > MAX_TREE_FILES or total > MAX_TREE_BYTES:
+                _refuse("FILE_SIZE_LIMIT")
+            lines.append((relative, _hash_file(Path(entry.path), MAX_INPUT_BYTES)[0]))
+    text = "".join("%s  %s\n" % (digest, name) for name, digest in sorted(lines))
+    return hashlib.sha256(text.encode("utf-8", "surrogateescape")).hexdigest()
+
+
 def _exact_directory(directory, expected):
     try:
         names = {entry.name for entry in os.scandir(directory)}
@@ -237,10 +287,13 @@ def _validate_satdump_installation(record):
     _keys(record, _SATDUMP_FIELDS, "INSTALLATION_SCHEMA")
     if (type(record["v"]) is not int or record["v"] != 1 or record["tool_id"] != "satdump" or
             record["version"] != SATDUMP_VERSION or record["source_commit"] != SATDUMP_COMMIT or
-            not _digest(record["sha256"]) or not _digest(record["config_sha256"]) or
-            not _digest(record["recipe_sha256"]) or not isinstance(record["evidence_id"], str) or
-            not _EVIDENCE.fullmatch(record["evidence_id"])):
+            not all(_digest(record[key]) for key in ("sha256", "core_sha256", "resources_sha256", "config_sha256",
+                                                     "recipe_sha256")) or
+            not isinstance(record["evidence_id"], str) or not _EVIDENCE.fullmatch(record["evidence_id"])):
         _refuse("INSTALLATION_VERSION_OR_PROVENANCE_UNVERIFIED")
+    # The build recipe of this deployed tree: a record made from another recipe is not accepted.
+    if _admin_file(Path(SATDUMP_RECIPE), 1024 * 1024) != record["recipe_sha256"]:
+        _refuse("SATDUMP_RECIPE_DIGEST_CHANGED")
     plugins, pipelines = record["plugins"], record["pipelines"]
     if (not isinstance(plugins, dict) or set(plugins) != {_plugin_file(name) for name in SATDUMP_PLUGINS} or
             not isinstance(pipelines, dict) or set(pipelines) != set(SATDUMP_PIPELINE_FILES) or
@@ -257,6 +310,9 @@ def _validate_satdump_installation(record):
             _refuse("NATIVE_VENDOR_EXECUTABLE_REQUIRED")
     if _hash_file(path, MAX_INPUT_BYTES)[0] != record["sha256"]:
         _refuse("EXECUTABLE_DIGEST_CHANGED")
+    # Most of SatDump (the pipeline modules, DSP, the loader) is libsatdump_core.so, not the ELF.
+    if _admin_file(Path(SATDUMP_CORE), MAX_INPUT_BYTES) != record["core_sha256"]:
+        _refuse("SATDUMP_CORE_DIGEST_CHANGED")
     # The loader takes every file of the plugin directory and every *.json of the pipeline
     # tree (src-core/core/plugin.cpp, src-core/pipeline/pipeline.cpp): both must be exactly the set.
     _exact_directory(SATDUMP_PLUGIN_DIR, plugins)
@@ -265,6 +321,9 @@ def _validate_satdump_installation(record):
         for name, digest in sorted(files.items()):
             if _admin_file(Path(directory) / name, MAX_INPUT_BYTES) != digest:
                 _refuse("SATDUMP_FILE_DIGEST_CHANGED")
+    # Calibration, LUT, instrument and product settings beside the pipelines: one digest for the tree.
+    if satdump_tree_digest(SATDUMP_RESOURCES) != record["resources_sha256"]:
+        _refuse("SATDUMP_RESOURCES_DIGEST_CHANGED")
     if _admin_file(Path(SATDUMP_CONFIG), 1024 * 1024) != record["config_sha256"]:
         _refuse("SATDUMP_CONFIG_DIGEST_CHANGED")
     try:
@@ -317,36 +376,55 @@ def satdump_plan(recording, installation, *, scope=None):
             "output": "weather_png_without_text_metadata", "hardware_qualified": False}
 
 
-def satdump_publish(output_directory, target, plan, *, scope=None):
+def satdump_publish(output_directory, target, plan, *, input_iq_deleted, scope=None):
     """Publish only sanitized PNG images of a SatDump output tree, then a fixed-schema report.
 
     Symlinks and special files are never followed; CADU, soft symbols, products.cbor and
-    logs stay in the work tree, which the caller removes. target must not exist.
+    logs stay in the work tree, which the caller removes. target must not exist. A PNG over
+    the per-image limits (MAX_IMAGE_BYTES, MAX_PIXELS) or one that does not parse is skipped,
+    and so is every PNG after MAX_PRODUCTS / MAX_PRODUCT_TOTAL_BYTES (path order): the report
+    counts them, and the pass keeps the images that fit. input_iq_deleted is what the caller
+    did with the baseband before publication (srrx.satdump_pass deletes it first).
     """
+    if type(input_iq_deleted) is not bool:
+        _refuse("SATDUMP_REPORT_SCHEMA")
     source, target = Path(output_directory), Path(target)
     if not target.is_absolute() or target.exists() or target.is_symlink():
         _refuse("NEW_ABSOLUTE_OUTPUT_DIRECTORY_REQUIRED")
     if not source.is_dir() or source.is_symlink():
         _refuse("SATDUMP_OUTPUT_MISSING")
-    images, total, seen = [], 0, 0
-    stack = [source]
+    candidates, seen = [], 0
+    stack = [(source, "")]
     while stack:
-        directory = stack.pop()
+        directory, prefix = stack.pop()
         for entry in sorted(os.scandir(directory), key=lambda item: item.name):
             seen += 1
             if seen > 4096:
                 _refuse("SATDUMP_OUTPUT_LIMIT")
             if entry.is_dir(follow_symlinks=False):
                 if len(stack) < 64:
-                    stack.append(Path(entry.path))
+                    stack.append((Path(entry.path), prefix + entry.name + "/"))
                 continue
-            if not entry.is_file(follow_symlinks=False) or not entry.name.lower().endswith(".png"):
-                continue
-            image, dimensions = _sanitized_png(Path(entry.path))
-            total += len(image)
-            if len(images) >= MAX_PRODUCTS or total > MAX_PRODUCT_TOTAL_BYTES:
-                _refuse("SATDUMP_OUTPUT_LIMIT")
-            images.append((image, dimensions))
+            if entry.is_file(follow_symlinks=False) and entry.name.lower().endswith(".png"):
+                candidates.append((prefix + entry.name, Path(entry.path)))
+    images, total, over_limit, invalid = [], 0, 0, 0
+    for unused, path in sorted(candidates):
+        if len(images) >= MAX_PRODUCTS:
+            over_limit += 1
+            continue
+        try:
+            image, dimensions = _sanitized_png(path)
+        except DecoderRefused as error:
+            if str(error) in ("WEATHER_PNG_MISSING_OR_OVERSIZE", "PNG_DIMENSION_LIMIT"):
+                over_limit += 1
+            else:
+                invalid += 1
+            continue
+        if total + len(image) > MAX_PRODUCT_TOTAL_BYTES:
+            over_limit += 1
+            continue
+        total += len(image)
+        images.append((image, dimensions))
     if not images:
         _refuse("SATDUMP_NO_IMAGE_PRODUCT")
     publication = target.parent / ("." + target.name + ".publishing")
@@ -362,8 +440,9 @@ def satdump_publish(output_directory, target, plan, *, scope=None):
                             "image": dimensions})
         report = {"v": 1, "status": "FILE_DECODE_COMPLETED", "preset": SATDUMP_PRESET, "pipeline": plan["pipeline"],
                   "source_sha512": plan["source_sha512"], "executable_sha256": plan["executable_sha256"],
-                  "source_commit": SATDUMP_COMMIT, "images": entries, "stdout_stored": False, "stderr_stored": False,
-                  "input_iq": True, "input_iq_deleted_after_decode": True, "physical_tests_performed": False}
+                  "source_commit": SATDUMP_COMMIT, "images": entries, "images_skipped_over_limit": over_limit,
+                  "images_skipped_invalid": invalid, "stdout_stored": False, "stderr_stored": False,
+                  "input_iq": True, "input_iq_deleted_after_decode": input_iq_deleted, "physical_tests_performed": False}
         (publication / "report.json").write_text(json.dumps(report, indent=2) + "\n")
         if target.exists() or target.is_symlink():
             _refuse("OUTPUT_DESTINATION_CHANGED")

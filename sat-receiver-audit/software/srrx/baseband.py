@@ -17,8 +17,10 @@ build/15-rishennia-komplektu.md decision 6). Implemented here, and only here:
   Decimation by 4 gives 256 kS/s.
 - File: SigMF v1.2.6 ci16_le (I, Q int16 little-endian, value = round(x * 32767), the inverse
   of SatDump 1aedd60's cs16 reader volk_16i_s32f_convert_32f(..., 32767)), with a strict
-  srrx: metadata record. Store: <StorageGuard root>/raw/baseband-lrpt, under the guard's
-  mount checks at every step. Class cap 1.5 GiB inside the rolling raw quota of 30 GiB
+  srrx: metadata record. Store: /data/raw/baseband-lrpt only, under the StorageGuard's mount
+  checks at every step; a guard rooted elsewhere or bound to a USB or MMC/SD block device (the
+  removable T7, a card) is refused (require_internal_data), since the recording may not leave
+  the internal UFS data partition. Class cap 1.5 GiB inside the rolling raw quota of 30 GiB
   over <root>/raw; a start is refused when the planned size x 1.1 does not fit in the
   class, the quota or the free space. The planned size is preallocated and never exceeded.
 - Lifetime: a stop, an error, a scope stop, a storage revocation or a lost UTC deletes the
@@ -86,6 +88,9 @@ LIVE_MAX_SAMPLES = 8188
 LIVE_PORT_RANGE = (1024, 65535)
 SIGMF_VERSION = "1.2.6"
 EXTENSION = {"name": "srrx", "version": "1.0.0", "optional": True}
+# The internal data partition (STACK.md C18: /data is the rest of the UFS device). Never the
+# removable T7 (/media/..., the exchange area) or a card: STACK.md:977 forbids any export.
+DATA_ROOT = "/data"
 RAW_DIR = "raw"
 CLASS_DIR = "raw/baseband-lrpt"
 LOCK_NAME = ".lock"
@@ -600,12 +605,39 @@ class Recording:
             pass
 
 
+_REMOVABLE_BUS = re.compile(r"(usb|mmc)\d+\Z")  # sysfs bus roots: usb1, usb2, ... and mmc0, mmc1, ...
+
+
+def _sysfs_block_path(major, minor):  # module-level: tests replace it
+    return os.path.realpath("/sys/dev/block/%d:%d" % (major, minor))
+
+
+def require_internal_data(guard):
+    """Refuse a StorageGuard that is not the internal data partition DATA_ROOT.
+
+    The root must be exactly DATA_ROOT, and the bound block device must not sit below a USB
+    or MMC host in sysfs (the T7 is USB, the microSD and an eMMC module are MMC): a recording
+    on a medium that can be unplugged would be an export (STACK.md:977).
+    """
+    if str(getattr(guard, "root", "")) != DATA_ROOT:
+        _refuse("BASEBAND_STORAGE_NOT_INTERNAL_DATA")
+    try:
+        identity = guard.identity
+        path = _sysfs_block_path(int(identity["major"]), int(identity["minor"]))
+    except (AttributeError, KeyError, TypeError, ValueError, OSError):
+        _refuse("BASEBAND_STORAGE_NOT_INTERNAL_DATA")
+    if (type(path) is not str or not path.startswith("/sys/devices/")
+            or any(_REMOVABLE_BUS.match(part) for part in path.split("/"))):
+        _refuse("BASEBAND_STORAGE_NOT_INTERNAL_DATA")
+
+
 class BasebandStore:
-    """<guard root>/raw/baseband-lrpt under a StorageGuard (check() + open_directory())."""
+    """DATA_ROOT/raw/baseband-lrpt under a StorageGuard (check() + open_directory() + identity)."""
 
     def __init__(self, guard, *, clock=time.time):
         if guard is None or not callable(getattr(guard, "check", None)) or not callable(getattr(guard, "open_directory", None)):
             _refuse("STORAGE_GUARD_REQUIRED")
+        require_internal_data(guard)
         self.guard, self.clock = guard, clock
         self._lock = None
         self._directory = None
@@ -843,7 +875,7 @@ class BasebandStore:
         return info.st_dev, info.st_ino, info.st_size
 
 
-def tmpfiles(root="/data", owner="labd", group="srrx-bb"):
+def tmpfiles(root=DATA_ROOT, owner="labd", group="srrx-bb"):
     """tmpfiles.d text for the class directory: setgid group srrx-bb (the decode unit reads), no world access.
 
     The age 24h is a second layer only (systemd-tmpfiles-clean runs daily); sweep() is the rule.

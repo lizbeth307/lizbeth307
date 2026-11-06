@@ -3,7 +3,7 @@
  "kind": "srrx_build_recipe",
  "id": "satdump",
  "status": "PENDING_BUILDER",
- "status_note": "Structure, option completeness and patch fit are checked offline (deployment/tests/test_satdump_recipe.py, patches against the pinned files on 2026-10-24); no arm64 build, plugin trace or decode fixture has run yet (the +lab package builder is a separate package).",
+ "status_note": "Structure, option completeness, plugin library names and patch fit are checked offline (deployment/tests/test_satdump_recipe.py; patches and plugin CMakeLists.txt against the pinned files on 2026-10-24); no arm64 build, plugin trace or decode fixture has run yet (the +lab package builder is a separate package).",
  "source": {
   "lock_id": "satdump",
   "repo": "SatDump/SatDump",
@@ -22,6 +22,14 @@
  "upstream_files": {
   "CMakeLists.txt": "daca96be5dbcbe89b28c2b6a541a44691f8c45a4",
   "plugins/CMakeLists.txt": "1f75d761e472550e4a769ba1f1c84951d549cd25",
+  "plugins/meteor_support/CMakeLists.txt": "3460a34a76ed251aba65737b24da0c7db4d547c6",
+  "plugins/noaa_metop_support/CMakeLists.txt": "b13c143897ccc1dd044edda3a36bcb68312e625d",
+  "plugins/aws_support/CMakeLists.txt": "07a9b59e3563eb9eb48e94e839c1464d05d78a68",
+  "plugins/elektro_arktika_support/CMakeLists.txt": "0aebe5ea64700a81a70618fb9976c0380d5753f5",
+  "plugins/xrit_support/CMakeLists.txt": "8d1bbab888f6ba88da5326c46879ec63c93f1780",
+  "plugins/fengyun2_support/CMakeLists.txt": "250a08da7930815c2d5b8990fe9471736a3af8c1",
+  "plugins/sdr_sources/net_source_support/CMakeLists.txt": "18da600c40b44502c6c54037e172cbbecb29115d",
+  "src-core/CMakeLists.txt": "1b146d4d06ac3e5e46a6c574868a0bee9403b887",
   "satdump_cfg.json": "e3099214a2048ff2c219faa9afb516c43b50f853",
   "src-core/common/net/udp.h": "dcb71736163e788fc047145fd2592c1c3c188702",
   "src-core/common/cli_utils.cpp": "b389e22ca974fd8bb056686bea54bc6f1e95d865",
@@ -80,6 +88,7 @@
    "CMAKE_BUILD_TYPE": "Release",
    "CMAKE_INSTALL_PREFIX": "/usr",
    "CMAKE_INSTALL_LIBDIR": "lib",
+   "CMAKE_INSTALL_RPATH": "/usr/lib/satdump/plugins",
    "EXTERNAL_PLUGINS": "",
    "BUILD_GUI": "OFF",
    "BUILD_TESTING": "OFF",
@@ -206,8 +215,10 @@
  },
  "install": {
   "executable": "usr/bin/satdump",
+  "core_library": "usr/lib/libsatdump_core.so",
   "plugin_dir": "usr/lib/satdump/plugins",
   "pipeline_dir": "usr/share/satdump/resources/pipelines",
+  "resources_dir": "usr/share/satdump/resources",
   "config": "usr/share/satdump/satdump_cfg.json",
   "expected_plugins": [
    "libmeteor_support.so",
@@ -215,7 +226,7 @@
    "libaws_support.so",
    "libelektro_arktika_support.so",
    "libxrit_support.so",
-   "libfy2_support.so",
+   "libfengyun2_support.so",
    "libnet_source_support.so"
   ],
   "keep_pipelines": [
@@ -252,6 +263,29 @@
      "norads_to_fetch"
     ],
     "value": []
+   },
+   {
+    "path": [
+     "kepler_settings",
+     "url_template"
+    ],
+    "value": ""
+   },
+   {
+    "path": [
+     "satdump_general",
+     "tle_space_track_login",
+     "value"
+    ],
+    "value": ""
+   },
+   {
+    "path": [
+     "satdump_general",
+     "tle_space_track_password",
+     "value"
+    ],
+    "value": ""
    }
   ],
   "remove_trees": [
@@ -263,7 +297,7 @@
  "builder_checks": [
   {
    "id": "plugin-set",
-   "how": "strace -f -e trace=openat satdump pipeline meteor_m2-x_lrpt --help: loaded *.so of the plugin dir == expected_plugins",
+   "how": "strace -f -e trace=openat satdump pipeline meteor_m2-x_lrpt --help: loaded *.so of the plugin dir == expected_plugins (libfengyun2_support.so for PLUGIN_FY2) and no 'failed to load' warning",
    "status": "PENDING_BUILDER"
   },
   {
@@ -273,7 +307,7 @@
   },
   {
    "id": "ldd",
-   "how": "ldd of satdump, libsatdump_core.so and every plugin: no librtlsdr, LimeSuite, SoapySDR, libusb, libhackrf, libbladeRF, portaudio",
+   "how": "ldd of satdump, libsatdump_core.so and every plugin: no librtlsdr, LimeSuite, SoapySDR, libusb, libhackrf, libbladeRF, portaudio and no 'not found'; readelf -d: RUNPATH /usr/lib/satdump/plugins only (CMAKE_INSTALL_RPATH, so libelektro_arktika_support.so finds libxrit_support.so)",
    "status": "PENDING_BUILDER"
   },
   {
@@ -313,6 +347,9 @@
   "STACK.md:977",
   "build/07-pz-vstanovlennia.md:362-389",
   "build/15-rishennia-komplektu.md",
-  "deployment/sources.lock.json"
+  "deployment/sources.lock.json",
+  "https://raw.githubusercontent.com/SatDump/SatDump/1aedd602055c154401384a8cc7876713bb371254/plugins/fengyun2_support/CMakeLists.txt (line 6 add_library(fengyun2_support SHARED); read 2026-10-24)",
+  "https://raw.githubusercontent.com/SatDump/SatDump/1aedd602055c154401384a8cc7876713bb371254/plugins/elektro_arktika_support/CMakeLists.txt (links xrit_support; read 2026-10-24)",
+  "https://raw.githubusercontent.com/SatDump/SatDump/1aedd602055c154401384a8cc7876713bb371254/satdump_cfg.json (kepler_settings.url_template line 348, Space-Track fields lines 249-260; read 2026-10-24)"
  ]
 }

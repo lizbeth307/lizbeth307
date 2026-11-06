@@ -510,6 +510,11 @@ def main(argv=None):
     try:
         if (args.storage_root is None) != (args.storage_device is None):
             raise ValueError("--storage-root and --storage-device must be supplied together")
+        if args.baseband_plan is not None and args.storage_root is not None:
+            from . import baseband
+            # Never the removable T7 or a card: BasebandStore re-checks the bound device itself.
+            if os.path.abspath(str(args.storage_root)) != baseband.DATA_ROOT:
+                raise ValueError("BASEBAND_STORAGE_NOT_INTERNAL_DATA")
         if args.storage_root is not None:
             from .storage import StorageGuard
             storage_guard = StorageGuard(args.storage_root, args.storage_device)
