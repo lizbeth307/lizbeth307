@@ -5745,7 +5745,7 @@
    "manufacturer": "Lindy",
    "mpn": "36700",
    "single_source": "Cable named in 10-bom row 91",
-   "interface_open": "Кабель з оцінки v2, сторінку продавця не перечитано (роздрібний опис 06.11.2026 — подовжувач USB-A M/F 0.2 м). VBUS_RTLA/VBUS_RTLB надходять від ключів E5, а не з порту Q6A (для J541 провід контакту 1 вилки J5 вилучено): як VBUS виводиться з кабелю на плату — не задано.",
+   "interface_open": "Кабель з оцінки v2, сторінку продавця не перечитано (06.11.2026 лише заголовок лістингу в пошуку: «Lindy 36700 USB Extension Cable, 0.2m, Anthra Line, USB A 2.0 male / USB A 2.0 female», huss-licht-ton.de; сама сторінка відповіла 403). VBUS_RTLA/VBUS_RTLB надходять від ключів E5, а не з порту Q6A (для J541 провід контакту 1 вилки J5 вилучено): як VBUS виводиться з кабелю на плату — не задано.",
    "extras": [
     {
      "item": "ferrite on the RTL-B cable (if A/B noise test needs it)",
