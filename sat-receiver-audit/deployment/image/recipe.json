@@ -102,7 +102,7 @@
     "srrx-poweroff.service": "follows srrx.service"
   },
   "dt_overlays": {
-    "source": "STACK.md:843 (fdtoverlay -i <package DTB> -o lab.dtb lab-q6a.dtbo; field.dtb with pcie0 disabled); sources are IMG-05 (not part of this recipe)",
+    "source": "STACK.md:843 (fdtoverlay -i <package DTB> -o lab.dtb lab-q6a.dtbo; field.dtb = package DTB + lab-q6a.dtbo + field-q6a.dtbo, pcie0 disabled: field-q6a.dtso header); sources are IMG-05 in deployment/system/dt, CI record dt-manifest.json",
     "lab": ["deployment/dt/lab-q6a.dtso", "deployment/system/dt/lab-q6a.dtso"],
     "field": ["deployment/dt/field-q6a.dtso", "deployment/system/dt/field-q6a.dtso"]
   },

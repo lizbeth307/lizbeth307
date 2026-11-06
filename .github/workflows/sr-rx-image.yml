@@ -246,7 +246,7 @@ jobs:
         run: |
           mkdir -p "$OUT"
           sudo python3 deployment/image/build_image.py build --cache "$CACHE" --work "$W/work" --out "$OUT" \
-            --route ${{ matrix.route }} --allow-unmerged-dtb
+            --route ${{ matrix.route }}
       - name: Summarize the manifest and facts
         if: always() && steps.sel.outputs.run == 'true'
         run: |

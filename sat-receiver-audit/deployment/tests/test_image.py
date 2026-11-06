@@ -712,5 +712,36 @@ class FirstBootAndRecipeTests(unittest.TestCase):
         self.assertEqual(build_image.block_runs(""), [])
 
 
+class DtbMergeTests(unittest.TestCase):
+    """build_dtbs with dtc/fdtoverlay replaced: the overlay order and the dt-manifest.json comparison."""
+
+    def setUp(self):
+        self.recipe = json.loads((HERE / "image/recipe.json").read_text())
+        self.temp = Path(tempfile.mkdtemp())
+        self.addCleanup(shutil.rmtree, self.temp)
+        self.kernel = self.temp / "deb" / "tree"
+        (self.kernel / "usr/lib/linux-image-6.18.2-4-qcom/qcom").mkdir(parents=True)
+        (self.kernel / "usr/lib/linux-image-6.18.2-4-qcom/qcom" / self.recipe["dtb_name"]).write_bytes(b"base")
+        self.calls = []
+
+    def fake_run(self, argv, **kwargs):
+        argv = [str(a) for a in argv]
+        self.calls.append(argv)
+        out = Path(argv[argv.index("-o") + 1])
+        out.write_bytes(" ".join(Path(a).name for a in argv[1:]).encode())
+
+    def test_field_dtb_applies_the_lab_overlay_before_the_field_overlay(self):
+        with patch.object(build_image, "run", self.fake_run):
+            record = build_image.build_dtbs(self.temp / "root", self.kernel, self.recipe, "6.18.2-4-qcom")
+        merges = {Path(c[c.index("-o") + 1]).name: [Path(a).name for a in c[c.index("-o") + 2:]]
+                  for c in self.calls if c[0] == "fdtoverlay"}
+        self.assertEqual(merges, {"lab.dtb": ["lab.dtbo"], "field.dtb": ["lab.dtbo", "field.dtbo"]})
+        self.assertEqual(sum(1 for c in self.calls if c[0] == "dtc"), 2)  # each overlay compiled once
+        self.assertEqual(record["field"]["applied"], ["deployment/system/dt/lab-q6a.dtso", "deployment/system/dt/field-q6a.dtso"])
+        self.assertTrue(record["lab"]["merged"] and record["field"]["merged"])
+        # The fake base DTB is not the one dt-manifest.json records: the comparison must say so, never MATCH.
+        self.assertEqual({record[p]["dt_manifest"] for p in ("lab", "field")}, {"NOT_COMPARABLE"})
+
+
 if __name__ == "__main__":
     unittest.main()

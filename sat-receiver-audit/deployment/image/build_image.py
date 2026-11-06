@@ -654,7 +654,7 @@ STEPS = (
     ("root-a-copy", "rsync -aHAXx the r2 root into root A, copy the r2 ESP into the new ESP, detach and delete the base raw file"),
     ("chroot", "minimal /dev, proc, read-only sys, tmpfs run/tmp, policy-rc.d exit 101"),
     ("bundle", "extract the deterministic controller bundle (/opt/srrx, /etc/srrx templates, units) into root A"),
-    ("dtb", "package DTB from the locked linux-image deb; lab.dtb/field.dtb via fdtoverlay when the IMG-05 overlays exist, else the unmerged package DTB marked merged=false"),
+    ("dtb", "package DTB from the locked linux-image deb; lab.dtb = + lab-q6a.dtbo, field.dtb = + lab-q6a.dtbo + field-q6a.dtbo via fdtoverlay when the IMG-05 overlays exist (compared with deployment/system/dt/dt-manifest.json), else the unmerged package DTB marked merged=false"),
     ("bootloader", "Route A: dpkg --purge sdboot-is-embloader, bootctl install --no-variables, embloader pinned -1; Route B: embloader kept (0.4 required)"),
     ("boot-config", "/etc/srrx/boot.json, /etc/srrx/slot, /etc/kernel/cmdline, tries, install.conf layout=other, 90-srrx-bls.install, boot-check unit (Route B: initramfs write-back and commit unit)"),
     ("kernel", "dpkg -i the five locked 6.18.2-4 debs before any apt run; the plugin writes the slot A entry and ESP files"),
@@ -860,8 +860,15 @@ def write_text(target, text, mode=0o644):
     os.chmod(target, mode)
 
 
+DT_MANIFEST = PROJECT / "deployment/system/dt/dt-manifest.json"
+# field.dtb = package DTB + lab-q6a.dtbo + field-q6a.dtbo (field-q6a.dtso header, build/07 §3.1,
+# STACK.md:843): the field overlay only disables pcie0 on top of the lab overlay.
+DT_CHAIN = {"lab": ("lab",), "field": ("lab", "field")}
+
+
 def build_dtbs(root, kernel_tree, recipe, kver):
-    """lab.dtb/field.dtb under /usr/lib/srrx/dtb/<kver>: fdtoverlay of the IMG-05 overlays when present."""
+    """lab.dtb/field.dtb under /usr/lib/srrx/dtb/<kver>: fdtoverlay of the IMG-05 overlays when present,
+    compared with the CI record deployment/system/dt/dt-manifest.json (merge-checked, never booted)."""
     found = sorted(Path(kernel_tree).rglob(recipe["dtb_name"]))
     if len(found) != 1:
         raise BuildError("expected exactly one " + recipe["dtb_name"] + " in the locked linux-image deb, found " + str(len(found)))
@@ -869,18 +876,31 @@ def build_dtbs(root, kernel_tree, recipe, kver):
     store = Path(root) / "usr/lib/srrx/dtb" / kver
     store.mkdir(parents=True, exist_ok=True)
     record = {"base_dtb": "/" + base.relative_to(kernel_tree).as_posix(), "base_dtb_sha256": sha256(base)}
-    for profile in ("lab", "field"):
-        overlay = next((PROJECT / p for p in recipe["dt_overlays"][profile] if (PROJECT / p).is_file()), None)
+    sources = {name: next((PROJECT / p for p in recipe["dt_overlays"][name] if (PROJECT / p).is_file()), None)
+               for name in ("lab", "field")}
+    ci = load_json(DT_MANIFEST) if DT_MANIFEST.is_file() else None
+    dtbos = {}
+    for profile, chain in DT_CHAIN.items():
         target = store / (profile + ".dtb")
-        if overlay is None:
+        if any(sources[name] is None for name in chain):
             shutil.copyfile(base, target)
             record[profile] = {"merged": False, "overlay": None, "why": "IMG-05 overlay source absent in this tree"}
         else:
-            dtbo = Path(kernel_tree).parent / (profile + ".dtbo")
-            run(["dtc", "-@", "-I", "dts", "-O", "dtb", "-o", dtbo, overlay])
-            run(["fdtoverlay", "-i", base, "-o", target, dtbo])
-            record[profile] = {"merged": True, "overlay": overlay.relative_to(PROJECT).as_posix(), "overlay_sha256": sha256(overlay)}
+            for name in chain:
+                if name not in dtbos:
+                    dtbos[name] = Path(kernel_tree).parent / (name + ".dtbo")
+                    run(["dtc", "-@", "-I", "dts", "-O", "dtb", "-o", dtbos[name], sources[name]])
+            run(["fdtoverlay", "-i", base, "-o", target] + [dtbos[name] for name in chain])
+            record[profile] = {"merged": True, "overlay": sources[profile].relative_to(PROJECT).as_posix(),
+                               "overlay_sha256": sha256(sources[profile]),
+                               "applied": [sources[name].relative_to(PROJECT).as_posix() for name in chain]}
         record[profile]["sha256"] = sha256(target)
+        if record[profile]["merged"]:
+            # Same overlay sources and base DTB as the CI record: the merged bytes must be the recorded ones.
+            same_inputs = (ci is not None and ci.get("base_dtb", {}).get("sha256") == record["base_dtb_sha256"]
+                           and all(ci.get("sources", {}).get(sources[n].name) == sha256(sources[n]) for n in chain))
+            record[profile]["dt_manifest"] = (("MATCH" if ci["merged"].get(profile + ".dtb") == record[profile]["sha256"] else "DIFFERS")
+                                              if same_inputs else "NOT_COMPARABLE")
     dump(store / "dtb.json", record)
     return record
 
@@ -967,9 +987,15 @@ def hardening(root, recipe, route):
     purge = [n for n in recipe["purge"]["names"] if n in names]
     if purge:
         chroot(root, ["dpkg", "--purge"] + purge)
-    masked = []
+    masked, masked_by_stage = [], []
     for unit in recipe["mask"]["units"]:
-        run(["systemctl", "--root", str(root), "mask", unit])
+        path = root / "etc/systemd/system" / unit
+        if path.is_file() and not path.is_symlink() and path.stat().st_size == 0:
+            # deploy.py stage (deployment/system/system_files.py MASKED_UNITS) already masked it with an
+            # empty unit file; systemctl mask refuses to replace a regular file (EEXIST).
+            masked_by_stage.append(unit)
+        else:
+            run(["systemctl", "--root", str(root), "mask", unit])
         masked.append(unit)
     policy = load_json(POLICY)
     tokens = policy["apt"]["forbidden_list_name_tokens"]
@@ -1016,7 +1042,7 @@ def hardening(root, recipe, route):
     for name in host_keys:
         (ssh_dir / name).unlink()
     install_file(FILES / "srrx-ssh-hostkeys.service", root / "etc/systemd/system/srrx-ssh-hostkeys.service")
-    return {"held": hold, "hold_names_not_installed": missing, "purged": purge, "masked": masked,
+    return {"held": hold, "hold_names_not_installed": missing, "purged": purge, "masked": masked, "masked_by_stage": masked_by_stage,
             "removed_apt_lists": removed, "diverted_apt_preferences": diverted_prefs, "locked_accounts": locked,
             "machine_id_before": previous, "removed_ssh_host_keys": host_keys}
 
@@ -1133,6 +1159,13 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
             manifest["blocking"].append("dt_overlays_missing: lab.dtb/field.dtb are the unmerged package DTB (IMG-05)")
             if not allow_unmerged_dtb:
                 raise BuildError("lab/field overlays absent (IMG-05); rerun with --allow-unmerged-dtb only for a CI candidate")
+        else:
+            differs = [p for p in ("lab", "field") if dtb[p].get("dt_manifest") != "MATCH"]
+            if differs:
+                manifest["blocking"].append("dt_merge_not_the_ci_record: " + ", ".join(p + ".dtb " + dtb[p]["dt_manifest"] for p in differs)
+                                            + " against deployment/system/dt/dt-manifest.json")
+            # Merged and compared in CI only; the booted tree is bench W-10 (fdt_check.py --reference).
+            manifest["blocking"].append("dt_not_booted: lab.dtb/field.dtb are CI merge-checked, not booted on a Q6A (W-10 OPEN)")
         LOG.step("dtb", "DONE", lab_merged=dtb["lab"]["merged"], field_merged=dtb["field"]["merged"])
         manifest["dtb"] = dtb
         route_recipe = recipe["routes"][route]
