@@ -20,16 +20,16 @@
   "copper_zones": 0,
   "errors": [],
   "input_file": "pcb/generated/detector-core-input.json",
-  "input_sha256": "fcd61ae3f83e3beb1f734a31fd4f0d3eb8591297536229e29665bc9c42119d73",
+  "input_sha256": "6a056da25492b2fa40db677725606aa6f0b4c483b2744eca93345a865f2c4f3b",
   "board_file": "build/kicad/pcb-preparation/detector-core-placement.kicad_pcb",
-  "board_sha256": "a8711e15007d6d5ef5117fd12b1c27e7d1898c774b08f062a2bf3ac980fda103",
+  "board_sha256": "99ffa5ac25a1280716d910cc079fc080ee5e9a9083b2ba66bf2f6eefd067c670",
   "kicad_version": "10.0.7",
   "outline_candidate_mm": {
     "x": 125.0,
     "y": 115.0,
     "production_qualified": false
   },
-  "passive_land_patterns_proposed": 50,
+  "passive_land_patterns_proposed": 0,
   "boundary_implementation": "Unselected: no invented connector/wire-pad numbers were added.",
   "rf_exclusions": [
     "C4420",
@@ -111,20 +111,20 @@
     }
   ],
   "blockers": [
-    "50 passive land patterns are placement proposals, not approved production MPN selections.",
+    "All 71 core parts carry graph-assigned footprints and MPNs selected in design/parts/parts.json; a selected MPN is a procurement record, not a qualification: voltage/power/TCR/leakage ratings and land patterns still need review before production.",
     "Eight-net connector/wire-pad implementation, mounting/outline and cable routing are unselected.",
     "RF-port tap/bleed assemblies are excluded from this core and must be placed on the RF substrate.",
     "Prototype threshold/leakage/temperature/ground-offset/RF/rail-off tests remain mandatory."
   ],
   "resource_resolution": {
     "R_0402_1005Metric": "Resolved using unmodified official KiCad 10.0.7 resource; actual file paths and hashes are recorded in placement-audit.json. Passive production qualification remains open.",
-    "source_metadata_null_paths": 3,
+    "source_metadata_null_paths": 0,
     "provenance_file": "build/kicad/pcb-preparation/footprint-provenance.json"
   },
   "drc": {
     "exit_code": 5,
     "raw_file": "build/kicad/pcb-preparation/drc-raw.json",
-    "raw_sha256": "5f287cf238fe9ec5a4f02e19911c3e36c89741d5db6dd4ee7234c38d6d038887",
+    "raw_sha256": "970f919a889c27a3114df24ceff23ff050fa7f99013df7bea19c65537f76792f",
     "counts": {
       "unconnected_items": 140
     },

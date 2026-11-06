@@ -2,13 +2,13 @@
   "passed": true,
   "methodology": "Independent stdlib JSON and XML parsers; no generator/validator imports.",
   "graph_sha256": {
-    "E1.json": "3d216840beed9e5692858718915e100fba00f9b73aeb57248841f1ecbc76aa5a",
-    "E2.json": "7af9822b4f8402f845fad8bb31358d90aa19ae5effcba0c4fd87d52334fc83d6",
-    "E3.json": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0",
-    "E4.json": "a3122809dacd86b312516df5b53f932bd0ab95b48122e5cf08351610f538e56b",
-    "E5.json": "9d61ff10e75417c806afda7ab923ac06de7faf9b6ff5b53acce57477b3960212"
+    "E1.json": "97ca786545acca72c89f2f276f23cdc292ab74e20daa608da1a229a9e6903996",
+    "E2.json": "1e63e579b3f60f8518837a8d52c189b84ee0401dc32e278f8e72ecf3fbe9e4cd",
+    "E3.json": "5d94d77320cb0ac41c3ea8d0c3ba98a8dba829ef896df8cfb5b642c85813f41d",
+    "E4.json": "a8c0ab0e6d9bbf4cbd1eb08175a34ec11fc8351b88a900570361a3f916f4142f",
+    "E5.json": "69047e28d6f571d87ae5a3b7b0f21944f4e9cf005d0697db002511e3f5428285"
   },
-  "netlist_sha256": "ad475def4086bf90f986227d18bd52db534784babd2e66ef70e04fa75b6461e1",
+  "netlist_sha256": "4e26a84360f3ff9ea341a2feba5334c10e0bdadd99390c7183b6d17c384f08ad",
   "counts": {
     "hardware_components": 777,
     "hardware_pin_declarations": 2393,

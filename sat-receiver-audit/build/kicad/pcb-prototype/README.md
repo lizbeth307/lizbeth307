@@ -1,6 +1,6 @@
 # Routed internal DC detector prototype
 
-**NOT FOR FABRICATION.** This is a routed prototype candidate for the 71-part DC_CORE subset. The eight external interfaces, 50 passive MPN/land-pattern approvals, enclosure fit and hardware performance tests remain unresolved. No Gerbers or drill files were created.
+**NOT FOR FABRICATION.** This is a routed prototype candidate for the 71-part DC_CORE subset. The eight external interfaces, qualification of the passive MPNs and land patterns (MPNs are selected in `design/parts/parts.json`, not qualified), enclosure fit and hardware performance tests remain unresolved. No Gerbers or drill files were created.
 
 Open `detector-core-routed-prototype.kicad_pcb` with its adjacent `.kicad_pro` and relative `fp-lib-table`. The exact source mapping is retained: 71 components, 187 pads, 180 connected pads, seven NC pads and 40 nets. No connector pads, new components or substitute pin numbers were added. Eighteen RF-port tap/bleed references remain outside this board.
 

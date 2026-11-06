@@ -1,7 +1,7 @@
 {
   "status": "ROUTED_INTERNAL_PROTOTYPE_NOT_FOR_FABRICATION",
-  "source_input_sha256": "fcd61ae3f83e3beb1f734a31fd4f0d3eb8591297536229e29665bc9c42119d73",
-  "frozen_starter_sha256": "a8711e15007d6d5ef5117fd12b1c27e7d1898c774b08f062a2bf3ac980fda103",
+  "source_input_sha256": "6a056da25492b2fa40db677725606aa6f0b4c483b2744eca93345a865f2c4f3b",
+  "frozen_starter_sha256": "99ffa5ac25a1280716d910cc079fc080ee5e9a9083b2ba66bf2f6eefd067c670",
   "published_board": true,
   "external_interfaces_selected": false,
   "release": "NOT_FOR_FABRICATION",
@@ -65,13 +65,13 @@
     }
   ],
   "source_preparation_blockers": [
-    "50 passive land patterns are placement proposals, not approved production MPN selections.",
+    "All 71 core parts carry graph-assigned footprints and MPNs selected in design/parts/parts.json; a selected MPN is a procurement record, not a qualification: voltage/power/TCR/leakage ratings and land patterns still need review before production.",
     "Eight-net connector/wire-pad implementation, mounting/outline and cable routing are unselected.",
     "RF-port tap/bleed assemblies are excluded from this core and must be placed on the RF substrate.",
     "Prototype threshold/leakage/temperature/ground-offset/RF/rail-off tests remain mandatory."
   ],
   "blockers": [
-    "50 passive land patterns are placement proposals, not approved production MPN selections.",
+    "All 71 core parts carry graph-assigned footprints and MPNs selected in design/parts/parts.json; a selected MPN is a procurement record, not a qualification: voltage/power/TCR/leakage ratings and land patterns still need review before production.",
     "Eight-net connector/wire-pad implementation, mounting/outline and cable routing are unselected.",
     "RF-port tap/bleed assemblies are excluded from this core and must be placed on the RF substrate.",
     "Prototype threshold/leakage/temperature/ground-offset/RF/rail-off tests remain mandatory."
@@ -85,7 +85,7 @@
       "schematic_parity": 0
     },
     "ignored_checks": [],
-    "raw_sha256": "fb5010e22d2d888429cdf0788a01aee7145b52c804d984480700942f4275f8c7",
+    "raw_sha256": "6866241d13e8d630454c20c9132823aeb638f99d638b044799c2263fe0398284",
     "suppressed_or_filtered": false
   },
   "track_segments": 753,
@@ -11314,8 +11314,8 @@
       "schematic_parity": 0
     },
     "ignored_checks": [],
-    "raw_sha256": "942686a84c6a8bbb500fb83b3398e189f0f802dfdb19e05b94d10fd023407e8d"
+    "raw_sha256": "4eb5c74e46aaf865ac606eeb8db7f0387e013d04132b7e2631e8193c49f7b0c7"
   },
-  "board_sha256": "0e9543d67f27e62071675a91ab8c648b077ddec3e2e1b5a5178e84b0cf5dde9d",
+  "board_sha256": "55d4005e18257ae834f88ee9f3d9e9af2a93c4b7316c7549a4ea4b13f6a467b7",
   "frozen_starter_unchanged": true
 }

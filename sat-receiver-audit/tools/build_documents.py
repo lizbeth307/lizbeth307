@@ -103,10 +103,11 @@ def main():
     rows = []
     for g in graphs:
         for c in g["components"]:
-            rows.append([g["sheet"], c["ref"], c["value"], c.get("kind", ""), c.get("status", ""), "DNP" if c.get("dnp") else "", c.get("footprint", ""), c.get("source", ""), "; ".join(c.get("notes", []))])
+            rows.append([g["sheet"], c["ref"], c["value"], c.get("kind", ""), c.get("status", ""), "DNP" if c.get("dnp") else "", c.get("footprint", ""),
+                         c.get("manufacturer", ""), c.get("mpn", ""), c.get("lcsc", ""), c.get("source", ""), "; ".join(c.get("notes", []))])
     with (BASE / "build/11-schematic-bom.csv").open("w", encoding="utf-8", newline="") as f:
         w = csv.writer(f, quoting=csv.QUOTE_ALL, lineterminator="\n")
-        w.writerow(["Аркуш", "Позначення", "Деталь / номінал", "Тип", "Статус", "Не монтувати", "Посадкове місце", "Джерело", "Примітки"])
+        w.writerow(["Аркуш", "Позначення", "Деталь / номінал", "Тип", "Статус", "Не монтувати", "Посадкове місце", "Виробник", "MPN", "LCSC", "Джерело", "Примітки"])
         w.writerows(rows)
     # This inventory is not added to the old purchasing BOM: on-module parts may
     # already be supplied with a commercial assembly.
@@ -115,6 +116,8 @@ def main():
 [11-schematic-bom.csv](11-schematic-bom.csv) формується з перевірених графів E1–E5. Це перелік позначених на схемі елементів, а не готовий кошик покупок. Частина резисторів, мікросхем і роз'ємів уже входить до готових модулів; повторно замовляти їх автоматично не можна.
 
 Колонка DNP означає «не монтувати». `design` — обране в цій редакції проєктне рішення; `verified` — перевірена документація, а не результат стенду. Порожнє посадкове місце не дозволяє виготовляти PCB.
+
+Посадкове місце, виробник, MPN і код LCSC записує в графи `tools/build_parts.py` з бази деталей [design/parts/parts.json](../design/parts/parts.json); там же — альтернативи, причини одного джерела й позиції TBD. Закупівельний перелік v2.1 за цією базою — [10-zakupivlia.md](10-zakupivlia.md) і [10-zakupivlia.csv](10-zakupivlia.csv).
 
 Початковий кошторис [10-bom.md](10-bom.md) і [10-bom.csv](10-bom.csv) залишається оцінкою редакції v2 від 18.10.2026. Він не є підтвердженою ціною оновлених схем. Заміни перетворювача, додаткові захисти, детектори, пасиви та конструктивні зміни мають бути включені в остаточний кошик за конкретними MPN і кількостями, без подвійного обліку деталей модулів. Непідтверджені ціни не прирівняно до нуля.
 
