@@ -154,7 +154,8 @@ def install_lab_packages(chroot, packages):
     manifest = [{k: v for k, v in item.items() if k != "path"} for item in packages]
     (directory / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
     if packages:
-        result = subprocess.run(offline_root_argv(chroot, ["dpkg", "-i"] + ["/%s/%s" % (LAB_DEBS, i["path"].name) for i in packages]))
+        # dpkg progress goes to stderr: stdout carries only the JSON result of this tool.
+        result = subprocess.run(offline_root_argv(chroot, ["dpkg", "-i"] + ["/%s/%s" % (LAB_DEBS, i["path"].name) for i in packages]), stdout=sys.stderr)
         if result.returncode:
             raise build_recipe.RecipeError("lab_build_depends do not install offline (their Depends belong in build_depends)")
     return manifest
