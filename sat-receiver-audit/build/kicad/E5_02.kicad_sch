@@ -202,7 +202,6 @@
 (property "ReviewStatus" "module" (at 104.14 78.74 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (property "MPN" "SKU 4681 (7\" 1920x1080 2000 nit)" (at 104.14 78.74 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (property "Manufacturer" "Wisecoco" (at 104.14 78.74 0) (effects (font (size 1.016 1.016)) (hide yes)))
-(property "Alt_MPN" "4D Systems 4DHDMI-70-1280-800-CT-EAR-1000" (at 104.14 78.74 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (pin "HDMI_1" (uuid eda96a70-321f-5280-9504-41a484412b90))
 (pin "HDMI_2" (uuid 02cc4f0c-4363-508e-802c-0e01dc4254e9))
 (pin "HDMI_3" (uuid b8f4d3bc-1a73-520f-aa4a-14c0824cc2b1))

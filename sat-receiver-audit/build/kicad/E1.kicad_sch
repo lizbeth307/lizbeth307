@@ -2010,8 +2010,6 @@
 (property "Datasheet" "STACK §2.7,§5.1" (at 558.8 195.58 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (property "Description" "" (at 558.8 195.58 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (property "ReviewStatus" "module" (at 558.8 195.58 0) (effects (font (size 1.016 1.016)) (hide yes)))
-(property "MPN" "KSD9700-70/5JSB/080C" (at 558.8 195.58 0) (effects (font (size 1.016 1.016)) (hide yes)))
-(property "Manufacturer" "Xucheng Electronics" (at 558.8 195.58 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (pin "1" (uuid f04f3ba9-1453-5767-a7c3-a174cb516e83))
 (pin "2" (uuid 21fd9a6f-346f-5d54-9e6a-27ee8097cd81))
 (instances (project "sr-rx-v2" (path "/fb9ec709-453b-5b24-a782-9cee42ec6d25/a943ccec-2813-5b6f-9c47-b1bcb52cee7f" (reference "TH102") (unit 1)))))

@@ -347,7 +347,6 @@
 (property "MPN" "TPS259630DDAR" (at 439.42 55.88 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (property "Manufacturer" "Texas Instruments" (at 439.42 55.88 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (property "LCSC" "C2155776" (at 439.42 55.88 0) (effects (font (size 1.016 1.016)) (hide yes)))
-(property "Alt_MPN" "Texas Instruments TPS259631DDAR" (at 439.42 55.88 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (pin "1" (uuid 8839224d-0ad3-5678-945e-11944d31b9c2))
 (pin "2" (uuid 0339f372-d1b2-5017-8b9f-cef2686cf391))
 (pin "3" (uuid 44c546b9-2d0e-55b4-945b-895a91c3c313))

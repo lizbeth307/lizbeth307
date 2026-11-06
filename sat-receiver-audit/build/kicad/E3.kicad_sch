@@ -1537,7 +1537,6 @@
 (property "MPN" "PI4IOE5V9555LEX" (at 274.32 259.08 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (property "Manufacturer" "Diodes Incorporated" (at 274.32 259.08 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (property "LCSC" "C3194482" (at 274.32 259.08 0) (effects (font (size 1.016 1.016)) (hide yes)))
-(property "Alt_MPN" "Texas Instruments TCA9555PWR" (at 274.32 259.08 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (pin "1" (uuid 5412c4aa-4130-5658-9eac-5de36d55e849))
 (pin "2" (uuid 8a5896c0-d11f-5c18-98d1-e9394fe38239))
 (pin "3" (uuid b59484f6-418b-543d-b633-2f0ee829322a))

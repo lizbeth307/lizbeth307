@@ -2119,16 +2119,12 @@
       <datasheet>STACK §2.7,§5.1</datasheet>
       <fields>
         <field name="ReviewStatus">module</field>
-        <field name="MPN">KSD9700-70/5JSB/080C</field>
-        <field name="Manufacturer">Xucheng Electronics</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK §2.7,§5.1</field>
         <field name="Description"/>
       </fields>
       <libsource lib="sr_rx_v2_completed" part="C_TH102" description="| module | Паралельно D/S Q101 на сигнальному рівні, сумарно через R121. Ніколи у розрив PD 20 V. Close 65…75 °C, reopen щонайменше на 15 K нижче."/>
       <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="KSD9700-70/5JSB/080C"/>
-      <property name="Manufacturer" value="Xucheng Electronics"/>
       <property name="Sheetname" value="E1"/>
       <property name="Sheetfile" value="E1.kicad_sch"/>
       <sheetpath names="/E1/" tstamps="/a943ccec-2813-5b6f-9c47-b1bcb52cee7f/"/>
@@ -10212,7 +10208,6 @@
         <field name="MPN">TPS259630DDAR</field>
         <field name="Manufacturer">Texas Instruments</field>
         <field name="LCSC">C2155776</field>
-        <field name="Alt_MPN">Texas Instruments TPS259631DDAR</field>
         <field name="Footprint">SR_RX_Custom:TI_DDA0008_HSOP-8-1EP_3.9x4.9mm_P1.27mm_EP2.4x3.1mm</field>
         <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tps2596.pdf</field>
         <field name="Description"/>
@@ -10222,7 +10217,6 @@
       <property name="MPN" value="TPS259630DDAR"/>
       <property name="Manufacturer" value="Texas Instruments"/>
       <property name="LCSC" value="C2155776"/>
-      <property name="Alt_MPN" value="Texas Instruments TPS259631DDAR"/>
       <property name="Sheetname" value="E2_04"/>
       <property name="Sheetfile" value="E2_04.kicad_sch"/>
       <sheetpath names="/E2_04/" tstamps="/b86a610c-9540-56eb-9a94-fee3a23ee226/"/>
@@ -11318,7 +11312,6 @@
         <field name="MPN">TPS259630DDAR</field>
         <field name="Manufacturer">Texas Instruments</field>
         <field name="LCSC">C2155776</field>
-        <field name="Alt_MPN">Texas Instruments TPS259631DDAR</field>
         <field name="Footprint">SR_RX_Custom:TI_DDA0008_HSOP-8-1EP_3.9x4.9mm_P1.27mm_EP2.4x3.1mm</field>
         <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tps2596.pdf</field>
         <field name="Description"/>
@@ -11328,7 +11321,6 @@
       <property name="MPN" value="TPS259630DDAR"/>
       <property name="Manufacturer" value="Texas Instruments"/>
       <property name="LCSC" value="C2155776"/>
-      <property name="Alt_MPN" value="Texas Instruments TPS259631DDAR"/>
       <property name="Sheetname" value="E2_05"/>
       <property name="Sheetfile" value="E2_05.kicad_sch"/>
       <sheetpath names="/E2_05/" tstamps="/3b171c1f-559e-51e7-80e8-e40d3812ba35/"/>
@@ -14126,7 +14118,6 @@
         <field name="MPN">PI4IOE5V9555LEX</field>
         <field name="Manufacturer">Diodes Incorporated</field>
         <field name="LCSC">C3194482</field>
-        <field name="Alt_MPN">Texas Instruments TCA9555PWR</field>
         <field name="Footprint">Package_SO:TSSOP-24_4.4x7.8mm_P0.65mm</field>
         <field name="Datasheet">https://www.diodes.com/datasheet/download/PI4IOE5V9555.pdf</field>
         <field name="Description"/>
@@ -14136,7 +14127,6 @@
       <property name="MPN" value="PI4IOE5V9555LEX"/>
       <property name="Manufacturer" value="Diodes Incorporated"/>
       <property name="LCSC" value="C3194482"/>
-      <property name="Alt_MPN" value="Texas Instruments TCA9555PWR"/>
       <property name="Sheetname" value="E3"/>
       <property name="Sheetfile" value="E3.kicad_sch"/>
       <sheetpath names="/E3/" tstamps="/815659b2-9f99-5caa-9e97-34b4cd398135/"/>
@@ -16615,7 +16605,7 @@
       <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
       <fields>
         <field name="ReviewStatus">module</field>
-        <field name="MPN">V4L (R828S)</field>
+        <field name="MPN">V4L (Lite) R828S Dongle Only</field>
         <field name="Manufacturer">RTL-SDR Blog</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
@@ -16623,7 +16613,7 @@
       </fields>
       <libsource lib="sr_rx_v2_completed" part="C_A411" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module | Internal RTL bias-tee must remain OFF; RFC DC block adds independent hardware isolation."/>
       <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="V4L (R828S)"/>
+      <property name="MPN" value="V4L (Lite) R828S Dongle Only"/>
       <property name="Manufacturer" value="RTL-SDR Blog"/>
       <property name="Sheetname" value="E4"/>
       <property name="Sheetfile" value="E4.kicad_sch"/>
@@ -16648,7 +16638,7 @@
       <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
       <fields>
         <field name="ReviewStatus">module</field>
-        <field name="MPN">V4L (R828S)</field>
+        <field name="MPN">V4L (Lite) R828S Dongle Only</field>
         <field name="Manufacturer">RTL-SDR Blog</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
@@ -16656,7 +16646,7 @@
       </fields>
       <libsource lib="sr_rx_v2_completed" part="C_A412" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module | Internal RTL bias-tee must remain OFF; RFC DC block adds independent hardware isolation."/>
       <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="V4L (R828S)"/>
+      <property name="MPN" value="V4L (Lite) R828S Dongle Only"/>
       <property name="Manufacturer" value="RTL-SDR Blog"/>
       <property name="Sheetname" value="E4"/>
       <property name="Sheetfile" value="E4.kicad_sch"/>
@@ -16756,7 +16746,7 @@
       <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
       <fields>
         <field name="ReviewStatus">module</field>
-        <field name="MPN">Bullseye BE01 TCXO LNB</field>
+        <field name="MPN">Bullseye 10 kHz BE01</field>
         <field name="Manufacturer">Othernet</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
@@ -16764,7 +16754,7 @@
       </fields>
       <libsource lib="sr_rx_v2_completed" part="C_A420" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
       <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="Bullseye BE01 TCXO LNB"/>
+      <property name="MPN" value="Bullseye 10 kHz BE01"/>
       <property name="Manufacturer" value="Othernet"/>
       <property name="Sheetname" value="E4"/>
       <property name="Sheetfile" value="E4.kicad_sch"/>
@@ -16788,7 +16778,6 @@
         <field name="ReviewStatus">module</field>
         <field name="MPN">CFA 11-00</field>
         <field name="Manufacturer">AXING</field>
-        <field name="Alt_MPN">TechniSat 0002/3077</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
         <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
@@ -16797,7 +16786,6 @@
       <property name="ReviewStatus" value="module"/>
       <property name="MPN" value="CFA 11-00"/>
       <property name="Manufacturer" value="AXING"/>
-      <property name="Alt_MPN" value="TechniSat 0002/3077"/>
       <property name="Sheetname" value="E4"/>
       <property name="Sheetfile" value="E4.kicad_sch"/>
       <sheetpath names="/E4/" tstamps="/8f7e80ea-aee4-5257-bec3-c2e6ba73b52d/"/>
@@ -17049,18 +17037,12 @@
       <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
       <fields>
         <field name="ReviewStatus">module</field>
-        <field name="MPN">CA-DKCA1-305L5-APAJ</field>
-        <field name="Manufacturer">Adam Tech</field>
-        <field name="Alt_MPN">TE Connectivity Linx CSE-SGAM-305-SGFB</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
         <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
       </fields>
       <libsource lib="sr_rx_v2_completed" part="C_J401" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
       <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="CA-DKCA1-305L5-APAJ"/>
-      <property name="Manufacturer" value="Adam Tech"/>
-      <property name="Alt_MPN" value="TE Connectivity Linx CSE-SGAM-305-SGFB"/>
       <property name="Sheetname" value="E4"/>
       <property name="Sheetfile" value="E4.kicad_sch"/>
       <sheetpath names="/E4/" tstamps="/8f7e80ea-aee4-5257-bec3-c2e6ba73b52d/"/>
@@ -17142,18 +17124,12 @@
       <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
       <fields>
         <field name="ReviewStatus">module</field>
-        <field name="MPN">CA-DKCA1-305L5-APAJ</field>
-        <field name="Manufacturer">Adam Tech</field>
-        <field name="Alt_MPN">TE Connectivity Linx CSE-SGAM-305-SGFB</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
         <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
       </fields>
       <libsource lib="sr_rx_v2_completed" part="C_J406" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
       <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="CA-DKCA1-305L5-APAJ"/>
-      <property name="Manufacturer" value="Adam Tech"/>
-      <property name="Alt_MPN" value="TE Connectivity Linx CSE-SGAM-305-SGFB"/>
       <property name="Sheetname" value="E4"/>
       <property name="Sheetfile" value="E4.kicad_sch"/>
       <sheetpath names="/E4/" tstamps="/8f7e80ea-aee4-5257-bec3-c2e6ba73b52d/"/>
@@ -17498,16 +17474,12 @@
       <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
       <fields>
         <field name="ReviewStatus">module</field>
-        <field name="MPN">W408 common-mode choke assembly</field>
-        <field name="Manufacturer">SR-RX build-to-print</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
         <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
       </fields>
       <libsource lib="sr_rx_v2_completed" part="C_W408" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module | The center conductor and shield both pass through the cores as one continuous coax. This is a common-mode impedance, not a series RF choke."/>
       <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="W408 common-mode choke assembly"/>
-      <property name="Manufacturer" value="SR-RX build-to-print"/>
       <property name="Sheetname" value="E4"/>
       <property name="Sheetfile" value="E4.kicad_sch"/>
       <sheetpath names="/E4/" tstamps="/8f7e80ea-aee4-5257-bec3-c2e6ba73b52d/"/>
@@ -18863,7 +18835,6 @@
         <field name="MPN">G6K-2F-RF-S DC5</field>
         <field name="Manufacturer">Omron (Aratas)</field>
         <field name="LCSC">C2750987</field>
-        <field name="Alt_MPN">Omron G6K-2F-RF DC5</field>
         <field name="Footprint">SR_RX_Custom:Relay_DPDT_Omron_G6K-2F-RF-S</field>
         <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
         <field name="Description"/>
@@ -18873,7 +18844,6 @@
       <property name="MPN" value="G6K-2F-RF-S DC5"/>
       <property name="Manufacturer" value="Omron (Aratas)"/>
       <property name="LCSC" value="C2750987"/>
-      <property name="Alt_MPN" value="Omron G6K-2F-RF DC5"/>
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
@@ -18904,7 +18874,6 @@
         <field name="MPN">G6K-2F-RF-S DC5</field>
         <field name="Manufacturer">Omron (Aratas)</field>
         <field name="LCSC">C2750987</field>
-        <field name="Alt_MPN">Omron G6K-2F-RF DC5</field>
         <field name="Footprint">SR_RX_Custom:Relay_DPDT_Omron_G6K-2F-RF-S</field>
         <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
         <field name="Description"/>
@@ -18914,7 +18883,6 @@
       <property name="MPN" value="G6K-2F-RF-S DC5"/>
       <property name="Manufacturer" value="Omron (Aratas)"/>
       <property name="LCSC" value="C2750987"/>
-      <property name="Alt_MPN" value="Omron G6K-2F-RF DC5"/>
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
@@ -22040,18 +22008,12 @@
       <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
       <fields>
         <field name="ReviewStatus">module</field>
-        <field name="MPN">CA-DKCA1-305L5-APAJ</field>
-        <field name="Manufacturer">Adam Tech</field>
-        <field name="Alt_MPN">TE Connectivity Linx CSE-SGAM-305-SGFB</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
         <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
       </fields>
       <libsource lib="sr_rx_v2_completed" part="C_J402" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
       <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="CA-DKCA1-305L5-APAJ"/>
-      <property name="Manufacturer" value="Adam Tech"/>
-      <property name="Alt_MPN" value="TE Connectivity Linx CSE-SGAM-305-SGFB"/>
       <property name="Sheetname" value="E4_04"/>
       <property name="Sheetfile" value="E4_04.kicad_sch"/>
       <sheetpath names="/E4_04/" tstamps="/9df58c55-738d-55e8-9cee-b8959598c250/"/>
@@ -22071,18 +22033,12 @@
       <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
       <fields>
         <field name="ReviewStatus">module</field>
-        <field name="MPN">CA-DKCA1-305L5-APAJ</field>
-        <field name="Manufacturer">Adam Tech</field>
-        <field name="Alt_MPN">TE Connectivity Linx CSE-SGAM-305-SGFB</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
         <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
       </fields>
       <libsource lib="sr_rx_v2_completed" part="C_J403" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
       <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="CA-DKCA1-305L5-APAJ"/>
-      <property name="Manufacturer" value="Adam Tech"/>
-      <property name="Alt_MPN" value="TE Connectivity Linx CSE-SGAM-305-SGFB"/>
       <property name="Sheetname" value="E4_04"/>
       <property name="Sheetfile" value="E4_04.kicad_sch"/>
       <sheetpath names="/E4_04/" tstamps="/9df58c55-738d-55e8-9cee-b8959598c250/"/>
@@ -23865,7 +23821,6 @@
         <field name="ReviewStatus">design</field>
         <field name="MPN">PX0845/A</field>
         <field name="Manufacturer">Bulgin</field>
-        <field name="Alt_MPN">Amphenol CONEC 17-200881</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK.md §5.2 / engineering design</field>
         <field name="Description"/>
@@ -23874,7 +23829,6 @@
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="PX0845/A"/>
       <property name="Manufacturer" value="Bulgin"/>
-      <property name="Alt_MPN" value="Amphenol CONEC 17-200881"/>
       <property name="Sheetname" value="E5"/>
       <property name="Sheetfile" value="E5.kicad_sch"/>
       <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
@@ -24902,7 +24856,6 @@
         <field name="MPN">TCA9517DR</field>
         <field name="Manufacturer">Texas Instruments</field>
         <field name="LCSC">C182421</field>
-        <field name="Alt_MPN">NXP PCA9517D,118</field>
         <field name="Footprint">Package_SO:SOIC-8_3.9x4.9mm_P1.27mm</field>
         <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tca9517.pdf</field>
         <field name="Description"/>
@@ -24912,7 +24865,6 @@
       <property name="MPN" value="TCA9517DR"/>
       <property name="Manufacturer" value="Texas Instruments"/>
       <property name="LCSC" value="C182421"/>
-      <property name="Alt_MPN" value="NXP PCA9517D,118"/>
       <property name="Sheetname" value="E5"/>
       <property name="Sheetfile" value="E5.kicad_sch"/>
       <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
@@ -25550,7 +25502,6 @@
         <field name="ReviewStatus">module</field>
         <field name="MPN">SKU 4681 (7" 1920x1080 2000 nit)</field>
         <field name="Manufacturer">Wisecoco</field>
-        <field name="Alt_MPN">4D Systems 4DHDMI-70-1280-800-CT-EAR-1000</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK.md §2.6,§5.1,§5.2</field>
         <field name="Description">Functional display assembly; HDMI contact names reflect standard Type-A. DC_POS and TP_* are logical labels until exact board connectors are inspected.</field>
@@ -25559,7 +25510,6 @@
       <property name="ReviewStatus" value="module"/>
       <property name="MPN" value="SKU 4681 (7&quot; 1920x1080 2000 nit)"/>
       <property name="Manufacturer" value="Wisecoco"/>
-      <property name="Alt_MPN" value="4D Systems 4DHDMI-70-1280-800-CT-EAR-1000"/>
       <property name="Sheetname" value="E5_02"/>
       <property name="Sheetfile" value="E5_02.kicad_sch"/>
       <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
