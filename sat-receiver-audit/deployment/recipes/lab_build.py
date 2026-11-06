@@ -160,6 +160,47 @@ def install_lab_packages(chroot, packages):
     return manifest
 
 
+# A consumer of the lab librtlsdr, compiled offline in a fresh chroot by consumer_check().
+CONSUMER_C = "#include <rtl-sdr.h>\nint main(void) { return (int) rtlsdr_get_device_count(); }\n"
+CONSUMER_SCRIPT = ("set -eu; cd /consumer; cc -o consumer main.c -lrtlsdr; ldconfig -p | grep -q 'librtlsdr.so.2 '; "
+                   "dpkg-shlibdeps -O -econsumer")
+
+
+def consumer_check(out_root, work):
+    """lab_build_depends end to end on the builder: a new chroot from the pinned snapshot gets
+    librtlsdr2 + librtlsdr-dev from the earlier rtlsdr build (hashes from its record, dpkg -i with
+    no network), a small program is compiled against them, the ldconfig trigger must have put
+    librtlsdr.so.2 into the cache, and dpkg-shlibdeps (no --ignore-missing-info) must derive
+    `librtlsdr2 (>= <lab version>)` from the lab package's DEBIAN/shlibs. CI evidence only."""
+    if os.geteuid() != 0:
+        raise build_recipe.RecipeError("lab_build.py needs root on a disposable builder (mmdebstrap, chroot, mounts)")
+    lock = deploy.load(DEPLOYMENT / "sources.lock.json")
+    consumer = {"build_depends": ["libusb-1.0-0-dev"], "lab_build_depends": ["librtlsdr2", "librtlsdr-dev"]}
+    packages = lab_packages(consumer, Path(out_root).resolve())
+    work = Path(work).resolve()
+    if work.exists():
+        raise build_recipe.RecipeError("consumer check work directory already exists")
+    work.mkdir(parents=True)
+    keyring = pinned_keyring(lock, work / "keyring")
+    fetch_sources.verify_releases(lock, keyring, work / "inrelease")
+    chroot = work / "chroot"
+    subprocess.run(mmdebstrap_argv(consumer, lock, chroot, keyring), check=True)
+    installed_releases(chroot, lock)
+    installed = install_lab_packages(chroot, packages)
+    (chroot / "consumer/debian").mkdir(parents=True)
+    (chroot / "consumer/main.c").write_text(CONSUMER_C, encoding="utf-8")
+    (chroot / "consumer/debian/control").write_text("Source: srrx-consumer\n\nPackage: srrx-consumer\nArchitecture: any\n", encoding="utf-8")
+    result = subprocess.run(offline_root_argv(chroot, ["sh", "-c", CONSUMER_SCRIPT]), capture_output=True, text=True)
+    if result.returncode:
+        raise build_recipe.RecipeError("consumer build, ldconfig cache or dpkg-shlibdeps failed: " + (result.stderr + result.stdout).strip()[-600:])
+    depends = next((line.partition("=")[2] for line in result.stdout.splitlines() if line.startswith("shlibs:Depends=")), "")
+    expected = "librtlsdr2 (>= %s)" % packages[0]["version"]
+    if expected not in [d.strip() for d in depends.split(",")]:
+        raise build_recipe.RecipeError("consumer Depends lacks " + expected + ": " + depends)
+    return {"status": "CI_LAB_PACKAGES_CONSUMED", "installed": installed, "consumer_depends": depends,
+            "ldconfig_cache": "librtlsdr.so.2", "hardware_ready": False}
+
+
 def build_once(component, chroot, archive_name, jobs):
     inner = ["python3", "-B", "-I", "/srrx/deployment/recipes/build_recipe.py", "--recipe",
              "/srrx/deployment/recipes/%s/recipe.json" % component, "--archive", "/cache/" + archive_name,
@@ -230,15 +271,21 @@ def run_builds(component, chroot, archive_name, jobs, repeat, out, extra):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument("--recipe", required=True, help="recipe id: deployment/recipes/<id>/recipe.json")
-    parser.add_argument("--cache", type=Path, required=True, help="fetch_sources.py cache with the verified archive")
+    parser.add_argument("--recipe", help="recipe id: deployment/recipes/<id>/recipe.json")
+    parser.add_argument("--cache", type=Path, help="fetch_sources.py cache with the verified archive")
     parser.add_argument("--work", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True, help="output root; earlier recipes' outputs there supply lab_build_depends")
     parser.add_argument("--jobs", type=int, default=os.cpu_count() or 2)
     parser.add_argument("--repeat", action="store_true", help="build twice; differing .deb hashes fail")
     parser.add_argument("--print-argv", action="store_true", help="print the mmdebstrap and offline argv, run nothing")
+    parser.add_argument("--consumer-check", action="store_true", help="install the built librtlsdr packages in a new chroot and link a consumer")
     args = parser.parse_args()
+    if not args.consumer_check and (args.recipe is None or (args.cache is None and not args.print_argv)):
+        parser.error("--recipe and --cache are required unless --consumer-check")
     try:
+        if args.consumer_check:
+            print(json.dumps(consumer_check(args.out, args.work), indent=2))
+            return
         if args.print_argv:
             lock = deploy.load(DEPLOYMENT / "sources.lock.json")
             recipe = deploy.load(HERE / args.recipe / "recipe.json")

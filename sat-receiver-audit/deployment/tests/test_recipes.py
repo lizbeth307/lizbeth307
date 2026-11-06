@@ -255,6 +255,10 @@ class BuilderArgvTests(unittest.TestCase):
         if hasattr(lab_build.os, "geteuid") and lab_build.os.geteuid() != 0:
             with self.assertRaisesRegex(build_recipe.RecipeError, "needs root"):
                 lab_build.lab_build("rtlsdr", "/nonexistent", "/nonexistent", "/nonexistent")
+            with self.assertRaisesRegex(build_recipe.RecipeError, "needs root"):
+                lab_build.consumer_check("/nonexistent", "/nonexistent")
+        self.assertNotIn("ignore-missing-info", lab_build.CONSUMER_SCRIPT)
+        self.assertIn("ldconfig -p", lab_build.CONSUMER_SCRIPT)  # the lab package's ldconfig trigger must have run
         net = self.root / "net"
         (net / "lo").mkdir(parents=True)
 

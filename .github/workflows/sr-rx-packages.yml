@@ -194,6 +194,11 @@ jobs:
           ls -l "$RUNNER_TEMP"/debs/*/
       - name: Packages match their build records, carry shlibs/triggers and stay OPEN for verify_build
         run: python3 deployment/repo/check_repo.py packages --out "$RUNNER_TEMP/debs" | tee "$RUNNER_TEMP/debs/packages-check.json"
+      - name: Lab packages consumed in a fresh chroot (lab_build_depends, DEBIAN/shlibs, ldconfig trigger)
+        if: contains(format(',{0},', env.LAB_BUILDS), ',rtlsdr,')
+        run: |
+          sudo env PYTHONDONTWRITEBYTECODE=1 python3 -B deployment/recipes/lab_build.py --consumer-check --out "$RUNNER_TEMP/debs" \
+            --work "$RUNNER_TEMP/consumer" | tee "$RUNNER_TEMP/consumer-check.json"
       - name: Reproducibility (same paths, same SOURCE_DATE_EPOCH; a difference fails)
         run: |
           python3 - "$RUNNER_TEMP/debs" "$LAB_BUILDS" "$REPEAT" <<'EOF' | tee -a "$GITHUB_STEP_SUMMARY"
@@ -284,6 +289,7 @@ jobs:
           path: |
             ${{ runner.temp }}/host-tools.txt
             ${{ runner.temp }}/debs
+            ${{ runner.temp }}/consumer-check.json
             ${{ runner.temp }}/verify-repo.json
             ${{ runner.temp }}/pipefail-canary.txt
             ${{ runner.temp }}/tamper.json
