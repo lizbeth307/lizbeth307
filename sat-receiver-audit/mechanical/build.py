@@ -73,7 +73,9 @@ def envelope_report(P):
             "rule": "flat bag: half-girths W + D <= 300 and H + D <= 230 mm (geometry estimate, model)",
             "w_plus_d": W + D, "h_plus_d": H + D,
             "result": "PASS (model)" if (W + D <= 300 and H + D <= 230) else "FAIL (model): charge on a non-flammable surface instead (STACK 5.8 fallback)"},
-        "reason": "D15 could not hold the v2.1 set with three boards, the 96.2 x 82 HDMI board, the 112 x 56 HF+ can and a full-depth battery strip without collisions (see collisions history in build/05 1.1); grown to the smallest envelope that passes the envelope checks",
+        "reason": ("height: battery strip (33.4) + middle row with the 112 x 56 HF+ can beside the Q6A + RF bay (60.5) along the top; "
+                   "depth: rear layer 36 (Q6A with cooler and fan duct) + plate 2 + front layer 16 (HDMI board, path-2 channel) + display 7; "
+                   "width: display glass 164.8 + HMI column 51 (build/05 1.1)"),
     }
 
 
