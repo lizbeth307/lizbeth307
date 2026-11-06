@@ -40,9 +40,11 @@ PASSIVE = ('resistor', 'capacitor', 'inductor')
 # Part fields this generator owns in design/E*.json (tools/generate_kicad.py prints them as KiCad fields).
 GRAPH_FIELDS = ('footprint', 'mpn', 'manufacturer', 'lcsc', 'alt_mpn')
 # Schema of design/parts/parts.json (described in design/parts/README.md).
-PART_KEYS = {'id', 'mount', 'refs', 'kind', 'package', 'footprint', 'manufacturer', 'mpn', 'sku', 'alternates', 'extras', 'match',
-             'single_source', 'tbd', 'source', 'note', 'polarized', 'deviation', 'unused_pads', 'host'}
+PART_KEYS = {'id', 'mount', 'refs', 'kind', 'package', 'footprint', 'manufacturer', 'mpn', 'sku', 'alternates', 'fallbacks', 'extras', 'match',
+             'single_source', 'tbd', 'source', 'note', 'polarized', 'deviation', 'unused_pads', 'host', 'interface_open', 'interface_resolved'}
 ALT_KEYS = {'manufacturer', 'mpn', 'sku', 'note'}
+# pcb/prepare.py category of a connector/feed ref that is not a board part: its entry states what is still open.
+INTERFACE_CATEGORY = 'physical_interface_boundary'
 EXTRA_KEYS = {'manufacturer', 'mpn', 'sku', 'qty_per_ref', 'item', 'note'}
 SKU_KEYS = {'lcsc', 'digikey', 'mouser', 'tme', 'web'}
 # harness_families: connector families of the board-to-board harnesses that have no graph refs yet (build/15, build/16).
@@ -263,7 +265,13 @@ class Model:
             if rec is None:
                 self.err(f'{entry.get("mpn") or entry.get("id")}: {dist} SKU {key} has no snapshot entry')
                 continue
-            if rec.get('mpn') and entry.get('mpn') and norm_mpn(rec['mpn']) != norm_mpn(entry['mpn']):
+            # A page that answered (HTTP 200) proves nothing about the part: the snapshot row must carry the
+            # part number the page showed, and it must be this entry's MPN.
+            if not rec.get('mpn'):
+                self.err(f'{entry.get("mpn") or entry.get("id")}: {dist} {key} snapshot row shows no MPN, so the page does not confirm the part '
+                         '(re-read it or move the seller to source)')
+                continue
+            if entry.get('mpn') and norm_mpn(rec['mpn']) != norm_mpn(entry['mpn']):
                 self.err(f'{entry.get("mpn")}: {dist} {key} snapshot shows MPN {rec["mpn"]}')
             hits.append((dist, rec))
         return hits
@@ -286,11 +294,46 @@ class Model:
             self.check_part(p, manifest_fps)
         for ref in sorted(set(self.comps) - set(self.part_of), key=sort_ref):
             self.err(f'{ref} has no parts-database entry')
+        self.check_interfaces(prepare_module())
         self.check_families()
         newest = max(self.snapshot_dates)
         age = (datetime.date.today() - datetime.date.fromisoformat(newest)).days
         if age > self.db['policy']['snapshot_max_age_days']:
             self.warnings.append(f'newest availability snapshot is {age} days old ({newest}); run tools/check_parts_availability.py')
+
+    def interface_refs(self, prep, p):
+        """Refs of p that pcb/prepare.py classifies as physical interface boundaries (not board parts)."""
+        return [r for r in p['refs'] if r in self.comps and
+                prep.category({**self.comps[r][1], '_sheet': self.comps[r][0], '_mount': p['mount']})[0] == INTERFACE_CATEGORY]
+
+    def check_interfaces(self, prep):
+        """A connector or feed that is not a board part is resolved only when its entry says how both the mating part and
+        the mounting are fixed (interface_resolved); otherwise interface_open says what is still open, and pcb/prepare.py
+        keeps a blocking record. A tbd entry stays open through its tbd text."""
+        for p in self.db['parts']:
+            refs = self.interface_refs(prep, p)
+            opened, resolved = p.get('interface_open'), p.get('interface_resolved')
+            if not refs:
+                if opened or resolved:
+                    self.err(f'{p["id"]}: interface_open/interface_resolved only apply to interface refs (pcb/prepare.py {INTERFACE_CATEGORY})')
+                continue
+            if p.get('tbd'):
+                if opened or resolved:
+                    self.err(f'{p["id"]}: a tbd entry keeps its interface open through tbd; drop interface_open/interface_resolved')
+                continue
+            if bool(opened) == bool(resolved):
+                self.err(f'{p["id"]}: interface refs {" ".join(refs)} need exactly one of interface_open (what is still open) or interface_resolved')
+                continue
+            if resolved and not (isinstance(resolved, str) and resolved.strip()):
+                self.err(f'{p["id"]}: interface_resolved must say how the mating part and the mounting are fixed')
+            if isinstance(opened, dict):
+                if sorted(opened) != sorted(refs):
+                    self.err(f'{p["id"]}: interface_open must name exactly the interface refs {" ".join(refs)}')
+                texts = list(opened.values())
+            else:
+                texts = [opened] if opened else []
+            if any(not (isinstance(t, str) and t.strip()) for t in texts):
+                self.err(f'{p["id"]}: interface_open needs a reason text')
 
     def family_items(self):
         """(family, pins, role, item) for every orderable item of harness_families."""
@@ -350,13 +393,17 @@ class Model:
         for k in ('id', 'mount', 'refs'):
             if not p.get(k):
                 self.err(f'{p.get("id")}: missing {k}')
-        for group, allowed in (('alternates', ALT_KEYS), ('extras', EXTRA_KEYS)):
+        for group, allowed in (('alternates', ALT_KEYS), ('fallbacks', ALT_KEYS), ('extras', EXTRA_KEYS)):
             for e in p.get(group, []):
                 for key in sorted(set(e) - allowed):
                     self.err(f'{p.get("id")}: {group} entry {e.get("mpn")} has unknown key {key}')
                 if not e.get('mpn'):
                     self.err(f'{p.get("id")}: {group} entry without mpn')
-        for e in [p] + p.get('alternates', []) + p.get('extras', []):
+        # A fallback changes behaviour or the land/cutout: it is never written as a substitute (alt_mpn, JLC alternate).
+        for e in p.get('fallbacks', []):
+            if not (e.get('note') or '').strip():
+                self.err(f'{p.get("id")}: fallback {e.get("mpn")} needs a note saying what changes and who decides')
+        for e in [p] + p.get('alternates', []) + p.get('fallbacks', []) + p.get('extras', []):
             for dist in sorted(set(e.get('sku') or {}) - SKU_KEYS):
                 self.err(f'{p.get("id")}: unknown distributor key {dist}')
 
@@ -417,7 +464,7 @@ class Model:
         if p.get('tbd') and not isinstance(p['tbd'], str):
             self.err(f'{p["id"]}: tbd must be a reason text')
         hits = self.sku_known(p)
-        for alt in p.get('alternates', []):
+        for alt in p.get('alternates', []) + p.get('fallbacks', []):
             self.sku_known(alt)
         for ex in p.get('extras', []):
             self.sku_known(ex)
@@ -459,7 +506,8 @@ class Model:
                 want = {}
                 if p.get('footprint'):
                     want['footprint'] = p['footprint']
-                if p['mount'] in BUY_MOUNTS and p.get('mpn') and p.get('manufacturer'):
+                # A tbd entry may name a candidate, but the graph (and KiCad MPN field) gets no part number until it is confirmed.
+                if p['mount'] in BUY_MOUNTS and p.get('mpn') and p.get('manufacturer') and not p.get('tbd'):
                     want['mpn'] = p['mpn']
                     want['manufacturer'] = p['manufacturer']
                 if p['mount'] in ('pcb_smt', 'pcb_tht') and (p.get('sku') or {}).get('lcsc') and not p.get('tbd'):
@@ -552,10 +600,11 @@ class Model:
         states = []
         for dist, key in (p.get('sku') or {}).items():
             rec = self.lcsc.get(key) if dist == 'lcsc' else self.manual.get(f'{dist}:{key}')
-            if rec is None:
-                continue
+            if rec is None or not rec.get('mpn'):
+                continue  # not evidence (sku_known reports it)
             stock = rec.get('stock')
-            states.append('ok' if stock else 'zero-stock' if stock == 0 else 'listed')
+            # in_stock: the page says "in stock" without a count (e.g. Mini-Circuits "more than 1,000").
+            states.append('ok' if stock or rec.get('in_stock') else 'zero-stock' if stock == 0 else 'listed')
         if 'ok' in states:
             return 'в наявності', ''
         if 'listed' in states:
@@ -580,13 +629,18 @@ class Model:
             state, why = self.availability(p)
             rec = self.lcsc_rec(p)
             boards = sorted({self.board_of(prep, r) for r in live} - {''})
+            tbd = bool(p.get('tbd'))
+            name = lambda e: ' '.join(x for x in (e.get('manufacturer'), e.get('mpn')) if x)
+            candidate = f'кандидат, не підтверджено: {name(p)}' if tbd and p.get('mpn') else ''
+            fallback = '; '.join(f'не заміна без рішення — {name(a)}: {a["note"]}' for a in p.get('fallbacks', []))
             rows.append({'section': p['mount'], 'part': p['id'], 'qty': qty, 'spare': spare, 'order': qty + spare, 'refs': ' '.join(sorted(live, key=sort_ref)),
-                         'boards': ' '.join(boards), 'manufacturer': p.get('manufacturer', ''), 'mpn': p.get('mpn', ''), 'footprint': p.get('footprint', ''),
+                         'boards': ' '.join(boards), 'manufacturer': '' if tbd else p.get('manufacturer', ''), 'mpn': '' if tbd else p.get('mpn', ''),
+                         'footprint': p.get('footprint', ''),
                          'lcsc': (p.get('sku') or {}).get('lcsc', ''), 'digikey': (p.get('sku') or {}).get('digikey', ''),
                          'other': (p.get('sku') or {}).get('web', '') or p.get('source', ''),
                          'lcsc_stock': '' if rec is None else rec.get('stock'), 'lcsc_usd': '' if rec is None else unit_price(rec, qty + spare),
                          'alternates': alt_text(p),
-                         'state': state, 'note': '; '.join(x for x in (why if state == 'TBD' else '', p.get('note', ''), p.get('single_source', '') and 'одне джерело: ' + p['single_source']) if x)})
+                         'state': state, 'note': '; '.join(x for x in (why if state == 'TBD' else '', candidate, p.get('note', ''), p.get('single_source', '') and 'одне джерело: ' + p['single_source'], fallback) if x)})
             for ex in p.get('extras', []):
                 rec = self.lcsc_rec(ex)
                 n = ex['qty_per_ref'] * qty
@@ -626,6 +680,11 @@ class Model:
                 self.err(f'bom_v2_rows: 10-bom.csv has no row {no}')
             if v.get('status') not in ('db', 'partial') or not v.get('note'):
                 self.err(f'bom_v2_rows {no}: status db|partial and a note are required')
+            for key in sorted(set(v) - {'status', 'note', 'remaining'}):
+                self.err(f'bom_v2_rows {no}: unknown key {key}')
+            # A partial row is printed only with what is still bought by it, so the database part is not ordered twice.
+            if (v.get('status') == 'partial') != bool((v.get('remaining') or '').strip()):
+                self.err(f'bom_v2_rows {no}: a partial row needs remaining (what is still bought by this row, with quantities); a db row has none')
         for p in self.db['parts']:
             for no in re.findall(r'10-bom\.csv №(\d+)', p.get('source', '')):
                 if no not in mapping:
@@ -635,10 +694,12 @@ class Model:
             v = mapping.get(r['№'], {})
             if v.get('status') == 'db':
                 continue
-            out.append({'row': r['№'], 'group': r['група'], 'level': r['рівень'], 'in_total': r['у підсумку рівня'], 'qty': r['к-сть'],
-                        'item': r['позиція'], 'model': r['модель і номер деталі'], 'seller': r['продавець (основний / запасний)'],
-                        'usd_min': r['USD мін (рядок)'], 'usd_max': r['USD макс (рядок)'], 'status_v2': r['статус'],
-                        'coverage': v.get('note', '') if v.get('status') == 'partial' else ''})
+            partial = v.get('status') == 'partial'
+            # Partial row: only the remaining sub-items; the v2 USD covered the whole row, so no sum is carried.
+            out.append({'row': r['№'], 'group': r['група'], 'level': r['рівень'], 'in_total': r['у підсумку рівня'], 'qty': '' if partial else r['к-сть'],
+                        'item': r['позиція'], 'model': v.get('remaining', '') if partial else r['модель і номер деталі'], 'seller': r['продавець (основний / запасний)'],
+                        'usd_min': '' if partial else r['USD мін (рядок)'], 'usd_max': '' if partial else r['USD макс (рядок)'], 'status_v2': r['статус'],
+                        'coverage': v.get('note', '') if partial else ''})
         return out
 
     def stocked_alternate(self, p):
@@ -659,6 +720,13 @@ class Model:
         buy_refs = [r for r in self.comps if self.part_of[r]['mount'] in BUY_MOUNTS and not self.comps[r][1].get('dnp')]
         state = collections.Counter(self.availability(self.part_of[r])[0] for r in buy_refs)
         tbd = [{'part': p['id'], 'refs': p['refs'], 'reason': p['tbd']} for p in self.db['parts'] if p.get('tbd')]
+        interfaces = []
+        for p in self.db['parts']:
+            refs = self.interface_refs(prep, p)
+            if refs and not p.get('tbd') and not p.get('interface_resolved'):
+                opened = p['interface_open']
+                interfaces += ([{'part': p['id'], 'refs': [r], 'open': opened[r]} for r in sorted(opened, key=sort_ref)] if isinstance(opened, dict)
+                               else [{'part': p['id'], 'refs': refs, 'open': opened}])
         carried = [{'part': p['id'], 'refs': p['refs'], 'source': p['source']} for p in self.db['parts'] if p.get('source') and not p.get('tbd')]
         origins = collections.Counter()
         for r in pcb_refs:
@@ -672,10 +740,12 @@ class Model:
             'board_refs': len(pcb_refs), 'board_refs_with_footprint': sum(bool(self.part_of[r].get('footprint')) for r in pcb_refs),
             'board_footprint_origin': dict(sorted(origins.items())),
             'purchased_refs': len(buy_refs), 'purchased_refs_by_availability': dict(sorted(state.items())),
-            'purchased_refs_with_mpn': sum(bool(self.part_of[r].get('mpn')) for r in buy_refs),
+            # A tbd candidate is not counted: its MPN is not confirmed and is not written to the graphs.
+            'purchased_refs_with_mpn': sum(bool(self.part_of[r].get('mpn')) and not self.part_of[r].get('tbd') for r in buy_refs),
             'harness_family_items': len(self.family_items()),
-            'tbd': tbd, 'carried_from_10_bom': carried,
+            'tbd': tbd, 'interfaces_open': interfaces, 'carried_from_10_bom': carried,
             'deviations': [{'part': p['id'], 'refs': p['refs'], **p['deviation']} for p in self.db['parts'] if p.get('deviation')],
+            'fallbacks': [{'part': p['id'], 'refs': p['refs'], 'mpn': a['mpn'], 'note': a['note']} for p in self.db['parts'] for a in p.get('fallbacks', [])],
             'footprint_checks_open': [{'footprint': f'SR_RX_Custom:{k}', 'note': v.get('note') or v.get('drawing')} for k, v in sorted(prov.items())
                                       if 'verify' in json.dumps(v) or 'must be checked' in json.dumps(v)],
             'open_items': OPEN_ITEMS,
@@ -683,9 +753,11 @@ class Model:
 
 
 OPEN_ITEMS = [
-    'SW308/SW309 — це кнопки всередині енкодерів ENC301/ENC302: граф тримає їх окремими позначеннями, тому контакти S1/S2 футпринта енкодера лишаються без кола в netlist, доки власник E3 не перенесе кола кнопок на виводи енкодера.',
+    'SW308/SW309 — це кнопки всередині енкодерів ENC301/ENC302: граф тримає їх окремими позначеннями, тому контакти S1/S2 футпринта енкодера лишаються без кола в netlist, доки власник E3 не перенесе кола кнопок на виводи енкодера (у pcb/generated/unresolved.csv — блокуючий запис host_pads_unconnected).',
     'Роз’єми з боку плати для джгутів, які ще не мають позначень у графі (кінець J302 на силовій платі, гніздо LAB BUS за J505, вентилятор, виводи NTC TH301/TH302, міжплатні з’єднання поділу на три плати), куплено як супутні деталі там, де їх названо; для решти артикули за кількістю контактів дає розділ «Роз’єми міжплатних джгутів», а позначення J на схемі й кількість чекають PCB-пакета й таблиці джгутів (build/16).',
-    'Панельні деталі (SMA, F, BNC, USB-A IP68, USB-C IP67, кнопки PV6 IP65) обрано за сторінками DigiKey DE від 06.11.2026; вирізи, ущільнення, заглушки й заглиблення кнопки EDL — механічний пакет (MECH-07). Внутрішній кабель ПЧ W402 і кабель живлення pod W425 лишаються TBD.',
+    'Розетку для 40-контактного роз’єму Q6A J20 (J301; 2×20, крок 2.54 мм) і шлейф або плату до CTRL_HMI не обрано: у графі немає ні позначення, ні MPN (запис J-Q6A-EXISTING, interface_open).',
+    'Панельні порти P1–P3 і P6 (J401–J403, J406) — TBD: їхній внутрішній бік — кола RF-плати, а роз’єму з боку плати (U.FL/MHF1 чи крайового SMA) у графі E4 немає; потрібні позначення J з боку плати (власник E4) і пігтейл з розрахунком втрат (build/15 «RF-порти»).',
+    'Панельні деталі (SMA P8, F, BNC, USB-A IP68, USB-C IP67, кнопки PV6 IP65) обрано за сторінками DigiKey DE від 06.11.2026; вирізи, ущільнення, заглушки й заглиблення кнопки EDL — механічний пакет (MECH-07). Що ще відкрито для кожного інтерфейсу — розділ «Інтерфейси без кріплення». Внутрішній кабель ПЧ W402 і кабель живлення pod W425 лишаються TBD.',
     'Розмір відкритої площадки HMC7992LP3DE і крок виводів CPT-1207-3TH треба звірити з кресленнями виробника до випуску PCB (див. SR_RX_Custom.pretty/provenance.json; analog.com 24.10.2026 не відповідав).',
 ]
 
@@ -714,7 +786,8 @@ BOM_HEAD = {'section': 'розділ', 'part': 'запис бази', 'qty': 'к
 
 V2_FIELDS = ['row', 'group', 'level', 'in_total', 'qty', 'item', 'model', 'seller', 'usd_min', 'usd_max', 'status_v2', 'coverage']
 V2_HEAD = {'row': '№ у 10-bom', 'group': 'група', 'level': 'рівень', 'in_total': 'у підсумку рівня', 'qty': 'к-сть', 'item': 'позиція',
-           'model': 'модель і номер деталі (v2)', 'seller': 'продавець (v2)', 'usd_min': 'USD мін (v2)', 'usd_max': 'USD макс (v2)',
+           'model': 'модель і номер деталі (v2; для частково покритого рядка — лише залишок з кількістю)', 'seller': 'продавець (v2)',
+           'usd_min': 'USD мін (v2; порожньо для частково покритого)', 'usd_max': 'USD макс (v2; порожньо для частково покритого)',
            'status_v2': 'статус (v2)', 'coverage': 'що вже в базі деталей'}
 
 
@@ -733,7 +806,7 @@ def bom_md(model, rows, cov):
              f'- Позначень на платах з посадковим місцем: {cov["board_refs_with_footprint"]} з {cov["board_refs"]} (KiCad {KICAD_TAG}: {cov["board_footprint_origin"].get("KiCad " + KICAD_TAG, 0)}, власні/похідні SR_RX_Custom: {cov["board_footprint_origin"].get("SR_RX_Custom", 0)}).',
              f'- Позначень, що купуються (без DNP): {cov["purchased_refs"]}; з MPN: {cov["purchased_refs_with_mpn"]}; за станом: ' + ', '.join(f'{k} — {v}' for k, v in cov['purchased_refs_by_availability'].items()) + '.',
              f'- Правило запасу для пасивних на платах: +{model.db["policy"]["spares"]["passive_pct"]} %, щонайменше {model.db["policy"]["spares"]["passive_min"]} шт. Дистриб’ютори: ' + ', '.join(model.db['policy']['distributors']) + '.', '',
-             'Стан: «в наявності» — є на складі хоча б в одного прочитаного дистриб’ютора; «у каталозі» — сторінку прочитано, кількість не показано; «склад 0» — лише нульовий склад; «з 10-bom» — продавець з оцінки v2 (18.10.2026), сторінку не перечитано; «TBD» — MPN не підтверджено, причина в примітці.', '']
+             'Стан: «в наявності» — є на складі хоча б в одного прочитаного продавця (кількість або напис «in stock»); «у каталозі» — сторінку прочитано і вона показує цей MPN, кількість не показано; «склад 0» — лише нульовий склад; «з 10-bom» — продавець з оцінки v2 (18.10.2026), сторінку не перечитано; «TBD» — MPN не підтверджено, причина в примітці (кандидат, якщо він є, — лише в примітці). Сторінка рахується доказом лише тоді, коли рядок знімка записує MPN, який вона показала.', '']
     for m, title in sec.items():
         part_rows = [r for r in rows if r['section'] == m]
         if not part_rows:
@@ -767,21 +840,32 @@ def bom_md(model, rows, cov):
     lines += ['## Решта закупівлі: рядки оцінки v2 поза схемою', '',
               'Рядки [10-bom.csv](10-bom.csv), деталей яких немає в графах E1–E5 (антени, прилади лабораторії, інструменти, корпус, кріплення, запасні модулі, плата Q6A), '
               'або які база покриває лише частково. Модель, продавець і ціна — оцінка v2 від 18.10.2026 у USD, не перечитана. '
+              'Для частково покритих рядків нижче стоїть лише залишок, який ще купується за цим рядком, з кількістю; суму v2 не наведено, бо вона охоплювала весь рядок. '
               f'Рядків, повністю замінених базою деталей (не купувати за ними вдруге): {sum(1 for v in model.db["bom_v2_rows"].values() if v["status"] == "db")}; '
               f'частково покритих: {sum(1 for r in other if r["coverage"])}; поза схемою: {sum(1 for r in other if not r["coverage"])}. Відповідність рядків і бази — `bom_v2_rows` у parts.json.', '']
     for level in sorted({r['level'] for r in other}, key=lambda x: [r['level'] for r in other].index(x)):
-        lines += [f'### {level}', '', '| № | к-сть | позиція | модель і номер деталі | USD (v2) | що вже в базі |', '|---:|---|---|---|---|---|']
+        lines += [f'### {level}', '', '| № | к-сть | позиція | модель і номер деталі (для часткового — лише залишок) | USD (v2) | що вже в базі |', '|---:|---|---|---|---|---|']
         for r in other:
             if r['level'] == level:
-                usd = r['usd_min'] if r['usd_min'] == r['usd_max'] else f'{r["usd_min"]}–{r["usd_max"]}'
+                usd = '—' if r['coverage'] else r['usd_min'] if r['usd_min'] == r['usd_max'] else f'{r["usd_min"]}–{r["usd_max"]}'
                 lines.append(f'| {r["row"]} | {r["qty"]} | {md_cell(r["item"])} | {md_cell(r["model"])} | {usd} | {md_cell(r["coverage"]) or "—"} |')
         lines.append('')
     lines += ['## Відкриті позиції (TBD)', '', '| запис | позначення | причина |', '|---|---|---|']
     for t in cov['tbd']:
         lines.append(f'| {t["part"]} | {" ".join(t["refs"])} | {t["reason"]} |')
+    lines += ['', '## Інтерфейси без кріплення', '',
+              'Роз’єми й вводи, які не є деталями плати (панель, кабель, наявний порт Q6A, зібраний вузол): деталь обрано, але відповідна частина або кріплення ще відкриті. '
+              'У `pcb/generated/unresolved.csv` кожен такий запис блокує випуск (`interface_mounting_unresolved`), доки запис бази не отримає `interface_resolved`.', '',
+              '| запис | позначення | що відкрито |', '|---|---|---|']
+    for i in cov['interfaces_open']:
+        lines.append(f'| {i["part"]} | {" ".join(i["refs"])} | {i["open"].replace("|", "/")} |')
     lines += ['', '## Відхилення від номіналу графа', '']
     for d in cov['deviations']:
         lines.append(f'- {d["part"]} ({" ".join(d["refs"])}): допуск {d["tolerance_pct"]} % замість значення графа — {d["reason"]} Рішення: {d["decision"]}.')
+    lines += ['', '## Запасні варіанти, що не є заміною', '',
+              'Ці деталі змінюють поведінку, площадку або виріз: їх не записано в `alt_mpn` графів, поле KiCad Alt_MPN і колонку альтернатив JLC; ставити лише за рішенням власника аркуша.', '']
+    for f in cov['fallbacks']:
+        lines.append(f'- {f["part"]} ({" ".join(f["refs"])}): {f["mpn"]} — {f["note"]}')
     lines += ['', '## Інші відкриті питання', ''] + [f'- {x}' for x in cov['open_items']]
     lines += ['', 'Повні колонки (запас, ціна, альтернативи, примітки) — у [10-zakupivlia.csv](10-zakupivlia.csv); рядки оцінки v2 поза схемою — у [10-zakupivlia-inshe.csv](10-zakupivlia-inshe.csv); '
               'перелік для JLC PCBA за платами — у [10-jlc-bom.csv](10-jlc-bom.csv); лічильники — у [10-parts-coverage.json](10-parts-coverage.json).', '']

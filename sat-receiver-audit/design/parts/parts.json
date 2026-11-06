@@ -32,7 +32,8 @@
   },
   "11": {
    "status": "partial",
-   "note": "A411/A412 у базі; третій V4L (запасний LABRXC) — за цим рядком"
+   "note": "A411/A412 у базі; третій V4L (запасний LABRXC) — за цим рядком",
+   "remaining": "1× RTL-SDR Blog V4L (запасний LABRXC)"
   },
   "12": {
    "status": "db",
@@ -60,11 +61,13 @@
   },
   "19": {
    "status": "partial",
-   "note": "L501, C511, R512, C512 у базі; екран Otto Schubert 6B — за цим рядком"
+   "note": "L501, C511, R512, C512 у базі; екран Otto Schubert 6B — за цим рядком",
+   "remaining": "1× екран Otto Schubert Art. 6B"
   },
   "20": {
    "status": "partial",
-   "note": "ферити FT-240-77 і #31 — супутні деталі W408 у базі; RG316, 2 SMA і кронштейн — за цим рядком (TBD у базі)"
+   "note": "ферити FT-240-77 і #31 — супутні деталі W408 у базі; RG316, 2 SMA і кронштейн — за цим рядком (TBD у базі)",
+   "remaining": "RG316 на 9–11 витків, 2 вилки SMA і кронштейн для W408 (у базі TBD: MPN не задано)"
   },
   "27": {
    "status": "db",
@@ -72,11 +75,13 @@
   },
   "31": {
    "status": "partial",
-   "note": "A420 у базі; запасний LNB — за цим рядком"
+   "note": "A420 у базі; запасний LNB — за цим рядком",
+   "remaining": "1× Othernet Bullseye 10 kHz BE01 (запасний)"
   },
   "32": {
    "status": "partial",
-   "note": "A421 у базі; другий термінатор — за цим рядком"
+   "note": "A421 у базі; другий термінатор — за цим рядком",
+   "remaining": "1× AXING CFA 11-00 (другий термінатор)"
   },
   "42": {
    "status": "db",
@@ -96,11 +101,13 @@
   },
   "49": {
    "status": "partial",
-   "note": "ENC301/ENC302 у базі; запасний енкодер — за цим рядком"
+   "note": "ENC301/ENC302 у базі; запасний енкодер — за цим рядком",
+   "remaining": "1× Bourns PEC11R-4220F-S0024 (запасний)"
   },
   "50": {
    "status": "partial",
-   "note": "SW302-SW307 у базі; запас до 12 шт. — за цим рядком"
+   "note": "SW302-SW307 у базі; запас до 12 шт. — за цим рядком",
+   "remaining": "6× E-Switch TL3145BF350QJ (до 12 шт.: 2 для тестів і запас)"
   },
   "53": {
    "status": "db",
@@ -108,19 +115,21 @@
   },
   "54": {
    "status": "partial",
-   "note": "U510 у базі; запасна плата — за цим рядком"
+   "note": "U510 у базі; запасна плата — за цим рядком",
+   "remaining": "1× Adafruit 5997 (запасна плата)"
   },
   "55": {
    "status": "db",
    "note": "U301-U303"
   },
   "56": {
-   "status": "partial",
-   "note": "TCA9517DR, 2N7002, AO3400A, BAT54C — у базі; SN74LVC1G17DBVR у графах v2.1 немає, не купувати без звірки"
+   "status": "db",
+   "note": "TCA9517DR, 2N7002, AO3400A, BAT54C і резистори — у базі; SN74LVC1G17DBVR у графах v2.1 немає — не купувати"
   },
   "57": {
    "status": "partial",
-   "note": "BT101-BT104 у базі; запасний елемент і solder tags — за цим рядком"
+   "note": "BT101-BT104 у базі; запасний елемент і solder tags — за цим рядком",
+   "remaining": "1× Molicel INR21700-P50B (запасний) і solder tags (MPN у v2 немає)"
   },
   "58": {
    "status": "db",
@@ -132,7 +141,8 @@
   },
   "61": {
    "status": "partial",
-   "note": "U107 у базі; запасний D36V50F12 — за цим рядком"
+   "note": "U107 у базі; запасний D36V50F12 — за цим рядком",
+   "remaining": "1× Pololu D36V50F12 #4095 (запасний)"
   },
   "62": {
    "status": "db",
@@ -140,7 +150,8 @@
   },
   "63": {
    "status": "partial",
-   "note": "U106 у базі; запасний #2813 — за цим рядком"
+   "note": "U106 у базі; запасний #2813 — за цим рядком",
+   "remaining": "1× Pololu #2813 (запасний)"
   },
   "64": {
    "status": "db",
@@ -163,8 +174,9 @@
    "note": "U215/U216 і шунти"
   },
   "69": {
-   "status": "db",
-   "note": "TPS2553"
+   "status": "partial",
+   "note": "TPS2553DBVR-1: 9 шт. у базі (U206–U210, U221, U501–U503); 2 запасні — за цим рядком",
+   "remaining": "2× TI TPS2553DBVR-1 (запасні; LCSC C111738)"
   },
   "70": {
    "status": "db",
@@ -172,11 +184,13 @@
   },
   "71": {
    "status": "partial",
-   "note": "запобіжники, тримачі, SMBJ, UHE1E221MPD, TLV3011, MF-MSMF075, AO3407A, TPS259470, дроселі й XT30 — у базі; 3× Fair-Rite 0431164281 цього рядка звірити з графами"
+   "note": "запобіжники, тримачі, SMBJ, UHE1E221MPD, TLV3011, MF-MSMF075, AO3407A, TPS259470, дроселі й XT30 — у базі; 3× Fair-Rite 0431164281 цього рядка звірити з графами",
+   "remaining": "Fair-Rite 0431164281: 2 шт. уже супутні деталі U520 (ферити HDMI); третій з v2 — лише після звірки з графами"
   },
   "72": {
    "status": "partial",
-   "note": "склад плат змінено рішенням build/15 (3 плати, 4 шари JLC04161H-7628, деталі зверху, JLC PCBA); деталі плат — у базі, специфікація замовлення плат — у PCB-пакеті"
+   "note": "склад плат змінено рішенням build/15 (3 плати, 4 шари JLC04161H-7628, деталі зверху, JLC PCBA); деталі плат — у базі, специфікація замовлення плат — у PCB-пакеті",
+   "remaining": "3 друковані плати за специфікацією PCB-пакета (4 шари JLC04161H-7628, build/15); дроселі Murata і C0G цього рядка — лише ті, що є в графах (тоді вони вже в базі)"
   },
   "76": {
    "status": "db",
@@ -212,7 +226,8 @@
   },
   "91": {
    "status": "partial",
-   "note": "Goobay 58814 (W401), Lindy 36700 (J541/J543), панельні SMA (J401-J403, J406, J408), BNC (J405), F (J404) і збірки RG-316 W422-W424 — у базі; польові RG316, перемички й перехідники — за цим рядком"
+   "note": "Goobay 58814 (W401), Lindy 36700 (J541/J543), панельна SMA P8 із пігтейлом (J408), BNC (J405), F (J404), CAB.011 (W407) і збірки RG-316 W422–W424 — у базі; панельні SMA P1–P3, P6 — TBD у базі (J-SMA-PANEL-RFBOARD)",
+   "remaining": "набір пігтейлів RTL-SDR Blog; 4 пігтейли CH334F; перемички RG316 між модулями (кількість — таблиця джгутів build/16); 4 польові RG316 1–2 м; BNC M-M для Boni; перехідники. Не купувати за цим рядком: панельні SMA P1–P3, P6 і їхні пігтейли (TBD у базі, J-SMA-PANEL-RFBOARD), SMA P8 із пігтейлом (J408), BNC P5 (J405), F P4 (J404), P7 (W407 CAB.011), 10 пігтейлів RG316 20 см (замінено збірками бази)"
   },
   "92": {
    "status": "db",
@@ -248,7 +263,8 @@
   },
   "101": {
    "status": "partial",
-   "note": "пасиви секції Lime — у базі; ребра пластини — за цим рядком"
+   "note": "пасиви секції Lime — у базі; ребра пластини — за цим рядком",
+   "remaining": "ребра пластини секції Lime"
   },
   "102": {
    "status": "db",
@@ -284,7 +300,8 @@
   },
   "143": {
    "status": "partial",
-   "note": "кнопка живлення — SW301 у базі (E-Switch PV6F240SS); перемичка XT30 для транспортування — за цим рядком"
+   "note": "кнопка живлення — SW301 у базі (E-Switch PV6F240SS); перемичка XT30 для транспортування — за цим рядком",
+   "remaining": "1× перемичка-запобіжник XT30 для транспортування (MPN у v2 немає)"
   }
  },
  "harness_families": [
@@ -3920,14 +3937,15 @@
    "sku": {
     "lcsc": "C2155776"
    },
-   "match": "TPS259630DDAR",
-   "alternates": [
+   "fallbacks": [
     {
      "manufacturer": "Texas Instruments",
      "mpn": "TPS259631DDAR",
-     "note": "spare variant named in 10-bom row 67 (not read 2026-10-24)"
+     "note": "auto-retry після теплового вимкнення, а TPS259630 — latch-off (TPS2596 datasheet SLVSET8A, Device Comparison Table, с. 3, https://www.ti.com/lit/ds/symlink/tps2596.pdf, прочитано 06.11.2026). E2 спирається на засувку (design/E2.json, E2-review.md); STACK.md називає запасний варіант auto-retry. Змінює реакцію на тепловий збій — лише за рішенням власника E2. Рядок 67 10-bom."
     }
    ],
+   "single_source": "Latch-off TPS259630 потрібен E2 (тепловий збій має засуватися); auto-retry TPS259631 — лише запасний варіант за рішенням власника E2",
+   "match": "TPS259630DDAR",
    "refs": [
     "U212",
     "U214"
@@ -4065,17 +4083,18 @@
     "lcsc": "C3194482",
     "digikey": "31-PI4IOE5V9555LEXCT-ND"
    },
-   "match": "PI4IOE5V9555LEX",
-   "alternates": [
+   "fallbacks": [
     {
      "manufacturer": "Texas Instruments",
      "mpn": "TCA9555PWR",
      "sku": {
       "lcsc": "C465732"
      },
-     "note": "same TSSOP-24 land per 10-bom row 53; pin compatibility to be confirmed against both datasheets before substitution"
+     "note": "той самий корпус TSSOP-24 за рядком 53 10-bom; сумісність виводів не звірено з обома даташитами — до звірки не заміна."
     }
    ],
+   "single_source": "PI4IOE5V9555LEX за графом E3; TCA9555PWR — лише після звірки виводів",
+   "match": "PI4IOE5V9555LEX",
    "note": "LCSC stock 0, DigiKey DE 3021 pcs on 2026-10-24.",
    "refs": [
     "U306"
@@ -4321,17 +4340,18 @@
    "sku": {
     "lcsc": "C182421"
    },
-   "match": "TCA9517DR",
-   "alternates": [
+   "fallbacks": [
     {
      "manufacturer": "NXP",
      "mpn": "PCA9517D,118",
      "sku": {
       "lcsc": "C2652395"
      },
-     "note": "same SO-8 family part; pin compatibility to be confirmed against both datasheets"
+     "note": "та сама родина в SO-8; сумісність виводів не звірено з обома даташитами — до звірки не заміна."
     }
    ],
+   "single_source": "TCA9517DR за графом; PCA9517D,118 — лише після звірки виводів",
+   "match": "TCA9517DR",
    "refs": [
     "U507"
    ]
@@ -4346,14 +4366,14 @@
     "lcsc": "C2750987",
     "digikey": "Z2828-ND"
    },
-   "match": "G6K-2F-RF-S",
-   "alternates": [
+   "fallbacks": [
     {
      "manufacturer": "Omron",
      "mpn": "G6K-2F-RF DC5",
-     "note": "standard-footprint RF version named in 10-bom row 18 (different land, not drop-in); not read 2026-10-24"
+     "note": "стандартна RF-версія без -S (рядок 18 10-bom): інша площадка, не drop-in — потрібен інший футпринт і перевірка RF-переходу; 24.10.2026 не перечитано."
     }
    ],
+   "match": "G6K-2F-RF-S",
    "single_source": "RF relay with case-ground terminals; the -S land pattern is specific",
    "note": "DigiKey lists the brand as Aratas (formerly Omron Components).",
    "refs": [
@@ -4889,6 +4909,7 @@
     }
    ],
    "note": "Female on the pack side; pigtail 18 AWG.",
+   "interface_open": "XT30U-F на пігтейлі 18 AWG і XT30U-M для сервісного дроту обрано; кріплення роз’єму в корпусі (сервісний доступ, фіксація, ущільнення) і з’єднання пігтейла з силовою платою не задано — механічний пакет і таблиця джгутів (build/16).",
    "refs": [
     "J101"
    ]
@@ -4912,6 +4933,7 @@
    "single_source": "Єдиний знайдений на складі DigiKey DE 06.11.2026 панельний USB-C з IP67 і номіналом 5 A; інша серія потребує іншого вирізу панелі",
    "match": "USB-C",
    "note": "IP67, 24 контакти, фланцевий монтаж, виводи THT під пайку: ставиться на малу панельну плату або на дроти лише VBUS/GND/CC1/CC2 (E1: CC прямо до IP2368, без Rd 5.1 kΩ). Номінали 0.25 / 1.25 / 5 A — з таблиці DigiKey; що 5 A стосується VBUS, звірити з кресленням Amphenol io_harsh_musb-type-c.pdf до замовлення.",
+   "interface_open": "MUSBRM5C130 має 24 виводи THT під пайку: потрібна мала панельна плата або дроти лише VBUS/GND/CC1/CC2 (і SHIELD до CHASSIS), а їх немає ні в графі, ні в BOM; виріз панелі й ущільнення — механічний пакет (MECH-07).",
    "refs": [
     "J103"
    ]
@@ -4983,7 +5005,17 @@
   {
    "id": "J-Q6A-EXISTING",
    "mount": "existing",
-   "note": "Connectors/pads on the purchased Radxa Q6A; mating cables and leads are separate refs or extras (J301 mating socket: see coverage open items).",
+   "note": "Connectors/pads on the purchased Radxa Q6A; mating cables and leads are separate refs or extras. What is still open per port is in interface_open (the J301 mating socket is not selected).",
+   "interface_open": {
+    "J301": "Розетку 2×20 (крок 2.54 мм) для Q6A J20 і шлейф або плату до CTRL_HMI не обрано: у графі немає ні позначення, ні MPN.",
+    "J303": "Відповідна частина — вилка 1.25 мм на виводах BT301 (Electrokit 41036512, рядок 85 10-bom, не перечитано); кріплення батареї й укладання дроту не задано.",
+    "J511": "Кабелі до J5: USB3 до T7 (U540) і USB2 до RTL-B (J541) — окремі записи; фіксація штекерів і розвантаження натягу в корпусі не задано (механічний пакет).",
+    "J512": "Кабелі USB2 без провідника VBUS до хаба U510 і сенсорного контролера U520 не мають MPN; фіксація штекерів не задана.",
+    "J520": "Кабель HDMI — супутня деталь U520 (Adafruit 2420); фіксація штекера й розвантаження натягу не задано (механічний пакет).",
+    "J521": "Заводську вилку J21 знімають після прогону; дроти від площадок J21 до J503 (Micro-Fit 3.0) — довжина й переріз у таблиці джгутів (build/16) ще не задано.",
+    "J522": "Дроти від площадок заводської кнопки EDL до SW501 (PV6F240SS) не задано (провід, довжина, фіксація пайки).",
+    "J530": "Райзер ADT-Link R44SF (U530) — окремий запис; кріплення райзера й модуля Lime у корпусі — механічний пакет."
+   },
    "refs": [
     "J301",
     "J303",
@@ -5121,7 +5153,7 @@
    },
    "match": "BFB0305HA-C",
    "single_source": "Delta blower named in E3 (v2.1)",
-   "note": "DigiKey DE EUR 12.90 @1 on 2026-10-24 (stock not shown).",
+   "note": "DigiKey DE 603-2111-ND: 24.10.2026 — склад 482, EUR 12.90 @1; 06.11.2026 — склад 470, EUR 13.04 @1 без ПДВ (EUR 15.52 з ПДВ).",
    "refs": [
     "FAN302"
    ]
@@ -5283,7 +5315,7 @@
    "id": "A-RTLSDR-V4L",
    "mount": "module",
    "manufacturer": "RTL-SDR Blog",
-   "mpn": "V4L (R828S)",
+   "mpn": "V4L (Lite) R828S Dongle Only",
    "sku": {
     "web": "rtl-sdr-shop"
    },
@@ -5314,9 +5346,7 @@
    "mount": "module",
    "manufacturer": "Lime Microsystems",
    "mpn": "LimeSDR Micro M.2 2280 Basic",
-   "sku": {
-    "web": "crowdsupply-limesdr-micro"
-   },
+   "source": "build/10-bom.csv №92 (Crowd Supply, checked 18.10.2026); crowdsupply.com answered WebFetch with HTTP 403 on 2026-11-06, so the variant and price were not re-read",
    "match": "LimeSDR Micro",
    "single_source": "Crowd Supply only; gate 1.12.2026 (10-bom row 92)",
    "refs": [
@@ -5354,7 +5384,7 @@
    "id": "A-BULLSEYE-LNB",
    "mount": "module",
    "manufacturer": "Othernet",
-   "mpn": "Bullseye BE01 TCXO LNB",
+   "mpn": "Bullseye 10 kHz BE01",
    "sku": {
     "web": "passionradio-bullseye"
    },
@@ -5370,14 +5400,15 @@
    "mount": "module",
    "manufacturer": "AXING",
    "mpn": "CFA 11-00",
-   "match": "CFA 11-00",
-   "alternates": [
+   "fallbacks": [
     {
      "manufacturer": "TechniSat",
      "mpn": "0002/3077",
-     "note": "fallback per 10-bom row 32 (not read)"
+     "note": "запасний варіант з рядка 32 10-bom, сторінку не перечитано — до перевірки параметрів (75 Ω, DC-розв’язка) не заміна."
     }
    ],
+   "single_source": "AXING CFA 11-00 (рядок 32 10-bom)",
+   "match": "CFA 11-00",
    "source": "build/10-bom.csv №32 (Reichelt, checked 18.10.2026; product URL returned 410 on 24.10.2026)",
    "refs": [
     "A421"
@@ -5429,13 +5460,24 @@
     }
    ],
    "match": "SMA",
-   "note": "Панельна SMA-розетка (bulkhead, гайка з лицьового боку) з пігтейлом RG-316 304.8 мм до SMA-вилки модуля — одна збірка на порт. 305 мм — найкоротша складська довжина, не менша за 20 см пігтейлів рядка 91 10-bom. Ущільнювальне кільце й IP на сторінках DigiKey не показано: ущільнення вирізу — механічний пакет (MECH-07); порти з DC — непровідні ковпачки рядка 90 10-bom. J407 (P7 GNSS) — панельний кінець Taoglas CAB.011 (W407), не окрема деталь.",
+   "note": "Панельна SMA-розетка (bulkhead, гайка з лицьового боку) з пігтейлом RG-316 304.8 мм до SMA-вилки, яка вкручується у SMA-вхід модуля A403 (P8 → Flamingo+ FM #2; коло E4_P8 не має деталей RF-плати). 305 мм — найкоротша складська довжина, не менша за 20 см пігтейлів рядка 91 10-bom. Ущільнювальне кільце й IP на сторінках DigiKey не показано: ущільнення вирізу — механічний пакет (MECH-07). P1–P3 і P6 — окремий запис J-SMA-PANEL-RFBOARD (TBD). J407 (P7 GNSS) — панельний кінець Taoglas CAB.011 (W407), не окрема деталь.",
+   "interface_open": "Збірка з пігтейлом до SMA-входу A403 обрана; виріз панелі, ущільнення й момент затягування гайки не задано — механічний пакет (MECH-07).",
+   "refs": [
+    "J408"
+   ]
+  },
+  {
+   "id": "J-SMA-PANEL-RFBOARD",
+   "mount": "panel",
+   "kind": "connector",
+   "match": "SMA",
+   "tbd": "Внутрішній бік цих портів — кола RF-плати, а не SMA-вхід модуля: E4_P1 — L401 (посадкове місце дроселя відведення); E4_P2 — C403, L403, R4420, R4460; E4_P3 — C411, L404, R4430, R4464; E4_P6 — K402.3, L407. Роз’єму з боку плати (U.FL/MHF1-розетки чи крайового SMA) у графі E4 немає, тому пігтейл нікуди вкрутити. За правилом build/15 «RF-порти» потрібні позначення J з боку плати й футпринт (зміна власника E4) і пігтейл SMA bulkhead → U.FL/MHF1 або крайовий SMA з розрахунком втрат для кожного порту. Збірка Adam Tech CA-DKCA1-305L5-APAJ (J-SMA-PANEL) закінчується SMA-вилкою й підходить лише до SMA-входу модуля (J408).",
+   "note": "Панельні порти P1 VHF137, P2 UHF (4.3 V), P3 L-band (4.3 V), P6 VHF/AIS; виріз панелі залежить від обраної збірки (механічний пакет, MECH-07).",
    "refs": [
     "J401",
     "J402",
     "J403",
-    "J406",
-    "J408"
+    "J406"
    ]
   },
   {
@@ -5457,6 +5499,7 @@
    ],
    "match": "F",
    "note": "Прохідний адаптер F-гніздо / F-гніздо 75 Ω на панелі (bulkhead), до 2 ГГц: зовні — W401 (Goobay 58814), усередині — W402 з F-вилкою. Варіанти до 750 МГц з того самого пошуку не обрано.",
+   "interface_open": "Прохідний адаптер F/F обрано; виріз панелі й ущільнення — механічний пакет (MECH-07); внутрішній кабель W402 з F-вилкою — TBD.",
    "refs": [
     "J404"
    ]
@@ -5480,6 +5523,7 @@
    ],
    "match": "BNC",
    "note": "Панельний адаптер BNC-гніздо (зовні, P5) / SMA-гніздо (усередині, вхід SMA-вилки W408), 50 Ω, до 4 ГГц, bulkhead з гайкою — замість «P5 BNC → SMA» рядка 91 10-bom. Котрий кінець має різьбу під панель, сторінка не каже: звірити з кресленням виробника перед вирізом.",
+   "interface_open": "Адаптер BNC/SMA обрано; який кінець має різьбу під панель, звірити з кресленням Amphenol; виріз і ущільнення — механічний пакет (MECH-07).",
    "refs": [
     "J405"
    ]
@@ -5488,6 +5532,7 @@
    "id": "J-PANEL-OF-CABLE",
    "mount": "assembly",
    "note": "SMA(f) bulkhead end of the Taoglas CAB.01075 cables W403/W404/W405 and of the CAB.011 pigtail W407 (J407).",
+   "interface_open": "Панельний кінець куплених кабелів Taoglas CAB.01075 (W403–W405) і CAB.011 (W407); виріз bulkhead, ущільнення й момент гайки — механічний пакет (MECH-07).",
    "refs": [
     "J407",
     "J413",
@@ -5499,6 +5544,7 @@
    "id": "J-ANTENNA-ASSEMBLY",
    "mount": "assembly",
    "note": "Input connector of the external A418/A419 assembly; no separate purchase (E4 notes).",
+   "interface_open": "Вхід зовнішнього вузла A418/A419: роз’єм антенного кабелю й кріплення вузла біля антени — антенний пакет (build/06); окремо не купується.",
    "refs": [
     "J416",
     "J417"
@@ -5508,6 +5554,7 @@
    "id": "J-EXISTING-HELIX",
    "mount": "existing",
    "note": "SMA of the existing S-band helix feed.",
+   "interface_open": "SMA наявного опромінювача S-band; кабель W422 обрано, кріплення опромінювача й кабелю — антенний пакет (build/06).",
    "refs": [
     "J422"
    ]
@@ -5538,8 +5585,7 @@
    "manufacturer": "Taoglas",
    "mpn": "CAB.01075",
    "sku": {
-    "digikey": "931-CAB.01075-ND",
-    "web": "taoglas-cab01075"
+    "digikey": "931-CAB.01075-ND"
    },
    "single_source": "MHF4L to SMA(f) bulkhead 100 mm (10-bom row 93); I-PEX 90609-0001 tool needed",
    "note": "DigiKey DE EUR 4.03 @1 on 2026-10-24.",
@@ -5567,8 +5613,6 @@
   {
    "id": "W-HF-CM-CHOKE",
    "mount": "harness",
-   "manufacturer": "SR-RX build-to-print",
-   "mpn": "W408 common-mode choke assembly",
    "match": "FT240-77",
    "extras": [
     {
@@ -5591,6 +5635,7 @@
     }
    ],
    "tbd": "Довжина RG316 (9-11 витків), SMA-вилки й кронштейн не задані як MPN (рядок 20 10-bom — «модель»).",
+   "note": "Збірка за кресленням проєкту (build-to-print): RG316 на осердях FT-240-77 і #31; MPN збірки немає.",
    "refs": [
     "W408"
    ]
@@ -5679,15 +5724,17 @@
    "sku": {
     "digikey": "708-1024-ND"
    },
-   "alternates": [
+   "fallbacks": [
     {
      "manufacturer": "Amphenol CONEC",
      "mpn": "17-200881",
-     "note": "IP67, гайка, виводи під плату — інший виріз панелі; DigiKey DE 06.11.2026, список пошуку: склад 2076, EUR 9.13 @1"
+     "note": "IP67, гайка, виводи під плату — інший виріз панелі й інше кріплення (не drop-in); DigiKey DE 06.11.2026, список пошуку: склад 2076, EUR 9.13 @1."
     }
    ],
+   "single_source": "Bulgin Buccaneer PX0845/A (IP68); Amphenol 17-200881 потребує іншого вирізу панелі",
    "match": "USB-A",
    "note": "Панельна розетка USB 2.0 A серії Buccaneer, IP68/IP69K (з кришкою чи без, сторінка не уточнює), виводи під пайку, гайка з лицьового боку; строк виробника 26 тижнів. Кришку Bulgin PX0711 сторінка лише пропонує поруч — сумісність звірити за кресленням Bulgin (непровідні заглушки — рядок 90 10-bom).",
+   "interface_open": "Розетку обрано; її виводи під пайку з’єднуються з платою USB_POWER (VBUS_LABPORT, D−/D+, GND) дротами, яких немає в графі й таблиці джгутів; виріз і заглушка — механічний пакет (MECH-07).",
    "refs": [
     "J501"
    ]
@@ -5698,6 +5745,7 @@
    "manufacturer": "Lindy",
    "mpn": "36700",
    "single_source": "Cable named in 10-bom row 91",
+   "interface_open": "Кабель з оцінки v2, сторінку продавця не перечитано (роздрібний опис 06.11.2026 — подовжувач USB-A M/F 0.2 м). VBUS_RTLA/VBUS_RTLB надходять від ключів E5, а не з порту Q6A (для J541 провід контакту 1 вилки J5 вилучено): як VBUS виводиться з кабелю на плату — не задано.",
    "extras": [
     {
      "item": "ferrite on the RTL-B cable (if A/B noise test needs it)",
@@ -5751,14 +5799,15 @@
    "mount": "module",
    "manufacturer": "Wisecoco",
    "mpn": "SKU 4681 (7\" 1920x1080 2000 nit)",
-   "match": "Wisecoco",
-   "alternates": [
+   "fallbacks": [
     {
      "manufacturer": "4D Systems",
      "mpn": "4DHDMI-70-1280-800-CT-EAR-1000",
-     "note": "documented downgrade per 10-bom row 42 (not read)"
+     "note": "задокументоване погіршення з рядка 42 10-bom (1280×800 замість 1920×1080), сторінку не перечитано: змінює дисплей і, можливо, кріплення — лише за рішенням власника E5/механіки."
     }
    ],
+   "single_source": "Wisecoco 7\" 1920×1080 2000 nit (рядок 42 10-bom); 4D Systems — лише задокументоване погіршення",
+   "match": "Wisecoco",
    "extras": [
     {
      "item": "HDMI cable",
@@ -5838,6 +5887,7 @@
     }
    ],
    "note": "GX12 6-pin set (male+female) for LAB BUS: a different shell size from the GX16-4 IMU connector, so the two cannot be swapped (MECH-07); IP rating to be checked.",
+   "interface_open": "Пару GX12-6 і вилку JST PH на платі (супутня деталь, позначення в графі немає) обрано; виріз панелі, IP і дроти до плати — механічний пакет (MECH-07) і build/16.",
    "refs": [
     "J505"
    ]
@@ -5852,6 +5902,7 @@
    },
    "match": "GX16-4",
    "single_source": "Olimex GX16-4 pair with tethered cap (STACK §1.1 D12)",
+   "interface_open": "Пару Olimex GX16-4 обрано; виріз панелі й дроти від роз’єму до плати (LAB5, GND, IMU_TX, IMU_RX, CHASSIS) не задано.",
    "refs": [
     "J504"
    ]
@@ -5872,6 +5923,7 @@
    ],
    "source": "build/10-bom.csv №80-81 (TME, not checked; not re-read 24.10.2026)",
    "note": "2 m of cable for the IMU pack.",
+   "interface_open": "Кабель HELU і ввід LAPP — з оцінки v2, сторінки не перечитано; заробка на боці IMU-пакета й екранування 360° — механічний пакет.",
    "refs": [
     "J550"
    ]
