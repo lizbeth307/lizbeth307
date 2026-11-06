@@ -18,8 +18,10 @@ Scenarios, one QEMU boot each (-no-reboot; systemd.run_*_action=poweroff ends th
   2 trial-b-fails    labB+1 newest with one required token removed: boot-check fails, no bless,
                      systemd-boot leaves labB+0-1.conf (no tries left)
   3 fallback-a       the bad labB sorts last: the blessed labA boots again
-Every boot also checks: no pending jobs, srrx.service inactive and disabled, the recipe masks in
-effect. The first slot A boot also runs selftest.py offline on a read-only view of the booted root
+Every boot also checks: no pending jobs, no failed unit beyond the scenario's expected ones (only
+srrx-boot-check.service on the boot that must fail), srrx.service inactive and disabled, the recipe
+masks in effect. srrx-boot-check accepts the smoke's own tokens (bootchain.smoke_tokens) only
+inside a VM (systemd-detect-virt), so every other extra token of an edited entry still fails it. The first slot A boot also runs selftest.py offline on a read-only view of the booted root
 and ESP (bootchain.live_selftest): its FAIL/BLOCKED rows must equal the build-time rows on root A,
 plus INTERPRETER_ROWS when the image's python3 lacks numpy. Bench gates W-03 (rollback on the Q6A)
 and W-10 (DTB provenance) stay OPEN.
@@ -90,9 +92,7 @@ def smoke_options(config, slot, drop=None, selftest=False):
     tokens = bootchain.cmdline(config["base_cmdline_without_root"], bootchain.root_partuuid(config, slot), config["lime_build"]).split(" ")
     if drop:
         tokens.remove(drop)
-    report = "/usr/bin/python3 -I -B /opt/srrx/deployment/image/bootchain.py smoke-report" + (" --selftest" if selftest else "")
-    return " ".join(tokens + ["console=ttyAMA0,115200", 'systemd.run="' + report + '"',
-                              "systemd.run_success_action=poweroff", "systemd.run_failure_action=poweroff"])
+    return " ".join(tokens + bootchain.smoke_tokens(selftest))
 
 
 def smoke_entry(config, slot, version, drop=None, selftest=False):
@@ -214,6 +214,10 @@ def check(scenario, result, expect, build_rows=None):
         bad.append("srrx-boot-check.service %r, expected %r" % (observed["boot_check_unit"], want_unit))
     if observed["pending_jobs"]:
         bad.append("jobs still pending: " + "; ".join(observed["pending_jobs"])[:300])
+    allowed_failed = set() if expect["boot_check"] == "BOOT_SELF_CHECK_OK" else {"srrx-boot-check.service"}
+    failed = sorted({line.split()[0] for line in report.get("failed_units") or [] if line.split()} - allowed_failed)
+    if report and failed:
+        bad.append("failed units: " + ",".join(failed))
     if observed["srrx_service"] != ["inactive", "disabled"]:
         bad.append("srrx.service must stay inactive and disabled without acceptance (IMG-06): %r" % observed["srrx_service"])
     masked = report.get("masked_units") or {}
@@ -238,6 +242,8 @@ def check(scenario, result, expect, build_rows=None):
 
 
 def smoke(image, manifest_path, facts_path, work, out, timeout=1800):
+    """Three QEMU boots of a sparse copy; SMOKE_NOT_FEASIBLE when the kernel config, QEMU or AAVMF
+    cannot run the model (main() --require-model turns that into a failure, as in CI)."""
     if sys.platform != "linux" or platform.machine() != "aarch64" or os.geteuid() != 0:
         raise SmokeError("the smoke runs as root on an aarch64 Linux builder")
     manifest = json.loads(Path(manifest_path).read_text(encoding="utf-8"))
@@ -293,6 +299,8 @@ def main():
     parser.add_argument("--work", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--timeout", type=int, default=1800, help="seconds per QEMU boot")
+    parser.add_argument("--require-model", action="store_true",
+                        help="CI: SMOKE_NOT_FEASIBLE is a failure (otherwise only MODEL_FAIL is); nothing booted is never green")
     args = parser.parse_args()
     try:
         result = smoke(args.image, args.manifest, args.facts or args.manifest.with_name("image-facts.json"), args.work, args.out, args.timeout)
@@ -301,7 +309,8 @@ def main():
         return 2
     print(json.dumps({"status": result["status"], "scenarios": [(s["scenario"], s["status"], s.get("mismatches"), s["observed"])
                                                                 for s in result["scenarios"]]}, indent=2))
-    return 0 if result["status"] in ("MODEL_PASS", "SMOKE_NOT_FEASIBLE") else 1
+    accepted = ("MODEL_PASS",) if args.require_model else ("MODEL_PASS", "SMOKE_NOT_FEASIBLE")
+    return 0 if result["status"] in accepted else 1
 
 
 if __name__ == "__main__":

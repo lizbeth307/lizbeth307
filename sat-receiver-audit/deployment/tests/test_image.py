@@ -71,7 +71,7 @@ class LayoutTests(unittest.TestCase):
         cmds = layoutlib.mkfs_commands(self.layout, self.ids, {r: "/dev/loop9p%d" % i for i, r in enumerate(layoutlib.ROLES, 1)})
         self.assertEqual(cmds["esp"][:5], ["mkfs.vfat", "-F", "32", "-S", "4096"])
         self.assertIn(self.ids["fs_uuid"]["root_b"], cmds["root_b"])
-        for role in ("root_a", "root_b", "data"):  # the journal is image data: the write leaves holes untouched
+        for role in ("root_a", "root_b", "data"):  # zeroed in the file (as holes); the map forces the journal blocks
             self.assertIn(",lazy_journal_init=0", cmds[role][cmds[role].index("-E") + 1])
         self.assertNotIn("quota,project", cmds["data"])
         self.assertIn("quota,project", layoutlib.mkfs_commands(self.layout, self.ids, {r: "x" for r in layoutlib.ROLES}, quota=True)["data"])
@@ -183,8 +183,43 @@ class PluginTests(unittest.TestCase):
 
     def plugin(self, *args, **kw):
         r = self.root
+        if not (r / "proc_cmdline").exists():  # a builder chroot: the host's root, not one of the slots
+            (r / "proc_cmdline").write_text("BOOT_IMAGE=/vmlinuz root=PARTUUID=0b0b0b0b-0000-4000-8000-000000000001 ro\n")
         return bootchain.kernel_install(list(args), esp=self.esp, config_path=r / "boot.json", slot_path=r / "slot",
-                                        cmdline_path=r / "cmdline", tries_path=r / "tries", dtb_store=r / "dtb", **kw)
+                                        cmdline_path=r / "cmdline", tries_path=r / "tries", dtb_store=r / "dtb",
+                                        proc_cmdline=r / "proc_cmdline", **kw)
+
+    def test_running_slot_is_replaced_only_as_a_trial_with_fallback(self):
+        add = ("add", "6.18.2-4-qcom", "/unused", str(self.root / "vmlinuz"), str(self.root / "initrd"))
+        (self.root / "proc_cmdline").write_text(bootchain.cmdline(BASE, self.cfg["root_a_partuuid"]) + " initrd=\\srrx\\A\\initrd.img\n")
+        with patch.dict(os.environ, {"SRRX_ALLOW_UNMERGED_DTB": "1"}):
+            self.assertEqual(self.plugin(*add), 0)  # Route A: counted +3 trial, the other slot is the fallback
+            self.assertTrue((self.esp / "loader/entries/labA+3.conf").is_file())
+            (self.root / "tries").unlink()
+            with self.assertRaisesRegex(bootchain.BootChainError, "no fallback"):
+                self.plugin(*add)
+            (self.root / "boot.json").write_text(json.dumps(config(route="B")))
+            (self.esp / "srrx/A").mkdir(parents=True, exist_ok=True)
+            (self.esp / "srrx/A/initrd.img").write_bytes(b"known good")
+            with self.assertRaisesRegex(bootchain.BootChainError, "arm a trial"):
+                self.plugin(*add)
+            self.assertEqual((self.esp / "srrx/A/initrd.img").read_bytes(), b"known good")  # refused before any write
+            (self.esp / "srrx/ab").mkdir(parents=True)
+            (self.esp / "srrx/ab/trial").write_text("A\n")
+            (self.esp / "srrx/ab/booting").write_text("")
+            (self.esp / "loader/loader.conf").write_text("default labB\ntimeout 3\neditor no\n")
+            self.assertEqual(self.plugin(*add), 0)
+            self.assertEqual((self.esp / "loader/loader.conf").read_text(), "default labA\ntimeout 3\neditor no\n")
+            self.assertFalse((self.esp / "srrx/ab/booting").exists())  # the next boot writes the default back to B
+            self.assertTrue((self.esp / "loader/entries/labA.conf").is_file())
+            (self.root / "slot").write_text("B\n")  # the other root in a chroot while A runs: a plain install
+            (self.root / "cmdline").write_text(bootchain.cmdline(BASE, self.cfg["root_b_partuuid"]) + "\n")
+            (self.esp / "srrx/ab/trial").unlink()
+            self.assertEqual(self.plugin(*add), 0)
+        (self.root / "proc_cmdline").unlink()
+        with patch.object(bootchain, "running_slot_root", lambda *a: None), patch.dict(os.environ, {"SRRX_ALLOW_UNMERGED_DTB": "1"}):
+            with self.assertRaisesRegex(bootchain.BootChainError, "unreadable"):
+                self.plugin(*add)
 
     def test_refuses_the_unmerged_package_dtb_unless_the_ci_flag_is_set(self):
         add = ("add", "6.18.2-4-qcom", "/unused", str(self.root / "vmlinuz"), str(self.root / "initrd"))
@@ -409,6 +444,27 @@ class SmokeModelTests(unittest.TestCase):
         self.assertTrue(any(m.startswith("entries_after") for m in result["mismatches"]))
         self.assertTrue(any(m.startswith("boot_complete") for m in result["mismatches"]))
 
+    def test_failed_units_beyond_the_expected_one_fail(self):
+        blessed = sorted(["labA.conf", "labB.conf", "labA-rescue.conf", "labB-rescue.conf"])
+        bad_b = sorted(["labA.conf", "labB+0-1.conf", "labA-rescue.conf", "labB-rescue.conf"])
+        report = self.report("A", True, "active", "active", "good")
+        report["failed_units"] = ["nmbd.service loaded failed failed Samba NMB Daemon"]  # CI 2026-11-06, before the samba masks
+        self.assertEqual(self.run_check(0, report, blessed)["mismatches"], ["failed units: nmbd.service"])
+        report = self.report("B", False, "inactive", "inactive", "indeterminate", selftest=False)
+        report["failed_units"] = ["srrx-boot-check.service loaded failed failed SR-RX boot self-check"]
+        self.assertEqual(self.run_check(1, report, bad_b)["status"], "MODEL_PASS")  # the expected failure of scenario 2
+        report = self.report("A", True, "inactive", "inactive", "clean", selftest=False)
+        report["failed_units"] = ["srrx-boot-check.service loaded failed failed SR-RX boot self-check"]
+        self.assertIn("failed units: srrx-boot-check.service", self.run_check(2, report, bad_b)["mismatches"])
+
+    def test_not_feasible_is_a_failure_when_the_model_is_required(self):
+        result = {"status": "SMOKE_NOT_FEASIBLE", "scenarios": []}
+        argv = ["smoke_qemu.py", "--image", "x.img", "--manifest", "m.json", "--work", "w", "--out", "o"]
+        with patch.object(self.smoke, "smoke", lambda *a, **k: result):
+            for extra, code in (([], 0), (["--require-model"], 1)):
+                with patch.object(sys, "argv", argv + extra), patch("builtins.print"):
+                    self.assertEqual(self.smoke.main(), code, extra)
+
     def test_running_service_missing_mask_or_selftest_drift_fail(self):
         blessed = sorted(["labA.conf", "labB.conf", "labA-rescue.conf", "labB-rescue.conf"])
         report = self.report("A", True, "active", "active", "good", rows={})
@@ -477,6 +533,182 @@ class RecoveryKitTests(unittest.TestCase):
             path.write_text(json.dumps(broken))
             with self.assertRaises(recovery_kit.KitError):
                 recovery_kit.load_map(path)
+
+    def test_forced_journal_ranges_are_written_over_holes(self):
+        # The journal of a fresh mke2fs is unwritten extents: SEEK_DATA reports a hole there.
+        journal = {"offset": 32 << 20, "length": 4 << 20, "what": "data ext4 journal (inode 8)"}
+        plain = recovery_kit.make_map(self.image)
+        self.assertEqual(recovery_kit.uncovered(plain["extents"], [journal]), [(32 << 20, 4 << 20)])
+        data = recovery_kit.make_map(self.image, forced=[journal])
+        self.assertEqual(recovery_kit.uncovered(data["extents"], [journal]), [])
+        self.assertEqual(data["forced"], [journal])
+        self.assertEqual(data["data_bytes"] - plain["data_bytes"], 4 << 20)
+        mapping = self.root / "forced.map.json"
+        mapping.write_text(json.dumps(data))
+        self.assertEqual(recovery_kit.verify_extents(self.image, recovery_kit.load_map(mapping)), [])
+        for change in (lambda d: d.pop("forced"), lambda d: d["forced"].append(dict(journal, offset=48 << 20)),
+                       lambda d: d["forced"].append(dict(journal, offset=4097)), lambda d: d["forced"].append(dict(journal, what="x\n"))):
+            broken = copy.deepcopy(data)
+            change(broken)
+            mapping.write_text(json.dumps(broken))
+            with self.assertRaises(recovery_kit.KitError):
+                recovery_kit.load_map(mapping)
+
+    def test_uncovered_and_merge(self):
+        self.assertEqual(recovery_kit.merge_ranges([(10, 5), (0, 10), (30, 5)]), [(0, 15), (30, 5)])
+        self.assertEqual(recovery_kit.merge_ranges([(0, 10), (12, 4)], gap=4), [(0, 16)])
+        self.assertEqual(recovery_kit.uncovered([[0, 10, "x"], [20, 10, "x"]], [(5, 20)]), [(10, 10)])
+        self.assertEqual(recovery_kit.uncovered([[0, 100, "x"]], [{"offset": 10, "length": 20}]), [])
+
+
+@unittest.skipUnless(os.name == "posix" and sys.platform == "linux", "fake sysfs tree with symlinks (Linux)")
+class TargetBusyTests(unittest.TestCase):
+    """refuse_busy on a fake /sys and /proc: mounted, swap, holders and the image on the target."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="srrx-sysfs-test-")
+        self.addCleanup(self.temp.cleanup)
+        root = Path(self.temp.name)
+        devices = root / "sys/devices/virtual/block"
+        (root / "sys/class/block").mkdir(parents=True)
+        (root / "sys/dev/block").mkdir(parents=True)
+        for disk, major, parts in (("loop7", 7, 4), ("sdz", 8, 2)):
+            (devices / disk / "holders").mkdir(parents=True)
+            os.symlink(devices / disk, root / "sys/class/block" / disk)
+            os.symlink(devices / disk, root / "sys/dev/block" / ("%d:0" % major))
+            for number in range(1, parts + 1):
+                part = devices / disk / (disk + ("p" if disk.startswith("loop") else "") + str(number))
+                (part / "holders").mkdir(parents=True)
+                (part / "partition").write_text(str(number) + "\n")
+                os.symlink(part, root / "sys/class/block" / part.name)
+                os.symlink(part, root / "sys/dev/block" / ("%d:%d" % (259 if major == 7 else major, number)))
+        self.devices = devices
+        self.mountinfo, self.swaps = root / "mountinfo", root / "swaps"
+        self.mountinfo.write_text("22 1 8:2 / / rw,relatime shared:1 - ext4 /dev/sdz2 rw\n")
+        self.swaps.write_text("Filename\tType\tSize\tUsed\tPriority\n")
+        for name, value in (("PROC_MOUNTINFO", self.mountinfo), ("PROC_SWAPS", self.swaps),
+                            ("SYS_CLASS_BLOCK", root / "sys/class/block"), ("SYS_DEV_BLOCK", root / "sys/dev/block")):
+            patcher = patch.object(recovery_kit, name, value)
+            patcher.start()
+            self.addCleanup(patcher.stop)
+
+    def test_idle_target_passes_and_the_running_root_disk_is_refused(self):
+        recovery_kit.refuse_busy("loop7", image_dev="8:2")  # the image lives on the root disk, not on the target
+        with self.assertRaisesRegex(recovery_kit.KitError, r"holds mounted filesystems or swap \(/\)"):
+            recovery_kit.refuse_busy("sdz")
+
+    def test_mounted_partition_swap_and_holders_are_refused(self):
+        self.mountinfo.write_text(self.mountinfo.read_text() + "40 22 259:4 / /mnt/x rw - ext4 /dev/loop7p4 rw\n")
+        with self.assertRaisesRegex(recovery_kit.KitError, "holds mounted filesystems"):
+            recovery_kit.refuse_busy("loop7")
+        self.mountinfo.write_text("22 1 8:2 / / rw - ext4 /dev/sdz2 rw\n")
+        self.swaps.write_text(self.swaps.read_text() + "/dev/loop7p3\tpartition\t1024\t0\t-2\n")
+        with patch.object(recovery_kit, "_rdev_of", lambda node: "259:3"):
+            with self.assertRaisesRegex(recovery_kit.KitError, r"\[swap\]"):
+                recovery_kit.refuse_busy("loop7")
+        self.swaps.write_text("Filename\tType\tSize\tUsed\tPriority\n")
+        (self.devices / "loop7/loop7p3/holders/dm-0").mkdir()
+        with self.assertRaisesRegex(recovery_kit.KitError, "held by dm-0"):
+            recovery_kit.refuse_busy("loop7")
+        (self.devices / "loop7/loop7p3/holders/dm-0").rmdir()
+        (self.devices / "loop7/holders/md0").mkdir()
+        with self.assertRaisesRegex(recovery_kit.KitError, "held by md0"):
+            recovery_kit.refuse_busy("loop7")
+
+    def test_image_on_the_target_is_refused_first(self):
+        self.mountinfo.write_text(self.mountinfo.read_text() + "40 22 259:4 / /mnt/x rw - ext4 /dev/loop7p4 rw\n")
+        with self.assertRaisesRegex(recovery_kit.KitError, "image file lives on the target disk"):
+            recovery_kit.refuse_busy("loop7", image_dev="259:4")
+        with self.assertRaisesRegex(recovery_kit.KitError, "image file lives on the target disk"):
+            recovery_kit.refuse_busy("sdz", image_dev="8:0")
+
+
+class BootCheckCmdlineTests(unittest.TestCase):
+    def setUp(self):
+        self.cfg = bootchain.validate_ab(config())
+        self.line = bootchain.cmdline(BASE, self.cfg["root_a_partuuid"])
+
+    def test_route_a_allows_only_the_entry_initrd(self):
+        issues, notes = bootchain.cmdline_findings(self.cfg, "A", self.line + " initrd=\\srrx\\A\\initrd.img\n")
+        self.assertEqual(issues, [])
+        self.assertEqual(notes, ["boot loader tokens: initrd=\\srrx\\A\\initrd.img"])
+        for added in ("systemd.mask=srrx-boot-check.service", "systemd.unit=rescue.target", "init=/bin/sh",
+                      "module_blacklist=vfat", "initrd=\\srrx\\B\\initrd.img", "loglevel=8"):
+            issues, _ = bootchain.cmdline_findings(self.cfg, "A", self.line + " " + added)
+            self.assertTrue(any(added in i for i in issues), (added, issues))
+        issues, _ = bootchain.cmdline_findings(self.cfg, "A", self.line + " root=PARTUUID=" + self.cfg["root_b_partuuid"])
+        self.assertTrue(any("root=" in i for i in issues))
+        issues, _ = bootchain.cmdline_findings(self.cfg, "A", self.line.replace(" panic=10", ""))
+        self.assertTrue(any("lacks panic=10" in i for i in issues))
+
+    def test_route_b_allows_the_recorded_embloader_bootargs(self):
+        cfg = bootchain.validate_ab(config(route="B"))
+        loader = " ".join(bootchain.EMBLOADER_Q6A_BOOTARGS)
+        issues, notes = bootchain.cmdline_findings(cfg, "A", loader + " " + self.line + " initrd=/srrx/A/initrd.img")
+        self.assertEqual(issues, [])
+        self.assertIn("embloader", notes[0])
+        issues, _ = bootchain.cmdline_findings(cfg, "A", self.line + " systemd.mask=srrx-ab-commit.service")
+        self.assertTrue(issues)
+
+    def test_smoke_tokens_pass_only_inside_a_vm(self):
+        for selftest in (False, True):
+            line = self.line + " " + " ".join(bootchain.smoke_tokens(selftest)) + " initrd=\\srrx\\A\\initrd.img"
+            self.assertEqual(bootchain.cmdline_findings(self.cfg, "A", line, "qemu")[0], [])
+            for virt in ("none", "unknown"):
+                self.assertTrue(bootchain.cmdline_findings(self.cfg, "A", line, virt)[0], virt)
+        mixed = self.line + " " + " ".join(bootchain.smoke_tokens()) + " init=/bin/sh"
+        self.assertTrue(bootchain.cmdline_findings(self.cfg, "A", mixed, "qemu")[0])
+
+    def test_proc_tokens_keep_quoted_parameters_whole(self):
+        self.assertEqual(bootchain.proc_tokens('a=1  systemd.run="/usr/bin/x -I y" b\n'), ["a=1", 'systemd.run="/usr/bin/x -I y"', "b"])
+
+
+class FirstBootAndRecipeTests(unittest.TestCase):
+    def setUp(self):
+        self.recipe = json.loads((HERE / "image/recipe.json").read_text())
+
+    def test_rsetup_first_boot_is_parsed_without_passwords_and_reviewed(self):
+        with tempfile.TemporaryDirectory() as temp:
+            before = Path(temp) / "before.txt"
+            before.write_text("# first boot\nno_fail\nlog \"start\"\nadd_user radxa radxa\nresize_root\n"
+                              "disable_service ssh ssh.socket smbd nmbd systemd-networkd\nregenerate_ssh_hostkey\n"
+                              "if headless enable_service ssh\nremove_packages rsetup-config-first-boot\n")
+            facts = build_image.rsetup_first_boot(before)
+            self.assertEqual([c["command"] for c in facts["commands"]],
+                             ["no_fail", "log", "add_user", "resize_root", "disable_service", "regenerate_ssh_hostkey",
+                              "enable_service", "remove_packages"])
+            self.assertEqual(facts["commands"][2], {"command": "add_user", "args_count": 2})  # no default password recorded
+            self.assertEqual(facts["commands"][6], {"command": "enable_service", "if": "headless", "args": ["ssh"]})
+            root = Path(temp) / "root"
+            (root / "etc/systemd/system/multi-user.target.wants").mkdir(parents=True)
+            rows, blocking = build_image.first_boot_review(facts, self.recipe, root)
+            self.assertEqual(blocking, [])
+            self.assertEqual(rows[4]["units"]["systemd-networkd.service"], "not enabled")
+            self.assertEqual(rows[4]["units"]["ssh.socket"], "masked")
+            (root / "etc/systemd/system/multi-user.target.wants/systemd-networkd.service").write_text("")
+            facts["commands"].append({"command": "connect_wi-fi", "args_count": 2})
+            _, blocking = build_image.first_boot_review(facts, self.recipe, root)
+            self.assertEqual(len(blocking), 2, blocking)
+            self.assertTrue(build_image.first_boot_review(None, self.recipe, root)[1])
+
+    def test_network_services_rsetup_disabled_are_masked_and_host_keys_handled(self):
+        masks = set(self.recipe["mask"]["units"])
+        self.assertTrue({"ssh.service", "ssh.socket", "smbd.service", "nmbd.service", "samba-ad-dc.service", "rsetup.service",
+                         "cups.service", "cups.socket", "cups.path", "avahi-daemon.service", "avahi-daemon.socket"} <= masks)
+        for command in ("disable_service", "regenerate_ssh_hostkey", "enable_service", "add_user", "rebuild_current_overlays"):
+            self.assertIn(command, self.recipe["rsetup_first_boot"]["handled"])
+        self.assertNotIn("STACK.md:845 never rsetup", json.dumps(self.recipe))  # :845 is the sleep masks; the rsetup ban is :138/:843
+        unit = (HERE / "image/files/srrx-ssh-hostkeys.service").read_text()
+        self.assertIn("ExecStart=/usr/bin/ssh-keygen -A", unit)
+        self.assertIn("\nBefore=ssh.service", unit)
+        self.assertEqual(self.recipe["enable_common"]["units"]["srrx-ssh-hostkeys.service"], "ssh.service.wants")
+
+    def test_journal_ranges_from_dumpe2fs_and_debugfs_output(self):
+        header = build_image.dumpe2fs_header("Filesystem volume name:   srrx-data\nJournal inode:            8\nBlock size:               4096\n"
+                                             "Journal size:             64M\n")
+        self.assertEqual((header["Journal inode"], header["Block size"], header["Journal size"]), ("8", "4096", "64M"))
+        self.assertEqual(build_image.block_runs("1024 1025 1026 2048\n1027 4000 4001\n"), [(1024, 4), (2048, 1), (4000, 2)])
+        self.assertEqual(build_image.block_runs(""), [])
 
 
 if __name__ == "__main__":

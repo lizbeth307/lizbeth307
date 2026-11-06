@@ -6,8 +6,9 @@ name: SR-RX image
 # image: the locked Radxa OS r2 _4096 image + the controller bundle -> image file, manifest,
 #   extent map and (optionally) a QEMU boot smoke. Only the manifest, facts, logs and map are
 #   uploaded; the image contains Radxa OS and Qualcomm material and is uploaded only from a
-#   PRIVATE repository, with 1-day retention (build/15-rishennia-komplektu.md). None of this is
-#   hardware evidence: bench gates W-01/W-02/W-03/W-08/W-09/W-10 stay OPEN.
+#   PRIVATE repository, as a sparse tar + zstd archive with 1-day retention
+#   (build/15-rishennia-komplektu.md; that path has not run yet). None of this is hardware
+#   evidence: bench gates W-01/W-02/W-03/W-08/W-09/W-10 stay OPEN.
 
 on:
   # A push runs the recipe checks; the image build needs a dispatch (or "[image-build]" in the
@@ -61,7 +62,7 @@ jobs:
       - name: Builder tools
         run: |
           sudo apt-get update -q
-          sudo apt-get install -y -q --no-install-recommends dosfstools e2fsprogs util-linux fdisk rsync xz-utils device-tree-compiler
+          sudo apt-get install -y -q --no-install-recommends dosfstools e2fsprogs util-linux fdisk rsync xz-utils device-tree-compiler dmsetup
       - name: Runner resources (disk, KVM, sectors)
         run: |
           uname -a; nproc; free -h; df -h; lsblk -o NAME,SIZE,LOG-SEC,PHY-SEC,TYPE,MOUNTPOINTS || true
@@ -77,26 +78,44 @@ jobs:
           U="$RUNNER_TEMP/units"
           mkdir -p "$U"
           cp "$S"/rootfs/etc/systemd/system/srrx-radio-off.service deployment/image/files/*.service "$U"/
-          SYSTEMD_UNIT_PATH="$U:" systemd-analyze verify --man=no "$U"/srrx-boot-check.service "$U"/srrx-ab-commit.service "$U"/srrx-radio-off.service
+          SYSTEMD_UNIT_PATH="$U:" systemd-analyze verify --man=no "$U"/srrx-boot-check.service "$U"/srrx-ab-commit.service "$U"/srrx-radio-off.service \
+            "$U"/srrx-ssh-hostkeys.service
       - name: Layout round trip (GPT on 4096-byte sectors, mkfs, mount, fsck) on a loop file
         run: |
           W="$RUNNER_TEMP/rt"
           mkdir -p "$W"
           sudo python3 deployment/image/build_image.py blank --work "$W" --output "$W/blank.img" --test-sizes | tee "$RUNNER_TEMP/blank.json"
           grep -q '"status": "BLANK_IMAGE_OK"' "$RUNNER_TEMP/blank.json"
-      - name: Recovery kit write into a 4K loop target, read back, grow /data
+      - name: Recovery kit write into a 4K loop target pre-filled with 0xFF, read back, grow /data
         run: |
           W="$RUNNER_TEMP/rt"
           sudo chown -R "$(id -u)" "$W"
-          python3 deployment/image/recovery_kit.py map --image "$W/blank.img" --output "$W/blank.img.map.json"
+          # The ext4 journals are holes of the image file (mke2fs zeroes them with fallocate): the map forces them.
+          python3 deployment/image/recovery_kit.py map --image "$W/blank.img" --forced "$W/blank.img.forced.json" --output "$W/blank.img.map.json" | tee "$RUNNER_TEMP/map.json"
+          python3 - "$W/blank.img" "$W/blank.img.map.json" > "$RUNNER_TEMP/journal-map.json" <<'EOF'
+          import json, sys
+          sys.path.insert(0, "deployment/image")
+          import recovery_kit
+          image, m = sys.argv[1], json.load(open(sys.argv[2]))
+          roles = sorted({f["what"].split()[0] for f in m["forced"]})
+          assert roles == ["data", "root_a", "root_b"], roles
+          assert not recovery_kit.uncovered(m["extents"], m["forced"]), "journal blocks outside the map extents"
+          holes = sum(n for _, n in recovery_kit.uncovered(recovery_kit.data_extents(image)[1], m["forced"]))
+          print(json.dumps({"journal_bytes": sum(f["length"] for f in m["forced"]), "journal_bytes_in_file_holes": holes,
+                            "map_data_bytes": m["data_bytes"]}))
+          EOF
+          cat "$RUNNER_TEMP/journal-map.json"
           python3 deployment/image/recovery_kit.py assemble --image "$W/blank.img" --map "$W/blank.img.map.json" --out "$W/kit" --link
           python3 deployment/image/recovery_kit.py verify --kit "$W/kit" | tee "$RUNNER_TEMP/kit-verify.json"
           grep -q '"status": "KIT_VERIFIED"' "$RUNNER_TEMP/kit-verify.json"
           size=$(stat -c %s "$W/blank.img")
-          truncate -s $((size + 512*1024*1024)) "$W/target.raw"
+          # A used UFS, not zeros: every byte the write leaves alone stays 0xFF.
+          head -c $((size + 512*1024*1024)) /dev/zero | tr '\000' '\377' > "$W/target.raw"
           T=$(sudo losetup --find --show --sector-size 4096 "$W/target.raw")
-          # Negative cases first: a plain /dev/loopN without the CI flag, a 512-byte target, the runner's root disk.
-          if sudo python3 deployment/image/recovery_kit.py write --kit "$W/kit" --target "$T" --execute; then echo "::error::loop target accepted without --test-loop-target"; exit 1; fi
+          # Refusals before the write: a plain /dev/loopN without the CI flag, a 512-byte target, the runner's root disk
+          # (that one is refused by its 512-byte LOG-SEC already; the mounted/held/image checks run on the 4K target below).
+          if sudo python3 deployment/image/recovery_kit.py write --kit "$W/kit" --target "$T" --execute 2>"$RUNNER_TEMP/plain-loop.err"; then echo "::error::loop target accepted without --test-loop-target"; exit 1; fi
+          grep -q "by-id/<name> link" "$RUNNER_TEMP/plain-loop.err"
           truncate -s $((size + 512*1024*1024)) "$W/target512.raw"
           T512=$(sudo losetup --find --show "$W/target512.raw")
           if sudo python3 deployment/image/recovery_kit.py write --kit "$W/kit" --target "$T512" --test-loop-target --execute 2>"$RUNNER_TEMP/t512.err"; then echo "::error::512-byte target accepted"; exit 1; fi
@@ -108,7 +127,7 @@ jobs:
             if sudo python3 deployment/image/recovery_kit.py write --kit "$W/kit" --target "$link" 2>"$RUNNER_TEMP/root.err"; then echo "::error::root disk accepted"; exit 1; fi
             cat "$RUNNER_TEMP/root.err"
           else
-            echo "no /dev/disk/by-id link for the root disk $rootdisk on this runner"
+            echo "no /dev/disk/by-id link for the root disk $rootdisk on this runner" | tee "$RUNNER_TEMP/root.err"
           fi
           sudo python3 deployment/image/recovery_kit.py write --kit "$W/kit" --target "$T" --test-loop-target | tee "$RUNNER_TEMP/dry.json"
           grep -q '"status": "DRY_RUN_ONLY"' "$RUNNER_TEMP/dry.json"
@@ -121,9 +140,37 @@ jobs:
           after = r["partition_table"]["partitions"][3]["size"]
           assert after > before, (before, after)
           assert [p["uuid"].lower() for p in r["partition_table"]["partitions"]] == [blank["identifiers"]["partuuid"][k] for k in ("esp", "root_a", "root_b", "data")]
-          print("data partition grown", before, "->", after, "sectors; PARTUUIDs kept")
+          print("data partition grown", before, "->", after, "sectors; PARTUUIDs kept; e2fsck/fsck.vfat clean on the 0xFF-filled target")
           EOF
-          sudo mkdir -p /mnt/srrx-data && sudo mount "${T}p4" /mnt/srrx-data && test -f /mnt/srrx-data/srrx-roundtrip && sudo umount /mnt/srrx-data
+          # No journal block of the target kept the fill pattern.
+          sudo python3 - "$T" "$W/blank.img.map.json" > "$RUNNER_TEMP/journal-target.json" <<'EOF'
+          import json, os, sys
+          fd, m = os.open(sys.argv[1], os.O_RDONLY), json.load(open(sys.argv[2]))
+          fill, stale, blocks = b"\xff" * 4096, 0, 0
+          for f in m["forced"]:
+              for pos in range(f["offset"], f["offset"] + f["length"], 4096):
+                  blocks += 1
+                  stale += os.pread(fd, 4096, pos) == fill
+          print(json.dumps({"journal_blocks": blocks, "blocks_with_the_fill_pattern": stale}))
+          assert blocks and not stale, (blocks, stale)
+          EOF
+          cat "$RUNNER_TEMP/journal-target.json"
+          sudo mkdir -p /mnt/srrx-data && sudo mount "${T}p4" /mnt/srrx-data && test -f /mnt/srrx-data/srrx-roundtrip
+          # Refusals of a busy target: the image file on the target, a mounted partition, a held partition.
+          sudo cp --sparse=always "$W/kit/golden/blank.img" /mnt/srrx-data/on-target.img
+          sudo cp "$W/kit/golden/blank.img.map.json" /mnt/srrx-data/on-target.img.map.json
+          if sudo python3 deployment/image/recovery_kit.py write --image /mnt/srrx-data/on-target.img --map /mnt/srrx-data/on-target.img.map.json \
+               --target "$T" --test-loop-target --execute 2>"$RUNNER_TEMP/image-on-target.err"; then echo "::error::image on the target accepted"; exit 1; fi
+          grep -q "image file lives on the target disk" "$RUNNER_TEMP/image-on-target.err"
+          if sudo python3 deployment/image/recovery_kit.py write --kit "$W/kit" --target "$T" --test-loop-target --execute 2>"$RUNNER_TEMP/mounted.err"; then echo "::error::mounted target accepted"; exit 1; fi
+          grep -q "holds mounted filesystems" "$RUNNER_TEMP/mounted.err"
+          sudo rm /mnt/srrx-data/on-target.img /mnt/srrx-data/on-target.img.map.json
+          sudo umount /mnt/srrx-data
+          sudo dmsetup create srrx-hold-test --table "0 $(sudo blockdev --getsz "${T}p3") linear ${T}p3 0"
+          if sudo python3 deployment/image/recovery_kit.py write --kit "$W/kit" --target "$T" --test-loop-target --execute 2>"$RUNNER_TEMP/held.err"; then echo "::error::held target accepted"; sudo dmsetup remove srrx-hold-test; exit 1; fi
+          sudo dmsetup remove srrx-hold-test
+          grep -q "held by dm-" "$RUNNER_TEMP/held.err"
+          cat "$RUNNER_TEMP"/image-on-target.err "$RUNNER_TEMP"/mounted.err "$RUNNER_TEMP"/held.err
           sudo losetup -d "$T"
       - uses: actions/upload-artifact@v5
         if: always()
@@ -161,7 +208,7 @@ jobs:
         run: |
           sudo apt-get update -q
           sudo apt-get install -y -q --no-install-recommends dosfstools e2fsprogs util-linux fdisk rsync xz-utils device-tree-compiler \
-            qemu-system-arm qemu-efi-aarch64 qemu-utils python3-numpy
+            qemu-system-arm qemu-efi-aarch64 qemu-utils python3-numpy zstd
       - name: Work directory on the largest free filesystem
         if: steps.sel.outputs.run == 'true'
         run: |
@@ -221,8 +268,30 @@ jobs:
       - name: QEMU boot smoke of the Route A image
         if: steps.sel.outputs.run == 'true' && matrix.route == 'A' && (inputs.smoke || contains(github.event.head_commit.message, '[image-smoke]'))
         run: |
+          # --require-model: QEMU, AAVMF or a kernel config that cannot run the model is a failure, not a green step.
           sudo python3 deployment/image/smoke_qemu.py --image "$OUT/srrx-golden-routeA.img" --manifest "$OUT/image-manifest.json" \
-            --work "$W/smoke" --out "$OUT/smoke"
+            --work "$W/smoke" --out "$OUT/smoke" --require-model
+          python3 -c "import json, sys; s = json.load(open(sys.argv[1]))['status']; print(s); sys.exit(s != 'MODEL_PASS')" "$OUT/smoke/smoke-report.json"
+      - name: Pack the image data (sparse tar + zstd) and measure it
+        if: steps.sel.outputs.run == 'true'
+        run: |
+          # Only the data: GNU tar --sparse stores the holes as a map, so the archive holds the extent
+          # data (about 13 GB per route), never the 52.6 GB apparent size.
+          I="srrx-golden-route${{ matrix.route }}"
+          sudo chown -R "$(id -u)" "$OUT"
+          tar -C "$OUT" --sparse -cf - "$I.img" "$I.img.map.json" image-manifest.json image-facts.json | zstd -T0 -6 -q -o "$W/$I.tar.zst"
+          zstd -dc "$W/$I.tar.zst" | tar -tvf - > "$OUT/packed-listing.txt"
+          python3 - "$W/$I.tar.zst" "$OUT/$I.img.map.json" "$OUT/packed-listing.txt" > "$OUT/packed-image.json" <<'EOF'
+          import hashlib, json, os, sys
+          with open(sys.argv[1], "rb") as handle:
+              digest = hashlib.file_digest(handle, "sha256").hexdigest()
+          m = json.load(open(sys.argv[2]))
+          print(json.dumps({"archive": os.path.basename(sys.argv[1]), "archive_bytes": os.path.getsize(sys.argv[1]), "sha256": digest,
+                            "image_bytes": m["image_bytes"], "map_data_bytes": m["data_bytes"],
+                            "members": len(open(sys.argv[3]).read().splitlines()), "uploaded": False}, indent=1))
+          EOF
+          cat "$OUT/packed-image.json" "$OUT/packed-listing.txt"
+          echo "PACKED=$W/$I.tar.zst" >> "$GITHUB_ENV"
       - name: Upload the manifest, facts, logs and extent map
         if: always() && steps.sel.outputs.run == 'true'
         uses: actions/upload-artifact@v5
@@ -231,13 +300,17 @@ jobs:
           retention-days: 7
           path: |
             ${{ env.OUT }}/*.json
+            ${{ env.OUT }}/packed-listing.txt
             ${{ env.OUT }}/build.log
             ${{ env.OUT }}/smoke
-      - name: Upload the image (private repository only, 1 day)
+      # UNVERIFIED until it runs once in a private fork: this repository is public, so the step is skipped
+      # here. The upload is the packed archive (sparse tar + zstd), never the sparse image itself, which
+      # upload-artifact would read as its full apparent size. Size: packed-image.json of each run.
+      - name: Upload the packed image (private repository only, 1 day)
         if: success() && steps.sel.outputs.run == 'true' && github.event.repository.private
         uses: actions/upload-artifact@v5
         with:
           name: image-route-${{ matrix.route }}-PRIVATE
           retention-days: 1
-          compression-level: 6
-          path: ${{ env.OUT }}/srrx-golden-route${{ matrix.route }}.img
+          compression-level: 0
+          path: ${{ env.PACKED }}

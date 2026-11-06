@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """SR-RX-v2.1 recovery kit (IMG-14): assemble, verify and write the golden A/B image to the UFS.
 
-  map       extent map of a sparse image file (SEEK_DATA/SEEK_HOLE, SHA-256 of every extent)
+  map       extent map of a sparse image file (SEEK_DATA/SEEK_HOLE, SHA-256 of every extent) plus
+            the forced ranges (ext4 journals) that are written even where the file has holes
   assemble  kit directory: golden image + map + manifests, locked upstream files, SHA256SUMS, README
   verify    SHA256SUMS of the kit and every image extent against its map
   write     dry run by default. With --execute: writes the image extents to --target
@@ -30,6 +31,12 @@ import time
 HERE = Path(__file__).resolve().parent
 COALESCE = 1 << 20   # holes shorter than 1 MiB are written as zeros: fewer extents, same bytes
 CHUNK = 4 << 20
+# Kernel interfaces of the target checks (module level so host tests can point them at a fake tree).
+PROC_MOUNTINFO = Path("/proc/self/mountinfo")
+PROC_SWAPS = Path("/proc/swaps")
+SYS_CLASS_BLOCK = Path("/sys/class/block")
+SYS_DEV_BLOCK = Path("/sys/dev/block")
+FORCED_WHAT = re.compile(r"[A-Za-z0-9_ ():<>.,/-]{1,120}\Z")
 # Recovery set of STACK.md:1700 and STACK.md:137 that sources.lock.json does not lock yet (IMG-08):
 # the kit lists them as MISSING until the operator adds verified copies with --extra.
 UNLOCKED_ITEMS = (
@@ -75,10 +82,64 @@ def data_extents(path):
         os.close(fd)
 
 
-def make_map(image, layout_sector=4096):
+def merge_ranges(ranges, gap=0):
+    """Sorted union of (offset, length) ranges; ranges closer than `gap` bytes are joined."""
+    out = []
+    for offset, length in sorted((int(o), int(n)) for o, n in ranges if n > 0):
+        if out and offset - (out[-1][0] + out[-1][1]) < max(gap, 1):
+            out[-1] = (out[-1][0], max(out[-1][0] + out[-1][1], offset + length) - out[-1][0])
+        else:
+            out.append((offset, length))
+    return out
+
+
+def uncovered(extents, ranges):
+    """[(offset, length)] of the bytes of `ranges` that no extent covers (empty: fully covered)."""
+    have = merge_ranges([(e[0], e[1]) for e in extents])
+    missing = []
+    for offset, length in merge_ranges([(r["offset"], r["length"]) if type(r) is dict else r for r in ranges]):
+        pos, end = offset, offset + length
+        for start, size in have:
+            if start + size <= pos:
+                continue
+            if start >= end:
+                break
+            if start > pos:
+                missing.append((pos, start - pos))
+            pos = max(pos, start + size)
+            if pos >= end:
+                break
+        if pos < end:
+            missing.append((pos, end - pos))
+    return missing
+
+
+def validate_forced(forced, image_bytes, sector=4096):
+    """Byte ranges that must be written even where the image file has holes (the ext4 journals)."""
+    if type(forced) is not list:
+        raise KitError("forced ranges must be a list")
+    for item in forced:
+        if (type(item) is not dict or set(item) != {"offset", "length", "what"} or type(item["offset"]) is not int
+                or type(item["length"]) is not int or item["offset"] < 0 or item["length"] <= 0
+                or item["offset"] % sector or item["length"] % sector or item["offset"] + item["length"] > image_bytes
+                or type(item["what"]) is not str or not FORCED_WHAT.match(item["what"])):
+            raise KitError("forced range malformed or outside the image: " + json.dumps(item)[:200])
+    return forced
+
+
+def make_map(image, layout_sector=4096, forced=()):
+    """Extent map: the allocated ranges of the sparse image plus the `forced` ranges.
+
+    mke2fs zeroes an ext4 journal with fallocate (ZERO_RANGE/PUNCH_HOLE through the loop
+    device), which leaves unwritten extents that SEEK_DATA reports as holes. A write that
+    skipped them would leave the target's old bytes in the journal, and with the identifiers
+    derived from the same seed a stale journal block of an earlier install would still carry
+    valid checksums. build_image.py therefore passes every journal block range as `forced`."""
     size, extents = data_extents(image)
     if size % layout_sector:
         raise KitError("image size is not a multiple of the sector size")
+    forced = validate_forced(list(forced), size, layout_sector)
+    extents = merge_ranges(extents + [(f["offset"], f["length"]) for f in forced], gap=COALESCE)
     rows = []
     with open(image, "rb") as handle:
         for offset, length in extents:
@@ -93,9 +154,10 @@ def make_map(image, layout_sector=4096):
                 remaining -= len(chunk)
             rows.append([offset, length, digest.hexdigest()])
     return {"schema_version": 1, "format": "srrx-extent-map", "image": Path(image).name, "image_bytes": size,
-            "sector_size": layout_sector, "data_bytes": sum(r[1] for r in rows), "extents": rows,
-            "holes": "read as zero in the image; a write leaves them untouched on the target (free filesystem space; "
-                     "the ext4 journals are zeroed image data, mkfs.ext4 -E lazy_journal_init=0)"}
+            "sector_size": layout_sector, "data_bytes": sum(r[1] for r in rows), "extents": rows, "forced": forced,
+            "holes": "read as zero in the image; a write leaves them untouched on the target: free filesystem space, "
+                     "inode tables past bg_itable_unused and bitmaps of uninitialised block groups. The ext4 journals "
+                     "are in `forced` and therefore written (as zeros where the image file has holes)"}
 
 
 def load_map(path):
@@ -109,6 +171,11 @@ def load_map(path):
         end = offset + length
     if end > data["image_bytes"]:
         raise KitError("extent map exceeds the image size")
+    if "forced" not in data:
+        raise KitError("extent map without forced ranges (made before the ext4 journal fix): rebuild the map")
+    forced = validate_forced(data["forced"], data["image_bytes"])
+    if uncovered(data["extents"], forced):
+        raise KitError("extent map does not cover its forced ranges (ext4 journals): the write would leave stale bytes")
     return data
 
 
@@ -230,36 +297,72 @@ def verify_kit(kit_dir):
 # ---------------------------------------------------------------- target checks
 
 def _sys_block(name):
-    return Path("/sys/class/block") / name
+    return SYS_CLASS_BLOCK / name
 
 
 def _disk_of(majmin):
     """Whole-disk name of a block device number (a partition maps to its parent)."""
     try:
-        node = Path("/sys/dev/block", majmin).resolve(strict=True)
+        node = (SYS_DEV_BLOCK / majmin).resolve(strict=True)
     except OSError:
         return None
     return node.parent.name if (node / "partition").exists() else node.name
 
 
+def _rdev_of(node):
+    """major:minor of a device node (swap entries of /proc/swaps)."""
+    st = os.stat(node)
+    return "%d:%d" % (os.major(st.st_rdev), os.minor(st.st_rdev))
+
+
+def _dev_of(path):
+    """major:minor of the filesystem that holds `path` (the image file)."""
+    st = os.stat(path)
+    return "%d:%d" % (os.major(st.st_dev), os.minor(st.st_dev))
+
+
 def _mounted_disks():
     disks = {}
-    for line in Path("/proc/self/mountinfo").read_text().splitlines():
+    for line in PROC_MOUNTINFO.read_text().splitlines():
         fields = line.split()
-        disk = _disk_of(fields[2])
+        disk = _disk_of(fields[2]) if len(fields) > 4 else None
         if disk:
             disks.setdefault(disk, []).append(fields[4])
-    for line in Path("/proc/swaps").read_text().splitlines()[1:]:
+    for line in PROC_SWAPS.read_text().splitlines()[1:]:
         device = line.split()[0] if line.split() else ""
         if device.startswith("/dev/"):
             try:
-                st = os.stat(device)
-                disk = _disk_of("%d:%d" % (os.major(st.st_rdev), os.minor(st.st_rdev)))
-                if disk:
-                    disks.setdefault(disk, []).append("[swap]")
+                disk = _disk_of(_rdev_of(device))
             except OSError:
-                pass
+                continue
+            if disk:
+                disks.setdefault(disk, []).append("[swap]")
     return disks
+
+
+def _holders(name):
+    """Holders (dm, md, bcache...) of the whole disk and of each of its partitions."""
+    sysdir = _sys_block(name)
+    holders = [p.name for p in (sysdir / "holders").iterdir()] if (sysdir / "holders").is_dir() else []
+    for part in sorted(sysdir.iterdir()) if sysdir.is_dir() else []:
+        if (part / "partition").exists() and (part / "holders").is_dir():
+            holders += [p.name for p in (part / "holders").iterdir()]
+    return holders
+
+
+def refuse_busy(name, image_dev=None):
+    """Refuse a whole disk that holds the image file, a mounted filesystem or swap, or a holder.
+
+    The image check comes first: an image on the target is always on a mounted filesystem of it,
+    and the more specific reason is the useful one."""
+    if image_dev is not None and _disk_of(image_dev) == name:
+        raise KitError("the image file lives on the target disk")
+    mounted = _mounted_disks()
+    if name in mounted:
+        raise KitError("target holds mounted filesystems or swap (" + ",".join(mounted[name][:4]) + "), e.g. the running root")
+    holders = _holders(name)
+    if holders:
+        raise KitError("target or its partitions are held by " + ",".join(holders))
 
 
 def check_target(target, extent_map, image=None, test_loop=False):
@@ -292,19 +395,7 @@ def check_target(target, extent_map, image=None, test_loop=False):
         raise KitError("target LOG-SEC is %d, the image needs %d (UFS 4K-native, STACK.md:87)" % (log_sec, extent_map["sector_size"]))
     if size < extent_map["image_bytes"]:
         raise KitError("target (%d B) is smaller than the image (%d B)" % (size, extent_map["image_bytes"]))
-    mounted = _mounted_disks()
-    if name in mounted:
-        raise KitError("target holds mounted filesystems or swap (" + ",".join(mounted[name][:4]) + "), e.g. the running root")
-    holders = [p.name for p in (sysdir / "holders").iterdir()] if (sysdir / "holders").is_dir() else []
-    for part in sysdir.iterdir():
-        if (part / "partition").exists() and (part / "holders").is_dir():
-            holders += [p.name for p in (part / "holders").iterdir()]
-    if holders:
-        raise KitError("target or its partitions are held by " + ",".join(holders))
-    if image is not None:
-        ist = os.stat(image)
-        if _disk_of("%d:%d" % (os.major(ist.st_dev), os.minor(ist.st_dev))) == name:
-            raise KitError("the image file lives on the target disk")
+    refuse_busy(name, _dev_of(image) if image is not None else None)
     return {"device": device, "name": name, "log_sec": log_sec, "size_bytes": size, "image_bytes": extent_map["image_bytes"]}
 
 
@@ -328,6 +419,7 @@ def write(image, extent_map_path, target, execute=False, test_loop=False, grow=T
         raise KitError("image size differs from its map")
     info = check_target(target, extent_map, image, test_loop)
     plan = {"target": info, "extents": len(extent_map["extents"]), "data_bytes": extent_map["data_bytes"],
+            "forced_bytes": sum(f["length"] for f in extent_map["forced"]),
             "then": ["read back every extent (SHA-256)", "sfdisk --relocate gpt-bak-std", "grow partition 4 (/data) to the device end",
                      "e2fsck -f + resize2fs /data", "sfdisk --verify, e2fsck -fn (2,3,4), fsck.vfat -n (1)"] if grow else ["read back"]}
     if not execute:
@@ -383,6 +475,7 @@ def main():
     sub = parser.add_subparsers(dest="op", required=True)
     p = sub.add_parser("map")
     p.add_argument("--image", type=Path, required=True)
+    p.add_argument("--forced", type=Path, help="JSON list of {offset, length, what} written even over holes (build_image.py journals)")
     p.add_argument("--output", type=Path, required=True)
     p = sub.add_parser("assemble")
     p.add_argument("--image", type=Path, required=True)
@@ -409,9 +502,11 @@ def main():
         if args.op == "map":
             if args.output.exists():
                 raise KitError("map output must be new")
-            data = make_map(args.image)
+            forced = json.loads(args.forced.read_text(encoding="utf-8")) if args.forced else []
+            data = make_map(args.image, forced=forced)
             args.output.write_text(json.dumps(data) + "\n", encoding="utf-8")
-            result = {"status": "MAP_WRITTEN", "extents": len(data["extents"]), "data_bytes": data["data_bytes"]}
+            result = {"status": "MAP_WRITTEN", "extents": len(data["extents"]), "data_bytes": data["data_bytes"],
+                      "forced_bytes": sum(f["length"] for f in data["forced"])}
         elif args.op == "assemble":
             result = assemble(args.image, args.map, args.out, args.manifest, args.facts, args.cache, args.lock, args.extra, args.link)
         elif args.op == "verify":

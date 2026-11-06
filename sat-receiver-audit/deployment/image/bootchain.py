@@ -56,6 +56,10 @@ DTB_STORE = Path("/usr/lib/srrx/dtb")
 TRIAL_MARK = "srrx/ab/trial"      # Route B: slot letter under trial (ESP-relative)
 BOOTING_MARK = "srrx/ab/booting"  # Route B: the trial slot's initramfs already wrote the default back
 ENTRY_NAME = re.compile(r"lab([AB])(?:\+([0-9]+)(?:-([0-9]+))?)?\.conf\Z")
+# Route B: bootargs of embloader 0.4's Q6A configuration (configs/radxa-q6a/config.static.yaml at tag
+# 0.4, read 2026-10-24); whether embloader adds them to an sdboot entry with its own options is not
+# verified (a bench step, never in CI). panic=30 would override the slot's panic=10 if it came last.
+EMBLOADER_Q6A_BOOTARGS = ("loglevel=8", "panic=30", "console=ttyMSM0", "earlycon=qcom_geni,0x994000")
 
 
 class BootChainError(ValueError):
@@ -82,6 +86,24 @@ def validate_tokens(text, label="kernel command line"):
 
 def _key(token):
     return token.split("=", 1)[0]
+
+
+def proc_tokens(text):
+    """Parameters of a running command line as the kernel splits them: whitespace separates, except
+    inside double quotes (systemd.run="..."); the quotes stay in the token."""
+    tokens, current, quoted = [], [], False
+    for char in text:
+        if char == '"':
+            quoted = not quoted
+        if char.isspace() and not quoted:
+            if current:
+                tokens.append("".join(current))
+                current = []
+            continue
+        current.append(char)
+    if current:
+        tokens.append("".join(current))
+    return tokens
 
 
 def additions(lime_build):
@@ -295,9 +317,27 @@ def _entry_versions(entries_dir):
     return versions
 
 
+def running_slot_root(config, slot, proc_cmdline=Path("/proc/cmdline")):
+    """True when the running kernel's root= is this slot's PARTUUID, False when it is not, None when
+    /proc/cmdline is unreadable (a chroot without /proc: treated as running by kernel_install)."""
+    try:
+        tokens = proc_tokens(Path(proc_cmdline).read_text(encoding="ascii", errors="replace"))
+    except OSError:
+        return None
+    return "root=PARTUUID=" + root_partuuid(config, slot) in tokens
+
+
 def kernel_install(argv, esp=ESP_MOUNT, config_path=BOOT_CONFIG, slot_path=SLOT_FILE,
-                   cmdline_path=Path("/etc/kernel/cmdline"), tries_path=Path("/etc/kernel/tries"), dtb_store=DTB_STORE):
-    """kernel-install plugin: `add KVER ENTRY_DIR KERNEL [INITRD...]` or `remove KVER ENTRY_DIR`."""
+                   cmdline_path=Path("/etc/kernel/cmdline"), tries_path=Path("/etc/kernel/tries"), dtb_store=DTB_STORE,
+                   proc_cmdline=Path("/proc/cmdline")):
+    """kernel-install plugin: `add KVER ENTRY_DIR KERNEL [INITRD...]` or `remove KVER ENTRY_DIR`.
+
+    It replaces this slot's ESP files in place. For the slot that is running that is safe only as
+    a trial with a fallback: Route A writes a counted `+tries` entry of a newer generation (a bad
+    initrd counts down and the other slot boots); Route B (embloader 0.4, no counter) refuses unless
+    the operator armed a trial of this slot (ESP srrx/ab/trial), and then points loader.conf at the
+    slot and clears srrx/ab/booting, so its initramfs writes the default back to the other slot on
+    the next boot (a failure before that initramfs still needs the rescue microSD, STACK.md:844)."""
     if len(argv) < 2 or argv[0] not in ("add", "remove"):
         return 0  # other verbs (inspect, add-all) are not ours
     verb, kver = argv[0], argv[1]
@@ -317,6 +357,17 @@ def kernel_install(argv, esp=ESP_MOUNT, config_path=BOOT_CONFIG, slot_path=SLOT_
         raise BootChainError("/etc/kernel/cmdline differs from the slot " + slot + " line generated from /etc/srrx/boot.json")
     if not _is_mountpoint(esp):
         raise BootChainError(str(esp) + " is not a mounted ESP")
+    tries = read_tries(tries_path) if config["route"] == "A" else None
+    running = running_slot_root(config, slot, proc_cmdline)
+    armed = False
+    if running is not False and not tries:
+        trial = Path(esp) / TRIAL_MARK
+        armed = config["route"] == "B" and trial.is_file() and trial.read_text(encoding="ascii", errors="replace").strip() == slot
+        if not armed:
+            raise BootChainError("slot " + slot + " is running (or /proc/cmdline is unreadable) and route " + config["route"] + " has no "
+                                 "counted trial: replacing its only boot files in place has no fallback. Install into the other slot, "
+                                 + ("arm a trial (ESP " + TRIAL_MARK + " = " + slot + ")" if config["route"] == "B" else "restore /etc/kernel/tries")
+                                 + " first (README.md, kernel-install plugin)")
     kernel = Path(argv[3])
     initrds = [Path(p) for p in argv[4:]] or [Path("/boot/initrd.img-" + kver)]
     if len(initrds) != 1 or not initrds[0].is_file() or not kernel.is_file():
@@ -340,11 +391,16 @@ def kernel_install(argv, esp=ESP_MOUNT, config_path=BOOT_CONFIG, slot_path=SLOT_
     for name, (owner, _) in versions.items():
         if owner == slot:
             (entries_dir / name).unlink()
-    tries = read_tries(tries_path) if config["route"] == "A" else None
     name = "lab" + slot + ("+%d" % tries if tries else "") + ".conf"
     _atomic_write(entries_dir / name, entry_text(config, slot, generation).encode())
-    print(json.dumps({"status": "SLOT_ENTRY_WRITTEN", "slot": slot, "entry": "loader/entries/" + name,
-                      "generation": generation, "files": written, "route": config["route"]}))
+    if armed:
+        # Route B trial of the running slot: boot it next, and let its initramfs write the default
+        # back to the other slot again (a stale booting marker would suppress that write-back).
+        _atomic_write(Path(esp) / "loader/loader.conf", loader_conf(config, slot).encode())
+        if (Path(esp) / BOOTING_MARK).exists():
+            (Path(esp) / BOOTING_MARK).unlink()
+    print(json.dumps({"status": "SLOT_ENTRY_WRITTEN", "slot": slot, "entry": "loader/entries/" + name, "running_slot": running,
+                      "route_b_trial_armed": armed, "generation": generation, "files": written, "route": config["route"]}))
     return 0
 
 
@@ -376,6 +432,65 @@ def _mount_source_dev(path):
     return os.stat(path).st_dev
 
 
+def loader_tokens(config, slot):
+    """Tokens a boot loader may add to the slot line. Route A: only systemd-boot's initrd= of the
+    entry (QEMU model 2026-11-06: initrd=\\srrx\\A\\initrd.img). Route B: that initrd= in either
+    separator and the embloader 0.4 Q6A bootargs (unverified on the unit)."""
+    initrd = config["slots"][slot]["initrd"]
+    allowed = {"initrd=" + initrd.replace("/", "\\")}
+    if config["route"] == "B":
+        allowed |= {"initrd=" + initrd, *EMBLOADER_Q6A_BOOTARGS}
+    return allowed
+
+
+def smoke_tokens(selftest=False):
+    """The tokens smoke_qemu.py appends to a slot line in its QEMU copy (one parameter each)."""
+    report = "/usr/bin/python3 -I -B /opt/srrx/deployment/image/bootchain.py smoke-report" + (" --selftest" if selftest else "")
+    return ["console=ttyAMA0,115200", 'systemd.run="' + report + '"', "systemd.run_success_action=poweroff",
+            "systemd.run_failure_action=poweroff"]
+
+
+def virtualization():
+    """`systemd-detect-virt --vm` (e.g. "qemu"), "none" on bare metal, "unknown" if it cannot run."""
+    import subprocess
+    try:
+        done = subprocess.run(["systemd-detect-virt", "--vm"], capture_output=True, text=True, timeout=20)
+    except (OSError, subprocess.SubprocessError):
+        return "unknown"
+    return done.stdout.strip() or "unknown"
+
+
+def cmdline_findings(config, slot, running_text, virt="none"):
+    """(issues, notes) of a running command line against the slot line.
+
+    Every slot token must be present, root= exactly once and this slot's, no clk_ignore_unused,
+    and nothing else but loader_tokens(): an edited entry with systemd.mask=, systemd.unit=, init=
+    or module_blacklist= is not blessed. Only inside a VM (the QEMU model) the exact smoke_tokens()
+    set is accepted, and noted."""
+    issues, notes = [], []
+    expected = cmdline(config["base_cmdline_without_root"], root_partuuid(config, slot), config["lime_build"]).split(" ")
+    running = proc_tokens(running_text)
+    missing = [t for t in expected if t not in running]
+    if missing:
+        issues.append("running cmdline lacks " + ",".join(missing))
+    if any(t in FORBIDDEN_TOKENS for t in running):
+        issues.append("running cmdline contains clk_ignore_unused")
+    roots = [t for t in running if t.startswith("root=")]
+    if roots != ["root=PARTUUID=" + root_partuuid(config, slot)]:
+        issues.append("running root= is not exactly the slot " + slot + " PARTUUID")
+    extra = [t for t in running if t not in expected]
+    allowed = loader_tokens(config, slot)
+    loader = sorted({t for t in extra if t in allowed})
+    unexpected = [t for t in extra if t not in allowed and not t.startswith("root=")]
+    if loader:
+        notes.append("boot loader tokens: " + ",".join(loader) + ("" if config["route"] == "A" else " (Route B: embloader bootargs, unverified)"))
+    if unexpected and virt not in ("none", "unknown", "") and sorted(unexpected) in (sorted(smoke_tokens(False)), sorted(smoke_tokens(True))):
+        notes.append("QEMU smoke tokens accepted inside the VM (" + virt + "): " + ",".join(unexpected))
+    elif unexpected:
+        issues.append("running cmdline has tokens beyond the slot line and the boot loader's: " + ",".join(unexpected)[:600])
+    return issues, notes
+
+
 def boot_check(root=Path("/"), proc_cmdline=Path("/proc/cmdline")):
     """Gate for boot-complete.target: no PASS of any bench gate, only the self-check of this boot."""
     sys.path.insert(0, str(DEPLOYMENT))
@@ -388,20 +503,9 @@ def boot_check(root=Path("/"), proc_cmdline=Path("/proc/cmdline")):
         return {"status": "BLOCKED", "issues": ["boot configuration unreadable: " + str(exc)], "notes": []}
     if platform.release() != config["kernel_version"]:
         issues.append("running kernel " + platform.release() + " is not the pinned slot kernel " + config["kernel_version"])
-    expected = cmdline(config["base_cmdline_without_root"], root_partuuid(config, slot), config["lime_build"]).split(" ")
-    running = Path(proc_cmdline).read_text(encoding="ascii", errors="replace").split()
-    missing = [t for t in expected if t not in running]
-    if missing:
-        issues.append("running cmdline lacks " + ",".join(missing))
-    if any(t in FORBIDDEN_TOKENS for t in running):
-        issues.append("running cmdline contains clk_ignore_unused")
-    roots = [t for t in running if t.startswith("root=")]
-    if roots != ["root=PARTUUID=" + root_partuuid(config, slot)]:
-        issues.append("running root= is not exactly the slot " + slot + " PARTUUID")
-    extra = sorted(set(running) - set(expected))
-    if extra:
-        # systemd-boot adds initrd=<entry initrd> (QEMU model 2026-11-06); embloader on Route B may append its bootargs.
-        notes.append("tokens beyond the slot line (loader-added initrd=, Route B embloader bootargs): " + ",".join(extra))
+    found, remarks = cmdline_findings(config, slot, Path(proc_cmdline).read_text(encoding="ascii", errors="replace"), virtualization())
+    issues += found
+    notes += remarks
     for mount, partuuid in (("/", root_partuuid(config, slot)), ("/boot/efi", config["esp_partuuid"])):
         try:
             if _mount_source_dev(root / mount.lstrip("/")) != os.stat(root / "dev/disk/by-partuuid" / partuuid).st_rdev:

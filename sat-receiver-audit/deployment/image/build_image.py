@@ -26,6 +26,7 @@ import os
 from pathlib import Path
 import platform
 import re
+import shlex
 import shutil
 import stat
 import subprocess
@@ -111,7 +112,8 @@ def require_builder():
         raise BuildError("the image builder runs only on native aarch64 Linux (ubuntu-24.04-arm in CI)")
     if os.geteuid() != 0:
         raise BuildError("the image builder needs root for losetup, mount and chroot")
-    for tool in ("losetup", "sfdisk", "mkfs.vfat", "mkfs.ext4", "e2fsck", "fsck.vfat", "rsync", "chroot", "xz", "dpkg-deb", "blkid", "systemctl"):
+    for tool in ("losetup", "sfdisk", "mkfs.vfat", "mkfs.ext4", "e2fsck", "fsck.vfat", "rsync", "chroot", "xz", "dpkg-deb", "blkid", "systemctl",
+                 "dumpe2fs", "debugfs"):
         if shutil.which(tool) is None:
             raise BuildError("builder tool missing: " + tool)
 
@@ -399,6 +401,69 @@ def _units(root):
             "interesting_units": interesting, "masked": masked}
 
 
+# before.txt commands whose arguments are recorded; others keep only their argument count
+# (add_user carries the default passwords, which the facts never repeat).
+RSETUP_ARGS_RECORDED = ("disable_service", "enable_service", "remove_packages", "update_locale")
+
+
+def rsetup_first_boot(path):
+    """Commands of rsetup's first-boot script (/config/before.txt on the r2 config partition)."""
+    data = Path(path).read_bytes()[:65536]
+    commands = []
+    for raw in data.decode("utf-8", errors="replace").splitlines():
+        line = raw.strip()
+        if not line or line.startswith("#"):
+            continue
+        try:
+            words = shlex.split(line, comments=True)
+        except ValueError:
+            words = line.split()
+        if not words:
+            continue
+        condition = None
+        if words[0] == "if" and len(words) >= 3:
+            condition, words = words[1], words[2:]
+        item = {"command": words[0]}
+        if condition:
+            item["if"] = condition
+        if words[0] in RSETUP_ARGS_RECORDED:
+            item["args"] = words[1:]
+        else:
+            item["args_count"] = len(words) - 1
+        commands.append(item)
+    return {"sha256": hashlib.sha256(data).hexdigest(), "size": len(data), "commands": commands}
+
+
+def _unit_name(name):
+    return name if "." in name else name + ".service"
+
+
+def first_boot_review(first_boot, recipe, root):
+    """Every before.txt step that this image skips (rsetup.service is masked) must be handled.
+
+    Returns (rows, blocking): one row per command with its handling, and the unhandled ones."""
+    handled = recipe["rsetup_first_boot"]["handled"]
+    masked = set(recipe["mask"]["units"])
+    rows, blocking = [], []
+    if not first_boot:
+        return [], ["rsetup_first_boot_unknown: the r2 config partition has no before.txt in the facts"]
+    for item in first_boot["commands"]:
+        row = dict(item, handling=handled.get(item["command"]))
+        if row["handling"] is None:
+            blocking.append("rsetup_first_boot_unhandled: before.txt runs " + item["command"] + ", which the recipe does not replace or skip")
+        if item["command"] in ("disable_service", "enable_service"):
+            units = [_unit_name(u) for u in item.get("args", [])]
+            enabled = {u: sorted(p.parent.name for p in (Path(root) / "etc/systemd/system").glob("*/" + u)) for u in units}
+            row["units"] = {u: "masked" if u in masked else ("enabled: " + ",".join(enabled[u]) if enabled[u] else "not enabled") for u in units}
+            for unit, state in row["units"].items():
+                # disable_service: the unit must not run in the image; enable_service is skipped, so
+                # its unit keeps the image state, which the row records.
+                if item["command"] == "disable_service" and state not in ("masked", "not enabled"):
+                    blocking.append("rsetup_first_boot_disable_service: " + unit + " is " + state + " in the image")
+        rows.append(row)
+    return rows, blocking
+
+
 def _find(root, name, roots=("usr/lib", "boot", "lib/firmware", "usr/share")):
     found = []
     for sub in roots:
@@ -443,6 +508,9 @@ def root_facts(root):
         "units": _units(root), "accounts": _accounts(root),
         "machine_id": "missing" if machine_id is None else ("empty" if not machine_id.strip() else ("uninitialized" if machine_id.strip() == "uninitialized" else "set")),
         "hostname": (_text(root / "etc/hostname") or "").strip(),
+        "locale": _text(root / "etc/default/locale"),
+        # names only: a private host key is never hashed or copied into the facts
+        "ssh_host_keys": sorted(p.name for p in (root / "etc/ssh").glob("ssh_host_*")) if (root / "etc/ssh").is_dir() else None,
         "config_dir": _listing(root / "config"),
         "python3": os.readlink(root / "usr/bin/python3") if (root / "usr/bin/python3").is_symlink() else None,
     }
@@ -531,6 +599,8 @@ def facts(cache, work, output=None, keep_mounted=None):
                 else:
                     entry["role"] = "other"
                     entry["listing"] = _listing(target)
+                    if (target / "before.txt").is_file():
+                        result["rsetup_first_boot"] = entry["rsetup_before_txt"] = rsetup_first_boot(target / "before.txt")
             result["partitions"].append(entry)
         if root_dir is None or esp_dir is None:
             raise BuildError("base image: root or ESP partition not identified")
@@ -588,13 +658,17 @@ STEPS = (
     ("bootloader", "Route A: dpkg --purge sdboot-is-embloader, bootctl install --no-variables, embloader pinned -1; Route B: embloader kept (0.4 required)"),
     ("boot-config", "/etc/srrx/boot.json, /etc/srrx/slot, /etc/kernel/cmdline, tries, install.conf layout=other, 90-srrx-bls.install, boot-check unit (Route B: initramfs write-back and commit unit)"),
     ("kernel", "dpkg -i the five locked 6.18.2-4 debs before any apt run; the plugin writes the slot A entry and ESP files"),
-    ("hardening", "apt-mark hold, purge unattended-upgrades/brltty, masks (apt/fwupd timers, ModemManager, sleep targets, rsetup.service), PPA lists removed, default-password accounts locked, empty machine-id"),
-    ("enable", "srrx-radio-off.service and srrx-boot-check.service (Route B also srrx-ab-commit.service); srrx.service is not enabled (IMG-06)"),
+    ("hardening", "apt-mark hold, purge unattended-upgrades/brltty, masks (apt/fwupd timers, ModemManager, sleep targets, rsetup.service, "
+                  "ssh/samba/cups/avahi that rsetup's skipped first boot or the recipe disables), PPA lists removed, default-password accounts locked, "
+                  "empty machine-id, r2 SSH host keys removed"),
+    ("enable", "srrx-radio-off.service, srrx-boot-check.service (Route B also srrx-ab-commit.service), srrx-ssh-hostkeys.service for a later "
+               "sshd start; srrx.service is not enabled (IMG-06); every before.txt step is checked as replaced or skipped"),
     ("data", "/etc/fstab of slot A, /data directories, the locked cache copied to /data/srrx-cache (read-only bind at /srv/srrx-cache)"),
     ("selftest", "deployment/selftest.py offline --profile controller on root A (policy DRAFT: BLOCKED expected)"),
     ("root-b", "rsync root A to root B, slot B fstab/cmdline/slot file, kernel-install add in a root B chroot (slot B entry and ESP files)"),
     ("entries", "golden entries: labA (newest) and labB blessed, labA-rescue/labB-rescue with the r2 kernel, loader.conf; foreign r2 entries and the bootctl loader/random-seed removed"),
-    ("verify", "sfdisk --verify, e2fsck -fn, fsck.vfat -n, image-manifest.json, extent map for recovery_kit.py"),
+    ("verify", "sfdisk --verify, e2fsck -fn, fsck.vfat -n, ext4 journal block ranges (dumpe2fs, debugfs) forced into the extent map "
+               "for recovery_kit.py, image-manifest.json"),
 )
 
 
@@ -648,6 +722,52 @@ def check_disk(loop, devices, layout, ids, geo):
     return {"partition_table": table, "issues": issues}
 
 
+def dumpe2fs_header(text):
+    """`dumpe2fs -h` output -> {field: value} (e.g. "Journal inode", "Block size")."""
+    fields = {}
+    for line in text.splitlines():
+        key, sep, value = line.partition(":")
+        if sep and key.strip() and key.strip() not in fields:
+            fields[key.strip()] = value.strip()
+    return fields
+
+
+def block_runs(text):
+    """`debugfs -R "blocks <ino>"` output (block numbers) -> sorted [(first block, count)] runs."""
+    numbers = sorted({int(word) for word in text.split()})
+    runs = []
+    for number in numbers:
+        if runs and number == runs[-1][0] + runs[-1][1]:
+            runs[-1] = (runs[-1][0], runs[-1][1] + 1)
+        else:
+            runs.append((number, 1))
+    return runs
+
+
+def journal_ranges(devices, geo):
+    """Image byte ranges of every ext4 journal block (data and extent-tree blocks of the journal
+    inode), passed to recovery_kit.make_map as forced extents: mke2fs zeroes the journal with
+    fallocate, which leaves holes in the image file that a hole-skipping write would not cover."""
+    sector = geo["sector_size"]
+    forced, summary = [], {}
+    for role in ("root_a", "root_b", "data"):
+        header = dumpe2fs_header(run(["dumpe2fs", "-h", devices[role]]).stdout)
+        inode, block = header.get("Journal inode", ""), header.get("Block size", "")
+        if not inode.isdigit() or not block.isdigit() or int(block) % sector:
+            raise BuildError(role + ": no internal ext4 journal or unexpected block size in dumpe2fs -h")
+        runs = block_runs(run(["debugfs", "-R", "blocks <" + inode + ">", devices[role]]).stdout)
+        base = geo["partitions"][role]["start"] * sector
+        blocks = sum(n for _, n in runs)
+        if not blocks:
+            raise BuildError(role + ": debugfs lists no blocks of the journal inode " + inode)
+        for first, count in runs:
+            forced.append({"offset": base + first * int(block), "length": count * int(block),
+                           "what": role + " ext4 journal (inode " + inode + ")"})
+        summary[role] = {"journal_inode": int(inode), "block_size": int(block), "blocks": blocks, "runs": len(runs),
+                         "journal_size": header.get("Journal size")}
+    return forced, summary
+
+
 def blank(work, output, test_sizes=False):
     """Partitioned, formatted image without an OS: the CI loop-file round trip of IMG-02."""
     require_builder()
@@ -680,10 +800,14 @@ def blank(work, output, test_sizes=False):
             argv = ["fsck.vfat", "-n", devices[role]] if role == "esp" else ["e2fsck", "-fn", devices[role]]
             if run(argv, check=False).returncode:
                 report["issues"].append(role + " filesystem check failed")
+        forced, report["journals"] = journal_ranges(devices, geo)
     finally:
         loop.detach()
+    # recovery_kit.py map --forced <this file>: the journals are written even where the file has holes
+    forced_path = Path(str(output) + ".forced.json")
+    dump(forced_path, forced)
     report.update(status="BLANK_IMAGE_OK" if not report["issues"] else "BLOCKED", image=str(output), geometry=geo, identifiers=ids,
-                  layout_status=layout["status"])
+                  layout_status=layout["status"], forced=str(forced_path))
     return report
 
 
@@ -882,9 +1006,17 @@ def hardening(root, recipe, route):
     if dbus.is_file() and not dbus.is_symlink():
         dbus.unlink()
         os.symlink("/etc/machine-id", dbus)
+    # rsetup's first boot (before.txt regenerate_ssh_hostkey) does not run: r2's host keys would be
+    # shared by every unit built from this image. Remove them (names recorded, never the keys);
+    # srrx-ssh-hostkeys.service generates per-unit keys before a first sshd start (IMG-06).
+    ssh_dir = root / "etc/ssh"
+    host_keys = sorted(p.name for p in ssh_dir.glob("ssh_host_*")) if ssh_dir.is_dir() else []
+    for name in host_keys:
+        (ssh_dir / name).unlink()
+    install_file(FILES / "srrx-ssh-hostkeys.service", root / "etc/systemd/system/srrx-ssh-hostkeys.service")
     return {"held": hold, "hold_names_not_installed": missing, "purged": purge, "masked": masked,
             "removed_apt_lists": removed, "diverted_apt_preferences": diverted_prefs, "locked_accounts": locked,
-            "machine_id_before": previous}
+            "machine_id_before": previous, "removed_ssh_host_keys": host_keys}
 
 
 def enable_units(root, recipe, route):
@@ -1049,6 +1181,10 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         LOG.step("hardening", "DONE", held=len(manifest["hardening"]["held"]), masked=manifest["hardening"]["masked"])
         manifest["enabled_units"] = enable_units(root_a, recipe, route)
         manifest["not_enabled"] = recipe["not_enabled"]
+        first_boot = base.get("rsetup_first_boot")
+        rows, unhandled = first_boot_review(first_boot, recipe, root_a)
+        manifest["rsetup_first_boot"] = {"before_txt_sha256": (first_boot or {}).get("sha256"), "commands": rows}
+        manifest["blocking"] += unhandled
         LOG.step("enable", "DONE")
         data = work / "mnt/data"
         mounts.mount(devices["data"], data, "ext4")
@@ -1104,6 +1240,7 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
             argv = ["fsck.vfat", "-n", devices[role]] if role == "esp" else ["e2fsck", "-fn", devices[role]]
             checks[role] = run(argv, check=False).returncode
         disk = check_disk(loop, devices, layout, ids, geo)
+        forced, manifest["journals"] = journal_ranges(devices, geo)
         loop.detach()
         loop = None
         manifest["filesystem_checks"] = checks
@@ -1111,11 +1248,18 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         if any(checks.values()) or disk["issues"]:
             raise BuildError("final filesystem or GPT check failed: " + json.dumps({"fsck": checks, "disk": disk["issues"]}))
         import recovery_kit
-        extent_map = recovery_kit.make_map(image, layout_sector=layout["sector_size"])
+        extent_map = recovery_kit.make_map(image, layout_sector=layout["sector_size"], forced=forced)
+        # Assertion of the map itself: every journal block is written by recovery_kit.py write.
+        left = recovery_kit.uncovered(extent_map["extents"], forced)
+        if left:
+            raise BuildError("extent map leaves ext4 journal blocks unwritten: " + json.dumps(left[:5]))
+        holes = sum(n for _, n in recovery_kit.uncovered(recovery_kit.data_extents(image)[1], forced))
         dump(out / (image.name + ".map.json"), extent_map)
-        LOG.step("verify", "DONE", data_bytes=extent_map["data_bytes"], extents=len(extent_map["extents"]))
+        LOG.step("verify", "DONE", data_bytes=extent_map["data_bytes"], extents=len(extent_map["extents"]),
+                 journal_bytes=sum(f["length"] for f in forced), journal_bytes_in_file_holes=holes)
         manifest.update(status="CANDIDATE_IMAGE_BUILT", finished_at=utc_now(), image={"name": image.name, "bytes": image.stat().st_size,
-                        "map_sha256": sha256(out / (image.name + ".map.json")), "data_bytes": extent_map["data_bytes"]})
+                        "map_sha256": sha256(out / (image.name + ".map.json")), "data_bytes": extent_map["data_bytes"],
+                        "journal_bytes_forced": sum(f["length"] for f in forced), "journal_bytes_in_file_holes": holes})
         return manifest
     except BaseException as exc:
         manifest.update(status="BLOCKED", error=str(exc)[-4000:], finished_at=utc_now())
