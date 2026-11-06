@@ -276,10 +276,10 @@
       "src": "https://gelidsolutions.com/product/gp-ultimate-thermal-pad/ (read 2026-10-24: 90 x 50 mm sheet; 0.5/1.0/1.5/2/3 mm; 60-70 Shore OO; 'can compress ... by up to 30% of thickness'; no W/mK figure)"
     },
     "epdm_cord": {
-      "name": "EPDM solid cord 3.0 mm, 70 Shore A (seam seal)",
-      "d": 3.0,
+      "name": "EPDM solid cord 2.0 mm, 70 Shore A (seam and hatch seal)",
+      "d": 2.0,
       "status": "assumption",
-      "src": "decision build/15 'Ущільнення: EPDM-шнур у пазу'; diameter is a design choice; MPN/supplier TBD (parts package)"
+      "src": "decision build/15 'Ущільнення: EPDM-шнур у пазу'; diameter 2.0 is a design choice of this package (groove 2.6 x 1.55 in the seam belt, mechanical.json gasket); MPN/supplier TBD (parts package)"
     },
     "oring_groove_rule": {
       "name": "Static face-seal gland rule",

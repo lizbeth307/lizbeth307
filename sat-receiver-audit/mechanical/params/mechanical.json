@@ -169,7 +169,7 @@
         "kind": "sma_cab01075"
       }
     ],
-    "_src": "STACK D15 puts RX2/REF IN on the left wall; this model moves them to the right wall next to the LimeSDR (fit-report 'lime_cables', CAB.01075 is 100 mm long); recorded in build/15"
+    "_src": "STACK D15 puts RX2/REF IN on the left wall; this model moves them to the right wall next to the LimeSDR: the Taoglas CAB.01075 leads are 100 mm long and the left wall is at least 145 mm from the Lime (recorded in build/15)"
   },
   "left_face": {
     "exhaust": {
