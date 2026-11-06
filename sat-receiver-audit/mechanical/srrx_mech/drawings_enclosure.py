@@ -87,6 +87,16 @@ def face_outline(sh, P, face, ox, oy):
             sh.line((ox + split, oy), (ox + split, oy + h), "BEND")
         elif face == "right":
             sh.line((ox + D - split, oy), (ox + D - split, oy + h), "BEND")
+        bh = m["gasket"]["belt_h"]
+        for zz in (split - bh, split + bh):      # edges of the seam belt (1.9 mm proud of the face)
+            if face == "top":
+                sh.line((ox, oy + D - zz), (ox + w, oy + D - zz), "HIDDEN")
+            elif face == "bottom":
+                sh.line((ox, oy + zz), (ox + w, oy + zz), "HIDDEN")
+            elif face == "left":
+                sh.line((ox + zz, oy), (ox + zz, oy + h), "HIDDEN")
+            elif face == "right":
+                sh.line((ox + D - zz, oy), (ox + D - zz, oy + h), "HIDDEN")
     sh.dim_h(ox, ox + w, oy, oy - 12, fmt(w))
     sh.dim_v(oy, oy + h, ox, ox - 12, fmt(h))
 
@@ -96,6 +106,7 @@ def face_sheets(P):
     sheets = []
     notes_common = ["Координати u/v — від лівої (A) і нижньої (B) кромок грані, як видно ззовні. Одиниці мм, допуск ±0.2.",
                     "Лінія роз'єму корпусу показана штриховою (BEND); отвори ⌀3 'TBD' — лише кернування, остаточний виріз за кресленням обраної деталі.",
+                    "Пунктир уздовж роз'єму — краї пояса шва (1.9 мм назовні від грані, по 5 мм на кожній оболонці, M-13); отвори в поясі не розміщувати.",
                     "MODEL FIT ONLY: посадку кожної деталі перевірити на стенді (ворота OPEN)."]
     # front and rear on separate A3 sheets
     for sid, face in (("M-01", "front"), ("M-06", "rear")):
@@ -464,7 +475,7 @@ def seam_sheet(P):
     sh.label((t + 6.5, -6.5), "задня оболонка: пласка площина, отвір під гвинт", 2.2)
     sh.label((t + 6.5, -0.6), f"шнур ⌀{fmt(gk['cord_d'])} до стиску (пунктир)", 1.8)
     sh.dim_h(g0, g0 + gk["groove_w"], gk["groove_depth"], gk["groove_depth"] + 2.0)
-    sh.dim_v(0, gk["groove_depth"], g0, g0 - 1.0)
+    sh.dim_v(0, gk["groove_depth"], g0, g0 - 1.0, fmt(gk["groove_depth"], 2))
     sh.dim_h(-b, 0, -bh, -bh - 1.6)
     sh.dim_h(0, t, -top, -top - 1.6)
     sh.dim_h(0, 4.5, top, top + 1.8)

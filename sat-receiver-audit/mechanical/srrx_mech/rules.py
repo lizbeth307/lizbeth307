@@ -224,6 +224,30 @@ def evaluate(P):
     out.append({"id": "R-VENT-REACH", "rule": "space behind each vent seat minus the thread reach (worst vent)", "value_mm": round(worst[0], 2),
                 "limit_mm": 0.5, "vent": worst[1], "thread_reach_mm": worst[2], "space_mm": worst[3], "result": _res(worst[0] >= 0.5),
                 "source": "LTW drawing: thread 10.0 (parts.json ltw_vent); envelopes in mechanical.json layout"})
+    # Side-face cut-outs: on the flat part of the face (corner radii excluded) and clear of the seam plane.
+    from .features import face_features
+    W, H, D = P.outer
+    R, zs = m["outer"]["corner_r"], m["split_z"]
+    keep = gk["land"] + gk["groove_w"] / 2 + 0.25
+    bad = []
+    for face, feats in face_features(P).items():
+        if face in ("front", "rear"):
+            continue
+        for f in feats:
+            hu = f["w"] / 2 if "w" in f and f["kind"] in ("grille", "tbd") else f["d"] / 2
+            hv = f["h"] / 2 if "h" in f and f["kind"] in ("grille", "tbd") else f["d"] / 2
+            if face in ("top", "bottom"):
+                along, alen, z_lo, z_hi = (f["u"] - hu, f["u"] + hu), W, None, None
+                z_lo, z_hi = ((D - f["v"] - hv, D - f["v"] + hv) if face == "top" else (f["v"] - hv, f["v"] + hv))
+            else:
+                along, alen = (f["v"] - hv, f["v"] + hv), H
+                z_lo, z_hi = ((f["u"] - hu, f["u"] + hu) if face == "left" else (D - f["u"] - hu, D - f["u"] + hu))
+            if along[0] < R - 1e-6 or along[1] > alen - R + 1e-6:
+                bad.append(f"{f['id']}: on the corner radius")
+            if z_lo < zs + keep and z_hi > zs - keep:
+                bad.append(f"{f['id']}: crosses the seam")
+    out.append({"id": "R-PANEL-FLAT", "rule": "side-face cut-outs on the flat face and clear of the seam plane (groove + land)",
+                "value_mm": bad or "none", "result": _res(not bad), "source": "geometry of this model (outer.corner_r, gasket)"})
     # Power key: the top wall is the PV0 panel.
     lo, hi = P.parts["pv0_button"]["panel_t"]
     out.append({"id": "R-PWR-KEY", "rule": "E-Switch PV0 panel thickness at the power key (top wall)", "value_mm": m["wall"], "limit_mm": [lo, hi],

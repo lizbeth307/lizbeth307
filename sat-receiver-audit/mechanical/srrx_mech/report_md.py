@@ -11,7 +11,7 @@ def _r(v):
     return str(v)
 
 
-def render(P, report, params_short):
+def render(P, report, params_short, boards_contract):
     e = report["envelope"]
     s = report["summary"]
     out = [
@@ -26,8 +26,9 @@ def render(P, report, params_short):
         "|---|---|---|",
         f"| Ш x В x Г, мм | {_r(e['model'][0])} x {_r(e['model'][1])} x {_r(e['model'][2])} | {_r(e['d15'][0])} x {_r(e['d15'][1])} x {_r(e['d15'][2])} |",
         f"| об'єм, L | {_r(e['volume_l'])} | {_r(e['volume_l_d15'])} |",
-        f"| поверхня, m² | {_r(e['surface_m2'])} | {_r(e['surface_m2_d15'])} |",
-        f"| лице, m² | {_r(e['front_m2'])} | {_r(e['d15'][0] * e['d15'][1] / 1e6)} |",
+        f"| поверхня, m² | {fmt(e['surface_m2'], 4)} | {fmt(e['surface_m2_d15'], 4)} |",
+        f"| лице, m² | {fmt(e['front_m2'], 4)} | {fmt(e['d15'][0] * e['d15'][1] / 1e6, 4)} |",
+        f"| над поясом шва, мм | {_r(e['over_seam_belt'][0])} x {_r(e['over_seam_belt'][1])} x {_r(e['over_seam_belt'][2])} | — |",
         f"| мішок 23 x 30 см (W+D ≤ 300, H+D ≤ 230) | {_r(e['fire_bag_23x30cm']['w_plus_d'])} / {_r(e['fire_bag_23x30cm']['h_plus_d'])}: "
         f"{e['fire_bag_23x30cm']['result']} | — |",
         "",
@@ -38,6 +39,8 @@ def render(P, report, params_short):
         f"- антенні деталі за правилом розміру: FAIL {s['antenna_rule_failures']}; площа плат: FAIL {s['board_area_failures']}",
         f"- термоінтерфейси: FAIL {s['thermal_failures']}, OPEN {s['thermal_open']}; ущільнення: {s['gasket']}",
         f"- звірка з STEP постачальника: {s['vendor_fit']}",
+        f"- перетини тіл B-rep (оболонки, пластина, кутники, РЧ-відсік, лоток) з конвертами: {s.get('solid_conflicts')}; "
+        f"деталі з кількох тіл («висячі» елементи): {len(s.get('disconnected_parts') or [])}",
         "",
         "## Правила (build/05 §6, STACK 5.8)",
         "",
@@ -68,14 +71,35 @@ def render(P, report, params_short):
         pcs = ", ".join(f"{p['id']} {_r(p['size'][0])}x{_r(p['size'][1])} (лист {p['sheet']})" for p in d["pieces"])
         out.append(f"- {th} мм: {d['sheets_90x50']} лист(и): {pcs}")
     g = report["gasket"]
-    out += ["", "## Ущільнення шва", "",
-            f"EPDM-шнур ⌀{_r(g['cord_d'])} у пазу {_r(g['groove'][0])} x {_r(g['groove'][1])}: стиск {fmt(g['squeeze'] * 100, 0)} %, "
-            f"заповнення {fmt(g['fill'] * 100, 0)} % — {g['result']}; довжина по осі паза {_r(g['cord_length_mm'])} мм, замовити {g['cord_order_mm']} мм.", ""]
+    cl = g["closure"]
+    out += ["", "## Ущільнення шва і гвинти", "",
+            f"EPDM-шнур ⌀{_r(g['cord_d'])} у пазу {_r(g['groove'][0])} x {_r(g['groove'][1])} у зовнішньому поясі {_r(g['belt_mm'])} мм: "
+            f"стиск {fmt(g['squeeze'] * 100, 0)} %, заповнення {fmt(g['fill'] * 100, 0)} % — {g['result']}; довжина по осі паза {_r(g['cord_length_mm'])} мм, "
+            f"замовити {g['cord_order_mm']} мм.", "",
+            f"Гвинтів шва {cl['screws']}, середній проліт {_r(cl['mean_span_mm'])} мм, найдовший {_r(cl['max_span_mm'])} мм (лівий нижній кут: "
+            "батарея й екран HF+ доходять до стінок, бобишка не вміщується; рішення — стенд T-07).", ""]
+    si = report.get("solid_interference")
+    if si:
+        out += ["## Перетини тіл (B-rep)", "", si["method"] + ".", "", f"Результат: {si['result']}.", ""]
+        for c in si["conflicts"]:
+            out.append(f"- {c['item']} ↔ {c['solid']}: {_r(c['overlap_mm3'])} мм³, {c['bbox_mm']}")
+        if si["by_design"]:
+            out += ["", "Перетини за задумом (плата на стійках, Lime на п'єдесталі тощо):", ""]
+            for c in si["by_design"]:
+                out.append(f"- {c['item']} ↔ {c['solid']}: {_r(c['overlap_mm3'])} мм³")
+        out.append("")
     if report["tight_below_0_5mm"]:
         out += ["## Тісні місця (зазор < 0.5 мм, модель)", ""]
         for c in report["tight_below_0_5mm"]:
             out.append(f"- {c['a']} ↔ {c['b']}: {_r(c['gap_mm'])} мм")
         out.append("")
+    bc = boards_contract
+    out += ["## Плати: механічний інтерфейс (contract/boards.json)", "",
+            "| плата | домени pcb/prepare.py | контур, мм² | отвори | висота деталей | розміщення | кріплення |", "|---|---|---|---|---|---|---|"]
+    for bid, b in bc["boards"].items():
+        pl = "; ".join(f"{k}: ({_r(v['origin'][0])}, {_r(v['origin'][1])}) z {_r(v['z_bottom'])} {v['facing']}" for k, v in b["placements"].items())
+        out.append(f"| {bid} | {', '.join(b['domains'])} | {_r(b['area_mm2'])} | {len(b['holes_mm'])} x ⌀{_r(b['hole_d'])} | ≤{_r(b['max_component_height'])} | {pl} | {b['mount']} |")
+    out.append("")
     out += ["## Розташування конвертів (мм; x вправо, y вгору з лиця, z від задньої зовнішньої грані)", "",
             "| ID | деталь / плата | x | y | z | кріплення |", "|---|---|---|---|---|---|"]
     for iid, name, bx, it in item_boxes(P):

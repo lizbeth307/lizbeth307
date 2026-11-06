@@ -1,9 +1,13 @@
-"""Unit tests of the mechanical generator that need no CAD kernel (run by sr-rx-mech.yml).
+"""Unit tests of the mechanical generator (run by sr-rx-mech.yml).
 
     python -m unittest discover -s mechanical/tests
+
+Most tests need no CAD kernel; the Cad class is skipped when build123d is not installed.
 """
 import csv
+import importlib.util
 import json
+import math
 import re
 import sys
 import unittest
@@ -12,8 +16,8 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(HERE))
 
-from srrx_mech import antennas, boards, drawings_enclosure as de, layout, rules, thermal, writers  # noqa: E402
-from srrx_mech.features import face_features  # noqa: E402
+from srrx_mech import antennas, boards, drawings_enclosure as de, export3d, layout, report_md, rules, thermal, writers  # noqa: E402
+from srrx_mech.features import face_features, seam_geometry  # noqa: E402
 from srrx_mech.geom2d import fmt  # noqa: E402
 from srrx_mech.params import Params  # noqa: E402
 
@@ -75,6 +79,112 @@ class ReceiveOnly(unittest.TestCase):
                     self.assertNotRegex(f["id"], r"(^|_)(TX|X1)($|_)")
         ids = [p["id"] for p in P.mech["top_face"]["ports"]] + [p["id"] for p in P.mech["right_face"]["ports"]]
         self.assertEqual(ids, ["P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "RX1", "RX2", "REF_IN"])
+
+    def test_the_only_operator_controls_are_hmi_and_the_power_key(self):
+        kinds = {f["kind"] for feats in face_features(P).values() for f in feats}
+        self.assertNotIn("switch", kinds)
+        self.assertEqual([f["id"] for f in face_features(P)["top"] if f["kind"] == "pv0"], ["PWR_KEY"])
+
+
+class Seam(unittest.TestCase):
+    def test_groove_lies_in_the_belt_and_wall(self):
+        gk = P.mech["gasket"]
+        sg = seam_geometry(P)
+        self.assertGreaterEqual(sg["groove_out"], -gk["belt"] + gk["land"] - 1e-9)
+        self.assertLessEqual(sg["groove_in"], P.mech["wall"] - gk["land"] + 1e-9)
+
+    def test_closure_holes_inside_the_seal(self):
+        r = [x for x in rules.evaluate(P) if x["id"] == "R-SEAM-HOLES"][0]
+        self.assertTrue(r["result"].startswith("PASS"), r)
+
+    def test_closure_spans_are_reported(self):
+        cs = rules.closure_spans(P)
+        self.assertEqual(cs["screws"], len(P.mech["closure"]["bosses"]))
+        self.assertLess(cs["max_span_mm"], 130.0)
+
+    def test_vents_never_face_up(self):
+        self.assertTrue(P.mech["vents"])
+        for v in P.mech["vents"]:
+            self.assertNotEqual(v["face"], "top", v["id"])
+
+
+def _inside(p, poly):
+    x, y = p
+    n, ins = len(poly), False
+    for i in range(n):
+        (x1, y1), (x2, y2) = poly[i], poly[(i + 1) % n]
+        if (y1 > y) != (y2 > y) and x < (x2 - x1) * (y - y1) / (y2 - y1) + x1:
+            ins = not ins
+    return ins
+
+
+class Plate(unittest.TestCase):
+    def test_outline_stays_inside_the_rounded_interior(self):
+        W, H, _ = P.outer
+        t, R = P.mech["wall"], P.mech["outer"]["corner_r"]
+        r = R - t - P.mech["plate"]["corner_clearance"]
+        for x, y in rules.plate_outline(P):
+            cx, cy = min(max(x, R), W - R), min(max(y, R), H - R)
+            self.assertLessEqual(math.hypot(x - cx, y - cy), r + 1e-6, (x, y))
+
+    def test_every_plate_hole_is_inside_the_outline(self):
+        poly = rules.plate_outline(P)
+        for h in rules.plate_holes(P):
+            self.assertTrue(_inside(h["c"], poly), h["id"])
+
+
+class Export3D(unittest.TestCase):
+    def test_step_reals_are_rounded_and_zero_noise_removed(self):
+        src = ("ISO-10303-21;\nHEADER;\nFILE_NAME('a','2030-01-01T00:00:00',('x'),('y'),'OCC 8.0','b','c');\nENDSEC;\nDATA;\n"
+               "#1 = DIRECTION('',(1.,0.,2.22044604925E-16));\n#2 = CARTESIAN_POINT('q6a.board 1.5',(-0.,12.3456789012345,1.E+100));\nENDSEC;\n")
+        out = export3d.normalise_step(src.encode()).decode()
+        self.assertIn("FILE_NAME('a','2026-10-24T00:00:00'", out)
+        self.assertIn("#1 = DIRECTION('',(1.,0.,0.));", out)
+        self.assertIn("CARTESIAN_POINT('q6a.board 1.5',(0.,12.345678901,1.E+100));", out)
+        self.assertIn("'OCC 8.0'", out)
+
+    def test_stl_reader_checks_the_length(self):
+        with self.assertRaises(ValueError):
+            export3d.read_stl(b"\0" * 80 + (2).to_bytes(4, "little") + b"\0" * 50)
+
+
+class Report(unittest.TestCase):
+    def test_markdown_report_renders_without_cad(self):
+        env = {"model": [1, 2, 3], "over_seam_belt": [1, 2, 3], "d15": [1, 2, 3], "volume_l": 1, "volume_l_d15": 1,
+               "surface_m2": 1, "surface_m2_d15": 1, "front_m2": 1, "fire_bag_23x30cm": {"w_plus_d": 1, "h_plus_d": 1, "result": "PASS (model)"}}
+        summ = {"collisions": 0, "outside": 0, "rule_failures": 0, "rules_open": 0, "antenna_rule_failures": 0,
+                "board_area_failures": 0, "thermal_failures": 0, "thermal_open": 0, "gasket": "PASS", "vendor_fit": "NOT RUN"}
+        gasket = {"cord_d": 2, "groove": [2.6, 1.55], "squeeze": 0.2, "fill": 0.7, "belt_mm": 1.9, "result": "PASS",
+                  "cord_length_mm": 1, "cord_order_mm": 1, "closure": rules.closure_spans(P)}
+        report = {"envelope": env, "summary": summ, "rules": rules.evaluate(P), "rf_bay_packing": rules.bay_packing(P),
+                  "thermal_interfaces": {"rule": "r", "rows": thermal.interfaces(P), "cuts_per_thickness": {}},
+                  "gasket": gasket, "tight_below_0_5mm": []}
+        md = report_md.render(P, report, "test", boards.contract(P)).decode("utf-8")
+        self.assertIn("MODEL FIT ONLY", md)
+        self.assertIn("| PWR |", md)
+
+
+@unittest.skipUnless(importlib.util.find_spec("build123d"), "build123d not installed")
+class Cad(unittest.TestCase):
+    def test_shells_are_single_solids_with_the_seam_belt(self):
+        from srrx_mech import cad
+        W, H, _ = P.outer
+        b = P.mech["gasket"]["belt"]
+        for fn in (cad.front_shell, cad.rear_shell):
+            s = fn(P)
+            self.assertEqual(len(s.solids()), 1, fn.__name__)
+            bb = s.bounding_box()
+            self.assertAlmostEqual(bb.size.X, W + 2 * b, places=3)
+            self.assertAlmostEqual(bb.size.Y, H + 2 * b, places=3)
+
+    def test_stl_writer_counts_and_bounds(self):
+        from build123d import Box
+        data, n = export3d.stl_bytes(Box(10, 20, 30), "box")
+        self.assertEqual(n, 12)
+        count, (lo, hi) = export3d.read_stl(data)
+        self.assertEqual(count, 12)
+        self.assertEqual([round(v, 3) for v in lo + hi], [-5, -10, -15, 5, 10, 15])
+        self.assertEqual(data, export3d.stl_bytes(Box(10, 20, 30), "box")[0])
 
 
 class Checks(unittest.TestCase):

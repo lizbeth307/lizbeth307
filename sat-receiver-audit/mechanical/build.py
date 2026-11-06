@@ -23,7 +23,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
-from srrx_mech import VERSION, antennas, boards, drawings_enclosure as de, layout, rules, thermal, writers  # noqa: E402
+from srrx_mech import VERSION, antennas, boards, drawings_enclosure as de, layout, report_md, rules, thermal, writers  # noqa: E402
 from srrx_mech.geom2d import scale_label  # noqa: E402
 from srrx_mech.params import Params  # noqa: E402
 
@@ -258,6 +258,7 @@ def build(out, vendor_cache=None, skip_cad=False, offline=False):
             "parts": {k: round(v["cm3"] * ASA_DENSITY) for k, v in vols.items() if v["printed"]}}
     report["summary"] = summary(report)
     write(out, "fit-report.json", jdump(report), files)
+    write(out, "fit-report.md", report_md.render(P, report, meta["params"], boards.contract(P)), files)
     manifest = {"schema": "srrx-mech-manifest-v1", "generator": VERSION, "params_sha256": params_hash(P), "libraries": libraries(),
                 "skip_cad": skip_cad, "vendor_fit": bool(vendor_cache),
                 "files": {k: {"bytes": len(v), "sha256": hashlib.sha256(v).hexdigest()} for k, v in sorted(files.items())}}
