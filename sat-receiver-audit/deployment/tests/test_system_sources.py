@@ -158,6 +158,18 @@ class DeviceTreeTests(unittest.TestCase):
         artifacts = {a["id"] for a in sources["artifacts"]}
         self.assertTrue(set(lock["kernel_artifacts"].values()) <= artifacts)
 
+    def test_committed_merge_record_belongs_to_these_overlay_sources(self):
+        # The device-tree CI job compares its merge with this record; an edited .dtso needs a new record.
+        record = json.loads((DT / "dt-manifest.json").read_text(encoding="utf-8"))
+        self.assertEqual((record["kind"], record["status"]), ("srrx_dt_ci_record", "CI_MERGE_CHECKED_NOT_BOOTED"))
+        self.assertEqual(record["sources"], {p.name: hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(DT.glob("*.dtso"))})
+        self.assertEqual(sorted(record["overlays"]), ["field-q6a.dtbo", "lab-q6a.dtbo"])
+        self.assertEqual(sorted(record["merged"]), ["field.dtb", "lab.dtb"])
+        for digest in [record["base_dtb"]["sha256"]] + list(record["overlays"].values()) + list(record["merged"].values()):
+            self.assertRegex(digest, r"^[0-9a-f]{64}$")
+        self.assertTrue(record["bench"].startswith("OPEN:"))
+        self.assertIsInstance(record["recorded_from"]["run_id"], int)
+
 
 class PpsDkmsTests(unittest.TestCase):
     def setUp(self):

@@ -16,6 +16,7 @@ on:
     branches: ['wip/**', 'codex/**', 'ccr-*']
     paths:
       - 'sat-receiver-audit/deployment/system/**'
+      - 'sat-receiver-audit/deployment/deploy.py'
       - 'sat-receiver-audit/tools/flash_mcu.py'
       - 'sat-receiver-audit/firmware/runtime.lock.json'
       - 'sat-receiver-audit/firmware/mpremote-requirements.txt'
@@ -23,6 +24,7 @@ on:
   pull_request:
     paths:
       - 'sat-receiver-audit/deployment/system/**'
+      - 'sat-receiver-audit/deployment/deploy.py'
       - 'sat-receiver-audit/tools/flash_mcu.py'
       - 'sat-receiver-audit/firmware/runtime.lock.json'
       - 'sat-receiver-audit/firmware/mpremote-requirements.txt'
@@ -61,6 +63,7 @@ jobs:
           systemctl --version | head -1
       - name: Field EDID equals the generator and parses without failures
         run: |
+          set -euo pipefail  # the default shell has no pipefail: a failing edid-decode before tee would pass
           python deployment/system/edid_field.py --check
           edid-decode --check deployment/system/edid/field.bin | tee "$RUNNER_TEMP/edid-decode.txt"
           grep -q "151.500000 MHz" "$RUNNER_TEMP/edid-decode.txt"
@@ -122,6 +125,21 @@ jobs:
           for rule in "$rootfs"/etc/polkit-1/rules.d/*.rules; do cp "$rule" "$RUNNER_TEMP/check.js"; node --check "$RUNNER_TEMP/check.js"; done
           for hook in "$rootfs"/etc/initramfs-tools/hooks/*; do sh -n "$hook"; shellcheck -s sh -e SC1091,SC2154 "$hook"; done
           tar -tvzf "$RUNNER_TEMP/stage.tar.gz" | grep -E 'etc/initramfs-tools/hooks/' | grep -c '^-rwxr-xr-x' | grep -qx 2
+      - name: The staged override replaces exactly the i2c-tools rule that would open every bus to group i2c
+        run: |
+          set -eu
+          # Installed only here, after the sysusers model: its postinst may add group i2c to the host /etc/group.
+          sudo apt-get install -y -q --no-install-recommends i2c-tools
+          dpkg-query -W -f='i2c-tools ${Version}\n' i2c-tools
+          rootfs="$RUNNER_TEMP/stage/rootfs"
+          rules=$(dpkg -L i2c-tools | grep -E '/udev/rules\.d/[^/]+\.rules$')
+          test "$(printf '%s\n' "$rules" | wc -l)" = 1
+          echo "package rule: $rules"; cat "$rules"
+          grep -Eq 'KERNEL=="i2c-\[0-9\]\*".*GROUP="i2c"' "$rules"
+          override="$rootfs/etc/udev/rules.d/$(basename "$rules")"
+          test -f "$override"
+          if grep -Ev '^[[:space:]]*(#|$)' "$override"; then echo '::error::the i2c-tools override contains a rule'; exit 1; fi
+          echo "i2c-tools override PASS (CI model): $(basename "$rules") in /etc/udev/rules.d replaces the package rule"
       - name: inferd-htp.service passes systemd-analyze verify
         run: |
           set -eu
@@ -146,7 +164,8 @@ jobs:
           sudo install -D -m 0644 "$rootfs/usr/lib/firmware/edid/field.bin" /usr/lib/firmware/edid/field.bin
           sudo mkinitramfs -d "$conf" -o "$RUNNER_TEMP/initrd.img" "$(uname -r)"
           lsinitramfs "$RUNNER_TEMP/initrd.img" | tee "$RUNNER_TEMP/initrd.txt" | grep -E 'firmware/edid/field.bin$'
-          ! grep -q 'dragon-q6a/cdsp.mbn' "$RUNNER_TEMP/initrd.txt"   # no Phase 0 selection: lab-dsp-fw copies nothing
+          # No Phase 0 selection: lab-dsp-fw copies nothing. (A `!`-inverted command is exempt from set -e.)
+          if grep -q 'dragon-q6a/cdsp.mbn' "$RUNNER_TEMP/initrd.txt"; then echo '::error::lab-dsp-fw copied DSP firmware without a Phase 0 selection'; exit 1; fi
           sudo cp /dev/null /usr/lib/firmware/edid/field.bin
           if sudo mkinitramfs -d "$conf" -o "$RUNNER_TEMP/bad.img" "$(uname -r)"; then echo "::error::wrong EDID accepted"; exit 1; fi
           echo "initramfs hooks PASS (CI model; the Q6A initramfs itself is a bench step)"
@@ -215,6 +234,16 @@ jobs:
                     "bench": "OPEN: W-10 compares /sys/firmware/fdt node by node (fdt_check.py --reference), pinmux and aliases on the Q6A (build/07 §5.3)"}
           (out / "dt-manifest.json").write_text(json.dumps(record, indent=2) + "\n")
           print(json.dumps(record, indent=2))
+          # The committed record (deployment/system/dt/dt-manifest.json) is the reference: other
+          # dtc/fdtoverlay output, base DTB or overlay sources fail here until it is re-recorded.
+          committed = json.load(open("deployment/system/dt/dt-manifest.json", encoding="utf-8"))
+          sources = {p.name: sha(p) for p in sorted(pathlib.Path("deployment/system/dt").glob("*.dtso"))}
+          differs = [k for k in ("dtc", "base_dtb", "overlays", "merged") if committed[k] != record[k]]
+          differs += ["sources"] if committed["sources"] != sources else []
+          if differs:
+              print("::error::merge differs from deployment/system/dt/dt-manifest.json in " + ", ".join(differs))
+              sys.exit(1)
+          print("merge equals the committed record of run", committed["recorded_from"]["run_id"])
           EOF
       - uses: actions/upload-artifact@v5
         with:
@@ -246,26 +275,44 @@ jobs:
               open(tmp + "/" + name, "wb").write(data)
               print("verified", name, len(data))
           EOF
-      - name: Assemble the DKMS tree and build with gcc-12
+      - name: Assemble the DKMS tree and build it with dkms (dkms.conf MAKE[0], gcc-12)
         run: |
-          set -eu
+          set -euo pipefail  # a failing vermagic check before tee fails the step
           sudo apt-get update -q
-          sudo apt-get install -y -q --no-install-recommends gcc-12 make kmod
+          sudo apt-get install -y -q --no-install-recommends gcc-12 make kmod dkms
+          dkms --version
           dpkg-deb -x "$RUNNER_TEMP/headers.deb" "$RUNNER_TEMP/headers"
           kdir="$RUNNER_TEMP/headers/usr/src/linux-headers-6.18.2-4-qcom"
           test -f "$kdir/Makefile"
-          grep -E 'CONFIG_PPS=|CONFIG_PPS_CLIENT_GPIO|CONFIG_CC_VERSION_TEXT' "$kdir/include/config/auto.conf" || true
+          grep -E 'CONFIG_PPS=|CONFIG_PPS_CLIENT_GPIO|CONFIG_CC_VERSION_TEXT|CONFIG_MODULE_SIG=|CONFIG_MODULE_COMPRESS' "$kdir/include/config/auto.conf" || true
           python deployment/system/pps_dkms.py assemble --source "$RUNNER_TEMP/pps-gpio.c" --dest "$RUNNER_TEMP/dkms"
           tree="$RUNNER_TEMP/dkms/srrx-pps-gpio-1.2.0+lab1"
-          make -C "$kdir" M="$tree" CC=gcc-12 modules
-          python deployment/system/pps_dkms.py vermagic --module "$tree/pps-gpio.ko" | tee "$RUNNER_TEMP/dkms-result.json"
-          modinfo "$tree/pps-gpio.ko" | grep -E '^(vermagic|name|license|alias):'
-          python - "$tree/pps-gpio.ko" "$RUNNER_TEMP/dkms-result.json" <<'EOF'
+          # The documented procedure (software/DEPLOYMENT.md): the tree in /usr/src, then dkms.
+          sudo cp -r "$tree" /usr/src/
+          sudo dkms add -m srrx-pps-gpio -v 1.2.0+lab1
+          sudo dkms build -m srrx-pps-gpio -v 1.2.0+lab1 -k 6.18.2-4-qcom --kernelsourcedir "$kdir" \
+            || { sudo cat /var/lib/dkms/srrx-pps-gpio/1.2.0+lab1/build/make.log || true; exit 1; }
+          dkms status -m srrx-pps-gpio -v 1.2.0+lab1 -k 6.18.2-4-qcom | tee "$RUNNER_TEMP/dkms-status.txt"
+          grep -q ': built' "$RUNNER_TEMP/dkms-status.txt"
+          built=$(sudo find /var/lib/dkms/srrx-pps-gpio/1.2.0+lab1/6.18.2-4-qcom -name 'pps-gpio.ko*' -type f -print -quit)
+          test -n "$built"
+          echo "dkms built: $built"
+          case "$built" in
+            *.ko) sudo cat "$built" > "$RUNNER_TEMP/pps-gpio.ko" ;;
+            *.ko.zst) sudo cat "$built" | zstd -d -q > "$RUNNER_TEMP/pps-gpio.ko" ;;
+            *.ko.xz) sudo cat "$built" | xz -d > "$RUNNER_TEMP/pps-gpio.ko" ;;
+            *) echo "::error::unexpected dkms module $built"; exit 1 ;;
+          esac
+          python deployment/system/pps_dkms.py vermagic --module "$RUNNER_TEMP/pps-gpio.ko" | tee "$RUNNER_TEMP/dkms-result.json"
+          modinfo "$RUNNER_TEMP/pps-gpio.ko" | grep -E '^(vermagic|name|license|alias):'
+          python - "$RUNNER_TEMP/pps-gpio.ko" "$RUNNER_TEMP/dkms-result.json" <<'EOF'
           import hashlib, json, subprocess, sys
           record = json.load(open(sys.argv[2]))
           record.update(kind="srrx_pps_gpio_ci_build", status="CI_BUILT_NOT_LOADED",
                         gcc=subprocess.run(["gcc-12", "--version"], capture_output=True, text=True).stdout.splitlines()[0],
                         ko_sha256=hashlib.sha256(open(sys.argv[1], "rb").read()).hexdigest(),
+                        built_by=subprocess.run(["dkms", "--version"], capture_output=True, text=True).stdout.strip() + " build (dkms.conf MAKE[0])",
+                        dkms_install="OPEN: dkms install (DEST_MODULE_LOCATION, depmod) runs on the target, not in CI",
                         bench="OPEN: module load, GPIO96 pinmux owner, /dev/pps-gnss and chrony PPS selection (W1-2)")
           json.dump(record, open(sys.argv[2], "w"), indent=2)
           print(json.dumps(record, indent=2))

@@ -652,6 +652,23 @@ def device_node(name, path):
     return node
 
 
+# srrx.service SupplementaryGroups: the staged 73-srrx-i2c.rules gives it the two bound buses only.
+I2C_GROUP = "i2c"
+
+
+def i2c_group_issues(bound, nodes, gid):
+    """/dev/i2c-N nodes other than the bound buses that labd's group (or everyone) may open, e.g.
+    from a package rule such as i2c-tools' 60-i2c-tools.rules (HDMI DDC, camera buses).
+    nodes: {name: stat result}; gid: the i2c group's id, or None when it does not exist."""
+    issues = []
+    for name, node in sorted(nodes.items()):
+        if name in bound or not re.fullmatch(r"i2c-[0-9]+", name) or not stat.S_ISCHR(node.st_mode):
+            continue
+        if (gid is not None and node.st_gid == gid and node.st_mode & 0o060) or node.st_mode & 0o006:
+            issues.append("/dev/" + name + " is open to group " + I2C_GROUP + " or others beyond the two bound buses")
+    return issues
+
+
 def doctor(config=None):
     """Read metadata only. No i2cdetect, EEPROM, serial writes or SDR opens."""
     report = {"read_only": True, "architecture": platform.machine(), "kernel": platform.release(),
@@ -735,6 +752,13 @@ def doctor(config=None):
                 actual = "/" + node.resolve(strict=True).as_posix().split("/sys/firmware/devicetree/base/", 1)[-1]
                 if actual != bus["of_fullname"]:
                     raise DeploymentError(label + " OF node differs from declared wiring")
+            import grp
+            try:
+                i2c_gid = grp.getgrnam(I2C_GROUP).gr_gid
+            except KeyError:
+                i2c_gid = None
+            report["issues"].extend(i2c_group_issues({Path(bus["path"]).name for bus in config["i2c"].values()},
+                                                     {p.name: p.stat() for p in Path("/dev").glob("i2c-*")}, i2c_gid))
             for name, device in guarded_devices(config).items():  # = the srrx.service device ordering
                 path = Path(device["path"])
                 device_node(name, path)
@@ -849,7 +873,7 @@ def stage_gnss(rootfs, mode):
     after dev-lab-gnss.device (gpsd.service in gpsd mode, srrx-locationd in raw mode; DEP-11)."""
     units = rootfs / "etc/systemd/system"
     rule = rootfs / GNSS_POLKIT_RULE
-    rule.parent.mkdir(parents=True, exist_ok=True)  # srrx.pass_jobs already wrote its rule there
+    rule.parent.mkdir(parents=True, exist_ok=True)  # pass_jobs.staged_files() ships a rule there too
     rule.write_text(gnss_polkit_rule(), newline="\n")
     locationd = units / "srrx-locationd.service.d"
     locationd.mkdir(exist_ok=True)

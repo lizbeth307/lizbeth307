@@ -7,9 +7,10 @@ polkitd and update-initramfs act on it only on the target, as reviewed install s
 (software/DEPLOYMENT.md, "Системні файли").
 
 Sources: users and groups from the staged units and deploy.py; masks, logind,
-gpsd, chrony and the GNSS blacklist from build/07 §1.2 and §18; zram from build/07
-§21; FastRPC udev and group from build/07 §6 / STACK.md:863; the EDID hook from
-STACK.md:851; the DSP firmware hook from build/07 §6 / STACK.md:864.
+gpsd, chrony and the GNSS blacklist from build/07 §1.2 and §18; zram and the ina238
+blacklist from build/07 §21 / STACK.md:877; FastRPC udev and group from build/07 §6 /
+STACK.md:863; the EDID hook from STACK.md:851; the DSP firmware hook from build/07 §6 /
+STACK.md:864.
 """
 import hashlib
 import json
@@ -46,7 +47,11 @@ USER_PRESET = "usr/lib/systemd/user-preset/40-srrx.preset"
 UDEV_FASTRPC = "etc/udev/rules.d/60-srrx-fastrpc.rules"
 UDEV_PPS = "etc/udev/rules.d/72-srrx-pps.rules"
 UDEV_I2C = "etc/udev/rules.d/73-srrx-i2c.rules"
+# Same name as the rule of Ubuntu noble i2c-tools 4.3-4build2 (debian/i2c-tools.udev, installed by
+# dh_installudev with its default priority 60): a file in /etc/udev/rules.d replaces it.
+UDEV_I2C_TOOLS_OVERRIDE = "etc/udev/rules.d/60-i2c-tools.rules"
 GNSS_BLACKLIST = "etc/modprobe.d/lab-gnss-blacklist.conf"
+INA238_BLACKLIST = "etc/modprobe.d/lab-ina238-blacklist.conf"
 GPSD_DEFAULTS = "etc/default/gpsd"
 CHRONY_CANDIDATE = "etc/chrony/conf.d/60-srrx-gnss.conf.candidate"
 LOGIND_DROPIN = "etc/systemd/logind.conf.d/60-srrx.conf"
@@ -102,7 +107,11 @@ def sysusers():
 def tmpfiles():
     # /var/lib/srrx and its orbits/plans directories belong to srrx.pass_jobs (etc/tmpfiles.d/srrx-passes.conf);
     # repeating them here would make systemd-tmpfiles warn about duplicate lines.
+    # OPEN for the lease-unit owner: every lease unit's ReadWritePaths=/data/products/<lease> must exist
+    # before systemd sets up its namespace, and neither lab nor labd can create it below this root-owned
+    # parent. No lease names are fixed yet, so no per-lease line is generated (software/DEPLOYMENT.md).
     return (GENERATED + "# Lease outputs (STACK.md:873, build/07 §21): read-only /data, one writable /data/products/<lease>.\n"
+            "# Per-lease directories are OPEN: they come with the lease units, not from this file.\n"
             "d /data/products 0750 root lab -\n")
 
 
@@ -131,9 +140,24 @@ def udev_i2c(config):
     return "\n".join(lines) + "\n"
 
 
+def udev_i2c_tools_override():
+    """Replaces i2c-tools' own rule, which gives group i2c (and so labd) every /dev/i2c-N once the
+    package is installed for bench i2cdetect (build/07 §5.3). Comments only: no rule applies."""
+    return (GENERATED + "# Replaces /usr/lib/udev/rules.d/60-i2c-tools.rules of the i2c-tools package, which would put every\n"
+            "# i2c-dev node (HDMI DDC, camera buses) in group i2c. Only 73-srrx-i2c.rules grants that group, on the two\n"
+            "# buses bound in devices.json; doctor reports any other node open to the group.\n")
+
+
 def gnss_blacklist():
     return (GENERATED + "# build/07 §18: no kernel GNSS driver may bind the LC76G UART next to gpsd or srrx-locationd.\n"
             + "".join("blacklist " + module + "\n" for module in GNSS_MODULES))
+
+
+def ina238_blacklist():
+    # STACK.md:877, build/07 §21: labpowerd owns the INA228 over i2c-dev; the ina238 hwmon driver
+    # (INA228 support since Linux 6.17) must not bind it, so no ti,ina228 node and no autoload.
+    return (GENERATED + "# labpowerd reads the INA228 on I2C0 over i2c-dev (STACK.md:877); the hwmon driver stays unbound.\n"
+            "blacklist ina238\n")
 
 
 def gpsd_defaults(mode):
@@ -283,7 +307,8 @@ def dsp_hook():
 def staged_files(config=None, gnss="gpsd"):
     """{rootfs-relative path: str|bytes}; empty strings are masks. config is the validated devices.json."""
     files = {SYSUSERS: sysusers(), TMPFILES: tmpfiles(), SYSTEM_PRESET: system_preset(gnss), USER_PRESET: user_preset(),
-             UDEV_FASTRPC: udev_fastrpc(), UDEV_PPS: udev_pps(), GNSS_BLACKLIST: gnss_blacklist(),
+             UDEV_FASTRPC: udev_fastrpc(), UDEV_PPS: udev_pps(), UDEV_I2C_TOOLS_OVERRIDE: udev_i2c_tools_override(),
+             GNSS_BLACKLIST: gnss_blacklist(), INA238_BLACKLIST: ina238_blacklist(),
              GPSD_DEFAULTS: gpsd_defaults(gnss), LOGIND_DROPIN: logind_dropin(), ZRAM: zram(),
              POLKIT_RADIO_OFF: polkit_radio_off(), EDID_FIRMWARE: edid_field.build(),
              EDID_HOOK: edid_hook(), DSP_HOOK: dsp_hook()}

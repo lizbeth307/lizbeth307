@@ -70,6 +70,7 @@ class SystemFilesTests(unittest.TestCase):
         files = json.loads((self.root / "candidate/stage-files.json").read_text())["files"]
         for relative in (system_files.SYSUSERS, system_files.TMPFILES, system_files.SYSTEM_PRESET, system_files.USER_PRESET,
                          system_files.UDEV_FASTRPC, system_files.UDEV_PPS, system_files.UDEV_I2C, system_files.GNSS_BLACKLIST,
+                         system_files.UDEV_I2C_TOOLS_OVERRIDE, system_files.INA238_BLACKLIST,
                          system_files.GPSD_DEFAULTS, system_files.CHRONY_CANDIDATE, system_files.LOGIND_DROPIN,
                          system_files.ZRAM, system_files.POLKIT_RADIO_OFF, system_files.EDID_FIRMWARE,
                          system_files.EDID_HOOK, system_files.DSP_HOOK):
@@ -139,6 +140,35 @@ class SystemFilesTests(unittest.TestCase):
         tmp = system_files.tmpfiles()
         self.assertNotIn("/var/lib/srrx ", tmp)  # srrx.pass_jobs owns it; duplicates warn
         self.assertNotIn("/run/labd", tmp)  # receive-only build: no bias token directory
+        # Per-lease directories are OPEN for the lease-unit owner; nothing invents lease names here.
+        self.assertEqual([l for l in tmp.splitlines() if not l.startswith("#")], ["d /data/products 0750 root lab -"])
+        self.assertIn("Per-lease directories are OPEN", tmp)
+        self.assertEqual([l for l in system_files.ina238_blacklist().splitlines() if not l.startswith("#")], ["blacklist ina238"])
+
+    def test_i2c_group_reaches_only_the_two_bound_buses(self):
+        # The override carries the package rule's file name and no rule of its own (udev(7): /etc wins).
+        self.assertEqual(Path(system_files.UDEV_I2C_TOOLS_OVERRIDE).name, "60-i2c-tools.rules")
+        self.assertEqual(Path(system_files.UDEV_I2C_TOOLS_OVERRIDE).parent.as_posix(), "etc/udev/rules.d")
+        override = system_files.udev_i2c_tools_override()
+        self.assertEqual([l for l in override.splitlines() if l.strip() and not l.startswith("#")], [])
+        self.assertEqual(system_files.rule_groups(override), set())
+        rootfs = self.stage("plain")  # staged with or without device bindings
+        self.assertEqual((rootfs / system_files.UDEV_I2C_TOOLS_OVERRIDE).read_text(), override)
+        # doctor: any other i2c-dev node open to the service group or to others is an issue.
+        chr_ = stat.S_IFCHR
+
+        def node(mode, gid):
+            return type("Stat", (), {"st_mode": chr_ | mode, "st_gid": gid})()
+        nodes = {"i2c-7": node(0o660, 120), "i2c-9": node(0o660, 120), "i2c-0": node(0o600, 0), "i2c-4": node(0o660, 120),
+                 "i2c-5": node(0o666, 0), "i2c-6": node(0o640, 120), "i2c-8": node(0o600, 120)}
+        issues = deploy.i2c_group_issues({"i2c-7", "i2c-9"}, nodes, 120)
+        self.assertEqual(issues, ["/dev/i2c-4 is open to group i2c or others beyond the two bound buses",
+                                  "/dev/i2c-5 is open to group i2c or others beyond the two bound buses",
+                                  "/dev/i2c-6 is open to group i2c or others beyond the two bound buses"])
+        self.assertEqual(deploy.i2c_group_issues({"i2c-7", "i2c-9"}, {"i2c-4": node(0o660, 120)}, None), [])
+        self.assertEqual(deploy.i2c_group_issues(set(), {"i2c-4": type("Stat", (), {"st_mode": stat.S_IFREG | 0o666, "st_gid": 0})()}, 120), [])
+        self.assertEqual(deploy.I2C_GROUP, "i2c")
+        self.assertIn(deploy.I2C_GROUP, (PROJECT / "software/systemd/srrx.service").read_text().split("SupplementaryGroups=", 1)[1].split("\n", 1)[0].split())
 
     def test_stage_refuses_unknown_accounts_and_collisions(self):
         accounts = tuple(a for a in system_files.SERVICE_ACCOUNTS if a[1] != "srrx-loc")
