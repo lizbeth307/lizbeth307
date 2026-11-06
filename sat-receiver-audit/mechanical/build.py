@@ -287,10 +287,63 @@ def gate(out):
     return 1 if bad else 0
 
 
+PORTABLE_SKIP = ("step/", "stl/", "manifest.json", "fit-report.md")
+VENDOR_DEPENDENT = ("vendor-fit.json", "drawings/M-10.svg", "drawings/M-10.dxf", "drawings/enclosure.pdf")
+
+
+def _close(a, b, path=""):
+    """Structural JSON comparison; CAD volumes, boxes and triangle counts within tolerance."""
+    if isinstance(a, dict) and isinstance(b, dict):
+        if set(a) != set(b):
+            return [f"{path}: keys differ"]
+        return [m for k in a for m in _close(a[k], b[k], f"{path}/{k}")]
+    if isinstance(a, list) and isinstance(b, list):
+        if len(a) != len(b):
+            return [f"{path}: length differs"]
+        return [m for i, (x, y) in enumerate(zip(a, b)) for m in _close(x, y, f"{path}[{i}]")]
+    if "/volumes_cm3/" in path and isinstance(a, (int, float)) and isinstance(b, (int, float)):
+        tol = {"cm3": max(0.01, 1e-3 * abs(a)), "stl_triangles": max(2, 0.05 * abs(a))}.get(path.rsplit("/", 1)[-1].split("[")[0], 0.02)
+        return [] if abs(a - b) <= tol else [f"{path}: {a} != {b}"]
+    if "/printed_mass_upper_bound_g/" in path and isinstance(a, (int, float)):
+        return [] if abs(a - b) <= 1 else [f"{path}: {a} != {b}"]
+    return [] if a == b else [f"{path}: {a!r} != {b!r}"]
+
+
+def compare(out, files, portable=False, vendor=True):
+    bad = []
+    for rel, data in files.items():
+        p = out / rel
+        if not p.exists():
+            bad.append(f"missing in {out}: {rel}")
+            continue
+        if portable and rel.startswith(PORTABLE_SKIP):
+            continue
+        if portable and rel == "fit-report.json":
+            old, new = json.loads(p.read_text(encoding="utf-8")), json.loads(data.decode("utf-8"))
+            if not vendor:
+                for r in (old, new):
+                    r.pop("vendor_fit", None)
+                    r.get("summary", {}).pop("vendor_fit", None)
+            bad += [f"differs: fit-report.json {m}" for m in _close(old, new)][:20]
+            continue
+        if p.read_bytes() != data:
+            bad.append(f"differs: {rel}")
+    if out.exists():
+        for p in sorted(out.rglob("*")):
+            rel = p.relative_to(out).as_posix()
+            if p.is_file() and rel not in files and (vendor or rel not in VENDOR_DEPENDENT):
+                bad.append(f"stale extra file: {rel}")
+    if portable and not vendor:
+        bad = [b for b in bad if not any(v in b for v in VENDOR_DEPENDENT)]
+    return bad
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--out", type=Path, default=OUT)
     ap.add_argument("--check", action="store_true", help="rebuild into a temporary directory and compare with --out byte for byte")
+    ap.add_argument("--portable", action="store_true",
+                    help="with --check on another platform: STEP/STL by volume, box and triangle count, everything else byte for byte")
     ap.add_argument("--vendor-cache", type=Path, default=None, help="directory for pinned vendor STEP archives (fetched if missing)")
     ap.add_argument("--offline", action="store_true", help="never download; the vendor archives must be in --vendor-cache")
     ap.add_argument("--fetch-vendor", type=Path, default=None, metavar="DIR", help="only download and verify the pinned vendor archives")
@@ -307,21 +360,12 @@ def main():
     if a.check:
         tmp = Path(tempfile.mkdtemp(prefix="srrx-mech-check-"))
         files, report = build(tmp, a.vendor_cache, a.skip_cad, a.offline)
-        bad = []
-        for rel, data in files.items():
-            p = a.out / rel
-            if not p.exists():
-                bad.append(f"missing in {a.out}: {rel}")
-            elif p.read_bytes() != data:
-                bad.append(f"differs: {rel}")
-        if a.out.exists():
-            for p in sorted(a.out.rglob("*")):
-                if p.is_file() and p.relative_to(a.out).as_posix() not in files:
-                    bad.append(f"stale extra file: {p.relative_to(a.out).as_posix()}")
+        bad = compare(a.out, files, portable=a.portable, vendor=bool(a.vendor_cache))
         shutil.rmtree(tmp, ignore_errors=True)
         for b in bad:
             print(b)
-        print("mechanical outputs:", "STALE" if bad else "reproduce byte for byte", f"({len(files)} files)")
+        mode = "geometry within tolerance (portable)" if a.portable else "byte for byte"
+        print("mechanical outputs:", "STALE" if bad else f"reproduce {mode}", f"({len(files)} files)")
         return 1 if bad else 0
     if a.out.exists():
         shutil.rmtree(a.out)
