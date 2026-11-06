@@ -1,0 +1,163 @@
+{
+ "schema": 1,
+ "date": "2026-11-06",
+ "note": "Pages read on this date with WebFetch. A row records what the page showed; \"stock\": null means not shown, not zero. The E-Switch PV6 data (IP65, 16 mm cutout, panel 1-10 mm, 0.6 Nm) is from the PV6 datasheet https://configured-product-images.s3.amazonaws.com/Datasheets/PV6.pdf (8.28.2025), read on the same date.",
+ "entries": {
+  "digikey:2057-CA-DKCA1-305L5-APAJ-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/adam-tech/CA-DKCA1-305L5-APAJ/9831667",
+   "read": "2026-11-06",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "CA-DKCA1-305L5-APAJ",
+   "manufacturer": "Adam Tech",
+   "stock": 3662,
+   "status": "Active",
+   "price": "EUR 7.02 @1",
+   "note": "SMA jack bulkhead (front-side nut) to SMA plug, RG-316, 304.80 mm, 50 Ohm, 6 GHz; O-ring and IP rating not shown"
+  },
+  "digikey:2111-VFA340-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/cinch-connectivity-solutions/VFA340/4430391",
+   "read": "2026-11-06",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "VFA340",
+   "manufacturer": "Cinch Connectivity Solutions",
+   "stock": 1701,
+   "status": "Active",
+   "price": "EUR 4.10 @1",
+   "note": "adapter F jack to F jack, panel mount bulkhead, 75 Ohm, 2 GHz"
+  },
+  "digikey:343-CSE-SGAM-305-SGFB-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/te-connectivity-linx/CSE-SGAM-305-SGFB/16629894",
+   "read": "2026-11-06",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "CSE-SGAM-305-SGFB",
+   "manufacturer": "TE Connectivity Linx",
+   "stock": 7937,
+   "status": "Active",
+   "price": "EUR 10.29 @1",
+   "note": "SMA jack bulkhead (front-side nut) to SMA plug, RG-316, 304.80 mm, 12.4 GHz; O-ring and IP rating not shown"
+  },
+  "digikey:5480-RSA-3413-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/rf-industries/RSA-3413/13182886",
+   "read": "2026-11-06",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "RSA-3413",
+   "manufacturer": "RF Industries",
+   "stock": 676,
+   "status": "Active",
+   "price": "EUR 8.42 @1",
+   "note": "adapter SMA jack to BNC jack, panel mount bulkhead, 50 Ohm, 4 GHz"
+  },
+  "digikey:708-1024-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/bulgin/PX0845-A/1625789",
+   "read": "2026-11-06",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "PX0845/A",
+   "manufacturer": "Bulgin",
+   "stock": 83,
+   "status": "Active",
+   "price": "EUR 32.68 @1",
+   "note": "USB 2.0 Type-A receptacle, 4 contacts, panel mount bulkhead with front-side nut, solder, IP68/IP69K (mated/unmated not stated); lead time 26 weeks"
+  },
+  "digikey:900-0732305316-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/molex/0732305316/15291714",
+   "read": "2026-11-06",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "0732305316",
+   "manufacturer": "Molex",
+   "stock": null,
+   "status": "Active",
+   "price": "EUR 15.09 @1",
+   "note": "SMA plug to SMA plug, RG-316, 1.0 m; stock shown only for the substitute 135101-01-M1.00"
+  },
+  "digikey:ACX1326-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/amphenol-rf/242181/1012003",
+   "read": "2026-11-06",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "242181",
+   "manufacturer": "Amphenol RF",
+   "stock": 658,
+   "status": "Active",
+   "price": "EUR 20.87 @1",
+   "note": "adapter SMA jack to BNC jack, panel mount bulkhead, nut and lockwasher, 50 Ohm, 4 GHz; the page does not say which end carries the panel thread"
+  },
+  "digikey:ACX1566-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/amphenol-rf/222121/1558777",
+   "read": "2026-11-06",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "222121",
+   "manufacturer": "Amphenol RF",
+   "stock": null,
+   "status": "Active",
+   "price": "EUR 2.00 @1",
+   "note": "adapter F jack to F jack, panel mount bulkhead, 75 Ohm, 2 GHz; stock shown only for a substitute; manufacturer lead time 12 weeks"
+  },
+  "digikey:ACX2410-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=135101-01-M1.00",
+   "read": "2026-11-06",
+   "method": "WebFetch of the DigiKey DE search page",
+   "mpn": "135101-01-M1.00",
+   "manufacturer": "Amphenol RF",
+   "stock": 965,
+   "status": "Active",
+   "price": "EUR 23.74 @1",
+   "note": "SMA plug to SMA plug, RG-316, 1.0 m; search 135101-01-M0 lists 0.25/0.50/0.75 m as the shorter M lengths"
+  },
+  "digikey:EG4732-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/e-switch/PV6F240SS-341/2116211",
+   "read": "2026-11-06",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "PV6F240SS-341",
+   "manufacturer": "E-Switch",
+   "stock": null,
+   "status": "Active",
+   "price": "EUR 13.85 @1",
+   "note": "PV6 with blue LED ring, otherwise as PV6F240SS (16.00 mm, IP65, Off-Mom); the \"In-Stock: 3.550\" figure sits next to a substitute row, so stock is recorded as not shown"
+  },
+  "digikey:EG5434-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/e-switch/PV6F240SS/4028824",
+   "read": "2026-11-06",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "PV6F240SS",
+   "manufacturer": "E-Switch",
+   "stock": null,
+   "status": "Active",
+   "price": "EUR 11.40 @1",
+   "note": "anti-vandal pushbutton SPST-NO Off-Mom, flush, 16.00 mm cutout, IP65, solder lug, 2 A 48 V DC; the page shows \"In-Stock: 725\" without tying it to this part, so stock is recorded as not shown"
+  },
+  "digikey:J3706-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/cinch-connectivity-solutions-johnson/415-0029-006/457093",
+   "read": "2026-11-06",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "415-0029-006",
+   "manufacturer": "Cinch Connectivity Solutions Johnson",
+   "stock": 645,
+   "status": "Active",
+   "price": "EUR 17.22 @1",
+   "note": "SMA plug to SMA plug, RG-316, 152.40 mm, 12.4 GHz; the shortest stocked length in the 415-0029 list (search 415-0029-0)"
+  },
+  "digikey:MUSBRM5C130-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/amphenol-cs-commercial-products/MUSBRM5C130/5877552",
+   "read": "2026-11-06",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "MUSBRM5C130",
+   "manufacturer": "Amphenol ICC",
+   "stock": 2090,
+   "status": "Active",
+   "price": "EUR 17.42 @1",
+   "note": "USB Type-C receptacle, 24 positions, panel mount through hole, flange vertical, solder, IP67, current rating 0.25 A / 1.25 A / 5 A; datasheet https://cdn.amphenol-cs.com/media/wysiwyg/files/documentation/datasheet/inputoutput/io_harsh_musb-type-c.pdf"
+  }
+ }
+}

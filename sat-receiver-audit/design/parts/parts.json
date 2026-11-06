@@ -1,7 +1,7 @@
 {
  "schema": 1,
  "title": "SR-RX-v2.1 parts database",
- "updated": "2026-10-24",
+ "updated": "2026-11-06",
  "policy": {
   "distributors": [
    "LCSC",
@@ -17,8 +17,9 @@
   "decisions": "build/15-rishennia-komplektu.md"
  },
  "snapshots": [
-  "design/parts/snapshots/2026-10-24-lcsc.json",
-  "design/parts/snapshots/2026-10-24-manual.json"
+  "design/parts/snapshots/2026-10-24-manual.json",
+  "design/parts/snapshots/2026-11-06-lcsc.json",
+  "design/parts/snapshots/2026-11-06-manual.json"
  ],
  "bom_v2_rows": {
   "4": {
@@ -211,7 +212,7 @@
   },
   "91": {
    "status": "partial",
-   "note": "Goobay 58814 (W401) і Lindy 36700 (J541/J543) у базі; панельні SMA/BNC/F і пігтейли — TBD у базі, за цим рядком лише після вибору MECH-07"
+   "note": "Goobay 58814 (W401), Lindy 36700 (J541/J543), панельні SMA (J401-J403, J406, J408), BNC (J405), F (J404) і збірки RG-316 W422-W424 — у базі; польові RG316, перемички й перехідники — за цим рядком"
   },
   "92": {
    "status": "db",
@@ -283,7 +284,7 @@
   },
   "143": {
    "status": "partial",
-   "note": "кнопка живлення — SW301 у базі (TBD); перемичка XT30 для транспортування — за цим рядком"
+   "note": "кнопка живлення — SW301 у базі (E-Switch PV6F240SS); перемичка XT30 для транспортування — за цим рядком"
   }
  },
  "parts": [
@@ -3122,8 +3123,11 @@
    "footprint": "Inductor_SMD:L_0805_2012Metric",
    "manufacturer": "Coilcraft",
    "mpn": "0805HP-221XGRC",
+   "sku": {
+    "lcsc": "C40877572"
+   },
    "match": "0805HP-221XGRC",
-   "tbd": "MPN обрано в E4; 24.10.2026 жоден дистриб’ютор його не підтвердив (DigiKey DE — немає результату; coilcraft.com відповідає 403 на автоматичне читання). Замовити напряму в Coilcraft після ручної перевірки сторінки.",
+   "single_source": "Coilcraft HP (дротовий) обрано в E4 за добротністю й SRF; заміна — лише після RF-перевірки E4",
    "refs": [
     "L403"
    ]
@@ -3135,8 +3139,11 @@
    "footprint": "Inductor_SMD:L_0603_1608Metric",
    "manufacturer": "Coilcraft",
    "mpn": "0603HP-47NXGRW",
+   "sku": {
+    "lcsc": "C43824843"
+   },
    "match": "0603HP-47NXGRW",
-   "tbd": "MPN обрано в E4 (документ Coilcraft 225-2); 24.10.2026 жоден дистриб’ютор його не підтвердив (DigiKey DE — немає результату; coilcraft.com — 403). Замовити напряму в Coilcraft після ручної перевірки.",
+   "single_source": "Coilcraft HP (дротовий) обрано в E4 за добротністю й SRF; заміна — лише після RF-перевірки E4",
    "refs": [
     "L404"
    ]
@@ -4481,7 +4488,14 @@
   {
    "id": "J-USBC-PANEL",
    "mount": "panel",
-   "tbd": "Герметичний панельний USB-C (лише живлення PD) не обрано: ступінь IP проти ціни — рішення власника (MECH-07, build/05); MPN 24.10.2026 не прочитано.",
+   "manufacturer": "Amphenol ICC",
+   "mpn": "MUSBRM5C130",
+   "sku": {
+    "digikey": "MUSBRM5C130-ND"
+   },
+   "single_source": "Єдиний знайдений на складі DigiKey DE 06.11.2026 панельний USB-C з IP67 і номіналом 5 A; інша серія потребує іншого вирізу панелі",
+   "match": "USB-C",
+   "note": "IP67, 24 контакти, фланцевий монтаж, виводи THT під пайку: ставиться на малу панельну плату або на дроти лише VBUS/GND/CC1/CC2 (E1: CC прямо до IP2368, без Rd 5.1 kΩ). Номінали 0.25 / 1.25 / 5 A — з таблиці DigiKey; що 5 A стосується VBUS, звірити з кресленням Amphenol io_harsh_musb-type-c.pdf до замовлення.",
    "refs": [
     "J103"
    ]
@@ -4624,11 +4638,28 @@
    ]
   },
   {
-   "id": "SW-POWER-PANEL",
+   "id": "SW-PV6F240SS",
    "mount": "panel",
-   "tbd": "Герметична кнопка живлення 12-16 мм без фіксації: MPN немає ні в STACK, ні в 10-bom (рядок 143 — лише оцінка); вибір разом зі ступенем IP — MECH-07 (build/05).",
+   "manufacturer": "E-Switch",
+   "mpn": "PV6F240SS",
+   "sku": {
+    "digikey": "EG5434-ND"
+   },
+   "alternates": [
+    {
+     "manufacturer": "E-Switch",
+     "mpn": "PV6F240SS-341",
+     "sku": {
+      "digikey": "EG4732-ND"
+     },
+     "note": "той самий корпус і виріз із синім кільцем LED (LED не підключати)"
+    }
+   ],
+   "match": "momentary NO",
+   "note": "Антивандальна кнопка PV6: SPST-NO Off-(On), 2 A 48 V DC, виріз ⌀16 мм, панель 1-10 мм, рекомендований момент 0.6 Н·м, IP65 (даташит E-Switch PV6 від 28.08.2025, прочитано 06.11.2026). IP65 — нижче за IP67, який просить пакет складання (кандидат PV0 без коду); SW501 (EDL) — та сама кнопка в заглибленні панелі (механічний пакет).",
    "refs": [
-    "SW301"
+    "SW301",
+    "SW501"
    ]
   },
   {
@@ -4967,20 +4998,49 @@
   {
    "id": "J-SMA-PANEL",
    "mount": "panel",
-   "tbd": "Панельна SMA-розетка з герметичним пігтейлом RG316: рядок 91 10-bom називає лише безіменний набір з AliExpress; деталь IP67 обрати разом з MECH-07 (build/05). Порти з DC лишають непровідні ковпачки (рядок 90 10-bom).",
+   "manufacturer": "Adam Tech",
+   "mpn": "CA-DKCA1-305L5-APAJ",
+   "sku": {
+    "digikey": "2057-CA-DKCA1-305L5-APAJ-ND"
+   },
+   "alternates": [
+    {
+     "manufacturer": "TE Connectivity Linx",
+     "mpn": "CSE-SGAM-305-SGFB",
+     "sku": {
+      "digikey": "343-CSE-SGAM-305-SGFB-ND"
+     }
+    }
+   ],
+   "match": "SMA",
+   "note": "Панельна SMA-розетка (bulkhead, гайка з лицьового боку) з пігтейлом RG-316 304.8 мм до SMA-вилки модуля — одна збірка на порт. 305 мм — найкоротша складська довжина, не менша за 20 см пігтейлів рядка 91 10-bom. Ущільнювальне кільце й IP на сторінках DigiKey не показано: ущільнення вирізу — механічний пакет (MECH-07); порти з DC — непровідні ковпачки рядка 90 10-bom. J407 (P7 GNSS) — панельний кінець Taoglas CAB.011 (W407), не окрема деталь.",
    "refs": [
     "J401",
     "J402",
     "J403",
     "J406",
-    "J407",
     "J408"
    ]
   },
   {
    "id": "J-F-PANEL",
    "mount": "panel",
-   "tbd": "Панельну F-розетку 75 Ω не обрано (рядок 91 10-bom — оцінка набору).",
+   "manufacturer": "Cinch Connectivity Solutions",
+   "mpn": "VFA340",
+   "sku": {
+    "digikey": "2111-VFA340-ND"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Amphenol RF",
+     "mpn": "222121",
+     "sku": {
+      "digikey": "ACX1566-ND"
+     }
+    }
+   ],
+   "match": "F",
+   "note": "Прохідний адаптер F-гніздо / F-гніздо 75 Ω на панелі (bulkhead), до 2 ГГц: зовні — W401 (Goobay 58814), усередині — W402 з F-вилкою. Варіанти до 750 МГц з того самого пошуку не обрано.",
    "refs": [
     "J404"
    ]
@@ -4988,7 +5048,22 @@
   {
    "id": "J-BNC-PANEL",
    "mount": "panel",
-   "tbd": "Панельну BNC-розетку не обрано (рядок 91 10-bom — оцінка набору).",
+   "manufacturer": "Amphenol RF",
+   "mpn": "242181",
+   "sku": {
+    "digikey": "ACX1326-ND"
+   },
+   "alternates": [
+    {
+     "manufacturer": "RF Industries",
+     "mpn": "RSA-3413",
+     "sku": {
+      "digikey": "5480-RSA-3413-ND"
+     }
+    }
+   ],
+   "match": "BNC",
+   "note": "Панельний адаптер BNC-гніздо (зовні, P5) / SMA-гніздо (усередині, вхід SMA-вилки W408), 50 Ω, до 4 ГГц, bulkhead з гайкою — замість «P5 BNC → SMA» рядка 91 10-bom. Котрий кінець має різьбу під панель, сторінка не каже: звірити з кресленням виробника перед вирізом.",
    "refs": [
     "J405"
    ]
@@ -4996,8 +5071,9 @@
   {
    "id": "J-PANEL-OF-CABLE",
    "mount": "assembly",
-   "note": "SMA(f) bulkhead end of the Taoglas CAB.01075 cables W403/W404/W405.",
+   "note": "SMA(f) bulkhead end of the Taoglas CAB.01075 cables W403/W404/W405 and of the CAB.011 pigtail W407 (J407).",
    "refs": [
+    "J407",
     "J413",
     "J414",
     "J415"
@@ -5035,7 +5111,7 @@
   {
    "id": "W-IF-75OHM",
    "mount": "harness",
-   "tbd": "Внутрішній коаксіал ПЧ 75 Ω (від F-розетки до тракту LNB): кабель і роз’єми не обрано.",
+   "tbd": "Внутрішній коаксіал ПЧ 75 Ω від прохідного F-адаптера J404 (потрібна F-вилка) до входу RF_CH5 RF-плати: граф не визначає, як кабель приєднано до плати (крайовий роз’єм чи пайка), тому кабель і роз’єми не обрано.",
    "refs": [
     "W402"
    ]
@@ -5112,12 +5188,47 @@
    ]
   },
   {
-   "id": "W-RG316-SMA-MM",
+   "id": "W-RG316-SMA-MM-0152",
    "mount": "harness",
-   "tbd": "Збірки RG316 SMA-M/M 0.10/0.10/1.00 м: перевіреного MPN збірки 24.10.2026 не прочитано (рядок 91 10-bom — загальні пігтейли).",
+   "manufacturer": "Cinch Connectivity Solutions Johnson",
+   "mpn": "415-0029-006",
+   "sku": {
+    "digikey": "J3706-ND"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Mueller Electric Co",
+     "mpn": "BU-4150029006",
+     "note": "DigiKey DE 06.11.2026, список пошуку 415-0029-0: 152.40 мм, склад 220, EUR 12.62 @1"
+    }
+   ],
+   "match": "RG316 SMA-M/M 0.10 m",
+   "note": "Збірка SMA-вилка / SMA-вилка RG-316 152.4 мм замість 0.10 м графа: коротших складських збірок на DigiKey DE 06.11.2026 не знайдено (найкоротші в серіях 135101-01 і 415-0029 — 152.4 мм). Зайві 52 мм RG-316 перед LaNA і після неї врахувати в бюджеті S-band (E4); ворота лишаються OPEN.",
    "refs": [
     "W422",
-    "W423",
+    "W423"
+   ]
+  },
+  {
+   "id": "W-RG316-SMA-MM-1M",
+   "mount": "harness",
+   "manufacturer": "Amphenol RF",
+   "mpn": "135101-01-M1.00",
+   "sku": {
+    "digikey": "ACX2410-ND"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Molex",
+     "mpn": "0732305316",
+     "sku": {
+      "digikey": "900-0732305316-ND"
+     }
+    }
+   ],
+   "match": "RG316 SMA-M/M 1.00 m",
+   "note": "Збірка SMA-вилка / SMA-вилка RG-316 1.0 м (W424, pod → RX2).",
+   "refs": [
     "W424"
    ]
   },
@@ -5147,7 +5258,20 @@
   {
    "id": "J-USBA-PANEL",
    "mount": "panel",
-   "tbd": "Панельну розетку USB-A для LAB не обрано (MECH-07); MPN 24.10.2026 не прочитано.",
+   "manufacturer": "Bulgin",
+   "mpn": "PX0845/A",
+   "sku": {
+    "digikey": "708-1024-ND"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Amphenol CONEC",
+     "mpn": "17-200881",
+     "note": "IP67, гайка, виводи під плату — інший виріз панелі; DigiKey DE 06.11.2026, список пошуку: склад 2076, EUR 9.13 @1"
+    }
+   ],
+   "match": "USB-A",
+   "note": "Панельна розетка USB 2.0 A серії Buccaneer, IP68/IP69K (з кришкою чи без, сторінка не уточнює), виводи під пайку, гайка з лицьового боку; строк виробника 26 тижнів. Кришку Bulgin PX0711 сторінка лише пропонує поруч — сумісність звірити за кресленням Bulgin (непровідні заглушки — рядок 90 10-bom).",
    "refs": [
     "J501"
    ]
@@ -5256,14 +5380,6 @@
    "single_source": "ADT-Link only; confirm the 2230-host/2280 B+M variant (10-bom row 94)",
    "refs": [
     "U530"
-   ]
-  },
-  {
-   "id": "SW-EDL-PANEL",
-   "mount": "panel",
-   "tbd": "Утоплену кнопку EDL без фіксації не обрано (MECH-07).",
-   "refs": [
-    "SW501"
    ]
   },
   {

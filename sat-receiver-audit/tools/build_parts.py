@@ -366,11 +366,12 @@ class Model:
             if not ex.get('qty_per_ref'):
                 self.err(f'{p["id"]}: extra {ex.get("mpn")} needs qty_per_ref')
         kind = p.get('kind')
+        checked = 0
         if kind in PASSIVE and not p.get('tbd'):
-            checked = 0
             for entry in [p] + p.get('alternates', []):
                 rec = self.lcsc_rec(entry)
-                if rec is None:
+                # A listing without attributes (e.g. LCSC C43824843) cannot be compared; the MPN match below applies instead.
+                if rec is None or not rec.get('attributes'):
                     continue
                 checked += 1
                 if p.get('package') and rec.get('package') != p['package']:
@@ -378,9 +379,9 @@ class Model:
                 for ref in refs:
                     for problem in requirement_problems(kind, self.comps[ref][1]['value'], rec.get('attributes', {}), p.get('deviation')):
                         self.err(f'{ref} {self.comps[ref][1]["value"]!r} vs {entry["mpn"]}: {problem}')
-            if not checked and kind != 'inductor':
+            if not checked and kind != 'inductor' and not p.get('match'):
                 self.warnings.append(f'{p["id"]}: no LCSC attributes to check the value against')
-        elif p.get('match'):
+        if p.get('match') and not checked:
             want = norm_mpn(p['match'])
             for ref in refs:
                 if want not in norm_mpn(self.comps[ref][1]['value']):
@@ -625,7 +626,7 @@ class Model:
 OPEN_ITEMS = [
     'SW308/SW309 — це кнопки всередині енкодерів ENC301/ENC302: граф тримає їх окремими позначеннями, тому контакти S1/S2 футпринта енкодера лишаються без кола в netlist, доки власник E3 не перенесе кола кнопок на виводи енкодера.',
     'Роз’єми з боку плати для джгутів, які ще не мають позначень у графі (кінець J302 на силовій платі, гніздо LAB BUS за J505, вентилятор, виводи NTC TH301/TH302, міжплатні з’єднання поділу на три плати), куплено як супутні деталі там, де їх названо; позначення на схемі чекають власника поділу плат.',
-    'Панельні деталі без MPN (SMA/F/BNC-розетки, прохідні USB-A/USB-C, кнопки живлення й EDL) чекають вибору ступеня IP у механічному пакеті (MECH-07).',
+    'Панельні деталі (SMA, F, BNC, USB-A IP68, USB-C IP67, кнопки PV6 IP65) обрано за сторінками DigiKey DE від 06.11.2026; вирізи, ущільнення, заглушки й заглиблення кнопки EDL — механічний пакет (MECH-07). Внутрішній кабель ПЧ W402 і кабель живлення pod W425 лишаються TBD.',
     'Розмір відкритої площадки HMC7992LP3DE і крок виводів CPT-1207-3TH треба звірити з кресленнями виробника до випуску PCB (див. SR_RX_Custom.pretty/provenance.json; analog.com 24.10.2026 не відповідав).',
 ]
 
