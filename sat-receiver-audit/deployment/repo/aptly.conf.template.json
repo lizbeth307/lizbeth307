@@ -1,0 +1,19 @@
+{
+  "rootDir": "@ROOT_DIR@",
+  "architectures": ["arm64"],
+  "dependencyFollowSuggests": false,
+  "dependencyFollowRecommends": false,
+  "dependencyFollowAllVariants": false,
+  "dependencyFollowSource": false,
+  "gpgDisableSign": false,
+  "gpgDisableVerify": false,
+  "gpgProvider": "gpg",
+  "downloadSourcePackages": false,
+  "skipLegacyPool": true,
+  "ppaDistributorID": "",
+  "ppaCodename": "",
+  "skipContentsPublishing": true,
+  "FileSystemPublishEndpoints": {},
+  "S3PublishEndpoints": {},
+  "SwiftPublishEndpoints": {}
+}

@@ -1,0 +1,6 @@
+Types: deb
+URIs: file:/srv/srrx-repo/lab
+Suites: noble-lab
+Components: main
+Architectures: arm64
+Signed-By: /usr/share/keyrings/srrx-lab.gpg

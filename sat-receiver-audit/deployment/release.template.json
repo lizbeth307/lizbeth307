@@ -7,5 +7,5 @@
   "source_lock_sha256": null,
   "profile": "controller",
   "base_image_sha256": null,
-  "offline_snapshot": {"status": "OPEN", "path": null, "sha256": null}
+  "offline_snapshot": {"status": "OPEN", "repo": null, "keyring": "/usr/share/keyrings/srrx-lab.gpg", "signing_fingerprint": null, "inrelease_sha256": null, "sources_entry": "/etc/apt/sources.list.d/srrx-lab.sources", "build_records": []}
 }

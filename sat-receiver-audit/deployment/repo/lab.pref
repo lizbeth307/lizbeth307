@@ -1,0 +1,11 @@
+Package: *
+Pin: release o=srrx-lab
+Pin-Priority: 1001
+
+Package: *
+Pin: release o=srrx-mirror
+Pin-Priority: 990
+
+Package: *
+Pin: origin *
+Pin-Priority: -1

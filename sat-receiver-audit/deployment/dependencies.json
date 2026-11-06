@@ -42,10 +42,11 @@
     "chrony": "4.5-1ubuntu4.2"
   },
   "isolated_build_host_tools": {
-    "programs": ["python3", "git", "cmake", "make", "gcc", "g++", "pkg-config", "readelf", "nm", "strings", "gpgv", "dpkg-deb", "sbuild", "aptly"],
+    "programs": ["python3", "git", "cmake", "make", "gcc", "g++", "pkg-config", "readelf", "nm", "strings", "gpgv", "dpkg-deb", "dpkg-shlibdeps", "mmdebstrap", "unshare", "aptly"],
+    "builder": ".github/workflows/sr-rx-packages.yml: one mmdebstrap chroot per recipe from the sources.lock.json apt_snapshot, build under unshare --net (deployment/recipes/lab_build.py)",
     "pps_dkms_compiler": "gcc-12 matching the pinned kernel build",
-    "libusb_development_api": "libusb-1.0 (exact Ubuntu source/deb snapshot unresolved)",
-    "exact_toolchain_package_versions": null,
+    "libusb_development_api": "libusb-1.0-0-dev from the pinned noble snapshot (sources.lock.json apt_snapshot); exact version recorded per build",
+    "exact_toolchain_package_versions": "recorded per build in <id>.chroot-packages.txt and the build record chroot_packages_sha256 (deployment/recipes/README.md)",
     "cmake_network_downloads": "disabled via FETCHCONTENT_FULLY_DISCONNECTED; prepopulate pinned submodules/dependencies"
   },
   "python_full_plan_constraints": {

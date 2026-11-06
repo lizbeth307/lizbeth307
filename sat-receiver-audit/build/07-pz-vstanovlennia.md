@@ -101,7 +101,7 @@ sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.ta
 
 - Одне джерело apt — одна підписана публікація aptly (deb +labN з тегованих комітів на arm64-збирачі). Пін — на дзеркалі aptly, на пристрої і на збиральному хості.
 - Списки PPA, які додає rsdk (ubuntu-qcom-iot/qcom-ppa, kisak/turtle, ppa:mozillateam), видаляються при першому завантаженні; перевірка — `ls /etc/apt/sources.list.d`.
-- Кожен вихідний пакет +lab збирається у власному chroot sbuild (libhamlib-dev — лише в chroot lab-wsjt-decoders; chroot SDRangel — без libhamlib-dev, libdsdcc, libmbe, libcodec2-dev; chroot Gpredict — без libgps-dev і libhamlib-dev).
+- Кожен вихідний пакет +lab збирається у власному chroot sbuild (libhamlib-dev — лише в chroot lab-wsjt-decoders; chroot SDRangel — без libhamlib-dev, libdsdcc, libmbe, libcodec2-dev; chroot Gpredict — без libgps-dev і libhamlib-dev). Відхилення реалізації: замість sbuild — новий chroot `mmdebstrap` на кожен рецепт зі знімка lock, збирання без мережі й пакування `dpkg-deb`; межі залежностей chroot ті самі, їх задає `build_depends` рецепта (deployment/recipes/README.md).
 - Сторонні deb дзеркаляться: OpenWebRX+ 1.2.126, linux-image/headers 6.18.2-4-qcom, прошивки radxa, qcom-qnn-sdk-v68.
 
 ```text
