@@ -1,0 +1,20 @@
+SR-RX recipe patch 0001: cherry-pick of upstream SatDump commit c0b6f8876c514990c2f22ca98b2a6c8a6f290a5d
+("Fix CLI stuff. Fixes #1191", 2026-09-30T06:22:59Z), taken from the GitHub commit API on 2026-10-24.
+SatDump is GPL-3.0 (upstream LICENSE, git blob f288702d2fa16d3cdf0035b15a9fcbc552cd88e7).
+Pipeline options accept "--key value" as well as "--key=value" (#1191).
+---
+diff --git a/src-core/core/cli/pipeline.cpp b/src-core/core/cli/pipeline.cpp
+--- a/src-core/core/cli/pipeline.cpp
++++ b/src-core/core/cli/pipeline.cpp
+@@ -32,9 +32,9 @@ namespace satdump
+                 auto opt = std::make_shared<std::string>();
+                 CLI::Option *f;
+                 if (ep.value().contains("description"))
+-                    f = sub_p->add_flag("--" + ep.key(), *opt, (const std::string)ep.value()["description"].get<std::string>());
++                    f = sub_p->add_option("--" + ep.key(), *opt, (const std::string)ep.value()["description"].get<std::string>());
+                 else
+-                    f = sub_p->add_flag("--" + ep.key(), *opt, "");
++                    f = sub_p->add_option("--" + ep.key(), *opt, "");
+                 if (ep.value().contains("value"))
+                 {
+                     if (ep.value()["value"].is_string())

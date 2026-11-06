@@ -1,0 +1,68 @@
+SR-RX recipe patch 0002: cherry-pick of upstream SatDump commit 6b5957fa52688c0a1395696b17e8d0a212bf0b72
+("Free the sample buffer of the clock recovery blocks on destruction", 2026-10-01T08:23:20Z), taken from the GitHub commit API on 2026-10-24.
+SatDump is GPL-3.0 (upstream LICENSE, git blob f288702d2fa16d3cdf0035b15a9fcbc552cd88e7).
+Clock recovery blocks free their sample buffer.
+---
+diff --git a/src-core/dsp/clock_recovery/clock_recovery_gardner.cpp b/src-core/dsp/clock_recovery/clock_recovery_gardner.cpp
+--- a/src-core/dsp/clock_recovery/clock_recovery_gardner.cpp
++++ b/src-core/dsp/clock_recovery/clock_recovery_gardner.cpp
+@@ -16,7 +16,7 @@ namespace satdump
+                     {{"out", std::is_same_v<T, complex_t> ? DSP_SAMPLE_TYPE_CF32 : DSP_SAMPLE_TYPE_F32}})
+         {
+             // Buffer
+-            if (buffer == nullptr)
++            if (buffer != nullptr)
+                 volk_free(buffer); // TODOREWORK
+ 
+             buffer = dsp::create_volk_buffer<T>(1e6);
+@@ -53,7 +53,7 @@ namespace satdump
+         template <typename T>
+         GardnerClockRecoveryBlock<T>::~GardnerClockRecoveryBlock()
+         {
+-            if (buffer == nullptr)
++            if (buffer != nullptr)
+                 volk_free(buffer);
+         }
+ 
+diff --git a/src-core/dsp/clock_recovery/clock_recovery_mm.cpp b/src-core/dsp/clock_recovery/clock_recovery_mm.cpp
+--- a/src-core/dsp/clock_recovery/clock_recovery_mm.cpp
++++ b/src-core/dsp/clock_recovery/clock_recovery_mm.cpp
+@@ -16,7 +16,7 @@ namespace satdump
+                     {{"out", std::is_same_v<T, complex_t> ? DSP_SAMPLE_TYPE_CF32 : DSP_SAMPLE_TYPE_F32}})
+         {
+             // Buffer
+-            if (buffer == nullptr)
++            if (buffer != nullptr)
+                 volk_free(buffer); // TODOREWORK
+ #if MM_DO_BRANCH
+             buffer = create_volk_buffer<T>(pfb.ntaps * 4);
+@@ -57,7 +57,7 @@ namespace satdump
+         template <typename T>
+         MMClockRecoveryBlock<T>::~MMClockRecoveryBlock()
+         {
+-            if (buffer == nullptr)
++            if (buffer != nullptr)
+                 volk_free(buffer);
+         }
+ 
+diff --git a/src-core/dsp/clock_recovery/clock_recovery_mm_fast.cpp b/src-core/dsp/clock_recovery/clock_recovery_mm_fast.cpp
+--- a/src-core/dsp/clock_recovery/clock_recovery_mm_fast.cpp
++++ b/src-core/dsp/clock_recovery/clock_recovery_mm_fast.cpp
+@@ -16,7 +16,7 @@ namespace satdump
+                     {{"out", std::is_same_v<T, complex_t> ? DSP_SAMPLE_TYPE_CF32 : DSP_SAMPLE_TYPE_F32}})
+         {
+             // Buffer
+-            if (buffer == nullptr)
++            if (buffer != nullptr)
+                 volk_free(buffer); // TODOREWORK
+ #if MM_DO_BRANCH
+             buffer = create_volk_buffer<T>(pfb.ntaps * 4);
+@@ -53,7 +53,7 @@ namespace satdump
+         template <typename T>
+         MMClockRecoveryFastBlock<T>::~MMClockRecoveryFastBlock()
+         {
+-            if (buffer == nullptr)
++            if (buffer != nullptr)
+                 volk_free(buffer);
+         }
+ 
