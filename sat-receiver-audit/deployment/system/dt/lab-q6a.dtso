@@ -1,0 +1,103 @@
+// SPDX-License-Identifier: BSD-3-Clause
+/*
+ * SR-RX v2.1 lab overlay for the Radxa Dragon Q6A (build/07 §5.1, STACK.md:859).
+ *
+ * The uart6, uart7, i2c0 and i2c2 fragments are copied unchanged from radxa-overlays
+ * 0.2.31 (commit c26d4eb947047598535961dc54874cca0ad71844, see LICENSE.radxa-overlays):
+ *   Copyright (c) 2025 Radxa Computer (Shenzhen) Co., Ltd. (uart6, i2c0, i2c2)
+ *   Copyright (c) 2026 Radxa Computer (Shenzhen) Co., Ltd. (uart7)
+ * Only their Radxa "metadata" nodes are left out. The aliases and the pps-gpio node
+ * are SR-RX additions. The overlay reaches the board only through a DTB merged with
+ * fdtoverlay (systemd-boot 255 ignores devicetree-overlay lines): the package DTB
+ * itself is never rebuilt. Bench checks: build/07 §5.3 (W1-2); none of them is done.
+ */
+
+/dts-v1/;
+/plugin/;
+
+/* UART6, header pins 16 (TX) / 18 (RX): LC76G GNSS. GPIO24/25 (pins 3/5) stay free. */
+&spi6 {
+	status = "disabled";
+};
+
+&i2c6 {
+	status = "disabled";
+};
+
+&uart6 {
+	qcom,enable-gsi-dma;
+	status = "okay";
+	pinctrl-0 = <&qup_uart6_tx>, <&qup_uart6_rx>;
+};
+
+/* UART7, header pins 32 (TX) / 29 (RX): Pico supervisor link. */
+&spi7 {
+	status = "disabled";
+};
+
+&i2c7 {
+	status = "disabled";
+};
+
+&uart7 {
+	qcom,enable-gsi-dma;
+	status = "okay";
+	pinctrl-0 = <&qup_uart7_tx>, <&qup_uart7_rx>;
+};
+
+/* I2C0, header pins 15 (SCL) / 13 (SDA), 100 kHz: INA228 only. */
+&spi0 {
+	status = "disabled";
+};
+
+&i2c0 {
+	qcom,enable-gsi-dma;
+	status = "okay";
+
+	clock-frequency = <100000>;
+};
+
+&uart0 {
+	status = "disabled";
+};
+
+/* I2C2, header pins 28 (SCL) / 27 (SDA), 100 kHz: MCP23017 #1/#3/#4, INA3221, TCA9517. */
+&spi2 {
+	status = "disabled";
+};
+
+&i2c2 {
+	qcom,enable-gsi-dma;
+	status = "okay";
+
+	clock-frequency = <100000>;
+};
+
+&uart2 {
+	status = "disabled";
+};
+
+/* SR-RX: LC76G PPS on GPIO96, header pin 7 (wire <= 20 cm). No upstream overlay exists. */
+&tlmm {
+	pps_gnss_default: pps-gnss-default-state {
+		pins = "gpio96";
+		function = "gpio";
+		bias-disable;
+	};
+};
+
+&{/} {
+	/* pps-gpio names this source "pps-gnss.-1"; udev 72-srrx-pps.rules links /dev/pps-gnss. */
+	pps-gnss {
+		compatible = "pps-gpio";
+		gpios = <&tlmm 96 0>;	/* 0 = GPIO_ACTIVE_HIGH */
+		pinctrl-names = "default";
+		pinctrl-0 = <&pps_gnss_default>;
+	};
+};
+
+/* SR-RX: fixed tty numbers independent of probe order (qcom_geni_serial uses the alias id). */
+&{/aliases} {
+	serial1 = "/soc@0/geniqup@9c0000/serial@998000";
+	serial2 = "/soc@0/geniqup@9c0000/serial@99c000";
+};

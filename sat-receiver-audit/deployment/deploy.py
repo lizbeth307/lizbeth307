@@ -653,6 +653,23 @@ def device_node(name, path):
     return node
 
 
+# srrx.service SupplementaryGroups: the staged 73-srrx-i2c.rules gives it the two bound buses only.
+I2C_GROUP = "i2c"
+
+
+def i2c_group_issues(bound, nodes, gid):
+    """/dev/i2c-N nodes other than the bound buses that labd's group (or everyone) may open, e.g.
+    from a package rule such as i2c-tools' 60-i2c-tools.rules (HDMI DDC, camera buses).
+    nodes: {name: stat result}; gid: the i2c group's id, or None when it does not exist."""
+    issues = []
+    for name, node in sorted(nodes.items()):
+        if name in bound or not re.fullmatch(r"i2c-[0-9]+", name) or not stat.S_ISCHR(node.st_mode):
+            continue
+        if (gid is not None and node.st_gid == gid and node.st_mode & 0o060) or node.st_mode & 0o006:
+            issues.append("/dev/" + name + " is open to group " + I2C_GROUP + " or others beyond the two bound buses")
+    return issues
+
+
 def doctor(config=None):
     """Read metadata only. No i2cdetect, EEPROM, serial writes or SDR opens."""
     report = {"read_only": True, "architecture": platform.machine(), "kernel": platform.release(),
@@ -736,6 +753,13 @@ def doctor(config=None):
                 actual = "/" + node.resolve(strict=True).as_posix().split("/sys/firmware/devicetree/base/", 1)[-1]
                 if actual != bus["of_fullname"]:
                     raise DeploymentError(label + " OF node differs from declared wiring")
+            import grp
+            try:
+                i2c_gid = grp.getgrnam(I2C_GROUP).gr_gid
+            except KeyError:
+                i2c_gid = None
+            report["issues"].extend(i2c_group_issues({Path(bus["path"]).name for bus in config["i2c"].values()},
+                                                     {p.name: p.stat() for p in Path("/dev").glob("i2c-*")}, i2c_gid))
             for name, device in guarded_devices(config).items():  # = the srrx.service device ordering
                 path = Path(device["path"])
                 device_node(name, path)
@@ -1116,6 +1140,26 @@ def verify_build(prefix, manifest):
     if manifest["schema_version"] != 1 or manifest["status"] != "REVIEWED" or not manifest["files"]:
         raise DeploymentError("build manifest is OPEN/unreviewed")
     root = Path(prefix).resolve(strict=True)
+    files, modules = build_inventory(root)
+    if files != manifest["files"] or sorted(modules) != sorted(manifest["allowed_modules"]):
+        raise DeploymentError("staged file hashes/module allowlist differ; unknown files rejected")
+    for name in ("source_audit", "tx_negative_tests"):
+        record = manifest[name]
+        keys(record, ("status", "report"), name)
+        if record["status"] != "PASS":
+            raise DeploymentError(name + " is OPEN")
+        keys(record["report"], ("path", "sha256"), name + " report")
+        report = (root / str(record["report"]["path"])).resolve(strict=True)
+        if not report.is_relative_to(root) or not report.is_file() or sha(report) != record["report"]["sha256"] or report.stat().st_size < 32:
+            raise DeploymentError(name + " evidence mismatch")
+    return {"status": "REVIEWED_BUILD_FILES_MATCH", "files": len(files), "hardware_ready": False,
+            "scope": "Exact reviewed files and known exclusions checked; hardware/native API behavior requires independent evidence."}
+
+
+def build_inventory(root):
+    """(files, modules) of a prefix exactly as verify_build compares them; the build-manifest
+    generator (deployment/system/build_manifest.py) emits the same walk, so the two never diverge."""
+    root = Path(root).resolve(strict=True)
     files = {}
     modules = []
     for path in sorted(root.rglob("*")):
@@ -1142,19 +1186,7 @@ def verify_build(prefix, manifest):
             if "limesuite" in lower:
                 raise DeploymentError("Lime runtime library is experimental; complete native TX audit is OPEN")
         files[relative] = sha(path)
-    if files != manifest["files"] or sorted(modules) != sorted(manifest["allowed_modules"]):
-        raise DeploymentError("staged file hashes/module allowlist differ; unknown files rejected")
-    for name in ("source_audit", "tx_negative_tests"):
-        record = manifest[name]
-        keys(record, ("status", "report"), name)
-        if record["status"] != "PASS":
-            raise DeploymentError(name + " is OPEN")
-        keys(record["report"], ("path", "sha256"), name + " report")
-        report = (root / str(record["report"]["path"])).resolve(strict=True)
-        if not report.is_relative_to(root) or not report.is_file() or sha(report) != record["report"]["sha256"] or report.stat().st_size < 32:
-            raise DeploymentError(name + " evidence mismatch")
-    return {"status": "REVIEWED_BUILD_FILES_MATCH", "files": len(files), "hardware_ready": False,
-            "scope": "Exact reviewed files and known exclusions checked; hardware/native API behavior requires independent evidence."}
+    return files, modules
 
 
 def stage_gnss(rootfs, mode):
@@ -1177,6 +1209,35 @@ def stage_gnss(rootfs, mode):
     timeout = units / (device_unit(GNSS_DEVICE) + ".d")
     timeout.mkdir()
     (timeout / DEVICE_TIMEOUT_DROPIN).write_text(device_timeout_dropin(LAB_DEVICE_TIMEOUT_S), newline="\n")
+
+
+def system_files():
+    """deployment/system/system_files.py: sysusers, tmpfiles, udev, presets, polkit, masks, hooks."""
+    path = str(HERE / "system")
+    if path not in sys.path:
+        sys.path.insert(0, path)
+    import system_files as module
+    return module
+
+
+def stage_system(rootfs, config, gnss):
+    """System files of the installed root (software/DEPLOYMENT.md, «Системні файли»). Writes only
+    below rootfs; refuses to overwrite another staged file and any account nothing creates."""
+    system = system_files()
+    for relative, content in sorted(system.staged_files(config, gnss).items()):
+        path = rootfs / relative
+        if path.exists():
+            raise DeploymentError("system file collides with a staged file: " + relative)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        if isinstance(content, bytes):
+            path.write_bytes(content)
+        else:
+            path.write_text(content, encoding="utf-8", newline="\n")
+        if relative in system.EXECUTABLES:
+            path.chmod(0o755)
+    unknown = system.unknown_accounts(rootfs)
+    if unknown:
+        raise DeploymentError("staged units/rules name accounts sysusers.d does not create: " + ", ".join(unknown))
 
 
 def stage(destination, config=None, gnss="gpsd"):
@@ -1243,6 +1304,7 @@ def stage(destination, config=None, gnss="gpsd"):
             (timeout / DEVICE_TIMEOUT_DROPIN).write_text(device_timeout_dropin(LAB_DEVICE_TIMEOUT_S), newline="\n")
         if gnss != "off":
             stage_gnss(rootfs, gnss)
+    stage_system(rootfs, config, gnss)
     files = {p.relative_to(rootfs).as_posix(): sha(p) for p in sorted(rootfs.rglob("*")) if p.is_file()}
     (destination / "stage-files.json").write_text(json.dumps({"schema_version": 1, "status": "STAGED_ONLY", "files": files}, indent=2) + "\n", newline="\n")
     (destination / "INSTALL_PLAN.txt").write_text("STAGED ONLY. No services enabled and no hardware acceptance supplied.\nReview software/DEPLOYMENT.md, run doctor and all release guards, then package rootfs via signed local repository.\nField/QUIET root: Wi-Fi/BT modprobe blacklist (install /bin/false), FE1.1s port-4 authorized=0 rule and rfkill unit are staged; the WIFI_PWR_EN gpio-hog (W1-2) is OPEN and not generated.\nDo not copy over /etc acceptance files, repartition UFS, flash BIOS, run rsetup or auto-enable units.\nA/B installation is a separate bench/recovery procedure; no activation command is generated here.\n", newline="\n")
@@ -1343,6 +1405,7 @@ def bundle(stage_directory, output):
     output = Path(output).resolve()
     if output.exists() or output.is_relative_to(directory) or str(output).startswith(("/etc/", "/usr/", "/opt/", "/boot/", "/sys/", "/proc/", "/dev/")):
         raise DeploymentError("bundle output must be a new independent artifact")
+    executables = system_files().EXECUTABLES  # initramfs-tools runs only executable hooks
     with output.open("xb") as raw:
         with gzip.GzipFile(filename="", mode="wb", fileobj=raw, mtime=0) as compressed:
             with tarfile.open(mode="w", fileobj=compressed, format=tarfile.PAX_FORMAT) as archive:
@@ -1350,7 +1413,7 @@ def bundle(stage_directory, output):
                     info = archive.gettarinfo(str(path), arcname=path.relative_to(rootfs).as_posix())
                     info.uid = info.gid = info.mtime = 0
                     info.uname = info.gname = ""
-                    info.mode = 0o755 if path.is_dir() else 0o644
+                    info.mode = 0o755 if path.is_dir() or info.name in executables else 0o644
                     with path.open("rb") if path.is_file() else open(os.devnull, "rb") as content:
                         archive.addfile(info, content if path.is_file() else None)
     return {"status": "STAGED_ARCHIVE_ONLY", "path": str(output), "sha256": sha(output), "services_enabled": False}
