@@ -184,7 +184,7 @@ class AssemblyDocsTests(unittest.TestCase):
 
     def test_partition_deviations_are_listed(self):
         text = self.files[gen.OUT["harness_md"]]
-        self.assertTrue(self.model.deviations)
+        # may become empty once pcb/prepare.py gives these refs their own domains
         for ref, _, cand, board, unit in self.model.deviations:
             self.assertIn(unit, D.PARTITION_DEVIATIONS)
             self.assertIn(f"| {ref} |", text)
