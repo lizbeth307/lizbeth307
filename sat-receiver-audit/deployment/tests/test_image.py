@@ -743,5 +743,37 @@ class DtbMergeTests(unittest.TestCase):
         self.assertEqual({record[p]["dt_manifest"] for p in ("lab", "field")}, {"NOT_COMPARABLE"})
 
 
+class StagedMaskTests(unittest.TestCase):
+    """The bundle of deploy.py stage already masks units with empty unit files (deployment/system);
+    the image hardening masks the rest with systemctl and never tries to replace those files."""
+
+    def setUp(self):
+        self.recipe = json.loads((HERE / "image/recipe.json").read_text())
+        sys.path.insert(0, str(HERE / "system"))
+        self.addCleanup(sys.path.remove, str(HERE / "system"))
+        import system_files
+        self.staged = system_files.MASKED_UNITS
+
+    def test_every_staged_mask_is_also_a_recipe_mask(self):
+        self.assertLessEqual(set(self.staged), set(self.recipe["mask"]["units"]))
+
+    def test_hardening_skips_units_already_masked_by_an_empty_unit_file(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            units = root / "etc/systemd/system"
+            units.mkdir(parents=True)
+            for unit in self.staged:
+                (units / unit).write_text("")
+            (root / "etc/passwd").write_text("root:x:0:0:root:/root:/bin/bash\n")
+            calls = []
+            with patch.object(build_image, "run", lambda argv, **kwargs: calls.append([str(a) for a in argv])):
+                result = build_image.hardening(root, self.recipe, "A")
+        masked_by_systemctl = [c[-1] for c in calls if c[:1] == ["systemctl"] and "mask" in c]
+        self.assertEqual(sorted(result["masked_by_stage"]), sorted(self.staged))
+        self.assertFalse(set(masked_by_systemctl) & set(self.staged))
+        self.assertEqual(sorted(masked_by_systemctl + result["masked_by_stage"]), sorted(self.recipe["mask"]["units"]))
+        self.assertEqual(result["masked"], self.recipe["mask"]["units"])
+
+
 if __name__ == "__main__":
     unittest.main()
