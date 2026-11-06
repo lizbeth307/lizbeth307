@@ -8,7 +8,7 @@ name: SR-RX mechanical model
 
 on:
   push:
-    branches: ['codex/**', 'ccr-*']
+    branches: ['codex/**', 'ccr-*', 'wip/**']
     paths: ['sat-receiver-audit/mechanical/**', 'sat-receiver-audit/pcb/generated/components.csv', '.github/workflows/sr-rx-mech.yml']
   pull_request:
     paths: ['sat-receiver-audit/mechanical/**', 'sat-receiver-audit/pcb/generated/components.csv', '.github/workflows/sr-rx-mech.yml']
