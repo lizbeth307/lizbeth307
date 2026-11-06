@@ -157,6 +157,9 @@ UNIT_OF_REF = {
     "J501": "LABUSB", "J505": "LABBUS", "J504": "GX16", "J502": "UART5", "J503": "J21H", "SW501": "EDL",
     "SW301": "PWRBTN", "U304": "GNSS", "U308": "VEML", "FAN301": "FAN1", "FAN302": "FAN2",
     "U305": "CTRL", "ENC301": "CTRL", "ENC302": "CTRL", "BZ301": "CTRL",
+    # Leaded bead NTCs (parts DB mount "remote"): their leads end on CTRL like TH102 on CHG. E3 notes:
+    # TH301 on the rear heat spreader of the panel, TH302 on the inner frame away from converter heat.
+    "TH301": "CTRL", "TH302": "CTRL",
     "SW302": "CTRL", "SW303": "CTRL", "SW304": "CTRL", "SW305": "CTRL", "SW306": "CTRL", "SW307": "CTRL",
     "SW308": "CTRL", "SW309": "CTRL",
     "U309": "IMUPACK", "U314": "IMUPACK", "J550": "IMUPACK", "D502": "IMUPACK", "C519": "IMUPACK",
@@ -180,7 +183,22 @@ PARTITION_DEVIATIONS = {
     "HDMIA": "U506 (pin 18 HDMI) — у кабелі HDMI між Q6A і дисплеєм (E5 §8), не на PWR",
     "IMUPACK": "захист живлення і даних IMU (E5 U552/D502/C519/C520) і деталі E3 «External IMU» — на носійній платі паку IMU "
                "(вузол IMUPACK), не на PWR/CTRL",
+    # Single refs (a key may be a ref as well as a unit; a ref key wins): the parts DB mounts these on
+    # a board, the assembly places them elsewhere. Open between the parts DB and the assembly docs.
+    "F101": "F101 — у тримачі Keystone 3568 біля плюса паку (STACK D2 «біля батареї», група E1 «Пак 4S1P»), а база деталей "
+            "(mount pcb_tht) ставить тримач на PWR_MAIN; базу деталей треба узгодити з місцем збирання",
+    "J302": "J302 (E3 «Power-board control harness») — кінець джгута S02 на PWR (рішення asm: на PWR 5 мереж I2C2/INT/3V3_Q6A), "
+            "а база деталей ставить вилку B5B-PH-K на CTRL_HMI за аркушем E3; не узгоджено, на якому кінці S02 стоїть J302",
+    "J502": "консоль UART5 — роз'єм PH 3 у сервісному лючку (рішення asm, build/15), а база деталей ставить вилку B3B-PH-K "
+            "на USB_POWER; не узгоджено",
+    "J503": "сервісний J21 — Micro-Fit 3 у сервісному лючку (рішення asm, build/15), а база деталей ставить вилку 43650-0315 "
+            "на USB_POWER; не узгоджено",
 }
+
+
+def partition_deviation(ref, unit):
+    """Reason for a place that differs from the board partition, or None."""
+    return PARTITION_DEVIATIONS.get(ref) or PARTITION_DEVIATIONS.get(unit)
 # Remaining E4 modules, panel RF connectors and coax assemblies form the RF domain
 # (each is its own unit; links are coax, see section "РЧ" of build/16).
 RF_DOMAIN_PREFIXES = ("A4", "J4", "W4")

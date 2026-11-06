@@ -151,7 +151,7 @@ class Model:
             board = D.BOARD_OF_DOMAIN.get(candidate)
             if board and self.unit_of[ref] != board:
                 self.deviations.append((ref, comp["_sheet"], candidate, board, self.unit_of[ref]))
-                if self.unit_of[ref] not in D.PARTITION_DEVIATIONS:
+                if not D.partition_deviation(ref, self.unit_of[ref]):
                     unacked.append(f"{ref} ({candidate} → {self.unit_of[ref]})")
         if unacked:
             fail("places that differ from pcb/generated/components.csv without a reason in PARTITION_DEVIATIONS: " + ", ".join(unacked))
@@ -557,7 +557,7 @@ def render_harness(model, h):
                  "Генератор зупиняється на кожному такому місці без причини в `PARTITION_DEVIATIONS`; `pcb/prepare.py` має дати цим "
                  "деталям окремий домен (не PWR/CTRL) до наступної перефіксації PCB (§11).\n\n")
     lines.append(table(["деталь", "аркуш", "board_candidate", "плата за розбиттям", "вузол збирання", "чому"],
-                       [(ref, sheet, cand, board, unit, D.PARTITION_DEVIATIONS[unit]) for ref, sheet, cand, board, unit in model.deviations]))
+                       [(ref, sheet, cand, board, unit, D.partition_deviation(ref, unit)) for ref, sheet, cand, board, unit in model.deviations]))
     # segments
     lines.append("\n## 3. Сегменти джгутів\n")
     seg_rows = []
@@ -638,7 +638,8 @@ def render_harness(model, h):
         notes.append("Розбиття PCB: `pcb/generated/components.csv` ставить на плати деталі, які збираються поза ними — "
                      + "; ".join(f"{unit}: {', '.join(refs)}" for unit, refs in moved.items())
                      + ". Потрібна зміна категорій `pcb/prepare.py` (власник parts): окремі домени для вставок T7/HDMI і носійної плати "
-                       "паку IMU, після чого — перефіксація PCB.")
+                       "паку IMU, для окремих деталей — узгодження бази деталей з місцем збирання (причини в §2), після чого — "
+                       "перефіксація PCB.")
     lines.append("\n".join(f"{i}. {md(n)}" for i, n in enumerate(notes, 1)) + "\n")
     lines.append(render_resistance(h))
     return "".join(lines)
