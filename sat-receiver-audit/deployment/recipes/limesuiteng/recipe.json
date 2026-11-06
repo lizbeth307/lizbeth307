@@ -4,6 +4,7 @@
   "summary": "LimeSuiteNG 37cb183 with the reviewed TX-rejecting patch: core library, SoapySDR module and headers; no CLI, GUI, GNU Radio, Amarisoft, firmware, udev or kernel modules",
   "source": {"patch": "deployment/patches/limesuiteng-rx-only.patch"},
   "build_depends": ["libusb-1.0-0-dev", "libsoapysdr-dev"],
+  "lab_build_depends": [],
   "cmake": {
     "configure": ["cmake", "-S", "{src}", "-B", "{build}", "-G", "Unix Makefiles"],
     "options": {

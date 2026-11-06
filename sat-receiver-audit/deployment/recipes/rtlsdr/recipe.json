@@ -4,6 +4,7 @@
   "summary": "librtlsdr2 2.0.3-0+lab1: osmocom rtl-sdr v2.0.3 (797f814) with the reviewed RX-only patch (SONAME 2 restored, GPIO0 bias gate); library and headers only, no tools",
   "source": {"patch": "deployment/patches/rtlsdr-rx-only.patch"},
   "build_depends": ["libusb-1.0-0-dev"],
+  "lab_build_depends": [],
   "cmake": {
     "configure": ["cmake", "-S", "{src}", "-B", "{build}", "-G", "Unix Makefiles"],
     "options": {

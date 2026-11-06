@@ -904,13 +904,108 @@ def _held(status_file):
     return held
 
 
-def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrelease_sha256=None, target_status=None):
+class _Member:
+    """Read-only view of the next `size` bytes of an open file: one ar member, streamed."""
+
+    def __init__(self, stream, size):
+        self.stream, self.left = stream, size
+
+    def read(self, size=-1):
+        size = self.left if size is None or size < 0 or size > self.left else size
+        data = self.stream.read(size)
+        self.left -= len(data)
+        return data
+
+
+def deb_data_tree(deb, destination=None):
+    """{path: 'file'|'link'|'dir'} of the data member of a .deb, read in Python (no dpkg on the
+    path being checked). With destination, the member is also extracted there (tar 'data' filter).
+    Anything but one safe relative tree of files, symlinks and directories fails closed."""
+    tree = {}
+    with open(deb, "rb") as stream:
+        if stream.read(8) != b"!<arch>\n":
+            raise DeploymentError("not a .deb (ar) archive: " + Path(deb).name)
+        while True:
+            header = stream.read(60)
+            if len(header) != 60 or header[58:60] != b"`\n" or not header[48:58].strip().isdigit():
+                raise DeploymentError(".deb has no data.tar member: " + Path(deb).name)
+            name, size = header[:16].decode("ascii", "replace").strip().rstrip("/"), int(header[48:58])
+            if name.startswith("data.tar"):
+                break
+            stream.seek(size + (size & 1), os.SEEK_CUR)
+        try:
+            with tarfile.open(fileobj=_Member(stream, size), mode="r|*") as data:
+                for member in data:
+                    relative = member.name[2:] if member.name.startswith("./") else member.name
+                    relative = relative.rstrip("/")
+                    if relative in ("", "."):
+                        continue
+                    kind = "dir" if member.isdir() else "link" if member.issym() else "file" if member.isfile() else None
+                    if kind is None or relative.startswith("/") or ".." in relative.split("/") or relative in tree:
+                        raise DeploymentError("unsafe, repeated or special .deb member in " + Path(deb).name)
+                    tree[relative] = kind
+                    if destination is not None:
+                        data.extract(member, destination, filter="data")
+        except tarfile.TarError as exc:
+            raise DeploymentError(".deb data member unreadable (" + name + "): " + Path(deb).name) from exc
+    return tree
+
+
+def lab_package_issues(tree, policy=None):
+    """Receive-only findings for the data tree of one lab repository package, by path alone and
+    from the same policy as selftest.py: TX/control executables and plugin paths (verify_build,
+    RX-01b), Soapy modules outside the allowlist, Lime modules and modules0.9 (RX-06) and the
+    Lime runtime library while Lime is disabled (RX-08). A content rule, not a TX proof."""
+    policy = policy or receive_only_policy()
+    soapy = policy["components"]["soapy"]
+    allow, deny = {a.lower() for a in soapy["allow_plugins"]}, [t.lower() for t in soapy["deny_tokens"]]
+    lime = [g.lower() for g in policy["lime"]["runtime_library_globs"]]
+    names = forbidden_basenames(policy)
+    issues = set()
+    for relative, kind in tree.items():
+        parent, _, base = relative.rpartition("/")
+        lower = base.lower()
+        if any(fnmatch.fnmatchcase(relative, g) or fnmatch.fnmatchcase(relative, g + "/*") for g in soapy["forbidden_dirs"]):
+            issues.add("RX-06 SoapySDR 0.9 module directory: " + relative)
+        if kind == "dir":
+            continue
+        if any(p.lower() in BAD_PARTS for p in relative.split("/")) or lower in BAD_NAMES or (parent in EXECUTABLE_DIRS and lower in names):
+            issues.add("TX/control executable or plugin: " + relative)
+        in_soapy = any(fnmatch.fnmatchcase(parent, g) for g in soapy["plugin_dirs"])
+        if in_soapy and ".so" in lower:
+            module = lower.split(".so", 1)[0]
+            if "lime" in module:
+                issues.add("RX-06 Lime Soapy module while Lime is disabled: " + relative)
+            elif module not in allow or any(t in module for t in deny):
+                issues.add("RX-06 Soapy module outside the allowlist: " + relative)
+        elif not in_soapy and any(fnmatch.fnmatchcase(lower, g) for g in lime):
+            issues.add("RX-08 Lime runtime library while Lime is disabled: " + relative)
+    return sorted(issues)
+
+
+def _record_binding(record, label):
+    """The build record names the reviewed recipe and patch that are in this tree now."""
+    recipe_path = HERE / "recipes" / record["component"] / "recipe.json"
+    if not recipe_path.is_file() or record["recipe_sha256"] != sha(recipe_path):
+        raise DeploymentError("build record was made from another recipe than deployment/recipes/" + record["component"] + ": " + label)
+    recipe = load(recipe_path)
+    patch = (recipe.get("source") or {}).get("patch") if type(recipe) is dict else None
+    receipt = record["build_environment"].get("patch_receipt") if type(record["build_environment"]) is dict else None
+    if type(receipt) is not dict or receipt.get("patch_sha256") != (sha(PROJECT / patch) if patch else None):
+        raise DeploymentError("build record patch differs from the reviewed " + (patch or "(no patch)") + ": " + label)
+
+
+def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrelease_sha256=None, target_status=None, release=False):
     """Signed lab repository check: gpgv InRelease by the pinned key -> every dists/ file against the
     signed SHA256 list -> every Packages stanza against a build record (name, version, architecture,
-    SHA-256, size) whose component and source archive are the locked ones -> every pool .deb listed
-    once. Refuses foreign origins, non-+labN versions, receive-only policy packages, kernel/bootloader/
-    SPI/DSP firmware packages, a changed held package (target_status) and an apt entry without
-    Signed-By. Integrity and provenance only; no install, no TX proof."""
+    SHA-256, size) whose component, source archive, recipe and patch are the locked/reviewed ones ->
+    every pool .deb listed once and its data tree free of receive-only policy findings (Lime while
+    Lime is disabled, Soapy modules outside the allowlist, TX/control tools). Refuses foreign origins,
+    non-+labN versions, receive-only policy packages, kernel/bootloader/SPI/DSP firmware packages, a
+    changed held package (target_status) and an apt entry without Signed-By. release=True (the
+    release_guard path) also needs REVIEWED build records and, per package, the build manifest the
+    record names, which deploy.verify_build must accept for the extracted package. Integrity,
+    provenance and named content rules only; no install, no TX proof."""
     policy = load(REPO_POLICY)
     keys(policy, ("schema_version", "status", "origin", "label", "codename", "component", "architecture",
                   "keyring_path", "never_in_lab_repo_globs", "notes", "sources"), "repository policy")
@@ -941,7 +1036,7 @@ def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrele
         raise DeploymentError("signed Release does not list " + index)
     lock = load(HERE / "sources.lock.json")
     components = {c["id"]: c for c in lock["components"]}
-    allowed, records = {}, []
+    allowed, manifests, records = {}, {}, []
     for record_path in build_records:
         record = load(record_path)
         keys(record, ("schema_version", "kind", "status", "component", "version", "recipe_sha256", "source_archive_sha256",
@@ -951,9 +1046,14 @@ def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrele
                 or record["source_archive_sha256"] is None or record["source_archive_sha256"] != component["source_archive_sha256"]
                 or record["version"] != component["version"] or record["apt_snapshot"] != lock["apt_snapshot"]["timestamp"]):
             raise DeploymentError("build record is not bound to the locked component source: " + Path(record_path).name)
+        _record_binding(record, Path(record_path).name)
+        if release and record["status"] != "REVIEWED":
+            raise DeploymentError("release path needs a REVIEWED build record (CI records are CI_BUILT_UNREVIEWED): " + Path(record_path).name)
         for package in record["packages"]:
             keys(package, ("package", "version", "architecture", "filename", "sha256", "size", "build_manifest_sha256"), "build record package")
             allowed[(package["package"], package["version"], package["architecture"])] = (package["sha256"], package["size"])
+            manifests[(package["package"], package["version"], package["architecture"])] = (
+                Path(record_path).parent / (package["package"] + ".build-manifest.json"), package["build_manifest_sha256"])
         records.append({"path": str(record_path), "sha256": sha(record_path)})
     never = [g.lower() for g in policy["never_in_lab_repo_globs"]]
     held = _held(target_status) if target_status is not None else {}
@@ -977,6 +1077,19 @@ def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrele
             raise DeploymentError("kernel, bootloader, SPI or DSP firmware package in the lab repository: " + name)
         if name in held and held[name] != version:
             raise DeploymentError("update would change a held package: " + name)
+        issues = lab_package_issues(deb_data_tree(deb))
+        if issues:
+            raise DeploymentError("receive-only policy refuses the contents of " + name + ": " + issues[0])
+        if release:
+            manifest_path, manifest_sha = manifests[(name, version, arch)]
+            if not manifest_path.is_file() or sha(manifest_path) != manifest_sha:
+                raise DeploymentError("build manifest differs from the build record: " + name)
+            with tempfile.TemporaryDirectory(prefix="srrx-deb-") as temporary:
+                deb_data_tree(deb, temporary)
+                try:
+                    verify_build(temporary, load(manifest_path))
+                except OSError as exc:  # e.g. a -dev package's .so link into another package
+                    raise DeploymentError("package tree is not self-contained for verify_build: " + name) from exc
         referenced.add(filename)
         versions[name] = version
     if not referenced:
@@ -992,8 +1105,9 @@ def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrele
             or entries[0].get("components") != policy["component"] or entries[0].get("types") != "deb"):
         raise DeploymentError("apt entry must be one deb822 stanza with Signed-By " + policy["keyring_path"])
     return {"status": "SIGNED_REPOSITORY_MATCHES_BUILD_RECORDS", "packages": len(referenced), "inrelease_sha256": sha(inrelease),
-            "signing_fingerprint": fingerprint.upper(), "build_records": records, "hardware_ready": False,
-            "scope": "Signature, index and package hashes, build-record and source-lock binding; no install, no receive-only proof."}
+            "signing_fingerprint": fingerprint.upper(), "build_records": records, "release_path": bool(release), "hardware_ready": False,
+            "scope": "Signature, index and package hashes, build-record, recipe, patch and source-lock binding, named receive-only "
+                     "content rules" + (", REVIEWED records and verify_build per package" if release else "") + "; no install, no receive-only proof."}
 
 
 def verify_build(prefix, manifest):
@@ -1049,7 +1163,7 @@ def stage_gnss(rootfs, mode):
     after dev-lab-gnss.device (gpsd.service in gpsd mode, srrx-locationd in raw mode; DEP-11)."""
     units = rootfs / "etc/systemd/system"
     rule = rootfs / GNSS_POLKIT_RULE
-    rule.parent.mkdir(parents=True, exist_ok=True)  # pass_jobs.staged_files() may have created rules.d
+    rule.parent.mkdir(parents=True, exist_ok=True)  # pass_jobs.staged_files() ships a rule there too
     rule.write_text(gnss_polkit_rule(), newline="\n")
     locationd = units / "srrx-locationd.service.d"
     locationd.mkdir(exist_ok=True)
@@ -1166,9 +1280,9 @@ def release_guard(devices, acceptance, release, build_manifest, cache):
     # The signed repository itself, not a file hash of it (deployment/repo/README.md); held
     # packages of this root must keep their versions.
     verify_repo(snapshot["repo"], snapshot["keyring"], snapshot["signing_fingerprint"], [i["path"] for i in snapshot["build_records"]],
-                snapshot["sources_entry"], snapshot["inrelease_sha256"], Path("/var/lib/dpkg/status"))
-    # Controller-only deployment needs the immutable base/kernel cache. The
-    # full radio application suite has30 separate unresolved source archives.
+                snapshot["sources_entry"], snapshot["inrelease_sha256"], Path("/var/lib/dpkg/status"), release=True)
+    # Controller-only deployment needs the immutable base/kernel cache. The full radio application
+    # suite would need every component source; QAIRT (owner-licensed archive) still has no SHA-256.
     verify_cache(cache, components=[])
     verify_build(PROJECT, load(build_manifest))
     return {"status": "RELEASE_GUARDS_MATCH", "hardware_unit_id": accepted["hardware_unit_id"], "services_enabled": False}
@@ -1304,6 +1418,7 @@ def main():
     signed.add_argument("--sources-entry", type=Path, required=True)
     signed.add_argument("--inrelease-sha256")
     signed.add_argument("--target-status", type=Path, help="dpkg status of the root being updated (held packages)")
+    signed.add_argument("--release", action="store_true", help="release path: REVIEWED build records and verify_build per package")
     guard = commands.add_parser("release-guard")
     for name in ("devices", "acceptance", "release", "build-manifest", "cache"):
         guard.add_argument("--" + name, type=Path, required=True)
@@ -1319,7 +1434,7 @@ def main():
         elif args.operation == "stage-ab": result = stage_ab(load(args.config), args.dest)
         elif args.operation == "bundle": result = bundle(args.stage_dir, args.output)
         elif args.operation == "verify-repo": result = verify_repo(args.repo, args.keyring, args.fingerprint, args.build_record, args.sources_entry,
-                                                                args.inrelease_sha256, args.target_status)
+                                                                args.inrelease_sha256, args.target_status, args.release)
         else: result = release_guard(args.devices, args.acceptance, args.release, args.build_manifest, args.cache)
         print(json.dumps(result, indent=2))
         if result.get("status") == "BLOCKED": sys.exit(2)

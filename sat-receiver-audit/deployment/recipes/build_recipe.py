@@ -2,12 +2,16 @@
 """Build one +lab recipe into .deb files inside the isolated builder chroot (recipes/README.md).
 
 Runs as an unprivileged user in a chroot whose network namespace has no route (lab_build.py
-starts it under `unshare --net`); it first proves that no outside connection is possible. The
+starts it under `unshare --net`); it first checks that the namespace lists only loopback and that
+an outside connection fails with no route. The
 source archive must match deployment/sources.lock.json; a reviewed patch is applied through
 vendor_patch.py. Every CMake option the upstream tree declares and this configuration evaluates
 must be set explicitly by the recipe (no unreviewed upstream default). The result is .deb files,
 one verify_build manifest per package (status OPEN, never REVIEWED here) and a build record that
-deploy.verify_repo binds to the lock. CI evidence only: no review, no TX proof, no hardware test.
+deploy.verify_repo binds to the lock, the recipe and the patch. A package that ships a SONAME'd
+library carries DEBIAN/shlibs and the ldconfig trigger, so consumers built against it in a later
+recipe (lab_build_depends) get their Depends from dpkg-shlibdeps without --ignore-missing-info.
+CI evidence only: no review, no TX proof, no hardware test.
 """
 import argparse
 import errno
@@ -29,8 +33,8 @@ DEPLOYMENT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(DEPLOYMENT))
 import deploy  # noqa: E402
 
-RECIPE_KEYS = ("schema_version", "component", "summary", "source", "build_depends", "cmake", "build", "install",
-               "packages", "drop", "checks", "notes")
+RECIPE_KEYS = ("schema_version", "component", "summary", "source", "build_depends", "lab_build_depends", "cmake", "build",
+               "install", "packages", "drop", "checks", "notes")
 PACKAGE_KEYS = ("name", "section", "description", "files", "depends", "shlibs_depends")
 CHECK_KINDS = {"soname": ("kind", "file", "equals"), "export_count": ("kind", "file", "prefix", "equals"),
                "forbid_strings": ("kind", "file", "substrings"), "forbid_paths": ("kind", "globs"),
@@ -75,6 +79,8 @@ def validate_recipe(recipe, lock=None):
         raise RecipeError("recipe schema_version must be 1 and component a sources.lock.json id")
     if component["source_archive_sha256"] is None or component.get("debian_source") is not None:
         raise RecipeError("recipe component needs a locked upstream source archive")
+    if component.get("source_subdir"):  # e.g. the LA9310 DKMS modules inside the LimeSuiteNG archive
+        raise RecipeError("component has a source_subdir, which build_recipe does not honour yet: " + component["id"])
     deploy.keys(recipe["source"], ("patch",), "recipe source")
     patch = recipe["source"]["patch"]
     if patch is not None and (patch != "deployment/patches/" + recipe["component"] + "-rx-only.patch"
@@ -83,6 +89,9 @@ def validate_recipe(recipe, lock=None):
     for name in _strings(recipe["build_depends"], "build_depends"):
         if not NAME.fullmatch(name):
             raise RecipeError("build_depends holds a non-package name: " + name)
+    lab = _strings(recipe["lab_build_depends"], "lab_build_depends", allow_empty=True)
+    if len(set(lab)) != len(lab) or not all(NAME.fullmatch(n) for n in lab):
+        raise RecipeError("lab_build_depends lists lab package names, each once")
     cmake = recipe["cmake"]
     deploy.keys(cmake, ("configure", "options", "variables"), "recipe cmake")
     _argv(cmake["configure"], "cmake.configure")
@@ -120,6 +129,8 @@ def validate_recipe(recipe, lock=None):
             raise RecipeError(package["name"] + " needs shlibs_depends and a description")
     if not names:
         raise RecipeError("recipe emits no package")
+    if names & set(lab):
+        raise RecipeError("a recipe cannot build against its own packages")
     forbidden = deploy.prohibited_installed({n: component["version"] for n in names}, identifiers=True)
     if forbidden:
         raise RecipeError("receive-only policy forbids package: " + ", ".join(forbidden))
@@ -133,8 +144,16 @@ def validate_recipe(recipe, lock=None):
     return component
 
 
-def no_network():
-    """Fail unless an outside TCP connection is impossible (unshare --net leaves only loopback)."""
+def no_network(interfaces_dir="/sys/class/net"):
+    """Fail unless the build's network namespace lists only loopback (lab_build.py mounts sysfs from
+    inside the new namespace, so this is that namespace's list) and outside TCP connections fail
+    with a no-route error. The isolation itself is `unshare --net`; this checks that it took."""
+    try:
+        interfaces = sorted(os.listdir(interfaces_dir))
+    except OSError as exc:
+        raise RecipeError("cannot list the build namespace's network interfaces (sysfs not mounted)") from exc
+    if interfaces != ["lo"]:
+        raise RecipeError("the build namespace has interfaces besides loopback: " + ",".join(interfaces))
     for address in (("192.0.2.1", 443), ("2001:db8::1", 443)):  # RFC 5737/3849 documentation addresses
         family = socket.AF_INET6 if ":" in address[0] else socket.AF_INET
         try:
@@ -146,8 +165,7 @@ def no_network():
                 raise RecipeError("network probe gave an unexpected result: " + str(exc)) from exc
             continue
         raise RecipeError("an outside connection succeeded: the build is not offline")
-    interfaces = sorted(os.listdir("/sys/class/net")) if os.path.isdir("/sys/class/net") else ["(sysfs not mounted)"]
-    return "no route outside the network namespace; interfaces " + ",".join(interfaces)
+    return "no route outside the network namespace; interfaces lo"
 
 
 def extract(archive, component, destination, patch):
@@ -276,8 +294,9 @@ def assign(recipe, root):
     return owners
 
 
-def shlibs_depends(package_root, staged, own_sonames, scratch):
-    """dpkg-shlibdeps for the package's ELF files; libraries of this build map to (= version)."""
+def shlibs_depends(package_root, staged, own_sonames, scratch, log):
+    """dpkg-shlibdeps for the package's ELF files; libraries of this build map to (= version).
+    No --ignore-missing-info: a library without shlibs/symbols information fails the build."""
     elves = [p for p in sorted(package_root.rglob("*")) if p.is_file() and not p.is_symlink() and p.read_bytes()[:4] == b"\x7fELF"]
     if not elves:
         return ""
@@ -286,8 +305,10 @@ def shlibs_depends(package_root, staged, own_sonames, scratch):
     (debian / "control").write_text("Source: srrx-lab\n\nPackage: srrx-lab\nArchitecture: any\n", encoding="utf-8")
     (debian / "shlibs.local").write_text("".join(own_sonames), encoding="utf-8")
     libdirs = sorted({str(p) for p in staged.rglob("*") if p.is_dir() and any(c.name.startswith("lib") and ".so" in c.name for c in p.iterdir())})
-    out = subprocess.run(["dpkg-shlibdeps", "-O", "--ignore-missing-info"] + ["-l" + d for d in libdirs] + ["-e" + str(e) for e in elves],
+    out = subprocess.run(["dpkg-shlibdeps", "-O"] + ["-l" + d for d in libdirs] + ["-e" + str(e) for e in elves],
                          cwd=scratch, capture_output=True, text=True)
+    with open(log, "a", encoding="utf-8") as stream:
+        stream.write("$ dpkg-shlibdeps (" + package_root.parent.name + ")\n" + out.stdout + out.stderr)
     if out.returncode:
         raise RecipeError("dpkg-shlibdeps failed: " + out.stderr.strip()[-400:])
     for line in out.stdout.splitlines():
@@ -312,7 +333,16 @@ def package_manifest(root):
             "tx_negative_tests": {"status": "OPEN", "report": {"path": None, "sha256": None}}}
 
 
-def build_deb(package, version, files, staged, epoch, depends, out, scratch):
+def control_extras(package, version, sonames):
+    """DEBIAN files beyond control/md5sums: shlibs for the SONAME'd libraries this package ships
+    (consumers then depend on >= this lab version) and the ldconfig trigger (Debian policy 8.1.1)."""
+    if not sonames:
+        return {}
+    return {"shlibs": "".join("%s %s %s (>= %s)\n" % (library, soversion, package, version) for library, soversion in sonames),
+            "triggers": "activate-noawait ldconfig\n"}
+
+
+def build_deb(package, version, files, staged, epoch, depends, out, scratch, sonames=()):
     root = scratch / ("pkg-" + package["name"])
     for relative in files:
         target = root / relative
@@ -338,10 +368,12 @@ def build_deb(package, version, files, staged, epoch, depends, out, scratch):
     sums = [hashlib.md5((root / f).read_bytes(), usedforsecurity=False).hexdigest() + "  " + f + "\n"
             for f in sorted(files) if not (root / f).is_symlink()]
     (control / "md5sums").write_text("".join(sums), encoding="utf-8", newline="\n")
+    for name, text in control_extras(package["name"], version, sonames).items():
+        (control / name).write_text(text, encoding="utf-8", newline="\n")
     for path in sorted(root.rglob("*"), reverse=True):
         if path.is_dir() and not path.is_symlink():
             os.chmod(path, 0o755)
-        if path.name in ("control", "md5sums") and path.parent == control:
+        if path.parent == control and path.is_file():
             os.chmod(path, 0o644)
         os.utime(path, (epoch, epoch), follow_symlinks=False)
     os.utime(root, (epoch, epoch))
@@ -351,11 +383,26 @@ def build_deb(package, version, files, staged, epoch, depends, out, scratch):
     return deb, manifest
 
 
-def build(recipe_path, archive, work, out, jobs):
+def lab_depends_manifest(path):
+    """The lab_build_depends lab_build.py installed (lab-debs/manifest.json), as recorded."""
+    if path is None:
+        return []
+    items = deploy.load(path)
+    if type(items) is not list:
+        raise RecipeError("lab package manifest must be a list")
+    for item in items:
+        deploy.keys(item, ("package", "version", "sha256", "component", "record_sha256"), "lab package")
+    return items
+
+
+def build(recipe_path, archive, work, out, jobs, lab_debs=None):
     recipe = deploy.load(recipe_path)
     component = validate_recipe(recipe)
     lock = deploy.load(DEPLOYMENT / "sources.lock.json")
     network = no_network()
+    installed = lab_depends_manifest(lab_debs)
+    if sorted(i["package"] for i in installed) != sorted(recipe["lab_build_depends"]):
+        raise RecipeError("the chroot's lab packages differ from lab_build_depends")
     work, out = Path(work), Path(out)
     for path in (work, out):
         if path.exists() and any(path.iterdir()):
@@ -394,7 +441,7 @@ def build(recipe_path, archive, work, out, jobs):
         raise RecipeError("TX/control executable or plugin staged: " + ", ".join(bad[:5]))
     owners = assign(recipe, destdir)
     version = component["version"]
-    own = []
+    sonames = {p["name"]: [] for p in recipe["packages"]}  # (library, SONAME version) shipped per package
     for package in recipe["packages"]:
         for relative in owners[package["name"]]:
             path = destdir / relative
@@ -402,7 +449,8 @@ def build(recipe_path, archive, work, out, jobs):
                 for soname in re.findall(r"Library soname: \[([^\]]+)\]", _tool(["readelf", "-d", str(path)])):
                     match = re.fullmatch(r"(.+)\.so\.(.+)", soname)
                     if match:
-                        own.append("%s %s %s (= %s)\n" % (match.group(1), match.group(2), package["name"], version))
+                        sonames[package["name"]].append((match.group(1), match.group(2)))
+    own = ["%s %s %s (= %s)\n" % (library, soversion, name, version) for name, items in sonames.items() for library, soversion in items]
     packages = []
     for package in recipe["packages"]:
         scratch = work / ("deb-" + package["name"])
@@ -414,8 +462,8 @@ def build(recipe_path, archive, work, out, jobs):
             for relative in files:
                 (stage / relative).parent.mkdir(parents=True, exist_ok=True)
                 shutil.copy2(destdir / relative, stage / relative, follow_symlinks=False)
-            depends = shlibs_depends(stage, destdir, own, scratch)
-        deb, manifest = build_deb(package, version, files, destdir, epoch, depends, out, scratch)
+            depends = shlibs_depends(stage, destdir, own, scratch, log)
+        deb, manifest = build_deb(package, version, files, destdir, epoch, depends, out, scratch, sonames[package["name"]])
         manifest_path = out / (package["name"] + ".build-manifest.json")
         manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
         packages.append({"package": package["name"], "version": version, "architecture": "arm64", "filename": deb.name,
@@ -428,7 +476,8 @@ def build(recipe_path, archive, work, out, jobs):
               "apt_snapshot": lock["apt_snapshot"]["timestamp"],
               "build_environment": {"chroot_packages_sha256": hashlib.sha256(environment.encode()).hexdigest(),
                                     "chroot_package_count": len(environment.splitlines()), "network": network,
-                                    "source_date_epoch": epoch, "patch_receipt": receipt, "cmake_options": options},
+                                    "source_date_epoch": epoch, "patch_receipt": receipt, "cmake_options": options,
+                                    "lab_build_depends": installed},
               "packages": packages, "checks": checks, "hardware_ready": False}
     (out / (recipe["component"] + ".build-record.json")).write_text(json.dumps(record, indent=2, sort_keys=True) + "\n", encoding="utf-8", newline="\n")
     return record
@@ -441,9 +490,10 @@ def main():
     parser.add_argument("--work", type=Path, required=True)
     parser.add_argument("--out", type=Path, required=True)
     parser.add_argument("--jobs", type=int, default=4)
+    parser.add_argument("--lab-debs", type=Path, help="manifest of the lab packages lab_build.py installed in the chroot")
     args = parser.parse_args()
     try:
-        record = build(args.recipe, args.archive, args.work, args.out, args.jobs)
+        record = build(args.recipe, args.archive, args.work, args.out, args.jobs, args.lab_debs)
     except (OSError, ValueError, subprocess.SubprocessError, tarfile.TarError) as exc:
         parser.exit(2, "BLOCKED: " + str(exc) + "\n")
     print(json.dumps({k: record[k] for k in ("component", "version", "status", "packages")}, indent=2))

@@ -165,17 +165,39 @@ def git_tree_sha1(archive, gitlinks=None):
     return identity
 
 
+def tree_exemption(component):
+    """Why a locked component has no git_tree_sha1, or None when it must have one."""
+    if component.get("debian_source"):
+        return "Ubuntu source package: signed snapshot pin (verify-debian)"
+    if component["commit"] is None or "github.com/" not in (component.get("source_archive_url") or ""):
+        return "release tarball, not a git archive"
+    return None
+
+
 def verify_trees(cache, components=None, lock=None):
-    """Recompute git_tree_sha1 of fetched archives (fetch first: their SHA-256 is checked there)."""
+    """Recompute git_tree_sha1 of fetched archives (fetch first: their SHA-256 is checked there).
+    A selected component without a tree is reported under `skipped` with its reason, never
+    silently; a git archive that should have a tree and has none fails."""
     lock = lock or deploy.load(HERE / "sources.lock.json")
-    selected = [c for c in lock["components"] if c.get("git_tree_sha1") and (components is None or c["id"] in components)]
-    if components is not None and {c["id"] for c in selected} != set(components):
-        raise FetchError("component has no recorded git_tree_sha1")
+    known = {c["id"]: c for c in lock["components"]}
+    chosen = [c for c in lock["components"] if c["source_archive_sha256"] is not None] if components is None else []
+    for name in components or []:
+        if name not in known:
+            raise FetchError("unknown source component: " + name)
+        chosen.append(known[name])
+    selected, skipped = [], {}
+    for component in chosen:
+        if component.get("git_tree_sha1"):
+            selected.append(component)
+        elif tree_exemption(component):
+            skipped[component["id"]] = tree_exemption(component)
+        else:
+            raise FetchError("git archive has no recorded git_tree_sha1: " + component["id"])
     root = Path(cache).resolve(strict=True)
     for component in selected:
         if git_tree_sha1(_safe_cache(root, component["source_cache_path"]), component.get("git_submodules")) != component["git_tree_sha1"]:
             raise FetchError("archive content differs from the locked git tree: " + component["id"])
-    return {"status": "ARCHIVE_TREES_MATCH_LOCKED_COMMITS", "components": [c["id"] for c in selected], "hardware_ready": False}
+    return {"status": "ARCHIVE_TREES_MATCH_LOCKED_COMMITS", "components": [c["id"] for c in selected], "skipped": skipped, "hardware_ready": False}
 
 
 def member_tree_sha1(archive, member, gitlinks=None):
@@ -266,11 +288,27 @@ def resolve_debian(lock, component_id, keyring, directory):
     raise FetchError(package + " " + component["version"] + " is not in the pinned snapshot suites")
 
 
+def verify_releases(lock, keyring, directory):
+    """Every snapshot suite's InRelease, gpgv-checked by the pinned fingerprint, equals its lock record
+    (apt_snapshot.releases lists each suite once). The lab builder chroot uses these same suites."""
+    snapshot = lock["apt_snapshot"]
+    recorded = {r["suite"]: r for r in snapshot["releases"]}
+    if sorted(recorded) != sorted(snapshot["suites"]) or len(recorded) != len(snapshot["releases"]):
+        raise FetchError("apt_snapshot.releases must record each suite exactly once")
+    for suite in snapshot["suites"]:
+        release, _ = signed_release(snapshot, suite, keyring, directory)
+        if recorded[suite] != release:
+            raise FetchError("InRelease differs from the lock: " + suite)
+    return [recorded[s] for s in snapshot["suites"]]
+
+
 def verify_debian(lock, keyring, directory, components=None):
-    """Derive every debian_source pin again from the signed snapshot; any difference fails."""
+    """Derive every debian_source pin again from the signed snapshot; any difference fails. Every
+    suite's InRelease is compared with the lock first, also the ones no pin comes from."""
     selected = [c for c in lock["components"] if c.get("debian_source") and (components is None or c["id"] in components)]
     if components is not None and {c["id"] for c in selected} != set(components):
         raise FetchError("component has no debian_source pin")
+    verify_releases(lock, keyring, directory)
     recorded_releases = {r["suite"]: r for r in lock["apt_snapshot"]["releases"]}
     recorded_indices = {(r["suite"], r["path"]): r for r in lock["apt_snapshot"]["indices"]}
     for component in selected:

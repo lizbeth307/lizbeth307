@@ -1,11 +1,14 @@
 """deploy.verify_repo with a throwaway key generated inside each test, never a release key.
 
-The repository is synthetic (hand-written Release/Packages, opaque .deb bytes): verify_repo
-checks signatures, indexes, hashes and bindings, not package contents. A missing gpg skips
-these tests, except with SRRX_RELEASE_BUILDER=1, where it fails like deployment/test.sh.
+The repository is synthetic (hand-written Release/Packages, small .deb files built here in
+Python): verify_repo checks signatures, indexes, hashes, bindings and the named receive-only
+content rules of each package's data tree. A missing gpg skips the signed tests, except with
+SRRX_RELEASE_BUILDER=1, where it fails like deployment/test.sh; the .deb reader and content rules
+are tested without gpg.
 """
 import gzip
 import hashlib
+import io
 import json
 import os
 from pathlib import Path
@@ -13,6 +16,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tarfile
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -26,10 +30,102 @@ if not GPG and os.environ.get("SRRX_RELEASE_BUILDER") == "1":
     raise RuntimeError("BLOCKED: release builder lacks gpg/gpgv for the signed repository tests")
 LOCK = deploy.load(HERE / "sources.lock.json")
 RTL = next(c for c in LOCK["components"] if c["id"] == "rtlsdr")
+LIB = "usr/lib/aarch64-linux-gnu/"
+# What build_recipe.package_manifest writes: verify_build refuses it as OPEN/unreviewed.
+OPEN_MANIFEST = {"schema_version": 1, "status": "OPEN", "files": {}, "allowed_modules": [],
+                 "source_audit": {"status": "OPEN", "report": {"path": None, "sha256": None}},
+                 "tx_negative_tests": {"status": "OPEN", "report": {"path": None, "sha256": None}}}
 
 
 def sha(data):
     return hashlib.sha256(data).hexdigest()
+
+
+def make_deb(files, links=None, compression="xz"):
+    """A .deb (ar: debian-binary, control.tar.xz, data.tar.<compression>) like dpkg-deb writes:
+    files {path: bytes}, links {path: target}, parent directories as ./ entries."""
+    def tar(entries, mode):
+        buffer = io.BytesIO()
+        with tarfile.open(fileobj=buffer, mode=mode) as archive:
+            for name, data, target in entries:
+                info = tarfile.TarInfo(name)
+                if target is not None:
+                    info.type, info.linkname = tarfile.SYMTYPE, target
+                elif data is None:
+                    info.type, info.mode = tarfile.DIRTYPE, 0o755
+                else:
+                    info.size, info.mode = len(data), 0o644
+                archive.addfile(info, io.BytesIO(data) if data is not None and target is None else None)
+        return buffer.getvalue()
+    links = links or {}
+    directories = sorted({"/".join(p.split("/")[:i]) for p in list(files) + list(links) for i in range(1, p.count("/") + 1)})
+    entries = [("./", None, None)] + [("./" + d + "/", None, None) for d in directories]
+    entries += [("./" + p, d, None) for p, d in sorted(files.items())] + [("./" + p, None, t) for p, t in sorted(links.items())]
+    members = [("debian-binary", b"2.0\n"), ("control.tar.xz", tar([("./", None, None), ("./control", b"Package: x\n", None)], "w:xz")),
+               ("data.tar." + compression, tar(entries, "w:" + compression))]
+    out = b"!<arch>\n"
+    for name, payload in members:
+        out += (name.ljust(16) + "0".ljust(12) + "0".ljust(6) + "0".ljust(6) + "100644".ljust(8) + str(len(payload)).ljust(10) + "`\n").encode()
+        out += payload + (b"\n" if len(payload) % 2 else b"")
+    return out
+
+
+def rtl_deb(name):
+    """Synthetic package data trees shaped like the real lab packages."""
+    if name == "librtlsdr2":
+        return make_deb({LIB + "librtlsdr.so.2.0.3": b"\x7fELF synthetic librtlsdr"}, {LIB + "librtlsdr.so.2": "librtlsdr.so.2.0.3"})
+    return make_deb({"usr/include/rtl-sdr.h": b"/* synthetic header */\n"}, {LIB + "librtlsdr.so": "librtlsdr.so.2"})
+
+
+class DebContentTests(unittest.TestCase):
+    """The .deb reader and the receive-only content rules, without gpg."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="srrx-deb-test-")
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+
+    def deb(self, data, name="x.deb"):
+        (self.root / name).write_bytes(data)
+        return self.root / name
+
+    def test_data_tree_is_read_and_extracted_in_python(self):
+        deb = self.deb(rtl_deb("librtlsdr2"))
+        tree = deploy.deb_data_tree(deb)
+        self.assertEqual(tree, {"usr": "dir", "usr/lib": "dir", "usr/lib/aarch64-linux-gnu": "dir",
+                                LIB + "librtlsdr.so.2.0.3": "file", LIB + "librtlsdr.so.2": "link"})
+        if os.name == "posix":  # Windows without symlink rights makes tarfile copy the link target (a backwards seek)
+            deploy.deb_data_tree(deb, self.root / "out")
+            self.assertEqual((self.root / "out" / LIB / "librtlsdr.so.2.0.3").read_bytes(), b"\x7fELF synthetic librtlsdr")
+            self.assertEqual(os.readlink(self.root / "out" / LIB / "librtlsdr.so.2"), "librtlsdr.so.2.0.3")
+        self.assertEqual(deploy.deb_data_tree(self.deb(make_deb({"a/b": b"1"}, compression="gz"), "gz.deb")), {"a": "dir", "a/b": "file"})
+
+    def test_unreadable_or_unsafe_debs_fail_closed(self):
+        with self.assertRaisesRegex(deploy.DeploymentError, "not a .deb"):
+            deploy.deb_data_tree(self.deb(b"synthetic opaque bytes"))
+        with self.assertRaisesRegex(deploy.DeploymentError, "no data.tar"):
+            deploy.deb_data_tree(self.deb(make_deb({"a": b"1"})[:80]))
+        with self.assertRaisesRegex(deploy.DeploymentError, "unsafe"):
+            deploy.deb_data_tree(self.deb(make_deb({"../escape": b"x"})))
+
+    def test_lime_soapy_and_tx_tools_are_named_findings(self):
+        self.assertEqual(deploy.lab_package_issues(deploy.deb_data_tree(self.deb(rtl_deb("librtlsdr2")))), [])
+        self.assertEqual(deploy.lab_package_issues({LIB + "SoapySDR/modules0.8/librtlsdrSupport.so": "file"}), [])
+        cases = {
+            LIB + "liblimesuiteng.so.0.3-1": "RX-08 Lime runtime library",
+            LIB + "liblimesuiteng.so": "RX-08 Lime runtime library",
+            LIB + "SoapySDR/modules0.8/liblimesuitengSupport.so": "RX-06 Lime Soapy module",
+            LIB + "SoapySDR/modules0.8/libhackrfSupport.so": "RX-06 Soapy module outside the allowlist",
+            LIB + "SoapySDR/modules0.8/libremoteSupport.so": "RX-06 Soapy module outside the allowlist",
+            LIB + "SoapySDR/modules0.9-0/librtlsdrSupport.so": "RX-06 SoapySDR 0.9",
+            "usr/bin/rtl_tcp": "TX/control executable",
+            "usr/bin/rigctld": "TX/control executable",
+            "usr/lib/sdrangel/plugins/channeltx/libmodam.so": "TX/control executable or plugin",
+        }
+        for path, rule in cases.items():
+            with self.subTest(path):
+                issues = deploy.lab_package_issues({path: "file"})
+                self.assertTrue(issues and issues[0].startswith(rule) and issues[0].endswith(path), issues)
 
 
 class Keys:
@@ -81,8 +177,8 @@ class SignedRepositoryTests(unittest.TestCase):
         self.wrong = self.root / "other.gpg"
         self.keys.export(self.other, self.wrong)
         self.sources = HERE / "repo/srrx-lab.sources"
-        self.packages = [("librtlsdr2", RTL["version"], b"synthetic librtlsdr2 deb bytes"),
-                         ("librtlsdr-dev", RTL["version"], b"synthetic librtlsdr-dev deb bytes")]
+        self.packages = [("librtlsdr2", RTL["version"], rtl_deb("librtlsdr2")),
+                         ("librtlsdr-dev", RTL["version"], rtl_deb("librtlsdr-dev"))]
 
     def publish(self, packages=None, origin="srrx-lab", signer=None, extra_release=""):
         repo = self.root / "repo"
@@ -109,17 +205,25 @@ class SignedRepositoryTests(unittest.TestCase):
         (dist / "InRelease").write_bytes(self.keys.clearsign(signer or self.fpr, release))
         return repo
 
-    def record(self, packages=None, **overrides):
+    def record(self, packages=None, manifests=None, **overrides):
+        """A build record in a new directory, with a build manifest file per package (manifests
+        {package: manifest}; default an OPEN placeholder) next to it, as lab_build.py writes them."""
+        directory = self.root / ("records-%d" % len(list(self.root.glob("records-*"))))
+        directory.mkdir()
         entries = []
         for name, version, data in packages or self.packages:
+            manifest = directory / (name + ".build-manifest.json")
+            manifest.write_text(json.dumps((manifests or {}).get(name, OPEN_MANIFEST)), encoding="utf-8")
             entries.append({"package": name, "version": version, "architecture": "arm64", "filename": "%s_%s_arm64.deb" % (name, version),
-                            "sha256": sha(data), "size": len(data), "build_manifest_sha256": "0" * 64})
+                            "sha256": sha(data), "size": len(data), "build_manifest_sha256": deploy.sha(manifest)})
+        patch_sha = deploy.sha(HERE / "patches/rtlsdr-rx-only.patch")
         record = {"schema_version": 1, "kind": "srrx_lab_build_record", "status": "CI_BUILT_UNREVIEWED", "component": "rtlsdr",
                   "version": RTL["version"], "recipe_sha256": deploy.sha(HERE / "recipes/rtlsdr/recipe.json"),
                   "source_archive_sha256": RTL["source_archive_sha256"], "apt_snapshot": LOCK["apt_snapshot"]["timestamp"],
-                  "build_environment": {}, "packages": entries, "checks": [], "hardware_ready": False}
+                  "build_environment": {"patch_receipt": {"component": "rtlsdr", "patch_sha256": patch_sha}},
+                  "packages": entries, "checks": [], "hardware_ready": False}
         record.update(overrides)
-        path = self.root / ("record-%d.json" % len(list(self.root.glob("record-*.json"))))
+        path = directory / "rtlsdr.build-record.json"
         path.write_text(json.dumps(record), encoding="utf-8")
         return path
 
@@ -182,7 +286,7 @@ class SignedRepositoryTests(unittest.TestCase):
     def test_kernel_firmware_policy_and_non_lab_packages_are_refused(self):
         for name, needle in (("linux-image-6.18.2-4-qcom", "kernel, bootloader"), ("edk2-qcs6490", "kernel, bootloader"),
                              ("radxa-firmware-qcs6490", "kernel, bootloader"), ("wsjtx", "receive-only policy forbids")):
-            packages = [(name, RTL["version"], b"synthetic " + name.encode())]
+            packages = [(name, RTL["version"], make_deb({"usr/share/doc/%s/README" % name: b"synthetic"}))]
             self.refused(needle, self.publish(packages=packages), [self.record(packages=packages)])
         # The record must carry the locked +labN version, so the version rule is shown on its own.
         with patch.object(deploy, "LAB_BUILD", re.compile(r"(?!)")):
@@ -207,6 +311,63 @@ class SignedRepositoryTests(unittest.TestCase):
         self.refused("40-hex fingerprint", repo, [record], fingerprint="SR-RX")
         self.refused("not a good signature", repo, [record], fingerprint=self.other)
 
+    def test_package_contents_follow_the_receive_only_rules_whatever_the_name(self):
+        # The real liblimesuiteng/limesuiteng-soapysdr trees (CI run 40114793589), and a renamed copy.
+        for name, files in (("liblimesuiteng", {LIB + "liblimesuiteng.so.0.3-1": b"\x7fELF lime"}),
+                            ("limesuiteng-soapysdr", {LIB + "SoapySDR/modules0.8/liblimesuitengSupport.so": b"\x7fELF module"}),
+                            ("librtlsdr-extras", {LIB + "liblimesuiteng.so.0.3-1": b"\x7fELF lime"}),
+                            ("soapysdr-module-x", {LIB + "SoapySDR/modules0.8/libremoteSupport.so": b"\x7fELF remote"}),
+                            ("librtlsdr-tools", {"usr/bin/rtl_tcp": b"\x7fELF tcp"})):
+            packages = [(name, RTL["version"], make_deb(files))]
+            with self.subTest(name):
+                self.refused("receive-only policy refuses the contents of " + name, self.publish(packages=packages), [self.record(packages=packages)])
+        self.refused("not a .deb", self.publish(packages=[("librtlsdr2", RTL["version"], b"opaque")]),
+                     [self.record(packages=[("librtlsdr2", RTL["version"], b"opaque")])])
+
+    def test_record_needs_the_reviewed_recipe_and_patch_of_this_tree(self):
+        repo = self.publish()
+        self.refused("another recipe", repo, [self.record(recipe_sha256="0" * 64)])
+        self.refused("patch differs", repo, [self.record(build_environment={"patch_receipt": {"patch_sha256": "0" * 64}})])
+        self.refused("patch differs", repo, [self.record(build_environment={})])
+
+    def reviewed_manifest(self, files, links):
+        """The REVIEWED verify_build manifest a reviewer would write for this package tree."""
+        with tempfile.TemporaryDirectory(prefix="srrx-manifest-") as temporary:
+            (Path(temporary) / "p.deb").write_bytes(make_deb(files, links))
+            deploy.deb_data_tree(Path(temporary) / "p.deb", Path(temporary) / "root")
+            root = Path(temporary) / "root"
+            listed = {p.relative_to(root).as_posix(): deploy.sha(p) for p in sorted(root.rglob("*")) if p.is_file()}
+        doc = "usr/share/doc/librtlsdr2/"
+        evidence = {name: {"status": "PASS", "report": {"path": doc + name + ".json", "sha256": listed.get(doc + name + ".json")}}
+                    for name in ("source_audit", "tx_negative_tests")}
+        return {"schema_version": 1, "status": "REVIEWED", "files": listed, "allowed_modules": sorted(f for f in listed if ".so" in f),
+                **evidence}
+
+    def test_release_path_needs_reviewed_records_and_verify_build_per_package(self):
+        doc = "usr/share/doc/librtlsdr2/"
+        files = {LIB + "librtlsdr.so.2.0.3": b"\x7fELF synthetic librtlsdr", doc + "source_audit.json": b'{"report": "synthetic source audit of the test"}\n',
+                 doc + "tx_negative_tests.json": b'{"report": "synthetic TX negative tests of the test"}\n'}
+        links = {LIB + "librtlsdr.so.2": "librtlsdr.so.2.0.3"}
+        packages = [("librtlsdr2", RTL["version"], make_deb(files, links))]
+        repo = self.publish(packages=packages)
+        manifest = self.reviewed_manifest(files, links)
+        record = self.record(packages=packages, manifests={"librtlsdr2": manifest}, status="REVIEWED")
+        result = self.verify(repo, [record], release=True)
+        self.assertEqual((result["status"], result["release_path"], result["packages"]), ("SIGNED_REPOSITORY_MATCHES_BUILD_RECORDS", True, 1))
+        self.assertFalse(self.verify(repo, [self.record(packages=packages)])["release_path"])  # CI path: CI records are enough
+        self.refused("REVIEWED build record", repo, [self.record(packages=packages, manifests={"librtlsdr2": manifest})], release=True)
+        self.refused("OPEN/unreviewed", repo, [self.record(packages=packages, status="REVIEWED")], release=True)
+        changed = self.record(packages=packages, manifests={"librtlsdr2": manifest}, status="REVIEWED")
+        (changed.parent / "librtlsdr2.build-manifest.json").write_text(json.dumps(dict(manifest, files={})), encoding="utf-8")
+        self.refused("build manifest differs from the build record", repo, [changed], release=True)
+        other = dict(manifest, files=dict(manifest["files"], **{LIB + "librtlsdr.so.2.0.3": "0" * 64}))
+        self.refused("staged file hashes", repo, [self.record(packages=packages, manifests={"librtlsdr2": other}, status="REVIEWED")], release=True)
+        # A -dev package links into the runtime package: it cannot pass verify_build on its own.
+        dev = [("librtlsdr-dev", RTL["version"], rtl_deb("librtlsdr-dev"))]
+        self.refused("not self-contained", self.publish(packages=dev),
+                     [self.record(packages=dev, manifests={"librtlsdr-dev": self.reviewed_manifest({"usr/include/rtl-sdr.h": b"/* synthetic header */\n"}, {})},
+                                  status="REVIEWED")], release=True)
+
 
 class ReleaseGuardRepositoryTests(unittest.TestCase):
     """release_guard verifies the signed repository instead of hashing one snapshot file."""
@@ -230,7 +391,7 @@ class ReleaseGuardRepositoryTests(unittest.TestCase):
         calls = []
         with patch.object(deploy, "validate_devices", return_value={}), patch.object(deploy, "doctor", return_value={"issues": []}), \
                 patch.object(commissioning, "load_acceptance", return_value={"hardware_unit_id": "SRRX-UNIT-TEST"}), \
-                patch.object(deploy, "verify_repo", side_effect=lambda *a: calls.append(a)), \
+                patch.object(deploy, "verify_repo", side_effect=lambda *a, **k: calls.append((a, k))), \
                 patch.object(deploy, "verify_cache"), patch.object(deploy, "verify_build"):
             result = deploy.release_guard(devices, self.root / "acceptance.json", self.root / "release.json", manifest, self.root / "cache")
         return result, calls
@@ -242,9 +403,10 @@ class ReleaseGuardRepositoryTests(unittest.TestCase):
                                    "build_records": [{"path": str(record), "sha256": deploy.sha(record)}]}
         result, calls = self.guard(snapshot)
         self.assertEqual(result["status"], "RELEASE_GUARDS_MATCH")
-        repo, keyring, fingerprint, records, sources, pinned, status = calls[0]
+        (repo, keyring, fingerprint, records, sources, pinned, status), options = calls[0]
         self.assertEqual((repo, fingerprint, pinned, status), ("/srv/srrx-repo/lab", "A" * 40, "b" * 64, Path("/var/lib/dpkg/status")))
         self.assertEqual(len(records), 1)
+        self.assertEqual(options, {"release": True})  # REVIEWED records and verify_build per package on this path
 
     def test_hash_only_snapshot_and_changed_record_are_refused(self):
         with self.assertRaisesRegex(deploy.DeploymentError, "offline package snapshot"):

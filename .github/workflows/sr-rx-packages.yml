@@ -2,10 +2,12 @@ name: SR-RX lab packages
 
 # Builds +lab .deb packages from sat-receiver-audit/deployment/recipes on native arm64
 # (ubuntu-24.04-arm): a fresh noble arm64 chroot per recipe from the snapshot.ubuntu.com
-# timestamp locked in deployment/sources.lock.json, with no network while upstream code
-# configures and compiles (unshare --net). The packages go into a throwaway aptly repository
-# signed by a CI-only TEST key and are checked with deploy.py verify-repo and tamper cases.
-# The sources job re-fetches the locked source bytes and re-derives the signed Ubuntu pins.
+# timestamp locked in deployment/sources.lock.json, trusting only the pinned archive key, with
+# no network while upstream code configures and compiles (unshare --net). The packages without a
+# receive-only finding go into a throwaway aptly repository signed by a CI-only TEST key and are
+# checked with deploy.py verify-repo and tamper cases; the held-back ones (Lime while Lime is
+# disabled) must be refused in a second repository. The sources job re-fetches the locked
+# source bytes and re-derives the signed Ubuntu pins.
 # CI evidence only: nothing here reviews a build, tests hardware or is a release signature.
 
 # A workflow_dispatch-only file cannot be dispatched before it reaches the default branch, so
@@ -16,7 +18,9 @@ on:
     paths:
       - 'sat-receiver-audit/deployment/recipes/**'
       - 'sat-receiver-audit/deployment/repo/**'
+      - 'sat-receiver-audit/deployment/deploy.py'
       - 'sat-receiver-audit/deployment/fetch_sources.py'
+      - 'sat-receiver-audit/deployment/receive-only-policy.json'
       - 'sat-receiver-audit/deployment/sources.lock.json'
       - 'sat-receiver-audit/deployment/source-cache-verification.json'
       - '.github/workflows/sr-rx-packages.yml'
@@ -27,7 +31,7 @@ on:
         type: string
         default: 'rtlsdr,limesuiteng'
       repeat:
-        description: 'Build every recipe twice in the same paths and compare the .deb SHA-256'
+        description: 'Build every recipe twice in the same paths; differing .deb SHA-256 fail the job'
         type: boolean
         default: true
       all_sources:
@@ -42,8 +46,11 @@ concurrency:
   group: sr-rx-packages-${{ github.ref }}
   cancel-in-progress: true
 
+# shell: bash makes GitHub run every step as `bash --noprofile --norc -eo pipefail {0}`: a check
+# piped into tee fails the step with its own exit status (the "pipefail canary" step proves it).
 defaults:
   run:
+    shell: bash
     working-directory: sat-receiver-audit
 
 env:
@@ -89,9 +96,11 @@ jobs:
           python3 deployment/fetch_sources.py fetch --cache "$RUNNER_TEMP/cache" --sources-only $documented ${{ steps.select.outputs.args }} --report "$RUNNER_TEMP/fetch-report.json"
       - name: deploy.py verify-cache (sources only)
         run: python3 deployment/deploy.py verify-cache --cache "$RUNNER_TEMP/cache" --sources-only ${{ steps.select.outputs.args }} | tee "$RUNNER_TEMP/verify-cache.json"
-      - name: Archive contents equal the locked commit trees
-        run: python3 deployment/fetch_sources.py tree --cache "$RUNNER_TEMP/cache" | tee "$RUNNER_TEMP/trees.json"
-      - name: Ubuntu pins equal the gpgv-verified snapshot indices
+      - name: Archive contents equal the locked commit trees (non-git archives listed as skipped, with the reason)
+        run: python3 deployment/fetch_sources.py tree --cache "$RUNNER_TEMP/cache" ${{ steps.select.outputs.args }} | tee "$RUNNER_TEMP/trees.json"
+      # Independent of the fetched cache: every suite's InRelease and all four Ubuntu pins are derived
+      # again from the signed snapshot, whatever all_sources selects.
+      - name: Ubuntu pins and every suite InRelease equal the gpgv-verified snapshot
         run: python3 deployment/fetch_sources.py verify-debian --keyring "$UBUNTU_KEYRING" --work "$RUNNER_TEMP/apt-indices" | tee "$RUNNER_TEMP/verify-debian.json"
       - name: source-cache-verification.json reproduces from the fetched cache
         if: env.ALL_SOURCES == 'true'
@@ -183,15 +192,29 @@ jobs:
             echo "::endgroup::"
           done
           ls -l "$RUNNER_TEMP"/debs/*/
-      - name: Packages match their build records and stay OPEN for verify_build
+      - name: Packages match their build records, carry shlibs/triggers and stay OPEN for verify_build
         run: python3 deployment/repo/check_repo.py packages --out "$RUNNER_TEMP/debs" | tee "$RUNNER_TEMP/debs/packages-check.json"
-      - name: Reproducibility (same paths, same SOURCE_DATE_EPOCH)
+      - name: Reproducibility (same paths, same SOURCE_DATE_EPOCH; a difference fails)
         run: |
-          python3 - "$RUNNER_TEMP/debs" <<'EOF' | tee -a "$GITHUB_STEP_SUMMARY"
+          python3 - "$RUNNER_TEMP/debs" "$LAB_BUILDS" "$REPEAT" <<'EOF' | tee -a "$GITHUB_STEP_SUMMARY"
           import json, pathlib, sys
-          for path in sorted(pathlib.Path(sys.argv[1]).glob("*/*.reproducibility.json")):
-              record = json.load(open(path))
-              print("-", record["component"], "reproducible:", record["reproducible"])
+          records = {json.load(open(p))["component"]: json.load(open(p)) for p in sorted(pathlib.Path(sys.argv[1]).glob("*/*.reproducibility.json"))}
+          builds = sorted(b.strip() for b in sys.argv[2].split(",") if b.strip())
+          assert sorted(records) == builds, ("reproducibility records", sorted(records), builds)
+          for component, record in sorted(records.items()):
+              print("-", component, "reproducible:", record["reproducible"])
+              if sys.argv[3] == "true":
+                  assert record["reproducible"] is True and record["first_debs"] == record["debs"], component + " is not reproducible"
+          EOF
+      - name: Packages that may enter the lab repository (the others are held back with their findings)
+        run: |
+          python3 deployment/repo/check_repo.py publishable --out "$RUNNER_TEMP/debs" | tee "$RUNNER_TEMP/debs/publishable.json"
+          python3 - "$RUNNER_TEMP/debs/publishable.json" <<'EOF' | tee -a "$GITHUB_STEP_SUMMARY"
+          import json, sys
+          selection = json.load(open(sys.argv[1]))
+          print("- lab repository:", ", ".join(p.rsplit("/", 1)[-1] for p in selection["publish"]))
+          for item in selection["held_back"]:
+              print("- held back:", item["package"], "-", "; ".join(item["findings"]))
           EOF
       - name: Throwaway TEST signing keys (exist only in this job)
         run: |
@@ -204,29 +227,42 @@ jobs:
           gpg --batch --export "$fpr" > "$RUNNER_TEMP/srrx-lab-TEST.gpg"
           gpg --batch --export "$wrong" > "$RUNNER_TEMP/srrx-lab-WRONG.gpg"
           echo "TEST_FPR=$fpr" >> "$GITHUB_ENV"
-      - name: Publish a test-signed aptly repository
+      - name: Publish a test-signed aptly repository (publishable packages) and one with every package (tamper case)
         run: |
           export GNUPGHOME="$RUNNER_TEMP/gnupg-test"
-          sh deployment/repo/publish.sh "$RUNNER_TEMP/aptly" "$TEST_FPR" "$RUNNER_TEMP"/debs/*/*.deb
+          mapfile -t publish < <(python3 -c 'import json, sys; print("\n".join(json.load(open(sys.argv[1]))["publish"]))' "$RUNNER_TEMP/debs/publishable.json")
+          sh deployment/repo/publish.sh "$RUNNER_TEMP/aptly" "$TEST_FPR" "${publish[@]}"
+          sh deployment/repo/publish.sh "$RUNNER_TEMP/aptly-all" "$TEST_FPR" "$RUNNER_TEMP"/debs/*/*.deb
       - name: deploy.py verify-repo
         run: |
           records=""
           for r in "$RUNNER_TEMP"/debs/*/*.build-record.json; do records="$records --build-record $r"; done
           python3 deployment/deploy.py verify-repo --repo "$RUNNER_TEMP/aptly/public" --keyring "$RUNNER_TEMP/srrx-lab-TEST.gpg" \
             --fingerprint "$TEST_FPR" $records --sources-entry deployment/repo/srrx-lab.sources | tee "$RUNNER_TEMP/verify-repo.json"
+      - name: Pipefail canary (a refused verify-repo piped into tee must fail its pipeline)
+        run: |
+          records=""
+          for r in "$RUNNER_TEMP"/debs/*/*.build-record.json; do records="$records --build-record $r"; done
+          if python3 deployment/deploy.py verify-repo --repo "$RUNNER_TEMP/aptly/public" --keyring "$RUNNER_TEMP/srrx-lab-WRONG.gpg" \
+              --fingerprint "$TEST_FPR" $records --sources-entry deployment/repo/srrx-lab.sources 2>&1 | tee "$RUNNER_TEMP/pipefail-canary.txt"; then
+            echo "::error::a wrong keyring passed through tee: pipefail is not in effect, piped checks cannot fail this job"
+            exit 1
+          fi
+          grep -q "not a good signature" "$RUNNER_TEMP/pipefail-canary.txt"
+          echo "pipefail canary: wrong keyring refused and the pipeline failed (shell: $SHELLOPTS)"
       - name: Tampered copies are refused
         run: |
           records=""
           for r in "$RUNNER_TEMP"/debs/*/*.build-record.json; do records="$records --build-record $r"; done
           python3 deployment/repo/check_repo.py tamper --repo "$RUNNER_TEMP/aptly/public" --keyring "$RUNNER_TEMP/srrx-lab-TEST.gpg" \
             --wrong-keyring "$RUNNER_TEMP/srrx-lab-WRONG.gpg" --fingerprint "$TEST_FPR" $records \
-            --sources-entry deployment/repo/srrx-lab.sources | tee "$RUNNER_TEMP/tamper.json"
-      - name: Staged root with the lab packages through selftest --profile full (reported, not a gate)
-        shell: bash
+            --sources-entry deployment/repo/srrx-lab.sources --full-repo "$RUNNER_TEMP/aptly-all/public" | tee "$RUNNER_TEMP/tamper.json"
+      - name: Staged root with the publishable lab packages through selftest --profile full (reported, not a gate)
         run: |
           python3 deployment/deploy.py stage --dest "$RUNNER_TEMP/stage" > /dev/null
           root="$RUNNER_TEMP/stage/rootfs"
-          for deb in "$RUNNER_TEMP"/debs/*/*.deb; do dpkg-deb -x "$deb" "$root"; done
+          mapfile -t publish < <(python3 -c 'import json, sys; print("\n".join(json.load(open(sys.argv[1]))["publish"]))' "$RUNNER_TEMP/debs/publishable.json")
+          for deb in "${publish[@]}"; do dpkg-deb -x "$deb" "$root"; done
           install -D -m 644 deployment/repo/lab.pref "$root/etc/apt/preferences.d/lab.pref"
           install -D -m 644 deployment/repo/srrx-lab.sources "$root/etc/apt/sources.list.d/srrx-lab.sources"
           install -D -m 644 "$RUNNER_TEMP/srrx-lab-TEST.gpg" "$root/usr/share/keyrings/srrx-lab.gpg"
@@ -249,6 +285,7 @@ jobs:
             ${{ runner.temp }}/host-tools.txt
             ${{ runner.temp }}/debs
             ${{ runner.temp }}/verify-repo.json
+            ${{ runner.temp }}/pipefail-canary.txt
             ${{ runner.temp }}/tamper.json
             ${{ runner.temp }}/selftest-full.json
             ${{ runner.temp }}/selftest-full-summary.json

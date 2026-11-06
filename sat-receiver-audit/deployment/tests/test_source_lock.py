@@ -53,6 +53,11 @@ class LockShapeTests(unittest.TestCase):
         self.assertEqual(set(snapshot["signing_fingerprints"]), {f for r in guest["signed_releases"] for f in r["signing_fingerprints"]})
         noble = next(r for r in snapshot["releases"] if r["suite"] == "noble")
         self.assertEqual(noble["inrelease_sha256"], next(r for r in guest["signed_releases"] if r["suite"] == "noble")["sha256"])
+        # Every suite the builder chroot uses is pinned, noble-security too (no Ubuntu pin comes from it).
+        self.assertEqual([r["suite"] for r in snapshot["releases"]], snapshot["suites"])
+        for release in snapshot["releases"]:
+            self.assertRegex(release["inrelease_sha256"], "^[0-9a-f]{64}$")
+            self.assertGreater(release["size"], 0)
         for cid in ("gnuradio", "volk", "gpsd", "chrony"):
             component = next(c for c in LOCK["components"] if c["id"] == cid)
             debian = component["debian_source"]
@@ -203,6 +208,28 @@ class DownloadTests(unittest.TestCase):
             fetch_sources.fetch(self.root / "cache", ["rtlsdr"], include_core=False, lock=lock)
 
 
+class TreeSelectionTests(unittest.TestCase):
+    """verify_trees: selected non-git archives are reported as skipped with a reason, never silently."""
+
+    def test_skipped_components_carry_their_reason(self):
+        with tempfile.TemporaryDirectory(prefix="srrx-tree-select-") as temporary:
+            result = fetch_sources.verify_trees(temporary, ["gpsd", "wsjt-decoders"])
+            self.assertEqual(result["components"], [])
+            self.assertEqual(set(result["skipped"]), {"gpsd", "wsjt-decoders"})
+            self.assertIn("verify-debian", result["skipped"]["gpsd"])
+            self.assertIn("release tarball", result["skipped"]["wsjt-decoders"])
+            resolved = [c for c in LOCK["components"] if c["source_archive_sha256"] is not None]
+            # Every resolved component either has a tree or a reason: the full selection never fails on a gap.
+            self.assertEqual({c["id"] for c in resolved if not c.get("git_tree_sha1")},
+                             {c["id"] for c in resolved if fetch_sources.tree_exemption(c)})
+            lock = copy.deepcopy(LOCK)
+            del next(c for c in lock["components"] if c["id"] == "rtlsdr")["git_tree_sha1"]
+            with self.assertRaisesRegex(fetch_sources.FetchError, "git archive has no recorded git_tree_sha1: rtlsdr"):
+                fetch_sources.verify_trees(temporary, ["rtlsdr"], lock=lock)
+            with self.assertRaisesRegex(fetch_sources.FetchError, "unknown source component"):
+                fetch_sources.verify_trees(temporary, ["made-up"])
+
+
 @unittest.skipUnless(shutil.which("git"), "git not available")
 class GitTreeTests(unittest.TestCase):
     def test_archive_tree_equals_git_tree_with_modes_symlinks_and_gitlinks(self):
@@ -293,11 +320,27 @@ class SignedSnapshotTests(unittest.TestCase):
         chrony = next(c for c in lock["components"] if c["id"] == "chrony")
         for key in ("debian_source", "binary_debs", "source_archive_sha256", "source_cache_path"):
             chrony[key] = derived[key]
-        lock["apt_snapshot"]["releases"], lock["apt_snapshot"]["indices"] = derived["releases"], derived["indices"]
+        lock["apt_snapshot"]["indices"] = derived["indices"]
+        lock["apt_snapshot"]["releases"] = [fetch_sources.signed_release(lock["apt_snapshot"], suite, self.keyring, self.root / "rel")[0]
+                                            for suite in lock["apt_snapshot"]["suites"]]
+        self.assertEqual([r for r in lock["apt_snapshot"]["releases"] if r["suite"] == "noble-updates"], derived["releases"])
         self.assertEqual(fetch_sources.verify_debian(lock, self.keyring, self.root / "work2", ["chrony"])["status"], "DEBIAN_PINS_MATCH_SIGNED_SNAPSHOT")
         chrony["binary_debs"][0]["sha256"] = "1" * 64
         with self.assertRaisesRegex(fetch_sources.FetchError, "differs from the lock"):
             fetch_sources.verify_debian(lock, self.keyring, self.root / "work3", ["chrony"])
+
+    def test_every_suite_inrelease_is_compared_with_the_lock(self):
+        lock = self.snapshot()
+        snapshot = lock["apt_snapshot"]
+        snapshot["releases"] = [fetch_sources.signed_release(snapshot, s, self.keyring, self.root / "rel")[0] for s in snapshot["suites"]]
+        self.assertEqual(fetch_sources.verify_releases(lock, self.keyring, self.root / "v1"), snapshot["releases"])
+        security = self.root / "snapshot/20990101T000000Z/dists/noble-security/InRelease"
+        security.write_bytes(self.keys.clearsign(self.fpr, "Origin: Ubuntu\nSuite: noble-security\nCodename: noble\nSHA256:\n " + "0" * 64 + " 1 x\n"))
+        with self.assertRaisesRegex(fetch_sources.FetchError, "InRelease differs from the lock: noble-security"):
+            fetch_sources.verify_releases(lock, self.keyring, self.root / "v2")
+        snapshot["releases"] = snapshot["releases"][:2]
+        with self.assertRaisesRegex(fetch_sources.FetchError, "each suite exactly once"):
+            fetch_sources.verify_releases(lock, self.keyring, self.root / "v3")
 
     def test_unsigned_or_tampered_index_is_refused(self):
         lock = self.snapshot()

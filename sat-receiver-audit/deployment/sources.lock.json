@@ -39,7 +39,7 @@
       "F6ECB3762474EDA9D21B7022871920D1991BC93C"
     ],
     "resolved_on": "2026-10-24",
-    "method": "deployment/fetch_sources.py resolve-debian: gpgv of each suite InRelease against the keyring and the pinned fingerprint, the signed SHA256 list for Sources.xz/Packages.xz, then Checksums-Sha256 of the exact source version and SHA256 of every arm64/all binary built from it. The same timestamp is the lab builder chroot snapshot (.github/workflows/sr-rx-packages.yml).",
+    "method": "deployment/fetch_sources.py resolve-debian: gpgv of each suite InRelease against the keyring and the pinned fingerprint, the signed SHA256 list for Sources.xz/Packages.xz, then Checksums-Sha256 of the exact source version and SHA256 of every arm64/all binary built from it. The same timestamp is the lab builder chroot snapshot (.github/workflows/sr-rx-packages.yml). releases records every suite: noble-security holds none of the four pins, but the builder chroot uses it, so its InRelease (fetched 2026-11-06, one signature by F6ECB376...C93C) is pinned too; verify-debian and lab_build.py compare each suite against it.",
     "releases": [
       {
         "suite": "noble",
@@ -50,6 +50,11 @@
         "suite": "noble-updates",
         "inrelease_sha256": "52bb7e89f40f411a401f8b1954098b5775a7d0d497dec182f323f4bc009612d0",
         "size": 126125
+      },
+      {
+        "suite": "noble-security",
+        "inrelease_sha256": "7f81a77abbf23458062d0bc98e868e00b4392de0c78d339e58f548e8ff64245b",
+        "size": 126127
       }
     ],
     "indices": [
