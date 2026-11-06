@@ -6,6 +6,7 @@ temporary directory behind a stand-in for StorageGuard (the real guard needs an 
 import contextlib
 import errno
 import hashlib
+import io
 import json
 import os
 from pathlib import Path
@@ -245,13 +246,22 @@ class MetadataTests(unittest.TestCase):
             bb.validate_metadata(extra)
 
 
-class DirGuard:
-    """StorageGuard stand-in over a temporary directory: check() and open_directory() only."""
+# Illustrative sysfs paths (shape of /sys/dev/block/<major>:<minor> resolved on an arm64 SoC; not
+# read from the Q6A): the internal UFS host, a USB mass-storage disk (the T7) and an SD/MMC card.
+SYSFS_UFS = "/sys/devices/platform/soc@0/1d84000.ufshc/host0/target0:0:0/0:0:0:0/block/sda/sda7"
+SYSFS_USB = ("/sys/devices/platform/soc@0/a600000.usb/a600000.usb/xhci-hcd.0.auto/usb2/2-1/2-1:1.0/host1/"
+             "target1:0:0/1:0:0:0/block/sdb/sdb1")
+SYSFS_MMC = "/sys/devices/platform/soc@0/8804000.mmc/mmc_host/mmc1/mmc1:aaaa/block/mmcblk1/mmcblk1p1"
 
-    def __init__(self, root):
+
+class DirGuard:
+    """StorageGuard stand-in over a temporary directory: check(), open_directory() and identity only."""
+
+    def __init__(self, root, major=8, minor=7):
         self.root = Path(root)
-        (self.root / bb.CLASS_DIR).mkdir(parents=True)
+        (self.root / bb.CLASS_DIR).mkdir(parents=True, exist_ok=True)
         self.revoked, self.checks = False, 0
+        self.identity = {"root": str(self.root), "major": major, "minor": minor}
 
     def check(self):
         self.checks += 1
@@ -263,10 +273,54 @@ class DirGuard:
         return os.open(self.root / path, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
 
 
+def internal_data(case, root, sysfs=SYSFS_UFS):
+    """Make root stand for DATA_ROOT on an internal (UFS) block device for one test."""
+    for name, value in (("DATA_ROOT", str(Path(root))), ("_sysfs_block_path", lambda major, minor: sysfs)):
+        patcher = mock.patch.object(bb, name, value)
+        patcher.start()
+        case.addCleanup(patcher.stop)
+
+
+class InternalStorageTests(unittest.TestCase):
+    """STACK.md:977: no export, so never a store on the removable T7 or a card (finding S3)."""
+
+    def setUp(self):
+        temp = tempfile.TemporaryDirectory(prefix="srrx-bb-")
+        self.addCleanup(temp.cleanup)
+        self.root = temp.name
+
+    def test_only_the_internal_data_partition_is_a_store(self):
+        self.assertEqual(bb.DATA_ROOT, "/data")
+        internal_data(self, self.root)
+        self.assertIsInstance(bb.BasebandStore(DirGuard(self.root)), bb.BasebandStore)
+        elsewhere = tempfile.TemporaryDirectory(prefix="srrx-t7-")  # e.g. /media/T7: a guard rooted elsewhere
+        self.addCleanup(elsewhere.cleanup)
+        with self.assertRaisesRegex(bb.BasebandRefused, "BASEBAND_STORAGE_NOT_INTERNAL_DATA"):
+            bb.BasebandStore(DirGuard(elsewhere.name))
+        for sysfs in (SYSFS_USB, SYSFS_MMC, "/sys/dev/block/8:7", ""):
+            with self.subTest(sysfs=sysfs), mock.patch.object(bb, "_sysfs_block_path", lambda major, minor: sysfs):
+                with self.assertRaisesRegex(bb.BasebandRefused, "BASEBAND_STORAGE_NOT_INTERNAL_DATA"):
+                    bb.BasebandStore(DirGuard(self.root))
+        unbound = DirGuard(self.root)
+        unbound.identity = {"root": self.root}  # no block identity: refused, never assumed internal
+        with self.assertRaisesRegex(bb.BasebandRefused, "BASEBAND_STORAGE_NOT_INTERNAL_DATA"):
+            bb.BasebandStore(unbound)
+
+    @unittest.skipUnless(POSIX, "labrx needs Linux")
+    def test_labrx_refuses_a_baseband_plan_on_another_storage_root(self):
+        stderr = io.StringIO()
+        with contextlib.redirect_stderr(stderr):
+            code = labrx.main(["--hardware", "--storage-root", "/media/T7", "--storage-device", "/dev/sdb1",
+                               "--baseband-plan", "/var/lib/srrx/plans/0123456789abcdef.json"])
+        self.assertEqual(code, 2)
+        self.assertIn("BASEBAND_STORAGE_NOT_INTERNAL_DATA", stderr.getvalue())
+
+
 class StoreCase(unittest.TestCase):
     def setUp(self):
         temp = tempfile.TemporaryDirectory(prefix="srrx-bb-")
         self.addCleanup(temp.cleanup)
+        internal_data(self, temp.name)
         self.guard = DirGuard(temp.name)
         self.now = [AOS - 50.0]
         self.store = bb.BasebandStore(self.guard, clock=lambda: self.now[0])
@@ -448,6 +502,22 @@ class RunBasebandTests(StoreCase):
         live = np.frombuffer(b"".join(made[0].sent), "<c8")
         self.assertTrue(np.array_equal(live, bb.ci16_to_cf32(np.frombuffer(data, "<i2"))))
         self.assertTrue(made[0].closed)
+
+    def test_blocks_before_the_window_start_never_reach_the_file(self):
+        # Start check at AOS-64 s (inside EARLY_START_S), then 1 s per block: AOS-63, -62 and -61 s
+        # are before start_unix_s = AOS-60 s and carry another in-window tone; AOS-60 .. AOS+60 s
+        # (121 blocks) are recorded and the block at AOS+61 s ends the file (finding S11).
+        early = [tone(-30_000.0, seconds=8192 / bb.INPUT_RATE_HZ, amplitude=0.8, phase=k * 8192) for k in range(3)]
+        inside = list(blocks(count=130))
+        result = self.run_pass(clock=SyntheticClock(AOS - 64.0, 1.0), synthetic=iter(early + inside))
+        self.assertEqual(result["stop_reason"], "WINDOW_END")
+        rid = result["recording_id"]
+        data = np.frombuffer((self.cls / (rid + ".sigmf-data")).read_bytes(), "<i2")
+        chain = bb.ChannelChain(window(duration=0.0))
+        expected = np.concatenate([chain.push(samples) for samples in inside[:121]] + [chain.flush()])
+        self.assertTrue(np.array_equal(data, expected.astype("<i2")))  # the filter never saw an early block
+        meta, unused = self.store.load(rid)
+        self.assertEqual(meta["global"]["srrx:created_utc"], bb.iso_utc(AOS - 60.0))
 
     def test_unverified_utc_refuses_and_writes_nothing(self):
         with self.assertRaisesRegex(ValueError, "UTC_NOT_VERIFIED"):

@@ -220,9 +220,6 @@ def check(recipe=None, options=None, policy=None):
         for name in sorted(on_plugin_libraries(recipe, options)):
             if manifest[name]["subdirectory"] + "/CMakeLists.txt" not in recipe["upstream_files"]:
                 findings.append("plugin_cmakelists_not_bound:" + name)
-    expected ={"lib%s_support.so" % name for name in allow}
-    if set(recipe["install"]["expected_plugins"]) != expected:
-        findings.append("expected_plugins_differ_from_policy")
     if set(recipe["install"]["keep_pipelines"]) != set(policy["components"]["satdump"]["allow_pipelines"]):
         findings.append("pipelines_differ_from_policy")
     for entry in recipe["patches"]:

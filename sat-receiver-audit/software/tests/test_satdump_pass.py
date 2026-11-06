@@ -3,7 +3,6 @@
 No SatDump binary runs here: the unit runner is replaced, and the products are synthetic PNGs.
 """
 from datetime import datetime, timezone
-import errno
 import json
 import os
 from pathlib import Path
@@ -171,16 +170,47 @@ class CommandTests(unittest.TestCase):
         with self.assertRaises(sp.PassRefused):
             sp.unit_properties("record", self.IDENT, work_dir="/data/x")
 
+    @unittest.skipUnless(os.name == "posix", "absolute POSIX unit paths and directory modes")
     def test_live_command_is_a_localhost_unit_bounded_by_the_window(self):
-        ident, work, argv = sp.live_command(self.window(), 8877, ident=self.IDENT)
-        self.assertEqual((ident, str(work)), (self.IDENT, "/data/products/satdump/.satdump-" + self.IDENT))
-        split = argv.index("--")
-        self.assertIn("--unit=srrx-satdump-live-" + self.IDENT, argv[:split])
-        self.assertIn("IPAddressAllow=localhost", argv[:split])
-        self.assertIn("RuntimeMaxSec=%d" % (840 + sp.LIVE_EXTRA_S), argv[:split])
-        self.assertEqual(argv[split + 1:split + 4], ["/usr/bin/satdump", "legacy", "live"])
-        self.assertEqual(argv[split + 5], str(work / "out"))
-        self.assertEqual(len(sp.live_command(self.window(), 8877)[0]), 16)
+        with tempfile.TemporaryDirectory(prefix="srrx-live-") as directory:
+            root = Path(directory).resolve()
+            products = root / "products/satdump"
+            products.mkdir(parents=True)
+            with mock.patch.object(sp, "DATA_ROOT", str(root)):  # the units' /data is this directory here
+                ident, work, argv = sp.live_command(self.window(), 8877, ident=self.IDENT, products_root=products)
+                self.assertEqual((ident, work), (self.IDENT, products / (".satdump-" + self.IDENT)))
+                # BindPaths= needs the work dir: live_command makes it, 2770 whatever the umask (finding S4).
+                self.assertEqual(stat.S_IMODE(os.lstat(work).st_mode), sp.WORK_MODE)
+                split = argv.index("--")
+                self.assertIn("--unit=srrx-satdump-live-" + self.IDENT, argv[:split])
+                self.assertIn("IPAddressAllow=localhost", argv[:split])
+                self.assertIn("BindPaths=" + str(work), argv[:split])
+                self.assertIn("RuntimeMaxSec=%d" % (840 + sp.LIVE_EXTRA_S), argv[:split])
+                self.assertEqual(argv[split + 1:split + 4], ["/usr/bin/satdump", "legacy", "live"])
+                self.assertEqual(argv[split + 5], str(work / "out"))
+                with self.assertRaisesRegex(sp.PassRefused, "OUTPUT_EXISTS"):
+                    sp.live_command(self.window(), 8877, ident=self.IDENT, products_root=products)
+                self.assertEqual(len(sp.live_command(self.window(), 8877, products_root=products)[0]), 16)
+
+    @unittest.skipUnless(os.name == "posix", "umask and setgid directories need POSIX")
+    def test_work_dir_is_2770_under_any_umask(self):
+        with tempfile.TemporaryDirectory(prefix="srrx-work-") as directory:
+            for index, mask in enumerate((0o022, 0o077, 0o000)):
+                previous = os.umask(mask)
+                try:
+                    work = sp.make_work_dir(Path(directory) / ("w%d" % index))
+                finally:
+                    os.umask(previous)
+                with self.subTest(umask=oct(mask)):
+                    self.assertEqual(stat.S_IMODE(os.lstat(work).st_mode), 0o2770)
+            # The setgid bit cannot be kept (a parent group the caller is not in): refused, and nothing is left.
+            chmod = os.chmod
+            with mock.patch.object(sp.os, "chmod", lambda path, mode: chmod(path, mode & ~stat.S_ISGID)):
+                with self.assertRaisesRegex(sp.PassRefused, "WORK_DIR_MODE"):
+                    sp.make_work_dir(Path(directory) / "lost-setgid")
+            self.assertFalse((Path(directory) / "lost-setgid").exists())
+            with self.assertRaises(FileExistsError):
+                sp.make_work_dir(Path(directory) / "w0")
 
     def test_systemd_run_command_line(self):
         argv = sp.systemd_run_argv("decode", self.IDENT, ["A=1", "B=2"], ["/usr/bin/satdump", "x"])
@@ -197,6 +227,54 @@ class CommandTests(unittest.TestCase):
         self.assertIn("d /var/lib/srrx-satdump/empty 0555 root root -", tmp)
         self.assertIn("OnUnitActiveSec=15min", files["etc/systemd/system/srrx-baseband-sweep.timer"])
         self.assertIn("PrivateNetwork=yes", files["etc/systemd/system/srrx-baseband-sweep.service"])
+        self.assertIn("member of group srrx-satdump", tmp)  # labd reads the unit's PNGs and removes its tree
+
+    def sweep_service(self):
+        text = sp.sweep_units()["etc/systemd/system/srrx-baseband-sweep.service"]
+        keys = {}
+        for line in text.splitlines():
+            if "=" in line and not line.startswith(("#", "[")):
+                key, value = line.split("=", 1)
+                keys.setdefault(key, []).append(value)
+        return keys
+
+    def test_sweep_unit_lets_the_storage_guard_work(self):
+        # Finding S2: the guard needs PYTHONPATH honoured, /dev visible, the whole bound mount writable
+        # and no nested bind mount below it.
+        keys = self.sweep_service()
+        self.assertEqual(keys["ReadWritePaths"], [sp.DATA_ROOT])  # the mount itself, never a class-dir bind
+        self.assertEqual(keys["ProtectSystem"], ["strict"])
+        self.assertNotIn("PrivateDevices", keys)  # a private /dev hides /dev/disk/by-uuid and the mount source
+        self.assertEqual(keys["DevicePolicy"], ["closed"])
+        self.assertEqual((keys["User"], keys["Group"]), (["labd"], [sp.BASEBAND_GROUP]))
+        argv = shlex.split(keys["ExecStart"][0])
+        module = argv.index("-m")
+        self.assertEqual(argv[module + 1:module + 3], ["srrx.baseband", "sweep"])
+        self.assertEqual(argv[argv.index("--storage-root") + 1], sp.DATA_ROOT)
+        self.assertEqual(argv[argv.index("--storage-device") + 1], "${SRRX_BB_DEVICE}")
+        flags = argv[1:module]
+        self.assertFalse({"-I", "-E"} & set(flags), flags)  # both drop PYTHONPATH
+        environment = dict(item.split("=", 1) for item in keys["Environment"][0].split())
+        self.assertEqual(environment["PYTHONPATH"], "/opt/srrx/software")
+
+    def test_sweep_unit_interpreter_flags_import_the_module(self):
+        # The unit's own flags and Environment=, run here with this tree as /opt/srrx/software.
+        keys = self.sweep_service()
+        argv = shlex.split(keys["ExecStart"][0])
+        flags = argv[1:argv.index("-m")]
+        environment = dict(item.split("=", 1) for item in keys["Environment"][0].split())
+        environment.update(PYTHONPATH=str(SOFTWARE), PATH=os.environ.get("PATH", ""))
+        if os.name != "posix":
+            environment["SYSTEMROOT"] = os.environ.get("SYSTEMROOT", "")
+        run = lambda options: subprocess.run([sys.executable, *options, "-m", "srrx.baseband", "--help"],
+                                             cwd=os.path.abspath(os.sep), env=environment, capture_output=True,
+                                             timeout=60)
+        result = run(flags)
+        self.assertEqual(result.returncode, 0, result.stderr[-400:])
+        self.assertIn(b"sweep", result.stdout)
+        refused = run(["-I", "-B"])  # the old unit: -I implies -E and ignores PYTHONPATH
+        self.assertNotEqual(refused.returncode, 0)
+        self.assertIn(b"No module named", refused.stderr)
 
 
 @unittest.skipUnless(os.name == "posix", "subprocess pipes and selectors need POSIX")

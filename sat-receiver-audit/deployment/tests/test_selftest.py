@@ -617,6 +617,11 @@ class SelftestTests(unittest.TestCase):
             gate = self.check(self.run_check(rootfs=self.clean), "RX-S1")
         self.assertEqual(gate["status"], "FAIL")
         self.assertEqual(gate["findings"][0]["item"], "ais-public")
+        # Only satdump-weather may read UNAVAILABLE_*: every other gated preset must stay DISABLED_*.
+        unavailable = dict(decoder_policy.availability(), **{"egc-safetynet": "UNAVAILABLE_NO_ACCEPTED_INSTALLATION"})
+        with patch.object(decoder_policy, "availability", return_value=unavailable):
+            gate = self.check(self.run_check(rootfs=self.clean), "RX-S1")
+        self.assertEqual((gate["status"], gate["findings"][0]["item"]), ("FAIL", "egc-safetynet"))
         # satdump-weather is installation-gated: offline it reads UNAVAILABLE, and that passes.
         self.assertTrue(decoder_policy.availability()["satdump-weather"].startswith("UNAVAILABLE"))
         accepted = dict(decoder_policy.availability(), **{"satdump-weather": "LRPT_FILE_PRESET_ACCEPTED_FIXTURE"})
