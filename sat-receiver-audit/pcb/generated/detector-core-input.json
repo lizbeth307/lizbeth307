@@ -8,6 +8,11 @@
       "value": "100 nF X7R 10 V",
       "kind": "capacitor",
       "group": "DC detectors: common reference",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -26,17 +31,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "C4401",
       "value": "10 nF C0G 50 V",
       "kind": "capacitor",
       "group": "DC detectors: common reference",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H103JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C85973",
+      "alt_mpn": "TDK C1608C0G1H103J080AA",
       "pins": [
         {
           "number": "1",
@@ -55,17 +63,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "C4402",
       "value": "10 nF C0G 50 V",
       "kind": "capacitor",
       "group": "DC detectors: common reference",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H103JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C85973",
+      "alt_mpn": "TDK C1608C0G1H103J080AA",
       "pins": [
         {
           "number": "1",
@@ -84,17 +95,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "C4403",
       "value": "1 nF C0G 50 V",
       "kind": "capacitor",
       "group": "DC detectors: common reference",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H102JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77026",
+      "alt_mpn": "YAGEO CC0603JRNPO9BN102",
       "pins": [
         {
           "number": "1",
@@ -113,17 +127,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "C4404",
       "value": "1 nF C0G 50 V",
       "kind": "capacitor",
       "group": "DC detectors: common reference",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H102JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C77026",
+      "alt_mpn": "YAGEO CC0603JRNPO9BN102",
       "pins": [
         {
           "number": "1",
@@ -142,17 +159,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "C4405",
       "value": "10 nF C0G 50 V",
       "kind": "capacitor",
       "group": "DC detectors: common reference",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H103JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C85973",
+      "alt_mpn": "TDK C1608C0G1H103J080AA",
       "pins": [
         {
           "number": "1",
@@ -171,17 +191,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "C4406",
       "value": "10 nF C0G 50 V",
       "kind": "capacitor",
       "group": "DC detectors: common reference",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H103JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C85973",
+      "alt_mpn": "TDK C1608C0G1H103J080AA",
       "pins": [
         {
           "number": "1",
@@ -200,17 +223,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "C4410",
       "value": "100 nF X7R 10 V local decoupling",
       "kind": "capacitor",
       "group": "DC detectors: local power",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -232,17 +258,20 @@
       ],
       "sheet": "E4",
       "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "C4411",
       "value": "100 nF X7R 10 V local decoupling",
       "kind": "capacitor",
       "group": "DC detectors: local power",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -264,17 +293,20 @@
       ],
       "sheet": "E4",
       "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "C4412",
       "value": "100 nF X7R 10 V local decoupling",
       "kind": "capacitor",
       "group": "DC detectors: local power",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -296,17 +328,20 @@
       ],
       "sheet": "E4",
       "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "C4413",
       "value": "100 nF X7R 10 V local decoupling",
       "kind": "capacitor",
       "group": "DC detectors: local power",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -328,17 +363,20 @@
       ],
       "sheet": "E4",
       "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "C4414",
       "value": "100 nF X7R 10 V local decoupling",
       "kind": "capacitor",
       "group": "DC detectors: local power",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -360,17 +398,20 @@
       ],
       "sheet": "E4",
       "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "C4415",
       "value": "100 nF X7R 10 V local decoupling",
       "kind": "capacitor",
       "group": "DC detectors: local power",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -392,17 +433,20 @@
       ],
       "sheet": "E4",
       "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "C4416",
       "value": "100 nF X7R 10 V local decoupling",
       "kind": "capacitor",
       "group": "DC detectors: local power",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -424,17 +468,20 @@
       ],
       "sheet": "E4",
       "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "C4417",
       "value": "100 nF X7R 10 V local decoupling",
       "kind": "capacitor",
       "group": "DC detectors: local power",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
       "pins": [
         {
           "number": "1",
@@ -456,17 +503,20 @@
       ],
       "sheet": "E4",
       "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "C4421",
       "value": "10 nF C0G 50 V",
       "kind": "capacitor",
       "group": "DC detectors: UHF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H103JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C85973",
+      "alt_mpn": "TDK C1608C0G1H103J080AA",
       "pins": [
         {
           "number": "1",
@@ -485,17 +535,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "C4431",
       "value": "10 nF C0G 50 V",
       "kind": "capacitor",
       "group": "DC detectors: LBAND",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H103JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C85973",
+      "alt_mpn": "TDK C1608C0G1H103J080AA",
       "pins": [
         {
           "number": "1",
@@ -514,17 +567,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "C4441",
       "value": "10 nF C0G 50 V",
       "kind": "capacitor",
       "group": "DC detectors: HF",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "GRM1885C1H103JA01D",
+      "manufacturer": "Murata Electronics",
+      "lcsc": "C85973",
+      "alt_mpn": "TDK C1608C0G1H103J080AA",
       "pins": [
         {
           "number": "1",
@@ -543,17 +599,19 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "D450",
       "value": "BAV199 reference reverse-feed isolation",
       "kind": "diode",
       "group": "DC detectors: common reference",
+      "mpn": "BAV199,215",
+      "manufacturer": "Nexperia",
+      "lcsc": "C40919",
+      "alt_mpn": "Diodes Incorporated BAV199-7-F",
       "pins": [
         {
           "number": "1",
@@ -591,6 +649,10 @@
       "value": "BAV199 sense clamps",
       "kind": "diode",
       "group": "DC detectors: UHF",
+      "mpn": "BAV199,215",
+      "manufacturer": "Nexperia",
+      "lcsc": "C40919",
+      "alt_mpn": "Diodes Incorporated BAV199-7-F",
       "pins": [
         {
           "number": "1",
@@ -628,6 +690,10 @@
       "value": "BAV199 sense clamps",
       "kind": "diode",
       "group": "DC detectors: LBAND",
+      "mpn": "BAV199,215",
+      "manufacturer": "Nexperia",
+      "lcsc": "C40919",
+      "alt_mpn": "Diodes Incorporated BAV199-7-F",
       "pins": [
         {
           "number": "1",
@@ -665,6 +731,10 @@
       "value": "BAV199 sense clamps",
       "kind": "diode",
       "group": "DC detectors: HF",
+      "mpn": "BAV199,215",
+      "manufacturer": "Nexperia",
+      "lcsc": "C40919",
+      "alt_mpn": "Diodes Incorporated BAV199-7-F",
       "pins": [
         {
           "number": "1",
@@ -702,6 +772,10 @@
       "value": "AO3400A",
       "kind": "nfet",
       "group": "DC detectors: UHF",
+      "mpn": "AO3400A",
+      "manufacturer": "Alpha & Omega Semiconductor",
+      "lcsc": "C20917",
+      "alt_mpn": "BORN AO3400A",
       "pins": [
         {
           "number": "1",
@@ -739,6 +813,10 @@
       "value": "AO3400A",
       "kind": "nfet",
       "group": "DC detectors: UHF",
+      "mpn": "AO3400A",
+      "manufacturer": "Alpha & Omega Semiconductor",
+      "lcsc": "C20917",
+      "alt_mpn": "BORN AO3400A",
       "pins": [
         {
           "number": "1",
@@ -776,6 +854,10 @@
       "value": "AO3400A",
       "kind": "nfet",
       "group": "DC detectors: LBAND",
+      "mpn": "AO3400A",
+      "manufacturer": "Alpha & Omega Semiconductor",
+      "lcsc": "C20917",
+      "alt_mpn": "BORN AO3400A",
       "pins": [
         {
           "number": "1",
@@ -813,6 +895,10 @@
       "value": "AO3400A",
       "kind": "nfet",
       "group": "DC detectors: LBAND",
+      "mpn": "AO3400A",
+      "manufacturer": "Alpha & Omega Semiconductor",
+      "lcsc": "C20917",
+      "alt_mpn": "BORN AO3400A",
       "pins": [
         {
           "number": "1",
@@ -850,6 +936,10 @@
       "value": "AO3400A",
       "kind": "nfet",
       "group": "DC detectors: HF",
+      "mpn": "AO3400A",
+      "manufacturer": "Alpha & Omega Semiconductor",
+      "lcsc": "C20917",
+      "alt_mpn": "BORN AO3400A",
       "pins": [
         {
           "number": "1",
@@ -887,6 +977,10 @@
       "value": "AO3400A",
       "kind": "nfet",
       "group": "DC detectors: HF",
+      "mpn": "AO3400A",
+      "manufacturer": "Alpha & Omega Semiconductor",
+      "lcsc": "C20917",
+      "alt_mpn": "BORN AO3400A",
       "pins": [
         {
           "number": "1",
@@ -924,6 +1018,10 @@
       "value": "AO3400A",
       "kind": "nfet",
       "group": "DC detectors: common reference",
+      "mpn": "AO3400A",
+      "manufacturer": "Alpha & Omega Semiconductor",
+      "lcsc": "C20917",
+      "alt_mpn": "BORN AO3400A",
       "pins": [
         {
           "number": "1",
@@ -961,6 +1059,10 @@
       "value": "AO3400A",
       "kind": "nfet",
       "group": "DC detectors: common reference",
+      "mpn": "AO3400A",
+      "manufacturer": "Alpha & Omega Semiconductor",
+      "lcsc": "C20917",
+      "alt_mpn": "BORN AO3400A",
       "pins": [
         {
           "number": "1",
@@ -998,6 +1100,11 @@
       "value": "150 Ω 1% 0.125 W",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "SR0603FR-7T150RL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C873675",
+      "alt_mpn": "ROHM SDR03EZPF1500",
       "pins": [
         {
           "number": "1",
@@ -1016,17 +1123,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4401",
       "value": "10 kΩ 1% Q6A off-state bleed",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1002T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25804",
+      "alt_mpn": "YAGEO RC0603FR-0710KL",
       "pins": [
         {
           "number": "1",
@@ -1048,17 +1158,20 @@
       ],
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4402",
       "value": "26.7 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0726K7L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C728587",
+      "alt_mpn": "Vishay Dale TNPW060326K7BEEA",
       "pins": [
         {
           "number": "1",
@@ -1077,17 +1190,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4403",
       "value": "25.5 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0725K5L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C861257",
+      "alt_mpn": "Vishay Dale TNPW060325K5BEEA",
       "pins": [
         {
           "number": "1",
@@ -1106,17 +1222,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4404",
       "value": "25.5 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0725K5L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C861257",
+      "alt_mpn": "Vishay Dale TNPW060325K5BEEA",
       "pins": [
         {
           "number": "1",
@@ -1135,17 +1254,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4405",
       "value": "26.7 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0726K7L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C728587",
+      "alt_mpn": "Vishay Dale TNPW060326K7BEEA",
       "pins": [
         {
           "number": "1",
@@ -1164,17 +1286,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4406",
       "value": "10.0 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0710KL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C95204",
+      "alt_mpn": "Viking Tech ARG03BTC1002",
       "pins": [
         {
           "number": "1",
@@ -1193,17 +1318,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4407",
       "value": "24.9 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRE0724K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C861775",
+      "alt_mpn": "Vishay Dale TNPW060324K9BEEA",
       "pins": [
         {
           "number": "1",
@@ -1222,17 +1350,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4408",
       "value": "24.9 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRE0724K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C861775",
+      "alt_mpn": "Vishay Dale TNPW060324K9BEEA",
       "pins": [
         {
           "number": "1",
@@ -1251,17 +1382,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4409",
       "value": "33.2 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0733K2L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C705767",
+      "alt_mpn": "Viking Tech AR03BTDX3322A",
       "pins": [
         {
           "number": "1",
@@ -1280,17 +1414,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4421",
       "value": "24.9 kΩ 0.1% 0402",
       "kind": "resistor",
       "group": "DC detectors: UHF",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "mpn": "RT0402BRD0724K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C852664",
+      "alt_mpn": "UNI-ROYAL TC0225D2492TCC",
       "pins": [
         {
           "number": "1",
@@ -1309,18 +1446,16 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0402_1005Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
-      "placement_footprint_file": null,
-      "placement_blockers": [
-        "Manufacturer MPN/land pattern approval required before production",
-        "Fetch official portable footprint first"
-      ]
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod",
+      "placement_blockers": []
     },
     {
       "ref": "R4422",
       "value": "49.8 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: UHF",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
       "pins": [
         {
           "number": "1",
@@ -1339,17 +1474,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4423",
       "value": "100 Ω",
       "kind": "resistor",
       "group": "DC detectors: UHF",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -1368,17 +1506,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4424",
       "value": "100 kΩ",
       "kind": "resistor",
       "group": "DC detectors: UHF",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -1397,17 +1538,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4425",
       "value": "100 Ω",
       "kind": "resistor",
       "group": "DC detectors: UHF",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -1426,17 +1570,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4426",
       "value": "100 kΩ",
       "kind": "resistor",
       "group": "DC detectors: UHF",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -1455,17 +1602,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4431",
       "value": "24.9 kΩ 0.1% 0402",
       "kind": "resistor",
       "group": "DC detectors: LBAND",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "mpn": "RT0402BRD0724K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C852664",
+      "alt_mpn": "UNI-ROYAL TC0225D2492TCC",
       "pins": [
         {
           "number": "1",
@@ -1484,18 +1634,16 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0402_1005Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
-      "placement_footprint_file": null,
-      "placement_blockers": [
-        "Manufacturer MPN/land pattern approval required before production",
-        "Fetch official portable footprint first"
-      ]
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod",
+      "placement_blockers": []
     },
     {
       "ref": "R4432",
       "value": "49.8 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: LBAND",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
       "pins": [
         {
           "number": "1",
@@ -1514,17 +1662,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4433",
       "value": "100 Ω",
       "kind": "resistor",
       "group": "DC detectors: LBAND",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -1543,17 +1694,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4434",
       "value": "100 kΩ",
       "kind": "resistor",
       "group": "DC detectors: LBAND",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -1572,17 +1726,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4435",
       "value": "100 Ω",
       "kind": "resistor",
       "group": "DC detectors: LBAND",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -1601,17 +1758,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4436",
       "value": "100 kΩ",
       "kind": "resistor",
       "group": "DC detectors: LBAND",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -1630,17 +1790,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4441",
       "value": "24.9 kΩ 0.1% 0402",
       "kind": "resistor",
       "group": "DC detectors: HF",
+      "footprint": "Resistor_SMD:R_0402_1005Metric",
+      "mpn": "RT0402BRD0724K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C852664",
+      "alt_mpn": "UNI-ROYAL TC0225D2492TCC",
       "pins": [
         {
           "number": "1",
@@ -1659,18 +1822,16 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0402_1005Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
-      "placement_footprint_file": null,
-      "placement_blockers": [
-        "Manufacturer MPN/land pattern approval required before production",
-        "Fetch official portable footprint first"
-      ]
+      "placement_footprint_status": "graph_assigned_portable",
+      "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod",
+      "placement_blockers": []
     },
     {
       "ref": "R4442",
       "value": "49.8 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: HF",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
       "pins": [
         {
           "number": "1",
@@ -1689,17 +1850,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4443",
       "value": "100 Ω",
       "kind": "resistor",
       "group": "DC detectors: HF",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -1718,17 +1882,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4444",
       "value": "100 kΩ",
       "kind": "resistor",
       "group": "DC detectors: HF",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -1747,17 +1914,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4445",
       "value": "100 Ω",
       "kind": "resistor",
       "group": "DC detectors: HF",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -1776,17 +1946,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4446",
       "value": "100 kΩ",
       "kind": "resistor",
       "group": "DC detectors: HF",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -1805,17 +1978,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4450",
       "value": "100 Ω",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -1834,17 +2010,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4451",
       "value": "100 kΩ",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -1863,17 +2042,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4452",
       "value": "100 Ω",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1000T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C22775",
+      "alt_mpn": "YAGEO AC0603FR-07100RL",
       "pins": [
         {
           "number": "1",
@@ -1892,17 +2074,20 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "R4453",
       "value": "100 kΩ",
       "kind": "resistor",
       "group": "DC detectors: common reference",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF1003T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C25803",
+      "alt_mpn": "YAGEO RC0603FR-07100KL",
       "pins": [
         {
           "number": "1",
@@ -1921,17 +2106,18 @@
       "source": "E4 completion design; see E4-review.md",
       "sheet": "E4",
       "placement_footprint": "Resistor_SMD:R_0603_1608Metric",
-      "placement_footprint_status": "proposed_not_production_qualified",
+      "placement_footprint_status": "graph_assigned_portable",
       "placement_footprint_file": "build/kicad/footprints/Resistor_SMD.pretty/R_0603_1608Metric.kicad_mod",
-      "placement_blockers": [
-        "Manufacturer MPN/package/land pattern approval required before production"
-      ]
+      "placement_blockers": []
     },
     {
       "ref": "U450",
       "value": "TLV3012BIDBVR",
       "kind": "ic",
       "group": "DC detectors: UHF",
+      "mpn": "TLV3012BIDBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C20345924",
       "pins": [
         {
           "number": "1",
@@ -1987,6 +2173,9 @@
       "value": "TLV3012BIDBVR",
       "kind": "ic",
       "group": "DC detectors: UHF",
+      "mpn": "TLV3012BIDBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C20345924",
       "pins": [
         {
           "number": "1",
@@ -2042,6 +2231,9 @@
       "value": "TLV3012BIDBVR",
       "kind": "ic",
       "group": "DC detectors: LBAND",
+      "mpn": "TLV3012BIDBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C20345924",
       "pins": [
         {
           "number": "1",
@@ -2097,6 +2289,9 @@
       "value": "TLV3012BIDBVR",
       "kind": "ic",
       "group": "DC detectors: LBAND",
+      "mpn": "TLV3012BIDBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C20345924",
       "pins": [
         {
           "number": "1",
@@ -2152,6 +2347,9 @@
       "value": "TLV3012BIDBVR",
       "kind": "ic",
       "group": "DC detectors: HF",
+      "mpn": "TLV3012BIDBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C20345924",
       "pins": [
         {
           "number": "1",
@@ -2207,6 +2405,9 @@
       "value": "TLV3012BIDBVR",
       "kind": "ic",
       "group": "DC detectors: HF",
+      "mpn": "TLV3012BIDBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C20345924",
       "pins": [
         {
           "number": "1",
@@ -2262,6 +2463,9 @@
       "value": "TLV3012BIDBVR",
       "kind": "ic",
       "group": "DC detectors: common reference",
+      "mpn": "TLV3012BIDBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C20345924",
       "pins": [
         {
           "number": "1",
@@ -2317,6 +2521,9 @@
       "value": "TLV3012BIDBVR",
       "kind": "ic",
       "group": "DC detectors: common reference",
+      "mpn": "TLV3012BIDBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C20345924",
       "pins": [
         {
           "number": "1",
@@ -2372,6 +2579,9 @@
       "value": "LM4040A20IDBZR 2.048 V 0.1% shunt",
       "kind": "ic",
       "group": "DC detectors: common reference",
+      "mpn": "LM4040A20IDBZR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C127070",
       "pins": [
         {
           "number": "1",
@@ -7925,7 +8135,7 @@
     }
   ],
   "blockers": [
-    "50 passive land patterns are placement proposals, not approved production MPN selections.",
+    "All 71 core parts carry graph-assigned footprints and MPNs selected in design/parts/parts.json; a selected MPN is a procurement record, not a qualification: voltage/power/TCR/leakage ratings and land patterns still need review before production.",
     "Eight-net connector/wire-pad implementation, mounting/outline and cable routing are unselected.",
     "RF-port tap/bleed assemblies are excluded from this core and must be placed on the RF substrate.",
     "Prototype threshold/leakage/temperature/ground-offset/RF/rail-off tests remain mandatory."
@@ -7942,31 +8152,31 @@
     "inputs": [
       {
         "file": "design/E1.json",
-        "sha256": "3d216840beed9e5692858718915e100fba00f9b73aeb57248841f1ecbc76aa5a"
+        "sha256": "97ca786545acca72c89f2f276f23cdc292ab74e20daa608da1a229a9e6903996"
       },
       {
         "file": "design/E2.json",
-        "sha256": "19b2247f3b32a547ba1478b37f31177b057f85f213b273e2407ac06a05189196"
+        "sha256": "1e63e579b3f60f8518837a8d52c189b84ee0401dc32e278f8e72ecf3fbe9e4cd"
       },
       {
         "file": "design/E3.json",
-        "sha256": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0"
+        "sha256": "5d94d77320cb0ac41c3ea8d0c3ba98a8dba829ef896df8cfb5b642c85813f41d"
       },
       {
         "file": "design/E4.json",
-        "sha256": "a3122809dacd86b312516df5b53f932bd0ab95b48122e5cf08351610f538e56b"
+        "sha256": "a8c0ab0e6d9bbf4cbd1eb08175a34ec11fc8351b88a900570361a3f916f4142f"
       },
       {
         "file": "design/E5.json",
-        "sha256": "9d61ff10e75417c806afda7ab923ac06de7faf9b6ff5b53acce57477b3960212"
+        "sha256": "69047e28d6f571d87ae5a3b7b0f21944f4e9cf005d0697db002511e3f5428285"
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "a8b1fcf3b427bf805eebe40a1e4193555c18d729e6d9498576e323730d98560c"
+        "sha256": "b18f0224569a0dd58a90d00675e80b74508c6833bfc4420cbf4c4cc0729dc2d7"
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "2fbb74498e079e328ec2a1f243522e68668a87e1905d59fa2d4711cc060a3df1"
+        "sha256": "da4f84006dbaf19fdbde78d34addc66e64016d6451c39ea638770c3c69286b15"
       }
     ],
     "source_documents": [

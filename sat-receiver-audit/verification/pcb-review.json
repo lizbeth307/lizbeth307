@@ -20,16 +20,16 @@
   "copper_zones": 0,
   "errors": [],
   "input_file": "pcb/generated/detector-core-input.json",
-  "input_sha256": "14a5d3988a0e6e33a5e7b7134292d833edd25feafd3629fe5a69fc78db302892",
+  "input_sha256": "d571b6b3779e07383cbea027a2b83413e9aa71a8a8ce5508a7d1a0f1625ff2f0",
   "board_file": "build/kicad/pcb-preparation/detector-core-placement.kicad_pcb",
-  "board_sha256": "25f586a5ec5ed50ef954a659732321277c03267a7f446fefc1e16512c8183ec6",
+  "board_sha256": "5ee4d73c2c6e741835cbcccc3908621c72f9e498662c19ae45786a09c75bd5ee",
   "kicad_version": "10.0.7",
   "outline_candidate_mm": {
     "x": 125.0,
     "y": 115.0,
     "production_qualified": false
   },
-  "passive_land_patterns_proposed": 50,
+  "passive_land_patterns_proposed": 0,
   "boundary_implementation": "Unselected: no invented connector/wire-pad numbers were added.",
   "rf_exclusions": [
     "C4420",
@@ -118,13 +118,13 @@
   ],
   "resource_resolution": {
     "R_0402_1005Metric": "Resolved using unmodified official KiCad 10.0.7 resource; actual file paths and hashes are recorded in placement-audit.json. Passive production qualification remains open.",
-    "source_metadata_null_paths": 3,
+    "source_metadata_null_paths": 0,
     "provenance_file": "build/kicad/pcb-preparation/footprint-provenance.json"
   },
   "drc": {
     "exit_code": 5,
     "raw_file": "build/kicad/pcb-preparation/drc-raw.json",
-    "raw_sha256": "180d2bc5c8508800952577d6db541a4b0d5ca84a26d04047be8ce87327480201",
+    "raw_sha256": "72d352d56cc7759622e35905ca05eb66ccf173a62f06a7f520f5b48062525f2d",
     "counts": {
       "unconnected_items": 140
     },
