@@ -593,7 +593,7 @@ STEPS = (
     ("data", "/etc/fstab of slot A, /data directories, the locked cache copied to /data/srrx-cache (read-only bind at /srv/srrx-cache)"),
     ("selftest", "deployment/selftest.py offline --profile controller on root A (policy DRAFT: BLOCKED expected)"),
     ("root-b", "rsync root A to root B, slot B fstab/cmdline/slot file, kernel-install add in a root B chroot (slot B entry and ESP files)"),
-    ("entries", "golden entries: labA (newest) and labB blessed, labA-rescue/labB-rescue with the r2 kernel, loader.conf; foreign r2 entries removed"),
+    ("entries", "golden entries: labA (newest) and labB blessed, labA-rescue/labB-rescue with the r2 kernel, loader.conf; foreign r2 entries and the bootctl loader/random-seed removed"),
     ("verify", "sfdisk --verify, e2fsck -fn, fsck.vfat -n, image-manifest.json, extent map for recovery_kit.py"),
 )
 
@@ -1082,6 +1082,12 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         LOG.step("root-b", "DONE", slot_b_entry=sorted(p.name for p in (root_b / "boot/efi/loader/entries").glob("labB*.conf")))
         golden = bootchain.golden_entries(root_b / "boot/efi", root_b / "etc/srrx/boot.json")
         manifest["entries"] = golden
+        # bootctl install writes loader/random-seed; one golden image goes to many units, so no unit
+        # may inherit it. systemd-boot-random-seed.service writes a fresh one on the first boot.
+        seed = root_b / "boot/efi/loader/random-seed"
+        manifest["esp_random_seed"] = "removed from the golden image" if seed.exists() else "absent"
+        if seed.exists():
+            seed.unlink()
         manifest["esp"] = esp_inventory(root_b / "boot/efi")
         manifest["boot_config"] = config
         manifest["cmdline_sha256"] = cmdline_sha

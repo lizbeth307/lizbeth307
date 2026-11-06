@@ -513,15 +513,13 @@ def smoke_report(timeout=900, root=Path("/")):
         config = load_config(root / BOOT_CONFIG.relative_to("/"))
         slot = read_slot(root / SLOT_FILE.relative_to("/"))
         line = cmdline(config["base_cmdline_without_root"], root_partuuid(config, slot), config["lime_build"]) + "\n"
-        output = Path("/run/srrx-smoke-selftest.json")
-        argv = [sys.executable, "-I", "-B", str(DEPLOYMENT / "selftest.py"), "offline", "--rootfs", str(root), "--profile", "controller",
-                "--policy", str(DEPLOYMENT / "receive-only-policy.json"), "--project", str(DEPLOYMENT.parent),
-                "--cmdline-sha256", hashlib.sha256(line.encode()).hexdigest(), "--output", str(output)]
-        done = subprocess.run(argv, capture_output=True, text=True, timeout=600)
-        live = json.loads(output.read_text(encoding="utf-8")) if output.is_file() else {}
-        report["selftest"] = {"exit_code": done.returncode, "status": live.get("status"), "counts": live.get("counts"),
-                              "fail_or_blocked_rows": fail_or_blocked_rows(live), "stderr_tail": done.stderr[-600:]}
-    except (OSError, ValueError, KeyError, subprocess.SubprocessError) as exc:
+        # In-process: the selftest CLI refuses an --output inside the inspected rootfs, and here it is "/".
+        sys.path.insert(0, str(DEPLOYMENT))
+        import selftest  # noqa: E402  (stdlib-only module of the same tree)
+        live = selftest.run_offline(root, "controller", DEPLOYMENT / "receive-only-policy.json", DEPLOYMENT.parent,
+                                    cmdline_sha256=hashlib.sha256(line.encode()).hexdigest())
+        report["selftest"] = {"status": live.get("status"), "counts": live.get("counts"), "fail_or_blocked_rows": fail_or_blocked_rows(live)}
+    except (OSError, ValueError, KeyError, RuntimeError, subprocess.SubprocessError) as exc:
         report["selftest"] = {"status": "unavailable: " + type(exc).__name__ + ": " + str(exc)[:300]}
     print(SMOKE_BEGIN + json.dumps(report, sort_keys=True) + SMOKE_END, flush=True)
     return 0
