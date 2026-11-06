@@ -14,7 +14,6 @@ import argparse
 import hashlib
 import json
 import math
-import re
 import shutil
 import sys
 import tempfile
@@ -33,6 +32,7 @@ D15 = (222.5, 137.5, 57.5)
 COMPONENTS = HERE.parent / "pcb" / "generated" / "components.csv"
 # PolyLite ASA, ISO 1183, 23 C: https://wiki.polymaker.com/polymaker-products/more-about-our-products/documents/technical-data-sheets/abs-asa/polylite-tm-asa (read 2026-10-24)
 ASA_DENSITY = 1.13
+STL_DEFLECTION, STL_ANGULAR = 0.1, 0.3   # mm (half a 0.2 mm print layer), rad
 
 
 def jdump(obj):
@@ -51,12 +51,6 @@ def write(out, rel, data, files):
     p.parent.mkdir(parents=True, exist_ok=True)
     p.write_bytes(data)
     files[rel] = data
-
-
-def normalise_step(data):
-    txt = data.decode("utf-8", "replace")
-    txt = re.sub(r"FILE_NAME\('([^']*)','[^']*'", r"FILE_NAME('\1','2026-10-24T00:00:00'", txt, count=1)
-    return txt.replace("\r\n", "\n").encode("utf-8")
 
 
 def envelope_report(P):
@@ -109,8 +103,8 @@ def all_sheets(P, vendor_fit):
 
 
 def cad_outputs(P, out, files):
-    from build123d import Compound, export_step, export_stl
-    from srrx_mech import cad, cad_fixtures as fx
+    from build123d import Compound, export_step
+    from srrx_mech import cad, cad_fixtures as fx, export3d
 
     tmp = Path(tempfile.mkdtemp(prefix="srrx-mech-"))
     vols = {}
@@ -119,13 +113,15 @@ def cad_outputs(P, out, files):
         part.label = label or name
         s = tmp / f"{name}.step"
         export_step(part, str(s))
-        write(out, f"step/{name}.step", normalise_step(s.read_bytes()), files)
+        write(out, f"step/{name}.step", export3d.normalise_step(s.read_bytes()), files)
+        bb = part.bounding_box()
+        vols[name] = {"cm3": round(part.volume / 1000.0, 2), "printed": stl,
+                      "bbox_mm": [round(v, 2) + 0.0 for v in (bb.min.X, bb.min.Y, bb.min.Z, bb.max.X, bb.max.Y, bb.max.Z)]}
         if stl:
-            t = tmp / f"{name}.stl"
-            # 0.1 mm chordal deviation: half a 0.2 mm print layer
-            export_stl(part, str(t), tolerance=0.1, angular_tolerance=0.3)
-            write(out, f"stl/{name}.stl", t.read_bytes(), files)
-        vols[name] = {"cm3": round(part.volume / 1000.0, 2), "printed": stl}
+            # absolute chordal deflection, single-threaded mesher (export3d)
+            data, ntri = export3d.stl_bytes(part, name, STL_DEFLECTION, STL_ANGULAR)
+            write(out, f"stl/{name}.stl", data, files)
+            vols[name]["stl_triangles"] = ntri
         return part
 
     parts = {}
@@ -169,7 +165,7 @@ def cad_outputs(P, out, files):
     asm = Compound(label="srrx_v2_1_mechanical_model_fit_only", children=kids)
     s = tmp / "assembly.step"
     export_step(asm, str(s))
-    write(out, "step/assembly.step", normalise_step(s.read_bytes()), files)
+    write(out, "step/assembly.step", export3d.normalise_step(s.read_bytes()), files)
     shutil.rmtree(tmp, ignore_errors=True)
     return vols
 
