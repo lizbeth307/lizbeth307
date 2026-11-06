@@ -4428,7 +4428,7 @@
   },
   {
    "id": "F-0297007.5-WXNV",
-   "mount": "pcb_tht",
+   "mount": "remote",
    "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
    "manufacturer": "Littelfuse",
    "mpn": "029707.5WXNV",
@@ -4448,7 +4448,7 @@
     }
    ],
    "single_source": "Littelfuse MINI blade; never clone MINI fuses (10-bom section 6)",
-   "note": "LCSC C178942 (named in 10-bom row 71) is the exact 029707.5WXNV.",
+   "note": "LCSC C178942 (named in 10-bom row 71) is the exact 029707.5WXNV. F101 sits at the pack positive (STACK D2 'near the battery', E1 group 'Пак 4S1P', build/16 unit PACK): the Keystone 3568 holder is on a small carrier or in the 18 AWG battery lead, not on the power board.",
    "refs": [
     "F101"
    ]

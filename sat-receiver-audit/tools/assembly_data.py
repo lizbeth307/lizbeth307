@@ -185,8 +185,6 @@ PARTITION_DEVIATIONS = {
                "(вузол IMUPACK), не на PWR/CTRL",
     # Single refs (a key may be a ref as well as a unit; a ref key wins): the parts DB mounts these on
     # a board, the assembly places them elsewhere. Open between the parts DB and the assembly docs.
-    "F101": "F101 — у тримачі Keystone 3568 біля плюса паку (STACK D2 «біля батареї», група E1 «Пак 4S1P»), а база деталей "
-            "(mount pcb_tht) ставить тримач на PWR_MAIN; базу деталей треба узгодити з місцем збирання",
     "J302": "J302 (E3 «Power-board control harness») — кінець джгута S02 на PWR (рішення asm: на PWR 5 мереж I2C2/INT/3V3_Q6A), "
             "а база деталей ставить вилку B5B-PH-K на CTRL_HMI за аркушем E3; не узгоджено, на якому кінці S02 стоїть J302",
     "J502": "консоль UART5 — роз'єм PH 3 у сервісному лючку (рішення asm, build/15), а база деталей ставить вилку B3B-PH-K "
