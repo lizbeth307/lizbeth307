@@ -52,6 +52,16 @@ class RecipeError(ValueError):
     pass
 
 
+# A recipe written for a builder that does not exist yet (deployment/recipes/satdump: its own
+# "srrx_build_recipe" schema, checked by that directory's check_recipe.py) is not a build_recipe:
+# validate_recipe refuses it by name, so lab_build.py never builds it and the tests keep it apart.
+PENDING_KIND, PENDING_STATUS = "srrx_build_recipe", "PENDING_BUILDER"
+
+
+def is_pending(recipe):
+    return type(recipe) is dict and recipe.get("kind") == PENDING_KIND and recipe.get("status") == PENDING_STATUS
+
+
 def _strings(value, label, allow_empty=False):
     if type(value) is not list or (not value and not allow_empty) or not all(type(x) is str and x for x in value):
         raise RecipeError(label + " must be a list of non-empty strings")
@@ -72,6 +82,9 @@ def _argv(value, label):
 
 def validate_recipe(recipe, lock=None):
     """Exact schema of recipes/<id>/recipe.json (deployment/tests/test_recipes.py)."""
+    if is_pending(recipe):
+        raise RecipeError("recipe " + str(recipe.get("id")) + " is " + PENDING_STATUS + " (kind " + PENDING_KIND
+                          + "), not in the build_recipe schema yet: this builder does not build it")
     deploy.keys(recipe, RECIPE_KEYS, "recipe")
     lock = lock or deploy.load(DEPLOYMENT / "sources.lock.json")
     component = next((c for c in lock["components"] if c["id"] == recipe["component"]), None)

@@ -21,11 +21,16 @@ import build_recipe  # noqa: E402
 import lab_build  # noqa: E402
 
 LOCK = deploy.load(HERE / "sources.lock.json")
-RECIPES = sorted(p.parent.name for p in (HERE / "recipes").glob("*/recipe.json"))
+ALL_RECIPES = sorted(p.parent.name for p in (HERE / "recipes").glob("*/recipe.json"))
 
 
 def recipe(name):
     return deploy.load(HERE / "recipes" / name / "recipe.json")
+
+
+# PENDING_BUILDER recipes (satdump) keep their own schema until they move to this builder.
+PENDING = [name for name in ALL_RECIPES if build_recipe.is_pending(recipe(name))]
+RECIPES = [name for name in ALL_RECIPES if name not in PENDING]
 
 
 class RecipeSchemaTests(unittest.TestCase):
@@ -36,6 +41,19 @@ class RecipeSchemaTests(unittest.TestCase):
             self.assertEqual(data["component"], name)
             component = build_recipe.validate_recipe(data, LOCK)
             self.assertIsNotNone(component["source_archive_sha256"])
+
+    def test_pending_builder_recipes_are_refused_by_the_builder(self):
+        self.assertEqual(PENDING, ["satdump"])
+        for name in PENDING:
+            data = recipe(name)
+            self.assertEqual(data["id"], name)
+            with self.assertRaisesRegex(build_recipe.RecipeError, "PENDING_BUILDER"):
+                build_recipe.validate_recipe(data, LOCK)
+            # once its status changes it must pass the exact build_recipe schema like the others
+            changed = dict(data, status="BUILDER")
+            self.assertFalse(build_recipe.is_pending(changed))
+            with self.assertRaises(Exception):
+                build_recipe.validate_recipe(changed, LOCK)
 
     def test_existing_vendor_recipes_keep_their_reviewed_flags(self):
         script = (HERE / "build-vendor.sh").read_text(encoding="utf-8")
