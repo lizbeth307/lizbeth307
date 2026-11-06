@@ -1240,12 +1240,13 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         manifest["blocking"].append("selftest root A " + str(manifest["selftest_root_a"]["status"]) + ": "
                                     + json.dumps(manifest["selftest_root_a"]["fail_or_blocked_rows"], sort_keys=True))
         LOG.step("selftest", "DONE", report=manifest["selftest_root_a"])
-        # selftest.py ran with the builder's python3 (python3-numpy installed): RX-14 imports numpy, which
-        # the image's own python3 lacks until the HMI venv (IMG-10); the QEMU smoke expects that row live.
+        # selftest.py ran with the builder's python3 (python3-numpy installed): RX-14 and RX-04-bb import
+        # numpy, which the image's own python3 lacks until the HMI venv (IMG-10); the QEMU smoke expects
+        # those rows live (smoke_qemu.INTERPRETER_ROWS).
         manifest["target_python_numpy"] = (root_a / "usr/lib/python3/dist-packages/numpy/__init__.py").is_file()
         if not manifest["target_python_numpy"]:
-            manifest["blocking"].append("target_python_without_numpy: RX-14 was evaluated with the builder's python3-numpy; "
-                                        "on the image python3 it is BLOCKED numpy_unavailable (HMI venv, IMG-10)")
+            manifest["blocking"].append("target_python_without_numpy: RX-14 and RX-04-bb were evaluated with the builder's "
+                                        "python3-numpy; on the image python3 they are BLOCKED numpy_unavailable (HMI venv, IMG-10)")
         mounts.umount_under(root_a / "boot/efi")
         root_b = work / "mnt/root_b"
         mounts.mount(devices["root_b"], root_b, "ext4")

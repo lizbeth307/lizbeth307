@@ -150,7 +150,8 @@ SCENARIOS = (
 # Rows whose verdict depends on the interpreter that runs selftest.py, not on the root: the builder
 # runs it with its own python3 and python3-numpy; the live run uses the image's python3, which has
 # no numpy (r2 ships none; the HMI venv is IMG-10). Expected live-only exactly when numpy is absent.
-INTERPRETER_ROWS = {"RX-14": ["numpy_unavailable"]}
+# RX-14 (voice mask) and RX-04-bb (LRPT baseband recorder, srrx.baseband) both import numpy.
+INTERPRETER_ROWS = {"RX-14": ["numpy_unavailable"], "RX-04-bb": ["numpy_unavailable"]}
 
 
 def entry_plan(config):

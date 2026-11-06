@@ -398,11 +398,13 @@ class SmokeModelTests(unittest.TestCase):
         self.assertEqual(stray["mismatches"], ["selftest ran on a boot that does not ask for it"])
 
     def test_interpreter_rows_are_expected_only_without_numpy(self):
-        # CI 2026-11-06: the image's python3 has no numpy, so RX-14 blocks live but passed at build time.
+        # CI 2026-11-06: the image's python3 has no numpy, so RX-14 and RX-04-bb block live but passed at build time.
         blessed = sorted(["labA.conf", "labB.conf", "labA-rescue.conf", "labB-rescue.conf"])
-        live = {"RX-14": ["numpy_unavailable"], "RX-16": ["lab_pref_missing"]}
+        live = {"RX-14": ["numpy_unavailable"], "RX-04-bb": ["numpy_unavailable"], "RX-16": ["lab_pref_missing"]}
         cases = ((live, False, "MODEL_PASS"), (live, True, "MODEL_FAIL"), ({"RX-16": ["lab_pref_missing"]}, False, "MODEL_FAIL"),
-                 ({"RX-14": ["voice_residual_above_noise"], "RX-16": ["lab_pref_missing"]}, False, "MODEL_FAIL"),
+                 ({"RX-14": ["numpy_unavailable"], "RX-16": ["lab_pref_missing"]}, False, "MODEL_FAIL"),  # RX-04-bb missing
+                 ({"RX-14": ["voice_residual_above_noise"], "RX-04-bb": ["numpy_unavailable"], "RX-16": ["lab_pref_missing"]}, False,
+                  "MODEL_FAIL"),
                  ({"RX-16": ["lab_pref_missing"]}, True, "MODEL_PASS"))
         for rows, numpy, status in cases:
             report = self.report("A", True, "active", "active", "good", rows=rows, numpy=numpy)
