@@ -1638,6 +1638,21 @@ class VenvAndUnitInterpreterTests(unittest.TestCase):
             (installed / "baseband.py").write_text("X = 1\n")
             self.assertNotEqual(build_image.tree_record(venv)["tree_sha256"], first["tree_sha256"])
 
+    def test_only_bytecode_outside_every_record_is_refused(self):
+        # Run 42418461427: pyside6_essentials 6.12.0 ships PySide6/support/__pycache__/*.pyc in its RECORD.
+        with tempfile.TemporaryDirectory() as temp:
+            venv = Path(temp) / "venv"
+            site = venv / "lib/python3.12/site-packages"
+            (site / "PySide6/support/__pycache__").mkdir(parents=True)
+            (site / "PySide6/support/__pycache__/deprecated.cpython-312.pyc").write_bytes(b"pyc")
+            (site / "PySide6_Essentials-6.12.0.dist-info").mkdir()
+            (site / "PySide6_Essentials-6.12.0.dist-info/RECORD").write_text(
+                "PySide6/support/__pycache__/deprecated.cpython-312.pyc,sha256=x,3\nPySide6_Essentials-6.12.0.dist-info/RECORD,,\n")
+            self.assertEqual(build_image.unrecorded_bytecode(venv), [])
+            (site / "numpy/__pycache__").mkdir(parents=True)
+            (site / "numpy/__pycache__/version.cpython-312.pyc").write_bytes(b"pyc")
+            self.assertEqual(build_image.unrecorded_bytecode(venv), ["lib/python3.12/site-packages/numpy/__pycache__/version.cpython-312.pyc"])
+
     def test_exec_interpreter(self):
         cases = (("/usr/bin/env /opt/srrx/venv/bin/python3 -m srrx.hmi", "/opt/srrx/venv/bin/python3"),
                  ("-/usr/bin/python3 -B /opt/srrx/deployment/deploy.py release-guard", "/usr/bin/python3"),

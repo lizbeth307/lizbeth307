@@ -27,6 +27,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import posixpath
 import re
 import shlex
 import shutil
@@ -2019,6 +2020,25 @@ def package_copy_issues(installed, staged):
     return ["srrx copy differs from the staged tree: " + ", ".join(differs[:10])]
 
 
+def unrecorded_bytecode(venv):
+    """__pycache__ files of a venv that no installed distribution's RECORD lists, i.e. written by the build
+    (--no-compile and -B everywhere) rather than shipped in a wheel (pyside6_essentials 6.12.0 ships
+    PySide6/support/__pycache__/*.cpython-312.pyc)."""
+    site = _site_packages(venv)
+    recorded = set()
+    for record in site.glob("*.dist-info/RECORD"):
+        for line in record.read_text(encoding="utf-8").splitlines():
+            if line.strip():
+                recorded.add(posixpath.normpath(line.rsplit(",", 2)[0]))
+    found = []
+    for path in sorted(Path(venv).rglob("*")):
+        if path.is_file() and "__pycache__" in path.parts:
+            rel = path.relative_to(site).as_posix() if path.is_relative_to(site) else None
+            if rel is None or rel not in recorded:
+                found.append(path.relative_to(venv).as_posix())
+    return found
+
+
 def tree_record(path):
     """deploy.build_inventory of a venv (the walk verify-build compares) and its SHA-256 over the sorted file map."""
     import deploy
@@ -2079,9 +2099,9 @@ def build_venvs(root, cache, plan=None):
             code, freeze, tail = _chroot_json(root, [python, "-I", "-B", "-c", FREEZE_CODE], VENV_ENV)
             issues = [] if check.returncode == 0 else ["pip check: " + ((check.stdout or "") + (check.stderr or ""))[-600:]]
             issues += freeze_issues(freeze or [], expected_freeze(PROJECT / spec["lock"], version)) if code == 0 else ["freeze: " + tail]
-            cached = sorted(p.relative_to(target).as_posix() for p in target.rglob("__pycache__"))
+            cached = unrecorded_bytecode(target)
             if cached:
-                issues.append("byte-compiled files present: " + ", ".join(cached[:5]))
+                issues.append("byte-compiled files outside every RECORD: " + ", ".join(cached[:5]))
             issues += package_copy_issues(_site_packages(target) / "srrx", root / "opt/srrx/software/srrx")
             if issues:
                 raise BuildError("venv /" + venv + ": " + "; ".join(issues))
