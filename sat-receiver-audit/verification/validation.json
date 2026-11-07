@@ -43,7 +43,7 @@
     "build/kicad/E4_03.kicad_sch": "11d5325ae92ba9656baa295f3aeb2de7af798b76e692706887c76b6a05761d64",
     "build/kicad/E4_04.kicad_sch": "dfd96950133dd864665e1d5ba5e5546143d4d9e7101c7f39085c79c2a603d472",
     "build/kicad/E5.kicad_sch": "c63d00f43197341f2871cfbc4754cfb4c8cf19a99a0e314e80a356e4d3274765",
-    "build/kicad/E5_02.kicad_sch": "5f127b58bef07947ae04d671cf08113444662105ddb12e1a4e2f556da74619a8",
+    "build/kicad/E5_02.kicad_sch": "4299edcc6124fc799203c1336fe9fa0af87ae604eba679ac0e451fb90d0c4c53",
     "build/kicad/sr-rx-v2.kicad_sch": "eab1b5d408eed2b50680f32b41fdc31b75e10b4b1fd21f059cf420216ee7d20e"
   },
   "input_files": [
@@ -53,7 +53,7 @@
     },
     {
       "file": "verification/netlist.xml",
-      "sha256": "53ca1af09cd48d729ca24c77dac1d33bb69f578e7ad9fa1ac387b05499844fd4"
+      "sha256": "e8158ced457cc3a74bec8d2e412addf1e3dbae1fd177a08faa2d98426013787d"
     }
   ]
 }

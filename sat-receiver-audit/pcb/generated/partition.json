@@ -70,7 +70,7 @@
       },
       {
         "file": "design/E5.json",
-        "sha256": "be7e960634f1f776264125c7e8d30ce695b0f5302c38ddef08b8421e86da7594"
+        "sha256": "62c26ed72800a748b398633eafff5fb6b45b2bc4a75d9665cd07843538ac675f"
       },
       {
         "file": "build/kicad/footprints/manifest.json",
@@ -78,7 +78,7 @@
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "53ca1af09cd48d729ca24c77dac1d33bb69f578e7ad9fa1ac387b05499844fd4"
+        "sha256": "e8158ced457cc3a74bec8d2e412addf1e3dbae1fd177a08faa2d98426013787d"
       }
     ],
     "source_documents": [
@@ -6826,7 +6826,7 @@
       "ref": "J514",
       "sheet": "E5",
       "mount": "pcb_tht",
-      "value": "X24S1-T7: JST PH 3, боковий вхід, S24",
+      "value": "X24S1-T7A: JST PH 3, боковий вхід, S24",
       "kind": "connector",
       "category": "bare_board_part",
       "assembly_owner": "",

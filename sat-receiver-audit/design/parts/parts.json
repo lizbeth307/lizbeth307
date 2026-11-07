@@ -5251,7 +5251,7 @@
     "J506",
     "J514"
    ],
-   "note": "Board-side harness headers: J506 X23S1-PWR on PWR_B (W2 GR-3) and J514 X24S1-T7 on T7_INSERT (W2 GR-4, segment S24). Part, LCSC SKU and footprint as harness_families PH 3 header_side; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+   "note": "Board-side harness headers: J506 X23S1-PWR on PWR_B (W2 GR-3) and J514 X24S1-T7A on T7_INSERT (W2 GR-4, segment S24). Part, LCSC SKU and footprint as harness_families PH 3 header_side; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
   },
   {
    "id": "WP-SOLDERWIRE-1SQMM",
