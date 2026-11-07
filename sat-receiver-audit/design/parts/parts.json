@@ -5031,7 +5031,7 @@
    "mount": "existing",
    "note": "Connectors/pads on the purchased Radxa Q6A; mating cables and leads are separate refs or extras. What is still open per port is in interface_open (the J301 mating socket is not selected).",
    "interface_open": {
-    "J301": "Родину IDC обрано (harness_families IDC): гніздо XDFH-0258-2*20P на стрічці 40 × 1.27 мм, бокс XDFH-0254-2*20P на CTRL; MPN стрічки, висота боксу (CTRL ≤5.5 мм, креслення не прочитано) і довжина S01 ≤200 мм (UART7/PPS, STACK §5.2) — TBD; стрічка йде крізь проріз пластини SL1 (M-07).",
+    "J301": "Для Q6A J20 (2×20, крок 2.54 мм) обрано родину IDC (harness_families IDC): гніздо XDFH-0258-2*20P на стрічці 40 × 1.27 мм, бокс XDFH-0254-2*20P на CTRL; MPN стрічки, висота боксу (CTRL ≤5.5 мм, креслення не прочитано) і довжина S01 ≤200 мм (UART7/PPS, STACK §5.2) — TBD; стрічка йде крізь проріз пластини SL1 (M-07).",
     "J303": "Відповідна частина — вилка 1.25 мм на виводах BT301 (Electrokit 41036512, рядок 85 10-bom, не перечитано); кріплення батареї й укладання дроту не задано.",
     "J511": "Кабелі до J5: USB3 до T7 (U540) і USB2 до RTL-B (J541) — окремі записи; фіксація штекерів і розвантаження натягу в корпусі не задано (механічний пакет).",
     "J512": "Кабелі USB2 без провідника VBUS до хаба U510 і сенсорного контролера U520 не мають MPN; фіксація штекерів не задана.",
