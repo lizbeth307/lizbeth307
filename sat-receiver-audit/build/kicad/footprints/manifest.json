@@ -1,6 +1,6 @@
 {
   "kicad_version": "10.0.7",
-  "assignments": 677,
+  "assignments": 681,
   "footprints": [
     {
       "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
@@ -378,6 +378,18 @@
       "role": "source of a derived SR_RX_Custom footprint"
     },
     {
+      "footprint": "Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical",
+      "file": "build/kicad/footprints/Connector_Coaxial.pretty/U.FL_Hirose_U.FL-R-SMT-1_Vertical.kicad_mod",
+      "sha256": "8f227fecc7252e97f349d06841694c60e3df4c0cb58c6c59a5123f1cd631860c",
+      "pads": [
+        "1",
+        "2"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [],
+      "role": "source of a derived SR_RX_Custom footprint"
+    },
+    {
       "footprint": "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
       "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical.kicad_mod",
       "sha256": "dd50eb4b509c1f7584aff9b58968d46cfac74ce253d4d5cf31c0565c3bf53f4c",
@@ -515,7 +527,6 @@
       ],
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
-        "L401",
         "L402",
         "L403",
         "L407"
@@ -1585,7 +1596,8 @@
         "J409",
         "J410",
         "J411",
-        "J412"
+        "J412",
+        "J426"
       ]
     },
     {
@@ -1711,6 +1723,22 @@
         "U201",
         "U202",
         "U203"
+      ]
+    },
+    {
+      "footprint": "SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS.kicad_mod",
+      "sha256": "2f622f6fe403f3d62dfbc2269cc15dec44cf5c2d9cefe3a5e37e7a4bbd7a62aa",
+      "pads": [
+        "CENTER",
+        "SHIELD"
+      ],
+      "origin": "SR_RX_Custom derived",
+      "refs": [
+        "J423",
+        "J424",
+        "J425",
+        "J427"
       ]
     },
     {

@@ -23,11 +23,14 @@ EXISTING_BOARD_DETAIL = {'U500'}
 MODULE_REWORK = {'R117', 'R118', 'R119', 'R120', 'C118'}
 SMT_MODULES = {'A407', 'A424'}  # Documented physical SMT pad maps, despite kind=module.
 PARTS_DB = ROOT / 'design/parts/parts.json'
-BOARD_MOUNTS = {'pcb_smt', 'pcb_tht', 'pcb_module'}
+# pcb_pad: bare copper test pads and the NT401 net tie are board parts too (footprint, nothing to buy).
+BOARD_MOUNTS = {'pcb_smt', 'pcb_tht', 'pcb_module', 'pcb_pad'}
 RF_TAP = {'R4420', 'R4430', 'R4440', 'C4420', 'C4430', 'C4440'}
 RF_BLEED = {f'R{i}' for i in range(4460, 4472)}
 RELAY_REFS = {'K401','K402','Q401','Q402','D401','R412','R413','R414','R415','R417','R418','R419','L407'}
-BIAS_REFS = {'A424','C446','L401','L402','L403','L404','L406'} | {f'C{i}' for i in range(447,453)}
+BIAS_REFS = {'A424','C446','L402','L403','L404','L406'} | {f'C{i}' for i in range(447,453)}
+# Board-side RF port connectors (W2 GR-2): each sits with the circuit it feeds (injector ports, the P6 relay input).
+RF_PORT_BOARD = {'J423':'RF_INJECTOR','J424':'RF_INJECTOR','J425':'RF_HF','J426':'RF_INJECTOR','J427':'RF_INJECTOR'}
 BOARDS = {
  'PWR_MAIN': {'purpose':'Main eFuse, AON/UV, charge inhibit and converter interconnect passives; commercial converters stay separate.', 'source':['design/E1-review.md','STACK.md §5.1']},
  'PWR_BRANCH': {'purpose':'E2 protected branches, current monitors and low-noise regulators. Candidate sub-board thermal split remains open.', 'source':['design/E2-review.md','STACK.md §5.1']},
@@ -54,8 +57,8 @@ CONSTRAINTS = [
  {'id':'PWR-01','boards':['PWR_MAIN','PWR_BRANCH'],'requirement':'4.6 A main path and 50 °C enclosure qualification; LAB5 <=3.2 A continuous, 4 A transient acceptance. Size copper/vias/connectors from chosen stackup and thermal calculation; no trace width is asserted here.','source':'design/E1-review.md; E1-05/E1-06'},
  {'id':'PWR-02','boards':['PWR_MAIN'],'requirement':'Keep raw E1_CELL0/B- distinct from GND/P-. No accidental copper, mounting-hole or balance-cable BMS bypass. J102 remains DNP/service-only.','source':'design/E1-review.md; design/charger-bms-review.md'},
  {'id':'PWR-03','boards':['PWR_BRANCH'],'requirement':'LT3045 pair <=1 A physical total; Kelvin current-shunt routes, low-drop high-current planes, regulator exposed-pad heat flow and vendor capacitor placement are release work. LNB precision OVP and switch ratings need full temperature validation.','source':'design/E2-review.md'},
- {'id':'DC-01','boards':['DC_CORE','RF_INJECTOR'],'requirement':'Keep each first24.9k RF tap plus100pF at its RF port; place12 bleeds at RF ports, away from core reference/precision dividers. Core boundary carries filtered DC TAP, not50ohm RF. Original schematic nodes preserved.','source':'design/E4-review.md; E4.json DC detector groups'},
- {'id':'DC-02','boards':['DC_CORE'],'requirement':'Clean low-leakage SENSE layout, short divider/input routes and local ground; do not place hot bleeds/regulators beside precision network. Leakage/TCR/RF/ground error must be measured:98.630mV analytical corner has only1.370mV margin to100mV.','source':'design/E4-review.md; design/E4-detector-analysis.py'},
+ {'id':'DC-01','boards':['DC_CORE','RF_INJECTOR'],'requirement':'Keep each first26.7k RF tap (R4420/R4430/R4440) plus100pF at its RF port (U.FL J423/J424, HF_CM); place12 bleeds at RF ports, away from core reference/precision dividers. Core boundary carries filtered DC TAP, not50ohm RF. Original schematic nodes preserved.','source':'design/E4-review.md; E4.json DC detector groups'},
+ {'id':'DC-02','boards':['DC_CORE'],'requirement':'Clean low-leakage SENSE layout, short divider/input routes and local ground; do not place hot bleeds/regulators beside precision network. Leakage/TCR/RF/ground error must be measured:98.638mV analytical corner has only1.362mV margin to100mV.','source':'design/E4-review.md; design/E4-detector-analysis.py'},
  {'id':'DC-03','boards':['DC_CORE'],'requirement':'Local100nF per comparator;1nF on each used internal reference; reference shunt/clamps/ground paths close. DCS HIGH=unsafe; LOW requires both window and both reference-good decisions. No signal pullup added on detector board; existing pullups belong E3.','source':'E4.json; https://www.ti.com/lit/ds/symlink/tlv3011.pdf'},
  {'id':'DC-04','boards':['DC_CORE','RF_INJECTOR'],'requirement':'Design envelope +/-30V limited DC. Verify chosen resistors rated voltage/power and PCB clearance for that envelope; no lightning/ESD compliance claim. Four249ohm bleeds dissipate0.226W each at30V and require >=0.5W parts with50C derating.','source':'design/E4-review.md; E4-06'},
  {'id':'DC-05','boards':['DC_CORE'],'requirement':'3V3_Q6A budget<=12mA includes E3 DCS pullups. At3.135V min supply, cold D450 VF must satisfy<=1.015V headroom for LM4040>=80uA. Each channel must reject+/-100mV over accepted temperature/supply and remain unsafe through startup/reference failure.','source':'design/E4-detector-analysis.py; design/E4-review.md'},
@@ -135,6 +138,7 @@ def board(c,cat):
     if s!='E4':return {'E1':'PWR_MAIN','E2':'PWR_BRANCH','E3':'CTRL_HMI','E5':'USB_POWER'}[s]
     if c['group'].startswith('DC detectors'):
         return 'RF_INJECTOR' if ref in RF_TAP|RF_BLEED else 'DC_CORE'
+    if ref in RF_PORT_BOARD:return RF_PORT_BOARD[ref]
     if ref in RELAY_REFS:return 'RF_HF'
     if ref in BIAS_REFS:return 'RF_INJECTOR'
     return 'RF_HMC'

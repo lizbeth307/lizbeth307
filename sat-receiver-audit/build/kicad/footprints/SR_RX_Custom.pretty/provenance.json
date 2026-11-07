@@ -114,5 +114,15 @@
     "kind": "custom",
     "read": "2026-10-24",
     "source": "https://www.ti.com/lit/ds/symlink/tps25947.pdf"
+  },
+  "U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS": {
+    "kind": "derived",
+    "note": "graph coax ports are named CENTER/SHIELD",
+    "pad_renames": {
+      "1": "CENTER",
+      "2": "SHIELD"
+    },
+    "source": "KiCad 10.0.7 Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical",
+    "source_sha256": "8f227fecc7252e97f349d06841694c60e3df4c0cb58c6c59a5123f1cd631860c"
   }
 }

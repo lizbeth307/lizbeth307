@@ -459,21 +459,21 @@
 | E4_LIME_X4_RX | LIME: A415.X4_RX; W404: W404.END_B | W404 (RX2 → Lime X4 MHF4 coax; купується Taoglas CAB.01075) | без DC |
 | E4_LNB_IF | A420: A420.IF; W401: W401.END_A | W401 (Goobay 58814 75 Ω F-F 1 m; купується Goobay 58814) | DC 13.2 V (LNB) |
 | E4_LNB_REF25 | A420: A420.REF25; A421: A421.END_A | перемичка/перехідник SMA — TBD (CAD) | без DC |
-| E4_P1 | RF: L401.1; A401: A401.IN; J401: J401.CENTER | перемичка/перехідник SMA — TBD (CAD) | без DC |
-| E4_P2 | RF: C403.1, L403.1, R4420.1, R4460.1; A418: A418.OUT; J402: J402.CENTER | перемичка/перехідник SMA — TBD (CAD) | DC 4.3 V (ch2 → Uputronics 440) |
+| E4_P1 | A401: A401.IN; J401: J401.CENTER | J401: Adam Tech CA-DKCA1-305L5-APAJ (база деталей, складська збірка) | без DC |
+| E4_P2 | RF: C403.1, L403.1, R4420.1, R4460.1; A418: A418.OUT; J402: J402.CENTER; J423: J423.CENTER | J402: Taoglas CAB.718 (база деталей, складська збірка) | DC 4.3 V (ch2 → Uputronics 440) |
 | E4_P2_ANT | A418: A418.IN; J416: J416.CENTER | перемичка/перехідник SMA — TBD (CAD) | без DC |
-| E4_P3 | RF: C411.1, L404.1, R4430.1, R4464.1; A419: A419.OUT; J403: J403.CENTER | перемичка/перехідник SMA — TBD (CAD) | DC 4.3 V (ch3 → активна L-band антена/LNA) |
+| E4_P3 | RF: C411.1, L404.1, R4430.1, R4464.1; A419: A419.OUT; J403: J403.CENTER; J424: J424.CENTER | J403: Taoglas CAB.718 (база деталей, складська збірка) | DC 4.3 V (ch3 → активна L-band антена/LNA) |
 | E4_P3_ANT | A419: A419.IN; J417: J417.CENTER | перемичка/перехідник SMA — TBD (CAD) | без DC |
-| E4_P4 | J404: J404.CENTER; W401: W401.END_B; W402: W402.END_A | W401 (Goobay 58814 75 Ω F-F 1 m; купується Goobay 58814), W402 (75 Ω shielded internal IF coax) | DC 13.2 V (LNB) |
+| E4_P4 | J404: J404.CENTER; W401: W401.END_B; W402: W402.END_A | W401 (Goobay 58814 75 Ω F-F 1 m; купується Goobay 58814), W402 (RG316 SMA-M/M 152.4 mm + SM3823 F/SMA adapter: P4 → J426; купується Cinch Connectivity Solutions Johnson 415-0029-006) | DC 13.2 V (LNB) |
 | E4_P5 | J405: J405.CENTER; W408: W408.IN_CENTER | W408 (RG316 common-mode choke FT240-77 +2631102002) | DC 13.8 V лише в профілі Boni |
-| E4_P6 | RF: K402.3, L407.1; J406: J406.CENTER | перемичка/перехідник SMA — TBD (CAD) | без DC |
-| E4_P8 | A403: A403.IN; J408: J408.CENTER | J408: Adam Tech CA-DKCA1-305L5-APAJ (база деталей, складська збірка) | без DC |
+| E4_P6 | RF: K402.3, L407.1; J406: J406.CENTER; J425: J425.CENTER | J406: Taoglas CAB.718 (база деталей, складська збірка) | без DC |
+| E4_P8_ANT | A403: A403.IN; J428: J428.CENTER | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_REF_IN | J415: J415.CENTER; W405: W405.END_A | W405 (REF IN → J4 MHF4 coax; купується Taoglas CAB.01075) | без DC |
 | E4_RFC_A | RF: C405.2, J410.CENTER; RTLA: A411.ANT | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_RFC_B | RF: C410.2, J411.CENTER; RTLB: A412.ANT | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_RF_CH1 | RF: C402.1, L402.1; A402: A402.OUT | перемичка/перехідник SMA — TBD (CAD) | без DC |
-| E4_RF_CH4 | RF: A424.3; A404: A404.OUT | перемичка/перехідник SMA — TBD (CAD) | DC 4.3 V (ch4 → LNA V2) лише з LNA |
-| E4_RF_CH5 | RF: C412.1, L406.1; W402: W402.END_B | W402 (75 Ω shielded internal IF coax) | DC 13.2 V (LNB) до DC-блока |
+| E4_RF_CH4 | RF: A424.3; A404: A404.OUT; J408: J408.CENTER; J427: J427.CENTER | J408: Taoglas CAB.718 (база деталей, складська збірка) | DC 4.3 V (ch4 → LNA V2) лише з LNA |
+| E4_RF_CH5 | RF: C412.1, L406.1; J426: J426.CENTER; W402: W402.END_B | W402 (RG316 SMA-M/M 152.4 mm + SM3823 F/SMA adapter: P4 → J426; купується Cinch Connectivity Solutions Johnson 415-0029-006) | DC 13.2 V (LNB) до DC-блока |
 | E4_RF_CH5_ATT | RF: C408.1; A405: A405.OUT | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_RF_CH5_DC | RF: C412.2; A405: A405.IN | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_RF_P1_FM | A401: A401.OUT; A402: A402.IN | перемичка/перехідник SMA — TBD (CAD) | без DC |
@@ -481,14 +481,14 @@
 | E4_RX1_EDGE | RF: C418.2, J412.CENTER; W409: W409.EDGE | W409 (Captive RX1 edge → profile pad coax) | без DC |
 | E4_RX1_PAD | A408: A408.IN; W409: W409.PAD | W409 (Captive RX1 edge → profile pad coax) | без DC |
 | E4_RX1_PANEL | A408: A408.OUT; J413: J413.CENTER; W403: W403.END_A | W403 (RX1 panel → Lime X2 MHF4 coax; купується Taoglas CAB.01075) | без DC |
-| E4_RX2_ANT | W422: W422.ANT; J422: J422.CENTER | W422 (RG316 SMA-M/M 0.10 m helix → LaNA; купується Cinch Connectivity Solutions Johnson 415-0029-006, куплено 152.4 мм, граф 0.10 м (база деталей W-RG316-SMA-MM-0152; build/06 §S-band)) | без DC |
+| E4_RX2_ANT | W422: W422.ANT; J422: J422.CENTER | W422 (RG316 SMA-M/M 152.4 mm helix → LaNA; купується Cinch Connectivity Solutions Johnson 415-0029-006) | без DC |
 | E4_RX2_BLK | A409: A409.OUT; W404: W404.END_A | W404 (RX2 → Lime X4 MHF4 coax; купується Taoglas CAB.01075) | без DC |
 | E4_SB_FILTER_IN | A423: A423.SMA_F_A; A425: A425.SMA_B | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_SB_FILTER_OUT | A423: A423.SMA_F_B; W424: W424.FILTER | W424 (RG316 SMA-M/M 1.00 m pod → RX2; купується Amphenol RF 135101-01-M1.00) | без DC |
-| E4_SB_LNA_IN | A422: A422.SMA_IN; W422: W422.LNA | W422 (RG316 SMA-M/M 0.10 m helix → LaNA; купується Cinch Connectivity Solutions Johnson 415-0029-006, куплено 152.4 мм, граф 0.10 м (база деталей W-RG316-SMA-MM-0152; build/06 §S-band)) | без DC |
-| E4_SB_LNA_OUT | A422: A422.SMA_OUT; W423: W423.LNA | W423 (RG316 SMA-M/M 0.10 m LaNA → DC block; купується Cinch Connectivity Solutions Johnson 415-0029-006, куплено 152.4 мм, граф 0.10 м (база деталей W-RG316-SMA-MM-0152; build/06 §S-band)) | без DC |
+| E4_SB_LNA_IN | A422: A422.SMA_IN; W422: W422.LNA | W422 (RG316 SMA-M/M 152.4 mm helix → LaNA; купується Cinch Connectivity Solutions Johnson 415-0029-006) | без DC |
+| E4_SB_LNA_OUT | A422: A422.SMA_OUT; W423: W423.LNA | W423 (RG316 SMA-M/M 152.4 mm LaNA → DC block; купується Cinch Connectivity Solutions Johnson 415-0029-006) | без DC |
 | E4_SB_POD5 | SPOD: W425.POD_5V; A422: A422.USB_C_VBUS | W425 (USB-C power-only 1.50 m, 26 AWG pair) | DC 5 V (живлення pod, не РЧ) |
-| E4_SB_PREBLOCK | W423: W423.BLOCK; A425: A425.SMA_A | W423 (RG316 SMA-M/M 0.10 m LaNA → DC block; купується Cinch Connectivity Solutions Johnson 415-0029-006, куплено 152.4 мм, граф 0.10 м (база деталей W-RG316-SMA-MM-0152; build/06 §S-band)) | без DC |
+| E4_SB_PREBLOCK | W423: W423.BLOCK; A425: A425.SMA_A | W423 (RG316 SMA-M/M 152.4 mm LaNA → DC block; купується Cinch Connectivity Solutions Johnson 415-0029-006) | без DC |
 | E4_TX_LOAD | A410: A410.END_A; W406: W406.END_B | W406 (CAB.01075 X1 → ANNE-50+ captive coax; купується Taoglas CAB.01075) | без DC |
 | GNSS_ANT | GNSS: U304.GPS1.2; J407: J407.CENTER; W407: W407.END_A, W407.END_B | W407 (P7 SMA → LC76G IPEX coax; купується Taoglas CAB.011) | DC ≈3.1 V від LC76G |
 

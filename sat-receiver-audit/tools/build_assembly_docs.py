@@ -701,8 +701,7 @@ def render_harness(model, h):
         def cable(c):
             part = model.db_part.get(c, {})
             bought = f"; купується {part['manufacturer']} {part['mpn']}" if part.get("mpn") and not part.get("tbd") else ""
-            length = f", куплено {D.PURCHASED_LENGTH[c]}, граф {D.GRAPH_LENGTH[c]} (база деталей {part.get('id')}; build/06 §S-band)" if c in D.PURCHASED_LENGTH else ""
-            return f"{c} ({model.by_ref[c]['value']}{bought}{length})"
+            return f"{c} ({model.by_ref[c]['value']}{bought})"
         link = (", ".join(cable(c) for c in cables) if cables else
                 ", ".join(f"{r}: {model.db_part[r]['manufacturer']} {model.db_part[r]['mpn']} (база деталей, складська збірка)" for r in assembled) if assembled
                 else "перемичка/перехідник SMA — TBD (CAD)")

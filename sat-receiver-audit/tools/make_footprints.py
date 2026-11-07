@@ -280,6 +280,8 @@ DERIVED = {
     'D_SMB_KA': ('Diode_SMD:D_SMB', {'1': 'K', '2': 'A'}, 'graph diode pins are named A/K'),
     'LED_D5.0mm_KA': ('LED_THT:LED_D5.0mm', {'1': 'K', '2': 'A'}, 'graph LED pins are named A/K'),
     'SMA_Molex_73251-1153_EdgeMount_Horizontal_CS': ('Connector_Coaxial:SMA_Molex_73251-1153_EdgeMount_Horizontal', {'1': 'CENTER', '2': 'SHIELD'}, 'graph coax ports are named CENTER/SHIELD'),
+    # Board-side U.FL receptacles of the RF panel pigtails (W2 GR-2): pad 1 = centre contact, both pads 2 = outer contact.
+    'U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS': ('Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical', {'1': 'CENTER', '2': 'SHIELD'}, 'graph coax ports are named CENTER/SHIELD'),
     'RaspberryPi_Pico_SMD_SWD': ('Module:RaspberryPi_Pico_SMD', {'D1': 'SWCLK', 'D2': 'SWD_GND', 'D3': 'SWDIO'}, 'debug pads named as the graph pins; order SWCLK/GND/SWDIO from Pico-R3-A4-Pinout.pdf'),
     'QFN-16-1EP_3x3mm_P0.5mm_EP1.7x1.7mm_EPAD': ('Package_DFN_QFN:QFN-16-1EP_3x3mm_P0.5mm_EP1.7x1.7mm', {'17': 'EPAD'}, 'HMC7992LP3DE exposed pad named EPAD; ADI outline not read (analog.com unreachable 24.10.2026): exposed-pad size must be checked against the HMC7992 package drawing before PCB release'),
 }

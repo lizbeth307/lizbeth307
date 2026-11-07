@@ -96,14 +96,15 @@
     "Receiver USB canonical nets and Lime E5_PCIE_* nets are intentional agreed E4/E5 links. E5 owns host/hub/cabling and the riser; E4 owns the receiver modules.",
     "DCS_UHF/LBAND/HF are real TLV3012B bipolar window circuits. HIGH means unsafe, unknown or off. LOW means both window tests and both reference-good tests passed. Nominal coax thresholds are ±47.080 mV; input hysteresis is 2–8 mV (4–16 mV at coax).",
     "DC preflight is valid only with the corresponding own bias OFF: disable the relevant EN, wait ≥500 ms, require DCS LOW continuously for ≥500 ms, then enable bias. DCS HIGH is expected with own bias ON. Disable bias and repeat preflight before changing antennas or routes.",
-    "The ±30 V sustained foreign-DC envelope applies to the detector tap (49.8 kΩ tap, BAV199 clamps, 996 Ω bleed) and, from v2.1, to the assembled sensed port with own bias OFF: each sensed branch has an E2 back-to-back DMP6050SSD-13 blocking element (Q2901/Q2902/Q2903, −60 V VDS) held open by its low EN_LNA2/EN_LNA3/EN_BONI, so P2/P3 no longer reach TPS2553 OUT (−0.3…7 V abs max), INA3221 inputs (−0.3…26 V) or polarized C239/C243, and HF_CM no longer reaches BONI13V8 (U214 TPS259630 OUT −0.3 V…min(21 V, VIN+0.3 V), U216, polarized C273). This is a design target until the E4-06 slow and fast-edge assembled-port tests pass; a shorted FET is not detectable and would silently restore the old limits (−0.3…+5.5 V on P2/P3, −0.3…+0.3 V on HF_CM). With own bias ON the element is closed and foreign DC stays forbidden. The 49.8 kΩ tap limits sustained negative clamp current below0.7mA. Upper clamps return to the shunt reference. BAV199 blocks reference-to-Q6A backfeed; a10k rail bleed limits reverse-leakage voltage. Physically verify the OFF 3.3V rail stays below0.1V.",
+    "The ±30 V sustained foreign-DC envelope applies to the detector tap (49.9 kΩ tap = 26.7 kΩ + 23.2 kΩ, BAV199 clamps, 996 Ω bleed) and, from v2.1, to the assembled sensed port with own bias OFF: each sensed branch has an E2 back-to-back DMP6050SSD-13 blocking element (Q2901/Q2902/Q2903, −60 V VDS) held open by its low EN_LNA2/EN_LNA3/EN_BONI, so P2/P3 no longer reach TPS2553 OUT (−0.3…7 V abs max), INA3221 inputs (−0.3…26 V) or polarized C239/C243, and HF_CM no longer reaches BONI13V8 (U214 TPS259630 OUT −0.3 V…min(21 V, VIN+0.3 V), U216, polarized C273). This is a design target until the E4-06 slow and fast-edge assembled-port tests pass; a shorted FET is not detectable and would silently restore the old limits (−0.3…+5.5 V on P2/P3, −0.3…+0.3 V on HF_CM). With own bias ON the element is closed and foreign DC stays forbidden. The 49.9 kΩ tap limits sustained negative clamp current below0.7mA. Upper clamps return to the shunt reference. BAV199 blocks reference-to-Q6A backfeed; a10k rail bleed limits reverse-leakage voltage. Physically verify the OFF 3.3V rail stays below0.1V.",
     "Detectors allocate ≤12 mA from3V3_Q6A (about6mA typical), and zero current fromLAB5. This includes the three existing E3 DCS pullups; do not count them twice.",
-    "S-band uses the existing helix →0.10mRG316→LaNAWB100845→0.10mRG316→podBLK89→cf2235→1.00mRG316→RX2→retainedBLK89→LimeX4. LaNA uses one1.50m26AWG USB-C power-only cable from protectedBIAS_SB_LNA5V.",
+    "S-band uses the existing helix →0.1524mRG316→LaNAWB100845→0.1524mRG316→podBLK89→cf2235→1.00mRG316→RX2→retainedBLK89→LimeX4. LaNA uses one1.50m26AWG USB-C power-only cable from protectedBIAS_SB_LNA5V.",
     "S-band LNA and filter belong to an external inline pod at the antenna feed, not the occupied handheld RF bay. Select Hammond1554U2GY, with the filter on a lower tray and LaNA above it. Proof-fit and cable-entry sealing remain required. Pack the pod in the backpack kit; longest part<35cm. Handheld mass excludes this pod.",
     "Sysmocom cf2235 has a2170–2300MHz passband, including2252.5/2284/2285MHz. Retain the mission allowlist as software policy, not a physical-filter rejection claim.",
-    "Each sensed RF port has a996Ω DC bleed (four249Ω≥0.5W resistors). A floating port self-biases to about20.3mV; a50Ω terminated port to about0.98mV. Expected extra own-bias load is about4.3mA onP2/P3 (4.30V rail, v2.1) and13.86mA onBoni. Include0.215dB ideal50Ω tap loss in RF acceptance/calibration.",
+    "Each sensed RF port has a996Ω DC bleed (four249Ω≥0.5W resistors). A floating port self-biases to about20.2mV; a50Ω terminated port to about0.98mV. Expected extra own-bias load is about4.3mA onP2/P3 (4.30V rail, v2.1) and13.86mA onBoni. Include0.215dB ideal50Ω tap loss in RF acceptance/calibration.",
     "DCS open wire fails HIGH while 3V3_Q6A is present; a short of DCS to GND can imitate SAFE and is not detected by this interface. This is a preflight aid with explicit prototype acceptance, not a certified single-fault safety interlock.",
-    "J416/J417 explicitly show the existing external UHF/L-band antenna feed and shield upstream of A418/A419. They belong to the selected antenna/LNA assembly and add no extra purchased connector; an integrated active patch uses an internal feed/return boundary rather than an invented exposed SMA."
+    "J416/J417 explicitly show the existing external UHF/L-band antenna feed and shield upstream of A418/A419. They belong to the selected antenna/LNA assembly and add no extra purchased connector; an integrated active patch uses an internal feed/return boundary rather than an invented exposed SMA.",
+    "RF board ports (W2 GR-2): P2/P3/P6/P8 panel SMA bulkheads are Taoglas CAB.718 pigtails into board U.FL J423/J424/J425/J427; P1 is an SMA pigtail straight into A401 (no RF-board part on E4_P1); ch5 ends at board-edge SMA J426 through W402 (SM3823 75/50 Ω adapter + RG-316). No U.FL or SMA current rating is published: DC on P2/P3/P8 and ch5 is a model until E4-07. Port losses: design/E4-review.md (model)."
   ],
   "components": [
     {
@@ -170,7 +171,7 @@
     },
     {
       "ref": "A403",
-      "value": "Flamingo+ FM v2 #2 optional",
+      "value": "Flamingo+ FM v2 #2 optional: external P8 accessory",
       "kind": "module",
       "group": "RF and receiver interfaces",
       "status": "module",
@@ -181,7 +182,7 @@
         {
           "number": "IN",
           "name": "IN",
-          "net": "E4_P8",
+          "net": "E4_P8_ANT",
           "type": "passive"
         },
         {
@@ -201,7 +202,7 @@
     },
     {
       "ref": "A404",
-      "value": "LNA V2 optional",
+      "value": "LNA V2 optional: external P8 accessory",
       "kind": "module",
       "group": "RF and receiver interfaces",
       "status": "module",
@@ -1723,6 +1724,9 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "CA-DKCA1-305L5-APAJ",
+      "manufacturer": "Adam Tech",
+      "alt_mpn": "TE Connectivity Linx CSE-SGAM-305-SGFB",
       "pins": [
         {
           "number": "CENTER",
@@ -1746,6 +1750,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "CAB.718",
+      "manufacturer": "Taoglas",
       "pins": [
         {
           "number": "CENTER",
@@ -1769,6 +1775,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "CAB.718",
+      "manufacturer": "Taoglas",
       "pins": [
         {
           "number": "CENTER",
@@ -1844,6 +1852,8 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "CAB.718",
+      "manufacturer": "Taoglas",
       "pins": [
         {
           "number": "CENTER",
@@ -1885,19 +1895,18 @@
     },
     {
       "ref": "J408",
-      "value": "P8 WIDE optional SMA",
+      "value": "P8 WIDE optional SMA: ch4 4.3 V",
       "kind": "connector",
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
-      "mpn": "CA-DKCA1-305L5-APAJ",
-      "manufacturer": "Adam Tech",
-      "alt_mpn": "TE Connectivity Linx CSE-SGAM-305-SGFB",
+      "mpn": "CAB.718",
+      "manufacturer": "Taoglas",
       "pins": [
         {
           "number": "CENTER",
           "name": "CENTER",
-          "net": "E4_P8",
+          "net": "E4_RF_CH4",
           "type": "passive"
         },
         {
@@ -2141,6 +2150,187 @@
       ]
     },
     {
+      "ref": "J423",
+      "value": "P2 board U.FL: 4.3 V",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT",
+      "footprint": "SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS",
+      "mpn": "U.FL-R-SMT-1(10)",
+      "manufacturer": "Hirose Electric",
+      "lcsc": "C88373",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_P2",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2).",
+      "notes": [
+        "Mates the U.FL plug of the J402 panel pigtail (Taoglas CAB.718). Carries the ch2 bias (4.3 V, TPS2553 limit 0.339 A max) outward: no U.FL current rating is published, so DC drop and heating at the bias current are E4-07 measurements.",
+        "Place at the E4_P2 node with C403, L403, R4420 and R4460: the detector RF tap R4420 stays ≤1 mm from this port (DC-01)."
+      ]
+    },
+    {
+      "ref": "J424",
+      "value": "P3 board U.FL: 4.3 V",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT",
+      "footprint": "SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS",
+      "mpn": "U.FL-R-SMT-1(10)",
+      "manufacturer": "Hirose Electric",
+      "lcsc": "C88373",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_P3",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2).",
+      "notes": [
+        "Mates the U.FL plug of the J403 panel pigtail (Taoglas CAB.718). Carries the ch3 bias (4.3 V, TPS2553 limit 0.339 A max) outward: no U.FL current rating is published, so DC drop and heating at the bias current are E4-07 measurements.",
+        "Place at the E4_P3 node with C411, L404, R4430 and R4464: the detector RF tap R4430 stays ≤1 mm from this port (DC-01)."
+      ]
+    },
+    {
+      "ref": "J425",
+      "value": "P6 board U.FL: no DC",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT",
+      "footprint": "SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS",
+      "mpn": "U.FL-R-SMT-1(10)",
+      "manufacturer": "Hirose Electric",
+      "lcsc": "C88373",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_P6",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2).",
+      "notes": [
+        "Mates the U.FL plug of the J406 panel pigtail (Taoglas CAB.718); feeds K402.3 next to the optional DNP L407 (RF_HF)."
+      ]
+    },
+    {
+      "ref": "J426",
+      "value": "ch5 IF edge SMA: 13.2 V LNB",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json J-SMA-EDGE, W-IF-75OHM",
+      "footprint": "SR_RX_Custom:SMA_Molex_73251-1153_EdgeMount_Horizontal_CS",
+      "mpn": "0732511153",
+      "manufacturer": "Molex",
+      "lcsc": "C5859238",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_RF_CH5",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Board-edge SMA jack at the RF_CH5 node; CENTER/SHIELD are the renamed pads of the derived Molex 73251-1153 footprint.",
+      "notes": [
+        "End of W402: SM3823 F(m)/SMA(f) adapter on J404, then RG-316 SMA-M/M 152.4 mm into this jack. Carries the LNB supply (13.2 V) from L406; no connector current rating is published (E4-07).",
+        "The 75/50 Ω transition sits at the SM3823 adapter: |Γ| 0.2, about 0.18 dB mismatch loss at the 739.5 MHz QO-100 IF (calculation, model)."
+      ]
+    },
+    {
+      "ref": "J427",
+      "value": "P8 board U.FL: ch4 4.3 V",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT",
+      "footprint": "SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS",
+      "mpn": "U.FL-R-SMT-1(10)",
+      "manufacturer": "Hirose Electric",
+      "lcsc": "C88373",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_RF_CH4",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2).",
+      "notes": [
+        "Mates the U.FL plug of the J408 panel pigtail (Taoglas CAB.718). P8 is a direct port (AREA decision, pcb/partition-spec.json p8): the Flamingo+ #2 / LNA V2 accessory A403/A404 sits outside between antenna and P8 and gets the ch4 bias over the coax.",
+        "Carries the ch4 bias (TCBT-2R5G+ A424, TPS2553 limit 0.192 A max) outward; no U.FL current rating is published (E4-07). Receive-only: the port supplies only LNA bias."
+      ]
+    },
+    {
+      "ref": "J428",
+      "value": "P8 antenna feed / A403 input interface",
+      "kind": "connector",
+      "group": "RF and receiver interfaces",
+      "status": "module",
+      "source": "STACK §5.3; assembly boundary of the external P8 accessory (A403 → A404), W2 GR-2; pcb/partition-spec.json p8",
+      "pins": [
+        {
+          "number": "CENTER",
+          "name": "CENTER",
+          "net": "E4_P8_ANT",
+          "type": "passive"
+        },
+        {
+          "number": "SHIELD",
+          "name": "SHIELD",
+          "net": "GND",
+          "type": "passive"
+        }
+      ],
+      "description": "Functional antenna-side coax interface of the external P8 accessory; named center/shield ports are not physical PCB pad numbers.",
+      "notes": [
+        "Antenna feed into the SMA input of A403 (Flamingo+ FM #2), upstream of A404; J408 remains the handheld P8 connection downstream of the accessory.",
+        "The interface is assembly-owned and adds no separately purchased connector; the accessory box, its SMA adapters and the cable to P8 are SRC-2/MECH-3/MECH-4 work."
+      ]
+    },
+    {
       "ref": "K401",
       "value": "G6K-2F-RF-S DC5 HF",
       "kind": "relay",
@@ -2295,33 +2485,6 @@
       ]
     },
     {
-      "ref": "L401",
-      "value": "470 nH optional bleed: part TBD",
-      "kind": "inductor",
-      "group": "RF passives and drivers",
-      "status": "TBD",
-      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
-      "footprint": "Inductor_SMD:L_0805_2012Metric",
-      "pins": [
-        {
-          "number": "1",
-          "name": "1",
-          "net": "E4_P1",
-          "type": "passive"
-        },
-        {
-          "number": "2",
-          "name": "2",
-          "net": "GND",
-          "type": "passive"
-        }
-      ],
-      "dnp": true,
-      "notes": [
-        "Optional bleed is DNP until exact part and RF loading are qualified."
-      ]
-    },
-    {
       "ref": "L402",
       "value": "Coilcraft 0805LS-471XGRC 470 nH 2%",
       "kind": "inductor",
@@ -2439,12 +2602,14 @@
     },
     {
       "ref": "L407",
-      "value": "470 nH bleed SRF >300 MHz: part TBD",
+      "value": "Coilcraft 0805CS-471XGRC 470 nH 2% bleed, SRF 375 MHz: DNP",
       "kind": "inductor",
       "group": "RF passives and drivers",
-      "status": "TBD",
-      "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "status": "design",
+      "source": "https://www.digikey.de/en/products/result?keywords=0805CS-471XGRC (read 2026-11-07; design/parts/snapshots/2026-11-07-w2-reads-rf-manual.json)",
       "footprint": "Inductor_SMD:L_0805_2012Metric",
+      "mpn": "0805CS-471XGRC",
+      "manufacturer": "Coilcraft",
       "pins": [
         {
           "number": "1",
@@ -2461,7 +2626,7 @@
       ],
       "dnp": true,
       "notes": [
-        "Optional bleed is DNP until exact part and RF loading are qualified."
+        "Optional bleed stays DNP: Q at 162 MHz is not on the read page and the Coilcraft datasheet answered 403; fit only after P6 RF loading is qualified (E4-01, E4-07)."
       ]
     },
     {
@@ -3555,11 +3720,14 @@
     },
     {
       "ref": "W402",
-      "value": "75 Ω shielded internal IF coax",
+      "value": "RG316 SMA-M/M 152.4 mm + SM3823 F/SMA adapter: P4 → J426",
       "kind": "module",
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
+      "mpn": "415-0029-006",
+      "manufacturer": "Cinch Connectivity Solutions Johnson",
+      "alt_mpn": "Mueller Electric Co BU-4150029006",
       "pins": [
         {
           "number": "END_A",
@@ -3806,7 +3974,7 @@
     },
     {
       "ref": "W422",
-      "value": "RG316 SMA-M/M 0.10 m helix → LaNA",
+      "value": "RG316 SMA-M/M 152.4 mm helix → LaNA",
       "kind": "module",
       "group": "S-band external inline pod",
       "mpn": "415-0029-006",
@@ -3841,7 +4009,7 @@
     },
     {
       "ref": "W423",
-      "value": "RG316 SMA-M/M 0.10 m LaNA → DC block",
+      "value": "RG316 SMA-M/M 152.4 mm LaNA → DC block",
       "kind": "module",
       "group": "S-band external inline pod",
       "mpn": "415-0029-006",
@@ -4825,14 +4993,14 @@
     },
     {
       "ref": "R4420",
-      "value": "24.9 kΩ 0.1% 0402 RF tap",
+      "value": "26.7 kΩ 0.1% 0402 RF tap",
       "kind": "resistor",
       "group": "DC detectors: UHF",
       "footprint": "Resistor_SMD:R_0402_1005Metric",
-      "mpn": "RT0402BRD0724K9L",
+      "mpn": "RT0402BRD0726K7L",
       "manufacturer": "YAGEO",
-      "lcsc": "C852664",
-      "alt_mpn": "UNI-ROYAL TC0225D2492TCC",
+      "lcsc": "C852674",
+      "alt_mpn": "RESI PTFR0402B26K7P9",
       "pins": [
         {
           "number": "1",
@@ -4855,14 +5023,14 @@
     },
     {
       "ref": "R4421",
-      "value": "24.9 kΩ 0.1% 0402",
+      "value": "23.2 kΩ 0.1% 0402",
       "kind": "resistor",
       "group": "DC detectors: UHF",
       "footprint": "Resistor_SMD:R_0402_1005Metric",
-      "mpn": "RT0402BRD0724K9L",
+      "mpn": "RT0402BRD0723K2L",
       "manufacturer": "YAGEO",
-      "lcsc": "C852664",
-      "alt_mpn": "UNI-ROYAL TC0225D2492TCC",
+      "lcsc": "C852655",
+      "alt_mpn": "UNI-ROYAL TC0225B2322TCC; Panasonic ERA-2AEB2322X",
       "pins": [
         {
           "number": "1",
@@ -4882,10 +5050,14 @@
     },
     {
       "ref": "R4422",
-      "value": "49.8 kΩ 0.1%",
+      "value": "49.9 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: UHF",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0749K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C705780",
+      "alt_mpn": "Panasonic ERA3AEB4992V; Vishay TNPW060349K9BEEA",
       "pins": [
         {
           "number": "1",
@@ -4989,7 +5161,7 @@
       "status": "verified",
       "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
       "notes": [
-        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.9 kΩ (26.7 kΩ + 23.2 kΩ); TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
       ],
       "footprint": "Package_TO_SOT_SMD:SOT-23"
     },
@@ -5281,14 +5453,14 @@
     },
     {
       "ref": "R4430",
-      "value": "24.9 kΩ 0.1% 0402 RF tap",
+      "value": "26.7 kΩ 0.1% 0402 RF tap",
       "kind": "resistor",
       "group": "DC detectors: LBAND",
       "footprint": "Resistor_SMD:R_0402_1005Metric",
-      "mpn": "RT0402BRD0724K9L",
+      "mpn": "RT0402BRD0726K7L",
       "manufacturer": "YAGEO",
-      "lcsc": "C852664",
-      "alt_mpn": "UNI-ROYAL TC0225D2492TCC",
+      "lcsc": "C852674",
+      "alt_mpn": "RESI PTFR0402B26K7P9",
       "pins": [
         {
           "number": "1",
@@ -5311,14 +5483,14 @@
     },
     {
       "ref": "R4431",
-      "value": "24.9 kΩ 0.1% 0402",
+      "value": "23.2 kΩ 0.1% 0402",
       "kind": "resistor",
       "group": "DC detectors: LBAND",
       "footprint": "Resistor_SMD:R_0402_1005Metric",
-      "mpn": "RT0402BRD0724K9L",
+      "mpn": "RT0402BRD0723K2L",
       "manufacturer": "YAGEO",
-      "lcsc": "C852664",
-      "alt_mpn": "UNI-ROYAL TC0225D2492TCC",
+      "lcsc": "C852655",
+      "alt_mpn": "UNI-ROYAL TC0225B2322TCC; Panasonic ERA-2AEB2322X",
       "pins": [
         {
           "number": "1",
@@ -5338,10 +5510,14 @@
     },
     {
       "ref": "R4432",
-      "value": "49.8 kΩ 0.1%",
+      "value": "49.9 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: LBAND",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0749K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C705780",
+      "alt_mpn": "Panasonic ERA3AEB4992V; Vishay TNPW060349K9BEEA",
       "pins": [
         {
           "number": "1",
@@ -5445,7 +5621,7 @@
       "status": "verified",
       "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
       "notes": [
-        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.9 kΩ (26.7 kΩ + 23.2 kΩ); TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
       ],
       "footprint": "Package_TO_SOT_SMD:SOT-23"
     },
@@ -5737,14 +5913,14 @@
     },
     {
       "ref": "R4440",
-      "value": "24.9 kΩ 0.1% 0402 RF tap",
+      "value": "26.7 kΩ 0.1% 0402 RF tap",
       "kind": "resistor",
       "group": "DC detectors: HF",
       "footprint": "Resistor_SMD:R_0402_1005Metric",
-      "mpn": "RT0402BRD0724K9L",
+      "mpn": "RT0402BRD0726K7L",
       "manufacturer": "YAGEO",
-      "lcsc": "C852664",
-      "alt_mpn": "UNI-ROYAL TC0225D2492TCC",
+      "lcsc": "C852674",
+      "alt_mpn": "RESI PTFR0402B26K7P9",
       "pins": [
         {
           "number": "1",
@@ -5767,14 +5943,14 @@
     },
     {
       "ref": "R4441",
-      "value": "24.9 kΩ 0.1% 0402",
+      "value": "23.2 kΩ 0.1% 0402",
       "kind": "resistor",
       "group": "DC detectors: HF",
       "footprint": "Resistor_SMD:R_0402_1005Metric",
-      "mpn": "RT0402BRD0724K9L",
+      "mpn": "RT0402BRD0723K2L",
       "manufacturer": "YAGEO",
-      "lcsc": "C852664",
-      "alt_mpn": "UNI-ROYAL TC0225D2492TCC",
+      "lcsc": "C852655",
+      "alt_mpn": "UNI-ROYAL TC0225B2322TCC; Panasonic ERA-2AEB2322X",
       "pins": [
         {
           "number": "1",
@@ -5794,10 +5970,14 @@
     },
     {
       "ref": "R4442",
-      "value": "49.8 kΩ 0.1%",
+      "value": "49.9 kΩ 0.1%",
       "kind": "resistor",
       "group": "DC detectors: HF",
       "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RT0603BRD0749K9L",
+      "manufacturer": "YAGEO",
+      "lcsc": "C705780",
+      "alt_mpn": "Panasonic ERA3AEB4992V; Vishay TNPW060349K9BEEA",
       "pins": [
         {
           "number": "1",
@@ -5901,7 +6081,7 @@
       "status": "verified",
       "source": "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
       "notes": [
-        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.8 kΩ; TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
+        "Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.9 kΩ (26.7 kΩ + 23.2 kΩ); TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."
       ],
       "footprint": "Package_TO_SOT_SMD:SOT-23"
     },
@@ -6978,9 +7158,9 @@
   "open_items": [
     {
       "id": "E4-01",
-      "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional static bleeds stay DNP.",
+      "description": "ch1–3 injector choke part selection is complete; final DC drop, thermal rise, RF impedance and footprint qualification remain open. Optional L407 DNP.",
       "blocking": true,
-      "resolve": "Verify selected 0805LS-471XGRC / 0805HP-221XGRC / 0603HP-47NXGRW manufacturer land patterns and target-band impedance under bias. VNA qualify IL/RL/isolation and DC heating at actual/worst protected current. The current Coilcraft 0603HP PDF confirms the 2.3 GHz typical SRF; no documentary SRF question remains. L401/L407 stay optional DNP until separately qualified.",
+      "resolve": "Verify selected 0805LS-471XGRC / 0805HP-221XGRC / 0603HP-47NXGRW manufacturer land patterns and target-band impedance under bias. VNA qualify IL/RL/isolation and DC heating at actual/worst protected current. The current Coilcraft 0603HP PDF confirms the 2.3 GHz typical SRF; no documentary SRF question remains. Optional L407 (candidate 0805CS-471XGRC, SRF 375 MHz read on DigiKey; Q at 162 MHz not read) stays DNP until separately qualified; L401 is removed (P1 pigtail into A401).",
       "stack": "§5.3; §8 (РЧ-деталі); §8.1 RF-10",
       "refs": [
         "L402",
@@ -7036,12 +7216,17 @@
       "id": "E4-07",
       "description": "RF PCB, relay insertion loss, isolation, return loss and startup PARK are unmeasured.",
       "blocking": true,
-      "resolve": "VNA: HF selector 10 kHz–260 MHz IL ≤0.3 dB, RL ≥21 dB, isolation ≥35 dB at 162–260 MHz plus STACK LF/HF gates. HMC ≥40 dB isolation at 0.1–1.7 GHz (37–40 dB conditional and recorded); verify all DC blocks and startup. Check all SMT footprint pad numbers, dimensions, orientation and ground/exposed-pad implementation against the now-verified manufacturer maps.",
+      "resolve": "VNA: HF selector 10 kHz–260 MHz IL ≤0.3 dB, RL ≥21 dB, isolation ≥35 dB at 162–260 MHz plus STACK LF/HF gates. HMC ≥40 dB isolation at 0.1–1.7 GHz (37–40 dB conditional and recorded); verify all DC blocks and startup. Check all SMT footprint pad numbers, dimensions, orientation and ground/exposed-pad implementation against the now-verified manufacturer maps. Per RF port P1–P8 and the ch5 IF (W2 GR-2 board ports): VNA IL/RL of the assembled panel → pigtail → board-connector path in its band against the model loss table (design/E4-review.md), and DC drop/heating at the bias current on P2/P3/P8 (TPS2553 limits 0.339/0.339/0.192 A) and on ch5 (LNB 13.2 V): no U.FL, MHF or SMA current rating is published.",
       "stack": "§5.3; §8 (HMC7992LP3DE; G6K-2F-RF-S); §8.1 RF-0/RF-1, HF-13",
       "refs": [
         "K401",
         "K402",
-        "U405"
+        "U405",
+        "J423",
+        "J424",
+        "J425",
+        "J426",
+        "J427"
       ]
     },
     {
@@ -7119,6 +7304,11 @@
       "id": "R-E4-10",
       "description": "v2.1 owner decision (E4-06): L403.2, C449 and C450 move from BIAS_CH2 to BIAS_CH2_PORT; L404.2, C451 and C452 from BIAS_CH3 to BIAS_CH3_PORT; A406 DC from BONI13V8 to BONI13V8_PORT. The E2 back-to-back P-MOSFET blocking elements Q2901–Q2903 sit between the protected E2 nodes and these port nodes. The DC-end RF bypass stays at the choke, so no RF current flows through the element (expected ΔIL ≈0 dB, unproven). The former 'TPS2660-class eFuse' option is dropped: the foreign source would sit on its OUT pin, rated only −0.3 V to RTN.",
       "source": "Brief PM30V-BLOCK option B with skeptic corrections, 24.10.2026; TI SLVSDG2G §7.1; design/E2.json R-E2-21."
+    },
+    {
+      "id": "R-E4-11",
+      "description": "W2 GR-2: board-side RF ports. P2/P3/P6/P8 = Hirose U.FL-R-SMT-1(10) J423/J424/J425/J427 with Taoglas CAB.718 U.FL→SMA(F) bulkhead pigtails (J402/J403/J406/J408); P1 = Adam Tech CA-DKCA1-305L5-APAJ pigtail into A401.IN, L401 removed; ch5 = Molex 73251-1153 edge SMA J426 fed by W402 (Fairview SM3823 F(m)/SMA(f) 75/50 Ω adapter on J404 + RG-316 SMA-M/M 152.4 mm); P8 = direct port with A403/A404 as an external accessory (AREA); W422/W423 = 152.4 mm as bought; detector arms 26.7 kΩ + 23.2 kΩ against 49.9 kΩ (value only).",
+      "source": "design/parts/snapshots/2026-11-07-w2-reads-rf-manual.json and -lcsc.json (read 2026-11-07); KiCad 10.0.7 Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical; pcb/partition-spec.json p8; design/E4-detector-analysis.py (98.638 mV, model); build/15-rishennia-komplektu.md «RF-порти»."
     }
   ],
   "drawing_notes": [

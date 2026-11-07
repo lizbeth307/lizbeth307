@@ -451,10 +451,6 @@ ASSEMBLIES = [
     ("C-PCIE", "PCIe x1 Q6A → R44SF → Lime", r"^E5_PCIE_", "Q6A.MKEY → RISER → LIME", "ADT-Link R44SF 5 см; 3.3 V хоста відділено (E5 §10)"),
 ]
 
-# Coax assemblies bought at another length than the graph models (parts DB W-RG316-SMA-MM-0152: no shorter stock part).
-PURCHASED_LENGTH = {"W422": "152.4 мм", "W423": "152.4 мм"}
-GRAPH_LENGTH = {"W422": "0.10 м", "W423": "0.10 м"}
-
 # --- Labels (build/18) ---------------------------------------------------------
 # Panel RF ports: ref -> (label text, DC on the port). Must cover every panel RF connector.
 PORT_LABELS = {
