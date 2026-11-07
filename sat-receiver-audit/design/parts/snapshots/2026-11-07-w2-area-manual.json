@@ -1,0 +1,494 @@
+{
+ "schema": 1,
+ "date": "2026-11-07",
+ "note": "W2 AREA reads for the board partition (pcb/partition-spec.json): the B2B pair, the dual-row header family and the heights of the PWR parts that decide the PWR-A/PWR-B rule. Keys use the prefix w2-area: so no parts-database SKU lookup matches them and no earlier row is replaced; these rows are evidence for pcb/partition-spec.json only. JLCPCB-search rows are not an LCSC snapshot (build_parts counts LCSC SKUs only from distributor 'LCSC' snapshots); GR-3 records the B2B and PHD codes it adds through tools/check_parts_availability.py. 'stock': null means not shown.",
+ "not_readable": [
+  {
+   "url": "https://www.coilcraft.com/en-us/products/power/shielded-inductors/molded-inductor/xal/xal5030/",
+   "read": "2026-11-07",
+   "result": "not readable: HTTP 403; XAL5030/XAL6060 heights taken from the vendored KiCad 10.0.7 footprint descriptions"
+  },
+  {
+   "url": "https://www.mouser.com/datasheet/2/215/3568-742601.pdf",
+   "read": "2026-11-07",
+   "result": "not readable: timeout"
+  },
+  {
+   "url": "https://www.lcsc.com/datasheet/lcsc_datasheet_2304140030_Samtec-QTH-030-01-L-D-A_C2843756.pdf",
+   "read": "2026-11-07",
+   "result": "not readable: HTML wrapper without the datasheet body (Samtec's own PDFs were read instead)"
+  },
+  {
+   "url": "https://www.lcsc.com/datasheet/C5379798.pdf",
+   "read": "2026-11-07",
+   "result": "not readable: 'The document link is invalid'"
+  }
+ ],
+ "entries": {
+  "w2-area:jlcpcb-C5199901": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": "https://www.lcsc.com/product-detail/board-to-board-and-backplane-connector_samtec-qsh-060-01-l-d-a_C5199901.html",
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C5199901",
+   "mpn": "QSH-060-01-L-D-A",
+   "manufacturer": "Samtec",
+   "stock": 270,
+   "price": "USD 8.8822 @1",
+   "attributes": {
+    "Number of Rows": "2",
+    "Number of Pins": "120P",
+    "Pitch": "0.5mm",
+    "Current Rating": "2A",
+    "Mounting Type": "Surface Mount,Vertical"
+   },
+   "note": "B2B socket of the chosen pair (PWR-A side), 120 contacts, 0.5 mm"
+  },
+  "w2-area:jlcpcb-C116054": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": "https://lcsc.com/product-detail/Mezzanine-Connectors-Board-to-Board_Samtec-QTH-060-01-L-D-A_C116054.html",
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C116054",
+   "mpn": "QTH-060-01-L-D-A",
+   "manufacturer": "Samtec",
+   "stock": 314,
+   "price": "USD 8.8004 @1",
+   "attributes": {
+    "Number of Rows": "2",
+    "System Fit Height": "5mm",
+    "Number of Pins": "120P",
+    "Current Rating": "2A",
+    "Pitch": "0.5mm",
+    "Mounting Type": "Surface Mount,Vertical"
+   },
+   "note": "B2B terminal of the chosen pair (PWR-B side), 120 contacts, 0.5 mm"
+  },
+  "w2-area:jlcpcb-C2909821": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": "https://www.lcsc.com/product-detail/board-to-board-and-backplane-connector_samtec-qsh-030-01-l-d-a_C2909821.html",
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C2909821",
+   "mpn": "QSH-030-01-L-D-A",
+   "manufacturer": "Samtec",
+   "stock": 72,
+   "price": "USD 8.4423 @1",
+   "attributes": {
+    "Number of Rows": "2",
+    "System Fit Height": "5mm",
+    "Number of Pins": "60P",
+    "Pitch": "0.5mm",
+    "Current Rating": "2A",
+    "Mounting Type": "Surface Mount,Vertical"
+   },
+   "note": "60-contact socket; 72 in stock is why the 120-contact size was chosen"
+  },
+  "w2-area:jlcpcb-C2843756": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": "https://www.lcsc.com/product-detail/board-to-board-and-backplane-connector_samtec-qth-030-01-l-d-a_C2843756.html",
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C2843756",
+   "mpn": "QTH-030-01-L-D-A",
+   "manufacturer": "Samtec",
+   "stock": 713,
+   "price": "USD 6.954 @1",
+   "attributes": {
+    "Number of Rows": "2",
+    "Number of Pins": "60P",
+    "Pitch": "0.5mm",
+    "Mounting Type": "Surface Mount,Vertical"
+   },
+   "note": "60-contact terminal"
+  },
+  "w2-area:jlcpcb-C594990": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-s26b-phdss-lf-sn_C594990.html",
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C594990",
+   "mpn": "S26B-PHDSS(LF)(SN)",
+   "manufacturer": "JST",
+   "stock": 3568,
+   "price": "USD 0.8374 @1",
+   "attributes": {
+    "Number of Rows": "2",
+    "Current Rating": "3A",
+    "Pins Structure": "2x13P",
+    "Mounting Type": "Right Angle",
+    "Y-Width of Bottom Edge on Board": "9mm",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "27.9mm",
+    "Number of Pins": "26P",
+    "Pitch": "2mm",
+    "Z-Height of the Board": "5mm"
+   },
+   "note": "JST PHD side entry 26 circuits, S02 PWR side"
+  },
+  "w2-area:jlcpcb-C2983880": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-s20b-phdss-lf-sn_C2983880.html",
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C2983880",
+   "mpn": "S20B-PHDSS(LF)(SN)",
+   "manufacturer": "JST",
+   "stock": 3270,
+   "price": "USD 0.6084 @1",
+   "attributes": {
+    "Number of Rows": "2",
+    "Current Rating": "3A",
+    "Pins Structure": "2x10P",
+    "Mounting Type": "Right Angle",
+    "Y-Width of Bottom Edge on Board": "9mm",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "21.9mm",
+    "Number of Pins": "20P",
+    "Pitch": "2mm",
+    "Z-Height of the Board": "5mm"
+   },
+   "note": "JST PHD side entry 20 circuits, S02 PWR and CTRL sides"
+  },
+  "w2-area:jlcpcb-C161675": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-s16b-phdss-lf-sn_C161675.html",
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C161675",
+   "mpn": "S16B-PHDSS(LF)(SN)",
+   "manufacturer": "JST",
+   "stock": 6549,
+   "price": "USD 0.494 @1",
+   "attributes": {
+    "Number of Rows": "2",
+    "Current Rating": "3A",
+    "Pins Structure": "2x8P",
+    "Mounting Type": "Right Angle",
+    "Y-Width of Bottom Edge on Board": "9mm",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "17.9mm",
+    "Number of Pins": "16P",
+    "Pitch": "2mm",
+    "Z-Height of the Board": "5mm"
+   },
+   "note": "JST PHD side entry 16 circuits: Z-height 5 mm, bottom width 9 mm"
+  },
+  "w2-area:jlcpcb-C5305834": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_jst-s24b-phdss-lf-sn_C5305834.html",
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C5305834",
+   "mpn": "S24B-PHDSS(LF)(SN)",
+   "manufacturer": "JST",
+   "stock": 0,
+   "price": "USD 0.8521 @1",
+   "attributes": {
+    "Number of Rows": "2",
+    "Current Rating": "3A",
+    "Pins Structure": "2x12P",
+    "Mounting Type": "Right Angle",
+    "Y-Width of Bottom Edge on Board": "9mm",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "25.9mm",
+    "Number of Pins": "24P",
+    "Pitch": "2mm",
+    "Z-Height of the Board": "5mm"
+   },
+   "note": "JST PHD side entry 24 circuits: stock 0, so not used"
+  },
+  "w2-area:jlcpcb-C407950": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": "https://www.lcsc.com/product-detail/aluminum-electrolytic-capacitors-leaded_panasonic-eeufr1h470_C407950.html",
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C407950",
+   "mpn": "EEUFR1H470",
+   "manufacturer": "PANASONIC",
+   "stock": 798,
+   "price": "USD 0.1911 @1",
+   "attributes": {
+    "Height - Seated (Max)": "11.2mm",
+    "Ripple Current": "405mA@100kHz",
+    "Diameter": "6.3mm"
+   },
+   "note": "THT radial of 15 PWR refs: height 11.2 mm"
+  },
+  "w2-area:jlcpcb-C116228": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": "https://www.lcsc.com/product-detail/aluminum-electrolytic-capacitors-leaded_nichicon-uhe1e221mpd_C116228.html",
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C116228",
+   "mpn": "UHE1E221MPD",
+   "manufacturer": "Nichicon",
+   "stock": 1,
+   "price": "USD 0.1589 @1",
+   "attributes": {
+    "Height - Seated (Max)": "11.5mm",
+    "Ripple Current": "640mA@100kHz",
+    "Diameter": "8mm"
+   },
+   "note": "THT radial C207: height 11.5 mm"
+  },
+  "w2-area:jlcpcb-C278532": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": "https://www.lcsc.com/product-detail/aluminum-electrolytic-capacitors-leaded_panasonic-eeufr1c101_C278532.html",
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C278532",
+   "mpn": "EEUFR1C101",
+   "manufacturer": "PANASONIC",
+   "stock": 3,
+   "price": "USD 0.0558 @1",
+   "attributes": {
+    "Height - Seated (Max)": "11mm",
+    "Ripple Current": "280mA@100kHz",
+    "Diameter": "5mm"
+   },
+   "note": "THT radial C511: height 11 mm"
+  },
+  "w2-area:jlcpcb-C454360": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": "https://www.lcsc.com/product-detail/hybrid-aluminum-electrolytic-capacitors_panasonic-eehzk1v101xp_C454360.html",
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C454360",
+   "mpn": "EEHZK1V101XP",
+   "manufacturer": "PANASONIC",
+   "stock": 51,
+   "price": "USD 0.8423 @1",
+   "attributes": {
+    "Height - Seated (Max)": "7.7mm",
+    "Mounting Type": "SMD",
+    "Diameter": "6.3mm"
+   },
+   "note": "SMD electrolytic C107/C109: height 7.7 mm"
+  },
+  "w2-area:jlcpcb-C88142": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": "https://www.lcsc.com/product-detail/polymer-aluminum-capacitors_panasonic-35svpf22m_C88142.html",
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C88142",
+   "mpn": "35SVPF22M",
+   "manufacturer": "PANASONIC",
+   "stock": 2542,
+   "price": "USD 1.2136 @1",
+   "attributes": {
+    "Height - Seated (Max)": "5.9mm",
+    "Mounting Type": "SMD",
+    "Ripple Current": "2.6A@100kHz",
+    "Diameter": "6.3mm"
+   },
+   "note": "SMD polymer C111/C112: height 5.9 mm"
+  },
+  "w2-area:jlcpcb-C136275": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": "https://www.lcsc.com/product-detail/polymer-aluminum-capacitors_panasonic-16svpc100m_C136275.html",
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C136275",
+   "mpn": "16SVPC100M",
+   "manufacturer": "PANASONIC",
+   "stock": 8117,
+   "price": "USD 0.7033 @1",
+   "attributes": {
+    "Height - Seated (Max)": "5.9mm",
+    "Mounting Type": "SMD",
+    "Ripple Current": "2.49A@100kHz",
+    "Diameter": "6.3mm"
+   },
+   "note": "SMD polymer C113: height 5.9 mm"
+  },
+  "w2-area:jlcpcb-C2161511": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": "https://www.lcsc.com/product-detail/polymer-aluminum-capacitors_panasonic-16svpg47m_C2161511.html",
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C2161511",
+   "mpn": "16SVPG47M",
+   "manufacturer": "PANASONIC",
+   "stock": 538,
+   "price": "USD 0.8194 @1",
+   "attributes": {
+    "Height - Seated (Max)": "4.5mm",
+    "Mounting Type": "SMD",
+    "Ripple Current": "160mA@120Hz",
+    "Diameter": "5mm"
+   },
+   "note": "SMD polymer C503: height 4.5 mm"
+  },
+  "w2-area:jlcpcb-C190722": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": "https://www.lcsc.com/product-detail/polymer-aluminum-capacitors_panasonic-16svpc150m_C190722.html",
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C190722",
+   "mpn": "16SVPC150M",
+   "manufacturer": "PANASONIC",
+   "stock": 0,
+   "price": "USD 1.1547 @1",
+   "attributes": {
+    "Height - Seated (Max)": "6.9mm",
+    "Mounting Type": "SMD",
+    "Ripple Current": "3.22A@100kHz",
+    "Diameter": "8mm"
+   },
+   "note": "SMD polymer C506: height 6.9 mm"
+  },
+  "w2-area:jlcpcb-C293740": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_molex-436500215_C293740.html",
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C293740",
+   "mpn": "436500215",
+   "manufacturer": "MOLEX",
+   "stock": 2889,
+   "price": "USD 0.6052 @1",
+   "attributes": {
+    "Number of Rows": "1",
+    "Current Rating": "8.5A",
+    "Pins Structure": "1x2P",
+    "Mounting Type": "Through Hole",
+    "Y-Width of Bottom Edge on Board": "5.57mm",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "9.65mm",
+    "Number of Pins": "2P",
+    "Pitch": "3mm",
+    "Z-Height of the Board": "9.9mm"
+   },
+   "note": "Micro-Fit 3.0 vertical 2-pin header: Z-height 9.9 mm"
+  },
+  "w2-area:jlcpcb-C293547": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_molex-436500415_C293547.html",
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C293547",
+   "mpn": "436500415",
+   "manufacturer": "MOLEX",
+   "stock": 1481,
+   "price": "USD 0.8063 @1",
+   "attributes": {
+    "Number of Rows": "1",
+    "Current Rating": "8.5A",
+    "Pins Structure": "1x4P",
+    "Mounting Type": "Through Hole",
+    "Y-Width of Bottom Edge on Board": "5.57mm",
+    "X-Length of Bottom Edge on Board (Spacing Line)": "15.65mm",
+    "Number of Pins": "4P",
+    "Pitch": "3mm",
+    "Z-Height of the Board": "9.9mm"
+   },
+   "note": "Micro-Fit 3.0 vertical 4-pin header: Z-height 9.9 mm"
+  },
+  "w2-area:jlcpcb-C490534": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": "https://www.lcsc.com/product-detail/wire-to-board-connector_molex-39288020_C490534.html",
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C490534",
+   "mpn": "39288020",
+   "manufacturer": "MOLEX",
+   "stock": 6700,
+   "price": "USD 0.1948 @1",
+   "attributes": {
+    "Number of Rows": "2",
+    "Current Rating": "9A",
+    "Pins Structure": "2x1P",
+    "Mounting Type": "Through Hole",
+    "Number of Pins": "2P",
+    "Pitch": "4.2mm",
+    "Z-Height of the Board": "12.8mm"
+   },
+   "note": "Mini-Fit Jr. 5566 vertical 2-pin header 39288020: Z-height 12.8 mm"
+  },
+  "w2-area:jlcpcb-C19193815": {
+   "distributor": "LCSC (JLCPCB parts search page, not an LCSC snapshot)",
+   "url": "https://www.lcsc.com/product-detail/idc-connectors_lian-xin-technology-xdfh-0254-2-20p_C19193815.html",
+   "read": "2026-11-07",
+   "method": "keyword query of https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList (public search, no key, User-Agent sr-rx-parts-snapshot as in tools/check_parts_availability.py)",
+   "lcsc": "C19193815",
+   "mpn": "XDFH-0254-2*20P",
+   "manufacturer": "Lian Xin Technology",
+   "stock": 1468,
+   "price": "USD 0.561 @1",
+   "attributes": {
+    "Number of Positions or Pins": "2x20P",
+    "Number of Rows": "2",
+    "Current Rating": "3A",
+    "Pitch": "2.54mm"
+   },
+   "note": "IDC box 2 x 20 of S01: no height attribute on the listing (box height stays TBD; MECH-1 reads the drawing)"
+  },
+  "w2-area:samtec-qsh-qth-spec": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://suddendocs.samtec.com/productspecs/qsh-qth.pdf",
+   "read": "2026-11-07",
+   "method": "WebFetch of the PDF; text extracted with PyMuPDF (AES-encrypted file, empty user password)",
+   "mpn": "QSH/QTH series",
+   "manufacturer": "Samtec",
+   "title": "Product Specification QSH/QTH 0.50 mm Q Strip, Revision K, February 20, 2025",
+   "stock": null,
+   "price": null,
+   "note": "3.1 current rating: signal 2 A (one pin powered per row); 175 VAC; -55 to +125 C; durability 100 cycles (10 u-in Au); all data for the 5 mm mated height vertical configuration"
+  },
+  "w2-area:samtec-qth-catalog": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://suddendocs.samtec.com/catalog_english/qth.pdf",
+   "read": "2026-11-07",
+   "method": "WebFetch of the PDF; text extracted with PyMuPDF",
+   "mpn": "QTH/QSH series",
+   "manufacturer": "Samtec",
+   "title": "Catalogue page F-226 (PDF of 2025-10-24)",
+   "stock": null,
+   "price": null,
+   "note": "QTH lead style -01: A 4.27, height with QSH 5.00 mm (-02 8.00, -03 11.00, -09 14.00, -04 16.00, -05 19.00, -07 25.00); contact 2 A per pin (2 pins powered); ground plane 25 A (1 powered); 175 VAC/247 VDC; -030/-060/-090 = 60/120/180 total pins per bank (-D); QSH length (pins per row/30) x 20.00 + 1.27, width 7.49; QTH length (pins per row/30) x 20.00, width 7.11; -L plating 10 u-in gold; max cycles 100"
+  },
+  "w2-area:bourns-srr1260": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.bourns.com/docs/Product-Datasheets/SRR1260.pdf",
+   "read": "2026-11-07",
+   "method": "WebFetch of the PDF; text extracted with PyMuPDF",
+   "mpn": "SRR1260 series",
+   "manufacturer": "Bourns",
+   "title": "SRR1260 Series Shielded SMD Power Inductors, REV. 03/26",
+   "stock": null,
+   "price": null,
+   "note": "product dimensions 12.5 +-0.3 x 12.5 +-0.3 x 6.0 +-0.5 mm (6.5 mm max)"
+  },
+  "w2-area:keystone-k75p48": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.keyelco.com/userAssets/file/K75p48.pdf",
+   "read": "2026-11-07",
+   "method": "WebFetch of the PDF; text extracted with PyMuPDF",
+   "mpn": "3568",
+   "manufacturer": "Keystone Electronics",
+   "title": "Catalogue K75 page 48, auto fuse clips and holders",
+   "stock": null,
+   "price": null,
+   "note": "3568 mini blade holder block: .630 [16.00], .265 [6.73], .290 [7.37], .390 [9.9] pin row; UL 30 A @ 500 VAC; for Littelfuse Mini 297/997; the height with the fuse inserted is not given (TBD)"
+  },
+  "w2-area:jst-ephd": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://www.jst-mfg.com/product/pdf/eng/ePHD.pdf",
+   "read": "2026-11-07",
+   "method": "WebFetch of the PDF; text extracted with PyMuPDF",
+   "mpn": "PHD series",
+   "manufacturer": "JST",
+   "title": "PHD connector catalogue (PDF of 2023-12-05)",
+   "stock": null,
+   "price": null,
+   "note": "2.0 mm dual row; 3 A AC/DC (AWG #22); 250 V; AWG 28-22; top entry: mounting height 8.8 mm, depth 5 mm; side entry S8B..S34B-PHDSS; B = A + 3.9 with A = 2 (n/2 - 1); PCB holes phi 0.7 on 2.0 mm"
+  },
+  "w2-area:digikey-36-3568-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=36-3568-ND",
+   "read": "2026-11-07",
+   "method": "WebFetch of the DigiKey DE search result page",
+   "mpn": "3568",
+   "manufacturer": "Keystone Electronics",
+   "stock": 87946,
+   "price": null,
+   "note": "fuse size 11.00 x 3.85 mm (0.433 x 0.152 in), through hole, blade, 30 A; datasheet link K75p48.pdf; the height above the board is not listed"
+  }
+ }
+}
