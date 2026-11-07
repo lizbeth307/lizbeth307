@@ -3,7 +3,7 @@
   "status": "MODEL FIT ONLY: envelopes and datasheet dimensions; no physical part was fitted. Hardware gates stay OPEN.",
   "generator": {
     "version": "1.0.0",
-    "params_sha256": "fab8754f230bbdbcf67e6aae5b11cd850203cf138ab7ece36ee9f29e8077695f",
+    "params_sha256": "aa7e786e6b7f44fe00d93c8cb8d80ec421e0627de5867a6cda62b05b475d93dc",
     "pcb_components_sha256": "9e6bdc34a545f2e336583bc95d6d830c613508a454faee6549c191a62d61c21b"
   },
   "envelope": {
@@ -207,18 +207,43 @@
     },
     {
       "id": "R-SMA-THREAD",
-      "rule": "bulkhead thread through ASA wall + Al angle with O-ring, lock washer and nut, >= 3 full threads left (1/4-36: 3 x 0.706 mm)",
-      "value_mm": 4.5,
-      "limit_mm": "thread length of the chosen bulkhead >= wall + O-ring + washer + nut + 2.1",
-      "result": "OPEN: bulkhead/pigtail MPN and its thread length not chosen (MECH-07); the representative Samtec SMA-J-C-X-ST-BH4 takes a 3.8 mm panel at most, less than this 4.5 mm wall: choose a long-thread bulkhead",
-      "source": "STACK 5.8 'стінка 4-5 мм'; parts.json sma_bulkhead_hw"
+      "rule": "per panel port: thread left for mating after the 4.5 mm wall (ASA 2.5 + Al angle 2.0), washer and nut >= 3 full threads (1/4-36: 3 x 0.706; 3/8-32: 3 x 0.794)",
+      "value_mm": {
+        "P1": "PASS (model): 3.25 mm left >= 2.12 (3 x 0.706); outside: thread (min) - wall - items 5 + 6 (max); the seal sits at the flange inside",
+        "P2": "PASS (model): 3.25 mm left >= 2.12 (3 x 0.706); outside: thread (min) - wall - items 5 + 6 (max); the seal sits at the flange inside",
+        "P3": "PASS (model): 3.25 mm left >= 2.12 (3 x 0.706); outside: thread (min) - wall - items 5 + 6 (max); the seal sits at the flange inside",
+        "P4": "PASS (model): 3.6 mm left >= 2.38 (3 x 0.794); inside, for the W402 F plug: long side (min) - wall - washer - nut (max); the 7.6 short side outside is free for W401",
+        "P5": "OPEN: drawing not readable: https://www.amphenolrf.com/en-us/assets/file/4065787441/ 2026-11-07 403 (distributor copies 403 or timeout, parts.json amphenol_242181); hole 9.7 is the typical 3/8-32 bulkhead value, the panel end, thread length and nut stay TBD (R-BULKHEAD-NUTS, R-SMA-THREAD)",
+        "P6": "PASS (model): 3.25 mm left >= 2.12 (3 x 0.706); outside: thread (min) - wall - items 5 + 6 (max); the seal sits at the flange inside",
+        "P7": "OPEN: CAB.011 thread length and D-cut hole not in the READS-RF row web:taoglas-cab011-datasheet-spe-11-8-068-f (2026-11-07); the P7 pigtail is chosen by MECH-6 (B-06)",
+        "P8": "OPEN: washer thickness not drawn: 2.32 mm left for it after the nut and 3 threads",
+        "RX1": "OPEN: nut and washer not drawn: 4.58 mm left for both after 3 threads (1/4-36 sets read: Taoglas p.11 items 5 + 6 up to 3.35, Samtec 2.5)",
+        "RX2": "OPEN: nut and washer not drawn: 4.58 mm left for both after 3 threads (1/4-36 sets read: Taoglas p.11 items 5 + 6 up to 3.35, Samtec 2.5)",
+        "REF_IN": "OPEN: nut and washer not drawn: 4.58 mm left for both after 3 threads (1/4-36 sets read: Taoglas p.11 items 5 + 6 up to 3.35, Samtec 2.5)"
+      },
+      "limit_mm": "3 x pitch; wall 4.5",
+      "result": "OPEN: P5, P7, P8, RX1, RX2, REF_IN (thread or hardware not drawn, or part not read); PASS (model): P1, P2, P3, P4, P6",
+      "source": "STACK 5.8 'стінка 4-5 мм'; parts.json taoglas_mhf1_sma_wp, taoglas_cab01075, adamtech_ca_dkca1_305l5, cinch_vfa340 (read 2026-11-07)"
     },
     {
       "id": "R-BULKHEAD-NUTS",
-      "rule": "nut and lock washer of every panel bulkhead inside the wall clear of the RF-bay walls and parts (envelope check)",
-      "value_mm": "SMA: washer d 10.15, 2.5 thick (layout nut.*)",
-      "result": "OPEN: hardware of P4, P5 not chosen (MPN TBD), no nut envelope",
-      "source": "parts.json sma_bulkhead_hw; envelopes in fit-report 'tight' / 'collisions'"
+      "rule": "nut, washer or connector body of every panel bulkhead inside the wall: an envelope from the part's drawing in the envelope check (nut.*: clear of the RF-bay walls, modules and structure)",
+      "value_mm": {
+        "P1": "d 10.20 x 3.40 deep: connector body and seal inside, nut outside (taoglas_mhf1_sma_wp)",
+        "P2": "d 10.20 x 3.40 deep: connector body and seal inside, nut outside (taoglas_mhf1_sma_wp)",
+        "P3": "d 10.20 x 3.40 deep: connector body and seal inside, nut outside (taoglas_mhf1_sma_wp)",
+        "P4": "d 12.70 x 7.30 deep: washer, nut and the long side inside (cinch_vfa340)",
+        "P5": "no envelope: drawing not readable: https://www.amphenolrf.com/en-us/assets/file/4065787441/ 2026-11-07 403 (distributor copies 403 or timeout, parts.json amphenol_242181); hole 9.7 is the typical 3/8-32 bulkhead value, the panel end, thread length and nut stay TBD (R-BULKHEAD-NUTS, R-SMA-THREAD)",
+        "P6": "d 10.20 x 3.40 deep: connector body and seal inside, nut outside (taoglas_mhf1_sma_wp)",
+        "P7": "d 10.15 x 2.50 deep: sma_bulkhead_hw (representative hardware, part not read)",
+        "P8": "d 9.24 x 3.40 deep: connector body hex inside, nut outside (adamtech_ca_dkca1_305l5)",
+        "RX1": "d 10.20 x 3.40 deep: connector body and seal inside, nut outside (taoglas_cab01075)",
+        "RX2": "d 10.20 x 3.40 deep: connector body and seal inside, nut outside (taoglas_cab01075)",
+        "REF_IN": "d 10.20 x 3.40 deep: connector body and seal inside, nut outside (taoglas_cab01075)",
+        "LAB_BUS": "d 14.60 x 10.80 deep: nut and rear thread with solder cups (kinghelm_gx12_6p)"
+      },
+      "result": "OPEN: no inner envelope for P5 (drawing not read); body OD or length not dimensioned, envelope reserve for P1, P2, P3, P6, P7, P8, RX1, RX2, REF_IN",
+      "source": "parts.json (makers' drawings read 2026-11-07); envelopes in fit-report 'tight' / 'collisions'"
     },
     {
       "id": "R-PWR-PADS",
@@ -426,7 +451,7 @@
       "rule": "harness route centrelines (mechanical.json harness_routes) clear of every envelope, keep-clear reserve and structure part; plate and RF-bay wall only through openings",
       "value_mm": {
         "routed": 33,
-        "clear": 33,
+        "clear": 30,
         "provisional_end": 33,
         "no_route_unplaced_end": [
           "S06",
@@ -439,9 +464,13 @@
           "S33",
           "S41"
         ],
-        "crossing": []
+        "crossing": [
+          "S11",
+          "S23",
+          "S34"
+        ]
       },
-      "result": "OPEN (end provisional): every routed centreline clears the envelopes and structure; 33 of 33 routes end on a board edge zone or at a module without an envelope (header positions, module envelopes and the bundle OD (AI-WIRE-PTFE) TBD); no route yet (end not placed): S06, S07, S36, S39, S40; routes through a plate slot that plate.slots does not list (R-PLATE-SLOT-FILL undercounts): SL1: S27",
+      "result": "OPEN (end provisional): every routed centreline clears the envelopes and structure; 33 of 33 routes end on a board edge zone or at a module without an envelope (header positions, module envelopes and the bundle OD (AI-WIRE-PTFE) TBD); no route yet (end not placed): S06, S07, S36, S39, S40; provisional routes crossing a solid: S11, S23, S34; routes through a plate slot that plate.slots does not list (R-PLATE-SLOT-FILL undercounts): SL1: S27",
       "source": "mechanical.json harness_routes, layout, plate.slots, rf_bay.notches"
     },
     {
@@ -1383,6 +1412,21 @@
         }
       ],
       "result": "OPEN: GR-3 decides (header orientation, board side or board): 15 headers above their board limit (X01I1-CTRL IDC_top 9.1, X02P1-CTRL MF_top 9.9, X02P1-PWR MF_top 9.9, X04P1-PWR MF_top 9.9, X04P1-RF MF_top 9.9, X11P1-PWR MF_top 9.9, X12P1-PWR MF_top 9.9, X13P1-PWR MF_top 9.9, X14P1-PWR MF_top 9.9, X17P1-PWR MF_top 9.9, X18P1-PWR MF_top 9.9, X19P1-PWR MF_top 9.9, X25P1-CTRL MF_top 9.9, X28P1-CTRL MF_top 9.9, X32P1-PWR MF_top 9.9); 5 heights not read; right-angle Micro-Fit 6.98 mm does not fit the CTRL component side (best zone 6.5 mm)"
+    },
+    {
+      "id": "R-BOTTOM-PITCH",
+      "rule": "bottom-face port row: outer flange or inner nut radius of each port + 1 mm <= centre distance (re-space inside x 163-213 if it fails)",
+      "value_mm": {
+        "USB_C_IN-LAB_USB_A": "17.0 mm apart; OPEN: USB_C_IN, LAB_USB_A not modelled",
+        "USB_C_IN-LAB_BUS": "18.0 mm apart; OPEN: USB_C_IN not modelled",
+        "USB_C_IN-AUDIO_3V5": "33.3 mm apart; OPEN: USB_C_IN, AUDIO_3V5 not modelled",
+        "LAB_USB_A-LAB_BUS": "34.5 mm apart; OPEN: LAB_USB_A not modelled",
+        "LAB_USB_A-AUDIO_3V5": "28.0 mm apart; OPEN: LAB_USB_A, AUDIO_3V5 not modelled",
+        "LAB_BUS-AUDIO_3V5": "41.3 mm apart; OPEN: AUDIO_3V5 not modelled"
+      },
+      "limit_mm": 1.0,
+      "result": "OPEN: USB_C_IN, LAB_USB_A, AUDIO_3V5 not modelled (mechanical.json bottom_face '_tbd_reason'); read but not placed: PX0845/A (hex 42) needs 22 mm + the neighbour radius to each neighbour, more than the 17 mm row pitch",
+      "source": "mechanical.json bottom_face.ports; parts.json (makers' drawings read 2026-11-07)"
     },
     {
       "id": "R-TOOL-ACCESS",
@@ -2617,7 +2661,7 @@
         "through": [
           "SL3"
         ],
-        "status": "OPEN (end provisional): behind-panel envelope of MUSBRM5C130 TBD (MECH-2): end at the port centre on the wall; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): route crosses a solid — re-route when the ends are placed: piece 2 through nut.LAB_BUS; piece 3 through nut.LAB_BUS"
       },
       "S12": {
         "kind": "harness",
@@ -2757,7 +2801,7 @@
         "through": [
           "SL3"
         ],
-        "status": "OPEN (end provisional): behind-panel envelope of PX0845/A TBD (MECH-2): end at the port centre on the wall; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): route crosses a solid — re-route when the ends are placed: piece 6 through nut.LAB_BUS"
       },
       "S24": {
         "kind": "harness",
@@ -2874,7 +2918,7 @@
         "through": [
           "SL3"
         ],
-        "status": "OPEN (end provisional): behind-panel envelope of KH-GX12-6P TBD (MECH-2): end at the port centre on the wall; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): route crosses a solid — re-route when the ends are placed: piece 6 through nut.LAB_BUS; piece 7 through nut.LAB_BUS; piece 8 through nut.LAB_BUS"
       },
       "S35": {
         "kind": "harness",
@@ -3592,7 +3636,7 @@
   },
   "volumes_cm3": {
     "front_shell": {
-      "cm3": 157.89,
+      "cm3": 157.61,
       "printed": true,
       "solids": 1,
       "bbox_mm": [
@@ -3603,7 +3647,7 @@
         161.9,
         71.99
       ],
-      "stl_triangles": 18692
+      "stl_triangles": 18668
     },
     "rear_shell": {
       "cm3": 126.02,
@@ -3745,7 +3789,7 @@
       ]
     },
     "angle_top_al": {
-      "cm3": 8.06,
+      "cm3": 8.05,
       "printed": false,
       "solids": 1,
       "bbox_mm": [
@@ -3758,7 +3802,7 @@
       ]
     },
     "angle_right_al": {
-      "cm3": 1.32,
+      "cm3": 1.31,
       "printed": false,
       "solids": 1,
       "bbox_mm": [
@@ -4018,7 +4062,7 @@
     "collisions": 0,
     "outside": 0,
     "rule_failures": 0,
-    "rules_open": 9,
+    "rules_open": 10,
     "antenna_rule_failures": 0,
     "board_area_failures": 0,
     "board_area_open": 1,
