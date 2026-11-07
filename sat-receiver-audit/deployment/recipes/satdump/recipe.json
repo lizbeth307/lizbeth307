@@ -392,7 +392,8 @@
   "Patch 0005 makes IersDBHandler::updateIERS return before its downloads: SatDump 1aedd60 schedules the IERS / leap-second fetch at every start (src-core/db/iers/iers_handler.cpp:33-52) and the task is due at once with the empty database of a private HOME. The decode unit has no network anyway; with the patch and kepler_update_interval Never nothing in the core or the seven plugins fetches at start. Only the AWS NAVATT reader reads the IERS table.",
   "One package satdump, no -dev package: the package hook removes usr/include, the desktop file and the icons; the installation record binds the whole file set as one unit (software/DECODERS.md).",
   "libsatdump_core.so and the plugins have unversioned SONAMEs: dpkg-shlibdeps ignores unversioned libraries it cannot map (dpkg 1.22.6 scripts/dpkg-shlibdeps.pl, read 2026-11-07), so Depends comes from the noble libraries only.",
-  "CI evidence only: the runtime check (runtime_check.py) runs in the sr-rx-packages runtime chroot; the LRPT fixture rows stay BLOCKED_NO_LICENSED_FIXTURE and live-localhost PENDING_DEVICE; nothing here is REVIEWED."
+  "CI evidence only: the runtime check (runtime_check.py) runs in the sr-rx-packages runtime chroot; the LRPT fixture rows stay BLOCKED_NO_LICENSED_FIXTURE and live-localhost PENDING_DEVICE; nothing here is REVIEWED.",
+  "Pinned recipe files (SHA-256; the installation record's recipe_sha256 binds them through this note): check_recipe.py e15a7fffd9c17b795774e8820b7a26e7dd708e184b0b5f0c27154dc9dbff4947, packaging.json 84da22b74c219b9e4d71c63e702b68528b641b5c16c2c71ae3d438ca1bca72c7, upstream-options.json 923f48f0f1a487c50c5259baf75b5a5fd2c0d2326d3ef68b7fb259911e4fec5c"
  ],
  "ci": {
   "heavy": true,

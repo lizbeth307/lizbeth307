@@ -21,7 +21,10 @@
 The builder recipe is recipe.json; everything else this script needs is packaging.json (pinned
 upstream blobs, installation layout, allowlists, config steps, builder check list) and
 upstream-options.json. Their SHA-256 values are pinned below (DATA_SHA256): the build record binds
-this script (recipe_files, hooks), so it binds both data files too. Plugin file names come from the
+this script (recipe_files, hooks), so it binds both data files too; and recipe.json carries one note
+with the SHA-256 of this script and both data files (pin_note), so the installation record's
+recipe_sha256 (decoder_policy compares it with the deployed recipe.json) binds them as well. All
+three subcommands refuse a stale pin or data file before reading anything. Plugin file names come from the
 upstream directory, not from the option name: PLUGIN_FY2 builds plugins/fengyun2_support
 (plugins/CMakeLists.txt:26-27 and plugins/fengyun2_support/CMakeLists.txt:6 at 1aedd60), so the file
 is libfengyun2_support.so. Nothing here compiles, fetches or runs SatDump. Findings name rule ids and
@@ -41,6 +44,10 @@ PROJECT = HERE.parents[2]
 # packaging.json and upstream-options.json as reviewed with this script (check: data_file_digest).
 DATA_SHA256 = {"packaging.json": "84da22b74c219b9e4d71c63e702b68528b641b5c16c2c71ae3d438ca1bca72c7",
                "upstream-options.json": "923f48f0f1a487c50c5259baf75b5a5fd2c0d2326d3ef68b7fb259911e4fec5c"}
+# recipe.json carries one note with the SHA-256 of these files (pin_note), so recipe_sha256 binds them.
+PINNED_FILES = ("check_recipe.py", "packaging.json", "upstream-options.json")
+PIN_NOTE = ("Pinned recipe files (SHA-256; the installation record's recipe_sha256 binds them through this note): "
+            "check_recipe.py %s, packaging.json %s, upstream-options.json %s")
 OPTION = re.compile(r"\boption\s*\(\s*([A-Za-z0-9_]+)\s+\"((?:[^\"\\]|\\.)*)\"\s*(ON|OFF)?\s*\)", re.S | re.I)
 ALLOWED_ON = frozenset(("BUILD_OPENMP", "ENABLE_INSTALL", "PLUGIN_METEOR", "PLUGIN_NOAA_METOP", "PLUGIN_AWS",
                         "PLUGIN_ELEKTRO_ARKTIKA", "PLUGIN_XRIT", "PLUGIN_FY2", "PLUGIN_NET_SOURCE_SDR_SUPPORT"))
@@ -228,12 +235,27 @@ def tree_digest(top, *, owner_check=None):
     return hashlib.sha256(text.encode("utf-8", "surrogateescape")).hexdigest()
 
 
+def pin_note():
+    """The recipe.json note that pins this script and both data files by SHA-256. The installation
+    record's recipe_sha256 is the SHA-256 of recipe.json (decoder_policy compares it with the deployed
+    file), so through this note it binds the hook script and the packaging data as well."""
+    return PIN_NOTE % tuple(sha256(HERE / name) for name in PINNED_FILES)
+
+
 def _data_findings():
+    """The committed state: data files as pinned in DATA_SHA256, and recipe.json's pin note current."""
     findings = []
     for name, digest in sorted(DATA_SHA256.items()):
         path = HERE / name
         if not path.is_file() or sha256(path) != digest:
             findings.append("data_file_digest:" + name)
+    try:
+        notes = strict_json((HERE / "recipe.json").read_text(encoding="utf-8")).get("notes")
+    except (OSError, ValueError):
+        notes = None
+    pins = [n for n in notes if type(n) is str and n.startswith(PIN_NOTE.split(":", 1)[0] + ":")] if type(notes) is list else []
+    if pins != [pin_note()]:
+        findings.append("recipe_pin_note")
     return findings
 
 

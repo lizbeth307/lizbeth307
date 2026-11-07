@@ -113,6 +113,19 @@ class RecipeTests(unittest.TestCase):
             with self.assertRaisesRegex(check_recipe.RecipeError, "data_file_digest:packaging.json"):
                 check_recipe.load("packaging.json")
 
+    def test_recipe_json_pins_the_hook_script_and_both_data_files(self):
+        # recipe_sha256 of the installation record is the SHA-256 of recipe.json; its pin note makes a
+        # change of check_recipe.py, packaging.json or upstream-options.json a change of recipe.json too.
+        pins = [n for n in self.recipe["notes"] if n.startswith("Pinned recipe files")]
+        self.assertEqual(pins, [check_recipe.pin_note()])
+        for name in check_recipe.PINNED_FILES:
+            self.assertIn(name + " " + hashlib.sha256((RECIPE / name).read_bytes()).hexdigest(), pins[0])
+        with patch.object(check_recipe, "pin_note", return_value="Pinned recipe files (SHA-256): stale"):
+            self.assertEqual(check_recipe.check(), ["recipe_pin_note"])
+            with patch("sys.stdout", new_callable=io.StringIO) as stdout:
+                self.assertEqual(check_recipe.main(["verify-source", "--source", str(RECIPE)]), 2)
+            self.assertIn("recipe_pin_note", stdout.getvalue())
+
     def test_data_files_are_the_pinned_ones(self):
         for name, digest in check_recipe.DATA_SHA256.items():
             self.assertEqual(hashlib.sha256((RECIPE / name).read_bytes()).hexdigest(), digest, name)
