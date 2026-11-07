@@ -7,10 +7,10 @@
   "kicad_version": "10.0.7",
   "inputs": {
     "board_file": "build/kicad/boards/ENC/ENC.kicad_pcb",
-    "board_sha256": "7a122c3361d2a74b2fba5edd4fc4c532afef11475b27978db90c8ca11f046133",
+    "board_sha256": "f83a55d4f95973ad1fc3b87961af649293336fb5247b37f080318a336271be7a",
     "project_sha256": "2aa13b5419374d94ff7d22cf48556ceebc9635e3742b9f4d2eef575c25624f41",
     "spec_projection_sha256": "2cc6aec9318a914fdb54071ced249cf8057df8d724d05ad0683a0c8d4d9e4376",
-    "report_projection_sha256": "9a25aae3dac4c58b4658af2d36355da5ea2c60b98e48d8b463b8d018a678f696",
+    "report_projection_sha256": "56aad72f681befef3e52d42bbacf269112160b3ff0b8f9837a5ad6cda56fb622",
     "jlc_bom_rows": [
       {
         "Board": "ENC",
@@ -324,8 +324,8 @@
     },
     {
       "path": "gerber/ENC-F_Cu.gtl",
-      "sha256": "abfc274b3f9a11f7cb9a56566f226defcb23bac5e3f788c58cdb0c6df0f72ee5",
-      "bytes": 21629
+      "sha256": "fbeb71c1f108e6c5d55e87396e38c18da4ea584851cfdac226844ae190520fe5",
+      "bytes": 21681
     },
     {
       "path": "gerber/ENC-F_Mask.gts",
