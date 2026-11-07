@@ -7134,11 +7134,11 @@
   },
   {
    "id": "AI-HATCH-BOARD-FIX",
-   "item": "кріплення плати лючка HATCH до задньої стінки",
-   "qty": 1,
-   "spares": 0,
-   "for": "build/17 F38",
-   "tbd": "контуру й отворів плати лючка ще немає (розкладка малих плат — хвиля 2, W2-05)"
+   "item": "гвинт M2.5 A2 TX8 для плати лючка HATCH у вставки TC-M2,5x4 бобишок задньої стінки",
+   "qty": 2,
+   "spares": 2,
+   "for": "build/17 F38: 2 отвори ⌀2.7 у вушках плати HATCH (pcb/boards/HATCH.json, build/kicad/boards/HATCH/contract-proposal.json, W2 PCB-SB1)",
+   "tbd": "довжина TBD: бобишок плати лючка в моделі механіки ще немає (mechanical/generated/fastener-stacks.json HATCH-BOARD: no stack); дві вставки TC-M2,5x4 до цих бобишок у кількість AI-INSERT-M25 ще не додано"
   },
   {
    "id": "AI-PACK-FUSE-FIX",
