@@ -1,0 +1,109 @@
+{
+  "schema": "srrx-board-review-v1",
+  "board_id": "ENC",
+  "status": "MODEL_CHECK: drawn copper against contract, graphs and net classes (pure-Python reader); not a fabrication release; bench gates OPEN",
+  "generator": "pcb/check_boards.py",
+  "result": "NO_FINDINGS",
+  "inputs": {
+    "board_file": {
+      "path": "build/kicad/boards/ENC/ENC.kicad_pcb",
+      "sha256": "7a122c3361d2a74b2fba5edd4fc4c532afef11475b27978db90c8ca11f046133"
+    },
+    "projection_sha256": {
+      "graph_refs_pins_nets": "60661f8cf773e1300c243a6468510e734578d1f9e711f225f2a91980df2dae75",
+      "footprints": "6ab71e6ba45f706c40b02aaba3cb31d76afda871c96fb040775d53fc01c087f9",
+      "contract_board": "de3e7f015bbdf99ff42f31d12438ee476779aa13010298a906c483047071fa19",
+      "netclasses": "2681d77f0f8c2d81aa4cf979f0c9584329d9bd10918d1594df7d7bd32ccf70ff",
+      "spec": "a97c96d016b04c65829925a8bb09474386b7dcadfa452a31559c75623f9ccd85"
+    },
+    "note": "projections of refs/pins/nets, footprints, the contract entry, the classes used and the spec (F10); the board file itself is hashed whole"
+  },
+  "frame": {
+    "origin": [
+      100.0,
+      124.0
+    ],
+    "y": "up",
+    "source": "Edge.Cuts bounding box"
+  },
+  "counts": {
+    "footprints": 4,
+    "pads": 13,
+    "tracks": 8,
+    "vias": 0,
+    "zones": 6,
+    "holes": 2,
+    "copper_layers": [
+      "F.Cu",
+      "B.Cu"
+    ]
+  },
+  "checks": {
+    "outline": {
+      "findings": 0,
+      "area_mm2": 576.0,
+      "loops": 1
+    },
+    "holes": {
+      "findings": 0,
+      "contract_holes": 2,
+      "board_holes": 2
+    },
+    "keepouts": {
+      "findings": 0,
+      "keepout_r_mm": 3.0
+    },
+    "pad_nets": {
+      "findings": 0,
+      "expected_refs": 1,
+      "board_footprints": 4
+    },
+    "class_widths": {
+      "findings": 0,
+      "tracks_checked": 8,
+      "pour_necks": []
+    },
+    "rf50": {
+      "findings": 0,
+      "rf50_segments": 0
+    },
+    "gnd_chassis_ties": {
+      "findings": 0,
+      "ties": [],
+      "expected": 0
+    },
+    "b2b": {
+      "findings": 0,
+      "pairs": 0
+    },
+    "tht_pockets": {
+      "findings": 0,
+      "applies": false
+    },
+    "heights": {
+      "findings": 0,
+      "checked": 0
+    },
+    "pth_annular": {
+      "findings": 0
+    }
+  },
+  "findings": [],
+  "unverified": [
+    {
+      "check": "heights",
+      "item": "board",
+      "reason": "spec height zone without rect (board_gen form): footprints carry no body heights; the enclosure height check belongs to the mechanical model (fit-report)"
+    },
+    {
+      "check": "heights",
+      "item": "ENC",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    },
+    {
+      "check": "heights",
+      "item": "J1",
+      "reason": "height unknown (spec heights or footprint property Height); limit 6.5 mm"
+    }
+  ]
+}
