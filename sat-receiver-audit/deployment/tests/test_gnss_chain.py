@@ -188,13 +188,21 @@ class GnssChainTests(unittest.TestCase):
         self.assertEqual(deploy.gnss_mode_issues(root), [])
 
     def test_unreadable_reader_configuration_blocks(self):
-        if os.geteuid() == 0:
-            self.skipTest("root reads a 0000 file")
         root = self.root / "target"
         env = self.put(root, "etc/srrx/devices.env", "SRRX_GNSS=gpsd\n")
         env.chmod(0)
         self.addCleanup(env.chmod, 0o644)
-        issues = deploy.gnss_mode_issues(root)
+        if os.geteuid() == 0:  # root (the ARM64 lab guest) reads a 0000 file: raise what labd would get
+            read_text = Path.read_text
+
+            def denied(path, *args, **kwargs):
+                if Path(path) == env:
+                    raise PermissionError(13, "Permission denied", str(path))
+                return read_text(path, *args, **kwargs)
+            with patch.object(Path, "read_text", denied):
+                issues = deploy.gnss_mode_issues(root)
+        else:
+            issues = deploy.gnss_mode_issues(root)
         self.assertEqual(len(issues), 1)
         self.assertTrue(issues[0].startswith("GNSS reader configuration unreadable: "), issues)
         self.assertIn("PermissionError", issues[0])

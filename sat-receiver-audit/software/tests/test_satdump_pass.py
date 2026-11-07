@@ -285,8 +285,16 @@ class CommandTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr[-400:])
         self.assertIn(b"sweep", result.stdout)
         refused = run(["-I", "-B"])  # the old unit: -I implies -E and ignores PYTHONPATH
-        self.assertNotEqual(refused.returncode, 0)
-        self.assertIn(b"No module named", refused.stderr)
+        probe = subprocess.run([sys.executable, "-I", "-B", "-c", "import importlib.util; spec = importlib.util.find_spec('srrx'); "
+                                "print(spec.origin if spec and spec.origin else '')"],
+                               cwd=os.path.abspath(os.sep), env=environment, capture_output=True, text=True, timeout=60)
+        self.assertEqual(probe.returncode, 0, probe.stderr[-400:])
+        installed = probe.stdout.strip()
+        if installed:  # an interpreter with its own installed srrx (the ARM64 lab venv) imports that copy under -I
+            self.assertFalse(Path(installed).resolve().is_relative_to(SOFTWARE.resolve()), installed)
+        else:  # the device's python3: without PYTHONPATH there is no srrx at all
+            self.assertNotEqual(refused.returncode, 0)
+            self.assertIn(b"No module named", refused.stderr)
 
 
 @unittest.skipUnless(os.name == "posix", "subprocess pipes and selectors need POSIX")

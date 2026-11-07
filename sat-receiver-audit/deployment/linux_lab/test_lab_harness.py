@@ -176,9 +176,11 @@ class BootstrapSummaryTests(unittest.TestCase):
         self.assertEqual(self.summary(skipped=())["status"], "PASS")
         pdf = {"test": "pdf", "reason": "PyMuPDF is not installed in this environment"}
         self.assertEqual(self.summary(skipped=[pdf, {"test": "qnn", "reason": QNN_SKIP}])["status"], "PASS")
+        inet = {"test": "udp", "reason": "Internet sockets are denied in this test process"}  # the offline guard itself
+        self.assertEqual(self.summary(skipped=[inet, pdf, {"test": "qnn", "reason": QNN_SKIP}])["status"], "PASS")
         for skipped in ([{"test": "spectrum", "reason": "Optional NumPy dependency is not installed"}],
                         [{"test": "hmi", "reason": "optional PySide6 is not installed"}],
-                        [{"test": "qnn", "reason": QNN_SKIP}] * 2, [pdf, pdf], ["not a record"]):
+                        [{"test": "qnn", "reason": QNN_SKIP}] * 2, [pdf, pdf], [inet, inet], ["not a record"]):
             with self.subTest(skipped=skipped):
                 report = self.summary(skipped=skipped)
                 self.assertEqual(report["status"], "FAIL")
