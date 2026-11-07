@@ -1,5 +1,5 @@
 """LimeSuiteNG 37cb183 TX audit part 1 (deployment/recipes/limesuiteng/TX-AUDIT.md) against the exact
-upstream fixtures and the reviewed RX-only patch: every cited anchor stands at its line, every
+upstream fixtures and the RX-only patch: every cited anchor stands at its line, every
 reachable entry point is guarded after the patch, and the guard code compiles and rejects TX.
 CI evidence only; the audit stays AUDIT_DRAFT_CI_CHECKED and the Lime runtime stays blocked."""
 import json
@@ -315,6 +315,105 @@ class LimeTxGuardCompileTests(unittest.TestCase):
                 "    assert(setParameterBits(0x0020, 2, 3, 0) == NS && setParameterBits(0x0021, 2, 2, 0) == NS);\n"
                 "    return 0;\n}\n")
         compile_and_run(self, code, self.root, "base_guards")
+
+
+
+class LimeTxReviewFixTextTests(unittest.TestCase):
+    """Review fixes R1-R4 of SW-LIME-1: Configure also rejects the TX band/switch and the TX LPF, the
+    device-wide Soapy writeSetting forwards the per-channel RX keys as upstream did, and the audit keeps
+    the RX calibration with TX powered down OPEN for the bench."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = tempfile.TemporaryDirectory()
+        tree = patched_tree(Path(cls.tmp.name))
+        cls.micro = (tree / "src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp").read_text(encoding="utf-8")
+        cls.settings = (tree / "plugins/soapysdr/Settings.cpp").read_text(encoding="utf-8")
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def test_configure_rejects_tx_path_and_lpf_before_any_chip_access(self):
+        configure = body(self.micro, "OpStatus LimeSDR_Micro::Configure(")
+        guard = configure.split('"Firmware is not loaded");', 1)[1].split("auto& rfsoc", 1)[0]
+        self.assertIn("if (cfg.channel[c].tx.path != 0 || cfg.channel[c].tx.lpf != 0)", guard)
+        self.assertIn("return OpStatus::NotSupported;", guard)
+        self.assertLess(configure.index("tx.path != 0"), configure.index("InitLMS7002M("))
+        self.assertLess(configure.index("tx.path != 0"), configure.index("LMSSetPath(TRXDir::Tx"))
+
+    def test_device_wide_setting_forwards_only_per_channel_rx_keys(self):
+        guard = body(self.settings, "void Soapy_limesuiteng::writeSetting(const std::string& key").split("const size_t channelCount", 1)[0]
+        self.assertTrue(first_statement(guard).startswith("if (!srrxRxSetting(key) && !srrxTxOffField(key, value))"))
+        self.assertIn("if (!srrxRxChannelSetting(key))", guard)
+        self.assertIn("throw std::runtime_error(", guard)
+        upstream = (FIXTURE / "plugins/soapysdr/Settings.cpp").read_text(encoding="utf-8")
+        self.assertIn("            writeSetting(SOAPY_SDR_RX, channel, key, value);", upstream.split("\n")[957])
+
+    def test_audit_records_calibration_with_tx_off_as_open(self):
+        text = AUDIT.read_text(encoding="utf-8")
+        remainder = text.split("## Залишки та OPEN", 1)[1].split("## Перевірки", 1)[0]
+        item = next(line for line in remainder.splitlines() if line.startswith("8. "))
+        for needle in ("OPEN", "CALIBRATE_RX", "rx.calibrate=DCIQ", "EnableChannel(Tx, false)", "TXEN = 0"):
+            self.assertIn(needle, item)
+        self.assertIn("lms7002m.c:195-197", text)
+        self.assertIn("`setReferenceClockRate`", text)
+        self.assertIn("Device.cpp:589", text)
+        self.assertNotIn("не змінено.", text.split("## Що лишається дозволеним", 1)[1].split("## Залишки", 1)[0])
+        self.assertNotIn("REVIEWED.**", text)
+
+
+@unittest.skipUnless(shutil.which("g++"), "host C++ compiler unavailable")
+class LimeTxReviewFixCompileTests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.tmp = tempfile.TemporaryDirectory()
+        cls.root = Path(cls.tmp.name)
+        cls.tree = patched_tree(cls.root)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.tmp.cleanup()
+
+    def read(self, name):
+        return (self.tree / name).read_text(encoding="utf-8")
+
+    def test_device_wide_soapy_setting_guard_compiles_and_passes_rx_keys_only(self):
+        settings = self.read("plugins/soapysdr/Settings.cpp")
+        helpers = settings[settings.index("static void srrxRejectTx("):settings.index("/*******************************************************************\n * Constructor/destructor")]
+        guard = body(settings, "void Soapy_limesuiteng::writeSetting(const std::string& key").split("const size_t channelCount", 1)[0]
+        code = ("#include <cassert>\n#include <stdexcept>\n#include <string>\nconstexpr int SOAPY_SDR_TX = 0, SOAPY_SDR_RX = 1;\n" + helpers +
+                "static bool accepted(const std::string& key, const std::string& value) {\n"
+                "    try {" + guard + "} catch (const std::runtime_error&) { return false; }\n"
+                "    // as upstream (Settings.cpp:958), an unlisted key goes on per channel with the RX direction\n"
+                "    if (!srrxRxSetting(key) && !srrxTxOffField(key, value)) {\n"
+                '        srrxRejectTx(SOAPY_SDR_RX, "probe");\n'
+                "        assert(srrxRxChannelSetting(key));\n    }\n    return true;\n}\n"
+                "int main() {\n"
+                '    for (const char* k : {"RXTSP_CONST", "CALIBRATE_RX", "ENABLE_RX_GFIR_LPF", "DISABLE_RX_GFIR_LPF", "RXTSG_NCO", "OVERSAMPLING",\n'
+                '                          "TSP_CONST", "CALIBRATE", "ENABLE_GFIR_LPF", "DISABLE_GFIR_LPF", "TSG_NCO"}) assert(accepted(k, "1"));\n'
+                '    assert(accepted("TXEN_A", "0") && accepted("TXEN_B", "0"));\n'
+                '    for (const char* k : {"TXTSP_CONST", "CALIBRATE_TX", "ENABLE_TX_GFIR_LPF", "DISABLE_TX_GFIR_LPF", "TXTSG_NCO", "SAVE_CONFIG",\n'
+                '                          "LOAD_CONFIG", "G_PAD_TRF", "PD_TXPAD_TRF", "MAC", "calibrate"}) assert(!accepted(k, "0"));\n'
+                '    assert(!accepted("TXEN_A", "1") && !accepted("TXEN_B", "1"));\n'
+                "    return 0;\n}\n")
+        compile_and_run(self, code, self.root, "soapy_device_setting_guard")
+
+    def test_configure_tx_path_and_lpf_guard_compiles_and_rejects(self):
+        micro = self.read("src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp")
+        guard = body(micro, "OpStatus LimeSDR_Micro::Configure(").split('"Firmware is not loaded");', 1)[1].split("auto& rfsoc", 1)[0]
+        code = ("#include <cassert>\n#include <cstdint>\n#include <initializer_list>\n#include <limits>\n"
+                "enum class OpStatus { Success, NotSupported };\n"
+                "struct Direction { double lpf = 0; uint8_t path = 0; };\n"
+                "struct ChannelConfig { Direction rx, tx; };\nstruct SDRConfig { ChannelConfig channel[2]; };\n"
+                "OpStatus configure(const SDRConfig& cfg) {" + guard + "return OpStatus::Success; }\n"
+                "int main() {\n    const OpStatus S = OpStatus::Success, NS = OpStatus::NotSupported;\n"
+                "    SDRConfig rx; rx.channel[0].rx.path = 2; rx.channel[0].rx.lpf = 5e6; rx.channel[1].rx.path = 3; assert(configure(rx) == S);\n"
+                "    for (int c = 0; c < 2; ++c) {\n"
+                "        for (uint8_t p : {1, 2, 3}) { SDRConfig a = rx; a.channel[c].tx.path = p; assert(configure(a) == NS); }\n"
+                "        for (double l : {5e6, 1.0, -1.0, std::numeric_limits<double>::quiet_NaN()}) { SDRConfig b = rx; b.channel[c].tx.lpf = l; assert(configure(b) == NS); }\n    }\n"
+                "    return 0;\n}\n")
+        compile_and_run(self, code, self.root, "configure_tx_path_lpf_guard")
 
 
 if __name__ == "__main__":
