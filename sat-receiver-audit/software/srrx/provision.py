@@ -11,7 +11,8 @@ from .commissioning import acceptance_template, load_acceptance_bound
 # Per-unit host name (build/15 «Ім'я хоста (W2 SYS-HOST)»). The acceptance record allows the same
 # characters (srrx.commissioning.load_acceptance); an RFC 1123 label allows only [a-z0-9-], at most
 # 63 characters (RFC 1035 2.3.4), no hyphen at either end. DNS names are case-insensitive (RFC 4343),
-# so lower-casing is not a loss; any other change, or a cut to fit 63, appends 6 hex of SHA-256(id).
+# so lower-casing is not a loss; any other change, or a cut to fit 63, appends 6 hex of SHA-256 of
+# the lower-cased id. The name is therefore a function of lower(id) alone, lossy ids included.
 UNIT_ID = re.compile(r"[A-Za-z0-9][A-Za-z0-9_.:-]{3,79}")
 HOST_LABEL = re.compile(r"[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?")
 HOST_PREFIX = "srrx-"
@@ -21,7 +22,7 @@ HOST_FILES = ("hostname", "hosts")
 
 def hostname_for(unit_id):
     """'srrx-' + lower(id) with every run outside [a-z0-9] as one '-', ends trimmed; if that is lossy
-    or longer than 63, the slug is cut and '-' + the first 6 hex of SHA-256(id) appended."""
+    or longer than 63, the slug is cut and '-' + the first 6 hex of SHA-256(lower(id)) appended."""
     if type(unit_id) is not str or not UNIT_ID.fullmatch(unit_id):
         raise ValueError("invalid hardware unit ID for a host name")
     lowered = unit_id.lower()
@@ -30,7 +31,7 @@ def hostname_for(unit_id):
     if slug != lowered or len(name) > 63:
         keep = 63 - len(HOST_PREFIX) - 1 - HOST_SUFFIX_HEX
         name = (HOST_PREFIX + slug[:keep].rstrip("-") + "-"
-                + hashlib.sha256(unit_id.encode("ascii")).hexdigest()[:HOST_SUFFIX_HEX])
+                + hashlib.sha256(lowered.encode("ascii")).hexdigest()[:HOST_SUFFIX_HEX])
     if not HOST_LABEL.fullmatch(name):  # unreachable for a valid id; kept as the contract
         raise ValueError("host name is not an RFC 1123 label: " + name)
     return name

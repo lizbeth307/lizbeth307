@@ -843,5 +843,195 @@ class SystemAccountsTests(unittest.TestCase):
                 build_image.system_accounts(Path(temp), Path(temp))
 
 
+class ImageAptSourcesTests(unittest.TestCase):
+    """W2 IMG-1 (D-01): only the signed SR-RX publications are apt sources of the image; every other r2
+    entry is diverted (dpkg-divert --local --rename, emulated here) and recorded in the manifest."""
+
+    R2_LISTS = ("50-noble-backports.list", "50-noble-security.list", "50-noble-updates.list", "50-noble.list", "70-radxa.list",
+                "80-radxa-qcs6490.list")  # image-facts.json of run 42354844339 (the two PPA lists are removed before)
+
+    def root_with_r2_sources(self, temp, route_a=True):
+        root = Path(temp)
+        lists = root / "etc/apt/sources.list.d"
+        lists.mkdir(parents=True)
+        for name in self.R2_LISTS:
+            (lists / name).write_text("deb http://ports.ubuntu.com/ubuntu-ports noble main\n")
+        (root / "etc/apt/sources.list").write_text("# Ubuntu sources have moved\n")
+        (root / "etc/apt/preferences.d").mkdir(parents=True)
+        if route_a:
+            shutil.copyfile(HERE / "image/files/srrx-boot-route-a.pref", root / "etc/apt/preferences.d/srrx-boot-route-a.pref")
+        return root
+
+    def divert(self, calls, rename=True):
+        def fake_chroot(where, argv, **kwargs):
+            calls.append(list(argv))
+            if argv[0] == "dpkg-divert" and rename:
+                os.replace(Path(where) / argv[-1].lstrip("/"), Path(where) / argv[argv.index("--divert") + 1].lstrip("/"))
+        return fake_chroot
+
+    def test_only_the_srrx_files_are_installed_and_every_r2_entry_is_disabled(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root, calls = self.root_with_r2_sources(temp), []
+            with patch.object(build_image, "chroot", self.divert(calls)):
+                record = build_image.apt_sources(root, ["mozillateam-ubuntu-ppa-noble.sources"])
+            self.assertEqual([e["path"] for e in record["installed"]],
+                             ["etc/apt/preferences.d/lab.pref", "etc/apt/sources.list.d/srrx-lab.sources",
+                              "etc/apt/sources.list.d/srrx-mirror.sources", "etc/apt/preferences.d/srrx-boot-route-a.pref"])
+            self.assertEqual([e["path"] for e in record["disabled"]],
+                             ["etc/apt/sources.list"] + ["etc/apt/sources.list.d/" + n for n in self.R2_LISTS])
+            self.assertTrue(all(e["divert_to"] == e["path"] + ".srrx-disabled" for e in record["disabled"]))
+            self.assertTrue(all(c[:4] == ["dpkg-divert", "--local", "--rename", "--divert"] and c[-2] == "--add" for c in calls))
+            self.assertEqual(record["removed"], ["etc/apt/sources.list.d/mozillateam-ubuntu-ppa-noble.sources"])
+            self.assertEqual((root / "etc/apt/preferences.d/lab.pref").read_bytes(), (HERE / "repo/lab.pref").read_bytes())
+            self.assertEqual(record["installed"][0]["sha256"], hashlib.sha256((HERE / "repo/lab.pref").read_bytes()).hexdigest())
+            self.assertEqual(sorted(p.name for p in (root / "etc/apt/sources.list.d").iterdir() if not p.name.endswith(".srrx-disabled")),
+                             ["srrx-lab.sources", "srrx-mirror.sources"])
+            self.assertEqual(record["keyring"], {"path": "usr/share/keyrings/srrx-lab.gpg", "present": False})
+            # A second run (root B is an rsync copy) finds nothing left to divert.
+            calls.clear()
+            with patch.object(build_image, "chroot", self.divert(calls)):
+                self.assertEqual(build_image.apt_sources(root)["disabled"], [])
+        with tempfile.TemporaryDirectory() as temp:
+            root = self.root_with_r2_sources(temp, route_a=False)
+            with patch.object(build_image, "chroot", self.divert([])):
+                self.assertEqual(len(build_image.apt_sources(root)["installed"]), 3)  # route B: no route A pin file
+            root = self.root_with_r2_sources(Path(temp) / "x")
+            with patch.object(build_image, "chroot", self.divert([], rename=False)), self.assertRaisesRegex(build_image.BuildError, "remain"):
+                build_image.apt_sources(root)
+
+    def test_hardening_records_the_apt_sources_and_keeps_lab_pref(self):
+        recipe = json.loads((HERE / "image/recipe.json").read_text())
+        with tempfile.TemporaryDirectory() as temp:
+            root, calls = self.root_with_r2_sources(temp), []
+            (root / "etc/passwd").write_text("root:x:0:0:root:/root:/bin/bash\n")
+            (root / "etc/apt/preferences.d/ubuntu-pro-esm-apps").write_text("Package: *\nPin: release o=UbuntuESMApps\nPin-Priority: 510\n")
+            with patch.object(build_image, "chroot", self.divert(calls)), patch.object(build_image, "run", lambda argv, **kwargs: None):
+                result = build_image.hardening(root, recipe, "A")
+            self.assertEqual(result["diverted_apt_preferences"], ["ubuntu-pro-esm-apps"])  # lab.pref is never diverted
+            self.assertEqual(len(result["apt_sources"]["disabled"]), 1 + len(self.R2_LISTS))
+            self.assertTrue((root / "etc/apt/preferences.d/lab.pref").is_file())
+
+
+class BlockerClosesAtTests(unittest.TestCase):
+    """W2 IMG-1 (D-10, D-05): every manifest blocker names what closes it; nothing leaves `blocking`."""
+
+    # The blocking list of run 42354844339 (both routes) and its selftest rows.
+    RUN = ["dt_not_booted: lab.dtb/field.dtb are CI merge-checked, not booted on a Q6A (W-10 OPEN)",
+           "package_accounts_missing: _chrony, gpsd (their packages are not in r2; package closure IMG-09)",
+           'selftest root A FAIL: {"RX-01a": ["pinned_package_present_unreviewed"], "RX-11": ["critical_leaf_touch_only", '
+           '"unit_interpreter_missing"], "RX-16": ["lab_pref_missing"], "RX-S2": ["radio_off_binding_missing"]}',
+           "target_python_without_numpy: RX-14 and RX-04-bb were evaluated with the builder's python3-numpy"]
+    ROWS = {"RX-01a": ["pinned_package_present_unreviewed"], "RX-11": ["critical_leaf_touch_only", "unit_interpreter_missing"],
+            "RX-16": ["lab_pref_missing"], "RX-S2": ["radio_off_binding_missing"]}
+
+    def test_run_blockers_are_tagged(self):
+        tags = build_image.blocking_closes_at(self.RUN + ["apt_keyring_absent: x"], {"fail_or_blocked_rows": self.ROWS})
+        by_id = {t["blocker"]: t["closes_at"] for t in tags}
+        self.assertEqual(by_id, {"dt_not_booted": "bench:W-10", "package_accounts_missing": "recipe",
+                                 "selftest_root_a:RX-01a:pinned_package_present_unreviewed": "bench:Phase0",
+                                 "selftest_root_a:RX-11:critical_leaf_touch_only": "recipe",
+                                 "selftest_root_a:RX-11:unit_interpreter_missing": "recipe",
+                                 "selftest_root_a:RX-16:lab_pref_missing": "recipe",
+                                 "selftest_root_a:RX-S2:radio_off_binding_missing": "commissioning",
+                                 "selftest_root_a:policy_not_reviewed": "owner:policy-review",
+                                 "target_python_without_numpy": "recipe", "apt_keyring_absent": "owner:key-ceremony"})
+        self.assertTrue(all(t["closes_at"] in build_image.CLOSES_AT for t in tags))
+        summary = build_image.closes_at_summary(tags)
+        self.assertEqual(list(summary), [t for t in build_image.CLOSES_AT if t in summary])
+        self.assertEqual(summary["bench:W-10"], ["dt_not_booted"])
+        # No rows left: the DRAFT policy still blocks the selftest, and an unknown blocker is "recipe", not hidden.
+        self.assertEqual(build_image.blocking_closes_at(["selftest root A BLOCKED: {}", "new_thing: x"], {"fail_or_blocked_rows": {}}),
+                         [{"blocker": "selftest_root_a:policy_not_reviewed", "closes_at": "owner:policy-review"},
+                          {"blocker": "new_thing", "closes_at": "recipe"}])
+
+    def test_every_blocker_the_builder_emits_has_an_explicit_tag(self):
+        import re
+        source = (HERE / "image/build_image.py").read_text(encoding="utf-8")
+        emitted = set(re.findall(r'blocking"?\]?\.append\("([^"]+)', source)) | set(re.findall(r'blocking\.append\("([^"]+)', source))
+        self.assertGreaterEqual(len(emitted), 12)
+        prefixes = [p for p, _, _ in build_image.BLOCKER_CLOSES_AT] + [build_image.SELFTEST_BLOCKER]
+        for text in emitted:
+            self.assertTrue(any(text.startswith(p) for p in prefixes), text)
+        self.assertEqual(sorted(t for _, _, t in build_image.BLOCKER_CLOSES_AT if t not in build_image.CLOSES_AT), [])
+
+
+class ImageFactsAndPayloadTests(unittest.TestCase):
+    """W2 IMG-1: facts name the pin_only packages and module signing (D-08); the manifest records the NPU
+    payload as absent (D-14) and the MCU firmware manifest the image expects (D-15)."""
+
+    def test_interest_and_kernel_config_keys(self):
+        for name in ("libsnpe1", "hexagon-dsp-binaries-qcs6490", "dragonwing-defaults", "tzdata", "tzdata-legacy", "embloader", "libqnn1"):
+            self.assertTrue(build_image.INTEREST.search(name), name)
+        for key in ("CONFIG_MODULE_SIG", "CONFIG_MODULE_SIG_FORCE", "CONFIG_MODULE_SIG_ALL", "CONFIG_MODULE_SIG_HASH", "CONFIG_CGROUP_BPF"):
+            self.assertIn(key, build_image.CONFIG_KEYS)
+        with tempfile.TemporaryDirectory() as temp:
+            config = Path(temp) / "config-6.18.2-4-qcom"
+            config.write_bytes(b'CONFIG_MODULE_SIG=y\n# CONFIG_MODULE_SIG_FORCE is not set\nCONFIG_MODULE_SIG_HASH="sha512"\n')
+            values = build_image._kernel_config(config)
+        self.assertEqual((values["CONFIG_MODULE_SIG"], values["CONFIG_MODULE_SIG_FORCE"], values["CONFIG_MODULE_SIG_HASH"],
+                          values["CONFIG_MODULE_SIG_ALL"]), ("y", "not set", '"sha512"', None))
+
+    def test_npu_payload_is_absent_unless_a_qnn_package_or_file_is_present(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "var/lib/dpkg").mkdir(parents=True)
+            status = root / "var/lib/dpkg/status"
+            status.write_text("Package: task-qualcomm-npu\nStatus: install ok installed\nVersion: 0.1.0-7\n\n"
+                              "Package: fastrpc\nStatus: install ok installed\nVersion: 1.0.3-1\n\n")
+            record = build_image.npu_payload(root)
+            self.assertEqual((record["status"], record["packages"], record["files"]), ("absent", [], []))
+            self.assertIn("never redistributed", record["why"])
+            status.write_text(status.read_text() + "Package: qcom-qnn-sdk-v68\nStatus: install ok installed\nVersion: 0.1.0-2\n\n")
+            (root / "usr/lib/dsp").mkdir(parents=True)
+            (root / "usr/lib/dsp/libQnnHtpV68Skel.so").write_bytes(b"\0")
+            record = build_image.npu_payload(root)
+            self.assertEqual((record["status"], record["packages"], record["files"]),
+                             ("PRESENT", ["qcom-qnn-sdk-v68"], ["usr/lib/dsp/libQnnHtpV68Skel.so"]))
+
+    def test_mcu_firmware_records_the_staged_build_manifest(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            record = build_image.mcu_firmware(root)
+            self.assertEqual((record["sha256"], record["matches_repo"]), (None, False))
+            staged = root / "opt/srrx/firmware/dist/build-manifest.json"
+            staged.parent.mkdir(parents=True)
+            shutil.copyfile(HERE.parent / "firmware/dist/build-manifest.json", staged)
+            record = build_image.mcu_firmware(root)
+            self.assertTrue(record["matches_repo"])
+            self.assertEqual(record["sha256"], hashlib.sha256(staged.read_bytes()).hexdigest())
+            self.assertIn("bench host only", record["flashing"])
+
+
+class SmokeFailedUnitStatusTests(unittest.TestCase):
+    """W2 IMG-1 (wave-1 gap 'boot-check not diagnosable'): an unexpected failed unit carries the guest's
+    bounded `systemctl status` tail into the mismatches, with address-like tokens removed."""
+
+    def test_failed_unit_status_reaches_the_mismatches(self):
+        import smoke_qemu
+        recipe = json.loads((HERE / "image/recipe.json").read_text())
+        name, expect = smoke_qemu.SCENARIOS[2]
+        report = {"boot_check": {"slot": "A", "status": "BOOT_SELF_CHECK_OK"}, "bless_boot_status": "clean", "pending_jobs": [],
+                  "units": {"srrx-boot-check.service": {"ActiveState": "active"}, "systemd-bless-boot.service": {"ActiveState": "inactive"},
+                            "srrx.service": {"ActiveState": "inactive", "UnitFileState": "disabled"}},
+                  "masked_units": {u: {"LoadState": "masked"} for u in recipe["mask"]["units"]},
+                  "failed_units": ["chrony.service loaded failed failed chrony, an NTP client/server"],
+                  "failed_unit_status": {"chrony.service": "x chrony.service - chrony\n     Active: failed (Result: exit-code)\n"}}
+        entries = sorted(["labA.conf", "labB+0-1.conf", "labA-rescue.conf", "labB-rescue.conf"])
+        result = smoke_qemu.check(name, {"qemu_exit": 0, "report": report, "entries_after": entries}, expect, {})
+        self.assertEqual(result["mismatches"][0], "failed units: chrony.service")
+        self.assertTrue(result["mismatches"][1].startswith("failed unit status chrony.service: x chrony.service"), result["mismatches"])
+
+    def test_address_like_tokens_are_removed_but_unit_instances_stay(self):
+        address = "someone" + "@" + "example" + ".org"  # built at run time: the tree carries no address
+        text = "modprobe@configfs.service getty@tty1.service user@1000.service Author: " + address + " x"
+        self.assertEqual(bootchain.redact_addresses(text),
+                         "modprobe@configfs.service getty@tty1.service user@1000.service Author: <address removed> x")
+        self.assertEqual(bootchain.redact_addresses(None), "")
+        self.assertEqual(bootchain.FAILED_UNIT_STATUS_BYTES, 2000)
+        source = (HERE / "image/bootchain.py").read_text(encoding="utf-8")
+        self.assertIn('"failed_unit_status"', source)
+        self.assertIn('"systemctl", "status", "--no-pager"', source)
+
+
 if __name__ == "__main__":
     unittest.main()
