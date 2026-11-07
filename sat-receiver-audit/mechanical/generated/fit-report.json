@@ -3,7 +3,7 @@
   "status": "MODEL FIT ONLY: envelopes and datasheet dimensions; no physical part was fitted. Hardware gates stay OPEN.",
   "generator": {
     "version": "1.0.0",
-    "params_sha256": "fe0187c59c26114b1fa1fa0f26a95be0063b16074228060ffce5c625682711ae",
+    "params_sha256": "e1c9eed7bf1d107136262c90ac9a98b9d721b7e02200c8314229e15eebd7d888",
     "pcb_components_sha256": "25a0d7830a63c999575be8ff155e6cf5f2e5f6167dc958a97e287f3c5beff98f"
   },
   "envelope": {
@@ -239,14 +239,14 @@
         "P4": "PASS (model): 3.6 mm left >= 2.38 (3 x 0.794); inside, for the W402 F plug: long side (min) - wall - washer - nut (max); the 7.6 short side outside is free for W401",
         "P5": "OPEN: drawing not readable: https://www.amphenolrf.com/en-us/assets/file/4065787441/ 2026-11-07 403 (distributor copies 403 or timeout, parts.json amphenol_242181); hole 9.7 is the typical 3/8-32 bulkhead value, the panel end, thread length and nut stay TBD (R-BULKHEAD-NUTS, R-SMA-THREAD)",
         "P6": "OPEN: washer thickness not drawn: 2.48 mm left for it after the nut and 3 threads",
-        "P7": "OPEN: CAB.011 thread length and D-cut hole not in the READS-RF row web:taoglas-cab011-datasheet-spe-11-8-068-f (2026-11-07); the P7 pigtail is chosen by MECH-6 (B-06)",
+        "P7": "PASS (model): 3.25 mm left >= 2.12 (3 x 0.706); outside: thread (min) - wall - items 5 + 6 (max); the seal sits at the flange inside",
         "P8": "OPEN: washer thickness not drawn: 2.48 mm left for it after the nut and 3 threads",
         "RX1": "OPEN: nut and washer not drawn: 4.58 mm left for both after 3 threads (1/4-36 sets read: Taoglas p.11 items 5 + 6 up to 3.35, Samtec 2.5)",
         "RX2": "OPEN: nut and washer not drawn: 4.58 mm left for both after 3 threads (1/4-36 sets read: Taoglas p.11 items 5 + 6 up to 3.35, Samtec 2.5)",
         "REF_IN": "OPEN: nut and washer not drawn: 4.58 mm left for both after 3 threads (1/4-36 sets read: Taoglas p.11 items 5 + 6 up to 3.35, Samtec 2.5)"
       },
       "limit_mm": "3 x pitch; wall 4.5",
-      "result": "OPEN: P1, P2, P3, P5, P6, P7, P8, RX1, RX2, REF_IN (thread or hardware not drawn, or part not read); PASS (model): P4",
+      "result": "OPEN: P1, P2, P3, P5, P6, P8, RX1, RX2, REF_IN (thread or hardware not drawn, or part not read); PASS (model): P4, P7",
       "source": "STACK 5.8 'стінка 4-5 мм'; parts.json taoglas_cab718, adamtech_ca_dkca1_305l5, taoglas_cab01075, cinch_vfa340 (read 2026-11-07)"
     },
     {
@@ -259,7 +259,7 @@
         "P4": "d 12.70 x 7.30 deep: washer, nut and the long side inside (cinch_vfa340)",
         "P5": "no envelope: drawing not readable: https://www.amphenolrf.com/en-us/assets/file/4065787441/ 2026-11-07 403 (distributor copies 403 or timeout, parts.json amphenol_242181); hole 9.7 is the typical 3/8-32 bulkhead value, the panel end, thread length and nut stay TBD (R-BULKHEAD-NUTS, R-SMA-THREAD)",
         "P6": "d 9.24 x 3.60 deep: connector body hex inside, nut outside (taoglas_cab718)",
-        "P7": "d 10.15 x 2.50 deep: sma_bulkhead_hw (representative hardware, part not read)",
+        "P7": "d 10.20 x 3.40 deep: connector body inside, nut outside (taoglas_mhf1_sma_wp)",
         "P8": "d 9.24 x 3.60 deep: connector body hex inside, nut outside (taoglas_cab718)",
         "RX1": "d 10.20 x 3.40 deep: connector body inside, nut outside (taoglas_cab01075)",
         "RX2": "d 10.20 x 3.40 deep: connector body inside, nut outside (taoglas_cab01075)",
@@ -328,11 +328,11 @@
     {
       "id": "R-VENT-REACH",
       "rule": "space behind each vent seat minus the thread reach (worst vent)",
-      "value_mm": 5.88,
+      "value_mm": 1.5,
       "limit_mm": 0.5,
-      "vent": "V2",
+      "vent": "V1",
       "thread_reach_mm": 6.0,
-      "space_mm": 11.88,
+      "space_mm": 7.5,
       "result": "PASS (model)",
       "source": "LTW drawing: thread 10.0 (parts.json ltw_vent); envelopes in mechanical.json layout"
     },
@@ -384,38 +384,110 @@
     },
     {
       "id": "R-PLATE-SLOT-FILL",
-      "rule": "harness wires through each plate slot (build/16-dzhgut.csv rows of the slot segments) against the bare opening",
-      "source": "mechanical.json plate.slots[].segments; build/16-dzhgut.csv",
+      "rule": "harness bundle through each plate slot (wire areas / 0.6 + ribbon stack) inside the opening left by the edge trim (grommet heyco_ngsg_105 B 0.8 per edge, tape 0.1); ribbon, stack and largest wire fit the inner size; grommet legs clear",
+      "source": "mechanical.json plate.slots / slot_trim; build/16-dzhgut.csv; parts.json heyco_ngsg_105 (Heyco catalogue 6-23 read 2026-11-07), hookup_wire_ptfe and ribbon_3m_3365_40 (SRC-1 rows read 2026-11-07)",
       "value_mm": {
         "SL1": {
-          "opening_mm2": 79.2,
-          "wires": 27,
+          "opening_mm": [
+            27.5,
+            3.8
+          ],
+          "trim": {
+            "bottom": "grommet",
+            "top": "tape",
+            "left": "tape",
+            "right": "tape"
+          },
+          "inner_mm": [
+            27.3,
+            2.9
+          ],
+          "inner_mm2": 79.2,
+          "wires": 30,
+          "loose_wires": 3,
           "wires_per_awg": {
+            "26": 3,
             "28": 27
-          }
+          },
+          "wire_area_mm2": 2.8,
+          "ribbon": {
+            "segment": "S01",
+            "w_mm": 25.4,
+            "stack_mm": 1.78,
+            "conductors_in_build16": 27
+          },
+          "bundle_need_mm2": 49.9,
+          "fill_of_inner": 0.63,
+          "largest_wire_mm": 1.09,
+          "legs_clear": "yes",
+          "result": "PASS (model)"
         },
         "SL2": {
-          "opening_mm2": 63.0,
+          "opening_mm": [
+            18.0,
+            7.6
+          ],
+          "trim": {
+            "bottom": "tape",
+            "top": "grommet",
+            "left": "tape",
+            "right": "tape"
+          },
+          "inner_mm": [
+            17.8,
+            6.7
+          ],
+          "inner_mm2": 119.3,
           "wires": 61,
+          "loose_wires": 61,
           "wires_per_awg": {
             "18": 4,
             "20": 8,
             "24": 24,
             "26": 25
-          }
+          },
+          "wire_area_mm2": 67.3,
+          "ribbon": null,
+          "bundle_need_mm2": 112.2,
+          "fill_of_inner": 0.94,
+          "largest_wire_mm": 1.88,
+          "legs_clear": "yes",
+          "result": "PASS (model)"
         },
         "SL3": {
-          "opening_mm2": 67.5,
+          "opening_mm": [
+            4.5,
+            15.0
+          ],
+          "trim": {
+            "bottom": "tape",
+            "top": "tape",
+            "left": "grommet",
+            "right": "grommet"
+          },
+          "inner_mm": [
+            2.9,
+            14.8
+          ],
+          "inner_mm2": 42.9,
           "wires": 17,
+          "loose_wires": 17,
           "wires_per_awg": {
             "20": 2,
             "24": 8,
             "26": 7
-          }
+          },
+          "wire_area_mm2": 16.2,
+          "ribbon": null,
+          "bundle_need_mm2": 27.0,
+          "fill_of_inner": 0.63,
+          "largest_wire_mm": 1.57,
+          "legs_clear": "yes",
+          "result": "PASS (model)"
         }
       },
-      "limit_mm": "bundle OD with edge trim inside the opening",
-      "result": "OPEN: wire outer diameter (AI-WIRE-PTFE) and edge-trim profile (AI-EDGE-TRIM) not chosen, so the fill is not checked (SL1 carries the whole 40-way S01 ribbon as two stacked 20-way halves; build/16 rows count only its connected conductors); resize SL1/SL2 or add a slot once both are read (wave 2)"
+      "limit_mm": "bundle inside the trimmed opening",
+      "result": "PASS (model): SL1 49.9 <= 79.2 mm2 (0.63 of the inner opening 27.3 x 2.9); SL2 112.2 <= 119.3 mm2 (0.94 of the inner opening 17.8 x 6.7); SL3 27 <= 42.9 mm2 (0.63 of the inner opening 2.9 x 14.8); grommet legs clear of the envelopes, the structure and the plate-hole footprints"
     },
     {
       "id": "R-PWR-MODULES",
@@ -465,24 +537,22 @@
       "id": "R-PPS-LEN",
       "rule": "PPS path Q6A J20.7 -> LC76G: harness length <= 200 mm (STACK 5.2 'UART7/PPS wiring <= 20 cm'; E3 J301 note)",
       "value_mm": {
-        "via_segments_mm": 322,
-        "branch_mm": 196
+        "via_segments_mm": 301,
+        "branch_mm": 159,
+        "branch_max_mm": 183
       },
       "limit_mm": 200.0,
-      "result": "OPEN (end provisional): S01+S25 = 322 mm > 200: decision (build/15 W2 MECH-1) — PPS + UART6 + GND branch off the S01 ribbon at the Q6A end and run directly to the LC76G in the rear layer (harness only, E3 nets unchanged; build/15 W2 MECH-1); branch PPS = 196 mm <= 200 (model; ends on board edge zones / envelope faces until the header and pin positions are placed); the margin depends on: J20 pin-1 orientation not read (Radxa Q6A header drawing, fetch-only): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch; P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge; P1 at the envelope edge towards the Q6A shortens the branch by up to half the envelope width (31.8 mm)",
+      "result": "PASS (model): S01+S25 = 301 mm > 200: decision (build/15 W2 MECH-1) — PPS + UART6 + GND branch off the S01 ribbon at the Q6A end and run directly to the LC76G in the rear layer (harness only, E3 nets unchanged; build/15 W2 MECH-1); branch PPS = 159 mm; worst case 183 mm with the bounded provisional ends (+23.1 mm: J20 pin-1 orientation not read (no pin-1 mark on J20 in the Radxa placement map V1.21, read 2026-11-07): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch; P1 (MX1.25) position read on the Waveshare outline drawing (parts.json lc76g), its height inside the 13.1 mm reserve is not (module height not read): end at mid-height, +/-6.6 mm) <= 200",
       "source": "mechanical.json harness_routes; generated/harness-routes.json"
     },
     {
       "id": "R-ROUTE-CLEAR",
       "rule": "harness route centrelines (mechanical.json harness_routes) clear of every envelope, keep-clear reserve and structure part; plate and RF-bay wall only through openings",
       "value_mm": {
-        "routed": 36,
-        "clear": 33,
-        "provisional_end": 36,
-        "no_route_unplaced_end": [
-          "S39",
-          "S40"
-        ],
+        "routed": 39,
+        "clear": 36,
+        "provisional_end": 38,
+        "no_route_unplaced_end": [],
         "external": [
           "S33",
           "S41"
@@ -493,8 +563,34 @@
           "S34"
         ]
       },
-      "result": "OPEN (end provisional): every routed centreline clears the envelopes and structure; 36 of 36 routes end on a board edge zone or at a module without an envelope (header positions, module envelopes and the bundle OD (AI-WIRE-PTFE) TBD); no route yet (end not placed): S39, S40; provisional routes crossing a solid: S11, S23, S34; routes through a plate slot that plate.slots does not list (R-PLATE-SLOT-FILL undercounts): SL1: S27",
+      "result": "OPEN (end provisional): every routed centreline clears the envelopes and structure; 38 of 39 routes end on a board edge zone (header refs named, positions TBD until the board placement) or at a module without an envelope; no route yet (end not placed): none; provisional routes crossing a solid: S11, S23, S34",
       "source": "mechanical.json harness_routes, layout, plate.slots, rf_bay.notches"
+    },
+    {
+      "id": "R-P7-PIGTAIL",
+      "rule": "W407 P7 bulkhead -> LC76G IPEX: pigtail lower length (nominal - tolerance) - coax route >= 30 mm slack",
+      "value_mm": {
+        "route_mm": 204,
+        "pigtails": [
+          {
+            "mpn": "CAB.01028",
+            "length_mm": 200.0,
+            "tol_mm": 6.0,
+            "slack_mm": -10.0,
+            "fits": false
+          },
+          {
+            "mpn": "CAB.01029",
+            "length_mm": 250.0,
+            "tol_mm": 7.5,
+            "slack_mm": 38.5,
+            "fits": true
+          }
+        ]
+      },
+      "limit_mm": 30.0,
+      "result": "PASS (model): route 204 mm (bulkhead body to the IPEX plug, no service loops); CAB.01029 250 - 7.5 mm leaves 38.5 mm >= 30; CAB.01028 200 mm leaves -10 mm",
+      "source": "mechanical.json harness_routes.coax.W407; Taoglas Cable Assembly Catalog SPE-24-8-198-C p.4 / p.11 (READS-RF row: CAB.01028 200, CAB.01029 250, drawn 200 +-6); DigiKey DE 931-CAB.01028-ND / 931-CAB.01029-ND re-read 2026-11-07 (200.00 / 250.00 mm, 1.13 mm, U.FL (UMCC) I-PEX MHFI plug right angle; design/parts/snapshots/2026-11-07-w2-mech6-manual.json); tol of CAB.01029: 3 % as drawn for the 200 mm variant (assumption)"
     },
     {
       "id": "R-HDR-HEIGHT",
@@ -2544,7 +2640,51 @@
             37.0,
             68.5,
             13.0,
-            14.5
+            2.5
+          ],
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
+          "limit": "plate.main"
+        },
+        {
+          "rect": [
+            37.0,
+            71.0,
+            1.5,
+            2.2
+          ],
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
+          "limit": "plate.main"
+        },
+        {
+          "rect": [
+            38.5,
+            71.0,
+            4.0,
+            2.2
+          ],
+          "free_mm": 16.28,
+          "fits_mm": 15.78,
+          "limit": "ntc_case"
+        },
+        {
+          "rect": [
+            42.5,
+            71.0,
+            7.5,
+            2.2
+          ],
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
+          "limit": "plate.main"
+        },
+        {
+          "rect": [
+            37.0,
+            73.2,
+            13.0,
+            9.8
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,
@@ -2831,118 +2971,120 @@
         "S01",
         "S25"
       ],
-      "via_segments_mm": 322,
+      "via_segments_mm": 301,
       "via_segments_provisional": true,
       "decision": "PPS + UART6 + GND branch off the S01 ribbon at the Q6A end and run directly to the LC76G in the rear layer (harness only, E3 nets unchanged; build/15 W2 MECH-1)",
       "branch": "PPS",
-      "branch_mm": 196,
+      "branch_mm": 159,
       "branch_provisional": true,
       "branch_provisional_ends": [
-        "J20 pin-1 orientation not read (Radxa Q6A header drawing, fetch-only): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch",
-        "P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge; P1 at the envelope edge towards the Q6A shortens the branch by up to half the envelope width (31.8 mm)"
+        "J20 pin-1 orientation not read (no pin-1 mark on J20 in the Radxa placement map V1.21, read 2026-11-07): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch",
+        "P1 (MX1.25) position read on the Waveshare outline drawing (parts.json lc76g), its height inside the 13.1 mm reserve is not (module height not read): end at mid-height, +/-6.6 mm"
       ],
-      "value_mm": 196
+      "value_mm": 159,
+      "branch_bound_mm": 23.1,
+      "branch_max_mm": 183
     },
     "segments": {
       "S01": {
         "kind": "harness",
-        "length_mm": 107,
-        "path_mm": 70.1,
+        "length_mm": 106,
+        "path_mm": 69.6,
         "bends": 3,
         "bundle_od_mm": 2.54,
         "bend_allowance_mm": 6.0,
         "through": [
           "SL1"
         ],
-        "status": "OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): J304 (X01I1-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
       },
       "S02": {
         "kind": "harness",
-        "length_mm": 193,
-        "path_mm": 84.6,
+        "length_mm": 188,
+        "path_mm": 91.1,
         "bends": 6,
-        "bundle_od_mm": 16.55,
-        "bend_allowance_mm": 78.0,
+        "bundle_od_mm": 14.04,
+        "bend_allowance_mm": 66.2,
         "through": [],
-        "status": "OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): J302 (CTRL), J305 (X02P1-CTRL, CTRL), J306 (S02-CTRL-SIG-1, CTRL), J307 (S02-CTRL-SIG-2, CTRL) position TBD (board placement): end on the CTRL edge zone 0; J104 (X02P1-PWR, PWR_A), J201 (X02S0-PWR, PWR_B), J202 (S02-PWR-SIG-1, PWR_B), J203 (S02-PWR-SIG-2, PWR_B) position TBD (board placement): end on the PWR_B edge zone 0"
       },
       "S03": {
         "kind": "harness",
-        "length_mm": 312,
-        "path_mm": 223.2,
+        "length_mm": 295,
+        "path_mm": 222.7,
         "bends": 11,
-        "bundle_od_mm": 6.71,
-        "bend_allowance_mm": 58.0,
+        "bundle_od_mm": 4.87,
+        "bend_allowance_mm": 42.1,
         "through": [
           "SL2",
           "N4"
         ],
-        "status": "OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone; RF header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): J308 (X03S1-CTRL, CTRL), J309 (X03S2-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0; J418 (X03S1-RF, RF), J419 (X03S2-RF, RF) position TBD (board placement): end on the RF edge zone 2"
       },
       "S04": {
         "kind": "harness",
-        "length_mm": 212,
-        "path_mm": 151.4,
+        "length_mm": 208,
+        "path_mm": 158.0,
         "bends": 7,
-        "bundle_od_mm": 5.48,
-        "bend_allowance_mm": 30.1,
+        "bundle_od_mm": 3.51,
+        "bend_allowance_mm": 19.3,
         "through": [
           "SL2",
           "N4"
         ],
-        "status": "OPEN (end provisional): PWR header position TBD (board layout; GR-3 header refs): end on the edge zone; RF header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): J204 (X04S1-PWR, PWR_B) position TBD (board placement): end on the PWR_B edge zone 1; J420 (X04S1-RF, RF) position TBD (board placement): end on the RF edge zone 2"
       },
       "S05": {
         "kind": "harness",
         "length_mm": 35,
         "path_mm": 4.8,
         "bends": 0,
-        "bundle_od_mm": 6.93,
+        "bundle_od_mm": 4.2,
         "bend_allowance_mm": 0.0,
         "through": [],
-        "status": "OPEN (end provisional): F101 carrier PACK_FUSE not modelled (mechanical/README): end on the pack top face; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): F101 carrier PACK_FUSE not modelled (mechanical/README): end on the pack top face; J105 (X05J1-PWR, PWR_A), J109 (X05S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 0"
       },
       "S06": {
         "kind": "harness",
-        "length_mm": 159,
+        "length_mm": 147,
         "path_mm": 86.5,
-        "bends": 5,
-        "bundle_od_mm": 10.59,
-        "bend_allowance_mm": 41.6,
+        "bends": 6,
+        "bundle_od_mm": 6.42,
+        "bend_allowance_mm": 30.3,
         "through": [
           "SL2"
         ],
-        "status": "OPEN (end provisional): INA228 5832 terminal block position on the board not read (Adafruit page gives the outline only): end at the top (+y) face of its envelope; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): INA228 5832 terminal block position on the board not read (Adafruit page gives the outline only): end at the top (+y) face of its envelope; J106 (X06J1-PWR, PWR_A), J110 (X06S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 3"
       },
       "S07": {
         "kind": "harness",
-        "length_mm": 136,
+        "length_mm": 122,
         "path_mm": 70.1,
         "bends": 5,
-        "bundle_od_mm": 8.95,
-        "bend_allowance_mm": 35.1,
+        "bundle_od_mm": 5.43,
+        "bend_allowance_mm": 21.3,
         "through": [
           "SL2"
         ],
-        "status": "OPEN (end provisional): #2813 terminal positions not read (no Pololu dimension drawing on the product page): end at the top (+y) face of its envelope; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): #2813 terminal positions not read (no Pololu dimension drawing on the product page): end at the top (+y) face of its envelope; J107 (X07J1-PWR, PWR_A), J111 (X07S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 3"
       },
       "S10": {
         "kind": "harness",
-        "length_mm": 248,
+        "length_mm": 222,
         "path_mm": 150.8,
         "bends": 8,
-        "bundle_od_mm": 10.59,
-        "bend_allowance_mm": 66.5,
+        "bundle_od_mm": 6.42,
+        "bend_allowance_mm": 40.3,
         "through": [],
-        "status": "OPEN (end provisional): PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): J108 (X10J1-PWR, PWR_A), J112 (X10S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 0"
       },
       "S11": {
         "kind": "harness",
-        "length_mm": 229,
+        "length_mm": 225,
         "path_mm": 175.6,
         "bends": 6,
-        "bundle_od_mm": 4.78,
-        "bend_allowance_mm": 22.5,
+        "bundle_od_mm": 4.05,
+        "bend_allowance_mm": 19.1,
         "through": [
           "SL3"
         ],
@@ -2953,136 +3095,136 @@
         "length_mm": 35,
         "path_mm": 4.8,
         "bends": 0,
-        "bundle_od_mm": 3.38,
+        "bundle_od_mm": 2.87,
         "bend_allowance_mm": 0.0,
         "through": [],
-        "status": "OPEN (end provisional): XT30 pigtail place in the battery compartment TBD: end on the pack top face; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): XT30 pigtail place in the battery compartment TBD: end on the pack top face; J115 (X12P1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 0"
       },
       "S13": {
         "kind": "harness",
         "length_mm": 131,
         "path_mm": 87.4,
         "bends": 6,
-        "bundle_od_mm": 2.74,
-        "bend_allowance_mm": 12.9,
+        "bundle_od_mm": 2.87,
+        "bend_allowance_mm": 13.5,
         "through": [
           "SL2"
         ],
-        "status": "OPEN (end provisional): Adafruit 5997 has no envelope (mechanical/README): end below the Q6A USB stack (J2); PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): Adafruit 5997 has no envelope (mechanical/README): end below the Q6A USB stack (J2); J206 (SL2-PWR-MF, PWR_A) position TBD (board placement): end on the PWR edge zone 3"
       },
       "S14": {
         "kind": "harness",
         "length_mm": 68,
         "path_mm": 34.8,
         "bends": 1,
-        "bundle_od_mm": 3.38,
-        "bend_allowance_mm": 2.7,
+        "bundle_od_mm": 2.87,
+        "bend_allowance_mm": 2.3,
         "through": [
           "SL2"
         ],
-        "status": "OPEN (end provisional): hatch-board layout TBD (W2-05): end on the hatch-board envelope; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): hatch-board layout TBD (W2-05): end on the hatch-board envelope; J206 (SL2-PWR-MF, PWR_A) position TBD (board placement): end on the PWR edge zone 3"
       },
       "S15": {
         "kind": "harness",
-        "length_mm": 161,
+        "length_mm": 158,
         "path_mm": 119.4,
         "bends": 7,
-        "bundle_od_mm": 1.94,
-        "bend_allowance_mm": 10.7,
+        "bundle_od_mm": 1.41,
+        "bend_allowance_mm": 7.8,
         "through": [
           "SL2"
         ],
-        "status": "OPEN (end provisional): hatch-board layout TBD (W2-05): end on the hatch-board envelope; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): hatch-board layout TBD (W2-05): end on the hatch-board envelope; J310 (S15-30-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
       },
       "S16": {
         "kind": "harness",
-        "length_mm": 123,
+        "length_mm": 122,
         "path_mm": 86.2,
         "bends": 2,
-        "bundle_od_mm": 4.14,
-        "bend_allowance_mm": 6.5,
+        "bundle_od_mm": 3.51,
+        "bend_allowance_mm": 5.5,
         "through": [],
         "status": "OPEN (end provisional): hatch-board layout TBD (W2-05): J503 on the hatch-board envelope"
       },
       "S17": {
         "kind": "harness",
-        "length_mm": 64,
-        "path_mm": 27.6,
-        "bends": 3,
-        "bundle_od_mm": 2.74,
-        "bend_allowance_mm": 6.0,
+        "length_mm": 160,
+        "path_mm": 115.6,
+        "bends": 6,
+        "bundle_od_mm": 2.87,
+        "bend_allowance_mm": 13.5,
         "through": [
           "SL2"
         ],
-        "status": "OPEN (end provisional): VCC_3V3_MKEY tap on the Q6A not chosen (E5/E2; MECH-6 B-07): end at the Q6A board edge; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): J206 (SL2-PWR-MF, PWR_A) position TBD (board placement): end on the PWR edge zone 3"
       },
       "S18": {
         "kind": "harness",
         "length_mm": 162,
-        "path_mm": 122.8,
+        "path_mm": 122.1,
         "bends": 4,
-        "bundle_od_mm": 2.74,
-        "bend_allowance_mm": 8.6,
+        "bundle_od_mm": 2.87,
+        "bend_allowance_mm": 9.0,
         "through": [
           "SL2"
         ],
-        "status": "OPEN (end provisional): R44SF envelope TBD: end at the riser window (plate rear face); PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): R44SF envelope TBD: end at the riser window (plate rear face); J206 (SL2-PWR-MF, PWR_A) position TBD (board placement): end on the PWR edge zone 3"
       },
       "S19": {
         "kind": "harness",
         "length_mm": 38,
         "path_mm": 5.0,
         "bends": 1,
-        "bundle_od_mm": 3.38,
-        "bend_allowance_mm": 2.7,
+        "bundle_od_mm": 2.87,
+        "bend_allowance_mm": 2.3,
         "through": [],
-        "status": "OPEN (end provisional): barrel jack position on the Wisecoco HDMI board TBD (STACK D5): end on the board envelope; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): barrel jack position on the Wisecoco HDMI board TBD (STACK D5): end on the board envelope; J205 (X19P1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 2"
       },
       "S20": {
         "kind": "harness",
-        "length_mm": 188,
-        "path_mm": 146.4,
+        "length_mm": 190,
+        "path_mm": 153.1,
         "bends": 5,
-        "bundle_od_mm": 2.74,
-        "bend_allowance_mm": 10.8,
+        "bundle_od_mm": 1.75,
+        "bend_allowance_mm": 6.9,
         "through": [
           "SL2",
           "N2"
         ],
-        "status": "OPEN (end provisional): J543 pigtail (H2) place TBD: end at notch N2 of the RTL-A USB lead; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): J543 pigtail (H2) place TBD: end at notch N2 of the RTL-A USB lead; J207 (SL2-PWR-PH, PWR_B) position TBD (board placement): end on the PWR_B edge zone 1"
       },
       "S21": {
         "kind": "harness",
-        "length_mm": 185,
-        "path_mm": 143.9,
+        "length_mm": 188,
+        "path_mm": 150.6,
         "bends": 5,
-        "bundle_od_mm": 2.74,
-        "bend_allowance_mm": 10.8,
+        "bundle_od_mm": 1.75,
+        "bend_allowance_mm": 6.9,
         "through": [
           "SL2",
           "N3"
         ],
-        "status": "OPEN (end provisional): J541 place TBD: end at notch N3 of the RTL-B USB lead; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): J541 place TBD: end at notch N3 of the RTL-B USB lead; J207 (SL2-PWR-PH, PWR_B) position TBD (board placement): end on the PWR_B edge zone 1"
       },
       "S22": {
         "kind": "harness",
-        "length_mm": 55,
-        "path_mm": 19.2,
+        "length_mm": 60,
+        "path_mm": 25.8,
         "bends": 2,
-        "bundle_od_mm": 3.35,
-        "bend_allowance_mm": 5.3,
+        "bundle_od_mm": 2.15,
+        "bend_allowance_mm": 3.4,
         "through": [
           "SL2"
         ],
-        "status": "OPEN (end provisional): J544 micro-USB pigtail exit on the HF+ can TBD: end on the can face; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): J544 micro-USB pigtail exit on the HF+ can TBD: end on the can face; J207 (SL2-PWR-PH, PWR_B) position TBD (board placement): end on the PWR_B edge zone 1"
       },
       "S23": {
         "kind": "harness",
-        "length_mm": 242,
-        "path_mm": 193.3,
+        "length_mm": 231,
+        "path_mm": 188.9,
         "bends": 7,
-        "bundle_od_mm": 3.35,
-        "bend_allowance_mm": 18.4,
+        "bundle_od_mm": 2.15,
+        "bend_allowance_mm": 11.8,
         "through": [
           "SL3"
         ],
@@ -3090,103 +3232,103 @@
       },
       "S24": {
         "kind": "harness",
-        "length_mm": 197,
-        "path_mm": 143.0,
+        "length_mm": 190,
+        "path_mm": 142.1,
         "bends": 9,
-        "bundle_od_mm": 3.35,
-        "bend_allowance_mm": 23.7,
+        "bundle_od_mm": 2.44,
+        "bend_allowance_mm": 17.2,
         "through": [
           "SL2"
         ],
-        "status": "OPEN (end provisional): T7_INSERT envelope TBD (in the USB3 cable between Q6A J5 and the T7 gland): end beside the gland; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): T7_INSERT envelope TBD (in the USB3 cable between Q6A J5 and the T7 gland): end beside the gland; J311 (S24-25-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
       },
       "S25": {
         "kind": "harness",
-        "length_mm": 215,
-        "path_mm": 163.6,
-        "bends": 8,
-        "bundle_od_mm": 3.35,
-        "bend_allowance_mm": 21.0,
+        "length_mm": 195,
+        "path_mm": 148.3,
+        "bends": 9,
+        "bundle_od_mm": 2.44,
+        "bend_allowance_mm": 15.7,
         "through": [
           "SL2"
         ],
-        "status": "OPEN (end provisional): P1 header position on the Waveshare 24370 board not read: end on the LC76G envelope face towards the route; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): J311 (S24-25-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
       },
       "S26": {
         "kind": "harness",
-        "length_mm": 101,
+        "length_mm": 100,
         "path_mm": 67.4,
         "bends": 1,
-        "bundle_od_mm": 3.87,
-        "bend_allowance_mm": 3.0,
+        "bundle_od_mm": 2.81,
+        "bend_allowance_mm": 2.2,
         "through": [],
-        "status": "OPEN (end provisional): Adafruit 4162 envelope TBD: end at the bezel window on the top wall; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): Adafruit 4162 envelope TBD: end at the bezel window on the top wall; J312 (X26S1-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
       },
       "S27": {
         "kind": "stock_lead",
-        "length_mm": 115,
+        "length_mm": 114,
         "path_mm": 71.6,
-        "bends": 5,
-        "bundle_od_mm": 3.35,
-        "bend_allowance_mm": 13.2,
+        "bends": 6,
+        "bundle_od_mm": 2.44,
+        "bend_allowance_mm": 11.5,
         "through": [
           "SL1"
         ],
-        "status": "OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): J313 (X27F1-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
       },
       "S28": {
         "kind": "harness",
         "length_mm": 42,
         "path_mm": 9.0,
         "bends": 1,
-        "bundle_od_mm": 3.38,
-        "bend_allowance_mm": 2.7,
+        "bundle_od_mm": 2.87,
+        "bend_allowance_mm": 2.3,
         "through": [],
-        "status": "OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): J314 (X28P1-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
       },
       "S29": {
         "kind": "harness",
-        "length_mm": 80,
+        "length_mm": 78,
         "path_mm": 40.8,
         "bends": 4,
-        "bundle_od_mm": 2.74,
-        "bend_allowance_mm": 8.6,
+        "bundle_od_mm": 1.99,
+        "bend_allowance_mm": 6.3,
         "through": [],
-        "status": "OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): J315 (X29S1-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
       },
       "S30": {
         "kind": "harness",
-        "length_mm": 181,
+        "length_mm": 175,
         "path_mm": 129.2,
         "bends": 8,
-        "bundle_od_mm": 3.35,
-        "bend_allowance_mm": 21.0,
+        "bundle_od_mm": 2.44,
+        "bend_allowance_mm": 15.3,
         "through": [
           "SL2"
         ],
-        "status": "OPEN (end provisional): hatch-board layout TBD (W2-05): J502 on the hatch-board envelope; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): hatch-board layout TBD (W2-05): J502 on the hatch-board envelope; J310 (S15-30-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
       },
       "S31": {
         "kind": "harness",
-        "length_mm": 58,
+        "length_mm": 57,
         "path_mm": 24.2,
         "bends": 2,
-        "bundle_od_mm": 2.74,
-        "bend_allowance_mm": 3.1,
+        "bundle_od_mm": 1.99,
+        "bend_allowance_mm": 2.2,
         "through": [],
         "status": "OPEN (end provisional): J522 EDL contact pads on the Q6A not localised (E5 §9): end at the Q6A board edge"
       },
       "S32": {
         "kind": "harness",
-        "length_mm": 212,
+        "length_mm": 207,
         "path_mm": 162.9,
         "bends": 6,
-        "bundle_od_mm": 3.87,
-        "bend_allowance_mm": 18.2,
+        "bundle_od_mm": 2.81,
+        "bend_allowance_mm": 13.2,
         "through": [
           "SL3"
         ],
-        "status": "OPEN (end provisional): PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): J507 (X32S1-PWR, PWR_A) position TBD (board placement): end on the PWR edge zone 1"
       },
       "S33": {
         "kind": "external",
@@ -3195,11 +3337,11 @@
       },
       "S34": {
         "kind": "harness",
-        "length_mm": 203,
-        "path_mm": 146.0,
+        "length_mm": 191,
+        "path_mm": 141.6,
         "bends": 7,
-        "bundle_od_mm": 4.74,
-        "bend_allowance_mm": 26.1,
+        "bundle_od_mm": 3.45,
+        "bend_allowance_mm": 19.0,
         "through": [
           "SL3"
         ],
@@ -3207,57 +3349,67 @@
       },
       "S35": {
         "kind": "harness",
-        "length_mm": 157,
-        "path_mm": 117.5,
+        "length_mm": 159,
+        "path_mm": 122.7,
         "bends": 4,
-        "bundle_od_mm": 2.74,
-        "bend_allowance_mm": 8.6,
+        "bundle_od_mm": 1.75,
+        "bend_allowance_mm": 5.5,
         "through": [
           "SL2"
         ],
-        "status": "OPEN (end provisional): Boni-Whip bias-tee has no envelope (mechanical/README): end at the HF+ can top edge; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): Boni-Whip bias-tee has no envelope (mechanical/README): end at the HF+ can top edge; J207 (SL2-PWR-PH, PWR_B) position TBD (board placement): end on the PWR_B edge zone 1"
       },
       "S36": {
         "kind": "harness",
-        "length_mm": 190,
-        "path_mm": 148.5,
+        "length_mm": 192,
+        "path_mm": 155.1,
         "bends": 5,
-        "bundle_od_mm": 2.74,
-        "bend_allowance_mm": 10.8,
+        "bundle_od_mm": 1.75,
+        "bend_allowance_mm": 6.9,
         "through": [
           "SL2"
         ],
-        "status": "OPEN (end provisional): J551 lead exit at the receptacle rear (0.2 m AWG 24 leads, soldered to the S36 wires, build/16): end at the rear face of the receptacle's inner envelope (nut.J551); PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): J551 lead exit at the receptacle rear (0.2 m AWG 24 leads, soldered to the S36 wires, build/16): end at the rear face of the receptacle's inner envelope (nut.J551); J207 (SL2-PWR-PH, PWR_B) position TBD (board placement): end on the PWR_B edge zone 1"
       },
       "S37": {
         "kind": "harness",
         "length_mm": 31,
         "path_mm": 0.8,
         "bends": 0,
-        "bundle_od_mm": 3.87,
+        "bundle_od_mm": 2.81,
         "bend_allowance_mm": 0.0,
         "through": [],
-        "status": "OPEN (end provisional): ENC header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): X37S0-ENCM (ENCM) position TBD (board placement): end on the ENC edge zone 0"
       },
       "S38": {
         "kind": "harness",
         "length_mm": 31,
         "path_mm": 0.8,
         "bends": 0,
-        "bundle_od_mm": 3.87,
+        "bundle_od_mm": 2.81,
         "bend_allowance_mm": 0.0,
         "through": [],
-        "status": "OPEN (end provisional): ENC header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): X38S0-ENCV (ENCV) position TBD (board placement): end on the ENC edge zone 0"
       },
       "S39": {
         "kind": "harness",
-        "length_mm": null,
-        "status": "OPEN (end provisional): TH301 place on the panel rear heat spreader TBD (MECH-6 B-10)"
+        "length_mm": 45,
+        "path_mm": 11.0,
+        "bends": 2,
+        "bundle_od_mm": 1.99,
+        "bend_allowance_mm": 3.1,
+        "through": [],
+        "status": "OPEN (end provisional): J318 (X39S1-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
       },
       "S40": {
         "kind": "harness",
-        "length_mm": null,
-        "status": "OPEN (end provisional): TH302 place on the inner frame TBD (MECH-6 B-10)"
+        "length_mm": 97,
+        "path_mm": 61.5,
+        "bends": 3,
+        "bundle_od_mm": 1.99,
+        "bend_allowance_mm": 4.7,
+        "through": [],
+        "status": "OPEN (end provisional): J319 (X40S1-CTRL, CTRL) position TBD (board placement): end on the CTRL edge zone 0"
       },
       "S41": {
         "kind": "external",
@@ -3268,28 +3420,41 @@
     "branches": {
       "PPS": {
         "kind": "harness",
-        "length_mm": 196,
-        "path_mm": 159.4,
-        "bends": 2,
+        "length_mm": 159,
+        "path_mm": 119.3,
+        "bends": 3,
         "bundle_od_mm": 3.87,
-        "bend_allowance_mm": 6.1,
+        "bend_allowance_mm": 9.1,
         "through": [],
-        "status": "OPEN (end provisional): J20 pin-1 orientation not read (Radxa Q6A header drawing, fetch-only): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch; P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge; P1 at the envelope edge towards the Q6A shortens the branch by up to half the envelope width (31.8 mm)"
+        "status": "OPEN (end provisional): J20 pin-1 orientation not read (no pin-1 mark on J20 in the Radxa placement map V1.21, read 2026-11-07): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch; P1 (MX1.25) position read on the Waveshare outline drawing (parts.json lc76g), its height inside the 13.1 mm reserve is not (module height not read): end at mid-height, +/-6.6 mm"
+      }
+    },
+    "coax": {
+      "W407": {
+        "kind": "coax",
+        "length_mm": 204,
+        "path_mm": 198.6,
+        "bends": 6,
+        "bundle_od_mm": 1.13,
+        "bend_allowance_mm": 5.2,
+        "through": [
+          "N1"
+        ],
+        "status": "PASS (model)"
       }
     },
     "slots": {
       "SL1": {
         "listed": [
-          "S01"
+          "S01",
+          "S27"
         ],
         "routed": [
           "S01",
           "S27"
         ],
         "listed_not_routed": [],
-        "routed_not_listed": [
-          "S27"
-        ]
+        "routed_not_listed": []
       },
       "SL2": {
         "listed": [
@@ -4074,7 +4239,7 @@
       "stl_triangles": 2846
     },
     "plate_al": {
-      "cm3": 57.04,
+      "cm3": 56.84,
       "printed": false,
       "solids": 1,
       "bbox_mm": [
@@ -4360,7 +4525,7 @@
     "collisions": 0,
     "outside": 0,
     "rule_failures": 0,
-    "rules_open": 11,
+    "rules_open": 9,
     "antenna_rule_failures": 0,
     "board_area_failures": 0,
     "board_area_open": 2,
