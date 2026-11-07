@@ -30,6 +30,31 @@ def inet_denied():
     return True
 
 
+def _open_progress(path, total, started):
+    """Result class that appends one line per test class to path (the ARM64 guest passes its console),
+    so a run stopped by the lab's time bound still shows how far it got. None: no progress output."""
+    if not path:
+        return None
+    try:
+        stream = open(path, "a", encoding="utf-8", buffering=1)
+    except OSError:
+        return None
+
+    class ProgressResult(unittest.TextTestResult):
+        current = None
+
+        def startTest(self, test):
+            group = type(test).__module__ + "." + type(test).__qualname__
+            if group != ProgressResult.current:
+                ProgressResult.current = group
+                try:
+                    stream.write("[srrx-regression] %d/%d %.0f s %s\n" % (self.testsRun, total, time.monotonic() - started, group))
+                except OSError:
+                    pass
+            super().startTest(test)
+    return ProgressResult
+
+
 def main():
     started = time.monotonic()
     groups = {"software": unittest.TestLoader().discover(str(BASE / "software/tests"))}
@@ -39,7 +64,10 @@ def main():
         groups["linux_lab"] = unittest.TestLoader().discover(str(BASE / "deployment/linux_lab"), pattern="test_*.py")
     group_counts = {name: tests.countTestCases() for name, tests in groups.items()}
     suite = unittest.TestSuite(groups.values())
-    result = unittest.TextTestRunner(verbosity=1).run(suite)
+    progress = _open_progress(os.environ.get("SRRX_TEST_PROGRESS"), sum(group_counts.values()), started)
+    # durations: the slowest tests close the log, so a slow emulated guest shows where its time went.
+    result = unittest.TextTestRunner(verbosity=1, durations=25,
+                                     resultclass=progress or unittest.TextTestResult).run(suite)
     from srrx.commissioning import project_hashes
     graphs, sources = project_hashes(BASE)
     report = {"host_regression_status": "PASS" if result.wasSuccessful() else "FAIL",

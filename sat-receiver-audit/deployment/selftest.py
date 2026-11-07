@@ -1801,6 +1801,34 @@ _LIVE_FORBIDDEN_ARGS = ("--http_server", "--client", "--server_address", "--serv
                         "--source_id")
 
 
+def _lrpt_window(bb):
+    """The fixed 600 s Meteor-M N2-3 pass window that the tone probe and the live argv check use."""
+    return bb.window(1, "Meteor-M N2-3", 137_900_000, 72_000, 1e9, 1e9 + 600, bb.iso_utc(1e9), bb.iso_utc(1e9 + 600))
+
+
+def _baseband_probe(np, bb, where, r):
+    """The channel filter of every allowed tuning and the synthetic tones through ChannelChain (_replay_probe)."""
+    for center in bb.CENTERS_HZ:
+        for rate in sorted(bb.PIPELINES):
+            try:
+                low, high = bb.channel_span(center, rate)
+                bb.verify_taps(bb.design_taps(center, rate), center, rate)
+                if not 137e6 < low < high < 138e6:
+                    raise bb.BasebandRefused("span")
+            except bb.BasebandRefused:
+                r.fail(where, "channel_filter_spec", "%d:%d" % (center, rate))
+    window = _lrpt_window(bb)
+    t = np.arange(bb.INPUT_RATE_HZ // 4) / bb.INPUT_RATE_HZ
+    for offset, inside in ((150_000.0, False), (-110_000.0, False), (20_000.0, True)):
+        chain = bb.ChannelChain(window)
+        tone = (0.99 * np.exp(2j * np.pi * offset * t)).astype(np.complex64)
+        stored = np.concatenate([chain.push(tone[k:k + 8192]) for k in range(0, tone.size, 8192)] + [chain.flush()])
+        if not inside and np.count_nonzero(stored):
+            r.fail(where, "out_of_window_tone_stored", "offset%+dkHz" % (offset / 1e3))
+        if inside and abs(np.sqrt(np.mean(stored.astype(np.float64) ** 2 * 2)) / bb.CI16_SCALE - 0.99) > 0.01:
+            r.fail(where, "in_window_tone_not_kept", "offset%+dkHz" % (offset / 1e3))
+
+
 def check_04bb(ctx, r):
     """srrx.baseband and srrx.satdump_pass as staged: the v2.1 constants, the channel filter of every
     allowed tuning (stopband <= -100 dB beyond the window), a synthetic out-of-window tone that is stored
@@ -1818,25 +1846,8 @@ def check_04bb(ctx, r):
             r.fail(where, "baseband_policy_constant", name)
     if bb.LIVE_MAX_SAMPLES * 8 > 65507 or set(bb.PIPELINES.values()) != {"meteor_m2-x_lrpt", "meteor_m2-x_lrpt_80k"}:
         r.fail(where, "baseband_policy_constant", "LIVE_OR_PIPELINES")
-    for center in bb.CENTERS_HZ:
-        for rate in sorted(bb.PIPELINES):
-            try:
-                low, high = bb.channel_span(center, rate)
-                bb.verify_taps(bb.design_taps(center, rate), center, rate)
-                if not 137e6 < low < high < 138e6:
-                    raise bb.BasebandRefused("span")
-            except bb.BasebandRefused:
-                r.fail(where, "channel_filter_spec", "%d:%d" % (center, rate))
-    window = bb.window(1, "Meteor-M N2-3", 137_900_000, 72_000, 1e9, 1e9 + 600, bb.iso_utc(1e9), bb.iso_utc(1e9 + 600))
-    t = np.arange(bb.INPUT_RATE_HZ // 4) / bb.INPUT_RATE_HZ
-    for offset, inside in ((150_000.0, False), (-110_000.0, False), (20_000.0, True)):
-        chain = bb.ChannelChain(window)
-        tone = (0.99 * np.exp(2j * np.pi * offset * t)).astype(np.complex64)
-        stored = np.concatenate([chain.push(tone[k:k + 8192]) for k in range(0, tone.size, 8192)] + [chain.flush()])
-        if not inside and np.count_nonzero(stored):
-            r.fail(where, "out_of_window_tone_stored", "offset%+dkHz" % (offset / 1e3))
-        if inside and abs(np.sqrt(np.mean(stored.astype(np.float64) ** 2 * 2)) / bb.CI16_SCALE - 0.99) > 0.01:
-            r.fail(where, "in_window_tone_not_kept", "offset%+dkHz" % (offset / 1e3))
+    _replay_probe(r, "RX-04-bb", np, lambda findings: _baseband_probe(np, bb, where, findings))
+    window = _lrpt_window(bb)
     ident = "0" * 16
     decode = glue.unit_properties("decode", ident, work_dir="/data/products/satdump/.satdump-" + ident,
                                   input_path="/data/raw/baseband-lrpt/lrpt-" + ident + ".sigmf-data")
@@ -2156,16 +2167,68 @@ def _band_power(np, samples, centre, rate, frequency, half):
     return float(total[bins].mean() / count)
 
 
-def check_14(ctx, r):
-    """srrx.voice_mask.excise on pinned captures: the NFM residual of each voice stays within the
-    noise floor + 3 dB, each control carrier keeps its power within 1 dB (STACK.md:977)."""
-    mask = _target_module(ctx, r, "voice_mask")
-    if mask is None:
+class _Findings(list):
+    """Records fail/block calls as (method, args) so a numeric probe can be replayed into a Result."""
+
+    def fail(self, *args):
+        self.append(("fail", args))
+
+    def block(self, *args):
+        self.append(("block", args))
+
+
+# The numeric probes of RX-14 and RX-04-bb (NumPy FFT and filter work on pinned synthetic signals) are
+# pure functions of the checker's own srrx modules (imported only after _target_identical) and NumPy.
+# One device run evaluates each once. A process that runs the selftest many times, the regression
+# suites above all (under TCG emulation the probes dominate a run), replays the recorded findings while
+# every object the probe can reach is unchanged: each srrx module, its globals, the attributes of its
+# classes, this module's globals and NumPy. A replaced object (a test patch, a reload) is a new key and
+# is evaluated again. The key's objects are kept, so no id() is reused while its entry exists. Objects
+# mutated in place are outside the key: nothing in srrx or here mutates the probes' inputs that way.
+_PROBE_RESULTS = {}
+
+
+def _probe_key(kind, np):
+    objects, ids = [np], [kind, id(np)]
+    for name in sorted(n for n in sys.modules if n == "srrx" or n.startswith("srrx.")):
+        module = sys.modules[name]
+        objects.append(module)
+        ids.append((name, id(module)))
+        if module is None:
+            continue
+        for key, value in sorted(vars(module).items()):
+            objects.append(value)
+            ids.append((key, id(value)))
+            if isinstance(value, type) and getattr(value, "__module__", None) == name:
+                for attr, item in sorted(vars(value).items()):
+                    objects.append(item)
+                    ids.append((key, attr, id(item)))
+    for key, value in sorted(globals().items()):
+        if key != "_PROBE_RESULTS":
+            objects.append(value)
+            ids.append(("selftest", key, id(value)))
+    return tuple(ids), objects
+
+
+def _replay_probe(r, kind, np, probe):
+    """Run probe(findings) once per unchanged key and replay its fail/block calls into r, in order.
+    A probe that raises replays what it recorded first and is not kept (run_offline handles the error)."""
+    key, objects = _probe_key(kind, np)
+    kept = _PROBE_RESULTS.get(key)
+    if kept is None:
+        findings = _Findings()
+        try:
+            probe(findings)
+        finally:
+            for method, args in findings:
+                getattr(r, method)(*args)
+        _PROBE_RESULTS[key] = (objects, tuple(findings))
         return
-    try:
-        import numpy as np
-    except ImportError:
-        return r.block(".", "numpy_unavailable")
+    for method, args in kept[1]:
+        getattr(r, method)(*args)
+
+
+def _voice_probe(np, mask, r):
     where = "software/srrx/voice_mask.py"
     for seed, (label, centre, rate, voices, windows, bench, carriers) in enumerate(_VOICE_PROBES, 1):
         capture, noise = _voice_capture(np, centre, rate, voices, carriers, seed)
@@ -2185,6 +2248,19 @@ def check_14(ctx, r):
             before = _band_power(np, capture, centre, rate, frequency, 1e3)
             if _band_power(np, out, centre, rate, frequency, 1e3) < before * 10 ** (-_CONTROL_LOSS_DB / 10):
                 r.block(where, "voice_mask_control_removed", label)
+
+
+def check_14(ctx, r):
+    """srrx.voice_mask.excise on pinned captures: the NFM residual of each voice stays within the
+    noise floor + 3 dB, each control carrier keeps its power within 1 dB (STACK.md:977)."""
+    mask = _target_module(ctx, r, "voice_mask")
+    if mask is None:
+        return
+    try:
+        import numpy as np
+    except ImportError:
+        return r.block(".", "numpy_unavailable")
+    _replay_probe(r, "RX-14", np, lambda findings: _voice_probe(np, mask, findings))
     r.note("recorder_excises_through_srrx.baseband_RX-04-bb")
     r.note("repeater_pass_recording_is_device_evidence")
 

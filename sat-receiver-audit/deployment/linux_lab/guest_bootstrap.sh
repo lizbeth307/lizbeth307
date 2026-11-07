@@ -148,7 +148,9 @@ cd /opt/srrx
 set +e
 rm -f verification/software-tests.json
 echo 'Running full software regression'
-/opt/srrx/venv/bin/python3 tools/run_tests_offline.py > "$results/unit-tests.log" 2>&1
+# One progress line per test class goes to the serial console, so a run stopped by the time bound
+# still shows how far it got (console.log); the full output stays in unit-tests.log.
+SRRX_TEST_PROGRESS=/dev/console /opt/srrx/venv/bin/python3 tools/run_tests_offline.py > "$results/unit-tests.log" 2>&1
 unit_code=$?
 test ! -f verification/software-tests.json || cp verification/software-tests.json "$results/software-tests.json"
 echo "Software regression exit: $unit_code; running systemd/Unix IPC smoke"
