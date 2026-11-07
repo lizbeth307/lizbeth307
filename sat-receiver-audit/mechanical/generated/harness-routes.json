@@ -1791,26 +1791,26 @@
         [
           212.75,
           12.005,
-          30.0
+          28.5
         ],
         [
           206.0,
           12.005,
-          30.0
+          28.5
         ],
         [
           206.0,
           2.5,
-          30.0
+          28.5
         ]
       ],
-      "path_mm": 144.5,
+      "path_mm": 146.0,
       "bends": 7,
       "bundle_od_mm": 4.74,
       "wires": 6,
       "bend_allowance_mm": 26.1,
       "service_loops_mm": 30.0,
-      "length_mm": 201,
+      "length_mm": 203,
       "through": [
         "SL3"
       ],
