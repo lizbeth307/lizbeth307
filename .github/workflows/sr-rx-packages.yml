@@ -137,10 +137,6 @@ jobs:
             args+=(--build-all)
           fi
           python3 deployment/repo/check_repo.py plan "${args[@]}" | tee "$RUNNER_TEMP/plan.json"
-          # HEAVY-JOB WIRING PROBE (this one commit only; the next commit reverts it): the light recipe
-          # rtlsdr runs as a heavy job, so the matrix, chain build, artifacts and repository merge run once.
-          printf '%s\n' 'light=limesuiteng' 'heavy_matrix=[{"recipe":"rtlsdr","chain":"rtlsdr"}]' 'heavy_count=1' >> "$GITHUB_OUTPUT"
-          echo "- HEAVY-JOB WIRING PROBE: rtlsdr forced into a heavy job for this commit only" >> "$GITHUB_STEP_SUMMARY"
           python3 - "$RUNNER_TEMP/plan.json" <<'EOF' | tee -a "$GITHUB_STEP_SUMMARY"
           import json, sys
           plan = json.load(open(sys.argv[1]))
