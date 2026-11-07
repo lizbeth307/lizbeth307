@@ -15,7 +15,9 @@ User=lab
 Group=lab
 WorkingDirectory=/
 # STACK.md C7 lease mode 2: DeviceAllow= stat()s the alias at start; a missing node adds no rule,
-# so DevicePolicy=closed leaves only the pseudo devices (needs CONFIG_CGROUP_BPF=y, RX-12-runtime).
+# so DevicePolicy=closed leaves only the pseudo devices and read-only RTC (ProtectClock=yes implies
+# DeviceAllow=char-rtc r). Without cgroup BPF systemd starts the unit with no device ACL and no IP
+# filter at all (fail open): CONFIG_CGROUP_BPF=y and RX-12-runtime come before any lease is used.
 DevicePolicy=closed
 DeviceAllow=/dev/lab/%i rw
 ProtectSystem=strict

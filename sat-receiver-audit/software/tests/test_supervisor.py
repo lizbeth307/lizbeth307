@@ -1022,7 +1022,7 @@ class OperatorStopTests(unittest.TestCase):
 
 @unittest.skipUnless(sys.platform != "win32", "srrx.hardware imports POSIX fcntl")
 class OperatorStopEngineTests(unittest.TestCase):
-    """labd follows the Pico's own stop through its existing TRIPPED path (engine.py:167-170):
+    """labd follows the Pico's own stop through its existing TRIPPED path (engine.py:189-192):
     the real Engine, SimLink wire codecs and this supervisor; a CI model, not a bench result."""
 
     def test_labd_and_console_follow_the_pico_stop_without_a_new_path(self):

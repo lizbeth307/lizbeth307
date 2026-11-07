@@ -13,7 +13,9 @@ Rules (srrx.engine.Engine.request checks the operator lease before calling reque
 
 1. The caller holds its own valid operator lease (the policy lease the console renews). The
    engine lease ends when that lease is lost or expires, on DISARM and on every other trip of
-   the power policy (the receivers lose VBUS then), on engine_stop (operator or scope stop),
+   the power policy (the receivers lose VBUS then), when the receiver's EN output goes off
+   without a trip (RECEIVER_OFF: powered again, the receiver re-enumerates with a new minor
+   that the unit's device allow-list does not hold), on engine_stop (operator or scope stop),
    when the unit exits, and when srrx.service stops: each template has BindsTo=srrx.service,
    and since systemd 254 an automatic restart passes through the inactive state first
    (NEWS, RestartMode=), so no lease outlives the labd that granted it.
@@ -42,6 +44,8 @@ ENGINES = ("readsb", "aiscatcher", "sdrangelsrv")
 # Template instance -> devices.json "usb" key; the alias is the udev SYMLINK (deploy.validate_devices).
 DEVICE_KEYS = {"rtla": "rtl_a", "rtlb": "rtl_b", "hfplus": "hfplus"}
 RECEIVERS = tuple(DEVICE_KEYS)
+# Template instance -> the policy's EN output of its 5 V branch (srrx.engine BRANCHES RTLA, RTLB, HFP).
+POWER_OUTPUTS = {"rtla": "EN_RTLA", "rtlb": "EN_RTLB", "hfplus": "EN_HFP"}
 TEMPLATES = tuple("srrx-lease-" + engine + "@.service" for engine in ENGINES)
 UNIT_PATTERN = "^srrx-lease-(" + "|".join(ENGINES) + ")@(" + "|".join(RECEIVERS) + ")\\.service$"
 LABD_USER = "labd"
@@ -62,8 +66,10 @@ ERRORS = ("ENGINE_LEASE_DISABLED", "ENGINE_LEASE_CLOSED", "ENGINE_LEASE_BAD_REQU
           "ENGINE_LEASE_FAULT", "ENGINE_LEASE_DEVICES_UNAVAILABLE", "ENGINE_LEASE_NODE_MISSING",
           "ENGINE_LEASE_NODE_MISMATCH", "ENGINE_LEASE_START_FAILED", "ENGINE_LEASE_STOP_FAILED",
           "ENGINE_LEASE_UNIT_EXITED", "ENGINE_LEASE_INTERNAL")
-# Why a lease ended (status last_stop): engine_stop reasons, the operator lease, a policy trip, labd exit.
-STOPS = ("OPERATOR_STOP", "SCOPE_STOP", "OPERATOR_LEASE_LOST", "POLICY_TRIP", "DAEMON_EXIT", "UNIT_EXITED")
+# Why a lease ended (status last_stop): engine_stop reasons, the operator lease, a policy trip,
+# the receiver's EN output off, labd exit, the unit's own exit.
+STOPS = ("OPERATOR_STOP", "SCOPE_STOP", "OPERATOR_LEASE_LOST", "POLICY_TRIP", "RECEIVER_OFF", "DAEMON_EXIT",
+         "UNIT_EXITED")
 _SYSTEMCTL_ENV = {"PATH": "/usr/bin:/bin", "LC_ALL": "C", "SYSTEMD_PAGER": "", "SYSTEMD_COLORS": "0"}
 
 

@@ -482,6 +482,28 @@ class EngineOperationTests(unittest.TestCase):
         self.assertEqual((reply["ok"], reply["stopping"]), (True, ["rtla"]))
         self.assertEqual((self.state()["state"], self.state()["last_stop"]), ("IDLE", "SCOPE_STOP"))
 
+    def test_receiver_en_off_while_armed_ends_only_that_receivers_lease(self):
+        # Powered again, the receiver re-enumerates with a new minor the unit's BPF allow-list lacks.
+        self.assertEqual(engine_leases.POWER_OUTPUTS, {"rtla": "EN_RTLA", "rtlb": "EN_RTLB", "hfplus": "EN_HFP"})
+        self.arm()
+        for output in ("EN_RTLA", "EN_HFP"):
+            self.assertTrue(self.request("uid:1000", op="control", name=output, value=True)["ok"])
+        self.advance(40)
+        self.assertTrue(self.lease()["ok"])
+        self.assertTrue(self.lease(engine="sdrangelsrv", receiver="hfplus")["ok"])
+        self.log.clear()
+        self.assertTrue(self.request("uid:1000", op="control", name="EN_RTLA", value=False)["ok"])
+        self.advance(20)
+        self.assertTrue(self.engine.policy.armed)
+        self.assertEqual((self.state()["state"], self.state()["last_stop"]), ("IDLE", "RECEIVER_OFF"))
+        self.assertIn(("systemctl", "stop", "srrx-lease-readsb@rtla.service"), self.log)
+        self.assertEqual(self.state("hfplus")["state"], "ACTIVE")
+        self.assertFalse(any("@hfplus" in " ".join(entry) for entry in self.log))
+        # A DISARM ends the rest as a policy trip, not as a receiver switched off.
+        self.assertTrue(self.request("uid:1000", op="disarm")["ok"])
+        self.advance(20)
+        self.assertEqual((self.state("hfplus")["state"], self.state("hfplus")["last_stop"]), ("IDLE", "POLICY_TRIP"))
+
     def test_simulation_has_no_engine_leases_and_hardware_has_them(self):
         plain = Engine(SimHardware(), SimLink(PROJECT), simulated=True)
         self.addCleanup(plain.close)

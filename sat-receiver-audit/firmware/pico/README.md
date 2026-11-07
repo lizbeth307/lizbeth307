@@ -189,7 +189,7 @@ The physical DISARM/STOP needs neither the Q6A, labd nor the Qt console
   kept for the console, nonce rotated). SAFE, TRIPPED, SHUTTING_DOWN and OFF
   are not changed, and the hold never cuts Pololu power.
 - labd needs no new path: a Pico TRIPPED report trips labd
-  (`pico_OPERATOR_STOP`, `software/srrx/engine.py:167-170`) and all outputs go
+  (`pico_OPERATOR_STOP`, `software/srrx/engine.py:189-192`) and all outputs go
   off; the console names the stop. Restart is the normal explicit host ARM in
   the new session after LOCK is released.
 - 1.0 s differs from the 1.5 s case-button shutdown hold. A stuck LOCK key
