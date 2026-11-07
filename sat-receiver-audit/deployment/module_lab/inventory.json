@@ -24540,7 +24540,7 @@
     },
     {
       "path": "components/adi_lt3045_paralleled_4_5_v_lna_rail.md",
-      "sha256": "4d89312f40ec20c47ef704f5cfc383072eaaa9218f1f5921bc463a782305e24d",
+      "sha256": "f89b209d9ab7784b518f1d8dccf02b0f40c4fc9b54063e737b9c9c1038bdb9bd",
       "category": "electrical_catalogue_with_graph_links",
       "linked_refs": [
         "U204",
@@ -24608,7 +24608,7 @@
     },
     {
       "path": "components/antennas_foldable.md",
-      "sha256": "9c7227261ec78a20c524d472532f71578976a2a7a393c79bdd1c9c8504debe91",
+      "sha256": "9a7197ec9c84bfbad077593c1a49ed43d6302de378cc41ddb75c6df1697a2971",
       "category": "catalogue_only_or_crosscutting_context_not_a_new_graph_device",
       "linked_refs": [],
       "historical_part_label": "",
@@ -24617,7 +24617,7 @@
     },
     {
       "path": "components/antennas_patch_chip.md",
-      "sha256": "3c14a1af0f35e2fcbc0c5393256abf2faf51ee699f1364c7f83d8dfc23e2484f",
+      "sha256": "41e1cefde0d320c049804f7711c1aa8fb89d7cfe94c3517ffca9a080ecd81d88",
       "category": "catalogue_only_or_crosscutting_context_not_a_new_graph_device",
       "linked_refs": [],
       "historical_part_label": "",
@@ -24667,7 +24667,7 @@
     },
     {
       "path": "components/cable_bulkhead_set_7_sma_1_f_bulkheads_r.md",
-      "sha256": "711b03956ba2734b5342e1595760f987195a0057e87bc0874515f7f3552b92b2",
+      "sha256": "1685ca653a814dac785568f023051f115a3f62778eabcb5e85f5c97152f5acde",
       "category": "electrical_catalogue_with_graph_links",
       "linked_refs": [
         "J401",
@@ -24746,7 +24746,7 @@
     },
     {
       "path": "components/custom_2_layer_pcbs_power_board_5_channe.md",
-      "sha256": "e20726189476d618dd3a9b0a8f2308628f25c5e17e8c16b2a0c3635f66514fe0",
+      "sha256": "69718036d161363c946508d5a08161119bcf7a8abb3e155b0f1faf653a4f0d48",
       "category": "catalogue_only_or_crosscutting_context_not_a_new_graph_device",
       "linked_refs": [],
       "historical_part_label": "- **Part:** Custom 2-layer PCB set: power board + 5-channel injector board (ch1 VHF-137, ch2 UHF 435-438, ch3 L-band 1525-1710, ch4 2 m/WIDE optional, ch5 LNB IF 739.5 MHz; it also carries the HMC7992 sections). Band chokes >=0.5 A, LNB choke >=1 A, C0G DC blocks. Tier core, group Power, 1 set.",
@@ -24775,7 +24775,7 @@
     },
     {
       "path": "components/display.md",
-      "sha256": "de53cf63f921c9ec0972ab900ac67cccd1f588bf4f180fe832121a60b92431ab",
+      "sha256": "7363d5f7b388246e2375bfa6be1cf765c8f6f39bb98e2f726e015c6ea5449e5a",
       "category": "electrical_catalogue_with_graph_links",
       "linked_refs": [
         "ENC301",
@@ -24882,7 +24882,7 @@
     },
     {
       "path": "components/hf_receiver.md",
-      "sha256": "244d44b9c1d813cf246aaedeaf655ed3d73e41d53c3d40c0b26a92a4a22aa949",
+      "sha256": "df7d6d8b5d3c6828afb960bcbcfb9cb7373435c9f74346de4ce3480af5135939",
       "category": "electrical_catalogue_with_graph_links",
       "linked_refs": [
         "A406",
@@ -24944,7 +24944,7 @@
     },
     {
       "path": "components/lab_ui.md",
-      "sha256": "fa7357254c249f00ecb1e55d68edf26b2be5deafe24108d2c600a0464d236391",
+      "sha256": "4697626700a5f3339b15605514b0cf5361cb48248d0240a2b297f857da32c0a6",
       "category": "software_or_architecture_context",
       "linked_refs": [],
       "historical_part_label": "",
@@ -24962,7 +24962,7 @@
     },
     {
       "path": "components/lime_parts_adt_link_r44sf_i_pex_90435_00.md",
-      "sha256": "75e6bdbde560cbcc4abaceb98362c30da227b161c4514af332c8bf90ea227abf",
+      "sha256": "204b3d133790554044352f2279c4dbda29b9c5a22e260062f715a8893452ae70",
       "category": "electrical_catalogue_with_graph_links",
       "linked_refs": [
         "A415",
@@ -25075,7 +25075,7 @@
     },
     {
       "path": "components/nooelec_sawbird_goes_cased_100792.md",
-      "sha256": "f8d11df13aaa7287bf4c496b8a3732816290b4baf5c8334225442e88e7e02c15",
+      "sha256": "d38b00b5b571aed6538f70b6e87380c0895426812edd748386546d125ec9a78a",
       "category": "catalogue_only_or_crosscutting_context_not_a_new_graph_device",
       "linked_refs": [],
       "historical_part_label": "- **Part:** L-band LNA + SAW filter at the helix/helicone feed (1687-1705 MHz: Meteor HRPT 1700, Metop AHRPT 1701.3, FY-3 1704.5, Elektro-L3 LRIT 1691, FY-2H 1687.5/1690.5). Qty 1, shared by both antenna tiers.",
@@ -25212,7 +25212,7 @@
     },
     {
       "path": "components/pololu_d36v50f12_sys12.md",
-      "sha256": "d29758915b0f3e03531dbc54db70858fbf250ca535c0fae246a3e0d4d779144f",
+      "sha256": "d08fb3642ff2bcbe8378cb8a43dc5898108e83eebcb025961d72590351a5c099",
       "category": "electrical_catalogue_with_graph_links",
       "linked_refs": [
         "U107"
@@ -25223,7 +25223,7 @@
     },
     {
       "path": "components/power.md",
-      "sha256": "e7b1f3568cba93db0b8d9b23f22b68979ca9a811adbf7ecf1846922a43e1e405",
+      "sha256": "9f3c0a21ff0df0ccc175e661cd7d13611a5c884cac5b5bba098232af5a05ed7a",
       "category": "catalogue_only_or_crosscutting_context_not_a_new_graph_device",
       "linked_refs": [],
       "historical_part_label": "- **Component:** Power system (battery, charging, converters, fuel gauge) for the Radxa Dragon Q6A handheld satellite receiver",
@@ -25307,7 +25307,7 @@
     },
     {
       "path": "components/rf_frontend.md",
-      "sha256": "1d61b0b47bb9b7b6db62d0eb8a622873c8fcb60ae513914e3264c86ea4d0cff9",
+      "sha256": "161813d61c8aee5a8308369db81385029aae213471ed46a4bb7b7eb22f266942",
       "category": "electrical_catalogue_with_graph_links",
       "linked_refs": [
         "A401",
@@ -25401,7 +25401,7 @@
     },
     {
       "path": "components/software.md",
-      "sha256": "a5a3a7af8337c34349f4f88710dd66a51aa03ff91aa3eb0c18982573e889da98",
+      "sha256": "28e9c89965a6bdb90fd7aceae32b884d118f0d218133320eb731723e8894e63d",
       "category": "software_or_architecture_context",
       "linked_refs": [],
       "historical_part_label": "- **Component:** Software stack on the Radxa Dragon Q6A (QCS6490): OS/kernel, LimeSDR Micro PCIe driver, SDR apps, GPU waterfall, NPU classifier",
@@ -25419,7 +25419,7 @@
     },
     {
       "path": "components/spare_rtl_sdr_blog_wideband_lna_v2.md",
-      "sha256": "b3a574bd4fc8c397336bdbe35e8ba7c6bb17c4fd118f50dff84a464c70eb1c93",
+      "sha256": "c6ba7f94fce612d8ca69f23b43f368b54e353102dc1d42c9ce4dc3089cb86215",
       "category": "electrical_catalogue_with_graph_links",
       "linked_refs": [
         "A404"
@@ -25430,7 +25430,7 @@
     },
     {
       "path": "components/storage.md",
-      "sha256": "06b0d3fbe3f76c6076b553424df96f88b9a69852403bfc20b330b4e31e77bbb4",
+      "sha256": "377e79704a3f7adab4c2eb4760e62f6ba8a972cc498c2b54cc670df120f786d8",
       "category": "catalogue_only_or_crosscutting_context_not_a_new_graph_device",
       "linked_refs": [],
       "historical_part_label": "- **Component:** Storage (raw IQ recording + OS) for Radxa Dragon Q6A handheld satellite receiver",
@@ -25459,7 +25459,7 @@
     },
     {
       "path": "components/ti_tps2553_lab_port_0_75_a_lna_ch1_4_300.md",
-      "sha256": "271705ceaa9e1fa56f66af60405f1ccbf6572bed3274e5f31e32fde4225ab3e5",
+      "sha256": "58e7dd208eb23406c581cf93851106b52641fa61695e13175e21f960f19b51ce",
       "category": "electrical_catalogue_with_graph_links",
       "linked_refs": [
         "U206",
@@ -25538,7 +25538,7 @@
     },
     {
       "path": "components/uputronics_440_mhz_cubesat_filtered_prea.md",
-      "sha256": "9b46e8d645e8a1f292d614734a5557045794828712870f048baee2c91147556f",
+      "sha256": "ea88d88251004fe059409d047c6188944f16be228228dcf058f54b1f077c37d7",
       "category": "electrical_catalogue_with_graph_links",
       "linked_refs": [
         "A418"

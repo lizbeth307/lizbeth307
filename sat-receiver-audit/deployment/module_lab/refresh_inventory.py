@@ -3,10 +3,13 @@
 
 Rewritten: copied component pins/value/kind/status/description/notes/source,
 assembly groups, nets, passive parameters and sheet open items, the net/NC
-lists, graph counts and the source_snapshots bytes/SHA256. The assembly
-partition, interface selection, model boundaries, gates and coverage fields
-are hand-maintained and never written; a changed ref set, or a ref that would
-change sheet, group split or passive/interface class, is refused for review.
+lists, graph counts, the source_snapshots bytes/SHA256 and the SHA256 of every
+catalogue_source_index file (components/*.md). The assembly partition,
+interface selection, model boundaries, gates and coverage fields, and the
+catalogue index's paths, categories, linked refs, historical labels and
+priorities are hand-maintained and never written; a changed ref set, or a ref
+that would change sheet, group split or passive/interface class, is refused for
+review, and so is a catalogue path that is not a regular project file.
 --check writes nothing and exits 1 when inventory.json is stale.
 """
 from __future__ import annotations
@@ -32,7 +35,9 @@ INTERFACE_KINDS = frozenset({"module", "ic", "connector", "switch", "battery", "
 ASSEMBLY_KEYS = {"source_group", "component_count", "named_nets", "passive_parameters", "sources", "sheet_hardware_gates"}
 INTERFACE_KEYS = {"value", "source_kind", "source_status", "source_pins", "sources", "source_description", "source_notes"}
 TOP_KEYS = {"source_snapshots", "scope", "assemblies", "subinterfaces", "reference_to_assembly",
-            "canonical_net_connections", "explicit_unconnected_pins", "validation"}
+            "canonical_net_connections", "explicit_unconnected_pins", "validation", "catalogue_source_index"}
+# The only computed key of a catalogue_source_index record: the SHA256 of its file.
+CATALOGUE_KEYS = {"sha256"}
 SCOPE_KEYS = {"graph_components", "graph_pins", "graph_sheets", "source_kind_module_count",
               "graph_connected_pins", "graph_nc_pins", "canonical_nets", "cross_assembly_nets"}
 
@@ -107,6 +112,10 @@ def refresh(project, inventory):
     check(not moved, "parameter/interface class changed for " + ",".join(moved[:12]) + "; review subinterfaces by hand")
     for relative in new["source_snapshots"]:
         new["source_snapshots"][relative] = snapshot(regular(project, relative))
+    catalogue = [entry["path"] for entry in new["catalogue_source_index"]]
+    check(len(catalogue) == len(set(catalogue)), "duplicate catalogue_source_index path")
+    for entry in new["catalogue_source_index"]:
+        entry["sha256"] = snapshot(regular(project, entry["path"]))["sha256"]
     for group in new["assemblies"]:
         refs = group["refs"]
         check({comps[ref][0] for ref in refs} == {group["sheet"]}, "assembly " + group["module_id"] + " no longer lies on sheet " + group["sheet"])
@@ -176,8 +185,15 @@ def guard(old, new):
     for key in old:
         if old[key] != new[key]:
             check(key in TOP_KEYS, "refused to touch hand-maintained field " + key)
-            if key not in ("assemblies", "subinterfaces", "scope"):
+            if key not in ("assemblies", "subinterfaces", "scope", "catalogue_source_index"):
                 changed.append(key)
+    check(len(old["catalogue_source_index"]) == len(new["catalogue_source_index"]), "catalogue_source_index count changed")
+    for before, after in zip(old["catalogue_source_index"], new["catalogue_source_index"]):
+        check(list(before) == list(after), "catalogue_source_index record keys changed")
+        for key in before:
+            if before[key] != after[key]:
+                check(key in CATALOGUE_KEYS, "refused to touch hand-maintained catalogue_source_index." + key)
+                changed.append("catalogue_source_index[" + str(before.get("path")) + "]." + key)
     check(all(old["scope"][k] == new["scope"][k] for k in old["scope"] if k not in SCOPE_KEYS) and list(old["scope"]) == list(new["scope"]),
           "refused to touch hand-maintained scope fields")
     changed += ["scope." + k for k in old["scope"] if old["scope"][k] != new["scope"][k]]
