@@ -23,8 +23,10 @@ TP213,PWR,E2_FAULT_J21,—,—,open-drain FLT U201: без несправнос�
 TP214,PWR,E2_FAULT_DISP,—,—,open-drain FLT U202,без несправності — не активний,як S2,як S2,E2.json U202
 TP215,PWR,OVP_LNB_N,EN_LNB,низький (100k на GND),низький (EN_LNB = 0),низький,низький,високий при EN_LNB = 1 і без OVP (поріг 13.760 V ном.),E2.json U212/U220
 TP216,PWR,BIAS_SB_LNA,EN_SB_LNA,0 V,0 V,0 V (EN_SB_LNA = 0),0 V,≈ LAB5 при EN_SB_LNA = 1 (≤5.5 V для LaNA),E2.json U221
+TP301,CTRL,E3_GNSS_FAULT,—,—,open-drain FAULT_N U315 без підтяжки: лише сервісно з 10k до 3.3 V; U315 вимкнено (EN = 3V3_Q6A = 0),без несправності — не активний (U315 увімкнено разом з 3V3_Q6A),як S2,як S2,E3.json U315 (R-E3-15); TI SLVS841G §8.3.3
 TP501,T7A,E5_FAULT_T7,EN_T7,—,0 V (підтяжка до 3V3_Q6A),≈3.3 V без несправності,як S2,як S2; EN_T7 = 1 — T7 живиться,E5 §7
 TP502,HDMIA,E5_HDMI_ST_N,—,—,—,до 5 V: не підключати до GPIO 3.3 V,як S2,як S2,E5 §8
+TP503,PWR,E5_IMU_FAULT,—,—,open-drain FAULT_N U553 без підтяжки: лише сервісно; без несправності не активний (EN = LAB5),як S1,як S1,як S1,E5.json U553 (R-E5-08); TI SLVS841G §8.3.3
 TP2901,PWR,BIAS_CH2_PORT,EN_LNA2,0 V,0 V,0 V (блокувальний елемент закритий),0 V,≈ BIAS_CH2 при EN_LNA2 = 1,E2 R-E2-21; DC-30
 TP2902,PWR,BIAS_CH3_PORT,EN_LNA3,0 V,0 V,0 V (блокувальний елемент закритий),0 V,≈ BIAS_CH3 при EN_LNA3 = 1,E2 R-E2-21; DC-30
 TP2903,PWR,BONI13V8_PORT,EN_BONI,0 V,0 V,0 V (блокувальний елемент закритий),0 V,≈ BONI13V8 при EN_BONI = 1,E2 R-E2-21; DC-30

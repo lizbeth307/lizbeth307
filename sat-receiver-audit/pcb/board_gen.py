@@ -14,7 +14,8 @@ Modes (run from any directory):
 
 --check and --route need KiCad 10.0.7 (pcbnew Python module and kicad-cli, as in the kicad/kicad:10.0.7
 image); everything else, and pcb/tests, uses the standard library only. Routing is a frozen output: CI
-re-routes a board only when the head commit message carries the token '[pcb-route <BOARD>]'.
+re-routes a board only when the subject (first line) of the head commit message carries the token
+'[pcb-route <BOARD>]' and does not start with 'GENERATED:'.
 Freerouting (GPL-3.0) and its Java runtime are fetched in CI by pinned SHA256 and never committed or bundled.
 Results are CI/model results, never a hardware PASS.
 """
@@ -35,6 +36,8 @@ import tempfile
 import urllib.request
 
 BASE = Path(__file__).resolve().parents[1]
+# The git work tree around sat-receiver-audit (a checkout or a worktree): fetch-only tools stay outside all of it.
+REPO_ROOT = next((d for d in (BASE, *BASE.parents) if (d / '.git').exists()), BASE)
 SPEC_DIR = BASE / 'pcb/boards'
 OUT_ROOT = BASE / 'build/kicad/boards'
 GRAPHS = [BASE / f'design/E{i}.json' for i in range(1, 6)]
@@ -45,6 +48,12 @@ SPEC_SCHEMA = 'srrx-board-spec-v1'
 REPORT_SCHEMA = 'srrx-board-report-v1'
 # Fixed pattern; the commit message is data and never reaches a shell.
 ROUTE_TOKEN = re.compile(r'\[pcb-route ([A-Z][A-Z0-9_]*)\]')
+# Contract fields that the board copper, the audits and connectors.json read (F10 'contract' projection).
+# Other fields of the entry (name, dxf, mount text, area, thermal bonds, modules, later MECH additions)
+# do not make a board stale; placements count only by origin, z_bottom and facing.
+CONTRACT_FIELDS = ('outline_mm', 'cutouts_mm', 'holes_mm', 'hole_d', 'hole_keepout_d', 'max_component_height',
+                   'edge_zones')
+PLACEMENT_FIELDS = ('origin', 'z_bottom', 'facing')
 
 # Release v2.5.0 of https://github.com/freerouting/freerouting (published 2026-10-05, GPL-3.0; licence from
 # gh api repos/freerouting/freerouting/license). Asset digests read from the GitHub release API
@@ -175,8 +184,22 @@ def sort_ref(ref):
 # --- commit token, Freerouting command ---------------------------------------------------------------
 
 def route_requested(message, board):
-    """True when the commit message carries '[pcb-route <board>]'."""
-    return board in ROUTE_TOKEN.findall(message or '')
+    """True when the subject (first line) of the commit message carries '[pcb-route <board>]'.
+
+    The body never counts, and neither does the subject of a 'GENERATED: ...' commit: a GENERATED
+    commit that quotes the token of its route run is checked, not routed again.
+    """
+    lines = (message or '').splitlines()
+    subject = lines[0].strip() if lines else ''
+    if subject.startswith('GENERATED:'):
+        return False
+    return board in ROUTE_TOKEN.findall(subject)
+
+
+def outside_repository(path):
+    """True when path is outside the git work tree (fetch-only tools must never be inside it)."""
+    path = Path(path).resolve()
+    return path != REPO_ROOT and REPO_ROOT not in path.parents
 
 
 def freerouting_command(java, jar, dsn, ses, max_passes, threads, user_dir, job_timeout):
@@ -212,7 +235,7 @@ def fetch_freerouting(dest):
     Fetch-only: nothing lands in the repository, the bundle or a CI artifact.
     """
     dest = Path(dest).resolve()
-    if dest == BASE or BASE in dest.parents:
+    if not outside_repository(dest):
         raise SpecError('Freerouting must be fetched outside the repository (fetch-only, never committed)')
     dest.mkdir(parents=True, exist_ok=True)
     jar = _download(FREEROUTING, dest)
@@ -371,6 +394,145 @@ def place_near(size, pin, body, placed, region, max_mm, gap=0.25):
     raise PackError(f'no free side within {max_mm} mm of pin {pin}')
 
 
+def turn_point(point, degrees):
+    """A footprint-local point (KiCad, y down) after a KiCad rotation by a multiple of 90 degrees."""
+    if abs(degrees - 90 * round(degrees / 90.0)) > 1e-9:
+        raise SpecError(f'only multiples of 90 degrees are packed, got {degrees}')
+    x, y = point
+    for _ in range(int(round(degrees / 90.0)) % 4):  # KiCad RotatePoint by +90: (x, y) -> (y, -x)
+        x, y = y, -x
+    return x, y
+
+
+def placed_geometry(geo, anchor):
+    """Courtyard box and pad centres (board mm, y up) of a footprint placed by an anchor.
+
+    Mirrors place(): rotation, then a left-right flip for side B (KiCad FOOTPRINT::Flip mirrors x about
+    the footprint position), then the align point (origin, one pad or a pad centroid) onto anchor 'at'.
+    """
+    rotation = float(anchor.get('rotation', 0))
+    flip = anchor.get('side', 'F') == 'B'
+
+    def local(pt):
+        x, y = turn_point(pt, rotation)
+        return (-x if flip else x), y
+    pads = [(str(p['number']), local(p['at'])) for p in geo['pads']]
+    align = anchor.get('align', 'origin')
+    if align == 'origin':
+        ax, ay = 0.0, 0.0
+    else:
+        want = str(align['pad'] if 'pad' in align else align['pad_centroid'])
+        pts = [xy for num, xy in pads if num == want]
+        if not pts:
+            raise SpecError(f'anchor pad {want} not in footprint')
+        ax, ay = sum(p[0] for p in pts) / len(pts), sum(p[1] for p in pts) / len(pts)
+    bx, by = (float(v) for v in anchor['at'])
+
+    def board(pt):
+        return (r4(bx + pt[0] - ax), r4(by - (pt[1] - ay)))
+    box = None
+    if geo['courtyard']:
+        x0, y0, x1, y1 = geo['courtyard']
+        corners = [board(local(c)) for c in ((x0, y0), (x1, y0), (x1, y1), (x0, y1))]
+        box = [min(c[0] for c in corners), min(c[1] for c in corners), max(c[0] for c in corners),
+               max(c[1] for c in corners)]
+    out_pads = {}
+    for num, xy in pads:
+        if num:
+            out_pads.setdefault(num, []).append(list(board(xy)))
+    return {'origin': list(board((0.0, 0.0))), 'box': box, 'pads': out_pads}
+
+
+def point_in_outline(point, outline, eps=1e-6):
+    """Point inside the board outline polygon (board mm); points on an edge count as inside."""
+    px, py = point
+    inside = False
+    for (x1, y1), (x2, y2) in zip(outline, outline[1:] + outline[:1]):
+        cross = (x2 - x1) * (py - y1) - (y2 - y1) * (px - x1)
+        if abs(cross) <= eps * max(1.0, math.hypot(x2 - x1, y2 - y1)) and \
+                min(x1, x2) - eps <= px <= max(x1, x2) + eps and min(y1, y2) - eps <= py <= max(y1, y2) + eps:
+            return True
+        if (y1 > py) != (y2 > py) and px < x1 + (py - y1) * (x2 - x1) / (y2 - y1):
+            inside = not inside
+    return inside
+
+
+def place_groups(spec, template, geometry, hole_list, outline):
+    """Anchors for the parts that the spec's placement groups place (deterministic, standard library).
+
+    geometry: {template ref: footprint_geometry()} for every template part. Anchored parts are fixed
+    obstacles. Groups run in spec order. In each group the members without 'decouple' are shelf-packed
+    into the region (courtyard boxes after rotation and side); then every decoupling member goes next to
+    its pin ({ref, pad, max_mm}) with place_near, nearest free side first, at most max_mm from the pin.
+    A placed courtyard box must not overlap another part on the same side or enter a hole keepout.
+    Returns ({ref: anchor}, rows); rows carry the plan that the KiCad group audit checks.
+    """
+    placed = {}
+    for part in template:
+        if part.get('anchor'):
+            placed[part['ref']] = {'side': part['anchor'].get('side', 'F'),
+                                   **placed_geometry(geometry[part['ref']], part['anchor'])}
+    anchors, rows = {}, []
+
+    def put(group, member, side, rotation, centre, local_box, decouple=None, target=None):
+        lcx, lcy = (local_box[0] + local_box[2]) / 2, (local_box[1] + local_box[3]) / 2
+        anchor = {'at': [r4(centre[0] - lcx), r4(centre[1] + lcy)], 'align': 'origin', 'rotation': rotation,
+                  'side': side}
+        geo = placed_geometry(geometry[member['ref']], anchor)
+        for ref, other in placed.items():
+            if ref != target and other['side'] == side and other['box'] and rects_overlap(geo['box'], other['box']):
+                raise PackError(f'group {group["id"]}: {member["ref"]} overlaps {ref}')
+        for hole in hole_list:
+            if box_circle_distance(geo['box'], hole['at']) < hole['keepout_d'] / 2:
+                raise PackError(f'group {group["id"]}: {member["ref"]} enters the keepout of {hole["ref"]}')
+        placed[member['ref']] = {'side': side, **geo}
+        anchors[member['ref']] = anchor
+        rows.append({'group': group['id'], 'ref': member['ref'], 'side': side, 'rotation': rotation,
+                     'at': anchor['at'], 'courtyard_box': geo['box'], 'region': group['region'],
+                     'decouple': decouple})
+
+    for group in spec.get('groups', []):
+        side = group.get('side', 'F')
+        region = [float(v) for v in group['region']]
+        corners = ((region[0], region[1]), (region[2], region[1]), (region[2], region[3]), (region[0], region[3]))
+        if not all(point_in_outline(c, outline) for c in corners):
+            raise SpecError(f'group {group["id"]}: region {region} is not inside the board outline')
+        local_boxes, items = {}, []
+        for member in group['members']:
+            geo = geometry[member['ref']]
+            if not geo['courtyard']:
+                raise SpecError(f'group {group["id"]}: {member["ref"]} footprint has no courtyard')
+            box = rotate_box(geo['courtyard'], float(member.get('rotation', 0)))
+            local_boxes[member['ref']] = [-box[2], box[1], -box[0], box[3]] if side == 'B' else box
+            if 'decouple' not in member:
+                b = local_boxes[member['ref']]
+                items.append({'ref': member['ref'], 'w': b[2] - b[0], 'h': b[3] - b[1]})
+        centres = shelf_pack(items, region, float(group.get('gap_mm', 0.5))) if items else {}
+        members = {m['ref']: m for m in group['members']}
+        for ref in sorted(centres, key=sort_ref):
+            put(group, members[ref], side, float(members[ref].get('rotation', 0)), centres[ref], local_boxes[ref])
+        for member in group['members']:
+            dec = member.get('decouple')
+            if not dec:
+                continue
+            target = placed.get(dec['ref'])
+            if target is None or target['side'] != side:
+                raise SpecError(f'group {group["id"]}: decoupling target {dec["ref"]} of {member["ref"]} is not '
+                                f'placed on side {side} before it')
+            pins = target['pads'].get(str(dec['pad']), [])
+            if len(pins) != 1:
+                raise SpecError(f'group {group["id"]}: {dec["ref"]} pad {dec["pad"]} must be exactly one pad')
+            b = local_boxes[member['ref']]
+            others = [o['box'] for r, o in placed.items() if r != dec['ref'] and o['side'] == side and o['box']]
+            max_mm = float(dec.get('max_mm', 2.0))
+            centre, dist = place_near((b[2] - b[0], b[3] - b[1]), tuple(pins[0]), target['box'], others, region,
+                                      max_mm, float(group.get('decouple_gap_mm', 0.25)))
+            put(group, member, side, float(member.get('rotation', 0)), centre, b,
+                {'ref': dec['ref'], 'pad': str(dec['pad']), 'max_mm': max_mm, 'planned_distance_mm': dist},
+                target=dec['ref'])
+    return anchors, rows
+
+
 # --- inputs: spec, contract, graph, footprints --------------------------------------------------------
 
 def spec_path(board):
@@ -430,6 +592,61 @@ def image_library_dir():
     return None
 
 
+def validate_groups(spec, board, refs):
+    """Placement groups: {id, region [x0, y0, x1, y1] board mm, side F/B, gap_mm?, decouple_gap_mm?,
+    members [{ref, rotation?, decouple?: {ref, pad, max_mm?}}]}. Returns {member ref: group id}.
+
+    A member is a template graph part without an anchor, in one group only. A decoupling target must be
+    an anchored part or a packed member of this or an earlier group, on the same side.
+    """
+    if not isinstance(spec['groups'], list):
+        raise SpecError(f'{board}: groups must be a list')
+    sides = {p['ref']: p['anchor'].get('side', 'F') for p in spec['parts'] if p.get('anchor')}
+    grouped, ids = {}, set()
+    for group in spec['groups']:
+        gid = group.get('id')
+        if not gid or gid in ids:
+            raise SpecError(f'{board}: every group needs a unique id ({gid!r})')
+        ids.add(gid)
+        region = group.get('region', [])
+        if len(region) != 4 or not all(isinstance(v, (int, float)) for v in region) or \
+                region[2] <= region[0] or region[3] <= region[1]:
+            raise SpecError(f'{board}: group {gid} region must be [x0, y0, x1, y1] with x1 > x0 and y1 > y0')
+        side = group.get('side', 'F')
+        if side not in ('F', 'B'):
+            raise SpecError(f'{board}: group {gid} side must be F or B')
+        members = group.get('members') or []
+        if not members:
+            raise SpecError(f'{board}: group {gid} has no members')
+        for member in members:
+            ref = member.get('ref')
+            if ref not in refs:
+                raise SpecError(f'{board}: group {gid} member {ref!r} is not a template ref')
+            if ref in grouped:
+                raise SpecError(f'{board}: {ref} is in groups {grouped[ref]} and {gid}')
+            grouped[ref] = gid
+            rotation = float(member.get('rotation', 0))
+            if abs(rotation - 90 * round(rotation / 90.0)) > 1e-9:
+                raise SpecError(f'{board}: group {gid} member {ref} rotation must be a multiple of 90')
+        for member in members:
+            if 'decouple' not in member:
+                sides[member['ref']] = side
+        for member in members:
+            dec = member.get('decouple')
+            if dec is None:
+                continue
+            if not isinstance(dec, dict) or dec.get('ref') == member['ref'] or 'pad' not in dec or \
+                    float(dec.get('max_mm', 2.0)) <= 0:
+                raise SpecError(f'{board}: group {gid} member {member["ref"]} decouple needs ref, pad and max_mm > 0')
+            if sides.get(dec['ref']) != side:
+                raise SpecError(f'{board}: group {gid}: decoupling target {dec["ref"]} of {member["ref"]} must be '
+                                f'anchored or packed before it, on side {side}')
+        for member in members:
+            if 'decouple' in member:
+                sides[member['ref']] = side
+    return grouped
+
+
 def validate_spec(spec, board):
     need = ('schema', 'board_id', 'status', 'contract', 'domains', 'layers', 'project', 'instances', 'parts',
             'holes', 'groups', 'pre_route', 'post_route_zones', 'router', 'drc_policy', 'fab_floor')
@@ -440,9 +657,13 @@ def validate_spec(spec, board):
         raise SpecError(f'{board}: schema must be {SPEC_SCHEMA} and board_id {board}')
     if spec['layers']['copper'] not in (2, 4):
         raise SpecError(f'{board}: copper layers must be 2 or 4')
+    if spec.get('rules_file') is not None:
+        raise SpecError(f'{board}: rules_file is set, but copying it into build/kicad/boards/{board}/{board}.kicad_dru '
+                        '(and hashing it) is not implemented in board_gen yet; keep it null')
     refs = [p['ref'] for p in spec['parts']]
     if len(refs) != len(set(refs)):
         raise SpecError(f'{board}: duplicate template ref')
+    grouped = validate_groups(spec, board, refs)
     inst = spec['instances']
     if not inst['list']:
         raise SpecError(f'{board}: at least one instance')
@@ -464,12 +685,20 @@ def validate_spec(spec, board):
             if (part['source'] == 'graph') != bool(graph_ref):
                 raise SpecError(f'{board}: {item["id"]}.{part["ref"]}: graph parts need a ref, placeholders none')
         if part['source'] == 'pilot_placeholder':
-            for key in ('footprint', 'footprint_library', 'footprint_sha256', 'value', 'pins', 'replaced_by'):
+            for key in ('footprint', 'footprint_library', 'footprint_sha256', 'value', 'pins', 'replaced_by', 'pending'):
                 if key not in part:
                     raise SpecError(f'{board}: placeholder {part["ref"]} lacks {key}')
+            if not str(part['pending']).strip():
+                raise SpecError(f'{board}: placeholder {part["ref"]} needs a pending text (boundary audit status)')
             bad = sorted(set(part['pins'].values()) - nets)
             if bad:
                 raise SpecError(f'{board}: placeholder {part["ref"]} uses unknown nets {bad}')
+        if part['ref'] in grouped:
+            if 'anchor' in part:
+                raise SpecError(f'{board}: part {part["ref"]} is placed by group {grouped[part["ref"]]} and has an anchor')
+            if part['source'] == 'pilot_placeholder':
+                raise SpecError(f'{board}: placeholder {part["ref"]} needs an anchor, not a group')
+            continue
         anchor = part.get('anchor')
         if not anchor or anchor.get('side', 'F') not in ('F', 'B') or len(anchor.get('at', [])) != 2:
             raise SpecError(f'{board}: part {part["ref"]} needs an anchor with at [x, y] and side F/B')
@@ -544,7 +773,7 @@ def resolve(spec, graph, manifest):
                              'library': part['footprint_library'], 'file': None,
                              'sha256': part['footprint_sha256'], 'value': part['value'],
                              'pads': {str(k): v for k, v in sorted(part['pins'].items())},
-                             'unused_pads': [], 'anchor': part['anchor']})
+                             'unused_pads': [], 'anchor': part['anchor'], 'pending': part.get('pending', '')})
             continue
         resolved = None
         for item in inst:
@@ -581,7 +810,7 @@ def resolve(spec, graph, manifest):
         unused = sorted(set(fp['pads']) - set(resolved['pads']))
         template.append({'ref': part['ref'], 'source': 'graph', 'fpid': resolved['fpid'], 'library': 'project',
                          'file': fp['file'], 'sha256': fp['sha256'], 'value': resolved['value'],
-                         'pads': resolved['pads'], 'unused_pads': unused, 'anchor': part['anchor']})
+                         'pads': resolved['pads'], 'unused_pads': unused, 'anchor': part.get('anchor')})
     return template
 
 
@@ -607,6 +836,14 @@ def holes(spec, contract):
     return out
 
 
+def contract_projection(contract, stackup):
+    """The contract fields a board depends on (CONTRACT_FIELDS, placements by PLACEMENT_FIELDS) and the stackup."""
+    board = {k: contract.get(k) for k in CONTRACT_FIELDS}
+    board['placements'] = {name: {k: entry.get(k) for k in PLACEMENT_FIELDS}
+                           for name, entry in sorted((contract.get('placements') or {}).items())}
+    return {'board': board, 'stackup': stackup}
+
+
 def projection(spec, contract, stackup, template, graph, project_bytes):
     """Input projection (F10): what the routed copper and the audits depend on, not whole files."""
     instances = []
@@ -619,7 +856,7 @@ def projection(spec, contract, stackup, template, graph, project_bytes):
                 parts.append({'ref': gref, 'value': comp['value'].strip(), 'footprint': comp.get('footprint', ''),
                               'pins': sorted([str(p['number']), p.get('net'), bool(p.get('nc'))] for p in comp['pins'])})
         instances.append({'id': item['id'], 'refs': item['refs'], 'nets': item['nets'], 'graph': parts})
-    contract_part = {'board': contract, 'stackup': stackup}
+    contract_part = contract_projection(contract, stackup)
     template_part = [{k: p[k] for k in ('ref', 'source', 'fpid', 'sha256', 'value', 'pads')} for p in template]
     parts = {'spec': sha256_bytes(canonical(spec)), 'contract': sha256_bytes(canonical(contract_part)),
              'project_rules': sha256_bytes(project_bytes), 'template': sha256_bytes(canonical(template_part)),
@@ -666,9 +903,12 @@ def boundary_audit(spec, template, graph, db):
             loose = sorted({p['net'] for p in graph[c]['pins'] if p.get('net')} - host_nets)
             contacts.append({'contact': c, 'host': host, 'nets_not_on_host_pads': loose})
         dangling = [n['net'] for n in nets if n['status'] == 'dangling']
-        provisional = [n['net'] for n in nets if n['status'] == 'provisional']
+        # The placeholders that carry the provisional nets name what they wait for (spec 'pending').
+        pending = sorted({p['pending'] or f'{p["ref"]} placeholder pending' for n in nets if n['status'] == 'provisional'
+                          for p in template if p['source'] == 'pilot_placeholder'
+                          and any(b.split('.', 1)[0] == p['ref'] for b in n['board_pads'])})
         status = ('fail: dangling ' + ', '.join(dangling) if dangling else
-                  'provisional: header ref pending GR-3' if provisional else 'pass')
+                  'provisional: ' + '; '.join(pending) if pending else 'pass')
         result.append({'instance': item['id'], 'status': status, 'nets': nets, 'hosted_contacts': contacts})
     return result
 
@@ -811,7 +1051,8 @@ def flip_footprint(pcb, fp):
         fp.Flip(fp.GetPosition(), True)
 
 
-def load_footprint(pcb, part, temp):
+def footprint_file(part):
+    """The .kicad_mod of a template part (project library or KiCad image library), SHA256 checked."""
     nick, name = part['fpid'].split(':', 1)
     if part['library'] == 'project':
         path = BASE / part['file']
@@ -824,6 +1065,20 @@ def load_footprint(pcb, part, temp):
         raise SpecError(f'footprint file missing: {path}')
     if sha256_file(path) != part['sha256']:
         raise SpecError(f'footprint {part["fpid"]} sha256 {sha256_file(path)} differs from the recorded {part["sha256"]}')
+    return path
+
+
+def group_plan(spec, contract, template):
+    """Anchors and plan rows of the placement groups; nothing to read when the spec has none."""
+    if not spec['groups']:
+        return {}, []
+    geometry = {p['ref']: footprint_geometry(footprint_file(p).read_text(encoding='utf-8')) for p in template}
+    return place_groups(spec, template, geometry, holes(spec, contract), contract['outline_mm'])
+
+
+def load_footprint(pcb, part, temp):
+    name = part['fpid'].split(':', 1)[1]
+    path = footprint_file(part)
     fp = pcb.FootprintLoad(str(path.parent), name)
     if fp is None:
         raise SpecError('KiCad could not load ' + part['fpid'])
@@ -895,6 +1150,7 @@ def build_board(pcb, spec, contract, template, temp):
         board.Add(edge)
     if contract.get('cutouts_mm'):
         raise SpecError('contract cutouts are not implemented in board_gen yet')
+    group_anchors, _rows = group_plan(spec, contract, template)
     sources = []
     for part in template:
         fp, fpath = load_footprint(pcb, part, temp)
@@ -902,8 +1158,9 @@ def build_board(pcb, spec, contract, template, temp):
         fp.SetValue(part['value'])
         nick, name = part['fpid'].split(':', 1)
         fp.SetFPID(pcb.LIB_ID(nick, name))
-        place(pcb, frame, fp, part['anchor'])
-        ref_text = part['anchor'].get('ref_text')
+        anchor = part['anchor'] or group_anchors[part['ref']]
+        place(pcb, frame, fp, anchor)
+        ref_text = anchor.get('ref_text')
         if ref_text:  # legend position (board mm) when the footprint default lands on a hole or pad
             fp.Reference().SetPosition(frame.k(*ref_text['at']))
             if 'angle' in ref_text:
@@ -1162,6 +1419,40 @@ def keepout_audit(facts, hole_list, template):
                     'intrusion is reported, not failed, when pads and the F.Fab body clear the keepout.'}
 
 
+def group_audit(facts, rows):
+    """Group-placed parts on the saved board: at the planned anchor, courtyard inside the region,
+    decoupling part within max_mm of its pin (pin pad centre to the courtyard box)."""
+    by_ref = {f['ref']: f for f in facts['footprints']}
+    tol = 0.05  # KiCad courtyard boxes include half the 0.05 mm courtyard line
+    out, errors = [], []
+    for row in rows:
+        fp = by_ref.get(row['ref'])
+        if fp is None:
+            errors.append({'kind': 'missing_footprint', 'group': row['group'], 'ref': row['ref']})
+            continue
+        region, box, plan = row['region'], fp['courtyard_box'], row['courtyard_box']
+        entry = {'group': row['group'], 'ref': row['ref'], 'planned_at': row['at'], 'observed_at': fp['at'],
+                 'side': fp['side'], 'rotation': fp['rotation'], 'planned_courtyard_box': plan, 'courtyard_box': box}
+        # The courtyard box, not KiCad's orientation number, is compared: a B-side flip changes the number.
+        if fp['side'] != row['side'] or math.hypot(fp['at'][0] - row['at'][0], fp['at'][1] - row['at'][1]) > 1e-3 or \
+                not box or any(abs(a - b) > tol for a, b in zip(box, plan)):
+            errors.append({'kind': 'not_at_plan', 'group': row['group'], 'ref': row['ref']})
+        entry['in_region'] = bool(box) and (box[0] >= region[0] - tol and box[1] >= region[1] - tol
+                                            and box[2] <= region[2] + tol and box[3] <= region[3] + tol)
+        if not entry['in_region']:
+            errors.append({'kind': 'outside_region', 'group': row['group'], 'ref': row['ref']})
+        dec = row['decouple']
+        if dec:
+            pins = [p['at'] for p in by_ref.get(dec['ref'], {}).get('pads', []) if p['number'] == dec['pad']]
+            dist = r4(box_circle_distance(box, pins[0])) if pins and box else None
+            entry['decouple'] = {**dec, 'distance_mm': dist,
+                                 'within': dist is not None and dist <= dec['max_mm'] + 1e-3}
+            if not entry['decouple']['within']:
+                errors.append({'kind': 'decoupling_too_far', 'group': row['group'], 'ref': row['ref']})
+        out.append(entry)
+    return {'rows': out, 'errors': errors, 'passed': not errors}
+
+
 def annular_audit(facts, template, floor):
     refs = {p['ref'] for p in template}
     low = [{'ref': f['ref'], 'pad': p['number'], 'annular_mm': p['annular_mm']} for f in facts['footprints']
@@ -1214,10 +1505,11 @@ def build_report(spec, contract, stackup, template, proj, facts, drc, audits, bo
         'boundary_audit': sorted({b['status'] for b in boundary}),
         'domain_audit': audits['domain']['passed'], 'keepout_audit': audits['keepout']['passed'],
         'annular_audit': audits['annular']['passed'], 'locked_copper_kept': audits['locked']['kept'],
+        'group_audit': audits['groups']['passed'],
     }
     passed = (drc['passed'] and all(a['passed'] for a in source_pad) and audits['domain']['passed']
               and audits['keepout']['passed'] and audits['annular']['passed'] and audits['locked']['kept']
-              and not any(b['status'].startswith('fail') for b in boundary))
+              and audits['groups']['passed'] and not any(b['status'].startswith('fail') for b in boundary))
     return {
         'schema': REPORT_SCHEMA, 'board_id': spec['board_id'], 'status': spec['status'],
         'label': 'CI/model result of pcb/board_gen.py in kicad/kicad:10.0.7; not a hardware PASS; bench gates OPEN',
@@ -1234,7 +1526,8 @@ def build_report(spec, contract, stackup, template, proj, facts, drc, audits, bo
         'template': [{k: p[k] for k in ('ref', 'source', 'fpid', 'library', 'file', 'sha256', 'value', 'pads', 'unused_pads')}
                      for p in template],
         'placeholders': [{'ref': p['ref'], 'footprint': p['footprint'], 'replaced_by': p['replaced_by'],
-                          'pins_source': p.get('pins_source', ''), 'why': p.get('why_placeholder', '')}
+                          'pending': p['pending'], 'pins_source': p.get('pins_source', ''),
+                          'why': p.get('why_placeholder', '')}
                          for p in spec['parts'] if p['source'] == 'pilot_placeholder'],
         'placement': [{k: f[k] for k in ('ref', 'fpid', 'side', 'rotation', 'at', 'courtyard_box', 'fab_box')}
                       for f in facts['footprints']],
@@ -1265,6 +1558,7 @@ def audit_board(pcb, spec, contract, stackup, template, graph, db, proj, board_p
         'boundary': boundary_audit(spec, template, graph, db),
         'keepout': keepout_audit(facts, hole_list, template),
         'annular': annular_audit(facts, template, spec['fab_floor']['pth_annular_min']),
+        'groups': group_audit(facts, group_plan(spec, contract, template)[1]),
         'locked': {'scripted_segments': want_locked, 'locked_on_board': facts['tracks']['locked'],
                    'kept': facts['tracks']['locked'] >= want_locked,
                    'note': 'SES import before/after counts and the DSN probe are in route-log.json'},
@@ -1338,7 +1632,7 @@ def route(board, freerouting):
         raise SystemExit(f'board_gen: KiCad {pcb.Version()} found, {KICAD_VERSION} required')
     spec, contract, stackup, graph, db, template, project, proj = prepare_inputs(board)
     tools = Path(freerouting).resolve()
-    if tools == BASE or BASE in tools.parents:
+    if not outside_repository(tools):
         raise SpecError('the Freerouting tools must live outside the repository')
     jar, java = tools / FREEROUTING['file'], java_in(tools)
     if sha256_file(jar) != FREEROUTING['sha256']:

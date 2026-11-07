@@ -9,7 +9,7 @@
 - [Radxa Q6A schematic v1.21](https://dl.radxa.com/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf), аркуші GPIO і RTC: J20 — 40 контактів; J11 RTC pin 1 = GND, pin 2 = батарея плюс через штатні 1 kΩ та BAT54CW. Штатний RS4C411ZAE не дублюється окремою мікросхемою на користувацьких I²C.
 - [Офіційна таблиця Radxa GPIO](https://docs.radxa.com/en/dragon/q6a/hardware-use/pin-gpio): UART5 — 8/10, UART6 — 16/18, I²C0 — 13/15, I²C2 — 27/28, UART7 TX/RX — 32/29. GPIO96 pin 7 віддано PPS.
 - [Microchip DS20001952D](https://ww1.microchip.com/downloads/aemDocuments/documents/APID/ProductDocuments/DataSheets/MCP23017-Data-Sheet-DS20001952.pdf), таблиця 2-1: фізична нумерація MCP23017 SOIC-28, NC 11/14, VDD 9, VSS 10, SCL 12, SDA 13; GPA7/GPB7 — лише виходи. У корпусі SOIC немає EP.
-- [Waveshare LC76G schematic](https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf): P1 1 = VCC, 2 = GND, 3 = TXD, 4 = RXD, 5 = PPS, 6 = RESET, 7 = SDA, 8 = SCL. RESET через штатний 0 Ω доходить до активного низького RESET_N. [Quectel hardware design v1.3](https://www.quectel.com/content/uploads/2023/05/Quectel_LC76G_Series_Hardware_Design_V1.3.pdf) підтверджує внутрішні 10 kΩ до 1.8 V, забороняє зовнішній pullup і задає мінімальний імпульс reset 100 ms. GPS1 IPEX: 2 — центр, 1/3/4 — земля. Плата має RT9193-33 і власну антенну схему; її VCC живиться від 5 V, зовнішній LDO не дублюється.
+- [Waveshare LC76G schematic](https://files.waveshare.com/wiki/LC76G/manual/LC76G%20GNSS%20Module.pdf): P1 1 = VCC, 2 = GND, 3 = TXD, 4 = RXD, 5 = PPS, 6 = RESET, 7 = SDA, 8 = SCL. RESET через штатний 0 Ω доходить до активного низького RESET_N. [Quectel hardware design v1.3](https://www.quectel.com/content/uploads/2023/05/Quectel_LC76G_Series_Hardware_Design_V1.3.pdf) підтверджує внутрішні 10 kΩ до 1.8 V, забороняє зовнішній pullup і задає мінімальний імпульс reset 100 ms. GPS1 IPEX: 2 — центр, 1/3/4 — земля. Плата має RT9193-33 і власну антенну схему; її VCC живиться від 5 V (E3_GNSS5V від ключа U315, R-E3-15), зовнішній LDO не дублюється.
 - [Raspberry Pi Pico pinout](https://datasheets.raspberrypi.com/pico/Pico-R3-A4-Pinout.pdf): фізичні 1–40 та окремі SWD pads. Внутрішні GP23/24/25/29 не використані як вільні зовнішні контакти.
 - [Diodes PI4IOE5V9555](https://www.diodes.com/datasheet/download/PI4IOE5V9555.pdf): TSSOP-24 pin 1 INT, 2 A1, 3 A2, 4–11 IO0, 12 GND, 13–20 IO1, 21 A0, 22 SCL, 23 SDA, 24 VCC.
 - [Adafruit BNO085 pinouts](https://learn.adafruit.com/adafruit-9-dof-orientation-imu-fusion-breakout-bno085/pinouts), [Waveshare RP2040-Zero schematic](https://files.waveshare.com/upload/4/4c/RP2040_Zero.pdf): застосовані реальні назви модульних pads. BNO VIN = 3.3 V MCU; PS0/PS1 обидва high під час reset — SPI; PS0 додатково підключено до Zero GP8 як WAKE через pullup 1 kΩ, щоб MCU міг розбудити датчик; INT і RESET під’єднано. SCL = SCK, SDA = MISO, DI = MOSI.
@@ -23,7 +23,7 @@
 | Фізичний контакт J20 | Мережа / функція |
 |---|---|
 | 1, 17 | 3V3_Q6A, живить усі три MCP |
-| 2, 4 | VCC_5V_PERI, LC76G |
+| 2, 4 | VCC_5V_PERI — лише на Q6A: у шлейф S01 не йде (провідники 2/4 вирізано на обох розетках, N-E3-01); LC76G живиться від U315 на CTRL (R-E3-15) |
 | 3 | INA228_ALERT, єдиний 10 kΩ R301 тільки до 3V3_Q6A; дубль E1 R102 вилучено |
 | 5 | MCP_INT, 10 kΩ до 3V3_Q6A |
 | 7 | PPS LC76G, GPIO96, один власник pps-gpio |
@@ -34,6 +34,8 @@
 | 27 / 28 | I2C2_SDA / I2C2_SCL, MCP і INA3221 |
 | 32 / 29 | UART7_TX / UART7_RX, Pico UART0 |
 | 40 | SAFE_BOOT від Pico GP15 |
+
+Хвиля 2 (GR-1, R-E3-15): LC76G U304 живиться від E3_GNSS5V — ключа U315 TPS2553DBVR-1 на CTRL з IN = LAB5 і EN = 3V3_Q6A, тож модуль має живлення лише разом з Q6A; RILIM R396 — старт 162k (144–192 mA за рівняннями TI SLVS841G), C321/C322 на вході, FAULT_N — на TP301. Контакти 2/4 J20 у шлейф не йдуть: від них на CTRL ніщо не захистить стрічку 2 × 28 AWG, бо межу дає лише бортовий SGM40666 Q6A. Послідовного резистора на UART6_TX не додано: Quectel HD V1.3 правила зворотного живлення не дає (лише VIH max = VCC + 0.3 V і абсолютний максимум 3.63 V), а гілка PPS/UART6 іде повз CTRL (build/15 «Бюджет PPS»); залишковий випадок — LAB5 немає, а Q6A працює — перевіряє E3-08.
 
 Неактивні контакти явно NC. Реальні GND-контакти не замінено хибним рядком `GND*`. На Q6A I²C2 додаткові 10 kΩ — DNP: штатні pullups уже є. Бік A TCA9517 не отримує ще 4.7 kΩ; B та LAB BUS належать E5.
 
@@ -92,7 +94,7 @@ MCP #1 зберігає початкову карту STACK; реле мають
 
 Усі 26 зовнішніх GP-контактів призначені: GP17 тепер керує апаратним reset MCP. Вільних GPIO Pico немає; три ADC зайняті. CHG_INHIBIT тому отримав вільний GPIO MCP #4, а не конфліктне призначення Pico.
 
-PI4IOE5V9555 IO0_0..7 призначені HOME, BACK, REC, MARK, FN, LOCK, натискання енкодера 1, натискання енкодера 2. Адреса 0x20 на окремій шині Pico не конфліктує з MCP #1 на шині Q6A. Є вісім зовнішніх pullup 2.2 kΩ, series 100 Ω та TVS; на чотирьох quadrature-каналах є RC 10 kΩ / 10 kΩ / 10 nF і TVS. Невикористаний IO1: firmware output-low, фізично NC.
+PI4IOE5V9555 IO0_0..7 призначені HOME, BACK, REC, MARK, FN, LOCK, натискання енкодера 1, натискання енкодера 2. Адреса 0x20 на окремій шині Pico не конфліктує з MCP #1 на шині Q6A. Є вісім зовнішніх pullup 2.2 kΩ, series 100 Ω та TVS; на чотирьох quadrature-каналах є RC 10 kΩ / 10 kΩ / 10 nF і TVS. Невикористаний IO1: firmware output-low, фізично NC. Кнопки натискання — контакти S1/S2 самих енкодерів ENC301/ENC302; SW308/SW309 — їхні віртуальні контакти в базі деталей, тож майданчики S1/S2 футпринта несуть кола кнопок (R-E3-16). ENC1 = ENC301 — головний енкодер настройки (вгорі, вибір сторінки HMI, GP2/GP3), ENC2 = ENC302 — гучність (внизу, прокручування, GP6/GP7); напрям обертання перевіряє стенд.
 
 Pico VSYS отримує LAB5 через SS14. Pico3V3 і 3V3_Q6A не об’єднуються. LM4040C30 живиться через зовнішні 200 Ω після видалення штатного R7; NTC дільники живляться від цього 3.0 V reference, а батарейний дільник у E1. Конфліктів ADC немає. При мінімальній Pico3V3 3.234 V, reference 3.015 V та 202 Ω джерело дає близько 1.08 mA; два закорочені NTC через свої 10 kΩ споживають близько 0.60 mA, ADC до близько 0.15 mA, тож лишається близько 0.33 mA на shunt. Це розрахунок запасу, напруги перевіряються на стенді.
 
@@ -100,7 +102,7 @@ Pico VSYS отримує LAB5 через SS14. Pico3V3 і 3V3_Q6A не об’є
 
 E3 володіє U309 RP2040-Zero та U314 Adafruit BNO085. E5 володіє фізичним GX16-4, SS14 та TVS на обох кінцях. E3_IMU3V3 отримується зі штатного LDO Zero; VIN BNO085 підключено до 3.3 V, щоб логіка SPI відповідала MCU. Внутрішня карта Zero: GP0 UART0 TX, GP1 RX, GP2 SPI0 SCK, GP3 MOSI, GP4 MISO, GP5 CS, GP6 INT, GP7 RESET, GP8 PS0/WAKE з pullup 1 kΩ. PS1 high; PS0 high до першого INT після reset, далі MCU може розбудити датчик імпульсом low. Ці призначення не конфліктують. Решта pads NC; factory GP29 RGB LED не використовується.
 
-Noctua NF-A4x10 5V без PWM отримує 5 V через AO3401A зверху, ним керує AO3400A. Земля вентилятора постійна; тахо підтягнуте лише до Pico3V3. Є flyback SS14 та bypass. Повітродувка — конкретний BOM-кандидат **Delta BFB0305HA-C**, 5 V, два дроти: червоний плюс LAB5, чорний мінус через AO3400A. У цього точного суфікса немає тахо, тому нижній ключ відповідає STACK. Додано 10 μF + 100 nF безпосередньо між її дротами. Вибір MPN закритий; механічна примірка, пусковий/стопорний струм та продуктивність у каналі лишаються апаратними воротами.
+Noctua NF-A4x10 5V без PWM отримує 5 V через AO3401A зверху і PTC F301 MF-MSMF075/24-2 (Itrip 1.50 A при 23 °C, Ihold 0.49 A при 70 °C; R-E3-17) — межа струму для проводу 26 AWG вентилятора S27; ключем керує AO3400A. Земля вентилятора постійна; тахо підтягнуте лише до Pico3V3. Flyback SS14 і bypass стоять після PTC, на виводах вентилятора (E3_FAN5_P). Повітродувка — конкретний BOM-кандидат **Delta BFB0305HA-C**, 5 V, два дроти: червоний плюс LAB5, чорний мінус через AO3400A. У цього точного суфікса немає тахо, тому нижній ключ відповідає STACK. Додано 10 μF + 100 nF безпосередньо між її дротами. Вибір MPN закритий; механічна примірка, пусковий/стопорний струм та продуктивність у каналі лишаються апаратними воротами.
 
 ## Залишені апаратні ворота
 
@@ -165,6 +167,6 @@ NTC встановлюються на задній теплорозподіль�
 
 **Прошивку watchdog реалізовано 20.10.2026 та перевірено на хості; фізичної кваліфікації ще немає.** Схема задає її контракт і апаратний actuator; наявний reset pullup робить powered boot без цієї прошивки безпечним для радіогілок, але не працездатним приймачем. Ворота **E3-08**: реалізувати heartbeat state machine, latch-reset до явного qualified recovery/re-arm, мінімальний проєктний guard 100 ms та перевірити фізичні рівні RESET <0.2VDD при assert і >0.8VDD при release. Після release спочатку записати safe OLAT=0, налаштувати IODIR та IOCON.ODR/MIRROR, лише потім дозволяти EN і GPINTEN. Reset очищає історію FAULT, тому за планового скидання її слід зберегти до reset, коли це ще можливо.
 
-Приймання E3-08 включає Linux kill/hang при початково HIGH EN, втрату UART, Pico GPIO reset/brownout, 20 cold/20 warm boots і Q6Aoff/Picoon без backfeed. Апаратний UV-супервізор E1 працює незалежно від цього firmware-контракту. GP17 більше не доступний для димінгу: лишається DDC/CI або новий інтерфейс на вільному MCP GPIO після підтвердження ревізії дисплея.
+Приймання E3-08 включає Linux kill/hang при початково HIGH EN, втрату UART, Pico GPIO reset/brownout, 20 cold/20 warm boots і Q6Aoff/Picoon без backfeed; для гілки GNSS (U315) — виміряний струм LC76G і R396 = 1.5–2× нього, а також рівні UART6 і VCC LC76G без LAB5 при працюючій Q6A. Апаратний UV-супервізор E1 працює незалежно від цього firmware-контракту. GP17 більше не доступний для димінгу: лишається DDC/CI або новий інтерфейс на вільному MCP GPIO після підтвердження ревізії дисплея.
 
-Остаточний freeze E3: **147 компонентів, 557 описів виводів**, чотири нові деталі watchdog. Усі references і pin numbers унікальні; усі нові GPIO/gate/reset-мережі мають визначені підключення, старих трьох окремих RESET-мереж більше немає.
+Остаточний freeze E3: **147 компонентів, 557 описів виводів**, чотири нові деталі watchdog. Хвиля 2 (GR-1): **153 компоненти, 576 описів виводів** — U315, R396, C321, C322, TP301, F301 і контакти S1/S2 обох енкодерів. Усі references і pin numbers унікальні; усі нові GPIO/gate/reset-мережі мають визначені підключення, старих трьох окремих RESET-мереж більше немає.

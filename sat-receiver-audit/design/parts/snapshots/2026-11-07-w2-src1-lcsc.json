@@ -1,0 +1,156 @@
+{
+ "date": "2026-11-07",
+ "distributor": "LCSC",
+ "entries": {
+  "C277599": {
+   "attributes": {
+    "Color": "White",
+    "Flame Retardant Rating": "UL94V-2",
+    "Holes Structure": "2x1P",
+    "Number of PINs Per Row": "1",
+    "Number of Rows": "2",
+    "Operating Temperature": "-40℃~+105℃",
+    "Pitch": "4.2mm",
+    "Plastic Material": "PA",
+    "Row Spacing": "4.2mm"
+   },
+   "datasheet": "",
+   "description": "-40℃~+105℃ 1 2 2x1P 4.2mm 4.2mm PA UL94V-2 White P=4.2mm Housings (Wire To Board / Wire To Wire ) ROHS",
+   "fetched_utc": "2026-11-07T16:52:44Z",
+   "jlc_library": "extended",
+   "manufacturer": "MOLEX",
+   "mpn": "39012020",
+   "package": "P=4.2mm",
+   "price_usd": [
+    [
+     1,
+     0.0503
+    ],
+    [
+     100,
+     0.0419
+    ],
+    [
+     300,
+     0.0377
+    ],
+    [
+     1000,
+     0.0344
+    ],
+    [
+     5000,
+     0.0319
+    ],
+    [
+     11000,
+     0.0306
+    ]
+   ],
+   "stock": 180905,
+   "url": "https://www.lcsc.com/product-detail/housings-wire-to-board-wire-to-wire_molex-39012020_C277599.html"
+  },
+  "C277696": {
+   "attributes": {
+    "Color": "White",
+    "Flame Retardant Rating": "UL94V-2",
+    "Holes Structure": "2x2P",
+    "Number of PINs Per Row": "2",
+    "Number of Rows": "2",
+    "Operating Temperature": "-40℃~+105℃",
+    "Pitch": "4.2mm",
+    "Plastic Material": "PA",
+    "Row Spacing": "4.2mm"
+   },
+   "datasheet": "",
+   "description": "-40℃~+105℃ 2 2 2x2P 4.2mm 4.2mm PA UL94V-2 White P=4.2mm Housings (Wire To Board / Wire To Wire ) ROHS",
+   "fetched_utc": "2026-11-07T16:52:45Z",
+   "jlc_library": "extended",
+   "manufacturer": "MOLEX",
+   "mpn": "39012040",
+   "package": "P=4.2mm",
+   "price_usd": [
+    [
+     1,
+     0.0584
+    ],
+    [
+     100,
+     0.0472
+    ],
+    [
+     300,
+     0.0414
+    ],
+    [
+     1000,
+     0.0372
+    ],
+    [
+     6000,
+     0.0337
+    ],
+    [
+     12000,
+     0.0321
+    ]
+   ],
+   "stock": 43000,
+   "url": "https://www.lcsc.com/product-detail/housings-wire-to-board-wire-to-wire_molex-39012040_C277696.html"
+  },
+  "C504840": {
+   "attributes": {
+    "Contact Material": "Phosphor bronze",
+    "Contact Plating": "Tin",
+    "Insulation OD": "1.3mm~3.1mm",
+    "Rated Voltage (Max)": "600V",
+    "Wire Gauge - AWG": "18~24"
+   },
+   "datasheet": "",
+   "description": "1.3mm~3.1mm 18~24 600V Phosphor bronze Tin - Housing Contact ROHS",
+   "fetched_utc": "2026-11-07T16:52:46Z",
+   "jlc_library": "extended",
+   "manufacturer": "MOLEX",
+   "mpn": "39000060",
+   "package": "-",
+   "price_usd": [
+    [
+     1,
+     0.0925
+    ],
+    [
+     50,
+     0.0756
+    ],
+    [
+     150,
+     0.0673
+    ],
+    [
+     1000,
+     0.0611
+    ],
+    [
+     2000,
+     0.056
+    ],
+    [
+     5000,
+     0.0534
+    ]
+   ],
+   "stock": 2,
+   "url": "https://www.lcsc.com/product-detail/housing-contact_molex-39000060_C504840.html"
+  }
+ },
+ "not_found": [],
+ "requested_codes": [
+  "C277599",
+  "C277696",
+  "C504840"
+ ],
+ "schema": 1,
+ "scope": "partial",
+ "source": "JLCPCB parts search https://jlcpcb.com/api/overseas-pcb-order/v1/shoppingCart/smtGood/selectSmtComponentList queried by exact LCSC C-code (no API key)",
+ "tool": "tools/check_parts_availability.py"
+}

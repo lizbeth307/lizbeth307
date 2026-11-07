@@ -158,13 +158,20 @@ def render(P, report, params_short, boards_contract):
         hr = next((r for r in report["rules"] if r["id"] == "R-HDR-HEIGHT"), None)
         if hr and hr.get("headers"):
             rows = [x for x in hr["headers"] if x["verdict"] != "inside the board limit"]
-            out += ["", f"Роз'єми джгутів понад обмеження плати або без прочитаної висоти ({len(rows)} з {len(hr['headers'])}; правило R-HDR-HEIGHT):", "",
-                    "| роз'єм | плата | родина | висота, мм | курт'ярд, мм | межа плати | найкраща зона лиця / тилу, мм | висновок |",
-                    "|---|---|---|---|---|---|---|---|"]
+            out += ["", f"Роз'єми джгутів понад обмеження плати або без прочитаної висоти ({len(rows)} з {len(hr['headers'])}; правило R-HDR-HEIGHT). "
+                    "Висота — з'єднаної пари (вилка + кабельна частина), де її прочитано, інакше корпусу вилки (позначено); вихід дроту за "
+                    "кабельною частиною не враховано (дріт TBD, AI-WIRE-PTFE). Для Micro-Fit понад межу наведено й кутову 43650 (MF_ra):", "",
+                    "| роз'єм | плата | родина | висота, мм | курт'ярд, мм | межа плати | найкраща зона лиця / тилу, мм | кутова 43650: висота, курт'ярд, зони лиця / тилу, мм | висновок |",
+                    "|---|---|---|---|---|---|---|---|---|"]
+            basis = {"mated": "пара", "body": "корпус"}
             for x in rows:
                 cyd = " x ".join(_r(v) for v in x["courtyard_mm"]) if x.get("courtyard_mm") else "—"
-                out.append(f"| {x['connector']} | {x['board']} | {x['family']} {x['orientation']} | {_r(x['h_mm']) if x['h_mm'] is not None else 'TBD'} | "
-                           f"{cyd} | {_r(x['max_height'])} | {_r(x['best_front_zone_mm'])} / {_r(x['best_rear_zone_mm'])} | {x['verdict']} |")
+                hb = f" ({basis[x['h_basis']]})" if x.get("h_basis") in basis else ""
+                a = x.get("alternative")
+                alt = (f"{_r(a['h_mm'])} ({basis.get(a['h_basis'], a['h_basis'])}); {' x '.join(_r(v) for v in a['courtyard_mm']) if a.get('courtyard_mm') else '—'}; "
+                       f"{_r(a['best_front_zone_mm'])} / {_r(a['best_rear_zone_mm'])}") if a else "—"
+                out.append(f"| {x['connector']} | {x['board']} | {x['family']} {x['orientation']} | {_r(x['h_mm']) + hb if x['h_mm'] is not None else 'TBD'} | "
+                           f"{cyd} | {_r(x['max_height'])} | {_r(x['best_front_zone_mm'])} / {_r(x['best_rear_zone_mm'])} | {alt} | {x['verdict']} |")
         out.append("")
     rt = report.get("harness_routes")
     if rt:

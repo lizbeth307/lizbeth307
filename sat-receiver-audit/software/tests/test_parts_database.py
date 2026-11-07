@@ -65,11 +65,11 @@ class PartsDatabaseTest(unittest.TestCase):
         self.assertTrue(any("BZ301 has no parts-database entry" in e for e in self.errors_after(missing)))
 
     def test_unexplained_pad_fails(self):
-        # ENC301 explains the push-switch pads S1/S2 in unused_pads; without that entry they are unexplained pads.
+        # ENC301 explains its mounting pads MP in unused_pads (S1/S2 carry the push switch since W2 GR-1); without that entry MP is unexplained.
         def drop_reason(db):
-            part(db, "ENC-PEC11R-4220F-S0024")["unused_pads"].pop("S1")
+            part(db, "ENC-PEC11R-4220F-S0024")["unused_pads"].pop("MP")
         errors = self.errors_after(drop_reason)
-        self.assertTrue(any(e.startswith("ENC301: pads ['S1']") and "neither graph pins nor listed in unused_pads" in e for e in errors), errors)
+        self.assertTrue(any(e.startswith("ENC301: pads ['MP']") and "neither graph pins nor listed in unused_pads" in e for e in errors), errors)
         self.assertFalse(any(e.startswith("ENC301: pins") for e in errors), errors)
 
     def test_missing_pin_fails(self):
@@ -258,10 +258,15 @@ class PcbPreparationBlockersTest(unittest.TestCase):
         self.assertEqual([i["type"] for i in self.issues("J501", db)], ["physical_interface_or_rework_unresolved"])
 
     def test_virtual_contact_without_host_net_blocks(self):
+        # W2 GR-1: the press nets are on ENC301/ENC302 S1/S2, so the virtual contacts no longer block.
         for ref in ("SW308", "SW309"):
-            issues = self.issues(ref)
-            self.assertEqual([i["type"] for i in issues], ["host_pads_unconnected"], ref)
-            self.assertIn("PRESS", issues[0]["detail"])
+            self.assertEqual(self.issues(ref), [], ref)
+        by_ref = dict(self.by_ref)
+        host = by_ref["ENC301"]
+        by_ref["ENC301"] = {**host, "pins": [p for p in host["pins"] if p["number"] not in ("S1", "S2")]}
+        issues = prepare.interface_issues(self.by_ref["SW308"], prepare.category(self.by_ref["SW308"])[0], self.db, by_ref)
+        self.assertEqual([i["type"] for i in issues], ["host_pads_unconnected"])
+        self.assertIn("PRESS", issues[0]["detail"])
 
     def test_committed_unresolved_records_keep_the_interface_blockers(self):
         import csv
@@ -274,7 +279,9 @@ class PcbPreparationBlockersTest(unittest.TestCase):
         self.assertTrue(interface_refs)
         for ref in interface_refs:
             self.assertTrue(by_ref.get(ref, set()) & {"interface_mounting_unresolved", "physical_interface_or_rework_unresolved"}, ref)
-        self.assertIn("host_pads_unconnected", by_ref["SW308"])
+        self.assertNotIn("SW308", by_ref)
+        self.assertNotIn("SW309", by_ref)
+        self.assertEqual(by_ref["J551"], {"interface_mounting_unresolved"})
 
 
 if __name__ == "__main__":

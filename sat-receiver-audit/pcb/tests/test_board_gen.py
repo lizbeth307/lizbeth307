@@ -37,7 +37,7 @@ def synthetic():
             {'ref': 'U', 'source': 'graph', 'anchor': {'at': [1, 1]}},
             {'ref': 'J', 'source': 'pilot_placeholder', 'footprint': 'L:J2', 'footprint_library': 'kicad-image',
              'footprint_sha256': '1' * 64, 'value': 'J', 'pins': {'1': 'GND', '2': 'SIG'}, 'replaced_by': 'later',
-             'anchor': {'at': [0, 0]}}],
+             'pending': 'header ref pending GR-3', 'anchor': {'at': [0, 0]}}],
     }
     return spec, graph, manifest
 
@@ -277,6 +277,207 @@ class RepositorySpecs(unittest.TestCase):
         table = bg.fp_lib_table(template)
         self.assertIn('${KIPRJMOD}/../../footprints/SR_RX_Custom.pretty', table)
         self.assertIn('${KICAD10_FOOTPRINT_DIR}/Connector_PinHeader_2.00mm.pretty', table)
+
+
+SOT236 = bg.BASE / 'build/kicad/footprints/Package_TO_SOT_SMD.pretty/SOT-23-6.kicad_mod'
+C0603 = bg.BASE / 'build/kicad/footprints/Capacitor_SMD.pretty/C_0603_1608Metric.kicad_mod'
+
+
+class RouteTokenSubjectOnly(unittest.TestCase):
+    def test_only_the_subject_line_routes(self):
+        self.assertTrue(bg.route_requested('PCB-SB1: new header [pcb-route ENC]\n\nBody text.\n', 'ENC'))
+        self.assertFalse(bg.route_requested('PCB-SB1: new header\n[pcb-route ENC]\n', 'ENC'))
+        self.assertFalse(bg.route_requested('PCB-SB1: new header\n\nRe-route with [pcb-route ENC] later.', 'ENC'))
+        self.assertFalse(bg.route_requested('', 'ENC'))
+
+    def test_generated_commit_quoting_its_route_run_is_a_check(self):
+        msg = ('GENERATED: ENC board from sr-rx-pcb route run 1\n\nArtifact of the [pcb-route ENC] run, '
+               'applied unchanged.\n\nCo-Authored-By: x')
+        self.assertFalse(bg.route_requested(msg, 'ENC'))
+        self.assertFalse(bg.route_requested('GENERATED: ENC [pcb-route ENC]', 'ENC'))
+
+
+class FetchGuardCoversTheWholeRepository(unittest.TestCase):
+    def test_destination_beside_sat_receiver_audit_is_refused(self):
+        inside = bg.REPO_ROOT / 'freerouting-tools'
+        self.assertFalse(bg.outside_repository(inside))
+        self.assertFalse(bg.outside_repository(bg.BASE / 'build/freerouting'))
+        with self.assertRaises(SystemExit):
+            bg.fetch_freerouting(inside)
+        with self.assertRaises(SystemExit):
+            bg.fetch_freerouting(bg.REPO_ROOT)
+
+    def test_repository_root_is_the_git_work_tree(self):
+        if (bg.BASE.parent / '.git').exists():
+            self.assertEqual(bg.REPO_ROOT, bg.BASE.parent)
+        self.assertTrue(bg.outside_repository(bg.REPO_ROOT.parent / (bg.REPO_ROOT.name + '-tools')))
+
+
+class ContractProjection(unittest.TestCase):
+    CONTRACT = {'name': 'enc', 'outline_mm': [[0, 0], [24, 0], [24, 24], [0, 24]], 'cutouts_mm': [], 'holes_mm': [[3, 3]],
+                'hole_d': 2.7, 'hole_keepout_d': 6.0, 'max_component_height': 6.5,
+                'edge_zones': [{'edge': 'left', 'span': [6, 18]}], 'dxf': 'boards/x.dxf', 'mount': 'M2.5',
+                'placements': {'main': {'origin': [1, 2], 'z_bottom': 5, 'facing': '+z'}}}
+
+    def proj(self, contract):
+        spec, graph, manifest = synthetic()
+        template = bg.resolve(spec, graph, manifest)
+        return bg.projection(spec, contract, {'layers': 4}, template, graph, b'{}')['parts']['contract']
+
+    def test_fields_that_cannot_move_copper_do_not_make_the_board_stale(self):
+        base = self.proj(self.CONTRACT)
+        more = copy.deepcopy(self.CONTRACT)
+        more.update({'height_zones': [], 'rear_zones': [], 'name': 'renamed', 'dxf': 'other.dxf', 'area_mm2': 1.0,
+                     'thermal_bond_mm': [], 'modules_on_board': ['x']})
+        more['placements']['main']['note'] = 'added by a MECH package'
+        self.assertEqual(self.proj(more), base)
+
+    def test_outline_holes_and_placement_origin_do(self):
+        base = self.proj(self.CONTRACT)
+        for path, value in ((('outline_mm',), [[0, 0], [25, 0], [25, 24], [0, 24]]), (('hole_keepout_d',), 6.5),
+                            (('edge_zones',), []), (('placements', 'main', 'origin'), [1, 3])):
+            changed = copy.deepcopy(self.CONTRACT)
+            target = changed
+            for key in path[:-1]:
+                target = target[key]
+            target[path[-1]] = value
+            self.assertNotEqual(self.proj(changed), base, path)
+
+
+class SpecRefusals(unittest.TestCase):
+    def test_rules_file_is_refused_until_it_is_copied_and_hashed(self):
+        spec = bg.read_json(bg.spec_path('ENC'))
+        spec['rules_file'] = 'pcb/rules/jlc-2l.kicad_dru'
+        with self.assertRaises(SystemExit) as caught:
+            bg.validate_spec(spec, 'ENC')
+        self.assertIn('rules_file', str(caught.exception))
+
+    def test_placeholder_needs_a_pending_text(self):
+        spec = bg.read_json(bg.spec_path('ENC'))
+        del next(p for p in spec['parts'] if p['source'] == 'pilot_placeholder')['pending']
+        with self.assertRaises(SystemExit):
+            bg.validate_spec(spec, 'ENC')
+
+
+class ProvisionalStatusFromPlaceholders(unittest.TestCase):
+    def test_status_names_what_the_placeholder_waits_for(self):
+        spec, graph, manifest = synthetic()
+        spec['parts'][1]['pending'] = 'power header pending GR-4'
+        rows = bg.boundary_audit(spec, bg.resolve(spec, graph, manifest), graph, {})
+        self.assertEqual({r['status'] for r in rows}, {'provisional: power header pending GR-4'})
+
+    def test_two_placeholders_are_both_named(self):
+        spec, graph, manifest = synthetic()
+        spec['parts'][1]['pins'] = {}  # J carries no net: only K's status counts
+        spec['parts'].append({**copy.deepcopy(spec['parts'][1]), 'ref': 'K', 'pins': {'1': 'SIG', '2': 'GND'},
+                              'pending': 'probe pad pending RF'})
+        for item in spec['instances']['list']:
+            item['refs']['K'] = None
+        rows = bg.boundary_audit(spec, bg.resolve(spec, graph, manifest), graph, {})
+        self.assertEqual(rows[0]['status'], 'provisional: probe pad pending RF')
+        spec['parts'][1]['pins'] = {'1': 'GND'}  # GND also leaves the board (U2 of the other instance)
+        rows = bg.boundary_audit(spec, bg.resolve(spec, graph, manifest), graph, {})
+        self.assertEqual(rows[0]['status'], 'provisional: header ref pending GR-3; probe pad pending RF')
+
+    def test_enc_keeps_the_acceptance_string(self):
+        spec, contract, stackup, graph, db, template, project, proj = bg.prepare_inputs('ENC')
+        self.assertEqual({r['status'] for r in bg.boundary_audit(spec, template, graph, db)},
+                         {'provisional: header ref pending GR-3'})
+
+
+class PlacementGroups(unittest.TestCase):
+    """Groups resolve to anchors with the repository's own footprints (no KiCad needed)."""
+
+    def setup(self, side='F'):
+        geo = {'U': bg.footprint_geometry(SOT236.read_text(encoding='utf-8'))}
+        for ref in ('R1', 'R2', 'C1'):
+            geo[ref] = bg.footprint_geometry(C0603.read_text(encoding='utf-8'))
+        anchor_x = 10.0 if side == 'F' else 14.0
+        template = [{'ref': 'U', 'anchor': {'at': [anchor_x, 10.0], 'rotation': 0, 'side': side}}] + \
+                   [{'ref': r, 'anchor': None} for r in ('R1', 'R2', 'C1')]
+        region = [12.0, 2.0, 22.0, 14.0] if side == 'F' else [2.0, 2.0, 12.0, 14.0]
+        spec = {'groups': [{'id': 'G1', 'region': region, 'side': side, 'members': [
+            {'ref': 'R2'}, {'ref': 'R1'}, {'ref': 'C1', 'decouple': {'ref': 'U', 'pad': '6', 'max_mm': 2.0}}]}]}
+        return spec, template, geo
+
+    def test_members_are_packed_and_the_decoupling_part_sits_by_its_pin(self):
+        spec, template, geo = self.setup()
+        outline = [[0, 0], [30, 0], [30, 20], [0, 20]]
+        anchors, rows = bg.place_groups(spec, template, geo, [], outline)
+        self.assertEqual(sorted(anchors), ['C1', 'R1', 'R2'])
+        self.assertEqual((anchors, rows), bg.place_groups(spec, template, geo, [], outline))  # deterministic
+        u = bg.placed_geometry(geo['U'], template[0]['anchor'])
+        self.assertEqual(u['pads']['6'], [[11.1375, 10.95]])  # SOT-23-6 pad 6 at (+1.1375, -0.95), y up
+        boxes = {r['ref']: r['courtyard_box'] for r in rows}
+        for ref, box in boxes.items():
+            self.assertTrue(12.0 - 1e-9 <= box[0] and box[2] <= 22.0 + 1e-9 and 2.0 - 1e-9 <= box[1] and box[3] <= 14.0 + 1e-9)
+            self.assertFalse(bg.rects_overlap(box, u['box']), ref)
+        self.assertFalse(bg.rects_overlap(boxes['R1'], boxes['C1']) or bg.rects_overlap(boxes['R2'], boxes['C1']))
+        c1 = next(r for r in rows if r['ref'] == 'C1')
+        self.assertLessEqual(c1['decouple']['planned_distance_mm'], 2.0)
+        self.assertLessEqual(bg.box_circle_distance(c1['courtyard_box'], u['pads']['6'][0]), 2.0 + 1e-6)
+        self.assertLess(boxes['R1'][0], boxes['R2'][0])  # equal heights pack in reference order
+
+    def test_back_side_group_mirrors_like_kicad_flip(self):
+        spec, template, geo = self.setup('B')
+        anchors, rows = bg.place_groups(spec, template, geo, [], [[0, 0], [30, 0], [30, 20], [0, 20]])
+        u = bg.placed_geometry(geo['U'], template[0]['anchor'])
+        self.assertEqual(u['pads']['6'], [[12.8625, 10.95]])  # mirrored in x about the footprint position
+        self.assertTrue(all(a['side'] == 'B' for a in anchors.values()))
+        c1 = next(r for r in rows if r['ref'] == 'C1')
+        self.assertLessEqual(bg.box_circle_distance(c1['courtyard_box'], u['pads']['6'][0]), 2.0 + 1e-6)
+
+    def test_plan_matches_the_kicad_placement_of_the_enc_pilot(self):
+        spec = bg.read_json(bg.spec_path('ENC'))
+        report = bg.read_json(bg.OUT_ROOT / 'ENC/report.json')
+        got = bg.placed_geometry(bg.footprint_geometry(PEC11R.read_text(encoding='utf-8')), spec['parts'][0]['anchor'])
+        kicad = next(p for p in report['placement'] if p['ref'] == 'ENC')
+        self.assertEqual(got['origin'], kicad['at'])
+        for a, b in zip(got['box'], kicad['courtyard_box']):
+            self.assertLessEqual(abs(a - b), 0.05)  # KiCad boxes include half the courtyard line
+        self.assertEqual({k: v for k, v in got['pads'].items()},
+                         {num: [p['at'] for p in report['pads']['ENC'] if p['number'] == num]
+                          for num in {p['number'] for p in report['pads']['ENC']}})
+
+    def test_keepouts_and_full_regions_are_refused(self):
+        spec, template, geo = self.setup()
+        outline = [[0, 0], [30, 0], [30, 20], [0, 20]]
+        with self.assertRaises(SystemExit):
+            bg.place_groups(spec, template, geo, [{'ref': 'H1', 'at': [13.5, 13.0], 'keepout_d': 3.0}], outline)
+        spec['groups'][0]['region'] = [12.0, 2.0, 32.0, 14.0]
+        with self.assertRaises(SystemExit):
+            bg.place_groups(spec, template, geo, [], outline)
+
+    def test_spec_validation_of_groups(self):
+        base = bg.read_json(bg.spec_path('ENC'))
+        spec = copy.deepcopy(base)
+        enc = spec['parts'][0]
+        del enc['anchor']
+        spec['groups'] = [{'id': 'G', 'region': [5, 3, 20, 21], 'members': [{'ref': 'ENC', 'rotation': 90}]}]
+        bg.validate_spec(spec, 'ENC')  # an anchor-less part is accepted when a group places it
+        refused = []
+        bad = copy.deepcopy(spec)
+        bad['parts'][0]['anchor'] = base['parts'][0]['anchor']
+        refused.append(bad)  # anchored and grouped
+        bad = copy.deepcopy(spec)
+        bad['groups'] = []
+        refused.append(bad)  # no anchor and no group
+        bad = copy.deepcopy(spec)
+        bad['groups'][0]['members'].append({'ref': 'J1'})
+        refused.append(bad)  # a placeholder needs an anchor
+        bad = copy.deepcopy(spec)
+        bad['groups'][0]['members'][0]['rotation'] = 45
+        refused.append(bad)
+        bad = copy.deepcopy(spec)
+        bad['groups'][0]['region'] = [5, 3, 4, 21]
+        refused.append(bad)
+        bad = copy.deepcopy(spec)
+        bad['groups'][0]['members'][0]['decouple'] = {'ref': 'J1', 'pad': '1', 'max_mm': 2.0}
+        bad['groups'][0]['side'] = 'B'
+        refused.append(bad)  # decoupling target on the other side
+        for i, candidate in enumerate(refused):
+            with self.assertRaises(SystemExit, msg=i):
+                bg.validate_spec(candidate, 'ENC')
 
 
 if __name__ == '__main__':

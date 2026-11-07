@@ -26,7 +26,9 @@
   "design/parts/snapshots/2026-11-07-w2-reads-e-lcsc.json",
   "design/parts/snapshots/2026-11-07-w2-reads-rf-manual.json",
   "design/parts/snapshots/2026-11-07-w2-reads-rf-lcsc.json",
-  "design/parts/snapshots/2026-11-07-w2-mech2-manual.json"
+  "design/parts/snapshots/2026-11-07-w2-mech2-manual.json",
+  "design/parts/snapshots/2026-11-07-w2-src1-manual.json",
+  "design/parts/snapshots/2026-11-07-w2-src1-lcsc.json"
  ],
  "bom_v2_rows": {
   "4": {
@@ -73,8 +75,8 @@
   },
   "20": {
    "status": "partial",
-   "note": "ферити FT-240-77 і #31 — супутні деталі W408 у базі; RG316, 2 SMA і кронштейн — за цим рядком (TBD у базі)",
-   "remaining": "RG316 на 9–11 витків, 2 вилки SMA і кронштейн для W408 (у базі TBD: MPN не задано)"
+   "note": "ферити FT-240-77 і #31 і збірка RG-316 SMA-вилка/SMA-вилка 1.0 м (Amphenol RF 135101-01-M1.00, намотується 11 витками) — W408 у базі",
+   "remaining": "кронштейн W408 для осердя FT-240 (механічний пакет)"
   },
   "27": {
    "status": "db",
@@ -744,6 +746,62 @@
      }
     }
    ]
+  },
+  {
+   "id": "MFJ",
+   "title": "Molex Mini-Fit Jr. 4.20 мм, 2 ряди — коло батареї 18 AWG",
+   "note": "Рішення build/15 «Живлення ≥2 A» (відхилення asm: коло батареї 18 AWG) і «Mini-Fit Jr. у базі (W2 SRC-1)». Клема 5556 0039000060: 18–24 AWG, ізоляція ⌀1.30–3.10 мм, 9.0 A на контакт (SOURCES MOLEX-5556 у tools/assembly_data.py). Вертикальні вилки 5566 серії 39-28-80n0 без кілочків PCB — за відображенням бібліотеки KiCad 10.0.7 (5566-0nA, без отворів під кілочки) і сусіднім аркушем 39288180; власні креслення 0039288020/0039288040 не прочитано (molex.com не відповідав 07.11.2026, знімок 2026-11-07-w2-reads-e-manual.json) — звірити до розкладки PWR.",
+   "terminal": {
+    "manufacturer": "Molex",
+    "mpn": "0039000060",
+    "sku": {
+     "lcsc": "C504840",
+     "digikey": "WM1015-ND"
+    },
+    "note": "LCSC 2 шт., DigiKey DE 45 203 шт. на 07.11.2026"
+   },
+   "sizes": [
+    {
+     "pins": 2,
+     "header_top": {
+      "manufacturer": "Molex",
+      "mpn": "0039288020",
+      "sku": {
+       "lcsc": "C490534",
+       "digikey": "WM23800-ND"
+      },
+      "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical"
+     },
+     "housing": {
+      "manufacturer": "Molex",
+      "mpn": "0039012020",
+      "sku": {
+       "lcsc": "C277599",
+       "digikey": "WM3700-ND"
+      }
+     }
+    },
+    {
+     "pins": 4,
+     "header_top": {
+      "manufacturer": "Molex",
+      "mpn": "0039288040",
+      "sku": {
+       "lcsc": "C240829",
+       "digikey": "WM23801-ND"
+      },
+      "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-04A_2x02_P4.20mm_Vertical"
+     },
+     "housing": {
+      "manufacturer": "Molex",
+      "mpn": "0039012040",
+      "sku": {
+       "lcsc": "C277696",
+       "digikey": "WM3701-ND"
+      }
+     }
+    }
+   ]
   }
  ],
  "parts": [
@@ -793,6 +851,7 @@
    ],
    "refs": [
     "C104",
+    "C322",
     "C502",
     "C505",
     "C509",
@@ -845,6 +904,7 @@
     "C311",
     "C312",
     "C319",
+    "C321",
     "C341",
     "C343",
     "C440",
@@ -861,6 +921,7 @@
     "C520",
     "C550",
     "C551",
+    "C552",
     "C4400",
     "C4410",
     "C4411",
@@ -1303,7 +1364,6 @@
     "R211",
     "R216",
     "R256",
-    "R264",
     "R281",
     "R284",
     "R287",
@@ -1644,7 +1704,24 @@
    ],
    "refs": [
     "R204",
-    "R210"
+    "R210",
+    "R263"
+   ]
+  },
+  {
+   "id": "R-0603-RT0603BRD079K09L",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "RT0603BRD079K09L",
+   "sku": {
+    "lcsc": "C861611"
+   },
+   "single_source": "9.09 kΩ 0.1 % 0603 thin film for the OVLO divider R263/R264 (R-E2-02); the only 0.1 % 9.09k 0603 listing read (LCSC snapshot 2026-11-07-w2-reads-e-lcsc.json); no alternate was read",
+   "refs": [
+    "R264"
    ]
   },
   {
@@ -1924,7 +2001,8 @@
    "refs": [
     "R228",
     "R233",
-    "R238"
+    "R238",
+    "R553"
    ]
   },
   {
@@ -2029,7 +2107,8 @@
    ],
    "refs": [
     "R243",
-    "R293"
+    "R293",
+    "R396"
    ]
   },
   {
@@ -2977,7 +3056,8 @@
     }
    ],
    "refs": [
-    "C510"
+    "C510",
+    "C553"
    ]
   },
   {
@@ -3256,17 +3336,6 @@
     "R4422",
     "R4432",
     "R4442"
-   ]
-  },
-  {
-   "id": "R-0603-TBD-R263",
-   "mount": "pcb_smt",
-   "kind": "resistor",
-   "package": "0603",
-   "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "tbd": "Стартове значення OVLO 112 kΩ не належить до ряду E192 (найближчі 111k/113k), а остаточний дільник OVLO закривають ворота; деталі 0.1 % 0603 24.10.2026 не знайдено.",
-   "refs": [
-    "R263"
    ]
   },
   {
@@ -3853,8 +3922,8 @@
     "lcsc": "C111738"
    },
    "match": "TPS2553DBVR-1",
-   "single_source": "Latch-off -1 variant required; TPS2553DBVR (auto-retry, LCSC C55266) is only the documented fallback for a channel that latches at start-up (10-bom row 69)",
-   "note": "Accept LCSC lots only with marking CHZ (10-bom row 69).",
+   "single_source": "Latch-off -1 variant required on these channels; TPS2553DBVR (constant-current, LCSC C55266) is the documented fallback for a channel that latches at start-up (10-bom row 69) and the chosen part of the IMU pack branch U553 (entry U-TPS2553DBVR, R-E5-08)",
+   "note": "Accept LCSC lots only with marking CHZ (10-bom row 69). LCSC C111738 showed stock 6 on 2026-11-07 (2026-11-07-w2-reads-e-lcsc.json) for 10 refs: source the rest before ordering (SRC-1).",
    "refs": [
     "U206",
     "U207",
@@ -3862,9 +3931,26 @@
     "U209",
     "U210",
     "U221",
+    "U315",
     "U501",
     "U502",
     "U503"
+   ]
+  },
+  {
+   "id": "U-TPS2553DBVR",
+   "mount": "pcb_smt",
+   "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+   "manufacturer": "Texas Instruments",
+   "mpn": "TPS2553DBVR",
+   "sku": {
+    "lcsc": "C55266"
+   },
+   "match": "TPS2553DBVR",
+   "single_source": "Constant-current TPS2553 (no -1) chosen for the IMU pack branch U553 (R-E5-08): it limits a short on the 2 m cable without latching and recovers by itself (TI SLVS841G p.14-15)",
+   "note": "Accept LCSC lots only with marking 2553 (TI SLVS841G package addendum p.29; the latch-off TPS2553DBVR-1 is marked CHZ). Never substitute the -1 part here, and never this part on a -1 channel.",
+   "refs": [
+    "U553"
    ]
   },
   {
@@ -4449,7 +4535,8 @@
    "match": "MF-MSMF075/24-2",
    "single_source": "PTC named in STACK §2.7; reflow only",
    "refs": [
-    "F202"
+    "F202",
+    "F301"
    ]
   },
   {
@@ -4595,10 +4682,8 @@
     }
    ],
    "single_source": "Bourns encoder with push switch named in STACK; the switch contacts are SW308/SW309",
-   "note": "S1/S2 pads carry the push switch; in the graph that switch is the separate ref SW308/SW309, so the PCB netlist leaves S1/S2 unconnected until the graph moves the switch onto ENC pins (see coverage open items). 10-bom row 49 buys 3 (1 spare). Integration 2026-11-07: each encoder sits on its own ENC daughterboard (pcb/prepare.py domain ENC; STACK §5.8 «на малій дочірній платі з роз’ємом», mechanical/params/boards.json ENC, two in use + one spare board), linked to CTRL by JST PH (build/16 S37/S38).",
+   "note": "S1/S2 pads carry the push switch: the graph puts its nets on ENC301/ENC302 S1 (E3_ENC1/2_PRESS_EXT) and S2 (GND); SW308/SW309 are the virtual contacts hosted by the encoders (W2 GR-1, R-E3-16). 10-bom row 49 buys 3 (1 spare). Integration 2026-11-07: each encoder sits on its own ENC daughterboard (pcb/prepare.py domain ENC; STACK §5.8 «на малій дочірній платі з роз’ємом», mechanical/params/boards.json ENC, two in use + one spare board), linked to CTRL by JST PH (build/16 S37/S38).",
    "unused_pads": {
-    "S1": "push-switch contact; in the graph the switch is SW308 (ENC301) / SW309 (ENC302), see open items",
-    "S2": "push-switch contact; in the graph the switch is SW308 (ENC301) / SW309 (ENC302), see open items",
     "MP": "mounting slots (mechanical, no net)"
    },
    "refs": [
@@ -4609,7 +4694,7 @@
   {
    "id": "SW-ENC-PUSH-virtual",
    "mount": "virtual",
-   "note": "Physically the push switch inside ENC301/ENC302 (pads S1/S2 of the encoder footprint): no separate part is bought or placed. SW308 belongs to ENC301, SW309 to ENC302.",
+   "note": "Physically the push switch inside ENC301/ENC302 (pads S1/S2 of the encoder footprint): no separate part is bought or placed. SW308 belongs to ENC301, SW309 to ENC302. The graph puts their nets on the encoder pins S1 (press) and S2 (GND), so the host pads carry them (W2 GR-1).",
    "host": {
     "SW308": "ENC301",
     "SW309": "ENC302"
@@ -4664,8 +4749,10 @@
     "TP214",
     "TP215",
     "TP216",
+    "TP301",
     "TP501",
     "TP502",
+    "TP503",
     "TP2901",
     "TP2902",
     "TP2903"
@@ -4947,7 +5034,7 @@
   {
    "id": "J-BALANCE-DNP",
    "mount": "harness",
-   "tbd": "DNP / лише сервіс до закриття E1-02; деталь не обрано.",
+   "tbd": "DNP (E1.json J102 dnp, примітки E1 J102): зовнішній балансний кабель не монтують і не підключають до закриття воріт E1-02, тож MPN не обирають; тип і порядок відводів комірок перевіряються на отриманому паку (E1 J102), відповідну розетку обирають за паком лише після E1-02.",
    "refs": [
     "J102"
    ]
@@ -4973,7 +5060,7 @@
    "mount": "module",
    "match": "IP2368",
    "single_source": "Retail board from one seller with a revision gate (build/15 «IP2368»)",
-   "tbd": "Роздрібна плата IP2368 COUT з AliExpress не має сталого MPN; під час купівлі записати оголошення продавця й ревізію плати (ворота E1-01, рядок 60 10-bom).",
+   "tbd": "Роздрібна плата IP2368 COUT з AliExpress не має сталого MPN, а сторінки продавців не читаються автоматично (капча й цикл входу, STACK.md:287); під час купівлі записати оголошення, продавця й ревізію плати у форму стенду (build/20, рядок З-04; ворота E1-01, рядок 60 10-bom). Переробки R117–R120 і C118 закриваються лише після E1-01 «до модифікацій»: фото обох боків і прозвонка до IC (E1-01 resolve).",
    "refs": [
     "U110"
    ]
@@ -5003,15 +5090,16 @@
    ]
   },
   {
-   "id": "TH-KSD9700-70-NO",
+   "id": "TH-67F070-70-NO",
    "mount": "remote",
-   "manufacturer": "Xucheng Electronics",
-   "mpn": "KSD9700-70/5JSB/080C",
+   "manufacturer": "Sensata-Airpax",
+   "mpn": "67F070",
    "sku": {
-    "lcsc": "C156512"
+    "digikey": "723-1190-ND"
    },
-   "match": "KSD9700",
-   "tbd": "Оголошення LCSC (механічний SPST, клас 70 °C) не вказує NO/NC; рядок 89 10-bom називає NO 70 °C KSD9700 від Piekarz 31610 (24.10.2026 не перечитано). Перед замовленням підтвердити нормально розімкнений варіант.",
+   "match": "67F070",
+   "single_source": "Єдиний прочитаний нормально розімкнений (замикається при нагріві) термовимикач 70 °C з MPN виробника й складом дистриб'ютора (07.11.2026): кандидат LCSC C156512 KSD9700-70/5JSB/080C нормально замкнений за власним даташитом (суфікс B), а продавець STACK Piekarz 31610 не має читабельної сторінки з MPN.",
+   "note": "Даташит Sensata 6700 (копія ChipDip, прочитано 07.11.2026): 67F070 — F = замикається при нагріві, 70 ±5 °C; таблиця с. 4 — «MIN DIFFERENTIAL 4 °C, MIN RESET 50 °C», приклад на тій самій сторінці читається як повернення не далі ніж на 4 K нижче замикання (два прочитання, READS-E RE-3; ≥15 K не гарантує жодне); 0.5 A 48 V DC; корпус TO-220-2 з виводами PC, тепло — через виводи й кронштейн (с. 1), кронштейн ізольований від контактів (1480 V AC). Відхилення від KSD9700 STACK §5.1 і зняту вимогу «повернення ≥15 K нижче» записано в build/15 «IP2368». DigiKey DE 07.11.2026: склад 1991, ціни лише від 500 шт. (EUR 7.39458 @500), ціни за 1 шт. сторінка не показує — кількість замовлення для 1–2 шт. уточнити перед купівлею (SRC-1).",
    "refs": [
     "TH102"
    ]
@@ -5038,9 +5126,9 @@
    "note": "Connectors/pads on the purchased Radxa Q6A; mating cables and leads are separate refs or extras. What is still open per port is in interface_open (the J301 mating socket is not selected).",
    "interface_open": {
     "J301": "Для Q6A J20 (2×20, крок 2.54 мм) обрано родину IDC (harness_families IDC): гніздо XDFH-0258-2*20P на стрічці 40 × 1.27 мм, бокс XDFH-0254-2*20P на CTRL; MPN стрічки, висота боксу (CTRL ≤5.5 мм, креслення не прочитано) і довжина S01 ≤200 мм (UART7/PPS, STACK §5.2) — TBD; стрічка йде крізь проріз пластини SL1 (M-07).",
-    "J303": "Відповідна частина — вилка 1.25 мм на виводах BT301 (Electrokit 41036512, рядок 85 10-bom, не перечитано); кріплення батареї й укладання дроту не задано.",
+    "J303": "Відповідна частина — 2-контактна вилка 1.25 мм на виводі 50 мм батареї BT301 (Electrokit 41036512, прочитано 07.11.2026, знімок 2026-11-07-w2-src1-manual.json web:electrokit-41036512; кріплення — власна клейка стрічка батареї). Відкрито: полярність вилки (сторінка її не дає; на Q6A J11 контакт 1 — GND, E3 J303) звірити до вставлення; місце батареї в межах 50 мм від J11 — механічний пакет.",
     "J511": "Кабелі до J5: USB3 до T7 (U540) і USB2 до RTL-B (J541) — окремі записи; фіксація штекерів і розвантаження натягу в корпусі не задано (механічний пакет).",
-    "J512": "Кабелі USB2 без провідника VBUS до хаба U510 і сенсорного контролера U520 не мають MPN; фіксація штекерів не задана.",
+    "J512": "Кабелі C-HUB (P3 → CH334F JP5) і C-TOUCH (P2 → сенсорний контролер Wisecoco) — assembly_items AI-USB2-J512: Tensility 10-02333 з вилкою A в J2, відрізаним другим кінцем і відрізаним провідником VBUS (E5 J512). Відкрито: закінчення на JP5 і роз’єм сенсорного порту Wisecoco (не прочитано), фіксація вилок у J2 — механічний пакет.",
     "J520": "Кабель HDMI — супутня деталь U520 (Adafruit 2420); фіксація штекера й розвантаження натягу не задано (механічний пакет).",
     "J521": "Заводську вилку J21 знімають після прогону; провід S16 від площадок J21 до розетки 43645-0300 на J503 (плата лючка): 12 V/GND — кручена пара 20 AWG, KEY — 24 AWG (build/16 S16); довжина — TBD (CAD).",
     "J522": "Дроти від площадок заводської кнопки EDL до SW501 (PV6F240SS на платі лючка) не задано (провід, довжина, фіксація пайки).",
@@ -5579,7 +5667,7 @@
    "id": "J-ANTENNA-ASSEMBLY",
    "mount": "assembly",
    "note": "Input connector of the external A418/A419 assembly; no separate purchase (E4 notes).",
-   "interface_open": "Вхід зовнішнього вузла A418/A419: роз’єм антенного кабелю й кріплення вузла біля антени — антенний пакет (build/06); окремо не купується.",
+   "interface_open": "Вхід зовнішнього вузла A418/A419 — антенний пакет (build/06), окремо не купується. J416 — вхід ANT Uputronics 440 під провід основи 60 см RG174 із SMA-вилкою (build/06 §2.3, набір #1); стать роз’ємів HAB-FPA440 не прочитано (store.uputronics.com 07.11.2026 — 429, знімок 2026-11-07-w2-src1-manual.json web:uputronics-hab-fpa440), тож MPN перемички SMA M-F або кронштейна біля P2 (build/06 §2.3, §7.1) не обрано. J417 — вхід профільної L-band антени чи LNA A419 (SAWbird+ GOES 100792 або активний патч): стать роз’єму записати на прибутті (build/06 §2.4).",
    "refs": [
     "J416",
     "J417"
@@ -5589,7 +5677,7 @@
    "id": "J-EXISTING-HELIX",
    "mount": "existing",
    "note": "SMA of the existing S-band helix feed.",
-   "interface_open": "SMA наявного опромінювача S-band; кабель W422 обрано, кріплення опромінювача й кабелю — антенний пакет (build/06).",
+   "interface_open": "SMA-гніздо живлення саморобної спіралі на диску 18 см (build/06 §2.5, §3.2) у build/06 не має MPN; відповідна частина — SMA-вилка W422 (Cinch 415-0029-006, 152.4 мм, запис W-RG316-SMA-MM-0152). Кріплення гнізда на диску й кабелю до вузла pod (креслення P-01/P-02) — антенний і механічний пакети; посадка й герметизація pod — ворота E4-04 (OPEN).",
    "refs": [
     "J422"
    ]
@@ -5648,6 +5736,20 @@
   {
    "id": "W-HF-CM-CHOKE",
    "mount": "harness",
+   "manufacturer": "Amphenol RF",
+   "mpn": "135101-01-M1.00",
+   "sku": {
+    "digikey": "ACX2410-ND"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Molex",
+     "mpn": "0732305316",
+     "sku": {
+      "digikey": "900-0732305316-ND"
+     }
+    }
+   ],
    "match": "FT240-77",
    "extras": [
     {
@@ -5669,8 +5771,7 @@
      "qty_per_ref": 1
     }
    ],
-   "tbd": "Довжина RG316 (9-11 витків), SMA-вилки й кронштейн не задані як MPN (рядок 20 10-bom — «модель»).",
-   "note": "Збірка за кресленням проєкту (build-to-print): RG316 на осердях FT-240-77 і #31; MPN збірки немає.",
+   "note": "Збірка за кресленням проєкту (build-to-print, W2 SRC-1): готова збірка RG-316 SMA-вилка/SMA-вилка 1.0 м, намотана 11 витками на осердя FT-240-77 (Fair-Rite 5977003801), муфта #31 (2631102002) — на кабелі; вхід — SMA-гніздо J405 зсередини панелі, вихід — вхід ANT bias-tee Boni A406 (роз’єм ANT отриманого вузла звірити, примітка E4 A406). Довжина (знімок 2026-11-07-w2-src1-manual.json web:fair-rite-5977003801 і web:fair-rite-2631102002; RG-316 ⌀2.5 мм — загальний RG-316, знімок READS-RF web:telegaertner-rg316-l01000c0002, оболонку кабелю Amphenol не прочитано): виток по осі кабелю = 2·((A − B)/2 + C) + π·d; за найбільшими розмірами осердя A 62.3, B 34.7, C 13.2 мм — 2·(13.8 + 13.2) + π·2.5 = 61.9 мм, 11 витків — 680 мм (за номіналом 58.7 і 646 мм); муфта #31 — до 29.4 мм кабелю; лишається ≤290 мм на обидва виводи разом із корпусами вилок (довжину вилок і точки відліку довжини збірки креслення Amphenol дає, але воно не прочиталось — 403). 11 витків по 2.5 мм займають 27.5 мм внутрішнього кола осердя (π·(34.7 − 2.5) = 101 мм) — один шар. Якщо траса J405 → осердя → A406 (кронштейн і місце осердя — механічний пакет) з вилками довша за 290 мм — збірка 135101-01-M2.00 тієї самої серії (DigiKey DE 07.11.2026: EUR 31.50, склад не показано; M1.50 на сторінці немає). Чи проходить SMA-вилка крізь муфту #31 (отвір ≥12.55 мм) — звірити на отриманій збірці.",
    "refs": [
     "W408"
    ]
@@ -5780,7 +5881,7 @@
    "manufacturer": "Lindy",
    "mpn": "36700",
    "single_source": "Cable named in 10-bom row 91",
-   "interface_open": "Кабель з оцінки v2, сторінку продавця не перечитано (06.11.2026 лише заголовок лістингу в пошуку: «Lindy 36700 USB Extension Cable, 0.2m, Anthra Line, USB A 2.0 male / USB A 2.0 female», huss-licht-ton.de; сама сторінка відповіла 403). VBUS_RTLA/VBUS_RTLB надходять від ключів E5, а не з порту Q6A (для J541 провід контакту 1 вилки J5 вилучено): як VBUS виводиться з кабелю на плату — не задано.",
+   "interface_open": "Прочитано 07.11.2026 (lindy.eu, знімок 2026-11-07-w2-src1-manual.json web:lindy-36700): 36700 — подовжувач USB 2.0 A-вилка → A-гніздо 0.2 м, живлення 26 AWG, дані 28 AWG, обплетення Al-Mg 43 %, оболонка ⌀4.4 мм; ціни й складу сторінка не показує (наявність неясна). Відкрито: VBUS_RTLA/VBUS_RTLB надходять від ключів E5, а не з порту (для J541 провід контакту 1 вилки J5 вилучено) — як провідник VBUS кабелю розрізають і під’єднують S20/S21 до A-гнізда, не задано (власник E5 і пакет складання); фіксація A-гнізд біля RTL-A/RTL-B — механічний пакет.",
    "extras": [
     {
      "item": "ferrite on the RTL-B cable (if A/B noise test needs it)",
@@ -5801,6 +5902,18 @@
   {
    "id": "W-HFP-MICROUSB",
    "mount": "harness",
+   "manufacturer": "Tensility",
+   "mpn": "10-02333",
+   "sku": {
+    "digikey": "839-10-02333-ND"
+   },
+   "alternates": [
+    {
+     "manufacturer": "Tensility",
+     "mpn": "10-02351",
+     "note": "та сама конструкція білого кольору (дріт 30-00099, ⌀3.6 мм); DigiKey DE 07.11.2026, пошук: склад 311, EUR 6.16 @1 (знімок web:tensility-10-02351-drawing)"
+    }
+   ],
    "extras": [
     {
      "item": "common-mode sleeves on the HF+ cable",
@@ -5812,7 +5925,8 @@
      "qty_per_ref": 2
     }
    ],
-   "tbd": "MPN кабелю micro-USB для HF+ не обрано (рядок 19 10-bom називає лише ферити).",
+   "note": "Пігтейл micro-B зі складського кабелю (build-to-print, W2 SRC-1): у Tensility 10-02333 (USB 2.0 A-вилка → micro-B-вилка, 1.0 м, дріт 30-00088: пара + 2 жили 28 AWG, екран, ⌀3.6 мм, PVC 80 °C) відрізати вилку A на довжині траси; дві муфти Fair-Rite 2631480002 (отвір 4.95 +0.25 мм, довжина 25.4 мм) надіти з відрізаного кінця на повний кабель (3.6 < 4.95 мм). Кінці за кресленням: червоний (micro-B 1) — VBUS_HFP (S22), білий (2) — D−, зелений (3) — D+, чорний (5) — GND, дренаж і екран — екран; контакт 4 (ID) у кабелі не розведено, як у E5 J544 (знімок 2026-11-07-w2-src1-manual.json web:tensility-10-02333-drawing). VBUS 28 AWG при межі U503 0.989 A: за таблицею ESCC 3901/001 (SOURCES ESCC-3901-001) 28 AWG — 1.5 A поодинці, у пучку з 4 — 1.5·25/28 = 1.34 A (оцінка для провідника ESCC, не кабелю Tensility); падіння напруги на пігтейлі перевіряється за виміряним струмом HF+ (стенд, ворота OPEN).",
+   "interface_open": "Кабель обрано (Tensility 10-02333 з відрізаною вилкою A); відкрито: довжина пігтейла й місце муфт на трасі крізь SL2, розвантаження натягу micro-B біля HF+ (механічний пакет) і з’єднання вільних кінців із S22 і C-HFP (пайка, ізоляція — build/16).",
    "refs": [
     "J544"
    ]
@@ -5943,6 +6057,33 @@
    ]
   },
   {
+   "id": "J-POD-PWR-PANEL",
+   "mount": "panel",
+   "manufacturer": "binder",
+   "mpn": "76 6618 1111 00003-0200",
+   "sku": {
+    "web": "binder-76-6618-1111-00003-0200"
+   },
+   "match": "M8",
+   "single_source": "Панельна розетка M8 A-код 3 конт. з прочитаним даташитом binder (07.11.2026): інший корпус, ніж GX16-4 J504 і GX12 J505, тож кабель IMU чи LAB BUS у неї не входить (build/15 «Ключування панельних роз'ємів J504/J505/J551 (W2 GR-1)»); іншої прочитаної деталі цього класу немає.",
+   "extras": [
+    {
+     "item": "вилка на кабелі W425 (польовий монтаж, гвинтові клеми 0.14–0.50 мм², кабель ⌀3.5–5.0 мм)",
+     "manufacturer": "binder",
+     "mpn": "99 3379 100 03",
+     "sku": {
+      "web": "binder-99-3379-100-03"
+     },
+     "qty_per_ref": 1
+    }
+   ],
+   "note": "binder 76 6618 1111 00003-0200 (alt. 09 3418 86 03): розетка M8 серії 718, A-код, IP67/IP69K, −40…+85 °C, виводи 0.2 м AWG 24 (1 коричневий, 3 синій, 4 чорний — чорний не GND), 4.0 A, 60 V DC; вилка 99 3379 100 03 (серія 768): A-код, IP67, 4.0 A, кабель ⌀3.5–5.0 мм — кабель Tensility 10-03676 (⌀4.2 мм, пара 26 AWG) у цей діапазон входить. Для BIAS_SB_LNA (5 V, ≤0.192 A за U221) номіналу досить. Склад і ціну сторінки binder не показують; пошук DigiKey DE за кодами розетки й вилки нічого не дав (07.11.2026) — постачальник TBD (SRC-1).",
+   "interface_open": "Розетку J551 і вилку W425 обрано (binder M8 A-код, контакти 1/3/4: 1 — BIAS_SB_LNA, 3 — GND, 4 — вільний); виріз — з даташиту (M10×0.75: отвір 10.1 мм, лиски 9.1 мм, стінка 2.0–6.5 мм, 1 N·m); відкриті: місце на стінці (грань — MECH-07, моделює MECH-3), бік монтажу (з креслення: вставляється зсередини, гайка — ззовні; підтвердити з товщиною стінки, MECH-2/3), довжина виводів 0.2 м проти траси S36 — TBD.",
+   "refs": [
+    "J551"
+   ]
+  },
+  {
    "id": "W-IMU-CABLE",
    "mount": "harness",
    "manufacturer": "HELU",
@@ -5958,7 +6099,7 @@
    ],
    "source": "build/10-bom.csv №80-81 (TME, not checked; not re-read 24.10.2026)",
    "note": "2 m of cable for the IMU pack.",
-   "interface_open": "Кабель HELU і ввід LAPP — з оцінки v2, сторінки не перечитано; заробка на боці IMU-пакета й екранування 360° — механічний пакет.",
+   "interface_open": "Прочитано 07.11.2026: HELUKABEL 49655 — 4 × 0.14 мм² (≈26 AWG), ⌀4.7 мм, обплетення з лудженої міді ≈85 %, PUR, −40…+90 °C нерухомо (каталог HELUCHAIN, знімок 2026-11-07-w2-src1-manual.json web:helukabel-heluchain-49655); LAPP SKINTOP MS-SC-M 12×1.5 (53112610) — затискання 3.5–7 мм, ≥1.0 мм над обплетенням, IP68, контакт екрана (дані LAPP, web:lapp-db53112610): кабель уміщується у ввід. Відкрито: отвір M12×1.5 і контргайка (серед частин вводу її немає) у стінці Hammond 1550Z101, заробка екрана 360° і кінці на платі носія IMU — механічний пакет; кінець у корпусі SR-RX — GX16 J504 (окремий запис).",
    "refs": [
     "J550"
    ]
@@ -6214,11 +6355,16 @@
   },
   {
    "id": "AI-JST-PH-TOOL",
-   "item": "ручний обтискач для JST SPH-002T-P0.5S",
+   "item": "ручний обтискач JST WC-240 для SPH-002T-P0.5S",
    "qty": 1,
    "spares": 0,
    "for": "build/16 §1, ЗБ-04",
-   "tbd": "каталог ePH називає лише аплікатор APLMK SPH002-05S / машину AP-K2N; ручний інструмент не обрано"
+   "manufacturer": "JST",
+   "mpn": "WC-240",
+   "sku": {
+    "digikey": "455-1128-ND"
+   },
+   "note": "інструмент виробника клеми (build/15 «Провід, стрічка й інструмент (W2 SRC-1)»): секції 30-28, 26 і 24 AWG охоплюють 26 і 24 AWG PH build/16; зачистка 2.2 мм; тяга не менше 19.6 N (26 AWG) і 29.4 N (24 AWG) — критерій ЗБ-04; калібрування в специфікації — на дроті UL1007, на PTFE обтиск перевіряють тим самим тестом тяги (знімок web:jst-wc-240-spec)"
   },
   {
    "id": "AI-PEM-PRESS",
@@ -6226,31 +6372,69 @@
    "qty": 1,
    "spares": 0,
    "for": "AI-PEM-F-M3-1, AI-PEM-SO-M3-3ZI (build/21 E2)",
-   "tbd": "інструмент або послуга майстерні не обрані"
+   "tbd": "рішення (build/15 «Провід, стрічка й інструмент (W2 SRC-1)»): F-M3-1 і SO-M3-3ZI запресовує майстерня, що виготовляє пластину M-07 (прес PEMSERTER або інший з паралельними пуансоном і матрицею), — послуга без MPN; власний ручний прес не обрано, бо зусилля встановлення й оснастку PEM 07.11.2026 не прочитано (pemnet.com: бюлетень F і сторінки product finder за WAF-викликом, знімок 2026-11-07-w2-src1-manual.json web:pem-type-f-installation)"
   },
   {
    "id": "AI-BENCH-LEAD",
-   "item": "стендовий провід: розетка Mini-Fit Jr. 5557 на 2 конт. (0039012020, DigiKey WM3700-ND) з клемами 0039000060, 18 AWG ≤0.5 м, тримач запобіжника 7.5 A у розриві",
+   "item": "стендовий провід: тримач запобіжника MINI у розриві (Littelfuse 0FHM0003ZXJS, виводи 18 AWG), розетка Mini-Fit Jr. 5557 на 2 конт. (0039012020) з клемами 0039000060, провід 18 AWG Alpha Wire 5857 ≤0.5 м",
    "qty": 1,
    "spares": 0,
    "for": "вхідний роз’єм S05 на PWR (build/19 §4, ЗБ-02)",
-   "tbd": "код тримача запобіжника 7.5 A не прочитано; розетку 0039012020 прочитано на DigiKey DE 07.11.2026 (https://www.digikey.de/en/products/detail/molex/0039012020/61315, знімок digikey:WM3700-ND)"
+   "manufacturer": "Littelfuse",
+   "mpn": "0FHM0003ZXJS",
+   "sku": {
+    "digikey": "5346-0FHM0003ZXJS-ND"
+   },
+   "note": "тримач 20 A / 58 V ≥ 7.5 A запобіжника (DigiKey DE 07.11.2026); довжину виводів і IP тримача не прочитано (littelfuse.com 403); розетка й клеми — родина MFJ (harness_families), розетку 0039012020 прочитано на DigiKey DE 07.11.2026 (знімок digikey:WM3700-ND); запобіжник — AI-BENCH-FUSE"
+  },
+  {
+   "id": "AI-BENCH-FUSE",
+   "item": "запобіжник MINI 7.5 A для стендового проводу (той самий, що F101)",
+   "qty": 1,
+   "spares": 1,
+   "for": "AI-BENCH-LEAD (build/19 §4)",
+   "manufacturer": "Littelfuse",
+   "mpn": "029707.5WXNV",
+   "sku": {
+    "lcsc": "C178942"
+   }
+  },
+  {
+   "id": "AI-USB2-J512",
+   "item": "кабель USB 2.0 Tensility 10-02333 (A-вилка → micro-B, 1.0 м) для C-HUB і C-TOUCH: вилка A — у Q6A J2, другий кінець відрізано, провідник VBUS (червоний) відрізано з обох кінців",
+   "qty": 2,
+   "spares": 0,
+   "for": "Q6A J2 (J512): P3 → CH334F JP5 (C-HUB) і P2 → сенсорний контролер Wisecoco (C-TOUCH); E5 J512 «No VBUS conductor in either cable»",
+   "manufacturer": "Tensility",
+   "mpn": "10-02333",
+   "sku": {
+    "digikey": "839-10-02333-ND"
+   },
+   "note": "дріт 30-00088 (пара + 2 жили 28 AWG, екран); закінчення на JP5 і роз’єм сенсорного порту Wisecoco не задано (J512, interface_open); відрізані половини з micro-B — запас для пігтейла J544"
   },
   {
    "id": "AI-WIRE-PTFE",
-   "item": "монтажний провід PTFE, луджена мідь, ≥200 °C — 18, 20, 24, 26, 28 AWG за кольорами build/16",
+   "item": "монтажний провід PTFE, посріблена мідь, −60…+200 °C — 18, 20, 24, 26 AWG за кольорами build/16, котушки 100 ft (30.5 м)",
    "qty": 1,
    "spares": 0,
-   "for": "усі джгути build/16 (кількість жил — підсумок build/16; довжини — TBD з CAD)",
-   "tbd": "тип і MPN дроту не обрано (build/16 §1 «Ізоляція»)"
+   "for": "усі джгути build/16 (кількість жил і артикул за AWG і кольором — підсумок build/16; довжини — модель/CAD)",
+   "manufacturer": "Alpha Wire",
+   "mpn": "5857 (18 AWG), 5856 (20 AWG), 2844/7 (24 AWG), 5853 (26 AWG)",
+   "source": "Alpha Wire customer specifications 5857, 5856, 2844/7 і 5853 (https://www.alphawire.com/disteAPI/SpecPDF/DownloadProductSpecPdf, read 07.11.2026) і сторінки DigiKey DE 5857 BK005, 5856 BK005, 2844/7 BK005, 5853 BK005 (design/parts/snapshots/2026-11-07-w2-src1-manual.json)",
+   "note": "відхилення від «луджена мідь» (build/15 «Провід, стрічка й інструмент (W2 SRC-1)»): прочитані серії PTFE Alpha Wire — лише посріблена мідь. Серія за AWG — найтонша, чий ⌀ ізоляції (номінал ± допуск) лежить у межах клем усіх кінців цього перерізу (tools/assembly_data.py WIRE): 2843/7 (type ET, ⌀0.79 ±0.05 мм) нижче мінімуму PH ⌀0.8, тому 26 AWG — 5853 (type E); type ET на 20 і 18 AWG немає. Кольорів «рожевий» і «блакитний» у серіях немає — білий, розрізнення за маркером (build/18)"
   },
   {
    "id": "AI-IDC-RIBBON-40",
-   "item": "плоска стрічка 40 жил, крок 1.27 мм",
-   "qty": 1,
+   "item": "плоска стрічка 3M 3365/40: 40 жил 28 AWG (7/36, луджена мідь), крок 1.27 мм, PVC, фут",
+   "qty": 2,
    "spares": 0,
-   "for": "S01 Q6A J20 → CTRL ≤200 мм (build/16 S01)",
-   "tbd": "MPN стрічки не обрано"
+   "for": "S01 Q6A J20 → CTRL ≤200 мм (build/16 S01; модель — 102 мм): 2 фути (610 мм) — одна стрічка й запас на повторне обтискання",
+   "manufacturer": "3M",
+   "mpn": "3365/40 300",
+   "sku": {
+    "digikey": "19-3365/40300-DS-ND"
+   },
+   "note": "DigiKey DE продає з котушки 300 ft на фути (склад 533 ft, 07.11.2026); PVC −20…+105 °C — виняток із PTFE ≥200 °C build/16 §1 для стрічки IDC (build/15 «Провід, стрічка й інструмент (W2 SRC-1)»); креслення гнізда XDFH-0258-2*20P не прочитано — звірити стрічку 1.27 мм з ним"
   },
   {
    "id": "AI-EDGE-TRIM",

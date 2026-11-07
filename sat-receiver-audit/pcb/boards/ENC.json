@@ -79,6 +79,7 @@
       "pins": {"1": "GND", "2": "ENC_A", "3": "ENC_B", "4": "ENC_SW"},
       "pins_source": "build/16-dzhgut-rozyemy.csv:60 and :62 (X37S1-ENCM / X38S1-ENCV: PH 4, pins GND, A, B, PRESS; synthesized, not a graph ref)",
       "replaced_by": "GR-3 ENC-side header ref (graph), then PCB-SB1",
+      "pending": "header ref pending GR-3",
       "why_placeholder": "No JST PH housing fits beside the PEC11R on the 24 x 24 outline: the S4B-PH-K side-entry body is 7.6 mm deep and the B4B-PH-K vertical courtyard 5.5 mm wide, while the strip between the left edge and the PEC11R courtyard is 4.5 mm (encoder at 90 deg) and a vertical PH is 8 mm tall against the 6.5 mm envelope (tools/assembly_data.py:120-121). The pilot keeps a 2.0 mm 4-pad land in the contract edge zone left [6, 18]; the header choice stays with GR-3/PCB-SB1/MECH-4.",
       "anchor": {"at": [2.25, 9.0], "align": {"pad": "1"}, "rotation": 180, "side": "F"}
     }

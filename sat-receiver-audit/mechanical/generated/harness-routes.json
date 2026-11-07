@@ -9,12 +9,16 @@
       "S01",
       "S25"
     ],
-    "via_segments_mm": 329,
+    "via_segments_mm": 322,
     "via_segments_provisional": true,
     "decision": "PPS + UART6 + GND branch off the S01 ribbon at the Q6A end and run directly to the LC76G in the rear layer (harness only, E3 nets unchanged; build/15 W2 MECH-1)",
     "branch": "PPS",
     "branch_mm": 196,
     "branch_provisional": true,
+    "branch_provisional_ends": [
+      "J20 pin-1 orientation not read (Radxa Q6A header drawing, fetch-only): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch",
+      "P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge; P1 at the envelope edge towards the Q6A shortens the branch by up to half the envelope width (31.8 mm)"
+    ],
     "value_mm": 196
   },
   "segments": {
@@ -55,7 +59,7 @@
       "path_mm": 66.0,
       "bends": 3,
       "bundle_od_mm": 2.54,
-      "wires": 29,
+      "wires": 27,
       "bend_allowance_mm": 6.0,
       "service_loops_mm": 30.0,
       "length_mm": 102,
@@ -1326,11 +1330,11 @@
       ],
       "path_mm": 159.5,
       "bends": 8,
-      "bundle_od_mm": 5.85,
+      "bundle_od_mm": 4.74,
       "wires": 6,
-      "bend_allowance_mm": 36.8,
+      "bend_allowance_mm": 29.8,
       "service_loops_mm": 30.0,
-      "length_mm": 227,
+      "length_mm": 220,
       "through": [
         "SL2"
       ],
@@ -1718,11 +1722,11 @@
       ],
       "path_mm": 162.9,
       "bends": 6,
-      "bundle_od_mm": 4.78,
+      "bundle_od_mm": 3.87,
       "wires": 4,
-      "bend_allowance_mm": 22.5,
+      "bend_allowance_mm": 18.2,
       "service_loops_mm": 30.0,
-      "length_mm": 216,
+      "length_mm": 212,
       "through": [
         "SL3"
       ],
@@ -2000,7 +2004,7 @@
       "length_mm": null,
       "provisional": [],
       "status": "EXTERNAL: outside the enclosure; the length is set by the cable, not by the enclosure model",
-      "in_build16": false
+      "in_build16": true
     }
   },
   "branches": {
@@ -2043,9 +2047,10 @@
       "through": [],
       "crossings": [],
       "provisional": [
-        "P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge"
+        "J20 pin-1 orientation not read (Radxa Q6A header drawing, fetch-only): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch",
+        "P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge; P1 at the envelope edge towards the Q6A shortens the branch by up to half the envelope width (31.8 mm)"
       ],
-      "status": "OPEN (end provisional): P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge",
+      "status": "OPEN (end provisional): J20 pin-1 orientation not read (Radxa Q6A header drawing, fetch-only): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch; P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge; P1 at the envelope edge towards the Q6A shortens the branch by up to half the envelope width (31.8 mm)",
       "from_segment": "S01",
       "nets": [
         "E3_GNSS_PPS",

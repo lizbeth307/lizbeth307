@@ -473,7 +473,75 @@ class HeaderHeights(unittest.TestCase):
     def test_header_height_rule_is_open_not_fail(self):
         row = boards.header_height_rule(P)
         self.assertTrue(row["result"].startswith("OPEN"), row["result"])
-        self.assertIn("X04P1-RF MF_top 9.9", row["value_mm"]["above_limit"])
+        # a property, not a connector name: GR-3 re-types and renames the headers
+        self.assertTrue(any(" MF_top " in s for s in row["value_mm"]["above_limit"]), row["value_mm"]["above_limit"])
+
+    def test_every_family_is_judged_at_its_mated_height_where_read(self):
+        hh = P.parts["harness_headers"]
+        mf = hh["MF_top"]
+        self.assertEqual(mf["h_mated"], 17.27)
+        self.assertIn("2026-11-07", mf["h_mated_src"])
+        self.assertIn("http", mf["h_mated_src"])
+        self.assertIn("h_mated", hh["MF_ra"])
+        row = boards.header_height_rule(P)
+        for x in row["headers"]:
+            c = hh.get(f"{x['family']}_{x['orientation']}", {})
+            with self.subTest(connector=x["connector"]):
+                if "h_mated" in c:
+                    self.assertEqual((x["h_mm"], x["h_basis"]), (c["h_mated"], "mated"))
+                elif x["h_mm"] is not None:
+                    self.assertEqual(x["h_basis"], "body")
+                    self.assertIn("mated height not read", x["verdict"])
+                if x["family"] == "MF" and x["h_mm"] > x["max_height"]:
+                    self.assertEqual(x["alternative"]["key"], "MF_ra")      # the right-angle 43650 is judged as the alternative
+
+
+class ReviewFixes(unittest.TestCase):
+    """W2 MECH-1 review fixes: per-group sums, waypoint names, --update-zones safety."""
+
+    def test_per_group_areas_add_up_to_the_board_total(self):
+        res = boards.area_check(P)
+        if res.get("status") == "SKIPPED":
+            self.skipTest(res["reason"])
+        for bid, b in res["boards"].items():
+            with self.subTest(board=bid):
+                self.assertLessEqual(abs(sum(b["per_group_raw_mm2"].values()) - b["courtyard_raw_mm2"]), len(b["per_group_raw_mm2"]))
+                self.assertEqual(set(b["per_group_need_mm2"]), set(b["per_group_raw_mm2"]))
+
+    def test_a_missing_waypoint_name_is_open_not_a_crash(self):
+        import copy
+        from srrx_mech import routes
+        Q = copy.deepcopy(P)
+        Q.mech["harness_routes"]["segments"]["S25"]["via"][-1] = {"box": "no_such_envelope", "at": [1.0, 0.5, 0.5]}
+        Q.mech["harness_routes"]["branches"]["PPS"]["via"][1] = {"slot": "SL99"}
+        res = routes.evaluate(Q)
+        for r in (res["segments"]["S25"], res["branches"]["PPS"]):
+            self.assertTrue(r["status"].startswith("OPEN (end provisional)"), r["status"])
+            self.assertIn("not in the model", r["status"])
+            self.assertIsNone(r["length_mm"])
+        self.assertFalse(any(x["result"].startswith("FAIL") for x in routes.route_rules(Q, res)))
+
+    def test_update_zones_is_idempotent_and_never_drops_the_zones(self):
+        import shutil
+        import tempfile
+        src = HERE / "params" / "boards.json"
+        with tempfile.TemporaryDirectory() as d:
+            tmp = Path(d) / "boards.json"
+            shutil.copyfile(src, tmp)
+            boards.write_zones(P, tmp)
+            once = tmp.read_bytes()
+            boards.write_zones(P, tmp)
+            self.assertEqual(tmp.read_bytes(), once)
+            self.assertEqual(once, src.read_bytes(), "run python mechanical/build.py --update-zones")
+            bid = boards.ZONE_BOARDS[0]
+            mh = json.dumps(P.boards["boards"][bid]["max_height"])
+            text = once.decode("utf-8")
+            start = text.index(f'    "{bid}": {{\n')
+            broken = text[:start] + text[start:].replace(f'      "max_height": {mh},\n', f'      "max_height": {mh}0,\n', 1)
+            tmp.write_text(broken, encoding="utf-8", newline="\n")
+            with self.assertRaises(ValueError):
+                boards.write_zones(P, tmp)
+            self.assertEqual(tmp.read_text(encoding="utf-8"), broken)      # nothing written
 
 
 class PanelPortsW2Mech2(unittest.TestCase):

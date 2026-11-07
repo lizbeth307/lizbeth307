@@ -52,6 +52,7 @@ EXPLICIT_SEGMENTS = {
     "J301": ("S01",), "J302": ("S02",), "J503": ("S16",), "J521": ("S16",), "J505": ("S34",),
     "J504": ("S32", "S33"), "J550": ("S33",), "J501": ("S23",), "J541": ("S21",), "J543": ("S20",), "J544": ("S22",),
     "J101": ("S12",), "J103": ("S11",), "J522": ("S31",), "SW301": ("S29",), "SW501": ("S31",),
+    "J551": ("S36", "S41"),  # pod power panel receptacle: its own leads to PWR (S36), the W425 plug outside (S41)
 }
 CONNECTOR_FAMILY = {"J301": "IDC", "J302": "PH", "J503": "MF", "J502": "PH", "J521": "SOLDER", "J522": "SOLDER"}
 ANY_AWG = (28, 26, 24, 22, 20, 18)
@@ -567,13 +568,6 @@ def connector_parts(model, conn):
     header = db_item(model, fam, n, header_style(conn))
     if fam == "FAN3":
         return fam_d["housing"], header, "—", src
-    if fam == "MFJ":
-        read = fam_d.get("parts", {}).get(n)
-        if read:  # codes read on a distributor page (assembly_data SOURCES DIGIKEY-MFJ), not in harness_families (LCSC only)
-            return (f"{read['housing']}; серія 5557, {n} конт.", f"{read['header']}; серія 5566, вертикальна, 2×{n // 2}",
-                    fam_d["terminal"], "MOLEX-5556; MOLEX-5566; DIGIKEY-MFJ")
-        return (db_item(model, fam, n, "housing") + f"; серія 5557, {n} конт.", db_item(model, fam, n, "header") + f"; серія 5566/5569, 2×{n // 2}",
-                fam_d["terminal"], "MOLEX-5556; MOLEX-5566")
     terminal = db_item(model, fam, n, "terminal") if fam in CRIMP else "—"
     return db_item(model, fam, n, "housing"), header, terminal, src
 
@@ -795,16 +789,17 @@ BOND = {
              "+ зубчаста шайба (F26); кріплення RF-плати F07 — без зубчастої шайби, не бондинг",
 }
 HARNESS_FINDINGS = [
-    "Гілки LAB5 (CTRL, RF, хаб, IMU) захищені лише загальним F102 4 A; у зовнішньому кабелі IMU (HELU 4×0.14 мм²) окремої межі струму немає — "
-    "рекомендовано PTC/ключ на гілці IMU (власник E5).",
+    "Тонкі гілки LAB5 мають власні межі (build/15 «Межі струму тонких гілок (W2 GR-1)»): LC76G — U315 TPS2553DBVR-1 на CTRL (144–192 mA, S25), "
+    "вентилятор Noctua — PTC F301 (Itrip 1.50 A при 23 °C, S27), пак IMU — U553 TPS2553DBVR зі сталим струмом на PWR (265–339 mA, S32/S33); решта "
+    "гілок LAB5 (S02, S04, S13) — під загальним F102 4 A, і їхні проводи генератор розраховує на 4 A.",
     "J503: тривалий струм J21 2.5 A на одному контакті Micro-Fit (50 % від 5 A); межа захисту 4 A (F201) — 80 %; приймання — прогрів J503 у "
     "тесті Ж-04/Ж-11.",
     "KEY у S16 — 24 AWG замість 26–28 AWG STACK §5.8: найтонший переріз, сумісний з клемами Micro-Fit 20–24 AWG у J503 (примітка E5 J503 і build/15 "
     "«Живлення ≥2 A»); у S15 KEY приходить на плату лючка в роз'єм PH (сигнальний провід).",
     "Коло батареї (S05–S07, S10) — 18 AWG за приміткою E1 F101; клеми Micro-Fit 3.0 беруть лише 20–24 AWG, тому силові роз'єми цих "
     "сегментів на PWR — Mini-Fit Jr. (клема 0039000060, 18–24 AWG, 9.0 A; вилка 5566/5569) — відхилення від build/15 «Micro-Fit для "
-    "живлення», записане в build/15; коди розеток 5557 і вертикальних вилок 5566 на 2 і 4 контакти прочитано на DigiKey DE 07.11.2026 (0039012020/"
-    "0039012040, 0039288020/0039288040, DIGIKEY-MFJ), у harness_families бази їх немає, бо там лише записи LCSC; кілочки PCB і посадкове місце — хвиля 2 (W2-01).",
+    "живлення», записане в build/15; розетки 5557, вертикальні вилки 5566 на 2 і 4 контакти й клема — родина MFJ бази (harness_families, LCSC і "
+    "DigiKey DE, W2 SRC-1); посадкові місця — Connector_Molex 5566-02A/-04A без кілочків за відображенням бібліотеки KiCad (креслення Molex не прочитано) — звірити до розкладки PWR.",
     "F101 стоїть на носійній платі PACK_FUSE біля плюса паку (група E1 «Пак 4S1P», STACK D2 «біля батареї»), тож усі провідники кола батареї поза паком "
     "(S05–S07, S10) — нижче F101 і розраховані на 7.5 A; провід BT104.+ → F101.1 захищає лише BMS (DOCP 40±10 A) — найкоротший, 18 AWG.",
     "18 AWG у клемах VIN± модуля Adafruit 5832 (S06): сумісність клемника з 18 AWG не перевірено (документ Adafruit не прочитано) — "
@@ -815,20 +810,24 @@ HARNESS_FINDINGS = [
     "U506 (HDMI pin 18) і U505 (VBUS T7) — у прохідних вставках кабелів (домени pcb/prepare.py HDMI_INSERT і T7_INSERT); розкладка вставок — хвиля 2.",
     "IMU-пак містить деталі E5 (U552, D502, C519, C520) і E3 «External IMU» — носійна плата IMU_CARRIER у Hammond 1550Z101 (домен pcb/prepare.py, "
     "конверт у mechanical/params/imu_pack.json); розкладка — хвиля 2.",
-    "Ввід кабелю живлення S-band pod (BIAS_SB_LNA, W425) у корпус у графах не визначено — потрібен панельний роз'єм або гермоввід (E2/E4).",
     "Точка відводу VCC_3V3_MKEY на Q6A (U500) не визначена — S17 TBD до прозвонки Q6A (E5/E2).",
-    "Live 5 V/3.3 V пінів 40-pin хедера Q6A захищені лише бортовими колами Q6A; у стрічці IDC 28 AWG — лише малі навантаження (LC76G, логіка).",
+    "Стрічка IDC S01 не несе 5 V: контакти 2 і 4 J20 (VCC_5V_PERI) лишаються лише на Q6A, провідники 2 і 4 стрічки вирізано на обох розетках "
+    "(N-E3-01, build/21 E5); якщо цей крок пропустити, 5 V Q6A без межі струму опиниться в стрічці 28 AWG. 3.3 V (контакти 1/17) захищені лише "
+    "бортовими колами Q6A; у стрічці — лише логіка.",
     "Площа й край плат (модель механіки, fit-report «board_area»): з роз'ємами джгутів цього розділу §4 оцінка площі PWR перевищує контур, а сума "
     "ширин роз'ємів — його крайові зони; розкладка PWR і архітектура джгутів (менше роз'ємів на PWR або більша плата) — хвиля 2, до того ворота "
     "розміщення PCB лишаються OPEN.",
-    "Висота роз'ємів на CTRL і RF (обмеження 5.5 мм): PH — лише боковий вхід (4.8 мм, каталог ePH), зокрема роз'єм графа J302 (S5B-PH-K-S). "
-    "Прочитано 07.11.2026: вертикальна Micro-Fit 43650 — 9.90 мм над платою (каталог Molex MX01 F-119 з PS-43650 rev J), кутова 43650-0209 — "
-    "6.98 мм (сторінка деталі Molex, креслення SD-43650-004); креслення XDFH-0254-2*20P не читається (LCSC дає лише HTML), еталонний бокс 2×20 "
-    "Würth WR-BHD 61204021621 — 9.1 мм (mechanical/params/parts.json harness_headers). Тож X02P1-CTRL, X25P1-CTRL, X28P1-CTRL, X04P1-RF і бокс "
-    "X01I1-CTRL (S01) вищі за 5.5 мм, а кутова 43650 не вміщується і на лиці CTRL (найбільша зона 6.5 мм). Карта вільної висоти (boards.json "
-    "height_zones/rear_zones, fit-report «Зони висоти CTRL і RF»): на RF над донглами V4L вміщується 16.3 мм (вертикальна X04P1-RF підходить), "
-    "на тилі CTRL біля пластини — до 13.9 мм (X25P1-CTRL і X28P1-CTRL — вивідні з тилу); X02P1-CTRL (4 конт.) і бокс IDC не вміщуються в жодну "
-    "зону. Орієнтацію, бік плати або перенесення на PWR вирішує розкладка роз'ємів (правило R-HDR-HEIGHT — OPEN).",
+    "Висота роз'ємів на CTRL і RF (обмеження 5.5 мм) — за висотою з'єднаної пари: PH — лише боковий вхід (4.8 мм і з'єднаним, каталог ePH), "
+    "зокрема роз'єм графа J302 (S5B-PH-K-S). Прочитано 07.11.2026: вертикальна Micro-Fit 43650 — корпус 9.90 мм над платою (каталог Molex "
+    "MX01 F-119 з PS-43650 rev J), з'єднана пара — 17.27 мм (листи деталей Molex 436500316 і 436500320); кутова 43650 — 6.98 мм з'єднаною "
+    "(листи 436500900, 436500311, 0436500209), курт'ярд глибиною 10.91 мм (KiCad 10.0.7); креслення XDFH-0254-2*20P не читається (LCSC дає "
+    "лише HTML), еталонний бокс 2×20 Würth WR-BHD 61204021621 — корпус 9.1 мм, з розеткою — TBD (mechanical/params/parts.json harness_headers). "
+    "Тож вертикальні X02P1-CTRL, X28P1-CTRL, X04P1-RF і вертикальні Micro-Fit PWR (17.27 мм проти межі 9.0 і зони 10.5 мм) не "
+    "вміщуються: вертикальних Micro-Fit 43650 на платах немає, замість них кутова 43650 — на PWR у межі плати, X04P1-RF у зонах RF над V4L "
+    "(16.3 мм) або LNA (10.6 мм), X28P1-CTRL — вивідний з тилу CTRL біля пластини (до 13.9 мм; X25P1-CTRL з хвилі 2 немає: S25 без 5 V Q6A став PH, GR-1); X02P1-CTRL (4 конт., навіть "
+    "кутова: лице CTRL — 6.5 мм) і бокс IDC X01I1-CTRL (S01) не вміщуються в жодну зону. Карта вільної висоти — boards.json height_zones/rear_zones, "
+    "fit-report «Зони висоти CTRL і RF»; тип, бік плати або перенесення на PWR вирішує розкладка роз'ємів GR-3 (правило R-HDR-HEIGHT — OPEN; "
+    "build/15 «Висота роз'ємів CTRL і RF (W2 MECH-1)»).",
     "S25 + S01 ≤200 мм для PPS (STACK §5.2): LC76G у моделі — задня стінка ліворуч, CTRL — праворуч за колонкою HMI, тож бюджет навряд чи виконується — "
     "перевірити трасу в CAD або перенести LC76G (build/15 «Оболонка D15»); пігтейл P7 W407 100 мм також не дістає (≥113 мм по прямій).",
 ]
@@ -850,6 +849,21 @@ def render_connectors_csv(model, h):
 
 def spares(n):
     return max(math.ceil(n * SPARE_PCT / 100), SPARE_MIN)
+
+
+def wire_part(awg, colour, families):
+    """Orderable hook-up wire of a gauge and colour (assembly_data WIRE), or TBD with the reason: the insulation OD range
+    (nominal +/- tolerance) must fit every crimp terminal family the gauge ends in."""
+    if awg not in D.WIRE:
+        return f"TBD (немає в базі деталей: {awg} AWG немає серед серій AI-WIRE-PTFE)"
+    item, kind, od, tol = D.WIRE[awg]
+    for fam in sorted(families):
+        lo, hi = D.WIRE_INSULATION_RANGE.get(fam, (None, None))
+        if (lo is not None and od - tol < lo) or (hi is not None and od + tol > hi):
+            return f"TBD (немає в базі деталей: Alpha Wire {item} ⌀{od:.2f} ±{tol:.2f} мм поза межами ізоляції клеми {fam}, AI-WIRE-PTFE)"
+    code = D.WIRE_COLOUR_CODE.get(colour)
+    swap = "" if code else f"; кольору «{colour}» у серії немає — білий, розрізнення за маркером (build/18)"
+    return f"Alpha Wire {item} {code or 'WH'}{D.WIRE_PUTUP} ({kind}, ⌀{od:.2f} ±{tol:.2f} мм, котушка 100 ft){swap}"
 
 
 def rollup_rows(model, h):
@@ -878,13 +892,14 @@ def rollup_rows(model, h):
         tmpl = {"conn": {"family": fam, "pins": 2, "unit": "", "mate_of": ""}}
         terminal = connector_parts(model, tmpl["conn"])[2]
         add(fam, "", "клема", terminal, "кінці проводів на роз'ємах X цієї таблиці", n)
-    wires = defaultdict(int)
+    wires, wire_ends = defaultdict(int), defaultdict(set)
     for w in h.wires:
         if "IDC" in (w["family_from"], w["family_to"]) or "CABLE" in (w["family_from"], w["family_to"]) or "FAN3" in (w["family_from"], w["family_to"]):
             continue
         wires[(int(w["awg"]), w["colour"])] += 1
+        wire_ends[int(w["awg"])] |= {w["family_from"], w["family_to"]}
     for (awg, col), n in sorted(wires.items(), key=lambda kv: (-kv[0][0], kv[0][1])):
-        add("провід", "", f"{awg} AWG, {col}", "TBD (немає в базі деталей: тип дроту не обрано, assembly_items AI-WIRE-PTFE)", "кількість жил; довжина — TBD (CAD)", n)
+        add("провід", "", f"{awg} AWG, {col}", wire_part(awg, col, wire_ends[awg]), "кількість жил; довжина — TBD (CAD)", n)
     rows = []
     order = {"IDC": 0, "MFJ": 1, "MF": 2, "PH": 3, "FAN3": 4, "провід": 5}
     for (fam, pins, role, mpn, note), n in sorted(count.items(), key=lambda kv: (order.get(kv[0][0], 9), kv[0][1] == "", kv[0][1] or 0, kv[0][2])):

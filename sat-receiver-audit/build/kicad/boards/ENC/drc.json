@@ -20,7 +20,7 @@
             "x": 105.64,
             "y": 118.81
           },
-          "uuid": "b311cb18-3ab8-4792-995e-eb5a23ac8bea"
+          "uuid": "b7dd0071-d86b-4320-bb83-8e9e398cb0c4"
         },
         {
           "description": "PTH pad A [ENC_A] of ENC",
@@ -28,7 +28,7 @@
             "x": 109.5,
             "y": 119.5
           },
-          "uuid": "c66a507b-9ec6-4488-a20f-eb6940e081cb"
+          "uuid": "28c19f13-8abb-40e3-a9bb-468780c06352"
         }
       ],
       "severity": "warning",
@@ -43,7 +43,7 @@
             "x": 105.64,
             "y": 118.81
           },
-          "uuid": "b311cb18-3ab8-4792-995e-eb5a23ac8bea"
+          "uuid": "b7dd0071-d86b-4320-bb83-8e9e398cb0c4"
         },
         {
           "description": "PTH pad B [ENC_B] of ENC",
@@ -51,7 +51,7 @@
             "x": 114.5,
             "y": 119.5
           },
-          "uuid": "73564554-1e56-4c42-9219-b669d1401112"
+          "uuid": "b3e284d8-4c9f-46f1-a63f-46d82515a754"
         }
       ],
       "severity": "warning",
@@ -66,7 +66,7 @@
             "x": 105.64,
             "y": 118.81
           },
-          "uuid": "b311cb18-3ab8-4792-995e-eb5a23ac8bea"
+          "uuid": "b7dd0071-d86b-4320-bb83-8e9e398cb0c4"
         },
         {
           "description": "PTH pad C [GND] of ENC",
@@ -74,7 +74,7 @@
             "x": 112.0,
             "y": 119.5
           },
-          "uuid": "ca7be0d0-1a7b-44fd-89d7-18a24c842c81"
+          "uuid": "11ada888-ba66-4f91-91af-1a1698950652"
         }
       ],
       "severity": "warning",
@@ -89,7 +89,7 @@
             "x": 105.64,
             "y": 118.81
           },
-          "uuid": "b311cb18-3ab8-4792-995e-eb5a23ac8bea"
+          "uuid": "b7dd0071-d86b-4320-bb83-8e9e398cb0c4"
         },
         {
           "description": "PTH pad MP [<no net>] of ENC",
@@ -97,7 +97,7 @@
             "x": 106.3,
             "y": 112.0
           },
-          "uuid": "7c102533-4504-4a17-bd00-2cc82b975cfd"
+          "uuid": "791431d6-83bb-4f4e-adc7-551fa00b8785"
         }
       ],
       "severity": "warning",
@@ -112,7 +112,7 @@
             "x": 105.64,
             "y": 118.81
           },
-          "uuid": "b311cb18-3ab8-4792-995e-eb5a23ac8bea"
+          "uuid": "b7dd0071-d86b-4320-bb83-8e9e398cb0c4"
         },
         {
           "description": "PTH pad MP [<no net>] of ENC",
@@ -120,7 +120,7 @@
             "x": 117.7,
             "y": 112.0
           },
-          "uuid": "852433b6-477b-472d-a166-85bceaccd748"
+          "uuid": "3bba07e2-ac5a-4266-b08d-d414eab38c0e"
         }
       ],
       "severity": "warning",
@@ -135,15 +135,15 @@
             "x": 105.64,
             "y": 118.81
           },
-          "uuid": "b311cb18-3ab8-4792-995e-eb5a23ac8bea"
+          "uuid": "b7dd0071-d86b-4320-bb83-8e9e398cb0c4"
         },
         {
-          "description": "PTH pad S1 [<no net>] of ENC",
+          "description": "PTH pad S1 [ENC_SW] of ENC",
           "pos": {
             "x": 109.5,
             "y": 105.0
           },
-          "uuid": "a5a110cc-1388-41ae-90d2-da134d984409"
+          "uuid": "2debe70d-b622-4485-bcf1-cb8a4a22ca5d"
         }
       ],
       "severity": "warning",
@@ -158,15 +158,15 @@
             "x": 105.64,
             "y": 118.81
           },
-          "uuid": "b311cb18-3ab8-4792-995e-eb5a23ac8bea"
+          "uuid": "b7dd0071-d86b-4320-bb83-8e9e398cb0c4"
         },
         {
-          "description": "PTH pad S2 [<no net>] of ENC",
+          "description": "PTH pad S2 [GND] of ENC",
           "pos": {
             "x": 114.5,
             "y": 105.0
           },
-          "uuid": "3398e556-2e9e-4701-af58-52d13c74fc26"
+          "uuid": "8ecbc223-7b57-4f7f-8eac-e8a1a46cbde8"
         }
       ],
       "severity": "warning",

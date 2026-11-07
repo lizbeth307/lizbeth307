@@ -42,23 +42,23 @@
   ],
   "exit_code": 0,
   "log_tail": [
-    "2026-11-07 16:32:15.578 INFO   Freerouting CLI v2.5.0 (build-date: 2026-10-05)",
-    "2026-11-07 16:32:15.704 INFO   Hardware: 4 CPU cores, 3996 MB RAM",
-    "2026-11-07 16:32:16.131 INFO   [137A3C\\422FA1] Loading board file 'ENC.dsn'...",
-    "2026-11-07 16:32:16.250 INFO   [137A3C\\422FA1] Job '137A3C\\422FA1' started at 2026-11-07T16:32:16.250301274Z.",
-    "2026-11-07 16:32:16.337 INFO   [137A3C\\422FA1] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=1.",
-    "2026-11-07 16:32:16.386 INFO   [137A3C\\422FA1] Fanout stage is enabled but skipped because the board has no SMD pins.",
-    "2026-11-07 16:32:16.415 INFO   [137A3C\\422FA1] Auto-routing stage started on board '7bab14252055ad86f2f06226a7056f2a' with baseline score 222.22 for 2 unrouted items.",
-    "2026-11-07 16:32:16.706 INFO   [137A3C\\422FA1] Auto-routing pass #1 on board '7bab14252055ad86f2f06226a7056f2a' was completed in 0.25 seconds with score 1000.00 (0 unrouted and 0 violations).",
-    "2026-11-07 16:32:16.721 INFO   [137A3C\\422FA1] Auto-routing pass #2 on board '8a684724bae27eb0c56838ceede52601' was completed in 0.00 seconds with score 1000.00 (0 unrouted and 0 violations).",
-    "2026-11-07 16:32:16.748 INFO   [137A3C\\422FA1] Auto-routing stage completed: started with 2 unrouted nets, completed in 0.40 seconds, final score: 1000.00 (0 unrouted and 0 violations), using 0.00 total CPU seconds, 0.00 GB total allocated, and 0.0 MB peak heap usage.",
-    "2026-11-07 16:32:16.757 INFO   [137A3C\\422FA1] Skipping optimization stage: the board has no vias to eliminate and initial optimizer score (1000.00) is already >= 950.00.",
-    "2026-11-07 16:32:16.763 INFO   [137A3C\\422FA1] Job '137A3C\\422FA1' finished with state: COMPLETED (elapsed: 0.51 seconds, finished at UTC: 2026-11-07T16:32:16.762645355Z).",
-    "2026-11-07 16:32:16.763 INFO   Saving output file '/tmp/sr-rx-ENC-lbyyh5bu/ENC.ses' (SES)...",
-    "2026-11-07 16:32:16.766 INFO   Successfully saved output file '/tmp/sr-rx-ENC-lbyyh5bu/ENC.ses' (1304 bytes)."
+    "2026-11-07 17:40:18.858 INFO   Freerouting CLI v2.5.0 (build-date: 2026-10-05)",
+    "2026-11-07 17:40:18.928 INFO   Hardware: 4 CPU cores, 3996 MB RAM",
+    "2026-11-07 17:40:19.280 INFO   [650313\\21A620] Loading board file 'ENC.dsn'...",
+    "2026-11-07 17:40:19.339 INFO   [650313\\21A620] Job '650313\\21A620' started at 2026-11-07T17:40:19.338913183Z.",
+    "2026-11-07 17:40:19.377 INFO   [650313\\21A620] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=1.",
+    "2026-11-07 17:40:19.396 INFO   [650313\\21A620] Fanout stage is enabled but skipped because the board has no SMD pins.",
+    "2026-11-07 17:40:19.408 INFO   [650313\\21A620] Auto-routing stage started on board '2b6cacb28bcf0e7fef0b0f5c093ea223' with baseline score 133.33 for 4 unrouted items.",
+    "2026-11-07 17:40:19.655 INFO   [650313\\21A620] Auto-routing pass #1 on board '2b6cacb28bcf0e7fef0b0f5c093ea223' was completed in 0.21 seconds with score 1000.00 (0 unrouted and 0 violations).",
+    "2026-11-07 17:40:19.667 INFO   [650313\\21A620] Auto-routing pass #2 on board '2dbe9347c30db4dff9854e3b1bd80412' was completed in 0.00 seconds with score 1000.00 (0 unrouted and 0 violations).",
+    "2026-11-07 17:40:19.676 INFO   [650313\\21A620] Auto-routing stage completed: started with 4 unrouted nets, completed in 0.30 seconds, final score: 1000.00 (0 unrouted and 0 violations), using 0.00 total CPU seconds, 0.00 GB total allocated, and 0.0 MB peak heap usage.",
+    "2026-11-07 17:40:19.680 INFO   [650313\\21A620] Skipping optimization stage: the board has no vias to eliminate and initial optimizer score (1000.00) is already >= 950.00.",
+    "2026-11-07 17:40:19.685 INFO   [650313\\21A620] Job '650313\\21A620' finished with state: COMPLETED (elapsed: 0.35 seconds, finished at UTC: 2026-11-07T17:40:19.685061562Z).",
+    "2026-11-07 17:40:19.732 INFO   Saving output file '/tmp/sr-rx-ENC-mji0om3v/ENC.ses' (SES)...",
+    "2026-11-07 17:40:19.733 INFO   Successfully saved output file '/tmp/sr-rx-ENC-mji0om3v/ENC.ses' (1653 bytes)."
   ],
-  "dsn_sha256": "bdbb92270369c8ba03604a3e6c3e5c4aca927a4e0b429dc5bc9afe331d89a08c",
-  "ses_sha256": "1498bd9e1c85de64ce3f035eb8787256d9be9bffdb5d0d20b61912a15839b601",
+  "dsn_sha256": "da9b32fa8fb55e2239339fb5e9f890e2c5b86833083737908fbbf4146021109d",
+  "ses_sha256": "1552d120ba5649e7f4eb366d3157fa7260ab1e83eb4b05920ec5ea67c48348a0",
   "dsn_probe": {
     "resolution": "um 10",
     "wires_fix": 2,
@@ -89,7 +89,7 @@
     "--refill-zones",
     "--save-board"
   ],
-  "board_sha256": "7a122c3361d2a74b2fba5edd4fc4c532afef11475b27978db90c8ca11f046133",
+  "board_sha256": "7cc2d65fab8e4177e4bc4c6057276117f57f40158a3c6b4f7bdb18b2954026e0",
   "previews": [
     "build/kicad/boards/ENC/ENC-top.svg",
     "build/kicad/boards/ENC/ENC-bottom.svg"
@@ -110,8 +110,8 @@
   ],
   "kicad_version": "10.0.7",
   "github": {
-    "run_id": "42391679434",
-    "sha": "defa1de0dc4af17d0a2e395f54286447a31d63d6",
+    "run_id": "42397332210",
+    "sha": "0e959d5bf608b2250408657d29c5860678c7a3e0",
     "ref": "refs/heads/wip/w2-int"
   }
 }
