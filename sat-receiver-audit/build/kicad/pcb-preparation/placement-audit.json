@@ -1892,9 +1892,9 @@
     }
   ],
   "input_file": "pcb/generated/detector-core-input.json",
-  "input_sha256": "e1a59bf54071e082a0c9bcb4fd5d266b1bff4df2204c59c0ae49a6a5252f7ed8",
+  "input_sha256": "9aa6c3d4d924b6e5ac1fcdf51991ebe4fc8e7d4637ef1d1abb476468e07e21cc",
   "board_file": "build/kicad/pcb-preparation/detector-core-placement.kicad_pcb",
-  "board_sha256": "188e6967c29cae84421777599dd7ffe8c7f185760e9a9c892c9e8a44bf3c46de",
+  "board_sha256": "066df67c61485b99afbe9aadadf6c258f0dd56b503527853dbb7d410fcd4f044",
   "kicad_version": "10.0.7",
   "outline_candidate_mm": {
     "x": 125.0,
@@ -2501,7 +2501,7 @@
   "drc": {
     "exit_code": 5,
     "raw_file": "build/kicad/pcb-preparation/drc-raw.json",
-    "raw_sha256": "73ed00b69d1a71de0b4caaea83ac3e5f4378c1ee979d54cffaaa0ddb1cd4a2f6",
+    "raw_sha256": "0eb475fbfe7e73f499a21a08ba147a9703e4b29a678a04a9b8d39958bea6021c",
     "counts": {
       "unconnected_items": 140
     },

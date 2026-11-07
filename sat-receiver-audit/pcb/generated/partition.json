@@ -1,22 +1,22 @@
 {
   "summary": {
     "status": "PREPARATION_ONLY_NOT_FOR_FABRICATION",
-    "components": 794,
-    "schematic_contacts": 2438,
-    "connected_contacts": 2297,
-    "nets": 485,
+    "components": 782,
+    "schematic_contacts": 2403,
+    "connected_contacts": 2263,
+    "nets": 478,
     "categories": {
-      "bare_board_part": 691,
+      "bare_board_part": 680,
       "harness_assembly": 13,
       "integral_to_host_part": 2,
       "mechanical_or_remote_part": 11,
       "module_rework_part": 5,
-      "physical_interface_boundary": 34,
+      "physical_interface_boundary": 33,
       "purchased_module": 33,
       "purchased_module_internal_detail": 5
     },
     "board_candidates": {
-      "CTRL_HMI": 133,
+      "CTRL_HMI": 127,
       "DC_CORE": 71,
       "ENC": 2,
       "HATCH": 2,
@@ -29,54 +29,55 @@
       "RF_HMC": 51,
       "RF_INJECTOR": 34,
       "T7_INSERT": 9,
-      "USB_POWER": 38
+      "USB_POWER": 33
     },
-    "graph_assigned_footprints": 692,
-    "portable_graph_assignments": 692,
+    "graph_assigned_footprints": 681,
+    "portable_graph_assignments": 681,
     "bare_parts_without_footprint": 0,
     "pin_pad_mismatches": 0,
     "xml_connected_pin_audit": "PASS",
-    "xml_compared_connected_pins": 2297,
+    "xml_compared_connected_pins": 2263,
     "core_parts": 71,
     "core_connected_pins": 180,
     "core_boundary_nets": 8,
     "core_graph_assigned_footprints": 71,
     "core_proposed_footprints": 0,
-    "blocking_issue_records": 39,
+    "blocking_issue_records": 40,
     "blocking_issue_types": {
-      "interface_mounting_unresolved": 33,
-      "physical_interface_or_rework_unresolved": 6
+      "host_pads_unconnected": 2,
+      "interface_mounting_unresolved": 31,
+      "physical_interface_or_rework_unresolved": 7
     }
   },
   "provenance": {
     "inputs": [
       {
         "file": "design/E1.json",
-        "sha256": "79e10a679741ad40010e414576c306f14deecd602b48636dbbe06c1552de555d"
+        "sha256": "a5f312ac5162252adbad513e9fddabc8e7c862f5dbf364c853497c683f67083c"
       },
       {
         "file": "design/E2.json",
-        "sha256": "cc0580f8c8f896e6d1cca1e9364f64d69cd1d461d94593b33a6668f34f7a4935"
+        "sha256": "7b41789d38c86a541d1a40bb7ffb348047ba1008a1b9ef75120c4db05084d461"
       },
       {
         "file": "design/E3.json",
-        "sha256": "f7a0ddd69f6b9f9979071528612ebd9173f0e21ded7bf426de412d298971cdbe"
+        "sha256": "b3bd4067f6f51fe2b5fe28bcc06d386319c239ec0af0392f1c2d4f61a9aa2132"
       },
       {
         "file": "design/E4.json",
-        "sha256": "8012086f2be1a33677c53661e01d8ca8f657fd3f10964c115b4893336863dddc"
+        "sha256": "af71c452f6835c0d7ad043eaee21cfb17eb525a8ea39aa8aa9b4efa892afc29b"
       },
       {
         "file": "design/E5.json",
-        "sha256": "48c61fa1a77ab35e5d930f377ac2ef473abdd8f6e02da8417e352f168ce562e5"
+        "sha256": "73e901d907a54e8adb05a6750f6f5ee47d9ad22f2b5c4b26575277175e545e79"
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "d61e32c4ebae8eda9625abd27e778b18c5976a234a84fa25ed0750a57630dff4"
+        "sha256": "8af43b7c5d4760132dd4cbc498afa21b8d6f93de7a15f14280436786f5ba92ee"
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "1539c9147c2efbef3c78e66bc46680cd0731c7af13158b241ca7b047814adf53"
+        "sha256": "b0ea96c62955b4195044b823fd9472f65c55cc062cc9a135e9e739235b77192d"
       }
     ],
     "source_documents": [
@@ -87,7 +88,6 @@
       "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
       "https://assets.nexperia.com/documents/data-sheet/PMEG4030ER.pdf",
       "https://bonito.net/en/boni-whip-2/",
-      "https://datasheet.lcsc.com/datasheet/pdf/a24fb2ca04c8aa40d8c57ff2ffdfaed8.pdf?productCode=C208467",
       "https://datasheets.raspberrypi.com/pico/Pico-R3-A4-Pinout.pdf",
       "https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
       "https://dl.radxa.com/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
@@ -124,7 +124,6 @@
       "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
       "https://www.aosmd.com/sites/default/files/res/datasheets/AO3400A.pdf",
       "https://www.aosmd.com/sites/default/files/res/datasheets/AO3407A.pdf",
-      "https://www.binder-connector.com/sg/products/automation-technology/m8/female-panel-mount-connector-front-mounting-with-single-wires",
       "https://www.bourns.com/docs/product-datasheets/srr1260.pdf",
       "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
       "https://www.coilcraft.com/en-us/products/power/shielded-inductors/molded-inductor/xal/xal60xx/",
@@ -185,7 +184,7 @@
         "interface_open",
         "interface_resolved"
       ],
-      "projection_sha256": "d11d85d5976e023d7caf543ccde17a03d4dd8597e68832051674e5176141dc13"
+      "projection_sha256": "3326c66905e7c2999f33370333da56d11fd958cc2fcbf05186ce621fcaf76512"
     }
   },
   "boards": {
@@ -3213,40 +3212,6 @@
       "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
-      "ref": "C321",
-      "sheet": "E3",
-      "mount": "pcb_smt",
-      "value": "100n 16V",
-      "kind": "capacitor",
-      "category": "bare_board_part",
-      "assembly_owner": "",
-      "board_candidate": "CTRL_HMI",
-      "dnp": false,
-      "footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "portable_footprint": true,
-      "pad_coverage": "PASS",
-      "pin_count": 2,
-      "source": "TI SLVS841G Table 5-1 (IN >=0.1 uF ceramic); engineering design",
-      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
-    },
-    {
-      "ref": "C322",
-      "sheet": "E3",
-      "mount": "pcb_smt",
-      "value": "4.7u 10V",
-      "kind": "capacitor",
-      "category": "bare_board_part",
-      "assembly_owner": "",
-      "board_candidate": "CTRL_HMI",
-      "dnp": false,
-      "footprint": "Capacitor_SMD:C_0805_2012Metric",
-      "portable_footprint": true,
-      "pad_coverage": "PASS",
-      "pin_count": 2,
-      "source": "engineering design (as C502 at U501)",
-      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
-    },
-    {
       "ref": "C340",
       "sheet": "E3",
       "mount": "pcb_smt",
@@ -4250,40 +4215,6 @@
       "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
-      "ref": "C552",
-      "sheet": "E5",
-      "mount": "pcb_smt",
-      "value": "100nF X7R 10V",
-      "kind": "capacitor",
-      "category": "bare_board_part",
-      "assembly_owner": "",
-      "board_candidate": "USB_POWER",
-      "dnp": false,
-      "footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "portable_footprint": true,
-      "pad_coverage": "PASS",
-      "pin_count": 2,
-      "source": "TI SLVS841G Table 5-1 (IN >=0.1 uF ceramic); engineering design",
-      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
-    },
-    {
-      "ref": "C553",
-      "sheet": "E5",
-      "mount": "pcb_smt",
-      "value": "1uF X7R 10V",
-      "kind": "capacitor",
-      "category": "bare_board_part",
-      "assembly_owner": "",
-      "board_candidate": "USB_POWER",
-      "dnp": false,
-      "footprint": "Capacitor_SMD:C_0603_1608Metric",
-      "portable_footprint": true,
-      "pad_coverage": "PASS",
-      "pin_count": 2,
-      "source": "engineering design (output capacitor of a cable branch, as C510 at U503)",
-      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
-    },
-    {
       "ref": "C2901",
       "sheet": "E2",
       "mount": "pcb_smt",
@@ -5146,7 +5077,7 @@
       "footprint": "SR_RX_Custom:RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx",
       "portable_footprint": true,
       "pad_coverage": "PASS",
-      "pin_count": 5,
+      "pin_count": 3,
       "source": "STACK.md §5.2; BournsPEC11R",
       "classification_reason": "Board part, mount pcb_tht in design/parts/parts.json."
     },
@@ -5163,7 +5094,7 @@
       "footprint": "SR_RX_Custom:RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx",
       "portable_footprint": true,
       "pad_coverage": "PASS",
-      "pin_count": 5,
+      "pin_count": 3,
       "source": "STACK.md §5.2; BournsPEC11R",
       "classification_reason": "Board part, mount pcb_tht in design/parts/parts.json."
     },
@@ -5250,23 +5181,6 @@
       "pad_coverage": "PASS",
       "pin_count": 2,
       "source": "STACK.md §§2.7, 5.1; інженерна деталізація E2",
-      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
-    },
-    {
-      "ref": "F301",
-      "sheet": "E3",
-      "mount": "pcb_smt",
-      "value": "MF-MSMF075/24-2 0.75A",
-      "kind": "fuse",
-      "category": "bare_board_part",
-      "assembly_owner": "",
-      "board_candidate": "CTRL_HMI",
-      "dnp": false,
-      "footprint": "Fuse:Fuse_1812_4532Metric",
-      "portable_footprint": true,
-      "pad_coverage": "PASS",
-      "pin_count": 2,
-      "source": "https://datasheet.lcsc.com/datasheet/pdf/a24fb2ca04c8aa40d8c57ff2ffdfaed8.pdf?productCode=C208467",
       "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
@@ -6066,23 +5980,6 @@
       "pad_coverage": "UNASSIGNED",
       "pin_count": 5,
       "source": "STACK.md §5.2 / engineering design",
-      "classification_reason": "Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately."
-    },
-    {
-      "ref": "J551",
-      "sheet": "E5",
-      "mount": "panel",
-      "value": "S-band pod power M8 3-pin receptacle DESIGN",
-      "kind": "connector",
-      "category": "physical_interface_boundary",
-      "assembly_owner": "",
-      "board_candidate": "",
-      "dnp": false,
-      "footprint": "",
-      "portable_footprint": false,
-      "pad_coverage": "UNASSIGNED",
-      "pin_count": 3,
-      "source": "https://www.binder-connector.com/sg/products/automation-technology/m8/female-panel-mount-connector-front-mounting-with-single-wires",
       "classification_reason": "Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately."
     },
     {
@@ -8248,7 +8145,7 @@
       "ref": "R263",
       "sheet": "E2",
       "mount": "pcb_smt",
-      "value": "OVLO TBD (start 102k 0.1%)",
+      "value": "OVLO TBD (start 112k 0.1%)",
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -8265,7 +8162,7 @@
       "ref": "R264",
       "sheet": "E2",
       "mount": "pcb_smt",
-      "value": "OVLO TBD (start 9.09k 0.1%)",
+      "value": "OVLO TBD (start 10.0k 0.1%)",
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
@@ -10064,23 +9961,6 @@
       "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
-      "ref": "R396",
-      "sheet": "E3",
-      "mount": "pcb_smt",
-      "value": "RILIM TBD (start 162k 1%)",
-      "kind": "resistor",
-      "category": "bare_board_part",
-      "assembly_owner": "",
-      "board_candidate": "CTRL_HMI",
-      "dnp": false,
-      "footprint": "Resistor_SMD:R_0603_1608Metric",
-      "portable_footprint": true,
-      "pad_coverage": "PASS",
-      "pin_count": 2,
-      "source": "STACK.md §5.1 rule; E2 RILIM value of U209/U221; engineering design",
-      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
-    },
-    {
       "ref": "R405",
       "sheet": "E4",
       "mount": "pcb_smt",
@@ -10758,23 +10638,6 @@
       "pad_coverage": "PASS",
       "pin_count": 2,
       "source": "https://www.ti.com/lit/ds/symlink/lm66100.pdf",
-      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
-    },
-    {
-      "ref": "R553",
-      "sheet": "E5",
-      "mount": "pcb_smt",
-      "value": "RILIM TBD (start 88.7k 1%)",
-      "kind": "resistor",
-      "category": "bare_board_part",
-      "assembly_owner": "",
-      "board_candidate": "USB_POWER",
-      "dnp": false,
-      "footprint": "Resistor_SMD:R_0603_1608Metric",
-      "portable_footprint": true,
-      "pad_coverage": "PASS",
-      "pin_count": 2,
-      "source": "STACK.md §5.1 rule; E2 RILIM value of U206-U208; engineering design",
       "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
@@ -11920,7 +11783,7 @@
       "ref": "TH102",
       "sheet": "E1",
       "mount": "remote",
-      "value": "67F070 70 °C NO",
+      "value": "KSD9700 70 °C NO",
       "kind": "switch",
       "category": "mechanical_or_remote_part",
       "assembly_owner": "",
@@ -11930,7 +11793,7 @@
       "portable_footprint": false,
       "pad_coverage": "UNASSIGNED",
       "pin_count": 2,
-      "source": "STACK §2.7,§5.1; Sensata 6700 series datasheet (https://static.chipdip.ru/lib/822/DOC031822369.pdf, прочитано 07.11.2026)",
+      "source": "STACK §2.7,§5.1",
       "classification_reason": "Leaded/remote part on wires (mount remote in design/parts/parts.json); not a PCB footprint."
     },
     {
@@ -12376,23 +12239,6 @@
       "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
-      "ref": "TP301",
-      "sheet": "E3",
-      "mount": "pcb_pad",
-      "value": "GNSS 5V switch FAULT_N test point",
-      "kind": "testpoint",
-      "category": "bare_board_part",
-      "assembly_owner": "",
-      "board_candidate": "CTRL_HMI",
-      "dnp": false,
-      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
-      "portable_footprint": true,
-      "pad_coverage": "PASS",
-      "pin_count": 1,
-      "source": "engineering design",
-      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
-    },
-    {
       "ref": "TP501",
       "sheet": "E5",
       "mount": "pcb_pad",
@@ -12424,23 +12270,6 @@
       "pad_coverage": "PASS",
       "pin_count": 1,
       "source": "https://www.ti.com/lit/ds/symlink/lm66100.pdf",
-      "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
-    },
-    {
-      "ref": "TP503",
-      "sheet": "E5",
-      "mount": "pcb_pad",
-      "value": "IMU 5V switch FAULT_N test point",
-      "kind": "testpoint",
-      "category": "bare_board_part",
-      "assembly_owner": "",
-      "board_candidate": "USB_POWER",
-      "dnp": false,
-      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
-      "portable_footprint": true,
-      "pad_coverage": "PASS",
-      "pin_count": 1,
-      "source": "engineering design",
       "classification_reason": "Board part, mount pcb_pad in design/parts/parts.json."
     },
     {
@@ -13243,23 +13072,6 @@
       "classification_reason": "Retain functional connector interfaces; no arbitrary module-pad footprint."
     },
     {
-      "ref": "U315",
-      "sheet": "E3",
-      "mount": "pcb_smt",
-      "value": "TPS2553DBVR-1",
-      "kind": "ic",
-      "category": "bare_board_part",
-      "assembly_owner": "",
-      "board_candidate": "CTRL_HMI",
-      "dnp": false,
-      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
-      "portable_footprint": true,
-      "pad_coverage": "PASS",
-      "pin_count": 6,
-      "source": "https://www.ti.com/lit/gpn/tps2553",
-      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
-    },
-    {
       "ref": "U405",
       "sheet": "E4",
       "mount": "pcb_smt",
@@ -13685,23 +13497,6 @@
       "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
-      "ref": "U553",
-      "sheet": "E5",
-      "mount": "pcb_smt",
-      "value": "TPS2553DBVR",
-      "kind": "ic",
-      "category": "bare_board_part",
-      "assembly_owner": "",
-      "board_candidate": "USB_POWER",
-      "dnp": false,
-      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
-      "portable_footprint": true,
-      "pad_coverage": "PASS",
-      "pin_count": 6,
-      "source": "https://www.ti.com/lit/gpn/tps2553",
-      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
-    },
-    {
       "ref": "W401",
       "sheet": "E4",
       "mount": "harness",
@@ -13934,7 +13729,7 @@
       "ref": "J102",
       "type": "physical_interface_or_rework_unresolved",
       "blocking": true,
-      "detail": "Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately. Parts database: DNP (E1.json J102 dnp, примітки E1 J102): зовнішній балансний кабель не монтують і не підключають до закриття воріт E1-02, тож MPN не обирають; тип і порядок відводів комірок перевіряються на отриманому паку (E1 J102), відповідну розетку обирають за паком лише після E1-02."
+      "detail": "Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately. Parts database: DNP / лише сервіс до закриття E1-02; деталь не обрано."
     },
     {
       "ref": "J103",
@@ -13982,7 +13777,19 @@
       "ref": "J303",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Відповідна частина — 2-контактна вилка 1.25 мм на виводі 50 мм батареї BT301 (Electrokit 41036512, прочитано 07.11.2026, знімок 2026-11-07-w2-src1-manual.json web:electrokit-41036512; кріплення — власна клейка стрічка батареї). Відкрито: полярність вилки (сторінка її не дає; на Q6A J11 контакт 1 — GND, E3 J303) звірити до вставлення; місце батареї в межах 50 мм від J11 — механічний пакет."
+      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Відповідна частина — вилка 1.25 мм на виводах BT301 (Electrokit 41036512, рядок 85 10-bom, не перечитано); кріплення батареї й укладання дроту не задано."
+    },
+    {
+      "ref": "SW308",
+      "type": "host_pads_unconnected",
+      "blocking": true,
+      "detail": "Contact of ENC301 (host in design/parts/parts.json), but net(s) E3_ENC1_PRESS_EXT reach no pin of ENC301: the host footprint pads for this contact carry no net, so it is unconnected on any layout until the sheet owner moves the nets onto host pins."
+    },
+    {
+      "ref": "SW309",
+      "type": "host_pads_unconnected",
+      "blocking": true,
+      "detail": "Contact of ENC302 (host in design/parts/parts.json), but net(s) E3_ENC2_PRESS_EXT reach no pin of ENC302: the host footprint pads for this contact carry no net, so it is unconnected on any layout until the sheet owner moves the nets onto host pins."
     },
     {
       "ref": "J401",
@@ -14054,13 +13861,13 @@
       "ref": "J416",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-ANTENNA-ASSEMBLY (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Вхід зовнішнього вузла A418/A419 — антенний пакет (build/06), окремо не купується. J416 — вхід ANT Uputronics 440 під провід основи 60 см RG174 із SMA-вилкою (build/06 §2.3, набір #1); стать роз’ємів HAB-FPA440 не прочитано (store.uputronics.com 07.11.2026 — 429, знімок 2026-11-07-w2-src1-manual.json web:uputronics-hab-fpa440), тож MPN перемички SMA M-F або кронштейна біля P2 (build/06 §2.3, §7.1) не обрано. J417 — вхід профільної L-band антени чи LNA A419 (SAWbird+ GOES 100792 або активний патч): стать роз’єму записати на прибутті (build/06 §2.4)."
+      "detail": "Parts database entry J-ANTENNA-ASSEMBLY (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Вхід зовнішнього вузла A418/A419: роз’єм антенного кабелю й кріплення вузла біля антени — антенний пакет (build/06); окремо не купується."
     },
     {
       "ref": "J417",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-ANTENNA-ASSEMBLY (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Вхід зовнішнього вузла A418/A419 — антенний пакет (build/06), окремо не купується. J416 — вхід ANT Uputronics 440 під провід основи 60 см RG174 із SMA-вилкою (build/06 §2.3, набір #1); стать роз’ємів HAB-FPA440 не прочитано (store.uputronics.com 07.11.2026 — 429, знімок 2026-11-07-w2-src1-manual.json web:uputronics-hab-fpa440), тож MPN перемички SMA M-F або кронштейна біля P2 (build/06 §2.3, §7.1) не обрано. J417 — вхід профільної L-band антени чи LNA A419 (SAWbird+ GOES 100792 або активний патч): стать роз’єму записати на прибутті (build/06 §2.4)."
+      "detail": "Parts database entry J-ANTENNA-ASSEMBLY (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Вхід зовнішнього вузла A418/A419: роз’єм антенного кабелю й кріплення вузла біля антени — антенний пакет (build/06); окремо не купується."
     },
     {
       "ref": "J428",
@@ -14072,7 +13879,7 @@
       "ref": "J422",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-EXISTING-HELIX (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: SMA-гніздо живлення 7-виткової S-band спіралі в конусі (Lime; build/06 §1, рядок «7-виткова S-band спіраль у конусі» :37, і §3.2, пункт «S-band (Lime)» :114) у build/06 не має MPN; відповідна частина — SMA-вилка W422 (Cinch 415-0029-006, 152.4 мм, запис W-RG316-SMA-MM-0152) до Nooelec LaNA WB 100845 у зовнішньому вузлі Hammond 1554U2GY. Кріплення гнізда в конусі й кабелю до вузла pod (креслення P-01/P-02) — антенний і механічний пакети; посадка й герметизація pod — ворота E4-04 (OPEN)."
+      "detail": "Parts database entry J-EXISTING-HELIX (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: SMA наявного опромінювача S-band; кабель W422 обрано, кріплення опромінювача й кабелю — антенний пакет (build/06)."
     },
     {
       "ref": "J521",
@@ -14090,7 +13897,7 @@
       "ref": "J512",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Кабелі C-HUB (P3 → CH334F JP5) і C-TOUCH (P2 → сенсорний контролер Wisecoco) — assembly_items AI-USB2-J512: Tensility 10-02333 з вилкою A в J2, відрізаним другим кінцем і відрізаним провідником VBUS (E5 J512). Відкрито: закінчення на JP5 і роз’єм сенсорного порту Wisecoco (не прочитано), фіксація вилок у J2 — механічний пакет."
+      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Кабелі USB2 без провідника VBUS до хаба U510 і сенсорного контролера U520 не мають MPN; фіксація штекерів не задана."
     },
     {
       "ref": "J501",
@@ -14102,19 +13909,19 @@
       "ref": "J543",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry W-LINDY-36700 (mount harness, MPN 36700) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Прочитано 07.11.2026 (lindy.eu, знімок 2026-11-07-w2-src1-manual.json web:lindy-36700): 36700 — подовжувач USB 2.0 A-вилка → A-гніздо 0.2 м, живлення 26 AWG, дані 28 AWG, обплетення Al-Mg 43 %, оболонка ⌀4.4 мм; ціни й складу сторінка не показує (наявність неясна). Відкрито: VBUS_RTLA/VBUS_RTLB надходять від ключів E5, а не з порту (для J541 провід контакту 1 вилки J5 вилучено) — як провідник VBUS кабелю розрізають і під’єднують S20/S21 до A-гнізда, не задано (власник E5 і пакет складання); фіксація A-гнізд біля RTL-A/RTL-B — механічний пакет."
+      "detail": "Parts database entry W-LINDY-36700 (mount harness, MPN 36700) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Кабель з оцінки v2, сторінку продавця не перечитано (06.11.2026 лише заголовок лістингу в пошуку: «Lindy 36700 USB Extension Cable, 0.2m, Anthra Line, USB A 2.0 male / USB A 2.0 female», huss-licht-ton.de; сама сторінка відповіла 403). VBUS_RTLA/VBUS_RTLB надходять від ключів E5, а не з порту Q6A (для J541 провід контакту 1 вилки J5 вилучено): як VBUS виводиться з кабелю на плату — не задано."
     },
     {
       "ref": "J541",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry W-LINDY-36700 (mount harness, MPN 36700) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Прочитано 07.11.2026 (lindy.eu, знімок 2026-11-07-w2-src1-manual.json web:lindy-36700): 36700 — подовжувач USB 2.0 A-вилка → A-гніздо 0.2 м, живлення 26 AWG, дані 28 AWG, обплетення Al-Mg 43 %, оболонка ⌀4.4 мм; ціни й складу сторінка не показує (наявність неясна). Відкрито: VBUS_RTLA/VBUS_RTLB надходять від ключів E5, а не з порту (для J541 провід контакту 1 вилки J5 вилучено) — як провідник VBUS кабелю розрізають і під’єднують S20/S21 до A-гнізда, не задано (власник E5 і пакет складання); фіксація A-гнізд біля RTL-A/RTL-B — механічний пакет."
+      "detail": "Parts database entry W-LINDY-36700 (mount harness, MPN 36700) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Кабель з оцінки v2, сторінку продавця не перечитано (06.11.2026 лише заголовок лістингу в пошуку: «Lindy 36700 USB Extension Cable, 0.2m, Anthra Line, USB A 2.0 male / USB A 2.0 female», huss-licht-ton.de; сама сторінка відповіла 403). VBUS_RTLA/VBUS_RTLB надходять від ключів E5, а не з порту Q6A (для J541 провід контакту 1 вилки J5 вилучено): як VBUS виводиться з кабелю на плату — не задано."
     },
     {
       "ref": "J544",
-      "type": "interface_mounting_unresolved",
+      "type": "physical_interface_or_rework_unresolved",
       "blocking": true,
-      "detail": "Parts database entry W-HFP-MICROUSB (mount harness, MPN 10-02333) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Кабель обрано (Tensility 10-02333 з відрізаною вилкою A); відкрито: довжина пігтейла й місце муфт на трасі крізь SL2, розвантаження натягу micro-B біля HF+ (механічний пакет) і з’єднання вільних кінців із S22 і C-HFP (пайка, ізоляція — build/16)."
+      "detail": "Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately. Parts database: MPN кабелю micro-USB для HF+ не обрано (рядок 19 10-bom називає лише ферити)."
     },
     {
       "ref": "J520",
@@ -14150,13 +13957,7 @@
       "ref": "J550",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry W-IMU-CABLE (mount harness, MPN SUPERTRONIC-C-PURO 4x0.14 (49655)) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Прочитано 07.11.2026: HELUKABEL 49655 — 4 × 0.14 мм² (≈26 AWG), ⌀4.7 мм, обплетення з лудженої міді ≈85 %, PUR, −40…+90 °C нерухомо (каталог HELUCHAIN, знімок 2026-11-07-w2-src1-manual.json web:helukabel-heluchain-49655); LAPP SKINTOP MS-SC-M 12×1.5 (53112610) — затискання 3.5–7 мм, ≥1.0 мм над обплетенням, IP68, контакт екрана (дані LAPP, web:lapp-db53112610): кабель уміщується у ввід. Відкрито: отвір M12×1.5 і контргайка (серед частин вводу її немає) у стінці Hammond 1550Z101, заробка екрана 360° і кінці на платі носія IMU — механічний пакет; кінець у корпусі SR-RX — GX16 J504 (окремий запис)."
-    },
-    {
-      "ref": "J551",
-      "type": "interface_mounting_unresolved",
-      "blocking": true,
-      "detail": "Parts database entry J-POD-PWR-PANEL (mount panel, MPN 76 6618 1111 00003-0200) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Розетку J551 і вилку W425 обрано (binder M8 A-код, контакти 1/3/4: 1 — BIAS_SB_LNA, 3 — GND, 4 — вільний); виріз — з даташиту (M10×0.75: отвір 10.1 мм, лиски 9.1 мм, стінка 2.0–6.5 мм, 1 N·m); відкриті: місце на стінці (грань — MECH-07, моделює MECH-3), бік монтажу (з креслення: вставляється зсередини, гайка — ззовні; підтвердити з товщиною стінки, MECH-2/3), довжина виводів 0.2 м проти траси S36 — TBD."
+      "detail": "Parts database entry W-IMU-CABLE (mount harness, MPN SUPERTRONIC-C-PURO 4x0.14 (49655)) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Кабель HELU і ввід LAPP — з оцінки v2, сторінки не перечитано; заробка на боці IMU-пакета й екранування 360° — механічний пакет."
     }
   ]
 }

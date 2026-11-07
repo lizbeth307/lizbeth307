@@ -17582,7 +17582,7 @@
         <field name="Datasheet">W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT</field>
         <field name="Description">Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2).</field>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J427" description="Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2). | module | Mates the U.FL plug of the J408 panel pigtail (Taoglas CAB.718). P8 is a direct port (AREA decision, pcb/partition-spec.json p8): the Flamingo+ #2 / LNA V2 accessory A403/A404 sits outside between antenna and P8 and gets the ch4 bias over the coax.; Carries the ch4 bias (TCBT-2R5G+ A424, TPS2553 limit 0.192 A max) outward; no U.FL current rating is published (E4-07). Receive-only: the port supplies only LNA bias."/>
+      <libsource lib="sr_rx_v2_completed" part="C_J427" description="Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2). | module | Mates the U.FL plug of the J408 panel pigtail (Taoglas CAB.718). P8 is a direct port (AREA decision, pcb/partition-spec.json p8): the Flamingo+ #2 / LNA V2 accessory A403/A404 sits outside between antenna and P8 and gets the ch4 bias over the coax.; Carries the ch4 bias (TCBT-2R5G+ A424, TPS2553 limit 0.192 A max) outward; no U.FL current rating is published (E4-07). Receive-only: the port supplies only LNA bias.; No DC-window detector and no E4-06 blocking element on ch4: foreign DC at P8 reaches TPS2553 U209 OUT (abs max −0.3…7 V) through A424 and E2 L209/R246. A ch4 element or detector is an owner/E2 decision (E4-06 OPEN)."/>
       <property name="ReviewStatus" value="module"/>
       <property name="MPN" value="U.FL-R-SMT-1(10)"/>
       <property name="Manufacturer" value="Hirose Electric"/>
@@ -17806,121 +17806,94 @@
         </unit>
       </units>
     </comp>
-    <comp ref="A409">
-      <value>BLK-89-S+</value>
-      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
+    <comp ref="A422">
+      <value>Nooelec LaNA WB 100845</value>
+      <datasheet>https://nooelec.com/store/sdr/sdr-addons/rf-blocks/lana-wb.html</datasheet>
       <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
+      <fields>
+        <field name="ReviewStatus">module</field>
+        <field name="MPN">100845</field>
+        <field name="Manufacturer">Nooelec</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">https://nooelec.com/store/sdr/sdr-addons/rf-blocks/lana-wb.html</field>
+        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_A422" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module | 300 MHz–8 GHz. External USB-C power 3.3–5.5 V, ≤65 mA specified. Use only this power method; no simultaneous bias-tee or external supply.; Located at existing S-band helix feed in an external weatherproof inline pod, not inside the handheld RF bay. Gain/NF at 2.2–2.3 GHz must be measured; product-wide nominal NF is not a guaranteed 2.2 GHz figure."/>
+      <property name="ReviewStatus" value="module"/>
+      <property name="MPN" value="100845"/>
+      <property name="Manufacturer" value="Nooelec"/>
+      <property name="Sheetname" value="E4_02"/>
+      <property name="Sheetfile" value="E4_02.kicad_sch"/>
+      <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
+      <tstamps>f2ca129c-28b7-5276-a073-878ae65950bd</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="USB_C_VBUS"/>
+            <pin num="SMA_OUT"/>
+            <pin num="USB_C_GND"/>
+            <pin num="SHIELDS"/>
+            <pin num="SMA_IN"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="A423">
+      <value>sysmocom cf2235-kt30 2170–2300 MHz</value>
+      <datasheet>https://www.sysmocom.de/downloads/rf_filter_cf2235-kt30.pdf</datasheet>
+      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
+      <fields>
+        <field name="ReviewStatus">module</field>
+        <field name="MPN">cf2235-kt30</field>
+        <field name="Manufacturer">sysmocom</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">https://www.sysmocom.de/downloads/rf_filter_cf2235-kt30.pdf</field>
+        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_A423" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module | Both SMA-female ports are bidirectional. 50 Ω, IL ≤1 dB, VSWR ≤1.30, 124×47×33 mm, 186 g, −20…+50 °C, IP50; needs weather enclosure.; Primary datasheet passband is 2170–2300 MHz. 2252.5/2284/2285 MHz are in-band: retain the software allowlist for policy/mission selection, not as a physical filter claim."/>
+      <property name="ReviewStatus" value="module"/>
+      <property name="MPN" value="cf2235-kt30"/>
+      <property name="Manufacturer" value="sysmocom"/>
+      <property name="Sheetname" value="E4_02"/>
+      <property name="Sheetfile" value="E4_02.kicad_sch"/>
+      <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
+      <tstamps>0850f42b-059c-5c6e-bfcf-2fa914c6626b</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="SMA_F_A"/>
+            <pin num="SHIELDS"/>
+            <pin num="SMA_F_B"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="A425">
+      <value>Mini-Circuits BLK-89-S+ pod DC block</value>
+      <datasheet>https://www.minicircuits.com/WebStore/dashboard.html?model=BLK-89-S%2B</datasheet>
+      <description>Commercial SMA module functional interface; no invented physical pin numbers.</description>
       <fields>
         <field name="ReviewStatus">module</field>
         <field name="MPN">BLK-89-S+</field>
         <field name="Manufacturer">Mini-Circuits</field>
         <field name="Footprint"/>
-        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
-        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
+        <field name="Datasheet">https://www.minicircuits.com/WebStore/dashboard.html?model=BLK-89-S%2B</field>
+        <field name="Description">Commercial SMA module functional interface; no invented physical pin numbers.</field>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_A409" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
+      <libsource lib="sr_rx_v2_completed" part="C_A425" description="Commercial SMA module functional interface; no invented physical pin numbers. | module | Explicit output DC isolation before the cavity filter; retained A409 still blocks DC at the receiver. Do not assume USB-powered LaNA output has no DC."/>
       <property name="ReviewStatus" value="module"/>
       <property name="MPN" value="BLK-89-S+"/>
       <property name="Manufacturer" value="Mini-Circuits"/>
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>d651e032-f11f-5e60-a7b8-d5c98dffe166</tstamps>
+      <tstamps>9a120134-c92b-508a-a4e5-496bf8fbb55c</tstamps>
       <units>
         <unit name="A">
           <pins>
-            <pin num="IN"/>
+            <pin num="SMA_A"/>
             <pin num="SHIELDS"/>
-            <pin num="OUT"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="A410">
-      <value>ANNE-50+ 50 Ω load</value>
-      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
-      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
-      <fields>
-        <field name="ReviewStatus">module</field>
-        <field name="MPN">ANNE-50+</field>
-        <field name="Manufacturer">Mini-Circuits</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
-        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_A410" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
-      <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="ANNE-50+"/>
-      <property name="Manufacturer" value="Mini-Circuits"/>
-      <property name="Sheetname" value="E4_02"/>
-      <property name="Sheetfile" value="E4_02.kicad_sch"/>
-      <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>2ca96edb-7eb3-5211-b12b-0551ffd462d8</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="END_A"/>
-            <pin num="END_B"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="A418">
-      <value>Uputronics 440 Rev 3.0 external LNA</value>
-      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
-      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
-      <fields>
-        <field name="ReviewStatus">module</field>
-        <field name="MPN">HAB-FPA440 (case V3 / board Rev 3.0)</field>
-        <field name="Manufacturer">Uputronics</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
-        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_A418" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
-      <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="HAB-FPA440 (case V3 / board Rev 3.0)"/>
-      <property name="Manufacturer" value="Uputronics"/>
-      <property name="Sheetname" value="E4_02"/>
-      <property name="Sheetfile" value="E4_02.kicad_sch"/>
-      <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>9217ee57-3a8c-57a8-9bdb-408f5aadd39b</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="IN"/>
-            <pin num="SHIELDS"/>
-            <pin num="OUT"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="A419">
-      <value>GOES / H1 / iO / active patch external LNA</value>
-      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
-      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
-      <fields>
-        <field name="ReviewStatus">module</field>
-        <field name="MPN">100792</field>
-        <field name="Manufacturer">Nooelec</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
-        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_A419" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module | Exactly one documented L-band LNA/active patch is connected per operating profile. No TCBT 200 mA device on ch3."/>
-      <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="100792"/>
-      <property name="Manufacturer" value="Nooelec"/>
-      <property name="Sheetname" value="E4_02"/>
-      <property name="Sheetfile" value="E4_02.kicad_sch"/>
-      <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>4155f3e0-62a8-5e1d-91dc-71dbb2f62505</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="IN"/>
-            <pin num="SHIELDS"/>
-            <pin num="OUT"/>
+            <pin num="SMA_B"/>
           </pins>
         </unit>
       </units>
@@ -18156,7 +18129,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="C4440">
+    <comp ref="C4430">
       <value>100 pF C0G 50 V</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <datasheet>E4 completion design; see E4-review.md</datasheet>
@@ -18170,7 +18143,7 @@
         <field name="Datasheet">E4 completion design; see E4-review.md</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C4440" description="| design |"/>
+      <libsource lib="sr_rx_v2_completed" part="C_C4430" description="| design |"/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="GRM1555C1H101JA01D"/>
       <property name="Manufacturer" value="Murata Electronics"/>
@@ -18179,7 +18152,7 @@
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>97468c02-35fb-5c51-886b-b47e21cdaf4c</tstamps>
+      <tstamps>ea8799ba-f351-510a-bd71-1849ee2f6c6a</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -18189,7 +18162,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="C4441">
+    <comp ref="C4431">
       <value>10 nF C0G 50 V</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <datasheet>E4 completion design; see E4-review.md</datasheet>
@@ -18203,7 +18176,7 @@
         <field name="Datasheet">E4 completion design; see E4-review.md</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C4441" description="| design |"/>
+      <libsource lib="sr_rx_v2_completed" part="C_C4431" description="| design |"/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="GRM1885C1H103JA01D"/>
       <property name="Manufacturer" value="Murata Electronics"/>
@@ -18212,7 +18185,7 @@
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>b2ce77ba-1081-5a97-9f07-97dbdbe2eaa4</tstamps>
+      <tstamps>01003a6f-1491-5a91-85a5-b428f392a6ea</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -18256,7 +18229,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="D453">
+    <comp ref="D452">
       <value>BAV199 sense clamps</value>
       <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
       <datasheet>https://assets.nexperia.com/documents/data-sheet/BAV199.pdf</datasheet>
@@ -18270,7 +18243,7 @@
         <field name="Datasheet">https://assets.nexperia.com/documents/data-sheet/BAV199.pdf</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_D453" description="| verified | Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.9 kΩ (26.7 kΩ + 23.2 kΩ); TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."/>
+      <libsource lib="sr_rx_v2_completed" part="C_D452" description="| verified | Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.9 kΩ (26.7 kΩ + 23.2 kΩ); TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."/>
       <property name="ReviewStatus" value="verified"/>
       <property name="MPN" value="BAV199,215"/>
       <property name="Manufacturer" value="Nexperia"/>
@@ -18279,7 +18252,7 @@
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>b93e2de9-fc5d-56d4-9c5a-58af240a1325</tstamps>
+      <tstamps>9d31129a-263b-552d-93f0-4f709beb82df</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -18290,216 +18263,21 @@
         </unit>
       </units>
     </comp>
-    <comp ref="J402">
-      <value>P2 UHF SMA: 4.3 V</value>
-      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
-      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
-      <fields>
-        <field name="ReviewStatus">module</field>
-        <field name="MPN">CAB.718</field>
-        <field name="Manufacturer">Taoglas</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
-        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J402" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
-      <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="CAB.718"/>
-      <property name="Manufacturer" value="Taoglas"/>
-      <property name="Sheetname" value="E4_02"/>
-      <property name="Sheetfile" value="E4_02.kicad_sch"/>
-      <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>d419822c-d32b-5d47-8627-bf80c70d034e</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="CENTER"/>
-            <pin num="SHIELD"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="J403">
-      <value>P3 L-band SMA: 4.3 V</value>
-      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
-      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
-      <fields>
-        <field name="ReviewStatus">module</field>
-        <field name="MPN">CAB.718</field>
-        <field name="Manufacturer">Taoglas</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
-        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J403" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
-      <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="CAB.718"/>
-      <property name="Manufacturer" value="Taoglas"/>
-      <property name="Sheetname" value="E4_02"/>
-      <property name="Sheetfile" value="E4_02.kicad_sch"/>
-      <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>6807feef-6ff5-5f7a-9b19-ad329577f3f3</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="CENTER"/>
-            <pin num="SHIELD"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="J406">
-      <value>P6 VHF/AIS SMA: no DC</value>
-      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
-      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
-      <fields>
-        <field name="ReviewStatus">module</field>
-        <field name="MPN">CAB.718</field>
-        <field name="Manufacturer">Taoglas</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
-        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J406" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
-      <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="CAB.718"/>
-      <property name="Manufacturer" value="Taoglas"/>
-      <property name="Sheetname" value="E4_02"/>
-      <property name="Sheetfile" value="E4_02.kicad_sch"/>
-      <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>054dc87c-7da4-58f5-8134-4358eaf01521</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="CENTER"/>
-            <pin num="SHIELD"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="J414">
-      <value>RX2 panel SMA</value>
-      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
-      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
+    <comp ref="J422">
+      <value>Existing S-band helix feed SMA</value>
+      <datasheet>E4 completion design; see E4-review.md</datasheet>
       <fields>
         <field name="ReviewStatus">module</field>
         <field name="Footprint"/>
-        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
-        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
+        <field name="Datasheet">E4 completion design; see E4-review.md</field>
+        <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J414" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
+      <libsource lib="sr_rx_v2_completed" part="C_J422" description="| module |"/>
       <property name="ReviewStatus" value="module"/>
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>2017b5a9-426e-559b-b738-94f6375d76f4</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="SHIELD"/>
-            <pin num="CENTER"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="J415">
-      <value>REF IN panel SMA</value>
-      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
-      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
-      <fields>
-        <field name="ReviewStatus">module</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
-        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J415" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
-      <property name="ReviewStatus" value="module"/>
-      <property name="Sheetname" value="E4_02"/>
-      <property name="Sheetfile" value="E4_02.kicad_sch"/>
-      <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>83eefd00-104f-58e9-9d75-203a24aa3da6</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="SHIELD"/>
-            <pin num="CENTER"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="J416">
-      <value>UHF antenna feed / A418 input interface</value>
-      <datasheet>STACK §5.3; assembly boundary of external Uputronics 440 LNA and selected UHF antenna</datasheet>
-      <description>Functional antenna-side coax interface of the external A418 assembly; named center/shield ports are not physical PCB pad numbers.</description>
-      <fields>
-        <field name="ReviewStatus">module</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK §5.3; assembly boundary of external Uputronics 440 LNA and selected UHF antenna</field>
-        <field name="Description">Functional antenna-side coax interface of the external A418 assembly; named center/shield ports are not physical PCB pad numbers.</field>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J416" description="Functional antenna-side coax interface of the external A418 assembly; named center/shield ports are not physical PCB pad numbers. | module | This is the selected UHF antenna/feed connection to the LNA RF input, upstream of A418; J402 remains the handheld P2 connection downstream of the LNA.; The interface is assembly-owned. When A418 has its integral SMA input, this record identifies that existing input and its mating antenna feed; it is not an additional bulkhead, adaptor, PCB jack or purchase. Verify the received assembly connector and cable before mating."/>
-      <property name="ReviewStatus" value="module"/>
-      <property name="Sheetname" value="E4_02"/>
-      <property name="Sheetfile" value="E4_02.kicad_sch"/>
-      <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>e2cb5026-40fc-5234-be1b-21ef3e399bad</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="SHIELD"/>
-            <pin num="CENTER"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="J417">
-      <value>L-band antenna feed / A419 input interface</value>
-      <datasheet>STACK §5.3; profile-selected external L-band antenna/LNA or active-patch assembly boundary</datasheet>
-      <description>Functional RF feed/return interface of the selected external A419 antenna assembly; named center/shield ports do not invent internal PCB pad numbers.</description>
-      <fields>
-        <field name="ReviewStatus">module</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK §5.3; profile-selected external L-band antenna/LNA or active-patch assembly boundary</field>
-        <field name="Description">Functional RF feed/return interface of the selected external A419 antenna assembly; named center/shield ports do not invent internal PCB pad numbers.</field>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J417" description="Functional RF feed/return interface of the selected external A419 antenna assembly; named center/shield ports do not invent internal PCB pad numbers. | module | Exactly one profile antenna/feed drives this interface. For a discrete external LNA, it identifies the existing antenna-side input connector and its shield. For an integrated active patch, CENTER and SHIELD express its internal antenna feed and RF return; no accessible extra SMA is asserted.; The interface is assembly-owned and adds no separately purchased connector. J403 remains the handheld P3 connection on the receiver-facing side. Confirm the chosen profile assembly and its real connectors during its existing hardware acceptance."/>
-      <property name="ReviewStatus" value="module"/>
-      <property name="Sheetname" value="E4_02"/>
-      <property name="Sheetfile" value="E4_02.kicad_sch"/>
-      <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>4c2d30d2-9450-59a3-90d1-664f1d49e1d6</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="SHIELD"/>
-            <pin num="CENTER"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="J423">
-      <value>P2 board U.FL: 4.3 V</value>
-      <footprint>SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS</footprint>
-      <datasheet>W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT</datasheet>
-      <description>Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2).</description>
-      <fields>
-        <field name="ReviewStatus">module</field>
-        <field name="MPN">U.FL-R-SMT-1(10)</field>
-        <field name="Manufacturer">Hirose Electric</field>
-        <field name="LCSC">C88373</field>
-        <field name="Footprint">SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS</field>
-        <field name="Datasheet">W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT</field>
-        <field name="Description">Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2).</field>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J423" description="Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2). | module | Mates the U.FL plug of the J402 panel pigtail (Taoglas CAB.718). Carries the ch2 bias (4.3 V, TPS2553 limit 0.339 A max) outward: no U.FL current rating is published, so DC drop and heating at the bias current are E4-07 measurements.; Place at the E4_P2 node with C403, L403, R4420 and R4460: the detector RF tap R4420 stays ≤1 mm from this port (DC-01)."/>
-      <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="U.FL-R-SMT-1(10)"/>
-      <property name="Manufacturer" value="Hirose Electric"/>
-      <property name="LCSC" value="C88373"/>
-      <property name="Sheetname" value="E4_02"/>
-      <property name="Sheetfile" value="E4_02.kicad_sch"/>
-      <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>2b077711-d322-5c42-ace7-4a00e0795961</tstamps>
+      <tstamps>7cbec986-041f-54eb-a59c-eba6ef0203df</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -18509,71 +18287,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="J424">
-      <value>P3 board U.FL: 4.3 V</value>
-      <footprint>SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS</footprint>
-      <datasheet>W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT</datasheet>
-      <description>Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2).</description>
-      <fields>
-        <field name="ReviewStatus">module</field>
-        <field name="MPN">U.FL-R-SMT-1(10)</field>
-        <field name="Manufacturer">Hirose Electric</field>
-        <field name="LCSC">C88373</field>
-        <field name="Footprint">SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS</field>
-        <field name="Datasheet">W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT</field>
-        <field name="Description">Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2).</field>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J424" description="Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2). | module | Mates the U.FL plug of the J403 panel pigtail (Taoglas CAB.718). Carries the ch3 bias (4.3 V, TPS2553 limit 0.339 A max) outward: no U.FL current rating is published, so DC drop and heating at the bias current are E4-07 measurements.; Place at the E4_P3 node with C411, L404, R4430 and R4464: the detector RF tap R4430 stays ≤1 mm from this port (DC-01)."/>
-      <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="U.FL-R-SMT-1(10)"/>
-      <property name="Manufacturer" value="Hirose Electric"/>
-      <property name="LCSC" value="C88373"/>
-      <property name="Sheetname" value="E4_02"/>
-      <property name="Sheetfile" value="E4_02.kicad_sch"/>
-      <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>47dbf5bc-d579-50c4-ba3f-8028468aab4b</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="CENTER"/>
-            <pin num="SHIELD"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="J425">
-      <value>P6 board U.FL: no DC</value>
-      <footprint>SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS</footprint>
-      <datasheet>W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT</datasheet>
-      <description>Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2).</description>
-      <fields>
-        <field name="ReviewStatus">module</field>
-        <field name="MPN">U.FL-R-SMT-1(10)</field>
-        <field name="Manufacturer">Hirose Electric</field>
-        <field name="LCSC">C88373</field>
-        <field name="Footprint">SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS</field>
-        <field name="Datasheet">W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT</field>
-        <field name="Description">Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2).</field>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J425" description="Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2). | module | Mates the U.FL plug of the J406 panel pigtail (Taoglas CAB.718); feeds K402.3 next to the optional DNP L407 (RF_HF)."/>
-      <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="U.FL-R-SMT-1(10)"/>
-      <property name="Manufacturer" value="Hirose Electric"/>
-      <property name="LCSC" value="C88373"/>
-      <property name="Sheetname" value="E4_02"/>
-      <property name="Sheetfile" value="E4_02.kicad_sch"/>
-      <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>de7093b1-e4bc-5cfe-b274-43dd945d6089</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="SHIELD"/>
-            <pin num="CENTER"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="Q454">
+    <comp ref="Q452">
       <value>AO3400A</value>
       <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
       <datasheet>https://www.aosmd.com/res/data_sheets/AO3400A.pdf</datasheet>
@@ -18587,7 +18301,7 @@
         <field name="Datasheet">https://www.aosmd.com/res/data_sheets/AO3400A.pdf</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_Q454" description="| verified | Series sink only; specified logic-level 2.5 V gate drive."/>
+      <libsource lib="sr_rx_v2_completed" part="C_Q452" description="| verified | Series sink only; specified logic-level 2.5 V gate drive."/>
       <property name="ReviewStatus" value="verified"/>
       <property name="MPN" value="AO3400A"/>
       <property name="Manufacturer" value="Alpha &amp; Omega Semiconductor"/>
@@ -18596,7 +18310,7 @@
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>255d7def-6762-5f4f-b911-aad2437f602f</tstamps>
+      <tstamps>e79955fe-868e-527a-8c07-e2997f69b7f0</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -18607,7 +18321,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="Q455">
+    <comp ref="Q453">
       <value>AO3400A</value>
       <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
       <datasheet>https://www.aosmd.com/res/data_sheets/AO3400A.pdf</datasheet>
@@ -18621,7 +18335,7 @@
         <field name="Datasheet">https://www.aosmd.com/res/data_sheets/AO3400A.pdf</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_Q455" description="| verified | Series sink only; specified logic-level 2.5 V gate drive."/>
+      <libsource lib="sr_rx_v2_completed" part="C_Q453" description="| verified | Series sink only; specified logic-level 2.5 V gate drive."/>
       <property name="ReviewStatus" value="verified"/>
       <property name="MPN" value="AO3400A"/>
       <property name="Manufacturer" value="Alpha &amp; Omega Semiconductor"/>
@@ -18630,7 +18344,7 @@
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>c6397363-e9ba-543f-a2af-59da8e96195a</tstamps>
+      <tstamps>a48cd4b3-6d45-5110-ae24-f2fa86faf204</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -19039,7 +18753,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R4440">
+    <comp ref="R4430">
       <value>26.7 kΩ 0.1% 0402 RF tap</value>
       <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <datasheet>E4 completion design; see E4-review.md</datasheet>
@@ -19053,7 +18767,7 @@
         <field name="Datasheet">E4 completion design; see E4-review.md</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R4440" description="| design | First RF tap resistor directly at coax, with ≤1 mm stub. Keep detector traces behind RF via fence."/>
+      <libsource lib="sr_rx_v2_completed" part="C_R4430" description="| design | First RF tap resistor directly at coax, with ≤1 mm stub. Keep detector traces behind RF via fence."/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="RT0402BRD0726K7L"/>
       <property name="Manufacturer" value="YAGEO"/>
@@ -19062,7 +18776,7 @@
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>c336eb2a-530b-5b3f-9f7a-9514ed4e290b</tstamps>
+      <tstamps>7d4e8252-b621-5926-8109-13a1707f175b</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -19072,7 +18786,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R4441">
+    <comp ref="R4431">
       <value>23.2 kΩ 0.1% 0402</value>
       <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <datasheet>E4 completion design; see E4-review.md</datasheet>
@@ -19086,7 +18800,7 @@
         <field name="Datasheet">E4 completion design; see E4-review.md</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R4441" description="| design |"/>
+      <libsource lib="sr_rx_v2_completed" part="C_R4431" description="| design |"/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="RT0402BRD0723K2L"/>
       <property name="Manufacturer" value="YAGEO"/>
@@ -19095,7 +18809,7 @@
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>f7e484e2-465c-5c08-803a-233a01243d0d</tstamps>
+      <tstamps>8a995d45-d644-53fa-8460-336e7aaedc3c</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -19105,7 +18819,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R4442">
+    <comp ref="R4432">
       <value>49.9 kΩ 0.1%</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <datasheet>E4 completion design; see E4-review.md</datasheet>
@@ -19119,7 +18833,7 @@
         <field name="Datasheet">E4 completion design; see E4-review.md</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R4442" description="| design |"/>
+      <libsource lib="sr_rx_v2_completed" part="C_R4432" description="| design |"/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="RT0603BRD0749K9L"/>
       <property name="Manufacturer" value="YAGEO"/>
@@ -19128,7 +18842,7 @@
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>e537aea7-93eb-5832-b96d-5989686da85e</tstamps>
+      <tstamps>ee86e320-b10a-58c2-956d-e6db86210138</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -19138,7 +18852,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R4443">
+    <comp ref="R4433">
       <value>100 Ω</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <datasheet>E4 completion design; see E4-review.md</datasheet>
@@ -19152,7 +18866,7 @@
         <field name="Datasheet">E4 completion design; see E4-review.md</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R4443" description="| design |"/>
+      <libsource lib="sr_rx_v2_completed" part="C_R4433" description="| design |"/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="0603WAF1000T5E"/>
       <property name="Manufacturer" value="UNI-ROYAL"/>
@@ -19161,7 +18875,7 @@
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>deb1be96-49f0-5f14-8d35-71df89311d31</tstamps>
+      <tstamps>51007196-ca2f-586e-bdb0-67ee78e5b2d9</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -19171,7 +18885,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R4444">
+    <comp ref="R4434">
       <value>100 kΩ</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <datasheet>E4 completion design; see E4-review.md</datasheet>
@@ -19185,7 +18899,7 @@
         <field name="Datasheet">E4 completion design; see E4-review.md</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R4444" description="| design |"/>
+      <libsource lib="sr_rx_v2_completed" part="C_R4434" description="| design |"/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="0603WAF1003T5E"/>
       <property name="Manufacturer" value="UNI-ROYAL"/>
@@ -19194,7 +18908,7 @@
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>40cf58bf-7c8c-5cf5-a266-15142edbce47</tstamps>
+      <tstamps>45d85727-83b4-5695-93f2-5d157eeb3c75</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -19204,7 +18918,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R4445">
+    <comp ref="R4435">
       <value>100 Ω</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <datasheet>E4 completion design; see E4-review.md</datasheet>
@@ -19218,7 +18932,7 @@
         <field name="Datasheet">E4 completion design; see E4-review.md</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R4445" description="| design |"/>
+      <libsource lib="sr_rx_v2_completed" part="C_R4435" description="| design |"/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="0603WAF1000T5E"/>
       <property name="Manufacturer" value="UNI-ROYAL"/>
@@ -19227,7 +18941,7 @@
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>48728960-902e-5a22-b033-4e84d9f168a4</tstamps>
+      <tstamps>8c8035e7-e034-56ec-ae94-5684aa0c02e1</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -19237,7 +18951,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R4446">
+    <comp ref="R4436">
       <value>100 kΩ</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <datasheet>E4 completion design; see E4-review.md</datasheet>
@@ -19251,7 +18965,7 @@
         <field name="Datasheet">E4 completion design; see E4-review.md</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R4446" description="| design |"/>
+      <libsource lib="sr_rx_v2_completed" part="C_R4436" description="| design |"/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="0603WAF1003T5E"/>
       <property name="Manufacturer" value="UNI-ROYAL"/>
@@ -19260,7 +18974,7 @@
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>32d2fd2b-7728-57dc-b9d1-ada7e855bbd2</tstamps>
+      <tstamps>f76678f6-1c58-57c9-afce-d1996cce6e09</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -19402,7 +19116,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R4468">
+    <comp ref="R4464">
       <value>249 Ω 1% ≥0.5 W</value>
       <footprint>Resistor_SMD:R_1210_3225Metric</footprint>
       <datasheet>E4 bipolar detector DC return design</datasheet>
@@ -19416,7 +19130,7 @@
         <field name="Datasheet">E4 bipolar detector DC return design</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R4468" description="| design | Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified.; First bleed resistor directly at the coax tap. Keep its pads and ground-return geometry short and symmetric; the other three form a series chain, not parallel RF loads."/>
+      <libsource lib="sr_rx_v2_completed" part="C_R4464" description="| design | Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified.; First bleed resistor directly at the coax tap. Keep its pads and ground-return geometry short and symmetric; the other three form a series chain, not parallel RF loads."/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="AC1210FR-07249RL"/>
       <property name="Manufacturer" value="YAGEO"/>
@@ -19425,7 +19139,7 @@
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>26219ad9-3d4e-57b2-b08e-b9b3d3524558</tstamps>
+      <tstamps>1f2e637e-1e6f-5090-a16d-d91f34ccd80d</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -19435,7 +19149,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R4469">
+    <comp ref="R4465">
       <value>249 Ω 1% ≥0.5 W</value>
       <footprint>Resistor_SMD:R_1210_3225Metric</footprint>
       <datasheet>E4 bipolar detector DC return design</datasheet>
@@ -19449,7 +19163,7 @@
         <field name="Datasheet">E4 bipolar detector DC return design</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R4469" description="| design | Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified."/>
+      <libsource lib="sr_rx_v2_completed" part="C_R4465" description="| design | Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified."/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="AC1210FR-07249RL"/>
       <property name="Manufacturer" value="YAGEO"/>
@@ -19458,7 +19172,7 @@
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>3ce80eeb-7c07-58c3-9eff-2de9e421eba8</tstamps>
+      <tstamps>265bba3b-eab5-5009-bec5-1a58fc24fe1d</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -19468,7 +19182,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R4470">
+    <comp ref="R4466">
       <value>249 Ω 1% ≥0.5 W</value>
       <footprint>Resistor_SMD:R_1210_3225Metric</footprint>
       <datasheet>E4 bipolar detector DC return design</datasheet>
@@ -19482,7 +19196,7 @@
         <field name="Datasheet">E4 bipolar detector DC return design</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R4470" description="| design | Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified."/>
+      <libsource lib="sr_rx_v2_completed" part="C_R4466" description="| design | Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified."/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="AC1210FR-07249RL"/>
       <property name="Manufacturer" value="YAGEO"/>
@@ -19491,7 +19205,7 @@
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>9afccdf9-4792-5952-a720-10fee1443013</tstamps>
+      <tstamps>a0179e44-b9f1-57d6-83cf-e55639f275fe</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -19501,7 +19215,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R4471">
+    <comp ref="R4467">
       <value>249 Ω 1% ≥0.5 W</value>
       <footprint>Resistor_SMD:R_1210_3225Metric</footprint>
       <datasheet>E4 bipolar detector DC return design</datasheet>
@@ -19515,7 +19229,7 @@
         <field name="Datasheet">E4 bipolar detector DC return design</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R4471" description="| design | Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified."/>
+      <libsource lib="sr_rx_v2_completed" part="C_R4467" description="| design | Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified."/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="AC1210FR-07249RL"/>
       <property name="Manufacturer" value="YAGEO"/>
@@ -19524,7 +19238,7 @@
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>0ede4c64-e67a-5033-91f8-41fc8dc046f4</tstamps>
+      <tstamps>e8150cee-338f-5d89-b4b6-d172893a4bef</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -19534,7 +19248,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="U454">
+    <comp ref="U452">
       <value>TLV3012BIDBVR</value>
       <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
       <datasheet>https://www.ti.com/lit/ds/symlink/tlv3011.pdf</datasheet>
@@ -19547,7 +19261,7 @@
         <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tlv3011.pdf</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_U454" description="| verified | B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."/>
+      <libsource lib="sr_rx_v2_completed" part="C_U452" description="| verified | B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."/>
       <property name="ReviewStatus" value="verified"/>
       <property name="MPN" value="TLV3012BIDBVR"/>
       <property name="Manufacturer" value="Texas Instruments"/>
@@ -19555,7 +19269,7 @@
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>2ccbc0bd-edfc-59ec-aebd-c7ed931edcca</tstamps>
+      <tstamps>33c5ae54-fc8b-5f01-9ded-14eb8f4c9014</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -19569,7 +19283,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="U455">
+    <comp ref="U453">
       <value>TLV3012BIDBVR</value>
       <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
       <datasheet>https://www.ti.com/lit/ds/symlink/tlv3011.pdf</datasheet>
@@ -19582,7 +19296,7 @@
         <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tlv3011.pdf</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_U455" description="| verified | B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."/>
+      <libsource lib="sr_rx_v2_completed" part="C_U453" description="| verified | B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."/>
       <property name="ReviewStatus" value="verified"/>
       <property name="MPN" value="TLV3012BIDBVR"/>
       <property name="Manufacturer" value="Texas Instruments"/>
@@ -19590,7 +19304,7 @@
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>bb31f89d-9197-5f76-8b47-4dde6d8d7202</tstamps>
+      <tstamps>1616f049-c0bd-53ab-83a3-d5b91313caae</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -19706,184 +19420,244 @@
         </unit>
       </units>
     </comp>
-    <comp ref="W404">
-      <value>RX2 → Lime X4 MHF4 coax</value>
-      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
-      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
+    <comp ref="W422">
+      <value>RG316 SMA-M/M 152.4 mm helix → LaNA</value>
+      <datasheet>E4 completion design; see E4-review.md</datasheet>
+      <description>Functional cable assembly interface.</description>
       <fields>
-        <field name="ReviewStatus">module</field>
-        <field name="MPN">CAB.01075</field>
-        <field name="Manufacturer">Taoglas</field>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">415-0029-006</field>
+        <field name="Manufacturer">Cinch Connectivity Solutions Johnson</field>
+        <field name="Alt_MPN">Mueller Electric Co BU-4150029006</field>
         <field name="Footprint"/>
-        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
-        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
+        <field name="Datasheet">E4 completion design; see E4-review.md</field>
+        <field name="Description">Functional cable assembly interface.</field>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_W404" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
-      <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="CAB.01075"/>
-      <property name="Manufacturer" value="Taoglas"/>
+      <libsource lib="sr_rx_v2_completed" part="C_W422" description="Functional cable assembly interface. | design | Functional cable assembly; connector identifiers are logical, not physical pad numbering."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="415-0029-006"/>
+      <property name="Manufacturer" value="Cinch Connectivity Solutions Johnson"/>
+      <property name="Alt_MPN" value="Mueller Electric Co BU-4150029006"/>
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>4ae44714-1e4b-585a-850c-524176e6db3a</tstamps>
+      <tstamps>b284131b-972a-50d5-b32c-1ba802a062a3</tstamps>
       <units>
         <unit name="A">
           <pins>
-            <pin num="END_A"/>
+            <pin num="LNA"/>
             <pin num="SHIELDS"/>
-            <pin num="END_B"/>
+            <pin num="ANT"/>
           </pins>
         </unit>
       </units>
     </comp>
-    <comp ref="W405">
-      <value>REF IN → J4 MHF4 coax</value>
-      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
-      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
+    <comp ref="W423">
+      <value>RG316 SMA-M/M 152.4 mm LaNA → DC block</value>
+      <datasheet>E4 completion design; see E4-review.md</datasheet>
+      <description>Functional cable assembly interface.</description>
       <fields>
-        <field name="ReviewStatus">module</field>
-        <field name="MPN">CAB.01075</field>
-        <field name="Manufacturer">Taoglas</field>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">415-0029-006</field>
+        <field name="Manufacturer">Cinch Connectivity Solutions Johnson</field>
+        <field name="Alt_MPN">Mueller Electric Co BU-4150029006</field>
         <field name="Footprint"/>
-        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
-        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
+        <field name="Datasheet">E4 completion design; see E4-review.md</field>
+        <field name="Description">Functional cable assembly interface.</field>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_W405" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
-      <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="CAB.01075"/>
-      <property name="Manufacturer" value="Taoglas"/>
+      <libsource lib="sr_rx_v2_completed" part="C_W423" description="Functional cable assembly interface. | design | Functional cable assembly; connector identifiers are logical, not physical pad numbering."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="415-0029-006"/>
+      <property name="Manufacturer" value="Cinch Connectivity Solutions Johnson"/>
+      <property name="Alt_MPN" value="Mueller Electric Co BU-4150029006"/>
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>54efdb36-fa67-53ba-a4de-c460e0dc6eb4</tstamps>
+      <tstamps>101605dc-08d7-51f5-b109-dc38634c727a</tstamps>
       <units>
         <unit name="A">
           <pins>
-            <pin num="END_A"/>
+            <pin num="LNA"/>
             <pin num="SHIELDS"/>
-            <pin num="END_B"/>
+            <pin num="BLOCK"/>
           </pins>
         </unit>
       </units>
     </comp>
-    <comp ref="W406">
-      <value>CAB.01075 X1 → ANNE-50+ captive coax</value>
-      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
-      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
+    <comp ref="W424">
+      <value>RG316 SMA-M/M 1.00 m pod → RX2</value>
+      <datasheet>E4 completion design; see E4-review.md</datasheet>
+      <description>Functional cable assembly interface.</description>
       <fields>
-        <field name="ReviewStatus">module</field>
-        <field name="MPN">CAB.01075</field>
-        <field name="Manufacturer">Taoglas</field>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">135101-01-M1.00</field>
+        <field name="Manufacturer">Amphenol RF</field>
+        <field name="Alt_MPN">Molex 0732305316</field>
         <field name="Footprint"/>
-        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
-        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
+        <field name="Datasheet">E4 completion design; see E4-review.md</field>
+        <field name="Description">Functional cable assembly interface.</field>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_W406" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
-      <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="CAB.01075"/>
-      <property name="Manufacturer" value="Taoglas"/>
+      <libsource lib="sr_rx_v2_completed" part="C_W424" description="Functional cable assembly interface. | design | Functional cable assembly; connector identifiers are logical, not physical pad numbering."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="135101-01-M1.00"/>
+      <property name="Manufacturer" value="Amphenol RF"/>
+      <property name="Alt_MPN" value="Molex 0732305316"/>
       <property name="Sheetname" value="E4_02"/>
       <property name="Sheetfile" value="E4_02.kicad_sch"/>
       <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
-      <tstamps>3456268c-e8ee-5e95-9ee6-ae16ce4d0bc1</tstamps>
+      <tstamps>b0aad58a-c77e-5a4d-a8da-0bb6fbe743e4</tstamps>
       <units>
         <unit name="A">
           <pins>
-            <pin num="END_A"/>
+            <pin num="FILTER"/>
             <pin num="SHIELDS"/>
-            <pin num="END_B"/>
+            <pin num="PANEL"/>
           </pins>
         </unit>
       </units>
     </comp>
-    <comp ref="A422">
-      <value>Nooelec LaNA WB 100845</value>
-      <datasheet>https://nooelec.com/store/sdr/sdr-addons/rf-blocks/lana-wb.html</datasheet>
-      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
+    <comp ref="W425">
+      <value>USB-C power-only 1.50 m, 26 AWG pair</value>
+      <datasheet>E4 completion design; see E4-review.md</datasheet>
+      <description>Functional cable assembly interface.</description>
       <fields>
-        <field name="ReviewStatus">module</field>
-        <field name="MPN">100845</field>
-        <field name="Manufacturer">Nooelec</field>
+        <field name="ReviewStatus">design</field>
         <field name="Footprint"/>
-        <field name="Datasheet">https://nooelec.com/store/sdr/sdr-addons/rf-blocks/lana-wb.html</field>
-        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
+        <field name="Datasheet">E4 completion design; see E4-review.md</field>
+        <field name="Description">Functional cable assembly interface.</field>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_A422" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module | 300 MHz–8 GHz. External USB-C power 3.3–5.5 V, ≤65 mA specified. Use only this power method; no simultaneous bias-tee or external supply.; Located at existing S-band helix feed in an external weatherproof inline pod, not inside the handheld RF bay. Gain/NF at 2.2–2.3 GHz must be measured; product-wide nominal NF is not a guaranteed 2.2 GHz figure."/>
-      <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="100845"/>
-      <property name="Manufacturer" value="Nooelec"/>
-      <property name="Sheetname" value="E4_03"/>
-      <property name="Sheetfile" value="E4_03.kicad_sch"/>
-      <sheetpath names="/E4_03/" tstamps="/4dd92141-48db-50ea-8b51-bae65ea8ecfb/"/>
-      <tstamps>fcf9e065-931a-5659-b0e6-f085eb362a1a</tstamps>
+      <libsource lib="sr_rx_v2_completed" part="C_W425" description="Functional cable assembly interface. | design | Functional cable assembly; connector identifiers are logical, not physical pad numbering.; The POD_5V power_out is the documented conductor output of this cable from protected BIAS_SB_LNA, not an independent supply or an assumed unknown rail."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E4_02"/>
+      <property name="Sheetfile" value="E4_02.kicad_sch"/>
+      <sheetpath names="/E4_02/" tstamps="/29d9ed3f-1ac6-5216-98b0-395a68609862/"/>
+      <tstamps>a0f9f116-092b-5a70-be3d-d8e8761116d4</tstamps>
       <units>
         <unit name="A">
           <pins>
-            <pin num="USB_C_VBUS"/>
-            <pin num="SMA_OUT"/>
-            <pin num="USB_C_GND"/>
-            <pin num="SHIELDS"/>
-            <pin num="SMA_IN"/>
+            <pin num="BRANCH_5V"/>
+            <pin num="RETURN"/>
+            <pin num="SHIELD"/>
+            <pin num="POD_5V"/>
           </pins>
         </unit>
       </units>
     </comp>
-    <comp ref="A423">
-      <value>sysmocom cf2235-kt30 2170–2300 MHz</value>
-      <datasheet>https://www.sysmocom.de/downloads/rf_filter_cf2235-kt30.pdf</datasheet>
+    <comp ref="A409">
+      <value>BLK-89-S+</value>
+      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
       <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
-      <fields>
-        <field name="ReviewStatus">module</field>
-        <field name="MPN">cf2235-kt30</field>
-        <field name="Manufacturer">sysmocom</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">https://www.sysmocom.de/downloads/rf_filter_cf2235-kt30.pdf</field>
-        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_A423" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module | Both SMA-female ports are bidirectional. 50 Ω, IL ≤1 dB, VSWR ≤1.30, 124×47×33 mm, 186 g, −20…+50 °C, IP50; needs weather enclosure.; Primary datasheet passband is 2170–2300 MHz. 2252.5/2284/2285 MHz are in-band: retain the software allowlist for policy/mission selection, not as a physical filter claim."/>
-      <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="cf2235-kt30"/>
-      <property name="Manufacturer" value="sysmocom"/>
-      <property name="Sheetname" value="E4_03"/>
-      <property name="Sheetfile" value="E4_03.kicad_sch"/>
-      <sheetpath names="/E4_03/" tstamps="/4dd92141-48db-50ea-8b51-bae65ea8ecfb/"/>
-      <tstamps>6c1b74b1-78d7-567c-b6e4-40a2d6c236d8</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="SMA_F_A"/>
-            <pin num="SHIELDS"/>
-            <pin num="SMA_F_B"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="A425">
-      <value>Mini-Circuits BLK-89-S+ pod DC block</value>
-      <datasheet>https://www.minicircuits.com/WebStore/dashboard.html?model=BLK-89-S%2B</datasheet>
-      <description>Commercial SMA module functional interface; no invented physical pin numbers.</description>
       <fields>
         <field name="ReviewStatus">module</field>
         <field name="MPN">BLK-89-S+</field>
         <field name="Manufacturer">Mini-Circuits</field>
         <field name="Footprint"/>
-        <field name="Datasheet">https://www.minicircuits.com/WebStore/dashboard.html?model=BLK-89-S%2B</field>
-        <field name="Description">Commercial SMA module functional interface; no invented physical pin numbers.</field>
+        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
+        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_A425" description="Commercial SMA module functional interface; no invented physical pin numbers. | module | Explicit output DC isolation before the cavity filter; retained A409 still blocks DC at the receiver. Do not assume USB-powered LaNA output has no DC."/>
+      <libsource lib="sr_rx_v2_completed" part="C_A409" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
       <property name="ReviewStatus" value="module"/>
       <property name="MPN" value="BLK-89-S+"/>
       <property name="Manufacturer" value="Mini-Circuits"/>
       <property name="Sheetname" value="E4_03"/>
       <property name="Sheetfile" value="E4_03.kicad_sch"/>
       <sheetpath names="/E4_03/" tstamps="/4dd92141-48db-50ea-8b51-bae65ea8ecfb/"/>
-      <tstamps>ae8d9e2c-2b19-522c-b66f-8a16ba6cd6bc</tstamps>
+      <tstamps>6b4871f9-9dc4-535f-bf3b-2b28b8c18c4a</tstamps>
       <units>
         <unit name="A">
           <pins>
-            <pin num="SMA_A"/>
+            <pin num="IN"/>
             <pin num="SHIELDS"/>
-            <pin num="SMA_B"/>
+            <pin num="OUT"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="A410">
+      <value>ANNE-50+ 50 Ω load</value>
+      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
+      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
+      <fields>
+        <field name="ReviewStatus">module</field>
+        <field name="MPN">ANNE-50+</field>
+        <field name="Manufacturer">Mini-Circuits</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
+        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_A410" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
+      <property name="ReviewStatus" value="module"/>
+      <property name="MPN" value="ANNE-50+"/>
+      <property name="Manufacturer" value="Mini-Circuits"/>
+      <property name="Sheetname" value="E4_03"/>
+      <property name="Sheetfile" value="E4_03.kicad_sch"/>
+      <sheetpath names="/E4_03/" tstamps="/4dd92141-48db-50ea-8b51-bae65ea8ecfb/"/>
+      <tstamps>ad195187-fb1f-58e5-9eed-9af96d1363a4</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="END_A"/>
+            <pin num="END_B"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="A418">
+      <value>Uputronics 440 Rev 3.0 external LNA</value>
+      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
+      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
+      <fields>
+        <field name="ReviewStatus">module</field>
+        <field name="MPN">HAB-FPA440 (case V3 / board Rev 3.0)</field>
+        <field name="Manufacturer">Uputronics</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
+        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_A418" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
+      <property name="ReviewStatus" value="module"/>
+      <property name="MPN" value="HAB-FPA440 (case V3 / board Rev 3.0)"/>
+      <property name="Manufacturer" value="Uputronics"/>
+      <property name="Sheetname" value="E4_03"/>
+      <property name="Sheetfile" value="E4_03.kicad_sch"/>
+      <sheetpath names="/E4_03/" tstamps="/4dd92141-48db-50ea-8b51-bae65ea8ecfb/"/>
+      <tstamps>0340322e-afc5-5e33-aba6-0c01fa8766fe</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="IN"/>
+            <pin num="SHIELDS"/>
+            <pin num="OUT"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="A419">
+      <value>GOES / H1 / iO / active patch external LNA</value>
+      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
+      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
+      <fields>
+        <field name="ReviewStatus">module</field>
+        <field name="MPN">100792</field>
+        <field name="Manufacturer">Nooelec</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
+        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_A419" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module | Exactly one documented L-band LNA/active patch is connected per operating profile. No TCBT 200 mA device on ch3."/>
+      <property name="ReviewStatus" value="module"/>
+      <property name="MPN" value="100792"/>
+      <property name="Manufacturer" value="Nooelec"/>
+      <property name="Sheetname" value="E4_03"/>
+      <property name="Sheetfile" value="E4_03.kicad_sch"/>
+      <sheetpath names="/E4_03/" tstamps="/4dd92141-48db-50ea-8b51-bae65ea8ecfb/"/>
+      <tstamps>8fb7ac60-d182-5fb7-a8c5-aa23870519f7</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="IN"/>
+            <pin num="SHIELDS"/>
+            <pin num="OUT"/>
           </pins>
         </unit>
       </units>
@@ -21077,26 +20851,285 @@
         </unit>
       </units>
     </comp>
-    <comp ref="J422">
-      <value>Existing S-band helix feed SMA</value>
-      <datasheet>E4 completion design; see E4-review.md</datasheet>
+    <comp ref="J402">
+      <value>P2 UHF SMA: 4.3 V</value>
+      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
+      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
       <fields>
         <field name="ReviewStatus">module</field>
+        <field name="MPN">CAB.718</field>
+        <field name="Manufacturer">Taoglas</field>
         <field name="Footprint"/>
-        <field name="Datasheet">E4 completion design; see E4-review.md</field>
-        <field name="Description"/>
+        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
+        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J422" description="| module |"/>
+      <libsource lib="sr_rx_v2_completed" part="C_J402" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
       <property name="ReviewStatus" value="module"/>
+      <property name="MPN" value="CAB.718"/>
+      <property name="Manufacturer" value="Taoglas"/>
       <property name="Sheetname" value="E4_03"/>
       <property name="Sheetfile" value="E4_03.kicad_sch"/>
       <sheetpath names="/E4_03/" tstamps="/4dd92141-48db-50ea-8b51-bae65ea8ecfb/"/>
-      <tstamps>c8d61688-3c0e-5b84-b87e-b63a5bb69ffb</tstamps>
+      <tstamps>d6f643c2-dbff-574a-840f-c8d9ffaea8d8</tstamps>
       <units>
         <unit name="A">
           <pins>
             <pin num="CENTER"/>
             <pin num="SHIELD"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J403">
+      <value>P3 L-band SMA: 4.3 V</value>
+      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
+      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
+      <fields>
+        <field name="ReviewStatus">module</field>
+        <field name="MPN">CAB.718</field>
+        <field name="Manufacturer">Taoglas</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
+        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_J403" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
+      <property name="ReviewStatus" value="module"/>
+      <property name="MPN" value="CAB.718"/>
+      <property name="Manufacturer" value="Taoglas"/>
+      <property name="Sheetname" value="E4_03"/>
+      <property name="Sheetfile" value="E4_03.kicad_sch"/>
+      <sheetpath names="/E4_03/" tstamps="/4dd92141-48db-50ea-8b51-bae65ea8ecfb/"/>
+      <tstamps>5bc03d36-43b0-5c9c-a2f5-bf4a3a860ca0</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="CENTER"/>
+            <pin num="SHIELD"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J406">
+      <value>P6 VHF/AIS SMA: no DC</value>
+      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
+      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
+      <fields>
+        <field name="ReviewStatus">module</field>
+        <field name="MPN">CAB.718</field>
+        <field name="Manufacturer">Taoglas</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
+        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_J406" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
+      <property name="ReviewStatus" value="module"/>
+      <property name="MPN" value="CAB.718"/>
+      <property name="Manufacturer" value="Taoglas"/>
+      <property name="Sheetname" value="E4_03"/>
+      <property name="Sheetfile" value="E4_03.kicad_sch"/>
+      <sheetpath names="/E4_03/" tstamps="/4dd92141-48db-50ea-8b51-bae65ea8ecfb/"/>
+      <tstamps>1873a8fc-4fbd-5d3f-bead-6820f9c35ae3</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="CENTER"/>
+            <pin num="SHIELD"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J414">
+      <value>RX2 panel SMA</value>
+      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
+      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
+      <fields>
+        <field name="ReviewStatus">module</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
+        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_J414" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
+      <property name="ReviewStatus" value="module"/>
+      <property name="Sheetname" value="E4_03"/>
+      <property name="Sheetfile" value="E4_03.kicad_sch"/>
+      <sheetpath names="/E4_03/" tstamps="/4dd92141-48db-50ea-8b51-bae65ea8ecfb/"/>
+      <tstamps>fa37dc0c-bcf8-59b2-b58c-ab96c6638d07</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="SHIELD"/>
+            <pin num="CENTER"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J415">
+      <value>REF IN panel SMA</value>
+      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
+      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
+      <fields>
+        <field name="ReviewStatus">module</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
+        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_J415" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
+      <property name="ReviewStatus" value="module"/>
+      <property name="Sheetname" value="E4_03"/>
+      <property name="Sheetfile" value="E4_03.kicad_sch"/>
+      <sheetpath names="/E4_03/" tstamps="/4dd92141-48db-50ea-8b51-bae65ea8ecfb/"/>
+      <tstamps>4d4e4cda-7fc4-58f5-9f00-aa57eb7bc43e</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="SHIELD"/>
+            <pin num="CENTER"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J416">
+      <value>UHF antenna feed / A418 input interface</value>
+      <datasheet>STACK §5.3; assembly boundary of external Uputronics 440 LNA and selected UHF antenna</datasheet>
+      <description>Functional antenna-side coax interface of the external A418 assembly; named center/shield ports are not physical PCB pad numbers.</description>
+      <fields>
+        <field name="ReviewStatus">module</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK §5.3; assembly boundary of external Uputronics 440 LNA and selected UHF antenna</field>
+        <field name="Description">Functional antenna-side coax interface of the external A418 assembly; named center/shield ports are not physical PCB pad numbers.</field>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_J416" description="Functional antenna-side coax interface of the external A418 assembly; named center/shield ports are not physical PCB pad numbers. | module | This is the selected UHF antenna/feed connection to the LNA RF input, upstream of A418; J402 remains the handheld P2 connection downstream of the LNA.; The interface is assembly-owned. When A418 has its integral SMA input, this record identifies that existing input and its mating antenna feed; it is not an additional bulkhead, adaptor, PCB jack or purchase. Verify the received assembly connector and cable before mating."/>
+      <property name="ReviewStatus" value="module"/>
+      <property name="Sheetname" value="E4_03"/>
+      <property name="Sheetfile" value="E4_03.kicad_sch"/>
+      <sheetpath names="/E4_03/" tstamps="/4dd92141-48db-50ea-8b51-bae65ea8ecfb/"/>
+      <tstamps>52add866-4f67-5d5e-b6c7-93baaf145532</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="SHIELD"/>
+            <pin num="CENTER"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J417">
+      <value>L-band antenna feed / A419 input interface</value>
+      <datasheet>STACK §5.3; profile-selected external L-band antenna/LNA or active-patch assembly boundary</datasheet>
+      <description>Functional RF feed/return interface of the selected external A419 antenna assembly; named center/shield ports do not invent internal PCB pad numbers.</description>
+      <fields>
+        <field name="ReviewStatus">module</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK §5.3; profile-selected external L-band antenna/LNA or active-patch assembly boundary</field>
+        <field name="Description">Functional RF feed/return interface of the selected external A419 antenna assembly; named center/shield ports do not invent internal PCB pad numbers.</field>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_J417" description="Functional RF feed/return interface of the selected external A419 antenna assembly; named center/shield ports do not invent internal PCB pad numbers. | module | Exactly one profile antenna/feed drives this interface. For a discrete external LNA, it identifies the existing antenna-side input connector and its shield. For an integrated active patch, CENTER and SHIELD express its internal antenna feed and RF return; no accessible extra SMA is asserted.; The interface is assembly-owned and adds no separately purchased connector. J403 remains the handheld P3 connection on the receiver-facing side. Confirm the chosen profile assembly and its real connectors during its existing hardware acceptance."/>
+      <property name="ReviewStatus" value="module"/>
+      <property name="Sheetname" value="E4_03"/>
+      <property name="Sheetfile" value="E4_03.kicad_sch"/>
+      <sheetpath names="/E4_03/" tstamps="/4dd92141-48db-50ea-8b51-bae65ea8ecfb/"/>
+      <tstamps>fc9b8f1c-f98b-52ca-ad43-e341ff3c7989</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="SHIELD"/>
+            <pin num="CENTER"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J423">
+      <value>P2 board U.FL: 4.3 V</value>
+      <footprint>SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS</footprint>
+      <datasheet>W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT</datasheet>
+      <description>Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2).</description>
+      <fields>
+        <field name="ReviewStatus">module</field>
+        <field name="MPN">U.FL-R-SMT-1(10)</field>
+        <field name="Manufacturer">Hirose Electric</field>
+        <field name="LCSC">C88373</field>
+        <field name="Footprint">SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS</field>
+        <field name="Datasheet">W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT</field>
+        <field name="Description">Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2).</field>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_J423" description="Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2). | module | Mates the U.FL plug of the J402 panel pigtail (Taoglas CAB.718). Carries the ch2 bias (4.3 V, TPS2553 limit 0.339 A max) outward: no U.FL current rating is published, so DC drop and heating at the bias current are E4-07 measurements.; Place at the E4_P2 node with C403, L403, R4420 and R4460: the detector RF tap R4420 stays ≤1 mm from this port (DC-01)."/>
+      <property name="ReviewStatus" value="module"/>
+      <property name="MPN" value="U.FL-R-SMT-1(10)"/>
+      <property name="Manufacturer" value="Hirose Electric"/>
+      <property name="LCSC" value="C88373"/>
+      <property name="Sheetname" value="E4_03"/>
+      <property name="Sheetfile" value="E4_03.kicad_sch"/>
+      <sheetpath names="/E4_03/" tstamps="/4dd92141-48db-50ea-8b51-bae65ea8ecfb/"/>
+      <tstamps>393b3df5-2d04-5af7-9c39-177269b39500</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="CENTER"/>
+            <pin num="SHIELD"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J424">
+      <value>P3 board U.FL: 4.3 V</value>
+      <footprint>SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS</footprint>
+      <datasheet>W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT</datasheet>
+      <description>Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2).</description>
+      <fields>
+        <field name="ReviewStatus">module</field>
+        <field name="MPN">U.FL-R-SMT-1(10)</field>
+        <field name="Manufacturer">Hirose Electric</field>
+        <field name="LCSC">C88373</field>
+        <field name="Footprint">SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS</field>
+        <field name="Datasheet">W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT</field>
+        <field name="Description">Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2).</field>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_J424" description="Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2). | module | Mates the U.FL plug of the J403 panel pigtail (Taoglas CAB.718). Carries the ch3 bias (4.3 V, TPS2553 limit 0.339 A max) outward: no U.FL current rating is published, so DC drop and heating at the bias current are E4-07 measurements.; Place at the E4_P3 node with C411, L404, R4430 and R4464: the detector RF tap R4430 stays ≤1 mm from this port (DC-01)."/>
+      <property name="ReviewStatus" value="module"/>
+      <property name="MPN" value="U.FL-R-SMT-1(10)"/>
+      <property name="Manufacturer" value="Hirose Electric"/>
+      <property name="LCSC" value="C88373"/>
+      <property name="Sheetname" value="E4_03"/>
+      <property name="Sheetfile" value="E4_03.kicad_sch"/>
+      <sheetpath names="/E4_03/" tstamps="/4dd92141-48db-50ea-8b51-bae65ea8ecfb/"/>
+      <tstamps>9103998a-f003-5618-a622-0e73808a4f87</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="CENTER"/>
+            <pin num="SHIELD"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J425">
+      <value>P6 board U.FL: no DC</value>
+      <footprint>SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS</footprint>
+      <datasheet>W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT</datasheet>
+      <description>Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2).</description>
+      <fields>
+        <field name="ReviewStatus">module</field>
+        <field name="MPN">U.FL-R-SMT-1(10)</field>
+        <field name="Manufacturer">Hirose Electric</field>
+        <field name="LCSC">C88373</field>
+        <field name="Footprint">SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS</field>
+        <field name="Datasheet">W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT</field>
+        <field name="Description">Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2).</field>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_J425" description="Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2). | module | Mates the U.FL plug of the J406 panel pigtail (Taoglas CAB.718); feeds K402.3 next to the optional DNP L407 (RF_HF)."/>
+      <property name="ReviewStatus" value="module"/>
+      <property name="MPN" value="U.FL-R-SMT-1(10)"/>
+      <property name="Manufacturer" value="Hirose Electric"/>
+      <property name="LCSC" value="C88373"/>
+      <property name="Sheetname" value="E4_03"/>
+      <property name="Sheetfile" value="E4_03.kicad_sch"/>
+      <sheetpath names="/E4_03/" tstamps="/4dd92141-48db-50ea-8b51-bae65ea8ecfb/"/>
+      <tstamps>68731092-abd6-5a11-990a-11c6dafc50ca</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="SHIELD"/>
+            <pin num="CENTER"/>
           </pins>
         </unit>
       </units>
@@ -22323,125 +22356,92 @@
         </unit>
       </units>
     </comp>
-    <comp ref="W422">
-      <value>RG316 SMA-M/M 152.4 mm helix → LaNA</value>
-      <datasheet>E4 completion design; see E4-review.md</datasheet>
-      <description>Functional cable assembly interface.</description>
+    <comp ref="W404">
+      <value>RX2 → Lime X4 MHF4 coax</value>
+      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
+      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
       <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">415-0029-006</field>
-        <field name="Manufacturer">Cinch Connectivity Solutions Johnson</field>
-        <field name="Alt_MPN">Mueller Electric Co BU-4150029006</field>
+        <field name="ReviewStatus">module</field>
+        <field name="MPN">CAB.01075</field>
+        <field name="Manufacturer">Taoglas</field>
         <field name="Footprint"/>
-        <field name="Datasheet">E4 completion design; see E4-review.md</field>
-        <field name="Description">Functional cable assembly interface.</field>
+        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
+        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_W422" description="Functional cable assembly interface. | design | Functional cable assembly; connector identifiers are logical, not physical pad numbering."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="415-0029-006"/>
-      <property name="Manufacturer" value="Cinch Connectivity Solutions Johnson"/>
-      <property name="Alt_MPN" value="Mueller Electric Co BU-4150029006"/>
+      <libsource lib="sr_rx_v2_completed" part="C_W404" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
+      <property name="ReviewStatus" value="module"/>
+      <property name="MPN" value="CAB.01075"/>
+      <property name="Manufacturer" value="Taoglas"/>
       <property name="Sheetname" value="E4_03"/>
       <property name="Sheetfile" value="E4_03.kicad_sch"/>
       <sheetpath names="/E4_03/" tstamps="/4dd92141-48db-50ea-8b51-bae65ea8ecfb/"/>
-      <tstamps>fa6c9ae5-38ec-5e10-98fa-09e4fc9c6c42</tstamps>
+      <tstamps>37dd186d-fd92-562a-9efd-499ccc3646b3</tstamps>
       <units>
         <unit name="A">
           <pins>
-            <pin num="LNA"/>
+            <pin num="END_A"/>
             <pin num="SHIELDS"/>
-            <pin num="ANT"/>
+            <pin num="END_B"/>
           </pins>
         </unit>
       </units>
     </comp>
-    <comp ref="W423">
-      <value>RG316 SMA-M/M 152.4 mm LaNA → DC block</value>
-      <datasheet>E4 completion design; see E4-review.md</datasheet>
-      <description>Functional cable assembly interface.</description>
+    <comp ref="W405">
+      <value>REF IN → J4 MHF4 coax</value>
+      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
+      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
       <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">415-0029-006</field>
-        <field name="Manufacturer">Cinch Connectivity Solutions Johnson</field>
-        <field name="Alt_MPN">Mueller Electric Co BU-4150029006</field>
+        <field name="ReviewStatus">module</field>
+        <field name="MPN">CAB.01075</field>
+        <field name="Manufacturer">Taoglas</field>
         <field name="Footprint"/>
-        <field name="Datasheet">E4 completion design; see E4-review.md</field>
-        <field name="Description">Functional cable assembly interface.</field>
+        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
+        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_W423" description="Functional cable assembly interface. | design | Functional cable assembly; connector identifiers are logical, not physical pad numbering."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="415-0029-006"/>
-      <property name="Manufacturer" value="Cinch Connectivity Solutions Johnson"/>
-      <property name="Alt_MPN" value="Mueller Electric Co BU-4150029006"/>
+      <libsource lib="sr_rx_v2_completed" part="C_W405" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
+      <property name="ReviewStatus" value="module"/>
+      <property name="MPN" value="CAB.01075"/>
+      <property name="Manufacturer" value="Taoglas"/>
       <property name="Sheetname" value="E4_03"/>
       <property name="Sheetfile" value="E4_03.kicad_sch"/>
       <sheetpath names="/E4_03/" tstamps="/4dd92141-48db-50ea-8b51-bae65ea8ecfb/"/>
-      <tstamps>7ae38749-a000-54c1-a20e-5c62ce52cec4</tstamps>
+      <tstamps>45c6ccd6-007a-5636-83a4-3e444083b3b0</tstamps>
       <units>
         <unit name="A">
           <pins>
-            <pin num="LNA"/>
+            <pin num="END_A"/>
             <pin num="SHIELDS"/>
-            <pin num="BLOCK"/>
+            <pin num="END_B"/>
           </pins>
         </unit>
       </units>
     </comp>
-    <comp ref="W424">
-      <value>RG316 SMA-M/M 1.00 m pod → RX2</value>
-      <datasheet>E4 completion design; see E4-review.md</datasheet>
-      <description>Functional cable assembly interface.</description>
+    <comp ref="W406">
+      <value>CAB.01075 X1 → ANNE-50+ captive coax</value>
+      <datasheet>STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</datasheet>
+      <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
       <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">135101-01-M1.00</field>
-        <field name="Manufacturer">Amphenol RF</field>
-        <field name="Alt_MPN">Molex 0732305316</field>
+        <field name="ReviewStatus">module</field>
+        <field name="MPN">CAB.01075</field>
+        <field name="Manufacturer">Taoglas</field>
         <field name="Footprint"/>
-        <field name="Datasheet">E4 completion design; see E4-review.md</field>
-        <field name="Description">Functional cable assembly interface.</field>
+        <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
+        <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_W424" description="Functional cable assembly interface. | design | Functional cable assembly; connector identifiers are logical, not physical pad numbering."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="135101-01-M1.00"/>
-      <property name="Manufacturer" value="Amphenol RF"/>
-      <property name="Alt_MPN" value="Molex 0732305316"/>
+      <libsource lib="sr_rx_v2_completed" part="C_W406" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module |"/>
+      <property name="ReviewStatus" value="module"/>
+      <property name="MPN" value="CAB.01075"/>
+      <property name="Manufacturer" value="Taoglas"/>
       <property name="Sheetname" value="E4_03"/>
       <property name="Sheetfile" value="E4_03.kicad_sch"/>
       <sheetpath names="/E4_03/" tstamps="/4dd92141-48db-50ea-8b51-bae65ea8ecfb/"/>
-      <tstamps>4e9164a4-7bad-564c-98ad-c4a678316e05</tstamps>
+      <tstamps>beef2ced-250f-5ade-9489-726d9bf177a8</tstamps>
       <units>
         <unit name="A">
           <pins>
-            <pin num="FILTER"/>
+            <pin num="END_A"/>
             <pin num="SHIELDS"/>
-            <pin num="PANEL"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="W425">
-      <value>USB-C power-only 1.50 m, 26 AWG pair</value>
-      <datasheet>E4 completion design; see E4-review.md</datasheet>
-      <description>Functional cable assembly interface.</description>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">E4 completion design; see E4-review.md</field>
-        <field name="Description">Functional cable assembly interface.</field>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_W425" description="Functional cable assembly interface. | design | Functional cable assembly; connector identifiers are logical, not physical pad numbering.; The POD_5V power_out is the documented conductor output of this cable from protected BIAS_SB_LNA, not an independent supply or an assumed unknown rail."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E4_03"/>
-      <property name="Sheetfile" value="E4_03.kicad_sch"/>
-      <sheetpath names="/E4_03/" tstamps="/4dd92141-48db-50ea-8b51-bae65ea8ecfb/"/>
-      <tstamps>c3bc6399-ba53-557b-9405-d915e625c535</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="BRANCH_5V"/>
-            <pin num="RETURN"/>
-            <pin num="SHIELD"/>
-            <pin num="POD_5V"/>
+            <pin num="END_B"/>
           </pins>
         </unit>
       </units>
@@ -22512,7 +22512,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="C4430">
+    <comp ref="C4440">
       <value>100 pF C0G 50 V</value>
       <footprint>Capacitor_SMD:C_0402_1005Metric</footprint>
       <datasheet>E4 completion design; see E4-review.md</datasheet>
@@ -22526,7 +22526,7 @@
         <field name="Datasheet">E4 completion design; see E4-review.md</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C4430" description="| design |"/>
+      <libsource lib="sr_rx_v2_completed" part="C_C4440" description="| design |"/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="GRM1555C1H101JA01D"/>
       <property name="Manufacturer" value="Murata Electronics"/>
@@ -22535,7 +22535,7 @@
       <property name="Sheetname" value="E4_04"/>
       <property name="Sheetfile" value="E4_04.kicad_sch"/>
       <sheetpath names="/E4_04/" tstamps="/9df58c55-738d-55e8-9cee-b8959598c250/"/>
-      <tstamps>ac096d74-2043-57da-bdfb-0eaa56c4f0bc</tstamps>
+      <tstamps>228ceddf-f089-56ba-bec6-1f7518d5e55a</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -22545,7 +22545,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="C4431">
+    <comp ref="C4441">
       <value>10 nF C0G 50 V</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
       <datasheet>E4 completion design; see E4-review.md</datasheet>
@@ -22559,7 +22559,7 @@
         <field name="Datasheet">E4 completion design; see E4-review.md</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C4431" description="| design |"/>
+      <libsource lib="sr_rx_v2_completed" part="C_C4441" description="| design |"/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="GRM1885C1H103JA01D"/>
       <property name="Manufacturer" value="Murata Electronics"/>
@@ -22568,7 +22568,7 @@
       <property name="Sheetname" value="E4_04"/>
       <property name="Sheetfile" value="E4_04.kicad_sch"/>
       <sheetpath names="/E4_04/" tstamps="/9df58c55-738d-55e8-9cee-b8959598c250/"/>
-      <tstamps>68fe17a6-b748-5714-b1bf-74c6c67fc9d4</tstamps>
+      <tstamps>276f44fa-1341-5c3c-9c27-407813f0e0d9</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -22612,7 +22612,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="D452">
+    <comp ref="D453">
       <value>BAV199 sense clamps</value>
       <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
       <datasheet>https://assets.nexperia.com/documents/data-sheet/BAV199.pdf</datasheet>
@@ -22626,7 +22626,7 @@
         <field name="Datasheet">https://assets.nexperia.com/documents/data-sheet/BAV199.pdf</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_D452" description="| verified | Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.9 kΩ (26.7 kΩ + 23.2 kΩ); TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."/>
+      <libsource lib="sr_rx_v2_completed" part="C_D453" description="| verified | Upper clamp returns to shunt reference, not Q6A VDD. Negative current is limited by 49.9 kΩ (26.7 kΩ + 23.2 kΩ); TLV3012B ground input clamp is explicitly rated for this limited negative current. ±30 V sustained foreign-DC envelope of this detector tap only; the assembled port is limited by the E2 bias branch (E4 notes, E4-06). Not lightning protection."/>
       <property name="ReviewStatus" value="verified"/>
       <property name="MPN" value="BAV199,215"/>
       <property name="Manufacturer" value="Nexperia"/>
@@ -22635,7 +22635,7 @@
       <property name="Sheetname" value="E4_04"/>
       <property name="Sheetfile" value="E4_04.kicad_sch"/>
       <sheetpath names="/E4_04/" tstamps="/9df58c55-738d-55e8-9cee-b8959598c250/"/>
-      <tstamps>21686be9-38b2-5fae-b9dd-0a6d78d335b8</tstamps>
+      <tstamps>e2bee087-4a07-5c9c-b0f9-57e2e0255236</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -22714,7 +22714,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="Q452">
+    <comp ref="Q454">
       <value>AO3400A</value>
       <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
       <datasheet>https://www.aosmd.com/res/data_sheets/AO3400A.pdf</datasheet>
@@ -22728,7 +22728,7 @@
         <field name="Datasheet">https://www.aosmd.com/res/data_sheets/AO3400A.pdf</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_Q452" description="| verified | Series sink only; specified logic-level 2.5 V gate drive."/>
+      <libsource lib="sr_rx_v2_completed" part="C_Q454" description="| verified | Series sink only; specified logic-level 2.5 V gate drive."/>
       <property name="ReviewStatus" value="verified"/>
       <property name="MPN" value="AO3400A"/>
       <property name="Manufacturer" value="Alpha &amp; Omega Semiconductor"/>
@@ -22737,7 +22737,7 @@
       <property name="Sheetname" value="E4_04"/>
       <property name="Sheetfile" value="E4_04.kicad_sch"/>
       <sheetpath names="/E4_04/" tstamps="/9df58c55-738d-55e8-9cee-b8959598c250/"/>
-      <tstamps>ae6117e2-7194-5d33-8bd6-434af755f506</tstamps>
+      <tstamps>1abef238-6a11-541e-8423-e10fb621edaa</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -22748,7 +22748,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="Q453">
+    <comp ref="Q455">
       <value>AO3400A</value>
       <footprint>Package_TO_SOT_SMD:SOT-23</footprint>
       <datasheet>https://www.aosmd.com/res/data_sheets/AO3400A.pdf</datasheet>
@@ -22762,7 +22762,7 @@
         <field name="Datasheet">https://www.aosmd.com/res/data_sheets/AO3400A.pdf</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_Q453" description="| verified | Series sink only; specified logic-level 2.5 V gate drive."/>
+      <libsource lib="sr_rx_v2_completed" part="C_Q455" description="| verified | Series sink only; specified logic-level 2.5 V gate drive."/>
       <property name="ReviewStatus" value="verified"/>
       <property name="MPN" value="AO3400A"/>
       <property name="Manufacturer" value="Alpha &amp; Omega Semiconductor"/>
@@ -22771,7 +22771,7 @@
       <property name="Sheetname" value="E4_04"/>
       <property name="Sheetfile" value="E4_04.kicad_sch"/>
       <sheetpath names="/E4_04/" tstamps="/9df58c55-738d-55e8-9cee-b8959598c250/"/>
-      <tstamps>328a00d3-2e16-5be7-9bb8-49cea8824d09</tstamps>
+      <tstamps>9c55ab31-aba3-591e-8c01-f7295687d38f</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -23013,7 +23013,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R4430">
+    <comp ref="R4440">
       <value>26.7 kΩ 0.1% 0402 RF tap</value>
       <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <datasheet>E4 completion design; see E4-review.md</datasheet>
@@ -23027,7 +23027,7 @@
         <field name="Datasheet">E4 completion design; see E4-review.md</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R4430" description="| design | First RF tap resistor directly at coax, with ≤1 mm stub. Keep detector traces behind RF via fence."/>
+      <libsource lib="sr_rx_v2_completed" part="C_R4440" description="| design | First RF tap resistor directly at coax, with ≤1 mm stub. Keep detector traces behind RF via fence."/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="RT0402BRD0726K7L"/>
       <property name="Manufacturer" value="YAGEO"/>
@@ -23036,7 +23036,7 @@
       <property name="Sheetname" value="E4_04"/>
       <property name="Sheetfile" value="E4_04.kicad_sch"/>
       <sheetpath names="/E4_04/" tstamps="/9df58c55-738d-55e8-9cee-b8959598c250/"/>
-      <tstamps>1811cd17-84ba-575e-805a-e7987b1bcaca</tstamps>
+      <tstamps>60e1eae1-55d8-57cf-884c-6ac06cdcb667</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -23046,7 +23046,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R4431">
+    <comp ref="R4441">
       <value>23.2 kΩ 0.1% 0402</value>
       <footprint>Resistor_SMD:R_0402_1005Metric</footprint>
       <datasheet>E4 completion design; see E4-review.md</datasheet>
@@ -23060,7 +23060,7 @@
         <field name="Datasheet">E4 completion design; see E4-review.md</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R4431" description="| design |"/>
+      <libsource lib="sr_rx_v2_completed" part="C_R4441" description="| design |"/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="RT0402BRD0723K2L"/>
       <property name="Manufacturer" value="YAGEO"/>
@@ -23069,7 +23069,7 @@
       <property name="Sheetname" value="E4_04"/>
       <property name="Sheetfile" value="E4_04.kicad_sch"/>
       <sheetpath names="/E4_04/" tstamps="/9df58c55-738d-55e8-9cee-b8959598c250/"/>
-      <tstamps>aa50f65e-796c-59af-b9e2-e29a03fab3d3</tstamps>
+      <tstamps>5fa7f28f-6d0f-5fe8-b660-7fa401394b44</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -23079,7 +23079,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R4432">
+    <comp ref="R4442">
       <value>49.9 kΩ 0.1%</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <datasheet>E4 completion design; see E4-review.md</datasheet>
@@ -23093,7 +23093,7 @@
         <field name="Datasheet">E4 completion design; see E4-review.md</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R4432" description="| design |"/>
+      <libsource lib="sr_rx_v2_completed" part="C_R4442" description="| design |"/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="RT0603BRD0749K9L"/>
       <property name="Manufacturer" value="YAGEO"/>
@@ -23102,7 +23102,7 @@
       <property name="Sheetname" value="E4_04"/>
       <property name="Sheetfile" value="E4_04.kicad_sch"/>
       <sheetpath names="/E4_04/" tstamps="/9df58c55-738d-55e8-9cee-b8959598c250/"/>
-      <tstamps>d9271daa-a0b9-5cae-8b79-eec82eecfebd</tstamps>
+      <tstamps>73c04401-17fe-5d2b-ac75-aff12843049c</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -23112,7 +23112,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R4433">
+    <comp ref="R4443">
       <value>100 Ω</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <datasheet>E4 completion design; see E4-review.md</datasheet>
@@ -23126,7 +23126,7 @@
         <field name="Datasheet">E4 completion design; see E4-review.md</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R4433" description="| design |"/>
+      <libsource lib="sr_rx_v2_completed" part="C_R4443" description="| design |"/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="0603WAF1000T5E"/>
       <property name="Manufacturer" value="UNI-ROYAL"/>
@@ -23135,7 +23135,7 @@
       <property name="Sheetname" value="E4_04"/>
       <property name="Sheetfile" value="E4_04.kicad_sch"/>
       <sheetpath names="/E4_04/" tstamps="/9df58c55-738d-55e8-9cee-b8959598c250/"/>
-      <tstamps>6e277f50-b8f7-572b-9049-60afb05608e2</tstamps>
+      <tstamps>291d2a91-6876-521d-95df-1ed235bae648</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -23145,7 +23145,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R4434">
+    <comp ref="R4444">
       <value>100 kΩ</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <datasheet>E4 completion design; see E4-review.md</datasheet>
@@ -23159,7 +23159,7 @@
         <field name="Datasheet">E4 completion design; see E4-review.md</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R4434" description="| design |"/>
+      <libsource lib="sr_rx_v2_completed" part="C_R4444" description="| design |"/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="0603WAF1003T5E"/>
       <property name="Manufacturer" value="UNI-ROYAL"/>
@@ -23168,7 +23168,7 @@
       <property name="Sheetname" value="E4_04"/>
       <property name="Sheetfile" value="E4_04.kicad_sch"/>
       <sheetpath names="/E4_04/" tstamps="/9df58c55-738d-55e8-9cee-b8959598c250/"/>
-      <tstamps>2d3dd9f8-3d66-5257-be35-7889177e212b</tstamps>
+      <tstamps>ef18dc92-30c8-5176-939e-700b327fefd3</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -23178,7 +23178,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R4435">
+    <comp ref="R4445">
       <value>100 Ω</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <datasheet>E4 completion design; see E4-review.md</datasheet>
@@ -23192,7 +23192,7 @@
         <field name="Datasheet">E4 completion design; see E4-review.md</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R4435" description="| design |"/>
+      <libsource lib="sr_rx_v2_completed" part="C_R4445" description="| design |"/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="0603WAF1000T5E"/>
       <property name="Manufacturer" value="UNI-ROYAL"/>
@@ -23201,7 +23201,7 @@
       <property name="Sheetname" value="E4_04"/>
       <property name="Sheetfile" value="E4_04.kicad_sch"/>
       <sheetpath names="/E4_04/" tstamps="/9df58c55-738d-55e8-9cee-b8959598c250/"/>
-      <tstamps>adf2acdd-8955-5822-94f6-3f08b3f06997</tstamps>
+      <tstamps>e547d6c9-9911-5124-a6e8-25df187b1cde</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -23211,7 +23211,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R4436">
+    <comp ref="R4446">
       <value>100 kΩ</value>
       <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
       <datasheet>E4 completion design; see E4-review.md</datasheet>
@@ -23225,7 +23225,7 @@
         <field name="Datasheet">E4 completion design; see E4-review.md</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R4436" description="| design |"/>
+      <libsource lib="sr_rx_v2_completed" part="C_R4446" description="| design |"/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="0603WAF1003T5E"/>
       <property name="Manufacturer" value="UNI-ROYAL"/>
@@ -23234,7 +23234,7 @@
       <property name="Sheetname" value="E4_04"/>
       <property name="Sheetfile" value="E4_04.kicad_sch"/>
       <sheetpath names="/E4_04/" tstamps="/9df58c55-738d-55e8-9cee-b8959598c250/"/>
-      <tstamps>668a28b2-58bf-5b99-b2f4-a191ee5cb249</tstamps>
+      <tstamps>3c6fd8e2-44c7-578d-9183-b8d6e5cc9210</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -23376,7 +23376,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R4464">
+    <comp ref="R4468">
       <value>249 Ω 1% ≥0.5 W</value>
       <footprint>Resistor_SMD:R_1210_3225Metric</footprint>
       <datasheet>E4 bipolar detector DC return design</datasheet>
@@ -23390,7 +23390,7 @@
         <field name="Datasheet">E4 bipolar detector DC return design</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R4464" description="| design | Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified.; First bleed resistor directly at the coax tap. Keep its pads and ground-return geometry short and symmetric; the other three form a series chain, not parallel RF loads."/>
+      <libsource lib="sr_rx_v2_completed" part="C_R4468" description="| design | Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified.; First bleed resistor directly at the coax tap. Keep its pads and ground-return geometry short and symmetric; the other three form a series chain, not parallel RF loads."/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="AC1210FR-07249RL"/>
       <property name="Manufacturer" value="YAGEO"/>
@@ -23399,7 +23399,7 @@
       <property name="Sheetname" value="E4_04"/>
       <property name="Sheetfile" value="E4_04.kicad_sch"/>
       <sheetpath names="/E4_04/" tstamps="/9df58c55-738d-55e8-9cee-b8959598c250/"/>
-      <tstamps>3164f710-6235-5dde-981a-34d33b92bbac</tstamps>
+      <tstamps>1dcc2ec9-15aa-5e7c-a843-0b38564fdc79</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -23409,7 +23409,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R4465">
+    <comp ref="R4469">
       <value>249 Ω 1% ≥0.5 W</value>
       <footprint>Resistor_SMD:R_1210_3225Metric</footprint>
       <datasheet>E4 bipolar detector DC return design</datasheet>
@@ -23423,7 +23423,7 @@
         <field name="Datasheet">E4 bipolar detector DC return design</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R4465" description="| design | Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified."/>
+      <libsource lib="sr_rx_v2_completed" part="C_R4469" description="| design | Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified."/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="AC1210FR-07249RL"/>
       <property name="Manufacturer" value="YAGEO"/>
@@ -23432,7 +23432,7 @@
       <property name="Sheetname" value="E4_04"/>
       <property name="Sheetfile" value="E4_04.kicad_sch"/>
       <sheetpath names="/E4_04/" tstamps="/9df58c55-738d-55e8-9cee-b8959598c250/"/>
-      <tstamps>aadcbac4-60b7-55b3-ada8-9e786e29f4ef</tstamps>
+      <tstamps>f72e4f73-5857-553d-b1c9-d9b5d35d7757</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -23442,7 +23442,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R4466">
+    <comp ref="R4470">
       <value>249 Ω 1% ≥0.5 W</value>
       <footprint>Resistor_SMD:R_1210_3225Metric</footprint>
       <datasheet>E4 bipolar detector DC return design</datasheet>
@@ -23456,7 +23456,7 @@
         <field name="Datasheet">E4 bipolar detector DC return design</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R4466" description="| design | Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified."/>
+      <libsource lib="sr_rx_v2_completed" part="C_R4470" description="| design | Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified."/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="AC1210FR-07249RL"/>
       <property name="Manufacturer" value="YAGEO"/>
@@ -23465,7 +23465,7 @@
       <property name="Sheetname" value="E4_04"/>
       <property name="Sheetfile" value="E4_04.kicad_sch"/>
       <sheetpath names="/E4_04/" tstamps="/9df58c55-738d-55e8-9cee-b8959598c250/"/>
-      <tstamps>13b92e42-7346-5ec0-92c2-7eb984a590c1</tstamps>
+      <tstamps>d1cc0c82-6897-52cb-8d63-7be19dd637cd</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -23475,7 +23475,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R4467">
+    <comp ref="R4471">
       <value>249 Ω 1% ≥0.5 W</value>
       <footprint>Resistor_SMD:R_1210_3225Metric</footprint>
       <datasheet>E4 bipolar detector DC return design</datasheet>
@@ -23489,7 +23489,7 @@
         <field name="Datasheet">E4 bipolar detector DC return design</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R4467" description="| design | Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified."/>
+      <libsource lib="sr_rx_v2_completed" part="C_R4471" description="| design | Four resistors in series =996 Ω port bleed. Sustained±30V gives0.226W perpart;use≥0.5W ratings at50°C. This defines DC on floating antennas and avoids a bias-reference-induced falseforeign voltage. Ideal50ΩIL≈0.215dB;actualRFloadingmustbeVNAqualified."/>
       <property name="ReviewStatus" value="design"/>
       <property name="MPN" value="AC1210FR-07249RL"/>
       <property name="Manufacturer" value="YAGEO"/>
@@ -23498,7 +23498,7 @@
       <property name="Sheetname" value="E4_04"/>
       <property name="Sheetfile" value="E4_04.kicad_sch"/>
       <sheetpath names="/E4_04/" tstamps="/9df58c55-738d-55e8-9cee-b8959598c250/"/>
-      <tstamps>483bfe71-2283-534c-8822-9c07f4a7d7d2</tstamps>
+      <tstamps>9709d36a-0c08-5fd5-bcde-870608c67e38</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -23578,7 +23578,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="U452">
+    <comp ref="U454">
       <value>TLV3012BIDBVR</value>
       <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
       <datasheet>https://www.ti.com/lit/ds/symlink/tlv3011.pdf</datasheet>
@@ -23591,7 +23591,7 @@
         <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tlv3011.pdf</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_U452" description="| verified | B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."/>
+      <libsource lib="sr_rx_v2_completed" part="C_U454" description="| verified | B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."/>
       <property name="ReviewStatus" value="verified"/>
       <property name="MPN" value="TLV3012BIDBVR"/>
       <property name="Manufacturer" value="Texas Instruments"/>
@@ -23599,7 +23599,7 @@
       <property name="Sheetname" value="E4_04"/>
       <property name="Sheetfile" value="E4_04.kicad_sch"/>
       <sheetpath names="/E4_04/" tstamps="/9df58c55-738d-55e8-9cee-b8959598c250/"/>
-      <tstamps>5b655cbb-eac7-5f4d-9d70-df43ea33d90b</tstamps>
+      <tstamps>eaea4940-8129-5021-85a9-62709d624a12</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -23613,7 +23613,7 @@
         </unit>
       </units>
     </comp>
-    <comp ref="U453">
+    <comp ref="U455">
       <value>TLV3012BIDBVR</value>
       <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
       <datasheet>https://www.ti.com/lit/ds/symlink/tlv3011.pdf</datasheet>
@@ -23626,7 +23626,7 @@
         <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tlv3011.pdf</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_U453" description="| verified | B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."/>
+      <libsource lib="sr_rx_v2_completed" part="C_U455" description="| verified | B version required: fail-safe inputs, 2–8 mV built-in hysteresis and push-pull LOW during POR. Original non-B or open-drain TLV3011B is not a drop-in substitute."/>
       <property name="ReviewStatus" value="verified"/>
       <property name="MPN" value="TLV3012BIDBVR"/>
       <property name="Manufacturer" value="Texas Instruments"/>
@@ -23634,7 +23634,7 @@
       <property name="Sheetname" value="E4_04"/>
       <property name="Sheetfile" value="E4_04.kicad_sch"/>
       <sheetpath names="/E4_04/" tstamps="/9df58c55-738d-55e8-9cee-b8959598c250/"/>
-      <tstamps>e8bcc27b-4830-509e-8c1c-79300efd4af5</tstamps>
+      <tstamps>66d6ddee-d8c3-5485-86fe-dd72f7311d0a</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -31074,14 +31074,14 @@
       </pins>
     </libpart>
     <libpart lib="sr_rx_v2_completed" part="C_J427">
-      <description>Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2). | module | Mates the U.FL plug of the J408 panel pigtail (Taoglas CAB.718). P8 is a direct port (AREA decision, pcb/partition-spec.json p8): the Flamingo+ #2 / LNA V2 accessory A403/A404 sits outside between antenna and P8 and gets the ch4 bias over the coax.; Carries the ch4 bias (TCBT-2R5G+ A424, TPS2553 limit 0.192 A max) outward; no U.FL current rating is published (E4-07). Receive-only: the port supplies only LNA bias.</description>
+      <description>Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2). | module | Mates the U.FL plug of the J408 panel pigtail (Taoglas CAB.718). P8 is a direct port (AREA decision, pcb/partition-spec.json p8): the Flamingo+ #2 / LNA V2 accessory A403/A404 sits outside between antenna and P8 and gets the ch4 bias over the coax.; Carries the ch4 bias (TCBT-2R5G+ A424, TPS2553 limit 0.192 A max) outward; no U.FL current rating is published (E4-07). Receive-only: the port supplies only LNA bias.; No DC-window detector and no E4-06 blocking element on ch4: foreign DC at P8 reaches TPS2553 U209 OUT (abs max −0.3…7 V) through A424 and E2 L209/R246. A ch4 element or detector is an owner/E2 decision (E4-06 OPEN).</description>
       <docs>W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT</docs>
       <fields>
         <field name="Reference">J427</field>
         <field name="Value">P8 board U.FL: ch4 4.3 V</field>
         <field name="Footprint">SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS</field>
         <field name="Datasheet">W2 GR-2 board RF port; design/E4-review.md «Межа плати: роз'єми РЧ-портів»; design/parts/parts.json U-FL-RECEPT</field>
-        <field name="Description">Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2). | module | Mates the U.FL plug of the J408 panel pigtail (Taoglas CAB.718). P8 is a direct port (AREA decision, pcb/partition-spec.json p8): the Flamingo+ #2 / LNA V2 accessory A403/A404 sits outside between antenna and P8 and gets the ch4 bias over the coax.; Carries the ch4 bias (TCBT-2R5G+ A424, TPS2553 limit 0.192 A max) outward; no U.FL current rating is published (E4-07). Receive-only: the port supplies only LNA bias.</field>
+        <field name="Description">Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2). | module | Mates the U.FL plug of the J408 panel pigtail (Taoglas CAB.718). P8 is a direct port (AREA decision, pcb/partition-spec.json p8): the Flamingo+ #2 / LNA V2 accessory A403/A404 sits outside between antenna and P8 and gets the ch4 bias over the coax.; Carries the ch4 bias (TCBT-2R5G+ A424, TPS2553 limit 0.192 A max) outward; no U.FL current rating is published (E4-07). Receive-only: the port supplies only LNA bias.; No DC-window detector and no E4-06 blocking element on ch4: foreign DC at P8 reaches TPS2553 U209 OUT (abs max −0.3…7 V) through A424 and E2 L209/R246. A ch4 element or detector is an owner/E2 decision (E4-06 OPEN).</field>
       </fields>
       <pins>
         <pin num="CENTER" name="CENTER" type="passive"/>
