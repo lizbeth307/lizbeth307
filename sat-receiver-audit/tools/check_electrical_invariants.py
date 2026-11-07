@@ -55,9 +55,13 @@ def main(base=BASE):
     ovp = {("U212", "3"), ("U220", "6"), ("R291", "2"), ("R292", "1"), ("TP215", "1"), ("U303", "6")}
     # W2 GR-3: the node reaches the CTRL MCP U303 through the S02 harness headers (graph refs, one contact on each board); a
     # connector contact adds no pull-up, so the other members stay exactly these and only the two header contacts are added.
-    harness = {(r, p) for r, p in members("OVP_LNB_N") if comps[r]["kind"] == "connector"}
+    # W2 B2B: it also crosses from PWR-A to PWR-B through one contact of each half of the board-to-board pair J208/J209.
+    b2b = {(r, p) for r, p in members("OVP_LNB_N") if r in ("J208", "J209")}
+    require(sorted(r for r, _ in b2b) == ["J208", "J209"], "OVP_LNB_N board-to-board contacts", sorted(b2b))
+    harness = {(r, p) for r, p in members("OVP_LNB_N") if comps[r]["kind"] == "connector"} - b2b
     require(len(harness) == 2 and all(comps[r].get("group", "").startswith("Роз'єми джгутів") for r, _ in harness),
             "OVP_LNB_N harness contacts", sorted(harness))
+    harness |= b2b
     require(members("OVP_LNB_N") - harness == ovp, "OVP_LNB_N membership", sorted(members("OVP_LNB_N")))
     require(node("R291", 1) == "EN_LNB" and node("R292", 2) == "GND", "OVP divider ends")
     relay_results = []

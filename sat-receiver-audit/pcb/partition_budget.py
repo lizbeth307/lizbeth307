@@ -253,10 +253,13 @@ class Design:
 
     def _parts(self):
         tp_fp = self.spec["test_points"]["footprint"]
+        # W2 B2B: the two board-to-board halves are graph refs, but their area is the b2b courtyard of each board (b2b_raw) and
+        # their nets are the boundary itself, so they are not parts here
+        b2b_refs = set(self.spec["b2b"].get("graph_refs", {}).values())
         out = {}
         for ref, r in self.rows.items():
             tp = self.is_test_point(r)
-            if r["dnp"] == "True" or not (r["category"] == "bare_board_part" or tp):
+            if r["dnp"] == "True" or not (r["category"] == "bare_board_part" or tp) or ref in b2b_refs:
                 continue
             fp = (r["footprint"] if self.fps.get(r["footprint"]) else tp_fp) if tp else r["footprint"]
             info = self.fps.get(fp)
@@ -546,7 +549,8 @@ class Evaluator:
             rows.append(row)
         n_power = sum(1 for r in rows if r["kind"] == "power")
         pins = sum(r["pins"] or 0 for r in rows)
-        gnd = n_power * S["b2b"]["gnd_pins_per_power_net"]
+        # W2 B2B: the LSHM pair has no ground plane, so every power contact gets its own GND contact(s) beside it
+        gnd = sum(r["pins"] or 0 for r in rows if r["kind"] == "power") * S["b2b"]["gnd_pins_per_power_contact"]
         with_spare = math.ceil((pins + gnd) * (1 + S["b2b"]["spare_fraction"]) - 1e-9)
         return {"nets": rows, "power_nets": n_power, "signal_pins": sum(r["pins"] for r in rows if r["kind"] != "power" and r["pins"]),
                 "power_pins": sum(r["pins"] or 0 for r in rows if r["kind"] == "power"), "gnd_pins": gnd,
@@ -894,8 +898,15 @@ def build(spec):
         "current_boards_raw": current_boards(design),
         "pwr_groups": group_table(design, ev),
         "pwr_heights_above_hA": heights_table(design, ev),
+        "b2b_footprints": {},
         "candidates": {},
     }
+    # W2 B2B: footprint and F.CrtYd of each board-to-board half (graph ref), which the spec courtyards must equal
+    for half, ref in spec["b2b"].get("graph_refs", {}).items():
+        fp = design.rows.get(ref, {}).get("footprint", "")
+        info = design.fps.get(fp) if fp else None
+        report["b2b_footprints"][half] = {"ref": ref, "footprint": fp,
+                                          "crtyd_mm": [rnd(x, 2) for x in info["crtyd"]] if info and info["crtyd"] else None}
     for cid in spec["candidates"]:
         res = ev.evaluate(cid)
         side = res.pop("side")
@@ -949,6 +960,11 @@ def check_spec(spec, report):
         errs.append(f"b2b.budget_chosen {want} differs from the computed {got}")
     if not b["meets_spare_rule"]:
         errs.append(f"chosen candidate {ch}: {b['contacts_with_spare']} contacts with spare exceed the {b['contacts_available']} of the B2B")
+    for half, row in report.get("b2b_footprints", {}).items():
+        if row["footprint"] != spec["b2b"]["footprint"]:
+            errs.append(f"B2B half {half} {row['ref']}: graph footprint {row['footprint']!r} is not b2b.footprint {spec['b2b']['footprint']!r}")
+        if row["crtyd_mm"] != spec["b2b"][f"courtyard_{half}"]:
+            errs.append(f"b2b.courtyard_{half} {spec['b2b'][f'courtyard_{half}']} differs from the F.CrtYd {row['crtyd_mm']} of {row['footprint']}")
     # every contact count the decision text quotes must be the computed one
     if "b2b_contacts_quoted" not in spec["decision"]:
         errs.append("decision.b2b_contacts_quoted is missing")

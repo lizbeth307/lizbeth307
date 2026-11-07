@@ -38,7 +38,7 @@ Only Python standard-library modules are used. The script reads E1–E5 and the 
 | `generated/constraints.json` | Current, thermal, RF, DC, grounding and mechanical requirements with sources |
 | `generated/provenance.json` | Exact input SHA256s and primary-document URLs |
 | `generated/summary.json` | Reproducible counts and audit outcomes |
-| `generated/b2b-nets.json` | Nets with pins on both PWR-A and PWR-B, contacts per net and the Samtec QSH/QTH-060 pair (design input of PCB-PWRA/PCB-PWRB, W2 GR-3) |
+| `generated/b2b-nets.json` | Nets with pins on both PWR-A and PWR-B, contacts per net and the contact map of the Samtec LSHM-150 pair J208 (PWR-A top) / J209 (PWR-B bottom), which the graph refs carry pin for pin (design input of PCB-PWRA/PCB-PWRB, W2 GR-3, W2 B2B) |
 
 Existing assemblies are separated from custom-PCB parts. In particular U102/R101/C101/C102 are already on the Adafruit INA228 breakout; U500 represents existing Q6A rail circuitry. R117–R120/C118 are IP2368 module rework, not parts automatically placed on a new motherboard. A407 YAT and A424 TCBT are the opposite exception: these are physical SMT RF parts despite their graph `kind=module`.
 
