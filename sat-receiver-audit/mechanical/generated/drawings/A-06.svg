@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297">
 <title>A-06 Конус LNB 11 см (QO-100, патч-рівень)</title>
-<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params e9f65a072a56</desc>
+<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params bedbb3ef32c8</desc>
 <rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
 <line x1="257.297" y1="208.931" x2="313.459" y2="188.537" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="4 2"/>
 <line x1="315.082" y1="193.265" x2="314.823" y2="192.473" stroke="#000" stroke-width="0.5" fill="none"/>
@@ -169,7 +169,7 @@
 <text x="264" y="266" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення A-06 · масштаб 1:1 · мм · допуск ±0.2, якщо не вказано</text>
 <text x="264" y="273" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: Al 0.3-0.5 мм (лист), краї зачистити; лише прийом</text>
 <text x="264" y="280" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
-<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params e9f65a072a56 · v1.0.0</text>
+<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params bedbb3ef32c8 · v1.0.0</text>
 <text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">Конус LNB 11 см (QO-100, патч-рівень)</text>
 <text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">розгортка 1:1, кут 140.1°</text>
 <text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Напівкут 22.9°, устя ⌀110.5: R = 142; горло ⌀64: R = 82.2 (build/06 2.7).</text>

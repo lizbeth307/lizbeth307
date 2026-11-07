@@ -194,6 +194,14 @@ def board_boxes(P, bid, at=None):
     return out
 
 
+def pwr_key_nut_box(P):
+    """PV6 panel nut of the power key inside the top wall: nut_d x nut_t reserve (parts.json pv6_button) about top_face.power_key."""
+    pk, pv = P.mech["top_face"]["power_key"], P.parts["pv6_button"]
+    y1 = P.outer[1] - P.mech["wall"]
+    r = pv["nut_d"] / 2.0
+    return (pk["x"] - r, y1 - pv["nut_t"], pk["z"] - r, pk["x"] + r, y1, pk["z"] + r)
+
+
 def item_boxes(P):
     items = []
     for it in P.mech["layout"]["items"]:
@@ -206,6 +214,8 @@ def item_boxes(P):
         elif it.get("derived") == "cooler_a":
             for name, bx in cooler_boxes(P):
                 items.append((it["id"], name, bx, it))
+        elif it.get("derived") == "pwr_key_nut":
+            items.append((it["id"], it["id"], pwr_key_nut_box(P), it))
         else:
             items.append((it["id"], it["id"], _box(it["box"]), it))
     for name, bx in bulkhead_nut_boxes(P):
@@ -278,18 +288,22 @@ ALLOWED = [
     ("v4l_a", "rfbay.lid"), ("v4l_b", "rfbay.lid"), ("sawbird", "rfbay.lid"),
     ("flamingo", "rfbay.lid"), ("battery_tray", "closure.boss"),   # the tray has slots round the wall-hugging bosses
     ("battery_pack", "battery_tray"),                                # the pack lies inside its tray
-    ("pwr_key_body", "pwr_key_nut"),                                 # the nut sits on the key thread
-    ("pwr_key_nut", "plate.main"),                                   # the plate has an open notch under the nut (plate.notches; the solid check sees it)
+    ("pwr_key_body", "nut.PWR_KEY"),                                 # the nut sits on the key thread
+    ("nut.PWR_KEY", "plate.main"),                                   # the plate has an open notch under the nut (plate.notches; the solid check sees it)
     ("tripod_boss", "rear"), ("gx16", "rear"), ("hatch_parts", "rear"), ("q6a_fan_duct", "rear"),
     ("enc_main", "board_ctrl"), ("enc_volume", "board_ctrl"), ("closure.boss", "rfbay.lid"),
     ("v4l_", "usb_socket_"), ("usb_lead_", "usb_socket_"),           # the V4L plug mates into its socket; the lead leaves the socket pads (W2 MECH-3)
     ("usb_socket_", "rfbay.lid"), ("usb_lead_", "rfbay.wall.bottom"),  # socket carriers on the lid; lead B through notch N3
-    ("q6a.usb_stack", "usb_plug_bay"), ("q6a.hdmi", "hdmi_plug_ra"),
+    ("q6a.usb_stack", "usb_plug_bay"), ("q6a.hdmi", "hdmi_fpc_q6a"),
     ("q6a.board", "plate.ufs_boss"),  # contact through the UFS pad by design (thermal T-UFS)
     ("cooler_a", "q6a.board"),         # the cooler sits in the generic 7.5 mm component zone of the Q6A envelope
     ("cooler_a", "q6a_fan_duct"),      # the duct starts at the fan face
     ("nut.", "angle."),                # bulkhead nut / connector body clamps the Al angle
-    ("hdmi_route", "hdmi_plug_ra"), ("hdmi_route", "hdmi_route"), ("hdmi_route", "plate."), ("hdmi_route", "hdmi_board"),
+    ("hdmi_route", "hdmi_route"), ("hdmi_route", "plate."), ("hdmi_route", "hdmi_board"),
+    # W2 MECH-4: the HDMI flex leaves the 3550 clip, runs through the ferrite and into the insert and 3548 clips; the
+    # insert lies on the plate front face; the 3548 plugs into the Wisecoco HDMI input
+    ("hdmi_route", "hdmi_fpc"), ("hdmi_route", "hdmi_ferrite"), ("hdmi_route", "hdmi_insert"), ("hdmi_insert", "plate."),
+    ("hdmi_fpc_disp", "hdmi_board"),
     ("t7_gland_body", "rear"), ("t7_gland_outside", "rear"),
 ]
 
