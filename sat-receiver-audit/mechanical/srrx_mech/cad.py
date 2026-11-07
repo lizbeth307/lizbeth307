@@ -28,11 +28,6 @@ def zcyl(x, y, z0, z1, r):
     return Pos(x, y, min(z0, z1)) * Cylinder(r, abs(z1 - z0), align=(Align.CENTER, Align.CENTER, Align.MIN))
 
 
-def ycyl(x, z, y0, y1, r):
-    """Cylinder along y between y0 and y1 at (x, z)."""
-    return Pos(x, (y0 + y1) / 2, z) * Rot(90, 0, 0) * Cylinder(r, abs(y1 - y0))
-
-
 def axis_cyl(p, normal, r, length, inward=True):
     """Cylinder of `length` starting `length/2` outside the face point p and going inwards along -normal."""
     nx, ny, nz = normal
@@ -235,6 +230,11 @@ def front_parts(P):
     for face in ("front", "top", "bottom", "left", "right"):
         cutters += feature_cutters(P, face, F[face], 4.0 + sg["belt"])
     return body, feats, cutters
+
+
+def ycyl(x, z, y0, y1, r):
+    """Cylinder along y between y0 and y1 at (x, z) (W2 MECH-5: bosses under the top wall)."""
+    return Pos(x, (y0 + y1) / 2, z) * Rot(90, 0, 0) * Cylinder(r, abs(y1 - y0))
 
 
 def vent_pad(P, v):
