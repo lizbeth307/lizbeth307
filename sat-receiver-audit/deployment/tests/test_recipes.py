@@ -28,7 +28,8 @@ def recipe(name):
     return deploy.load(HERE / "recipes" / name / "recipe.json")
 
 
-# PENDING_BUILDER recipes (satdump) keep their own schema until they move to this builder.
+# PENDING_BUILDER recipes keep their own schema until they move to this builder (none left since
+# W2 SW-SATDUMP moved satdump to schema 2; the refusal stays tested on a synthetic one).
 PENDING = [name for name in ALL_RECIPES if build_recipe.is_pending(recipe(name))]
 RECIPES = [name for name in ALL_RECIPES if name not in PENDING]
 
@@ -43,9 +44,9 @@ class RecipeSchemaTests(unittest.TestCase):
             self.assertIsNotNone(component["source_archive_sha256"])
 
     def test_pending_builder_recipes_are_refused_by_the_builder(self):
-        self.assertEqual(PENDING, ["satdump"])
-        for name in PENDING:
-            data = recipe(name)
+        self.assertEqual(PENDING, [])
+        synthetic = {"schema_version": 1, "kind": build_recipe.PENDING_KIND, "id": "srrx-pending", "status": build_recipe.PENDING_STATUS}
+        for name, data in [(n, recipe(n)) for n in PENDING] + [("srrx-pending", synthetic)]:
             self.assertEqual(data["id"], name)
             with self.assertRaisesRegex(build_recipe.RecipeError, "PENDING_BUILDER"):
                 build_recipe.validate_recipe(data, LOCK)
@@ -686,11 +687,11 @@ class SchemaV2Tests(unittest.TestCase):
                 build_recipe.patch_paths(text, 1)
 
     def test_satdump_patch_entries_and_hooks_fit_the_schema(self):
-        # The current satdump patches (moving into source.patches with its recipe) and its check_recipe.py.
+        # The satdump recipe's source.patches (0001-0005) and its check_recipe.py hooks.
         data = recipe("satdump")
         listed = (data.get("source") or {}).get("patches") or data.get("patches")
         with patch.object(build_recipe, "DEPLOYMENT", HERE):
-            self.assertEqual(len(build_recipe._patches(listed, "satdump")), 3)
+            self.assertEqual(len(build_recipe._patches(listed, "satdump")), 5)
             build_recipe._hook(SOURCE_CHECK, "source_check", "satdump")
             build_recipe._hook(PACKAGE_HOOK, "package", "satdump")
             with self.assertRaisesRegex(build_recipe.RecipeError, "check_recipe.py is missing"):
@@ -1140,6 +1141,55 @@ class DataTreeBuildTests(unittest.TestCase):
                     check_repo.packages(out)
                 record_path.write_text(original, encoding="utf-8")
                 self.assertEqual(check_repo.packages(out)["status"], "CI_PACKAGES_MATCH_BUILD_RECORDS")
+
+
+# --- W2 SW-SATDUMP: satdump is a schema-2 builder recipe (heavy job, five listed patches, hooks, runtime check).
+class SatDumpBuilderRecipeTests(unittest.TestCase):
+    def setUp(self):
+        self.data = recipe("satdump")
+
+    def test_satdump_is_a_validating_heavy_recipe_of_the_real_tree(self):
+        self.assertIn("satdump", RECIPES)
+        self.assertEqual(PENDING, [])
+        component = build_recipe.validate_recipe(self.data, LOCK)
+        self.assertEqual((self.data["schema_version"], self.data["component"], component["version"]),
+                         (2, "satdump", "2.0.0~alpha+git20260929+lab1"))
+        self.assertEqual(build_recipe.ci_view(self.data), {"heavy": True, "runtime_depends": ["binutils", "strace"], "tag_samples": []})
+        with patch.object(build_recipe, "DEPLOYMENT", HERE):
+            plan = build_recipe.ci_plan(LOCK)
+        self.assertEqual(plan["heavy"], ["satdump"])
+        self.assertEqual(plan["recipes"]["satdump"]["chain"], ["satdump"])
+        self.assertTrue(plan["recipes"]["satdump"]["runtime_check"])
+        self.assertEqual(plan["skipped"], {})
+        self.assertEqual(plan["light"], ["limesuiteng", "rtlsdr"])
+
+    def test_satdump_build_steps_hooks_and_packages(self):
+        self.assertEqual(self.data["cmake"]["configure"], ["cmake", "-S", "{src}", "-B", "{build}", "-G", "Ninja"])
+        self.assertIn("ninja-build", self.data["build_depends"])
+        for name in ("libarmadillo-dev", "libzstd-dev", "librtlsdr-dev", "libhackrf-dev", "portaudio19-dev", "libusb-1.0-0-dev"):
+            self.assertNotIn(name, self.data["build_depends"])
+        self.assertEqual(self.data["hooks"], {"source_check": SOURCE_CHECK, "package": PACKAGE_HOOK})
+        self.assertEqual([p["name"] for p in self.data["packages"]], ["satdump"])
+        self.assertTrue(self.data["packages"][0]["shlibs_depends"])
+        self.assertEqual(self.data["lab_build_depends"], [])
+        variables = self.data["cmake"]["variables"]
+        self.assertEqual((variables["CMAKE_INSTALL_LIBDIR"], variables["CMAKE_INSTALL_RPATH"], variables["FETCHCONTENT_FULLY_DISCONNECTED"]),
+                         ("lib", "/usr/lib/satdump/plugins", "ON"))
+        self.assertNotIn("EXTERNAL_PLUGINS", variables)  # an empty value is never passed; the upstream default is empty
+        kinds = [c["kind"] for c in self.data["checks"]]
+        self.assertEqual(kinds.count("require_paths"), 15)  # binary, core, config, 7 plugins, 5 pipelines
+        self.assertEqual(kinds[-2:], ["forbid_paths", "forbid_needed"])
+
+    def test_heavy_selection_runs_satdump_for_its_own_inputs_only(self):
+        spec = importlib.util.spec_from_file_location("srrx_check_repo_satdump", HERE / "repo/check_repo.py")
+        check_repo = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(check_repo)
+        project = check_repo.PROJECT_PREFIX + "deployment/"
+        plan = check_repo.plan([project + "recipes/satdump/runtime_check.py"], LOCK, False)
+        self.assertEqual(plan["heavy_run"], ["satdump"])
+        self.assertEqual(plan["build"], ["limesuiteng", "rtlsdr", "satdump"])
+        self.assertEqual(check_repo.plan([project + "recipes/rtlsdr/recipe.json"], LOCK, False)["heavy_run"], [])
+        self.assertEqual(check_repo.plan([project + "recipes/README.md"], LOCK, False)["heavy_run"], [])
 
 
 if __name__ == "__main__":

@@ -1,0 +1,193 @@
+{
+ "schema_version": 1,
+ "kind": "srrx_satdump_packaging",
+ "component": "satdump",
+ "source": {
+  "lock_id": "satdump",
+  "repo": "SatDump/SatDump",
+  "commit": "1aedd602055c154401384a8cc7876713bb371254",
+  "archive_sha256": "122267dbf038c541a78ea19c50071eec585c8fafb769617dcb7a4cb4c6f73235",
+  "archive_top": "SatDump-1aedd602055c154401384a8cc7876713bb371254",
+  "license": "GPL-3.0",
+  "license_blob": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
+ },
+ "package": {
+  "name": "satdump",
+  "version": "2.0.0~alpha+git20260929+lab1",
+  "architecture": "arm64",
+  "distribution": "noble"
+ },
+ "upstream_files": {
+  "CMakeLists.txt": "daca96be5dbcbe89b28c2b6a541a44691f8c45a4",
+  "plugins/CMakeLists.txt": "1f75d761e472550e4a769ba1f1c84951d549cd25",
+  "plugins/meteor_support/CMakeLists.txt": "3460a34a76ed251aba65737b24da0c7db4d547c6",
+  "plugins/noaa_metop_support/CMakeLists.txt": "b13c143897ccc1dd044edda3a36bcb68312e625d",
+  "plugins/aws_support/CMakeLists.txt": "07a9b59e3563eb9eb48e94e839c1464d05d78a68",
+  "plugins/elektro_arktika_support/CMakeLists.txt": "0aebe5ea64700a81a70618fb9976c0380d5753f5",
+  "plugins/xrit_support/CMakeLists.txt": "8d1bbab888f6ba88da5326c46879ec63c93f1780",
+  "plugins/fengyun2_support/CMakeLists.txt": "250a08da7930815c2d5b8990fe9471736a3af8c1",
+  "plugins/sdr_sources/net_source_support/CMakeLists.txt": "18da600c40b44502c6c54037e172cbbecb29115d",
+  "src-core/CMakeLists.txt": "1b146d4d06ac3e5e46a6c574868a0bee9403b887",
+  "satdump_cfg.json": "e3099214a2048ff2c219faa9afb516c43b50f853",
+  "src-core/common/net/udp.h": "dcb71736163e788fc047145fd2592c1c3c188702",
+  "src-core/common/cli_utils.cpp": "b389e22ca974fd8bb056686bea54bc6f1e95d865",
+  "src-core/core/cli/pipeline.cpp": "d3c4e383d931ff839103528a0ed04c44995d84ca",
+  "src-core/core/plugin.cpp": "7726add7014bc3ba8c74c1c60aa68eaa647796e8",
+  "src-core/pipeline/pipeline.cpp": "25ea1f8aac6aadbac4c89563a7bb5989c53cbc32",
+  "src-core/init.cpp": "65237ed135d4711692c5808d5ff16347ac67bcaf",
+  "plugins/sdr_sources/net_source_support/net_source.cpp": "95b10b22fdcf3ef0f9e23da80bc49a741b2c1707",
+  "src-core/common/dsp/io/baseband_interface.h": "5fdc328f60ee7de0f8f36c4a7fbc6e03526605a5",
+  "src-cli/legacy/live.cpp": "56f1c8327e4d5bd51bc9e2fe7c5ebe8b3f7d4aed",
+  "resources/pipelines/Meteor-M.json": "9f77ff43d45fe370a21d4abd2ab77d7c61a55fc5",
+  "resources/pipelines/MetOp.json": "bdece1f3c0802561804092703660196ca6feb7e9",
+  "resources/pipelines/AWS.json": "cce89d53f695a21450d56c4514f8c2a645465434",
+  "resources/pipelines/FengYun-2.json": "bd47ba9a013cdcaf38cbb2d419743ffda52e3a72",
+  "resources/pipelines/Elektro_Arktika.json": "c36b3f80f3b41fec601e6213bdc7b43aabba6dbf",
+  "src-core/db/kepler/kepler_utils.cpp": "b651019701681a617c09a9f42e990efc97927be9",
+  "src-core/db/iers/iers_handler.cpp": "f6ab7a6f411c6d7d356bf36ee1164eae916ee1ee"
+ },
+ "install": {
+  "executable": "usr/bin/satdump",
+  "core_library": "usr/lib/libsatdump_core.so",
+  "plugin_dir": "usr/lib/satdump/plugins",
+  "pipeline_dir": "usr/share/satdump/resources/pipelines",
+  "resources_dir": "usr/share/satdump/resources",
+  "config": "usr/share/satdump/satdump_cfg.json",
+  "expected_plugins": [
+   "libmeteor_support.so",
+   "libnoaa_metop_support.so",
+   "libaws_support.so",
+   "libelektro_arktika_support.so",
+   "libxrit_support.so",
+   "libfengyun2_support.so",
+   "libnet_source_support.so"
+  ],
+  "keep_pipelines": [
+   "Meteor-M.json",
+   "MetOp.json",
+   "AWS.json",
+   "FengYun-2.json",
+   "Elektro_Arktika.json"
+  ],
+  "remove_pipeline_ids": {
+   "Elektro_Arktika.json": [
+    "elektro_ggak_mqtt"
+   ]
+  },
+  "config_set": [
+   {
+    "path": [
+     "satdump_general",
+     "kepler_update_interval",
+     "value"
+    ],
+    "value": "Never"
+   },
+   {
+    "path": [
+     "kepler_settings",
+     "urls_to_fetch"
+    ],
+    "value": []
+   },
+   {
+    "path": [
+     "kepler_settings",
+     "norads_to_fetch"
+    ],
+    "value": []
+   },
+   {
+    "path": [
+     "kepler_settings",
+     "url_template"
+    ],
+    "value": ""
+   },
+   {
+    "path": [
+     "satdump_general",
+     "tle_space_track_login",
+     "value"
+    ],
+    "value": ""
+   },
+   {
+    "path": [
+     "satdump_general",
+     "tle_space_track_password",
+     "value"
+    ],
+    "value": ""
+   }
+  ],
+  "remove_trees": [
+   "usr/include",
+   "usr/share/applications",
+   "usr/share/icons"
+  ]
+ },
+ "builder_checks": [
+  {
+   "id": "plugin-set",
+   "how": "strace -f -e trace=%network,openat of `satdump pipeline meteor_m2-x_lrpt --help` in an empty working directory with a fresh HOME: the *.so files opened in the plugin directory are exactly expected_plugins, the help names the satdump_pass probe markers and no plugin load failure is logged",
+   "status": "RUNTIME_CHECK"
+  },
+  {
+   "id": "ldd",
+   "how": "readelf -dW and ldd of every ELF file of the installed package: no DT_RPATH, any DT_RUNPATH exactly /usr/lib/satdump/plugins and present where a plugin library is needed, nothing 'not found', no SDR, USB or audio library",
+   "status": "RUNTIME_CHECK"
+  },
+  {
+   "id": "no-connect",
+   "how": "every satdump run of the runtime check under strace %network: zero connect()/sendto()/sendmsg()/bind() outside AF_UNIX; the cs16 decode of 2 s of synthetic noise reads its input",
+   "status": "RUNTIME_CHECK"
+  },
+  {
+   "id": "cli-forms",
+   "how": "the decode argv of srrx.satdump_pass (--samplerate=256000 --baseband_format=cs16) and the space form (--samplerate 256000 --baseband_format cs16, patch 0001) both exit 0 and both log samplerate 256000 and baseband_format cs16",
+   "status": "RUNTIME_CHECK"
+  },
+  {
+   "id": "planted-pipelines-json",
+   "how": "pipelines.json (with syracuse3_tlm) and settings.json planted in the caller's working directory and HOME: opened when satdump runs there (positive control), never opened in the unit shape (empty working directory, private empty HOME)",
+   "status": "RUNTIME_CHECK"
+  },
+  {
+   "id": "omm-csv",
+   "how": "srrx.orbits satdump_csv rows against the pinned reader ccsdsOmmToKepler (src-core/db/kepler/kepler_utils.cpp, blob bound by verify-source): 17 comma-separated fields in reader index order, header skipped (deployment/tests/test_satdump_recipe.py)",
+   "status": "HOST_TEST"
+  },
+  {
+   "id": "lrpt-fixture",
+   "how": "decode one sha-pinned ci16 256 kS/s LRPT fixture through srrx.satdump_pass (CI-only asset, never in Git); needs a recording with a stated licence or an owner bench recording",
+   "status": "BLOCKED_NO_LICENSED_FIXTURE"
+  },
+  {
+   "id": "lrpt-cadu-cut",
+   "how": "LRPT CADU replay after dd bs=8192 skip=4 (#1212); needs the same licensed recording",
+   "status": "BLOCKED_NO_LICENSED_FIXTURE"
+  },
+  {
+   "id": "live-localhost",
+   "how": "live unit receives 127.0.0.1 datagrams and drops a datagram from another address",
+   "status": "PENDING_DEVICE"
+  }
+ ],
+ "sources": [
+  "STACK.md:142",
+  "STACK.md:886",
+  "STACK.md:977",
+  "build/07-pz-vstanovlennia.md:362-389",
+  "build/15-rishennia-komplektu.md",
+  "deployment/sources.lock.json",
+  "https://raw.githubusercontent.com/SatDump/SatDump/1aedd602055c154401384a8cc7876713bb371254/plugins/fengyun2_support/CMakeLists.txt (line 6 add_library(fengyun2_support SHARED); read 2026-10-24)",
+  "https://raw.githubusercontent.com/SatDump/SatDump/1aedd602055c154401384a8cc7876713bb371254/plugins/elektro_arktika_support/CMakeLists.txt (links xrit_support; read 2026-10-24)",
+  "https://raw.githubusercontent.com/SatDump/SatDump/1aedd602055c154401384a8cc7876713bb371254/satdump_cfg.json (kepler_settings.url_template line 348, Space-Track fields lines 249-260; read 2026-10-24)",
+  "https://raw.githubusercontent.com/SatDump/SatDump/1aedd602055c154401384a8cc7876713bb371254/CMakeLists.txt (lines 166-172: -march=native without CI; read 2026-11-07)",
+  "https://raw.githubusercontent.com/SatDump/SatDump/1aedd602055c154401384a8cc7876713bb371254/src-core/db/kepler/kepler_utils.cpp (ccsdsOmmToKepler: 17 fields split on ','; read 2026-11-07)",
+  "https://raw.githubusercontent.com/SatDump/SatDump/1aedd602055c154401384a8cc7876713bb371254/src-core/pipeline/pipeline.cpp (user pipelines.json: working directory, then HOME/.config/satdump; read 2026-11-07)",
+  "https://salsa.debian.org/dpkg-team/dpkg/-/raw/1.22.6/scripts/dpkg-shlibdeps.pl (unversioned SONAMEs ignored when no shlibs info exists; read 2026-11-07)",
+  "https://raw.githubusercontent.com/SatDump/SatDump/1aedd602055c154401384a8cc7876713bb371254/src-core/db/iers/iers_handler.cpp (honor_setting always true, updateIERS fetches two fixed HTTPS URLs; read 2026-11-07)"
+ ]
+}

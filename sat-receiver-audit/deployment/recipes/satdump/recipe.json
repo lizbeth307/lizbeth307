@@ -1,95 +1,91 @@
 {
- "schema_version": 1,
- "kind": "srrx_build_recipe",
- "id": "satdump",
- "status": "PENDING_BUILDER",
- "status_note": "Structure, option completeness, plugin library names and patch fit are checked offline (deployment/tests/test_satdump_recipe.py; patches and plugin CMakeLists.txt against the pinned files on 2026-10-24); no arm64 build, plugin trace or decode fixture has run yet (the +lab package builder is a separate package).",
+ "schema_version": 2,
+ "component": "satdump",
+ "summary": "SatDump 1aedd60 as 2.0.0~alpha+git20260929+lab1: CLI, libsatdump_core.so, the seven allowlisted plugins, five pipelines and the resources; no GUI, no SDR source except net_source, no audio sink; patches 0001-0005",
  "source": {
-  "lock_id": "satdump",
-  "repo": "SatDump/SatDump",
-  "commit": "1aedd602055c154401384a8cc7876713bb371254",
-  "archive_sha256": "122267dbf038c541a78ea19c50071eec585c8fafb769617dcb7a4cb4c6f73235",
-  "archive_top": "SatDump-1aedd602055c154401384a8cc7876713bb371254",
-  "license": "GPL-3.0",
-  "license_blob": "f288702d2fa16d3cdf0035b15a9fcbc552cd88e7"
- },
- "package": {
-  "name": "satdump",
-  "version": "2.0.0~alpha+git20260929+lab1",
-  "architecture": "arm64",
-  "distribution": "noble"
- },
- "upstream_files": {
-  "CMakeLists.txt": "daca96be5dbcbe89b28c2b6a541a44691f8c45a4",
-  "plugins/CMakeLists.txt": "1f75d761e472550e4a769ba1f1c84951d549cd25",
-  "plugins/meteor_support/CMakeLists.txt": "3460a34a76ed251aba65737b24da0c7db4d547c6",
-  "plugins/noaa_metop_support/CMakeLists.txt": "b13c143897ccc1dd044edda3a36bcb68312e625d",
-  "plugins/aws_support/CMakeLists.txt": "07a9b59e3563eb9eb48e94e839c1464d05d78a68",
-  "plugins/elektro_arktika_support/CMakeLists.txt": "0aebe5ea64700a81a70618fb9976c0380d5753f5",
-  "plugins/xrit_support/CMakeLists.txt": "8d1bbab888f6ba88da5326c46879ec63c93f1780",
-  "plugins/fengyun2_support/CMakeLists.txt": "250a08da7930815c2d5b8990fe9471736a3af8c1",
-  "plugins/sdr_sources/net_source_support/CMakeLists.txt": "18da600c40b44502c6c54037e172cbbecb29115d",
-  "src-core/CMakeLists.txt": "1b146d4d06ac3e5e46a6c574868a0bee9403b887",
-  "satdump_cfg.json": "e3099214a2048ff2c219faa9afb516c43b50f853",
-  "src-core/common/net/udp.h": "dcb71736163e788fc047145fd2592c1c3c188702",
-  "src-core/common/cli_utils.cpp": "b389e22ca974fd8bb056686bea54bc6f1e95d865",
-  "src-core/core/cli/pipeline.cpp": "d3c4e383d931ff839103528a0ed04c44995d84ca",
-  "src-core/core/plugin.cpp": "7726add7014bc3ba8c74c1c60aa68eaa647796e8",
-  "src-core/pipeline/pipeline.cpp": "25ea1f8aac6aadbac4c89563a7bb5989c53cbc32",
-  "src-core/init.cpp": "65237ed135d4711692c5808d5ff16347ac67bcaf",
-  "plugins/sdr_sources/net_source_support/net_source.cpp": "95b10b22fdcf3ef0f9e23da80bc49a741b2c1707",
-  "src-core/common/dsp/io/baseband_interface.h": "5fdc328f60ee7de0f8f36c4a7fbc6e03526605a5",
-  "src-cli/legacy/live.cpp": "56f1c8327e4d5bd51bc9e2fe7c5ebe8b3f7d4aed",
-  "resources/pipelines/Meteor-M.json": "9f77ff43d45fe370a21d4abd2ab77d7c61a55fc5",
-  "resources/pipelines/MetOp.json": "bdece1f3c0802561804092703660196ca6feb7e9",
-  "resources/pipelines/AWS.json": "cce89d53f695a21450d56c4514f8c2a645465434",
-  "resources/pipelines/FengYun-2.json": "bd47ba9a013cdcaf38cbb2d419743ffda52e3a72",
-  "resources/pipelines/Elektro_Arktika.json": "c36b3f80f3b41fec601e6213bdc7b43aabba6dbf"
- },
- "patches": [
-  {
-   "file": "patches/0001-cli-add-option-c0b6f88.patch",
-   "sha256": "650e666a30c79130d51a932aac7f5d1d8d5c300fcce3d48f1d8347b06dd1c517",
-   "kind": "cherry-pick",
-   "strip": 1,
-   "targets": {
-    "src-core/core/cli/pipeline.cpp": "d3c4e383d931ff839103528a0ed04c44995d84ca"
+  "patch": null,
+  "patches": [
+   {
+    "file": "patches/0001-cli-add-option-c0b6f88.patch",
+    "sha256": "650e666a30c79130d51a932aac7f5d1d8d5c300fcce3d48f1d8347b06dd1c517",
+    "strip": 1,
+    "targets": {
+     "src-core/core/cli/pipeline.cpp": "d3c4e383d931ff839103528a0ed04c44995d84ca"
+    },
+    "kind": "cherry-pick",
+    "summary": "pipeline options take \"--key value\" as well as \"--key=value\" (#1191)",
+    "upstream_commit": "c0b6f8876c514990c2f22ca98b2a6c8a6f290a5d"
    },
-   "summary": "pipeline options take \"--key value\" as well as \"--key=value\" (#1191)",
-   "upstream_commit": "c0b6f8876c514990c2f22ca98b2a6c8a6f290a5d"
-  },
-  {
-   "file": "patches/0002-clock-recovery-free-6b5957f.patch",
-   "sha256": "377b3017be3055919d4d3b4cf1f4073651a04026b8e1208e00aba0bcfb41a78b",
-   "kind": "cherry-pick",
-   "strip": 1,
-   "targets": {
-    "src-core/dsp/clock_recovery/clock_recovery_gardner.cpp": "a65691ad322273014f9ca29b421169b5832b2c76",
-    "src-core/dsp/clock_recovery/clock_recovery_mm.cpp": "1b33f71ba8faa5f672ec3c53f6e0f62d48e9d5e2",
-    "src-core/dsp/clock_recovery/clock_recovery_mm_fast.cpp": "fa04ee44727da09a912e7a184c5a4b3a76b24070"
+   {
+    "file": "patches/0002-clock-recovery-free-6b5957f.patch",
+    "sha256": "377b3017be3055919d4d3b4cf1f4073651a04026b8e1208e00aba0bcfb41a78b",
+    "strip": 1,
+    "targets": {
+     "src-core/dsp/clock_recovery/clock_recovery_gardner.cpp": "a65691ad322273014f9ca29b421169b5832b2c76",
+     "src-core/dsp/clock_recovery/clock_recovery_mm.cpp": "1b33f71ba8faa5f672ec3c53f6e0f62d48e9d5e2",
+     "src-core/dsp/clock_recovery/clock_recovery_mm_fast.cpp": "fa04ee44727da09a912e7a184c5a4b3a76b24070"
+    },
+    "kind": "cherry-pick",
+    "summary": "clock recovery blocks free their sample buffer",
+    "upstream_commit": "6b5957fa52688c0a1395696b17e8d0a212bf0b72"
    },
-   "summary": "clock recovery blocks free their sample buffer",
-   "upstream_commit": "6b5957fa52688c0a1395696b17e8d0a212bf0b72"
-  },
-  {
-   "file": "patches/0003-lab-udp-loopback.patch",
-   "sha256": "e04d131fe58a16ec48e0cfcd17316183ec49164a1a024e7586206d24cf840faa",
-   "kind": "lab",
-   "strip": 1,
-   "targets": {
-    "src-core/common/net/udp.h": "dcb71736163e788fc047145fd2592c1c3c188702"
+   {
+    "file": "patches/0003-lab-udp-loopback.patch",
+    "sha256": "e04d131fe58a16ec48e0cfcd17316183ec49164a1a024e7586206d24cf840faa",
+    "strip": 1,
+    "targets": {
+     "src-core/common/net/udp.h": "dcb71736163e788fc047145fd2592c1c3c188702"
+    },
+    "kind": "lab",
+    "summary": "net::UDPServer binds 127.0.0.1 (second layer under the live unit's IPAddressDeny=any)"
    },
-   "summary": "net::UDPServer binds 127.0.0.1 (second layer under the live unit's IPAddressDeny=any)"
-  }
+   {
+    "file": "patches/0004-lab-no-march-native.patch",
+    "sha256": "b1954d1291506da5d8e614d0c530f1fb06373af9fc066a681cc7767866adde81",
+    "strip": 1,
+    "targets": {
+     "CMakeLists.txt": "daca96be5dbcbe89b28c2b6a541a44691f8c45a4"
+    },
+    "kind": "lab",
+    "summary": "no -march=native: the root CMakeLists.txt targets the build machine's CPU (and drops CMAKE_CXX_FLAGS) when CI is undefined"
+   },
+   {
+    "file": "patches/0005-lab-no-iers-download.patch",
+    "sha256": "f36b612a159fdb450a637a6264599590466b0c04d6bcc5fd41f1c6eb584ccebc",
+    "strip": 1,
+    "targets": {
+     "src-core/db/iers/iers_handler.cpp": "f6ab7a6f411c6d7d356bf36ee1164eae916ee1ee"
+    },
+    "kind": "lab",
+    "summary": "updateIERS returns before any download: the IERS / leap-second fetch (datacenter.iers.org, hpiers.obspm.fr, fixed in the code) is scheduled at every start and due at once with an empty database"
+   }
+  ],
+  "member": null
+ },
+ "build_system": "cmake",
+ "build_depends": [
+  "ninja-build",
+  "libjemalloc-dev",
+  "libvolk-dev",
+  "libpng-dev",
+  "libfftw3-dev",
+  "libnng-dev",
+  "libcurl4-openssl-dev",
+  "libsqlite3-dev",
+  "libtiff-dev"
  ],
+ "lab_build_depends": [],
  "cmake": {
-  "options_manifest": "upstream-options.json",
-  "definitions": {
-   "CMAKE_BUILD_TYPE": "Release",
-   "CMAKE_INSTALL_PREFIX": "/usr",
-   "CMAKE_INSTALL_LIBDIR": "lib",
-   "CMAKE_INSTALL_RPATH": "/usr/lib/satdump/plugins",
-   "EXTERNAL_PLUGINS": "",
+  "configure": [
+   "cmake",
+   "-S",
+   "{src}",
+   "-B",
+   "{build}",
+   "-G",
+   "Ninja"
+  ],
+  "options": {
    "BUILD_GUI": "OFF",
    "BUILD_TESTING": "OFF",
    "BUILD_TOOLS": "OFF",
@@ -196,160 +192,214 @@
    "NFD_CASE_SENSITIVE_FILTER": "OFF",
    "NFD_OVERRIDE_RECENT_WITH_DEFAULT": "OFF"
   },
-  "on_plugins_policy": "deployment/receive-only-policy.json components.satdump.allow_plugins"
+  "variables": {
+   "CMAKE_BUILD_TYPE": "Release",
+   "CMAKE_INSTALL_PREFIX": "/usr",
+   "CMAKE_INSTALL_LIBDIR": "lib",
+   "CMAKE_INSTALL_RPATH": "/usr/lib/satdump/plugins",
+   "FETCHCONTENT_FULLY_DISCONNECTED": "ON"
+  }
  },
- "build": {
-  "network": "none",
-  "isolation": "as deployment/recipes/lab_build.py offline_argv: a fresh mmdebstrap chroot per recipe, unshare --net --mount --pid --fork (new, empty network namespace) and chroot --userspec=1000:1000 with a clean environment; build_recipe.no_network checks that only loopback exists (README.md, builder order). deployment/build-vendor.sh (unshare --user --map-root-user --net) builds only the rtlsdr/limesuiteng candidates",
-  "jobs": 4,
-  "steps": [
-   "verify archive sha256",
-   "extract",
-   "check_recipe.py verify-source",
-   "apply patches -p1",
-   "cmake -S . -B build -G Ninja <definitions>",
-   "cmake --build build -j4",
-   "DESTDIR=<stage> cmake --install build",
-   "check_recipe.py package --root <stage>"
+ "autotools": null,
+ "build": [
+  [
+   "cmake",
+   "--build",
+   "{build}",
+   "--parallel",
+   "{jobs}"
   ]
- },
+ ],
  "install": {
-  "executable": "usr/bin/satdump",
-  "core_library": "usr/lib/libsatdump_core.so",
-  "plugin_dir": "usr/lib/satdump/plugins",
-  "pipeline_dir": "usr/share/satdump/resources/pipelines",
-  "resources_dir": "usr/share/satdump/resources",
-  "config": "usr/share/satdump/satdump_cfg.json",
-  "expected_plugins": [
-   "libmeteor_support.so",
-   "libnoaa_metop_support.so",
-   "libaws_support.so",
-   "libelektro_arktika_support.so",
-   "libxrit_support.so",
-   "libfengyun2_support.so",
-   "libnet_source_support.so"
+  "cmake_install": true,
+  "make_install": false,
+  "copy": []
+ },
+ "hooks": {
+  "source_check": [
+   "python3",
+   "-I",
+   "{recipe}/check_recipe.py",
+   "verify-source",
+   "--source",
+   "{src}"
   ],
-  "keep_pipelines": [
-   "Meteor-M.json",
-   "MetOp.json",
-   "AWS.json",
-   "FengYun-2.json",
-   "Elektro_Arktika.json"
-  ],
-  "remove_pipeline_ids": {
-   "Elektro_Arktika.json": [
-    "elektro_ggak_mqtt"
-   ]
-  },
-  "config_set": [
-   {
-    "path": [
-     "satdump_general",
-     "kepler_update_interval",
-     "value"
-    ],
-    "value": "Never"
-   },
-   {
-    "path": [
-     "kepler_settings",
-     "urls_to_fetch"
-    ],
-    "value": []
-   },
-   {
-    "path": [
-     "kepler_settings",
-     "norads_to_fetch"
-    ],
-    "value": []
-   },
-   {
-    "path": [
-     "kepler_settings",
-     "url_template"
-    ],
-    "value": ""
-   },
-   {
-    "path": [
-     "satdump_general",
-     "tle_space_track_login",
-     "value"
-    ],
-    "value": ""
-   },
-   {
-    "path": [
-     "satdump_general",
-     "tle_space_track_password",
-     "value"
-    ],
-    "value": ""
-   }
-  ],
-  "remove_trees": [
-   "usr/include",
-   "usr/share/applications",
-   "usr/share/icons"
+  "package": [
+   "python3",
+   "-I",
+   "{recipe}/check_recipe.py",
+   "package",
+   "--root",
+   "{destdir}",
+   "--manifest",
+   "{hook_out}"
   ]
  },
- "builder_checks": [
+ "packages": [
   {
-   "id": "plugin-set",
-   "how": "strace -f -e trace=openat satdump pipeline meteor_m2-x_lrpt --help: loaded *.so of the plugin dir == expected_plugins (libfengyun2_support.so for PLUGIN_FY2) and no 'failed to load' warning",
-   "status": "PENDING_BUILDER"
-  },
-  {
-   "id": "no-connect",
-   "how": "strace -f -e trace=connect on one file decode: zero connect() outside AF_UNIX",
-   "status": "PENDING_BUILDER"
-  },
-  {
-   "id": "ldd",
-   "how": "ldd of satdump, libsatdump_core.so and every plugin: no librtlsdr, LimeSuite, SoapySDR, libusb, libhackrf, libbladeRF, portaudio and no 'not found'; readelf -d: RUNPATH /usr/lib/satdump/plugins only (CMAKE_INSTALL_RPATH, so libelektro_arktika_support.so finds libxrit_support.so)",
-   "status": "PENDING_BUILDER"
-  },
-  {
-   "id": "lrpt-fixture",
-   "how": "decode one sha-pinned ci16 256 kS/s LRPT fixture through srrx.satdump_pass (CI-only asset, never in Git)",
-   "status": "PENDING_BUILDER"
-  },
-  {
-   "id": "cli-forms",
-   "how": "both --samplerate=256000 and --samplerate 256000 decode the fixture after patch 0001 (STACK.md:1481)",
-   "status": "PENDING_BUILDER"
-  },
-  {
-   "id": "planted-pipelines-json",
-   "how": "a pipelines.json with syracuse3_tlm in the working and home directory is not loaded by the unit",
-   "status": "PENDING_BUILDER"
-  },
-  {
-   "id": "lrpt-cadu-cut",
-   "how": "LRPT CADU replay after dd bs=8192 skip=4 (#1212)",
-   "status": "PENDING_BUILDER"
-  },
-  {
-   "id": "omm-csv",
-   "how": "orbits.export_satdump_csv column order against the pinned reader",
-   "status": "PENDING_BUILDER"
-  },
-  {
-   "id": "live-localhost",
-   "how": "live unit receives 127.0.0.1 datagrams and drops a datagram from another address",
-   "status": "PENDING_DEVICE"
+   "name": "satdump",
+   "section": "hamradio",
+   "description": "SatDump weather-satellite decoder, receive-only allowlist (7 plugins, 5 pipelines, net_source only)",
+   "files": [
+    "usr/bin/satdump",
+    "usr/lib/libsatdump_core.so",
+    "usr/lib/satdump/plugins/*",
+    "usr/share/satdump/*"
+   ],
+   "depends": [],
+   "shlibs_depends": true
   }
  ],
- "sources": [
-  "STACK.md:142",
-  "STACK.md:886",
-  "STACK.md:977",
-  "build/07-pz-vstanovlennia.md:362-389",
-  "build/15-rishennia-komplektu.md",
-  "deployment/sources.lock.json",
-  "https://raw.githubusercontent.com/SatDump/SatDump/1aedd602055c154401384a8cc7876713bb371254/plugins/fengyun2_support/CMakeLists.txt (line 6 add_library(fengyun2_support SHARED); read 2026-10-24)",
-  "https://raw.githubusercontent.com/SatDump/SatDump/1aedd602055c154401384a8cc7876713bb371254/plugins/elektro_arktika_support/CMakeLists.txt (links xrit_support; read 2026-10-24)",
-  "https://raw.githubusercontent.com/SatDump/SatDump/1aedd602055c154401384a8cc7876713bb371254/satdump_cfg.json (kepler_settings.url_template line 348, Space-Track fields lines 249-260; read 2026-10-24)"
- ]
+ "drop": [],
+ "checks": [
+  {
+   "kind": "require_paths",
+   "globs": [
+    "usr/bin/satdump"
+   ]
+  },
+  {
+   "kind": "require_paths",
+   "globs": [
+    "usr/lib/libsatdump_core.so"
+   ]
+  },
+  {
+   "kind": "require_paths",
+   "globs": [
+    "usr/share/satdump/satdump_cfg.json"
+   ]
+  },
+  {
+   "kind": "require_paths",
+   "globs": [
+    "usr/lib/satdump/plugins/libmeteor_support.so"
+   ]
+  },
+  {
+   "kind": "require_paths",
+   "globs": [
+    "usr/lib/satdump/plugins/libnoaa_metop_support.so"
+   ]
+  },
+  {
+   "kind": "require_paths",
+   "globs": [
+    "usr/lib/satdump/plugins/libaws_support.so"
+   ]
+  },
+  {
+   "kind": "require_paths",
+   "globs": [
+    "usr/lib/satdump/plugins/libelektro_arktika_support.so"
+   ]
+  },
+  {
+   "kind": "require_paths",
+   "globs": [
+    "usr/lib/satdump/plugins/libxrit_support.so"
+   ]
+  },
+  {
+   "kind": "require_paths",
+   "globs": [
+    "usr/lib/satdump/plugins/libfengyun2_support.so"
+   ]
+  },
+  {
+   "kind": "require_paths",
+   "globs": [
+    "usr/lib/satdump/plugins/libnet_source_support.so"
+   ]
+  },
+  {
+   "kind": "require_paths",
+   "globs": [
+    "usr/share/satdump/resources/pipelines/Meteor-M.json"
+   ]
+  },
+  {
+   "kind": "require_paths",
+   "globs": [
+    "usr/share/satdump/resources/pipelines/MetOp.json"
+   ]
+  },
+  {
+   "kind": "require_paths",
+   "globs": [
+    "usr/share/satdump/resources/pipelines/AWS.json"
+   ]
+  },
+  {
+   "kind": "require_paths",
+   "globs": [
+    "usr/share/satdump/resources/pipelines/FengYun-2.json"
+   ]
+  },
+  {
+   "kind": "require_paths",
+   "globs": [
+    "usr/share/satdump/resources/pipelines/Elektro_Arktika.json"
+   ]
+  },
+  {
+   "kind": "forbid_paths",
+   "globs": [
+    "usr/lib/satdump/plugins/*sdr_support*",
+    "usr/lib/satdump/plugins/*_sink*",
+    "usr/lib/satdump/plugins/*server*",
+    "usr/lib/satdump/plugins/*simd*",
+    "*inmarsat*",
+    "*.json.inc",
+    "usr/include/*",
+    "usr/share/applications/*",
+    "usr/share/icons/*",
+    "usr/lib/satdump/plugins/*/*"
+   ]
+  },
+  {
+   "kind": "forbid_needed",
+   "files": [
+    "usr/bin/satdump",
+    "usr/lib/libsatdump_core.so",
+    "usr/lib/satdump/plugins/*.so"
+   ],
+   "needed": [
+    "librtlsdr*",
+    "libLimeSuite*",
+    "liblimesuite*",
+    "libSoapySDR*",
+    "libusb*",
+    "libhackrf*",
+    "libbladeRF*",
+    "libportaudio*",
+    "libairspy*",
+    "libuhd*",
+    "libiio*",
+    "libzstd*",
+    "libarmadillo*",
+    "libhdf5*",
+    "libOpenCL*"
+   ]
+  }
+ ],
+ "notes": [
+  "Packaging data (pinned upstream file blobs, the installation layout, the pipeline and plugin allowlists, the config steps and the builder check list) is packaging.json; check_recipe.py carries the SHA-256 of packaging.json and upstream-options.json, so the build record binds them through check_recipe.py.",
+  "Every one of the 105 option() of the pinned tree is set (upstream-options.json, check_recipe.py check). ON: only the receive-only plugin allowlist (receive-only-policy.json components.satdump.allow_plugins), BUILD_OPENMP and ENABLE_INSTALL; PLUGINS_ALL, the GUI, ZIQ, OpenCL, crashdump, I18N, every hardware SDR source, every audio sink and every app are OFF; PLUGIN_SIMD_NEON stays OFF until a CPU measurement on the Q6A.",
+  "EXTERNAL_PLUGINS (a STRING cache entry, upstream default empty in plugins/CMakeLists.txt, bound by its blob) is not passed: the builder never overrides with an empty value.",
+  "No libarmadillo-dev: find_package(Armadillo) is optional at 1aedd60 (src-core/CMakeLists.txt:141) and leaving it out keeps configure deterministic; no libzstd-dev (BUILD_ZIQ OFF), no SDR, USB or audio development packages.",
+  "Patch 0004 removes upstream's -march=native: the builder's clean environment never defines CI, so CMakeLists.txt:166-172 would target the CI runner's CPU instead of the QCS6490 and replace CMAKE_CXX_FLAGS (dropping -fopenmp).",
+  "Patch 0005 makes IersDBHandler::updateIERS return before its downloads: SatDump 1aedd60 schedules the IERS / leap-second fetch at every start (src-core/db/iers/iers_handler.cpp:33-52) and the task is due at once with the empty database of a private HOME. The decode unit has no network anyway; with the patch and kepler_update_interval Never nothing in the core or the seven plugins fetches at start. Only the AWS NAVATT reader reads the IERS table.",
+  "One package satdump, no -dev package: the package hook removes usr/include, the desktop file and the icons; the installation record binds the whole file set as one unit (software/DECODERS.md).",
+  "libsatdump_core.so and the plugins have unversioned SONAMEs: dpkg-shlibdeps ignores unversioned libraries it cannot map (dpkg 1.22.6 scripts/dpkg-shlibdeps.pl, read 2026-11-07), so Depends comes from the noble libraries only.",
+  "CI evidence only: the runtime check (runtime_check.py) runs in the sr-rx-packages runtime chroot; the LRPT fixture rows stay BLOCKED_NO_LICENSED_FIXTURE and live-localhost PENDING_DEVICE; nothing here is REVIEWED."
+ ],
+ "ci": {
+  "heavy": true,
+  "runtime_depends": [
+   "binutils",
+   "strace"
+  ],
+  "tag_samples": []
+ }
 }
