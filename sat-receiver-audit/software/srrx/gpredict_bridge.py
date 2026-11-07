@@ -12,8 +12,9 @@ deployment/recipes/gpredict) loads element sets only from the files written here
   1..99999 is assigned somewhere, so an alias always equals some real object's number; that does
   not matter because Gpredict sees only this satdata directory (the package drops the bundled
   satellites.dat and *.cat, and first-time check step 5, src/first-time.c:610-640, copies them only
-  into a directory without .sat or .cat files). Inside one set an alias never equals a real id of
-  the set or another alias.
+  into a directory without .sat or .cat files; lab patch 0002 stops the network TLE update and
+  lab patch 0004 the TLE import from local files, the only other writers of satdata/<number>.sat).
+  Inside one set an alias never equals a real id of the set or another alias.
 - satdata/<number>.sat holds the TLE built from labd's OMM records (srrx.orbits): the two lines
   sgp4 2.27's exporter writes for the same elements (software/tests/test_gpredict_bridge.py checks
   both equality and that Gpredict's Good_Elements rules, src/sgpsdp/sgp_in.c:122-147, accept them).
@@ -28,8 +29,11 @@ deployment/recipes/gpredict) loads element sets only from the files written here
 
 CLI: python3 -m srrx.gpredict_bridge write --omm /var/lib/srrx/orbits/gp.json
 --allowlist /etc/srrx/orbit-allowlist.json --location <status.json> --config-dir
-~/.config/Gpredict [--aliases /var/lib/srrx/gpredict/aliases.json]. CI model only: no GUI and no
-receiver run here; the Doppler loop with SDR++ stays a device row.
+~/.config/Gpredict [--aliases /var/lib/srrx/gpredict/aliases.json]. The Expert GUI runs as the
+touch-session account srrx-ui, whose home /var/lib/srrx-ui gets no copy of /etc/skel
+(deployment/system/system_files.py SESSION_HOME), so its config dir is
+/var/lib/srrx-ui/.config/Gpredict; who runs this before Gpredict starts stays OPEN. CI model only:
+no GUI and no receiver run here; the Doppler loop with SDR++ stays a device row.
 """
 import argparse
 from datetime import datetime, timedelta

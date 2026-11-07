@@ -356,5 +356,44 @@ class FileTests(unittest.TestCase):
         self.assertEqual(json.loads(out.getvalue())["status"], "BLOCKED")
 
 
+class SessionAccountTests(unittest.TestCase):
+    """The Expert GUI runs as the touch-session account (deployment/system/system_files.py
+    SESSION_USER), whose home SESSION_HOME tmpfiles.d creates empty: /etc/skel never reaches it, so
+    the bridge files must be written there and RX-10's globs must see them."""
+
+    @classmethod
+    def setUpClass(cls):
+        import sys
+        system = str(ROOT / "deployment/system")
+        if system not in sys.path:
+            sys.path.insert(0, system)
+        import system_files
+        cls.home = system_files.SESSION_HOME.strip("/")
+        cls.tmpfiles = system_files.session_tmpfiles()
+        cls.policy = json.loads((ROOT / "deployment/receive-only-policy.json").read_text(encoding="utf-8"))["components"]["gpredict"]
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="srrx-gpredict-ui-")
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+
+    def matches(self, path, globs):
+        return any(fnmatch.fnmatchcase(path, g) for g in globs)
+
+    def test_bridge_files_in_the_session_home_match_the_rx_10_globs(self):
+        config = self.root / self.home / ".config/Gpredict"
+        gb.write(config, [record(25544)], pass_jobs.stored_location(location()), self.root / "var/lib/srrx/gpredict/aliases.json")
+        radios = sorted(p.relative_to(self.root).as_posix() for p in config.rglob("*.rig"))
+        self.assertEqual(radios, [self.home + "/.config/Gpredict/hwconf/SDRPP-RX.rig"])
+        self.assertTrue(all(self.matches(r, self.policy["radio_config_globs"]) for r in radios))
+        self.assertTrue(self.matches((config / "gpredict.cfg").relative_to(self.root).as_posix(), self.policy["tle_update"]["file_globs"]))
+        for other in ("hwconf/trx.rig", "radios/trx.rig"):  # a TX radio someone drops there is seen by RX-10 too
+            self.assertTrue(self.matches(self.home + "/.config/Gpredict/" + other, self.policy["radio_config_globs"]))
+
+    def test_session_home_is_created_empty_without_skel(self):
+        lines = [line.split() for line in self.tmpfiles.splitlines() if not line.startswith("#") and line.split()[1:2] == ["/" + self.home]]
+        self.assertEqual([fields[0] for fields in lines], ["d"])  # no C/L line: nothing copies /etc/skel/.config/Gpredict
+
+
 if __name__ == "__main__":
     unittest.main()

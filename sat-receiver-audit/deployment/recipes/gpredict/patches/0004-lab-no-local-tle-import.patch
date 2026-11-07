@@ -1,0 +1,24 @@
+--- a/src/tle-update.c
++++ b/src/tle-update.c
+@@ -121,6 +121,21 @@
+ 
+     (void)filter;
+ 
++    /* SRRX +lab: element sets come only from the srrx Gpredict bridge (labd's
++       OMM, build/07 section 19). A local TLE file would replace the elements of
++       a bridge alias that shares its catalogue number, so this build never
++       reads one ("Update TLE data from local files", src/menubar.c). */
++    sat_log_log(SAT_LOG_LEVEL_ERROR,
++                _("%s: local TLE file import is disabled in the SR-RX lab build"),
++                __func__);
++    if (!silent && (label1 != NULL))
++        gtk_label_set_text(GTK_LABEL(label1),
++                           _("Local TLE file import is disabled in the SR-RX lab build"));
++    (void)dir;
++    (void)progress;
++    (void)label2;
++    return;
++
+     if (g_mutex_trylock(&tle_file_in_progress) == FALSE)
+     {
+         sat_log_log(SAT_LOG_LEVEL_ERROR,

@@ -8,8 +8,8 @@ only. It checks that:
 - the package ships no bundled satellite data (no usr/share/gpredict/data/satdata files: Gpredict
   loads only what the srrx Gpredict bridge writes);
 - the binary carries the lab refusals (no network TLE or transponder update, RX only radios, the
-  rotctld full-buffer error) and none of the removed texts (IQRECORD, the CelesTrak, AMSAT and
-  SatNOGS default URLs);
+  rotctld full-buffer error, no TLE import from local files) and none of the removed texts
+  (IQRECORD, the CelesTrak, AMSAT and SatNOGS default URLs);
 - the /etc/skel defaults hold [TLE] AUTO_UPDATE_FREQ=0 with an empty URL list and exactly one radio,
   Type 0 at 127.0.0.1:4532 (SDR++ rigctl_server) with every AOS/LOS/IQ signal off.
 The GUI is never started (gtk_init needs a display): no device, no RF. The last stdout line is a
@@ -26,7 +26,8 @@ SKEL = "/etc/skel/.config/Gpredict"
 REQUIRED = (b"network TLE update is disabled in the SR-RX lab build",
             b"network transponder update is disabled in the SR-RX lab build",
             b"is not an RX only radio; refused by the SR-RX lab build",
-            b"rotctld answer fills the")
+            b"rotctld answer fills the",
+            b"local TLE file import is disabled in the SR-RX lab build")
 FORBIDDEN = (b"IQRECORD", b"celestrak.org/NORAD", b"amsat.org/amsat/ftp", b"db.satnogs.org")
 FORBIDDEN_LIBRARIES = re.compile(r"^(libgps|libhamlib|libcurl)", re.I)
 RADIO = {"host": "127.0.0.1", "port": "4532", "type": "0", "ptt": "0", "signal_aos": "false", "signal_los": "false",
