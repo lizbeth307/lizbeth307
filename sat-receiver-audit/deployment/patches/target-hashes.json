@@ -22,7 +22,7 @@
   "sdrangel": {
     "CMakeLists.txt": {
       "before_sha256": "b719077d6793c693103b3d5acfc00309fb3cf1a171dcf7f832ff1013f06dc4b6",
-      "after_sha256": "da7f772835be0c3288d54d40b470d9ad95a127dd0995bbfc9434b809ced957fa"
+      "after_sha256": "1d5fbb3a41a7d09112476938c69716a6a6765168a1569244fb907f123bcf860f"
     },
     "plugins/CMakeLists.txt": {
       "before_sha256": "c098ff1a939ad1da7c7909ae88f2100a8a0fc8f7ee73ee98717f3083ae768a88",

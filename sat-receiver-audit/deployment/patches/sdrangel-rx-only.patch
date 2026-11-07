@@ -18,7 +18,23 @@
  
  if(ANDROID)
    set(PLUGINS_PREFIX    "sdrangel_plugins_")
-@@ -1071,9 +1074,8 @@
+@@ -898,12 +901,9 @@
+                             QuickWidgets
+                             Location
+                             TextToSpeech
+-                            Svg
+-                           OPTIONAL_COMPONENTS
+-                            WebEngine
+-                            WebEngineCore
+-                            WebEngineWidgets
+-                            Gamepad)
++                            Svg)
++            # SR-RX: no QtWebEngine and no QtGamepad: only the map and skymap features and the
++            # gs232controller feature use them, and none of these is built.
+         endif()
+     endif()
+ endif()
+@@ -1071,9 +1071,8 @@
  add_subdirectory(swagger)
  add_subdirectory(devices)
  
@@ -30,7 +46,7 @@
  
  if (FFTW3F_FOUND)
      add_subdirectory(ft8)
-@@ -1081,11 +1083,7 @@
+@@ -1081,11 +1080,7 @@
      set(FT8_SUPPORT ON CACHE INTERNAL "")
  endif()
  
