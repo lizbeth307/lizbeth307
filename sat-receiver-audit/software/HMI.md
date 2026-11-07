@@ -374,3 +374,78 @@ SIM ARM+HOLD, знімає шість сторінок у стані READY/CONTR
 Widgets змінюються тільки у GUI thread; worker передає стан сигналами.
 
 Станом на 24.10.2026 анотація, навчання CPU-моделі, класифікація та load/save датасету й моделі виконуються у фоновій задачі (див. вище), а не в GUI thread; датасет сеансу обмежено 2 MiB, тож задача триває секунди, а не хвилини. Найдовший неподільний крок (один збережений кадр або перевірка печатки всього датасету) визначає затримку Cancel. Відкрито: затримку на Q6A не виміряно; у GUI thread лишаються три попоінтові проходи на кожен показаний кадр до 2 MiB (`accept_frame`, `Plot.add` через `spectrum_columns`, перечитування відстежуваного файлу). Якщо GUI thread усе ж зупиниться понад 1,5 с, worker і далі знімає HOLD (відмова безпечна).
+
+## Сеанс на дисплеї: greetd, lab-session, labwc
+
+Станом на 07.11.2026 (W2 SYS-SESSION) файли сеансу генерує `deployment/system/system_files.py`
+(`session_files()`), а `deploy.py stage` кладе їх у rootfs для кожного режиму GNSS. Пакети greetd,
+labwc, kanshi і cage та greetd як display-manager додає образ (лінія IMG). Поки Lab Shell не має
+коду, клієнтом сеансу є ця консоль (`srrx-menu.service`, `-m srrx.hmi`). Поведінку greetd 0.9.0,
+labwc 0.7.1, kanshi 1.5.1, cage 0.1.5 і systemd v255 прочитано з їхніх джерел (пакети noble,
+SHA-256 збігаються з .dsc) 07.11.2026; посилання на файли джерел — у коментарях `system_files.py`.
+
+| Файл у rootfs | Призначення |
+|---|---|
+| `usr/lib/sysusers.d/srrx.conf` | Обліковий запис `srrx-ui`: `u`, домівка `/var/lib/srrx-ui`, оболонка `/usr/sbin/nologin`, створюється вимкненим (без пароля). Єдиний рядок `m srrx-ui labd`: група `labd` відкриває `/run/srrx` (0750) і `control.sock` (0660). `srrx-pico` і `srrx-gnss` лишаються без членів |
+| `usr/lib/tmpfiles.d/srrx-session.conf` | Домівка `/var/lib/srrx-ui` 0700 (sysusers записує лише шлях) і каталог лічильника `/run/srrx-session` 0700 |
+| `etc/greetd/config.toml` | `vt = 1`, `source_profile = false`, лише `default_session`: `/usr/lib/srrx/lab-session` від `srrx-ui`. Замінює conffile пакета (agreety на VT 7); `/etc/greetd/greetd.conf` greetd 0.9.0 читав би раніше, тому його не має бути |
+| `etc/systemd/system/greetd.service.d/60-srrx-session.conf` | `StartLimitBurst=0` (unit пакета дозволяє 5 перезапусків за 30 с) і `Conflicts=`/`After=getty@tty1.service` (патч Debian переніс конфлікт на tty7) |
+| `usr/lib/srrx/lab-session` (0755) | Обгортка сеансу, яка ніколи не завершується через збій (нижче) |
+| `usr/lib/srrx/labwc/rc.xml`, `environment`, `autostart` | Конфігурація, яку lab-session передає labwc через `-C`: каталоги XDG, зокрема пакетний `/etc/xdg/labwc` зі swaybg, waybar і swayidle, не читаються |
+| `usr/lib/srrx/kanshi/field60`, `field52` | Профілі з польового EDID: `output HDMI-A-1 mode 1920x1080@59.986Hz` і `…@51.677Hz` |
+
+greetd запускає `/bin/sh -c "exec /usr/lib/srrx/lab-session"` від `srrx-ui` (клас greeter, PAM
+`greetd-greeter`, без автентифікації) незалежно від оболонки облікового запису і сам завершується,
+щойно default_session виходить, не створивши сеансу. Тому lab-session наглядає за графічним етапом
+і рахує кожне його завершення як збій:
+
+1. **normal** — `labwc -C /usr/lib/srrx/labwc`. Автозапуск запускає `kanshi -c /usr/lib/srrx/kanshi/field60`
+   (або `field52`, якщо адміністратор під час введення в дію записав це слово в
+   `/etc/srrx/display-profile`; kanshi 1.5.1-1 у noble зібрано без IPC, тож `kanshictl switch`
+   недоступний), імпортує `WAYLAND_DISPLAY` у менеджер користувача і, якщо `srrx-menu.service`
+   увімкнено, виконує `systemctl --user start --wait srrx-menu.service`. Коли консоль зупиняється,
+   автозапуск завершує свій labwc (`labwc --exit`, лише якщо `LABWC_PID` ще належить labwc).
+2. **safe** — після 3 збоїв за 600 с: `cage -d -- /usr/lib/srrx/lab-session client`, тобто лише
+   консоль (той самий user unit з тією самою пісочницею) без labwc, kanshi та інших вікон; режим
+   екрана — бажаний режим EDID (DTD1, 59.986 Hz).
+3. **text** — ще 3 збої за 600 с: текст стану на VT 1 (`python3 -m srrx.cli … status`, тобто
+   `labctl status`), оновлення кожні 30 с, до перезавантаження. labd працює далі.
+
+Режим і моменти збоїв (секунди `/proc/uptime`, тож крок годинника від GNSS чи RTC їх не зсуває)
+лежать у `/run/srrx-session`: перезапуск greetd їх зберігає, перезавантаження очищає. Без цього
+каталогу лічильник працює в `$XDG_RUNTIME_DIR/srrx-session`, але лише до перезапуску greetd.
+SIGTERM (зупинка greetd, вимкнення) завершує обгортку.
+
+`srrx-menu.service` має `ConditionPathExists=/opt/srrx/venv/bin/python3` (без venv старт
+пропускається, а не падає) і `Restart=no` (перезапуск робить lab-session). Пресет користувача
+лишається `disable`: консоль стартує лише після того, як адміністратор увімкне unit після збирання
+й аудиту venv; до того labwc працює без консолі.
+
+rc.xml має один `<touch mapToOutput="HDMI-A-1"/>` без `deviceName` (типовий запис для всіх сенсорних
+пристроїв) і по одній прив'язці клавіатури й миші з дією `None`: labwc 0.7.1 тоді не завантажує
+типових прив'язок (термінал, запускач, кореневе меню з Exit) і відкидає прив'язки без дій, тож
+кіоск не має жодної. Правило вікна `lab.shell` (без декорацій, розгорнуте) чекає на Lab Shell.
+
+Перевірки хоста (CI-модель, не апаратний результат): `deployment/tests/test_system_files.py`,
+класи `SessionFilesTests` (вміст, розбір config.toml за правилами greetd 0.9.0, один рядок `m`,
+staging і режими в архіві) і `LabSessionExecutionTests` (справжні lab-session і автозапуск під
+POSIX sh з підробленими labwc, cage, systemctl, kanshi і sleep: 3 збої → safe, ще 3 → текст,
+вікно 600 с, режим після перезапуску greetd, клієнт safe-режиму, вибір профілю kanshi).
+
+Відкрито:
+- Стенд W1-2 (STACK.md:1442, :1486): режим 59.986 Hz і дотик на HDMI Q6A, відновлення greetd
+  (Lab Shell → консоль), повернення VT у текстовий режим після виходу labwc чи cage, доступ сеансу
+  класу greeter до DRM і вводу через logind і запуск user@ для `srrx-ui` (`loginctl`); групи
+  `video` та `input` не додано.
+- `LABWC_FALLBACK_OUTPUT=NOOP-fallback` записано, але labwc 0.7.1 його ігнорує (резервний вихід
+  з'явився в 0.7.2): поведінку при від'єднанні HDMI з 0.7.1 перевіряє стенд; 0.7.4+lab1 — група E.
+- `WLR_DRM_DEVICES` (by-path контролера дисплея Q6A) — TBD до читання на стенді.
+- Порожній робочий стіл labwc — суцільний чорний фон wlroots 0.17.1 (0x00), який правило палітри
+  STACK.md:884 забороняє для великих заливок; консоль на весь екран його закриває, клієнта фону
+  в образі немає.
+- `PrivateTmp=yes` у user unit потребує просторів імен; чи стартує консоль у noble, покаже
+  сценарій сеансу QEMU (лінія IMG).
+- LOCK (фрагмент rc.xml із `sendEventsMode=no`) потребує записуваного каталогу конфігурації — разом
+  із Lab Shell.
+- `/var/lib/srrx-ui` записуваний для `srrx-ui`: перевизначення user unit у цій домівці має блокувати
+  RX-11 (у selftest її ще немає серед домівок).
