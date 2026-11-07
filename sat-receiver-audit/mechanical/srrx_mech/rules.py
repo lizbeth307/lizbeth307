@@ -732,15 +732,25 @@ def pwr_pocket_rule(P):
                     f"{gap:.1f} mm to the nearest plate hole")
         if not ok:
             bad.append(pid)
+    from .boards import budget_candidate
+    ch, cand = budget_candidate()
+    items = (cand or {}).get("pwr_a_tht_pocket_items")
+    if items is not None:
+        drawn = [x["item"] for x in items if x["item"] in ("U107", "U108")]    # D36V50F12 U107 / D36V50F5 U108 (boards.json PWR notes)
+        live = (f" (pcb/partition-budget.json candidates.{ch} pwr_a_tht_pocket_items now: {len(items)} items with "
+                f"{sum(x['tht_pads'] for x in items)} THT pads" + (f", {'/'.join(drawn)} of them pocketed here" if drawn else "") + ")")
+    else:
+        live = " (pcb/partition-budget.json pwr_a_tht_pocket_items not found)"
     if bad:
         res = "FAIL (model): " + ", ".join(bad)
     else:
         res = ("OPEN: the Pololu pin rows are pocketed (M-07 " + ", ".join(val) + "); "
-               + tp.get("from_placement", "the other THT groups wait for the placement"))
+               + tp.get("from_placement", "the other THT groups wait for the placement") + live)
     return {"id": "R-PWR-POCKETS",
             "rule": f"plate relief pocket >= {tp.get('depth_min', 1.0):g} mm under every PWR-A THT pad group (pin field + {tp.get('margin', 1.0):g} mm), polyimide over it",
             "value_mm": val, "limit_mm": {"depth_min": tp.get("depth_min", 1.0), "plate_t": pl["t"]}, "result": res,
-            "source": "boards.json PWR tht_pockets / modules_on_board pin_field; pcb/partition-spec.json keepouts.pwr_a_tht_pockets"}
+            "source": "boards.json PWR tht_pockets / modules_on_board pin_field; pcb/partition-spec.json keepouts.pwr_a_tht_pockets; "
+                      "pcb/partition-budget.json pwr_a_tht_pocket_items"}
 
 
 def j551_rule(P):
@@ -763,7 +773,9 @@ def j551_rule(P):
            "proud_outside": round(proud, 2), "inner": [part["inner_d"], part["inner_depth"]], "leads_mm": part["leads_mm"]}
     if ok:
         res = (f"PASS (model): {wall:g} mm ASA wall inside {part['wall_min']:g}-{part['wall_max']:g}; inserted from inside (collar on the inner face), "
-               f"SW 11 nut outside, {proud:g} mm proud of the right face; plain bore {part['hole_d']:g} (binder proposal 2)")
+               f"SW 11 nut outside, {proud:g} mm proud of the right face; plain bore {part['hole_d']:g} (binder proposal 2: takes the M10x0.75 "
+               f"body with or without flats); anti-rotation with the flats proposal ({part['hole_flats']:g} across) OPEN until flats on this "
+               "part's body are confirmed (the READS-E reading of the scale drawing names none)")
     else:
         res = f"FAIL (model): wall {wall:g} outside {part['wall_min']:g}-{part['wall_max']:g}"
     return dict(rule, value_mm=val, limit_mm={"wall": [part["wall_min"], part["wall_max"]]}, result=res)

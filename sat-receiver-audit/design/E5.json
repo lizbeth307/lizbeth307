@@ -1867,7 +1867,7 @@
     },
     {
       "ref": "J514",
-      "value": "X24S1-T7: JST PH 3, боковий вхід, S24",
+      "value": "X24S1-T7A: JST PH 3, боковий вхід, S24",
       "kind": "connector",
       "group": "T7 USB3 VBUS",
       "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-4)",
@@ -1897,7 +1897,7 @@
         }
       ],
       "notes": [
-        "Роз'єм джгута X24S1-T7 (build/16 §4; W2 GR-4): на вставці T7_INSERT, сегмент S24; номери контактів = контакти джгута (tools/assembly_data.py HEADERS), 1:1 з J311.1–3 на CTRL. Бічний вхід S3B-PH-K-S (висота 4.8 мм, JST ePH): провід іде вздовж кабелю USB3 під термоусадкою вставки."
+        "Роз'єм джгута X24S1-T7A (build/16 §4; W2 GR-4): на вставці T7_INSERT, сегмент S24; номери контактів = контакти джгута (tools/assembly_data.py HEADERS), 1:1 з J311.1–3 на CTRL. Бічний вхід S3B-PH-K-S (висота 4.8 мм, JST ePH): провід іде вздовж кабелю USB3 під термоусадкою вставки."
       ]
     },
     {
