@@ -404,8 +404,8 @@
 | S34-06 | SLED_DET | PWR: X34S1-PWR.6 (транзит) | LABBUS: J505.6 (SLED_DET_N) | 26 | 1/1 | 0.05 / — | блакитний |
 | S35-01 | GND | PWR: X35S1-PWR.1 → U103.2, C103.2, C104.2 … | BONI: пайка: A406.SHIELDS | 24 | 1/1 | 0.065 / 0.153 | чорний |
 | S35-02 | BONI13V8_PORT | PWR: X35S1-PWR.2 → Q2903.5, Q2903.6, C2903.1 … | BONI: пайка: A406.DC | 24 | 1/1 | 0.065 / 0.153 | фіолетовий |
-| S36-01 | GND | PWR: X36S1-PWR.1 → U103.2, C103.2, C104.2 … | SBPWR: J551.RTN (return) | 24 | 1/1 | 0.065 / 0.192 | чорний |
-| S36-02 | BIAS_SB_LNA | PWR: X36S1-PWR.2 → L215.2, C297.1, R295.1 … | SBPWR: J551.VOUT (+5 V pod (BIAS_SB_LNA)) | 24 | 1/1 | 0.065 / 0.192 | червоний |
+| S36-01 | GND | PWR: X36S1-PWR.1 → U103.2, C103.2, C104.2 … | SBPWR: J551.3 (return (GND), lead blue) | 24 | 1/1 | 0.065 / 0.192 | чорний |
+| S36-02 | BIAS_SB_LNA | PWR: X36S1-PWR.2 → L215.2, C297.1, R295.1 … | SBPWR: J551.1 (+5 V pod (BIAS_SB_LNA), lead brown) | 24 | 1/1 | 0.065 / 0.192 | червоний |
 | S37-01 | GND | CTRL: X37S1-CTRL.1 → J302.2, U301.10, U301.15 … | ENCM: X37S1-ENCM.1 → SW308.2, ENC301.C, ENC301.S2 | 26 | 1/1 | 0.05 / — | чорний |
 | S37-02 | E3_ENC1_A_RAW | CTRL: X37S1-CTRL.2 → R351.1, R352.1, U312.1 | ENCM: X37S1-ENCM.2 → ENC301.A | 26 | 1/1 | 0.05 / — | білий |
 | S37-03 | E3_ENC1_B_RAW | CTRL: X37S1-CTRL.3 → R353.1, R354.1, U312.3 | ENCM: X37S1-ENCM.3 → ENC301.B | 26 | 1/1 | 0.05 / — | білий |
@@ -418,8 +418,8 @@
 | S39-02 | E3_PANEL_TEMP | CTRL: X39S1-CTRL.2 → U305.31, R332.2, C310.1 | NTCP: пайка: TH301.1 | 26 | 1/1 | 0.05 / — | білий |
 | S40-01 | GND | CTRL: X40S1-CTRL.1 → J302.2, U301.10, U301.15 … | NTCC: пайка: TH302.2 | 26 | 1/1 | 0.05 / — | чорний |
 | S40-02 | E3_CASE_TEMP | CTRL: X40S1-CTRL.2 → U305.34, R333.2, C311.1 | NTCC: пайка: TH302.1 | 26 | 1/1 | 0.05 / — | білий |
-| S41-01 | GND | SBPWR: J551.RTN (return) | SPOD: пайка: W425.RETURN | 26 | 1/1 | 0.065 / 0.192 | чорний |
-| S41-02 | BIAS_SB_LNA | SBPWR: J551.VOUT (+5 V pod (BIAS_SB_LNA)) | SPOD: пайка: W425.BRANCH_5V | 26 | 1/1 | 0.065 / 0.192 | червоний |
+| S41-01 | GND | SBPWR: J551.3 (return (GND), lead blue) | SPOD: пайка: W425.RETURN | 26 | 1/1 | 0.065 / 0.192 | чорний |
+| S41-02 | BIAS_SB_LNA | SBPWR: J551.1 (+5 V pod (BIAS_SB_LNA), lead brown) | SPOD: пайка: W425.BRANCH_5V | 26 | 1/1 | 0.065 / 0.192 | червоний |
 
 ## 6. Готові кабельні збірки (високошвидкісні лінії не розплітати)
 
