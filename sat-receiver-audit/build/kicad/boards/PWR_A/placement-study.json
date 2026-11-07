@@ -5,8 +5,8 @@
   "generator": "build/kicad/boards/PWR_A/placement_study.py",
   "inputs": {
     "spec_sha256": "e24407a3dc2e4854838cf8a502e96d7a3c130141d9bc428292c268eed08c3bdd",
-    "contract_pwr": "d5307660571f38e01e7360e185710a9cdb6d2f53f90610941286ad5198b14ca1",
-    "contract_pwr_b_outline": "43f3c25887263a48ccbffef5db4ef30274c120adea255ab19f2249678a5500c4",
+    "contract_pwr": "00bf8c302e39b748b918c2bbf8af3fe139209ac5c113675f699c3ebfdcc01fb6",
+    "contract_pwr_b_outline": "162a3b5c88a8f0dfb87102136b57a0938ce02ed85d2cd3f0b5ca2d275d5cbd9d",
     "template_sha256": "54caa614b628ed1913658c30571d6f499bb96361fcca78d5285f5076be985f61",
     "project_sha256": "202ab44962f558762ad5fe3ac916d928247669a4cbe85bb255d21431fa716be4"
   },
@@ -2033,7 +2033,7 @@
         108,
         128
       ],
-      "use": "rear-layer harness through plate slot SL2 (S04, S13, S14, S17, S18, S20-S22, S35; JST PH, Micro-Fit)",
+      "use": "rear-layer harness through plate slot SL2: J206 SL2-PWR-MF (S13, S14, S17, S18; Micro-Fit) and the battery-path S06/S07 leads to the rear-wall INA228 / #2813 (W2 MECH-3 routes); S04, S20-S22 and S35 leave from PWR-B J204/J207 (build/16-dzhgut-rozyemy.csv, W2 GR-3)",
       "hole_keepout_chords": [],
       "free_length_mm": 20.0,
       "pwr_a_headers": [
