@@ -546,6 +546,15 @@ class CutoutsLayerTypesAndDrillOffsets(unittest.TestCase):
         with self.assertRaises(SystemExit):
             bg.validate_spec(spec, 'CTRL')
 
+    def test_pre_route_vias_are_validated(self):
+        spec = copy.deepcopy(bg.read_json(bg.spec_path('CTRL')))
+        self.assertTrue(spec['pre_route']['vias'])
+        for bad in ({'net': 'NOPE'}, {'drill_mm': 0.1}, {'diameter_mm': 0.2}, {'diameter_mm': 0.3, 'drill_mm': 0.3}):
+            candidate = copy.deepcopy(spec)
+            candidate['pre_route']['vias'][0].update(bad)
+            with self.assertRaises(SystemExit):
+                bg.validate_spec(candidate, 'CTRL')
+
     def test_smd_drill_offset_without_size(self):
         geo = bg.footprint_geometry(PICO.read_text(encoding='utf-8'))
         self.assertTrue(any(p['number'] == '1' for p in geo['pads']))

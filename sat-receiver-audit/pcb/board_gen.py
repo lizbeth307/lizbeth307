@@ -733,6 +733,10 @@ def validate_spec(spec, board):
     for track in spec['pre_route'].get('tracks', []):
         if track['net'] not in nets or len(track['path']) < 2 or track['width_mm'] <= 0:
             raise SpecError(f'{board}: pre-route track {track.get("id")} is malformed')
+    floor = spec['fab_floor']
+    for via in spec['pre_route'].get('vias', []):
+        if via.get('net') not in nets or len(via.get('at', [])) != 2 or                 float(via.get('drill_mm', 0)) + 1e-9 < float(floor['min_drill']) or                 float(via.get('diameter_mm', 0)) + 1e-9 < float(floor['min_via_diameter']) or                 float(via['diameter_mm']) <= float(via['drill_mm']):
+            raise SpecError(f'{board}: pre-route via {via.get("id")} is malformed or below the fab floor')
     for zone in spec['post_route_zones'] + spec['pre_route'].get('zones', []):
         if zone['net'] not in nets:
             raise SpecError(f'{board}: zone {zone.get("id")} on unknown net {zone["net"]}')
@@ -1297,6 +1301,18 @@ def build_board(pcb, spec, contract, template, temp):
             seg.SetNet(nets[track['net']])
             seg.SetLocked(bool(track.get('locked', True)))
             board.Add(seg)
+    # Scripted through vias (spec pre_route.vias), locked like the scripted tracks: e.g. plane fanout of SMD pads
+    # whose escape the router cannot find on a dense board.
+    for item in spec['pre_route'].get('vias', []):
+        via = pcb.PCB_VIA(board)
+        via.SetViaType(pcb.VIATYPE_THROUGH)
+        via.SetLayerPair(pcb.F_Cu, pcb.B_Cu)
+        via.SetPosition(frame.k(*item['at']))
+        via.SetWidth(pcb.FromMM(item['diameter_mm']))
+        via.SetDrill(pcb.FromMM(item['drill_mm']))
+        via.SetNet(nets[item['net']])
+        via.SetLocked(bool(item.get('locked', True)))
+        board.Add(via)
     for zone in spec['pre_route'].get('zones', []):
         add_copper_zone(pcb, board, frame, spec, contract, zone, nets)
     text = pcb.PCB_TEXT(board)
@@ -1656,7 +1672,7 @@ def audit_board(pcb, spec, contract, stackup, template, graph, db, proj, board_p
     drc = drc_summary(drc_raw, policy, project['board']['design_settings']['rule_severities'])
     partition = read_json(BASE / spec['partition'])
     hole_list = holes(spec, contract)
-    want_locked = sum(len(t['path']) - 1 for t in spec['pre_route'].get('tracks', []) if t.get('locked', True))
+    want_locked = sum(len(t['path']) - 1 for t in spec['pre_route'].get('tracks', []) if t.get('locked', True)) +         sum(1 for v in spec['pre_route'].get('vias', []) if v.get('locked', True))
     audits = {
         'domain': domain_audit(spec, partition),
         'source_pad': source_pad_audit(facts, spec, template, graph),
