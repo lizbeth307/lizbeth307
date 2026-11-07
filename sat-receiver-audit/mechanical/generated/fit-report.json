@@ -3,8 +3,8 @@
   "status": "MODEL FIT ONLY: envelopes and datasheet dimensions; no physical part was fitted. Hardware gates stay OPEN.",
   "generator": {
     "version": "1.0.0",
-    "params_sha256": "e9f65a072a5648bbcc25e0806b672126efc61b56a8819329d9afdd331b45eae4",
-    "pcb_components_sha256": "878b83338d5bcc6c1a133b038580c6a40a9775a6ec0aab2b385f143562a36662"
+    "params_sha256": "a71155ca0440d2285800437adec08952bc11eaed804e7d5ca642339f288004f9",
+    "pcb_components_sha256": "be0953f767d7d71194636e0895ebb95f5ed1451c9348f01c00bb30d9fb2d4cb3"
   },
   "envelope": {
     "model": [
@@ -1596,11 +1596,11 @@
     "boards": {
       "PWR": {
         "area_mm2": 7910.0,
-        "courtyard_raw_mm2": 6631.0,
+        "courtyard_raw_mm2": 6822.0,
         "modules_mm2": 1342.0,
         "per_domain_raw_mm2": {
           "PWR_MAIN": 3234.0,
-          "PWR_BRANCH": 2882.0,
+          "PWR_BRANCH": 3072.0,
           "USB_POWER": 516.0
         },
         "per_group_raw_mm2": {
@@ -1608,11 +1608,11 @@
           "E1 Роз'єми джгутів PWR": 870.0,
           "E1 SYS12": 759.0,
           "E2 Boni: малошумна захищена шина": 512.0,
+          "E2 Роз'єми джгутів PWR": 430.0,
           "E2 LNB: малошумна захищена шина": 416.0,
           "E2 J21: захищене живлення 12 V": 412.0,
           "E2 LNA4V5: паралельні LT3045": 358.0,
           "E5 VBUS HF+ з демпфованим LC": 306.0,
-          "E2 Роз'єми джгутів PWR": 240.0,
           "E2 AUX12: верхній ключ і PTC": 191.0,
           "E2 Дисплей: захищене живлення 12 V": 183.0,
           "E2 Lime M.2: комутована шина 3.3 V": 173.0,
@@ -1652,6 +1652,10 @@
             768.0,
             922.0
           ],
+          "E2 Роз'єми джгутів PWR": [
+            645.0,
+            775.0
+          ],
           "E2 LNB: малошумна захищена шина": [
             624.0,
             748.0
@@ -1667,10 +1671,6 @@
           "E5 VBUS HF+ з демпфованим LC": [
             460.0,
             552.0
-          ],
-          "E2 Роз'єми джгутів PWR": [
-            360.0,
-            432.0
           ],
           "E2 AUX12: верхній ключ і PTC": [
             287.0,
@@ -1757,25 +1757,25 @@
             23.0
           ]
         },
-        "parts": 256,
-        "need_1_5_mm2": 9276.0,
-        "need_1_8_mm2": 10863.0,
-        "estimate_mm2": 10863.0,
-        "ratio_1_5": 1.17,
-        "ratio_1_8": 1.37,
+        "parts": 257,
+        "need_1_5_mm2": 9562.0,
+        "need_1_8_mm2": 11206.0,
+        "estimate_mm2": 11206.0,
+        "ratio_1_5": 1.21,
+        "ratio_1_8": 1.42,
         "scope": "board parts and modules, without the harness headers",
-        "result": "OPEN: need 10863 mm2 at fill 1.8 > outline 7910 mm2 (model estimate; partition and placement decide, AREA / PCB)"
+        "result": "OPEN: need 11206 mm2 at fill 1.8 > outline 7910 mm2 (model estimate; partition and placement decide, AREA / PCB)"
       },
       "PWR_B": {
         "area_mm2": 6516.0,
-        "courtyard_raw_mm2": 2370.0,
+        "courtyard_raw_mm2": 2560.0,
         "modules_mm2": 0.0,
         "per_domain_raw_mm2": {
-          "PWR_BRANCH_SW": 1982.0,
+          "PWR_BRANCH_SW": 2172.0,
           "USB_POWER_SW": 388.0
         },
         "per_group_raw_mm2": {
-          "E2 Роз'єми джгутів PWR": 990.0,
+          "E2 Роз'єми джгутів PWR": 1181.0,
           "E2 LNA: канал 2": 213.0,
           "E2 LNA: канал 3": 213.0,
           "E5 Роз'єми джгутів PWR і HATCH": 205.0,
@@ -1792,8 +1792,8 @@
         },
         "per_group_need_mm2": {
           "E2 Роз'єми джгутів PWR": [
-            1485.0,
-            1783.0
+            1771.0,
+            2125.0
           ],
           "E2 LNA: канал 2": [
             319.0,
@@ -1848,14 +1848,14 @@
             56.0
           ]
         },
-        "parts": 128,
-        "need_1_5_mm2": 3555.0,
-        "need_1_8_mm2": 4266.0,
-        "estimate_mm2": 4266.0,
-        "ratio_1_5": 1.55,
-        "ratio_1_8": 1.86,
+        "parts": 129,
+        "need_1_5_mm2": 3840.0,
+        "need_1_8_mm2": 4608.0,
+        "estimate_mm2": 4608.0,
+        "ratio_1_5": 1.68,
+        "ratio_1_8": 2.01,
         "scope": "board parts and modules, without the harness headers",
-        "result": "OPEN: need 4266 mm2 at fill 1.8 > usable 2290 mm2 of pcb/partition-budget.json candidates.a boards.PWR_B (outline minus holes, windows over PWR-A parts taller than hA, edge strips of the PWR-A headers and probe windows; the outline 6516 mm2 minus only the Pololu windows is an upper bound) (model estimate; partition and placement decide, AREA / PCB)",
+        "result": "OPEN: need 4608 mm2 at fill 1.8 > usable 2290 mm2 of pcb/partition-budget.json candidates.a boards.PWR_B (outline minus holes, windows over PWR-A parts taller than hA, edge strips of the PWR-A headers and probe windows; the outline 6516 mm2 minus only the Pololu windows is an upper bound) (model estimate; partition and placement decide, AREA / PCB)",
         "usable_mm2": 2290.0,
         "ratio_basis": "usable_mm2 (pcb/partition-budget.json)"
       },
