@@ -142,10 +142,10 @@ class SystemFilesTests(unittest.TestCase):
         tmp = system_files.tmpfiles()
         self.assertNotIn("/var/lib/srrx ", tmp)  # srrx.pass_jobs owns it; duplicates warn
         self.assertNotIn("/run/labd", tmp)  # receive-only build: no bias token directory
-        # Per-lease directories are OPEN for the lease-unit owner; nothing invents lease names here.
-        # 0751: lab lists it, other accounts only pass through (labd to products/satdump, 2770 labd:srrx-satdump).
-        self.assertEqual([l for l in tmp.splitlines() if not l.startswith("#")], ["d /data/products 0751 root lab -"])
-        self.assertIn("Per-lease directories are OPEN", tmp)
+        # 0751: lab lists it, other accounts only pass through (labd to products/satdump, 2770 labd:srrx-satdump);
+        # then one 2750 lab:labd directory per engine lease unit (SW-LEASE, test_engine_leases checks the set).
+        self.assertEqual([l for l in tmp.splitlines() if not l.startswith("#")][0], "d /data/products 0751 root lab -")
+        self.assertEqual(tmp.count("d /data/products/"), 9)
         self.assertEqual([l for l in system_files.ina238_blacklist().splitlines() if not l.startswith("#")], ["blacklist ina238"])
 
     def test_i2c_group_reaches_only_the_two_bound_buses(self):

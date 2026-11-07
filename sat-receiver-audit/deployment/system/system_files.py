@@ -128,16 +128,30 @@ def sysusers():
 def tmpfiles():
     # /var/lib/srrx and its orbits/plans directories belong to srrx.pass_jobs (etc/tmpfiles.d/srrx-passes.conf);
     # repeating them here would make systemd-tmpfiles warn about duplicate lines.
-    # OPEN for the lease-unit owner: every lease unit's ReadWritePaths=/data/products/<lease> must exist
-    # before systemd sets up its namespace, and neither lab nor labd can create it below this root-owned
-    # parent. No lease names are fixed yet, so no per-lease line is generated (software/DEPLOYMENT.md).
+    # Every lease unit's ReadWritePaths=/data/products/<engine>-<alias> must exist before systemd sets up its
+    # namespace, and neither lab nor labd can create it below this root-owned parent: lease_products().
     # 0751: group lab lists it; every other account may only pass through to a subdirectory that grants
     # it access by its own mode (labd to products/satdump, 2770 labd:srrx-satdump, srrx.satdump_pass).
     # Group lab for labd would also open the receiver nodes to it (udev GROUP="lab"; build/15 Baseband/IQ).
     return (GENERATED + "# Lease outputs (STACK.md:873, build/07 §21): read-only /data, one writable /data/products/<lease>.\n"
-            "# Per-lease directories are OPEN: they come with the lease units, not from this file, and grant\n"
-            "# others nothing (0751 lets any account pass through, never list).\n"
-            "d /data/products 0751 root lab -\n")
+            "# Each lease directory grants others nothing (0751 lets any account pass through, never list).\n"
+            "d /data/products 0751 root lab -\n" + lease_products())
+
+
+# srrx.engine_leases ENGINES x RECEIVERS (the template instance is the udev alias, deploy.validate_devices);
+# test_engine_leases checks that both lists equal the module's.
+LEASE_ENGINES = ("readsb", "aiscatcher", "sdrangelsrv")
+LEASE_RECEIVERS = ("rtla", "rtlb", "hfplus")
+
+
+def lease_products():
+    """The writable directory of each engine lease unit (srrx-lease-<engine>@<alias>.service,
+    ReadWritePaths=/data/products/<engine>-%i): 2750 lab:labd, so the engine (User=lab, UMask=0027)
+    writes its products and labd reads them through the setgid group; nobody else enters."""
+    lines = ["# Engine lease products: srrx-lease-<engine>@<alias>.service (software/systemd, srrx.engine_leases)."]
+    lines += ["d /data/products/%s-%s 2750 lab labd -" % (engine, receiver)
+              for engine in LEASE_ENGINES for receiver in LEASE_RECEIVERS]
+    return "\n".join(lines) + "\n"
 
 
 def udev_fastrpc():
