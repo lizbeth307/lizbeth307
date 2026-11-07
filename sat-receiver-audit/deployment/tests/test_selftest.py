@@ -1527,10 +1527,18 @@ class AisCatcherRowTests(unittest.TestCase):
 
     def test_changed_arguments_or_a_lease_without_the_filter_fail(self):
         unit = "etc/systemd/system/srrx-lease-aiscatcher@"
-        reviewed = "ExecStart=/usr/bin/env AIS-catcher @%t/srrx-lease-aiscatcher-%i/receiver.args -o 0 -f %t/srrx-lease-aiscatcher-%i/ais.fifo MSGFORMAT JSON_FULL\n"
+        reviewed = ("ExecStart=/usr/bin/env AIS-catcher @%t/srrx-lease-aiscatcher-%i/receiver.args -o 0 -X off "
+                    "-f %t/srrx-lease-aiscatcher-%i/ais.fifo MSGFORMAT JSON_FULL\n")
+        no_feed = {("ais_exec_start_not_reviewed", None), ("ais_denied_argument", "X"), ("ais_required_option_missing", "X")}
         cases = (
-            ("hfplus.service.d/50-x.conf", "[Service]\nExecStart=\nExecStart=/usr/bin/env AIS-catcher -X 0123 -o 0\n",
-             {("ais_exec_start_not_reviewed", None), ("ais_denied_argument", "X")}),
+            ("hfplus.service.d/50-x.conf", "[Service]\nExecStart=\nExecStart=/usr/bin/env AIS-catcher -X 0123 -o 0\n", no_feed),
+            # Without -X, v0.70 enables the community feed by default; -X is accepted only as "-X off".
+            ("rtla.service.d/51-x.conf", "[Service]\nExecStart=\n" + reviewed.replace("-X off ", ""),
+             {("ais_exec_start_not_reviewed", None), ("ais_required_option_missing", "X")}),
+            ("rtlb.service.d/51-x.conf", "[Service]\nExecStart=\n" + reviewed.replace("-X off", "-X on"), no_feed),
+            ("hfplus.service.d/51-x.conf", "[Service]\nExecStart=\n" + reviewed.replace("-X off", "-X"), no_feed),
+            ("rtla.service.d/52-x.conf", "[Service]\nExecStart=\n" + reviewed.replace("-X off", "-X OFF"), no_feed),
+            ("rtlb.service.d/52-x.conf", "[Service]\nExecStart=\n" + reviewed.replace("-X off", "-X off 0123"), no_feed),
             ("rtla.service.d/50-x.conf", "[Service]\nExecStart=\n" + reviewed.replace("-o 0", "-o 5"), {("ais_exec_start_not_reviewed", None)}),
             ("rtlb.service.d/50-x.conf", "[Service]\nExecStart=\n" + reviewed.rstrip("\n") + " -N 8100\n",
              {("ais_exec_start_not_reviewed", None), ("ais_denied_argument", "N")}),
@@ -1555,6 +1563,31 @@ class AisCatcherRowTests(unittest.TestCase):
         missing = self.row(self.case(binary=FAKE_ELF, remove=("etc/systemd/system/srrx-lease-aiscatcher@.service",)))
         self.assertEqual((missing["status"], self.rules(missing)), ("FAIL", {("ais_engine_without_filter_unit", None)}))
 
+    def test_an_instance_fragment_wins_over_the_template_and_is_compared_exactly(self):
+        template = (self.clean / "etc/systemd/system/srrx-lease-aiscatcher@.service").read_text(encoding="utf-8")
+        execs = ("ExecStartPre=", "ExecStart=", "ExecStartPost=")
+        unfiltered = "\n".join(line for line in template.splitlines() if not line.startswith(execs))
+        unfiltered += "\nExecStart=/usr/bin/env AIS-catcher -d LABRXA -o 5\n"  # straight to the journal, no filter
+        expected = {("ais_prepare_not_reviewed", None), ("ais_exec_start_not_reviewed", None), ("ais_filter_not_in_lease", None),
+                    ("ais_required_option_missing", "X")}
+        for directory in ("etc/systemd/system", "usr/lib/systemd/system"):
+            with self.subTest(directory=directory):
+                rel = directory + "/srrx-lease-aiscatcher@rtla.service"
+                row = self.row(self.case({rel: unfiltered}, binary=FAKE_ELF))
+                self.assertEqual((row["status"], self.rules(row)), ("FAIL", expected), row)
+                self.assertEqual({f["path"] for f in row["findings"]}, {rel})
+        # Only one argument of the reviewed ExecStart changed in an instance fragment.
+        row = self.row(self.case({"etc/systemd/system/srrx-lease-aiscatcher@rtlb.service": template.replace(" -o 0 -X off ", " -o 5 -X off ")},
+                                 binary=FAKE_ELF))
+        self.assertEqual((row["status"], self.rules(row)), ("FAIL", {("ais_exec_start_not_reviewed", None)}))
+        # An exact copy of the template as an instance fragment runs the reviewed lines.
+        same = self.row(self.case({"etc/systemd/system/srrx-lease-aiscatcher@hfplus.service": template}, binary=FAKE_ELF))
+        self.assertEqual((same["status"], same["findings"]), ("PASS", []), same)
+        # A lease unit file in a .wants directory would start the engine outside a labd lease.
+        wanted = self.row(self.case({"etc/systemd/system/multi-user.target.wants/srrx-lease-aiscatcher@rtlb.service": template},
+                                    binary=FAKE_ELF))
+        self.assertEqual((wanted["status"], self.rules(wanted)), ("FAIL", {("ais_engine_outside_lease", None)}))
+
     def test_the_target_filter_must_be_the_checkers_and_the_probe_catches_a_weak_filter(self):
         rel = "opt/srrx/software/srrx/ais_filter.py"
         changed = self.case({rel: (self.clean / rel).read_text(encoding="utf-8") + "\n# changed target copy\n"})
@@ -1572,8 +1605,9 @@ class AisCatcherRowTests(unittest.TestCase):
 
         weak = type("Weak", (), {"VesselFilter": Everything, "device_args": staticmethod(lambda r, d: ["-d", "x", "-s", "1", "-X", "k"])})
         self.assertEqual(selftest._ais_filter_probe(weak),
-                         ["late_type_35_not_deleted", "position_before_static_published", "receiver_arguments_beyond_device_and_rate",
-                          "suppressed_vessel_published_again", "unknown_military_or_part_a_published"])
+                         ["late_type_35_not_deleted", "late_unknown_type_not_deleted", "position_before_static_published",
+                          "receiver_arguments_beyond_device_and_rate", "suppressed_vessel_published_again",
+                          "unknown_military_or_part_a_published"])
         sys.path.insert(0, str(deploy.PROJECT / "software"))
         from srrx import ais_filter
         self.assertEqual(selftest._ais_filter_probe(ais_filter), [])

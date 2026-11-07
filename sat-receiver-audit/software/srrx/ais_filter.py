@@ -4,10 +4,13 @@ AIS-catcher v0.70+lab1 (deployment/recipes/ais-catcher) runs only in the lease u
 srrx-lease-aiscatcher@<alias>.service. It writes its decoded messages as JSON lines
 (`-f <fifo> MSGFORMAT JSON_FULL`, the "full" key names of the pinned v0.70 Source/JSON/KeyDefs.h;
 the recipe's runtime_check.py reads the same names from the built binary) into a FIFO inside the
-unit's 0700 RuntimeDirectory, and nothing to stdout (`-o 0`): the raw stream exists only in a kernel
-pipe buffer, never on disk or in the journal. This filter runs in the same unit and sandbox
-(User=lab, ReadWritePaths=/data/products/aiscatcher-%i, IPAddressDeny=any) and keeps per-MMSI state
-in memory only. Rules:
+unit's 0700 RuntimeDirectory, and nothing to stdout (`-o 0`). The unit also passes `-X off`: v0.70
+otherwise turns its aiscatcher.org community feed, a TCP client sending the unfiltered stream, on by
+default as soon as any output such as `-f` exists (Source/Application/Main.cpp:1077-1086). With it,
+outside the two processes the raw stream exists only in a kernel pipe buffer, never on disk, in the
+journal or on the network (IPAddressDeny=any is a second layer). This filter runs in the same unit
+and sandbox (User=lab, ReadWritePaths=/data/products/aiscatcher-%i, IPAddressDeny=any) and keeps
+per-MMSI state in memory only. Rules:
 
 1. A vessel is published only after a static report: type 5, type 19 or type 24 part B. Its ship
    type must be known (1..99, the table of the pinned engine, Source/JSON/Keys.cpp:276) and not 35
@@ -15,7 +18,10 @@ in memory only. Rules:
    before the static one are dropped, not buffered.
 2. A static report with type 35 deletes a published vessel from memory and from the products file
    at once, and the MMSI stays suppressed for the life of the lease (RAM only, bounded): a later
-   static report with another type does not bring it back.
+   static report with another type does not bring it back. A later static report with an unknown
+   ship type (0, 100..255, missing or not an integer) also withdraws a published vessel at once
+   (fail closed: an unknown type could hide a military vessel just as 35 does), without suppression,
+   so the next static report with a known type other than 35 publishes it again.
 3. Only vessel messages count (1, 2, 3, 5, 18, 19, 24, 27); base stations, aids to navigation, SAR
    aircraft, safety and binary messages are dropped. Malformed or oversized lines are dropped.
 4. Nothing is logged about any vessel, published or not: no MMSI, no count, no message text. The
@@ -150,12 +156,14 @@ class VesselFilter:
             return self.vessels.pop(mmsi, None) is not None  # rule 2: deleted at once
         if mmsi in self.suppressed:
             return False
+        if static and not is_published_shiptype(record.get("shiptype")):
+            return self.vessels.pop(mmsi, None) is not None  # rule 2: an unknown type withdraws, no suppression
         vessel = self.vessels.pop(mmsi, None)
         if vessel is None:
-            if not (static and is_published_shiptype(record.get("shiptype"))):
+            if not static:
                 return False  # rule 1: nothing about an unpublished vessel is kept
             vessel = {"mmsi": mmsi}
-        if static and is_published_shiptype(record.get("shiptype")):
+        if static:
             vessel["shiptype"] = record["shiptype"]
         if kind in (5, 19) or (kind == 24 and record.get("partno") == 0):
             name = _text(record.get("shipname"), 20)
@@ -199,7 +207,7 @@ class VesselFilter:
             vessels.append(vessel)
         return {"schema_version": 1, "kind": "srrx_ais_vessels", "engine": ENGINE, "receiver": receiver,
                 "active": active, "updated_utc": int(wall),
-                "rule": "static 5/19/24B with ship type 1..99 and not 35; a late 35 deletes",
+                "rule": "static 5/19/24B with ship type 1..99 and not 35; a late 35 deletes and suppresses, a late unknown type withdraws",
                 "vessels": vessels}
 
 

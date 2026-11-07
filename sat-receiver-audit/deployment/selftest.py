@@ -200,7 +200,7 @@ POLICY_SCHEMA = {
         "gpredict": dict(_COMMON, binaries=[_text], forbidden_needed=(_text,), radio_config_globs=[_text], rx_only_radio_type=_text,
                          tle_update={"file_globs": (_text,), "section": _text, "key": _text, "required": _text}),
         "ais-catcher": dict(_COMMON, binaries=(_text,), forbidden_needed=(_text,), forbidden_strings=(_text,), lease_template=_text,
-                            exec_start_pre=(_text,), exec_start=_text, exec_start_post=(_text,), filter_module=_text),
+                            exec_start_pre=(_text,), exec_start=_text, required_options=(_text,), exec_start_post=(_text,), filter_module=_text),
     },
     "lime": {"runtime_library_globs": [_text], "sources": [_text]},
     "librtlsdr": {"library_glob": _text, "old_library_glob": _text, "soname": _text, "export_prefix": _text, "exports": int, "forbidden_strings": [_text], "sources": [_text]},
@@ -1595,6 +1595,10 @@ def _ais_filter_probe(module):
     f.feed({"class": "AIS", "type": 5, "mmsi": 200000002, "shiptype": 70}, 2.0)
     if 200000002 in f.vessels:
         broken.append("suppressed_vessel_published_again")
+    f.feed({"class": "AIS", "type": 5, "mmsi": 200000004, "shiptype": 70}, 2.0)
+    f.feed({"class": "AIS", "type": 5, "mmsi": 200000004, "shiptype": 0}, 2.5)
+    if 200000004 in f.vessels:  # an unknown type would hide a military vessel just as 35 does
+        broken.append("late_unknown_type_not_deleted")
     for record in ({"type": 5, "shiptype": 70}, {"type": 19, "shiptype": 30}, {"type": 24, "partno": 1, "shiptype": 37}):
         mmsi = 200000010 + record["type"]
         f.feed(dict(record, **{"class": "AIS", "mmsi": mmsi}), 3.0)
@@ -1613,12 +1617,39 @@ def _ais_filter_probe(module):
     return sorted(set(broken))
 
 
+def _ais_word_issues(words, deny_tokens, required):
+    """(denied tokens, missing required options) of one ExecStart word list. A required option
+    ("-X off") must appear as consecutive words followed by nothing but the next option (a dash and a
+    letter, as AIS-catcher v0.70 isOption counts parameters, Source/Application/Main.cpp:315-318);
+    that exact form is the only accepted use of its first word, a deny token in every other form."""
+    sequences = [option.split() for option in required]
+
+    def is_option(word):
+        return len(word) >= 2 and word[0] == "-" and word[1].isascii() and word[1].isalpha()
+
+    def accepted(index, sequence):
+        after = index + len(sequence)
+        return words[index:after] == sequence and (after == len(words) or is_option(words[after]))
+    denied = []
+    for token in deny_tokens:  # flags are case-sensitive (-o output, -O own MMSI); setting names are not
+        if any((w == token if token.startswith("-") else w.upper() == token.upper())
+               and not (token.startswith("-") and any(accepted(i, s) for s in sequences if s[0] == w))
+               for i, w in enumerate(words)):
+            denied.append(token.lstrip("-"))  # item ids cannot start with a dash
+    missing = [s[0].lstrip("-") for s in sequences if not any(accepted(i, s) for i in range(len(words)))]
+    return denied, missing
+
+
 def check_12ais(ctx, r):
     """AIS-catcher (deployment/recipes/ais-catcher) only as the lease engine behind srrx.ais_filter:
-    the effective template and every instance with drop-ins run exactly the reviewed ExecStartPre,
-    ExecStart and ExecStartPost of the policy (deny tokens as a second layer); the binary links no
-    TLS, Soapy, database or message-bus library and imports no bias-tee call; no other unit starts
-    it; the target filter module (byte-identical to the checker's) passes a synthetic rule probe."""
+    the effective template and every instance (its own fragment, a drop-in directory or a name in a
+    .wants/.requires/.upholds directory, as in RX-12; an instance fragment wins over the template)
+    run exactly the reviewed ExecStartPre, ExecStart and ExecStartPost of the policy, with its
+    required options (-X off: v0.70 enables the community feed by default otherwise) and the deny
+    tokens as a second layer; the binary links no TLS, Soapy, database or message-bus library and
+    imports no bias-tee call; no other unit file starts it (a lease unit file linked into a .wants
+    directory counts as such a file); the target filter module (byte-identical to the checker's)
+    passes a synthetic rule probe."""
     comp = ctx.comp("ais-catcher")
     binaries = sorted(set(ctx.globs(comp["binaries"])) | {k for k in ctx.keys if k.rsplit("/", 1)[-1] == "AIS-catcher"
                                                           and k.split("/")[-2:-1] in (["bin"], ["sbin"])})
@@ -1642,24 +1673,38 @@ def check_12ais(ctx, r):
     units = ctx.policy["units"]
     dirs = list(dict.fromkeys(d for d in (ctx.resolve_kind(p, "dir") for p in units["system_unit_paths"]) if d is not None))
     prefix = template.split("@", 1)[0] + "@"
-    instances = {name[:-2] for d in dirs for name in ctx.children(d) if name.startswith(prefix) and name.endswith(".service.d")
-                 and not name.startswith(prefix + ".")}
+    # Instances exist by name: a fragment of their own, a drop-in directory or a .wants/.requires/.upholds entry (check_12).
+    instances = set()
+    for directory in dirs:
+        for name in ctx.children(directory):
+            rel = directory + "/" + name
+            if name.endswith(".service") and ctx.entries[rel].kind != "dir":
+                instances.add(name)
+            elif name.endswith(".service.d"):
+                instances.add(name[:-2])
+            elif name.endswith((".wants", ".requires", ".upholds")):
+                sub = ctx.resolve_kind(rel, "dir")
+                instances.update(n for n in (ctx.children(sub) if sub else []) if n.endswith(".service"))
+    instances = {n for n in instances if n.startswith(prefix) and not n.startswith(prefix + ".")}
     expected = ([c.split() for c in comp["exec_start_pre"]], [comp["exec_start"].split()], [c.split() for c in comp["exec_start_post"]])
-    evaluated = 0
+    evaluated, names = 0, {template} | instances
     for name in [template] + sorted(instances):
         fragment = _unit_fragment(ctx, r, dirs, name)
         if fragment is None:
             continue
         listed, final = fragment
         evaluated += 1
-        texts = [ctx.text(final)] + [ctx.text(f) for f in _unit_dropins(ctx, r, dirs, [name])]
+        alias = posixpath.basename(final)
+        aliases = [name] + ([alias] if alias != name and alias.endswith(".service") else [])
+        texts = [ctx.text(final)] + [ctx.text(f) for f in _unit_dropins(ctx, r, dirs, aliases)]
         if posixpath.basename(listed) != name:  # an instance evaluated through its template: name its drop-ins
             listed = next((d + "/" + name + ".d" for d in dirs if d + "/" + name + ".d" in ctx.entries), listed)
         pre, start, post = ([c.split() for c in _service_commands(texts, key)] for key in ("ExecStartPre", "ExecStart", "ExecStartPost"))
-        words = [w for command in start for w in command]
-        for token in comp["deny_tokens"]:  # flags are case-sensitive (-o output, -O own MMSI); setting names are not
-            if any(w == token if token.startswith("-") else w.upper() == token.upper() for w in words):
-                r.fail(listed, "ais_denied_argument", token.lstrip("-"))  # item ids cannot start with a dash
+        denied, missing = _ais_word_issues([w for command in start for w in command], comp["deny_tokens"], comp["required_options"])
+        for token in denied:
+            r.fail(listed, "ais_denied_argument", token)
+        for option in missing:
+            r.fail(listed, "ais_required_option_missing", option)
         for got, want, rule in ((pre, expected[0], "ais_prepare_not_reviewed"), (start, expected[1], "ais_exec_start_not_reviewed"),
                                 (post, expected[2], "ais_filter_not_in_lease")):
             if got != want:
@@ -1670,7 +1715,10 @@ def check_12ais(ctx, r):
         else:
             r.note("ais_lease_template_absent")
     for listed, final in ctx.unit_texts():
-        if any(part.startswith(prefix) for part in listed.split("/")) or not ctx.contains(final, ["AIS-catcher"]):
+        # Only the fragments and drop-in directories of the lease unit names collected above are skipped.
+        top = next((listed[len(d) + 1:].split("/", 1)[0] for d in dirs if listed.startswith(d + "/")), None)
+        own = top is not None and (top in names or (top.endswith(".d") and top[:-2] in names))
+        if own or not ctx.contains(final, ["AIS-catcher"]):
             continue  # streamed first: only a unit that names the engine is parsed
         for line in ctx.text(final, 256 * 1024).splitlines():
             key, sep, value = line.strip().partition("=")

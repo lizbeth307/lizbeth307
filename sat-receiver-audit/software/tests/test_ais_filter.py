@@ -112,6 +112,26 @@ class RuleTests(unittest.TestCase):
                 self.assertNotIn(244000101, filt.vessels)
                 self.assertEqual(list(filt.suppressed), [244000101])
 
+    def test_late_unknown_ship_type_withdraws_the_vessel_without_suppression(self):
+        for shiptype in (0, 100, 255, None, "70", 70.0):
+            for late in (static5(244000101, shiptype), engine_line(type=19, mmsi=244000101, shiptype=shiptype, lat=1.0, lon=1.0),
+                         engine_line(type=24, partno=1, mmsi=244000101, shiptype=shiptype)):
+                with self.subTest(shiptype=shiptype, late=json.loads(late)["type"]):
+                    filt = VesselFilter()
+                    feed(filt, static5(244000101, 70), position1(244000101), static5(244000202, 80))
+                    self.assertEqual(feed(filt, late, now=10.0), [True])  # fail closed, written at once
+                    self.assertNotIn(244000101, filt.vessels)
+                    self.assertIn(244000202, filt.vessels)
+                    self.assertEqual(filt.suppressed, {})  # not suppressed, unlike 35
+                    self.assertEqual(feed(filt, position1(244000101), now=11.0), [False])  # unpublished again: dropped
+                    self.assertEqual(feed(filt, static5(244000101, 60), now=12.0), [True])
+                    self.assertEqual(filt.vessels[244000101]["shiptype"], 60)
+        # A part A report (no ship type) or a position report never withdraws a published vessel.
+        filt = VesselFilter()
+        feed(filt, static5(244000101, 70))
+        self.assertEqual(feed(filt, engine_line(type=24, partno=0, mmsi=244000101, shipname="RENAMED"), position1(244000101)), [True, True])
+        self.assertEqual(filt.vessels[244000101]["shiptype"], 70)
+
     def test_only_vessel_messages_count(self):
         filt = VesselFilter()
         lines = [engine_line(type=kind, mmsi=244000500 + kind, shiptype=70) for kind in (4, 6, 8, 9, 11, 14, 21, 22, 23, 25, 26)]
@@ -284,7 +304,9 @@ class LeaseWiringTests(unittest.TestCase):
         pre, start, post = (shlex.split(service[k][0]) for k in ("ExecStartPre", "ExecStart", "ExecStartPost"))
         self.assertEqual([len(service[k]) for k in ("ExecStartPre", "ExecStart", "ExecStartPost")], [1, 1, 1])
         runtime = "%t/srrx-lease-aiscatcher-%i"
-        self.assertEqual(start, ["/usr/bin/env", "AIS-catcher", "@" + runtime + "/" + ais_filter.ARGS_FILE, "-o", "0",
+        # -X off: v0.70 enables the aiscatcher.org community feed by default once any output exists
+        # (Source/Application/Main.cpp:1077-1086).
+        self.assertEqual(start, ["/usr/bin/env", "AIS-catcher", "@" + runtime + "/" + ais_filter.ARGS_FILE, "-o", "0", "-X", "off",
                                  "-f", runtime + "/" + ais_filter.FIFO_FILE, "MSGFORMAT", "JSON_FULL"])
         self.assertEqual(pre, ["/usr/bin/python3", "-P", "-s", "-B", "-m", "srrx.ais_filter", "prepare", "--receiver", "%i",
                                "--devices", "/etc/srrx/devices.json", "--runtime", runtime])
@@ -295,8 +317,12 @@ class LeaseWiringTests(unittest.TestCase):
         component = json.loads(POLICY.read_text(encoding="utf-8"))["components"]["ais-catcher"]
         self.assertEqual((component["exec_start_pre"], component["exec_start"], component["exec_start_post"]),
                          (service["ExecStartPre"], service["ExecStart"][0], service["ExecStartPost"]))
+        self.assertEqual(component["required_options"], ["-X off"])
         for token in component["deny_tokens"]:
-            self.assertNotIn(token, start)
+            if token == "-X":  # only in the required pair
+                self.assertEqual([start[i + 1] for i, word in enumerate(start) if word == token], ["off"])
+            else:
+                self.assertNotIn(token, start)
 
 
 class EngineContractTests(unittest.TestCase):
@@ -344,6 +370,17 @@ class EngineContractTests(unittest.TestCase):
     def test_fields_agree_with_the_filter(self):
         self.assertEqual(self.check.FIELDS, ais_filter.FIELDS)
         self.assertEqual(self.check.BINARY, "/usr/bin/AIS-catcher")
+
+    def test_the_fifo_run_uses_exactly_the_lease_output_arguments(self):
+        start = next(shlex.split(line.partition("=")[2]) for line in UNIT.read_text(encoding="utf-8").splitlines()
+                     if line.startswith("ExecStart="))
+        runtime = "%t/srrx-lease-aiscatcher-%i"
+        self.assertEqual(start[2], "@" + runtime + "/" + ais_filter.ARGS_FILE)
+        self.assertEqual([("{fifo}" if word == runtime + "/" + ais_filter.FIFO_FILE else word) for word in start[3:]],
+                         list(self.check.LEASE_OUTPUT))
+        self.assertIn(("-X", "off"), list(zip(self.check.LEASE_OUTPUT, self.check.LEASE_OUTPUT[1:])))
+        self.assertEqual((self.check.FEED_OFF, self.check.FEED_DEFAULT_ON),
+                         ("Community feed sharing disabled.", "Currently ON by default"))
 
     def test_synthetic_sentences_carry_the_values_at_the_engine_offsets(self):
         minimum = {1: 149, 5: 418, 18: 168, 19: 312, 24: 160}  # Source/Marine/Message.cpp:401 (validate)

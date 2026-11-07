@@ -7,10 +7,16 @@ Runs as uid 1000 in a fresh offline chroot from the pinned snapshot with the pac
    RTLSDR-TUNERBW; no SSL, SOXR, libsamplerate, SQLite, PostgreSQL, NMEA2000, ZMQ, bias-tee).
 2. Synthetic AIVDM sentences written here (types 1, 5, 18, 19, 24A, 24B; ship types 70, 30, 37
    and 35; no recorded traffic) are replayed with `-r TXT <file>` three ways: JSON on stdout
-   (`-o 5`), JSON through a FIFO exactly as the lease unit runs it (`-o 0 -f <fifo> MSGFORMAT
-   JSON_FULL`, nothing on stdout), and with the options from an @response file as
-   srrx.ais_filter prepare writes it. Every message must come back with the JSON_FULL keys
-   srrx.ais_filter reads (FIELDS) and the values encoded; stderr must not name an MMSI.
+   (`-o 5`), JSON through a FIFO with exactly the output arguments of the lease unit
+   (LEASE_OUTPUT: `-o 0 -X off -f <fifo> MSGFORMAT JSON_FULL`, nothing on stdout), and with the
+   options from an @response file as srrx.ais_filter prepare writes it. Every message must come
+   back with the JSON_FULL keys srrx.ais_filter reads (FIELDS) and the values encoded; stderr must
+   not name an MMSI.
+3. Community feed: v0.70 turns its aiscatcher.org feed (TCP to 185.77.96.227:4242) on by default
+   once any output such as `-f` exists (Source/Application/Main.cpp:1077-1086). The FIFO run's
+   stderr must say FEED_OFF and must not contain FEED_DEFAULT_ON; a parse-only control
+   (`-L -f /dev/null` without -X: -L returns before any input or output starts, Main.cpp:1130-1131)
+   must print FEED_DEFAULT_ON, so a changed upstream hint cannot make the check vacuous.
 Last stdout line: {"ok": true, "findings": [], ...} (the hook contract of build_recipe.run_hook).
 """
 import json
@@ -27,6 +33,11 @@ FIELDS = ("class", "type", "mmsi", "shiptype", "partno", "lat", "lon", "speed", 
 SDR_SUPPORT = {"RTLSDR", "AIRSPYHF+", "RTLTCP", "SPYSERVER"}
 OTHER_REQUIRED, OTHER_ALLOWED = {"ZLIB"}, {"ZLIB", "SYSLOG", "RTLSDR-TUNERBW"}
 TIMEOUT_S = 60
+# The arguments of srrx-lease-aiscatcher@.service after the @response file ({fifo} = its FIFO);
+# software/tests/test_ais_filter.py checks that both agree.
+LEASE_OUTPUT = ("-o", "0", "-X", "off", "-f", "{fifo}", "MSGFORMAT", "JSON_FULL")
+FEED_OFF = "Community feed sharing disabled."  # Main.cpp:934 (-X off)
+FEED_DEFAULT_ON = "Currently ON by default"  # Main.cpp:1083 (no -X and an output)
 
 
 def bits(value, width):
@@ -200,7 +211,7 @@ def main():
                 chunks.append(stream.read())
         thread = threading.Thread(target=reader, daemon=True)
         thread.start()
-        piped = run(["-r", "TXT", source, "-o", "0", "-f", fifo, "MSGFORMAT", "JSON_FULL"])
+        piped = run(["-r", "TXT", source] + [fifo if a == "{fifo}" else a for a in LEASE_OUTPUT])
         thread.join(TIMEOUT_S)
         if thread.is_alive():
             findings.append("FIFO run: the reader did not see the end of the stream")
@@ -212,6 +223,14 @@ def main():
             findings.append("FIFO run: -o 0 still printed on stdout")
         if mmsi_in(piped.stderr):
             findings.append("FIFO run: stderr names a synthetic MMSI")
+        report["community_feed"] = {"lease_run_disabled": FEED_OFF in piped.stderr,
+                                    "lease_run_default_on_hint": FEED_DEFAULT_ON in piped.stderr}
+        if FEED_OFF not in piped.stderr or FEED_DEFAULT_ON in piped.stderr:
+            findings.append("FIFO run: the lease arguments do not disable the community feed")
+        control = run(["-L", "-f", os.devnull])
+        report["community_feed"]["control_without_X_default_on_hint"] = FEED_DEFAULT_ON in control.stderr
+        if FEED_DEFAULT_ON not in control.stderr:
+            findings.append("control without -X: the default-on community feed hint is missing (upstream changed)")
         response = os.path.join(temporary, "receiver.args")
         with open(response, "w", encoding="ascii", newline="\n") as stream:
             stream.write("-o\n5\n")
@@ -220,7 +239,7 @@ def main():
         report["response_file_json_records"] = len(records)
         compare("@response file", records, findings)
     report["exit_codes"] = {"list": listing.returncode, "stdout": screen.returncode, "fifo": piped.returncode,
-                            "response_file": expanded.returncode}
+                            "response_file": expanded.returncode, "feed_control": control.returncode}
     report.update(ok=not findings, findings=findings, hardware_ready=False,
                   scope="CI model: synthetic AIVDM replay through the built AIS-catcher; no SDR, no RF")
     print(json.dumps(report, sort_keys=True))
