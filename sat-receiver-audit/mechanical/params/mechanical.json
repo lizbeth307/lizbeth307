@@ -93,20 +93,23 @@
       {
         "id": "P1",
         "x": 43.5,
-        "kind": "sma_pigtail",
-        "part": "taoglas_mhf1_sma_wp"
+        "kind": "sma_adamtech",
+        "part": "adamtech_ca_dkca1_305l5",
+        "_mpn": "Adam Tech CA-DKCA1-305L5-APAJ bulkhead assembly into the A401 SMA input (parts DB J401 J-SMA-PANEL, W2 GR-2): front-side nut (parts.json adamtech_ca_dkca1_305l5)"
       },
       {
         "id": "P2",
         "x": 63.5,
-        "kind": "sma_pigtail",
-        "part": "taoglas_mhf1_sma_wp"
+        "kind": "sma_cab718",
+        "part": "taoglas_cab718",
+        "_mpn": "Taoglas CAB.718 Hirose U.FL plug -> SMA(F) bulkhead 200 mm (parts DB J402 J-SMA-PANEL-RFBOARD, W2 GR-2): front-side nut, D6.5 / 6 D-cut (parts.json taoglas_cab718)"
       },
       {
         "id": "P3",
         "x": 83.5,
-        "kind": "sma_pigtail",
-        "part": "taoglas_mhf1_sma_wp"
+        "kind": "sma_cab718",
+        "part": "taoglas_cab718",
+        "_mpn": "Taoglas CAB.718 Hirose U.FL plug -> SMA(F) bulkhead 200 mm (parts DB J403 J-SMA-PANEL-RFBOARD, W2 GR-2): front-side nut, D6.5 / 6 D-cut (parts.json taoglas_cab718)"
       },
       {
         "id": "P4",
@@ -126,8 +129,9 @@
       {
         "id": "P6",
         "x": 143.5,
-        "kind": "sma_pigtail",
-        "part": "taoglas_mhf1_sma_wp"
+        "kind": "sma_cab718",
+        "part": "taoglas_cab718",
+        "_mpn": "Taoglas CAB.718 Hirose U.FL plug -> SMA(F) bulkhead 200 mm (parts DB J406 J-SMA-PANEL-RFBOARD, W2 GR-2): front-side nut, D6.5 / 6 D-cut (parts.json taoglas_cab718)"
       },
       {
         "id": "P7",
@@ -139,9 +143,9 @@
       {
         "id": "P8",
         "x": 183.5,
-        "kind": "sma_adamtech",
-        "part": "adamtech_ca_dkca1_305l5",
-        "_mpn": "Adam Tech CA-DKCA1-305L5-APAJ bulkhead assembly into the A403 SMA input (parts DB J408): front-side nut (parts.json adamtech_ca_dkca1_305l5)"
+        "kind": "sma_cab718",
+        "part": "taoglas_cab718",
+        "_mpn": "Taoglas CAB.718 Hirose U.FL plug -> SMA(F) bulkhead 200 mm (parts DB J408 J-SMA-PANEL-RFBOARD, W2 GR-2): front-side nut, D6.5 / 6 D-cut (parts.json taoglas_cab718); to U.FL J427 on the RF board, P8 is a direct port (AREA)"
       },
       {
         "id": "RX1",
@@ -228,10 +232,10 @@
       {
         "id": "LAB_BUS",
         "x": 206.0,
-        "z": 30.0,
+        "z": 28.5,
         "kind": "gx12",
         "part": "kinghelm_gx12_6p",
-        "_note": "Kinghelm KH-GX12-6P, 6-pin GX12 (parts DB J505, build/15 'Сигнальні джгути'): D12.0 cut-out with a flat at 11.2, flange D15 outside, nut D14.6 inside (READS-E drawing row); no IP rating on the drawing, cap per 10-bom row 90"
+        "_note": "Kinghelm KH-GX12-6P, 6-pin GX12 (parts DB J505, build/15 'Сигнальні джгути'): D12.0 cut-out with a flat at 11.2, flange D15 outside, nut 14.6 across flats (D16.9 across corners) inside (READS-E drawing row); z 28.5 keeps the flange 1.5 mm above the seam belt (z <= 19.5) and the nut corners 1.57 mm below the plate (z 38.5); no IP rating on the drawing, cap per 10-bom row 90"
       },
       {
         "id": "AUDIO_3V5",

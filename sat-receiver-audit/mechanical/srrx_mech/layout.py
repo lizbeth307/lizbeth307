@@ -83,14 +83,14 @@ def cooler_boxes(P):
             ("cooler_a.fan", (f[0], f[1], fan_face - ft, f[2], f[3], fan_face))]
 
 
-SMA_KINDS = ("sma_pigtail", "sma_k", "sma_cab01075", "sma_adamtech")
+SMA_KINDS = ("sma_pigtail", "sma_k", "sma_cab01075", "sma_adamtech", "sma_cab718")
 
 
 def port_inner(P, p):
     """Envelope of a panel port's parts inside the wall as (radius, depth from the inner wall face, basis), or None if unread.
 
-    Front-side-nut SMA bulkheads (nut and washer outside): the connector body / flange with its seal on the inner face.
-    VFA340 (flange outside): washer, nut and the rest of the long side. GX12: nut and the rear thread with the solder cups.
+    Front-side-nut SMA bulkheads (nut and washer outside): the connector body (hex) on the inner face.
+    VFA340 (flange outside): washer, nut and the rest of the long side. GX12: nut corners and the rear thread with the solder cups.
     A port without a part entry keeps the representative SMA hardware envelope (parts.json sma_bulkhead_hw)."""
     part = P.parts.get(p.get("part", ""))
     kind = p["kind"]
@@ -106,12 +106,14 @@ def port_inner(P, p):
         r = max(part["washer"][0] / 2.0, part["nut_af"] / math.cos(math.radians(30)) / 2.0)
         return r, long_side - port_wall(P, p), "washer, nut and the long side inside (cinch_vfa340)"
     if kind == "gx12":
-        return part["nut_d"] / 2.0, part["behind_reserve"], "nut and rear thread with solder cups (kinghelm_gx12_6p)"
+        # the drawing's nut size is across flats: the envelope takes the corners
+        return part["nut_af"] / math.cos(math.radians(30)) / 2.0, part["behind_reserve"], "nut (corners) and rear thread with solder cups (kinghelm_gx12_6p)"
     if "body_od_reserve" in part:
         depth = part.get("body_len_reserve", part.get("body_len", 0.0) - part.get("thread_len", 0.0))
-        return part["body_od_reserve"] / 2.0, depth, f"connector body and seal inside, nut outside ({p['part']})"
+        return part["body_od_reserve"] / 2.0, depth, f"connector body inside, nut outside ({p['part']})"
     if "body_hex_af" in part:
-        return part["body_hex_af"] / math.cos(math.radians(30)) / 2.0, part["body_len_reserve"], f"connector body hex inside, nut outside ({p['part']})"
+        depth = part["body_hex_len"] + part["body_hex_len_tol"] if "body_hex_len" in part else part["body_len_reserve"]
+        return part["body_hex_af"] / math.cos(math.radians(30)) / 2.0, depth, f"connector body hex inside, nut outside ({p['part']})"
     return None
 
 

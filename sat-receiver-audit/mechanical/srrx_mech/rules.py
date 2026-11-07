@@ -516,8 +516,10 @@ def w2_mech1_rules(P):
 def _port_stack(P, p):
     """Thread left for mating at a panel port (worst case) with its basis and pitch; left is None when a stack item is not drawn.
 
-    Front-side-nut SMA: thread_len(min) - wall - washer(max) - nut(max); the seal sits at the flange inside, so it adds
-    nothing to the outer stack. VFA340 (flange outside, nut inside): the long side left inside for the W402 F plug."""
+    Front-side-nut SMA: thread_len(min) - wall - washer(max) - nut(max); a seal drawn at the flange (waterproof fallback family)
+    sits inside, so it adds nothing to the outer stack. VFA340 (flange outside, nut inside): the long side left inside for the
+    W402 F plug. An item that is not drawn leaves the row OPEN, unless the drawn items alone already leave less than 3 threads
+    (then the row FAILs on what is drawn)."""
     from .layout import port_wall
     part = P.parts.get(p.get("part", ""))
     wall = port_wall(P, p)
@@ -533,9 +535,14 @@ def _port_stack(P, p):
         hw = part["item5_t"] + part["item5_t_tol"] + part["item6_t"] + part["item6_t_tol"]
         return round(t_min - wall - hw, 2), "outside: thread (min) - wall - items 5 + 6 (max); the seal sits at the flange inside", pitch
     if "nut_t" in part:
-        allow = t_min - wall - part["nut_t"] - part.get("nut_t_tol", 0.0) - 3 * pitch
+        nut = part["nut_t"] + part.get("nut_t_tol", 0.0)
+        allow = t_min - wall - nut - 3 * pitch
+        if allow < 0:
+            return round(t_min - wall - nut, 2), "outside: thread (min) - wall - nut (max), before the undrawn washer", pitch
         return None, f"washer thickness not drawn: {allow:.2f} mm left for it after the nut and 3 threads", pitch
     allow = t_min - wall - 3 * pitch
+    if allow < 0:
+        return round(t_min - wall, 2), "outside: thread (min) - wall, before the undrawn nut and washer", pitch
     return None, (f"nut and washer not drawn: {allow:.2f} mm left for both after 3 threads "
                   "(1/4-36 sets read: Taoglas p.11 items 5 + 6 up to 3.35, Samtec 2.5)"), pitch
 
@@ -563,7 +570,7 @@ def sma_thread_rule(P):
     wall = m["wall"] + m["angles"]["top"]["t"]
     return {"id": "R-SMA-THREAD", "rule": "per panel port: thread left for mating after the 4.5 mm wall (ASA 2.5 + Al angle 2.0), washer and nut >= 3 full threads (1/4-36: 3 x 0.706; 3/8-32: 3 x 0.794)",
             "value_mm": rows, "limit_mm": f"3 x pitch; wall {wall:g}", "result": res,
-            "source": "STACK 5.8 'стінка 4-5 мм'; parts.json taoglas_mhf1_sma_wp, taoglas_cab01075, adamtech_ca_dkca1_305l5, cinch_vfa340 (read 2026-11-07)"}
+            "source": "STACK 5.8 'стінка 4-5 мм'; parts.json taoglas_cab718, adamtech_ca_dkca1_305l5, taoglas_cab01075, cinch_vfa340 (read 2026-11-07)"}
 
 
 def bulkhead_nuts_rule(P):
@@ -630,6 +637,34 @@ def bottom_pitch_rule(P, clear=1.0):
             "value_mm": val, "limit_mm": clear, "result": res, "source": "mechanical.json bottom_face.ports; parts.json (makers' drawings read 2026-11-07)"}
 
 
+def pod_wall_rule(P):
+    """R-POD-WALL: S-band pod wall parts against the wall they pass (worst-case wall per port, antennas.pod_wall_t)."""
+    from .antennas import pod_wall_t
+    val, bad = {}, []
+    for p in P.antennas["sband_pod"]["ports"]:
+        t, basis = pod_wall_t(P, p["wall"])
+        part = P.parts.get(p.get("part", ""), {})
+        if "panel_max" in part:
+            ok, txt = t <= part["panel_max"], f"wall {t:.2f} <= panel max {part['panel_max']:g}"
+        elif "locknut_t" in part:
+            left = part["thread_len"] - t - part["locknut_t"]
+            ok, txt = left >= 0, f"thread {part['thread_len']:g} - wall {t:.2f} - locknut {part['locknut_t']:g} = {left:.2f} >= 0 (locknut fully on the thread)"
+        elif "panel_t" in part:
+            ok, txt = part["panel_t"][0] <= t <= part["panel_t"][1], f"wall {t:.2f} in the through-hole range {part['panel_t'][0]:g}-{part['panel_t'][1]:g}"
+        else:
+            val[p["id"]] = f"OPEN: no panel data for {p.get('part', p['kind'])}"
+            continue
+        val[p["id"]] = f"{'PASS' if ok else 'FAIL'} (model): {txt}; {basis}"
+        if not ok:
+            bad.append(p["id"])
+    opened = [k for k, v in val.items() if v.startswith("OPEN")]
+    res = ("FAIL (model): " + ", ".join(bad)) if bad else (("OPEN: " + ", ".join(opened)) if opened else
+                                                           "PASS (model); the end walls are not dimensioned (upper bound used)")
+    return {"id": "R-POD-WALL", "rule": "S-band pod: bulkhead panel range, gland thread through wall + locknut, vent through-hole range against the pod wall (worst case)",
+            "value_mm": val, "result": res,
+            "source": "antennas.json sband_pod.ports; parts.json hammond_1554u2gy, fairview_sm4955, lapp_skintop_st_m12, ltw_vent (read 2026-11-07)"}
+
+
 def w2_mech2_rules(P):
     """Rows added by W2 MECH-2 (registration list, append-only)."""
-    return [bottom_pitch_rule(P)]
+    return [bottom_pitch_rule(P), pod_wall_rule(P)]

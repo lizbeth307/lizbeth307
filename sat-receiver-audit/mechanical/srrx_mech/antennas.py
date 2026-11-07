@@ -225,6 +225,15 @@ def pod_sheet(P):
     return sh
 
 
+def pod_wall_t(P, wall):
+    """Wall thickness of the pod box at a port wall (mm) and its basis: the Hammond drawing dimensions only the side walls
+    (section B-B); the end walls are taken at their upper bound (outside - inside length) / 2, the worst case for a thread."""
+    hb = P.parts["hammond_1554u2gy"]
+    if wall.endswith("_end"):
+        return (hb["outside"][0] - hb["inside"][0]) / 2.0, "end wall not dimensioned: upper bound (outside - inside length) / 2"
+    return hb["wall"], "side wall, Hammond 1554U section B-B"
+
+
 def pod_walls_sheet(P):
     """Drilling of the S-band pod walls, each seen from outside; z from the bottom of the box body."""
     A = P.antennas["sband_pod"]
@@ -233,14 +242,17 @@ def pod_walls_sheet(P):
     bh = hb["box_h"]
     from .features import HOLES, hole_outline
     sma, gl = P.parts["fairview_sm4955"], P.parts["lapp_skintop_st_m12"]
-    wall = hb.get("wall")
+    end, _ = pod_wall_t(P, "left_end")
     sh = Sheet("P-02", "Зовнішній S-band вузол: свердління стінок", "вид ззовні кожної стінки, 1:1; z — від дна корпусу", (420.0, 297.0), 1.0,
                (30.0, 40.0), "корпус PC (Hammond 1554U2GY)",
                [f"SMA-прохідники RF_IN/RF_OUT: виріз ⌀{fmt(sma['hole_d'])} з лискою {fmt(sma['hole_flat'])} за кресленням прохідника гніздо-гніздо Fairview SM4955 "
-                f"(панель ≤{fmt(sma['panel_max'])}; стінка pod {fmt(wall)}, Hammond 1554U, переріз B-B); кільця в даташиті немає — ущільнення й закупівельна позиція "
+                f"(панель ≤{fmt(sma['panel_max'])}); RF_IN, RF_OUT і PWR — у торцевих стінках, товщину яких креслення Hammond 1554U не розмірює (≤{fmt(end)} "
+                f"за різницею довжин; переріз B-B дає {fmt(hb['wall'])} лише бічним стінкам); кільця в даташиті SM4955 немає — ущільнення й закупівельна позиція "
                 "AI-SMA-BULK-POD — TBD (SRC-2).",
-                f"PWR: гермоввід LAPP SKINTOP ST-M 12x1.5 (53111400), отвір ⌀12.2, різьба {fmt(gl['thread_len'])} мм, затискання {fmt(gl['clamp'][0])}-{fmt(gl['clamp'][1])} мм "
-                "(кабель W425 ⌀4.2 вводиться обрізаним кінцем зсередини); контргайки в комплекті немає — TBD.",
+                f"PWR: гермоввід LAPP SKINTOP ST-M 12x1.5 RAL 9005 ({gl['mpn']}, чорний, UV-стійкий), отвір ⌀12.2, різьба {fmt(gl['thread_len'])} мм, затискання "
+                f"{fmt(gl['clamp'][0])}-{fmt(gl['clamp'][1])} мм (кабель W425 ⌀4.2 вводиться обрізаним кінцем зсередини); контргайка LAPP SKINDICHT SM-M 12x1.5 "
+                f"({gl['locknut_mpn']}, {fmt(gl['locknut_t'])} мм) — окремо: {fmt(gl['thread_len'])} ≥ стінка ≤{fmt(end)} + {fmt(gl['locknut_t'])} (R-POD-WALL, модель); "
+                "кільце гермовводу на стінку — TBD (MECH-4).",
                 "Клапан LTW M12 (⌀12.2, наскрізний отвір 2.0–3.5 мм) — на бічній стінці, ніколи догори.",
                 "Положення — модельні (build/12: шари з 5 мм між ними); посадка й герметизація — ворота E4-04 OPEN."])
     walls = [("left_end", "торець лівий", oy, 0.0, 115.0), ("right_end", "торець правий", oy, 150.0, 115.0),

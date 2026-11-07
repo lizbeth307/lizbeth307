@@ -11,14 +11,16 @@ Each face has its own (u, v) system as seen from OUTSIDE the enclosure:
 # Hole specifications by connector kind. d = finished hole; 'basis' says where it comes from.
 # shape: round (default) or dflat (a circle d with one flat, 'flat' = width across the flat, flat on the +v side of the face).
 HOLES = {
-    "sma_pigtail": {"d": 6.5, "basis": "Taoglas MHF1-SMA(F) BK waterproof (CAB.0243/01028/01029, READS-RF row): 1/4-36UNS-2A, no D-cut drawn; 6.5 = catalogue hole of its 1/4-36 bulkheads"},
+    "sma_pigtail": {"d": 6.5, "basis": "fallback only, no port uses it (W2 GR-2 chose CAB.718): Taoglas MHF1-SMA(F) BK waterproof CAB.0243/01028 (READS-RF row), 1/4-36UNS-2A, no D-cut and no panel hole drawn; 6.5 = design choice, 6.35 major + 0.15 clearance (= the Adam Tech washer ID)"},
     "sma_k": {"d": 6.4, "basis": "Taoglas CAB.011 (P7, W407): D-cut thread, hole and thread length not read (MECH-6, B-06); 1/4-36 clearance (TBD)"},
-    "sma_cab01075": {"d": 6.5, "basis": "Taoglas CAB.01075 SMA(F) BK (catalogue p.14, READS-RF row): 1/4-36UNS-2A, threaded 11.4, no D-cut drawn"},
-    "sma_adamtech": {"d": 6.5, "basis": "Adam Tech CA-DKCA1-305L5-APAJ drawing 11/16/18: 1/4-36UNS jack, washer ID 6.5, no D-cut drawn"},
+    "sma_cab01075": {"d": 6.5, "basis": "Taoglas CAB.01075 SMA(F) BK (catalogue p.14, READS-RF row): 1/4-36UNS-2A, threaded 11.4, no D-cut and no panel hole drawn; 6.5 = design choice, 6.35 major + 0.15 clearance"},
+    "sma_adamtech": {"d": 6.5, "basis": "Adam Tech CA-DKCA1-305L5-APAJ drawing 11/16/18 (P1): 1/4-36UNS jack, no D-cut and no panel hole drawn; 6.5 = its lock-washer ID (design choice)"},
+    "sma_cab718": {"d": 6.5, "shape": "dflat", "flat": 6.0,
+                   "basis": "Taoglas CAB.718 SPE-12-8-100/B/WY p.5 (read 2026-11-07): recommended mounting hole D6.5 with one flat at 6 +0.08/0 (thread 1/4-36UNS-2A with one flat 5.8)"},
     "f_bulkhead": {"d": 9.7, "basis": "Cinch VFA340 ISS 3: 3/8-32 UNEF, washer ID 9.7, no D-flat drawn; flange outside, nut inside"},
     "bnc_bulkhead": {"d": 9.7, "basis": "Amphenol RF 242181: drawing not readable (403, 2026-11-07); 3/8-32 typical, TBD (MECH-07)"},
     "gx12": {"d": 12.0, "shape": "dflat", "flat": 11.2, "flange_d": 15.0,
-             "basis": "Kinghelm KH-GX12-6P drawing rev A (READS-E row): hole D12.00 with one flat at 11.20, flange D15 outside, nut D14.6 inside"},
+             "basis": "Kinghelm KH-GX12-6P drawing rev A (READS-E row): hole D12.00 with one flat at 11.20, flange D15 outside, nut 14.6 across flats (D16.9 across corners) inside"},
     "jack_3v5": {"d": 10.9, "shape": "dflat", "flat": 9.8, "flange_d": 13.5,
                  "basis": "Tensility 10-06000 rev A: recommended cut-out D10.9 with a flat at 9.8, panel 1.5-4, flange D13.5 outside"},
     "sma_bulkhead_pod": {"d": 6.47, "shape": "dflat", "flat": 5.94,
