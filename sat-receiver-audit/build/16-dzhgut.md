@@ -473,7 +473,7 @@
 | E4_SB_FILTER_OUT | A423: A423.SMA_F_B; W424: W424.FILTER | W424 (RG316 SMA-M/M 1.00 m pod → RX2; купується Amphenol RF 135101-01-M1.00) | без DC |
 | E4_SB_LNA_IN | A422: A422.SMA_IN; W422: W422.LNA | W422 (RG316 SMA-M/M 152.4 mm helix → LaNA; купується Cinch Connectivity Solutions Johnson 415-0029-006) | без DC |
 | E4_SB_LNA_OUT | A422: A422.SMA_OUT; W423: W423.LNA | W423 (RG316 SMA-M/M 152.4 mm LaNA → DC block; купується Cinch Connectivity Solutions Johnson 415-0029-006) | без DC |
-| E4_SB_POD5 | SPOD: W425.POD_5V; A422: A422.USB_C_VBUS | W425 (USB-C power-only 1.50 m, 26 AWG pair) | DC 5 V (живлення pod, не РЧ) |
+| E4_SB_POD5 | SPOD: W425.POD_5V; A422: A422.USB_C_VBUS | W425 (USB-C power-only 1.50 m, 26 AWG pair; купується Tensility 10-03676) | DC 5 V (живлення pod, не РЧ) |
 | E4_SB_PREBLOCK | W423: W423.BLOCK; A425: A425.SMA_A | W423 (RG316 SMA-M/M 152.4 mm LaNA → DC block; купується Cinch Connectivity Solutions Johnson 415-0029-006) | без DC |
 | E4_TX_LOAD | A410: A410.END_A; W406: W406.END_B | W406 (CAB.01075 X1 → ANNE-50+ captive coax; купується Taoglas CAB.01075) | без DC |
 | GNSS_ANT | GNSS: U304.GPS1.2; J407: J407.CENTER; W407: W407.END_A, W407.END_B | W407 (P7 SMA → LC76G IPEX coax; купується Taoglas CAB.011) | DC ≈3.1 V від LC76G |
