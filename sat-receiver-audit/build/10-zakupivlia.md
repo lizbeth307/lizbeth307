@@ -465,6 +465,7 @@ Molex KK 254 з фіксатором для штатної вилки кабел
 |---|---|---|---|---|---|---|---|
 | AI-PEM-F-M3-1 | самоклінчувальна гайка врівень PEM F-M3-1 (нержавійка) у пластину 2 мм | 15 + 2 | PennEngineering (PEM) | F-M3-1 | M-07: PWR1-7 (кріплення PWR, build/17 F06), AT1-5 і AR1-3 (Al-кутники, F31); отвір 4.37 +0.08, ≥6.00 мм від… | web:pem-f-m3-1 | у каталозі |
 | AI-PEM-SO-M3-3ZI | самоклінчувальна наскрізна стійка PEM SO-M3-3ZI, 3 мм | 6 + 2 | PennEngineering (PEM) | SO-M3-3ZI | M-07: RF1-6 (кріплення RF-плати, build/17 F07); отвір 4.22 +0.08, ≥6.00 мм від кромки, голівка врівень з ли… | web:pem-so-m3-3zi | у каталозі |
+| AI-PEM-SO-M25-6ZI | самоклінчувальна наскрізна стійка PEM SO-M2.5-6ZI, 6 мм | 2 + 2 | PennEngineering (PEM) | SO-M2.5-6ZI | M-07: PF1-PF2 (носій PACK_FUSE на розширенні пластини, mechanical.json module_mounts; гвинти й ізоляція — b… | PEM catalogue https://catalog.pemnet.com/item/thru-hole-threaded-standoffs-types-so-soa-sos/ru-hole-threade… | з 10-bom |
 | AI-M3X4-ISO14580 | гвинт M3×4 ISO 14580 A2 TX10 | 15 + 2 | — | — | PWR → PEM F-M3-1 ×7 (плата 1.6 + шайба 0.4 + пластина 2.0, boards.json PWR) і кутники → пластина ×8 (кутник… | — | TBD |
 | AI-M3X5-ISO14580 | гвинт M3×5 ISO 14580 A2 TX10 | 6 + 2 | — | — | RF-плата → стійки SO-M3-3 (boards.json RF, build/17 F07) | — | TBD |
 | AI-M3X14-ISO14580 | гвинт M3×14 ISO 14580 A2 TX10 | 3 + 2 | — | — | тримач T7 ззовні у вставки на задній стінці (mechanical.json t7_holder; 14 — непереважна довжина ISO) | — | TBD |
@@ -491,7 +492,7 @@ Molex KK 254 з фіксатором для штатної вилки кабел
 | AI-MOLEX-0638190000 | ручний обтискач Molex Micro-Fit 3.0 | 1 + 0 | Molex | 0638190000 | клема 43030-0007 (build/16 §1, ЗБ-04) | Molex 43030-0007 sheet https://www.farnell.com/datasheets/1887331.pdf (read 06.11.2026 by the assembly pack… | з 10-bom |
 | AI-MOLEX-0011030043 | екстрактор Molex Micro-Fit 3.0 | 1 + 0 | Molex | 0011030043 | build/16 §1 | Molex 43030-0007 sheet https://www.farnell.com/datasheets/1887331.pdf (read 06.11.2026 by the assembly pack… | з 10-bom |
 | AI-JST-PH-TOOL | ручний обтискач JST WC-240 для SPH-002T-P0.5S | 1 + 0 | JST | WC-240 | build/16 §1, ЗБ-04 | digikey:455-1128-ND | в наявності |
-| AI-PEM-PRESS | запресування PEM F-M3-1 і SO-M3-3ZI у пластину M-07 — послуга майстерні, що виготовляє M-07 (власного преса… | 1 + 0 | — | — | AI-PEM-F-M3-1, AI-PEM-SO-M3-3ZI (build/21 E2) | — | TBD |
+| AI-PEM-PRESS | запресування PEM F-M3-1 і SO-M3-3ZI у пластину M-07 — послуга майстерні, що виготовляє M-07 (власного преса… | 1 + 0 | — | — | AI-PEM-F-M3-1, AI-PEM-SO-M3-3ZI, AI-PEM-SO-M25-6ZI (build/21 E2) | — | TBD |
 | AI-BENCH-LEAD | стендовий провід: тримач запобіжника MINI у розриві (Littelfuse 0FHM0003ZXJS, виводи 18 AWG), розетка Mini-… | 1 + 0 | Littelfuse | 0FHM0003ZXJS | вхідний роз’єм S05 на PWR (build/19 §4, ЗБ-02) | digikey:5346-0FHM0003ZXJS-ND | в наявності |
 | AI-BENCH-FUSE | запобіжник MINI 7.5 A для стендового проводу (той самий, що F101) | 1 + 1 | Littelfuse | 029707.5WXNV | AI-BENCH-LEAD (build/19 §4) | lcsc:C178942 | в наявності |
 | AI-BENCH-HOUSING | розетка Mini-Fit Jr. 5557 на 2 конт. стендового проводу | 1 + 1 | Molex | 0039012020 | AI-BENCH-LEAD → вхідний роз’єм S05 на PWR (build/19 §4) | lcsc:C277599, digikey:WM3700-ND | в наявності |
