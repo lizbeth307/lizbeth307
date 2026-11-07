@@ -21,8 +21,8 @@
       "bytes": 174832
     },
     "design/E4.json": {
-      "sha256": "a003bedb98bfacbf1863ebc4bfc88eb8e10643d450820b399a668b4e65e1584d",
-      "bytes": 212475
+      "sha256": "8012086f2be1a33677c53661e01d8ca8f657fd3f10964c115b4893336863dddc",
+      "bytes": 222672
     },
     "design/E5.json": {
       "sha256": "48c61fa1a77ab35e5d930f377ac2ef473abdd8f6e02da8417e352f168ce562e5",
@@ -38,13 +38,13 @@
     }
   },
   "scope": {
-    "graph_components": 789,
-    "graph_pins": 2428,
+    "graph_components": 794,
+    "graph_pins": 2438,
     "graph_sheets": {
       "E1": 76,
       "E2": 269,
       "E3": 153,
-      "E4": 213,
+      "E4": 218,
       "E5": 78
     },
     "top_level_circuit_assemblies": 64,
@@ -55,10 +55,10 @@
     "partition_refs_assigned_exactly_once": true,
     "missing_refs": [],
     "duplicate_refs": [],
-    "graph_connected_pins": 2287,
+    "graph_connected_pins": 2297,
     "graph_nc_pins": 141,
     "canonical_nets": 485,
-    "cross_assembly_nets": 215
+    "cross_assembly_nets": 214
   },
   "critical_constraints": [
     "Every one of the 750 source component references is assigned exactly once to a circuit assembly. Circuit passives remain parameters, not fictitious software registers.",
@@ -51350,10 +51350,10 @@
   "validation": {
     "status": "PASS",
     "source_snapshot_hashes_unchanged": true,
-    "all789refs_assigned_once": true,
-    "all2287connected_pin_net_triples_exact": true,
+    "all794refs_assigned_once": true,
+    "all2297connected_pin_net_triples_exact": true,
     "all141NCpins_exact": true,
-    "all169subinterface_pin_arrays_exact": true,
+    "all175subinterface_pin_arrays_exact": true,
     "all_catalogue_sources_exist": true,
     "no_project_files_written_by_inventory_task": true,
     "synchronised": "23.10.2026 with the current design graphs: refs removed from the graphs dropped, renamed nets followed, graph-derived fields recomputed; curated fields unchanged"
