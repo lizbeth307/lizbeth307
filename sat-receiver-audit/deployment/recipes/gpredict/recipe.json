@@ -1,0 +1,85 @@
+{
+  "schema_version": 2,
+  "component": "gpredict",
+  "summary": "gpredict 2.7+lab1: Gpredict v2.7 release tarball built with autotools without libgps and hamlib; lab patches fix rotctld_socket_rw, remove network TLE/transponder updates and refuse every radio type but RX only",
+  "source": {
+    "patch": null,
+    "patches": [
+      {
+        "file": "patches/0001-lab-rotctld-socket-rw.patch",
+        "sha256": "e243b5a15d2ca0736dbf60f9258abd031c617e5cc592a1397b5781b865f3e7cc",
+        "strip": 1,
+        "targets": {"src/gtk-rot-ctrl.c": "f3282317916eb58a6df7573b897c4903e894f5c2"},
+        "kind": "lab",
+        "summary": "rotctld_socket_rw: recv at most sizeout-1 bytes so the NUL stays inside the buffer (upstream wrote buffout[sizeout]), every negative send/recv return is an error, and an answer that fills the buffer is an error"
+      },
+      {
+        "file": "patches/0002-lab-no-network-updates.patch",
+        "sha256": "a38785ed3adb2589be00360fad64aa42e55c7af1e1a0617898fab955c52a70de",
+        "strip": 1,
+        "targets": {"src/sat-cfg.c": "1c11788de7c253a4a8b01df02382d0c16602c45e",
+                    "src/tle-update.c": "b725a8151579f50741e815e0d2ebe492eb921bfb",
+                    "src/trsp-update.c": "da8edb5d2e7d3d0c9efd822db3ad999f1050efd7"},
+        "kind": "lab",
+        "summary": "no network element or transponder data: tle_update_from_network, modes_update_from_network and trsp_update_from_network return before any download; TLE AUTO_UPDATE_FREQ defaults to 0 (never) and the TLE SERVER/URLS and TRSP SERVER defaults are empty"
+      },
+      {
+        "file": "patches/0003-lab-rx-only-radios.patch",
+        "sha256": "a52ced96f7b57eb3f2f441a155325f64bc34498f8a971add465e470c9ac2d898",
+        "strip": 1,
+        "targets": {"src/radio-conf.c": "c834e17df9479cfe104cbb42acab4d407a255a13",
+                    "src/gtk-rig-ctrl.c": "d42ee46d7d5a3f14ce29affc5f32e45d7f98430c"},
+        "kind": "lab",
+        "summary": "radio_conf_read refuses every .rig whose Type is not 0 (RX only), so no uplink VFO is tuned and PTT is never set; SIGNAL_AOIQ/SIGNAL_LOIQ are never read and the 'U IQRECORD' commands of #371 are removed from check_aos_los"
+      }
+    ],
+    "member": null
+  },
+  "build_system": "autotools",
+  "build_depends": ["gettext", "intltool", "libcurl4-gnutls-dev", "libglib2.0-dev", "libgtk-3-dev"],
+  "lab_build_depends": [],
+  "cmake": null,
+  "autotools": {"flags": ["--disable-maintainer-mode", "--disable-dependency-tracking", "--disable-silent-rules", "--disable-coverage",
+                          "--disable-caches", "--disable-rpath", "--enable-nls"]},
+  "build": [["make", "-C", "{src}", "-j{jobs}"]],
+  "install": {"cmake_install": false, "make_install": true,
+              "copy": [{"from": "{recipe}/files/gpredict.cfg", "to": "etc/skel/.config/Gpredict"},
+                       {"from": "{recipe}/files/SDRPP-RX.rig", "to": "etc/skel/.config/Gpredict/hwconf"}]},
+  "hooks": {"source_check": null, "package": null},
+  "packages": [
+    {
+      "name": "gpredict",
+      "section": "hamradio",
+      "description": "Gpredict satellite tracking, receive-only SR-RX lab build (RX only radios, no network updates)",
+      "files": ["usr/bin/gpredict", "usr/share/gpredict/*", "usr/share/applications/gpredict.desktop", "usr/share/metainfo/*",
+                "usr/share/pixmaps/gpredict/*", "usr/share/icons/hicolor/scalable/apps/gpredict.svg", "usr/share/man/man1/gpredict.1",
+                "usr/share/locale/*/LC_MESSAGES/gpredict.mo", "etc/skel/.config/Gpredict/*"],
+      "depends": [],
+      "shlibs_depends": true
+    }
+  ],
+  "drop": [
+    {"glob": "usr/share/gpredict/data/satdata/*",
+     "reason": "bundled satellites.dat and *.cat (element sets of 2026-11-01 and upstream categories): Gpredict loads only the satdata the srrx Gpredict bridge writes from labd's OMM (software/srrx/gpredict_bridge.py, build/15 W2 SW-GPREDICT); without bridge files first-time check step 5 fails and Gpredict does not start"}
+  ],
+  "checks": [
+    {"kind": "require_paths", "globs": ["usr/bin/gpredict"]},
+    {"kind": "require_paths", "globs": ["usr/share/gpredict/data/locations.dat"]},
+    {"kind": "require_paths", "globs": ["etc/skel/.config/Gpredict/gpredict.cfg"]},
+    {"kind": "require_paths", "globs": ["etc/skel/.config/Gpredict/hwconf/SDRPP-RX.rig"]},
+    {"kind": "forbid_paths", "globs": ["usr/bin/rotctl*", "usr/bin/rigctl*", "usr/lib/*", "usr/include/*", "*.a", "*.la"]},
+    {"kind": "forbid_needed", "files": ["usr/bin/gpredict"], "needed": ["libgps*", "libhamlib*"]},
+    {"kind": "forbid_strings", "file": "usr/bin/gpredict",
+     "substrings": ["IQRECORD", "celestrak.org/NORAD", "db.satnogs.org", "amsat.org/amsat/ftp"]}
+  ],
+  "notes": [
+    "Source: the v2.7 release asset gpredict-2.7.tar.bz2 (sources.lock.json gpredict, tag v2.7 = commit 22593781), make dist output with the generated configure; nothing regenerates configure (no autoreconf, build/15 W2 SW-BUILDER). --disable-maintainer-mode keeps the Makefile rules from rerunning automake/autoconf even though intltool's Depends bring automake into the chroot.",
+    "configure.ac of v2.7 has no hamlib option at all (rig and rotator control are rigctld/rotctld TCP clients) and links libgps only when pkg-config finds libgps >= 2.90: build_depends has no libgps-dev and no libhamlib-dev (build/07 section 2), and forbid_needed refuses libgps* and libhamlib* in DT_NEEDED of usr/bin/gpredict (selftest RX-10 checks the same on the device).",
+    "libcurl stays a configure requirement (pkg-config libcurl >= 7.19), but lab patch 0002 returns from every download function before curl is used, empties the TLE and transponder server defaults and makes TLE AUTO_UPDATE_FREQ default to 0 (never; src/sat-cfg.c:211, src/tle-update.h:40). forbid_strings proves the default CelesTrak, AMSAT and SatNOGS URLs are gone from the binary.",
+    "Lab patch 0003: Gpredict only reads RX only radios (radio_conf_read refuses Type != 0, src/radio-conf.h RIG_TYPE_RX = 0), so the TX only, half/full duplex and FT-817/857/897 toggle paths, including set_ptt ('T 1'), are never reached; the #371 IQ record signalling ('U IQRECORD 1/0' on AOS/LOS) is removed and SIGNAL_AOIQ/SIGNAL_LOIQ are ignored (forbid_strings IQRECORD).",
+    "Lab patch 0001 keeps the rotctld_socket_rw fix of build/07 section 19: v2.7 src/gtk-rot-ctrl.c:180 still read sizeout bytes and then wrote buffout[size] = '\\0' (one byte past the 128-byte buffers of get_pos/set_pos)",
+    "The bundled satdata (satellites.dat, *.cat) is dropped: first-time check step 5 (src/first-time.c:610-640) copies it only when the user's satdata has no .sat or no .cat file; the bridge writes both, and without bridge files Gpredict exits at the first-time check instead of loading a stale list.",
+    "etc/skel/.config/Gpredict/gpredict.cfg ([TLE] AUTO_UPDATE_FREQ=0, empty URLS) and hwconf/SDRPP-RX.rig (Type=0, 127.0.0.1:4532, SDR++ rigctl_server, no AOS/LOS/IQ signals) are the defaults for new accounts and the files selftest RX-10 reads on the staged root; they are byte-equal to what software/srrx/gpredict_bridge.py writes (software/tests/test_gpredict_bridge.py). Existing accounts get their files from the bridge.",
+    "CI build only: the package is CI_BUILT_UNREVIEWED; the GUI is never started in CI (gtk_init needs a display). Doppler tracking against SDR++ rigctl_server on the Q6A and the Expert-GUI session stay device rows."
+  ]
+}
