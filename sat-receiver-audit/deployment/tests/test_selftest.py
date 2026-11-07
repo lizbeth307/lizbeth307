@@ -694,9 +694,9 @@ class SelftestTests(unittest.TestCase):
         base = self.check(self.run_check(rootfs=self.clean), "RX-11")
         self.assertEqual(base["status"], "PASS")  # W2 FW-STOP: DISARM has its LOCK-hold glove path
         self.assertEqual({(f["rule"], f.get("item")) for f in base["findings"]}, set())
-        # Not evaluated here, and said so: the Lab Shell menu (STACK.md:884), unit enablement, and on an
-        # overlay without the base image the interpreters (/usr/bin/python3, the venv).
-        self.assertTrue({"lab_shell_menu_not_modelled", "unit_enablement_is_an_install_step",
+        # Not evaluated here, and said so: the QML Lab Shell itself (its menu model is, W2 SW-MENU), unit
+        # enablement, and on an overlay without the base image the interpreters (/usr/bin/python3, the venv).
+        self.assertTrue({"lab_shell_qml_not_built", "unit_enablement_is_an_install_step",
                          "unit_interpreter_absent_controller_overlay"} <= set(base["notes"]), base["notes"])
 
         def rx11(leaves=None, **patches):
@@ -1274,7 +1274,7 @@ class SelftestTests(unittest.TestCase):
         rules = ("pinned_package_present_unreviewed", "modes_py_not_found", "gpredict_binary_not_found", "critical_leaf_touch_only",
                  "backend_unit_missing", "no_lime_backend_undeclared", "voice_residual_above_noise", "voice_mask_control_removed",
                  "user_unit_in_home_directory", "unit_interpreter_missing", "unit_interpreter_absent_controller_overlay",
-                 "unavailable_preset_without_fallback", "lab_shell_menu_not_modelled",
+                 "unavailable_preset_without_fallback",  # W2 SW-MENU: the Lab Shell rule ids, LabShellMenuRowTests
                  "POLICY_REVIEW_RECORD_MISSING", "POLICY_REVIEW_RECORD_NOT_BOUND", "--policy-review")
         for rule in rules + ("tool_dependencies", "lab-lease@.service.d"):
             self.assertIn(rule, documented)
@@ -1404,6 +1404,132 @@ class BasebandSchedulerRowTests(unittest.TestCase):
                 patch.object(sched, "UNIT_PATTERN", r"^srrx-.*\.service$"):
             found = {f["rule"] for f in self.row()["findings"]}
         self.assertTrue({"transient_units_present", "polkit_rule_scope"} <= found, found)
+
+
+class LabShellMenuRowTests(unittest.TestCase):
+    """W2 SW-MENU: RX-11 evaluates srrx.lab_shell_menu (STACK.md:884) on the same root as the console model:
+    capability check from the root, hidden leaves listed with reasons, visible leaves reached in depth.
+    Synthetic deploy.py stage roots only; the QML Lab Shell is not built. Reuses the SelftestTests fixture."""
+    setUpClass = classmethod(SelftestTests.setUpClass.__func__)
+    tearDownClass = classmethod(SelftestTests.tearDownClass.__func__)
+    setUp, put, run_check, dpkg_image = SelftestTests.setUp, SelftestTests.put, SelftestTests.run_check, SelftestTests.dpkg_image
+    check = staticmethod(SelftestTests.check)
+    checker_module = staticmethod(SelftestTests.checker_module)
+    # What a deploy.py stage root shows today: labd operations and staged srrx modules, nothing that needs
+    # a +lab package, the Lime, the T7 or a backend PLANNED lists.
+    VISIBLE = {"home.tiles", "home.stop", "satellites.passes", "satellites.tle", "hf.band_survey", "hf.antenna",
+               "spectrum.waterfall", "spectrum.survey", "spectrum.measure", "spectrum.interference_hunt", "spectrum.noise_floor",
+               "instruments.bench", "instruments.rf_path", "signals_ai.label", "signals_ai.train", "signals_ai.models",
+               "recordings.export", "map_point.live_map", "gnss_time.fix", "gnss_time.egnos", "gnss_time.time_sources",
+               "gnss_time.reset", "system.power", "system.profiles", "system.storage", "system.shutdown"}
+    LEASE = "etc/systemd/system/srrx-lease-sdrangelsrv@.service"
+
+    @staticmethod
+    def hidden(result):
+        """{leaf id: reasons} from the lab_shell_hidden:<id>:<reason,...> notes."""
+        out = {}
+        for note in result["notes"]:
+            if note.startswith("lab_shell_hidden:"):
+                _, item, reasons = note.split(":", 2)
+                out[item] = reasons
+        return out
+
+    def rx11(self, rootfs=None, leaves=None):
+        shell = self.checker_module("lab_shell_menu")
+        with patch.object(shell, "LEAVES", shell.LEAVES if leaves is None else tuple(leaves)):
+            return self.check(self.run_check(rootfs=rootfs), "RX-11")
+
+    def sdrangel_leaves(self, shell):
+        return {item["id"] for item in shell.LEAVES if "srrx-lease-sdrangelsrv@.service" in item["requires"]["units"]
+                and not item["backend"]["name"].startswith(shell.PLANNED_PREFIX) and item["allowlist"]["name"] != "demoddsc"}
+
+    def test_staged_root_lists_every_hidden_leaf_with_its_reasons(self):
+        shell = self.checker_module("lab_shell_menu")
+        result = self.rx11(self.clean)
+        self.assertEqual((result["status"], result["findings"]), ("PASS", []))
+        self.assertNotIn("lab_shell_menu_not_modelled", result["notes"])
+        self.assertIn("lab_shell_qml_not_built", result["notes"])
+        self.assertIn("software/srrx/lab_shell_menu.py LEAVES", result["sources"])
+        hidden = self.hidden(result)
+        self.assertEqual(set(hidden), {item["id"] for item in shell.LEAVES} - self.VISIBLE)
+        for item, reason in (("hf.wefax", "package_deferred:openwebrx"), ("satellites.hrpt", "no_lime"), ("system.lime_power", "no_lime"),
+                             ("satellites.safetynet", "preset:egc-safetynet=DISABLED_NO_VERIFIED_HEADER_PARSER_AND_TEST_VECTORS"),
+                             ("air_sea.adsb", "package_missing:readsb"), ("hf.navtex", "package_missing:sdrangelsrv"),
+                             ("hf.dsc", "denied:sdrangel:demoddsc"), ("signals_ai.dataset_export", "no_t7"),
+                             ("home.back", "planned:labinput"), ("system.bluetooth", "hidden:bluetooth_off_permanently")):
+            self.assertIn(reason, hidden[item].split(","), (item, hidden[item]))
+
+    def test_installed_engine_and_lime_show_their_leaves_and_each_is_reached(self):
+        shell, menu = self.checker_module("lab_shell_menu"), self.checker_module("menu_model")
+        lease_leaves = self.sdrangel_leaves(shell)
+        self.assertGreaterEqual(len(lease_leaves), 10)
+        # The Lime build (devices.json and a Lime runtime library), sdrangelsrv on the search path and a T7 leaf
+        # on a module outside the console's closure: visible with the T7, so it is reached although listed hidden.
+        t7 = shell._leaf("recordings.fixture_t7", "Fixture", "page_only", "timegate", t7=True, fallback="fixture fallback")
+        devices = json.loads((self.rootfs / "etc/srrx/devices.json").read_text(encoding="utf-8"))
+        devices["lime"]["enabled"] = True
+        self.put("etc/srrx/devices.json", devices)
+        self.put("usr/lib/aarch64-linux-gnu/liblimesuiteng.so.24", "x")
+        self.put("usr/bin/sdrangelsrv", "#!fixture\n")
+        result = self.rx11(leaves=shell.LEAVES + (t7,))
+        self.assertEqual((result["status"], result["findings"]), ("PASS", []))
+        hidden = self.hidden(result)
+        self.assertFalse((lease_leaves | {"system.lime_power"}) & set(hidden), hidden)
+        self.assertEqual(hidden["recordings.fixture_t7"], "no_t7")
+        self.assertNotIn("no_lime", hidden["satellites.hrpt"].split(","))
+        self.assertIn("unit_interpreter_absent_controller_overlay", result["notes"])  # /usr/bin/env: no base image
+        # Reached in depth: a changed target copy of the T7 leaf's module and a lease unit that runs another program.
+        target = self.rootfs / "opt/srrx/software/srrx/timegate.py"
+        target.write_text(target.read_text(encoding="utf-8") + "\n# changed target copy\n", encoding="utf-8")
+        self.put(self.LEASE + ".d/50-other.conf", "[Service]\nExecStart=\nExecStart=/usr/bin/env other-engine --rx\n")
+        result = self.rx11(leaves=shell.LEAVES + (t7,))
+        self.assertEqual(result["status"], "FAIL")
+        self.assertIn({"path": "opt/srrx/software/srrx/timegate.py", "rule": "target_module_differs", "effect": "BLOCKED"}, result["findings"])
+        mismatched = {f["item"] for f in result["findings"] if f["rule"] == "lab_shell_unit_program_mismatch"}
+        self.assertEqual(mismatched, lease_leaves)
+        self.assertEqual(menu.HOLD_STOP["key"], "LOCK")
+
+    def test_full_image_needs_the_unit_interpreters_of_a_visible_lease(self):
+        shell = self.checker_module("lab_shell_menu")
+        self.dpkg_image("Package: base-files\nStatus: install ok installed\nVersion: 13ubuntu10\n\n")
+        self.put("usr/bin/sdrangelsrv", "#!fixture\n")
+        result = self.rx11()
+        self.assertEqual((result["status"], result["findings"]), ("PASS", []))
+        self.assertNotIn("unit_interpreter_absent_controller_overlay", result["notes"])
+        self.assertFalse(self.sdrangel_leaves(shell) & set(self.hidden(result)))
+        (self.rootfs / "usr/bin/env").unlink()
+        result = self.rx11()
+        self.assertEqual(result["status"], "BLOCKED")
+        blocked = {f["item"] for f in result["findings"] if f["rule"] == "unit_interpreter_missing"}
+        self.assertTrue(self.sdrangel_leaves(shell) <= blocked, blocked)
+
+    def test_model_defects_are_findings_and_a_touch_only_critical_leaf_blocks(self):
+        shell = self.checker_module("lab_shell_menu")
+        defects = (shell._leaf("system.fixture_tx", "Fixture", "labd_op", "transmit"),
+                   shell._leaf("system.fixture_lime", "Fixture", "labd_op", "status", lime=True),
+                   shell._leaf("system.fixture_t7", "Fixture", "labd_op", "status", t7=True),
+                   shell._leaf("system.fixture_module", "Fixture", "labd_op", "status", modules=("no_such_module",)),
+                   shell._leaf("system.fixture_stop", "Fixture", "labd_op", "disarm", critical=True))
+        result = self.rx11(self.clean, shell.LEAVES + defects)
+        self.assertEqual(result["status"], "FAIL")
+        where = "software/srrx/lab_shell_menu.py"
+        self.assertEqual({(f["rule"], f["item"], f["effect"]) for f in result["findings"] if f["path"] == where},
+                         {("lab_shell_backend_unknown", "system.fixture_tx", "FAIL"),
+                          ("no_lime_backend_undeclared", "system.fixture_lime", "FAIL"),
+                          ("no_t7_backend_undeclared", "system.fixture_t7", "FAIL"),
+                          ("lab_shell_requirement_unknown", "system.fixture_module", "FAIL"),
+                          ("critical_leaf_touch_only", "system.fixture_stop", "BLOCKED")})
+        result = self.rx11(self.clean, shell.LEAVES + shell.LEAVES[:1])
+        self.assertEqual(result["findings"], [{"path": where, "rule": "lab_shell_menu_invalid", "effect": "FAIL"}])
+
+    def test_rule_ids_are_emitted_and_documented(self):
+        source = (HERE / "selftest.py").read_text(encoding="utf-8")
+        documented = "\n".join((deploy.PROJECT / name).read_text(encoding="utf-8") for name in ("software/HMI.md", "build/09-testy.md"))
+        for rule in ("lab_shell_menu_invalid", "lab_shell_backend_unknown", "lab_shell_requirement_unknown",
+                     "lab_shell_unit_program_mismatch", "lab_shell_hidden", "lab_shell_qml_not_built"):
+            self.assertIn(rule, source)
+            self.assertIn(rule, documented)
+        self.assertNotIn("lab_shell_menu_not_modelled", source)
 
 
 if __name__ == "__main__":

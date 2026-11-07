@@ -259,7 +259,23 @@ disarm, «Close + DISARM» — disarm. Лист `page_only` не надсила�
 (LIME лишається PARK, EN_LIME3V3 — OFF; OFF і PARK labd приймає без оренди), EN_T7 —
 бекенд без T7 (OFF; сховище — UFS і microSD V30, STACK.md:977). Це декларація для
 перевірки: консоль цей текст не показує й нічого не ховає. Перевірка можливостей,
-що ховає пункти лише для Lime (STACK.md:884), належить Lab Shell, а не цій консолі.
+що ховає пункти лише для Lime (STACK.md:884), належить Lab Shell, а не цій консолі: це
+модель `srrx.lab_shell_menu` (рішення W2 SW-MENU, [build/15](../build/15-rishennia-komplektu.md)) —
+дванадцять хабів STACK.md:884 і листи Home, кожен з бекендом (ті самі види, що тут), потрібними
+пакетами (`PACKAGES`: компонент `sources.lock.json` і виконувані файли на шляху пошуку systemd),
+unit, модулями srrx, пресетами, записом алоу-листа політики (плагін SDRangel, режим OpenWebRX+,
+конвеєр SatDump), `needs_lime`/`needs_t7` з `fallback_text` і `hidden_reason`; бекенд
+`planned.<функція>` — ще не зібраний (`PLANNED` з джерелом). `visible_leaves(capabilities)` показує
+лист, лише коли все це є на корені, запис дозволено й не заборонено, пресет прийнято, а Lime/T7 є;
+інакше лист приховано з причинами (`hide_reasons`), напр. WEFAX — `package_deferred:openwebrx`,
+SafetyNET — `preset:egc-safetynet=DISABLED_…`, DSC — `denied:sdrangel:demoddsc`, HRPT — `no_lime`.
+RX-11 оцінює її на тому самому корені після консолі: Lime — з `/etc/srrx/devices.json` і бібліотеки
+Lime, T7 (знімний, без прив'язки офлайн) — з ним і без нього; FAIL `lab_shell_menu_invalid`,
+`lab_shell_backend_unknown`, `lab_shell_requirement_unknown` (ім'я не зібране й не в `PLANNED`),
+`no_lime_backend_undeclared`/`no_t7_backend_undeclared`, `lab_shell_unit_program_mismatch` (unit
+видимого листа не запускає виконуваний файл його пакета); BLOCKED `critical_leaf_touch_only`,
+`target_module_differs`, `unit_interpreter_missing`; кожен прихований лист — примітка
+`lab_shell_hidden:<лист>:<причини>`. Сама QML-оболонка не зібрана (примітка `lab_shell_qml_not_built`).
 
 Критичні листи — дії, потрібні в рукавицях, коли ємнісна панель не працює
 (STACK.md:110): навігація HOME/BACK/FN/ENC1/ENC2/ENC1_PRESS/ENC2_PRESS, LOCK,
