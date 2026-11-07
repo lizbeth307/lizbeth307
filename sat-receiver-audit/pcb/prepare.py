@@ -30,6 +30,7 @@ RF_BLEED = {f'R{i}' for i in range(4460, 4472)}
 RELAY_REFS = {'K401','K402','Q401','Q402','D401','R412','R413','R414','R415','R417','R418','R419','L407'}
 BIAS_REFS = {'A424','C446','L402','L403','L404','L406'} | {f'C{i}' for i in range(447,453)}
 # Board-side RF port connectors (W2 GR-2): each sits with the circuit it feeds (injector ports, the P6 relay input).
+# The panel pigtail ends (J401-J403, J406, J408) and J428 (input of the external P8 accessory) stay interfaces.
 RF_PORT_BOARD = {'J423':'RF_INJECTOR','J424':'RF_INJECTOR','J425':'RF_HF','J426':'RF_INJECTOR','J427':'RF_INJECTOR'}
 BOARDS = {
  'PWR_MAIN': {'purpose':'Main eFuse, AON/UV, charge inhibit and converter interconnect passives; commercial converters stay separate.', 'source':['design/E1-review.md','STACK.md §5.1']},
