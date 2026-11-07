@@ -598,6 +598,9 @@ class InmarsatChecksumTests(unittest.TestCase):
             g.checksum_ok(packet)
         with self.assertRaisesRegex(g.EgcRefused, "CHECKSUM_ALGORITHM_UNVERIFIED"):
             g.EgcAssembler(None)
+        # This fragment layout (the inner trailer travels in the fragments) is the gate's assumption, not
+        # SatDump's: pkt_parser.cpp:19/:131 completes at inner length - 2 with a zero-filled trailer, a layout
+        # the gate discards (SatDumpMultiframeLayoutTests). ПОЛ-06 decides.
         inner = medium_c(0x00, with_priority(3) + bytes(range(40)))
         start, continuation = fragment_c(0x3D, inner[:20]), fragment_c(0x3E, inner[20:])
         self.assertTrue(all(g.verify_inmarsat_c(part) for part in (inner, start, continuation)))
@@ -630,6 +633,27 @@ class ReleaseEvidenceSourcesTests(unittest.TestCase):
             with mock.patch.dict(g.RELEASE_EVIDENCE_SOURCES, sources):
                 self.assertEqual(g.gate_status(), "DISABLED_RELEASE_EVIDENCE_MISSING")  # records never flip a flag
                 self.assertEqual(decoder_policy.availability()["egc-safetynet"], expected)
+
+
+class SatDumpMultiframeLayoutTests(unittest.TestCase):
+    """SatDump pkt_parser.cpp:19/:131 layout: the fragments carry the inner descriptor without its trailer.
+
+    The gate assumes the inner trailer travels too; laid out as SatDump reads it, a multiframe message
+    stays 2 bytes short and is discarded (fail closed) until ПОЛ-06 decides the layout.
+    """
+    def test_inner_length_minus_two_never_completes_and_is_discarded(self):
+        inner = seal_inmarsat(bytes((0xB1, 3 + 41, 0x00)) + with_priority(3) + bytes(range(40)))
+        carried = inner[:-2]  # SatDump copies pkt_len - 4 bytes per fragment and stops at inner length - 2
+        start = seal_inmarsat(bytes((0xBD, 20 + 2)) + carried[:20])
+        end = seal_inmarsat(bytes((0xBE, len(carried) - 20 + 2)) + carried[20:])
+        for name, verifier in (("read", g.verify_inmarsat_c), ("permissive", lambda descriptor: True)):
+            with self.subTest(verifier=name):
+                assembler = g.EgcAssembler(verifier)
+                self.assertEqual(frames(assembler, [start], [end]), [[], []])
+                self.assertTrue(assembler.open)  # waits for the 2 trailer bytes SatDump never carries
+                self.assertEqual(frames(assembler, [medium(0x31, 0x02)], first=3), [[]])
+                self.assertEqual((assembler.open, assembler.discarded), (False, 1))
+        self.assertFalse(g.verify_inmarsat_c(carried + bytes(2)))  # the zero trailer SatDump passes via :122
 
 
 if __name__ == "__main__":

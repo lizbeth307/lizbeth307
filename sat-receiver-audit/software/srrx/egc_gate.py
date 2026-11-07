@@ -43,10 +43,19 @@ before any release:
   wrapped or invalid frame number, a reported loss, a continuation anywhere else,
   a missing boundary or a fragment that overruns the declared inner length
   closes and zero-fills the open message, so after a lost frame a continuation
-  of another (e.g. FleetNET) multiframe is never appended; the completed inner
-  descriptor's own checksum must verify too (SatDump pkt_parser.cpp:8-34 and
-  :124-142 handle one 0x3D start and one 0x3E end with outer bytes 0-1, data
-  and 2 checksum bytes, and size only short and medium inner descriptors);
+  of another (e.g. FleetNET) multiframe is never appended (SatDump
+  pkt_parser.cpp:8-34 and :124-142 handle one 0x3D start and one 0x3E end with
+  outer bytes 0-1, data and 2 checksum bytes, and size only short and medium
+  inner descriptors);
+- the fragments carry the whole inner descriptor, its own 2 checksum bytes
+  included, and the completed inner descriptor must verify. SatDump reads the
+  stream differently: pkt_parser.cpp:19 zero-fills a buffer of the inner length
+  and :131 completes the message at inner length - 2, so the inner trailer is
+  never carried and passes there only through the sent-0 rule
+  (packets_structs.h:122). Laid out as SatDump reads it, every multiframe
+  SafetyNET message stays 2 bytes short here and the next descriptor or a frame
+  gap discards it, whatever the verifier; verify_inmarsat_c would also refuse
+  the zero trailer. This fails closed; ПОЛ-06 decides the layout;
 - the checksum stays an injected verifier(descriptor_bytes) -> True; without
   one nothing is checked or passed. verify_inmarsat_c is the read algorithm,
   passed explicitly until the review; unlike SatDump it refuses a sent 0x0000
