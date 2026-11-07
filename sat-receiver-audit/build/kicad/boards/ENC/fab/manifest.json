@@ -157,6 +157,7 @@
         "ENC_SW",
         "GND"
       ],
+      "aliases": {},
       "missing": []
     },
     "gerber_x2": {
@@ -224,6 +225,11 @@
       "url": "https://gitlab.com/kicad/code/kicad/-/tree/10.0.7/common/jobs",
       "read": "2026-11-07",
       "used": "jobset JSON keys: job_export_pcb_plot.cpp, job_export_pcb_gerber(s).cpp, job_export_pcb_drill.cpp, job_export_pcb_pos.cpp, job_export_pcb_ipcd356.cpp, job.cpp, jobset.cpp, jobs_output_folder.cpp; Gerber header lines: pcbnew/pcbplot.cpp AddGerberX2Header, common/plotters/GERBER_plotter.cpp"
+    },
+    "kicad_d356": {
+      "url": "https://gitlab.com/kicad/code/kicad/-/blob/10.0.7/pcbnew/exporters/export_d356.cpp",
+      "read": "2026-11-07",
+      "used": "IPC-D-356 signal names: the upper-cased sanitised net name when <= 14 characters and unique, otherwise an alias M + 4 base-36 digits declared as P NNAME with the case-kept name (last 58 characters); test record types 307/317/327/367"
     }
   },
   "files": [
@@ -234,8 +240,8 @@
     },
     {
       "path": "ENC-fab-notes.pdf",
-      "sha256": "fbe85513209397a26b7b129e40e131145311e7172fca3d0473f285d55c466ce4",
-      "bytes": 7216
+      "sha256": "53a0f18dd984fec366157a6b5f4f8a6a40f190d9c86b17030763319a5a75dc86",
+      "bytes": 7263
     },
     {
       "path": "ENC.ipc356",
@@ -249,8 +255,8 @@
     },
     {
       "path": "README.md",
-      "sha256": "f658b7f1c46ee3c03e67c72703fc204fdff395f1b4b7be12f9ba2dd64d1e5165",
-      "bytes": 6205
+      "sha256": "93fe30bb524d1a466219da61dd85c89426d29f159bc025df215608a5a98a2db8",
+      "bytes": 6965
     },
     {
       "path": "assembly/ENC-bom-jlc.csv",
@@ -264,8 +270,8 @@
     },
     {
       "path": "assembly/ENC-cpl-rotation-offsets.csv",
-      "sha256": "393a7538c4e6114ca5000a03146f6a76d61a49db32073d385e750eeaa6028205",
-      "bytes": 545
+      "sha256": "2dc01603c66ca3fe53fa0e18e87e25f74d6f33103fe774577a032303cb8695ab",
+      "bytes": 803
     },
     {
       "path": "assembly/ENC-instances.csv",

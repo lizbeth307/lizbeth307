@@ -18,7 +18,7 @@ endobj
 << /Type /Page /Parent 2 0 R /MediaBox [0 0 842 595] /Resources << /Font << /F1 3 0 R /F2 4 0 R >> >> /Contents 7 0 R >>
 endobj
 7 0 obj
-<< /Length 5058 >>
+<< /Length 5105 >>
 stream
 1.00 w 36.00 470.00 m 36.00 80.00 l S
 1.00 w 36.00 80.00 m 426.00 80.00 l S
@@ -66,11 +66,11 @@ BT /F2 11.00 Tf 450.00 212.00 Td (Assembly) Tj ET
 BT /F1 8.00 Tf 450.00 198.00 Td (Boards to build: 3 = instances \(ENCM 1, ENCV 1\) + spares 1; every board is the) Tj ET
 BT /F1 8.00 Tf 450.00 187.00 Td (same design and is assembled the same.) Tj ET
 BT /F1 8.00 Tf 450.00 176.00 Td (Sides with parts: Top \(THT 2\).) Tj ET
-BT /F1 8.00 Tf 450.00 165.00 Td (CPL: Mid X / Mid Y are the KiCad footprint origins and Rotation the raw KiCad) Tj ET
-BT /F1 8.00 Tf 450.00 154.00 Td (rotation \(degrees, counter-clockwise as the JLC CPL column\). JLC rotation and) Tj ET
-BT /F1 8.00 Tf 450.00 143.00 Td (centroid offsets per footprint are TBD \(assembly/ENC-cpl-rotation-) Tj ET
-BT /F1 8.00 Tf 450.00 132.00 Td (offsets.csv\): check every part in the JLC viewer at order time; nothing here) Tj ET
-BT /F1 8.00 Tf 450.00 121.00 Td (verifies them.) Tj ET
+BT /F1 8.00 Tf 450.00 165.00 Td (CPL: Mid X / Mid Y are the KiCad footprint origins \(JLC defines them as the) Tj ET
+BT /F1 8.00 Tf 450.00 154.00 Td (component centroid\) and Rotation the raw KiCad rotation \(degrees, counter-) Tj ET
+BT /F1 8.00 Tf 450.00 143.00 Td (clockwise as the JLC CPL column\). JLC rotation and centroid offsets per) Tj ET
+BT /F1 8.00 Tf 450.00 132.00 Td (footprint are TBD \(assembly/ENC-cpl-rotation-offsets.csv\): check every part in) Tj ET
+BT /F1 8.00 Tf 450.00 121.00 Td (the JLC viewer at order time; nothing here verifies them.) Tj ET
 BT /F1 8.00 Tf 450.00 110.00 Td (BOM TBD: J1 \(PH4 pilot placeholder\): TBD: pilot_placeholder, no graph ref and) Tj ET
 BT /F1 8.00 Tf 450.00 99.00 Td (no MPN yet; replaced by GR-3 ENC-side header ref \(graph\), then PCB-SB1) Tj ET
 BT /F2 11.00 Tf 450.00 82.00 Td (Not proved here \(OPEN\)) Tj ET
@@ -105,10 +105,10 @@ xref
 0000000320 00000 n 
 0000000509 00000 n 
 0000000645 00000 n 
-0000005754 00000 n 
-0000005890 00000 n 
+0000005801 00000 n 
+0000005937 00000 n 
 trailer
 << /Size 10 /Root 1 0 R /Info 5 0 R >>
 startxref
-6938
+6985
 %%EOF
