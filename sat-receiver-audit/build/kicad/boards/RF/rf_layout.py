@@ -504,7 +504,8 @@ def project_text(classes):
     # Pours: 0.20 mm to other nets (the RF50 CPWG gap; DCTAP keeps 0.30 through its class), thermal spokes that fit
     # 0.25 mm QFN pins. board_gen creates its zones with these project defaults (route run 42414473163: 0.3/0.5/0.5).
     proj['board']['design_settings']['defaults']['zones'] = {
-        'min_clearance': 0.2, 'min_thickness': 0.2, 'thermal_relief_gap': 0.25, 'thermal_relief_spoke_width': 0.3}
+        'min_clearance': 0.2, 'min_thickness': 0.25, 'thermal_relief_gap': 0.25, 'thermal_relief_spoke_width': 0.3}
+    # min_thickness stays 0.25: 0.2 left twelve 0.004 mm pour necks (connection_width) in route run 42415959957.
     # Hole to hole: the JLC pad hole-to-hole floor 0.45 (via to via 0.2, netclasses.json fab_floor); 0.6/0.3 vias at
     # 0.15 mm clearance sit 0.45 mm apart, which the project value 0.5 refused in route run 42414473163.
     proj['board']['design_settings']['rules']['min_hole_to_hole'] = 0.45
@@ -542,7 +543,7 @@ def spec_doc(template_nets, parts, enc):
                        'RF50 0.36/0.20, DCTAP 0.20/0.30 (project rule, not IPC-verified), PWR1A 0.35/0.15 and the '
                        'default 0.20/0.15 live in RF.kicad_pro, values from pcb/generated/netclasses.json. Project '
                        'zone defaults (used by the board_gen pours): clearance 0.20 (= RF50 CPWG gap), minimum width '
-                       '0.20, thermal gap 0.25, spokes 0.30. min_hole_to_hole 0.45 = JLC pad hole-to-hole floor '
+                       '0.25, thermal gap 0.25, spokes 0.30. min_hole_to_hole 0.45 = JLC pad hole-to-hole floor '
                        '(via to via 0.2); the ENC value 0.5 refused 0.6/0.3 vias at 0.15 mm clearance. min_resolved_spokes 1: '
                        'a HMC7992 GND pin between two RF pins takes only its outward spoke (project choice, reviewed '
                        'in PCB-RF-2).'),
