@@ -1,0 +1,957 @@
+{
+  "schema": "srrx-board-report-v1",
+  "board_id": "ENC",
+  "status": "PILOT_NOT_FOR_FABRICATION",
+  "label": "CI/model result of pcb/board_gen.py in kicad/kicad:10.0.7; not a hardware PASS; bench gates OPEN",
+  "passed": true,
+  "result": {
+    "drc_errors": 0,
+    "drc_unconnected": 0,
+    "drc_warnings": 7,
+    "ignored_checks": [],
+    "source_pad_audit_errors": {
+      "ENCM": 0,
+      "ENCV": 0
+    },
+    "boundary_audit": [
+      "provisional: header ref pending GR-3"
+    ],
+    "domain_audit": true,
+    "keepout_audit": true,
+    "annular_audit": true,
+    "locked_copper_kept": true
+  },
+  "inputs": {
+    "parts": {
+      "spec": "a97c96d016b04c65829925a8bb09474386b7dcadfa452a31559c75623f9ccd85",
+      "contract": "6e37f08ab030265bba0cc1d547d2c78135ed2a68c2d29f33af748f610b80e67a",
+      "project_rules": "2aa13b5419374d94ff7d22cf48556ceebc9635e3742b9f4d2eef575c25624f41",
+      "template": "d455cb3519a825eb47ca3bafd22f3926c8383bf250349ca6cbfd19f642c4a065",
+      "instances": "5af94aa57598cdecc667e7e5bcb2283be84bb439ac2ba58580569f10c4ed30fb"
+    },
+    "sha256": "28419f7943db76f5253256f4c4b7f87b7999accebe50dd810e285e53e7233877"
+  },
+  "board_file": "build/kicad/boards/ENC/ENC.kicad_pcb",
+  "board_sha256": "46363b75966e422aa68e2f0bb6868ef65cbcf619a969d538dd6809470d338870",
+  "project_file": "build/kicad/boards/ENC/ENC.kicad_pro",
+  "fp_lib_table_sha256": "6b2a79120473af8986b9a926ecdd3f0a81eacea4b73a8391c78367962c2525c3",
+  "layers": {
+    "copper": 2,
+    "thickness_mm": 1.6,
+    "source": "PCB-SB1 plan: ENC is a 2-layer 1.6 mm 1 oz board (final-plan.json PCB-SB1 brief); the 4-layer default of build/15 'Шари' is for the main boards",
+    "plan": {
+      "F.Cu": "parts, signals, GND pour",
+      "B.Cu": "scripted GND link, signals, GND pour"
+    }
+  },
+  "stackup_contract": {
+    "t": 1.6,
+    "layers": 4,
+    "fab": "JLC JLC04161H-7628 (build/15)",
+    "components": "top side only (build/15)"
+  },
+  "outline_mm": [
+    [
+      0,
+      0
+    ],
+    [
+      24,
+      0
+    ],
+    [
+      24,
+      24
+    ],
+    [
+      0,
+      24
+    ]
+  ],
+  "holes": [
+    {
+      "ref": "H1",
+      "at": [
+        3.0,
+        3.0
+      ],
+      "d": 2.7,
+      "keepout_d": 6.0
+    },
+    {
+      "ref": "H2",
+      "at": [
+        21.0,
+        21.0
+      ],
+      "d": 2.7,
+      "keepout_d": 6.0
+    }
+  ],
+  "instances": [
+    {
+      "id": "ENCM",
+      "placement": "main",
+      "qty": 1,
+      "refs": {
+        "ENC": "ENC301",
+        "J1": null
+      },
+      "nets": {
+        "ENC_A": "E3_ENC1_A_RAW",
+        "ENC_B": "E3_ENC1_B_RAW",
+        "ENC_SW": "E3_ENC1_PRESS_EXT",
+        "GND": "GND"
+      }
+    },
+    {
+      "id": "ENCV",
+      "placement": "volume",
+      "qty": 1,
+      "refs": {
+        "ENC": "ENC302",
+        "J1": null
+      },
+      "nets": {
+        "ENC_A": "E3_ENC2_A_RAW",
+        "ENC_B": "E3_ENC2_B_RAW",
+        "ENC_SW": "E3_ENC2_PRESS_EXT",
+        "GND": "GND"
+      }
+    }
+  ],
+  "build_quantity": {
+    "instances": 2,
+    "spares": 1,
+    "total": 3
+  },
+  "template": [
+    {
+      "ref": "ENC",
+      "source": "graph",
+      "fpid": "SR_RX_Custom:RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx",
+      "library": "project",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx.kicad_mod",
+      "sha256": "5a892be8aec0f4d2f8d4b273607974d04e8be47218e74c324bbf6033dfe7ae66",
+      "value": "PEC11R-4220F encoder",
+      "pads": {
+        "A": "ENC_A",
+        "B": "ENC_B",
+        "C": "GND"
+      },
+      "unused_pads": [
+        "MP",
+        "S1",
+        "S2"
+      ]
+    },
+    {
+      "ref": "J1",
+      "source": "pilot_placeholder",
+      "fpid": "Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical",
+      "library": "kicad-image",
+      "file": null,
+      "sha256": "c1fbb648efbffa98c740285def47b64fc2cc9e5cf07f24a196e7956b940e8e1d",
+      "value": "PH4 pilot placeholder",
+      "pads": {
+        "1": "GND",
+        "2": "ENC_A",
+        "3": "ENC_B",
+        "4": "ENC_SW"
+      },
+      "unused_pads": []
+    }
+  ],
+  "placeholders": [
+    {
+      "ref": "J1",
+      "footprint": "Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical",
+      "replaced_by": "GR-3 ENC-side header ref (graph), then PCB-SB1",
+      "pins_source": "build/16-dzhgut-rozyemy.csv:60 and :62 (X37S1-ENCM / X38S1-ENCV: PH 4, pins GND, A, B, PRESS; synthesized, not a graph ref)",
+      "why": "No JST PH housing fits beside the PEC11R on the 24 x 24 outline: the S4B-PH-K side-entry body is 7.6 mm deep and the B4B-PH-K vertical courtyard 5.5 mm wide, while the strip between the left edge and the PEC11R courtyard is 4.5 mm (encoder at 90 deg) and a vertical PH is 8 mm tall against the 6.5 mm envelope (tools/assembly_data.py:120-121). The pilot keeps a 2.0 mm 4-pad land in the contract edge zone left [6, 18]; the header choice stays with GR-3/PCB-SB1/MECH-4."
+    }
+  ],
+  "placement": [
+    {
+      "ref": "ENC",
+      "fpid": "SR_RX_Custom:RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx",
+      "side": "F",
+      "rotation": 90.0,
+      "at": [
+        9.5,
+        4.5
+      ],
+      "courtyard_box": [
+        4.475,
+        3.225,
+        19.525,
+        20.275
+      ],
+      "fab_box": [
+        5.7,
+        5.25,
+        18.3,
+        18.75
+      ]
+    },
+    {
+      "ref": "H1",
+      "fpid": "NPTH_2.7mm",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        3.0,
+        3.0
+      ],
+      "courtyard_box": [
+        1.625,
+        1.625,
+        4.375,
+        4.375
+      ],
+      "fab_box": null
+    },
+    {
+      "ref": "H2",
+      "fpid": "NPTH_2.7mm",
+      "side": "F",
+      "rotation": 0.0,
+      "at": [
+        21.0,
+        21.0
+      ],
+      "courtyard_box": [
+        19.625,
+        19.625,
+        22.375,
+        22.375
+      ],
+      "fab_box": null
+    },
+    {
+      "ref": "J1",
+      "fpid": "Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical",
+      "side": "F",
+      "rotation": 180.0,
+      "at": [
+        2.25,
+        9.0
+      ],
+      "courtyard_box": [
+        0.725,
+        7.475,
+        3.775,
+        16.525
+      ],
+      "fab_box": [
+        1.2,
+        7.95,
+        3.3,
+        16.05
+      ]
+    }
+  ],
+  "pads": {
+    "ENC": [
+      {
+        "number": "A",
+        "net": "ENC_A",
+        "at": [
+          9.5,
+          4.5
+        ]
+      },
+      {
+        "number": "B",
+        "net": "ENC_B",
+        "at": [
+          14.5,
+          4.5
+        ]
+      },
+      {
+        "number": "C",
+        "net": "GND",
+        "at": [
+          12.0,
+          4.5
+        ]
+      },
+      {
+        "number": "MP",
+        "net": null,
+        "at": [
+          6.3,
+          12.0
+        ]
+      },
+      {
+        "number": "MP",
+        "net": null,
+        "at": [
+          17.7,
+          12.0
+        ]
+      },
+      {
+        "number": "S1",
+        "net": null,
+        "at": [
+          9.5,
+          19.0
+        ]
+      },
+      {
+        "number": "S2",
+        "net": null,
+        "at": [
+          14.5,
+          19.0
+        ]
+      }
+    ],
+    "H1": [
+      {
+        "number": "",
+        "net": null,
+        "at": [
+          3.0,
+          3.0
+        ]
+      }
+    ],
+    "H2": [
+      {
+        "number": "",
+        "net": null,
+        "at": [
+          21.0,
+          21.0
+        ]
+      }
+    ],
+    "J1": [
+      {
+        "number": "1",
+        "net": "GND",
+        "at": [
+          2.25,
+          9.0
+        ]
+      },
+      {
+        "number": "2",
+        "net": "ENC_A",
+        "at": [
+          2.25,
+          11.0
+        ]
+      },
+      {
+        "number": "3",
+        "net": "ENC_B",
+        "at": [
+          2.25,
+          13.0
+        ]
+      },
+      {
+        "number": "4",
+        "net": "ENC_SW",
+        "at": [
+          2.25,
+          15.0
+        ]
+      }
+    ]
+  },
+  "copper": {
+    "tracks": {
+      "segments": 8,
+      "vias": 0,
+      "locked": 2,
+      "by_layer": {
+        "B.Cu": 2,
+        "F.Cu": 6
+      },
+      "widths_mm": [
+        0.25,
+        0.5
+      ]
+    },
+    "zones": [
+      {
+        "name": "GND-B",
+        "rule_area": false,
+        "net": "GND",
+        "layer": "B.Cu",
+        "filled": true,
+        "locked": false
+      },
+      {
+        "name": "GND-F",
+        "rule_area": false,
+        "net": "GND",
+        "layer": "F.Cu",
+        "filled": true,
+        "locked": false
+      },
+      {
+        "name": "KO_H1_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_H1_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_H2_B.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "B.Cu",
+        "filled": false,
+        "locked": false
+      },
+      {
+        "name": "KO_H2_F.Cu",
+        "rule_area": true,
+        "net": null,
+        "layer": "F.Cu",
+        "filled": false,
+        "locked": false
+      }
+    ],
+    "copper_layers": 2
+  },
+  "drc": {
+    "errors": 0,
+    "warnings": 7,
+    "unconnected": 0,
+    "schematic_parity": 0,
+    "ignored_checks": [],
+    "by_type": {
+      "silk_over_copper": {
+        "severity": "warning",
+        "count": 7
+      }
+    },
+    "error_items": [],
+    "warning_items": [
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Rectangle of ENC on F.Silkscreen",
+            "pos": [
+              105.64,
+              118.81
+            ]
+          },
+          {
+            "description": "PTH pad A [ENC_A] of ENC",
+            "pos": [
+              109.5,
+              119.5
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; the vendored PEC11R outline (tools/make_footprints.py) crosses its own A/C/B pads"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Rectangle of ENC on F.Silkscreen",
+            "pos": [
+              105.64,
+              118.81
+            ]
+          },
+          {
+            "description": "PTH pad B [ENC_B] of ENC",
+            "pos": [
+              114.5,
+              119.5
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; the vendored PEC11R outline (tools/make_footprints.py) crosses its own A/C/B pads"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Rectangle of ENC on F.Silkscreen",
+            "pos": [
+              105.64,
+              118.81
+            ]
+          },
+          {
+            "description": "PTH pad C [GND] of ENC",
+            "pos": [
+              112.0,
+              119.5
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; the vendored PEC11R outline (tools/make_footprints.py) crosses its own A/C/B pads"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Rectangle of ENC on F.Silkscreen",
+            "pos": [
+              105.64,
+              118.81
+            ]
+          },
+          {
+            "description": "PTH pad MP [<no net>] of ENC",
+            "pos": [
+              106.3,
+              112.0
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; the vendored PEC11R outline (tools/make_footprints.py) crosses its own A/C/B pads"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Rectangle of ENC on F.Silkscreen",
+            "pos": [
+              105.64,
+              118.81
+            ]
+          },
+          {
+            "description": "PTH pad MP [<no net>] of ENC",
+            "pos": [
+              117.7,
+              112.0
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; the vendored PEC11R outline (tools/make_footprints.py) crosses its own A/C/B pads"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Rectangle of ENC on F.Silkscreen",
+            "pos": [
+              105.64,
+              118.81
+            ]
+          },
+          {
+            "description": "PTH pad S1 [<no net>] of ENC",
+            "pos": [
+              109.5,
+              105.0
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; the vendored PEC11R outline (tools/make_footprints.py) crosses its own A/C/B pads"
+      },
+      {
+        "section": "violations",
+        "type": "silk_over_copper",
+        "severity": "warning",
+        "description": "Silkscreen clipped by solder mask",
+        "items": [
+          {
+            "description": "Rectangle of ENC on F.Silkscreen",
+            "pos": [
+              105.64,
+              118.81
+            ]
+          },
+          {
+            "description": "PTH pad S2 [<no net>] of ENC",
+            "pos": [
+              114.5,
+              105.0
+            ]
+          }
+        ],
+        "reason": "legend only: the fab clips legend over exposed copper; the vendored PEC11R outline (tools/make_footprints.py) crosses its own A/C/B pads"
+      }
+    ],
+    "unconnected_items": [],
+    "severities_reviewed": {
+      "errors": [
+        "annular_width",
+        "assertion_failure",
+        "clearance",
+        "connection_width",
+        "copper_edge_clearance",
+        "copper_sliver",
+        "courtyards_overlap",
+        "creepage",
+        "diff_pair_gap_out_of_range",
+        "diff_pair_uncoupled_length_too_long",
+        "drill_out_of_range",
+        "footprint",
+        "footprint_type_mismatch",
+        "generic_error",
+        "hole_clearance",
+        "hole_to_hole",
+        "holes_co_located",
+        "invalid_outline",
+        "isolated_copper",
+        "item_on_disabled_layer",
+        "items_not_allowed",
+        "length_out_of_range",
+        "lib_footprint_issues",
+        "lib_footprint_mismatch",
+        "malformed_courtyard",
+        "microvia_drill_out_of_range",
+        "mirrored_text_on_front_layer",
+        "missing_courtyard",
+        "nonmirrored_text_on_back_layer",
+        "npth_inside_courtyard",
+        "padstack",
+        "padstack_invalid",
+        "pth_inside_courtyard",
+        "shorting_items",
+        "silk_edge_clearance",
+        "skew_out_of_range",
+        "solder_mask_bridge",
+        "starved_thermal",
+        "text_height",
+        "text_on_edge_cuts",
+        "text_thickness",
+        "through_hole_pad_without_hole",
+        "too_many_vias",
+        "track_angle",
+        "track_dangling",
+        "track_not_centered_on_via",
+        "track_on_post_machined_layer",
+        "track_segment_length",
+        "track_width",
+        "tracks_crossing",
+        "unconnected_items",
+        "unresolved_variable",
+        "via_dangling",
+        "via_diameter",
+        "zones_intersect"
+      ],
+      "warnings": {
+        "duplicate_footprints": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "extra_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "footprint_filters_mismatch": "schematic-parity check; per-board PCBs are not linked to the multi-sheet schematic, so DRC runs without --schematic-parity and the source-pad audit replaces it",
+        "footprint_symbol_field_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "footprint_symbol_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "generic_warning": "KiCad's catch-all warning class; any instance is listed in report.json and reviewed",
+        "missing_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "missing_tuning_profile": "no length-tuned nets and no tuning profiles on this board",
+        "net_conflict": "schematic-parity check, not run (see footprint_filters_mismatch)",
+        "silk_over_copper": "legend only: the fab clips legend over exposed copper; the vendored PEC11R outline (tools/make_footprints.py) crosses its own A/C/B pads",
+        "silk_overlap": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json",
+        "tuning_profile_track_geometries": "no length-tuned nets and no tuning profiles on this board"
+      }
+    },
+    "kicad_version": "10.0.7",
+    "coordinate_units": "mm",
+    "passed": true
+  },
+  "audits": {
+    "domain": {
+      "domains": [
+        "ENC"
+      ],
+      "domain_refs": [
+        "ENC301",
+        "ENC302"
+      ],
+      "missing": [],
+      "foreign": [],
+      "passed": true
+    },
+    "source_pad": [
+      {
+        "instance": "ENCM",
+        "errors": [],
+        "passed": true
+      },
+      {
+        "instance": "ENCV",
+        "errors": [],
+        "passed": true
+      }
+    ],
+    "boundary": [
+      {
+        "instance": "ENCM",
+        "status": "provisional: header ref pending GR-3",
+        "nets": [
+          {
+            "net": "ENC_A",
+            "graph_net": "E3_ENC1_A_RAW",
+            "board_pads": [
+              "ENC.A",
+              "J1.2"
+            ],
+            "external_refs": 3,
+            "external_sample": [
+              "R351",
+              "R352",
+              "U312"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "ENC_B",
+            "graph_net": "E3_ENC1_B_RAW",
+            "board_pads": [
+              "ENC.B",
+              "J1.3"
+            ],
+            "external_refs": 3,
+            "external_sample": [
+              "R353",
+              "R354",
+              "U312"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "ENC_SW",
+            "graph_net": "E3_ENC1_PRESS_EXT",
+            "board_pads": [
+              "J1.4"
+            ],
+            "external_refs": 2,
+            "external_sample": [
+              "R348",
+              "U311"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "GND",
+            "graph_net": "GND",
+            "board_pads": [
+              "ENC.C",
+              "J1.1"
+            ],
+            "external_refs": 475,
+            "external_sample": [
+              "A401",
+              "A402",
+              "A403",
+              "A404",
+              "A405",
+              "A406"
+            ],
+            "status": "provisional"
+          }
+        ],
+        "hosted_contacts": [
+          {
+            "contact": "SW308",
+            "host": "ENC301",
+            "nets_not_on_host_pads": [
+              "E3_ENC1_PRESS_EXT"
+            ]
+          }
+        ]
+      },
+      {
+        "instance": "ENCV",
+        "status": "provisional: header ref pending GR-3",
+        "nets": [
+          {
+            "net": "ENC_A",
+            "graph_net": "E3_ENC2_A_RAW",
+            "board_pads": [
+              "ENC.A",
+              "J1.2"
+            ],
+            "external_refs": 3,
+            "external_sample": [
+              "R355",
+              "R356",
+              "U312"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "ENC_B",
+            "graph_net": "E3_ENC2_B_RAW",
+            "board_pads": [
+              "ENC.B",
+              "J1.3"
+            ],
+            "external_refs": 3,
+            "external_sample": [
+              "R357",
+              "R358",
+              "U312"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "ENC_SW",
+            "graph_net": "E3_ENC2_PRESS_EXT",
+            "board_pads": [
+              "J1.4"
+            ],
+            "external_refs": 2,
+            "external_sample": [
+              "R350",
+              "U311"
+            ],
+            "status": "provisional"
+          },
+          {
+            "net": "GND",
+            "graph_net": "GND",
+            "board_pads": [
+              "ENC.C",
+              "J1.1"
+            ],
+            "external_refs": 475,
+            "external_sample": [
+              "A401",
+              "A402",
+              "A403",
+              "A404",
+              "A405",
+              "A406"
+            ],
+            "status": "provisional"
+          }
+        ],
+        "hosted_contacts": [
+          {
+            "contact": "SW309",
+            "host": "ENC302",
+            "nets_not_on_host_pads": [
+              "E3_ENC2_PRESS_EXT"
+            ]
+          }
+        ]
+      }
+    ],
+    "keepout": {
+      "rows": [
+        {
+          "hole": "H1",
+          "ref": "ENC",
+          "keepout_radius": 3.0,
+          "pad_distance": 5.5227,
+          "courtyard_distance": 1.4921,
+          "body_distance": 3.5146,
+          "courtyard_intrudes": true,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H1",
+          "ref": "J1",
+          "keepout_radius": 3.0,
+          "pad_distance": 5.3255,
+          "courtyard_distance": 4.475,
+          "body_distance": 4.95,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "ENC",
+          "keepout_radius": 3.0,
+          "pad_distance": 5.5902,
+          "courtyard_distance": 1.6435,
+          "body_distance": 3.5146,
+          "courtyard_intrudes": true,
+          "body_intrudes": false
+        },
+        {
+          "hole": "H2",
+          "ref": "J1",
+          "keepout_radius": 3.0,
+          "pad_distance": 18.8431,
+          "courtyard_distance": 17.7968,
+          "body_distance": 18.3791,
+          "courtyard_intrudes": false,
+          "body_intrudes": false
+        }
+      ],
+      "errors": [],
+      "passed": true,
+      "note": "Keepout = copper rule area (tracks, vias, fills) on the listed layers. A courtyard box intrusion is reported, not failed, when pads and the F.Fab body clear the keepout."
+    },
+    "annular": {
+      "floor_mm": 0.18,
+      "below_floor": [],
+      "passed": true
+    },
+    "locked": {
+      "scripted_segments": 2,
+      "locked_on_board": 2,
+      "kept": true,
+      "note": "SES import before/after counts and the DSN probe are in route-log.json"
+    }
+  },
+  "router": {
+    "name": "Freerouting",
+    "version": "2.5.0",
+    "licence": "GPL-3.0",
+    "url": "https://github.com/freerouting/freerouting/releases/download/v2.5.0/freerouting-2.5.0.jar",
+    "sha256": "f6f51bb02245e8e717f9359bd260cc9c5c0b1bc0acc8b7cb2cd5b8ffeb5de3c7",
+    "main_class": "app.freerouting.cli.FreeroutingCli",
+    "runtime": "Eclipse Temurin JRE 25.0.5+8 (sha256 6fac98f0c8202efc3135a9e9e42aa61963ec42d1c5cbb40caf231e7b14a24ef6)",
+    "max_passes": 20,
+    "threads": 1,
+    "job_timeout": "00:05:00",
+    "fetch": "CI only, never committed or uploaded"
+  },
+  "heights": [
+    {
+      "region": "board",
+      "max_height_mm_from_contract": "max_component_height",
+      "checked": false,
+      "why": "footprints carry no body heights; the enclosure height check belongs to the mechanical model (fit-report)"
+    }
+  ],
+  "does_not_prove": [
+    "that the schematic is right",
+    "current capacity or temperature rise beyond the chosen class widths",
+    "impedance, RF loss or isolation, EMC or signal integrity",
+    "creepage beyond the encoded clearances",
+    "that the enclosure fits (only outline and hole checks; heights are not checked here)",
+    "that the fab's DFM accepts the board, or that CPL rotations are right",
+    "that the land patterns match the purchased MPNs",
+    "any function: hardware and bench gates stay OPEN"
+  ]
+}

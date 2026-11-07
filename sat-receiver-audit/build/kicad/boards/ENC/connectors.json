@@ -1,0 +1,166 @@
+{
+  "schema": "srrx-board-connectors-v1",
+  "board_id": "ENC",
+  "status": "PILOT_NOT_FOR_FABRICATION",
+  "coordinates": "board mm: contract outline origin, y up, top view; enclosure_xy = contract placement origin + board xy (outline axes parallel to the enclosure, as mechanical/srrx_mech/cad.py:171)",
+  "instances": [
+    {
+      "instance": "ENCM",
+      "placement": "main",
+      "board_origin_enclosure_mm": [
+        188.5,
+        123.0
+      ],
+      "z_bottom": 54.3,
+      "facing": "+z",
+      "connectors": [
+        {
+          "template_ref": "J1",
+          "ref": null,
+          "kind": "pilot_placeholder",
+          "footprint": "Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            2.25,
+            9.0
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                2.25,
+                9.0
+              ],
+              "enclosure_xy": [
+                190.75,
+                132.0
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E3_ENC1_A_RAW",
+              "at": [
+                2.25,
+                11.0
+              ],
+              "enclosure_xy": [
+                190.75,
+                134.0
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "E3_ENC1_B_RAW",
+              "at": [
+                2.25,
+                13.0
+              ],
+              "enclosure_xy": [
+                190.75,
+                136.0
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "E3_ENC1_PRESS_EXT",
+              "at": [
+                2.25,
+                15.0
+              ],
+              "enclosure_xy": [
+                190.75,
+                138.0
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            190.75,
+            132.0
+          ],
+          "replaced_by": "GR-3 ENC-side header ref (graph), then PCB-SB1"
+        }
+      ]
+    },
+    {
+      "instance": "ENCV",
+      "placement": "volume",
+      "board_origin_enclosure_mm": [
+        188.5,
+        82.0
+      ],
+      "z_bottom": 54.3,
+      "facing": "+z",
+      "connectors": [
+        {
+          "template_ref": "J1",
+          "ref": null,
+          "kind": "pilot_placeholder",
+          "footprint": "Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical",
+          "side": "F",
+          "rotation": 180.0,
+          "at": [
+            2.25,
+            9.0
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                2.25,
+                9.0
+              ],
+              "enclosure_xy": [
+                190.75,
+                91.0
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "E3_ENC2_A_RAW",
+              "at": [
+                2.25,
+                11.0
+              ],
+              "enclosure_xy": [
+                190.75,
+                93.0
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "E3_ENC2_B_RAW",
+              "at": [
+                2.25,
+                13.0
+              ],
+              "enclosure_xy": [
+                190.75,
+                95.0
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "E3_ENC2_PRESS_EXT",
+              "at": [
+                2.25,
+                15.0
+              ],
+              "enclosure_xy": [
+                190.75,
+                97.0
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            190.75,
+            91.0
+          ],
+          "replaced_by": "GR-3 ENC-side header ref (graph), then PCB-SB1"
+        }
+      ]
+    }
+  ]
+}

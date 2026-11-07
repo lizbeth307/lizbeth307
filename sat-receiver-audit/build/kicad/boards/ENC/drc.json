@@ -1,0 +1,177 @@
+{
+  "$schema": "https://schemas.kicad.org/drc.v1.json",
+  "coordinate_units": "mm",
+  "ignored_checks": [],
+  "included_severities": [
+    "error",
+    "warning",
+    "exclusion"
+  ],
+  "kicad_version": "10.0.7",
+  "schematic_parity": [],
+  "unconnected_items": [],
+  "violations": [
+    {
+      "description": "Silkscreen clipped by solder mask",
+      "items": [
+        {
+          "description": "Rectangle of ENC on F.Silkscreen",
+          "pos": {
+            "x": 105.64,
+            "y": 118.81
+          },
+          "uuid": "641b0eea-d48b-4457-b5d4-c6069f6ca482"
+        },
+        {
+          "description": "PTH pad A [ENC_A] of ENC",
+          "pos": {
+            "x": 109.5,
+            "y": 119.5
+          },
+          "uuid": "016711b4-cdce-4fca-9674-348590e37311"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_over_copper"
+    },
+    {
+      "description": "Silkscreen clipped by solder mask",
+      "items": [
+        {
+          "description": "Rectangle of ENC on F.Silkscreen",
+          "pos": {
+            "x": 105.64,
+            "y": 118.81
+          },
+          "uuid": "641b0eea-d48b-4457-b5d4-c6069f6ca482"
+        },
+        {
+          "description": "PTH pad B [ENC_B] of ENC",
+          "pos": {
+            "x": 114.5,
+            "y": 119.5
+          },
+          "uuid": "d2e964d9-05eb-4d98-9cd9-e7fc54aedc87"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_over_copper"
+    },
+    {
+      "description": "Silkscreen clipped by solder mask",
+      "items": [
+        {
+          "description": "Rectangle of ENC on F.Silkscreen",
+          "pos": {
+            "x": 105.64,
+            "y": 118.81
+          },
+          "uuid": "641b0eea-d48b-4457-b5d4-c6069f6ca482"
+        },
+        {
+          "description": "PTH pad C [GND] of ENC",
+          "pos": {
+            "x": 112.0,
+            "y": 119.5
+          },
+          "uuid": "edc03828-7bb1-46c0-8906-f299eb71bdc8"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_over_copper"
+    },
+    {
+      "description": "Silkscreen clipped by solder mask",
+      "items": [
+        {
+          "description": "Rectangle of ENC on F.Silkscreen",
+          "pos": {
+            "x": 105.64,
+            "y": 118.81
+          },
+          "uuid": "641b0eea-d48b-4457-b5d4-c6069f6ca482"
+        },
+        {
+          "description": "PTH pad MP [<no net>] of ENC",
+          "pos": {
+            "x": 106.3,
+            "y": 112.0
+          },
+          "uuid": "6ed5ddaf-c36d-4051-812b-eccbe054961d"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_over_copper"
+    },
+    {
+      "description": "Silkscreen clipped by solder mask",
+      "items": [
+        {
+          "description": "Rectangle of ENC on F.Silkscreen",
+          "pos": {
+            "x": 105.64,
+            "y": 118.81
+          },
+          "uuid": "641b0eea-d48b-4457-b5d4-c6069f6ca482"
+        },
+        {
+          "description": "PTH pad MP [<no net>] of ENC",
+          "pos": {
+            "x": 117.7,
+            "y": 112.0
+          },
+          "uuid": "4261cbdf-49da-4f68-acdd-b66e7ea166a2"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_over_copper"
+    },
+    {
+      "description": "Silkscreen clipped by solder mask",
+      "items": [
+        {
+          "description": "Rectangle of ENC on F.Silkscreen",
+          "pos": {
+            "x": 105.64,
+            "y": 118.81
+          },
+          "uuid": "641b0eea-d48b-4457-b5d4-c6069f6ca482"
+        },
+        {
+          "description": "PTH pad S1 [<no net>] of ENC",
+          "pos": {
+            "x": 109.5,
+            "y": 105.0
+          },
+          "uuid": "99d6df5c-2ac2-487f-b33a-2322543f1b2b"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_over_copper"
+    },
+    {
+      "description": "Silkscreen clipped by solder mask",
+      "items": [
+        {
+          "description": "Rectangle of ENC on F.Silkscreen",
+          "pos": {
+            "x": 105.64,
+            "y": 118.81
+          },
+          "uuid": "641b0eea-d48b-4457-b5d4-c6069f6ca482"
+        },
+        {
+          "description": "PTH pad S2 [<no net>] of ENC",
+          "pos": {
+            "x": 114.5,
+            "y": 105.0
+          },
+          "uuid": "4f948bc9-aaa6-4d66-b973-1652e579105d"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_over_copper"
+    }
+  ],
+  "source": "see report.json board_file"
+}
