@@ -4881,7 +4881,7 @@
     "lcsc": "C88373",
     "digikey": "H11891CT-ND"
    },
-   "single_source": "Hirose U.FL-R-SMT-1 — єдина розетка U.FL з офіційним футпринтом KiCad 10.0.7 (Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical); розетка I-PEX MHF I потребує власного прочитаного land pattern",
+   "single_source": "Hirose U.FL-R-SMT-1 стикується з вилкою Hirose U.FL пігтейла CAB.718 (BOM HRS.UFL.PLUG.AH) за прочитаними кресленням і каталогом Hirose; офіційний футпринт KiCad 10.0.7 Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical. Molex MCRF 73412-0110 теж має офіційний футпринт KiCad 10.0.7, але даних Molex не прочитано (не обрано); розетка I-PEX MHF I потребує власного прочитаного land pattern",
    "note": "Розетка з боку RF-плати для панельних пігтейлів (W2 GR-2): P2 J423, P3 J424, P6 J425, P8 J427. Креслення HRS CL331-0472-2-10: CENTER CONTACT 1 × 1.05, OUTER CONTACT 2 × (1 × 2.2), корпус 3 × 2.6, висота 1.25 ±0.2 мм; каталог U.FL (серпень 2025): 50 Ω, 0–8 ГГц, контактний опір центр 20 mΩ max, зовнішній 10 mΩ max, 30 циклів з'єднання. Номінального струму Hirose не публікує (каталог pp.1–34), тож DC через J423/J424/J427 (ліміти 0.339/0.339/0.192 A) — розрахунок і ворота E4-07 (OPEN): на 0.339 A контакти розсіюють ≈3.4 mW (модель). Знімки 2026-11-07-w2-reads-rf-*.json.",
    "refs": [
     "J423",

@@ -21,8 +21,8 @@
       "bytes": 163908
     },
     "design/E4.json": {
-      "sha256": "590eb7a5942d2dbe11015d67a63218b81af02a7540ac2c3c419ea90626d7f9ad",
-      "bytes": 222566
+      "sha256": "af71c452f6835c0d7ad043eaee21cfb17eb525a8ea39aa8aa9b4efa892afc29b",
+      "bytes": 224405
     },
     "design/E5.json": {
       "sha256": "73e901d907a54e8adb05a6750f6f5ee47d9ad22f2b5c4b26575277175e545e79",
@@ -6877,7 +6877,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven. Not covered (W2 GR-2 review): the direct P8 port (ch4) has no DC-window detector and no blocking element. With the P8 accessory off-board, panel J408 → U.FL J427 sits on E4_RF_CH4, the RF_DC node of TCBT A424, whose DC port BIAS_CH4 runs through E2 L209 and shunt R246 to TPS2553 U209 OUT (E2_LNA4_SW; OUT abs max −0.3…7 V, TI TPS255xx Rev. G §6.1, https://www.ti.com/lit/ds/symlink/tps2553.pdf, read 2026-11-07) and the INA3221 U216 channel-1 inputs: foreign DC on P8 reaches that protected E2 node, and own ch4 bias reaches whatever is plugged into P8.",
           "blocking": true
         },
         {
@@ -6978,7 +6978,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven. Not covered (W2 GR-2 review): the direct P8 port (ch4) has no DC-window detector and no blocking element. With the P8 accessory off-board, panel J408 → U.FL J427 sits on E4_RF_CH4, the RF_DC node of TCBT A424, whose DC port BIAS_CH4 runs through E2 L209 and shunt R246 to TPS2553 U209 OUT (E2_LNA4_SW; OUT abs max −0.3…7 V, TI TPS255xx Rev. G §6.1, https://www.ti.com/lit/ds/symlink/tps2553.pdf, read 2026-11-07) and the INA3221 U216 channel-1 inputs: foreign DC on P8 reaches that protected E2 node, and own ch4 bias reaches whatever is plugged into P8.",
           "blocking": true
         },
         {
@@ -7538,7 +7538,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven. Not covered (W2 GR-2 review): the direct P8 port (ch4) has no DC-window detector and no blocking element. With the P8 accessory off-board, panel J408 → U.FL J427 sits on E4_RF_CH4, the RF_DC node of TCBT A424, whose DC port BIAS_CH4 runs through E2 L209 and shunt R246 to TPS2553 U209 OUT (E2_LNA4_SW; OUT abs max −0.3…7 V, TI TPS255xx Rev. G §6.1, https://www.ti.com/lit/ds/symlink/tps2553.pdf, read 2026-11-07) and the INA3221 U216 channel-1 inputs: foreign DC on P8 reaches that protected E2 node, and own ch4 bias reaches whatever is plugged into P8.",
           "blocking": true
         },
         {
@@ -7639,7 +7639,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven. Not covered (W2 GR-2 review): the direct P8 port (ch4) has no DC-window detector and no blocking element. With the P8 accessory off-board, panel J408 → U.FL J427 sits on E4_RF_CH4, the RF_DC node of TCBT A424, whose DC port BIAS_CH4 runs through E2 L209 and shunt R246 to TPS2553 U209 OUT (E2_LNA4_SW; OUT abs max −0.3…7 V, TI TPS255xx Rev. G §6.1, https://www.ti.com/lit/ds/symlink/tps2553.pdf, read 2026-11-07) and the INA3221 U216 channel-1 inputs: foreign DC on P8 reaches that protected E2 node, and own ch4 bias reaches whatever is plugged into P8.",
           "blocking": true
         },
         {
@@ -7903,7 +7903,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven. Not covered (W2 GR-2 review): the direct P8 port (ch4) has no DC-window detector and no blocking element. With the P8 accessory off-board, panel J408 → U.FL J427 sits on E4_RF_CH4, the RF_DC node of TCBT A424, whose DC port BIAS_CH4 runs through E2 L209 and shunt R246 to TPS2553 U209 OUT (E2_LNA4_SW; OUT abs max −0.3…7 V, TI TPS255xx Rev. G §6.1, https://www.ti.com/lit/ds/symlink/tps2553.pdf, read 2026-11-07) and the INA3221 U216 channel-1 inputs: foreign DC on P8 reaches that protected E2 node, and own ch4 bias reaches whatever is plugged into P8.",
           "blocking": true
         },
         {
@@ -8112,7 +8112,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven. Not covered (W2 GR-2 review): the direct P8 port (ch4) has no DC-window detector and no blocking element. With the P8 accessory off-board, panel J408 → U.FL J427 sits on E4_RF_CH4, the RF_DC node of TCBT A424, whose DC port BIAS_CH4 runs through E2 L209 and shunt R246 to TPS2553 U209 OUT (E2_LNA4_SW; OUT abs max −0.3…7 V, TI TPS255xx Rev. G §6.1, https://www.ti.com/lit/ds/symlink/tps2553.pdf, read 2026-11-07) and the INA3221 U216 channel-1 inputs: foreign DC on P8 reaches that protected E2 node, and own ch4 bias reaches whatever is plugged into P8.",
           "blocking": true
         },
         {
@@ -8321,7 +8321,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven. Not covered (W2 GR-2 review): the direct P8 port (ch4) has no DC-window detector and no blocking element. With the P8 accessory off-board, panel J408 → U.FL J427 sits on E4_RF_CH4, the RF_DC node of TCBT A424, whose DC port BIAS_CH4 runs through E2 L209 and shunt R246 to TPS2553 U209 OUT (E2_LNA4_SW; OUT abs max −0.3…7 V, TI TPS255xx Rev. G §6.1, https://www.ti.com/lit/ds/symlink/tps2553.pdf, read 2026-11-07) and the INA3221 U216 channel-1 inputs: foreign DC on P8 reaches that protected E2 node, and own ch4 bias reaches whatever is plugged into P8.",
           "blocking": true
         },
         {
@@ -8530,7 +8530,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven. Not covered (W2 GR-2 review): the direct P8 port (ch4) has no DC-window detector and no blocking element. With the P8 accessory off-board, panel J408 → U.FL J427 sits on E4_RF_CH4, the RF_DC node of TCBT A424, whose DC port BIAS_CH4 runs through E2 L209 and shunt R246 to TPS2553 U209 OUT (E2_LNA4_SW; OUT abs max −0.3…7 V, TI TPS255xx Rev. G §6.1, https://www.ti.com/lit/ds/symlink/tps2553.pdf, read 2026-11-07) and the INA3221 U216 channel-1 inputs: foreign DC on P8 reaches that protected E2 node, and own ch4 bias reaches whatever is plugged into P8.",
           "blocking": true
         },
         {
@@ -8665,7 +8665,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven. Not covered (W2 GR-2 review): the direct P8 port (ch4) has no DC-window detector and no blocking element. With the P8 accessory off-board, panel J408 → U.FL J427 sits on E4_RF_CH4, the RF_DC node of TCBT A424, whose DC port BIAS_CH4 runs through E2 L209 and shunt R246 to TPS2553 U209 OUT (E2_LNA4_SW; OUT abs max −0.3…7 V, TI TPS255xx Rev. G §6.1, https://www.ti.com/lit/ds/symlink/tps2553.pdf, read 2026-11-07) and the INA3221 U216 channel-1 inputs: foreign DC on P8 reaches that protected E2 node, and own ch4 bias reaches whatever is plugged into P8.",
           "blocking": true
         },
         {
@@ -8787,7 +8787,7 @@
         },
         {
           "id": "E4-06",
-          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
+          "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven. Not covered (W2 GR-2 review): the direct P8 port (ch4) has no DC-window detector and no blocking element. With the P8 accessory off-board, panel J408 → U.FL J427 sits on E4_RF_CH4, the RF_DC node of TCBT A424, whose DC port BIAS_CH4 runs through E2 L209 and shunt R246 to TPS2553 U209 OUT (E2_LNA4_SW; OUT abs max −0.3…7 V, TI TPS255xx Rev. G §6.1, https://www.ti.com/lit/ds/symlink/tps2553.pdf, read 2026-11-07) and the INA3221 U216 channel-1 inputs: foreign DC on P8 reaches that protected E2 node, and own ch4 bias reaches whatever is plugged into P8.",
           "blocking": true
         },
         {
@@ -19080,7 +19080,8 @@
       "source_description": "Board-side coax receptacle on the RF board top edge; CENTER/SHIELD are the renamed pads of the derived footprint (CENTER = pad 1, SHIELD = both pads 2).",
       "source_notes": [
         "Mates the U.FL plug of the J408 panel pigtail (Taoglas CAB.718). P8 is a direct port (AREA decision, pcb/partition-spec.json p8): the Flamingo+ #2 / LNA V2 accessory A403/A404 sits outside between antenna and P8 and gets the ch4 bias over the coax.",
-        "Carries the ch4 bias (TCBT-2R5G+ A424, TPS2553 limit 0.192 A max) outward; no U.FL current rating is published (E4-07). Receive-only: the port supplies only LNA bias."
+        "Carries the ch4 bias (TCBT-2R5G+ A424, TPS2553 limit 0.192 A max) outward; no U.FL current rating is published (E4-07). Receive-only: the port supplies only LNA bias.",
+        "No DC-window detector and no E4-06 blocking element on ch4: foreign DC at P8 reaches TPS2553 U209 OUT (abs max −0.3…7 V) through A424 and E2 L209/R246. A ch4 element or detector is an owner/E2 decision (E4-06 OPEN)."
       ],
       "coverage_constraints": [
         "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
