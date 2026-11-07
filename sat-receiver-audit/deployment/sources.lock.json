@@ -994,10 +994,11 @@
       "ref": "22593781b5fc922aa7064c8665d40ef8b3f98ddb",
       "commit": "22593781b5fc922aa7064c8665d40ef8b3f98ddb",
       "ref_verified": true,
-      "recipe": "deployment/recipes/gpredict: v2.7 release tarball, autotools without libgps and hamlib, lab patches (rotctld_socket_rw, no network TLE/transponder updates, RX only radios)",
+      "recipe": "deployment/recipes/gpredict: v2.7 release tarball, autotools without libgps and hamlib, lab patches (rotctld_socket_rw, no network TLE/transponder updates, RX only radios, no TLE import from local files)",
       "release_blockers": [
         "reviewed +lab build (the CI build record is CI_BUILT_UNREVIEWED)",
-        "device rows: Doppler loop to the SDR++ rigctl_server and the Expert-GUI session on the Q6A"
+        "binary archive hash of the reviewed deb: the CI deb gpredict_2.7+lab1_arm64.deb (sha256 92715e16920aa010e2166a2c1e83d8cb52dfba5722a35142f8d8ce695cf48ce0, 4522920 bytes, reproducible in two builds; sr-rx-packages run 42417292582 on a0a8197d, 2026-11-07) is CI_BUILT_UNREVIEWED, not a release hash",
+        "device rows: Doppler loop to the SDR++ rigctl_server, the Expert-GUI session on the Q6A and the bridge writing /var/lib/srrx-ui/.config/Gpredict before Gpredict starts"
       ],
       "source_archive_sha256": "1d58b0fc4f13173cde6f64277a8b2e36e84cf0f2a27d8b8d0e48b76780b1236c",
       "source_cache_path": "sources/gpredict.tar.bz2",
