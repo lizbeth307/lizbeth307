@@ -414,7 +414,7 @@ cmake -S . -B build -G Ninja -DPLUGINS_ALL=OFF -DCMAKE_INSTALL_PREFIX=/usr -DCMA
 
 | клас | дозволено |
 |---|---|
-| channelrx | chanalyzer (лише GUI), channelpower, demodam, demodbfm, demodwfm, demodnfm, demodssb, demodnavtex, demodrtty, demodft8, demodpacket (лише APRS), radioclock, radioastronomy, freqtracker, demodvor, demodils, noisefigure (лише Bench); demodnavtex, demodrtty і demodpacket — лише в sdrangelsrv (патч збирає їх тільки в режимі сервера) |
+| channelrx | chanalyzer (лише GUI), channelpower, demodam, demodbfm, demodwfm, demodnfm, demodssb, demodnavtex, demodrtty, demodft8, demodpacket (лише APRS; з cherry-pick 6ddd5bd — PR #2901 upstream, без якого плагін не завантажується), radioclock, radioastronomy, freqtracker, demodvor, demodils, noisefigure (лише Bench); demodnavtex, demodrtty і demodpacket — лише в sdrangelsrv (патч збирає їх тільки в режимі сервера) |
 | samplesource | rtlsdr (проти `librtlsdr2` +lab, що відхиляє ввімкнення зміщення GPIO0), airspyhf, soapysdrinput (лише з пропатченим модулем LimeSuiteNG; оренда не передає `--soapy`, доки Lime вимкнено), fileinput, testsource; sigmffileinput дозволено, але не зібрано: libsigmf 1.0.2-2 у noble — лише заголовки без `libsigmf/sigmf_sdrangel_generated.h`, якого вимагає `FindLibSigMF.cmake` |
 | feature | freqdisplay, antennatools, demodanalyzer; дозволені satellitetracker (немає libsgp4), startracker (немає cspice), morsedecoder (немає ggmorse) і denoiser (немає rnnoise) не зібрано — цих бібліотек у знімку noble 20261020T000000Z немає; skymap не зібрано (потребує QtWebEngine і віддалених оглядів неба) |
 
