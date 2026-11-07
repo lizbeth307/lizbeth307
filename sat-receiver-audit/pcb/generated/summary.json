@@ -45,7 +45,7 @@
   "core_proposed_footprints": 0,
   "blocking_issue_records": 38,
   "blocking_issue_types": {
-    "interface_mounting_unresolved": 27,
-    "physical_interface_or_rework_unresolved": 11
+    "interface_mounting_unresolved": 28,
+    "physical_interface_or_rework_unresolved": 10
   }
 }

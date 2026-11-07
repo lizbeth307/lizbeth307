@@ -14,11 +14,11 @@
     },
     {
       "file": "design/E4.json",
-      "sha256": "a8c0ab0e6d9bbf4cbd1eb08175a34ec11fc8351b88a900570361a3f916f4142f"
+      "sha256": "a003bedb98bfacbf1863ebc4bfc88eb8e10643d450820b399a668b4e65e1584d"
     },
     {
       "file": "design/E5.json",
-      "sha256": "a1af787e01694729e34bc1e9f0b854402f53bd20d93a784d9421f63a2f820703"
+      "sha256": "48c61fa1a77ab35e5d930f377ac2ef473abdd8f6e02da8417e352f168ce562e5"
     },
     {
       "file": "build/kicad/footprints/manifest.json",
@@ -26,7 +26,7 @@
     },
     {
       "file": "verification/netlist.xml",
-      "sha256": "3d09dee61fc041157bc541f9a95c96368f71c789cec0499c0f956429ae820a00"
+      "sha256": "b2ea596af870594b8aa8f79f18e2f3e567265308a3946cc80efefe3e91e3b4ca"
     }
   ],
   "source_documents": [
@@ -135,6 +135,6 @@
       "interface_open",
       "interface_resolved"
     ],
-    "projection_sha256": "69a5c44fcde996d7d3879a0c61ae0543b37ea06c6cf0339ba96727344bd264b7"
+    "projection_sha256": "b4529dc616f3ea175b2bc8a0104fb4d53a4cf72b4c251a4cf867d733758999c5"
   }
 }

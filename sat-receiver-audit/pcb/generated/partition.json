@@ -46,8 +46,8 @@
     "core_proposed_footprints": 0,
     "blocking_issue_records": 38,
     "blocking_issue_types": {
-      "interface_mounting_unresolved": 27,
-      "physical_interface_or_rework_unresolved": 11
+      "interface_mounting_unresolved": 28,
+      "physical_interface_or_rework_unresolved": 10
     }
   },
   "provenance": {
@@ -66,11 +66,11 @@
       },
       {
         "file": "design/E4.json",
-        "sha256": "a8c0ab0e6d9bbf4cbd1eb08175a34ec11fc8351b88a900570361a3f916f4142f"
+        "sha256": "a003bedb98bfacbf1863ebc4bfc88eb8e10643d450820b399a668b4e65e1584d"
       },
       {
         "file": "design/E5.json",
-        "sha256": "a1af787e01694729e34bc1e9f0b854402f53bd20d93a784d9421f63a2f820703"
+        "sha256": "48c61fa1a77ab35e5d930f377ac2ef473abdd8f6e02da8417e352f168ce562e5"
       },
       {
         "file": "build/kicad/footprints/manifest.json",
@@ -78,7 +78,7 @@
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "3d09dee61fc041157bc541f9a95c96368f71c789cec0499c0f956429ae820a00"
+        "sha256": "b2ea596af870594b8aa8f79f18e2f3e567265308a3946cc80efefe3e91e3b4ca"
       }
     ],
     "source_documents": [
@@ -187,7 +187,7 @@
         "interface_open",
         "interface_resolved"
       ],
-      "projection_sha256": "69a5c44fcde996d7d3879a0c61ae0543b37ea06c6cf0339ba96727344bd264b7"
+      "projection_sha256": "b4529dc616f3ea175b2bc8a0104fb4d53a4cf72b4c251a4cf867d733758999c5"
     }
   },
   "boards": {
@@ -13851,7 +13851,7 @@
       "ref": "J102",
       "type": "physical_interface_or_rework_unresolved",
       "blocking": true,
-      "detail": "Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately. Parts database: DNP / лише сервіс до закриття E1-02; деталь не обрано."
+      "detail": "Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately. Parts database: DNP (E1.json J102 dnp, примітки E1 J102): зовнішній балансний кабель не монтують і не підключають до закриття воріт E1-02, тож MPN не обирають; тип і порядок відводів комірок перевіряються на отриманому паку (E1 J102), відповідну розетку обирають за паком лише після E1-02."
     },
     {
       "ref": "J103",
@@ -13899,7 +13899,7 @@
       "ref": "J303",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Відповідна частина — вилка 1.25 мм на виводах BT301 (Electrokit 41036512, рядок 85 10-bom, не перечитано); кріплення батареї й укладання дроту не задано."
+      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Відповідна частина — 2-контактна вилка 1.25 мм на виводі 50 мм батареї BT301 (Electrokit 41036512, прочитано 07.11.2026, знімок 2026-11-07-w2-src1-manual.json web:electrokit-41036512; кріплення — власна клейка стрічка батареї). Відкрито: полярність вилки (сторінка її не дає; на Q6A J11 контакт 1 — GND, E3 J303) звірити до вставлення; місце батареї в межах 50 мм від J11 — механічний пакет."
     },
     {
       "ref": "J401",
@@ -13971,19 +13971,19 @@
       "ref": "J416",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-ANTENNA-ASSEMBLY (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Вхід зовнішнього вузла A418/A419: роз’єм антенного кабелю й кріплення вузла біля антени — антенний пакет (build/06); окремо не купується."
+      "detail": "Parts database entry J-ANTENNA-ASSEMBLY (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Вхід зовнішнього вузла A418/A419 — антенний пакет (build/06), окремо не купується. J416 — вхід ANT Uputronics 440 під провід основи 60 см RG174 із SMA-вилкою (build/06 §2.3, набір #1); стать роз’ємів HAB-FPA440 не прочитано (store.uputronics.com 07.11.2026 — 429, знімок 2026-11-07-w2-src1-manual.json web:uputronics-hab-fpa440), тож MPN перемички SMA M-F або кронштейна біля P2 (build/06 §2.3, §7.1) не обрано. J417 — вхід профільної L-band антени чи LNA A419 (SAWbird+ GOES 100792 або активний патч): стать роз’єму записати на прибутті (build/06 §2.4)."
     },
     {
       "ref": "J417",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-ANTENNA-ASSEMBLY (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Вхід зовнішнього вузла A418/A419: роз’єм антенного кабелю й кріплення вузла біля антени — антенний пакет (build/06); окремо не купується."
+      "detail": "Parts database entry J-ANTENNA-ASSEMBLY (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Вхід зовнішнього вузла A418/A419 — антенний пакет (build/06), окремо не купується. J416 — вхід ANT Uputronics 440 під провід основи 60 см RG174 із SMA-вилкою (build/06 §2.3, набір #1); стать роз’ємів HAB-FPA440 не прочитано (store.uputronics.com 07.11.2026 — 429, знімок 2026-11-07-w2-src1-manual.json web:uputronics-hab-fpa440), тож MPN перемички SMA M-F або кронштейна біля P2 (build/06 §2.3, §7.1) не обрано. J417 — вхід профільної L-band антени чи LNA A419 (SAWbird+ GOES 100792 або активний патч): стать роз’єму записати на прибутті (build/06 §2.4)."
     },
     {
       "ref": "J422",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-EXISTING-HELIX (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: SMA наявного опромінювача S-band; кабель W422 обрано, кріплення опромінювача й кабелю — антенний пакет (build/06)."
+      "detail": "Parts database entry J-EXISTING-HELIX (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: SMA-гніздо живлення саморобної спіралі на диску 18 см (build/06 §2.5, §3.2) у build/06 не має MPN; відповідна частина — SMA-вилка W422 (Cinch 415-0029-006, 152.4 мм, запис W-RG316-SMA-MM-0152). Кріплення гнізда на диску й кабелю до вузла pod (креслення P-01/P-02) — антенний і механічний пакети; посадка й герметизація pod — ворота E4-04 (OPEN)."
     },
     {
       "ref": "J521",
@@ -14001,7 +14001,7 @@
       "ref": "J512",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Кабелі USB2 без провідника VBUS до хаба U510 і сенсорного контролера U520 не мають MPN; фіксація штекерів не задана."
+      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Кабелі C-HUB (P3 → CH334F JP5) і C-TOUCH (P2 → сенсорний контролер Wisecoco) — assembly_items AI-USB2-J512: Tensility 10-02333 з вилкою A в J2, відрізаним другим кінцем і відрізаним провідником VBUS (E5 J512). Відкрито: закінчення на JP5 і роз’єм сенсорного порту Wisecoco (не прочитано), фіксація вилок у J2 — механічний пакет."
     },
     {
       "ref": "J501",
@@ -14013,19 +14013,19 @@
       "ref": "J543",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry W-LINDY-36700 (mount harness, MPN 36700) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Кабель з оцінки v2, сторінку продавця не перечитано (06.11.2026 лише заголовок лістингу в пошуку: «Lindy 36700 USB Extension Cable, 0.2m, Anthra Line, USB A 2.0 male / USB A 2.0 female», huss-licht-ton.de; сама сторінка відповіла 403). VBUS_RTLA/VBUS_RTLB надходять від ключів E5, а не з порту Q6A (для J541 провід контакту 1 вилки J5 вилучено): як VBUS виводиться з кабелю на плату — не задано."
+      "detail": "Parts database entry W-LINDY-36700 (mount harness, MPN 36700) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Прочитано 07.11.2026 (lindy.eu, знімок 2026-11-07-w2-src1-manual.json web:lindy-36700): 36700 — подовжувач USB 2.0 A-вилка → A-гніздо 0.2 м, живлення 26 AWG, дані 28 AWG, обплетення Al-Mg 43 %, оболонка ⌀4.4 мм; ціни й складу сторінка не показує (наявність неясна). Відкрито: VBUS_RTLA/VBUS_RTLB надходять від ключів E5, а не з порту (для J541 провід контакту 1 вилки J5 вилучено) — як провідник VBUS кабелю розрізають і під’єднують S20/S21 до A-гнізда, не задано (власник E5 і пакет складання); фіксація A-гнізд біля RTL-A/RTL-B — механічний пакет."
     },
     {
       "ref": "J541",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry W-LINDY-36700 (mount harness, MPN 36700) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Кабель з оцінки v2, сторінку продавця не перечитано (06.11.2026 лише заголовок лістингу в пошуку: «Lindy 36700 USB Extension Cable, 0.2m, Anthra Line, USB A 2.0 male / USB A 2.0 female», huss-licht-ton.de; сама сторінка відповіла 403). VBUS_RTLA/VBUS_RTLB надходять від ключів E5, а не з порту Q6A (для J541 провід контакту 1 вилки J5 вилучено): як VBUS виводиться з кабелю на плату — не задано."
+      "detail": "Parts database entry W-LINDY-36700 (mount harness, MPN 36700) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Прочитано 07.11.2026 (lindy.eu, знімок 2026-11-07-w2-src1-manual.json web:lindy-36700): 36700 — подовжувач USB 2.0 A-вилка → A-гніздо 0.2 м, живлення 26 AWG, дані 28 AWG, обплетення Al-Mg 43 %, оболонка ⌀4.4 мм; ціни й складу сторінка не показує (наявність неясна). Відкрито: VBUS_RTLA/VBUS_RTLB надходять від ключів E5, а не з порту (для J541 провід контакту 1 вилки J5 вилучено) — як провідник VBUS кабелю розрізають і під’єднують S20/S21 до A-гнізда, не задано (власник E5 і пакет складання); фіксація A-гнізд біля RTL-A/RTL-B — механічний пакет."
     },
     {
       "ref": "J544",
-      "type": "physical_interface_or_rework_unresolved",
+      "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately. Parts database: MPN кабелю micro-USB для HF+ не обрано (рядок 19 10-bom називає лише ферити)."
+      "detail": "Parts database entry W-HFP-MICROUSB (mount harness, MPN 10-02333) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Кабель обрано (Tensility 10-02333 з відрізаною вилкою A); відкрито: довжина пігтейла й місце муфт на трасі крізь SL2, розвантаження натягу micro-B біля HF+ (механічний пакет) і з’єднання вільних кінців із S22 і C-HFP (пайка, ізоляція — build/16)."
     },
     {
       "ref": "J520",
@@ -14061,7 +14061,7 @@
       "ref": "J550",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry W-IMU-CABLE (mount harness, MPN SUPERTRONIC-C-PURO 4x0.14 (49655)) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Кабель HELU і ввід LAPP — з оцінки v2, сторінки не перечитано; заробка на боці IMU-пакета й екранування 360° — механічний пакет."
+      "detail": "Parts database entry W-IMU-CABLE (mount harness, MPN SUPERTRONIC-C-PURO 4x0.14 (49655)) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Прочитано 07.11.2026: HELUKABEL 49655 — 4 × 0.14 мм² (≈26 AWG), ⌀4.7 мм, обплетення з лудженої міді ≈85 %, PUR, −40…+90 °C нерухомо (каталог HELUCHAIN, знімок 2026-11-07-w2-src1-manual.json web:helukabel-heluchain-49655); LAPP SKINTOP MS-SC-M 12×1.5 (53112610) — затискання 3.5–7 мм, ≥1.0 мм над обплетенням, IP68, контакт екрана (дані LAPP, web:lapp-db53112610): кабель уміщується у ввід. Відкрито: отвір M12×1.5 і контргайка (серед частин вводу її немає) у стінці Hammond 1550Z101, заробка екрана 360° і кінці на платі носія IMU — механічний пакет; кінець у корпусі SR-RX — GX16 J504 (окремий запис)."
     },
     {
       "ref": "J551",
