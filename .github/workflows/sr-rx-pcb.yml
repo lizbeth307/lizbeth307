@@ -89,15 +89,20 @@ jobs:
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
           kicad-cli version
           python3 --version
+      # Each check runs even when an earlier one failed (if: !cancelled()), so one red step never hides another.
       - name: Net classes and rule files reproduce (pcb/stackup.py --check)
         run: python3 pcb/stackup.py --check
       - name: Every pcb test, with kicad-cli present (python3 -m unittest discover -s pcb/tests)
+        if: ${{ !cancelled() }}
         run: python3 -m unittest discover -s pcb/tests -v
       - name: Partition budget reproduces (pcb/partition_budget.py --check)
+        if: ${{ !cancelled() }}
         run: python3 pcb/partition_budget.py --check
       - name: Independent board reviews are current, no findings (pcb/check_boards.py --all --check)
+        if: ${{ !cancelled() }}
         run: python3 pcb/check_boards.py --all --check
       - name: Nothing above wrote into the tree
+        if: ${{ !cancelled() }}
         run: |
           git status --porcelain --untracked-files=all -- . > "$RUNNER_TEMP/tree-status.txt"
           cat "$RUNNER_TEMP/tree-status.txt"
