@@ -291,6 +291,7 @@ ALLOWED = [
     ("nut.", "angle."),                # bulkhead nut / connector body clamps the Al angle
     ("hdmi_route", "hdmi_plug_ra"), ("hdmi_route", "hdmi_route"), ("hdmi_route", "plate."), ("hdmi_route", "hdmi_board"),
     ("t7_gland_body", "rear"), ("t7_gland_outside", "rear"),
+    ("ntc_panel", "display"), ("ntc_case", "plate."),   # W2 MECH-6: the NTC beads are taped to the panel back and to the plate
 ]
 
 STRUCT = ("plate.", "angle.", "rfbay.")

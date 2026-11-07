@@ -183,12 +183,15 @@ def render(P, report, params_short, boards_contract):
         out += ["## Траси джгутів (модель, generated/harness-routes.json)", "",
                 "Осьова лінія кожного сегмента build/16 крізь модель корпусу (mechanical.json harness_routes): довжина = ламана + запас на вигини "
                 "(половина діаметра джгута × кут) + 2 × 15 мм сервісних петель, округлено вгору до 1 мм. Діаметр джгута — верхня межа за "
-                "кількістю жил build/16 і найбільшою ізоляцією, яку беруть клеми (дріт не обрано, AI-WIRE-PTFE). Кінці на крайових зонах плат "
-                "і біля модулів без конверту — попередні (OPEN), доки немає позицій роз'ємів. MODEL ESTIMATE, не виміряні довжини.", "",
+                "кількістю жил build/16 і найбільшим ⌀ обраного дроту PTFE (номінал + допуск, parts.json hookup_wire_ptfe; переріз без "
+                "прочитаного ⌀ — найбільша ізоляція, яку беруть клеми). Коаксіал W407 — без сервісних петель, із запасом ≥30 мм до довжини "
+                "пігтейла (R-P7-PIGTAIL). Кінці на крайових зонах плат (з назвами роз'ємів графа) і біля модулів без конверту — попередні "
+                "(OPEN), доки немає позицій роз'ємів. MODEL ESTIMATE, не виміряні довжини.", "",
                 f"PPS (R-PPS-LEN): {'+'.join(pb['via_segments'])} = {pb.get('via_segments_mm')} мм проти {_r(pb['limit_mm'])} мм"
                 + (f"; рішення — {pb['decision']}; гілка {pb['branch']} = {pb.get('branch_mm')} мм" if "branch" in pb else "") + ".", "",
                 "| сегмент | тип | довжина, мм | ламана, мм | вигинів | ⌀ джгута, мм | прорізи | стан |", "|---|---|---|---|---|---|---|---|"]
-        for sid, r in list(rt["segments"].items()) + [(f"{k} (гілка)", v) for k, v in rt["branches"].items()]:
+        for sid, r in (list(rt["segments"].items()) + [(f"{k} (гілка)", v) for k, v in rt["branches"].items()]
+                       + [(f"{k} (коаксіал)", v) for k, v in rt.get("coax", {}).items()]):
             out.append(f"| {sid} | {r.get('kind', '')} | {r.get('length_mm') if r.get('length_mm') is not None else '—'} | "
                        f"{_r(r['path_mm']) if 'path_mm' in r else '—'} | {r.get('bends', '—')} | {_r(r['bundle_od_mm']) if 'bundle_od_mm' in r else '—'} | "
                        f"{', '.join(r.get('through', [])) or '—'} | {r['status']} |")

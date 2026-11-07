@@ -11,8 +11,8 @@ Each face has its own (u, v) system as seen from OUTSIDE the enclosure:
 # Hole specifications by connector kind. d = finished hole; 'basis' says where it comes from.
 # shape: round (default) or dflat (a circle d with one flat, 'flat' = width across the flat, flat on the +v side of the face).
 HOLES = {
-    "sma_pigtail": {"d": 6.5, "basis": "fallback only, no port uses it (W2 GR-2 chose CAB.718): Taoglas MHF1-SMA(F) BK waterproof CAB.0243/01028 (READS-RF row), 1/4-36UNS-2A, no D-cut and no panel hole drawn; 6.5 = design choice, 6.35 major + 0.15 clearance (= the Adam Tech washer ID)"},
-    "sma_k": {"d": 6.4, "basis": "Taoglas CAB.011 (P7, W407): D-cut thread, hole and thread length not read (MECH-6, B-06); 1/4-36 clearance (TBD)"},
+    "sma_pigtail": {"d": 6.5, "basis": "Taoglas MHF1-SMA(F) BK waterproof family (READS-RF row; P7 = CAB.01029 W407, W2 MECH-6; CAB.0243/01028 the GR-2 fallbacks), 1/4-36UNS-2A, no D-cut and no panel hole drawn; 6.5 = design choice, 6.35 major + 0.15 clearance (= the Adam Tech washer ID)"},
+    "sma_k": {"d": 6.4, "basis": "no port since W2 MECH-6 (P7 was the Taoglas CAB.011 W407, now CAB.01029 kind sma_pigtail); 1/4-36 clearance"},
     "sma_cab01075": {"d": 6.5, "basis": "Taoglas CAB.01075 SMA(F) BK (catalogue p.14, READS-RF row): 1/4-36UNS-2A, threaded 11.4, no D-cut and no panel hole drawn; 6.5 = design choice, 6.35 major + 0.15 clearance"},
     "sma_adamtech": {"d": 6.5, "basis": "Adam Tech CA-DKCA1-305L5-APAJ drawing 11/16/18 (P1): 1/4-36UNS jack, no D-cut and no panel hole drawn; 6.5 = its lock-washer ID (design choice)"},
     "sma_cab718": {"d": 6.5, "shape": "dflat", "flat": 6.0,

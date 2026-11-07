@@ -16,7 +16,8 @@
   "design/parts/snapshots/2026-11-07-w2-src1-manual.json",
   "design/parts/snapshots/2026-11-07-w2-src1-lcsc.json",
   "design/parts/snapshots/2026-11-07-w2-gr3-lcsc.json",
-  "design/parts/snapshots/2026-11-07-w2-gr4-manual.json"
+  "design/parts/snapshots/2026-11-07-w2-gr4-manual.json",
+  "design/parts/snapshots/2026-11-07-w2-mech6-manual.json"
  ],
  "refs": 849,
  "parts": 256,
@@ -103,7 +104,7 @@
    "refs": [
     "J301"
    ],
-   "open": "Для Q6A J20 (2×20, крок 2.54 мм) обрано родину IDC (harness_families IDC): гніздо XDFH-0258-2*20P на стрічці 40 × 1.27 мм, бокс XDFH-0254-2*20P на CTRL; MPN стрічки, висота боксу (CTRL ≤5.5 мм, креслення не прочитано) і довжина S01 ≤200 мм (UART7/PPS, STACK §5.2) — TBD; стрічка йде крізь проріз пластини SL1 (M-07)."
+   "open": "Для Q6A J20 (2×20, крок 2.54 мм) — родина IDC (harness_families IDC): гніздо XDFH-0258-2*20P на стрічці, бокс XDFH-0254-2*20P J304 на CTRL. Зафіксовано (W2 MECH-6): стрічка — 3M 3365/40 (assembly_items AI-IDC-RIBBON-40: 40 × 28 AWG, крок 1.27, 50.80 × 0.89 мм, рядок SRC-1 digikey:19-3365/40300-DS-ND), дві половини по 20, укладені одна на одну, крізь проріз SL1 27.5 × 3.8 (M-07; R-PLATE-SLOT-FILL PASS, модель); S01 (UART7) за трасою моделі в межах 200 мм, а PPS/UART6 ідуть гілкою PPS (R-PPS-LEN PASS, модель, і в найгіршому випадку; mechanical/generated/harness-routes.json). Відкрито: висота бокса J304 проти CTRL 5.5 мм (креслення XDFH-0254 не читається, еталон 9.1 мм — R-HDR-HEIGHT OPEN), креслення гнізда XDFH-0258 (стикування зі стрічкою 1.27 мм) і орієнтація контакту 1 J20 (на карті розміщення Radxa V1.21 мітки немає) — тому запис лишається interface_open (запис J-Q6A-EXISTING охоплює вісім ref)."
   },
   {
    "part": "J-Q6A-EXISTING",
@@ -208,7 +209,7 @@
    "refs": [
     "J407"
    ],
-   "open": "Панельний кінець Taoglas CAB.011 (W407, P7): довжину різьби й виріз з лискою (D-Cut) рядок READS-RF web:taoglas-cab011-datasheet-spe-11-8-068-f (07.11.2026) не містить, а пігтейл P7 замінює MECH-6 (B-06: 95 мм не дістає LC76G), тож виріз, різьба (R-SMA-THREAD OPEN для P7), ущільнення й момент — TBD."
+   "open": "Панельний кінець Taoglas CAB.01029 (W407, P7, W2 MECH-6): водозахищена родина каталогу Taoglas SPE-24-8-198-C с.11 (рядок READS-RF): різьба 1/4-36UNS-2A довжиною 11.4 ±0.3, деталі 5 (1.75 ±0.2) і 6 (1.1 ±0.3) зовні, кругле ущільнення на фланці всередині; виріз ⌀6.5 (вибір конструкції 6.35 + 0.15, отвору креслення не дає; M-02 P7, mechanical/params/parts.json taoglas_mhf1_sma_wp); після стінки 4.5 і деталей 5 + 6 лишається 3.25 мм ≥ 3 витки (R-SMA-THREAD PASS, модель). Відкрито: момент гайки й ущільнення вирізу (T-07), стикування вилки I-PEX MHF I з гніздом IPEX Waveshare 24370 — вхідний контроль."
   },
   {
    "part": "J-PANEL-OF-CABLE",

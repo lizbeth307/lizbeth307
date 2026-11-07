@@ -350,39 +350,122 @@ def plate_slot_rule(P, web_min=1.5):
             "source": "mechanical.json plate.slots (harness pass-throughs, build/16 §1)"}
 
 
-def plate_slot_fill(P):
-    """Harness bundle through each plate slot: wires per AWG of the slot's build/16 segments against the bare opening.
+def _slot_trim_legs(P, sl):
+    """Leg footprints of the grommet strip on each 'grommet' edge of a slot: (edge, face, (x0, y0, z0, x1, y1, z1))."""
+    tr = P.mech["plate"]["slot_trim"]
+    g = P.parts[tr["grommet"]]
+    reach, proud = g["A"] - g["B"], (g["C"] - P.mech["plate"]["t"]) / 2.0
+    x, y, w, h = sl["rect"]
+    sz = P.mech["stack_z"]
+    pr, pf = sz["plate_rear"], sz["plate_front"]
+    rects = {"bottom": (x, y - reach, x + w, y), "top": (x, y + h, x + w, y + h + reach),
+             "left": (x - reach, y, x, y + h), "right": (x + w, y, x + w + reach, y + h)}
+    out = []
+    for edge, kind in sl.get("trim", {}).items():
+        if kind != "grommet":
+            continue
+        a = rects[edge]
+        out.append((edge, "rear", (a[0], a[1], pr - proud, a[2], a[3], pr)))
+        out.append((edge, "front", (a[0], a[1], pf, a[2], a[3], pf + proud)))
+    return out
 
-    Reported OPEN, never PASS: the PTFE wire type (outer diameter) and the edge-trim profile that narrows the opening are not
-    chosen (parts DB AI-WIRE-PTFE, AI-EDGE-TRIM). A slot segment that build/16 does not have is a FAIL (stale slot list)."""
+
+def plate_slot_fill(P):
+    """R-PLATE-SLOT-FILL (W2 MECH-6): the harness bundle of each plate slot fits the opening left by the edge trim.
+
+    Bundle = sum of the wire cross-sections of the slot's build/16 segments (OD = nominal + tolerance of the chosen PTFE wire,
+    parts.json hookup_wire_ptfe) / fill + the S01 ribbon stack (two 20-way halves of parts.json ribbon_3m_3365_40). Opening =
+    (w - loss_left - loss_right) x (h - loss_bottom - loss_top), loss = grommet bottom B or the tape allowance per edge
+    (plate.slot_trim). The ribbon width, the stack and the largest wire must also fit the inner width / height, and every
+    grommet leg (A - B from the edge, (C - t) / 2 proud on both faces) must clear the envelopes, the structure and the
+    fastener footprints of the plate holes. A slot segment that build/16 does not have, or a wire without a read OD, is FAIL."""
     import csv
     from pathlib import Path
+    from .layout import item_boxes, structure_boxes, gap
     path = Path(__file__).resolve().parents[2] / "build" / "16-dzhgut.csv"
-    slots = P.mech["plate"].get("slots", [])
-    rule = {"id": "R-PLATE-SLOT-FILL", "rule": "harness wires through each plate slot (build/16-dzhgut.csv rows of the slot segments) against the bare opening",
-            "source": "mechanical.json plate.slots[].segments; build/16-dzhgut.csv"}
+    pl = P.mech["plate"]
+    slots = pl.get("slots", [])
+    tr = pl["slot_trim"]
+    g = P.parts[tr["grommet"]]
+    wod = P.parts["hookup_wire_ptfe"]["od"]
+    rib = P.parts["ribbon_3m_3365_40"]
+    flat = P.mech["harness_routes"].get("flat", {})
+    rule = {"id": "R-PLATE-SLOT-FILL",
+            "rule": f"harness bundle through each plate slot (wire areas / {tr['fill']:g} + ribbon stack) inside the opening left by the edge trim "
+                    f"(grommet {tr['grommet']} B {g['B']:g} per edge, tape {tr['tape_mm']:g}); ribbon, stack and largest wire fit the inner size; grommet legs clear",
+            "source": "mechanical.json plate.slots / slot_trim; build/16-dzhgut.csv; parts.json heyco_ngsg_105 (Heyco catalogue 6-23 read 2026-11-07), "
+                      "hookup_wire_ptfe and ribbon_3m_3365_40 (SRC-1 rows read 2026-11-07)"}
     if not path.exists():
         return dict(rule, value_mm=None, result="OPEN: build/16-dzhgut.csv not found, bundle not counted")
     wires = {}
     with path.open(encoding="utf-8", newline="") as fh:
         for r in csv.DictReader(fh):
             wires.setdefault(r["segment"], []).append(r["awg"])
-    value, missing = {}, []
+    obstacles = [(name, bx) for iid, name, bx, it in item_boxes(P) if not it.get("outside")]
+    obstacles += [(name, bx) for name, bx in structure_boxes(P) if not name.startswith("plate.main") and not name.startswith("plate.ext")]
+    holes = plate_holes(P)
+    value, missing, bad = {}, [], []
     for sl in slots:
-        counts = {}
+        x, y, w, h = sl["rect"]
+        loss = {e: (g["B"] if sl.get("trim", {}).get(e) == "grommet" else tr["tape_mm"]) for e in ("bottom", "top", "left", "right")}
+        iw, ih = w - loss["left"] - loss["right"], h - loss["bottom"] - loss["top"]
+        counts, area, dmax, loose = {}, 0.0, 0.0, 0
+        ribbon = None
         for seg in sl.get("segments", []):
             if seg not in wires:
                 missing.append(f"{sl['id']}: {seg}")
-            for awg in wires.get(seg, []):
+                continue
+            if seg in flat:                                    # the S01 IDC ribbon: two stacked 20-way halves
+                ribbon = {"segment": seg, "w_mm": round(rib["w"] / 2.0, 2), "stack_mm": round(2 * rib["t"], 2),
+                          "conductors_in_build16": len(wires[seg])}
+                for awg in wires[seg]:
+                    counts[awg] = counts.get(awg, 0) + 1
+                continue
+            for awg in wires[seg]:
                 counts[awg] = counts.get(awg, 0) + 1
-        value[sl["id"]] = {"opening_mm2": round(sl["rect"][2] * sl["rect"][3], 1), "wires": sum(counts.values()),
-                           "wires_per_awg": {k: counts[k] for k in sorted(counts, key=int)}}
+                loose += 1
+                od = wod.get(awg)
+                if od is None:
+                    missing.append(f"{sl['id']}: {seg} {awg} AWG has no read wire OD")
+                    continue
+                d = od[0] + od[1]
+                dmax = max(dmax, d)
+                area += math.pi * d * d / 4.0
+        need = area / tr["fill"] + (ribbon["w_mm"] * ribbon["stack_mm"] if ribbon else 0.0)
+        have = max(iw, 0.0) * max(ih, 0.0)
+        fits = [("bundle", need <= have + 1e-9), ("largest wire", dmax <= min(iw, ih) + 1e-9)]
+        if ribbon:
+            fits += [("ribbon width", ribbon["w_mm"] <= iw + 1e-9), ("ribbon stack", ribbon["stack_mm"] <= ih + 1e-9)]
+        legs = []
+        for edge, face, bx in _slot_trim_legs(P, sl):
+            for name, ob in obstacles:
+                if gap(bx, ob) <= 0.0:
+                    legs.append(f"{edge} leg ({face}) on {name}")
+            for ho in holes:
+                rr = ho["d"] if tr["fastener_footprint"] == "d" else float(tr["fastener_footprint"])
+                cx, cy = ho["c"]
+                dx = max(bx[0] - cx, 0.0, cx - bx[3])
+                dy = max(bx[1] - cy, 0.0, cy - bx[4])
+                if math.hypot(dx, dy) < rr - 1e-9 and f"{edge} leg on hole {ho['id']}" not in legs:
+                    legs.append(f"{edge} leg on hole {ho['id']}")
+        ok = all(f for _, f in fits) and not legs
+        if not ok:
+            bad.append(sl["id"])
+        value[sl["id"]] = {"opening_mm": [w, h], "trim": sl.get("trim", {}), "inner_mm": [round(iw, 2), round(ih, 2)],
+                           "inner_mm2": round(have, 1), "wires": sum(counts.values()), "loose_wires": loose,
+                           "wires_per_awg": {k: counts[k] for k in sorted(counts, key=int)}, "wire_area_mm2": round(area, 1),
+                           "ribbon": ribbon, "bundle_need_mm2": round(need, 1), "fill_of_inner": round(need / have, 2) if have else None,
+                           "largest_wire_mm": round(dmax, 2), "legs_clear": legs or "yes",
+                           "result": ("PASS (model)" if ok else "FAIL (model): " + ", ".join([n for n, f in fits if not f] + legs))}
     if missing:
-        return dict(rule, value_mm=value, result="FAIL (model): slot segments not in build/16: " + ", ".join(missing))
-    return dict(rule, value_mm=value, limit_mm="bundle OD with edge trim inside the opening",
-                result="OPEN: wire outer diameter (AI-WIRE-PTFE) and edge-trim profile (AI-EDGE-TRIM) not chosen, so the fill is not checked "
-                       "(SL1 carries the whole 40-way S01 ribbon as two stacked 20-way halves; build/16 rows count only its connected conductors); "
-                       "resize SL1/SL2 or add a slot once both are read (wave 2)")
+        return dict(rule, value_mm=value, result="FAIL (model): " + ", ".join(missing))
+    txt = "; ".join(f"{k} {v['bundle_need_mm2']:g} <= {v['inner_mm2']:g} mm2 ({v['fill_of_inner']:g} of the inner opening "
+                    f"{v['inner_mm'][0]:g} x {v['inner_mm'][1]:g})" for k, v in value.items())
+    if bad:
+        return dict(rule, value_mm=value, limit_mm="bundle inside the trimmed opening", result="FAIL (model): " + ", ".join(
+            f"{k}: {value[k]['result']}" for k in bad))
+    return dict(rule, value_mm=value, limit_mm="bundle inside the trimmed opening",
+                result=f"PASS (model): {txt}; grommet legs clear of the envelopes, the structure and the plate-hole footprints")
 
 
 def module_rules(P):

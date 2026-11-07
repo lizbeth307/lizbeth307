@@ -3883,7 +3883,7 @@
       "group": "RF and receiver interfaces",
       "status": "module",
       "source": "STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md",
-      "mpn": "CAB.011",
+      "mpn": "CAB.01029",
       "manufacturer": "Taoglas",
       "pins": [
         {
