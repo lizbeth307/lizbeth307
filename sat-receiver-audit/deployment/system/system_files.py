@@ -239,8 +239,12 @@ def chrony_candidate():
 CHRONY_CONF = "etc/chrony/chrony.conf"
 # chrony.conf(5) directives that add a time source, open an NTP or command service to others, or read
 # source lists; none may appear in chrony_conf(). refclock belongs to the bench-measured candidate only.
+# chrony 4.5 (orig tarball of sources.lock.json, read 2026-11-07): initstepslew resolves and polls its
+# servers at start (conf.c parse_initstepslew), mailonchange sends mail, and the NTP-over-PTP port of ptpport
+# is open "even if chronyd is not configured to operate as a server or client" (doc/chrony.conf.adoc).
 CHRONY_NETWORK_DIRECTIVES = ("pool", "server", "peer", "sourcedir", "refclock", "allow", "broadcast", "bindaddress",
-                             "bindcmdaddress", "cmdallow", "ntsserverkey", "ntsservercert")
+                             "bindcmdaddress", "cmdallow", "ntsserverkey", "ntsservercert", "initstepslew", "mailonchange",
+                             "ptpport")
 
 
 def chrony_conf():
