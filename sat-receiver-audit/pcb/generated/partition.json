@@ -186,7 +186,7 @@
         "interface_open",
         "interface_resolved"
       ],
-      "projection_sha256": "12abadd4c1a11429385fe89ca0b0f835cd6b77b26d32e90511d9602d9fc910de"
+      "projection_sha256": "ecee0ac776e1f86deebed96f65fbdeea250e9bfb54ba4ca6eaa36b853560b537"
     }
   },
   "boards": {
@@ -13790,7 +13790,7 @@
       "ref": "J422",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-EXISTING-HELIX (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: SMA-гніздо живлення саморобної спіралі на диску 18 см (build/06 §2.5, §3.2) у build/06 не має MPN; відповідна частина — SMA-вилка W422 (Cinch 415-0029-006, 152.4 мм, запис W-RG316-SMA-MM-0152). Кріплення гнізда на диску й кабелю до вузла pod (креслення P-01/P-02) — антенний і механічний пакети; посадка й герметизація pod — ворота E4-04 (OPEN)."
+      "detail": "Parts database entry J-EXISTING-HELIX (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: SMA-гніздо живлення 7-виткової S-band спіралі в конусі (Lime; build/06 §1, рядок «7-виткова S-band спіраль у конусі» :37, і §3.2, пункт «S-band (Lime)» :114) у build/06 не має MPN; відповідна частина — SMA-вилка W422 (Cinch 415-0029-006, 152.4 мм, запис W-RG316-SMA-MM-0152) до Nooelec LaNA WB 100845 у зовнішньому вузлі Hammond 1554U2GY. Кріплення гнізда в конусі й кабелю до вузла pod (креслення P-01/P-02) — антенний і механічний пакети; посадка й герметизація pod — ворота E4-04 (OPEN)."
     },
     {
       "ref": "J521",
