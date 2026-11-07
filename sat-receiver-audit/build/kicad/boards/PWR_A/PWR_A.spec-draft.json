@@ -24,7 +24,12 @@
       "In2.Cu": "L3: power pours (placement-dependent, OPEN)",
       "B.Cu": "L4: signals; BATT/PWR3A pours paired with L1; GND bond copper in the four thermal_bond zones, solder mask on"
     },
-    "plan_source": "build/15 'План шарів (W2 PCB-RULES)'"
+    "plan_source": "build/15 'План шарів (W2 PCB-RULES)'",
+    "types": {
+      "In1.Cu": "power",
+      "In2.Cu": "power"
+    },
+    "types_why": "layer type power on both inner layers (as PWR_B): Freerouting puts only vias through them. Probe 2 (sr-rx-pcb run 42424071774) routed LAB5, E1_N, E1_SHUNT_P and E1_LAB5_FUSED tracks on In1/In2, which the classes do not count (17 check_boards class_widths findings) and which cut the L2 GND plane; L3 power copper stays possible as scripted zones"
   },
   "project": "build/kicad/boards/PWR_A/PWR_A.kicad_pro",
   "rules_file": null,
@@ -660,7 +665,7 @@
             37.95,
             64.6
           ],
-          "angle": 90
+          "angle": 0
         }
       },
       "anchor_source": "LAB5 damper R110 + C113 (E1_LAB5_DAMP has only C113.1 and R110.2: an RC damper, not a sense shunt): right strip of the leg above the H7 keepout; scripted locked link R110.2 -> C113.1"

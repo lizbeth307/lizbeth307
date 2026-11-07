@@ -33,6 +33,7 @@ OUT = HERE / 'skeleton-probe' / 'probe-spec.json'
 INSTALL = BASE / 'pcb' / 'boards' / 'PWR_A.json'
 MARGIN = 1.0   # mm, mechanical/params/boards.json tht_pockets margin (the PWRA-1 probe rule)
 GRID = 0.05    # mm, outward rounding of a pocket
+SLACK = 0.01   # mm, added before the outward rounding
 RIB = 3.0      # mm, design value: two pockets closer than this become one (a thinner plate rib is not kept)
 DROP = ('regions', 'reserved_areas', 'reserved_area_mm2')  # planner-only keys of the draft
 
@@ -62,7 +63,9 @@ def pockets_for(geo, anchor):
         clusters.append(b)
     out = []
     for x0, y0, x1, y1 in sorted(clusters):
-        x0, y0, x1, y1 = outward(x0, False), outward(y0, False), outward(x1, True), outward(y1, True)
+        # SLACK keeps a pad edge that falls exactly on the grid off the pocket edge (KiCad stores nm, probe 2 found it)
+        x0, y0, x1, y1 = (outward(x0 - SLACK, False), outward(y0 - SLACK, False), outward(x1 + SLACK, True),
+                          outward(y1 + SLACK, True))
         out.append([x0, y0, round(x1 - x0, 4), round(y1 - y0, 4)])
     return out
 

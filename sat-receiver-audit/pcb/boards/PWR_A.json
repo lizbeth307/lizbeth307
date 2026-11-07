@@ -24,7 +24,12 @@
       "In2.Cu": "L3: power pours (placement-dependent, OPEN)",
       "B.Cu": "L4: signals; BATT/PWR3A pours paired with L1; GND bond copper in the four thermal_bond zones, solder mask on"
     },
-    "plan_source": "build/15 'План шарів (W2 PCB-RULES)'"
+    "plan_source": "build/15 'План шарів (W2 PCB-RULES)'",
+    "types": {
+      "In1.Cu": "power",
+      "In2.Cu": "power"
+    },
+    "types_why": "layer type power on both inner layers (as PWR_B): Freerouting puts only vias through them. Probe 2 (sr-rx-pcb run 42424071774) routed LAB5, E1_N, E1_SHUNT_P and E1_LAB5_FUSED tracks on In1/In2, which the classes do not count (17 check_boards class_widths findings) and which cut the L2 GND plane; L3 power copper stays possible as scripted zones"
   },
   "project": "build/kicad/boards/PWR_A/PWR_A.kicad_pro",
   "rules_file": null,
@@ -256,7 +261,7 @@
             37.95,
             64.6
           ],
-          "angle": 90
+          "angle": 0
         }
       },
       "anchor_source": "LAB5 damper R110 + C113 (E1_LAB5_DAMP has only C113.1 and R110.2: an RC damper, not a sense shunt): right strip of the leg above the H7 keepout; scripted locked link R110.2 -> C113.1"
@@ -1084,86 +1089,86 @@
   "tht_pockets": [
     [
       -0.2,
-      66.9,
+      66.85,
       8.25,
-      4.8
+      4.85
     ],
     [
       -0.2,
       76.8,
       8.25,
-      4.8
+      4.85
     ],
     [
-      128.4,
+      128.35,
       9.15,
-      5.65,
+      5.7,
       18.35
     ],
     [
-      30.2,
-      1.15,
-      10.8,
-      4.7
+      30.15,
+      1.1,
+      10.9,
+      4.8
     ],
     [
-      50.1,
-      1.15,
-      10.8,
-      4.7
+      50.05,
+      1.1,
+      10.9,
+      4.8
     ],
     [
-      8.3,
-      1.15,
-      10.8,
-      4.7
+      8.25,
+      1.1,
+      10.9,
+      4.8
     ],
     [
-      76.0,
-      1.15,
-      10.8,
-      8.9
+      75.95,
+      1.1,
+      10.9,
+      9.0
     ],
     [
-      43.45,
+      43.4,
       0.6,
-      5.2,
+      5.3,
       3.8
     ],
     [
-      63.35,
+      63.3,
       0.6,
-      11.2,
+      11.3,
       3.8
     ],
     [
-      21.55,
+      21.5,
       0.6,
-      7.2,
+      7.3,
       3.8
     ],
     [
-      89.25,
+      89.2,
       0.6,
-      9.2,
+      9.3,
       3.8
     ],
     [
-      102.75,
-      1.15,
-      3.8,
-      5.2
+      102.7,
+      1.1,
+      3.85,
+      5.3
     ],
     [
-      120.9,
+      120.85,
       -0.55,
-      5.65,
+      5.7,
       12.35
     ],
     [
-      107.8,
+      107.75,
       -0.55,
-      5.65,
+      5.7,
       12.35
     ],
     [
@@ -1180,20 +1185,20 @@
     ],
     [
       115.8,
-      1.15,
+      1.1,
       3.8,
-      9.2
+      9.3
     ],
     [
-      12.5,
+      12.45,
       39.4,
-      16.4,
+      16.5,
       6.3
     ],
     [
-      12.5,
+      12.45,
       71.4,
-      16.4,
+      16.5,
       6.3
     ],
     [
@@ -1209,16 +1214,16 @@
       4.55
     ],
     [
-      84.55,
-      15.35,
-      2.7,
-      2.7
+      84.5,
+      15.3,
+      2.8,
+      2.8
     ],
     [
-      124.55,
-      15.15,
-      3.1,
-      3.1
+      124.5,
+      15.1,
+      3.2,
+      3.2
     ]
   ],
   "tht_pocket_margin_mm": 1.0,
