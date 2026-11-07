@@ -939,3 +939,44 @@ class RoutesW2Mech4(unittest.TestCase):
         r = self._rule(P, "R-P8-ACCESSORY")
         self.assertTrue(r["result"].startswith("OPEN"), r["result"])
         self.assertTrue(r["value_mm"]["outside_enclosure"])
+
+
+class RoutesW2Mech4Review(unittest.TestCase):
+    """W2 MECH-4 review fixes: R-F101-ACCESS keeps the USB-A plug access, R-HDMI-ROUTE labels the harness centrelines and the slot."""
+
+    def _copy(self):
+        import copy
+        return copy.deepcopy(P)
+
+    def _rule(self, Q, rid):
+        return [x for x in rules.evaluate(Q) if x["id"] == rid][0]
+
+    def test_f101_place_in_front_of_the_usb_plug_bay_is_never_hatch_access(self):
+        r = self._rule(P, "R-F101-ACCESS")
+        self.assertTrue(r["result"].startswith("PASS (model, decision: seam)"), r["result"])
+        self.assertEqual(r["value_mm"]["access_path_to"], ["usb_plug_bay"])
+        Q = self._copy()
+        Q.parts["littelfuse_mini_297"]["body"][2] = 1.0         # depth fits, the strip is still the USB-A plug access path
+        r = self._rule(Q, "R-F101-ACCESS")
+        self.assertLessEqual(r["value_mm"]["stack"], r["value_mm"]["free_depth"])
+        self.assertTrue(r["result"].startswith("PASS (model, decision: seam)"), r["result"])
+        for it in Q.mech["layout"]["items"]:
+            if it["id"] == "usb_plug_bay":
+                it["keep_clear"] = False                         # no access path behind the place: the depth decides
+        r = self._rule(Q, "R-F101-ACCESS")
+        self.assertTrue(r["result"].startswith("PASS (model): F101 fits facing the hatch"), r["result"])
+        self.assertEqual(r["value_mm"]["access_path_to"], [])
+
+    def test_hdmi_route_labels_harness_centrelines_and_the_slot_height(self):
+        r = self._rule(P, "R-HDMI-ROUTE")
+        self.assertTrue(r["result"].startswith("PASS (model)"), r["result"])
+        self.assertIn("harness bundles are centrelines", r["result"])
+        self.assertIn("bare flex must be <= 0.5", r["result"])
+        near = r["value_mm"]["harness_near"]                     # follows the harness routes (MECH-6 may move the CTRL drops)
+        sid, env, d = near["nearest_centreline"]
+        self.assertIn(env, P.mech["hdmi_route"]["envelopes"])
+        self.assertIn(f"the nearest, {sid}, runs {d:g} mm from {env}", r["result"])
+        self.assertEqual(near["bundle_overlaps"] > 0, "reach into" in r["result"])
+        Q = self._copy()
+        Q.parts["adafruit_flex"]["thickness"] = 0.8               # a measured bare flex thicker than the WE-FLAT slot
+        self.assertTrue(self._rule(Q, "R-HDMI-ROUTE")["result"].startswith("FAIL"))
