@@ -790,6 +790,7 @@
    ],
    "refs": [
     "C104",
+    "C322",
     "C502",
     "C505",
     "C509",
@@ -842,6 +843,7 @@
     "C311",
     "C312",
     "C319",
+    "C321",
     "C341",
     "C343",
     "C440",
@@ -858,6 +860,7 @@
     "C520",
     "C550",
     "C551",
+    "C552",
     "C4400",
     "C4410",
     "C4411",
@@ -1300,7 +1303,6 @@
     "R211",
     "R216",
     "R256",
-    "R264",
     "R281",
     "R284",
     "R287",
@@ -1641,7 +1643,24 @@
    ],
    "refs": [
     "R204",
-    "R210"
+    "R210",
+    "R263"
+   ]
+  },
+  {
+   "id": "R-0603-RT0603BRD079K09L",
+   "mount": "pcb_smt",
+   "kind": "resistor",
+   "package": "0603",
+   "footprint": "Resistor_SMD:R_0603_1608Metric",
+   "manufacturer": "YAGEO",
+   "mpn": "RT0603BRD079K09L",
+   "sku": {
+    "lcsc": "C861611"
+   },
+   "single_source": "9.09 kΩ 0.1 % 0603 thin film for the OVLO divider R263/R264 (R-E2-02); the only 0.1 % 9.09k 0603 listing read (LCSC snapshot 2026-11-07-w2-reads-e-lcsc.json); no alternate was read",
+   "refs": [
+    "R264"
    ]
   },
   {
@@ -1921,7 +1940,8 @@
    "refs": [
     "R228",
     "R233",
-    "R238"
+    "R238",
+    "R553"
    ]
   },
   {
@@ -2026,7 +2046,8 @@
    ],
    "refs": [
     "R243",
-    "R293"
+    "R293",
+    "R396"
    ]
   },
   {
@@ -2974,7 +2995,8 @@
     }
    ],
    "refs": [
-    "C510"
+    "C510",
+    "C553"
    ]
   },
   {
@@ -3253,17 +3275,6 @@
     "R4422",
     "R4432",
     "R4442"
-   ]
-  },
-  {
-   "id": "R-0603-TBD-R263",
-   "mount": "pcb_smt",
-   "kind": "resistor",
-   "package": "0603",
-   "footprint": "Resistor_SMD:R_0603_1608Metric",
-   "tbd": "Стартове значення OVLO 112 kΩ не належить до ряду E192 (найближчі 111k/113k), а остаточний дільник OVLO закривають ворота; деталі 0.1 % 0603 24.10.2026 не знайдено.",
-   "refs": [
-    "R263"
    ]
   },
   {
@@ -3850,8 +3861,8 @@
     "lcsc": "C111738"
    },
    "match": "TPS2553DBVR-1",
-   "single_source": "Latch-off -1 variant required; TPS2553DBVR (auto-retry, LCSC C55266) is only the documented fallback for a channel that latches at start-up (10-bom row 69)",
-   "note": "Accept LCSC lots only with marking CHZ (10-bom row 69).",
+   "single_source": "Latch-off -1 variant required on these channels; TPS2553DBVR (constant-current, LCSC C55266) is the documented fallback for a channel that latches at start-up (10-bom row 69) and the chosen part of the IMU pack branch U553 (entry U-TPS2553DBVR, R-E5-08)",
+   "note": "Accept LCSC lots only with marking CHZ (10-bom row 69). LCSC C111738 showed stock 6 on 2026-11-07 (2026-11-07-w2-reads-e-lcsc.json) for 10 refs: source the rest before ordering (SRC-1).",
    "refs": [
     "U206",
     "U207",
@@ -3859,9 +3870,26 @@
     "U209",
     "U210",
     "U221",
+    "U315",
     "U501",
     "U502",
     "U503"
+   ]
+  },
+  {
+   "id": "U-TPS2553DBVR",
+   "mount": "pcb_smt",
+   "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+   "manufacturer": "Texas Instruments",
+   "mpn": "TPS2553DBVR",
+   "sku": {
+    "lcsc": "C55266"
+   },
+   "match": "TPS2553DBVR",
+   "single_source": "Constant-current TPS2553 (no -1) chosen for the IMU pack branch U553 (R-E5-08): it limits a short on the 2 m cable without latching and recovers by itself (TI SLVS841G p.14-15)",
+   "note": "Accept LCSC lots only with marking 2553 (TI SLVS841G package addendum p.29; the latch-off TPS2553DBVR-1 is marked CHZ). Never substitute the -1 part here, and never this part on a -1 channel.",
+   "refs": [
+    "U553"
    ]
   },
   {
@@ -4446,7 +4474,8 @@
    "match": "MF-MSMF075/24-2",
    "single_source": "PTC named in STACK §2.7; reflow only",
    "refs": [
-    "F202"
+    "F202",
+    "F301"
    ]
   },
   {
@@ -4592,10 +4621,8 @@
     }
    ],
    "single_source": "Bourns encoder with push switch named in STACK; the switch contacts are SW308/SW309",
-   "note": "S1/S2 pads carry the push switch; in the graph that switch is the separate ref SW308/SW309, so the PCB netlist leaves S1/S2 unconnected until the graph moves the switch onto ENC pins (see coverage open items). 10-bom row 49 buys 3 (1 spare). Integration 2026-11-07: each encoder sits on its own ENC daughterboard (pcb/prepare.py domain ENC; STACK §5.8 «на малій дочірній платі з роз’ємом», mechanical/params/boards.json ENC, two in use + one spare board), linked to CTRL by JST PH (build/16 S37/S38).",
+   "note": "S1/S2 pads carry the push switch: the graph puts its nets on ENC301/ENC302 S1 (E3_ENC1/2_PRESS_EXT) and S2 (GND); SW308/SW309 are the virtual contacts hosted by the encoders (W2 GR-1, R-E3-16). 10-bom row 49 buys 3 (1 spare). Integration 2026-11-07: each encoder sits on its own ENC daughterboard (pcb/prepare.py domain ENC; STACK §5.8 «на малій дочірній платі з роз’ємом», mechanical/params/boards.json ENC, two in use + one spare board), linked to CTRL by JST PH (build/16 S37/S38).",
    "unused_pads": {
-    "S1": "push-switch contact; in the graph the switch is SW308 (ENC301) / SW309 (ENC302), see open items",
-    "S2": "push-switch contact; in the graph the switch is SW308 (ENC301) / SW309 (ENC302), see open items",
     "MP": "mounting slots (mechanical, no net)"
    },
    "refs": [
@@ -4606,7 +4633,7 @@
   {
    "id": "SW-ENC-PUSH-virtual",
    "mount": "virtual",
-   "note": "Physically the push switch inside ENC301/ENC302 (pads S1/S2 of the encoder footprint): no separate part is bought or placed. SW308 belongs to ENC301, SW309 to ENC302.",
+   "note": "Physically the push switch inside ENC301/ENC302 (pads S1/S2 of the encoder footprint): no separate part is bought or placed. SW308 belongs to ENC301, SW309 to ENC302. The graph puts their nets on the encoder pins S1 (press) and S2 (GND), so the host pads carry them (W2 GR-1).",
    "host": {
     "SW308": "ENC301",
     "SW309": "ENC302"
@@ -4661,8 +4688,10 @@
     "TP214",
     "TP215",
     "TP216",
+    "TP301",
     "TP501",
     "TP502",
+    "TP503",
     "TP2901",
     "TP2902",
     "TP2903"
@@ -5000,15 +5029,16 @@
    ]
   },
   {
-   "id": "TH-KSD9700-70-NO",
+   "id": "TH-67F070-70-NO",
    "mount": "remote",
-   "manufacturer": "Xucheng Electronics",
-   "mpn": "KSD9700-70/5JSB/080C",
+   "manufacturer": "Sensata-Airpax",
+   "mpn": "67F070",
    "sku": {
-    "lcsc": "C156512"
+    "digikey": "723-1190-ND"
    },
-   "match": "KSD9700",
-   "tbd": "Оголошення LCSC (механічний SPST, клас 70 °C) не вказує NO/NC; рядок 89 10-bom називає NO 70 °C KSD9700 від Piekarz 31610 (24.10.2026 не перечитано). Перед замовленням підтвердити нормально розімкнений варіант.",
+   "match": "67F070",
+   "single_source": "Єдиний прочитаний нормально розімкнений (замикається при нагріві) термовимикач 70 °C з MPN виробника й складом дистриб'ютора (07.11.2026): кандидат LCSC C156512 KSD9700-70/5JSB/080C нормально замкнений за власним даташитом (суфікс B), а продавець STACK Piekarz 31610 не має читабельної сторінки з MPN.",
+   "note": "Даташит Sensata 6700 (копія ChipDip, прочитано 07.11.2026): 67F070 — F = замикається при нагріві, 70 ±5 °C; мінімальний диференціал 4 °C, мінімальне повернення 50 °C (с. 4); 0.5 A 48 V DC; корпус TO-220-2 з виводами PC, тепло — через виводи й кронштейн (с. 1), кронштейн ізольований від контактів (1480 V AC). Відхилення від KSD9700 STACK §5.1 і зняту вимогу «повернення ≥15 K нижче» записано в build/15 «IP2368». DigiKey DE 07.11.2026: склад 1991, ціни лише від 500 шт. (EUR 7.39458 @500), ціни за 1 шт. сторінка не показує — кількість замовлення для 1–2 шт. уточнити перед купівлею (SRC-1).",
    "refs": [
     "TH102"
    ]
@@ -5932,6 +5962,33 @@
    "interface_open": "Дроти задано в build/16 S32 (LAB5, GND, IMU_TX, IMU_RX до X32P1-PWR і X32S1-PWR), корпус — бондинг CHASSIS за build/16 §9; відкриті: виріз панелі (отвір ⌀16, M-06) і посадка — механічний пакет.",
    "refs": [
     "J504"
+   ]
+  },
+  {
+   "id": "J-POD-PWR-PANEL",
+   "mount": "panel",
+   "manufacturer": "binder",
+   "mpn": "76 6618 1111 00003-0200",
+   "sku": {
+    "web": "binder-76-6618-1111-00003-0200"
+   },
+   "match": "M8",
+   "single_source": "Панельна розетка M8 A-код 3 конт. з прочитаним даташитом binder (07.11.2026): інший корпус, ніж GX16-4 J504 і GX12 J505, тож кабель IMU чи LAB BUS у неї не входить (build/15 «Ключування панельних роз'ємів J504/J505/J551 (W2 GR-1)»); іншої прочитаної деталі цього класу немає.",
+   "extras": [
+    {
+     "item": "вилка на кабелі W425 (польовий монтаж, гвинтові клеми 0.14–0.50 мм², кабель ⌀3.5–5.0 мм)",
+     "manufacturer": "binder",
+     "mpn": "99 3379 100 03",
+     "sku": {
+      "web": "binder-99-3379-100-03"
+     },
+     "qty_per_ref": 1
+    }
+   ],
+   "note": "binder 76 6618 1111 00003-0200 (alt. 09 3418 86 03): розетка M8 серії 718, A-код, IP67/IP69K, −40…+85 °C, виводи 0.2 м AWG 24, 4.0 A, 60 V DC; вилка 99 3379 100 03 (серія 768): A-код, IP67, 4.0 A, кабель ⌀3.5–5.0 мм — кабель Tensility 10-03676 (⌀4.2 мм, пара 26 AWG) у цей діапазон входить. Для BIAS_SB_LNA (5 V, ≤0.192 A за U221) номіналу досить. Склад і ціну сторінки binder не показують; пошук DigiKey DE за кодами розетки й вилки нічого не дав (07.11.2026) — постачальник TBD (SRC-1).",
+   "interface_open": "Розетку J551 і вилку W425 обрано (binder M8 A-код, 3 конт.); відкриті: нумерація контактів (у графі — функціональні VOUT/RTN/SPARE, креслення binder не прочитано), бік монтажу (сторінка binder суперечлива: у назві rear mounting, в адресі front), місце на стінці й виріз (картинка 718 для M10×0.75: отвір 10.1 мм, лиски 9.1 мм, стінка 2.0–6.5 мм, 1 N·m; грань і виріз — MECH-07, моделює MECH-3), довжина виводів 0.2 м проти траси S36 — TBD.",
+   "refs": [
+    "J551"
    ]
   },
   {

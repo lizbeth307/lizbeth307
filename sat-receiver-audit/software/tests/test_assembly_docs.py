@@ -27,7 +27,7 @@ D = gen.D
 # that sits upstream of each fused harness net in the graphs (E1/E2 topology, read by hand).
 ESCC_IMAX = {28: 1.5, 26: 2.5, 24: 3.5, 22: 5.0, 20: 7.5, 18: 10.0}
 FUSE_OF_NET = {"E1_SHUNT_P": "F101", "E1_N": "F101", "E1_SW": "F101", "SYS12": "F101", "E1_SERVICE_P": "F103",
-               "LAB5": "F102", "E3_FAN5": "F102", "E3_BLOWER_GND": "F102", "J21": "F201"}
+               "LAB5": "F102", "E3_FAN5_P": "F301", "E3_BLOWER_GND": "F102", "J21": "F201"}
 PIN_RE = re.compile(r"(?:пайка: )?([A-Z][A-Z0-9]*\d)\.([^\s(]+)")
 
 
@@ -179,8 +179,9 @@ class AssemblyDocsTests(unittest.TestCase):
                 self.assertLessEqual(int(wire["awg"]), 24, wire["wire"])
 
     def test_one_branch_has_one_current(self):
-        lab5 = {w["segment"]: (w["i_cont_a"], w["i_prot_a"]) for w in self.h.wires if w["net"] == "LAB5"}
-        self.assertEqual(lab5["S33"], lab5["S32"])
+        # The IMU pack branch is E5_IMU5V behind U553 (W2 GR-1): the internal lead S32 and the cable S33 carry one budget.
+        imu = {w["segment"]: (w["i_cont_a"], w["i_prot_a"]) for w in self.h.wires if w["net"] == "E5_IMU5V"}
+        self.assertEqual(imu["S33"], imu["S32"])
 
     def test_partition_deviations_are_listed(self):
         text = self.files[gen.OUT["harness_md"]]
