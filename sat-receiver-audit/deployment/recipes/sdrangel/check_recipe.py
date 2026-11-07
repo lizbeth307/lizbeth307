@@ -175,9 +175,19 @@ def verify_source(src):
             + ["-D%s=%s" % (k, v) for k, v in sorted({**cmake["variables"], **cmake["options"]}.items())])
     result = subprocess.run(argv, capture_output=True, text=True, cwd=str(scratch))
     text = result.stdout + result.stderr
-    shutil.rmtree(scratch, ignore_errors=True)
     if result.returncode == 0:
-        return {"ok": True, "findings": []}
+        build = subprocess.run(["cmake", "--build", str(scratch / "b"), "--parallel", str(os.cpu_count() or 4)],
+                               capture_output=True, text=True, cwd=str(scratch))
+        shutil.rmtree(scratch, ignore_errors=True)
+        if build.returncode == 0:
+            return {"ok": True, "findings": []}
+        out = (build.stdout + build.stderr).splitlines()
+        errors = [l.strip() for l in out if " error: " in l or "undefined reference" in l or l.startswith("CMake Error")]
+        failed = [l.strip()[len("FAILED: "):] for l in out if l.startswith("FAILED: ")]
+        print("\n".join(out[-200:]))
+        return {"ok": False, "findings": [(errors[0] if errors else (out[-1] if out else "no output"))[-260:],
+                                          (failed[0] if failed else "-")[-110:]]}
+    shutil.rmtree(scratch, ignore_errors=True)
     lines = text.splitlines()
     start = next((i for i, l in enumerate(lines) if "CMake Error" in l or "Error" in l), max(0, len(lines) - 6))
     print(text[-6000:])
