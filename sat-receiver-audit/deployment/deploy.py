@@ -627,9 +627,9 @@ def prohibited_executables(root=Path("/"), names=None):
     return sorted(found)
 
 
-def command(args, limit=100_000):
+def command(args, limit=100_000, timeout=10):
     try:
-        out = subprocess.run(args, capture_output=True, text=True, timeout=10)
+        out = subprocess.run(args, capture_output=True, text=True, timeout=timeout)
         if len(out.stdout) > limit:  # fail closed: a cut inventory would silently omit packages
             return {"returncode": -2, "error": "output exceeds bound", "stdout": "", "stderr": ""}
         return {"returncode": out.returncode, "stdout": out.stdout, "stderr": out.stderr[:1000]}
@@ -1220,22 +1220,28 @@ def system_files():
     return module
 
 
-def stage_system(rootfs, config, gnss):
-    """System files of the installed root (software/DEPLOYMENT.md, «Системні файли»). Writes only
-    below rootfs; refuses to overwrite another staged file and any account nothing creates."""
-    system = system_files()
-    for relative, content in sorted(system.staged_files(config, gnss).items()):
+def stage_files(rootfs, files, label):
+    """Write generated {relative path: str|bytes} below rootfs; never over another staged file."""
+    for relative, content in sorted(files.items()):
         path = rootfs / relative
         if path.exists():
-            raise DeploymentError("system file collides with a staged file: " + relative)
+            raise DeploymentError(label + " collides with a staged file: " + relative)
         path.parent.mkdir(parents=True, exist_ok=True)
         if isinstance(content, bytes):
             path.write_bytes(content)
         else:
             path.write_text(content, encoding="utf-8", newline="\n")
-        if relative in system.EXECUTABLES:
-            path.chmod(0o755)
-    unknown = system.unknown_accounts(rootfs)
+
+
+def stage_system(rootfs, config, gnss, transient_units=()):
+    """System files of the installed root (software/DEPLOYMENT.md, «Системні файли»). Writes only
+    below rootfs; refuses to overwrite another staged file and any account nothing creates, also
+    for the run-time units of transient_units (systemd-run properties as unit text)."""
+    system = system_files()
+    stage_files(rootfs, system.staged_files(config, gnss), "system file")
+    for relative in system.EXECUTABLES:
+        (rootfs / relative).chmod(0o755)
+    unknown = system.unknown_accounts(rootfs, transient_units)
     if unknown:
         raise DeploymentError("staged units/rules name accounts sysusers.d does not create: " + ", ".join(unknown))
 
@@ -1281,9 +1287,9 @@ def stage(destination, config=None, gnss="gpsd"):
     modprobe.write_text(radio_off_modprobe(), newline="\n")
     sys.path.insert(0, str(PROJECT / "software"))
     from srrx import pass_jobs  # polkit rule and plan directory of srrx-passes@.service, from one source
-    for relative, text in pass_jobs.staged_files().items():
-        (rootfs / relative).parent.mkdir(parents=True, exist_ok=True)
-        (rootfs / relative).write_text(text, newline="\n")
+    from srrx import satdump_pass  # SatDump/baseband tmpfiles, sweep service and timer, baseband.env template
+    stage_files(rootfs, pass_jobs.staged_files(), "pass planner file")
+    stage_files(rootfs, satdump_pass.staged_files(), "SatDump/baseband file")
     for name in ("release.template.json", "build-manifest.template.json", "devices.template.json"):
         shutil.copyfile(HERE / name, etc / name)
     shutil.copyfile(PROJECT / "software/config/acceptance.template.json", etc / "acceptance.template.json")
@@ -1304,7 +1310,7 @@ def stage(destination, config=None, gnss="gpsd"):
             (timeout / DEVICE_TIMEOUT_DROPIN).write_text(device_timeout_dropin(LAB_DEVICE_TIMEOUT_S), newline="\n")
         if gnss != "off":
             stage_gnss(rootfs, gnss)
-    stage_system(rootfs, config, gnss)
+    stage_system(rootfs, config, gnss, satdump_pass.transient_units())
     files = {p.relative_to(rootfs).as_posix(): sha(p) for p in sorted(rootfs.rglob("*")) if p.is_file()}
     (destination / "stage-files.json").write_text(json.dumps({"schema_version": 1, "status": "STAGED_ONLY", "files": files}, indent=2) + "\n", newline="\n")
     (destination / "INSTALL_PLAN.txt").write_text("STAGED ONLY. No services enabled and no hardware acceptance supplied.\nReview software/DEPLOYMENT.md, run doctor and all release guards, then package rootfs via signed local repository.\nField/QUIET root: Wi-Fi/BT modprobe blacklist (install /bin/false), FE1.1s port-4 authorized=0 rule and rfkill unit are staged; the WIFI_PWR_EN gpio-hog (W1-2) is OPEN and not generated.\nDo not copy over /etc acceptance files, repartition UFS, flash BIOS, run rsetup or auto-enable units.\nA/B installation is a separate bench/recovery procedure; no activation command is generated here.\n", newline="\n")

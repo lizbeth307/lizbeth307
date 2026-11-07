@@ -72,7 +72,7 @@ class SystemFilesTests(unittest.TestCase):
                          system_files.UDEV_FASTRPC, system_files.UDEV_PPS, system_files.UDEV_I2C, system_files.GNSS_BLACKLIST,
                          system_files.UDEV_I2C_TOOLS_OVERRIDE, system_files.INA238_BLACKLIST,
                          system_files.GPSD_DEFAULTS, system_files.CHRONY_CANDIDATE, system_files.LOGIND_DROPIN,
-                         system_files.ZRAM, system_files.POLKIT_RADIO_OFF, system_files.EDID_FIRMWARE,
+                         system_files.ZRAMSWAP_DEFAULTS, system_files.POLKIT_RADIO_OFF, system_files.EDID_FIRMWARE,
                          system_files.EDID_HOOK, system_files.DSP_HOOK):
             self.assertIn(relative, files)
         for unit in system_files.MASKED_UNITS:
@@ -122,7 +122,9 @@ class SystemFilesTests(unittest.TestCase):
         self.assertEqual([l for l in system_files.gnss_blacklist().splitlines() if not l.startswith("#")],
                          ["blacklist gnss-usb", "blacklist gnss-ubx", "blacklist gnss-mtk", "blacklist gnss-sirf", "blacklist gnss-serial"])
         self.assertIn("HandlePowerKey=ignore\nIdleAction=ignore\n", system_files.logind_dropin())
-        self.assertIn("[zram0]\nzram-size = 1024\n", system_files.zram())
+        # zram-tools 0.3.3.1-1.1 keys: SIZE in MiB; PERCENT would override it, so only SIZE is set.
+        self.assertEqual([l for l in system_files.zramswap_defaults().splitlines() if not l.startswith("#")], ["SIZE=1024"])
+        self.assertEqual(system_files.ZRAMSWAP_DEFAULTS, "etc/default/zramswap")
         self.assertEqual(set(system_files.MASKED_UNITS) >= {"apt-daily.timer", "apt-daily-upgrade.timer", "fwupd-refresh.timer",
                                                             "ModemManager.service", "sleep.target", "suspend.target",
                                                             "hibernate.target", "hybrid-sleep.target"}, True)
@@ -141,7 +143,8 @@ class SystemFilesTests(unittest.TestCase):
         self.assertNotIn("/var/lib/srrx ", tmp)  # srrx.pass_jobs owns it; duplicates warn
         self.assertNotIn("/run/labd", tmp)  # receive-only build: no bias token directory
         # Per-lease directories are OPEN for the lease-unit owner; nothing invents lease names here.
-        self.assertEqual([l for l in tmp.splitlines() if not l.startswith("#")], ["d /data/products 0750 root lab -"])
+        # 0751: lab lists it, other accounts only pass through (labd to products/satdump, 2770 labd:srrx-satdump).
+        self.assertEqual([l for l in tmp.splitlines() if not l.startswith("#")], ["d /data/products 0751 root lab -"])
         self.assertIn("Per-lease directories are OPEN", tmp)
         self.assertEqual([l for l in system_files.ina238_blacklist().splitlines() if not l.startswith("#")], ["blacklist ina238"])
 
@@ -179,6 +182,31 @@ class SystemFilesTests(unittest.TestCase):
         with patch.object(system_files, "staged_files", lambda config, gnss: extra):
             with self.assertRaisesRegex(deploy.DeploymentError, "collides"):
                 self.stage("collision")
+
+    def test_stage_carries_the_satdump_baseband_files_and_their_accounts(self):
+        sys.path.insert(0, str(PROJECT / "software"))
+        from srrx import satdump_pass
+        rootfs = self.stage("satdump", devices())
+        for relative, text in satdump_pass.staged_files().items():
+            self.assertEqual((rootfs / relative).read_text(encoding="utf-8"), text, relative)
+        self.assertFalse((rootfs / "etc/srrx/baseband.env").exists())  # the administrator writes it at commissioning
+        self.assertIn("SRRX_BB_DEVICE=\n", (rootfs / "etc/srrx/baseband.env.template").read_text())
+        sweep = (rootfs / "etc/systemd/system/srrx-baseband-sweep.service").read_text()
+        self.assertIn("\nConditionPathExists=/etc/srrx/baseband.env\n", sweep)  # skipped, not failed, before that
+        self.assertIn("disable srrx-baseband-sweep.timer", (rootfs / system_files.SYSTEM_PRESET).read_text().splitlines())
+        users, groups = system_files.accounts()
+        self.assertIn(satdump_pass.UNIT_USER, users)
+        self.assertTrue({satdump_pass.UNIT_USER, satdump_pass.BASEBAND_GROUP} <= groups)
+        # The decode/live units exist only at run time (systemd-run): their User=/Group= are checked as well.
+        transient = satdump_pass.transient_units()
+        self.assertEqual(system_files.unknown_accounts(rootfs, transient), [])
+        accounts = tuple(a for a in system_files.SERVICE_ACCOUNTS if a[1] != satdump_pass.UNIT_USER)
+        with patch.object(system_files, "SERVICE_ACCOUNTS", accounts):
+            self.assertIn("user:srrx-satdump", system_files.unknown_accounts(Path(self.temp.name) / "empty", transient))
+            with self.assertRaisesRegex(deploy.DeploymentError, "srrx-satdump"):
+                self.stage("no-satdump-user", devices())
+        # No "m" line: labd gets srrx-satdump/srrx-bb only through unit SupplementaryGroups= (system_files.py).
+        self.assertNotRegex(system_files.sysusers(), r"(?m)^m ")
 
     def test_bundle_keeps_hooks_executable_and_everything_else_0644(self):
         self.stage("candidate", devices())

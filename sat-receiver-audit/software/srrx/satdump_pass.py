@@ -27,8 +27,10 @@ build/07-pz-vstanovlennia.md section 11, build/12-revision-v2.1.md, build/15 dec
   bounded output scan that fails on "CALCEPH ERROR", the baseband deleted before the sanitized
   PNG products are published (decoder_policy.satdump_publish), and deleted whatever the outcome.
 - The work tree <products>/.satdump-<id> is made 2770 whatever the caller's umask
-  (make_work_dir), for the decode and the live unit alike. The caller (labd) must be a member
-  of group srrx-satdump: it reads the unit's PNGs and removes the unit's directories.
+  (make_work_dir), for the decode and the live unit alike. The caller must hold group
+  srrx-satdump (labd through srrx.service SupplementaryGroups= once it schedules decodes, never
+  a sysusers "m" line; an administrator runs as root today): it reads the unit's PNGs and
+  removes the unit's directories.
 - load_plan() reads only /var/lib/srrx/plans/<16 hex>.json written by srrx-passes@.service
   (srrx.pass_jobs: directory 2750 srrx-passes:labd, plans 0640), so the window source is the
   isolated plan unit, not any JSON a caller names.
@@ -58,6 +60,7 @@ SATDUMP = "/usr/bin/satdump"
 UNIT_USER = "srrx-satdump"
 BASEBAND_GROUP = "srrx-bb"
 EMPTY_WORKDIR = "/var/lib/srrx-satdump/empty"
+BASEBAND_ENV = "/etc/srrx/baseband.env"  # written by the administrator only; staging ships the .template
 DATA_ROOT = baseband.DATA_ROOT
 # srrx.pass_jobs PLAN_ROOT / UNIT_USER (tests check the equality; no import of the labd side here).
 PLAN_ROOT = "/var/lib/srrx/plans"
@@ -414,8 +417,8 @@ def _remove_tree(path):
 def tmpfiles():
     """tmpfiles.d text: the empty root-owned SatDump working directory and the baseband class directory."""
     return ("# SR-RX SatDump units (srrx.satdump_pass.tmpfiles): an empty, root-owned working directory and the\n"
-            "# products directory, setgid " + UNIT_USER + " so the unit writes its work tree there; labd must be a\n"
-            "# member of group " + UNIT_USER + " (it reads the unit's PNGs and removes its work tree).\n"
+            "# products directory, setgid " + UNIT_USER + " so the unit writes its work tree there; the caller needs\n"
+            "# group " + UNIT_USER + " (it reads the unit's PNGs and removes its work tree): labd via SupplementaryGroups=.\n"
             "d /var/lib/srrx-satdump 0755 root root -\n"
             "d " + EMPTY_WORKDIR + " 0555 root root -\n"
             "d " + DATA_ROOT + "/products/satdump 2770 labd " + UNIT_USER + " -\n" + baseband.tmpfiles(DATA_ROOT))
@@ -431,8 +434,10 @@ def sweep_units():
     /dev/disk/by-uuid and the mount source) with DevicePolicy=closed denying every open().
     """
     service = ("[Unit]\nDescription=SR-RX LRPT baseband sweep (delete >= 24 h, incomplete or invalid recordings)\n"
-               "RequiresMountsFor=" + DATA_ROOT + "\n\n[Service]\nType=oneshot\nUser=labd\nGroup=" + BASEBAND_GROUP + "\n"
-               "EnvironmentFile=/etc/srrx/baseband.env\n"
+               "RequiresMountsFor=" + DATA_ROOT + "\n"
+               "# Skipped, not failed, until the administrator writes the storage binding at commissioning.\n"
+               "ConditionPathExists=" + BASEBAND_ENV + "\n\n[Service]\nType=oneshot\nUser=labd\nGroup=" + BASEBAND_GROUP + "\n"
+               "EnvironmentFile=" + BASEBAND_ENV + "\n"
                "Environment=PYTHONPATH=/opt/srrx/software PYTHONDONTWRITEBYTECODE=1\nWorkingDirectory=/\n"
                "ExecStart=/usr/bin/python3 -P -s -B -m srrx.baseband sweep --storage-root " + DATA_ROOT + " "
                "--storage-device ${SRRX_BB_DEVICE}\n"
@@ -445,9 +450,31 @@ def sweep_units():
             "etc/systemd/system/srrx-baseband-sweep.timer": timer}
 
 
+def baseband_env_template():
+    """etc/srrx/baseband.env.template: never the live file, which the administrator writes."""
+    return ("# SR-RX v2.1 LRPT baseband storage binding (srrx.satdump_pass.baseband_env_template). TEMPLATE ONLY.\n"
+            "# At commissioning the administrator writes " + BASEBAND_ENV + " (root:root 0644) with the verified\n"
+            "# UUID of the /data partition of this unit, SRRX_BB_DEVICE=/dev/disk/by-uuid/<UUID>, then enables\n"
+            "# srrx-baseband-sweep.timer. Without that file the sweep unit is skipped (ConditionPathExists=).\n"
+            "SRRX_BB_DEVICE=\n")
+
+
+def transient_units():
+    """The decode and live systemd-run properties as unit text: these units exist only at run time,
+    so deploy.stage hands them to system_files.unknown_accounts (User=, Group=, SupplementaryGroups=)."""
+    ident = "0" * 16
+    work = DATA_ROOT + "/products/satdump/.satdump-" + ident
+    decode = unit_properties("decode", ident, work_dir=work,
+                             input_path=DATA_ROOT + "/" + baseband.CLASS_DIR + "/lrpt-" + ident + ".sigmf-data")
+    live = unit_properties("live", ident, work_dir=work)
+    return ["[Service]\n" + "\n".join(properties) + "\n" for properties in (decode, live)]
+
+
 def staged_files():
-    """Relative rootfs path -> text, for a future deploy.stage (not staged yet: integration item)."""
-    return dict(sweep_units(), **{"etc/tmpfiles.d/srrx-satdump.conf": tmpfiles()})
+    """Relative rootfs path -> text that deploy.stage writes: tmpfiles, the sweep service and timer
+    (left disabled by the system preset) and the baseband.env template."""
+    return dict(sweep_units(), **{"etc/tmpfiles.d/srrx-satdump.conf": tmpfiles(),
+                                  "etc/srrx/baseband.env.template": baseband_env_template()})
 
 
 def main(argv=None):
