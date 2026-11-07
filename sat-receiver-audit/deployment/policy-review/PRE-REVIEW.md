@@ -73,4 +73,10 @@ build/09 (РЕЦ-01) вимагає ще: компоненти readsb, AIS-catch
 
 ## Як рецензент оформлює запис
 
-Запис рецензії — окремий файл JSON поза цим каталогом. Його поля задає `selftest.load_review`: `schema_version` 1; `status` REVIEWED; `policy_sha256` і `source_lock_sha256` — SHA-256 рецензованих байтів; `reviewer` — ім'я або роль без адреси e-mail (до 128 символів, без `@`); `reviewed_on` — дата YYYY-MM-DD; `builds` — непорожній перелік рецензованих результатів збірки з унікальними назвами і SHA-256; `notes` — рівно одна непорожня відповідь на кожен індекс приміток політики. Потім `python3 deployment/selftest.py offline … --policy-review <запис>` має показати `policy_review.status` = BOUND. Статус REVIEWED у самій політиці рецензент ставить вручну після цього. Ні агент, ні CI цього кроку не виконують.
+Запис рецензії — окремий файл JSON поза цим каталогом. `selftest.load_review` прив'язує його до точних байтів політики й lock, які прочитав selftest (`policy_sha256` запису порівнюється з SHA-256 прочитаного файла політики, `deployment/selftest.py`, `load_review`), тож будь-яка зміна політики після запису, зокрема сам статус REVIEWED, робить запис `NOT_BOUND`. Тому порядок такий:
+
+1. Рецензент вносить у `deployment/receive-only-policy.json` усі правки й ставить у ній `status` REVIEWED. Це остання зміна політики перед записом.
+2. Рахує SHA-256 саме цих байтів політики і `deployment/sources.lock.json` (`sha256sum`) і пише запис з полями, які задає `load_review`: `schema_version` 1; `status` REVIEWED; `policy_sha256` і `source_lock_sha256` — ці два SHA-256; `reviewer` — ім'я або роль без адреси e-mail (до 128 символів, без `@`); `reviewed_on` — дата YYYY-MM-DD; `builds` — непорожній перелік рецензованих результатів збірки з унікальними назвами і SHA-256; `notes` — рівно одна непорожня відповідь на кожен індекс приміток політики.
+3. Запускає `python3 deployment/selftest.py offline … --policy-review <запис>`. Очікування: `policy_status` = REVIEWED, `policy_review.status` = BOUND і в `blockers` немає жодного `POLICY_*` (`POLICY_NOT_REVIEWED`, `POLICY_REVIEW_RECORD_NOT_BOUND`, `POLICY_REVIEW_RECORD_MISSING`).
+
+Будь-яка пізніша зміна політики чи lock потребує нового запису за тими самими кроками. Ні агент, ні CI цих кроків не виконують.
