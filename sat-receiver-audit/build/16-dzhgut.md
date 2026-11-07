@@ -10,7 +10,7 @@
 
 | правило | значення | джерело |
 |---|---|---|
-| Родина сигнальних з'єднань | JST PH 2.0 мм: розетка PHR-n, клема SPH-002T-P0.5S (AWG 30–24, ⌀ ізоляції 0.8–1.5 мм), вилка S n B-PH-K-S / B n B-PH-K-S | JST-PH (https://www.jst-mfg.com/product/pdf/eng/ePH.pdf, прочитано 06.11.2026) |
+| Родина сигнальних з'єднань | JST PH 2.0 мм: розетка PHR-n, клема SPH-002T-P0.5S (AWG 30–24, ⌀ ізоляції 0.8–1.5 мм); вилка на CTRL, RF і ENC — лише боковий вхід S n B-PH-K-S (висота 4.8 мм проти 5.5/6.5 мм цих плат; до 8 конт., бо S16B у базі немає), на PWR і платі лючка — верхній вхід B n B-PH-K-S (монтажна висота з розеткою 8 мм); артикули — база деталей (harness_families PH) | JST-PH (https://www.jst-mfg.com/product/pdf/eng/ePH.pdf, прочитано 07.11.2026) |
 | Родина силових з'єднань | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм): розетка 43645 з фіксатором, клема 43030 (20–24 AWG, ⌀ ≤1.85 мм), вилка 43650 | MOLEX-43645 (https://docs.rs-online.com/0eff/A700000015719686.pdf, прочитано 24.10.2026); MOLEX-43030 (https://www.farnell.com/datasheets/1887331.pdf, прочитано 06.11.2026) |
 | Родина кола батареї | Molex Mini-Fit Jr. (дворядна): розетка 5557, клема 0039000060 (18–24 AWG, ⌀ 1.30–3.10 мм, 9.0 A), вилка 5566/5569 (дворядна) — бо коло батареї 18 AWG, а Micro-Fit 3.0 бере лише 20–24 AWG | MOLEX-5556 (https://static.chipdip.ru/lib/677/DOC040677478.pdf, прочитано 06.11.2026); MOLEX-5566 (https://www.farnell.com/datasheets/2695871.pdf, прочитано 06.11.2026) |
 | Проєктна межа контакту | PH 1.2 A, Micro-Fit 3.0 A, Mini-Fit Jr. 5.4 A (60 % від каталожних 2, 5 і 9 A при 50 °C усередині корпусу — рішення asm) | JST-PH; MOLEX-43030; MOLEX-5556 |
@@ -19,11 +19,11 @@
 | Переріз силових проводів у роз'ємах | мережа з бюджетом струму: у PH — AWG 24 (JST дає номінал 2 A лише для #24), у Micro-Fit — AWG 20, у Mini-Fit Jr. — AWG 18 (Molex дає номінал без перерізу — береться найтовщий, який приймає клема); сигнали — найтонший дозволений | JST-PH; MOLEX-43030; MOLEX-5556 |
 | Мінімум кола батареї | мережі E1_N, E1_SHUNT_P, E1_SW і їхнє повернення GND — не тонше 18 AWG | E1.json F101: «18 AWG. Тримач та інтерконекти мають витримувати ≥7.5 A» |
 | Перехресна перевірка перерізу | 20 AWG у джгуті ≥15 проводів при 70 °C у вакуумі — 3.7 A на провід | NASA-19990009916 (https://ntrs.nasa.gov/citations/19990009916, прочитано 24.10.2026) |
-| Ізоляція | PTFE, луджена мідь багатодротова, ≥200 °C (тип і MPN — parts DB); ⌀ ізоляції в межах клеми | рішення asm |
+| Ізоляція | PTFE, луджена мідь багатодротова, ≥200 °C; тип і MPN — TBD (немає в базі деталей: assembly_items AI-WIRE-PTFE); ⌀ ізоляції в межах клеми | рішення asm |
 | Колір | чорний GND, коричневий батарея/N/SW, жовтий 12 V, червоний 5 V, помаранчевий 3.3 V, рожевий bias 4.3 V, фіолетовий LNB/Boni, синій SDA, білий SCL та інше, зелений UART/IMU, сірий EN, блакитний FAULT/PG; колір лише допоміжний | рішення asm |
 | Маркер | друкований термоусадковий маркер з ID проводу на обох кінцях, ≤20 мм від клеми (build/18) | build/15 «Маркування» |
 | Довжина | траса з моделі корпусу + 2 × 15 мм сервісної петлі; де модель ще не готова — TBD (CAD) | рішення asm |
-| Розвантаження натягу | стяжка до пластини або бобишки ≤30 мм від кожного роз'єму, далі кожні 50–80 мм; силові джгути не ближче 20 мм до РЧ-відсіку й фідера GNSS | рішення asm; STACK §5.8 (S-складка HDMI) |
+| Розвантаження натягу | стяжка до пластини або бобишки ≤30 мм від кожного роз'єму, далі кожні 50–80 мм; силові джгути не ближче 20 мм до РЧ-відсіку й фідера GNSS; джгути між лицьовим і тильним шаром — лише крізь прорізи пластини з кантом: SL1 (стрічка S01 над верхнім краєм Q6A), SL2 (PWR/CTRL → тильний шар: S03, S04, S13–S15, S17, S18, S20–S22, S24, S25, S30, S35), SL3 (нижній ряд портів, GX16, PD-провід: S11, S23, S32, S34); ширина й межі прорізів — креслення M-07 | рішення asm; mechanical/params/mechanical.json plate slots |
 | Пайка до модулів | лудити, паяти, термоусадка 2:1 на кожному з'єднанні (як J21, 08 крок 7.7); жилу не згинати біля пайки | 08 крок 7.7 |
 | Інструмент | Mini-Fit Jr.: Molex 638190901 (18–24 AWG); екстрактор 11030044; Micro-Fit: Molex 0638190000; екстрактор 0011030043; PH: ручний інструмент JST для SPH-002T-P0.5S — TBD (каталог ePH називає лише аплікатор APLMK SPH002-05S / машину AP-K2N) | MOLEX-5556; MOLEX-43030; JST-PH |
 
@@ -31,9 +31,12 @@
 
 | вузол | що це | місце |
 |---|---|---|
-| PWR | Силова плата PWR (PWR_MAIN + PWR_BRANCH + USB_POWER) з модулем D36V50F5 U108 на платі | унизу праворуч на середній пластині (05 §3, рядок 15 «Силова плата»); U108 впаяно в PWR обома парами силових пінів (E1 U108: «використовувати обидва парні силові піни»), тепло — через мідь PWR і стійки до пластини; відхилення від 05 «регулятори прикріплені до пластини» — build/15 |
-| CTRL | Плата керування/HMI CTRL (CTRL_HMI) | за правою колонкою HMI; кнопки й енкодери крізь лице |
-| RF | RF/детекторна плата RF (RF_HMC + RF_HF + RF_INJECTOR + DC_CORE) | РЧ-відсік уздовж верхнього краю |
+| PWR | Силова плата PWR (PWR_MAIN + PWR_BRANCH + USB_POWER) з модулями D36V50F12 U107 і D36V50F5 U108 на платі | лицьовий бік середньої пластини ліворуч унизу: нижня смуга x 6–142 і ліва ніжка x 6–48 (05 §3 рядок 15, M-07, B-PWR); U107 і U108 впаяно в ліву ніжку обома парами силових пінів (E1 U108) на проставці гребінки (деталі низу модуля 1.8 мм, креслення Pololu), тепло — через мідь PWR і термопрокладки до пластини; рішення build/15 «Кількість плат» |
+| CTRL | Плата керування/HMI CTRL (CTRL_HMI) | за правою колонкою HMI на бобишках передньої половини (B-CTRL); кнопки крізь лице, енкодери — на дочірніх платах ENC |
+| ENCM | Дочірня плата головного енкодера ENC (ENC301 + кнопка SW308) | лице, колонка HMI, x 188.5 y 123 (M-01, B-ENC, place_at main); ENC1 = головний — призначення інтеграції, звірити з E3/HMI |
+| ENCV | Дочірня плата енкодера гучності ENC (ENC302 + кнопка SW309) | лице, колонка HMI, x 188.5 y 82 (M-01, B-ENC, place_at volume) |
+| RF | RF/детекторна плата RF (RF_HMC + RF_HF + RF_INJECTOR + DC_CORE) | за пластиною в РЧ-відсіку вздовж верхнього краю, компоненти до задньої стінки (B-RF) |
+| HATCH | Плата сервісного лючка HATCH (J502 консоль UART5, J503 сервісний J21, SW501 EDL) | сервісний лючок задньої стінки x 116–138, y 40–90 (layout hatch_parts, M-04); рішення build/15 «Сигнальні джгути» |
 | Q6A.HDR | Q6A, 40-pin J20 (J301) | середня пластина |
 | Q6A.CORE | Q6A, бортові шини (U500) | середня пластина |
 | Q6A.J21 | Q6A, майданчики J21 (J521) | середня пластина |
@@ -43,12 +46,11 @@
 | Q6A.MKEY | Q6A, M.2 M-key (J530) | середня пластина |
 | Q6A.EDL | Q6A, контакти кнопки EDL (J522) | середня пластина |
 | Q6A.RTC | Q6A, J11 RTC (J303 + BT301) | середня пластина |
-| PACK | Пак 4S1P + BMS Daly + запобіжник паку (BT101–BT104, U101, TH101, F101) | батарейний відсік зліва внизу; F101 7.5 A — у тримачі Keystone 3568 біля плюса паку, на малому носії або в розриві дроту (STACK D2 «біля батареї»; у графі E1 F101 — у групі «Пак 4S1P»); провід BT104.+ → F101.1 — найкоротший, 18 AWG, усередині паку (його захищає лише BMS, DOCP 40±10 A, 02 §2) |
-| INA | Adafruit INA228 5832 (U102, R101, C101, C102) | на стійках над PWR |
-| SWM | Pololu #2813 (U106) | на середній пластині біля PWR |
-| REG12 | Pololu D36V50F12 (U107) | прикріплено до середньої пластини (STACK §5.8 «Регулятори») |
-| CHG | IP2368 COUT (U110, R117–R120, C118, TH102) | на стінці корпусу, ≥10 мм від елементів |
-| HUB | Adafruit 5997 CH334F (U510) | біля Q6A J2 |
+| PACK | Пак 4S1P + BMS Daly + запобіжник паку (BT101–BT104, U101, TH101, F101) | батарейний відсік (лоток x 3–161 уздовж нижньої стінки, layout battery_tray), BMS — лицьовий бік пластини x 175–210 (layout bms); F101 7.5 A — у тримачі Keystone 3568 на малій носійній платі PACK_FUSE біля плюса паку, ізольованій і закріпленій біля лотка (STACK D2 «біля батареї»; конверт у моделі — TBD, mechanical/README); провід BT104.+ → F101.1 — найкоротший, 18 AWG (його захищає лише BMS, DOCP 40±10 A, 02 §2) |
+| INA | Adafruit INA228 5832 (U102, R101, C101, C102) | на стійках над PWR (конверт у моделі механіки — TBD, mechanical/README) |
+| SWM | Pololu #2813 (U106) | на середній пластині біля PWR (конверт у моделі механіки — TBD, mechanical/README) |
+| CHG | IP2368 COUT (U110, R117–R120, C118, TH102) | лицьовий бік пластини вгорі праворуч x 172–220, y 122.5–156.5 (layout ip2368; R-IP2368 ≥10 мм від батареї) |
+| HUB | Adafruit 5997 CH334F (U510) | біля Q6A J2 (конверт у моделі механіки — TBD, mechanical/README) |
 | T7A | Вставка ключа VBUS T7 (U505, R514–R517, C514–C516, TP501) | у розриві USB3 біля Q6A J5 |
 | T7 | Samsung T7 + цілісний кабель A–C (U540) | ззовні ззаду внизу, тримач |
 | HDMIA | HDMI-вставка pin 18 (U506, C517, C518, R552, TP502) | біля HDMI Q6A |
@@ -57,189 +59,176 @@
 | LIME | LimeSDR Micro M.2 (A415) | на п'єдесталі |
 | RTLA | RTL-A V4L + кабель USB (A411, J543) | РЧ-відсік |
 | RTLB | RTL-B V4L + кабель з розділеним VBUS (A412, J541) | РЧ-відсік |
-| HFP | Airspy HF+ + пігтейл micro-USB (A414, J544) | екран Schubert 6B угорі праворуч |
-| USBC | USB-C PD (J103) | нижній край |
+| HFP | Airspy HF+ + пігтейл micro-USB (A414, J544) | екран Schubert 6B за пластиною, середній ряд ліворуч x 2.6–114.6 (layout hfplus) |
+| USBC | USB-C PD (J103, Amphenol ICC MUSBRM5C130) | нижня грань x 189, z 24 (M-05); виріз — TBD (креслення не прочитано) |
 | XT30 | Сервісний XT30 (J101) | пігтейл у батарейному відсіку (v2.1: заряд ISDT заблоковано) |
-| LABUSB | LAB USB-A (J501) | нижній край |
-| LABBUS | LAB BUS (J505) | нижній край |
-| GX16 | Гніздо IMU GX16-4 (J504) | задня стінка |
-| UART5 | Консоль UART5 (J502) | сервісний лючок |
-| J21H | Сервісний роз'єм J21 (J503) | сервісний лючок |
-| EDL | Кнопка EDL (SW501) | сервісний лючок |
-| PWRBTN | Кнопка живлення (SW301) | TBD (STACK §5.8 не задає місце) |
+| LABUSB | LAB USB-A (J501, Bulgin PX0845/A) | нижня грань x 172, z 24 (M-05) |
+| LABBUS | LAB BUS (J505, Kinghelm KH-GX12-6P) | нижня грань x 206, z 30 (M-05); виріз — TBD |
+| GX16 | Гніздо IMU GX16-4 (J504) | задня стінка x 175, y 25 (M-04) |
+| EDL | Кнопка EDL (SW501, E-Switch PV6F240SS) | на платі лючка за кришкою сервісного лючка (layout edl_key_body) |
+| PWRBTN | Кнопка живлення (SW301, E-Switch PV6F240SS) | верхня грань x 155, z 48.5 (layout pwr_key_body, M-03; рішення build/15 «Оболонка D15») |
 | IMUPACK | IMU-пак Hammond 1550Z101 (U309, U314, J550, D502, C519, C520, U552 і деталі E3 «External IMU») | на штанзі антени, ≥30 см позаду |
-| GNSS | LC76G (U304) | біля P7 |
-| VEML | Adafruit 4162 VEML7700 (U308) | верхня грань безеля, поза козирком |
-| FAN1 | Noctua NF-A4x10 5V (FAN301) | задній отвір, шлях 1 |
-| FAN2 | Delta BFB0305HA-C (FAN302) | канал дисплея, шлях 2 |
-| BONI | Bias-tee Boni-Whip (A406) | поруч з G6K, поза екраном HF+ |
+| GNSS | LC76G (U304) | задня стінка ліворуч x 8–71.6, y 38.5–92.5 (layout lc76g); до P7 (верхня грань x 163.5) ≥113 мм по прямій — W407 CAB.011 100 мм не дістає, потрібен довший пігтейл (MPN TBD, build/15 «Оболонка D15») |
+| VEML | Adafruit 4162 VEML7700 (U308) | верхня грань безеля, вікно ⌀4 x 120, z 60 (layout veml7700_window), поза козирком; конверт плати — TBD |
+| FAN1 | Noctua NF-A4x10 5V (FAN301) | на охолоджувачі A Q6A, витяжка шляху 1 у задній стінці (layout cooler_a, q6a_fan_duct) |
+| FAN2 | Delta BFB0305HA-C (FAN302) | лицьовий бік пластини x 144–174.5, y 38.5–69, шлях 2 (layout blower) |
+| BONI | Bias-tee Boni-Whip (A406) | поруч з G6K, поза екраном HF+ (конверт у моделі механіки — TBD, mechanical/README) |
 | SPOD | Кабель живлення S-band pod (W425) | зовнішній вузол |
 
-Деталі, місце яких відрізняється від `board_candidate` у `pcb/generated/components.csv` (23). Генератор зупиняється на кожному такому місці без причини в `PARTITION_DEVIATIONS`; `pcb/prepare.py` має дати цим деталям окремий домен (не PWR/CTRL) до наступної перефіксації PCB (§11).
+Деталі, місце яких відрізняється від `board_candidate` у `pcb/generated/components.csv` (0). Генератор зупиняється на кожному такому місці без причини в `PARTITION_DEVIATIONS`. Деталі вставок T7/HDMI, носійної плати паку IMU, плати лючка, плат енкодерів і носія F101 мають власні домени `pcb/prepare.py` (T7_INSERT, HDMI_INSERT, IMU_CARRIER, HATCH, ENC, PACK_FUSE), тож відхилень немає, коли таблиця порожня.
 
 | деталь | аркуш | board_candidate | плата за розбиттям | вузол збирання | чому |
 |---|---|---|---|---|---|
-| C340 | E3 | CTRL_HMI | CTRL | IMUPACK | захист живлення і даних IMU (E5 U552/D502/C519/C520) і деталі E3 «External IMU» — на носійній платі паку IMU (вузол IMUPACK), не на PWR/CTRL |
-| C341 | E3 | CTRL_HMI | CTRL | IMUPACK | захист живлення і даних IMU (E5 U552/D502/C519/C520) і деталі E3 «External IMU» — на носійній платі паку IMU (вузол IMUPACK), не на PWR/CTRL |
-| C514 | E5 | USB_POWER | PWR | T7A | U505 з обв'язкою — у вставці кабелю T7 (E5 §7: U505 OUT → «тільки VBUS-жила кабелю»), не на PWR |
-| C515 | E5 | USB_POWER | PWR | T7A | U505 з обв'язкою — у вставці кабелю T7 (E5 §7: U505 OUT → «тільки VBUS-жила кабелю»), не на PWR |
-| C516 | E5 | USB_POWER | PWR | T7A | U505 з обв'язкою — у вставці кабелю T7 (E5 §7: U505 OUT → «тільки VBUS-жила кабелю»), не на PWR |
-| C517 | E5 | USB_POWER | PWR | HDMIA | U506 (pin 18 HDMI) — у кабелі HDMI між Q6A і дисплеєм (E5 §8), не на PWR |
-| C518 | E5 | USB_POWER | PWR | HDMIA | U506 (pin 18 HDMI) — у кабелі HDMI між Q6A і дисплеєм (E5 §8), не на PWR |
-| C519 | E5 | USB_POWER | PWR | IMUPACK | захист живлення і даних IMU (E5 U552/D502/C519/C520) і деталі E3 «External IMU» — на носійній платі паку IMU (вузол IMUPACK), не на PWR/CTRL |
-| C520 | E5 | USB_POWER | PWR | IMUPACK | захист живлення і даних IMU (E5 U552/D502/C519/C520) і деталі E3 «External IMU» — на носійній платі паку IMU (вузол IMUPACK), не на PWR/CTRL |
-| D502 | E5 | USB_POWER | PWR | IMUPACK | захист живлення і даних IMU (E5 U552/D502/C519/C520) і деталі E3 «External IMU» — на носійній платі паку IMU (вузол IMUPACK), не на PWR/CTRL |
-| J302 | E3 | CTRL_HMI | CTRL | PWR | J302 (E3 «Power-board control harness») — кінець джгута S02 на PWR (рішення asm: на PWR 5 мереж I2C2/INT/3V3_Q6A), а база деталей ставить вилку B5B-PH-K на CTRL_HMI за аркушем E3; не узгоджено, на якому кінці S02 стоїть J302 |
-| J502 | E5 | USB_POWER | PWR | UART5 | консоль UART5 — роз'єм PH 3 у сервісному лючку (рішення asm, build/15), а база деталей ставить вилку B3B-PH-K на USB_POWER; не узгоджено |
-| J503 | E5 | USB_POWER | PWR | J21H | сервісний J21 — Micro-Fit 3 у сервісному лючку (рішення asm, build/15), а база деталей ставить вилку 43650-0315 на USB_POWER; не узгоджено |
-| R390 | E3 | CTRL_HMI | CTRL | IMUPACK | захист живлення і даних IMU (E5 U552/D502/C519/C520) і деталі E3 «External IMU» — на носійній платі паку IMU (вузол IMUPACK), не на PWR/CTRL |
-| R391 | E3 | CTRL_HMI | CTRL | IMUPACK | захист живлення і даних IMU (E5 U552/D502/C519/C520) і деталі E3 «External IMU» — на носійній платі паку IMU (вузол IMUPACK), не на PWR/CTRL |
-| R514 | E5 | USB_POWER | PWR | T7A | U505 з обв'язкою — у вставці кабелю T7 (E5 §7: U505 OUT → «тільки VBUS-жила кабелю»), не на PWR |
-| R515 | E5 | USB_POWER | PWR | T7A | U505 з обв'язкою — у вставці кабелю T7 (E5 §7: U505 OUT → «тільки VBUS-жила кабелю»), не на PWR |
-| R516 | E5 | USB_POWER | PWR | T7A | U505 з обв'язкою — у вставці кабелю T7 (E5 §7: U505 OUT → «тільки VBUS-жила кабелю»), не на PWR |
-| R517 | E5 | USB_POWER | PWR | T7A | U505 з обв'язкою — у вставці кабелю T7 (E5 §7: U505 OUT → «тільки VBUS-жила кабелю»), не на PWR |
-| R552 | E5 | USB_POWER | PWR | HDMIA | U506 (pin 18 HDMI) — у кабелі HDMI між Q6A і дисплеєм (E5 §8), не на PWR |
-| U505 | E5 | USB_POWER | PWR | T7A | U505 з обв'язкою — у вставці кабелю T7 (E5 §7: U505 OUT → «тільки VBUS-жила кабелю»), не на PWR |
-| U506 | E5 | USB_POWER | PWR | HDMIA | U506 (pin 18 HDMI) — у кабелі HDMI між Q6A і дисплеєм (E5 §8), не на PWR |
-| U552 | E5 | USB_POWER | PWR | IMUPACK | захист живлення і даних IMU (E5 U552/D502/C519/C520) і деталі E3 «External IMU» — на носійній платі паку IMU (вузол IMUPACK), не на PWR/CTRL |
 
 ## 3. Сегменти джгутів
 
 | сегмент | назва | кінці | проводів | родини | довжина, мм | примітка |
 |---|---|---|---|---|---|---|
-| S01 | Шлейф 40-pin Q6A J20 → CTRL | Q6A.HDR ↔ CTRL | 29 | IDC | ≤200 (UART7 і PPS ≤20 см, STACK §5.2) | IDC 2×20 2.54 мм 1:1; на CTRL — екранований бокс-роз'єм 2×20 з ключем |
-| S02 | Керування і LAB5: CTRL ↔ PWR | CTRL ↔ PWR | 49 | MF, PH | TBD (CAD) | на PWR 5 мереж I2C2/INT/3V3_Q6A приходять у J302 (E3), решта — у роз'єми X02 |
-| S03 | Керування RF: CTRL ↔ RF | CTRL ↔ RF | 12 | PH | TBD (CAD) | лінії HMC7992/G6K/DCS; вести вздовж пластини, подалі від буферних дроселів |
-| S04 | Зміщення і реле: PWR ↔ RF | PWR ↔ RF | 9 | MF, PH | TBD (CAD) | шини bias ch1–ch4, LNB і LAB5 котушок G6K |
+| S01 | Шлейф 40-pin Q6A J20 → CTRL | Q6A.HDR ↔ CTRL | 29 | IDC | ≤200 (UART7 і PPS ≤20 см, STACK §5.2) | IDC 2×20 2.54 мм 1:1 крізь проріз пластини SL1 над верхнім краєм Q6A (M-07; стрічку 40 жил розділено на дві половини по 20, укладені одна на одну); на CTRL — бокс-роз'єм 2×20 з ключем; висота боксу проти обмеження CTRL 5.5 мм — TBD (креслення не прочитано) |
+| S02 | Керування і LAB5: CTRL ↔ PWR | CTRL ↔ PWR | 48 | MF, PH | TBD (CAD) | на CTRL 5 мереж I2C2/INT/3V3_Q6A — у J302 (E3, B5B-PH-K), на PWR — відповідь X02S0-PWR (B5B, супутня деталь бази); решта — у роз'єми X02 |
+| S03 | Керування RF: CTRL ↔ RF | CTRL ↔ RF | 12 | PH | TBD (CAD) | лінії HMC7992/G6K/DCS; крізь проріз SL2 (M-07) і виріз N4 стінки РЧ-відсіку; подалі від буферних дроселів |
+| S04 | Зміщення і реле: PWR ↔ RF | PWR ↔ RF | 9 | MF, PH | TBD (CAD) | шини bias ch1–ch4, LNB і LAB5 котушок G6K; крізь проріз SL2 і виріз N4 (M-07, M-09) |
 | S05 | Пак (після F101) → PWR | PACK ↔ PWR | 3 | MFJ, PH, SOLDER | мінімальна (TBD, CAD) | F101 стоїть біля паку, тож увесь сегмент захищає F101 7.5 A; коло батареї 18 AWG (E1 F101); найкоротша траса, без петель; роз'єм S05 на PWR — також вхід стенда при запуску (19 §4) |
 | S06 | PWR ↔ INA228 (шунт) | PWR ↔ INA | 7 | MFJ, PH, SOLDER | TBD (CAD) | VIN+/VIN− — клеми шунта Adafruit 5832; I2C0/ALERT/VS — гребінка модуля |
 | S07 | PWR ↔ Pololu #2813 | PWR ↔ SWM | 5 | MFJ, PH, SOLDER | TBD (CAD) | пайка до контактів модуля; коло батареї 18 AWG |
-| S08 | PWR ↔ D36V50F12 (SYS12) | PWR ↔ REG12 | 5 | MFJ, PH, SOLDER | TBD (CAD) | пайка до контактів модуля; вхід E1_SW — коло батареї 18 AWG |
 | S10 | PWR ↔ IP2368 | PWR ↔ CHG | 7 | MFJ, PH, SOLDER | TBD (CAD) | пайка до контактів роздрібної плати; KSD9700 — на MOSFET плати |
-| S11 | USB-C панелі → PWR | USBC ↔ PWR | 4 | MF, PH, SOLDER | TBD (CAD) | CC1/CC2 проходять PWR транзитом до IP2368 |
-| S12 | PWR → сервісний XT30 | PWR ↔ XT30 | 2 | MF, SOLDER | TBD (CAD) | пігтейл XT30U-M; v2.1: ISDT/raw-balance заблоковано до E1-02 |
-| S13 | LAB5 → CH334F JP5.1 | PWR ↔ HUB | 2 | MF, SOLDER | TBD (CAD) | лише живлення хаба; дані — кабель C-HUB |
-| S14 | J21 12 V → J503 | PWR ↔ J21H | 2 | MF | TBD (CAD) | кручена пара 12 V/GND (STACK §5.8) |
-| S15 | PWR_ON_KEY → J503.3 | CTRL ↔ J21H | 1 | MF, PH | TBD (CAD) | окрема жила KEY до вузла АБО (STACK §5.8 і E5 J503/J521: 26–28 AWG; тут 24 AWG — клема Micro-Fit J503, build/15) |
-| S16 | J503 → майданчики J21 Q6A | J21H ↔ Q6A.J21 | 3 | MF, SOLDER | TBD (CAD) | після прогону Q6A (08 крок 7.7): 12 V/GND — кручена пара 20 AWG, KEY — 24 AWG (замість 26–28 AWG STACK §5.8, бо кінець у Micro-Fit J503); термоусадка на кожному з'єднанні, поліімід на корпусі USB-C |
-| S17 | VCC_3V3_MKEY Q6A → ключ LIME3V3 | PWR ↔ Q6A.CORE | 2 | MF, SOLDER | TBD (CAD) | точка відводу 3.3 V M.2 на Q6A не визначена (E5/E2) — TBD до прозвонки Q6A |
-| S18 | LIME3V3 → R44SF (бік картки) | PWR ↔ RISER | 2 | MF, SOLDER | TBD (CAD) | лише до контактів 3.3 V картки, відділених від VCC_3V3_MKEY (E5 §10) |
+| S11 | USB-C панелі → PWR | USBC ↔ PWR | 4 | MF, PH, SOLDER | TBD (CAD) | CC1/CC2 проходять PWR транзитом до IP2368; крізь проріз SL3 (M-07) |
+| S12 | PWR → сервісний XT30 | PWR ↔ XT30 | 2 | MF, SOLDER | TBD (CAD) | пігтейл XT30U-F (бік паку/PWR, під напругою — гніздо); XT30U-M — на сервісному дроті; v2.1: ISDT/raw-balance заблоковано до E1-02 |
+| S13 | LAB5 → CH334F JP5.1 | PWR ↔ HUB | 2 | MF, SOLDER | TBD (CAD) | лише живлення хаба; дані — кабель C-HUB; крізь проріз SL2 |
+| S14 | J21 12 V → плата лючка (J503) | PWR ↔ HATCH | 2 | MF | TBD (CAD) | кручена пара 12 V/GND (STACK §5.8); крізь проріз SL2 |
+| S15 | PWR_ON_KEY → плата лючка (J503.3) | CTRL ↔ HATCH | 1 | PH | TBD (CAD) | окрема жила KEY до вузла АБО (STACK §5.8); на платі лючка — мідь до J503.3; крізь проріз SL2 |
+| S16 | J503 (плата лючка) → майданчики J21 Q6A | HATCH ↔ Q6A.J21 | 3 | MF, SOLDER | TBD (CAD) | після прогону Q6A (08 крок 7.7): розетка 43645-0300 на J503 плати лючка; 12 V/GND — кручена пара 20 AWG, KEY — 24 AWG (примітка E5 J503, build/15: найтонший переріз клеми Micro-Fit 43030); термоусадка на кожному з'єднанні, поліімід на корпусі USB-C |
+| S17 | VCC_3V3_MKEY Q6A → ключ LIME3V3 | PWR ↔ Q6A.CORE | 2 | MF, SOLDER | TBD (CAD) | точка відводу 3.3 V M.2 на Q6A не визначена (E5/E2) — TBD до прозвонки Q6A; крізь проріз SL2 |
+| S18 | LIME3V3 → R44SF (бік картки) | PWR ↔ RISER | 2 | MF, SOLDER | TBD (CAD) | лише до контактів 3.3 V картки, відділених від VCC_3V3_MKEY (E5 §10); крізь проріз SL2 |
 | S19 | DISP12 → барель Wisecoco | PWR ↔ DISP | 2 | MF, SOLDER | TBD (CAD) | розмір і полярність бареля — E5-01 відкрито |
-| S20 | VBUS_RTLA → кабель RTL-A (J543.1) | PWR ↔ RTLA | 2 | PH, SOLDER | TBD (CAD) | VBUS вставляється в пігтейл H2; JP1.1 хаба не з'єднувати |
-| S21 | VBUS_RTLB → кабель RTL-B (J541.1) | PWR ↔ RTLB | 2 | PH, SOLDER | TBD (CAD) | розділений VBUS; J5.10 не з'єднувати |
-| S22 | VBUS_HFP → пігтейл HF+ (J544.1) | PWR ↔ HFP | 3 | PH, SOLDER | TBD (CAD) | після L501 і демпфера; 2× Fair-Rite 2631480002 на повному кабелі |
-| S23 | VBUS_LABPORT → J501.1 | PWR ↔ LABUSB | 3 | PH, SOLDER | TBD (CAD) | C506 біля вихідного порту |
-| S24 | EN_T7/3V3 → вставка T7 | CTRL ↔ T7A | 3 | PH, SOLDER | TBD (CAD) | U505 на вставці USB3 |
-| S25 | CTRL → LC76G | CTRL ↔ GNSS | 6 | MF, PH, SOLDER | ≤200 разом з S01 для PPS | UART6 і PPS з J20 транзитом через CTRL |
+| S20 | VBUS_RTLA → кабель RTL-A (J543.1) | PWR ↔ RTLA | 2 | PH, SOLDER | TBD (CAD) | VBUS вставляється в пігтейл H2; JP1.1 хаба не з'єднувати; крізь SL2 і виріз N2 |
+| S21 | VBUS_RTLB → кабель RTL-B (J541.1) | PWR ↔ RTLB | 2 | PH, SOLDER | TBD (CAD) | розділений VBUS; J5.10 не з'єднувати; крізь SL2 і виріз N3 |
+| S22 | VBUS_HFP → пігтейл HF+ (J544.1) | PWR ↔ HFP | 3 | PH, SOLDER | TBD (CAD) | після L501 і демпфера; 2× Fair-Rite 2631480002 на повному кабелі; крізь SL2 |
+| S23 | VBUS_LABPORT → J501.1 | PWR ↔ LABUSB | 3 | PH, SOLDER | TBD (CAD) | C506 біля вихідного порту; крізь проріз SL3 |
+| S24 | EN_T7/3V3 → вставка T7 | CTRL ↔ T7A | 3 | PH, SOLDER | TBD (CAD) | U505 на вставці USB3; крізь проріз SL2 |
+| S25 | CTRL → LC76G | CTRL ↔ GNSS | 6 | MF, PH, SOLDER | ≤200 разом з S01 для PPS | UART6 і PPS з J20 транзитом через CTRL, крізь SL2; LC76G у моделі — задня стінка ліворуч, CTRL — праворуч: S01 + S25 ≤200 мм не перевірено і за відстанню між ними (понад 150 мм по прямій) навряд чи виконується — TBD (CAD), §11 |
 | S26 | CTRL → VEML7700 | CTRL ↔ VEML | 4 | PH, SOLDER | TBD (CAD) | 100 Ω + TVS біля безеля (на CTRL) |
 | S27 | CTRL → Noctua | CTRL ↔ FAN1 | 3 | FAN3 | кабель вентилятора | штатний 3-контактний роз'єм Noctua; на CTRL — сумісна 3-контактна вилка 2.54 мм |
 | S28 | CTRL → повітродувка Delta | CTRL ↔ FAN2 | 2 | MF, SOLDER | TBD (CAD) | 2 дроти; низький ключ на CTRL |
-| S29 | CTRL → кнопка живлення | CTRL ↔ PWRBTN | 2 | PH, SOLDER | TBD (CAD) | пайка до контактів кнопки |
-| S30 | CTRL → консоль UART5 (J502) | CTRL ↔ UART5 | 3 | PH | TBD (CAD) | лише 3.3 V TTL, без живлення адаптера |
-| S31 | Контакти EDL Q6A → SW501 | Q6A.EDL ↔ EDL | 2 | SOLDER | TBD (CAD) | точки пайки на Q6A не локалізовано (E5 §9) |
-| S32 | PWR → гніздо GX16-4 (J504) | PWR ↔ GX16 | 4 | MF, PH, SOLDER | TBD (CAD) | U551 біля входу на PWR; корпус GX16 → CHASSIS |
+| S29 | CTRL → кнопка живлення | CTRL ↔ PWRBTN | 2 | PH, SOLDER | TBD (CAD) | пайка до виводів PV6F240SS |
+| S30 | CTRL → плата лючка (консоль UART5 J502) | CTRL ↔ HATCH | 3 | PH | TBD (CAD) | лише 3.3 V TTL, без живлення адаптера; крізь проріз SL2 |
+| S31 | Контакти EDL Q6A → SW501 | Q6A.EDL ↔ EDL | 2 | SOLDER | TBD (CAD) | точки пайки на Q6A не локалізовано (E5 §9); пайка до виводів PV6F240SS |
+| S32 | PWR → гніздо GX16-4 (J504) | PWR ↔ GX16 | 4 | MF, PH, SOLDER | TBD (CAD) | U551 біля входу на PWR; корпус GX16 → CHASSIS; крізь проріз SL3 |
 | S33 | Зовнішній кабель IMU | GX16 ↔ IMUPACK | 4 | CABLE | 2000 (HELU 49655, STACK §2.10) | HELU SUPERTRONIC-C-PURO 4×0.14 мм²; оплітка 360° у GX16 і в SKINTOP паку |
-| S34 | PWR → LAB BUS (J505) | PWR ↔ LABBUS | 6 | PH, SOLDER | TBD (CAD) | кабель за межами корпусу ≤1 м (понад — PCA9615, E5 §9) |
-| S35 | BONI13V8_PORT → bias-tee Boni | PWR ↔ BONI | 2 | PH, SOLDER | TBD (CAD) | штекер 5.5/2.1 мм (STACK, «Склад набору кабелів») |
+| S34 | PWR → LAB BUS (J505) | PWR ↔ LABBUS | 6 | PH, SOLDER | TBD (CAD) | пайка в чашки KH-GX12-6P; кабель за межами корпусу ≤1 м (понад — PCA9615, E5 §9); крізь проріз SL3 |
+| S35 | BONI13V8_PORT → bias-tee Boni | PWR ↔ BONI | 2 | PH, SOLDER | TBD (CAD) | штекер 5.5/2.1 мм (STACK, «Склад набору кабелів»); крізь проріз SL2 |
 | S36 | BIAS_SB_LNA → кабель W425 | PWR ↔ SPOD | 2 | PH, SOLDER | TBD (CAD); W425 = 1500 | ввід кабелю живлення pod у корпус у графах не визначено — TBD (E2/E4) |
+| S37 | CTRL ↔ дочірня плата головного енкодера | CTRL ↔ ENCM | 4 | PH | TBD (CAD) | A/B/C і кнопка ENC1_PRESS; JST PH боковий вхід на обох кінцях (зона з'єднання ENC — лівий край, boards.json) |
+| S38 | CTRL ↔ дочірня плата енкодера гучності | CTRL ↔ ENCV | 4 | PH | TBD (CAD) | A/B/C і кнопка ENC2_PRESS; JST PH боковий вхід |
 
 ## 4. Роз'єми джгутів на платах
 
-Позначення `X<сегмент><J|P|S|I|F><n>-<плата>`: J — Mini-Fit Jr., P — Micro-Fit, S — PH, I — IDC, F — вентилятор. Ці роз'єми ще не мають позиційних позначень на схемі; parts DB/PCB додають їх (J-номер) з тим самим розміщенням контактів. Наявні роз'єми графа (J302, J501–J505, J541/J543/J544, J550, J101, J103) використано як є.
+Позначення `X<сегмент><J|P|S|I|F><n>-<плата>`: J — Mini-Fit Jr., P — Micro-Fit, S — PH, I — IDC, F — вентилятор; n = 0 — відповідь наявного роз'єму графа на іншому кінці (контакт у контакт, J302). Ці роз'єми ще не мають позиційних позначень на схемі (хвиля 2); артикули вилок, розеток і клем — з бази деталей (`harness_families`), TBD — лише де бази немає (причина в рядку). Наявні роз'єми графа (J302, J501–J505, J541/J543/J544, J550, J101, J103) використано як є. Кількість для закупівлі — [16-dzhgut-pidsumok.csv](16-dzhgut-pidsumok.csv).
 
 | роз'єм | плата | сегмент | родина | контактів | на платі | розетка кабелю | клема | джерело |
 |---|---|---|---|---|---|---|---|---|
-| X01I1-CTRL | CTRL | S01 | IDC 2×20, 2.54 мм, стрічка 1.27 мм | 40 | бокс 2×20 з ключем на CTRL — parts DB | IDC-гніздо 2×20 з ключем — parts DB | — | — |
-| X02P1-CTRL | CTRL | S02 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 4 | 43650 вертикальна Sn, 4 конт. — parts DB | 43645-0400 — TBD (серія 43645 перевірена, код для 4 конт. — parts DB) | 0430300007 | MOLEX-43645; MOLEX-43030; MOLEX-43650 |
-| X02P1-PWR | PWR | S02 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 4 | 43650 вертикальна Sn, 4 конт. — parts DB | 43645-0400 — TBD (серія 43645 перевірена, код для 4 конт. — parts DB) | 0430300007 | MOLEX-43645; MOLEX-43030; MOLEX-43650 |
-| X02S1-CTRL | CTRL | S02 | JST PH 2.0 мм | 16 | S16B-PH-K-S (боковий) / B16B-PH-K-S (верхній) | PHR-16 | SPH-002T-P0.5S | JST-PH |
-| X02S1-PWR | PWR | S02 | JST PH 2.0 мм | 16 | S16B-PH-K-S (боковий) / B16B-PH-K-S (верхній) | PHR-16 | SPH-002T-P0.5S | JST-PH |
-| X02S2-CTRL | CTRL | S02 | JST PH 2.0 мм | 16 | S16B-PH-K-S (боковий) / B16B-PH-K-S (верхній) | PHR-16 | SPH-002T-P0.5S | JST-PH |
-| X02S2-PWR | PWR | S02 | JST PH 2.0 мм | 16 | S16B-PH-K-S (боковий) / B16B-PH-K-S (верхній) | PHR-16 | SPH-002T-P0.5S | JST-PH |
-| X02S3-CTRL | CTRL | S02 | JST PH 2.0 мм | 13 | S13B-PH-K-S (боковий) / B13B-PH-K-S (верхній) | PHR-13 | SPH-002T-P0.5S | JST-PH |
-| X02S3-PWR | PWR | S02 | JST PH 2.0 мм | 8 | S8B-PH-K-S (боковий) / B8B-PH-K-S (верхній) | PHR-8 | SPH-002T-P0.5S | JST-PH |
-| X03S1-CTRL | CTRL | S03 | JST PH 2.0 мм | 12 | S12B-PH-K-S (боковий) / B12B-PH-K-S (верхній) | PHR-12 | SPH-002T-P0.5S | JST-PH |
-| X03S1-RF | RF | S03 | JST PH 2.0 мм | 12 | S12B-PH-K-S (боковий) / B12B-PH-K-S (верхній) | PHR-12 | SPH-002T-P0.5S | JST-PH |
-| X04P1-PWR | PWR | S04 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650 вертикальна Sn, 2 конт. — parts DB | 43645-0200 — TBD (серія 43645 перевірена, код для 2 конт. — parts DB) | 0430300007 | MOLEX-43645; MOLEX-43030; MOLEX-43650 |
-| X04P1-RF | RF | S04 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650 вертикальна Sn, 2 конт. — parts DB | 43645-0200 — TBD (серія 43645 перевірена, код для 2 конт. — parts DB) | 0430300007 | MOLEX-43645; MOLEX-43030; MOLEX-43650 |
-| X04S1-PWR | PWR | S04 | JST PH 2.0 мм | 7 | S7B-PH-K-S (боковий) / B7B-PH-K-S (верхній) | PHR-7 | SPH-002T-P0.5S | JST-PH |
-| X04S1-RF | RF | S04 | JST PH 2.0 мм | 7 | S7B-PH-K-S (боковий) / B7B-PH-K-S (верхній) | PHR-7 | SPH-002T-P0.5S | JST-PH |
-| X05J1-PWR | PWR | S05 | Molex Mini-Fit Jr. (дворядна) | 2 | 5566 вертикальна / 5569 кутова, 2 конт. (2×1) — код parts DB | 5557, 2 конт. — код parts DB | 0039000060 | MOLEX-5556; MOLEX-5566 |
-| X05S1-PWR | PWR | S05 | JST PH 2.0 мм | 2 | S2B-PH-K-S (боковий) / B2B-PH-K-S (верхній) | PHR-2 | SPH-002T-P0.5S | JST-PH |
-| X06J1-PWR | PWR | S06 | Molex Mini-Fit Jr. (дворядна) | 2 | 5566 вертикальна / 5569 кутова, 2 конт. (2×1) — код parts DB | 5557, 2 конт. — код parts DB | 0039000060 | MOLEX-5556; MOLEX-5566 |
-| X06S1-PWR | PWR | S06 | JST PH 2.0 мм | 5 | S5B-PH-K-S (боковий) / B5B-PH-K-S (верхній) | PHR-5 | SPH-002T-P0.5S | JST-PH |
-| X07J1-PWR | PWR | S07 | Molex Mini-Fit Jr. (дворядна) | 2 | 5566 вертикальна / 5569 кутова, 2 конт. (2×1) — код parts DB | 5557, 2 конт. — код parts DB | 0039000060 | MOLEX-5556; MOLEX-5566 |
-| X07S1-PWR | PWR | S07 | JST PH 2.0 мм | 3 | S3B-PH-K-S (боковий) / B3B-PH-K-S (верхній) | PHR-3 | SPH-002T-P0.5S | JST-PH |
-| X08J1-PWR | PWR | S08 | Molex Mini-Fit Jr. (дворядна) | 4 | 5566 вертикальна / 5569 кутова, 4 конт. (2×2) — код parts DB | 5557, 4 конт. — код parts DB | 0039000060 | MOLEX-5556; MOLEX-5566 |
-| X08S1-PWR | PWR | S08 | JST PH 2.0 мм | 2 | S2B-PH-K-S (боковий) / B2B-PH-K-S (верхній) | PHR-2 | SPH-002T-P0.5S | JST-PH |
-| X10J1-PWR | PWR | S10 | Molex Mini-Fit Jr. (дворядна) | 4 | 5566 вертикальна / 5569 кутова, 4 конт. (2×2) — код parts DB | 5557, 4 конт. — код parts DB | 0039000060 | MOLEX-5556; MOLEX-5566 |
-| X10S1-PWR | PWR | S10 | JST PH 2.0 мм | 4 | S4B-PH-K-S (боковий) / B4B-PH-K-S (верхній) | PHR-4 | SPH-002T-P0.5S | JST-PH |
-| X11P1-PWR | PWR | S11 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650 вертикальна Sn, 2 конт. — parts DB | 43645-0200 — TBD (серія 43645 перевірена, код для 2 конт. — parts DB) | 0430300007 | MOLEX-43645; MOLEX-43030; MOLEX-43650 |
-| X11S1-PWR | PWR | S11 | JST PH 2.0 мм | 2 | S2B-PH-K-S (боковий) / B2B-PH-K-S (верхній) | PHR-2 | SPH-002T-P0.5S | JST-PH |
-| X12P1-PWR | PWR | S12 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650 вертикальна Sn, 2 конт. — parts DB | 43645-0200 — TBD (серія 43645 перевірена, код для 2 конт. — parts DB) | 0430300007 | MOLEX-43645; MOLEX-43030; MOLEX-43650 |
-| X13P1-PWR | PWR | S13 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650 вертикальна Sn, 2 конт. — parts DB | 43645-0200 — TBD (серія 43645 перевірена, код для 2 конт. — parts DB) | 0430300007 | MOLEX-43645; MOLEX-43030; MOLEX-43650 |
-| X14P1-PWR | PWR | S14 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650 вертикальна Sn, 2 конт. — parts DB | 43645-0200 — TBD (серія 43645 перевірена, код для 2 конт. — parts DB) | 0430300007 | MOLEX-43645; MOLEX-43030; MOLEX-43650 |
-| X15S1-CTRL | CTRL | S15 | JST PH 2.0 мм | 2 | S2B-PH-K-S (боковий) / B2B-PH-K-S (верхній) | PHR-2 | SPH-002T-P0.5S | JST-PH |
-| X17P1-PWR | PWR | S17 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650 вертикальна Sn, 2 конт. — parts DB | 43645-0200 — TBD (серія 43645 перевірена, код для 2 конт. — parts DB) | 0430300007 | MOLEX-43645; MOLEX-43030; MOLEX-43650 |
-| X18P1-PWR | PWR | S18 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650 вертикальна Sn, 2 конт. — parts DB | 43645-0200 — TBD (серія 43645 перевірена, код для 2 конт. — parts DB) | 0430300007 | MOLEX-43645; MOLEX-43030; MOLEX-43650 |
-| X19P1-PWR | PWR | S19 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650 вертикальна Sn, 2 конт. — parts DB | 43645-0200 — TBD (серія 43645 перевірена, код для 2 конт. — parts DB) | 0430300007 | MOLEX-43645; MOLEX-43030; MOLEX-43650 |
-| X20S1-PWR | PWR | S20 | JST PH 2.0 мм | 2 | S2B-PH-K-S (боковий) / B2B-PH-K-S (верхній) | PHR-2 | SPH-002T-P0.5S | JST-PH |
-| X21S1-PWR | PWR | S21 | JST PH 2.0 мм | 2 | S2B-PH-K-S (боковий) / B2B-PH-K-S (верхній) | PHR-2 | SPH-002T-P0.5S | JST-PH |
-| X22S1-PWR | PWR | S22 | JST PH 2.0 мм | 3 | S3B-PH-K-S (боковий) / B3B-PH-K-S (верхній) | PHR-3 | SPH-002T-P0.5S | JST-PH |
-| X23S1-PWR | PWR | S23 | JST PH 2.0 мм | 3 | S3B-PH-K-S (боковий) / B3B-PH-K-S (верхній) | PHR-3 | SPH-002T-P0.5S | JST-PH |
-| X24S1-CTRL | CTRL | S24 | JST PH 2.0 мм | 3 | S3B-PH-K-S (боковий) / B3B-PH-K-S (верхній) | PHR-3 | SPH-002T-P0.5S | JST-PH |
-| X25P1-CTRL | CTRL | S25 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650 вертикальна Sn, 2 конт. — parts DB | 43645-0200 — TBD (серія 43645 перевірена, код для 2 конт. — parts DB) | 0430300007 | MOLEX-43645; MOLEX-43030; MOLEX-43650 |
-| X25S1-CTRL | CTRL | S25 | JST PH 2.0 мм | 4 | S4B-PH-K-S (боковий) / B4B-PH-K-S (верхній) | PHR-4 | SPH-002T-P0.5S | JST-PH |
-| X26S1-CTRL | CTRL | S26 | JST PH 2.0 мм | 4 | S4B-PH-K-S (боковий) / B4B-PH-K-S (верхній) | PHR-4 | SPH-002T-P0.5S | JST-PH |
-| X27F1-CTRL | CTRL | S27 | 3-контактний роз'єм вентилятора 2.54 мм (штатний Noctua) | 3 | 3-контактна вилка 2.54 мм із замком — parts DB | штатний на кабелі Noctua | — | — |
-| X28P1-CTRL | CTRL | S28 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650 вертикальна Sn, 2 конт. — parts DB | 43645-0200 — TBD (серія 43645 перевірена, код для 2 конт. — parts DB) | 0430300007 | MOLEX-43645; MOLEX-43030; MOLEX-43650 |
-| X29S1-CTRL | CTRL | S29 | JST PH 2.0 мм | 2 | S2B-PH-K-S (боковий) / B2B-PH-K-S (верхній) | PHR-2 | SPH-002T-P0.5S | JST-PH |
-| X30S1-CTRL | CTRL | S30 | JST PH 2.0 мм | 3 | S3B-PH-K-S (боковий) / B3B-PH-K-S (верхній) | PHR-3 | SPH-002T-P0.5S | JST-PH |
-| X32P1-PWR | PWR | S32 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650 вертикальна Sn, 2 конт. — parts DB | 43645-0200 — TBD (серія 43645 перевірена, код для 2 конт. — parts DB) | 0430300007 | MOLEX-43645; MOLEX-43030; MOLEX-43650 |
-| X32S1-PWR | PWR | S32 | JST PH 2.0 мм | 2 | S2B-PH-K-S (боковий) / B2B-PH-K-S (верхній) | PHR-2 | SPH-002T-P0.5S | JST-PH |
-| X34S1-PWR | PWR | S34 | JST PH 2.0 мм | 6 | S6B-PH-K-S (боковий) / B6B-PH-K-S (верхній) | PHR-6 | SPH-002T-P0.5S | JST-PH |
-| X35S1-PWR | PWR | S35 | JST PH 2.0 мм | 2 | S2B-PH-K-S (боковий) / B2B-PH-K-S (верхній) | PHR-2 | SPH-002T-P0.5S | JST-PH |
-| X36S1-PWR | PWR | S36 | JST PH 2.0 мм | 2 | S2B-PH-K-S (боковий) / B2B-PH-K-S (верхній) | PHR-2 | SPH-002T-P0.5S | JST-PH |
+| X01I1-CTRL | CTRL | S01 | IDC 2×20, 2.54 мм, стрічка 1.27 мм | 40 | XDFH-0254-2*20P (C19193815) | XDFH-0258-2*20P (C53309344) | — | design/parts/parts.json harness_families IDC |
+| X02P1-CTRL | CTRL | S02 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 4 | 43650-0415 (C293547) | 43645-0400 (C277618) | 43030-0007 (C293530) | design/parts/parts.json harness_families MF; MOLEX-43030 |
+| X02P1-PWR | PWR | S02 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 4 | 43650-0415 (C293547) | 43645-0400 (C277618) | 43030-0007 (C293530) | design/parts/parts.json harness_families MF; MOLEX-43030 |
+| X02S0-PWR | PWR | S02 | JST PH 2.0 мм | 5 | B5B-PH-K-S(LF)(SN) — супутня деталь J302 (база деталей) | PHR-5 — супутня деталь J302 (база деталей) | SPH-002T-P0.5S (C111515) | design/parts/parts.json J-PH-B5B |
+| X02S1-CTRL | CTRL | S02 | JST PH 2.0 мм | 8 | S8B-PH-K-S(LF)(SN) (C157915) | PHR-8 (C157950) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X02S1-PWR | PWR | S02 | JST PH 2.0 мм | 16 | B16B-PH-K-S(LF)(SN) (C158019) | PHR-16 (C157956) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X02S2-CTRL | CTRL | S02 | JST PH 2.0 мм | 8 | S8B-PH-K-S(LF)(SN) (C157915) | PHR-8 (C157950) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X02S3-CTRL | CTRL | S02 | JST PH 2.0 мм | 8 | S8B-PH-K-S(LF)(SN) (C157915) | PHR-8 (C157950) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X02S2-PWR | PWR | S02 | JST PH 2.0 мм | 16 | B16B-PH-K-S(LF)(SN) (C158019) | PHR-16 (C157956) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X02S4-CTRL | CTRL | S02 | JST PH 2.0 мм | 8 | S8B-PH-K-S(LF)(SN) (C157915) | PHR-8 (C157950) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X02S5-CTRL | CTRL | S02 | JST PH 2.0 мм | 8 | S8B-PH-K-S(LF)(SN) (C157915) | PHR-8 (C157950) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X02S3-PWR | PWR | S02 | JST PH 2.0 мм | 8 | B8B-PH-K-S(LF)(SN) (C157974) | PHR-8 (C157950) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X03S1-CTRL | CTRL | S03 | JST PH 2.0 мм | 8 | S8B-PH-K-S(LF)(SN) (C157915) | PHR-8 (C157950) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X03S1-RF | RF | S03 | JST PH 2.0 мм | 8 | S8B-PH-K-S(LF)(SN) (C157915) | PHR-8 (C157950) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X03S2-CTRL | CTRL | S03 | JST PH 2.0 мм | 4 | S4B-PH-K-S(LF)(SN) (C157926) | PHR-4 (C111514) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X03S2-RF | RF | S03 | JST PH 2.0 мм | 4 | S4B-PH-K-S(LF)(SN) (C157926) | PHR-4 (C111514) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X04P1-PWR | PWR | S04 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650-0215 (C293740) | 43645-0200 (C114089) | 43030-0007 (C293530) | design/parts/parts.json harness_families MF; MOLEX-43030 |
+| X04P1-RF | RF | S04 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650-0215 (C293740) | 43645-0200 (C114089) | 43030-0007 (C293530) | design/parts/parts.json harness_families MF; MOLEX-43030 |
+| X04S1-PWR | PWR | S04 | JST PH 2.0 мм | 7 | B7B-PH-K-S(LF)(SN) (C157981) | PHR-7 (C157951) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X04S1-RF | RF | S04 | JST PH 2.0 мм | 7 | S7B-PH-K-S(LF)(SN) (C157917) | PHR-7 (C157951) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X05J1-PWR | PWR | S05 | Molex Mini-Fit Jr. (дворядна) | 2 | TBD (немає в базі деталей: коди розеток Mini-Fit Jr. 5557 і вилок 5566/5569 на 2 і 4 контакти не прочитано на сторінці Molex чи дистриб'ютора (клему 0039000060 прочитано, MOLEX-5556)); серія 5566/5569, 2×1 | TBD (немає в базі деталей: коди розеток Mini-Fit Jr. 5557 і вилок 5566/5569 на 2 і 4 контакти не прочитано на сторінці Molex чи дистриб'ютора (клему 0039000060 прочитано, MOLEX-5556)); серія 5557, 2 конт. | 0039000060 (пакет) / 0039000059 (котушка) | MOLEX-5556; MOLEX-5566 |
+| X05S1-PWR | PWR | S05 | JST PH 2.0 мм | 2 | B2B-PH-K-S(LF)(SN) (C131337) | PHR-2 (C157955) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X06J1-PWR | PWR | S06 | Molex Mini-Fit Jr. (дворядна) | 2 | TBD (немає в базі деталей: коди розеток Mini-Fit Jr. 5557 і вилок 5566/5569 на 2 і 4 контакти не прочитано на сторінці Molex чи дистриб'ютора (клему 0039000060 прочитано, MOLEX-5556)); серія 5566/5569, 2×1 | TBD (немає в базі деталей: коди розеток Mini-Fit Jr. 5557 і вилок 5566/5569 на 2 і 4 контакти не прочитано на сторінці Molex чи дистриб'ютора (клему 0039000060 прочитано, MOLEX-5556)); серія 5557, 2 конт. | 0039000060 (пакет) / 0039000059 (котушка) | MOLEX-5556; MOLEX-5566 |
+| X06S1-PWR | PWR | S06 | JST PH 2.0 мм | 5 | B5B-PH-K-S(LF)(SN) (C157993) | PHR-5 (C157953) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X07J1-PWR | PWR | S07 | Molex Mini-Fit Jr. (дворядна) | 2 | TBD (немає в базі деталей: коди розеток Mini-Fit Jr. 5557 і вилок 5566/5569 на 2 і 4 контакти не прочитано на сторінці Molex чи дистриб'ютора (клему 0039000060 прочитано, MOLEX-5556)); серія 5566/5569, 2×1 | TBD (немає в базі деталей: коди розеток Mini-Fit Jr. 5557 і вилок 5566/5569 на 2 і 4 контакти не прочитано на сторінці Molex чи дистриб'ютора (клему 0039000060 прочитано, MOLEX-5556)); серія 5557, 2 конт. | 0039000060 (пакет) / 0039000059 (котушка) | MOLEX-5556; MOLEX-5566 |
+| X07S1-PWR | PWR | S07 | JST PH 2.0 мм | 3 | B3B-PH-K-S(LF)(SN) (C131339) | PHR-3 (C265393) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X10J1-PWR | PWR | S10 | Molex Mini-Fit Jr. (дворядна) | 4 | TBD (немає в базі деталей: коди розеток Mini-Fit Jr. 5557 і вилок 5566/5569 на 2 і 4 контакти не прочитано на сторінці Molex чи дистриб'ютора (клему 0039000060 прочитано, MOLEX-5556)); серія 5566/5569, 2×2 | TBD (немає в базі деталей: коди розеток Mini-Fit Jr. 5557 і вилок 5566/5569 на 2 і 4 контакти не прочитано на сторінці Molex чи дистриб'ютора (клему 0039000060 прочитано, MOLEX-5556)); серія 5557, 4 конт. | 0039000060 (пакет) / 0039000059 (котушка) | MOLEX-5556; MOLEX-5566 |
+| X10S1-PWR | PWR | S10 | JST PH 2.0 мм | 4 | B4B-PH-K-S(LF)(SN) (C131334) | PHR-4 (C111514) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X11P1-PWR | PWR | S11 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650-0215 (C293740) | 43645-0200 (C114089) | 43030-0007 (C293530) | design/parts/parts.json harness_families MF; MOLEX-43030 |
+| X11S1-PWR | PWR | S11 | JST PH 2.0 мм | 2 | B2B-PH-K-S(LF)(SN) (C131337) | PHR-2 (C157955) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X12P1-PWR | PWR | S12 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650-0215 (C293740) | 43645-0200 (C114089) | 43030-0007 (C293530) | design/parts/parts.json harness_families MF; MOLEX-43030 |
+| X13P1-PWR | PWR | S13 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650-0215 (C293740) | 43645-0200 (C114089) | 43030-0007 (C293530) | design/parts/parts.json harness_families MF; MOLEX-43030 |
+| X14P1-PWR | PWR | S14 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650-0215 (C293740) | 43645-0200 (C114089) | 43030-0007 (C293530) | design/parts/parts.json harness_families MF; MOLEX-43030 |
+| X14P1-HATCH | HATCH | S14 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650-0215 (C293740) | 43645-0200 (C114089) | 43030-0007 (C293530) | design/parts/parts.json harness_families MF; MOLEX-43030 |
+| X15S1-CTRL | CTRL | S15 | JST PH 2.0 мм | 2 | S2B-PH-K-S(LF)(SN) (C173752) | PHR-2 (C157955) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X15S1-HATCH | HATCH | S15 | JST PH 2.0 мм | 2 | B2B-PH-K-S(LF)(SN) (C131337) | PHR-2 (C157955) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X17P1-PWR | PWR | S17 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650-0215 (C293740) | 43645-0200 (C114089) | 43030-0007 (C293530) | design/parts/parts.json harness_families MF; MOLEX-43030 |
+| X18P1-PWR | PWR | S18 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650-0215 (C293740) | 43645-0200 (C114089) | 43030-0007 (C293530) | design/parts/parts.json harness_families MF; MOLEX-43030 |
+| X19P1-PWR | PWR | S19 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650-0215 (C293740) | 43645-0200 (C114089) | 43030-0007 (C293530) | design/parts/parts.json harness_families MF; MOLEX-43030 |
+| X20S1-PWR | PWR | S20 | JST PH 2.0 мм | 2 | B2B-PH-K-S(LF)(SN) (C131337) | PHR-2 (C157955) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X21S1-PWR | PWR | S21 | JST PH 2.0 мм | 2 | B2B-PH-K-S(LF)(SN) (C131337) | PHR-2 (C157955) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X22S1-PWR | PWR | S22 | JST PH 2.0 мм | 3 | B3B-PH-K-S(LF)(SN) (C131339) | PHR-3 (C265393) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X23S1-PWR | PWR | S23 | JST PH 2.0 мм | 3 | B3B-PH-K-S(LF)(SN) (C131339) | PHR-3 (C265393) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X24S1-CTRL | CTRL | S24 | JST PH 2.0 мм | 3 | S3B-PH-K-S(LF)(SN) (C157929) | PHR-3 (C265393) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X25P1-CTRL | CTRL | S25 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650-0215 (C293740) | 43645-0200 (C114089) | 43030-0007 (C293530) | design/parts/parts.json harness_families MF; MOLEX-43030 |
+| X25S1-CTRL | CTRL | S25 | JST PH 2.0 мм | 4 | S4B-PH-K-S(LF)(SN) (C157926) | PHR-4 (C111514) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X26S1-CTRL | CTRL | S26 | JST PH 2.0 мм | 4 | S4B-PH-K-S(LF)(SN) (C157926) | PHR-4 (C111514) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X27F1-CTRL | CTRL | S27 | 3-контактний роз'єм вентилятора 2.54 мм (штатний Noctua) | 3 | 22-27-2031 (C471416) | штатний на кабелі Noctua | — | design/parts/parts.json harness_families FAN3 |
+| X28P1-CTRL | CTRL | S28 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650-0215 (C293740) | 43645-0200 (C114089) | 43030-0007 (C293530) | design/parts/parts.json harness_families MF; MOLEX-43030 |
+| X29S1-CTRL | CTRL | S29 | JST PH 2.0 мм | 2 | S2B-PH-K-S(LF)(SN) (C173752) | PHR-2 (C157955) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X30S1-CTRL | CTRL | S30 | JST PH 2.0 мм | 3 | S3B-PH-K-S(LF)(SN) (C157929) | PHR-3 (C265393) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X30S1-HATCH | HATCH | S30 | JST PH 2.0 мм | 3 | B3B-PH-K-S(LF)(SN) (C131339) | PHR-3 (C265393) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X32P1-PWR | PWR | S32 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650-0215 (C293740) | 43645-0200 (C114089) | 43030-0007 (C293530) | design/parts/parts.json harness_families MF; MOLEX-43030 |
+| X32S1-PWR | PWR | S32 | JST PH 2.0 мм | 2 | B2B-PH-K-S(LF)(SN) (C131337) | PHR-2 (C157955) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X34S1-PWR | PWR | S34 | JST PH 2.0 мм | 6 | B6B-PH-K-S(LF)(SN) (C131342) | PHR-6 (C157952) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X35S1-PWR | PWR | S35 | JST PH 2.0 мм | 2 | B2B-PH-K-S(LF)(SN) (C131337) | PHR-2 (C157955) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X36S1-PWR | PWR | S36 | JST PH 2.0 мм | 2 | B2B-PH-K-S(LF)(SN) (C131337) | PHR-2 (C157955) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X37S1-CTRL | CTRL | S37 | JST PH 2.0 мм | 4 | S4B-PH-K-S(LF)(SN) (C157926) | PHR-4 (C111514) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X37S1-ENCM | ENCM | S37 | JST PH 2.0 мм | 4 | S4B-PH-K-S(LF)(SN) (C157926) | PHR-4 (C111514) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X38S1-CTRL | CTRL | S38 | JST PH 2.0 мм | 4 | S4B-PH-K-S(LF)(SN) (C157926) | PHR-4 (C111514) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
+| X38S1-ENCV | ENCV | S38 | JST PH 2.0 мм | 4 | S4B-PH-K-S(LF)(SN) (C157926) | PHR-4 (C111514) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
 
 Контакти понад зайняті проводами (мінімум 2 у PH і Micro-Fit) — резерв, без проводу.
 
-Наявні роз'єми графа, для яких тут обрано родину (вимога E5-08 — артикули ще мають підтвердити parts DB):
+Наявні роз'єми графа і панельні деталі з обраною родиною (артикули — база деталей):
 
 | роз'єм | вузол | сегмент | родина | панель/плата | розетка | клема | джерело |
 |---|---|---|---|---|---|---|---|
-| J302 | PWR | S02 | PH 5 (рішення asm) | S5B-PH-K-S | PHR-5 | SPH-002T-P0.5S | JST-PH |
-| J503 | J21H | S14/S15/S16 | Micro-Fit 3 з фіксатором (рішення asm) | розетка 0436450300 ↔ вилка 43640 (код — parts DB) | 0436450300 | 43030 / 43031 | MOLEX-43645 |
-| J502 | UART5 | S30 | PH 3 (рішення asm; не стикується з J503) | S3B-PH-K-S | PHR-3 | SPH-002T-P0.5S | JST-PH |
-| J505 | LABBUS | S34 | M8 6-конт. A-код, IP67 (кандидат binder 86 6618 1120 00006) | панель M10×0.75 | — | — | BINDER-M8 |
+| J302 | CTRL | S02 | PH 5 (граф E3, база деталей J-PH-B5B) | B5B-PH-K-S (C157993) на CTRL; відповідь X02S0-PWR — B5B на PWR | PHR-5 на обох кінцях | SPH-002T-P0.5S | design/parts/parts.json J-PH-B5B |
+| J503 | HATCH | S16 | Micro-Fit 3 з фіксатором на платі лючка (база деталей J-MICROFIT-3) | вилка 43650-0315 (C293546, Sn) | 43645-0300 (C259740) на S16 | 43030-0007 (C293530) | design/parts/parts.json J-MICROFIT-3; MOLEX-43645 |
+| J502 | HATCH | — (зовнішній провід консолі) | PH 3 на платі лючка (база деталей J-PH-B3B; не стикується з J503) | B3B-PH-K-S (C131339) | PHR-3 на проводі адаптера | SPH-002T-P0.5S | design/parts/parts.json J-PH-B3B |
+| J505 | LABBUS | S34 | Kinghelm KH-GX12-6P (база деталей J-GX12-6; альтернатива IP67 — binder M8 86 6618 1120 00006) | панель, виріз — TBD (сторінка LCSC без креслення) | — | пайка в чашки | KINGHELM-GX12; BINDER-M8 |
 | J504 | GX16 | S32/S33 | Olimex CONNECTOR-GX16-4 (STACK) | панель, отвір ⌀16 | — | пайка в чашки | OLIMEX-GX16 |
-| SW301 | PWRBTN | S29 | E-Switch PV0, IP67, ⌀12 (код конфігурації — TBD) | панель | — | пайка/дроти 300 мм | PV0 |
+| SW301 | PWRBTN | S29 | E-Switch PV6F240SS, IP65, ⌀16 (база деталей SW-PV6F240SS) | верхня стінка, виріз ⌀16.00 +0.20 | — | пайка до виводів | PV6 |
+| SW501 | EDL | S31 | E-Switch PV6F240SS, IP65, ⌀16 (база деталей SW-PV6F240SS) | плата лючка як панель 1.6 мм | — | пайка до виводів | PV6 |
 
 ## 5. Таблиця проводів
 
-199 проводів; повна таблиця з полями ізоляції й джерел — [16-dzhgut.csv](16-dzhgut.csv). Струми: тривалий / межа захисту (A) — проєктні значення.
+201 проводів; повна таблиця з полями ізоляції й джерел — [16-dzhgut.csv](16-dzhgut.csv). Струми: тривалий / межа захисту (A) — проєктні значення.
 
 | провід | мережа | звідки | куди | AWG | пар. | I, A | колір |
 |---|---|---|---|---|---|---|---|
-| S01-01 | GND | Q6A.HDR: J301.14 (GND) | CTRL: X01I1-CTRL.14 → U301.10, U301.15, U301.16 … | 28 | 1/8 | 0.1 / 4.5 | чорний |
-| S01-02 | GND | Q6A.HDR: J301.20 (GND) | CTRL: X01I1-CTRL.20 → U301.10, U301.15, U301.16 … | 28 | 2/8 | 0.1 / 4.5 | чорний |
-| S01-03 | GND | Q6A.HDR: J301.25 (GND) | CTRL: X01I1-CTRL.25 → U301.10, U301.15, U301.16 … | 28 | 3/8 | 0.1 / 4.5 | чорний |
-| S01-04 | GND | Q6A.HDR: J301.30 (GND) | CTRL: X01I1-CTRL.30 → U301.10, U301.15, U301.16 … | 28 | 4/8 | 0.1 / 4.5 | чорний |
-| S01-05 | GND | Q6A.HDR: J301.34 (GND) | CTRL: X01I1-CTRL.34 → U301.10, U301.15, U301.16 … | 28 | 5/8 | 0.1 / 4.5 | чорний |
-| S01-06 | GND | Q6A.HDR: J301.39 (GND) | CTRL: X01I1-CTRL.39 → U301.10, U301.15, U301.16 … | 28 | 6/8 | 0.1 / 4.5 | чорний |
-| S01-07 | GND | Q6A.HDR: J301.6 (GND) | CTRL: X01I1-CTRL.6 → U301.10, U301.15, U301.16 … | 28 | 7/8 | 0.1 / 4.5 | чорний |
-| S01-08 | GND | Q6A.HDR: J301.9 (GND) | CTRL: X01I1-CTRL.9 → U301.10, U301.15, U301.16 … | 28 | 8/8 | 0.1 / 4.5 | чорний |
-| S01-09 | 3V3_Q6A | Q6A.HDR: J301.1 (3V3) | CTRL: X01I1-CTRL.1 → R301.2, R302.2, R303.2 … | 28 | 1/2 | 0.1 / 0.1 | помаранчевий |
-| S01-10 | 3V3_Q6A | Q6A.HDR: J301.17 (3V3) | CTRL: X01I1-CTRL.17 → R301.2, R302.2, R303.2 … | 28 | 2/2 | 0.1 / 0.1 | помаранчевий |
+| S01-01 | GND | Q6A.HDR: J301.14 (GND) | CTRL: X01I1-CTRL.14 → J302.2, U301.10, U301.15 … | 28 | 1/8 | 0.1 / 4.5 | чорний |
+| S01-02 | GND | Q6A.HDR: J301.20 (GND) | CTRL: X01I1-CTRL.20 → J302.2, U301.10, U301.15 … | 28 | 2/8 | 0.1 / 4.5 | чорний |
+| S01-03 | GND | Q6A.HDR: J301.25 (GND) | CTRL: X01I1-CTRL.25 → J302.2, U301.10, U301.15 … | 28 | 3/8 | 0.1 / 4.5 | чорний |
+| S01-04 | GND | Q6A.HDR: J301.30 (GND) | CTRL: X01I1-CTRL.30 → J302.2, U301.10, U301.15 … | 28 | 4/8 | 0.1 / 4.5 | чорний |
+| S01-05 | GND | Q6A.HDR: J301.34 (GND) | CTRL: X01I1-CTRL.34 → J302.2, U301.10, U301.15 … | 28 | 5/8 | 0.1 / 4.5 | чорний |
+| S01-06 | GND | Q6A.HDR: J301.39 (GND) | CTRL: X01I1-CTRL.39 → J302.2, U301.10, U301.15 … | 28 | 6/8 | 0.1 / 4.5 | чорний |
+| S01-07 | GND | Q6A.HDR: J301.6 (GND) | CTRL: X01I1-CTRL.6 → J302.2, U301.10, U301.15 … | 28 | 7/8 | 0.1 / 4.5 | чорний |
+| S01-08 | GND | Q6A.HDR: J301.9 (GND) | CTRL: X01I1-CTRL.9 → J302.2, U301.10, U301.15 … | 28 | 8/8 | 0.1 / 4.5 | чорний |
+| S01-09 | 3V3_Q6A | Q6A.HDR: J301.1 (3V3) | CTRL: X01I1-CTRL.1 → J302.1, R301.2, R302.2 … | 28 | 1/2 | 0.1 / 0.1 | помаранчевий |
+| S01-10 | 3V3_Q6A | Q6A.HDR: J301.17 (3V3) | CTRL: X01I1-CTRL.17 → J302.1, R301.2, R302.2 … | 28 | 2/2 | 0.1 / 0.1 | помаранчевий |
 | S01-11 | E3_GNSS_PPS | Q6A.HDR: J301.7 (GPIO96) | CTRL: X01I1-CTRL.7 (транзит) | 28 | 1/1 | 0.05 / — | білий |
 | S01-12 | E3_PICO_RUN | Q6A.HDR: J301.38 (GPIO98_RUN) | CTRL: X01I1-CTRL.38 → U305.30 | 28 | 1/1 | 0.05 / — | білий |
 | S01-13 | E3_PICO_SWCLK | Q6A.HDR: J301.12 (GPIO97_SWCLK) | CTRL: X01I1-CTRL.12 → U305.SWCLK | 28 | 1/1 | 0.05 / — | білий |
 | S01-14 | E3_PICO_SWDIO | Q6A.HDR: J301.35 (GPIO100_SWDIO) | CTRL: X01I1-CTRL.35 → U305.SWDIO | 28 | 1/1 | 0.05 / — | білий |
 | S01-15 | I2C0_SCL | Q6A.HDR: J301.15 (GPIO1_I2C0_SCL) | CTRL: X01I1-CTRL.15 (транзит) | 28 | 1/1 | 0.05 / — | білий |
 | S01-16 | I2C0_SDA | Q6A.HDR: J301.13 (GPIO0_I2C0_SDA) | CTRL: X01I1-CTRL.13 (транзит) | 28 | 1/1 | 0.05 / — | синій |
-| S01-17 | I2C2_SCL | Q6A.HDR: J301.28 (GPIO9_I2C2_SCL) | CTRL: X01I1-CTRL.28 → R304.1, U301.12, U302.12 … | 28 | 1/1 | 0.05 / — | білий |
-| S01-18 | I2C2_SDA | Q6A.HDR: J301.27 (GPIO8_I2C2_SDA) | CTRL: X01I1-CTRL.27 → R303.1, U301.13, U302.13 … | 28 | 1/1 | 0.05 / — | синій |
+| S01-17 | I2C2_SCL | Q6A.HDR: J301.28 (GPIO9_I2C2_SCL) | CTRL: X01I1-CTRL.28 → J302.4, R304.1, U301.12 … | 28 | 1/1 | 0.05 / — | білий |
+| S01-18 | I2C2_SDA | Q6A.HDR: J301.27 (GPIO8_I2C2_SDA) | CTRL: X01I1-CTRL.27 → J302.3, R303.1, U301.13 … | 28 | 1/1 | 0.05 / — | синій |
 | S01-19 | INA228_ALERT | Q6A.HDR: J301.3 (GPIO24) | CTRL: X01I1-CTRL.3 → R301.1 | 28 | 1/1 | 0.05 / — | блакитний |
-| S01-20 | MCP_INT | Q6A.HDR: J301.5 (GPIO25) | CTRL: X01I1-CTRL.5 → R302.1, U302.19, U302.20 … | 28 | 1/1 | 0.05 / — | блакитний |
+| S01-20 | MCP_INT | Q6A.HDR: J301.5 (GPIO25) | CTRL: X01I1-CTRL.5 → J302.5, R302.1, U302.19 … | 28 | 1/1 | 0.05 / — | блакитний |
 | S01-21 | SAFE_BOOT | Q6A.HDR: J301.40 (GPIO99_SAFE_BOOT) | CTRL: X01I1-CTRL.40 → U305.20 | 28 | 1/1 | 0.05 / — | білий |
 | S01-22 | UART5_RX | Q6A.HDR: J301.10 (GPIO23_UART5_RX) | CTRL: X01I1-CTRL.10 (транзит) | 28 | 1/1 | 0.05 / — | зелений |
 | S01-23 | UART5_TX | Q6A.HDR: J301.8 (GPIO22_UART5_TX) | CTRL: X01I1-CTRL.8 (транзит) | 28 | 1/1 | 0.05 / — | зелений |
@@ -249,56 +238,55 @@
 | S01-27 | UART7_TX | Q6A.HDR: J301.32 (GPIO30_UART7_TX) | CTRL: X01I1-CTRL.32 → U305.2 | 28 | 1/1 | 0.05 / — | зелений |
 | S01-28 | VCC_5V_PERI | Q6A.HDR: J301.2 (5V) | CTRL: X01I1-CTRL.2 (транзит) | 28 | 1/2 | 0.1 / 4.5 | червоний |
 | S01-29 | VCC_5V_PERI | Q6A.HDR: J301.4 (5V) | CTRL: X01I1-CTRL.4 (транзит) | 28 | 2/2 | 0.1 / 4.5 | червоний |
-| S02-01 | GND | CTRL: X02P1-CTRL.1 → U301.10, U301.15, U301.16 … | PWR: X02P1-PWR.1 → U103.2, C103.2, C104.2 … | 20 | 1/2 | 1 / 4 | чорний |
-| S02-02 | GND | CTRL: X02P1-CTRL.2 → U301.10, U301.15, U301.16 … | PWR: X02P1-PWR.2 → U103.2, C103.2, C104.2 … | 20 | 2/2 | 1 / 4 | чорний |
+| S02-01 | GND | CTRL: X02P1-CTRL.1 → J302.2, U301.10, U301.15 … | PWR: X02P1-PWR.1 → U103.2, C103.2, C104.2 … | 20 | 1/2 | 1 / 4 | чорний |
+| S02-02 | GND | CTRL: X02P1-CTRL.2 → J302.2, U301.10, U301.15 … | PWR: X02P1-PWR.2 → U103.2, C103.2, C104.2 … | 20 | 2/2 | 1 / 4 | чорний |
 | S02-03 | LAB5 | CTRL: X02P1-CTRL.3 → D301.2, R367.2, Q304.2 … | PWR: X02P1-PWR.3 → L101.2, C112.1, R110.1 … | 20 | 1/2 | 1 / 4 | червоний |
 | S02-04 | LAB5 | CTRL: X02P1-CTRL.4 → D301.2, R367.2, Q304.2 … | PWR: X02P1-PWR.4 → L101.2, C112.1, R110.1 … | 20 | 2/2 | 1 / 4 | червоний |
-| S02-05 | GND | CTRL: X02S1-CTRL.1 → U301.10, U301.15, U301.16 … | PWR: J302.2 (GND) | 24 | 1/1 | 0.1 / 0.1 | чорний |
-| S02-06 | 3V3_Q6A | CTRL: X02S1-CTRL.2 → R301.2, R302.2, R303.2 … | PWR: J302.1 (3V3_Q6A) | 24 | 1/1 | 0.1 / 0.1 | помаранчевий |
-| S02-07 | CHG_INHIBIT | CTRL: X02S1-CTRL.3 → U303.5 | PWR: X02S1-PWR.1 → R122.1 | 26 | 1/1 | 0.05 / — | сірий |
-| S02-08 | E1_BAT_ADC | CTRL: X02S1-CTRL.4 → U305.32 | PWR: X02S1-PWR.2 → R111.2, R112.1, C114.1 | 26 | 1/1 | 0.05 / — | білий |
-| S02-09 | EN_AUX12 | CTRL: X02S1-CTRL.5 → U301.22 | PWR: X02S1-PWR.3 → Q202.1, R220.1 | 26 | 1/1 | 0.05 / — | сірий |
-| S02-10 | EN_BONI | CTRL: X02S1-CTRL.6 → U301.2 | PWR: X02S1-PWR.4 → U213.13, R261.1, U214.3 … | 26 | 1/1 | 0.05 / — | сірий |
-| S02-11 | EN_HFP | CTRL: X02S1-CTRL.7 → U301.25 | PWR: X02S1-PWR.5 → U503.3, R510.1 | 26 | 1/1 | 0.05 / — | сірий |
-| S02-12 | EN_LABPORT | CTRL: X02S1-CTRL.8 → U301.21 | PWR: X02S1-PWR.6 → U502.3, R506.1 | 26 | 1/1 | 0.05 / — | сірий |
-| S02-13 | EN_LIME3V3 | CTRL: X02S1-CTRL.9 → U303.21 | PWR: X02S1-PWR.7 → U203.1, R218.1 | 26 | 1/1 | 0.05 / — | сірий |
-| S02-14 | EN_LNA1 | CTRL: X02S1-CTRL.10 → U301.26 | PWR: X02S1-PWR.8 → U206.3, R229.1 | 26 | 1/1 | 0.05 / — | сірий |
-| S02-15 | EN_LNA2 | CTRL: X02S1-CTRL.11 → U301.27 | PWR: X02S1-PWR.9 → U207.3, R234.1, Q2911.1 | 26 | 1/1 | 0.05 / — | сірий |
-| S02-16 | EN_LNA3 | CTRL: X02S1-CTRL.12 → U301.28 | PWR: X02S1-PWR.10 → U208.3, R239.1, Q2912.1 | 26 | 1/1 | 0.05 / — | сірий |
-| S02-17 | EN_LNA4 | CTRL: X02S1-CTRL.13 → U302.28 | PWR: X02S1-PWR.11 → U209.3, R244.1 | 26 | 1/1 | 0.05 / — | сірий |
-| S02-18 | EN_LNB | CTRL: X02S1-CTRL.14 → U301.1 | PWR: X02S1-PWR.12 → U211.13, R253.1, R291.1 | 26 | 1/1 | 0.05 / — | сірий |
-| S02-19 | EN_RTLA | CTRL: X02S1-CTRL.15 → U301.23 | PWR: X02S1-PWR.13 → U501.3, R502.1 | 26 | 1/1 | 0.05 / — | сірий |
-| S02-20 | EN_RTLB | CTRL: X02S1-CTRL.16 → U301.24 | PWR: X02S1-PWR.14 → U210.3, R249.1 | 26 | 1/1 | 0.05 / — | сірий |
-| S02-21 | EN_SB_LNA | CTRL: X02S2-CTRL.1 → U303.25 | PWR: X02S1-PWR.15 → U221.3, R294.1 | 26 | 1/1 | 0.05 / — | сірий |
-| S02-22 | FAULT_HFP | CTRL: X02S2-CTRL.2 → U303.2, R323.1 | PWR: X02S1-PWR.16 → U503.4 | 26 | 1/1 | 0.05 / — | блакитний |
-| S02-23 | FAULT_LABPORT | CTRL: X02S2-CTRL.3 → U302.21, R308.1 | PWR: X02S2-PWR.1 → U502.4 | 26 | 1/1 | 0.05 / — | блакитний |
-| S02-24 | FAULT_LNA1 | CTRL: X02S2-CTRL.4 → U302.22, R309.1 | PWR: X02S2-PWR.2 → U206.4 | 26 | 1/1 | 0.05 / — | блакитний |
-| S02-25 | FAULT_LNA2 | CTRL: X02S2-CTRL.5 → U302.23, R310.1 | PWR: X02S2-PWR.3 → U207.4 | 26 | 1/1 | 0.05 / — | блакитний |
-| S02-26 | FAULT_LNA3 | CTRL: X02S2-CTRL.6 → U302.24, R311.1 | PWR: X02S2-PWR.4 → U208.4 | 26 | 1/1 | 0.05 / — | блакитний |
-| S02-27 | FAULT_LNA4 | CTRL: X02S2-CTRL.7 → U302.25, R312.1 | PWR: X02S2-PWR.5 → U209.4 | 26 | 1/1 | 0.05 / — | блакитний |
-| S02-28 | FAULT_RTLA | CTRL: X02S2-CTRL.8 → U303.3, R324.1 | PWR: X02S2-PWR.6 → U501.4 | 26 | 1/1 | 0.05 / — | блакитний |
-| S02-29 | FAULT_RTLB | CTRL: X02S2-CTRL.9 → U303.1, R322.1 | PWR: X02S2-PWR.7 → U210.4 | 26 | 1/1 | 0.05 / — | блакитний |
-| S02-30 | FLT_BONI | CTRL: X02S2-CTRL.10 → U302.27, R314.1 | PWR: X02S2-PWR.8 → U214.6 | 26 | 1/1 | 0.05 / — | блакитний |
-| S02-31 | FLT_LIME3V3 | CTRL: X02S2-CTRL.11 → U303.4, R325.1 | PWR: X02S2-PWR.9 → U203.4 | 26 | 1/1 | 0.05 / — | блакитний |
-| S02-32 | FLT_LNB | CTRL: X02S2-CTRL.12 → U302.26, R313.1 | PWR: X02S2-PWR.10 → U212.6 | 26 | 1/1 | 0.05 / — | блакитний |
-| S02-33 | FLT_SB_LNA | CTRL: X02S2-CTRL.13 → U303.26, R392.1 | PWR: X02S2-PWR.11 → U221.4 | 26 | 1/1 | 0.05 / — | блакитний |
-| S02-34 | I2C0_SCL | CTRL: X02S2-CTRL.14 (транзит) | PWR: X02S2-PWR.12 (транзит) | 26 | 1/1 | 0.05 / — | білий |
-| S02-35 | I2C0_SDA | CTRL: X02S2-CTRL.15 (транзит) | PWR: X02S2-PWR.13 (транзит) | 26 | 1/1 | 0.05 / — | синій |
-| S02-36 | I2C2_SCL | CTRL: X02S2-CTRL.16 → R304.1, U301.12, U302.12 … | PWR: J302.4 (SCL) | 26 | 1/1 | 0.05 / — | білий |
-| S02-37 | I2C2_SDA | CTRL: X02S3-CTRL.1 → R303.1, U301.13, U302.13 … | PWR: J302.3 (SDA) | 26 | 1/1 | 0.05 / — | синій |
-| S02-38 | IMU_RX | CTRL: X02S3-CTRL.2 → U305.11 | PWR: X02S2-PWR.14 → U551.6 | 26 | 1/1 | 0.05 / — | зелений |
-| S02-39 | IMU_TX | CTRL: X02S3-CTRL.3 → U305.12 | PWR: X02S2-PWR.15 → U551.1 | 26 | 1/1 | 0.05 / — | зелений |
-| S02-40 | INA228_ALERT | CTRL: X02S3-CTRL.4 → R301.1 | PWR: X02S2-PWR.16 (транзит) | 26 | 1/1 | 0.05 / — | блакитний |
-| S02-41 | MCP_INT | CTRL: X02S3-CTRL.5 → R302.1, U302.19, U302.20 … | PWR: J302.5 (INT) | 26 | 1/1 | 0.05 / — | блакитний |
-| S02-42 | OVP_LNB_N | CTRL: X02S3-CTRL.6 → U303.6 | PWR: X02S3-PWR.1 → U212.3, U220.6, R291.2 … | 26 | 1/1 | 0.05 / — | блакитний |
-| S02-43 | PG_BONI | CTRL: X02S3-CTRL.7 → U302.2, R316.1 | PWR: X02S3-PWR.2 → U218.1 | 26 | 1/1 | 0.05 / — | блакитний |
-| S02-44 | PG_LNB | CTRL: X02S3-CTRL.8 → U302.1, R315.1 | PWR: X02S3-PWR.3 → U217.1 | 26 | 1/1 | 0.05 / — | блакитний |
-| S02-45 | PICO_DISP_EN | CTRL: X02S3-CTRL.9 → U305.21 | PWR: X02S3-PWR.4 → U202.1, R213.1 | 26 | 1/1 | 0.05 / — | сірий |
-| S02-46 | PICO_OFF | CTRL: X02S3-CTRL.10 → U305.17 | PWR: X02S3-PWR.5 → D102.1 | 26 | 1/1 | 0.05 / — | сірий |
-| S02-47 | PTC_AUX | CTRL: X02S3-CTRL.11 → U302.6, R320.1 | PWR: X02S3-PWR.6 → U219.1 | 26 | 1/1 | 0.05 / — | блакитний |
-| S02-48 | PWR_BUTTON | CTRL: X02S3-CTRL.12 → D302.3, D303.3 | PWR: X02S3-PWR.7 → D103.3 | 26 | 1/1 | 0.05 / — | білий |
-| S02-49 | SLED_DET | CTRL: X02S3-CTRL.13 → U302.7, R321.1 | PWR: X02S3-PWR.8 (транзит) | 26 | 1/1 | 0.05 / — | блакитний |
-| S03-01 | GND | CTRL: X03S1-CTRL.1 → U301.10, U301.15, U301.16 … | RF: X03S1-RF.1 → A407.1, A407.3, A407.4 … | 26 | 1/1 | 0.05 / — | чорний |
+| S02-05 | GND | CTRL: J302.2 (GND) | PWR: X02S0-PWR.2 → U103.2, C103.2, C104.2 … | 24 | 1/1 | 0.1 / 0.1 | чорний |
+| S02-06 | 3V3_Q6A | CTRL: J302.1 (3V3_Q6A) | PWR: X02S0-PWR.1 → R206.2, R212.2, U215.4 … | 24 | 1/1 | 0.1 / 0.1 | помаранчевий |
+| S02-07 | CHG_INHIBIT | CTRL: X02S1-CTRL.1 → U303.5 | PWR: X02S1-PWR.1 → R122.1 | 26 | 1/1 | 0.05 / — | сірий |
+| S02-08 | E1_BAT_ADC | CTRL: X02S1-CTRL.2 → U305.32 | PWR: X02S1-PWR.2 → R111.2, R112.1, C114.1 | 26 | 1/1 | 0.05 / — | білий |
+| S02-09 | EN_AUX12 | CTRL: X02S1-CTRL.3 → U301.22 | PWR: X02S1-PWR.3 → Q202.1, R220.1 | 26 | 1/1 | 0.05 / — | сірий |
+| S02-10 | EN_BONI | CTRL: X02S1-CTRL.4 → U301.2 | PWR: X02S1-PWR.4 → U213.13, R261.1, U214.3 … | 26 | 1/1 | 0.05 / — | сірий |
+| S02-11 | EN_HFP | CTRL: X02S1-CTRL.5 → U301.25 | PWR: X02S1-PWR.5 → U503.3, R510.1 | 26 | 1/1 | 0.05 / — | сірий |
+| S02-12 | EN_LABPORT | CTRL: X02S1-CTRL.6 → U301.21 | PWR: X02S1-PWR.6 → U502.3, R506.1 | 26 | 1/1 | 0.05 / — | сірий |
+| S02-13 | EN_LIME3V3 | CTRL: X02S1-CTRL.7 → U303.21 | PWR: X02S1-PWR.7 → U203.1, R218.1 | 26 | 1/1 | 0.05 / — | сірий |
+| S02-14 | EN_LNA1 | CTRL: X02S1-CTRL.8 → U301.26 | PWR: X02S1-PWR.8 → U206.3, R229.1 | 26 | 1/1 | 0.05 / — | сірий |
+| S02-15 | EN_LNA2 | CTRL: X02S2-CTRL.1 → U301.27 | PWR: X02S1-PWR.9 → U207.3, R234.1, Q2911.1 | 26 | 1/1 | 0.05 / — | сірий |
+| S02-16 | EN_LNA3 | CTRL: X02S2-CTRL.2 → U301.28 | PWR: X02S1-PWR.10 → U208.3, R239.1, Q2912.1 | 26 | 1/1 | 0.05 / — | сірий |
+| S02-17 | EN_LNA4 | CTRL: X02S2-CTRL.3 → U302.28 | PWR: X02S1-PWR.11 → U209.3, R244.1 | 26 | 1/1 | 0.05 / — | сірий |
+| S02-18 | EN_LNB | CTRL: X02S2-CTRL.4 → U301.1 | PWR: X02S1-PWR.12 → U211.13, R253.1, R291.1 | 26 | 1/1 | 0.05 / — | сірий |
+| S02-19 | EN_RTLA | CTRL: X02S2-CTRL.5 → U301.23 | PWR: X02S1-PWR.13 → U501.3, R502.1 | 26 | 1/1 | 0.05 / — | сірий |
+| S02-20 | EN_RTLB | CTRL: X02S2-CTRL.6 → U301.24 | PWR: X02S1-PWR.14 → U210.3, R249.1 | 26 | 1/1 | 0.05 / — | сірий |
+| S02-21 | EN_SB_LNA | CTRL: X02S2-CTRL.7 → U303.25 | PWR: X02S1-PWR.15 → U221.3, R294.1 | 26 | 1/1 | 0.05 / — | сірий |
+| S02-22 | FAULT_HFP | CTRL: X02S2-CTRL.8 → U303.2, R323.1 | PWR: X02S1-PWR.16 → U503.4 | 26 | 1/1 | 0.05 / — | блакитний |
+| S02-23 | FAULT_LABPORT | CTRL: X02S3-CTRL.1 → U302.21, R308.1 | PWR: X02S2-PWR.1 → U502.4 | 26 | 1/1 | 0.05 / — | блакитний |
+| S02-24 | FAULT_LNA1 | CTRL: X02S3-CTRL.2 → U302.22, R309.1 | PWR: X02S2-PWR.2 → U206.4 | 26 | 1/1 | 0.05 / — | блакитний |
+| S02-25 | FAULT_LNA2 | CTRL: X02S3-CTRL.3 → U302.23, R310.1 | PWR: X02S2-PWR.3 → U207.4 | 26 | 1/1 | 0.05 / — | блакитний |
+| S02-26 | FAULT_LNA3 | CTRL: X02S3-CTRL.4 → U302.24, R311.1 | PWR: X02S2-PWR.4 → U208.4 | 26 | 1/1 | 0.05 / — | блакитний |
+| S02-27 | FAULT_LNA4 | CTRL: X02S3-CTRL.5 → U302.25, R312.1 | PWR: X02S2-PWR.5 → U209.4 | 26 | 1/1 | 0.05 / — | блакитний |
+| S02-28 | FAULT_RTLA | CTRL: X02S3-CTRL.6 → U303.3, R324.1 | PWR: X02S2-PWR.6 → U501.4 | 26 | 1/1 | 0.05 / — | блакитний |
+| S02-29 | FAULT_RTLB | CTRL: X02S3-CTRL.7 → U303.1, R322.1 | PWR: X02S2-PWR.7 → U210.4 | 26 | 1/1 | 0.05 / — | блакитний |
+| S02-30 | FLT_BONI | CTRL: X02S3-CTRL.8 → U302.27, R314.1 | PWR: X02S2-PWR.8 → U214.6 | 26 | 1/1 | 0.05 / — | блакитний |
+| S02-31 | FLT_LIME3V3 | CTRL: X02S4-CTRL.1 → U303.4, R325.1 | PWR: X02S2-PWR.9 → U203.4 | 26 | 1/1 | 0.05 / — | блакитний |
+| S02-32 | FLT_LNB | CTRL: X02S4-CTRL.2 → U302.26, R313.1 | PWR: X02S2-PWR.10 → U212.6 | 26 | 1/1 | 0.05 / — | блакитний |
+| S02-33 | FLT_SB_LNA | CTRL: X02S4-CTRL.3 → U303.26, R392.1 | PWR: X02S2-PWR.11 → U221.4 | 26 | 1/1 | 0.05 / — | блакитний |
+| S02-34 | I2C0_SCL | CTRL: X02S4-CTRL.4 (транзит) | PWR: X02S2-PWR.12 (транзит) | 26 | 1/1 | 0.05 / — | білий |
+| S02-35 | I2C0_SDA | CTRL: X02S4-CTRL.5 (транзит) | PWR: X02S2-PWR.13 (транзит) | 26 | 1/1 | 0.05 / — | синій |
+| S02-36 | I2C2_SCL | CTRL: J302.4 (SCL) | PWR: X02S0-PWR.4 → U215.6, U216.5, U216.6 … | 26 | 1/1 | 0.05 / — | білий |
+| S02-37 | I2C2_SDA | CTRL: J302.3 (SDA) | PWR: X02S0-PWR.3 → U215.7, U216.7, U507.3 | 26 | 1/1 | 0.05 / — | синій |
+| S02-38 | IMU_RX | CTRL: X02S4-CTRL.6 → U305.11 | PWR: X02S2-PWR.14 → U551.6 | 26 | 1/1 | 0.05 / — | зелений |
+| S02-39 | IMU_TX | CTRL: X02S4-CTRL.7 → U305.12 | PWR: X02S2-PWR.15 → U551.1 | 26 | 1/1 | 0.05 / — | зелений |
+| S02-40 | INA228_ALERT | CTRL: X02S4-CTRL.8 → R301.1 | PWR: X02S2-PWR.16 (транзит) | 26 | 1/1 | 0.05 / — | блакитний |
+| S02-41 | OVP_LNB_N | CTRL: X02S5-CTRL.1 → U303.6 | PWR: X02S3-PWR.1 → U212.3, U220.6, R291.2 … | 26 | 1/1 | 0.05 / — | блакитний |
+| S02-42 | PG_BONI | CTRL: X02S5-CTRL.2 → U302.2, R316.1 | PWR: X02S3-PWR.2 → U218.1 | 26 | 1/1 | 0.05 / — | блакитний |
+| S02-43 | PG_LNB | CTRL: X02S5-CTRL.3 → U302.1, R315.1 | PWR: X02S3-PWR.3 → U217.1 | 26 | 1/1 | 0.05 / — | блакитний |
+| S02-44 | PICO_DISP_EN | CTRL: X02S5-CTRL.4 → U305.21 | PWR: X02S3-PWR.4 → U202.1, R213.1 | 26 | 1/1 | 0.05 / — | сірий |
+| S02-45 | PICO_OFF | CTRL: X02S5-CTRL.5 → U305.17 | PWR: X02S3-PWR.5 → D102.1 | 26 | 1/1 | 0.05 / — | сірий |
+| S02-46 | PTC_AUX | CTRL: X02S5-CTRL.6 → U302.6, R320.1 | PWR: X02S3-PWR.6 → U219.1 | 26 | 1/1 | 0.05 / — | блакитний |
+| S02-47 | PWR_BUTTON | CTRL: X02S5-CTRL.7 → D302.3, D303.3 | PWR: X02S3-PWR.7 → D103.3 | 26 | 1/1 | 0.05 / — | білий |
+| S02-48 | SLED_DET | CTRL: X02S5-CTRL.8 → U302.7, R321.1 | PWR: X02S3-PWR.8 (транзит) | 26 | 1/1 | 0.05 / — | блакитний |
+| S03-01 | GND | CTRL: X03S1-CTRL.1 → J302.2, U301.10, U301.15 … | RF: X03S1-RF.1 → A407.1, A407.3, A407.4 … | 26 | 1/1 | 0.05 / — | чорний |
 | S03-02 | DCS_HF | CTRL: X03S1-CTRL.2 → U302.5, R319.1 | RF: X03S1-RF.2 → Q454.3 | 26 | 1/1 | 0.05 / — | блакитний |
 | S03-03 | DCS_LBAND | CTRL: X03S1-CTRL.3 → U302.4, R318.1 | RF: X03S1-RF.3 → Q452.3 | 26 | 1/1 | 0.05 / — | блакитний |
 | S03-04 | DCS_UHF | CTRL: X03S1-CTRL.4 → U302.3, R317.1 | RF: X03S1-RF.4 → Q450.3 | 26 | 1/1 | 0.05 / — | блакитний |
@@ -306,10 +294,10 @@
 | S03-06 | K2_ON | CTRL: X03S1-CTRL.6 → U301.4 | RF: X03S1-RF.6 → R413.1 | 26 | 1/1 | 0.05 / — | сірий |
 | S03-07 | SW_LIME_A | CTRL: X03S1-CTRL.7 → U303.23 | RF: X03S1-RF.7 → R444.1 | 26 | 1/1 | 0.05 / — | сірий |
 | S03-08 | SW_LIME_B | CTRL: X03S1-CTRL.8 → U303.24 | RF: X03S1-RF.8 → R445.1 | 26 | 1/1 | 0.05 / — | сірий |
-| S03-09 | SW_RTLA_A | CTRL: X03S1-CTRL.9 → U301.5 | RF: X03S1-RF.9 → R440.1 | 26 | 1/1 | 0.05 / — | сірий |
-| S03-10 | SW_RTLA_B | CTRL: X03S1-CTRL.10 → U301.6 | RF: X03S1-RF.10 → R441.1 | 26 | 1/1 | 0.05 / — | сірий |
-| S03-11 | SW_RTLB_A | CTRL: X03S1-CTRL.11 → U301.7 | RF: X03S1-RF.11 → R442.1 | 26 | 1/1 | 0.05 / — | сірий |
-| S03-12 | SW_RTLB_B | CTRL: X03S1-CTRL.12 → U301.8 | RF: X03S1-RF.12 → R443.1 | 26 | 1/1 | 0.05 / — | сірий |
+| S03-09 | SW_RTLA_A | CTRL: X03S2-CTRL.1 → U301.5 | RF: X03S2-RF.1 → R440.1 | 26 | 1/1 | 0.05 / — | сірий |
+| S03-10 | SW_RTLA_B | CTRL: X03S2-CTRL.2 → U301.6 | RF: X03S2-RF.2 → R441.1 | 26 | 1/1 | 0.05 / — | сірий |
+| S03-11 | SW_RTLB_A | CTRL: X03S2-CTRL.3 → U301.7 | RF: X03S2-RF.3 → R442.1 | 26 | 1/1 | 0.05 / — | сірий |
+| S03-12 | SW_RTLB_B | CTRL: X03S2-CTRL.4 → U301.8 | RF: X03S2-RF.4 → R443.1 | 26 | 1/1 | 0.05 / — | сірий |
 | S04-01 | GND | PWR: X04P1-PWR.1 → U103.2, C103.2, C104.2 … | RF: X04P1-RF.1 → A407.1, A407.3, A407.4 … | 20 | 1/1 | 0.1 / 4 | чорний |
 | S04-02 | LAB5 | PWR: X04P1-PWR.2 → L101.2, C112.1, R110.1 … | RF: X04P1-RF.2 → D401.3, K401.1, K402.1 | 20 | 1/1 | 0.1 / 4 | червоний |
 | S04-03 | GND | PWR: X04S1-PWR.1 → U103.2, C103.2, C104.2 … | RF: X04S1-RF.1 → A407.1, A407.3, A407.4 … | 24 | 1/1 | 0.339 / 0.499 | чорний |
@@ -330,15 +318,10 @@
 | S06-06 | I2C0_SDA | PWR: X06S1-PWR.4 (транзит) | INA: пайка: U102.4 | 26 | 1/1 | 0.05 / — | синій |
 | S06-07 | INA228_ALERT | PWR: X06S1-PWR.5 (транзит) | INA: пайка: U102.3 | 26 | 1/1 | 0.05 / — | блакитний |
 | S07-01 | E1_N | PWR: X07J1-PWR.1 → U103.1, C103.1, R103.1 … | SWM: пайка: U106.VIN | 18 | 1/1 | 4.6 / 7.5 | коричневий |
-| S07-02 | E1_SW | PWR: X07J1-PWR.2 → D105.K, R108.1, C107.1 … | SWM: пайка: U106.VOUT | 18 | 1/1 | 4.6 / 7.5 | коричневий |
+| S07-02 | E1_SW | PWR: X07J1-PWR.2 → D105.K, U107.VIN, R108.1 … | SWM: пайка: U106.VOUT | 18 | 1/1 | 4.6 / 7.5 | коричневий |
 | S07-03 | GND | PWR: X07S1-PWR.1 → U103.2, C103.2, C104.2 … | SWM: пайка: U106.GND | 26 | 1/1 | 0.05 / — | чорний |
 | S07-04 | E1_MASTER_OFF | PWR: X07S1-PWR.2 → D101.3, D102.3 | SWM: пайка: U106.OFF | 26 | 1/1 | 0.05 / — | білий |
 | S07-05 | E1_SWITCH_A | PWR: X07S1-PWR.3 → D103.1 | SWM: пайка: U106.A | 26 | 1/1 | 0.05 / — | білий |
-| S08-01 | GND | PWR: X08J1-PWR.1 → U103.2, C103.2, C104.2 … | REG12: пайка: U107.GND | 18 | 1/1 | 4.6 / 7.5 | чорний |
-| S08-02 | E1_SW | PWR: X08J1-PWR.2 → D105.K, R108.1, C107.1 … | REG12: пайка: U107.VIN | 18 | 1/1 | 4.6 / 7.5 | коричневий |
-| S08-03 | SYS12 | PWR: X08J1-PWR.3 → F201.1, C208.1, L202.1 … | REG12: пайка: U107.VOUT | 18 | 1/1 | 4 / 7.5 | жовтий |
-| S08-04 | E1_EN_SYS12 | PWR: X08S1-PWR.1 → R108.2, R109.1 | REG12: пайка: U107.EN | 26 | 1/1 | 0.05 / — | білий |
-| S08-05 | E1_PG_SYS12 | PWR: X08S1-PWR.2 → TP101.1 | REG12: пайка: U107.PG | 26 | 1/1 | 0.05 / — | білий |
 | S10-01 | GND | PWR: X10J1-PWR.1 → U103.2, C103.2, C104.2 … | CHG: пайка: U110.BAT- | 18 | 1/1 | 3 / 7.5 | чорний |
 | S10-02 | E1_N | PWR: X10J1-PWR.2 → U103.1, C103.1, R103.1 … | CHG: пайка: U110.BAT+ | 18 | 1/1 | 3 / 7.5 | коричневий |
 | S10-03 | E1_USB_PD_SAFE | PWR: X10J1-PWR.3 → U109.6, C117.1 | CHG: пайка: U110.VBUS | 18 | 1/1 | 3 / 3.5 | коричневий |
@@ -354,12 +337,12 @@
 | S12-02 | E1_SERVICE_P | PWR: X12P1-PWR.2 → F103.2 | XT30: J101.+ | 20 | 1/1 | 3 / 5 | коричневий |
 | S13-01 | GND | PWR: X13P1-PWR.1 → U103.2, C103.2, C104.2 … | HUB: пайка: U510.JP5_4 | 20 | 1/1 | 0.3 / 4 | чорний |
 | S13-02 | LAB5 | PWR: X13P1-PWR.2 → L101.2, C112.1, R110.1 … | HUB: пайка: U510.JP5_1 | 20 | 1/1 | 0.3 / 4 | червоний |
-| S14-01 | GND | PWR: X14P1-PWR.1 → U103.2, C103.2, C104.2 … | J21H: J503.2 (GND) | 20 | 1/1 | 2.5 / 4 | чорний |
-| S14-02 | J21 | PWR: X14P1-PWR.2 → L201.2, C205.1, R207.1 … | J21H: J503.1 (12V) | 20 | 1/1 | 2.5 / 4 | жовтий |
-| S15-01 | PWR_ON_KEY | CTRL: X15S1-CTRL.1 → D303.1, Q302.3 | J21H: J503.3 (KEY) | 24 | 1/1 | 0.05 / — | білий |
-| S16-01 | GND | J21H: J503.2 (GND) | Q6A.J21: J521.2 (GND) | 20 | 1/1 | 2.5 / 4 | чорний |
-| S16-02 | J21 | J21H: J503.1 (12V) | Q6A.J21: J521.1 (ADP12V_IN) | 20 | 1/1 | 2.5 / 4 | жовтий |
-| S16-03 | PWR_ON_KEY | J21H: J503.3 (KEY) | Q6A.J21: J521.3 (PWR_ON_KEY) | 24 | 1/1 | 0.05 / — | білий |
+| S14-01 | GND | PWR: X14P1-PWR.1 → U103.2, C103.2, C104.2 … | HATCH: X14P1-HATCH.1 → J503.2, J502.1 | 20 | 1/1 | 2.5 / 4 | чорний |
+| S14-02 | J21 | PWR: X14P1-PWR.2 → L201.2, C205.1, R207.1 … | HATCH: X14P1-HATCH.2 → J503.1 | 20 | 1/1 | 2.5 / 4 | жовтий |
+| S15-01 | PWR_ON_KEY | CTRL: X15S1-CTRL.1 → D303.1, Q302.3 | HATCH: X15S1-HATCH.1 → J503.3 | 26 | 1/1 | 0.05 / — | білий |
+| S16-01 | GND | HATCH: J503.2 (GND) | Q6A.J21: J521.2 (GND) | 20 | 1/1 | 2.5 / 4 | чорний |
+| S16-02 | J21 | HATCH: J503.1 (12V) | Q6A.J21: J521.1 (ADP12V_IN) | 20 | 1/1 | 2.5 / 4 | жовтий |
+| S16-03 | PWR_ON_KEY | HATCH: J503.3 (KEY) | Q6A.J21: J521.3 (PWR_ON_KEY) | 24 | 1/1 | 0.05 / — | білий |
 | S17-01 | GND | PWR: X17P1-PWR.1 → U103.2, C103.2, C104.2 … | Q6A.CORE: пайка: U500.GND | 20 | 1/1 | 1.2 / 2.2 | чорний |
 | S17-02 | VCC_3V3_MKEY | PWR: X17P1-PWR.2 → U203.5, R215.1, C215.1 | Q6A.CORE: пайка: U500.MKEY_3V3 | 20 | 1/1 | 1.2 / 2.2 | помаранчевий |
 | S18-01 | GND | PWR: X18P1-PWR.1 → U103.2, C103.2, C104.2 … | RISER: пайка: U530.GND | 20 | 1/1 | 1.2 / 2.2 | чорний |
@@ -376,29 +359,29 @@
 | S23-01 | GND | PWR: X23S1-PWR.1 → U103.2, C103.2, C104.2 … | LABUSB: J501.4 (GND) | 24 | 1/2 | 0.825 / 0.825 | чорний |
 | S23-02 | GND | PWR: X23S1-PWR.2 → U103.2, C103.2, C104.2 … | LABUSB: J501.S (cable shield) | 24 | 2/2 | 0.825 / 0.825 | чорний |
 | S23-03 | VBUS_LABPORT | PWR: X23S1-PWR.3 → U502.6, C506.1, C507.1 … | LABUSB: J501.1 (VBUS) | 24 | 1/1 | 0.825 / 0.825 | червоний |
-| S24-01 | GND | CTRL: X24S1-CTRL.1 → U301.10, U301.15, U301.16 … | T7A: пайка: U505.5 | 24 | 1/1 | 0.1 / 0.1 | чорний |
-| S24-02 | 3V3_Q6A | CTRL: X24S1-CTRL.2 → R301.2, R302.2, R303.2 … | T7A: пайка: R516.2 | 24 | 1/1 | 0.1 / 0.1 | помаранчевий |
+| S24-01 | GND | CTRL: X24S1-CTRL.1 → J302.2, U301.10, U301.15 … | T7A: пайка: U505.5 | 24 | 1/1 | 0.1 / 0.1 | чорний |
+| S24-02 | 3V3_Q6A | CTRL: X24S1-CTRL.2 → J302.1, R301.2, R302.2 … | T7A: пайка: R516.2 | 24 | 1/1 | 0.1 / 0.1 | помаранчевий |
 | S24-03 | EN_T7 | CTRL: X24S1-CTRL.3 → U302.8 | T7A: пайка: U505.4 (той самий вузол: R515.1) | 26 | 1/1 | 0.05 / — | сірий |
-| S25-01 | GND | CTRL: X25P1-CTRL.1 → U301.10, U301.15, U301.16 … | GNSS: пайка: U304.P1.2 | 20 | 1/1 | 0.1 / 4.5 | чорний |
+| S25-01 | GND | CTRL: X25P1-CTRL.1 → J302.2, U301.10, U301.15 … | GNSS: пайка: U304.P1.2 | 20 | 1/1 | 0.1 / 4.5 | чорний |
 | S25-02 | VCC_5V_PERI | CTRL: X25P1-CTRL.2 (транзит) | GNSS: пайка: U304.P1.1 | 20 | 1/1 | 0.1 / 4.5 | червоний |
 | S25-03 | E3_GNSS_PPS | CTRL: X25S1-CTRL.1 (транзит) | GNSS: пайка: U304.P1.5 | 26 | 1/1 | 0.05 / — | білий |
 | S25-04 | E3_GNSS_RESET_N | CTRL: X25S1-CTRL.2 → Q301.3 | GNSS: пайка: U304.P1.6 | 26 | 1/1 | 0.05 / — | білий |
 | S25-05 | UART6_RX | CTRL: X25S1-CTRL.3 (транзит) | GNSS: пайка: U304.P1.3 | 26 | 1/1 | 0.05 / — | зелений |
 | S25-06 | UART6_TX | CTRL: X25S1-CTRL.4 (транзит) | GNSS: пайка: U304.P1.4 | 26 | 1/1 | 0.05 / — | зелений |
-| S26-01 | GND | CTRL: X26S1-CTRL.1 → U301.10, U301.15, U301.16 … | VEML: пайка: U308.GND | 26 | 1/1 | 0.05 / 0.02 | чорний |
+| S26-01 | GND | CTRL: X26S1-CTRL.1 → J302.2, U301.10, U301.15 … | VEML: пайка: U308.GND | 26 | 1/1 | 0.05 / 0.02 | чорний |
 | S26-02 | E3_BEZEL_SCL | CTRL: X26S1-CTRL.2 → R360.2, U313.3 | VEML: пайка: U308.SCL | 26 | 1/1 | 0.05 / — | білий |
 | S26-03 | E3_BEZEL_SDA | CTRL: X26S1-CTRL.3 → R359.2, U313.1 | VEML: пайка: U308.SDA | 26 | 1/1 | 0.05 / — | синій |
 | S26-04 | E3_PICO3V3 | CTRL: X26S1-CTRL.4 → U305.36, C308.1, R327.1 … | VEML: пайка: U308.VIN | 24 | 1/1 | 0.02 / 0.02 | помаранчевий |
-| S27-01 | GND | CTRL: X27F1-CTRL.1 → U301.10, U301.15, U301.16 … | FAN1: пайка: FAN301.GND | 26 | 1/1 | 0.25 / 4 | чорний |
+| S27-01 | GND | CTRL: X27F1-CTRL.1 → J302.2, U301.10, U301.15 … | FAN1: пайка: FAN301.GND | 26 | 1/1 | 0.25 / 4 | чорний |
 | S27-02 | E3_FAN5 | CTRL: X27F1-CTRL.2 → Q304.3, D305.1, C318.1 … | FAN1: пайка: FAN301.V+ | 26 | 1/1 | 0.25 / 4 | червоний |
 | S27-03 | E3_FAN_TACH_RAW | CTRL: X27F1-CTRL.3 → R368.1, R369.1 | FAN1: пайка: FAN301.TACH | 26 | 1/1 | 0.05 / — | білий |
 | S28-01 | E3_BLOWER_GND | CTRL: X28P1-CTRL.1 → Q305.3, D306.2, C342.2 … | FAN2: пайка: FAN302.BLACK | 20 | 1/1 | 0.5 / 4 | білий |
 | S28-02 | LAB5 | CTRL: X28P1-CTRL.2 → D301.2, R367.2, Q304.2 … | FAN2: пайка: FAN302.RED | 20 | 1/1 | 0.5 / 4 | червоний |
-| S29-01 | GND | CTRL: X29S1-CTRL.1 → U301.10, U301.15, U301.16 … | PWRBTN: SW301.2 (B) | 26 | 1/1 | 0.05 / — | чорний |
+| S29-01 | GND | CTRL: X29S1-CTRL.1 → J302.2, U301.10, U301.15 … | PWRBTN: SW301.2 (B) | 26 | 1/1 | 0.05 / — | чорний |
 | S29-02 | PWR_BUTTON | CTRL: X29S1-CTRL.2 → D302.3, D303.3 | PWRBTN: SW301.1 (A) | 26 | 1/1 | 0.05 / — | білий |
-| S30-01 | GND | CTRL: X30S1-CTRL.1 → U301.10, U301.15, U301.16 … | UART5: J502.1 (GND) | 26 | 1/1 | 0.05 / — | чорний |
-| S30-02 | UART5_RX | CTRL: X30S1-CTRL.2 (транзит) | UART5: J502.3 (adapterTX → Q6A RX) | 26 | 1/1 | 0.05 / — | зелений |
-| S30-03 | UART5_TX | CTRL: X30S1-CTRL.3 (транзит) | UART5: J502.2 (Q6A TX → adapterRX) | 26 | 1/1 | 0.05 / — | зелений |
+| S30-01 | GND | CTRL: X30S1-CTRL.1 → J302.2, U301.10, U301.15 … | HATCH: X30S1-HATCH.1 → J503.2, J502.1 | 26 | 1/1 | 0.05 / — | чорний |
+| S30-02 | UART5_RX | CTRL: X30S1-CTRL.2 (транзит) | HATCH: X30S1-HATCH.2 → J502.3 | 26 | 1/1 | 0.05 / — | зелений |
+| S30-03 | UART5_TX | CTRL: X30S1-CTRL.3 (транзит) | HATCH: X30S1-HATCH.3 → J502.2 | 26 | 1/1 | 0.05 / — | зелений |
 | S31-01 | E5_EDL_A | Q6A.EDL: J522.A (EDL padA) | EDL: SW501.1 (EDL contactA) | 26 | 1/1 | 0.05 / — | білий |
 | S31-02 | E5_EDL_B | Q6A.EDL: J522.B (EDL padB) | EDL: SW501.2 (EDL contactB) | 26 | 1/1 | 0.05 / — | білий |
 | S32-01 | GND | PWR: X32P1-PWR.1 → U103.2, C103.2, C104.2 … | GX16: J504.2 (GND) | 20 | 1/1 | 0.2 / 4 | чорний |
@@ -419,12 +402,20 @@
 | S35-02 | BONI13V8_PORT | PWR: X35S1-PWR.2 → Q2903.5, Q2903.6, C2903.1 … | BONI: пайка: A406.DC | 24 | 1/1 | 0.065 / 0.153 | фіолетовий |
 | S36-01 | GND | PWR: X36S1-PWR.1 → U103.2, C103.2, C104.2 … | SPOD: пайка: W425.RETURN | 24 | 1/1 | 0.065 / 0.192 | чорний |
 | S36-02 | BIAS_SB_LNA | PWR: X36S1-PWR.2 → L215.2, C297.1, R295.1 … | SPOD: пайка: W425.BRANCH_5V | 24 | 1/1 | 0.065 / 0.192 | червоний |
+| S37-01 | GND | CTRL: X37S1-CTRL.1 → J302.2, U301.10, U301.15 … | ENCM: X37S1-ENCM.1 → SW308.2, ENC301.C | 26 | 1/1 | 0.05 / — | чорний |
+| S37-02 | E3_ENC1_A_RAW | CTRL: X37S1-CTRL.2 → R351.1, R352.1, U312.1 | ENCM: X37S1-ENCM.2 → ENC301.A | 26 | 1/1 | 0.05 / — | білий |
+| S37-03 | E3_ENC1_B_RAW | CTRL: X37S1-CTRL.3 → R353.1, R354.1, U312.3 | ENCM: X37S1-ENCM.3 → ENC301.B | 26 | 1/1 | 0.05 / — | білий |
+| S37-04 | E3_ENC1_PRESS_EXT | CTRL: X37S1-CTRL.4 → R348.2, U311.4 | ENCM: X37S1-ENCM.4 → SW308.1 | 26 | 1/1 | 0.05 / — | білий |
+| S38-01 | GND | CTRL: X38S1-CTRL.1 → J302.2, U301.10, U301.15 … | ENCV: X38S1-ENCV.1 → SW309.2, ENC302.C | 26 | 1/1 | 0.05 / — | чорний |
+| S38-02 | E3_ENC2_A_RAW | CTRL: X38S1-CTRL.2 → R355.1, R356.1, U312.4 | ENCV: X38S1-ENCV.2 → ENC302.A | 26 | 1/1 | 0.05 / — | білий |
+| S38-03 | E3_ENC2_B_RAW | CTRL: X38S1-CTRL.3 → R357.1, R358.1, U312.6 | ENCV: X38S1-ENCV.3 → ENC302.B | 26 | 1/1 | 0.05 / — | білий |
+| S38-04 | E3_ENC2_PRESS_EXT | CTRL: X38S1-CTRL.4 → R350.2, U311.6 | ENCV: X38S1-ENCV.4 → SW309.1 | 26 | 1/1 | 0.05 / — | білий |
 
 ## 6. Готові кабельні збірки (високошвидкісні лінії не розплітати)
 
 | збірка | призначення | кінці | мережі графа | деталі й вимоги |
 |---|---|---|---|---|
-| C-HDMI | HDMI Q6A → Wisecoco | Q6A.HDMI → HDMIA → DISP | E5_HDMI_5V_DISP, E5_HDMI_5V_Q6A, E5_HDMI_CEC, E5_HDMI_CLK_N, E5_HDMI_CLK_P, E5_HDMI_D0_N, E5_HDMI_D0_P, E5_HDMI_D1_N, E5_HDMI_D1_P, E5_HDMI_D2_N, E5_HDMI_D2_P, E5_HDMI_HPD, E5_HDMI_SCL, E5_HDMI_SDA | Adafruit 2420 457 мм + 2× Fair-Rite 0431164281; pin 18 через U506 на вставці (E5 §8); TMDS не розплітати |
+| C-HDMI | HDMI Q6A → Wisecoco | Q6A.HDMI → HDMIA → DISP | E5_HDMI_5V_DISP, E5_HDMI_5V_Q6A, E5_HDMI_CEC, E5_HDMI_CLK_N, E5_HDMI_CLK_P, E5_HDMI_D0_N, E5_HDMI_D0_P, E5_HDMI_D1_N, E5_HDMI_D1_P, E5_HDMI_D2_N, E5_HDMI_D2_P, E5_HDMI_HPD, E5_HDMI_SCL, E5_HDMI_SDA | R-HDMI-ROUTE OPEN (fit-report): прямий штекер Adafruit 2420 упирається в нижню стінку, кишень під 2× Fair-Rite 0431164281 і S-укладку надлишку на трасі немає; запропоновано за замовчуванням FPC-запас STACK (Adafruit 3550 кутовий + 3548 + 3560, обмотка заземленою мідною стрічкою) — MPN, довжина й ферит для пласкої стрічки TBD (assembly_items AI-HDMI-FPC); pin 18 через U506 на вставці (E5 §8, домен HDMI_INSERT); TMDS не розплітати |
 | C-T7 | USB3 Q6A J5 нижній → T7 | Q6A.J5 → T7A → T7 | E5_T7_DM, E5_T7_DP, E5_T7_HOST_RX_N, E5_T7_HOST_RX_P, E5_T7_HOST_TX_N, E5_T7_HOST_TX_P, E5_VBUS_J5, E5_VBUS_T7 | цілісний екранований кабель A–C ≤0.5 м + вставка U505 (E5 §7); перевірка 5000M/uas |
 | C-HUB | USB2 Q6A J2 P3 → CH334F JP5 | Q6A.J2 → HUB | E5_HUB_DM, E5_HUB_DP | VBUS Q6A не підключати (E5 §2) |
 | C-TOUCH | USB2 Q6A J2 P2 → touch Wisecoco | Q6A.J2 → DISP | E5_TOUCH_DM, E5_TOUCH_DP | лише D+/D−/GND, ферит Würth 74271140 |
@@ -451,23 +442,23 @@
 | E4_HFP_ANT | RF: K401.6; HFP: A414.ANT | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_HF_BT | RF: K401.3; BONI: A406.RF | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_HF_CM | RF: R4440.1, R4468.1; BONI: A406.ANT; W408: W408.OUT_CENTER | W408 (RG316 common-mode choke FT240-77 +2631102002) | DC 13.8 V лише в профілі Boni |
-| E4_LIME_REF | LIME: A415.J4_REF_IN; W405: W405.END_B | W405 (REF IN → J4 MHF4 coax) | без DC |
-| E4_LIME_RX2 | A409: A409.IN; J414: J414.CENTER; W424: W424.PANEL | W424 (RG316 SMA-M/M 1.00 m pod → RX2) | без DC |
-| E4_LIME_TX | LIME: A415.X1_TX; W406: W406.END_A | W406 (CAB.01075 X1 → ANNE-50+ captive coax) | без DC |
-| E4_LIME_X2_RX | LIME: A415.X2_RX; W403: W403.END_B | W403 (RX1 panel → Lime X2 MHF4 coax) | без DC |
-| E4_LIME_X4_RX | LIME: A415.X4_RX; W404: W404.END_B | W404 (RX2 → Lime X4 MHF4 coax) | без DC |
-| E4_LNB_IF | A420: A420.IF; W401: W401.END_A | W401 (Goobay 58814 75 Ω F-F 1 m) | DC 13.2 V (LNB) |
+| E4_LIME_REF | LIME: A415.J4_REF_IN; W405: W405.END_B | W405 (REF IN → J4 MHF4 coax; купується Taoglas CAB.01075) | без DC |
+| E4_LIME_RX2 | A409: A409.IN; J414: J414.CENTER; W424: W424.PANEL | W424 (RG316 SMA-M/M 1.00 m pod → RX2; купується Amphenol RF 135101-01-M1.00) | без DC |
+| E4_LIME_TX | LIME: A415.X1_TX; W406: W406.END_A | W406 (CAB.01075 X1 → ANNE-50+ captive coax; купується Taoglas CAB.01075) | без DC |
+| E4_LIME_X2_RX | LIME: A415.X2_RX; W403: W403.END_B | W403 (RX1 panel → Lime X2 MHF4 coax; купується Taoglas CAB.01075) | без DC |
+| E4_LIME_X4_RX | LIME: A415.X4_RX; W404: W404.END_B | W404 (RX2 → Lime X4 MHF4 coax; купується Taoglas CAB.01075) | без DC |
+| E4_LNB_IF | A420: A420.IF; W401: W401.END_A | W401 (Goobay 58814 75 Ω F-F 1 m; купується Goobay 58814) | DC 13.2 V (LNB) |
 | E4_LNB_REF25 | A420: A420.REF25; A421: A421.END_A | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_P1 | RF: L401.1; A401: A401.IN; J401: J401.CENTER | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_P2 | RF: C403.1, L403.1, R4420.1, R4460.1; A418: A418.OUT; J402: J402.CENTER | перемичка/перехідник SMA — TBD (CAD) | DC 4.3 V (ch2 → Uputronics 440) |
 | E4_P2_ANT | A418: A418.IN; J416: J416.CENTER | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_P3 | RF: C411.1, L404.1, R4430.1, R4464.1; A419: A419.OUT; J403: J403.CENTER | перемичка/перехідник SMA — TBD (CAD) | DC 4.3 V (ch3 → активна L-band антена/LNA) |
 | E4_P3_ANT | A419: A419.IN; J417: J417.CENTER | перемичка/перехідник SMA — TBD (CAD) | без DC |
-| E4_P4 | J404: J404.CENTER; W401: W401.END_B; W402: W402.END_A | W401 (Goobay 58814 75 Ω F-F 1 m), W402 (75 Ω shielded internal IF coax) | DC 13.2 V (LNB) |
+| E4_P4 | J404: J404.CENTER; W401: W401.END_B; W402: W402.END_A | W401 (Goobay 58814 75 Ω F-F 1 m; купується Goobay 58814), W402 (75 Ω shielded internal IF coax) | DC 13.2 V (LNB) |
 | E4_P5 | J405: J405.CENTER; W408: W408.IN_CENTER | W408 (RG316 common-mode choke FT240-77 +2631102002) | DC 13.8 V лише в профілі Boni |
 | E4_P6 | RF: K402.3, L407.1; J406: J406.CENTER | перемичка/перехідник SMA — TBD (CAD) | без DC |
-| E4_P8 | A403: A403.IN; J408: J408.CENTER | перемичка/перехідник SMA — TBD (CAD) | без DC |
-| E4_REF_IN | J415: J415.CENTER; W405: W405.END_A | W405 (REF IN → J4 MHF4 coax) | без DC |
+| E4_P8 | A403: A403.IN; J408: J408.CENTER | J408: Adam Tech CA-DKCA1-305L5-APAJ (база деталей, складська збірка) | без DC |
+| E4_REF_IN | J415: J415.CENTER; W405: W405.END_A | W405 (REF IN → J4 MHF4 coax; купується Taoglas CAB.01075) | без DC |
 | E4_RFC_A | RF: C405.2, J410.CENTER; RTLA: A411.ANT | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_RFC_B | RF: C410.2, J411.CENTER; RTLB: A412.ANT | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_RF_CH1 | RF: C402.1, L402.1; A402: A402.OUT | перемичка/перехідник SMA — TBD (CAD) | без DC |
@@ -479,17 +470,17 @@
 | E4_RF_P8_FM | A403: A403.OUT; A404: A404.IN | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_RX1_EDGE | RF: C418.2, J412.CENTER; W409: W409.EDGE | W409 (Captive RX1 edge → profile pad coax) | без DC |
 | E4_RX1_PAD | A408: A408.IN; W409: W409.PAD | W409 (Captive RX1 edge → profile pad coax) | без DC |
-| E4_RX1_PANEL | A408: A408.OUT; J413: J413.CENTER; W403: W403.END_A | W403 (RX1 panel → Lime X2 MHF4 coax) | без DC |
-| E4_RX2_ANT | W422: W422.ANT; J422: J422.CENTER | W422 (RG316 SMA-M/M 0.10 m helix → LaNA) | без DC |
-| E4_RX2_BLK | A409: A409.OUT; W404: W404.END_A | W404 (RX2 → Lime X4 MHF4 coax) | без DC |
+| E4_RX1_PANEL | A408: A408.OUT; J413: J413.CENTER; W403: W403.END_A | W403 (RX1 panel → Lime X2 MHF4 coax; купується Taoglas CAB.01075) | без DC |
+| E4_RX2_ANT | W422: W422.ANT; J422: J422.CENTER | W422 (RG316 SMA-M/M 0.10 m helix → LaNA; купується Cinch Connectivity Solutions Johnson 415-0029-006, куплено 152.4 мм, граф 0.10 м (база деталей W-RG316-SMA-MM-0152; build/06 §S-band)) | без DC |
+| E4_RX2_BLK | A409: A409.OUT; W404: W404.END_A | W404 (RX2 → Lime X4 MHF4 coax; купується Taoglas CAB.01075) | без DC |
 | E4_SB_FILTER_IN | A423: A423.SMA_F_A; A425: A425.SMA_B | перемичка/перехідник SMA — TBD (CAD) | без DC |
-| E4_SB_FILTER_OUT | A423: A423.SMA_F_B; W424: W424.FILTER | W424 (RG316 SMA-M/M 1.00 m pod → RX2) | без DC |
-| E4_SB_LNA_IN | A422: A422.SMA_IN; W422: W422.LNA | W422 (RG316 SMA-M/M 0.10 m helix → LaNA) | без DC |
-| E4_SB_LNA_OUT | A422: A422.SMA_OUT; W423: W423.LNA | W423 (RG316 SMA-M/M 0.10 m LaNA → DC block) | без DC |
+| E4_SB_FILTER_OUT | A423: A423.SMA_F_B; W424: W424.FILTER | W424 (RG316 SMA-M/M 1.00 m pod → RX2; купується Amphenol RF 135101-01-M1.00) | без DC |
+| E4_SB_LNA_IN | A422: A422.SMA_IN; W422: W422.LNA | W422 (RG316 SMA-M/M 0.10 m helix → LaNA; купується Cinch Connectivity Solutions Johnson 415-0029-006, куплено 152.4 мм, граф 0.10 м (база деталей W-RG316-SMA-MM-0152; build/06 §S-band)) | без DC |
+| E4_SB_LNA_OUT | A422: A422.SMA_OUT; W423: W423.LNA | W423 (RG316 SMA-M/M 0.10 m LaNA → DC block; купується Cinch Connectivity Solutions Johnson 415-0029-006, куплено 152.4 мм, граф 0.10 м (база деталей W-RG316-SMA-MM-0152; build/06 §S-band)) | без DC |
 | E4_SB_POD5 | SPOD: W425.POD_5V; A422: A422.USB_C_VBUS | W425 (USB-C power-only 1.50 m, 26 AWG pair) | DC 5 V (живлення pod, не РЧ) |
-| E4_SB_PREBLOCK | W423: W423.BLOCK; A425: A425.SMA_A | W423 (RG316 SMA-M/M 0.10 m LaNA → DC block) | без DC |
-| E4_TX_LOAD | A410: A410.END_A; W406: W406.END_B | W406 (CAB.01075 X1 → ANNE-50+ captive coax) | без DC |
-| GNSS_ANT | GNSS: U304.GPS1.2; J407: J407.CENTER; W407: W407.END_A, W407.END_B | W407 (P7 SMA → LC76G IPEX coax) | DC ≈3.1 V від LC76G |
+| E4_SB_PREBLOCK | W423: W423.BLOCK; A425: A425.SMA_A | W423 (RG316 SMA-M/M 0.10 m LaNA → DC block; купується Cinch Connectivity Solutions Johnson 415-0029-006, куплено 152.4 мм, граф 0.10 м (база деталей W-RG316-SMA-MM-0152; build/06 §S-band)) | без DC |
+| E4_TX_LOAD | A410: A410.END_A; W406: W406.END_B | W406 (CAB.01075 X1 → ANNE-50+ captive coax; купується Taoglas CAB.01075) | без DC |
+| GNSS_ANT | GNSS: U304.GPS1.2; J407: J407.CENTER; W407: W407.END_A, W407.END_B | W407 (P7 SMA → LC76G IPEX coax; купується Taoglas CAB.011) | DC ≈3.1 V від LC76G |
 
 ## 9. Бондинг CHASSIS
 
@@ -518,17 +509,19 @@
 5. S33 GND: межа захисту 4 A більша за допустимий струм 1×26 AWG у сегменті з 4 провідників (ESCC 3901/001) — потрібна окрема межа струму на гілці
 6. Гілки LAB5 (CTRL, RF, хаб, IMU) захищені лише загальним F102 4 A; у зовнішньому кабелі IMU (HELU 4×0.14 мм²) окремої межі струму немає — рекомендовано PTC/ключ на гілці IMU (власник E5).
 7. J503: тривалий струм J21 2.5 A на одному контакті Micro-Fit (50 % від 5 A); межа захисту 4 A (F201) — 80 %; приймання — прогрів J503 у тесті Ж-04/Ж-11.
-8. KEY у S15 і S16 — 24 AWG замість 26–28 AWG (STACK §5.8; примітки E5 J503/J521 «KEY26–28AWG»): найтонший переріз, сумісний з клемами Micro-Fit 20–24 AWG у J503; відхилення записано в build/15, примітку графа E5 має оновити власник E5.
-9. Коло батареї (S05–S08, S10) — 18 AWG за приміткою E1 F101; клеми Micro-Fit 3.0 беруть лише 20–24 AWG, тому силові роз'єми цих сегментів на PWR — Mini-Fit Jr. (клема 0039000060, 18–24 AWG, 9.0 A; вилка 5566/5569) — відхилення від build/15 «Micro-Fit для живлення», записане в build/15; MPN розеток і вилок — parts DB.
-10. F101 стоїть у паку (група E1 «Пак 4S1P», STACK D2 «біля батареї»), тож усі провідники кола батареї поза паком (S05–S08, S10) — нижче F101 і розраховані на 7.5 A; провід BT104.+ → F101.1 усередині паку захищає лише BMS (DOCP 40±10 A) — найкоротший, 18 AWG.
+8. KEY у S16 — 24 AWG замість 26–28 AWG STACK §5.8: найтонший переріз, сумісний з клемами Micro-Fit 20–24 AWG у J503 (примітка E5 J503 і build/15 «Живлення ≥2 A»); у S15 KEY приходить на плату лючка в роз'єм PH (сигнальний провід).
+9. Коло батареї (S05–S07, S10) — 18 AWG за приміткою E1 F101; клеми Micro-Fit 3.0 беруть лише 20–24 AWG, тому силові роз'єми цих сегментів на PWR — Mini-Fit Jr. (клема 0039000060, 18–24 AWG, 9.0 A; вилка 5566/5569) — відхилення від build/15 «Micro-Fit для живлення», записане в build/15; коди розеток 5557 і вилок 5566 у базі деталей — TBD (сторінки не прочитано).
+10. F101 стоїть на носійній платі PACK_FUSE біля плюса паку (група E1 «Пак 4S1P», STACK D2 «біля батареї»), тож усі провідники кола батареї поза паком (S05–S07, S10) — нижче F101 і розраховані на 7.5 A; провід BT104.+ → F101.1 захищає лише BMS (DOCP 40±10 A) — найкоротший, 18 AWG.
 11. 18 AWG у клемах VIN± модуля Adafruit 5832 (S06): сумісність клемника з 18 AWG не перевірено (документ Adafruit не прочитано) — інакше паяти до майданчиків VIN± модуля.
-12. E1-05 (запас LT3045): U108, F102, L101 і пара LT3045 стоять на PWR, тож опір LAB5 E1→E2 ≤10 mΩ (E1-05: «кожні 10 mΩ — 32 mV при 3.2 A») — вимога до міді й доріжок PWR (PCB), джгута в цьому шляху немає; холодний опір F102 ≤10 mΩ лишається відкритим (MPN). U108 впаяно в PWR замість кріплення до пластини (05 §3 рядок 15) — відхилення записано в build/15.
-13. U506 (HDMI pin 18) і U505 (VBUS T7) потребують прохідних вставок у кабелі — малі окремі плати поза трьома основними (build/15).
-14. IMU-пак містить деталі E5 (U552, D502, C519, C520) і E3 «External IMU» — потрібна мала носійна плата в Hammond 1550Z101 (build/15).
+12. E1-05 (запас LT3045): U108, F102, L101 і пара LT3045 стоять на PWR, тож опір LAB5 E1→E2 ≤10 mΩ (E1-05: «кожні 10 mΩ — 32 mV при 3.2 A») — вимога до міді й доріжок PWR (PCB), джгута в цьому шляху немає; холодний опір F102 ≤10 mΩ лишається відкритим (MPN). U107 (SYS12) і U108 впаяно в PWR на проставці гребінки (деталі низу модуля 1.8 мм за кресленням Pololu), тож сегмента S08 немає (build/15 «Кількість плат»).
+13. U506 (HDMI pin 18) і U505 (VBUS T7) — у прохідних вставках кабелів (домени pcb/prepare.py HDMI_INSERT і T7_INSERT); розкладка вставок — хвиля 2.
+14. IMU-пак містить деталі E5 (U552, D502, C519, C520) і E3 «External IMU» — носійна плата IMU_CARRIER у Hammond 1550Z101 (домен pcb/prepare.py, конверт у mechanical/params/imu_pack.json); розкладка — хвиля 2.
 15. Ввід кабелю живлення S-band pod (BIAS_SB_LNA, W425) у корпус у графах не визначено — потрібен панельний роз'єм або гермоввід (E2/E4).
 16. Точка відводу VCC_3V3_MKEY на Q6A (U500) не визначена — S17 TBD до прозвонки Q6A (E5/E2).
 17. Live 5 V/3.3 V пінів 40-pin хедера Q6A захищені лише бортовими колами Q6A; у стрічці IDC 28 AWG — лише малі навантаження (LC76G, логіка).
-18. Розбиття PCB: `pcb/generated/components.csv` ставить на плати деталі, які збираються поза ними — IMUPACK: C340, C341, C519, C520, D502, R390, R391, U552; T7A: C514, C515, C516, R514, R515, R516, R517, U505; HDMIA: C517, C518, R552, U506; PWR: J302; UART5: J502; J21H: J503. Потрібна зміна категорій `pcb/prepare.py` (власник parts): окремі домени для вставок T7/HDMI і носійної плати паку IMU, для окремих деталей — узгодження бази деталей з місцем збирання (причини в §2), після чого — перефіксація PCB.
+18. Площа й край плат (модель механіки, fit-report «board_area»): з роз'ємами джгутів цього розділу §4 оцінка площі PWR перевищує контур, а сума ширин роз'ємів — його крайові зони; розкладка PWR і архітектура джгутів (менше роз'ємів на PWR або більша плата) — хвиля 2, до того ворота розміщення PCB лишаються OPEN.
+19. Висота роз'ємів на CTRL і RF (обмеження 5.5 мм): PH — лише боковий вхід (4.8 мм, каталог ePH); бокс IDC XDFH-0254-2*20P (S01) і вертикальні Micro-Fit 43650 (X02P1-CTRL, X25P1-CTRL, X28P1-CTRL, X04P1-RF) — висоту не прочитано (сторінки LCSC/Molex не дали креслення): TBD; якщо вони вищі за 5.5 мм — кутові вилки 43650-0n00 (коди не в базі) або перенесення на PWR чи гнучкий вивід.
+20. S25 + S01 ≤200 мм для PPS (STACK §5.2): LC76G у моделі — задня стінка ліворуч, CTRL — праворуч за колонкою HMI, тож бюджет навряд чи виконується — перевірити трасу в CAD або перенести LC76G (build/15 «Оболонка D15»); пігтейл P7 W407 100 мм також не дістає (≥113 мм по прямій).
 
 ## 12. Опір і падіння напруги силових проводів
 
@@ -551,9 +544,6 @@
 | S06-02 | E1_SHUNT_P | 18 | 20.6 | 1 × TBD | 2.06 / 9.5 | TBD (CAD) | TBD (довжина з CAD) | TBD |
 | S07-01 | E1_N | 18 | 20.6 | 1 × TBD | 2.06 / 9.5 | TBD (CAD) | TBD (довжина з CAD) | TBD |
 | S07-02 | E1_SW | 18 | 20.6 | 1 × TBD | 2.06 / 9.5 | TBD (CAD) | TBD (довжина з CAD) | TBD |
-| S08-01 | GND | 18 | 20.6 | 1 × TBD | 2.06 / 9.5 | TBD (CAD) | TBD (довжина з CAD) | TBD |
-| S08-02 | E1_SW | 18 | 20.6 | 1 × TBD | 2.06 / 9.5 | TBD (CAD) | TBD (довжина з CAD) | TBD |
-| S08-03 | SYS12 | 18 | 20.6 | 1 × TBD | 2.06 / 8.2 | TBD (CAD) | TBD (довжина з CAD) | TBD |
 | S10-01 | GND | 18 | 20.6 | 1 × TBD | 2.06 / 6.2 | TBD (CAD) | TBD (довжина з CAD) | TBD |
 | S10-02 | E1_N | 18 | 20.6 | 1 × TBD | 2.06 / 6.2 | TBD (CAD) | TBD (довжина з CAD) | TBD |
 | S10-03 | E1_USB_PD_SAFE | 18 | 20.6 | 1 × TBD | 2.06 / 6.2 | TBD (CAD) | TBD (довжина з CAD) | TBD |

@@ -6,29 +6,35 @@
     "connected_contacts": 2253,
     "nets": 478,
     "categories": {
-      "bare_board_part": 643,
+      "bare_board_part": 646,
       "bond_implementation_requirement": 1,
       "harness_assembly": 13,
       "integral_to_host_part": 2,
-      "mechanical_or_remote_part": 12,
+      "mechanical_or_remote_part": 11,
       "module_rework_part": 5,
       "physical_interface_boundary": 32,
-      "purchased_module": 35,
+      "purchased_module": 33,
       "purchased_module_internal_detail": 5,
       "test_access_requirement": 29
     },
     "board_candidates": {
-      "CTRL_HMI": 133,
+      "CTRL_HMI": 127,
       "DC_CORE": 71,
+      "ENC": 2,
+      "HATCH": 2,
+      "HDMI_INSERT": 4,
+      "IMU_CARRIER": 8,
+      "PACK_FUSE": 1,
       "PWR_BRANCH": 250,
-      "PWR_MAIN": 44,
+      "PWR_MAIN": 46,
       "RF_HF": 13,
       "RF_HMC": 50,
       "RF_INJECTOR": 31,
-      "USB_POWER": 51
+      "T7_INSERT": 8,
+      "USB_POWER": 33
     },
-    "graph_assigned_footprints": 675,
-    "portable_graph_assignments": 675,
+    "graph_assigned_footprints": 677,
+    "portable_graph_assignments": 677,
     "bare_parts_without_footprint": 0,
     "pin_pad_mismatches": 0,
     "xml_connected_pin_audit": "PASS",
@@ -49,7 +55,7 @@
     "inputs": [
       {
         "file": "design/E1.json",
-        "sha256": "cb11816d20865a1f502b74cc185e733cbfe553402de1a28ef1bdf468fc98ae4a"
+        "sha256": "a5f312ac5162252adbad513e9fddabc8e7c862f5dbf364c853497c683f67083c"
       },
       {
         "file": "design/E2.json",
@@ -65,15 +71,15 @@
       },
       {
         "file": "design/E5.json",
-        "sha256": "69047e28d6f571d87ae5a3b7b0f21944f4e9cf005d0697db002511e3f5428285"
+        "sha256": "73e901d907a54e8adb05a6750f6f5ee47d9ad22f2b5c4b26575277175e545e79"
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "b18f0224569a0dd58a90d00675e80b74508c6833bfc4420cbf4c4cc0729dc2d7"
+        "sha256": "10b360bbd979caa77500ac8f93ddb6e23b35661a0feb6387100c3dcbcce7a69c"
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "12766f6a95ee8fa1c4719f5b886af05f8caa66d643927bf6d6032a12de4e8dc7"
+        "sha256": "d3b2d2293c1a602fa73fd7a9ef7faffde29dea49aa498cc820d8c63e356d0973"
       }
     ],
     "source_documents": [
@@ -180,7 +186,7 @@
         "interface_open",
         "interface_resolved"
       ],
-      "projection_sha256": "461260dcd5e7069d3c41738bd3189ba5ec1ac781c77cdf123caa41dbf4e113f4"
+      "projection_sha256": "fe5d0b34eef6b3a95d45152a4dff8ac53b1bdba39a340ff9c0bf9828b63f7908"
     }
   },
   "boards": {
@@ -238,6 +244,50 @@
       "source": [
         "design/E4-review.md",
         "design/E4-detector-analysis.py"
+      ]
+    },
+    "ENC": {
+      "purpose": "Replaceable encoder daughterboard (PEC11R-4220F with its push switch), two in use plus one spare; harness to CTRL_HMI.",
+      "source": [
+        "STACK.md §5.8",
+        "mechanical/params/boards.json ENC",
+        "build/15-rishennia-komplektu.md"
+      ]
+    },
+    "HATCH": {
+      "purpose": "Service-hatch board in the rear hatch bay: J503 J21 service header (Micro-Fit 3) and J502 UART5 console header (JST PH 3); harness from PWR/CTRL.",
+      "source": [
+        "STACK.md §5.8 (service hatch)",
+        "build/15-rishennia-komplektu.md"
+      ]
+    },
+    "T7_INSERT": {
+      "purpose": "In-line VBUS key insert of the T7 USB3 cable (E5 U505 and its passives); built off the plate boards.",
+      "source": [
+        "design/E5-connection-guide.md §7",
+        "build/16-dzhgut.md"
+      ]
+    },
+    "HDMI_INSERT": {
+      "purpose": "In-line HDMI pin-18 insert of the display cable (E5 U506 and its passives); built off the plate boards.",
+      "source": [
+        "design/E5-connection-guide.md §8",
+        "build/16-dzhgut.md"
+      ]
+    },
+    "IMU_CARRIER": {
+      "purpose": "Carrier board inside the Hammond 1550Z101 IMU pack: E5 IMU supply/data protection and the bare parts of E3 group External IMU.",
+      "source": [
+        "design/E5-connection-guide.md",
+        "design/E3-review.md",
+        "mechanical/params/imu_pack.json"
+      ]
+    },
+    "PACK_FUSE": {
+      "purpose": "Small F101 carrier at the pack positive: Keystone 3568 mini-blade holder and 18 AWG solder pads, insulated and fixed beside the battery tray.",
+      "source": [
+        "STACK.md D2",
+        "build/15-rishennia-komplektu.md"
       ]
     }
   },
@@ -362,7 +412,13 @@
         "RF_HMC",
         "RF_HF",
         "RF_INJECTOR",
-        "DC_CORE"
+        "DC_CORE",
+        "ENC",
+        "HATCH",
+        "T7_INSERT",
+        "HDMI_INSERT",
+        "IMU_CARRIER",
+        "PACK_FUSE"
       ],
       "requirement": "All partitions are engineering candidates. Final outline, mounting, stackup, copper weight, connector MPN/orientation and enclosure proof-fit are unset. No Gerbers/drill/production DRC is authorized by this preparation output.",
       "source": "STACK.md §5.8; build/05-mekhanika.md; build/13-pcb-preparation.md"
@@ -3165,7 +3221,7 @@
       "kind": "capacitor",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "CTRL_HMI",
+      "board_candidate": "IMU_CARRIER",
       "dnp": false,
       "footprint": "Capacitor_SMD:C_0805_2012Metric",
       "portable_footprint": true,
@@ -3182,7 +3238,7 @@
       "kind": "capacitor",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "CTRL_HMI",
+      "board_candidate": "IMU_CARRIER",
       "dnp": false,
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "portable_footprint": true,
@@ -4015,7 +4071,7 @@
       "kind": "capacitor",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "USB_POWER",
+      "board_candidate": "T7_INSERT",
       "dnp": false,
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "portable_footprint": true,
@@ -4032,7 +4088,7 @@
       "kind": "capacitor",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "USB_POWER",
+      "board_candidate": "T7_INSERT",
       "dnp": false,
       "footprint": "Capacitor_SMD:C_0805_2012Metric",
       "portable_footprint": true,
@@ -4049,7 +4105,7 @@
       "kind": "capacitor",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "USB_POWER",
+      "board_candidate": "T7_INSERT",
       "dnp": false,
       "footprint": "Capacitor_SMD:CP_Elec_8x6.9",
       "portable_footprint": true,
@@ -4066,7 +4122,7 @@
       "kind": "capacitor",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "USB_POWER",
+      "board_candidate": "HDMI_INSERT",
       "dnp": false,
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "portable_footprint": true,
@@ -4083,7 +4139,7 @@
       "kind": "capacitor",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "USB_POWER",
+      "board_candidate": "HDMI_INSERT",
       "dnp": false,
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "portable_footprint": true,
@@ -4100,7 +4156,7 @@
       "kind": "capacitor",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "USB_POWER",
+      "board_candidate": "IMU_CARRIER",
       "dnp": false,
       "footprint": "Capacitor_SMD:C_0805_2012Metric",
       "portable_footprint": true,
@@ -4117,7 +4173,7 @@
       "kind": "capacitor",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "USB_POWER",
+      "board_candidate": "IMU_CARRIER",
       "dnp": false,
       "footprint": "Capacitor_SMD:C_0603_1608Metric",
       "portable_footprint": true,
@@ -4950,7 +5006,7 @@
       "kind": "diode",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "USB_POWER",
+      "board_candidate": "IMU_CARRIER",
       "dnp": false,
       "footprint": "Diode_SMD:D_SMA",
       "portable_footprint": true,
@@ -5018,7 +5074,7 @@
       "kind": "module",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "CTRL_HMI",
+      "board_candidate": "ENC",
       "dnp": false,
       "footprint": "SR_RX_Custom:RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx",
       "portable_footprint": true,
@@ -5035,7 +5091,7 @@
       "kind": "module",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "CTRL_HMI",
+      "board_candidate": "ENC",
       "dnp": false,
       "footprint": "SR_RX_Custom:RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx",
       "portable_footprint": true,
@@ -5047,19 +5103,19 @@
     {
       "ref": "F101",
       "sheet": "E1",
-      "mount": "remote",
+      "mount": "pcb_tht",
       "value": "Mini-blade 7.5 A DC ≥32 V",
       "kind": "fuse",
-      "category": "mechanical_or_remote_part",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PACK_FUSE",
       "dnp": false,
       "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 2,
       "source": "STACK §2.7,§5.1",
-      "classification_reason": "Leaded/remote part on wires (mount remote in design/parts/parts.json); not a PCB footprint."
+      "classification_reason": "Board part, mount pcb_tht in design/parts/parts.json."
     },
     {
       "ref": "F102",
@@ -5596,7 +5652,7 @@
       "kind": "connector",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "USB_POWER",
+      "board_candidate": "HATCH",
       "dnp": false,
       "footprint": "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
       "portable_footprint": true,
@@ -5613,7 +5669,7 @@
       "kind": "connector",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "USB_POWER",
+      "board_candidate": "HATCH",
       "dnp": false,
       "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0315_1x03_P3.00mm_Vertical",
       "portable_footprint": true,
@@ -9727,7 +9783,7 @@
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "CTRL_HMI",
+      "board_candidate": "IMU_CARRIER",
       "dnp": false,
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "portable_footprint": true,
@@ -9744,7 +9800,7 @@
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "CTRL_HMI",
+      "board_candidate": "IMU_CARRIER",
       "dnp": false,
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "portable_footprint": true,
@@ -10390,7 +10446,7 @@
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "USB_POWER",
+      "board_candidate": "T7_INSERT",
       "dnp": false,
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "portable_footprint": true,
@@ -10407,7 +10463,7 @@
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "USB_POWER",
+      "board_candidate": "T7_INSERT",
       "dnp": false,
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "portable_footprint": true,
@@ -10424,7 +10480,7 @@
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "USB_POWER",
+      "board_candidate": "T7_INSERT",
       "dnp": false,
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "portable_footprint": true,
@@ -10441,7 +10497,7 @@
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "USB_POWER",
+      "board_candidate": "T7_INSERT",
       "dnp": false,
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "portable_footprint": true,
@@ -10492,7 +10548,7 @@
       "kind": "resistor",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "USB_POWER",
+      "board_candidate": "HDMI_INSERT",
       "dnp": false,
       "footprint": "Resistor_SMD:R_0603_1608Metric",
       "portable_footprint": true,
@@ -12272,36 +12328,36 @@
     {
       "ref": "U107",
       "sheet": "E1",
-      "mount": "module",
+      "mount": "pcb_module",
       "value": "Pololu D36V50F12#4095",
       "kind": "module",
-      "category": "purchased_module",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_MAIN",
       "dnp": false,
-      "footprint": "",
-      "portable_footprint": false,
-      "pad_coverage": "UNASSIGNED",
+      "footprint": "SR_RX_Custom:Pololu_D36V50Fx",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
       "pin_count": 6,
       "source": "https://www.pololu.com/product/4095",
-      "classification_reason": "Retain functional connector interfaces; no arbitrary module-pad footprint."
+      "classification_reason": "Board part, mount pcb_module in design/parts/parts.json."
     },
     {
       "ref": "U108",
       "sheet": "E1",
-      "mount": "module",
+      "mount": "pcb_module",
       "value": "Pololu D36V50F5 #4091 — LAB5 default",
       "kind": "module",
-      "category": "purchased_module",
+      "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "",
+      "board_candidate": "PWR_MAIN",
       "dnp": false,
-      "footprint": "",
-      "portable_footprint": false,
-      "pad_coverage": "UNASSIGNED",
+      "footprint": "SR_RX_Custom:Pololu_D36V50Fx",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
       "pin_count": 6,
       "source": "https://www.pololu.com/product/4091",
-      "classification_reason": "Retain functional connector interfaces; no arbitrary module-pad footprint."
+      "classification_reason": "Board part, mount pcb_module in design/parts/parts.json."
     },
     {
       "ref": "U109",
@@ -13212,7 +13268,7 @@
       "kind": "ic",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "USB_POWER",
+      "board_candidate": "T7_INSERT",
       "dnp": false,
       "footprint": "Package_SON:WSON-6-1EP_2x2mm_P0.65mm_EP1x1.6mm",
       "portable_footprint": true,
@@ -13229,7 +13285,7 @@
       "kind": "ic",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "USB_POWER",
+      "board_candidate": "HDMI_INSERT",
       "dnp": false,
       "footprint": "Package_TO_SOT_SMD:SOT-363_SC-70-6",
       "portable_footprint": true,
@@ -13348,7 +13404,7 @@
       "kind": "ic",
       "category": "bare_board_part",
       "assembly_owner": "",
-      "board_candidate": "USB_POWER",
+      "board_candidate": "IMU_CARRIER",
       "dnp": false,
       "footprint": "Package_TO_SOT_SMD:SOT-23-6",
       "portable_footprint": true,
@@ -13632,7 +13688,7 @@
       "ref": "J301",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Розетку 2×20 (крок 2.54 мм) для Q6A J20 і шлейф або плату до CTRL_HMI не обрано: у графі немає ні позначення, ні MPN."
+      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Для Q6A J20 (2×20, крок 2.54 мм) обрано родину IDC (harness_families IDC): гніздо XDFH-0258-2*20P на стрічці 40 × 1.27 мм, бокс XDFH-0254-2*20P на CTRL; MPN стрічки, висота боксу (CTRL ≤5.5 мм, креслення не прочитано) і довжина S01 ≤200 мм (UART7/PPS, STACK §5.2) — TBD; стрічка йде крізь проріз пластини SL1 (M-07)."
     },
     {
       "ref": "J303",
@@ -13740,7 +13796,7 @@
       "ref": "J521",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Заводську вилку J21 знімають після прогону; дроти від площадок J21 до J503 (Micro-Fit 3.0) — довжина й переріз у таблиці джгутів (build/16) ще не задано."
+      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Заводську вилку J21 знімають після прогону; провід S16 від площадок J21 до розетки 43645-0300 на J503 (плата лючка): 12 V/GND — кручена пара 20 AWG, KEY — 24 AWG (build/16 S16); довжина — TBD (CAD)."
     },
     {
       "ref": "J511",
@@ -13794,13 +13850,13 @@
       "ref": "J522",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Дроти від площадок заводської кнопки EDL до SW501 (PV6F240SS) не задано (провід, довжина, фіксація пайки)."
+      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Дроти від площадок заводської кнопки EDL до SW501 (PV6F240SS на платі лючка) не задано (провід, довжина, фіксація пайки)."
     },
     {
       "ref": "J505",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-GX12-6 (mount panel, MPN KH-GX12-6P) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Пару GX12-6 і вилку JST PH на платі (супутня деталь, позначення в графі немає) обрано; виріз панелі, IP і дроти до плати — механічний пакет (MECH-07) і build/16."
+      "detail": "Parts database entry J-GX12-6 (mount panel, MPN KH-GX12-6P) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Пару GX12-6 і вилку JST PH на платі (супутня деталь, позначення в графі немає) обрано; виріз панелі, гайка, момент і IP — TBD (сторінка LCSC без креслення), дроти до плати — build/16 S34."
     },
     {
       "ref": "J504",
