@@ -839,9 +839,36 @@ def pwr_key_nut_rule(P):
         "incoming inspection: a nut wider than the reserve needs the top Al angle notched or the key moved"))
 
 
+def _harness_near(P, envs, named):
+    """Harness routes next to the given envelopes. R-ROUTE-CLEAR checks centrelines only, so this gives the nearest centreline gap
+    and the pieces whose bundle (bundle_od_mm / 2 about the centreline) reaches into an envelope. A piece is taken as its bounding
+    box: exact for the axis-parallel pieces, a lower bound of the distance otherwise."""
+    from . import routes
+    from .layout import gap
+    res = routes.evaluate(P)
+    if res is None:
+        return None
+    near, over = None, []
+    for sid, r in list(res["segments"].items()) + list(res["branches"].items()):
+        pts, rad = r.get("points_mm") or [], (r.get("bundle_od_mm") or 0.0) / 2
+        for a, b in zip(pts, pts[1:]):
+            piece = tuple(min(a[i], b[i]) for i in range(3)) + tuple(max(a[i], b[i]) for i in range(3))
+            for e in envs:
+                d = max(gap(piece, named[e]), 0.0)
+                if near is None or d < near[2] - 1e-9:
+                    near = (sid, e, d)
+                if rad - d > 1e-9:
+                    over.append((sid, e, rad - d))
+    worst = max(over, key=lambda o: o[2]) if over else None
+    return {"nearest_centreline": [near[0], near[1], round(near[2], 2)] if near else None,
+            "bundle_overlaps": len(over), "segments": sorted({o[0] for o in over}), "envelopes": sorted({o[1] for o in over}),
+            "worst": [worst[0], worst[1], round(worst[2], 2)] if worst else None}
+
+
 def hdmi_route_rule(P):
     """R-HDMI-ROUTE (W2 MECH-4, B-04): the FPC route envelopes (adapters, folds, ferrite, insert) are in the envelope check without a
-    conflict, each flex is long enough for its centreline with bounded slack, the flex fits the ferrite slot and the plate notch."""
+    conflict, each flex is long enough for its centreline with bounded slack, the flex width fits the ferrite slot and the plate notch
+    (the bare flex thickness against the slot height only once it is measured: parts.json adafruit_flex thickness)."""
     from .layout import fit_checks
     m = P.mech
     hr = m["hdmi_route"]
@@ -864,55 +891,85 @@ def hdmi_route_rule(P):
     w = flex["width"]
     if w > min(fer["cable_width_max"], fer["slot"][0]):
         bad.append(f"flex {w:g} wider than the ferrite slot {fer['slot'][0]:g}")
+    t_bare = flex.get("thickness")                  # bare flex, measured; not published by Adafruit (thickness_reserve is with the wrap)
+    if t_bare is not None and t_bare > fer["slot"][1]:
+        bad.append(f"bare flex {t_bare:g} thicker than the ferrite slot height {fer['slot'][1]:g}")
     nx, ny, nw, nh = m["plate"]["notches_right"][0]
     xc = hr["segments"][0]["points"][4][0]
     if not (nx + hr["notch_clear"] <= xc - w / 2 and xc + w / 2 <= nx + nw - hr["notch_clear"]):
         bad.append(f"flex band x {xc - w / 2:g}-{xc + w / 2:g} not inside the notch x {nx:g}-{nx + nw:g} with {hr['notch_clear']:g} clearance")
-    val = {"segments": segs, "flex_w": w, "ferrite_slot": fer["slot"], "notch": [nx, ny, nw, nh], "envelopes": len(hr["envelopes"]),
-           "folds": sum(s.get("folds", 0) for s in hr["segments"])}
+    harn = _harness_near(P, [e for e in hr["envelopes"] if e in named], named)
+    val = {"segments": segs, "flex_w": w, "ferrite_slot": fer["slot"], "flex_bare_t": t_bare if t_bare is not None else "not published (measure)",
+           "notch": [nx, ny, nw, nh], "envelopes": len(hr["envelopes"]), "folds": sum(s.get("folds", 0) for s in hr["segments"]),
+           "harness_near": harn}
     rule = {"id": "R-HDMI-ROUTE",
             "rule": "HDMI FPC route Q6A to the Wisecoco input: adapter, fold, ferrite, insert and run envelopes in the envelope check without a conflict; "
-                    f"each flex covers its centreline with slack 0-{hr['slack_max']:g} mm; flex through the ferrite slot and the plate notch",
+                    f"each flex covers its centreline with slack 0-{hr['slack_max']:g} mm; flex width through the ferrite slot and the plate notch "
+                    "(bare flex thickness <= the slot height once measured)",
             "value_mm": val, "source": "mechanical.json hdmi_route, layout hdmi_*; parts.json adafruit_3550, adafruit_3548, adafruit_flex, wurth_74278011"}
     problems = [f"missing envelope {e}" for e in missing] + conflicts + bad
     if problems:
         return dict(rule, result="FAIL (model): " + "; ".join(problems))
     f1, f2 = segs["FLEX1"], segs["FLEX2"]
+    if harn and harn["nearest_centreline"]:
+        hs, he, hd = harn["nearest_centreline"]
+        htxt = (f"harness bundles are centrelines in the envelope check (R-ROUTE-CLEAR): the nearest, {hs}, runs {hd:g} mm from {he}"
+                + (f"; with bundle_od_mm / 2 about the centreline {harn['bundle_overlaps']} route pieces of {', '.join(harn['segments'])} reach into "
+                   f"{', '.join(harn['envelopes'])} (worst {harn['worst'][0]} {harn['worst'][2]:g} mm into {harn['worst'][1]}): the drops must move "
+                   "clear of flex 2, OPEN for the harness routes" if harn["bundle_overlaps"] else ""))
+    else:
+        htxt = "no harness route evaluated"
     return dict(rule, result=(
         f"PASS (model): Adafruit 3550 on the Q6A receptacle, flex 1 {f1['part']} ({f1['slack_mm']:g} mm slack) with the WE-FLAT 74278011 ferrite under the "
         f"LAB BUS nut, through the plate notch to the HDMI_INSERT reserve right of the BMS, flex 2 {f2['part']} ({f2['slack_mm']:g} mm slack) up the strip "
         f"and along y 78.65-88.65 to the Adafruit 3548 in the Wisecoco input; {val['folds']} 45-degree folds; labelled assumptions: 3550 axis from the "
         f"product photos (3550 or 3549 by the receptacle side), flex thickness {flex['thickness_reserve']:g} and bend radius {flex['bend_r']:g} not "
         "published, insert reserve size, Wisecoco HDMI input at the lower end of the board's right edge (STACK D5: measure the received board); "
+        f"only the flex width is checked against the ferrite slot: the bare flex must be <= {fer['slot'][1]:g} thick for the "
+        f"{fer['slot'][0]:g} x {fer['slot'][1]:g} (+0.5/-0) slot (thickness not published: measure, OPEN); {htxt}; "
         "link, EMI of the wrapped flex and the folds stay bench OPEN"))
 
 
 def f101_access_rule(P):
     """R-F101-ACCESS (W2 MECH-4, B-12): can F101 face the service hatch for storage? Free depth in the hatch bottom strip in front of
-    the USB-A plug bay against the carrier + holder + fuse body stack; otherwise storage opens the seam (decision record)."""
+    the USB-A plug bay against the carrier + holder + fuse body stack, and the place must not stand in the hatch access path to a
+    keep-clear reserve behind it (the USB-A plug of the Q6A is reached through that strip, hatch.content); otherwise storage opens the
+    seam (decision record)."""
     m = P.mech
     fa = m["rear_face"]["hatch"]["f101_access"]
     x, y, w, hh = fa["place"]
     t = m["wall"]
     holder, fuse = P.parts["keystone_3568"], P.parts["littelfuse_mini_297"]
-    front = [bx for iid, name, bx, it in item_boxes(P)
-             if iid != "hatch_parts" and not it.get("outside") and bx[0] < x + w and bx[3] > x and bx[1] < y + hh and bx[4] > y and bx[2] > t]
+    behind = [(name, bx, it) for iid, name, bx, it in item_boxes(P)
+              if iid != "hatch_parts" and not it.get("outside") and bx[0] < x + w and bx[3] > x and bx[1] < y + hh and bx[4] > y and bx[2] > t]
+    front = [bx for _, bx, _ in behind]
     z_front = min([bx[2] for bx in front] or [m["stack_z"]["plate_rear"]])
     free = round(z_front - t - fa["clearance"], 2)
     stack = round(fa["carrier_t"] + holder["body"][2] + fuse["body"][2], 2)
+    blocks = sorted(name for name, _, it in behind if it.get("keep_clear"))
     val = {"place": fa["place"], "free_depth": free, "stack": stack,
-           "stack_parts": {"carrier": fa["carrier_t"], "keystone_3568": holder["body"][2], "mini_fuse_body": fuse["body"][2]}}
+           "stack_parts": {"carrier": fa["carrier_t"], "keystone_3568": holder["body"][2], "mini_fuse_body": fuse["body"][2]},
+           "access_path_to": blocks}
     rule = {"id": "R-F101-ACCESS",
             "rule": "F101 for storage (STACK: F1 out for more than 2-4 weeks): the PACK_FUSE carrier with the fuse facing the hatch opening needs "
-                    "carrier + Keystone 3568 + MINI body of free depth in the hatch bottom strip; otherwise the seam is opened",
-            "value_mm": val, "limit_mm": stack, "source": "mechanical.json rear_face.hatch.f101_access; parts.json keystone_3568, littelfuse_mini_297"}
-    if stack <= free:
-        return dict(rule, result=f"PASS (model): F101 fits facing the hatch opening ({stack:g} <= {free:g} mm free)")
+                    "carrier + Keystone 3568 + MINI body of free depth in the hatch bottom strip, and its place must leave the hatch access path "
+                    "to the keep-clear reserves behind it (USB-A plug bay) open; otherwise the seam is opened",
+            "value_mm": val, "limit_mm": stack, "source": "mechanical.json rear_face.hatch.f101_access, hatch.content, layout usb_plug_bay; "
+                                                          "parts.json keystone_3568, littelfuse_mini_297"}
+    if stack <= free and not blocks:
+        return dict(rule, result=f"PASS (model): F101 fits facing the hatch opening ({stack:g} <= {free:g} mm free) and leaves the hatch access paths open")
+    parts_txt = f"carrier {fa['carrier_t']:g} + Keystone 3568 {holder['body'][2]:g} + MINI body {fuse['body'][2]:g}"
+    if stack > free:
+        why = [f"facing the opening, the stack needs {stack:g} mm ({parts_txt}) against {free:g} mm in front of the USB-A plug bay"]
+    else:
+        why = [f"the stack {stack:g} mm ({parts_txt}) fits facing the hatch opening ({free:g} mm free)"]
+    if blocks:
+        why.append(f"{'but ' if stack <= free else ''}the place is the hatch access path to {', '.join(blocks)} (the USB-A plug of the Q6A goes in "
+                   "through this strip, hatch.content)")
     return dict(rule, result=(
-        f"PASS (model): decision - storage keeps the seam procedure: facing the opening, the stack needs {stack:g} mm (carrier {fa['carrier_t']:g} "
-        f"+ Keystone 3568 {holder['body'][2]:g} + MINI body {fuse['body'][2]:g}) against {free:g} mm in front of the USB-A plug bay, and the rest of the "
-        "hatch footprint is the hatch board (J502, J503) and the EDL key; F101 stays on the PACK_FUSE carrier beside the battery tray (envelope MECH-5) "
-        "and comes out after the seam is opened (build/21 section 4 item 7, build/15 'Ущільнення')"))
+        "PASS (model, decision: seam): storage keeps the seam procedure, F101 is not reached through the hatch: " + "; ".join(why)
+        + "; the rest of the hatch footprint is the hatch board (J502, J503) and the EDL key; F101 stays on the PACK_FUSE carrier beside the battery "
+        "tray (envelope MECH-5) and comes out after the seam is opened (build/21 section 4 item 7, build/15 'Ущільнення')"))
 
 
 def p8_accessory_rule(P):

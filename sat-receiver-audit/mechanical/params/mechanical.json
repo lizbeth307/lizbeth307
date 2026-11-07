@@ -173,7 +173,7 @@
       "x": 155.5,
       "z": 50.0,
       "kind": "pv6",
-      "_src": "SW301 location is not given in STACK (build/04 'розміщення в STACK.md не задано'); this package puts it on the top face, front half, between the HDMI board and the IP2368 board (fit-report); E-Switch PV6F240SS (build/15 'Сигнальні джгути', 2026-11-07): the M16 body (D16) sits between the plate front face (40.5) and the display clamp plates under the top clamp bosses (module_back 60.58 - clamp t 2.0 = 58.58, W2 MECH-3 dz 4.08); W2 MECH-4 (B-05, build/15 'Кнопка живлення SW301 (W2 MECH-4)'): moved along the top face from z 48.5 to z 50.0, so the body clears the plate by 1.5 (was 0), the clamp plate by 0.58 and the HDMI board by 1.3, and the nut reserve nut.PWR_KEY (parts.json pv6_button nut_d x nut_t, assumption) clears the top Al angle by 0.5, the HDMI board top edge by 0.8 and the top clamp boss by 1.05, sitting in the plate notch (plate.notches); the nut is not dimensioned (rule R-PWR-KEY-NUT OPEN: measure the received nut)"
+      "_src": "SW301 location is not given in STACK (build/04 'розміщення в STACK.md не задано'); this package puts it on the top face, front half, between the HDMI board and the IP2368 board (fit-report); E-Switch PV6F240SS (build/15 'Сигнальні джгути', 2026-11-07): the M16 body (D16) sits between the plate front face (40.5) and the display clamp plates under the top clamp bosses (module_back 60.58 - clamp t 2.0 = 58.58, W2 MECH-3 dz 4.08); W2 MECH-4 (B-05, build/15 'Кнопка живлення SW301 (W2 MECH-4)'): moved along the top face from z 48.5 to z 50.0, so the body clears the plate by 1.5 (was 0), the clamp plate by 0.58 and the HDMI board by 1.3, and the nut reserve nut.PWR_KEY (parts.json pv6_button nut_d x nut_t, assumption) clears the top Al angle by 0.5, the HDMI board top edge by 0.8 and the display clamp plate under the nearest top clamp boss (rules.clamp_plate_boxes display_clamp.3) by 1.05, sitting in the plate notch (plate.notches); the nut is not dimensioned (rule R-PWR-KEY-NUT OPEN: measure the received nut)"
     }
   },
   "right_face": {
@@ -754,7 +754,7 @@
         "id": "nut.PWR_KEY",
         "derived": "pwr_key_nut",
         "mount": "front_wall",
-        "_note": "W2 MECH-4 (B-05): PV6 panel nut inside the top wall on the key thread, reserve D nut_d x nut_t of parts.json pv6_button (assumption, not dimensioned: R-PWR-KEY-NUT OPEN) as a box about top_face.power_key; it reaches 0.5 below the plate front face inside the plate notch"
+        "_note": "W2 MECH-4 (B-05): PV6 panel nut inside the top wall on the key thread, reserve D nut_d x nut_t of parts.json pv6_button (assumption, not dimensioned: R-PWR-KEY-NUT OPEN) as a box about top_face.power_key; inside the plate notch its rear face (z 39.0) is 1.5 behind the plate front face (40.5) and 0.5 in front of the plate rear face (38.5), on which the plate leg of the top Al angle sits; tightened in build/21 E5 before the plate goes in (E6), wrench from the open rear side (build/17 F21)"
       }
     ]
   },
