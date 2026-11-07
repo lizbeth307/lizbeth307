@@ -54,7 +54,7 @@
     "inputs": [
       {
         "file": "design/E1.json",
-        "sha256": "256ffe717c12e2f876b6c1736a8a9798f5e3de2ffc62f2253995da2d272bf4c4"
+        "sha256": "f854ea931a2f2f35482f650312ee7e6326ee1554e4477f6410b50cd516b99295"
       },
       {
         "file": "design/E2.json",
@@ -62,11 +62,11 @@
       },
       {
         "file": "design/E3.json",
-        "sha256": "a84e824308def639d81a72ca97b054e329cfed89a76fd1d6a8f45f61c1016db8"
+        "sha256": "77a0ea41b64b9382ba14b031145f2ba783b6a952ee0e6f190f34370c2f13167b"
       },
       {
         "file": "design/E4.json",
-        "sha256": "ad20d3e8e9268c3ca74c2e760adc5f1efc93376672a13574cd256a1fa81131ee"
+        "sha256": "e10e0c344463c9e5bc48cb59293853bacc943e8e55f08f2f0cf109211688aa17"
       },
       {
         "file": "design/E5.json",
@@ -187,7 +187,7 @@
         "interface_open",
         "interface_resolved"
       ],
-      "projection_sha256": "fc15b0fc05e16faeac58c28e111b299a4bcaa71fe9de0ef557e41b24d35cf783"
+      "projection_sha256": "dd46c1ab799a88c7cbfa1a0e625d425f603e2f88ed90d3e5de66a8c4639275d3"
     },
     "partition": {
       "file": "pcb/partition-spec.json",
@@ -14877,7 +14877,7 @@
       "ref": "J422",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-EXISTING-HELIX (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: SMA-гніздо живлення саморобної спіралі на диску 18 см (build/06 §2.5, §3.2) у build/06 не має MPN; відповідна частина — SMA-вилка W422 (Cinch 415-0029-006, 152.4 мм, запис W-RG316-SMA-MM-0152). Кріплення гнізда на диску й кабелю до вузла pod (креслення P-01/P-02) — антенний і механічний пакети; посадка й герметизація pod — ворота E4-04 (OPEN)."
+      "detail": "Parts database entry J-EXISTING-HELIX (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: SMA-гніздо живлення 7-виткової S-band спіралі в конусі (Lime; build/06 §1, рядок «7-виткова S-band спіраль у конусі» :37, і §3.2, пункт «S-band (Lime)» :114) у build/06 не має MPN; відповідна частина — SMA-вилка W422 (Cinch 415-0029-006, 152.4 мм, запис W-RG316-SMA-MM-0152) до Nooelec LaNA WB 100845 у зовнішньому вузлі Hammond 1554U2GY. Кріплення гнізда в конусі й кабелю до вузла pod (креслення P-01/P-02) — антенний і механічний пакети; посадка й герметизація pod — ворота E4-04 (OPEN)."
     },
     {
       "ref": "J521",
