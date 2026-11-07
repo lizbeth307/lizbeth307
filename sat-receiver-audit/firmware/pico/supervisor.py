@@ -131,11 +131,6 @@ class Supervisor:
             return "ADC_UNCALIBRATED"
         if self._inputs_at is None or self._now - self._inputs_at > SENSOR_MAX_AGE_MS:
             return "SENSOR_STALE"
-        # Physical DISARM/STOP: main.py sets operator_stop for a LOCK hold seen on
-        # fresh key reads. It refuses ARM and, via _advance, trips WARMING,
-        # CONFIGURING or ACTIVE; SAFE, TRIPPED, SHUTTING_DOWN and OFF stay as they are.
-        if self._inputs.get("operator_stop") is True:
-            return "OPERATOR_STOP"
         if self._inputs.get("q6a_on") is not True:
             return "Q6A_OFF"
         if not self._sensors_valid():
@@ -149,6 +144,13 @@ class Supervisor:
             return "CASE_HOT"
         if self._inputs.get("fan_stalled") is True:
             return "FAN_STALLED"
+        # Physical DISARM/STOP: main.py sets operator_stop for a LOCK hold seen on
+        # fresh key reads. It refuses ARM and, via _advance, trips WARMING,
+        # CONFIGURING or ACTIVE; SAFE, TRIPPED, SHUTTING_DOWN and OFF stay as they are.
+        # Checked last, so a protective cause in the same sample names the trip and
+        # CASE_HOT/FAN_STALLED still drop DISP12; the armed path skips only battery.
+        if self._inputs.get("operator_stop") is True:
+            return "OPERATOR_STOP"
         return None
 
     def _trip(self, reason):

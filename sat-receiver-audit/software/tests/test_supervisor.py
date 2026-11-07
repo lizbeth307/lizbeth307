@@ -1019,6 +1019,45 @@ class OperatorStopTests(unittest.TestCase):
         self.assertFalse(rig.send("ARM", {"qualified": True}))
         self.assertEqual(rig.model.reject_reason, "SENSOR_STALE")
 
+    def test_a_thermal_cause_in_the_same_step_names_the_trip_and_drops_the_console(self):
+        # The hold completing in the step where the case first exceeds 60 C or the fan stalls
+        # must not hide the thermal latch: the trip is CASE_HOT/FAN_STALLED and DISP12 goes off.
+        for phase in ("WARMING", "ACTIVE"):
+            for field, value, reason in (("case_temp_c", 65, "CASE_HOT"),
+                                         ("fan_stalled", True, "FAN_STALLED")):
+                with self.subTest(phase=phase, field=field):
+                    rig = self.armed(phase)
+                    rig.inputs["operator_stop"] = True
+                    rig.inputs[field] = value
+                    rig.now += 20
+                    outputs = rig.model.step(rig.now, rig.inputs)
+                    self.assertEqual((rig.model.state, rig.model.fault), ("TRIPPED", reason))
+                    self.assertTrue(outputs["mcp_reset"])
+                    self.assertFalse(outputs["disp_en"])
+                    # Cooled / tach back with LOCK still held: the latch holds DISP12 off and
+                    # ARM stays refused by the stop; only a new ARM after release relights it.
+                    rig.inputs[field] = READY.get(field, False)
+                    rig.advance(rig.now + 1000, heartbeat=True)
+                    self.assertEqual((rig.model.state, rig.model.fault), ("TRIPPED", reason))
+                    self.assertFalse(rig.model.outputs["disp_en"])
+                    self.assertFalse(rig.send("ARM", {"qualified": True}))
+                    self.assertEqual(rig.model.reject_reason, "OPERATOR_STOP")
+                    rig.inputs["operator_stop"] = False
+                    rig.advance(rig.now + 20)
+                    self.assertTrue(rig.send("ARM", {"qualified": True}))
+                    self.assertTrue(rig.model.outputs["disp_en"])
+        # Armed, the stop still trips with low battery (the armed path skips only that gate);
+        # a held stop cannot mask a hot panel either.
+        rig = self.armed("ACTIVE")
+        rig.inputs.update(operator_stop=True, battery_mv=12800)
+        rig.advance(rig.now + 20)
+        self.assertEqual((rig.model.state, rig.model.fault), ("TRIPPED", "OPERATOR_STOP"))
+        rig = self.armed("ACTIVE")
+        rig.inputs.update(operator_stop=True, panel_temp_c=80)
+        rig.advance(rig.now + 20)
+        self.assertEqual((rig.model.state, rig.model.fault), ("TRIPPED", "PANEL_HOT"))
+        self.assertFalse(rig.model.outputs["disp_en"])
+
 
 @unittest.skipUnless(sys.platform != "win32", "srrx.hardware imports POSIX fcntl")
 class OperatorStopEngineTests(unittest.TestCase):
