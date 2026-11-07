@@ -49,8 +49,8 @@ BOARDS = {
 }
 # Board parts assembled off the plate boards (build/15, build/16 §2): their own domain instead of the sheet default.
 DOMAIN_OVERRIDE = {**{r:'ENC' for r in ('ENC301','ENC302')}, **{r:'HATCH' for r in ('J502','J503')},
- **{r:'T7_INSERT' for r in ('U505','R514','R515','R516','R517','C514','C515','C516')},
- **{r:'HDMI_INSERT' for r in ('U506','C517','C518','R552')},
+ **{r:'T7_INSERT' for r in ('U505','R514','R515','R516','R517','C514','C515','C516','TP501')},
+ **{r:'HDMI_INSERT' for r in ('U506','C517','C518','R552','TP502')},
  **{r:'IMU_CARRIER' for r in ('U552','D502','C519','C520','C340','C341','R390','R391')},
  'F101':'PACK_FUSE'}
 CONSTRAINTS = [

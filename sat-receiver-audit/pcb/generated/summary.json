@@ -19,7 +19,7 @@
     "DC_CORE": 71,
     "ENC": 2,
     "HATCH": 2,
-    "HDMI_INSERT": 4,
+    "HDMI_INSERT": 5,
     "IMU_CARRIER": 8,
     "PACK_FUSE": 1,
     "PWR_BRANCH": 269,
@@ -27,8 +27,8 @@
     "RF_HF": 14,
     "RF_HMC": 51,
     "RF_INJECTOR": 34,
-    "T7_INSERT": 8,
-    "USB_POWER": 35
+    "T7_INSERT": 9,
+    "USB_POWER": 33
   },
   "graph_assigned_footprints": 681,
   "portable_graph_assignments": 681,

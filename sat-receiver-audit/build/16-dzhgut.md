@@ -460,20 +460,20 @@
 | E4_LNB_IF | A420: A420.IF; W401: W401.END_A | W401 (Goobay 58814 75 Ω F-F 1 m; купується Goobay 58814) | DC 13.2 V (LNB) |
 | E4_LNB_REF25 | A420: A420.REF25; A421: A421.END_A | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_P1 | A401: A401.IN; J401: J401.CENTER | J401: Adam Tech CA-DKCA1-305L5-APAJ (база деталей, складська збірка) | без DC |
-| E4_P2 | RF: C403.1, L403.1, R4420.1, R4460.1; A418: A418.OUT; J402: J402.CENTER; J423: J423.CENTER | J402: Taoglas CAB.718 (база деталей, складська збірка) | DC 4.3 V (ch2 → Uputronics 440) |
+| E4_P2 | RF: C403.1, J423.CENTER, L403.1, R4420.1, R4460.1; A418: A418.OUT; J402: J402.CENTER | J402: Taoglas CAB.718 (база деталей, складська збірка) | DC 4.3 V (ch2 → Uputronics 440) |
 | E4_P2_ANT | A418: A418.IN; J416: J416.CENTER | перемичка/перехідник SMA — TBD (CAD) | без DC |
-| E4_P3 | RF: C411.1, L404.1, R4430.1, R4464.1; A419: A419.OUT; J403: J403.CENTER; J424: J424.CENTER | J403: Taoglas CAB.718 (база деталей, складська збірка) | DC 4.3 V (ch3 → активна L-band антена/LNA) |
+| E4_P3 | RF: C411.1, J424.CENTER, L404.1, R4430.1, R4464.1; A419: A419.OUT; J403: J403.CENTER | J403: Taoglas CAB.718 (база деталей, складська збірка) | DC 4.3 V (ch3 → активна L-band антена/LNA) |
 | E4_P3_ANT | A419: A419.IN; J417: J417.CENTER | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_P4 | J404: J404.CENTER; W401: W401.END_B; W402: W402.END_A | W401 (Goobay 58814 75 Ω F-F 1 m; купується Goobay 58814), W402 (RG316 SMA-M/M 152.4 mm + SM3823 F/SMA adapter: P4 → J426; купується Cinch Connectivity Solutions Johnson 415-0029-006) | DC 13.2 V (LNB) |
 | E4_P5 | J405: J405.CENTER; W408: W408.IN_CENTER | W408 (RG316 common-mode choke FT240-77 +2631102002) | DC 13.8 V лише в профілі Boni |
-| E4_P6 | RF: K402.3, L407.1; J406: J406.CENTER; J425: J425.CENTER | J406: Taoglas CAB.718 (база деталей, складська збірка) | без DC |
+| E4_P6 | RF: J425.CENTER, K402.3, L407.1; J406: J406.CENTER | J406: Taoglas CAB.718 (база деталей, складська збірка) | без DC |
 | E4_P8_ANT | A403: A403.IN; J428: J428.CENTER | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_REF_IN | J415: J415.CENTER; W405: W405.END_A | W405 (REF IN → J4 MHF4 coax; купується Taoglas CAB.01075) | без DC |
 | E4_RFC_A | RF: C405.2, J410.CENTER; RTLA: A411.ANT | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_RFC_B | RF: C410.2, J411.CENTER; RTLB: A412.ANT | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_RF_CH1 | RF: C402.1, L402.1; A402: A402.OUT | перемичка/перехідник SMA — TBD (CAD) | без DC |
-| E4_RF_CH4 | RF: A424.3; A404: A404.OUT; J408: J408.CENTER; J427: J427.CENTER | J408: Taoglas CAB.718 (база деталей, складська збірка) | DC 4.3 V (ch4 → LNA V2) лише з LNA |
-| E4_RF_CH5 | RF: C412.1, L406.1; J426: J426.CENTER; W402: W402.END_B | W402 (RG316 SMA-M/M 152.4 mm + SM3823 F/SMA adapter: P4 → J426; купується Cinch Connectivity Solutions Johnson 415-0029-006) | DC 13.2 V (LNB) до DC-блока |
+| E4_RF_CH4 | RF: A424.3, J427.CENTER; A404: A404.OUT; J408: J408.CENTER | J408: Taoglas CAB.718 (база деталей, складська збірка) | DC 4.3 V (ch4 → LNA V2) лише з LNA |
+| E4_RF_CH5 | RF: C412.1, J426.CENTER, L406.1; W402: W402.END_B | W402 (RG316 SMA-M/M 152.4 mm + SM3823 F/SMA adapter: P4 → J426; купується Cinch Connectivity Solutions Johnson 415-0029-006) | DC 13.2 V (LNB) до DC-блока |
 | E4_RF_CH5_ATT | RF: C408.1; A405: A405.OUT | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_RF_CH5_DC | RF: C412.2; A405: A405.IN | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_RF_P1_FM | A401: A401.OUT; A402: A402.IN | перемичка/перехідник SMA — TBD (CAD) | без DC |
