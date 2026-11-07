@@ -1,7 +1,7 @@
 {
  "schema": 1,
  "date": "2026-11-07",
- "note": "MECH-2 (wave 2) panel-drawing reads of 2026-11-07 (C-20, one reader for the panel drawings): Cinch VFA340, Amphenol RF 242181 (not readable), Amphenol ICC MUSBRM5C130 (not readable), Bulgin PX0845/A, Adam Tech CA-DKCA1-305L5-APAJ, Tensility 10-06000 / 10-05999 (3.5 mm panel jack), icotek KVT 20 (T7 split gland), Fairview SM4955 (pod bulkhead reference), LAPP SKINTOP ST-M 12x1.5 53111400 (pod gland), Olimex GX16-4 dimension picture and the Hammond 1554U wall. Taoglas cable assemblies and the KH-GX12-6P drawing are READS-RF / READS-E rows and are only cited. A row records what the source showed; \"stock\": null means not shown, not zero; web:* rows are datasheet/drawing reads, digikey:* rows are distributor pages with the SKU as key. No browser User-Agent was sent (curl default, WebFetch); 403/404/timeouts are recorded as not readable with URL and date, and the not-readable rows carry \"mpn\": null. PDFs and images were read in a scratch directory and are not committed. The geometry used by the enclosure model is in sat-receiver-audit/mechanical/params/parts.json.",
+ "note": "MECH-2 (wave 2) panel-drawing reads of 2026-11-07 (C-20, one reader for the panel drawings): Cinch VFA340, Amphenol RF 242181 (not readable), Amphenol ICC MUSBRM5C130 (not readable), Bulgin PX0845/A, Adam Tech CA-DKCA1-305L5-APAJ, Tensility 10-06000 / 10-05999 (3.5 mm panel jack), icotek KVT 20 (T7 split gland), Fairview SM4955 (pod bulkhead reference), LAPP SKINTOP ST-M 12x1.5 53111400 and the black 53111200 that replaced it (pod gland, review fix), the LAPP SKINDICHT SM-M 12x1.5 locknut 52103000, Olimex GX16-4 dimension picture and the Hammond 1554U wall. Taoglas cable assemblies and the KH-GX12-6P drawing are READS-RF / READS-E rows and are only cited; the CAB.718 panel pages and the KH-GX12-6P rear view were re-rendered for the review fix (rows web:taoglas-cab718-panel-pages and web:kinghelm-kh-gx12-6p-rear-view). A row records what the source showed; \"stock\": null means not shown, not zero; web:* rows are datasheet/drawing reads, digikey:* rows are distributor pages with the SKU as key. No browser User-Agent was sent (curl default, WebFetch); 403/404/timeouts are recorded as not readable with URL and date, and the not-readable rows carry \"mpn\": null. PDFs and images were read in a scratch directory and are not committed. The geometry used by the enclosure model is in sat-receiver-audit/mechanical/params/parts.json.",
  "entries": {
   "web:cinch-vfa340-drawing": {
    "distributor": "manufacturer drawing (datasheet link of DigiKey DE 2111-VFA340-ND)",
@@ -212,7 +212,7 @@
    "title": "Article information SKINTOP ST-M 12X1.5 RAL 7035 LGY, article no. 53111400",
    "stock": null,
    "price": null,
-   "note": "Cable gland M 12 x 1.5 (DIN EN 60423), thread length 0.315 in (8.0 mm), total length 1.181 in (30.0 mm), wrench size 0.591 in (15.0), hexagon corner dimension 0.654 in (16.6), clamping range 0.138-0.276 in (3.5-7.0 mm), clear width 0.276 in, polyamide light grey, chloroprene conduit sealing ring, IP 68 - 5 bar (30 min), IP 69, IP 66; 'Delivery with lock nut: No', 'Including o-ring: No'.",
+   "note": "Cable gland M 12 x 1.5 (DIN EN 60423), thread length 0.315 in (8.0 mm), total length 1.181 in (30.0 mm), wrench size 0.591 in (15.0), hexagon corner dimension 0.654 in (16.6), clamping range 0.138-0.276 in (3.5-7.0 mm), clear width 0.276 in, polyamide light grey, chloroprene conduit sealing ring, IP 68 - 5 bar (30 min), IP 69, IP 66; 'Delivery with lock nut: No', 'Including o-ring: No'; 'UV-resistant: No' (p.4) and 'Black variants are suitable for outdoor use' (p.1), so the outdoor pod takes the black 53111200 (row web:lapp-53111200-article-information).",
    "read": "2026-11-07"
   },
   "digikey:2181-53111400-ND": {
@@ -248,6 +248,65 @@
    "stock": null,
    "price": null,
    "note": "Section B-B side walls 3.00 [.12] both sides, inside width 108.13, 112.13, outside 90.50 high; section A-A inside length 192.13, 75.50, 15.00 lid, 2.00 and 6.00 details; polycarbonate UL94-5VA at 3 mm, UL 508A, type 4, 4X, 6, 6P; cover screw torque 30-40 cN-m; silicone gasket 1554UGASKET; steel panel 1554UPL.",
+   "read": "2026-11-07"
+  },
+  "web:lapp-53111200-article-information": {
+   "distributor": "manufacturer article information",
+   "url": "https://api-shop.lapp.com/occ/v2/us/products/export/specification-sheet-file/53111200?lang=en_US&curr=USD",
+   "method": "curl (default User-Agent), PDF generated 2026-11-07, text read with PyMuPDF",
+   "mpn": "53111200",
+   "manufacturer": "LAPP",
+   "title": "Article information SKINTOP ST-M 12X1.5 RAL 9005 BK, article no. 53111200",
+   "stock": null,
+   "price": null,
+   "note": "Cable gland M 12 x 1.5 (DIN EN 60423), thread length 0.315 in (8.0 mm), total length 1.181 in (30.0 mm), wrench size 0.591 in (15.0), hexagon corner dimension 0.654 in (16.6), clamping range 0.138-0.276 in (3.5-7.0 mm), polyamide black RAL 9005, chloroprene conduit sealing ring, IP 68 - 5 bar (30 min), IP 69, IP 66, -40 to 100 C static, UL 94 V-2; 'UV-resistant: Yes', 'Black variants are suitable for outdoor use'; 'Delivery with lock nut: No', 'Including o-ring: No'; delivery unit 100 (bag).",
+   "read": "2026-11-07"
+  },
+  "digikey:2181-53111200-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/lapp/53111200/18879038",
+   "method": "WebFetch of the DigiKey DE product page (found from https://www.digikey.de/en/products/result?keywords=53111200)",
+   "mpn": "53111200",
+   "manufacturer": "LAPP",
+   "stock": null,
+   "price": "EUR 1.68148 @1400 (only break shown)",
+   "note": "CABLE GLAND 3.5-7MM M12 POLYAMID, black, M12x1.5, thread 8.00 mm, cable 3.50-7.00 mm; 'This product is not kept in stock at DigiKey', manufacturer standard lead time 2 weeks. RS UK 444-3029 (https://uk.rs-online.com/web/p/cable-glands/4443029) and Buerklin 12H6802 (https://buerklin.com/en/p/lapp/cable-glands/53111200/12H6802) answered 403 on 2026-11-07 (not read).",
+   "read": "2026-11-07"
+  },
+  "web:lapp-52103000-article-information": {
+   "distributor": "manufacturer article information",
+   "url": "https://api-shop.lapp.com/occ/v2/us/products/export/specification-sheet-file/52103000?lang=en_US&curr=USD",
+   "method": "curl (default User-Agent), PDF generated 2026-11-07, text read with PyMuPDF",
+   "mpn": "52103000",
+   "manufacturer": "LAPP",
+   "title": "Article information SKINDICHT SM-M 12X1.5 LOCKNUT, article no. 52103000",
+   "stock": null,
+   "price": null,
+   "note": "Lock nut M 12 x 1.5 (DIN EN 60423) for SKINTOP glands 'on the inside of the application', brass nickel-plated, thickness 0.118 in (3.0 mm), wrench width 0.591 in (15.0), hexagon corner dimension 0.65 in (16.5), -60 to 200 C, UV-resistant: Yes; delivery unit 100 (bag); 52103000LF is the lead-free variant with the same properties.",
+   "read": "2026-11-07"
+  },
+  "web:taoglas-cab718-panel-pages": {
+   "distributor": "manufacturer document (DigiKey DE links https://cdn.taoglas.com/datasheets/CAB.718.pdf)",
+   "url": "https://www.taoglas.com/datasheets/CAB.718.pdf",
+   "method": "curl (default User-Agent), image pages 4 and 5 rendered with PyMuPDF (detail A at 8x); re-read of the READS-RF row web:taoglas-cab718-datasheet-spe-12-8-100 for the panel geometry",
+   "mpn": "CAB.718",
+   "manufacturer": "Taoglas",
+   "title": "CAB.718 SPE-12-8-100/B/WY pp.4-5: technical drawing, connectors, recommended mounting hole",
+   "stock": null,
+   "price": null,
+   "note": "p.4: item 5 washer D6.35 +-0.3 (inner), D10.2 REF (outer), thickness not dimensioned; item 6 nut HEX8 x 1.8 +-0.3; washer and nut 'See Connector Spec', brass gold; no O-ring item. p.5 detail A SMA(F)BKST: body 8 HEX 3.4 +-0.2 long, thread 1/4\"-36UNS-2A 11.4 +-0.2 from the hex, one flat 5.8 +0.1/-0.2 across the thread (end view), pin D0.9 +-0.05; 3.3 recommended mounting hole D6.5 with one flat at 6 +0.08/0.",
+   "read": "2026-11-07"
+  },
+  "web:kinghelm-kh-gx12-6p-rear-view": {
+   "distributor": "LCSC-hosted drawing (C18203264)",
+   "url": "https://datasheet.lcsc.com/datasheet/pdf/6dc2aa5305ed2fdcb41440c2a688a6a8.pdf?productCode=C18203264",
+   "method": "curl (default User-Agent), PDF page 2 rendered with PyMuPDF at 3x; re-read of the READS-E row web:kinghelm-kh-gx12-6p-drawing for the nut size",
+   "mpn": "KH-GX12-6P",
+   "manufacturer": "Kinghelm",
+   "title": "GX12 MALE CONNECTOR KH-GX12-6P rev A 2022/06/15, rear view",
+   "stock": null,
+   "price": null,
+   "note": "The rear-view hexagon is drawn pointy-top; the 14.60 extension lines land on its two vertical flats, so 14.60 is the nut size across flats; its vertex-to-vertex height measures about 1.14 x that width (14.6 / cos 30 = 16.86 across corners). The inner 11.00 is a circle of the same view.",
    "read": "2026-11-07"
   }
  }

@@ -555,6 +555,9 @@ class PanelPortsW2Mech2(unittest.TestCase):
     def _rule(self, Q, rid):
         return [x for x in rules.evaluate(Q) if x["id"] == rid][0]
 
+    def _box(self, Q, name):
+        return [b for _, n, b, _ in layout.item_boxes(Q) if n == name][0]
+
     def test_bottom_ports_are_modelled_or_name_a_reason(self):
         for p in P.mech["bottom_face"]["ports"]:
             with self.subTest(port=p["id"]):
@@ -565,29 +568,54 @@ class PanelPortsW2Mech2(unittest.TestCase):
                     self.assertIn(p["part"], P.parts)
                     self.assertTrue(P.parts[p["part"]]["status"].startswith("datasheet"))
 
-    def test_taoglas_ports_pass_the_thread_rule(self):
-        # W2 MECH-3 (reconciled with W2 GR-2): P2, P3, P6, P8 are Taoglas CAB.718, P1 is the Adam Tech assembly; neither
-        # drawing dimensions the washer, so the ports are OPEN with the room left for it (never FAIL)
+    def test_panel_ports_model_the_parts_db_mpns(self):
+        # the port model follows the MPN the parts DB holds for each port ref (W2 GR-2: P1 Adam Tech, P2/P3/P6/P8 CAB.718)
+        db = json.loads((HERE.parent / "design" / "parts" / "parts.json").read_text(encoding="utf-8"))
+        mpn = {r: e.get("mpn") for e in db["parts"] for r in e.get("refs", [])}
+        ports = {p["id"]: p for p in P.mech["top_face"]["ports"]}
+        for pid, ref in (("P1", "J401"), ("P2", "J402"), ("P3", "J403"), ("P6", "J406"), ("P8", "J408"), ("P4", "J404")):
+            with self.subTest(port=pid):
+                self.assertEqual(P.parts[ports[pid]["part"]]["mpn"], mpn[ref])
+
+    def test_sma_ports_without_a_drawn_washer_stay_open(self):
         r = self._rule(P, "R-SMA-THREAD")
         for pid in ("P2", "P3", "P6", "P8"):
-            # 11.4 - 0.2 - 4.5 - (1.8 + 0.3) - 3 x 0.706 = 2.48 mm left for the washer
-            self.assertIn("2.48 mm left", r["value_mm"][pid])
+            # 11.4 - 0.2 - 4.5 - (1.8 + 0.3) - 3 x 0.706 = 2.48 left for the undrawn CAB.718 washer
+            self.assertEqual(r["value_mm"][pid], "OPEN: washer thickness not drawn: 2.48 mm left for it after the nut and 3 threads")
         self.assertIn("2.32 mm left", r["value_mm"]["P1"])
+        self.assertTrue(r["value_mm"]["P4"].startswith("PASS (model)"), r["value_mm"]["P4"])
         self.assertTrue(r["value_mm"]["P5"].startswith("OPEN"))
-        self.assertFalse(r["result"].startswith("FAIL"), r["result"])
+        self.assertTrue(r["result"].startswith("OPEN"), r["result"])
+
+    def test_fallback_family_passes_the_thread_rule(self):
+        import copy
+        Q = copy.deepcopy(P)
+        p2 = [p for p in Q.mech["top_face"]["ports"] if p["id"] == "P2"][0]
+        p2.update({"kind": "sma_pigtail", "part": "taoglas_mhf1_sma_wp"})
+        r = self._rule(Q, "R-SMA-THREAD")
+        # 11.4 - 0.3 - 4.5 - (1.75 + 0.2) - (1.1 + 0.3) = 3.25 >= 3 x 0.706
+        self.assertTrue(r["value_mm"]["P2"].startswith("PASS (model): 3.25 mm left"), r["value_mm"]["P2"])
 
     def test_a_thin_thread_fails_the_thread_rule(self):
         import copy
         Q = copy.deepcopy(P)
-        Q.parts["taoglas_cab718"]["thread_len"] = 8.0
+        Q.parts["taoglas_cab718"]["thread_len"] = 8.0      # nut alone leaves 7.8 - 4.5 - 2.1 = 1.2 < 2.12: FAIL before the washer
         r = self._rule(Q, "R-SMA-THREAD")
         self.assertTrue(r["result"].startswith("FAIL"), r["result"])
+        self.assertIn("P2", r["result"])
+
+    def test_cab718_cut_out_and_body(self):
+        f = [x for x in face_features(P)["top"] if x["id"] == "P2"][0]
+        self.assertEqual((f["shape"], f["d"], f["flat"]), ("dflat", 6.5, 6.0))
+        nut = self._box(P, "nut.P2")
+        self.assertAlmostEqual(nut[3] - nut[0], 8.0 / math.cos(math.radians(30)), places=6)
+        self.assertAlmostEqual(nut[4] - nut[1], 3.4 + 0.2, places=6)
 
     def test_vfa340_nut_and_long_side_inside(self):
         v = P.parts["cinch_vfa340"]
         self.assertEqual((v["hex_af"], v["flange_t"], v["short_side"], v["overall"], v["nut_af"], v["nut_t"]), (11.0, 1.5, 7.6, 20.9, 11.0, 2.4))
         self.assertEqual(v["washer"], [12.0, 9.7, 0.4])
-        nut = [b for _, n, b, _ in layout.item_boxes(P) if n == "nut.P4"][0]
+        nut = self._box(P, "nut.P4")
         self.assertAlmostEqual(nut[3] - nut[0], 11.0 / math.cos(math.radians(30)), places=6)
         self.assertAlmostEqual(nut[4] - nut[1], 20.9 - 7.6 - 1.5 - 4.5, places=6)
         r = self._rule(P, "R-SMA-THREAD")
@@ -609,6 +637,19 @@ class PanelPortsW2Mech2(unittest.TestCase):
         self.assertAlmostEqual(max(v for _, v in pts), f["v"] + 11.2 - 6.0, places=6)
         self.assertAlmostEqual(min(v for _, v in pts), f["v"] - 6.0, places=2)
 
+    def test_lab_bus_nut_takes_the_corners_and_clears_plate_and_seam(self):
+        # the drawing's 14.60 is across flats: the envelope is 14.6 / cos 30 across the corners
+        gx = P.parts["kinghelm_gx12_6p"]
+        nut = self._box(P, "nut.LAB_BUS")
+        self.assertAlmostEqual(nut[3] - nut[0], gx["nut_af"] / math.cos(math.radians(30)), places=6)
+        self.assertLessEqual(nut[5], P.mech["stack_z"]["plate_rear"] - 0.5)
+        lb = [p for p in P.mech["bottom_face"]["ports"] if p["id"] == "LAB_BUS"][0]
+        keep = P.mech["gasket"]["belt_h"] + 0.5                       # R-PANEL-FLAT seam belt margin
+        self.assertGreaterEqual(lb["z"] - gx["flange_d"] / 2, P.mech["split_z"] + keep)
+        self.assertTrue(self._rule(P, "R-PANEL-FLAT")["result"].startswith("PASS"))
+        coll, _ = layout.fit_checks(P)
+        self.assertFalse([c for c in coll if "nut.LAB_BUS" in (c["a"], c["b"])], coll)
+
     def test_bottom_pitch_rule_fails_on_an_overlap(self):
         import copy
         r = self._rule(P, "R-BOTTOM-PITCH")
@@ -626,10 +667,23 @@ class PanelPortsW2Mech2(unittest.TestCase):
             with self.subTest(port=p["id"]):
                 self.assertIn(p["kind"], HOLES)
                 self.assertIn(p["part"], P.parts)
-        sm = P.parts["fairview_sm4955"]
-        self.assertLessEqual(P.parts["hammond_1554u2gy"]["wall"], sm["panel_max"])
-        lo, hi = P.parts["lapp_skintop_st_m12"]["clamp"]
+        # RF_IN/RF_OUT and PWR are in the end walls, which the Hammond drawing does not dimension: worst case by difference
+        hb = P.parts["hammond_1554u2gy"]
+        end, _ = antennas.pod_wall_t(P, "right_end")
+        self.assertAlmostEqual(end, (hb["outside"][0] - hb["inside"][0]) / 2, places=6)
+        self.assertGreater(end, hb["wall"])
+        self.assertLessEqual(end, P.parts["fairview_sm4955"]["panel_max"])
+        gl = P.parts["lapp_skintop_st_m12"]
+        self.assertGreaterEqual(gl["thread_len"] - end - gl["locknut_t"], 0.0)
+        self.assertTrue(gl["uv_resistant"])                 # the pod is outdoors: black, UV-resistant variant
+        lo, hi = gl["clamp"]
         self.assertTrue(lo <= 4.2 <= hi)
+        r = self._rule(P, "R-POD-WALL")
+        self.assertTrue(r["result"].startswith("PASS (model)"), r["result"])
+        import copy
+        Q = copy.deepcopy(P)
+        Q.parts["lapp_skintop_st_m12"]["locknut_t"] = 4.5
+        self.assertTrue(self._rule(Q, "R-POD-WALL")["result"].startswith("FAIL"))
 
 
 @unittest.skipUnless(importlib.util.find_spec("build123d"), "build123d not installed")
@@ -644,6 +698,17 @@ class PanelPortsW2Mech2Cad(unittest.TestCase):
         self.assertAlmostEqual(c.volume, (math.pi * r * r - seg) * L, delta=0.5)
         bb = c.bounding_box()
         self.assertAlmostEqual(bb.max.Z, f["v"] + h, places=3)            # the flat is on the +v (front) side
+
+    def test_top_face_d_cut_flat_faces_the_rear(self):
+        from srrx_mech import cad
+        f = [x for x in face_features(P)["top"] if x["id"] == "P2"][0]
+        c = cad.dflat_cutter(P, "top", f, 20.0)
+        bb = c.bounding_box()
+        zc = P.mech["top_face"]["ports_z"]
+        # top face +v points to -z (towards the rear): the flat is at zc - (flat - r), the arc reaches zc + r
+        self.assertAlmostEqual(bb.min.Z, zc - (f["flat"] - f["d"] / 2), places=3)
+        self.assertAlmostEqual(bb.max.Z, zc + f["d"] / 2, places=3)
+
 
 class EnvelopeW2Mech3(unittest.TestCase):
     """W2 MECH-3 (B-08, A-PCB-02 mech handoff, CC-06, CC-12, J551/W425, fastener stacks)."""

@@ -187,7 +187,7 @@
         "interface_open",
         "interface_resolved"
       ],
-      "projection_sha256": "5ef34b43ba1f3e84c09354e8fac6dc075fb1fd1289fef42f4f5e86753d4047f3"
+      "projection_sha256": "caa325f1d72a6fb531ae284738e235ca75f97b59b5eef78c8ff8fed5ee80b580"
     },
     "partition": {
       "file": "pcb/partition-spec.json",
@@ -14835,7 +14835,7 @@
       "ref": "J408",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-SMA-PANEL-RFBOARD (mount panel, MPN CAB.718) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Пігтейл обрано (Taoglas CAB.718, U.FL → SMA(F) bulkhead 200 мм) до U.FL J423/J424/J425/J427; довжину за трасою моделі перевіряє SRC-2 (200 мм або інша збірка); виріз ⌀6.5 з лискою 6, ущільнення панелі (у CAB.718 кільця немає) і момент гайки — механічний пакет (MECH-07)."
+      "detail": "Parts database entry J-SMA-PANEL-RFBOARD (mount panel, MPN CAB.718) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Панельний кінець Taoglas CAB.718 (P8, верхня грань): виріз ⌀6.5 з лискою 6 +0.08/0 і кріплення змодельовано за кресленням SPE-12-8-100/B/WY (https://www.taoglas.com/datasheets/CAB.718.pdf, прочитано 07.11.2026, с. 4–5; рядок READS-RF web:taoglas-cab718-datasheet-spe-12-8-100; mechanical/params/parts.json taoglas_cab718): різьба 1/4\"-36UNS-2A довжиною 11.4 ±0.2 з однією лискою 5.8 +0.1/−0.2, гайка HEX8 × 1.8 ±0.3 і зубчаста шайба ⌀6.35 ±0.3 / 10.2 REF — з лицьового боку, корпус 8 HEX × 3.4 ±0.2 — на Al-кутнику зсередини (M-02 P8, nut.P8). Відкриті: товщину шайби не розмірено (після стінки 4.5, гайки й 3 витків лишається 2.48 мм — R-SMA-THREAD OPEN для P8), кільця в збірці немає — ущільнення вирізу (T-07), момент гайки — TBD."
     },
     {
       "ref": "J413",
@@ -14943,7 +14943,7 @@
       "ref": "J505",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-GX12-6 (mount panel, MPN KH-GX12-6P) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Готово до interface_resolved (W2 MECH-2). Сполучна частина — гніздова кабельна вилка GX12 того самого комплекту KH-GX12-6P (стор. 1 креслення), дроти build/16 S34 від вилки JST PH J508 на PWR-B (ref графа з W2 GR-3) у чашки під пайку; кріплення — виріз ⌀12.0 з лискою 11.2 у нижній стінці 2.5 мм (M-02 LAB_BUS, x 206 / z 30), фланець ⌀15 × 1.7 зовні, різьба M12×0.75 довжиною 8.8, гайка ⌀14.6 зсередини (конверт nut.LAB_BUS) — за кресленням Kinghelm rev A (рядок READS-E web:kinghelm-kh-gx12-6p-drawing, LCSC C18203264, прочитано 07.11.2026; mechanical/params/parts.json kinghelm_gx12_6p). MODEL FIT ONLY: IP на кресленні не наведено — заглушка (10-bom рядок 90), ущільнення й момент — ворота T-07 (OPEN). Відкрито лише формально: interface_resolved не записано, бо software/tests/test_parts_database.py (test_committed_unresolved_records_keep_the_interface_blockers) вимагає блокуючий запис для кожного інтерфейсного ref — рішення про цей тест за його власником (INT)."
+      "detail": "Parts database entry J-GX12-6 (mount panel, MPN KH-GX12-6P) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Готово до interface_resolved (W2 MECH-2). Сполучна частина — гніздова кабельна вилка GX12 того самого комплекту KH-GX12-6P (стор. 1 креслення), дроти build/16 S34 у чашки під пайку, до вилки JST PH J508 на PWR-B (ref графа з W2 GR-3); кріплення — виріз ⌀12.0 з лискою 11.2 у нижній стінці 2.5 мм (M-02 LAB_BUS, x 206 / z 28.5), фланець ⌀15 × 1.7 зовні, різьба M12×0.75 довжиною 8.8, гайка 14.6 під ключ (⌀16.9 по кутах) зсередини (конверт nut.LAB_BUS) — за кресленням Kinghelm rev A (рядок READS-E web:kinghelm-kh-gx12-6p-drawing, LCSC C18203264, прочитано 07.11.2026; mechanical/params/parts.json kinghelm_gx12_6p). MODEL FIT ONLY: IP на кресленні не наведено — заглушка (10-bom рядок 90), ущільнення й момент — ворота T-07 (OPEN). Відкрито лише формально: interface_resolved не записано, бо software/tests/test_parts_database.py (test_committed_unresolved_records_keep_the_interface_blockers) вимагає блокуючий запис для кожного інтерфейсного ref — рішення про цей тест за його власником (INT)."
     },
     {
       "ref": "J504",

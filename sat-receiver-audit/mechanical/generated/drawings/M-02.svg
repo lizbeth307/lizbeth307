@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297">
 <title>M-02 Корпус: верхня грань і нижня грань</title>
-<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 542df4197d9b</desc>
+<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params d6e167a6d2d9</desc>
 <rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
 <line x1="30" y1="127" x2="260" y2="127" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="260" y1="127" x2="260" y2="56.92" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="260" y1="56.92" x2="30" y2="56.92" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="30" y1="56.92" x2="30" y2="127" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="30" y1="70.92" x2="260" y2="70.92" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="4 2"/>
-<line x1="30" y1="65.92" x2="260" y2="65.92" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="30" y1="75.92" x2="260" y2="75.92" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="260" y1="127" x2="260" y2="61" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="260" y1="61" x2="30" y2="61" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="30" y1="61" x2="30" y2="127" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="30" y1="75" x2="260" y2="75" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="4 2"/>
+<line x1="30" y1="70" x2="260" y2="70" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="30" y1="80" x2="260" y2="80" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
 <line x1="30" y1="127.8" x2="30" y2="140.5" stroke="#000" stroke-width="0.18" fill="none"/>
 <line x1="260" y1="127.8" x2="260" y2="140.5" stroke="#000" stroke-width="0.18" fill="none"/>
 <line x1="30" y1="139" x2="260" y2="139" stroke="#000" stroke-width="0.18" fill="none"/>
@@ -19,158 +19,158 @@
 <line x1="260" y1="139" x2="257.8" y2="139.7" stroke="#000" stroke-width="0.18" fill="none"/>
 <text x="145" y="142.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000">230</text>
 <line x1="29.2" y1="127" x2="16.5" y2="127" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="29.2" y1="56.92" x2="16.5" y2="56.92" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="18" y1="127" x2="18" y2="56.92" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="29.2" y1="61" x2="16.5" y2="61" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="18" y1="127" x2="18" y2="61" stroke="#000" stroke-width="0.18" fill="none"/>
 <line x1="18" y1="127" x2="17.3" y2="124.8" stroke="#000" stroke-width="0.18" fill="none"/>
 <line x1="18" y1="127" x2="18.7" y2="124.8" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="18" y1="56.92" x2="17.3" y2="59.12" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="18" y1="56.92" x2="18.7" y2="59.12" stroke="#000" stroke-width="0.18" fill="none"/>
-<text x="16.8" y="91.96" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000" transform="rotate(-90 16.8 91.96)">70.08</text>
-<circle cx="73.5" cy="86.92" r="3.25" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="68.75" y1="86.92" x2="78.25" y2="86.92" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="73.5" y1="91.67" x2="73.5" y2="82.17" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<text x="70.25" y="93.37" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P1</text>
-<line x1="91.768" y1="84.17" x2="91.221" y2="84.603" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="91.221" y1="84.603" x2="90.779" y2="85.142" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="90.779" y1="85.142" x2="90.463" y2="85.763" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="90.463" y1="85.763" x2="90.286" y2="86.438" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="90.286" y1="86.438" x2="90.257" y2="87.135" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="90.257" y1="87.135" x2="90.378" y2="87.821" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="90.378" y1="87.821" x2="90.642" y2="88.467" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="90.642" y1="88.467" x2="91.037" y2="89.041" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="91.037" y1="89.041" x2="91.546" y2="89.517" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="91.546" y1="89.517" x2="92.145" y2="89.874" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="92.145" y1="89.874" x2="92.807" y2="90.095" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="92.807" y1="90.095" x2="93.5" y2="90.17" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="93.5" y1="90.17" x2="94.193" y2="90.095" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="94.193" y1="90.095" x2="94.855" y2="89.874" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="94.855" y1="89.874" x2="95.454" y2="89.517" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="95.454" y1="89.517" x2="95.963" y2="89.041" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="95.963" y1="89.041" x2="96.358" y2="88.467" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="96.358" y1="88.467" x2="96.622" y2="87.821" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="96.622" y1="87.821" x2="96.743" y2="87.135" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="96.743" y1="87.135" x2="96.714" y2="86.438" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="96.714" y1="86.438" x2="96.537" y2="85.763" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="96.537" y1="85.763" x2="96.221" y2="85.142" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="96.221" y1="85.142" x2="95.779" y2="84.603" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="95.779" y1="84.603" x2="95.232" y2="84.17" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="95.232" y1="84.17" x2="91.768" y2="84.17" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="88.25" y1="86.92" x2="98.75" y2="86.92" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="93.5" y1="92.17" x2="93.5" y2="81.67" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<text x="97.75" y="89.92" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P2 ⌀6.5 / 6</text>
-<line x1="111.768" y1="84.17" x2="111.221" y2="84.603" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="111.221" y1="84.603" x2="110.779" y2="85.142" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="110.779" y1="85.142" x2="110.463" y2="85.763" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="110.463" y1="85.763" x2="110.286" y2="86.438" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="110.286" y1="86.438" x2="110.257" y2="87.135" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="110.257" y1="87.135" x2="110.378" y2="87.821" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="110.378" y1="87.821" x2="110.642" y2="88.467" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="110.642" y1="88.467" x2="111.037" y2="89.041" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="111.037" y1="89.041" x2="111.546" y2="89.517" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="111.546" y1="89.517" x2="112.145" y2="89.874" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="112.145" y1="89.874" x2="112.807" y2="90.095" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="112.807" y1="90.095" x2="113.5" y2="90.17" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="113.5" y1="90.17" x2="114.193" y2="90.095" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="114.193" y1="90.095" x2="114.855" y2="89.874" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="114.855" y1="89.874" x2="115.454" y2="89.517" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="115.454" y1="89.517" x2="115.963" y2="89.041" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="115.963" y1="89.041" x2="116.358" y2="88.467" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="116.358" y1="88.467" x2="116.622" y2="87.821" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="116.622" y1="87.821" x2="116.743" y2="87.135" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="116.743" y1="87.135" x2="116.714" y2="86.438" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="116.714" y1="86.438" x2="116.537" y2="85.763" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="116.537" y1="85.763" x2="116.221" y2="85.142" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="116.221" y1="85.142" x2="115.779" y2="84.603" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="115.779" y1="84.603" x2="115.232" y2="84.17" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="115.232" y1="84.17" x2="111.768" y2="84.17" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="108.25" y1="86.92" x2="118.75" y2="86.92" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="113.5" y1="92.17" x2="113.5" y2="81.67" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<text x="117.75" y="89.92" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P3 ⌀6.5 / 6</text>
-<circle cx="133.5" cy="86.92" r="4.85" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="127.15" y1="86.92" x2="139.85" y2="86.92" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="133.5" y1="93.27" x2="133.5" y2="80.57" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<text x="128.65" y="94.97" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P4</text>
-<circle cx="153.5" cy="86.92" r="4.85" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="147.15" y1="86.92" x2="159.85" y2="86.92" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="153.5" y1="93.27" x2="153.5" y2="80.57" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<text x="148.65" y="94.97" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P5</text>
-<line x1="171.768" y1="84.17" x2="171.221" y2="84.603" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="171.221" y1="84.603" x2="170.779" y2="85.142" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="170.779" y1="85.142" x2="170.463" y2="85.763" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="170.463" y1="85.763" x2="170.286" y2="86.438" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="170.286" y1="86.438" x2="170.257" y2="87.135" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="170.257" y1="87.135" x2="170.378" y2="87.821" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="170.378" y1="87.821" x2="170.642" y2="88.467" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="170.642" y1="88.467" x2="171.037" y2="89.041" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="171.037" y1="89.041" x2="171.546" y2="89.517" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="171.546" y1="89.517" x2="172.145" y2="89.874" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="172.145" y1="89.874" x2="172.807" y2="90.095" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="172.807" y1="90.095" x2="173.5" y2="90.17" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="173.5" y1="90.17" x2="174.193" y2="90.095" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="174.193" y1="90.095" x2="174.855" y2="89.874" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="174.855" y1="89.874" x2="175.454" y2="89.517" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="175.454" y1="89.517" x2="175.963" y2="89.041" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="175.963" y1="89.041" x2="176.358" y2="88.467" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="176.358" y1="88.467" x2="176.622" y2="87.821" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="176.622" y1="87.821" x2="176.743" y2="87.135" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="176.743" y1="87.135" x2="176.714" y2="86.438" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="176.714" y1="86.438" x2="176.537" y2="85.763" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="176.537" y1="85.763" x2="176.221" y2="85.142" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="176.221" y1="85.142" x2="175.779" y2="84.603" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="175.779" y1="84.603" x2="175.232" y2="84.17" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="175.232" y1="84.17" x2="171.768" y2="84.17" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="168.25" y1="86.92" x2="178.75" y2="86.92" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="173.5" y1="92.17" x2="173.5" y2="81.67" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<text x="177.75" y="89.92" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P6 ⌀6.5 / 6</text>
-<circle cx="193.5" cy="86.92" r="3.2" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="188.8" y1="86.92" x2="198.2" y2="86.92" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="193.5" y1="91.62" x2="193.5" y2="82.22" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<text x="190.3" y="93.32" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P7</text>
-<line x1="211.768" y1="84.17" x2="211.221" y2="84.603" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="211.221" y1="84.603" x2="210.779" y2="85.142" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="210.779" y1="85.142" x2="210.463" y2="85.763" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="210.463" y1="85.763" x2="210.286" y2="86.438" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="210.286" y1="86.438" x2="210.257" y2="87.135" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="210.257" y1="87.135" x2="210.378" y2="87.821" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="210.378" y1="87.821" x2="210.642" y2="88.467" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="210.642" y1="88.467" x2="211.037" y2="89.041" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="211.037" y1="89.041" x2="211.546" y2="89.517" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="211.546" y1="89.517" x2="212.145" y2="89.874" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="212.145" y1="89.874" x2="212.807" y2="90.095" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="212.807" y1="90.095" x2="213.5" y2="90.17" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="213.5" y1="90.17" x2="214.193" y2="90.095" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="214.193" y1="90.095" x2="214.855" y2="89.874" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="214.855" y1="89.874" x2="215.454" y2="89.517" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="215.454" y1="89.517" x2="215.963" y2="89.041" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="215.963" y1="89.041" x2="216.358" y2="88.467" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="216.358" y1="88.467" x2="216.622" y2="87.821" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="216.622" y1="87.821" x2="216.743" y2="87.135" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="216.743" y1="87.135" x2="216.714" y2="86.438" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="216.714" y1="86.438" x2="216.537" y2="85.763" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="216.537" y1="85.763" x2="216.221" y2="85.142" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="216.221" y1="85.142" x2="215.779" y2="84.603" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="215.779" y1="84.603" x2="215.232" y2="84.17" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="215.232" y1="84.17" x2="211.768" y2="84.17" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="208.25" y1="86.92" x2="218.75" y2="86.92" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="213.5" y1="92.17" x2="213.5" y2="81.67" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<text x="217.75" y="89.92" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P8 ⌀6.5 / 6</text>
-<circle cx="233.5" cy="86.92" r="3.25" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="228.75" y1="86.92" x2="238.25" y2="86.92" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="233.5" y1="91.67" x2="233.5" y2="82.17" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<text x="230.25" y="93.37" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">RX1</text>
-<circle cx="185.5" cy="105.42" r="8.05" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="175.95" y1="105.42" x2="195.05" y2="105.42" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="185.5" y1="114.97" x2="185.5" y2="95.87" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<text x="177.45" y="116.67" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">PWR_KEY</text>
+<line x1="18" y1="61" x2="17.3" y2="63.2" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="18" y1="61" x2="18.7" y2="63.2" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="16.8" y="94" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000" transform="rotate(-90 16.8 94)">66</text>
+<circle cx="73.5" cy="91" r="3.25" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="68.75" y1="91" x2="78.25" y2="91" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="73.5" y1="95.75" x2="73.5" y2="86.25" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="70.25" y="97.45" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P1</text>
+<line x1="91.768" y1="88.25" x2="91.221" y2="88.683" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="91.221" y1="88.683" x2="90.779" y2="89.222" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="90.779" y1="89.222" x2="90.463" y2="89.843" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="90.463" y1="89.843" x2="90.286" y2="90.518" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="90.286" y1="90.518" x2="90.257" y2="91.215" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="90.257" y1="91.215" x2="90.378" y2="91.901" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="90.378" y1="91.901" x2="90.642" y2="92.547" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="90.642" y1="92.547" x2="91.037" y2="93.121" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="91.037" y1="93.121" x2="91.546" y2="93.597" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="91.546" y1="93.597" x2="92.145" y2="93.954" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="92.145" y1="93.954" x2="92.807" y2="94.175" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="92.807" y1="94.175" x2="93.5" y2="94.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="93.5" y1="94.25" x2="94.193" y2="94.175" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="94.193" y1="94.175" x2="94.855" y2="93.954" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="94.855" y1="93.954" x2="95.454" y2="93.597" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="95.454" y1="93.597" x2="95.963" y2="93.121" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="95.963" y1="93.121" x2="96.358" y2="92.547" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="96.358" y1="92.547" x2="96.622" y2="91.901" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="96.622" y1="91.901" x2="96.743" y2="91.215" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="96.743" y1="91.215" x2="96.714" y2="90.518" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="96.714" y1="90.518" x2="96.537" y2="89.843" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="96.537" y1="89.843" x2="96.221" y2="89.222" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="96.221" y1="89.222" x2="95.779" y2="88.683" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="95.779" y1="88.683" x2="95.232" y2="88.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="95.232" y1="88.25" x2="91.768" y2="88.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="88.25" y1="91" x2="98.75" y2="91" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="93.5" y1="96.25" x2="93.5" y2="85.75" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="90.25" y="97.45" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P2</text>
+<line x1="111.768" y1="88.25" x2="111.221" y2="88.683" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="111.221" y1="88.683" x2="110.779" y2="89.222" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="110.779" y1="89.222" x2="110.463" y2="89.843" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="110.463" y1="89.843" x2="110.286" y2="90.518" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="110.286" y1="90.518" x2="110.257" y2="91.215" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="110.257" y1="91.215" x2="110.378" y2="91.901" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="110.378" y1="91.901" x2="110.642" y2="92.547" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="110.642" y1="92.547" x2="111.037" y2="93.121" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="111.037" y1="93.121" x2="111.546" y2="93.597" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="111.546" y1="93.597" x2="112.145" y2="93.954" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="112.145" y1="93.954" x2="112.807" y2="94.175" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="112.807" y1="94.175" x2="113.5" y2="94.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="113.5" y1="94.25" x2="114.193" y2="94.175" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="114.193" y1="94.175" x2="114.855" y2="93.954" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="114.855" y1="93.954" x2="115.454" y2="93.597" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="115.454" y1="93.597" x2="115.963" y2="93.121" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="115.963" y1="93.121" x2="116.358" y2="92.547" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="116.358" y1="92.547" x2="116.622" y2="91.901" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="116.622" y1="91.901" x2="116.743" y2="91.215" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="116.743" y1="91.215" x2="116.714" y2="90.518" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="116.714" y1="90.518" x2="116.537" y2="89.843" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="116.537" y1="89.843" x2="116.221" y2="89.222" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="116.221" y1="89.222" x2="115.779" y2="88.683" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="115.779" y1="88.683" x2="115.232" y2="88.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="115.232" y1="88.25" x2="111.768" y2="88.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="108.25" y1="91" x2="118.75" y2="91" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="113.5" y1="96.25" x2="113.5" y2="85.75" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="110.25" y="97.45" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P3</text>
+<circle cx="133.5" cy="91" r="4.85" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="127.15" y1="91" x2="139.85" y2="91" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="133.5" y1="97.35" x2="133.5" y2="84.65" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="128.65" y="99.05" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P4</text>
+<circle cx="153.5" cy="91" r="4.85" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="147.15" y1="91" x2="159.85" y2="91" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="153.5" y1="97.35" x2="153.5" y2="84.65" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="148.65" y="99.05" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P5</text>
+<line x1="171.768" y1="88.25" x2="171.221" y2="88.683" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="171.221" y1="88.683" x2="170.779" y2="89.222" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="170.779" y1="89.222" x2="170.463" y2="89.843" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="170.463" y1="89.843" x2="170.286" y2="90.518" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="170.286" y1="90.518" x2="170.257" y2="91.215" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="170.257" y1="91.215" x2="170.378" y2="91.901" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="170.378" y1="91.901" x2="170.642" y2="92.547" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="170.642" y1="92.547" x2="171.037" y2="93.121" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="171.037" y1="93.121" x2="171.546" y2="93.597" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="171.546" y1="93.597" x2="172.145" y2="93.954" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="172.145" y1="93.954" x2="172.807" y2="94.175" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="172.807" y1="94.175" x2="173.5" y2="94.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="173.5" y1="94.25" x2="174.193" y2="94.175" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="174.193" y1="94.175" x2="174.855" y2="93.954" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="174.855" y1="93.954" x2="175.454" y2="93.597" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="175.454" y1="93.597" x2="175.963" y2="93.121" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="175.963" y1="93.121" x2="176.358" y2="92.547" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="176.358" y1="92.547" x2="176.622" y2="91.901" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="176.622" y1="91.901" x2="176.743" y2="91.215" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="176.743" y1="91.215" x2="176.714" y2="90.518" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="176.714" y1="90.518" x2="176.537" y2="89.843" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="176.537" y1="89.843" x2="176.221" y2="89.222" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="176.221" y1="89.222" x2="175.779" y2="88.683" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="175.779" y1="88.683" x2="175.232" y2="88.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="175.232" y1="88.25" x2="171.768" y2="88.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="168.25" y1="91" x2="178.75" y2="91" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="173.5" y1="96.25" x2="173.5" y2="85.75" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="170.25" y="97.45" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P6</text>
+<circle cx="193.5" cy="91" r="3.2" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="188.8" y1="91" x2="198.2" y2="91" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="193.5" y1="95.7" x2="193.5" y2="86.3" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="190.3" y="97.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P7</text>
+<line x1="211.768" y1="88.25" x2="211.221" y2="88.683" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="211.221" y1="88.683" x2="210.779" y2="89.222" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="210.779" y1="89.222" x2="210.463" y2="89.843" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="210.463" y1="89.843" x2="210.286" y2="90.518" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="210.286" y1="90.518" x2="210.257" y2="91.215" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="210.257" y1="91.215" x2="210.378" y2="91.901" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="210.378" y1="91.901" x2="210.642" y2="92.547" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="210.642" y1="92.547" x2="211.037" y2="93.121" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="211.037" y1="93.121" x2="211.546" y2="93.597" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="211.546" y1="93.597" x2="212.145" y2="93.954" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="212.145" y1="93.954" x2="212.807" y2="94.175" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="212.807" y1="94.175" x2="213.5" y2="94.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="213.5" y1="94.25" x2="214.193" y2="94.175" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="214.193" y1="94.175" x2="214.855" y2="93.954" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="214.855" y1="93.954" x2="215.454" y2="93.597" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="215.454" y1="93.597" x2="215.963" y2="93.121" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="215.963" y1="93.121" x2="216.358" y2="92.547" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="216.358" y1="92.547" x2="216.622" y2="91.901" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="216.622" y1="91.901" x2="216.743" y2="91.215" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="216.743" y1="91.215" x2="216.714" y2="90.518" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="216.714" y1="90.518" x2="216.537" y2="89.843" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="216.537" y1="89.843" x2="216.221" y2="89.222" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="216.221" y1="89.222" x2="215.779" y2="88.683" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="215.779" y1="88.683" x2="215.232" y2="88.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="215.232" y1="88.25" x2="211.768" y2="88.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="208.25" y1="91" x2="218.75" y2="91" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="213.5" y1="96.25" x2="213.5" y2="85.75" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="210.25" y="97.45" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">P8</text>
+<circle cx="233.5" cy="91" r="3.25" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="228.75" y1="91" x2="238.25" y2="91" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="233.5" y1="95.75" x2="233.5" y2="86.25" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="230.25" y="97.45" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">RX1</text>
+<circle cx="185.5" cy="109.5" r="8.05" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="175.95" y1="109.5" x2="195.05" y2="109.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="185.5" y1="119.05" x2="185.5" y2="99.95" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="177.45" y="120.75" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">PWR_KEY</text>
 <circle cx="150" cy="121" r="2" stroke="#000" stroke-width="0.35" fill="none"/>
 <line x1="146.5" y1="121" x2="153.5" y2="121" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
 <line x1="150" y1="124.5" x2="150" y2="117.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
 <text x="148" y="126.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">VEML7700</text>
-<text x="30" y="53.92" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">верхня грань, вид згори (лице внизу)</text>
+<text x="30" y="58" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">верхня грань, вид згори (лице внизу)</text>
 <line x1="30" y1="227" x2="260" y2="227" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="260" y1="227" x2="260" y2="156.92" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="260" y1="156.92" x2="30" y2="156.92" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="30" y1="156.92" x2="30" y2="227" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="260" y1="227" x2="260" y2="161" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="260" y1="161" x2="30" y2="161" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="30" y1="161" x2="30" y2="227" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="30" y1="213" x2="260" y2="213" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="4 2"/>
 <line x1="30" y1="218" x2="260" y2="218" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
 <line x1="30" y1="208" x2="260" y2="208" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
@@ -183,13 +183,13 @@
 <line x1="260" y1="239" x2="257.8" y2="239.7" stroke="#000" stroke-width="0.18" fill="none"/>
 <text x="145" y="242.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000">230</text>
 <line x1="29.2" y1="227" x2="16.5" y2="227" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="29.2" y1="156.92" x2="16.5" y2="156.92" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="18" y1="227" x2="18" y2="156.92" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="29.2" y1="161" x2="16.5" y2="161" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="18" y1="227" x2="18" y2="161" stroke="#000" stroke-width="0.18" fill="none"/>
 <line x1="18" y1="227" x2="17.3" y2="224.8" stroke="#000" stroke-width="0.18" fill="none"/>
 <line x1="18" y1="227" x2="18.7" y2="224.8" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="18" y1="156.92" x2="17.3" y2="159.12" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="18" y1="156.92" x2="18.7" y2="159.12" stroke="#000" stroke-width="0.18" fill="none"/>
-<text x="16.8" y="191.96" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000" transform="rotate(-90 16.8 191.96)">70.08</text>
+<line x1="18" y1="161" x2="17.3" y2="163.2" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="18" y1="161" x2="18.7" y2="163.2" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="16.8" y="194" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000" transform="rotate(-90 16.8 194)">66</text>
 <line x1="213" y1="206" x2="225" y2="206" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
 <line x1="225" y1="206" x2="225" y2="200" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
 <line x1="225" y1="200" x2="213" y2="200" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
@@ -206,35 +206,35 @@
 <line x1="199" y1="203" x2="205" y2="203" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
 <line x1="202" y1="206" x2="202" y2="200" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
 <text x="205" y="209.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">LAB_USB_A TBD</text>
-<line x1="233.007" y1="191.8" x2="231.952" y2="192.572" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="231.952" y1="192.572" x2="231.089" y2="193.553" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="231.089" y1="193.553" x2="230.459" y2="194.699" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="230.459" y1="194.699" x2="230.092" y2="195.953" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="230.092" y1="195.953" x2="230.006" y2="197.257" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="230.006" y1="197.257" x2="230.203" y2="198.549" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="230.203" y1="198.549" x2="230.676" y2="199.768" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="230.676" y1="199.768" x2="231.402" y2="200.855" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="231.402" y1="200.855" x2="232.346" y2="201.759" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="232.346" y1="201.759" x2="233.463" y2="202.437" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="233.463" y1="202.437" x2="234.701" y2="202.858" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="234.701" y1="202.858" x2="236" y2="203" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="236" y1="203" x2="237.299" y2="202.858" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="237.299" y1="202.858" x2="238.537" y2="202.437" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="238.537" y1="202.437" x2="239.654" y2="201.759" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="239.654" y1="201.759" x2="240.598" y2="200.855" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="240.598" y1="200.855" x2="241.324" y2="199.768" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="241.324" y1="199.768" x2="241.797" y2="198.549" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="241.797" y1="198.549" x2="241.994" y2="197.257" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="241.994" y1="197.257" x2="241.908" y2="195.953" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="241.908" y1="195.953" x2="241.541" y2="194.699" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="241.541" y1="194.699" x2="240.911" y2="193.553" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="240.911" y1="193.553" x2="240.048" y2="192.572" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="240.048" y1="192.572" x2="238.993" y2="191.8" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="238.993" y1="191.8" x2="233.007" y2="191.8" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="228" y1="197" x2="244" y2="197" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="236" y1="205" x2="236" y2="189" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<circle cx="236" cy="197" r="7.5" stroke="#000" stroke-width="0.18" fill="none"/>
-<text x="244.5" y="200" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">LAB_BUS ⌀12 / 11.2</text>
+<line x1="233.007" y1="193.3" x2="231.952" y2="194.072" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="231.952" y1="194.072" x2="231.089" y2="195.053" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="231.089" y1="195.053" x2="230.459" y2="196.199" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="230.459" y1="196.199" x2="230.092" y2="197.453" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="230.092" y1="197.453" x2="230.006" y2="198.757" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="230.006" y1="198.757" x2="230.203" y2="200.049" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="230.203" y1="200.049" x2="230.676" y2="201.268" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="230.676" y1="201.268" x2="231.402" y2="202.355" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="231.402" y1="202.355" x2="232.346" y2="203.259" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="232.346" y1="203.259" x2="233.463" y2="203.937" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="233.463" y1="203.937" x2="234.701" y2="204.358" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="234.701" y1="204.358" x2="236" y2="204.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="236" y1="204.5" x2="237.299" y2="204.358" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="237.299" y1="204.358" x2="238.537" y2="203.937" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="238.537" y1="203.937" x2="239.654" y2="203.259" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="239.654" y1="203.259" x2="240.598" y2="202.355" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="240.598" y1="202.355" x2="241.324" y2="201.268" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="241.324" y1="201.268" x2="241.797" y2="200.049" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="241.797" y1="200.049" x2="241.994" y2="198.757" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="241.994" y1="198.757" x2="241.908" y2="197.453" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="241.908" y1="197.453" x2="241.541" y2="196.199" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="241.541" y1="196.199" x2="240.911" y2="195.053" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="240.911" y1="195.053" x2="240.048" y2="194.072" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="240.048" y1="194.072" x2="238.993" y2="193.3" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="238.993" y1="193.3" x2="233.007" y2="193.3" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="228" y1="198.5" x2="244" y2="198.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="236" y1="206.5" x2="236" y2="190.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<circle cx="236" cy="198.5" r="7.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="244.5" y="201.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">LAB_BUS ⌀12 / 11.2</text>
 <line x1="196" y1="180" x2="206" y2="180" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
 <line x1="206" y1="180" x2="206" y2="170" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
 <line x1="206" y1="170" x2="196" y2="170" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
@@ -280,28 +280,28 @@
 <path d="M 212.35 165.75 A 1.25 1.25 0 0 1 211.1 167" stroke="#000" stroke-width="0.5" fill="none"/>
 <path d="M 211.1 167 A 1.25 1.25 0 0 1 212.35 168.25" stroke="#000" stroke-width="0.5" fill="none"/>
 <text x="209.6" y="163" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.08" text-anchor="start" fill="#000">INTAKE_P2 36.4 x 20</text>
-<text x="30" y="153.92" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">нижня грань, вид знизу (лице вгорі)</text>
+<text x="30" y="158" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">нижня грань, вид знизу (лице вгорі)</text>
 <text x="268" y="75" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.92" text-anchor="start" fill="#000">Таблиця: top</text>
 <text x="268" y="79.5" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">ID                 u       v  розмір</text>
-<text x="268" y="82.9" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P1                43.5    40.1  ⌀6.5</text>
-<text x="272" y="85.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">Adam Tech CA-DKCA1-305L5-APAJ drawing 11/16/18: 1/4-36UNS jack, washer ID 6.5, no D-cut draw</text>
-<text x="268" y="88.5" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P2                63.5    40.1  ⌀6.5 / 6</text>
-<text x="272" y="91.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">Taoglas CAB.718 SPE-12-8-100 (READS-RF row): recommended mounting hole D6.5 with one flat at</text>
-<text x="268" y="94.1" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P3                83.5    40.1  ⌀6.5 / 6</text>
-<text x="272" y="97.1" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">Taoglas CAB.718 SPE-12-8-100 (READS-RF row): recommended mounting hole D6.5 with one flat at</text>
-<text x="268" y="99.7" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P4               103.5    40.1  ⌀9.7</text>
+<text x="268" y="82.9" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P1                43.5      36  ⌀6.5</text>
+<text x="272" y="85.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">Adam Tech CA-DKCA1-305L5-APAJ drawing 11/16/18 (P1): 1/4-36UNS jack, no D-cut and no panel h</text>
+<text x="268" y="88.5" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P2                63.5      36  ⌀6.5 / 6</text>
+<text x="272" y="91.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">Taoglas CAB.718 SPE-12-8-100/B/WY p.5 (read 2026-11-07): recommended mounting hole D6.5 with</text>
+<text x="268" y="94.1" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P3                83.5      36  ⌀6.5 / 6</text>
+<text x="272" y="97.1" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">Taoglas CAB.718 SPE-12-8-100/B/WY p.5 (read 2026-11-07): recommended mounting hole D6.5 with</text>
+<text x="268" y="99.7" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P4               103.5      36  ⌀9.7</text>
 <text x="272" y="102.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">Cinch VFA340 ISS 3: 3/8-32 UNEF, washer ID 9.7, no D-flat drawn; flange outside, nut inside</text>
-<text x="268" y="105.3" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P5               123.5    40.1  ⌀9.7</text>
+<text x="268" y="105.3" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P5               123.5      36  ⌀9.7</text>
 <text x="272" y="108.3" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">Amphenol RF 242181: drawing not readable (403, 2026-11-07); 3/8-32 typical, TBD (MECH-07)</text>
-<text x="268" y="110.9" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P6               143.5    40.1  ⌀6.5 / 6</text>
-<text x="272" y="113.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">Taoglas CAB.718 SPE-12-8-100 (READS-RF row): recommended mounting hole D6.5 with one flat at</text>
-<text x="268" y="116.5" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P7               163.5    40.1  ⌀6.4</text>
+<text x="268" y="110.9" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P6               143.5      36  ⌀6.5 / 6</text>
+<text x="272" y="113.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">Taoglas CAB.718 SPE-12-8-100/B/WY p.5 (read 2026-11-07): recommended mounting hole D6.5 with</text>
+<text x="268" y="116.5" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P7               163.5      36  ⌀6.4</text>
 <text x="272" y="119.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">Taoglas CAB.011 (P7, W407): D-cut thread, hole and thread length not read (MECH-6, B-06); 1/</text>
-<text x="268" y="122.1" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P8               183.5    40.1  ⌀6.5 / 6</text>
-<text x="272" y="125.1" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">Taoglas CAB.718 SPE-12-8-100 (READS-RF row): recommended mounting hole D6.5 with one flat at</text>
-<text x="268" y="127.7" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">RX1              203.5    40.1  ⌀6.5</text>
+<text x="268" y="122.1" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">P8               183.5      36  ⌀6.5 / 6</text>
+<text x="272" y="125.1" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">Taoglas CAB.718 SPE-12-8-100/B/WY p.5 (read 2026-11-07): recommended mounting hole D6.5 with</text>
+<text x="268" y="127.7" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">RX1              203.5      36  ⌀6.5</text>
 <text x="272" y="130.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">Taoglas CAB.01075 SMA(F) BK (catalogue p.14, READS-RF row): 1/4-36UNS-2A, threaded 11.4, no </text>
-<text x="268" y="133.3" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">PWR_KEY          155.5    21.6  ⌀16.1</text>
+<text x="268" y="133.3" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">PWR_KEY          155.5    17.5  ⌀16.1</text>
 <text x="272" y="136.3" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">E-Switch PV6 datasheet 8.28.2025: panel cut-out 16.00 +0.20/-0.00 (drill 16.0, ream to 16.1)</text>
 <text x="268" y="138.9" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">VEML7700           120       6  ⌀4</text>
 <text x="268" y="145.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.92" text-anchor="start" fill="#000">Таблиця: bottom</text>
@@ -310,7 +310,7 @@
 <text x="272" y="156.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">pilot only: part unread or not placed ('_tbd_reason' in mechanical.json); final cut-out from</text>
 <text x="268" y="159.4" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">LAB_USB_A          172      24  16 x 8</text>
 <text x="272" y="162.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">pilot only: part unread or not placed ('_tbd_reason' in mechanical.json); final cut-out from</text>
-<text x="268" y="165" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">LAB_BUS            206      30  ⌀12 / 11.2</text>
+<text x="268" y="165" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">LAB_BUS            206    28.5  ⌀12 / 11.2</text>
 <text x="272" y="168" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">Kinghelm KH-GX12-6P drawing rev A (READS-E row): hole D12.00 with one flat at 11.20, flange </text>
 <text x="268" y="170.6" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">AUDIO_3V5          171      52  10 x 10</text>
 <text x="272" y="173.6" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">pilot only: part unread or not placed ('_tbd_reason' in mechanical.json); final cut-out from</text>
@@ -343,7 +343,7 @@
 <text x="264" y="266" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення M-02 · масштаб 1:1 · мм · допуск ±0.2, якщо не вказано</text>
 <text x="264" y="273" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: ASA (Polymaker PF01002), друк</text>
 <text x="264" y="280" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
-<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 542df4197d9b · v1.0.0</text>
+<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params d6e167a6d2d9 · v1.0.0</text>
 <text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">Корпус: верхня грань і нижня грань</text>
 <text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">свердління/вирізи, 1:1</text>
 <text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Координати u/v — від лівої (A) і нижньої (B) кромок грані, як видно ззовні. Одиниці мм, допуск ±0.2.</text>

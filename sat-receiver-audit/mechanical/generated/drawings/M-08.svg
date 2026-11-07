@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297">
 <title>M-08 Алюмінієві кутники роз'ємів (стінка 4-5 мм = ASA + 2 мм Al)</title>
-<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 542df4197d9b</desc>
+<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params d6e167a6d2d9</desc>
 <rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
 <line x1="25" y1="107" x2="203" y2="107" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="203" y1="107" x2="203" y2="92" stroke="#000" stroke-width="0.5" fill="none"/>
@@ -135,13 +135,13 @@
 <text x="264" y="266" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення M-08 · масштаб 1:1 · мм · допуск ±0.2, якщо не вказано</text>
 <text x="264" y="273" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: EN AW-6060 L angle 15 x 12 x 2 (cut from 20 x 20…</text>
 <text x="264" y="280" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
-<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 542df4197d9b · v1.0.0</text>
+<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params d6e167a6d2d9 · v1.0.0</text>
 <text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">Алюмінієві кутники роз'ємів (стінка 4-5 мм = ASA + 2 мм Al)</text>
 <text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">кутник 20 x 20 x 2, розгортки полиць 1:1</text>
 <text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Полиця 'стінка' прилягає до стінки корпусу зсередини; отвори збігаються з отворами корпусу (M-02, M-03).</text>
 <text x="12" y="28.6" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Полиця 'пластина' кріпиться до тильного боку пластини (M-07): гвинти M3 з тильного боку у врівень-гайки PEM F-M3-1 пластини; з'єднання — голий метал.</text>
 <text x="12" y="32.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Гвинти верхнього кутника — посередині між портами, щоб їхні голівки минали корпуси прохідників SMA і гайку F (fit-report nut.*).</text>
-<text x="12" y="35.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SMA-пігтейли й CAB.01075 — гайка з лицьового боку (зовні), корпус із кільцем — на кутнику зсередини; F VFA340 — фланець зовні, шайба й гайка на кутнику.</text>
+<text x="12" y="35.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SMA CAB.718, Adam Tech, CAB.01075 і CAB.011 — гайка й шайба з лицьового боку (зовні), корпус 8 HEX — на кутнику зсередини; кілець у їхніх кресленнях немає — ущільнення вирізу T-07. Лиска CAB.718 (⌀6.5 / 6) — у вирізі стінки ASA (M-02), отвір кутника — круглий ⌀6.5. F VFA340 — фланець зовні, шайба й гайка на кутнику.</text>
 <text x="12" y="39.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Прохідники: ≥3 повні витки різьби для стикування після стінки, шайби й гайки (R-SMA-THREAD, STACK 5.8).</text>
 <text x="12" y="43" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: EN AW-6060 L angle 15 x 12 x 2 (cut from 20 x 20 x 2 or 2.0 mm 5754 bent), screwed to the plate (STACK 5.8 'стінка 4-5: ASA + 2 мм Al')</text>
 </svg>

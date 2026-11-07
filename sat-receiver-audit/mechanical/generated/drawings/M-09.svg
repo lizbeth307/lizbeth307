@@ -1,133 +1,111 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297">
 <title>M-09 РЧ-відсік: розкрій фольгованого FR4</title>
-<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 542df4197d9b</desc>
+<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params d6e167a6d2d9</desc>
 <rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
 <line x1="25" y1="262" x2="220.7" y2="262" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="220.7" y1="262" x2="220.7" y2="197.7" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="220.7" y1="197.7" x2="25" y2="197.7" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="25" y1="197.7" x2="25" y2="262" stroke="#000" stroke-width="0.5" fill="none"/>
-<text x="25" y="194.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">Кришка 195.7 x 64.3 (несе модулі), 1 шт.</text>
-<line x1="108.7" y1="259.9" x2="203.7" y2="259.9" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="203.7" y1="259.9" x2="203.7" y2="232.9" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="203.7" y1="232.9" x2="108.7" y2="232.9" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="108.7" y1="232.9" x2="108.7" y2="259.9" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<text x="110.7" y="257.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">v4l_a</text>
-<line x1="131.2" y1="263.15" x2="133.7" y2="263.15" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="134.45" y1="262.4" x2="134.45" y2="262.4" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="133.7" y1="261.65" x2="131.2" y2="261.65" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="130.45" y1="262.4" x2="130.45" y2="262.4" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 133.7 263.15 A 0.75 0.75 0 0 1 134.45 262.4" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 134.45 262.4 A 0.75 0.75 0 0 1 133.7 261.65" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 131.2 261.65 A 0.75 0.75 0 0 1 130.45 262.4" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 130.45 262.4 A 0.75 0.75 0 0 1 131.2 263.15" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="131.2" y1="231.15" x2="133.7" y2="231.15" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="134.45" y1="230.4" x2="134.45" y2="230.4" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="133.7" y1="229.65" x2="131.2" y2="229.65" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="130.45" y1="230.4" x2="130.45" y2="230.4" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 133.7 231.15 A 0.75 0.75 0 0 1 134.45 230.4" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 134.45 230.4 A 0.75 0.75 0 0 1 133.7 229.65" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 131.2 229.65 A 0.75 0.75 0 0 1 130.45 230.4" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 130.45 230.4 A 0.75 0.75 0 0 1 131.2 231.15" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="178.7" y1="263.15" x2="181.2" y2="263.15" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="181.95" y1="262.4" x2="181.95" y2="262.4" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="181.2" y1="261.65" x2="178.7" y2="261.65" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="177.95" y1="262.4" x2="177.95" y2="262.4" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 181.2 263.15 A 0.75 0.75 0 0 1 181.95 262.4" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 181.95 262.4 A 0.75 0.75 0 0 1 181.2 261.65" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 178.7 261.65 A 0.75 0.75 0 0 1 177.95 262.4" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 177.95 262.4 A 0.75 0.75 0 0 1 178.7 263.15" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="178.7" y1="231.15" x2="181.2" y2="231.15" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="181.95" y1="230.4" x2="181.95" y2="230.4" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="181.2" y1="229.65" x2="178.7" y2="229.65" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="177.95" y1="230.4" x2="177.95" y2="230.4" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 181.2 231.15 A 0.75 0.75 0 0 1 181.95 230.4" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 181.95 230.4 A 0.75 0.75 0 0 1 181.2 229.65" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 178.7 229.65 A 0.75 0.75 0 0 1 177.95 230.4" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 177.95 230.4 A 0.75 0.75 0 0 1 178.7 231.15" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="108.7" y1="232.4" x2="203.7" y2="232.4" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="203.7" y1="232.4" x2="203.7" y2="205.4" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="203.7" y1="205.4" x2="108.7" y2="205.4" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="108.7" y1="205.4" x2="108.7" y2="232.4" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<text x="110.7" y="230.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">v4l_b</text>
-<line x1="131.2" y1="235.65" x2="133.7" y2="235.65" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="134.45" y1="234.9" x2="134.45" y2="234.9" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="133.7" y1="234.15" x2="131.2" y2="234.15" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="130.45" y1="234.9" x2="130.45" y2="234.9" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 133.7 235.65 A 0.75 0.75 0 0 1 134.45 234.9" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 134.45 234.9 A 0.75 0.75 0 0 1 133.7 234.15" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 131.2 234.15 A 0.75 0.75 0 0 1 130.45 234.9" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 130.45 234.9 A 0.75 0.75 0 0 1 131.2 235.65" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="131.2" y1="203.65" x2="133.7" y2="203.65" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="134.45" y1="202.9" x2="134.45" y2="202.9" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="133.7" y1="202.15" x2="131.2" y2="202.15" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="130.45" y1="202.9" x2="130.45" y2="202.9" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 133.7 203.65 A 0.75 0.75 0 0 1 134.45 202.9" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 134.45 202.9 A 0.75 0.75 0 0 1 133.7 202.15" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 131.2 202.15 A 0.75 0.75 0 0 1 130.45 202.9" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 130.45 202.9 A 0.75 0.75 0 0 1 131.2 203.65" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="178.7" y1="235.65" x2="181.2" y2="235.65" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="181.95" y1="234.9" x2="181.95" y2="234.9" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="181.2" y1="234.15" x2="178.7" y2="234.15" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="177.95" y1="234.9" x2="177.95" y2="234.9" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 181.2 235.65 A 0.75 0.75 0 0 1 181.95 234.9" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 181.95 234.9 A 0.75 0.75 0 0 1 181.2 234.15" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 178.7 234.15 A 0.75 0.75 0 0 1 177.95 234.9" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 177.95 234.9 A 0.75 0.75 0 0 1 178.7 235.65" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="178.7" y1="203.65" x2="181.2" y2="203.65" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="181.95" y1="202.9" x2="181.95" y2="202.9" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="181.2" y1="202.15" x2="178.7" y2="202.15" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="177.95" y1="202.9" x2="177.95" y2="202.9" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 181.2 203.65 A 0.75 0.75 0 0 1 181.95 202.9" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 181.95 202.9 A 0.75 0.75 0 0 1 181.2 202.15" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 178.7 202.15 A 0.75 0.75 0 0 1 177.95 202.9" stroke="#000" stroke-width="0.5" fill="none"/>
-<path d="M 177.95 202.9 A 0.75 0.75 0 0 1 178.7 203.65" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="27.1" y1="259.9" x2="100.8" y2="259.9" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="100.8" y1="259.9" x2="100.8" y2="229.3" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="100.8" y1="229.3" x2="27.1" y2="229.3" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="27.1" y1="229.3" x2="27.1" y2="259.9" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<text x="29.1" y="257.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">sawbird</text>
-<circle cx="31.1" cy="244.6" r="1.6" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="28" y1="244.6" x2="34.2" y2="244.6" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="31.1" y1="247.7" x2="31.1" y2="241.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<circle cx="96.8" cy="244.6" r="1.6" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="93.7" y1="244.6" x2="99.9" y2="244.6" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="96.8" y1="247.7" x2="96.8" y2="241.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="27.1" y1="228.8" x2="100.8" y2="228.8" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="100.8" y1="228.8" x2="100.8" y2="198.2" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="100.8" y1="198.2" x2="27.1" y2="198.2" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="27.1" y1="198.2" x2="27.1" y2="228.8" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<text x="29.1" y="226.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">flamingo</text>
-<circle cx="31.1" cy="213.5" r="1.6" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="28" y1="213.5" x2="34.2" y2="213.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="31.1" y1="216.6" x2="31.1" y2="210.4" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<circle cx="96.8" cy="213.5" r="1.6" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="93.7" y1="213.5" x2="99.9" y2="213.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="96.8" y1="216.6" x2="96.8" y2="210.4" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="203.7" y1="259.9" x2="218.6" y2="259.9" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="218.6" y1="259.9" x2="218.6" y2="237.9" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="218.6" y1="237.9" x2="203.7" y2="237.9" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="203.7" y1="237.9" x2="203.7" y2="259.9" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<text x="205.7" y="257.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">usb_socket_a</text>
-<circle cx="207.7" cy="248.9" r="1.6" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="204.6" y1="248.9" x2="210.8" y2="248.9" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="207.7" y1="252" x2="207.7" y2="245.8" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<circle cx="214.6" cy="248.9" r="1.6" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="211.5" y1="248.9" x2="217.7" y2="248.9" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="214.6" y1="252" x2="214.6" y2="245.8" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="203.7" y1="232.4" x2="218.6" y2="232.4" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="218.6" y1="232.4" x2="218.6" y2="210.4" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="218.6" y1="210.4" x2="203.7" y2="210.4" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<line x1="203.7" y1="210.4" x2="203.7" y2="232.4" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
-<text x="205.7" y="230.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">usb_socket_b</text>
-<circle cx="207.7" cy="221.4" r="1.6" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="204.6" y1="221.4" x2="210.8" y2="221.4" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="207.7" y1="224.5" x2="207.7" y2="218.3" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<circle cx="214.6" cy="221.4" r="1.6" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="211.5" y1="221.4" x2="217.7" y2="221.4" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="214.6" y1="224.5" x2="214.6" y2="218.3" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<circle cx="189.5" cy="199.7" r="4.25" stroke="#000" stroke-width="0.5" fill="none"/>
-<circle cx="105.6" cy="199.7" r="4.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="220.7" y1="262" x2="220.7" y2="201.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="220.7" y1="201.5" x2="25" y2="201.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="25" y1="201.5" x2="25" y2="262" stroke="#000" stroke-width="0.5" fill="none"/>
+<text x="25" y="198.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">Кришка 195.7 x 60.5 (несе модулі), 1 шт.</text>
+<line x1="27.1" y1="260" x2="122.1" y2="260" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="122.1" y1="260" x2="122.1" y2="233" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="122.1" y1="233" x2="27.1" y2="233" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="27.1" y1="233" x2="27.1" y2="260" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<text x="29.1" y="258" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">v4l_a</text>
+<line x1="49.6" y1="263.25" x2="52.1" y2="263.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="52.85" y1="262.5" x2="52.85" y2="262.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="52.1" y1="261.75" x2="49.6" y2="261.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="48.85" y1="262.5" x2="48.85" y2="262.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 52.1 263.25 A 0.75 0.75 0 0 1 52.85 262.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 52.85 262.5 A 0.75 0.75 0 0 1 52.1 261.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 49.6 261.75 A 0.75 0.75 0 0 1 48.85 262.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 48.85 262.5 A 0.75 0.75 0 0 1 49.6 263.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="49.6" y1="231.25" x2="52.1" y2="231.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="52.85" y1="230.5" x2="52.85" y2="230.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="52.1" y1="229.75" x2="49.6" y2="229.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="48.85" y1="230.5" x2="48.85" y2="230.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 52.1 231.25 A 0.75 0.75 0 0 1 52.85 230.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 52.85 230.5 A 0.75 0.75 0 0 1 52.1 229.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 49.6 229.75 A 0.75 0.75 0 0 1 48.85 230.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 48.85 230.5 A 0.75 0.75 0 0 1 49.6 231.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="97.1" y1="263.25" x2="99.6" y2="263.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="100.35" y1="262.5" x2="100.35" y2="262.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="99.6" y1="261.75" x2="97.1" y2="261.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="96.35" y1="262.5" x2="96.35" y2="262.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 99.6 263.25 A 0.75 0.75 0 0 1 100.35 262.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 100.35 262.5 A 0.75 0.75 0 0 1 99.6 261.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 97.1 261.75 A 0.75 0.75 0 0 1 96.35 262.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 96.35 262.5 A 0.75 0.75 0 0 1 97.1 263.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="97.1" y1="231.25" x2="99.6" y2="231.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="100.35" y1="230.5" x2="100.35" y2="230.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="99.6" y1="229.75" x2="97.1" y2="229.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="96.35" y1="230.5" x2="96.35" y2="230.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 99.6 231.25 A 0.75 0.75 0 0 1 100.35 230.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 100.35 230.5 A 0.75 0.75 0 0 1 99.6 229.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 97.1 229.75 A 0.75 0.75 0 0 1 96.35 230.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 96.35 230.5 A 0.75 0.75 0 0 1 97.1 231.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="123.6" y1="260" x2="218.6" y2="260" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="218.6" y1="260" x2="218.6" y2="233" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="218.6" y1="233" x2="123.6" y2="233" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="123.6" y1="233" x2="123.6" y2="260" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<text x="125.6" y="258" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">v4l_b</text>
+<line x1="146.1" y1="263.25" x2="148.6" y2="263.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="149.35" y1="262.5" x2="149.35" y2="262.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="148.6" y1="261.75" x2="146.1" y2="261.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="145.35" y1="262.5" x2="145.35" y2="262.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 148.6 263.25 A 0.75 0.75 0 0 1 149.35 262.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 149.35 262.5 A 0.75 0.75 0 0 1 148.6 261.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 146.1 261.75 A 0.75 0.75 0 0 1 145.35 262.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 145.35 262.5 A 0.75 0.75 0 0 1 146.1 263.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="146.1" y1="231.25" x2="148.6" y2="231.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="149.35" y1="230.5" x2="149.35" y2="230.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="148.6" y1="229.75" x2="146.1" y2="229.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="145.35" y1="230.5" x2="145.35" y2="230.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 148.6 231.25 A 0.75 0.75 0 0 1 149.35 230.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 149.35 230.5 A 0.75 0.75 0 0 1 148.6 229.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 146.1 229.75 A 0.75 0.75 0 0 1 145.35 230.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 145.35 230.5 A 0.75 0.75 0 0 1 146.1 231.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="193.6" y1="263.25" x2="196.1" y2="263.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="196.85" y1="262.5" x2="196.85" y2="262.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="196.1" y1="261.75" x2="193.6" y2="261.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="192.85" y1="262.5" x2="192.85" y2="262.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 196.1 263.25 A 0.75 0.75 0 0 1 196.85 262.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 196.85 262.5 A 0.75 0.75 0 0 1 196.1 261.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 193.6 261.75 A 0.75 0.75 0 0 1 192.85 262.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 192.85 262.5 A 0.75 0.75 0 0 1 193.6 263.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="193.6" y1="231.25" x2="196.1" y2="231.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="196.85" y1="230.5" x2="196.85" y2="230.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="196.1" y1="229.75" x2="193.6" y2="229.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="192.85" y1="230.5" x2="192.85" y2="230.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 196.1 231.25 A 0.75 0.75 0 0 1 196.85 230.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 196.85 230.5 A 0.75 0.75 0 0 1 196.1 229.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 193.6 229.75 A 0.75 0.75 0 0 1 192.85 230.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 192.85 230.5 A 0.75 0.75 0 0 1 193.6 231.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="27.1" y1="232.5" x2="100.8" y2="232.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="100.8" y1="232.5" x2="100.8" y2="201.9" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="100.8" y1="201.9" x2="27.1" y2="201.9" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="27.1" y1="201.9" x2="27.1" y2="232.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<text x="29.1" y="230.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">sawbird</text>
+<circle cx="31.1" cy="217.2" r="1.6" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="28" y1="217.2" x2="34.2" y2="217.2" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="31.1" y1="220.3" x2="31.1" y2="214.1" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<circle cx="96.8" cy="217.2" r="1.6" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="93.7" y1="217.2" x2="99.9" y2="217.2" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="96.8" y1="220.3" x2="96.8" y2="214.1" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="110.4" y1="232.5" x2="184.1" y2="232.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="184.1" y1="232.5" x2="184.1" y2="201.9" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="184.1" y1="201.9" x2="110.4" y2="201.9" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="110.4" y1="201.9" x2="110.4" y2="232.5" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<text x="112.4" y="230.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">flamingo</text>
+<circle cx="114.4" cy="217.2" r="1.6" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="111.3" y1="217.2" x2="117.5" y2="217.2" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="114.4" y1="220.3" x2="114.4" y2="214.1" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<circle cx="180.1" cy="217.2" r="1.6" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="177" y1="217.2" x2="183.2" y2="217.2" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="180.1" y1="220.3" x2="180.1" y2="214.1" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<circle cx="189.5" cy="203.5" r="4.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<circle cx="105.6" cy="203.5" r="4.25" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="25" y1="262.8" x2="25" y2="269.5" stroke="#000" stroke-width="0.18" fill="none"/>
 <line x1="220.7" y1="262.8" x2="220.7" y2="269.5" stroke="#000" stroke-width="0.18" fill="none"/>
 <line x1="25" y1="268" x2="220.7" y2="268" stroke="#000" stroke-width="0.18" fill="none"/>
@@ -137,89 +115,89 @@
 <line x1="220.7" y1="268" x2="218.5" y2="268.7" stroke="#000" stroke-width="0.18" fill="none"/>
 <text x="122.85" y="271.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000">195.7</text>
 <line x1="24.2" y1="262" x2="15.5" y2="262" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="24.2" y1="197.7" x2="15.5" y2="197.7" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="17" y1="262" x2="17" y2="197.7" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="24.2" y1="201.5" x2="15.5" y2="201.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="17" y1="262" x2="17" y2="201.5" stroke="#000" stroke-width="0.18" fill="none"/>
 <line x1="17" y1="262" x2="16.3" y2="259.8" stroke="#000" stroke-width="0.18" fill="none"/>
 <line x1="17" y1="262" x2="17.7" y2="259.8" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="17" y1="197.7" x2="16.3" y2="199.9" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="17" y1="197.7" x2="17.7" y2="199.9" stroke="#000" stroke-width="0.18" fill="none"/>
-<text x="15.8" y="229.85" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000" transform="rotate(-90 15.8 229.85)">64.3</text>
-<line x1="25" y1="177.7" x2="220.7" y2="177.7" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="220.7" y1="177.7" x2="220.7" y2="143.3" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="220.7" y1="143.3" x2="25" y2="143.3" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="25" y1="143.3" x2="25" y2="177.7" stroke="#000" stroke-width="0.5" fill="none"/>
-<text x="25" y="140.3" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">Нижня стінка 195.7 x 34.4, 1 шт. (низ — кромка кришки)</text>
-<line x1="31.5" y1="177.7" x2="49.5" y2="177.7" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="49.5" y1="177.7" x2="49.5" y2="171.7" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="49.5" y1="171.7" x2="31.5" y2="171.7" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="31.5" y1="171.7" x2="31.5" y2="177.7" stroke="#000" stroke-width="0.5" fill="none"/>
-<text x="31.5" y="170.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">N1</text>
-<line x1="204.5" y1="177.7" x2="211" y2="177.7" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="211" y1="177.7" x2="211" y2="171.7" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="211" y1="171.7" x2="204.5" y2="171.7" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="204.5" y1="171.7" x2="204.5" y2="177.7" stroke="#000" stroke-width="0.5" fill="none"/>
-<text x="204.5" y="170.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">N2</text>
-<line x1="211.5" y1="177.7" x2="218" y2="177.7" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="218" y1="177.7" x2="218" y2="159.7" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="218" y1="159.7" x2="211.5" y2="159.7" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="211.5" y1="159.7" x2="211.5" y2="177.7" stroke="#000" stroke-width="0.5" fill="none"/>
-<text x="211.5" y="158.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">N3</text>
-<line x1="185.5" y1="177.7" x2="199.5" y2="177.7" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="199.5" y1="177.7" x2="199.5" y2="171.7" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="199.5" y1="171.7" x2="185.5" y2="171.7" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="185.5" y1="171.7" x2="185.5" y2="177.7" stroke="#000" stroke-width="0.5" fill="none"/>
-<text x="185.5" y="170.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">N4</text>
-<line x1="25" y1="178.5" x2="25" y2="184.2" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="220.7" y1="178.5" x2="220.7" y2="184.2" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="25" y1="182.7" x2="220.7" y2="182.7" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="25" y1="182.7" x2="27.2" y2="182" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="25" y1="182.7" x2="27.2" y2="183.4" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="220.7" y1="182.7" x2="218.5" y2="182" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="220.7" y1="182.7" x2="218.5" y2="183.4" stroke="#000" stroke-width="0.18" fill="none"/>
-<text x="122.85" y="186.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000">195.7</text>
-<line x1="221.5" y1="177.7" x2="230.2" y2="177.7" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="221.5" y1="143.3" x2="230.2" y2="143.3" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="228.7" y1="177.7" x2="228.7" y2="143.3" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="228.7" y1="177.7" x2="228" y2="175.5" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="228.7" y1="177.7" x2="229.4" y2="175.5" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="228.7" y1="143.3" x2="228" y2="145.5" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="228.7" y1="143.3" x2="229.4" y2="145.5" stroke="#000" stroke-width="0.18" fill="none"/>
-<text x="232.4" y="160.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000" transform="rotate(-90 232.4 160.5)">34.4</text>
-<line x1="25" y1="123.3" x2="89.3" y2="123.3" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="89.3" y1="123.3" x2="89.3" y2="88.9" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="89.3" y1="88.9" x2="25" y2="88.9" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="25" y1="88.9" x2="25" y2="123.3" stroke="#000" stroke-width="0.5" fill="none"/>
-<text x="25" y="85.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">Ліва стінка 64.3 x 34.4, 1 шт.</text>
-<line x1="25" y1="124.1" x2="25" y2="129.8" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="89.3" y1="124.1" x2="89.3" y2="129.8" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="25" y1="128.3" x2="89.3" y2="128.3" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="25" y1="128.3" x2="27.2" y2="127.6" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="25" y1="128.3" x2="27.2" y2="129" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="89.3" y1="128.3" x2="87.1" y2="127.6" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="89.3" y1="128.3" x2="87.1" y2="129" stroke="#000" stroke-width="0.18" fill="none"/>
-<text x="57.15" y="132" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000">64.3</text>
-<line x1="114.3" y1="123.3" x2="178.6" y2="123.3" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="178.6" y1="123.3" x2="178.6" y2="104.2" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="178.6" y1="104.2" x2="176.3" y2="104.2" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="176.3" y1="104.2" x2="176.3" y2="91.2" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="176.3" y1="91.2" x2="166.3" y2="91.2" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="166.3" y1="91.2" x2="166.3" y2="88.9" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="166.3" y1="88.9" x2="114.3" y2="88.9" stroke="#000" stroke-width="0.5" fill="none"/>
-<line x1="114.3" y1="88.9" x2="114.3" y2="123.3" stroke="#000" stroke-width="0.5" fill="none"/>
-<text x="136.3" y="80.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">виріз під Al-кутник: 12.3 x 2.3 і 2.3 x 15.3</text>
-<text x="114.3" y="85.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">Права стінка 64.3 x 34.4, 1 шт.</text>
-<line x1="114.3" y1="124.1" x2="114.3" y2="129.8" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="178.6" y1="124.1" x2="178.6" y2="129.8" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="114.3" y1="128.3" x2="178.6" y2="128.3" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="114.3" y1="128.3" x2="116.5" y2="127.6" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="114.3" y1="128.3" x2="116.5" y2="129" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="178.6" y1="128.3" x2="176.4" y2="127.6" stroke="#000" stroke-width="0.18" fill="none"/>
-<line x1="178.6" y1="128.3" x2="176.4" y2="129" stroke="#000" stroke-width="0.18" fill="none"/>
-<text x="146.45" y="132" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000">64.3</text>
+<line x1="17" y1="201.5" x2="16.3" y2="203.7" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="17" y1="201.5" x2="17.7" y2="203.7" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="15.8" y="231.75" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000" transform="rotate(-90 15.8 231.75)">60.5</text>
+<line x1="25" y1="181.5" x2="220.7" y2="181.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="220.7" y1="181.5" x2="220.7" y2="147.1" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="220.7" y1="147.1" x2="25" y2="147.1" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="25" y1="147.1" x2="25" y2="181.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<text x="25" y="144.1" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">Нижня стінка 195.7 x 34.4, 1 шт. (низ — кромка кришки)</text>
+<line x1="31.5" y1="181.5" x2="49.5" y2="181.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="49.5" y1="181.5" x2="49.5" y2="175.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="49.5" y1="175.5" x2="31.5" y2="175.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="31.5" y1="175.5" x2="31.5" y2="181.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<text x="31.5" y="174.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">N1</text>
+<line x1="69.5" y1="181.5" x2="81.5" y2="181.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="81.5" y1="181.5" x2="81.5" y2="175.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="81.5" y1="175.5" x2="69.5" y2="175.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="69.5" y1="175.5" x2="69.5" y2="181.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<text x="69.5" y="174.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">N2</text>
+<line x1="159.5" y1="181.5" x2="171.5" y2="181.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="171.5" y1="181.5" x2="171.5" y2="175.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="171.5" y1="175.5" x2="159.5" y2="175.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="159.5" y1="175.5" x2="159.5" y2="181.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<text x="159.5" y="174.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">N3</text>
+<line x1="185.5" y1="181.5" x2="199.5" y2="181.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="199.5" y1="181.5" x2="199.5" y2="175.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="199.5" y1="175.5" x2="185.5" y2="175.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="185.5" y1="175.5" x2="185.5" y2="181.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<text x="185.5" y="174.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">N4</text>
+<line x1="25" y1="182.3" x2="25" y2="188" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="220.7" y1="182.3" x2="220.7" y2="188" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="25" y1="186.5" x2="220.7" y2="186.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="25" y1="186.5" x2="27.2" y2="185.8" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="25" y1="186.5" x2="27.2" y2="187.2" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="220.7" y1="186.5" x2="218.5" y2="185.8" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="220.7" y1="186.5" x2="218.5" y2="187.2" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="122.85" y="190.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000">195.7</text>
+<line x1="221.5" y1="181.5" x2="230.2" y2="181.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="221.5" y1="147.1" x2="230.2" y2="147.1" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="228.7" y1="181.5" x2="228.7" y2="147.1" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="228.7" y1="181.5" x2="228" y2="179.3" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="228.7" y1="181.5" x2="229.4" y2="179.3" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="228.7" y1="147.1" x2="228" y2="149.3" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="228.7" y1="147.1" x2="229.4" y2="149.3" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="232.4" y="164.3" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000" transform="rotate(-90 232.4 164.3)">34.4</text>
+<line x1="25" y1="127.1" x2="85.5" y2="127.1" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="85.5" y1="127.1" x2="85.5" y2="92.7" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="85.5" y1="92.7" x2="25" y2="92.7" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="25" y1="92.7" x2="25" y2="127.1" stroke="#000" stroke-width="0.5" fill="none"/>
+<text x="25" y="89.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">Ліва стінка 60.5 x 34.4, 1 шт.</text>
+<line x1="25" y1="127.9" x2="25" y2="133.6" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="85.5" y1="127.9" x2="85.5" y2="133.6" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="25" y1="132.1" x2="85.5" y2="132.1" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="25" y1="132.1" x2="27.2" y2="131.4" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="25" y1="132.1" x2="27.2" y2="132.8" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="85.5" y1="132.1" x2="83.3" y2="131.4" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="85.5" y1="132.1" x2="83.3" y2="132.8" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="55.25" y="135.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000">60.5</text>
+<line x1="110.5" y1="127.1" x2="171" y2="127.1" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="171" y1="127.1" x2="171" y2="108" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="171" y1="108" x2="168.7" y2="108" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="168.7" y1="108" x2="168.7" y2="95" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="168.7" y1="95" x2="158.7" y2="95" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="158.7" y1="95" x2="158.7" y2="92.7" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="158.7" y1="92.7" x2="110.5" y2="92.7" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="110.5" y1="92.7" x2="110.5" y2="127.1" stroke="#000" stroke-width="0.5" fill="none"/>
+<text x="128.7" y="84.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">виріз під Al-кутник: 12.3 x 2.3 і 2.3 x 15.3</text>
+<text x="110.5" y="89.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">Права стінка 60.5 x 34.4, 1 шт.</text>
+<line x1="110.5" y1="127.9" x2="110.5" y2="133.6" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="171" y1="127.9" x2="171" y2="133.6" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="110.5" y1="132.1" x2="171" y2="132.1" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="110.5" y1="132.1" x2="112.7" y2="131.4" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="110.5" y1="132.1" x2="112.7" y2="132.8" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="171" y1="132.1" x2="168.8" y2="131.4" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="171" y1="132.1" x2="168.8" y2="132.8" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="140.75" y="135.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000">60.5</text>
 <text x="262" y="147" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.36" text-anchor="start" fill="#000">Вирізи нижньої стінки (від лівого краю кришки)</text>
 <text x="262" y="151" font-family="DejaVu Sans Mono, monospace" font-size="2.52" text-anchor="start" fill="#000">N1: 6.5..24.5 x 6 — 2x RG316 K401/K402 to the HF+ can (row below)</text>
-<text x="262" y="154" font-family="DejaVu Sans Mono, monospace" font-size="2.52" text-anchor="start" fill="#000">N2: 179.5..186 x 6 — USB 2.0 lead of V4L-A (RTL-A) from the socket-A carrier pads</text>
-<text x="262" y="157" font-family="DejaVu Sans Mono, monospace" font-size="2.52" text-anchor="start" fill="#000">N3: 186.5..193 x 18 — USB 2.0 lead of V4L-B (RTL-B) to the hub: it crosses over so</text>
+<text x="262" y="154" font-family="DejaVu Sans Mono, monospace" font-size="2.52" text-anchor="start" fill="#000">N2: 44.5..56.5 x 6 — USB 2.0 lead of V4L-A (RTL-A) to the hub / Q6A</text>
+<text x="262" y="157" font-family="DejaVu Sans Mono, monospace" font-size="2.52" text-anchor="start" fill="#000">N3: 134.5..146.5 x 6 — USB 2.0 lead of V4L-B (RTL-B) to the hub</text>
 <text x="262" y="160" font-family="DejaVu Sans Mono, monospace" font-size="2.52" text-anchor="start" fill="#000">N4: 160.5..174.5 x 6 — RF board power / DC_CORE harness (JST PH) and U.FL to Lime R</text>
 <line x1="8" y1="289" x2="412" y2="289" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="412" y1="289" x2="412" y2="8" stroke="#000" stroke-width="0.5" fill="none"/>
@@ -249,13 +227,13 @@
 <text x="264" y="266" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення M-09 · масштаб 1:1 · мм · допуск ±0.2, якщо не вказано</text>
 <text x="264" y="273" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: FR4 copper clad 35/35 um, 1.5-1.6 mm (Bungard 120…</text>
 <text x="264" y="280" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
-<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 542df4197d9b · v1.0.0</text>
+<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params d6e167a6d2d9 · v1.0.0</text>
 <text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">РЧ-відсік: розкрій фольгованого FR4</text>
 <text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">кришка і стінки, 1:1; шви пропаяти суцільно з обох боків</text>
 <text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Дно відсіку — пластина (Al); верх — Al-кутник + стінка корпусу; FR4: кришка (несе модулі), ліва, нижня й права стінки.</text>
 <text x="12" y="28.6" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Висота стінок 34.4 = від кришки до тильної грані пластини; стінки паяти до кришки, до пластини — мідною стрічкою або пружними лапками.</text>
 <text x="12" y="32.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Вирізи N1-N4 — біля кришки, під кабелі (таблиця); краї вирізів облудити. Фоторезист зняти перед паянням (STACK 2.9).</text>
 <text x="12" y="35.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Модулі на кришці: SAWbird+/Flamingo+ — M3 за отворами корпусу модуля (розмітити по деталі, TBD); V4L — хомути через пари прорізів 2 x 4.</text>
-<text x="12" y="39.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Розетки V4L: Würth 614004190021 на малих носійних платах на кришці (usb_socket_a/b), вихід кабелів — вирізи N2/N3; розкладка (b), fit-report 'rf_bay_packing'.</text>
+<text x="12" y="39.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Розетки USB-подовжувачів V4L у відсіку не змодельовано (fit-report 'rf_bay_packing': OPEN).</text>
 <text x="12" y="43" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: FR4 copper clad 35/35 um, 1.5-1.6 mm (Bungard 120306Z33 or Scankemi 1.6, STACK 2.9)</text>
 </svg>
