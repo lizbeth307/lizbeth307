@@ -454,7 +454,7 @@
 (property "ReviewStatus" "module" (at 132.08 99.06 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (property "MPN" "CA-DKCA1-305L5-APAJ" (at 132.08 99.06 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (property "Manufacturer" "Adam Tech" (at 132.08 99.06 0) (effects (font (size 1.016 1.016)) (hide yes)))
-(property "Alt_MPN" "TE Connectivity Linx CSE-SGAM-305-SGFB" (at 132.08 99.06 0) (effects (font (size 1.016 1.016)) (hide yes)))
+(property "Alt_MPN" "TE Connectivity Linx CSE-SGAM-305-SGFB; Adam Tech CA-DKCA1-152L5-APAJ" (at 132.08 99.06 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (pin "CENTER" (uuid 20a4fd55-d15c-5982-8472-6969cf84b9bd))
 (pin "SHIELD" (uuid aa3a672a-4c81-519c-a6dc-879832c51b2a))
 (instances (project "sr-rx-v2" (path "/fb9ec709-453b-5b24-a782-9cee42ec6d25/8f7e80ea-aee4-5257-bec3-c2e6ba73b52d" (reference "J401") (unit 1)))))
