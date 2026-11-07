@@ -3340,6 +3340,13 @@
       }
     ]
   },
+  "split_nets": {
+    "E1_LAB5_RAW": [
+      "F.Cu",
+      "B.Cu"
+    ]
+  },
+  "split_nets_note": "pcb/check_boards.py split_nets: a BATT/PWR3A net poured on L1 and L4 is checked against the per-layer split width (netclasses.json split_outer_per_layer_mm) when both layers join the same THT pads",
   "post_route_zones": [
     {
       "id": "GND-L2",
