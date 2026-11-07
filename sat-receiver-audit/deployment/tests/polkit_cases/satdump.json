@@ -328,11 +328,11 @@
    "expect": "not_handled"
   },
   {
-   "name": "labd start 'srrx-lease-readsb@rtla.service' is not allowed",
+   "name": "labd start 'srrx-lease-readsb@lrpt-0123456789abcdef.service' is not allowed",
    "action": "org.freedesktop.systemd1.manage-units",
    "user": "labd",
    "details": {
-    "unit": "srrx-lease-readsb@rtla.service",
+    "unit": "srrx-lease-readsb@lrpt-0123456789abcdef.service",
     "verb": "start"
    },
    "expect": "not_handled"

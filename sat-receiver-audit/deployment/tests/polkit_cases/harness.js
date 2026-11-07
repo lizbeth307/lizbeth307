@@ -7,6 +7,9 @@
 //  - the functions given to polkit.addRule() run in that order and the first truthy result wins;
 //    none is "not_handled", i.e. the action's own default policy decides (src/polkitbackend/init.js);
 //  - action.lookup(key) returns the detail key, subject.user / subject.groups / isInGroup().
+// Case files: v1 with requires[] and cases {name, user, groups?, ...} (satdump.json), or v1 with one
+// staged rule path and cases {id, subject: {user, groups?}, ...}, expect null = not_handled (lease.json,
+// W2 SW-LEASE); both are read into the first form before any decision (caseDocument).
 // Usage: node harness.js (--root ROOTFS | --rules-dir DIR ...) CASES.json ...
 // Exit 0 only when every case gets its expected decision and every required rule file is present.
 "use strict";
@@ -97,6 +100,29 @@ function makeSubject(spec) {
            isInNetGroup: () => false };
 }
 
+function caseDocument(document, casePath) {
+  if (document === null || typeof document !== "object" || document.schema_version !== 1
+      || document.kind !== "srrx_polkit_cases" || !Array.isArray(document.cases) || !document.cases.length) {
+    fail("not an srrx_polkit_cases v1 file with cases: " + casePath);
+  }
+  if (Array.isArray(document.requires) && document.rule === undefined) return document;
+  if (document.requires !== undefined || typeof document.rule !== "string"
+      || !/^etc\/polkit-1\/rules\.d\/[^/]+\.rules$/.test(document.rule)) {
+    fail("not an srrx_polkit_cases v1 file with requires or one etc/polkit-1/rules.d rule: " + casePath);
+  }
+  const cases = document.cases.map((c) => {
+    if (c === null || typeof c !== "object" || c.subject === null || typeof c.subject !== "object"
+        || c.name !== undefined || c.user !== undefined || c.groups !== undefined) {
+      fail("malformed case in " + casePath + ": " + JSON.stringify(c).slice(0, 200));
+    }
+    const out = { name: c.id, action: c.action, user: c.subject.user, details: c.details,
+                  expect: c.expect === null ? "not_handled" : c.expect };
+    if (c.subject.groups !== undefined) out.groups = c.subject.groups;
+    return out;
+  });
+  return { requires: [path.posix.basename(document.rule)], cases };
+}
+
 function decide(functions, testCase) {
   const action = makeAction(testCase.action, testCase.details);
   const subject = makeSubject(testCase);
@@ -121,10 +147,7 @@ function main() {
     } catch (error) {
       fail("case file does not parse: " + casePath + ": " + error.message);
     }
-    if (document.schema_version !== 1 || document.kind !== "srrx_polkit_cases" || !Array.isArray(document.cases)
-        || !document.cases.length || !Array.isArray(document.requires)) {
-      fail("not an srrx_polkit_cases v1 file with cases and requires: " + casePath);
-    }
+    document = caseDocument(document, casePath);
     for (const required of document.requires) {
       total++;
       if (!names.has(required)) {
