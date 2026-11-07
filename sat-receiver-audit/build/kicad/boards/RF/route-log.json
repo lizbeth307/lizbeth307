@@ -42,25 +42,25 @@
   ],
   "exit_code": 0,
   "log_tail": [
+    "2026-11-07 21:49:29.819 WARN   Polyline: must contain at least 2 different points",
+    "2026-11-07 21:49:29.843 WARN   Polyline: must contain at least 2 different points",
+    "2026-11-07 21:49:32.387 INFO   [966967\\686A6A] Auto-routing pass #18 on board 'd13c6efbf38d6b9bc1df8cbaf885a133' was completed in 20.12 seconds with score 952.94 (15 unrouted and 0 violations), using 528.30 CPU seconds and the job allocated 289.57 GB of memory so far.",
+    "2026-11-07 21:49:32.433 INFO   [966967\\686A6A] The router's best score (952.94) has not improved by more than 0.5 points since pass #8. Stopping the auto-router after 18 passes (15 items still unconnected).",
+    "The following connections could not be routed -- please review your design (e.g. check pad clearances, trace width rules, and available routing space):",
+    "  Net 'E4_LIME_RF1' (1 unrouted connection):",
+    "    - U407-12  ->  C414-1",
+    "  Net 'E4_LIME_RF3' (1 unrouted connection):",
+    "    - C415-1  ->  U407-4",
+    "  Net 'E4_LIME_RFC' (1 unrouted connection):",
     "    - C411-2  ->  U407-15",
     "  Net 'E4_LIME_RFSPARE' (1 unrouted connection):",
     "    - C417-1  ->  U407-1",
     "  Net 'E4_LIME_TO_RTLB' (1 unrouted connection):",
     "    - U407-9  ->  C416-1",
-    "  Net 'E4_P2' (2 unrouted connections):",
-    "    - L403-1  ->  R4420-1",
-    "    - R4460-1  ->  L403-1",
-    "  Net 'E4_P3' (2 unrouted connections):",
-    "    - R4430-1  ->  J424-CENTER",
-    "    - R4464-1  ->  L404-1",
-    "  Net 'E4_RF_CH1' (1 unrouted connection):",
-    "    - L402-1  ->  PH401-1",
-    "  Net 'E4_RF_CH5' (1 unrouted connection):",
-    "    - L406-1  ->  C412-1",
     "  Net 'E4_RTLA_RF1' (1 unrouted connection):",
     "    - C401-1  ->  U405-12",
     "  Net 'E4_RTLA_RF2' (1 unrouted connection):",
-    "    - U405-9  ->  C402-2",
+    "    - C402-2  ->  U405-9",
     "  Net 'E4_RTLA_RF3' (1 unrouted connection):",
     "    - C403-2  ->  U405-4",
     "  Net 'E4_RTLA_RF4' (1 unrouted connection):",
@@ -68,26 +68,26 @@
     "  Net 'E4_RTLA_RFC' (1 unrouted connection):",
     "    - C405-1  ->  U405-15",
     "  Net 'E4_RTLB_RF1' (1 unrouted connection):",
-    "    - C406-1  ->  U406-12",
+    "    - U406-12  ->  C406-1",
     "  Net 'E4_RTLB_RF2' (1 unrouted connection):",
-    "    - U406-9  ->  C407-2",
+    "    - C407-2  ->  U406-9",
     "  Net 'E4_RTLB_RF3' (1 unrouted connection):",
     "    - C408-2  ->  U406-4",
     "  Net 'E4_RTLB_RF4' (1 unrouted connection):",
     "    - C409-2  ->  U406-1",
     "  Net 'E4_RTLB_RFC' (1 unrouted connection):",
     "    - C410-1  ->  U406-15",
-    "2026-11-07 21:22:40.874 INFO   [8C1696\\53EE6E] Auto-routing stage completed: started with 388 unrouted nets, completed in 661.11 seconds, final score: 930.98 (22 unrouted and 0 violations), using 655.22 total CPU seconds, 363.31 GB total allocated, and 447.3 MB peak heap usage.",
-    "2026-11-07 21:22:41.731 INFO   [8C1696\\53EE6E] Skipping optimization stage: the board has 22 unrouted connection(s) (optimizer only runs on completely routed boards).",
-    "2026-11-07 21:22:41.775 INFO   [8C1696\\53EE6E] Job '8C1696\\53EE6E' finished with state: COMPLETED (elapsed: 11 minutes 3.21 seconds, finished at UTC: 2026-11-07T21:22:41.774198220Z).",
-    "2026-11-07 21:22:41.786 INFO   Saving output file '/tmp/sr-rx-RF-1t23cuak/RF.ses' (SES)...",
-    "2026-11-07 21:22:41.788 INFO   Successfully saved output file '/tmp/sr-rx-RF-1t23cuak/RF.ses' (121893 bytes)."
+    "2026-11-07 21:49:34.929 INFO   [966967\\686A6A] Auto-routing stage completed: started with 379 unrouted nets, completed in 535.65 seconds, final score: 952.94 (15 unrouted and 0 violations), using 530.30 total CPU seconds, 290.17 GB total allocated, and 434.2 MB peak heap usage.",
+    "2026-11-07 21:49:35.765 INFO   [966967\\686A6A] Skipping optimization stage: the board has 15 unrouted connection(s) (optimizer only runs on completely routed boards).",
+    "2026-11-07 21:49:35.803 INFO   [966967\\686A6A] Job '966967\\686A6A' finished with state: COMPLETED (elapsed: 8 minutes 57.72 seconds, finished at UTC: 2026-11-07T21:49:35.802394904Z).",
+    "2026-11-07 21:49:35.827 INFO   Saving output file '/tmp/sr-rx-RF-ek3lv0br/RF.ses' (SES)...",
+    "2026-11-07 21:49:35.828 INFO   Successfully saved output file '/tmp/sr-rx-RF-ek3lv0br/RF.ses' (123820 bytes)."
   ],
-  "dsn_sha256": "04f151fd898baa494af5e9fba3af403f86f531ab27f070e44510036ec37a4690",
-  "ses_sha256": "c7d6287b875cf2b5d2444bd7494f7f181ab4fb3dcdfbb559ba5fd1b2400d5270",
+  "dsn_sha256": "94d2ffadceda51deda068a5ef51097858a098d5b7478fb8f7719b8e8c2e82764",
+  "ses_sha256": "9ca4642958a990315f6489769acd2285fee29f296af9990c480635738ebfad6e",
   "dsn_probe": {
     "resolution": "um 10",
-    "wires_fix": 82,
+    "wires_fix": 91,
     "wires_protect": 0,
     "keepouts": 31,
     "planes": 1,
@@ -111,8 +111,8 @@
     }
   },
   "locked_segments": {
-    "before_ses_import": 82,
-    "after_ses_import": 82
+    "before_ses_import": 91,
+    "after_ses_import": 91
   },
   "drc_command": [
     "kicad-cli",
@@ -127,7 +127,7 @@
     "--refill-zones",
     "--save-board"
   ],
-  "board_sha256": "8e36303f5b3a9e7bdb0817d2ed0686ac5561bcf6d4b03ad61de41f473f33cd3a",
+  "board_sha256": "2ea12e85775810d3c1185cf11add1d5d840ecb994022c75c374b054807190292",
   "previews": [
     "build/kicad/boards/RF/RF-top.svg",
     "build/kicad/boards/RF/RF-bottom.svg"
@@ -1210,8 +1210,8 @@
   ],
   "kicad_version": "10.0.7",
   "github": {
-    "run_id": "42414473163",
-    "sha": "4fae1ef2337510385d33c00c95f65defb23e51d2",
+    "run_id": "42416865216",
+    "sha": "28ff90a2b9db161add50b078ba974ece8e4245e2",
     "ref": "refs/heads/wip/w2-rf1"
   }
 }
