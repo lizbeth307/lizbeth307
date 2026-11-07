@@ -365,12 +365,32 @@ def _slot_trim_legs(P, sl):
 
 def trim_legs(P, g):
     """(leg reach from the slot edge, leg height proud of a plate face) of a U edging profile (parts.json semantic keys):
-    reach = overall height - base; proud = (outer - inner width) / 2 + (inner width - plate) with an inner width (worst case,
-    panel against one leg), else (outer width - plate) / 2 (the profile's base width as an upper bound)."""
+    reach = overall height - base (the inside depth of the U: the plate edge bottoms on the base, the legs run that far onto
+    each face; for the Essentra MGS-2-01 the drawing's D, W2 MECH-6 review); proud = (outer - inner width) / 2 + (inner width
+    - plate) with an inner width (worst case, panel against one leg), else (outer width - plate) / 2 (the profile's base width
+    as an upper bound)."""
     t = P.mech["plate"]["t"]
     reach = g["overall_h"] - g["base_t"]
     proud = (g["outer_w"] - g["inner_w"]) / 2.0 + (g["inner_w"] - t) if "inner_w" in g else (g["outer_w"] - t) / 2.0
     return reach, proud
+
+
+def _shelf_pack(diams, w, h):
+    """Wire diameters left over after packing round wires into a w x h rectangle (next-fit decreasing shelves, no nesting of
+    one row into the next, so a lower bound of what fits); both orientations are tried, the one leaving fewer wins."""
+    best = None
+    for a, b in ((w, h), (h, w)):
+        left, used, row_w, row_h = [], 0.0, 0.0, 0.0
+        for d in sorted(diams, reverse=True):
+            if row_h > 0.0 and row_w + d <= a + 1e-9:
+                row_w += d
+            elif d <= a + 1e-9 and used + row_h + d <= b + 1e-9:
+                used, row_w, row_h = used + row_h, d, d
+            else:
+                left.append(d)
+        if best is None or len(left) < len(best):
+            best = left
+    return best
 
 
 def plate_slot_fill(P):
@@ -379,9 +399,12 @@ def plate_slot_fill(P):
     Bundle = sum of the wire cross-sections of the slot's build/16 segments (OD = nominal + tolerance of the chosen PTFE wire,
     parts.json hookup_wire_ptfe) / fill + the S01 ribbon stack (two 20-way halves of parts.json ribbon_3m_3365_40). Opening =
     (w - loss_left - loss_right) x (h - loss_bottom - loss_top), loss = grommet bottom B or the tape allowance per edge
-    (plate.slot_trim). The ribbon width, the stack and the largest wire must also fit the inner width / height, and every
-    grommet leg (A - B from the edge, (C - t) / 2 proud on both faces) must clear the envelopes, the structure and the
-    fastener footprints of the plate holes. A slot segment that build/16 does not have, or a wire without a read OD, is FAIL."""
+    (plate.slot_trim). The ribbon width, the stack and the largest wire must also fit the inner width / height; the loose
+    wires must also pack as round wires (_shelf_pack) into what the rigid ribbon leaves: beside it ((inner w - ribbon w) x
+    inner h) and on it (ribbon w x (inner h - stack)), or into the whole inner opening when the slot has no ribbon. Every
+    grommet leg (trim_legs: overall height - base from the edge, the Essentra inside depth D; leg thickness plus the panel
+    play proud on both faces) must clear the envelopes, the structure and the fastener footprints of the plate holes. A slot
+    segment that build/16 does not have, or a wire without a read OD, is FAIL."""
     import csv
     from pathlib import Path
     from .layout import item_boxes, structure_boxes, gap
@@ -395,7 +418,8 @@ def plate_slot_fill(P):
     flat = P.mech["harness_routes"].get("flat", {})
     rule = {"id": "R-PLATE-SLOT-FILL",
             "rule": f"harness bundle through each plate slot (wire areas / {tr['fill']:g} + ribbon stack) inside the opening left by the edge trim "
-                    f"(edging {tr['grommet']} base {g['base_t']:g} per edge, tape {tr['tape_mm']:g}); ribbon, stack and largest wire fit the inner size; edging legs clear",
+                    f"(edging {tr['grommet']} base {g['base_t']:g} per edge, tape {tr['tape_mm']:g}); ribbon, stack and largest wire fit the inner size; "
+                    f"loose wires pack as round wires beside / on the ribbon; edging legs ({trim_legs(P, g)[0]:.2f} onto each face) clear",
             "source": "mechanical.json plate.slots / slot_trim; build/16-dzhgut.csv; parts.json essentra_mgs_2_01 (Essentra catalogue p.276 read 2026-11-07), "
                       "hookup_wire_ptfe and ribbon_3m_3365_40 (SRC-1 rows read 2026-11-07)"}
     if not path.exists():
@@ -413,7 +437,7 @@ def plate_slot_fill(P):
         loss = {e: (g["base_t"] if sl.get("trim", {}).get(e) == "grommet" else tr["tape_mm"]) for e in ("bottom", "top", "left", "right")}
         iw, ih = w - loss["left"] - loss["right"], h - loss["bottom"] - loss["top"]
         counts, area, dmax, loose = {}, 0.0, 0.0, 0
-        ribbon = None
+        ribbon, ds = None, []
         for seg in sl.get("segments", []):
             if seg not in wires:
                 missing.append(f"{sl['id']}: {seg}")
@@ -434,11 +458,22 @@ def plate_slot_fill(P):
                 d = od[0] + od[1]
                 dmax = max(dmax, d)
                 area += math.pi * d * d / 4.0
+                ds.append(d)
         need = area / tr["fill"] + (ribbon["w_mm"] * ribbon["stack_mm"] if ribbon else 0.0)
         have = max(iw, 0.0) * max(ih, 0.0)
         fits = [("bundle", need <= have + 1e-9), ("largest wire", dmax <= min(iw, ih) + 1e-9)]
         if ribbon:
             fits += [("ribbon width", ribbon["w_mm"] <= iw + 1e-9), ("ribbon stack", ribbon["stack_mm"] <= ih + 1e-9)]
+            regions = [(iw - ribbon["w_mm"], ih), (ribbon["w_mm"], ih - ribbon["stack_mm"])]
+        else:
+            regions = [(iw, ih)]
+        left = ds
+        for rw_, rh_ in regions:
+            left = _shelf_pack(left, max(rw_, 0.0), max(rh_, 0.0)) if left else left
+        packing = {"regions_mm": [[round(max(a, 0.0), 2), round(max(b, 0.0), 2)] for a, b in regions],
+                   "method": "round wires, next-fit decreasing shelves, no nesting (beside the ribbon, then on it)" if ribbon
+                   else "round wires, next-fit decreasing shelves, no nesting", "unplaced": len(left)}
+        fits.append(("wire packing", not left))
         legs = []
         for edge, face, bx in _slot_trim_legs(P, sl):
             for name, ob in obstacles:
@@ -458,7 +493,7 @@ def plate_slot_fill(P):
                            "inner_mm2": round(have, 1), "wires": sum(counts.values()), "loose_wires": loose,
                            "wires_per_awg": {k: counts[k] for k in sorted(counts, key=int)}, "wire_area_mm2": round(area, 1),
                            "ribbon": ribbon, "bundle_need_mm2": round(need, 1), "fill_of_inner": round(need / have, 2) if have else None,
-                           "largest_wire_mm": round(dmax, 2), "legs_clear": legs or "yes",
+                           "largest_wire_mm": round(dmax, 2), "packing": packing, "legs_clear": legs or "yes",
                            "result": ("PASS (model)" if ok else "FAIL (model): " + ", ".join([n for n, f in fits if not f] + legs))}
     if missing:
         return dict(rule, value_mm=value, result="FAIL (model): " + ", ".join(missing))
@@ -468,7 +503,7 @@ def plate_slot_fill(P):
         return dict(rule, value_mm=value, limit_mm="bundle inside the trimmed opening", result="FAIL (model): " + ", ".join(
             f"{k}: {value[k]['result']}" for k in bad))
     return dict(rule, value_mm=value, limit_mm="bundle inside the trimmed opening",
-                result=f"PASS (model): {txt}; edging legs clear of the envelopes, the structure and the plate-hole footprints")
+                result=f"PASS (model): {txt}; loose wires pack beside / on the ribbon; edging legs clear of the envelopes, the structure and the plate-hole footprints")
 
 
 def module_rules(P):

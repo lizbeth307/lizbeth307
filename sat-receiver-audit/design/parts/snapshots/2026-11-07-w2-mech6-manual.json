@@ -38,7 +38,7 @@
    "title": "LC76G GNSS Module outline dimensions (unit: mm)",
    "stock": null,
    "price": null,
-   "note": "board 30.50 x 25.50 mm; mounting hole centre 2.25 mm from the connector edge; 8-pin MX1.25 connector on one short edge, pins from the top SCL, SDA, RST, PPS, RX, TX, GND, VCC; IPEX antenna receptacle near the opposite edge with the bundled ceramic patch antenna on a lead; no height, hole diameter or pin dimensions on the drawing (positions in mechanical/params/parts.json lc76g scaled on the image, +-0.5 mm). Package contents on the product page: LC76G GNSS Module, MX1.25 8PIN cable"
+   "note": "board 30.50 x 25.50 mm; mounting hole diameter 2.25 mm (the 2.25 extension lines drop from the two edges of the drilled hole, inside the annular ring; corrected in the W2 MECH-6 review after zooming the image, 2026-11-07); hole centre positions not dimensioned (scaled about 2.4 mm from the board edges, +-0.5); 8-pin MX1.25 connector on one short edge, pins from the top SCL, SDA, RST, PPS, RX, TX, GND, VCC; IPEX antenna receptacle near the opposite edge with the bundled ceramic patch antenna on a lead; no height or pin dimensions on the drawing (positions in mechanical/params/parts.json lc76g scaled on the image, +-0.5 mm). Package contents on the product page: LC76G GNSS Module, MX1.25 8PIN cable"
   },
   "web:heyco-grommet-rolls": {
    "distributor": "manufacturer catalogue",
@@ -86,7 +86,7 @@
    "title": "Essentra Fiber, Wire & Cable Management catalogue: MGS Series MS21266 Grommet Strip",
    "stock": null,
    "price": null,
-   "note": "MGS-2-01 / MS21266-2N: panel thickness 0.052-0.085 in, A 0.175, B 0.090, C 0.055, D 0.100 in (drawing: A overall width, B inside width, C base thickness, D overall height); slot pitch .067 (1.7) typ.; strip 12.620/12.750 in (320.5/323.9 mm); UL94 V-2 nylon 6/6, natural; complies with NASM21266; minimum hole diameter 1 in; bulk pack 100"
+   "note": "MGS-2-01 / MS21266-2N: panel thickness 0.052-0.085 in, A 0.175, B 0.090, C 0.055, D 0.100 in (drawing: A overall width, B inside width, C base thickness, D inside depth from the leg tips to the inner bottom of the U, so the overall height is C + D = 0.155 in; D corrected in the W2 MECH-6 review from the vector dimension lines read with PyMuPDF and a 1400 dpi rendering, 2026-11-07); slot pitch .067 (1.7) typ.; strip 12.620/12.750 in (320.5/323.9 mm); UL94 V-2 nylon 6/6, natural; complies with NASM21266; minimum hole diameter 1 in; bulk pack 100"
   }
  }
 }

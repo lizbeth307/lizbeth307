@@ -1038,3 +1038,51 @@ class SlotFillAndW2Mech6(unittest.TestCase):
         self.assertTrue(any("J304" in p for p in res["segments"]["S01"]["provisional"]))
         self.assertTrue(any("J207" in p and "PWR_B" in p for p in res["segments"]["S20"]["provisional"]))
         self.assertTrue(any("J318" in p for p in res["segments"]["S39"]["provisional"]))
+
+
+class SlotFillW2Mech6Review(unittest.TestCase):
+    """W2 MECH-6 review: the Essentra MGS-2-01 legs reach the inside depth D onto each face, the loose wires must pack
+    beside / on the rigid S01 ribbon, and the SL3 edge next to the BMS takes the tape."""
+
+    def _copy(self):
+        import copy
+        return copy.deepcopy(P)
+
+    def test_edging_reach_is_the_inside_depth_d(self):
+        g = P.parts[P.mech["plate"]["slot_trim"]["grommet"]]
+        reach, proud = rules.trim_legs(P, g)
+        self.assertAlmostEqual(reach, 0.100 * 25.4, places=3)                 # D 0.100 in (catalogue p.276)
+        self.assertAlmostEqual(g["overall_h"], (0.055 + 0.100) * 25.4, places=3)  # C + D
+        self.assertAlmostEqual(reach, g["inside_d"], places=6)
+        self.assertGreater(proud, 0.0)
+
+    def test_loose_wires_pack_beside_and_on_the_ribbon(self):
+        r = rules.plate_slot_fill(P)
+        self.assertTrue(r["result"].startswith("PASS (model)"), r["result"])
+        for sid, v in r["value_mm"].items():
+            with self.subTest(slot=sid):
+                self.assertEqual(v["packing"]["unplaced"], 0)
+        sl1 = r["value_mm"]["SL1"]
+        self.assertEqual(len(sl1["packing"]["regions_mm"]), 2)
+        Q = self._copy()
+        s = next(x for x in Q.mech["plate"]["slots"] if x["id"] == "SL1")
+        s["rect"] = [168.5, 93.2, 27.5, 3.8]                                  # the first size: area passed, the third wire had no place
+        v = rules.plate_slot_fill(Q)["value_mm"]["SL1"]
+        self.assertLessEqual(v["bundle_need_mm2"], v["inner_mm2"])
+        self.assertGreater(v["packing"]["unplaced"], 0)
+        self.assertIn("wire packing", v["result"])
+
+    def test_shelf_pack_counts_round_wires(self):
+        self.assertEqual(rules._shelf_pack([1.09] * 3, 1.9, 2.3), [1.09])     # two stacked fit, the third does not
+        self.assertEqual(rules._shelf_pack([1.09] * 4, 2.2, 2.2), [])
+        self.assertEqual(rules._shelf_pack([2.0], 1.9, 5.0), [2.0])
+
+    def test_sl3_bms_edge_takes_the_tape(self):
+        sl3 = next(x for x in P.mech["plate"]["slots"] if x["id"] == "SL3")
+        self.assertEqual(sl3["trim"]["left"], "tape")
+        self.assertEqual(sl3["trim"]["right"], "grommet")
+        Q = self._copy()
+        s = next(x for x in Q.mech["plate"]["slots"] if x["id"] == "SL3")
+        s["trim"]["left"] = "grommet"                                         # legs would sit under the BMS (0.5 mm above the plate)
+        v = rules.plate_slot_fill(Q)["value_mm"]["SL3"]
+        self.assertIn("bms", v["result"])
