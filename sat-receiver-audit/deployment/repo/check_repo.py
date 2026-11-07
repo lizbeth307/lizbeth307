@@ -12,6 +12,8 @@ patch, source member, the recipe files and hooks of the recipe), and a package h
 SHA-256 and carry the record's record_digests. Every package, -dev and Lime included, has its
 <package>.data-tree.json with the recorded data_tree_sha256, and both readers of the .deb (Python
 deploy.deb_data_inventory and the dpkg-deb extraction) give exactly its entries (DATA_TREE_MATCH).
+Each lab package a record's build_environment.lab_build_depends names is one of these packages,
+byte for byte (lab_depends_published: a heavy job's rebuilt chain cannot publish against other bytes).
 `publishable`: the .deb files a lab repository may carry now (no deploy.lab_package_issues
 finding: Lime while Lime is disabled, Soapy modules outside the allowlist, TX/control tools); the
 others are listed as held back with their findings.
@@ -26,7 +28,7 @@ in ci.tag_samples, from a clone of the component's tag that must be the locked c
 installed offline, a probe and each recipe's runtime_check.py under unshare --net),
 `tarball-vs-tag` (every lock entry with a tag and no git tree: its release tarball against the
 tag tree, reported) and `chains` (a heavy job's rebuilt lab_build_depends against the published
-bytes, reported).
+bytes, reported; the bytes a published package was built against are a gate in `packages`).
 Read-only for its inputs; writes only into new temporary or named output directories. CI
 evidence only: no review, no TX proof, no hardware test.
 """
@@ -52,12 +54,15 @@ import build_recipe  # noqa: E402
 import lab_build  # noqa: E402
 
 PUBLIC_LIBRARY = re.compile(r"usr/lib/aarch64-linux-gnu/[^/]+\.so\.[^/]+")
-# Repository-relative paths (git diff --name-only) of the push range against which heavy jobs are
-# selected: the files every recipe build goes through, then per chain recipe its directory, its
-# -rx-only patch and its sources.lock.json entry (heavy_selection).
+# Repository-relative paths (git diff --no-renames --name-only) of the push range against which
+# heavy jobs are selected: the files every recipe build goes through (receive-only-policy.json:
+# its forbidden_basenames refuse a staged tree in build_recipe.build), then per chain recipe its
+# directory, its -rx-only patch and its sources.lock.json entry, and the lock's apt_snapshot
+# (heavy_selection). deploy.py is not one: a heavy package meets a changed deploy.py only in a
+# [lab-build-all] run (the landing commit).
 PROJECT_PREFIX = DEPLOYMENT.parent.name + "/"
 BUILDER_INPUTS = (".github/workflows/sr-rx-packages.yml",) + tuple(PROJECT_PREFIX + "deployment/" + p for p in (
-    "recipes/build_recipe.py", "recipes/lab_build.py", "vendor_patch.py", "patches/target-hashes.json"))
+    "recipes/build_recipe.py", "recipes/lab_build.py", "vendor_patch.py", "patches/target-hashes.json", "receive-only-policy.json"))
 # The one commit-message token: fixed text, matched in Python on the message passed through env.
 LAB_BUILD_ALL = re.compile(r"\[lab-build-all\]")
 TAG = re.compile(r"[A-Za-z0-9][A-Za-z0-9._+/-]*")
@@ -106,6 +111,36 @@ def record_binding(record_path, record):
         raise CheckError("build record carries record_digests without a package hook output: " + record_path.name)
     return {"component": record["component"], "patch_receipts": len(environment.get("patch_receipts", [])),
             "source_member": (environment.get("source_member") or {}).get("path"), "record_digests": "record_digests" in record}
+
+
+def lab_depends_published(out):
+    """Each record's build_environment.lab_build_depends (the lab packages its chroot installed)
+    against the packages of the records under out, the ones this run publishes: the same name,
+    version, component and SHA-256, or a refusal. So a heavy job, which rebuilt its chain on
+    another runner, cannot publish a package built against bytes the repository does not carry.
+    A differing record_sha256 with the same bytes is only reported (record_equal false)."""
+    published = {}
+    for record_path in records(out):
+        record = deploy.load(record_path)
+        for package in record["packages"]:
+            published[package["package"]] = {"version": package["version"], "component": record["component"],
+                                             "sha256": package["sha256"], "record_sha256": deploy.sha(record_path)}
+    result = []
+    for record_path in records(out):
+        record = deploy.load(record_path)
+        installed = record["build_environment"].get("lab_build_depends", [])
+        if type(installed) is not list:
+            raise CheckError("build record lab_build_depends is not a list: " + record_path.name)
+        for item in installed:
+            name = item.get("package") if type(item) is dict else None
+            have = published.get(name)
+            if have is None or any(item.get(k) != have[k] for k in ("version", "component", "sha256")):
+                raise CheckError("%s was built against lab package %s bytes this run does not publish (%s)"
+                                 % (record_path.name, name, "no record builds it" if have is None else "SHA-256 %s, published %s"
+                                    % (str(item.get("sha256"))[:12], have["sha256"][:12])))
+            result.append({"component": record["component"], "package": name, "sha256": item["sha256"],
+                           "record_equal": item.get("record_sha256") == have["record_sha256"]})
+    return result
 
 
 def packages(out):
@@ -162,7 +197,8 @@ def packages(out):
                             "sha256": package["sha256"], "shlibs": shlibs, "verify_build": "REFUSED_OPEN_AS_EXPECTED",
                             "manifest_files": "NONE: " + refusal if refusal else "BUILD_INVENTORY_MATCH",
                             "data_tree": "DATA_TREE_MATCH", "data_tree_entries": len(entries)})
-    return {"status": "CI_PACKAGES_MATCH_BUILD_RECORDS", "packages": summary, "records": bound, "hardware_ready": False}
+    return {"status": "CI_PACKAGES_MATCH_BUILD_RECORDS", "packages": summary, "records": bound,
+            "lab_build_depends": lab_depends_published(out), "hardware_ready": False}
 
 
 def publishable(out):
@@ -358,8 +394,9 @@ def heavy_selection(plan, changed, lock_before, lock, build_all=False):
     [lab-build-all] token, a dispatch input): all of them. Otherwise one runs when a changed path
     of the push range (repository-relative) is a builder input (BUILDER_INPUTS), lies in
     deployment/recipes/<x>/ or is deployment/patches/<x>-rx-only.patch of a recipe x of its chain,
-    or when the sources.lock.json entry of a chain component differs from lock_before (the lock at
-    the start of the range; {} if it had none). changed None: an unknown range, all of them."""
+    or when the sources.lock.json entry of a chain component, or the lock's apt_snapshot (every
+    chroot comes from it), differs from lock_before (the lock at the start of the range; {} if it
+    had none). changed None: an unknown range, all of them."""
     selected = {}
     lock_path = PROJECT_PREFIX + "deployment/sources.lock.json"
     before = {c["id"]: c for c in (lock_before or {}).get("components", [])}
@@ -374,6 +411,8 @@ def heavy_selection(plan, changed, lock_before, lock, build_all=False):
         hit = next((p for p in changed if p in BUILDER_INPUTS or p in patches or p.startswith(prefixes)), None)
         if hit is None and lock_path in changed:
             hit = next((lock_path + " entry " + x for x in chain if before.get(x) != after.get(x)), None)
+            if hit is None and (lock_before or {}).get("apt_snapshot") != lock.get("apt_snapshot"):
+                hit = "sources.lock.json apt_snapshot"
         if hit is not None:
             selected[name] = "changed: " + hit
     return selected
@@ -749,11 +788,19 @@ def chroot_json(argv, log):
     return {"exit": result.returncode, "status": "CI_PASS" if ok else "FAIL", "report": report, "log": Path(log).name}
 
 
+def runtime_script(name):
+    """deployment/recipes/<name>/runtime_check.py when the recipe ships one (a regular file), else None."""
+    script = DEPLOYMENT / "recipes" / name / "runtime_check.py"
+    return None if script.is_symlink() or not script.is_file() else script
+
+
 def runtime_check(out, recipes, work, samples=None, lock=None):
     """runtime_packages of one job installed offline (dpkg -i in an empty network namespace) in one
     fresh chroot from the pinned snapshot; then PROBE and each recipe's runtime_check.py
     (deployment/recipes/<id>/runtime_check.py, with --samples <its tag samples> when it declares
-    ci.tag_samples) as uid 1000 under unshare --net --mount --pid. CI model on the arm64 builder."""
+    ci.tag_samples) as uid 1000 under unshare --net --mount --pid. CI model on the arm64 builder.
+    A recipe with a runtime_check.py but none of its own packages in the install set (all -dev or
+    held back) fails the check: its script would test nothing."""
     if not hasattr(os, "geteuid") or os.geteuid() != 0:
         raise CheckError("runtime-check needs root on a disposable builder (mmdebstrap, chroot, mounts)")
     lock = lock or deploy.load(DEPLOYMENT / "sources.lock.json")
@@ -763,13 +810,19 @@ def runtime_check(out, recipes, work, samples=None, lock=None):
         raise CheckError("runtime-check names no or unknown recipes: " + ", ".join(unknown))
     install, snapshot, held = runtime_packages(out, recipes)
     extra = sorted({d for r in recipes for d in result["recipes"][r]["runtime_depends"]})
+    uncovered = [n for n in recipes if runtime_script(n) is not None and not any(i["component"] == n for i in install)]
     report = {"status": "NO_RUNTIME_PACKAGES", "recipes": list(recipes), "snapshot_packages": sorted(set(snapshot) | set(extra) | {"python3"}),
               "held_back": held, "installed": [], "probe": None, "runtime_checks": {}, "hardware_ready": False,
+              "findings": ["%s/runtime_check.py: none of its packages is installed (all -dev or held back), so it would test nothing" % n
+                           for n in uncovered],
               "scope": "CI model on the arm64 builder: offline install in a fresh chroot from the pinned snapshot; no hardware, no RF."}
     work = Path(work).resolve()
     if work.exists():
         raise CheckError("runtime-check work directory already exists")
     work.mkdir(parents=True)
+    if uncovered:
+        report["status"] = "CI_RUNTIME_CHECK_FAILED"
+        return report
     if not install:
         return report
     keyring = lab_build.pinned_keyring(lock, work / "keyring")
@@ -785,8 +838,8 @@ def runtime_check(out, recipes, work, samples=None, lock=None):
                                   work / "probe.log")
     components = {c["id"]: c for c in lock["components"]}
     for name in recipes:
-        script = DEPLOYMENT / "recipes" / name / "runtime_check.py"
-        if script.is_symlink() or not script.is_file():
+        script = runtime_script(name)
+        if script is None:
             continue
         directory = runtime / name
         directory.mkdir()

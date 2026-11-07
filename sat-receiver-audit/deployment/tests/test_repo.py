@@ -1210,5 +1210,97 @@ class AptVersionPinSemanticsTests(unittest.TestCase):
                 self.assertTrue(value.startswith("/") and value.endswith("/"), stanza["package"])
 
 
+class ReviewedHeavyInputsTests(unittest.TestCase):
+    """W2 SW-CI review fixes: the lock's apt_snapshot and receive-only-policy.json select heavy jobs,
+    a published package must be built against published lab bytes, a runtime_check.py that would
+    test nothing fails, and the push range / mirror detection of sr-rx-packages.yml."""
+    PLAN = HeavySelectionTests.PLAN
+    WORKFLOW = HERE.parent.parent / ".github/workflows/sr-rx-packages.yml"
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="srrx-review-")
+        self.addCleanup(self.temp.cleanup)
+        self.out = Path(self.temp.name) / "debs"
+        self.check_repo = load_check_repo("srrx_check_repo_review")
+
+    def select(self, changed, lock_before):
+        return self.check_repo.heavy_selection(self.PLAN, changed, lock_before, LOCK)
+
+    def test_apt_snapshot_and_receive_only_policy_select_every_heavy_job(self):
+        project = self.check_repo.PROJECT_PREFIX + "deployment/"
+        lock_path = project + "sources.lock.json"
+        moved = copy.deepcopy(LOCK)
+        moved["apt_snapshot"]["timestamp"] = "20990101T000000Z"
+        self.assertEqual(self.select([lock_path], moved), {"satdump": "changed: sources.lock.json apt_snapshot",
+                                                           "sdrangel": "changed: sources.lock.json apt_snapshot"})
+        self.assertEqual(self.select([], moved), {})  # the lock is not in the range
+        self.assertEqual(self.select([lock_path], copy.deepcopy(LOCK)), {})  # same snapshot, same chain entries
+        self.assertIn(project + "receive-only-policy.json", self.check_repo.BUILDER_INPUTS)
+        self.assertEqual(sorted(self.select([project + "receive-only-policy.json"], None)), ["satdump", "sdrangel"])
+        self.assertNotIn(project + "deploy.py", self.check_repo.BUILDER_INPUTS)  # only a [lab-build-all] run (build/15)
+        self.assertEqual(self.select([project + "deploy.py"], None), {})
+
+    def record(self, component, packages, lab_build_depends=()):
+        directory = self.out / component
+        directory.mkdir(parents=True)
+        entries = []
+        for name, files in packages:
+            deb = directory / ("%s_1_arm64.deb" % name)
+            deb.write_bytes(control_deb("Package: %s\nVersion: 1\nArchitecture: arm64\nDepends: libc6\n" % name, files))
+            entries.append({"package": name, "version": "1", "architecture": "arm64", "filename": deb.name, "sha256": deploy.sha(deb), "size": deb.stat().st_size})
+        path = directory / (component + ".build-record.json")
+        path.write_text(json.dumps({"component": component, "packages": entries, "build_environment": {"lab_build_depends": list(lab_build_depends)}}),
+                        encoding="utf-8")
+        return path
+
+    def test_published_packages_are_built_against_published_lab_bytes(self):
+        rtl = self.record("rtlsdr", [("librtlsdr2", {LIB + "librtlsdr.so.2.0.3": b"\x7fELF lib"}), ("librtlsdr-dev", {"usr/include/rtl-sdr.h": b"/* h */\n"})])
+        dev = deploy.load(rtl)["packages"][1]
+        item = {"package": "librtlsdr-dev", "version": "1", "sha256": dev["sha256"], "component": "rtlsdr", "record_sha256": deploy.sha(rtl)}
+        heavy = self.record("sdrangel", [("sdrangel", {"usr/bin/sdrangel": b"\x7fELF sdrangel"})], [item])
+        self.assertEqual(self.check_repo.lab_depends_published(self.out),
+                         [{"component": "sdrangel", "package": "librtlsdr-dev", "sha256": dev["sha256"], "record_equal": True}])
+        for change, message in (({"record_sha256": "0" * 64}, None), ({"sha256": "1" * 64}, "bytes this run does not publish"),
+                                ({"version": "2"}, "bytes this run does not publish"), ({"component": "other"}, "bytes this run does not publish"),
+                                ({"package": "libairspyhf-dev"}, "no record builds it")):
+            with self.subTest(change):
+                record = deploy.load(heavy)
+                record["build_environment"]["lab_build_depends"] = [dict(item, **change)]
+                heavy.write_text(json.dumps(record), encoding="utf-8")
+                if message is None:  # another record file, the same bytes: reported only
+                    self.assertFalse(self.check_repo.lab_depends_published(self.out)[0]["record_equal"])
+                else:
+                    with self.assertRaisesRegex(self.check_repo.CheckError, message):
+                        self.check_repo.lab_depends_published(self.out)
+        with patch.object(self.check_repo, "records", return_value=[]), \
+                patch.object(self.check_repo, "lab_depends_published", side_effect=self.check_repo.CheckError("unpublished lab bytes")):
+            with self.assertRaisesRegex(self.check_repo.CheckError, "unpublished lab bytes"):
+                self.check_repo.packages(self.out)  # packages() applies the gate
+
+    def test_a_runtime_check_with_nothing_installed_fails(self):
+        self.record("limesuiteng", [("liblimesuiteng", {LIB + "liblimesuiteng.so.0.3-1": b"\x7fELF lime"}),
+                                    ("limesuiteng-dev", {"usr/include/limesuiteng.h": b"/* h */\n"})])
+        self.record("rtlsdr", [("librtlsdr2", {LIB + "librtlsdr.so.2.0.3": b"\x7fELF lib"})])
+        script = Path(self.temp.name) / "runtime_check.py"
+        script.write_text("print('{\"ok\": true, \"findings\": []}')\n", encoding="utf-8")
+        cases = ((["limesuiteng"], {"limesuiteng"}, "CI_RUNTIME_CHECK_FAILED"), (["limesuiteng", "rtlsdr"], {"limesuiteng"}, "CI_RUNTIME_CHECK_FAILED"),
+                 (["limesuiteng"], set(), "NO_RUNTIME_PACKAGES"))
+        for number, (recipes, hooks, status) in enumerate(cases):
+            with self.subTest(recipes=recipes, hooks=hooks), patch.object(self.check_repo.os, "geteuid", create=True, return_value=0), \
+                    patch.object(self.check_repo, "runtime_script", side_effect=lambda name: script if name in hooks else None), \
+                    patch.object(self.check_repo.lab_build, "pinned_keyring", side_effect=AssertionError("no chroot for this case")):
+                report = self.check_repo.runtime_check(self.out, recipes, Path(self.temp.name) / ("work%d" % number))
+                self.assertEqual((report["status"], report["installed"], report["probe"]), (status, [], None))
+                self.assertEqual([f.split("/", 1)[0] for f in report["findings"]], sorted(hooks))
+
+    @unittest.skipUnless((HERE.parent.parent / ".github/workflows/sr-rx-packages.yml").is_file(), "workflow file not in this tree")
+    def test_push_range_and_mirror_detection_fail_safe(self):
+        text = self.WORKFLOW.read_text(encoding="utf-8")
+        self.assertIn('git diff --no-renames --name-only "$base" HEAD', text)
+        self.assertNotIn("HEAD^", text)  # a new branch is an unknown range, not its last commit
+        self.assertNotIn("check_repo.py mirror --help", text)
+        self.assertIn('python3 deployment/repo/check_repo.py --help > "$RUNNER_TEMP/check-repo-help.txt"', text)
+
+
 if __name__ == "__main__":
     unittest.main()
