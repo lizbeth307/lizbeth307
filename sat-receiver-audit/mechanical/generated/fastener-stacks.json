@@ -320,7 +320,7 @@
       "what": "CTRL board to the front-shell bosses",
       "count": 6,
       "thread": "M2.5",
-      "seat": "CTRL rear face, z 57",
+      "seat": "CTRL rear face, z 58.98",
       "stack_mm": [
         [
           "CTRL board",
@@ -348,7 +348,7 @@
       "what": "ENC board to the front-shell bosses",
       "count": 4,
       "thread": "M2.5",
-      "seat": "ENC rear face, z 56.4",
+      "seat": "ENC rear face, z 58.38",
       "stack_mm": [
         [
           "ENC board",
@@ -480,7 +480,7 @@
       "what": "display clamps into the front-shell clamp bosses",
       "count": 4,
       "thread": "M2.5",
-      "seat": "clamp rear face, z 56.6",
+      "seat": "clamp rear face, z 58.58",
       "stack_mm": [
         [
           "printed clamp",

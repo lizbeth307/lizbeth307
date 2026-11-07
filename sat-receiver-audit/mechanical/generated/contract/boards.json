@@ -668,7 +668,7 @@
             176.0,
             13.0
           ],
-          "z_bottom": 57.0,
+          "z_bottom": 58.98,
           "facing": "+z"
         }
       },
@@ -1003,8 +1003,8 @@
             34.0,
             57.0
           ],
-          "free_mm": 6.0,
-          "fits_mm": 5.5,
+          "free_mm": 7.98,
+          "fits_mm": 7.48,
           "limit": "bms"
         },
         {
@@ -1014,8 +1014,8 @@
             9.5,
             5.5
           ],
-          "free_mm": 16.5,
-          "fits_mm": 16.0,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.ext"
         },
         {
@@ -1025,8 +1025,8 @@
             6.5,
             5.5
           ],
-          "free_mm": 2.5,
-          "fits_mm": 2.0,
+          "free_mm": 4.48,
+          "fits_mm": 3.98,
           "limit": "plate.boss2"
         },
         {
@@ -1036,8 +1036,8 @@
             16.0,
             8.7
           ],
-          "free_mm": 16.5,
-          "fits_mm": 16.0,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.ext"
         },
         {
@@ -1047,8 +1047,8 @@
             6.2,
             11.3
           ],
-          "free_mm": 16.5,
-          "fits_mm": 16.0,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.ext"
         },
         {
@@ -1058,8 +1058,8 @@
             5.6,
             49.6
           ],
-          "free_mm": 5.7,
-          "fits_mm": 5.2,
+          "free_mm": 7.68,
+          "fits_mm": 7.18,
           "limit": "hdmi_route_front_up"
         },
         {
@@ -1069,8 +1069,8 @@
             4.2,
             11.3
           ],
-          "free_mm": 16.5,
-          "fits_mm": 16.0,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.ext"
         },
         {
@@ -1080,8 +1080,8 @@
             6.2,
             27.5
           ],
-          "free_mm": 16.5,
-          "fits_mm": 16.0,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.main"
         },
         {
@@ -1091,8 +1091,8 @@
             4.2,
             38.3
           ],
-          "free_mm": 16.5,
-          "fits_mm": 16.0,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.main"
         },
         {
@@ -1102,8 +1102,8 @@
             0.8,
             4.0
           ],
-          "free_mm": 16.5,
-          "fits_mm": 16.0,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.main"
         },
         {
@@ -1113,8 +1113,8 @@
             5.4,
             10.8
           ],
-          "free_mm": 5.7,
-          "fits_mm": 5.2,
+          "free_mm": 7.68,
+          "fits_mm": 7.18,
           "limit": "hdmi_route_front_turn"
         },
         {
@@ -1124,8 +1124,8 @@
             34.8,
             1.2
           ],
-          "free_mm": 16.5,
-          "fits_mm": 16.0,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.main"
         },
         {
@@ -1135,8 +1135,8 @@
             34.8,
             5.6
           ],
-          "free_mm": 5.7,
-          "fits_mm": 5.2,
+          "free_mm": 7.68,
+          "fits_mm": 7.18,
           "limit": "hdmi_route_front_run"
         },
         {
@@ -1146,8 +1146,8 @@
             50.0,
             4.7
           ],
-          "free_mm": 16.5,
-          "fits_mm": 16.0,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.main"
         },
         {
@@ -1157,8 +1157,8 @@
             12.0,
             14.5
           ],
-          "free_mm": 16.5,
-          "fits_mm": 16.0,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.main"
         },
         {
@@ -1168,8 +1168,8 @@
             13.0,
             14.5
           ],
-          "free_mm": 16.5,
-          "fits_mm": 16.0,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.main"
         },
         {
@@ -1179,8 +1179,8 @@
             12.0,
             10.5
           ],
-          "free_mm": 3.5,
-          "fits_mm": 3.0,
+          "free_mm": 5.48,
+          "fits_mm": 4.98,
           "limit": "lime"
         },
         {
@@ -1190,8 +1190,8 @@
             13.0,
             10.5
           ],
-          "free_mm": 3.5,
-          "fits_mm": 3.0,
+          "free_mm": 5.48,
+          "fits_mm": 4.98,
           "limit": "lime"
         },
         {
@@ -1201,8 +1201,8 @@
             50.0,
             15.5
           ],
-          "free_mm": 3.5,
-          "fits_mm": 3.0,
+          "free_mm": 5.48,
+          "fits_mm": 4.98,
           "limit": "lime"
         },
         {
@@ -1212,8 +1212,8 @@
             50.0,
             0.5
           ],
-          "free_mm": 16.5,
-          "fits_mm": 16.0,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.main"
         },
         {
@@ -1223,8 +1223,8 @@
             12.0,
             25.0
           ],
-          "free_mm": 6.0,
-          "fits_mm": 5.5,
+          "free_mm": 7.98,
+          "fits_mm": 7.48,
           "limit": "ip2368"
         },
         {
@@ -1234,8 +1234,8 @@
             7.0,
             25.0
           ],
-          "free_mm": 6.0,
-          "fits_mm": 5.5,
+          "free_mm": 7.98,
+          "fits_mm": 7.48,
           "limit": "ip2368"
         },
         {
@@ -1245,8 +1245,8 @@
             6.0,
             27.5
           ],
-          "free_mm": 16.5,
-          "fits_mm": 16.0,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.main"
         },
         {
@@ -1256,8 +1256,8 @@
             44.0,
             2.5
           ],
-          "free_mm": 6.0,
-          "fits_mm": 5.5,
+          "free_mm": 7.98,
+          "fits_mm": 7.48,
           "limit": "ip2368"
         },
         {
@@ -1267,8 +1267,8 @@
             40.0,
             6.5
           ],
-          "free_mm": 6.0,
-          "fits_mm": 5.5,
+          "free_mm": 7.98,
+          "fits_mm": 7.48,
           "limit": "ip2368"
         },
         {
@@ -1278,8 +1278,8 @@
             40.0,
             0.5
           ],
-          "free_mm": 16.5,
-          "fits_mm": 16.0,
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
           "limit": "plate.main"
         }
       ],
@@ -1329,7 +1329,7 @@
             188.5,
             123.0
           ],
-          "z_bottom": 56.4,
+          "z_bottom": 58.38,
           "facing": "+z"
         },
         "volume": {
@@ -1337,7 +1337,7 @@
             188.5,
             82.0
           ],
-          "z_bottom": 56.4,
+          "z_bottom": 58.38,
           "facing": "+z"
         }
       },

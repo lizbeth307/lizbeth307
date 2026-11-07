@@ -1,7 +1,7 @@
 {
   "schema": "srrx-mech-manifest-v1",
   "generator": "1.0.0",
-  "params_sha256": "ebbeb7b0ead0e1d11beec6e197534157aedf2f17e5ba84077594909e177188b4",
+  "params_sha256": "542df4197d9bb5099829f66e9ef938bf57fe0cbc7406fad0ea31cb8a402cc5e4",
   "libraries": {
     "build123d": "0.13.0",
     "cadquery-ocp-novtk": "8.0.1.0.0",
@@ -31,8 +31,8 @@
       "sha256": "e8305537ee28f53d45d8c7add0e19b92f87005215d4e6c985912bb1bf8e2d2b5"
     },
     "contract/boards.json": {
-      "bytes": 26996,
-      "sha256": "9d29efc3537e9561e1a930a51f7fe4370497410860f24f83bc5ecb1ac5b5ef0f"
+      "bytes": 27051,
+      "sha256": "53dd33ef22feb5d33cc8185f91212b8ad9291b1a72c102295249f58a58e54be2"
     },
     "drawings/A-01.dxf": {
       "bytes": 3744,
@@ -40,7 +40,7 @@
     },
     "drawings/A-01.svg": {
       "bytes": 10322,
-      "sha256": "cf0317eecccb0b618f9b240e04edbe7411a3af61284bc3ce75a3efc17e59c5d3"
+      "sha256": "d4a055963f76f1d57d5ac5b28784a725dd20bb37a1e5a87090bfb92f4e54d367"
     },
     "drawings/A-02.dxf": {
       "bytes": 3728,
@@ -48,7 +48,7 @@
     },
     "drawings/A-02.svg": {
       "bytes": 10598,
-      "sha256": "045ecc8f32e009365c028cafd22aa1c9b118a96218ff7892746aa201bbc8d10f"
+      "sha256": "41f2f4a0850c67e8597bda3b369ec68f31afda67f56f512da926c765230b5f8a"
     },
     "drawings/A-03.dxf": {
       "bytes": 5161,
@@ -56,7 +56,7 @@
     },
     "drawings/A-03.svg": {
       "bytes": 13172,
-      "sha256": "e6f51f755a549b79e73d5f5c3b854e5c1c36927394abb66be0768db1df81ce4b"
+      "sha256": "20cdfd44cadd90fe7677b7767dc850b304926d87b45ef515210940f93836f04e"
     },
     "drawings/A-04.dxf": {
       "bytes": 11972,
@@ -64,7 +64,7 @@
     },
     "drawings/A-04.svg": {
       "bytes": 24157,
-      "sha256": "b3bf0f230e72de774e97bc9e3ddbbc58fb557432458e60dac29d53f346110570"
+      "sha256": "1c866e5442e2d88ac62c2b15650231702ee0a95988ee982d8bc1d1eece44d840"
     },
     "drawings/A-05.dxf": {
       "bytes": 11954,
@@ -72,7 +72,7 @@
     },
     "drawings/A-05.svg": {
       "bytes": 23968,
-      "sha256": "d9c12441e61cc6d1da1b893a6ece93744e88c94b8fe2bad99b7c38a90812ffde"
+      "sha256": "3f25a26d469bc4a2193ccf20723de739027de87a58010bd4e6c83db002bb66bc"
     },
     "drawings/A-06.dxf": {
       "bytes": 9830,
@@ -80,7 +80,7 @@
     },
     "drawings/A-06.svg": {
       "bytes": 19479,
-      "sha256": "8a895ee84d26b0e083020aa31b6b5651ebd8ca7b1e4450dff42b911b215fcac7"
+      "sha256": "08c25da876da00db11a7013a04026747df823d5f1a359f0cd84b709931987931"
     },
     "drawings/A-07.dxf": {
       "bytes": 5288,
@@ -88,7 +88,7 @@
     },
     "drawings/A-07.svg": {
       "bytes": 14992,
-      "sha256": "02c338bbc028b1e197a5466abc432d4e00cc879ef95780c4e2c551df9aa93ee3"
+      "sha256": "29f27cd6a7cefd482c5bf743ac2cc782fe92c4057284cb5c58cd17312f0b5650"
     },
     "drawings/B-CTRL.dxf": {
       "bytes": 5378,
@@ -96,7 +96,7 @@
     },
     "drawings/B-CTRL.svg": {
       "bytes": 14904,
-      "sha256": "d5f5059e6b6d5b4be495d365e81e0b53f216058161f06b81085ad8b4953d6ef1"
+      "sha256": "75d73571048b19269a50f1a999cf9848bf5eb2963dc23b90acf3946207cbc66c"
     },
     "drawings/B-ENC.dxf": {
       "bytes": 2607,
@@ -104,7 +104,7 @@
     },
     "drawings/B-ENC.svg": {
       "bytes": 9484,
-      "sha256": "740e96c2ce478d93ee6dad8be7ef3c24252575e589dc8dcd5f5d82ba96143632"
+      "sha256": "bdd393052e7a597da149e796e976c2785f4193e9d9dac3998af3f4af03aac660"
     },
     "drawings/B-PWR.dxf": {
       "bytes": 5468,
@@ -112,7 +112,7 @@
     },
     "drawings/B-PWR.svg": {
       "bytes": 16726,
-      "sha256": "59ce1db3b7a6957a10fabc80fd74c48f5fc0f2e7c0f6c5e54437fbca753d7dae"
+      "sha256": "9ff10a58a776f18b5148b770c17ee7af9de053a486e635d329bb141450cc2024"
     },
     "drawings/B-PWR_B.dxf": {
       "bytes": 4276,
@@ -120,7 +120,7 @@
     },
     "drawings/B-PWR_B.svg": {
       "bytes": 13216,
-      "sha256": "dfed3c5ab9b19ea684df9799661cc01cc67e03d51d66e5f5b4f384b20eacc3de"
+      "sha256": "bee5ff73dbd73b1074069c54a984fc62c641f6b9e62e6c3e72edbb5814dc3f51"
     },
     "drawings/B-RF.dxf": {
       "bytes": 3704,
@@ -128,7 +128,7 @@
     },
     "drawings/B-RF.svg": {
       "bytes": 11926,
-      "sha256": "15cccf9e630c98c1d4c1c1313aaef89b9d46273a6cf720e80d95ccdc3a6fffe2"
+      "sha256": "99a26847234e2013fd578b1c77fc7281b0d661cf0761b8466eb214e83e7c98d5"
     },
     "drawings/I-01.dxf": {
       "bytes": 3542,
@@ -136,7 +136,7 @@
     },
     "drawings/I-01.svg": {
       "bytes": 12125,
-      "sha256": "ea4ffb288e39eb68c1181deced08df6cf7867199d23ab75bf8186f42e6c2e662"
+      "sha256": "76076bd786e66000edf9a05fa4c3d6a8d9358c48edda5c5f5feff4e6b1cb2726"
     },
     "drawings/M-01.dxf": {
       "bytes": 6222,
@@ -144,23 +144,23 @@
     },
     "drawings/M-01.svg": {
       "bytes": 19458,
-      "sha256": "427aa29dab726cd2017587677fa3c4a61a4168b1182947a561fb35ea07c40a12"
+      "sha256": "fb1da8b29d9def34f20f532011d9513ec1efe4abb84588cbd8ddc17dd4f1f880"
     },
     "drawings/M-02.dxf": {
-      "bytes": 17644,
-      "sha256": "a5a59a9320f4a62a2d655048fd5c31db7eebbae0b8f0d1bc7d81ed6a5d13d663"
+      "bytes": 17707,
+      "sha256": "958b64b7ff8b777f009b4ccdec9e86fe36ec3bdfd832f71e8d65818ca534932b"
     },
     "drawings/M-02.svg": {
-      "bytes": 41182,
-      "sha256": "73ef769aed03ed6e6bb30476b57c7a8e779609fcc09c83c5086a18e7c597273d"
+      "bytes": 41247,
+      "sha256": "744d0e60d368b6690a8dd2e2dc24a55515b600a1739a6968ed09b84f8ce20854"
     },
     "drawings/M-03.dxf": {
-      "bytes": 5271,
-      "sha256": "46cfd60a5ea50800dac2cf839464b6c3c7ad3e8ceb69c0ce8006c0af23215709"
+      "bytes": 5313,
+      "sha256": "a81d865d5c826eecdb2e6b52463705ff39d191d24c6d1dafa17d813c46b6b28b"
     },
     "drawings/M-03.svg": {
-      "bytes": 16629,
-      "sha256": "ee958a01dbdf2c228b485c3e7e73848f791dc288e1d13173a9c9bf6927533548"
+      "bytes": 16680,
+      "sha256": "b0ed4ff7abcfe25e35e7d3f6c8fbdac329babf1d3257b2be8218402ff63930b1"
     },
     "drawings/M-06.dxf": {
       "bytes": 14767,
@@ -168,7 +168,7 @@
     },
     "drawings/M-06.svg": {
       "bytes": 39040,
-      "sha256": "e055cb7e16099b3ee0d356b14d19ddf6403d89347932e7bcf7fc723adc1fb45b"
+      "sha256": "211fc85eef159b70e6ff73125e95cb544f1382b3259e4c3bcc1a4450d82a4a46"
     },
     "drawings/M-07.dxf": {
       "bytes": 17412,
@@ -176,7 +176,7 @@
     },
     "drawings/M-07.svg": {
       "bytes": 50333,
-      "sha256": "527be6a6a96446e4485a85e791841735070084a8aa9d63301408af079d925f97"
+      "sha256": "8691f2a06f9d7154f459d1d2fab40a757e760478565786dcb9d7dc5c8ef35787"
     },
     "drawings/M-08.dxf": {
       "bytes": 6185,
@@ -184,7 +184,7 @@
     },
     "drawings/M-08.svg": {
       "bytes": 17795,
-      "sha256": "248f002a80423392acf4a8636d3bae05478630150c45d9339c3a99d8995b7bb4"
+      "sha256": "70a47acb66f5fdcbb6cacb40b22ec3de5348c16cbec77e745aaed49c35b1fd48"
     },
     "drawings/M-09.dxf": {
       "bytes": 12352,
@@ -192,7 +192,7 @@
     },
     "drawings/M-09.svg": {
       "bytes": 29889,
-      "sha256": "96290812557b7b1e1d65f787596b858bba662716aa464ba0deb890c325dbd591"
+      "sha256": "f79112398f75f79bef71ae5db824a9182622aea4adc02c663e5e77a325e1500c"
     },
     "drawings/M-10.dxf": {
       "bytes": 8752,
@@ -200,7 +200,7 @@
     },
     "drawings/M-10.svg": {
       "bytes": 21354,
-      "sha256": "a5513a266d228fe93d07489d5279bd8f4cc8b2ce88059f1c0a124998e9fa7caa"
+      "sha256": "d9d2dbbad991ba956f386fc0fd5022dd60af55a62b8e2a609d675f266dc617d9"
     },
     "drawings/M-11.dxf": {
       "bytes": 3264,
@@ -208,7 +208,7 @@
     },
     "drawings/M-11.svg": {
       "bytes": 11429,
-      "sha256": "1beeb015ed6e331e83eb9b4a1d9bd5d50f55e21c1d0a1775c7990e1667607905"
+      "sha256": "8d6615e3b10484af396402bc6ece5a7db2ed464293fb212dcb7a4f430aa123ee"
     },
     "drawings/M-12.dxf": {
       "bytes": 4216,
@@ -216,7 +216,7 @@
     },
     "drawings/M-12.svg": {
       "bytes": 12145,
-      "sha256": "d2d70741a0c805328b04b79281c6718d105e65f242ff38334b760289f9bce5ae"
+      "sha256": "fe924bbb98c2aa354f09a6de35f095b46cb14da35017883bb41620dde1353359"
     },
     "drawings/M-13.dxf": {
       "bytes": 4844,
@@ -224,7 +224,7 @@
     },
     "drawings/M-13.svg": {
       "bytes": 14880,
-      "sha256": "db9ff90f9b50e7e6eaeb7214b065e6efe74641b41cdd1682a56eebd0779623e2"
+      "sha256": "74fc3754d7020dcea1975581878f1229cbab011aaccddc061e3b0450db08e048"
     },
     "drawings/P-01.dxf": {
       "bytes": 3419,
@@ -232,7 +232,7 @@
     },
     "drawings/P-01.svg": {
       "bytes": 11225,
-      "sha256": "02219136bcf967d0561d9f5ca1ae78385024fbbba091bc8e3346247d54f729b3"
+      "sha256": "ae6ed0a537bdffaf71253ab1b978ef5ed3f92d90ed8afb37152b5753d618bdbc"
     },
     "drawings/P-02.dxf": {
       "bytes": 8290,
@@ -240,39 +240,39 @@
     },
     "drawings/P-02.svg": {
       "bytes": 18838,
-      "sha256": "0e1d7929e1160aa707a133710bf7a387bf9e42858e642564719e777c71a4f086"
+      "sha256": "7a237e11b7410866a46e3cf782996c141a85e6a5268d167e933650e6505d715d"
     },
     "drawings/antennas.pdf": {
-      "bytes": 81808,
-      "sha256": "b55bbd49f1929bcb0ab2642c34ac77a27b8a1d17b61a02a602d15274b80ae5b2"
+      "bytes": 81911,
+      "sha256": "7f234ea8a575418668fc5b9299b8f9ded88dbd41b66a15c9fd42c2bfa7f97711"
     },
     "drawings/boards.pdf": {
-      "bytes": 68296,
-      "sha256": "54c773aa00c99e712313bdf463f2ad017a07ed64d37164c9e1218d9c004dfe1a"
+      "bytes": 68382,
+      "sha256": "e658bdef7c763181b34e095064735b82533aca400a25c29ca5644635bfa36d46"
     },
     "drawings/enclosure.pdf": {
-      "bytes": 174417,
-      "sha256": "94f3ada93b555937463c246695ae6d4ee224e10e7f13a4984d34b10222d78fa9"
+      "bytes": 174657,
+      "sha256": "f0a34ce2d5b0d6704f35d9867548712bba43c53d52b3b3a5567fb0805b4f764a"
     },
     "drawings/pod-imu.pdf": {
-      "bytes": 48352,
-      "sha256": "03b90ccc5ed6fcd475536afe3e75fd2f7cad8daedc6e616be7d536b844e7775f"
+      "bytes": 48399,
+      "sha256": "9d22f5b3d18e34005e786f0accb84d025502d9f93236b673b3810c9c47c5ea3a"
     },
     "fastener-stacks.json": {
-      "bytes": 22974,
-      "sha256": "1ffe4aab91b2648e40132bc78c4f2c43b2f5615d1c3f7bca7991007cb83bc502"
+      "bytes": 22979,
+      "sha256": "260013f1e3fcc4165e869012ec3f04478d4a8e26a2d01a9a1f37f9b9bc1d025d"
     },
     "fit-report.json": {
-      "bytes": 131467,
-      "sha256": "acfa219dd8a581a75c4db87a4b3eb8e080a2fc7471c1817849805a6c7b1c4e77"
+      "bytes": 121333,
+      "sha256": "dcfeb709e0f0cf182eb7ac484f4e0f9da6bf540b166a712280e5d6de9b821f1c"
     },
     "fit-report.md": {
-      "bytes": 60420,
-      "sha256": "65e72a024da2312f9c48628dbd010db79cefa8d71e65ad4a865ee81586b627b0"
+      "bytes": 57691,
+      "sha256": "5fc7e3448f2abd13856603f24488786e168b7b09500a39a8ef48ab1e19790342"
     },
     "harness-routes.json": {
-      "bytes": 52717,
-      "sha256": "39a787e2024371364597b3c40faeec1b79ceea378df3c98f774b5721143d41a1"
+      "bytes": 52752,
+      "sha256": "660f3480c13b81f2412177fcdb76e913d04f178060a6e19346fa89206f46a236"
     },
     "step/angle_right_al.step": {
       "bytes": 40584,
@@ -283,8 +283,8 @@
       "sha256": "ba515dd27bee6d00cc81994ee19ae07a7f6cddf5f7daa91c8ae55057fa347b1b"
     },
     "step/assembly.step": {
-      "bytes": 4184693,
-      "sha256": "4ba0fd16acd2d8e7573f12e249c6ba3705f045fe5909b1a7cc5a7ba9003bb63f"
+      "bytes": 4185327,
+      "sha256": "6a1b32ab69308d9ef4ca64a43014d47c17178be39e30c21b58d14f530dee4825"
     },
     "step/battery_tray.step": {
       "bytes": 110999,
@@ -307,8 +307,8 @@
       "sha256": "9777a40b8246108fa0861dd2405e94f4472e5271436171f0871ec19c5ae9e557"
     },
     "step/front_shell.step": {
-      "bytes": 1030159,
-      "sha256": "f1430956616375abd7c00aad56d006674b8bc9ff2dd62623b6c4312d011a91b3"
+      "bytes": 1030626,
+      "sha256": "93cb609ba7fcc47b5484b83b33211c4128b6095de8de9bb514f751ddfbe8726a"
     },
     "step/hatch_cover.step": {
       "bytes": 128975,
@@ -319,8 +319,8 @@
       "sha256": "e5a90235814743a38a8af6d7c76c2591cd0b60eecd838ae841349f4b44709239"
     },
     "step/hood.step": {
-      "bytes": 95357,
-      "sha256": "3c64bc447429009b736f191e1d84081a1a46008c51eb692aae164c3bd7d2f361"
+      "bytes": 95509,
+      "sha256": "5b82f40430f2703df1cb98b0eb11bfdac2ddb37f9683a6e6ea9ec927c8d2ba31"
     },
     "step/horn_ring_127.step": {
       "bytes": 210548,
@@ -412,7 +412,7 @@
     },
     "stl/front_shell.stl": {
       "bytes": 945384,
-      "sha256": "55aa44a1231665c92287aec22f3518aea7b9a1aa342f07afb80b78a3bc1f1318"
+      "sha256": "d3ee329b7849e290a29320af48a67ddacdea25dc76782a1a3ab28b978a12f658"
     },
     "stl/hatch_cover.stl": {
       "bytes": 40084,
@@ -420,7 +420,7 @@
     },
     "stl/hood.stl": {
       "bytes": 21884,
-      "sha256": "8a71a5c3118a76699e551ff782233689afe6137eb2a1293f19639b4529342c3b"
+      "sha256": "9e653ee242820ffe1da36c4ab730b7d6688c6167ddfa9c84a1fe7a73d43b775e"
     },
     "stl/horn_ring_127.stl": {
       "bytes": 91884,
