@@ -1276,7 +1276,8 @@
           {"box": "lc76g", "at": [0.5, 0.5, 0.5], "keep": "yz"},
           {"box": "lc76g", "at": [0.5, 1.0, 0.5], "keep": "z"}
         ],
-        "end_status": [{"unit": "GNSS", "provisional": "P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge"}],
+        "end_status": [{"unit": "Q6A.HDR", "provisional": "J20 pin-1 orientation not read (Radxa Q6A header drawing, fetch-only): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch"},
+                       {"unit": "GNSS", "provisional": "P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge; P1 at the envelope edge towards the Q6A shortens the branch by up to half the envelope width (31.8 mm)"}],
         "note": "PPS (J20.7), UART6 (J20.16/18) and one GND leave the S01 ribbon right after the socket and run along y 95.8 in the rear layer to the LC76G"
       }
     }

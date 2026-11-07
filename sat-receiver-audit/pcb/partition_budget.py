@@ -22,8 +22,10 @@ f x (parts + harness headers + B2B + test points) + modules at 1.0 + keepouts at
 outline minus hole keep-outs, and for the PWR-B mezzanine also minus the windows over PWR-A parts taller
 than hA, the Pololu windows, the uncovered edge strips over the PWR-A power headers and the probe windows of
 the PWR-A test points. The PWR-A/PWR-B boundary is the set of nets with pins on both boards; each crossing
-power net needs ceil(I_protection / I_pin) B2B contacts. Nothing here is a placement: the fill of a real
-placement (PCB-PWRA/PWRB/CTRL) decides, and the fallbacks of the spec fire on the triggers it states.
+power net needs ceil(I_protection / I_pin) B2B contacts. A CTRL bottom header takes the first variant whose read
+height fits the gap over BMS/IP2368 within the depth cap (dz_ctrl = the largest such term); a header without
+one is listed as unresolved. Nothing here is a placement: the fill of a real placement (PCB-PWRA/PWRB/CTRL)
+decides, and the fallbacks of the spec fire on the triggers it states.
 """
 from __future__ import annotations
 
@@ -40,7 +42,9 @@ ROOT = Path(__file__).resolve().parents[1]
 SPEC = ROOT / "pcb" / "partition-spec.json"
 OUT = ROOT / "pcb" / "partition-budget.json"
 SHEETS = ("E1", "E2", "E3", "E4", "E5")
-PWR_DOMAINS = ("PWR_MAIN", "PWR_BRANCH", "USB_POWER")
+# the last two are the PWR-B domains that GR-3 adds to pcb/prepare.py (partition-spec domains.PWR_B); listing them
+# here keeps the PWR part set the same before and after that change
+PWR_DOMAINS = ("PWR_MAIN", "PWR_BRANCH", "USB_POWER", "PWR_BRANCH_SW", "USB_POWER_SW")
 CURRENT_BOARDS = {"PWR": PWR_DOMAINS, "RF": ("RF_HMC", "RF_HF", "RF_INJECTOR", "DC_CORE"), "CTRL": ("CTRL_HMI",)}
 
 
@@ -216,39 +220,48 @@ class Design:
 
     # -- parts ----------------------------------------------------------------------------------------
     def height(self, ref, fp):
+        """(height, source, lower_bound): lower_bound marks a read value that is only a part of the stack
+        (a fuse holder without its fuse), so the real height is above it."""
         h = self.spec["heights"]
         mpn = self.mpn.get(ref)
         if mpn in h["by_mpn"]:
             e = h["by_mpn"][mpn]
-            return e["h"], f"MPN {mpn}: {e['src']}"
+            return e["h"], f"MPN {mpn}: {e['src']}", bool(e.get("lower_bound"))
         name = fp.split(":", 1)[-1]
         for key, e in h["by_footprint"].items():
             if name.startswith(key):
-                return e["h"], f"footprint {key}: {e['src']}"
+                return e["h"], f"footprint {key}: {e['src']}", bool(e.get("lower_bound"))
         for pat in h["low_profile"]["footprint_prefixes"]:
             if name.startswith(pat):
-                return h["low_profile"]["h_max"], "class: " + h["low_profile"]["src"]
-        return None, "no read or class height"
+                return h["low_profile"]["h_max"], "class: " + h["low_profile"]["src"], False
+        return None, "no read or class height", False
+
+    @staticmethod
+    def is_test_point(r):
+        """A test point before GR-2 (category test_access_requirement) and after it (a board part, mount pcb_pad,
+        kind testpoint or a TestPoint: footprint): the probe-window rule must not depend on the classification."""
+        return (r["category"] == "test_access_requirement" or r.get("kind") == "testpoint"
+                or (r["mount"] == "pcb_pad" and r["footprint"].startswith("TestPoint:")))
 
     def _parts(self):
         tp_fp = self.spec["test_points"]["footprint"]
         out = {}
         for ref, r in self.rows.items():
-            tp = r["category"] == "test_access_requirement"
+            tp = self.is_test_point(r)
             if r["dnp"] == "True" or not (r["category"] == "bare_board_part" or tp):
                 continue
-            fp = tp_fp if tp else r["footprint"]
+            fp = (r["footprint"] if self.fps.get(r["footprint"]) else tp_fp) if tp else r["footprint"]
             info = self.fps.get(fp)
             if info is None or info["crtyd"] is None:
                 raise SystemExit(f"{ref}: footprint {fp} has no F.CrtYd in the vendored library")
             c = self.comp[ref]
-            h, hsrc = self.height(ref, fp)
+            h, hsrc, h_lb = self.height(ref, fp)
             w, d = info["crtyd"]
             nets = sorted({p["net"] for p in c["pins"] if p.get("net")})
             out[ref] = {
                 "ref": ref, "sheet": c["sheet"], "group": c.get("group", ""), "value": c.get("value", ""),
                 "domain": r["board_candidate"], "mount": "pcb_pad" if tp else r["mount"], "tp": tp,
-                "footprint": fp, "w": w, "d": d, "area": w * d, "h": h, "h_src": hsrc,
+                "footprint": fp, "w": w, "d": d, "area": w * d, "h": h, "h_src": hsrc, "h_lower_bound": h_lb,
                 "module": r["mount"] == "pcb_module", "tht": (not tp) and r["mount"] in ("pcb_tht", "pcb_module"),
                 "tht_field": info["tht_field"], "tht_pads": info["tht_pads"] if not tp else 0, "nets": nets,
                 "pins": c["pins"],
@@ -269,11 +282,16 @@ class Design:
     def family(self, family):
         """Courtyard formula of a header family: mechanical/params/parts.json harness_headers, completed or
         replaced by the spec's header_families (heights, pin fields, dual-row families)."""
-        fam = dict(self.hh.get(family) or {})
-        fam.update(self.spec["header_families"].get(family, {}))
-        if "a" not in fam:
+        fam = self.family_or_none(family)
+        if fam is None:
             raise SystemExit(f"header family {family}: no courtyard formula")
         return fam
+
+    def family_or_none(self, family):
+        """As family(), but None when the family has no courtyard formula (a variant that is not usable yet)."""
+        fam = dict(self.hh.get(family) or {})
+        fam.update(self.spec["header_families"].get(family, {}))
+        return fam if all(k in fam for k in ("a", "b", "d")) else None
 
     def header_size(self, family, pins):
         fam = self.family(family)
@@ -325,6 +343,11 @@ class Evaluator:
                           (p["tp"] and p["sheet"] in ("E1", "E2", "E5") and self.group_domain(p) in PWR_DOMAINS)}
         self.ctrl_parts = {r: p for r, p in design.parts.items() if p["domain"] == "CTRL_HMI" or
                            (p["tp"] and self.group_domain(p) == "CTRL_HMI")}
+        n_tp = sum(1 for p in self.pwr_parts.values() if p["tp"])
+        if n_tp != self.S["test_points"]["expected_pwr"]:
+            raise SystemExit(f"found {n_tp} PWR test points, partition-spec test_points.expected_pwr says "
+                             f"{self.S['test_points']['expected_pwr']}: check the test-point classification, then the spec")
+        self.ctrl_hdrs = self.ctrl_bottom_headers()
 
     def group_domain(self, p):
         """Domain of the bare board parts of the same group (where a test point of that group lands)."""
@@ -375,14 +398,14 @@ class Evaluator:
                 side[ref] = "PLATE"
                 continue
             if key in groups_rear and ref not in pinned:
-                if p["h"] is not None and p["h"] <= P["rear_board"]["h_max"]:
+                if p["h"] is not None and p["h"] <= P["rear_board"]["h_max"] and not p["h_lower_bound"]:
                     side[ref] = "PCB_REAR"
                     continue
                 rear_override.append(ref)
             if key in groups_b and ref not in pinned:
                 if p["h"] is None:
                     raise SystemExit(f"{ref}: no height for the PWR-B rule ({p['footprint']})")
-                if p["h"] <= hB:
+                if p["h"] <= hB and not p["h_lower_bound"]:
                     side[ref] = "PWR_B"
                     continue
                 override.append(ref)
@@ -457,7 +480,7 @@ class Evaluator:
                 pins.setdefault(n, {}).setdefault(h["board"], []).append(h["id"])
         return {n: v for n, v in pins.items() if n != "GND" and len(v) == 2}
 
-    def b2b_budget(self, cross):
+    def b2b_budget(self, cross, contacts):
         P, S = self.P, self.S
         kelvin, precision = self.sense_nets()
         declared = {n for pair in S["b2b"]["declared_sense_pairs"] for n in pair["nets"]}
@@ -498,18 +521,31 @@ class Evaluator:
         n_power = sum(1 for r in rows if r["kind"] == "power")
         pins = sum(r["pins"] or 0 for r in rows)
         gnd = n_power * S["b2b"]["gnd_pins_per_power_net"]
+        with_spare = math.ceil((pins + gnd) * (1 + S["b2b"]["spare_fraction"]) - 1e-9)
         return {"nets": rows, "power_nets": n_power, "signal_pins": sum(r["pins"] for r in rows if r["kind"] != "power" and r["pins"]),
                 "power_pins": sum(r["pins"] or 0 for r in rows if r["kind"] == "power"), "gnd_pins": gnd,
-                "contacts_needed": pins + gnd, "contacts_available": S["b2b"]["contacts"],
-                "fits": pins + gnd <= S["b2b"]["contacts"] and not errors, "errors": errors}
+                "contacts_needed": pins + gnd, "contacts_with_spare": with_spare, "contacts_available": contacts,
+                "meets_spare_rule": with_spare <= contacts,
+                "fits": pins + gnd <= contacts and not errors, "errors": errors}
 
     def evaluate(self, cid):
         cand = self.S["candidates"][cid]
         P = self.P
+        hA = cand.get("hA", P["hA"])
+        hB = cand.get("hB", P["hB"])
+        stack = cand.get("stack", P["stack"])
+        bb = dict(self.S["b2b"])
+        bb.update(cand.get("b2b", {}))       # a candidate may evaluate another B2B size (contacts, courtyards)
         side, override, rear_override = self.assign(cand)
         hdrs = self.place_headers(side, cand)
         cross = self.crossing(side, hdrs)
-        b2b = self.b2b_budget(cross)
+        b2b = self.b2b_budget(cross, bb["contacts"])
+        if cand.get("ctrl_unresolved_to_pwr_a"):
+            # rule_gr3 'otherwise the function moves to PWR': the CTRL headers without a height-valid bottom variant
+            # are counted on PWR-A (area, edge strip, THT pockets); their nets are not modelled on PWR
+            for h in self.ctrl_hdrs:
+                if h["unresolved"]:
+                    hdrs.append(dict(h, board="PWR_A", nets=[], moved_from="CTRL"))
         m = P["window_margin"]
         outline = poly_area([tuple(p) for p in self.D.mech["PWR"]["outline"]])
         holes = len(self.D.mech["PWR"]["holes"]) * math.pi * (self.D.mech["PWR"]["hole_keepout_d"] / 2) ** 2
@@ -519,7 +555,7 @@ class Evaluator:
             return boards.setdefault(board, {"parts_raw": 0.0, "modules": 0.0, "headers_raw": 0.0, "b2b_raw": 0.0,
                                              "tps_raw": 0.0, "keepouts": 0.0, "refs": 0, "headers": 0, "tht_pads": 0})
         windows, tp_windows = 0.0, 0.0
-        win_refs = []
+        win_refs, win_lower_bound = [], []
         for ref, s in sorted(side.items()):
             p = self.D.parts[ref]
             if s == "CTRL":
@@ -535,10 +571,15 @@ class Evaluator:
                 b["tps_raw"] += p["area"]
             else:
                 b["parts_raw"] += p["area"]
-            h_eff = cand.get("what_if_height", {}).get(self.D.mpn.get(ref), p["h"])
-            if s == "PWR_A" and h_eff is not None and h_eff > P["hA"] and not p["tp"]:
+            what_if = self.D.mpn.get(ref) in cand.get("what_if_height", {})
+            h_eff = cand["what_if_height"][self.D.mpn[ref]] if what_if else p["h"]
+            lower_bound = p["h_lower_bound"] and not what_if
+            # a lower-bound height (holder without its fuse) always gets a window: the real height is above it
+            if s == "PWR_A" and h_eff is not None and (h_eff > hA or lower_bound) and not p["tp"]:
                 windows += (p["w"] + 2 * m) * (p["d"] + 2 * m)
                 win_refs.append(ref)
+                if lower_bound:
+                    win_lower_bound.append(ref)
             if s == "PWR_A" and p["tp"]:
                 tp_windows += (P["tp_probe_window"]) ** 2
         strips = 0.0
@@ -548,9 +589,9 @@ class Evaluator:
             b["headers"] += 1
             if h["board"] == "PWR_A":
                 strips += (h["w"] + 2 * m) * (h["d"] + m)
-        bw, bd = self.S["b2b"]["courtyard_pwr_a"]
+        bw, bd = bb["courtyard_pwr_a"]
         acc("PWR_A")["b2b_raw"] += bw * bd
-        bw, bd = self.S["b2b"]["courtyard_pwr_b"]
+        bw, bd = bb["courtyard_pwr_b"]
         acc("PWR_B")["b2b_raw"] += bw * bd
         # PWR-A keepouts under the THT pin fields of PWR-B parts and headers (their tails reach into the stack)
         keep, keep_items, pockets = 0.0, [], []
@@ -575,7 +616,13 @@ class Evaluator:
             usable["PCB_REAR"] = P["rear_board"]["area"] - P["rear_board"]["holes"] * math.pi * (P["rear_board"]["hole_keepout_d"] / 2) ** 2
         rear_links = sorted(n for n in {n for r, s in side.items() if s == "PCB_REAR" for n in self.D.parts[r]["nets"]} - {"GND"}
                             if any(side.get(r) in ("PWR_A", "PWR_B") and n in self.D.parts[r]["nets"] for r in side))
-        res = {"title": cand["title"], "boards": {}, "windows_mm2": rnd(windows), "window_refs": win_refs,
+        env = self.S["envelope"]
+        res = {"title": cand["title"], "hA": hA, "hB": hB, "stack": stack,
+               "window_ceiling_mm": rnd(stack + P["board_t"] + hB, 2),
+               "dz_mezz_mm": rnd(env["pwr_top_z"] + stack + P["board_t"] + hB + env["air_channel"] - env["display_z"], 2),
+               "boards": {}, "windows_mm2": rnd(windows), "window_refs": win_refs,
+               "window_refs_height_lower_bound": win_lower_bound,
+               "ctrl_headers_moved_to_pwr_a": [h["id"] for h in hdrs if h.get("moved_from") == "CTRL"],
                "pcb_rear_harness_nets": rear_links,
                "edge_strips_mm2": rnd(strips), "tp_probe_windows_mm2": rnd(tp_windows),
                "pwr_a_keepouts_mm2": rnd(keep), "pwr_a_keepout_items": keep_items, "pwr_a_tht_pocket_items": pockets,
@@ -598,8 +645,9 @@ class Evaluator:
             row["fits_at_1_8"] = row[f"ratio_{fmax:g}"] >= 1.0
             fits_all &= row["fits_at_1_8"]
             res["boards"][name] = row
-        res["headers"] = [{"id": h["id"], "board": h["board"], "family": h["family"], "pins": h["pins"],
-                           "w": rnd(h["w"], 2), "d": rnd(h["d"], 2), "h": h["h"]} for h in hdrs]
+        res["headers"] = [dict({"id": h["id"], "board": h["board"], "family": h["family"], "pins": h["pins"],
+                                "w": rnd(h["w"], 2), "d": rnd(h["d"], 2), "h": h["h"]},
+                               **({"moved_from": "CTRL"} if h.get("moved_from") else {})) for h in hdrs]
         res["fits"] = fits_all and b2b["fits"]
         res["side"] = side
         return res
@@ -613,6 +661,41 @@ class Evaluator:
         return pf["a"] * (n - 1) + pf["b"], pf["d"]
 
     # -- CTRL two-sided ------------------------------------------------------------------------------------
+    def ctrl_bottom_headers(self):
+        """CTRL harness headers with their bottom-side variant: the first variant of ctrl.bottom_header_rule
+        that has a courtyard and a read height h (mated if given) with h + clearance - gap <= the dz cap. A header
+        with no such variant keeps its base courtyard and is marked unresolved (no height-valid variant)."""
+        S = self.S["ctrl"]
+        rule = S["bottom_header_rule"]
+        cap = self.S["envelope"]["cap"]["dz_max"]
+        out = []
+        for h in self.D.consolidated_headers("CTRL"):
+            h = dict(h, unresolved=False, dz=None, tried=[])
+            if h["id"] in S["headers_top"]:
+                out.append(h)
+                continue
+            base = h["family"].split("_")[0]
+            for fam_id in rule["variants"].get(base, [h["family"]]):
+                fam = self.D.family_or_none(fam_id)
+                ht = None if fam is None else (fam.get("h_mated") if fam.get("h_mated") is not None else fam.get("h"))
+                if fam is None:
+                    h["tried"].append(f"{fam_id}: no courtyard formula (TBD)")
+                    continue
+                if ht is None:
+                    h["tried"].append(f"{fam_id}: height not read (TBD)")
+                    continue
+                dz = ht + rule["clearance_mm"] - rule["gap_mm"]
+                if dz > cap + 1e-9:
+                    h["tried"].append(f"{fam_id}: h {ht:g} + {rule['clearance_mm']:g} - {rule['gap_mm']:g} = {dz:.1f} > dz cap {cap:g}")
+                    continue
+                w, d, _ = self.D.header_size(fam_id, h["pins"])
+                h.update(family=fam_id, w=w, d=d, area=w * d, h=ht, dz=rnd(max(dz, 0.0), 2))
+                break
+            else:
+                h["unresolved"] = True
+            out.append(h)
+        return out
+
     def ctrl(self, cid, moved_to_b=()):
         P, S = self.P, self.S["ctrl"]
         mech = self.D.mech["CTRL"]
@@ -639,9 +722,14 @@ class Evaluator:
                 fw, fh = p["tht_field"]
                 (top if on_bottom else bot)["tht_fields_other_side"] += (fw + 2 * m) * (fh + 2 * m)
                 tht_top += 0 if on_bottom else p["tht_pads"]
-        hdrs = self.D.consolidated_headers("CTRL")
-        hdr_rows = []
-        for h in hdrs:
+        to_pwr = bool(self.S["candidates"][cid].get("ctrl_unresolved_to_pwr_a"))
+        hdr_rows, unresolved = [], []
+        for h in self.ctrl_hdrs:
+            if h["unresolved"]:
+                unresolved.append({"id": h["id"], "family": h["family"], "pins": h["pins"], "area_mm2": rnd(h["area"]),
+                                   "tried": h["tried"], "counted_on": "PWR_A" if to_pwr else "CTRL bottom (base courtyard)"})
+                if to_pwr:
+                    continue
             on_top = h["id"] in S["headers_top"]
             tgt = top if on_top else bot
             tgt["headers_raw"] += h["area"]
@@ -649,7 +737,9 @@ class Evaluator:
             # a bottom THT header is hand-soldered from the top: its pin field plus iron access is lost on top
             (bot if on_top else top)["tht_fields_other_side"] += (fw + 2 * S["iron_access_margin"]) * (fh + 2 * S["iron_access_margin"])
             hdr_rows.append({"id": h["id"], "side": "top" if on_top else "bottom", "family": h["family"], "pins": h["pins"],
-                             "w": rnd(h["w"], 2), "d": rnd(h["d"], 2), "h": h["h"]})
+                             "w": rnd(h["w"], 2), "d": rnd(h["d"], 2), "h": h["h"], "dz": h["dz"],
+                             "height_valid": not h["unresolved"]})
+        placed_dz = [h["dz"] for h in self.ctrl_hdrs if not h["unresolved"] and h["dz"] is not None]
         # bottom strip over the Lime module: gap 1.4 mm + dz (fit-report layout), no headers there
         place = mech["place"]["origin"]
         poly = [(x + place[0], y + place[1]) for x, y in mech["outline"]]
@@ -658,6 +748,7 @@ class Evaluator:
         for cx, cy, cw, ch in mech.get("cutouts", []):
             band -= rect_overlap((cx + place[0], cy + place[1], cx + place[0] + cw, cy + place[1] + ch), (lx0, ly0, lx1, ly1))
         out = {"outline_mm2": rnd(outline), "holes_mm2": rnd(holes), "lime_band_mm2": rnd(band), "headers": hdr_rows,
+               "headers_unresolved": unresolved, "dz_ctrl_mm": max(placed_dz) if placed_dz else 0.0,
                "tht_pads_top_parts": tht_top, "sides": {}}
         fmax = max(P["factors"])
         for name, s, extra_loss in (("top", top, 0.0), ("bottom", bot, band)):
@@ -672,7 +763,8 @@ class Evaluator:
                 row[f"ratio_{f:g}"] = rnd(u / need, 3)
             row["fits_at_1_8"] = row[f"ratio_{fmax:g}"] >= 1.0
             out["sides"][name] = row
-        out["fits"] = all(v["fits_at_1_8"] for v in out["sides"].values())
+        # area alone is not a fit while a header has no height-valid place
+        out["fits"] = all(v["fits_at_1_8"] for v in out["sides"].values()) and not (unresolved and not to_pwr)
         return out
 
 
@@ -724,7 +816,8 @@ def heights_table(design, ev):
         if p["tp"] or p["h"] is None or p["h"] <= ev.P["hA"]:
             continue
         key = design.mpn.get(p["ref"]) or p["footprint"]
-        e = out.setdefault(key, {"h": p["h"], "src": p["h_src"], "refs": []})
+        e = out.setdefault(key, dict({"h": p["h"], "src": p["h_src"], "refs": []},
+                                     **({"lower_bound": True} if p["h_lower_bound"] else {})))
         e["refs"].append(p["ref"])
     return out
 
@@ -794,9 +887,33 @@ def check_spec(spec, report):
     b = res["b2b"]
     want = spec["b2b"]["budget_chosen"]
     got = {"crossing_nets": len(b["nets"]), "power_pins": b["power_pins"], "signal_pins": b["signal_pins"],
-           "gnd_pins": b["gnd_pins"], "contacts_needed": b["contacts_needed"]}
+           "gnd_pins": b["gnd_pins"], "contacts_needed": b["contacts_needed"], "contacts_with_spare": b["contacts_with_spare"]}
     if want != got:
         errs.append(f"b2b.budget_chosen {want} differs from the computed {got}")
+    if not b["meets_spare_rule"]:
+        errs.append(f"chosen candidate {ch}: {b['contacts_with_spare']} contacts with spare exceed the {b['contacts_available']} of the B2B")
+    # every contact count the decision text quotes must be the computed one
+    if "b2b_contacts_quoted" not in spec["decision"]:
+        errs.append("decision.b2b_contacts_quoted is missing")
+    for cid, n in spec["decision"].get("b2b_contacts_quoted", {}).items():
+        got_n = report["candidates"].get(cid, {}).get("b2b", {}).get("contacts_needed")
+        if got_n != n:
+            errs.append(f"decision.b2b_contacts_quoted[{cid}] {n} differs from the computed {got_n}")
+    got_short = {name: round(row["demand_1.8_mm2"] - row["usable_mm2"]) for name, row in res["boards"].items()
+                 if row["demand_1.8_mm2"] > row["usable_mm2"]}
+    got_short.update({f"CTRL_{name}": round(row["demand_1.8_mm2"] - row["usable_mm2"]) for name, row in res["ctrl"]["sides"].items()
+                      if row["demand_1.8_mm2"] > row["usable_mm2"]})
+    if spec["decision"]["shortfall_1_8_mm2"] != got_short:
+        errs.append(f"decision.shortfall_1_8_mm2 {spec['decision']['shortfall_1_8_mm2']} differs from the computed {got_short}")
+    got_unres = [h["id"] for h in res["ctrl"]["headers_unresolved"]]
+    if spec["decision"].get("ctrl_headers_unresolved") != got_unres:
+        errs.append(f"decision.ctrl_headers_unresolved {spec['decision'].get('ctrl_headers_unresolved')} differs from the computed {got_unres}")
+    env = spec["envelope"]
+    got_env = {"dz_mezz": res["dz_mezz_mm"], "dz_ctrl": res["ctrl"]["dz_ctrl_mm"],
+               "dz": max(res["dz_mezz_mm"], res["ctrl"]["dz_ctrl_mm"])}
+    want_env = {k: env.get(k) for k in got_env}
+    if want_env != got_env:
+        errs.append(f"envelope {want_env} differs from the computed {got_env}")
     got_ratios = {name: row["ratio_1.8"] for name, row in res["boards"].items()}
     got_ratios.update({f"CTRL_{name}": row["ratio_1.8"] for name, row in res["ctrl"]["sides"].items()})
     if spec["decision"]["ratios_1_8"] != got_ratios:

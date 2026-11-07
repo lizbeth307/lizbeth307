@@ -1,0 +1,117 @@
+{
+  "schema": "srrx-board-route-log-v1",
+  "board_id": "ENC",
+  "label": "Frozen route provenance (CI run); --check does not re-route",
+  "tool": {
+    "name": "Freerouting",
+    "version": "2.5.0",
+    "licence": "GPL-3.0",
+    "url": "https://github.com/freerouting/freerouting/releases/download/v2.5.0/freerouting-2.5.0.jar",
+    "sha256": "f6f51bb02245e8e717f9359bd260cc9c5c0b1bc0acc8b7cb2cd5b8ffeb5de3c7",
+    "main_class": "app.freerouting.cli.FreeroutingCli",
+    "source_read": "GitHub release API v2.5.0 asset digests, read 2026-11-07"
+  },
+  "runtime": {
+    "name": "Eclipse Temurin JRE",
+    "version": "25.0.5+8",
+    "licence": "GPL-2.0-with-classpath-exception",
+    "url": "https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5%2B8/OpenJDK25U-jre_x64_linux_hotspot_25.0.5_8.tar.gz",
+    "sha256": "6fac98f0c8202efc3135a9e9e42aa61963ec42d1c5cbb40caf231e7b14a24ef6",
+    "source_read": "Adoptium API and GitHub release API, read 2026-11-07"
+  },
+  "command": [
+    "java",
+    "-Djava.awt.headless=true",
+    "-cp",
+    "freerouting-2.5.0.jar",
+    "app.freerouting.cli.FreeroutingCli",
+    "-de",
+    "ENC.dsn",
+    "-do",
+    "ENC.ses",
+    "--router.autorouter.max_passes=20",
+    "-mt",
+    "1",
+    "--router.optimizer.max_threads=1",
+    "--router.automatic_neckdown=false",
+    "-da",
+    "--gui.enabled=false",
+    "--router.job_timeout=00:05:00",
+    "--logging.file.enabled=false",
+    "--user_data_path=<temp>"
+  ],
+  "exit_code": 0,
+  "log_tail": [
+    "2026-11-07 16:32:15.578 INFO   Freerouting CLI v2.5.0 (build-date: 2026-10-05)",
+    "2026-11-07 16:32:15.704 INFO   Hardware: 4 CPU cores, 3996 MB RAM",
+    "2026-11-07 16:32:16.131 INFO   [137A3C\\422FA1] Loading board file 'ENC.dsn'...",
+    "2026-11-07 16:32:16.250 INFO   [137A3C\\422FA1] Job '137A3C\\422FA1' started at 2026-11-07T16:32:16.250301274Z.",
+    "2026-11-07 16:32:16.337 INFO   [137A3C\\422FA1] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=1.",
+    "2026-11-07 16:32:16.386 INFO   [137A3C\\422FA1] Fanout stage is enabled but skipped because the board has no SMD pins.",
+    "2026-11-07 16:32:16.415 INFO   [137A3C\\422FA1] Auto-routing stage started on board '7bab14252055ad86f2f06226a7056f2a' with baseline score 222.22 for 2 unrouted items.",
+    "2026-11-07 16:32:16.706 INFO   [137A3C\\422FA1] Auto-routing pass #1 on board '7bab14252055ad86f2f06226a7056f2a' was completed in 0.25 seconds with score 1000.00 (0 unrouted and 0 violations).",
+    "2026-11-07 16:32:16.721 INFO   [137A3C\\422FA1] Auto-routing pass #2 on board '8a684724bae27eb0c56838ceede52601' was completed in 0.00 seconds with score 1000.00 (0 unrouted and 0 violations).",
+    "2026-11-07 16:32:16.748 INFO   [137A3C\\422FA1] Auto-routing stage completed: started with 2 unrouted nets, completed in 0.40 seconds, final score: 1000.00 (0 unrouted and 0 violations), using 0.00 total CPU seconds, 0.00 GB total allocated, and 0.0 MB peak heap usage.",
+    "2026-11-07 16:32:16.757 INFO   [137A3C\\422FA1] Skipping optimization stage: the board has no vias to eliminate and initial optimizer score (1000.00) is already >= 950.00.",
+    "2026-11-07 16:32:16.763 INFO   [137A3C\\422FA1] Job '137A3C\\422FA1' finished with state: COMPLETED (elapsed: 0.51 seconds, finished at UTC: 2026-11-07T16:32:16.762645355Z).",
+    "2026-11-07 16:32:16.763 INFO   Saving output file '/tmp/sr-rx-ENC-lbyyh5bu/ENC.ses' (SES)...",
+    "2026-11-07 16:32:16.766 INFO   Successfully saved output file '/tmp/sr-rx-ENC-lbyyh5bu/ENC.ses' (1304 bytes)."
+  ],
+  "dsn_sha256": "bdbb92270369c8ba03604a3e6c3e5c4aca927a4e0b429dc5bc9afe331d89a08c",
+  "ses_sha256": "1498bd9e1c85de64ce3f035eb8787256d9be9bffdb5d0d20b61912a15839b601",
+  "dsn_probe": {
+    "resolution": "um 10",
+    "wires_fix": 2,
+    "wires_protect": 0,
+    "keepouts": 6,
+    "planes": 0,
+    "classes": {
+      "kicad_default": {
+        "width": "250",
+        "clearance": "200"
+      }
+    }
+  },
+  "locked_segments": {
+    "before_ses_import": 2,
+    "after_ses_import": 2
+  },
+  "drc_command": [
+    "kicad-cli",
+    "pcb",
+    "drc",
+    "--format",
+    "json",
+    "--severity-all",
+    "--all-track-errors",
+    "--units",
+    "mm",
+    "--refill-zones",
+    "--save-board"
+  ],
+  "board_sha256": "7a122c3361d2a74b2fba5edd4fc4c532afef11475b27978db90c8ca11f046133",
+  "previews": [
+    "build/kicad/boards/ENC/ENC-top.svg",
+    "build/kicad/boards/ENC/ENC-bottom.svg"
+  ],
+  "footprint_sources": [
+    {
+      "ref": "ENC",
+      "footprint": "SR_RX_Custom:RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx.kicad_mod",
+      "sha256": "5a892be8aec0f4d2f8d4b273607974d04e8be47218e74c324bbf6033dfe7ae66"
+    },
+    {
+      "ref": "J1",
+      "footprint": "Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical",
+      "file": "kicad-image:Connector_PinHeader_2.00mm.pretty/PinHeader_1x04_P2.00mm_Vertical.kicad_mod",
+      "sha256": "c1fbb648efbffa98c740285def47b64fc2cc9e5cf07f24a196e7956b940e8e1d"
+    }
+  ],
+  "kicad_version": "10.0.7",
+  "github": {
+    "run_id": "42391679434",
+    "sha": "defa1de0dc4af17d0a2e395f54286447a31d63d6",
+    "ref": "refs/heads/wip/w2-int"
+  }
+}

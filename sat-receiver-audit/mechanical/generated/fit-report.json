@@ -3,8 +3,8 @@
   "status": "MODEL FIT ONLY: envelopes and datasheet dimensions; no physical part was fitted. Hardware gates stay OPEN.",
   "generator": {
     "version": "1.0.0",
-    "params_sha256": "fab8754f230bbdbcf67e6aae5b11cd850203cf138ab7ece36ee9f29e8077695f",
-    "pcb_components_sha256": "662254f0e1ffab09e12e23b6ad50e02d79f8c1843616972daac8d7fbb32a31cd"
+    "params_sha256": "5292c234c1ef28611ecde23cc5daf942e03e18a15ba9c2b3238cb19cd5d20c6d",
+    "pcb_components_sha256": "9e6bdc34a545f2e336583bc95d6d830c613508a454faee6549c191a62d61c21b"
   },
   "envelope": {
     "model": [
@@ -339,17 +339,17 @@
       "value_mm": {
         "SL1": {
           "opening_mm2": 79.2,
-          "wires": 27,
+          "wires": 29,
           "wires_per_awg": {
-            "28": 27
+            "28": 29
           }
         },
         "SL2": {
           "opening_mm2": 63.0,
           "wires": 51,
           "wires_per_awg": {
-            "20": 10,
-            "24": 20,
+            "20": 12,
+            "24": 18,
             "26": 21
           }
         },
@@ -357,8 +357,8 @@
           "opening_mm2": 67.5,
           "wires": 17,
           "wires_per_awg": {
-            "20": 2,
-            "24": 8,
+            "20": 4,
+            "24": 6,
             "26": 7
           }
         }
@@ -414,11 +414,11 @@
       "id": "R-PPS-LEN",
       "rule": "PPS path Q6A J20.7 -> LC76G: harness length <= 200 mm (STACK 5.2 'UART7/PPS wiring <= 20 cm'; E3 J301 note)",
       "value_mm": {
-        "via_segments_mm": 322,
+        "via_segments_mm": 329,
         "branch_mm": 196
       },
       "limit_mm": 200.0,
-      "result": "OPEN (end provisional): S01+S25 = 322 mm > 200: decision (build/15 W2 MECH-1) — PPS + UART6 + GND branch off the S01 ribbon at the Q6A end and run directly to the LC76G in the rear layer (harness only, E3 nets unchanged; build/15 W2 MECH-1); branch PPS = 196 mm <= 200 (model; ends on board edge zones / envelope faces until the header and pin positions are placed)",
+      "result": "OPEN (end provisional): S01+S25 = 329 mm > 200: decision (build/15 W2 MECH-1) — PPS + UART6 + GND branch off the S01 ribbon at the Q6A end and run directly to the LC76G in the rear layer (harness only, E3 nets unchanged; build/15 W2 MECH-1); branch PPS = 196 mm <= 200 (model; ends on board edge zones / envelope faces until the header and pin positions are placed); the margin depends on: J20 pin-1 orientation not read (Radxa Q6A header drawing, fetch-only): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch; P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge; P1 at the envelope edge towards the Q6A shortens the branch by up to half the envelope width (31.8 mm)",
       "source": "mechanical.json harness_routes; generated/harness-routes.json"
     },
     {
@@ -446,23 +446,25 @@
     },
     {
       "id": "R-HDR-HEIGHT",
-      "rule": "board-side harness headers (build/16 §4) inside the board height limit, or in a computed height zone (component side) / rear zone",
-      "source": "parts.json harness_headers h; boards.json max_height, height_zones, rear_zones (clearance map)",
+      "rule": "board-side harness headers (build/16 §4) inside the board height limit, or in a computed height zone (component side) / rear zone; heights mated (header + plug) where read, else the header body (labelled); the wire exit beyond the plug is not included (wire TBD, AI-WIRE-PTFE)",
+      "source": "parts.json harness_headers h_mated / h; boards.json max_height, height_zones, rear_zones (clearance map)",
       "value_mm": {
         "above_limit": [
-          "X01I1-CTRL IDC_top 9.1",
-          "X02P1-CTRL MF_top 9.9",
-          "X02P1-PWR MF_top 9.9",
-          "X04P1-PWR MF_top 9.9",
-          "X04P1-RF MF_top 9.9",
-          "X11P1-PWR MF_top 9.9",
-          "X12P1-PWR MF_top 9.9",
-          "X13P1-PWR MF_top 9.9",
-          "X14P1-PWR MF_top 9.9",
-          "X17P1-PWR MF_top 9.9",
-          "X18P1-PWR MF_top 9.9",
-          "X19P1-PWR MF_top 9.9",
-          "X28P1-CTRL MF_top 9.9"
+          "X01I1-CTRL IDC_top 9.1 body",
+          "X02P1-CTRL MF_top 17.27 mated",
+          "X02P1-PWR MF_top 17.27 mated",
+          "X04P1-PWR MF_top 17.27 mated",
+          "X04P1-RF MF_top 17.27 mated",
+          "X11P1-PWR MF_top 17.27 mated",
+          "X12P1-PWR MF_top 17.27 mated",
+          "X13P1-PWR MF_top 17.27 mated",
+          "X14P1-PWR MF_top 17.27 mated",
+          "X17P1-PWR MF_top 17.27 mated",
+          "X18P1-PWR MF_top 17.27 mated",
+          "X19P1-PWR MF_top 17.27 mated",
+          "X25P1-CTRL MF_top 17.27 mated",
+          "X28P1-CTRL MF_top 17.27 mated",
+          "X32P1-PWR MF_top 17.27 mated"
         ],
         "height_not_read": [
           "X05J1-PWR",
@@ -470,7 +472,30 @@
           "X07J1-PWR",
           "X10J1-PWR",
           "X27F1-CTRL"
-        ]
+        ],
+        "alternative_fits": [
+          "X02P1-PWR",
+          "X04P1-PWR",
+          "X04P1-RF",
+          "X11P1-PWR",
+          "X12P1-PWR",
+          "X13P1-PWR",
+          "X14P1-PWR",
+          "X17P1-PWR",
+          "X18P1-PWR",
+          "X19P1-PWR",
+          "X25P1-CTRL",
+          "X28P1-CTRL",
+          "X32P1-PWR"
+        ],
+        "alternative_fits_no_zone": [
+          "X02P1-CTRL"
+        ],
+        "body_height_only": {
+          "IDC_top": [
+            "X01I1-CTRL"
+          ]
+        }
       },
       "limit_mm": {
         "PWR": 9.0,
@@ -485,6 +510,8 @@
           "family": "IDC",
           "orientation": "top",
           "h_mm": 9.1,
+          "h_basis": "body",
+          "h_status": "datasheet (reference part)",
           "courtyard_mm": [
             61.0,
             9.0
@@ -492,14 +519,16 @@
           "max_height": 5.5,
           "best_front_zone_mm": 5.5,
           "best_rear_zone_mm": 0.0,
-          "verdict": "above the board limit 5.5; fits no computed zone that takes its courtyard"
+          "verdict": "above the board limit 5.5; fits no computed zone that takes its courtyard (header body 9.1 mm, reference part; mated height not read: TBD)"
         },
         {
           "connector": "X02P1-CTRL",
           "board": "CTRL",
           "family": "MF",
           "orientation": "top",
-          "h_mm": 9.9,
+          "h_mm": 17.27,
+          "h_basis": "mated",
+          "h_status": "datasheet",
           "courtyard_mm": [
             16.66,
             6.77
@@ -507,14 +536,28 @@
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
           "best_rear_zone_mm": 3.4,
-          "verdict": "above the board limit 5.5; fits no computed zone that takes its courtyard"
+          "verdict": "above the board limit 5.5; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): above the board limit 5.5; fits no computed zone that takes its courtyard",
+          "alternative": {
+            "key": "MF_ra",
+            "h_mm": 6.98,
+            "h_basis": "mated",
+            "courtyard_mm": [
+              16.66,
+              10.91
+            ],
+            "best_front_zone_mm": 6.5,
+            "best_rear_zone_mm": 3.4,
+            "verdict": "above the board limit 5.5; fits no computed zone that takes its courtyard"
+          }
         },
         {
           "connector": "X02P1-PWR",
           "board": "PWR",
           "family": "MF",
           "orientation": "top",
-          "h_mm": 9.9,
+          "h_mm": 17.27,
+          "h_basis": "mated",
+          "h_status": "datasheet",
           "courtyard_mm": [
             16.66,
             6.77
@@ -522,7 +565,19 @@
           "max_height": 9.0,
           "best_front_zone_mm": 10.5,
           "best_rear_zone_mm": 0.0,
-          "verdict": "above the board limit 9; fits a component-side height zone"
+          "verdict": "above the board limit 9; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): inside the board limit",
+          "alternative": {
+            "key": "MF_ra",
+            "h_mm": 6.98,
+            "h_basis": "mated",
+            "courtyard_mm": [
+              16.66,
+              10.91
+            ],
+            "best_front_zone_mm": 10.5,
+            "best_rear_zone_mm": 0.0,
+            "verdict": "inside the board limit"
+          }
         },
         {
           "connector": "X02S0-PWR",
@@ -530,6 +585,8 @@
           "family": "PH",
           "orientation": "top",
           "h_mm": 8.0,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             12.9,
             5.5
@@ -545,6 +602,8 @@
           "family": "PH",
           "orientation": "side",
           "h_mm": 4.8,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             18.9,
             8.6
@@ -560,6 +619,8 @@
           "family": "PH",
           "orientation": "top",
           "h_mm": 8.0,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             34.9,
             5.5
@@ -575,6 +636,8 @@
           "family": "PH",
           "orientation": "side",
           "h_mm": 4.8,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             18.9,
             8.6
@@ -590,6 +653,8 @@
           "family": "PH",
           "orientation": "side",
           "h_mm": 4.8,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             18.9,
             8.6
@@ -605,6 +670,8 @@
           "family": "PH",
           "orientation": "top",
           "h_mm": 8.0,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             34.9,
             5.5
@@ -620,6 +687,8 @@
           "family": "PH",
           "orientation": "side",
           "h_mm": 4.8,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             18.9,
             8.6
@@ -635,6 +704,8 @@
           "family": "PH",
           "orientation": "side",
           "h_mm": 4.8,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             18.9,
             8.6
@@ -650,6 +721,8 @@
           "family": "PH",
           "orientation": "top",
           "h_mm": 8.0,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             18.9,
             5.5
@@ -665,6 +738,8 @@
           "family": "PH",
           "orientation": "side",
           "h_mm": 4.8,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             18.9,
             8.6
@@ -680,6 +755,8 @@
           "family": "PH",
           "orientation": "side",
           "h_mm": 4.8,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             18.9,
             8.6
@@ -695,6 +772,8 @@
           "family": "PH",
           "orientation": "side",
           "h_mm": 4.8,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             10.9,
             8.6
@@ -710,6 +789,8 @@
           "family": "PH",
           "orientation": "side",
           "h_mm": 4.8,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             10.9,
             8.6
@@ -724,7 +805,9 @@
           "board": "PWR",
           "family": "MF",
           "orientation": "top",
-          "h_mm": 9.9,
+          "h_mm": 17.27,
+          "h_basis": "mated",
+          "h_status": "datasheet",
           "courtyard_mm": [
             10.66,
             6.77
@@ -732,14 +815,28 @@
           "max_height": 9.0,
           "best_front_zone_mm": 10.5,
           "best_rear_zone_mm": 0.0,
-          "verdict": "above the board limit 9; fits a component-side height zone"
+          "verdict": "above the board limit 9; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): inside the board limit",
+          "alternative": {
+            "key": "MF_ra",
+            "h_mm": 6.98,
+            "h_basis": "mated",
+            "courtyard_mm": [
+              10.66,
+              10.91
+            ],
+            "best_front_zone_mm": 10.5,
+            "best_rear_zone_mm": 0.0,
+            "verdict": "inside the board limit"
+          }
         },
         {
           "connector": "X04P1-RF",
           "board": "RF",
           "family": "MF",
           "orientation": "top",
-          "h_mm": 9.9,
+          "h_mm": 17.27,
+          "h_basis": "mated",
+          "h_status": "datasheet",
           "courtyard_mm": [
             10.66,
             6.77
@@ -747,7 +844,19 @@
           "max_height": 5.5,
           "best_front_zone_mm": 29.3,
           "best_rear_zone_mm": 2.5,
-          "verdict": "above the board limit 5.5; fits a component-side height zone"
+          "verdict": "above the board limit 5.5; fits a component-side height zone; as MF_ra (6.98 mm mated): above the board limit 5.5; fits a component-side height zone",
+          "alternative": {
+            "key": "MF_ra",
+            "h_mm": 6.98,
+            "h_basis": "mated",
+            "courtyard_mm": [
+              10.66,
+              10.91
+            ],
+            "best_front_zone_mm": 29.3,
+            "best_rear_zone_mm": 2.5,
+            "verdict": "above the board limit 5.5; fits a component-side height zone"
+          }
         },
         {
           "connector": "X04S1-PWR",
@@ -755,6 +864,8 @@
           "family": "PH",
           "orientation": "top",
           "h_mm": 8.0,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             16.9,
             5.5
@@ -770,6 +881,8 @@
           "family": "PH",
           "orientation": "side",
           "h_mm": 4.8,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             16.9,
             8.6
@@ -785,6 +898,8 @@
           "family": "MFJ",
           "orientation": "top",
           "h_mm": null,
+          "h_basis": "not read",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             11.7,
             13.0
@@ -800,6 +915,8 @@
           "family": "PH",
           "orientation": "top",
           "h_mm": 8.0,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             6.9,
             5.5
@@ -815,6 +932,8 @@
           "family": "MFJ",
           "orientation": "top",
           "h_mm": null,
+          "h_basis": "not read",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             11.7,
             13.0
@@ -830,6 +949,8 @@
           "family": "PH",
           "orientation": "top",
           "h_mm": 8.0,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             12.9,
             5.5
@@ -845,6 +966,8 @@
           "family": "MFJ",
           "orientation": "top",
           "h_mm": null,
+          "h_basis": "not read",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             11.7,
             13.0
@@ -860,6 +983,8 @@
           "family": "PH",
           "orientation": "top",
           "h_mm": 8.0,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             8.9,
             5.5
@@ -875,6 +1000,8 @@
           "family": "MFJ",
           "orientation": "top",
           "h_mm": null,
+          "h_basis": "not read",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             15.9,
             13.0
@@ -890,6 +1017,8 @@
           "family": "PH",
           "orientation": "top",
           "h_mm": 8.0,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             10.9,
             5.5
@@ -904,7 +1033,9 @@
           "board": "PWR",
           "family": "MF",
           "orientation": "top",
-          "h_mm": 9.9,
+          "h_mm": 17.27,
+          "h_basis": "mated",
+          "h_status": "datasheet",
           "courtyard_mm": [
             10.66,
             6.77
@@ -912,7 +1043,19 @@
           "max_height": 9.0,
           "best_front_zone_mm": 10.5,
           "best_rear_zone_mm": 0.0,
-          "verdict": "above the board limit 9; fits a component-side height zone"
+          "verdict": "above the board limit 9; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): inside the board limit",
+          "alternative": {
+            "key": "MF_ra",
+            "h_mm": 6.98,
+            "h_basis": "mated",
+            "courtyard_mm": [
+              10.66,
+              10.91
+            ],
+            "best_front_zone_mm": 10.5,
+            "best_rear_zone_mm": 0.0,
+            "verdict": "inside the board limit"
+          }
         },
         {
           "connector": "X11S1-PWR",
@@ -920,6 +1063,8 @@
           "family": "PH",
           "orientation": "top",
           "h_mm": 8.0,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             6.9,
             5.5
@@ -934,7 +1079,9 @@
           "board": "PWR",
           "family": "MF",
           "orientation": "top",
-          "h_mm": 9.9,
+          "h_mm": 17.27,
+          "h_basis": "mated",
+          "h_status": "datasheet",
           "courtyard_mm": [
             10.66,
             6.77
@@ -942,14 +1089,28 @@
           "max_height": 9.0,
           "best_front_zone_mm": 10.5,
           "best_rear_zone_mm": 0.0,
-          "verdict": "above the board limit 9; fits a component-side height zone"
+          "verdict": "above the board limit 9; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): inside the board limit",
+          "alternative": {
+            "key": "MF_ra",
+            "h_mm": 6.98,
+            "h_basis": "mated",
+            "courtyard_mm": [
+              10.66,
+              10.91
+            ],
+            "best_front_zone_mm": 10.5,
+            "best_rear_zone_mm": 0.0,
+            "verdict": "inside the board limit"
+          }
         },
         {
           "connector": "X13P1-PWR",
           "board": "PWR",
           "family": "MF",
           "orientation": "top",
-          "h_mm": 9.9,
+          "h_mm": 17.27,
+          "h_basis": "mated",
+          "h_status": "datasheet",
           "courtyard_mm": [
             10.66,
             6.77
@@ -957,14 +1118,28 @@
           "max_height": 9.0,
           "best_front_zone_mm": 10.5,
           "best_rear_zone_mm": 0.0,
-          "verdict": "above the board limit 9; fits a component-side height zone"
+          "verdict": "above the board limit 9; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): inside the board limit",
+          "alternative": {
+            "key": "MF_ra",
+            "h_mm": 6.98,
+            "h_basis": "mated",
+            "courtyard_mm": [
+              10.66,
+              10.91
+            ],
+            "best_front_zone_mm": 10.5,
+            "best_rear_zone_mm": 0.0,
+            "verdict": "inside the board limit"
+          }
         },
         {
           "connector": "X14P1-PWR",
           "board": "PWR",
           "family": "MF",
           "orientation": "top",
-          "h_mm": 9.9,
+          "h_mm": 17.27,
+          "h_basis": "mated",
+          "h_status": "datasheet",
           "courtyard_mm": [
             10.66,
             6.77
@@ -972,7 +1147,19 @@
           "max_height": 9.0,
           "best_front_zone_mm": 10.5,
           "best_rear_zone_mm": 0.0,
-          "verdict": "above the board limit 9; fits a component-side height zone"
+          "verdict": "above the board limit 9; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): inside the board limit",
+          "alternative": {
+            "key": "MF_ra",
+            "h_mm": 6.98,
+            "h_basis": "mated",
+            "courtyard_mm": [
+              10.66,
+              10.91
+            ],
+            "best_front_zone_mm": 10.5,
+            "best_rear_zone_mm": 0.0,
+            "verdict": "inside the board limit"
+          }
         },
         {
           "connector": "X15S1-CTRL",
@@ -980,6 +1167,8 @@
           "family": "PH",
           "orientation": "side",
           "h_mm": 4.8,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             6.9,
             8.6
@@ -994,7 +1183,9 @@
           "board": "PWR",
           "family": "MF",
           "orientation": "top",
-          "h_mm": 9.9,
+          "h_mm": 17.27,
+          "h_basis": "mated",
+          "h_status": "datasheet",
           "courtyard_mm": [
             10.66,
             6.77
@@ -1002,14 +1193,28 @@
           "max_height": 9.0,
           "best_front_zone_mm": 10.5,
           "best_rear_zone_mm": 0.0,
-          "verdict": "above the board limit 9; fits a component-side height zone"
+          "verdict": "above the board limit 9; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): inside the board limit",
+          "alternative": {
+            "key": "MF_ra",
+            "h_mm": 6.98,
+            "h_basis": "mated",
+            "courtyard_mm": [
+              10.66,
+              10.91
+            ],
+            "best_front_zone_mm": 10.5,
+            "best_rear_zone_mm": 0.0,
+            "verdict": "inside the board limit"
+          }
         },
         {
           "connector": "X18P1-PWR",
           "board": "PWR",
           "family": "MF",
           "orientation": "top",
-          "h_mm": 9.9,
+          "h_mm": 17.27,
+          "h_basis": "mated",
+          "h_status": "datasheet",
           "courtyard_mm": [
             10.66,
             6.77
@@ -1017,14 +1222,28 @@
           "max_height": 9.0,
           "best_front_zone_mm": 10.5,
           "best_rear_zone_mm": 0.0,
-          "verdict": "above the board limit 9; fits a component-side height zone"
+          "verdict": "above the board limit 9; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): inside the board limit",
+          "alternative": {
+            "key": "MF_ra",
+            "h_mm": 6.98,
+            "h_basis": "mated",
+            "courtyard_mm": [
+              10.66,
+              10.91
+            ],
+            "best_front_zone_mm": 10.5,
+            "best_rear_zone_mm": 0.0,
+            "verdict": "inside the board limit"
+          }
         },
         {
           "connector": "X19P1-PWR",
           "board": "PWR",
           "family": "MF",
           "orientation": "top",
-          "h_mm": 9.9,
+          "h_mm": 17.27,
+          "h_basis": "mated",
+          "h_status": "datasheet",
           "courtyard_mm": [
             10.66,
             6.77
@@ -1032,7 +1251,19 @@
           "max_height": 9.0,
           "best_front_zone_mm": 10.5,
           "best_rear_zone_mm": 0.0,
-          "verdict": "above the board limit 9; fits a component-side height zone"
+          "verdict": "above the board limit 9; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): inside the board limit",
+          "alternative": {
+            "key": "MF_ra",
+            "h_mm": 6.98,
+            "h_basis": "mated",
+            "courtyard_mm": [
+              10.66,
+              10.91
+            ],
+            "best_front_zone_mm": 10.5,
+            "best_rear_zone_mm": 0.0,
+            "verdict": "inside the board limit"
+          }
         },
         {
           "connector": "X20S1-PWR",
@@ -1040,6 +1271,8 @@
           "family": "PH",
           "orientation": "top",
           "h_mm": 8.0,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             6.9,
             5.5
@@ -1055,6 +1288,8 @@
           "family": "PH",
           "orientation": "top",
           "h_mm": 8.0,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             6.9,
             5.5
@@ -1070,6 +1305,8 @@
           "family": "PH",
           "orientation": "top",
           "h_mm": 8.0,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             8.9,
             5.5
@@ -1085,6 +1322,8 @@
           "family": "PH",
           "orientation": "top",
           "h_mm": 8.0,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             8.9,
             5.5
@@ -1100,6 +1339,8 @@
           "family": "PH",
           "orientation": "side",
           "h_mm": 4.8,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             8.9,
             8.6
@@ -1110,13 +1351,44 @@
           "verdict": "inside the board limit"
         },
         {
+          "connector": "X25P1-CTRL",
+          "board": "CTRL",
+          "family": "MF",
+          "orientation": "top",
+          "h_mm": 17.27,
+          "h_basis": "mated",
+          "h_status": "datasheet",
+          "courtyard_mm": [
+            10.66,
+            6.77
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 13.9,
+          "verdict": "above the board limit 5.5; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): above the board limit 5.5; fits a rear zone (THT from the back)",
+          "alternative": {
+            "key": "MF_ra",
+            "h_mm": 6.98,
+            "h_basis": "mated",
+            "courtyard_mm": [
+              10.66,
+              10.91
+            ],
+            "best_front_zone_mm": 6.5,
+            "best_rear_zone_mm": 13.9,
+            "verdict": "above the board limit 5.5; fits a rear zone (THT from the back)"
+          }
+        },
+        {
           "connector": "X25S1-CTRL",
           "board": "CTRL",
           "family": "PH",
           "orientation": "side",
           "h_mm": 4.8,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
-            14.9,
+            10.9,
             8.6
           ],
           "max_height": 5.5,
@@ -1130,6 +1402,8 @@
           "family": "PH",
           "orientation": "side",
           "h_mm": 4.8,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             10.9,
             8.6
@@ -1145,6 +1419,8 @@
           "family": "FAN3",
           "orientation": "top",
           "h_mm": null,
+          "h_basis": "not read",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             10.08,
             6.0
@@ -1159,7 +1435,9 @@
           "board": "CTRL",
           "family": "MF",
           "orientation": "top",
-          "h_mm": 9.9,
+          "h_mm": 17.27,
+          "h_basis": "mated",
+          "h_status": "datasheet",
           "courtyard_mm": [
             10.66,
             6.77
@@ -1167,7 +1445,19 @@
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
           "best_rear_zone_mm": 13.9,
-          "verdict": "above the board limit 5.5; fits a rear zone (THT from the back)"
+          "verdict": "above the board limit 5.5; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): above the board limit 5.5; fits a rear zone (THT from the back)",
+          "alternative": {
+            "key": "MF_ra",
+            "h_mm": 6.98,
+            "h_basis": "mated",
+            "courtyard_mm": [
+              10.66,
+              10.91
+            ],
+            "best_front_zone_mm": 6.5,
+            "best_rear_zone_mm": 13.9,
+            "verdict": "above the board limit 5.5; fits a rear zone (THT from the back)"
+          }
         },
         {
           "connector": "X29S1-CTRL",
@@ -1175,6 +1465,8 @@
           "family": "PH",
           "orientation": "side",
           "h_mm": 4.8,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             6.9,
             8.6
@@ -1190,6 +1482,8 @@
           "family": "PH",
           "orientation": "side",
           "h_mm": 4.8,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             8.9,
             8.6
@@ -1200,13 +1494,44 @@
           "verdict": "inside the board limit"
         },
         {
+          "connector": "X32P1-PWR",
+          "board": "PWR",
+          "family": "MF",
+          "orientation": "top",
+          "h_mm": 17.27,
+          "h_basis": "mated",
+          "h_status": "datasheet",
+          "courtyard_mm": [
+            10.66,
+            6.77
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "above the board limit 9; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): inside the board limit",
+          "alternative": {
+            "key": "MF_ra",
+            "h_mm": 6.98,
+            "h_basis": "mated",
+            "courtyard_mm": [
+              10.66,
+              10.91
+            ],
+            "best_front_zone_mm": 10.5,
+            "best_rear_zone_mm": 0.0,
+            "verdict": "inside the board limit"
+          }
+        },
+        {
           "connector": "X32S1-PWR",
           "board": "PWR",
           "family": "PH",
           "orientation": "top",
           "h_mm": 8.0,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
-            10.9,
+            6.9,
             5.5
           ],
           "max_height": 9.0,
@@ -1220,6 +1545,8 @@
           "family": "PH",
           "orientation": "top",
           "h_mm": 8.0,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             14.9,
             5.5
@@ -1235,6 +1562,8 @@
           "family": "PH",
           "orientation": "top",
           "h_mm": 8.0,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             6.9,
             5.5
@@ -1250,6 +1579,8 @@
           "family": "PH",
           "orientation": "top",
           "h_mm": 8.0,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             6.9,
             5.5
@@ -1265,6 +1596,8 @@
           "family": "PH",
           "orientation": "side",
           "h_mm": 4.8,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             10.9,
             8.6
@@ -1280,6 +1613,8 @@
           "family": "PH",
           "orientation": "side",
           "h_mm": 4.8,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             10.9,
             8.6
@@ -1295,6 +1630,8 @@
           "family": "PH",
           "orientation": "side",
           "h_mm": 4.8,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             10.9,
             8.6
@@ -1310,6 +1647,8 @@
           "family": "PH",
           "orientation": "side",
           "h_mm": 4.8,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             10.9,
             8.6
@@ -1325,6 +1664,8 @@
           "family": "PH",
           "orientation": "side",
           "h_mm": 4.8,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             6.9,
             8.6
@@ -1340,6 +1681,8 @@
           "family": "PH",
           "orientation": "side",
           "h_mm": 4.8,
+          "h_basis": "mated",
+          "h_status": "datasheet+assumption",
           "courtyard_mm": [
             6.9,
             8.6
@@ -1350,7 +1693,7 @@
           "verdict": "inside the board limit"
         }
       ],
-      "result": "OPEN: GR-3 decides (header orientation, board side or board): 13 headers above their board limit (X01I1-CTRL IDC_top 9.1, X02P1-CTRL MF_top 9.9, X02P1-PWR MF_top 9.9, X04P1-PWR MF_top 9.9, X04P1-RF MF_top 9.9, X11P1-PWR MF_top 9.9, X12P1-PWR MF_top 9.9, X13P1-PWR MF_top 9.9, X14P1-PWR MF_top 9.9, X17P1-PWR MF_top 9.9, X18P1-PWR MF_top 9.9, X19P1-PWR MF_top 9.9, X28P1-CTRL MF_top 9.9); 5 heights not read; right-angle Micro-Fit 6.98 mm does not fit the CTRL component side (best zone 6.5 mm)"
+      "result": "OPEN: GR-3 decides (header orientation, board side or board): 15 headers above their board limit (X01I1-CTRL IDC_top 9.1 body, X02P1-CTRL MF_top 17.27 mated, X02P1-PWR MF_top 17.27 mated, X04P1-PWR MF_top 17.27 mated, X04P1-RF MF_top 17.27 mated, X11P1-PWR MF_top 17.27 mated, X12P1-PWR MF_top 17.27 mated, X13P1-PWR MF_top 17.27 mated, X14P1-PWR MF_top 17.27 mated, X17P1-PWR MF_top 17.27 mated, X18P1-PWR MF_top 17.27 mated, X19P1-PWR MF_top 17.27 mated, X25P1-CTRL MF_top 17.27 mated, X28P1-CTRL MF_top 17.27 mated, X32P1-PWR MF_top 17.27 mated); as right-angle Micro-Fit (MF_ra 6.98 mm mated) 13 fit (X02P1-PWR, X04P1-PWR, X04P1-RF, X11P1-PWR, X12P1-PWR, X13P1-PWR, X14P1-PWR, X17P1-PWR, X18P1-PWR, X19P1-PWR, X25P1-CTRL, X28P1-CTRL, X32P1-PWR), 1 fit no zone (X02P1-CTRL); judged on the header body because the mated height is not read: IDC_top (X01I1-CTRL); 5 heights not read"
     },
     {
       "id": "R-TOOL-ACCESS",
@@ -1410,28 +1753,24 @@
     "boards": {
       "PWR": {
         "area_mm2": 7910.0,
-        "courtyard_raw_mm2": 6438.0,
+        "courtyard_raw_mm2": 6411.0,
         "modules_mm2": 1342.0,
         "per_domain_raw_mm2": {
           "PWR_MAIN": 2290.0,
           "PWR_BRANCH": 3515.0,
-          "USB_POWER": 633.0
+          "USB_POWER": 606.0
         },
         "per_group_raw_mm2": {
           "E1 LAB5": 1149.0,
           "E1 SYS12": 753.0,
-          "E1 Сервісний заряд": 119.0,
-          "E1 AON і UV": 94.0,
-          "E1 Головний вимикач": 92.0,
-          "E1 Захист USB-PD": 43.0,
-          "E1 Інгібування заряду": 26.0,
-          "E1 Аварійний ADC": 13.0,
           "E2 Boni: малошумна захищена шина": 500.0,
           "E2 LNB: малошумна захищена шина": 410.0,
           "E2 J21: захищене живлення 12 V": 399.0,
           "E2 LNA4V5: паралельні LT3045": 352.0,
+          "E5 VBUS HF+ з демпфованим LC": 306.0,
           "E2 LNA: канал 2": 247.0,
           "E2 LNA: канал 3": 247.0,
+          "E5 VBUS RTL-A і LAB PORT": 228.0,
           "E2 AUX12: верхній ключ і PTC": 185.0,
           "E2 Дисплей: захищене живлення 12 V": 171.0,
           "E2 Lime M.2: комутована шина 3.3 V": 166.0,
@@ -1439,16 +1778,20 @@
           "E2 LNA: канал 4": 146.0,
           "E2 RTL-B: комутований VBUS": 136.0,
           "E2 S-band LaNA WB: захищена шина 5 V": 136.0,
+          "E1 Сервісний заряд": 119.0,
+          "E1 AON і UV": 94.0,
+          "E1 Головний вимикач": 92.0,
           "E2 INA3221: струми LNA1–3": 67.0,
           "E2 INA3221: струми LNA4, LNB і Boni": 67.0,
+          "E5 LAB BUS I2C buffer": 57.0,
           "E2 LNB: незалежне точне відсікання OVP": 46.0,
+          "E1 Захист USB-PD": 43.0,
           "E2 LNB: контроль напруги": 31.0,
           "E2 Boni: контроль напруги": 31.0,
           "E2 AUX12: контроль напруги після PTC": 31.0,
-          "E5 VBUS HF+ з демпфованим LC": 306.0,
-          "E5 VBUS RTL-A і LAB PORT": 228.0,
-          "E5 LAB BUS I2C buffer": 57.0,
-          "E5 Сервіс і зовнішні шини": 41.0
+          "E1 Інгібування заряду": 26.0,
+          "E5 Сервіс і зовнішні шини": 14.0,
+          "E1 Аварійний ADC": 13.0
         },
         "per_group_need_mm2": {
           "E1 LAB5": [
@@ -1458,30 +1801,6 @@
           "E1 SYS12": [
             794.0,
             818.0
-          ],
-          "E1 Сервісний заряд": [
-            179.0,
-            215.0
-          ],
-          "E1 AON і UV": [
-            142.0,
-            170.0
-          ],
-          "E1 Головний вимикач": [
-            138.0,
-            166.0
-          ],
-          "E1 Захист USB-PD": [
-            65.0,
-            78.0
-          ],
-          "E1 Інгібування заряду": [
-            39.0,
-            47.0
-          ],
-          "E1 Аварійний ADC": [
-            19.0,
-            23.0
           ],
           "E2 Boni: малошумна захищена шина": [
             750.0,
@@ -1499,6 +1818,10 @@
             528.0,
             633.0
           ],
+          "E5 VBUS HF+ з демпфованим LC": [
+            460.0,
+            552.0
+          ],
           "E2 LNA: канал 2": [
             370.0,
             444.0
@@ -1506,6 +1829,10 @@
           "E2 LNA: канал 3": [
             370.0,
             444.0
+          ],
+          "E5 VBUS RTL-A і LAB PORT": [
+            342.0,
+            410.0
           ],
           "E2 AUX12: верхній ключ і PTC": [
             278.0,
@@ -1535,6 +1862,18 @@
             204.0,
             245.0
           ],
+          "E1 Сервісний заряд": [
+            179.0,
+            215.0
+          ],
+          "E1 AON і UV": [
+            142.0,
+            170.0
+          ],
+          "E1 Головний вимикач": [
+            138.0,
+            166.0
+          ],
           "E2 INA3221: струми LNA1–3": [
             101.0,
             121.0
@@ -1543,9 +1882,17 @@
             101.0,
             121.0
           ],
+          "E5 LAB BUS I2C buffer": [
+            86.0,
+            103.0
+          ],
           "E2 LNB: незалежне точне відсікання OVP": [
             69.0,
             83.0
+          ],
+          "E1 Захист USB-PD": [
+            65.0,
+            78.0
           ],
           "E2 LNB: контроль напруги": [
             47.0,
@@ -1559,31 +1906,27 @@
             47.0,
             56.0
           ],
-          "E5 VBUS HF+ з демпфованим LC": [
-            460.0,
-            552.0
-          ],
-          "E5 VBUS RTL-A і LAB PORT": [
-            342.0,
-            410.0
-          ],
-          "E5 LAB BUS I2C buffer": [
-            86.0,
-            103.0
+          "E1 Інгібування заряду": [
+            39.0,
+            47.0
           ],
           "E5 Сервіс і зовнішні шини": [
-            61.0,
-            74.0
+            21.0,
+            25.0
+          ],
+          "E1 Аварійний ADC": [
+            19.0,
+            23.0
           ]
         },
-        "parts": 333,
-        "need_1_5_mm2": 8986.0,
-        "need_1_8_mm2": 10515.0,
-        "estimate_mm2": 10515.0,
-        "ratio_1_5": 1.14,
-        "ratio_1_8": 1.33,
+        "parts": 329,
+        "need_1_5_mm2": 8945.0,
+        "need_1_8_mm2": 10466.0,
+        "estimate_mm2": 10466.0,
+        "ratio_1_5": 1.13,
+        "ratio_1_8": 1.32,
         "scope": "board parts and modules, without the harness headers",
-        "result": "OPEN: need 10515 mm2 at fill 1.8 > outline 7910 mm2 (model estimate; partition and placement decide, AREA / PCB)"
+        "result": "OPEN: need 10466 mm2 at fill 1.8 > outline 7910 mm2 (model estimate; partition and placement decide, AREA / PCB)"
       },
       "RF": {
         "area_mm2": 8188.0,
@@ -1596,52 +1939,52 @@
           "DC_CORE": 490.0
         },
         "per_group_raw_mm2": {
-          "E4 RF and receiver interfaces": 20.0,
-          "E4 RF passives and drivers": 31.0,
-          "E4 SP4T switches": 54.0,
-          "E4 DC detectors: UHF": 95.0,
-          "E4 DC detectors: LBAND": 95.0,
-          "E4 DC detectors: HF": 95.0,
-          "E4 RF bias injector local decoupling": 18.0,
+          "E4 RF and receiver interfaces": 856.0,
+          "E4 RF passives and drivers": 454.0,
           "E4 DC detectors: common reference": 171.0,
-          "E4 DC detectors: local power": 35.0
+          "E4 DC detectors: UHF": 156.0,
+          "E4 DC detectors: LBAND": 156.0,
+          "E4 DC detectors: HF": 156.0,
+          "E4 SP4T switches": 54.0,
+          "E4 DC detectors: local power": 35.0,
+          "E4 RF bias injector local decoupling": 18.0
         },
         "per_group_need_mm2": {
           "E4 RF and receiver interfaces": [
-            29.0,
-            35.0
+            1284.0,
+            1541.0
           ],
           "E4 RF passives and drivers": [
-            47.0,
-            56.0
-          ],
-          "E4 SP4T switches": [
-            82.0,
-            98.0
-          ],
-          "E4 DC detectors: UHF": [
-            142.0,
-            171.0
-          ],
-          "E4 DC detectors: LBAND": [
-            142.0,
-            171.0
-          ],
-          "E4 DC detectors: HF": [
-            142.0,
-            171.0
-          ],
-          "E4 RF bias injector local decoupling": [
-            27.0,
-            32.0
+            680.0,
+            817.0
           ],
           "E4 DC detectors: common reference": [
             257.0,
             308.0
           ],
+          "E4 DC detectors: UHF": [
+            234.0,
+            281.0
+          ],
+          "E4 DC detectors: LBAND": [
+            234.0,
+            281.0
+          ],
+          "E4 DC detectors: HF": [
+            234.0,
+            281.0
+          ],
+          "E4 SP4T switches": [
+            82.0,
+            98.0
+          ],
           "E4 DC detectors: local power": [
             52.0,
             62.0
+          ],
+          "E4 RF bias injector local decoupling": [
+            27.0,
+            32.0
           ]
         },
         "parts": 163,
@@ -1655,23 +1998,23 @@
       },
       "CTRL": {
         "area_mm2": 5915.0,
-        "courtyard_raw_mm2": 3300.0,
+        "courtyard_raw_mm2": 3248.0,
         "modules_mm2": 1221.0,
         "per_domain_raw_mm2": {
-          "CTRL_HMI": 3300.0
+          "CTRL_HMI": 3248.0
         },
         "per_group_raw_mm2": {
           "E3 Pico HMI": 1287.0,
           "E3 MCP23017 control": 783.0,
           "E3 HMI buttons": 487.0,
           "E3 Indicators": 219.0,
-          "E3 Cooling": 170.0,
+          "E3 Cooling": 147.0,
           "E3 Q6A header": 120.0,
           "E3 HMI encoders": 66.0,
           "E3 Pico power control": 48.0,
-          "E3 GNSS": 47.0,
           "E3 Ambient sensor": 31.0,
           "E3 MCP hardware watchdog reset": 26.0,
+          "E3 GNSS": 17.0,
           "E3 Thermal sensors": 17.0
         },
         "per_group_need_mm2": {
@@ -1692,8 +2035,8 @@
             394.0
           ],
           "E3 Cooling": [
-            255.0,
-            306.0
+            221.0,
+            265.0
           ],
           "E3 Q6A header": [
             179.0,
@@ -1707,10 +2050,6 @@
             72.0,
             86.0
           ],
-          "E3 GNSS": [
-            70.0,
-            84.0
-          ],
           "E3 Ambient sensor": [
             47.0,
             56.0
@@ -1719,17 +2058,21 @@
             39.0,
             47.0
           ],
+          "E3 GNSS": [
+            26.0,
+            31.0
+          ],
           "E3 Thermal sensors": [
             26.0,
             31.0
           ]
         },
-        "parts": 130,
-        "need_1_5_mm2": 4340.0,
-        "need_1_8_mm2": 4963.0,
-        "estimate_mm2": 4963.0,
-        "ratio_1_5": 0.73,
-        "ratio_1_8": 0.84,
+        "parts": 125,
+        "need_1_5_mm2": 4261.0,
+        "need_1_8_mm2": 4869.0,
+        "estimate_mm2": 4869.0,
+        "ratio_1_5": 0.72,
+        "ratio_1_8": 0.82,
         "scope": "board parts and modules, without the harness headers",
         "result": "PASS (model estimate)"
       }
@@ -1741,20 +2084,20 @@
       "counted_with_parts": [],
       "courtyard_sources": {
         "KiCad": 3,
-        "parts.json": 55
+        "parts.json": 57
       },
       "boards": {
         "PWR": {
-          "headers": 31,
-          "header_courtyard_mm2": 2652.0,
+          "headers": 32,
+          "header_courtyard_mm2": 2702.0,
           "area_mm2": 7910.0,
-          "with_headers_raw_mm2": 9090.0,
-          "estimate_with_headers_1_5_mm2": 12964.0,
-          "estimate_with_headers_mm2": 15289.0,
-          "ratio": 1.93,
-          "frontage_mm": 389.0,
+          "with_headers_raw_mm2": 9113.0,
+          "estimate_with_headers_1_5_mm2": 12999.0,
+          "estimate_with_headers_mm2": 15330.0,
+          "ratio": 1.94,
+          "frontage_mm": 396.0,
           "edge_zones_mm": 233,
-          "result": "OPEN: area 15289 > 7910 mm2 at fill 1.8; frontage 389 > 233 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"
+          "result": "OPEN: area 15330 > 7910 mm2 at fill 1.8; frontage 396 > 233 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"
         },
         "RF": {
           "headers": 4,
@@ -1769,16 +2112,16 @@
           "result": "PASS (model estimate)"
         },
         "CTRL": {
-          "headers": 21,
-          "header_courtyard_mm2": 2663.0,
+          "headers": 22,
+          "header_courtyard_mm2": 2701.0,
           "area_mm2": 5915.0,
-          "with_headers_raw_mm2": 5963.0,
-          "estimate_with_headers_1_5_mm2": 8335.0,
-          "estimate_with_headers_mm2": 9757.0,
+          "with_headers_raw_mm2": 5949.0,
+          "estimate_with_headers_1_5_mm2": 8312.0,
+          "estimate_with_headers_mm2": 9731.0,
           "ratio": 1.65,
-          "frontage_mm": 316.0,
+          "frontage_mm": 322.0,
           "edge_zones_mm": 145,
-          "result": "OPEN: area 9757 > 5915 mm2 at fill 1.8; frontage 316 > 145 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"
+          "result": "OPEN: area 9731 > 5915 mm2 at fill 1.8; frontage 322 > 145 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"
         },
         "ENC": {
           "headers": 2,
@@ -2488,12 +2831,16 @@
         "S01",
         "S25"
       ],
-      "via_segments_mm": 322,
+      "via_segments_mm": 329,
       "via_segments_provisional": true,
       "decision": "PPS + UART6 + GND branch off the S01 ribbon at the Q6A end and run directly to the LC76G in the rear layer (harness only, E3 nets unchanged; build/15 W2 MECH-1)",
       "branch": "PPS",
       "branch_mm": 196,
       "branch_provisional": true,
+      "branch_provisional_ends": [
+        "J20 pin-1 orientation not read (Radxa Q6A header drawing, fetch-only): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch",
+        "P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge; P1 at the envelope edge towards the Q6A shortens the branch by up to half the envelope width (31.8 mm)"
+      ],
       "value_mm": 196
     },
     "segments": {
@@ -2741,11 +3088,11 @@
       },
       "S25": {
         "kind": "harness",
-        "length_mm": 220,
+        "length_mm": 227,
         "path_mm": 159.5,
         "bends": 8,
-        "bundle_od_mm": 4.74,
-        "bend_allowance_mm": 29.8,
+        "bundle_od_mm": 5.85,
+        "bend_allowance_mm": 36.8,
         "through": [
           "SL2"
         ],
@@ -2817,11 +3164,11 @@
       },
       "S32": {
         "kind": "harness",
-        "length_mm": 212,
+        "length_mm": 216,
         "path_mm": 162.9,
         "bends": 6,
-        "bundle_od_mm": 3.87,
-        "bend_allowance_mm": 18.2,
+        "bundle_od_mm": 4.78,
+        "bend_allowance_mm": 22.5,
         "through": [
           "SL3"
         ],
@@ -2906,7 +3253,7 @@
         "bundle_od_mm": 3.87,
         "bend_allowance_mm": 6.1,
         "through": [],
-        "status": "OPEN (end provisional): P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge"
+        "status": "OPEN (end provisional): J20 pin-1 orientation not read (Radxa Q6A header drawing, fetch-only): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch; P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge; P1 at the envelope edge towards the Q6A shortens the branch by up to half the envelope width (31.8 mm)"
       }
     },
     "slots": {

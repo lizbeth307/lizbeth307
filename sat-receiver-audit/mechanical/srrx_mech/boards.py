@@ -207,12 +207,19 @@ def area_check(P):
         raw = sum(by.get(d, 0.0) for d in b["domains"])
         mod = sum(mods.get(d, 0.0) for d in b["domains"])
         n15, n18 = _need(raw, mod, FILL[0]), _need(raw, mod, FILL[1])
+        graw, gmod = {}, {}      # a schematic group can span several domains of one board: sum them before rounding
+        for d in b["domains"]:
+            for g, v in groups.get(d, {}).items():
+                graw[g] = graw.get(g, 0.0) + v
+            for g, v in gmods.get(d, {}).items():
+                gmod[g] = gmod.get(g, 0.0) + v
+        gsorted = sorted(graw.items(), key=lambda kv: -kv[1])
         res["boards"][bid] = {
             "area_mm2": round(have, 0), "courtyard_raw_mm2": round(raw, 0), "modules_mm2": round(mod, 0),
             "per_domain_raw_mm2": {d: round(by.get(d, 0.0), 0) for d in b["domains"]},
-            "per_group_raw_mm2": {g: round(v, 0) for d in b["domains"] for g, v in sorted(groups.get(d, {}).items(), key=lambda kv: -kv[1])},
-            "per_group_need_mm2": {g: [round(_need(v, gmods.get(d, {}).get(g, 0.0), FILL[0]), 0), round(_need(v, gmods.get(d, {}).get(g, 0.0), FILL[1]), 0)]
-                                   for d in b["domains"] for g, v in sorted(groups.get(d, {}).items(), key=lambda kv: -kv[1])},
+            "per_group_raw_mm2": {g: round(v, 0) for g, v in gsorted},
+            "per_group_need_mm2": {g: [round(_need(v, gmod.get(g, 0.0), FILL[0]), 0), round(_need(v, gmod.get(g, 0.0), FILL[1]), 0)]
+                                   for g, v in gsorted},
             "parts": sum(len(refs.get(d, [])) for d in b["domains"]),
             "need_1_5_mm2": round(n15, 0), "need_1_8_mm2": round(n18, 0), "estimate_mm2": round(n18, 0),
             "ratio_1_5": round(n15 / have, 2), "ratio_1_8": round(n18 / have, 2),
@@ -235,11 +242,12 @@ def header_orientation(family, unit):
     return "side" if family == "PH" and unit in SIDE_ENTRY else "top"
 
 
-def header_size(P, family, pins, unit, courtyards=None):
+def header_size(P, family, pins, unit, courtyards=None, orient=None):
     """(width along the edge, depth, source) of a harness header courtyard: the vendored KiCad footprint where it
-    exists for that pin count, else parts.json harness_headers (w = a (n - 1) + b, d)."""
+    exists for that pin count, else parts.json harness_headers (w = a (n - 1) + b, d). orient overrides the
+    build/16 orientation (e.g. 'ra' for the right-angle Micro-Fit alternative)."""
     hh = P.parts["harness_headers"]
-    orient = header_orientation(family, unit)
+    orient = orient or header_orientation(family, unit)
     fp = HEADER_FP.get((family, orient))
     if fp and courtyards:
         c = courtyards.get(fp.format(n=pins))
@@ -424,24 +432,41 @@ def zones_from_map(m):
     return ([dict(z) for z in m["front"] if keep(z)], [dict(z) for z in m["rear"] if keep(z)])
 
 
-def header_height(P, family, unit):
-    """(height above the board, orientation, source key) of a build/16 header as specified, or (None, ...) when not read."""
+def header_height(P, family, unit, orient=None):
+    """(height above the board, orientation, source key) of a build/16 header as specified (or in orientation orient),
+    or (None, ...) when not read. The mated height (header + plug) is used where it was read, else the header body
+    (header_height_basis says which)."""
     hh = P.parts["harness_headers"]
-    orient = header_orientation(family, unit)
+    orient = orient or header_orientation(family, unit)
     key = f"{family}_{orient}"
     c = hh.get(key, {})
     h = c.get("h_mated", c.get("h"))
     return h, orient, key
 
 
+def header_height_basis(P, key):
+    """'mated' (header + plug, read), 'body' (header body only: the mated height is not read) or 'not read'."""
+    c = P.parts["harness_headers"].get(key, {})
+    if c.get("h_mated") is not None:
+        return "mated"
+    return "body" if c.get("h") is not None else "not read"
+
+
+# Alternative orientation judged for a header family above its board limit (the right-angle Micro-Fit 43650).
+HEADER_ALT = {"MF": "ra"}
+
+
 def header_height_rule(P):
     """R-HDR-HEIGHT: every build/16 board header against its board's height limit and the computed clearance map.
 
+    Every family is judged at its mated height (header + plug) where it was read; a header with only a body height is
+    labelled 'body' (mated height TBD). A Micro-Fit above its limit is also judged as the right-angle 43650 (MF_ra).
     Reported OPEN until the header refs and positions exist (GR-3 decides orientation, side and board); never FAIL."""
     import csv
     path = _root() / "build" / "16-dzhgut-rozyemy.csv"
-    rule = {"id": "R-HDR-HEIGHT", "rule": "board-side harness headers (build/16 §4) inside the board height limit, or in a computed height zone (component side) / rear zone",
-            "source": "parts.json harness_headers h; boards.json max_height, height_zones, rear_zones (clearance map)"}
+    rule = {"id": "R-HDR-HEIGHT", "rule": "board-side harness headers (build/16 §4) inside the board height limit, or in a computed height zone (component side) / rear zone; "
+                                          "heights mated (header + plug) where read, else the header body (labelled); the wire exit beyond the plug is not included (wire TBD, AI-WIRE-PTFE)",
+            "source": "parts.json harness_headers h_mated / h; boards.json max_height, height_zones, rear_zones (clearance map)"}
     if not path.exists():
         return dict(rule, value_mm=None, result="OPEN: build/16-dzhgut-rozyemy.csv not found")
     hh = P.parts["harness_headers"]
@@ -456,43 +481,72 @@ def header_height_rule(P):
         ok = [z.get("fits_mm", z.get("max_height", 0.0)) for z in zones
               if min(z["rect"][2:]) + 1e-9 >= a and max(z["rect"][2:]) + 1e-9 >= d]
         return max(ok + [default])
-    rows, over, unknown = [], [], []
+
+    def judge(b, h, size):
+        front = best(b.get("height_zones", []), size, b["max_height"])
+        rear = best(b.get("rear_zones", []), size, 0.0)
+        if h <= b["max_height"] + 1e-9:
+            return front, rear, True, "inside the board limit"
+        where = []
+        if h <= front + 1e-9:
+            where.append("a component-side height zone")
+        if h <= rear + 1e-9:
+            where.append("a rear zone (THT from the back)")
+        return front, rear, bool(where), (f"above the board limit {b['max_height']:g}; fits "
+                                          + (" or ".join(where) if where else "no computed zone that takes its courtyard"))
+    rows, over, unknown, body = [], [], [], {}
+    alt_ok, alt_no = [], []
     with path.open(encoding="utf-8", newline="") as fh:
         for r in csv.DictReader(fh):
             bid = UNIT_BOARD.get(r["unit"])
             if bid is None:
                 continue
             b = P.boards["boards"][bid]
+            pins = int(r["pins"])
             h, orient, key = header_height(P, r["family"], r["unit"])
-            size = header_size(P, r["family"], int(r["pins"]), r["unit"], cy)
-            front = best(b.get("height_zones", []), size, b["max_height"])
-            rear = best(b.get("rear_zones", []), size, 0.0)
-            row = {"connector": r["connector"], "board": bid, "family": r["family"], "orientation": orient, "h_mm": h,
-                   "courtyard_mm": [round(v, 2) for v in size[:2]] if size else None,
-                   "max_height": b["max_height"], "best_front_zone_mm": front, "best_rear_zone_mm": rear}
+            basis = header_height_basis(P, key)
+            size = header_size(P, r["family"], pins, r["unit"], cy)
+            row = {"connector": r["connector"], "board": bid, "family": r["family"], "orientation": orient, "h_mm": h, "h_basis": basis,
+                   "h_status": hh.get(key, {}).get("h_status", hh.get("status")),
+                   "courtyard_mm": [round(v, 2) for v in size[:2]] if size else None, "max_height": b["max_height"]}
             if h is None:
-                row["verdict"] = f"height of {key} not read (TBD)"
+                row.update(best_front_zone_mm=best(b.get("height_zones", []), size, b["max_height"]),
+                           best_rear_zone_mm=best(b.get("rear_zones", []), size, 0.0), verdict=f"height of {key} not read (TBD)")
                 unknown.append(r["connector"])
-            elif h <= b["max_height"] + 1e-9:
-                row["verdict"] = "inside the board limit"
-            else:
-                where = []
-                if h <= front + 1e-9:
-                    where.append("a component-side height zone")
-                if h <= rear + 1e-9:
-                    where.append("a rear zone (THT from the back)")
-                row["verdict"] = f"above the board limit {b['max_height']:g}; fits " + (" or ".join(where) if where else "no computed zone that takes its courtyard")
-                over.append(f"{r['connector']} {key} {h:g}")
+                rows.append(row)
+                continue
+            front, rear, fits, verdict = judge(b, h, size)
+            row.update(best_front_zone_mm=front, best_rear_zone_mm=rear, verdict=verdict)
+            if basis == "body":
+                body.setdefault(key, []).append(r["connector"])
+                row["verdict"] += f" (header body {h:g} mm{', reference part' if 'reference' in str(row['h_status']) else ''}; mated height not read: TBD)"
+            if h > b["max_height"] + 1e-9:
+                over.append(f"{r['connector']} {key} {h:g} {basis}")
+                alt = HEADER_ALT.get(r["family"])
+                ha, _, akey = header_height(P, r["family"], r["unit"], alt) if alt else (None, None, None)
+                if ha is not None:
+                    asize = header_size(P, r["family"], pins, r["unit"], cy, alt)
+                    af, ar, aok, av = judge(b, ha, asize)
+                    row["alternative"] = {"key": akey, "h_mm": ha, "h_basis": header_height_basis(P, akey),
+                                          "courtyard_mm": [round(v, 2) for v in asize[:2]] if asize else None,
+                                          "best_front_zone_mm": af, "best_rear_zone_mm": ar, "verdict": av}
+                    row["verdict"] += f"; as {akey} ({ha:g} mm {header_height_basis(P, akey)}): {av}"
+                    (alt_ok if aok else alt_no).append(r["connector"])
             rows.append(row)
-    ra = hh.get("MF_ra", {}).get("h")
-    ctrl = P.boards["boards"]["CTRL"]
-    ctrl_front = max([z["fits_mm"] for z in ctrl.get("height_zones", []) if "fits_mm" in z] or [ctrl["max_height"]])
-    note = (f"; right-angle Micro-Fit {ra:g} mm {'fits' if ra is not None and ra <= ctrl_front else 'does not fit'} the CTRL component side "
-            f"(best zone {ctrl_front:g} mm)" if ra is not None else "")
-    return dict(rule, value_mm={"above_limit": over, "height_not_read": unknown}, limit_mm={k: v["max_height"] for k, v in P.boards["boards"].items()},
+    alt_txt = ""
+    if alt_ok or alt_no:
+        ra = hh.get("MF_ra", {})
+        alt_txt = (f"; as right-angle Micro-Fit (MF_ra {ra.get('h_mated', ra.get('h')):g} mm mated) "
+                   + (f"{len(alt_ok)} fit ({', '.join(alt_ok)})" if alt_ok else "none fits")
+                   + (f", {len(alt_no)} fit no zone ({', '.join(alt_no)})" if alt_no else ""))
+    body_txt = ("; judged on the header body because the mated height is not read: " + "; ".join(f"{k} ({', '.join(v)})" for k, v in body.items())
+                if body else "")
+    return dict(rule, value_mm={"above_limit": over, "height_not_read": unknown, "alternative_fits": alt_ok, "alternative_fits_no_zone": alt_no,
+                                "body_height_only": body},
+                limit_mm={k: v["max_height"] for k, v in P.boards["boards"].items()},
                 headers=rows,
                 result=f"OPEN: GR-3 decides (header orientation, board side or board): {len(over)} headers above their board limit"
-                       + (f" ({', '.join(over)})" if over else "") + f"; {len(unknown)} heights not read" + note)
+                       + (f" ({', '.join(over)})" if over else "") + alt_txt + body_txt + f"; {len(unknown)} heights not read")
 
 
 ZONES_NOTE = ("computed by srrx_mech.boards.clearance_map (W2 MECH-1, MODEL ESTIMATE): free_mm = free height from the component face (height_zones) "
@@ -526,7 +580,9 @@ def write_zones(P, path):
         blk = re.sub(r'      "(height_zones|rear_zones)": \[\n(?:        .*\n)*      \],\n', "", blk)
         blk = blk.replace('      "height_zones": [],\n', "")
         anchor = f'      "max_height": {json.dumps(b["max_height"])},\n'
-        ins = f'      "_zones_note": {json.dumps(ZONES_NOTE, ensure_ascii=False)},\n' + lst("height_zones", front, b["max_height"]) + lst("rear_zones", rear, None)
+        if anchor not in blk:      # never drop the zones silently: the insert point must exist before the old lists go
+            raise ValueError(f"boards.json {bid}: line {anchor.strip()!r} not found (zones not rewritten)")
+        ins =f'      "_zones_note": {json.dumps(ZONES_NOTE, ensure_ascii=False)},\n' + lst("height_zones", front, b["max_height"]) + lst("rear_zones", rear, None)
         blk = blk.replace(anchor, anchor + ins, 1)
         text = text[:start] + blk + text[end:]
     json.loads(text)

@@ -6,27 +6,42 @@
   "chosen": "a",
   "fits_at_1_8": false,
   "ratios_1_8": {
-   "PWR_A": 0.649,
-   "PWR_B": 0.448,
+   "PWR_A": 0.64,
+   "PWR_B": 0.427,
    "CTRL_top": 1.003,
    "CTRL_bottom": 0.979
   },
-  "summary": "Four main boards: PWR-A (plate-bonded L, 7910 mm2), PWR-B (mezzanine on the PWR-A footprint, Samtec QSH/QTH-060-01 5.00 mm stack), RF (unchanged) and a two-sided CTRL; harness headers consolidated per destination and exit zone. Working partition (a): the draft PWR-B list, with the LNB OVP comparator (U220 group) kept on PWR-A next to U212 so that E1_SW and the LNB LDO rail do not cross. Computed verdict (MODEL ESTIMATE): no evaluated partition fits at 1.8. Candidate (a) gives PWR-A 0.649 and PWR-B 0.448 (usable / demand), because every PWR-A part taller than hA and every PWR-A power header costs PWR-B a window or an edge strip (3.8k + 1.3k of the 7.6k outline). CTRL two-sided gives top 1.003 and bottom 0.979.",
-  "why_a": "(a) and (b) leave almost the same total shortfall (about 7.0k mm2 at 1.8), but (a) needs 53 B2B contacts against 76, moves no fused high-current internal net (E2_J21_FUSED) across the boards, and keeps the J21/display/Lime/AUX12 eFuses with their fuse holders and bulk capacitors; moving more groups to PWR-B overfills PWR-B, whose usable area is set by the windows",
+  "summary": "Four main boards: PWR-A (plate-bonded L, 7910 mm2), PWR-B (mezzanine on the PWR-A footprint, Samtec QSH/QTH-060-01 5.00 mm stack), RF (unchanged) and a two-sided CTRL; harness headers consolidated per destination and exit zone. Working partition (a): the draft PWR-B list, with the LNB OVP comparator (U220 group) kept on PWR-A next to U212 so that E1_SW and the LNB LDO rail do not cross. Computed verdict (MODEL ESTIMATE): no evaluated partition fits at 1.8. Candidate (a) gives PWR-A 0.640 and PWR-B 0.427 (usable / demand), because every PWR-A part taller than hA and every PWR-A power header costs PWR-B a window or an edge strip (3.8k + 1.4k of the 7.6k outline). CTRL two-sided gives top 1.003 and bottom 0.979 by area, and five CTRL bottom headers have no height-valid variant under the depth cap (ctrl_headers_unresolved), so CTRL is NOT FIT as well.",
+  "why_a": "(a) and (b) leave almost the same total shortfall (about 7.3k mm2 at 1.8), but (a) needs 53 B2B contacts against 81, moves no fused high-current internal net (E2_J21_FUSED) across the boards, and keeps the J21/display/Lime/AUX12 eFuses with their fuse holders and bulk capacitors; moving more groups to PWR-B overfills PWR-B, whose usable area is set by the windows",
+  "b2b_contacts_quoted": {
+   "a": 53,
+   "b": 81
+  },
   "shortfall_1_8_mm2": {
-   "PWR_A": 4127,
-   "PWR_B": 2910,
+   "PWR_A": 4303,
+   "PWR_B": 3025,
    "CTRL_bottom": 100
   },
-  "shortfall_note": "demand at 1.8 minus usable area, candidate (a), pcb/partition-budget.json; the PWR harness headers alone are 2.6k mm2 raw (about 4.7k at 1.8), two thirds of the PWR shortfall",
+  "shortfall_note": "demand at 1.8 minus usable area, candidate (a), pcb/partition-budget.json; the PWR harness headers alone are 2.7k mm2 raw (about 4.9k at 1.8), two thirds of the PWR shortfall",
+  "ctrl_headers_unresolved": [
+   "X01I1-CTRL",
+   "X02P1-CTRL",
+   "X25P1-CTRL",
+   "X27F1-CTRL",
+   "X28P1-CTRL"
+  ],
+  "ctrl_headers_unresolved_note": "CTRL bottom headers without a height-valid variant (ctrl.bottom_header_rule): X02P1-CTRL (LAB5 into CTRL), X25P1-CTRL (VCC_5V_PERI) and X28P1-CTRL (blower) are vertical Micro-Fit 43650, 9.9 + 1.0 - 3.9 = 7.0 > cap 6.0, and the right-angle variant has no read height and courtyard on this branch; X01I1-CTRL (S01 IDC 2 x 20 to the Q6A) and X27F1-CTRL (KK fan header) have no read height. Their area stays counted on the CTRL bottom (S01 and the LAB5 input cannot move to PWR by function); GR-3 gives them a lower connector within its read rating or MECH-3 a CTRL rear zone with free height, and candidate (am) shows the cost of moving them to PWR-A",
   "rejected": [
-   "(b) switch groups on PWR-B: PWR-A 0.713, PWR-B 0.383, 76 contacts and E2_J21_FUSED (4 A) across the boards",
-   "(c) Pololu modules off PWR-A on plate standoffs: PWR-A 0.733, PWR-B 0.723, still short, and no plate location exists (front face full, build/15 'Розмір'; behind the left leg sit the HF+ can and the RF bay, mechanical/generated/fit-report.md layout); a cut-out in the L for them saves nothing",
+   "(b) switch groups on PWR-B: PWR-A 0.701, PWR-B 0.364, 81 contacts and E2_J21_FUSED (4 A) across the boards",
+   "(c) Pololu modules off PWR-A on plate standoffs: PWR-A 0.721, PWR-B 0.701, still short, and no plate location exists (front face full, build/15 'Розмір'; behind the left leg sit the HF+ can and the RF bay, mechanical/generated/fit-report.md layout); a cut-out in the L for them saves nothing",
    "bigger single PWR board or larger face: the face is fixed by the plan (D-ENV width unchanged, STACK.md:109 HMI layouts); depth growth adds no area",
    "radials or headers on the RF board: RF max height 5.5 (mechanical/params/boards.json:91) and constraints DC-02/RF-01 (pcb/generated/constraints.json:37-77)",
-   "(h8) hB 8.0 instead of 5.5: PWR-A 0.660, PWR-B 0.515 for 2.5 mm more depth (dz_mezz 4.6); still short, and the radials (11.0-11.5 mm) stay above it"
+   "(h8) hB 8.0 instead of 5.5: PWR-A 0.650, PWR-B 0.491 for 2.5 mm more depth (dz_mezz 4.6); still short, and the radials (11.0-11.5 mm) stay above it",
+   "(s8) the 8.00 mm stack (QTH-060-02 with QSH-060-01, hA 7.5, window ceiling 15.1 mm): PWR-B 0.427 -> 0.560 (windows 3.8k -> 3.1k mm2: the polymer capacitors, XAL6060, SRR1260 and C506 no longer need one; the Keystone 3568 holders keep theirs, their height being a lower bound), PWR-A unchanged 0.640, dz_mezz 5.1 <= cap 6.0. It is the strongest PWR-B lever but is not adopted alone: PWR-B stays short, it costs 3 mm more depth, and the QTH-060-02-L-D-A terminal was 0 in stock on 2026-11-07 (the -K variant 33, -TR 5); it goes into next_decision together with a PWR-A lever (s8c)",
+   "(a60) the 60-contact QSH-030/QTH-030 pair: PWR-A 0.656, PWR-B 0.450 (288 and 274 mm2 less demand at 1.8), but the 53 contacts of (a) with the 20 % spare need 64 > 60 (b2b.spare_rule), and (b) needs 81",
+   "(am) the five unresolved CTRL bottom headers moved to PWR-A (rule_gr3: the function moves to PWR): PWR-A 0.566, PWR-B 0.245 (their edge strips), CTRL top 1.218, bottom 1.460; S01 (IDC to the Q6A) and the LAB5 input of CTRL cannot move by function, so their area stays on CTRL"
   ],
-  "next_decision": "OPEN for INT/owner (integration_plan step 8, F2): the PWR function needs about 7.0k mm2 more board area at 1.8 than PWR-A + PWR-B give in the plan's face, or a smaller PWR connector/circuit set. GR-3, MECH-3 and the board packages implement (a) as the working partition; the real placement fill of PCB-PWRA-1/2 and PCB-PWRB is the trigger record."
+  "next_decision": "OPEN for INT/owner (integration_plan step 8, F2): the PWR function needs about 7.3k mm2 more board area at 1.8 than PWR-A + PWR-B give in the plan's face, or a smaller PWR connector/circuit set. Best combinations evaluated (MODEL ESTIMATE): s8c (8.00 mm stack + Pololu modules off PWR-A + PCB-REAR) PWR-A 0.755, PWR-B 1.012; w2 (hypothetical radials <= hB + (b) + Pololu off) PWR-A 0.874. PWR-A stays short in every one (about 2.5k mm2 at best, s8c), so the owner lever is PWR-A area (a larger or second rear board, or face growth) or fewer PWR-A parts and headers; the 8.00 mm stack (s8, dz_mezz 5.1) is the PWR-B lever to take with it. GR-3, MECH-3 and the board packages implement (a) as the working partition; the real placement fill of PCB-PWRA-1/2 and PCB-PWRB is the trigger record."
  },
  "parameters": {
   "hA": 4.5,
@@ -103,11 +118,13 @@
    },
    "0297004.WXNV": {
     "h": 7.37,
-    "src": "Keystone 3568 holder body 16.00 x 6.73 x 7.37 mm (Keystone catalogue K75 p48, https://www.keyelco.com/userAssets/file/K75p48.pdf, read 2026-11-07); height with the mini fuse inserted TBD (Littelfuse 297 drawing not read)"
+    "lower_bound": true,
+    "src": "LOWER BOUND, holder body only: Keystone 3568 holder body 16.00 x 6.73 x 7.37 mm (Keystone catalogue K75 p48, https://www.keyelco.com/userAssets/file/K75p48.pdf, read 2026-11-07); the mini fuse stands above the holder and the height with the fuse inserted is TBD (Littelfuse 297 drawing not read), so this part always gets a PWR-B window and its height against the window ceiling stays OPEN"
    },
    "0297005.WXNV": {
     "h": 7.37,
-    "src": "as 0297004.WXNV: Keystone 3568 body 7.37 mm (K75 p48, read 2026-11-07); fused height TBD"
+    "lower_bound": true,
+    "src": "LOWER BOUND, as 0297004.WXNV: Keystone 3568 body 7.37 mm (K75 p48, read 2026-11-07); fused height TBD"
    },
    "D36V50F12": {
     "h": 10.17,
@@ -158,10 +175,12 @@
  },
  "test_points": {
   "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
-  "src": "GR-2 makes the 29 test_access_requirement refs board parts with this footprint (TP-PAD-D1.5, pcb_pad); counted here with its vendored F.CrtYd",
+  "src": "GR-2 makes the 29 test_access_requirement refs board parts with this footprint (TP-PAD-D1.5, pcb_pad); counted here with its vendored F.CrtYd. A row is a test point when its category is test_access_requirement or, after GR-2, its kind is testpoint or it is a pcb_pad with a TestPoint: footprint (pcb/partition_budget.py is_test_point), so the PWR-A probe windows survive the reclassification",
   "group_domain": {
    "E1/Контрольні точки": "PWR_MAIN"
-  }
+  },
+  "expected_pwr": 27,
+  "expected_pwr_why": "pcb/partition_budget.py stops when it finds another number of PWR test points (E1, E2, E5): a changed TP set is checked and this count updated, never lost silently"
  },
  "header_families": {
   "PH_top": {
@@ -275,7 +294,7 @@
    "MF2",
    "MFJ"
   ],
-  "rule_gr3": "no vertical Molex 43650 on CTRL or RF (9.9 mm, LCSC C293740/C293547 read 2026-11-07, against the 5.5 mm CTRL/RF limit). CTRL: every harness header on the CTRL bottom, side entry (PH 4.8, PHD 5.0), soldered from the top (pin field + 1.0 mm iron access lost on the top side). A right-angle 43650 or the IDC box goes there only if MECH-1's read height + 1.0 mm fits the CTRL bottom gap (3.9 mm + dz over BMS/IP2368; 1.4 mm + dz over the Lime band, where no header goes); otherwise the function moves to PWR. PWR-B: side entry PH/PHD (hB 5.5). PWR-A: Micro-Fit, Mini-Fit Jr. and the battery-sense PH headers in uncovered edge strips.",
+  "rule_gr3": "no vertical Molex 43650 on CTRL or RF (9.9 mm, LCSC C293740/C293547 read 2026-11-07, against the 5.5 mm CTRL/RF limit). CTRL: every harness header on the CTRL bottom, soldered from the top (pin field + 1.0 mm iron access lost on the top side), in the first variant of ctrl.bottom_header_rule whose read height h gives h + 1.0 - 3.9 <= the dz cap 6.0 over BMS/IP2368 (side entry PH 4.8 and PHD 5.0 do; a right-angle Micro-Fit qualifies once its height and courtyard are read; no header over the Lime band, 1.4 mm + dz). A header with no such variant is listed in pcb/partition-budget.json candidates.<chosen>.ctrl.headers_unresolved: GR-3 gives it a lower connector within its read rating, or MECH-3 a CTRL rear zone with free height >= h + 1.0, or its function moves to PWR (candidate 'am' counts that). PWR-B: side entry PH/PHD (hB 5.5). PWR-A: Micro-Fit, Mini-Fit Jr. and the battery-sense PH headers in uncovered edge strips.",
   "variants": {
    "PH": [
     "PH_top",
@@ -323,17 +342,16 @@
    },
    {
     "unit": "PWR",
-    "to": "S05-07-PWR",
+    "to": "S06-07-PWR",
     "from": [
-     "X05J1-PWR",
      "X06J1-PWR",
      "X07J1-PWR"
     ],
     "headers": [
      {
-      "id": "S05-07-PWR",
+      "id": "S06-07-PWR",
       "family": "MFJ_top",
-      "pins": 6
+      "pins": 4
      }
     ]
    },
@@ -429,7 +447,7 @@
   "notes": [
    "S02 PWR side, 45 pins (PH16 + PH16 + PH8 + PH5) -> two JST PHD side entry S26B-PHDSS + S20B-PHDSS (46 positions; LCSC C594990 3568 pcs, C2983880 3270 pcs, JLCPCB search 2026-11-07): the PHD family ends at 34 circuits (ePHD p.3), so the draft '2 x 23' becomes two headers",
    "S02 CTRL side, 5 x PH8 = 40 -> two S20B-PHDSS (C2983880)",
-   "S05 + S06 + S07 Mini-Fit Jr. 3 x 2 -> one 5566 2 x 3 (MPN TBD: SRC-1 owns the Mini-Fit Jr. family; courtyard by the harness_headers formula)",
+   "S05 stays its own Mini-Fit Jr. 5566 2-pin header X05J1-PWR: it is the pack input after F101 and the bench input of build/19 §4 and build/08 step 16 (bench lead into S05 with a 5557 housing, 18 AWG, 7.5 A fuse, while INA228 and #2813 hang on S06-S07), so that procedure and its lead stay as written. S06 + S07 (to the INA228 shunt and to the Pololu #2813 switch, the same bottom-edge exit zone) -> one 5566 2 x 2 (4 contacts: E1_N twice, E1_SHUNT_P, E1_SW). MPN TBD (SRC-1/GR-3 own the Mini-Fit Jr. family); the per-contact current of a 4-circuit 5566 is TBD (Molex 5566 is a READS-E source, plan §4; not read here): all four contacts carry the battery loop current behind F101 7.5 A, so GR-3 takes the derated rating from the READS-E row before it fixes the part, else keeps two 2-pin headers",
    "SL2-bound Micro-Fit S13/S14/S17/S18 2-pin -> one dual-row 2 x 4 (MPN and drawing TBD; MF2_top is an assumption)",
    "SL2-bound PH S20/S21/S22/S35/S36 (11 pins) -> one PH 12 (<= 1.2 A per contact, build/15 'Сигнальні джгути')",
    "S15 + S30 (both to HATCH) -> one PH 5 on CTRL; S24 + S25 PH -> one PH 7 on CTRL",
@@ -447,6 +465,8 @@
    7.61
   ],
   "gnd_pins_per_power_net": 1,
+  "spare_fraction": 0.2,
+  "spare_rule": "design value: the B2B needs ceil(contacts_needed x (1 + spare_fraction)) contacts, because GR-3's header refs and placement can add crossing nets and the owner decision (decision.next_decision) may move groups ((b) needs 81)",
   "declared_sense_pairs": [
    {
     "nets": [
@@ -478,7 +498,8 @@
    "power_pins": 14,
    "signal_pins": 29,
    "gnd_pins": 10,
-   "contacts_needed": 53
+   "contacts_needed": 53,
+   "contacts_with_spare": 64
   },
   "sense_taps": {
    "BONI13V8": "only the divider R283 of the Boni voltage monitor U218 (group 'Boni: контроль напруги') taps the rail"
@@ -502,10 +523,37 @@
    "src": [
     "Samtec QSH/QTH product specification Rev K (2025-02-20), https://suddendocs.samtec.com/productspecs/qsh-qth.pdf (read 2026-11-07): signal current 2 A (one pin powered per row), 175 VAC, -55..+125 C, data for the 5 mm mated height vertical configuration",
     "Samtec catalogue page F-226, https://suddendocs.samtec.com/catalog_english/qth.pdf (2025-10-24, read 2026-11-07): lead style -01 = 5.00 mm with QSH; 2 A per pin (2 pins powered); 25 A per ground plane (1 powered); -030/-060/-090 = 60/120/180 pins per bank; QSH length (pins per row/30) x 20.00 + 1.27, width 7.49; QTH length (pins per row/30) x 20.00, width 7.11; max 100 cycles",
-    "LCSC stock by the JLCPCB parts search (no API key, the User-Agent of tools/check_parts_availability.py), 2026-11-07: QSH-060-01-L-D-A C5199901 270, QTH-060-01-L-D-A C116054 314, QSH-030-01-L-D-A C2909821 72, QTH-030-01-L-D-A C2843756 713"
+    "LCSC stock by the JLCPCB parts search (no API key, the User-Agent of tools/check_parts_availability.py), 2026-11-07: QSH-060-01-L-D-A C5199901 270, QTH-060-01-L-D-A C116054 314, QSH-030-01-L-D-A C2909821 72, QTH-030-01-L-D-A C2843756 713",
+    "Samtec catalogue F-226 qth.pdf (PDF of 2025-10-24), re-read 2026-11-07 for the review fix: QTH lead style -02 A 7.26, height with QSH 8.00 mm; the QSH part number has the single lead style -01, so the QTH lead style sets the mated height; 'Some lengths, styles and options are non-standard, non-returnable'",
+    "LCSC stock by the JLCPCB parts search (no API key, User-Agent sr-rx-parts-snapshot), 2026-11-07: QTH-060-02-L-D-A C116053 0 ('System Fit Height' 8mm), QTH-060-02-L-D-A-K C7267810 33, QTH-060-02-L-D-A-TR C5852170 5"
    ],
-   "why": "the only family found with a read datasheet that meets >= 50 contacts, >= 1 A per contact and a stack of about hA + 0.5 with LCSC stock on both halves; 120 contacts because the computed boundary of (a) needs 53 (76 for (b)) and the 60-contact QSH has 72 in stock; GND returns through the 25 A ground plane plus one GND contact next to each power net",
-   "courtyard_note": "courtyard_pwr_a / courtyard_pwr_b = catalogue body outline + 0.25 mm each side (design value) until GR-3 vendors the Samtec footprints"
+   "why": "the only family found with a read datasheet that meets >= 50 contacts, >= 1 A per contact and a stack of about hA + 0.5 with LCSC stock on both halves. 120 contacts (-060) by b2b.spare_rule: the computed boundary of (a) needs 53, with the 20 % spare 64 > 60, so the 60-contact QSH-030/QTH-030 does not qualify, and (b), still open to the owner, needs 81. The 120-contact pair costs area on two boards that are already short: 288 mm2 of PWR-A and 274 mm2 of PWR-B demand at 1.8 against the 60-contact pair (candidate a60: PWR-A 0.656, PWR-B 0.450 instead of 0.640 / 0.427). Re-decide when the partition is frozen: if contacts_with_spare <= 60 then, GR-3 takes the -030 pair. Stock (QSH-060 270, QTH-060 314, QSH-030 72, QTH-030 713, JLCPCB search 2026-11-07) is evidence only: either size is enough for one build. GND returns through the 25 A ground plane plus one GND contact next to each power net",
+   "courtyard_note": "courtyard_pwr_a / courtyard_pwr_b = catalogue body outline + 0.25 mm each side (design value) until GR-3 vendors the Samtec footprints",
+   "stack_8": {
+    "pwr_a": "QSH-060-01-L-D-A (unchanged: the QSH has the single lead style -01)",
+    "pwr_b": {
+     "mpn": "QTH-060-02-L-D-A",
+     "manufacturer": "Samtec",
+     "lcsc": "C116053",
+     "stock": 0,
+     "alternatives": [
+      {
+       "mpn": "QTH-060-02-L-D-A-K",
+       "lcsc": "C7267810",
+       "stock": 33,
+       "note": "-K = polyimide pick and place pad"
+      },
+      {
+       "mpn": "QTH-060-02-L-D-A-TR",
+       "lcsc": "C5852170",
+       "stock": 5,
+       "note": "-TR = tape and reel"
+      }
+     ]
+    },
+    "read": "2026-11-07",
+    "use": "candidates s8 and s8c only (not chosen); the courtyards are the same catalogue outlines (length and width do not depend on the lead style)"
+   }
   },
   "rule": "contacts per crossing power net = ceil(I_protection / b2b_i_pin_A), I_protection from tools/assembly_data.py NET_CURRENT or net_current_extra; every other crossing net 1 contact; plus gnd_pins_per_power_net; Kelvin and precision nets (shunt nets, INA inputs, precision divider mid-points) never cross except declared_sense_pairs and sense_taps; GR-3 writes pcb/generated/b2b-nets.json by the same rule"
  },
@@ -517,6 +565,30 @@
   "keep_top_refs": [],
   "headers_top": [],
   "iron_access_margin": 1.0,
+  "bottom_header_rule": {
+   "gap_mm": 3.9,
+   "clearance_mm": 1.0,
+   "variants": {
+    "PH": [
+     "PH_side"
+    ],
+    "PHD": [
+     "PHD_side"
+    ],
+    "MF": [
+     "MF_ra",
+     "MF_top"
+    ],
+    "IDC": [
+     "IDC_top"
+    ],
+    "FAN3": [
+     "FAN3_top"
+    ]
+   },
+   "rule": "a CTRL bottom header takes the first variant that has a courtyard formula and a read height h (h_mated if given) with h + clearance_mm - gap_mm <= envelope.cap.dz_max; dz_ctrl = the largest such term of the placed headers. A header with no such variant keeps its base courtyard on the CTRL bottom, is listed in ctrl.headers_unresolved, and the CTRL verdict is NOT FIT until it is resolved (rule_gr3)",
+   "src": "gap = CTRL z_bottom 54.9 (mechanical/params/boards.json CTRL place.z_bottom) - top of the BMS and IP2368 envelopes z 51 (mechanical/generated/fit-report.md layout 'bms', 'ip2368'); every bottom header is taken to sit over BMS/IP2368 (the worst gap outside the Lime band); clearance 1.0 mm design value; MF_ra is used only when a source defines its height and courtyard (mechanical/params/parts.json harness_headers)"
+  },
   "lime_band": {
    "rect": [
     147.0,
@@ -1040,6 +1112,264 @@
     "EEU-FR1C101": 5.5,
     "EEU-FR1C221": 5.5
    }
+  },
+  "s8": {
+   "title": "(a) with the 8.00 mm B2B stack (QTH lead style -02): hA 7.5, window ceiling 15.1 mm, dz_mezz 5.1",
+   "pololu": "pwr_a",
+   "pinned_pwr_a": [],
+   "pwr_b_groups": [
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 1"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 2"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 3"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 4"
+    },
+    {
+     "sheet": "E2",
+     "group": "RTL-B: комутований VBUS"
+    },
+    {
+     "sheet": "E2",
+     "group": "S-band LaNA WB: захищена шина 5 V"
+    },
+    {
+     "sheet": "E2",
+     "group": "INA3221: струми LNA1–3"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNB: контроль напруги"
+    },
+    {
+     "sheet": "E2",
+     "group": "Boni: контроль напруги"
+    },
+    {
+     "sheet": "E2",
+     "group": "AUX12: контроль напруги після PTC"
+    },
+    {
+     "sheet": "E5",
+     "group": "VBUS RTL-A і LAB PORT"
+    },
+    {
+     "sheet": "E5",
+     "group": "LAB BUS I2C buffer"
+    }
+   ],
+   "hA": 7.5,
+   "stack": 8.0
+  },
+  "s8c": {
+   "title": "WHAT-IF (c) + F2b with the 8.00 mm stack: Pololu modules on plate standoffs (no plate location exists), PCB-REAR, hA 7.5",
+   "pololu": "plate",
+   "pinned_pwr_a": [],
+   "pwr_b_groups": [
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 1"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 2"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 3"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 4"
+    },
+    {
+     "sheet": "E2",
+     "group": "RTL-B: комутований VBUS"
+    },
+    {
+     "sheet": "E2",
+     "group": "S-band LaNA WB: захищена шина 5 V"
+    },
+    {
+     "sheet": "E2",
+     "group": "INA3221: струми LNA1–3"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNB: контроль напруги"
+    },
+    {
+     "sheet": "E2",
+     "group": "Boni: контроль напруги"
+    },
+    {
+     "sheet": "E2",
+     "group": "AUX12: контроль напруги після PTC"
+    },
+    {
+     "sheet": "E5",
+     "group": "VBUS RTL-A і LAB PORT"
+    },
+    {
+     "sheet": "E5",
+     "group": "LAB BUS I2C buffer"
+    }
+   ],
+   "rear_groups": [
+    {
+     "sheet": "E5",
+     "group": "VBUS HF+ з демпфованим LC"
+    },
+    {
+     "sheet": "E5",
+     "group": "VBUS RTL-A і LAB PORT"
+    },
+    {
+     "sheet": "E5",
+     "group": "LAB BUS I2C buffer"
+    },
+    {
+     "sheet": "E2",
+     "group": "RTL-B: комутований VBUS"
+    },
+    {
+     "sheet": "E2",
+     "group": "S-band LaNA WB: захищена шина 5 V"
+    }
+   ],
+   "hA": 7.5,
+   "stack": 8.0
+  },
+  "a60": {
+   "title": "(a) with the 60-contact pair QSH-030-01-L-D-A / QTH-030-01-L-D-A (the area that the 120-contact choice costs)",
+   "pololu": "pwr_a",
+   "pinned_pwr_a": [],
+   "pwr_b_groups": [
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 1"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 2"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 3"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 4"
+    },
+    {
+     "sheet": "E2",
+     "group": "RTL-B: комутований VBUS"
+    },
+    {
+     "sheet": "E2",
+     "group": "S-band LaNA WB: захищена шина 5 V"
+    },
+    {
+     "sheet": "E2",
+     "group": "INA3221: струми LNA1–3"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNB: контроль напруги"
+    },
+    {
+     "sheet": "E2",
+     "group": "Boni: контроль напруги"
+    },
+    {
+     "sheet": "E2",
+     "group": "AUX12: контроль напруги після PTC"
+    },
+    {
+     "sheet": "E5",
+     "group": "VBUS RTL-A і LAB PORT"
+    },
+    {
+     "sheet": "E5",
+     "group": "LAB BUS I2C buffer"
+    }
+   ],
+   "b2b": {
+    "contacts": 60,
+    "courtyard_pwr_a": [
+     21.77,
+     7.99
+    ],
+    "courtyard_pwr_b": [
+     20.5,
+     7.61
+    ]
+   }
+  },
+  "am": {
+   "title": "(a) with the CTRL headers that have no height-valid bottom variant moved to PWR-A (rule_gr3: the function moves to PWR)",
+   "pololu": "pwr_a",
+   "pinned_pwr_a": [],
+   "pwr_b_groups": [
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 1"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 2"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 3"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNA: канал 4"
+    },
+    {
+     "sheet": "E2",
+     "group": "RTL-B: комутований VBUS"
+    },
+    {
+     "sheet": "E2",
+     "group": "S-band LaNA WB: захищена шина 5 V"
+    },
+    {
+     "sheet": "E2",
+     "group": "INA3221: струми LNA1–3"
+    },
+    {
+     "sheet": "E2",
+     "group": "LNB: контроль напруги"
+    },
+    {
+     "sheet": "E2",
+     "group": "Boni: контроль напруги"
+    },
+    {
+     "sheet": "E2",
+     "group": "AUX12: контроль напруги після PTC"
+    },
+    {
+     "sheet": "E5",
+     "group": "VBUS RTL-A і LAB PORT"
+    },
+    {
+     "sheet": "E5",
+     "group": "LAB BUS I2C buffer"
+    }
+   ],
+   "ctrl_unresolved_to_pwr_a": true
   }
  },
  "partition": {
@@ -1197,20 +1527,20 @@
     "F2a (c)": "Pololu D36V50F12/F5 off PWR-A on plate standoffs, keeping their bond-zone path; needs a plate location the model does not have (rejected now, kept as an option if MECH-3 finds one)",
     "F2b": "rear-tier board PCB-REAR in x 71.6-116, y 38.5-94.5, z 4.8-17.5 (2486 mm2, parts <= 10.6 mm) taking the rear-load groups E5 'VBUS HF+', 'VBUS RTL-A і LAB PORT', 'LAB BUS I2C buffer' and E2 'RTL-B', 'S-band'; their radials (11.0-11.2 mm) cannot go there and stay on PWR-A; the rear board's own harness headers are not counted yet"
    },
-   "trigger": "courtyard fill of PWR-A or PWR-B > 0.60 in placement, or unrouted nets after two placement iterations (PCB-PWRA-1/2, PCB-PWRB). The model already exceeds it: raw fill PWR-A 0.959, PWR-B 1.239 for (a)",
+   "trigger": "courtyard fill of PWR-A or PWR-B > 0.60 in placement, or unrouted nets after two placement iterations (PCB-PWRA-1/2, PCB-PWRB). The model already exceeds it: raw fill PWR-A 0.972, PWR-B 1.302 for (a)",
    "verdict": "fired at the model level in wave 1; neither option closes the shortfall at 1.8 (see ratios_1_8), so F2 alone is not the fix: decision.next_decision stays OPEN",
    "cost": "integration_plan step 8: +10-12 h (PCB-REAR board, MECH envelope step, GR-3 partition update)",
    "ratios_1_8": {
     "c": {
-     "PWR_A": 0.733,
-     "PWR_B": 0.723,
+     "PWR_A": 0.721,
+     "PWR_B": 0.701,
      "CTRL_top": 1.003,
      "CTRL_bottom": 0.979
     },
     "f2b": {
      "PCB_REAR": 1.75,
-     "PWR_A": 0.677,
-     "PWR_B": 0.616,
+     "PWR_A": 0.667,
+     "PWR_B": 0.589,
      "CTRL_top": 1.003,
      "CTRL_bottom": 0.979
     }
@@ -1222,13 +1552,13 @@
    "candidates": [
     "f3"
    ],
-   "option": "MCP23017 #1/#3/#4 (E3 group 'MCP23017 control') from CTRL to the power side (PWR-B), as STACK.md:1058 allows; needs an E3/E2 review of the EN/FAULT logic",
+   "option": "MCP23017 #1/#3/#4 (E3 group 'MCP23017 control') from CTRL to the power side (PWR-B), as STACK.md:277 allows (MCP23017-E/SO 'на силовій платі'); needs an E3/E2 review of the EN/FAULT logic",
    "trigger": "CTRL fill > 0.60 on either side in placement (PCB-CTRL). The model is at raw fill 0.684 (top) / 0.568 (bottom) for (a)",
-   "verdict": "closes CTRL at 1.8 (top 1.008, bottom 1.024) but adds about 0.23k mm2 to PWR-B, which is already short; apply only if PCB-CTRL shows the fill and PWR gets more area",
+   "verdict": "closes the CTRL area at 1.8 (top 1.008, bottom 1.024) but adds about 0.23k mm2 to PWR-B, which is already short, and leaves the five unresolved CTRL bottom headers (decision.ctrl_headers_unresolved) as they are; apply only if PCB-CTRL shows the fill and PWR gets more area",
    "ratios_1_8": {
     "f3": {
-     "PWR_A": 0.649,
-     "PWR_B": 0.43,
+     "PWR_A": 0.64,
+     "PWR_B": 0.409,
      "CTRL_top": 1.008,
      "CTRL_bottom": 1.024
     }
@@ -1242,19 +1572,58 @@
     "w2"
    ],
    "option": "hypothetical part heights, not parts: w1 = every THT radial no taller than hB; w2 = w1 plus (b) plus the Pololu modules off PWR-A",
-   "verdict": "even w2 stays short (PWR-A 0.892, PWR-B 0.627): replacing the radials alone does not close the budget; no MPN is implied",
+   "verdict": "even w2 stays short (PWR-A 0.874, PWR-B 0.611): replacing the radials alone does not close the budget; no MPN is implied",
    "ratios_1_8": {
     "w1": {
-     "PWR_A": 0.673,
-     "PWR_B": 0.473,
+     "PWR_A": 0.663,
+     "PWR_B": 0.453,
      "CTRL_top": 1.003,
      "CTRL_bottom": 0.979
     },
     "w2": {
-     "PWR_A": 0.892,
-     "PWR_B": 0.627,
+     "PWR_A": 0.874,
+     "PWR_B": 0.611,
      "CTRL_top": 1.003,
      "CTRL_bottom": 0.979
+    }
+   }
+  },
+  {
+   "id": "LEVERS",
+   "relieves": "information for decision.next_decision (levers, not fallbacks with a trigger)",
+   "candidates": [
+    "s8",
+    "s8c",
+    "a60",
+    "am"
+   ],
+   "option": "s8 = (a) with the 8.00 mm stack (PWR-B lever); s8c = s8 with (c) and F2b (WHAT-IF: the Pololu modules have no plate location); a60 = (a) with the 60-contact B2B (the area the 120-contact choice costs); am = (a) with the unresolved CTRL bottom headers counted on PWR-A",
+   "verdict": "s8 lifts PWR-B from 0.427 to 0.560 for dz_mezz 5.1; only s8c brings PWR-B above 1.0 (1.012), and PWR-A stays at 0.755 there: the PWR-A shortfall needs the owner's area or parts decision; a60 gains 0.016 / 0.023 but breaks the spare rule; am costs PWR-A 0.074 and PWR-B 0.182",
+   "ratios_1_8": {
+    "s8": {
+     "PWR_A": 0.64,
+     "PWR_B": 0.56,
+     "CTRL_top": 1.003,
+     "CTRL_bottom": 0.979
+    },
+    "s8c": {
+     "PCB_REAR": 1.75,
+     "PWR_A": 0.755,
+     "PWR_B": 1.012,
+     "CTRL_top": 1.003,
+     "CTRL_bottom": 0.979
+    },
+    "a60": {
+     "PWR_A": 0.656,
+     "PWR_B": 0.45,
+     "CTRL_top": 1.003,
+     "CTRL_bottom": 0.979
+    },
+    "am": {
+     "PWR_A": 0.566,
+     "PWR_B": 0.245,
+     "CTRL_top": 1.218,
+     "CTRL_bottom": 1.46
     }
    }
   }
@@ -1275,7 +1644,7 @@
     "PWR_BRANCH_SW",
     "USB_POWER_SW"
    ],
-   "mech": "mezzanine on the PWR-A L footprint minus windows and edge strips; bottom face at PWR-A top + stack (z 49.1 with dz 0); parts on the top side only"
+   "mech": "mezzanine on the PWR-A L footprint minus windows and edge strips; bottom face at PWR-A top + stack (z 47.5 = 42.5 + 5.0 with dz 0), top face z 49.1 (+ board 1.6); parts on the top side only"
   },
   "mapping": "pcb/prepare.py: E2 parts of the PWR_B groups -> PWR_BRANCH_SW, E5 parts of the PWR_B groups -> USB_POWER_SW; DOMAIN_OVERRIDE keeps partition.domain_override_pwr_a on their old domain; tools/assembly_data.py BOARD_OF_DOMAIN and tools/build_parts.py BOARD3 map both new domains to PWR_B; mechanical/params/boards.json PWR_B lists the same two names (CC-12)"
  },
@@ -1283,12 +1652,12 @@
   "rule": "a PWR part goes to PWR-B only if its schematic group is in partition.PWR_B_groups and its read or class height (heights) is <= hB; otherwise it stays on PWR-A (DOMAIN_OVERRIDE). Every PWR-A part taller than hA gets a window in PWR-B (courtyard + window_margin each side); inside a window a PWR-A part may reach stack + board_t + hB = 12.1 mm",
   "window_ceiling_mm": 12.1,
   "pwr_b_header_rule": "a PWR-B header takes the first family variant whose mated height is <= hB (side entry at hB 5.5); PWR-A headers sit in uncovered edge strips (courtyard + margin), because every one of them is taller than hA",
-  "finding": "at 72ee71b the THT radials EEU-FR1H470, UHE1E221MPD and EEU-FR1C101 (11.0-11.5 mm, LCSC read 2026-11-07) already exceed the PWR max_height 9.0 of mechanical/params/boards.json:28; under this rule they stay on PWR-A inside PWR-B windows (ceiling 12.1 mm), and MECH-3 gives the windows their height zone"
+  "finding": "at 72ee71b 17 THT radials with read heights (EEU-FR1H470 x15 11.2 mm, UHE1E221MPD C207 11.5 mm, EEU-FR1C101 C511 11.0 mm; LCSC via the JLCPCB search, read 2026-11-07) already exceed the PWR max_height 9.0 of mechanical/params/boards.json:28; the 18th radial C512 (EEU-FR1C221) has no read height (class 7.0 from the KiCad footprint, TBD). Read PWR-A harness headers exceed it too: Micro-Fit 3.0 vertical 43650 9.9 mm (LCSC C293740/C293547; X02P1, X04P1, X11P1, X12P1, X19P1 and X32P1-PWR; the dual-row SL2-PWR-MF at 9.9 is an assumption) and Mini-Fit Jr. 5566 39288020 12.8 mm (LCSC C490534; X05J1, X10J1 and S06-07-PWR). Under this rule the radials stay on PWR-A inside PWR-B windows (ceiling 12.1 mm) and the headers sit in uncovered edge strips; MECH-3 gives both their height zones"
  },
  "keepouts": {
   "pwr_a_under_pwr_b_tht": "no PWR-A component under any PWR-B THT pin field (pin field + window_margin each side; copper and mask allowed); the list is pcb/partition-budget.json candidates.<chosen>.pwr_a_keepout_items",
   "pwr_a_under_b2b": "no PWR-A component under the mated QSH/QTH stack outside the QSH courtyard (counted as b2b_raw on both boards)",
-  "pwr_a_tht_pockets": "every PWR-A THT pad (candidates.<chosen>.pwr_a_tht_pocket_items: radials, Keystone 3568 holders, both Pololu pin rows, the PWR-A headers) gets a plate relief pocket >= 1.0 mm deep in M-07 plus a polyimide insulator over the 0.4 mm shim gap (mechanical/params/boards.json:36); MECH-3 draws them",
+  "pwr_a_tht_pockets": "every PWR-A THT pad (candidates.<chosen>.pwr_a_tht_pocket_items: radials, Keystone 3568 holders, both Pololu pin rows, the PWR-A headers) gets a plate relief pocket >= 1.0 mm deep in M-07 plus a polyimide insulator over the 0.4 mm shim gap (mechanical/params/boards.json:21); MECH-3 draws them",
   "pwr_a_test_points": "PWR-A test points sit under probe windows of PWR-B (tp_probe_window), so they stay reachable with PWR-B fitted"
  },
  "p8": {
@@ -1304,14 +1673,15 @@
   "_src": "PWR z_bottom 40.9 + 1.6 (mechanical/params/boards.json:19, :6); display z 56.5 (mechanical/generated/fit-report.md layout 'display'); channel = lower bound of 'Канал повітря 4-6' (build/05-mekhanika.md:124)",
   "dz_mezz": 2.1,
   "dz_mezz_formula": "(42.5 + stack 5.0 + board 1.6 + hB 5.5 + channel 4.0) - 56.5 = 2.1 mm",
-  "dz_ctrl_side_entry": 2.1,
-  "dz_ctrl_formula": "CTRL bottom header PHD side entry 5.0 + 1.0 clearance - 3.9 mm gap over BMS/IP2368 (top z 51, CTRL z_bottom 54.9) = 2.1 mm (PH side entry 4.8 gives 1.9)",
-  "dz_ctrl_idc": "TBD: the box height of XDFH-0254-2*20P is not read here (MECH-1 reads it); term = h_box + 1.0 - 3.9",
-  "dz": "max(2.1, 2.1, IDC term) = 2.1 mm until the IDC term is known",
+  "dz_ctrl": 2.1,
+  "dz_ctrl_formula": "largest placed CTRL bottom header term h + 1.0 - 3.9 over BMS/IP2368 (top z 51, CTRL z_bottom 54.9): PHD side entry 5.0 gives 2.1 (PH side entry 4.8 gives 1.9); the five headers of decision.ctrl_headers_unresolved are not placed and set no term (a vertical Micro-Fit, 9.9 mm, would give 7.0 > cap 6.0; the IDC box and the KK fan header have no read height here)",
+  "dz_ctrl_idc": "TBD: the box height of XDFH-0254-2*20P is not read on this branch (MECH-1 reads it); term = h_box + 1.0 - 3.9, and a term above the cap 6.0 keeps the IDC unresolved",
+  "dz": 2.1,
+  "dz_note": "dz = max(dz_mezz, dz_ctrl) of the chosen candidate, computed (pcb/partition-budget.json candidates.<chosen>.dz_mezz_mm and ctrl.dz_ctrl_mm); with the 8.00 mm stack (s8) dz_mezz would be 5.1",
   "cap": {
    "dz_max": 6.0,
    "dh_max": 4.0,
-   "why": "decision of this package: dz <= 6.0 mm (d <= 72) and dh <= 4.0 mm (h <= 164). A part that would push dz above the cap does not go on the CTRL bottom over BMS/IP2368 (it moves to PWR or to a CTRL region with nothing below); growth beyond either cap returns to the owner row 'Оболонка D15'"
+   "why": "decision of this package: dz <= 6.0 mm (d <= 72) and dh <= 4.0 mm (h <= 164). A part that would push dz above the cap does not go on the CTRL bottom over BMS/IP2368 (ctrl.headers_unresolved of the budget lists such headers: GR-3 gives them a lower connector, MECH-3 a CTRL region with free height, or the function moves to PWR); growth beyond either cap returns to the owner row 'Оболонка D15'"
   },
   "width": "unchanged (plan D-ENV); depth growth adds no board area, so it does not close decision.shortfall_1_8_mm2"
  }
