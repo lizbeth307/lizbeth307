@@ -28,7 +28,7 @@
   },
   "project": "build/kicad/boards/RF/RF.kicad_pro",
   "rules_file": null,
-  "rules_note": "rules_file stays null (pcb/board_gen.py does not copy .kicad_dru files yet); the net classes RF50 0.36/0.20, DCTAP 0.20/0.30 (project rule, not IPC-verified), PWR1A 0.35/0.15 and the default 0.20/0.15 live in RF.kicad_pro, values from pcb/generated/netclasses.json.",
+  "rules_note": "rules_file stays null (pcb/board_gen.py does not copy .kicad_dru files yet); the net classes RF50 0.36/0.20, DCTAP 0.20/0.30 (project rule, not IPC-verified), PWR1A 0.35/0.15 and the default 0.20/0.15 live in RF.kicad_pro, values from pcb/generated/netclasses.json. Project zone defaults (used by the board_gen pours): clearance 0.20 (= RF50 CPWG gap), minimum width 0.20, thermal gap 0.25, spokes 0.30. min_hole_to_hole 0.45 = JLC pad hole-to-hole floor (via to via 0.2); the ENC value 0.5 refused 0.6/0.3 vias at 0.15 mm clearance. min_resolved_spokes 1: a HMC7992 GND pin between two RF pins takes only its outward spoke (project choice, reviewed in PCB-RF-2).",
   "fab_floor": {
     "source": "https://jlcpcb.com/capabilities/pcb-capabilities read 2026-11-07, 4-layer 1 oz values (pcb/generated/netclasses.json fab_floor.jlc_4l_1oz)",
     "min_track_width": 0.09,
@@ -3209,6 +3209,10 @@
           ],
           [
             32.0,
+            6.2
+          ],
+          [
+            32.0,
             9.0
           ]
         ],
@@ -3224,6 +3228,10 @@
           [
             26.0,
             40.0
+          ],
+          [
+            26.0,
+            35.3
           ],
           [
             26.0,
@@ -3843,6 +3851,18 @@
           ],
           [
             98.0,
+            31.8
+          ],
+          [
+            98.0,
+            35.4
+          ],
+          [
+            98.0,
+            37.6
+          ],
+          [
+            98.0,
             40.475
           ]
         ],
@@ -4057,6 +4077,18 @@
           ],
           [
             107.0,
+            31.6
+          ],
+          [
+            107.0,
+            35.4
+          ],
+          [
+            107.0,
+            37.6
+          ],
+          [
+            107.0,
             40.475
           ]
         ],
@@ -4170,6 +4202,10 @@
           [
             129.6,
             24.25
+          ],
+          [
+            129.6,
+            22.4
           ],
           [
             129.6,

@@ -94,6 +94,34 @@ def row(items, x0, y, gap=0.4):
     return x - gap
 
 
+def split_at_pads():
+    """Insert a vertex at every same-net pad centre that a scripted segment passes over, so each pad on the line
+    ends a segment (Freerouting counts a pin as connected only at a wire end; route run 42414473163 listed the
+    pass-through pads as unrouted although KiCad connectivity was complete)."""
+    centres = {}
+    for ref, placed in PLACED.items():
+        for num, pts in placed['pads'].items():
+            for x, y in pts:
+                centres.setdefault(ref, []).append((num, (x, y)))
+    for t in TRACKS:
+        out = [tuple(t['path'][0])]
+        for a, b in zip(t['path'], t['path'][1:]):
+            inner = []
+            L = math.hypot(b[0] - a[0], b[1] - a[1])
+            for ref, items in centres.items():
+                for num, c in items:
+                    if NET_OF.get((ref, num)) != t['net']:
+                        continue
+                    if seg_point(c, a, b) < 1e-6 and min(math.hypot(c[0] - a[0], c[1] - a[1]),
+                                                         math.hypot(c[0] - b[0], c[1] - b[1])) > 1e-6:
+                        inner.append((math.hypot(c[0] - a[0], c[1] - a[1]) / L, c))
+            out += [c for _t, c in sorted(set(inner))] + [tuple(b)]
+        t['path'] = [[bg.r4(x), bg.r4(y)] for x, y in out]
+
+
+NET_OF = {}
+
+
 def track(net, pts, width=RF_W, why='RF50 CPWG on F.Cu over solid In1.Cu GND (scripted, locked)'):
     TRACKS.append({'id': f'{net}-{len([t for t in TRACKS if t["net"] == net]) + 1}', 'net': net, 'layer': 'F.Cu',
                    'width_mm': width, 'path': [[bg.r4(x), bg.r4(y)] for x, y in pts], 'locked': True, 'why': why})
@@ -473,6 +501,16 @@ def project_text(classes):
     for prio, (name, width, clear) in enumerate((('RF50', 0.36, 0.2), ('DCTAP', 0.2, 0.3), ('PWR1A', 0.35, 0.15))):
         rows.append(dict(base, name=name, priority=prio, track_width=width, clearance=clear))
     proj['net_settings']['classes'] = rows
+    # Pours: 0.20 mm to other nets (the RF50 CPWG gap; DCTAP keeps 0.30 through its class), thermal spokes that fit
+    # 0.25 mm QFN pins. board_gen creates its zones with these project defaults (route run 42414473163: 0.3/0.5/0.5).
+    proj['board']['design_settings']['defaults']['zones'] = {
+        'min_clearance': 0.2, 'min_thickness': 0.2, 'thermal_relief_gap': 0.25, 'thermal_relief_spoke_width': 0.3}
+    # Hole to hole: the JLC pad hole-to-hole floor 0.45 (via to via 0.2, netclasses.json fab_floor); 0.6/0.3 vias at
+    # 0.15 mm clearance sit 0.45 mm apart, which the project value 0.5 refused in route run 42414473163.
+    proj['board']['design_settings']['rules']['min_hole_to_hole'] = 0.45
+    # One resolved spoke: a HMC7992 GND pin between two RF pins (0.25 mm pads, 0.5 mm pitch) can only take the outward
+    # spoke; its return is the EPAD and the GND fan-out vias (13 starved_thermal errors in route run 42414473163).
+    proj['board']['design_settings']['rules']['min_resolved_spokes'] = 1
     proj['net_settings']['netclass_patterns'] = [{'netclass': c, 'pattern': n} for n, c in sorted(classes.items())]
     return json.dumps(proj, indent=2, ensure_ascii=False) + '\n'
 
@@ -502,7 +540,12 @@ def spec_doc(template_nets, parts, enc):
         'rules_file': None,
         'rules_note': ('rules_file stays null (pcb/board_gen.py does not copy .kicad_dru files yet); the net classes '
                        'RF50 0.36/0.20, DCTAP 0.20/0.30 (project rule, not IPC-verified), PWR1A 0.35/0.15 and the '
-                       'default 0.20/0.15 live in RF.kicad_pro, values from pcb/generated/netclasses.json.'),
+                       'default 0.20/0.15 live in RF.kicad_pro, values from pcb/generated/netclasses.json. Project '
+                       'zone defaults (used by the board_gen pours): clearance 0.20 (= RF50 CPWG gap), minimum width '
+                       '0.20, thermal gap 0.25, spokes 0.30. min_hole_to_hole 0.45 = JLC pad hole-to-hole floor '
+                       '(via to via 0.2); the ENC value 0.5 refused 0.6/0.3 vias at 0.15 mm clearance. min_resolved_spokes 1: '
+                       'a HMC7992 GND pin between two RF pins takes only its outward spoke (project choice, reviewed '
+                       'in PCB-RF-2).'),
         'fab_floor': {
             'source': f'{nc["fab_floor"]["source"]} read {nc["fab_floor"]["read"]}, 4-layer 1 oz values (pcb/generated/netclasses.json fab_floor.jlc_4l_1oz)',
             'min_track_width': floor['track_width_min'], 'min_clearance': floor['track_spacing_min'],
@@ -581,7 +624,7 @@ def spec_doc(template_nets, parts, enc):
 
 
 def build():
-    GEO.clear(); PLACED.clear(); ANCHORS.clear(); TRACKS.clear(); CHECK_PAIRS.clear()
+    GEO.clear(); PLACED.clear(); ANCHORS.clear(); TRACKS.clear(); CHECK_PAIRS.clear(); NET_OF.clear()
     graph = bg.load_graph()
     manifest = bg.read_json(bg.MANIFEST)
     fps = {f['footprint']: f for f in manifest['footprints']}
@@ -600,6 +643,12 @@ def build():
             raise SystemExit(f'rf_layout: {path} sha256 differs from the recorded {img["sha256"]}')
         GEO[ref] = bg.footprint_geometry(path.read_text(encoding='utf-8'))
     layout()
+    NET_OF.clear()
+    for ref in refs:
+        for p in graph[ref]['pins']:
+            if p.get('net'):
+                NET_OF[(ref, str(p['number']))] = p['net']
+    split_at_pads()
     missing = sorted(set(GEO) - set(ANCHORS), key=bg.sort_ref)
     if missing:
         raise SystemExit(f'rf_layout: not placed: {missing}')
