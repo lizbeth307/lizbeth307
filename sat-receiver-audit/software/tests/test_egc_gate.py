@@ -80,7 +80,7 @@ class ClassifierTests(unittest.TestCase):
         for code in sorted(g.SAFETYNET_SERVICE_CODES):
             for ptype in (0x30, 0x31, 0x32):
                 for build, cls, raw in ((medium, g.MEDIUM, 0xB0), (long_form, g.LONG, 0xF0)):
-                    packet = build(ptype, code, b"\x01\x02")
+                    packet = build(ptype, code, b"\x61\x02")  # priority bits 6-5 = 3 (distress) for C2 00
                     with self.subTest(code=code, ptype=ptype, cls=cls):
                         self.assertEqual(packet[0], raw + ptype - 0x30)
                         self.assertEqual(g.classify(packet), g.EgcDecision(
@@ -96,11 +96,12 @@ class ClassifierTests(unittest.TestCase):
                     self.assertEqual(g.classify(build(0x31, code)), g.EgcDecision(False, expected))
 
     def test_system_and_fleetnet_codes_are_explicitly_rejected(self):
-        self.assertEqual(g.SYSTEM_SERVICE_CODES, {0x00, 0x11, 0x23, 0x33})
+        self.assertEqual(g.SYSTEM_SERVICE_CODES, {0x11, 0x23, 0x33})
         self.assertEqual(g.FLEETNET_SERVICE_CODES, {0x02, 0x72})
         self.assertFalse(g.SAFETYNET_SERVICE_CODES & (g.SYSTEM_SERVICE_CODES | g.FLEETNET_SERVICE_CODES))
-        for code in (0x00, 0x11, 0x23, 0x33):
+        for code in (0x11, 0x23, 0x33):
             self.assertEqual(g.classify(medium(0x30, code)).reason, "SYSTEM_SERVICE_CODE")
+        self.assertEqual(g.classify(medium(0x30, 0x00)).reason, "GENERAL_CALL_BELOW_URGENCY")  # routine C2 00
         for code in (0x02, 0x72):
             self.assertEqual(g.classify(long_form(0x32, code)).reason, "FLEETNET_SERVICE_CODE")
 
@@ -425,6 +426,210 @@ class ReleaseTests(unittest.TestCase):
             self.assertEqual(decoder_policy.availability()["egc-safetynet"], expected)
         source = Path(decoder_policy.__file__).read_text(encoding="utf-8")
         self.assertNotRegex(source, r"import\s+.*egc_gate")  # the profile cannot reach the gate code
+
+
+def with_priority(priority, rest=0x05):
+    """The byte after the service code: priority in bits 6-5, other bits (continuation, repetition) arbitrary."""
+    return bytes(((priority << 5) | rest,))
+
+
+class GeneralCallAndTableTests(unittest.TestCase):
+    """Decision table from IMO MSC.1/Circ.1364/Rev.2 (read 2026-11-07); synthetic descriptors only."""
+    def test_c2_table_is_the_read_rev2_table_and_0x73_is_rejected(self):
+        self.assertEqual(g.SAFETYNET_SERVICE_CODES, {0x00, 0x04, 0x13, 0x14, 0x24, 0x31, 0x34, 0x44})
+        self.assertNotIn(0x73, g.SAFETYNET_SERVICE_CODES)
+        for build in (medium, long_form):
+            with self.subTest(form=build.__name__):
+                self.assertEqual(g.classify(build(0x30, 0x73, with_priority(3))),
+                                 g.EgcDecision(False, "SERVICE_CODE_NOT_SAFETYNET"))
+        self.assertEqual((g.GENERAL_CALL, g.GENERAL_CALL_MIN_PRIORITY), (0x00, 2))
+
+    def test_general_call_passes_only_at_urgency_or_distress(self):
+        for priority in range(4):
+            for rest in (0x00, 0x1F, 0x80, 0x9F):
+                for build, cls in ((medium, g.MEDIUM), (long_form, g.LONG)):
+                    packet = build(0x31, 0x00, with_priority(priority, rest) + b"\x01")
+                    decision = g.classify(packet)
+                    with self.subTest(priority=priority, rest=rest, cls=cls):
+                        if priority >= 2:
+                            self.assertEqual(decision, g.EgcDecision(True, "ACCEPT_SAFETYNET", cls, 0x31, 0x00, len(packet)))
+                        else:
+                            self.assertEqual(decision, g.EgcDecision(False, "GENERAL_CALL_BELOW_URGENCY"))
+                    for inner_build in (medium, long_form):
+                        inner = inner_build(0x31, 0x00, with_priority(priority, rest) + bytes(30))
+                        start = g.classify(fragment(0x3D, inner[:12]))
+                        with self.subTest(priority=priority, rest=rest, inner=inner_build.__name__):
+                            self.assertEqual(start.accept, priority >= 2)
+                            self.assertEqual(start.reason, "ACCEPT_SAFETYNET_MULTIFRAME_START" if priority >= 2
+                                             else "GENERAL_CALL_BELOW_URGENCY")
+
+    def test_priority_bits_matter_only_for_the_general_call(self):
+        for code in sorted(g.SAFETYNET_SERVICE_CODES - {0x00}):
+            for value in range(256):
+                with self.subTest(code=code, value=value):
+                    self.assertTrue(g.classify(medium(0x32, code, bytes((value,)))).accept)
+        for value in range(256):
+            with self.subTest(value=value):
+                self.assertEqual(g.classify(medium(0x32, 0x00, bytes((value,)))).accept, (value & 0x60) >> 5 >= 2)
+
+    def test_general_call_priority_byte_must_lie_inside_the_descriptor_and_first_fragment(self):
+        check = bytes(2)
+        for packet, reason in ((bytes((0xB1, 3, 0x00)) + check, "LENGTH_TOO_SMALL"),
+                               (bytes((0xF1, 0, 3, 0x00)) + check, "LENGTH_TOO_SMALL")):
+            with self.subTest(packet=packet):
+                self.assertEqual(g.classify(packet), g.EgcDecision(False, reason))
+        self.assertTrue(g.classify(bytes((0xB1, 3, 0x04)) + check).accept)  # other codes need no priority byte
+        self.assertTrue(g.classify(bytes((0xB1, 4, 0x00, 0x60)) + check).accept)
+        self.assertTrue(g.classify(bytes((0xF1, 0, 4, 0x00, 0x60)) + check).accept)
+        for inner_build, header in ((medium, 4), (long_form, 5)):
+            inner = inner_build(0x31, 0x00, with_priority(3) + bytes(20))
+            with self.subTest(inner=inner_build.__name__):
+                self.assertEqual(g.classify(fragment(0x3D, inner[:header - 1])).reason, "INNER_HEADER_NOT_IN_FIRST_FRAGMENT")
+                self.assertTrue(g.classify(fragment(0x3D, inner[:header])).accept)
+        self.assertEqual(g.classify(fragment(0x3D, bytes((0xB1, 3, 0x00, 0x60)))).reason, "LENGTH_TOO_SMALL")
+
+    def test_classifier_reads_only_header_bytes_for_general_calls(self):
+        for packet, highest in ((medium(0x31, 0x00, with_priority(3) + bytes(40)), 3),
+                                (long_form(0x31, 0x00, with_priority(0) + bytes(40)), 4),
+                                (fragment(0x3D, medium(0x31, 0x00, with_priority(2) + bytes(40))[:20]), 5),
+                                (fragment(0x3D, long_form(0x31, 0x00, with_priority(1) + bytes(40))[:20]), 6)):
+            spy = Spy(packet)
+            g.classify(spy)
+            with self.subTest(highest=highest):
+                self.assertTrue(all(type(key) is int for key in spy.reads), spy.reads)
+                self.assertEqual(max(spy.reads), highest)
+
+    def test_rejected_general_call_gets_no_checksum_and_no_copy(self):
+        verifier = Verifier()
+        assembler = g.EgcAssembler(verifier)
+        for priority in (0, 1):
+            spy = Spy(medium(0x31, 0x00, with_priority(priority) + bytes(30)))
+            self.assertEqual(assembler.feed(spy), [])
+            self.assertEqual(assembler.last_reason, "GENERAL_CALL_BELOW_URGENCY")
+            self.assertTrue(all(type(key) is int for key in spy.reads), spy.reads)
+        self.assertEqual(verifier.calls, [])
+        relay = medium(0x31, 0x00, with_priority(3) + bytes(30))
+        self.assertEqual(assembler.feed(relay), [relay])
+        self.assertEqual(verifier.calls, [relay])
+
+
+def running_sums(data):
+    c0 = c1 = 0
+    for value in data:
+        c0, c1 = (c0 + value) & 0xFF, (c1 + (c0 + value)) & 0xFF
+    return c0, c1
+
+
+def seal_inmarsat(head):
+    value = g.checksum_inmarsat_c(bytes(head) + bytes(2))
+    return bytes(head) + bytes((value >> 8, value & 0xFF))
+
+
+class InmarsatChecksumTests(unittest.TestCase):
+    """Properties of the checksum read from SatDump packets_structs.h:90-122; no reference vectors exist yet."""
+    def setUp(self):
+        rng = random.Random(1364)
+        self.heads = [bytes(rng.randrange(256) for _ in range(rng.randrange(1, 300))) for _ in range(200)]
+
+    def test_trailer_makes_both_running_sums_zero_and_matches_the_closed_form(self):
+        for head in self.heads:
+            descriptor = seal_inmarsat(head)
+            prefix, total = 0, 0
+            for value in head:
+                prefix = (prefix + value) & 0xFF
+                total = (total + prefix) & 0xFF
+            with self.subTest(size=len(head)):
+                self.assertEqual(running_sums(descriptor), (0, 0))  # Fletcher-style check bytes
+                self.assertEqual(descriptor[-2:], bytes(((-(total + prefix)) & 0xFF, total)))
+
+    def test_trailer_bytes_are_taken_as_zero_and_sent_big_endian(self):
+        for head in self.heads[:40]:
+            value = g.checksum_inmarsat_c(head + bytes(2))
+            for trailer in (b"\x00\x00", b"\xff\xff", b"\x12\x34"):
+                self.assertEqual(g.checksum_inmarsat_c(head + trailer), value)
+            descriptor = seal_inmarsat(head)
+            self.assertEqual(descriptor[-2] << 8 | descriptor[-1], value)
+            swapped = descriptor[:-2] + descriptor[-1:] + descriptor[-2:-1]
+            with self.subTest(size=len(head)):
+                self.assertEqual(g.verify_inmarsat_c(descriptor), value != 0)
+                if descriptor[-1] != descriptor[-2]:
+                    self.assertFalse(g.verify_inmarsat_c(swapped))
+
+    def test_every_single_byte_change_is_detected(self):
+        descriptor = seal_inmarsat(bytes((0xB1, 10, 0x31, 0x60, 1, 2, 3, 4, 5, 6)))
+        self.assertTrue(g.verify_inmarsat_c(descriptor))
+        for index in range(len(descriptor)):
+            for delta in range(1, 256):
+                changed = bytearray(descriptor)
+                changed[index] = (changed[index] + delta) & 0xFF
+                self.assertFalse(g.verify_inmarsat_c(bytes(changed)), (index, delta))
+
+    def test_a_sent_zero_is_refused_although_satdump_accepts_it(self):
+        head = bytes((0xB1, 6, 0x31, 0x60, 0x41, 0x42))
+        self.assertNotEqual(g.checksum_inmarsat_c(head + bytes(2)), 0)
+        self.assertFalse(g.verify_inmarsat_c(head + bytes(2)))  # packets_structs.h:122 treats a sent 0 as valid
+        a = 0x31  # sums of (a, b, c): S0 = a+b+c and T = 3a+2b+c, both 0 mod 256 for b = -2a, c = a
+        zero = bytes((a, (-2 * a) & 0xFF, a))
+        self.assertEqual(g.checksum_inmarsat_c(zero + bytes(2)), 0)
+        self.assertEqual(running_sums(zero + bytes(2)), (0, 0))  # consistent by the algorithm...
+        self.assertFalse(g.verify_inmarsat_c(zero + bytes(2)))  # ...yet refused: fail closed until ПОЛ-06
+
+    def test_invalid_input_is_refused(self):
+        for value in (None, "abcdef", 12, b"", b"\x01\x02", [0xB1, 300, 0, 0], [0xB1, True, 0, 0], [0xB1, 1, 0, None]):
+            with self.subTest(value=value):
+                if value != [0xB1, 1, 0, None]:
+                    with self.assertRaisesRegex(g.EgcRefused, "CHECKSUM_INPUT_INVALID"):
+                        g.checksum_inmarsat_c(value)
+                self.assertFalse(g.verify_inmarsat_c(value))
+        self.assertEqual(g.checksum_inmarsat_c(bytearray(seal_inmarsat(b"\xb1\x01"))),
+                         g.checksum_inmarsat_c(memoryview(seal_inmarsat(b"\xb1\x01"))))
+
+    def test_read_algorithm_plugs_into_the_gate_but_is_never_the_default(self):
+        def medium_c(code, data):
+            return seal_inmarsat(bytes((0xB1, 3 + len(data), code)) + data)
+
+        def fragment_c(ptype, data):
+            return seal_inmarsat(bytes((0x80 | ptype, len(data) + 2)) + data)
+
+        packet = medium_c(0x44, b"\x20abc")
+        self.assertTrue(g.checksum_ok(packet, g.verify_inmarsat_c))
+        self.assertFalse(g.checksum_ok(packet[:-1] + bytes(((packet[-1] + 1) & 0xFF,)), g.verify_inmarsat_c))
+        with self.assertRaisesRegex(g.EgcRefused, "CHECKSUM_ALGORITHM_UNVERIFIED"):
+            g.checksum_ok(packet)
+        with self.assertRaisesRegex(g.EgcRefused, "CHECKSUM_ALGORITHM_UNVERIFIED"):
+            g.EgcAssembler(None)
+        inner = medium_c(0x00, with_priority(3) + bytes(range(40)))
+        start, continuation = fragment_c(0x3D, inner[:20]), fragment_c(0x3E, inner[20:])
+        self.assertTrue(all(g.verify_inmarsat_c(part) for part in (inner, start, continuation)))
+        assembler = g.EgcAssembler(g.verify_inmarsat_c)
+        self.assertEqual(frames(assembler, [start], [continuation]), [[], [inner]])
+        self.assertEqual(frames(assembler, [medium(0x31, 0x04, b"x")], first=5), [[]])  # toy-sealed: mismatch
+        self.assertEqual(assembler.last_reason, "CHECKSUM_MISMATCH")
+
+
+class ReleaseEvidenceSourcesTests(unittest.TestCase):
+    def test_sources_are_recorded_but_no_flag_and_no_profile_changes(self):
+        self.assertEqual(set(g.RELEASE_EVIDENCE_SOURCES), set(g.RELEASE_EVIDENCE))
+        self.assertTrue(all(value is False for value in g.RELEASE_EVIDENCE.values()))
+        statuses = {key: record["status"] for key, record in g.RELEASE_EVIDENCE_SOURCES.items()}
+        self.assertEqual(statuses, {"c2_service_code_table_verified": "SOURCE_READ_UNREVIEWED",
+                                    "descriptor_checksum_algorithm_verified": "SOURCE_READ_UNREVIEWED",
+                                    "pol06_mixed_recording_test_passed": "OPEN"})
+        for key in ("c2_service_code_table_verified", "descriptor_checksum_algorithm_verified"):
+            record = g.RELEASE_EVIDENCE_SOURCES[key]
+            with self.subTest(key=key):
+                self.assertEqual(record["read"], "2026-11-07")
+                self.assertRegex(record["url"], r"\Ahttps://")
+                self.assertTrue(record["where"] and record["open"])
+        self.assertIn("1aedd602055c154401384a8cc7876713bb371254",
+                      g.RELEASE_EVIDENCE_SOURCES["descriptor_checksum_algorithm_verified"]["url"])
+        self.assertRegex(g.RELEASE_EVIDENCE_SOURCES["c2_service_code_table_verified"]["sha256"], r"\A[0-9a-f]{64}\Z")
+        expected = "DISABLED_NO_VERIFIED_HEADER_PARSER_AND_TEST_VECTORS"
+        reviewed = {key: dict(record, status="REVIEWED") for key, record in g.RELEASE_EVIDENCE_SOURCES.items()}
+        for sources in (g.RELEASE_EVIDENCE_SOURCES, reviewed):
+            with mock.patch.dict(g.RELEASE_EVIDENCE_SOURCES, sources):
+                self.assertEqual(g.gate_status(), "DISABLED_RELEASE_EVIDENCE_MISSING")  # records never flip a flag
+                self.assertEqual(decoder_policy.availability()["egc-safetynet"], expected)
 
 
 if __name__ == "__main__":
