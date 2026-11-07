@@ -26,13 +26,13 @@
       "spec": "a97c96d016b04c65829925a8bb09474386b7dcadfa452a31559c75623f9ccd85",
       "contract": "eee8a3867163df550701303781111a0012b3314a89f7dee351a8ede7ac8353d0",
       "project_rules": "2aa13b5419374d94ff7d22cf48556ceebc9635e3742b9f4d2eef575c25624f41",
-      "template": "d455cb3519a825eb47ca3bafd22f3926c8383bf250349ca6cbfd19f642c4a065",
-      "instances": "5af94aa57598cdecc667e7e5bcb2283be84bb439ac2ba58580569f10c4ed30fb"
+      "template": "4c9dcf416687d46f2147b6af3f9d85d7ae394b072e377e73fba15fcb524a55b9",
+      "instances": "19a6ad3075d7bb21f060309f07b73889cd960c616b5337231528298fe5da9c08"
     },
-    "sha256": "28ecb9bdf314e245f0e03529d804cfe24d5b7a0663757d4cb2d1e5ba72c3b8d0"
+    "sha256": "f77a469d79ff499b62e129cfb76125ecb55cce7a5fe2fa89d9ce2169099b6243"
   },
   "board_file": "build/kicad/boards/ENC/ENC.kicad_pcb",
-  "board_sha256": "7a122c3361d2a74b2fba5edd4fc4c532afef11475b27978db90c8ca11f046133",
+  "board_sha256": "507ab3832957d25e2aabde58fa4509e84787181e4c1fe5c7e404072c6b03193f",
   "project_file": "build/kicad/boards/ENC/ENC.kicad_pro",
   "fp_lib_table_sha256": "6b2a79120473af8986b9a926ecdd3f0a81eacea4b73a8391c78367962c2525c3",
   "layers": {
@@ -137,12 +137,12 @@
       "pads": {
         "A": "ENC_A",
         "B": "ENC_B",
-        "C": "GND"
+        "C": "GND",
+        "S1": "ENC_SW",
+        "S2": "GND"
       },
       "unused_pads": [
-        "MP",
-        "S1",
-        "S2"
+        "MP"
       ]
     },
     {
@@ -295,7 +295,7 @@
       },
       {
         "number": "S1",
-        "net": null,
+        "net": "ENC_SW",
         "at": [
           9.5,
           19.0
@@ -303,7 +303,7 @@
       },
       {
         "number": "S2",
-        "net": null,
+        "net": "GND",
         "at": [
           14.5,
           19.0
@@ -367,12 +367,12 @@
   },
   "copper": {
     "tracks": {
-      "segments": 8,
+      "segments": 12,
       "vias": 0,
       "locked": 2,
       "by_layer": {
-        "B.Cu": 2,
-        "F.Cu": 6
+        "B.Cu": 4,
+        "F.Cu": 8
       },
       "widths_mm": [
         0.25,
@@ -574,7 +574,7 @@
             ]
           },
           {
-            "description": "PTH pad S1 [<no net>] of ENC",
+            "description": "PTH pad S1 [ENC_SW] of ENC",
             "pos": [
               109.5,
               105.0
@@ -597,7 +597,7 @@
             ]
           },
           {
-            "description": "PTH pad S2 [<no net>] of ENC",
+            "description": "PTH pad S2 [GND] of ENC",
             "pos": [
               114.5,
               105.0
@@ -749,6 +749,7 @@
             "net": "ENC_SW",
             "graph_net": "E3_ENC1_PRESS_EXT",
             "board_pads": [
+              "ENC.S1",
               "J1.4"
             ],
             "external_refs": 2,
@@ -763,9 +764,10 @@
             "graph_net": "GND",
             "board_pads": [
               "ENC.C",
+              "ENC.S2",
               "J1.1"
             ],
-            "external_refs": 475,
+            "external_refs": 484,
             "external_sample": [
               "A401",
               "A402",
@@ -781,9 +783,7 @@
           {
             "contact": "SW308",
             "host": "ENC301",
-            "nets_not_on_host_pads": [
-              "E3_ENC1_PRESS_EXT"
-            ]
+            "nets_not_on_host_pads": []
           }
         ]
       },
@@ -825,6 +825,7 @@
             "net": "ENC_SW",
             "graph_net": "E3_ENC2_PRESS_EXT",
             "board_pads": [
+              "ENC.S1",
               "J1.4"
             ],
             "external_refs": 2,
@@ -839,9 +840,10 @@
             "graph_net": "GND",
             "board_pads": [
               "ENC.C",
+              "ENC.S2",
               "J1.1"
             ],
-            "external_refs": 475,
+            "external_refs": 484,
             "external_sample": [
               "A401",
               "A402",
@@ -857,9 +859,7 @@
           {
             "contact": "SW309",
             "host": "ENC302",
-            "nets_not_on_host_pads": [
-              "E3_ENC2_PRESS_EXT"
-            ]
+            "nets_not_on_host_pads": []
           }
         ]
       }
