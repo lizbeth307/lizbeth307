@@ -31,6 +31,7 @@ defaults:
 env:
   PYTHONDONTWRITEBYTECODE: '1'
   QT_QPA_PLATFORM: offscreen
+  PYTHONUNBUFFERED: '1'
 
 jobs:
   unit:

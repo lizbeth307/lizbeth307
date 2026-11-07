@@ -934,8 +934,22 @@ def count_locked(board):
 
 
 def run(cmd, timeout=900, cwd=None):
-    proc = subprocess.run([str(c) for c in cmd], capture_output=True, text=True, timeout=timeout, cwd=cwd)
+    proc = subprocess.run([str(c) for c in cmd], capture_output=True, text=True, timeout=timeout, cwd=cwd,
+                          stdin=subprocess.DEVNULL)
     return proc
+
+
+def run_logged(cmd, log_path, timeout, cwd):
+    """Run with stdout and stderr streamed to a file; returns the exit code, or None after a timeout."""
+    with open(log_path, 'wb') as log:
+        proc = subprocess.Popen([str(c) for c in cmd], stdout=log, stderr=subprocess.STDOUT,
+                                stdin=subprocess.DEVNULL, cwd=cwd)
+        try:
+            return proc.wait(timeout=timeout)
+        except subprocess.TimeoutExpired:
+            proc.kill()
+            proc.wait()
+            return None
 
 
 def kicad_cli():
@@ -1278,11 +1292,19 @@ def route(board, freerouting):
             raise SystemExit('board_gen: Specctra DSN export failed')
         probe = dsn_probe(dsn.read_text(encoding='utf-8', errors='replace'))
         cmd = freerouting_command(binary, dsn, ses, spec['router']['max_passes'], spec['router']['threads'], temp / 'fr-user')
-        print('Freerouting command:', ' '.join(Path(c).name if i in (0, 2, 4) else c for i, c in enumerate(cmd)))
-        proc = run(cmd, timeout=int(spec['router'].get('timeout_s', 900)), cwd=temp)
-        log = re.sub(r'\x1b\[[0-9;]*m', '', proc.stdout + proc.stderr)
-        if proc.returncode != 0 or not ses.is_file():
-            raise SystemExit(f'board_gen: Freerouting failed ({proc.returncode}):\n{log[-4000:]}')
+        print('Freerouting command:', ' '.join(Path(c).name if i in (0, 2, 4) else c for i, c in enumerate(cmd)), flush=True)
+        art = os.environ.get('SR_RX_PCB_ARTIFACTS')
+        if art:  # the DSN is our design data; keep it for review even if routing fails
+            Path(art).mkdir(parents=True, exist_ok=True)
+            shutil.copyfile(dsn, Path(art) / dsn.name)
+        proc = run_logged(cmd, temp / 'freerouting.log', int(spec['router'].get('timeout_s', 900)), temp)
+        log = re.sub(r'\x1b\[[0-9;]*m', '', (temp / 'freerouting.log').read_text(encoding='utf-8', errors='replace'))
+        if art:
+            atomic_write(Path(art) / 'freerouting.log', log)
+        if proc is None:
+            raise SystemExit(f'board_gen: Freerouting timed out after {spec["router"].get("timeout_s", 900)} s:\n{log[-6000:]}')
+        if proc != 0 or not ses.is_file():
+            raise SystemExit(f'board_gen: Freerouting failed ({proc}):\n{log[-6000:]}')
         if not pcb.ImportSpecctraSES(board_obj, str(ses)):
             raise SystemExit('board_gen: Specctra SES import failed')
         locked_after = count_locked(board_obj)
@@ -1308,7 +1330,7 @@ def route(board, freerouting):
             'binary_sha256': sha256_file(binary),
             'command': [Path(c).name if i in (0, 2, 4) else ('--user_data_path=<temp>' if c.startswith('--user_data_path') else c)
                         for i, c in enumerate(cmd)],
-            'exit_code': proc.returncode, 'log_tail': log.strip().splitlines()[-40:],
+            'exit_code': proc, 'log_tail': log.strip().splitlines()[-40:],
             'dsn_sha256': sha256_file(dsn), 'ses_sha256': sha256_file(ses), 'dsn_probe': probe,
             'locked_segments': {'before_ses_import': locked_before, 'after_ses_import': locked_after},
             'drc_command': drc_cmd, 'board_sha256': sha256_file(board_path), 'previews': shown,
@@ -1318,11 +1340,8 @@ def route(board, freerouting):
         }
         atomic_write(out / 'route-log.json', dump(route_log))
         # The DSN and SES are design data (not Freerouting code): kept as artifacts for review, not committed.
-        art = os.environ.get('SR_RX_PCB_ARTIFACTS')
         if art:
-            Path(art).mkdir(parents=True, exist_ok=True)
-            for f in (dsn, ses):
-                shutil.copyfile(f, Path(art) / f.name)
+            shutil.copyfile(ses, Path(art) / ses.name)
     summary = {k: report['result'][k] for k in report['result']}
     print(dump({'board': board, 'passed': report['passed'], **summary}), end='')
     return 0 if report['passed'] else 1
