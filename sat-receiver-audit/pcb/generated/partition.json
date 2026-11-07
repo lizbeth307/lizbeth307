@@ -65,7 +65,7 @@
       },
       {
         "file": "design/E4.json",
-        "sha256": "590eb7a5942d2dbe11015d67a63218b81af02a7540ac2c3c419ea90626d7f9ad"
+        "sha256": "af71c452f6835c0d7ad043eaee21cfb17eb525a8ea39aa8aa9b4efa892afc29b"
       },
       {
         "file": "design/E5.json",
@@ -77,7 +77,7 @@
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "09be9823a82e097bd019ea4abb5cc7947a3a66c7aee225e2adc2e5f6a680bff1"
+        "sha256": "b0ea96c62955b4195044b823fd9472f65c55cc062cc9a135e9e739235b77192d"
       }
     ],
     "source_documents": [
