@@ -323,7 +323,11 @@ FAMILIES = {
             "max_pins": 40, "source": None, "db": "IDC", "tool": "прес IDC"},
     "MFJ": {"title": "Molex Mini-Fit Jr. (дворядна)", "rating": 9.0, "share": 0.6, "awg": (24, 22, 20, 18), "signal_awg": 24, "power_awg": 18,
             "max_pins": 12, "source": "MOLEX-5556",
-            # Housings 5557, vertical headers 5566 and the 0039000060 terminal: harness_families MFJ (LCSC + DigiKey DE, W2 SRC-1).
+            # Housings 5557 (0039012020/0039012040), vertical headers 5566 (0039288020/0039288040) and the 0039000060
+            # terminal are the harness_families MFJ entry of design/parts/parts.json (LCSC listings plus DigiKey DE SKUs,
+            # W2 SRC-1), so the generator takes them from the database like PH, MF and IDC. Header footprints: KiCad 10.0.7
+            # Connector_Molex 5566-02A/-04A (no PCB pegs, by the library mapping; the Molex drawings were not readable).
+            # The codes first read on DigiKey DE stay in SOURCES DIGIKEY-MFJ.
             "db": "MFJ", "terminal": "0039000060 (пакет) / 0039000059 (котушка)",
             "tool": "Molex 638190901 (18–24 AWG); екстрактор 11030044"},
     "SOLDER": {"title": "пайка до майданчиків", "rating": None, "share": None, "awg": (28, 26, 24, 22, 20, 18), "signal_awg": 26, "power_awg": 20,
