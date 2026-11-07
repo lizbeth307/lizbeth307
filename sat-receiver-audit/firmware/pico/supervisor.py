@@ -131,6 +131,11 @@ class Supervisor:
             return "ADC_UNCALIBRATED"
         if self._inputs_at is None or self._now - self._inputs_at > SENSOR_MAX_AGE_MS:
             return "SENSOR_STALE"
+        # Physical DISARM/STOP: main.py sets operator_stop for a LOCK hold seen on
+        # fresh key reads. It refuses ARM and, via _advance, trips WARMING,
+        # CONFIGURING or ACTIVE; SAFE, TRIPPED, SHUTTING_DOWN and OFF stay as they are.
+        if self._inputs.get("operator_stop") is True:
+            return "OPERATOR_STOP"
         if self._inputs.get("q6a_on") is not True:
             return "Q6A_OFF"
         if not self._sensors_valid():
