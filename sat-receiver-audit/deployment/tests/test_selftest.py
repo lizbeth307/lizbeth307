@@ -122,6 +122,13 @@ class SelftestTests(unittest.TestCase):
         path.write_bytes(data.encode() if isinstance(data, str) else data)
         return path
 
+    def dpkg_image(self, status):
+        """A dpkg database makes the root a full image, which RX-11 expects to carry its unit interpreters
+        (W2 FW-STOP: RX-11 now passes on the clean tree, so a missing interpreter would flip it too)."""
+        for rel in ("usr/bin/python3", "usr/bin/env", "opt/srrx/venv/bin/python3"):
+            self.put(rel, "#!fixture\n")
+        return self.put("var/lib/dpkg/status", status)
+
     def symlink(self, link, target):
         link.parent.mkdir(parents=True, exist_ok=True)
         try:
@@ -136,8 +143,8 @@ class SelftestTests(unittest.TestCase):
         # Invariants of every report: no hardware claim, no PASS outside OFFLINE evidence.
         self.assertFalse(report["hardware_ready"])
         self.assertFalse(report["receive_only_proven"])
-        if not allow_pass:  # honest today: RX-11 reports the touch-only DISARM leaf
-            self.assertNotEqual(report["status"], "OFFLINE_CHECKS_PASS")
+        if report["status"] == "OFFLINE_CHECKS_PASS":  # allow_pass is kept for callers (W2 FW-STOP)
+            self.assertEqual((report["policy_status"], report["policy_review"]["status"]), ("REVIEWED", "BOUND"))
         for check in report["checks"]:
             if check["evaluability"] in ("BUILDER", "DEVICE", "HARDWARE"):
                 self.assertEqual(check["status"], "RUNTIME_ONLY", check["id"])
@@ -190,16 +197,16 @@ class SelftestTests(unittest.TestCase):
         out = subprocess.run([sys.executable, str(HERE / "selftest.py"), "catalogue"], capture_output=True, text=True, check=True)
         self.assertEqual([c["id"] for c in json.loads(out.stdout)], ids)
 
-    def test_clean_staged_tree_passes_offline_rows_but_stays_blocked(self):
+    def test_clean_staged_tree_passes_offline_rows_with_the_synthetic_review(self):
         report = self.run_check(rootfs=self.clean)
-        self.assertEqual(report["status"], "BLOCKED")
-        self.assertEqual(report["blockers"], ["RX-11"])  # honest today: DISARM has no key or encoder path
+        # W2 FW-STOP: the LOCK hold gave DISARM its glove path, the last RX-11 finding. This PASS needs the
+        # synthetic REVIEWED policy and its bound record; the shipped DRAFT policy blocks (test below).
+        self.assertEqual((report["status"], report["blockers"]), ("OFFLINE_CHECKS_PASS", []))
         self.assertEqual(report["policy_status"], "REVIEWED")
         self.assertEqual(report["policy_review"], {"status": "BOUND", "sha256": deploy.sha(self.review)})
-        self.assertEqual(self.check(report, "RX-11")["findings"], [{"path": "software/srrx/menu_model.py", "rule": "critical_leaf_touch_only",
-                                                                   "effect": "BLOCKED", "item": "frame.disarm"}])
+        self.assertEqual(self.check(report, "RX-11")["findings"], [])
         for check in report["checks"]:
-            if check["evaluability"] == "OFFLINE" and check["id"] != "RX-11":
+            if check["evaluability"] == "OFFLINE":
                 self.assertEqual(check["status"], "PASS", check)
         self.assertTrue(report["target"]["inventory_complete"])
         self.assertGreater(report["target"]["files_scanned"], 50)
@@ -320,9 +327,9 @@ class SelftestTests(unittest.TestCase):
             ("RX-01c", "direct_sampling_nonzero", lambda: self.put("home/lab/.config/sdrpp/rtl_sdr_config.json", {"devices": {"LABRXA": {"directSamplingMode": 1}}})),
             ("RX-01c", "bias_key", lambda: self.put("etc/SoapySDR/rtl.conf", "[rtlsdr]\nbiastee = 0\n")),
             ("RX-01c", "hfplus_rate_256000", lambda: self.put("etc/openwebrx/openwebrx.conf", "[hfplus]\nsamp_rate = 256000\n")),
-            ("RX-01a", "forbidden_package", lambda: self.put("var/lib/dpkg/status", "Package: direwolf\nStatus: install ok unpacked\nVersion: 1.7-1\n\nPackage: bash\nStatus: install ok installed\nVersion: 5.2.21-2ubuntu4\n")),
-            ("RX-01a", "forbidden_package", lambda: self.put("var/lib/dpkg/status", "Package: librtlsdr2\nStatus: install ok installed\nVersion: 2.0.1-2build1\n")),
-            ("RX-01a", "forbidden_package", lambda: self.put("var/lib/dpkg/status", "Package: dream\nStatus: install ok installed\nVersion: 2.1.1-3\n")),
+            ("RX-01a", "forbidden_package", lambda: self.dpkg_image("Package: direwolf\nStatus: install ok unpacked\nVersion: 1.7-1\n\nPackage: bash\nStatus: install ok installed\nVersion: 5.2.21-2ubuntu4\n")),
+            ("RX-01a", "forbidden_package", lambda: self.dpkg_image("Package: librtlsdr2\nStatus: install ok installed\nVersion: 2.0.1-2build1\n")),
+            ("RX-01a", "forbidden_package", lambda: self.dpkg_image("Package: dream\nStatus: install ok installed\nVersion: 2.1.1-3\n")),
             ("RX-16", "apt_forbidden_origin", lambda: self.put("etc/apt/sources.list.d/extra.list", "deb http://ppa.launchpadcontent.net/x/y/ubuntu noble main\n")),
             ("RX-16", "rsdk_ppa_list_present", lambda: self.put("etc/apt/sources.list.d/ubuntu-qcom-iot-ubuntu-qcom-ppa-noble.list", "# disabled\n")),
             ("RX-16", "lab_pref_structure", lambda: self.put("etc/apt/preferences.d/lab.pref", "Package: *\nPin: release o=lab\nPin-Priority: 1001\n\nPackage: *\nPin: origin *\nPin-Priority: 500\n")),
@@ -337,7 +344,7 @@ class SelftestTests(unittest.TestCase):
             ("RX-01c", "direct_sampling_key", lambda: self.put("var/lib/openwebrx/sdrs.json", {"sdrs": {"rtl": {"type": "soapy", "device": "driver=rtlsdr,direct_samp=2"}}})),
             ("RX-01c", "bias_key", lambda: self.put("etc/SoapySDR/rtl.conf", "[rtl]\nargs = driver=rtlsdr biastee=true\n")),
             ("RX-01c", "direct_sampling_nonzero", lambda: self.put("etc/lab/receivers.json", {"rx": ["driver=rtlsdr, directSampling=\"1\""]})),
-            ("RX-01a", "pinned_package_present_unreviewed", lambda: self.put("var/lib/dpkg/status", "Package: libqnn1\nStatus: install ok installed\nVersion: 2.49.0-1\n"), "BLOCKED"),
+            ("RX-01a", "pinned_package_present_unreviewed", lambda: self.dpkg_image("Package: libqnn1\nStatus: install ok installed\nVersion: 2.49.0-1\n"), "BLOCKED"),
             ("RX-16", "apt_pin_positive_outside_lab_pref", lambda: (self.put("etc/apt/preferences.d/lab.pref", self.LAB_PREF),
                                                                      self.put("etc/apt/preferences.d/50-unpin", "Package: wsjtx\nPin: release *\nPin-Priority: 500\n"))),
             ("RX-16", "apt_pin_positive_outside_lab_pref", lambda: (self.put("etc/apt/preferences.d/lab.pref", self.LAB_PREF),
@@ -526,7 +533,7 @@ class SelftestTests(unittest.TestCase):
         accepted = [
             lambda: self.put("etc/systemd/system/lab-lease-sdrpp.service", self.lease()),
             lambda: self.put("home/lab/.config/sdrpp/rtl_sdr_config.json", {"devices": {"LABRXA": {"directSamplingMode": 0, "gain": 20}}}),
-            lambda: self.put("var/lib/dpkg/status", "Package: librtlsdr2\nStatus: install ok installed\nVersion: 2.0.3-0+lab1\n\n"
+            lambda: self.dpkg_image("Package: librtlsdr2\nStatus: install ok installed\nVersion: 2.0.3-0+lab1\n\n"
                              "Package: direwolf\nStatus: deinstall ok config-files\nVersion: 1.7-1\n\n"
                              "Package: dream\nStatus: install ok installed\nVersion: 2.1.1-3+lab1\n\n"
                              "Package: gpredict\nStatus: install ok installed\nVersion: 2.6+git20261011-0+lab1\n\n"
@@ -582,7 +589,7 @@ class SelftestTests(unittest.TestCase):
                 report = self.run_check()
                 expected = {check for check, deps in closure.items() if name in deps}
                 self.assertTrue(expected)
-                # RX-11 is already BLOCKED (touch-only DISARM): its findings below still show the copy.
+                # A row already BLOCKED in the baseline does not flip; its findings below still show the copy.
                 flips = {check for check in expected if self.base("controller")[check] != "BLOCKED"}
                 self.assertEqual({k for k, v in self.statuses(report).items() if v != self.base("controller")[k]}, flips)
                 for check_id in expected:
@@ -685,8 +692,8 @@ class SelftestTests(unittest.TestCase):
     def test_menu_model_row_reports_each_defect(self):
         menu = self.checker_module("menu_model")
         base = self.check(self.run_check(rootfs=self.clean), "RX-11")
-        self.assertEqual(base["status"], "BLOCKED")
-        self.assertEqual({(f["rule"], f.get("item")) for f in base["findings"]}, {("critical_leaf_touch_only", "frame.disarm")})
+        self.assertEqual(base["status"], "PASS")  # W2 FW-STOP: DISARM has its LOCK-hold glove path
+        self.assertEqual({(f["rule"], f.get("item")) for f in base["findings"]}, set())
         # Not evaluated here, and said so: the Lab Shell menu (STACK.md:884), unit enablement, and on an
         # overlay without the base image the interpreters (/usr/bin/python3, the venv).
         self.assertTrue({"lab_shell_menu_not_modelled", "unit_enablement_is_an_install_step",
@@ -727,13 +734,13 @@ class SelftestTests(unittest.TestCase):
                 self.assertIn(finding, findings)
         self.setUp()
         apt = leaf("overview.apt", "decoder_preset", "noaa-apt-weather", fallback_text="No accepted APT installation: the WAV stays on file")
-        self.assertEqual(rx11(menu.LEAVES + (apt,)), ("BLOCKED", {("critical_leaf_touch_only", "frame.disarm")}))
+        self.assertEqual(rx11(menu.LEAVES + (apt,)), ("PASS", set()))
         # The engine leaf fails on a unit without its binary and passes once both are staged.
         self.setUp()
         self.put("etc/systemd/system/fixture-engine.service", "[Service]\nExecStart=/usr/bin/fixture-engine --rx-only\n")
         self.assertIn(("backend_program_missing", "overview.engine"), rx11(menu.LEAVES + (engine,))[1])
         self.put("usr/bin/fixture-engine", "#!/bin/sh\n")
-        self.assertEqual(rx11(menu.LEAVES + (engine,)), ("BLOCKED", {("critical_leaf_touch_only", "frame.disarm")}))
+        self.assertEqual(rx11(menu.LEAVES + (engine,)), ("PASS", set()))
         # A missing console unit, a model defect, gesture drift or a page without builder fail.
         self.setUp()
         (self.rootfs / "usr/lib/systemd/user/srrx-menu.service").unlink()
@@ -742,7 +749,7 @@ class SelftestTests(unittest.TestCase):
         self.assertIn(("menu_model_invalid", None), rx11(menu.LEAVES + menu.LEAVES[:1])[1])
         self.assertIn(("physical_controls_drift", None), rx11(GESTURES=menu.GESTURES[::-1])[1])
         self.assertIn(("page_builder_missing", "radio"), rx11(PAGES=menu.PAGES + ({"id": "radio", "label": "Radio"},))[1])
-        # With a physical DISARM path (hypothetical model) the row passes.
+        # With the physical DISARM path patched in explicitly (the shipped LOCK hold) the row passes.
         glove = tuple(dict(item, controls={"touch": True, "keys": ("LOCK",)}) if item["id"] == "frame.disarm" else item for item in menu.LEAVES)
         self.assertEqual(rx11(glove), ("PASS", set()))
 
@@ -1024,17 +1031,17 @@ class SelftestTests(unittest.TestCase):
         self.assertFalse((self.rootfs / "report.json").exists())
         fresh = self.work / "fresh.json"
         out = subprocess.run(base + ["--output", str(fresh)], capture_output=True, text=True, env=env, timeout=120)
-        self.assertEqual(out.returncode, 2, out.stderr)  # honest BLOCKED: exit 0 only for OFFLINE_CHECKS_PASS
+        self.assertEqual(out.returncode, 0, out.stderr)  # exit 0 only for OFFLINE_CHECKS_PASS (synthetic review)
         written = json.loads(fresh.read_text(encoding="utf-8"))
-        self.assertEqual((written["tool"], written["status"]), ("srrx-selftest", "BLOCKED"))
-        self.assertEqual((written["policy_review"]["status"], written["blockers"]), ("BOUND", ["RX-11"]))
-        self.assertEqual(json.loads(out.stdout)["status"], "BLOCKED")
+        self.assertEqual((written["tool"], written["status"]), ("srrx-selftest", "OFFLINE_CHECKS_PASS"))
+        self.assertEqual((written["policy_review"]["status"], written["blockers"]), ("BOUND", []))
+        self.assertEqual(json.loads(out.stdout)["status"], "OFFLINE_CHECKS_PASS")
         bad = subprocess.run(base[:-2] + ["--cmdline-sha256", "XYZ", "--output", str(self.work / "bad.json")], capture_output=True, text=True, env=env, timeout=120)
         self.assertEqual(bad.returncode, 2)
         self.assertFalse((self.work / "bad.json").exists())
 
     def test_all_offline_rows_pass_exit_zero_and_fail_exits_two(self):
-        # Hypothetical menu model with a physical DISARM path (the one open RX-11 item) and a bound review
+        # The menu model with its physical DISARM path (the LOCK hold, patched in explicitly) and a bound review
         # record: RUNTIME_ONLY rows do not block an all-PASS offline report, which is still no hardware or
         # receive-only proof.
         menu = self.checker_module("menu_model")
@@ -1274,6 +1281,34 @@ class SelftestTests(unittest.TestCase):
         source = (HERE / "selftest.py").read_text(encoding="utf-8")
         for rule in tuple(r for r in rules if not r.startswith("POLICY_")) + ('"tool_dependencies"', '"POLICY_REVIEW_RECORD_" + reviewed'):
             self.assertIn(rule, source)  # the documented ids are the ones the checker emits
+
+
+class PhysicalDisarmSelftestTests(unittest.TestCase):
+    """RX-11 fixtures for frame.disarm's LOCK-hold glove path (W2 FW-STOP); synthetic rootfs only.
+    It borrows the SelftestTests staging and helpers, so their cases do not run twice."""
+    setUpClass, tearDownClass = SelftestTests.__dict__["setUpClass"], SelftestTests.__dict__["tearDownClass"]
+    setUp, run_check = SelftestTests.setUp, SelftestTests.run_check
+    check, checker_module = SelftestTests.__dict__["check"], SelftestTests.__dict__["checker_module"]
+
+    def test_disarm_leaf_has_the_lock_hold_and_rx11_passes(self):
+        menu = self.checker_module("menu_model")
+        disarm = next(item for item in menu.LEAVES if item["id"] == "frame.disarm")
+        self.assertEqual((disarm["critical"], disarm["controls"]["keys"]), (True, (menu.HOLD_STOP["key"],)))
+        result = self.check(self.run_check(rootfs=self.clean), "RX-11")
+        self.assertEqual((result["status"], result["findings"]), ("PASS", []))
+
+    def test_touch_only_critical_leaf_is_still_blocked(self):
+        # The rule stays: a critical leaf without a key or encoder (DISARM before W2 FW-STOP) BLOCKs RX-11.
+        menu = self.checker_module("menu_model")
+        touch_only = tuple(dict(item, controls={"touch": True, "keys": ()}) if item["id"] == "frame.disarm" else item
+                           for item in menu.LEAVES)
+        with patch.object(menu, "LEAVES", touch_only):
+            report = self.run_check()
+        result = self.check(report, "RX-11")
+        self.assertEqual(result["status"], "BLOCKED")
+        self.assertEqual(result["findings"], [{"path": "software/srrx/menu_model.py", "rule": "critical_leaf_touch_only",
+                                               "effect": "BLOCKED", "item": "frame.disarm"}])
+        self.assertEqual((report["status"], report["blockers"]), ("BLOCKED", ["RX-11"]))
 
 
 if __name__ == "__main__":

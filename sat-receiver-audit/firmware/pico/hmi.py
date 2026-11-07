@@ -2,9 +2,12 @@
 
 DEFAULT_WIRING is checked against design/E3.json by the host wrapper/tests.
 The actual bus belongs exclusively to Pico, not a Q6A /dev/i2c node.
+lock_held_ms() reports how long LOCK has been held, as an input fact only;
+main.py decides what a long hold means (the operator STOP).
 """
 DOMAIN = "pico_hmi_i2c0"
 KEY_NAMES = ("HOME", "BACK", "REC", "MARK", "FN", "LOCK", "ENC1_PRESS", "ENC2_PRESS")
+LOCK_BIT = KEY_NAMES.index("LOCK")
 DEFAULT_WIRING = {"domain": DOMAIN, "key_address": 0x20, "light_address": 0x10,
                   "sda_gpio": 4, "scl_gpio": 5, "interrupt_gpio": 10,
                   "encoder_gpios": ((2, 3), (6, 7)), "keys": KEY_NAMES}
@@ -180,6 +183,7 @@ class PeripheralPoller:
         self._last_keys_at = None
         self._candidate = self._stable = 0
         self._changed_at = [0] * 8
+        self._lock_since = None  # First sampled edge of the current stable LOCK press.
         self.presses = [0] * 8
         self.encoders = [0, 0]
         self._encoder_ok = False
@@ -205,6 +209,8 @@ class PeripheralPoller:
         # Held keys at boot/recovery form a baseline, not synthetic press edges.
         self._candidate = self._stable = (~ports[0]) & 255
         self._changed_at = [now_ms] * 8
+        # A LOCK already down counts from this baseline: the gap before it is unobserved.
+        self._lock_since = now_ms if self._stable & (1 << LOCK_BIT) else None
         self._last_keys_at = now_ms
         self._configured = True
         self._verify_at = now_ms + 1000
@@ -232,6 +238,8 @@ class PeripheralPoller:
                 self._stable ^= mask
                 if self._stable & mask:
                     self.presses[bit] = (self.presses[bit] + 1) & 65535
+                if bit == LOCK_BIT:
+                    self._lock_since = self._changed_at[bit] if self._stable & mask else None
         self._last_keys_at = now_ms
         self._next_keys = now_ms + 20
 
@@ -289,6 +297,17 @@ class PeripheralPoller:
             self._clock_fault = True
             self._mark("HMI_SEQUENCE_EXHAUSTED")
         return self.snapshot(now_ms)
+
+    def lock_held_ms(self, now_ms):
+        """Continuous LOCK hold in ms from fresh key reads only, else 0. Not in snapshot().
+
+        It counts from the first sampled press edge, or from the boot/recovery
+        baseline when LOCK is already down. A key read older than 100 ms, a bus or
+        clock fault or a poll gap ends it; it never authorizes an output."""
+        if (self._lock_since is None or not self._configured or self._clock_fault
+                or self._last_keys_at is None or not 0 <= now_ms - self._last_keys_at < 100):
+            return 0
+        return max(0, now_ms - self._lock_since)
 
     def snapshot(self, now_ms):
         age = 65535 if self._last_keys_at is None else max(0, now_ms - self._last_keys_at)

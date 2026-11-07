@@ -96,17 +96,17 @@ class MenuModelTests(unittest.TestCase):
             text = (PROJECT / "software/systemd" / unit["name"]).read_text(encoding="utf-8")
             self.assertIn("-m " + unit["program"] + " ", text)
 
-    def test_critical_leaves_and_the_open_physical_disarm_gap(self):
+    def test_critical_leaves_and_the_physical_disarm_path(self):
         critical = {item["id"] for item in menu_model.LEAVES if item["critical"]}
         self.assertTrue({"frame.disarm", "frame.lock", "frame.home", "overview.status"} <= critical)
-        # The one critical action without a glove path: RX-11 reports it BLOCKED (HMI.md, DEPLOYMENT.md).
-        self.assertEqual({i for i in critical if not leaf(i)["controls"]["keys"]}, {"frame.disarm"})
+        # Every critical action has a glove path; DISARM's is the LOCK hold (HOLD_STOP, W2 FW-STOP).
+        self.assertEqual({i for i in critical if not leaf(i)["controls"]["keys"]}, set())
         physical = {key for item in menu_model.LEAVES for key in item["controls"]["keys"]}
         self.assertEqual(physical, set(menu_model.KEYS + menu_model.ENCODERS))
         for item in menu_model.LEAVES:
             if item["controls"]["keys"]:
-                # Physical inputs navigate, lock or read status; none reaches an energizing labd operation.
-                self.assertIn(item["backend"]["name"], ("hmi", "status"), item["id"])
+                # Physical inputs navigate, lock, read status or stop; none reaches an energizing labd operation.
+                self.assertIn(item["backend"]["name"], ("hmi", "status", "disarm"), item["id"])
 
     def test_validate_rejects_schema_defects(self):
         def broken(change):
@@ -300,6 +300,24 @@ class MenuModelQtTests(unittest.TestCase):
         with patch.object(menu_model, "PAGES", renamed), self.assertRaises(RuntimeError):
             create_window(controller, start_worker=False)
         app.processEvents()
+
+
+class PhysicalStopModelTests(unittest.TestCase):
+    """frame.disarm's glove path (W2 FW-STOP) is the firmware's LOCK hold, not a new labd path."""
+
+    def test_hold_stop_equals_the_firmware_constant(self):
+        spec = importlib.util.spec_from_file_location("pico_main_menu_model_test", PROJECT / "firmware/pico/main.py")
+        pico_main = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(pico_main)
+        self.assertEqual(menu_model.HOLD_STOP, {"key": "LOCK", "hold_ms": pico_main.LOCK_STOP_HOLD_MS})
+        self.assertEqual(pico_hmi.KEY_NAMES[pico_hmi.LOCK_BIT], menu_model.HOLD_STOP["key"])
+        disarm = leaf("frame.disarm")
+        self.assertEqual(disarm["controls"], {"touch": True, "keys": ("LOCK",)})
+        self.assertTrue(disarm["critical"])
+        # The LOCK hold only stops: touch still reaches labd disarm, and LOCK reaches no other labd operation.
+        self.assertEqual(disarm["backend"], {"kind": "labd_op", "name": "disarm"})
+        self.assertEqual({item["backend"]["name"] for item in menu_model.LEAVES if "LOCK" in item["controls"]["keys"]},
+                         {"hmi", "disarm"})
 
 
 if __name__ == "__main__":
