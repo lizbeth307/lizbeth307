@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "component": "limesuiteng",
-  "summary": "LimeSuiteNG 37cb183 with the reviewed TX-rejecting patch: core library, SoapySDR module and headers; no CLI, GUI, GNU Radio, Amarisoft, firmware, udev or kernel modules",
+  "summary": "LimeSuiteNG 37cb183 with the TX-rejecting patch of the TX audit part 1 (recipes/limesuiteng/TX-AUDIT.md, AUDIT_DRAFT_CI_CHECKED): core library, SoapySDR module and headers; no CLI, GUI, GNU Radio, Amarisoft, firmware, udev, kernel modules or USB (FX3/FT601) boards",
   "source": {"patch": "deployment/patches/limesuiteng-rx-only.patch"},
   "build_depends": ["libusb-1.0-0-dev", "libsoapysdr-dev"],
   "lab_build_depends": [],
@@ -46,8 +46,8 @@
       "LIMEPCIE_RELOAD_ON_INSTALL": "OFF",
       "LIMESUITENG_LA9310": "ON",
       "LIMESUITENG_PCIE": "ON",
-      "LIMESUITENG_USB_FTDI": "ON",
-      "LIMESUITENG_USB_FX3": "ON",
+      "LIMESUITENG_USB_FTDI": "OFF",
+      "LIMESUITENG_USB_FX3": "OFF",
       "UDEV_RULES_RELOAD_ON_INSTALL": "OFF"
     },
     "variables": {
@@ -64,7 +64,7 @@
     {
       "name": "liblimesuiteng",
       "section": "libs",
-      "description": "LimeSuiteNG core library, lab build with TX setupStream rejected (experimental, native TX audit OPEN)",
+      "description": "LimeSuiteNG core library, lab build with the TX audit part 1 guards (TX setters, raw register/SPI/I2C writes, firmware/EEPROM uploads rejected; audit AUDIT_DRAFT_CI_CHECKED, not REVIEWED)",
       "files": ["usr/lib/aarch64-linux-gnu/liblimesuiteng.so.*"],
       "depends": [],
       "shlibs_depends": true
@@ -72,7 +72,7 @@
     {
       "name": "limesuiteng-soapysdr",
       "section": "libs",
-      "description": "LimeSuiteNG SoapySDR module, lab build with TX streams rejected",
+      "description": "LimeSuiteNG SoapySDR module, lab build with TX streams, TX setters, raw register/GPIO writes and non-RX settings rejected",
       "files": ["usr/lib/aarch64-linux-gnu/SoapySDR/modules*/*"],
       "depends": ["liblimesuiteng (= {version})"],
       "shlibs_depends": true
@@ -94,8 +94,8 @@
   ],
   "notes": [
     "Options of deployment/build-vendor.sh limesuiteng kept (BUILD_GUI/CLI/DOCS/UNIT_TESTS/AMARISOFT/GNURADIO/HDSDR=OFF, SOAPYSDR=ON, UDEV/FIRMWARE install OFF); every other option the pinned tree declares is set to its upstream default.",
-    "Three deliberate non-defaults: BUILD_DRIVERS=OFF (la9310_limesdr 0.2.1 and la9310_uart_module 1.0.0 are their own DKMS components in sources.lock.json and need linux-headers-6.18.2-4-qcom, not this chroot); BUILD_LEGACYAPI=OFF (build/07 section 10: only when a consumer needs it); RPATH automation OFF as in the upstream debian/rules, so no RPATH enters a system library.",
-    "LIMESUITENG_USB_FX3/FTDI stay at their upstream ON default (USB boards, not on this device); turning them off is a review choice of the open Lime TX audit.",
+    "Four deliberate non-defaults: BUILD_DRIVERS=OFF (la9310_limesdr 0.2.1 and la9310_uart_module 1.0.0 are their own DKMS components in sources.lock.json and need linux-headers-6.18.2-4-qcom, not this chroot); BUILD_LEGACYAPI=OFF (build/07 section 10: only when a consumer needs it); RPATH automation OFF as in the upstream debian/rules, so no RPATH enters a system library; LIMESUITENG_USB_FX3/FTDI=OFF (TX audit part 1, recipes/limesuiteng/TX-AUDIT.md E-04).",
+    "LIMESUITENG_USB_FX3/FTDI=OFF removes the LimeSDR-USB and LimeSDR-Mini board drivers (src/boards/CMakeLists.txt:15-23 at 37cb183), whose own TX paths are not patched and which are not part of this device; LIMESUITENG_PCIE stays ON because LimeSDR_Micro is built under it (src/boards/CMakeLists.txt:6-13).",
     "deploy.py verify_build still rejects every Lime runtime library until the complete native/raw-register TX audit (sources.lock.json release_blockers) is REVIEWED; this build proves only that the patched tree compiles and packages on arm64."
   ]
 }

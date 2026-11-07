@@ -16,7 +16,23 @@
     },
     "src/boards/LimeSDR_Micro/LimeSDR_Micro.cpp": {
       "before_sha256": "f76a14d5589fa516090984e9a95258bd3ae481f6e4134dc7e6ff298d5f98ce09",
-      "after_sha256": "c226888485b1fcb37509e84083d61fec8cf6ac0b0d91ade4cb1e199e4ade645e"
+      "after_sha256": "faff9d353d6c7c36b40f32d79c45709c6234a0cb1652506c62d2b99913a7409a"
+    },
+    "plugins/soapysdr/Settings.cpp": {
+      "before_sha256": "bf336221f5acc2d8e399e192c02fd83c9a3e052ce6a73b3d87900604ae9ac677",
+      "after_sha256": "d036e7d5d0ce000812387fbcdc34122e207f0af4e27ca3eb1f2ff5bd5bd6e682"
+    },
+    "src/API/LimePlugin.cpp": {
+      "before_sha256": "23ea500ed90f66b354cece6d61bbcbfea81496530a54c918b8701e77fe93271f",
+      "after_sha256": "7d335028a19a9f50c37b2870d60a4515cdc31ce8b988f554fd544b94e2250712"
+    },
+    "src/boards/LMS7002M_SDRDevice.cpp": {
+      "before_sha256": "69f77cba2db4597b29fde5bac2ef43a0af076b3dadbb89b595be8990dd932164",
+      "after_sha256": "a5186a985a99973b18b534fde6456ddf2e9c18bdf1001425412ff66506c78c4b"
+    },
+    "src/boards/LimeSDR_Micro/calibrations.cpp": {
+      "before_sha256": "9dda7312e6e8a2c968d28470b6ef16e1625331598f2e583f9f33bb4e4f08a438",
+      "after_sha256": "917f85c70d59b816aff3d3bde54eddc3aace92a88aaa23a17c34726a8c5d1e20"
     }
   }
 }

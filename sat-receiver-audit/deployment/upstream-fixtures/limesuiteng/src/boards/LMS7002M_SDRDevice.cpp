@@ -1,0 +1,1347 @@
+#include "LMS7002M_SDRDevice.h"
+
+#include "FPGA/FPGA_common.h"
+#include "limesuiteng/LMS7002M.h"
+#include "limesuiteng/ToString.h"
+#include "chips/LMS7002M/LMS7002MCSR_Data.h"
+#include "chips/LMS7002M/MCU_BD.h"
+#include "chips/LMS7002M/validation.h"
+#include "limesuiteng/Logger.h"
+#include "streaming/TRXLooper.h"
+
+#include <algorithm>
+#include <array>
+#include <cmath>
+#include <complex>
+
+using namespace std::literals::string_literals;
+
+namespace lime {
+using namespace lime::LMS7002MCSR_Data;
+
+constexpr static int MAXIMUM_GAIN_VALUE = 63; // Gain table size
+// clang-format off
+
+/// @brief The stucture for storing the data of device Rx gain values for a specific gain value.
+struct RxGainRow {
+    int lna; ///< The value of the Low Noise Amplifier.
+    int pga; ///< The value of the Programmable Gain Amplifier.
+};
+
+static std::array<RxGainRow, MAXIMUM_GAIN_VALUE> rxGainTable{ {
+    { 1, 0 },
+    { 1, 1 },
+    { 1, 2 },
+    { 1, 3 },
+    { 1, 4 },
+    { 1, 5 },
+    { 1, 6 },
+    { 1, 7 },
+    { 1, 8 },
+    { 1, 9 },
+    { 1, 10 },
+    { 1, 11 },
+    { 1, 12 },
+    { 1, 13 },
+    { 2, 12 },
+    { 2, 13 },
+    { 2, 14 },
+    { 3, 12 },
+    { 3, 13 },
+    { 3, 14 },
+    { 4, 12 },
+    { 4, 13 },
+    { 4, 14 },
+    { 5, 12 },
+    { 5, 13 },
+    { 5, 14 },
+    { 6, 12 },
+    { 6, 13 },
+    { 6, 14 },
+    { 7, 12 },
+    { 7, 13 },
+    { 7, 14 },
+    { 8, 12 },
+    { 8, 13 },
+    { 8, 14 },
+    { 9, 12 },
+    { 9, 13 },
+    { 9, 14 },
+    { 10, 12 },
+    { 11, 12 },
+    { 12, 12 },
+    { 13, 12 },
+    { 14, 12 },
+    { 15, 12 },
+    { 15, 13 },
+    { 15, 14 },
+    { 15, 15 },
+    { 15, 16 },
+    { 15, 17 },
+    { 15, 18 },
+    { 15, 19 },
+    { 15, 20 },
+    { 15, 21 },
+    { 15, 22 },
+    { 15, 23 },
+    { 15, 24 },
+    { 15, 25 },
+    { 15, 26 },
+    { 15, 27 },
+    { 15, 28 },
+    { 15, 29 },
+    { 15, 30 },
+    { 15, 31 },
+} };
+// clang-format on
+
+LMS7002M_SDRDevice::LMS7002M_SDRDevice()
+    : mCallback_logMessage(nullptr)
+{
+}
+
+LMS7002M_SDRDevice::~LMS7002M_SDRDevice()
+{
+}
+
+OpStatus LMS7002M_SDRDevice::EnableChannel(uint8_t moduleIndex, TRXDir trx, uint8_t channel, bool enable)
+{
+    if (moduleIndex >= mLMSChips.size())
+        return OpStatus::InvalidValue;
+    return mLMSChips.at(moduleIndex)->EnableChannel(trx, channel % 2, enable);
+}
+
+void LMS7002M_SDRDevice::SetMessageLogCallback(LogCallbackType callback)
+{
+    mCallback_logMessage = callback;
+}
+
+const SDRDescriptor& LMS7002M_SDRDevice::GetDescriptor() const
+{
+    return mDeviceDescriptor;
+}
+
+OpStatus LMS7002M_SDRDevice::Reset()
+{
+    OpStatus status;
+    for (auto& iter : mLMSChips)
+    {
+        status = iter->ResetChip();
+        if (status != OpStatus::Success)
+            return status;
+    }
+    return OpStatus::Success;
+}
+
+OpStatus LMS7002M_SDRDevice::GetGPSLock(GPS_Lock* status)
+{
+    assert(mFPGA);
+    uint16_t regValue = mFPGA->ReadRegister(0x114);
+    status->glonass = static_cast<GPS_Lock::LockStatus>((regValue >> 0) & 0x3);
+    status->gps = static_cast<GPS_Lock::LockStatus>((regValue >> 4) & 0x3);
+    status->beidou = static_cast<GPS_Lock::LockStatus>((regValue >> 8) & 0x3);
+    status->galileo = static_cast<GPS_Lock::LockStatus>((regValue >> 12) & 0x3);
+    // TODO: not all boards have GPS
+    return OpStatus::Success;
+}
+
+double LMS7002M_SDRDevice::GetSampleRate(uint8_t moduleIndex, TRXDir trx, uint8_t channel, uint32_t* rf_samplerate)
+{
+    if (moduleIndex >= mLMSChips.size())
+    {
+        ReportError(OpStatus::OutOfRange, "GetSample rate invalid module index (%i)", moduleIndex);
+        return 0;
+    }
+    double sampleRate = mLMSChips[moduleIndex]->GetSampleRate(trx, LMS7002M::Channel::ChA);
+    if (rf_samplerate)
+    {
+        int oversample_control = mLMSChips[moduleIndex]->Get_SPI_Reg_bits(trx == TRXDir::Rx ? HBD_OVR_RXTSP : HBI_OVR_TXTSP);
+        if (oversample_control != 7)
+            *rf_samplerate = sampleRate * (2 << oversample_control);
+        else
+            *rf_samplerate = sampleRate;
+    }
+    return sampleRate;
+}
+
+double LMS7002M_SDRDevice::GetFrequency(uint8_t moduleIndex, TRXDir trx, uint8_t channel)
+{
+    lime::LMS7002M* lms = mLMSChips.at(moduleIndex).get();
+    if (trx == TRXDir::Rx)
+    {
+        LMS7002M::ChannelScope scope(lms, LMS7002M::Channel::ChSXT);
+        if (lms->Get_SPI_Reg_bits(PD_LOCH_T2RBUF) == 0) // TDD mode, return SXT LO
+            trx = TRXDir::Tx;
+    }
+    return lms->GetFrequencySX(trx);
+}
+
+OpStatus LMS7002M_SDRDevice::SetFrequency(uint8_t moduleIndex, TRXDir trx, uint8_t channel, double frequency)
+{
+    lime::LMS7002M* lms = mLMSChips.at(moduleIndex).get();
+    int64_t oppositeDirLO = lms->GetFrequencySX(trx == TRXDir::Rx ? TRXDir::Tx : TRXDir::Rx);
+    OpStatus status = lms->SetFrequencySX(trx, frequency);
+    // Readback of LO frequency might not exactly match what was requested, so compare with some margin
+    bool useTDD = (std::abs(oppositeDirLO - frequency) <= 20);
+    lms->EnableSXTDD(useTDD);
+    return status;
+}
+
+double LMS7002M_SDRDevice::GetNCOOffset(uint8_t moduleIndex, TRXDir trx, uint8_t channel)
+{
+    double phaseOffset = 0.0;
+    return GetFrequency(moduleIndex, trx, channel) - GetNCOFrequency(moduleIndex, trx, channel, 0, phaseOffset);
+}
+
+double LMS7002M_SDRDevice::GetNCOFrequency(uint8_t moduleIndex, TRXDir trx, uint8_t channel, uint8_t index, double& phaseOffset)
+{
+    auto& lms = mLMSChips.at(moduleIndex);
+
+    lms->SetActiveChannel(channel == 0 ? LMS7002M::Channel::ChA : LMS7002M::Channel::ChB);
+    double freq = lms->GetNCOFrequency(trx, index, true);
+
+    bool down = lms->Get_SPI_Reg_bits(trx == TRXDir::Tx ? CMIX_SC_TXTSP : CMIX_SC_RXTSP);
+    if (!(trx == TRXDir::Tx) && (lms->Get_SPI_Reg_bits(MASK) == 0))
+    {
+        down = !down;
+    }
+
+    uint16_t value = lms->SPI_read(trx == TRXDir::Tx ? 0x0241 : 0x0441);
+    phaseOffset = 360.0 * value / 65536.0;
+
+    return down ? -freq : freq;
+}
+
+OpStatus LMS7002M_SDRDevice::SetNCOFrequency(
+    uint8_t moduleIndex, TRXDir trx, uint8_t channel, uint8_t index, double frequency, double phaseOffset)
+{
+    if (index > 15)
+        return ReportError(OpStatus::OutOfRange, "%s NCO%i index invalid", ToString(trx).c_str(), index);
+
+    auto& lms = mLMSChips.at(moduleIndex);
+
+    lms->SetActiveChannel(channel == 0 ? LMS7002M::Channel::ChA : LMS7002M::Channel::ChB);
+
+    bool enable = frequency != 0;
+    bool tx = trx == TRXDir::Tx;
+
+    if ((lms->Modify_SPI_Reg_bits(tx ? CMIX_BYP_TXTSP : CMIX_BYP_RXTSP, !enable) != OpStatus::Success) ||
+        (lms->Modify_SPI_Reg_bits(tx ? CMIX_GAIN_TXTSP : CMIX_GAIN_RXTSP, enable) != OpStatus::Success))
+    {
+        return ReportError(OpStatus::Error, "Failed to set %s NCO%i frequency", ToString(trx).c_str(), index);
+    }
+
+    OpStatus status = lms->SetNCOFrequency(trx, index, std::fabs(frequency));
+    if (status != OpStatus::Success)
+        return status;
+
+    if (enable)
+    {
+        bool down = frequency < 0;
+        if ((!tx) && (lms->Get_SPI_Reg_bits(MASK) == 0))
+        {
+            down = !down;
+        }
+
+        if ((lms->Modify_SPI_Reg_bits(tx ? SEL_TX : SEL_RX, index) != OpStatus::Success) ||
+            (lms->Modify_SPI_Reg_bits(tx ? MODE_TX : MODE_RX, 0) != OpStatus::Success) ||
+            (lms->Modify_SPI_Reg_bits(tx ? CMIX_SC_TXTSP : CMIX_SC_RXTSP, down) != OpStatus::Success))
+        {
+            return ReportError(OpStatus::Error, "Failed to set %s NCO%i frequency", ToString(trx).c_str(), index);
+        }
+    }
+
+    if (phaseOffset != -1.0)
+        return lms->SetNCOPhaseOffsetForMode0(trx, phaseOffset);
+    return OpStatus::Success;
+}
+
+int LMS7002M_SDRDevice::GetNCOIndex(uint8_t moduleIndex, TRXDir trx, uint8_t channel)
+{
+    const auto& selParameter = trx == TRXDir::Tx ? SEL_TX : SEL_RX;
+    return GetParameter(moduleIndex, channel, selParameter.address, selParameter.msb, selParameter.lsb);
+}
+
+OpStatus LMS7002M_SDRDevice::SetNCOIndex(uint8_t moduleIndex, TRXDir trx, uint8_t channel, uint8_t index, bool downconv)
+{
+    auto& cmixBypassParameter = trx == TRXDir::Tx ? CMIX_BYP_TXTSP : CMIX_BYP_RXTSP;
+    auto& cmixGainParameter = trx == TRXDir::Tx ? CMIX_GAIN_TXTSP : CMIX_GAIN_RXTSP;
+    auto& selectionParameter = trx == TRXDir::Tx ? SEL_TX : SEL_RX;
+    auto& cmixSelectionParameter = trx == TRXDir::Tx ? CMIX_SC_TXTSP : CMIX_SC_RXTSP;
+
+    if (OpStatus status = SetParameter(
+            moduleIndex, channel, cmixBypassParameter.address, cmixBypassParameter.msb, cmixBypassParameter.lsb, index < 0 ? 1 : 0);
+        status != OpStatus::Success)
+        return status;
+    if (OpStatus status = SetParameter(
+            moduleIndex, channel, cmixGainParameter.address, cmixGainParameter.msb, cmixGainParameter.lsb, index < 0 ? 0 : 1);
+        status != OpStatus::Success)
+        return status;
+
+    if (index >= 16)
+    {
+        lime::error("Invalid NCO index value."s);
+        return OpStatus::OutOfRange;
+    }
+
+    if (OpStatus status =
+            SetParameter(moduleIndex, channel, selectionParameter.address, selectionParameter.msb, selectionParameter.lsb, index);
+        status != OpStatus::Success)
+        return status;
+
+    if (OpStatus status = SetParameter(
+            moduleIndex, channel, cmixSelectionParameter.address, cmixSelectionParameter.msb, cmixSelectionParameter.lsb, downconv);
+        status != OpStatus::Success)
+        return status;
+
+    return OpStatus::Success;
+}
+
+double LMS7002M_SDRDevice::GetLowPassFilter(uint8_t moduleIndex, TRXDir trx, uint8_t channel)
+{
+    return lowPassFilterCache[trx][channel]; // Default initializes to 0
+}
+
+OpStatus LMS7002M_SDRDevice::SetLowPassFilter(uint8_t moduleIndex, TRXDir trx, uint8_t channel, double lpf)
+{
+    auto& lms = mLMSChips.at(moduleIndex);
+
+    LMS7002M::Channel ch = channel == 0 ? LMS7002M::Channel::ChA : LMS7002M::Channel::ChB;
+
+    lms->SetActiveChannel(ch);
+
+    const auto& bw_range = mDeviceDescriptor.rfSOC.at(moduleIndex).lowPassFilterRange.at(trx);
+    bool tx = trx == TRXDir::Tx;
+
+    if (lpf < 0)
+    {
+        lpf = lowPassFilterCache[trx][channel]; // Default initializes to 0
+    }
+
+    double newLPF = std::clamp(lpf, bw_range.min, bw_range.max);
+
+    if (newLPF != lpf)
+    {
+        lime::warning("%cXLPF set to %.3f MHz (requested %0.3f MHz [out of range])", tx ? 'T' : 'R', newLPF / 1e6, lpf / 1e6);
+    }
+
+    lpf = newLPF;
+    lowPassFilterCache[trx][channel] = lpf;
+
+    OpStatus status = OpStatus::Success;
+    if (tx)
+        status = lms->SetTxLPF(lpf);
+    else
+        status = lms->SetRxLPF(lpf);
+
+    if (status != OpStatus::Success)
+        return status;
+
+    lime::debug(ToString(trx) + " LPF configured"s);
+    return OpStatus::Success;
+}
+
+uint8_t LMS7002M_SDRDevice::GetAntenna(uint8_t moduleIndex, TRXDir trx, uint8_t channel)
+{
+    auto& lms = mLMSChips.at(moduleIndex);
+
+    if (trx == TRXDir::Tx)
+    {
+        return lms->GetBandTRF();
+    }
+    else
+    {
+        return static_cast<uint8_t>(lms->GetPathRFE());
+    }
+}
+
+OpStatus LMS7002M_SDRDevice::SetAntenna(uint8_t moduleIndex, TRXDir trx, uint8_t channel, uint8_t path)
+{
+    if (path >= mDeviceDescriptor.rfSOC.at(moduleIndex).pathNames.at(trx).size())
+    {
+        lime::error("Out of bounds antenna path");
+        return OpStatus::InvalidValue;
+    }
+
+    auto& lms = mLMSChips.at(moduleIndex);
+
+    return lms->SetPath(trx, channel % 2, path);
+}
+
+OpStatus LMS7002M_SDRDevice::Calibrate(uint8_t moduleIndex, TRXDir trx, uint8_t channel, double bandwidth)
+{
+    auto& lms = mLMSChips.at(moduleIndex);
+    lms->SetActiveChannel(static_cast<LMS7002M::Channel>((channel % 2) + 1));
+    OpStatus ret;
+    auto reg20 = lms->SPI_read(0x20);
+    lms->SPI_write(0x20, reg20 | (20 << (channel % 2)));
+    if (trx == TRXDir::Tx)
+    {
+        ret = lms->CalibrateTx(bandwidth, false);
+    }
+    else
+    {
+        ret = lms->CalibrateRx(bandwidth, false);
+    }
+    lms->SPI_write(0x20, reg20);
+    return ret;
+}
+
+OpStatus LMS7002M_SDRDevice::ConfigureGFIR(
+    uint8_t moduleIndex, TRXDir trx, uint8_t channel, ChannelConfig::Direction::GFIRFilter settings)
+{
+    auto& lms = mLMSChips.at(moduleIndex);
+    LMS7002M::Channel enumChannel = channel > 0 ? LMS7002M::Channel::ChB : LMS7002M::Channel::ChA;
+
+    return lms->SetGFIRFilter(trx, enumChannel, settings.enabled, settings.bandwidth);
+}
+
+OpStatus LMS7002M_SDRDevice::StreamSetup(const StreamConfig& config, uint8_t moduleIndex)
+{
+    if (moduleIndex >= mStreamers.size())
+        return OpStatus::InvalidValue;
+
+    mStreamers.at(moduleIndex) = StreamCreate(config, moduleIndex);
+    if (mStreamers[moduleIndex])
+        return OpStatus::Success;
+    else
+        return OpStatus::Error;
+}
+
+void LMS7002M_SDRDevice::StreamStart(uint8_t moduleIndex)
+{
+    if (moduleIndex >= mStreamers.size())
+        return;
+
+    if (!mStreamers.at(moduleIndex))
+        return;
+
+    mStreamers.at(moduleIndex)->Start();
+}
+
+void LMS7002M_SDRDevice::StreamStop(uint8_t moduleIndex)
+{
+    if (moduleIndex >= mStreamers.size())
+        return;
+
+    if (!mStreamers.at(moduleIndex))
+        return;
+
+    mStreamers.at(moduleIndex)->Stop();
+}
+
+void LMS7002M_SDRDevice::StreamDestroy(uint8_t moduleIndex)
+{
+    if (moduleIndex >= mStreamers.size())
+        return;
+
+    if (!mStreamers.at(moduleIndex))
+        return;
+
+    mStreamers.at(moduleIndex).reset();
+}
+
+void LMS7002M_SDRDevice::StreamStatus(uint8_t moduleIndex, StreamStats* rx, StreamStats* tx)
+{
+    if (moduleIndex >= mStreamers.size())
+        return;
+
+    mStreamers[moduleIndex]->StreamStatus(rx, tx);
+}
+
+OpStatus LMS7002M_SDRDevice::SetGain(uint8_t moduleIndex, TRXDir direction, uint8_t channel, eGainTypes gain, double value)
+{
+    auto& device = mLMSChips.at(moduleIndex);
+    LMS7002M::Channel enumChannel = channel > 0 ? LMS7002M::Channel::ChB : LMS7002M::Channel::ChA;
+
+    switch (gain)
+    {
+    case eGainTypes::LNA:
+        return device->SetRFELNA_dB(value, enumChannel);
+    case eGainTypes::LoopbackLNA:
+        return device->SetRFELoopbackLNA_dB(value, enumChannel);
+    case eGainTypes::PGA:
+        return device->SetRBBPGA_dB(value, enumChannel);
+    case eGainTypes::TIA:
+        return device->SetRFETIA_dB(value, enumChannel);
+    case eGainTypes::PAD:
+        return device->SetTRFPAD_dB(value, enumChannel);
+    case eGainTypes::IAMP:
+        return device->SetTBBIAMP_dB(value, enumChannel);
+    case eGainTypes::LoopbackPAD:
+        return device->SetTRFLoopbackPAD_dB(value, enumChannel);
+    case eGainTypes::PA:
+        // TODO: implement
+        return OpStatus::Error;
+    case eGainTypes::UNKNOWN:
+    default:
+        if (TRXDir::Tx == direction)
+            return SetGenericTxGain(*device, enumChannel, value);
+        else
+            return SetGenericRxGain(*device, enumChannel, value);
+    }
+}
+
+OpStatus LMS7002M_SDRDevice::SetGenericTxGain(lime::LMS7002M& chip, LMS7002M::Channel channel, double value)
+{
+    LMS7002M::ChannelScope scope(&chip, channel);
+    return chip.SetTRFPAD_dB(value, channel);
+}
+
+OpStatus LMS7002M_SDRDevice::SetGenericRxGain(lime::LMS7002M& chip, LMS7002M::Channel channel, double gvalue)
+{
+    LMS7002M::ChannelScope scope(&chip, channel);
+    int value = std::clamp(static_cast<int>(gvalue + 12), 0, MAXIMUM_GAIN_VALUE - 1);
+
+    unsigned int lna = rxGainTable.at(std::lround(value)).lna;
+    unsigned int pga = rxGainTable.at(std::lround(value)).pga;
+
+    if (gvalue >= 0)
+    {
+        uint8_t tia = 1;
+        if (chip.Modify_SPI_Reg_bits(LMS7002MCSR::G_TIA_RFE, tia) != OpStatus::Success)
+            return OpStatus::IOFailure;
+    }
+    int rcc_ctl_pga_rbb = (430 * (pow(0.65, pga / 10.0)) - 110.35) / 20.4516 + 16; // From data sheet
+
+    // TODO: optimize into single write batch
+    if ((chip.Modify_SPI_Reg_bits(LMS7002MCSR::G_LNA_RFE, lna) != OpStatus::Success) ||
+        (chip.Modify_SPI_Reg_bits(LMS7002MCSR::G_PGA_RBB, pga) != OpStatus::Success) ||
+        (chip.Modify_SPI_Reg_bits(LMS7002MCSR::RCC_CTL_PGA_RBB, rcc_ctl_pga_rbb) != OpStatus::Success))
+    {
+        return OpStatus::IOFailure;
+    }
+
+    return OpStatus::Success;
+}
+
+OpStatus LMS7002M_SDRDevice::GetGain(uint8_t moduleIndex, TRXDir direction, uint8_t channel, eGainTypes gain, double& value)
+{
+    auto& device = mLMSChips.at(moduleIndex);
+    LMS7002M::Channel enumChannel = channel > 0 ? LMS7002M::Channel::ChB : LMS7002M::Channel::ChA;
+
+    switch (gain)
+    {
+    case eGainTypes::LNA:
+        value = device->GetRFELNA_dB(enumChannel);
+        return OpStatus::Success;
+    case eGainTypes::LoopbackLNA:
+        value = device->GetRFELoopbackLNA_dB(enumChannel);
+        return OpStatus::Success;
+    case eGainTypes::PGA:
+        value = device->GetRBBPGA_dB(enumChannel);
+        return OpStatus::Success;
+    case eGainTypes::TIA:
+        value = device->GetRFETIA_dB(enumChannel);
+        return OpStatus::Success;
+    case eGainTypes::PAD:
+        value = device->GetTRFPAD_dB(enumChannel);
+        return OpStatus::Success;
+    case eGainTypes::IAMP:
+        value = device->GetTBBIAMP_dB(enumChannel);
+        return OpStatus::Success;
+    case eGainTypes::LoopbackPAD:
+        value = device->GetTRFLoopbackPAD_dB(enumChannel);
+        return OpStatus::Success;
+    case eGainTypes::PA:
+        // TODO: implement
+        return OpStatus::Error;
+    case eGainTypes::UNKNOWN:
+    default:
+        if (TRXDir::Tx == direction)
+        {
+            value = device->GetTRFPAD_dB(enumChannel);
+        }
+        else
+        {
+            value = device->GetRFELNA_dB(enumChannel) + device->GetRBBPGA_dB(enumChannel);
+        }
+        return OpStatus::Success;
+    }
+}
+
+bool LMS7002M_SDRDevice::GetDCOffsetMode(uint8_t moduleIndex, TRXDir trx, uint8_t channel)
+{
+    if (trx == TRXDir::Rx)
+    {
+        auto& lms = mLMSChips.at(moduleIndex);
+        auto lastCh = lms->GetActiveChannel();
+        lms->SetActiveChannel((channel == 0 ? lime::LMS7002M::Channel::ChA : lime::LMS7002M::Channel::ChB));
+        bool status = lms->Get_SPI_Reg_bits(LMS7002MCSR::DC_BYP_RXTSP, channel) == 0;
+        lms->SetActiveChannel(lastCh);
+        return status;
+    }
+
+    return false;
+}
+
+OpStatus LMS7002M_SDRDevice::SetDCOffsetMode(uint8_t moduleIndex, TRXDir trx, uint8_t channel, bool isAutomatic)
+{
+    if (trx == TRXDir::Tx)
+        return OpStatus::NotSupported;
+
+    auto& lms = mLMSChips.at(moduleIndex);
+    auto lastCh = lms->GetActiveChannel();
+    lms->SetActiveChannel((channel == 0 ? lime::LMS7002M::Channel::ChA : lime::LMS7002M::Channel::ChB));
+    OpStatus status = lms->Modify_SPI_Reg_bits(LMS7002MCSR::DC_BYP_RXTSP, isAutomatic == 0, channel);
+    lms->SetActiveChannel(lastCh);
+    return status;
+}
+
+complex64f_t LMS7002M_SDRDevice::GetDCOffset(uint8_t moduleIndex, TRXDir trx, uint8_t channel)
+{
+    double I = 0.0;
+    double Q = 0.0;
+
+    auto& lms = mLMSChips.at(moduleIndex);
+    lms->Modify_SPI_Reg_bits(LMS7002MCSR::MAC, (channel % 2) + 1);
+    lms->GetDCOffset(trx, I, Q);
+    return complex64f_t(I, Q);
+}
+
+OpStatus LMS7002M_SDRDevice::SetDCOffset(uint8_t moduleIndex, TRXDir trx, uint8_t channel, const complex64f_t& offset)
+{
+    auto& lms = mLMSChips.at(moduleIndex);
+    lms->Modify_SPI_Reg_bits(LMS7002MCSR::MAC, (channel % 2) + 1);
+    return lms->SetDCOffset(trx, offset.real(), offset.imag());
+}
+
+complex64f_t LMS7002M_SDRDevice::GetIQBalance(uint8_t moduleIndex, TRXDir trx, uint8_t channel)
+{
+    auto& lms = mLMSChips.at(moduleIndex);
+    lms->Modify_SPI_Reg_bits(LMS7002MCSR::MAC, (channel % 2) + 1);
+
+    double phase = 0.0, gainI = 0.0, gainQ = 0.0;
+    lms->GetIQBalance(trx, phase, gainI, gainQ);
+    auto balance = (gainI / gainQ) * std::polar(1.0, phase);
+    return { balance.real(), balance.imag() };
+}
+
+OpStatus LMS7002M_SDRDevice::SetIQBalance(uint8_t moduleIndex, TRXDir trx, uint8_t channel, const complex64f_t& balance)
+{
+    std::complex<double> bal{ balance.real(), balance.imag() };
+    double gain = std::abs(bal);
+
+    double gainI = 1.0;
+    if (gain < 1.0)
+    {
+        gainI = gain;
+    }
+
+    double gainQ = 1.0;
+    if (gain > 1.0)
+    {
+        gainQ = 1.0 / gain;
+    }
+
+    auto& lms = mLMSChips.at(moduleIndex);
+    lms->Modify_SPI_Reg_bits(LMS7002MCSR::MAC, (channel % 2) + 1);
+    return lms->SetIQBalance(trx, std::arg(bal), gainI, gainQ);
+}
+
+bool LMS7002M_SDRDevice::GetCGENLocked(uint8_t moduleIndex)
+{
+    auto& lms = mLMSChips.at(moduleIndex);
+    return lms->GetCGENLocked();
+}
+
+double LMS7002M_SDRDevice::GetTemperature(uint8_t moduleIndex)
+{
+    auto& lms = mLMSChips.at(moduleIndex);
+    return lms->GetTemperature();
+}
+
+bool LMS7002M_SDRDevice::GetSXLocked(uint8_t moduleIndex, TRXDir trx)
+{
+    auto& lms = mLMSChips.at(moduleIndex);
+    return lms->GetSXLocked(trx);
+}
+
+unsigned int LMS7002M_SDRDevice::ReadRegister(uint8_t moduleIndex, unsigned int address, bool useFPGA)
+{
+    if (useFPGA)
+    {
+        return ReadFPGARegister(address);
+    }
+
+    auto& lms = mLMSChips.at(moduleIndex);
+    return lms->SPI_read(address);
+}
+
+OpStatus LMS7002M_SDRDevice::WriteRegister(uint8_t moduleIndex, unsigned int address, unsigned int value, bool useFPGA)
+{
+    if (useFPGA)
+        return WriteFPGARegister(address, value);
+
+    return mLMSChips.at(moduleIndex)->SPI_write(address, value);
+}
+
+OpStatus LMS7002M_SDRDevice::LoadConfig(uint8_t moduleIndex, const std::string& filename)
+{
+    auto& lms = mLMSChips.at(moduleIndex);
+    return lms->LoadConfig(filename);
+}
+
+OpStatus LMS7002M_SDRDevice::SaveConfig(uint8_t moduleIndex, const std::string& filename)
+{
+    auto& lms = mLMSChips.at(moduleIndex);
+    return lms->SaveConfig(filename);
+}
+
+uint16_t LMS7002M_SDRDevice::GetParameter(uint8_t moduleIndex, uint8_t channel, const std::string& parameterKey)
+{
+    auto& lms = mLMSChips.at(moduleIndex);
+    lms->SetActiveChannel(channel % 2 == 0 ? LMS7002M::Channel::ChA : LMS7002M::Channel::ChB);
+
+    try
+    {
+        uint16_t val = lms->Get_SPI_Reg_bits(lms->GetParam(parameterKey));
+        return val;
+    } catch (...)
+    {
+        throw std::runtime_error("failure getting key: "s + parameterKey);
+    }
+}
+
+OpStatus LMS7002M_SDRDevice::SetParameter(uint8_t moduleIndex, uint8_t channel, const std::string& parameterKey, uint16_t value)
+{
+    auto& lms = mLMSChips.at(moduleIndex);
+    lms->SetActiveChannel(channel % 2 == 0 ? LMS7002M::Channel::ChA : LMS7002M::Channel::ChB);
+    return lms->Modify_SPI_Reg_bits(lms->GetParam(parameterKey), value);
+}
+
+uint16_t LMS7002M_SDRDevice::GetParameter(uint8_t moduleIndex, uint8_t channel, uint16_t address, uint8_t msb, uint8_t lsb)
+{
+    auto& lms = mLMSChips.at(moduleIndex);
+    lms->SetActiveChannel(channel % 2 == 0 ? LMS7002M::Channel::ChA : LMS7002M::Channel::ChB);
+
+    try
+    {
+        uint16_t val = lms->Get_SPI_Reg_bits(address, msb, lsb);
+        return val;
+    } catch (...)
+    {
+        // TODO: fix return
+        throw std::runtime_error("failure setting parameter: "s + std::to_string(address));
+    }
+}
+
+OpStatus LMS7002M_SDRDevice::SetParameter(
+    uint8_t moduleIndex, uint8_t channel, uint16_t address, uint8_t msb, uint8_t lsb, uint16_t value)
+{
+    auto& lms = mLMSChips.at(moduleIndex);
+    lms->SetActiveChannel(channel % 2 == 0 ? LMS7002M::Channel::ChA : LMS7002M::Channel::ChB);
+    return lms->Modify_SPI_Reg_bits(address, msb, lsb, value);
+}
+
+OpStatus LMS7002M_SDRDevice::Synchronize(bool toChip)
+{
+    OpStatus status = OpStatus::Success;
+    for (auto& iter : mLMSChips)
+    {
+        status = toChip ? iter->UploadAll() : iter->DownloadAll();
+        if (status != OpStatus::Success)
+            return status;
+    }
+    return status;
+}
+
+void LMS7002M_SDRDevice::EnableCache(bool enable)
+{
+    for (auto& iter : mLMSChips)
+        iter->EnableValuesCache(enable);
+}
+
+void* LMS7002M_SDRDevice::GetInternalChip(uint32_t index)
+{
+    if (index >= mLMSChips.size())
+        throw std::logic_error("Invalid chip index"s);
+    return mLMSChips.at(index).get();
+}
+
+uint64_t LMS7002M_SDRDevice::GetHardwareTimestamp(uint8_t moduleIndex)
+{
+    if (moduleIndex >= mStreamers.size())
+        return 0;
+    return mStreamers.at(moduleIndex)->GetHardwareTimestamp();
+}
+
+OpStatus LMS7002M_SDRDevice::SetHardwareTimestamp(uint8_t moduleIndex, const uint64_t now)
+{
+    if (moduleIndex >= mStreamers.size())
+        return OpStatus::OutOfRange;
+
+    return OpStatus::NotImplemented;
+    //return mStreamers.at(moduleIndex)->SetHardwareTimestamp(now);
+}
+
+OpStatus LMS7002M_SDRDevice::SetTestSignal(uint8_t moduleIndex,
+    TRXDir direction,
+    uint8_t channel,
+    ChannelConfig::Direction::TestSignal signalConfiguration,
+    int16_t dc_i,
+    int16_t dc_q)
+{
+    auto& lms = mLMSChips.at(moduleIndex);
+    lime::OpStatus status = lime::OpStatus::Success;
+    auto lastCh = lms->GetActiveChannel();
+    lms->SetActiveChannel((channel == 0 ? lime::LMS7002M::Channel::ChA : lime::LMS7002M::Channel::ChB));
+
+    bool div4 = signalConfiguration.divide == ChannelConfig::Direction::TestSignal::Divide::Div4;
+    bool fullscale = signalConfiguration.scale == ChannelConfig::Direction::TestSignal::Scale::Full;
+
+    switch (direction)
+    {
+    case TRXDir::Rx:
+        if (lms->Modify_SPI_Reg_bits(LMS7002MCSR::INSEL_RXTSP, signalConfiguration.enabled, true) != OpStatus::Success)
+        {
+            lms->SetActiveChannel(lastCh);
+            return ReportError(OpStatus::IOFailure, "Failed to set Rx test signal."s);
+        }
+
+        lms->Modify_SPI_Reg_bits(LMS7002MCSR::TSGFCW_RXTSP, div4 ? 2 : 1);
+        lms->Modify_SPI_Reg_bits(LMS7002MCSR::TSGFC_RXTSP, fullscale ? 1 : 0);
+        lms->Modify_SPI_Reg_bits(LMS7002MCSR::TSGMODE_RXTSP, signalConfiguration.dcMode);
+        break;
+    case TRXDir::Tx:
+        if (lms->Modify_SPI_Reg_bits(LMS7002MCSR::INSEL_TXTSP, signalConfiguration.enabled, true) != OpStatus::Success)
+        {
+            lms->SetActiveChannel(lastCh);
+            return ReportError(OpStatus::IOFailure, "Failed to set Tx test signal."s);
+        }
+
+        lms->Modify_SPI_Reg_bits(LMS7002MCSR::TSGFCW_TXTSP, div4 ? 2 : 1);
+        lms->Modify_SPI_Reg_bits(LMS7002MCSR::TSGFC_TXTSP, fullscale ? 1 : 0);
+        lms->Modify_SPI_Reg_bits(LMS7002MCSR::TSGMODE_TXTSP, signalConfiguration.dcMode);
+        break;
+    }
+
+    if (signalConfiguration.dcMode)
+        status = lms->LoadDC_REG_IQ(direction, dc_i, dc_q);
+
+    lms->SetActiveChannel(lastCh);
+    return status;
+}
+
+ChannelConfig::Direction::TestSignal LMS7002M_SDRDevice::GetTestSignal(uint8_t moduleIndex, TRXDir direction, uint8_t channel)
+{
+    auto& lms = mLMSChips.at(moduleIndex);
+    auto lastCh = lms->GetActiveChannel();
+    lms->SetActiveChannel((channel == 0 ? lime::LMS7002M::Channel::ChA : lime::LMS7002M::Channel::ChB));
+    ChannelConfig::Direction::TestSignal signalConfiguration;
+
+    switch (direction)
+    {
+    case TRXDir::Tx:
+        if (lms->Get_SPI_Reg_bits(LMS7002MCSR::INSEL_TXTSP) == 0)
+        {
+            lms->SetActiveChannel(lastCh);
+            return signalConfiguration;
+        }
+        signalConfiguration.enabled = true;
+
+        if (lms->Get_SPI_Reg_bits(LMS7002MCSR::TSGMODE_TXTSP) != 0)
+        {
+            signalConfiguration.dcMode = true;
+            lms->SetActiveChannel(lastCh);
+            return signalConfiguration;
+        }
+
+        signalConfiguration.divide =
+            static_cast<ChannelConfig::Direction::TestSignal::Divide>(lms->Get_SPI_Reg_bits(LMS7002MCSR::TSGFCW_TXTSP));
+        signalConfiguration.scale =
+            static_cast<ChannelConfig::Direction::TestSignal::Scale>(lms->Get_SPI_Reg_bits(LMS7002MCSR::TSGFC_TXTSP));
+
+        lms->SetActiveChannel(lastCh);
+        return signalConfiguration;
+    case TRXDir::Rx:
+        if (lms->Get_SPI_Reg_bits(LMS7002MCSR::INSEL_RXTSP) == 0)
+        {
+            lms->SetActiveChannel(lastCh);
+            return signalConfiguration;
+        }
+        signalConfiguration.enabled = true;
+
+        if (lms->Get_SPI_Reg_bits(LMS7002MCSR::TSGMODE_RXTSP) != 0)
+        {
+            signalConfiguration.dcMode = true;
+            lms->SetActiveChannel(lastCh);
+            return signalConfiguration;
+        }
+
+        signalConfiguration.divide =
+            static_cast<ChannelConfig::Direction::TestSignal::Divide>(lms->Get_SPI_Reg_bits(LMS7002MCSR::TSGFCW_RXTSP));
+        signalConfiguration.scale =
+            static_cast<ChannelConfig::Direction::TestSignal::Scale>(lms->Get_SPI_Reg_bits(LMS7002MCSR::TSGFC_RXTSP));
+
+        lms->SetActiveChannel(lastCh);
+        return signalConfiguration;
+    }
+
+    throw std::runtime_error("Failed to get test mode"s);
+}
+
+std::vector<double> LMS7002M_SDRDevice::GetGFIRCoefficients(uint8_t moduleIndex, TRXDir trx, uint8_t channel, uint8_t gfirID)
+{
+    auto& lms = mLMSChips.at(moduleIndex);
+
+    const uint8_t count = gfirID == 2 ? 120 : 40;
+    std::vector<double> coefficientBuffer(count);
+
+    lms->GetGFIRCoefficients(trx, gfirID, coefficientBuffer.data(), count);
+
+    return coefficientBuffer;
+}
+
+OpStatus LMS7002M_SDRDevice::SetGFIRCoefficients(
+    uint8_t moduleIndex, TRXDir trx, uint8_t channel, uint8_t gfirID, std::vector<double> coefficients)
+{
+    auto& lms = mLMSChips.at(moduleIndex);
+    return lms->SetGFIRCoefficients(trx, gfirID, coefficients.data(), coefficients.size());
+}
+
+OpStatus LMS7002M_SDRDevice::SetGFIR(uint8_t moduleIndex, TRXDir trx, uint8_t channel, uint8_t gfirID, bool enabled)
+{
+    auto& lms = mLMSChips.at(moduleIndex);
+
+    if (gfirID > 2)
+        return ReportError(OpStatus::OutOfRange, "Failed to set GFIR filter, invalid filter index %i.", gfirID);
+
+    std::vector<std::reference_wrapper<const CSRegister>> txGfirBypasses = { GFIR1_BYP_TXTSP, GFIR2_BYP_TXTSP, GFIR3_BYP_TXTSP };
+    std::vector<std::reference_wrapper<const CSRegister>> rxGfirBypasses = { GFIR1_BYP_RXTSP, GFIR2_BYP_RXTSP, GFIR3_BYP_RXTSP };
+
+    lms->SetActiveChannel(static_cast<LMS7002M::Channel>((channel % 2) + 1));
+    OpStatus status;
+    if (trx == TRXDir::Tx)
+        status = lms->Modify_SPI_Reg_bits(txGfirBypasses[gfirID], enabled == false);
+    else
+        status = lms->Modify_SPI_Reg_bits(rxGfirBypasses[gfirID], enabled == false);
+    return status;
+}
+
+OpStatus LMS7002M_SDRDevice::UploadMemory(
+    eMemoryDevice device, uint8_t moduleIndex, const char* data, size_t length, UploadMemoryCallback callback)
+{
+    return OpStatus::NotImplemented;
+}
+
+RFSOCDescriptor LMS7002M_SDRDevice::GetDefaultLMS7002MDescriptor()
+{
+    RFSOCDescriptor soc;
+    // LMS#1
+    soc.name = "LMS7002M"s;
+    soc.channelCount = 2;
+    soc.pathNames[TRXDir::Rx] = { "None"s, "LNAH"s, "LNAL"s, "LNAW"s, "LB1"s, "LB2"s };
+    soc.pathNames[TRXDir::Tx] = { "None"s, "Band1"s, "Band2"s };
+
+    soc.samplingRateRange = { 100e3, 61.44e6, 0 };
+    soc.frequencyRange = { 100e3, 3.8e9, 0 };
+
+    soc.lowPassFilterRange[TRXDir::Rx] = { 1.4001e6, 130e6 };
+    soc.lowPassFilterRange[TRXDir::Tx] = { 5e6, 130e6 };
+
+    soc.antennaRange[TRXDir::Rx]["LNAH"s] = { 2e9, 2.6e9 };
+    soc.antennaRange[TRXDir::Rx]["LNAL"s] = { 700e6, 900e6 };
+    soc.antennaRange[TRXDir::Rx]["LNAW"s] = { 700e6, 2.6e9 };
+    // TODO: separate loopbacks from antennas
+    // soc.antennaRange[TRXDir::Rx]["LB1"s] = soc.antennaRange[TRXDir::Rx]["LNAL"s];
+    // soc.antennaRange[TRXDir::Rx]["LB2"s] = soc.antennaRange[TRXDir::Rx]["LNAW"s];
+    soc.antennaRange[TRXDir::Tx]["Band1"s] = { 2e9, 2.6e9 };
+    soc.antennaRange[TRXDir::Tx]["Band2"s] = { 30e6, 1.9e9 };
+
+    SetGainInformationInDescriptor(soc);
+    return soc;
+}
+
+OpStatus LMS7002M_SDRDevice::UpdateFPGAInterfaceFrequency(LMS7002M& soc, FPGA& fpga, uint8_t chipIndex)
+{
+    double fpgaTxPLL = soc.GetReferenceClk_TSP(TRXDir::Tx);
+    int interp = soc.Get_SPI_Reg_bits(LMS7002MCSR::HBI_OVR_TXTSP);
+    if (interp != 7)
+    {
+        uint8_t siso = soc.Get_SPI_Reg_bits(LML1_SISODDR);
+        fpgaTxPLL /= std::pow(2, interp + siso);
+    }
+    double fpgaRxPLL = soc.GetReferenceClk_TSP(TRXDir::Rx);
+    int dec = soc.Get_SPI_Reg_bits(LMS7002MCSR::HBD_OVR_RXTSP);
+    if (dec != 7)
+    {
+        uint8_t siso = soc.Get_SPI_Reg_bits(LML2_SISODDR);
+        fpgaRxPLL /= std::pow(2, dec + siso);
+    }
+
+    OpStatus status = fpga.SetInterfaceFreq(fpgaTxPLL, fpgaRxPLL, chipIndex);
+    if (status != OpStatus::Success)
+        return status;
+    soc.ResetLogicRegisters();
+    return OpStatus::Success;
+}
+
+int LMS7002M_SDRDevice::ReadFPGARegister(uint32_t address)
+{
+    assert(mFPGA);
+    return mFPGA->ReadRegister(address);
+}
+
+OpStatus LMS7002M_SDRDevice::WriteFPGARegister(uint32_t address, uint32_t value)
+{
+    assert(mFPGA);
+    return mFPGA->WriteRegister(address, value);
+}
+
+void LMS7002M_SDRDevice::SetGainInformationInDescriptor(RFSOCDescriptor& descriptor)
+{
+    descriptor.gainValues[TRXDir::Rx][eGainTypes::LNA] = { { 1, 0 },
+        { 2, 3 },
+        { 3, 6 },
+        { 4, 9 },
+        { 5, 12 },
+        { 6, 15 },
+        { 7, 18 },
+        { 8, 21 },
+        { 9, 24 },
+        { 10, 25 },
+        { 11, 26 },
+        { 12, 27 },
+        { 13, 28 },
+        { 14, 29 },
+        { 15, 30 } };
+    descriptor.gainValues[TRXDir::Rx][eGainTypes::TIA] = { { 1, 0 }, { 2, 9 }, { 3, 12 } };
+
+    std::vector<GainValue> PGAParameter(32);
+    for (uint8_t i = 0; i < PGAParameter.size(); ++i)
+    {
+        PGAParameter[i] = { i, static_cast<float>(i - 12) };
+    }
+    descriptor.gainValues[TRXDir::Rx][eGainTypes::PGA] = PGAParameter;
+
+    std::vector<GainValue> IAMPParameter(63);
+    for (uint8_t i = 1; i <= IAMPParameter.size(); ++i)
+    {
+        IAMPParameter[i - 1] = { i, static_cast<float>(i) };
+    }
+    descriptor.gainValues[TRXDir::Tx][eGainTypes::IAMP] = IAMPParameter;
+
+    std::vector<GainValue> PADParameter(31);
+    for (uint8_t i = 0; i < PADParameter.size(); ++i)
+    {
+        PADParameter[i] = { i, static_cast<float>(i) };
+    }
+    descriptor.gainValues[TRXDir::Tx][eGainTypes::PAD] = PADParameter;
+
+    descriptor.gains[TRXDir::Rx] = {
+        eGainTypes::LNA,
+        eGainTypes::PGA,
+        eGainTypes::TIA,
+    };
+
+    descriptor.gains[TRXDir::Tx] = {
+        eGainTypes::PAD,
+        eGainTypes::IAMP,
+    };
+
+    descriptor.gainRange[TRXDir::Rx][eGainTypes::LNA] = Range<double>(0, 30);
+    descriptor.gainRange[TRXDir::Rx][eGainTypes::LoopbackLNA] = Range<double>(0, 40);
+    descriptor.gainRange[TRXDir::Rx][eGainTypes::TIA] = Range<double>(0, 12);
+    descriptor.gainRange[TRXDir::Rx][eGainTypes::PGA] = Range<double>(-12, 19);
+    descriptor.gainRange[TRXDir::Tx][eGainTypes::PAD] = Range<double>(0, 52);
+    descriptor.gainRange[TRXDir::Tx][eGainTypes::LoopbackPAD] = Range<double>(-4.3, 0);
+    descriptor.gainRange[TRXDir::Tx][eGainTypes::IAMP] = Range<double>(-12, 12);
+
+    descriptor.gainRange[TRXDir::Rx][eGainTypes::UNKNOWN] = Range<double>(-12, 49);
+    descriptor.gainRange[TRXDir::Tx][eGainTypes::UNKNOWN] = descriptor.gainRange[TRXDir::Tx][eGainTypes::PAD];
+}
+
+OpStatus LMS7002M_SDRDevice::LMS7002M_Configure(LMS7002M& chip, const SDRConfig& cfg)
+{
+    std::vector<std::string> errors;
+    bool isValidConfig = LMS7002M_Validate(cfg, errors);
+
+    if (!isValidConfig)
+    {
+        std::stringstream ss;
+        for (const auto& err : errors)
+            ss << err << std::endl;
+        return ReportError(OpStatus::Error, "config error: "s + ss.str());
+    }
+
+    try
+    {
+        LMS7002LOConfigure(chip, cfg);
+        for (int i = 0; i < 2; ++i)
+        {
+            LMS7002ChannelConfigure(chip, cfg.channel[i], i);
+            LMS7002TestSignalConfigure(chip, cfg.channel[i], i);
+        }
+
+        // enabled ADC/DAC is required for FPGA to work
+        chip.Modify_SPI_Reg_bits(PD_RX_AFE1, 0);
+        chip.Modify_SPI_Reg_bits(PD_TX_AFE1, 0);
+        chip.SetActiveChannel(LMS7002M::Channel::ChA);
+
+        // Workaround: Toggle LimeLights transmit port to flush residual value from data interface
+        uint16_t txMux = chip.Get_SPI_Reg_bits(LMS7002MCSR::TX_MUX);
+        chip.Modify_SPI_Reg_bits(LMS7002MCSR::TX_MUX, 2);
+        chip.Modify_SPI_Reg_bits(LMS7002MCSR::TX_MUX, txMux);
+    } //try
+    catch (std::logic_error& e)
+    {
+        return ReportError(OpStatus::Error, "LimeSDR config: "s + e.what());
+    } catch (std::runtime_error& e)
+    {
+        return ReportError(OpStatus::Error, "LimeSDR config: "s + e.what());
+    }
+    return OpStatus::Success;
+}
+
+OpStatus LMS7002M_SDRDevice::LMS7002M_SetSampleRate(double f_Hz, uint8_t rxDecimation, uint8_t txInterpolation)
+{
+    if (rxDecimation != 0 && txInterpolation / rxDecimation > 4)
+        return lime::ReportError(OpStatus::InvalidValue,
+            "TxInterpolation(%i)/RxDecimation(%i) should not be more than 4",
+            txInterpolation,
+            rxDecimation);
+
+    uint8_t oversample = rxDecimation;
+    const bool bypass = ((oversample == 1 || oversample == 0) && f_Hz > 61.44e6);
+    uint8_t hbd_ovr = 7; // decimation ratio is 2^(1+hbd_ovr), HBD_OVR_RXTSP=7 - bypass
+    uint8_t hbi_ovr = 7; // interpolation ratio is 2^(1+hbi_ovr), HBI_OVR_TXTSP=7 - bypass
+    double cgenFreq = f_Hz * 4; // AI AQ BI BQ
+    if (!bypass)
+    {
+        if (oversample == 0)
+        {
+            const int n = lime::LMS7002M::CGEN_MAX_FREQ / (cgenFreq);
+            oversample = (n >= 32) ? 32 : (n >= 16) ? 16 : (n >= 8) ? 8 : (n >= 4) ? 4 : 2;
+        }
+
+        hbd_ovr = 4;
+        if (oversample <= 16)
+        {
+            const int decTbl[] = { 0, 0, 0, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3 };
+            hbd_ovr = decTbl[oversample];
+            rxDecimation = pow(2, hbd_ovr + 1);
+        }
+        cgenFreq *= 2 << hbd_ovr;
+        rxDecimation = 2 << hbd_ovr;
+
+        if (txInterpolation == 0)
+        {
+            //int txMultiplier = std::log2(lime::LMS7002M::CGEN_MAX_FREQ / cgenFreq);
+            txInterpolation = rxDecimation; // << txMultiplier;
+        }
+
+        if (txInterpolation >= rxDecimation)
+        {
+            hbi_ovr = hbd_ovr + std::log2(txInterpolation / rxDecimation);
+            txInterpolation = pow(2, hbi_ovr + 1);
+        }
+        else
+            return lime::ReportError(
+                OpStatus::NotSupported, "Rx decimation(2^%i) > Tx interpolation(2^%i) currently not supported", hbd_ovr, hbi_ovr);
+    }
+    lime::debug("Sampling rate set(%.3f MHz): CGEN:%.3f MHz, Decim: 2^%i, Interp: 2^%i",
+        f_Hz / 1e6,
+        cgenFreq / 1e6,
+        1 + hbd_ovr,
+        1 + hbi_ovr);
+    auto& mLMSChip = mLMSChips.at(0);
+    mLMSChip->Modify_SPI_Reg_bits(LMS7002MCSR::EN_ADCCLKH_CLKGN, 0);
+    if (rxDecimation != 0)
+        mLMSChip->Modify_SPI_Reg_bits(LMS7002MCSR::CLKH_OV_CLKL_CGEN, 2 - std::log2(txInterpolation / rxDecimation));
+    else
+        mLMSChip->Modify_SPI_Reg_bits(LMS7002MCSR::CLKH_OV_CLKL_CGEN, 2);
+
+    LMS7002M::ChannelScope scope(mLMSChip.get());
+    mLMSChip->Modify_SPI_Reg_bits(LMS7002MCSR::MAC, 2);
+    mLMSChip->Modify_SPI_Reg_bits(LMS7002MCSR::HBD_OVR_RXTSP, hbd_ovr);
+    mLMSChip->Modify_SPI_Reg_bits(LMS7002MCSR::HBI_OVR_TXTSP, hbi_ovr);
+    mLMSChip->Modify_SPI_Reg_bits(LMS7002MCSR::MAC, 1);
+    mLMSChip->Modify_SPI_Reg_bits(LMS7002MCSR::HBD_OVR_RXTSP, hbd_ovr);
+    mLMSChip->Modify_SPI_Reg_bits(LMS7002MCSR::HBI_OVR_TXTSP, hbi_ovr);
+
+    return mLMSChip->SetInterfaceFrequency(cgenFreq, hbi_ovr, hbd_ovr);
+}
+
+OpStatus LMS7002M_SDRDevice::LMS7002LOConfigure(LMS7002M& chip, const SDRConfig& cfg)
+{
+    OpStatus status = OpStatus::Success;
+    if (cfg.referenceClockFreq != 0)
+    {
+        status = chip.SetClockFreq(LMS7002M::ClockID::CLK_REFERENCE, cfg.referenceClockFreq);
+        if (status != OpStatus::Success)
+            return status;
+    }
+
+    double rx_lo = 0;
+    if (cfg.channel[0].rx.enabled && cfg.channel[0].rx.centerFrequency > 0)
+        rx_lo = cfg.channel[0].rx.centerFrequency;
+    else if (cfg.channel[1].rx.enabled && cfg.channel[1].rx.centerFrequency > 0)
+        rx_lo = cfg.channel[1].rx.centerFrequency;
+
+    double tx_lo = 0;
+    if (cfg.channel[0].tx.enabled && cfg.channel[0].tx.centerFrequency > 0)
+        tx_lo = cfg.channel[0].tx.centerFrequency;
+    else if (cfg.channel[1].tx.enabled && cfg.channel[1].tx.centerFrequency > 0)
+        tx_lo = cfg.channel[1].tx.centerFrequency;
+
+    const bool tddMode = rx_lo == tx_lo;
+    {
+        // TODO: verify if every FPGA gateware has this
+        // configure FPGA to do TDD switching
+        if (mFPGA)
+        {
+            uint16_t reg000A = mFPGA->ReadRegister(0x000A);
+            reg000A &= ~(1 << 11);
+            if (tddMode)
+                reg000A |= (1 << 11);
+            mFPGA->WriteRegister(0x000A, reg000A);
+        }
+    }
+    // Rx PLL is not used in TDD mode
+    if (rx_lo > 0)
+    {
+        status = chip.SetFrequencySX(TRXDir::Rx, rx_lo);
+        if (status != OpStatus::Success)
+            return status;
+    }
+    if (cfg.channel[0].tx.centerFrequency > 0)
+    {
+        status = chip.SetFrequencySX(TRXDir::Tx, tx_lo);
+        if (status != OpStatus::Success)
+            return status;
+    }
+    chip.EnableSXTDD(tddMode);
+    return status;
+}
+
+OpStatus LMS7002M_SDRDevice::LMS7002ChannelConfigure(LMS7002M& chip, const ChannelConfig& config, uint8_t channelIndex)
+{
+    LMS7002M::ChannelScope scope(&chip, channelIndex);
+
+    OpStatus status;
+    const ChannelConfig& ch = config;
+
+    chip.EnableChannel(TRXDir::Rx, channelIndex, ch.rx.enabled);
+    chip.SetPathRFE(static_cast<LMS7002M::PathRFE>(ch.rx.path));
+    if (static_cast<LMS7002M::PathRFE>(ch.rx.path) == LMS7002M::PathRFE::LB1 ||
+        static_cast<LMS7002M::PathRFE>(ch.rx.path) == LMS7002M::PathRFE::LB2)
+    {
+        // TODO: confirm which should be used for loopback
+        if (ch.rx.lpf > 0)
+            chip.Modify_SPI_Reg_bits(INPUT_CTL_PGA_RBB, 3); // baseband loopback
+        else
+            chip.Modify_SPI_Reg_bits(INPUT_CTL_PGA_RBB, 2); // LPF bypass
+    }
+
+    chip.EnableChannel(TRXDir::Tx, channelIndex, ch.tx.enabled);
+    chip.SetBandTRF(ch.tx.path);
+
+    // Rx LPF configuration modifies Rx PGA
+    status = chip.SetRxLPF(ch.rx.lpf);
+    if (status != OpStatus::Success)
+        return status;
+    status = chip.SetTxLPF(ch.tx.lpf);
+    if (status != OpStatus::Success)
+        return status;
+
+    for (const auto& gain : ch.rx.gain)
+    {
+        SetGain(0, TRXDir::Rx, channelIndex, gain.first, gain.second);
+    }
+
+    for (const auto& gain : ch.tx.gain)
+    {
+        SetGain(0, TRXDir::Tx, channelIndex, gain.first, gain.second);
+    }
+    return status;
+}
+
+OpStatus LMS7002M_SDRDevice::LMS7002ChannelCalibration(LMS7002M& chip, const ChannelConfig& config, uint8_t channelIndex)
+{
+    LMS7002M::ChannelScope scope(&chip, channelIndex);
+    int i = channelIndex;
+    auto enumChannel = i == 0 ? LMS7002M::Channel::ChA : LMS7002M::Channel::ChB;
+    const ChannelConfig& ch = config;
+
+    // TODO: Don't configure GFIR when external ADC/DAC is used
+    if (ch.rx.enabled)
+    {
+        OpStatus status = chip.SetGFIRFilter(TRXDir::Rx, enumChannel, ch.rx.gfir.enabled, ch.rx.gfir.bandwidth);
+
+        if (status == OpStatus::NotImplemented)
+            lime::warning("Rx ch%i GFIR config not implemented", i);
+        else if (status != OpStatus::Success)
+            return lime::ReportError(OpStatus::Error, "Rx ch%i GFIR config failed", i);
+    }
+
+    if (ch.tx.enabled)
+    {
+        OpStatus status = chip.SetGFIRFilter(TRXDir::Tx, enumChannel, ch.tx.gfir.enabled, ch.tx.gfir.bandwidth);
+
+        if (status == OpStatus::NotImplemented)
+            lime::warning("Tx ch%i GFIR config not implemented", i);
+        else if (status != OpStatus::Success)
+            return lime::ReportError(OpStatus::Error, "Tx ch%i GFIR config failed", i);
+    }
+
+    OpStatus rxStatus = OpStatus::Success;
+    if ((ch.rx.calibrate & CalibrationFlag::DCIQ) && ch.rx.enabled)
+    {
+        rxStatus = chip.CalibrateRx(ch.rx.sampleRate);
+    }
+
+    OpStatus txStatus = OpStatus::Success;
+    if (ch.tx.enabled)
+    {
+        if (ch.tx.calibrate & CalibrationFlag::DCIQ)
+            txStatus = chip.CalibrateTx(ch.tx.sampleRate);
+        if (ch.tx.calibrate & CalibrationFlag::FILTER)
+            chip.CalibrateTxGain();
+    }
+
+    if (rxStatus != OpStatus::Success || txStatus != OpStatus::Success)
+        return OpStatus::Error;
+    return OpStatus::Success;
+}
+
+OpStatus LMS7002M_SDRDevice::LMS7002TestSignalConfigure(LMS7002M& chip, const ChannelConfig& config, uint8_t channelIndex)
+{
+    LMS7002M::ChannelScope scope(&chip, channelIndex);
+    const ChannelConfig& ch = config;
+    chip.Modify_SPI_Reg_bits(INSEL_RXTSP, ch.rx.testSignal.enabled ? 1 : 0);
+    if (ch.rx.testSignal.enabled)
+    {
+        const ChannelConfig::Direction::TestSignal& signal = ch.rx.testSignal;
+        bool fullscale = signal.scale == ChannelConfig::Direction::TestSignal::Scale::Full;
+        bool div4 = signal.divide == ChannelConfig::Direction::TestSignal::Divide::Div4;
+        chip.Modify_SPI_Reg_bits(TSGFC_RXTSP, fullscale ? 1 : 0);
+        chip.Modify_SPI_Reg_bits(TSGFCW_RXTSP, div4 ? 2 : 1);
+        chip.Modify_SPI_Reg_bits(TSGMODE_RXTSP, signal.dcMode ? 1 : 0);
+        chip.SPI_write(0x040C, 0x01FF); // DC.. bypasss
+        // TSGMODE_RXTSP change resets DC values
+        return chip.LoadDC_REG_IQ(TRXDir::Rx, signal.dcValue.real(), signal.dcValue.imag());
+    }
+
+    chip.Modify_SPI_Reg_bits(INSEL_TXTSP, ch.tx.testSignal.enabled ? 1 : 0);
+    if (ch.tx.testSignal.enabled)
+    {
+        const ChannelConfig::Direction::TestSignal& signal = ch.tx.testSignal;
+        bool fullscale = signal.scale == ChannelConfig::Direction::TestSignal::Scale::Full;
+        bool div4 = signal.divide == ChannelConfig::Direction::TestSignal::Divide::Div4;
+        chip.Modify_SPI_Reg_bits(TSGFC_TXTSP, fullscale ? 1 : 0);
+        chip.Modify_SPI_Reg_bits(TSGFCW_TXTSP, div4 ? 2 : 1);
+        chip.Modify_SPI_Reg_bits(TSGMODE_TXTSP, signal.dcMode ? 1 : 0);
+        chip.SPI_write(0x040C, 0x01FF); // DC.. bypasss
+        // TSGMODE_TXTSP change resets DC values
+        return chip.LoadDC_REG_IQ(TRXDir::Tx, signal.dcValue.real(), signal.dcValue.imag());
+    }
+    return OpStatus::Success;
+}
+
+FPGA* LMS7002M_SDRDevice::GetFPGA()
+{
+    return mFPGA.get();
+}
+
+} // namespace lime
