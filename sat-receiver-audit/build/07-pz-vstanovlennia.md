@@ -504,9 +504,9 @@ $PAIR411*3E                        (читання)
 
 ## 19. Gpredict RX-only (STACK.md 5.4)
 
-- 1d80049b0fecc06a18378d88f09b1d154a070234 (2.6+git20261011, GTK3), без libgps і без hamlib; локальний патч rotctld_socket_rw (recv sizeout-1, перевірка від'ємних повернень, повний буфер = помилка).
-- Радіо лише «RX only» (типи TX only / Simplex TRX / Duplex TRX заборонено в конфігах); мережеві оновлення TLE і транспондерів вимкнено; QTH — статичний файл від служби місця; єдиний клієнт rigctl — SDR++ RIGCTL_SERVER localhost:4532.
-- Міст псевдонімів «6-значний номер → псевдонім» живе в labd. Аудит `ldd` не показує ні libgps, ні libhamlib.
+- v2.7: tarball релізу `gpredict-2.7.tar.bz2` (тег v2.7 = 22593781b5fc922aa7064c8665d40ef8b3f98ddb, GTK3), пакет 2.7+lab1 з `deployment/recipes/gpredict` (autotools зі згенерованим `configure`), без libgps і без hamlib; локальний патч rotctld_socket_rw (recv sizeout-1, перевірка від'ємних повернень, повний буфер = помилка) — `patches/0001`.
+- Радіо лише «RX only»: збірка відхиляє `.rig` з `Type` ≠ 0 (`patches/0003`; типи TX only / Simplex TRX / Duplex TRX заборонено й у конфігах, RX-10), сигналів запису IQ (#371) немає; мережеві оновлення TLE і транспондерів вимкнено самою збіркою (`patches/0002`) і `[TLE] AUTO_UPDATE_FREQ=0`; QTH — статичний файл від служби місця (збережене місце, округлене до 0,1°); єдиний клієнт rigctl — SDR++ RIGCTL_SERVER 127.0.0.1:4532 (`hwconf/SDRPP-RX.rig`).
+- Міст псевдонімів «6-значний номер → псевдонім» живе в labd: `srrx.gpredict_bridge` пише satdata з OMM labd з детермінованими 5-значними псевдонімами (`/var/lib/srrx/gpredict/aliases.json`, справжній id у назві); вбудованих списків супутників пакет не ставить. Аудит `ldd` не показує ні libgps, ні libhamlib.
 
 ## 20. Python (STACK.md 5.4; C22)
 
