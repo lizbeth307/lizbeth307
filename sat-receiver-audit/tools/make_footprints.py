@@ -238,6 +238,25 @@ def cpt1207():
     return fp.render(2.5 - 7.3, 2.5 + 7.3)
 
 
+def pololu_d36v50fx():
+    """Pololu D36V50Fx (#4090-4095) carrier on a 2x6 0.1 in header, dimension drawing reg24d (24 December 2019)."""
+    fp = FP('Pololu_D36V50Fx', 'Pololu D36V50Fx step-down regulator carrier (#4090-4095) on two 1x6 0.1 in header strips, top view of the module as it sits on the board: '
+            '12 holes D1.02 in two rows 2.54 apart, 1.27 and 3.81 mm from the module edge, columns 6.35-19.05 mm (VOUT, GND, GND, VIN, VRP, EN/PG); '
+            'board 25.4 x 25.4, three D2.18 M2 holes 2.2 mm from the edges (fab layer only); module bottom-side parts 1.8 mm, so it stands on the header spacer', 'Pololu D36V50F regulator module', smd=False)
+    cols = {6.35: 'VOUT', 8.89: 'GND', 11.43: 'GND', 13.97: 'VIN', 16.51: 'VRP'}
+    for x_top, name in cols.items():
+        for y_top in (1.27, 3.81):
+            fp.tht(name, x_top - 12.7, 12.7 - y_top, 1.7, 1.02)
+    fp.tht('EN', 19.05 - 12.7, 12.7 - 1.27, 1.7, 1.02, shape='rect')
+    fp.tht('PG', 19.05 - 12.7, 12.7 - 3.81, 1.7, 1.02)
+    fp.rect(-12.7, -12.7, 12.7, 12.7, 'F.Fab', 0.1)
+    for hx, hy in ((2.159, 2.159), (23.241, 2.159), (23.241, 23.241)):
+        fp.circle(hx - 12.7, 12.7 - hy, 1.09, 'F.Fab', 0.1)
+    fp.rect(-12.95, -12.95, 12.95, 12.95, 'F.CrtYd', 0.05)
+    fp.rect(-12.81, -12.81, 12.81, 12.81, 'F.SilkS', 0.12)
+    return fp.render(-13.8, 13.8)
+
+
 CUSTOM_BUILDERS = {
     'TI_RPW0010A_VQFN-HR-10_2x2mm_P0.5mm': rpw0010a,
     'TI_RGW0020A_VQFN-20-1EP_5x5mm_P0.65mm_EP3.15x3.15mm': lambda: qfn(
@@ -253,6 +272,7 @@ CUSTOM_BUILDERS = {
     'SW_E-Switch_TL3145_6.45x6.45mm': tl3145,
     'RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx': pec11r_s,
     'Buzzer_SameSky_CPT-1207-3TH_D12.5mm_P5.0mm': cpt1207,
+    'Pololu_D36V50Fx': pololu_d36v50fx,
 }
 
 # name -> (official source 'Lib:Name', pad renames, note)
@@ -275,6 +295,7 @@ PROVENANCE = {
     'SW_E-Switch_TL3145_6.45x6.45mm': {'kind': 'custom', 'source': 'https://configured-product-images.s3.amazonaws.com/Datasheets/TL3145.pdf', 'drawing': 'Recommended PCB Layout, page 2 (datasheet 4.2.2024)', 'read': '2026-10-24'},
     'RotaryEncoder_Bourns_PEC11R-4xxxF-Sxxxx': {'kind': 'custom', 'source': 'https://www.bourns.com/docs/Product-Datasheets/PEC11R.pdf', 'drawing': 'PEC11R-4xxxF-Sxxxx PCB layout, page 2', 'read': '2026-10-24'},
     'Buzzer_SameSky_CPT-1207-3TH_D12.5mm_P5.0mm': {'kind': 'custom', 'source': 'https://www.sameskydevices.com/product/resource/cpt-1207-3th.pdf', 'drawing': 'Recommended PCB Layout (Top View), page 2 (07/22/2025)', 'read': '2026-10-24'},
+    'Pololu_D36V50Fx': {'kind': 'custom', 'source': 'https://www.pololu.com/file/0J1732/d36v50fx-step-down-voltage-regulator-dimensions.pdf', 'drawing': 'D36V50Fx Step-Down Voltage Regulator, dev code reg24d, drawing date 24 December 2019: views 1 (board, 3x D2.18), 2 (12x D1.02 connector callouts, 2.54/1.27/6.35 mm) and 3 (pin labels PG, EN, VRP, VIN, GND, VOUT); linked from https://www.pololu.com/product/4091/resources', 'read': '2026-11-07'},
 }
 
 

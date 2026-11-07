@@ -260,6 +260,7 @@ def imu_sheet(P):
                ["Осі паку: +X — стрілка на кришці (бортове візування антени), +Z — з кришки, +Y = Z x X (правий трійник).",
                 "BNO085 ставиться так, щоб осі мікросхеми збігалися з осями паку (матриця chip_to_pack = I); знаки й орієнтацію перевіряє стенд (OPEN).",
                 "Дно: отвір ⌀6.6 під 1/4-20; носій (STL) з латунною вставкою 1/4-20 x 12.7, гвинти M3 у вставки; плати на стійках 13 мм над носієм.",
+                "Носійна плата IMU_CARRIER (U552, D502, C519, C520, деталі E3 External IMU) — смуга вздовж стінки y_min під платами, на тих самих гвинтах M3 (резерв, розкладка — хвиля 2).",
                 "Стінка y_max: SKINTOP MS-SC-M12 ⌀12.2; шов кришки — провідна фольгова стрічка; момент гвинтів кришки 50-75 cN·m (креслення Hammond)."])
     sh.rect(0, 0, ix, iy, "CUT")
     bx, by = I["boards"]["origin_in_box"]
@@ -268,6 +269,11 @@ def imu_sheet(P):
     sh.rect(bx, by, P.parts["bno085_board"]["bno_board"][0], ph, "HIDDEN")
     sh.text((bx + 1, by + 1), "BNO085", 1.6)
     sh.text((bx + 27, by + 1), "RP2040-Zero", 1.6)
+    cp = I.get("carrier_pcb")
+    if cp:
+        px, py, pw2, ph2 = cp["rect"]
+        sh.rect(px, py, pw2, ph2, "HIDDEN")
+        sh.text((px + 9, py + 1.8), "носійна плата IMU_CARRIER (резерв)", 1.4)
     t = I["tripod"]
     sh.hole(tuple(t["c"]), t["hole_d"], "⌀6.6", 1.6)
     for (sx, sy) in I["carrier"]["screws"]:

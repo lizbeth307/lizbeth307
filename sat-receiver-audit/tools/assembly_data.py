@@ -11,15 +11,18 @@ measurements; every catalogue value names the document that was read.
 
 READ = "24.10.2026"
 # Sources (re)read later than READ, or values added from them later.
-READ_ON = {"JST-PH": "06.11.2026", "MOLEX-43030": "06.11.2026", "MOLEX-5556": "06.11.2026", "MOLEX-5566": "06.11.2026",
-           "ESCC-3901-001": "06.11.2026", "HAMMOND-1550Z101": "06.11.2026"}
+READ_ON = {"JST-PH": "07.11.2026", "MOLEX-43030": "06.11.2026", "MOLEX-5556": "06.11.2026", "MOLEX-5566": "06.11.2026",
+           "ESCC-3901-001": "06.11.2026", "HAMMOND-1550Z101": "06.11.2026", "PV6": "07.11.2026", "KINGHELM-GX12": "07.11.2026",
+           "PEM-F": "07.11.2026", "PEM-SO": "07.11.2026", "POLOLU-D36V50": "07.11.2026"}
 
 # --- Sources actually read for catalogue values (URL, what it gives) --------
 SOURCES = {
     "JST-PH": ("https://www.jst-mfg.com/product/pdf/eng/ePH.pdf",
                "JST PH: 2 A AC/DC (AWG #24) — інших перерізів номінал не наводить; 100 V, −40…+105 °C; опір контакту 10 mΩ макс. "
                "початково / 20 mΩ після тесту; провід AWG #32…#24, ізоляція ⌀0.5…1.5 мм; "
-               "SPH-002T-P0.5S — AWG #30…#24, ⌀0.8…1.5 мм; PHR-2…PHR-16; B2B…B16B-PH-K-S (верхній вхід), S2B…S16B-PH-K-S (боковий)"),
+               "SPH-002T-P0.5S — AWG #30…#24, ⌀0.8…1.5 мм; PHR-2…PHR-16; B2B…B16B-PH-K-S (верхній вхід), S2B…S16B-PH-K-S (боковий); "
+               "THT-вилки: довжина B = 2(n−1) + 3.9; верхній вхід — висота 6, глибина 4.5, монтажна висота з розеткою (8); боковий — висота 4.8, "
+               "глибина 7.6, з розеткою (9.6) (каталог ePH, с. 1 і 3, PDF від 27.01.2026)"),
     "MOLEX-43030": ("https://www.farnell.com/datasheets/1887331.pdf",
                     "Molex 43030-0007 (пакет; 43030-0001 — котушка, https://www.farnell.com/datasheets/1864962.pdf): гніздова клема Micro-Fit 3.0, "
                     "20/22/24 AWG, ізоляція ≤1.85 мм, 5 A на контакт (документи 2014–2016; лист 2018 https://www.farnell.com/datasheets/2696325.pdf — 8.5 A); "
@@ -51,9 +54,10 @@ SOURCES = {
                          "Cable Bundle Wire Derating (1998): 20 AWG — 3.7 A на провід у джгуті ≥15 проводів, 70 °C, вакуум (перехресна перевірка ESCC)"),
     "PEC11R": ("https://www.bourns.com/docs/Product-Datasheets/PEC11R.pdf",
                "Bourns PEC11R (REV. 04/26): момент кріплення 10.2 kgf·cm (8.83 lb·in) макс. ≈1.0 N·m; гайка M7×0.75 і шайба в комплекті; IP40; −30…+70 °C"),
-    "PV0": ("https://configured-product-images.s3.amazonaws.com/Datasheets/PV0.pdf",
-            "E-Switch PV0 (3.16.2026): антивандальна кнопка, виріз ⌀12.00 (+0.20) мм, панель 1–6 мм, IP67, 2 A 36 VDC, SPST Off-(On), "
-            "момент гайки 0.6 N·m, −40…+85 °C"),
+    "PV6": ("https://configured-product-images.s3.amazonaws.com/Datasheets/PV6.pdf",
+            "E-Switch PV6 (8.28.2025): антивандальна кнопка, виріз ⌀16.00 +0.20/−0.00 мм, панель 1–10 мм, IP65, 2 A 48 VDC, SPST Off-(On), "
+            "рекомендований момент кріплення 0.6 N·m, −40…+85 °C; без підсвічування — безель ⌀18.00 × 1.50, різьба M16×1.0, 17.50 ±0.50 мм від "
+            "безеля до кінців виводів (с. 1, 3, 5); розмір гайки не наведено"),
     "LTW-VENT": ("https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/7136/Amphenol%20LTW_Pressure%20Relief%20Vent%20Group.pdf",
                  "Amphenol LTW, каталог клапанів, M12 Plastic (VENT-PS1YBK-O8002 — з гайкою): M12×1.5, момент 6.0–8.0 kgf·cm (0.59–0.78 N·m), "
                  "наскрізний отвір 2.0–3.5 мм або різьбовий ≥4.0 мм, IP68/IP69K, O8002 >1000 ml/min при 7 kPa"),
@@ -63,6 +67,17 @@ SOURCES = {
     "BINDER-M8": ("https://binder-usa.com/us-en/products/automation-technology/m8/86-6618-1120-00006-m8-female-panel-mount-connector-6-shieldable-tht-ip67-m10x075-front-fastened",
                   "binder 86 6618 1120 00006 (alt. 09 3422 81 06), M8 серія 718, 6 конт., A-код, THT, IP67, M10×0.75, 1.5 A, 30 V, −40…+85 °C; "
                   "кільце кабельного роз'єму — від руки ≈50 cN·m; сторінка суперечлива щодо переднього/заднього монтажу, виріз і момент гайки не наведені"),
+    "KINGHELM-GX12": ("https://www.lcsc.com/product-detail/C18203264.html",
+                      "Kinghelm KH-GX12-6P (LCSC C18203264): «CONN 1 SET MALE AND FEMALE M12 6POS», 6 конт.; виріз панелі, гайка, момент і IP на "
+                      "сторінці не наведені, PDF-даташит LCSC тексту не віддав — TBD"),
+    "PEM-F": ("https://catalog.pemnet.com/item/pemsert--self-clinching-flush-fasteners---type-f/msert-self-clinching-flush-fasteners-type-f-metric/f-m3-1",
+              "PEM F-M3-1: M3×0.5, лист 1.53–2.32 мм, отвір 4.37 +0.08, ≥6.00 мм від осі отвору до кромки, лист ≤HRB 70 / HB 125, нержавійка 300; "
+              "ставиться втискуванням (прес)"),
+    "PEM-SO": ("https://catalog.pemnet.com/item/thru-hole-threaded-standoffs-types-so-soa-sos/ru-hole-threaded-standoffs-types-so-soa-sos-metric/so-m3-3zi",
+               "PEM SO-M3-3ZI: M3×0.5, L 3 мм, лист ≥1.00 мм, отвір 4.22 +0.08, H 4.8, ≥6.00 мм від осі отвору до кромки; голівка врівень з одним боком листа; прес"),
+    "POLOLU-D36V50": ("https://www.pololu.com/file/0J1732/d36v50fx-step-down-voltage-regulator-dimensions.pdf",
+                      "Pololu D36V50Fx (reg24d, 24.12.2019): плата 25.4 × 25.4, 12 отворів ⌀1.02 у два ряди (VOUT, GND ×4, VIN, VRP, EN/PG), "
+                      "3 отвори ⌀2.18 під M2; деталі на нижньому боці 1.8 мм — модуль стоїть на проставці гребінки"),
     "CNCK-M3": ("https://3djake.ch/en-CH/cnc-kitchen/threaded-inserts-m3-standard",
                 "CNC Kitchen TC-M3x5.7: L 5.7, ⌀D1 4.6, отвір ⌀D3 4.0, стінка ≥1.6; ставити на 10–20 °C вище температури друку"),
     "CNCK-M25": ("https://3djake.ch/en-CH/cnc-kitchen/threaded-inserts-m25-standard",
@@ -83,17 +98,29 @@ SOURCES = {
 BOARD_OF_DOMAIN = {  # build/15 «Кількість плат»
     "PWR_MAIN": "PWR", "PWR_BRANCH": "PWR", "USB_POWER": "PWR",
     "RF_HMC": "RF", "RF_HF": "RF", "RF_INJECTOR": "RF", "DC_CORE": "RF",
-    "CTRL_HMI": "CTRL",
+    "CTRL_HMI": "CTRL", "HATCH": "HATCH",
 }
+# Off-plate board domains of pcb/prepare.py whose parts belong to a module or cable unit here (no deviation):
+# ENC (ENCM/ENCV), T7_INSERT (T7A), HDMI_INSERT (HDMIA), IMU_CARRIER (IMUPACK), PACK_FUSE (PACK).
+# Boards whose PH headers must be side entry: their envelope height is 5.5 mm (RF, CTRL) or 6.5 mm (ENC) and a
+# top-entry PH stands 8 mm with its housing (JST ePH); the side-entry header stands 4.8 mm (mechanical/params/boards.json).
+SIDE_ENTRY_UNITS = ("CTRL", "RF", "ENCM", "ENCV")
+SIDE_ENTRY_PH_MAX = 8  # S16B-PH-K-S is not stocked (parts DB): 16-pin groups become 2 x 8 (build/15 «Сигнальні джгути»)
 
 UNITS = [
     # id, kind, name, place
-    ("PWR", "board", "Силова плата PWR (PWR_MAIN + PWR_BRANCH + USB_POWER) з модулем D36V50F5 U108 на платі",
-     "унизу праворуч на середній пластині (05 §3, рядок 15 «Силова плата»); U108 впаяно в PWR обома парами силових "
-     "пінів (E1 U108: «використовувати обидва парні силові піни»), тепло — через мідь PWR і стійки до пластини; відхилення від 05 "
-     "«регулятори прикріплені до пластини» — build/15"),
-    ("CTRL", "board", "Плата керування/HMI CTRL (CTRL_HMI)", "за правою колонкою HMI; кнопки й енкодери крізь лице"),
-    ("RF", "board", "RF/детекторна плата RF (RF_HMC + RF_HF + RF_INJECTOR + DC_CORE)", "РЧ-відсік уздовж верхнього краю"),
+    ("PWR", "board", "Силова плата PWR (PWR_MAIN + PWR_BRANCH + USB_POWER) з модулями D36V50F12 U107 і D36V50F5 U108 на платі",
+     "лицьовий бік середньої пластини ліворуч унизу: нижня смуга x 6–142 і ліва ніжка x 6–48 (05 §3 рядок 15, M-07, B-PWR); U107 і U108 "
+     "впаяно в ліву ніжку обома парами силових пінів (E1 U108) на проставці гребінки (деталі низу модуля 1.8 мм, креслення Pololu), тепло — "
+     "через мідь PWR і термопрокладки до пластини; рішення build/15 «Кількість плат»"),
+    ("CTRL", "board", "Плата керування/HMI CTRL (CTRL_HMI)", "за правою колонкою HMI на бобишках передньої половини (B-CTRL); кнопки крізь лице, "
+     "енкодери — на дочірніх платах ENC"),
+    ("ENCM", "board", "Дочірня плата головного енкодера ENC (ENC301 + кнопка SW308)", "лице, колонка HMI, x 188.5 y 123 (M-01, B-ENC, place_at main); "
+     "ENC1 = головний — призначення інтеграції, звірити з E3/HMI"),
+    ("ENCV", "board", "Дочірня плата енкодера гучності ENC (ENC302 + кнопка SW309)", "лице, колонка HMI, x 188.5 y 82 (M-01, B-ENC, place_at volume)"),
+    ("RF", "board", "RF/детекторна плата RF (RF_HMC + RF_HF + RF_INJECTOR + DC_CORE)", "за пластиною в РЧ-відсіку вздовж верхнього краю, компоненти до задньої стінки (B-RF)"),
+    ("HATCH", "board", "Плата сервісного лючка HATCH (J502 консоль UART5, J503 сервісний J21, SW501 EDL)",
+     "сервісний лючок задньої стінки x 116–138, y 40–90 (layout hatch_parts, M-04); рішення build/15 «Сигнальні джгути»"),
     ("Q6A.HDR", "module", "Q6A, 40-pin J20 (J301)", "середня пластина"),
     ("Q6A.CORE", "module", "Q6A, бортові шини (U500)", "середня пластина"),
     ("Q6A.J21", "module", "Q6A, майданчики J21 (J521)", "середня пластина"),
@@ -104,14 +131,15 @@ UNITS = [
     ("Q6A.EDL", "module", "Q6A, контакти кнопки EDL (J522)", "середня пластина"),
     ("Q6A.RTC", "module", "Q6A, J11 RTC (J303 + BT301)", "середня пластина"),
     ("PACK", "module", "Пак 4S1P + BMS Daly + запобіжник паку (BT101–BT104, U101, TH101, F101)",
-     "батарейний відсік зліва внизу; F101 7.5 A — у тримачі Keystone 3568 біля плюса паку, на малому носії або в розриві дроту "
-     "(STACK D2 «біля батареї»; у графі E1 F101 — у групі «Пак 4S1P»); провід BT104.+ → F101.1 — найкоротший, 18 AWG, усередині паку "
+     "батарейний відсік (лоток x 3–161 уздовж нижньої стінки, layout battery_tray), BMS — лицьовий бік пластини x 175–210 (layout bms); "
+     "F101 7.5 A — у тримачі Keystone 3568 на малій носійній платі PACK_FUSE біля плюса паку, ізольованій і закріпленій біля лотка "
+     "(STACK D2 «біля батареї»; конверт у моделі — TBD, mechanical/README); провід BT104.+ → F101.1 — найкоротший, 18 AWG "
      "(його захищає лише BMS, DOCP 40±10 A, 02 §2)"),
-    ("INA", "module", "Adafruit INA228 5832 (U102, R101, C101, C102)", "на стійках над PWR"),
-    ("SWM", "module", "Pololu #2813 (U106)", "на середній пластині біля PWR"),
-    ("REG12", "module", "Pololu D36V50F12 (U107)", "прикріплено до середньої пластини (STACK §5.8 «Регулятори»)"),
-    ("CHG", "module", "IP2368 COUT (U110, R117–R120, C118, TH102)", "на стінці корпусу, ≥10 мм від елементів"),
-    ("HUB", "module", "Adafruit 5997 CH334F (U510)", "біля Q6A J2"),
+    ("INA", "module", "Adafruit INA228 5832 (U102, R101, C101, C102)", "на стійках над PWR (конверт у моделі механіки — TBD, mechanical/README)"),
+    ("SWM", "module", "Pololu #2813 (U106)", "на середній пластині біля PWR (конверт у моделі механіки — TBD, mechanical/README)"),
+    ("CHG", "module", "IP2368 COUT (U110, R117–R120, C118, TH102)", "лицьовий бік пластини вгорі праворуч x 172–220, y 122.5–156.5 (layout ip2368; "
+     "R-IP2368 ≥10 мм від батареї)"),
+    ("HUB", "module", "Adafruit 5997 CH334F (U510)", "біля Q6A J2 (конверт у моделі механіки — TBD, mechanical/README)"),
     ("T7A", "cable", "Вставка ключа VBUS T7 (U505, R514–R517, C514–C516, TP501)", "у розриві USB3 біля Q6A J5"),
     ("T7", "remote", "Samsung T7 + цілісний кабель A–C (U540)", "ззовні ззаду внизу, тримач"),
     ("HDMIA", "cable", "HDMI-вставка pin 18 (U506, C517, C518, R552, TP502)", "біля HDMI Q6A"),
@@ -120,22 +148,21 @@ UNITS = [
     ("LIME", "module", "LimeSDR Micro M.2 (A415)", "на п'єдесталі"),
     ("RTLA", "cable", "RTL-A V4L + кабель USB (A411, J543)", "РЧ-відсік"),
     ("RTLB", "cable", "RTL-B V4L + кабель з розділеним VBUS (A412, J541)", "РЧ-відсік"),
-    ("HFP", "cable", "Airspy HF+ + пігтейл micro-USB (A414, J544)", "екран Schubert 6B угорі праворуч"),
-    ("USBC", "panel", "USB-C PD (J103)", "нижній край"),
+    ("HFP", "cable", "Airspy HF+ + пігтейл micro-USB (A414, J544)", "екран Schubert 6B за пластиною, середній ряд ліворуч x 2.6–114.6 (layout hfplus)"),
+    ("USBC", "panel", "USB-C PD (J103, Amphenol ICC MUSBRM5C130)", "нижня грань x 189, z 24 (M-05); виріз — TBD (креслення не прочитано)"),
     ("XT30", "panel", "Сервісний XT30 (J101)", "пігтейл у батарейному відсіку (v2.1: заряд ISDT заблоковано)"),
-    ("LABUSB", "panel", "LAB USB-A (J501)", "нижній край"),
-    ("LABBUS", "panel", "LAB BUS (J505)", "нижній край"),
-    ("GX16", "panel", "Гніздо IMU GX16-4 (J504)", "задня стінка"),
-    ("UART5", "panel", "Консоль UART5 (J502)", "сервісний лючок"),
-    ("J21H", "panel", "Сервісний роз'єм J21 (J503)", "сервісний лючок"),
-    ("EDL", "panel", "Кнопка EDL (SW501)", "сервісний лючок"),
-    ("PWRBTN", "panel", "Кнопка живлення (SW301)", "TBD (STACK §5.8 не задає місце)"),
+    ("LABUSB", "panel", "LAB USB-A (J501, Bulgin PX0845/A)", "нижня грань x 172, z 24 (M-05)"),
+    ("LABBUS", "panel", "LAB BUS (J505, Kinghelm KH-GX12-6P)", "нижня грань x 206, z 30 (M-05); виріз — TBD"),
+    ("GX16", "panel", "Гніздо IMU GX16-4 (J504)", "задня стінка x 175, y 25 (M-04)"),
+    ("EDL", "panel", "Кнопка EDL (SW501, E-Switch PV6F240SS)", "на платі лючка за кришкою сервісного лючка (layout edl_key_body)"),
+    ("PWRBTN", "panel", "Кнопка живлення (SW301, E-Switch PV6F240SS)", "верхня грань x 155, z 48.5 (layout pwr_key_body, M-03; рішення build/15 «Оболонка D15»)"),
     ("IMUPACK", "remote", "IMU-пак Hammond 1550Z101 (U309, U314, J550, D502, C519, C520, U552 і деталі E3 «External IMU»)", "на штанзі антени, ≥30 см позаду"),
-    ("GNSS", "module", "LC76G (U304)", "біля P7"),
-    ("VEML", "module", "Adafruit 4162 VEML7700 (U308)", "верхня грань безеля, поза козирком"),
-    ("FAN1", "module", "Noctua NF-A4x10 5V (FAN301)", "задній отвір, шлях 1"),
-    ("FAN2", "module", "Delta BFB0305HA-C (FAN302)", "канал дисплея, шлях 2"),
-    ("BONI", "module", "Bias-tee Boni-Whip (A406)", "поруч з G6K, поза екраном HF+"),
+    ("GNSS", "module", "LC76G (U304)", "задня стінка ліворуч x 8–71.6, y 38.5–92.5 (layout lc76g); до P7 (верхня грань x 163.5) ≥113 мм по прямій — "
+     "W407 CAB.011 100 мм не дістає, потрібен довший пігтейл (MPN TBD, build/15 «Оболонка D15»)"),
+    ("VEML", "module", "Adafruit 4162 VEML7700 (U308)", "верхня грань безеля, вікно ⌀4 x 120, z 60 (layout veml7700_window), поза козирком; конверт плати — TBD"),
+    ("FAN1", "module", "Noctua NF-A4x10 5V (FAN301)", "на охолоджувачі A Q6A, витяжка шляху 1 у задній стінці (layout cooler_a, q6a_fan_duct)"),
+    ("FAN2", "module", "Delta BFB0305HA-C (FAN302)", "лицьовий бік пластини x 144–174.5, y 38.5–69, шлях 2 (layout blower)"),
+    ("BONI", "module", "Bias-tee Boni-Whip (A406)", "поруч з G6K, поза екраном HF+ (конверт у моделі механіки — TBD, mechanical/README)"),
     ("SPOD", "remote", "Кабель живлення S-band pod (W425)", "зовнішній вузол"),
 ]
 
@@ -147,21 +174,22 @@ UNIT_OF_REF = {
     "U102": "INA", "R101": "INA", "C101": "INA", "C102": "INA",
     # U108 sits on PWR: its output reaches F102 through PWR copper, not a crimped harness, so the
     # E1-05 headroom budget (F102 ≤10 mΩ, E1→E2 ≤10 mΩ) is not spent on wire and contacts (ASM-R5).
-    "U106": "SWM", "U107": "REG12", "U108": "PWR",
+    # U107 sits on PWR as well (build/15 «Кількість плат», 07.11.2026): the SYS12 link is PWR copper, no harness S08.
+    "U106": "SWM", "U107": "PWR", "U108": "PWR",
     "U110": "CHG", "R117": "CHG", "R118": "CHG", "R119": "CHG", "R120": "CHG", "C118": "CHG", "TH102": "CHG",
     # F101 at the pack (STACK D2 «біля батареї»): every harness wire of the battery circuit is downstream of it (ASM-R1).
-    "F101": "PACK", "F102": "PWR", "F103": "PWR", "F201": "PWR", "F202": "PWR", "J302": "PWR",
+    "F101": "PACK", "F102": "PWR", "F103": "PWR", "F201": "PWR", "F202": "PWR",
     "J101": "XT30", "J103": "USBC",
     "U510": "HUB", "U540": "T7", "U520": "DISP", "U530": "RISER", "A415": "LIME",
     "A411": "RTLA", "J543": "RTLA", "A412": "RTLB", "J541": "RTLB", "A414": "HFP", "J544": "HFP",
-    "J501": "LABUSB", "J505": "LABBUS", "J504": "GX16", "J502": "UART5", "J503": "J21H", "SW501": "EDL",
+    "J501": "LABUSB", "J505": "LABBUS", "J504": "GX16", "J502": "HATCH", "J503": "HATCH", "SW501": "EDL",
     "SW301": "PWRBTN", "U304": "GNSS", "U308": "VEML", "FAN301": "FAN1", "FAN302": "FAN2",
-    "U305": "CTRL", "ENC301": "CTRL", "ENC302": "CTRL", "BZ301": "CTRL",
+    "U305": "CTRL", "ENC301": "ENCM", "ENC302": "ENCV", "BZ301": "CTRL",
     # Leaded bead NTCs (parts DB mount "remote"): their leads end on CTRL like TH102 on CHG. E3 notes:
     # TH301 on the rear heat spreader of the panel, TH302 on the inner frame away from converter heat.
     "TH301": "CTRL", "TH302": "CTRL",
     "SW302": "CTRL", "SW303": "CTRL", "SW304": "CTRL", "SW305": "CTRL", "SW306": "CTRL", "SW307": "CTRL",
-    "SW308": "CTRL", "SW309": "CTRL",
+    "SW308": "ENCM", "SW309": "ENCV",  # push switches inside ENC301/ENC302 (parts DB virtual hosts)
     "U309": "IMUPACK", "U314": "IMUPACK", "J550": "IMUPACK", "D502": "IMUPACK", "C519": "IMUPACK",
     "C520": "IMUPACK", "U552": "IMUPACK",
     "U506": "HDMIA", "C517": "HDMIA", "C518": "HDMIA", "R552": "HDMIA", "TP502": "HDMIA",
@@ -176,22 +204,10 @@ for _n in list(range(101, 109)) + list(range(201, 217)) + [2901, 2902, 2903]:
 # Bare parts drawn on E3 but built into the IMU pack (E3 group "External IMU").
 UNIT_OF_GROUP = {("E3", "External IMU"): "IMUPACK"}
 # Acknowledged places that differ from the board_candidate of pcb/generated/components.csv:
-# unit -> why. The generator lists every such ref in build/16 §2 and fails on an unacknowledged one;
-# pcb/prepare.py has to give these refs their own domain (not PWR/CTRL) before the PCB re-freeze.
-PARTITION_DEVIATIONS = {
-    "T7A": "U505 з обв'язкою — у вставці кабелю T7 (E5 §7: U505 OUT → «тільки VBUS-жила кабелю»), не на PWR",
-    "HDMIA": "U506 (pin 18 HDMI) — у кабелі HDMI між Q6A і дисплеєм (E5 §8), не на PWR",
-    "IMUPACK": "захист живлення і даних IMU (E5 U552/D502/C519/C520) і деталі E3 «External IMU» — на носійній платі паку IMU "
-               "(вузол IMUPACK), не на PWR/CTRL",
-    # Single refs (a key may be a ref as well as a unit; a ref key wins): the parts DB mounts these on
-    # a board, the assembly places them elsewhere. Open between the parts DB and the assembly docs.
-    "J302": "J302 (E3 «Power-board control harness») — кінець джгута S02 на PWR (рішення asm: на PWR 5 мереж I2C2/INT/3V3_Q6A), "
-            "а база деталей ставить вилку B5B-PH-K на CTRL_HMI за аркушем E3; не узгоджено, на якому кінці S02 стоїть J302",
-    "J502": "консоль UART5 — роз'єм PH 3 у сервісному лючку (рішення asm, build/15), а база деталей ставить вилку B3B-PH-K "
-            "на USB_POWER; не узгоджено",
-    "J503": "сервісний J21 — Micro-Fit 3 у сервісному лючку (рішення asm, build/15), а база деталей ставить вилку 43650-0315 "
-            "на USB_POWER; не узгоджено",
-}
+# unit or ref -> why. The generator lists every such ref in build/16 §2 and fails on an unacknowledged one.
+# Empty since the integration of 07.11.2026: pcb/prepare.py gives the inserts, the IMU-pack carrier, the hatch board,
+# the encoder boards and the F101 carrier their own domains, and J302 stays on CTRL as graph E3 has it.
+PARTITION_DEVIATIONS = {}
 
 
 def partition_deviation(ref, unit):
@@ -212,50 +228,58 @@ INTERNAL_LINKS = [
 # id, end a, end b, title, family override (None = by current), length (mm or text), note
 SEGMENTS = [
     ("S01", "Q6A.HDR", "CTRL", "Шлейф 40-pin Q6A J20 → CTRL", "IDC", "≤200 (UART7 і PPS ≤20 см, STACK §5.2)",
-     "IDC 2×20 2.54 мм 1:1; на CTRL — екранований бокс-роз'єм 2×20 з ключем"),
+     "IDC 2×20 2.54 мм 1:1 крізь проріз пластини SL1 над верхнім краєм Q6A (M-07; стрічку 40 жил розділено на дві половини по 20, укладені одна на одну); "
+     "на CTRL — бокс-роз'єм 2×20 з ключем; висота боксу проти обмеження CTRL 5.5 мм — TBD (креслення не прочитано)"),
     ("S02", "CTRL", "PWR", "Керування і LAB5: CTRL ↔ PWR", None, "TBD (CAD)",
-     "на PWR 5 мереж I2C2/INT/3V3_Q6A приходять у J302 (E3), решта — у роз'єми X02"),
-    ("S03", "CTRL", "RF", "Керування RF: CTRL ↔ RF", None, "TBD (CAD)", "лінії HMC7992/G6K/DCS; вести вздовж пластини, подалі від буферних дроселів"),
-    ("S04", "PWR", "RF", "Зміщення і реле: PWR ↔ RF", None, "TBD (CAD)", "шини bias ch1–ch4, LNB і LAB5 котушок G6K"),
+     "на CTRL 5 мереж I2C2/INT/3V3_Q6A — у J302 (E3, B5B-PH-K), на PWR — відповідь X02S0-PWR (B5B, супутня деталь бази); решта — у роз'єми X02"),
+    ("S03", "CTRL", "RF", "Керування RF: CTRL ↔ RF", None, "TBD (CAD)",
+     "лінії HMC7992/G6K/DCS; крізь проріз SL2 (M-07) і виріз N4 стінки РЧ-відсіку; подалі від буферних дроселів"),
+    ("S04", "PWR", "RF", "Зміщення і реле: PWR ↔ RF", None, "TBD (CAD)", "шини bias ch1–ch4, LNB і LAB5 котушок G6K; крізь проріз SL2 і виріз N4 (M-07, M-09)"),
     ("S05", "PACK", "PWR", "Пак (після F101) → PWR", None, "мінімальна (TBD, CAD)",
      "F101 стоїть біля паку, тож увесь сегмент захищає F101 7.5 A; коло батареї 18 AWG (E1 F101); найкоротша траса, без петель; "
      "роз'єм S05 на PWR — також вхід стенда при запуску (19 §4)"),
     ("S06", "PWR", "INA", "PWR ↔ INA228 (шунт)", None, "TBD (CAD)", "VIN+/VIN− — клеми шунта Adafruit 5832; I2C0/ALERT/VS — гребінка модуля"),
     ("S07", "PWR", "SWM", "PWR ↔ Pololu #2813", None, "TBD (CAD)", "пайка до контактів модуля; коло батареї 18 AWG"),
-    ("S08", "PWR", "REG12", "PWR ↔ D36V50F12 (SYS12)", None, "TBD (CAD)", "пайка до контактів модуля; вхід E1_SW — коло батареї 18 AWG"),
     ("S10", "PWR", "CHG", "PWR ↔ IP2368", None, "TBD (CAD)", "пайка до контактів роздрібної плати; KSD9700 — на MOSFET плати"),
-    ("S11", "USBC", "PWR", "USB-C панелі → PWR", None, "TBD (CAD)", "CC1/CC2 проходять PWR транзитом до IP2368"),
-    ("S12", "PWR", "XT30", "PWR → сервісний XT30", None, "TBD (CAD)", "пігтейл XT30U-M; v2.1: ISDT/raw-balance заблоковано до E1-02"),
-    ("S13", "PWR", "HUB", "LAB5 → CH334F JP5.1", None, "TBD (CAD)", "лише живлення хаба; дані — кабель C-HUB"),
-    ("S14", "PWR", "J21H", "J21 12 V → J503", None, "TBD (CAD)", "кручена пара 12 V/GND (STACK §5.8)"),
-    ("S15", "CTRL", "J21H", "PWR_ON_KEY → J503.3", None, "TBD (CAD)",
-     "окрема жила KEY до вузла АБО (STACK §5.8 і E5 J503/J521: 26–28 AWG; тут 24 AWG — клема Micro-Fit J503, build/15)"),
-    ("S16", "J21H", "Q6A.J21", "J503 → майданчики J21 Q6A", "SOLDER", "TBD (CAD)",
-     "після прогону Q6A (08 крок 7.7): 12 V/GND — кручена пара 20 AWG, KEY — 24 AWG (замість 26–28 AWG STACK §5.8, бо кінець у Micro-Fit J503); "
-     "термоусадка на кожному з'єднанні, поліімід на корпусі USB-C"),
+    ("S11", "USBC", "PWR", "USB-C панелі → PWR", None, "TBD (CAD)", "CC1/CC2 проходять PWR транзитом до IP2368; крізь проріз SL3 (M-07)"),
+    ("S12", "PWR", "XT30", "PWR → сервісний XT30", None, "TBD (CAD)",
+     "пігтейл XT30U-F (бік паку/PWR, під напругою — гніздо); XT30U-M — на сервісному дроті; v2.1: ISDT/raw-balance заблоковано до E1-02"),
+    ("S13", "PWR", "HUB", "LAB5 → CH334F JP5.1", None, "TBD (CAD)", "лише живлення хаба; дані — кабель C-HUB; крізь проріз SL2"),
+    ("S14", "PWR", "HATCH", "J21 12 V → плата лючка (J503)", None, "TBD (CAD)", "кручена пара 12 V/GND (STACK §5.8); крізь проріз SL2"),
+    ("S15", "CTRL", "HATCH", "PWR_ON_KEY → плата лючка (J503.3)", None, "TBD (CAD)",
+     "окрема жила KEY до вузла АБО (STACK §5.8); на платі лючка — мідь до J503.3; крізь проріз SL2"),
+    ("S16", "HATCH", "Q6A.J21", "J503 (плата лючка) → майданчики J21 Q6A", "SOLDER", "TBD (CAD)",
+     "після прогону Q6A (08 крок 7.7): розетка 43645-0300 на J503 плати лючка; 12 V/GND — кручена пара 20 AWG, KEY — 24 AWG (примітка E5 J503, "
+     "build/15: найтонший переріз клеми Micro-Fit 43030); термоусадка на кожному з'єднанні, поліімід на корпусі USB-C"),
     ("S17", "PWR", "Q6A.CORE", "VCC_3V3_MKEY Q6A → ключ LIME3V3", None, "TBD (CAD)",
-     "точка відводу 3.3 V M.2 на Q6A не визначена (E5/E2) — TBD до прозвонки Q6A"),
-    ("S18", "PWR", "RISER", "LIME3V3 → R44SF (бік картки)", None, "TBD (CAD)", "лише до контактів 3.3 V картки, відділених від VCC_3V3_MKEY (E5 §10)"),
+     "точка відводу 3.3 V M.2 на Q6A не визначена (E5/E2) — TBD до прозвонки Q6A; крізь проріз SL2"),
+    ("S18", "PWR", "RISER", "LIME3V3 → R44SF (бік картки)", None, "TBD (CAD)", "лише до контактів 3.3 V картки, відділених від VCC_3V3_MKEY (E5 §10); крізь проріз SL2"),
     ("S19", "PWR", "DISP", "DISP12 → барель Wisecoco", None, "TBD (CAD)", "розмір і полярність бареля — E5-01 відкрито"),
-    ("S20", "PWR", "RTLA", "VBUS_RTLA → кабель RTL-A (J543.1)", None, "TBD (CAD)", "VBUS вставляється в пігтейл H2; JP1.1 хаба не з'єднувати"),
-    ("S21", "PWR", "RTLB", "VBUS_RTLB → кабель RTL-B (J541.1)", None, "TBD (CAD)", "розділений VBUS; J5.10 не з'єднувати"),
-    ("S22", "PWR", "HFP", "VBUS_HFP → пігтейл HF+ (J544.1)", None, "TBD (CAD)", "після L501 і демпфера; 2× Fair-Rite 2631480002 на повному кабелі"),
-    ("S23", "PWR", "LABUSB", "VBUS_LABPORT → J501.1", None, "TBD (CAD)", "C506 біля вихідного порту"),
-    ("S24", "CTRL", "T7A", "EN_T7/3V3 → вставка T7", None, "TBD (CAD)", "U505 на вставці USB3"),
-    ("S25", "CTRL", "GNSS", "CTRL → LC76G", None, "≤200 разом з S01 для PPS", "UART6 і PPS з J20 транзитом через CTRL"),
+    ("S20", "PWR", "RTLA", "VBUS_RTLA → кабель RTL-A (J543.1)", None, "TBD (CAD)", "VBUS вставляється в пігтейл H2; JP1.1 хаба не з'єднувати; крізь SL2 і виріз N2"),
+    ("S21", "PWR", "RTLB", "VBUS_RTLB → кабель RTL-B (J541.1)", None, "TBD (CAD)", "розділений VBUS; J5.10 не з'єднувати; крізь SL2 і виріз N3"),
+    ("S22", "PWR", "HFP", "VBUS_HFP → пігтейл HF+ (J544.1)", None, "TBD (CAD)", "після L501 і демпфера; 2× Fair-Rite 2631480002 на повному кабелі; крізь SL2"),
+    ("S23", "PWR", "LABUSB", "VBUS_LABPORT → J501.1", None, "TBD (CAD)", "C506 біля вихідного порту; крізь проріз SL3"),
+    ("S24", "CTRL", "T7A", "EN_T7/3V3 → вставка T7", None, "TBD (CAD)", "U505 на вставці USB3; крізь проріз SL2"),
+    ("S25", "CTRL", "GNSS", "CTRL → LC76G", None, "≤200 разом з S01 для PPS",
+     "UART6 і PPS з J20 транзитом через CTRL, крізь SL2; LC76G у моделі — задня стінка ліворуч, CTRL — праворуч: S01 + S25 ≤200 мм не перевірено "
+     "і за відстанню між ними (понад 150 мм по прямій) навряд чи виконується — TBD (CAD), §11"),
     ("S26", "CTRL", "VEML", "CTRL → VEML7700", None, "TBD (CAD)", "100 Ω + TVS біля безеля (на CTRL)"),
     ("S27", "CTRL", "FAN1", "CTRL → Noctua", "FAN3", "кабель вентилятора", "штатний 3-контактний роз'єм Noctua; на CTRL — сумісна 3-контактна вилка 2.54 мм"),
     ("S28", "CTRL", "FAN2", "CTRL → повітродувка Delta", None, "TBD (CAD)", "2 дроти; низький ключ на CTRL"),
-    ("S29", "CTRL", "PWRBTN", "CTRL → кнопка живлення", None, "TBD (CAD)", "пайка до контактів кнопки"),
-    ("S30", "CTRL", "UART5", "CTRL → консоль UART5 (J502)", None, "TBD (CAD)", "лише 3.3 V TTL, без живлення адаптера"),
-    ("S31", "Q6A.EDL", "EDL", "Контакти EDL Q6A → SW501", "SOLDER", "TBD (CAD)", "точки пайки на Q6A не локалізовано (E5 §9)"),
-    ("S32", "PWR", "GX16", "PWR → гніздо GX16-4 (J504)", None, "TBD (CAD)", "U551 біля входу на PWR; корпус GX16 → CHASSIS"),
+    ("S29", "CTRL", "PWRBTN", "CTRL → кнопка живлення", None, "TBD (CAD)", "пайка до виводів PV6F240SS"),
+    ("S30", "CTRL", "HATCH", "CTRL → плата лючка (консоль UART5 J502)", None, "TBD (CAD)", "лише 3.3 V TTL, без живлення адаптера; крізь проріз SL2"),
+    ("S31", "Q6A.EDL", "EDL", "Контакти EDL Q6A → SW501", "SOLDER", "TBD (CAD)", "точки пайки на Q6A не локалізовано (E5 §9); пайка до виводів PV6F240SS"),
+    ("S32", "PWR", "GX16", "PWR → гніздо GX16-4 (J504)", None, "TBD (CAD)", "U551 біля входу на PWR; корпус GX16 → CHASSIS; крізь проріз SL3"),
     ("S33", "GX16", "IMUPACK", "Зовнішній кабель IMU", "CABLE", "2000 (HELU 49655, STACK §2.10)",
      "HELU SUPERTRONIC-C-PURO 4×0.14 мм²; оплітка 360° у GX16 і в SKINTOP паку"),
-    ("S34", "PWR", "LABBUS", "PWR → LAB BUS (J505)", None, "TBD (CAD)", "кабель за межами корпусу ≤1 м (понад — PCA9615, E5 §9)"),
-    ("S35", "PWR", "BONI", "BONI13V8_PORT → bias-tee Boni", None, "TBD (CAD)", "штекер 5.5/2.1 мм (STACK, «Склад набору кабелів»)"),
+    ("S34", "PWR", "LABBUS", "PWR → LAB BUS (J505)", None, "TBD (CAD)",
+     "пайка в чашки KH-GX12-6P; кабель за межами корпусу ≤1 м (понад — PCA9615, E5 §9); крізь проріз SL3"),
+    ("S35", "PWR", "BONI", "BONI13V8_PORT → bias-tee Boni", None, "TBD (CAD)", "штекер 5.5/2.1 мм (STACK, «Склад набору кабелів»); крізь проріз SL2"),
     ("S36", "PWR", "SPOD", "BIAS_SB_LNA → кабель W425", None, "TBD (CAD); W425 = 1500",
      "ввід кабелю живлення pod у корпус у графах не визначено — TBD (E2/E4)"),
+    ("S37", "CTRL", "ENCM", "CTRL ↔ дочірня плата головного енкодера", None, "TBD (CAD)",
+     "A/B/C і кнопка ENC1_PRESS; JST PH боковий вхід на обох кінцях (зона з'єднання ENC — лівий край, boards.json)"),
+    ("S38", "CTRL", "ENCV", "CTRL ↔ дочірня плата енкодера гучності", None, "TBD (CAD)", "A/B/C і кнопка ENC2_PRESS; JST PH боковий вхід"),
 ]
 
 # Families: (name, contact rating A, design share, AWG allowed, source). power_awg is the gauge the catalogue
@@ -264,27 +288,25 @@ SEGMENTS = [
 FAMILIES = {
     "PH": {"title": "JST PH 2.0 мм", "rating": 2.0, "share": 0.6, "awg": (26, 24), "signal_awg": 26, "power_awg": 24,
            "max_pins": 16, "source": "JST-PH",
-           "housing": "PHR-{n}", "header": "S{n}B-PH-K-S (боковий вхід) або B{n}B-PH-K-S (верхній)", "terminal": "SPH-002T-P0.5S",
-           "tool": "ручний інструмент JST для SPH-002T-P0.5S — TBD (каталог ePH називає лише аплікатор APLMK SPH002-05S / машину AP-K2N)"},
+           "db": "PH", "tool": "ручний інструмент JST для SPH-002T-P0.5S — TBD (каталог ePH називає лише аплікатор APLMK SPH002-05S / машину AP-K2N)"},
     "MF": {"title": "Molex Micro-Fit 3.0 (1 ряд, 3.00 мм)", "rating": 5.0, "share": 0.6, "awg": (24, 22, 20), "signal_awg": 24, "power_awg": 20,
            "max_pins": 12, "source": "MOLEX-43030",
-           "housing": "43645-0{n:d}00 (серія 43645; перевірені коди — 0436450300, 436450508, 0436451000, 436451200)",
-           "header": "43650 вертикальна, Sn, TH (точний код — parts DB)", "terminal": "0430300007 (пакет) / 0430300001 (котушка)",
-           "tool": "Molex 0638190000; екстрактор 0011030043"},
+           "db": "MF", "tool": "Molex 0638190000; екстрактор 0011030043"},
     "IDC": {"title": "IDC 2×20, 2.54 мм, стрічка 1.27 мм", "rating": None, "share": None, "awg": (28,), "signal_awg": 28, "power_awg": 28,
-            "max_pins": 40, "source": None, "housing": "IDC-гніздо 2×20 з ключем — parts DB", "header": "бокс 2×20 з ключем на CTRL — parts DB",
-            "terminal": "—", "tool": "прес IDC"},
+            "max_pins": 40, "source": None, "db": "IDC", "tool": "прес IDC"},
     "MFJ": {"title": "Molex Mini-Fit Jr. (дворядна)", "rating": 9.0, "share": 0.6, "awg": (24, 22, 20, 18), "signal_awg": 24, "power_awg": 18,
             "max_pins": 12, "source": "MOLEX-5556",
-            "housing": "5557, {n} конт. (код — parts DB)", "header": "5566 вертикальна / 5569 кутова, дворядна (код — parts DB)",
-            "terminal": "0039000060 (пакет) / 0039000059 (котушка)", "tool": "Molex 638190901 (18–24 AWG); екстрактор 11030044"},
+            "db": None, "terminal": "0039000060 (пакет) / 0039000059 (котушка)",
+            "no_db": "коди розеток Mini-Fit Jr. 5557 і вилок 5566/5569 на 2 і 4 контакти не прочитано на сторінці Molex чи дистриб'ютора "
+                     "(клему 0039000060 прочитано, MOLEX-5556)",
+            "tool": "Molex 638190901 (18–24 AWG); екстрактор 11030044"},
     "SOLDER": {"title": "пайка до майданчиків", "rating": None, "share": None, "awg": (28, 26, 24, 22, 20, 18), "signal_awg": 26, "power_awg": 20,
                "max_pins": 99, "source": None, "housing": "—", "header": "—", "terminal": "—", "tool": "паяльник; термоусадка"},
     "CABLE": {"title": "готовий кабель", "rating": None, "share": None, "awg": (26,), "signal_awg": 26, "power_awg": 26,
               "max_pins": 99, "source": None, "housing": "—", "header": "—", "terminal": "—", "tool": "—"},
     "FAN3": {"title": "3-контактний роз'єм вентилятора 2.54 мм (штатний Noctua)", "rating": None, "share": None, "awg": (26,),
-             "signal_awg": 26, "power_awg": 26, "max_pins": 3, "source": None,
-             "housing": "штатний на кабелі Noctua", "header": "3-контактна вилка 2.54 мм із замком — parts DB", "terminal": "—", "tool": "—"},
+             "signal_awg": 26, "power_awg": 26, "max_pins": 3, "source": None, "db": "FAN3",
+             "housing": "штатний на кабелі Noctua", "terminal": "—", "tool": "—"},
 }
 # Battery circuit downstream of F101: E1 F101 «18 AWG. Тримач та інтерконекти мають витримувати ≥7.5 A». Its wires are
 # never thinner than this, and a connector carrying them (and their return) uses a family that accepts 18 AWG.
@@ -310,7 +332,7 @@ GND_CURRENT = {"S06": (0.01, None), "S07": (0.05, None)}  # chip/control ground 
 END_PIN = {
     ("S05", "PACK", "E1_SHUNT_P"): "F101.2 (вихід тримача F101 біля плюса паку)", ("S05", "PACK", "GND"): "U101.P- (P− BMS)",
     ("S06", "INA", "E1_N"): "R101.2 (клема VIN− модуля 5832)", ("S06", "INA", "E1_SHUNT_P"): "R101.1 (клема VIN+ модуля 5832)",
-    ("S06", "INA", "GND"): "U102.7", ("S07", "SWM", "GND"): "U106.GND", ("S08", "REG12", "GND"): "U107.GND",
+    ("S06", "INA", "GND"): "U102.7", ("S07", "SWM", "GND"): "U106.GND",
     ("S10", "CHG", "GND"): "U110.BAT-", ("S13", "HUB", "GND"): "U510.JP5_4",
     ("S17", "Q6A.CORE", "GND"): "U500.GND", ("S18", "RISER", "GND"): "U530.GND", ("S19", "DISP", "GND"): "U520.DC_GND",
     ("S24", "T7A", "GND"): "U505.5", ("S25", "GNSS", "GND"): "U304.P1.2", ("S26", "VEML", "GND"): "U308.GND",
@@ -380,12 +402,14 @@ COLOURS = [
     (r"^(FAULT_|FLT_|PG_|DCS_|OVP_|PTC_|MCP_INT|INA228_ALERT|SLED_DET)", "блакитний"),
     (r".*", "білий"),
 ]
-INSULATION = "PTFE, луджена мідь багатодротова, ≥200 °C (тип і MPN — parts DB); ⌀ ізоляції в межах клеми"
+INSULATION = "PTFE, луджена мідь багатодротова, ≥200 °C; тип і MPN — TBD (немає в базі деталей: assembly_items AI-WIRE-PTFE); ⌀ ізоляції в межах клеми"
 
 # High-speed / factory cable assemblies: id -> (title, net regex, ends, parts)
 ASSEMBLIES = [
     ("C-HDMI", "HDMI Q6A → Wisecoco", r"^E5_HDMI_", "Q6A.HDMI → HDMIA → DISP",
-     "Adafruit 2420 457 мм + 2× Fair-Rite 0431164281; pin 18 через U506 на вставці (E5 §8); TMDS не розплітати"),
+     "R-HDMI-ROUTE OPEN (fit-report): прямий штекер Adafruit 2420 упирається в нижню стінку, кишень під 2× Fair-Rite 0431164281 і S-укладку надлишку "
+     "на трасі немає; запропоновано за замовчуванням FPC-запас STACK (Adafruit 3550 кутовий + 3548 + 3560, обмотка заземленою мідною стрічкою) — MPN, "
+     "довжина й ферит для пласкої стрічки TBD (assembly_items AI-HDMI-FPC); pin 18 через U506 на вставці (E5 §8, домен HDMI_INSERT); TMDS не розплітати"),
     ("C-T7", "USB3 Q6A J5 нижній → T7", r"^E5_(T7_|VBUS_J5|VBUS_T7)", "Q6A.J5 → T7A → T7",
      "цілісний екранований кабель A–C ≤0.5 м + вставка U505 (E5 §7); перевірка 5000M/uas"),
     ("C-HUB", "USB2 Q6A J2 P3 → CH334F JP5", r"^E5_HUB_", "Q6A.J2 → HUB", "VBUS Q6A не підключати (E5 §2)"),
@@ -396,6 +420,10 @@ ASSEMBLIES = [
     ("C-LAB", "USB2 H3 → LAB USB-A J501", r"^E5_LABPORT_D", "HUB → LABUSB", "VBUS лише з S23"),
     ("C-PCIE", "PCIe x1 Q6A → R44SF → Lime", r"^E5_PCIE_", "Q6A.MKEY → RISER → LIME", "ADT-Link R44SF 5 см; 3.3 V хоста відділено (E5 §10)"),
 ]
+
+# Coax assemblies bought at another length than the graph models (parts DB W-RG316-SMA-MM-0152: no shorter stock part).
+PURCHASED_LENGTH = {"W422": "152.4 мм", "W423": "152.4 мм"}
+GRAPH_LENGTH = {"W422": "0.10 м", "W423": "0.10 м"}
 
 # --- Labels (build/18) ---------------------------------------------------------
 # Panel RF ports: ref -> (label text, DC on the port). Must cover every panel RF connector.
@@ -419,7 +447,7 @@ LABELS = [
     ("L-LABUSB", "нижній край, LAB USB-A", "LAB USB-A · 5 V ≤0.75 A", "полієстер, УФ-стабільний ламінат", "30×8", "E5 §5"),
     ("L-LABBUS", "нижній край, LAB BUS", "LAB BUS · AUX 12 V · I2C", "полієстер, УФ-стабільний ламінат", "30×8", "E5 §9"),
     ("L-AUDIO", "нижній край, 3.5 мм", "АУДІО 3.5 мм", "полієстер, УФ-стабільний ламінат", "20×6", "STACK §5.8"),
-    ("L-T7", "нижній край, гермоввід T7", "T7 USB3", "полієстер, УФ-стабільний ламінат", "20×6", "STACK §5.8"),
+    ("L-T7", "задня стінка, гермоввід T7 (x 150, y 66, M-04)", "T7 USB3", "полієстер, УФ-стабільний ламінат", "20×6", "STACK §5.8; mechanical.json t7_gland"),
     ("L-IMU", "задня стінка, GX16-4", "IMU · GX16-4 · 5 V · ключ ▲", "полієстер, УФ-стабільний ламінат", "30×8", "E5 §9"),
     ("L-HATCH", "кришка сервісного лючка", "СЕРВІС: UART5 · EDL · J21 · USB-A", "полієстер, УФ-стабільний ламінат", "45×8", "STACK §5.8"),
     ("L-J21", "сервісний лючок, біля J503", "J21 unplugged before USB-C", "поліімід", "40×6", "05 §5.5; STACK §11.5 #16"),
@@ -439,53 +467,76 @@ LABELS = [
 # id, place, part, qty, spares, receiving, torque, torque source, washer/locking, step
 FASTENERS = [
     ("F01", "Q6A → стійки на середній пластині", "гвинт M2.5×6 TX8 A2 (STACK, рядок «Корпус»)", "4", "2",
-     "стійка M2.5 F-F (висота з CAD)", "TBD — виробник не публікує; задати за купоном (див. §2)", "—", "—", "E3"),
-    ("F02", "стійки Q6A → пластина 2 мм Al", "гвинт M2.5 (довжина з CAD) знизу пластини", "4", "2",
-     "наскрізний отвір ⌀3.5 у пластині (різьбу не нарізати, 08 крок 5)", "TBD — купон", "—", "пружинна шайба M2.5", "E3"),
+     "стійка M2.5 F-F 6 мм (mechanical.json q6a_mount; AI-STANDOFF-M25-6)", "TBD — виробник не публікує; задати за купоном (див. §2)", "—", "—", "E3"),
+    ("F02", "стійки Q6A → пластина 2 мм Al", "гвинт M2.5 A2 з лицьового боку пластини (довжина TBD, AI-M25-Q6A-PLATE)", "4", "2",
+     "наскрізний отвір ⌀2.9 у пластині (M-07 Q6A1-4; різьбу не нарізати)", "TBD — купон", "—", "пружинна шайба M2.5", "E3"),
     ("F03", "кришка Armor 7056A (варіант B охолоджувача)", "гвинт M2.5 зі стійками комплекту Radxa", "за комплектом", "2",
      "стійки M2.5 крізь отвори ⌀3.5", "TBD — за інструкцією Radxa", "—", "—", "E3"),
-    ("F04", "п'єдестал Lime → пластина", "гвинт M2.5 (тип і довжина з CAD)", "TBD (CAD)", "2", "пластина/п'єдестал", "TBD — купон", "—", "—", "E3"),
-    ("F05", "модулі Pololu U106/U107 → пластина; U108 — у PWR", "за отворами модулів Pololu; U108 тримають впаяні силові піни "
-     "(обидві пари, E1 U108), додаткове кріплення — за кресленням Pololu", "TBD (креслення Pololu)", "2",
-     "стійки/прокладка до пластини", "TBD — креслення Pololu не прочитані", "—", "ізолювальна шайба під отвір з міддю", "E2"),
-    ("F06", "PWR → бобишки корпусу/пластина", "гвинт M3 ISO 14580 A2 TX10 (CNC Kitchen, STACK)", "TBD (CAD)", "2",
-     "вставка CNC Kitchen TC-M3x5.7", "TBD — купон (§2)", "CNCK-M3", "—", "E2"),
-    ("F07", "RF → пластина (з бондингом NT401)", "гвинт M3 ISO 14580 A2 TX10", "TBD (CAD)", "2",
-     "вставка TC-M3x5.7 або стійка до пластини", "TBD — купон (§2)", "CNCK-M3", "зубчаста шайба на голому металі в точці NT401", "E4"),
-    ("F08", "CTRL → бобишки корпусу", "гвинт M3 ISO 14580 A2 TX10", "TBD (CAD)", "2", "вставка TC-M3x5.7", "TBD — купон (§2)", "CNCK-M3", "—", "E5"),
+    ("F04", "п'єдестал Lime → пластина", "гвинт M3 (тип і довжина TBD, AI-M3-LIME)", "2", "2",
+     "отвори ⌀3.4 LP1–LP2 у пластині (M-07); різьба — у п'єдесталі Al, не в пластині", "TBD — купон", "—", "—", "E3"),
+    ("F05", "модуль Pololu #2813 U106 → пластина", "за отворами модуля #2813 (креслення Pololu #2813 не прочитано)", "TBD (креслення Pololu)", "2",
+     "стійки/прокладка до пластини", "TBD — креслення не прочитано", "—", "ізолювальна шайба під отвір з міддю", "E2"),
+    ("F06", "PWR → пластина", "гвинт M3×4 ISO 14580 A2 TX10 з боку компонентів + шайба-прокладка 0.4 мм (AI-M3X4-ISO14580, AI-SHIM-M3-0.4)", "7", "2",
+     "гайка врівень PEM F-M3-1 у пластині (M-07 PWR1–PWR7; AI-PEM-F-M3-1): плата 1.6 + шайба 0.4 + пластина 2.0", "TBD — PEM моменту не дає; купон на зразку пластини (§2)",
+     "PEM-F", "—", "E2"),
+    ("F07", "RF → пластина", "гвинт M3×5 ISO 14580 A2 TX10 з боку компонентів (AI-M3X5-ISO14580)", "6", "2",
+     "стійка PEM SO-M3-3ZI 3 мм, голівка врівень з лицьовою гранню пластини (M-07 RF1–RF6; AI-PEM-SO-M3-3ZI)", "TBD — купон (§2)", "PEM-SO",
+     "—; бондинг RF GND — окрема точка BOND-RF (F26)", "E4"),
+    ("F08", "CTRL → бобишки передньої половини", "гвинт M2.5 A2 TX8 (довжина TBD, AI-M25-CTRL-ENC)", "6", "2",
+     "вставка TC-M2,5x4 (boards.json CTRL: 6 отворів ⌀2.7)", "TBD — купон (§2)", "CNCK-M25", "—", "E5"),
     ("F09", "INA228 5832 → стійки над PWR", "гвинт M2.5 + стійка", "TBD (креслення Adafruit)", "2", "стійка M2.5", "TBD", "—", "—", "E2"),
     ("F10", "CH334F 5997 → корпус", "гвинт M2.5 + стійка", "TBD (креслення Adafruit)", "2", "стійка M2.5", "TBD", "—", "—", "E3"),
-    ("F11", "IP2368 → стінка корпусу", "кріплення TBD (у плати немає описаних отворів)", "TBD", "—", "стінка ASA", "—", "—", "—", "E7"),
-    ("F12", "половини корпусу", "гвинт M3 ISO 14580 A2 TX10", "TBD (CAD)", "4", "вставка TC-M3x5.7", "TBD — купон (§2)", "CNCK-M3",
-     "EPDM-шнур у пазу (build/15)", "E9"),
-    ("F13", "кришка сервісного лючка", "невипадний гвинт M3", "TBD (CAD)", "2", "вставка TC-M3x5.7", "TBD — купон (§2)", "CNCK-M3", "власна прокладка лючка", "E9"),
-    ("F14", "прохідники SMA P1–P3, P6–P8, RX1, RX2, REF IN", "гайка прохідника + кільце + стопорна шайба (STACK §5.8)", "9", "2",
-     "стінка 4–5 мм (ASA + 2 мм Al), ≥3 витки для стикування", "за даташитом обраного прохідника; довідково 0.57 N·m (Würth WR-SMA, вимога IP67)",
-     "WE-SMA", "стопорна шайба; лиска від провертання", "E7"),
+    ("F11", "IP2368 → пластина", "кріплення TBD (у плати немає описаних отворів): ізолювальні стійки або термостійкий двосторонній скотч", "TBD", "—",
+     "лицьовий бік пластини вгорі праворуч (layout ip2368)", "—", "—", "—", "E2"),
+    ("F12", "половини корпусу", "гвинт M3 ISO 14580 A2 TX10 (довжина TBD, AI-M3-CLOSURE) + ущільнювальна шайба (AI-SEAL-WASHER-M3)", "14", "2",
+     "вставка TC-M3x5.7 (mechanical.json closure, 14 бобишок)", "TBD — купон (§2)", "CNCK-M3", "EPDM-шнур у пазу (build/15)", "E10"),
+    ("F13", "кришка сервісного лючка", "невипадний гвинт M3 (AI-M3-HATCH)", "2", "2", "вставка TC-M3x5.7", "TBD — купон (§2)", "CNCK-M3", "власна прокладка лючка", "E10"),
+    ("F14", "прохідники SMA P1–P3, P6–P8, RX1, RX2, REF IN", "гайка прохідника + кільце + стопорна шайба (STACK §5.8): P1–P3, P6 — TBD (база деталей "
+     "J-SMA-PANEL-RFBOARD), P7 — SMA-кінець Taoglas CAB.011, P8 — Adam Tech CA-DKCA1-305L5-APAJ, RX1/RX2/REF IN — Taoglas CAB.01075", "9", "2",
+     "стінка 4.5 мм (ASA 2.5 + Al-кутник 2.0), ≥3 витки для стикування; макс. товщина панелі обраних збірок — TBD (R-SMA-THREAD OPEN; орієнтир Samtec 3.8 мм)",
+     "за даташитом обраного прохідника; довідково 0.57 N·m (Würth WR-SMA, вимога IP67)", "WE-SMA", "стопорна шайба; лиска від провертання", "E7"),
     ("F15", "стикування SMA (нержавіючі)", "—", "—", "—", "—", "0.9 N·m ключем TOJOIN/TekBox; латунні гнізда приладів — пальцями (09 правило 7)",
      "STACK §5.3", "—", "E4"),
-    ("F16", "прохідник F (P4)", "гайка прохідника F-F (SAT)", "1", "1", "стінка 4–5 мм", "TBD — SKU не названо (05 §5.1)", "—", "—", "E7"),
-    ("F17", "BNC-прохідник (P5)", "гайка BNC", "1", "1", "стінка 4–5 мм", "TBD — SKU не названо (05 §5.1)", "—", "—", "E7"),
-    ("F18", "гніздо GX16-4 (J504)", "шестигранна гайка 18.8 мм (Olimex)", "1", "1", "отвір ⌀16 у задній стінці", "TBD — Olimex не публікує момент",
-     "OLIMEX-GX16", "—", "E7"),
-    ("F19", "LAB BUS M8 (J505)", "гайка M10×0.75 binder 718", "1", "1", "виріз — TBD (сторінка binder без розміру)",
-     "гайка — TBD; кільце кабелю від руки ≈50 cN·m", "BINDER-M8", "—", "E7"),
+    ("F16", "прохідник F (P4)", "гайка прохідного адаптера F/F Cinch VFA340 (база деталей J404)", "1", "1", "стінка 4.5 мм",
+     "TBD — креслення Cinch не прочитано (R-BULKHEAD-NUTS OPEN)", "—", "—", "E7"),
+    ("F17", "BNC-прохідник (P5)", "гайка адаптера BNC/SMA Amphenol RF 242181 (база деталей J405)", "1", "1", "стінка 4.5 мм",
+     "TBD — креслення Amphenol не прочитано (R-BULKHEAD-NUTS OPEN)", "—", "—", "E7"),
+    ("F18", "гніздо GX16-4 (J504)", "шестигранна гайка 18.8 мм (Olimex)", "1", "1", "отвір ⌀16 у задній стінці, пласке гніздо 3 мм (M-04)",
+     "TBD — Olimex не публікує момент", "OLIMEX-GX16", "—", "E8"),
+    ("F19", "LAB BUS GX12 (J505)", "гайка Kinghelm KH-GX12-6P (комплект)", "1", "1", "виріз — TBD (сторінка LCSC без креслення)",
+     "TBD — момент не наведено", "KINGHELM-GX12", "заглушка LAB BUS (10-bom рядок 90)", "E7"),
     ("F20", "енкодери PEC11R-4220F (ENC301/302)", "гайка M7×0.75 + шайба (комплект)", "2", "1 запасний енкодер", "бобишка: O-ring + стінка 2.4–3 + шайба 0.5 + гайка 2.0 ≤6.5",
      "≤1.0 N·m (10.2 kgf·cm макс.)", "PEC11R", "шайба з комплекту", "E5"),
-    ("F21", "кнопка живлення SW301 (E-Switch PV0)", "гайка M12×0.75 (комплект)", "1", "—", "виріз ⌀12.00 +0.20, панель 1–6 мм", "0.6 N·m", "PV0", "кільце з комплекту", "E5"),
-    ("F22", "клапани LTW VENT-PS1YBK-O8002 (×5)", "гайка M12×1.5 (комплект)", "5", "1", "наскрізний отвір у майданчику 2.0–3.5 мм (STACK) ", "0.59–0.78 N·m (6.0–8.0 kgf·cm)",
-     "LTW-VENT", "MOLYKOTE 4 — ніколи на силіконові кільця клапанів (STACK)", "E7"),
+    ("F21", "кнопка живлення SW301 (E-Switch PV6F240SS)", "гайка M16×1.0 (комплект; розмір у даташиті не наведено)", "1", "—",
+     "виріз ⌀16.00 +0.20 у верхній стінці 2.5 мм (панель 1–10 мм)", "0.6 N·m (рекомендований момент кріплення)", "PV6", "—", "E5"),
+    ("F22a", "клапани LTW VENT-PS1NBK-O8002 V1/V2 (×2)", "без гайки: різьба M12×1.5 у гнізді", "2", "—",
+     "різьбове гніздо 4.0 мм (V1 — права стінка, V2 — лице; mechanical.json vents)", "0.59–0.78 N·m (6.0–8.0 kgf·cm)", "LTW-VENT",
+     "MOLYKOTE 4 — ніколи на силіконові кільця клапанів (STACK)", "E7"),
+    ("F22b", "клапани LTW VENT-PS1YBK-O8002 коробок Gainta (×3)", "гайка M12×1.5 (комплект)", "3", "—", "наскрізний отвір 2.0–3.5 мм у стінці коробки",
+     "0.59–0.78 N·m (6.0–8.0 kgf·cm)", "LTW-VENT", "MOLYKOTE 4 — ніколи на силіконові кільця клапанів (STACK)", "E9"),
     ("F23", "гермоввід паку IMU LAPP SKINTOP MS-SC-M12", "гайка-ковпак і контргайка", "1", "1", "отвір 12 мм у стінці Hammond 1550Z101",
-     "TBD — інструкція MS-SC-M не прочитана (M12×1.5: 8 N·m для MS-M, категорія A — лише орієнтир)", "LAPP-MSM", "—", "E8"),
-    ("F24", "кришка паку IMU Hammond 1550Z101", "латунний гвинт M4×20 замість штатних нержавіючих M4-0.7×20 (STACK §2.8, рядок «Пак IMU»)", "2", "2",
+     "TBD — інструкція MS-SC-M не прочитана (M12×1.5: 8 N·m для MS-M, категорія A — лише орієнтир)", "LAPP-MSM", "—", "E9"),
+    ("F24", "кришка паку IMU Hammond 1550Z101", "латунний гвинт M4×20 замість штатних нержавіючих M4-0.7×20 (STACK §2.8, рядок «Пак IMU»; AI-M4X20-BRASS)", "2", "2",
      "корпус Hammond (штатно 2 гвинти кришки)", "0.50–0.75 N·m — значення Hammond для штатних нержавіючих гвинтів; для латунних — "
-     "перевірити купоном (§2), не перевищувати 0.75 N·m", "HAMMOND-1550Z101", "шов перекрито провідною стрічкою", "E8"),
-    ("F25", "штативна гайка 1/4-20 UNC", "захоплена оцинкована гайка 7/16 in AF", "1", "1", "шестигранне гніздо 11.3 AF бобишки ASA 100 %",
-     "приймання: момент ≥3 N·m, 20 циклів (тест, не момент затягування)", "STACK §5.8", "—", "E7"),
-    ("F26", "бондинг CHASSIS: екран USB-C, корпус GX16, пластина", "кабельний наконечник + гвинт M3", "3", "2", "гола точка пластини (08 крок 5 п. 2)",
-     "TBD — купон (§2)", "—", "зубчаста шайба", "E9"),
+     "перевірити купоном (§2), не перевищувати 0.75 N·m", "HAMMOND-1550Z101", "шов перекрито провідною стрічкою", "E9"),
+    ("F25", "штативна гайка 1/4-20 UNC", "захоплена оцинкована гайка 7/16 in AF", "1", "1", "шестигранне гніздо 11.3 AF бобишки ASA 100 % на цоколі 5 мм",
+     "приймання: момент ≥3 N·m, 20 циклів (тест, не момент затягування)", "STACK §5.8", "—", "E8"),
+    ("F26", "бондинг CHASSIS: BOND-RF, екран USB-C, корпус GX16, пластина", "кабельний наконечник + гвинт M3 (AI-M3-BOND)", "4", "2",
+     "гола точка пластини (BOND-RF на M-07; 08 крок 5 п. 2)", "TBD — купон (§2)", "—", "зубчаста шайба", "E10"),
     ("F27", "вентилятор Noctua NF-A4x10", "кріплення з комплекту Noctua", "4", "—", "задній отвір", "TBD", "—", "—", "E3"),
-    ("F28", "повітродувка Delta BFB0305HA-C", "TBD за кресленням Delta", "TBD", "—", "канал дисплея", "TBD", "—", "—", "E5"),
+    ("F28", "повітродувка Delta BFB0305HA-C", "TBD за кресленням Delta", "TBD", "—", "лицьовий бік пластини (layout blower)", "TBD", "—", "—", "E3"),
+    ("F29", "дочірні плати ENC ×2 → бобишки передньої половини", "гвинт M2.5 A2 TX8 (довжина TBD, AI-M25-CTRL-ENC)", "4", "2",
+     "вставка TC-M2,5x4 (boards.json ENC: 2 отвори ⌀2.7 на плату)", "TBD — купон (§2)", "CNCK-M25", "—", "E5"),
+    ("F30", "пластина → бобишки передньої половини", "гвинт M3 ISO 14580 A2 TX10 (довжина TBD, AI-M3-PLATE)", "4", "2",
+     "вставка TC-M3x5.7 у бобишках PM1–PM4 (M-07, отвір пластини ⌀3.4)", "TBD — купон (§2)", "CNCK-M3", "—", "E6"),
+    ("F31", "Al-кутники → пластина", "гвинт M3×4 ISO 14580 A2 TX10 з тильного боку (AI-M3X4-ISO14580): кутник 2 + пластина 2", "8", "2",
+     "гайка врівень PEM F-M3-1 (M-07 AT1–AT5, AR1–AR3)", "TBD — купон (§2)", "PEM-F", "—", "E4"),
+    ("F32", "бобишка UFS → пластина", "гвинт M2.5 з потайною голівкою ISO 10642 з лицьового боку (AI-M25-UFS)", "2", "2",
+     "бобишка UFS Al з різьбою M2.5 (M-07 UB1–UB2)", "TBD — купон (§2)", "—", "—", "E3"),
+    ("F33", "тримач T7 → задня стінка", "гвинт M3×14 ISO 14580 A2 TX10 ззовні (AI-M3X14-ISO14580)", "3", "2",
+     "вставка TC-M3x5.7 у майданчиках задньої стінки (mechanical.json t7_holder)", "TBD — купон (§2)", "CNCK-M3", "—", "E8"),
+    ("F34", "кнопка EDL SW501 (E-Switch PV6F240SS) на платі лючка", "гайка M16×1.0 (комплект)", "1", "—",
+     "виріз ⌀16.00 +0.20 у платі лючка 1.6 мм як панелі (панель 1–10 мм)", "0.6 N·m (рекомендований момент кріплення)", "PV6", "—", "E8"),
 ]
 INSERTS = [
     ("TC-M3x5.7", "M3", "4.0", "≥1.6", "CNCK-M3"),
@@ -577,14 +628,14 @@ STEPS = [
     # id, title, parts, actions, checks, refs (segments S.., fasteners F.., labels L.., assemblies C-..)
     ("E0", "Підготовка і друк",
      "друковані деталі ASA (§1), термовставки TC-M3x5.7 / TC-M2,5x4, купон з тієї самої котушки",
-     ["Робоче місце, ESD і безпека — за 08 крок 0; літієвий пак не під'єднано, F101 вийнято з тримача паку і лежить окремо.",
+     ["Робоче місце, ESD і безпека — за 08 крок 0; літієвий пак не під'єднано, F101 вийнято з тримача на носійній платі PACK_FUSE і лежить окремо.",
       "Надрукувати деталі за таблицею §1; дати охолонути до кімнатної температури.",
       "Купон: одна бобишка з кожним типом вставки; задати робочий момент за 17 §2 і записати в бланк 20.",
       "Вставки в корпус — за 17 §3, по одній, торець урівень із бобишкою."],
      ["вставки не провертаються робочим моментом купона", "торець вставки урівень, без напливів пластику в різьбі"],
-     ["F06", "F08", "F12", "F13"]),
+     []),
     ("E1", "Плати на столі",
-     "плати PWR, RF, CTRL після оплавлення (лише верхній бік, build/15)",
+     "плати PWR, RF, CTRL, ENC ×2, плата лючка HATCH після оплавлення (лише верхній бік, build/15)",
      ["Перевірка B0: опір кожної шини до GND за 19 §2 до і після оплавлення.",
       "Плати окремо не живити: PWR вмикається лише з модулями на пластині (E2), RF — лише через S03/S04 від PWR (E4), "
       "CTRL — від 3V3_Q6A через S01 (E6); порядок — 19 §4.",
@@ -592,72 +643,85 @@ STEPS = [
      ["жодна шина < 10 Ω до GND", "прозвонка кожного проводу джгута від маркера до маркера"],
      ["S02", "S03", "S04", "L-WIRE", "L-CONN"]),
     ("E2", "Збірка середньої пластини (на столі, поза корпусом)",
-     "пластина 2 мм EN AW-5754 (08 крок 5), D36V50F12, D36V50F5, #2813, INA228 5832, PWR, стендовий провід (розетка Mini-Fit Jr. 5557 "
-     "під вхідний роз'єм S05, 18 AWG, запобіжник 7.5 A у розриві)",
-     ["D36V50F5 U108 — впаяти в PWR обома парами силових пінів (E1 U108) до встановлення PWR; модулі Pololu U106/U107 — на пластину "
-      "через ізолювальні прокладки (F05); PWR — на стійки (F06).",
-      "INA228 — на стійки над PWR (F09); джгути S06–S08, S12, S13 — до роз'ємів PWR; кінець S12 (XT30) ізолювати; S05 паку ще не під'єднувати.",
+     "пластина 2 мм EN AW-5754 за шаблоном M-07 (08 крок 5), гайки PEM F-M3-1 ×15 і стійки PEM SO-M3-3ZI ×6, D36V50F12, D36V50F5, #2813, INA228 5832, "
+     "IP2368, PWR, стендовий провід (розетка Mini-Fit Jr. 5557 під вхідний роз'єм S05, 18 AWG, запобіжник 7.5 A у розриві)",
+     ["Самоклінчувальні деталі — пресом, до будь-якого монтажу: F-M3-1 у PWR1–7, AT1–5, AR1–3; SO-M3-3ZI у RF1–6 голівкою врівень з лицьовою гранню "
+      "(PEM: «install with a squeeze in properly sized round holes»; прес — AI-PEM-PRESS); кромки прорізів SL1–SL3 — кант (AI-EDGE-TRIM).",
+      "D36V50F12 U107 і D36V50F5 U108 — впаяти в ліву ніжку PWR обома парами силових пінів (E1 U108) на проставці гребінки (деталі низу модуля "
+      "1.8 мм) до встановлення PWR; модуль Pololu #2813 U106 — на пластину через ізолювальні прокладки (F05); PWR — на пластину з термопрокладками "
+      "0.5 мм і шайбами 0.4 мм (F06).",
+      "INA228 — на стійки над PWR (F09); IP2368 — на лицьовий бік пластини вгорі праворуч (F11), джгут S10; KSD9700 на MOSFET через поліімід (08 крок 3); "
+      "джгути S06, S07, S12, S13 — до роз'ємів PWR; кінець S12 (XT30) ізолювати; S05 паку ще не під'єднувати.",
       "Стендовий провід — у вхідний роз'єм S05 на PWR (19 §4 п. 1); TP104 — лише щуп, не живлення: ступінь L0, потім кнопка — L1 (19 §5)."],
-     ["TP104/TP105/TP106/TP108 за станами S0–S1 (19 §3)", "струм L0 ≤1.0 mA при 14.8 V"],
-     ["F05", "F06", "F09", "S06", "S07", "S08", "S12", "S13"]),
+     ["TP104/TP105/TP106/TP108 за станами S0–S1 (19 §3)", "струм L0 ≤1.0 mA при 14.8 V", "гайки PEM урівень з обох боків, стійки SO урівень з лицем"],
+     ["F05", "F06", "F09", "F11", "S06", "S07", "S10", "S12", "S13"]),
     ("E3", "Q6A, Lime, охолодження і хаб на пластині",
-     "Q6A (прогнаний за 08 крок 1), охолоджувач A або B, Noctua NF-A4x10, CH334F 5997, R44SF + Lime на п'єдесталі",
-     ["Q6A — на стійки M2.5 (F01/F02); охолоджувач — за 08 крок 6 (F03 для Armor).",
+     "Q6A (прогнаний за 08 крок 1), охолоджувач A або B, Noctua NF-A4x10, повітродувка Delta, CH334F 5997, бобишка UFS, R44SF + Lime на п'єдесталі",
+     ["Бобишка UFS — на тильний бік пластини потайними M2.5 (F32); Q6A — на стійки M2.5 6 мм (F01/F02); охолоджувач — за 08 крок 6 (F03 для Armor).",
       "П'єдестал Lime (F04) з прокладкою; riser крізь вікно; кабель C-PCIE; LIME3V3 S18 — лише після прозвонки ізоляції 3.3 V картки (E5 §10).",
       "Відвід VCC_3V3_MKEY S17 — лише після локалізації точки на Q6A (16 §11); до того LIME3V3 не живити.",
-      "Хаб (F10), кабель C-HUB; Noctua (F27) з кабелем S27.",
+      "Хаб (F10), кабель C-HUB; Noctua (F27) з кабелем S27; повітродувка Delta на лицьовий бік пластини (F28).",
       "J21: до прогону — заводський кабель; після прогону — S16 пайкою до майданчиків J21 (08 крок 7.7)."],
      ["S2 за 19 §3 з Q6A на J21 (ступінь L2, 19 §4 п. 2)", "lsusb бачить хаб; Noctua обертається; тахо на GP22"],
-     ["F01", "F02", "F03", "F04", "F10", "F27", "S17", "S18", "S27", "S16", "C-PCIE", "C-HUB"]),
-    ("E4", "РЧ-відсік на пластині",
-     "RF-плата, модулі РЧ-тракту (Flamingo+, SAWbird+, атенюатор LNB), RTL-A/B на подовжувачах, HF+ в екрані Schubert 6B, bias-tee Boni, G6K",
-     ["RF-плата на пластину з бондингом NT401 (F07, зубчаста шайба на голій точці).",
+     ["F01", "F02", "F03", "F04", "F10", "F27", "F28", "F32", "S17", "S18", "S27", "S16", "C-PCIE", "C-HUB"]),
+    ("E4", "РЧ-відсік і кутники на пластині",
+     "RF-плата, Al-кутники, модулі РЧ-тракту (Flamingo+, SAWbird+, атенюатор LNB), RTL-A/B на подовжувачах, HF+ в екрані Schubert 6B, bias-tee Boni, G6K",
+     ["Al-кутники (верхній і правий) — на тильний бік пластини гвинтами M3×4 у гайки PEM (F31).",
+      "RF-плата на стійки SO-M3-3 (F07); бондинг RF GND — окрема точка BOND-RF (F26, E10).",
       "Модулі РЧ-тракту і коаксіальні з'єднання — за 16 §8; ключ 0.9 N·m лише для нержавіючих SMA (F15).",
       "RTL-A/B: кабелі C-RTLA/C-RTLB і VBUS S20/S21; HF+: C-HFP і S22 з двома феритами на повному кабелі; Boni: S35.",
-      "Джгути S03/S04 з E1 — під'єднати; укласти вздовж пластини, подалі від буферних дроселів."],
+      "Джгути S03/S04 з E1 — під'єднати крізь проріз SL2 і виріз N4; укласти вздовж пластини, подалі від буферних дроселів."],
      ["HMC7992 у RF1 при ввімкненні (08 крок 9)", "котушки G6K знеструмлені", "розрив центр–корпус на кожному SMA з вимкненим зміщенням"],
-     ["F07", "F15", "S03", "S04", "S20", "S21", "S22", "S35", "C-RTLA", "C-RTLB", "C-HFP", "L-LABRXA", "L-LABRXB",
+     ["F07", "F15", "F31", "S03", "S04", "S20", "S21", "S22", "S35", "C-RTLA", "C-RTLB", "C-HFP", "L-LABRXA", "L-LABRXB",
       "L-LIME-X2", "L-LIME-X4", "L-LIME-J4", "L-LIME-X1"]),
     ("E5", "Передня половина: дисплей і HMI",
-     "передня половина корпусу, Wisecoco + рамка, CTRL, енкодери PEC11R-4220F, кнопка PV0, VEML7700, повітродувка Delta",
+     "передня половина корпусу, Wisecoco + рамка, CTRL, дві плати ENC з енкодерами PEC11R-4220F, кнопка PV6F240SS, VEML7700",
      ["Дисплей у рамку (параметрична модель; клей/фіксація — TBD за пакетом механіки), козирок і L-SUN.",
-      "CTRL на бобишки (F08); вали енкодерів вкоротити до встановлення (08 крок 12); гайки енкодерів ≤1.0 N·m (F20); PV0 — 0.6 N·m (F21).",
-      "VEML7700 на верхній грані безеля (S26); повітродувка в канал дисплея (F28, S28).",
-      "Кабелі CTRL: S01 (≤200 мм), S24, S25 (PPS разом з S01 ≤200 мм), S29, S30 — заготовити з запасом петлі."],
+      "CTRL на бобишки (F08); плати ENC на бобишки (F29), джгути S37/S38 до CTRL; вали енкодерів вкоротити до встановлення (08 крок 12); "
+      "гайки енкодерів ≤1.0 N·m (F20); SW301 PV6F240SS у верхню стінку — 0.6 N·m (F21).",
+      "VEML7700 на верхній грані безеля (S26); провід повітродувки S28 — заготовити до CTRL.",
+      "Кабелі CTRL: S01 (≤200 мм), S24, S25 (PPS разом з S01 ≤200 мм), S29, S30, S15 — заготовити з запасом петлі."],
      ["вали енкодерів вкорочені, ручки не торкаються гайок", "кнопки й енкодери перевіряються в E6 (19 §4 п. 3) — CTRL живиться від Q6A"],
-     ["F08", "F20", "F21", "F28", "S01", "S24", "S25", "S26", "S28", "S29", "L-SUN", "L-RX"]),
+     ["F08", "F20", "F21", "F29", "S01", "S15", "S24", "S25", "S26", "S28", "S29", "S30", "S37", "S38", "L-SUN", "L-RX"]),
     ("E6", "Пластина в передню половину",
      "збірка середньої пластини (E2–E4), передня половина (E5)",
-     ["Встановити пластину на бобишки передньої половини; дисплей — до пластини з каналом повітря 4–6 мм.",
-      "HDMI C-HDMI: пласка S-складка, ферити в кишенях 40×20×20, подалі від РЧ-відсіку і фідера GNSS; touch C-TOUCH.",
-      "DISP12 S19 з наклейкою L-DISP12; S02 CTRL ↔ PWR; S01 Q6A ↔ CTRL; S24 до вставки T7 у C-T7.",
+     ["Встановити пластину на бобишки передньої половини гвинтами M3 у вставки PM1–PM4 (F30); дисплей — до пластини з каналом повітря 4–6 мм.",
+      "HDMI C-HDMI: R-HDMI-ROUTE OPEN — трасу з прямим штекером, кишенями феритів і S-укладкою не прокладати; запропонований варіант — FPC-запас STACK "
+      "(Adafruit 3550 + 3548 + 3560, обмотка заземленою мідною стрічкою), MPN і довжина TBD (AI-HDMI-FPC); подалі від РЧ-відсіку і фідера GNSS; touch C-TOUCH.",
+      "DISP12 S19 з наклейкою L-DISP12; S02 CTRL ↔ PWR; S01 Q6A ↔ CTRL крізь проріз SL1; S24 до вставки T7 у C-T7.",
       "Стяжки до пластини ≤30 мм від кожного роз'єму і далі кожні 50–80 мм (16 §1)."],
      ["S2 і S3 за 19 §3 (ступінь L3)", "EN-тести S4 і кнопки/енкодери за 19 §4 п. 3", "touch енумерується без VBUS (E5 §8)"],
-     ["S19", "S02", "S01", "S24", "C-HDMI", "C-TOUCH", "C-T7", "L-DISP12"]),
-    ("E7", "Задня половина: панелі, лючок, батарейний відсік",
-     "задня половина, прохідники SMA/F/BNC, GX16-4, LAB BUS M8, USB-C, LAB USB-A, гермоввід T7, клапани LTW, гайка 1/4-20",
-     ["Прохідники SMA (F14), F (F16), BNC (F17) — у верхню стінку/смугу; ≥3 витки для стикування.",
-      "GX16-4 (F18), LAB BUS M8 (F19), USB-C, LAB USB-A, клапани LTW (F22), захоплена гайка 1/4-20 (F25).",
-      "Джгути S11 (USB-C), S23 + C-LAB (LAB USB-A), S32 (GX16), S34 (LAB BUS), S36 (ввід pod — TBD).",
-      "Сервісний лючок: J503 (S14 + S15), J502 (S30), SW501 (S31), синій USB-A; наклейки L-HATCH, L-J21.",
-      "IP2368 на стінку ≥10 мм від елементів (F11), джгут S10; KSD9700 на MOSFET через поліімід (08 крок 3).",
-      "Батарейний відсік: піна 3 мм, відбивна плівка, бар'єр; пак з L-BAT і L-F101; S05 паку поки не під'єднувати (у вхідному "
-      "роз'ємі S05 на PWR — стендовий провід), F101 вийнятий."],
-     ["оплітка GX16 — корпус ≤0.1 Ω", "розрив між J503 і J502 (різні родини, не стикуються)", "наклейки за 18"],
-     ["F14", "F16", "F17", "F18", "F19", "F22", "F25", "S11", "S23", "S32", "S34", "S36", "S14", "S15", "S30", "S31",
-      "S10", "F11", "C-LAB", "L-HATCH", "L-J21", "L-BAT", "L-USBC", "L-LABUSB", "L-LABBUS", "L-AUDIO", "L-T7", "L-IMU", "L-F101"]
+     ["F30", "S19", "S02", "S01", "C-HDMI", "C-TOUCH", "C-T7", "L-DISP12"]),
+    ("E7", "Передня половина: панельні деталі стінок",
+     "прохідники SMA/F/BNC верхньої грані (крізь стінку і верхній Al-кутник), RX2/REF IN правої стінки, USB-C, LAB USB-A, LAB BUS GX12 і аудіо нижньої "
+     "грані, клапани V1/V2 — усі в стінках передньої половини (роз'єм половин z 14, mechanical.json split_z)",
+     ["Прохідники SMA (F14), F (F16), BNC (F17) — крізь верхню стінку і верхній кутник; RX2/REF IN — крізь праву стінку і правий кутник; ≥3 витки для стикування.",
+      "USB-C (S11), LAB USB-A (S23 + C-LAB), LAB BUS GX12 (F19, S34) — у нижню грань; дроти крізь проріз SL3 пластини.",
+      "Клапани V1/V2 VENT-PS1NBK-O8002 у різьбові гнізда 4 мм (F22a); наклейки панелей."],
+     ["розрив центр–корпус на кожному SMA з вимкненим зміщенням", "наклейки за 18"],
+     ["F14", "F16", "F17", "F19", "F22a", "S11", "S23", "S34", "C-LAB", "L-USBC", "L-LABUSB", "L-LABBUS", "L-AUDIO"]
      + ["L-" + _ref for _ref in PORT_LABELS]),
-    ("E8", "Пак IMU і зовнішній кабель",
-     "Hammond 1550Z101, носійна частина паку (U552, D502, C519, C520, деталі E3 «External IMU»), RP2040-Zero, BNO085, SKINTOP MS-SC-M12, кабель HELU 49655 2 м",
+    ("E8", "Задня половина: GX16, гермоввід T7, лючок, батарейний відсік",
+     "задня половина, GX16-4, гермоввід T7, тримач T7, плата лючка (J502, J503, SW501), гайка 1/4-20, ремінь",
+     ["GX16-4 (F18, S32 крізь проріз SL3), гермоввід T7 і тримач T7 ззовні (F33), захоплена гайка 1/4-20 на цоколі (F25).",
+      "Сервісний лючок: плата лючка з J503 (S14 + S15, далі S16 до J21) і J502 (S30), SW501 PV6F240SS у платі лючка (F34, S31), синій USB-A Q6A; наклейки L-HATCH, L-J21.",
+      "Батарейний відсік: піна 3 мм, відбивна плівка, бар'єр; пак з L-BAT і L-F101; носійна плата F101 (PACK_FUSE) біля лотка; S05 паку поки не "
+      "під'єднувати (у вхідному роз'ємі S05 на PWR — стендовий провід), F101 вийнятий."],
+     ["оплітка GX16 — корпус ≤0.1 Ω", "розрив між J503 і J502 (різні родини, не стикуються)", "наклейки за 18"],
+     ["F18", "F25", "F33", "F34", "S32", "S36", "S14", "S30", "S31", "L-HATCH", "L-J21", "L-BAT", "L-T7", "L-IMU", "L-F101"]),
+    ("E9", "Пак IMU, зовнішній кабель і коробки Gainta",
+     "Hammond 1550Z101, носійна плата IMU_CARRIER (U552, D502, C519, C520, деталі E3 «External IMU»), RP2040-Zero, BNO085, SKINTOP MS-SC-M12, "
+     "кабель HELU 49655 2 м; коробки Gainta з клапанами LTW",
      ["Плати в корпус паку; гермоввід (F23) на стінці, найдальшій від BNO085.",
-      "Кабель S33: оплітка 360° у SKINTOP і обтиснута в GX16; кришка латунними M4 (F24), шов — провідна стрічка."],
+      "Кабель S33: оплітка 360° у SKINTOP і обтиснута в GX16; кришка латунними M4 (F24), шов — провідна стрічка.",
+      "Коробки Gainta: клапани VENT-PS1YBK-O8002 з гайкою в наскрізних отворах 2.0–3.5 мм (F22b)."],
      ["оплітка — корпус паку і GX16 ≤0.1 Ω", "1e6 кадрів IMU без CRC-помилок (E5 §10 п. 8)"],
-     ["F23", "F24", "S33"]),
-    ("E9", "Бондинг, перевірка і закриття",
-     "EPDM-шнур, гвинти половин F12, кришка лючка F13",
-     ["Бондинг CHASSIS за 16 §9 (F26).",
+     ["F22b", "F23", "F24", "S33"]),
+    ("E10", "Бондинг, перевірка і закриття",
+     "EPDM-шнур, гвинти половин F12 з ущільнювальними шайбами, кришка лючка F13",
+     ["Бондинг CHASSIS за 16 §9 (F26), зокрема BOND-RF.",
       "Перевірка перед закриттям — 19 §6 (ще від стенду); бланк 20.",
-      "Лише після ступенів L0–L3 від стенду (19 §5): від'єднати стендовий провід, S05 паку — у вхідний роз'єм S05 на PWR, F101 — у тримач паку.",
+      "Лише після ступенів L0–L3 від стенду (19 §5): від'єднати стендовий провід, S05 паку — у вхідний роз'єм S05 на PWR, F101 — у тримач носійної плати.",
       "EPDM-шнур у паз без розтягу, стик — на прямій ділянці; половини — гвинти хрест-навхрест у два проходи (F12); кришка лючка (F13).",
       "Перше ввімкнення від паку — 08 крок 16 п. 6 і таблиця перевірки кроку 16."],
      ["шнур не виступає з пазу", "перевірки 08 крок 16 від паку (INA228, labd) на закритому корпусі", "тест штативної гайки ≥3 N·m (F25)"],
@@ -666,10 +730,15 @@ STEPS = [
 
 # Printed parts (table in build/21 §1); geometry belongs to the mechanical package.
 PRINTS = [
-    ("корпус: передня половина", "лицем на стіл", "≥4 периметри у бобишках вставок і гайки 1/4-20; бобишка гайки — 100 % (STACK §5.8)", "лише під навислими вирізами портів"),
-    ("корпус: задня половина", "внутрішньою стороною вгору", "як вище", "під прорізами ременя"),
-    ("верхня смуга під Lime", "довгим боком на стіл", "≥4 периметри навколо прохідників", "ні"),
-    ("козирок 30 мм (шарнірний)", "пласко", "3 периметри (PIS)", "ні"),
-    ("рамка дисплея (параметрична)", "лицем на стіл", "3 периметри (PIS)", "ні"),
-    ("тримач T7", "пласко", "3 периметри (PIS)", "ні"),
+    # from the printed parts of the mechanical model (mechanical/generated/stl, fit-report «Друковані деталі»)
+    ("корпус: передня половина (front_shell)", "лицем на стіл", "≥4 периметри у бобишках вставок; 30 % заповнення (mechanical.json print)", "лише під навислими вирізами портів"),
+    ("корпус: задня половина (rear_shell)", "внутрішньою стороною вгору", "≥4 периметри; бобишка гайки 1/4-20 — 100 % (STACK §5.8)", "під прорізами ременя"),
+    ("кришка сервісного лючка (hatch_cover)", "пласко", "≥4 периметри навколо вставок", "ні"),
+    ("козирок 30 мм (hood, шарнірний)", "пласко", "3 периметри (PIS)", "ні"),
+    ("лоток батареї (battery_tray)", "дном на стіл", "3 периметри (PIS)", "ні"),
+    ("тримач T7 (t7_holder)", "пласко", "3 периметри (PIS)", "ні"),
+    ("притискачі дисплея ×4 (display_clamp_x4)", "пласко", "3 периметри (PIS)", "ні"),
+    ("ковпачки кнопок ×4 і з ребром ×2 (button_cap_x4, button_cap_ribbed_x2)", "торцем на стіл", "суцільні", "ні"),
+    ("ручка головного енкодера (main_knob)", "спідницею на стіл", "≥4 периметри", "ні"),
+    ("носій паку IMU (imu_carrier)", "пласко", "≥4 периметри навколо вставки 1/4-20", "ні"),
 ]

@@ -12,6 +12,7 @@ Outputs written from it:
   build/10-zakupivlia.csv, build/10-zakupivlia.md   consolidated v2.1 purchase BOM
   build/10-jlc-bom.csv                              JLC assembly BOM per board (LCSC parts)
   build/10-dzhgut-rodyny.csv                        harness connector families per pin count (no graph refs yet)
+  build/10-zakupivlia-kriplennia.csv                fasteners, seals, consumables and tools outside the schematic (assembly_items)
   build/10-parts-coverage.json                      coverage counts and open items
 Nothing here measures hardware: an orderable MPN is a procurement fact, not a qualification.
 """
@@ -52,7 +53,17 @@ FAMILY_KEYS = {'id', 'title', 'note', 'terminal', 'sizes'}
 FAMILY_ROLES = ('header_top', 'header_side', 'housing')
 FAMILY_ITEM_KEYS = {'manufacturer', 'mpn', 'sku', 'footprint', 'note'}
 FAMILY_FIELDS = ['family', 'pins', 'role', 'manufacturer', 'mpn', 'lcsc', 'lcsc_stock', 'lcsc_usd_1', 'footprint', 'note']
-BOARD3 = {'PWR_MAIN': 'POWER', 'PWR_BRANCH': 'POWER', 'USB_POWER': 'POWER', 'RF_HMC': 'RF', 'RF_HF': 'RF', 'RF_INJECTOR': 'RF', 'DC_CORE': 'RF', 'CTRL_HMI': 'CTRL'}
+# assembly_items: purchases outside the schematic that the mechanical and assembly packages require (fasteners, seals,
+# consumables, tools). Each has a quantity from the model or the harness table and either a read source or a tbd reason.
+ITEM_KEYS = {'id', 'item', 'qty', 'spares', 'for', 'manufacturer', 'mpn', 'sku', 'source', 'tbd', 'note'}
+ITEM_FIELDS = ['id', 'item', 'qty', 'spares', 'order', 'for', 'manufacturer', 'mpn', 'sku', 'state', 'note']
+ITEM_HEAD = {'id': 'запис', 'item': 'що', 'qty': 'к-сть на виріб', 'spares': 'запас', 'order': 'замовити', 'for': 'де і навіщо (джерело кількості)',
+             'manufacturer': 'виробник', 'mpn': 'MPN', 'sku': 'сторінка / SKU', 'state': 'стан', 'note': 'примітка'}
+# Harness connector roll-up written by tools/build_assembly_docs.py (quantities per family, pins and role).
+HARNESS_ROLLUP = ROOT / 'build/16-dzhgut-pidsumok.csv'
+BOARD3 = {'PWR_MAIN': 'POWER', 'PWR_BRANCH': 'POWER', 'USB_POWER': 'POWER', 'RF_HMC': 'RF', 'RF_HF': 'RF', 'RF_INJECTOR': 'RF', 'DC_CORE': 'RF', 'CTRL_HMI': 'CTRL',
+          # small boards off the three plate boards (pcb/prepare.py DOMAIN_OVERRIDE): each is its own JLC order line
+          'ENC': 'ENC', 'HATCH': 'HATCH', 'T7_INSERT': 'T7_INSERT', 'HDMI_INSERT': 'HDMI_INSERT', 'IMU_CARRIER': 'IMU_CARRIER', 'PACK_FUSE': 'PACK_FUSE'}
 SHEET_BOARD = {'E1': 'POWER', 'E2': 'POWER', 'E3': 'CTRL', 'E4': 'RF', 'E5': 'POWER'}
 SECTIONS = [('pcb_smt', 'Плати: SMD (збирання JLC PCBA)'), ('pcb_tht', 'Плати: THT (ручне паяння або THT-збирання)'),
             ('pcb_module', 'Модулі, що паяються на плату'), ('module', 'Готові модулі й вузли'), ('panel', 'Панель'),
@@ -296,6 +307,7 @@ class Model:
             self.err(f'{ref} has no parts-database entry')
         self.check_interfaces(prepare_module())
         self.check_families()
+        self.check_items()
         newest = max(self.snapshot_dates)
         age = (datetime.date.today() - datetime.date.fromisoformat(newest)).days
         if age > self.db['policy']['snapshot_max_age_days']:
@@ -376,6 +388,43 @@ class Model:
             for dist, rec in self.sku_known(item):
                 if rec.get('stock') == 0:
                     self.warnings.append(f'{label} {item["mpn"]}: {dist} stock 0 on the snapshot date')
+
+    def check_items(self):
+        """assembly_items: a quantity, where it is used, and either a confirmed MPN with a read source or a tbd reason."""
+        seen = set()
+        for it in self.db.get('assembly_items', []):
+            iid = it.get('id')
+            if not iid or iid in seen:
+                self.err(f'assembly item {iid!r}: id missing or repeated')
+            seen.add(iid)
+            for key in sorted(set(it) - ITEM_KEYS):
+                self.err(f'assembly item {iid}: unknown key {key}')
+            if not isinstance(it.get('qty'), int) or it['qty'] < 1 or not isinstance(it.get('spares', 0), int) or it.get('spares', 0) < 0:
+                self.err(f'assembly item {iid}: qty must be a positive integer and spares a non-negative integer')
+            if not (it.get('item') or '').strip() or not (it.get('for') or '').strip():
+                self.err(f'assembly item {iid}: item and for (where it is used, source of the quantity) are required')
+            for dist in sorted(set(it.get('sku') or {}) - SKU_KEYS):
+                self.err(f'assembly item {iid}: unknown distributor key {dist}')
+            if it.get('tbd'):
+                if not isinstance(it['tbd'], str) or not it['tbd'].strip():
+                    self.err(f'assembly item {iid}: tbd must be a reason text')
+                continue
+            if not (it.get('mpn') and it.get('manufacturer')):
+                self.err(f'assembly item {iid}: needs manufacturer and mpn, or tbd with a reason')
+            if not it.get('sku') and not it.get('source'):
+                self.err(f'assembly item {iid}: needs a SKU read in a snapshot or a source (page and date), or tbd')
+            self.sku_known(it)
+
+    def item_rows(self):
+        rows = []
+        for it in self.db.get('assembly_items', []):
+            sku = ', '.join(f'{d}:{k}' for d, k in (it.get('sku') or {}).items())
+            state, why = self.availability(it)
+            rows.append({'id': it['id'], 'item': it['item'], 'qty': it['qty'], 'spares': it.get('spares', 0), 'order': it['qty'] + it.get('spares', 0),
+                         'for': it['for'], 'manufacturer': '' if it.get('tbd') else it.get('manufacturer', ''), 'mpn': '' if it.get('tbd') else it.get('mpn', ''),
+                         'sku': '; '.join(x for x in (sku, it.get('source', '')) if x), 'state': state,
+                         'note': '; '.join(x for x in (why if state == 'TBD' else '', it.get('note', '')) if x)})
+        return rows
 
     def family_rows(self):
         rows = []
@@ -532,6 +581,8 @@ class Model:
         sheet, c = self.comps[ref]
         if self.part_of[ref]['mount'] not in PCB_MOUNTS:
             return ''
+        if ref in getattr(prep, 'DOMAIN_OVERRIDE', {}):
+            return BOARD3[prep.DOMAIN_OVERRIDE[ref]]
         if sheet == 'E4':
             return BOARD3[prep.board({**c, '_sheet': sheet}, 'bare_board_part')]
         return SHEET_BOARD[sheet]
@@ -754,8 +805,8 @@ class Model:
 
 OPEN_ITEMS = [
     'SW308/SW309 — це кнопки всередині енкодерів ENC301/ENC302: граф тримає їх окремими позначеннями, тому контакти S1/S2 футпринта енкодера лишаються без кола в netlist, доки власник E3 не перенесе кола кнопок на виводи енкодера (у pcb/generated/unresolved.csv — блокуючий запис host_pads_unconnected).',
-    'Роз’єми з боку плати для джгутів, які ще не мають позначень у графі (кінець J302 на силовій платі, гніздо LAB BUS за J505, вентилятор, виводи NTC TH301/TH302, міжплатні з’єднання поділу на три плати), куплено як супутні деталі там, де їх названо; для решти артикули за кількістю контактів дає розділ «Роз’єми міжплатних джгутів», а позначення J на схемі й кількість чекають PCB-пакета й таблиці джгутів (build/16).',
-    'Розетку для 40-контактного роз’єму Q6A J20 (J301; 2×20, крок 2.54 мм) і шлейф або плату до CTRL_HMI не обрано: у графі немає ні позначення, ні MPN (запис J-Q6A-EXISTING, interface_open).',
+    'Роз’єми з боку плати для джгутів, які ще не мають позначень у графі (відповідь J302 на силовій платі, гніздо LAB BUS за J505, вентилятор, виводи NTC TH301/TH302, міжплатні з’єднання поділу на плати), куплено як супутні деталі там, де їх названо; для решти артикули за кількістю контактів дає розділ «Роз’єми міжплатних джгутів», кількість — підсумок build/16 нижче; позначення J на схемі чекають власників графів (хвиля 2).',
+    'Q6A J20 (J301): обрано родину IDC — гніздо XDFH-0258-2*20P на стрічці 40 × 1.27 мм і бокс XDFH-0254-2*20P на CTRL (harness_families IDC); MPN стрічки, висота боксу (обмеження CTRL 5.5 мм) і довжина S01 ≤200 мм — TBD (запис J-Q6A-EXISTING, interface_open; build/16 S01).',
     'Панельні порти P1–P3 і P6 (J401–J403, J406) — TBD: їхній внутрішній бік — кола RF-плати, а роз’єму з боку плати (U.FL/MHF1 чи крайового SMA) у графі E4 немає; потрібні позначення J з боку плати (власник E4) і пігтейл з розрахунком втрат (build/15 «RF-порти»).',
     'Панельні деталі (SMA P8, F, BNC, USB-A IP68, USB-C IP67, кнопки PV6 IP65) обрано за сторінками DigiKey DE від 06.11.2026; вирізи, ущільнення, заглушки й заглиблення кнопки EDL — механічний пакет (MECH-07). Що ще відкрито для кожного інтерфейсу — розділ «Інтерфейси без кріплення». Внутрішній кабель ПЧ W402 і кабель живлення pod W425 лишаються TBD.',
     'Розмір відкритої площадки HMC7992LP3DE і крок виводів CPT-1207-3TH треба звірити з кресленнями виробника до випуску PCB (див. SR_RX_Custom.pretty/provenance.json; analog.com 24.10.2026 не відповідав).',
@@ -821,9 +872,9 @@ def bom_md(model, rows, cov):
     if fams:
         lines += ['## Роз’єми міжплатних джгутів (родини)', '',
                   'Поділ на три плати ([build/15](15-rishennia-komplektu.md)) додає роз’єми джгутів, яких ще немає в графах E1–E5. Нижче — артикули для кожної '
-                  'кількості контактів, перевірені за знімком LCSC; кількість штук і розміщення дає таблиця роз’ємів джгутів пакета складання (build/16), тому '
-                  'в розділи вище й у зведення ці роз’єми не входять. Посадкові місця — назви бібліотеки KiCad ' + KICAD_TAG + '; файли додаються до бібліотеки '
-                  'проєкту разом із позначеннями J. Машинна таблиця — [10-dzhgut-rodyny.csv](10-dzhgut-rodyny.csv).', '']
+                  'кількості контактів, перевірені за знімком LCSC; розміщення дає таблиця роз’ємів джгутів пакета складання (build/16 §4), кількість штук — '
+                  'підсумок нижче (з build/16), тому в розділи вище й у зведення ці роз’єми не входять. Посадкові місця — назви бібліотеки KiCad ' + KICAD_TAG + '; '
+                  'файли додаються до бібліотеки проєкту разом із позначеннями J. Машинна таблиця — [10-dzhgut-rodyny.csv](10-dzhgut-rodyny.csv).', '']
         cell = lambda item: f'{item["mpn"]} ({item["sku"]["lcsc"]}, склад {(model.lcsc_rec(item) or {}).get("stock", "—")})'
         for fam in fams:
             lines += [f'### {fam["title"]}', '']
@@ -836,6 +887,29 @@ def bom_md(model, rows, cov):
             for s in fam['sizes']:
                 lines.append(f'| {s["pins"]} | ' + ' | '.join(cell(s[r]) if r in s else '—' for r in FAMILY_ROLES) + f' | {s.get("note", "")} |')
             lines.append('')
+    if HARNESS_ROLLUP.is_file():
+        with HARNESS_ROLLUP.open(encoding='utf-8', newline='') as f:
+            roll = list(csv.DictReader(f))
+        lines += ['## Кількість роз’ємів, клем і проводу джгутів (з build/16)', '',
+                  'Підсумок таблиць build/16 §4–5 за родиною, кількістю контактів і роллю, з правилом запасу пакета складання (+10 %, щонайменше 2 шт.; '
+                  'провід — кількість жил, довжина з CAD). Згенеровано `tools/build_assembly_docs.py` у [16-dzhgut-pidsumok.csv](16-dzhgut-pidsumok.csv); '
+                  'артикули — з родин вище, TBD — у базі деталей немає (причина в рядку).', '',
+                  '| родина | контактів | роль | MPN | к-сть | запас | замовити | примітка |', '|---|---:|---|---|---:|---:|---:|---|']
+        for r in roll:
+            lines.append(f'| {r["family"]} | {r["pins"]} | {r["role"]} | {md_cell(r["mpn"])} | {r["qty"]} | {r["spares"]} | {r["order"]} | {md_cell(r["note"]) or "—"} |')
+        lines.append('')
+    items = model.item_rows()
+    if items:
+        lines += ['## Кріплення, ущільнення, витратні матеріали й інструмент (поза схемою)', '',
+                  'Деталі, яких вимагають механічна модель (`mechanical/params`, креслення M-07) і пакет складання (build/16–21), але яких немає '
+                  'в графах E1–E5 (`assembly_items` у parts.json). Кількість — з моделі або таблиці джгутів (стовпець «де»), запас — правило пакета '
+                  'складання (+10 %, щонайменше 2 шт.); TBD — сторінку виробника чи дистриб’ютора не прочитано, причина в примітці. '
+                  'Машинна таблиця — [10-zakupivlia-kriplennia.csv](10-zakupivlia-kriplennia.csv).', '',
+                  '| запис | що | к-сть + запас | виробник | MPN | де і навіщо | сторінка / SKU | стан |', '|---|---|---|---|---|---|---|---|']
+        for r in items:
+            lines.append(f'| {r["id"]} | {md_cell(r["item"])} | {r["qty"]} + {r["spares"]} | {r["manufacturer"] or "—"} | {r["mpn"] or "—"} | '
+                         f'{md_cell(r["for"])} | {md_cell(r["sku"]) or "—"} | {r["state"]} |')
+        lines.append('')
     other = model.v2_rows()
     lines += ['## Решта закупівлі: рядки оцінки v2 поза схемою', '',
               'Рядки [10-bom.csv](10-bom.csv), деталей яких немає в графах E1–E5 (антени, прилади лабораторії, інструменти, корпус, кріплення, запасні модулі, плата Q6A), '
@@ -900,6 +974,9 @@ def main():
     files[ROOT / 'build/10-zakupivlia-inshe.csv'] = head.getvalue()
     files[ROOT / 'build/10-jlc-bom.csv'] = csv_text(model.jlc_rows(prep), ['Board', 'Comment', 'Designator', 'Footprint', 'LCSC Part #', 'Mount', 'LCSC stock', 'LCSC alternate'])
     files[ROOT / 'build/10-dzhgut-rodyny.csv'] = csv_text(model.family_rows(), FAMILY_FIELDS)
+    head = io.StringIO()
+    csv.writer(head, quoting=csv.QUOTE_ALL, lineterminator='\n').writerow([ITEM_HEAD[f] for f in ITEM_FIELDS])
+    files[ROOT / 'build/10-zakupivlia-kriplennia.csv'] = head.getvalue() + csv_text(model.item_rows(), ITEM_FIELDS).split('\n', 1)[1]
     files[ROOT / 'build/10-parts-coverage.json'] = json.dumps(cov, ensure_ascii=False, indent=1) + '\n'
     for w in model.warnings:
         print('WARNING:', w)

@@ -108,12 +108,14 @@
       {
         "id": "P4",
         "x": 103.5,
-        "kind": "f_bulkhead"
+        "kind": "f_bulkhead",
+        "_mpn": "Cinch VFA340 F/F bulkhead adapter (parts DB J404); its hardware and panel range not read (R-BULKHEAD-NUTS)"
       },
       {
         "id": "P5",
         "x": 123.5,
-        "kind": "bnc_bulkhead"
+        "kind": "bnc_bulkhead",
+        "_mpn": "Amphenol RF 242181 BNC/SMA bulkhead adapter (parts DB J405); which end carries the panel thread not read (R-BULKHEAD-NUTS)"
       },
       {
         "id": "P6",
@@ -123,12 +125,14 @@
       {
         "id": "P7",
         "x": 163.5,
-        "kind": "sma_k"
+        "kind": "sma_k",
+        "_mpn": "SMA end of the Taoglas CAB.011 pigtail W407 (parts DB); 100 mm does not reach the LC76G at the rear-left wall (>= 113 mm straight line): longer pigtail TBD"
       },
       {
         "id": "P8",
         "x": 183.5,
-        "kind": "sma_pigtail"
+        "kind": "sma_pigtail",
+        "_mpn": "Adam Tech CA-DKCA1-305L5-APAJ bulkhead assembly into the A403 SMA input (parts DB J408); max panel thickness not read (R-SMA-THREAD)"
       },
       {
         "id": "RX1",
@@ -151,10 +155,10 @@
     "_src": "port pitch 20 mm, types and the order P1..P8 + RX1: STACK 5.8 / 05 5.1; the row starts at x 43.5 so that the RX1 bulkhead nut and washer (envelope: Samtec SMA-J-C-X-ST-BH4 hardware, parts.json sma_bulkhead_hw) clear the right FR4 wall of the RF bay (x 209.6) by 1 mm",
     "power_key": {
       "id": "PWR_KEY",
-      "x": 158.0,
-      "z": 48.0,
-      "kind": "pv0",
-      "_src": "SW301 location is not given in STACK (build/04 'розміщення в STACK.md не задано'); this package puts it on the top face, front half, between the HDMI board and the IP2368 board (fit-report)"
+      "x": 155.5,
+      "z": 48.5,
+      "kind": "pv6",
+      "_src": "SW301 location is not given in STACK (build/04 'розміщення в STACK.md не задано'); this package puts it on the top face, front half, between the HDMI board and the IP2368 board (fit-report); E-Switch PV6F240SS (build/15 'Сигнальні джгути', 2026-11-07): the M16 body (D16) fills the 16 mm between the plate front face (40.5) and the display module back (56.5), so x 155.5 / z 48.5 leaves 1.3 mm to the HDMI board and 0 mm to plate and module (model; TBD: measure the received key); the nut is not dimensioned on the datasheet and is not modelled as an envelope: with a D20 nut (assumption) it would meet the HDMI board edge and the top-right display clamp boss (rule R-PWR-KEY-NUT OPEN)"
     }
   },
   "right_face": {
@@ -184,7 +188,8 @@
     "_src": "path 2 side exhaust (STACK 5.6, side TBD there): left wall downstream of the blower"
   },
   "bottom_face": {
-    "_ports_note": "rear-layer row above the external seam belt (z 9-19 plus margin, rule R-PANEL-FLAT) and below the plate edge (z 38.5)",
+    "_ports_note": "rear-layer row above the external seam belt (z 9-19 plus margin, rule R-PANEL-FLAT) and below the plate edge (z 38.5); wires to the front layer through plate slot SL3",
+    "_pitch_note": "the row USB-A 172 / USB-C 189 / LAB BUS 206 has a 17 mm pitch: the flanged MUSBRM5C130 and the nut-mounted PX0845/A and KH-GX12-6P may overlap their neighbours; re-check with the makers' drawings (not read, TBD)",
     "ports": [
       {
         "id": "USB_C_IN",
@@ -193,7 +198,7 @@
         "kind": "tbd",
         "w": 12.0,
         "h": 6.0,
-        "_note": "IP2368 sealed USB-C feedthrough, MPN TBD (MECH-07); internal 100 W PD lead to the IP2368 board at the top right, about 140 mm, route TBD"
+        "_note": "IP2368 sealed USB-C feedthrough Amphenol ICC MUSBRM5C130 (parts DB J103); cut-out TBD (drawing not read, MECH-07); internal 100 W PD lead through plate slot SL3 to the IP2368 board at the top right, about 140 mm, route TBD"
       },
       {
         "id": "LAB_USB_A",
@@ -202,7 +207,7 @@
         "kind": "tbd",
         "w": 16.0,
         "h": 8.0,
-        "_note": "MPN TBD (MECH-07)"
+        "_note": "Bulgin PX0845/A Buccaneer USB-A, IP68 (parts DB J501); cut-out TBD (drawing not read, MECH-07)"
       },
       {
         "id": "LAB_BUS",
@@ -211,7 +216,7 @@
         "kind": "tbd",
         "w": 16.0,
         "h": 16.0,
-        "_note": "6-pin locking, MPN TBD (MECH-07)"
+        "_note": "Kinghelm KH-GX12-6P, 6-pin GX12 (parts DB J505, build/15 'Сигнальні джгути'): cut-out, nut and IP TBD (the LCSC page read 2026-11-07 gives no drawing); 16 x 16 stays a reserve"
       },
       {
         "id": "AUDIO_3V5",
@@ -260,7 +265,7 @@
       "seat": 4.0,
       "screws": [[120.0, 93.0], [134.0, 93.0]],
       "lip": "bottom edge of the cover hooks under the opening (no screw near the battery)",
-      "content": ["blue USB-A port of the Q6A (reached directly in the plug bay)", "J21 3-pin locking", "UART5 console pigtail (40-pin 8/10 + GND)", "EDL button (or recessed parallel)"],
+      "content": ["blue USB-A port of the Q6A (reached directly in the plug bay)", "hatch board (pcb/prepare.py HATCH): J503 J21 header 43650-0315 and J502 UART5 console header B3B-PH-K", "EDL button SW501 PV6F240SS through the hatch board (layout edl_key_body)"],
       "_src": "STACK 5.8 / D15 service hatch"
     },
     "path1_intake": {
@@ -375,8 +380,26 @@
     "_src": "STACK 5.8 (2.0 mm Al, holes +-0.2, flatness <=0.2 under Q6A, pedestal and regulator pads, no thread cut in the plate; riser window about 26 x 20)",
     "mount_boss_d": 7.0,
     "corner_clearance": 0.5,
-    "notches": [[149.0, 153.0, 18.0, 5.0]],
-    "_notches_note": "open notch in the top edge under the power-key nut"
+    "notches": [[145.5, 153.0, 20.0, 5.0]],
+    "_notches_note": "open notch in the top edge under the power-key nut (PV6 nut D20, assumption)",
+    "slots": [
+      {
+        "id": "SL1",
+        "rect": [163.0, 94.6, 33.0, 2.4],
+        "use": "S01 40-way ribbon Q6A J20 -> CTRL over the Q6A top edge, split into two 20-way halves stacked (build/16 S01), next to the riser window"
+      },
+      {
+        "id": "SL2",
+        "rect": [115.5, 73.6, 17.5, 3.6],
+        "use": "front layer (PWR top edge, CTRL harness along y 74-77) <-> rear layer above the hatch: S03, S04, S13, S14, S15, S17, S18, S20-S22, S24, S25, S30, S35, C-T7 (build/16)"
+      },
+      {
+        "id": "SL3",
+        "rect": [210.5, 9.5, 4.5, 15.0],
+        "use": "front layer <-> bottom-face port row and GX16 under the plate extension: S11, S23, S32, S34, the IP2368 PD lead (build/16)"
+      }
+    ],
+    "_slots_note": "harness pass-throughs of the plate (M-07): every slot gets an edge trim or grommet on the 2 mm Al edges (parts DB assembly_items AI-EDGE-TRIM, profile TBD); sizes are model reserves to be checked against the bundle diameters of build/16 (TBD); the self-clinching edge distance (R-CLINCH-EDGE) and R-HOLE-EDGE include the slots"
   },
   "layout": {
     "_note": "Envelope boxes [x, y, z, dx, dy, dz]; mount: plate_rear (hangs from the plate), plate_front, rear_wall, front_wall, rf_lid, free. part = key in parts.json, board = key in boards.json. keep_clear boxes reserve space (plugs, cable bends) and must stay empty.",
@@ -534,7 +557,15 @@
       {
         "id": "hatch_parts",
         "box": [116.0, 40.0, 2.5, 22.0, 50.0, 11.0],
-        "mount": "rear_wall"
+        "mount": "rear_wall",
+        "_note": "hatch board HATCH (J502, J503) and the SW501 bezel inside the hatch bay; board layout wave 2 (W2-05)"
+      },
+      {
+        "id": "edl_key_body",
+        "part": "pv6_button",
+        "box": [119.0, 72.0, 13.5, 16.0, 16.0, 14.6],
+        "mount": "rear_wall",
+        "_note": "SW501 PV6F240SS through the hatch board (board as a 1.6 mm panel, bezel towards the hatch opening): body D16 below the board, 17.5 + 0.5 to the terminals + 2.5 for the wires (parts.json pv6_button)"
       },
       {
         "id": "t7_gland_body",
@@ -585,16 +616,10 @@
       },
       {
         "id": "pwr_key_body",
-        "part": "pv0_button",
-        "box": [151.5, 135.0, 41.5, 13.0, 22.5, 13.0],
+        "part": "pv6_button",
+        "box": [147.5, 137.0, 40.5, 16.0, 20.5, 16.0],
         "mount": "front_wall",
-        "_note": "PV0 body below the panel: 19.0 +-1.0 to the terminal ends (datasheet) + 2.5 mm for the soldered wires; diameter 13 reserve (thread M12)"
-      },
-      {
-        "id": "pwr_key_nut",
-        "box": [150.0, 154.5, 40.0, 16.0, 3.0, 16.0],
-        "mount": "front_wall",
-        "_note": "M12x0.75 nut: size not on the PV0 datasheet, 16 x 3 is an assumption (TBD); the plate is notched under it"
+        "_note": "PV6F240SS body below the panel: 17.50 +0.50 to the terminal ends (datasheet p.5) + 2.5 mm for the soldered wires; M16 thread D16"
       }
     ]
   },
@@ -695,7 +720,7 @@
     "cable_od": 5.2,
     "bend_r": 8.0,
     "_src": "Adafruit 2420 OD 5.2 +-0.15 (STACK 2.6 / 11.5, drawing CHDMI-AM-AM-457); bend_r = cable-axis radius used for the keep-clear boxes, an assumption (no bend radius found for the 2420; check on the cable)",
-    "_status": "the route needs a right-angle plug at the Q6A (MPN TBD) and has no 20 mm deep space for the two Fair-Rite 0431164281 snap ferrites (39.5 x 20 x 19.6) or for the S-fold of about 250 mm of excess cable: rule R-HDMI-ROUTE OPEN (decision: angled plug, smaller ferrites, or STACK's FPC fallback Adafruit 3548/3550 + 3560)"
+    "_status": "the route needs a right-angle plug at the Q6A (MPN TBD) and has no 20 mm deep space for the two Fair-Rite 0431164281 snap ferrites (39.5 x 20 x 19.6) or for the S-fold of about 250 mm of excess cable: rule R-HDMI-ROUTE OPEN; proposed default (build/15 'Оболонка D15', 2026-11-07): STACK's FPC reserve Adafruit 3550 (right angle) + 3548 + 3560 with a grounded copper-tape wrap; MPN, length and a ferrite for the flat cable TBD until the Adafruit pages are read"
   },
   "pwr_bond": {
     "pad": 0.5,
@@ -758,5 +783,5 @@
       "_note": "battery compartment: front face below the display; the thread passes the front wall of the tray and ends in the 3 mm foam layer (z 54.2-57.2), clear of the pack; the foam gets a 13 mm hole at the vent axis so the membrane breathes into the pack compartment"
     }
   ],
-  "vents_src": "Amphenol LTW M12 plastic vents (parts.json ltw_vent): through-hole 2.0-3.5 mm with nut (VENT-PS1YBK-O8002), or threaded hole >= 4.0 mm without nut (VENT-PS1NBK-O8002, used for V1 and V2); never facing up (STACK D15)"
+  "vents_src": "Amphenol LTW M12 plastic vents (parts.json ltw_vent): through-hole 2.0-3.5 mm with nut (VENT-PS1YBK-O8002, the 3 Gainta boxes), or threaded hole >= 4.0 mm without nut (VENT-PS1NBK-O8002, used for V1 and V2); never facing up (STACK D15); purchase: parts DB assembly_items AI-VENT-NBK / AI-VENT-YBK"
 }

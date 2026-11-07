@@ -29,12 +29,12 @@
       "height_zones": [
         {
           "rect": [0, 35, 42, 75],
-          "max_height": 9.5,
-          "why": "Pololu D36V50F12/F5 soldered flat (parts.json pololu_d36v50: 9.5 + mount_standoff 0.0); rule R-PWR-MODULES"
+          "max_height": 10.5,
+          "why": "Pololu D36V50F12/F5 on their header spacer (parts.json pololu_d36v50: 7.67 + mount_standoff 2.5, bottom-side parts 1.8 per the Pololu drawing); rule R-PWR-MODULES"
         }
       ],
       "thermal_bond": [[9, 4, 60, 23], [72, 4, 56, 23], [4, 38, 30, 30], [4, 70, 30, 30]],
-      "_thermal_bond_note": "placement contract for the PCB work: TPS7A4701 x2 and LT3045 x2 inside the two lower zones (their exposed pads stitched to bottom copper), D36V50F12 and D36V50F5 inside the two zones of the left leg; the Pololu modules are purchased carrier boards without an exposed pad: their GND/VIN/VOUT pins and the flat-mounted module board conduct into a copper pour that is stitched to bottom copper; each zone gets one Gelid pad of the same size",
+      "_thermal_bond_note": "placement contract for the PCB work: TPS7A4701 x2 and LT3045 x2 inside the two lower zones (their exposed pads stitched to bottom copper), D36V50F12 and D36V50F5 inside the two zones of the left leg; the Pololu modules are purchased carrier boards without an exposed pad that stand on their header spacer (1.8 mm bottom-side parts): their GND/VIN/VOUT pins conduct into a copper pour that is stitched to bottom copper; each zone gets one Gelid pad of the same size",
       "modules_on_board": [
         {
           "id": "D36V50F12",
@@ -51,20 +51,26 @@
         {
           "edge": "bottom",
           "span": [0, 136],
-          "use": "battery (Micro-Fit 3.0), BMS and IP2368 leads"
+          "use": "battery circuit (Mini-Fit Jr., 18 AWG), BMS and IP2368 leads"
         },
         {
           "edge": "right",
           "span": [0, 35],
-          "use": "blower, BMS, column harness (JST PH)"
+          "use": "blower, BMS, CTRL harness S02 (JST PH, Micro-Fit); bottom-row ports and GX16 through plate slot SL3"
         },
         {
           "edge": "top",
           "span": [0, 42],
-          "use": "DISP12 to the HDMI board, rails through the plate slot to the rear layer (Micro-Fit 3.0 for >=2 A)"
+          "use": "DISP12 to the HDMI board (Micro-Fit 3.0)"
+        },
+        {
+          "edge": "top",
+          "at": 35,
+          "span": [108, 128],
+          "use": "rear-layer harness through plate slot SL2 (S04, S13, S14, S17, S18, S20-S22, S35; JST PH, Micro-Fit)"
         }
       ],
-      "notes": "Fastening: M3 into PEM F-M3-1 self-clinching flush nuts in the plate (flush on both faces, so nothing reaches the RF side; no cut thread in the plate, STACK 5.8). The IP2368 retail board sits on the plate in the HMI column (layout item ip2368). Area check: fit-report 'board_area'."
+      "notes": "Fastening: M3 x 4 into PEM F-M3-1 self-clinching flush nuts in the plate (flush on both faces, so nothing reaches the RF side; no cut thread in the plate, STACK 5.8). D36V50F12 U107 and D36V50F5 U108 are soldered into the left leg (footprint SR_RX_Custom:Pololu_D36V50Fx). The IP2368 retail board sits on the plate in the HMI column (layout item ip2368). Area check with and without the build/16 harness headers: fit-report 'board_area'."
     },
     "RF": {
       "name": "RF / detector board (RF_HMC + RF_HF + RF_INJECTOR + DC_CORE)",
@@ -88,7 +94,7 @@
         {
           "edge": "top",
           "span": [20, 180],
-          "use": "U.FL / MHF to the panel pigtails P1..P8 (build/15: U.FL + coax to panel SMA where the edge is not on the panel)"
+          "use": "U.FL/MHF1 to the panel pigtails of P2, P3 and P6 (plus P1 if L401 stays, W2-02) and the 75-ohm W402 end of ch5 (P4); P4 F and P5 BNC are bulkhead adapters with W402/W408, P7 is the Taoglas CAB.011 end at the LC76G, P8 is the Adam Tech CA-DKCA1-305L5-APAJ assembly into A403 (parts DB; build/15 'RF-порти')"
         },
         {
           "edge": "bottom",
@@ -113,7 +119,7 @@
         "origin": [176.0, 13.0],
         "z_bottom": 54.9,
         "facing": "+z",
-        "mount": "M2.5 screws into front-shell bosses"
+        "mount": "M2.5 screws into CNC Kitchen TC-M2,5x4 inserts in the front-shell bosses"
       },
       "holes": [[3, 3], [47, 3], [3, 141], [43, 137], [3, 100], [47, 100]],
       "hole_d": 2.7,
@@ -132,12 +138,12 @@
           "use": "JST PH to the two ENC daughterboards"
         }
       ],
-      "notes": "TL3145BF350QJ switches face the front wall; caps 12 mm, 22 mm pitch (mechanical.json hmi.buttons).",
+      "notes": "TL3145BF350QJ switches face the front wall; caps 12 mm, 22 mm pitch (mechanical.json hmi.buttons). Harness headers: JST PH side entry only (4.8 mm, JST ePH), 16-pin groups as 2 x 8 (S16B-PH-K-S not stocked); the height of the IDC box XDFH-0254-2*20P (S01) and of the vertical Micro-Fit 43650 headers against max_height 5.5 is not read (TBD, fit-report board_area).",
       "_outline_note": "top-right corner chamfered to clear the rounded inner corner of the shells (R 11.5)"
     },
     "ENC": {
       "name": "encoder daughterboard (PEC11R-4220F-S0024), same design x2 + 1 spare",
-      "domains": ["CTRL_HMI (SW/encoder contacts)"],
+      "domains": ["ENC"],
       "outline": [[0, 0], [24, 0], [24, 24], [0, 24]],
       "rects": [[0, 0, 24, 24]],
       "place_at": {
@@ -147,7 +153,7 @@
       "place": {
         "z_bottom": 54.3,
         "facing": "+z",
-        "mount": "2x M2.5 into front-shell bosses"
+        "mount": "2x M2.5 into CNC Kitchen TC-M2,5x4 inserts in the front-shell bosses"
       },
       "holes": [[3, 3], [21, 21]],
       "hole_d": 2.7,
@@ -161,7 +167,15 @@
           "use": "JST PH 2.0 to CTRL"
         }
       ],
-      "notes": "PEC11R rear-facing pins (type 4); bushing M7x0.75 through the 2.6 mm boss with an O-ring (STACK 5.8)."
+      "notes": "PEC11R rear-facing pins (type 4); bushing M7x0.75 through the 2.6 mm boss with an O-ring (STACK 5.8). pcb/prepare.py domain ENC (ENC301/ENC302); harness S37/S38 to CTRL with side-entry JST PH."
     }
+  },
+  "small_boards": {
+    "_note": "boards of pcb/prepare.py that are not mounted on the plate or the front shell: their envelope is a layout item (or the IMU pack) and their layout is wave 2 (W2-05); listed here so the board domains of the partition are all accounted for",
+    "HATCH": {"domains": ["HATCH"], "envelope": "layout hatch_parts", "name": "service-hatch board: J502 B3B-PH-K (UART5), J503 43650-0315 (J21), SW501 PV6F240SS through the board"},
+    "T7_INSERT": {"domains": ["T7_INSERT"], "envelope": "in the T7 USB3 cable (not modelled)", "name": "VBUS key insert U505 of the T7 cable"},
+    "HDMI_INSERT": {"domains": ["HDMI_INSERT"], "envelope": "in the HDMI cable (not modelled; R-HDMI-ROUTE OPEN)", "name": "pin-18 insert U506 of the HDMI cable"},
+    "IMU_CARRIER": {"domains": ["IMU_CARRIER"], "envelope": "imu_pack.json carrier_pcb", "name": "carrier board in the Hammond 1550Z101 IMU pack"},
+    "PACK_FUSE": {"domains": ["PACK_FUSE"], "envelope": "not modelled yet (OPEN, mechanical/README)", "name": "F101 carrier with the Keystone 3568 holder at the pack positive"}
   }
 }

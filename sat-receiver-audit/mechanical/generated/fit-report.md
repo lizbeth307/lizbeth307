@@ -1,6 +1,6 @@
 # Звіт посадки механічної моделі SR-RX-v2.1
 
-Згенеровано `mechanical/build.py` (params 1feb6fd68ccf); не редагувати вручну. **MODEL FIT ONLY:** це перевірка конвертів і даних з даташитів, а не примірка деталей. Фізичні ворота посадки, ущільнення, тепла й падіння лишаються OPEN.
+Згенеровано `mechanical/build.py` (params 8c4e291cf3a1); не редагувати вручну. **MODEL FIT ONLY:** це перевірка конвертів і даних з даташитів, а не примірка деталей. Фізичні ворота посадки, ущільнення, тепла й падіння лишаються OPEN.
 
 ## Габарит
 
@@ -29,8 +29,8 @@
 ## Підсумок
 
 - зіткнень конвертів: 0; поза внутрішнім об'ємом: 0
-- правила: FAIL 0, OPEN 4 (OPEN = потрібна обрана або виміряна деталь)
-- антенні деталі за правилом розміру: FAIL 0; площа плат: FAIL 0
+- правила: FAIL 0, OPEN 5 (OPEN = потрібна обрана або виміряна деталь)
+- антенні деталі за правилом розміру: FAIL 0; площа плат (деталі без роз'ємів джгутів): FAIL 0; з роз'ємами джгутів build/16: OPEN 2 (оцінка, не в гейті до перерозкладки хвилі 2)
 - термоінтерфейси: FAIL 0, OPEN 3; ущільнення: PASS (model)
 - звірка з STEP постачальника: PASS (model vs vendor STEP)
 - перетини тіл B-rep (оболонки, пластина, кутники, РЧ-відсік, лоток) з конвертами: 0; деталі з кількох тіл («висячі» елементи): 0
@@ -54,11 +54,13 @@
 | R-VENT-SEAT | vent seats: threaded hole >= 4.0 mm, or 2.0-3.5 mm through hole with the nut | {'V1': 4.0, 'V2': 4.0} | {'threaded': 4.0, 'through': [2.0, 3.5]} | PASS (model) |
 | R-VENT-REACH | space behind each vent seat minus the thread reach (worst vent) | 1.8 | 0.5 | PASS (model) |
 | R-PANEL-FLAT | side-face cut-outs on the flat face and clear of the seam belt (split plane +- 5.5 mm) | none |  | PASS (model) |
-| R-PWR-KEY | E-Switch PV0 panel thickness at the power key (top wall) | 2.5 | 1 / 6 | PASS (model) |
-| R-PWR-MODULES | modules on a board (height + mount standoff) inside the board envelope height there (worst module) | 9.5 | 9.5 | PASS (model) |
+| R-PWR-KEY | E-Switch PV6F240SS panel thickness at the power key (top wall) and at SW501 (hatch board 1.6 mm) | 2.5 / 1.6 | 1 / 10 | PASS (model) |
+| R-PWR-KEY-NUT | PV6 panel nut inside the top wall clear of the HDMI board, the display clamp bosses and the top Al angle | {'key_x': 155.5, 'key_z': 48.5, 'nut_d_assumed': 20.0} |  | OPEN: the PV6 datasheet gives no nut size; a D20 nut (assumption) at x 155.5 / z 48.5 would reach the HDMI board edge (x 146.2) and the top-right display clamp boss (z >= 56.5): measure the received nut; if it does not clear, re-place the key (wave 2 layout) |
+| R-PLATE-SLOTS | plate harness slots inside the outline with a web >= 1.5 mm to the outline and to every other opening (worst slot) | 1.5 | 1.5 | PASS (model) |
+| R-PWR-MODULES | modules on a board (height + mount standoff) inside the board envelope height there (worst module) | 10.17 | 10.5 | PASS (model) |
 | R-COOLER-A | cooler A: Cu block inside the 32 x 31 keep-in and over SoC + LPDDR5 (cover margin >= 0.5); fan face >= the keep-in minimum and above the 40-pin and 2x2 headers | {'cover_margin': 0.97, 'fan_face_above_board': 10.5, 'tallest_header': 9.65} | {'cover_margin': 0.5, 'fan_face_above_board': 10.0} | PASS (model) |
 | R-VENT-FOAM | battery vent: the thread ends in the 3 mm foam layer, so the foam has a hole >= thread d + 0.5 at the vent | {'V2': 13.0} | 12.5 | PASS (model) |
-| R-HDMI-ROUTE | HDMI cable Q6A to HDMI board: keep-clear route in the envelope check (plug head, bends, plate notch, run) | {'cable_od': 5.2, 'bend_r': 8.0} |  | OPEN: the route needs a right-angle plug at the Q6A (MPN TBD) and has no 20 mm deep space for the two Fair-Rite 0431164281 snap ferrites (39.5 x 20 x 19.6) or for the S-fold of about 250 mm of excess cable: rule R-HDMI-ROUTE OPEN (decision: angled plug, smaller ferrites, or STACK's FPC fallback Adafruit 3548/3550 + 3560) |
+| R-HDMI-ROUTE | HDMI cable Q6A to HDMI board: keep-clear route in the envelope check (plug head, bends, plate notch, run) | {'cable_od': 5.2, 'bend_r': 8.0} |  | OPEN: the route needs a right-angle plug at the Q6A (MPN TBD) and has no 20 mm deep space for the two Fair-Rite 0431164281 snap ferrites (39.5 x 20 x 19.6) or for the S-fold of about 250 mm of excess cable: rule R-HDMI-ROUTE OPEN; proposed default (build/15 'Оболонка D15', 2026-11-07): STACK's FPC reserve Adafruit 3550 (right angle) + 3548 + 3560 with a grounded copper-tape wrap; MPN, length and a ferrite for the flat cable TBD until the Adafruit pages are read |
 | R-TOOL-ACCESS | every closure, hatch and T7-holder screw: clear tool path (counterbore, then d 8.0 for 60 mm) from outside | CLOSURE_1: remove t7_holder first / CLOSURE_2: remove t7_holder first | no fixed solid in a tool path; removable parts only over closure screws | PASS (model) |
 | R-TRIPOD-DISC | tripod plate disc d 50.0 about the 1/4-20: no solid prouder than the plinth face (5.0 mm) | none | plinth d 23.0, 5.0 proud | PASS (model) |
 
@@ -125,11 +127,14 @@ B-rep intersection of every envelope with the shells, plate, angles, RF bay, ped
 
 ## Тісні місця (зазор < 0.5 мм, модель)
 
+- display ↔ pwr_key_body: 0 мм
 - CTRL.r0 ↔ plate.boss2: 0.4 мм
 - q6a.board ↔ closure.boss6: 0.4 мм
+- hatch_parts ↔ edl_key_body: 0 мм
 - v4l_a ↔ rfbay.wall.bottom: 0.4 мм
 - v4l_b ↔ rfbay.wall.bottom: 0.4 мм
 - RF.r0 ↔ rfbay.wall.bottom: 0.4 мм
+- pwr_key_body ↔ plate.main: 0 мм
 
 ## Плати: механічний інтерфейс (contract/boards.json)
 
@@ -137,8 +142,21 @@ B-rep intersection of every envelope with the shells, plate, angles, RF bay, ped
 |---|---|---|---|---|---|---|
 | PWR | PWR_MAIN, PWR_BRANCH, USB_POWER | 7910 | 7 x ⌀3.2 | ≤9 | default: (6, 38.5) z 40.9 +z | plate front face; Gelid 0.5 mm pads under the thermal_bond zones, gap 0.4 mm set by shim washers (mechanical.json pwr_bond) |
 | RF | RF_HMC, RF_HF, RF_INJECTOR, DC_CORE | 8188 | 6 x ⌀3.2 | ≤5.5 | default: (17.6, 99) z 35.5 -z | PEM SO-M3-3 thru-hole standoffs (3 mm) clinched into the plate, heads flush with the plate front face; single RF GND/CHASSIS bond at BOND-RF |
-| CTRL | CTRL_HMI | 5915 | 6 x ⌀2.7 | ≤5.5 | default: (176, 13) z 54.9 +z | M2.5 screws into front-shell bosses |
-| ENC | CTRL_HMI (SW/encoder contacts) | 576 | 2 x ⌀2.7 | ≤6.5 | main: (188.5, 123) z 54.3 +z; volume: (188.5, 82) z 54.3 +z | 2x M2.5 into front-shell bosses |
+| CTRL | CTRL_HMI | 5915 | 6 x ⌀2.7 | ≤5.5 | default: (176, 13) z 54.9 +z | M2.5 screws into CNC Kitchen TC-M2,5x4 inserts in the front-shell bosses |
+| ENC | ENC | 576 | 2 x ⌀2.7 | ≤6.5 | main: (188.5, 123) z 54.3 +z; volume: (188.5, 82) z 54.3 +z | 2x M2.5 into CNC Kitchen TC-M2,5x4 inserts in the front-shell bosses |
+
+## Площа плат: деталі і роз'єми джгутів (оцінка, модель)
+
+courtyard estimate per footprint class x 1.8 placement density (model, not a placement); courtyard w x d per header (parts.json harness_headers) x 1.8 placement density, added to the parts estimate; frontage = sum of header widths against the edge zones of boards.json (every header at an edge, cable leaving sideways).
+
+MODEL ESTIMATE: reported, not gated (OPEN = the outline or the harness architecture needs a wave-2 decision)
+
+| плата | контур, мм² | деталі (без джгутів), мм² | результат | роз'ємів джгутів | з роз'ємами, мм² | ширина роз'ємів / крайові зони, мм | результат |
+|---|---|---|---|---|---|---|---|
+| PWR | 7910 | 7597 | PASS (model) | 32 | 12461 | 396 / 233 | OPEN: area 12461 > 7910 mm2; frontage 396 > 233 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2) |
+| RF | 8188 | 2787 | PASS (model) | 4 | 3640 | 57 / 344 | PASS (model) |
+| CTRL | 5915 | 3049 | PASS (model) | 20 | 7697 | 309 / 145 | OPEN: area 7697 > 5915 mm2; frontage 309 > 145 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2) |
+| ENC | 576 | — | — | 2 | 169 | 11 / 12 | PASS (model) |
 
 ## Розташування конвертів (мм; x вправо, y вгору з лиця, z від задньої зовнішньої грані)
 
@@ -149,7 +167,7 @@ B-rep intersection of every envelope with the shells, plate, angles, RF bay, ped
 | display | display_module | 6.3-170.52 | 50.3-148.28 | 56.5-62.5 | front_wall |
 | hdmi_board | hdmi_board | 50-146.2 | 75-157 | 45-56 | plate_front |
 | PWR.r0 | PWR | 6-142 | 38.5-73.5 | 40.9-51.5 | plate_front |
-| PWR.r1 | PWR | 6-48 | 73.5-148.5 | 40.9-52 | plate_front |
+| PWR.r1 | PWR | 6-48 | 73.5-148.5 | 40.9-53 | plate_front |
 | blower | blower | 144-174.5 | 38.5-69 | 45-55.5 | plate_front |
 | CTRL.r0 | CTRL | 176-226 | 13-81.5 | 54.9-62 | front_wall |
 | CTRL.r1 | CTRL | 176-188 | 81.5-147.5 | 54.9-62 | front_wall |
@@ -174,7 +192,7 @@ B-rep intersection of every envelope with the shells, plate, angles, RF bay, ped
 | q6a.header40 | q6a | 169.03-219.83 | 87.14-94.35 | 21.25-30.9 | plate_rear |
 | q6a.j21_3p | q6a | 202.95-210.57 | 39.39-41.93 | 22.4-30.9 | plate_rear |
 | q6a.hdr2x2 | q6a | 162.91-167.99 | 82.36-87.44 | 23.4-30.9 | plate_rear |
-| q6a.uart5_plug | q6a | 169.03-219.83 | 87.14-94.35 | 14.4-30.9 | plate_rear |
+| q6a.s01_idc_socket | q6a | 169.03-219.83 | 87.14-94.35 | 14.4-30.9 | plate_rear |
 | cooler_a.block | q6a_cooler_zone | 172.63-189.63 | 51.84-81.5 | 24.9-29.9 | q6a |
 | cooler_a.fins | q6a_cooler_zone | 169-201 | 50.5-81.5 | 20.4-24.9 | q6a |
 | cooler_a.fan | q6a_cooler_zone | 164-204 | 46-86 | 10.4-20.4 | q6a |
@@ -186,6 +204,7 @@ B-rep intersection of every envelope with the shells, plate, angles, RF bay, ped
 | hdmi_route_front_turn | резерв (порожньо) | 210.8-221.8 | 66-76.8 | 45.7-51.3 | free |
 | hdmi_route_front_run | резерв (порожньо) | 146.2-221.8 | 71.2-76.8 | 45.7-51.3 | free |
 | hatch_parts | — | 116-138 | 40-90 | 2.5-13.5 | rear_wall |
+| edl_key_body | pv6_button | 119-135 | 72-88 | 13.5-28.1 | rear_wall |
 | t7_gland_body | — | 143-157 | 59-73 | 2.5-15.5 | rear_wall |
 | t7_gland_outside | — | 143-157 | 59-73 | -15-0 | outside |
 | v4l_a | v4l | 17.6-112.6 | 99-126 | 4.1-17.1 | rf_lid |
@@ -194,8 +213,7 @@ B-rep intersection of every envelope with the shells, plate, angles, RF bay, ped
 | flamingo | flamingo_fm | 100.9-174.6 | 126.5-157.1 | 4.1-22.8 | rf_lid |
 | RF.r0 | RF | 17.6-201.6 | 99-143.5 | 28.4-35.5 | plate_rear |
 | gx16 | gx16_socket | 165-185 | 15-35 | 2.5-24.5 | rear_wall |
-| pwr_key_body | pv0_button | 151.5-164.5 | 135-157.5 | 41.5-54.5 | front_wall |
-| pwr_key_nut | — | 150-166 | 154.5-157.5 | 40-56 | front_wall |
+| pwr_key_body | pv6_button | 147.5-163.5 | 137-157.5 | 40.5-56.5 | front_wall |
 | nut.P1 | — | 38.42-48.58 | 153-155.5 | 24.93-35.08 | angle |
 | nut.P2 | — | 58.42-68.58 | 153-155.5 | 24.93-35.08 | angle |
 | nut.P3 | — | 78.42-88.58 | 153-155.5 | 24.93-35.08 | angle |
@@ -212,7 +230,7 @@ solid CAD volume x 1.13 g/cm3 (PolyLite ASA, ISO 1183); real prints with 30 % in
 
 | деталь | об'єм, cm³ | g (суцільна) |
 |---|---|---|
-| front_shell | 158.11 | 179 |
+| front_shell | 157.89 | 178 |
 | rear_shell | 126.02 | 142 |
 | hatch_cover | 5.68 | 6 |
 | hood | 15.87 | 18 |

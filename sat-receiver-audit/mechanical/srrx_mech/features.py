@@ -20,7 +20,7 @@ HOLES = {
     "m12_gland": {"d": 12.2, "basis": "M12x1.5 clearance (design)"},
     "gx16": {"d": 16.0, "basis": "STACK D15: Olimex GX16-4 needs a 16 mm hole (not 12)"},
     "pec11r": {"d": 7.3, "basis": "M7x0.75 bushing (Bourns PEC11R datasheet), 0.3 clearance (design)"},
-    "pv0": {"d": 12.1, "basis": "E-Switch PV0 datasheet 3.16.2026: panel cut-out 12.00 +0.20/-0.00 (drill 12.0, ream to 12.1), panel 1-6 mm"},
+    "pv6": {"d": 16.1, "basis": "E-Switch PV6 datasheet 8.28.2025: panel cut-out 16.00 +0.20/-0.00 (drill 16.0, ream to 16.1), panel 1-10 mm"},
     "tbd": {"d": 3.0, "basis": "pilot only: connector MPN not chosen (MECH-07); final cut-out from the chosen part's drawing"},
     "pilot": {"d": 3.0, "basis": "pilot only: SKU TBD"},
 }

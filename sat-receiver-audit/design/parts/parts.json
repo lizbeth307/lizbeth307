@@ -1,7 +1,7 @@
 {
  "schema": 1,
  "title": "SR-RX-v2.1 parts database",
- "updated": "2026-11-06",
+ "updated": "2026-11-07",
  "policy": {
   "distributors": [
    "LCSC",
@@ -19,7 +19,8 @@
  "snapshots": [
   "design/parts/snapshots/2026-10-24-manual.json",
   "design/parts/snapshots/2026-11-06-lcsc.json",
-  "design/parts/snapshots/2026-11-06-manual.json"
+  "design/parts/snapshots/2026-11-06-manual.json",
+  "design/parts/snapshots/2026-11-07-manual.json"
  ],
  "bom_v2_rows": {
   "4": {
@@ -216,6 +217,11 @@
    "status": "db",
    "note": "TPD4E1U06DBVR"
   },
+  "83": {
+   "status": "partial",
+   "note": "латунні гвинти M4×20 — assembly_items AI-M4X20-BRASS",
+   "remaining": "провідна фольгова стрічка по шву кришки ×1, клейка термоусадка ×1 набір"
+  },
   "84": {
    "status": "db",
    "note": "U304"
@@ -223,6 +229,20 @@
   "85": {
    "status": "db",
    "note": "BT301"
+  },
+  "86": {
+   "status": "partial",
+   "note": "вставки TC-M3x5.7 і TC-M2,5x4 — assembly_items AI-INSERT-M3/AI-INSERT-M25 (кількості з моделі механіки); прокладки 0.5 мм — AI-GELID-A",
+   "remaining": "Polymaker ASA White 1 kg PF01002 ×1; CNC Kitchen вставка 1/4-20x12.7 ×1 (носій паку IMU); гвинти M2.5x6 TX8 A2 ×4 (Q6A, F01) і мідні M2.5x12; Gelid GP-Ultimate 1.0 мм 90x50 TP-GP04-B ×1; Peak Design Leash ×1"
+  },
+  "87": {
+   "status": "db",
+   "note": "гвинти M3 ISO 14580 за довжинами моделі механіки — assembly_items AI-M3X4/AI-M3X5/AI-M3X14 (CNC Kitchen), довжини шва, лючка й пластини — TBD"
+  },
+  "90": {
+   "status": "partial",
+   "note": "клапани LTW: 2× VENT-PS1NBK-O8002 (V1/V2) і 3× VENT-PS1YBK-O8002 (Gainta) — assembly_items AI-VENT-NBK/AI-VENT-YBK",
+   "remaining": "11× GCT RFCT-SMA-CAP-GS-1; 3× Gainta G201-IP67; 6× LAPP SKINTOP ST-M 12x1.5 (53111400); піна Qualtek 09150-M-30; сітка 316; 2× OP/TECH Rainsleeve 18 in (9001132); 3M Scotch 23; MOLYKOTE 4 100 g; силікагель без кобальту + картка; непровідні заглушки F, USB-C, USB-A, 3.5 мм, LAB BUS"
   },
   "91": {
    "status": "partial",
@@ -4428,7 +4448,7 @@
   },
   {
    "id": "F-0297007.5-WXNV",
-   "mount": "remote",
+   "mount": "pcb_tht",
    "footprint": "Fuse:Fuseholder_Blade_Mini_Keystone_3568",
    "manufacturer": "Littelfuse",
    "mpn": "029707.5WXNV",
@@ -4448,7 +4468,7 @@
     }
    ],
    "single_source": "Littelfuse MINI blade; never clone MINI fuses (10-bom section 6)",
-   "note": "LCSC C178942 (named in 10-bom row 71) is the exact 029707.5WXNV. F101 sits at the pack positive (STACK D2 'near the battery', E1 group 'Пак 4S1P', build/16 unit PACK): the Keystone 3568 holder is on a small carrier or in the 18 AWG battery lead, not on the power board.",
+   "note": "LCSC C178942 (named in 10-bom row 71) is the exact 029707.5WXNV. Integration 2026-11-07 (build/15 «Кількість плат»): F101 sits in the Keystone 3568 holder on the small carrier board PACK_FUSE at the pack positive (STACK D2 «біля батареї», E1 group «Пак 4S1P», build/16 unit PACK), with 18 AWG solder pads, insulated and fixed beside the battery tray; pcb/prepare.py gives it the PACK_FUSE domain, so it is not counted on the power board. The carrier layout is wave 2 (W2-05); the mechanical envelope is open (mechanical/README).",
    "refs": [
     "F101"
    ]
@@ -4569,7 +4589,7 @@
     }
    ],
    "single_source": "Bourns encoder with push switch named in STACK; the switch contacts are SW308/SW309",
-   "note": "S1/S2 pads carry the push switch; in the graph that switch is the separate ref SW308/SW309, so the PCB netlist leaves S1/S2 unconnected until the graph moves the switch onto ENC pins (see coverage open items). 10-bom row 49 buys 3 (1 spare).",
+   "note": "S1/S2 pads carry the push switch; in the graph that switch is the separate ref SW308/SW309, so the PCB netlist leaves S1/S2 unconnected until the graph moves the switch onto ENC pins (see coverage open items). 10-bom row 49 buys 3 (1 spare). Integration 2026-11-07: each encoder sits on its own ENC daughterboard (pcb/prepare.py domain ENC; STACK §5.8 «на малій дочірній платі з роз’ємом», mechanical/params/boards.json ENC, two in use + one spare board), linked to CTRL by JST PH (build/16 S37/S38).",
    "unused_pads": {
     "S1": "push-switch contact; in the graph the switch is SW308 (ENC301) / SW309 (ENC302), see open items",
     "S2": "push-switch contact; in the graph the switch is SW308 (ENC301) / SW309 (ENC302), see open items",
@@ -4695,7 +4715,8 @@
    ],
    "refs": [
     "J302"
-   ]
+   ],
+   "note": "J302 stays on CTRL_HMI as graph E3 puts it (build/15 «Сигнальні джгути», 2026-11-07); the S02 lead carries PHR-5 at both ends and its power-board end plugs into the B5B header listed in extras (build/16 connector J302M-PWR)."
   },
   {
    "id": "J-PH-B3B",
@@ -4729,7 +4750,8 @@
    ],
    "refs": [
     "J502"
-   ]
+   ],
+   "note": "UART5 console header on the service-hatch board HATCH (pcb/prepare.py domain HATCH), reached through the rear service hatch; the console adapter lead carries the PHR-3 housing (extras). JST PH offers only PCB headers as mates, which is why J502 stays a board header."
   },
   {
    "id": "J-MICROFIT-3",
@@ -4761,7 +4783,7 @@
      "qty_per_ref": 3
     }
    ],
-   "note": "J21 service harness: 20 AWG twisted pair + KEY 26-28 AWG; the Q6A end is soldered to the J21 pads (J521).",
+   "note": "J21 service connector on the service-hatch board HATCH (pcb/prepare.py domain HATCH; build/15 «Сигнальні джгути»): 43650-0315 header on the hatch board, 43645-0300 receptacle on the S16 lead to the J21 pads (J521). Gauges: 12 V/GND 20 AWG twisted pair, KEY 24 AWG — the thinnest wire the 43030 terminals take (20-24 AWG; build/15 «Живлення ≥2 A»).",
    "refs": [
     "J503"
    ]
@@ -4859,7 +4881,8 @@
   },
   {
    "id": "U-POLOLU-4095",
-   "mount": "module",
+   "mount": "pcb_module",
+   "footprint": "SR_RX_Custom:Pololu_D36V50Fx",
    "manufacturer": "Pololu",
    "mpn": "D36V50F12",
    "sku": {
@@ -4867,14 +4890,15 @@
    },
    "match": "D36V50F12",
    "single_source": "Pololu only; gate C4 fallback TI LM61460 on a custom board",
-   "note": "Pololu #4095; Botland id 16387 per 10-bom row 61; Pololu shows \"Rationed\".",
+   "note": "Pololu #4095; Botland id 16387 per 10-bom row 61; Pololu shows \"Rationed\". Integration 2026-11-07 (build/15 «Кількість плат»): U107 is soldered into the PWR board like U108 (mechanical/params/boards.json modules_on_board), not mounted on the plate with a harness. Footprint from the Pololu dimension drawing https://www.pololu.com/file/0J1732/d36v50fx-step-down-voltage-regulator-dimensions.pdf (reg24d, 24 December 2019; linked from https://www.pololu.com/product/4091/resources, read 2026-11-07): 12 holes D1.02 on a 0.1 in grid (VOUT, GND x4, VIN, VRP doubled; EN and PG single), three D2.18 M2 holes; the module has 1.8 mm parts on its bottom side, so it stands on its header spacer, not flat on the PWR board.",
    "refs": [
     "U107"
    ]
   },
   {
    "id": "U-POLOLU-4091",
-   "mount": "module",
+   "mount": "pcb_module",
+   "footprint": "SR_RX_Custom:Pololu_D36V50Fx",
    "manufacturer": "Pololu",
    "mpn": "D36V50F5",
    "sku": {
@@ -4882,7 +4906,7 @@
    },
    "match": "D36V50F5",
    "single_source": "Pololu only",
-   "note": "Pololu #4091 (v2.1 LAB5 default); Pololu shows \"Rationed\".",
+   "note": "Pololu #4091 (v2.1 LAB5 default); Pololu shows \"Rationed\". Soldered into the PWR board with both paired power pins (E1 U108); footprint from the Pololu dimension drawing https://www.pololu.com/file/0J1732/d36v50fx-step-down-voltage-regulator-dimensions.pdf (reg24d, 24 December 2019; linked from https://www.pololu.com/product/4091/resources, read 2026-11-07); module bottom-side parts 1.8 mm, so it stands on its header spacer.",
    "refs": [
     "U108"
    ]
@@ -4908,7 +4932,7 @@
      "qty_per_ref": 1
     }
    ],
-   "note": "Female on the pack side; pigtail 18 AWG.",
+   "note": "Female on the pack/PWR side (the energised side stays female); pigtail 18 AWG; XT30U-M is on the service lead (build/16 S12).",
    "interface_open": "XT30U-F на пігтейлі 18 AWG і XT30U-M для сервісного дроту обрано; кріплення роз’єму в корпусі (сервісний доступ, фіксація, ущільнення) і з’єднання пігтейла з силовою платою не задано — механічний пакет і таблиця джгутів (build/16).",
    "refs": [
     "J101"
@@ -5007,13 +5031,13 @@
    "mount": "existing",
    "note": "Connectors/pads on the purchased Radxa Q6A; mating cables and leads are separate refs or extras. What is still open per port is in interface_open (the J301 mating socket is not selected).",
    "interface_open": {
-    "J301": "Розетку 2×20 (крок 2.54 мм) для Q6A J20 і шлейф або плату до CTRL_HMI не обрано: у графі немає ні позначення, ні MPN.",
+    "J301": "Для Q6A J20 (2×20, крок 2.54 мм) обрано родину IDC (harness_families IDC): гніздо XDFH-0258-2*20P на стрічці 40 × 1.27 мм, бокс XDFH-0254-2*20P на CTRL; MPN стрічки, висота боксу (CTRL ≤5.5 мм, креслення не прочитано) і довжина S01 ≤200 мм (UART7/PPS, STACK §5.2) — TBD; стрічка йде крізь проріз пластини SL1 (M-07).",
     "J303": "Відповідна частина — вилка 1.25 мм на виводах BT301 (Electrokit 41036512, рядок 85 10-bom, не перечитано); кріплення батареї й укладання дроту не задано.",
     "J511": "Кабелі до J5: USB3 до T7 (U540) і USB2 до RTL-B (J541) — окремі записи; фіксація штекерів і розвантаження натягу в корпусі не задано (механічний пакет).",
     "J512": "Кабелі USB2 без провідника VBUS до хаба U510 і сенсорного контролера U520 не мають MPN; фіксація штекерів не задана.",
     "J520": "Кабель HDMI — супутня деталь U520 (Adafruit 2420); фіксація штекера й розвантаження натягу не задано (механічний пакет).",
-    "J521": "Заводську вилку J21 знімають після прогону; дроти від площадок J21 до J503 (Micro-Fit 3.0) — довжина й переріз у таблиці джгутів (build/16) ще не задано.",
-    "J522": "Дроти від площадок заводської кнопки EDL до SW501 (PV6F240SS) не задано (провід, довжина, фіксація пайки).",
+    "J521": "Заводську вилку J21 знімають після прогону; провід S16 від площадок J21 до розетки 43645-0300 на J503 (плата лючка): 12 V/GND — кручена пара 20 AWG, KEY — 24 AWG (build/16 S16); довжина — TBD (CAD).",
+    "J522": "Дроти від площадок заводської кнопки EDL до SW501 (PV6F240SS на платі лючка) не задано (провід, довжина, фіксація пайки).",
     "J530": "Райзер ADT-Link R44SF (U530) — окремий запис; кріплення райзера й модуля Lime у корпусі — механічний пакет."
    },
    "refs": [
@@ -5104,7 +5128,7 @@
     }
    ],
    "match": "momentary NO",
-   "note": "Антивандальна кнопка PV6: SPST-NO Off-(On), 2 A 48 V DC, виріз ⌀16 мм, панель 1-10 мм, рекомендований момент 0.6 Н·м, IP65 (даташит E-Switch PV6 від 28.08.2025, прочитано 06.11.2026). IP65 — нижче за IP67, який просить пакет складання (кандидат PV0 без коду); SW501 (EDL) — та сама кнопка в заглибленні панелі (механічний пакет).",
+   "note": "Антивандальна кнопка PV6 для SW301 і SW501 (рішення build/15 «Сигнальні джгути», 07.11.2026): SPST-NO Off-(On), 2 A 48 V DC, виріз ⌀16.00 +0.20 мм, панель 1-10 мм, рекомендований момент 0.6 Н·м, IP65; без підсвічування: безель ⌀18.00 × 1.50 над панеллю, різьба M16×1.0, 17.50 ±0.50 від безеля до кінців виводів (даташит E-Switch PV6 від 28.08.2025, с. 1, 3, 5, прочитано 06.11.2026 і 07.11.2026). IP65 вище за ціль корпусу IPX4/IP54 (STACK), тож IP67 пакета складання не потрібен. SW301 — верхня грань (механічна модель, pwr_key_body); SW501 (EDL) — на платі лючка за кришкою сервісного лючка (edl_key_body). Розмір гайки даташит не дає (TBD).",
    "refs": [
     "SW301",
     "SW501"
@@ -5605,7 +5629,7 @@
     "digikey": "931-1098-ND"
    },
    "single_source": "Taoglas U.FL-SMA bulkhead pigtail; length 100 mm",
-   "note": "U.FL (MHF1) to SMA bulkhead; 10-bom row 91 option for P7 → LC76G. DigiKey DE EUR 3.90 @1 on 2026-10-24.",
+   "note": "U.FL (MHF1) to SMA bulkhead; 10-bom row 91 option for P7 → LC76G. DigiKey DE EUR 3.90 @1 on 2026-10-24. The mechanical model puts the LC76G at the rear-left wall and P7 on the top face at x 163.5: the straight line from the nearest LC76G corner to P7 is at least 113 mm (fit-report), more than this 100 mm lead, so a longer U.FL-SMA bulkhead pigtail (≥200 mm, MPN TBD — no page read) is needed unless the LC76G moves (build/15 «Оболонка D15»).",
    "refs": [
     "W407"
    ]
@@ -5664,7 +5688,7 @@
     }
    ],
    "match": "RG316 SMA-M/M 0.10 m",
-   "note": "Збірка SMA-вилка / SMA-вилка RG-316 152.4 мм замість 0.10 м графа: коротших складських збірок на DigiKey DE 06.11.2026 не знайдено (найкоротші в серіях 135101-01 і 415-0029 — 152.4 мм). Зайві 52 мм RG-316 перед LaNA і після неї врахувати в бюджеті S-band (E4); ворота лишаються OPEN.",
+   "note": "Збірка SMA-вилка / SMA-вилка RG-316 152.4 мм замість 0.10 м графа: коротших складських збірок на DigiKey DE 06.11.2026 не знайдено (найкоротші в серіях 135101-01 і 415-0029 — 152.4 мм). Зайві 2 × 52 мм RG-316 (W422 перед LaNA, W423 після неї): дод. втрати = 0.0524 м × загасання RG-316 на 2.2–2.3 ГГц — TBD (даташит Cinch 415-0029-006 не прочитано), примітка build/06 §S-band; виміряні втрати кабелю — ворота E4-04 (OPEN).",
    "refs": [
     "W422",
     "W423"
@@ -5886,8 +5910,8 @@
      "qty_per_ref": 6
     }
    ],
-   "note": "GX12 6-pin set (male+female) for LAB BUS: a different shell size from the GX16-4 IMU connector, so the two cannot be swapped (MECH-07); IP rating to be checked.",
-   "interface_open": "Пару GX12-6 і вилку JST PH на платі (супутня деталь, позначення в графі немає) обрано; виріз панелі, IP і дроти до плати — механічний пакет (MECH-07) і build/16.",
+   "note": "GX12 6-pin set (male+female) for LAB BUS J505 — the decision of build/15 «Сигнальні джгути» (2026-11-07): verified LCSC code, solder cups for the S34 wire harness, and a different shell size from the GX16-4 IMU connector, so the two cannot be swapped (MECH-07); binder M8 86 6618 1120 00006 stays the recorded IP67 alternative. The LCSC page (read 2026-11-07) gives no cut-out, nut, IP rating or drawing text: cut-out TBD; LAB BUS gets a cap (10-bom row 90).",
+   "interface_open": "Пару GX12-6 і вилку JST PH на платі (супутня деталь, позначення в графі немає) обрано; виріз панелі, гайка, момент і IP — TBD (сторінка LCSC без креслення), дроти до плати — build/16 S34.",
    "refs": [
     "J505"
    ]
@@ -5927,6 +5951,324 @@
    "refs": [
     "J550"
    ]
+  }
+ ],
+ "assembly_items": [
+  {
+   "id": "AI-PEM-F-M3-1",
+   "item": "самоклінчувальна гайка врівень PEM F-M3-1 (нержавійка) у пластину 2 мм",
+   "qty": 15,
+   "spares": 2,
+   "for": "M-07: PWR1-7 (кріплення PWR, build/17 F06), AT1-5 і AR1-3 (Al-кутники, F31); отвір 4.37 +0.08, ≥6.00 мм від кромки",
+   "manufacturer": "PennEngineering (PEM)",
+   "mpn": "F-M3-1",
+   "sku": {
+    "web": "pem-f-m3-1"
+   },
+   "note": "ставиться пресом (PEMSERTER або ручний прес з пуансоном, build/21 E2); твердість листа ≤HRB 70 / HB 125"
+  },
+  {
+   "id": "AI-PEM-SO-M3-3ZI",
+   "item": "самоклінчувальна наскрізна стійка PEM SO-M3-3ZI, 3 мм",
+   "qty": 6,
+   "spares": 2,
+   "for": "M-07: RF1-6 (кріплення RF-плати, build/17 F07); отвір 4.22 +0.08, ≥6.00 мм від кромки, голівка врівень з лицьовою гранню",
+   "manufacturer": "PennEngineering (PEM)",
+   "mpn": "SO-M3-3ZI",
+   "sku": {
+    "web": "pem-so-m3-3zi"
+   },
+   "note": "ставиться пресом (build/21 E2); нержавіюча альтернатива SOS-M3-3 — сторінку не прочитано"
+  },
+  {
+   "id": "AI-M3X4-ISO14580",
+   "item": "гвинт M3×4 ISO 14580 A2 TX10",
+   "qty": 15,
+   "spares": 2,
+   "for": "PWR → PEM F-M3-1 ×7 (плата 1.6 + шайба 0.4 + пластина 2.0, boards.json PWR) і кутники → пластина ×8 (кутник 2 + пластина 2, mechanical.json angles)",
+   "manufacturer": "CNC Kitchen",
+   "mpn": "ISO 14580 A2 M3×4 TX10",
+   "source": "CNC Kitchen (10-bom row 87, v2 18.10.2026; page not re-read)"
+  },
+  {
+   "id": "AI-M3X5-ISO14580",
+   "item": "гвинт M3×5 ISO 14580 A2 TX10",
+   "qty": 6,
+   "spares": 2,
+   "for": "RF-плата → стійки SO-M3-3 (boards.json RF, build/17 F07)",
+   "manufacturer": "CNC Kitchen",
+   "mpn": "ISO 14580 A2 M3×5 TX10",
+   "source": "CNC Kitchen (10-bom row 87, v2 18.10.2026; page not re-read)"
+  },
+  {
+   "id": "AI-M3X14-ISO14580",
+   "item": "гвинт M3×14 ISO 14580 A2 TX10",
+   "qty": 3,
+   "spares": 2,
+   "for": "тримач T7 ззовні у вставки на задній стінці (mechanical.json t7_holder; 14 — непереважна довжина ISO)",
+   "manufacturer": "CNC Kitchen",
+   "mpn": "ISO 14580 A2 M3×14 TX10",
+   "source": "CNC Kitchen (10-bom row 87, v2 18.10.2026; page not re-read)"
+  },
+  {
+   "id": "AI-M3-CLOSURE",
+   "item": "гвинт M3 ISO 14580 A2 TX10 для шва половин корпусу",
+   "qty": 14,
+   "spares": 2,
+   "for": "mechanical.json closure: 14 бобишок (build/17 F12)",
+   "tbd": "довжину модель механіки не задає (зенковка 3.0 мм, вставка 5.7 мм; TBD з CAD)"
+  },
+  {
+   "id": "AI-M3-HATCH",
+   "item": "невипадний гвинт M3 кришки сервісного лючка",
+   "qty": 2,
+   "spares": 2,
+   "for": "mechanical.json rear_face.hatch screws (build/17 F13)",
+   "tbd": "тип і довжину невипадного гвинта не обрано"
+  },
+  {
+   "id": "AI-M3-PLATE",
+   "item": "гвинт M3 ISO 14580 A2 TX10, пластина → бобишки передньої половини",
+   "qty": 4,
+   "spares": 2,
+   "for": "M-07 PM1-4 (отвір 3.4) у вставки TC-M3x5.7 бобишок (build/17 F30)",
+   "tbd": "довжина TBD з CAD (пластина 2 + вставка 5.7)"
+  },
+  {
+   "id": "AI-M3-BOND",
+   "item": "гвинт M3 + зубчаста шайба для точок бондингу",
+   "qty": 4,
+   "spares": 2,
+   "for": "BOND-RF (M-07) і F26 (екран USB-C, корпус GX16, пластина)",
+   "tbd": "довжина й тип шайби не обрані"
+  },
+  {
+   "id": "AI-SHIM-M3-0.4",
+   "item": "шайба-прокладка M3, 0.4 мм",
+   "qty": 7,
+   "spares": 2,
+   "for": "зазор PWR → пластина 0.4 мм під термопрокладками (mechanical.json pwr_bond, MECH-04)",
+   "tbd": "MPN не обрано (MECH-04)"
+  },
+  {
+   "id": "AI-INSERT-M3",
+   "item": "термовставка CNC Kitchen TC-M3x5.7",
+   "qty": 25,
+   "spares": 3,
+   "for": "шов 14 + лючок 2 + тримач T7 3 + бобишки пластини PM1-4 4 + носій паку IMU 2 (mechanical.json, imu_pack.json)",
+   "manufacturer": "CNC Kitchen",
+   "mpn": "TC-M3x5.7",
+   "source": "CNC Kitchen (https://3djake.ch/en-CH/cnc-kitchen/threaded-inserts-m3-standard, read 24.10.2026 by the assembly package; 10-bom row 86)"
+  },
+  {
+   "id": "AI-INSERT-M25",
+   "item": "термовставка CNC Kitchen TC-M2,5x4",
+   "qty": 10,
+   "spares": 2,
+   "for": "CTRL 6 (boards.json CTRL holes) + ENC 2 × 2 (boards.json ENC)",
+   "manufacturer": "CNC Kitchen",
+   "mpn": "TC-M2,5x4",
+   "source": "CNC Kitchen (https://3djake.ch/en-CH/cnc-kitchen/threaded-inserts-m25-standard, read 24.10.2026 by the assembly package; 10-bom row 86)"
+  },
+  {
+   "id": "AI-M25-CTRL-ENC",
+   "item": "гвинт M2.5 A2 TX8 для CTRL і ENC у вставки",
+   "qty": 10,
+   "spares": 2,
+   "for": "CTRL 6 + ENC 4 (build/17 F08, F29)",
+   "tbd": "довжина TBD (плата 1.6 + вставка 4.0)"
+  },
+  {
+   "id": "AI-STANDOFF-M25-6",
+   "item": "стійка M2.5 F-F 6 мм для Q6A",
+   "qty": 4,
+   "spares": 2,
+   "for": "M-07 Q6A1-4 (отвір 2.9), mechanical.json q6a_mount standoff 6.0 (build/17 F01/F02)",
+   "tbd": "MPN не обрано"
+  },
+  {
+   "id": "AI-M25-Q6A-PLATE",
+   "item": "гвинт M2.5 A2 крізь пластину в стійки Q6A",
+   "qty": 4,
+   "spares": 2,
+   "for": "M-07 Q6A1-4 з лицьового боку пластини (build/17 F02)",
+   "tbd": "довжина TBD (пластина 2 + різьба стійки)"
+  },
+  {
+   "id": "AI-M25-UFS",
+   "item": "гвинт M2.5 з потайною голівкою (ISO 10642) у бобишку UFS",
+   "qty": 2,
+   "spares": 2,
+   "for": "M-07 UB1-2 з лицьового боку пластини (build/17 F32)",
+   "tbd": "довжина TBD (пластина 2 + бобишка)"
+  },
+  {
+   "id": "AI-M3-LIME",
+   "item": "гвинт M3 п’єдесталу Lime",
+   "qty": 2,
+   "spares": 2,
+   "for": "M-07 LP1-2 (⌀3.4, build/17 F04)",
+   "tbd": "довжина й тип TBD (різьба в п’єдесталі Al, не в пластині)"
+  },
+  {
+   "id": "AI-SEAL-WASHER-M3",
+   "item": "ущільнювальна шайба M3 (bonded seal / EPDM) під голівки гвинтів шва",
+   "qty": 14,
+   "spares": 2,
+   "for": "mechanical.json closure sealing_washer",
+   "tbd": "MPN не обрано (mechanical.json closure: MPN TBD)"
+  },
+  {
+   "id": "AI-EPDM-CORD-2",
+   "item": "EPDM-шнур ⌀2.0, 70 Shore A, мм",
+   "qty": 800,
+   "spares": 0,
+   "for": "шов корпусу: 754 мм по осі паза, замовити 800 мм (fit-report «Ущільнення шва»)",
+   "tbd": "MPN/постачальника не обрано (mechanical/params/parts.json epdm_cord)"
+  },
+  {
+   "id": "AI-GELID-A",
+   "item": "термопрокладка Gelid GP-Ultimate 0.5 мм 90×50 (TP-GP04-A), аркуш",
+   "qty": 2,
+   "spares": 0,
+   "for": "T-PWR1…4: 2 аркуші за розкроєм fit-report «Термоінтерфейси»",
+   "manufacturer": "Gelid Solutions",
+   "mpn": "TP-GP04-A",
+   "source": "Gelid GP-Ultimate page https://gelidsolutions.com/product/gp-ultimate-thermal-pad/ (read 24.10.2026 by the mechanical package, mechanical/params/parts.json gelid_gp_ultimate)",
+   "note": "аркуш 1.0 мм TP-GP04-B ×1 — рядок 86 10-bom"
+  },
+  {
+   "id": "AI-VENT-NBK",
+   "item": "клапан Amphenol LTW VENT-PS1NBK-O8002 (M12×1.5, без гайки)",
+   "qty": 2,
+   "spares": 0,
+   "for": "V1/V2 у різьбових гніздах 4.0 мм (mechanical.json vents, build/17 F22a)",
+   "manufacturer": "Amphenol LTW",
+   "mpn": "VENT-PS1NBK-O8002",
+   "source": "Amphenol LTW vent catalogue https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/7136/Amphenol%20LTW_Pressure%20Relief%20Vent%20Group.pdf, PDF p. 7 (read 06.11.2026 by the mechanical package, mechanical/params/parts.json ltw_vent)",
+   "note": "SKU дистриб’ютора — TBD (сторінку не прочитано)"
+  },
+  {
+   "id": "AI-VENT-YBK",
+   "item": "клапан Amphenol LTW VENT-PS1YBK-O8002 (M12×1.5, з гайкою)",
+   "qty": 3,
+   "spares": 0,
+   "for": "3 коробки Gainta (наскрізний отвір 2.0–3.5 мм, build/17 F22b)",
+   "manufacturer": "Amphenol LTW",
+   "mpn": "VENT-PS1YBK-O8002",
+   "source": "Amphenol LTW vent catalogue https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/7136/Amphenol%20LTW_Pressure%20Relief%20Vent%20Group.pdf, PDF p. 7 (read 06.11.2026 by the mechanical package, mechanical/params/parts.json ltw_vent); продавці TME/DigiKey — 10-bom row 90 (v2)"
+  },
+  {
+   "id": "AI-M4X20-BRASS",
+   "item": "латунний гвинт M4×20 кришки паку IMU",
+   "qty": 2,
+   "spares": 2,
+   "for": "Hammond 1550Z101 (STACK §2.8, build/17 F24)",
+   "tbd": "MPN і продавця не прочитано (10-bom row 83 без продавця)"
+  },
+  {
+   "id": "AI-MOLEX-638190901",
+   "item": "ручний обтискач Molex Mini-Fit Jr. 18–24 AWG",
+   "qty": 1,
+   "spares": 0,
+   "for": "клема 0039000060 (build/16 §1, ЗБ-04)",
+   "manufacturer": "Molex",
+   "mpn": "638190901",
+   "source": "Molex 0039000060 sheet https://static.chipdip.ru/lib/677/DOC040677478.pdf (read 06.11.2026 by the assembly package, tools/assembly_data.py MOLEX-5556)"
+  },
+  {
+   "id": "AI-MOLEX-11030044",
+   "item": "екстрактор Molex Mini-Fit Jr.",
+   "qty": 1,
+   "spares": 0,
+   "for": "build/16 §1",
+   "manufacturer": "Molex",
+   "mpn": "11030044",
+   "source": "Molex 0039000060 sheet https://static.chipdip.ru/lib/677/DOC040677478.pdf (read 06.11.2026 by the assembly package, tools/assembly_data.py MOLEX-5556)"
+  },
+  {
+   "id": "AI-MOLEX-0638190000",
+   "item": "ручний обтискач Molex Micro-Fit 3.0",
+   "qty": 1,
+   "spares": 0,
+   "for": "клема 43030-0007 (build/16 §1, ЗБ-04)",
+   "manufacturer": "Molex",
+   "mpn": "0638190000",
+   "source": "Molex 43030-0007 sheet https://www.farnell.com/datasheets/1887331.pdf (read 06.11.2026 by the assembly package, tools/assembly_data.py MOLEX-43030)"
+  },
+  {
+   "id": "AI-MOLEX-0011030043",
+   "item": "екстрактор Molex Micro-Fit 3.0",
+   "qty": 1,
+   "spares": 0,
+   "for": "build/16 §1",
+   "manufacturer": "Molex",
+   "mpn": "0011030043",
+   "source": "Molex 43030-0007 sheet https://www.farnell.com/datasheets/1887331.pdf (read 06.11.2026 by the assembly package, tools/assembly_data.py MOLEX-43030)"
+  },
+  {
+   "id": "AI-JST-PH-TOOL",
+   "item": "ручний обтискач для JST SPH-002T-P0.5S",
+   "qty": 1,
+   "spares": 0,
+   "for": "build/16 §1, ЗБ-04",
+   "tbd": "каталог ePH називає лише аплікатор APLMK SPH002-05S / машину AP-K2N; ручний інструмент не обрано"
+  },
+  {
+   "id": "AI-PEM-PRESS",
+   "item": "прес для самоклінчувальних деталей PEM (з пуансоном і матрицею M3)",
+   "qty": 1,
+   "spares": 0,
+   "for": "AI-PEM-F-M3-1, AI-PEM-SO-M3-3ZI (build/21 E2)",
+   "tbd": "інструмент або послуга майстерні не обрані"
+  },
+  {
+   "id": "AI-BENCH-LEAD",
+   "item": "стендовий провід: розетка Mini-Fit Jr. 5557 на 2 конт., 18 AWG ≤0.5 м, тримач запобіжника 7.5 A у розриві",
+   "qty": 1,
+   "spares": 0,
+   "for": "вхідний роз’єм S05 на PWR (build/19 §4, ЗБ-02)",
+   "tbd": "коди розетки 5557 і тримача запобіжника не прочитано на сторінці виробника чи дистриб’ютора"
+  },
+  {
+   "id": "AI-WIRE-PTFE",
+   "item": "монтажний провід PTFE, луджена мідь, ≥200 °C — 18, 20, 24, 26, 28 AWG за кольорами build/16",
+   "qty": 1,
+   "spares": 0,
+   "for": "усі джгути build/16 (кількість жил — підсумок build/16; довжини — TBD з CAD)",
+   "tbd": "тип і MPN дроту не обрано (build/16 §1 «Ізоляція»)"
+  },
+  {
+   "id": "AI-IDC-RIBBON-40",
+   "item": "плоска стрічка 40 жил, крок 1.27 мм",
+   "qty": 1,
+   "spares": 0,
+   "for": "S01 Q6A J20 → CTRL ≤200 мм (build/16 S01)",
+   "tbd": "MPN стрічки не обрано"
+  },
+  {
+   "id": "AI-EDGE-TRIM",
+   "item": "кант-ущільнювач на кромки прорізів пластини SL1–SL3 (грумет / U-профіль), м",
+   "qty": 1,
+   "spares": 0,
+   "for": "M-07 прорізи джгутів SL1–SL3 (mechanical.json plate slots)",
+   "tbd": "профіль і MPN не обрано; кромки 2 мм Al"
+  },
+  {
+   "id": "AI-HDMI-FPC",
+   "item": "запас FPC для HDMI STACK: Adafruit 3550 (кутовий) + 3548 + 3560, обмотка заземленою мідною стрічкою",
+   "qty": 1,
+   "spares": 0,
+   "for": "R-HDMI-ROUTE OPEN — запропонований варіант за замовчуванням (build/15 «Оболонка D15»)",
+   "tbd": "сторінки Adafruit (MPN, довжина, склад) не прочитано; ферит для пласкої стрічки не обрано"
+  },
+  {
+   "id": "AI-PIGTAIL-P7-LONG",
+   "item": "пігтейл U.FL (MHF1) → SMA bulkhead ≥200 мм для P7",
+   "qty": 1,
+   "spares": 0,
+   "for": "LC76G (задня стінка ліворуч) → P7 ≥113 мм по прямій (fit-report), W407 CAB.011 100 мм не дістає",
+   "tbd": "MPN і довжину не прочитано"
   }
  ]
 }

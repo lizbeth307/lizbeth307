@@ -1892,9 +1892,9 @@
     }
   ],
   "input_file": "pcb/generated/detector-core-input.json",
-  "input_sha256": "fef6bda8887eb5862e3945dc2386ad1ebffb015429daf84ce4ebb545e3780a0b",
+  "input_sha256": "2197fb37cf250ed466637574b43982d99cf1ac1ef05fe8a04ad40082cf424cea",
   "board_file": "build/kicad/pcb-preparation/detector-core-placement.kicad_pcb",
-  "board_sha256": "f0f3191186e67c4d05361b9603523b31b71e99f5ca47426cf2b67ce0f17c5529",
+  "board_sha256": "67f5d60c0f122f3d8353200911ceb55e3bd8f6ccbb93487ffd9c88e0dc3d93d7",
   "kicad_version": "10.0.7",
   "outline_candidate_mm": {
     "x": 125.0,
@@ -2475,7 +2475,13 @@
         "RF_HMC",
         "RF_HF",
         "RF_INJECTOR",
-        "DC_CORE"
+        "DC_CORE",
+        "ENC",
+        "HATCH",
+        "T7_INSERT",
+        "HDMI_INSERT",
+        "IMU_CARRIER",
+        "PACK_FUSE"
       ],
       "requirement": "All partitions are engineering candidates. Final outline, mounting, stackup, copper weight, connector MPN/orientation and enclosure proof-fit are unset. No Gerbers/drill/production DRC is authorized by this preparation output.",
       "source": "STACK.md §5.8; build/05-mekhanika.md; build/13-pcb-preparation.md"
@@ -2495,7 +2501,7 @@
   "drc": {
     "exit_code": 5,
     "raw_file": "build/kicad/pcb-preparation/drc-raw.json",
-    "raw_sha256": "0fbc1135431be55a69b29939d9501443a1e862495e74b7e8ce89538a9886d866",
+    "raw_sha256": "3cd2cdf21c1bf5abdbd7aaa60ba4c13ab5e345ef2eae8b103484488b818eb627",
     "counts": {
       "unconnected_items": 140
     },

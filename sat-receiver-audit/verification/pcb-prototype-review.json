@@ -1,7 +1,7 @@
 {
   "status": "ROUTED_INTERNAL_PROTOTYPE_NOT_FOR_FABRICATION",
-  "source_input_sha256": "fef6bda8887eb5862e3945dc2386ad1ebffb015429daf84ce4ebb545e3780a0b",
-  "frozen_starter_sha256": "f0f3191186e67c4d05361b9603523b31b71e99f5ca47426cf2b67ce0f17c5529",
+  "source_input_sha256": "2197fb37cf250ed466637574b43982d99cf1ac1ef05fe8a04ad40082cf424cea",
+  "frozen_starter_sha256": "67f5d60c0f122f3d8353200911ceb55e3bd8f6ccbb93487ffd9c88e0dc3d93d7",
   "published_board": true,
   "external_interfaces_selected": false,
   "release": "NOT_FOR_FABRICATION",
@@ -58,7 +58,13 @@
         "RF_HMC",
         "RF_HF",
         "RF_INJECTOR",
-        "DC_CORE"
+        "DC_CORE",
+        "ENC",
+        "HATCH",
+        "T7_INSERT",
+        "HDMI_INSERT",
+        "IMU_CARRIER",
+        "PACK_FUSE"
       ],
       "requirement": "All partitions are engineering candidates. Final outline, mounting, stackup, copper weight, connector MPN/orientation and enclosure proof-fit are unset. No Gerbers/drill/production DRC is authorized by this preparation output.",
       "source": "STACK.md §5.8; build/05-mekhanika.md; build/13-pcb-preparation.md"
@@ -85,7 +91,7 @@
       "schematic_parity": 0
     },
     "ignored_checks": [],
-    "raw_sha256": "4ab541d0c84df8c2e5ac98d7f348c19e2cec56f5ed95f3e1754db88a5dacc810",
+    "raw_sha256": "db140da92d2c230710b8e1e827ab6cf67d8ec001a2c305cbd216a24b9b45260d",
     "suppressed_or_filtered": false
   },
   "track_segments": 753,
@@ -11314,8 +11320,8 @@
       "schematic_parity": 0
     },
     "ignored_checks": [],
-    "raw_sha256": "9333a873a50e864563235ad6a9ed50436b7a0a01a6e4554bf3d4e6763e2bf20e"
+    "raw_sha256": "152492d0d9307c375ba0824b576c206d0f79286319df769a19290b79698671d2"
   },
-  "board_sha256": "ca4cc5f1b39e39c0a5a23f02db910d20b6008d9bee48427d78f78237803db2d6",
+  "board_sha256": "f8ceafd2650d9f4dc4ef9fdd9744b94cdef7d9f6e212f7d49e023cabc64ba7ec",
   "frozen_starter_unchanged": true
 }

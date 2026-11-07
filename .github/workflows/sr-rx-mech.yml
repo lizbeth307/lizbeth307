@@ -9,9 +9,9 @@ name: SR-RX mechanical model
 on:
   push:
     branches: ['codex/**', 'ccr-*', 'wip/**']
-    paths: ['sat-receiver-audit/mechanical/**', 'sat-receiver-audit/pcb/generated/components.csv', '.github/workflows/sr-rx-mech.yml']
+    paths: ['sat-receiver-audit/mechanical/**', 'sat-receiver-audit/pcb/generated/components.csv', 'sat-receiver-audit/build/16-dzhgut-rozyemy.csv', '.github/workflows/sr-rx-mech.yml']
   pull_request:
-    paths: ['sat-receiver-audit/mechanical/**', 'sat-receiver-audit/pcb/generated/components.csv', '.github/workflows/sr-rx-mech.yml']
+    paths: ['sat-receiver-audit/mechanical/**', 'sat-receiver-audit/pcb/generated/components.csv', 'sat-receiver-audit/build/16-dzhgut-rozyemy.csv', '.github/workflows/sr-rx-mech.yml']
   workflow_dispatch:
 
 permissions:

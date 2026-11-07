@@ -1,6 +1,6 @@
 {
   "kicad_version": "10.0.7",
-  "assignments": 675,
+  "assignments": 677,
   "footprints": [
     {
       "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
@@ -1422,6 +1422,24 @@
       "origin": "SR_RX_Custom custom",
       "refs": [
         "A407"
+      ]
+    },
+    {
+      "footprint": "SR_RX_Custom:Pololu_D36V50Fx",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/Pololu_D36V50Fx.kicad_mod",
+      "sha256": "ca57b6cbe52f704f5d0ec8da14faf6525a02fcd895b0d4e71902722b866fdb84",
+      "pads": [
+        "EN",
+        "GND",
+        "PG",
+        "VIN",
+        "VOUT",
+        "VRP"
+      ],
+      "origin": "SR_RX_Custom custom",
+      "refs": [
+        "U107",
+        "U108"
       ]
     },
     {

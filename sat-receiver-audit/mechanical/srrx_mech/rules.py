@@ -77,6 +77,7 @@ def plate_outline(P):
 
 
 def plate_windows(P):
+    """Closed openings of the plate: the riser window and the harness slots (mechanical.json plate.slots)."""
     pl = P.mech["plate"]
     out = []
     for key in ("riser_window", "hdmi_slot"):
@@ -84,6 +85,9 @@ def plate_windows(P):
             continue
         x, y, w, h = pl[key]
         out.append((key, [(x, y), (x + w, y), (x + w, y + h), (x, y + h)]))
+    for sl in pl.get("slots", []):
+        x, y, w, h = sl["rect"]
+        out.append((sl["id"], [(x, y), (x + w, y), (x + w, y + h), (x, y + h)]))
     return out
 
 
@@ -277,10 +281,18 @@ def evaluate(P):
                 bad.append(f"{f['id']}: crosses the seam belt")
     out.append({"id": "R-PANEL-FLAT", "rule": f"side-face cut-outs on the flat face and clear of the seam belt (split plane +- {fmt_mm(keep)} mm)",
                 "value_mm": bad or "none", "result": _res(not bad), "source": "geometry of this model (outer.corner_r, gasket)"})
-    # Power key: the top wall is the PV0 panel.
-    lo, hi = P.parts["pv0_button"]["panel_t"]
-    out.append({"id": "R-PWR-KEY", "rule": "E-Switch PV0 panel thickness at the power key (top wall)", "value_mm": m["wall"], "limit_mm": [lo, hi],
-                "result": _res(lo <= m["wall"] <= hi), "source": "E-Switch PV0 datasheet (parts.json pv0_button)"})
+    # Power key: the top wall is the PV6 panel.
+    lo, hi = P.parts["pv6_button"]["panel_t"]
+    out.append({"id": "R-PWR-KEY", "rule": "E-Switch PV6F240SS panel thickness at the power key (top wall) and at SW501 (hatch board 1.6 mm)",
+                "value_mm": [m["wall"], P.boards["stackup"]["t"]], "limit_mm": [lo, hi],
+                "result": _res(lo <= m["wall"] <= hi and lo <= P.boards["stackup"]["t"] <= hi), "source": "E-Switch PV6 datasheet (parts.json pv6_button)"})
+    pk, pv = m["top_face"]["power_key"], P.parts["pv6_button"]
+    out.append({"id": "R-PWR-KEY-NUT", "rule": "PV6 panel nut inside the top wall clear of the HDMI board, the display clamp bosses and the top Al angle",
+                "value_mm": {"key_x": pk["x"], "key_z": pk["z"], "nut_d_assumed": pv["nut_d"]},
+                "result": f"OPEN: the PV6 datasheet gives no nut size; a D{pv['nut_d']:g} nut (assumption) at x {pk['x']:g} / z {pk['z']:g} would reach the HDMI "
+                          "board edge (x 146.2) and the top-right display clamp boss (z >= 56.5): measure the received nut; if it does not clear, re-place "
+                          "the key (wave 2 layout)", "source": "parts.json pv6_button; mechanical.json top_face.power_key"})
+    out.append(plate_slot_rule(P))
     out += module_rules(P)
     out += cooler_rules(P)
     # Battery-side vents: a thread that ends in the foam layer needs a hole in the foam.
@@ -305,6 +317,44 @@ def evaluate(P):
 
 def fmt_mm(v):
     return f"{v:g}"
+
+
+def _inside(p, poly):
+    x, y = p
+    ins = False
+    for i in range(len(poly)):
+        (x1, y1), (x2, y2) = poly[i], poly[(i + 1) % len(poly)]
+        if (y1 > y) != (y2 > y) and x < (x2 - x1) * (y - y1) / (y2 - y1) + x1:
+            ins = not ins
+    return ins
+
+
+def plate_slot_rule(P, web_min=1.5):
+    """Harness slots of the plate: inside the outline, with a web of at least web_min to the outline and to every other opening."""
+    pl = P.mech["plate"]
+    outline = plate_outline(P)
+    wins = plate_windows(P)
+    notches = [("notch", [(x, y), (x + w, y), (x + w, y + h), (x, y + h)]) for (x, y, w, h) in pl.get("notches", []) + pl.get("notches_right", [])]
+    worst, bad = None, []
+    for sl in pl.get("slots", []):
+        x, y, w, h = sl["rect"]
+        corners = [(x, y), (x + w, y), (x + w, y + h), (x, y + h)]
+        if not all(_inside(c, outline) for c in corners):
+            bad.append(f"{sl['id']}: outside the outline")
+            continue
+        d = min(_seg_dist(c, a, b) for c in corners for a, b in zip(outline, outline[1:] + outline[:1]))
+        for name, poly in wins + notches:
+            if name == sl["id"]:
+                continue
+            d = min([d] + [_seg_dist(c, a, b) for c in corners for a, b in zip(poly, poly[1:] + poly[:1])]
+                     + [_seg_dist(c, a, b) for c in poly for a, b in zip(corners, corners[1:] + corners[:1])])
+        if worst is None or d < worst[0]:
+            worst = (d, sl["id"])
+    ok = not bad and (worst is None or worst[0] >= web_min)
+    return {"id": "R-PLATE-SLOTS", "rule": f"plate harness slots inside the outline with a web >= {web_min:g} mm to the outline and to every other opening (worst slot)",
+            "value_mm": round(worst[0], 2) if worst else None, "limit_mm": web_min, "slot": worst[1] if worst else None,
+            "slots": [sl["id"] for sl in pl.get("slots", [])], "result": "FAIL (model): " + "; ".join(bad) if bad else _res(ok),
+            "source": "mechanical.json plate.slots (harness pass-throughs, build/16 §1)"}
 
 
 def module_rules(P):

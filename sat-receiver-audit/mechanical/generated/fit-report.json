@@ -3,8 +3,8 @@
   "status": "MODEL FIT ONLY: envelopes and datasheet dimensions; no physical part was fitted. Hardware gates stay OPEN.",
   "generator": {
     "version": "1.0.0",
-    "params_sha256": "1feb6fd68ccf6038666ebc968a7248d6946df0734eafaffdc8c4994563a1074c",
-    "pcb_components_sha256": "65d7662e271ac683d6b627fcf05060ca14205de0c2b13acc50472575e92ab556"
+    "params_sha256": "8c4e291cf3a1af193ac872276273667ef9ea980f6693ad063dfdea2e5548fb5b",
+    "pcb_components_sha256": "f9d98113d56ab15643e0024dcad92a2531cd217eba59297bdbcc60b387dd32e0"
   },
   "envelope": {
     "model": [
@@ -74,6 +74,12 @@
   "collisions": [],
   "tight_below_0_5mm": [
     {
+      "a": "display",
+      "b": "pwr_key_body",
+      "gap_mm": 0.0,
+      "result": "TIGHT (model)"
+    },
+    {
       "a": "CTRL.r0",
       "b": "plate.boss2",
       "gap_mm": 0.4,
@@ -83,6 +89,12 @@
       "a": "q6a.board",
       "b": "closure.boss6",
       "gap_mm": 0.4,
+      "result": "TIGHT (model)"
+    },
+    {
+      "a": "hatch_parts",
+      "b": "edl_key_body",
+      "gap_mm": 0.0,
       "result": "TIGHT (model)"
     },
     {
@@ -102,6 +114,12 @@
       "b": "rfbay.wall.bottom",
       "gap_mm": 0.4,
       "result": "TIGHT (model)"
+    },
+    {
+      "a": "pwr_key_body",
+      "b": "plate.main",
+      "gap_mm": 0.0,
+      "result": "TIGHT (model)"
     }
   ],
   "outside_interior": [],
@@ -114,9 +132,9 @@
     },
     {
       "item": "PWR.r1",
-      "top_z": 52.0,
-      "gap_to_module_mm": 4.5,
-      "result": "PASS (model)"
+      "top_z": 53.0,
+      "gap_to_module_mm": 3.5,
+      "result": "TIGHT (model): local, below the 4 mm channel rule"
     },
     {
       "item": "blower",
@@ -277,20 +295,48 @@
     },
     {
       "id": "R-PWR-KEY",
-      "rule": "E-Switch PV0 panel thickness at the power key (top wall)",
-      "value_mm": 2.5,
+      "rule": "E-Switch PV6F240SS panel thickness at the power key (top wall) and at SW501 (hatch board 1.6 mm)",
+      "value_mm": [
+        2.5,
+        1.6
+      ],
       "limit_mm": [
         1.0,
-        6.0
+        10.0
       ],
       "result": "PASS (model)",
-      "source": "E-Switch PV0 datasheet (parts.json pv0_button)"
+      "source": "E-Switch PV6 datasheet (parts.json pv6_button)"
+    },
+    {
+      "id": "R-PWR-KEY-NUT",
+      "rule": "PV6 panel nut inside the top wall clear of the HDMI board, the display clamp bosses and the top Al angle",
+      "value_mm": {
+        "key_x": 155.5,
+        "key_z": 48.5,
+        "nut_d_assumed": 20.0
+      },
+      "result": "OPEN: the PV6 datasheet gives no nut size; a D20 nut (assumption) at x 155.5 / z 48.5 would reach the HDMI board edge (x 146.2) and the top-right display clamp boss (z >= 56.5): measure the received nut; if it does not clear, re-place the key (wave 2 layout)",
+      "source": "parts.json pv6_button; mechanical.json top_face.power_key"
+    },
+    {
+      "id": "R-PLATE-SLOTS",
+      "rule": "plate harness slots inside the outline with a web >= 1.5 mm to the outline and to every other opening (worst slot)",
+      "value_mm": 1.5,
+      "limit_mm": 1.5,
+      "slot": "SL1",
+      "slots": [
+        "SL1",
+        "SL2",
+        "SL3"
+      ],
+      "result": "PASS (model)",
+      "source": "mechanical.json plate.slots (harness pass-throughs, build/16 §1)"
     },
     {
       "id": "R-PWR-MODULES",
       "rule": "modules on a board (height + mount standoff) inside the board envelope height there (worst module)",
-      "value_mm": 9.5,
-      "limit_mm": 9.5,
+      "value_mm": 10.17,
+      "limit_mm": 10.5,
       "module": "PWR/D36V50F12",
       "result": "PASS (model)",
       "source": "boards.json modules_on_board / height_zones; parts.json pololu_d36v50"
@@ -327,7 +373,7 @@
         "cable_od": 5.2,
         "bend_r": 8.0
       },
-      "result": "OPEN: the route needs a right-angle plug at the Q6A (MPN TBD) and has no 20 mm deep space for the two Fair-Rite 0431164281 snap ferrites (39.5 x 20 x 19.6) or for the S-fold of about 250 mm of excess cable: rule R-HDMI-ROUTE OPEN (decision: angled plug, smaller ferrites, or STACK's FPC fallback Adafruit 3548/3550 + 3560)",
+      "result": "OPEN: the route needs a right-angle plug at the Q6A (MPN TBD) and has no 20 mm deep space for the two Fair-Rite 0431164281 snap ferrites (39.5 x 20 x 19.6) or for the S-fold of about 250 mm of excess cable: rule R-HDMI-ROUTE OPEN; proposed default (build/15 'Оболонка D15', 2026-11-07): STACK's FPC reserve Adafruit 3550 (right angle) + 3548 + 3560 with a grounded copper-tape wrap; MPN, length and a ferrite for the flat cable TBD until the Adafruit pages are read",
       "source": "mechanical.json hdmi_route, layout hdmi_*"
     },
     {
@@ -381,21 +427,71 @@
     "boards": {
       "PWR": {
         "area_mm2": 7910.0,
-        "estimate_mm2": 7874.0,
-        "ratio": 1.0,
+        "estimate_mm2": 7597.0,
+        "ratio": 1.04,
+        "scope": "board parts and modules_on_board, without the harness headers",
         "result": "PASS (model)"
       },
       "RF": {
         "area_mm2": 8188.0,
         "estimate_mm2": 2787.0,
         "ratio": 2.94,
+        "scope": "board parts and modules_on_board, without the harness headers",
         "result": "PASS (model)"
       },
       "CTRL": {
         "area_mm2": 5915.0,
-        "estimate_mm2": 3160.0,
-        "ratio": 1.87,
+        "estimate_mm2": 3049.0,
+        "ratio": 1.94,
+        "scope": "board parts and modules_on_board, without the harness headers",
         "result": "PASS (model)"
+      }
+    },
+    "with_harness": {
+      "method": "courtyard w x d per header (parts.json harness_headers) x 1.8 placement density, added to the parts estimate; frontage = sum of header widths against the edge zones of boards.json (every header at an edge, cable leaving sideways)",
+      "status": "MODEL ESTIMATE: reported, not gated (OPEN = the outline or the harness architecture needs a wave-2 decision)",
+      "families_without_courtyard": [],
+      "boards": {
+        "PWR": {
+          "headers": 32,
+          "header_courtyard_mm2": 2702.0,
+          "area_mm2": 7910.0,
+          "estimate_with_headers_mm2": 12461.0,
+          "ratio": 0.63,
+          "frontage_mm": 396.0,
+          "edge_zones_mm": 233,
+          "result": "OPEN: area 12461 > 7910 mm2; frontage 396 > 233 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"
+        },
+        "RF": {
+          "headers": 4,
+          "header_courtyard_mm2": 474.0,
+          "area_mm2": 8188.0,
+          "estimate_with_headers_mm2": 3640.0,
+          "ratio": 2.25,
+          "frontage_mm": 57.0,
+          "edge_zones_mm": 344,
+          "result": "PASS (model)"
+        },
+        "CTRL": {
+          "headers": 20,
+          "header_courtyard_mm2": 2582.0,
+          "area_mm2": 5915.0,
+          "estimate_with_headers_mm2": 7697.0,
+          "ratio": 0.77,
+          "frontage_mm": 309.0,
+          "edge_zones_mm": 145,
+          "result": "OPEN: area 7697 > 5915 mm2; frontage 309 > 145 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"
+        },
+        "ENC": {
+          "headers": 2,
+          "header_courtyard_mm2": 94.0,
+          "area_mm2": 576.0,
+          "estimate_with_headers_mm2": 169.0,
+          "ratio": 3.41,
+          "frontage_mm": 11.0,
+          "edge_zones_mm": 12,
+          "result": "PASS (model)"
+        }
       }
     }
   },
@@ -982,7 +1078,7 @@
   },
   "volumes_cm3": {
     "front_shell": {
-      "cm3": 158.11,
+      "cm3": 157.89,
       "printed": true,
       "solids": 1,
       "bbox_mm": [
@@ -1122,7 +1218,7 @@
       "stl_triangles": 2846
     },
     "plate_al": {
-      "cm3": 55.98,
+      "cm3": 55.55,
       "printed": false,
       "solids": 1,
       "bbox_mm": [
@@ -1382,7 +1478,7 @@
   "printed_mass_upper_bound_g": {
     "rule": "solid CAD volume x 1.13 g/cm3 (PolyLite ASA, ISO 1183); real prints with 30 % infill weigh less",
     "parts": {
-      "front_shell": 179,
+      "front_shell": 178,
       "rear_shell": 142,
       "hatch_cover": 6,
       "hood": 18,
@@ -1408,9 +1504,10 @@
     "collisions": 0,
     "outside": 0,
     "rule_failures": 0,
-    "rules_open": 4,
+    "rules_open": 5,
     "antenna_rule_failures": 0,
     "board_area_failures": 0,
+    "board_area_harness_open": 2,
     "thermal_failures": 0,
     "thermal_open": 3,
     "gasket": "PASS (model)",

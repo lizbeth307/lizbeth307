@@ -161,7 +161,7 @@
 (property "Value" "J21 service harness 3pin locking" (at 0 -2.54 0) (effects (font (size 1.016 1.016)) ))
 (property "Footprint" "Connector_Molex:Molex_Micro-Fit_3.0_43650-0315_1x03_P3.00mm_Vertical" (at 0 0 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (property "Datasheet" "STACK.md §5.2 / engineering design" (at 0 0 0) (effects (font (size 1.016 1.016)) (hide yes)))
-(property "Description" " | design | PROJECT harness pin assignment matches original J21:1/2/3. Power/GND20AWG twisted pair, KEY26–28AWG; insulation and strain relief. No power source from service PC." (at 0 0 0) (effects (font (size 1.016 1.016)) (hide yes)))
+(property "Description" " | design | PROJECT harness pin assignment matches original J21:1/2/3. Power/GND20AWG twisted pair, KEY 24 AWG (Micro-Fit 43030 terminals take 20–24 AWG; build/15); insulation and strain relief. No power source from service PC." (at 0 0 0) (effects (font (size 1.016 1.016)) (hide yes)))
 (symbol "C_J503_0_1" (rectangle (start 0 0) (end 10.16 -7.62) (stroke (width 0.254) (type default)) (fill (type background))))
 (symbol "C_J503_1_1" (pin passive line (at -2.54 -2.54 0) (length 2.54) (name "12V" (effects (font (size 0.889 0.889)) )) (number "1" (effects (font (size 0.889 0.889)) ))) (pin passive line (at 12.7 -2.54 180) (length 2.54) (name "KEY" (effects (font (size 0.889 0.889)) )) (number "3" (effects (font (size 0.889 0.889)) ))) (pin passive line (at 5.08 -10.16 90) (length 2.54) (name "GND" (effects (font (size 0.889 0.889)) )) (number "2" (effects (font (size 0.889 0.889)) )))))
 (symbol "sr_rx_v2_completed:C_J511" (pin_names (offset 0.508)) (exclude_from_sim no) (in_bom yes) (on_board yes)

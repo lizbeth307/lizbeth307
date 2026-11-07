@@ -37,7 +37,8 @@ def render(P, report, params_short, boards_contract):
         "",
         f"- зіткнень конвертів: {s['collisions']}; поза внутрішнім об'ємом: {s['outside']}",
         f"- правила: FAIL {s['rule_failures']}, OPEN {s['rules_open']} (OPEN = потрібна обрана або виміряна деталь)",
-        f"- антенні деталі за правилом розміру: FAIL {s['antenna_rule_failures']}; площа плат: FAIL {s['board_area_failures']}",
+        f"- антенні деталі за правилом розміру: FAIL {s['antenna_rule_failures']}; площа плат (деталі без роз'ємів джгутів): FAIL {s['board_area_failures']}; "
+        f"з роз'ємами джгутів build/16: OPEN {s.get('board_area_harness_open', 0)} (оцінка, не в гейті до перерозкладки хвилі 2)",
         f"- термоінтерфейси: FAIL {s['thermal_failures']}, OPEN {s['thermal_open']}; ущільнення: {s['gasket']}",
         f"- звірка з STEP постачальника: {s['vendor_fit']}",
         f"- перетини тіл B-rep (оболонки, пластина, кутники, РЧ-відсік, лоток) з конвертами: {s.get('solid_conflicts')}; "
@@ -109,6 +110,21 @@ def render(P, report, params_short, boards_contract):
         pl = "; ".join(f"{k}: ({_r(v['origin'][0])}, {_r(v['origin'][1])}) z {_r(v['z_bottom'])} {v['facing']}" for k, v in b["placements"].items())
         out.append(f"| {bid} | {', '.join(b['domains'])} | {_r(b['area_mm2'])} | {len(b['holes_mm'])} x ⌀{_r(b['hole_d'])} | ≤{_r(b['max_component_height'])} | {pl} | {b['mount']} |")
     out.append("")
+    ba = report.get("board_area", {})
+    if ba.get("boards"):
+        out += ["## Площа плат: деталі і роз'єми джгутів (оцінка, модель)", "", ba["method"] + "; " + ba.get("with_harness", {}).get("method", "") + ".", "",
+                ba.get("with_harness", {}).get("status", ""), "",
+                "| плата | контур, мм² | деталі (без джгутів), мм² | результат | роз'ємів джгутів | з роз'ємами, мм² | ширина роз'ємів / крайові зони, мм | результат |",
+                "|---|---|---|---|---|---|---|---|"]
+        wh = ba.get("with_harness", {}).get("boards", {})
+        for bid in P.boards["boards"]:
+            p_, h_ = ba["boards"].get(bid, {}), wh.get(bid, {})
+            if not p_ and not h_:
+                continue
+            out.append(f"| {bid} | {_r(p_.get('area_mm2', h_.get('area_mm2', 0)))} | {_r(p_['estimate_mm2']) if p_ else '—'} | {p_.get('result', '—')} | "
+                       f"{h_.get('headers', '—')} | {_r(h_['estimate_with_headers_mm2']) if h_ else '—'} | "
+                       f"{(_r(h_['frontage_mm']) + ' / ' + _r(h_['edge_zones_mm'])) if h_ else '—'} | {h_.get('result', '—')} |")
+        out.append("")
     out += ["## Розташування конвертів (мм; x вправо, y вгору з лиця, z від задньої зовнішньої грані)", "",
             "| ID | деталь / плата | x | y | z | кріплення |", "|---|---|---|---|---|---|"]
     for iid, name, bx, it in item_boxes(P):

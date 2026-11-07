@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297">
 <title>M-02 Корпус: верхня грань і нижня грань</title>
-<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 1feb6fd68ccf</desc>
+<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 8c4e291cf3a1</desc>
 <rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
 <line x1="30" y1="127" x2="260" y2="127" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="260" y1="127" x2="260" y2="61" stroke="#000" stroke-width="0.5" fill="none"/>
@@ -62,10 +62,10 @@
 <line x1="228.8" y1="91" x2="238.2" y2="91" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
 <line x1="233.5" y1="95.7" x2="233.5" y2="86.3" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
 <text x="230.3" y="97.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">RX1</text>
-<circle cx="188" cy="109" r="6.05" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="180.45" y1="109" x2="195.55" y2="109" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="188" y1="116.55" x2="188" y2="101.45" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<text x="181.95" y="118.25" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">PWR_KEY</text>
+<circle cx="185.5" cy="109.5" r="8.05" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="175.95" y1="109.5" x2="195.05" y2="109.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="185.5" y1="119.05" x2="185.5" y2="99.95" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="177.45" y="120.75" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">PWR_KEY</text>
 <circle cx="150" cy="121" r="2" stroke="#000" stroke-width="0.35" fill="none"/>
 <line x1="146.5" y1="121" x2="153.5" y2="121" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
 <line x1="150" y1="124.5" x2="150" y2="117.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
@@ -184,8 +184,8 @@
 <text x="272" y="125.1" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">1/4-36 UNS bulkhead, STACK 5.8 'близько 6.4 з лискою'; D-flat per received part (TBD)</text>
 <text x="268" y="127.7" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">RX1              203.5      36  ⌀6.4</text>
 <text x="272" y="130.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">Taoglas CAB.01075 SMA(f) bulkhead, 1/4-36 assumed; datasheet not readable (403), check the p</text>
-<text x="268" y="133.3" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">PWR_KEY            158      18  ⌀12.1</text>
-<text x="272" y="136.3" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">E-Switch PV0 datasheet 3.16.2026: panel cut-out 12.00 +0.20/-0.00 (drill 12.0, ream to 12.1)</text>
+<text x="268" y="133.3" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">PWR_KEY          155.5    17.5  ⌀16.1</text>
+<text x="272" y="136.3" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">E-Switch PV6 datasheet 8.28.2025: panel cut-out 16.00 +0.20/-0.00 (drill 16.0, ream to 16.1)</text>
 <text x="268" y="138.9" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">VEML7700           120       6  ⌀4</text>
 <text x="268" y="145.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.92" text-anchor="start" fill="#000">Таблиця: bottom</text>
 <text x="268" y="150.4" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">ID                 u       v  розмір</text>
@@ -226,7 +226,7 @@
 <text x="264" y="266" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення M-02 · масштаб 1:1 · мм · допуск ±0.2, якщо не вказано</text>
 <text x="264" y="273" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: ASA (Polymaker PF01002), друк</text>
 <text x="264" y="280" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
-<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 1feb6fd68ccf · v1.0.0</text>
+<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 8c4e291cf3a1 · v1.0.0</text>
 <text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">Корпус: верхня грань і нижня грань</text>
 <text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">свердління/вирізи, 1:1</text>
 <text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Координати u/v — від лівої (A) і нижньої (B) кромок грані, як видно ззовні. Одиниці мм, допуск ±0.2.</text>

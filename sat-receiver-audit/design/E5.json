@@ -150,7 +150,7 @@
         }
       ],
       "notes": [
-        "PROJECT harness pin assignment matches original J21:1/2/3. Power/GND20AWG twisted pair, KEY26–28AWG; insulation and strain relief. No power source from service PC."
+        "PROJECT harness pin assignment matches original J21:1/2/3. Power/GND20AWG twisted pair, KEY 24 AWG (Micro-Fit 43030 terminals take 20–24 AWG; build/15); insulation and strain relief. No power source from service PC."
       ]
     },
     {

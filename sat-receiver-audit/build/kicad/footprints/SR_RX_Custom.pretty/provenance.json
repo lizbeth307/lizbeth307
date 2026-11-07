@@ -37,6 +37,12 @@
     "read": "2026-10-24",
     "source": "https://www.minicircuits.com/case_style/MC1630.pdf"
   },
+  "Pololu_D36V50Fx": {
+    "drawing": "D36V50Fx Step-Down Voltage Regulator, dev code reg24d, drawing date 24 December 2019: views 1 (board, 3x D2.18), 2 (12x D1.02 connector callouts, 2.54/1.27/6.35 mm) and 3 (pin labels PG, EN, VRP, VIN, GND, VOUT); linked from https://www.pololu.com/product/4091/resources",
+    "kind": "custom",
+    "read": "2026-11-07",
+    "source": "https://www.pololu.com/file/0J1732/d36v50fx-step-down-voltage-regulator-dimensions.pdf"
+  },
   "QFN-16-1EP_3x3mm_P0.5mm_EP1.7x1.7mm_EPAD": {
     "kind": "derived",
     "note": "HMC7992LP3DE exposed pad named EPAD; ADI outline not read (analog.com unreachable 24.10.2026): exposed-pad size must be checked against the HMC7992 package drawing before PCB release",
