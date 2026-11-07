@@ -4,7 +4,7 @@
   "generator": {
     "version": "1.0.0",
     "params_sha256": "fab8754f230bbdbcf67e6aae5b11cd850203cf138ab7ece36ee9f29e8077695f",
-    "pcb_components_sha256": "9e6bdc34a545f2e336583bc95d6d830c613508a454faee6549c191a62d61c21b"
+    "pcb_components_sha256": "298210121e54da3a8e2f9d530ec3c6ae926aebccf64557036ae4a3dd0371590e"
   },
   "envelope": {
     "model": [
@@ -1438,42 +1438,45 @@
       1.5,
       1.8
     ],
-    "parts_without_courtyard": [],
+    "parts_without_courtyard": [
+      "NT401"
+    ],
     "boards": {
       "PWR": {
         "area_mm2": 7910.0,
-        "courtyard_raw_mm2": 6411.0,
+        "courtyard_raw_mm2": 6580.0,
         "modules_mm2": 1342.0,
         "per_domain_raw_mm2": {
-          "PWR_MAIN": 2290.0,
-          "PWR_BRANCH": 3515.0,
+          "PWR_MAIN": 2340.0,
+          "PWR_BRANCH": 3634.0,
           "USB_POWER": 606.0
         },
         "per_group_raw_mm2": {
-          "E1 LAB5": 1149.0,
-          "E1 SYS12": 753.0,
+          "E1 LAB5": 1155.0,
+          "E1 SYS12": 759.0,
           "E1 Сервісний заряд": 119.0,
           "E1 AON і UV": 94.0,
           "E1 Головний вимикач": 92.0,
-          "E1 Захист USB-PD": 43.0,
+          "E1 Захист USB-PD": 50.0,
+          "E1 Контрольні точки": 31.0,
           "E1 Інгібування заряду": 26.0,
           "E1 Аварійний ADC": 13.0,
-          "E2 Boni: малошумна захищена шина": 500.0,
-          "E2 LNB: малошумна захищена шина": 410.0,
-          "E2 J21: захищене живлення 12 V": 399.0,
-          "E2 LNA4V5: паралельні LT3045": 352.0,
-          "E2 LNA: канал 2": 247.0,
-          "E2 LNA: канал 3": 247.0,
-          "E2 AUX12: верхній ключ і PTC": 185.0,
-          "E2 Дисплей: захищене живлення 12 V": 171.0,
-          "E2 Lime M.2: комутована шина 3.3 V": 166.0,
-          "E2 LNA: канал 1": 146.0,
-          "E2 LNA: канал 4": 146.0,
-          "E2 RTL-B: комутований VBUS": 136.0,
-          "E2 S-band LaNA WB: захищена шина 5 V": 136.0,
+          "E2 Boni: малошумна захищена шина": 512.0,
+          "E2 LNB: малошумна захищена шина": 416.0,
+          "E2 J21: захищене живлення 12 V": 412.0,
+          "E2 LNA4V5: паралельні LT3045": 358.0,
+          "E2 LNA: канал 2": 259.0,
+          "E2 LNA: канал 3": 259.0,
+          "E2 AUX12: верхній ключ і PTC": 191.0,
+          "E2 Дисплей: захищене живлення 12 V": 183.0,
+          "E2 Lime M.2: комутована шина 3.3 V": 173.0,
+          "E2 LNA: канал 1": 153.0,
+          "E2 LNA: канал 4": 153.0,
+          "E2 RTL-B: комутований VBUS": 142.0,
+          "E2 S-band LaNA WB: захищена шина 5 V": 142.0,
           "E2 INA3221: струми LNA1–3": 67.0,
           "E2 INA3221: струми LNA4, LNB і Boni": 67.0,
-          "E2 LNB: незалежне точне відсікання OVP": 46.0,
+          "E2 LNB: незалежне точне відсікання OVP": 52.0,
           "E2 LNB: контроль напруги": 31.0,
           "E2 Boni: контроль напруги": 31.0,
           "E2 AUX12: контроль напруги після PTC": 31.0,
@@ -1484,12 +1487,12 @@
         },
         "per_group_need_mm2": {
           "E1 LAB5": [
-            1388.0,
-            1532.0
+            1397.0,
+            1543.0
           ],
           "E1 SYS12": [
-            794.0,
-            818.0
+            803.0,
+            830.0
           ],
           "E1 Сервісний заряд": [
             179.0,
@@ -1504,8 +1507,12 @@
             166.0
           ],
           "E1 Захист USB-PD": [
-            65.0,
-            78.0
+            74.0,
+            89.0
+          ],
+          "E1 Контрольні точки": [
+            47.0,
+            56.0
           ],
           "E1 Інгібування заряду": [
             39.0,
@@ -1516,56 +1523,56 @@
             23.0
           ],
           "E2 Boni: малошумна захищена шина": [
-            750.0,
-            899.0
+            768.0,
+            922.0
           ],
           "E2 LNB: малошумна захищена шина": [
-            614.0,
-            737.0
+            624.0,
+            748.0
           ],
           "E2 J21: захищене живлення 12 V": [
-            599.0,
-            719.0
+            618.0,
+            742.0
           ],
           "E2 LNA4V5: паралельні LT3045": [
-            528.0,
-            633.0
+            537.0,
+            645.0
           ],
           "E2 LNA: канал 2": [
-            370.0,
-            444.0
+            389.0,
+            466.0
           ],
           "E2 LNA: канал 3": [
-            370.0,
-            444.0
+            389.0,
+            466.0
           ],
           "E2 AUX12: верхній ключ і PTC": [
-            278.0,
-            333.0
+            287.0,
+            345.0
           ],
           "E2 Дисплей: захищене живлення 12 V": [
-            256.0,
-            307.0
+            275.0,
+            330.0
           ],
           "E2 Lime M.2: комутована шина 3.3 V": [
-            249.0,
-            299.0
+            259.0,
+            311.0
           ],
           "E2 LNA: канал 1": [
-            220.0,
-            263.0
+            229.0,
+            275.0
           ],
           "E2 LNA: канал 4": [
-            220.0,
-            263.0
+            229.0,
+            275.0
           ],
           "E2 RTL-B: комутований VBUS": [
-            204.0,
-            245.0
+            213.0,
+            256.0
           ],
           "E2 S-band LaNA WB: захищена шина 5 V": [
-            204.0,
-            245.0
+            213.0,
+            256.0
           ],
           "E2 INA3221: струми LNA1–3": [
             101.0,
@@ -1576,8 +1583,8 @@
             121.0
           ],
           "E2 LNB: незалежне точне відсікання OVP": [
-            69.0,
-            83.0
+            78.0,
+            94.0
           ],
           "E2 LNB: контроль напруги": [
             47.0,
@@ -1608,27 +1615,27 @@
             25.0
           ]
         },
-        "parts": 329,
-        "need_1_5_mm2": 8945.0,
-        "need_1_8_mm2": 10466.0,
-        "estimate_mm2": 10466.0,
-        "ratio_1_5": 1.13,
-        "ratio_1_8": 1.32,
+        "parts": 356,
+        "need_1_5_mm2": 9198.0,
+        "need_1_8_mm2": 10770.0,
+        "estimate_mm2": 10770.0,
+        "ratio_1_5": 1.16,
+        "ratio_1_8": 1.36,
         "scope": "board parts and modules, without the harness headers",
-        "result": "OPEN: need 10466 mm2 at fill 1.8 > outline 7910 mm2 (model estimate; partition and placement decide, AREA / PCB)"
+        "result": "OPEN: need 10770 mm2 at fill 1.8 > outline 7910 mm2 (model estimate; partition and placement decide, AREA / PCB)"
       },
       "RF": {
         "area_mm2": 8188.0,
-        "courtyard_raw_mm2": 2056.0,
+        "courtyard_raw_mm2": 2338.0,
         "modules_mm2": 0.0,
         "per_domain_raw_mm2": {
           "RF_HMC": 1011.0,
-          "RF_HF": 302.0,
-          "RF_INJECTOR": 252.0,
+          "RF_HF": 321.0,
+          "RF_INJECTOR": 516.0,
           "DC_CORE": 490.0
         },
         "per_group_raw_mm2": {
-          "E4 RF and receiver interfaces": 20.0,
+          "E4 RF and receiver interfaces": 284.0,
           "E4 RF passives and drivers": 31.0,
           "E4 SP4T switches": 54.0,
           "E4 DC detectors: UHF": 95.0,
@@ -1640,8 +1647,8 @@
         },
         "per_group_need_mm2": {
           "E4 RF and receiver interfaces": [
-            29.0,
-            35.0
+            425.0,
+            510.0
           ],
           "E4 RF passives and drivers": [
             47.0,
@@ -1676,12 +1683,12 @@
             62.0
           ]
         },
-        "parts": 163,
-        "need_1_5_mm2": 3083.0,
-        "need_1_8_mm2": 3700.0,
-        "estimate_mm2": 3700.0,
-        "ratio_1_5": 0.38,
-        "ratio_1_8": 0.45,
+        "parts": 168,
+        "need_1_5_mm2": 3508.0,
+        "need_1_8_mm2": 4209.0,
+        "estimate_mm2": 4209.0,
+        "ratio_1_5": 0.43,
+        "ratio_1_8": 0.51,
         "scope": "board parts and modules, without the harness headers",
         "result": "PASS (model estimate)"
       },
@@ -1780,22 +1787,22 @@
           "headers": 32,
           "header_courtyard_mm2": 2702.0,
           "area_mm2": 7910.0,
-          "with_headers_raw_mm2": 9113.0,
-          "estimate_with_headers_1_5_mm2": 12999.0,
-          "estimate_with_headers_mm2": 15330.0,
-          "ratio": 1.94,
+          "with_headers_raw_mm2": 9282.0,
+          "estimate_with_headers_1_5_mm2": 13252.0,
+          "estimate_with_headers_mm2": 15634.0,
+          "ratio": 1.98,
           "frontage_mm": 396.0,
           "edge_zones_mm": 233,
-          "result": "OPEN: area 15330 > 7910 mm2 at fill 1.8; frontage 396 > 233 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"
+          "result": "OPEN: area 15634 > 7910 mm2 at fill 1.8; frontage 396 > 233 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"
         },
         "RF": {
           "headers": 4,
           "header_courtyard_mm2": 474.0,
           "area_mm2": 8188.0,
-          "with_headers_raw_mm2": 2530.0,
-          "estimate_with_headers_1_5_mm2": 3794.0,
-          "estimate_with_headers_mm2": 4553.0,
-          "ratio": 0.56,
+          "with_headers_raw_mm2": 2812.0,
+          "estimate_with_headers_1_5_mm2": 4219.0,
+          "estimate_with_headers_mm2": 5062.0,
+          "ratio": 0.62,
           "frontage_mm": 57.0,
           "edge_zones_mm": 344,
           "result": "PASS (model estimate)"
