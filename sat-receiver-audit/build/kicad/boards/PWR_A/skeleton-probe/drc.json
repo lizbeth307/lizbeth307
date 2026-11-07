@@ -1,0 +1,1045 @@
+{
+  "$schema": "https://schemas.kicad.org/drc.v1.json",
+  "coordinate_units": "mm",
+  "ignored_checks": [],
+  "included_severities": [
+    "error",
+    "warning",
+    "exclusion"
+  ],
+  "kicad_version": "10.0.7",
+  "schematic_parity": [],
+  "unconnected_items": [
+    {
+      "description": "Missing connection between items",
+      "items": [
+        {
+          "description": "PTH pad 2 [E1_SW] of J107",
+          "pos": {
+            "x": 116.45,
+            "y": 206.5
+          },
+          "uuid": "a036533f-64b9-43c4-9f37-c6fd5bbc4c8d"
+        },
+        {
+          "description": "PTH pad VIN [E1_SW] of U107",
+          "pos": {
+            "x": 121.97,
+            "y": 168.73
+          },
+          "uuid": "65361fac-e7de-42a1-bc75-64cc581ffae4"
+        }
+      ],
+      "severity": "error",
+      "type": "unconnected_items"
+    },
+    {
+      "description": "Missing connection between items",
+      "items": [
+        {
+          "description": "PTH pad VIN [E1_SW] of U107",
+          "pos": {
+            "x": 121.97,
+            "y": 166.19
+          },
+          "uuid": "e73c076c-eb64-46f4-89c9-13434b47523f"
+        },
+        {
+          "description": "PTH pad VIN [E1_SW] of U108",
+          "pos": {
+            "x": 121.97,
+            "y": 136.73
+          },
+          "uuid": "c5381aeb-292a-4009-b414-90266e7f9814"
+        }
+      ],
+      "severity": "error",
+      "type": "unconnected_items"
+    },
+    {
+      "description": "Missing connection between items",
+      "items": [
+        {
+          "description": "PTH pad VIN [E1_SW] of U107",
+          "pos": {
+            "x": 121.97,
+            "y": 168.73
+          },
+          "uuid": "65361fac-e7de-42a1-bc75-64cc581ffae4"
+        },
+        {
+          "description": "PTH pad VIN [E1_SW] of U107",
+          "pos": {
+            "x": 121.97,
+            "y": 166.19
+          },
+          "uuid": "e73c076c-eb64-46f4-89c9-13434b47523f"
+        }
+      ],
+      "severity": "error",
+      "type": "unconnected_items"
+    },
+    {
+      "description": "Missing connection between items",
+      "items": [
+        {
+          "description": "PTH pad VIN [E1_SW] of U108",
+          "pos": {
+            "x": 121.97,
+            "y": 136.73
+          },
+          "uuid": "c5381aeb-292a-4009-b414-90266e7f9814"
+        },
+        {
+          "description": "PTH pad VIN [E1_SW] of U108",
+          "pos": {
+            "x": 121.97,
+            "y": 134.19
+          },
+          "uuid": "cc3723d4-95f7-4edd-919b-93a5d1b13b77"
+        }
+      ],
+      "severity": "error",
+      "type": "unconnected_items"
+    },
+    {
+      "description": "Missing connection between items",
+      "items": [
+        {
+          "description": "PTH pad VOUT [SYS12] of U107",
+          "pos": {
+            "x": 114.35,
+            "y": 166.19
+          },
+          "uuid": "7f7996d2-7a25-4d4b-8662-33c4f802aa09"
+        },
+        {
+          "description": "PTH pad VOUT [SYS12] of U107",
+          "pos": {
+            "x": 114.35,
+            "y": 168.73
+          },
+          "uuid": "10ea9969-eade-4712-9d42-d3f75f128c52"
+        }
+      ],
+      "severity": "error",
+      "type": "unconnected_items"
+    },
+    {
+      "description": "Missing connection between items",
+      "items": [
+        {
+          "description": "Pad 16 [E2_BONI_IN] of U213 on F.Cu",
+          "pos": {
+            "x": 176.85,
+            "y": 191.125
+          },
+          "uuid": "9f77a0da-0cd6-4ddc-a1ee-60f847af264f"
+        },
+        {
+          "description": "Pad 15 [E2_BONI_IN] of U213 on F.Cu",
+          "pos": {
+            "x": 177.875,
+            "y": 192.15
+          },
+          "uuid": "d0ce6c15-0d4a-4966-b0f9-2a227d6dd171"
+        }
+      ],
+      "severity": "error",
+      "type": "unconnected_items"
+    },
+    {
+      "description": "Missing connection between items",
+      "items": [
+        {
+          "description": "Pad 16 [E2_LNB_IN] of U211 on F.Cu",
+          "pos": {
+            "x": 113.85,
+            "y": 191.125
+          },
+          "uuid": "0442061e-af5d-4319-8b4d-a08754ec8a14"
+        },
+        {
+          "description": "Pad 15 [E2_LNB_IN] of U211 on F.Cu",
+          "pos": {
+            "x": 114.875,
+            "y": 192.15
+          },
+          "uuid": "f4181589-df49-4903-80bc-6f44e2a3ab18"
+        }
+      ],
+      "severity": "error",
+      "type": "unconnected_items"
+    },
+    {
+      "description": "Missing connection between items",
+      "items": [
+        {
+          "description": "Pad 4 [E2_LNA_IN] of U204 on F.Cu",
+          "pos": {
+            "x": 143.98,
+            "y": 190.455
+          },
+          "uuid": "6bd5e249-a511-4a54-b8d1-6a35835b4efc"
+        },
+        {
+          "description": "Track [E2_LNA_IN] on F.Cu, length 0.6500 mm",
+          "pos": {
+            "x": 143.98,
+            "y": 195.155
+          },
+          "uuid": "1649ccc9-42e4-4fb7-b658-bbc85c4a4441"
+        }
+      ],
+      "severity": "error",
+      "type": "unconnected_items"
+    },
+    {
+      "description": "Missing connection between items",
+      "items": [
+        {
+          "description": "Pad 4 [E2_LNA_IN] of U205 on F.Cu",
+          "pos": {
+            "x": 143.98,
+            "y": 196.455
+          },
+          "uuid": "801fbcd2-0184-45cf-b971-da4b6904f7d2"
+        },
+        {
+          "description": "Pad 7 [E2_LNA_IN] of U205 on F.Cu",
+          "pos": {
+            "x": 148.28,
+            "y": 197.755
+          },
+          "uuid": "6b37f5f5-a0e8-45c2-a574-57f9f054c9cd"
+        }
+      ],
+      "severity": "error",
+      "type": "unconnected_items"
+    },
+    {
+      "description": "Missing connection between items",
+      "items": [
+        {
+          "description": "Pad 7 [E2_LNA_IN] of U204 on F.Cu",
+          "pos": {
+            "x": 148.28,
+            "y": 191.755
+          },
+          "uuid": "75d540f5-f22c-412b-bcd2-f03c429560e6"
+        },
+        {
+          "description": "Pad 4 [E2_LNA_IN] of U204 on F.Cu",
+          "pos": {
+            "x": 143.98,
+            "y": 190.455
+          },
+          "uuid": "6bd5e249-a511-4a54-b8d1-6a35835b4efc"
+        }
+      ],
+      "severity": "error",
+      "type": "unconnected_items"
+    },
+    {
+      "description": "Missing connection between items",
+      "items": [
+        {
+          "description": "Track [LAB5] on In2.Cu, length 2.6993 mm",
+          "pos": {
+            "x": 215.38,
+            "y": 178.17
+          },
+          "uuid": "e9bc1f24-d68d-4d64-a33a-d7c88b5df7b4"
+        },
+        {
+          "description": "Via [LAB5] on F.Cu - B.Cu",
+          "pos": {
+            "x": 137.93,
+            "y": 134.6955
+          },
+          "uuid": "252104ee-3a38-4f06-a51e-007bda43d712"
+        }
+      ],
+      "severity": "error",
+      "type": "unconnected_items"
+    }
+  ],
+  "violations": [
+    {
+      "description": "Copper connection too narrow (board setup constraints minimum connection width 0.1500 mm; actual 0.1124 mm) (F.Cu)",
+      "items": [
+        {
+          "description": "Pad 11 [GND] of U211 on F.Cu",
+          "pos": {
+            "x": 114.875,
+            "y": 194.75
+          },
+          "uuid": "8ae14400-ccfc-47c1-a1cb-70d2ce800b0a"
+        },
+        {
+          "description": "Track [GND] on F.Cu, length 0.3811 mm",
+          "pos": {
+            "x": 115.1445,
+            "y": 194.4805
+          },
+          "uuid": "ca28070b-110c-472d-92c9-b79cf5e793f4"
+        }
+      ],
+      "severity": "error",
+      "type": "connection_width"
+    },
+    {
+      "description": "Copper connection too narrow (board setup constraints minimum connection width 0.1500 mm; actual 0.1124 mm) (F.Cu)",
+      "items": [
+        {
+          "description": "Via [E2_LNA_SET] on F.Cu - B.Cu",
+          "pos": {
+            "x": 149.4578,
+            "y": 196.8806
+          },
+          "uuid": "a9cbc271-3567-4d9d-aa3c-fac5c6acb2df"
+        },
+        {
+          "description": "Track [E2_LNA_SET] on F.Cu, length 0.9534 mm",
+          "pos": {
+            "x": 149.4578,
+            "y": 196.8806
+          },
+          "uuid": "439c585d-e50d-4dea-9289-2217e41594e4"
+        }
+      ],
+      "severity": "error",
+      "type": "connection_width"
+    },
+    {
+      "description": "Copper connection too narrow (board setup constraints minimum connection width 0.1500 mm; actual 0.1152 mm) (F.Cu)",
+      "items": [
+        {
+          "description": "Track [E2_BONI_LDO] on F.Cu, length 0.3788 mm",
+          "pos": {
+            "x": 172.5767,
+            "y": 192.4195
+          },
+          "uuid": "9254e516-ab9c-4329-8681-9bcc904fc652"
+        },
+        {
+          "description": "Track [E2_BONI_LDO] on F.Cu, length 0.6074 mm",
+          "pos": {
+            "x": 172.5767,
+            "y": 193.0269
+          },
+          "uuid": "59b2ed89-1a04-4236-b6e4-a9825c991b34"
+        }
+      ],
+      "severity": "error",
+      "type": "connection_width"
+    },
+    {
+      "description": "Copper connection too narrow (board setup constraints minimum connection width 0.1500 mm; actual 0.1152 mm) (F.Cu)",
+      "items": [
+        {
+          "description": "Track [E2_LNA_SET] on F.Cu, length 0.7492 mm",
+          "pos": {
+            "x": 147.3064,
+            "y": 191.3294
+          },
+          "uuid": "db71ef9b-2875-4b0d-a37c-c7a53d7fc9a9"
+        },
+        {
+          "description": "Track [E2_LNA_SET] on F.Cu, length 0.9224 mm",
+          "pos": {
+            "x": 147.3064,
+            "y": 192.2518
+          },
+          "uuid": "3a81f31e-a41d-4bd5-8d3a-1559443042ba"
+        }
+      ],
+      "severity": "error",
+      "type": "connection_width"
+    },
+    {
+      "description": "Copper connection too narrow (board setup constraints minimum connection width 0.1500 mm; actual 0.1152 mm) (F.Cu)",
+      "items": [
+        {
+          "description": "Track [E2_LNB_LDO] on F.Cu, length 0.6113 mm",
+          "pos": {
+            "x": 109.5739,
+            "y": 193.0308
+          },
+          "uuid": "bf430a6d-fb4e-4f81-be08-57493b1951ff"
+        },
+        {
+          "description": "Track [E2_LNB_LDO] on F.Cu, length 0.3816 mm",
+          "pos": {
+            "x": 109.5739,
+            "y": 192.4195
+          },
+          "uuid": "14214a75-7c93-4dc3-b57b-b956606f9af5"
+        }
+      ],
+      "severity": "error",
+      "type": "connection_width"
+    },
+    {
+      "description": "Copper connection too narrow (board setup constraints minimum connection width 0.1500 mm; actual 0.1217 mm) (F.Cu)",
+      "items": [
+        {
+          "description": "Track [GND] on F.Cu, length 0.3811 mm",
+          "pos": {
+            "x": 114.6055,
+            "y": 194.4805
+          },
+          "uuid": "e5a6062c-7f06-422c-9897-890dd934579f"
+        },
+        {
+          "description": "Track [GND] on F.Cu, length 0.8635 mm",
+          "pos": {
+            "x": 113.742,
+            "y": 194.4805
+          },
+          "uuid": "247c6679-7aeb-4e0c-97e4-09ab45b7bd28"
+        }
+      ],
+      "severity": "error",
+      "type": "connection_width"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Rectangle of J109 on F.Silkscreen",
+          "pos": {
+            "x": 149.11,
+            "y": 209.31
+          },
+          "uuid": "2c8a8d05-47b5-4263-9a9e-91e47e103424"
+        },
+        {
+          "description": "Reference field of J106",
+          "pos": {
+            "x": 149.3,
+            "y": 206.5
+          },
+          "uuid": "648c6113-3035-4859-8b33-219726410cc0"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Rectangle of J110 on F.Silkscreen",
+          "pos": {
+            "x": 175.01,
+            "y": 209.31
+          },
+          "uuid": "4e805b2d-ba97-4b90-a8e4-e9d8bf372e53"
+        },
+        {
+          "description": "Reference field of J108",
+          "pos": {
+            "x": 175.2,
+            "y": 204.4
+          },
+          "uuid": "9f5b684b-ec75-4eb2-b1cd-42a58cde9fbb"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Rectangle of J111 on F.Silkscreen",
+          "pos": {
+            "x": 129.21,
+            "y": 209.31
+          },
+          "uuid": "18756deb-27b0-4460-9f20-4f82f1acb447"
+        },
+        {
+          "description": "Reference field of J105",
+          "pos": {
+            "x": 129.4,
+            "y": 206.5
+          },
+          "uuid": "a47f52b0-f273-4704-9e6d-99a0beb4f3fe"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Rectangle of J113 on F.Silkscreen",
+          "pos": {
+            "x": 215.89,
+            "y": 197.91
+          },
+          "uuid": "0bef87e0-4057-42d1-a0c3-781abf628403"
+        },
+        {
+          "description": "Reference field of J115",
+          "pos": {
+            "x": 220.83,
+            "y": 193.21
+          },
+          "uuid": "c17f8c6e-152d-480c-88cf-7550b7a33a5f"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clearance",
+      "items": [
+        {
+          "description": "Reference field of J114",
+          "pos": {
+            "x": 220.83,
+            "y": 204.37
+          },
+          "uuid": "a999d8d0-0dc7-48be-ab76-5fd9f38fe1bf"
+        },
+        {
+          "description": "Rectangle of J507 on F.Silkscreen",
+          "pos": {
+            "x": 215.89,
+            "y": 209.31
+          },
+          "uuid": "ff95eb04-1629-444e-8f68-90b5fd03099a"
+        }
+      ],
+      "severity": "warning",
+      "type": "silk_overlap"
+    },
+    {
+      "description": "Silkscreen clipped by board edge",
+      "items": [
+        {
+          "description": "Segment on Edge.Cuts",
+          "pos": {
+            "x": 100.0,
+            "y": 100.0
+          },
+          "uuid": "6abc169f-f58d-482f-b1fc-0e7e7015c4c7"
+        },
+        {
+          "description": "Reference field of F102",
+          "pos": {
+            "x": 99.55,
+            "y": 135.75
+          },
+          "uuid": "48c04fe2-ec5f-452c-8c0e-a82d199b4085"
+        }
+      ],
+      "severity": "error",
+      "type": "silk_edge_clearance"
+    },
+    {
+      "description": "Silkscreen clipped by board edge",
+      "items": [
+        {
+          "description": "Segment on Edge.Cuts",
+          "pos": {
+            "x": 100.0,
+            "y": 210.0
+          },
+          "uuid": "0f4c393e-84e5-408e-a195-4c7ef8cced62"
+        },
+        {
+          "description": "Reference field of J109",
+          "pos": {
+            "x": 146.05,
+            "y": 210.4
+          },
+          "uuid": "118dc7e1-4b98-402a-8e91-712f79ecf915"
+        }
+      ],
+      "severity": "error",
+      "type": "silk_edge_clearance"
+    },
+    {
+      "description": "Silkscreen clipped by board edge",
+      "items": [
+        {
+          "description": "Segment on Edge.Cuts",
+          "pos": {
+            "x": 100.0,
+            "y": 210.0
+          },
+          "uuid": "0f4c393e-84e5-408e-a195-4c7ef8cced62"
+        },
+        {
+          "description": "Reference field of J110",
+          "pos": {
+            "x": 168.95,
+            "y": 210.4
+          },
+          "uuid": "2b33ecb9-fef9-465f-86c4-b3f8fe3c48fb"
+        }
+      ],
+      "severity": "error",
+      "type": "silk_edge_clearance"
+    },
+    {
+      "description": "Silkscreen clipped by board edge",
+      "items": [
+        {
+          "description": "Segment on Edge.Cuts",
+          "pos": {
+            "x": 100.0,
+            "y": 210.0
+          },
+          "uuid": "0f4c393e-84e5-408e-a195-4c7ef8cced62"
+        },
+        {
+          "description": "Reference field of J111",
+          "pos": {
+            "x": 125.15,
+            "y": 210.4
+          },
+          "uuid": "4631c30d-5203-43c7-aaa1-c5a9f8944401"
+        }
+      ],
+      "severity": "error",
+      "type": "silk_edge_clearance"
+    },
+    {
+      "description": "Silkscreen clipped by board edge",
+      "items": [
+        {
+          "description": "Segment on Edge.Cuts",
+          "pos": {
+            "x": 100.0,
+            "y": 210.0
+          },
+          "uuid": "0f4c393e-84e5-408e-a195-4c7ef8cced62"
+        },
+        {
+          "description": "Reference field of J112",
+          "pos": {
+            "x": 193.85,
+            "y": 210.4
+          },
+          "uuid": "86861e0f-369e-44c5-a240-fa3de293611d"
+        }
+      ],
+      "severity": "error",
+      "type": "silk_edge_clearance"
+    },
+    {
+      "description": "Silkscreen clipped by board edge",
+      "items": [
+        {
+          "description": "Segment on Edge.Cuts",
+          "pos": {
+            "x": 142.0,
+            "y": 100.0
+          },
+          "uuid": "c02dd475-73cd-4770-b8c6-2199bfa4ac27"
+        },
+        {
+          "description": "Reference field of J205",
+          "pos": {
+            "x": 120.93,
+            "y": 99.5
+          },
+          "uuid": "f5977fee-32c2-4d20-bf97-075c6b10984b"
+        }
+      ],
+      "severity": "error",
+      "type": "silk_edge_clearance"
+    },
+    {
+      "description": "Silkscreen clipped by board edge",
+      "items": [
+        {
+          "description": "Segment on Edge.Cuts",
+          "pos": {
+            "x": 142.0,
+            "y": 175.0
+          },
+          "uuid": "e034bf82-4623-4d0b-88d9-3f1de748c93d"
+        },
+        {
+          "description": "Reference field of C113",
+          "pos": {
+            "x": 142.3,
+            "y": 145.4
+          },
+          "uuid": "8959e7dc-1147-4c31-bb11-9f01b2db42ba"
+        }
+      ],
+      "severity": "error",
+      "type": "silk_edge_clearance"
+    },
+    {
+      "description": "Silkscreen clipped by board edge",
+      "items": [
+        {
+          "description": "Segment on Edge.Cuts",
+          "pos": {
+            "x": 236.0,
+            "y": 175.0
+          },
+          "uuid": "395b0e56-a233-450b-b495-30e991b255bb"
+        },
+        {
+          "description": "Reference field of J206",
+          "pos": {
+            "x": 216.88,
+            "y": 174.5
+          },
+          "uuid": "cb1b7356-d608-4a2b-8008-33bc1e25dbca"
+        }
+      ],
+      "severity": "error",
+      "type": "silk_edge_clearance"
+    },
+    {
+      "description": "Thermal relief connection to zone incomplete (layer B.Cu; zone min spoke count 2; actual 1)",
+      "items": [
+        {
+          "description": "Zone 'GND-BOND-2' [GND] on B.Cu, priority 1",
+          "pos": {
+            "x": 172.0,
+            "y": 206.0
+          },
+          "uuid": "abcf1ae1-b379-4830-9c6d-d49f83f364f5"
+        },
+        {
+          "description": "PTH pad 1 [GND] of J108",
+          "pos": {
+            "x": 178.65,
+            "y": 206.5
+          },
+          "uuid": "a1fe9704-a8d6-43ac-87a3-b702c5c572f2"
+        }
+      ],
+      "severity": "error",
+      "type": "starved_thermal"
+    },
+    {
+      "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
+      "items": [
+        {
+          "description": "Track [E2_BONI_LDO] on F.Cu, length 0.3788 mm",
+          "pos": {
+            "x": 172.5767,
+            "y": 192.4195
+          },
+          "uuid": "9254e516-ab9c-4329-8681-9bcc904fc652"
+        }
+      ],
+      "severity": "error",
+      "type": "track_width"
+    },
+    {
+      "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
+      "items": [
+        {
+          "description": "Track [E2_BONI_LDO] on F.Cu, length 0.3811 mm",
+          "pos": {
+            "x": 172.9555,
+            "y": 192.4195
+          },
+          "uuid": "e8b25ec9-5d8b-4d14-966f-6aa0c375e48f"
+        }
+      ],
+      "severity": "error",
+      "type": "track_width"
+    },
+    {
+      "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
+      "items": [
+        {
+          "description": "Track [E2_LNA_SET] on F.Cu, length 0.3173 mm",
+          "pos": {
+            "x": 148.0556,
+            "y": 191.3294
+          },
+          "uuid": "7c07a6b9-2619-49eb-b689-69be17769cc4"
+        }
+      ],
+      "severity": "error",
+      "type": "track_width"
+    },
+    {
+      "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
+      "items": [
+        {
+          "description": "Track [E2_LNA_SET] on F.Cu, length 0.3173 mm",
+          "pos": {
+            "x": 148.5044,
+            "y": 196.8806
+          },
+          "uuid": "3546d8b8-2fbf-4b41-9d44-eb9a0b57dced"
+        }
+      ],
+      "severity": "error",
+      "type": "track_width"
+    },
+    {
+      "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
+      "items": [
+        {
+          "description": "Track [E2_LNA_SET] on F.Cu, length 0.7492 mm",
+          "pos": {
+            "x": 147.3064,
+            "y": 191.3294
+          },
+          "uuid": "db71ef9b-2875-4b0d-a37c-c7a53d7fc9a9"
+        }
+      ],
+      "severity": "error",
+      "type": "track_width"
+    },
+    {
+      "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
+      "items": [
+        {
+          "description": "Track [E2_LNA_SET] on F.Cu, length 0.9534 mm",
+          "pos": {
+            "x": 149.4578,
+            "y": 196.8806
+          },
+          "uuid": "439c585d-e50d-4dea-9289-2217e41594e4"
+        }
+      ],
+      "severity": "error",
+      "type": "track_width"
+    },
+    {
+      "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
+      "items": [
+        {
+          "description": "Track [E2_LNB_LDO] on F.Cu, length 0.3811 mm",
+          "pos": {
+            "x": 109.9555,
+            "y": 192.4195
+          },
+          "uuid": "7cf1e08e-dd95-4c02-9b18-38631c88cf48"
+        }
+      ],
+      "severity": "error",
+      "type": "track_width"
+    },
+    {
+      "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
+      "items": [
+        {
+          "description": "Track [E2_LNB_LDO] on F.Cu, length 0.3816 mm",
+          "pos": {
+            "x": 109.5739,
+            "y": 192.4195
+          },
+          "uuid": "14214a75-7c93-4dc3-b57b-b956606f9af5"
+        }
+      ],
+      "severity": "error",
+      "type": "track_width"
+    },
+    {
+      "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
+      "items": [
+        {
+          "description": "Track [GND] on F.Cu, length 0.3173 mm",
+          "pos": {
+            "x": 144.2044,
+            "y": 191.5306
+          },
+          "uuid": "6934c710-836e-4da8-b6b0-96e47a3dc575"
+        }
+      ],
+      "severity": "error",
+      "type": "track_width"
+    },
+    {
+      "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
+      "items": [
+        {
+          "description": "Track [GND] on F.Cu, length 0.3173 mm",
+          "pos": {
+            "x": 144.2044,
+            "y": 197.5306
+          },
+          "uuid": "e7fe5f69-1b02-480b-90df-96d0803c7570"
+        }
+      ],
+      "severity": "error",
+      "type": "track_width"
+    },
+    {
+      "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
+      "items": [
+        {
+          "description": "Track [GND] on F.Cu, length 0.3173 mm",
+          "pos": {
+            "x": 148.0556,
+            "y": 190.2306
+          },
+          "uuid": "eb2285b5-4c78-47e5-884a-0e6068d9088e"
+        }
+      ],
+      "severity": "error",
+      "type": "track_width"
+    },
+    {
+      "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
+      "items": [
+        {
+          "description": "Track [GND] on F.Cu, length 0.3173 mm",
+          "pos": {
+            "x": 148.0556,
+            "y": 196.2306
+          },
+          "uuid": "6f0b1f53-e3d3-42d8-a0ad-dad75cc090d2"
+        }
+      ],
+      "severity": "error",
+      "type": "track_width"
+    },
+    {
+      "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
+      "items": [
+        {
+          "description": "Track [GND] on F.Cu, length 0.3811 mm",
+          "pos": {
+            "x": 114.6055,
+            "y": 194.4805
+          },
+          "uuid": "e5a6062c-7f06-422c-9897-890dd934579f"
+        }
+      ],
+      "severity": "error",
+      "type": "track_width"
+    },
+    {
+      "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
+      "items": [
+        {
+          "description": "Track [GND] on F.Cu, length 0.3811 mm",
+          "pos": {
+            "x": 115.1445,
+            "y": 194.4805
+          },
+          "uuid": "ca28070b-110c-472d-92c9-b79cf5e793f4"
+        }
+      ],
+      "severity": "error",
+      "type": "track_width"
+    },
+    {
+      "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
+      "items": [
+        {
+          "description": "Track [GND] on F.Cu, length 0.8635 mm",
+          "pos": {
+            "x": 113.742,
+            "y": 194.4805
+          },
+          "uuid": "247c6679-7aeb-4e0c-97e4-09ab45b7bd28"
+        }
+      ],
+      "severity": "error",
+      "type": "track_width"
+    },
+    {
+      "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
+      "items": [
+        {
+          "description": "Track [GND] on F.Cu, length 1.3509 mm",
+          "pos": {
+            "x": 116.4954,
+            "y": 194.4805
+          },
+          "uuid": "af3b5531-f039-4b46-8dd6-60ca11031339"
+        }
+      ],
+      "severity": "error",
+      "type": "track_width"
+    },
+    {
+      "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
+      "items": [
+        {
+          "description": "Track [GND] on F.Cu, length 1.4256 mm",
+          "pos": {
+            "x": 145.63,
+            "y": 191.5306
+          },
+          "uuid": "83c60008-a010-4b9d-9769-eb3565e3c443"
+        }
+      ],
+      "severity": "error",
+      "type": "track_width"
+    },
+    {
+      "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
+      "items": [
+        {
+          "description": "Track [GND] on F.Cu, length 1.4256 mm",
+          "pos": {
+            "x": 145.63,
+            "y": 197.5306
+          },
+          "uuid": "3e89aec8-b902-4238-ba32-6725c72b67dc"
+        }
+      ],
+      "severity": "error",
+      "type": "track_width"
+    },
+    {
+      "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
+      "items": [
+        {
+          "description": "Track [GND] on F.Cu, length 1.4256 mm",
+          "pos": {
+            "x": 146.63,
+            "y": 190.2306
+          },
+          "uuid": "b5c533c8-2015-429b-9640-96993eff6cbc"
+        }
+      ],
+      "severity": "error",
+      "type": "track_width"
+    },
+    {
+      "description": "Track width (board setup constraints min width 0.1500 mm; actual 0.1124 mm)",
+      "items": [
+        {
+          "description": "Track [GND] on F.Cu, length 1.4256 mm",
+          "pos": {
+            "x": 146.63,
+            "y": 196.2306
+          },
+          "uuid": "dbe23b09-924d-4071-b561-d597269ce4d4"
+        }
+      ],
+      "severity": "error",
+      "type": "track_width"
+    },
+    {
+      "description": "Via is not connected or connected on only one layer",
+      "items": [
+        {
+          "description": "Via [LAB5] on F.Cu - B.Cu",
+          "pos": {
+            "x": 137.93,
+            "y": 134.6955
+          },
+          "uuid": "252104ee-3a38-4f06-a51e-007bda43d712"
+        }
+      ],
+      "severity": "error",
+      "type": "via_dangling"
+    }
+  ],
+  "source": "see report.json board_file"
+}

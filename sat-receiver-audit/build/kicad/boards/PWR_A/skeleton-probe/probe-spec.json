@@ -1,0 +1,872 @@
+{
+  "schema": "srrx-board-spec-v1",
+  "board_id": "PWR_A",
+  "status": "SKELETON_PROBE_NOT_FOR_FABRICATION",
+  "title": "PWR-A skeleton probe: the 24 anchored refs and the scripted copper of the draft only",
+  "note": "W2 PCB-PWRA-1 probe for one CI route run: loads the 4-layer PWR_A.kicad_pro in KiCad 10.0.7, places the anchors of build/kicad/boards/PWR_A/PWR_A.spec-draft.json and lays its scripted copper, so that the anchors, the locked copper and the pour necks can be measured on a saved board. It covers 24 of the 256 PWR_A refs, so the domain and boundary audits fail by construction; removed from pcb/boards/ right after the run.",
+  "contract": {
+    "file": "mechanical/generated/contract/boards.json",
+    "board": "PWR"
+  },
+  "domains": [
+    "PWR_MAIN",
+    "PWR_BRANCH",
+    "USB_POWER"
+  ],
+  "partition": "pcb/generated/partition.json",
+  "layers": {
+    "copper": 4,
+    "thickness_mm": 1.6,
+    "source": "build/15 'Шари' and 'Мідь і струмові класи (W2 PCB-RULES)': JLC04161H-7628, 1 oz outer / 0.5 oz inner, no 2 oz",
+    "plan": {
+      "F.Cu": "L1: parts, signals; BATT/PWR3A pours (scripted where both ends are anchored)",
+      "In1.Cu": "L2: solid GND (post-route pour over the whole outline)",
+      "In2.Cu": "L3: power pours (placement-dependent, OPEN)",
+      "B.Cu": "L4: signals; BATT/PWR3A pours paired with L1; GND bond copper in the four thermal_bond zones, solder mask on"
+    },
+    "plan_source": "build/15 'План шарів (W2 PCB-RULES)'"
+  },
+  "project": "build/kicad/boards/PWR_A/PWR_A.kicad_pro",
+  "rules_file": null,
+  "rules_note": "board_gen refuses rules_file until it copies and hashes it (PCB-FAB/PCB-SB1 lineage), so the net classes and project rules of pcb/rules/jlc-4l-1oz.kicad_dru and pcb/generated/netclasses.json are mirrored in PWR_A.kicad_pro: classes SIG (Default) 0.15, PWR1A 0.35, PWR2A 0.8, PWR3A 1.85, BATT 3.2 mm outer, clearance 0.15; via 0.6/0.3; min through hole 0.2 because the KiCad LT3045 footprint MSOP-12-1EP ThermalVias drills 0.2 mm (JLC 4-layer floor 0.15)",
+  "fab_floor": {
+    "source": "https://jlcpcb.com/capabilities/pcb-capabilities read 2026-11-07 (W2 PCB-PWRA-1), multilayer 1 oz values; the same numbers as pcb/generated/netclasses.json fab_floor.jlc_4l_1oz",
+    "min_track_width": 0.09,
+    "min_clearance": 0.09,
+    "min_drill": 0.15,
+    "min_via_diameter": 0.25,
+    "min_hole_to_hole": 0.45,
+    "min_hole_to_hole_note": "0.45 = pad hole-to-hole; via hole-to-hole is 0.2",
+    "min_copper_edge_clearance": 0.2,
+    "min_text_height": 1.0,
+    "min_text_thickness": 0.15,
+    "npth_min_diameter": 0.5,
+    "pth_annular_min": 0.15,
+    "pth_annular_recommended": 0.2
+  },
+  "holes": {
+    "from_contract": true,
+    "ref_prefix": "H",
+    "keepout_layers": [
+      "F.Cu",
+      "In1.Cu",
+      "In2.Cu",
+      "B.Cu"
+    ],
+    "keepout_blocks": [
+      "tracks",
+      "vias",
+      "zone_fills"
+    ]
+  },
+  "pre_route": {
+    "tracks": [
+      {
+        "id": "LAB5-DAMP",
+        "net": "E1_LAB5_DAMP",
+        "layer": "F.Cu",
+        "width_mm": 1.85,
+        "path": [
+          [
+            37.94,
+            67.4
+          ],
+          [
+            37.94,
+            70.6675
+          ]
+        ],
+        "locked": true,
+        "why": "scripted locked link C113.1 -> R110.2 of the LAB5 RC damper (PWR3A class 1.85 mm, netclasses.json)"
+      }
+    ],
+    "zones": [
+      {
+        "id": "LAB5-RAW-F",
+        "net": "E1_LAB5_RAW",
+        "layer": "F.Cu",
+        "outline": [
+          [
+            0.6,
+            67.6
+          ],
+          [
+            15.5,
+            67.6
+          ],
+          [
+            15.5,
+            77.2
+          ],
+          [
+            0.6,
+            77.2
+          ]
+        ],
+        "priority": 2,
+        "why": "BATT class (3.2 mm single layer, 1.85 mm per layer on L1 + L4): U108 VOUT -> F102.1, paired with LAB5-RAW-B; the THT pins of U108 and F102 join the two layers"
+      },
+      {
+        "id": "LAB5-RAW-B",
+        "net": "E1_LAB5_RAW",
+        "layer": "B.Cu",
+        "outline": [
+          [
+            0.6,
+            67.6
+          ],
+          [
+            15.5,
+            67.6
+          ],
+          [
+            15.5,
+            77.2
+          ],
+          [
+            0.6,
+            77.2
+          ]
+        ],
+        "priority": 2,
+        "why": "L4 half of the E1_LAB5_RAW pour (see LAB5-RAW-F)"
+      }
+    ]
+  },
+  "split_nets": {
+    "E1_LAB5_RAW": [
+      "F.Cu",
+      "B.Cu"
+    ]
+  },
+  "split_nets_note": "pcb/check_boards.py split_nets: a BATT/PWR3A net poured on L1 and L4 is checked against the per-layer split width (netclasses.json split_outer_per_layer_mm) when both layers join the same THT pads",
+  "post_route_zones": [
+    {
+      "id": "GND-L2",
+      "net": "GND",
+      "layer": "In1.Cu",
+      "outline": "board",
+      "priority": 0
+    },
+    {
+      "id": "GND-BOND-1",
+      "net": "GND",
+      "layer": "B.Cu",
+      "outline": [
+        [
+          9,
+          4
+        ],
+        [
+          69,
+          4
+        ],
+        [
+          69,
+          27
+        ],
+        [
+          9,
+          27
+        ]
+      ],
+      "priority": 1
+    },
+    {
+      "id": "GND-BOND-2",
+      "net": "GND",
+      "layer": "B.Cu",
+      "outline": [
+        [
+          72,
+          4
+        ],
+        [
+          128,
+          4
+        ],
+        [
+          128,
+          27
+        ],
+        [
+          72,
+          27
+        ]
+      ],
+      "priority": 1
+    },
+    {
+      "id": "GND-BOND-3",
+      "net": "GND",
+      "layer": "B.Cu",
+      "outline": [
+        [
+          4,
+          38
+        ],
+        [
+          34,
+          38
+        ],
+        [
+          34,
+          68
+        ],
+        [
+          4,
+          68
+        ]
+      ],
+      "priority": 1
+    },
+    {
+      "id": "GND-BOND-4",
+      "net": "GND",
+      "layer": "B.Cu",
+      "outline": [
+        [
+          4,
+          70
+        ],
+        [
+          34,
+          70
+        ],
+        [
+          34,
+          100
+        ],
+        [
+          4,
+          100
+        ]
+      ],
+      "priority": 1
+    }
+  ],
+  "height_zones": [
+    {
+      "region": "board",
+      "max_height_mm_from_contract": "max_component_height",
+      "checked": false,
+      "why": "parts taller than hA 4.5 need a PWR-B window (pcb/partition-spec.json height_rule); the window list of this placement is in placement-study.json pwr_b_cutouts"
+    }
+  ],
+  "router": {
+    "tool": "freerouting",
+    "max_passes": 30,
+    "threads": 1,
+    "job_timeout": "00:10:00",
+    "timeout_s": 700
+  },
+  "drc_policy": {
+    "warning_checks": {
+      "footprint_filters_mismatch": "schematic-parity check; per-board PCBs are not linked to the multi-sheet schematic, so DRC runs without --schematic-parity and the source-pad audit replaces it",
+      "footprint_symbol_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "footprint_symbol_field_mismatch": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "missing_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "extra_footprint": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "duplicate_footprints": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "net_conflict": "schematic-parity check, not run (see footprint_filters_mismatch)",
+      "missing_tuning_profile": "no length-tuned nets and no tuning profiles on this board",
+      "tuning_profile_track_geometries": "no length-tuned nets and no tuning profiles on this board",
+      "generic_warning": "KiCad's catch-all warning class; any instance is listed in report.json and reviewed",
+      "silk_over_copper": "legend only: the fab clips legend over exposed copper; every instance is listed in report.json and reviewed (library footprints whose legend crosses their own pads)",
+      "silk_overlap": "legend only: overlapping legend items are cosmetic; every instance is listed in report.json"
+    }
+  },
+  "parts": [
+    {
+      "ref": "C113",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          37.95,
+          64.6
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "F"
+      },
+      "anchor_source": "LAB5 damper R110 + C113 (E1_LAB5_DAMP has only C113.1 and R110.2: an RC damper, not a sense shunt): right strip of the leg above the H7 keepout; scripted locked link R110.2 -> C113.1"
+    },
+    {
+      "ref": "F102",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          2.22,
+          69.29
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "next to U108 VOUT (E1_LAB5_RAW, BATT class): left strip x 0-7.75 of the leg, rotation 90; PWR-B window (Keystone 3568, height >= 7.37 mm lower bound)"
+    },
+    {
+      "ref": "J104",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          132.0,
+          13.83
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "contract edge_zones right (CTRL harness S02, LAB5 to CTRL); column between the keepouts of H2 and H3"
+    },
+    {
+      "ref": "J105",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          32.85,
+          3.5
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "contract edge_zones bottom (battery circuit, BMS and IP2368 leads); harness segment per build/16-dzhgut-rozyemy.csv; PWR-B edge strip over it"
+    },
+    {
+      "ref": "J106",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          52.75,
+          3.5
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "contract edge_zones bottom (battery circuit, BMS and IP2368 leads); harness segment per build/16-dzhgut-rozyemy.csv; PWR-B edge strip over it"
+    },
+    {
+      "ref": "J107",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          10.95,
+          3.5
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "contract edge_zones bottom (battery circuit, BMS and IP2368 leads); harness segment per build/16-dzhgut-rozyemy.csv; PWR-B edge strip over it"
+    },
+    {
+      "ref": "J108",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          78.65,
+          3.5
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "contract edge_zones bottom (battery circuit, BMS and IP2368 leads); harness segment per build/16-dzhgut-rozyemy.csv; PWR-B edge strip over it"
+    },
+    {
+      "ref": "J109",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          47.05,
+          2.5
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      },
+      "anchor_source": "contract edge_zones bottom (battery circuit, BMS and IP2368 leads); harness segment per build/16-dzhgut-rozyemy.csv; PWR-B edge strip over it"
+    },
+    {
+      "ref": "J110",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          72.95,
+          2.5
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      },
+      "anchor_source": "contract edge_zones bottom (battery circuit, BMS and IP2368 leads); harness segment per build/16-dzhgut-rozyemy.csv; PWR-B edge strip over it"
+    },
+    {
+      "ref": "J111",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          27.15,
+          2.5
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      },
+      "anchor_source": "contract edge_zones bottom (battery circuit, BMS and IP2368 leads); harness segment per build/16-dzhgut-rozyemy.csv; PWR-B edge strip over it"
+    },
+    {
+      "ref": "J112",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          96.85,
+          2.5
+        ],
+        "align": "origin",
+        "rotation": 180,
+        "side": "F"
+      },
+      "anchor_source": "contract edge_zones bottom (battery circuit, BMS and IP2368 leads); harness segment per build/16-dzhgut-rozyemy.csv; PWR-B edge strip over it"
+    },
+    {
+      "ref": "J113",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          117.7,
+          14.15
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "contract edge_zones right (bottom-row ports through plate slot SL3: S11 USB-C, S12 XT30, S32 GX16); second/third column: the 35 mm edge minus the H2/H3 keepouts leaves 18 mm"
+    },
+    {
+      "ref": "J114",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          124.5,
+          4.13
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "contract edge_zones right (bottom-row ports through plate slot SL3: S11 USB-C, S12 XT30, S32 GX16); second/third column: the 35 mm edge minus the H2/H3 keepouts leaves 18 mm"
+    },
+    {
+      "ref": "J115",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          124.5,
+          15.29
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "contract edge_zones right (bottom-row ports through plate slot SL3: S11 USB-C, S12 XT30, S32 GX16); second/third column: the 35 mm edge minus the H2/H3 keepouts leaves 18 mm"
+    },
+    {
+      "ref": "J205",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          19.43,
+          106.83
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "contract edge_zones top 0-42 (DISP12 to the HDMI board, S19), between the keepouts of H5 (4, 106) and H6 (38, 106)"
+    },
+    {
+      "ref": "J206",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          112.38,
+          31.83
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "contract edge_zones top at 35, span 108-128 (SL2: S13, S14, S17, S18)"
+    },
+    {
+      "ref": "J507",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          117.7,
+          2.75
+        ],
+        "align": "origin",
+        "rotation": 90,
+        "side": "F"
+      },
+      "anchor_source": "contract edge_zones right (bottom-row ports through plate slot SL3: S11 USB-C, S12 XT30, S32 GX16); second/third column: the 35 mm edge minus the H2/H3 keepouts leaves 18 mm"
+    },
+    {
+      "ref": "R110",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          37.93,
+          73.63
+        ],
+        "align": "origin",
+        "rotation": 270,
+        "side": "F"
+      },
+      "anchor_source": "LAB5 damper R110 + C113 (E1_LAB5_DAMP has only C113.1 and R110.2: an RC damper, not a sense shunt): right strip of the leg above the H7 keepout; scripted locked link R110.2 -> C113.1"
+    },
+    {
+      "ref": "U107",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          20.7,
+          52.7
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "contract modules_on_board (mechanical/generated/contract/boards.json PWR): module square at [8, 40] / [8, 72] + 12.7 = footprint origin (module centre, SR_RX_Custom:Pololu_D36V50Fx); rotation 0 puts both 6-pin rows on the contract pin_field (M-07 PK1/PK2)"
+    },
+    {
+      "ref": "U108",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          20.7,
+          84.7
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "contract modules_on_board (mechanical/generated/contract/boards.json PWR): module square at [8, 40] / [8, 72] + 12.7 = footprint origin (module centre, SR_RX_Custom:Pololu_D36V50Fx); rotation 0 puts both 6-pin rows on the contract pin_field (M-07 PK1/PK2)"
+    },
+    {
+      "ref": "U204",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          46.13,
+          19.87
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "LT3045 pair inside thermal_bond zone 1; footprint MSOP-12 ThermalVias (6 x 0.2 mm EP vias to L4)"
+    },
+    {
+      "ref": "U205",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          46.13,
+          13.87
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "LT3045 pair inside thermal_bond zone 1; footprint MSOP-12 ThermalVias (6 x 0.2 mm EP vias to L4)"
+    },
+    {
+      "ref": "U211",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          12.55,
+          16.55
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "TPS7A4701 inside a thermal_bond zone (A-PCB-08: bond zones 1-2 hold U211/U213 and U204/U205); EP to L4 GND bond copper"
+    },
+    {
+      "ref": "U213",
+      "source": "graph",
+      "anchor": {
+        "at": [
+          75.55,
+          16.55
+        ],
+        "align": "origin",
+        "rotation": 0,
+        "side": "F"
+      },
+      "anchor_source": "TPS7A4701 inside a thermal_bond zone (A-PCB-08: bond zones 1-2 hold U211/U213 and U204/U205); EP to L4 GND bond copper"
+    }
+  ],
+  "groups": [],
+  "instances": {
+    "template_nets": [
+      "AON3V3",
+      "DISP12",
+      "E1_CHG_CC1",
+      "E1_CHG_CC2",
+      "E1_CHG_INHIBIT_LOW",
+      "E1_CHG_NTC",
+      "E1_EN_SYS12",
+      "E1_LAB5_DAMP",
+      "E1_LAB5_FUSED",
+      "E1_LAB5_RAW",
+      "E1_MASTER_OFF",
+      "E1_N",
+      "E1_PG_LAB5",
+      "E1_PG_SYS12",
+      "E1_SERVICE_P",
+      "E1_SHUNT_P",
+      "E1_SW",
+      "E1_SWITCH_A",
+      "E1_USB_PD_RAW",
+      "E1_USB_PD_SAFE",
+      "E2_BONI_IN",
+      "E2_BONI_LDO",
+      "E2_BONI_NR",
+      "E2_LNA_IN",
+      "E2_LNA_SET",
+      "E2_LNB_IN",
+      "E2_LNB_LDO",
+      "E2_LNB_NR",
+      "E2_LT_OUT1",
+      "E2_LT_OUT2",
+      "E5_IMU5V",
+      "EN_BONI",
+      "EN_LNB",
+      "GND",
+      "I2C0_SCL",
+      "I2C0_SDA",
+      "IMU_RX",
+      "IMU_TX",
+      "INA228_ALERT",
+      "J21",
+      "LAB5",
+      "LIME3V3",
+      "SYS12",
+      "VCC_3V3_MKEY"
+    ],
+    "list": [
+      {
+        "id": "PWRA",
+        "placement": "default",
+        "qty": 1,
+        "refs": {
+          "C113": "C113",
+          "F102": "F102",
+          "J104": "J104",
+          "J105": "J105",
+          "J106": "J106",
+          "J107": "J107",
+          "J108": "J108",
+          "J109": "J109",
+          "J110": "J110",
+          "J111": "J111",
+          "J112": "J112",
+          "J113": "J113",
+          "J114": "J114",
+          "J115": "J115",
+          "J205": "J205",
+          "J206": "J206",
+          "J507": "J507",
+          "R110": "R110",
+          "U107": "U107",
+          "U108": "U108",
+          "U204": "U204",
+          "U205": "U205",
+          "U211": "U211",
+          "U213": "U213"
+        },
+        "nets": {
+          "AON3V3": "AON3V3",
+          "DISP12": "DISP12",
+          "E1_CHG_CC1": "E1_CHG_CC1",
+          "E1_CHG_CC2": "E1_CHG_CC2",
+          "E1_CHG_INHIBIT_LOW": "E1_CHG_INHIBIT_LOW",
+          "E1_CHG_NTC": "E1_CHG_NTC",
+          "E1_EN_SYS12": "E1_EN_SYS12",
+          "E1_LAB5_DAMP": "E1_LAB5_DAMP",
+          "E1_LAB5_FUSED": "E1_LAB5_FUSED",
+          "E1_LAB5_RAW": "E1_LAB5_RAW",
+          "E1_MASTER_OFF": "E1_MASTER_OFF",
+          "E1_N": "E1_N",
+          "E1_PG_LAB5": "E1_PG_LAB5",
+          "E1_PG_SYS12": "E1_PG_SYS12",
+          "E1_SERVICE_P": "E1_SERVICE_P",
+          "E1_SHUNT_P": "E1_SHUNT_P",
+          "E1_SW": "E1_SW",
+          "E1_SWITCH_A": "E1_SWITCH_A",
+          "E1_USB_PD_RAW": "E1_USB_PD_RAW",
+          "E1_USB_PD_SAFE": "E1_USB_PD_SAFE",
+          "E2_BONI_IN": "E2_BONI_IN",
+          "E2_BONI_LDO": "E2_BONI_LDO",
+          "E2_BONI_NR": "E2_BONI_NR",
+          "E2_LNA_IN": "E2_LNA_IN",
+          "E2_LNA_SET": "E2_LNA_SET",
+          "E2_LNB_IN": "E2_LNB_IN",
+          "E2_LNB_LDO": "E2_LNB_LDO",
+          "E2_LNB_NR": "E2_LNB_NR",
+          "E2_LT_OUT1": "E2_LT_OUT1",
+          "E2_LT_OUT2": "E2_LT_OUT2",
+          "E5_IMU5V": "E5_IMU5V",
+          "EN_BONI": "EN_BONI",
+          "EN_LNB": "EN_LNB",
+          "GND": "GND",
+          "I2C0_SCL": "I2C0_SCL",
+          "I2C0_SDA": "I2C0_SDA",
+          "IMU_RX": "IMU_RX",
+          "IMU_TX": "IMU_TX",
+          "INA228_ALERT": "INA228_ALERT",
+          "J21": "J21",
+          "LAB5": "LAB5",
+          "LIME3V3": "LIME3V3",
+          "SYS12": "SYS12",
+          "VCC_3V3_MKEY": "VCC_3V3_MKEY"
+        },
+        "source": "identity map (skeleton probe)"
+      }
+    ],
+    "spares": 0,
+    "spares_source": "one board per device (build/15 'Кількість плат'); the JLC order quantity is an order-time choice"
+  },
+  "tht_pockets": [
+    [
+      -0.2,
+      66.9,
+      8.25,
+      14.7
+    ],
+    [
+      128.4,
+      9.15,
+      5.65,
+      18.35
+    ],
+    [
+      30.2,
+      1.15,
+      10.8,
+      4.7
+    ],
+    [
+      50.1,
+      1.15,
+      10.8,
+      4.7
+    ],
+    [
+      8.3,
+      1.15,
+      10.8,
+      4.7
+    ],
+    [
+      76.0,
+      1.15,
+      10.8,
+      8.9
+    ],
+    [
+      43.45,
+      0.6,
+      5.2,
+      3.8
+    ],
+    [
+      63.35,
+      0.6,
+      11.2,
+      3.8
+    ],
+    [
+      21.55,
+      0.6,
+      7.2,
+      3.8
+    ],
+    [
+      89.25,
+      0.6,
+      9.2,
+      3.8
+    ],
+    [
+      115.8,
+      12.55,
+      3.8,
+      5.2
+    ],
+    [
+      120.9,
+      -0.55,
+      5.65,
+      12.35
+    ],
+    [
+      120.9,
+      10.65,
+      5.65,
+      12.3
+    ],
+    [
+      14.75,
+      104.8,
+      12.35,
+      5.65
+    ],
+    [
+      107.85,
+      26.35,
+      18.05,
+      7.25
+    ],
+    [
+      115.8,
+      1.15,
+      3.8,
+      9.2
+    ],
+    [
+      12.5,
+      39.4,
+      16.4,
+      6.3
+    ],
+    [
+      12.5,
+      71.4,
+      16.4,
+      6.3
+    ],
+    [
+      44.35,
+      17.6,
+      3.55,
+      4.55
+    ],
+    [
+      44.35,
+      11.6,
+      3.55,
+      4.55
+    ]
+  ],
+  "tht_pocket_margin_mm": 1.0,
+  "tht_pockets_note": "proposed plate relief pockets (M-07) = THT pin field of each anchored part + 1.0 mm (mechanical/params/boards.json tht_pockets margin), rounded outward to 0.05 mm; pin field = THT pads and NPTH pegs; U107/U108 are the contract pin fields PK1/PK2"
+}
