@@ -110,7 +110,7 @@
 | S21 | VBUS_RTLB → кабель RTL-B (J541.1) | PWR ↔ RTLB | 2 | PH, SOLDER | 185 (модель, кінець попередній) | розділений VBUS; J5.10 не з'єднувати; крізь SL2 і виріз N3 |
 | S22 | VBUS_HFP → пігтейл HF+ (J544.1) | PWR ↔ HFP | 3 | PH, SOLDER | 55 (модель, кінець попередній) | після L501 і демпфера; 2× Fair-Rite 2631480002 на повному кабелі; крізь SL2 |
 | S23 | VBUS_LABPORT → J501.1 | PWR ↔ LABUSB | 3 | PH, SOLDER | 242 (модель, кінець попередній) | C506 біля вихідного порту; крізь проріз SL3 |
-| S24 | EN_T7/3V3 → вставка T7 | CTRL ↔ T7A | 3 | PH | 197 (модель, кінець попередній) | U505 на вставці USB3; на вставці — вилка J514 (X24S1-T7, PH 3 бічного входу, W2 GR-4); крізь проріз SL2 |
+| S24 | EN_T7/3V3 → вставка T7 | CTRL ↔ T7A | 3 | PH | 197 (модель, кінець попередній) | U505 на вставці USB3; на вставці — вилка J514 (X24S1-T7A, PH 3 бічного входу, W2 GR-4); крізь проріз SL2 |
 | S25 | CTRL → LC76G (живлення і RESET) | CTRL ↔ GNSS | 3 | PH, SOLDER | 215 (модель, кінець попередній) | E3_GNSS5V від U315 і E3_GNSS_RESET_N від Q301 з CTRL, крізь SL2; PPS і UART6 сюди не входять — вони йдуть гілкою PPS шлейфу S01 (S01 + S25 за моделлю 322 мм > 200, R-PPS-LEN; рішення build/15 W2 MECH-1) |
 | S26 | CTRL → VEML7700 | CTRL ↔ VEML | 4 | PH, SOLDER | 101 (модель, кінець попередній) | 100 Ω + TVS біля безеля (на CTRL) |
 | S27 | CTRL → Noctua | CTRL ↔ FAN1 | 3 | FAN3 | кабель вентилятора; траса 115 (модель, кінець попередній) | штатний 3-контактний роз'єм Noctua; на CTRL — сумісна 3-контактна вилка 2.54 мм |
@@ -181,7 +181,7 @@
 | J509 | X14P1-HATCH | HATCH | S14 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 (2 з проводом) | 43650-0215 (C293740) | 43645-0200 (C114089) | 43030-0007 (C293530) | design/parts/parts.json J-HDR-436500215; design/parts/parts.json harness_families MF; MOLEX-43030 |
 | J510 | X15S1-HATCH | HATCH | S15 | JST PH 2.0 мм | 2 (1 з проводом) | B2B-PH-K-S(LF)(SN) (C131337) | PHR-2 (C157955) | SPH-002T-P0.5S (C111515) | design/parts/parts.json J-HDR-B2BPH; design/parts/parts.json harness_families PH; JST-PH |
 | J513 | X30S1-HATCH | HATCH | S30 | JST PH 2.0 мм | 3 (3 з проводом) | B3B-PH-K-S(LF)(SN) (C131339) | PHR-3 (C265393) | SPH-002T-P0.5S (C111515) | design/parts/parts.json J-HDR-B3BPH; design/parts/parts.json harness_families PH; JST-PH |
-| J514 | X24S1-T7 | T7_INSERT | S24 | JST PH 2.0 мм | 3 (3 з проводом) | S3B-PH-K-S(LF)(SN) (C157929) | PHR-3 (C265393) | SPH-002T-P0.5S (C111515) | design/parts/parts.json J-HDR-S3BPH; design/parts/parts.json harness_families PH; JST-PH |
+| J514 | X24S1-T7A | T7_INSERT | S24 | JST PH 2.0 мм | 3 (3 з проводом) | S3B-PH-K-S(LF)(SN) (C157929) | PHR-3 (C265393) | SPH-002T-P0.5S (C111515) | design/parts/parts.json J-HDR-S3BPH; design/parts/parts.json harness_families PH; JST-PH |
 | X37S0-ENCM | X37S0-ENCM | ENCM | S37 | JST PH 2.0 мм | 4 | TBD (роз'єм плати ENCM без позначення графа: роз'єм дочірньої плати ENC: жоден корпус JST PH не вміщується біля PEC11R на контурі 24 × 24 (W2 PCB-PIPE, pcb/boards/ENC.json J1 pilot_placeholder); ref графа з доменом ENC зламав би доменний аудит плати ENC, доки її специфікацію не оновить PCB-SB1) | TBD (роз'єм плати ENCM без позначення графа: роз'єм дочірньої плати ENC: жоден корпус JST PH не вміщується біля PEC11R на контурі 24 × 24 (W2 PCB-PIPE, pcb/boards/ENC.json J1 pilot_placeholder); ref графа з доменом ENC зламав би доменний аудит плати ENC, доки її специфікацію не оновить PCB-SB1) | TBD (роз'єм плати ENCM без позначення графа: роз'єм дочірньої плати ENC: жоден корпус JST PH не вміщується біля PEC11R на контурі 24 × 24 (W2 PCB-PIPE, pcb/boards/ENC.json J1 pilot_placeholder); ref графа з доменом ENC зламав би доменний аудит плати ENC, доки її специфікацію не оновить PCB-SB1) | tools/assembly_data.py PENDING_BOARD_ENDS |
 | X38S0-ENCV | X38S0-ENCV | ENCV | S38 | JST PH 2.0 мм | 4 | TBD (роз'єм плати ENCV без позначення графа: як ENCM (той самий шаблон плати ENC, pcb/boards/ENC.json)) | TBD (роз'єм плати ENCV без позначення графа: як ENCM (той самий шаблон плати ENC, pcb/boards/ENC.json)) | TBD (роз'єм плати ENCV без позначення графа: як ENCM (той самий шаблон плати ENC, pcb/boards/ENC.json)) | tools/assembly_data.py PENDING_BOARD_ENDS |
 
@@ -352,9 +352,9 @@
 | S23-01 | GND | PWR: J506.1 (X23S1-PWR) → U103.2, C103.2, C104.2 … | LABUSB: J501.S (cable shield) | 24 | 1/2 | 0.825 / 0.825 | чорний |
 | S23-02 | GND | PWR: J506.2 (X23S1-PWR) → U103.2, C103.2, C104.2 … | LABUSB: J501.4 (GND) | 24 | 2/2 | 0.825 / 0.825 | чорний |
 | S23-03 | VBUS_LABPORT | PWR: J506.3 (X23S1-PWR) → U502.6, C506.1, C507.1 … | LABUSB: J501.1 (VBUS) | 24 | 1/1 | 0.825 / 0.825 | червоний |
-| S24-01 | GND | CTRL: J311.1 (S24-25-CTRL) → J302.2, U301.10, U301.15 … | T7A: J514.1 (X24S1-T7) → U505.5, U505.7, R514.2 … | 24 | 1/1 | 0.1 / 0.1 | чорний |
-| S24-02 | 3V3_Q6A | CTRL: J311.2 (S24-25-CTRL) → J302.1, R301.2, R302.2 … | T7A: J514.2 (X24S1-T7) → R516.2 | 24 | 1/1 | 0.1 / 0.1 | помаранчевий |
-| S24-03 | EN_T7 | CTRL: J311.3 (S24-25-CTRL) → U302.8 | T7A: J514.3 (X24S1-T7) → U505.4, R515.1 | 26 | 1/1 | 0.05 / — | сірий |
+| S24-01 | GND | CTRL: J311.1 (S24-25-CTRL) → J302.2, U301.10, U301.15 … | T7A: J514.1 (X24S1-T7A) → U505.5, U505.7, R514.2 … | 24 | 1/1 | 0.1 / 0.1 | чорний |
+| S24-02 | 3V3_Q6A | CTRL: J311.2 (S24-25-CTRL) → J302.1, R301.2, R302.2 … | T7A: J514.2 (X24S1-T7A) → R516.2 | 24 | 1/1 | 0.1 / 0.1 | помаранчевий |
+| S24-03 | EN_T7 | CTRL: J311.3 (S24-25-CTRL) → U302.8 | T7A: J514.3 (X24S1-T7A) → U505.4, R515.1 | 26 | 1/1 | 0.05 / — | сірий |
 | S25-01 | GND | CTRL: J311.4 (S24-25-CTRL) → J302.2, U301.10, U301.15 … | GNSS: пайка: U304.P1.2 | 24 | 1/1 | 0.1 / 0.192 | чорний |
 | S25-02 | E3_GNSS5V | CTRL: J311.5 (S24-25-CTRL) → U315.6 | GNSS: пайка: U304.P1.1 | 24 | 1/1 | 0.1 / 0.192 | червоний |
 | S25-03 | E3_GNSS_RESET_N | CTRL: J311.6 (S24-25-CTRL) → Q301.3 | GNSS: пайка: U304.P1.6 | 26 | 1/1 | 0.05 / — | білий |
