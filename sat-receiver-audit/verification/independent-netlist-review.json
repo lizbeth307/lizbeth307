@@ -2,22 +2,22 @@
   "passed": true,
   "methodology": "Independent stdlib JSON and XML parsers; no generator/validator imports.",
   "graph_sha256": {
-    "E1.json": "a5f312ac5162252adbad513e9fddabc8e7c862f5dbf364c853497c683f67083c",
-    "E2.json": "7b41789d38c86a541d1a40bb7ffb348047ba1008a1b9ef75120c4db05084d461",
-    "E3.json": "b3bd4067f6f51fe2b5fe28bcc06d386319c239ec0af0392f1c2d4f61a9aa2132",
-    "E4.json": "590eb7a5942d2dbe11015d67a63218b81af02a7540ac2c3c419ea90626d7f9ad",
-    "E5.json": "73e901d907a54e8adb05a6750f6f5ee47d9ad22f2b5c4b26575277175e545e79"
+    "E1.json": "39da4cd1ecdfcad37a4cf5b6ee309846b4aa73243f2c8e7d8f07083ab1824a90",
+    "E2.json": "cc0580f8c8f896e6d1cca1e9364f64d69cd1d461d94593b33a6668f34f7a4935",
+    "E3.json": "0ae9955a91c906ae6fa7e0cc51a212922ffe791df3d9bd5ccf9381cca55c1e7d",
+    "E4.json": "8012086f2be1a33677c53661e01d8ca8f657fd3f10964c115b4893336863dddc",
+    "E5.json": "48c61fa1a77ab35e5d930f377ac2ef473abdd8f6e02da8417e352f168ce562e5"
   },
-  "netlist_sha256": "09be9823a82e097bd019ea4abb5cc7947a3a66c7aee225e2adc2e5f6a680bff1",
+  "netlist_sha256": "f112e459f95fb8eddfff80bb5717fd180e95bba9d27efbb6639faae63d83bb26",
   "counts": {
-    "hardware_components": 782,
-    "hardware_pin_declarations": 2403,
-    "connected_hardware_pins": 2263,
-    "connected_hardware_nets": 478,
-    "declared_nc_pins": 140,
-    "xml_hardware_components": 782,
-    "xml_pin_nodes": 2403,
-    "xml_nets": 618,
+    "hardware_components": 794,
+    "hardware_pin_declarations": 2438,
+    "connected_hardware_pins": 2297,
+    "connected_hardware_nets": 485,
+    "declared_nc_pins": 141,
+    "xml_hardware_components": 794,
+    "xml_pin_nodes": 2438,
+    "xml_nets": 626,
     "explicit_power_flags": 25
   },
   "dnp_components": [
@@ -162,9 +162,9 @@
     },
     {
       "sheet": "E3",
-      "net": "E3_FAN5",
-      "reason": "Fan supply is physically powered from LAB5 through AO3401A Q304 when enabled. The pass MOSFET has passive drain/source pins, so KiCad requires a powered-net marker downstream.",
-      "source": "STACK.md high-side Noctua fan control and E3 Q304 connectivity."
+      "net": "E3_FAN5_P",
+      "reason": "Fan supply is physically powered from LAB5 through AO3401A Q304 and PTC F301 when enabled. Both pass elements have passive pins, so KiCad requires a powered-net marker on the fan side.",
+      "source": "STACK.md high-side Noctua fan control; E3 Q304/F301 connectivity."
     },
     {
       "sheet": "E5",
@@ -175,7 +175,7 @@
     {
       "sheet": "E5",
       "net": "E5_IMU_VIN",
-      "reason": "Known power after D502 Schottky: LAB5→SS14 anode→cathode E5_IMU_VIN supplies E3 IMU MCU. Flag declares powered-after-passive path only.",
+      "reason": "Known power after D502 Schottky: LAB5→U553→E5_IMU5V→SS14 anode→cathode E5_IMU_VIN supplies E3 IMU MCU. Flag declares powered-after-passive path only.",
       "source": "STACK.md §5.1 reverse-feed rules; D502 in E5.json; https://www.vishay.com/doc?88746="
     }
   ],

@@ -1,21 +1,21 @@
 {
   "status": "PREPARATION_ONLY_NOT_FOR_FABRICATION",
-  "components": 782,
-  "schematic_contacts": 2403,
-  "connected_contacts": 2263,
-  "nets": 478,
+  "components": 794,
+  "schematic_contacts": 2438,
+  "connected_contacts": 2297,
+  "nets": 485,
   "categories": {
-    "bare_board_part": 680,
+    "bare_board_part": 691,
     "harness_assembly": 13,
     "integral_to_host_part": 2,
     "mechanical_or_remote_part": 11,
     "module_rework_part": 5,
-    "physical_interface_boundary": 33,
+    "physical_interface_boundary": 34,
     "purchased_module": 33,
     "purchased_module_internal_detail": 5
   },
   "board_candidates": {
-    "CTRL_HMI": 127,
+    "CTRL_HMI": 133,
     "DC_CORE": 71,
     "ENC": 2,
     "HATCH": 2,
@@ -28,23 +28,22 @@
     "RF_HMC": 51,
     "RF_INJECTOR": 34,
     "T7_INSERT": 9,
-    "USB_POWER": 33
+    "USB_POWER": 38
   },
-  "graph_assigned_footprints": 681,
-  "portable_graph_assignments": 681,
+  "graph_assigned_footprints": 692,
+  "portable_graph_assignments": 692,
   "bare_parts_without_footprint": 0,
   "pin_pad_mismatches": 0,
   "xml_connected_pin_audit": "PASS",
-  "xml_compared_connected_pins": 2263,
+  "xml_compared_connected_pins": 2297,
   "core_parts": 71,
   "core_connected_pins": 180,
   "core_boundary_nets": 8,
   "core_graph_assigned_footprints": 71,
   "core_proposed_footprints": 0,
-  "blocking_issue_records": 40,
+  "blocking_issue_records": 39,
   "blocking_issue_types": {
-    "host_pads_unconnected": 2,
-    "interface_mounting_unresolved": 31,
-    "physical_interface_or_rework_unresolved": 7
+    "interface_mounting_unresolved": 33,
+    "physical_interface_or_rework_unresolved": 6
   }
 }
