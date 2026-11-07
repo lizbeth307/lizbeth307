@@ -19,20 +19,21 @@
     "domain_audit": true,
     "keepout_audit": true,
     "annular_audit": true,
-    "locked_copper_kept": true
+    "locked_copper_kept": true,
+    "group_audit": true
   },
   "inputs": {
     "parts": {
-      "spec": "a97c96d016b04c65829925a8bb09474386b7dcadfa452a31559c75623f9ccd85",
-      "contract": "eee8a3867163df550701303781111a0012b3314a89f7dee351a8ede7ac8353d0",
+      "spec": "003f66d4f0f534d32ce8d7a98827614b9961b52eba4249068834ba6efd69f64d",
+      "contract": "8ad359e2b8e9e52974332fa64d0b5a2ef8eca421cf5ed08efb38d2ee3da86707",
       "project_rules": "2aa13b5419374d94ff7d22cf48556ceebc9635e3742b9f4d2eef575c25624f41",
       "template": "4c9dcf416687d46f2147b6af3f9d85d7ae394b072e377e73fba15fcb524a55b9",
       "instances": "19a6ad3075d7bb21f060309f07b73889cd960c616b5337231528298fe5da9c08"
     },
-    "sha256": "f77a469d79ff499b62e129cfb76125ecb55cce7a5fe2fa89d9ce2169099b6243"
+    "sha256": "39dcf8e6fe37749bb03cd7152c4ee090ede3b3aa7381b901d6943af546aa75ab"
   },
   "board_file": "build/kicad/boards/ENC/ENC.kicad_pcb",
-  "board_sha256": "507ab3832957d25e2aabde58fa4509e84787181e4c1fe5c7e404072c6b03193f",
+  "board_sha256": "7cc2d65fab8e4177e4bc4c6057276117f57f40158a3c6b4f7bdb18b2954026e0",
   "project_file": "build/kicad/boards/ENC/ENC.kicad_pro",
   "fp_lib_table_sha256": "6b2a79120473af8986b9a926ecdd3f0a81eacea4b73a8391c78367962c2525c3",
   "layers": {
@@ -167,6 +168,7 @@
       "ref": "J1",
       "footprint": "Connector_PinHeader_2.00mm:PinHeader_1x04_P2.00mm_Vertical",
       "replaced_by": "GR-3 ENC-side header ref (graph), then PCB-SB1",
+      "pending": "header ref pending GR-3",
       "pins_source": "build/16-dzhgut-rozyemy.csv:60 and :62 (X37S1-ENCM / X38S1-ENCV: PH 4, pins GND, A, B, PRESS; synthesized, not a graph ref)",
       "why": "No JST PH housing fits beside the PEC11R on the 24 x 24 outline: the S4B-PH-K side-entry body is 7.6 mm deep and the B4B-PH-K vertical courtyard 5.5 mm wide, while the strip between the left edge and the PEC11R courtyard is 4.5 mm (encoder at 90 deg) and a vertical PH is 8 mm tall against the 6.5 mm envelope (tools/assembly_data.py:120-121). The pilot keeps a 2.0 mm 4-pad land in the contract edge zone left [6, 18]; the header choice stays with GR-3/PCB-SB1/MECH-4."
     }
@@ -914,6 +916,11 @@
     "annular": {
       "floor_mm": 0.18,
       "below_floor": [],
+      "passed": true
+    },
+    "groups": {
+      "rows": [],
+      "errors": [],
       "passed": true
     },
     "locked": {
