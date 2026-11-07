@@ -38,63 +38,65 @@
     "--gui.enabled=false",
     "--router.job_timeout=00:20:00",
     "--logging.file.enabled=false",
-    "--user_data_path=<temp>"
+    "--user_data_path=<temp>",
+    "--router.fanout.enabled=false",
+    "-inc",
+    "RF50,DCSENSE,SCRIPTED"
   ],
   "exit_code": 0,
   "log_tail": [
-    "2026-11-07 21:49:29.819 WARN   Polyline: must contain at least 2 different points",
-    "2026-11-07 21:49:29.843 WARN   Polyline: must contain at least 2 different points",
-    "2026-11-07 21:49:32.387 INFO   [966967\\686A6A] Auto-routing pass #18 on board 'd13c6efbf38d6b9bc1df8cbaf885a133' was completed in 20.12 seconds with score 952.94 (15 unrouted and 0 violations), using 528.30 CPU seconds and the job allocated 289.57 GB of memory so far.",
-    "2026-11-07 21:49:32.433 INFO   [966967\\686A6A] The router's best score (952.94) has not improved by more than 0.5 points since pass #8. Stopping the auto-router after 18 passes (15 items still unconnected).",
-    "The following connections could not be routed -- please review your design (e.g. check pad clearances, trace width rules, and available routing space):",
-    "  Net 'E4_LIME_RF1' (1 unrouted connection):",
-    "    - U407-12  ->  C414-1",
-    "  Net 'E4_LIME_RF3' (1 unrouted connection):",
-    "    - C415-1  ->  U407-4",
-    "  Net 'E4_LIME_RFC' (1 unrouted connection):",
-    "    - C411-2  ->  U407-15",
-    "  Net 'E4_LIME_RFSPARE' (1 unrouted connection):",
-    "    - C417-1  ->  U407-1",
-    "  Net 'E4_LIME_TO_RTLB' (1 unrouted connection):",
-    "    - U407-9  ->  C416-1",
-    "  Net 'E4_RTLA_RF1' (1 unrouted connection):",
-    "    - C401-1  ->  U405-12",
-    "  Net 'E4_RTLA_RF2' (1 unrouted connection):",
-    "    - C402-2  ->  U405-9",
-    "  Net 'E4_RTLA_RF3' (1 unrouted connection):",
-    "    - C403-2  ->  U405-4",
-    "  Net 'E4_RTLA_RF4' (1 unrouted connection):",
-    "    - C404-2  ->  U405-1",
-    "  Net 'E4_RTLA_RFC' (1 unrouted connection):",
-    "    - C405-1  ->  U405-15",
-    "  Net 'E4_RTLB_RF1' (1 unrouted connection):",
-    "    - U406-12  ->  C406-1",
-    "  Net 'E4_RTLB_RF2' (1 unrouted connection):",
-    "    - C407-2  ->  U406-9",
-    "  Net 'E4_RTLB_RF3' (1 unrouted connection):",
-    "    - C408-2  ->  U406-4",
-    "  Net 'E4_RTLB_RF4' (1 unrouted connection):",
-    "    - C409-2  ->  U406-1",
-    "  Net 'E4_RTLB_RFC' (1 unrouted connection):",
-    "    - C410-1  ->  U406-15",
-    "2026-11-07 21:49:34.929 INFO   [966967\\686A6A] Auto-routing stage completed: started with 379 unrouted nets, completed in 535.65 seconds, final score: 952.94 (15 unrouted and 0 violations), using 530.30 total CPU seconds, 290.17 GB total allocated, and 434.2 MB peak heap usage.",
-    "2026-11-07 21:49:35.765 INFO   [966967\\686A6A] Skipping optimization stage: the board has 15 unrouted connection(s) (optimizer only runs on completely routed boards).",
-    "2026-11-07 21:49:35.803 INFO   [966967\\686A6A] Job '966967\\686A6A' finished with state: COMPLETED (elapsed: 8 minutes 57.72 seconds, finished at UTC: 2026-11-07T21:49:35.802394904Z).",
-    "2026-11-07 21:49:35.827 INFO   Saving output file '/tmp/sr-rx-RF-ek3lv0br/RF.ses' (SES)...",
-    "2026-11-07 21:49:35.828 INFO   Successfully saved output file '/tmp/sr-rx-RF-ek3lv0br/RF.ses' (123820 bytes)."
+    "2026-11-07 23:19:36.746 INFO   Freerouting CLI v2.5.0 (build-date: 2026-10-05)",
+    "2026-11-07 23:19:36.870 INFO   Hardware: 4 CPU cores, 3996 MB RAM",
+    "2026-11-07 23:19:36.874 WARN   Deprecated settings path '-inc / --router.ignore_net_classes'; use '--router.autorouter.ignore_net_classes' instead. The old path will be removed in a future release.",
+    "2026-11-07 23:19:37.022 WARN   The '-inc' command-line flag is deprecated; use '--router.autorouter.ignore_net_classes' instead.",
+    "2026-11-07 23:19:37.308 INFO   [3542BC\\FE9BB6] Loading board file 'RF.dsn'...",
+    "2026-11-07 23:19:37.823 INFO   [3542BC\\FE9BB6] Job '3542BC\\FE9BB6' started at 2026-11-07T23:19:37.823157796Z.",
+    "2026-11-07 23:19:39.369 WARN   Design Warning: Board has 194 pre-existing clearance violation(s) in the loaded design (before routing):",
+    "  - 194 unfixable violation(s) (cannot be resolved by Freerouting):",
+    "      * 194 fixed trace/via clearance violations (first 5 shown):",
+    "          - FixedVia#3004 [net GND] <-> FixedVia#2870 [net GND]",
+    "          - FixedVia#3004 [net GND] <-> FixedVia#2870 [net GND]",
+    "          - FixedVia#3004 [net GND] <-> FixedVia#2870 [net GND]",
+    "          - FixedVia#3004 [net GND] <-> FixedVia#2870 [net GND]",
+    "          - FixedVia#3001 [net GND] <-> FixedVia#2880 [net GND]",
+    "          ... and 189 more",
+    "  - 0 potentially fixable violations",
+    "Notice: Freerouting does not modify component placement, board outlines, or fixed items.",
+    "Resolving these 194 unfixable violation(s) is the responsibility of the board author in their EDA tool (e.g. KiCad).",
+    "2026-11-07 23:19:39.450 INFO   [3542BC\\FE9BB6] Pipeline thread limits: autorouter pass is single-threaded, optimizer.max_threads=1.",
+    "2026-11-07 23:19:41.845 INFO   [3542BC\\FE9BB6] Auto-routing stage started on board 'b35513969aaa661e8a1210c33dab6b43' with baseline score 159.88 for 319 unrouted items.",
+    "2026-11-07 23:20:52.341 INFO   [3542BC\\FE9BB6] Auto-routing pass #1 on board 'b35513969aaa661e8a1210c33dab6b43' was completed in 69.35 seconds with score 357.07 (203 unrouted and 194 violations), using 71.62 CPU seconds and the job allocated 32.70 GB of memory so far.",
+    "2026-11-07 23:21:22.438 INFO   [3542BC\\FE9BB6] Auto-routing pass #2 on board '666d3e4e1ad639f717f75b535e8f8d18' was completed in 28.86 seconds with score 400.88 (189 unrouted and 194 violations), using 101.41 CPU seconds and the job allocated 48.62 GB of memory so far.",
+    "2026-11-07 23:21:43.957 INFO   [3542BC\\FE9BB6] Auto-routing pass #3 on board '25270e4a518aa55e3803f74e65a9f3df' was completed in 20.27 seconds with score 447.83 (174 unrouted and 194 violations), using 123.28 CPU seconds and the job allocated 59.50 GB of memory so far.",
+    "2026-11-07 23:21:56.782 INFO   [3542BC\\FE9BB6] Auto-routing pass #4 on board '10475f081713ddc6889219f79fa9b9bd' was completed in 11.53 seconds with score 460.35 (170 unrouted and 194 violations), using 135.22 CPU seconds and the job allocated 65.58 GB of memory so far.",
+    "2026-11-07 23:22:06.985 INFO   [3542BC\\FE9BB6] Auto-routing pass #5 on board '36d20d8f1065f2cf2dcadd110e57348a' was completed in 8.88 seconds with score 466.61 (168 unrouted and 194 violations), using 146.17 CPU seconds and the job allocated 70.55 GB of memory so far.",
+    "2026-11-07 23:22:13.202 INFO   [3542BC\\FE9BB6] Auto-routing pass #6 on board '60694fdbae2658b462d01a4a9bfc2218' was completed in 4.91 seconds with score 472.87 (166 unrouted and 194 violations), using 152.16 CPU seconds and the job allocated 72.83 GB of memory so far.",
+    "2026-11-07 23:22:19.055 INFO   [3542BC\\FE9BB6] Auto-routing pass #7 on board '4337e3dadf50dfc54766be0136d13559' was completed in 4.52 seconds with score 472.87 (166 unrouted and 194 violations), using 158.15 CPU seconds and the job allocated 75.00 GB of memory so far.",
+    "2026-11-07 23:22:26.579 INFO   [3542BC\\FE9BB6] Auto-routing pass #8 on board '4337e3dadf50dfc54766be0136d13559' was completed in 0.00 seconds with score 472.87 (166 unrouted and 194 violations), using 165.13 CPU seconds and the job allocated 77.68 GB of memory so far.",
+    "2026-11-07 23:22:30.516 INFO   [3542BC\\FE9BB6] Auto-routing pass #9 on board '4337e3dadf50dfc54766be0136d13559' was completed in 3.89 seconds with score 476.00 (165 unrouted and 194 violations), using 169.10 CPU seconds and the job allocated 79.44 GB of memory so far.",
+    "2026-11-07 23:22:32.727 INFO   [3542BC\\FE9BB6] Auto-routing pass #10 on board '3ced54e49c290baf22d6dccd64d18e80' was completed in 1.10 seconds with score 476.00 (165 unrouted and 194 violations), using 171.09 CPU seconds and the job allocated 80.22 GB of memory so far.",
+    "2026-11-07 23:22:35.903 INFO   [3542BC\\FE9BB6] Auto-routing stage completed: started with 319 unrouted nets, completed in 175.41 seconds, final score: 476.00 (165 unrouted and 194 violations), using 175.07 total CPU seconds, 81.81 GB total allocated, and 588.1 MB peak heap usage.",
+    "2026-11-07 23:22:36.970 INFO   [3542BC\\FE9BB6] Skipping optimization stage: the board has 165 unrouted connection(s) (optimizer only runs on completely routed boards).",
+    "2026-11-07 23:22:37.044 INFO   [3542BC\\FE9BB6] Job '3542BC\\FE9BB6' finished with state: COMPLETED (elapsed: 2 minutes 59.22 seconds, finished at UTC: 2026-11-07T23:22:37.043171189Z).",
+    "2026-11-07 23:22:37.076 INFO   Saving output file '/tmp/sr-rx-RF-kdcrbcb0/RF.ses' (SES)...",
+    "2026-11-07 23:22:37.078 INFO   Successfully saved output file '/tmp/sr-rx-RF-kdcrbcb0/RF.ses' (75918 bytes)."
   ],
-  "dsn_sha256": "94d2ffadceda51deda068a5ef51097858a098d5b7478fb8f7719b8e8c2e82764",
-  "ses_sha256": "9ca4642958a990315f6489769acd2285fee29f296af9990c480635738ebfad6e",
+  "dsn_sha256": "00b62695b1b7322724fb92b4df8fd136c9c18f2a682d497525e3e84d1199f316",
+  "ses_sha256": "eb607cf5e100e02452769c94b66af33f4b1c100e8be48e722403dfb76cf58c91",
   "dsn_probe": {
     "resolution": "um 10",
-    "wires_fix": 91,
+    "wires_fix": 1328,
     "wires_protect": 0,
-    "keepouts": 31,
-    "planes": 1,
+    "keepouts": 27,
+    "planes": 2,
     "classes": {
       "kicad_default": {
         "width": "200",
         "clearance": "150"
+      },
+      "DCSENSE": {
+        "width": "200",
+        "clearance": "300"
       },
       "DCTAP": {
         "width": "200",
@@ -104,6 +106,10 @@
         "width": "360",
         "clearance": "200"
       },
+      "SCRIPTED": {
+        "width": "300",
+        "clearance": "150"
+      },
       "PWR1A": {
         "width": "350",
         "clearance": "150"
@@ -111,9 +117,23 @@
     }
   },
   "locked_segments": {
-    "before_ses_import": 91,
-    "after_ses_import": 91
+    "before_ses_import": 1328,
+    "after_ses_import": 1328
   },
+  "via_centre_stubs": [
+    {
+      "net": "BIAS_CH4",
+      "layer": "B.Cu",
+      "end": [
+        208.872,
+        116.378
+      ],
+      "centre": [
+        208.8725,
+        116.2425
+      ]
+    }
+  ],
   "drc_command": [
     "kicad-cli",
     "pcb",
@@ -127,7 +147,7 @@
     "--refill-zones",
     "--save-board"
   ],
-  "board_sha256": "2ea12e85775810d3c1185cf11add1d5d840ecb994022c75c374b054807190292",
+  "board_sha256": "9f1db1d30abaaa8b112e969e56f8540aa6d886184e8461a15156f076c9d9c60a",
   "previews": [
     "build/kicad/boards/RF/RF-top.svg",
     "build/kicad/boards/RF/RF-bottom.svg"
@@ -1202,16 +1222,34 @@
       "sha256": "8f227fecc7252e97f349d06841694c60e3df4c0cb58c6c59a5123f1cd631860c"
     },
     {
-      "ref": "PH407",
-      "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
-      "file": "kicad-image:TestPoint.pretty/TestPoint_Pad_D2.0mm.kicad_mod",
-      "sha256": "0a1ce94753a7b270c8ff6c20698b4de7ce95606b643549926acc04bb698d0120"
+      "ref": "CPN1",
+      "footprint": "SR_RX_Custom:SMA_Molex_73251-1153_EdgeMount_Horizontal_CS",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/SMA_Molex_73251-1153_EdgeMount_Horizontal_CS.kicad_mod",
+      "sha256": "a1e31f4d0a3af2aecc18f8134e614891f247bd2008f043bb5bb43a051b15af20"
+    },
+    {
+      "ref": "CPN2",
+      "footprint": "SR_RX_Custom:SMA_Molex_73251-1153_EdgeMount_Horizontal_CS",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/SMA_Molex_73251-1153_EdgeMount_Horizontal_CS.kicad_mod",
+      "sha256": "a1e31f4d0a3af2aecc18f8134e614891f247bd2008f043bb5bb43a051b15af20"
+    },
+    {
+      "ref": "CPN3",
+      "footprint": "SR_RX_Custom:SMA_Molex_73251-1153_EdgeMount_Horizontal_CS",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/SMA_Molex_73251-1153_EdgeMount_Horizontal_CS.kicad_mod",
+      "sha256": "a1e31f4d0a3af2aecc18f8134e614891f247bd2008f043bb5bb43a051b15af20"
+    },
+    {
+      "ref": "CPN4",
+      "footprint": "SR_RX_Custom:SMA_Molex_73251-1153_EdgeMount_Horizontal_CS",
+      "file": "build/kicad/footprints/SR_RX_Custom.pretty/SMA_Molex_73251-1153_EdgeMount_Horizontal_CS.kicad_mod",
+      "sha256": "a1e31f4d0a3af2aecc18f8134e614891f247bd2008f043bb5bb43a051b15af20"
     }
   ],
   "kicad_version": "10.0.7",
   "github": {
-    "run_id": "42416865216",
-    "sha": "28ff90a2b9db161add50b078ba974ece8e4245e2",
-    "ref": "refs/heads/wip/w2-rf1"
+    "run_id": "42424601968",
+    "sha": "74416860759aa70e66020efab1d8b680664967e7",
+    "ref": "refs/heads/wip/w2-rf2"
   }
 }

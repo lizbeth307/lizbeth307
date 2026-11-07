@@ -1,7 +1,7 @@
 {
   "schema": "srrx-board-connectors-v1",
   "board_id": "RF",
-  "status": "RF1_PLACED_FIRST_ROUTE_NOT_FOR_FABRICATION",
+  "status": "RF2_ROUTED_NOT_FOR_FABRICATION",
   "coordinates": "board mm: contract outline origin, y up, top view; enclosure_xy = contract placement origin + board xy (outline axes parallel to the enclosure, as mechanical/srrx_mech/cad.py:171)",
   "instances": [
     {
@@ -1603,37 +1603,6 @@
             101.3
           ],
           "replaced_by": "GR-4 graph ref for this board end (cable assembly and length: SRC-2)"
-        },
-        {
-          "template_ref": "PH407",
-          "ref": null,
-          "kind": "pilot_placeholder",
-          "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
-          "side": "F",
-          "rotation": 0.0,
-          "at": [
-            88.8,
-            34.0
-          ],
-          "pins": [
-            {
-              "pad": "1",
-              "net": "CHASSIS",
-              "at": [
-                88.8,
-                34.0
-              ],
-              "enclosure_xy": [
-                106.4,
-                133.0
-              ]
-            }
-          ],
-          "enclosure_xy": [
-            106.4,
-            133.0
-          ],
-          "replaced_by": "BOND-RF plated hole once board_gen.py has a plated-hole primitive"
         }
       ]
     }
