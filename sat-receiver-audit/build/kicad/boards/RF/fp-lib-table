@@ -1,0 +1,12 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "Capacitor_SMD")(type "KiCad")(uri "${KIPRJMOD}/../../footprints/Capacitor_SMD.pretty")(options "")(descr "SR-RX project footprints (build/kicad/footprints)"))
+  (lib (name "Connector_Coaxial")(type "KiCad")(uri "${KICAD10_FOOTPRINT_DIR}/Connector_Coaxial.pretty")(options "")(descr "Official KiCad 10.0.7 library of the kicad/kicad:10.0.7 image (pilot placeholder)"))
+  (lib (name "Connector_JST")(type "KiCad")(uri "${KIPRJMOD}/../../footprints/Connector_JST.pretty")(options "")(descr "SR-RX project footprints (build/kicad/footprints)"))
+  (lib (name "Inductor_SMD")(type "KiCad")(uri "${KIPRJMOD}/../../footprints/Inductor_SMD.pretty")(options "")(descr "SR-RX project footprints (build/kicad/footprints)"))
+  (lib (name "NetTie")(type "KiCad")(uri "${KIPRJMOD}/../../footprints/NetTie.pretty")(options "")(descr "SR-RX project footprints (build/kicad/footprints)"))
+  (lib (name "Package_TO_SOT_SMD")(type "KiCad")(uri "${KIPRJMOD}/../../footprints/Package_TO_SOT_SMD.pretty")(options "")(descr "SR-RX project footprints (build/kicad/footprints)"))
+  (lib (name "Resistor_SMD")(type "KiCad")(uri "${KIPRJMOD}/../../footprints/Resistor_SMD.pretty")(options "")(descr "SR-RX project footprints (build/kicad/footprints)"))
+  (lib (name "SR_RX_Custom")(type "KiCad")(uri "${KIPRJMOD}/../../footprints/SR_RX_Custom.pretty")(options "")(descr "SR-RX project footprints (build/kicad/footprints)"))
+  (lib (name "TestPoint")(type "KiCad")(uri "${KICAD10_FOOTPRINT_DIR}/TestPoint.pretty")(options "")(descr "Official KiCad 10.0.7 library of the kicad/kicad:10.0.7 image (pilot placeholder)"))
+)

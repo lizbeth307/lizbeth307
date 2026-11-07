@@ -1,0 +1,1641 @@
+{
+  "schema": "srrx-board-connectors-v1",
+  "board_id": "RF",
+  "status": "RF1_PLACED_FIRST_ROUTE_NOT_FOR_FABRICATION",
+  "coordinates": "board mm: contract outline origin, y up, top view; enclosure_xy = contract placement origin + board xy (outline axes parallel to the enclosure, as mechanical/srrx_mech/cad.py:171)",
+  "instances": [
+    {
+      "instance": "RF",
+      "placement": "default",
+      "board_origin_enclosure_mm": [
+        17.6,
+        99.0
+      ],
+      "z_bottom": 35.5,
+      "facing": "-z",
+      "connectors": [
+        {
+          "template_ref": "J409",
+          "ref": "J409",
+          "kind": "graph",
+          "footprint": "SR_RX_Custom:SMA_Molex_73251-1153_EdgeMount_Horizontal_CS",
+          "side": "F",
+          "rotation": -90.0,
+          "at": [
+            52.6,
+            39.74
+          ],
+          "pins": [
+            {
+              "pad": "CENTER",
+              "net": "E4_BENCH",
+              "at": [
+                52.6,
+                41.46
+              ],
+              "enclosure_xy": [
+                70.2,
+                140.46
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                48.22,
+                38.02
+              ],
+              "enclosure_xy": [
+                65.82,
+                137.02
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                48.22,
+                38.47
+              ],
+              "enclosure_xy": [
+                65.82,
+                137.47
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                48.22,
+                38.47
+              ],
+              "enclosure_xy": [
+                65.82,
+                137.47
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                48.22,
+                41.46
+              ],
+              "enclosure_xy": [
+                65.82,
+                140.46
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                48.22,
+                41.46
+              ],
+              "enclosure_xy": [
+                65.82,
+                140.46
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                56.98,
+                38.02
+              ],
+              "enclosure_xy": [
+                74.58,
+                137.02
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                56.98,
+                38.47
+              ],
+              "enclosure_xy": [
+                74.58,
+                137.47
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                56.98,
+                38.47
+              ],
+              "enclosure_xy": [
+                74.58,
+                137.47
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                56.98,
+                41.46
+              ],
+              "enclosure_xy": [
+                74.58,
+                140.46
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                56.98,
+                41.46
+              ],
+              "enclosure_xy": [
+                74.58,
+                140.46
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            70.2,
+            138.74
+          ]
+        },
+        {
+          "template_ref": "J410",
+          "ref": "J410",
+          "kind": "graph",
+          "footprint": "SR_RX_Custom:SMA_Molex_73251-1153_EdgeMount_Horizontal_CS",
+          "side": "F",
+          "rotation": -90.0,
+          "at": [
+            123.0,
+            39.74
+          ],
+          "pins": [
+            {
+              "pad": "CENTER",
+              "net": "E4_RFC_A",
+              "at": [
+                123.0,
+                41.46
+              ],
+              "enclosure_xy": [
+                140.6,
+                140.46
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                118.62,
+                38.02
+              ],
+              "enclosure_xy": [
+                136.22,
+                137.02
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                118.62,
+                38.47
+              ],
+              "enclosure_xy": [
+                136.22,
+                137.47
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                118.62,
+                38.47
+              ],
+              "enclosure_xy": [
+                136.22,
+                137.47
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                118.62,
+                41.46
+              ],
+              "enclosure_xy": [
+                136.22,
+                140.46
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                118.62,
+                41.46
+              ],
+              "enclosure_xy": [
+                136.22,
+                140.46
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                127.38,
+                38.02
+              ],
+              "enclosure_xy": [
+                144.98,
+                137.02
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                127.38,
+                38.47
+              ],
+              "enclosure_xy": [
+                144.98,
+                137.47
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                127.38,
+                38.47
+              ],
+              "enclosure_xy": [
+                144.98,
+                137.47
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                127.38,
+                41.46
+              ],
+              "enclosure_xy": [
+                144.98,
+                140.46
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                127.38,
+                41.46
+              ],
+              "enclosure_xy": [
+                144.98,
+                140.46
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            140.6,
+            138.74
+          ]
+        },
+        {
+          "template_ref": "J411",
+          "ref": "J411",
+          "kind": "graph",
+          "footprint": "SR_RX_Custom:SMA_Molex_73251-1153_EdgeMount_Horizontal_CS",
+          "side": "F",
+          "rotation": -90.0,
+          "at": [
+            65.25,
+            39.74
+          ],
+          "pins": [
+            {
+              "pad": "CENTER",
+              "net": "E4_RFC_B",
+              "at": [
+                65.25,
+                41.46
+              ],
+              "enclosure_xy": [
+                82.85,
+                140.46
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                60.87,
+                38.02
+              ],
+              "enclosure_xy": [
+                78.47,
+                137.02
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                60.87,
+                38.47
+              ],
+              "enclosure_xy": [
+                78.47,
+                137.47
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                60.87,
+                38.47
+              ],
+              "enclosure_xy": [
+                78.47,
+                137.47
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                60.87,
+                41.46
+              ],
+              "enclosure_xy": [
+                78.47,
+                140.46
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                60.87,
+                41.46
+              ],
+              "enclosure_xy": [
+                78.47,
+                140.46
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                69.63,
+                38.02
+              ],
+              "enclosure_xy": [
+                87.23,
+                137.02
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                69.63,
+                38.47
+              ],
+              "enclosure_xy": [
+                87.23,
+                137.47
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                69.63,
+                38.47
+              ],
+              "enclosure_xy": [
+                87.23,
+                137.47
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                69.63,
+                41.46
+              ],
+              "enclosure_xy": [
+                87.23,
+                140.46
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                69.63,
+                41.46
+              ],
+              "enclosure_xy": [
+                87.23,
+                140.46
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            82.85,
+            138.74
+          ]
+        },
+        {
+          "template_ref": "J412",
+          "ref": "J412",
+          "kind": "graph",
+          "footprint": "SR_RX_Custom:SMA_Molex_73251-1153_EdgeMount_Horizontal_CS",
+          "side": "F",
+          "rotation": -90.0,
+          "at": [
+            78.25,
+            39.74
+          ],
+          "pins": [
+            {
+              "pad": "CENTER",
+              "net": "E4_RX1_EDGE",
+              "at": [
+                78.25,
+                41.46
+              ],
+              "enclosure_xy": [
+                95.85,
+                140.46
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                73.87,
+                38.02
+              ],
+              "enclosure_xy": [
+                91.47,
+                137.02
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                73.87,
+                38.47
+              ],
+              "enclosure_xy": [
+                91.47,
+                137.47
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                73.87,
+                38.47
+              ],
+              "enclosure_xy": [
+                91.47,
+                137.47
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                73.87,
+                41.46
+              ],
+              "enclosure_xy": [
+                91.47,
+                140.46
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                73.87,
+                41.46
+              ],
+              "enclosure_xy": [
+                91.47,
+                140.46
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                82.63,
+                38.02
+              ],
+              "enclosure_xy": [
+                100.23,
+                137.02
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                82.63,
+                38.47
+              ],
+              "enclosure_xy": [
+                100.23,
+                137.47
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                82.63,
+                38.47
+              ],
+              "enclosure_xy": [
+                100.23,
+                137.47
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                82.63,
+                41.46
+              ],
+              "enclosure_xy": [
+                100.23,
+                140.46
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                82.63,
+                41.46
+              ],
+              "enclosure_xy": [
+                100.23,
+                140.46
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            95.85,
+            138.74
+          ]
+        },
+        {
+          "template_ref": "J418",
+          "ref": "J418",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S8B-PH-K_1x08_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            134.95,
+            7.6
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                134.95,
+                7.6
+              ],
+              "enclosure_xy": [
+                152.55,
+                106.6
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "DCS_HF",
+              "at": [
+                136.95,
+                7.6
+              ],
+              "enclosure_xy": [
+                154.55,
+                106.6
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "DCS_LBAND",
+              "at": [
+                138.95,
+                7.6
+              ],
+              "enclosure_xy": [
+                156.55,
+                106.6
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "DCS_UHF",
+              "at": [
+                140.95,
+                7.6
+              ],
+              "enclosure_xy": [
+                158.55,
+                106.6
+              ]
+            },
+            {
+              "pad": "5",
+              "net": "K1_ON",
+              "at": [
+                142.95,
+                7.6
+              ],
+              "enclosure_xy": [
+                160.55,
+                106.6
+              ]
+            },
+            {
+              "pad": "6",
+              "net": "K2_ON",
+              "at": [
+                144.95,
+                7.6
+              ],
+              "enclosure_xy": [
+                162.55,
+                106.6
+              ]
+            },
+            {
+              "pad": "7",
+              "net": "SW_LIME_A",
+              "at": [
+                146.95,
+                7.6
+              ],
+              "enclosure_xy": [
+                164.55,
+                106.6
+              ]
+            },
+            {
+              "pad": "8",
+              "net": "SW_LIME_B",
+              "at": [
+                148.95,
+                7.6
+              ],
+              "enclosure_xy": [
+                166.55,
+                106.6
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            152.55,
+            106.6
+          ]
+        },
+        {
+          "template_ref": "J419",
+          "ref": "J419",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            122.0,
+            7.6
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "SW_RTLA_A",
+              "at": [
+                122.0,
+                7.6
+              ],
+              "enclosure_xy": [
+                139.6,
+                106.6
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "SW_RTLA_B",
+              "at": [
+                124.0,
+                7.6
+              ],
+              "enclosure_xy": [
+                141.6,
+                106.6
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "SW_RTLB_A",
+              "at": [
+                126.0,
+                7.6
+              ],
+              "enclosure_xy": [
+                143.6,
+                106.6
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "SW_RTLB_B",
+              "at": [
+                128.0,
+                7.6
+              ],
+              "enclosure_xy": [
+                145.6,
+                106.6
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            139.6,
+            106.6
+          ]
+        },
+        {
+          "template_ref": "J420",
+          "ref": "J420",
+          "kind": "graph",
+          "footprint": "Connector_JST:JST_PH_S8B-PH-K_1x08_P2.00mm_Horizontal",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            155.0,
+            7.6
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "GND",
+              "at": [
+                155.0,
+                7.6
+              ],
+              "enclosure_xy": [
+                172.6,
+                106.6
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "3V3_Q6A",
+              "at": [
+                157.0,
+                7.6
+              ],
+              "enclosure_xy": [
+                174.6,
+                106.6
+              ]
+            },
+            {
+              "pad": "3",
+              "net": "BIAS_CH1",
+              "at": [
+                159.0,
+                7.6
+              ],
+              "enclosure_xy": [
+                176.6,
+                106.6
+              ]
+            },
+            {
+              "pad": "4",
+              "net": "BIAS_CH2_PORT",
+              "at": [
+                161.0,
+                7.6
+              ],
+              "enclosure_xy": [
+                178.6,
+                106.6
+              ]
+            },
+            {
+              "pad": "5",
+              "net": "BIAS_CH3_PORT",
+              "at": [
+                163.0,
+                7.6
+              ],
+              "enclosure_xy": [
+                180.6,
+                106.6
+              ]
+            },
+            {
+              "pad": "6",
+              "net": "BIAS_CH4",
+              "at": [
+                165.0,
+                7.6
+              ],
+              "enclosure_xy": [
+                182.6,
+                106.6
+              ]
+            },
+            {
+              "pad": "7",
+              "net": "LAB5_RLY",
+              "at": [
+                167.0,
+                7.6
+              ],
+              "enclosure_xy": [
+                184.6,
+                106.6
+              ]
+            },
+            {
+              "pad": "8",
+              "net": "LNB13V2",
+              "at": [
+                169.0,
+                7.6
+              ],
+              "enclosure_xy": [
+                186.6,
+                106.6
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            172.6,
+            106.6
+          ]
+        },
+        {
+          "template_ref": "J423",
+          "ref": "J423",
+          "kind": "graph",
+          "footprint": "SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS",
+          "side": "F",
+          "rotation": 90.0,
+          "at": [
+            107.0,
+            42.0
+          ],
+          "pins": [
+            {
+              "pad": "CENTER",
+              "net": "E4_P2",
+              "at": [
+                107.0,
+                40.475
+              ],
+              "enclosure_xy": [
+                124.6,
+                139.475
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                105.525,
+                42.0
+              ],
+              "enclosure_xy": [
+                123.125,
+                141.0
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                108.475,
+                42.0
+              ],
+              "enclosure_xy": [
+                126.075,
+                141.0
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            124.6,
+            141.0
+          ]
+        },
+        {
+          "template_ref": "J424",
+          "ref": "J424",
+          "kind": "graph",
+          "footprint": "SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS",
+          "side": "F",
+          "rotation": 90.0,
+          "at": [
+            98.0,
+            42.0
+          ],
+          "pins": [
+            {
+              "pad": "CENTER",
+              "net": "E4_P3",
+              "at": [
+                98.0,
+                40.475
+              ],
+              "enclosure_xy": [
+                115.6,
+                139.475
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                96.525,
+                42.0
+              ],
+              "enclosure_xy": [
+                114.125,
+                141.0
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                99.475,
+                42.0
+              ],
+              "enclosure_xy": [
+                117.075,
+                141.0
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            115.6,
+            141.0
+          ]
+        },
+        {
+          "template_ref": "J425",
+          "ref": "J425",
+          "kind": "graph",
+          "footprint": "SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS",
+          "side": "F",
+          "rotation": 90.0,
+          "at": [
+            38.4,
+            42.0
+          ],
+          "pins": [
+            {
+              "pad": "CENTER",
+              "net": "E4_P6",
+              "at": [
+                38.4,
+                40.475
+              ],
+              "enclosure_xy": [
+                56.0,
+                139.475
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                36.925,
+                42.0
+              ],
+              "enclosure_xy": [
+                54.525,
+                141.0
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                39.875,
+                42.0
+              ],
+              "enclosure_xy": [
+                57.475,
+                141.0
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            56.0,
+            141.0
+          ]
+        },
+        {
+          "template_ref": "J426",
+          "ref": "J426",
+          "kind": "graph",
+          "footprint": "SR_RX_Custom:SMA_Molex_73251-1153_EdgeMount_Horizontal_CS",
+          "side": "F",
+          "rotation": -90.0,
+          "at": [
+            26.0,
+            39.74
+          ],
+          "pins": [
+            {
+              "pad": "CENTER",
+              "net": "E4_RF_CH5",
+              "at": [
+                26.0,
+                41.46
+              ],
+              "enclosure_xy": [
+                43.6,
+                140.46
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                21.62,
+                38.02
+              ],
+              "enclosure_xy": [
+                39.22,
+                137.02
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                21.62,
+                38.47
+              ],
+              "enclosure_xy": [
+                39.22,
+                137.47
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                21.62,
+                38.47
+              ],
+              "enclosure_xy": [
+                39.22,
+                137.47
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                21.62,
+                41.46
+              ],
+              "enclosure_xy": [
+                39.22,
+                140.46
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                21.62,
+                41.46
+              ],
+              "enclosure_xy": [
+                39.22,
+                140.46
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                30.38,
+                38.02
+              ],
+              "enclosure_xy": [
+                47.98,
+                137.02
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                30.38,
+                38.47
+              ],
+              "enclosure_xy": [
+                47.98,
+                137.47
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                30.38,
+                38.47
+              ],
+              "enclosure_xy": [
+                47.98,
+                137.47
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                30.38,
+                41.46
+              ],
+              "enclosure_xy": [
+                47.98,
+                140.46
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                30.38,
+                41.46
+              ],
+              "enclosure_xy": [
+                47.98,
+                140.46
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            43.6,
+            138.74
+          ]
+        },
+        {
+          "template_ref": "J427",
+          "ref": "J427",
+          "kind": "graph",
+          "footprint": "SR_RX_Custom:U.FL_Hirose_U.FL-R-SMT-1_Vertical_CS",
+          "side": "F",
+          "rotation": 90.0,
+          "at": [
+            113.995,
+            42.0
+          ],
+          "pins": [
+            {
+              "pad": "CENTER",
+              "net": "E4_RF_CH4",
+              "at": [
+                113.995,
+                40.475
+              ],
+              "enclosure_xy": [
+                131.595,
+                139.475
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                112.52,
+                42.0
+              ],
+              "enclosure_xy": [
+                130.12,
+                141.0
+              ]
+            },
+            {
+              "pad": "SHIELD",
+              "net": "GND",
+              "at": [
+                115.47,
+                42.0
+              ],
+              "enclosure_xy": [
+                133.07,
+                141.0
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            131.595,
+            141.0
+          ]
+        },
+        {
+          "template_ref": "PH401",
+          "ref": null,
+          "kind": "pilot_placeholder",
+          "footprint": "Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical",
+          "side": "F",
+          "rotation": -90.0,
+          "at": [
+            129.6,
+            17.075
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E4_RF_CH1",
+              "at": [
+                129.6,
+                18.6
+              ],
+              "enclosure_xy": [
+                147.2,
+                117.6
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                128.125,
+                17.075
+              ],
+              "enclosure_xy": [
+                145.725,
+                116.075
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                131.075,
+                17.075
+              ],
+              "enclosure_xy": [
+                148.675,
+                116.075
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            147.2,
+            116.075
+          ],
+          "replaced_by": "GR-4 graph ref for this board end (cable assembly and length: SRC-2)"
+        },
+        {
+          "template_ref": "PH402",
+          "ref": null,
+          "kind": "pilot_placeholder",
+          "footprint": "Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            30.125,
+            31.3
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E4_RF_CH5_DC",
+              "at": [
+                28.6,
+                31.3
+              ],
+              "enclosure_xy": [
+                46.2,
+                130.3
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                30.125,
+                29.825
+              ],
+              "enclosure_xy": [
+                47.725,
+                128.825
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                30.125,
+                32.775
+              ],
+              "enclosure_xy": [
+                47.725,
+                131.775
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            47.725,
+            130.3
+          ],
+          "replaced_by": "GR-4 graph ref for this board end (cable assembly and length: SRC-2)"
+        },
+        {
+          "template_ref": "PH403",
+          "ref": null,
+          "kind": "pilot_placeholder",
+          "footprint": "Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical",
+          "side": "F",
+          "rotation": -90.0,
+          "at": [
+            60.0,
+            21.475
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E4_RF_CH5_ATT",
+              "at": [
+                60.0,
+                23.0
+              ],
+              "enclosure_xy": [
+                77.6,
+                122.0
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                58.525,
+                21.475
+              ],
+              "enclosure_xy": [
+                76.125,
+                120.475
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                61.475,
+                21.475
+              ],
+              "enclosure_xy": [
+                79.075,
+                120.475
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            77.6,
+            120.475
+          ],
+          "replaced_by": "GR-4 graph ref for this board end (cable assembly and length: SRC-2)"
+        },
+        {
+          "template_ref": "PH404",
+          "ref": null,
+          "kind": "pilot_placeholder",
+          "footprint": "Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical",
+          "side": "F",
+          "rotation": -90.0,
+          "at": [
+            17.6,
+            2.3
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E4_HF_BT",
+              "at": [
+                17.6,
+                3.825
+              ],
+              "enclosure_xy": [
+                35.2,
+                102.825
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                16.125,
+                2.3
+              ],
+              "enclosure_xy": [
+                33.725,
+                101.3
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                19.075,
+                2.3
+              ],
+              "enclosure_xy": [
+                36.675,
+                101.3
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            35.2,
+            101.3
+          ],
+          "replaced_by": "GR-4 graph ref for this board end (cable assembly and length: SRC-2)"
+        },
+        {
+          "template_ref": "PH405",
+          "ref": null,
+          "kind": "pilot_placeholder",
+          "footprint": "Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical",
+          "side": "F",
+          "rotation": -90.0,
+          "at": [
+            32.0,
+            2.3
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E4_HF_CM",
+              "at": [
+                32.0,
+                3.825
+              ],
+              "enclosure_xy": [
+                49.6,
+                102.825
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                30.525,
+                2.3
+              ],
+              "enclosure_xy": [
+                48.125,
+                101.3
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                33.475,
+                2.3
+              ],
+              "enclosure_xy": [
+                51.075,
+                101.3
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            49.6,
+            101.3
+          ],
+          "replaced_by": "GR-4 graph ref for this board end (cable assembly and length: SRC-2)"
+        },
+        {
+          "template_ref": "PH406",
+          "ref": null,
+          "kind": "pilot_placeholder",
+          "footprint": "Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical",
+          "side": "F",
+          "rotation": -90.0,
+          "at": [
+            26.0,
+            2.3
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "E4_HFP_ANT",
+              "at": [
+                26.0,
+                3.825
+              ],
+              "enclosure_xy": [
+                43.6,
+                102.825
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                24.525,
+                2.3
+              ],
+              "enclosure_xy": [
+                42.125,
+                101.3
+              ]
+            },
+            {
+              "pad": "2",
+              "net": "GND",
+              "at": [
+                27.475,
+                2.3
+              ],
+              "enclosure_xy": [
+                45.075,
+                101.3
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            43.6,
+            101.3
+          ],
+          "replaced_by": "GR-4 graph ref for this board end (cable assembly and length: SRC-2)"
+        },
+        {
+          "template_ref": "PH407",
+          "ref": null,
+          "kind": "pilot_placeholder",
+          "footprint": "TestPoint:TestPoint_Pad_D2.0mm",
+          "side": "F",
+          "rotation": 0.0,
+          "at": [
+            88.8,
+            34.0
+          ],
+          "pins": [
+            {
+              "pad": "1",
+              "net": "CHASSIS",
+              "at": [
+                88.8,
+                34.0
+              ],
+              "enclosure_xy": [
+                106.4,
+                133.0
+              ]
+            }
+          ],
+          "enclosure_xy": [
+            106.4,
+            133.0
+          ],
+          "replaced_by": "BOND-RF plated hole once board_gen.py has a plated-hole primitive"
+        }
+      ]
+    }
+  ]
+}
