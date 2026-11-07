@@ -578,7 +578,7 @@ def unit_properties(text):
 
 
 # The smoke report and the console logs are CI artifacts of a public repository: an address-like
-# token (local@domain.tld) in captured unit or journal text is replaced. systemd unit instance names
+# token (a local part, "@", a dotted domain) in captured unit or journal text is replaced. systemd unit instance names
 # (modprobe@configfs.service, getty@tty1.service) are not addresses and stay as they are.
 ADDRESS = re.compile(r"[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.([A-Za-z]{2,})\b")
 UNIT_SUFFIXES = frozenset(("service", "socket", "target", "mount", "automount", "swap", "timer", "path", "slice", "scope", "device"))
