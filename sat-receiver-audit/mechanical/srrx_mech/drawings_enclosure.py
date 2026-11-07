@@ -1,7 +1,7 @@
 """Panel drilling sheets, mid-plate, angles, RF bay, pedestal, cooler block, HF+ can, bezel and seam details."""
 import math
 
-from .features import HOLES, face_features, face_size
+from .features import HOLES, face_features, face_size, hole_outline
 from .geom2d import Sheet, fmt
 
 FACE_UK = {"front": "лице (z = D)", "rear": "задня стінка, вид ззаду", "top": "верхня грань, вид згори (лице внизу)",
@@ -33,6 +33,18 @@ def _feature(sh, f, ox=0.0, oy=0.0):
     elif k == "tbd":
         sh.rect(u - f["w"] / 2, v - f["h"] / 2, f["w"], f["h"], "HIDDEN")
         sh.hole((u, v), f["d"], f"{f['id']} TBD", 2.0)
+    elif f.get("shape") == "dflat":
+        # D-cut from the maker's drawing: arc on the -v side, flat on the +v side; flange outline outside (thin)
+        sh.poly(hole_outline(dict(f, u=u, v=v)), True, "CUT")
+        sh.center_mark((u, v), f["d"] / 2 + 2.0)
+        if f.get("flange_d"):
+            sh.circle((u, v), f["flange_d"] / 2, "THIN")
+            rr = max(f["d"], f.get("flange_d", 0.0)) / 2
+            sh.text((u + rr + 1.0, v - 3.0), f"{f['id']} ⌀{fmt(f['d'])} / {fmt(f['flat'])}", 1.8)
+        else:
+            # a row of small D-cuts (SMA): the id under the hole like the round holes; the size is in the table
+            r = f["d"] / 2
+            sh.label((u - r, v - (r + 3.2)), f["id"], 1.8, [(u - r, v + r + 1.5), (u + r + 1.0, v - 3.0)])
     elif k == "strap":
         sh.rect(u - f["w"] / 2, v - f["h"] / 2, f["w"], f["h"], "THIN")            # solid body printed with the shell
         sh.rect(u - f["pw"] / 2, v - f["ph"] / 2, f["pw"], f["ph"], "HIDDEN")       # strap passage
@@ -67,6 +79,8 @@ def _table(sh, feats, x, y, title):
     y -= 3.4
     for f in feats:
         size = f"⌀{fmt(f['d'])}" if "d" in f and f["kind"] not in ("grille", "hatch", "window", "tbd") else f"{fmt(f.get('w', 0))} x {fmt(f.get('h', 0))}"
+        if f.get("shape") == "dflat":
+            size += f" / {fmt(f['flat'])}"
         basis = HOLES.get(f["kind"], {}).get("basis", "")
         line = f"{f['id'][:14]:14s} {fmt(f['u'], 1):>7s} {fmt(f['v'], 1):>7s}  {size}"
         sh.ptext((x, y), line, 2.0, layer="TABLE")
@@ -243,8 +257,11 @@ def angles_sheet(P):
                (420.0, 297.0), 1.0, (25.0, 40.0), m["angles"]["material"],
                ["Полиця 'стінка' прилягає до стінки корпусу зсередини; отвори збігаються з отворами корпусу (M-02, M-03).",
                 "Полиця 'пластина' кріпиться до тильного боку пластини (M-07): гвинти M3 з тильного боку у врівень-гайки PEM F-M3-1 пластини; з'єднання — голий метал.",
-                "Гвинти верхнього кутника — посередині між портами, щоб їхні голівки минали гайки й шайби прохідників (⌀10.15 x 2.5, fit-report nut.*).",
-                "Прохідники: ≥3 повні витки різьби після кільця, стопорної шайби й гайки (STACK 5.8)."])
+                "Гвинти верхнього кутника — посередині між портами, щоб їхні голівки минали корпуси прохідників SMA і гайку F (fit-report nut.*).",
+                "SMA CAB.718, Adam Tech, CAB.01075 і CAB.011 — гайка й шайба з лицьового боку (зовні), корпус 8 HEX — на кутнику зсередини; кілець у їхніх кресленнях "
+                "немає — ущільнення вирізу T-07. Лиска CAB.718 (⌀6.5 / 6) — у вирізі стінки ASA (M-02), отвір кутника — круглий ⌀6.5. F VFA340 — фланець зовні, "
+                "шайба й гайка на кутнику.",
+                "Прохідники: ≥3 повні витки різьби для стикування після стінки, шайби й гайки (R-SMA-THREAD, STACK 5.8)."])
     at = m["angles"]["top"]
     L = at["x"][1] - at["x"][0]
     # wall leg (in XZ): u = x - x0, v = z - (plate_rear - leg)

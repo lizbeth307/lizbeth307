@@ -33,10 +33,11 @@
   },
   "sband_pod": {
     "box": "hammond_1554u2gy", "layer_gap": 5.0, "standoff": 6.0,
-    "ports": [{"id": "RF_IN", "wall": "left_end", "y": 40.0, "z": 45.0, "kind": "sma_bulkhead"},
-              {"id": "RF_OUT", "wall": "right_end", "y": 40.0, "z": 45.0, "kind": "sma_bulkhead"},
-              {"id": "PWR", "wall": "right_end", "y": 80.0, "z": 45.0, "kind": "m12_gland"},
-              {"id": "VENT", "wall": "side_front", "x": 100.0, "z": 30.0, "kind": "m12_vent"}],
+    "ports": [{"id": "RF_IN", "wall": "left_end", "y": 40.0, "z": 45.0, "kind": "sma_bulkhead_pod", "part": "fairview_sm4955"},
+              {"id": "RF_OUT", "wall": "right_end", "y": 40.0, "z": 45.0, "kind": "sma_bulkhead_pod", "part": "fairview_sm4955"},
+              {"id": "PWR", "wall": "right_end", "y": 80.0, "z": 45.0, "kind": "m12_gland", "part": "lapp_skintop_st_m12"},
+              {"id": "VENT", "wall": "side_front", "x": 100.0, "z": 30.0, "kind": "m12_vent", "part": "ltw_vent"}],
+    "_ports_src": "W2 MECH-2 (2026-11-07): RF_IN/RF_OUT D-cut hole of the jack-jack bulkhead whose drawing was read (Fairview SM4955: D6.47 / 5.94, panel <= 6.35; no O-ring in its data sheet, so the seal is TBD with the purchase item AI-SMA-BULK-POD, SRC-2); PWR: LAPP SKINTOP ST-M 12x1.5 RAL 9005 BK 53111200 (black, UV-resistant per its LAPP sheet, which says the black variants are the outdoor ones; the light-grey 53111400 is not UV-resistant; clamping 3.5-7.0 mm takes the 4.2 mm W425 cable) with the separate LAPP SKINDICHT SM-M 12x1.5 locknut 52103000 (3.0 mm); DigiKey DE 2181-53111200-ND is not stocked, only break 1,400 (supply OPEN, SRC-2); the gland O-ring on the wall is not included (TBD, MECH-4). Walls: RF_IN, RF_OUT and PWR sit in the end walls, which the Hammond 1554U drawing does not dimension (section B-B gives 3.00 for the side walls only); rule R-POD-WALL takes the end walls at their upper bound (200 - 192.13) / 2 = 3.94: SM4955 panel max 6.35 >= 3.94, gland thread 8.0 - 3.94 - locknut 3.0 = 1.06 >= 0 (model)",
     "_src": "build/12-revision-v2.1 'S-band: зовнішній антенний вузол' (LaNA WB 100845 + cf2235-kt30 in a Hammond 1554U2GY, layers 5 mm apart); E4-04 gate OPEN"
   }
 }

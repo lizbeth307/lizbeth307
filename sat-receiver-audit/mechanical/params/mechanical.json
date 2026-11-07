@@ -93,51 +93,65 @@
       {
         "id": "P1",
         "x": 43.5,
-        "kind": "sma_pigtail"
+        "kind": "sma_adamtech",
+        "part": "adamtech_ca_dkca1_305l5",
+        "_mpn": "Adam Tech CA-DKCA1-305L5-APAJ bulkhead assembly into the A401 SMA input (parts DB J401 J-SMA-PANEL, W2 GR-2): front-side nut (parts.json adamtech_ca_dkca1_305l5)"
       },
       {
         "id": "P2",
         "x": 63.5,
-        "kind": "sma_pigtail"
+        "kind": "sma_cab718",
+        "part": "taoglas_cab718",
+        "_mpn": "Taoglas CAB.718 Hirose U.FL plug -> SMA(F) bulkhead 200 mm (parts DB J402 J-SMA-PANEL-RFBOARD, W2 GR-2): front-side nut, D6.5 / 6 D-cut (parts.json taoglas_cab718)"
       },
       {
         "id": "P3",
         "x": 83.5,
-        "kind": "sma_pigtail"
+        "kind": "sma_cab718",
+        "part": "taoglas_cab718",
+        "_mpn": "Taoglas CAB.718 Hirose U.FL plug -> SMA(F) bulkhead 200 mm (parts DB J403 J-SMA-PANEL-RFBOARD, W2 GR-2): front-side nut, D6.5 / 6 D-cut (parts.json taoglas_cab718)"
       },
       {
         "id": "P4",
         "x": 103.5,
         "kind": "f_bulkhead",
-        "_mpn": "Cinch VFA340 F/F bulkhead adapter (parts DB J404); its hardware and panel range not read (R-BULKHEAD-NUTS)"
+        "part": "cinch_vfa340",
+        "_mpn": "Cinch VFA340 F/F bulkhead adapter (parts DB J404): 11 HEX flange outside, washer and nut inside on the Al angle (parts.json cinch_vfa340)"
       },
       {
         "id": "P5",
         "x": 123.5,
         "kind": "bnc_bulkhead",
-        "_mpn": "Amphenol RF 242181 BNC/SMA bulkhead adapter (parts DB J405); which end carries the panel thread not read (R-BULKHEAD-NUTS)"
+        "part": "amphenol_242181",
+        "_mpn": "Amphenol RF 242181 BNC/SMA bulkhead adapter (parts DB J405)",
+        "_tbd_reason": "drawing not readable: https://www.amphenolrf.com/en-us/assets/file/4065787441/ 2026-11-07 403 (distributor copies 403 or timeout, parts.json amphenol_242181); hole 9.7 is the typical 3/8-32 bulkhead value, the panel end, thread length and nut stay TBD (R-BULKHEAD-NUTS, R-SMA-THREAD)"
       },
       {
         "id": "P6",
         "x": 143.5,
-        "kind": "sma_pigtail"
+        "kind": "sma_cab718",
+        "part": "taoglas_cab718",
+        "_mpn": "Taoglas CAB.718 Hirose U.FL plug -> SMA(F) bulkhead 200 mm (parts DB J406 J-SMA-PANEL-RFBOARD, W2 GR-2): front-side nut, D6.5 / 6 D-cut (parts.json taoglas_cab718)"
       },
       {
         "id": "P7",
         "x": 163.5,
         "kind": "sma_k",
-        "_mpn": "SMA end of the Taoglas CAB.011 pigtail W407 (parts DB); 100 mm does not reach the LC76G at the rear-left wall (>= 113 mm straight line): longer pigtail TBD"
+        "_mpn": "SMA end of the Taoglas CAB.011 pigtail W407 (parts DB); 100 mm does not reach the LC76G at the rear-left wall (>= 113 mm straight line): longer pigtail TBD",
+        "_tbd_reason": "CAB.011 thread length and D-cut hole not in the READS-RF row web:taoglas-cab011-datasheet-spe-11-8-068-f (2026-11-07); the P7 pigtail is chosen by MECH-6 (B-06)"
       },
       {
         "id": "P8",
         "x": 183.5,
-        "kind": "sma_pigtail",
-        "_mpn": "Adam Tech CA-DKCA1-305L5-APAJ bulkhead assembly into the A403 SMA input (parts DB J408); max panel thickness not read (R-SMA-THREAD)"
+        "kind": "sma_cab718",
+        "part": "taoglas_cab718",
+        "_mpn": "Taoglas CAB.718 Hirose U.FL plug -> SMA(F) bulkhead 200 mm (parts DB J408 J-SMA-PANEL-RFBOARD, W2 GR-2): front-side nut, D6.5 / 6 D-cut (parts.json taoglas_cab718); to U.FL J427 on the RF board, P8 is a direct port (AREA)"
       },
       {
         "id": "RX1",
         "x": 203.5,
-        "kind": "sma_cab01075"
+        "kind": "sma_cab01075",
+        "part": "taoglas_cab01075"
       }
     ],
     "veml7700_window": {
@@ -167,13 +181,15 @@
         "id": "RX2",
         "y": 142.0,
         "z": 30.0,
-        "kind": "sma_cab01075"
+        "kind": "sma_cab01075",
+        "part": "taoglas_cab01075"
       },
       {
         "id": "REF_IN",
         "y": 122.0,
         "z": 30.0,
-        "kind": "sma_cab01075"
+        "kind": "sma_cab01075",
+        "part": "taoglas_cab01075"
       }
     ],
     "_src": "STACK D15 puts RX2/REF IN on the left wall; this model moves them to the right wall next to the LimeSDR: the Taoglas CAB.01075 leads are 100 mm long and the left wall is at least 145 mm from the Lime (recorded in build/15)"
@@ -189,43 +205,48 @@
   },
   "bottom_face": {
     "_ports_note": "rear-layer row above the external seam belt (z 9-19 plus margin, rule R-PANEL-FLAT) and below the plate edge (z 38.5); wires to the front layer through plate slot SL3",
-    "_pitch_note": "the row USB-A 172 / USB-C 189 / LAB BUS 206 has a 17 mm pitch: the flanged MUSBRM5C130 and the nut-mounted PX0845/A and KH-GX12-6P may overlap their neighbours; re-check with the makers' drawings (not read, TBD)",
+    "_pitch_note": "the row USB-A 172 / USB-C 189 / LAB BUS 206 has a 17 mm pitch; rule R-BOTTOM-PITCH checks every pair of modelled bottom ports (outer flange or inner nut radius of each + 1 mm <= centre distance); ports whose part is unread or does not fit keep kind 'tbd' with '_tbd_reason' (W2 MECH-2, makers' drawings read 2026-11-07)",
     "ports": [
       {
         "id": "USB_C_IN",
         "x": 189.0,
         "z": 24.0,
         "kind": "tbd",
+        "part": "musbrm5c130",
         "w": 12.0,
         "h": 6.0,
-        "_note": "IP2368 sealed USB-C feedthrough Amphenol ICC MUSBRM5C130 (parts DB J103); cut-out TBD (drawing not read, MECH-07); internal 100 W PD lead through plate slot SL3 to the IP2368 board at the top right, about 140 mm, route TBD"
+        "_note": "IP2368 sealed USB-C feedthrough Amphenol ICC MUSBRM5C130 (parts DB J103); internal 100 W PD lead through plate slot SL3 to the IP2368 board at the top right, about 140 mm, route TBD",
+        "_tbd_reason": "drawing not readable: https://cdn.amphenol-cs.com/media/wysiwyg/files/documentation/datasheet/inputoutput/io_harsh_musb-type-c.pdf 2026-11-07 403 (also cdn/www .../drawing/musbrm5c130.pdf 403, Mouser timeout; parts.json musbrm5c130): flange, screw holes and depth behind the panel TBD, 12 x 6 stays a reserve"
       },
       {
         "id": "LAB_USB_A",
         "x": 172.0,
         "z": 24.0,
         "kind": "tbd",
+        "part": "bulgin_px0845a",
         "w": 16.0,
         "h": 8.0,
-        "_note": "Bulgin PX0845/A Buccaneer USB-A, IP68 (parts DB J501); cut-out TBD (drawing not read, MECH-07)"
+        "_note": "Bulgin PX0845/A Buccaneer USB-A, IP68 (parts DB J501)",
+        "_tbd_reason": "drawing read 2026-11-07 (https://www.bulgin.com/pdf/pdf.php?sku=PX0845/A, parts.json bulgin_px0845a): panel 0.8-1.5 mm < the 2.5 mm wall, 42 mm hex > the 17 mm pitch (needs z >= 40.5 off the seam belt, where the battery tray and the intake grille are), PCB-mount contacts; the part does not fit this row: a USB-A panel part for a 2.5 mm wall is TBD (parts DB owner of J501), 16 x 8 stays a reserve"
       },
       {
         "id": "LAB_BUS",
         "x": 206.0,
-        "z": 30.0,
-        "kind": "tbd",
-        "w": 16.0,
-        "h": 16.0,
-        "_note": "Kinghelm KH-GX12-6P, 6-pin GX12 (parts DB J505, build/15 'Сигнальні джгути'): cut-out, nut and IP TBD (the LCSC page read 2026-11-07 gives no drawing); 16 x 16 stays a reserve"
+        "z": 28.5,
+        "kind": "gx12",
+        "part": "kinghelm_gx12_6p",
+        "_note": "Kinghelm KH-GX12-6P, 6-pin GX12 (parts DB J505, build/15 'Сигнальні джгути'): D12.0 cut-out with a flat at 11.2, flange D15 outside, nut 14.6 across flats (D16.9 across corners) inside (READS-E drawing row); z 28.5 keeps the flange 1.5 mm above the seam belt (z <= 19.5) and the nut corners 1.57 mm below the plate (z 38.5); no IP rating on the drawing, cap per 10-bom row 90"
       },
       {
         "id": "AUDIO_3V5",
         "x": 171.0,
         "z": 52.0,
         "kind": "tbd",
+        "part": "tensility_10_06000",
         "w": 10.0,
         "h": 10.0,
-        "_note": "3.5 mm jack, MPN TBD"
+        "_note": "3.5 mm panel jack Tensility 10-06000 (stereo; 10-05999 TRRS has the same panel parts), build/15 W2 MECH-2; no parts DB entry yet (no graph ref)",
+        "_tbd_reason": "drawing read 2026-11-07 (https://tensility.s3.us-west-2.amazonaws.com/uploads/pdffiles/10-06000.pdf): D10.9 / 9.8 D-cut, panel 1.5-4, but 30.15 mm of nut and overmold (D13.5, nut 13 hex) behind the 2.5 mm wall: a scan of the flat bottom face (x 14-216, 0.5 mm steps, off the seam belt and the intake grille, 2026-11-07) finds no place clear by 0.5 mm of the battery tray, plate boss PM4, BMS, CTRL, the GX16 socket and the HDMI plug reserve: place TBD (MECH-3 relayout or a shorter jack), 10 x 10 stays a reserve"
       }
     ],
     "intake": {
@@ -297,7 +318,9 @@
       "w": 14.0,
       "h": 14.0,
       "proud": 15.0,
-      "_src": "STACK 5.8 puts the T7 gland on the bottom edge; with the battery strip along the bottom it moves to the rear face, right of the service hatch next to the blue USB-A port, outside the tripod plate disc (fit-report); gland MPN TBD, so the body reserve inside (14 x 14 x 13) and outside (14 x 14, 15 proud) is an assumption"
+      "part": "icotek_kvt20",
+      "_src": "STACK 5.8 puts the T7 gland on the bottom edge; with the battery strip along the bottom it moves to the rear face, right of the service hatch next to the blue USB-A port, outside the tripod plate disc (fit-report); the body reserve inside (14 x 14 x 13) and outside (14 x 14, 15 proud) is an assumption",
+      "_tbd_reason": "type chosen (build/15 W2 MECH-2): split gland icotek KVT 20 for the pre-terminated T7 lead, drawing read 2026-11-07 (parts.json icotek_kvt20: flange D40, M20x1.5 x 14, 21 proud, cable <= 11 mm, IP54); its D40 flange does not fit the 24 mm between the hatch seat (x 142) and the path-1 exhaust grille (x 166); the one rear-face place that takes D40 clear of the tripod plate disc, the RF-bay lid (y >= 97), the battery tray (y <= 38), the GX16 and the closure-screw tool paths is the lower right corner (about x 207, y 27; model check 2026-11-07), about 130 mm from the T7 holder across the tripod plate area, which changes the T7 lead path and the S13/S24 routes (t7_gland_body): the place is TBD (MECH-3 relayout), so the 14 x 14 reserve and the pilot hole stay"
     },
     "t7_holder": {
       "rect": [3.0, 3.0, 71.0, 92.0],

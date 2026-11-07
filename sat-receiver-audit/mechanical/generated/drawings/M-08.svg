@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297">
 <title>M-08 Алюмінієві кутники роз'ємів (стінка 4-5 мм = ASA + 2 мм Al)</title>
-<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 5292c234c1ef</desc>
+<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params d6e167a6d2d9</desc>
 <rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
 <line x1="25" y1="107" x2="203" y2="107" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="203" y1="107" x2="203" y2="92" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="203" y1="92" x2="25" y2="92" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="25" y1="92" x2="25" y2="107" stroke="#000" stroke-width="0.5" fill="none"/>
 <text x="25" y="89" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">Верхній кутник: полиця 'стінка' (вид згори)</text>
-<circle cx="32.5" cy="100.5" r="3.2" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="27.8" y1="100.5" x2="37.2" y2="100.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="32.5" y1="105.2" x2="32.5" y2="95.8" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<text x="37.2" y="95.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">P1 ⌀6.4</text>
-<circle cx="52.5" cy="100.5" r="3.2" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="47.8" y1="100.5" x2="57.2" y2="100.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="52.5" y1="105.2" x2="52.5" y2="95.8" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<text x="57.2" y="95.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">P2 ⌀6.4</text>
-<circle cx="72.5" cy="100.5" r="3.2" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="67.8" y1="100.5" x2="77.2" y2="100.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="72.5" y1="105.2" x2="72.5" y2="95.8" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<text x="77.2" y="95.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">P3 ⌀6.4</text>
+<circle cx="32.5" cy="100.5" r="3.25" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="27.75" y1="100.5" x2="37.25" y2="100.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="32.5" y1="105.25" x2="32.5" y2="95.75" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="37.25" y="95.75" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">P1 ⌀6.5</text>
+<circle cx="52.5" cy="100.5" r="3.25" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="47.75" y1="100.5" x2="57.25" y2="100.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="52.5" y1="105.25" x2="52.5" y2="95.75" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="57.25" y="95.75" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">P2 ⌀6.5</text>
+<circle cx="72.5" cy="100.5" r="3.25" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="67.75" y1="100.5" x2="77.25" y2="100.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="72.5" y1="105.25" x2="72.5" y2="95.75" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="77.25" y="95.75" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">P3 ⌀6.5</text>
 <circle cx="92.5" cy="100.5" r="4.85" stroke="#000" stroke-width="0.35" fill="none"/>
 <line x1="86.15" y1="100.5" x2="98.85" y2="100.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
 <line x1="92.5" y1="106.85" x2="92.5" y2="94.15" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
@@ -28,22 +28,22 @@
 <line x1="106.15" y1="100.5" x2="118.85" y2="100.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
 <line x1="112.5" y1="106.85" x2="112.5" y2="94.15" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
 <text x="118.85" y="94.15" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">P5 ⌀9.7</text>
-<circle cx="132.5" cy="100.5" r="3.2" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="127.8" y1="100.5" x2="137.2" y2="100.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="132.5" y1="105.2" x2="132.5" y2="95.8" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<text x="137.2" y="95.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">P6 ⌀6.4</text>
+<circle cx="132.5" cy="100.5" r="3.25" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="127.75" y1="100.5" x2="137.25" y2="100.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="132.5" y1="105.25" x2="132.5" y2="95.75" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="137.25" y="95.75" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">P6 ⌀6.5</text>
 <circle cx="152.5" cy="100.5" r="3.2" stroke="#000" stroke-width="0.35" fill="none"/>
 <line x1="147.8" y1="100.5" x2="157.2" y2="100.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
 <line x1="152.5" y1="105.2" x2="152.5" y2="95.8" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
 <text x="157.2" y="95.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">P7 ⌀6.4</text>
-<circle cx="172.5" cy="100.5" r="3.2" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="167.8" y1="100.5" x2="177.2" y2="100.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="172.5" y1="105.2" x2="172.5" y2="95.8" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<text x="177.2" y="95.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">P8 ⌀6.4</text>
-<circle cx="192.5" cy="100.5" r="3.2" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="187.8" y1="100.5" x2="197.2" y2="100.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="192.5" y1="105.2" x2="192.5" y2="95.8" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<text x="197.2" y="95.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">RX1 ⌀6.4</text>
+<circle cx="172.5" cy="100.5" r="3.25" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="167.75" y1="100.5" x2="177.25" y2="100.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="172.5" y1="105.25" x2="172.5" y2="95.75" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="177.25" y="95.75" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">P8 ⌀6.5</text>
+<circle cx="192.5" cy="100.5" r="3.25" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="187.75" y1="100.5" x2="197.25" y2="100.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="192.5" y1="105.25" x2="192.5" y2="95.75" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="197.25" y="95.75" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">RX1 ⌀6.5</text>
 <line x1="25" y1="107.8" x2="25" y2="116.5" stroke="#000" stroke-width="0.18" fill="none"/>
 <line x1="203" y1="107.8" x2="203" y2="116.5" stroke="#000" stroke-width="0.18" fill="none"/>
 <line x1="25" y1="115" x2="203" y2="115" stroke="#000" stroke-width="0.18" fill="none"/>
@@ -77,14 +77,14 @@
 <line x1="300" y1="127" x2="285" y2="127" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="285" y1="127" x2="285" y2="157" stroke="#000" stroke-width="0.5" fill="none"/>
 <text x="285" y="124" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">Правий кутник: 'стінка'</text>
-<circle cx="291.5" cy="131" r="3.2" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="286.8" y1="131" x2="296.2" y2="131" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="291.5" y1="135.7" x2="291.5" y2="126.3" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<text x="296.2" y="126.3" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">RX2 ⌀6.4</text>
-<circle cx="291.5" cy="151" r="3.2" stroke="#000" stroke-width="0.35" fill="none"/>
-<line x1="286.8" y1="151" x2="296.2" y2="151" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<line x1="291.5" y1="155.7" x2="291.5" y2="146.3" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
-<text x="296.2" y="146.3" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">REF_IN ⌀6.4</text>
+<circle cx="291.5" cy="131" r="3.25" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="286.75" y1="131" x2="296.25" y2="131" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="291.5" y1="135.75" x2="291.5" y2="126.25" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="296.25" y="126.25" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">RX2 ⌀6.5</text>
+<circle cx="291.5" cy="151" r="3.25" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="286.75" y1="151" x2="296.25" y2="151" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="291.5" y1="155.75" x2="291.5" y2="146.25" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="296.25" y="146.25" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">REF_IN ⌀6.5</text>
 <line x1="325" y1="157" x2="337" y2="157" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="337" y1="157" x2="337" y2="127" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="337" y1="127" x2="325" y2="127" stroke="#000" stroke-width="0.5" fill="none"/>
@@ -135,12 +135,13 @@
 <text x="264" y="266" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення M-08 · масштаб 1:1 · мм · допуск ±0.2, якщо не вказано</text>
 <text x="264" y="273" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: EN AW-6060 L angle 15 x 12 x 2 (cut from 20 x 20…</text>
 <text x="264" y="280" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
-<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 5292c234c1ef · v1.0.0</text>
+<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params d6e167a6d2d9 · v1.0.0</text>
 <text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">Алюмінієві кутники роз'ємів (стінка 4-5 мм = ASA + 2 мм Al)</text>
 <text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">кутник 20 x 20 x 2, розгортки полиць 1:1</text>
 <text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Полиця 'стінка' прилягає до стінки корпусу зсередини; отвори збігаються з отворами корпусу (M-02, M-03).</text>
 <text x="12" y="28.6" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Полиця 'пластина' кріпиться до тильного боку пластини (M-07): гвинти M3 з тильного боку у врівень-гайки PEM F-M3-1 пластини; з'єднання — голий метал.</text>
-<text x="12" y="32.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Гвинти верхнього кутника — посередині між портами, щоб їхні голівки минали гайки й шайби прохідників (⌀10.15 x 2.5, fit-report nut.*).</text>
-<text x="12" y="35.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Прохідники: ≥3 повні витки різьби після кільця, стопорної шайби й гайки (STACK 5.8).</text>
-<text x="12" y="39.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: EN AW-6060 L angle 15 x 12 x 2 (cut from 20 x 20 x 2 or 2.0 mm 5754 bent), screwed to the plate (STACK 5.8 'стінка 4-5: ASA + 2 мм Al')</text>
+<text x="12" y="32.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Гвинти верхнього кутника — посередині між портами, щоб їхні голівки минали корпуси прохідників SMA і гайку F (fit-report nut.*).</text>
+<text x="12" y="35.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SMA CAB.718, Adam Tech, CAB.01075 і CAB.011 — гайка й шайба з лицьового боку (зовні), корпус 8 HEX — на кутнику зсередини; кілець у їхніх кресленнях немає — ущільнення вирізу T-07. Лиска CAB.718 (⌀6.5 / 6) — у вирізі стінки ASA (M-02), отвір кутника — круглий ⌀6.5. F VFA340 — фланець зовні, шайба й гайка на кутнику.</text>
+<text x="12" y="39.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Прохідники: ≥3 повні витки різьби для стикування після стінки, шайби й гайки (R-SMA-THREAD, STACK 5.8).</text>
+<text x="12" y="43" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: EN AW-6060 L angle 15 x 12 x 2 (cut from 20 x 20 x 2 or 2.0 mm 5754 bent), screwed to the plate (STACK 5.8 'стінка 4-5: ASA + 2 мм Al')</text>
 </svg>
