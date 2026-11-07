@@ -7,11 +7,13 @@ This creates partition and placement INPUTS, not a fabrication release.
 """
 from __future__ import annotations
 import argparse
+import ast
 import collections
 import csv
 import hashlib
 import io
 import json
+import math
 import re
 from pathlib import Path
 import xml.etree.ElementTree as ET
@@ -35,6 +37,8 @@ RF_PORT_BOARD = {'J423':'RF_INJECTOR','J424':'RF_INJECTOR','J425':'RF_HF','J426'
 BOARDS = {
  'PWR_MAIN': {'purpose':'Main eFuse, AON/UV, charge inhibit and converter interconnect passives; commercial converters stay separate.', 'source':['design/E1-review.md','STACK.md §5.1']},
  'PWR_BRANCH': {'purpose':'E2 protected branches, current monitors and low-noise regulators. Candidate sub-board thermal split remains open.', 'source':['design/E2-review.md','STACK.md §5.1']},
+ 'PWR_BRANCH_SW': {'purpose':'PWR-B mezzanine (W2 AREA/GR-3): the E2 switch groups of partition.PWR_B_groups (LNA ch1-4, RTL-B, S-band LaNA, INA3221 #1, LNB/Boni/AUX12 monitors) no taller than hB, plus the PWR-B side-entry harness headers; joined to PWR-A by the Samtec QSH/QTH pair (b2b-nets.json).', 'source':['pcb/partition-spec.json','design/E2-review.md']},
+ 'USB_POWER_SW': {'purpose':'PWR-B mezzanine (W2 AREA/GR-3): the E5 groups VBUS RTL-A/LAB PORT and LAB BUS I2C buffer no taller than hB, plus the PWR-B side-entry harness headers of E5.', 'source':['pcb/partition-spec.json','design/E5-review.md']},
  'CTRL_HMI': {'purpose':'Bare MCP/HMI control, input protection, cooling drivers and local interface passives; purchased Pico/sensors remain modules.', 'source':['design/E3-review.md','STACK.md §5.2']},
  'USB_POWER': {'purpose':'USB VBUS switches, HF+ LC damping, HDMI reverse isolation and LAB I2C buffer; intact high-speed cables retained.', 'source':['design/E5-review.md','design/E5-connection-guide.md']},
  'RF_HMC': {'purpose':'Three HMC7992 switches, their blocks, controls, pads/loads; final 50 ohm stackup not selected.', 'source':['design/E4-review.md','STACK.md §5.3/5.7']},
@@ -48,16 +52,35 @@ BOARDS = {
  'IMU_CARRIER': {'purpose':'Carrier board inside the Hammond 1550Z101 IMU pack: E5 IMU supply/data protection and the bare parts of E3 group External IMU.', 'source':['design/E5-connection-guide.md','design/E3-review.md','mechanical/params/imu_pack.json']},
  'PACK_FUSE': {'purpose':'Small F101 carrier at the pack positive: Keystone 3568 mini-blade holder and 18 AWG solder pads, insulated and fixed beside the battery tray.', 'source':['STACK.md D2','build/15-rishennia-komplektu.md']},
 }
+PARTITION_SPEC = ROOT / 'pcb/partition-spec.json'
+PWR_A_DOMAINS = ('PWR_MAIN', 'PWR_BRANCH', 'USB_POWER')
+PWR_B_DOMAINS = ('PWR_BRANCH_SW', 'USB_POWER_SW')
+def pwr_b_overrides():
+    """PWR-A/PWR-B partition of pcb/partition-spec.json (W2 AREA decision, GR-3): E2 parts of partition.PWR_B_groups -> PWR_BRANCH_SW,
+    E5 parts -> USB_POWER_SW; the parts of partition.domain_override_pwr_a (taller than hB) keep their PWR-A domain."""
+    spec = json.loads(PARTITION_SPEC.read_text(encoding='utf-8'))['partition']
+    groups = {(g['sheet'], g['group']) for g in spec['PWR_B_groups']}
+    keep = set(spec['domain_override_pwr_a'])
+    out = {}
+    for sheet, dom in (('E2', 'PWR_BRANCH_SW'), ('E5', 'USB_POWER_SW')):
+        for c in json.loads((ROOT / f'design/{sheet}.json').read_text(encoding='utf-8'))['components']:
+            if (sheet, c.get('group', '')) in groups and c['ref'] not in keep:
+                out[c['ref']] = dom
+    return out
 # Board parts assembled off the plate boards (build/15, build/16 §2): their own domain instead of the sheet default.
-DOMAIN_OVERRIDE = {**{r:'ENC' for r in ('ENC301','ENC302')}, **{r:'HATCH' for r in ('J502','J503')},
+# W2 GR-3: the hatch-board harness headers sit on HATCH, and the PWR side-entry headers that tie to PWR-B parts on PWR-B
+# (tools/assembly_data.py HEADERS); the other PWR headers keep their sheet domain on PWR-A.
+DOMAIN_OVERRIDE = {**pwr_b_overrides(), **{r:'ENC' for r in ('ENC301','ENC302')}, **{r:'HATCH' for r in ('J502','J503','J509','J510','J513')},
+ **{r:'PWR_BRANCH_SW' for r in ('J201','J202','J203','J204','J207')}, **{r:'USB_POWER_SW' for r in ('J506','J508')},
  **{r:'T7_INSERT' for r in ('U505','R514','R515','R516','R517','C514','C515','C516','TP501')},
  **{r:'HDMI_INSERT' for r in ('U506','C517','C518','R552','TP502')},
  **{r:'IMU_CARRIER' for r in ('U552','D502','C519','C520','C340','C341','R390','R391')},
  'F101':'PACK_FUSE'}
 CONSTRAINTS = [
- {'id':'PWR-01','boards':['PWR_MAIN','PWR_BRANCH'],'requirement':'4.6 A main path and 50 °C enclosure qualification; LAB5 <=3.2 A continuous, 4 A transient acceptance. Size copper/vias/connectors from chosen stackup and thermal calculation; no trace width is asserted here.','source':'design/E1-review.md; E1-05/E1-06'},
+ {'id':'PWR-01','boards':['PWR_MAIN','PWR_BRANCH','PWR_BRANCH_SW','USB_POWER_SW'],'requirement':'4.6 A main path and 50 °C enclosure qualification; LAB5 <=3.2 A continuous, 4 A transient acceptance. Size copper/vias/connectors from chosen stackup and thermal calculation; no trace width is asserted here.','source':'design/E1-review.md; E1-05/E1-06'},
  {'id':'PWR-02','boards':['PWR_MAIN'],'requirement':'Keep raw E1_CELL0/B- distinct from GND/P-. No accidental copper, mounting-hole or balance-cable BMS bypass. J102 remains DNP/service-only.','source':'design/E1-review.md; design/charger-bms-review.md'},
- {'id':'PWR-03','boards':['PWR_BRANCH'],'requirement':'LT3045 pair <=1 A physical total; Kelvin current-shunt routes, low-drop high-current planes, regulator exposed-pad heat flow and vendor capacitor placement are release work. LNB precision OVP and switch ratings need full temperature validation.','source':'design/E2-review.md'},
+ {'id':'PWR-03','boards':['PWR_BRANCH','PWR_BRANCH_SW'],'requirement':'LT3045 pair <=1 A physical total; Kelvin current-shunt routes, low-drop high-current planes, regulator exposed-pad heat flow and vendor capacitor placement are release work. LNB precision OVP and switch ratings need full temperature validation.','source':'design/E2-review.md'},
+ {'id':'PWR-04','boards':['PWR_MAIN','PWR_BRANCH','USB_POWER','PWR_BRANCH_SW','USB_POWER_SW'],'requirement':'PWR-A/PWR-B mezzanine: every net with pins on both boards crosses only through the Samtec QSH-060-01-L-D-A / QTH-060-01-L-D-A pair (pcb/generated/b2b-nets.json: ceil(I_protection / 1 A) contacts per power net plus one adjacent GND, 25 A ground plane); no Kelvin or precision net crosses except the declared sense pairs. PWR-B parts no taller than hB 5.5 mm; PWR-A parts under PWR-B no taller than hA 4.5 mm (pcb/partition-spec.json).','source':'pcb/partition-spec.json (W2 AREA); Samtec QSH/QTH specification Rev K'},
  {'id':'DC-01','boards':['DC_CORE','RF_INJECTOR'],'requirement':'Keep each first26.7k RF tap (R4420/R4430/R4440) plus100pF at its RF port (U.FL J423/J424, HF_CM); place12 bleeds at RF ports, away from core reference/precision dividers. Core boundary carries filtered DC TAP, not50ohm RF. Original schematic nodes preserved.','source':'design/E4-review.md; E4.json DC detector groups'},
  {'id':'DC-02','boards':['DC_CORE'],'requirement':'Clean low-leakage SENSE layout, short divider/input routes and local ground; do not place hot bleeds/regulators beside precision network. Leakage/TCR/RF/ground error must be measured:98.638mV analytical corner has only1.362mV margin to100mV.','source':'design/E4-review.md; design/E4-detector-analysis.py'},
  {'id':'DC-03','boards':['DC_CORE'],'requirement':'Local100nF per comparator;1nF on each used internal reference; reference shunt/clamps/ground paths close. DCS HIGH=unsafe; LOW requires both window and both reference-good decisions. No signal pullup added on detector board; existing pullups belong E3.','source':'E4.json; https://www.ti.com/lit/ds/symlink/tlv3011.pdf'},
@@ -66,8 +89,8 @@ CONSTRAINTS = [
  {'id':'RF-01','boards':['RF_HMC','RF_INJECTOR'],'requirement':'50ohm geometry requires approved dielectric/copper stackup and vendor footprint reference planes. Ground EPAD/grounds with short low-inductance returns and via fences; all15 HMC RF-terminal DC blocks remain. No generic width or finished impedance claimed.','source':'https://www.analog.com/media/en/technical-documentation/data-sheets/hmc7992.pdf; design/E4-review.md'},
  {'id':'RF-02','boards':['RF_HF'],'requirement':'HF selector10kHz..260MHz IL<=0.3dB, RL>=21dB, isolation>=35dB at162..260MHz plus STACK LF gates. The detector996ohm bleed alone adds0.2153dB ideal loss, making this a real acceptance risk. Relays use2/3 contacts for HF/VHF.','source':'design/E4-review.md; STACK.md §5.7'},
  {'id':'RF-03','boards':['RF_HMC'],'requirement':'Power order GND->VDD->controls; shared3V3_Q6A,1k/100k/100pF controls,00 RF1 PARK. HMC isolation>=40dB at0.1..1.7GHz;37..40dB conditional only. X1 TX stays on internal load.','source':'design/E4-review.md'},
- {'id':'IO-01','boards':['CTRL_HMI','USB_POWER'],'requirement':'3.3V GPIO only; retain existing USB3/HDMI/PCIe cables/riser and their shield return. Do not create an unqualified high-speed PCB route from functional cable symbols. T7 WSON thermal condition TJ<=105C at1.5A requires copper/thermal validation.','source':'design/E3-review.md; design/E5-review.md'},
- {'id':'MECH-02','boards':['CTRL_HMI','PWR_BRANCH'],'requirement':'Existing mechanical source calls for MCP expanders15..20mm from TPS7A4701, PTC and buck inductors, and I2C away from switching nodes. Separate CTRL/PWR domains are candidates; if combined, preserve this separation and recheck enclosure fit.','source':'build/05-mekhanika.md §3 item15; STACK.md §5.8'},
+ {'id':'IO-01','boards':['CTRL_HMI','USB_POWER','USB_POWER_SW'],'requirement':'3.3V GPIO only; retain existing USB3/HDMI/PCIe cables/riser and their shield return. Do not create an unqualified high-speed PCB route from functional cable symbols. T7 WSON thermal condition TJ<=105C at1.5A requires copper/thermal validation.','source':'design/E3-review.md; design/E5-review.md'},
+ {'id':'MECH-02','boards':['CTRL_HMI','PWR_BRANCH','PWR_BRANCH_SW'],'requirement':'Existing mechanical source calls for MCP expanders15..20mm from TPS7A4701, PTC and buck inductors, and I2C away from switching nodes. Separate CTRL/PWR domains are candidates; if combined, preserve this separation and recheck enclosure fit.','source':'build/05-mekhanika.md §3 item15; STACK.md §5.8'},
  {'id':'MECH-01','boards':list(BOARDS),'requirement':'All partitions are engineering candidates. Final outline, mounting, stackup, copper weight, connector MPN/orientation and enclosure proof-fit are unset. No Gerbers/drill/production DRC is authorized by this preparation output.','source':'STACK.md §5.8; build/05-mekhanika.md; build/13-pcb-preparation.md'},
 ]
 
@@ -132,6 +155,70 @@ def category(c):
     if kind=='net_tie':return 'bond_implementation_requirement','', 'Electrical bond requirement; choose physical strap/net-tie/mount implementation explicitly.'
     return 'bare_board_part','', 'Physical IC/passive/device for a custom board candidate.'
 
+def net_currents():
+    # tools/assembly_data.py NET_CURRENT (protection limits), read with ast: this script imports no tool module.
+    tree=ast.parse((ROOT/'tools/assembly_data.py').read_text(encoding='utf-8'))
+    for node in tree.body:
+        if isinstance(node,ast.Assign) and any(isinstance(t,ast.Name) and t.id=='NET_CURRENT' for t in node.targets):
+            return {k:v[1] for k,v in ast.literal_eval(node.value).items()}
+    raise SystemExit('PCB preparation audit FAIL: tools/assembly_data.py NET_CURRENT not found')
+
+def sense_nets(components,currents):
+    """Kelvin nets (a part value says Kelvin), INA inputs (pins IN+/IN-) and precision divider mid-points (two or more 0.1/0.5 %
+    resistors into an IC input, not a rail): the rule of pcb/partition_budget.py (W2 AREA), applied here to the B2B net list."""
+    kelvin,precision,res=set(),set(),{}
+    flags=set().union(*(c['_flags'] for c in components))
+    for c in components:
+        nets={p['net'] for p in c['pins'] if p.get('net')}
+        if 'Kelvin' in c.get('value',''):kelvin|=nets-{'GND'}
+        for p in c['pins']:
+            if p.get('net') and re.match(r'IN[+-]\d?$',p.get('name','')):precision.add(p['net'])
+        if c['ref'].startswith('R') and re.search(r'0\.[15] ?%',c.get('value','')):
+            for n in nets:res.setdefault(n,set()).add(c['ref'])
+    for n,refs in res.items():
+        ic_input=any(p.get('net')==n and p.get('type')=='input' for c in components if not c['ref'].startswith('R') for p in c['pins'])
+        rail=n in flags or n in currents or any(p.get('net')==n and p.get('type') in ('power_in','power_out') for c in components for p in c['pins'])
+        if len(refs)>=2 and ic_input and n!='GND' and not rail:precision.add(n)
+    return kelvin,precision-{'GND'},flags
+
+def b2b_nets(components,rows,currents):
+    """Nets with pins on PWR-A and PWR-B bare board parts (W2 GR-3): the B2B net list by pcb/partition-spec.json b2b.rule."""
+    spec=json.loads(PARTITION_SPEC.read_text(encoding='utf-8'));bb=spec['b2b'];i_pin=spec['parameters']['b2b_i_pin_A']
+    side={r['ref']:('PWR_A' if r['board_candidate'] in PWR_A_DOMAINS else 'PWR_B') for r in rows
+          if r['category']=='bare_board_part' and r['board_candidate'] in PWR_A_DOMAINS+PWR_B_DOMAINS and not r['dnp']}
+    by_ref={c['ref']:c for c in components}
+    pins=collections.defaultdict(lambda:collections.defaultdict(list))
+    for ref,s in side.items():
+        for n in sorted({p['net'] for p in by_ref[ref]['pins'] if p.get('net')}):pins[n][s].append(ref)
+    cross={n:v for n,v in pins.items() if n!='GND' and len(v)==2}
+    kelvin,precision,flags=sense_nets(components,currents)
+    declared={n for pair in bb['declared_sense_pairs'] for n in pair['nets']}
+    extra=bb['net_current_extra'];out=[];errors=[]
+    for n in sorted(cross):
+        row={'net':n,'pwr_a':sorted(cross[n]['PWR_A'],key=sort_ref),'pwr_b':sorted(cross[n]['PWR_B'],key=sort_ref)}
+        if n in declared:row.update(kind='declared sense pair',pins=1)
+        elif n in bb['sense_taps']:row.update(kind='sense/supply tap',pins=1,why=bb['sense_taps'][n])
+        elif n in kelvin or n in precision:
+            row.update(kind='Kelvin/precision (refused)',pins=None);errors.append(f'{n}: Kelvin/precision net crosses PWR-A/PWR-B and is not a declared sense pair')
+        else:
+            prot=currents.get(n)
+            if prot is None and n in extra:prot=sum(currents[x] for x in extra[n]['sum_of'])
+            power=prot is not None or n in flags or any(p.get('net')==n and p.get('type') in ('power_in','power_out') for r in cross[n]['PWR_A']+cross[n]['PWR_B'] for p in by_ref[r]['pins'])
+            if power and prot is None:
+                row.update(kind='power (no current)',pins=None);errors.append(f'{n}: power net crosses PWR-A/PWR-B without a protection current (tools/assembly_data.py NET_CURRENT)')
+            elif power:row.update(kind='power',prot_A=round(prot,3),pins=math.ceil(prot/i_pin-1e-9),gnd_pins=bb['gnd_pins_per_power_net'])
+            else:row.update(kind='signal',pins=1)
+        out.append(row)
+    signal=sum(r['pins'] or 0 for r in out if r['kind']!='power');power=sum(r['pins'] for r in out if r['kind']=='power')
+    gnd=sum(r.get('gnd_pins',0) for r in out);need=signal+power+gnd;spare=math.ceil(need*(1+bb['spare_fraction'])-1e-9)
+    return {'schema':'srrx-b2b-nets-v1','status':'DESIGN INPUT (W2 GR-3): nets with pins on PWR-A and PWR-B bare board parts of components.csv; '
+            'the board packages derive the QSH/QTH pin map from it. Not a placement and not a measured current.',
+            'generator':'pcb/prepare.py','rule':bb['rule'],'i_pin_A':i_pin,'mpn':{k:bb['mpn'][k] for k in ('pwr_a','pwr_b','read')},
+            'contacts_available':bb['contacts'],'pwr_a_domains':list(PWR_A_DOMAINS),'pwr_b_domains':list(PWR_B_DOMAINS),
+            'totals':{'crossing_nets':len(out),'power_nets':sum(r['kind']=='power' for r in out),'power_pins':power,'signal_pins':signal,'gnd_pins':gnd,
+                      'contacts_needed':need,'contacts_with_spare':spare,'fits':need<=bb['contacts'] and not errors},
+            'nets':out,'errors':errors}
+
 def board(c,cat):
     if cat!='bare_board_part':return ''
     s=c['_sheet'];ref=c['ref']
@@ -149,8 +236,8 @@ def main():
     components=[];sources=[];graph_paths=[];db=parts_db()
     for i in range(1,6):
         path=ROOT/f'design/E{i}.json';j=json.loads(path.read_text(encoding='utf-8'));graph_paths.append(path)
-        sources.extend(j['sources'])
-        for c in j['components']:components.append({**c,'_sheet':f'E{i}','_mount':db[c['ref']]['mount'] if c['ref'] in db else None})
+        sources.extend(j['sources']);flags=frozenset(f['net'] for f in j.get('power_flags',[]))
+        for c in j['components']:components.append({**c,'_sheet':f'E{i}','_mount':db[c['ref']]['mount'] if c['ref'] in db else None,'_flags':flags})
     refs=[c['ref'] for c in components];require(len(refs)==len(set(refs)), 'Duplicate schematic reference');by_ref={c['ref']:c for c in components}
     manifest_path=ROOT/'build/kicad/footprints/manifest.json'
     manifest=json.loads(manifest_path.read_text(encoding='utf-8'));fps={f['footprint']:f for f in manifest['footprints']}
@@ -178,7 +265,7 @@ def main():
         row={'ref':ref,'sheet':c['_sheet'],'mount':c['_mount'] or '','value':c['value'],'kind':c['kind'],'category':cat,'assembly_owner':owner,'board_candidate':domain,'dnp':not active,'footprint':fp,'portable_footprint':portable,'pad_coverage':'PASS' if portable and not missing else 'UNASSIGNED' if not fp else 'FAIL','pin_count':len(pin_nums),'source':c.get('source',''),'classification_reason':why}
         rows.append(row)
         if domain=='DC_CORE':
-            c={k:v for k,v in c.items() if k!='_mount'}
+            c={k:v for k,v in c.items() if k not in ('_mount','_flags')}
             # Physical package selection is separate from verification/procurement readiness.
             candidate=fp
             status='graph_assigned_portable' if portable else 'proposed_not_production_qualified'
@@ -212,13 +299,16 @@ def main():
     # does not force a re-freeze.
     core_provenance={'inputs':[{'file':p.relative_to(ROOT).as_posix(),'sha256':sha(p)} for p in graph_paths+[manifest_path,xml_path]],'source_documents':sorted({s['url'] for s in sources}),'generator':'pcb/prepare.py','note':'All classification/board splits are new controlled engineering proposals. They do not change E1..E5, claim module pin order, or authorize production.'}
     projection=json.dumps(parts_projection(db),ensure_ascii=False,sort_keys=True,separators=(',',':')).encode('utf-8')
-    provenance={**core_provenance,'parts_database':{'file':PARTS_DB.relative_to(ROOT).as_posix(),'fields_used':list(PARTS_DB_FIELDS),'projection_sha256':hashlib.sha256(projection).hexdigest()}}
+    b2b=b2b_nets(components,rows,net_currents())
+    require(not b2b['errors'],'B2B rule: '+'; '.join(b2b['errors']))
+    provenance={**core_provenance,'parts_database':{'file':PARTS_DB.relative_to(ROOT).as_posix(),'fields_used':list(PARTS_DB_FIELDS),'projection_sha256':hashlib.sha256(projection).hexdigest()},
+                'partition':{'file':PARTITION_SPEC.relative_to(ROOT).as_posix(),'sha256':sha(PARTITION_SPEC),'b2b_currents':'tools/assembly_data.py NET_CURRENT'}}
     package={'summary':summary,'provenance':provenance,'boards':BOARDS,'constraints':CONSTRAINTS,'parts':rows,'unresolved':issues}
     proposed=summary['core_proposed_footprints']
     footprint_blocker=(f'{proposed} passive land patterns are placement proposals, not approved production MPN selections.' if proposed else
                        f'All {len(core)} core parts carry graph-assigned footprints and MPNs selected in design/parts/parts.json; a selected MPN is a procurement record, not a qualification: voltage/power/TCR/leakage ratings and land patterns still need review before production.')
     detector={'board_id':'DC_CORE','status':'UNROUTED_PLACEMENT_INPUT_NOT_FABRICATION','part_count':len(core),'components':core,'nets':{n:[x for x in net_nodes[n] if x['ref'] in core_refs] for n in sorted(core_nets)},'external_boundary':boundary,'must_remain_at_RF_port':sorted(RF_TAP|RF_BLEED,key=sort_ref),'constraints':[c for c in CONSTRAINTS if 'DC_CORE' in c['boards']],'blockers':[footprint_blocker,*(['Three explicitly0402 resistor footprints must be fetched from official KiCad if absent.'] if not (ROOT/'build/kicad/footprints/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod').is_file() else []),'Eight-net connector/wire-pad implementation, mounting/outline and cable routing are unselected.','RF-port tap/bleed assemblies are excluded from this core and must be placed on the RF substrate.','Prototype threshold/leakage/temperature/ground-offset/RF/rail-off tests remain mandatory.'],'source_node_audit':{'source_graph':'design/E4.json','actual_xml':'verification/netlist.xml','connected_pins_checked':connected_core,'status':'PASS','all_pins':sum(len(c['pins']) for c in core),'nc_pins':sum(bool(p.get('nc')) for c in core for p in c['pins'])},'provenance':core_provenance}
-    files={'partition.json':dump(package),'components.csv':csv_text(rows,['ref','sheet','value','kind','mount','category','assembly_owner','board_candidate','dnp','footprint','portable_footprint','pad_coverage','pin_count','source','classification_reason']),'unresolved.csv':csv_text([{**i,'detail':json.dumps(i['detail'],ensure_ascii=False) if not isinstance(i['detail'],str) else i['detail']} for i in issues],['ref','type','blocking','detail']),'constraints.json':dump(CONSTRAINTS),'detector-core-input.json':dump(detector),'summary.json':dump(summary),'provenance.json':dump(provenance),'detector-core-nodes.csv':csv_text([{'ref':c['ref'],'pin':p['number'],'name':p['name'],'net':p.get('net',''),'nc':p.get('nc',False),'placement_footprint':c['placement_footprint'],'footprint_status':c['placement_footprint_status']} for c in core for p in c['pins']],['ref','pin','name','net','nc','placement_footprint','footprint_status'])}
+    files={'partition.json':dump(package),'components.csv':csv_text(rows,['ref','sheet','value','kind','mount','category','assembly_owner','board_candidate','dnp','footprint','portable_footprint','pad_coverage','pin_count','source','classification_reason']),'unresolved.csv':csv_text([{**i,'detail':json.dumps(i['detail'],ensure_ascii=False) if not isinstance(i['detail'],str) else i['detail']} for i in issues],['ref','type','blocking','detail']),'constraints.json':dump(CONSTRAINTS),'detector-core-input.json':dump(detector),'summary.json':dump(summary),'provenance.json':dump(provenance),'b2b-nets.json':dump(b2b),'detector-core-nodes.csv':csv_text([{'ref':c['ref'],'pin':p['number'],'name':p['name'],'net':p.get('net',''),'nc':p.get('nc',False),'placement_footprint':c['placement_footprint'],'footprint_status':c['placement_footprint_status']} for c in core for p in c['pins']],['ref','pin','name','net','nc','placement_footprint','footprint_status'])}
     if args.check:
         stale=[name for name,content in files.items() if not (OUT/name).exists() or (OUT/name).read_text(encoding='utf-8')!=content]
         require(not stale,'Stale generated output: '+', '.join(stale))

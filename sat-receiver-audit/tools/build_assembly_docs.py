@@ -49,14 +49,54 @@ SIGNAL = (0.05, None, "логічний рівень", "сигнал (рішен
 # Graph connectors that a harness segment lands on directly. J503 and J502 sit on the hatch board (HATCH): S14/S15/S30
 # land on harness headers of that board, S16 plugs into J503; J502 takes the external console lead.
 EXPLICIT_SEGMENTS = {
-    "J301": ("S01",), "J302": ("S02",), "J503": ("S16",), "J521": ("S16",), "J505": ("S34",),
+    "J302": ("S02",), "J503": ("S16",), "J521": ("S16",), "J505": ("S34",),
     "J504": ("S32", "S33"), "J550": ("S33",), "J501": ("S23",), "J541": ("S21",), "J543": ("S20",), "J544": ("S22",),
     "J101": ("S12",), "J103": ("S11",), "J522": ("S31",), "SW301": ("S29",), "SW501": ("S31",),
     "J551": ("S36", "S41"),  # pod power panel receptacle: its own leads to PWR (S36), the W425 plug outside (S41)
 }
 CONNECTOR_FAMILY = {"J301": "IDC", "J302": "PH", "J503": "MF", "J502": "PH", "J521": "SOLDER", "J522": "SOLDER"}
 ANY_AWG = (28, 26, 24, 22, 20, 18)
-CRIMP = {"PH": "terminal", "MF": "terminal", "MFJ": "terminal"}
+CRIMP = {"PH": "terminal", "MF": "terminal", "MFJ": "terminal", "PHD": "terminal", "MF2": "terminal"}
+# Family of a board-side header graph ref (tools/assembly_data.py HEADERS) from its parts-database footprint. The dual-row
+# variants share the selection rule (hint) of their single-row family: PHD carries signals like PH, MF2 power like MF.
+FOOTPRINT_FAMILY = (("Connector_JST:JST_PHD_", "PHD"), ("Connector_JST:JST_PH_", "PH"), ("Connector_Molex:Molex_Micro-Fit_3.0_43045", "MF2"),
+                    ("Connector_Molex:Molex_Micro-Fit_3.0_43650", "MF"), ("Connector_Molex:Molex_Mini-Fit_Jr", "MFJ"),
+                    ("Connector_IDC:IDC-Header", "IDC"), ("Connector_Molex:Molex_KK-254", "FAN3"))
+HINT_OF = {"PHD": "PH", "MF2": "MF"}
+
+
+def pin_list(text):
+    """'1 3 5-8' -> ['1', '3', '5', '6', '7', '8'] (contact numbers of tools/assembly_data.py HEADERS / PIN_SEGMENTS)."""
+    out = []
+    for part in str(text).split():
+        m = re.fullmatch(r"(\d+)-(\d+)", part)
+        out += [str(i) for i in range(int(m[1]), int(m[2]) + 1)] if m else [part]
+    return out
+
+
+def pin_map(ref):
+    """{contact: segment} of a header ref or of a graph connector whose contacts serve several segments, else None."""
+    spec = D.HEADERS[ref][1] if ref in D.HEADERS else D.PIN_SEGMENTS.get(ref)
+    if spec is None:
+        return None
+    out = {}
+    for sid, pins in spec.items():
+        for pin in pin_list(pins):
+            if pin in out:
+                fail(f"{ref}.{pin} is listed for two segments ({out[pin]}, {sid})")
+            out[pin] = sid
+    return out
+
+
+def serves(ref, pin, sid):
+    pm = pin_map(ref)
+    return pm.get(str(pin)) == sid if pm is not None else sid in EXPLICIT_SEGMENTS.get(ref, ())
+
+
+def segment_refs(sid):
+    refs = {r for r, segs in EXPLICIT_SEGMENTS.items() if sid in segs}
+    refs |= {r for r in list(D.HEADERS) + list(D.PIN_SEGMENTS) if sid in pin_map(r).values()}
+    return sorted(refs, key=ref_key)
 SPARE_PCT, SPARE_MIN = 10, 2  # asm spare rule (build/17): +10 %, at least 2
 
 
@@ -266,6 +306,13 @@ def route(model, routed):
     return seg_nets, passthrough, internal
 
 
+def segment_wires(h, sid):
+    """Wires of one segment; a branch (D.SEGMENT_BRANCHES) is listed under its parent bundle with ids <parent>-<branch>-nn."""
+    if sid in D.SEGMENT_BRANCHES:
+        return [w for w in h.wires if w["wire"].startswith(f"{D.SEGMENT_BRANCHES[sid]}-{sid}-")]
+    return [w for w in h.wires if w["segment"] == sid and w["wire"].startswith(f"{sid}-") and w["wire"].count("-") == 1]
+
+
 def bundle_factor(n):
     if n <= 1:
         return 1.0
@@ -287,7 +334,9 @@ def harness_routes(base=BASE):
     path = Path(base) / ROUTES_JSON
     if not path.is_file():
         return {}
-    return json.loads(path.read_text(encoding="utf-8")).get("segments", {})
+    data = json.loads(path.read_text(encoding="utf-8"))
+    # a branch route (branches.PPS) gives the length of the branch segment of the same id (D.SEGMENT_BRANCHES)
+    return {**{b: r for b, r in data.get("branches", {}).items() if b in D.SEGMENT_BRANCHES}, **data.get("segments", {})}
 
 
 def routed_length(text, route):
@@ -311,43 +360,83 @@ class Harness:
         self.segments = OrderedDict((s[0], s[:5] + (routed_length(s[5], routes.get(s[0])),) + s[6:]) for s in D.SEGMENTS)
         self.warnings = []
         self.wires, self.connectors = [], OrderedDict()
+        # Explicit mode (W2 GR-3): every board end lands on a graph header contact (tools/assembly_data.py HEADERS); an X id is
+        # synthesized only on the board units of PENDING_BOARD_ENDS, and the generator fails on any other board end without one.
+        self.explicit = bool(D.HEADERS)
+        for ref in list(D.HEADERS) + list(D.PIN_SEGMENTS):
+            if ref not in model.by_ref:
+                fail(f"HEADERS/PIN_SEGMENTS name {ref}, which is not in design/E[1-5].json")
+            pm = pin_map(ref)
+            pins = {str(p["number"]): p for p in model.by_ref[ref]["pins"]}
+            for pin, sid in pm.items():
+                if sid not in self.segments:
+                    fail(f"{ref}.{pin}: unknown segment {sid}")
+                if pin not in pins or not pins[pin].get("net"):
+                    fail(f"{ref}.{pin} is listed for {sid} but has no net in the graph")
+            if ref in D.HEADERS:
+                unlisted = sorted((p for p, x in pins.items() if x.get("net") and p not in pm), key=lambda p: int(p) if p.isdigit() else 0)
+                if unlisted:
+                    fail(f"{ref}: contacts with a net but no segment in HEADERS: {', '.join(unlisted)}")
         for (sid, unit, net), text in D.END_PIN.items():
             ref, pin = text.split(" ")[0].split(".", 1)
             if not any(r == ref and p == pin for r, p, _, _ in model.nets[net].get(unit, [])):
                 fail(f"END_PIN {sid} {unit} {net}: {ref}.{pin} is not on that net in that unit")
         for sid in self.segments:
             self.build_segment(sid)
+        self.collect_board_connectors()
 
     # end description for (segment, unit, net): explicit contacts or module pins
     def explicit_pins(self, sid, unit, net, family=None):
         pins = []
         for ref, pin, _, name in self.model.nets[net].get(unit, []):
-            if sid not in EXPLICIT_SEGMENTS.get(ref, ()):
+            if not serves(ref, pin, sid):
                 continue
-            if family and self.model.is_board(unit) and CONNECTOR_FAMILY.get(ref, "SOLDER") != family:
+            if family and self.model.is_board(unit) and HINT_OF.get(self.ref_family(ref), self.ref_family(ref)) != HINT_OF.get(family, family):
                 continue  # a board-side connector of another family in the same segment
             pins.append((ref, pin, name))
-        return sorted(pins, key=lambda p: (ref_key(p[0]), p[1]))
+        return sorted(pins, key=lambda p: (ref_key(p[0]), int(p[1]) if p[1].isdigit() else 0, p[1]))
+
+    def ref_family(self, ref):
+        """Family of a graph connector: CONNECTOR_FAMILY, else the footprint of its parts-database entry (header refs)."""
+        if ref in CONNECTOR_FAMILY:
+            return CONNECTOR_FAMILY[ref]
+        fp = self.model.db_part.get(ref, {}).get("footprint") or self.model.by_ref.get(ref, {}).get("footprint", "")
+        for prefix, fam in FOOTPRINT_FAMILY:
+            if fp.startswith(prefix):
+                return fam
+        return "SOLDER"
+
+    def orientation(self, ref):
+        """top (vertical header), side (side-entry PH/PHD) or ra (right-angle Micro-Fit), from the parts-database footprint name."""
+        fp = self.model.db_part.get(ref, {}).get("footprint") or ""
+        if fp.endswith("_Horizontal"):
+            return "ra" if self.ref_family(ref) in ("MF", "MF2", "MFJ") else "side"
+        return "top"
 
     def has_gnd(self, unit):
         return self.model.is_board(unit) or bool(self.model.nets["GND"].get(unit))
 
-    def end_family(self, sid, unit, family_hint):
+    def end_family(self, sid, unit, family_hint, net=None):
         seg = self.segments[sid]
         if seg[4] in ("IDC", "CABLE", "FAN3") and self.model.is_board(unit):
             return seg[4]
         if self.model.is_board(unit):
+            if self.explicit and net is not None:
+                # the family of the graph header that carries this net of the segment (PHD for a PH hint, MF2 for an MF hint)
+                pins = self.explicit_pins(sid, unit, net, family_hint if family_hint != "SOLDER" else None)
+                if pins:
+                    return self.ref_family(pins[0][0])
             # a soldered segment that lands on a graph connector of a board (S16 on J503 of the hatch board) takes that connector's family
             return (self.explicit_family(sid, unit) or family_hint) if family_hint == "SOLDER" else family_hint
-        for ref in sorted(EXPLICIT_SEGMENTS, key=ref_key):
-            if sid in EXPLICIT_SEGMENTS[ref] and self.model.unit_of.get(ref) == unit:
-                return CONNECTOR_FAMILY.get(ref, "SOLDER")
+        fam = self.explicit_family(sid, unit)
+        if fam:
+            return fam
         return "SOLDER" if seg[4] not in ("CABLE",) else "CABLE"
 
     def explicit_family(self, sid, unit):
-        for ref in sorted(EXPLICIT_SEGMENTS, key=ref_key):
-            if sid in EXPLICIT_SEGMENTS[ref] and self.model.unit_of.get(ref) == unit:
-                return CONNECTOR_FAMILY.get(ref, "SOLDER")
+        for ref in segment_refs(sid):
+            if self.model.unit_of.get(ref) == unit:
+                return self.ref_family(ref)
         return None
 
     def current(self, sid, net):
@@ -409,7 +498,7 @@ class Harness:
             changed = False
             for item in items:
                 net, cont, prot, _, _, k_min, hint, min_awg, declared = item[:9]
-                fam_a, fam_b = self.end_family(sid, a, hint), self.end_family(sid, b, hint)
+                fam_a, fam_b = self.end_family(sid, a, hint, net), self.end_family(sid, b, hint, net)
                 allowed = sorted(set(D.FAMILIES[fam_a]["awg"] if fam_a in D.FAMILIES else ANY_AWG)
                                  & set(D.FAMILIES[fam_b]["awg"] if fam_b in D.FAMILIES else ANY_AWG), reverse=True)
                 if not allowed:
@@ -490,10 +579,12 @@ class Harness:
                 rows.append((net, cont, prot, why, src, kk, idx, awg, end_a, end_b, fam_a, fam_b))
         for num, row in enumerate(rows, 1):
             net, cont, prot, why, src, kk, idx, awg, end_a, end_b, fam_a, fam_b = row
-            wid = f"{sid}-{num:02d}"
+            # a branch of another segment's bundle (the PPS conductors of the S01 ribbon) is listed under that segment
+            listed = D.SEGMENT_BRANCHES.get(sid, sid)
+            wid = f"{listed}-{sid}-{num:02d}" if listed != sid else f"{sid}-{num:02d}"
             ohm = None if {"CABLE", "IDC"} & {fam_a, fam_b} else D.WIRE_OHM_PER_KM.get(awg)
             self.wires.append(OrderedDict([
-                ("wire", wid), ("segment", sid), ("net", net), ("from_unit", a), ("from", end_a), ("to_unit", b), ("to", end_b),
+                ("wire", wid), ("segment", listed), ("net", net), ("from_unit", a), ("from", end_a), ("to_unit", b), ("to", end_b),
                 ("family_from", fam_a), ("family_to", fam_b), ("awg", awg), ("parallel", f"{idx + 1}/{kk}"),
                 ("i_cont_a", f"{cont:g}"), ("i_prot_a", f"{prot:g}" if prot else ""), ("protection", why), ("current_source", src),
                 ("bundle_n", n), ("colour", colour(net)), ("insulation", D.INSULATION), ("length_mm", self.segments[sid][5]),
@@ -502,9 +593,16 @@ class Harness:
     def end(self, sid, unit, net, family, pins, idx, counters, mirror=None, mate=None):
         if pins:
             ref, pin, name = pins[idx % len(pins)]
+            if ref in D.HEADERS:
+                local = [f"{r}.{p}" for r, p, _, _ in self.model.nets[net].get(unit, []) if r not in D.HEADERS]
+                where = f" → {', '.join(local[:3])}{' …' if len(local) > 3 else ''}" if local else " (транзит)"
+                return f"{ref}.{pin} ({D.HEADERS[ref][0]}){where}"
             return f"{ref}.{pin}" + (f" ({name})" if name and name != pin else "")
         local = [f"{r}.{p}" for r, p, _, _ in self.model.nets[net].get(unit, [])]
         if self.model.is_board(unit):
+            if self.explicit and unit not in D.PENDING_BOARD_ENDS:
+                fail(f"{sid} {net}: no graph header contact on {unit} (explicit mode: add the header ref to design/E[1-5].json "
+                     "and its contacts to tools/assembly_data.py HEADERS; an X id is synthesized only for PENDING_BOARD_ENDS)")
             kind = {"MFJ": "J", "MF": "P", "PH": "S", "IDC": "I", "FAN3": "F"}.get(family, "C")
             limit = D.SIDE_ENTRY_PH_MAX if family == "PH" and unit in D.SIDE_ENTRY_UNITS else D.FAMILIES[family]["max_pins"]
             if mate:
@@ -534,6 +632,43 @@ class Harness:
         return "пайка: " + local[0] + rest
 
 
+    def collect_board_connectors(self):
+        """Board-side harness connectors keyed by graph ref (header refs of HEADERS and graph connectors such as J302/J503 on a
+        board), with the contacts and segments the wires use; synthesized X connectors (PENDING_BOARD_ENDS only) follow them."""
+        found = OrderedDict()
+        for w in self.wires:
+            for key, ukey, fkey in (("from", "from_unit", "family_from"), ("to", "to_unit", "family_to")):
+                unit = w[ukey]
+                m = re.match(r"([A-Z][A-Z0-9]*\d)\.(\S+)", w[key])
+                if not m or not self.model.is_board(unit) or m[1] not in self.model.by_ref:
+                    continue
+                ref = m[1]
+                if ref not in D.HEADERS and ref not in EXPLICIT_SEGMENTS:
+                    continue
+                found.setdefault(ref, {"unit": unit, "segments": set(), "used": set()})
+                found[ref]["segments"].add(w["segment"])
+                found[ref]["used"].add(m[2])
+        synth = list(self.connectors.items())
+        self.connectors = OrderedDict()
+        for ref in sorted(found, key=lambda r: (self.model.order.get(found[r]["unit"], 999), ref_key(r))):
+            comp = self.model.by_ref[ref]
+            pins = sorted(comp["pins"], key=lambda p: (int(p["number"]) if str(p["number"]).isdigit() else 0, str(p["number"])))
+            domain = self.model.partition.get(ref, {}).get("board_candidate", "")
+            self.connectors[ref] = OrderedDict([
+                ("connector", ref), ("label", D.HEADERS[ref][0] if ref in D.HEADERS else ""), ("unit", found[ref]["unit"]),
+                ("board", D.PHYSICAL_BOARD.get(domain, found[ref]["unit"])),
+                ("segment", "+".join(sorted(found[ref]["segments"], key=lambda x: (len(x), x)))), ("family", self.ref_family(ref)),
+                ("orientation", self.orientation(ref)),
+                ("pins", len(pins)), ("nets", [p.get("net") or "—" for p in pins]), ("used", len(found[ref]["used"])),
+                ("graph", True), ("mate_of", "")])
+        for cid, conn in synth:
+            conn.setdefault("label", cid)
+            conn.setdefault("board", conn["unit"])
+            conn.setdefault("orientation", "TBD")
+            conn.setdefault("graph", False)
+            self.connectors[cid] = conn
+
+
 def header_style(conn):
     return "header_side" if conn["family"] == "PH" and conn["unit"] in D.SIDE_ENTRY_UNITS else "header_top"
 
@@ -556,15 +691,30 @@ def db_item(model, fam, n, role):
     return f"{item['mpn']} ({item['sku']['lcsc']})"
 
 
+def pending_reason(conn):
+    return f"TBD (роз'єм плати {conn['unit']} без позначення графа: {D.PENDING_BOARD_ENDS[conn['unit']]})"
+
+
 def connector_parts(model, conn):
+    """(cable housing, board header, crimp terminal, source) of a board-side harness connector. A graph ref (W2 GR-3) is bought
+    through its parts-database entry; its housing and terminal come from harness_families. A pending end (PENDING_BOARD_ENDS) is TBD."""
     fam, n = conn["family"], conn["pins"]
     fam_d = D.FAMILIES[fam]
     src = "design/parts/parts.json harness_families " + (fam_d.get("db") or "—") + ("; " + fam_d["source"] if fam_d.get("source") else "")
-    if conn.get("mate_of"):
-        part = model.db_part.get(conn["mate_of"], {})
-        mate = next((e["mpn"] for e in part.get("extras", []) if "power-board end header" in e.get("item", "")), None)
-        return (f"PHR-{n} — супутня деталь {conn['mate_of']} (база деталей)", f"{mate or 'TBD'} — супутня деталь {conn['mate_of']} (база деталей)",
-                db_item(model, fam, n, "terminal"), "design/parts/parts.json " + part.get("id", "—"))
+    if conn.get("graph"):
+        part = model.db_part.get(conn["connector"], {})
+        sku = (part.get("sku") or {}).get("lcsc")
+        header = f"{part.get('mpn', 'TBD')}" + (f" ({sku})" if sku else "")
+        src = f"design/parts/parts.json {part.get('id', '—')}; " + src
+        if fam == "FAN3":
+            return fam_d["housing"], header, "—", src
+        if fam in ("SOLDER", "CABLE"):
+            return "—", header, "—", src
+        terminal = db_item(model, fam, n, "terminal") if fam in CRIMP else "—"
+        return db_item(model, fam, n, "housing"), header, terminal, src
+    if conn["unit"] in D.PENDING_BOARD_ENDS:
+        why = pending_reason(conn)
+        return why, why, why if fam in CRIMP else "—", "tools/assembly_data.py PENDING_BOARD_ENDS"
     header = db_item(model, fam, n, header_style(conn))
     if fam == "FAN3":
         return fam_d["housing"], header, "—", src
@@ -589,6 +739,10 @@ def render_harness(model, h):
          "платі лючка — верхній вхід B n B-PH-K-S (монтажна висота з розеткою 8 мм); артикули — база деталей (harness_families PH)", source_text("JST-PH")),
         ("Родина силових з'єднань", f"{mf['title']}: розетка 43645 з фіксатором, клема 43030 (20–24 AWG, ⌀ ≤1.85 мм), вилка 43650",
          source_text("MOLEX-43645") + "; " + source_text("MOLEX-43030")),
+        ("Зведені роз'єми (W2 GR-3)", f"{D.FAMILIES['PHD']['title']}: S02 CTRL ↔ PWR — дві вилки S20B-PHDSS бічного входу на кожному кінці, розетка "
+         "PHDR-20VS, клема SPHD-001T-P0.5 (AWG 26–22, ⌀ 1.0–1.5 мм), тож проводи PHD — 22 AWG; "
+         f"{D.FAMILIES['MF2']['title']}: S13/S14/S17/S18 до SL2 — вилка 43045-0812 на PWR-A, розетка 43025-0800; зведення — pcb/partition-spec.json",
+         source_text("JST-PHD") + "; " + source_text("MOLEX-43030")),
         ("Родина кола батареї", f"{mfj['title']}: розетка 5557, клема 0039000060 (18–24 AWG, ⌀ 1.30–3.10 мм, 9.0 A), вилка 5566/5569 "
          "(дворядна) — бо коло батареї 18 AWG, а Micro-Fit 3.0 бере лише 20–24 AWG",
          source_text("MOLEX-5556") + "; " + source_text("MOLEX-5566")),
@@ -617,7 +771,8 @@ def render_harness(model, h):
          "SL1 (стрічка S01 над верхнім краєм Q6A), SL2 (PWR/CTRL → тильний шар: S03, S04, S13–S15, S17, S18, S20–S22, S24, S25, S30, S35), SL3 (нижній ряд "
          "портів, GX16, PD-провід: S11, S23, S32, S34); ширина й межі прорізів — креслення M-07", "рішення asm; mechanical/params/mechanical.json plate slots"),
         ("Пайка до модулів", "лудити, паяти, термоусадка 2:1 на кожному з'єднанні (як J21, 08 крок 7.7); жилу не згинати біля пайки", "08 крок 7.7"),
-        ("Інструмент", f"Mini-Fit Jr.: {mfj['tool']}; Micro-Fit: {mf['tool']}; PH: {ph['tool']}", "MOLEX-5556; MOLEX-43030; JST-PH"),
+        ("Інструмент", f"Mini-Fit Jr.: {mfj['tool']}; Micro-Fit: {mf['tool']}; PH: {ph['tool']}; PHD: {D.FAMILIES['PHD']['tool']}",
+         "MOLEX-5556; MOLEX-43030; JST-PH; JST-PHD"),
     ]))
     # units
     lines.append("\n## 2. Вузли\n")
@@ -633,29 +788,38 @@ def render_harness(model, h):
     lines.append("\n## 3. Сегменти джгутів\n")
     seg_rows = []
     for sid, seg in h.segments.items():
-        wires = [w for w in h.wires if w["segment"] == sid]
+        wires = segment_wires(h, sid)
         fams = sorted({w["family_from"] for w in wires} | {w["family_to"] for w in wires})
         seg_rows.append((sid, seg[3], f"{seg[1]} ↔ {seg[2]}", len(wires), ", ".join(fams), seg[5], seg[6]))
     lines.append(table(["сегмент", "назва", "кінці", "проводів", "родини", "довжина, мм", "примітка"], seg_rows))
     # connectors
     lines.append("\n## 4. Роз'єми джгутів на платах\n")
-    lines.append("Позначення `X<сегмент><J|P|S|I|F><n>-<плата>`: J — Mini-Fit Jr., P — Micro-Fit, S — PH, I — IDC, F — вентилятор; n = 0 — відповідь "
-                 "наявного роз'єму графа на іншому кінці (контакт у контакт, J302). Ці роз'єми ще не мають позиційних позначень на схемі (хвиля 2); "
-                 "артикули вилок, розеток і клем — з бази деталей (`harness_families`), TBD — лише де бази немає (причина в рядку). Наявні роз'єми графа "
-                 "(J302, J501–J505, J541/J543/J544, J550, J101, J103) використано як є. Кількість для закупівлі — [16-dzhgut-pidsumok.csv](16-dzhgut-pidsumok.csv).\n\n")
+    pending = sorted({c["unit"] for c in h.connectors.values() if not c.get("graph")}, key=model.order.get)
+    lines.append("Кожен роз'єм джгута на платі — позиційне позначення графа `design/E[1-5].json` (W2 GR-3): контакт таблиці проводів = контакт "
+                 "схеми й посадкового місця (`tools/assembly_data.py` HEADERS; генератор зупиняється на кінці проводу на платі без такого контакту). "
+                 "Мітка — колишній ідентифікатор X хвилі 1 або назва зведення `pcb/partition-spec.json` (один роз'єм на напрям і зону виходу, джгут "
+                 "розходиться після прорізу); плата — фізична плата за доменом `pcb/prepare.py` (PWR_A, PWR_B, CTRL, RF, HATCH). Вилки на платі купуються "
+                 "за базою деталей (10-zakupivlia, BOM JLC); розетки кабелю й клеми — лише за [16-dzhgut-pidsumok.csv](16-dzhgut-pidsumok.csv) "
+                 "(одне джерело, без подвійного рахунку). Висоти: на CTRL усі вилки — на нижньому боці (PH і PHD бічного входу, Micro-Fit лише кутова "
+                 "43650-0n00), на RF — лише PH бічного входу, на PWR-B — PH/PHD бічного входу, на PWR-A — Micro-Fit, Mini-Fit Jr. і PH верхнього входу "
+                 "в непокритих крайових смугах (build/15 «Сигнальні джгути», «Живлення ≥2 A»)"
+                 + (f"; без позначення графа лишаються лише кінці на {', '.join(pending)} — причина в рядку (OPEN)" if pending else "")
+                 + ".\n\n")
     crow = []
     for cid, conn in h.connectors.items():
         housing, header, terminal, src = connector_parts(model, conn)
-        crow.append((cid, conn["unit"], conn["segment"], D.FAMILIES[conn["family"]]["title"], conn["pins"], header, housing, terminal, src))
-    lines.append(table(["роз'єм", "плата", "сегмент", "родина", "контактів", "на платі", "розетка кабелю", "клема", "джерело"], crow))
-    lines.append("\nКонтакти понад зайняті проводами (мінімум 2 у PH і Micro-Fit) — резерв, без проводу.\n")
+        used = conn.get("used", conn["pins"])
+        crow.append((cid, conn["label"] or "—", conn["board"], conn["segment"], D.FAMILIES[conn["family"]]["title"], f"{conn['pins']} ({used} з проводом)" if conn.get("graph") else conn["pins"],
+                     header, housing, terminal, src))
+    lines.append(table(["роз'єм", "мітка", "плата", "сегмент", "родина", "контактів", "на платі", "розетка кабелю", "клема", "джерело"], crow))
+    lines.append("\nКонтакти без проводу — резерв (у графі без кола, `nc`).\n")
     existing = [("J302", "CTRL", "S02", "PH 5 (граф E3, база деталей J-PH-S5B)",
-                 "S5B-PH-K-S (C157923) на CTRL — боковий вхід, як усі PH на CTRL; відповідь X02S0-PWR — B5B-PH-K-S (верхній вхід) на PWR",
-                 "PHR-5 на обох кінцях", "SPH-002T-P0.5S", "design/parts/parts.json J-PH-S5B"),
+                 "S5B-PH-K-S (C157923) на CTRL — боковий вхід, як усі PH на CTRL; відповідь J201 (X02S0-PWR) — та сама S5B на PWR-B",
+                 "PHR-5 на обох кінцях (підсумок джгута)", "SPH-002T-P0.5S", "design/parts/parts.json J-PH-S5B"),
                 ("J503", "HATCH", "S16", "Micro-Fit 3 з фіксатором на платі лючка (база деталей J-MICROFIT-3)", "вилка 43650-0315 (C293546, Sn)",
-                 "43645-0300 (C259740) на S16", "43030-0007 (C293530)", "design/parts/parts.json J-MICROFIT-3; MOLEX-43645"),
+                 "43645-0300 (C259740) на S16 (підсумок джгута)", "43030-0007 (C293530)", "design/parts/parts.json J-MICROFIT-3; MOLEX-43645"),
                 ("J502", "HATCH", "— (зовнішній провід консолі)", "PH 3 на платі лючка (база деталей J-PH-B3B; не стикується з J503)", "B3B-PH-K-S (C131339)",
-                 "PHR-3 на проводі адаптера", "SPH-002T-P0.5S", "design/parts/parts.json J-PH-B3B"),
+                 "PHR-3 на проводі адаптера (підсумок джгута, ROLLUP_EXTRA)", "SPH-002T-P0.5S", "design/parts/parts.json J-PH-B3B"),
                 ("J505", "LABBUS", "S34", "Kinghelm KH-GX12-6P (база деталей J-GX12-6; альтернатива IP67 — binder M8 86 6618 1120 00006)",
                  "панель, виріз — TBD (сторінка LCSC без креслення)", "—", "пайка в чашки", "KINGHELM-GX12; BINDER-M8"),
                 ("J504", "GX16", "S32/S33", "Olimex CONNECTOR-GX16-4 (STACK)", "панель, отвір ⌀16", "—", "пайка в чашки", "OLIMEX-GX16"),
@@ -789,8 +953,9 @@ BOND = {
 }
 HARNESS_FINDINGS = [
     "Тонкі гілки LAB5 мають власні межі (build/15 «Межі струму тонких гілок (W2 GR-1)»): LC76G — U315 TPS2553DBVR-1 на CTRL (144–192 mA, S25), "
-    "вентилятор Noctua — PTC F301 (Itrip 1.50 A при 23 °C, S27), пак IMU — U553 TPS2553DBVR зі сталим струмом на PWR (265–339 mA, S32/S33); решта "
-    "гілок LAB5 (S02, S04, S13, S28) — під загальним F102 4 A, і їхні проводи генератор розраховує на 4 A.",
+    "вентилятор Noctua — PTC F301 (Itrip 1.50 A при 23 °C, S27), пак IMU — U553 TPS2553DBVR зі сталим струмом на PWR (265–339 mA, S32/S33), котушки "
+    "реле RF — PTC F104 на PWR-A (Itrip 1.50 A при 23 °C, LAB5_RLY у S04, R-E1-09); решта гілок LAB5 (S02, S13, S28) — під загальним F102 4 A, і їхні "
+    "проводи генератор розраховує на 4 A.",
     "J503: тривалий струм J21 2.5 A на одному контакті Micro-Fit (50 % від 5 A); межа захисту 4 A (F201) — 80 %; приймання — прогрів J503 у "
     "тесті Ж-04/Ж-11.",
     "KEY у S16 — 24 AWG замість 26–28 AWG STACK §5.8: найтонший переріз, сумісний з клемами Micro-Fit 20–24 AWG у J503 (примітка E5 J503 і build/15 "
@@ -816,19 +981,17 @@ HARNESS_FINDINGS = [
     "Площа й край плат (модель механіки, fit-report «board_area»): з роз'ємами джгутів цього розділу §4 оцінка площі PWR перевищує контур, а сума "
     "ширин роз'ємів — його крайові зони; розкладка PWR і архітектура джгутів (менше роз'ємів на PWR або більша плата) — хвиля 2, до того ворота "
     "розміщення PCB лишаються OPEN.",
-    "Висота роз'ємів на CTRL і RF (обмеження 5.5 мм) — за висотою з'єднаної пари: PH — лише боковий вхід (4.8 мм і з'єднаним, каталог ePH), "
-    "зокрема роз'єм графа J302 (S5B-PH-K-S). Прочитано 07.11.2026: вертикальна Micro-Fit 43650 — корпус 9.90 мм над платою (каталог Molex "
-    "MX01 F-119 з PS-43650 rev J), з'єднана пара — 17.27 мм (листи деталей Molex 436500316 і 436500320); кутова 43650 — 6.98 мм з'єднаною "
-    "(листи 436500900, 436500311, 0436500209), курт'ярд глибиною 10.91 мм (KiCad 10.0.7); креслення XDFH-0254-2*20P не читається (LCSC дає "
-    "лише HTML), еталонний бокс 2×20 Würth WR-BHD 61204021621 — корпус 9.1 мм, з розеткою — TBD (mechanical/params/parts.json harness_headers). "
-    "Тож вертикальні X02P1-CTRL, X28P1-CTRL, X04P1-RF і вертикальні Micro-Fit PWR (17.27 мм проти межі 9.0 і зони 10.5 мм) не "
-    "вміщуються: вертикальних Micro-Fit 43650 на платах немає, замість них кутова 43650 — на PWR у межі плати, X04P1-RF у зонах RF над V4L "
-    "(16.3 мм) або LNA (10.6 мм), X28P1-CTRL — вивідний з тилу CTRL біля пластини (до 13.9 мм; X25P1-CTRL з хвилі 2 немає: S25 без 5 V Q6A став PH, GR-1); X02P1-CTRL (4 конт., навіть "
-    "кутова: лице CTRL — 6.5 мм) і бокс IDC X01I1-CTRL (S01) не вміщуються в жодну зону. Карта вільної висоти — boards.json height_zones/rear_zones, "
-    "fit-report «Зони висоти CTRL і RF»; тип, бік плати або перенесення на PWR вирішує розкладка роз'ємів GR-3 (правило R-HDR-HEIGHT — OPEN; "
-    "build/15 «Висота роз'ємів CTRL і RF (W2 MECH-1)»).",
-    "S25 + S01 ≤200 мм для PPS (STACK §5.2): LC76G у моделі — задня стінка ліворуч, CTRL — праворуч за колонкою HMI, тож бюджет навряд чи виконується — "
-    "перевірити трасу в CAD або перенести LC76G (build/15 «Оболонка D15»); пігтейл P7 W407 100 мм також не дістає (≥113 мм по прямій).",
+    "Висота роз'ємів (W2 GR-3, консервативно, не чекаючи MECH-3; правило pcb/partition-spec.json header_orientation.rule_gr3): вертикальних Micro-Fit "
+    "43650 на CTRL і RF немає. CTRL двобічна: усі вилки джгутів — на нижньому боці, паяються зверху; PH бічного входу 4.8 мм і PHD бічного входу 5.0 мм "
+    "(каталоги JST ePH і PHD), Micro-Fit — лише кутова 43650-0400/-0200 (J305 LAB5, J314 повітродувка; з розеткою 6.98 мм за листами Molex, "
+    "mechanical/params/parts.json harness_headers MF_ra) — над BMS/IP2368 це dz = 6.98 + 1.0 − 3.9 = 4.1 мм у межах dz cap 6.0 (pcb/partition-spec.json "
+    "ctrl.bottom_header_rule). Бокс IDC J304 (XDFH-0254-2*20P: креслення LCSC не читається; еталон Würth WR-BHD 61204021621 — 9.1 мм) і вилка KK J313 "
+    "(висоту 22-27-2031 не прочитано) варіанта в межах dz cap над BMS/IP2368 не мають: їм потрібна зона CTRL з вільною висотою ≥ h + 1.0 мм (MECH-3) — OPEN "
+    "(R-HDR-HEIGHT). RF — лише PH бічного входу (J418–J420): живлення котушок G6K іде через PTC F104 на PWR-A, тож силового Micro-Fit на RF немає. PWR-B — "
+    "PH/PHD бічного входу (≤ hB 5.5 мм); PWR-A — Micro-Fit, Mini-Fit Jr. і PH верхнього входу в непокритих крайових смугах.",
+    "PPS (STACK §5.2, ≤20 см): S01 + S25 за моделлю 322 мм, тож PPS, UART6 і один GND ідуть гілкою PPS провідників 6/7/16/18 стрічки S01 одразу від "
+    "розетки J20 до P1 LC76G — 196 мм за моделлю з межею 200 мм (кінці попередні: розташування P1 на Waveshare 24370 і контакту 1 J20 не прочитано; "
+    "R-PPS-LEN OPEN, build/15 W2 MECH-1); S25 несе лише живлення й RESET LC76G. Пігтейл P7 W407 100 мм також не дістає (≥113 мм по прямій).",
 ]
 
 
@@ -838,11 +1001,15 @@ def render_harness_csv(h):
 
 
 def render_connectors_csv(model, h):
-    header = ["connector", "unit", "segment", "family", "pins", "board_part", "cable_housing", "terminal", "source", "nets"]
+    """Board-side harness connectors keyed by graph ref (W2 GR-3); label = the wave-1 X id or the consolidation name of
+    pcb/partition-spec.json; nets = one entry per contact in contact order (— = reserve without a net)."""
+    header = ["connector", "label", "unit", "board", "segment", "family", "orientation", "pins", "board_part", "cable_housing", "terminal",
+              "source", "nets"]
     rows = []
     for cid, conn in h.connectors.items():
         housing, header_part, terminal, src = connector_parts(model, conn)
-        rows.append([cid, conn["unit"], conn["segment"], conn["family"], conn["pins"], header_part, housing, terminal, src, " ".join(conn["nets"])])
+        rows.append([cid, conn["label"], conn["unit"], conn["board"], conn["segment"], conn["family"], conn["orientation"], conn["pins"],
+                     header_part, housing, terminal, src, " ".join(conn["nets"])])
     return csv_text(header, rows)
 
 
@@ -894,31 +1061,44 @@ def spool_row(awg, colours):
 
 
 def rollup_rows(model, h):
-    """Purchase quantities of the harness: headers and housings of the generated board connectors, crimp terminals of their
-    wire ends and wires per gauge and colour. Mates of graph connectors (J302) and the graph connectors themselves are bought
-    through their parts-database entries (extras), so they are not counted here."""
+    """Purchase quantities of the harness (W2 GR-3 BOM ownership): the board headers are graph refs bought through the parts
+    database (10-zakupivlia, JLC BOM); this roll-up owns every cable housing and crimp terminal of the board-header wire ends
+    (counted from the wires), the IDC socket at the Q6A end of S01, the external console lead of J502 (ROLLUP_EXTRA) and the wires
+    per gauge and colour. A pending board end (PENDING_BOARD_ENDS) is listed as TBD with its reason."""
     count = OrderedDict()
 
     def add(fam, pins, role, mpn, note, n=1):
         key = (fam, pins, role, mpn, note)
         count[key] = count.get(key, 0) + n
     for cid, conn in h.connectors.items():
-        if conn.get("mate_of"):
-            continue
         housing, header, terminal, _ = connector_parts(model, conn)
-        style = {"header_side": "вилка, боковий вхід", "header_top": "вилка, верхній вхід"}[header_style(conn)]
-        add(conn["family"], conn["pins"], style, header, "")
-        if conn["family"] != "FAN3":
+        if not conn.get("graph"):
+            add(conn["family"], conn["pins"], "вилка на платі", header, "")
+        if conn["family"] not in ("FAN3", "SOLDER", "CABLE"):
             add(conn["family"], conn["pins"], "розетка кабелю", housing, "")
+    sockets = set()
+    for w in h.wires:
+        for key, ukey, fkey in (("from", "from_unit", "family_from"), ("to", "to_unit", "family_to")):
+            m = re.match(r"([A-Z][A-Z0-9]*\d)\.", w[key])
+            if w[fkey] == "IDC" and m and not model.is_board(w[ukey]) and m[1] in model.by_ref:
+                sockets.add(m[1])
+    for ref in sorted(sockets, key=ref_key):
+        add("IDC", 40, "розетка кабелю", db_item(model, "IDC", 40, "housing"), f"на {ref} ({model.unit_of[ref]}), другий кінець стрічки")
     ends = defaultdict(int)
     for w in h.wires:
         for key, fam in (("from", w["family_from"]), ("to", w["family_to"])):
-            if fam in CRIMP and re.match(r"X\d\d[JPSIF][1-9]\d*-", w[key]):
-                ends[fam] += 1
-    for fam, n in sorted(ends.items()):
-        tmpl = {"conn": {"family": fam, "pins": 2, "unit": "", "mate_of": ""}}
-        terminal = connector_parts(model, tmpl["conn"])[2]
-        add(fam, "", "клема", terminal, "кінці проводів на роз'ємах X цієї таблиці", n)
+            m = re.match(r"([A-Z][A-Z0-9]*\d|X\d\d[JPSIF]\d+-[A-Z]+)\.", w[key])
+            if fam in CRIMP and m and m[1] in h.connectors:
+                ends[(fam, h.connectors[m[1]].get("graph"), m[1] if not h.connectors[m[1]].get("graph") else "")] += 1
+    for (fam, graph, cid), n in sorted(ends.items(), key=lambda kv: (kv[0][0], not kv[0][1], kv[0][2])):
+        if graph:
+            terminal = connector_parts(model, {"family": fam, "pins": 2, "unit": "", "graph": False, "mate_of": ""})[2]
+            add(fam, "", "клема", terminal, "кінці проводів на роз'ємах плат (build/16 §4)", n)
+        else:
+            add(fam, "", "клема", pending_reason(h.connectors[cid]), f"кінці проводів на {cid}", n)
+    for fam, pins, role, n, note in D.ROLLUP_EXTRA:
+        item = db_item(model, fam, pins or 2, "terminal" if role == "клема" else "housing")
+        add(fam, pins, role, item, note, n)
     wires, wire_ends, wire_len = defaultdict(int), defaultdict(set), defaultdict(list)
     for w in h.wires:
         if "IDC" in (w["family_from"], w["family_to"]) or "CABLE" in (w["family_from"], w["family_to"]) or "FAN3" in (w["family_from"], w["family_to"]):
@@ -938,7 +1118,7 @@ def rollup_rows(model, h):
         role, n, note = spool_row(awg, colours)
         add("провід", "", role, part, note, n)
     rows = []
-    order = {"IDC": 0, "MFJ": 1, "MF": 2, "PH": 3, "FAN3": 4, "провід": 5}
+    order = {"IDC": 0, "MFJ": 1, "MF": 2, "MF2": 3, "PH": 4, "PHD": 5, "FAN3": 6, "провід": 7}
     for (fam, pins, role, mpn, note), n in sorted(count.items(), key=lambda kv: (order.get(kv[0][0], 9), kv[0][1] == "", kv[0][1] or 0, kv[0][2])):
         sp = 0 if fam == "провід" else spares(n)
         rows.append([fam, pins, role, mpn, n, sp, n + sp, note])

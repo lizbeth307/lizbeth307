@@ -362,7 +362,7 @@
     "3V3_Q6A": {
       "class": "SIG",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:419",
+      "source": "tools/assembly_data.py:517",
       "inputs": {
         "continuous_a": 0.1,
         "protective_a": 0.1,
@@ -375,7 +375,7 @@
     "AON3V3": {
       "class": "SIG",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:420",
+      "source": "tools/assembly_data.py:518",
       "inputs": {
         "continuous_a": 0.01,
         "protective_a": 0.01,
@@ -388,7 +388,7 @@
     "AUX12": {
       "class": "PWR1A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:393",
+      "source": "tools/assembly_data.py:491",
       "inputs": {
         "continuous_a": 0.42,
         "protective_a": 0.75,
@@ -413,7 +413,7 @@
     "BIAS_CH1": {
       "class": "PWR1A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:403",
+      "source": "tools/assembly_data.py:501",
       "inputs": {
         "continuous_a": 0.339,
         "protective_a": 0.339,
@@ -438,7 +438,7 @@
     "BIAS_CH2_PORT": {
       "class": "PWR1A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:404",
+      "source": "tools/assembly_data.py:502",
       "inputs": {
         "continuous_a": 0.339,
         "protective_a": 0.339,
@@ -451,7 +451,7 @@
     "BIAS_CH3_PORT": {
       "class": "PWR1A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:405",
+      "source": "tools/assembly_data.py:503",
       "inputs": {
         "continuous_a": 0.339,
         "protective_a": 0.339,
@@ -464,7 +464,7 @@
     "BIAS_CH4": {
       "class": "PWR1A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:406",
+      "source": "tools/assembly_data.py:504",
       "inputs": {
         "continuous_a": 0.192,
         "protective_a": 0.192,
@@ -489,7 +489,7 @@
     "BIAS_SB_LNA": {
       "class": "PWR1A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:407",
+      "source": "tools/assembly_data.py:505",
       "inputs": {
         "continuous_a": 0.065,
         "protective_a": 0.192,
@@ -502,7 +502,7 @@
     "BONI13V8_PORT": {
       "class": "PWR1A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:409",
+      "source": "tools/assembly_data.py:507",
       "inputs": {
         "continuous_a": 0.065,
         "protective_a": 0.153,
@@ -515,7 +515,7 @@
     "DISP12": {
       "class": "PWR2A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:392",
+      "source": "tools/assembly_data.py:490",
       "inputs": {
         "continuous_a": 1.27,
         "protective_a": 1.7,
@@ -528,7 +528,7 @@
     "E1_CELL4": {
       "class": "BATT",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:384",
+      "source": "tools/assembly_data.py:480",
       "inputs": {
         "continuous_a": 4.6,
         "protective_a": 7.5,
@@ -541,7 +541,7 @@
     "E1_CHG_INHIBIT_LOW": {
       "class": "SIG",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:410",
+      "source": "tools/assembly_data.py:508",
       "inputs": {
         "continuous_a": 0.01,
         "protective_a": 0.01,
@@ -578,7 +578,7 @@
     "E1_LAB5_RAW": {
       "class": "BATT",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:389",
+      "source": "tools/assembly_data.py:485",
       "inputs": {
         "continuous_a": 3.2,
         "protective_a": 7.5,
@@ -591,7 +591,7 @@
     "E1_N": {
       "class": "BATT",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:386",
+      "source": "tools/assembly_data.py:482",
       "inputs": {
         "continuous_a": 4.6,
         "protective_a": 7.5,
@@ -604,7 +604,7 @@
           "segment": "S10",
           "continuous_a": 3.0,
           "protective_a": 7.5,
-          "source": "tools/assembly_data.py:425"
+          "source": "tools/assembly_data.py:523"
         }
       ],
       "required_outer_width_mm": 3.1766
@@ -612,7 +612,7 @@
     "E1_SERVICE_P": {
       "class": "PWR3A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:398",
+      "source": "tools/assembly_data.py:496",
       "inputs": {
         "continuous_a": 3.0,
         "protective_a": 5.0,
@@ -625,7 +625,7 @@
     "E1_SHUNT_P": {
       "class": "BATT",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:385",
+      "source": "tools/assembly_data.py:481",
       "inputs": {
         "continuous_a": 4.6,
         "protective_a": 7.5,
@@ -638,7 +638,7 @@
     "E1_SW": {
       "class": "BATT",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:387",
+      "source": "tools/assembly_data.py:483",
       "inputs": {
         "continuous_a": 4.6,
         "protective_a": 7.5,
@@ -651,7 +651,7 @@
     "E1_USB_PD_RAW": {
       "class": "PWR3A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:396",
+      "source": "tools/assembly_data.py:494",
       "inputs": {
         "continuous_a": 3.0,
         "protective_a": 3.5,
@@ -664,7 +664,7 @@
     "E1_USB_PD_SAFE": {
       "class": "PWR3A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:397",
+      "source": "tools/assembly_data.py:495",
       "inputs": {
         "continuous_a": 3.0,
         "protective_a": 3.5,
@@ -941,7 +941,7 @@
     "E3_BLOWER_GND": {
       "class": "PWR3A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:417",
+      "source": "tools/assembly_data.py:515",
       "inputs": {
         "continuous_a": 0.5,
         "protective_a": 4.0,
@@ -954,7 +954,7 @@
     "E3_FAN5": {
       "class": "PWR3A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:411",
+      "source": "tools/assembly_data.py:509",
       "inputs": {
         "continuous_a": 0.25,
         "protective_a": 4.0,
@@ -967,7 +967,7 @@
     "E3_FAN5_P": {
       "class": "PWR1A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:412",
+      "source": "tools/assembly_data.py:510",
       "inputs": {
         "continuous_a": 0.25,
         "protective_a": 1.5,
@@ -980,7 +980,7 @@
     "E3_GNSS5V": {
       "class": "PWR1A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:414",
+      "source": "tools/assembly_data.py:512",
       "inputs": {
         "continuous_a": 0.1,
         "protective_a": 0.192,
@@ -993,7 +993,7 @@
     "E3_PICO3V3": {
       "class": "SIG",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:421",
+      "source": "tools/assembly_data.py:519",
       "inputs": {
         "continuous_a": 0.02,
         "protective_a": 0.02,
@@ -1819,7 +1819,7 @@
     "E5_IMU5V": {
       "class": "PWR1A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:416",
+      "source": "tools/assembly_data.py:514",
       "inputs": {
         "continuous_a": 0.2,
         "protective_a": 0.339,
@@ -1853,7 +1853,7 @@
     "J21": {
       "class": "PWR3A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:391",
+      "source": "tools/assembly_data.py:489",
       "inputs": {
         "continuous_a": 2.5,
         "protective_a": 4.0,
@@ -1878,7 +1878,7 @@
     "LAB5": {
       "class": "PWR3A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:390",
+      "source": "tools/assembly_data.py:486",
       "inputs": {
         "continuous_a": 1.0,
         "protective_a": 4.0,
@@ -1891,27 +1891,34 @@
           "segment": "S28",
           "continuous_a": 0.5,
           "protective_a": 4.0,
-          "source": "tools/assembly_data.py:426"
+          "source": "tools/assembly_data.py:524"
         },
         {
           "segment": "S13",
           "continuous_a": 0.3,
           "protective_a": 4.0,
-          "source": "tools/assembly_data.py:427"
-        },
-        {
-          "segment": "S04",
-          "continuous_a": 0.1,
-          "protective_a": 4.0,
-          "source": "tools/assembly_data.py:428"
+          "source": "tools/assembly_data.py:525"
         }
       ],
       "required_outer_width_mm": 1.3348
     },
+    "LAB5_RLY": {
+      "class": "PWR1A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:487",
+      "inputs": {
+        "continuous_a": 0.1,
+        "protective_a": 1.5,
+        "protection": "PTC F104 MF-MSMF075/24-2 (Itrip 1.50 A при 23 °C; Ihold 0.75 A, 0.49 A при 70 °C)",
+        "current_source": "2 котушки G6K ≈21.1 mA (08 крок 10); R-E1-09; Bourns MF-MSMF REV. AO (прочитано 07.11.2026)"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.345
+    },
     "LIME3V3": {
       "class": "PWR2A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:394",
+      "source": "tools/assembly_data.py:492",
       "inputs": {
         "continuous_a": 1.2,
         "protective_a": 2.2,
@@ -1936,7 +1943,7 @@
     "LNB13V2": {
       "class": "PWR1A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:408",
+      "source": "tools/assembly_data.py:506",
       "inputs": {
         "continuous_a": 0.3,
         "protective_a": 0.499,
@@ -1961,7 +1968,7 @@
     "SYS12": {
       "class": "BATT",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:388",
+      "source": "tools/assembly_data.py:484",
       "inputs": {
         "continuous_a": 4.0,
         "protective_a": 7.5,
@@ -1974,7 +1981,7 @@
     "VBUS_HFP": {
       "class": "PWR1A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:401",
+      "source": "tools/assembly_data.py:499",
       "inputs": {
         "continuous_a": 0.989,
         "protective_a": 0.989,
@@ -1987,7 +1994,7 @@
     "VBUS_LABPORT": {
       "class": "PWR1A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:402",
+      "source": "tools/assembly_data.py:500",
       "inputs": {
         "continuous_a": 0.825,
         "protective_a": 0.825,
@@ -2000,7 +2007,7 @@
     "VBUS_RTLA": {
       "class": "PWR1A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:399",
+      "source": "tools/assembly_data.py:497",
       "inputs": {
         "continuous_a": 0.673,
         "protective_a": 0.673,
@@ -2013,7 +2020,7 @@
     "VBUS_RTLB": {
       "class": "PWR1A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:400",
+      "source": "tools/assembly_data.py:498",
       "inputs": {
         "continuous_a": 0.673,
         "protective_a": 0.673,
@@ -2038,7 +2045,7 @@
     "VCC_3V3_MKEY": {
       "class": "PWR2A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:395",
+      "source": "tools/assembly_data.py:493",
       "inputs": {
         "continuous_a": 1.2,
         "protective_a": 2.2,
@@ -2051,7 +2058,7 @@
     "VCC_5V_PERI": {
       "class": "PWR3A",
       "basis": "NET_CURRENT",
-      "source": "tools/assembly_data.py:418",
+      "source": "tools/assembly_data.py:516",
       "inputs": {
         "continuous_a": 0.1,
         "protective_a": 4.5,
@@ -2063,18 +2070,18 @@
     }
   },
   "summary": {
-    "nets": 151,
+    "nets": 152,
     "by_class": {
       "BATT": 13,
       "DCTAP": 12,
-      "PWR1A": 32,
+      "PWR1A": 33,
       "PWR2A": 5,
       "PWR3A": 14,
       "RF50": 71,
       "SIG": 4
     },
-    "net_current_entries": 36,
-    "seg_current_entries": 4,
+    "net_current_entries": 37,
+    "seg_current_entries": 3,
     "not_in_graph": []
   },
   "unclassified_supply_candidates": {
@@ -2647,6 +2654,10 @@
       {
         "netclass": "PWR3A",
         "pattern": "LAB5"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "LAB5_RLY"
       },
       {
         "netclass": "PWR2A",

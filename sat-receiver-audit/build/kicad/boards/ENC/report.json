@@ -33,7 +33,7 @@
     "sha256": "39dcf8e6fe37749bb03cd7152c4ee090ede3b3aa7381b901d6943af546aa75ab"
   },
   "board_file": "build/kicad/boards/ENC/ENC.kicad_pcb",
-  "board_sha256": "2b3c19876539f3fb7be18af9c3182c0363012fa2172053c76fd0f59ba810bc59",
+  "board_sha256": "065243df3d2448b25d5230f43354e57a746ebbd7cb6a010d7c4b3b6f9735d3de",
   "project_file": "build/kicad/boards/ENC/ENC.kicad_pro",
   "fp_lib_table_sha256": "6b2a79120473af8986b9a926ecdd3f0a81eacea4b73a8391c78367962c2525c3",
   "layers": {
@@ -724,8 +724,9 @@
               "ENC.A",
               "J1.2"
             ],
-            "external_refs": 3,
+            "external_refs": 4,
             "external_sample": [
+              "J316",
               "R351",
               "R352",
               "U312"
@@ -739,8 +740,9 @@
               "ENC.B",
               "J1.3"
             ],
-            "external_refs": 3,
+            "external_refs": 4,
             "external_sample": [
+              "J316",
               "R353",
               "R354",
               "U312"
@@ -754,8 +756,9 @@
               "ENC.S1",
               "J1.4"
             ],
-            "external_refs": 2,
+            "external_refs": 3,
             "external_sample": [
+              "J316",
               "R348",
               "U311"
             ],
@@ -769,7 +772,7 @@
               "ENC.S2",
               "J1.1"
             ],
-            "external_refs": 489,
+            "external_refs": 520,
             "external_sample": [
               "A401",
               "A402",
@@ -800,8 +803,9 @@
               "ENC.A",
               "J1.2"
             ],
-            "external_refs": 3,
+            "external_refs": 4,
             "external_sample": [
+              "J317",
               "R355",
               "R356",
               "U312"
@@ -815,8 +819,9 @@
               "ENC.B",
               "J1.3"
             ],
-            "external_refs": 3,
+            "external_refs": 4,
             "external_sample": [
+              "J317",
               "R357",
               "R358",
               "U312"
@@ -830,8 +835,9 @@
               "ENC.S1",
               "J1.4"
             ],
-            "external_refs": 2,
+            "external_refs": 3,
             "external_sample": [
+              "J317",
               "R350",
               "U311"
             ],
@@ -845,7 +851,7 @@
               "ENC.S2",
               "J1.1"
             ],
-            "external_refs": 489,
+            "external_refs": 520,
             "external_sample": [
               "A401",
               "A402",

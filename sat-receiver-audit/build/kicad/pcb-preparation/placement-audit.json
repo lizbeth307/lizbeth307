@@ -1892,9 +1892,9 @@
     }
   ],
   "input_file": "pcb/generated/detector-core-input.json",
-  "input_sha256": "687b119204e45916f9a8aa7617a341a6737490eebb83410b98724efe9f33327b",
+  "input_sha256": "b64ec13dfe7f0c3bad5a2dfe4e7f8d5174cc65e6147025bd9da707ba5654780f",
   "board_file": "build/kicad/pcb-preparation/detector-core-placement.kicad_pcb",
-  "board_sha256": "c3dc087cf35315e0d9af052cc6fea6d03812bc34948a3c635d51327e97c8b61a",
+  "board_sha256": "8086c207eb6842c6e79dd8d9f9bdf8c03a1a88c7a57a326f7731fe3826e0b3a8",
   "kicad_version": "10.0.7",
   "outline_candidate_mm": {
     "x": 125.0,
@@ -2470,6 +2470,8 @@
       "boards": [
         "PWR_MAIN",
         "PWR_BRANCH",
+        "PWR_BRANCH_SW",
+        "USB_POWER_SW",
         "CTRL_HMI",
         "USB_POWER",
         "RF_HMC",
@@ -2501,7 +2503,7 @@
   "drc": {
     "exit_code": 5,
     "raw_file": "build/kicad/pcb-preparation/drc-raw.json",
-    "raw_sha256": "567b68881bc3358c5f73b30f37c24b06f3d928f00ab5554a16d94857efbe0c32",
+    "raw_sha256": "098a4a666864670f0047daacca25c2f0ab31a2b19f63a2cfe66682ff740c64a3",
     "counts": {
       "unconnected_items": 140
     },

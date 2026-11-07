@@ -1,6 +1,6 @@
 {
   "kicad_version": "10.0.7",
-  "assignments": 692,
+  "assignments": 737,
   "footprints": [
     {
       "footprint": "Capacitor_SMD:CP_Elec_5x4.5",
@@ -394,6 +394,106 @@
       "role": "source of a derived SR_RX_Custom footprint"
     },
     {
+      "footprint": "Connector_IDC:IDC-Header_2x20_P2.54mm_Vertical",
+      "file": "build/kicad/footprints/Connector_IDC.pretty/IDC-Header_2x20_P2.54mm_Vertical.kicad_mod",
+      "sha256": "547b0e374a40cdf6e63ae56c65dfb6c794ec26e19a377b1a1b7f67ac643df332",
+      "pads": [
+        "1",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "2",
+        "20",
+        "21",
+        "22",
+        "23",
+        "24",
+        "25",
+        "26",
+        "27",
+        "28",
+        "29",
+        "3",
+        "30",
+        "31",
+        "32",
+        "33",
+        "34",
+        "35",
+        "36",
+        "37",
+        "38",
+        "39",
+        "4",
+        "40",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J304"
+      ]
+    },
+    {
+      "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal.kicad_mod",
+      "sha256": "7f8ab891bb8ca28840688f5e3db368339970e0550e1b90069a72accc900677d5",
+      "pads": [
+        "1",
+        "10",
+        "11",
+        "12",
+        "13",
+        "14",
+        "15",
+        "16",
+        "17",
+        "18",
+        "19",
+        "2",
+        "20",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J202",
+        "J203",
+        "J306",
+        "J307"
+      ]
+    },
+    {
+      "footprint": "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical.kicad_mod",
+      "sha256": "dd59286748b9a6fa9174237072608f811cf3169dddf00eab54a5c196fcb6f7e8",
+      "pads": [
+        "1",
+        "2"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J109",
+        "J113",
+        "J510"
+      ]
+    },
+    {
       "footprint": "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
       "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical.kicad_mod",
       "sha256": "dd50eb4b509c1f7584aff9b58968d46cfac74ce253d4d5cf31c0565c3bf53f4c",
@@ -404,7 +504,113 @@
       ],
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
-        "J502"
+        "J111",
+        "J502",
+        "J513"
+      ]
+    },
+    {
+      "footprint": "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical.kicad_mod",
+      "sha256": "f5488d79bbafc8c929bcfacf8e960e81dcfc126c598e03083de317607937b58e",
+      "pads": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J112",
+        "J507"
+      ]
+    },
+    {
+      "footprint": "Connector_JST:JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical.kicad_mod",
+      "sha256": "03211833fb2e60a511e2fe68e1604d057517e1315ad0221909895d20be5cd7fc",
+      "pads": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J110"
+      ]
+    },
+    {
+      "footprint": "Connector_JST:JST_PH_S12B-PH-K_1x12_P2.00mm_Horizontal",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_S12B-PH-K_1x12_P2.00mm_Horizontal.kicad_mod",
+      "sha256": "a17fef9af3538fb73a6e15de40cbb9c3674f04c7f1fb750101a103c205d33ee2",
+      "pads": [
+        "1",
+        "10",
+        "11",
+        "12",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J207"
+      ]
+    },
+    {
+      "footprint": "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal.kicad_mod",
+      "sha256": "296506c379958ec5f3f455ae66c169b9e0b5e3482713b4aa4366b677dea398e7",
+      "pads": [
+        "1",
+        "2"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J315",
+        "J318",
+        "J319"
+      ]
+    },
+    {
+      "footprint": "Connector_JST:JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal.kicad_mod",
+      "sha256": "e1536f71fadb2bcb735cc91360ecf558f92ed45bcc42831e606aa2c128c38c63",
+      "pads": [
+        "1",
+        "2",
+        "3"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J506"
+      ]
+    },
+    {
+      "footprint": "Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal.kicad_mod",
+      "sha256": "9bd73c9cae5dfe7148942ae387fd3054465c81c64b2b1229ea1d22cdd39b0f6b",
+      "pads": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J309",
+        "J310",
+        "J312",
+        "J316",
+        "J317",
+        "J419"
       ]
     },
     {
@@ -420,7 +626,110 @@
       ],
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
+        "J201",
         "J302"
+      ]
+    },
+    {
+      "footprint": "Connector_JST:JST_PH_S6B-PH-K_1x06_P2.00mm_Horizontal",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_S6B-PH-K_1x06_P2.00mm_Horizontal.kicad_mod",
+      "sha256": "643b4b1d7051026fb1c659f0419b14a5661d9806a9468bc176c8b11449d7c1c3",
+      "pads": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J311",
+        "J508"
+      ]
+    },
+    {
+      "footprint": "Connector_JST:JST_PH_S8B-PH-K_1x08_P2.00mm_Horizontal",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_S8B-PH-K_1x08_P2.00mm_Horizontal.kicad_mod",
+      "sha256": "4b83287d134389306df2966130734fb8ea0a16eba6eb5929c582edc082daca1d",
+      "pads": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J204",
+        "J308",
+        "J418",
+        "J420"
+      ]
+    },
+    {
+      "footprint": "Connector_Molex:Molex_KK-254_AE-6410-03A_1x03_P2.54mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_KK-254_AE-6410-03A_1x03_P2.54mm_Vertical.kicad_mod",
+      "sha256": "f8cc1a00efb00f4c770f8014243699576954f11d725a0f7f5a52a461d0d6aa70",
+      "pads": [
+        "1",
+        "2",
+        "3"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J313"
+      ]
+    },
+    {
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43045-0812_2x04_P3.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Micro-Fit_3.0_43045-0812_2x04_P3.00mm_Vertical.kicad_mod",
+      "sha256": "1aaa5ed421b2f1c499e2f293531216e3eb6d548960cc7941d6669c8ce52ddc75",
+      "pads": [
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J206"
+      ]
+    },
+    {
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0200_1x02_P3.00mm_Horizontal",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Micro-Fit_3.0_43650-0200_1x02_P3.00mm_Horizontal.kicad_mod",
+      "sha256": "3553d934e5be3fa399e2698752ffc72497e58c8080ccb4d5af0485925bbf64a2",
+      "pads": [
+        "1",
+        "2"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J314"
+      ]
+    },
+    {
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical.kicad_mod",
+      "sha256": "f9c0c5f74aa2dfcec90b84bba70b553b0c158ea2cb1aae8c91a7b0342e22eed6",
+      "pads": [
+        "1",
+        "2"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J114",
+        "J115",
+        "J205",
+        "J509"
       ]
     },
     {
@@ -435,6 +744,66 @@
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
         "J503"
+      ]
+    },
+    {
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0400_1x04_P3.00mm_Horizontal",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Micro-Fit_3.0_43650-0400_1x04_P3.00mm_Horizontal.kicad_mod",
+      "sha256": "25fb1a63aaae3b4f2814664d157d742b9a54ecdcac52e96738a43570edb14013",
+      "pads": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J305"
+      ]
+    },
+    {
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0415_1x04_P3.00mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Micro-Fit_3.0_43650-0415_1x04_P3.00mm_Vertical.kicad_mod",
+      "sha256": "9dc8529b288dff1cfbc3efe7b49cb9110ebfae665b8e7705dcc91fd305deaa2b",
+      "pads": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J104"
+      ]
+    },
+    {
+      "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical.kicad_mod",
+      "sha256": "0b8945d43b6a2a9282971785c2b7d23b50eea9795bbb8c0398390b37883a1278",
+      "pads": [
+        "1",
+        "2"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J105",
+        "J106",
+        "J107"
+      ]
+    },
+    {
+      "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-04A_2x02_P4.20mm_Vertical",
+      "file": "build/kicad/footprints/Connector_Molex.pretty/Molex_Mini-Fit_Jr_5566-04A_2x02_P4.20mm_Vertical.kicad_mod",
+      "sha256": "1f4aa9a92dea496e784b2fa2ec1b8145a153a88c644cd010a2eac5c14b85edb4",
+      "pads": [
+        "1",
+        "2",
+        "3",
+        "4"
+      ],
+      "origin": "KiCad 10.0.7 official, unmodified",
+      "refs": [
+        "J108"
       ]
     },
     {
@@ -489,6 +858,7 @@
       ],
       "origin": "KiCad 10.0.7 official, unmodified",
       "refs": [
+        "F104",
         "F202",
         "F301"
       ]

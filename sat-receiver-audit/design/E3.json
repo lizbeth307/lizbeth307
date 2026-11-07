@@ -5957,6 +5957,1052 @@
         "About3.3mA static current is sunk by GP17 in normal release state. R393 has no static voltage-divider drop when GP17 actively low because the pullup is on its GPIO side.",
         "The1k pullup overrides weak RP2040 pad pulldowns during reset. Verify gate high and RESETlow over actual supply ramp, brownout andtemperature."
       ]
+    },
+    {
+      "ref": "J304",
+      "value": "X01I1-CTRL: IDC 2×20, бокс, S01",
+      "kind": "connector",
+      "group": "Роз'єми джгутів CTRL",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_IDC:IDC-Header_2x20_P2.54mm_Vertical",
+      "mpn": "XDFH-0254-2*20P",
+      "manufacturer": "Lian Xin Technology",
+      "lcsc": "C19193815",
+      "pins": [
+        {
+          "number": "1",
+          "name": "3V3_Q6A",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "3",
+          "name": "INA228_ALERT",
+          "type": "passive",
+          "net": "INA228_ALERT"
+        },
+        {
+          "number": "4",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "5",
+          "name": "MCP_INT",
+          "type": "passive",
+          "net": "MCP_INT"
+        },
+        {
+          "number": "6",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "7",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "8",
+          "name": "UART5_TX",
+          "type": "passive",
+          "net": "UART5_TX"
+        },
+        {
+          "number": "9",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "10",
+          "name": "UART5_RX",
+          "type": "passive",
+          "net": "UART5_RX"
+        },
+        {
+          "number": "11",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "12",
+          "name": "E3_PICO_SWCLK",
+          "type": "passive",
+          "net": "E3_PICO_SWCLK"
+        },
+        {
+          "number": "13",
+          "name": "I2C0_SDA",
+          "type": "passive",
+          "net": "I2C0_SDA"
+        },
+        {
+          "number": "14",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "15",
+          "name": "I2C0_SCL",
+          "type": "passive",
+          "net": "I2C0_SCL"
+        },
+        {
+          "number": "16",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "17",
+          "name": "3V3_Q6A",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "18",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "19",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "20",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "21",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "22",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "23",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "24",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "25",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "26",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "27",
+          "name": "I2C2_SDA",
+          "type": "passive",
+          "net": "I2C2_SDA"
+        },
+        {
+          "number": "28",
+          "name": "I2C2_SCL",
+          "type": "passive",
+          "net": "I2C2_SCL"
+        },
+        {
+          "number": "29",
+          "name": "UART7_RX",
+          "type": "passive",
+          "net": "UART7_RX"
+        },
+        {
+          "number": "30",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "31",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "32",
+          "name": "UART7_TX",
+          "type": "passive",
+          "net": "UART7_TX"
+        },
+        {
+          "number": "33",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "34",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "35",
+          "name": "E3_PICO_SWDIO",
+          "type": "passive",
+          "net": "E3_PICO_SWDIO"
+        },
+        {
+          "number": "36",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "37",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        },
+        {
+          "number": "38",
+          "name": "E3_PICO_RUN",
+          "type": "passive",
+          "net": "E3_PICO_RUN"
+        },
+        {
+          "number": "39",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "40",
+          "name": "SAFE_BOOT",
+          "type": "passive",
+          "net": "SAFE_BOOT"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X01I1-CTRL (build/16 §4; W2 GR-3): на нижньому боці CTRL, сегмент(и) S01; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу. Контакти 1:1 з J301 (J20 Q6A); 2/4 (VCC_5V_PERI, N-E3-01) і 6/7/16/18 (гілка PPS, N-E3-03) — без кола."
+      ]
+    },
+    {
+      "ref": "J305",
+      "value": "X02P1-CTRL: Molex Micro-Fit 3.0 4, кутова, S02",
+      "kind": "connector",
+      "group": "Роз'єми джгутів CTRL",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0400_1x04_P3.00mm_Horizontal",
+      "mpn": "43650-0400",
+      "manufacturer": "Molex",
+      "lcsc": "C277684",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "LAB5",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "4",
+          "name": "LAB5",
+          "type": "passive",
+          "net": "LAB5"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X02P1-CTRL (build/16 §4; W2 GR-3): на нижньому боці CTRL, сегмент(и) S02; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J306",
+      "value": "S02-CTRL-SIG-1: JST PHD 2×10, боковий вхід, S02",
+      "kind": "connector",
+      "group": "Роз'єми джгутів CTRL",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
+      "mpn": "S20B-PHDSS(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C2983880",
+      "pins": [
+        {
+          "number": "1",
+          "name": "CHG_INHIBIT",
+          "type": "passive",
+          "net": "CHG_INHIBIT"
+        },
+        {
+          "number": "2",
+          "name": "E1_BAT_ADC",
+          "type": "passive",
+          "net": "E1_BAT_ADC"
+        },
+        {
+          "number": "3",
+          "name": "EN_AUX12",
+          "type": "passive",
+          "net": "EN_AUX12"
+        },
+        {
+          "number": "4",
+          "name": "EN_BONI",
+          "type": "passive",
+          "net": "EN_BONI"
+        },
+        {
+          "number": "5",
+          "name": "EN_HFP",
+          "type": "passive",
+          "net": "EN_HFP"
+        },
+        {
+          "number": "6",
+          "name": "EN_LABPORT",
+          "type": "passive",
+          "net": "EN_LABPORT"
+        },
+        {
+          "number": "7",
+          "name": "EN_LIME3V3",
+          "type": "passive",
+          "net": "EN_LIME3V3"
+        },
+        {
+          "number": "8",
+          "name": "EN_LNA1",
+          "type": "passive",
+          "net": "EN_LNA1"
+        },
+        {
+          "number": "9",
+          "name": "EN_LNA2",
+          "type": "passive",
+          "net": "EN_LNA2"
+        },
+        {
+          "number": "10",
+          "name": "EN_LNA3",
+          "type": "passive",
+          "net": "EN_LNA3"
+        },
+        {
+          "number": "11",
+          "name": "EN_LNA4",
+          "type": "passive",
+          "net": "EN_LNA4"
+        },
+        {
+          "number": "12",
+          "name": "EN_LNB",
+          "type": "passive",
+          "net": "EN_LNB"
+        },
+        {
+          "number": "13",
+          "name": "EN_RTLA",
+          "type": "passive",
+          "net": "EN_RTLA"
+        },
+        {
+          "number": "14",
+          "name": "EN_RTLB",
+          "type": "passive",
+          "net": "EN_RTLB"
+        },
+        {
+          "number": "15",
+          "name": "EN_SB_LNA",
+          "type": "passive",
+          "net": "EN_SB_LNA"
+        },
+        {
+          "number": "16",
+          "name": "FAULT_HFP",
+          "type": "passive",
+          "net": "FAULT_HFP"
+        },
+        {
+          "number": "17",
+          "name": "FAULT_LABPORT",
+          "type": "passive",
+          "net": "FAULT_LABPORT"
+        },
+        {
+          "number": "18",
+          "name": "FAULT_LNA1",
+          "type": "passive",
+          "net": "FAULT_LNA1"
+        },
+        {
+          "number": "19",
+          "name": "FAULT_LNA2",
+          "type": "passive",
+          "net": "FAULT_LNA2"
+        },
+        {
+          "number": "20",
+          "name": "FAULT_LNA3",
+          "type": "passive",
+          "net": "FAULT_LNA3"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута S02-CTRL-SIG-1 (build/16 §4; W2 GR-3): на нижньому боці CTRL, сегмент(и) S02; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J307",
+      "value": "S02-CTRL-SIG-2: JST PHD 2×10, боковий вхід, S02",
+      "kind": "connector",
+      "group": "Роз'єми джгутів CTRL",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
+      "mpn": "S20B-PHDSS(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C2983880",
+      "pins": [
+        {
+          "number": "1",
+          "name": "FAULT_LNA4",
+          "type": "passive",
+          "net": "FAULT_LNA4"
+        },
+        {
+          "number": "2",
+          "name": "FAULT_RTLA",
+          "type": "passive",
+          "net": "FAULT_RTLA"
+        },
+        {
+          "number": "3",
+          "name": "FAULT_RTLB",
+          "type": "passive",
+          "net": "FAULT_RTLB"
+        },
+        {
+          "number": "4",
+          "name": "FLT_BONI",
+          "type": "passive",
+          "net": "FLT_BONI"
+        },
+        {
+          "number": "5",
+          "name": "FLT_LIME3V3",
+          "type": "passive",
+          "net": "FLT_LIME3V3"
+        },
+        {
+          "number": "6",
+          "name": "FLT_LNB",
+          "type": "passive",
+          "net": "FLT_LNB"
+        },
+        {
+          "number": "7",
+          "name": "FLT_SB_LNA",
+          "type": "passive",
+          "net": "FLT_SB_LNA"
+        },
+        {
+          "number": "8",
+          "name": "I2C0_SCL",
+          "type": "passive",
+          "net": "I2C0_SCL"
+        },
+        {
+          "number": "9",
+          "name": "I2C0_SDA",
+          "type": "passive",
+          "net": "I2C0_SDA"
+        },
+        {
+          "number": "10",
+          "name": "IMU_RX",
+          "type": "passive",
+          "net": "IMU_RX"
+        },
+        {
+          "number": "11",
+          "name": "IMU_TX",
+          "type": "passive",
+          "net": "IMU_TX"
+        },
+        {
+          "number": "12",
+          "name": "INA228_ALERT",
+          "type": "passive",
+          "net": "INA228_ALERT"
+        },
+        {
+          "number": "13",
+          "name": "OVP_LNB_N",
+          "type": "passive",
+          "net": "OVP_LNB_N"
+        },
+        {
+          "number": "14",
+          "name": "PG_BONI",
+          "type": "passive",
+          "net": "PG_BONI"
+        },
+        {
+          "number": "15",
+          "name": "PG_LNB",
+          "type": "passive",
+          "net": "PG_LNB"
+        },
+        {
+          "number": "16",
+          "name": "PICO_DISP_EN",
+          "type": "passive",
+          "net": "PICO_DISP_EN"
+        },
+        {
+          "number": "17",
+          "name": "PICO_OFF",
+          "type": "passive",
+          "net": "PICO_OFF"
+        },
+        {
+          "number": "18",
+          "name": "PTC_AUX",
+          "type": "passive",
+          "net": "PTC_AUX"
+        },
+        {
+          "number": "19",
+          "name": "PWR_BUTTON",
+          "type": "passive",
+          "net": "PWR_BUTTON"
+        },
+        {
+          "number": "20",
+          "name": "SLED_DET",
+          "type": "passive",
+          "net": "SLED_DET"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута S02-CTRL-SIG-2 (build/16 §4; W2 GR-3): на нижньому боці CTRL, сегмент(и) S02; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J308",
+      "value": "X03S1-CTRL: JST PH 8, боковий вхід, S03",
+      "kind": "connector",
+      "group": "Роз'єми джгутів CTRL",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_S8B-PH-K_1x08_P2.00mm_Horizontal",
+      "mpn": "S8B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C157915",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "DCS_HF",
+          "type": "passive",
+          "net": "DCS_HF"
+        },
+        {
+          "number": "3",
+          "name": "DCS_LBAND",
+          "type": "passive",
+          "net": "DCS_LBAND"
+        },
+        {
+          "number": "4",
+          "name": "DCS_UHF",
+          "type": "passive",
+          "net": "DCS_UHF"
+        },
+        {
+          "number": "5",
+          "name": "K1_ON",
+          "type": "passive",
+          "net": "K1_ON"
+        },
+        {
+          "number": "6",
+          "name": "K2_ON",
+          "type": "passive",
+          "net": "K2_ON"
+        },
+        {
+          "number": "7",
+          "name": "SW_LIME_A",
+          "type": "passive",
+          "net": "SW_LIME_A"
+        },
+        {
+          "number": "8",
+          "name": "SW_LIME_B",
+          "type": "passive",
+          "net": "SW_LIME_B"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X03S1-CTRL (build/16 §4; W2 GR-3): на нижньому боці CTRL, сегмент(и) S03; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J309",
+      "value": "X03S2-CTRL: JST PH 4, боковий вхід, S03",
+      "kind": "connector",
+      "group": "Роз'єми джгутів CTRL",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal",
+      "mpn": "S4B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C157926",
+      "pins": [
+        {
+          "number": "1",
+          "name": "SW_RTLA_A",
+          "type": "passive",
+          "net": "SW_RTLA_A"
+        },
+        {
+          "number": "2",
+          "name": "SW_RTLA_B",
+          "type": "passive",
+          "net": "SW_RTLA_B"
+        },
+        {
+          "number": "3",
+          "name": "SW_RTLB_A",
+          "type": "passive",
+          "net": "SW_RTLB_A"
+        },
+        {
+          "number": "4",
+          "name": "SW_RTLB_B",
+          "type": "passive",
+          "net": "SW_RTLB_B"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X03S2-CTRL (build/16 §4; W2 GR-3): на нижньому боці CTRL, сегмент(и) S03; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J310",
+      "value": "S15-30-CTRL: JST PH 4, боковий вхід, S15, S30",
+      "kind": "connector",
+      "group": "Роз'єми джгутів CTRL",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal",
+      "mpn": "S4B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C157926",
+      "pins": [
+        {
+          "number": "1",
+          "name": "PWR_ON_KEY",
+          "type": "passive",
+          "net": "PWR_ON_KEY"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "UART5_RX",
+          "type": "passive",
+          "net": "UART5_RX"
+        },
+        {
+          "number": "4",
+          "name": "UART5_TX",
+          "type": "passive",
+          "net": "UART5_TX"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута S15-30-CTRL (build/16 §4; W2 GR-3): на нижньому боці CTRL, сегмент(и) S15, S30; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J311",
+      "value": "S24-25-CTRL: JST PH 6, боковий вхід, S24, S25",
+      "kind": "connector",
+      "group": "Роз'єми джгутів CTRL",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_S6B-PH-K_1x06_P2.00mm_Horizontal",
+      "mpn": "S6B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C157920",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "3V3_Q6A",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "3",
+          "name": "EN_T7",
+          "type": "passive",
+          "net": "EN_T7"
+        },
+        {
+          "number": "4",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "5",
+          "name": "E3_GNSS5V",
+          "type": "passive",
+          "net": "E3_GNSS5V"
+        },
+        {
+          "number": "6",
+          "name": "E3_GNSS_RESET_N",
+          "type": "passive",
+          "net": "E3_GNSS_RESET_N"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута S24-25-CTRL (build/16 §4; W2 GR-3): на нижньому боці CTRL, сегмент(и) S24, S25; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J312",
+      "value": "X26S1-CTRL: JST PH 4, боковий вхід, S26",
+      "kind": "connector",
+      "group": "Роз'єми джгутів CTRL",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal",
+      "mpn": "S4B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C157926",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "E3_BEZEL_SCL",
+          "type": "passive",
+          "net": "E3_BEZEL_SCL"
+        },
+        {
+          "number": "3",
+          "name": "E3_BEZEL_SDA",
+          "type": "passive",
+          "net": "E3_BEZEL_SDA"
+        },
+        {
+          "number": "4",
+          "name": "E3_PICO3V3",
+          "type": "passive",
+          "net": "E3_PICO3V3"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X26S1-CTRL (build/16 §4; W2 GR-3): на нижньому боці CTRL, сегмент(и) S26; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J313",
+      "value": "X27F1-CTRL: Molex KK 254 3, верхній вхід, S27",
+      "kind": "connector",
+      "group": "Роз'єми джгутів CTRL",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_Molex:Molex_KK-254_AE-6410-03A_1x03_P2.54mm_Vertical",
+      "mpn": "22-27-2031",
+      "manufacturer": "Molex",
+      "lcsc": "C471416",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "E3_FAN5_P",
+          "type": "passive",
+          "net": "E3_FAN5_P"
+        },
+        {
+          "number": "3",
+          "name": "E3_FAN_TACH_RAW",
+          "type": "passive",
+          "net": "E3_FAN_TACH_RAW"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X27F1-CTRL (build/16 §4; W2 GR-3): на нижньому боці CTRL, сегмент(и) S27; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J314",
+      "value": "X28P1-CTRL: Molex Micro-Fit 3.0 2, кутова, S28",
+      "kind": "connector",
+      "group": "Роз'єми джгутів CTRL",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0200_1x02_P3.00mm_Horizontal",
+      "mpn": "43650-0200",
+      "manufacturer": "Molex",
+      "lcsc": "C192562",
+      "pins": [
+        {
+          "number": "1",
+          "name": "E3_BLOWER_GND",
+          "type": "passive",
+          "net": "E3_BLOWER_GND"
+        },
+        {
+          "number": "2",
+          "name": "LAB5",
+          "type": "passive",
+          "net": "LAB5"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X28P1-CTRL (build/16 §4; W2 GR-3): на нижньому боці CTRL, сегмент(и) S28; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J315",
+      "value": "X29S1-CTRL: JST PH 2, боковий вхід, S29",
+      "kind": "connector",
+      "group": "Роз'єми джгутів CTRL",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal",
+      "mpn": "S2B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C173752",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "PWR_BUTTON",
+          "type": "passive",
+          "net": "PWR_BUTTON"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X29S1-CTRL (build/16 §4; W2 GR-3): на нижньому боці CTRL, сегмент(и) S29; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J316",
+      "value": "X37S1-CTRL: JST PH 4, боковий вхід, S37",
+      "kind": "connector",
+      "group": "Роз'єми джгутів CTRL",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal",
+      "mpn": "S4B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C157926",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "E3_ENC1_A_RAW",
+          "type": "passive",
+          "net": "E3_ENC1_A_RAW"
+        },
+        {
+          "number": "3",
+          "name": "E3_ENC1_B_RAW",
+          "type": "passive",
+          "net": "E3_ENC1_B_RAW"
+        },
+        {
+          "number": "4",
+          "name": "E3_ENC1_PRESS_EXT",
+          "type": "passive",
+          "net": "E3_ENC1_PRESS_EXT"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X37S1-CTRL (build/16 §4; W2 GR-3): на нижньому боці CTRL, сегмент(и) S37; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J317",
+      "value": "X38S1-CTRL: JST PH 4, боковий вхід, S38",
+      "kind": "connector",
+      "group": "Роз'єми джгутів CTRL",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal",
+      "mpn": "S4B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C157926",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "E3_ENC2_A_RAW",
+          "type": "passive",
+          "net": "E3_ENC2_A_RAW"
+        },
+        {
+          "number": "3",
+          "name": "E3_ENC2_B_RAW",
+          "type": "passive",
+          "net": "E3_ENC2_B_RAW"
+        },
+        {
+          "number": "4",
+          "name": "E3_ENC2_PRESS_EXT",
+          "type": "passive",
+          "net": "E3_ENC2_PRESS_EXT"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X38S1-CTRL (build/16 §4; W2 GR-3): на нижньому боці CTRL, сегмент(и) S38; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J318",
+      "value": "X39S1-CTRL: JST PH 2, боковий вхід, S39",
+      "kind": "connector",
+      "group": "Роз'єми джгутів CTRL",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal",
+      "mpn": "S2B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C173752",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "E3_PANEL_TEMP",
+          "type": "passive",
+          "net": "E3_PANEL_TEMP"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X39S1-CTRL (build/16 §4; W2 GR-3): на нижньому боці CTRL, сегмент(и) S39; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J319",
+      "value": "X40S1-CTRL: JST PH 2, боковий вхід, S40",
+      "kind": "connector",
+      "group": "Роз'єми джгутів CTRL",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal",
+      "mpn": "S2B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C173752",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "E3_CASE_TEMP",
+          "type": "passive",
+          "net": "E3_CASE_TEMP"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X40S1-CTRL (build/16 §4; W2 GR-3): на нижньому боці CTRL, сегмент(и) S40; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
     }
   ],
   "open_items": [
@@ -6161,6 +7207,15 @@
       ],
       "stack": "§5.1 (правило RILIM); §8.1",
       "text": "R396 = RILIM TBD (старт 162k 1%, 144–192 mA за рівняннями TI SLVS841G). STACK номіналу не задає, лише правило RILIM = 1.5–2× виміряного струму LC76G. Ворота: E3-08."
+    },
+    {
+      "id": "N-E3-03",
+      "refs": [
+        "J301",
+        "J304"
+      ],
+      "stack": "§5.2 (UART7/PPS ≤20 см); §8.1",
+      "text": "Гілка PPS шлейфу S01 (W2 GR-3 за рішенням build/15 W2 MECH-1): провідники 6 (GND), 7 (PPS), 16 і 18 (UART6) стрічки відокремити одразу за розеткою на J20 і довести до P1 LC76G (P1.2/P1.5/P1.4/P1.3, ≤200 мм; модель 196 мм); на розетці CTRL ці провідники вирізати до обтиснення, контакти 6/7/16/18 бокса J304 — без кола. Мережі E3 не змінюються. Перевірка: прозвонка J20.7 → P1.5 — є, J20.7 → J304.7 — розрив."
     }
   ]
 }

@@ -11,7 +11,7 @@ measurements; every catalogue value names the document that was read.
 
 READ = "24.10.2026"
 # Sources (re)read later than READ, or values added from them later.
-READ_ON = {"JST-PH": "07.11.2026", "MOLEX-43030": "06.11.2026", "MOLEX-5556": "06.11.2026", "MOLEX-5566": "06.11.2026",
+READ_ON = {"JST-PH": "07.11.2026", "JST-PHD": "07.11.2026", "MOLEX-43030": "06.11.2026", "MOLEX-5556": "06.11.2026", "MOLEX-5566": "06.11.2026",
            "ESCC-3901-001": "06.11.2026", "HAMMOND-1550Z101": "06.11.2026", "PV6": "07.11.2026", "KINGHELM-GX12": "07.11.2026",
            "PEM-F": "07.11.2026", "PEM-SO": "07.11.2026", "POLOLU-D36V50": "07.11.2026", "DIGIKEY-MFJ": "07.11.2026",
            "HAMMOND-1554U2GY": "24.10.2026 (креслення), 07.11.2026 (DigiKey DE)"}
@@ -24,6 +24,11 @@ SOURCES = {
                "SPH-002T-P0.5S — AWG #30…#24, ⌀0.8…1.5 мм; PHR-2…PHR-16; B2B…B16B-PH-K-S (верхній вхід), S2B…S16B-PH-K-S (боковий); "
                "THT-вилки: довжина B = 2(n−1) + 3.9; верхній вхід — висота 6, глибина 4.5, монтажна висота з розеткою (8); боковий — висота 4.8, "
                "глибина 7.6, з розеткою (9.6) (каталог ePH, с. 1 і 3, PDF від 27.01.2026)"),
+    "JST-PHD": ("https://datasheet.lcsc.com/datasheet/pdf/5f2def6b1b145b42d10ba2e392671cbf.pdf?productCode=C111516",
+                "JST PHD (каталог JST, копія LCSC до C111516; jst-mfg.com/product/pdf/eng/ePHD.pdf відповів 403 07.11.2026): 2.0 мм, 2 ряди; "
+                "3 A AC/DC (AWG #22) — інших перерізів номінал не наводить; 250 V, −25…+85 °C; опір контакту 10 mΩ макс. початково / 20 mΩ після "
+                "тесту; провід AWG #28…#22; SPHD-001T-P0.5 — AWG 26…22, ⌀ ізоляції 1.0…1.5 мм; SPHD-002T-P0.5 — AWG 28…24, ⌀ 0.9…1.5 мм; "
+                "розетки PHDR-08VS…PHDR-34VS; вилки B8B…B34B-PHDSS (верхній вхід), S8B…S34B-PHDSS (боковий); аплікатор AP-K2N з матрицею MK/SPHD-001-05 (с. 1–2)"),
     "MOLEX-43030": ("https://www.farnell.com/datasheets/1887331.pdf",
                     "Molex 43030-0007 (пакет; 43030-0001 — котушка, https://www.farnell.com/datasheets/1864962.pdf): гніздова клема Micro-Fit 3.0, "
                     "20/22/24 AWG, ізоляція ≤1.85 мм, 5 A на контакт (документи 2014–2016; лист 2018 https://www.farnell.com/datasheets/2696325.pdf — 8.5 A); "
@@ -111,7 +116,9 @@ SOURCES = {
 # kind: board (copper can route a net through), module, panel (part in a wall),
 # cable (assembly end), remote (outside the enclosure).
 BOARD_OF_DOMAIN = {  # build/15 «Кількість плат»
-    "PWR_MAIN": "PWR", "PWR_BRANCH": "PWR", "USB_POWER": "PWR",
+    # PWR = the PWR-A/PWR-B stack (pcb/partition-spec.json, W2 AREA): PWR-B is a mezzanine on the PWR-A L, joined by the Samtec B2B
+    # pair, so one harness unit serves both; the physical board of each header is PHYSICAL_BOARD (build/16-dzhgut-rozyemy.csv).
+    "PWR_MAIN": "PWR", "PWR_BRANCH": "PWR", "USB_POWER": "PWR", "PWR_BRANCH_SW": "PWR", "USB_POWER_SW": "PWR",
     "RF_HMC": "RF", "RF_HF": "RF", "RF_INJECTOR": "RF", "DC_CORE": "RF",
     "CTRL_HMI": "CTRL", "HATCH": "HATCH",
 }
@@ -200,7 +207,7 @@ UNIT_OF_REF = {
     "U106": "SWM", "U107": "PWR", "U108": "PWR",
     "U110": "CHG", "R117": "CHG", "R118": "CHG", "R119": "CHG", "R120": "CHG", "C118": "CHG", "TH102": "CHG",
     # F101 at the pack (STACK D2 «біля батареї»): every harness wire of the battery circuit is downstream of it (ASM-R1).
-    "F101": "PACK", "F102": "PWR", "F103": "PWR", "F201": "PWR", "F202": "PWR",
+    "F101": "PACK", "F102": "PWR", "F103": "PWR", "F104": "PWR", "F201": "PWR", "F202": "PWR",
     "J101": "XT30", "J103": "USBC",
     "U510": "HUB", "U540": "T7", "U520": "DISP", "U530": "RISER", "A415": "LIME",
     "A411": "RTLA", "J543": "RTLA", "A412": "RTLB", "J541": "RTLB", "A414": "HFP", "J544": "HFP",
@@ -209,7 +216,7 @@ UNIT_OF_REF = {
     "U305": "CTRL", "ENC301": "ENCM", "ENC302": "ENCV", "BZ301": "CTRL",
     # Leaded bead NTCs (parts DB mount "remote") sit away from CTRL (E3 notes: TH301 on the rear heat spreader of the
     # panel, TH302 on the inner frame away from converter heat), so each gets its own unit and a two-wire lead to a PH
-    # header on CTRL (S39, S40) like every other off-board part; the CTRL headers get graph refs with W2-01 (wave 2).
+    # header on CTRL (S39, S40) like every other off-board part; the CTRL headers are graph refs J318/J319 (W2 GR-3, HEADERS).
     "TH301": "NTCP", "TH302": "NTCC",
     "SW302": "CTRL", "SW303": "CTRL", "SW304": "CTRL", "SW305": "CTRL", "SW306": "CTRL", "SW307": "CTRL",
     "SW308": "ENCM", "SW309": "ENCV",  # push switches inside ENC301/ENC302 (parts DB virtual hosts)
@@ -228,6 +235,79 @@ for _n in list(range(101, 109)) + list(range(201, 217)) + [2901, 2902, 2903]:
 UNIT_OF_REF.update({"TP301": "CTRL", "TP503": "PWR"})
 # Bare parts drawn on E3 but built into the IMU pack (E3 group "External IMU").
 UNIT_OF_GROUP = {("E3", "External IMU"): "IMUPACK"}
+# Physical board of a pcb/prepare.py domain (the 'board' column of build/16-dzhgut-rozyemy.csv). The harness unit PWR is the
+# PWR-A/PWR-B stack: one bundle end that breaks out after the slot onto headers of both boards (pcb/partition-spec.json; the
+# JLC BOM board names of tools/build_parts.py BOARD3 are the same).
+PHYSICAL_BOARD = {"PWR_MAIN": "PWR_A", "PWR_BRANCH": "PWR_A", "USB_POWER": "PWR_A", "PWR_BRANCH_SW": "PWR_B", "USB_POWER_SW": "PWR_B",
+                  "CTRL_HMI": "CTRL", "RF_HMC": "RF", "RF_HF": "RF", "RF_INJECTOR": "RF", "DC_CORE": "RF", "HATCH": "HATCH", "ENC": "ENC"}
+
+# --- Board-side harness headers (graph refs, W2 GR-3 / W2-01) ------------------------------------------------
+# ref -> (harness label, {segment: "contact numbers"}). Every board end of a harness wire lands on a listed contact of one
+# of these refs (tools/build_assembly_docs.py explicit mode); a contact that is not listed is a reserve (nc in the graph).
+# Labels keep the X ids of the wave-1 tables or the consolidation names of pcb/partition-spec.json (build/16 §4 column).
+HEADERS = {
+    "J304": ("X01I1-CTRL", {"S01": "1 3 5 8-10 12-15 17 20 25 27-30 32 34 35 38-40"}),
+    "J305": ("X02P1-CTRL", {"S02": "1-4"}),
+    "J306": ("S02-CTRL-SIG-1", {"S02": "1-20"}),
+    "J307": ("S02-CTRL-SIG-2", {"S02": "1-20"}),
+    "J308": ("X03S1-CTRL", {"S03": "1-8"}),
+    "J309": ("X03S2-CTRL", {"S03": "1-4"}),
+    "J310": ("S15-30-CTRL", {"S15": "1", "S30": "2-4"}),
+    "J311": ("S24-25-CTRL", {"S24": "1-3", "S25": "4-6"}),
+    "J312": ("X26S1-CTRL", {"S26": "1-4"}),
+    "J313": ("X27F1-CTRL", {"S27": "1-3"}),
+    "J314": ("X28P1-CTRL", {"S28": "1 2"}),
+    "J315": ("X29S1-CTRL", {"S29": "1 2"}),
+    "J316": ("X37S1-CTRL", {"S37": "1-4"}),
+    "J317": ("X38S1-CTRL", {"S38": "1-4"}),
+    "J318": ("X39S1-CTRL", {"S39": "1 2"}),
+    "J319": ("X40S1-CTRL", {"S40": "1 2"}),
+    "J418": ("X03S1-RF", {"S03": "1-8"}),
+    "J419": ("X03S2-RF", {"S03": "1-4"}),
+    "J420": ("X04S1-RF", {"S04": "1-8"}),
+    "J104": ("X02P1-PWR", {"S02": "1-4"}),
+    "J105": ("X05J1-PWR", {"S05": "1 2"}),
+    "J106": ("X06J1-PWR", {"S06": "1 2"}),
+    "J107": ("X07J1-PWR", {"S07": "1 2"}),
+    "J108": ("X10J1-PWR", {"S10": "1-3"}),
+    "J109": ("X05S1-PWR", {"S05": "1"}),
+    "J110": ("X06S1-PWR", {"S06": "1-5"}),
+    "J111": ("X07S1-PWR", {"S07": "1-3"}),
+    "J112": ("X10S1-PWR", {"S10": "1-4"}),
+    "J113": ("X11S1-PWR", {"S11": "1 2"}),
+    "J114": ("X11P1-PWR", {"S11": "1 2"}),
+    "J115": ("X12P1-PWR", {"S12": "1 2"}),
+    "J201": ("X02S0-PWR", {"S02": "1-4"}),
+    "J202": ("S02-PWR-SIG-1", {"S02": "1-20"}),
+    "J203": ("S02-PWR-SIG-2", {"S02": "1-20"}),
+    "J204": ("X04S1-PWR", {"S04": "1-8"}),
+    "J205": ("X19P1-PWR", {"S19": "1 2"}),
+    "J206": ("SL2-PWR-MF", {"S13": "1 2", "S14": "3 4", "S17": "5 6", "S18": "7 8"}),
+    "J207": ("SL2-PWR-PH", {"S20": "1 2", "S21": "3 4", "S22": "5-7", "S35": "8 9", "S36": "10 11"}),
+    "J506": ("X23S1-PWR", {"S23": "1-3"}),
+    "J507": ("X32S1-PWR", {"S32": "1-4"}),
+    "J508": ("X34S1-PWR", {"S34": "1-6"}),
+    "J509": ("X14P1-HATCH", {"S14": "1 2"}),
+    "J510": ("X15S1-HATCH", {"S15": "1"}),
+    "J513": ("X30S1-HATCH", {"S30": "1-3"}),
+}
+# Graph connectors whose contacts serve more than one segment: the S01 ribbon conductors 6, 7, 16 and 18 leave as the PPS branch
+# right after the J20 socket (build/15 W2 MECH-1, mechanical/params/mechanical.json harness_routes branches.PPS).
+PIN_SEGMENTS = {"J301": {"S01": "1 3 5 8-10 12-15 17 20 25 27-30 32 34 35 38-40", "PPS": "6 7 16 18"}}
+# Branch segments listed under their parent bundle in build/16 (wire ids <parent>-<branch>-nn, segment column = parent): the PPS
+# conductors are S01 ribbon conductors that leave it after the J20 socket; their route is branches.PPS of the mechanical model.
+SEGMENT_BRANCHES = {"PPS": "S01"}
+# Board units whose harness ends have no graph header ref yet, with the reason; only there the generator still writes an X id.
+PENDING_BOARD_ENDS = {
+    "ENCM": "роз'єм дочірньої плати ENC: жоден корпус JST PH не вміщується біля PEC11R на контурі 24 × 24 (W2 PCB-PIPE, pcb/boards/ENC.json "
+            "J1 pilot_placeholder); ref графа з доменом ENC зламав би доменний аудит плати ENC, доки її специфікацію не оновить PCB-SB1",
+    "ENCV": "як ENCM (той самий шаблон плати ENC, pcb/boards/ENC.json)",
+}
+# Harness purchases outside the wire table that the roll-up owns (BOM ownership, W2 GR-3): (family, pins, role, qty, note).
+ROLLUP_EXTRA = [
+    ("PH", 3, "розетка кабелю", 1, "провід адаптера консолі UART5 до J502 на платі лючка (зовнішній, поза таблицею проводів)"),
+    ("PH", "", "клема", 3, "провід адаптера консолі UART5 до J502 (зовнішній, поза таблицею проводів)"),
+]
 # Acknowledged places that differ from the board_candidate of pcb/generated/components.csv:
 # unit or ref -> why. The generator lists every such ref in build/16 §2 and fails on an unacknowledged one.
 # Empty since the integration of 07.11.2026: pcb/prepare.py gives the inserts, the IMU-pack carrier, the hatch board,
@@ -254,12 +334,17 @@ INTERNAL_LINKS = [
 SEGMENTS = [
     ("S01", "Q6A.HDR", "CTRL", "Шлейф 40-pin Q6A J20 → CTRL", "IDC", "≤200 (UART7 і PPS ≤20 см, STACK §5.2)",
      "IDC 2×20 2.54 мм 1:1 крізь проріз пластини SL1 над верхнім краєм Q6A (M-07; стрічку 40 жил розділено на дві половини по 20, укладені одна на одну); "
-     "на CTRL — бокс-роз'єм 2×20 з ключем; висота боксу проти обмеження CTRL 5.5 мм — TBD (креслення не прочитано)"),
+     "на CTRL — бокс-роз'єм 2×20 з ключем; висота боксу проти обмеження CTRL 5.5 мм — TBD (креслення не прочитано); провідники 6, 7, 16 і 18 "
+     "(GND, PPS, UART6) відходять гілкою PPS одразу за розеткою J20, тож контакти 6/7/16/18 бокса на CTRL — без кола (рішення build/15 W2 MECH-1, W2 GR-3)"),
+    ("PPS", "Q6A.HDR", "GNSS", "Гілка PPS і UART6 шлейфу S01 → LC76G", "IDC", "≤200 (STACK §5.2)",
+     "провідники 6 (GND), 7 (PPS), 16 і 18 (UART6) стрічки S01 відокремлено одразу за розеткою на J20 і проведено задньою площиною до P1 LC76G "
+     "(mechanical/params/mechanical.json harness_routes branches.PPS; рішення build/15 W2 MECH-1); на LC76G — пайка; мережі E3 не змінюються"),
     ("S02", "CTRL", "PWR", "Керування і LAB5: CTRL ↔ PWR", None, "TBD (CAD)",
      "на CTRL 5 мереж I2C2/INT/3V3_Q6A — у J302 (E3, S5B-PH-K-S, боковий вхід), на PWR — відповідь X02S0-PWR (B5B, верхній вхід, супутня деталь бази); решта — у роз'єми X02"),
     ("S03", "CTRL", "RF", "Керування RF: CTRL ↔ RF", None, "TBD (CAD)",
      "лінії HMC7992/G6K/DCS; крізь проріз SL2 (M-07) і виріз N4 стінки РЧ-відсіку; подалі від буферних дроселів"),
-    ("S04", "PWR", "RF", "Зміщення і реле: PWR ↔ RF", None, "TBD (CAD)", "шини bias ch1–ch4, LNB і LAB5 котушок G6K; крізь проріз SL2 і виріз N4 (M-07, M-09)"),
+    ("S04", "PWR", "RF", "Зміщення і реле: PWR ↔ RF", None, "TBD (CAD)",
+     "шини bias ch1–ch4, LNB і LAB5_RLY котушок G6K (після PTC F104 на PWR-A, R-E1-09); крізь проріз SL2 і виріз N4 (M-07, M-09)"),
     ("S05", "PACK", "PWR", "Пак (після F101) → PWR", None, "мінімальна (TBD, CAD)",
      "F101 стоїть біля паку, тож увесь сегмент захищає F101 7.5 A; коло батареї 18 AWG (E1 F101); найкоротша траса, без петель; "
      "роз'єм S05 на PWR — також вхід стенда при запуску (19 §4)"),
@@ -285,9 +370,9 @@ SEGMENTS = [
     ("S22", "PWR", "HFP", "VBUS_HFP → пігтейл HF+ (J544.1)", None, "TBD (CAD)", "після L501 і демпфера; 2× Fair-Rite 2631480002 на повному кабелі; крізь SL2"),
     ("S23", "PWR", "LABUSB", "VBUS_LABPORT → J501.1", None, "TBD (CAD)", "C506 біля вихідного порту; крізь проріз SL3"),
     ("S24", "CTRL", "T7A", "EN_T7/3V3 → вставка T7", None, "TBD (CAD)", "U505 на вставці USB3; крізь проріз SL2"),
-    ("S25", "CTRL", "GNSS", "CTRL → LC76G", None, "PPS ≤200 разом з S01 — за моделлю більше: PPS і UART6 гілкою від S01 (R-PPS-LEN, build/15)",
-     "UART6 і PPS з J20 транзитом через CTRL, крізь SL2; LC76G у моделі — задня стінка ліворуч, CTRL — праворуч: S01 + S25 ≤200 мм не перевірено "
-     "і за відстанню між ними (понад 150 мм по прямій) навряд чи виконується — TBD (CAD), §11"),
+    ("S25", "CTRL", "GNSS", "CTRL → LC76G (живлення і RESET)", None, "TBD (CAD)",
+     "E3_GNSS5V від U315 і E3_GNSS_RESET_N від Q301 з CTRL, крізь SL2; PPS і UART6 сюди не входять — вони йдуть гілкою PPS шлейфу S01 "
+     "(S01 + S25 за моделлю 322 мм > 200, R-PPS-LEN; рішення build/15 W2 MECH-1)"),
     ("S26", "CTRL", "VEML", "CTRL → VEML7700", None, "TBD (CAD)", "100 Ω + TVS біля безеля (на CTRL)"),
     ("S27", "CTRL", "FAN1", "CTRL → Noctua", "FAN3", "кабель вентилятора", "штатний 3-контактний роз'єм Noctua; на CTRL — сумісна 3-контактна вилка 2.54 мм"),
     ("S28", "CTRL", "FAN2", "CTRL → повітродувка Delta", None, "TBD (CAD)", "2 дроти; низький ключ на CTRL"),
@@ -326,6 +411,14 @@ FAMILIES = {
     "MF": {"title": "Molex Micro-Fit 3.0 (1 ряд, 3.00 мм)", "rating": 5.0, "share": 0.6, "awg": (24, 22, 20), "signal_awg": 24, "power_awg": 20,
            "max_pins": 12, "source": "MOLEX-43030",
            "db": "MF", "tool": "Molex 0638190000; екстрактор 0011030043"},
+    # Dual-row variants of the board headers (W2 GR-3, consolidation of pcb/partition-spec.json): the same selection rule as
+    # their single-row family (tools/build_assembly_docs.py HINT_OF), their own housings in harness_families.
+    "MF2": {"title": "Molex Micro-Fit 3.0 (2 ряди, 3.00 мм)", "rating": 5.0, "share": 0.6, "awg": (24, 22, 20), "signal_awg": 24, "power_awg": 20,
+            "max_pins": 24, "source": "MOLEX-43030",
+            "db": "MF2", "tool": "Molex 0638190000; екстрактор 0011030043"},
+    "PHD": {"title": "JST PHD 2.0 мм (2 ряди)", "rating": 3.0, "share": 0.6, "awg": (22,), "signal_awg": 22, "power_awg": 22,
+            "max_pins": 34, "source": "JST-PHD",
+            "db": "PHD", "tool": "TBD: каталог PHD називає лише аплікатор AP-K2N з матрицею MK/SPHD-001-05 (ручного інструмента не наведено)"},
     "IDC": {"title": "IDC 2×20, 2.54 мм, стрічка 1.27 мм", "rating": None, "share": None, "awg": (28,), "signal_awg": 28, "power_awg": 28,
             "max_pins": 40, "source": None, "db": "IDC", "tool": "прес IDC"},
     "MFJ": {"title": "Molex Mini-Fit Jr. (дворядна)", "rating": 9.0, "share": 0.6, "awg": (24, 22, 20, 18), "signal_awg": 24, "power_awg": 18,
@@ -351,6 +444,7 @@ MIN_AWG = {"E1_SHUNT_P": 18, "E1_N": 18, "E1_SW": 18}
 MIN_AWG_SOURCE = "E1.json F101: «18 AWG. Тримач та інтерконекти мають витримувати ≥7.5 A»"
 # Contact resistance per mating interface, mΩ (None = not given in the documents read).
 CONTACT_MOHM = {"PH": (20, "JST-PH: 10 mΩ макс. початково / 20 mΩ після тесту — взято 20"), "MF": (None, "MOLEX-43030: не наведено"),
+                "PHD": (20, "JST-PHD: 10 mΩ макс. початково / 20 mΩ після тесту — взято 20"), "MF2": (None, "MOLEX-43030: не наведено"),
                 "MFJ": (None, "MOLEX-5556: не наведено")}
 # Conductor resistance, Ω/km at 20 °C (ESCC 3901/001 table 1(a), single-core variants; no 28 AWG variant).
 WIRE_OHM_PER_KM = {26: 148, 24: 105, 22: 50.9, 20: 32.2, 18: 20.6}
@@ -361,6 +455,7 @@ SEGMENT_NETS = {
     "S13": {"LAB5"}, "S14": {"J21"}, "S15": {"PWR_ON_KEY"}, "S16": {"J21", "PWR_ON_KEY"}, "S17": {"VCC_3V3_MKEY"},
     "S18": {"LIME3V3"}, "S19": {"DISP12"}, "S20": {"VBUS_RTLA"}, "S21": {"VBUS_RTLB"}, "S22": {"VBUS_HFP"},
     "S23": {"VBUS_LABPORT"}, "S35": {"BONI13V8_PORT"}, "S36": {"BIAS_SB_LNA"}, "S41": {"BIAS_SB_LNA"},
+    "PPS": {"E3_GNSS_PPS", "UART6_RX", "UART6_TX"}, "S25": {"E3_GNSS5V", "E3_GNSS_RESET_N"},
 }
 NO_GND = {"S15"}  # KEY joins J503, whose GND contact already carries the S14 return
 GND_GROUP_SKIP = {("S06", "MFJ"), ("S07", "MFJ")}  # shunt path and #2813 switch: no return current in that connector
@@ -372,7 +467,8 @@ END_PIN = {
     ("S06", "INA", "GND"): "U102.7", ("S07", "SWM", "GND"): "U106.GND",
     ("S10", "CHG", "GND"): "U110.BAT-", ("S13", "HUB", "GND"): "U510.JP5_4",
     ("S17", "Q6A.CORE", "GND"): "U500.GND", ("S18", "RISER", "GND"): "U530.GND", ("S19", "DISP", "GND"): "U520.DC_GND",
-    ("S24", "T7A", "GND"): "U505.5", ("S25", "GNSS", "GND"): "U304.P1.2", ("S26", "VEML", "GND"): "U308.GND",
+    ("S24", "T7A", "GND"): "U505.5", ("S25", "GNSS", "GND"): "U304.P1.2", ("PPS", "GNSS", "GND"): "U304.P1.2 (повернення PPS/UART6, разом із GND S25)",
+    ("S26", "VEML", "GND"): "U308.GND",
     ("S27", "FAN1", "GND"): "FAN301.GND", ("S35", "BONI", "GND"): "A406.SHIELDS", ("S41", "SPOD", "GND"): "W425.RETURN",
     ("S10", "CHG", "E1_CHG_NTC"): "U110.NTC",
 }
@@ -388,6 +484,8 @@ NET_CURRENT = {
     "SYS12": (4.0, 7.5, "F101 7.5 A вище; власна межа D36V50F12 — TBD", "02 §2 (≈4 A пік з Lime)"),
     "E1_LAB5_RAW": (3.2, 7.5, "F101 7.5 A вище; F102 4 A — після U108 на міді PWR", "E1.json lab5_budget (3.2 A тривало, 4 A перехідно)"),
     "LAB5": (1.0, 4.0, "F102 4 A", "бюджет гілки 1.0 A — рішення asm; загальний бюджет LAB5 3.2 A (E1-05)"),
+    "LAB5_RLY": (0.10, 1.50, "PTC F104 MF-MSMF075/24-2 (Itrip 1.50 A при 23 °C; Ihold 0.75 A, 0.49 A при 70 °C)",
+                 "2 котушки G6K ≈21.1 mA (08 крок 10); R-E1-09; Bourns MF-MSMF REV. AO (прочитано 07.11.2026)"),
     "J21": (2.5, 4.0, "F201 4 A + eFuse U201 ≈4 A", "02 §2 (2.5 A з Lime)"),
     "DISP12": (1.27, 1.70, "eFuse U202 RILM 1.96k ≈1.70 A", "E2.json U202; 02 §2 (1.27 A на межі 14 W)"),
     "AUX12": (0.42, 0.75, "PTC MF-MSMF075/24-2, утримання 0.75 A", "02 §2"),
@@ -425,7 +523,6 @@ SEG_CURRENT = {
     ("S10", "E1_N"): (3.0, 7.5, "F101 7.5 A (вузол N)", "IP2368 RISET 15k = 3 A (02 §5)"),
     ("S28", "LAB5"): (0.50, 4.0, "F102 4 A", "E3-03: старт 0.50 A"),
     ("S13", "LAB5"): (0.30, 4.0, "F102 4 A", "бюджет хаба — рішення asm, виміряти"),
-    ("S04", "LAB5"): (0.10, 4.0, "F102 4 A", "2 котушки G6K ≈21.1 mA (08 крок 10)"),
 }
 
 # Wire colours by net (regex, colour) — project convention, first match wins.
@@ -465,7 +562,7 @@ WIRE_COLOUR_CODE = {"білий": "WH", "чорний": "BK", "червоний"
 WIRE_PUTUP = "005"  # 100 ft (30.48 m) spool: the shortest put-up every WIRE series lists (5857 also lists 50 ft, code not read)
 WIRE_SPOOL_M = 30.48  # length of one WIRE_PUTUP spool, m (100 ft)
 # Insulation OD each crimp terminal accepts, mm (None: no limit given): JST-PH SPH-002T-P0.5S, MOLEX-43030, MOLEX-5556 (SOURCES).
-WIRE_INSULATION_RANGE = {"PH": (0.8, 1.5), "MF": (None, 1.85), "MFJ": (1.30, 3.10)}
+WIRE_INSULATION_RANGE = {"PH": (0.8, 1.5), "MF": (None, 1.85), "MFJ": (1.30, 3.10), "MF2": (None, 1.85), "PHD": (1.0, 1.5)}
 
 # High-speed / factory cable assemblies: id -> (title, net regex, ends, parts)
 ASSEMBLIES = [
@@ -774,10 +871,13 @@ STEPS = [
       "Шлейф S01 без 5 V (N-E3-01, R-E3-15) — до заготовлення кабелів CTRL (наступний пункт): у місці кожної з двох розеток IDC до обтиснення вирізати "
       "провідники 2 і 4 стрічки (ділянку ≈5 мм під лезами контактів 2 і 4), щоб жоден кінець цих провідників не торкався контакту; на CTRL контакти 2/4 "
       "бокса — без кола. Без цього кроку 5 V Q6A J20 знову опиняється в стрічці 28 AWG без межі струму; LC76G живиться від U315 на CTRL (S25).",
-      "Кабелі CTRL: S01 (≤200 мм), S24, S25 (PPS разом з S01 ≤200 мм), S29, S30, S15 — заготовити з запасом петлі."],
+      "Кабелі CTRL: S01 (≤200 мм), S24, S25 (живлення і RESET LC76G), S29, S30, S15 — заготовити з запасом петлі; гілка PPS: провідники 6, 7, "
+      "16 і 18 стрічки S01 відокремити одразу за розеткою J20 (до обтиснення розетки CTRL вирізати їх там, як 2 і 4) і довести до P1 LC76G (≤200 мм, "
+      "модель 196 мм; N-E3-03)."],
      ["вали енкодерів вкорочені, ручки не торкаються гайок", "кнопки й енкодери перевіряються в E6 (19 §4 п. 3) — CTRL живиться від Q6A",
-      "S01: прозвонка контактів 2 і 4 розетки Q6A → контакти 2 і 4 розетки CTRL — розрив, сусідні 1, 3, 5 — є з'єднання (до підключення до Q6A)"],
-     ["F08", "F20", "F21", "F29", "S01", "S15", "S24", "S25", "S26", "S28", "S29", "S30", "S37", "S38", "S39", "L-SUN", "L-RX"]),
+      "S01: прозвонка контактів 2 і 4 розетки Q6A → контакти 2 і 4 розетки CTRL — розрив, сусідні 1, 3, 5 — є з'єднання (до підключення до Q6A)",
+      "гілка PPS: J20.7 → P1.5, J20.16 → P1.4, J20.18 → P1.3, J20.6 → P1.2 LC76G — є з'єднання; ті самі провідники до розетки CTRL (контакти 6, 7, 16, 18) — розрив"],
+     ["F08", "F20", "F21", "F29", "S01", "PPS", "S15", "S24", "S25", "S26", "S28", "S29", "S30", "S37", "S38", "S39", "L-SUN", "L-RX"]),
     ("E6", "Пластина в передню половину",
      "збірка середньої пластини (E2–E4), передня половина (E5)",
      ["Встановити пластину на бобишки передньої половини гвинтами M3 у вставки PM1–PM4 (F30); дисплей — до пластини з каналом повітря 4–6 мм.",

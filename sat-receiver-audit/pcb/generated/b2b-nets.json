@@ -1,0 +1,600 @@
+{
+  "schema": "srrx-b2b-nets-v1",
+  "status": "DESIGN INPUT (W2 GR-3): nets with pins on PWR-A and PWR-B bare board parts of components.csv; the board packages derive the QSH/QTH pin map from it. Not a placement and not a measured current.",
+  "generator": "pcb/prepare.py",
+  "rule": "contacts per crossing power net = ceil(I_protection / b2b_i_pin_A), I_protection from tools/assembly_data.py NET_CURRENT or net_current_extra; every other crossing net 1 contact; plus gnd_pins_per_power_net; Kelvin and precision nets (shunt nets, INA inputs, precision divider mid-points) never cross except declared_sense_pairs and sense_taps; GR-3 writes pcb/generated/b2b-nets.json by the same rule",
+  "i_pin_A": 1.0,
+  "mpn": {
+    "pwr_a": {
+      "mpn": "QSH-060-01-L-D-A",
+      "manufacturer": "Samtec",
+      "lcsc": "C5199901",
+      "stock": 270,
+      "role": "socket strip 0.50 mm, 2 x 60 = 120 contacts + ground plane"
+    },
+    "pwr_b": {
+      "mpn": "QTH-060-01-L-D-A",
+      "manufacturer": "Samtec",
+      "lcsc": "C116054",
+      "stock": 314,
+      "role": "terminal strip, lead style -01, 120 contacts + ground plane"
+    },
+    "read": "2026-11-07"
+  },
+  "contacts_available": 120,
+  "pwr_a_domains": [
+    "PWR_MAIN",
+    "PWR_BRANCH",
+    "USB_POWER"
+  ],
+  "pwr_b_domains": [
+    "PWR_BRANCH_SW",
+    "USB_POWER_SW"
+  ],
+  "totals": {
+    "crossing_nets": 40,
+    "power_nets": 9,
+    "power_pins": 14,
+    "signal_pins": 31,
+    "gnd_pins": 9,
+    "contacts_needed": 54,
+    "contacts_with_spare": 65,
+    "fits": true
+  },
+  "nets": [
+    {
+      "net": "3V3_Q6A",
+      "pwr_a": [
+        "C281",
+        "R206",
+        "R212",
+        "U216"
+      ],
+      "pwr_b": [
+        "C277",
+        "C283",
+        "C285",
+        "C287",
+        "C550",
+        "C551",
+        "J201",
+        "J204",
+        "R550",
+        "R551",
+        "U215",
+        "U217",
+        "U218",
+        "U219",
+        "U507"
+      ],
+      "kind": "power",
+      "prot_A": 0.1,
+      "pins": 1,
+      "gnd_pins": 1
+    },
+    {
+      "net": "AUX12",
+      "pwr_a": [
+        "C221",
+        "L204",
+        "R223",
+        "TP204"
+      ],
+      "pwr_b": [
+        "J508",
+        "R286"
+      ],
+      "kind": "power",
+      "prot_A": 0.75,
+      "pins": 1,
+      "gnd_pins": 1
+    },
+    {
+      "net": "BIAS_CH1_DAMP",
+      "pwr_a": [
+        "C235"
+      ],
+      "pwr_b": [
+        "R232"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "BIAS_CH2_DAMP",
+      "pwr_a": [
+        "C239"
+      ],
+      "pwr_b": [
+        "R237"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "BIAS_CH3_DAMP",
+      "pwr_a": [
+        "C243"
+      ],
+      "pwr_b": [
+        "R242"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "BIAS_CH4_DAMP",
+      "pwr_a": [
+        "C247"
+      ],
+      "pwr_b": [
+        "R247"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "BONI13V8",
+      "pwr_a": [
+        "C272",
+        "L214",
+        "Q2903",
+        "R267",
+        "R2923",
+        "TP212"
+      ],
+      "pwr_b": [
+        "R283"
+      ],
+      "kind": "sense/supply tap",
+      "pins": 1,
+      "why": "only the divider R283 of the Boni voltage monitor U218 (group 'Boni: контроль напруги') taps the rail"
+    },
+    {
+      "net": "BONI13V8_PORT",
+      "pwr_a": [
+        "C2903",
+        "Q2903",
+        "TP2903"
+      ],
+      "pwr_b": [
+        "J207"
+      ],
+      "kind": "power",
+      "prot_A": 0.153,
+      "pins": 1,
+      "gnd_pins": 1
+    },
+    {
+      "net": "CHG_INHIBIT",
+      "pwr_a": [
+        "R122"
+      ],
+      "pwr_b": [
+        "J202"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "E1_BAT_ADC",
+      "pwr_a": [
+        "C114",
+        "R111",
+        "R112"
+      ],
+      "pwr_b": [
+        "J202"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "E2_LNA4_SHUNT",
+      "pwr_a": [
+        "R275"
+      ],
+      "pwr_b": [
+        "C245",
+        "L209",
+        "R246"
+      ],
+      "kind": "declared sense pair",
+      "pins": 1
+    },
+    {
+      "net": "E2_LNA4_SW",
+      "pwr_a": [
+        "R274"
+      ],
+      "pwr_b": [
+        "R246",
+        "U209"
+      ],
+      "kind": "declared sense pair",
+      "pins": 1
+    },
+    {
+      "net": "E2_SB_DAMP",
+      "pwr_a": [
+        "C298"
+      ],
+      "pwr_b": [
+        "R295"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "EN_AUX12",
+      "pwr_a": [
+        "Q202",
+        "R220"
+      ],
+      "pwr_b": [
+        "J202"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "EN_BONI",
+      "pwr_a": [
+        "Q2913",
+        "R261",
+        "U213",
+        "U214"
+      ],
+      "pwr_b": [
+        "J202"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "EN_HFP",
+      "pwr_a": [
+        "R510",
+        "U503"
+      ],
+      "pwr_b": [
+        "J202"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "EN_LIME3V3",
+      "pwr_a": [
+        "R218",
+        "U203"
+      ],
+      "pwr_b": [
+        "J202"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "EN_LNB",
+      "pwr_a": [
+        "R253",
+        "R291",
+        "U211"
+      ],
+      "pwr_b": [
+        "J202"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "FAULT_HFP",
+      "pwr_a": [
+        "U503"
+      ],
+      "pwr_b": [
+        "J202"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "FLT_BONI",
+      "pwr_a": [
+        "U214"
+      ],
+      "pwr_b": [
+        "J203"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "FLT_LIME3V3",
+      "pwr_a": [
+        "U203"
+      ],
+      "pwr_b": [
+        "J203"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "FLT_LNB",
+      "pwr_a": [
+        "U212"
+      ],
+      "pwr_b": [
+        "J203"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "I2C0_SCL",
+      "pwr_a": [
+        "J110"
+      ],
+      "pwr_b": [
+        "J203"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "I2C0_SDA",
+      "pwr_a": [
+        "J110"
+      ],
+      "pwr_b": [
+        "J203"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "I2C2_SCL",
+      "pwr_a": [
+        "U216"
+      ],
+      "pwr_b": [
+        "J201",
+        "U215",
+        "U507"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "I2C2_SDA",
+      "pwr_a": [
+        "U216"
+      ],
+      "pwr_b": [
+        "J201",
+        "U215",
+        "U507"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "IMU_RX",
+      "pwr_a": [
+        "J507",
+        "U551"
+      ],
+      "pwr_b": [
+        "J203"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "IMU_TX",
+      "pwr_a": [
+        "J507",
+        "U551"
+      ],
+      "pwr_b": [
+        "J203"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "INA228_ALERT",
+      "pwr_a": [
+        "J110"
+      ],
+      "pwr_b": [
+        "J203"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "LAB5",
+      "pwr_a": [
+        "C112",
+        "C223",
+        "C508",
+        "C509",
+        "C552",
+        "F104",
+        "J104",
+        "J206",
+        "L101",
+        "L205",
+        "R110",
+        "U503",
+        "U553"
+      ],
+      "pwr_b": [
+        "C248",
+        "C295",
+        "C501",
+        "C502",
+        "C504",
+        "C505",
+        "U210",
+        "U221",
+        "U501",
+        "U502"
+      ],
+      "kind": "power",
+      "prot_A": 4.0,
+      "pins": 4,
+      "gnd_pins": 1
+    },
+    {
+      "net": "LAB5_RLY",
+      "pwr_a": [
+        "F104"
+      ],
+      "pwr_b": [
+        "J204"
+      ],
+      "kind": "power",
+      "prot_A": 1.5,
+      "pins": 2,
+      "gnd_pins": 1
+    },
+    {
+      "net": "LNA4V5",
+      "pwr_a": [
+        "C231",
+        "R225",
+        "R226",
+        "TP205"
+      ],
+      "pwr_b": [
+        "C232",
+        "C236",
+        "C240",
+        "C244",
+        "U206",
+        "U207",
+        "U208",
+        "U209"
+      ],
+      "kind": "power",
+      "prot_A": 1.209,
+      "pins": 2,
+      "gnd_pins": 1
+    },
+    {
+      "net": "LNB13V2",
+      "pwr_a": [
+        "C261",
+        "L212",
+        "R259",
+        "TP211"
+      ],
+      "pwr_b": [
+        "J204",
+        "R280"
+      ],
+      "kind": "power",
+      "prot_A": 0.499,
+      "pins": 1,
+      "gnd_pins": 1
+    },
+    {
+      "net": "OVP_LNB_N",
+      "pwr_a": [
+        "R291",
+        "R292",
+        "TP215",
+        "U212",
+        "U220"
+      ],
+      "pwr_b": [
+        "J203"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "PICO_DISP_EN",
+      "pwr_a": [
+        "R213",
+        "U202"
+      ],
+      "pwr_b": [
+        "J203"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "PICO_OFF",
+      "pwr_a": [
+        "D102"
+      ],
+      "pwr_b": [
+        "J203"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "PWR_BUTTON",
+      "pwr_a": [
+        "D103"
+      ],
+      "pwr_b": [
+        "J203"
+      ],
+      "kind": "signal",
+      "pins": 1
+    },
+    {
+      "net": "VBUS_HFP",
+      "pwr_a": [
+        "C511",
+        "C513",
+        "L501",
+        "R512",
+        "R513"
+      ],
+      "pwr_b": [
+        "J207"
+      ],
+      "kind": "power",
+      "prot_A": 0.989,
+      "pins": 1,
+      "gnd_pins": 1
+    },
+    {
+      "net": "VBUS_LABPORT",
+      "pwr_a": [
+        "C506"
+      ],
+      "pwr_b": [
+        "C507",
+        "J506",
+        "R508",
+        "U502"
+      ],
+      "kind": "power",
+      "prot_A": 0.825,
+      "pins": 1,
+      "gnd_pins": 1
+    },
+    {
+      "net": "VBUS_RTLB_DAMP",
+      "pwr_a": [
+        "C251"
+      ],
+      "pwr_b": [
+        "R251"
+      ],
+      "kind": "signal",
+      "pins": 1
+    }
+  ],
+  "errors": []
+}

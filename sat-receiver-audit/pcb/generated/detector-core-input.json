@@ -3994,6 +3994,18 @@
           "name": "1"
         },
         {
+          "ref": "J201",
+          "pin": "1",
+          "sheet": "E2",
+          "name": "3V3_Q6A"
+        },
+        {
+          "ref": "J204",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "3V3_Q6A"
+        },
+        {
           "ref": "J301",
           "pin": "1",
           "sheet": "E3",
@@ -4252,6 +4264,24 @@
           "name": "2"
         },
         {
+          "ref": "J304",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "3V3_Q6A"
+        },
+        {
+          "ref": "J304",
+          "pin": "17",
+          "sheet": "E3",
+          "name": "3V3_Q6A"
+        },
+        {
+          "ref": "J311",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "3V3_Q6A"
+        },
+        {
           "ref": "C440",
           "pin": "1",
           "sheet": "E4",
@@ -4286,6 +4316,12 @@
           "pin": "6",
           "sheet": "E4",
           "name": "VDD"
+        },
+        {
+          "ref": "J420",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "3V3_Q6A"
         },
         {
           "ref": "R516",
@@ -4360,6 +4396,18 @@
           "pin": "1",
           "sheet": "E3",
           "name": "1"
+        },
+        {
+          "ref": "J308",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "DCS_HF"
+        },
+        {
+          "ref": "J418",
+          "pin": "2",
+          "sheet": "E4",
+          "name": "DCS_HF"
         }
       ],
       "connector_or_wire_pad_selected": false
@@ -4386,6 +4434,18 @@
           "pin": "1",
           "sheet": "E3",
           "name": "1"
+        },
+        {
+          "ref": "J308",
+          "pin": "3",
+          "sheet": "E3",
+          "name": "DCS_LBAND"
+        },
+        {
+          "ref": "J418",
+          "pin": "3",
+          "sheet": "E4",
+          "name": "DCS_LBAND"
         }
       ],
       "connector_or_wire_pad_selected": false
@@ -4412,6 +4472,18 @@
           "pin": "1",
           "sheet": "E3",
           "name": "1"
+        },
+        {
+          "ref": "J308",
+          "pin": "4",
+          "sheet": "E3",
+          "name": "DCS_UHF"
+        },
+        {
+          "ref": "J418",
+          "pin": "4",
+          "sheet": "E4",
+          "name": "DCS_UHF"
         }
       ],
       "connector_or_wire_pad_selected": false
@@ -5050,6 +5122,54 @@
           "pin": "1",
           "sheet": "E1",
           "name": "Protectedground"
+        },
+        {
+          "ref": "J104",
+          "pin": "1",
+          "sheet": "E1",
+          "name": "GND"
+        },
+        {
+          "ref": "J104",
+          "pin": "2",
+          "sheet": "E1",
+          "name": "GND"
+        },
+        {
+          "ref": "J105",
+          "pin": "1",
+          "sheet": "E1",
+          "name": "GND"
+        },
+        {
+          "ref": "J108",
+          "pin": "1",
+          "sheet": "E1",
+          "name": "GND"
+        },
+        {
+          "ref": "J110",
+          "pin": "1",
+          "sheet": "E1",
+          "name": "GND"
+        },
+        {
+          "ref": "J111",
+          "pin": "1",
+          "sheet": "E1",
+          "name": "GND"
+        },
+        {
+          "ref": "J114",
+          "pin": "1",
+          "sheet": "E1",
+          "name": "GND"
+        },
+        {
+          "ref": "J115",
+          "pin": "1",
+          "sheet": "E1",
+          "name": "GND"
         },
         {
           "ref": "R202",
@@ -6138,6 +6258,84 @@
           "name": "-"
         },
         {
+          "ref": "J201",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J204",
+          "pin": "1",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J205",
+          "pin": "1",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J206",
+          "pin": "1",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J206",
+          "pin": "3",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J206",
+          "pin": "5",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J206",
+          "pin": "7",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J207",
+          "pin": "1",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J207",
+          "pin": "3",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J207",
+          "pin": "5",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J207",
+          "pin": "6",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J207",
+          "pin": "8",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J207",
+          "pin": "10",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
           "ref": "J301",
           "pin": "6",
           "sheet": "E3",
@@ -6748,6 +6946,126 @@
           "pin": "2",
           "sheet": "E3",
           "name": "2"
+        },
+        {
+          "ref": "J304",
+          "pin": "9",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J304",
+          "pin": "14",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J304",
+          "pin": "20",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J304",
+          "pin": "25",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J304",
+          "pin": "30",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J304",
+          "pin": "34",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J304",
+          "pin": "39",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J305",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J305",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J308",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J310",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J311",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J311",
+          "pin": "4",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J312",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J313",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J315",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J316",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J317",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J318",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "J319",
+          "pin": "1",
+          "sheet": "E3",
+          "name": "GND"
         },
         {
           "ref": "A401",
@@ -7590,6 +7908,18 @@
           "name": "2"
         },
         {
+          "ref": "J418",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
+          "ref": "J420",
+          "pin": "1",
+          "sheet": "E4",
+          "name": "GND"
+        },
+        {
           "ref": "U500",
           "pin": "GND",
           "sheet": "E5",
@@ -8164,6 +8494,48 @@
           "pin": "2",
           "sheet": "E5",
           "name": "2"
+        },
+        {
+          "ref": "J506",
+          "pin": "1",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "J506",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "J507",
+          "pin": "1",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "J508",
+          "pin": "1",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "J508",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "J509",
+          "pin": "1",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "J513",
+          "pin": "1",
+          "sheet": "E5",
+          "name": "GND"
         }
       ],
       "connector_or_wire_pad_selected": false
@@ -8237,6 +8609,8 @@
       "boards": [
         "PWR_MAIN",
         "PWR_BRANCH",
+        "PWR_BRANCH_SW",
+        "USB_POWER_SW",
         "CTRL_HMI",
         "USB_POWER",
         "RF_HMC",
@@ -8272,31 +8646,31 @@
     "inputs": [
       {
         "file": "design/E1.json",
-        "sha256": "79e10a679741ad40010e414576c306f14deecd602b48636dbbe06c1552de555d"
+        "sha256": "256ffe717c12e2f876b6c1736a8a9798f5e3de2ffc62f2253995da2d272bf4c4"
       },
       {
         "file": "design/E2.json",
-        "sha256": "cc0580f8c8f896e6d1cca1e9364f64d69cd1d461d94593b33a6668f34f7a4935"
+        "sha256": "add1bc5d1bbf1cfa391e4f080de7a3ac340d616048a95640607294ad18a75721"
       },
       {
         "file": "design/E3.json",
-        "sha256": "f7a0ddd69f6b9f9979071528612ebd9173f0e21ded7bf426de412d298971cdbe"
+        "sha256": "a84e824308def639d81a72ca97b054e329cfed89a76fd1d6a8f45f61c1016db8"
       },
       {
         "file": "design/E4.json",
-        "sha256": "39b5a936ea16630d49ba51606e82014ec6dd8605770662278af4c862aaa5c548"
+        "sha256": "ad20d3e8e9268c3ca74c2e760adc5f1efc93376672a13574cd256a1fa81131ee"
       },
       {
         "file": "design/E5.json",
-        "sha256": "48c61fa1a77ab35e5d930f377ac2ef473abdd8f6e02da8417e352f168ce562e5"
+        "sha256": "13f0cefe6ebe5c6942b39ccb599a2330395a659535cdb55df9e4a552a3932639"
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "d61e32c4ebae8eda9625abd27e778b18c5976a234a84fa25ed0750a57630dff4"
+        "sha256": "6e74404d6a71f8377c77b2bb4d556b7456bccc7b878765c7451a6a4dc766e121"
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "162c5821ebb6447a8372364a035ad5faf96dda6f2493ab3d89e6767538a56340"
+        "sha256": "564e965c5d07c2dcf245766d149a78407f1fe412de8e2538b0b91aec8bf02caf"
       }
     ],
     "source_documents": [
