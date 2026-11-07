@@ -197,7 +197,7 @@ POLICY_SCHEMA = {
         "soapy": dict(_COMMON, plugin_dirs=(_text,), forbidden_dirs=[_text]),
         "gpredict": dict(_COMMON, binaries=[_text], forbidden_needed=(_text,), radio_config_globs=[_text], rx_only_radio_type=_text,
                          tle_update={"file_globs": (_text,), "section": _text, "key": _text, "required": _text}),
-        # W2 SW-WSJT: jt9/wsprd and the reviewed wsjtx_app_version stub (RX-01b, _wsjt_app_version).
+        # W2 SW-WSJT: jt9/wsprd and the wsjtx_app_version stub kept in files/ for review (RX-01b, _wsjt_app_version).
         "lab-wsjt-decoders": {"footprint": (_text,), "app_version_stub": {"basename": _text, "lines": (_text,)}, "sources": [_text]},
     },
     "lime": {"runtime_library_globs": [_text], "sources": [_text]},
@@ -981,9 +981,9 @@ def check_01b(ctx, r):
 
 def _wsjt_app_version(ctx, r):
     """W2 SW-WSJT: every file named wsjtx_app_version (any directory, any case, also behind a
-    link) must be the reviewed 2-line stub of lab-wsjt-decoders, which only prints the version
-    OpenWebRX+ reads; anything else of that name is upstream WSJT-X tooling outside the jt9/wsprd
-    allowlist (STACK.md:127, STACK.md:886). The target file is compared byte for byte, never run."""
+    link) must be the 2-line lab-wsjt-decoders stub kept in files/ for review, which only prints
+    the version OpenWebRX+ reads; anything else of that name is upstream WSJT-X tooling outside the
+    jt9/wsprd allowlist (STACK.md:127, STACK.md:886). The target file is compared byte for byte, never run."""
     comp = ctx.comp("lab-wsjt-decoders")
     stub = comp["app_version_stub"]
     expected, name = ("\n".join(stub["lines"]) + "\n").encode(), stub["basename"].lower()
