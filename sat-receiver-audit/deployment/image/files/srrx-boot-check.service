@@ -15,6 +15,9 @@ RequiresMountsFor=/opt/srrx /boot/efi /data
 [Service]
 Type=oneshot
 RemainAfterExit=yes
+# A oneshot has no start timeout by default; a hung check ends as a failed unit, i.e. an unblessed
+# slot (fail-safe). bootchain.py's own bounds (dpkg-query 120 s, systemd-detect-virt 60 s) are inside it.
+TimeoutStartSec=600
 Environment=PYTHONDONTWRITEBYTECODE=1
 ExecStart=/usr/bin/python3 -I -B /opt/srrx/deployment/image/bootchain.py boot-check
 ProtectSystem=strict

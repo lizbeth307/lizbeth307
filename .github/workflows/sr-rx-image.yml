@@ -15,11 +15,18 @@ on:
   # head commit message, because a workflow that is not on the default branch cannot be dispatched).
   push:
     branches: ['wip/**', 'codex/**', 'ccr-*']
+    # Everything the jobs consume: build_image.py stages the controller tree (deploy.py stage copies
+    # software/, firmware/, design/ and deployment/system), runs selftest.py, reads the lock and the policy.
     paths:
       - 'sat-receiver-audit/deployment/image/**'
       - 'sat-receiver-audit/deployment/deploy.py'
       - 'sat-receiver-audit/deployment/ab.template.json'
       - 'sat-receiver-audit/deployment/tests/test_image.py'
+      - 'sat-receiver-audit/deployment/system/**'
+      - 'sat-receiver-audit/deployment/sources.lock.json'
+      - 'sat-receiver-audit/deployment/selftest.py'
+      - 'sat-receiver-audit/deployment/receive-only-policy.json'
+      - 'sat-receiver-audit/software/**'
       - '.github/workflows/sr-rx-image.yml'
   workflow_dispatch:
     inputs:
@@ -43,8 +50,11 @@ concurrency:
   group: sr-rx-image-${{ github.ref }}
   cancel-in-progress: true
 
+# shell: bash makes GitHub run every step as `bash --noprofile --norc -eo pipefail {0}`: a builder or
+# recovery-kit command piped into tee or zstd fails the step with its own exit status (canary below).
 defaults:
   run:
+    shell: bash
     working-directory: sat-receiver-audit
 
 env:
@@ -59,6 +69,10 @@ jobs:
       - uses: actions/checkout@v5
         with:
           persist-credentials: false
+      - name: pipefail canary (a failing command before tee must fail a step)
+        run: |
+          if (false | tee /dev/null); then echo "::error::pipefail is not in effect"; exit 1; fi
+          echo "pipefail in effect"
       - name: Builder tools
         run: |
           sudo apt-get update -q
@@ -262,7 +276,7 @@ jobs:
                   print(name, "missing"); continue
               d = json.loads(p.read_text())
               if name == "image-manifest.json":
-                  print(json.dumps({k: d.get(k) for k in ("status", "error", "blocking", "kernel", "bootloader", "entries", "enabled_units", "hardening", "selftest_root_a", "filesystem_checks", "image")}, indent=1)[:12000])
+                  print(json.dumps({k: d.get(k) for k in ("status", "error", "blocking", "kernel", "bootloader", "entries", "enabled_units", "accounts", "hardening", "selftest_root_a", "filesystem_checks", "image")}, indent=1)[:14000])
               else:
                   r = d.get("root", {})
                   print(json.dumps({"partitions": d.get("partitions"), "base_cmdline_status": d.get("base_cmdline_status"),

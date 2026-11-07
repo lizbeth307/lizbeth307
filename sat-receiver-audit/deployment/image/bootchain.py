@@ -450,11 +450,18 @@ def smoke_tokens(selftest=False):
             "systemd.run_failure_action=poweroff"]
 
 
+# Bounds of the boot-time check: srrx-boot-check.service runs right after local-fs.target while the rest
+# of the boot competes for the CPU (minutes under QEMU TCG), and a timeout fails the check, so these
+# are generous; the unit's TimeoutStartSec=600 bounds the whole check (a hung check is an unblessed slot).
+VIRT_TIMEOUT_S = 60
+DPKG_QUERY_TIMEOUT_S = 120
+
+
 def virtualization():
     """`systemd-detect-virt --vm` (e.g. "qemu"), "none" on bare metal, "unknown" if it cannot run."""
     import subprocess
     try:
-        done = subprocess.run(["systemd-detect-virt", "--vm"], capture_output=True, text=True, timeout=20)
+        done = subprocess.run(["systemd-detect-virt", "--vm"], capture_output=True, text=True, timeout=VIRT_TIMEOUT_S)
     except (OSError, subprocess.SubprocessError):
         return "unknown"
     return done.stdout.strip() or "unknown"
@@ -515,9 +522,11 @@ def boot_check(root=Path("/"), proc_cmdline=Path("/proc/cmdline")):
     if not _is_mountpoint(root / "data"):
         issues.append("/data is not mounted")
     issues.extend(deploy.radio_off_issues(None, root))
-    inventory = deploy.command(["dpkg-query", "-W", "-f=${binary:Package}\t${Version}\t${db:Status-Status}\n"], limit=8 * 1024 * 1024)
+    inventory = deploy.command(["dpkg-query", "-W", "-f=${binary:Package}\t${Version}\t${db:Status-Status}\n"], limit=8 * 1024 * 1024,
+                               timeout=DPKG_QUERY_TIMEOUT_S)
     if inventory["returncode"]:
-        issues.append("installed package inventory unavailable")
+        issues.append("installed package inventory unavailable (dpkg-query exit %s%s)" % (
+            inventory["returncode"], ": " + inventory["error"][:200] if inventory.get("error") else ""))
     else:
         present = {f[0].split(":", 1)[0]: f[1] for f in (r.split("\t") for r in inventory["stdout"].splitlines())
                    if len(f) == 3 and f[2] not in ("not-installed", "config-files")}
@@ -645,12 +654,15 @@ def smoke_report(timeout=900, root=Path("/"), selftest=False):
         if not jobs or time.monotonic() > deadline:
             break
         time.sleep(5)
-    show = "--property=LoadState,ActiveState,SubState,Result,UnitFileState"
+    show = "--property=LoadState,ActiveState,SubState,Result,UnitFileState,ExecMainStatus"
     report = {"started_target": SMOKE_TARGET, "start_output": started, "pending_jobs": jobs, "uname_r": platform.release(),
               "proc_cmdline": Path("/proc/cmdline").read_text(errors="replace").strip(),
               "units": {u: unit_properties(out(["systemctl", "show", show, u])) for u in SMOKE_UNITS},
               "failed_units": out(["systemctl", "--failed", "--no-legend", "--plain"]).splitlines(),
               "bless_boot_status": out(["/usr/lib/systemd/systemd-bless-boot", "status"]),
+              # The boot-time run of the unit (it prints its JSON result): the post-boot boot_check below
+              # can pass where the boot-time one failed, e.g. on a timeout while the boot loaded the CPU.
+              "boot_check_journal": out(["journalctl", "-b", "-u", "srrx-boot-check.service", "-o", "cat", "--no-pager", "-n", "60"]),
               "boot_check": boot_check(root)}
     try:
         recipe = json.loads((HERE / "recipe.json").read_text(encoding="utf-8"))
@@ -658,6 +670,14 @@ def smoke_report(timeout=900, root=Path("/"), selftest=False):
                                   for u in recipe["mask"]["units"]}
     except (OSError, ValueError, KeyError) as exc:
         report["masked_units"] = {"unavailable": type(exc).__name__}
+    try:
+        if str(DEPLOYMENT) not in sys.path:
+            sys.path.insert(0, str(DEPLOYMENT))
+        import deploy  # noqa: E402  (stdlib-only module of the same tree)
+        report["accounts"] = {name: out(["getent", "passwd" if kind == "u" else "group", name])
+                              for kind, name, *_ in deploy.system_files().SERVICE_ACCOUNTS}
+    except (ImportError, OSError, ValueError) as exc:
+        report["accounts"] = {"unavailable": type(exc).__name__}
     if selftest:
         try:
             report["selftest"] = live_selftest(load_config(root / BOOT_CONFIG.relative_to("/")), read_slot(root / SLOT_FILE.relative_to("/")))
