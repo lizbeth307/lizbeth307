@@ -21,7 +21,7 @@
     "plan": {
       "F.Cu": "L1: parts, signals; BATT/PWR3A pours (scripted where both ends are anchored)",
       "In1.Cu": "L2: solid GND (post-route pour over the whole outline)",
-      "In2.Cu": "L3: power pours (placement-dependent, OPEN)",
+      "In2.Cu": "L3: GND fill (pre-route plane) until the placement-dependent power pours take their areas (higher priority)",
       "B.Cu": "L4: signals; BATT/PWR3A pours paired with L1; GND bond copper in the four thermal_bond zones, solder mask on"
     },
     "plan_source": "build/15 'План шарів (W2 PCB-RULES)'",
@@ -29,7 +29,7 @@
       "In1.Cu": "power",
       "In2.Cu": "power"
     },
-    "types_why": "layer type power on both inner layers (as PWR_B): Freerouting puts only vias through them. Probe 2 (sr-rx-pcb run 42424071774) routed LAB5, E1_N, E1_SHUNT_P and E1_LAB5_FUSED tracks on In1/In2, which the classes do not count (17 check_boards class_widths findings) and which cut the L2 GND plane; L3 power copper stays possible as scripted zones"
+    "types_why": "layer type power on both inner layers and a pre-route GND plane on each (as PWR_B): the DSN then carries the planes and Freerouting puts only vias through them. Probe 2 (sr-rx-pcb run 42424071774) and probe 3 (run 42424538187, layer type alone) routed LAB5, E1_N, E1_SHUNT_P and E1_LAB5_FUSED tracks on In1/In2, which the classes do not count (17 check_boards class_widths findings) and which cut the L2 GND plane. L3 power pours (layer plan) go in later as higher-priority zones inside the L3 GND fill"
   },
   "project": "build/kicad/boards/PWR_A/PWR_A.kicad_pro",
   "rules_file": null,
@@ -3608,6 +3608,24 @@
         "priority": 2,
         "why": "L4 half of the E1_LAB5_RAW pour (see LAB5-RAW-F); solid pad connection (W2 PCB-PWRA-2): probe 1 measured a 1.03 mm thermal-spoke neck against 1.85 mm per layer",
         "pad_connection": "solid"
+      },
+      {
+        "id": "GND-In1",
+        "net": "GND",
+        "layer": "In1.Cu",
+        "outline": "board",
+        "priority": 0,
+        "pad_connection": "solid",
+        "why": "L2 solid GND (layer plan W2 PCB-RULES) as a pre-route plane: a plane in the DSN keeps the router off In1; the THT GND pins and the EP vias join it"
+      },
+      {
+        "id": "GND-In2",
+        "net": "GND",
+        "layer": "In2.Cu",
+        "outline": "board",
+        "priority": 0,
+        "pad_connection": "solid",
+        "why": "L3 GND fill (pre-route plane, as PWR_B In2): keeps the router off In2; the placement-dependent L3 power pours replace it locally as higher-priority zones"
       }
     ]
   },
@@ -3619,13 +3637,6 @@
   },
   "split_nets_note": "pcb/check_boards.py split_nets: a BATT/PWR3A net poured on L1 and L4 is checked against the per-layer split width (netclasses.json split_outer_per_layer_mm) when both layers join the same THT pads",
   "post_route_zones": [
-    {
-      "id": "GND-L2",
-      "net": "GND",
-      "layer": "In1.Cu",
-      "outline": "board",
-      "priority": 0
-    },
     {
       "id": "GND-BOND-1",
       "net": "GND",

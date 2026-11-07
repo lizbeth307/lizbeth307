@@ -503,6 +503,10 @@ def study():
                        'class_outer_width_mm': need, 'width_ok': track['width_mm'] + 1e-9 >= need,
                        'end_pads': ends, 'ends_on_net_pads': all(ends), 'locked': bool(track.get('locked', True))})
     for zone in spec['pre_route'].get('zones', []):
+        if zone.get('outline', 'board') == 'board':  # whole-outline plane (GND In1/In2): no pad geometry to pre-check
+            copper.append({'id': zone['id'], 'kind': 'plane', 'net': zone['net'], 'layer': zone['layer'],
+                           'pad_connection': zone.get('pad_connection', 'thermal'), 'outline': 'board'})
+            continue
         poly = zone['outline']
         zx, zy = [p[0] for p in poly], [p[1] for p in poly]
         zb = [min(zx), min(zy), max(zx), max(zy)]

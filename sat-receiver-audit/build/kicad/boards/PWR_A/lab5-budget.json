@@ -4,7 +4,7 @@
   "status": "MODEL: copper resistance from geometry (IACS copper, finished 1 oz outer); no PWR-A board exists, no measurement; E1-05 and every bench gate stay OPEN",
   "generator": "build/kicad/boards/PWR_A/lab5_budget.py",
   "inputs": {
-    "spec_sha256": "c34b4e1a0f92aa0bf3477773840b278fdd4ede4f194bce105891f333c4d09e66",
+    "spec_sha256": "f8b4cc1efd05b0873592b92039ab564c71a50ab09648ff5270cce86cdf657dfb",
     "pwr_b_board_sha256": "19420cbcbd70d65ccafb3633bbe1d1ab229fd440730e65256a5d020c56ddc8a6",
     "pwr_b_spec_b2b1_pins_sha256": "a661196f62182f1fe3f2a62a931dc3ab9fcaefdc4523f97ee87fcc337418d9c1",
     "netclasses_sha256": "7140f840af2f8ac893674c87d703c9135a7cac5071b430027adf42a82d751753",
