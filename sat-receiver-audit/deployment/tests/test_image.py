@@ -1033,5 +1033,92 @@ class SmokeFailedUnitStatusTests(unittest.TestCase):
         self.assertIn('"systemctl", "status", "--no-pager"', source)
 
 
+class ReviewFixesImg1Tests(unittest.TestCase):
+    """W2 IMG-1 review fixes: loose QNN/SNPE files block like a package (IMG1-R1); the selftest blocker
+    is tagged from its verdict, so a missing report is "recipe" and a REVIEWED policy drops the policy
+    tag (IMG1-R2)."""
+
+    def test_npu_files_without_a_package_block_the_image(self):
+        source = (HERE / "image/build_image.py").read_text(encoding="utf-8")
+        self.assertIn('if manifest["npu_payload"]["status"] != "absent":', source)
+        self.assertNotIn('if manifest["npu_payload"]["packages"]:', source)
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "var/lib/dpkg").mkdir(parents=True)
+            (root / "var/lib/dpkg/status").write_text("Package: fastrpc\nStatus: install ok installed\nVersion: 1.0.3-1\n\n")
+            (root / "usr/lib/dsp").mkdir(parents=True)
+            (root / "usr/lib/dsp/libQnnHtpV68Skel.so").write_bytes(b"\0")
+            record = build_image.npu_payload(root)
+        self.assertEqual((record["status"], record["packages"], record["files"]), ("PRESENT", [], ["usr/lib/dsp/libQnnHtpV68Skel.so"]))
+        # The blocker text the build appends for this record, and its tag.
+        text = "npu_payload_present: " + ", ".join(record["packages"] + record["files"])
+        self.assertIn("libQnnHtpV68Skel.so", text)
+        self.assertEqual(build_image.blocking_closes_at([text]), [{"blocker": "npu_payload_present", "closes_at": "recipe"}])
+
+    def record(self, **fields):
+        base = {"exit_code": 2, "status": "BLOCKED", "counts": {}, "fail_or_blocked_rows": {}, "report_sha256": "0" * 64,
+                "policy_status": "DRAFT", "policy_blockers": ["POLICY_NOT_REVIEWED"], "tagged_items": {}}
+        base.update(fields)
+        return base
+
+    def tags(self, record):
+        text = build_image.SELFTEST_BLOCKER + str(record["status"]) + ": " + json.dumps(record["fail_or_blocked_rows"], sort_keys=True)
+        return {t["blocker"]: t["closes_at"] for t in build_image.blocking_closes_at([text], record)}
+
+    def test_selftest_without_a_usable_verdict_is_a_recipe_item(self):
+        # selftest.py crashed or wrote nothing: build_image.selftest() gives status None and no report hash.
+        crashed = self.record(exit_code=1, status=None, counts=None, report_sha256=None, policy_status=None, policy_blockers=[])
+        self.assertEqual(self.tags(crashed), {"selftest_root_a:no_report": "recipe",
+                                              "selftest_root_a:policy_not_reviewed": "owner:policy-review"})  # policy file is DRAFT
+        self.assertEqual(build_image.closes_at_summary(build_image.blocking_closes_at(["selftest root A None: {}"],
+                                                                                      {"status": None, "fail_or_blocked_rows": {},
+                                                                                       "report_sha256": None}))["recipe"],
+                         ["selftest_root_a:no_report"])
+        self.assertIn("selftest_root_a:no_report", self.tags(self.record(status="SOMETHING_ELSE")))
+        self.assertIn("selftest_root_a:no_report", self.tags(self.record(exit_code=1)))  # verdict and exit code disagree
+        self.assertNotIn("selftest_root_a:no_report", self.tags(self.record()))
+
+    def test_policy_tag_follows_the_verdict(self):
+        self.assertEqual(self.tags(self.record()), {"selftest_root_a:policy_not_reviewed": "owner:policy-review"})
+        reviewed = self.record(policy_status="REVIEWED", policy_blockers=["POLICY_REVIEW_RECORD_MISSING"])
+        self.assertEqual(self.tags(reviewed), {"selftest_root_a:policy_review_record_missing": "owner:policy-review"})
+        passed = self.record(exit_code=0, status="OFFLINE_CHECKS_PASS", policy_status="REVIEWED", policy_blockers=[])
+        tags = self.tags(passed)
+        self.assertNotIn("selftest_root_a:policy_not_reviewed", tags)
+        self.assertEqual(tags, {"selftest_root_a:verdict_offline_checks_pass": "recipe"})  # still listed: one tag, never none
+
+    def test_embloader_outside_its_version_rule_is_recipe_drift(self):
+        rows = {"RX-01a": ["pinned_package_present_unreviewed"]}
+        key = "RX-01a:pinned_package_present_unreviewed"
+        self.assertEqual(self.tags(self.record(fail_or_blocked_rows=rows, tagged_items={key: ["embloader"]})),
+                         {"selftest_root_a:RX-01a:pinned_package_present_unreviewed:embloader": "recipe",
+                          "selftest_root_a:policy_not_reviewed": "owner:policy-review"})
+        both = self.tags(self.record(fail_or_blocked_rows=rows, tagged_items={key: ["dragonwing-defaults", "embloader"]}))
+        self.assertEqual((both["selftest_root_a:RX-01a:pinned_package_present_unreviewed:embloader"],
+                          both["selftest_root_a:RX-01a:pinned_package_present_unreviewed"]), ("recipe", "bench:Phase0"))
+        self.assertEqual(self.tags(self.record(fail_or_blocked_rows=rows))["selftest_root_a:RX-01a:pinned_package_present_unreviewed"],
+                         "bench:Phase0")  # no items recorded: the rule tag
+
+    def test_selftest_record_carries_the_verdict_parts_the_tags_need(self):
+        report = {"status": "BLOCKED", "policy_status": "DRAFT", "blockers": ["POLICY_NOT_REVIEWED", "RX-01a", "RX-S2"], "counts": {},
+                  "checks": [{"id": "RX-01a", "status": "BLOCKED",
+                              "findings": [{"path": "var/lib/dpkg/status", "rule": "pinned_package_present_unreviewed", "item": "embloader"}]},
+                             {"id": "RX-S2", "status": "BLOCKED", "findings": [{"path": "etc/srrx/devices.json", "rule": "radio_off_binding_missing"}]},
+                             {"id": "RX-11", "status": "PASS", "findings": []}]}
+        with tempfile.TemporaryDirectory() as temp:
+            output = Path(temp) / "selftest-root-a.json"
+            output.write_text(json.dumps(report))
+            with patch.object(build_image, "run", lambda argv, check=False: subprocess.CompletedProcess(argv, 2)):
+                record = build_image.selftest(Path(temp) / "root", "0" * 64, output)
+            missing = Path(temp) / "absent.json"
+            with patch.object(build_image, "run", lambda argv, check=False: subprocess.CompletedProcess(argv, 1)):
+                crashed = build_image.selftest(Path(temp) / "root", "0" * 64, missing)
+        self.assertEqual((record["policy_status"], record["policy_blockers"], record["tagged_items"]),
+                         ("DRAFT", ["POLICY_NOT_REVIEWED"], {"RX-01a:pinned_package_present_unreviewed": ["embloader"]}))
+        self.assertEqual(record["fail_or_blocked_rows"], {"RX-01a": ["pinned_package_present_unreviewed"], "RX-S2": ["radio_off_binding_missing"]})
+        self.assertEqual((crashed["status"], crashed["report_sha256"], crashed["policy_blockers"], crashed["tagged_items"]), (None, None, [], {}))
+        self.assertIn("selftest_root_a:no_report", self.tags(crashed))
+
+
 if __name__ == "__main__":
     unittest.main()

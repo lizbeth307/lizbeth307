@@ -516,8 +516,8 @@ class LabPrefMinusOnePinTests(unittest.TestCase):
     def test_version_pins_match_the_policy_thresholds_and_spare_the_held_versions(self):
         pins = {s["package"]: s["pin"][len("version "):] for s in self.extra if s["pin"].startswith("version ")}
         self.assertEqual(set(pins), {"linux-firmware-dragonwing", "*mesa*", "edk2-*"})
-        self.assertTrue(self.match("1.0.0+20260825", pins["linux-firmware-dragonwing"]))
-        self.assertFalse(self.match("1.0.0+20251203", pins["linux-firmware-dragonwing"]))  # held r2 version
+        self.assertTrue(apt_version_pin_matches(pins["linux-firmware-dragonwing"], "1.0.0+20260825"))  # apt semantics (below)
+        self.assertFalse(apt_version_pin_matches(pins["linux-firmware-dragonwing"], "1.0.0+20251203"))  # held r2 version
         rules = {e["glob"]: e["version_rule"]["forbid_at_least"] for e in self.policy["forbidden_packages"]
                  if e.get("glob") in ("*mesa*", "edk2-*")}
         grids = {"*mesa*": (["9.0.0-2", "9.0.2-1.1build1", "25.2.8-0ubuntu0.24.04.1"],  # r2 versions (image facts, run 42354844339)
@@ -548,6 +548,47 @@ class LabPrefMinusOnePinTests(unittest.TestCase):
         self.assertEqual(mirror["signed-by"], deploy.load(deploy.REPO_POLICY)["keyring_path"])
         self.assertNotEqual(mirror["suites"], lab["suites"])
         self.assertTrue(mirror["uris"].startswith("file:/srv/srrx-repo/") and mirror["uris"] != lab["uris"])
+
+
+def apt_version_pin_matches(pin, version):
+    """apt's pkgVersionMatch for 'Pin: version' (apt-pkg/versionmatch.cc, Debian/apt main, read
+    2026-11-07): one trailing '*' is cut off and the rest is tried as a literal prefix, then the same cut
+    string goes to ExpressionMatches: /.../ is regcomp(REG_EXTENDED | REG_ICASE), anything else
+    fnmatch(FNM_CASEFOLD). Python's re stands in for the POSIX ERE subset lab.pref uses."""
+    import fnmatch
+    prefix = pin.endswith("*")
+    text = pin[:-1] if prefix else pin
+    if version.lower() == text.lower() or (prefix and version.lower().startswith(text.lower())):
+        return True
+    if len(text) >= 2 and text.startswith("/") and text.endswith("/"):
+        return re.search(text[1:-1], version, re.IGNORECASE) is not None
+    return fnmatch.fnmatch(version.lower(), text.lower())
+
+
+class AptVersionPinSemanticsTests(unittest.TestCase):
+    """W2 IMG-1 review (IMG1-R3): 'Pin: version *20260825*' only matched versions ENDING in 20260825 under
+    apt (the last '*' is dropped), so the dragonwing pin is an unanchored ERE that also takes rebuilds."""
+
+    def test_the_model_reproduces_apts_trailing_star_rule(self):
+        self.assertTrue(apt_version_pin_matches("*20260825*", "1.0.0+20260825"))
+        self.assertFalse(apt_version_pin_matches("*20260825*", "20260825-1"))  # what the old pin missed
+        self.assertTrue(apt_version_pin_matches("2.4*", "2.4.125-1"))  # documented prefix form
+        self.assertTrue(apt_version_pin_matches("/^26\\./", "26.0.1-1"))
+
+    def test_dragonwing_pin_takes_the_ppa_version_and_its_rebuilds_but_spares_r2(self):
+        stanzas = deploy.deb822((HERE / "repo/lab.pref").read_text(encoding="utf-8"), "lab.pref")
+        pin = next(s["pin"] for s in stanzas if s["package"] == "linux-firmware-dragonwing")
+        self.assertEqual(pin, "version /20260825/")
+        for version in ("20260825", "20260825-1", "1.0.0+20260825", "1.0.0+20260825ubuntu1", "20260825~bpo24.04.1"):
+            self.assertTrue(apt_version_pin_matches(pin[len("version "):], version), version)
+        for version in ("1.0.0+20251203", "1.0.0+20251203ubuntu1", "20260826"):
+            self.assertFalse(apt_version_pin_matches(pin[len("version "):], version), version)
+
+    def test_no_version_pin_relies_on_a_trailing_star_inside_a_glob(self):
+        for stanza in deploy.deb822((HERE / "repo/lab.pref").read_text(encoding="utf-8"), "lab.pref"):
+            if stanza["pin"].startswith("version "):
+                value = stanza["pin"][len("version "):]
+                self.assertTrue(value.startswith("/") and value.endswith("/"), stanza["package"])
 
 
 if __name__ == "__main__":

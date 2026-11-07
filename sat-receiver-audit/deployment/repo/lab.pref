@@ -50,9 +50,9 @@ Package: dream librtlsdr2 rtl-sdr sdrangel sdrangelsrv sdrpp openwebrx satdump g
 Pin: release o=srrx-mirror
 Pin-Priority: -1
 
-Explanation: STACK.md:892, linux-firmware-dragonwing 20260825 of qcom-ppa (r2 holds 1.0.0+20251203)
+Explanation: STACK.md:892, linux-firmware-dragonwing 20260825 of qcom-ppa and its rebuilds (r2 holds 1.0.0+20251203); an ERE, since apt drops the last '*' of a glob
 Package: linux-firmware-dragonwing
-Pin: version *20260825*
+Pin: version /20260825/
 Pin-Priority: -1
 
 Explanation: STACK.md:892, mesa 26 and later (receive-only-policy.json forbid_at_least 26)

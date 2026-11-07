@@ -1192,8 +1192,17 @@ def selftest(root, cmdline_sha, output):
             "--policy", str(POLICY), "--project", str(PROJECT), "--cmdline-sha256", cmdline_sha, "--output", str(output)]
     done = run(argv, check=False)
     report = load_json(output) if Path(output).is_file() else {}
+    # Finding items (policy identifiers, never dpkg text) only for the (row, rule) pairs tagged per item.
+    items, keys = {}, {(r, f) for r, f, _ in SELFTEST_ITEM_CLOSES_AT}
+    for row in report.get("checks", []):
+        for finding in row.get("findings", []) if row.get("status") in ("FAIL", "BLOCKED") else []:
+            if (row.get("id"), finding.get("rule")) in keys and "item" in finding:
+                items.setdefault(row["id"] + ":" + finding["rule"], set()).add(str(finding["item"]))
     return {"exit_code": done.returncode, "status": report.get("status"), "counts": report.get("counts"),
-            "fail_or_blocked_rows": bootchain.fail_or_blocked_rows(report), "report_sha256": sha256(output) if Path(output).is_file() else None}
+            "fail_or_blocked_rows": bootchain.fail_or_blocked_rows(report), "report_sha256": sha256(output) if Path(output).is_file() else None,
+            "policy_status": report.get("policy_status"),
+            "policy_blockers": sorted(b for b in report.get("blockers", []) if str(b).startswith("POLICY_")),
+            "tagged_items": {key: sorted(found) for key, found in sorted(items.items())}}
 
 
 # What closes each manifest blocker. "recipe": this recipe or CI must still fix it; "commissioning":
@@ -1219,8 +1228,43 @@ BLOCKER_CLOSES_AT = (  # (blocker text prefix, id, tag); the selftest blocker is
 )
 SELFTEST_BLOCKER = "selftest root A "
 SELFTEST_RULE_CLOSES_AT = {("RX-S2", "radio_off_binding_missing"): "commissioning",
-                           # embloader has its version_rule; any other present pin_only package waits for Phase 0
+                           # any present pin_only package without a passing version_rule waits for Phase 0
                            ("RX-01a", "pinned_package_present_unreviewed"): "bench:Phase0"}
+SELFTEST_ITEM_CLOSES_AT = {  # (row, rule, finding item): tag, ahead of the (row, rule) tag
+    # embloader's version is fixed by the boot recipe (recipe.json routes.B.embloader_version), not by
+    # Phase 0: a present embloader outside its version_rule allow_only 0.4 is recipe drift
+    ("RX-01a", "pinned_package_present_unreviewed", "embloader"): "recipe"}
+SELFTEST_VERDICTS = ("FAIL", "BLOCKED", "OFFLINE_CHECKS_PASS")  # selftest.py run_offline; exit 0 only on a pass
+
+
+def _selftest_closes_at(text, record):
+    """Tags of the selftest blocker: "recipe" when the run left no usable verdict (no report, an
+    unknown status or an exit code that disagrees with it), one per FAIL/BLOCKED (row, rule) or
+    tagged finding item, and one per POLICY_* blocker of the verdict."""
+    status = record["status"] if "status" in record else text[len(SELFTEST_BLOCKER):].split(":", 1)[0]
+    exit_code = 0 if status == "OFFLINE_CHECKS_PASS" else 2
+    no_report = (status not in SELFTEST_VERDICTS or ("report_sha256" in record and record["report_sha256"] is None)
+                 or record.get("exit_code", exit_code) != exit_code)
+    tags = [{"blocker": "selftest_root_a:no_report", "closes_at": "recipe"}] if no_report else []
+    rows, items = record.get("fail_or_blocked_rows") or {}, record.get("tagged_items") or {}
+    for row in sorted(rows):
+        for rule in rows[row] or ["?"]:
+            found = items.get(row + ":" + rule, [])
+            tagged = [i for i in found if (row, rule, i) in SELFTEST_ITEM_CLOSES_AT]
+            for item in tagged:
+                tags.append({"blocker": "selftest_root_a:" + row + ":" + rule + ":" + item,
+                             "closes_at": SELFTEST_ITEM_CLOSES_AT[(row, rule, item)]})
+            if not found or len(tagged) < len(found):
+                tags.append({"blocker": "selftest_root_a:" + row + ":" + rule,
+                             "closes_at": SELFTEST_RULE_CLOSES_AT.get((row, rule), "recipe")})
+    if not no_report and "policy_blockers" in record:
+        policy = record["policy_blockers"]  # POLICY_NOT_REVIEWED, or POLICY_REVIEW_RECORD_* of a REVIEWED policy
+    else:  # no verdict (or an older record): the status of the policy file the builder passed
+        policy = [] if load_json(POLICY).get("status") == "REVIEWED" else ["POLICY_NOT_REVIEWED"]
+    tags += [{"blocker": "selftest_root_a:" + str(b).lower(), "closes_at": "owner:policy-review"} for b in policy]
+    if not tags:  # a verdict with no row and no policy blocker is still listed: the recipe must decide
+        tags.append({"blocker": "selftest_root_a:verdict_" + str(status).lower(), "closes_at": "recipe"})
+    return tags
 
 
 def blocking_closes_at(blocking, selftest_report=None):
@@ -1229,13 +1273,7 @@ def blocking_closes_at(blocking, selftest_report=None):
     tags = []
     for text in blocking:
         if text.startswith(SELFTEST_BLOCKER):
-            rows = (selftest_report or {}).get("fail_or_blocked_rows") or {}
-            for row in sorted(rows):
-                for rule in rows[row] or ["?"]:
-                    tags.append({"blocker": "selftest_root_a:" + row + ":" + rule,
-                                 "closes_at": SELFTEST_RULE_CLOSES_AT.get((row, rule), "recipe")})
-            # DRAFT policy: the overall verdict stays BLOCKED (POLICY_NOT_REVIEWED) even without rows.
-            tags.append({"blocker": "selftest_root_a:policy_not_reviewed", "closes_at": "owner:policy-review"})
+            tags += _selftest_closes_at(text, selftest_report or {})
             continue
         found = next(((i, t) for prefix, i, t in BLOCKER_CLOSES_AT if text.startswith(prefix)), None)
         tags.append({"blocker": found[0] if found else text.split(":", 1)[0], "closes_at": found[1] if found else "recipe"})
@@ -1418,8 +1456,9 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         manifest["enabled_units"] = enable_units(root_a, recipe, route)
         manifest["not_enabled"] = recipe["not_enabled"]
         manifest["npu_payload"] = npu_payload(root_a)
-        if manifest["npu_payload"]["packages"]:
-            manifest["blocking"].append("npu_payload_present: " + ", ".join(manifest["npu_payload"]["packages"])
+        if manifest["npu_payload"]["status"] != "absent":  # a package or a loose file: either one is a payload
+            manifest["blocking"].append("npu_payload_present: " + ", ".join(manifest["npu_payload"]["packages"]
+                                                                             + manifest["npu_payload"]["files"])
                                         + " (the golden image never carries the QNN SDK or QAIRT)")
         manifest["mcu_firmware"] = mcu_firmware(root_a)
         if not manifest["mcu_firmware"]["matches_repo"]:
