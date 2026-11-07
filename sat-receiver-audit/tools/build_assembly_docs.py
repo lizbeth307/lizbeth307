@@ -1252,6 +1252,20 @@ def render_labels_svg(model, h):
             + "\n".join(out) + "\n</svg>\n")
 
 
+# Physical boards of the bare-board check (build/19 §2, build/20 B0): PWR-A and PWR-B are one harness unit PWR but two
+# boards, powered up in stages (build/19 §4 п. 1, W2 DOCS-PCB).
+BRINGUP_BOARDS = ("PWR_A", "PWR_B", "RF", "CTRL")
+
+
+def board_label(board):
+    return board.replace("_", "-")
+
+
+def physical_board(model, ref):
+    """Board a ref is soldered to: PHYSICAL_BOARD of its components.csv domain, else its unit (modules, inserts)."""
+    return D.PHYSICAL_BOARD.get(model.partition.get(ref, {}).get("board_candidate", ""), model.unit_of[ref])
+
+
 def tp_rows(model):
     rows = []
     for comp in sorted((c for c in model.components if c["kind"] == "testpoint"), key=lambda c: ref_key(c["ref"])):
@@ -1259,7 +1273,7 @@ def tp_rows(model):
         if net not in D.TP_EXPECT:
             fail(f"test point {comp['ref']} on {net} has no expected values in tools/assembly_data.py")
         expect, en, src = D.TP_EXPECT[net]
-        board = model.unit_of[comp["ref"]]
+        board = board_label(physical_board(model, comp["ref"]))
         rows.append((comp["ref"], board, net, en or "—") + tuple(expect.get(s[0], "—") for s in D.STATES[1:]) + (src,))
     return rows
 
@@ -1267,7 +1281,7 @@ def tp_rows(model):
 def board_rails(model, board):
     rails = []
     for net in sorted(model.nets):
-        pins = model.nets[net].get(board, [])
+        pins = [p for unit_pins in model.nets[net].values() for p in unit_pins if physical_board(model, p[0]) == board]
         if net in ("GND",) or not pins:
             continue
         if net in D.NET_CURRENT or any(p[2] == "power_out" for p in pins):
@@ -1285,23 +1299,31 @@ def render_bringup(model, h):
     lines.append("\n## 2. Гола плата: опір шин до GND (стан B0)\n")
     lines.append(f"До і після оплавлення, DMM у режимі опору, щуп «−» на GND. Записати значення; менше {D.SHORT_LIMIT_OHM} Ω — зупинитися і "
                  "шукати коротке (критерій asm). Значення другої плати порівнюються з першою.\n\n")
-    for board in ("PWR", "RF", "CTRL"):
+    for board in BRINGUP_BOARDS:
         rails = board_rails(model, board)
-        lines.append(f"**{board}:** " + ", ".join(rails) + "\n\n")
+        lines.append(f"**{board_label(board)}:** " + ", ".join(rails) + "\n\n")
+    lines.append("Шина, що переходить між PWR-A і PWR-B через стик B2B, стоїть в обох списках: кожну голу плату міряють окремо.\n\n")
     lines.append("\n## 3. Контрольні точки за станами\n")
     header = ["TP", "плата", "мережа", "EN для S4"] + [s[0] for s in D.STATES[1:]] + ["джерело"]
     lines.append(table(header, tp_rows(model)))
     lines.append("\n## 4. Порядок запуску кожної плати\n")
+    pwr_b_tps = ", ".join(r[0] for r in tp_rows(model) if r[1] == board_label("PWR_B"))
     lines.append(
-        "1. **PWR** (21 крок E2: гайки PEM у пластині, U107 і U108 впаяно в PWR, INA228 і #2813 під'єднані джгутами S06–S07). "
-        "Живлення — лише стендовим проводом у вхідний роз'єм S05 на PWR: розетка Mini-Fit Jr. 5557 (клема 0039000060), 18 AWG, "
-        "≤0.5 м, запобіжник 7.5 A у розриві, бо F101 стоїть у паку; пак від'єднано. TP104 — лише щуп вимірювання, не точка живлення. "
-        "Ступінь L0 → S0: TP104, TP106, TP105, TP108; потім кнопка → S1 (ступінь L1): TP201, TP205; TP101/TP102 — лише сервісно з 10k до 3.3 V.\n"
+        "1. **PWR-A, потім PWR-A + PWR-B** (21 крок E2: гайки PEM у пластині, U107 і U108 впаяно в PWR-A, INA228 і #2813 під'єднані "
+        "джгутами S06–S07). Живлення — лише стендовим проводом у вхідний роз'єм S05 (J105) на PWR-A: розетка Mini-Fit Jr. 5557 "
+        "(клема 0039000060), 18 AWG, ≤0.5 м, запобіжник 7.5 A у розриві, бо F101 стоїть у паку; пак від'єднано. TP104 — лише щуп "
+        "вимірювання, не точка живлення. (а) **PWR-A сама**: PWR-B ще не встановлено, стик B2B вільний (контактів гнізда QSH-060 з кроком "
+        "0.5 мм щупом не торкатися); EN-входи PWR-A тримають власні 100k на PWR-A. Ступінь L0 → S0: TP104, TP106, TP105, TP108; потім "
+        "кнопка → S1 (ступінь L1): TP201, TP205; TP101/TP102 — лише сервісно з 10k до 3.3 V. (б) **PWR-A + PWR-B**: знеструмити "
+        "(стендовий провід від'єднати), встановити PWR-B на стик B2B (21 крок E2), потім знову L0 → S0 і кнопка → S1 (L1): TP PWR-A — "
+        f"як у (а); TP PWR-B ({pwr_b_tps}) — за §3 у стані S1 (CTRL ще не під'єднано, усі EN низькі). Струм L1 записати окремо для (а) "
+        "і (б).\n"
         "2. **Q6A на J21** (21 крок E3): ступінь L2 → S2.\n"
-        "3. **PWR + CTRL + Q6A** (21 крок E6, після S01 і S02): у S2 усі EN низькі (100k). EN-тести — з Q6A по I2C2 (i2cset до MCP23017 "
+        "3. **PWR-A + PWR-B + CTRL + Q6A** (21 крок E6, після S01 і S02): у S2 усі EN низькі (100k). EN-тести — з Q6A по I2C2 (i2cset до MCP23017 "
         "#1 0x20, #3 0x22, #4 0x23 на CTRL за картою E3; labd зупинено): по одному EN=1 → стан S4 відповідного рядка §3; DISP12 "
         "(GP16 Pico) → S3 зі ступенем L3; кнопки й енкодери — через Pico.\n"
-        "4. **RF** (21 крок E4) — живлення лише через S03/S04 від PWR; HMC7992 — порядок GND → VDD → керування (08 крок 0); без генератора на портах.\n"
+        "4. **RF** (21 крок E4) — живлення лише через S04 від PWR-B (зміщення і LAB5_RLY котушок реле) і S03 від CTRL (керування); "
+        "HMC7992 — порядок GND → VDD → керування (08 крок 0); без генератора на портах.\n"
         "5. Після кожного кроку — бланк build/20.\n")
     lines.append("\n## 5. Ступені обмеження струму стенда\n")
     lines.append(table(["ступінь", "конфігурація", "обмеження, A", "очікування (модель)", "джерело"], D.STAGES))
@@ -1364,9 +1386,9 @@ def v21_row(rid, proc, threshold):
 def form_rows(model):
     contract = json.loads((model.base / "design/readiness-contract.json").read_text(encoding="utf-8"))
     rows = []
-    for board in ("PWR", "RF", "CTRL"):
+    for board in BRINGUP_BOARDS:
         for rail in board_rails(model, board):
-            rows.append(("B0", f"{board}/{rail}", f"опір {rail} до GND, гола плата", f"≥{D.SHORT_LIMIT_OHM} Ω; записати до і після оплавлення"))
+            rows.append(("B0", f"{board_label(board)}/{rail}", f"опір {rail} до GND, гола плата", f"≥{D.SHORT_LIMIT_OHM} Ω; записати до і після оплавлення"))
     for tp in tp_rows(model):
         for i, state in enumerate(D.STATES[1:]):
             expect = tp[4 + i]
@@ -1386,7 +1408,7 @@ def render_form(model):
              "Друкувати з цього файлу (pandoc → HTML/PDF) або з CSV [20-forma-stendu.csv](20-forma-stendu.csv). Поля результату порожні: їх заповнює стенд. "
              "PASS заздалегідь не вписаний; ворота з `design/readiness-contract.json` лишаються OPEN, доки доказ не записано за 09 §0 п. 8.\n",
              "\n## 1. Екземпляр\n",
-             table(["поле", "значення"], [("серійний номер пристрою", ""), ("ревізії плат PWR / RF / CTRL", ""), ("Q6A S/N, UFS", ""),
+             table(["поле", "значення"], [("серійний номер пристрою", ""), ("ревізії плат PWR-A / PWR-B / RF / CTRL", ""), ("Q6A S/N, UFS", ""),
                                           ("Pico / RP2040-Zero ID", ""), ("дата, виконавець", ""), ("температура / вологість", "")]),
              "\n## 2. Прилади\n",
              table(["прилад", "модель", "S/N або ID", "дата калібрування"], [("DMM", "", "", ""), ("лабораторне джерело", "", "", ""),
