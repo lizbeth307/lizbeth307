@@ -27,7 +27,7 @@
         "E1-01": 180,
         "E1-06": 110
       },
-      "fill": 0.683,
+      "fill": 0.687,
       "drawing": {
         "fallback_labels": 0,
         "global_labels": 81,
@@ -210,7 +210,7 @@
         "E3-08": 110,
         "N-E3-02": 110
       },
-      "fill": 0.71,
+      "fill": 0.716,
       "drawing": {
         "fallback_labels": 0,
         "global_labels": 98,
@@ -412,11 +412,12 @@
       "id": "E1-01",
       "description": "Ревізія COUT і місця NTC/VSET/ISET/ISET_MODE/CELLSET не підтверджені офіційною схемою. Вікно 0…45 °C та inhibit не перевірені.",
       "blocking": true,
-      "resolve": "До модифікацій отримати ревізійну схему або фото обох боків з continuity до IC. Стенд: NTC 0/45 °C, обрив/КЗ, зупинка charge і reverse boost, 2 h при 3 A, 20 PD cycles, зовнішній VBUS=0 V, startup 5→20 V, CV кожної комірки. При провалі цей модуль не використовувати; ISDT лише після E1-02.",
+      "resolve": "До модифікацій отримати ревізійну схему або фото обох боків з continuity до IC. Стенд: NTC 0/45 °C, обрив/КЗ, зупинка charge і reverse boost, 2 h при 3 A, 20 PD cycles, зовнішній VBUS=0 V, startup 5→20 V, CV кожної комірки. При провалі цей модуль не використовувати; ISDT лише після E1-02. TH102 Sensata 67F070 (build/15 «IP2368»): гарячим повітрям на найгарячіший MOSFET IP2368 — замикається при 65…75 °C, і заряд зупиняється (E1_CHG_INHIBIT_LOW на GND) не пізніше 75 °C; записати температуру повернення й диференціал (даташит Sensata 6700 с. 4: MIN DIFFERENTIAL 4 °C, MIN RESET 50 °C) і частоту повторних пусків заряду; опір замкненого контакту ≤50 mΩ (даташит с. 2, «50 milliohms max»).",
       "stack": "§2.7 (IP2368); §5.1; §8 (IP2368); §8.1 (IP2368, матриця DRP)",
       "refs": [
         "U110",
-        "TH101"
+        "TH101",
+        "TH102"
       ],
       "sheet": "E1"
     },
@@ -637,7 +638,7 @@
       "id": "E3-08",
       "description": "Pico watchdog, MicroPython GPIO/UART adapter and host handshake implemented 20.10.2026 and tested on the host. Actual GPIO timing, reset levels, WDT/brownout behavior and Linux/serial fault recovery have not been qualified on the device.",
       "blocking": true,
-      "resolve": "Run the implemented firmware with the actual accepted Pico/Q6A assembly: scope MCP RESET assertion/release, safe output image including CHG_INHIBIT=1 after initialization, 100ms guard, 750ms heartbeat deadline plus measured latency, explicit fresh-session recovery, Linux kill/hang, UART loss/corruption, WDT/brownout and GPIO current/backfeed. Complete Pico power loss with Q6A alive remains outside Q306 coverage; no software test closes this boundary. GNSS branch (R-E3-15): measure the LC76G board supply current on E3_GNSS5V (cold start, acquisition, active antenna) and set R396 to 1.5-2x the measured current (start 162k, 144-192 mA); confirm U315 follows 3V3_Q6A (off with Q6A off) and record UART6_RX/TX levels and LC76G VCC with LAB5 absent while Q6A runs (no back-feed through RXD above VCC + 0.3 V).",
+      "resolve": "Run the implemented firmware with the actual accepted Pico/Q6A assembly: scope MCP RESET assertion/release, safe output image including CHG_INHIBIT=1 after initialization, 100ms guard, 750ms heartbeat deadline plus measured latency, explicit fresh-session recovery, Linux kill/hang, UART loss/corruption, WDT/brownout and GPIO current/backfeed. Complete Pico power loss with Q6A alive remains outside Q306 coverage; no software test closes this boundary. GNSS branch (R-E3-15): measure the LC76G board supply current on E3_GNSS5V (cold start, acquisition, active antenna) and set R396 to 1.5-2x the measured current (start 162k, 144-192 mA); confirm U315 follows 3V3_Q6A (off with Q6A off) and record UART6_RX/TX levels and LC76G VCC with LAB5 absent while Q6A runs and with U315 latched off after a short on E3_GNSS5V (S25) while Q6A runs (no back-feed through RXD above VCC + 0.3 V in either state); record which action clears the latch (3V3_Q6A or LAB5 power cycle; whether a Q6A software reboot drops 3V3_Q6A).",
       "stack": "§5.2; §5.4",
       "refs": [
         "Q306",
@@ -1057,9 +1058,9 @@
     ]
   },
   "source_sha256": {
-    "E1.json": "39da4cd1ecdfcad37a4cf5b6ee309846b4aa73243f2c8e7d8f07083ab1824a90",
+    "E1.json": "79e10a679741ad40010e414576c306f14deecd602b48636dbbe06c1552de555d",
     "E2.json": "cc0580f8c8f896e6d1cca1e9364f64d69cd1d461d94593b33a6668f34f7a4935",
-    "E3.json": "0ae9955a91c906ae6fa7e0cc51a212922ffe791df3d9bd5ccf9381cca55c1e7d",
+    "E3.json": "f7a0ddd69f6b9f9979071528612ebd9173f0e21ded7bf426de412d298971cdbe",
     "E4.json": "8012086f2be1a33677c53661e01d8ca8f657fd3f10964c115b4893336863dddc",
     "E5.json": "48c61fa1a77ab35e5d930f377ac2ef473abdd8f6e02da8417e352f168ce562e5"
   }

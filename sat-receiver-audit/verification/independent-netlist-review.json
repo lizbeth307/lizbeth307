@@ -2,13 +2,13 @@
   "passed": true,
   "methodology": "Independent stdlib JSON and XML parsers; no generator/validator imports.",
   "graph_sha256": {
-    "E1.json": "39da4cd1ecdfcad37a4cf5b6ee309846b4aa73243f2c8e7d8f07083ab1824a90",
+    "E1.json": "79e10a679741ad40010e414576c306f14deecd602b48636dbbe06c1552de555d",
     "E2.json": "cc0580f8c8f896e6d1cca1e9364f64d69cd1d461d94593b33a6668f34f7a4935",
-    "E3.json": "0ae9955a91c906ae6fa7e0cc51a212922ffe791df3d9bd5ccf9381cca55c1e7d",
+    "E3.json": "f7a0ddd69f6b9f9979071528612ebd9173f0e21ded7bf426de412d298971cdbe",
     "E4.json": "8012086f2be1a33677c53661e01d8ca8f657fd3f10964c115b4893336863dddc",
     "E5.json": "48c61fa1a77ab35e5d930f377ac2ef473abdd8f6e02da8417e352f168ce562e5"
   },
-  "netlist_sha256": "f112e459f95fb8eddfff80bb5717fd180e95bba9d27efbb6639faae63d83bb26",
+  "netlist_sha256": "1539c9147c2efbef3c78e66bc46680cd0731c7af13158b241ca7b047814adf53",
   "counts": {
     "hardware_components": 794,
     "hardware_pin_declarations": 2438,
