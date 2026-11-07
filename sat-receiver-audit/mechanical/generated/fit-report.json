@@ -3,7 +3,7 @@
   "status": "MODEL FIT ONLY: envelopes and datasheet dimensions; no physical part was fitted. Hardware gates stay OPEN.",
   "generator": {
     "version": "1.0.0",
-    "params_sha256": "813314e1d5362b905acd7bb6052f86dcca89f3491b8fe2ffccadaef6d0cb143b",
+    "params_sha256": "dd03065dca42386f2d2799ecd6de12721f9db4d3bf78d4c8c807717b43918ace",
     "pcb_components_sha256": "878b83338d5bcc6c1a133b038580c6a40a9775a6ec0aab2b385f143562a36662"
   },
   "envelope": {
@@ -398,13 +398,13 @@
     },
     {
       "id": "R-PLATE-SLOT-FILL",
-      "rule": "harness bundle through each plate slot (wire areas / 0.6 + ribbon stack) inside the opening left by the edge trim (edging essentra_mgs_2_01 base 1.397 per edge, tape 0.1); ribbon, stack and largest wire fit the inner size; edging legs clear",
+      "rule": "harness bundle through each plate slot (wire areas / 0.6 + ribbon stack) inside the opening left by the edge trim (edging essentra_mgs_2_01 base 1.397 per edge, tape 0.1); ribbon, stack and largest wire fit the inner size; loose wires pack as round wires beside / on the ribbon; edging legs (2.54 onto each face) clear",
       "source": "mechanical.json plate.slots / slot_trim; build/16-dzhgut.csv; parts.json essentra_mgs_2_01 (Essentra catalogue p.276 read 2026-11-07), hookup_wire_ptfe and ribbon_3m_3365_40 (SRC-1 rows read 2026-11-07)",
       "value_mm": {
         "SL1": {
           "opening_mm": [
             27.5,
-            3.8
+            4.4
           ],
           "trim": {
             "bottom": "grommet",
@@ -414,9 +414,9 @@
           },
           "inner_mm": [
             27.3,
-            2.3
+            2.9
           ],
-          "inner_mm2": 62.9,
+          "inner_mm2": 79.3,
           "wires": 30,
           "loose_wires": 3,
           "wires_per_awg": {
@@ -431,8 +431,22 @@
             "conductors_in_build16": 27
           },
           "bundle_need_mm2": 49.9,
-          "fill_of_inner": 0.79,
+          "fill_of_inner": 0.63,
           "largest_wire_mm": 1.09,
+          "packing": {
+            "regions_mm": [
+              [
+                1.9,
+                2.9
+              ],
+              [
+                25.4,
+                1.12
+              ]
+            ],
+            "method": "round wires, next-fit decreasing shelves, no nesting (beside the ribbon, then on it)",
+            "unplaced": 0
+          },
           "legs_clear": "yes",
           "result": "PASS (model)"
         },
@@ -465,6 +479,16 @@
           "bundle_need_mm2": 112.2,
           "fill_of_inner": 0.94,
           "largest_wire_mm": 1.88,
+          "packing": {
+            "regions_mm": [
+              [
+                17.8,
+                6.7
+              ]
+            ],
+            "method": "round wires, next-fit decreasing shelves, no nesting",
+            "unplaced": 0
+          },
           "legs_clear": "yes",
           "result": "PASS (model)"
         },
@@ -476,14 +500,14 @@
           "trim": {
             "bottom": "tape",
             "top": "tape",
-            "left": "grommet",
+            "left": "tape",
             "right": "grommet"
           },
           "inner_mm": [
-            2.71,
+            4.0,
             11.3
           ],
-          "inner_mm2": 30.6,
+          "inner_mm2": 45.2,
           "wires": 17,
           "loose_wires": 17,
           "wires_per_awg": {
@@ -494,14 +518,24 @@
           "wire_area_mm2": 16.2,
           "ribbon": null,
           "bundle_need_mm2": 27.0,
-          "fill_of_inner": 0.88,
+          "fill_of_inner": 0.6,
           "largest_wire_mm": 1.57,
+          "packing": {
+            "regions_mm": [
+              [
+                4.0,
+                11.3
+              ]
+            ],
+            "method": "round wires, next-fit decreasing shelves, no nesting",
+            "unplaced": 0
+          },
           "legs_clear": "yes",
           "result": "PASS (model)"
         }
       },
       "limit_mm": "bundle inside the trimmed opening",
-      "result": "PASS (model): SL1 49.9 <= 62.9 mm2 (0.79 of the inner opening 27.3 x 2.3); SL2 112.2 <= 119.3 mm2 (0.94 of the inner opening 17.8 x 6.7); SL3 27 <= 30.6 mm2 (0.88 of the inner opening 2.71 x 11.3); edging legs clear of the envelopes, the structure and the plate-hole footprints"
+      "result": "PASS (model): SL1 49.9 <= 79.3 mm2 (0.63 of the inner opening 27.3 x 2.9); SL2 112.2 <= 119.3 mm2 (0.94 of the inner opening 17.8 x 6.7); SL3 27 <= 45.2 mm2 (0.6 of the inner opening 4 x 11.3); loose wires pack beside / on the ribbon; edging legs clear of the envelopes, the structure and the plate-hole footprints"
     },
     {
       "id": "R-PWR-MODULES",
@@ -579,11 +613,11 @@
       "rule": "PPS path Q6A J20.7 -> LC76G: harness length <= 200 mm (STACK 5.2 'UART7/PPS wiring <= 20 cm'; E3 J301 note)",
       "value_mm": {
         "via_segments_mm": 301,
-        "branch_mm": 159,
-        "branch_max_mm": 183
+        "branch_mm": 158,
+        "branch_max_mm": 182
       },
       "limit_mm": 200.0,
-      "result": "PASS (model): S01+S25 = 301 mm > 200: decision (build/15 W2 MECH-1) — PPS + UART6 + GND branch off the S01 ribbon at the Q6A end and run directly to the LC76G in the rear layer (harness only, E3 nets unchanged; build/15 W2 MECH-1); branch PPS = 159 mm; worst case 183 mm with the bounded provisional ends (+23.1 mm: J20 pin-1 orientation not read (no pin-1 mark on J20 in the Radxa placement map V1.21, read 2026-11-07): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch; P1 (MX1.25) position read on the Waveshare outline drawing (parts.json lc76g), its height inside the 13.1 mm reserve is not (module height not read): end at mid-height, +/-6.6 mm) <= 200",
+      "result": "PASS (model): S01+S25 = 301 mm > 200: decision (build/15 W2 MECH-1) — PPS + UART6 + GND branch off the S01 ribbon at the Q6A end and run directly to the LC76G in the rear layer (harness only, E3 nets unchanged; build/15 W2 MECH-1); branch PPS = 158 mm; worst case 182 mm with the bounded provisional ends (+23.1 mm: J20 pin-1 orientation not read (no pin-1 mark on J20 in the Radxa placement map V1.21, read 2026-11-07): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch; P1 (MX1.25) position read on the Waveshare outline drawing (parts.json lc76g), its height inside the 13.1 mm reserve is not (module height not read): end at mid-height, +/-6.6 mm) <= 200",
       "source": "mechanical.json harness_routes; generated/harness-routes.json"
     },
     {
@@ -3069,21 +3103,21 @@
       "via_segments_provisional": true,
       "decision": "PPS + UART6 + GND branch off the S01 ribbon at the Q6A end and run directly to the LC76G in the rear layer (harness only, E3 nets unchanged; build/15 W2 MECH-1)",
       "branch": "PPS",
-      "branch_mm": 159,
+      "branch_mm": 158,
       "branch_provisional": true,
       "branch_provisional_ends": [
         "J20 pin-1 orientation not read (no pin-1 mark on J20 in the Radxa placement map V1.21, read 2026-11-07): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch",
         "P1 (MX1.25) position read on the Waveshare outline drawing (parts.json lc76g), its height inside the 13.1 mm reserve is not (module height not read): end at mid-height, +/-6.6 mm"
       ],
-      "value_mm": 159,
+      "value_mm": 158,
       "branch_bound_mm": 23.1,
-      "branch_max_mm": 183
+      "branch_max_mm": 182
     },
     "segments": {
       "S01": {
         "kind": "harness",
         "length_mm": 106,
-        "path_mm": 69.6,
+        "path_mm": 69.5,
         "bends": 3,
         "bundle_od_mm": 2.54,
         "bend_allowance_mm": 6.0,
@@ -3174,8 +3208,8 @@
       },
       "S11": {
         "kind": "harness",
-        "length_mm": 228,
-        "path_mm": 178.6,
+        "length_mm": 227,
+        "path_mm": 177.6,
         "bends": 6,
         "bundle_od_mm": 4.05,
         "bend_allowance_mm": 19.1,
@@ -3254,8 +3288,8 @@
       },
       "S18": {
         "kind": "harness",
-        "length_mm": 162,
-        "path_mm": 122.1,
+        "length_mm": 161,
+        "path_mm": 121.9,
         "bends": 4,
         "bundle_od_mm": 2.87,
         "bend_allowance_mm": 9.0,
@@ -3314,8 +3348,8 @@
       },
       "S23": {
         "kind": "harness",
-        "length_mm": 234,
-        "path_mm": 192.0,
+        "length_mm": 233,
+        "path_mm": 191.0,
         "bends": 7,
         "bundle_od_mm": 2.15,
         "bend_allowance_mm": 11.8,
@@ -3414,8 +3448,8 @@
       },
       "S32": {
         "kind": "harness",
-        "length_mm": 210,
-        "path_mm": 165.9,
+        "length_mm": 209,
+        "path_mm": 164.9,
         "bends": 6,
         "bundle_od_mm": 2.81,
         "bend_allowance_mm": 13.2,
@@ -3431,8 +3465,8 @@
       },
       "S34": {
         "kind": "harness",
-        "length_mm": 194,
-        "path_mm": 144.6,
+        "length_mm": 193,
+        "path_mm": 143.6,
         "bends": 7,
         "bundle_od_mm": 3.45,
         "bend_allowance_mm": 19.0,
@@ -3443,8 +3477,8 @@
       },
       "S35": {
         "kind": "harness",
-        "length_mm": 159,
-        "path_mm": 122.7,
+        "length_mm": 158,
+        "path_mm": 122.1,
         "bends": 4,
         "bundle_od_mm": 1.75,
         "bend_allowance_mm": 5.5,
@@ -3514,8 +3548,8 @@
     "branches": {
       "PPS": {
         "kind": "harness",
-        "length_mm": 159,
-        "path_mm": 119.3,
+        "length_mm": 158,
+        "path_mm": 118.7,
         "bends": 3,
         "bundle_od_mm": 3.87,
         "bend_allowance_mm": 9.1,
@@ -4333,7 +4367,7 @@
       "stl_triangles": 2846
     },
     "plate_al": {
-      "cm3": 56.74,
+      "cm3": 56.71,
       "printed": false,
       "solids": 1,
       "bbox_mm": [
