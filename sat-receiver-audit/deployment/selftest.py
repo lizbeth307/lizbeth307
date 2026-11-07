@@ -2157,14 +2157,14 @@ def _lab_shell_capabilities(ctx, r, shell, operations, presets):
     return caps, units, system + user
 
 
-def _lab_shell_unknown(shell, leaf, presets):
+def _lab_shell_unknown(shell, leaf, presets, checker_ops):
     """Names of the leaf that the checker's own tree does not build and PLANNED does not list: a typo
     or a forbidden operation is a FAIL, never a quietly hidden leaf."""
     software = deploy.PROJECT / "software"
     backend, needs, unknown = leaf["backend"], leaf["requires"], []
     kind, name = backend["kind"], backend["name"]
     if not name.startswith(shell.PLANNED_PREFIX):
-        known = (name in _labd_operations() if kind == "labd_op"
+        known = (name in checker_ops if kind == "labd_op"
                  else (software / "srrx" / (name + ".py")).is_file() if kind == "page_only"
                  else (software / "systemd" / name).is_file() if kind == "engine_unit"
                  else presets is None or name in presets)
@@ -2217,9 +2217,10 @@ def _lab_shell_menu(ctx, r, operations):
     decoders = _target_module(ctx, r, "decoder_policy")
     presets = decoders.availability() if decoders is not None else None
     caps, units, dirs = _lab_shell_capabilities(ctx, r, shell, operations, presets)
+    checker_ops = _labd_operations()  # parsed once: the checker's engine.py, whatever the target holds
     for leaf in shell.LEAVES:
         item = leaf["id"]
-        for what in _lab_shell_unknown(shell, leaf, presets):
+        for what in _lab_shell_unknown(shell, leaf, presets, checker_ops):
             r.fail(_LAB_SHELL, "lab_shell_backend_unknown" if what == "backend" else "lab_shell_requirement_unknown", item)
         if leaf["needs_lime"] and not leaf["fallback_text"]:
             r.fail(_LAB_SHELL, "no_lime_backend_undeclared", item)
