@@ -1245,5 +1245,53 @@ class SdrppRecipeTests(unittest.TestCase):
                 self.assertIn("README", findings[1])
 
 
+class SdrppLoopbackPatchTests(unittest.TestCase):
+    """Lab patch 0003: rigctl_server and network_source use 127.0.0.1 only (review W2 SW-SDRPP F1)."""
+    PATCH = "patches/0003-lab-loopback-only.patch"
+
+    def setUp(self):
+        self.recipe = recipe("sdrpp")
+        self.entry = next(e for e in self.recipe["source"]["patches"] if e["file"] == self.PATCH)
+        self.text = (HERE / "recipes/sdrpp" / self.PATCH).read_text(encoding="utf-8")
+        self.added = [line[1:] for line in self.text.splitlines() if line.startswith("+") and not line.startswith("+++")]
+        self.removed = [line[1:] for line in self.text.splitlines() if line.startswith("-") and not line.startswith("---")]
+
+    def test_patch_fixes_both_hosts_to_the_loopback_and_drops_the_host_fields(self):
+        self.assertEqual(self.entry["kind"], "lab")
+        self.assertEqual(set(self.entry["targets"]), {"misc_modules/rigctl_server/src/main.cpp", "source_modules/network_source/src/main.cpp"})
+        added, removed = "\n".join(self.added), "\n".join(self.removed)
+        self.assertEqual(added.count('#define SRRX_LAB_LOOPBACK "127.0.0.1"'), 2)
+        for token in ("##_rigctl_srv_host_", "##network_source_host_", 'config.conf[name]["host"] = "localhost";',
+                      "net::listen(hostname, port)", "net::connect(_this->hostname, _this->port)",
+                      'net::openudp("0.0.0.0", _this->port, _this->hostname, _this->port, true)'):
+            self.assertIn(token, removed)
+            self.assertNotIn(token, added)
+        self.assertIn("net::listen(SRRX_LAB_LOOPBACK, port)", added)
+        self.assertIn("net::connect(SRRX_LAB_LOOPBACK, _this->port)", added)
+        # net::openudp(rhost, rport, lhost, lport, broadcast): the local bind host is the third argument.
+        self.assertIn('net::openudp("0.0.0.0", _this->port, SRRX_LAB_LOOPBACK, _this->port, true)', added)
+        self.assertFalse([line for line in self.added if "hostname" in line or '["host"]' in line])
+
+    def test_build_checks_and_runtime_check_assert_the_patch_in_the_built_modules(self):
+        module = sdrpp_runtime_check()
+        forbidden = {c["file"]: c["substrings"] for c in self.recipe["checks"] if c["kind"] == "forbid_strings"}
+        for name, tokens in module.LOOPBACK.items():
+            self.assertIn(name, SDRPP_MODULES)
+            self.assertEqual(set(forbidden["usr/lib/sdrpp/plugins/%s.so" % name]), {t.decode() for t in tokens["forbidden"]})
+            for marker in tokens["required"]:  # the log line the patch adds, as a literal that reaches the module
+                self.assertTrue([line for line in self.added if "flog::info(" in line and marker.decode().replace("127.0.0.1", '" SRRX_LAB_LOOPBACK "') in line], marker)
+        with tempfile.TemporaryDirectory(prefix="srrx-sdrpp-lb-") as temporary:
+            for name, tokens in module.LOOPBACK.items():
+                (Path(temporary) / (name + ".so")).write_bytes(b"\x7fELF\0" + tokens["required"][0] + b", port {}\0")
+            with patch.object(module, "PLUGINS", temporary):
+                findings = []
+                self.assertEqual(set(module.loopback_modules(findings).values()), {"loopback-only"})
+                self.assertEqual(findings, [])
+                (Path(temporary) / "network_source.so").write_bytes(b"\x7fELF\0##network_source_host_\0")
+                report = module.loopback_modules(findings)
+                self.assertEqual(report["network_source"], "configurable")
+                self.assertEqual(len(findings), 2, findings)
+
+
 if __name__ == "__main__":
     unittest.main()
