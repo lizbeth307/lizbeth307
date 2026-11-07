@@ -395,8 +395,9 @@ Widgets змінюються тільки у GUI thread; worker передає �
 (`session_files()`), а `deploy.py stage` кладе їх у rootfs для кожного режиму GNSS. Пакети greetd,
 labwc, kanshi і cage та greetd як display-manager додає образ (лінія IMG). Поки Lab Shell не має
 коду, клієнтом сеансу є ця консоль (`srrx-menu.service`, `-m srrx.hmi`). Поведінку greetd 0.9.0,
-labwc 0.7.1, kanshi 1.5.1, cage 0.1.5 і systemd v255 прочитано з їхніх джерел (пакети noble,
-SHA-256 збігаються з .dsc) 07.11.2026; посилання на файли джерел — у коментарях `system_files.py`.
+labwc 0.7.1, kanshi 1.5.1 і cage 0.1.5 прочитано з вихідних пакетів noble (SHA-256 архівів
+збігаються з .dsc), а systemd v255 — з його upstream-тега; усі джерела перелічено наприкінці
+розділу, файли й функції — у коментарях `system_files.py` і скриптів `deployment/system/session`.
 
 | Файл у rootfs | Призначення |
 |---|---|
@@ -419,21 +420,45 @@ greetd запускає `/bin/sh -c "exec /usr/lib/srrx/lab-session"` від `sr
    недоступний), імпортує `WAYLAND_DISPLAY` у менеджер користувача і, якщо `srrx-menu.service`
    увімкнено, виконує `systemctl --user start --wait srrx-menu.service`. Коли консоль зупиняється,
    автозапуск завершує свій labwc (`labwc --exit`, лише якщо `LABWC_PID` ще належить labwc).
+   Якщо менеджер користувача не відповідає (`is-enabled` не друкує жодного стану), автозапуск теж
+   завершує labwc: це збій сеансу, а не «консоль не ввімкнено».
 2. **safe** — після 3 збоїв за 600 с: `cage -d -- /usr/lib/srrx/lab-session client`, тобто лише
    консоль (той самий user unit з тією самою пісочницею) без labwc, kanshi та інших вікон; режим
-   екрана — бажаний режим EDID (DTD1, 59.986 Hz).
+   екрана — бажаний режим EDID (DTD1, 59.986 Hz). Якщо консолі немає (unit не ввімкнено або його
+   старт пропущено без venv), клієнт виходить зі статусом 69, cage 0.1.5 повертає його, і
+   lab-session одразу, без лічильника, переходить у text: чорний cage без клієнта нічого б не показав.
 3. **text** — ще 3 збої за 600 с: текст стану на VT 1 (`python3 -m srrx.cli … status`, тобто
-   `labctl status`), оновлення кожні 30 с, до перезавантаження. labd працює далі.
+   `labctl status`), оновлення кожні 30 с, до перезавантаження. labd працює далі. Перший рядок
+   називає причину (`/run/srrx-session/reason`).
 
 Режим і моменти збоїв (секунди `/proc/uptime`, тож крок годинника від GNSS чи RTC їх не зсуває)
 лежать у `/run/srrx-session`: перезапуск greetd їх зберігає, перезавантаження очищає. Без цього
 каталогу лічильник працює в `$XDG_RUNTIME_DIR/srrx-session`, але лише до перезапуску greetd.
-SIGTERM (зупинка greetd, вимкнення) завершує обгортку.
 
-`srrx-menu.service` має `ConditionPathExists=/opt/srrx/venv/bin/python3` (без venv старт
-пропускається, а не падає) і `Restart=no` (перезапуск робить lab-session). Пресет користувача
-лишається `disable`: консоль стартує лише після того, як адміністратор увімкне unit після збирання
-й аудиту venv; до того labwc працює без консолі.
+Зупинка й перезапуск greetd. greetd 0.9.0 надсилає SIGTERM лише обгортці (sub_task,
+`session/interface.rs`), а вихід worker-а знімає VT, і SIGHUP від цього labwc 0.7.1 сприймає як
+«перечитати конфігурацію» (`src/server.c`). Тому кожен етап (labwc, cage, пауза текстового режиму)
+працює у фоні, а SIGTERM, SIGHUP чи SIGINT обгортка передає етапу як SIGTERM, чекає до 5 с, далі
+SIGKILL, і лише тоді виходить (143, 129 чи 130); зупинка не рахується як збій. Перед кожним
+графічним етапом lab-session зупиняє `srrx-menu.service`, щоб консоль, яка лишилася від попереднього
+compositor-а (Ubuntu не вбиває процеси закритого сеансу, KillUserProcesses=no), не тримала
+`start --wait` нового автозапуску на старому дисплеї.
+
+Журнал. greetd з'єднує stdin/stdout/stderr сеансу з VT (`session/worker.rs`), тож без цього повідомлення
+обгортки й compositor-а не потрапляли б у journald. Поки існує потоковий сокет journald
+(`/run/systemd/journal/stdout`), lab-session пише свої рядки ще й через `systemd-cat -t lab-session`, а
+labwc і cage запускає через `systemd-cat -t labwc` / `-t cage` (systemd-cat v255 виконує команду
+через execvp, тож PID етапу не змінюється; вивід автозапуску й kanshi іде з labwc). Журнал сеансу:
+`journalctl -t lab-session -t labwc -t cage`. Без сокета все лишається на VT.
+
+`srrx-menu.service` має `ConditionPathExists=/opt/srrx/venv/bin/python3` і `Restart=no` (перезапуск
+робить lab-session). Без venv `systemctl --user start --wait` повертає 0 одразу (systemd v255: умова
+не виконана — job `done`, unit `inactive`), тож автозапуск після нього читає
+`systemctl --user show -P ConditionResult`: `no` означає визначений стан «venv немає» — labwc працює
+далі без консолі, збою немає. Пресет користувача лишається `disable`: консоль стартує лише після
+того, як адміністратор увімкне unit після збирання й аудиту venv; до того labwc теж працює без
+консолі. Увімкнути unit без venv (наприклад, для сценарію QEMU) отже безпечно: сеанс лишається в
+normal з активним labwc.
 
 rc.xml має один `<touch mapToOutput="HDMI-A-1"/>` без `deviceName` (типовий запис для всіх сенсорних
 пристроїв) і по одній прив'язці клавіатури й миші з дією `None`: labwc 0.7.1 тоді не завантажує
@@ -443,8 +468,11 @@ rc.xml має один `<touch mapToOutput="HDMI-A-1"/>` без `deviceName` (т
 Перевірки хоста (CI-модель, не апаратний результат): `deployment/tests/test_system_files.py`,
 класи `SessionFilesTests` (вміст, розбір config.toml за правилами greetd 0.9.0, один рядок `m`,
 staging і режими в архіві) і `LabSessionExecutionTests` (справжні lab-session і автозапуск під
-POSIX sh з підробленими labwc, cage, systemctl, kanshi і sleep: 3 збої → safe, ще 3 → текст,
-вікно 600 с, режим після перезапуску greetd, клієнт safe-режиму, вибір профілю kanshi).
+POSIX sh з підробленими labwc, cage, systemctl, systemd-cat, kanshi і sleep: 3 збої → safe, ще 3 →
+текст, вікно 600 с, режим після перезапуску greetd, клієнт safe-режиму, safe без консолі → одразу
+текст, SIGTERM/SIGHUP обгортці доходять до labwc, який ігнорує SIGHUP, а labwc, що ігнорує й
+SIGTERM, отримує SIGKILL, пропущений за умовою старт консолі лишає labwc, менеджер користувача без
+відповіді — збій, рядки журналу через systemd-cat, вибір профілю kanshi).
 
 Відкрито:
 - Стенд W1-2 (STACK.md:1442, :1486): режим 59.986 Hz і дотик на HDMI Q6A, відновлення greetd
@@ -463,3 +491,33 @@ POSIX sh з підробленими labwc, cage, systemctl, kanshi і sleep: 3 
   із Lab Shell.
 - `/var/lib/srrx-ui` записуваний для `srrx-ui`: перевизначення user unit у цій домівці має блокувати
   RX-11 (у selftest її ще немає серед домівок).
+- Перемикання VT у labwc лишається: labwc 0.7.1 обробляє XF86Switch_VT_1…12 (Ctrl+Alt+F1…F12) раніше
+  за прив'язки (`src/input/keyboard.c`, `handle_change_vt_key`), тож з USB-клавіатурою можна дійти до
+  getty, які logind запускає на вимогу (autovt). cage без `-s` перемикання VT не дозволяє, тож це
+  стосується лише режиму normal. Чи ставити logind `NAutoVTs=0`/`ReserveVT=0`, вирішує власник або
+  пакет SYS (logind тут не змінено).
+- Ескалація до SIGKILL через 5 с і запис у журнал через systemd-cat перевірено лише на підроблених
+  процесах (CI-модель); на Q6A — стенд W1-2 (STACK.md:1486 (a), `journalctl -t lab-session`).
+
+Джерела (прочитано 07.11.2026):
+- greetd: http://archive.ubuntu.com/ubuntu/pool/universe/g/greetd/greetd_0.9.0.orig.tar.gz і
+  greetd_0.9.0-4ubuntu1.debian.tar.xz (`greetd/src/{context.rs,server.rs,config/mod.rs}`,
+  `session/{worker.rs,interface.rs}`, `debian/patches/systemd_service_tweaks.patch`).
+- labwc: http://archive.ubuntu.com/ubuntu/pool/universe/l/labwc/labwc_0.7.1.orig.tar.gz і
+  labwc_0.7.1-1build1.debian.tar.xz (`src/server.c`, `src/main.c`, `src/config/{rcxml.c,session.c,touch.c}`,
+  `src/input/keyboard.c`); https://raw.githubusercontent.com/labwc/labwc/0.7.4/NEWS.md.
+- kanshi: http://archive.ubuntu.com/ubuntu/pool/universe/k/kanshi/kanshi_1.5.1.orig.tar.gz і
+  kanshi_1.5.1-1.debian.tar.xz; cage:
+  http://archive.ubuntu.com/ubuntu/pool/universe/c/cage/cage_0.1.5+20240127.orig.tar.gz (`cage.c`).
+- wlroots 0.17.1: https://gitlab.freedesktop.org/wlroots/wlroots/-/raw/0.17.1/types/scene/wlr_scene.c.
+- systemd v255: https://raw.githubusercontent.com/systemd/systemd/v255/ — `src/basic/ratelimit.h`,
+  `src/core/load-fragment-gperf.gperf.in`, `src/core/job.c`, `src/login/logind-session.c`,
+  `src/journal/cat.c`, `src/libsystemd/sd-journal/journal-send.c`, `src/systemctl/{systemctl.c,
+  systemctl-start-unit.c,systemctl-is-enabled.c}`, `src/shared/bus-wait-for-units.c`,
+  `man/{sysusers.d.xml,systemd.unit.xml,systemd.exec.xml,logind.conf.xml}`; systemd noble
+  http://archive.ubuntu.com/ubuntu/pool/main/s/systemd/systemd_255.4-1ubuntu8.debian.tar.xz
+  (`debian/rules`: `-Ddefault-kill-user-processes=false`).
+- Qt: https://raw.githubusercontent.com/qt/qtbase/v6.12.0/src/gui/kernel/qguiapplication.cpp.
+- Версії noble: Launchpad API `https://api.launchpad.net/1.0/ubuntu/+archive/primary?ws.op=getPublishedSources`
+  (greetd 0.9.0-4ubuntu1, labwc 0.7.1-1build1, kanshi 1.5.1-1, cage 0.1.5+20240127-2build1,
+  wlroots 0.17.1-2.1build1, wlopm 0.1.0-1).

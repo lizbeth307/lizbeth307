@@ -499,10 +499,11 @@ def unknown_accounts(rootfs, transient_units=()):
 
 # ---------------------------------------------------------------- touch session (D-12 host part)
 # STACK.md:160 and :884; the image (IMG lineage) installs the packages and makes greetd the display
-# manager. Upstream behaviour cited below was read on 2026-11-07 from the noble sources
-# (archive.ubuntu.com pool, SHA-256 equal to the .dsc): greetd_0.9.0.orig.tar.gz +
-# greetd_0.9.0-4ubuntu1.debian.tar.xz, labwc_0.7.1.orig.tar.gz, kanshi_1.5.1.orig.tar.gz +
-# kanshi_1.5.1-1.debian.tar.xz, cage_0.1.5+20240127.orig.tar.gz; systemd v255 from its git tag.
+# manager. Upstream behaviour cited below was read on 2026-11-07 from the noble sources in
+# http://archive.ubuntu.com/ubuntu/pool/universe/{g/greetd,l/labwc,k/kanshi,c/cage}/ (SHA-256 equal to
+# the .dsc): greetd_0.9.0.orig.tar.gz + greetd_0.9.0-4ubuntu1.debian.tar.xz, labwc_0.7.1.orig.tar.gz,
+# kanshi_1.5.1.orig.tar.gz + kanshi_1.5.1-1.debian.tar.xz, cage_0.1.5+20240127.orig.tar.gz; systemd v255
+# from its upstream git tag, https://raw.githubusercontent.com/systemd/systemd/v255/<path>.
 SESSION_USER = "srrx-ui"
 SESSION_HOME = "/var/lib/srrx-ui"
 SESSION_STATE = "/run/srrx-session"

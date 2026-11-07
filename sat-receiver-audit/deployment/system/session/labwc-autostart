@@ -1,15 +1,17 @@
 # SR-RX v2.1 labwc autostart of the touch session (lab-session, user srrx-ui).
 # Installed as /usr/lib/srrx/labwc/autostart by deployment/system/system_files.py through deploy.py
 # stage. labwc 0.7.1 runs it as `sh <file>` once per compositor start, in the background, with
-# WAYLAND_DISPLAY and LABWC_PID set (src/config/session.c session_autostart_init, src/main.c).
+# WAYLAND_DISPLAY and LABWC_PID set (src/config/session.c session_autostart_init, src/main.c); its
+# output goes where labwc's goes (the journal, tag labwc, when lab-session runs labwc via systemd-cat).
 #  1. kanshi 1.5.1 pins the HDMI-A-1 mode (STACK.md:884): profile field60 (59.986 Hz), or field52
 #     (51.677 Hz) when the administrator writes "field52" to /etc/srrx/display-profile at commissioning.
 #     kanshi 1.5.1-1 is built without IPC (no kanshictl switch), so the profile is chosen here.
 #  2. The touch console is the user unit srrx-menu.service. It starts only once the administrator has
-#     enabled it after building and auditing its venv (user preset: disabled); until then the
-#     compositor stays without a console.
-#  3. When the console stops for any reason, the compositor ends too, so lab-session counts one
+#     enabled it after building and auditing its venv (user preset: disabled); until then, and when
+#     its ConditionPathExists= skips the start (no venv), the compositor stays without a console.
+#  3. When the console stops for any other reason, the compositor ends too, so lab-session counts one
 #     session failure (3 within 10 min: safe mode). labwc 0.7.1 has no --session option for this.
+#     A user manager that does not answer counts as a failure as well, never as "not enabled".
 
 profile=field60
 if [ -r /etc/srrx/display-profile ]; then
@@ -26,16 +28,33 @@ if [ -r /etc/srrx/display-profile ]; then
 fi
 /usr/bin/kanshi -c "/usr/lib/srrx/kanshi/$profile" &
 
-# Qt 6.12 picks its wayland platform first when WAYLAND_DISPLAY is set (qguiapplication.cpp,
-# createPlatformIntegration); the user manager does not inherit labwc's environment otherwise.
-/usr/bin/systemctl --user import-environment WAYLAND_DISPLAY
-if /usr/bin/systemctl --user --quiet is-enabled srrx-menu.service; then
-	/usr/bin/systemctl --user start --wait srrx-menu.service
-	echo "labwc-autostart: srrx-menu.service stopped; ending the compositor" >&2
+end_compositor() {
 	# Only this autostart's own compositor: after a labwc crash its PID may be gone or reused.
 	if [ -n "${LABWC_PID:-}" ] && [ "$(cat "/proc/$LABWC_PID/comm" 2>/dev/null)" = labwc ]; then
 		/usr/bin/labwc --exit
 	fi
+}
+
+# Qt 6.12 picks its wayland platform first when WAYLAND_DISPLAY is set (qguiapplication.cpp,
+# createPlatformIntegration); the user manager does not inherit labwc's environment otherwise.
+/usr/bin/systemctl --user import-environment WAYLAND_DISPLAY
+# is-enabled prints the unit file state and exits 0 only when enabled (systemd v255
+# systemctl-is-enabled.c); no state at all means the user manager did not answer.
+state=$(/usr/bin/systemctl --user is-enabled srrx-menu.service 2>/dev/null)
+enabled=$?
+if [ "$enabled" -eq 0 ]; then
+	/usr/bin/systemctl --user start --wait srrx-menu.service
+	# A start skipped by ConditionPathExists= returns 0 at once (systemd v255 job.c: -ECOMM -> JOB_DONE,
+	# bus-wait-for-units.c: inactive without a job is done), so the condition result is read back.
+	if [ "$(/usr/bin/systemctl --user show -P ConditionResult srrx-menu.service 2>/dev/null)" = no ]; then
+		echo "labwc-autostart: srrx-menu.service was skipped by its condition (no /opt/srrx/venv/bin/python3); no console" >&2
+	else
+		echo "labwc-autostart: srrx-menu.service stopped; ending the compositor" >&2
+		end_compositor
+	fi
+elif [ -n "$state" ]; then
+	echo "labwc-autostart: srrx-menu.service is $state (venv not built and audited); no console" >&2
 else
-	echo "labwc-autostart: srrx-menu.service is not enabled (venv not built and audited); no console" >&2
+	echo "labwc-autostart: the user manager did not answer; ending the compositor (one session failure)" >&2
+	end_compositor
 fi
