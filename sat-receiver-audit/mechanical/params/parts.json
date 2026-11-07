@@ -394,7 +394,7 @@
       "threaded_hole_min": 4.0
     },
     "taoglas_mhf1_sma_wp": {
-      "name": "Taoglas IPEX MHF I to SMA(F) bulkhead straight, waterproof, 1.13 mm cable: CAB.0243 150 mm, CAB.01028 200 mm, CAB.01029 250 mm (panel geometry of P1-P3 and P6, build/15 W2 MECH-2; the MPN of J-SMA-PANEL-RFBOARD is chosen by GR-2/SRC-2)",
+      "name": "Taoglas IPEX MHF I to SMA(F) bulkhead straight, waterproof, 1.13 mm cable: CAB.0243 150 mm, CAB.01028 200 mm, CAB.01029 250 mm (fallback family of J-SMA-PANEL-RFBOARD, parts DB fallbacks CAB.0243 / CAB.01028; after W2 GR-2 no panel port uses it: P2, P3, P6 and P8 take taoglas_cab718, P1 takes adamtech_ca_dkca1_305l5)",
       "thread": "1/4-36 UNS-2A",
       "pitch": 0.706,
       "thread_len": 11.4,
@@ -423,7 +423,7 @@
       "src": "READS-RF rows web:taoglas-cable-assembly-catalog-spe-24-8-198-c (catalogue p.14, read 2026-11-07: 100 +-3 mm, 1/4-36UNS-2A, threaded 11.4 +-0.2, heat-shrink 17 REF; nut and washer not dimensioned) and digikey:931-CAB.01075-ND (front-side nut; https://www.taoglas.com/datasheets/CAB.01075.pdf 404); the body/flange is not dimensioned: OD 10.2 and length 3.4 (= 14.8 - 11.4 of the p.11 family) are envelope assumptions"
     },
     "adamtech_ca_dkca1_305l5": {
-      "name": "Adam Tech CA-DKCA1-305L5-APAJ: SMA straight jack bulkhead (P2) -> RG-316 305 mm -> SMA straight plug (P1) (P8, parts DB J408)",
+      "name": "Adam Tech CA-DKCA1-305L5-APAJ: SMA straight jack bulkhead (P2) -> RG-316 305 mm -> SMA straight plug (P1) (panel port P1 into the A401 SMA input, parts DB J-SMA-PANEL J401 after W2 GR-2)",
       "mpn": "CA-DKCA1-305L5-APAJ",
       "thread": "1/4-36 UNS",
       "pitch": 0.706,
@@ -563,6 +563,28 @@
       "ip": "IP68 (5 bar, 30 min), IP69, IP66",
       "status": "datasheet",
       "src": "LAPP article information 53111400, https://api-shop.lapp.com/occ/v2/us/products/export/specification-sheet-file/53111400?lang=en_US&curr=USD (datasheet link of DigiKey DE 2181-53111400-ND, generated and read 2026-11-07): M 12 x 1.5, thread length 0.315 in (8.0), total length 1.181 in (30.0), wrench size 0.591 in (15.0), hexagon corner dimension 0.654 in (16.6), clamping range 0.138-0.276 in (3.5-7.0), clear width 0.276 in, chloroprene sealing ring, polyamide, 'Delivery with lock nut: No', 'Including o-ring: No'; DigiKey DE 2026-11-07: not stocked, 1,400 @ EUR 1.68148; W425 (Tensility 10-03676, OD 4.2, READS-E web:tensility-10-03676-drawing) is inside the clamping range"
+    },
+    "taoglas_cab718": {
+      "name": "Taoglas CAB.718 Hirose U.FL to SMA(F) bulkhead straight, 1.13 mm cable 200 mm (P2, P3, P6, P8; parts DB J-SMA-PANEL-RFBOARD J402/J403/J406/J408 after W2 GR-2)",
+      "mpn": "CAB.718",
+      "thread": "1/4-36 UNS-2A",
+      "pitch": 0.706,
+      "thread_len": 11.4,
+      "thread_len_tol": 0.2,
+      "nut_af": 8.0,
+      "nut_t": 1.8,
+      "nut_t_tol": 0.3,
+      "washer_od": 10.2,
+      "washer_id": 6.35,
+      "body_hex_af": 8.0,
+      "body_hex_len": 3.4,
+      "body_hex_len_tol": 0.2,
+      "hole_d": 6.5,
+      "hole_flat": 6.0,
+      "cable_len": 200.0,
+      "nut_side": "outside (mating side): DigiKey 'SMA jack bulkhead front-side nut'; the 8 HEX body sits on the inner face of the Al angle",
+      "status": "datasheet",
+      "src": "READS-RF rows design/parts/snapshots/2026-11-07-w2-reads-rf-manual.json web:taoglas-cab718-datasheet-spe-12-8-100 (https://www.taoglas.com/datasheets/CAB.718.pdf SPE-12-8-100/B/WY, read 2026-11-07, drawing pages rendered: 200 +-5 mm, washer dia 6.35 +-0.3 / 10.2 REF (thickness not dimensioned), nut HEX8 x 1.8 +-0.3, SMA(F)BKST hex 3.4 +-0.2, threaded length 11.4 +-0.2, 1/4\"-36UNS-2A, 8 HEX, recommended mounting hole dia 6.5 with one flat at 6 +0.08/0, no O-ring) and digikey:931-1186-ND (front-side nut, 2,749 in stock, EUR 5.21 @1, 2026-11-07); pitch 0.706 = 25.4 / 36; 'hex 3.4' is read as the length of the 8 HEX body behind the thread"
     }
   }
 }

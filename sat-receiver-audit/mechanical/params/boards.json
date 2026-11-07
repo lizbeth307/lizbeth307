@@ -107,7 +107,7 @@
         {
           "edge": "top",
           "span": [20, 180],
-          "use": "U.FL/MHF1 to the panel pigtails of P2, P3 and P6 (plus P1 if L401 stays, W2-02) and the 75-ohm W402 end of ch5 (P4); P4 F and P5 BNC are bulkhead adapters with W402/W408, P7 is the Taoglas CAB.011 end at the LC76G, P8 is the Adam Tech CA-DKCA1-305L5-APAJ assembly into A403 (parts DB; build/15 'RF-порти')"
+          "use": "U.FL J423/J424/J425/J427 to the Taoglas CAB.718 panel pigtails of P2, P3, P6 and P8 (W2 GR-2) and the 75-ohm W402 end of ch5 (P4); P1 is the Adam Tech CA-DKCA1-305L5-APAJ assembly into the A401 SMA input (no RF-board end), P4 F and P5 BNC are bulkhead adapters with W402/W408, P7 is the Taoglas CAB.011 end at the LC76G (parts DB; build/15 'RF-порти')"
         },
         {
           "edge": "bottom",

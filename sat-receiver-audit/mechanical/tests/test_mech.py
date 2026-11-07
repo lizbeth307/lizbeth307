@@ -561,18 +561,20 @@ class PanelPortsW2Mech2(unittest.TestCase):
                     self.assertTrue(P.parts[p["part"]]["status"].startswith("datasheet"))
 
     def test_taoglas_ports_pass_the_thread_rule(self):
+        # W2 MECH-3 (reconciled with W2 GR-2): P2, P3, P6, P8 are Taoglas CAB.718, P1 is the Adam Tech assembly; neither
+        # drawing dimensions the washer, so the ports are OPEN with the room left for it (never FAIL)
         r = self._rule(P, "R-SMA-THREAD")
-        for pid in ("P1", "P2", "P3", "P6"):
-            self.assertTrue(r["value_mm"][pid].startswith("PASS (model)"), r["value_mm"][pid])
-        # 11.4 - 0.3 - 4.5 - (1.75 + 0.2) - (1.1 + 0.3) = 3.25 >= 3 x 0.706
-        self.assertIn("3.25 mm left", r["value_mm"]["P1"])
+        for pid in ("P2", "P3", "P6", "P8"):
+            # 11.4 - 0.2 - 4.5 - (1.8 + 0.3) - 3 x 0.706 = 2.48 mm left for the washer
+            self.assertIn("2.48 mm left", r["value_mm"][pid])
+        self.assertIn("2.32 mm left", r["value_mm"]["P1"])
         self.assertTrue(r["value_mm"]["P5"].startswith("OPEN"))
         self.assertFalse(r["result"].startswith("FAIL"), r["result"])
 
     def test_a_thin_thread_fails_the_thread_rule(self):
         import copy
         Q = copy.deepcopy(P)
-        Q.parts["taoglas_mhf1_sma_wp"]["thread_len"] = 8.0
+        Q.parts["taoglas_cab718"]["thread_len"] = 8.0
         r = self._rule(Q, "R-SMA-THREAD")
         self.assertTrue(r["result"].startswith("FAIL"), r["result"])
 

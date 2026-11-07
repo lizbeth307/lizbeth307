@@ -83,7 +83,7 @@ def cooler_boxes(P):
             ("cooler_a.fan", (f[0], f[1], fan_face - ft, f[2], f[3], fan_face))]
 
 
-SMA_KINDS = ("sma_pigtail", "sma_k", "sma_cab01075", "sma_adamtech")
+SMA_KINDS = ("sma_pigtail", "sma_k", "sma_cab01075", "sma_adamtech", "sma_cab718")
 
 
 def port_inner(P, p):
@@ -111,7 +111,8 @@ def port_inner(P, p):
         depth = part.get("body_len_reserve", part.get("body_len", 0.0) - part.get("thread_len", 0.0))
         return part["body_od_reserve"] / 2.0, depth, f"connector body and seal inside, nut outside ({p['part']})"
     if "body_hex_af" in part:
-        return part["body_hex_af"] / math.cos(math.radians(30)) / 2.0, part["body_len_reserve"], f"connector body hex inside, nut outside ({p['part']})"
+        depth = part["body_hex_len"] + part.get("body_hex_len_tol", 0.0) if "body_hex_len" in part else part["body_len_reserve"]
+        return part["body_hex_af"] / math.cos(math.radians(30)) / 2.0, depth, f"connector body hex inside, nut outside ({p['part']})"
     return None
 
 

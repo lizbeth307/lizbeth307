@@ -534,6 +534,8 @@ def _port_stack(P, p):
         return round(t_min - wall - hw, 2), "outside: thread (min) - wall - items 5 + 6 (max); the seal sits at the flange inside", pitch
     if "nut_t" in part:
         allow = t_min - wall - part["nut_t"] - part.get("nut_t_tol", 0.0) - 3 * pitch
+        if allow < -1e-9:      # even without a washer fewer than 3 threads are left: a FAIL, not an unknown
+            return round(allow + 3 * pitch, 2), "outside: thread (min) - wall - nut (max), washer not drawn", pitch
         return None, f"washer thickness not drawn: {allow:.2f} mm left for it after the nut and 3 threads", pitch
     allow = t_min - wall - 3 * pitch
     return None, (f"nut and washer not drawn: {allow:.2f} mm left for both after 3 threads "
@@ -563,7 +565,7 @@ def sma_thread_rule(P):
     wall = m["wall"] + m["angles"]["top"]["t"]
     return {"id": "R-SMA-THREAD", "rule": "per panel port: thread left for mating after the 4.5 mm wall (ASA 2.5 + Al angle 2.0), washer and nut >= 3 full threads (1/4-36: 3 x 0.706; 3/8-32: 3 x 0.794)",
             "value_mm": rows, "limit_mm": f"3 x pitch; wall {wall:g}", "result": res,
-            "source": "STACK 5.8 'стінка 4-5 мм'; parts.json taoglas_mhf1_sma_wp, taoglas_cab01075, adamtech_ca_dkca1_305l5, cinch_vfa340 (read 2026-11-07)"}
+            "source": "STACK 5.8 'стінка 4-5 мм'; parts.json taoglas_cab718, taoglas_cab01075, adamtech_ca_dkca1_305l5, cinch_vfa340 (read 2026-11-07; port parts per W2 GR-2)"}
 
 
 def bulkhead_nuts_rule(P):
@@ -579,7 +581,7 @@ def bulkhead_nuts_rule(P):
             continue
         r, th, basis = e
         part = P.parts.get(p.get("part", ""), {})
-        if "representative" in basis or "body_od_reserve" in part or "body_len_reserve" in part:
+        if "representative" in basis or "body_od_reserve" in part or ("body_len_reserve" in part and "body_hex_len" not in part):
             assumed.append(p["id"])
         val[p["id"]] = f"d {2 * r:.2f} x {th:.2f} deep: {basis}"
     res = f"OPEN: no inner envelope for {', '.join(opened)} (drawing not read)" if opened else "PASS (model)"

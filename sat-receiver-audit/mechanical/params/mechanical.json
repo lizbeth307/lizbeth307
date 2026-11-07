@@ -93,20 +93,21 @@
       {
         "id": "P1",
         "x": 43.5,
-        "kind": "sma_pigtail",
-        "part": "taoglas_mhf1_sma_wp"
+        "kind": "sma_adamtech",
+        "part": "adamtech_ca_dkca1_305l5",
+        "_mpn": "Adam Tech CA-DKCA1-305L5-APAJ bulkhead assembly into the A401 SMA input (parts DB J-SMA-PANEL, J401 after W2 GR-2): front-side nut (parts.json adamtech_ca_dkca1_305l5)"
       },
       {
         "id": "P2",
         "x": 63.5,
-        "kind": "sma_pigtail",
-        "part": "taoglas_mhf1_sma_wp"
+        "kind": "sma_cab718",
+        "part": "taoglas_cab718"
       },
       {
         "id": "P3",
         "x": 83.5,
-        "kind": "sma_pigtail",
-        "part": "taoglas_mhf1_sma_wp"
+        "kind": "sma_cab718",
+        "part": "taoglas_cab718"
       },
       {
         "id": "P4",
@@ -126,8 +127,8 @@
       {
         "id": "P6",
         "x": 143.5,
-        "kind": "sma_pigtail",
-        "part": "taoglas_mhf1_sma_wp"
+        "kind": "sma_cab718",
+        "part": "taoglas_cab718"
       },
       {
         "id": "P7",
@@ -139,9 +140,9 @@
       {
         "id": "P8",
         "x": 183.5,
-        "kind": "sma_adamtech",
-        "part": "adamtech_ca_dkca1_305l5",
-        "_mpn": "Adam Tech CA-DKCA1-305L5-APAJ bulkhead assembly into the A403 SMA input (parts DB J408): front-side nut (parts.json adamtech_ca_dkca1_305l5)"
+        "kind": "sma_cab718",
+        "part": "taoglas_cab718",
+        "_mpn": "Taoglas CAB.718 to U.FL J427 on the RF board (parts DB J-SMA-PANEL-RFBOARD J408 after W2 GR-2; P8 is a direct port, the A403/A404 accessory sits outside, build/15 'Шлях P8 (W2 AREA)')"
       },
       {
         "id": "RX1",
