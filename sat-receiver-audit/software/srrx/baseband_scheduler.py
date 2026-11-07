@@ -24,7 +24,9 @@ verb, src/core/dbus-util.c:151-181; StartTransientUnit has none, src/core/dbus.c
 3. After the unit's result names the recording and not before LOS + MARGIN_S (LOS+60 s), the
    decode unit runs (satdump_pass.prepare_decode / finish_decode): the unit's PNGs are read, the
    baseband is deleted before they are published, the work tree is removed, and the baseband is
-   deleted whatever the outcome.
+   deleted whatever the outcome. A decode unit stopped by a cancel, a late start or an overrun is
+   first seen ended (DECODE_STOPPING, at most START_GRACE_MS) before its work tree is removed.
+   Each unit writes its result atomically, and an unreadable result counts only once the unit ended.
 
 Unattended scheduling (labd arming RTL-A itself) is not implemented: it is an open owner
 decision (build/15 «Порядок»). Device timing (W-04/W-05, a real pass) stays OPEN; nothing here
@@ -57,14 +59,16 @@ UNIT_PATTERN = r"^srrx-(satdump-decode|baseband-record)@lrpt-[0-9a-f]{16}\.servi
 # product size of a real pass is a bench measurement (build/15 «Baseband/IQ»).
 LABD_PUBLISH_BUDGET_BYTES = 20 * 1024 * 1024
 POLL_MS = 2000
-START_GRACE_MS = 30_000  # a unit neither seen running nor with a result by then did not start
+# A unit neither seen running nor with a result by then did not start; also the wait for a stopped unit to end
+# (both templates have TimeoutStopSec=15, then systemd kills what is left).
+START_GRACE_MS = 30_000
 RECORD_OVERRUN_S = 120  # after the window end the record unit must have ended (its TimeoutStartSec= is longer)
 DECODE_OVERRUN_S = sp.DECODE_UNIT_TIMEOUT_S + 120
 SYSTEMCTL_TIMEOUT_S = 30
 MAX_ENV_BYTES = 4096
 REQUEST_KEYS = frozenset(("aos_utc", "center_hz", "symbol_rate"))
 STATES = ("IDLE", "QUEUED", "RECORD_STARTING", "RECORDING", "RECORD_STOPPING", "DECODE_WAIT", "DECODE_STARTING",
-          "DECODING", "DECODE_FINISHING", "DONE", "FAILED", "CANCELLED")
+          "DECODING", "DECODE_STOPPING", "DECODE_FINISHING", "DONE", "FAILED", "CANCELLED")
 RUNNING_STATES = ("activating", "active", "deactivating", "reloading")
 # Only these mean the unit ended; "unknown" (a failed systemctl show) never ends a recording by itself.
 ENDED_STATES = ("inactive", "failed")
@@ -293,7 +297,14 @@ class BasebandScheduler:
         return job
 
     def cancel(self, owner, now_ms, scope_stop=False):
-        """baseband_cancel: any local operator may stop (de-energizing side); scope_stop also latches the span."""
+        """baseband_cancel: any local operator may stop (de-energizing side); scope_stop also latches the span.
+
+        The latch is this scheduler's own ScopeLatch and holds for the labd session (fail closed):
+        a later pass whose span touches it is refused OUT_OF_SCOPE until a pass at a tuning that does
+        not touch it starts recording (the retune releases it, as scope_policy.ScopeLatch does) or
+        labd restarts; there is no release op. The latch is not shared with the HMI's: an HMI scope
+        stop reaches labd only as baseband_cancel {scope_stop: true}.
+        """
         with self._lock:
             job = self._job
             if job is None:
@@ -309,7 +320,7 @@ class BasebandScheduler:
             job, last = self._job, self._last
             current = None if job is None else self._view(job)
         return {"enabled": True, "state": "IDLE" if job is None else job["state"], "job": current, "last": last,
-                "attended_only": True, "live_decode": False}
+                "attended_only": True, "live_decode": False, "scope_stopped": self.scope.stopped}
 
     @staticmethod
     def _view(job):
@@ -376,6 +387,8 @@ class BasebandScheduler:
                     self._command(job, "DECODE_STARTING", self._op_decode_start, now_ms)
         elif state == "DECODING":
             self._tick_decoding(job, now_ms, now_s)
+        elif state == "DECODE_STOPPING":
+            self._tick_decode_stopping(job, now_ms)
 
     def _tick_queued(self, job, now_ms, now_s, lease):
         window = job["window"]
@@ -435,12 +448,23 @@ class BasebandScheduler:
         ended = job["seen_running"] and job["active"] in ENDED_STATES
         late = not job["seen_running"] and now_ms - job["started_ms"] > START_GRACE_MS
         overrun = now_ms - job["started_ms"] > DECODE_OVERRUN_S * 1000
-        if job["result"] is not None or ended or late or overrun or job["cancel"]:
-            stop = job["result"] is None and not ended
-            self._command(job, "DECODE_FINISHING", lambda j: self._op_decode_finish(j, stop), now_ms)
+        if job["result"] is not None or ended:
+            self._command(job, "DECODE_FINISHING", self._op_decode_finish, now_ms)
+        elif late or overrun or job["cancel"]:
+            # Stop first; the work tree goes only once the unit is seen ended (SatDump may still write there).
+            self._command(job, "DECODE_STOPPING", self._op_decode_stop, now_ms)
         elif job["polled_ms"] is None or now_ms - job["polled_ms"] >= POLL_MS:
             job["polled_ms"] = now_ms
             self._command(job, "DECODING", lambda j: self._op_poll(j, "decode"), now_ms)
+
+    def _tick_decode_stopping(self, job, now_ms):
+        # As RECORD_STOPPING: finish once a poll after the stop sees the unit ended, or after the grace.
+        seen_ended = job["active"] in ENDED_STATES and job["polled_ms"] is not None and job["polled_ms"] >= job["stop_ms"]
+        if seen_ended or now_ms - job["stop_ms"] > START_GRACE_MS:
+            self._command(job, "DECODE_FINISHING", self._op_decode_finish, now_ms)
+        elif job["polled_ms"] is None or now_ms - job["polled_ms"] >= POLL_MS // 2:
+            job["polled_ms"] = now_ms
+            self._command(job, "DECODE_STOPPING", lambda j: self._op_poll(j, "decode"), now_ms)
 
     # ------------------------------------------------------------ state changes
 
@@ -476,7 +500,7 @@ class BasebandScheduler:
         """Hand one operation to the worker; the job waits (pending) until it is done."""
         with self._lock:
             job["state"], job["pending"] = state, operation
-            if state == "RECORD_STOPPING" and job.get("stop_ms") is None:
+            if state in ("RECORD_STOPPING", "DECODE_STOPPING") and job.get("stop_ms") is None:
                 job["stop_ms"], job["polled_ms"] = now_ms, None
         self._queue.put(job)
         if not self._wake():
@@ -589,7 +613,9 @@ class BasebandScheduler:
         try:
             result = sp.read_result(path, kind, instance)
         except sp.PassRefused:
-            result = sp.result_value(kind, instance, "REFUSED", "UNIT_RESULT_INVALID")
+            # The unit writes its result atomically (satdump_pass.write_result_file); still, an unreadable
+            # result is final only once the unit is seen ended, never while it may still be writing.
+            result = sp.result_value(kind, instance, "REFUSED", "UNIT_RESULT_INVALID") if active in ENDED_STATES else None
         with self._lock:
             job["active"] = active
             job["seen_running"] = job["seen_running"] or active in RUNNING_STATES
@@ -654,12 +680,13 @@ class BasebandScheduler:
         finally:
             close()
 
-    def _op_decode_finish(self, job, stop):
-        if stop:
-            try:
-                self.systemctl.stop(job["decode"]["unit"])
-            except (OSError, ValueError, subprocess.SubprocessError):
-                pass
+    def _op_decode_stop(self, job):
+        try:
+            self.systemctl.stop(job["decode"]["unit"])
+        except (OSError, ValueError, subprocess.SubprocessError):
+            pass  # DECODE_STOPPING still polls; the grace and the unit's own bounds end the wait
+
+    def _op_decode_finish(self, job):
         try:
             store, close = self._store()
         except Exception:

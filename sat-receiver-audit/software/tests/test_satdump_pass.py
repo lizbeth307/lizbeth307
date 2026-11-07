@@ -486,5 +486,68 @@ class DecodeTests(unittest.TestCase):
         self.assertEqual(list(self.products.iterdir()), [])
 
 
+class ResultFileAndCleanupTests(unittest.TestCase):
+    """A unit's result appears complete or not at all; finish_decode's cleanup steps run independently."""
+    RID = "lrpt-0123456789abcdef"
+
+    def setUp(self):
+        temp = tempfile.TemporaryDirectory(prefix="srrx-result-")
+        self.addCleanup(temp.cleanup)
+        self.root = Path(temp.name)
+
+    def test_result_file_is_renamed_into_place_complete_and_written_once(self):
+        path = self.root / sp.RESULT_FILE
+        value = sp.result_value("decode", self.RID, "DECODED")
+        rename, seen = os.rename, []
+
+        def spy(source, target):
+            seen.append((Path(target).exists(), json.loads(Path(source).read_text())))
+            return rename(source, target)
+        with mock.patch.object(sp.os, "rename", spy):
+            sp.write_result_file(path, value)
+        self.assertEqual(seen, [(False, value)])  # a poll sees no file until the complete one is renamed in
+        self.assertEqual(json.loads(path.read_text()), value)
+        with self.assertRaises(FileExistsError):
+            sp.write_result_file(path, sp.result_value("decode", self.RID, "REFUSED", "SATDUMP_CALCEPH_ERROR"))
+        self.assertEqual(json.loads(path.read_text()), value)
+        self.assertEqual([p.name for p in self.root.iterdir()], [sp.RESULT_FILE])  # no .tmp left behind
+
+    def test_a_failed_result_write_leaves_neither_file(self):
+        with mock.patch.object(sp.os, "fsync", side_effect=OSError(28, "No space left on device")), \
+                self.assertRaises(OSError):
+            sp.write_result_file(self.root / sp.UNIT_RESULT, sp.result_value("decode", self.RID, "DECODED"))
+        self.assertEqual(list(self.root.iterdir()), [])
+
+    def test_the_unit_entry_point_writes_through_the_atomic_writer(self):
+        import contextlib
+        import io
+        from srrx import satdump_unit
+        value = sp.result_value("record", self.RID, "REFUSED", "JOB_INVALID")
+        with mock.patch.object(sp, "write_result_file", wraps=sp.write_result_file) as writer, \
+                contextlib.redirect_stdout(io.StringIO()) as out:
+            satdump_unit.write_result(self.root / sp.RESULT_FILE, value)
+        writer.assert_called_once()
+        self.assertEqual(json.loads(out.getvalue()), value)
+        self.assertEqual(json.loads((self.root / sp.RESULT_FILE).read_text()), value)
+
+    def test_finish_decode_removes_the_job_and_deletes_the_baseband_when_the_tree_cannot_go(self):
+        work, jobs = self.root / (".satdump-" + self.RID), self.root / "jobs"
+        (work / "out").mkdir(parents=True)
+        (jobs / self.RID).mkdir(parents=True)
+        (jobs / self.RID / sp.JOB_FILE).write_text("{}")
+        store = FakeStore(self.root, None)
+        job = {"recording_id": self.RID, "work": work, "target": self.root / self.RID, "plan": {},
+               "identity": (1, 2, 16), "job_root": str(jobs), "unit": sp.unit_name(sp.DECODE_TEMPLATE, self.RID)}
+        with mock.patch.object(sp, "_remove_tree", side_effect=OSError(39, "Directory not empty")), \
+                self.assertRaisesRegex(decoder_policy.DecoderRefused, "DECODE_UNIT_NO_RESULT"):
+            sp.finish_decode(store, job)  # the decode's own refusal stays the outcome
+        self.assertFalse((jobs / self.RID).exists())
+        self.assertEqual(store.deleted, [self.RID])
+
+    def test_decode_template_bounds_its_stop(self):
+        self.assertIn("TimeoutStopSec=15", sp.unit_lines("decode"))
+        self.assertIn("TimeoutStopSec=15\n", sp.unit_text("decode"))
+
+
 if __name__ == "__main__":
     unittest.main()

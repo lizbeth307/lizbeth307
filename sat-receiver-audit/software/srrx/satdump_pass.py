@@ -47,6 +47,7 @@ the CLI below stays for an administrator. Nothing here is RF or hardware evidenc
 from __future__ import annotations
 
 import argparse
+import errno
 import json
 import os
 from pathlib import Path
@@ -279,7 +280,7 @@ def unit_lines(kind, instance="%i"):
                   "BindReadOnlyPaths=" + DATA_ROOT + "/" + baseband.CLASS_DIR + "/" + instance + baseband.DATA_SUFFIX,
                   "PrivateNetwork=yes", "IPAddressDeny=any", "RestrictAddressFamilies=AF_UNIX",
                   "LoadCredential=job:" + JOB_ROOT + "/" + instance + "/" + JOB_FILE,
-                  "TimeoutStartSec=%d" % DECODE_UNIT_TIMEOUT_S]
+                  "TimeoutStartSec=%d" % DECODE_UNIT_TIMEOUT_S, "TimeoutStopSec=15"]
     else:
         lines += ["IPAddressDeny=any", "IPAddressAllow=localhost", "RestrictAddressFamilies=AF_INET AF_UNIX"]
     return lines
@@ -501,6 +502,33 @@ def _write_new(path, value, mode):
         stream.write(data)
 
 
+def write_result_file(path, value, mode=0o640):
+    """A unit's result, once and atomically: <path>.tmp (O_EXCL, no link followed), fsync, rename.
+
+    labd polls the file while the unit runs (srrx.baseband_scheduler), so it must see either no
+    file or the complete one, never an empty or partial write. A result already there is never
+    replaced. remove_job and the work-tree removal also take a .tmp left by a killed unit.
+    """
+    path = Path(path)
+    temporary = path.with_name(path.name + ".tmp")
+    data = (json.dumps(value, allow_nan=False, sort_keys=True) + "\n").encode("ascii")
+    descriptor = os.open(temporary, _O_NEW, mode)
+    try:
+        with os.fdopen(descriptor, "wb") as stream:
+            stream.write(data)
+            stream.flush()
+            os.fsync(stream.fileno())
+        if os.path.lexists(path):
+            raise FileExistsError(errno.EEXIST, "a unit result is written once")
+        os.rename(temporary, path)
+    except BaseException:
+        try:
+            os.unlink(temporary)
+        except OSError:
+            pass
+        raise
+
+
 def write_job(job_root, instance, value):
     """labd's private directory job_root/<instance>/ (0700) with job.json (0600) for LoadCredential=."""
     root = Path(job_root)
@@ -623,8 +651,10 @@ def finish_decode(store, job, *, scope=None, publish_budget=None):
     The baseband is deleted first and the products are published second, so the report's
     input_iq_deleted_after_decode states a completed deletion; a failed deletion publishes nothing
     (the sweep removes the file later). The work tree and the job directory are removed and the
-    baseband is deleted whatever the outcome. publish_budget: the most PNG bytes this caller may
-    hold in memory while publishing (labd: baseband_scheduler.LABD_PUBLISH_BUDGET_BYTES).
+    baseband is deleted whatever the outcome, each step even when another one fails: a work tree a
+    unit still writes into stays until the next record start (BasebandScheduler._remove_stale_work)
+    and never changes the outcome. publish_budget: the most PNG bytes this caller may hold in memory
+    while publishing (labd: baseband_scheduler.LABD_PUBLISH_BUDGET_BYTES).
     """
     from . import decoder_policy
     recording_id, deleted = job["recording_id"], False
@@ -644,7 +674,10 @@ def finish_decode(store, job, *, scope=None, publish_budget=None):
             return decoder_policy.satdump_publish(Path(job["work"]) / "out", job["target"], job["plan"],
                                                   input_iq_deleted=True, scope=scope)
         finally:
-            _remove_tree(job["work"])
+            try:
+                _remove_tree(job["work"])
+            except OSError:
+                pass  # e.g. ENOTEMPTY from a unit that outlived its stop; removed before the next record
             remove_job(job["job_root"], recording_id)
     finally:
         if not deleted:

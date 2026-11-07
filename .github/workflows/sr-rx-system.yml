@@ -163,7 +163,7 @@ jobs:
           # polkitd 124 semantics (deployment/tests/polkit_cases/harness.js): all staged rules, file-name order,
           # first truthy result. Each cases file names the rule files it needs staged.
           node deployment/tests/polkit_cases/harness.js --root "$RUNNER_TEMP/stage/rootfs" deployment/tests/polkit_cases/*.json             | tee "$RUNNER_TEMP/polkit-harness.txt"
-          echo "polkit decisions PASS (CI model of polkitd; the Q6A decision itself is the ПРХ-01 guest/device row)"
+          echo "polkit decisions PASS (CI model of polkitd; Q6A decisions stay OPEN: build/09 ПРХ-01 covers srrx-passes@ only, 60-srrx-satdump.rules has no build/09 row yet)"
       - name: The staged override replaces exactly the i2c-tools rule that would open every bus to group i2c
         run: |
           set -eu

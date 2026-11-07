@@ -82,9 +82,9 @@ def read_job(instance, environ=None):
 
 
 def write_result(path, value):
-    """Write the result once (O_EXCL, no link followed), then the same line on stdout."""
+    """Write the result once and atomically (satdump_pass.write_result_file), then the same line on stdout."""
     try:
-        sp._write_new(path, value, 0o640)
+        sp.write_result_file(path, value, 0o640)
     finally:
         print(json.dumps(value, sort_keys=True), flush=True)
 
@@ -144,7 +144,7 @@ def record(instance, *, environ=None, recorder=None, clock=None):
                            branch_off_confirmed=result["branch_off_confirmed"])
 
 
-def _hardware_recorder(window, device, driver):  # pragma: no cover - device only (RX-04-sched)
+def _hardware_recorder(window, device, driver):  # pragma: no cover - device only; OPEN, no build/09 row yet (build/15 W2 SW-SCHED)
     from . import labrx
     from .commissioning import load_acceptance
     from .daemon import request_once

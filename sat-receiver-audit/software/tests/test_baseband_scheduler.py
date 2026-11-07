@@ -668,5 +668,119 @@ class UtcVerifiedTests(unittest.TestCase):
         self.assertIs(calls[-1][2], False)
 
 
+class ScopeSessionTests(unittest.TestCase):
+    """baseband_cancel {scope_stop: true} latches the span in labd's own ScopeLatch for the session (fail closed)."""
+
+    LEASE = {"owner": OWNER, "valid": True, "armed": True, "rtla_on": True}
+
+    def test_a_scope_stop_holds_until_a_pass_at_a_tuning_that_does_not_touch_it_starts(self):
+        clock, threads = Clock(AOS - 600), []
+        scheduler = bs.BasebandScheduler(
+            planner=Planner(plan()), utc_verified=lambda: True, systemctl=Systemctl(), accepted_loader=lambda: ACCEPTED,
+            binding_loader=lambda: ("/dev/disk/by-uuid/0000-TEST", "/opt/srrx/evidence/rtla.json"),
+            installation_check=lambda: None, installation_loader=lambda: {"sha256": "c" * 64},
+            store_factory=lambda device: (None, lambda: None), scope=ScopeLatch(), wall_clock=clock,
+            start_thread=threads.append, job_root="/nonexistent-srrx-jobs", products_root="/nonexistent-srrx-products")
+        value = {"aos_utc": text(AOS), "center_hz": 137_900_000, "symbol_rate": 72_000}
+        self.assertTrue(scheduler.request(value, OWNER, 0)["ok"])
+        self.assertIs(scheduler.status()["scope_stopped"], False)
+        self.assertTrue(scheduler.cancel("uid:3000", 0, scope_stop=True)["ok"])  # e.g. the HMI's identification stop
+        scheduler.tick(1000, self.LEASE)
+        status = scheduler.status()
+        self.assertEqual((status["state"], status["last"]["error"], status["scope_stopped"]), ("IDLE", "CANCELLED", True))
+        for center in (137_900_000, 137_912_500):  # both touch the latched span: refused for the rest of the session
+            with self.subTest(center=center):
+                self.assertEqual(scheduler.request(dict(value, center_hz=center), OWNER, 0),
+                                 {"ok": False, "error": "OUT_OF_SCOPE"})
+        self.assertTrue(scheduler.request(dict(value, center_hz=137_100_000), OWNER, 0)["ok"])
+        self.assertIs(scheduler.status()["scope_stopped"], True)  # a queued pass releases nothing
+        clock.now = scheduler._job["window"]["start_unix_s"] - bb.EARLY_START_S
+        scheduler.tick(2000, self.LEASE)
+        self.assertEqual(scheduler.status()["state"], "RECORD_STARTING")
+        self.assertIs(scheduler.status()["scope_stopped"], False)  # the retune to 137.1 MHz released the latch
+        self.assertEqual(len(threads), 1)
+
+
+@unittest.skipUnless(os.name == "posix", "job directories (0700, euid) and the setgid work tree need POSIX")
+class UnitEndTests(unittest.TestCase):
+    """A result read while the unit may still write is not final; a stopped decode unit is seen ended first."""
+
+    setUp, make, request, step = SchedulerTests.setUp, SchedulerTests.make, SchedulerTests.request, SchedulerTests.step
+    record_unit, write_record_result = SchedulerTests.record_unit, SchedulerTests.write_record_result
+    start_recording, run_to_decode = SchedulerTests.start_recording, SchedulerTests.run_to_decode
+
+    def test_an_unreadable_record_result_counts_only_once_the_unit_ended(self):
+        job_id, window = self.start_recording()
+        path = self.jobs / job_id / sp.RESULT_FILE
+        path.write_bytes(b"")  # what a reader would see between open(O_CREAT) and write() of a non-atomic writer
+        self.step(ticks=3)
+        self.assertEqual(self.scheduler.status()["state"], "RECORDING")
+        self.assertIsNone(self.scheduler._job["result"])
+        path.unlink()
+        self.write_record_result(job_id)
+        self.step(ticks=2)
+        self.assertEqual(self.scheduler.status()["state"], "DECODE_WAIT")  # the complete recording is kept
+        # An ended unit's unreadable result is final: nothing is decoded and the store is swept.
+        self.systemctl.calls.clear()
+        self.scheduler = self.make()
+        job_id, window = self.start_recording()
+        (self.jobs / job_id / sp.RESULT_FILE).write_bytes(b"{")
+        self.systemctl.state[self.record_unit(job_id)] = "failed"
+        self.step(ticks=3)
+        status = self.scheduler.status()
+        self.assertEqual((status["state"], status["last"]["error"]), ("IDLE", "UNIT_RESULT_INVALID"))
+        self.assertIn(("sweep",), self.events)
+        self.assertFalse((self.jobs / job_id).exists())
+        self.assertFalse(any("decode" in unit for unused, unit in self.systemctl.calls))
+
+    def decoding(self):
+        self.run_to_decode()
+        rid = "lrpt-" + "a" * 16
+        unit = sp.unit_name(sp.DECODE_TEMPLATE, rid)
+        with mock.patch.object(sp, "prepare_decode", return_value={"recording_id": rid, "unit": unit,
+                                                                   "work": self.products / (".satdump-" + rid)}):
+            self.step(LOS + bb.MARGIN_S)
+        self.step()  # poll: the unit is activating
+        self.assertEqual(self.scheduler.status()["state"], "DECODING")
+        return unit
+
+    def test_a_cancelled_decode_unit_is_seen_ended_before_its_work_tree_goes(self):
+        unit = self.decoding()
+
+        def stop(name):  # SIGTERM, then at most TimeoutStopSec=15: the unit takes its time to end
+            self.systemctl.calls.append(("stop", name))
+            self.systemctl.state[name] = "deactivating"
+            return 0
+        self.systemctl.stop = stop
+        finished = []
+
+        def finish(store, job, **kwargs):
+            finished.append(self.systemctl.state[unit])
+            raise decoder_policy.DecoderRefused("DECODE_UNIT_NO_RESULT")
+        with mock.patch.object(sp, "finish_decode", side_effect=finish):
+            self.assertTrue(self.scheduler.cancel(OWNER, 0)["ok"])
+            self.step(ticks=3)
+            self.assertIn(("stop", unit), self.systemctl.calls)
+            self.assertEqual((self.scheduler.status()["state"], finished), ("DECODE_STOPPING", []))
+            self.systemctl.state[unit] = "inactive"
+            self.step(ticks=3)
+        self.assertEqual(finished, ["inactive"])  # the work tree and the baseband go only after the unit ended
+        status = self.scheduler.status()
+        self.assertEqual((status["state"], status["last"]["error"]), ("IDLE", "CANCELLED"))
+
+    def test_a_decode_unit_that_never_ends_is_finished_after_the_grace(self):
+        unit = self.decoding()
+        self.systemctl.state[unit] = "active"
+        self.systemctl.stop = lambda name: self.systemctl.calls.append(("stop", name)) or 0  # stays active
+        with mock.patch.object(sp, "finish_decode", side_effect=decoder_policy.DecoderRefused("DECODE_UNIT_NO_RESULT")) as finish:
+            self.step(now_ms=self.now_ms + bs.DECODE_OVERRUN_S * 1000 + 1)  # overrun: stop
+            self.assertIn(("stop", unit), self.systemctl.calls)
+            self.step(ticks=bs.START_GRACE_MS // 2500 - 1)
+            self.assertEqual((self.scheduler.status()["state"], finish.call_count), ("DECODE_STOPPING", 0))
+            self.step(ticks=3)
+        finish.assert_called_once()
+        self.assertEqual(self.scheduler.status()["last"]["error"], "DECODE_UNIT_NO_RESULT")
+
+
 if __name__ == "__main__":
     unittest.main()
