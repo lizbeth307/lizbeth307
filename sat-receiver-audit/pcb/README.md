@@ -1,6 +1,6 @@
 # PCB preparation package
 
-This directory contains audited PCB partition and placement inputs. It is **not a fabrication package**. The E1–E5 schematic graphs include whole purchased products, existing board circuitry, cables and physical interfaces as well as custom-board parts. Placing all 777 graph references on one PCB would duplicate hardware and invent module pads.
+This directory contains audited PCB partition and placement inputs. It is **not a fabrication package**. The E1–E5 schematic graphs include whole purchased products, existing board circuitry, cables and physical interfaces as well as custom-board parts. Placing all 839 graph references on one PCB would duplicate hardware and invent module pads.
 
 Run from the repository root:
 
@@ -14,7 +14,7 @@ Only Python standard-library modules are used. The script reads E1–E5 and the 
 | Output | Use |
 |---|---|
 | `generated/partition.json` | Every reference, category, candidate board, unresolved item and constraints |
-| `generated/components.csv` | Filterable BOM/placement classification of all 777 references |
+| `generated/components.csv` | Filterable BOM/placement classification of all 839 references |
 | `generated/unresolved.csv` | Missing physical footprint, pin/pad or module/interface/rework blocker records; a connector or feed that is not a board part stays blocking (`interface_mounting_unresolved`) until its parts-database entry fixes both the mating part and the mounting (`interface_resolved`), and a virtual contact whose nets reach no host pin is `host_pads_unconnected` |
 | `generated/detector-core-input.json` | Exact 71-part DC core placement input, original pin/net/NC data and eight-net boundary |
 | `generated/detector-core-nodes.csv` | All 187 core pin assignments; 180 connected and seven NC |

@@ -306,6 +306,13 @@ def route(model, routed):
     return seg_nets, passthrough, internal
 
 
+def segment_wires(h, sid):
+    """Wires of one segment; a branch (D.SEGMENT_BRANCHES) is listed under its parent bundle with ids <parent>-<branch>-nn."""
+    if sid in D.SEGMENT_BRANCHES:
+        return [w for w in h.wires if w["wire"].startswith(f"{D.SEGMENT_BRANCHES[sid]}-{sid}-")]
+    return [w for w in h.wires if w["segment"] == sid and w["wire"].startswith(f"{sid}-") and w["wire"].count("-") == 1]
+
+
 def bundle_factor(n):
     if n <= 1:
         return 1.0
@@ -327,7 +334,9 @@ def harness_routes(base=BASE):
     path = Path(base) / ROUTES_JSON
     if not path.is_file():
         return {}
-    return json.loads(path.read_text(encoding="utf-8")).get("segments", {})
+    data = json.loads(path.read_text(encoding="utf-8"))
+    # a branch route (branches.PPS) gives the length of the branch segment of the same id (D.SEGMENT_BRANCHES)
+    return {**{b: r for b, r in data.get("branches", {}).items() if b in D.SEGMENT_BRANCHES}, **data.get("segments", {})}
 
 
 def routed_length(text, route):
@@ -570,10 +579,12 @@ class Harness:
                 rows.append((net, cont, prot, why, src, kk, idx, awg, end_a, end_b, fam_a, fam_b))
         for num, row in enumerate(rows, 1):
             net, cont, prot, why, src, kk, idx, awg, end_a, end_b, fam_a, fam_b = row
-            wid = f"{sid}-{num:02d}"
+            # a branch of another segment's bundle (the PPS conductors of the S01 ribbon) is listed under that segment
+            listed = D.SEGMENT_BRANCHES.get(sid, sid)
+            wid = f"{listed}-{sid}-{num:02d}" if listed != sid else f"{sid}-{num:02d}"
             ohm = None if {"CABLE", "IDC"} & {fam_a, fam_b} else D.WIRE_OHM_PER_KM.get(awg)
             self.wires.append(OrderedDict([
-                ("wire", wid), ("segment", sid), ("net", net), ("from_unit", a), ("from", end_a), ("to_unit", b), ("to", end_b),
+                ("wire", wid), ("segment", listed), ("net", net), ("from_unit", a), ("from", end_a), ("to_unit", b), ("to", end_b),
                 ("family_from", fam_a), ("family_to", fam_b), ("awg", awg), ("parallel", f"{idx + 1}/{kk}"),
                 ("i_cont_a", f"{cont:g}"), ("i_prot_a", f"{prot:g}" if prot else ""), ("protection", why), ("current_source", src),
                 ("bundle_n", n), ("colour", colour(net)), ("insulation", D.INSULATION), ("length_mm", self.segments[sid][5]),
@@ -777,7 +788,7 @@ def render_harness(model, h):
     lines.append("\n## 3. Сегменти джгутів\n")
     seg_rows = []
     for sid, seg in h.segments.items():
-        wires = [w for w in h.wires if w["segment"] == sid]
+        wires = segment_wires(h, sid)
         fams = sorted({w["family_from"] for w in wires} | {w["family_to"] for w in wires})
         seg_rows.append((sid, seg[3], f"{seg[1]} ↔ {seg[2]}", len(wires), ", ".join(fams), seg[5], seg[6]))
     lines.append(table(["сегмент", "назва", "кінці", "проводів", "родини", "довжина, мм", "примітка"], seg_rows))

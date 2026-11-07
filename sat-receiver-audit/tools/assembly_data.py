@@ -294,6 +294,9 @@ HEADERS = {
 # Graph connectors whose contacts serve more than one segment: the S01 ribbon conductors 6, 7, 16 and 18 leave as the PPS branch
 # right after the J20 socket (build/15 W2 MECH-1, mechanical/params/mechanical.json harness_routes branches.PPS).
 PIN_SEGMENTS = {"J301": {"S01": "1 3 5 8-10 12-15 17 20 25 27-30 32 34 35 38-40", "PPS": "6 7 16 18"}}
+# Branch segments listed under their parent bundle in build/16 (wire ids <parent>-<branch>-nn, segment column = parent): the PPS
+# conductors are S01 ribbon conductors that leave it after the J20 socket; their route is branches.PPS of the mechanical model.
+SEGMENT_BRANCHES = {"PPS": "S01"}
 # Board units whose harness ends have no graph header ref yet, with the reason; only there the generator still writes an X id.
 PENDING_BOARD_ENDS = {
     "ENCM": "роз'єм дочірньої плати ENC: жоден корпус JST PH не вміщується біля PEC11R на контурі 24 × 24 (W2 PCB-PIPE, pcb/boards/ENC.json "
@@ -333,7 +336,7 @@ SEGMENTS = [
      "IDC 2×20 2.54 мм 1:1 крізь проріз пластини SL1 над верхнім краєм Q6A (M-07; стрічку 40 жил розділено на дві половини по 20, укладені одна на одну); "
      "на CTRL — бокс-роз'єм 2×20 з ключем; висота боксу проти обмеження CTRL 5.5 мм — TBD (креслення не прочитано); провідники 6, 7, 16 і 18 "
      "(GND, PPS, UART6) відходять гілкою PPS одразу за розеткою J20, тож контакти 6/7/16/18 бокса на CTRL — без кола (рішення build/15 W2 MECH-1, W2 GR-3)"),
-    ("PPS", "Q6A.HDR", "GNSS", "Гілка PPS і UART6 шлейфу S01 → LC76G", "IDC", "196 (модель гілки PPS, межа 200; STACK §5.2)",
+    ("PPS", "Q6A.HDR", "GNSS", "Гілка PPS і UART6 шлейфу S01 → LC76G", "IDC", "≤200 (STACK §5.2)",
      "провідники 6 (GND), 7 (PPS), 16 і 18 (UART6) стрічки S01 відокремлено одразу за розеткою на J20 і проведено задньою площиною до P1 LC76G "
      "(mechanical/params/mechanical.json harness_routes branches.PPS; рішення build/15 W2 MECH-1); на LC76G — пайка; мережі E3 не змінюються"),
     ("S02", "CTRL", "PWR", "Керування і LAB5: CTRL ↔ PWR", None, "TBD (CAD)",

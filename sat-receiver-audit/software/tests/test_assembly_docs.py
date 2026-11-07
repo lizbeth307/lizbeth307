@@ -378,10 +378,12 @@ class HarnessHeaderRefTests(unittest.TestCase):
                 self.assertIn("_Horizontal", fp, row["connector"])
 
     def test_pps_branch_leaves_the_ribbon(self):
-        pps = {w["net"] for w in self.h.wires if w["segment"] == "PPS"}
-        self.assertEqual(pps, {"E3_GNSS_PPS", "UART6_RX", "UART6_TX", "GND"})
-        s01 = {w["from"].split(" ")[0] for w in self.h.wires if w["segment"] == "S01"}
-        self.assertFalse({"J301.6", "J301.7", "J301.16", "J301.18"} & s01)
+        branch = [w for w in self.h.wires if w["wire"].startswith("S01-PPS-")]
+        self.assertEqual({w["net"] for w in branch}, {"E3_GNSS_PPS", "UART6_RX", "UART6_TX", "GND"})
+        self.assertEqual({w["segment"] for w in branch} | {w["to_unit"] for w in branch}, {"S01", "GNSS"})
+        self.assertEqual(sorted(w["from"].split(" ")[0] for w in branch), ["J301.16", "J301.18", "J301.6", "J301.7"])
+        to_ctrl = {w["from"].split(" ")[0] for w in self.h.wires if w["segment"] == "S01" and w["to_unit"] == "CTRL"}
+        self.assertFalse({"J301.6", "J301.7", "J301.16", "J301.18"} & to_ctrl)
         self.assertNotIn("E3_GNSS_PPS", {w["net"] for w in self.h.wires if w["segment"] == "S25"})
 
 
