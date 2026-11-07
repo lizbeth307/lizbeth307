@@ -1,12 +1,12 @@
 {
   "summary": {
     "status": "PREPARATION_ONLY_NOT_FOR_FABRICATION",
-    "components": 849,
-    "schematic_contacts": 2742,
-    "connected_contacts": 2579,
+    "components": 851,
+    "schematic_contacts": 2942,
+    "connected_contacts": 2697,
     "nets": 486,
     "categories": {
-      "bare_board_part": 746,
+      "bare_board_part": 748,
       "harness_assembly": 13,
       "integral_to_host_part": 2,
       "mechanical_or_remote_part": 11,
@@ -23,8 +23,8 @@
       "HDMI_INSERT": 5,
       "IMU_CARRIER": 12,
       "PACK_FUSE": 3,
-      "PWR_BRANCH": 169,
-      "PWR_BRANCH_SW": 107,
+      "PWR_BRANCH": 170,
+      "PWR_BRANCH_SW": 108,
       "PWR_MAIN": 67,
       "RF_HF": 14,
       "RF_HMC": 54,
@@ -33,12 +33,12 @@
       "USB_POWER": 20,
       "USB_POWER_SW": 21
     },
-    "graph_assigned_footprints": 747,
-    "portable_graph_assignments": 747,
+    "graph_assigned_footprints": 749,
+    "portable_graph_assignments": 749,
     "bare_parts_without_footprint": 0,
     "pin_pad_mismatches": 0,
     "xml_connected_pin_audit": "PASS",
-    "xml_compared_connected_pins": 2579,
+    "xml_compared_connected_pins": 2697,
     "core_parts": 71,
     "core_connected_pins": 180,
     "core_boundary_nets": 8,
@@ -58,7 +58,7 @@
       },
       {
         "file": "design/E2.json",
-        "sha256": "add1bc5d1bbf1cfa391e4f080de7a3ac340d616048a95640607294ad18a75721"
+        "sha256": "5ffb253e88b4cd14c2d3f5b712371102ac6989412ff7e814193d46b82dd2b283"
       },
       {
         "file": "design/E3.json",
@@ -74,11 +74,11 @@
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "2359c03ba0e9e32355e105286c61dcb3463dd69322f3443c894da88289203209"
+        "sha256": "6b9b480ac6f99aaaad27011715b89d5041b16991208551979465eed412dc4748"
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "e8158ced457cc3a74bec8d2e412addf1e3dbae1fd177a08faa2d98426013787d"
+        "sha256": "8241ac215d3a6a14108138f3f99b17fcfd06444ffbf17757d4d21982f5d981c6"
       }
     ],
     "source_documents": [
@@ -187,11 +187,11 @@
         "interface_open",
         "interface_resolved"
       ],
-      "projection_sha256": "5d2a692e76b7631ffd8a4691f337e8680a1eea4b31d21ec7e1506fc701a5d9e5"
+      "projection_sha256": "a1b01ca1fd93b5d246c47e2a134cc0318c7f49edf8250db1b783befb51fb15d7"
     },
     "partition": {
       "file": "pcb/partition-spec.json",
-      "sha256": "96c2093e38b997474060037dcb22a1091ec98fedc0c6e6aee3f9f2b7e8062745",
+      "sha256": "677c4476c857880de057006744ca896b76ea6132144e4efbc493101f5d03f897",
       "b2b_currents": "tools/assembly_data.py NET_CURRENT"
     }
   },
@@ -211,7 +211,7 @@
       ]
     },
     "PWR_BRANCH_SW": {
-      "purpose": "PWR-B mezzanine (W2 AREA/GR-3): the E2 switch groups of partition.PWR_B_groups (LNA ch1-4, RTL-B, S-band LaNA, INA3221 #1, LNB/Boni/AUX12 monitors) no taller than hB, plus the PWR-B side-entry harness headers; joined to PWR-A by the Samtec QSH/QTH pair (b2b-nets.json).",
+      "purpose": "PWR-B mezzanine (W2 AREA/GR-3): the E2 switch groups of partition.PWR_B_groups (LNA ch1-4, RTL-B, S-band LaNA, INA3221 #1, LNB/Boni/AUX12 monitors) no taller than hB, plus the PWR-B side-entry harness headers; joined to PWR-A by the Samtec LSHM-150 pair J208 (PWR-A top) / J209 (PWR-B bottom) (b2b-nets.json, W2 B2B).",
       "source": [
         "pcb/partition-spec.json",
         "design/E2-review.md"
@@ -349,8 +349,8 @@
         "PWR_BRANCH_SW",
         "USB_POWER_SW"
       ],
-      "requirement": "PWR-A/PWR-B mezzanine: every net with pins on both boards crosses only through the Samtec QSH-060-01-L-D-A / QTH-060-01-L-D-A pair (pcb/generated/b2b-nets.json: ceil(I_protection / 1 A) contacts per power net plus one adjacent GND, 25 A ground plane); no Kelvin or precision net crosses except the declared sense pairs. PWR-B parts no taller than hB 5.5 mm; PWR-A parts under PWR-B no taller than hA 4.5 mm (pcb/partition-spec.json).",
-      "source": "pcb/partition-spec.json (W2 AREA); Samtec QSH/QTH specification Rev K"
+      "requirement": "PWR-A/PWR-B mezzanine: every net with pins on both boards crosses only through the Samtec LSHM-150-02.5-L-DV-A-N-K-TR pair J208 (PWR-A top) / J209 (PWR-B bottom), 5.00 mm mated (pcb/generated/b2b-nets.json contacts: ceil(I_protection / 1 A) contacts per power net, one GND contact beside each power contact, no ground plane; pin n of J208 meets pin n+1 (n odd) / n-1 (n even) of J209); no Kelvin or precision net crosses except the declared sense pairs. PWR-B parts no taller than hB 5.5 mm; PWR-A parts under PWR-B no taller than hA 4.5 mm (pcb/partition-spec.json).",
+      "source": "pcb/partition-spec.json (W2 AREA, W2 B2B); Samtec LSHM specification Rev H, catalogue F-224, print Rev Z note 4"
     },
     {
       "id": "DC-01",
@@ -5767,6 +5767,40 @@
       "pin_count": 12,
       "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
       "classification_reason": "Board part, mount pcb_tht in design/parts/parts.json."
+    },
+    {
+      "ref": "J208",
+      "sheet": "E2",
+      "mount": "pcb_smt",
+      "value": "B2B-PWRA: Samtec LSHM-150 2×50, PWR-A верх, стик 5.00 мм",
+      "kind": "connector",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "PWR_BRANCH",
+      "dnp": false,
+      "footprint": "Connector_Samtec:Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 100,
+      "source": "pcb/generated/b2b-nets.json contacts (pcb/prepare.py b2b_contacts); pcb/partition-spec.json b2b (W2 B2B)",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
+    },
+    {
+      "ref": "J209",
+      "sheet": "E2",
+      "mount": "pcb_smt",
+      "value": "B2B-PWRB: Samtec LSHM-150 2×50, PWR-B низ, стик 5.00 мм",
+      "kind": "connector",
+      "category": "bare_board_part",
+      "assembly_owner": "",
+      "board_candidate": "PWR_BRANCH_SW",
+      "dnp": false,
+      "footprint": "Connector_Samtec:Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical",
+      "portable_footprint": true,
+      "pad_coverage": "PASS",
+      "pin_count": 100,
+      "source": "pcb/generated/b2b-nets.json contacts (pcb/prepare.py b2b_contacts); pcb/partition-spec.json b2b (W2 B2B)",
+      "classification_reason": "Board part, mount pcb_smt in design/parts/parts.json."
     },
     {
       "ref": "J301",

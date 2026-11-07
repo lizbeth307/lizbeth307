@@ -1,27 +1,28 @@
 {
   "schema": "srrx-b2b-nets-v1",
-  "status": "DESIGN INPUT (W2 GR-3): nets with pins on PWR-A and PWR-B bare board parts of components.csv; the board packages derive the QSH/QTH pin map from it. Not a placement and not a measured current.",
+  "status": "DESIGN INPUT (W2 GR-3, W2 B2B): nets with pins on PWR-A and PWR-B bare board parts of components.csv (the B2B halves themselves left out) and the contact map of both halves, which the graph refs carry pin for pin. Not a placement and not a measured current.",
   "generator": "pcb/prepare.py",
-  "rule": "contacts per crossing power net = ceil(I_protection / b2b_i_pin_A), I_protection from tools/assembly_data.py NET_CURRENT or net_current_extra; every other crossing net 1 contact; plus gnd_pins_per_power_net; Kelvin and precision nets (shunt nets, INA inputs, precision divider mid-points) never cross except declared_sense_pairs and sense_taps; GR-3 writes pcb/generated/b2b-nets.json by the same rule",
+  "rule": "contacts per crossing power net = ceil(I_protection / b2b_i_pin_A), I_protection from tools/assembly_data.py NET_CURRENT or net_current_extra; every other crossing net 1 contact; plus gnd_pins_per_power_contact GND contacts for every power contact (W2 B2B: the LSHM has no ground plane); Kelvin and precision nets (shunt nets, INA inputs, precision divider mid-points) never cross except declared_sense_pairs and sense_taps; pcb/prepare.py writes pcb/generated/b2b-nets.json by the same rule, with the contact map",
   "i_pin_A": 1.0,
+  "i_pin_note": "b2b_i_pin_A 1.0 A per contact is a design derating: half the Samtec LSHM rating of 2 A per pin, which spec Rev H states for one pin powered per row only; in the power block every column carries a power contact and its GND return, and neighbouring columns carry current at the same time. Samtec gives no rating for many powered pins, so 1.0 A is not a rating; the B2B temperature rise is a bench gate (OPEN)",
   "mpn": {
     "pwr_a": {
-      "mpn": "QSH-060-01-L-D-A",
+      "mpn": "LSHM-150-02.5-L-DV-A-N-K-TR",
       "manufacturer": "Samtec",
-      "lcsc": "C5199901",
-      "stock": 270,
-      "role": "socket strip 0.50 mm, 2 x 60 = 120 contacts + ground plane"
+      "lcsc": "C2940507",
+      "stock": 243,
+      "role": "hermaphroditic terminal/socket strip 0.50 mm, 2 x 50 = 100 contacts, no ground plane, lead style -02.5; J208 on the PWR-A top"
     },
     "pwr_b": {
-      "mpn": "QTH-060-01-L-D-A",
+      "mpn": "LSHM-150-02.5-L-DV-A-N-K-TR",
       "manufacturer": "Samtec",
-      "lcsc": "C116054",
-      "stock": 314,
-      "role": "terminal strip, lead style -01, 120 contacts + ground plane"
+      "lcsc": "C2940507",
+      "stock": 243,
+      "role": "the same part (self-mating), J209 on the PWR-B bottom"
     },
     "read": "2026-11-07"
   },
-  "contacts_available": 120,
+  "contacts_available": 100,
   "pwr_a_domains": [
     "PWR_MAIN",
     "PWR_BRANCH",
@@ -36,10 +37,11 @@
     "power_nets": 9,
     "power_pins": 14,
     "signal_pins": 31,
-    "gnd_pins": 9,
-    "contacts_needed": 54,
-    "contacts_with_spare": 65,
-    "fits": true
+    "gnd_pins": 14,
+    "contacts_needed": 59,
+    "contacts_with_spare": 71,
+    "fits": true,
+    "meets_spare_rule": true
   },
   "nets": [
     {
@@ -447,7 +449,7 @@
       "kind": "power",
       "prot_A": 4.0,
       "pins": 4,
-      "gnd_pins": 1
+      "gnd_pins": 4
     },
     {
       "net": "LAB5_RLY",
@@ -460,7 +462,7 @@
       "kind": "power",
       "prot_A": 1.5,
       "pins": 2,
-      "gnd_pins": 1
+      "gnd_pins": 2
     },
     {
       "net": "LNA4V5",
@@ -483,7 +485,7 @@
       "kind": "power",
       "prot_A": 1.209,
       "pins": 2,
-      "gnd_pins": 1
+      "gnd_pins": 2
     },
     {
       "net": "LNB13V2",
@@ -594,6 +596,620 @@
       ],
       "kind": "signal",
       "pins": 1
+    }
+  ],
+  "graph_refs": {
+    "pwr_a": "J208",
+    "pwr_b": "J209"
+  },
+  "footprint": "Connector_Samtec:Samtec_LSHM-150-xx.x-x-DV-N_2x50_P0.50mm_Vertical",
+  "mating_map": {
+    "formula": "pin n of J208 (PWR-A) meets pin n+1 of J209 (PWR-B) for n odd and pin n-1 for n even; the map is its own inverse",
+    "source": "Samtec print Rev Z note 4 (https://suddendocs.samtec.com/prints/lshm-1xx-xx.x-xxx-dv-a-x-x-tr-mkt.pdf, read 2026-11-07): pin 01 mates contact 02 of the other LSHM-DV",
+    "derivation": "both halves are the same footprint (odd pads in one row, even pads in the other, pads 2k-1 and 2k at the same x); pin 01 meeting contact 02 means the upper half is turned over about the strip axis, so every column k pairs 2k-1 with 2k; pcb/tests/test_b2b_map.py checks it on the vendored footprint",
+    "placement": "J209 on the PWR-B bottom over J208 (same centre in the shared PWR-A/PWR-B frame), so that its pad m lies over J208 pad b2b_mate(m): seen from the PWR-A top, J209 is J208 mirrored about the strip axis (y -> -y in the J208 frame); its pin-1 row lies over the even row of J208 and its alignment holes at (+/-13.5, +0.85) against (+/-13.5, -0.85) of J208. A bottom-side footprint flipped top/bottom, or flipped left/right and turned 180 degrees, is that mirror; pcb/check_boards.py b2b with pin_map from b2b-nets.json contacts checks it"
+  },
+  "pin_map_rule": "pcb/prepare.py b2b_contacts: J208 contacts in order 1, 2, 3 ...: power contacts first (nets in name order, each power contact followed by its GND contact, so they share a column), then each declared sense pair in one column, then the other crossing nets in name order (one contact each), the rest spare (nc in the graph); J209 contact m carries the net of J208 contact b2b_mate(m). Design value; the board packages place and route it",
+  "contacts": [
+    {
+      "pwr_a_pin": "1",
+      "pwr_b_pin": "2",
+      "net": "3V3_Q6A",
+      "role": "power"
+    },
+    {
+      "pwr_a_pin": "2",
+      "pwr_b_pin": "1",
+      "net": "GND",
+      "role": "gnd"
+    },
+    {
+      "pwr_a_pin": "3",
+      "pwr_b_pin": "4",
+      "net": "AUX12",
+      "role": "power"
+    },
+    {
+      "pwr_a_pin": "4",
+      "pwr_b_pin": "3",
+      "net": "GND",
+      "role": "gnd"
+    },
+    {
+      "pwr_a_pin": "5",
+      "pwr_b_pin": "6",
+      "net": "BONI13V8_PORT",
+      "role": "power"
+    },
+    {
+      "pwr_a_pin": "6",
+      "pwr_b_pin": "5",
+      "net": "GND",
+      "role": "gnd"
+    },
+    {
+      "pwr_a_pin": "7",
+      "pwr_b_pin": "8",
+      "net": "LAB5",
+      "role": "power"
+    },
+    {
+      "pwr_a_pin": "8",
+      "pwr_b_pin": "7",
+      "net": "GND",
+      "role": "gnd"
+    },
+    {
+      "pwr_a_pin": "9",
+      "pwr_b_pin": "10",
+      "net": "LAB5",
+      "role": "power"
+    },
+    {
+      "pwr_a_pin": "10",
+      "pwr_b_pin": "9",
+      "net": "GND",
+      "role": "gnd"
+    },
+    {
+      "pwr_a_pin": "11",
+      "pwr_b_pin": "12",
+      "net": "LAB5",
+      "role": "power"
+    },
+    {
+      "pwr_a_pin": "12",
+      "pwr_b_pin": "11",
+      "net": "GND",
+      "role": "gnd"
+    },
+    {
+      "pwr_a_pin": "13",
+      "pwr_b_pin": "14",
+      "net": "LAB5",
+      "role": "power"
+    },
+    {
+      "pwr_a_pin": "14",
+      "pwr_b_pin": "13",
+      "net": "GND",
+      "role": "gnd"
+    },
+    {
+      "pwr_a_pin": "15",
+      "pwr_b_pin": "16",
+      "net": "LAB5_RLY",
+      "role": "power"
+    },
+    {
+      "pwr_a_pin": "16",
+      "pwr_b_pin": "15",
+      "net": "GND",
+      "role": "gnd"
+    },
+    {
+      "pwr_a_pin": "17",
+      "pwr_b_pin": "18",
+      "net": "LAB5_RLY",
+      "role": "power"
+    },
+    {
+      "pwr_a_pin": "18",
+      "pwr_b_pin": "17",
+      "net": "GND",
+      "role": "gnd"
+    },
+    {
+      "pwr_a_pin": "19",
+      "pwr_b_pin": "20",
+      "net": "LNA4V5",
+      "role": "power"
+    },
+    {
+      "pwr_a_pin": "20",
+      "pwr_b_pin": "19",
+      "net": "GND",
+      "role": "gnd"
+    },
+    {
+      "pwr_a_pin": "21",
+      "pwr_b_pin": "22",
+      "net": "LNA4V5",
+      "role": "power"
+    },
+    {
+      "pwr_a_pin": "22",
+      "pwr_b_pin": "21",
+      "net": "GND",
+      "role": "gnd"
+    },
+    {
+      "pwr_a_pin": "23",
+      "pwr_b_pin": "24",
+      "net": "LNB13V2",
+      "role": "power"
+    },
+    {
+      "pwr_a_pin": "24",
+      "pwr_b_pin": "23",
+      "net": "GND",
+      "role": "gnd"
+    },
+    {
+      "pwr_a_pin": "25",
+      "pwr_b_pin": "26",
+      "net": "VBUS_HFP",
+      "role": "power"
+    },
+    {
+      "pwr_a_pin": "26",
+      "pwr_b_pin": "25",
+      "net": "GND",
+      "role": "gnd"
+    },
+    {
+      "pwr_a_pin": "27",
+      "pwr_b_pin": "28",
+      "net": "VBUS_LABPORT",
+      "role": "power"
+    },
+    {
+      "pwr_a_pin": "28",
+      "pwr_b_pin": "27",
+      "net": "GND",
+      "role": "gnd"
+    },
+    {
+      "pwr_a_pin": "29",
+      "pwr_b_pin": "30",
+      "net": "E2_LNA4_SW",
+      "role": "sense pair"
+    },
+    {
+      "pwr_a_pin": "30",
+      "pwr_b_pin": "29",
+      "net": "E2_LNA4_SHUNT",
+      "role": "sense pair"
+    },
+    {
+      "pwr_a_pin": "31",
+      "pwr_b_pin": "32",
+      "net": "BIAS_CH1_DAMP",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "32",
+      "pwr_b_pin": "31",
+      "net": "BIAS_CH2_DAMP",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "33",
+      "pwr_b_pin": "34",
+      "net": "BIAS_CH3_DAMP",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "34",
+      "pwr_b_pin": "33",
+      "net": "BIAS_CH4_DAMP",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "35",
+      "pwr_b_pin": "36",
+      "net": "BONI13V8",
+      "role": "sense/supply tap"
+    },
+    {
+      "pwr_a_pin": "36",
+      "pwr_b_pin": "35",
+      "net": "CHG_INHIBIT",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "37",
+      "pwr_b_pin": "38",
+      "net": "E1_BAT_ADC",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "38",
+      "pwr_b_pin": "37",
+      "net": "E2_SB_DAMP",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "39",
+      "pwr_b_pin": "40",
+      "net": "EN_AUX12",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "40",
+      "pwr_b_pin": "39",
+      "net": "EN_BONI",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "41",
+      "pwr_b_pin": "42",
+      "net": "EN_HFP",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "42",
+      "pwr_b_pin": "41",
+      "net": "EN_LIME3V3",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "43",
+      "pwr_b_pin": "44",
+      "net": "EN_LNB",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "44",
+      "pwr_b_pin": "43",
+      "net": "FAULT_HFP",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "45",
+      "pwr_b_pin": "46",
+      "net": "FLT_BONI",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "46",
+      "pwr_b_pin": "45",
+      "net": "FLT_LIME3V3",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "47",
+      "pwr_b_pin": "48",
+      "net": "FLT_LNB",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "48",
+      "pwr_b_pin": "47",
+      "net": "I2C0_SCL",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "49",
+      "pwr_b_pin": "50",
+      "net": "I2C0_SDA",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "50",
+      "pwr_b_pin": "49",
+      "net": "I2C2_SCL",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "51",
+      "pwr_b_pin": "52",
+      "net": "I2C2_SDA",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "52",
+      "pwr_b_pin": "51",
+      "net": "IMU_RX",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "53",
+      "pwr_b_pin": "54",
+      "net": "IMU_TX",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "54",
+      "pwr_b_pin": "53",
+      "net": "INA228_ALERT",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "55",
+      "pwr_b_pin": "56",
+      "net": "OVP_LNB_N",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "56",
+      "pwr_b_pin": "55",
+      "net": "PICO_DISP_EN",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "57",
+      "pwr_b_pin": "58",
+      "net": "PICO_OFF",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "58",
+      "pwr_b_pin": "57",
+      "net": "PWR_BUTTON",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "59",
+      "pwr_b_pin": "60",
+      "net": "VBUS_RTLB_DAMP",
+      "role": "signal"
+    },
+    {
+      "pwr_a_pin": "60",
+      "pwr_b_pin": "59",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "61",
+      "pwr_b_pin": "62",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "62",
+      "pwr_b_pin": "61",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "63",
+      "pwr_b_pin": "64",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "64",
+      "pwr_b_pin": "63",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "65",
+      "pwr_b_pin": "66",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "66",
+      "pwr_b_pin": "65",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "67",
+      "pwr_b_pin": "68",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "68",
+      "pwr_b_pin": "67",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "69",
+      "pwr_b_pin": "70",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "70",
+      "pwr_b_pin": "69",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "71",
+      "pwr_b_pin": "72",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "72",
+      "pwr_b_pin": "71",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "73",
+      "pwr_b_pin": "74",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "74",
+      "pwr_b_pin": "73",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "75",
+      "pwr_b_pin": "76",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "76",
+      "pwr_b_pin": "75",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "77",
+      "pwr_b_pin": "78",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "78",
+      "pwr_b_pin": "77",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "79",
+      "pwr_b_pin": "80",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "80",
+      "pwr_b_pin": "79",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "81",
+      "pwr_b_pin": "82",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "82",
+      "pwr_b_pin": "81",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "83",
+      "pwr_b_pin": "84",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "84",
+      "pwr_b_pin": "83",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "85",
+      "pwr_b_pin": "86",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "86",
+      "pwr_b_pin": "85",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "87",
+      "pwr_b_pin": "88",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "88",
+      "pwr_b_pin": "87",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "89",
+      "pwr_b_pin": "90",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "90",
+      "pwr_b_pin": "89",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "91",
+      "pwr_b_pin": "92",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "92",
+      "pwr_b_pin": "91",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "93",
+      "pwr_b_pin": "94",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "94",
+      "pwr_b_pin": "93",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "95",
+      "pwr_b_pin": "96",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "96",
+      "pwr_b_pin": "95",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "97",
+      "pwr_b_pin": "98",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "98",
+      "pwr_b_pin": "97",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "99",
+      "pwr_b_pin": "100",
+      "net": "",
+      "role": "spare"
+    },
+    {
+      "pwr_a_pin": "100",
+      "pwr_b_pin": "99",
+      "net": "",
+      "role": "spare"
     }
   ],
   "errors": []

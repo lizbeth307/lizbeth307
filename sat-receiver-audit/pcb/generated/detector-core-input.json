@@ -4006,6 +4006,18 @@
           "name": "3V3_Q6A"
         },
         {
+          "ref": "J208",
+          "pin": "1",
+          "sheet": "E2",
+          "name": "3V3_Q6A"
+        },
+        {
+          "ref": "J209",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "3V3_Q6A"
+        },
+        {
           "ref": "J301",
           "pin": "1",
           "sheet": "E3",
@@ -6338,6 +6350,174 @@
         {
           "ref": "J207",
           "pin": "10",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "2",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "4",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "6",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "8",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "10",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "12",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "14",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "16",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "18",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "20",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "22",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "24",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "26",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J208",
+          "pin": "28",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "1",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "3",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "5",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "7",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "9",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "11",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "13",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "15",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "17",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "19",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "21",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "23",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "25",
+          "sheet": "E2",
+          "name": "GND"
+        },
+        {
+          "ref": "J209",
+          "pin": "27",
           "sheet": "E2",
           "name": "GND"
         },
@@ -8686,7 +8866,7 @@
       },
       {
         "file": "design/E2.json",
-        "sha256": "add1bc5d1bbf1cfa391e4f080de7a3ac340d616048a95640607294ad18a75721"
+        "sha256": "5ffb253e88b4cd14c2d3f5b712371102ac6989412ff7e814193d46b82dd2b283"
       },
       {
         "file": "design/E3.json",
@@ -8702,11 +8882,11 @@
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "2359c03ba0e9e32355e105286c61dcb3463dd69322f3443c894da88289203209"
+        "sha256": "6b9b480ac6f99aaaad27011715b89d5041b16991208551979465eed412dc4748"
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "e8158ced457cc3a74bec8d2e412addf1e3dbae1fd177a08faa2d98426013787d"
+        "sha256": "8241ac215d3a6a14108138f3f99b17fcfd06444ffbf17757d4d21982f5d981c6"
       }
     ],
     "source_documents": [

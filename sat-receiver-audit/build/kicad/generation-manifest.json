@@ -62,7 +62,78 @@
       "stem": "E2",
       "instance": "81984160-ffc1-5150-93ba-690a49e1cc5c",
       "title": "E2 - Захищені рейки, LNA і моніторинг струму (1/5)",
-      "components": 88,
+      "components": 63,
+      "sheet": "E2",
+      "notes": [
+        "N-E2-02",
+        "E2-01",
+        "E2-04"
+      ],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {
+        "N-E2-02": 110,
+        "E2-01": 110,
+        "E2-04": 110
+      },
+      "fill": 0.857,
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 42,
+        "ground_symbols": 41,
+        "junctions": 52,
+        "wire_crossings": 3,
+        "wires": 224
+      }
+    },
+    {
+      "stem": "E2_02",
+      "instance": "def01337-c22c-581d-ab21-3e0f48197e81",
+      "title": "E2 - Захищені рейки, LNA і моніторинг струму (2/5)",
+      "components": 45,
+      "sheet": "E2",
+      "notes": [],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {},
+      "fill": 0.723,
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 169,
+        "ground_symbols": 28,
+        "junctions": 63,
+        "wire_crossings": 2,
+        "wires": 351
+      }
+    },
+    {
+      "stem": "E2_03",
+      "instance": "c4c82d69-a1e5-5cf1-924c-73422e522133",
+      "title": "E2 - Захищені рейки, LNA і моніторинг струму (3/5)",
+      "components": 45,
+      "sheet": "E2",
+      "notes": [
+        "E2-02",
+        "N-E2-03"
+      ],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {
+        "E2-02": 110,
+        "N-E2-03": 110
+      },
+      "fill": 0.591,
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 34,
+        "ground_symbols": 28,
+        "junctions": 31,
+        "wire_crossings": 3,
+        "wires": 141
+      }
+    },
+    {
+      "stem": "E2_04",
+      "instance": "b86a610c-9540-56eb-9a94-fee3a23ee226",
+      "title": "E2 - Захищені рейки, LNA і моніторинг струму (4/5)",
+      "components": 62,
       "sheet": "E2",
       "notes": [
         "E2-05"
@@ -71,48 +142,21 @@
       "note_wrap_chars": {
         "E2-05": 110
       },
-      "fill": 0.699,
+      "fill": 0.667,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 67,
-        "ground_symbols": 56,
-        "junctions": 40,
-        "wire_crossings": 2,
-        "wires": 219
+        "global_labels": 53,
+        "ground_symbols": 31,
+        "junctions": 38,
+        "wire_crossings": 6,
+        "wires": 191
       }
     },
     {
-      "stem": "E2_02",
-      "instance": "def01337-c22c-581d-ab21-3e0f48197e81",
-      "title": "E2 - Захищені рейки, LNA і моніторинг струму (2/5)",
-      "components": 49,
-      "sheet": "E2",
-      "notes": [
-        "E2-01",
-        "E2-04",
-        "N-E2-03"
-      ],
-      "note_wrap_cap": 110,
-      "note_wrap_chars": {
-        "E2-01": 110,
-        "E2-04": 110,
-        "N-E2-03": 110
-      },
-      "fill": 0.695,
-      "drawing": {
-        "fallback_labels": 0,
-        "global_labels": 33,
-        "ground_symbols": 30,
-        "junctions": 40,
-        "wire_crossings": 3,
-        "wires": 171
-      }
-    },
-    {
-      "stem": "E2_03",
-      "instance": "c4c82d69-a1e5-5cf1-924c-73422e522133",
-      "title": "E2 - Захищені рейки, LNA і моніторинг струму (3/5)",
-      "components": 62,
+      "stem": "E2_05",
+      "instance": "3b171c1f-559e-51e7-80e8-e40d3812ba35",
+      "title": "E2 - Захищені рейки, LNA і моніторинг струму (5/5)",
+      "components": 80,
       "sheet": "E2",
       "notes": [
         "E2-03",
@@ -123,60 +167,14 @@
         "E2-03": 110,
         "N-E2-01": 110
       },
-      "fill": 0.668,
+      "fill": 0.58,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 57,
-        "ground_symbols": 33,
-        "junctions": 30,
-        "wire_crossings": 5,
-        "wires": 176
-      }
-    },
-    {
-      "stem": "E2_04",
-      "instance": "b86a610c-9540-56eb-9a94-fee3a23ee226",
-      "title": "E2 - Захищені рейки, LNA і моніторинг струму (4/5)",
-      "components": 60,
-      "sheet": "E2",
-      "notes": [
-        "E2-02"
-      ],
-      "note_wrap_cap": 110,
-      "note_wrap_chars": {
-        "E2-02": 110
-      },
-      "fill": 0.631,
-      "drawing": {
-        "fallback_labels": 0,
-        "global_labels": 114,
-        "ground_symbols": 25,
-        "junctions": 28,
-        "wire_crossings": 2,
-        "wires": 215
-      }
-    },
-    {
-      "stem": "E2_05",
-      "instance": "3b171c1f-559e-51e7-80e8-e40d3812ba35",
-      "title": "E2 - Захищені рейки, LNA і моніторинг струму (5/5)",
-      "components": 34,
-      "sheet": "E2",
-      "notes": [
-        "N-E2-02"
-      ],
-      "note_wrap_cap": 110,
-      "note_wrap_chars": {
-        "N-E2-02": 110
-      },
-      "fill": 0.441,
-      "drawing": {
-        "fallback_labels": 0,
-        "global_labels": 24,
-        "ground_symbols": 21,
-        "junctions": 27,
-        "wire_crossings": 3,
-        "wires": 120
+        "global_labels": 62,
+        "ground_symbols": 39,
+        "junctions": 23,
+        "wire_crossings": 1,
+        "wires": 163
       }
     },
     {
@@ -437,17 +435,17 @@
       }
     }
   ],
-  "components": 849,
+  "components": 851,
   "supply_annotations": 25,
-  "connected_contacts": 2579,
+  "connected_contacts": 2697,
   "nets": 486,
   "drawing": {
     "fallback_labels": 0,
-    "global_labels": 1157,
-    "ground_symbols": 531,
-    "junctions": 490,
+    "global_labels": 1222,
+    "ground_symbols": 533,
+    "junctions": 532,
     "wire_crossings": 50,
-    "wires": 3083
+    "wires": 3252
   },
   "sparse_last_pages": [],
   "single_contact_nets": {},
@@ -1113,7 +1111,7 @@
   },
   "source_sha256": {
     "E1.json": "7d65a57e0f7d6e7a7c24daecd6e1f3ebb2c0b3862f7fc15dd5c421a8f3774487",
-    "E2.json": "add1bc5d1bbf1cfa391e4f080de7a3ac340d616048a95640607294ad18a75721",
+    "E2.json": "5ffb253e88b4cd14c2d3f5b712371102ac6989412ff7e814193d46b82dd2b283",
     "E3.json": "4e851e282f31aad001eff00fe680a210d694b67fc01cb392b63b3282e93c08b0",
     "E4.json": "e10e0c344463c9e5bc48cb59293853bacc943e8e55f08f2f0cf109211688aa17",
     "E5.json": "62c26ed72800a748b398633eafff5fb6b45b2bc4a75d9665cd07843538ac675f"

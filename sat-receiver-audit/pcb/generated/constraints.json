@@ -36,8 +36,8 @@
       "PWR_BRANCH_SW",
       "USB_POWER_SW"
     ],
-    "requirement": "PWR-A/PWR-B mezzanine: every net with pins on both boards crosses only through the Samtec QSH-060-01-L-D-A / QTH-060-01-L-D-A pair (pcb/generated/b2b-nets.json: ceil(I_protection / 1 A) contacts per power net plus one adjacent GND, 25 A ground plane); no Kelvin or precision net crosses except the declared sense pairs. PWR-B parts no taller than hB 5.5 mm; PWR-A parts under PWR-B no taller than hA 4.5 mm (pcb/partition-spec.json).",
-    "source": "pcb/partition-spec.json (W2 AREA); Samtec QSH/QTH specification Rev K"
+    "requirement": "PWR-A/PWR-B mezzanine: every net with pins on both boards crosses only through the Samtec LSHM-150-02.5-L-DV-A-N-K-TR pair J208 (PWR-A top) / J209 (PWR-B bottom), 5.00 mm mated (pcb/generated/b2b-nets.json contacts: ceil(I_protection / 1 A) contacts per power net, one GND contact beside each power contact, no ground plane; pin n of J208 meets pin n+1 (n odd) / n-1 (n even) of J209); no Kelvin or precision net crosses except the declared sense pairs. PWR-B parts no taller than hB 5.5 mm; PWR-A parts under PWR-B no taller than hA 4.5 mm (pcb/partition-spec.json).",
+    "source": "pcb/partition-spec.json (W2 AREA, W2 B2B); Samtec LSHM specification Rev H, catalogue F-224, print Rev Z note 4"
   },
   {
     "id": "DC-01",

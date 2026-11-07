@@ -1631,6 +1631,174 @@
       "type": "passive"
     },
     {
+      "ref": "J208",
+      "pin": "2",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "4",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "6",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "8",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "10",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "12",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "14",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "16",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "18",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "20",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "22",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "24",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "26",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "28",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "1",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "3",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "5",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "7",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "9",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "11",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "13",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "15",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "17",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "19",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "21",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "23",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "25",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "27",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
       "ref": "J301",
       "pin": "6",
       "sheet": "E3",
@@ -4277,6 +4445,18 @@
       "type": "passive"
     },
     {
+      "ref": "J208",
+      "pin": "54",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "53",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
       "ref": "J301",
       "pin": "3",
       "sheet": "E3",
@@ -4321,6 +4501,18 @@
       "type": "passive"
     },
     {
+      "ref": "J208",
+      "pin": "49",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "50",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
       "ref": "J301",
       "pin": "13",
       "sheet": "E3",
@@ -4355,6 +4547,18 @@
     {
       "ref": "J203",
       "pin": "8",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "48",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "47",
       "sheet": "E2",
       "type": "passive"
     },
@@ -4573,6 +4777,18 @@
       "type": "passive"
     },
     {
+      "ref": "J208",
+      "pin": "57",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "58",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
       "ref": "U305",
       "pin": "17",
       "sheet": "E3",
@@ -4725,6 +4941,18 @@
     {
       "ref": "J203",
       "pin": "19",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "58",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "57",
       "sheet": "E2",
       "type": "passive"
     },
@@ -4959,6 +5187,54 @@
       "type": "passive"
     },
     {
+      "ref": "J208",
+      "pin": "7",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "9",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "11",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "13",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "8",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "10",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "12",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "14",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
       "ref": "U315",
       "pin": "1",
       "sheet": "E3",
@@ -5149,6 +5425,30 @@
       "type": "passive"
     },
     {
+      "ref": "J208",
+      "pin": "15",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "17",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "16",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "18",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
       "ref": "D401",
       "pin": "3",
       "sheet": "E4",
@@ -5215,6 +5515,18 @@
     {
       "ref": "J202",
       "pin": "2",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "37",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "38",
       "sheet": "E2",
       "type": "passive"
     },
@@ -5603,6 +5915,18 @@
       "type": "passive"
     },
     {
+      "ref": "J208",
+      "pin": "36",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "35",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
       "ref": "U303",
       "pin": "5",
       "sheet": "E3",
@@ -5860,6 +6184,18 @@
     },
     {
       "ref": "J204",
+      "pin": "2",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "1",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
       "pin": "2",
       "sheet": "E2",
       "type": "passive"
@@ -6499,6 +6835,18 @@
       "type": "passive"
     },
     {
+      "ref": "J208",
+      "pin": "56",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "55",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
       "ref": "U305",
       "pin": "21",
       "sheet": "E3",
@@ -6631,6 +6979,18 @@
       "type": "passive"
     },
     {
+      "ref": "J208",
+      "pin": "42",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "41",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
       "ref": "U303",
       "pin": "21",
       "sheet": "E3",
@@ -6673,6 +7033,18 @@
     {
       "ref": "J203",
       "pin": "5",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "46",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "45",
       "sheet": "E2",
       "type": "passive"
     },
@@ -6893,6 +7265,18 @@
       "type": "passive"
     },
     {
+      "ref": "J208",
+      "pin": "39",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "40",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
       "ref": "U301",
       "pin": "22",
       "sheet": "E3",
@@ -6967,6 +7351,18 @@
     {
       "ref": "R286",
       "pin": "1",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "3",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "4",
       "sheet": "E2",
       "type": "passive"
     },
@@ -7251,6 +7647,30 @@
       "pin": "1",
       "sheet": "E2",
       "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "19",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "21",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "20",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "22",
+      "sheet": "E2",
+      "type": "passive"
     }
   ],
   "E2_LT_OUT2": [
@@ -7483,6 +7903,18 @@
       "pin": "1",
       "sheet": "E2",
       "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "31",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "32",
+      "sheet": "E2",
+      "type": "passive"
     }
   ],
   "EN_LNA2": [
@@ -7669,6 +8101,18 @@
     {
       "ref": "C239",
       "pin": "1",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "32",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "31",
       "sheet": "E2",
       "type": "passive"
     }
@@ -7999,6 +8443,18 @@
       "pin": "1",
       "sheet": "E2",
       "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "33",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "34",
+      "sheet": "E2",
+      "type": "passive"
     }
   ],
   "E2_BLK3_S": [
@@ -8237,6 +8693,18 @@
       "pin": "1",
       "sheet": "E2",
       "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "29",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "30",
+      "sheet": "E2",
+      "type": "passive"
     }
   ],
   "E2_LNA4_SHUNT": [
@@ -8261,6 +8729,18 @@
     {
       "ref": "R275",
       "pin": "1",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "30",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "29",
       "sheet": "E2",
       "type": "passive"
     }
@@ -8325,6 +8805,18 @@
     {
       "ref": "C247",
       "pin": "1",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "34",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "33",
       "sheet": "E2",
       "type": "passive"
     }
@@ -8483,6 +8975,18 @@
       "pin": "1",
       "sheet": "E2",
       "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "59",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "60",
+      "sheet": "E2",
+      "type": "passive"
     }
   ],
   "E2_LNB_IN": [
@@ -8619,6 +9123,18 @@
       "type": "passive"
     },
     {
+      "ref": "J208",
+      "pin": "43",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "44",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
       "ref": "U301",
       "pin": "1",
       "sheet": "E3",
@@ -8697,6 +9213,18 @@
       "type": "passive"
     },
     {
+      "ref": "J208",
+      "pin": "55",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "56",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
       "ref": "U303",
       "pin": "6",
       "sheet": "E3",
@@ -8745,6 +9273,18 @@
     {
       "ref": "J203",
       "pin": "6",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "47",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "48",
       "sheet": "E2",
       "type": "passive"
     },
@@ -8861,6 +9401,18 @@
     {
       "ref": "J204",
       "pin": "8",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "23",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "24",
       "sheet": "E2",
       "type": "passive"
     },
@@ -9025,6 +9577,18 @@
       "type": "passive"
     },
     {
+      "ref": "J208",
+      "pin": "40",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "39",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
       "ref": "U301",
       "pin": "2",
       "sheet": "E3",
@@ -9101,6 +9665,18 @@
     {
       "ref": "J203",
       "pin": "4",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "45",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "46",
       "sheet": "E2",
       "type": "passive"
     },
@@ -9231,6 +9807,18 @@
       "pin": "1",
       "sheet": "E2",
       "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "35",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "36",
+      "sheet": "E2",
+      "type": "passive"
     }
   ],
   "BONI13V8_DAMP": [
@@ -9345,6 +9933,18 @@
     {
       "ref": "J207",
       "pin": "9",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "5",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "6",
       "sheet": "E2",
       "type": "passive"
     },
@@ -9515,6 +10115,18 @@
       "type": "passive"
     },
     {
+      "ref": "J208",
+      "pin": "50",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "49",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
       "ref": "J301",
       "pin": "28",
       "sheet": "E3",
@@ -9579,6 +10191,18 @@
     {
       "ref": "J201",
       "pin": "3",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "51",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "52",
       "sheet": "E2",
       "type": "passive"
     },
@@ -10155,12 +10779,36 @@
       "pin": "1",
       "sheet": "E2",
       "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "38",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "37",
+      "sheet": "E2",
+      "type": "passive"
     }
   ],
   "EN_HFP": [
     {
       "ref": "J202",
       "pin": "5",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "41",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "42",
       "sheet": "E2",
       "type": "passive"
     },
@@ -10261,6 +10909,18 @@
       "type": "passive"
     },
     {
+      "ref": "J208",
+      "pin": "44",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "43",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
       "ref": "U303",
       "pin": "2",
       "sheet": "E3",
@@ -10357,6 +11017,18 @@
       "type": "passive"
     },
     {
+      "ref": "J208",
+      "pin": "52",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "51",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
       "ref": "U305",
       "pin": "11",
       "sheet": "E3",
@@ -10421,6 +11093,18 @@
     {
       "ref": "J203",
       "pin": "11",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J208",
+      "pin": "53",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "54",
       "sheet": "E2",
       "type": "passive"
     },
@@ -10569,6 +11253,18 @@
       "type": "passive"
     },
     {
+      "ref": "J208",
+      "pin": "25",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "26",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
       "ref": "A414",
       "pin": "USB_VBUS",
       "sheet": "E4",
@@ -10607,6 +11303,56 @@
     {
       "ref": "R513",
       "pin": "1",
+      "sheet": "E5",
+      "type": "passive"
+    }
+  ],
+  "VBUS_LABPORT": [
+    {
+      "ref": "J208",
+      "pin": "27",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J209",
+      "pin": "28",
+      "sheet": "E2",
+      "type": "passive"
+    },
+    {
+      "ref": "J501",
+      "pin": "1",
+      "sheet": "E5",
+      "type": "passive"
+    },
+    {
+      "ref": "U502",
+      "pin": "6",
+      "sheet": "E5",
+      "type": "power_out"
+    },
+    {
+      "ref": "C506",
+      "pin": "1",
+      "sheet": "E5",
+      "type": "passive"
+    },
+    {
+      "ref": "C507",
+      "pin": "1",
+      "sheet": "E5",
+      "type": "passive"
+    },
+    {
+      "ref": "R508",
+      "pin": "1",
+      "sheet": "E5",
+      "type": "passive"
+    },
+    {
+      "ref": "J506",
+      "pin": "3",
       "sheet": "E5",
       "type": "passive"
     }
@@ -15859,44 +16605,6 @@
       "pin": "2",
       "sheet": "E5",
       "type": "bidirectional"
-    }
-  ],
-  "VBUS_LABPORT": [
-    {
-      "ref": "J501",
-      "pin": "1",
-      "sheet": "E5",
-      "type": "passive"
-    },
-    {
-      "ref": "U502",
-      "pin": "6",
-      "sheet": "E5",
-      "type": "power_out"
-    },
-    {
-      "ref": "C506",
-      "pin": "1",
-      "sheet": "E5",
-      "type": "passive"
-    },
-    {
-      "ref": "C507",
-      "pin": "1",
-      "sheet": "E5",
-      "type": "passive"
-    },
-    {
-      "ref": "R508",
-      "pin": "1",
-      "sheet": "E5",
-      "type": "passive"
-    },
-    {
-      "ref": "J506",
-      "pin": "3",
-      "sheet": "E5",
-      "type": "passive"
     }
   ],
   "E5_U501_ILIM": [

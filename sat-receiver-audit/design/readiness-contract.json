@@ -121,6 +121,16 @@
         "type": "passive"
       },
       {
+        "ref": "J208",
+        "pin": "36",
+        "type": "passive"
+      },
+      {
+        "ref": "J209",
+        "pin": "35",
+        "type": "passive"
+      },
+      {
         "ref": "U303",
         "pin": "5",
         "type": "output"
@@ -145,6 +155,16 @@
       {
         "ref": "J203",
         "pin": "16",
+        "type": "passive"
+      },
+      {
+        "ref": "J208",
+        "pin": "56",
+        "type": "passive"
+      },
+      {
+        "ref": "J209",
+        "pin": "55",
         "type": "passive"
       },
       {
@@ -175,6 +195,16 @@
         "type": "passive"
       },
       {
+        "ref": "J208",
+        "pin": "42",
+        "type": "passive"
+      },
+      {
+        "ref": "J209",
+        "pin": "41",
+        "type": "passive"
+      },
+      {
         "ref": "U303",
         "pin": "21",
         "type": "output"
@@ -199,6 +229,16 @@
       {
         "ref": "J202",
         "pin": "3",
+        "type": "passive"
+      },
+      {
+        "ref": "J208",
+        "pin": "39",
+        "type": "passive"
+      },
+      {
+        "ref": "J209",
+        "pin": "40",
         "type": "passive"
       },
       {
@@ -379,6 +419,16 @@
         "type": "passive"
       },
       {
+        "ref": "J208",
+        "pin": "43",
+        "type": "passive"
+      },
+      {
+        "ref": "J209",
+        "pin": "44",
+        "type": "passive"
+      },
+      {
         "ref": "U301",
         "pin": "1",
         "type": "output"
@@ -413,6 +463,16 @@
       {
         "ref": "J202",
         "pin": "4",
+        "type": "passive"
+      },
+      {
+        "ref": "J208",
+        "pin": "40",
+        "type": "passive"
+      },
+      {
+        "ref": "J209",
+        "pin": "39",
         "type": "passive"
       },
       {
@@ -457,6 +517,16 @@
       {
         "ref": "J202",
         "pin": "5",
+        "type": "passive"
+      },
+      {
+        "ref": "J208",
+        "pin": "41",
+        "type": "passive"
+      },
+      {
+        "ref": "J209",
+        "pin": "42",
         "type": "passive"
       },
       {
