@@ -1008,15 +1008,37 @@ def lab_package_issues(tree, policy=None):
 
 
 def _record_binding(record, label):
-    """The build record names the reviewed recipe and patch that are in this tree now."""
+    """The build record names the reviewed recipe and patch that are in this tree now, one receipt
+    per listed patch of the recipe (source.patches, in order, with the SHA-256 of the file in this
+    tree), the recipe's source member and the recipe files it used (hook script, files/)."""
     recipe_path = HERE / "recipes" / record["component"] / "recipe.json"
     if not recipe_path.is_file() or record["recipe_sha256"] != sha(recipe_path):
         raise DeploymentError("build record was made from another recipe than deployment/recipes/" + record["component"] + ": " + label)
     recipe = load(recipe_path)
-    patch = (recipe.get("source") or {}).get("patch") if type(recipe) is dict else None
-    receipt = record["build_environment"].get("patch_receipt") if type(record["build_environment"]) is dict else None
+    source = recipe.get("source") if type(recipe) is dict else None
+    source = source if type(source) is dict else {}
+    patch = source.get("patch")
+    environment = record["build_environment"] if type(record["build_environment"]) is dict else {}
+    receipt = environment.get("patch_receipt")
     if type(receipt) is not dict or receipt.get("patch_sha256") != (sha(PROJECT / patch) if patch else None):
         raise DeploymentError("build record patch differs from the reviewed " + (patch or "(no patch)") + ": " + label)
+    directory = recipe_path.parent
+    listed = source.get("patches") or []
+    expected = [(p.get("file"), p.get("sha256"), p.get("strip")) for p in listed if type(p) is dict]
+    receipts = environment.get("patch_receipts", [])
+    found = [(r.get("file"), r.get("sha256"), r.get("strip")) for r in receipts if type(r) is dict] if type(receipts) is list else None
+    if (found is None or len(found) != len(receipts) or len(expected) != len(listed) or found != expected
+            or any(not (directory / f).is_file() or sha(directory / f) != digest for f, digest, _ in expected if type(f) is str)):
+        raise DeploymentError("build record patch list differs from the reviewed recipe patches (%d listed, %s recorded): %s"
+                              % (len(listed), len(receipts) if type(receipts) is list else "no list", label))
+    member = source.get("member")
+    wanted = {"path": member.get("path"), "sha256": member.get("sha256")} if type(member) is dict else None
+    if environment.get("source_member") != wanted:
+        raise DeploymentError("build record source member differs from the reviewed recipe: " + label)
+    files = environment.get("recipe_files", {})
+    if type(files) is not dict or any(type(f) is not str or ".." in f.split("/") or not (directory / f).is_file() or sha(directory / f) != d
+                                      for f, d in files.items()):
+        raise DeploymentError("build record recipe files differ from deployment/recipes/" + record["component"] + ": " + label)
 
 
 def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrelease_sha256=None, target_status=None, release=False):
@@ -1063,8 +1085,12 @@ def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrele
     allowed, manifests, records = {}, {}, []
     for record_path in build_records:
         record = load(record_path)
+        # record_digests (the recipe package hook's digests, build_recipe.py) is the one optional field.
+        optional = ("record_digests",) if type(record) is dict and "record_digests" in record else ()
         keys(record, ("schema_version", "kind", "status", "component", "version", "recipe_sha256", "source_archive_sha256",
-                      "apt_snapshot", "build_environment", "packages", "checks", "hardware_ready"), "build record")
+                      "apt_snapshot", "build_environment", "packages", "checks", "hardware_ready") + optional, "build record")
+        if optional and type(record["record_digests"]) is not dict:
+            raise DeploymentError("build record record_digests must be an object: " + Path(record_path).name)
         component = components.get(record["component"])
         if (record["schema_version"] != 1 or record["kind"] != "srrx_lab_build_record" or component is None
                 or record["source_archive_sha256"] is None or record["source_archive_sha256"] != component["source_archive_sha256"]
@@ -1130,7 +1156,7 @@ def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrele
         raise DeploymentError("apt entry must be one deb822 stanza with Signed-By " + policy["keyring_path"])
     return {"status": "SIGNED_REPOSITORY_MATCHES_BUILD_RECORDS", "packages": len(referenced), "inrelease_sha256": sha(inrelease),
             "signing_fingerprint": fingerprint.upper(), "build_records": records, "release_path": bool(release), "hardware_ready": False,
-            "scope": "Signature, index and package hashes, build-record, recipe, patch and source-lock binding, named receive-only "
+            "scope": "Signature, index and package hashes, build-record, recipe, patch, listed-patch, source-member and source-lock binding, named receive-only "
                      "content rules" + (", REVIEWED records and verify_build per package" if release else "") + "; no install, no receive-only proof."}
 
 

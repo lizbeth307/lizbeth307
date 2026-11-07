@@ -6,13 +6,17 @@ its extracted data tree, walked by deploy.build_inventory (the walk verify_build
 the package's verify_build manifest (an empty file list where that walk refuses the tree, as
 build_recipe.package_manifest writes it: a -dev .so link into another package, Lime), a package with a public
 SONAME'd library carries DEBIAN/shlibs and the ldconfig trigger, and deploy.verify_build still
-refuses the manifest because it is OPEN (a reviewer, never CI, sets REVIEWED).
+refuses the manifest because it is OPEN (a reviewer, never CI, sets REVIEWED). Each record is
+bound to this tree as deploy.verify_repo binds it (recipe, -rx-only patch, one receipt per listed
+patch, source member, recipe files), and a package hook output it names must have the recorded
+SHA-256 and carry the record's record_digests.
 `publishable`: the .deb files a lab repository may carry now (no deploy.lab_package_issues
 finding: Lime while Lime is disabled, Soapy modules outside the allowlist, TX/control tools); the
 others are listed as held back with their findings.
 `tamper`: the published repository passes deploy.verify_repo, and each tampered copy (index,
-pool, keyring, InRelease pin, build record, recipe, patch, apt entry, held package, release path
-with CI records or OPEN manifests, a repository holding the held-back Lime packages) is refused.
+pool, keyring, InRelease pin, build record, recipe, patch, listed-patch receipts, source member,
+apt entry, held package, release path with CI records or OPEN manifests, a repository holding
+the held-back Lime packages) is refused.
 Read-only for its inputs; writes only into new temporary directories. CI evidence only.
 """
 import argparse
@@ -56,10 +60,33 @@ def recorded_deb(record_path, package):
     return deb
 
 
+def record_binding(record_path, record):
+    """deploy._record_binding for one record, plus its package hook output (when the record names
+    one): the file next to the record has the recorded SHA-256 and the record's record_digests."""
+    try:
+        deploy._record_binding(record, record_path.name)
+    except deploy.DeploymentError as exc:
+        raise CheckError(str(exc)) from exc
+    environment = record["build_environment"]
+    hooks = [h for h in environment.get("hooks", []) if type(h) is dict and "output" in h]
+    for hook in hooks:
+        output = record_path.parent / hook["output"]
+        if Path(hook["output"]).name != hook["output"] or not output.is_file() or deploy.sha(output) != hook.get("output_sha256"):
+            raise CheckError("package hook output differs from its build record: " + hook["output"])
+        data = deploy.load(output)
+        if type(data) is not dict or data.get("record_digests") != record.get("record_digests"):
+            raise CheckError("build record record_digests differ from the package hook output: " + record_path.name)
+    if "record_digests" in record and not hooks:
+        raise CheckError("build record carries record_digests without a package hook output: " + record_path.name)
+    return {"component": record["component"], "patch_receipts": len(environment.get("patch_receipts", [])),
+            "source_member": (environment.get("source_member") or {}).get("path"), "record_digests": "record_digests" in record}
+
+
 def packages(out):
-    summary = []
+    summary, bound = [], []
     for record_path in records(out):
         record = deploy.load(record_path)
+        bound.append(record_binding(record_path, record))
         for package in record["packages"]:
             deb = recorded_deb(record_path, package)
             for name, expected in (("Package", package["package"]), ("Version", package["version"]), ("Architecture", package["architecture"])):
@@ -97,7 +124,7 @@ def packages(out):
             summary.append({"package": package["package"], "version": package["version"], "files": len(files),
                             "sha256": package["sha256"], "shlibs": shlibs, "verify_build": "REFUSED_OPEN_AS_EXPECTED",
                             "manifest_files": "NONE: " + refusal if refusal else "BUILD_INVENTORY_MATCH"})
-    return {"status": "CI_PACKAGES_MATCH_BUILD_RECORDS", "packages": summary, "hardware_ready": False}
+    return {"status": "CI_PACKAGES_MATCH_BUILD_RECORDS", "packages": summary, "records": bound, "hardware_ready": False}
 
 
 def publishable(out):
@@ -190,6 +217,13 @@ def tamper(repo, keyring, wrong_keyring, fingerprint, record_paths, sources_entr
     def other_patch(record):
         record["build_environment"]["patch_receipt"]["patch_sha256"] = "0" * 64
 
+    def other_patch_list(record):
+        record["build_environment"].setdefault("patch_receipts", []).append({"file": "patches/0001-not-in-the-recipe.patch",
+                                                                              "sha256": "0" * 64, "strip": 1})
+
+    def other_member(record):
+        record["build_environment"]["source_member"] = {"path": "not-in-the-recipe/src/inner.tgz", "sha256": "0" * 64}
+
     def reviewed(record):
         record["status"] = "REVIEWED"
 
@@ -208,6 +242,8 @@ def tamper(repo, keyring, wrong_keyring, fingerprint, record_paths, sources_entr
     expect("held package would change", "held package", held)
     expect("build record from another recipe", "another recipe", edited_records(other_recipe))
     expect("build record with another patch", "patch differs", edited_records(other_patch))
+    expect("build record with another listed-patch list", "patch list differs", edited_records(other_patch_list))
+    expect("build record with another source member", "source member differs", edited_records(other_member))
     expect("release path with CI_BUILT_UNREVIEWED records", "REVIEWED build record", release=True)
     expect("release path with OPEN package manifests", "OPEN/unreviewed", edited_records(reviewed, release=True))
     expect("release path with another manifest", "build manifest differs", edited_records(reviewed_other_manifest, release=True))
