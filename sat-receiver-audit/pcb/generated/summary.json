@@ -2,7 +2,7 @@
   "status": "PREPARATION_ONLY_NOT_FOR_FABRICATION",
   "components": 851,
   "schematic_contacts": 2942,
-  "connected_contacts": 2697,
+  "connected_contacts": 2717,
   "nets": 486,
   "categories": {
     "bare_board_part": 748,
@@ -37,7 +37,7 @@
   "bare_parts_without_footprint": 0,
   "pin_pad_mismatches": 0,
   "xml_connected_pin_audit": "PASS",
-  "xml_compared_connected_pins": 2697,
+  "xml_compared_connected_pins": 2717,
   "core_parts": 71,
   "core_connected_pins": 180,
   "core_boundary_nets": 8,
