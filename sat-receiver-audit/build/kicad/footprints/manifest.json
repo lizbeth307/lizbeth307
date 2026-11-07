@@ -392,9 +392,9 @@
       ]
     },
     {
-      "footprint": "Connector_JST:JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical",
-      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical.kicad_mod",
-      "sha256": "03211833fb2e60a511e2fe68e1604d057517e1315ad0221909895d20be5cd7fc",
+      "footprint": "Connector_JST:JST_PH_S5B-PH-K_1x05_P2.00mm_Horizontal",
+      "file": "build/kicad/footprints/Connector_JST.pretty/JST_PH_S5B-PH-K_1x05_P2.00mm_Horizontal.kicad_mod",
+      "sha256": "5b4ca57c7ce9f495ab05ea74641545c33421e452291446e2f28a511f92d18bb6",
       "pads": [
         "1",
         "2",

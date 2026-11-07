@@ -63,7 +63,7 @@
       },
       {
         "file": "design/E3.json",
-        "sha256": "5d94d77320cb0ac41c3ea8d0c3ba98a8dba829ef896df8cfb5b642c85813f41d"
+        "sha256": "b3bd4067f6f51fe2b5fe28bcc06d386319c239ec0af0392f1c2d4f61a9aa2132"
       },
       {
         "file": "design/E4.json",
@@ -75,7 +75,7 @@
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "10b360bbd979caa77500ac8f93ddb6e23b35661a0feb6387100c3dcbcce7a69c"
+        "sha256": "f39e7901065e0d9cf121e012c081a33a32dc014883147f7f41db2d0986884a3a"
       },
       {
         "file": "verification/netlist.xml",
@@ -186,7 +186,7 @@
         "interface_open",
         "interface_resolved"
       ],
-      "projection_sha256": "fe5d0b34eef6b3a95d45152a4dff8ac53b1bdba39a340ff9c0bf9828b63f7908"
+      "projection_sha256": "b558d5ede356066b5eef723ee0ff8429dccbf61fbe9fd42b4f8ac36d1504bfd5"
     }
   },
   "boards": {
@@ -5297,7 +5297,7 @@
       "assembly_owner": "",
       "board_candidate": "CTRL_HMI",
       "dnp": false,
-      "footprint": "Connector_JST:JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical",
+      "footprint": "Connector_JST:JST_PH_S5B-PH-K_1x05_P2.00mm_Horizontal",
       "portable_footprint": true,
       "pad_coverage": "PASS",
       "pin_count": 5,
@@ -13640,7 +13640,7 @@
       "ref": "J101",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-XT30U-F (mount harness, MPN XT30U-F) in design/parts/parts.json: mating part and mounting are not both fixed. Open: XT30U-F на пігтейлі 18 AWG і XT30U-M для сервісного дроту обрано; кріплення роз’єму в корпусі (сервісний доступ, фіксація, ущільнення) і з’єднання пігтейла з силовою платою не задано — механічний пакет і таблиця джгутів (build/16)."
+      "detail": "Parts database entry J-XT30U-F (mount harness, MPN XT30U-F) in design/parts/parts.json: mating part and mounting are not both fixed. Open: XT30U-F на пігтейлі і XT30U-M для сервісного дроту обрано; пігтейл — 20 AWG до X12P1-PWR (Micro-Fit, build/16 S12: 3 A тривало / F103 5 A, клема 43030 бере 20–24 AWG); відкриті: кріплення роз’єму в корпусі, сервісний доступ, фіксація й ущільнення — механічний пакет."
     },
     {
       "ref": "J102",
@@ -13652,7 +13652,7 @@
       "ref": "J103",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-USBC-PANEL (mount panel, MPN MUSBRM5C130) in design/parts/parts.json: mating part and mounting are not both fixed. Open: MUSBRM5C130 має 24 виводи THT під пайку: потрібна мала панельна плата або дроти лише VBUS/GND/CC1/CC2 (і SHIELD до CHASSIS), а їх немає ні в графі, ні в BOM; виріз панелі й ущільнення — механічний пакет (MECH-07)."
+      "detail": "Parts database entry J-USBC-PANEL (mount panel, MPN MUSBRM5C130) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Дроти VBUS/GND/CC1/CC2 задано в build/16 S11 (до X11P1-PWR і X11S1-PWR; CC — транзитом PWR до IP2368); відкриті: виріз панелі, ущільнення й бондинг SHIELD до CHASSIS (build/16 §9, F26) — механічний пакет (MECH-07)."
     },
     {
       "ref": "R117",
@@ -13814,7 +13814,7 @@
       "ref": "J501",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-USBA-PANEL (mount panel, MPN PX0845/A) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Розетку обрано; її виводи під пайку з’єднуються з платою USB_POWER (VBUS_LABPORT, D−/D+, GND) дротами, яких немає в графі й таблиці джгутів; виріз і заглушка — механічний пакет (MECH-07)."
+      "detail": "Parts database entry J-USBA-PANEL (mount panel, MPN PX0845/A) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Дроти задано в build/16: VBUS_LABPORT і GND — сегмент S23 (до X23S1-PWR), D−/D+ — кабельна збірка C-LAB від хаба H3; відкриті: виріз панелі й заглушка — механічний пакет (MECH-07)."
     },
     {
       "ref": "J543",
@@ -13862,7 +13862,7 @@
       "ref": "J504",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-GX16-4 (mount panel, MPN CONNECTOR-GX16-4) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Пару Olimex GX16-4 обрано; виріз панелі й дроти від роз’єму до плати (LAB5, GND, IMU_TX, IMU_RX, CHASSIS) не задано."
+      "detail": "Parts database entry J-GX16-4 (mount panel, MPN CONNECTOR-GX16-4) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Дроти задано в build/16 S32 (LAB5, GND, IMU_TX, IMU_RX до X32P1-PWR і X32S1-PWR), корпус — бондинг CHASSIS за build/16 §9; відкриті: виріз панелі (отвір ⌀16, M-06) і посадка — механічний пакет."
     },
     {
       "ref": "J550",
