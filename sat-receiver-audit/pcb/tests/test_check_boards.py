@@ -829,5 +829,37 @@ class PadGeometryTests(unittest.TestCase):
         self.assertEqual([u['check'] for u in b.unverified], ['geometry'])
 
 
+class CouponTests(unittest.TestCase):
+    """W2 PCB-RF-2: spec coupons (a test coupon drawn beside the board in the same file)."""
+    SPEC = dict(RF_SPEC, contract_transform={'origin': [OX, OY], 'y': 'up'})
+
+    def with_coupon(self, width='0.36'):
+        t = tree('rf_cpwg.kicad_pcb')
+        loop = rect(0, -12, 30, -4)
+        for a, b in zip(loop, loop[1:] + loop[:1]):
+            (x0, y0), (x1, y1) = K(*a), K(*b)
+            t.append(['gr_line', ['start', '%g' % x0, '%g' % y0], ['end', '%g' % x1, '%g' % y1],
+                      ['stroke', ['width', '0.05'], ['type', 'solid']], ['layer', cb.Q('Edge.Cuts')]])
+        (x0, y0), (x1, y1) = K(5, -8), K(25, -8)
+        t.append(['segment', ['start', '%g' % x0, '%g' % y0], ['end', '%g' % x1, '%g' % y1], ['width', width],
+                  ['layer', cb.Q('F.Cu')], ['net', cb.Q('CPN_X')]])
+        return t
+
+    def test_coupon_loop_needs_the_spec_coupon(self):
+        t = self.with_coupon()
+        self.assertIn('outline', checks_failed(review(t, self.SPEC)))
+        doc = review(t, dict(self.SPEC, coupons=[{'rect': [0, -12, 30, 8], 'reason': 'test'}]))
+        self.assertNotIn('outline', checks_failed(doc))
+        self.assertEqual(doc['checks']['outline']['coupon_loops'], 1)
+        self.assertNotIn('coupon_loops', review(tree('rf_cpwg.kicad_pcb'), RF_SPEC)['checks']['outline'])
+
+    def test_coupon_rf50_nets_are_checked(self):
+        spec = dict(self.SPEC, coupons=[{'rect': [0, -12, 30, 8], 'rf50_nets': ['CPN_X'], 'reason': 'test'}])
+        doc = review(self.with_coupon('0.3'), spec)
+        self.assertTrue(any(f['check'] == 'rf50' and f['item'] == 'CPN_X' and 'width' in f['detail'] for f in doc['findings']))
+        plain = review(self.with_coupon('0.3'), dict(self.SPEC, coupons=[{'rect': [0, -12, 30, 8], 'reason': 'test'}]))
+        self.assertFalse(any(f['item'] == 'CPN_X' for f in plain['findings']))
+
+
 if __name__ == '__main__':
     unittest.main()

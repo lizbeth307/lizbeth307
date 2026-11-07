@@ -37,9 +37,10 @@ Checker keys (optional, in either form; contract frame mm, y up unless contract_
   b2b [{ref, mate_board, mate_ref, pin_map: "identity" | {pin: mate_pin}}],
   tht_pockets [[x, y, w, h], ...] + tht_pocket_margin_mm (contract frame), height_zones [{rect, max_height, side}],
   heights {ref: mm}, sides ["top"] (default top only), max_height_bottom,
-  coupons [{rect: [x, y, w, h] (contract frame), rf50_nets [...], reason}] (test coupons drawn beside the board in the same
-  file, e.g. the RF impedance coupon on a breakaway tab: Edge.Cuts loops inside a coupon rect are not board cutouts and
-  stay out of the outline and area checks; rf50_nets are checked as RF50 lines; W2 PCB-RF-2).
+  coupons [{rect: [x, y, w, h] (contract frame), rf50_nets [...], gnd_net, reason}] (test coupons drawn beside the board in
+  the same file, e.g. the RF impedance coupon on a breakaway tab: Edge.Cuts loops inside a coupon rect are not board
+  cutouts and stay out of the outline and area checks; rf50_nets are checked as RF50 lines against the coupon's own ground
+  net gnd_net (default GND; a separate piece needs its own net, or KiCad reports the two GND islands unconnected); W2 PCB-RF-2).
 """
 from __future__ import annotations
 
@@ -1506,6 +1507,7 @@ def check_rf50(board, spec, netclasses, views):
     out, unverified = [], []
     lookup = class_map(netclasses, views)
     coupon_rf50 = {n for c in spec.get('coupons', []) for n in c.get('rf50_nets', [])}
+    ground_of = {n: c.get('gnd_net', 'GND') for c in spec.get('coupons', []) for n in c.get('rf50_nets', [])}
     if coupon_rf50:  # coupon lines (board-only nets) are checked as RF50 lines too
         graph_lookup = lookup
 
@@ -1521,7 +1523,9 @@ def check_rf50(board, spec, netclasses, views):
     layers = board.by_layer()
     top = LayerIndex(layers.get('F.Cu', []))
     l2 = LayerIndex(layers.get('In1.Cu', []))
-    gnd_vias = [v for v in board.vias if v['net'] == 'GND']
+    vias_of = collections.defaultdict(list)
+    for v in board.vias:
+        vias_of[v['net']].append(v)
     segs = 0
     short = collections.Counter()
     exempt = spec.get('rf50_exempt', {})
@@ -1574,6 +1578,8 @@ def check_rf50(board, spec, netclasses, views):
             continue
         gap_bad = ground_bad = l2_bad = 0
         first = {}
+        gnd = ground_of.get(it.net, 'GND')
+        gnd_vias = vias_of.get(gnd, [])
         for t in ts:
             px, py = x1 + ux * t, y1 + uy * t
             for side in (1, -1):
@@ -1585,7 +1591,7 @@ def check_rf50(board, spec, netclasses, views):
                         first.setdefault('gap', (qx, qy, others[0].net))
                 d = w / 2 + ground_within
                 qx, qy = px + side * nx_ * d, py + side * ny_ * d
-                if not any(c.net == 'GND' for c in top.at(qx, qy)):
+                if not any(c.net == gnd for c in top.at(qx, qy)):
                     ground_bad += 1
                     first.setdefault('ground', (qx, qy))
             k = 0
@@ -1594,7 +1600,7 @@ def check_rf50(board, spec, netclasses, views):
                 if d > band + 1e-9:
                     break
                 qx, qy = px + nx_ * d, py + ny_ * d
-                if not any(c.net == 'GND' for c in l2.at(qx, qy)):
+                if not any(c.net == gnd for c in l2.at(qx, qy)):
                     l2_bad += 1
                     first.setdefault('l2', (qx, qy))
                 k += 1
