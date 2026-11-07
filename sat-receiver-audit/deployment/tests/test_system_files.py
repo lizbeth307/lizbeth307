@@ -197,12 +197,14 @@ class SystemFilesTests(unittest.TestCase):
         users, groups = system_files.accounts()
         self.assertIn(satdump_pass.UNIT_USER, users)
         self.assertTrue({satdump_pass.UNIT_USER, satdump_pass.BASEBAND_GROUP} <= groups)
-        # The decode/live units exist only at run time (systemd-run): their User=/Group= are checked as well.
-        transient = satdump_pass.transient_units()
-        self.assertEqual(system_files.unknown_accounts(rootfs, transient), [])
+        # No transient unit any more (SW-SCHED): the decode/record templates are staged unit files, checked like all.
+        self.assertEqual(satdump_pass.transient_units(), [])
+        templates = [(PROJECT / "software/systemd" / name).read_text(encoding="utf-8")
+                     for name in (satdump_pass.DECODE_TEMPLATE, satdump_pass.RECORD_TEMPLATE)]
+        self.assertEqual(system_files.unknown_accounts(rootfs), [])
         accounts = tuple(a for a in system_files.SERVICE_ACCOUNTS if a[1] != satdump_pass.UNIT_USER)
         with patch.object(system_files, "SERVICE_ACCOUNTS", accounts):
-            self.assertIn("user:srrx-satdump", system_files.unknown_accounts(Path(self.temp.name) / "empty", transient))
+            self.assertIn("user:srrx-satdump", system_files.unknown_accounts(Path(self.temp.name) / "empty", templates))
             with self.assertRaisesRegex(deploy.DeploymentError, "srrx-satdump"):
                 self.stage("no-satdump-user", devices())
         # No "m" line: labd gets srrx-satdump/srrx-bb only through unit SupplementaryGroups= (system_files.py).
@@ -396,6 +398,109 @@ class BuildManifestTests(unittest.TestCase):
             build_manifest.main(["--prefix", str(self.prefix), "--output", str(output)])
         with self.assertRaises(SystemExit):
             build_manifest.main(["--prefix", str(self.prefix), "--output", str(self.prefix / "inside.json")])
+
+
+class BasebandSchedulerStagingTests(unittest.TestCase):
+    """SW-SCHED: the record/decode templates, their polkit rule and labd's drop-in in a deploy.py stage root.
+
+    One stage for the class (TCG-cheap). The node harness is the sr-rx-system model of polkitd; here it
+    runs only where node exists (a skip is not evidence)."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temp = tempfile.TemporaryDirectory(prefix="srrx-sched-stage-")
+        cls.root = Path(cls.temp.name)
+        deploy.stage(cls.root / "stage", devices(), "gpsd")
+        cls.rootfs = cls.root / "stage/rootfs"
+        sys.path.insert(0, str(PROJECT / "software"))
+        from srrx import baseband_scheduler, satdump_pass
+        cls.sched, cls.glue = baseband_scheduler, satdump_pass
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.temp.cleanup()
+
+    def test_templates_rule_and_dropin_are_staged_as_generated(self):
+        units = self.rootfs / "etc/systemd/system"
+        for kind, template in (("decode", self.glue.DECODE_TEMPLATE), ("record", self.glue.RECORD_TEMPLATE)):
+            self.assertEqual((units / template).read_text(encoding="utf-8"), self.glue.unit_text(kind), template)
+            self.assertIn(template, deploy.RELEASE_GUARD_EXEMPT)
+            self.assertFalse((units / (template + ".d")).exists(), template)  # no release-guard drop-in
+            self.assertIn("disable " + template, (self.rootfs / system_files.SYSTEM_PRESET).read_text().splitlines())
+        for relative, text in self.sched.staged_files().items():
+            self.assertEqual((self.rootfs / relative).read_text(encoding="utf-8"), text, relative)
+        self.assertEqual(system_files.unknown_accounts(self.rootfs), [])
+        # labd's own unit is unchanged; the guest smoke installs only srrx.service and the release guard.
+        self.assertEqual((units / "srrx.service").read_bytes(), (PROJECT / "software/systemd/srrx.service").read_bytes())
+        enabled = [l for l in (self.rootfs / system_files.SYSTEM_PRESET).read_text().splitlines() if l.startswith("enable ")]
+        self.assertEqual(enabled, ["enable srrx-radio-off.service"])
+
+    def test_guest_smoke_instances_match_the_staged_rule(self):
+        if os.name != "posix":
+            self.skipTest("guest_smoke imports POSIX account modules")
+        sys.path.insert(0, str(HERE / "linux_lab"))
+        import guest_smoke
+        with tempfile.TemporaryDirectory(prefix="srrx-instances-") as directory:
+            paths = guest_smoke.template_instances(self.rootfs, directory)
+            self.assertEqual(sorted(p.name for p in paths),
+                             ["srrx-baseband-record@lrpt-0123456789abcdef.service",
+                              "srrx-satdump-decode@lrpt-0123456789abcdef.service"])
+            rule = self.rootfs / guest_smoke.SCHEDULER_RULE
+            original = rule.read_text()
+            try:
+                rule.write_text(original.replace("[0-9a-f]{16}", "[0-9a-f]{8}"))
+                with self.assertRaises(guest_smoke.SmokeError):
+                    guest_smoke.template_instances(self.rootfs, directory)
+            finally:
+                rule.write_text(original)
+
+    def test_polkit_cases_cover_the_acceptance_set(self):
+        cases = json.loads((HERE / "tests/polkit_cases/satdump.json").read_text(encoding="utf-8"))
+        self.assertEqual((cases["schema_version"], cases["kind"]), (1, "srrx_polkit_cases"))
+        self.assertIn("60-srrx-satdump.rules", cases["requires"])
+        decided = {(c["user"], c["action"], c["details"].get("unit"), c["details"].get("verb")): c["expect"]
+                   for c in cases["cases"]}
+        manage = "org.freedesktop.systemd1.manage-units"
+        for unit in ("srrx-satdump-decode@lrpt-0123456789abcdef.service", "srrx-baseband-record@lrpt-0123456789abcdef.service"):
+            for verb in ("start", "stop"):
+                self.assertEqual(decided[("labd", manage, unit, verb)], "yes")
+        decode = "srrx-satdump-decode@lrpt-0123456789abcdef.service"
+        for verb in ("restart", "reload", "kill", "reset-failed"):
+            self.assertEqual(decided[("labd", manage, decode, verb)], "not_handled", verb)
+        allowed = [key for key, expect in decided.items() if expect == "yes"]
+        self.assertTrue(all(key[0] == "labd" for key in allowed))
+        self.assertEqual(sum(1 for key in allowed if "srrx-satdump-decode@" in str(key[2]) or "srrx-baseband-record@" in str(key[2])), 4)
+        self.assertIn(("labd", manage, None, None), decided)  # StartTransientUnit: no details at all
+        self.assertEqual(decided[("labd", manage, None, None)], "not_handled")
+        self.assertTrue(any(key[0] != "labd" and expect == "not_handled" for key, expect in decided.items()))
+
+    def test_node_harness_decides_every_case_over_the_staged_rules(self):
+        node = shutil.which("node")
+        if node is None:
+            self.skipTest("node is not installed here; sr-rx-system runs the harness (a skip is not evidence)")
+        try:
+            probe = subprocess.run([node, "--version"], capture_output=True, text=True, timeout=30)
+        except OSError:
+            self.skipTest("node does not start here")
+        if probe.returncode != 0:
+            self.skipTest("node does not start here")
+        harness = HERE / "tests/polkit_cases/harness.js"
+        files = sorted(str(p) for p in (HERE / "tests/polkit_cases").glob("*.json"))
+        result = subprocess.run([node, str(harness), "--root", str(self.rootfs), *files], capture_output=True, text=True,
+                                timeout=120)
+        self.assertEqual(result.returncode, 0, result.stdout[-3000:] + result.stderr[-2000:])
+        self.assertIn("cases as expected", result.stdout)
+        # A widened rule (any verb) is caught: the harness evaluates the staged text, not the generator.
+        with tempfile.TemporaryDirectory(prefix="srrx-rules-") as directory:
+            for rule in (self.rootfs / "etc/polkit-1/rules.d").glob("*.rules"):
+                text = rule.read_text()
+                if rule.name == "60-srrx-satdump.rules":
+                    text = text.replace('(action.lookup("verb") == "start" || action.lookup("verb") == "stop")', "true")
+                (Path(directory) / rule.name).write_text(text)
+            widened = subprocess.run([node, str(harness), "--rules-dir", directory, *files], capture_output=True,
+                                     text=True, timeout=120)
+        self.assertEqual(widened.returncode, 1, widened.stdout[-2000:])
+        self.assertIn("FAIL satdump.json: labd restart is not allowed -> yes", widened.stdout)
 
 
 if __name__ == "__main__":

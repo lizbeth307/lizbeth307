@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import shlex
+import shutil
 import stat
 import struct
 import subprocess
@@ -145,52 +146,64 @@ class CommandTests(unittest.TestCase):
             sp.live_argv("/usr/bin/satdump", self.window(), "/out", 80)
 
     def test_units_are_sandboxed_and_live_is_localhost_only(self):
-        decode = sp.unit_properties("decode", self.IDENT, work_dir="/data/products/satdump/.satdump-" + self.IDENT,
-                                    input_path="/data/raw/baseband-lrpt/lrpt-" + self.IDENT + ".sigmf-data")
+        rid = "lrpt-" + self.IDENT
+        decode = sp.unit_lines("decode", rid)
         for value in ("PrivateNetwork=yes", "IPAddressDeny=any", "RestrictAddressFamilies=AF_UNIX", "ProtectHome=yes",
                       "ProtectSystem=strict", "TemporaryFileSystem=/data:ro", "Environment=LC_ALL=C.UTF-8",
                       "WorkingDirectory=/var/lib/srrx-satdump/empty", "User=srrx-satdump", "SupplementaryGroups=srrx-bb",
-                      "BindReadOnlyPaths=/data/raw/baseband-lrpt/lrpt-" + self.IDENT + ".sigmf-data",
-                      "Environment=HOME=/run/srrx-satdump-" + self.IDENT, "RuntimeMaxSec=1800", "LimitCORE=0"):
+                      "BindReadOnlyPaths=/data/raw/baseband-lrpt/" + rid + ".sigmf-data",
+                      "BindPaths=/data/products/satdump/.satdump-" + rid, "Environment=HOME=/run/srrx-satdump-" + rid,
+                      "LoadCredential=job:/run/srrx/satdump/" + rid + "/job.json",
+                      "TimeoutStartSec=%d" % sp.DECODE_UNIT_TIMEOUT_S, "LimitCORE=0"):
             self.assertIn(value, decode)
-        self.assertFalse(any(p.startswith("IPAddressAllow=") for p in decode))
-        live = sp.unit_properties("live", self.IDENT, work_dir="/data/products/satdump/.satdump-" + self.IDENT,
-                                  runtime_max_s=1000)
-        for value in ("IPAddressDeny=any", "IPAddressAllow=localhost", "RestrictAddressFamilies=AF_INET AF_UNIX",
-                      "RuntimeMaxSec=1000"):
+        self.assertFalse(any(p.startswith(("IPAddressAllow=", "RuntimeMaxSec=")) for p in decode))
+        live = sp.unit_lines("live", rid)
+        for value in ("IPAddressDeny=any", "IPAddressAllow=localhost", "RestrictAddressFamilies=AF_INET AF_UNIX"):
             self.assertIn(value, live)
         self.assertNotIn("PrivateNetwork=yes", live)
-        self.assertFalse(any(p.startswith(("BindReadOnlyPaths=", "SupplementaryGroups=")) for p in live))
-        for kwargs in ({"work_dir": "relative"}, {"work_dir": "/home/user/x"}, {"work_dir": "/data/a b"},
-                       {"work_dir": "/data/../etc"}, {"work_dir": "/data/x", "input_path": "/etc/shadow"}):
-            with self.subTest(kwargs=kwargs), self.assertRaises(sp.PassRefused):
-                sp.unit_properties("decode", self.IDENT, **kwargs)
+        self.assertFalse(any(p.startswith(("BindReadOnlyPaths=", "SupplementaryGroups=", "LoadCredential=")) for p in live))
+        for instance in ("0123456789abcdef", "lrpt-0123456789ABCDEF", "lrpt-0123", "lrpt-0123456789abcdef/../x", None, 7):
+            with self.subTest(instance=instance), self.assertRaises(sp.PassRefused):
+                sp.unit_lines("decode", instance)
         with self.assertRaises(sp.PassRefused):
-            sp.unit_properties("live", self.IDENT, work_dir="/data/x", input_path="/data/raw/baseband-lrpt/x")
+            sp.unit_lines("record", rid)
         with self.assertRaises(sp.PassRefused):
-            sp.unit_properties("record", self.IDENT, work_dir="/data/x")
+            sp.unit_name(sp.DECODE_TEMPLATE, "%i")
 
-    @unittest.skipUnless(os.name == "posix", "absolute POSIX unit paths and directory modes")
-    def test_live_command_is_a_localhost_unit_bounded_by_the_window(self):
-        with tempfile.TemporaryDirectory(prefix="srrx-live-") as directory:
-            root = Path(directory).resolve()
-            products = root / "products/satdump"
-            products.mkdir(parents=True)
-            with mock.patch.object(sp, "DATA_ROOT", str(root)):  # the units' /data is this directory here
-                ident, work, argv = sp.live_command(self.window(), 8877, ident=self.IDENT, products_root=products)
-                self.assertEqual((ident, work), (self.IDENT, products / (".satdump-" + self.IDENT)))
-                # BindPaths= needs the work dir: live_command makes it, 2770 whatever the umask (finding S4).
-                self.assertEqual(stat.S_IMODE(os.lstat(work).st_mode), sp.WORK_MODE)
-                split = argv.index("--")
-                self.assertIn("--unit=srrx-satdump-live-" + self.IDENT, argv[:split])
-                self.assertIn("IPAddressAllow=localhost", argv[:split])
-                self.assertIn("BindPaths=" + str(work), argv[:split])
-                self.assertIn("RuntimeMaxSec=%d" % (840 + sp.LIVE_EXTRA_S), argv[:split])
-                self.assertEqual(argv[split + 1:split + 4], ["/usr/bin/satdump", "legacy", "live"])
-                self.assertEqual(argv[split + 5], str(work / "out"))
-                with self.assertRaisesRegex(sp.PassRefused, "OUTPUT_EXISTS"):
-                    sp.live_command(self.window(), 8877, ident=self.IDENT, products_root=products)
-                self.assertEqual(len(sp.live_command(self.window(), 8877, products_root=products)[0]), 16)
+    def test_template_files_are_the_generated_text(self):
+        # The sandbox, user and ExecStart live in root-owned files; nothing is passed at run time but %i.
+        for kind, template in (("decode", sp.DECODE_TEMPLATE), ("record", sp.RECORD_TEMPLATE)):
+            text = (SOFTWARE / "systemd" / template).read_text(encoding="utf-8")
+            self.assertEqual(text, sp.unit_text(kind), template)
+            self.assertNotIn("[Install]", text)
+            self.assertIn("\nType=oneshot\n", text)
+            self.assertIn("\nCollectMode=inactive-or-failed\n", text)
+            exec_start = [l for l in text.splitlines() if l.startswith("ExecStart=")]
+            self.assertEqual(len(exec_start), 1)
+            argv = shlex.split(exec_start[0].split("=", 1)[1])
+            self.assertEqual(argv[-3:], ["srrx.satdump_unit", kind, "%i"])
+            self.assertEqual(argv[argv.index("-m") - 3:argv.index("-m")], ["-P", "-s", "-B"])  # PYTHONPATH honoured
+            self.assertFalse({"-I", "-E"} & set(argv))
+            self.assertIn("Environment=PYTHONPATH=/opt/srrx/software PYTHONDONTWRITEBYTECODE=1", text)
+        record = (SOFTWARE / "systemd" / sp.RECORD_TEMPLATE).read_text(encoding="utf-8").splitlines()
+        for value in ("User=labd", "Group=srrx-bb", "SupplementaryGroups=lab", "DevicePolicy=closed",
+                      "DeviceAllow=/dev/lab/rtla rw", "ReadWritePaths=/data /run/srrx/satdump/%i", "PrivateNetwork=yes",
+                      "RestrictAddressFamilies=AF_UNIX AF_NETLINK", "ProtectSystem=strict", "NoNewPrivileges=yes",
+                      "EnvironmentFile=/etc/srrx/baseband.env", "ConditionPathExists=/etc/srrx/baseband.env",
+                      "KillMode=mixed", "TimeoutStartSec=%d" % sp.RECORD_UNIT_TIMEOUT_S):
+            self.assertIn(value, record)
+        self.assertFalse([l for l in record if l.startswith("PrivateDevices=")])  # it opens RTL-A (DeviceAllow=)
+        self.assertGreater(sp.RECORD_UNIT_TIMEOUT_S, bb.MAX_FILE_S + bb.EARLY_START_S + 10)
+        self.assertEqual(sp.unit_name(sp.RECORD_TEMPLATE, "lrpt-" + self.IDENT),
+                         "srrx-baseband-record@lrpt-" + self.IDENT + ".service")
+
+    def test_no_transient_unit_and_no_systemd_run_anywhere(self):
+        self.assertEqual(sp.transient_units(), [])
+        for name in ("satdump_pass.py", "satdump_unit.py", "baseband_scheduler.py"):
+            text = (SOFTWARE / "srrx" / name).read_text(encoding="utf-8")
+            self.assertNotIn("systemd-run", text, name)
+            self.assertNotIn("systemd_run", text, name)
+            self.assertNotIn("StartTransientUnit(", text, name)
 
     @unittest.skipUnless(os.name == "posix", "umask and setgid directories need POSIX")
     def test_work_dir_is_2770_under_any_umask(self):
@@ -212,12 +225,6 @@ class CommandTests(unittest.TestCase):
             with self.assertRaises(FileExistsError):
                 sp.make_work_dir(Path(directory) / "w0")
 
-    def test_systemd_run_command_line(self):
-        argv = sp.systemd_run_argv("decode", self.IDENT, ["A=1", "B=2"], ["/usr/bin/satdump", "x"])
-        self.assertEqual(argv, ["/usr/bin/systemd-run", "--quiet", "--wait", "--pipe", "--collect", "--service-type=exec",
-                                "--unit=srrx-satdump-decode-" + self.IDENT, "-p", "A=1", "-p", "B=2", "--",
-                                "/usr/bin/satdump", "x"])
-
     def test_staged_texts(self):
         files = sp.staged_files()
         self.assertEqual(set(files), {"etc/systemd/system/srrx-baseband-sweep.service",
@@ -232,14 +239,8 @@ class CommandTests(unittest.TestCase):
         # Before commissioning writes the storage binding the sweep is skipped, not failed; the template binds nothing.
         self.assertIn("\nConditionPathExists=" + sp.BASEBAND_ENV + "\n", files["etc/systemd/system/srrx-baseband-sweep.service"])
         self.assertIn("\nEnvironmentFile=" + sp.BASEBAND_ENV + "\n", files["etc/systemd/system/srrx-baseband-sweep.service"])
-        self.assertEqual([l for l in files["etc/srrx/baseband.env.template"].splitlines() if not l.startswith("#")], ["SRRX_BB_DEVICE="])
-
-    def test_transient_units_name_the_unit_user_and_the_baseband_group(self):
-        decode, live = sp.transient_units()
-        self.assertIn("\nUser=" + sp.UNIT_USER + "\n", decode)
-        self.assertIn("\nGroup=" + sp.UNIT_USER + "\n", live)
-        self.assertIn("\nSupplementaryGroups=" + sp.BASEBAND_GROUP + "\n", decode)
-        self.assertNotIn("SupplementaryGroups=", live)
+        self.assertEqual([l for l in files["etc/srrx/baseband.env.template"].splitlines() if not l.startswith("#")],
+                         ["SRRX_BB_DEVICE=", "SRRX_BB_DRIVER_RECORD="])
 
     def sweep_service(self):
         text = sp.sweep_units()["etc/systemd/system/srrx-baseband-sweep.service"]
@@ -340,14 +341,16 @@ class FakeStore:
 
 @unittest.skipUnless(os.name == "posix", "setgid work directory and scandir semantics of Linux")
 class DecodeTests(unittest.TestCase):
+    """run_decode with the decode unit played by srrx.satdump_unit.decode itself (PID 1 and SatDump faked)."""
     RID = "lrpt-0123456789abcdef"
 
     def setUp(self):
         temp = tempfile.TemporaryDirectory(prefix="srrx-satdump-")
         self.addCleanup(temp.cleanup)
         self.root = Path(temp.name).resolve()
-        self.products = self.root / "products"
-        self.products.mkdir()
+        self.products = self.root / sp.PRODUCTS_DIR
+        self.products.mkdir(parents=True)
+        self.jobs = self.root / "run-satdump"
         patcher = mock.patch.object(sp, "DATA_ROOT", str(self.root))  # the units' /data is this directory here
         patcher.start()
         self.addCleanup(patcher.stop)
@@ -361,26 +364,49 @@ class DecodeTests(unittest.TestCase):
             patcher = mock.patch.object(decoder_policy, name, return_value=value)
             patcher.start()
             self.addCleanup(patcher.stop)
-        self.calls = []
+        self.calls, self.units = [], []
 
-    def runner(self, probe_output=b"level input_file output_folder --samplerate --baseband_format", code=0,
-               output=b"done", products=True):
-        def run(argv, timeout):
-            self.calls.append(argv)
-            if argv[argv.index("--") + 2] == "pipeline" and argv[-1] == "--help":
-                return 0, probe_output
-            out = Path(argv[argv.index("--") + 6])
-            out.mkdir(parents=True)  # SatDump creates the output folder even when nothing decodes
-            if products:
-                (out / "MSU-MR").mkdir()
-                (out / "MSU-MR" / "msu_mr_rgb_221.png").write_bytes(png())
-                (out / "meteor_m2-x_lrpt.cadu").write_bytes(b"\x1a\xcf\xfc\x1d" * 4)
-                os.symlink("/etc/passwd", out / "MSU-MR" / "link.png")
-            return code, output
-        return run
+    def unit(self, probe_output=b"level input_file output_folder --samplerate --baseband_format", code=0,
+             output=b"done", products=True, result=True, installed=None, home=None):
+        from srrx import satdump_unit
+
+        def start(name, timeout):
+            self.units.append(name)
+            instance = name.split("@", 1)[1][:-len(".service")]
+            credentials = self.root / "credentials" / instance  # PID 1 copies job.json (LoadCredential=job:...)
+            credentials.mkdir(parents=True)
+            shutil.copyfile(self.jobs / instance / sp.JOB_FILE, credentials / "job")
+            environ = {"CREDENTIALS_DIRECTORY": str(credentials), "HOME": home or "/run/srrx-satdump-" + instance}
+
+            def run(argv, timeout_s, env=None, cwd=None):
+                self.calls.append((argv, env, cwd))
+                if argv[-1] == "--help":
+                    return 0, probe_output
+                out = Path(argv[5])
+                out.mkdir(parents=True)  # SatDump creates the output folder even when nothing decodes
+                if products:
+                    (out / "MSU-MR").mkdir()
+                    (out / "MSU-MR" / "msu_mr_rgb_221.png").write_bytes(png())
+                    (out / "meteor_m2-x_lrpt.cadu").write_bytes(b"\x1a\xcf\xfc\x1d" * 4)
+                    os.symlink("/etc/passwd", out / "MSU-MR" / "link.png")
+                return code, output
+            try:
+                value = satdump_unit.decode(instance, environ=environ, runner=run,
+                                            load_installation=lambda path: installed or self.install,
+                                            executable_check=lambda installation: Path("/usr/bin/satdump"))
+            except Exception as error:
+                value = sp.result_value("decode", instance, "REFUSED", satdump_unit._code(error))
+            if result:
+                sp._write_new(self.products / (".satdump-" + instance) / sp.UNIT_RESULT, value, 0o640)
+            return 0 if value["status"] == "DECODED" else 1
+        return start
+
+    def decode(self, start, **kwargs):
+        return sp.run_decode(self.store, self.RID, self.install, self.products, start_unit=start, job_root=self.jobs,
+                             **kwargs)
 
     def test_decode_publishes_sanitized_images_only_and_deletes_the_baseband(self):
-        report = sp.run_decode(self.store, self.RID, self.install, self.products, runner=self.runner())
+        report = self.decode(self.unit())
         target = self.products / self.RID
         self.assertEqual(sorted(p.name for p in target.iterdir()), ["image-00.png", "report.json"])
         self.assertNotIn(b"PRIVATE", (target / "image-00.png").read_bytes())
@@ -388,33 +414,76 @@ class DecodeTests(unittest.TestCase):
         self.assertTrue(report["input_iq_deleted_after_decode"])
         self.assertEqual(self.store.deleted, [self.RID])
         self.assertEqual(sorted(p.name for p in self.products.iterdir()), [self.RID])  # work tree removed
-        decode = self.calls[-1]
-        self.assertIn("PrivateNetwork=yes", decode)
-        self.assertEqual(decode[decode.index("--") + 1:][-2:], ["--samplerate=256000", "--baseband_format=cs16"])
+        self.assertEqual(list(self.jobs.iterdir()), [])  # job directory removed
+        self.assertEqual(self.units, ["srrx-satdump-decode@" + self.RID + ".service"])
+        (probe, probe_env, probe_cwd), (decode, env, cwd) = self.calls
+        self.assertEqual(probe[1:], ["pipeline", "meteor_m2-x_lrpt", "--help"])
+        self.assertEqual(decode[1:5], ["pipeline", "meteor_m2-x_lrpt", "baseband",
+                                       str(self.root) + "/raw/baseband-lrpt/" + self.RID + ".sigmf-data"])
+        self.assertEqual(decode[-2:], ["--samplerate=256000", "--baseband_format=cs16"])
+        self.assertEqual(env, {"PATH": "/usr/bin:/bin", "LC_ALL": "C.UTF-8", "HOME": "/run/srrx-satdump-" + self.RID})
+        self.assertEqual((cwd, probe_env, probe_cwd), (sp.EMPTY_WORKDIR, env, sp.EMPTY_WORKDIR))
+
+    def test_the_job_credential_names_only_what_the_plan_fixed(self):
+        seen = {}
+
+        def start(name, timeout):
+            path = self.jobs / self.RID / sp.JOB_FILE
+            seen["mode"] = stat.S_IMODE(os.lstat(path).st_mode)
+            seen["dir_mode"] = stat.S_IMODE(os.lstat(path.parent).st_mode)
+            seen["job"] = json.loads(path.read_text())
+            return 1
+        with self.assertRaisesRegex(decoder_policy.DecoderRefused, "DECODE_UNIT_NO_RESULT"):
+            self.decode(start)
+        self.assertEqual((seen["mode"], seen["dir_mode"]), (0o600, 0o700))
+        self.assertEqual(seen["job"], {"v": 1, "kind": "srrx_satdump_decode_job", "recording_id": self.RID,
+                                       "pipeline": "meteor_m2-x_lrpt", "executable_sha256": "c" * 64,
+                                       "source_sha512": "b" * 128})
+        self.assertEqual(sp.check_decode_job(seen["job"], self.RID), seen["job"])
+        for change in ({"recording_id": "lrpt-" + "1" * 16}, {"pipeline": "meteor_hrpt"}, {"extra": 1},
+                       {"executable_sha256": "C" * 64}):
+            with self.subTest(change=change), self.assertRaisesRegex(sp.PassRefused, "JOB_INVALID"):
+                sp.check_decode_job(dict(seen["job"], **change), self.RID)
+        self.assertEqual(self.store.deleted, [self.RID])
 
     def test_every_failure_still_deletes_the_baseband(self):
-        cases = (("LIVE_VENDOR_INTERFACE_UNVERIFIED", self.runner(probe_output=b"usage")),
-                 ("DECODER_NONZERO_EXIT", self.runner(code=1)),
-                 ("SATDUMP_CALCEPH_ERROR", self.runner(output=b"...\nCALCEPH ERROR")),
-                 ("SATDUMP_NO_IMAGE_PRODUCT", self.runner(products=False)))
-        for code, runner in cases:
+        cases = (("LIVE_VENDOR_INTERFACE_UNVERIFIED", self.unit(probe_output=b"usage")),
+                 ("DECODER_NONZERO_EXIT", self.unit(code=1)),
+                 ("SATDUMP_CALCEPH_ERROR", self.unit(output=b"...\nCALCEPH ERROR")),
+                 ("SATDUMP_NO_IMAGE_PRODUCT", self.unit(products=False)),
+                 ("DECODE_UNIT_NO_RESULT", self.unit(result=False)),
+                 ("INSTALLATION_CHANGED_SINCE_PLAN", self.unit(installed={"sha256": "d" * 64})),
+                 ("UNIT_HOME_MISMATCH", self.unit(home="/var/lib/srrx-satdump")))
+        for code, start in cases:
             with self.subTest(code=code):
                 self.store.deleted.clear()
+                shutil.rmtree(self.root / "credentials", ignore_errors=True)
                 with self.assertRaisesRegex(decoder_policy.DecoderRefused, code):
-                    sp.run_decode(self.store, self.RID, self.install, self.products, runner=runner)
+                    self.decode(start)
                 self.assertEqual(self.store.deleted, [self.RID])
                 self.assertEqual(list(self.products.iterdir()), [])
+                self.assertEqual(list(self.jobs.iterdir()), [])
 
     def test_changed_source_and_refused_metadata_delete_too(self):
         with mock.patch.object(self.store, "identity", return_value=(9, 9, 9)):
             with self.assertRaisesRegex(decoder_policy.DecoderRefused, "SOURCE_CHANGED_DURING_DECODE"):
-                sp.run_decode(self.store, self.RID, self.install, self.products, runner=self.runner())
+                self.decode(self.unit())
         self.assertEqual(self.store.deleted, [self.RID])
         self.store.deleted.clear()
         self.store.meta = dict(self.meta, captures=[])
         with self.assertRaisesRegex(decoder_policy.DecoderRefused, "SOURCE_NOT_APPROVED_LRPT_BASEBAND"):
-            sp.run_decode(self.store, self.RID, self.install, self.products, runner=self.runner())
+            self.decode(self.unit())
         self.assertEqual(self.store.deleted, [self.RID])
+        self.assertEqual(self.units, ["srrx-satdump-decode@" + self.RID + ".service"])  # no unit for a refused plan
+
+    def test_publish_budget_refuses_without_publishing(self):
+        prepared = sp.prepare_decode(self.store, self.RID, self.install, self.products, job_root=self.jobs)
+        self.unit()(prepared["unit"], 10)
+        self.assertGreater(sp.png_bytes(prepared["work"] / "out"), 1)
+        with self.assertRaisesRegex(decoder_policy.DecoderRefused, "SATDUMP_PRODUCTS_OVER_PUBLISH_BUDGET"):
+            sp.finish_decode(self.store, prepared, publish_budget=1)
+        self.assertEqual(self.store.deleted, [self.RID])
+        self.assertEqual(list(self.products.iterdir()), [])
 
 
 if __name__ == "__main__":

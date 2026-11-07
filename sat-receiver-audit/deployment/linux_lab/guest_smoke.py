@@ -159,6 +159,36 @@ def verify_units(rootfs, masks):
     return sorted(p for p in units.glob("*.service") if p.is_file() and p.stat().st_size > 0)
 
 
+# The LRPT record/decode templates labd starts (srrx.baseband_scheduler): verified once more as one real
+# instance, so %i paths, the job credential and ExecStart are checked as systemd expands them for labd.
+SCHEDULER_TEMPLATES = ("srrx-satdump-decode@.service", "srrx-baseband-record@.service")
+TEMPLATE_INSTANCE = "lrpt-0123456789abcdef"
+SCHEDULER_RULE = "etc/polkit-1/rules.d/60-srrx-satdump.rules"
+
+
+def template_instances(rootfs, directory):
+    """Copies of the staged scheduler templates named as one instance, for systemd-analyze verify.
+
+    Each instance name must match the unit pattern of the staged polkit rule (the JavaScript regex
+    literal of 60-srrx-satdump.rules), or labd could never start it."""
+    rootfs = Path(rootfs)
+    rule = (rootfs / SCHEDULER_RULE).read_text(encoding="utf-8")
+    found = re.search(r'/(\^srrx-[^/\n]+\$)/\.test\(action\.lookup\("unit"\)\)', rule)
+    require(found is not None, "staged scheduler polkit rule has no unit pattern")
+    pattern = re.compile(found.group(1))
+    paths = []
+    for template in SCHEDULER_TEMPLATES:
+        source = rootfs / "etc/systemd/system" / template
+        require(source.is_file() and source.stat().st_size > 0, "staged root lacks the template " + template)
+        name = template.replace("@.", "@" + TEMPLATE_INSTANCE + ".")
+        require(pattern.match(name) is not None, "template instance outside the polkit unit pattern: " + name)
+        require(pattern.match(template) is None, "the polkit unit pattern admits the bare template: " + template)
+        target = Path(directory) / name
+        target.write_bytes(source.read_bytes())
+        paths.append(target)
+    return paths
+
+
 def device_probe_units():
     """Throwaway units that carry the generated srrx.service device ordering; no hardware, no [Install]."""
     head = "[Unit]\nDescription=SR-RX Linux lab device-wait probe (no hardware)\n\n[Service]\n"
@@ -424,6 +454,14 @@ class GuestSmoke:
         masks = load_deploy(self.project).system_files().masks("gpsd")
         unit_paths = verify_units(rootfs, masks) + [menu]
         self.command(["/usr/bin/systemd-analyze", "verify", *unit_paths], timeout=60)
+        instance_dir = Path(tempfile.mkdtemp(prefix="srrx-instances-", dir="/var/tmp"))
+        try:
+            instances = template_instances(rootfs, instance_dir)
+            self.command(["/usr/bin/systemd-analyze", "verify", *instances], timeout=60)
+        finally:
+            for path in instance_dir.iterdir():
+                path.unlink()
+            instance_dir.rmdir()
         # Install only the guarded hardware unit in this marked guest. Never
         # install/start the root poweroff bridge or create an enable symlink.
         for relative in ("etc/systemd/system/srrx.service", "etc/systemd/system/srrx.service.d/20-release-guard.conf"):
@@ -437,7 +475,8 @@ class GuestSmoke:
         return {"stage": str(self.stage), "payload_files": len(manifest["files"]), "current_source_files_verified": len(copied),
                 "manifest_sha256": digest(self.stage / "stage-files.json"),
                 "physical_gates_open": len(gates), "menu_user_unit": True, "systemd_verify": "PASS",
-                "verified_units": len(unit_paths), "staged_masks": sorted(masks)}
+                "verified_units": len(unit_paths), "staged_masks": sorted(masks),
+                "verified_template_instances": sorted(p.name for p in instances)}
 
     def device_wait(self):
         """DEP-11 on this guest's real systemd: the generated Wants=/After= drop-in waits for an absent

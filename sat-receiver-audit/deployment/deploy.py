@@ -109,7 +109,11 @@ GNSS_POLKIT_RULE = "etc/polkit-1/rules.d/60-srrx-gnss-config.rules"
 # No release guard for these: they energize nothing, run as srrx-loc/_chrony (no access to the
 # acceptance and cache records), and the oneshot must not hash the cache each time labd starts it.
 # srrx-passes@ is started only by labd, after labd's own guard, and opens no device (DEPLOYMENT.md).
-RELEASE_GUARD_EXEMPT = frozenset({"srrx-locationd.service", "srrx-timegate.service", GNSS_CONFIG_UNIT, "srrx-passes@.service"})
+# The SatDump/baseband templates likewise (srrx.baseband_scheduler): the decode opens no device, the
+# recorder energizes nothing (labd's policy powers EN_RTLA) and reads only RTL-A through DeviceAllow=,
+# their users cannot read the guard's records, and a guard would hash the cache at every pass start.
+RELEASE_GUARD_EXEMPT = frozenset({"srrx-locationd.service", "srrx-timegate.service", GNSS_CONFIG_UNIT, "srrx-passes@.service",
+                                  "srrx-satdump-decode@.service", "srrx-baseband-record@.service"})
 
 
 class DeploymentError(ValueError):
@@ -1288,8 +1292,10 @@ def stage(destination, config=None, gnss="gpsd"):
     sys.path.insert(0, str(PROJECT / "software"))
     from srrx import pass_jobs  # polkit rule and plan directory of srrx-passes@.service, from one source
     from srrx import satdump_pass  # SatDump/baseband tmpfiles, sweep service and timer, baseband.env template
+    from srrx import baseband_scheduler  # polkit rule for the record/decode templates, labd's drop-in
     stage_files(rootfs, pass_jobs.staged_files(), "pass planner file")
     stage_files(rootfs, satdump_pass.staged_files(), "SatDump/baseband file")
+    stage_files(rootfs, baseband_scheduler.staged_files(), "baseband scheduler file")
     for name in ("release.template.json", "build-manifest.template.json", "devices.template.json"):
         shutil.copyfile(HERE / name, etc / name)
     shutil.copyfile(PROJECT / "software/config/acceptance.template.json", etc / "acceptance.template.json")

@@ -88,8 +88,9 @@ CATALOGUE = (
     ("RX-03", 3, "OFFLINE", "SDR++: no recorder/iq_exporter/network_sink/pager_decoder, ON list only, no sdrpp --server", (_B07 + ":401-409", _B07 + ":548", "STACK.md:890")),
     ("RX-04", 4, "OFFLINE", "SatDump: allowlisted plugins and five pipelines, no sinks/sources/mqtt, kepler Never", (_B07 + ":362-389", _B07 + ":549", "STACK.md:886", _B09 + ":78")),
     ("RX-04-decode", 4, "BUILDER", "SatDump baseline decode of one stored file per allowlisted pipeline", (_B07 + ":389", _B07 + ":549")),
-    ("RX-04-bb", 4, "OFFLINE", "v2.1 LRPT baseband recorder: policy constants, computed channel filter, out-of-window tone stored as zeros, fixed SatDump units",
-     ("STACK.md:977", "STACK.md:882", "build/12-revision-v2.1.md:71", "software/srrx/baseband.py", "software/srrx/satdump_pass.py")),
+    ("RX-04-bb", 4, "OFFLINE", "v2.1 LRPT baseband recorder: policy constants, computed channel filter, out-of-window tone stored as zeros, fixed SatDump units, staged record/decode templates and their polkit rule",
+     ("STACK.md:977", "STACK.md:882", "build/12-revision-v2.1.md:71", "software/srrx/baseband.py", "software/srrx/satdump_pass.py",
+      "software/srrx/baseband_scheduler.py")),
     ("RX-04-live", 4, "DEVICE", "SatDump live unit on the Q6A: only 127.0.0.1 datagrams reach net_source; live products equal the file decode",
      ("STACK.md:1480", "software/srrx/satdump_pass.py unit_properties")),
     ("RX-05", 5, "OFFLINE", "OpenWebRX+: static modes subset of allowlist, locked settings, admin password present", (_B07 + ":426-433", _B07 + ":550", _B09 + ":79")),
@@ -1848,10 +1849,9 @@ def check_04bb(ctx, r):
         r.fail(where, "baseband_policy_constant", "LIVE_OR_PIPELINES")
     _replay_probe(r, "RX-04-bb", np, srrx_closure("baseband"), lambda findings: _baseband_probe(np, bb, where, findings))
     window = _lrpt_window(bb)
-    ident = "0" * 16
-    decode = glue.unit_properties("decode", ident, work_dir="/data/products/satdump/.satdump-" + ident,
-                                  input_path="/data/raw/baseband-lrpt/lrpt-" + ident + ".sigmf-data")
-    live = glue.unit_properties("live", ident, work_dir="/data/products/satdump/.satdump-" + ident)
+    instance = "lrpt-" + "0" * 16
+    decode = glue.unit_lines("decode", instance)
+    live = glue.unit_lines("live", instance)
     common = {"ProtectHome=yes", "ProtectSystem=strict", "NoNewPrivileges=yes", "Environment=LC_ALL=C.UTF-8",
               "WorkingDirectory=" + glue.EMPTY_WORKDIR, "TemporaryFileSystem=/data:ro", "IPAddressDeny=any",
               "User=" + glue.UNIT_USER}
@@ -1867,6 +1867,7 @@ def check_04bb(ctx, r):
     if command[1:3] != ["legacy", "live"] or command[command.index("--source") + 1] != "net_source" or any(
             a in command for a in _LIVE_FORBIDDEN_ARGS):
         r.fail(units, "live_argv")
+    _check_04bb_scheduler(ctx, r, glue, instance, decode)
     staged = ctx.file("etc/tmpfiles.d/srrx-satdump.conf")
     if staged is None:
         r.note("baseband_tmpfiles_not_staged")
@@ -1874,6 +1875,50 @@ def check_04bb(ctx, r):
         r.fail("etc/tmpfiles.d/srrx-satdump.conf", "baseband_tmpfiles_differs")
     r.note("live_localhost_behaviour_is_RX-04-live")
     r.note("device_recording_needs_labd_utc_verified")
+
+
+def _check_04bb_scheduler(ctx, r, glue, instance, decode):
+    """No transient SatDump unit; the staged record/decode templates, labd's drop-in and the polkit rule
+    equal their generators (srrx.satdump_pass.unit_text, srrx.baseband_scheduler.staged_files); the
+    decode template expands to the reviewed sandbox; the rule allows labd only start/stop of the two
+    templates' instances. A root without them (not a deploy.stage root) is noted, never passed as staged."""
+    sched = _target_module(ctx, r, "baseband_scheduler")
+    if sched is None:
+        return
+    if glue.transient_units():
+        r.fail("software/srrx/satdump_pass.py", "transient_units_present")
+    for kind, template in (("decode", glue.DECODE_TEMPLATE), ("record", glue.RECORD_TEMPLATE)):
+        rel = "etc/systemd/system/" + template
+        final = ctx.file(rel)
+        if final is None:
+            r.note("scheduler_templates_not_staged")
+            continue
+        text = ctx.read(final, 64 * 1024).decode("utf-8", "replace")
+        if text != glue.unit_text(kind):
+            r.fail(rel, "template_differs")
+        lines = set(text.replace("%i", instance).splitlines())
+        if kind == "decode" and not set(decode) <= lines:
+            r.fail(rel, "decode_unit_properties")
+        if "[Install]" in text or any(line.startswith(("User=root", "ExecStartPre=", "PermissionsStartOnly"))
+                                      for line in lines):
+            r.fail(rel, "template_not_fixed")
+    for rel, expected in sorted(sched.staged_files().items()):
+        final = ctx.file(rel)
+        if final is None:
+            r.note("scheduler_files_not_staged")
+        elif ctx.read(final, 64 * 1024).decode("utf-8", "replace") != expected:
+            r.fail(rel, "scheduler_file_differs")
+    pattern = re.compile(sched.UNIT_PATTERN)
+    allowed = [glue.unit_name(template, instance) for template in (glue.DECODE_TEMPLATE, glue.RECORD_TEMPLATE)]
+    refused = ("srrx-satdump-decode@.service", "srrx-satdump-decode@lrpt-0.service", "srrx.service",
+               "srrx-satdump-decode@lrpt-" + "0" * 16 + ".service.d", "run-u1.service",
+               "srrx-baseband-record@lrpt-" + "A" * 16 + ".service")
+    rule = sched.polkit_rule()
+    if (not all(pattern.match(name) for name in allowed) or any(pattern.match(name) for name in refused)
+            or "/" + sched.UNIT_PATTERN + "/" not in rule or rule.count("polkit.Result.YES") != 1
+            or 'subject.user == "labd"' not in rule or "restart" in rule):
+        r.fail("software/srrx/baseband_scheduler.py", "polkit_rule_scope")
+    r.note("polkit_decisions_are_the_sr-rx-system_node_harness")
 
 
 # kmod and udev read these persistent directories in this precedence order (/run is runtime state).
