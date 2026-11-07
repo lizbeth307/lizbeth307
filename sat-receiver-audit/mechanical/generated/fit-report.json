@@ -3,7 +3,7 @@
   "status": "MODEL FIT ONLY: envelopes and datasheet dimensions; no physical part was fitted. Hardware gates stay OPEN.",
   "generator": {
     "version": "1.0.0",
-    "params_sha256": "e9f65a072a5648bbcc25e0806b672126efc61b56a8819329d9afdd331b45eae4",
+    "params_sha256": "bedbb3ef32c865638bac1b706dc8b9e6ab66fb8d94236d636ba890cdeef11fad",
     "pcb_components_sha256": "878b83338d5bcc6c1a133b038580c6a40a9775a6ec0aab2b385f143562a36662"
   },
   "envelope": {
@@ -89,12 +89,6 @@
       "a": "RF.r0",
       "b": "rfbay.wall.bottom",
       "gap_mm": 0.4,
-      "result": "TIGHT (model)"
-    },
-    {
-      "a": "pwr_key_body",
-      "b": "plate.main",
-      "gap_mm": 0.0,
       "result": "TIGHT (model)"
     }
   ],
@@ -359,14 +353,34 @@
     },
     {
       "id": "R-PWR-KEY-NUT",
-      "rule": "PV6 panel nut inside the top wall clear of the HDMI board, the display clamp bosses and the top Al angle",
+      "rule": "PV6 panel nut inside the top wall (reserve nut.PWR_KEY) and the key body clear of the HDMI board, the display and its clamp plates, the top Al angle and the plate (the nut inside the plate notch), >= 0.5",
       "value_mm": {
         "key_x": 155.5,
-        "key_z": 48.5,
-        "nut_d_assumed": 20.0
+        "key_z": 50.0,
+        "nut_reserve": [
+          22.0,
+          3.5
+        ],
+        "clear_mm": {
+          "body-display": 2.58,
+          "body-display_clamp.3": 0.58,
+          "body-hdmi_board": 1.3,
+          "body-plate.main": 1.5,
+          "nut-angle.top.plate": 0.5,
+          "nut-angle.top.wall": 0.5,
+          "nut-display_clamp.3": 1.05,
+          "nut-front_wall": 6.58,
+          "nut-hdmi_board": 0.8
+        },
+        "worst": [
+          "nut-angle.top.plate",
+          0.5
+        ],
+        "in_plate_notch": true
       },
-      "result": "OPEN: the PV6 datasheet gives no nut size; a D20 nut (assumption) at x 155.5 / z 48.5 would reach the HDMI board edge (x 146.2) and the top-right display clamp boss (z >= 56.5): measure the received nut; if it does not clear, re-place the key (wave 2 layout)",
-      "source": "parts.json pv6_button; mechanical.json top_face.power_key"
+      "limit_mm": 0.5,
+      "source": "parts.json pv6_button (nut_src); mechanical.json top_face.power_key, plate.notches, display.clamp",
+      "result": "OPEN: the nut is not dimensioned (PV6 and PV2 datasheets; DigiKey PV2PV3PV6HEX16 'HEX NUT FOR PV2 SERIES'; parts.json pv6_button nut_src): the reserve D22 x 3.5 (assumption) at x 155.5 / z 50 clears everything by >= 0.5 (worst nut-angle.top.plate 0.50) inside the plate notch, and the key body no longer touches the plate; measure the received nut at incoming inspection: a nut wider than the reserve needs the top Al angle notched or the key moved"
     },
     {
       "id": "R-PLATE-SLOTS",
@@ -453,13 +467,40 @@
     },
     {
       "id": "R-HDMI-ROUTE",
-      "rule": "HDMI cable Q6A to HDMI board: keep-clear route in the envelope check (plug head, bends, plate notch, run)",
+      "rule": "HDMI FPC route Q6A to the Wisecoco input: adapter, fold, ferrite, insert and run envelopes in the envelope check without a conflict; each flex covers its centreline with slack 0-40 mm; flex through the ferrite slot and the plate notch",
       "value_mm": {
-        "cable_od": 5.2,
-        "bend_r": 8.0
+        "segments": {
+          "FLEX1": {
+            "part": "3560",
+            "flex_mm": 100.0,
+            "centreline_mm": 73.8,
+            "slack_mm": 26.2,
+            "folds": 2
+          },
+          "FLEX2": {
+            "part": "3560",
+            "flex_mm": 100.0,
+            "centreline_mm": 83.5,
+            "slack_mm": 16.5,
+            "folds": 1
+          }
+        },
+        "flex_w": 10.0,
+        "ferrite_slot": [
+          11.5,
+          0.5
+        ],
+        "notch": [
+          211.0,
+          26.5,
+          15.5,
+          7.0
+        ],
+        "envelopes": 11,
+        "folds": 3
       },
-      "result": "OPEN: the route needs a right-angle plug at the Q6A (MPN TBD) and has no 20 mm deep space for the two Fair-Rite 0431164281 snap ferrites (39.5 x 20 x 19.6) or for the S-fold of about 250 mm of excess cable: rule R-HDMI-ROUTE OPEN; proposed default (build/15 'Оболонка D15', 2026-11-07): STACK's FPC reserve Adafruit 3550 (right angle) + 3548 + 3560 with a grounded copper-tape wrap; MPN, length and a ferrite for the flat cable TBD until the Adafruit pages are read",
-      "source": "mechanical.json hdmi_route, layout hdmi_*"
+      "source": "mechanical.json hdmi_route, layout hdmi_*; parts.json adafruit_3550, adafruit_3548, adafruit_flex, wurth_74278011",
+      "result": "PASS (model): Adafruit 3550 on the Q6A receptacle, flex 1 3560 (26.2 mm slack) with the WE-FLAT 74278011 ferrite under the LAB BUS nut, through the plate notch to the HDMI_INSERT reserve right of the BMS, flex 2 3560 (16.5 mm slack) up the strip and along y 78.65-88.65 to the Adafruit 3548 in the Wisecoco input; 3 45-degree folds; labelled assumptions: 3550 axis from the product photos (3550 or 3549 by the receptacle side), flex thickness 0.5 and bend radius 2 not published, insert reserve size, Wisecoco HDMI input at the lower end of the board's right edge (STACK D5: measure the received board); link, EMI of the wrapped flex and the folds stay bench OPEN"
     },
     {
       "id": "R-PPS-LEN",
@@ -983,7 +1024,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 17.98,
+          "best_rear_zone_mm": 16.88,
           "verdict": "inside the board limit"
         },
         {
@@ -1017,8 +1058,8 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 7.48,
-          "verdict": "above the board limit 5.5; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): above the board limit 5.5; fits a rear zone (THT from the back)",
+          "best_rear_zone_mm": 17.98,
+          "verdict": "above the board limit 5.5; fits a rear zone (THT from the back); as MF_ra (6.98 mm mated): above the board limit 5.5; fits a rear zone (THT from the back)",
           "alternative": {
             "key": "MF_ra",
             "h_mm": 6.98,
@@ -1028,7 +1069,7 @@
               10.91
             ],
             "best_front_zone_mm": 6.5,
-            "best_rear_zone_mm": 7.48,
+            "best_rear_zone_mm": 16.88,
             "verdict": "above the board limit 5.5; fits a rear zone (THT from the back)"
           }
         },
@@ -1074,7 +1115,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 7.48,
+          "best_rear_zone_mm": 16.88,
           "verdict": "inside the board limit"
         },
         {
@@ -1091,7 +1132,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 17.98,
+          "best_rear_zone_mm": 16.88,
           "verdict": "inside the board limit"
         },
         {
@@ -1108,7 +1149,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 17.98,
+          "best_rear_zone_mm": 16.88,
           "verdict": "inside the board limit"
         },
         {
@@ -1125,7 +1166,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 17.98,
+          "best_rear_zone_mm": 16.88,
           "verdict": "inside the board limit"
         },
         {
@@ -1142,7 +1183,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 17.98,
+          "best_rear_zone_mm": 16.88,
           "verdict": "inside the board limit"
         },
         {
@@ -1187,7 +1228,7 @@
               10.91
             ],
             "best_front_zone_mm": 6.5,
-            "best_rear_zone_mm": 17.98,
+            "best_rear_zone_mm": 16.88,
             "verdict": "above the board limit 5.5; fits a rear zone (THT from the back)"
           }
         },
@@ -1222,7 +1263,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 17.98,
+          "best_rear_zone_mm": 16.88,
           "verdict": "inside the board limit"
         },
         {
@@ -1239,7 +1280,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 17.98,
+          "best_rear_zone_mm": 16.88,
           "verdict": "inside the board limit"
         },
         {
@@ -1505,6 +1546,57 @@
       },
       "result": "OPEN: HATCH, PWR_A-PLATE, CTRL, ENC, Q6A-STANDOFF, Q6A-PLATE, UFS-BOSS, LIME-PEDESTAL, DISPLAY-CLAMP, IMU-CARRIER, IMU-LID, IMU-BOARD-STANDOFFS, IMU-TRIPOD, POD-LID, POD-PANEL, PWR-BOND, INA228, SWM-2813, HUB-5997, IP2368, FAN-NF-A4X10, BLOWER, HATCH-BOARD, PACK-FUSE, POD-MODULES (thread depth not read, fixing or screw not chosen, or no ISO length in the window); PASS (model): CLOSURE, T7_HOLDER, PLATE_PM1, PLATE_PM2, PLATE_PM3, PLATE_PM4, ANGLES, PWR_B-STANDOFF, RF-STANDOFF",
       "source": "mechanical/srrx_mech/fasteners.py; build/17 rows"
+    },
+    {
+      "id": "R-F101-ACCESS",
+      "rule": "F101 for storage (STACK: F1 out for more than 2-4 weeks): the PACK_FUSE carrier with the fuse facing the hatch opening needs carrier + Keystone 3568 + MINI body of free depth in the hatch bottom strip; otherwise the seam is opened",
+      "value_mm": {
+        "place": [
+          116.0,
+          40.0,
+          22.0,
+          16.5
+        ],
+        "free_depth": 11.65,
+        "stack": 17.77,
+        "stack_parts": {
+          "carrier": 1.6,
+          "keystone_3568": 7.37,
+          "mini_fuse_body": 8.8
+        }
+      },
+      "limit_mm": 17.77,
+      "source": "mechanical.json rear_face.hatch.f101_access; parts.json keystone_3568, littelfuse_mini_297",
+      "result": "PASS (model): decision - storage keeps the seam procedure: facing the opening, the stack needs 17.77 mm (carrier 1.6 + Keystone 3568 7.37 + MINI body 8.8) against 11.65 mm in front of the USB-A plug bay, and the rest of the hatch footprint is the hatch board (J502, J503) and the EDL key; F101 stays on the PACK_FUSE carrier beside the battery tray (envelope MECH-5) and comes out after the seam is opened (build/21 section 4 item 7, build/15 'Ущільнення')"
+    },
+    {
+      "id": "R-P8-ACCESSORY",
+      "rule": "P8 external inline accessory (A403 -> A404 in the antenna line, ch4 bias through P8): module envelopes, chain and the parts still open",
+      "value_mm": {
+        "outside_enclosure": true,
+        "chain": [
+          "J428 antenna feed (SMA input of A403)",
+          "A403 Flamingo+ FM #2",
+          "SMA male-male adapter from the LNA V2 package (A403 OUT -> A404 IN)",
+          "A404 RTL-SDR Blog Wideband LNA V2",
+          "coax A404 OUT -> P8 (W2 GR-2 net E4_RF_CH4; ch4 bias 4.3 V reaches A404 over it)"
+        ],
+        "modules": {
+          "A403": [
+            73.7,
+            30.6,
+            18.7
+          ],
+          "A404": null
+        },
+        "envelope": {
+          "length": null,
+          "w": 30.6,
+          "h": 18.7
+        }
+      },
+      "source": "parts.json p8_accessory; build/03 P8 row; build/15 'Шлях P8 (W2 AREA)'",
+      "result": "OPEN: A404: RTL-SDR Blog Wideband LNA V2: the maker's page https://www.rtl-sdr.com/product/rtl-sdr-blog-wideband-lna-bias-tee-powered/ (read 2026-11-07 with WebFetch) gives no dimensions and no connector genders; it lists '1x SMA male to SMA male adapter' in the package and 'Requires 3 - 5v bias tee power' (ch4 gives 4.3 V through P8, build/03 P8 row); length = A403 73.7 (reserve) + adapter + A404 (not read); box, adapters, cable and mounting items are SRC-2's (CC-27); sealing of the accessory box is OPEN (T-07); assembly order build/21 E9c"
     },
     {
       "id": "R-TOOL-ACCESS",
@@ -2403,7 +2495,7 @@
             34.0,
             5.5,
             16.0,
-            8.7
+            8.0
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,
@@ -2412,9 +2504,9 @@
         {
           "rect": [
             34.0,
-            14.2,
-            6.2,
-            11.3
+            13.5,
+            1.0,
+            7.5
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,
@@ -2422,21 +2514,21 @@
         },
         {
           "rect": [
-            40.2,
-            14.2,
-            5.6,
-            49.6
+            35.0,
+            13.5,
+            11.0,
+            7.5
           ],
-          "free_mm": 7.68,
-          "fits_mm": 7.18,
+          "free_mm": 14.98,
+          "fits_mm": 14.48,
           "limit": "hdmi_route_front_up"
         },
         {
           "rect": [
-            45.8,
-            14.2,
-            4.2,
-            11.3
+            46.0,
+            13.5,
+            4.0,
+            7.5
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,
@@ -2445,20 +2537,31 @@
         {
           "rect": [
             34.0,
-            25.5,
-            6.2,
-            27.5
+            21.0,
+            0.5,
+            4.5
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,
-          "limit": "plate.main"
+          "limit": "plate.ext"
         },
         {
           "rect": [
-            45.8,
+            34.5,
+            21.0,
+            15.5,
+            18.0
+          ],
+          "free_mm": 13.48,
+          "fits_mm": 12.98,
+          "limit": "hdmi_insert"
+        },
+        {
+          "rect": [
+            34.0,
             25.5,
-            4.2,
-            38.3
+            0.5,
+            13.5
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,
@@ -2467,9 +2570,9 @@
         {
           "rect": [
             34.0,
-            53.0,
-            0.8,
-            4.0
+            39.0,
+            1.0,
+            18.0
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,
@@ -2477,32 +2580,32 @@
         },
         {
           "rect": [
-            34.8,
-            53.0,
-            5.4,
-            10.8
+            35.0,
+            39.0,
+            11.0,
+            24.8
           ],
-          "free_mm": 7.68,
-          "fits_mm": 7.18,
-          "limit": "hdmi_route_front_turn"
+          "free_mm": 17.38,
+          "fits_mm": 16.88,
+          "limit": "hdmi_route_front_run"
         },
         {
           "rect": [
-            45.8,
-            53.0,
-            0.0,
-            10.8
+            46.0,
+            39.0,
+            4.0,
+            37.5
           ],
-          "free_mm": 7.68,
-          "fits_mm": 7.18,
-          "limit": "hdmi_route_front_turn"
+          "free_mm": 18.48,
+          "fits_mm": 17.98,
+          "limit": "plate.main"
         },
         {
           "rect": [
             0.0,
             57.0,
-            34.8,
-            1.2
+            35.0,
+            8.5
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,
@@ -2510,32 +2613,65 @@
         },
         {
           "rect": [
-            0.0,
-            58.2,
-            34.8,
-            5.6
-          ],
-          "free_mm": 7.68,
-          "fits_mm": 7.18,
-          "limit": "hdmi_route_front_run"
-        },
-        {
-          "rect": [
-            0.0,
+            35.0,
             63.8,
-            50.0,
+            11.0,
             4.7
           ],
-          "free_mm": 18.48,
-          "fits_mm": 17.98,
-          "limit": "plate.main"
+          "free_mm": 16.48,
+          "fits_mm": 15.98,
+          "limit": "hdmi_route_front_turn"
         },
         {
           "rect": [
             0.0,
+            65.5,
+            10.0,
+            11.0
+          ],
+          "free_mm": 7.98,
+          "fits_mm": 7.48,
+          "limit": "hdmi_route_front_rise"
+        },
+        {
+          "rect": [
+            10.0,
+            65.5,
+            25.0,
+            3.0
+          ],
+          "free_mm": 16.98,
+          "fits_mm": 16.48,
+          "limit": "hdmi_route_front_flat"
+        },
+        {
+          "rect": [
+            10.0,
             68.5,
+            2.0,
+            8.0
+          ],
+          "free_mm": 16.98,
+          "fits_mm": 16.48,
+          "limit": "hdmi_route_front_flat"
+        },
+        {
+          "rect": [
+            37.0,
+            68.5,
+            9.0,
+            8.0
+          ],
+          "free_mm": 16.48,
+          "fits_mm": 15.98,
+          "limit": "hdmi_route_front_turn"
+        },
+        {
+          "rect": [
+            0.0,
+            76.5,
             12.0,
-            14.5
+            6.5
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,
@@ -2544,9 +2680,9 @@
         {
           "rect": [
             37.0,
-            68.5,
+            76.5,
             13.0,
-            14.5
+            6.5
           ],
           "free_mm": 18.48,
           "fits_mm": 17.98,
@@ -3148,8 +3284,8 @@
       },
       "S29": {
         "kind": "harness",
-        "length_mm": 80,
-        "path_mm": 40.8,
+        "length_mm": 78,
+        "path_mm": 39.3,
         "bends": 4,
         "bundle_od_mm": 2.74,
         "bend_allowance_mm": 8.6,
@@ -4076,7 +4212,7 @@
       "stl_triangles": 2846
     },
     "plate_al": {
-      "cm3": 57.04,
+      "cm3": 56.95,
       "printed": false,
       "solids": 1,
       "bbox_mm": [
