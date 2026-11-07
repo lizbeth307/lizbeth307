@@ -185,7 +185,7 @@
         "interface_open",
         "interface_resolved"
       ],
-      "projection_sha256": "198d0012cc1541eb9d3d2af8b755607275526a1a678c1420b9e4ee1801be857a"
+      "projection_sha256": "d11d85d5976e023d7caf543ccde17a03d4dd8597e68832051674e5176141dc13"
     }
   },
   "boards": {
@@ -13928,7 +13928,7 @@
       "ref": "J101",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-XT30U-F (mount harness, MPN XT30U-F) in design/parts/parts.json: mating part and mounting are not both fixed. Open: XT30U-F на пігтейлі і XT30U-M для сервісного дроту обрано; пігтейл — 20 AWG до X12P1-PWR (Micro-Fit, build/16 S12: 3 A тривало / F103 5 A, клема 43030 бере 20–24 AWG). Відкриті (W2 MECH-2, 07.11.2026): місце пігтейла в батарейному відсіку — у моделі S12 закінчується на верхній грані паку (кінець provisional, mechanical/generated/harness-routes.json), конверта XT30 у моделі немає; сервісний доступ (лючок задньої стінки його не відкриває), фіксація й ущільнення — механічний пакет (MECH-3/MECH-4); панельного вирізу в цього роз'єму немає."
+      "detail": "Parts database entry J-XT30U-F (mount harness, MPN XT30U-F) in design/parts/parts.json: mating part and mounting are not both fixed. Open: XT30U-F на пігтейлі і XT30U-M для сервісного дроту обрано; пігтейл — 20 AWG до X12P1-PWR (Micro-Fit, build/16 S12: 3 A тривало / F103 5 A, клема 43030 бере 20–24 AWG); відкриті: кріплення роз’єму в корпусі, сервісний доступ, фіксація й ущільнення — механічний пакет."
     },
     {
       "ref": "J102",
@@ -13940,7 +13940,7 @@
       "ref": "J103",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-USBC-PANEL (mount panel, MPN MUSBRM5C130) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Дроти VBUS/GND/CC1/CC2 задано в build/16 S11 (до X11P1-PWR і X11S1-PWR; CC — транзитом PWR до IP2368). Відкриті (W2 MECH-2, 07.11.2026): креслення MUSBRM5C130 не читається — https://cdn.amphenol-cs.com/media/wysiwyg/files/documentation/datasheet/inputoutput/io_harsh_musb-type-c.pdf і .../drawing/musbrm5c130.pdf відповіли 403, Mouser — таймаут (mechanical/params/parts.json musbrm5c130), тож фланець, отвори гвинтів, виріз і глибина за панеллю — TBD: порт USB_C_IN лишається керном ⌀3 з резервом 12 × 6 (M-02, mechanical.json _tbd_reason); ущільнення й бондинг SHIELD до CHASSIS (build/16 §9, F26) — відкриті."
+      "detail": "Parts database entry J-USBC-PANEL (mount panel, MPN MUSBRM5C130) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Дроти VBUS/GND/CC1/CC2 задано в build/16 S11 (до X11P1-PWR і X11S1-PWR; CC — транзитом PWR до IP2368); відкриті: виріз панелі, ущільнення й бондинг SHIELD до CHASSIS (build/16 §9, F26) — механічний пакет (MECH-07)."
     },
     {
       "ref": "R117",
@@ -14006,13 +14006,13 @@
       "ref": "J404",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-F-PANEL (mount panel, MPN VFA340) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Виріз і кріплення змодельовано за кресленням Cinch VFA340 ISS 3 (https://www.cinch.com/media/drawings/products/rf-microwave/adapters/dr-ccs-vit-vfa340.pdf, прочитано 07.11.2026 з рендеру; mechanical/params/parts.json cinch_vfa340): отвір ⌀9.7 у стінці 4.5 мм (ASA + Al-кутник), фланець 11 HEX × 1.5 назовні з короткою стороною 7.6 під зовнішній W401, шайба ⌀12.0/9.7 × 0.4 і гайка 11.0 HEX × 2.4 усередині на кутнику; усередині лишається 3.6 мм різьби 3/8-32 під F-вилку W402 (R-SMA-THREAD виконано в моделі, конверт nut.P4). Відкриті: внутрішній кабель W402 з F-вилкою (GR-2), ущільнення вирізу (у VFA340 прокладки немає; T-07) і момент гайки."
+      "detail": "Parts database entry J-F-PANEL (mount panel, MPN VFA340) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Прохідний адаптер F/F обрано; виріз панелі й ущільнення — механічний пакет (MECH-07); внутрішній кабель W402 з F-вилкою — TBD."
     },
     {
       "ref": "J405",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-BNC-PANEL (mount panel, MPN 242181) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Адаптер BNC/SMA обрано (DigiKey DE ACX1326-ND, 07.11.2026: у комплекті прокладка, стопорна шайба й гайка). Відкриті (W2 MECH-2): креслення Amphenol не читається — https://www.amphenolrf.com/en-us/assets/file/4065787441/ відповів 403 07.11.2026, копії Master Electronics, RS, Richardson RFPD і Zenka — 403, element14 — таймаут (mechanical/params/parts.json amphenol_242181), тож котрий кінець має різьбу під панель, довжина різьби, гайка й виріз — TBD (P5 ⌀9.7 — типове значення, R-BULKHEAD-NUTS і R-SMA-THREAD OPEN для P5); ущільнення вирізу (T-07)."
+      "detail": "Parts database entry J-BNC-PANEL (mount panel, MPN 242181) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Адаптер BNC/SMA обрано; який кінець має різьбу під панель, звірити з кресленням Amphenol; виріз і ущільнення — механічний пакет (MECH-07)."
     },
     {
       "ref": "J406",
@@ -14024,31 +14024,31 @@
       "ref": "J407",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-PANEL-OF-CABLE (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Панельний кінець Taoglas CAB.011 (W407, P7): довжину різьби й виріз з лискою (D-Cut) рядок READS-RF web:taoglas-cab011-datasheet-spe-11-8-068-f (07.11.2026) не містить, а пігтейл P7 замінює MECH-6 (B-06: 95 мм не дістає LC76G), тож виріз, різьба (R-SMA-THREAD OPEN для P7), ущільнення й момент — TBD."
+      "detail": "Parts database entry J-PANEL-OF-CABLE (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Панельний кінець куплених кабелів Taoglas CAB.01075 (W403–W405) і CAB.011 (W407); виріз bulkhead, ущільнення й момент гайки — механічний пакет (MECH-07)."
     },
     {
       "ref": "J408",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-SMA-PANEL-RFBOARD (mount panel, MPN CAB.718) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Панельний кінець Taoglas CAB.718 (P8, верхня грань): виріз ⌀6.5 з лискою 6 +0.08/0 і кріплення змодельовано за кресленням SPE-12-8-100/B/WY (https://www.taoglas.com/datasheets/CAB.718.pdf, прочитано 07.11.2026, с. 4–5; рядок READS-RF web:taoglas-cab718-datasheet-spe-12-8-100; mechanical/params/parts.json taoglas_cab718): різьба 1/4\"-36UNS-2A довжиною 11.4 ±0.2 з однією лискою 5.8 +0.1/−0.2, гайка HEX8 × 1.8 ±0.3 і зубчаста шайба ⌀6.35 ±0.3 / 10.2 REF — з лицьового боку, корпус 8 HEX × 3.4 ±0.2 — на Al-кутнику зсередини (M-02 P8, nut.P8). Відкриті: товщину шайби не розмірено (після стінки 4.5, гайки й 3 витків лишається 2.48 мм — R-SMA-THREAD OPEN для P8), кільця в збірці немає — ущільнення вирізу (T-07), момент гайки — TBD."
+      "detail": "Parts database entry J-SMA-PANEL-RFBOARD (mount panel, MPN CAB.718) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Пігтейл обрано (Taoglas CAB.718, U.FL → SMA(F) bulkhead 200 мм) до U.FL J423/J424/J425/J427; довжину за трасою моделі перевіряє SRC-2 (200 мм або інша збірка); виріз ⌀6.5 з лискою 6, ущільнення панелі (у CAB.718 кільця немає) і момент гайки — механічний пакет (MECH-07)."
     },
     {
       "ref": "J413",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-PANEL-OF-CABLE (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Панельний кінець Taoglas CAB.01075 (W403, RX1, верхня грань): виріз ⌀6.5 і корпус пігтейла змодельовано за каталогом Taoglas SPE-24-8-198-C с.14 (рядок READS-RF web:taoglas-cable-assembly-catalog-spe-24-8-198-c, 07.11.2026: різьба 1/4-36UNS-2A довжиною 11.4 ±0.2, гайка з лицьового боку; mechanical/params/parts.json taoglas_cab01075). Відкриті: гайку й шайбу каталог не розмірює (на них і 3 витки лишається 4.58 мм — R-SMA-THREAD OPEN), діаметр корпусу — резерв ⌀10.2, ущільнення вирізу (T-07), момент гайки."
+      "detail": "Parts database entry J-PANEL-OF-CABLE (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Панельний кінець куплених кабелів Taoglas CAB.01075 (W403–W405) і CAB.011 (W407); виріз bulkhead, ущільнення й момент гайки — механічний пакет (MECH-07)."
     },
     {
       "ref": "J414",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-PANEL-OF-CABLE (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Панельний кінець Taoglas CAB.01075 (W404, RX2, права стінка): виріз ⌀6.5 і корпус пігтейла змодельовано за каталогом Taoglas SPE-24-8-198-C с.14 (рядок READS-RF web:taoglas-cable-assembly-catalog-spe-24-8-198-c, 07.11.2026: різьба 1/4-36UNS-2A довжиною 11.4 ±0.2, гайка з лицьового боку; mechanical/params/parts.json taoglas_cab01075). Відкриті: гайку й шайбу каталог не розмірює (на них і 3 витки лишається 4.58 мм — R-SMA-THREAD OPEN), діаметр корпусу — резерв ⌀10.2, ущільнення вирізу (T-07), момент гайки."
+      "detail": "Parts database entry J-PANEL-OF-CABLE (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Панельний кінець куплених кабелів Taoglas CAB.01075 (W403–W405) і CAB.011 (W407); виріз bulkhead, ущільнення й момент гайки — механічний пакет (MECH-07)."
     },
     {
       "ref": "J415",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-PANEL-OF-CABLE (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Панельний кінець Taoglas CAB.01075 (W405, REF IN, права стінка): виріз ⌀6.5 і корпус пігтейла змодельовано за каталогом Taoglas SPE-24-8-198-C с.14 (рядок READS-RF web:taoglas-cable-assembly-catalog-spe-24-8-198-c, 07.11.2026: різьба 1/4-36UNS-2A довжиною 11.4 ±0.2, гайка з лицьового боку; mechanical/params/parts.json taoglas_cab01075). Відкриті: гайку й шайбу каталог не розмірює (на них і 3 витки лишається 4.58 мм — R-SMA-THREAD OPEN), діаметр корпусу — резерв ⌀10.2, ущільнення вирізу (T-07), момент гайки."
+      "detail": "Parts database entry J-PANEL-OF-CABLE (mount assembly, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Панельний кінець куплених кабелів Taoglas CAB.01075 (W403–W405) і CAB.011 (W407); виріз bulkhead, ущільнення й момент гайки — механічний пакет (MECH-07)."
     },
     {
       "ref": "J416",
@@ -14096,7 +14096,7 @@
       "ref": "J501",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-USBA-PANEL (mount panel, MPN PX0845/A) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Дроти задано в build/16: VBUS_LABPORT і GND — сегмент S23 (до X23S1-PWR), D−/D+ — кабельна збірка C-LAB від хаба H3. Відкриті (W2 MECH-2): креслення PX0845/A прочитано (https://www.bulgin.com/pdf/pdf.php?sku=PX0845/A, 07.11.2026; mechanical/params/parts.json bulgin_px0845a) — виріз ⌀35.25–35.70 з ключем, панель 0.8–1.5 мм, шестигранник 42.0, глибина 16.9, контакти під плату (5 отворів ⌀1.00); деталь не підходить: стінка нижньої грані 2.5 мм товща за 1.5 мм, 42 мм не вміщуються в крок 17 мм ряду і в смугу поза поясом шва, а контакти потребують плати за панеллю. Потрібна інша панельна розетка USB-A під стінку 2.5 мм (MPN — власник J501); до того порт LAB_USB_A — керн ⌀3 з резервом 16 × 8 (M-02, R-BOTTOM-PITCH OPEN); заглушка."
+      "detail": "Parts database entry J-USBA-PANEL (mount panel, MPN PX0845/A) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Дроти задано в build/16: VBUS_LABPORT і GND — сегмент S23 (до X23S1-PWR), D−/D+ — кабельна збірка C-LAB від хаба H3; відкриті: виріз панелі й заглушка — механічний пакет (MECH-07)."
     },
     {
       "ref": "J543",
@@ -14126,7 +14126,7 @@
       "ref": "J530",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Райзер ADT-Link R44SF (U530) — окремий запис; у моделі (W2 MECH-2, 07.11.2026) його кінець проходить крізь вікно пластини riser_window 26 × 2.4 між верхнім краєм Q6A і нижньою стінкою РЧ-відсіку (mechanical.json plate.riser_window; STACK оцінював близько 26 × 20), Lime — на Al-п'єдесталі (lime_pedestal, M3 LP1–LP2, F04); конверт райзера не прочитано (S18 закінчується біля вікна, provisional), тож розмір вікна, вигин і фіксація райзера — TBD (виміряти отриманий R44SF; MECH-3)."
+      "detail": "Parts database entry J-Q6A-EXISTING (mount existing, no MPN) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Райзер ADT-Link R44SF (U530) — окремий запис; кріплення райзера й модуля Lime у корпусі — механічний пакет."
     },
     {
       "ref": "J522",
@@ -14138,13 +14138,13 @@
       "ref": "J505",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-GX12-6 (mount panel, MPN KH-GX12-6P) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Готово до interface_resolved (W2 MECH-2). Сполучна частина — гніздова кабельна вилка GX12 того самого комплекту KH-GX12-6P (стор. 1 креслення), дроти build/16 S34 у чашки під пайку; кріплення — виріз ⌀12.0 з лискою 11.2 у нижній стінці 2.5 мм (M-02 LAB_BUS, x 206 / z 28.5), фланець ⌀15 × 1.7 зовні, різьба M12×0.75 довжиною 8.8, гайка 14.6 під ключ (⌀16.9 по кутах) зсередини (конверт nut.LAB_BUS) — за кресленням Kinghelm rev A (рядок READS-E web:kinghelm-kh-gx12-6p-drawing, LCSC C18203264, прочитано 07.11.2026; mechanical/params/parts.json kinghelm_gx12_6p). MODEL FIT ONLY: IP на кресленні не наведено — заглушка (10-bom рядок 90), ущільнення й момент — ворота T-07 (OPEN). Відкрито лише формально: interface_resolved не записано, бо software/tests/test_parts_database.py (test_committed_unresolved_records_keep_the_interface_blockers) вимагає блокуючий запис для кожного інтерфейсного ref — рішення про цей тест за його власником (INT)."
+      "detail": "Parts database entry J-GX12-6 (mount panel, MPN KH-GX12-6P) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Пару GX12-6 і вилку JST PH на платі (супутня деталь, позначення в графі немає) обрано; виріз панелі, гайка, момент і IP — TBD (сторінка LCSC без креслення), дроти до плати — build/16 S34."
     },
     {
       "ref": "J504",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-GX16-4 (mount panel, MPN CONNECTOR-GX16-4) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Готово до interface_resolved (W2 MECH-2). Сполучна частина — кабельна вилка GX16-4 того самого комплекту Olimex (кабель S33, HELU 49655), дроти build/16 S32 (LAB5, GND, IMU_TX, IMU_RX до X32P1-PWR і X32S1-PWR); кріплення — гніздо M16×1 в отвір ⌀16 задньої стінки на пласкому гнізді 3 мм під гайку 18.8 (M-06 GX16_IMU), довжина гнізда 20.1 мм у резерві 22 (рисунок розмірів Olimex https://www.olimex.com/Products/Components/Connectors/CONNECTOR-GX16-4/resources/gx-connector-dimension.jpg, прочитано 07.11.2026; mechanical/params/parts.json gx16_socket); бондинг корпусу до CHASSIS — build/16 §9 (F26). MODEL FIT ONLY: IP і момент гайки Olimex не наводить — ворота T-07 (OPEN). Відкрито лише формально: interface_resolved не записано, бо software/tests/test_parts_database.py (test_committed_unresolved_records_keep_the_interface_blockers) вимагає блокуючий запис для кожного інтерфейсного ref — рішення про цей тест за його власником (INT)."
+      "detail": "Parts database entry J-GX16-4 (mount panel, MPN CONNECTOR-GX16-4) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Дроти задано в build/16 S32 (LAB5, GND, IMU_TX, IMU_RX до X32P1-PWR і X32S1-PWR), корпус — бондинг CHASSIS за build/16 §9; відкриті: виріз панелі (отвір ⌀16, M-06) і посадка — механічний пакет."
     },
     {
       "ref": "J550",
