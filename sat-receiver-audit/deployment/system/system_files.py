@@ -24,8 +24,9 @@ HERE = Path(__file__).resolve().parent
 DSP_LOCK = HERE / "npu/dsp-firmware.lock.json"
 
 # kind, name, GECOS, home, source. "u" creates the user and its same-named group; "g" a
-# group only. No "m" lines: srrx-pico and srrx-gnss must stay without members (deploy.py
-# doctor refuses a member), and units get their extra groups only via SupplementaryGroups=.
+# group only. One "m" line only (SESSION_MEMBERS): the touch-session account srrx-ui joins labd for
+# the 0660 control socket. srrx-pico and srrx-gnss must stay without members (deploy.py doctor
+# refuses a member), and units get their extra groups only via SupplementaryGroups=.
 SERVICE_ACCOUNTS = (
     ("u", "labd", "SR-RX labd hardware control", "/var/lib/srrx", "software/systemd/srrx.service User=labd"),
     ("u", "lab", "SR-RX engine lease", "/nonexistent", "STACK.md:873 lease User=lab; deploy.udev_rules GROUP=lab"),
@@ -39,7 +40,12 @@ SERVICE_ACCOUNTS = (
     ("g", "srrx-gnss", None, None, "deploy.GNSS_GROUP: LC76G UART, no members"),
     ("g", "i2c", None, None, "srrx.service SupplementaryGroups=i2c; bound /dev/i2c-N"),
     ("g", "fastrpc", None, None, "STACK.md:863/875 FastRPC devices, inferd-htp SupplementaryGroups"),
+    ("u", "srrx-ui", "SR-RX touch session", "/var/lib/srrx-ui",
+     "greetd default_session user (session_files(), STACK.md:884); runs the user unit srrx-menu.service"),
 )
+# The one documented member line: HMI users join labd for the socket (deploy.py PICO_GROUP comment),
+# srrx.daemon binds /run/srrx/control.sock 0660 labd:labd below RuntimeDirectoryMode=0750 (srrx.service).
+SESSION_MEMBERS = (("srrx-ui", "labd", "software/srrx/daemon.py control socket 0660 in /run/srrx 0750 labd"),)
 # Created by packages of the base image, never by this file: root (base-passwd), dialout
 # (base-passwd, gid 20), _chrony (chrony), gpsd (gpsd).
 PACKAGE_ACCOUNTS = frozenset({"root", "dialout", "_chrony", "gpsd"})
@@ -67,8 +73,13 @@ EDID_FIRMWARE = "usr/lib/firmware/edid/field.bin"
 EDID_HOOK = "etc/initramfs-tools/hooks/srrx-edid"
 DSP_HOOK = "etc/initramfs-tools/hooks/lab-dsp-fw"
 NPU_PHASE0 = "/etc/srrx/npu-phase0.env"
-# bundle() gives exactly these staged paths mode 0755: initramfs-tools runs only executable hooks.
-EXECUTABLES = frozenset({EDID_HOOK, DSP_HOOK})
+# Touch session (session_files(), STACK.md:160/:884): greetd 0.9.0-4ubuntu1 default_session -> lab-session
+# -> labwc 0.7.1-1build1 (+ kanshi 1.5.1-1), cage 0.1.5 in safe mode. Sources in deployment/system/session.
+SESSION_SOURCES = HERE / "session"
+LAB_SESSION = "usr/lib/srrx/lab-session"
+# bundle() gives exactly these staged paths mode 0755: initramfs-tools runs only executable hooks, and
+# greetd execs lab-session through `/bin/sh -c "exec <command>"`.
+EXECUTABLES = frozenset({EDID_HOOK, DSP_HOOK, LAB_SESSION})
 
 # build/07 §1.2 (STACK.md:845): unattended apt/fwupd, ModemManager and every sleep state; and the
 # receive-only userspace layer over the AIC8800 blacklist (IMG-06, build/15 «Збирання образу»):
@@ -120,10 +131,13 @@ def accounts():
 
 
 def sysusers():
-    lines = [GENERATED.rstrip("\n"), "# Service accounts only: no login shell, no members in srrx-pico/srrx-gnss."]
+    lines = [GENERATED.rstrip("\n"), "# System accounts only: no login shell, created disabled (no password); no members in srrx-pico/srrx-gnss."]
     for kind, name, gecos, home, source in SERVICE_ACCOUNTS:
         lines.append("# " + source)
         lines.append(f'u {name} - "{gecos}" {home} /usr/sbin/nologin' if kind == "u" else f"g {name} -")
+    for user, group, source in SESSION_MEMBERS:
+        lines.append("# " + source)
+        lines.append(f"m {user} {group}")
     return "\n".join(lines) + "\n"
 
 
@@ -391,6 +405,7 @@ def staged_files(config=None, gnss="gpsd"):
         files[CHRONY_CANDIDATE] = chrony_candidate()
     if config is not None:
         files[UDEV_I2C] = udev_i2c(config)
+    files.update(session_files())
     for unit in masks(gnss):
         files["etc/systemd/system/" + unit] = ""
     return files
@@ -451,3 +466,136 @@ def unknown_accounts(rootfs, transient_units=()):
             needed |= tmpfiles_accounts(path.read_text(encoding="utf-8"))
     return sorted(kind + ":" + name for kind, name in needed
                   if name not in (users if kind == "user" else groups))
+
+
+# ---------------------------------------------------------------- touch session (D-12 host part)
+# STACK.md:160 and :884; the image (IMG lineage) installs the packages and makes greetd the display
+# manager. Upstream behaviour cited below was read on 2026-11-07 from the noble sources
+# (archive.ubuntu.com pool, SHA-256 equal to the .dsc): greetd_0.9.0.orig.tar.gz +
+# greetd_0.9.0-4ubuntu1.debian.tar.xz, labwc_0.7.1.orig.tar.gz, kanshi_1.5.1.orig.tar.gz +
+# kanshi_1.5.1-1.debian.tar.xz, cage_0.1.5+20240127.orig.tar.gz; systemd v255 from its git tag.
+SESSION_USER = "srrx-ui"
+SESSION_HOME = "/var/lib/srrx-ui"
+SESSION_STATE = "/run/srrx-session"
+SESSION_VT = 1
+FIELD_OUTPUT = "HDMI-A-1"
+# greetd 0.9.0 reads /etc/greetd/greetd.conf first, then config.toml (greetd/src/config/mod.rs read_config);
+# config.toml is the noble package's conffile (debian/greetd.install), which this file replaces.
+GREETD_CONFIG = "etc/greetd/config.toml"
+GREETD_DROPIN = "etc/systemd/system/greetd.service.d/60-srrx-session.conf"
+SESSION_TMPFILES = "usr/lib/tmpfiles.d/srrx-session.conf"
+LABWC_DIR = "usr/lib/srrx/labwc"
+KANSHI_DIR = "usr/lib/srrx/kanshi"
+# STACK.md:81/:884 profile names in the field EDID's DTD order (edid_field.TIMINGS): field60 is the default.
+KANSHI_PROFILES = (("field60", edid_field.TIMINGS[0]), ("field52", edid_field.TIMINGS[1]))
+# Written by the administrator at commissioning (one word, field60 or field52); read by the labwc autostart.
+DISPLAY_PROFILE = "/etc/srrx/display-profile"
+
+
+def session_tmpfiles():
+    """sysusers.d sets only the home record of a "u" line (sysusers.d(5), v255): the home is made here.
+    The lab-session state directory is in /run, so a greetd restart keeps it and a reboot clears it."""
+    return (GENERATED + "# Touch session (system_files.session_files()): srrx-ui home and the lab-session crash counter.\n"
+            f"d {SESSION_HOME} 0700 {SESSION_USER} {SESSION_USER} -\n"
+            f"d {SESSION_STATE} 0700 {SESSION_USER} {SESSION_USER} -\n")
+
+
+def greetd_config():
+    """/etc/greetd/config.toml for greetd 0.9.0 (config/mod.rs parse_new_config; inish: '#' comment
+    lines, [section], key = value). Only a default_session: every start, the first or after a restart,
+    runs lab-session with the same class (greeter), PAM service (greetd-greeter, which includes login;
+    server.rs main) and no authentication (context.rs start_greeter). greetd runs the command through
+    /bin/sh -c "exec ..." whatever the account's shell is (session/worker.rs), so srrx-ui keeps
+    /usr/sbin/nologin. source_profile = false: /etc/profile and ~/.profile are not sourced, so the
+    session environment comes only from PAM, lab-session and the labwc environment file."""
+    return (GENERATED + "# SR-RX touch session; replaces the greetd 0.9.0-4ubuntu1 conffile (agreety on VT 7).\n"
+            "# greetd.service.d/60-srrx-session.conf keeps getty off this VT and lifts the start limit.\n"
+            "[terminal]\n"
+            f"vt = {SESSION_VT}\n"
+            "\n"
+            "[general]\n"
+            "source_profile = false\n"
+            "\n"
+            "[default_session]\n"
+            f'command = "/{LAB_SESSION}"\n'
+            f'user = "{SESSION_USER}"\n')
+
+
+def greetd_dropin():
+    """greetd.service of greetd 0.9.0-4ubuntu1 has Restart=always, RestartSec=1, StartLimitBurst=5 and
+    StartLimitInterval=30 in [Service], and After=/Conflicts=getty@tty7.service (Debian patch
+    systemd_service_tweaks.patch). systemd v255 rate-limits only with interval > 0 and burst > 0
+    (src/basic/ratelimit.h ratelimit_configured), and [Unit] and [Service] StartLimitBurst= set the same
+    field (load-fragment-gperf.gperf.in): StartLimitBurst=0 lets greetd restart every second for as
+    long as it fails, instead of ending in a black screen (STACK.md:160). VT 1 needs the getty
+    conflict that the Debian patch moved to tty7 (greetd(5): "Conflicts=getty@ttyN.service")."""
+    return (GENERATED + "[Unit]\n"
+            "# No start limit: a failing greetd is restarted after RestartSec=1 for as long as it fails.\n"
+            "StartLimitBurst=0\n"
+            f"# greetd runs the session on VT {SESSION_VT} (/etc/greetd/config.toml): no getty may use it.\n"
+            f"Conflicts=getty@tty{SESSION_VT}.service\n"
+            f"After=getty@tty{SESSION_VT}.service\n")
+
+
+def labwc_rc():
+    """rc.xml of labwc 0.7.1 (docs/labwc-config.5.scd). Every touch device maps to HDMI-A-1: a <touch>
+    without deviceName is the default entry (src/config/touch.c find_default_config). labwc loads its
+    default key and mouse bindings (terminal, launcher, root menu with Exit) only when rc.xml defines
+    none, and then drops every binding whose only action is None (src/config/rcxml.c post_processing,
+    deduplicate_key_bindings/deduplicate_mouse_bindings): one None binding of each kind leaves the
+    kiosk without any binding. The lab.shell rule (STACK.md:884) waits for the Lab Shell (no code yet)."""
+    return ('<?xml version="1.0"?>\n'
+            "<!-- " + GENERATED[2:].rstrip("\n") + " -->\n"
+            "<labwc_config>\n"
+            f'  <touch mapToOutput="{FIELD_OUTPUT}"/>\n'
+            "  <keyboard>\n"
+            '    <keybind key="W-Return"><action name="None"/></keybind>\n'
+            "  </keyboard>\n"
+            "  <mouse>\n"
+            '    <context name="Root">\n'
+            '      <mousebind button="Left" action="Press"><action name="None"/></mousebind>\n'
+            "    </context>\n"
+            "  </mouse>\n"
+            "  <windowRules>\n"
+            '    <windowRule identifier="lab.shell" serverDecoration="no">\n'
+            '      <action name="Maximize"/>\n'
+            "    </windowRule>\n"
+            "  </windowRules>\n"
+            "</labwc_config>\n")
+
+
+def labwc_environment():
+    """labwc reads <config dir>/environment before it starts (src/config/session.c
+    session_environment_init; '#' lines are comments). LABWC_FALLBACK_OUTPUT is STACK.md:884's value,
+    but the headless fallback output arrived in labwc 0.7.2 (NEWS.md at tag 0.7.4): 0.7.1 ignores it."""
+    return (GENERATED + "# Inherited by the autostart and kanshi, not by user units (srrx-menu.service).\n"
+            "# Effective from labwc 0.7.2 on (0.7.4+lab1); labwc 0.7.1 has no fallback output.\n"
+            "LABWC_FALLBACK_OUTPUT=NOOP-fallback\n"
+            "# WLR_DRM_DEVICES=/dev/dri/by-path/<display controller>: TBD, the by-path name on the Q6A is a\n"
+            "# bench read (W1-2); until then it stays unset and wlroots picks the device itself.\n")
+
+
+def kanshi_profile(name):
+    """One kanshi 1.5.1 profile per file: kanshi applies the first matching profile only (main.c
+    match/match_and_apply) and noble's 1.5.1-1 is built without IPC (no libvarlink in Build-Depends,
+    meson option ipc=auto), so kanshictl cannot switch; the autostart picks the file. The refresh comes
+    from the field EDID timing (matched within 50 mHz, main.c match_refresh); never @60Hz, @52Hz or
+    --custom (STACK.md:81)."""
+    timing = dict(KANSHI_PROFILES)[name]
+    refresh = edid_field.check_timing(timing)["refresh_hz"]
+    return (GENERATED + f"# STACK.md:884 profile {name}: field EDID {timing[0]}, {timing[1] / 1000:.2f} MHz.\n"
+            f"profile {name} {{\n"
+            f"\toutput {FIELD_OUTPUT} mode {timing[2]}x{timing[6]}@{refresh:.3f}Hz\n"
+            "}\n")
+
+
+def session_files():
+    """{rootfs-relative path: text} of the touch session, staged for every GNSS mode. lab-session and the
+    labwc autostart are shell scripts kept as files in deployment/system/session (tests run them)."""
+    files = {SESSION_TMPFILES: session_tmpfiles(), GREETD_CONFIG: greetd_config(), GREETD_DROPIN: greetd_dropin(),
+             LAB_SESSION: (SESSION_SOURCES / "lab-session").read_text(encoding="utf-8"),
+             LABWC_DIR + "/rc.xml": labwc_rc(), LABWC_DIR + "/environment": labwc_environment(),
+             LABWC_DIR + "/autostart": (SESSION_SOURCES / "labwc-autostart").read_text(encoding="utf-8")}
+    for name, _ in KANSHI_PROFILES:
+        files[KANSHI_DIR + "/" + name] = kanshi_profile(name)
+    return files

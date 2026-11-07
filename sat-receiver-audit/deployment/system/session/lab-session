@@ -1,0 +1,158 @@
+#!/bin/sh
+# SR-RX v2.1 lab-session: the greetd 0.9.0 default_session of the touch display (user srrx-ui).
+# Installed as /usr/lib/srrx/lab-session (mode 0755) by deployment/system/system_files.py through
+# deploy.py stage; /etc/greetd/config.toml from the same generator names it.
+#
+# greetd runs it as `/bin/sh -c "exec /usr/lib/srrx/lab-session"` (greetd 0.9.0
+# greetd/src/session/worker.rs) and exits itself as soon as a default_session ends without having
+# started a user session (greetd/src/context.rs check_children). So this wrapper never exits on a crash
+# (STACK.md:160, :884): it supervises the graphical stage and counts every end of it as one failure.
+#   normal: labwc 0.7.1 with the reviewed configuration in /usr/lib/srrx/labwc (-C: no XDG lookup); its
+#           autostart starts kanshi and srrx-menu.service and ends labwc when the console stops;
+#   safe:   after 3 failures within 10 min, cage runs only the console (no labwc, kanshi or other window);
+#   text:   after 3 more failures within 10 min, a status text on this VT, refreshed every 30 s, until reboot.
+# Mode and failure times are kept in /run/srrx-session (tmpfiles, cleared at reboot), so they survive a
+# greetd restart. Times are /proc/uptime seconds: a GNSS or RTC step of the wall clock does not move them.
+# Receive-only: nothing here starts an engine, a radio, a transmitter or a network service.
+# SIGTERM (greetd stop, shutdown) ends the wrapper with its default action; no trap keeps it alive.
+
+set -u
+umask 077
+
+STATE=/run/srrx-session
+WINDOW=600
+LIMIT=3
+PAUSE=1
+STATUS_EVERY=30
+LABWC_CONFIG=/usr/lib/srrx/labwc
+SELF=$0
+
+log() {
+	printf 'lab-session: %s\n' "$*" >&2
+}
+
+uptime_s() {
+	up=0
+	read -r up _ < /proc/uptime
+	printf '%s\n' "${up%%.*}"
+}
+
+use_state_dir() {
+	if [ -d "$STATE" ] && [ -w "$STATE" ]; then
+		return 0
+	fi
+	# Without the tmpfiles directory the counter still works, but only until greetd restarts.
+	if [ -n "${XDG_RUNTIME_DIR:-}" ] && mkdir -p "$XDG_RUNTIME_DIR/srrx-session" 2>/dev/null \
+		&& [ -w "$XDG_RUNTIME_DIR/srrx-session" ]; then
+		log "$STATE is not writable; counting failures in $XDG_RUNTIME_DIR/srrx-session"
+		STATE=$XDG_RUNTIME_DIR/srrx-session
+		return 0
+	fi
+	fallback=$(mktemp -d "${TMPDIR:-/tmp}/srrx-session.XXXXXX") || fallback=
+	log "$STATE is not writable; counting failures in ${fallback:-nowhere (every end counts as the first)}"
+	STATE=${fallback:-$STATE}
+}
+
+current_mode() {
+	mode=
+	if [ -r "$STATE/mode" ]; then
+		read -r mode < "$STATE/mode"
+	fi
+	case $mode in
+	normal|safe|text) ;;
+	'') mode=normal ;;
+	*)
+		log "unknown mode '$mode' in $STATE/mode; using normal"
+		mode=normal
+		;;
+	esac
+}
+
+set_mode() {
+	printf '%s\n' "$1" > "$STATE/mode.new" && mv -f "$STATE/mode.new" "$STATE/mode"
+	: > "$STATE/failures"
+}
+
+record_failure() {
+	now=$(uptime_s)
+	: > "$STATE/failures.new"
+	if [ -r "$STATE/failures" ]; then
+		while read -r when; do
+			case $when in
+			''|*[!0-9]*) continue ;;
+			esac
+			if [ $((now - when)) -lt "$WINDOW" ]; then
+				printf '%s\n' "$when" >> "$STATE/failures.new"
+			fi
+		done < "$STATE/failures"
+	fi
+	printf '%s\n' "$now" >> "$STATE/failures.new"
+	mv -f "$STATE/failures.new" "$STATE/failures"
+	count=$(wc -l < "$STATE/failures")
+	count=$((count + 0))
+}
+
+text_console() {
+	while :; do
+		printf '\033[H\033[2J'
+		printf '%s\n' "SR-RX: the graphical session failed $LIMIT times within $WINDOW s in safe mode as well." \
+			"lab-session text console. labd keeps running; this console only reads its status." \
+			"Reboot to try the graphical session again." ""
+		PYTHONPATH=/opt/srrx/software /usr/bin/python3 -B -m srrx.cli --socket /run/srrx/control.sock status 2>&1
+		sleep "$STATUS_EVERY"
+	done
+}
+
+# Safe-mode client inside cage: the console is the same user unit as in the normal session, so it
+# keeps the unit's sandbox; cage ends when systemctl returns, that is when the console stops.
+client() {
+	/usr/bin/systemctl --user import-environment WAYLAND_DISPLAY
+	if /usr/bin/systemctl --user --quiet is-enabled srrx-menu.service; then
+		exec /usr/bin/systemctl --user start --wait srrx-menu.service
+	fi
+	log "srrx-menu.service is not enabled (venv not built and audited): the safe mode has no console"
+	exit 1
+}
+
+case ${1:-} in
+client)
+	client
+	;;
+'') ;;
+*)
+	log "ignoring unexpected arguments: $*"
+	;;
+esac
+
+use_state_dir
+log "started; state in $STATE"
+while :; do
+	current_mode
+	case $mode in
+	normal)
+		/usr/bin/labwc -C "$LABWC_CONFIG"
+		;;
+	safe)
+		/usr/bin/cage -d -- "$SELF" client
+		;;
+	text)
+		text_console
+		;;
+	esac
+	status=$?
+	record_failure
+	log "$mode session ended with status $status: $count failure(s) in the last $WINDOW s"
+	if [ "$count" -ge "$LIMIT" ]; then
+		case $mode in
+		normal)
+			set_mode safe
+			log "switching to safe mode: cage with the console only"
+			;;
+		safe)
+			set_mode text
+			log "switching to the text console"
+			;;
+		esac
+	fi
+	sleep "$PAUSE"
+done
