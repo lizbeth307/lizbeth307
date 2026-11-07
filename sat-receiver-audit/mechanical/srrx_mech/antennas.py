@@ -205,7 +205,7 @@ def pod_sheet(P):
                "корпус PC (Hammond), сталева панель 1554UPL",
                ["cf2235-kt30 (124 x 47 x 33) — на сталевій панелі; LaNA WB (60 x 38 x 25) — другим шаром, 5 мм над фільтром (build/12).",
                 f"Стек 33 + 5 + 25 = 63 мм + стійки {fmt(A['standoff'])} ≤ внутрішньої висоти {fmt(hb['inside'][2])} — модельно, без кабелів; посадка і герметизація — ворота E4-04 OPEN.",
-                "Отвори кріплення модулів — за їх кресленнями (TBD); SMA — ⌀6.4, гермоввід і клапан — ⌀12.2; клапан ніколи догори.",
+                "Отвори кріплення модулів — за їх кресленнями (TBD); SMA — ⌀6.47 з лискою 5.94 (SM4955, P-02), гермоввід SKINTOP і клапан — ⌀12.2; клапан ніколи догори.",
                 "Момент гвинтів кришки 30-40 cN·m (креслення Hammond 1554U)."])
     sh.rect(0, 0, ox, oy, "CUT")
     sh.rect((ox - ix) / 2, (oy - iy) / 2, ix, iy, "HIDDEN")
@@ -231,10 +231,17 @@ def pod_walls_sheet(P):
     hb = P.parts["hammond_1554u2gy"]
     ox, oy = hb["outside"][0], hb["outside"][1]
     bh = hb["box_h"]
+    from .features import HOLES, hole_outline
+    sma, gl = P.parts["fairview_sm4955"], P.parts["lapp_skintop_st_m12"]
+    wall = hb.get("wall")
     sh = Sheet("P-02", "Зовнішній S-band вузол: свердління стінок", "вид ззовні кожної стінки, 1:1; z — від дна корпусу", (420.0, 297.0), 1.0,
                (30.0, 40.0), "корпус PC (Hammond 1554U2GY)",
-               ["SMA-прохідники ⌀6.4 (1/4-36, тип TBD, MECH-07); гермоввід кабелю живлення USB-C (лише живлення LaNA) і клапан M12 — ⌀12.2.",
-                "Клапан — на бічній стінці, ніколи догори; ущільнювальні кільця прохідників — з боку корпусу.",
+               [f"SMA-прохідники RF_IN/RF_OUT: виріз ⌀{fmt(sma['hole_d'])} з лискою {fmt(sma['hole_flat'])} за кресленням прохідника гніздо-гніздо Fairview SM4955 "
+                f"(панель ≤{fmt(sma['panel_max'])}; стінка pod {fmt(wall)}, Hammond 1554U, переріз B-B); кільця в даташиті немає — ущільнення й закупівельна позиція "
+                "AI-SMA-BULK-POD — TBD (SRC-2).",
+                f"PWR: гермоввід LAPP SKINTOP ST-M 12x1.5 (53111400), отвір ⌀12.2, різьба {fmt(gl['thread_len'])} мм, затискання {fmt(gl['clamp'][0])}-{fmt(gl['clamp'][1])} мм "
+                "(кабель W425 ⌀4.2 вводиться обрізаним кінцем зсередини); контргайки в комплекті немає — TBD.",
+                "Клапан LTW M12 (⌀12.2, наскрізний отвір 2.0–3.5 мм) — на бічній стінці, ніколи догори.",
                 "Положення — модельні (build/12: шари з 5 мм між ними); посадка й герметизація — ворота E4-04 OPEN."])
     walls = [("left_end", "торець лівий", oy, 0.0, 115.0), ("right_end", "торець правий", oy, 150.0, 115.0),
              ("side_front", "бічна стінка (передня)", ox, 0.0, 0.0)]
@@ -245,9 +252,15 @@ def pod_walls_sheet(P):
         sh.dim_v(y0, y0 + bh, x0, x0 - 6)
         for p in A["ports"]:
             if p["wall"] == wall:
-                d = 6.4 if p["kind"] == "sma_bulkhead" else 12.2
+                h = HOLES[p["kind"]]
                 u = p["x"] if wall == "side_front" else p["y"]
-                sh.hole((x0 + u, y0 + p["z"]), d, f"{p['id']} ⌀{fmt(d)} ({fmt(u)}, {fmt(p['z'])})", 2.2)
+                if h.get("shape") == "dflat":
+                    sh.poly(hole_outline({"u": x0 + u, "v": y0 + p["z"], "d": h["d"], "flat": h["flat"]}), True, "CUT")
+                    sh.center_mark((x0 + u, y0 + p["z"]), h["d"] / 2 + 2.0)
+                    sh.text((x0 + u - h["d"] / 2, y0 + p["z"] - h["d"] / 2 - 3.5),
+                            f"{p['id']} ⌀{fmt(h['d'])} / {fmt(h['flat'])} ({fmt(u)}, {fmt(p['z'])})", 2.2)
+                else:
+                    sh.hole((x0 + u, y0 + p["z"]), h["d"], f"{p['id']} ⌀{fmt(h['d'])} ({fmt(u)}, {fmt(p['z'])})", 2.2)
     return sh
 
 

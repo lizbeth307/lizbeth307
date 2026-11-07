@@ -474,3 +474,98 @@ class HeaderHeights(unittest.TestCase):
         row = boards.header_height_rule(P)
         self.assertTrue(row["result"].startswith("OPEN"), row["result"])
         self.assertIn("X04P1-RF MF_top 9.9", row["value_mm"]["above_limit"])
+
+
+class PanelPortsW2Mech2(unittest.TestCase):
+    """W2 MECH-2 (B-01, B-02, C-20): panel and bottom cut-outs from the makers' drawings."""
+
+    def _rule(self, Q, rid):
+        return [x for x in rules.evaluate(Q) if x["id"] == rid][0]
+
+    def test_bottom_ports_are_modelled_or_name_a_reason(self):
+        for p in P.mech["bottom_face"]["ports"]:
+            with self.subTest(port=p["id"]):
+                if p["kind"] == "tbd":
+                    self.assertIn("2026-11-07", p.get("_tbd_reason", ""))
+                    self.assertIn("http", p["_tbd_reason"])
+                else:
+                    self.assertIn(p["part"], P.parts)
+                    self.assertTrue(P.parts[p["part"]]["status"].startswith("datasheet"))
+
+    def test_taoglas_ports_pass_the_thread_rule(self):
+        r = self._rule(P, "R-SMA-THREAD")
+        for pid in ("P1", "P2", "P3", "P6"):
+            self.assertTrue(r["value_mm"][pid].startswith("PASS (model)"), r["value_mm"][pid])
+        # 11.4 - 0.3 - 4.5 - (1.75 + 0.2) - (1.1 + 0.3) = 3.25 >= 3 x 0.706
+        self.assertIn("3.25 mm left", r["value_mm"]["P1"])
+        self.assertTrue(r["value_mm"]["P5"].startswith("OPEN"))
+        self.assertFalse(r["result"].startswith("FAIL"), r["result"])
+
+    def test_a_thin_thread_fails_the_thread_rule(self):
+        import copy
+        Q = copy.deepcopy(P)
+        Q.parts["taoglas_mhf1_sma_wp"]["thread_len"] = 8.0
+        r = self._rule(Q, "R-SMA-THREAD")
+        self.assertTrue(r["result"].startswith("FAIL"), r["result"])
+
+    def test_vfa340_nut_and_long_side_inside(self):
+        v = P.parts["cinch_vfa340"]
+        self.assertEqual((v["hex_af"], v["flange_t"], v["short_side"], v["overall"], v["nut_af"], v["nut_t"]), (11.0, 1.5, 7.6, 20.9, 11.0, 2.4))
+        self.assertEqual(v["washer"], [12.0, 9.7, 0.4])
+        nut = [b for _, n, b, _ in layout.item_boxes(P) if n == "nut.P4"][0]
+        self.assertAlmostEqual(nut[3] - nut[0], 11.0 / math.cos(math.radians(30)), places=6)
+        self.assertAlmostEqual(nut[4] - nut[1], 20.9 - 7.6 - 1.5 - 4.5, places=6)
+        r = self._rule(P, "R-SMA-THREAD")
+        self.assertTrue(r["value_mm"]["P4"].startswith("PASS (model)"), r["value_mm"]["P4"])
+
+    def test_unread_port_has_no_inner_envelope(self):
+        names = {n for _, n, _, _ in layout.item_boxes(P)}
+        self.assertNotIn("nut.P5", names)
+        self.assertIn("nut.LAB_BUS", names)
+        r = self._rule(P, "R-BULKHEAD-NUTS")
+        self.assertTrue(r["result"].startswith("OPEN: no inner envelope for P5"), r["result"])
+        self.assertIn("P4", r["value_mm"])
+
+    def test_lab_bus_cut_out_is_the_drawing_d_cut(self):
+        from srrx_mech.features import hole_outline
+        f = [x for x in face_features(P)["bottom"] if x["id"] == "LAB_BUS"][0]
+        self.assertEqual((f["shape"], f["d"], f["flat"], f["flange_d"]), ("dflat", 12.0, 11.2, 15.0))
+        pts = hole_outline(f)
+        self.assertAlmostEqual(max(v for _, v in pts), f["v"] + 11.2 - 6.0, places=6)
+        self.assertAlmostEqual(min(v for _, v in pts), f["v"] - 6.0, places=2)
+
+    def test_bottom_pitch_rule_fails_on_an_overlap(self):
+        import copy
+        r = self._rule(P, "R-BOTTOM-PITCH")
+        self.assertTrue(r["result"].startswith("OPEN"), r["result"])
+        Q = copy.deepcopy(P)
+        a = [p for p in Q.mech["bottom_face"]["ports"] if p["id"] == "AUDIO_3V5"][0]
+        a.update({"kind": "jack_3v5", "x": 195.0, "z": 30.0})
+        r = self._rule(Q, "R-BOTTOM-PITCH")
+        self.assertTrue(r["result"].startswith("FAIL"), r["result"])
+        self.assertIn("LAB_BUS-AUDIO_3V5", r["result"])
+
+    def test_pod_holes_come_from_read_parts(self):
+        from srrx_mech.features import HOLES
+        for p in P.antennas["sband_pod"]["ports"]:
+            with self.subTest(port=p["id"]):
+                self.assertIn(p["kind"], HOLES)
+                self.assertIn(p["part"], P.parts)
+        sm = P.parts["fairview_sm4955"]
+        self.assertLessEqual(P.parts["hammond_1554u2gy"]["wall"], sm["panel_max"])
+        lo, hi = P.parts["lapp_skintop_st_m12"]["clamp"]
+        self.assertTrue(lo <= 4.2 <= hi)
+
+
+@unittest.skipUnless(importlib.util.find_spec("build123d"), "build123d not installed")
+class PanelPortsW2Mech2Cad(unittest.TestCase):
+    def test_dflat_cutter_has_the_d_cut_area(self):
+        from srrx_mech import cad
+        f = [x for x in face_features(P)["bottom"] if x["id"] == "LAB_BUS"][0]
+        L = 20.0
+        c = cad.dflat_cutter(P, "bottom", f, L)
+        r, h = f["d"] / 2, f["flat"] - f["d"] / 2
+        seg = r * r * math.acos(h / r) - h * math.sqrt(r * r - h * h)     # circular segment beyond the flat
+        self.assertAlmostEqual(c.volume, (math.pi * r * r - seg) * L, delta=0.5)
+        bb = c.bounding_box()
+        self.assertAlmostEqual(bb.max.Z, f["v"] + h, places=3)            # the flat is on the +v (front) side

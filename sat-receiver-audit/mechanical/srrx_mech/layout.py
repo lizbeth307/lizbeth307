@@ -83,29 +83,74 @@ def cooler_boxes(P):
             ("cooler_a.fan", (f[0], f[1], fan_face - ft, f[2], f[3], fan_face))]
 
 
-SMA_KINDS = ("sma_pigtail", "sma_k", "sma_cab01075")
+SMA_KINDS = ("sma_pigtail", "sma_k", "sma_cab01075", "sma_adamtech")
+
+
+def port_inner(P, p):
+    """Envelope of a panel port's parts inside the wall as (radius, depth from the inner wall face, basis), or None if unread.
+
+    Front-side-nut SMA bulkheads (nut and washer outside): the connector body / flange with its seal on the inner face.
+    VFA340 (flange outside): washer, nut and the rest of the long side. GX12: nut and the rear thread with the solder cups.
+    A port without a part entry keeps the representative SMA hardware envelope (parts.json sma_bulkhead_hw)."""
+    part = P.parts.get(p.get("part", ""))
+    kind = p["kind"]
+    if kind == "tbd" or (part and part.get("status") == "listing"):
+        return None
+    if part is None:
+        if kind in SMA_KINDS:
+            hw = P.parts["sma_bulkhead_hw"]
+            return hw["washer_od"] / 2.0, hw["washer_t"] + hw["nut_t"], "sma_bulkhead_hw (representative hardware, part not read)"
+        return None
+    if kind == "f_bulkhead":
+        long_side = part["overall"] - part["short_side"] - part["flange_t"]
+        r = max(part["washer"][0] / 2.0, part["nut_af"] / math.cos(math.radians(30)) / 2.0)
+        return r, long_side - port_wall(P, p), "washer, nut and the long side inside (cinch_vfa340)"
+    if kind == "gx12":
+        return part["nut_d"] / 2.0, part["behind_reserve"], "nut and rear thread with solder cups (kinghelm_gx12_6p)"
+    if "body_od_reserve" in part:
+        depth = part.get("body_len_reserve", part.get("body_len", 0.0) - part.get("thread_len", 0.0))
+        return part["body_od_reserve"] / 2.0, depth, f"connector body and seal inside, nut outside ({p['part']})"
+    if "body_hex_af" in part:
+        return part["body_hex_af"] / math.cos(math.radians(30)) / 2.0, part["body_len_reserve"], f"connector body hex inside, nut outside ({p['part']})"
+    return None
+
+
+def port_wall(P, p):
+    """Panel thickness at a port: ASA wall + Al angle on the top and right faces, the ASA wall alone elsewhere."""
+    m = P.mech
+    if p in m["top_face"]["ports"]:
+        return m["wall"] + m["angles"]["top"]["t"]
+    if p in m["right_face"]["ports"]:
+        return m["wall"] + m["angles"]["right"]["t"]
+    return m["wall"]
 
 
 def bulkhead_nut_boxes(P):
-    """Jam nut + lock washer of every SMA bulkhead inside the panel (envelope: parts.json sma_bulkhead_hw)."""
+    """Inner envelope (nut.<port>) of every read panel port: hardware or connector body inside the wall (port_inner)."""
     m = P.mech
     W, H, D = P.outer
     t = m["wall"]
-    hw = P.parts["sma_bulkhead_hw"]
-    r = hw["washer_od"] / 2.0
-    th = hw["washer_t"] + hw["nut_t"]
     out = []
     a = m["angles"]["top"]
     y1 = H - t - a["t"]
     zc = m["top_face"]["ports_z"]
     for p in m["top_face"]["ports"]:
-        if p["kind"] in SMA_KINDS:
+        e = port_inner(P, p)
+        if e:
+            r, th, _ = e
             out.append((f"nut.{p['id']}", (p["x"] - r, y1 - th, zc - r, p["x"] + r, y1, zc + r)))
     a = m["angles"]["right"]
     x1 = W - t - a["t"]
     for p in m["right_face"]["ports"]:
-        if p["kind"] in SMA_KINDS:
+        e = port_inner(P, p)
+        if e:
+            r, th, _ = e
             out.append((f"nut.{p['id']}", (x1 - th, p["y"] - r, p["z"] - r, x1, p["y"] + r, p["z"] + r)))
+    for p in m["bottom_face"]["ports"]:
+        e = port_inner(P, p)
+        if e:
+            r, th, _ = e
+            out.append((f"nut.{p['id']}", (p["x"] - r, t, p["z"] - r, p["x"] + r, t + th, p["z"] + r)))
     return out
 
 
@@ -222,7 +267,7 @@ ALLOWED = [
     ("q6a.board", "plate.ufs_boss"),  # contact through the UFS pad by design (thermal T-UFS)
     ("cooler_a", "q6a.board"),         # the cooler sits in the generic 7.5 mm component zone of the Q6A envelope
     ("cooler_a", "q6a_fan_duct"),      # the duct starts at the fan face
-    ("nut.", "angle."),                # bulkhead nut and washer clamp the Al angle
+    ("nut.", "angle."),                # bulkhead nut / connector body clamps the Al angle
     ("hdmi_route", "hdmi_plug_ra"), ("hdmi_route", "hdmi_route"), ("hdmi_route", "plate."), ("hdmi_route", "hdmi_board"),
     ("t7_gland_body", "rear"), ("t7_gland_outside", "rear"),
 ]
