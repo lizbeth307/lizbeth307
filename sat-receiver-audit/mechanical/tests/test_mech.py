@@ -352,3 +352,125 @@ class Contract(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class CourtyardArea(unittest.TestCase):
+    """W2 MECH-1 (A-PCB-01): board area from the vendored KiCad courtyards."""
+
+    def test_courtyards_match_kicad(self):
+        cy = boards.footprint_courtyards()
+        r = cy["Resistor_SMD:R_0603_1608Metric"]
+        self.assertAlmostEqual(r["w"], 2.96, places=3)
+        self.assertAlmostEqual(r["h"], 1.46, places=3)
+        p = cy["SR_RX_Custom:Pololu_D36V50Fx"]
+        self.assertAlmostEqual(p["w"], 25.9, places=3)
+        self.assertAlmostEqual(p["h"], 25.9, places=3)
+
+    def test_board_total_is_the_sum_over_its_domain_refs(self):
+        path = HERE.parent / "pcb" / "generated" / "components.csv"
+        if not path.exists():
+            self.skipTest("pcb/generated/components.csv not present")
+        cy = boards.footprint_courtyards()
+        with path.open(encoding="utf-8", newline="") as fh:
+            rows = [r for r in csv.DictReader(fh) if r["category"] == "bare_board_part" and r["dnp"] != "True"]
+        ctrl = sum(cy[r["footprint"]]["area"] for r in rows if r["board_candidate"] == "CTRL_HMI")
+        res = boards.area_check(P)
+        self.assertEqual(res["boards"]["CTRL"]["courtyard_raw_mm2"], round(ctrl, 0))
+        mods = sum(cy[r["footprint"]]["area"] for r in rows if r["board_candidate"] in P.boards["boards"]["PWR"]["domains"] and r["mount"] == "pcb_module")
+        self.assertEqual(res["boards"]["PWR"]["modules_mm2"], round(mods, 0))
+        for m in P.boards["boards"]["PWR"]["modules_on_board"]:      # every modules_on_board part is a pcb_module ref, counted once
+            self.assertEqual(m["part"], "pololu_d36v50")
+        self.assertAlmostEqual(res["boards"]["PWR"]["need_1_8_mm2"], round(mods + (res["boards"]["PWR"]["courtyard_raw_mm2"] - mods) * 1.8, 0), delta=1.0)
+
+    def test_area_rows_are_model_estimates_and_never_fail(self):
+        res = boards.area_check(P)
+        for bid, r in list(res["boards"].items()) + list(res["with_harness"]["boards"].items()):
+            with self.subTest(board=bid):
+                self.assertTrue(r["result"].startswith(("PASS (model estimate)", "OPEN")), r["result"])
+        self.assertIn("MODEL ESTIMATE", res["status"])
+
+
+class HarnessRoutes(unittest.TestCase):
+    """W2 MECH-1 (B-00, B-06): routes, lengths, PPS budget."""
+
+    @classmethod
+    def setUpClass(cls):
+        from srrx_mech import routes
+        cls.routes = routes
+        cls.res = routes.evaluate(P)
+
+    def test_every_build16_segment_and_s41_has_an_entry(self):
+        segs = set(self.routes.build16_wires())
+        if not segs:
+            self.skipTest("build/16-dzhgut.csv not present")
+        self.assertTrue(segs <= set(P.mech["harness_routes"]["segments"]), sorted(segs - set(P.mech["harness_routes"]["segments"])))
+        self.assertIn("S41", self.res["segments"])
+        for sid, r in self.res["segments"].items():
+            with self.subTest(segment=sid):
+                self.assertFalse(r["status"].startswith("FAIL"), r["status"])
+                if r["kind"] != "external" and r.get("length_mm") is None:
+                    self.assertTrue(r["provisional"], sid)      # no length only with a named reason
+
+    def test_every_slot_segment_is_routed_through_its_slot(self):
+        for sl, v in self.res["slots"].items():
+            with self.subTest(slot=sl):
+                self.assertEqual(v["listed_not_routed"], [])
+
+    def test_length_grows_when_the_far_end_moves_away(self):
+        import copy
+        Q = copy.deepcopy(P)
+        base = self.res["segments"]["S25"]["length_mm"]
+        lens = []
+        for dx in (5.0, 10.0, 20.0):
+            for it in Q.mech["layout"]["items"]:
+                if it["id"] == "lc76g":
+                    it["box"][0] = next(i for i in P.mech["layout"]["items"] if i["id"] == "lc76g")["box"][0] - dx
+            lens.append(self.routes.evaluate(Q)["segments"]["S25"]["length_mm"])
+        self.assertTrue(base < lens[0] < lens[1] < lens[2], (base, lens))
+
+    def test_a_route_through_a_solid_is_reported(self):
+        import copy
+        Q = copy.deepcopy(P)
+        Q.mech["harness_routes"]["segments"]["S28"]["via"] = [{"box": "blower", "at": [0.0, 0.5, 0.5]}, {"box": "PWR.r0", "at": [0.5, 0.5, 0.5]},
+                                                             {"box": "lime", "at": [0.5, 0.5, 0.5]}]
+        r = self.routes.evaluate(Q)["segments"]["S28"]
+        self.assertTrue(r["crossings"], r)
+        self.assertTrue(r["status"].startswith("FAIL"), r["status"])
+
+    def test_pps_budget_has_a_number_and_a_decision(self):
+        row = next(r for r in rules.evaluate(P) if r["id"] == "R-PPS-LEN")
+        self.assertIsInstance(row["value_mm"]["via_segments_mm"], int)
+        if row["value_mm"]["via_segments_mm"] > row["limit_mm"]:
+            self.assertIn("branch_mm", row["value_mm"])
+            self.assertIn("PPS", P.mech["harness_routes"]["branches"])
+        self.assertFalse(row["result"].startswith("FAIL"), row["result"])
+
+    def test_routes_never_read_the_build16_length_column(self):
+        src = (HERE / "srrx_mech" / "routes.py").read_text(encoding="utf-8")
+        self.assertNotIn('"length_mm"]', src.split("def build16_wires")[1].split("def ")[0])
+
+
+class HeaderHeights(unittest.TestCase):
+    """W2 MECH-1 (B-03): header heights and the computed height zones of CTRL and RF."""
+
+    def test_zones_in_boards_json_equal_the_clearance_map(self):
+        for bid in boards.ZONE_BOARDS:
+            front, rear = boards.zones_from_map(boards.clearance_map(P, bid))
+            b = P.boards["boards"][bid]
+            got = [{k: z[k] for k in ("rect", "free_mm", "fits_mm", "limit")} for z in b["height_zones"]]
+            with self.subTest(board=bid):
+                self.assertEqual(got, front, "run python mechanical/build.py --update-zones")
+                self.assertEqual(b["rear_zones"], rear, "run python mechanical/build.py --update-zones")
+                self.assertTrue(all(z["max_height"] == b["max_height"] for z in b["height_zones"]))
+
+    def test_micro_fit_vertical_height_is_read(self):
+        mf = P.parts["harness_headers"]["MF_top"]
+        self.assertEqual(mf["h"], 9.9)
+        self.assertEqual(mf["h_status"], "datasheet")
+        self.assertIn("2026-11-07", mf["h_src"])
+        self.assertIn("http", mf["h_src"])
+
+    def test_header_height_rule_is_open_not_fail(self):
+        row = boards.header_height_rule(P)
+        self.assertTrue(row["result"].startswith("OPEN"), row["result"])
+        self.assertIn("X04P1-RF MF_top 9.9", row["value_mm"]["above_limit"])

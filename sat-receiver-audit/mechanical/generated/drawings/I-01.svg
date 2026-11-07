@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="297mm" height="210mm" viewBox="0 0 297 210">
 <title>I-01 Пак IMU: Hammond 1550Z101 — свердління, плати, осі</title>
-<desc>SR-RX-v2.1 mechanical drawing, scale 2:1, mm. MODEL FIT ONLY. params 135211b0855f</desc>
+<desc>SR-RX-v2.1 mechanical drawing, scale 2:1, mm. MODEL FIT ONLY. params fab8754f230b</desc>
 <rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
 <line x1="30" y1="170" x2="118.56" y2="170" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="118.56" y1="170" x2="118.56" y2="91.44" stroke="#000" stroke-width="0.5" fill="none"/>
@@ -86,7 +86,7 @@
 <text x="141" y="179" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення I-01 · масштаб 2:1 · мм · допуск ±0.2, якщо не вказано</text>
 <text x="141" y="186" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: литий Al (Hammond 1550Z101), латунні гвинти кришк…</text>
 <text x="141" y="193" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
-<text x="141" y="200" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 135211b0855f · v1.0.0</text>
+<text x="141" y="200" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params fab8754f230b · v1.0.0</text>
 <text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">Пак IMU: Hammond 1550Z101 — свердління, плати, осі</text>
 <text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">2:1</text>
 <text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Осі паку: +X — стрілка на кришці (бортове візування антени), +Z — з кришки, +Y = Z x X (правий трійник).</text>
