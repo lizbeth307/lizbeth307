@@ -37,6 +37,10 @@
     {
       "url": "https://www.ti.com/lit/ds/symlink/tca9517.pdf",
       "note": "TCA9517DR SOIC8 full pinout, 0.9..5.5V A /2.7..5.5V B, powered-off HiZ, static-offset B-side restrictions."
+    },
+    {
+      "url": "https://www.binder-connector.com/sg/products/automation-technology/m8/female-panel-mount-connector-front-mounting-with-single-wires",
+      "note": "binder 76 6618 1111 00003-0200 (alt. 09 3418 86 03): M8 female panel receptacle, A-coded, IP67, contacts 1/3/4 (no contact 2), single wires 0.2 m AWG 24 (1 brown, 3 blue, 4 black), 4.0 A, 60 V DC; panel cut-out M10x0.75 (bore 10.1, flats 9.1, wall 2.0-6.5 mm, 1 Nm); mating male cable plug 99 3379 100 03 (screw clamp, cable 3.5-5.0 mm, contacts 1/3/4). Mounting side read from the drawing only (MECH-2/3 confirm). Read 2026-11-07 (parts snapshot 2026-11-07-w2-reads-e-manual.json, review RE-1)."
     }
   ],
   "notes": [
@@ -2631,9 +2635,9 @@
       "pins": [
         {
           "number": "1",
-          "name": "LAB5 to pack",
+          "name": "E5_IMU5V to pack",
           "type": "passive",
-          "net": "LAB5"
+          "net": "E5_IMU5V"
         },
         {
           "number": "2",
@@ -2691,7 +2695,7 @@
           "number": "3",
           "name": "D2+ 5V",
           "type": "passive",
-          "net": "LAB5"
+          "net": "E5_IMU5V"
         },
         {
           "number": "4",
@@ -2731,7 +2735,7 @@
           "number": "1",
           "name": "5V raw",
           "type": "passive",
-          "net": "LAB5"
+          "net": "E5_IMU5V"
         },
         {
           "number": "2",
@@ -2789,7 +2793,7 @@
           "number": "3",
           "name": "D2+ 5V",
           "type": "passive",
-          "net": "LAB5"
+          "net": "E5_IMU5V"
         },
         {
           "number": "4",
@@ -2837,11 +2841,11 @@
           "number": "2",
           "name": "A ← cable5V",
           "type": "passive",
-          "net": "LAB5"
+          "net": "E5_IMU5V"
         }
       ],
       "notes": [
-        "Located INSIDE IMU pack before MCU5V/VSYS. Band=cathode. No direct LAB5 wire to RP2040-Zero USB5V.",
+        "Located INSIDE IMU pack before MCU5V/VSYS. Band=cathode. No direct cable-5V (E5_IMU5V) wire to RP2040-Zero USB5V.",
         "Output E5_IMU_VIN feeds E3 RP2040-Zero U309 5V_IN. IMU firmware/MCU and BNO085 SPI wiring owned by E3; do not duplicate pack module on E5."
       ],
       "footprint": "Diode_SMD:D_SMA"
@@ -2898,6 +2902,206 @@
           "type": "passive",
           "net": "GND"
         }
+      ]
+    },
+    {
+      "ref": "U553",
+      "value": "TPS2553DBVR",
+      "kind": "ic",
+      "group": "Сервіс і зовнішні шини",
+      "source": "https://www.ti.com/lit/gpn/tps2553",
+      "status": "design",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "mpn": "TPS2553DBVR",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C55266",
+      "pins": [
+        {
+          "number": "1",
+          "name": "IN",
+          "type": "power_in",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "EN",
+          "type": "input",
+          "net": "LAB5"
+        },
+        {
+          "number": "4",
+          "name": "FAULT_N",
+          "type": "open_collector",
+          "net": "E5_IMU_FAULT"
+        },
+        {
+          "number": "5",
+          "name": "ILIM",
+          "type": "output",
+          "net": "E5_U553_ILIM"
+        },
+        {
+          "number": "6",
+          "name": "OUT",
+          "type": "power_out",
+          "net": "E5_IMU5V"
+        }
+      ],
+      "notes": [
+        "Constant-current TPS2553DBVR (no -1): in a short on the 2 m IMU cable it limits instead of latching and recovers by itself when the fault clears (SLVS841G p.14-15), so no MCP output, harness wire or software is needed. EN tied to IN: on whenever LAB5 is present (R-E5-08).",
+        "DBV SOT-23-6 per SLVS841G Table 5-1: 1 IN, 2 GND, 3 EN, 4 FAULT, 5 ILIM, 6 OUT. RILIM is a starting value (R553). FAULT_N goes to TP503 only."
+      ]
+    },
+    {
+      "ref": "R553",
+      "value": "RILIM TBD (start 88.7k 1%)",
+      "kind": "resistor",
+      "group": "Сервіс і зовнішні шини",
+      "source": "STACK.md §5.1 rule; E2 RILIM value of U206-U208; engineering design",
+      "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "0603WAF8872T5E",
+      "manufacturer": "UNI-ROYAL",
+      "lcsc": "C23258",
+      "alt_mpn": "Bourns CR0603-FX-8872ELF",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E5_U553_ILIM"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Starting value 88.7k as on U206-U208: IOS 264.7-339.1 mA (SLVS841G eq. 1-3). STACK gives only the rule 1.5-2x measured current; bench gate E5-04 (N-E5-04)."
+      ]
+    },
+    {
+      "ref": "C552",
+      "value": "100nF X7R 10V",
+      "kind": "capacitor",
+      "group": "Сервіс і зовнішні шини",
+      "source": "TI SLVS841G Table 5-1 (IN >=0.1 uF ceramic); engineering design",
+      "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "At U553 IN/GND with the shortest current path."
+      ]
+    },
+    {
+      "ref": "C553",
+      "value": "1uF X7R 10V",
+      "kind": "capacitor",
+      "group": "Сервіс і зовнішні шини",
+      "source": "engineering design (output capacitor of a cable branch, as C510 at U503)",
+      "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB105",
+      "manufacturer": "YAGEO",
+      "lcsc": "C559769",
+      "alt_mpn": "TDK CGA3E1X7R1E105KT0Y0E",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E5_IMU5V"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "At U553 OUT, before the GX16 J504 lead; the pack keeps C519/C520 after D502."
+      ]
+    },
+    {
+      "ref": "TP503",
+      "value": "IMU 5V switch FAULT_N test point",
+      "kind": "testpoint",
+      "group": "Сервіс і зовнішні шини",
+      "source": "engineering design",
+      "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "pins": [
+        {
+          "number": "1",
+          "name": "FAULT_N",
+          "type": "passive",
+          "net": "E5_IMU_FAULT"
+        }
+      ],
+      "notes": [
+        "Open drain without pull-up; diagnostic probe point only (10k to 3.3 V while probing). No free MCP input claimed."
+      ]
+    },
+    {
+      "ref": "J551",
+      "value": "S-band pod power M8 3-pin receptacle DESIGN",
+      "kind": "connector",
+      "group": "Сервіс і зовнішні шини",
+      "source": "https://www.binder-connector.com/sg/products/automation-technology/m8/female-panel-mount-connector-front-mounting-with-single-wires",
+      "status": "design",
+      "mpn": "76 6618 1111 00003-0200",
+      "manufacturer": "binder",
+      "pins": [
+        {
+          "number": "1",
+          "name": "+5 V pod (BIAS_SB_LNA), lead brown",
+          "type": "passive",
+          "net": "BIAS_SB_LNA"
+        },
+        {
+          "number": "3",
+          "name": "return (GND), lead blue",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "4",
+          "name": "unused, lead black",
+          "type": "no_connect",
+          "nc": true
+        }
+      ],
+      "description": "binder M8 A-coded 3-contact receptacle: contacts 1, 3 and 4, there is no contact 2 (data sheet p.1, plug-in side: 4 at the top, 3 left, 1 right); lead colours 1 brown, 3 blue, 4 black.",
+      "notes": [
+        "W425 (E4) is the cable plugged into J551: field-wired M8 male plug 99 3379 100 03 at this end (its contacts 1/3/4 mirror the receptacle), USB-C into the pod (R-E5-09). The receptacle is the female (socket) half, so the live 5 V contact is shrouded.",
+        "Lead colours are binder's (1 brown, 3 blue, 4 black): the black lead is the unused contact 4, not GND; insulate it at the PWR end. Map W425 by contact number, not by colour (its black conductor is GND).",
+        "Keying: M8 shell differs from GX16-4 J504 and GX12 J505, so neither the IMU nor the LAB BUS plug enters it (build/15 'Ключування панельних роз'ємів'). Unshielded version: no shell or shield contact; the housing is not bonded (ASA wall, power-only cable)."
       ]
     },
     {
@@ -3171,15 +3375,17 @@
     },
     {
       "id": "E5-04",
-      "description": "Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
+      "description": "Current-setting resistors R501 (RTL-A), R509 (HF+), R514 (T7) and R553 (IMU pack, U553) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
       "blocking": true,
-      "resolve": "Measure current/inrush; set the RTL-A/HF+/T7 limits to 1.5–2× the measured current as STACK §5.1 requires; confirm HF+ minimum startup ≥0.75 A. Run the STACK §8 TPS2553DBVR-1 item 3 inrush test on latching U503 (HF+ LC 100 µH/100 µF + 220 µF damper) at final RILIM; only if it latches, fit TPS2553DBVR (constant-current) on this channel alone. Retry/latch test at all battery states; scope LC overshoot.",
+      "resolve": "Measure current/inrush; set the RTL-A/HF+/T7 limits to 1.5–2× the measured current as STACK §5.1 requires; confirm HF+ minimum startup ≥0.75 A. Run the STACK §8 TPS2553DBVR-1 item 3 inrush test on latching U503 (HF+ LC 100 µH/100 µF + 220 µF damper) at final RILIM; only if it latches, fit TPS2553DBVR (constant-current) on this channel alone. Retry/latch test at all battery states; scope LC overshoot. IMU pack branch (R-E5-08): measure the pack supply current at the J504 lead (start-up and streaming) and set R553 to 1.5-2x (start 88.7k, 265-339 mA); short the far end of the 2 m cable and confirm U553 limits without latching, recovers after the short is removed and LAB5 does not droop below the E1-05 limits.",
       "stack": "§5.1 (VBUS RTL-A, HF+); §8 (TPS2553DBVR-1 п. 2–3)",
       "refs": [
         "U501",
         "R501",
         "R509",
-        "R514"
+        "R514",
+        "U553",
+        "R553"
       ]
     },
     {
@@ -3216,14 +3422,15 @@
     },
     {
       "id": "E5-08",
-      "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released.",
+      "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin, contacts 1/3/4) still needs its wall position and a confirmed mounting side (MECH-07).",
       "blocking": true,
       "resolve": "Record exact supplier part numbers, face-view and wire-color tables; no-power continuity plus first energization current limit.",
       "stack": "§2.9; §5.8",
       "refs": [
         "J502",
         "J505",
-        "J504"
+        "J504",
+        "J551"
       ]
     },
     {
@@ -3282,6 +3489,16 @@
       "id": "R-E5-07",
       "description": "Use LM66100 ST open-drain output as local5V diagnostic with100k pull-upR552 andTP502. Manufacturer ground-tie recommendation applies only if unused. Keeps correct OD electrical type and removes direct ST-ground powerflag ERC collision without blanket exclusions.",
       "source": "https://www.ti.com/lit/ds/symlink/lm66100.pdf; section5 pin functions and section6.5ST current/voltage limits."
+    },
+    {
+      "id": "R-E5-08",
+      "description": "IMU pack branch: U553 = TPS2553DBVR constant-current (LCSC C55266) with IN and EN on LAB5 and OUT E5_IMU5V to J504.1, U551.3, J550.1, U552.3 and D502.2; RILIM R553 start 88.7k (265-339 mA); C552 100 nF at IN, C553 1 uF at OUT; FAULT_N to TP503.",
+      "source": "TI SLVS841G p.14-15 (constant-current recovery); the external 2 m cable is the likely short, and a fast electronic limit keeps the shared LAB5 from drooping the way a PTC would; no MCP output, S02 wire or software change. build/15 'Межі струму тонких гілок (W2 GR-1)'."
+    },
+    {
+      "id": "R-E5-09",
+      "description": "W425 enters the main case through J551, a keyed panel receptacle binder M8 A-coded 3-pin (76 6618 1111 00003-0200) with the mating field-wireable plug 99 3379 100 03 on W425: BIAS_SB_LNA on contact 1 (brown lead), GND on contact 3 (blue), contact 4 (black) unused. S36 ends at J551, S41 is the W425 cable.",
+      "source": "binder data sheets read 2026-11-07 (parts snapshot 2026-11-07-w2-reads-e-manual.json); the M8 shell family differs from GX16 (J504) and GX12 (J505, its drawing read the same day), so no IMU or LAB BUS plug fits; a captive pod gland stays at the pod end only. build/15 'Ключування панельних роз'ємів J504/J505/J551 (W2 GR-1)'."
     }
   ],
   "power_flags": [
@@ -3292,7 +3509,7 @@
     },
     {
       "net": "E5_IMU_VIN",
-      "reason": "Known power after D502 Schottky: LAB5→SS14 anode→cathode E5_IMU_VIN supplies E3 IMU MCU. Flag declares powered-after-passive path only.",
+      "reason": "Known power after D502 Schottky: LAB5→U553→E5_IMU5V→SS14 anode→cathode E5_IMU_VIN supplies E3 IMU MCU. Flag declares powered-after-passive path only.",
       "source": "STACK.md §5.1 reverse-feed rules; D502 in E5.json; https://www.vishay.com/doc?88746="
     }
   ],
@@ -3321,6 +3538,23 @@
       ],
       "stack": "§5.1; §8.1 (T7)",
       "text": "R514 = RILIM TBD (старт 15.8k 1%, 1.51–1.73 A). STACK не задає RILIM для ключа T7 (U505 TPS2553DRVR без засувки — проєктне рішення R-E5-03/R-E5-04). Ворота: E5-04, E5-05."
+    },
+    {
+      "id": "N-E5-04",
+      "refs": [
+        "U553",
+        "R553"
+      ],
+      "stack": "§5.1 (правило RILIM); §8 (пак IMU)",
+      "text": "U553 = TPS2553DBVR зі сталим струмом (не -1): КЗ у 2-метровому кабелі IMU обмежується без засувки й без GPIO. R553 = RILIM TBD (старт 88.7k 1%, 265–339 mA за рівняннями TI SLVS841G); STACK номіналу не задає, лише правило 1.5–2× виміряного струму. Ворота: E5-04."
+    },
+    {
+      "id": "N-E5-05",
+      "refs": [
+        "J551"
+      ],
+      "stack": "§5.8 (панель, роз'єми); §8.1",
+      "text": "J551 — панельна розетка M8 A-код 3 конт. (binder 76 6618 1111 00003-0200), вилка W425 — 99 3379 100 03: інший корпус, ніж GX16-4 J504 і GX12 J505, тож кабель IMU чи LAB BUS у неї не входить. Контакти 1/3/4 (контакту 2 немає): 1 — BIAS_SB_LNA (коричневий вивід), 3 — GND (синій), 4 — вільний (чорний вивід — не GND, ізолювати). Місце на стінці й бік монтажу — MECH-07. Ворота: E5-08."
     }
   ]
 }

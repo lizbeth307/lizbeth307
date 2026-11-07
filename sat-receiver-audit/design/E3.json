@@ -81,6 +81,14 @@
     {
       "url": "https://semiware.com/uploads/datasheet/MF52A103F3950.pdf",
       "note": "Semiware MF52A103F3950 revA2.0 concrete10k1%/B25/5039501%NTC,dimensions,RTtableandoperatingrange."
+    },
+    {
+      "url": "https://www.ti.com/lit/gpn/tps2553",
+      "note": "SLVS841G Table 5-1 (DBV): 1 IN, 2 GND, 3 EN (active high), 4 FAULT, 5 ILIM, 6 OUT; -1 latch-off; IOS equations (1)-(3) p.16-17: RILIM 162k gives 143.6/166.2/192.5 mA (arithmetic, resistor tolerance excluded); FAULT de-asserts after EN toggle or power cycle (p.15). Read 2026-11-07 (parts snapshot 2026-11-07-w2-reads-e-manual.json)."
+    },
+    {
+      "url": "https://datasheet.lcsc.com/datasheet/pdf/a24fb2ca04c8aa40d8c57ff2ffdfaed8.pdf?productCode=C208467",
+      "note": "Bourns MF-MSMF REV. AO: MF-MSMF075/24 Ihold 0.75 A / Itrip 1.50 A at 23 C, 24 V; Ihold 0.60 A at 50 C, 0.49 A at 70 C (p.4); reflow only. Read 2026-11-07 (2026-11-07-w2-reads-e-manual.json)."
     }
   ],
   "notes": [
@@ -1830,7 +1838,7 @@
           "number": "P1.1",
           "name": "VCC",
           "type": "power_in",
-          "net": "VCC_5V_PERI"
+          "net": "E3_GNSS5V"
         },
         {
           "number": "P1.2",
@@ -1900,7 +1908,7 @@
         }
       ],
       "notes": [
-        "Supply VCC with Q6A 5V; do not feed it from 3V3. Leave module SDA/SCL disconnected from I2C2.",
+        "Supply VCC from E3_GNSS5V: LAB5 through the CTRL-local switch U315 (TPS2553DBVR-1, EN = 3V3_Q6A, RILIM start 162k); never from 3V3 and never from the Q6A J20 5 V pins, which do not enter the S01 ribbon (R-E3-15, N-E3-01). Leave module SDA/SCL disconnected from I2C2.",
         "P1.6 RESET connects via factory 0 ohm to LC76G RESET_N. Use the external 2N7002 open drain, high at its gate to reset.",
         "Quectel specifies an internal 10k pullup to 1.8V on RESET_N and forbids external pullups. Hold reset low for at least 100ms, then release."
       ],
@@ -1964,6 +1972,168 @@
           "type": "passive",
           "net": "GND"
         }
+      ]
+    },
+    {
+      "ref": "U315",
+      "value": "TPS2553DBVR-1",
+      "kind": "ic",
+      "group": "GNSS",
+      "source": "https://www.ti.com/lit/gpn/tps2553",
+      "status": "design",
+      "footprint": "Package_TO_SOT_SMD:SOT-23-6",
+      "mpn": "TPS2553DBVR-1",
+      "manufacturer": "Texas Instruments",
+      "lcsc": "C111738",
+      "pins": [
+        {
+          "number": "1",
+          "name": "IN",
+          "type": "power_in",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "EN",
+          "type": "input",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "4",
+          "name": "FAULT_N",
+          "type": "open_collector",
+          "net": "E3_GNSS_FAULT"
+        },
+        {
+          "number": "5",
+          "name": "ILIM",
+          "type": "output",
+          "net": "E3_U315_ILIM"
+        },
+        {
+          "number": "6",
+          "name": "OUT",
+          "type": "power_out",
+          "net": "E3_GNSS5V"
+        }
+      ],
+      "notes": [
+        "DBV SOT-23-6 per SLVS841G Table 5-1: 1 IN, 2 GND, 3 EN, 4 FAULT, 5 ILIM, 6 OUT. Latch-off -1 version from the parts DB entry of the E2/E5 channels.",
+        "EN = 3V3_Q6A keeps LC76G in the Q6A power domain: with Q6A off the module is unpowered, so the Q6A UART6 TX is never high into an unpowered module in normal states (R-E3-15).",
+        "A latch after a fault clears only by a 3V3_Q6A power cycle (Q6A reboot) or a LAB5 power cycle; FAULT_N goes to TP301 only, no MCP input is claimed."
+      ]
+    },
+    {
+      "ref": "R396",
+      "value": "RILIM TBD (start 162k 1%)",
+      "kind": "resistor",
+      "group": "GNSS",
+      "source": "STACK.md §5.1 rule; E2 RILIM value of U209/U221; engineering design",
+      "status": "design",
+      "footprint": "Resistor_SMD:R_0603_1608Metric",
+      "mpn": "RC0603FR-07162KL",
+      "manufacturer": "YAGEO",
+      "lcsc": "C165760",
+      "alt_mpn": "UNI-ROYAL 0603WAF1623T5E",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_U315_ILIM"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "Starting value 162k as on U209/U221: IOS 143.6-192.5 mA (SLVS841G eq. 1-3). STACK gives only the rule 1.5-2x measured current; bench gate E3-08 (N-E3-02)."
+      ]
+    },
+    {
+      "ref": "C321",
+      "value": "100n 16V",
+      "kind": "capacitor",
+      "group": "GNSS",
+      "source": "TI SLVS841G Table 5-1 (IN >=0.1 uF ceramic); engineering design",
+      "status": "design",
+      "footprint": "Capacitor_SMD:C_0603_1608Metric",
+      "mpn": "CC0603KRX7R9BB104",
+      "manufacturer": "YAGEO",
+      "lcsc": "C14663",
+      "alt_mpn": "TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ],
+      "notes": [
+        "At U315 IN/GND with the shortest path, as C501 at U501."
+      ]
+    },
+    {
+      "ref": "C322",
+      "value": "4.7u 10V",
+      "kind": "capacitor",
+      "group": "GNSS",
+      "source": "engineering design (as C502 at U501)",
+      "status": "design",
+      "footprint": "Capacitor_SMD:C_0805_2012Metric",
+      "mpn": "CC0805KKX7R8BB475",
+      "manufacturer": "YAGEO",
+      "lcsc": "C354262",
+      "alt_mpn": "TDK C2012X7R1E475KT000N",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "GND"
+        }
+      ]
+    },
+    {
+      "ref": "TP301",
+      "value": "GNSS 5V switch FAULT_N test point",
+      "kind": "testpoint",
+      "group": "GNSS",
+      "source": "engineering design",
+      "status": "design",
+      "footprint": "TestPoint:TestPoint_Pad_D1.5mm",
+      "pins": [
+        {
+          "number": "1",
+          "name": "FAULT_N",
+          "type": "passive",
+          "net": "E3_GNSS_FAULT"
+        }
+      ],
+      "notes": [
+        "Open drain without pull-up; diagnostic probe point only (10k to 3.3 V while probing). No free MCP input claimed."
       ]
     },
     {
@@ -4064,9 +4234,21 @@
           "name": "B",
           "type": "passive",
           "net": "E3_ENC1_B_RAW"
+        },
+        {
+          "number": "S1",
+          "name": "SW_A",
+          "type": "passive",
+          "net": "E3_ENC1_PRESS_EXT"
+        },
+        {
+          "number": "S2",
+          "name": "SW_B",
+          "type": "passive",
+          "net": "GND"
         }
       ],
-      "description": "Functional quadrature contacts A/B/C; integrated push switch represented separately by SW308. Confirm exact encoder suffix and terminal orientation before assembly."
+      "description": "Functional quadrature contacts A/B/C and push-switch contacts S1/S2 of the PEC11R footprint; the switch is the virtual contact SW308 (parts DB host ENC301). ENC1 main tuning knob (upper, HMI page select), R-E3-16. Confirm exact encoder suffix, terminal orientation and the sense of rotation before assembly."
     },
     {
       "ref": "R355",
@@ -4260,9 +4442,21 @@
           "name": "B",
           "type": "passive",
           "net": "E3_ENC2_B_RAW"
+        },
+        {
+          "number": "S1",
+          "name": "SW_A",
+          "type": "passive",
+          "net": "E3_ENC2_PRESS_EXT"
+        },
+        {
+          "number": "S2",
+          "name": "SW_B",
+          "type": "passive",
+          "net": "GND"
         }
       ],
-      "description": "Functional quadrature contacts A/B/C; integrated push switch represented separately by SW309. Confirm exact encoder suffix and terminal orientation before assembly."
+      "description": "Functional quadrature contacts A/B/C and push-switch contacts S1/S2 of the PEC11R footprint; the switch is the virtual contact SW309 (parts DB host ENC302). ENC2 volume knob (lower, HMI scroll), R-E3-16. Confirm exact encoder suffix, terminal orientation and the sense of rotation before assembly."
     },
     {
       "ref": "U312",
@@ -4777,6 +4971,36 @@
       "footprint": "Package_TO_SOT_SMD:SOT-23"
     },
     {
+      "ref": "F301",
+      "value": "MF-MSMF075/24-2 0.75A",
+      "kind": "fuse",
+      "group": "Cooling",
+      "source": "https://datasheet.lcsc.com/datasheet/pdf/a24fb2ca04c8aa40d8c57ff2ffdfaed8.pdf?productCode=C208467",
+      "status": "design",
+      "footprint": "Fuse:Fuse_1812_4532Metric",
+      "mpn": "MF-MSMF075/24-2",
+      "manufacturer": "Bourns",
+      "lcsc": "C208467",
+      "pins": [
+        {
+          "number": "1",
+          "name": "1",
+          "type": "passive",
+          "net": "E3_FAN5"
+        },
+        {
+          "number": "2",
+          "name": "2",
+          "type": "passive",
+          "net": "E3_FAN5_P"
+        }
+      ],
+      "notes": [
+        "Bourns MF-MSMF075/24-2 after Q304: Ihold 0.75 A / Itrip 1.50 A at 23 C; Ihold 0.60 A at 50 C and 0.49 A at 70 C (Bourns MF-MSMF REV. AO, p.1 and p.4). It limits the Noctua lead S27 (1x26 AWG) instead of F102 4 A; the flyback D305 and C318/C319 stay across the fan after the PTC (R-E3-17).",
+        "Reflow only: the maker forbids wave and hand soldering."
+      ]
+    },
+    {
       "ref": "D305",
       "value": "SS14 flyback",
       "kind": "diode",
@@ -4792,7 +5016,7 @@
           "number": "1",
           "name": "K",
           "type": "passive",
-          "net": "E3_FAN5"
+          "net": "E3_FAN5_P"
         },
         {
           "number": "2",
@@ -4820,7 +5044,7 @@
           "number": "1",
           "name": "1",
           "type": "passive",
-          "net": "E3_FAN5"
+          "net": "E3_FAN5_P"
         },
         {
           "number": "2",
@@ -4847,7 +5071,7 @@
           "number": "1",
           "name": "1",
           "type": "passive",
-          "net": "E3_FAN5"
+          "net": "E3_FAN5_P"
         },
         {
           "number": "2",
@@ -4871,7 +5095,7 @@
           "number": "V+",
           "name": "+5V",
           "type": "power_in",
-          "net": "E3_FAN5"
+          "net": "E3_FAN5_P"
         },
         {
           "number": "GND",
@@ -5813,10 +6037,12 @@
       "id": "E3-08",
       "description": "Pico watchdog, MicroPython GPIO/UART adapter and host handshake implemented 20.10.2026 and tested on the host. Actual GPIO timing, reset levels, WDT/brownout behavior and Linux/serial fault recovery have not been qualified on the device.",
       "blocking": true,
-      "resolve": "Run the implemented firmware with the actual accepted Pico/Q6A assembly: scope MCP RESET assertion/release, safe output image including CHG_INHIBIT=1 after initialization, 100ms guard, 750ms heartbeat deadline plus measured latency, explicit fresh-session recovery, Linux kill/hang, UART loss/corruption, WDT/brownout and GPIO current/backfeed. Complete Pico power loss with Q6A alive remains outside Q306 coverage; no software test closes this boundary.",
+      "resolve": "Run the implemented firmware with the actual accepted Pico/Q6A assembly: scope MCP RESET assertion/release, safe output image including CHG_INHIBIT=1 after initialization, 100ms guard, 750ms heartbeat deadline plus measured latency, explicit fresh-session recovery, Linux kill/hang, UART loss/corruption, WDT/brownout and GPIO current/backfeed. Complete Pico power loss with Q6A alive remains outside Q306 coverage; no software test closes this boundary. GNSS branch (R-E3-15): measure the LC76G board supply current on E3_GNSS5V (cold start, acquisition, active antenna) and set R396 to 1.5-2x the measured current (start 162k, 144-192 mA); confirm U315 follows 3V3_Q6A (off with Q6A off) and record UART6_RX/TX levels and LC76G VCC with LAB5 absent while Q6A runs (no back-feed through RXD above VCC + 0.3 V).",
       "stack": "§5.2; §5.4",
       "refs": [
-        "Q306"
+        "Q306",
+        "U315",
+        "R396"
       ]
     }
   ],
@@ -5890,6 +6116,21 @@
       "id": "R-E3-14",
       "description": "Reassign PicoGP17 physical22 to sharedthree-MCP active-low reset: R393100ohm seriesgate, Q3062N7002, R394100k gate-sourcepulldown, R3951k GPIO-sidepullup toPico3V3. Powered GPIOhighimpedance defaults asserted; firmware drivesLOWforrelease. Existing3x10kresetpullupsremainonQ6A3V3.",
       "source": "Root final fail-safe design review; Microchip DS20001952D RESET minimum low1us, output high-impedance within1us, IODIR reset0xff and OLAT reset0x00."
+    },
+    {
+      "id": "R-E3-15",
+      "description": "S01 carries no 5 V: LC76G U304 VCC comes from E3_GNSS5V, a CTRL-local TPS2553DBVR-1 U315 on LAB5 with EN = 3V3_Q6A and RILIM start 162k (144-192 mA). Q6A J20 pins 2/4 (VCC_5V_PERI) stay on the Q6A only: on CTRL the IDC header contacts 2/4 are not connected and ribbon conductors 2 and 4 are notched out at both IDC sockets (N-E3-01, build/21 E5). No series resistor on UART6_TX: the Quectel LC76G HD V1.3 gives no back-power rule (only VIH max = VCC + 0.3 V and VIN_IO abs. max 3.63 V), and the PPS/UART6 branch bypasses CTRL (build/15 'Бюджет PPS').",
+      "source": "Q6A J20 5 V has no limit but the Q6A SGM40666 (STACK.md:664), so no part on CTRL can protect the 2x28 AWG ribbon; TI SLVS841G; Quectel LC76G HD V1.3 Table 10/12 (read 2026-11-07, parts snapshot 2026-11-07-w2-reads-e-manual.json); build/15 'Межі струму тонких гілок (W2 GR-1)'."
+    },
+    {
+      "id": "R-E3-16",
+      "description": "ENC1 = ENC301 = main tuning knob (upper, place_at main y 123) = HMI page select (Pico GP2/GP3); ENC2 = ENC302 = volume knob (lower, place_at volume y 82) = HMI scroll (GP6/GP7). The push switches SW308/SW309 are the S1/S2 contacts of their encoder (virtual parts DB contacts). The sense of rotation stays a bench check (firmware/pico/hmi.py:18).",
+      "source": "STACK.md:161 and :1057 (tuning + volume, main encoder on a replaceable daughterboard); mechanical/params/boards.json place_at; firmware/pico/adapter.py:58-59; software/HMI.md:293-295."
+    },
+    {
+      "id": "R-E3-17",
+      "description": "Fan path 1 gets the PTC F301 = Bourns MF-MSMF075/24-2 between Q304 and the fan (E3_FAN5 -> E3_FAN5_P): Itrip 1.50 A at 23 C is below the 2.3 A of 1x26 AWG in the 3-wire S27 lead (ESCC 3901/001 bundle rule), Ihold 0.49 A at 70 C stays above the 0.25 A design current.",
+      "source": "Bourns MF-MSMF REV. AO (read 2026-11-07). A passive limit never latches cooling off, needs no GPIO and rides through fan inrush; a TPS2553 in place of Q304 would change the gate polarity and could latch cooling off."
     }
   ],
   "power_flags": [
@@ -5899,9 +6140,27 @@
       "source": "STACK.md Pico supply and E3 D301 connectivity."
     },
     {
-      "net": "E3_FAN5",
-      "reason": "Fan supply is physically powered from LAB5 through AO3401A Q304 when enabled. The pass MOSFET has passive drain/source pins, so KiCad requires a powered-net marker downstream.",
-      "source": "STACK.md high-side Noctua fan control and E3 Q304 connectivity."
+      "net": "E3_FAN5_P",
+      "reason": "Fan supply is physically powered from LAB5 through AO3401A Q304 and PTC F301 when enabled. Both pass elements have passive pins, so KiCad requires a powered-net marker on the fan side.",
+      "source": "STACK.md high-side Noctua fan control; E3 Q304/F301 connectivity."
+    }
+  ],
+  "drawing_notes": [
+    {
+      "id": "N-E3-01",
+      "refs": [
+        "J301"
+      ],
+      "stack": "§5.2 (40-pin хедер, LC76G VCC); §8.1",
+      "text": "Шлейф S01 не несе 5 V: контакти 2 і 4 J20 (VCC_5V_PERI) лишаються лише на Q6A; провідники 2 і 4 стрічки IDC вирізати на обох розетках до обтиснення, контакти 2/4 бокса на CTRL — без кола (R-E3-15, build/21 E5). LC76G живиться від U315 (LAB5, EN = 3V3_Q6A). Перевірка: прозвонка J20.2/J20.4 → CTRL — розрив."
+    },
+    {
+      "id": "N-E3-02",
+      "refs": [
+        "R396"
+      ],
+      "stack": "§5.1 (правило RILIM); §8.1",
+      "text": "R396 = RILIM TBD (старт 162k 1%, 144–192 mA за рівняннями TI SLVS841G). STACK номіналу не задає, лише правило RILIM = 1.5–2× виміряного струму LC76G. Ворота: E3-08."
     }
   ]
 }

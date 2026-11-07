@@ -4222,6 +4222,12 @@
           "name": "2"
         },
         {
+          "ref": "U315",
+          "pin": "3",
+          "sheet": "E3",
+          "name": "EN"
+        },
+        {
           "ref": "R328",
           "pin": "1",
           "sheet": "E3",
@@ -6300,6 +6306,30 @@
           "name": "2"
         },
         {
+          "ref": "U315",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "GND"
+        },
+        {
+          "ref": "R396",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "C321",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
+          "ref": "C322",
+          "pin": "2",
+          "sheet": "E3",
+          "name": "2"
+        },
+        {
           "ref": "J303",
           "pin": "1",
           "sheet": "E3",
@@ -6558,6 +6588,12 @@
           "name": "COMMON"
         },
         {
+          "ref": "ENC301",
+          "pin": "S2",
+          "sheet": "E3",
+          "name": "SW_B"
+        },
+        {
           "ref": "C316",
           "pin": "2",
           "sheet": "E3",
@@ -6574,6 +6610,12 @@
           "pin": "C",
           "sheet": "E3",
           "name": "COMMON"
+        },
+        {
+          "ref": "ENC302",
+          "pin": "S2",
+          "sheet": "E3",
+          "name": "SW_B"
         },
         {
           "ref": "U312",
@@ -8034,6 +8076,36 @@
           "name": "−"
         },
         {
+          "ref": "U553",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "GND"
+        },
+        {
+          "ref": "R553",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        },
+        {
+          "ref": "C552",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        },
+        {
+          "ref": "C553",
+          "pin": "2",
+          "sheet": "E5",
+          "name": "2"
+        },
+        {
+          "ref": "J551",
+          "pin": "3",
+          "sheet": "E5",
+          "name": "return (GND), lead blue"
+        },
+        {
           "ref": "U507",
           "pin": "4",
           "sheet": "E5",
@@ -8158,31 +8230,31 @@
     "inputs": [
       {
         "file": "design/E1.json",
-        "sha256": "a5f312ac5162252adbad513e9fddabc8e7c862f5dbf364c853497c683f67083c"
+        "sha256": "39da4cd1ecdfcad37a4cf5b6ee309846b4aa73243f2c8e7d8f07083ab1824a90"
       },
       {
         "file": "design/E2.json",
-        "sha256": "7b41789d38c86a541d1a40bb7ffb348047ba1008a1b9ef75120c4db05084d461"
+        "sha256": "cc0580f8c8f896e6d1cca1e9364f64d69cd1d461d94593b33a6668f34f7a4935"
       },
       {
         "file": "design/E3.json",
-        "sha256": "b3bd4067f6f51fe2b5fe28bcc06d386319c239ec0af0392f1c2d4f61a9aa2132"
+        "sha256": "0ae9955a91c906ae6fa7e0cc51a212922ffe791df3d9bd5ccf9381cca55c1e7d"
       },
       {
         "file": "design/E4.json",
-        "sha256": "a003bedb98bfacbf1863ebc4bfc88eb8e10643d450820b399a668b4e65e1584d"
+        "sha256": "a8c0ab0e6d9bbf4cbd1eb08175a34ec11fc8351b88a900570361a3f916f4142f"
       },
       {
         "file": "design/E5.json",
-        "sha256": "4a2bcc042a19a596ebeee44e676d732b4c9ed80ca613490627746dc88f429b0f"
+        "sha256": "a1af787e01694729e34bc1e9f0b854402f53bd20d93a784d9421f63a2f820703"
       },
       {
         "file": "build/kicad/footprints/manifest.json",
-        "sha256": "f39e7901065e0d9cf121e012c081a33a32dc014883147f7f41db2d0986884a3a"
+        "sha256": "096ae19a80380402d669caadbf5ab95ee9afbb3c0b9aaab07c7ca98144fa4c92"
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "5c0d3b16cd475025717aa70fbeb5e732b4542097fd7dde2da02d7b25f31cee04"
+        "sha256": "3d09dee61fc041157bc541f9a95c96368f71c789cec0499c0f956429ae820a00"
       }
     ],
     "source_documents": [
@@ -8193,6 +8265,7 @@
       "https://assets.nexperia.com/documents/data-sheet/BAV199.pdf",
       "https://assets.nexperia.com/documents/data-sheet/PMEG4030ER.pdf",
       "https://bonito.net/en/boni-whip-2/",
+      "https://datasheet.lcsc.com/datasheet/pdf/a24fb2ca04c8aa40d8c57ff2ffdfaed8.pdf?productCode=C208467",
       "https://datasheets.raspberrypi.com/pico/Pico-R3-A4-Pinout.pdf",
       "https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
       "https://dl.radxa.com/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf",
@@ -8229,6 +8302,7 @@
       "https://www.aosmd.com/res/data_sheets/AO3400A.pdf",
       "https://www.aosmd.com/sites/default/files/res/datasheets/AO3400A.pdf",
       "https://www.aosmd.com/sites/default/files/res/datasheets/AO3407A.pdf",
+      "https://www.binder-connector.com/sg/products/automation-technology/m8/female-panel-mount-connector-front-mounting-with-single-wires",
       "https://www.bourns.com/docs/product-datasheets/srr1260.pdf",
       "https://www.coilcraft.com/en-us/products/power/high-voltage-inductors/xal/xal50xx/xal5030-102/",
       "https://www.coilcraft.com/en-us/products/power/shielded-inductors/molded-inductor/xal/xal60xx/",

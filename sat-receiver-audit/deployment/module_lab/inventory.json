@@ -9,28 +9,28 @@
   ],
   "source_snapshots": {
     "design/E1.json": {
-      "sha256": "a5f312ac5162252adbad513e9fddabc8e7c862f5dbf364c853497c683f67083c",
-      "bytes": 95212
+      "sha256": "39da4cd1ecdfcad37a4cf5b6ee309846b4aa73243f2c8e7d8f07083ab1824a90",
+      "bytes": 96430
     },
     "design/E2.json": {
-      "sha256": "7b41789d38c86a541d1a40bb7ffb348047ba1008a1b9ef75120c4db05084d461",
-      "bytes": 355640
+      "sha256": "cc0580f8c8f896e6d1cca1e9364f64d69cd1d461d94593b33a6668f34f7a4935",
+      "bytes": 356191
     },
     "design/E3.json": {
-      "sha256": "b3bd4067f6f51fe2b5fe28bcc06d386319c239ec0af0392f1c2d4f61a9aa2132",
-      "bytes": 163908
+      "sha256": "0ae9955a91c906ae6fa7e0cc51a212922ffe791df3d9bd5ccf9381cca55c1e7d",
+      "bytes": 174832
     },
     "design/E4.json": {
-      "sha256": "a003bedb98bfacbf1863ebc4bfc88eb8e10643d450820b399a668b4e65e1584d",
-      "bytes": 212475
+      "sha256": "a8c0ab0e6d9bbf4cbd1eb08175a34ec11fc8351b88a900570361a3f916f4142f",
+      "bytes": 212369
     },
     "design/E5.json": {
-      "sha256": "4a2bcc042a19a596ebeee44e676d732b4c9ed80ca613490627746dc88f429b0f",
-      "bytes": 97848
+      "sha256": "a1af787e01694729e34bc1e9f0b854402f53bd20d93a784d9421f63a2f820703",
+      "bytes": 108385
     },
     "STACK.md": {
-      "sha256": "dbf8adb3291872de4670d62a1a67758544d04339f12575dd96cb629e6557a825",
-      "bytes": 1966714
+      "sha256": "a9475a40d0f735e392b9bc7b3ebbff8cd6193af1276d316238180cca79def48e",
+      "bytes": 1967181
     },
     "build/12-revision-v2.1.md": {
       "sha256": "56f71210b0d3e3f4547ebfc2cabe35fb746866183493882612da9707cbc806e5",
@@ -38,27 +38,27 @@
     }
   },
   "scope": {
-    "graph_components": 777,
-    "graph_pins": 2393,
+    "graph_components": 789,
+    "graph_pins": 2428,
     "graph_sheets": {
       "E1": 76,
       "E2": 269,
-      "E3": 147,
+      "E3": 153,
       "E4": 213,
-      "E5": 72
+      "E5": 78
     },
     "top_level_circuit_assemblies": 64,
     "source_kind_module_count": 57,
-    "detailed_subinterfaces": 166,
+    "detailed_subinterfaces": 169,
     "catalogue_only_or_factory_internal_entities": 30,
     "catalogue_documents": 102,
     "partition_refs_assigned_exactly_once": true,
     "missing_refs": [],
     "duplicate_refs": [],
-    "graph_connected_pins": 2253,
-    "graph_nc_pins": 140,
-    "canonical_nets": 478,
-    "cross_assembly_nets": 213
+    "graph_connected_pins": 2287,
+    "graph_nc_pins": 141,
+    "canonical_nets": 485,
+    "cross_assembly_nets": 215
   },
   "critical_constraints": [
     "Every one of the 750 source component references is assigned exactly once to a circuit assembly. Circuit passives remain parameters, not fictitious software registers.",
@@ -1635,7 +1635,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 102k/9.09k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -1812,7 +1812,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 102k/9.09k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -1974,7 +1974,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 102k/9.09k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -2127,7 +2127,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 102k/9.09k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -2331,7 +2331,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 102k/9.09k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -2472,7 +2472,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 102k/9.09k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -2680,7 +2680,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 102k/9.09k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -2888,7 +2888,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 102k/9.09k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -3029,7 +3029,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 102k/9.09k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -3161,7 +3161,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 102k/9.09k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -3401,7 +3401,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 102k/9.09k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -3555,13 +3555,13 @@
         {
           "ref": "R263",
           "kind": "resistor",
-          "value": "OVLO TBD (start 112k 0.1%)",
+          "value": "OVLO TBD (start 102k 0.1%)",
           "status": "design"
         },
         {
           "ref": "R264",
           "kind": "resistor",
-          "value": "OVLO TBD (start 10.0k 0.1%)",
+          "value": "OVLO TBD (start 9.09k 0.1%)",
           "status": "design"
         },
         {
@@ -3707,7 +3707,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 102k/9.09k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -3857,7 +3857,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 102k/9.09k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -4007,7 +4007,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 102k/9.09k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -4103,7 +4103,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 102k/9.09k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -4199,7 +4199,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 102k/9.09k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -4294,7 +4294,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 102k/9.09k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -4412,7 +4412,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 102k/9.09k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -4544,7 +4544,7 @@
         },
         {
           "id": "E2-03",
-          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
+          "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 102k/9.09k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
           "blocking": true
         },
         {
@@ -5025,18 +5025,27 @@
       "refs": [
         "U304",
         "Q301",
-        "R326"
+        "R326",
+        "U315",
+        "R396",
+        "C321",
+        "C322",
+        "TP301"
       ],
-      "component_count": 3,
+      "component_count": 8,
       "named_nets": [
+        "3V3_Q6A",
+        "E3_GNSS5V",
+        "E3_GNSS_FAULT",
         "E3_GNSS_PPS",
         "E3_GNSS_RESET_GATE",
         "E3_GNSS_RESET_N",
+        "E3_U315_ILIM",
         "GND",
         "GNSS_ANT",
+        "LAB5",
         "UART6_RX",
-        "UART6_TX",
-        "VCC_5V_PERI"
+        "UART6_TX"
       ],
       "protocol_or_special_subinterfaces": [
         "U304"
@@ -5055,6 +5064,30 @@
           "ref": "R326",
           "kind": "resistor",
           "value": "100k",
+          "status": "design"
+        },
+        {
+          "ref": "R396",
+          "kind": "resistor",
+          "value": "RILIM TBD (start 162k 1%)",
+          "status": "design"
+        },
+        {
+          "ref": "C321",
+          "kind": "capacitor",
+          "value": "100n 16V",
+          "status": "design"
+        },
+        {
+          "ref": "C322",
+          "kind": "capacitor",
+          "value": "4.7u 10V",
+          "status": "design"
+        },
+        {
+          "ref": "TP301",
+          "kind": "testpoint",
+          "value": "GNSS 5V switch FAULT_N test point",
           "status": "design"
         }
       ],
@@ -5870,10 +5903,12 @@
         "E3_ENC1_A_RAW",
         "E3_ENC1_B",
         "E3_ENC1_B_RAW",
+        "E3_ENC1_PRESS_EXT",
         "E3_ENC2_A",
         "E3_ENC2_A_RAW",
         "E3_ENC2_B",
         "E3_ENC2_B_RAW",
+        "E3_ENC2_PRESS_EXT",
         "E3_PICO3V3",
         "GND"
       ],
@@ -6247,6 +6282,7 @@
         "Q303",
         "R367",
         "Q304",
+        "F301",
         "D305",
         "C318",
         "C319",
@@ -6262,12 +6298,13 @@
         "C342",
         "C343"
       ],
-      "component_count": 19,
+      "component_count": 20,
       "named_nets": [
         "E3_BLOWER_EN",
         "E3_BLOWER_GATE",
         "E3_BLOWER_GND",
         "E3_FAN5",
+        "E3_FAN5_P",
         "E3_FAN_EN",
         "E3_FAN_NG",
         "E3_FAN_PG",
@@ -6311,6 +6348,12 @@
           "ref": "Q304",
           "kind": "pfet",
           "value": "AO3401A",
+          "status": "design"
+        },
+        {
+          "ref": "F301",
+          "kind": "fuse",
+          "value": "MF-MSMF075/24-2 0.75A",
           "status": "design"
         },
         {
@@ -8886,7 +8929,7 @@
         },
         {
           "id": "E5-04",
-          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
+          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+), R514 (T7) and R553 (IMU pack, U553) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
           "blocking": true
         },
         {
@@ -8906,7 +8949,7 @@
         },
         {
           "id": "E5-08",
-          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released.",
+          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin, contacts 1/3/4) still needs its wall position and a confirmed mounting side (MECH-07).",
           "blocking": true
         },
         {
@@ -8996,7 +9039,7 @@
         },
         {
           "id": "E5-04",
-          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
+          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+), R514 (T7) and R553 (IMU pack, U553) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
           "blocking": true
         },
         {
@@ -9016,7 +9059,7 @@
         },
         {
           "id": "E5-08",
-          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released.",
+          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin, contacts 1/3/4) still needs its wall position and a confirmed mounting side (MECH-07).",
           "blocking": true
         },
         {
@@ -9185,7 +9228,7 @@
         },
         {
           "id": "E5-04",
-          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
+          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+), R514 (T7) and R553 (IMU pack, U553) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
           "blocking": true
         },
         {
@@ -9205,7 +9248,7 @@
         },
         {
           "id": "E5-08",
-          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released.",
+          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin, contacts 1/3/4) still needs its wall position and a confirmed mounting side (MECH-07).",
           "blocking": true
         },
         {
@@ -9357,7 +9400,7 @@
         },
         {
           "id": "E5-04",
-          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
+          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+), R514 (T7) and R553 (IMU pack, U553) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
           "blocking": true
         },
         {
@@ -9377,7 +9420,7 @@
         },
         {
           "id": "E5-08",
-          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released.",
+          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin, contacts 1/3/4) still needs its wall position and a confirmed mounting side (MECH-07).",
           "blocking": true
         },
         {
@@ -9518,7 +9561,7 @@
         },
         {
           "id": "E5-04",
-          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
+          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+), R514 (T7) and R553 (IMU pack, U553) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
           "blocking": true
         },
         {
@@ -9538,7 +9581,7 @@
         },
         {
           "id": "E5-08",
-          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released.",
+          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin, contacts 1/3/4) still needs its wall position and a confirmed mounting side (MECH-07).",
           "blocking": true
         },
         {
@@ -9658,7 +9701,7 @@
         },
         {
           "id": "E5-04",
-          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
+          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+), R514 (T7) and R553 (IMU pack, U553) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
           "blocking": true
         },
         {
@@ -9678,7 +9721,7 @@
         },
         {
           "id": "E5-08",
-          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released.",
+          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin, contacts 1/3/4) still needs its wall position and a confirmed mounting side (MECH-07).",
           "blocking": true
         },
         {
@@ -9762,7 +9805,7 @@
         },
         {
           "id": "E5-04",
-          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
+          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+), R514 (T7) and R553 (IMU pack, U553) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
           "blocking": true
         },
         {
@@ -9782,7 +9825,7 @@
         },
         {
           "id": "E5-08",
-          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released.",
+          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin, contacts 1/3/4) still needs its wall position and a confirmed mounting side (MECH-07).",
           "blocking": true
         },
         {
@@ -9817,15 +9860,25 @@
         "U552",
         "D502",
         "C519",
-        "C520"
+        "C520",
+        "U553",
+        "R553",
+        "C552",
+        "C553",
+        "TP503",
+        "J551"
       ],
-      "component_count": 11,
+      "component_count": 17,
       "named_nets": [
         "AUX12",
+        "BIAS_SB_LNA",
         "CHASSIS",
         "E5_EDL_A",
         "E5_EDL_B",
+        "E5_IMU5V",
+        "E5_IMU_FAULT",
         "E5_IMU_VIN",
+        "E5_U553_ILIM",
         "GND",
         "I2CB_SCL",
         "I2CB_SDA",
@@ -9857,6 +9910,30 @@
           "ref": "C520",
           "kind": "capacitor",
           "value": "100nF X7R 10V",
+          "status": "design"
+        },
+        {
+          "ref": "R553",
+          "kind": "resistor",
+          "value": "RILIM TBD (start 88.7k 1%)",
+          "status": "design"
+        },
+        {
+          "ref": "C552",
+          "kind": "capacitor",
+          "value": "100nF X7R 10V",
+          "status": "design"
+        },
+        {
+          "ref": "C553",
+          "kind": "capacitor",
+          "value": "1uF X7R 10V",
+          "status": "design"
+        },
+        {
+          "ref": "TP503",
+          "kind": "testpoint",
+          "value": "IMU 5V switch FAULT_N test point",
           "status": "design"
         }
       ],
@@ -9893,7 +9970,7 @@
         },
         {
           "id": "E5-04",
-          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
+          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+), R514 (T7) and R553 (IMU pack, U553) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
           "blocking": true
         },
         {
@@ -9913,7 +9990,7 @@
         },
         {
           "id": "E5-08",
-          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released.",
+          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin, contacts 1/3/4) still needs its wall position and a confirmed mounting side (MECH-07).",
           "blocking": true
         },
         {
@@ -10016,7 +10093,7 @@
         },
         {
           "id": "E5-04",
-          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
+          "description": "Current-setting resistors R501 (RTL-A), R509 (HF+), R514 (T7) and R553 (IMU pack, U553) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
           "blocking": true
         },
         {
@@ -10036,7 +10113,7 @@
         },
         {
           "id": "E5-08",
-          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released.",
+          "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin, contacts 1/3/4) still needs its wall position and a confirmed mounting side (MECH-07).",
           "blocking": true
         },
         {
@@ -11116,7 +11193,7 @@
       "source_notes": [
         "Замінити stock R4 на RVSET 5.1 kΩ; R3 на RISET 15 kΩ; R7 CELLSET 13 kΩ для 4S; ISET_MODE через 1 kΩ на GND; R6 замінити справжнім 10 kΩ B3380.",
         "До E1-01 обов’язково підтвердити місця модифікацій фото і continuity, маркування LDO та ревізію IP2368. Не підключати NTC або VSET навгад.",
-        "Заряд лише при 0…45 °C комірок; KSD 70 °C NO на MOSFET. Quiet inhibit діє тільки після успішного стендового тесту."
+        "Заряд лише при 0…45 °C комірок; TH102 (Sensata 67F070, замість KSD9700 — build/15 «IP2368») 70 °C NO на MOSFET. Quiet inhibit діє тільки після успішного стендового тесту."
       ],
       "coverage_constraints": [
         "PD contract/power/thermal/inhibit model only. Retail board revision/modification nodes and NTC/inhibit behavior are unqualified; no invented I2C/USB telemetry or internal pin numbering.",
@@ -11233,7 +11310,7 @@
       "module_id": "E1/TH102",
       "parent_assembly": "E1-CIR-11",
       "ref": "TH102",
-      "value": "KSD9700 70 °C NO",
+      "value": "67F070 70 °C NO",
       "source_kind": "switch",
       "source_status": "module",
       "interface_family": "physical_state_input_or_analog_load",
@@ -11263,12 +11340,12 @@
         {
           "path": "design/E1.json",
           "ref": "TH102",
-          "component_source": "STACK §2.7,§5.1"
+          "component_source": "STACK §2.7,§5.1; Sensata 6700 series datasheet (https://static.chipdip.ru/lib/822/DOC031822369.pdf, прочитано 07.11.2026)"
         }
       ],
       "source_description": "",
       "source_notes": [
-        "Паралельно D/S Q101 на сигнальному рівні, сумарно через R121. Ніколи у розрив PD 20 V. Close 65…75 °C, reopen щонайменше на 15 K нижче."
+        "Паралельно D/S Q101 на сигнальному рівні, сумарно через R121. Ніколи у розрив PD 20 V. Замикається при нагріві 70 ±5 °C (NO, 65…75 °C); повернення — за таблицею даташиту Sensata 6700 (с. 4) «MIN DIFFERENTIAL 4 °C, MIN RESET 50 °C», а приклад на тій самій сторінці читається як повернення не далі ніж на 4 K нижче фактичного замикання; за жодним прочитанням повернення ≥15 K нижче не гарантоване. Вимогу «reopen щонайменше на 15 K нижче» знято: максимум температури MOSFET задає точка замикання, а клас STACK (повернення 50 ±10 °C) сам допускає 5 K на краях; частота повторних пусків заряду — стенд (build/15 «IP2368»)."
       ],
       "coverage_constraints": [
         "Mechanical/power/contact/analog state model only; no vendor register interface is specified.",
@@ -12784,7 +12861,7 @@
       ],
       "source_description": "",
       "source_notes": [
-        "RILM = 7.15k (v2.1) відповідає 0.122–0.153 A; OVLO 112k/10k 0.1% усуває перекриття зі штатною смугою 13.8 V.",
+        "RILM = 7.15k (v2.1) відповідає 0.122–0.153 A; OVLO 102k/9.09k 0.1% (R-E2-02) усуває перекриття зі штатною смугою 13.8 V.",
         "dVdt 100 nF задає приблизно 0.42 V/ms тип. (до ≈0.66 V/ms з допуском IdVdt і X7R C269) і ≈33 ms наростання. Сталий струм у найгіршому випадку: Boni 65 mA (лише типовий) + bleed E4 996 Ω до 14.35 mA + R283/R284 і DCS tap ≈0.34 mA ≈79.7 mA; з блокувальним елементом E4-06 (+≈1.6 mA) ≈81.3 mA. ILIM min 0.122 A ≈1.50× цього (0.1215 A з TCR — на межі), max 0.153 A ≤1.92×; пусковий запас над відомими 59.4 µF ≈4…7 mA. Остаточний RILM — після HF-9: ILIM min ≥1.5×I_вим., ILIM max ≤ min(2×I_вим., DC-рейтинг bias-tee); резерв 6.98k (0.125…0.157 A).",
         "FLT не замінює струмове вікно INA3221; PTC на цій шині не встановлюється. Тверде КЗ на P5 (v2.1, Q2903 послідовно): при EN_BONI = 1 затвор Q2903 сидить на VS·22k/122k, тобто VGS ≈ −0.82·VS, тож пара самозміщується біля VGS(th) (−1…−3 V) і тримає BONI13V8 (вихід U214) на ≈1.2…4.4 V, а не на 0 V. Foldback TPS2596 з Figure 22 (≈0.09…0.11 A при 7.87k, оцінка ≈0.095…0.115 A при 7.15k) виміряно при VOUT = 0, і цієї робочої точки він уже не описує: струм — між foldback і ILIM (≤0.154 A), U214 розсіює ≈(13.8 V − VOUT)·I ≈0.9…1.9 W, Q2903 у лінійному режимі — ≈0.1…0.7 W до зняття EN_BONI (≤2 s). FLT у струмовому обмеженні мовчить; чи доходить U214 до TSD до зняття EN_BONI, перевіряє E2-03. EN_BONI знімає labd за min_voltage_v і PG_BONI (U218; захищений вузол ≈1.2…4.4 V нижче порога), а не за струмовим вікном чи DC-sense."
       ],
@@ -14507,7 +14584,7 @@
           "number": "P1.1",
           "name": "VCC",
           "type": "power_in",
-          "net": "VCC_5V_PERI"
+          "net": "E3_GNSS5V"
         },
         {
           "number": "P1.2",
@@ -14594,7 +14671,7 @@
       ],
       "source_description": "Commercial board, physical terminals qualified by connector. Factory RT9193-33, RF bias network, MS621FE and decoupling remain on module.",
       "source_notes": [
-        "Supply VCC with Q6A 5V; do not feed it from 3V3. Leave module SDA/SCL disconnected from I2C2.",
+        "Supply VCC from E3_GNSS5V: LAB5 through the CTRL-local switch U315 (TPS2553DBVR-1, EN = 3V3_Q6A, RILIM start 162k); never from 3V3 and never from the Q6A J20 5 V pins, which do not enter the S01 ribbon (R-E3-15, N-E3-01). Leave module SDA/SCL disconnected from I2C2.",
         "P1.6 RESET connects via factory 0 ohm to LC76G RESET_N. Use the external 2N7002 open drain, high at its gate to reset.",
         "Quectel specifies an internal 10k pullup to 1.8V on RESET_N and forbids external pullups. Hold reset low for at least 100ms, then release."
       ],
@@ -14603,6 +14680,86 @@
         "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
       ],
       "protocol_fidelity_boundary": "Source interface identified; exact implementation and test coverage are not assessed by this inventory."
+    },
+    {
+      "module_id": "E3/U315",
+      "parent_assembly": "E3-CIR-03",
+      "ref": "U315",
+      "value": "TPS2553DBVR-1",
+      "source_kind": "ic",
+      "source_status": "design",
+      "interface_family": "analog_or_discrete_control_ic",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "LAB5",
+        "GND",
+        "3V3_Q6A",
+        "E3_GNSS_FAULT",
+        "E3_U315_ILIM",
+        "E3_GNSS5V"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "source_numbered_pin_map",
+      "pinout_gate": null,
+      "source_pins": [
+        {
+          "number": "1",
+          "name": "IN",
+          "type": "power_in",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "EN",
+          "type": "input",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "4",
+          "name": "FAULT_N",
+          "type": "open_collector",
+          "net": "E3_GNSS_FAULT"
+        },
+        {
+          "number": "5",
+          "name": "ILIM",
+          "type": "output",
+          "net": "E3_U315_ILIM"
+        },
+        {
+          "number": "6",
+          "name": "OUT",
+          "type": "power_out",
+          "net": "E3_GNSS5V"
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E3.json",
+          "ref": "U315",
+          "component_source": "https://www.ti.com/lit/gpn/tps2553"
+        },
+        {
+          "path": "components/ti_tps2553_lab_port_0_75_a_lna_ch1_4_300.md"
+        }
+      ],
+      "source_description": "",
+      "source_notes": [
+        "DBV SOT-23-6 per SLVS841G Table 5-1: 1 IN, 2 GND, 3 EN, 4 FAULT, 5 ILIM, 6 OUT. Latch-off -1 version from the parts DB entry of the E2/E5 channels.",
+        "EN = 3V3_Q6A keeps LC76G in the Q6A power domain: with Q6A off the module is unpowered, so the Q6A UART6 TX is never high into an unpowered module in normal states (R-E3-15).",
+        "A latch after a fault clears only by a 3V3_Q6A power cycle (Q6A reboot) or a LAB5 power cycle; FAULT_N goes to TP301 only, no MCP input is claimed."
+      ],
+      "coverage_constraints": [
+        "Model analog rail/comparator/ESD/control-pin effects within the parent circuit; no software register interface is specified.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
     },
     {
       "module_id": "E3/J303",
@@ -15863,7 +16020,9 @@
       "interface_signals": [
         "E3_ENC1_A_RAW",
         "GND",
-        "E3_ENC1_B_RAW"
+        "E3_ENC1_B_RAW",
+        "E3_ENC1_PRESS_EXT",
+        "GND"
       ],
       "configuration_from_source": {},
       "pinout_status": "source_named_functional_terminals_not_a_complete_physical_connector_numbering",
@@ -15886,6 +16045,18 @@
           "name": "B",
           "type": "passive",
           "net": "E3_ENC1_B_RAW"
+        },
+        {
+          "number": "S1",
+          "name": "SW_A",
+          "type": "passive",
+          "net": "E3_ENC1_PRESS_EXT"
+        },
+        {
+          "number": "S2",
+          "name": "SW_B",
+          "type": "passive",
+          "net": "GND"
         }
       ],
       "sources": [
@@ -15907,7 +16078,7 @@
           "path": "components/pololu_d36v28f5_2_for_a_5_v_only_display.md"
         }
       ],
-      "source_description": "Functional quadrature contacts A/B/C; integrated push switch represented separately by SW308. Confirm exact encoder suffix and terminal orientation before assembly.",
+      "source_description": "Functional quadrature contacts A/B/C and push-switch contacts S1/S2 of the PEC11R footprint; the switch is the virtual contact SW308 (parts DB host ENC301). ENC1 main tuning knob (upper, HMI page select), R-E3-16. Confirm exact encoder suffix, terminal orientation and the sense of rotation before assembly.",
       "source_notes": [],
       "coverage_constraints": [
         "A/B/C phase, detent/bounce and direction model; integrated press is represented separately bySW308/SW309.",
@@ -15927,7 +16098,9 @@
       "interface_signals": [
         "E3_ENC2_A_RAW",
         "GND",
-        "E3_ENC2_B_RAW"
+        "E3_ENC2_B_RAW",
+        "E3_ENC2_PRESS_EXT",
+        "GND"
       ],
       "configuration_from_source": {},
       "pinout_status": "source_named_functional_terminals_not_a_complete_physical_connector_numbering",
@@ -15950,6 +16123,18 @@
           "name": "B",
           "type": "passive",
           "net": "E3_ENC2_B_RAW"
+        },
+        {
+          "number": "S1",
+          "name": "SW_A",
+          "type": "passive",
+          "net": "E3_ENC2_PRESS_EXT"
+        },
+        {
+          "number": "S2",
+          "name": "SW_B",
+          "type": "passive",
+          "net": "GND"
         }
       ],
       "sources": [
@@ -15971,7 +16156,7 @@
           "path": "components/pololu_d36v28f5_2_for_a_5_v_only_display.md"
         }
       ],
-      "source_description": "Functional quadrature contacts A/B/C; integrated push switch represented separately by SW309. Confirm exact encoder suffix and terminal orientation before assembly.",
+      "source_description": "Functional quadrature contacts A/B/C and push-switch contacts S1/S2 of the PEC11R footprint; the switch is the virtual contact SW309 (parts DB host ENC302). ENC2 volume knob (lower, HMI scroll), R-E3-16. Confirm exact encoder suffix, terminal orientation and the sense of rotation before assembly.",
       "source_notes": [],
       "coverage_constraints": [
         "A/B/C phase, detent/bounce and direction model; integrated press is represented separately bySW308/SW309.",
@@ -16256,7 +16441,7 @@
       "interface_family": "motor_power_and_tach",
       "software_interface_specified": false,
       "interface_signals": [
-        "E3_FAN5",
+        "E3_FAN5_P",
         "GND",
         "E3_FAN_TACH_RAW"
       ],
@@ -16268,7 +16453,7 @@
           "number": "V+",
           "name": "+5V",
           "type": "power_in",
-          "net": "E3_FAN5"
+          "net": "E3_FAN5_P"
         },
         {
           "number": "GND",
@@ -23440,7 +23625,7 @@
       "interface_family": "passive_connector_or_named_boundary",
       "software_interface_specified": false,
       "interface_signals": [
-        "LAB5",
+        "E5_IMU5V",
         "GND",
         "IMU_TX",
         "IMU_RX",
@@ -23452,9 +23637,9 @@
       "source_pins": [
         {
           "number": "1",
-          "name": "LAB5 to pack",
+          "name": "E5_IMU5V to pack",
           "type": "passive",
-          "net": "LAB5"
+          "net": "E5_IMU5V"
         },
         {
           "number": "2",
@@ -23510,7 +23695,7 @@
       "interface_signals": [
         "IMU_TX",
         "GND",
-        "LAB5",
+        "E5_IMU5V",
         "IMU_RX"
       ],
       "configuration_from_source": {},
@@ -23533,7 +23718,7 @@
           "number": "3",
           "name": "D2+ 5V",
           "type": "passive",
-          "net": "LAB5"
+          "net": "E5_IMU5V"
         },
         {
           "number": "4",
@@ -23581,7 +23766,7 @@
       "interface_family": "passive_connector_or_named_boundary",
       "software_interface_specified": false,
       "interface_signals": [
-        "LAB5",
+        "E5_IMU5V",
         "GND",
         "IMU_TX",
         "IMU_RX",
@@ -23595,7 +23780,7 @@
           "number": "1",
           "name": "5V raw",
           "type": "passive",
-          "net": "LAB5"
+          "net": "E5_IMU5V"
         },
         {
           "number": "2",
@@ -23651,7 +23836,7 @@
       "interface_signals": [
         "IMU_TX",
         "GND",
-        "LAB5",
+        "E5_IMU5V",
         "IMU_RX"
       ],
       "configuration_from_source": {},
@@ -23674,7 +23859,7 @@
           "number": "3",
           "name": "D2+ 5V",
           "type": "passive",
-          "net": "LAB5"
+          "net": "E5_IMU5V"
         },
         {
           "number": "4",
@@ -23708,6 +23893,140 @@
       ],
       "coverage_constraints": [
         "Model analog rail/comparator/ESD/control-pin effects within the parent circuit; no software register interface is specified.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
+      "module_id": "E5/U553",
+      "parent_assembly": "E5-CIR-08",
+      "ref": "U553",
+      "value": "TPS2553DBVR",
+      "source_kind": "ic",
+      "source_status": "design",
+      "interface_family": "analog_or_discrete_control_ic",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "LAB5",
+        "GND",
+        "LAB5",
+        "E5_IMU_FAULT",
+        "E5_U553_ILIM",
+        "E5_IMU5V"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "source_numbered_pin_map",
+      "pinout_gate": null,
+      "source_pins": [
+        {
+          "number": "1",
+          "name": "IN",
+          "type": "power_in",
+          "net": "LAB5"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "power_in",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "EN",
+          "type": "input",
+          "net": "LAB5"
+        },
+        {
+          "number": "4",
+          "name": "FAULT_N",
+          "type": "open_collector",
+          "net": "E5_IMU_FAULT"
+        },
+        {
+          "number": "5",
+          "name": "ILIM",
+          "type": "output",
+          "net": "E5_U553_ILIM"
+        },
+        {
+          "number": "6",
+          "name": "OUT",
+          "type": "power_out",
+          "net": "E5_IMU5V"
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E5.json",
+          "ref": "U553",
+          "component_source": "https://www.ti.com/lit/gpn/tps2553"
+        },
+        {
+          "path": "components/ti_tps2553_lab_port_0_75_a_lna_ch1_4_300.md"
+        }
+      ],
+      "source_description": "",
+      "source_notes": [
+        "Constant-current TPS2553DBVR (no -1): in a short on the 2 m IMU cable it limits instead of latching and recovers by itself when the fault clears (SLVS841G p.14-15), so no MCP output, harness wire or software is needed. EN tied to IN: on whenever LAB5 is present (R-E5-08).",
+        "DBV SOT-23-6 per SLVS841G Table 5-1: 1 IN, 2 GND, 3 EN, 4 FAULT, 5 ILIM, 6 OUT. RILIM is a starting value (R553). FAULT_N goes to TP503 only."
+      ],
+      "coverage_constraints": [
+        "Model analog rail/comparator/ESD/control-pin effects within the parent circuit; no software register interface is specified.",
+        "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
+      ],
+      "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
+    },
+    {
+      "module_id": "E5/J551",
+      "parent_assembly": "E5-CIR-08",
+      "ref": "J551",
+      "value": "S-band pod power M8 3-pin receptacle DESIGN",
+      "source_kind": "connector",
+      "source_status": "design",
+      "interface_family": "passive_connector_or_named_boundary",
+      "software_interface_specified": false,
+      "interface_signals": [
+        "BIAS_SB_LNA",
+        "GND"
+      ],
+      "configuration_from_source": {},
+      "pinout_status": "source_numbered_pin_map",
+      "pinout_gate": "binder M8 contacts 1/3/4 from the data sheet; wall position and mounting side not fixed (MECH-07)",
+      "source_pins": [
+        {
+          "number": "1",
+          "name": "+5 V pod (BIAS_SB_LNA), lead brown",
+          "type": "passive",
+          "net": "BIAS_SB_LNA"
+        },
+        {
+          "number": "3",
+          "name": "return (GND), lead blue",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "4",
+          "name": "unused, lead black",
+          "type": "no_connect",
+          "nc": true
+        }
+      ],
+      "sources": [
+        {
+          "path": "design/E5.json",
+          "ref": "J551",
+          "component_source": "https://www.binder-connector.com/sg/products/automation-technology/m8/female-panel-mount-connector-front-mounting-with-single-wires"
+        }
+      ],
+      "source_description": "binder M8 A-coded 3-contact receptacle: contacts 1, 3 and 4, there is no contact 2 (data sheet p.1, plug-in side: 4 at the top, 3 left, 1 right); lead colours 1 brown, 3 blue, 4 black.",
+      "source_notes": [
+        "W425 (E4) is the cable plugged into J551: field-wired M8 male plug 99 3379 100 03 at this end (its contacts 1/3/4 mirror the receptacle), USB-C into the pod (R-E5-09). The receptacle is the female (socket) half, so the live 5 V contact is shrouded.",
+        "Lead colours are binder's (1 brown, 3 blue, 4 black): the black lead is the unused contact 4, not GND; insulate it at the PWR end. Map W425 by contact number, not by colour (its black conductor is GND).",
+        "Keying: M8 shell differs from GX16-4 J504 and GX12 J505, so neither the IMU nor the LAB BUS plug enters it (build/15 'Ключування панельних роз'ємів'). Unshielded version: no shell or shield contact; the housing is not bonded (ASA wall, power-only cable)."
+      ],
+      "coverage_constraints": [
+        "Connectivity only; connector contact numbers do not create a software protocol. Preserve pinout gate and NC conductors.",
         "Copied source notes may include historical implementation-status prose; current model/software implementation is not assessed by this inventory."
       ],
       "protocol_fidelity_boundary": "No register or packet interface is defined for this source component; use its parent circuit/contact/connectivity model."
@@ -25996,6 +26315,11 @@
     "U304": "E3-CIR-03",
     "Q301": "E3-CIR-03",
     "R326": "E3-CIR-03",
+    "U315": "E3-CIR-03",
+    "R396": "E3-CIR-03",
+    "C321": "E3-CIR-03",
+    "C322": "E3-CIR-03",
+    "TP301": "E3-CIR-03",
     "J303": "E3-CIR-04",
     "BT301": "E3-CIR-04",
     "U305": "E3-CIR-05",
@@ -26079,6 +26403,7 @@
     "Q303": "E3-CIR-12",
     "R367": "E3-CIR-12",
     "Q304": "E3-CIR-12",
+    "F301": "E3-CIR-12",
     "D305": "E3-CIR-12",
     "C318": "E3-CIR-12",
     "C319": "E3-CIR-12",
@@ -26383,6 +26708,12 @@
     "D502": "E5-CIR-08",
     "C519": "E5-CIR-08",
     "C520": "E5-CIR-08",
+    "U553": "E5-CIR-08",
+    "R553": "E5-CIR-08",
+    "C552": "E5-CIR-08",
+    "C553": "E5-CIR-08",
+    "TP503": "E5-CIR-08",
+    "J551": "E5-CIR-08",
     "U507": "E5-CIR-09",
     "R550": "E5-CIR-09",
     "R551": "E5-CIR-09",
@@ -26836,6 +27167,14 @@
         },
         {
           "sheet": "E3",
+          "ref": "U315",
+          "pin": "3",
+          "name": "EN",
+          "electrical_type": "input",
+          "assembly": "E3-CIR-03"
+        },
+        {
+          "sheet": "E3",
           "ref": "R328",
           "pin": "1",
           "name": "1",
@@ -27117,6 +27456,7 @@
         "E2-CIR-17",
         "E3-CIR-01",
         "E3-CIR-02",
+        "E3-CIR-03",
         "E3-CIR-05",
         "E4-CIR-03",
         "E4-CIR-04",
@@ -27821,11 +28161,20 @@
           "name": "BRANCH_5V",
           "electrical_type": "power_in",
           "assembly": "E4-CIR-02"
+        },
+        {
+          "sheet": "E5",
+          "ref": "J551",
+          "pin": "1",
+          "name": "+5 V pod (BIAS_SB_LNA), lead brown",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-08"
         }
       ],
       "assemblies": [
         "E2-CIR-19",
-        "E4-CIR-02"
+        "E4-CIR-02",
+        "E5-CIR-08"
       ],
       "cross_assembly": true
     },
@@ -33500,12 +33849,21 @@
           "name": "D2-",
           "electrical_type": "passive",
           "assembly": "E3-CIR-08"
+        },
+        {
+          "sheet": "E3",
+          "ref": "ENC301",
+          "pin": "S1",
+          "name": "SW_A",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-09"
         }
       ],
       "assemblies": [
-        "E3-CIR-08"
+        "E3-CIR-08",
+        "E3-CIR-09"
       ],
-      "cross_assembly": false
+      "cross_assembly": true
     },
     {
       "net": "E3_ENC2_A",
@@ -33716,12 +34074,21 @@
           "name": "D1-",
           "electrical_type": "passive",
           "assembly": "E3-CIR-08"
+        },
+        {
+          "sheet": "E3",
+          "ref": "ENC302",
+          "pin": "S1",
+          "name": "SW_A",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-09"
         }
       ],
       "assemblies": [
-        "E3-CIR-08"
+        "E3-CIR-08",
+        "E3-CIR-09"
       ],
-      "cross_assembly": false
+      "cross_assembly": true
     },
     {
       "net": "E3_FAN5",
@@ -33731,6 +34098,31 @@
           "ref": "Q304",
           "pin": "3",
           "name": "D",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-12"
+        },
+        {
+          "sheet": "E3",
+          "ref": "F301",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-12"
+        }
+      ],
+      "assemblies": [
+        "E3-CIR-12"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E3_FAN5_P",
+      "pins": [
+        {
+          "sheet": "E3",
+          "ref": "F301",
+          "pin": "2",
+          "name": "2",
           "electrical_type": "passive",
           "assembly": "E3-CIR-12"
         },
@@ -33986,6 +34378,56 @@
       ],
       "assemblies": [
         "E3-CIR-08"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E3_GNSS5V",
+      "pins": [
+        {
+          "sheet": "E3",
+          "ref": "U304",
+          "pin": "P1.1",
+          "name": "VCC",
+          "electrical_type": "power_in",
+          "assembly": "E3-CIR-03"
+        },
+        {
+          "sheet": "E3",
+          "ref": "U315",
+          "pin": "6",
+          "name": "OUT",
+          "electrical_type": "power_out",
+          "assembly": "E3-CIR-03"
+        }
+      ],
+      "assemblies": [
+        "E3-CIR-03"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E3_GNSS_FAULT",
+      "pins": [
+        {
+          "sheet": "E3",
+          "ref": "U315",
+          "pin": "4",
+          "name": "FAULT_N",
+          "electrical_type": "open_collector",
+          "assembly": "E3-CIR-03"
+        },
+        {
+          "sheet": "E3",
+          "ref": "TP301",
+          "pin": "1",
+          "name": "FAULT_N",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-03"
+        }
+      ],
+      "assemblies": [
+        "E3-CIR-03"
       ],
       "cross_assembly": false
     },
@@ -35398,6 +35840,31 @@
       ],
       "assemblies": [
         "E3-CIR-04"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E3_U315_ILIM",
+      "pins": [
+        {
+          "sheet": "E3",
+          "ref": "U315",
+          "pin": "5",
+          "name": "ILIM",
+          "electrical_type": "output",
+          "assembly": "E3-CIR-03"
+        },
+        {
+          "sheet": "E3",
+          "ref": "R396",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-03"
+        }
+      ],
+      "assemblies": [
+        "E3-CIR-03"
       ],
       "cross_assembly": false
     },
@@ -39844,6 +40311,96 @@
       "cross_assembly": true
     },
     {
+      "net": "E5_IMU5V",
+      "pins": [
+        {
+          "sheet": "E5",
+          "ref": "J504",
+          "pin": "1",
+          "name": "E5_IMU5V to pack",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-08"
+        },
+        {
+          "sheet": "E5",
+          "ref": "U551",
+          "pin": "3",
+          "name": "D2+ 5V",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-08"
+        },
+        {
+          "sheet": "E5",
+          "ref": "J550",
+          "pin": "1",
+          "name": "5V raw",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-08"
+        },
+        {
+          "sheet": "E5",
+          "ref": "U552",
+          "pin": "3",
+          "name": "D2+ 5V",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-08"
+        },
+        {
+          "sheet": "E5",
+          "ref": "D502",
+          "pin": "2",
+          "name": "A ← cable5V",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-08"
+        },
+        {
+          "sheet": "E5",
+          "ref": "U553",
+          "pin": "6",
+          "name": "OUT",
+          "electrical_type": "power_out",
+          "assembly": "E5-CIR-08"
+        },
+        {
+          "sheet": "E5",
+          "ref": "C553",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-08"
+        }
+      ],
+      "assemblies": [
+        "E5-CIR-08"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E5_IMU_FAULT",
+      "pins": [
+        {
+          "sheet": "E5",
+          "ref": "U553",
+          "pin": "4",
+          "name": "FAULT_N",
+          "electrical_type": "open_collector",
+          "assembly": "E5-CIR-08"
+        },
+        {
+          "sheet": "E5",
+          "ref": "TP503",
+          "pin": "1",
+          "name": "FAULT_N",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-08"
+        }
+      ],
+      "assemblies": [
+        "E5-CIR-08"
+      ],
+      "cross_assembly": false
+    },
+    {
       "net": "E5_IMU_VIN",
       "pins": [
         {
@@ -40626,6 +41183,31 @@
       ],
       "assemblies": [
         "E5-CIR-05"
+      ],
+      "cross_assembly": false
+    },
+    {
+      "net": "E5_U553_ILIM",
+      "pins": [
+        {
+          "sheet": "E5",
+          "ref": "U553",
+          "pin": "5",
+          "name": "ILIM",
+          "electrical_type": "output",
+          "assembly": "E5-CIR-08"
+        },
+        {
+          "sheet": "E5",
+          "ref": "R553",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-08"
+        }
+      ],
+      "assemblies": [
+        "E5-CIR-08"
       ],
       "cross_assembly": false
     },
@@ -43739,6 +44321,38 @@
         },
         {
           "sheet": "E3",
+          "ref": "U315",
+          "pin": "2",
+          "name": "GND",
+          "electrical_type": "power_in",
+          "assembly": "E3-CIR-03"
+        },
+        {
+          "sheet": "E3",
+          "ref": "R396",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-03"
+        },
+        {
+          "sheet": "E3",
+          "ref": "C321",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-03"
+        },
+        {
+          "sheet": "E3",
+          "ref": "C322",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-03"
+        },
+        {
+          "sheet": "E3",
           "ref": "J303",
           "pin": "1",
           "name": "GND",
@@ -44083,6 +44697,14 @@
         },
         {
           "sheet": "E3",
+          "ref": "ENC301",
+          "pin": "S2",
+          "name": "SW_B",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-09"
+        },
+        {
+          "sheet": "E3",
           "ref": "C316",
           "pin": "2",
           "name": "2",
@@ -44102,6 +44724,14 @@
           "ref": "ENC302",
           "pin": "C",
           "name": "COMMON",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-09"
+        },
+        {
+          "sheet": "E3",
+          "ref": "ENC302",
+          "pin": "S2",
+          "name": "SW_B",
           "electrical_type": "passive",
           "assembly": "E3-CIR-09"
         },
@@ -46411,6 +47041,46 @@
         },
         {
           "sheet": "E5",
+          "ref": "U553",
+          "pin": "2",
+          "name": "GND",
+          "electrical_type": "power_in",
+          "assembly": "E5-CIR-08"
+        },
+        {
+          "sheet": "E5",
+          "ref": "R553",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-08"
+        },
+        {
+          "sheet": "E5",
+          "ref": "C552",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-08"
+        },
+        {
+          "sheet": "E5",
+          "ref": "C553",
+          "pin": "2",
+          "name": "2",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-08"
+        },
+        {
+          "sheet": "E5",
+          "ref": "J551",
+          "pin": "3",
+          "name": "return (GND), lead blue",
+          "electrical_type": "passive",
+          "assembly": "E5-CIR-08"
+        },
+        {
+          "sheet": "E5",
           "ref": "U507",
           "pin": "4",
           "name": "GND",
@@ -47298,6 +47968,30 @@
         },
         {
           "sheet": "E3",
+          "ref": "U315",
+          "pin": "1",
+          "name": "IN",
+          "electrical_type": "power_in",
+          "assembly": "E3-CIR-03"
+        },
+        {
+          "sheet": "E3",
+          "ref": "C321",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-03"
+        },
+        {
+          "sheet": "E3",
+          "ref": "C322",
+          "pin": "1",
+          "name": "1",
+          "electrical_type": "passive",
+          "assembly": "E3-CIR-03"
+        },
+        {
+          "sheet": "E3",
           "ref": "D301",
           "pin": "2",
           "name": "A",
@@ -47466,41 +48160,25 @@
         },
         {
           "sheet": "E5",
-          "ref": "J504",
+          "ref": "U553",
           "pin": "1",
-          "name": "LAB5 to pack",
-          "electrical_type": "passive",
+          "name": "IN",
+          "electrical_type": "power_in",
           "assembly": "E5-CIR-08"
         },
         {
           "sheet": "E5",
-          "ref": "U551",
+          "ref": "U553",
           "pin": "3",
-          "name": "D2+ 5V",
-          "electrical_type": "passive",
+          "name": "EN",
+          "electrical_type": "input",
           "assembly": "E5-CIR-08"
         },
         {
           "sheet": "E5",
-          "ref": "J550",
+          "ref": "C552",
           "pin": "1",
-          "name": "5V raw",
-          "electrical_type": "passive",
-          "assembly": "E5-CIR-08"
-        },
-        {
-          "sheet": "E5",
-          "ref": "U552",
-          "pin": "3",
-          "name": "D2+ 5V",
-          "electrical_type": "passive",
-          "assembly": "E5-CIR-08"
-        },
-        {
-          "sheet": "E5",
-          "ref": "D502",
-          "pin": "2",
-          "name": "A ← cable5V",
+          "name": "1",
           "electrical_type": "passive",
           "assembly": "E5-CIR-08"
         }
@@ -47510,6 +48188,7 @@
         "E2-CIR-05",
         "E2-CIR-10",
         "E2-CIR-19",
+        "E3-CIR-03",
         "E3-CIR-05",
         "E3-CIR-12",
         "E4-CIR-03",
@@ -49052,14 +49731,6 @@
           "assembly": "E3-CIR-01"
         },
         {
-          "sheet": "E3",
-          "ref": "U304",
-          "pin": "P1.1",
-          "name": "VCC",
-          "electrical_type": "power_in",
-          "assembly": "E3-CIR-03"
-        },
-        {
           "sheet": "E5",
           "ref": "U500",
           "pin": "5V",
@@ -49070,7 +49741,6 @@
       ],
       "assemblies": [
         "E3-CIR-01",
-        "E3-CIR-03",
         "E5-CIR-01"
       ],
       "cross_assembly": true
@@ -50196,6 +50866,14 @@
       "name": "NC",
       "electrical_type": "no_connect",
       "assembly": "E5-CIR-08"
+    },
+    {
+      "sheet": "E5",
+      "ref": "J551",
+      "pin": "4",
+      "name": "unused, lead black",
+      "electrical_type": "no_connect",
+      "assembly": "E5-CIR-08"
     }
   ],
   "unknown_or_non_software_interfaces": [
@@ -50300,10 +50978,10 @@
   "validation": {
     "status": "PASS",
     "source_snapshot_hashes_unchanged": true,
-    "all777refs_assigned_once": true,
-    "all2253connected_pin_net_triples_exact": true,
-    "all140NCpins_exact": true,
-    "all166subinterface_pin_arrays_exact": true,
+    "all789refs_assigned_once": true,
+    "all2287connected_pin_net_triples_exact": true,
+    "all141NCpins_exact": true,
+    "all169subinterface_pin_arrays_exact": true,
     "all_catalogue_sources_exist": true,
     "no_project_files_written_by_inventory_task": true,
     "synchronised": "23.10.2026 with the current design graphs: refs removed from the graphs dropped, renamed nets followed, graph-derived fields recomputed; curated fields unchanged"
