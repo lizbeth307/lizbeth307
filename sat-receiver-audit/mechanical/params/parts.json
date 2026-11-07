@@ -748,14 +748,24 @@
       "src": "fasten.it norm page DIN EN ISO 14580 https://www.fasten.it/pt/norms/norm/din_en_iso_14580 (read 2026-11-07: dimension table 'source Din 14580 2011', k nom=max M2.5 1.85 / M3 2.4, socket Nr 8 / 10; table 'Din 14580 - weigth in kg x1000 pcs - commercial items': the lengths above are the rows with a weight in the M 2.5 / M 3 columns); a secondary reproduction of the standard, the ISO text itself was not read. The countersunk pages of the same site (DIN EN ISO 10642 https://www.fasten.it/pt/norms/norm/din_en_iso_10642 and DIN EN ISO 14581 https://www.fasten.it/pt/norms/norm/din_en_iso_14581, read 2026-11-07) give head dimensions only, no length table (used by generated/fastener-stacks.json, W2 MECH-3 review)"
     },
     "heyco_ngsg_105": {
-      "name": "Heyco continuous grommet roll NGSG-105-100' (part 12417 natural, 12417B black): nylon, unserrated, with adhesive, 100 ft (30.5 m) roll, for 1.8-2.7 mm panels",
+      "name": "Heyco continuous grommet roll NGSG-105-100' (part 12417 natural, 12417B black): nylon, unserrated, with adhesive, 100 ft (30.5 m) roll, for 1.8-2.7 mm panels (read as a candidate; not the purchased trim: SRC-2 found no Heyco listing on DigiKey DE and chose essentra_mgs_2_01 for parts DB AI-EDGE-TRIM)",
       "panel_t": [1.8, 2.7],
-      "A": 4.4,
-      "B": 0.8,
-      "C": 2.8,
+      "overall_h": 4.4,
+      "base_t": 0.8,
+      "outer_w": 2.8,
       "temp_c": [-40, 85],
       "status": "datasheet",
       "src": "Heyco 'Continuous Grommet Rolls' catalogue page 6-23 (https://www.heyco.com/Hole_Plugs/pdf/Grommet-Rolls.pdf, 301 to http://www.heyco.com/wp-content/uploads/wpallimport/files/Grommet-Rolls.pdf, PDF of 2020-04-07; read 2026-11-07 with WebFetch, the table rendered with PyMuPDF and read from the rendering): nylon roll, unserrated with adhesive, NGSG-105-100' fit panel .072-.105 in (1,8-2,7 mm), A overall height .17 in (4,4 mm), B bottom thickness .03 in (0,8 mm), C bottom width .11 in (2,8 mm); nylon 94HB, -40 to 185 F (-40 to 85 C); standard colour natural, black by special order. The leg thickness is not dimensioned: the model takes (C - plate t) / 2 as the height each leg stands proud of a plate face (upper bound at the U bottom) and A - B as the leg reach from the slot edge"
+    },
+    "essentra_mgs_2_01": {
+      "name": "Essentra (Richco) MGS-2-01 grommet edging, MS21266-2N, slotted U strip, PA66 natural UL94 V-2, 0.32 m strip (parts DB AI-EDGE-TRIM, W2 SRC-2)",
+      "panel_t": [1.32, 2.16],
+      "overall_h": 2.54,
+      "base_t": 1.397,
+      "outer_w": 4.445,
+      "inner_w": 2.286,
+      "status": "datasheet",
+      "src": "Essentra 'Fiber, Wire & Cable Management' catalogue, page 276 (PDF page 101; DigiKey-hosted copy https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/27/Fiber%2CWire%2CCable_Catalog.pdf, the datasheet link of DigiKey DE RP814-ND, PDF of 2020-01-29; read 2026-11-07 with curl (default User-Agent), the drawing rendered with PyMuPDF and read from the rendering; essentracomponents.com answered 403): MGS-2-01 / MS21266-2N panel 0.052-0.085 in, A (overall width) 0.175, B (inside width) 0.090, C (base thickness) 0.055, D (overall height) 0.100 in (25.4 mm/in: 4.445, 2.286, 1.397, 2.54 mm); slot pitch .067 (1.7) typ.; strip 12.620/12.750 in (320.5/323.9 mm); minimum hole diameter 1 in (round holes; straight slot edges take cut pieces). The model takes C as the opening loss per edge, D - C as the leg reach from the edge and (A - B) / 2 + (B - plate t) as the height a leg stands proud of a plate face (worst case, panel against one leg)"
     },
     "hookup_wire_ptfe": {
       "name": "PTFE hook-up wire of parts DB AI-WIRE-PTFE (Alpha Wire): insulation OD [nominal, tolerance] per AWG",

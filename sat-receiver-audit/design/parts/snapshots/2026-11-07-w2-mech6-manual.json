@@ -75,6 +75,18 @@
    "stock": null,
    "price": null,
    "note": "board outline 85.0 x 56.0 mm on both pages. Page 1 (ASSM_TOP): C451 at uv (21.18, 36.21) and C453 at (7.46, 36.21) mm (top view, u from the left edge, v from the bottom edge), outline 0.60 x 1.15 mm each, below the J13 connector; C452 outline 0.30 x 0.70. Page 2 (bottom, mirrored: u = 85 - x, checked on the mounting holes 3.5 / 61.5): C17 / C14 / C15 at u 9.14 / 10.46 / 11.72, v 41.12, outline 1.32 x 2.60 mm each; U20 at (12.23, 43.48), outline 1.2 x 1.7; L24 at (9.49, 43.80), outline 2.5 x 2.5. J20 has no pin-1 mark on page 1"
+  },
+  "web:essentra-fwc-catalogue-mgs": {
+   "distributor": "manufacturer catalogue (DigiKey-hosted copy)",
+   "url": "https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/27/Fiber%2CWire%2CCable_Catalog.pdf",
+   "read": "2026-11-07",
+   "method": "curl (default User-Agent) of the PDF linked as the datasheet of DigiKey DE RP814-ND (104 pages, PDF of 2020-01-29); page 101 (printed 276) text read and the drawing rendered with PyMuPDF; https://www.essentracomponents.com/en-ca/p/grommet-strips-ms21266-strips/mgs-2-01 and /en-us/... answered 403 on 2026-11-07",
+   "mpn": "MGS-2-01",
+   "manufacturer": "Essentra Components",
+   "title": "Essentra Fiber, Wire & Cable Management catalogue: MGS Series MS21266 Grommet Strip",
+   "stock": null,
+   "price": null,
+   "note": "MGS-2-01 / MS21266-2N: panel thickness 0.052-0.085 in, A 0.175, B 0.090, C 0.055, D 0.100 in (drawing: A overall width, B inside width, C base thickness, D overall height); slot pitch .067 (1.7) typ.; strip 12.620/12.750 in (320.5/323.9 mm); UL94 V-2 nylon 6/6, natural; complies with NASM21266; minimum hole diameter 1 in; bulk pack 100"
   }
  }
 }

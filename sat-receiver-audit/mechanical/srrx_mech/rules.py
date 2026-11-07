@@ -347,7 +347,7 @@ def _slot_trim_legs(P, sl):
     """Leg footprints of the grommet strip on each 'grommet' edge of a slot: (edge, face, (x0, y0, z0, x1, y1, z1))."""
     tr = P.mech["plate"]["slot_trim"]
     g = P.parts[tr["grommet"]]
-    reach, proud = g["A"] - g["B"], (g["C"] - P.mech["plate"]["t"]) / 2.0
+    reach, proud = trim_legs(P, g)
     x, y, w, h = sl["rect"]
     sz = P.mech["stack_z"]
     pr, pf = sz["plate_rear"], sz["plate_front"]
@@ -361,6 +361,16 @@ def _slot_trim_legs(P, sl):
         out.append((edge, "rear", (a[0], a[1], pr - proud, a[2], a[3], pr)))
         out.append((edge, "front", (a[0], a[1], pf, a[2], a[3], pf + proud)))
     return out
+
+
+def trim_legs(P, g):
+    """(leg reach from the slot edge, leg height proud of a plate face) of a U edging profile (parts.json semantic keys):
+    reach = overall height - base; proud = (outer - inner width) / 2 + (inner width - plate) with an inner width (worst case,
+    panel against one leg), else (outer width - plate) / 2 (the profile's base width as an upper bound)."""
+    t = P.mech["plate"]["t"]
+    reach = g["overall_h"] - g["base_t"]
+    proud = (g["outer_w"] - g["inner_w"]) / 2.0 + (g["inner_w"] - t) if "inner_w" in g else (g["outer_w"] - t) / 2.0
+    return reach, proud
 
 
 def plate_slot_fill(P):
@@ -385,8 +395,8 @@ def plate_slot_fill(P):
     flat = P.mech["harness_routes"].get("flat", {})
     rule = {"id": "R-PLATE-SLOT-FILL",
             "rule": f"harness bundle through each plate slot (wire areas / {tr['fill']:g} + ribbon stack) inside the opening left by the edge trim "
-                    f"(grommet {tr['grommet']} B {g['B']:g} per edge, tape {tr['tape_mm']:g}); ribbon, stack and largest wire fit the inner size; grommet legs clear",
-            "source": "mechanical.json plate.slots / slot_trim; build/16-dzhgut.csv; parts.json heyco_ngsg_105 (Heyco catalogue 6-23 read 2026-11-07), "
+                    f"(edging {tr['grommet']} base {g['base_t']:g} per edge, tape {tr['tape_mm']:g}); ribbon, stack and largest wire fit the inner size; edging legs clear",
+            "source": "mechanical.json plate.slots / slot_trim; build/16-dzhgut.csv; parts.json essentra_mgs_2_01 (Essentra catalogue p.276 read 2026-11-07), "
                       "hookup_wire_ptfe and ribbon_3m_3365_40 (SRC-1 rows read 2026-11-07)"}
     if not path.exists():
         return dict(rule, value_mm=None, result="OPEN: build/16-dzhgut.csv not found, bundle not counted")
@@ -400,7 +410,7 @@ def plate_slot_fill(P):
     value, missing, bad = {}, [], []
     for sl in slots:
         x, y, w, h = sl["rect"]
-        loss = {e: (g["B"] if sl.get("trim", {}).get(e) == "grommet" else tr["tape_mm"]) for e in ("bottom", "top", "left", "right")}
+        loss = {e: (g["base_t"] if sl.get("trim", {}).get(e) == "grommet" else tr["tape_mm"]) for e in ("bottom", "top", "left", "right")}
         iw, ih = w - loss["left"] - loss["right"], h - loss["bottom"] - loss["top"]
         counts, area, dmax, loose = {}, 0.0, 0.0, 0
         ribbon = None
@@ -458,7 +468,7 @@ def plate_slot_fill(P):
         return dict(rule, value_mm=value, limit_mm="bundle inside the trimmed opening", result="FAIL (model): " + ", ".join(
             f"{k}: {value[k]['result']}" for k in bad))
     return dict(rule, value_mm=value, limit_mm="bundle inside the trimmed opening",
-                result=f"PASS (model): {txt}; grommet legs clear of the envelopes, the structure and the plate-hole footprints")
+                result=f"PASS (model): {txt}; edging legs clear of the envelopes, the structure and the plate-hole footprints")
 
 
 def module_rules(P):

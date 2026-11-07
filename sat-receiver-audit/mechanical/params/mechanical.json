@@ -434,7 +434,7 @@
       },
       {
         "id": "SL2",
-        "rect": [115.5, 73.6, 18.0, 7.6],
+        "rect": [115.5, 73.6, 18.0, 8.2],
         "use": "front layer (PWR top edge, CTRL harness along y 74-77) <-> rear layer above the hatch: S03, S04, S13, S14, S15, S17, S18, S20-S22, S24, S25, S30, S35 (build/16); C-T7 stays in the rear layer (Q6A J5 at the plate rear, T7 gland in the rear wall)",
         "segments": ["S03", "S04", "S13", "S14", "S15", "S17", "S18", "S20", "S21", "S22", "S24", "S25", "S30", "S35", "S06", "S07", "S36"],
         "trim": {"bottom": "tape", "top": "grommet", "left": "tape", "right": "tape"},
@@ -442,22 +442,22 @@
       },
       {
         "id": "SL3",
-        "rect": [210.5, 9.5, 4.5, 11.5],
-        "_rect_note": "W2 MECH-6: shortened from 15.0 to 11.5 so that the grommet legs on its long edges stay below the HDMI flex rise (hdmi_route_rise, y >= 21.6, W2 MECH-4) on the plate rear face; the fill still passes (R-PLATE-SLOT-FILL)",
+        "rect": [211.5, 9.5, 5.5, 11.5],
+        "_rect_note": "W2 MECH-6: 11.5 long (was 15.0) so that the edging on its long edges stays below the HDMI flex rise (hdmi_route_rise, y >= 21.6, W2 MECH-4) on the plate rear face; 5.5 wide (was 4.5) for the 1.4 mm edging base on both long edges; x0 211.5 keeps the edging legs off the BMS, which stands 0.5 mm above the plate front face (R-PLATE-SLOT-FILL)",
         "use": "front layer <-> bottom-face port row and GX16 under the plate extension: S11, S23, S32, S34, the IP2368 PD lead (build/16)",
         "segments": ["S11", "S23", "S32", "S34"],
         "trim": {"bottom": "tape", "top": "tape", "left": "grommet", "right": "grommet"}
       }
     ],
     "slot_trim": {
-      "grommet": "heyco_ngsg_105",
+      "grommet": "essentra_mgs_2_01",
       "fill": 0.6,
       "tape_mm": 0.1,
       "fastener_footprint": "d",
-      "_note": "W2 MECH-6 (R-PLATE-SLOT-FILL): every long slot edge takes the Heyco NGSG-105 grommet strip, cut to the edge length (parts.json heyco_ngsg_105: plate 2.0 mm inside its 1.8-2.7 mm range; B 0.8 mm off the opening per edge, legs A - B = 3.6 mm onto each face, (C - t) / 2 = 0.4 mm proud); an edge where the legs would sit under a part resting on the plate face, and the short ends, are deburred and covered by a fold of polyimide tape instead (product: SRC-2 C-18, TBD; design requirement tape <= tape_mm thick per layer, taken as the opening loss). Bundle: sum of the wire areas (OD = nominal + tolerance of the chosen PTFE wire, parts.json hookup_wire_ptfe) / fill 0.6 + ribbon stack (parts.json ribbon_3m_3365_40, two 20-way halves) must fit the opening minus the trim; the ribbon width, the stack and the largest wire must fit the inner width / height. Fastener footprint of a plate hole for the leg check = a circle of the hole diameter around the centre (assumption: screw head or standoff about 2 d across)",
-      "_src": "fill 0.6: harness_routes.fill (the bundle packing factor of this model, B-00); trim and wire data: parts.json heyco_ngsg_105, hookup_wire_ptfe, ribbon_3m_3365_40"
+      "_note": "W2 MECH-6 (R-PLATE-SLOT-FILL): every long slot edge takes a piece of the Essentra MGS-2-01 grommet edging cut to the edge length (parts DB AI-EDGE-TRIM, W2 SRC-2; parts.json essentra_mgs_2_01: plate 2.0 mm inside its 1.32-2.16 mm range; base 1.4 mm off the opening per edge, legs 1.14 mm onto each face, up to 1.37 mm proud); an edge where the legs would sit under a part resting on the plate face, and the short ends, are deburred and covered by a fold of polyimide tape instead (parts DB AI-POLYIMIDE-TAPE, 3M 5413, total thickness 0.07 mm per the SRC-2 row web:3m-5413-tds; the model takes tape_mm 0.1 as the opening loss). Bundle: sum of the wire areas (OD = nominal + tolerance of the chosen PTFE wire, parts.json hookup_wire_ptfe) / fill 0.6 + ribbon stack (parts.json ribbon_3m_3365_40, two 20-way halves) must fit the opening minus the trim; the ribbon width, the stack and the largest wire must fit the inner width / height. Fastener footprint of a plate hole for the leg check = a circle of the hole diameter around the centre (assumption: screw head or standoff about 2 d across)",
+      "_src": "fill 0.6: harness_routes.fill (the bundle packing factor of this model, B-00); trim and wire data: parts.json essentra_mgs_2_01 (heyco_ngsg_105 read as the alternative), hookup_wire_ptfe, ribbon_3m_3365_40"
     },
-    "_slots_note": "harness pass-throughs of the plate (M-07): each edge gets the Heyco NGSG-105 grommet strip or a polyimide tape fold (plate.slot_trim, per slot 'trim'; parts DB assembly_items AI-EDGE-TRIM); sizes from the bundle fill of the build/16 wires with the trim (R-PLATE-SLOT-FILL, W2 MECH-6); the self-clinching edge distance (R-CLINCH-EDGE) and R-HOLE-EDGE include the slots"
+    "_slots_note": "harness pass-throughs of the plate (M-07): each edge gets the Essentra MGS-2-01 grommet edging or a polyimide tape fold (plate.slot_trim, per slot 'trim'; parts DB assembly_items AI-EDGE-TRIM); sizes from the bundle fill of the build/16 wires with the trim (R-PLATE-SLOT-FILL, W2 MECH-6); the self-clinching edge distance (R-CLINCH-EDGE) and R-HOLE-EDGE include the slots"
   },
   "layout": {
     "_note": "Envelope boxes [x, y, z, dx, dy, dz]; mount: plate_rear (hangs from the plate), plate_front, rear_wall, front_wall, rf_lid, free. part = key in parts.json, board = key in boards.json. keep_clear boxes reserve space (plugs, cable bends) and must stay empty.",
