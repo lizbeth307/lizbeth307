@@ -441,7 +441,7 @@ TEXT
 40
 1.6
 1
-E1: battery (Micro-Fit 3.0), BMS and IP2368 leads
+E1: battery circuit (Mini-Fit Jr., 18 AWG), BMS and IP2368 leads
 50
 0
 0
@@ -473,7 +473,7 @@ TEXT
 40
 1.6
 1
-E2: blower, BMS, column harness (JST PH)
+E2: blower, BMS, CTRL harness S02 (JST PH, Micro-Fit); bottom-ro
 50
 0
 0
@@ -505,7 +505,39 @@ TEXT
 40
 1.6
 1
-E3: DISP12 to the HDMI board, rails through the plate slot to the rear lay
+E3: DISP12 to the HDMI board (Micro-Fit 3.0)
+50
+0
+0
+LINE
+8
+CENTER
+10
+108
+20
+37
+30
+0
+11
+128
+21
+37
+31
+0
+0
+TEXT
+8
+TEXT
+10
+108
+20
+49
+30
+0
+40
+1.6
+1
+E4: rear-layer harness through plate slot SL2 (S04, S13, S14, S17, S18, S2
 50
 0
 0

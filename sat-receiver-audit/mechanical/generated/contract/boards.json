@@ -95,7 +95,7 @@
             0,
             136
           ],
-          "use": "battery (Micro-Fit 3.0), BMS and IP2368 leads"
+          "use": "battery circuit (Mini-Fit Jr., 18 AWG), BMS and IP2368 leads"
         },
         {
           "edge": "right",
@@ -103,7 +103,7 @@
             0,
             35
           ],
-          "use": "blower, BMS, column harness (JST PH)"
+          "use": "blower, BMS, CTRL harness S02 (JST PH, Micro-Fit); bottom-row ports and GX16 through plate slot SL3"
         },
         {
           "edge": "top",
@@ -111,7 +111,16 @@
             0,
             42
           ],
-          "use": "DISP12 to the HDMI board, rails through the plate slot to the rear layer (Micro-Fit 3.0 for >=2 A)"
+          "use": "DISP12 to the HDMI board (Micro-Fit 3.0)"
+        },
+        {
+          "edge": "top",
+          "at": 35,
+          "span": [
+            108,
+            128
+          ],
+          "use": "rear-layer harness through plate slot SL2 (S04, S13, S14, S17, S18, S20-S22, S35; JST PH, Micro-Fit)"
         }
       ],
       "thermal_bond_mm": [
@@ -235,7 +244,7 @@
             20,
             180
           ],
-          "use": "U.FL / MHF to the panel pigtails P1..P8 (build/15: U.FL + coax to panel SMA where the edge is not on the panel)"
+          "use": "U.FL/MHF1 to the panel pigtails of P2, P3 and P6 (plus P1 if L401 stays, W2-02) and the 75-ohm W402 end of ch5 (P4); P4 F and P5 BNC are bulkhead adapters with W402/W408, P7 is the Taoglas CAB.011 end at the LC76G, P8 is the Adam Tech CA-DKCA1-305L5-APAJ assembly into A403 (parts DB; build/15 'RF-порти')"
         },
         {
           "edge": "bottom",
@@ -339,7 +348,7 @@
           "facing": "+z"
         }
       },
-      "mount": "M2.5 screws into front-shell bosses",
+      "mount": "M2.5 screws into CNC Kitchen TC-M2,5x4 inserts in the front-shell bosses",
       "edge_zones": [
         {
           "edge": "left",
@@ -365,7 +374,7 @@
     "ENC": {
       "name": "encoder daughterboard (PEC11R-4220F-S0024), same design x2 + 1 spare",
       "domains": [
-        "CTRL_HMI (SW/encoder contacts)"
+        "ENC"
       ],
       "outline_mm": [
         [
@@ -418,7 +427,7 @@
           "facing": "+z"
         }
       },
-      "mount": "2x M2.5 into front-shell bosses",
+      "mount": "2x M2.5 into CNC Kitchen TC-M2,5x4 inserts in the front-shell bosses",
       "edge_zones": [
         {
           "edge": "left",

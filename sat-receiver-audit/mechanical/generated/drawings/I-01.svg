@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="297mm" height="210mm" viewBox="0 0 297 210">
 <title>I-01 Пак IMU: Hammond 1550Z101 — свердління, плати, осі</title>
-<desc>SR-RX-v2.1 mechanical drawing, scale 2:1, mm. MODEL FIT ONLY. params 1feb6fd68ccf</desc>
+<desc>SR-RX-v2.1 mechanical drawing, scale 2:1, mm. MODEL FIT ONLY. params 8c4e291cf3a1</desc>
 <rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
 <line x1="30" y1="170" x2="118.56" y2="170" stroke="#000" stroke-width="0.5" fill="none"/>
 <line x1="118.56" y1="170" x2="118.56" y2="91.44" stroke="#000" stroke-width="0.5" fill="none"/>
@@ -17,6 +17,11 @@
 <line x1="33.6" y1="105.2" x2="33.6" y2="156.4" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
 <text x="35.6" y="154.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">BNO085</text>
 <text x="87.6" y="154.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">RP2040-Zero</text>
+<line x1="34" y1="169" x2="114.56" y2="169" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="114.56" y1="169" x2="114.56" y2="157" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="114.56" y1="157" x2="34" y2="157" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="34" y1="157" x2="34" y2="169" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<text x="52" y="165.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="1.96" text-anchor="start" fill="#000">носійна плата IMU_CARRIER (резерв)</text>
 <circle cx="74.28" cy="130.72" r="6.6" stroke="#000" stroke-width="0.35" fill="none"/>
 <line x1="64.68" y1="130.72" x2="83.88" y2="130.72" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
 <line x1="74.28" y1="140.32" x2="74.28" y2="121.12" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
@@ -81,12 +86,13 @@
 <text x="141" y="179" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення I-01 · масштаб 2:1 · мм · допуск ±0.2, якщо не вказано</text>
 <text x="141" y="186" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: литий Al (Hammond 1550Z101), латунні гвинти кришк…</text>
 <text x="141" y="193" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
-<text x="141" y="200" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 1feb6fd68ccf · v1.0.0</text>
+<text x="141" y="200" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 8c4e291cf3a1 · v1.0.0</text>
 <text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">Пак IMU: Hammond 1550Z101 — свердління, плати, осі</text>
 <text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">2:1</text>
 <text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Осі паку: +X — стрілка на кришці (бортове візування антени), +Z — з кришки, +Y = Z x X (правий трійник).</text>
 <text x="12" y="28.6" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">BNO085 ставиться так, щоб осі мікросхеми збігалися з осями паку (матриця chip_to_pack = I); знаки й орієнтацію перевіряє стенд (OPEN).</text>
 <text x="12" y="32.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Дно: отвір ⌀6.6 під 1/4-20; носій (STL) з латунною вставкою 1/4-20 x 12.7, гвинти M3 у вставки; плати на стійках 13 мм над носієм.</text>
-<text x="12" y="35.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Стінка y_max: SKINTOP MS-SC-M12 ⌀12.2; шов кришки — провідна фольгова стрічка; момент гвинтів кришки 50-75 cN·m (креслення Hammond).</text>
-<text x="12" y="39.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: литий Al (Hammond 1550Z101), латунні гвинти кришки M4</text>
+<text x="12" y="35.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Носійна плата IMU_CARRIER (U552, D502, C519, C520, деталі E3 External IMU) — смуга вздовж стінки y_min під платами, на тих самих гвинтах M3 (резерв, розкладка — хвиля 2).</text>
+<text x="12" y="39.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Стінка y_max: SKINTOP MS-SC-M12 ⌀12.2; шов кришки — провідна фольгова стрічка; момент гвинтів кришки 50-75 cN·m (креслення Hammond).</text>
+<text x="12" y="43" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: литий Al (Hammond 1550Z101), латунні гвинти кришки M4</text>
 </svg>
