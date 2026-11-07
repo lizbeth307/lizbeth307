@@ -46,7 +46,7 @@
   "blocking_issue_records": 39,
   "blocking_issue_types": {
     "host_pads_unconnected": 2,
-    "interface_mounting_unresolved": 26,
-    "physical_interface_or_rework_unresolved": 11
+    "interface_mounting_unresolved": 27,
+    "physical_interface_or_rework_unresolved": 10
   }
 }

@@ -19,13 +19,13 @@
 | Переріз силових проводів у роз'ємах | мережа з бюджетом струму: у PH — AWG 24 (JST дає номінал 2 A лише для #24), у Micro-Fit — AWG 20, у Mini-Fit Jr. — AWG 18 (Molex дає номінал без перерізу — береться найтовщий, який приймає клема); сигнали — найтонший дозволений | JST-PH; MOLEX-43030; MOLEX-5556 |
 | Мінімум кола батареї | мережі E1_N, E1_SHUNT_P, E1_SW і їхнє повернення GND — не тонше 18 AWG | E1.json F101: «18 AWG. Тримач та інтерконекти мають витримувати ≥7.5 A» |
 | Перехресна перевірка перерізу | 20 AWG у джгуті ≥15 проводів при 70 °C у вакуумі — 3.7 A на провід | NASA-19990009916 (https://ntrs.nasa.gov/citations/19990009916, прочитано 24.10.2026) |
-| Ізоляція | PTFE, луджена мідь багатодротова, ≥200 °C; тип і MPN — TBD (немає в базі деталей: assembly_items AI-WIRE-PTFE); ⌀ ізоляції в межах клеми | рішення asm |
+| Ізоляція | PTFE, посріблена мідь багатодротова, −60…+200 °C (Alpha Wire, assembly_items AI-WIRE-PTFE): 26 AWG 5853, 20 AWG 5856 і 18 AWG 5857 — MIL-W-16878/4 type E, 24 AWG 2844/7 — MIL-W-16878/6 type ET; ⌀ ізоляції в межах клеми; артикул за кольором — підсумок закупівлі | рішення asm |
 | Колір | чорний GND, коричневий батарея/N/SW, жовтий 12 V, червоний 5 V, помаранчевий 3.3 V, рожевий bias 4.3 V, фіолетовий LNB/Boni, синій SDA, білий SCL та інше, зелений UART/IMU, сірий EN, блакитний FAULT/PG; колір лише допоміжний | рішення asm |
 | Маркер | друкований термоусадковий маркер з ID проводу на обох кінцях, ≤20 мм від клеми (build/18) | build/15 «Маркування» |
 | Довжина | траса з моделі корпусу + запас на вигини + 2 × 15 мм сервісної петлі (mechanical/generated/harness-routes.json, MODEL ESTIMATE); «кінець попередній» — роз'єм на крайовій зоні плати або модуль без конверту, доки немає їхніх позицій; де траси ще немає — TBD (CAD) | рішення asm; mechanical/params/mechanical.json harness_routes |
 | Розвантаження натягу | стяжка до пластини або бобишки ≤30 мм від кожного роз'єму, далі кожні 50–80 мм; силові джгути не ближче 20 мм до РЧ-відсіку й фідера GNSS; джгути між лицьовим і тильним шаром — лише крізь прорізи пластини з кантом: SL1 (стрічка S01 над верхнім краєм Q6A), SL2 (PWR/CTRL → тильний шар: S03, S04, S13–S15, S17, S18, S20–S22, S24, S25, S30, S35), SL3 (нижній ряд портів, GX16, PD-провід: S11, S23, S32, S34); ширина й межі прорізів — креслення M-07 | рішення asm; mechanical/params/mechanical.json plate slots |
 | Пайка до модулів | лудити, паяти, термоусадка 2:1 на кожному з'єднанні (як J21, 08 крок 7.7); жилу не згинати біля пайки | 08 крок 7.7 |
-| Інструмент | Mini-Fit Jr.: Molex 638190901 (18–24 AWG); екстрактор 11030044; Micro-Fit: Molex 0638190000; екстрактор 0011030043; PH: ручний інструмент JST для SPH-002T-P0.5S — TBD (каталог ePH називає лише аплікатор APLMK SPH002-05S / машину AP-K2N) | MOLEX-5556; MOLEX-43030; JST-PH |
+| Інструмент | Mini-Fit Jr.: Molex 638190901 (18–24 AWG); екстрактор 11030044; Micro-Fit: Molex 0638190000; екстрактор 0011030043; PH: JST WC-240 (секції 30-28, 26, 24 AWG; зачистка 2.2 мм; assembly_items AI-JST-PH-TOOL) | MOLEX-5556; MOLEX-43030; JST-PH |
 
 ## 2. Вузли
 
@@ -151,13 +151,13 @@
 | X04P1-RF | RF | S04 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650-0215 (C293740) | 43645-0200 (C114089) | 43030-0007 (C293530) | design/parts/parts.json harness_families MF; MOLEX-43030 |
 | X04S1-PWR | PWR | S04 | JST PH 2.0 мм | 7 | B7B-PH-K-S(LF)(SN) (C157981) | PHR-7 (C157951) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
 | X04S1-RF | RF | S04 | JST PH 2.0 мм | 7 | S7B-PH-K-S(LF)(SN) (C157917) | PHR-7 (C157951) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
-| X05J1-PWR | PWR | S05 | Molex Mini-Fit Jr. (дворядна) | 2 | 0039288020 (DigiKey WM23800-ND); серія 5566, вертикальна, 2×1 | 0039012020 (DigiKey WM3700-ND); серія 5557, 2 конт. | 0039000060 (пакет) / 0039000059 (котушка) | MOLEX-5556; MOLEX-5566; DIGIKEY-MFJ |
+| X05J1-PWR | PWR | S05 | Molex Mini-Fit Jr. (дворядна) | 2 | 0039288020 (C490534) | 0039012020 (C277599) | 0039000060 (C504840) | design/parts/parts.json harness_families MFJ; MOLEX-5556 |
 | X05S1-PWR | PWR | S05 | JST PH 2.0 мм | 2 | B2B-PH-K-S(LF)(SN) (C131337) | PHR-2 (C157955) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
-| X06J1-PWR | PWR | S06 | Molex Mini-Fit Jr. (дворядна) | 2 | 0039288020 (DigiKey WM23800-ND); серія 5566, вертикальна, 2×1 | 0039012020 (DigiKey WM3700-ND); серія 5557, 2 конт. | 0039000060 (пакет) / 0039000059 (котушка) | MOLEX-5556; MOLEX-5566; DIGIKEY-MFJ |
+| X06J1-PWR | PWR | S06 | Molex Mini-Fit Jr. (дворядна) | 2 | 0039288020 (C490534) | 0039012020 (C277599) | 0039000060 (C504840) | design/parts/parts.json harness_families MFJ; MOLEX-5556 |
 | X06S1-PWR | PWR | S06 | JST PH 2.0 мм | 5 | B5B-PH-K-S(LF)(SN) (C157993) | PHR-5 (C157953) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
-| X07J1-PWR | PWR | S07 | Molex Mini-Fit Jr. (дворядна) | 2 | 0039288020 (DigiKey WM23800-ND); серія 5566, вертикальна, 2×1 | 0039012020 (DigiKey WM3700-ND); серія 5557, 2 конт. | 0039000060 (пакет) / 0039000059 (котушка) | MOLEX-5556; MOLEX-5566; DIGIKEY-MFJ |
+| X07J1-PWR | PWR | S07 | Molex Mini-Fit Jr. (дворядна) | 2 | 0039288020 (C490534) | 0039012020 (C277599) | 0039000060 (C504840) | design/parts/parts.json harness_families MFJ; MOLEX-5556 |
 | X07S1-PWR | PWR | S07 | JST PH 2.0 мм | 3 | B3B-PH-K-S(LF)(SN) (C131339) | PHR-3 (C265393) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
-| X10J1-PWR | PWR | S10 | Molex Mini-Fit Jr. (дворядна) | 4 | 0039288040 (DigiKey WM23801-ND); серія 5566, вертикальна, 2×2 | 0039012040 (DigiKey WM3701-ND); серія 5557, 4 конт. | 0039000060 (пакет) / 0039000059 (котушка) | MOLEX-5556; MOLEX-5566; DIGIKEY-MFJ |
+| X10J1-PWR | PWR | S10 | Molex Mini-Fit Jr. (дворядна) | 4 | 0039288040 (C240829) | 0039012040 (C277696) | 0039000060 (C504840) | design/parts/parts.json harness_families MFJ; MOLEX-5556 |
 | X10S1-PWR | PWR | S10 | JST PH 2.0 мм | 4 | B4B-PH-K-S(LF)(SN) (C131334) | PHR-4 (C111514) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
 | X11P1-PWR | PWR | S11 | Molex Micro-Fit 3.0 (1 ряд, 3.00 мм) | 2 | 43650-0215 (C293740) | 43645-0200 (C114089) | 43030-0007 (C293530) | design/parts/parts.json harness_families MF; MOLEX-43030 |
 | X11S1-PWR | PWR | S11 | JST PH 2.0 мм | 2 | B2B-PH-K-S(LF)(SN) (C131337) | PHR-2 (C157955) | SPH-002T-P0.5S (C111515) | design/parts/parts.json harness_families PH; JST-PH |
@@ -451,7 +451,7 @@
 |---|---|---|---|
 | E4_HFP_ANT | RF: K401.6; HFP: A414.ANT | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_HF_BT | RF: K401.3; BONI: A406.RF | перемичка/перехідник SMA — TBD (CAD) | без DC |
-| E4_HF_CM | RF: R4440.1, R4468.1; BONI: A406.ANT; W408: W408.OUT_CENTER | W408 (RG316 common-mode choke FT240-77 +2631102002) | DC 13.8 V лише в профілі Boni |
+| E4_HF_CM | RF: R4440.1, R4468.1; BONI: A406.ANT; W408: W408.OUT_CENTER | W408 (RG316 common-mode choke FT240-77 +2631102002; купується Amphenol RF 135101-01-M1.00) | DC 13.8 V лише в профілі Boni |
 | E4_LIME_REF | LIME: A415.J4_REF_IN; W405: W405.END_B | W405 (REF IN → J4 MHF4 coax; купується Taoglas CAB.01075) | без DC |
 | E4_LIME_RX2 | A409: A409.IN; J414: J414.CENTER; W424: W424.PANEL | W424 (RG316 SMA-M/M 1.00 m pod → RX2; купується Amphenol RF 135101-01-M1.00) | без DC |
 | E4_LIME_TX | LIME: A415.X1_TX; W406: W406.END_A | W406 (CAB.01075 X1 → ANNE-50+ captive coax; купується Taoglas CAB.01075) | без DC |
@@ -465,7 +465,7 @@
 | E4_P3 | RF: C411.1, L404.1, R4430.1, R4464.1; A419: A419.OUT; J403: J403.CENTER | перемичка/перехідник SMA — TBD (CAD) | DC 4.3 V (ch3 → активна L-band антена/LNA) |
 | E4_P3_ANT | A419: A419.IN; J417: J417.CENTER | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_P4 | J404: J404.CENTER; W401: W401.END_B; W402: W402.END_A | W401 (Goobay 58814 75 Ω F-F 1 m; купується Goobay 58814), W402 (75 Ω shielded internal IF coax) | DC 13.2 V (LNB) |
-| E4_P5 | J405: J405.CENTER; W408: W408.IN_CENTER | W408 (RG316 common-mode choke FT240-77 +2631102002) | DC 13.8 V лише в профілі Boni |
+| E4_P5 | J405: J405.CENTER; W408: W408.IN_CENTER | W408 (RG316 common-mode choke FT240-77 +2631102002; купується Amphenol RF 135101-01-M1.00) | DC 13.8 V лише в профілі Boni |
 | E4_P6 | RF: K402.3, L407.1; J406: J406.CENTER | перемичка/перехідник SMA — TBD (CAD) | без DC |
 | E4_P8 | A403: A403.IN; J408: J408.CENTER | J408: Adam Tech CA-DKCA1-305L5-APAJ (база деталей, складська збірка) | без DC |
 | E4_REF_IN | J415: J415.CENTER; W405: W405.END_A | W405 (REF IN → J4 MHF4 coax; купується Taoglas CAB.01075) | без DC |
@@ -520,7 +520,7 @@
 6. Гілки LAB5 (CTRL, RF, хаб, IMU) захищені лише загальним F102 4 A; у зовнішньому кабелі IMU (HELU 4×0.14 мм²) окремої межі струму немає — рекомендовано PTC/ключ на гілці IMU (власник E5).
 7. J503: тривалий струм J21 2.5 A на одному контакті Micro-Fit (50 % від 5 A); межа захисту 4 A (F201) — 80 %; приймання — прогрів J503 у тесті Ж-04/Ж-11.
 8. KEY у S16 — 24 AWG замість 26–28 AWG STACK §5.8: найтонший переріз, сумісний з клемами Micro-Fit 20–24 AWG у J503 (примітка E5 J503 і build/15 «Живлення ≥2 A»); у S15 KEY приходить на плату лючка в роз'єм PH (сигнальний провід).
-9. Коло батареї (S05–S07, S10) — 18 AWG за приміткою E1 F101; клеми Micro-Fit 3.0 беруть лише 20–24 AWG, тому силові роз'єми цих сегментів на PWR — Mini-Fit Jr. (клема 0039000060, 18–24 AWG, 9.0 A; вилка 5566/5569) — відхилення від build/15 «Micro-Fit для живлення», записане в build/15; коди розеток 5557 і вертикальних вилок 5566 на 2 і 4 контакти прочитано на DigiKey DE 07.11.2026 (0039012020/0039012040, 0039288020/0039288040, DIGIKEY-MFJ), у harness_families бази їх немає, бо там лише записи LCSC; кілочки PCB і посадкове місце — хвиля 2 (W2-01).
+9. Коло батареї (S05–S07, S10) — 18 AWG за приміткою E1 F101; клеми Micro-Fit 3.0 беруть лише 20–24 AWG, тому силові роз'єми цих сегментів на PWR — Mini-Fit Jr. (клема 0039000060, 18–24 AWG, 9.0 A; вилка 5566/5569) — відхилення від build/15 «Micro-Fit для живлення», записане в build/15; розетки 5557, вертикальні вилки 5566 на 2 і 4 контакти й клема — родина MFJ бази (harness_families, LCSC і DigiKey DE, W2 SRC-1); посадкові місця — Connector_Molex 5566-02A/-04A без кілочків за відображенням бібліотеки KiCad (креслення Molex не прочитано) — звірити до розкладки PWR.
 10. F101 стоїть на носійній платі PACK_FUSE біля плюса паку (група E1 «Пак 4S1P», STACK D2 «біля батареї»), тож усі провідники кола батареї поза паком (S05–S07, S10) — нижче F101 і розраховані на 7.5 A; провід BT104.+ → F101.1 захищає лише BMS (DOCP 40±10 A) — найкоротший, 18 AWG.
 11. 18 AWG у клемах VIN± модуля Adafruit 5832 (S06): сумісність клемника з 18 AWG не перевірено (документ Adafruit не прочитано) — інакше паяти до майданчиків VIN± модуля.
 12. E1-05 (запас LT3045): U108, F102, L101 і пара LT3045 стоять на PWR, тож опір LAB5 E1→E2 ≤10 mΩ (E1-05: «кожні 10 mΩ — 32 mV при 3.2 A») — вимога до міді й доріжок PWR (PCB), джгута в цьому шляху немає; холодний опір F102 ≤10 mΩ лишається відкритим (MPN). U107 (SYS12) і U108 впаяно в PWR на проставці гребінки (деталі низу модуля 1.8 мм за кресленням Pololu), тож сегмента S08 немає (build/15 «Кількість плат»).

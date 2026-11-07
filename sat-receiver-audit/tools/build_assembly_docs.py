@@ -567,13 +567,6 @@ def connector_parts(model, conn):
     header = db_item(model, fam, n, header_style(conn))
     if fam == "FAN3":
         return fam_d["housing"], header, "—", src
-    if fam == "MFJ":
-        read = fam_d.get("parts", {}).get(n)
-        if read:  # codes read on a distributor page (assembly_data SOURCES DIGIKEY-MFJ), not in harness_families (LCSC only)
-            return (f"{read['housing']}; серія 5557, {n} конт.", f"{read['header']}; серія 5566, вертикальна, 2×{n // 2}",
-                    fam_d["terminal"], "MOLEX-5556; MOLEX-5566; DIGIKEY-MFJ")
-        return (db_item(model, fam, n, "housing") + f"; серія 5557, {n} конт.", db_item(model, fam, n, "header") + f"; серія 5566/5569, 2×{n // 2}",
-                fam_d["terminal"], "MOLEX-5556; MOLEX-5566")
     terminal = db_item(model, fam, n, "terminal") if fam in CRIMP else "—"
     return db_item(model, fam, n, "housing"), header, terminal, src
 
@@ -803,8 +796,8 @@ HARNESS_FINDINGS = [
     "«Живлення ≥2 A»); у S15 KEY приходить на плату лючка в роз'єм PH (сигнальний провід).",
     "Коло батареї (S05–S07, S10) — 18 AWG за приміткою E1 F101; клеми Micro-Fit 3.0 беруть лише 20–24 AWG, тому силові роз'єми цих "
     "сегментів на PWR — Mini-Fit Jr. (клема 0039000060, 18–24 AWG, 9.0 A; вилка 5566/5569) — відхилення від build/15 «Micro-Fit для "
-    "живлення», записане в build/15; коди розеток 5557 і вертикальних вилок 5566 на 2 і 4 контакти прочитано на DigiKey DE 07.11.2026 (0039012020/"
-    "0039012040, 0039288020/0039288040, DIGIKEY-MFJ), у harness_families бази їх немає, бо там лише записи LCSC; кілочки PCB і посадкове місце — хвиля 2 (W2-01).",
+    "живлення», записане в build/15; розетки 5557, вертикальні вилки 5566 на 2 і 4 контакти й клема — родина MFJ бази (harness_families, LCSC і "
+    "DigiKey DE, W2 SRC-1); посадкові місця — Connector_Molex 5566-02A/-04A без кілочків за відображенням бібліотеки KiCad (креслення Molex не прочитано) — звірити до розкладки PWR.",
     "F101 стоїть на носійній платі PACK_FUSE біля плюса паку (група E1 «Пак 4S1P», STACK D2 «біля батареї»), тож усі провідники кола батареї поза паком "
     "(S05–S07, S10) — нижче F101 і розраховані на 7.5 A; провід BT104.+ → F101.1 захищає лише BMS (DOCP 40±10 A) — найкоротший, 18 AWG.",
     "18 AWG у клемах VIN± модуля Adafruit 5832 (S06): сумісність клемника з 18 AWG не перевірено (документ Adafruit не прочитано) — "
@@ -855,6 +848,21 @@ def spares(n):
     return max(math.ceil(n * SPARE_PCT / 100), SPARE_MIN)
 
 
+def wire_part(awg, colour, families):
+    """Orderable hook-up wire of a gauge and colour (assembly_data WIRE), or TBD with the reason: the insulation OD range
+    (nominal +/- tolerance) must fit every crimp terminal family the gauge ends in."""
+    if awg not in D.WIRE:
+        return f"TBD (немає в базі деталей: {awg} AWG немає серед серій AI-WIRE-PTFE)"
+    item, kind, od, tol = D.WIRE[awg]
+    for fam in sorted(families):
+        lo, hi = D.WIRE_INSULATION_RANGE.get(fam, (None, None))
+        if (lo is not None and od - tol < lo) or (hi is not None and od + tol > hi):
+            return f"TBD (немає в базі деталей: Alpha Wire {item} ⌀{od:.2f} ±{tol:.2f} мм поза межами ізоляції клеми {fam}, AI-WIRE-PTFE)"
+    code = D.WIRE_COLOUR_CODE.get(colour)
+    swap = "" if code else f"; кольору «{colour}» у серії немає — білий, розрізнення за маркером (build/18)"
+    return f"Alpha Wire {item} {code or 'WH'}{D.WIRE_PUTUP} ({kind}, ⌀{od:.2f} ±{tol:.2f} мм, котушка 100 ft){swap}"
+
+
 def rollup_rows(model, h):
     """Purchase quantities of the harness: headers and housings of the generated board connectors, crimp terminals of their
     wire ends and wires per gauge and colour. Mates of graph connectors (J302) and the graph connectors themselves are bought
@@ -881,13 +889,14 @@ def rollup_rows(model, h):
         tmpl = {"conn": {"family": fam, "pins": 2, "unit": "", "mate_of": ""}}
         terminal = connector_parts(model, tmpl["conn"])[2]
         add(fam, "", "клема", terminal, "кінці проводів на роз'ємах X цієї таблиці", n)
-    wires = defaultdict(int)
+    wires, wire_ends = defaultdict(int), defaultdict(set)
     for w in h.wires:
         if "IDC" in (w["family_from"], w["family_to"]) or "CABLE" in (w["family_from"], w["family_to"]) or "FAN3" in (w["family_from"], w["family_to"]):
             continue
         wires[(int(w["awg"]), w["colour"])] += 1
+        wire_ends[int(w["awg"])] |= {w["family_from"], w["family_to"]}
     for (awg, col), n in sorted(wires.items(), key=lambda kv: (-kv[0][0], kv[0][1])):
-        add("провід", "", f"{awg} AWG, {col}", "TBD (немає в базі деталей: тип дроту не обрано, assembly_items AI-WIRE-PTFE)", "кількість жил; довжина — TBD (CAD)", n)
+        add("провід", "", f"{awg} AWG, {col}", wire_part(awg, col, wire_ends[awg]), "кількість жил; довжина — TBD (CAD)", n)
     rows = []
     order = {"IDC": 0, "MFJ": 1, "MF": 2, "PH": 3, "FAN3": 4, "провід": 5}
     for (fam, pins, role, mpn, note), n in sorted(count.items(), key=lambda kv: (order.get(kv[0][0], 9), kv[0][1] == "", kv[0][1] or 0, kv[0][2])):

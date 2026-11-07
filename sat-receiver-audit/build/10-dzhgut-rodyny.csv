@@ -43,3 +43,8 @@
 "IDC","40","header_top","Lian Xin Technology","XDFH-0254-2*20P","C19193815","1469","0.5616","Connector_IDC:IDC-Header_2x20_P2.54mm_Vertical",""
 "IDC","40","housing","Lian Xin Technology","XDFH-0258-2*20P","C53309344","1160","0.2515","",""
 "FAN3","3","header_top","Molex","22-27-2031","C471416","11438","0.1868","Connector_Molex:Molex_KK-254_AE-6410-03A_1x03_P2.54mm_Vertical",""
+"MFJ","","terminal","Molex","0039000060","C504840","2","0.0925","","LCSC 2 шт., DigiKey DE 45 203 шт. на 07.11.2026"
+"MFJ","2","header_top","Molex","0039288020","C490534","6700","0.1948","Connector_Molex:Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical",""
+"MFJ","2","housing","Molex","0039012020","C277599","180905","0.0503","",""
+"MFJ","4","header_top","Molex","0039288040","C240829","3818","0.3305","Connector_Molex:Molex_Mini-Fit_Jr_5566-04A_2x02_P4.20mm_Vertical",""
+"MFJ","4","housing","Molex","0039012040","C277696","43000","0.0584","",""

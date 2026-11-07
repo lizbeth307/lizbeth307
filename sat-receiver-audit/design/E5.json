@@ -622,6 +622,9 @@
       "group": "CH334F і USB2 кабелі",
       "source": "STACK.md §5.2 / engineering design",
       "status": "design",
+      "mpn": "10-02333",
+      "manufacturer": "Tensility",
+      "alt_mpn": "Tensility 10-02351",
       "pins": [
         {
           "number": "1",

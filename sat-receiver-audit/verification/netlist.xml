@@ -17476,12 +17476,18 @@
       <description>Functional interface with logical connector names; no implied physical PCB pin numbering.</description>
       <fields>
         <field name="ReviewStatus">module</field>
+        <field name="MPN">135101-01-M1.00</field>
+        <field name="Manufacturer">Amphenol RF</field>
+        <field name="Alt_MPN">Molex 0732305316</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK §5.3; corrected draft; sources listed on E4 and in E4-review.md</field>
         <field name="Description">Functional interface with logical connector names; no implied physical PCB pin numbering.</field>
       </fields>
       <libsource lib="sr_rx_v2_completed" part="C_W408" description="Functional interface with logical connector names; no implied physical PCB pin numbering. | module | The center conductor and shield both pass through the cores as one continuous coax. This is a common-mode impedance, not a series RF choke."/>
       <property name="ReviewStatus" value="module"/>
+      <property name="MPN" value="135101-01-M1.00"/>
+      <property name="Manufacturer" value="Amphenol RF"/>
+      <property name="Alt_MPN" value="Molex 0732305316"/>
       <property name="Sheetname" value="E4"/>
       <property name="Sheetfile" value="E4.kicad_sch"/>
       <sheetpath names="/E4/" tstamps="/8f7e80ea-aee4-5257-bec3-c2e6ba73b52d/"/>
@@ -24075,12 +24081,18 @@
       <datasheet>STACK.md §5.2 / engineering design</datasheet>
       <fields>
         <field name="ReviewStatus">design</field>
+        <field name="MPN">10-02333</field>
+        <field name="Manufacturer">Tensility</field>
+        <field name="Alt_MPN">Tensility 10-02351</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK.md §5.2 / engineering design</field>
         <field name="Description"/>
       </fields>
       <libsource lib="sr_rx_v2_completed" part="C_J544" description="| design | Endpoint only, Airspy module on E4. Two Fair-Rite2631480002 sleeves surround complete cable including power/data; sleeves are common-mode mechanical ferrites, not a series DC component."/>
       <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="10-02333"/>
+      <property name="Manufacturer" value="Tensility"/>
+      <property name="Alt_MPN" value="Tensility 10-02351"/>
       <property name="Sheetname" value="E5"/>
       <property name="Sheetfile" value="E5.kicad_sch"/>
       <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
