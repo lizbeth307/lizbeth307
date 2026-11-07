@@ -12,12 +12,12 @@ on:
     paths: ['sat-receiver-audit/design/**', 'sat-receiver-audit/build/kicad/footprints/**', 'sat-receiver-audit/pcb/**', 'sat-receiver-audit/tools/build_parts.py',
             'sat-receiver-audit/tools/make_footprints.py', 'sat-receiver-audit/tools/check_parts_availability.py', 'sat-receiver-audit/build/10-*',
             'sat-receiver-audit/build/16-dzhgut-pidsumok.csv', 'sat-receiver-audit/tools/assembly_data.py', 'sat-receiver-audit/tools/build_assembly_docs.py',
-            '.github/workflows/sr-rx-parts.yml']
+            'sat-receiver-audit/mechanical/generated/harness-routes.json', '.github/workflows/sr-rx-parts.yml']
   pull_request:
     paths: ['sat-receiver-audit/design/**', 'sat-receiver-audit/build/kicad/footprints/**', 'sat-receiver-audit/pcb/**', 'sat-receiver-audit/tools/build_parts.py',
             'sat-receiver-audit/tools/make_footprints.py', 'sat-receiver-audit/tools/check_parts_availability.py', 'sat-receiver-audit/build/10-*',
             'sat-receiver-audit/build/16-dzhgut-pidsumok.csv', 'sat-receiver-audit/tools/assembly_data.py', 'sat-receiver-audit/tools/build_assembly_docs.py',
-            '.github/workflows/sr-rx-parts.yml']
+            'sat-receiver-audit/mechanical/generated/harness-routes.json', '.github/workflows/sr-rx-parts.yml']
   workflow_dispatch:
     inputs:
       availability_snapshot:

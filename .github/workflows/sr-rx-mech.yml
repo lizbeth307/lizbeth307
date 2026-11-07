@@ -9,9 +9,13 @@ name: SR-RX mechanical model
 on:
   push:
     branches: ['codex/**', 'ccr-*', 'wip/**']
-    paths: ['sat-receiver-audit/mechanical/**', 'sat-receiver-audit/pcb/generated/components.csv', 'sat-receiver-audit/build/16-dzhgut-rozyemy.csv', 'sat-receiver-audit/build/16-dzhgut.csv', '.github/workflows/sr-rx-mech.yml']
+    paths: ['sat-receiver-audit/mechanical/**', 'sat-receiver-audit/pcb/generated/components.csv', 'sat-receiver-audit/build/16-dzhgut-rozyemy.csv', 'sat-receiver-audit/build/16-dzhgut.csv',
+            'sat-receiver-audit/build/kicad/footprints/**', 'sat-receiver-audit/design/E*.json', 'sat-receiver-audit/pcb/generated/partition.json',
+            'sat-receiver-audit/pcb/partition-spec.json', '.github/workflows/sr-rx-mech.yml']
   pull_request:
-    paths: ['sat-receiver-audit/mechanical/**', 'sat-receiver-audit/pcb/generated/components.csv', 'sat-receiver-audit/build/16-dzhgut-rozyemy.csv', 'sat-receiver-audit/build/16-dzhgut.csv', '.github/workflows/sr-rx-mech.yml']
+    paths: ['sat-receiver-audit/mechanical/**', 'sat-receiver-audit/pcb/generated/components.csv', 'sat-receiver-audit/build/16-dzhgut-rozyemy.csv', 'sat-receiver-audit/build/16-dzhgut.csv',
+            'sat-receiver-audit/build/kicad/footprints/**', 'sat-receiver-audit/design/E*.json', 'sat-receiver-audit/pcb/generated/partition.json',
+            'sat-receiver-audit/pcb/partition-spec.json', '.github/workflows/sr-rx-mech.yml']
   workflow_dispatch:
 
 permissions:
