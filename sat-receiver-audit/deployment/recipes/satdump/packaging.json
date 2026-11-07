@@ -44,7 +44,8 @@
   "resources/pipelines/FengYun-2.json": "bd47ba9a013cdcaf38cbb2d419743ffda52e3a72",
   "resources/pipelines/Elektro_Arktika.json": "c36b3f80f3b41fec601e6213bdc7b43aabba6dbf",
   "src-core/db/kepler/kepler_utils.cpp": "b651019701681a617c09a9f42e990efc97927be9",
-  "src-core/db/iers/iers_handler.cpp": "f6ab7a6f411c6d7d356bf36ee1164eae916ee1ee"
+  "src-core/db/iers/iers_handler.cpp": "f6ab7a6f411c6d7d356bf36ee1164eae916ee1ee",
+  "src-core/core/config.cpp": "9ee8d402974d2d89a1a8a435ab684bc6c8b23af4"
  },
  "install": {
   "executable": "usr/bin/satdump",
@@ -140,7 +141,7 @@
   },
   {
    "id": "no-connect",
-   "how": "every satdump run of the runtime check under strace %network: zero connect()/sendto()/sendmsg()/bind() outside AF_UNIX; the cs16 decode of 2 s of synthetic noise reads its input",
+   "how": "every satdump run of the runtime check under strace %network: no socket()/socketpair() of a family other than AF_UNIX and zero connect()/sendto()/sendmsg()/bind() outside AF_UNIX (the decode unit's RestrictAddressFamilies=AF_UNIX); the cs16 decode of 2 s of synthetic noise reads its input",
    "status": "RUNTIME_CHECK"
   },
   {
@@ -150,7 +151,7 @@
   },
   {
    "id": "planted-pipelines-json",
-   "how": "pipelines.json (with syracuse3_tlm) and settings.json planted in the caller's working directory and HOME: opened when satdump runs there (positive control), never opened in the unit shape (empty working directory, private empty HOME)",
+   "how": "every user file SatDump 1aedd60 looks up (src-core/init.cpp:126 and :131-134, src-core/core/config.cpp:104-107, src-core/pipeline/pipeline.cpp:234-237) planted: pipelines.json (with syracuse3_tlm), settings.json and a copy of the packaged satdump_cfg.json in a caller working directory, pipelines.json and settings.json in a caller HOME/.config/satdump. Positive controls: satdump started in that directory opens its three files, satdump started with that HOME opens both of its files. Unit shape: with the runtime check's own working directory and HOME moved to the planted ones, satdump started with an empty working directory and a private empty HOME (the unit's WorkingDirectory= and Environment=HOME=) opens none of them and no satdump_cfg.json but the packaged one",
    "status": "RUNTIME_CHECK"
   },
   {
@@ -188,6 +189,8 @@
   "https://raw.githubusercontent.com/SatDump/SatDump/1aedd602055c154401384a8cc7876713bb371254/src-core/db/kepler/kepler_utils.cpp (ccsdsOmmToKepler: 17 fields split on ','; read 2026-11-07)",
   "https://raw.githubusercontent.com/SatDump/SatDump/1aedd602055c154401384a8cc7876713bb371254/src-core/pipeline/pipeline.cpp (user pipelines.json: working directory, then HOME/.config/satdump; read 2026-11-07)",
   "https://salsa.debian.org/dpkg-team/dpkg/-/raw/1.22.6/scripts/dpkg-shlibdeps.pl (unversioned SONAMEs ignored when no shlibs info exists; read 2026-11-07)",
-  "https://raw.githubusercontent.com/SatDump/SatDump/1aedd602055c154401384a8cc7876713bb371254/src-core/db/iers/iers_handler.cpp (honor_setting always true, updateIERS fetches two fixed HTTPS URLs; read 2026-11-07)"
+  "https://raw.githubusercontent.com/SatDump/SatDump/1aedd602055c154401384a8cc7876713bb371254/src-core/db/iers/iers_handler.cpp (honor_setting always true, updateIERS fetches two fixed HTTPS URLs; read 2026-11-07)",
+  "https://raw.githubusercontent.com/SatDump/SatDump/1aedd602055c154401384a8cc7876713bb371254/src-core/init.cpp (user path HOME/.config/satdump line 126; ./satdump_cfg.json loaded in place of the packaged config, lines 131-134; read 2026-11-07)",
+  "https://raw.githubusercontent.com/SatDump/SatDump/1aedd602055c154401384a8cc7876713bb371254/src-core/core/config.cpp (user settings.json: working directory, then HOME/.config/satdump, lines 104-107; read 2026-11-07)"
  ]
 }

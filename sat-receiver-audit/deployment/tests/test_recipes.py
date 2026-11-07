@@ -1157,11 +1157,13 @@ class SatDumpBuilderRecipeTests(unittest.TestCase):
         self.assertEqual(build_recipe.ci_view(self.data), {"heavy": True, "runtime_depends": ["binutils", "strace"], "tag_samples": []})
         with patch.object(build_recipe, "DEPLOYMENT", HERE):
             plan = build_recipe.ci_plan(LOCK)
-        self.assertEqual(plan["heavy"], ["satdump"])
+        # Only satdump's own place in the plan: other recipe packages add light or heavy recipes to the same tree.
+        self.assertIn("satdump", plan["heavy"])
+        self.assertNotIn("satdump", plan["light"])
         self.assertEqual(plan["recipes"]["satdump"]["chain"], ["satdump"])
         self.assertTrue(plan["recipes"]["satdump"]["runtime_check"])
         self.assertEqual(plan["skipped"], {})
-        self.assertEqual(plan["light"], ["limesuiteng", "rtlsdr"])
+        self.assertLessEqual({"limesuiteng", "rtlsdr"}, set(plan["light"]))
 
     def test_satdump_build_steps_hooks_and_packages(self):
         self.assertEqual(self.data["cmake"]["configure"], ["cmake", "-S", "{src}", "-B", "{build}", "-G", "Ninja"])
@@ -1187,9 +1189,10 @@ class SatDumpBuilderRecipeTests(unittest.TestCase):
         project = check_repo.PROJECT_PREFIX + "deployment/"
         plan = check_repo.plan([project + "recipes/satdump/runtime_check.py"], LOCK, False)
         self.assertEqual(plan["heavy_run"], ["satdump"])
-        self.assertEqual(plan["build"], ["limesuiteng", "rtlsdr", "satdump"])
-        self.assertEqual(check_repo.plan([project + "recipes/rtlsdr/recipe.json"], LOCK, False)["heavy_run"], [])
-        self.assertEqual(check_repo.plan([project + "recipes/README.md"], LOCK, False)["heavy_run"], [])
+        self.assertEqual(plan["build"], plan["light"] + ["satdump"])
+        # Another recipe's input never selects satdump (a heavy recipe whose chain holds rtlsdr may run).
+        self.assertNotIn("satdump", check_repo.plan([project + "recipes/rtlsdr/recipe.json"], LOCK, False)["heavy_run"])
+        self.assertNotIn("satdump", check_repo.plan([project + "recipes/README.md"], LOCK, False)["heavy_run"])
 
 
 if __name__ == "__main__":

@@ -6,6 +6,7 @@ heavy job). The runtime check itself runs only in the sr-rx-packages runtime chr
 constants are compared with the recipe, packaging.json and srrx.satdump_pass, and its strace parser
 is fed sample lines. The OMM CSV column order (omm-csv) is checked here against the pinned reader.
 """
+import contextlib
 import copy
 import csv
 import hashlib
@@ -355,6 +356,45 @@ class SourceAndPackageTests(unittest.TestCase):
             self.assertEqual(check_recipe.main(["package", "--root", str(root)]), 2)
         self.assertIn("data_file_digest:upstream-options.json", stdout.getvalue())
 
+    def test_the_template_with_an_evidence_id_passes_every_record_check(self):
+        # Only evidence_id is left to the administrator: filled with a well-formed id, the template gets past
+        # the schema and provenance step on any host and is refused only where the installed files are looked
+        # at. Against the staged tree as the installed one (decoder_policy's paths pointed at it, its root
+        # ownership checks and the ELF path relocated, nothing else changed) every check passes, and a
+        # changed digest of each kind is still refused.
+        root = self.stage().resolve()
+        out = self.root / "package-hook.json"
+        with patch("sys.stdout", new_callable=io.StringIO):
+            self.assertEqual(check_recipe.main(["package", "--root", str(root), "--manifest", str(out)]), 0)
+        template = build_recipe.hook_output(out)["installation_template"]
+        filled = dict(template, evidence_id="sr-rx-packages-42406828911")
+        self.assertTrue(decoder_policy._EVIDENCE.fullmatch(filled["evidence_id"]))
+        with self.assertRaises(decoder_policy.DecoderRefused) as refused:
+            decoder_policy._validate_satdump_installation(filled)
+        self.assertNotIn(str(refused.exception), {"INSTALLATION_SCHEMA", "INSTALLATION_VERSION_OR_PROVENANCE_UNVERIFIED",
+                                                  "SATDUMP_RECIPE_DIGEST_CHANGED", "SATDUMP_FILE_SET_NOT_ALLOWLISTED"})
+        install = self.packaging["install"]
+        installed = {"SATDUMP_CORE": install["core_library"], "SATDUMP_PLUGIN_DIR": install["plugin_dir"],
+                     "SATDUMP_PIPELINE_DIR": install["pipeline_dir"], "SATDUMP_RESOURCES": install["resources_dir"],
+                     "SATDUMP_CONFIG": install["config"]}
+        file_check = decoder_policy._file
+        staged = dict(filled, executable=str(root / install["executable"]))
+        with contextlib.ExitStack() as stack:
+            for name, relative in installed.items():
+                stack.enter_context(patch.object(decoder_policy, name, str(root / relative)))
+            stack.enter_context(patch.object(decoder_policy, "_admin_owned", lambda info: True))
+            stack.enter_context(patch.object(decoder_policy, "_admin_directories", lambda path: None))
+            stack.enter_context(patch.object(decoder_policy, "_file", lambda path, executable=False: file_check(path)))
+            self.assertEqual(decoder_policy._validate_satdump_installation(staged), Path(staged["executable"]))
+            plugin = sorted(staged["plugins"])[0]
+            for change, code in ((dict(sha256="0" * 64), "EXECUTABLE_DIGEST_CHANGED"), (dict(core_sha256="0" * 64), "SATDUMP_CORE_DIGEST_CHANGED"),
+                                 (dict(plugins=dict(staged["plugins"], **{plugin: "0" * 64})), "SATDUMP_FILE_DIGEST_CHANGED"),
+                                 (dict(resources_sha256="0" * 64), "SATDUMP_RESOURCES_DIGEST_CHANGED"),
+                                 (dict(config_sha256="0" * 64), "SATDUMP_CONFIG_DIGEST_CHANGED"),
+                                 (dict(recipe_sha256="0" * 64), "SATDUMP_RECIPE_DIGEST_CHANGED")):
+                with self.subTest(code=code), self.assertRaisesRegex(decoder_policy.DecoderRefused, code):
+                    decoder_policy._validate_satdump_installation(dict(staged, **change))
+
     def test_package_refuses_a_url_left_in_the_config(self):
         root = self.stage()
         config = root / self.packaging["install"]["config"]
@@ -441,8 +481,13 @@ class RuntimeCheckTests(unittest.TestCase):
             '103 socket(AF_INET, SOCK_DGRAM|SOCK_CLOEXEC|SOCK_NONBLOCK, IPPROTO_IP) = 6',
             '103 connect(6, {sa_family=AF_INET, sin_port=htons(53), sin_addr=inet_addr("127.0.0.53")}, 16) = -1 ENETUNREACH (Network is unreachable)',
             '103 sendto(7, "x", 1, 0, {sa_family=AF_INET6, sin6_port=htons(443)}, 28) = -1 ENETUNREACH (Network is unreachable)',
+            '104 socket(AF_NETLINK, SOCK_RAW|SOCK_CLOEXEC, NETLINK_ROUTE) = 8',
             '104 bind(8, {sa_family=AF_NETLINK, nl_pid=0, nl_groups=00000000}, 12) = 0',
             '104 +++ exited with 0 +++',
+            '105 socket(AF_UNIX, SOCK_STREAM|SOCK_CLOEXEC|SOCK_NONBLOCK, 0) = 9',
+            '105 socketpair(AF_UNIX, SOCK_STREAM, 0, [10, 11]) = 0',
+            '105 sendto(9, "y", 1, MSG_NOSIGNAL, NULL, 0) = 1',
+            '105 socket(PF_INET6, SOCK_STREAM, IPPROTO_TCP) = 12',
             '--- SIGCHLD {si_signo=SIGCHLD} ---',
         ])
         calls = runtime_check.parse_trace(trace)
@@ -450,9 +495,35 @@ class RuntimeCheckTests(unittest.TestCase):
         self.assertIn(("/usr/lib/satdump/plugins/libmeteor_support.so", 3), files)
         self.assertIn(("/usr/lib/satdump/plugins/libjemalloc.so.2", -1), files)
         self.assertIn(("pipelines.json", 5), files)
+        self.assertEqual(runtime_check.opened_ok([("./pipelines.json", 5), ("settings.json", -1), ("/a/b.json", 0)]),
+                         {"pipelines.json", "/a/b.json"})
         findings, sockets = runtime_check.network(calls)
-        self.assertEqual(findings, ["connect AF_INET", "sendto AF_INET6"])
-        self.assertEqual(sockets, ["AF_INET"])
+        # The decode unit allows AF_UNIX only (RestrictAddressFamilies=AF_UNIX): a socket of any other family,
+        # netlink included, is a finding, and so is each address outside AF_UNIX.
+        self.assertEqual(findings, ["socket AF_INET", "connect AF_INET", "sendto AF_INET6", "socket AF_NETLINK", "bind AF_NETLINK",
+                                    "socket AF_INET6"])
+        self.assertEqual(sockets, ["AF_INET", "AF_INET6", "AF_NETLINK", "AF_UNIX"])
+        self.assertEqual(runtime_check.network(runtime_check.parse_trace(
+            '7 connect(3, {sa_family=AF_UNIX, sun_path="/run/x"}, 110) = 0\n7 socket(AF_LOCAL, SOCK_DGRAM, 0) = 4')), ([], ["AF_LOCAL"]))
+        self.assertIn("RestrictAddressFamilies=AF_UNIX", satdump_pass.unit_lines("decode"))
+
+    def test_planted_files_are_the_lookups_of_the_pinned_tree(self):
+        # planted-pipelines-json plants every user file SatDump 1aedd60 looks up; the files that say so are
+        # bound by verify-source (packaging.json upstream_files).
+        upstream = self.packaging["upstream_files"]
+        for name in runtime_check.LOOKUP_SOURCES:
+            self.assertIn(name, upstream)
+        self.assertEqual((upstream["src-core/init.cpp"], upstream["src-core/core/config.cpp"], upstream["src-core/pipeline/pipeline.cpp"]),
+                         ("65237ed135d4711692c5808d5ff16347ac67bcaf", "9ee8d402974d2d89a1a8a435ab684bc6c8b23af4",
+                          "25ea1f8aac6aadbac4c89563a7bb5989c53cbc32"))
+        self.assertEqual(set(runtime_check.CWD_FILES), {"pipelines.json", "settings.json", "satdump_cfg.json"})
+        self.assertEqual({n.rsplit("/", 1)[-1] for n in runtime_check.HOME_FILES}, {"pipelines.json", "settings.json"})
+        self.assertTrue(all(n.startswith(".config/satdump/") for n in runtime_check.HOME_FILES))
+        self.assertEqual(Path(runtime_check.CONFIG).name, "satdump_cfg.json")  # the one config the unit shape may open
+        how = {c["id"]: c["how"] for c in self.packaging["builder_checks"]}
+        for name in runtime_check.CWD_FILES:
+            self.assertIn(name, how["planted-pipelines-json"])
+        self.assertIn("socket()", how["no-connect"])
 
     def test_tree_digest_is_check_recipe_s(self):
         with tempfile.TemporaryDirectory(prefix="srrx-satdump-digest-") as temporary:

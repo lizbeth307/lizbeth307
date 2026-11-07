@@ -42,7 +42,7 @@ import sys
 HERE = Path(__file__).resolve().parent
 PROJECT = HERE.parents[2]
 # packaging.json and upstream-options.json as reviewed with this script (check: data_file_digest).
-DATA_SHA256 = {"packaging.json": "84da22b74c219b9e4d71c63e702b68528b641b5c16c2c71ae3d438ca1bca72c7",
+DATA_SHA256 = {"packaging.json": "3151b89c4029f7d7b28ad4abb78b78d4941418c0029165db8e9f4a7fee60343f",
                "upstream-options.json": "923f48f0f1a487c50c5259baf75b5a5fd2c0d2326d3ef68b7fb259911e4fec5c"}
 # recipe.json carries one note with the SHA-256 of these files (pin_note), so recipe_sha256 binds them.
 PINNED_FILES = ("check_recipe.py", "packaging.json", "upstream-options.json")

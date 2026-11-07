@@ -393,7 +393,7 @@
   "One package satdump, no -dev package: the package hook removes usr/include, the desktop file and the icons; the installation record binds the whole file set as one unit (software/DECODERS.md).",
   "libsatdump_core.so and the plugins have unversioned SONAMEs: dpkg-shlibdeps ignores unversioned libraries it cannot map (dpkg 1.22.6 scripts/dpkg-shlibdeps.pl, read 2026-11-07), so Depends comes from the noble libraries only.",
   "CI evidence only: the runtime check (runtime_check.py) runs in the sr-rx-packages runtime chroot; the LRPT fixture rows stay BLOCKED_NO_LICENSED_FIXTURE and live-localhost PENDING_DEVICE; nothing here is REVIEWED.",
-  "Pinned recipe files (SHA-256; the installation record's recipe_sha256 binds them through this note): check_recipe.py e15a7fffd9c17b795774e8820b7a26e7dd708e184b0b5f0c27154dc9dbff4947, packaging.json 84da22b74c219b9e4d71c63e702b68528b641b5c16c2c71ae3d438ca1bca72c7, upstream-options.json 923f48f0f1a487c50c5259baf75b5a5fd2c0d2326d3ef68b7fb259911e4fec5c"
+  "Pinned recipe files (SHA-256; the installation record's recipe_sha256 binds them through this note): check_recipe.py 96eefe9bc9fcca73cfc017c33357d867c19629281abbf9797574752e8d1cae5f, packaging.json 3151b89c4029f7d7b28ad4abb78b78d4941418c0029165db8e9f4a7fee60343f, upstream-options.json 923f48f0f1a487c50c5259baf75b5a5fd2c0d2326d3ef68b7fb259911e4fec5c"
  ],
  "ci": {
   "heavy": true,
