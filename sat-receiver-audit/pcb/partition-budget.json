@@ -1213,8 +1213,9 @@
       "pwr_b": [
        "R232"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
      },
      {
       "net": "BIAS_CH2_DAMP",
@@ -1224,8 +1225,9 @@
       "pwr_b": [
        "R237"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
      },
      {
       "net": "BIAS_CH3_DAMP",
@@ -1235,8 +1237,9 @@
       "pwr_b": [
        "R242"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
      },
      {
       "net": "BIAS_CH4_DAMP",
@@ -1246,8 +1249,9 @@
       "pwr_b": [
        "R247"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -1338,8 +1342,9 @@
       "pwr_b": [
        "R295"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_AUX12",
@@ -1708,16 +1713,18 @@
       "pwr_b": [
        "R251"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      }
     ],
     "power_nets": 9,
     "signal_pins": 31,
     "power_pins": 14,
-    "gnd_pins": 14,
-    "contacts_needed": 59,
-    "contacts_with_spare": 71,
+    "gnd_pins": 24,
+    "guard_pins": 3,
+    "contacts_needed": 69,
+    "contacts_with_spare": 83,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -2617,8 +2624,9 @@
       "pwr_b": [
        "R223"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R223 0.22R 1% 0.25W to AUX12"
      },
      {
       "net": "BIAS_CH1_DAMP",
@@ -2628,8 +2636,9 @@
       "pwr_b": [
        "R232"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
      },
      {
       "net": "BIAS_CH2_DAMP",
@@ -2639,8 +2648,9 @@
       "pwr_b": [
        "R237"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
      },
      {
       "net": "BIAS_CH3_DAMP",
@@ -2650,8 +2660,9 @@
       "pwr_b": [
        "R242"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
      },
      {
       "net": "BIAS_CH4_DAMP",
@@ -2661,8 +2672,9 @@
       "pwr_b": [
        "R247"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -2743,8 +2755,9 @@
       "pwr_b": [
        "R208"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R208 0.22R 1% 0.25W to E2_DISP_IN"
      },
      {
       "net": "E2_J21_FUSED",
@@ -2795,8 +2808,9 @@
       "pwr_b": [
        "R295"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_BONI",
@@ -2979,8 +2993,9 @@
       "pwr_b": [
        "R207"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R207 0.22R 1% 0.25W to J21"
      },
      {
       "net": "LAB5",
@@ -3053,8 +3068,9 @@
       "pwr_b": [
        "R219"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R219 0.22R 1% 0.25W to LIME3V3"
      },
      {
       "net": "LNA4V5",
@@ -3191,8 +3207,9 @@
       "pwr_b": [
        "R251"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      },
      {
       "net": "VCC_3V3_MKEY",
@@ -3213,9 +3230,10 @@
     "power_nets": 14,
     "signal_pins": 31,
     "power_pins": 37,
-    "gnd_pins": 37,
-    "contacts_needed": 105,
-    "contacts_with_spare": 126,
+    "gnd_pins": 51,
+    "guard_pins": 3,
+    "contacts_needed": 119,
+    "contacts_with_spare": 143,
     "contacts_available": 100,
     "meets_spare_rule": false,
     "fits": false,
@@ -4164,8 +4182,9 @@
       "pwr_b": [
        "R232"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
      },
      {
       "net": "BIAS_CH2_DAMP",
@@ -4175,8 +4194,9 @@
       "pwr_b": [
        "R237"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
      },
      {
       "net": "BIAS_CH3_DAMP",
@@ -4186,8 +4206,9 @@
       "pwr_b": [
        "R242"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
      },
      {
       "net": "BIAS_CH4_DAMP",
@@ -4197,8 +4218,9 @@
       "pwr_b": [
        "R247"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -4289,8 +4311,9 @@
       "pwr_b": [
        "R295"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_AUX12",
@@ -4659,16 +4682,18 @@
       "pwr_b": [
        "R251"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      }
     ],
     "power_nets": 9,
     "signal_pins": 31,
     "power_pins": 14,
-    "gnd_pins": 14,
-    "contacts_needed": 59,
-    "contacts_with_spare": 71,
+    "gnd_pins": 24,
+    "guard_pins": 3,
+    "contacts_needed": 69,
+    "contacts_with_spare": 83,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -5580,8 +5605,9 @@
       "pwr_b": [
        "R232"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
      },
      {
       "net": "BIAS_CH2_DAMP",
@@ -5591,8 +5617,9 @@
       "pwr_b": [
        "R237"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
      },
      {
       "net": "BIAS_CH3_DAMP",
@@ -5602,8 +5629,9 @@
       "pwr_b": [
        "R242"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
      },
      {
       "net": "BIAS_CH4_DAMP",
@@ -5613,8 +5641,9 @@
       "pwr_b": [
        "R247"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -5705,8 +5734,9 @@
       "pwr_b": [
        "R295"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_AUX12",
@@ -6059,16 +6089,18 @@
       "pwr_b": [
        "R251"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      }
     ],
     "power_nets": 8,
     "signal_pins": 31,
     "power_pins": 13,
-    "gnd_pins": 13,
-    "contacts_needed": 57,
-    "contacts_with_spare": 69,
+    "gnd_pins": 23,
+    "guard_pins": 3,
+    "contacts_needed": 67,
+    "contacts_with_spare": 81,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -7011,8 +7043,9 @@
       "pwr_b": [
        "R232"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
      },
      {
       "net": "BIAS_CH2_DAMP",
@@ -7022,8 +7055,9 @@
       "pwr_b": [
        "R237"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
      },
      {
       "net": "BIAS_CH3_DAMP",
@@ -7033,8 +7067,9 @@
       "pwr_b": [
        "R242"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
      },
      {
       "net": "BIAS_CH4_DAMP",
@@ -7044,8 +7079,9 @@
       "pwr_b": [
        "R247"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -7412,9 +7448,10 @@
     "power_nets": 7,
     "signal_pins": 27,
     "power_pins": 9,
-    "gnd_pins": 9,
-    "contacts_needed": 45,
-    "contacts_with_spare": 54,
+    "gnd_pins": 17,
+    "guard_pins": 3,
+    "contacts_needed": 53,
+    "contacts_with_spare": 64,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -8366,8 +8403,9 @@
       "pwr_b": [
        "R232"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
      },
      {
       "net": "BIAS_CH2_DAMP",
@@ -8377,8 +8415,9 @@
       "pwr_b": [
        "R237"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
      },
      {
       "net": "BIAS_CH3_DAMP",
@@ -8388,8 +8427,9 @@
       "pwr_b": [
        "R242"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
      },
      {
       "net": "BIAS_CH4_DAMP",
@@ -8399,8 +8439,9 @@
       "pwr_b": [
        "R247"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -8491,8 +8532,9 @@
       "pwr_b": [
        "R295"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_AUX12",
@@ -8865,16 +8907,18 @@
       "pwr_b": [
        "R251"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      }
     ],
     "power_nets": 9,
     "signal_pins": 31,
     "power_pins": 14,
-    "gnd_pins": 14,
-    "contacts_needed": 59,
-    "contacts_with_spare": 71,
+    "gnd_pins": 24,
+    "guard_pins": 3,
+    "contacts_needed": 69,
+    "contacts_with_spare": 83,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -10231,9 +10275,10 @@
     "power_nets": 9,
     "signal_pins": 25,
     "power_pins": 14,
-    "gnd_pins": 14,
-    "contacts_needed": 53,
-    "contacts_with_spare": 64,
+    "gnd_pins": 18,
+    "guard_pins": 3,
+    "contacts_needed": 57,
+    "contacts_with_spare": 69,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -11573,9 +11618,10 @@
     "power_nets": 14,
     "signal_pins": 21,
     "power_pins": 37,
-    "gnd_pins": 37,
-    "contacts_needed": 95,
-    "contacts_with_spare": 114,
+    "gnd_pins": 41,
+    "guard_pins": 3,
+    "contacts_needed": 99,
+    "contacts_with_spare": 119,
     "contacts_available": 100,
     "meets_spare_rule": false,
     "fits": true,
@@ -12549,8 +12595,9 @@
       "pwr_b": [
        "R232"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
      },
      {
       "net": "BIAS_CH2_DAMP",
@@ -12560,8 +12607,9 @@
       "pwr_b": [
        "R237"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
      },
      {
       "net": "BIAS_CH3_DAMP",
@@ -12571,8 +12619,9 @@
       "pwr_b": [
        "R242"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
      },
      {
       "net": "BIAS_CH4_DAMP",
@@ -12582,8 +12631,9 @@
       "pwr_b": [
        "R247"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -12674,8 +12724,9 @@
       "pwr_b": [
        "R295"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_AUX12",
@@ -13044,16 +13095,18 @@
       "pwr_b": [
        "R251"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      }
     ],
     "power_nets": 9,
     "signal_pins": 31,
     "power_pins": 14,
-    "gnd_pins": 14,
-    "contacts_needed": 59,
-    "contacts_with_spare": 71,
+    "gnd_pins": 24,
+    "guard_pins": 3,
+    "contacts_needed": 69,
+    "contacts_with_spare": 83,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -13973,8 +14026,9 @@
       "pwr_b": [
        "R232"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
      },
      {
       "net": "BIAS_CH2_DAMP",
@@ -13984,8 +14038,9 @@
       "pwr_b": [
        "R237"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
      },
      {
       "net": "BIAS_CH3_DAMP",
@@ -13995,8 +14050,9 @@
       "pwr_b": [
        "R242"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
      },
      {
       "net": "BIAS_CH4_DAMP",
@@ -14006,8 +14062,9 @@
       "pwr_b": [
        "R247"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -14374,9 +14431,10 @@
     "power_nets": 7,
     "signal_pins": 27,
     "power_pins": 9,
-    "gnd_pins": 9,
-    "contacts_needed": 45,
-    "contacts_with_spare": 54,
+    "gnd_pins": 17,
+    "guard_pins": 3,
+    "contacts_needed": 53,
+    "contacts_with_spare": 64,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
@@ -15303,8 +15361,9 @@
       "pwr_b": [
        "R232"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
      },
      {
       "net": "BIAS_CH2_DAMP",
@@ -15314,8 +15373,9 @@
       "pwr_b": [
        "R237"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
      },
      {
       "net": "BIAS_CH3_DAMP",
@@ -15325,8 +15385,9 @@
       "pwr_b": [
        "R242"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
      },
      {
       "net": "BIAS_CH4_DAMP",
@@ -15336,8 +15397,9 @@
       "pwr_b": [
        "R247"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -15428,8 +15490,9 @@
       "pwr_b": [
        "R295"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_AUX12",
@@ -15798,18 +15861,20 @@
       "pwr_b": [
        "R251"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      }
     ],
     "power_nets": 9,
     "signal_pins": 31,
     "power_pins": 14,
-    "gnd_pins": 14,
-    "contacts_needed": 59,
-    "contacts_with_spare": 71,
+    "gnd_pins": 24,
+    "guard_pins": 3,
+    "contacts_needed": 69,
+    "contacts_with_spare": 83,
     "contacts_available": 80,
-    "meets_spare_rule": true,
+    "meets_spare_rule": false,
     "fits": true,
     "errors": []
    },
@@ -16737,8 +16802,9 @@
       "pwr_b": [
        "R232"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R232 0.22R 1% 0.25W to BIAS_CH1"
      },
      {
       "net": "BIAS_CH2_DAMP",
@@ -16748,8 +16814,9 @@
       "pwr_b": [
        "R237"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R237 0.22R 1% 0.25W to BIAS_CH2"
      },
      {
       "net": "BIAS_CH3_DAMP",
@@ -16759,8 +16826,9 @@
       "pwr_b": [
        "R242"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R242 0.22R 1% 0.25W to BIAS_CH3"
      },
      {
       "net": "BIAS_CH4_DAMP",
@@ -16770,8 +16838,9 @@
       "pwr_b": [
        "R247"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R247 0.22R 1% 0.25W to BIAS_CH4"
      },
      {
       "net": "BONI13V8",
@@ -16862,8 +16931,9 @@
       "pwr_b": [
        "R295"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R295 0.22R 1%0.25W to BIAS_SB_LNA"
      },
      {
       "net": "EN_AUX12",
@@ -17232,16 +17302,18 @@
       "pwr_b": [
        "R251"
       ],
-      "kind": "signal",
-      "pins": 1
+      "kind": "rail node",
+      "pins": 1,
+      "why": "R251 0.22R 1% 0.25W to VBUS_RTLB"
      }
     ],
     "power_nets": 9,
     "signal_pins": 31,
     "power_pins": 14,
-    "gnd_pins": 14,
-    "contacts_needed": 59,
-    "contacts_with_spare": 71,
+    "gnd_pins": 24,
+    "guard_pins": 3,
+    "contacts_needed": 69,
+    "contacts_with_spare": 83,
     "contacts_available": 100,
     "meets_spare_rule": true,
     "fits": true,
