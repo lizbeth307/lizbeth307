@@ -1,6 +1,6 @@
 # Звіт посадки механічної моделі SR-RX-v2.1
 
-Згенеровано `mechanical/build.py` (params 8c4e291cf3a1); не редагувати вручну. **MODEL FIT ONLY:** це перевірка конвертів і даних з даташитів, а не примірка деталей. Фізичні ворота посадки, ущільнення, тепла й падіння лишаються OPEN.
+Згенеровано `mechanical/build.py` (params 135211b0855f); не редагувати вручну. **MODEL FIT ONLY:** це перевірка конвертів і даних з даташитів, а не примірка деталей. Фізичні ворота посадки, ущільнення, тепла й падіння лишаються OPEN.
 
 ## Габарит
 
@@ -29,7 +29,7 @@
 ## Підсумок
 
 - зіткнень конвертів: 0; поза внутрішнім об'ємом: 0
-- правила: FAIL 0, OPEN 5 (OPEN = потрібна обрана або виміряна деталь)
+- правила: FAIL 0, OPEN 6 (OPEN = потрібна обрана або виміряна деталь)
 - антенні деталі за правилом розміру: FAIL 0; площа плат (деталі без роз'ємів джгутів): FAIL 0; з роз'ємами джгутів build/16: OPEN 2 (оцінка, не в гейті до перерозкладки хвилі 2)
 - термоінтерфейси: FAIL 0, OPEN 3; ущільнення: PASS (model)
 - звірка з STEP постачальника: PASS (model vs vendor STEP)
@@ -57,6 +57,7 @@
 | R-PWR-KEY | E-Switch PV6F240SS panel thickness at the power key (top wall) and at SW501 (hatch board 1.6 mm) | 2.5 / 1.6 | 1 / 10 | PASS (model) |
 | R-PWR-KEY-NUT | PV6 panel nut inside the top wall clear of the HDMI board, the display clamp bosses and the top Al angle | {'key_x': 155.5, 'key_z': 48.5, 'nut_d_assumed': 20.0} |  | OPEN: the PV6 datasheet gives no nut size; a D20 nut (assumption) at x 155.5 / z 48.5 would reach the HDMI board edge (x 146.2) and the top-right display clamp boss (z >= 56.5): measure the received nut; if it does not clear, re-place the key (wave 2 layout) |
 | R-PLATE-SLOTS | plate harness slots inside the outline with a web >= 1.5 mm to the outline and to every other opening (worst slot) | 1.5 | 1.5 | PASS (model) |
+| R-PLATE-SLOT-FILL | harness wires through each plate slot (build/16-dzhgut.csv rows of the slot segments) against the bare opening | {'SL1': {'opening_mm2': 79.2, 'wires': 29, 'wires_per_awg': {'28': 29}}, 'SL2': {'opening_mm2': 63.0, 'wires': 51, 'wires_per_awg': {'20': 12, '24': 18, '26': 21}}, 'SL3': {'opening_mm2': 67.5, 'wires': 17, 'wires_per_awg': {'20': 4, '24': 6, '26': 7}}} | bundle OD with edge trim inside the opening | OPEN: wire outer diameter (AI-WIRE-PTFE) and edge-trim profile (AI-EDGE-TRIM) not chosen, so the fill is not checked (SL1 carries the whole 40-way S01 ribbon as two stacked 20-way halves; build/16 rows count only its connected conductors); resize SL1/SL2 or add a slot once both are read (wave 2) |
 | R-PWR-MODULES | modules on a board (height + mount standoff) inside the board envelope height there (worst module) | 10.17 | 10.5 | PASS (model) |
 | R-COOLER-A | cooler A: Cu block inside the 32 x 31 keep-in and over SoC + LPDDR5 (cover margin >= 0.5); fan face >= the keep-in minimum and above the 40-pin and 2x2 headers | {'cover_margin': 0.97, 'fan_face_above_board': 10.5, 'tallest_header': 9.65} | {'cover_margin': 0.5, 'fan_face_above_board': 10.0} | PASS (model) |
 | R-VENT-FOAM | battery vent: the thread ends in the 3 mm foam layer, so the foam has a hole >= thread d + 0.5 at the vent | {'V2': 13.0} | 12.5 | PASS (model) |
@@ -155,7 +156,7 @@ MODEL ESTIMATE: reported, not gated (OPEN = the outline or the harness architect
 |---|---|---|---|---|---|---|---|
 | PWR | 7910 | 7597 | PASS (model) | 32 | 12461 | 396 / 233 | OPEN: area 12461 > 7910 mm2; frontage 396 > 233 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2) |
 | RF | 8188 | 2787 | PASS (model) | 4 | 3640 | 57 / 344 | PASS (model) |
-| CTRL | 5915 | 3049 | PASS (model) | 20 | 7697 | 309 / 145 | OPEN: area 7697 > 5915 mm2; frontage 309 > 145 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2) |
+| CTRL | 5915 | 3049 | PASS (model) | 22 | 7911 | 322 / 145 | OPEN: area 7911 > 5915 mm2; frontage 322 > 145 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2) |
 | ENC | 576 | — | — | 2 | 169 | 11 / 12 | PASS (model) |
 
 ## Розташування конвертів (мм; x вправо, y вгору з лиця, z від задньої зовнішньої грані)

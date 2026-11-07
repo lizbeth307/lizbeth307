@@ -3,8 +3,8 @@
   "status": "MODEL FIT ONLY: envelopes and datasheet dimensions; no physical part was fitted. Hardware gates stay OPEN.",
   "generator": {
     "version": "1.0.0",
-    "params_sha256": "8c4e291cf3a1af193ac872276273667ef9ea980f6693ad063dfdea2e5548fb5b",
-    "pcb_components_sha256": "f9d98113d56ab15643e0024dcad92a2531cd217eba59297bdbcc60b387dd32e0"
+    "params_sha256": "135211b0855f5c0223ffe92eb2eb899278c93e488a60a8905117cd2c05b02c00",
+    "pcb_components_sha256": "9e6bdc34a545f2e336583bc95d6d830c613508a454faee6549c191a62d61c21b"
   },
   "envelope": {
     "model": [
@@ -333,6 +333,40 @@
       "source": "mechanical.json plate.slots (harness pass-throughs, build/16 §1)"
     },
     {
+      "id": "R-PLATE-SLOT-FILL",
+      "rule": "harness wires through each plate slot (build/16-dzhgut.csv rows of the slot segments) against the bare opening",
+      "source": "mechanical.json plate.slots[].segments; build/16-dzhgut.csv",
+      "value_mm": {
+        "SL1": {
+          "opening_mm2": 79.2,
+          "wires": 29,
+          "wires_per_awg": {
+            "28": 29
+          }
+        },
+        "SL2": {
+          "opening_mm2": 63.0,
+          "wires": 51,
+          "wires_per_awg": {
+            "20": 12,
+            "24": 18,
+            "26": 21
+          }
+        },
+        "SL3": {
+          "opening_mm2": 67.5,
+          "wires": 17,
+          "wires_per_awg": {
+            "20": 4,
+            "24": 6,
+            "26": 7
+          }
+        }
+      },
+      "limit_mm": "bundle OD with edge trim inside the opening",
+      "result": "OPEN: wire outer diameter (AI-WIRE-PTFE) and edge-trim profile (AI-EDGE-TRIM) not chosen, so the fill is not checked (SL1 carries the whole 40-way S01 ribbon as two stacked 20-way halves; build/16 rows count only its connected conductors); resize SL1/SL2 or add a slot once both are read (wave 2)"
+    },
+    {
       "id": "R-PWR-MODULES",
       "rule": "modules on a board (height + mount standoff) inside the board envelope height there (worst module)",
       "value_mm": 10.17,
@@ -473,14 +507,14 @@
           "result": "PASS (model)"
         },
         "CTRL": {
-          "headers": 20,
-          "header_courtyard_mm2": 2582.0,
+          "headers": 22,
+          "header_courtyard_mm2": 2701.0,
           "area_mm2": 5915.0,
-          "estimate_with_headers_mm2": 7697.0,
-          "ratio": 0.77,
-          "frontage_mm": 309.0,
+          "estimate_with_headers_mm2": 7911.0,
+          "ratio": 0.75,
+          "frontage_mm": 322.0,
           "edge_zones_mm": 145,
-          "result": "OPEN: area 7697 > 5915 mm2; frontage 309 > 145 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"
+          "result": "OPEN: area 7911 > 5915 mm2; frontage 322 > 145 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"
         },
         "ENC": {
           "headers": 2,
@@ -1504,7 +1538,7 @@
     "collisions": 0,
     "outside": 0,
     "rule_failures": 0,
-    "rules_open": 5,
+    "rules_open": 6,
     "antenna_rule_failures": 0,
     "board_area_failures": 0,
     "board_area_harness_open": 2,
