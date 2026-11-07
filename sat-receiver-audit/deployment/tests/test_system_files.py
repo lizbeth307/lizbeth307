@@ -469,8 +469,8 @@ class NetworkManagerHostnameTests(unittest.TestCase):
             (root / relative).parent.mkdir(parents=True, exist_ok=True)
             (root / relative).write_text(files[relative], encoding="utf-8")
         (root / system_files.NM_WIRED_PROFILE).chmod(0o644)
-        subprocess.run(["systemd-tmpfiles", "--root=" + str(root), "--create", "/" + system_files.NM_PROFILE_TMPFILES],
-                       check=True, capture_output=True, timeout=60)
+        # No file argument: like the sr-rx-system model, every tmpfiles.d file below --root (only this one here).
+        subprocess.run(["systemd-tmpfiles", "--root=" + str(root), "--create"], check=True, capture_output=True, timeout=60)
         info = (root / system_files.NM_WIRED_PROFILE).stat()
         self.assertEqual((stat.S_IMODE(info.st_mode), info.st_uid, info.st_gid), (0o600, 0, 0))
 
