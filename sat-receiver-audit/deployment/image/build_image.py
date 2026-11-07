@@ -84,7 +84,7 @@ SNAPSHOT_URL = "https://snapshot.ubuntu.com/ubuntu/"
 # The packages the closure is resolved for (STACK.md:902, build/07 §1.2) and the accounts their postinst
 # creates with adduser: chrony -> _chrony (+ group), gpsd -> gpsd in group dialout (debian/postinst of
 # chrony 4.5-1ubuntu4.2 and gpsd 3.25-3ubuntu3.2, read from the snapshot debs 2026-11-07).
-CLOSURE_ROOTS = {"chrony": ("_chrony",), "gpsd": ("gpsd",), "greetd": ()}  # PROBE, reverted in the next commit
+CLOSURE_ROOTS = {"chrony": ("_chrony",), "gpsd": ("gpsd",)}
 CLOSURE_PACKAGE_KEYS = ("package", "version", "architecture", "filename", "suite", "sha256", "size", "r2_version", "reason")
 # Compared between the committed file and a fresh `closure --resolve` (resolved_on is the run date).
 CLOSURE_COMPARED = ("snapshot", "suites", "base", "roots", "packages", "expected_removed", "removed_because", "expected_accounts")
