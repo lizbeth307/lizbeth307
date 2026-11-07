@@ -7,6 +7,10 @@ name: SR-RX boards
 # the artifact pcb-regenerated-<BOARD> and are committed as 'GENERATED: ...'.
 # Freerouting 2.5.0 (GPL-3.0, JAR) and its Temurin 25 JRE are fetched by pinned SHA256 into the runner
 # temp directory and are never committed, cached or uploaded. CI/model results only: bench gates stay OPEN.
+# Per board the job also checks the fab set (pcb/fab_export.py --check: Gerber X2, drill, IPC-D-356, JLC CPL/BOM,
+# fab notes, byte-stable) and the independent review (pcb/check_boards.py --check); a stale one is regenerated into
+# the same pcb-regenerated-<BOARD> artifact. The checks job runs pcb/stackup.py --check, every pcb test (the KiCad
+# rule-load test included), pcb/partition_budget.py --check and pcb/check_boards.py --all --check in KiCad 10.0.7.
 
 on:
   push:
@@ -15,7 +19,9 @@ on:
     paths: ['sat-receiver-audit/pcb/**', 'sat-receiver-audit/build/kicad/boards/**', 'sat-receiver-audit/build/kicad/footprints/**',
             'sat-receiver-audit/mechanical/generated/contract/boards.json', 'sat-receiver-audit/design/E*.json',
             'sat-receiver-audit/design/parts/parts.json', 'sat-receiver-audit/build/10-jlc-bom.csv',
-            'sat-receiver-audit/tools/assembly_data.py', '.github/workflows/sr-rx-pcb.yml']
+            'sat-receiver-audit/tools/assembly_data.py', 'sat-receiver-audit/mechanical/params/boards.json',
+            'sat-receiver-audit/mechanical/params/parts.json', 'sat-receiver-audit/build/16-dzhgut-rozyemy.csv',
+            '.github/workflows/sr-rx-pcb.yml']
 
 permissions:
   contents: read
@@ -57,6 +63,46 @@ jobs:
           echo "boards=$boards" >> "$GITHUB_OUTPUT"
           echo "Boards: $boards"
       - name: Nothing above wrote into the tree
+        run: |
+          git status --porcelain --untracked-files=all -- . > "$RUNNER_TEMP/tree-status.txt"
+          cat "$RUNNER_TEMP/tree-status.txt"
+          test ! -s "$RUNNER_TEMP/tree-status.txt"
+
+  checks:
+    name: Rules, pcb tests, partition budget and board reviews (KiCad 10.0.7)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    container:
+      image: kicad/kicad:10.0.7
+      options: --user root
+    steps:
+      - name: Install git inside the KiCad image
+        working-directory: .
+        run: |
+          apt-get update -q
+          apt-get install -y -q --no-install-recommends git ca-certificates
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+      - name: Tools
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          kicad-cli version
+          python3 --version
+      # Each check runs even when an earlier one failed (if: !cancelled()), so one red step never hides another.
+      - name: Net classes and rule files reproduce (pcb/stackup.py --check)
+        run: python3 pcb/stackup.py --check
+      - name: Every pcb test, with kicad-cli present (python3 -m unittest discover -s pcb/tests)
+        if: ${{ !cancelled() }}
+        run: python3 -m unittest discover -s pcb/tests -v
+      - name: Partition budget reproduces (pcb/partition_budget.py --check)
+        if: ${{ !cancelled() }}
+        run: python3 pcb/partition_budget.py --check
+      - name: Independent board reviews are current, no findings (pcb/check_boards.py --all --check)
+        if: ${{ !cancelled() }}
+        run: python3 pcb/check_boards.py --all --check
+      - name: Nothing above wrote into the tree
+        if: ${{ !cancelled() }}
         run: |
           git status --porcelain --untracked-files=all -- . > "$RUNNER_TEMP/tree-status.txt"
           cat "$RUNNER_TEMP/tree-status.txt"
@@ -113,6 +159,26 @@ jobs:
         run: python3 pcb/board_gen.py --board "$BOARD" --route --freerouting "$RUNNER_TEMP/freerouting"
       - name: Check ${{ matrix.board }} (DRC and audits reproduce the report)
         run: python3 pcb/board_gen.py --board "$BOARD" --check
+      - name: Fab set and review of ${{ matrix.board }} (fab_export --check, check_boards --check)
+        env:
+          MODE: ${{ steps.mode.outputs.mode }}
+          # Raw KiCad exports (design data, before normalisation) for review in the artifact.
+          SR_RX_FAB_RAW: ${{ runner.temp }}/pcb-out/fab-raw
+        run: |
+          if [ "$MODE" = route ]; then
+            python3 pcb/fab_export.py --board "$BOARD"
+            python3 pcb/check_boards.py --board "$BOARD"
+          else
+            status=0
+            python3 pcb/fab_export.py --board "$BOARD" --check || status=1
+            python3 pcb/check_boards.py --board "$BOARD" --check || status=1
+            if [ "$status" -ne 0 ]; then
+              echo "::error::fab/ or review.json of $BOARD is not current: regenerated into the pcb-regenerated-$BOARD artifact; apply it as a 'GENERATED:' commit"
+              python3 pcb/fab_export.py --board "$BOARD" || true
+              python3 pcb/check_boards.py --board "$BOARD" || true
+              exit 1
+            fi
+          fi
       - name: Collect regenerated outputs
         if: always()
         run: |

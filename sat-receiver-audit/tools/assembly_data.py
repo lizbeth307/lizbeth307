@@ -462,7 +462,8 @@ WIRE = {
 # a harness colour outside them is bought white and told apart by the printed marker (build/18).
 WIRE_COLOUR_CODE = {"білий": "WH", "чорний": "BK", "червоний": "RD", "зелений": "GR", "жовтий": "YL", "синій": "BL", "коричневий": "BR",
                     "помаранчевий": "OR", "сірий": "SL", "фіолетовий": "VI"}
-WIRE_PUTUP = "005"  # 100 ft (30.5 m) spool, the shortest put-up of the specifications
+WIRE_PUTUP = "005"  # 100 ft (30.48 m) spool: the shortest put-up every WIRE series lists (5857 also lists 50 ft, code not read)
+WIRE_SPOOL_M = 30.48  # length of one WIRE_PUTUP spool, m (100 ft)
 # Insulation OD each crimp terminal accepts, mm (None: no limit given): JST-PH SPH-002T-P0.5S, MOLEX-43030, MOLEX-5556 (SOURCES).
 WIRE_INSULATION_RANGE = {"PH": (0.8, 1.5), "MF": (None, 1.85), "MFJ": (1.30, 3.10)}
 
