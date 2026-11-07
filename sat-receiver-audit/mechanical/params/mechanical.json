@@ -5,18 +5,18 @@
   "outer": {
     "w": 230.0,
     "h": 163.8,
-    "d": 68.1,
+    "d": 70.08,
     "corner_r": 14.0,
     "_src": "D15 222.5 x 137.5 x 57.5 grown after the model fit (fit-report.json 'envelope'); decision build/15 'Оболонка D15 може збільшитися'",
-    "_growth_w2_mech3": "one joint growth (W2 MECH-3, build/15 'Оболонка D15'): h 160.0 -> 163.8 = RF-bay arrangement (b), two rows of cased LNA modules 2 x 30.6 + 3 x 0.5 clearance = 62.7 against the inner bay height 58.9 (rules.bay_packing); d 66.0 -> 68.1 = front-tier dz 2.1 of pcb/partition-spec.json envelope.dz ((42.5 + stack 5.0 + board 1.6 + hB 5.5 + channel 4.0) - 56.5 = 2.1, equal to the CTRL bottom term PHD 5.0 + 1.0 - 3.9); both inside the AREA caps dh <= 4.0, dz <= 6.0; width unchanged (STACK.md:109)"
+    "_growth_w2_mech3": "one joint growth (W2 MECH-3, build/15 'Оболонка D15'): h 160.0 -> 163.8 = RF-bay arrangement (b), two rows of cased LNA modules 2 x 30.6 + 3 x 0.5 clearance = 62.7 against the inner bay height 58.9 (rules.bay_packing); d 66.0 -> 70.08 = front-tier dz 4.08 of pcb/partition-spec.json envelope.dz = max(dz_mezz 2.1 = (42.5 + stack 5.0 + board 1.6 + hB 5.5 + channel 4.0) - 56.5, dz_ctrl 4.08 = the right-angle Micro-Fit 43650 J305/J314 on the CTRL bottom at their mated 6.98 + 1.0 - 3.9, W2 GR-3); both inside the AREA caps dh <= 4.0, dz <= 6.0; width unchanged (STACK.md:109)"
   },
   "wall": 2.5,
   "split_z": 14.0,
   "stack_z": {
     "_note": "front-to-rear stack in the display region",
-    "front_wall_inner": 65.6,
+    "front_wall_inner": 67.58,
     "vhb": 1.0,
-    "module_back": 58.6,
+    "module_back": 60.58,
     "plate_front": 40.5,
     "plate_t": 2.0,
     "plate_rear": 38.5,
@@ -154,7 +154,7 @@
     ],
     "veml7700_window": {
       "x": 120.0,
-      "z": 62.1,
+      "z": 64.08,
       "d": 4.0
     },
     "hood_hinge": {
@@ -162,7 +162,7 @@
       "knuckle_w": 8.0,
       "pin_d": 2.1,
       "axis_y": 158.8,
-      "axis_z": 71.1
+      "axis_z": 73.08
     },
     "_src": "port pitch 20 mm, types and the order P1..P8 + RX1: STACK 5.8 / 05 5.1; the row starts at x 43.5 so that the RX1 bulkhead nut and washer (envelope: Samtec SMA-J-C-X-ST-BH4 hardware, parts.json sma_bulkhead_hw) clear the right FR4 wall of the RF bay (x 209.6) by 1 mm",
     "power_key": {
@@ -170,7 +170,7 @@
       "x": 155.5,
       "z": 48.5,
       "kind": "pv6",
-      "_src": "SW301 location is not given in STACK (build/04 'розміщення в STACK.md не задано'); this package puts it on the top face, front half, between the HDMI board and the IP2368 board (fit-report); E-Switch PV6F240SS (build/15 'Сигнальні джгути', 2026-11-07): the M16 body (D16) sits between the plate front face (40.5) and the display module back (58.6 after the W2 MECH-3 dz 2.1), so x 155.5 / z 48.5 leaves 1.3 mm to the HDMI board, 0 mm to the plate and 2.1 mm to the module (model; TBD: measure the received key); the nut is not dimensioned on the datasheet and is not modelled as an envelope: with a D20 nut (assumption) it would meet the HDMI board edge and the top-right display clamp boss (rule R-PWR-KEY-NUT OPEN)"
+      "_src": "SW301 location is not given in STACK (build/04 'розміщення в STACK.md не задано'); this package puts it on the top face, front half, between the HDMI board and the IP2368 board (fit-report); E-Switch PV6F240SS (build/15 'Сигнальні джгути', 2026-11-07): the M16 body (D16) sits between the plate front face (40.5) and the display module back (60.58 after the W2 MECH-3 dz 4.08), so x 155.5 / z 48.5 leaves 1.3 mm to the HDMI board, 0 mm to the plate and 4.08 mm to the module (model; TBD: measure the received key); the nut is not dimensioned on the datasheet and is not modelled as an envelope: with a D20 nut (assumption) it would meet the HDMI board edge and the top-right display clamp boss (rule R-PWR-KEY-NUT OPEN)"
     }
   },
   "right_face": {
@@ -455,7 +455,7 @@
       {
         "id": "display",
         "part": "display_module",
-        "box": [6.3, 50.3, 58.6, 164.22, 97.98, 6.0],
+        "box": [6.3, 50.3, 60.58, 164.22, 97.98, 6.0],
         "mount": "front_wall"
       },
       {

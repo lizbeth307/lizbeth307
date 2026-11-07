@@ -703,8 +703,8 @@ class EnvelopeW2Mech3(unittest.TestCase):
         zones = [z for z in P.boards["boards"]["CTRL"]["rear_zones"] if z["limit"] in ("bms", "ip2368")]
         self.assertTrue(zones)
         for z in zones:
-            # PHD side entry 5.0 + 1.0 clearance needs gap 3.9 + dz 2.1 = 6.0 over BMS/IP2368
-            self.assertGreaterEqual(z["free_mm"], cap["gap_mm"] + 2.1 - 1e-9, z)
+            # the tallest placed CTRL bottom header + 1.0 clearance sets dz_ctrl (W2 GR-3: right-angle Micro-Fit 6.98 -> 4.08)
+            self.assertGreaterEqual(z["free_mm"], cap["gap_mm"] + self._spec()["envelope"]["dz_ctrl"] - 1e-9, z)
 
     def test_ina_swm_and_j551_are_in_the_collision_set(self):
         names = {n for _, n, _, _ in layout.item_boxes(P)}
