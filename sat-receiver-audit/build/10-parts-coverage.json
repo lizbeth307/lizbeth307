@@ -6,7 +6,9 @@
   "design/parts/snapshots/2026-10-24-manual.json",
   "design/parts/snapshots/2026-11-06-lcsc.json",
   "design/parts/snapshots/2026-11-06-manual.json",
-  "design/parts/snapshots/2026-11-07-manual.json"
+  "design/parts/snapshots/2026-11-07-manual.json",
+  "design/parts/snapshots/2026-11-07-w2-reads-rf-manual.json",
+  "design/parts/snapshots/2026-11-07-w2-reads-rf-lcsc.json"
  ],
  "refs": 777,
  "parts": 226,
