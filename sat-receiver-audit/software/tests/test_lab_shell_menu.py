@@ -216,5 +216,48 @@ class RepositoryNamesTests(unittest.TestCase):
         self.assertEqual(shell.allowlist_reason(leaf("hf.wefax")["allowlist"], shell.policy_lists(policy)), "denied:openwebrx:fax")
 
 
+class ModelSourceTests(unittest.TestCase):
+    """W2 SW-MENU review fixes: the OpenWebRX+ deferral rests on an in-repo record, an engine_unit leaf
+    carries its scope and program and a unit name has one scope, the live map promises only what
+    srrx.location does."""
+
+    def test_openwebrx_deferral_rests_on_the_lock(self):
+        lock = {c["id"]: c for c in json.loads((PROJECT / "deployment/sources.lock.json").read_text(encoding="utf-8"))["components"]}
+        package = shell.PACKAGES["openwebrx"]
+        self.assertEqual([name for name, item in shell.PACKAGES.items() if item["deferred"]], ["openwebrx"])
+        self.assertTrue(package["deferred"].startswith("sources.lock.json " + package["lock"] + ":"), package)
+        self.assertTrue(lock[package["lock"]]["release_blockers"])
+        # While deferred: csdr, pycsdr and owrx_connector are not locked and no recipe builds OpenWebRX+.
+        self.assertEqual([c for c in lock if re.fullmatch(r"(py)?csdr.*|owrx[-_]connector.*", c)], [])
+        self.assertEqual(list((PROJECT / "deployment/recipes").glob("*openwebrx*")), [])
+        self.assertNotIn("E2-SW-", (PROJECT / "software/srrx/lab_shell_menu.py").read_text(encoding="utf-8"))
+
+    def test_engine_unit_leaves_carry_scope_and_program(self):
+        good = shell._leaf("system.fixture_unit", "Fixture", "engine_unit", "srrx-menu.service", scope="user", program="srrx.hmi")
+        self.assertEqual(good["backend"], menu_model.CONSOLE_UNIT)
+        shell.validate(leaves=shell.LEAVES + (good,))
+        self.assertIn("srrx-menu.service", shell.referenced(shell.LEAVES + (good,))["units"])
+        cases = {
+            "no scope or program": shell._leaf("system.fixture_unit", "Fixture", "engine_unit", "srrx-menu.service"),
+            "unknown scope": shell._leaf("system.fixture_unit", "Fixture", "engine_unit", "srrx-menu.service", scope="session",
+                                         program="srrx.hmi"),
+            "required unit is a system unit": dict(good, requires=dict(good["requires"], units=("srrx-menu.service",))),
+            "same unit in another scope": dict(good, id="system.fixture_lease",
+                                               backend=dict(good["backend"], name="srrx-lease-sdrangelsrv@.service")),
+        }
+        for name, bad in cases.items():
+            with self.subTest(case=name):
+                with self.assertRaises(shell.LabShellMenuError):
+                    shell.validate(leaves=shell.LEAVES + (bad,))
+
+    def test_live_map_promises_only_the_own_position(self):
+        live, layers = leaf("map_point.live_map"), leaf("map_point.layers")
+        self.assertEqual((live["label"], live["backend"]), ("Live map (own position)", {"kind": "page_only", "name": "location"}))
+        self.assertIn("GNSS location", (PROJECT / "software/srrx/location.py").read_text(encoding="utf-8").splitlines()[0])
+        self.assertEqual(layers["backend"], {"kind": "page_only", "name": shell.PLANNED_PREFIX + "map_layers"})
+        line = (PROJECT / "STACK.md").read_text(encoding="utf-8").splitlines()[883]
+        self.assertIn("шари: власне місце, літаки, судна, зонди, траси супутників, APRS", line)
+
+
 if __name__ == "__main__":
     unittest.main()

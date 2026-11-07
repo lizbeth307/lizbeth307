@@ -1579,10 +1579,63 @@ class LabShellMenuRowTests(unittest.TestCase):
         source = (HERE / "selftest.py").read_text(encoding="utf-8")
         documented = "\n".join((deploy.PROJECT / name).read_text(encoding="utf-8") for name in ("software/HMI.md", "build/09-testy.md"))
         for rule in ("lab_shell_menu_invalid", "lab_shell_backend_unknown", "lab_shell_requirement_unknown",
-                     "lab_shell_unit_program_mismatch", "lab_shell_hidden", "lab_shell_qml_not_built"):
+                     "lab_shell_unit_program_mismatch", "lab_shell_hidden", "lab_shell_critical_hidden", "lab_shell_qml_not_built"):
             self.assertIn(rule, source)
             self.assertIn(rule, documented)
         self.assertNotIn("lab_shell_menu_not_modelled", source)
+
+    # W2 SW-MENU review fixes.
+    def test_hidden_critical_leaves_get_their_own_note(self):
+        # A PASS covers the controls the critical leaves declare: BACK, the encoders and LOCK have no
+        # backend yet (labinput, the touch lock), and every report names them (МЕН-03/Д-06 OPEN).
+        result = self.rx11(self.clean)
+        self.assertEqual((result["status"], result["findings"]), ("PASS", []))
+        critical = {n.split(":", 2)[1]: n.split(":", 2)[2] for n in result["notes"] if n.startswith("lab_shell_critical_hidden:")}
+        self.assertEqual(critical, {"home.back": "planned:labinput", "home.encoders": "planned:labinput",
+                                    "home.lock": "planned:touch_lock"})
+
+    def test_lease_units_are_system_units_only(self):
+        shell = self.checker_module("lab_shell_menu")
+        lease_leaves = self.sdrangel_leaves(shell)
+        self.put("usr/bin/sdrangelsrv", "#!fixture\n")
+        # A drop-in in a user unit directory does not apply to the system lease unit.
+        self.put("etc/systemd/user/srrx-lease-sdrangelsrv@.service.d/50-other.conf",
+                 "[Service]\nExecStart=\nExecStart=/usr/bin/env other-engine --rx\n")
+        result = self.rx11()
+        self.assertEqual((result["status"], result["findings"]), ("PASS", []))
+        self.assertFalse(lease_leaves & set(self.hidden(result)))
+        # A lease template only in a user unit directory is not the lease: its leaves stay hidden.
+        text = (self.rootfs / self.LEASE).read_text(encoding="utf-8")
+        (self.rootfs / self.LEASE).unlink()
+        self.put("usr/lib/systemd/user/srrx-lease-sdrangelsrv@.service", text)
+        hidden = self.hidden(self.rx11())
+        for item in lease_leaves:
+            self.assertIn("unit_missing:srrx-lease-sdrangelsrv@.service", hidden[item].split(","), item)
+
+    def test_engine_unit_leaf_is_reached_through_its_unit(self):
+        shell = self.checker_module("lab_shell_menu")
+        user = shell._leaf("system.fixture_user_unit", "Fixture", "engine_unit", "srrx-menu.service", scope="user", program="srrx.hmi")
+        system = shell._leaf("system.fixture_system_unit", "Fixture", "engine_unit", "srrx.service", scope="system", program="srrx.daemon")
+        wrong = shell._leaf("system.fixture_program", "Fixture", "engine_unit", "srrx.service", scope="system", program="srrx.labrx")
+        result = self.rx11(leaves=shell.LEAVES + (user, system))
+        self.assertEqual((result["status"], result["findings"]), ("PASS", []))
+        self.assertFalse({"system.fixture_user_unit", "system.fixture_system_unit"} & set(self.hidden(result)))
+        result = self.rx11(leaves=shell.LEAVES + (user, system, wrong))
+        self.assertEqual(result["status"], "FAIL")
+        self.assertEqual({(f["rule"], f["item"]) for f in result["findings"]}, {("backend_program_missing", "system.fixture_program")})
+        (self.rootfs / "usr/lib/systemd/user/srrx-menu.service").unlink()
+        self.assertEqual(self.hidden(self.rx11(leaves=shell.LEAVES + (user,)))["system.fixture_user_unit"], "unit_missing:srrx-menu.service")
+
+    def test_an_allowlist_entry_the_policy_does_not_know_fails(self):
+        shell = self.checker_module("lab_shell_menu")
+        typo = shell._lease("hf.fixture_typo", "Fixture", "demodnavtexx")
+        mode = shell._leaf("hf.fixture_mode", "Fixture", "page_only", "spectrum", allowlist=("openwebrx", "faxx"))
+        result = self.rx11(self.clean, shell.LEAVES + (typo, mode))
+        self.assertEqual(result["status"], "FAIL")
+        self.assertEqual({(f["path"], f["rule"], f["item"]) for f in result["findings"]},
+                         {("software/srrx/lab_shell_menu.py", "lab_shell_requirement_unknown", "hf.fixture_typo"),
+                          ("software/srrx/lab_shell_menu.py", "lab_shell_requirement_unknown", "hf.fixture_mode")})
+        self.assertIn("not_allowlisted:openwebrx:faxx", self.hidden(result)["hf.fixture_mode"].split(","))
 
 
 if __name__ == "__main__":

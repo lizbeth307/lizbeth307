@@ -9,7 +9,8 @@ works from keys and encoders alone (STACK.md:110). The touch console srrx.hmi ha
 
 A leaf names its hub, its label, the backend it reaches (menu_model.BACKEND_KINDS: a labd operation,
 an engine unit, a decoder preset of srrx.decoder_policy or a page backed by an srrx module), what it
-also needs (`requires`: PACKAGES by name, systemd units, srrx modules, decoder presets), an entry of
+also needs (`requires`: PACKAGES by name, system units such as the engine lease templates, which are
+never --user (STACK.md:76), srrx modules, decoder presets), an entry of
 the receive-only policy allowlists it uses (`allowlist`: an SDRangel plugin, an OpenWebRX+ mode or a
 SatDump pipeline, the lists of deployment/receive-only-policy.json), whether it needs the Lime or the
 T7 with the backend it declares without them (`fallback_text`), whether it is critical, the inputs
@@ -59,6 +60,7 @@ PLANNED = {
     "recordings_index": "recordings browser and index (lab_ui_hf, extra-studies.md:74273)",
     "update_media": "update from a USB stick or microSD into the inactive slot (STACK.md:884, :906)",
     "t7_storage": "T7 health, the 55 C stop and its deauthorization in L-band, S-band and GNSS sessions (STACK.md:87)",
+    "map_layers": "live map layers: aircraft, vessels, sondes, satellite tracks, APRS (STACK.md:884); srrx.location has the own position only",
     "peak_on_signal": "peak-on-signal pointing without a bearing line or emitter marker, nothing stored (STACK.md:884)",
     "wifi_home": "home-only Wi-Fi after a 1.5 s hold, blocked in every field and QUIET profile (STACK.md:884); srrx.rfkill only blocks",
     "selftest_view": "logs and self-test view (lab_ui_hf, extra-studies.md:74393)",
@@ -74,8 +76,10 @@ PACKAGES = {
     "ais-catcher": {"lock": "ais-catcher", "binaries": ("AIS-catcher",), "deferred": None},  # srrx-lease-aiscatcher@.service
     "wsjt-decoders": {"lock": "wsjt-decoders", "binaries": ("jt9", "wsprd"), "deferred": None},  # STACK.md:127
     "dream": {"lock": None, "binaries": ("dream",), "deferred": None},  # receive-only-policy.json dream.binary_names
-    # OpenWebRX+ is deferred (wave-2 plan E2-SW-11: csdr, pycsdr and owrx_connector have no recipe or locked provenance).
-    "openwebrx": {"lock": "openwebrx-plus", "binaries": ("openwebrx",), "deferred": "E2-SW-11"},
+    # OpenWebRX+ is deferred: its lock entry keeps release blockers and has no recipe, and its DSP
+    # dependencies csdr, pycsdr and owrx_connector have no sources.lock.json component.
+    "openwebrx": {"lock": "openwebrx-plus", "binaries": ("openwebrx",),
+                  "deferred": "sources.lock.json openwebrx-plus: release_blockers, no recipe; csdr, pycsdr, owrx_connector not locked"},
     "slowrx": {"lock": "slowrx", "binaries": (), "deferred": None},
     "gr-satellites": {"lock": "gr-satellites", "binaries": (), "deferred": None},
     "radiosonde-auto-rx": {"lock": "radiosonde-auto-rx", "binaries": (), "deferred": None},
@@ -108,8 +112,13 @@ class LabShellMenuError(ValueError):
 
 
 def _leaf(leaf_id, label, kind, name, *, packages=(), units=(), modules=(), presets=(), allowlist=None,
-          lime=False, t7=False, fallback=None, critical=False, controls=TOUCH, hidden=None):
-    return {"id": leaf_id, "hub": leaf_id.split(".", 1)[0], "label": label, "backend": {"kind": kind, "name": name},
+          lime=False, t7=False, fallback=None, critical=False, controls=TOUCH, hidden=None, scope=None, program=None):
+    """One leaf. An engine_unit backend also takes the unit's scope ("system" or "user") and the program
+    its ExecStart runs (srrx.<module> or an absolute path), as menu_model's unit backends."""
+    backend = {"kind": kind, "name": name}
+    if kind == "engine_unit":
+        backend.update(scope=scope, program=program)
+    return {"id": leaf_id, "hub": leaf_id.split(".", 1)[0], "label": label, "backend": backend,
             "requires": {"packages": tuple(packages), "units": tuple(units), "modules": tuple(modules), "presets": tuple(presets)},
             "allowlist": None if allowlist is None else {"component": allowlist[0], "name": allowlist[1]},
             "needs_lime": lime, "needs_t7": t7, "fallback_text": fallback, "critical": critical,
@@ -221,7 +230,9 @@ LEAVES = (
     _leaf("recordings.export", "Export (USB stick or microSD)", "page_only", "storage"),
     _planned("recordings.update", "Update (USB stick or microSD)", "update_media"),
     _planned("recordings.t7", "T7 storage", "t7_storage", t7=True, fallback=NO_T7),
-    _leaf("map_point.live_map", "Live map (own position, aircraft, vessels, sondes, satellite tracks, APRS)", "page_only", "location"),
+    # srrx.location gives the own GNSS position only; the other STACK.md:884 layers are planned.
+    _leaf("map_point.live_map", "Live map (own position)", "page_only", "location"),
+    _planned("map_point.layers", "Live map layers: aircraft, vessels, sondes, satellite tracks, APRS", "map_layers"),
     _planned("map_point.peak", "Peak on signal (LEO, GEO beacons, Sun, published beacons)", "peak_on_signal"),
     _leaf("gnss_time.fix", "Fix and sky plot", "page_only", "location"),
     _leaf("gnss_time.egnos", "EGNOS (SBAS)", "labd_op", "gnss_config"),
@@ -395,7 +406,7 @@ def validate(hubs=None, leaves=None):
         hub_ids.append(hub["id"])
     if len(set(hub_ids)) != len(hub_ids) or HOME in hub_ids:
         raise LabShellMenuError("hub ids must be unique and differ from home")
-    seen = set()
+    seen, scopes = set(), {}
     for leaf in leaves:
         if type(leaf) is not dict or set(leaf) != _LEAF_FIELDS:
             raise LabShellMenuError("leaf entries need exactly the leaf fields")
@@ -426,5 +437,12 @@ def validate(hubs=None, leaves=None):
             raise LabShellMenuError(label + " names an unknown key or encoder")
         if not controls["touch"] and not keys:
             raise LabShellMenuError(label + " has no control")
+        # A required unit is a system unit (engine leases, STACK.md:76); a unit name has one scope.
+        units = [(name, "system") for name in leaf["requires"]["units"]]
+        if leaf["backend"]["kind"] == "engine_unit":
+            units.append((leaf["backend"]["name"], leaf["backend"]["scope"]))
+        for name, scope in units:
+            if scopes.setdefault(name, scope) != scope:
+                raise LabShellMenuError(label + " names a unit in another scope than an earlier leaf")
     if not leaves:
         raise LabShellMenuError("the menu has no leaves")

@@ -261,21 +261,34 @@ disarm, «Close + DISARM» — disarm. Лист `page_only` не надсила�
 перевірки: консоль цей текст не показує й нічого не ховає. Перевірка можливостей,
 що ховає пункти лише для Lime (STACK.md:884), належить Lab Shell, а не цій консолі: це
 модель `srrx.lab_shell_menu` (рішення W2 SW-MENU, [build/15](../build/15-rishennia-komplektu.md)) —
-дванадцять хабів STACK.md:884 і листи Home, кожен з бекендом (ті самі види, що тут), потрібними
-пакетами (`PACKAGES`: компонент `sources.lock.json` і виконувані файли на шляху пошуку systemd),
-unit, модулями srrx, пресетами, записом алоу-листа політики (плагін SDRangel, режим OpenWebRX+,
-конвеєр SatDump), `needs_lime`/`needs_t7` з `fallback_text` і `hidden_reason`; бекенд
-`planned.<функція>` — ще не зібраний (`PLANNED` з джерелом). `visible_leaves(capabilities)` показує
-лист, лише коли все це є на корені, запис дозволено й не заборонено, пресет прийнято, а Lime/T7 є;
-інакше лист приховано з причинами (`hide_reasons`), напр. WEFAX — `package_deferred:openwebrx`,
-SafetyNET — `preset:egc-safetynet=DISABLED_…`, DSC — `denied:sdrangel:demoddsc`, HRPT — `no_lime`.
+дванадцять хабів STACK.md:884 і листи Home, кожен з бекендом (ті самі види, що тут; `engine_unit`
+— з областю system/user і програмою), потрібними пакетами (`PACKAGES`: компонент `sources.lock.json`
+і виконувані файли на шляху пошуку systemd), системними unit (шаблони оренд — лише системні,
+STACK.md:76, тож RX-11 шукає їх і їхні drop-in лише в системних шляхах unit, як RX-12), модулями
+srrx, пресетами, записом алоу-листа політики (плагін SDRangel, режим OpenWebRX+, конвеєр SatDump),
+`needs_lime`/`needs_t7` з `fallback_text` і `hidden_reason`; бекенд `planned.<функція>` — ще не
+зібраний (`PLANNED` з джерелом). `visible_leaves(capabilities)` показує лист, лише коли все це є на
+корені, запис дозволено й не заборонено, пресет прийнято, а Lime/T7 є; інакше лист приховано з
+причинами (`hide_reasons`), напр. WEFAX — `package_deferred:openwebrx` (OpenWebRX+ відкладено: у
+`sources.lock.json` немає csdr, pycsdr і owrx_connector), SafetyNET — `preset:egc-safetynet=DISABLED_…`,
+DSC — `denied:sdrangel:demoddsc`, HRPT — `no_lime`. Live map показує лише власне місце
+(`srrx.location`); шари літаків, суден, зондів, трас і APRS — окремий запланований лист.
 RX-11 оцінює її на тому самому корені після консолі: Lime — з `/etc/srrx/devices.json` і бібліотеки
-Lime, T7 (знімний, без прив'язки офлайн) — з ним і без нього; FAIL `lab_shell_menu_invalid`,
-`lab_shell_backend_unknown`, `lab_shell_requirement_unknown` (ім'я не зібране й не в `PLANNED`),
-`no_lime_backend_undeclared`/`no_t7_backend_undeclared`, `lab_shell_unit_program_mismatch` (unit
-видимого листа не запускає виконуваний файл його пакета); BLOCKED `critical_leaf_touch_only`,
-`target_module_differs`, `unit_interpreter_missing`; кожен прихований лист — примітка
-`lab_shell_hidden:<лист>:<причини>`. Сама QML-оболонка не зібрана (примітка `lab_shell_qml_not_built`).
+Lime, T7 (знімний, без прив'язки офлайн) — з ним і без нього. FAIL у
+`software/srrx/lab_shell_menu.py` з id листа як `item`: `lab_shell_menu_invalid` (без листа),
+`lab_shell_backend_unknown`, `lab_shell_requirement_unknown` (ім'я не зібране й не в `PLANNED` або
+запис алоу-листа, якого політика ні дозволяє, ні забороняє), `no_lime_backend_undeclared`/
+`no_t7_backend_undeclared`; BLOCKED `critical_leaf_touch_only`. Перевірка досяжності видимого листа
+пише знахідку за шляхом unit чи модуля: `lab_shell_unit_program_mismatch` (FAIL: unit не запускає
+виконуваний файл пакета листа), `unit_interpreter_missing` (BLOCKED) і для листа `engine_unit`
+`backend_program_missing` (FAIL) — з id листа (`backend_unit_missing` такого листа — у
+`software/srrx/lab_shell_menu.py`), а `target_module_differs` (BLOCKED, спільне з консоллю) — за
+шляхом модуля цілі без id листа. Кожен прихований лист — примітка
+`lab_shell_hidden:<лист>:<причини>`; прихований критичний лист — ще й примітка
+`lab_shell_critical_hidden:<лист>:<причини>`. PASS RX-11 означає лише, що критичні листи оголошують
+клавіші чи енкодери: BACK, ENC1/ENC2 і LOCK приховано (`planned:labinput`, `planned:touch_lock`),
+доки немає labinput і блокування дотику, тож шлях у рукавицях для них лишається OPEN (МЕН-03, Д-06).
+Сама QML-оболонка не зібрана (примітка `lab_shell_qml_not_built`).
 
 Критичні листи — дії, потрібні в рукавицях, коли ємнісна панель не працює
 (STACK.md:110): навігація HOME/BACK/FN/ENC1/ENC2/ENC1_PRESS/ENC2_PRESS, LOCK,
