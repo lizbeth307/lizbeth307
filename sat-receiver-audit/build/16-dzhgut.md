@@ -412,7 +412,7 @@
 | збірка | призначення | кінці | мережі графа | деталі й вимоги |
 |---|---|---|---|---|
 | C-HDMI | HDMI Q6A → Wisecoco | Q6A.HDMI → HDMIA → DISP | E5_HDMI_5V_DISP, E5_HDMI_5V_Q6A, E5_HDMI_CEC, E5_HDMI_CLK_N, E5_HDMI_CLK_P, E5_HDMI_D0_N, E5_HDMI_D0_P, E5_HDMI_D1_N, E5_HDMI_D1_P, E5_HDMI_D2_N, E5_HDMI_D2_P, E5_HDMI_HPD, E5_HDMI_SCL, E5_HDMI_SDA | R-HDMI-ROUTE OPEN (fit-report): прямий штекер Adafruit 2420 упирається в нижню стінку, кишень під 2× Fair-Rite 0431164281 і S-укладку надлишку на трасі немає; запропоновано за замовчуванням FPC-запас STACK (Adafruit 3550 кутовий + 3548 + 3560, обмотка заземленою мідною стрічкою) — MPN, довжина й ферит для пласкої стрічки TBD (assembly_items AI-HDMI-FPC); pin 18 через U506 на вставці (E5 §8, домен HDMI_INSERT); TMDS не розплітати |
-| C-T7 | USB3 Q6A J5 нижній → T7 | Q6A.J5 → T7A → T7 | E5_T7_DM, E5_T7_DP, E5_T7_HOST_RX_N, E5_T7_HOST_RX_P, E5_T7_HOST_TX_N, E5_T7_HOST_TX_P, E5_VBUS_J5, E5_VBUS_T7 | цілісний екранований кабель A–C ≤0.5 м + вставка U505 (E5 §7); перевірка 5000M/uas |
+| C-T7 | USB3 Q6A J5 нижній → T7 | Q6A.J5 → T7A → T7 | E5_T7_DM, E5_T7_DP, E5_T7_HOST_RX_N, E5_T7_HOST_RX_P, E5_T7_HOST_TX_N, E5_T7_HOST_TX_P, E5_VBUS_J5, E5_VBUS_T7 | цілісний екранований кабель A–C ≤0.5 м + вставка U505 (E5 §7): VBUS-жилу розрізано лише на вставці (J515 від J5, J516 до T7), GND-жилу не розривають (відвід J517), S24 — вилка J514 (W2 GR-4); перевірка 5000M/uas |
 | C-HUB | USB2 Q6A J2 P3 → CH334F JP5 | Q6A.J2 → HUB | E5_HUB_DM, E5_HUB_DP | VBUS Q6A не підключати (E5 §2) |
 | C-TOUCH | USB2 Q6A J2 P2 → touch Wisecoco | Q6A.J2 → DISP | E5_TOUCH_DM, E5_TOUCH_DP | лише D+/D−/GND, ферит Würth 74271140 |
 | C-RTLA | USB2 H2 → RTL-A | HUB → RTLA | RTLA_DM, RTLA_DP | пігтейл H2 → USB-A J543; VBUS лише з S20 |

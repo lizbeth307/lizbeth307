@@ -122,9 +122,8 @@ BOARD_OF_DOMAIN = {  # build/15 «Кількість плат»
     "RF_HMC": "RF", "RF_HF": "RF", "RF_INJECTOR": "RF", "DC_CORE": "RF",
     "CTRL_HMI": "CTRL", "HATCH": "HATCH",
 }
-# Off-plate board domains of pcb/prepare.py whose parts belong to a module or cable unit here (no deviation):
-# ENC (ENCM/ENCV), T7_INSERT (T7A), HDMI_INSERT (HDMIA), IMU_CARRIER (IMUPACK), PACK_FUSE (PACK). Their boundary refs (W2 GR-4:
-# S24 header J514, solder-wire pads J515-J518, J320-J322, J116/J117) sit in the same units, so a harness end there names a graph contact.
+# Off-plate board domains of pcb/prepare.py whose parts belong to a module or cable unit here (no deviation; W2 GR-4: their boundary refs too):
+# ENC (ENCM/ENCV), T7_INSERT (T7A: J514-J517), HDMI_INSERT (HDMIA), IMU_CARRIER (IMUPACK: J518, J320-J322), PACK_FUSE (PACK: J116/J117).
 # Boards whose PH headers must be side entry: their envelope height is 5.5 mm (RF, CTRL) or 6.5 mm (ENC) and a
 # top-entry PH stands 8 mm with its housing (JST ePH); the side-entry header stands 4.8 mm (mechanical/params/boards.json).
 SIDE_ENTRY_UNITS = ("CTRL", "RF", "ENCM", "ENCV")
@@ -583,7 +582,7 @@ ASSEMBLIES = [
      "на трасі немає; запропоновано за замовчуванням FPC-запас STACK (Adafruit 3550 кутовий + 3548 + 3560, обмотка заземленою мідною стрічкою) — MPN, "
      "довжина й ферит для пласкої стрічки TBD (assembly_items AI-HDMI-FPC); pin 18 через U506 на вставці (E5 §8, домен HDMI_INSERT); TMDS не розплітати"),
     ("C-T7", "USB3 Q6A J5 нижній → T7", r"^E5_(T7_|VBUS_J5|VBUS_T7)", "Q6A.J5 → T7A → T7",
-     "цілісний екранований кабель A–C ≤0.5 м + вставка U505 (E5 §7); перевірка 5000M/uas"),
+     "цілісний екранований кабель A–C ≤0.5 м + вставка U505 (E5 §7): VBUS-жилу розрізано лише на вставці (J515 від J5, J516 до T7), GND-жилу не розривають (відвід J517), S24 — вилка J514 (W2 GR-4); перевірка 5000M/uas"),
     ("C-HUB", "USB2 Q6A J2 P3 → CH334F JP5", r"^E5_HUB_", "Q6A.J2 → HUB", "VBUS Q6A не підключати (E5 §2)"),
     ("C-TOUCH", "USB2 Q6A J2 P2 → touch Wisecoco", r"^E5_TOUCH_", "Q6A.J2 → DISP", "лише D+/D−/GND, ферит Würth 74271140"),
     ("C-RTLA", "USB2 H2 → RTL-A", r"^RTLA_D", "HUB → RTLA", "пігтейл H2 → USB-A J543; VBUS лише з S20"),
