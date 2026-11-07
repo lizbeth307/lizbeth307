@@ -135,7 +135,7 @@
       "interface_open",
       "interface_resolved"
     ],
-    "projection_sha256": "2099262801323b43c64779a5fc003422b5673f797a795777ed1495a9e8add15f"
+    "projection_sha256": "47a0ef1ac027323b6a680383836976bf7817f88e688e45141c43381ceab060ef"
   },
   "partition": {
     "file": "pcb/partition-spec.json",

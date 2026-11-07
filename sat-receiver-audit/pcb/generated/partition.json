@@ -187,7 +187,7 @@
         "interface_open",
         "interface_resolved"
       ],
-      "projection_sha256": "2099262801323b43c64779a5fc003422b5673f797a795777ed1495a9e8add15f"
+      "projection_sha256": "47a0ef1ac027323b6a680383836976bf7817f88e688e45141c43381ceab060ef"
     },
     "partition": {
       "file": "pcb/partition-spec.json",
@@ -14799,13 +14799,13 @@
       "ref": "J402",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-SMA-PANEL-RFBOARD (mount panel, MPN CAB.718) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Пігтейл обрано (Taoglas CAB.718, U.FL → SMA(F) bulkhead 200 мм) до U.FL J423/J424/J425; довжину звірено з моделлю (W2 SRC-2): найгірше місце U.FL у зоні верхнього краю дає трасу P2 170 мм (запас 25) проти 195 мм — 200 мм досить, коротші CAB.01038/CAB.01039 — за розміщенням PCB-RF; відкриті: виріз ⌀6.5 з лискою 6 і кутник змодельовано (MECH-2), але товщину шайби не розмірено (R-SMA-THREAD OPEN: лишається 2.48 мм), кільця в CAB.718 немає — ущільнення вирізу T-07 (MECH-4), момент гайки — TBD, укладання надлишку кабелю в моделі немає."
+      "detail": "Parts database entry J-SMA-PANEL-RFBOARD (mount panel, MPN CAB.718) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Пігтейл обрано (Taoglas CAB.718, U.FL → SMA(F) bulkhead 200 мм) до U.FL J423; довжину звірено з моделлю (W2 SRC-2): найгірше місце U.FL у зоні верхнього краю дає трасу P2 170 мм (запас 25) проти 195 мм — 200 мм досить, коротші CAB.01038/CAB.01039 — за розміщенням PCB-RF; відкриті: виріз ⌀6.5 з лискою 6 і кутник змодельовано (MECH-2), але товщину шайби не розмірено (R-SMA-THREAD OPEN: лишається 2.48 мм), кільця в CAB.718 немає — ущільнення вирізу T-07 (MECH-4), момент гайки — TBD, укладання надлишку кабелю в моделі немає."
     },
     {
       "ref": "J403",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-SMA-PANEL-RFBOARD (mount panel, MPN CAB.718) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Пігтейл обрано (Taoglas CAB.718, U.FL → SMA(F) bulkhead 200 мм) до U.FL J423/J424/J425; довжину звірено з моделлю (W2 SRC-2): найгірше місце U.FL у зоні верхнього краю дає трасу P3 150 мм (запас 45) проти 195 мм — 200 мм досить, коротші CAB.01038/CAB.01039 — за розміщенням PCB-RF; відкриті: виріз ⌀6.5 з лискою 6 і кутник змодельовано (MECH-2), але товщину шайби не розмірено (R-SMA-THREAD OPEN: лишається 2.48 мм), кільця в CAB.718 немає — ущільнення вирізу T-07 (MECH-4), момент гайки — TBD, укладання надлишку кабелю в моделі немає."
+      "detail": "Parts database entry J-SMA-PANEL-RFBOARD (mount panel, MPN CAB.718) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Пігтейл обрано (Taoglas CAB.718, U.FL → SMA(F) bulkhead 200 мм) до U.FL J424; довжину звірено з моделлю (W2 SRC-2): найгірше місце U.FL у зоні верхнього краю дає трасу P3 150 мм (запас 45) проти 195 мм — 200 мм досить, коротші CAB.01038/CAB.01039 — за розміщенням PCB-RF; відкриті: виріз ⌀6.5 з лискою 6 і кутник змодельовано (MECH-2), але товщину шайби не розмірено (R-SMA-THREAD OPEN: лишається 2.48 мм), кільця в CAB.718 немає — ущільнення вирізу T-07 (MECH-4), момент гайки — TBD, укладання надлишку кабелю в моделі немає."
     },
     {
       "ref": "J404",
@@ -14823,7 +14823,7 @@
       "ref": "J406",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-SMA-PANEL-RFBOARD (mount panel, MPN CAB.718) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Пігтейл обрано (Taoglas CAB.718, U.FL → SMA(F) bulkhead 200 мм) до U.FL J423/J424/J425; довжину звірено з моделлю (W2 SRC-2): найгірше місце U.FL у зоні верхнього краю дає трасу P6 142 мм (запас 53) проти 195 мм — 200 мм досить, коротші CAB.01038/CAB.01039 — за розміщенням PCB-RF; відкриті: виріз ⌀6.5 з лискою 6 і кутник змодельовано (MECH-2), але товщину шайби не розмірено (R-SMA-THREAD OPEN: лишається 2.48 мм), кільця в CAB.718 немає — ущільнення вирізу T-07 (MECH-4), момент гайки — TBD, укладання надлишку кабелю в моделі немає."
+      "detail": "Parts database entry J-SMA-PANEL-RFBOARD (mount panel, MPN CAB.718) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Пігтейл обрано (Taoglas CAB.718, U.FL → SMA(F) bulkhead 200 мм) до U.FL J425; довжину звірено з моделлю (W2 SRC-2): найгірше місце U.FL у зоні верхнього краю дає трасу P6 142 мм (запас 53) проти 195 мм — 200 мм досить, коротші CAB.01038/CAB.01039 — за розміщенням PCB-RF; відкриті: виріз ⌀6.5 з лискою 6 і кутник змодельовано (MECH-2), але товщину шайби не розмірено (R-SMA-THREAD OPEN: лишається 2.48 мм), кільця в CAB.718 немає — ущільнення вирізу T-07 (MECH-4), момент гайки — TBD, укладання надлишку кабелю в моделі немає."
     },
     {
       "ref": "J407",
