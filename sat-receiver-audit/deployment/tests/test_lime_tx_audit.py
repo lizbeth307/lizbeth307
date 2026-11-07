@@ -510,5 +510,110 @@ class LimeExportAllowlistTests(unittest.TestCase):
             self.assertIn("N4lime%d%sE" % (len(board), board), removed)
 
 
+# W2 SW-LIME-2 review fixes: the whole export count of each file is pinned (a new extern "C" export
+# fails the build too), section H names both kernel modules of drivers/linux/la9310_limesdr, and
+# recipes/limesuiteng/export_lists.py rebuilds exports.json from the CI .deb files.
+EXPORT_LISTS = HERE / "recipes/limesuiteng/export_lists.py"
+
+
+def load_export_lists():
+    import importlib.util
+    spec = importlib.util.spec_from_file_location("srrx_lime_export_lists", EXPORT_LISTS)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def tiny_elf(symbols):
+    """A little-endian ELF64 file with one .dynsym: [(name, defined)]."""
+    import struct
+    dynstr = b"\0" + b"".join(name.encode() + b"\0" for name, _ in symbols)
+    entries, offset = [bytes(24)], 1
+    for name, defined in symbols:
+        entries.append(struct.pack("<IBBHQQ", offset, 0x12, 0, 12 if defined else 0, 0, 0))
+        offset += len(name) + 1
+    dynsym, shstr = b"".join(entries), b"\0.dynstr\0.dynsym\0.shstrtab\0"
+    at_dynsym = 64 + len(dynstr)
+    at_shstr = at_dynsym + len(dynsym)
+    shoff = at_shstr + len(shstr)
+    header = b"\x7fELF\x02\x01\x01" + bytes(9) + struct.pack("<HHIQQQIHHHHHH", 3, 183, 1, 0, 0, shoff, 0, 64, 0, 0, 64, 4, 3)
+
+    def section(name, kind, at, size, link, entsize):
+        return struct.pack("<IIQQQQIIQQ", name, kind, 0, 0, at, size, link, 0, 1, entsize)
+    return (header + dynstr + dynsym + shstr + section(0, 0, 0, 0, 0, 0) + section(1, 3, 64, len(dynstr), 0, 0)
+            + section(9, 11, at_dynsym, len(dynsym), 1, 24) + section(17, 3, at_shstr, len(shstr), 0, 0))
+
+
+def tiny_deb(files):
+    """An ar .deb with debian-binary and a data.tar.xz holding {path: bytes} as ./path."""
+    import io
+    import tarfile
+    data = io.BytesIO()
+    with tarfile.open(fileobj=data, mode="w:xz") as tar:
+        for path, content in files.items():
+            info = tarfile.TarInfo("./" + path)
+            info.size = len(content)
+            tar.addfile(info, io.BytesIO(content))
+    out = b"!<arch>\n"
+    for name, content in (("debian-binary", b"2.0\n"), ("data.tar.xz", data.getvalue())):
+        out += ("%-16s%-12d%-6d%-6d%-8s%-10d`\n" % (name, 0, 0, 0, "100644", len(content))).encode() + content
+        out += b"\n" if len(content) % 2 else b""
+    return out
+
+
+class LimeExportTotalTests(unittest.TestCase):
+    def test_each_file_pins_its_whole_export_count(self):
+        exports = json.loads(EXPORTS.read_text(encoding="utf-8"))
+        recipe = json.loads(RECIPE.read_text(encoding="utf-8"))
+        for name, entry in exports["files"].items():
+            totals = [c for c in recipe["checks"] if c["kind"] == "export_count" and c["file"] == name and c["prefix"] == ""]
+            self.assertEqual(len(totals), 1, name)
+            self.assertEqual(totals[0]["equals"], len(entry["defined"]), name)
+        self.assertEqual({len(e["defined"]) for e in exports["files"].values()}, {753, 14})
+
+    def test_section_h_names_the_uart_module_and_its_tty_node(self):
+        text = AUDIT.read_text(encoding="utf-8")
+        section = text[text.index("### H. "):text.index("### I. ")]
+        for name in ("la9310_uart_module", "ttyLA9310_UART", "la9310-uart", "dialout"):
+            self.assertIn(name, section, name)
+        rows = {row["id"]: row for row in part2_rows()}
+        self.assertEqual((rows["H-06"]["file"], rows["H-06"]["verdict"]), ("drivers/linux/la9310_limesdr/la9310_uart.c", "open"))
+        for row_id in ("F-12", "G-11", "K-04"):  # no compiled caller: blocked by the document's own definition
+            self.assertEqual(rows[row_id]["verdict"], "blocked", row_id)
+
+
+class LimeExportListsScriptTests(unittest.TestCase):
+    def setUp(self):
+        self.script = load_export_lists()
+
+    def test_lists_come_from_the_deb_dynsym(self):
+        lib = tiny_deb({self.script.LIB_FILE: tiny_elf([("_ZN4lime4TypeEv", True), ("c_entry", True), ("memcpy", False)])})
+        soapy = tiny_deb({self.script.SOAPY_FILE: tiny_elf([("_ZNSt4copyEv", True), ("_ZN4lime4TypeEv", False),
+                                                            ("strlen", False)])})
+        self.assertEqual(self.script.lists([soapy, lib]),
+                         {self.script.LIB_FILE: {"defined": ["_ZN4lime4TypeEv", "c_entry"]},
+                          self.script.SOAPY_FILE: {"defined": ["_ZNSt4copyEv"], "imports_from_liblimesuiteng": ["_ZN4lime4TypeEv"]}})
+        with self.assertRaises(ValueError):
+            self.script.lists([lib])  # the module is missing
+        with self.assertRaises(ValueError):
+            self.script.lists([lib, lib, soapy])  # the library twice
+
+    def test_differences_name_every_added_and_removed_symbol(self):
+        exports = json.loads(EXPORTS.read_text(encoding="utf-8"))
+        same = {path: {key: entry[key] for key in ("defined", "imports_from_liblimesuiteng") if key in entry}
+                for path, entry in exports["files"].items()}
+        self.assertEqual(self.script.differences(exports, same), [])
+        changed = json.loads(json.dumps(same))
+        changed[LIB_FILE]["defined"] = changed[LIB_FILE]["defined"][1:] + ["srrx_raw_write"]
+        diff = self.script.differences(exports, changed)
+        self.assertIn("+ %s defined srrx_raw_write" % LIB_FILE, diff)
+        self.assertEqual(len(diff), 2)
+
+    def test_exports_json_is_in_the_format_write_produces(self):
+        text = EXPORTS.read_text(encoding="utf-8")
+        self.assertEqual(json.dumps(json.loads(text), indent=2, ensure_ascii=False) + "\n", text)
+        self.assertIn("export_lists.py", json.loads(text)["source"])
+
+
 if __name__ == "__main__":
     unittest.main()

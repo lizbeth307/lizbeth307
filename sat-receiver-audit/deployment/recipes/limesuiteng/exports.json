@@ -3,8 +3,8 @@
   "kind": "srrx_limesuiteng_export_allowlist",
   "status": "AUDIT_DRAFT_CI_CHECKED",
   "audit": "deployment/recipes/limesuiteng/TX-AUDIT.md, section L",
-  "source": "defined dynamic symbols (the set nm -D --defined-only lists) of the arm64 .deb files built by sr-rx-packages run 42408657867, job lab-light, artifact lab-out-light, on wip/w2-swlime2 106196da (patch sha256 fd36f1f7dbe0af2d4f707def951ab60fdd21ddc46038b3e0700735bc39590e73); read from the ELF .dynsym on 2026-11-07",
-  "checks": "recipe.json export_count checks are derived from these lists (deployment/tests/test_lime_tx_audit.py); the build fails when a counted prefix gains or loses a symbol",
+  "source": "defined dynamic symbols (the set nm -D --defined-only lists) of the arm64 .deb files built by sr-rx-packages run 42408657867, job lab-light, artifact lab-out-light, on wip/w2-swlime2 106196da (patch sha256 fd36f1f7dbe0af2d4f707def951ab60fdd21ddc46038b3e0700735bc39590e73); read from the ELF .dynsym on 2026-11-07; the same lists come again from the .deb files of sr-rx-packages run 42411074815 on 08ff8d60 (liblimesuiteng .deb sha256 7a2c6233c25d0d7607bae227c98caaa61ed9dad4a81950f278f999c0734ffe2e); check or rewrite them with deployment/recipes/limesuiteng/export_lists.py check|write <liblimesuiteng .deb> <limesuiteng-soapysdr .deb>",
+  "checks": "recipe.json export_count checks are derived from these lists (deployment/tests/test_lime_tx_audit.py): the whole export count of each file (empty prefix) and the counted prefixes; the build fails when a file or a counted prefix gains or loses a symbol",
   "files": {
     "usr/lib/aarch64-linux-gnu/liblimesuiteng.so.0.3-1": {
       "package": "liblimesuiteng",
