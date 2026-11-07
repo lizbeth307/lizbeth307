@@ -204,7 +204,9 @@ def _download(url, target, expected_sha, expected_size, label):
 
 def fetch(cache, ids=None, closure=True):
     """Download locked artifacts into cache_path and the package closure debs into cache/closure;
-    size and SHA-256 are checked before the rename."""
+    size and SHA-256 are checked before the rename. A package-closure.json that closure_issues refuses
+    (a root added to CLOSURE_ROOTS, a new lock pin) downloads no deb and is reported, not raised: build()
+    records image-facts.json before it stops on it, so `closure --resolve` can propose the new file."""
     cache = Path(cache)
     artifacts = lock_artifacts()
     ids = list(artifacts) if ids is None else ids
@@ -220,7 +222,10 @@ def fetch(cache, ids=None, closure=True):
     verified = deploy.verify_cache(cache, components=[])
     result = {"status": "LOCKED_ARTIFACTS_VERIFIED", "artifacts": done, "verify_cache": verified}
     if closure:
-        result["closure"] = fetch_closure(cache)
+        document = load_json(CLOSURE)
+        issues = closure_issues(document, load_json(LOCK))
+        result["closure"] = {"status": "CLOSURE_INCONSISTENT", "issues": issues} if issues else \
+            {"status": "CLOSURE_DEBS_VERIFIED", "debs": fetch_closure(cache, document)}
     return result
 
 
@@ -1846,6 +1851,10 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
             raise BuildError("observed r2 /etc/kernel/cmdline is not usable: " + base["base_cmdline_status"])
         if base["rescue"]["status"] != "IDENTIFIED":
             raise BuildError("r2 rescue entry (6.18.2-3) not identified on the base ESP: " + json.dumps(base["rescue"]))
+        if fetched["closure"]["status"] != "CLOSURE_DEBS_VERIFIED":
+            # The r2 facts are written: the CI resolve step proposes package-closure.resolved.json from them (GENERATED commit).
+            raise BuildError("package-closure.json: " + "; ".join(fetched["closure"]["issues"])
+                             + " (image-facts.json recorded; `build_image.py closure --resolve` proposes the file)")
         kernel_tree, kconfig = kernel_deb_config(cache, recipe, work)
         quota = False  # partition-layout.json "quota": TBD, enabled on the unit (the builder kernel may lack quota_v2)
         loop, devices, geo = create_disk(image, layout, ids, data_bytes, quota=quota)

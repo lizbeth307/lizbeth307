@@ -614,5 +614,17 @@ class ChronyConfTests(unittest.TestCase):
         self.assertEqual(system_files.CHRONY_CONF, "etc/chrony/chrony.conf")
 
 
+class ChronyNetworkGuardTests(unittest.TestCase):
+    """IMG2-R2: chrony 4.5 directives that poll servers (initstepslew), send mail (mailonchange) or open a port without
+    any server or client setting (ptpport) are network directives too; the offline file still has none."""
+
+    def test_initstepslew_mailonchange_and_ptpport_are_guarded(self):
+        for word in ("initstepslew", "mailonchange", "ptpport"):
+            self.assertIn(word, system_files.CHRONY_NETWORK_DIRECTIVES)
+        self.assertEqual(len(set(system_files.CHRONY_NETWORK_DIRECTIVES)), len(system_files.CHRONY_NETWORK_DIRECTIVES))
+        directives = ChronyConfTests.directives(self, system_files.chrony_conf())
+        self.assertFalse(set(directives) & set(system_files.CHRONY_NETWORK_DIRECTIVES), directives)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -1440,5 +1440,75 @@ class GdmMaskAndFactsTests(unittest.TestCase):
         self.assertEqual([s[0] for s in build_image.STEPS].index("closure"), [s[0] for s in build_image.STEPS].index("kernel") + 1)
 
 
+class ClosureExtensionRouteTests(unittest.TestCase):
+    """IMG2-R1: a root added to CLOSURE_ROOTS before package-closure.json is regenerated (the IMG-4 route) downloads no
+    closure deb and does not stop fetch(); build() records image-facts.json and only then stops, so the CI resolve step
+    can propose the file. load_closure() (step 8b, `closure --check`) stays strict. IMG2-R2: the chrony guard."""
+
+    def fetch(self, cache, roots):
+        import deploy
+        downloads = []
+        with patch.object(build_image, "CLOSURE_ROOTS", roots), \
+                patch.object(build_image, "_download", lambda url, target, sha, size, label: downloads.append(url) or "PRESENT"), \
+                patch.object(deploy, "verify_cache", lambda cache, components: {"status": "STUB"}):
+            return build_image.fetch(cache, ids=[]), downloads
+
+    def test_fetch_reports_an_inconsistent_closure_without_downloading(self):
+        with tempfile.TemporaryDirectory() as cache:
+            result, downloads = self.fetch(cache, dict(build_image.CLOSURE_ROOTS))
+            self.assertEqual(result["closure"]["status"], "CLOSURE_DEBS_VERIFIED")
+            self.assertEqual(sorted(result["closure"]["debs"]), ["chrony", "gpsd", "libgps30t64", "tzdata", "tzdata-legacy"])
+            self.assertEqual(len(downloads), 5)
+            result, downloads = self.fetch(cache, dict(build_image.CLOSURE_ROOTS, greetd=()))
+            self.assertEqual(result["status"], "LOCKED_ARTIFACTS_VERIFIED")
+            self.assertEqual(result["closure"]["status"], "CLOSURE_INCONSISTENT")
+            self.assertTrue(any("roots must be" in issue for issue in result["closure"]["issues"]), result["closure"])
+            self.assertEqual(downloads, [])
+        with patch.object(build_image, "CLOSURE_ROOTS", dict(build_image.CLOSURE_ROOTS, greetd=())), \
+                self.assertRaisesRegex(build_image.BuildError, "roots must be"):
+            build_image.load_closure()
+
+    def test_build_records_the_facts_then_stops_on_the_closure(self):
+        fetched = {"status": "LOCKED_ARTIFACTS_VERIFIED", "artifacts": {}, "verify_cache": {},
+                   "closure": {"status": "CLOSURE_INCONSISTENT", "issues": ["roots must be chrony,gpsd,greetd and in packages"]}}
+
+        class Detached:
+            def umount_all(self):
+                pass
+
+            def detach(self):
+                pass
+
+        def facts(cache, work, output=None, keep_mounted=None):
+            build_image.dump(output, {"root": {"packages": {}, "packages_total": 0}})
+            keep_mounted[:] = [Detached(), Detached(), None, None]
+            return {"base_cmdline_status": "VALID", "rescue": {"status": "IDENTIFIED"}}
+
+        with tempfile.TemporaryDirectory() as temp:
+            out = Path(temp) / "out"
+            staged = (Path(temp) / "stage", Path(temp) / "bundle.tar.gz", {"bundle": {"sha256": "0" * 64}, "stage": {"files": 0}})
+            with patch.object(build_image, "require_builder", lambda: None), patch.object(build_image, "fetch", lambda cache: fetched), \
+                    patch.object(build_image, "stage_bundle", lambda work: staged), patch.object(build_image, "facts", facts), \
+                    patch.object(build_image, "kernel_deb_config", side_effect=AssertionError("the build ran past the closure check")), \
+                    patch.object(build_image.LOG, "path", None), patch.object(build_image.LOG, "steps", []):
+                with self.assertRaisesRegex(build_image.BuildError, "package-closure.json: roots must be"):
+                    build_image.build(Path(temp) / "cache", Path(temp) / "work", out)
+            self.assertTrue((out / "image-facts.json").is_file())
+            manifest = json.loads((out / "image-manifest.json").read_text(encoding="utf-8"))
+            self.assertEqual(manifest["status"], "BLOCKED")
+            self.assertIn("closure --resolve", manifest["error"])
+            self.assertEqual([s["id"] for s in manifest["steps"]], ["inputs", "base-facts"])
+
+    def test_initstepslew_mailonchange_and_ptpport_stop_the_build(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            (root / "etc/chrony").mkdir(parents=True)
+            for line, word in (("initstepslew 10 ntp.example", "initstepslew"), ("mailonchange root 0.5", "mailonchange"),
+                               ("ptpport 319", "ptpport")):
+                with patch.object(build_image, "chroot", ChronyConfInstallTests.parse(self, line + "\n")), \
+                        self.assertRaisesRegex(build_image.BuildError, word):
+                    build_image.install_chrony_conf(root)  # e.g. a *.conf in conf.d (chronyd -p prints it)
+
+
 if __name__ == "__main__":
     unittest.main()
