@@ -52,5 +52,6 @@ IPAddressDeny=any
 RestrictAddressFamilies=AF_UNIX
 LoadCredential=job:/run/srrx/satdump/%i/job.json
 TimeoutStartSec=1920
+TimeoutStopSec=15
 Environment=PYTHONPATH=/opt/srrx/software PYTHONDONTWRITEBYTECODE=1
 ExecStart=/usr/bin/python3 -P -s -B -m srrx.satdump_unit decode %i
