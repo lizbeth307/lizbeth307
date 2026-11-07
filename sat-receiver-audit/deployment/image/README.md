@@ -63,7 +63,7 @@ GUID типів підтверджує таблиця `sfdisk --list-types --lab
 
 ## Збирання (IMG-01)
 
-Потрібен нативний arm64 Linux (Ubuntu 24.04) з root, `dosfstools e2fsprogs util-linux fdisk rsync xz-utils device-tree-compiler`; CI — `ubuntu-24.04-arm` (диск 145 GB, KVM немає).
+Потрібен нативний arm64 Linux (Ubuntu 24.04) з root, `dosfstools e2fsprogs util-linux fdisk rsync xz-utils device-tree-compiler`; CI — `ubuntu-24.04-arm` (диск 145 GB, KVM немає). Push у `sr-rx-image.yml` запускає лише перевірки рецепта; збирання образу — ручний запуск або `[image-build]` у повідомленні head-коміту, модель QEMU маршруту A — ще й `[image-smoke]` (або вхід `smoke` ручного запуску).
 
 ```sh
 python3 deployment/image/build_image.py plan --route A
