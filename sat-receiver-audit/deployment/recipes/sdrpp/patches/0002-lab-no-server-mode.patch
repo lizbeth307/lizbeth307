@@ -1,0 +1,14 @@
+--- a/core/src/core.cpp
++++ b/core/src/core.cpp
+@@ -78,6 +78,11 @@
+     }
+ 
+     bool serverMode = (bool)core::args["server"];
++    // SRRX +lab: server mode is not available in the receive-only lab build (build/07 section 13).
++    if (serverMode) {
++        flog::error("Server mode is disabled in the SR-RX receive-only lab build");
++        return 1;
++    }
+ 
+ #ifdef _WIN32
+     // Free console if the user hasn't asked for a console and not in server mode
