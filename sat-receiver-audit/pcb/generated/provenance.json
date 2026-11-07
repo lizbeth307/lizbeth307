@@ -14,7 +14,7 @@
     },
     {
       "file": "design/E4.json",
-      "sha256": "e10e0c344463c9e5bc48cb59293853bacc943e8e55f08f2f0cf109211688aa17"
+      "sha256": "b7e76b58e992f767726d4d2481d1100987e9cb296a45784f9ebbaac260872595"
     },
     {
       "file": "design/E5.json",
@@ -135,7 +135,7 @@
       "interface_open",
       "interface_resolved"
     ],
-    "projection_sha256": "caa325f1d72a6fb531ae284738e235ca75f97b59b5eef78c8ff8fed5ee80b580"
+    "projection_sha256": "f25825a8f31a4ca5c03bd53925ecab5b89419430fc6a66fa2c7bc1435fb1b25e"
   },
   "partition": {
     "file": "pcb/partition-spec.json",
