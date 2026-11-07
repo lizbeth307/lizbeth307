@@ -70,12 +70,14 @@ def pwr_b_overrides():
 # Board parts assembled off the plate boards (build/15, build/16 §2): their own domain instead of the sheet default.
 # W2 GR-3: the hatch-board harness headers sit on HATCH, and the PWR side-entry headers that tie to PWR-B parts on PWR-B
 # (tools/assembly_data.py HEADERS); the other PWR headers keep their sheet domain on PWR-A.
+# W2 GR-4: the boundary refs of the insert boards (S24 header J514, solder-wire pads J515-J517, J518, J320-J322, J116/J117)
+# sit on their insert board, so every off-board net of T7_INSERT, IMU_CARRIER and PACK_FUSE ends on a connector of that board.
 DOMAIN_OVERRIDE = {**pwr_b_overrides(), **{r:'ENC' for r in ('ENC301','ENC302')}, **{r:'HATCH' for r in ('J502','J503','J509','J510','J513')},
  **{r:'PWR_BRANCH_SW' for r in ('J201','J202','J203','J204','J207')}, **{r:'USB_POWER_SW' for r in ('J506','J508')},
- **{r:'T7_INSERT' for r in ('U505','R514','R515','R516','R517','C514','C515','C516','TP501')},
+ **{r:'T7_INSERT' for r in ('U505','R514','R515','R516','R517','C514','C515','C516','TP501','J514','J515','J516','J517')},
  **{r:'HDMI_INSERT' for r in ('U506','C517','C518','R552','TP502')},
- **{r:'IMU_CARRIER' for r in ('U552','D502','C519','C520','C340','C341','R390','R391')},
- 'F101':'PACK_FUSE'}
+ **{r:'IMU_CARRIER' for r in ('U552','D502','C519','C520','C340','C341','R390','R391','J518','J320','J321','J322')},
+ **{r:'PACK_FUSE' for r in ('F101','J116','J117')}}
 CONSTRAINTS = [
  {'id':'PWR-01','boards':['PWR_MAIN','PWR_BRANCH','PWR_BRANCH_SW','USB_POWER_SW'],'requirement':'4.6 A main path and 50 °C enclosure qualification; LAB5 <=3.2 A continuous, 4 A transient acceptance. Size copper/vias/connectors from chosen stackup and thermal calculation; no trace width is asserted here.','source':'design/E1-review.md; E1-05/E1-06'},
  {'id':'PWR-02','boards':['PWR_MAIN'],'requirement':'Keep raw E1_CELL0/B- distinct from GND/P-. No accidental copper, mounting-hole or balance-cable BMS bypass. J102 remains DNP/service-only.','source':'design/E1-review.md; design/charger-bms-review.md'},

@@ -115,8 +115,8 @@ BOARD_OF_DOMAIN = {  # build/15 «Кількість плат»; PWR = the PWR-A
     "RF_HMC": "RF", "RF_HF": "RF", "RF_INJECTOR": "RF", "DC_CORE": "RF",
     "CTRL_HMI": "CTRL", "HATCH": "HATCH",
 }
-# Off-plate board domains of pcb/prepare.py whose parts belong to a module or cable unit here (no deviation):
-# ENC (ENCM/ENCV), T7_INSERT (T7A), HDMI_INSERT (HDMIA), IMU_CARRIER (IMUPACK), PACK_FUSE (PACK).
+# Off-plate board domains of pcb/prepare.py whose parts belong to a module or cable unit here (no deviation; W2 GR-4: their boundary refs too):
+# ENC (ENCM/ENCV), T7_INSERT (T7A: J514-J517), HDMI_INSERT (HDMIA), IMU_CARRIER (IMUPACK: J518, J320-J322), PACK_FUSE (PACK: J116/J117).
 # Boards whose PH headers must be side entry: their envelope height is 5.5 mm (RF, CTRL) or 6.5 mm (ENC) and a
 # top-entry PH stands 8 mm with its housing (JST ePH); the side-entry header stands 4.8 mm (mechanical/params/boards.json).
 SIDE_ENTRY_UNITS = ("CTRL", "RF", "ENCM", "ENCV")
@@ -146,17 +146,18 @@ UNITS = [
     ("Q6A.MKEY", "module", "Q6A, M.2 M-key (J530)", "середня пластина"),
     ("Q6A.EDL", "module", "Q6A, контакти кнопки EDL (J522)", "середня пластина"),
     ("Q6A.RTC", "module", "Q6A, J11 RTC (J303 + BT301)", "середня пластина"),
-    ("PACK", "module", "Пак 4S1P + BMS Daly + запобіжник паку (BT101–BT104, U101, TH101, F101)",
+    ("PACK", "module", "Пак 4S1P + BMS Daly + запобіжник паку (BT101–BT104, U101, TH101, F101; майданчики J116/J117 носія F101)",
      "батарейний відсік (лоток x 3–161 уздовж нижньої стінки, layout battery_tray), BMS — лицьовий бік пластини x 175–210 (layout bms); "
      "F101 7.5 A — у тримачі Keystone 3568 на малій носійній платі PACK_FUSE біля плюса паку, ізольованій і закріпленій біля лотка "
-     "(STACK D2 «біля батареї»; конверт у моделі — TBD, mechanical/README); провід BT104.+ → F101.1 — найкоротший, 18 AWG "
-     "(його захищає лише BMS, DOCP 40±10 A, 02 §2)"),
+     "(STACK D2 «біля батареї»; конверт у моделі — TBD, mechanical/README); провід BT104.+ → майданчик J116 (мідь до F101.1) — найкоротший, "
+     "18 AWG (його захищає лише BMS, DOCP 40±10 A, 02 §2); провід S05 — від майданчика J117 (мідь від F101.2), W2 GR-4"),
     ("INA", "module", "Adafruit INA228 5832 (U102, R101, C101, C102)", "задній шар, на стійках задньої стінки біля батарейного лотка x 72.6–92.8, y 39–64.8, z 5.5–15.6 (layout ina228, W2 MECH-3: над PWR-A тепер мезонін PWR-B); кріплення — F09"),
     ("SWM", "module", "Pololu #2813 (U106)", "задній шар, на стійках задньої стінки поруч з INA228 x 93.3–113.6, y 39–64.4, z 5.5–15.6 (layout swm_2813, W2 MECH-3); кріплення — F05"),
     ("CHG", "module", "IP2368 COUT (U110, R117–R120, C118, TH102)", "лицьовий бік пластини вгорі праворуч x 172–220, y 122.5–156.5 (layout ip2368; "
      "R-IP2368 ≥10 мм від батареї)"),
     ("HUB", "module", "Adafruit 5997 CH334F (U510)", "біля Q6A J2 (конверт у моделі механіки — TBD, mechanical/README)"),
-    ("T7A", "cable", "Вставка ключа VBUS T7 (U505, R514–R517, C514–C516, TP501)", "у розриві USB3 біля Q6A J5"),
+    ("T7A", "cable", "Вставка ключа VBUS T7 (U505, R514–R517, C514–C516, TP501; вилка S24 J514, майданчики VBUS J515/J516 і GND J517)",
+     "у розриві USB3 біля Q6A J5"),
     ("T7", "remote", "Samsung T7 + цілісний кабель A–C (U540)", "ззовні ззаду внизу, тримач"),
     ("HDMIA", "cable", "HDMI-вставка pin 18 (U506, C517, C518, R552, TP502)", "біля HDMI Q6A"),
     ("DISP", "module", "Дисплей Wisecoco (U520)", "лице"),
@@ -174,7 +175,8 @@ UNITS = [
      "стінка головного корпусу — грань і виріз TBD (MECH-07, моделює MECH-3); вилка — на кабелі W425 (S41); рішення build/15 «Ключування панельних роз'ємів»"),
     ("EDL", "panel", "Кнопка EDL (SW501, E-Switch PV6F240SS)", "на платі лючка за кришкою сервісного лючка (layout edl_key_body)"),
     ("PWRBTN", "panel", "Кнопка живлення (SW301, E-Switch PV6F240SS)", "верхня грань x 155, z 48.5 (layout pwr_key_body, M-02, PWR_KEY; рішення build/15 «Оболонка D15»)"),
-    ("IMUPACK", "remote", "IMU-пак Hammond 1550Z101 (U309, U314, J550, D502, C519, C520, U552 і деталі E3 «External IMU»)", "на штанзі антени, ≥30 см позаду"),
+    ("IMUPACK", "remote", "IMU-пак Hammond 1550Z101 (U309, U314, J550, D502, C519, C520, U552 і деталі E3 «External IMU»; майданчики "
+     "носійної плати IMU_CARRIER: кабель J518, RP2040-Zero J320/J321, BNO085 J322)", "на штанзі антени, ≥30 см позаду"),
     ("GNSS", "module", "LC76G (U304)", "задня стінка ліворуч x 8–71.6, y 38.5–92.5 (layout lc76g); до P7 (верхня грань x 163.5) ≥113 мм по прямій — "
      "W407 CAB.011 100 мм не дістає, потрібен довший пігтейл (MPN TBD, build/15 «Оболонка D15»)"),
     ("VEML", "module", "Adafruit 4162 VEML7700 (U308)", "верхня грань безеля, вікно ⌀4 x 120, z 60 (layout veml7700_window), поза козирком; конверт плати — TBD"),
@@ -215,6 +217,9 @@ UNIT_OF_REF = {
     "SW308": "ENCM", "SW309": "ENCV",  # push switches inside ENC301/ENC302 (parts DB virtual hosts)
     "U309": "IMUPACK", "U314": "IMUPACK", "J550": "IMUPACK", "D502": "IMUPACK", "C519": "IMUPACK",
     "C520": "IMUPACK", "U552": "IMUPACK",
+    # W2 GR-4: boundary refs of the insert boards, in the unit that assembles the board (pcb/prepare.py DOMAIN_OVERRIDE).
+    "J518": "IMUPACK", "J320": "IMUPACK", "J321": "IMUPACK", "J322": "IMUPACK", "J116": "PACK", "J117": "PACK",
+    "J514": "T7A", "J515": "T7A", "J516": "T7A", "J517": "T7A",
     "U506": "HDMIA", "C517": "HDMIA", "C518": "HDMIA", "R552": "HDMIA", "TP502": "HDMIA",
     "U505": "T7A", "R514": "T7A", "R515": "T7A", "R516": "T7A", "R517": "T7A", "C514": "T7A", "C515": "T7A",
     "C516": "T7A", "TP501": "T7A",
@@ -232,7 +237,9 @@ UNIT_OF_GROUP = {("E3", "External IMU"): "IMUPACK"}
 # PWR-A/PWR-B stack: one bundle end that breaks out after the slot onto headers of both boards (pcb/partition-spec.json; the
 # JLC BOM board names of tools/build_parts.py BOARD3 are the same).
 PHYSICAL_BOARD = {"PWR_MAIN": "PWR_A", "PWR_BRANCH": "PWR_A", "USB_POWER": "PWR_A", "PWR_BRANCH_SW": "PWR_B", "USB_POWER_SW": "PWR_B",
-                  "CTRL_HMI": "CTRL", "RF_HMC": "RF", "RF_HF": "RF", "RF_INJECTOR": "RF", "DC_CORE": "RF", "HATCH": "HATCH", "ENC": "ENC"}
+                  "CTRL_HMI": "CTRL", "RF_HMC": "RF", "RF_HF": "RF", "RF_INJECTOR": "RF", "DC_CORE": "RF", "HATCH": "HATCH", "ENC": "ENC",
+                  # the insert boards (W2 GR-4): a header there (J514) is listed on its own board
+                  "T7_INSERT": "T7_INSERT", "HDMI_INSERT": "HDMI_INSERT", "IMU_CARRIER": "IMU_CARRIER", "PACK_FUSE": "PACK_FUSE"}
 # PWR-B is a mezzanine on the PWR-A L, joined by the Samtec B2B pair (pcb/partition-spec.json, W2 AREA), so BOARD_OF_DOMAIN keeps
 # one harness unit PWR for both. Source of the dual-row PHD headers (W2 GR-3), set here after the units so that the line citations
 # into this file (side-entry rule and ENC units: build/15, pcb/README.md, pcb/boards/ENC.json) keep their numbers.
@@ -292,6 +299,8 @@ HEADERS = {
     "J509": ("X14P1-HATCH", {"S14": "1 2"}),
     "J510": ("X15S1-HATCH", {"S15": "1"}),
     "J513": ("X30S1-HATCH", {"S30": "1-3"}),
+    # W2 GR-4: the T7A end of S24 lands on the side-entry PH 3 header of the T7_INSERT board (was soldered to U505/R516 pins)
+    "J514": ("X24S1-T7", {"S24": "1-3"}),
 }
 # Graph connectors whose contacts serve more than one segment: the S01 ribbon conductors 6, 7, 16 and 18 leave as the PPS branch
 # right after the J20 socket (build/15 W2 MECH-1, mechanical/params/mechanical.json harness_routes branches.PPS).
@@ -350,6 +359,7 @@ SEGMENTS = [
      "шини bias ch1–ch4, LNB і LAB5_RLY котушок G6K (після PTC F104 на PWR-A, R-E1-09); крізь проріз SL2 і виріз N4 (M-07, M-09)"),
     ("S05", "PACK", "PWR", "Пак (після F101) → PWR", None, "мінімальна (TBD, CAD)",
      "F101 стоїть біля паку, тож увесь сегмент захищає F101 7.5 A; коло батареї 18 AWG (E1 F101); найкоротша траса, без петель; "
+     "кінець у паку — майданчик J117 носійної плати PACK_FUSE (мідь від F101.2, W2 GR-4); "
      "роз'єм S05 на PWR — також вхід стенда при запуску (19 §4)"),
     ("S06", "PWR", "INA", "PWR ↔ INA228 (шунт)", None, "TBD (CAD)", "VIN+/VIN− — клеми шунта Adafruit 5832; I2C0/ALERT/VS — гребінка модуля"),
     ("S07", "PWR", "SWM", "PWR ↔ Pololu #2813", None, "TBD (CAD)", "пайка до контактів модуля; коло батареї 18 AWG"),
@@ -372,7 +382,8 @@ SEGMENTS = [
     ("S21", "PWR", "RTLB", "VBUS_RTLB → кабель RTL-B (J541.1)", None, "TBD (CAD)", "розділений VBUS; J5.10 не з'єднувати; крізь SL2 і виріз N3"),
     ("S22", "PWR", "HFP", "VBUS_HFP → пігтейл HF+ (J544.1)", None, "TBD (CAD)", "після L501 і демпфера; 2× Fair-Rite 2631480002 на повному кабелі; крізь SL2"),
     ("S23", "PWR", "LABUSB", "VBUS_LABPORT → J501.1", None, "TBD (CAD)", "C506 біля вихідного порту; крізь проріз SL3"),
-    ("S24", "CTRL", "T7A", "EN_T7/3V3 → вставка T7", None, "TBD (CAD)", "U505 на вставці USB3; крізь проріз SL2"),
+    ("S24", "CTRL", "T7A", "EN_T7/3V3 → вставка T7", None, "TBD (CAD)",
+     "U505 на вставці USB3; на вставці — вилка J514 (X24S1-T7, PH 3 бічного входу, W2 GR-4); крізь проріз SL2"),
     ("S25", "CTRL", "GNSS", "CTRL → LC76G (живлення і RESET)", None, "TBD (CAD)",
      "E3_GNSS5V від U315 і E3_GNSS_RESET_N від Q301 з CTRL, крізь SL2; PPS і UART6 сюди не входять — вони йдуть гілкою PPS шлейфу S01 "
      "(S01 + S25 за моделлю 322 мм > 200, R-PPS-LEN; рішення build/15 W2 MECH-1)"),
@@ -465,12 +476,12 @@ GND_GROUP_SKIP = {("S06", "MFJ"), ("S07", "MFJ")}  # shunt path and #2813 switch
 GND_CURRENT = {"S06": (0.01, None), "S07": (0.05, None)}  # chip/control ground only (INA228, #2813 logic)
 # Module end of a wire: which contact it lands on, (segment, unit, net) -> "REF.PIN (note)".
 END_PIN = {
-    ("S05", "PACK", "E1_SHUNT_P"): "F101.2 (вихід тримача F101 біля плюса паку)", ("S05", "PACK", "GND"): "U101.P- (P− BMS)",
+    ("S05", "PACK", "E1_SHUNT_P"): "F101.2 (вихід тримача F101 біля плюса паку; провід паяється в майданчик J117 носійної плати PACK_FUSE, W2 GR-4)", ("S05", "PACK", "GND"): "U101.P- (P− BMS)",
     ("S06", "INA", "E1_N"): "R101.2 (клема VIN− модуля 5832)", ("S06", "INA", "E1_SHUNT_P"): "R101.1 (клема VIN+ модуля 5832)",
     ("S06", "INA", "GND"): "U102.7", ("S07", "SWM", "GND"): "U106.GND",
     ("S10", "CHG", "GND"): "U110.BAT-", ("S13", "HUB", "GND"): "U510.JP5_4",
     ("S17", "Q6A.CORE", "GND"): "U500.GND", ("S18", "RISER", "GND"): "U530.GND", ("S19", "DISP", "GND"): "U520.DC_GND",
-    ("S24", "T7A", "GND"): "U505.5", ("S25", "GNSS", "GND"): "U304.P1.2", ("PPS", "GNSS", "GND"): "U304.P1.2 (повернення PPS/UART6, разом із GND S25)",
+    ("S25", "GNSS", "GND"): "U304.P1.2", ("PPS", "GNSS", "GND"): "U304.P1.2 (повернення PPS/UART6, разом із GND S25)",
     ("S26", "VEML", "GND"): "U308.GND",
     ("S27", "FAN1", "GND"): "FAN301.GND", ("S35", "BONI", "GND"): "A406.SHIELDS", ("S41", "SPOD", "GND"): "W425.RETURN",
     ("S10", "CHG", "E1_CHG_NTC"): "U110.NTC",
@@ -575,7 +586,7 @@ ASSEMBLIES = [
      "на трасі немає; запропоновано за замовчуванням FPC-запас STACK (Adafruit 3550 кутовий + 3548 + 3560, обмотка заземленою мідною стрічкою) — MPN, "
      "довжина й ферит для пласкої стрічки TBD (assembly_items AI-HDMI-FPC); pin 18 через U506 на вставці (E5 §8, домен HDMI_INSERT); TMDS не розплітати"),
     ("C-T7", "USB3 Q6A J5 нижній → T7", r"^E5_(T7_|VBUS_J5|VBUS_T7)", "Q6A.J5 → T7A → T7",
-     "цілісний екранований кабель A–C ≤0.5 м + вставка U505 (E5 §7); перевірка 5000M/uas"),
+     "цілісний екранований кабель A–C ≤0.5 м + вставка U505 (E5 §7): VBUS-жилу розрізано лише на вставці (J515 від J5, J516 до T7), GND-жилу не розривають (відвід J517), S24 — вилка J514 (W2 GR-4); перевірка 5000M/uas"),
     ("C-HUB", "USB2 Q6A J2 P3 → CH334F JP5", r"^E5_HUB_", "Q6A.J2 → HUB", "VBUS Q6A не підключати (E5 §2)"),
     ("C-TOUCH", "USB2 Q6A J2 P2 → touch Wisecoco", r"^E5_TOUCH_", "Q6A.J2 → DISP", "лише D+/D−/GND, ферит Würth 74271140"),
     ("C-RTLA", "USB2 H2 → RTL-A", r"^RTLA_D", "HUB → RTLA", "пігтейл H2 → USB-A J543; VBUS лише з S20"),
