@@ -11,10 +11,16 @@ What it decides, in one place (the spec records each rule with its source):
     placeholder B2B1 on the bottom side (the Samtec QTH-060-01-L-D-A of pcb/partition-spec.json b2b has no graph ref and
     no vendored footprint yet: GR-3 for_dependents, OPEN for GR-4 / PCB-PWRA / PCB-PWRB);
   * the B2B pin map, generated from pcb/generated/b2b-nets.json (contacts per net, one GND contact per power net);
-  * scripted locked copper: the LAB5 path (B2B pins -> B.Cu bar -> via array -> F.Cu trunk -> stubs) and the Kelvin
-    nets of the four LNA shunts (current path and sense take-off from the shunt pads);
-  * the 4-layer plan (In1.Cu / In2.Cu GND planes of type power, signals on F.Cu / B.Cu) and the project rules.
-It checks courtyard overlaps, outline / cutouts, hole keepouts and the clearance of the scripted copper before CI routes.
+  * scripted locked copper: the LAB5 path (B2B pins -> B.Cu bar -> via array -> F.Cu trunk -> stubs), the Kelvin
+    nets of the four LNA shunts (current path and sense take-off from the shunt pads) and a plane via next to every
+    SMD GND pad (gnd_fanout);
+  * the 4-layer plan (In1.Cu / In2.Cu GND planes of type power, signals on F.Cu / B.Cu), the project rules and net
+    classes, and the router settings: Freerouting without its fan-out stage, the classes of the scripted nets
+    (SCRIPTED_GND, SCRIPTED_PWR1A, SCRIPTED_PWR3A) not autorouted, rule-area strips on every board edge.
+Why each router setting exists is in the spec (router.why, edge_keepout.why) with the sr-rx-pcb run that showed it.
+It checks courtyard overlaps, outline / cutouts, hole keepouts, drilled holes in courtyards, the GND via of every SMD
+GND pad and the clearance of the scripted copper before CI routes. The routed board, its report and the fab set are
+CI outputs (route run of a commit whose subject carries '[pcb-route PWR_B]', applied as 'GENERATED:').
 CI/model input only: no fabrication release; bench gates stay OPEN.
 """
 from __future__ import annotations
