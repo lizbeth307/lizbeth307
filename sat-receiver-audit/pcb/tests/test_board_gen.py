@@ -222,6 +222,7 @@ class RouterAndToken(unittest.TestCase):
         self.assertIn('--gui.enabled=false', cmd)
         self.assertIn('--router.job_timeout=00:05:00', cmd)
         self.assertIn('--router.autorouter.max_passes=20', cmd)
+        self.assertIn('--router.optimizer.max_threads=1', cmd)
         self.assertEqual(cmd[cmd.index('-mt') + 1], '1')
         self.assertEqual(cmd[cmd.index('-de') + 1], 'b.dsn')
         self.assertEqual(cmd[cmd.index('-do') + 1], 'b.ses')

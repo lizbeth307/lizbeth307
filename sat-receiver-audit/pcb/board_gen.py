@@ -185,8 +185,11 @@ def freerouting_command(java, jar, dsn, ses, max_passes, threads, user_dir, job_
         raise SpecError('router.max_passes and router.threads must be >= 1')
     if not re.fullmatch(r'\d{2}:\d{2}:\d{2}', str(job_timeout)):
         raise SpecError('router.job_timeout must be HH:MM:SS')
+    # -mt alone left optimizer.max_threads at 3 in the first JAR run (log of run 42389363266), so the canonical
+    # key is passed too; automatic neckdown off keeps every routed track at its net-class width.
     return [str(java), '-Djava.awt.headless=true', '-cp', str(jar), FREEROUTING['main_class'],
             '-de', str(dsn), '-do', str(ses), f'--router.autorouter.max_passes={int(max_passes)}', '-mt', str(int(threads)),
+            f'--router.optimizer.max_threads={int(threads)}', '--router.automatic_neckdown=false',
             '-da', '--gui.enabled=false', f'--router.job_timeout={job_timeout}', '--logging.file.enabled=false',
             f'--user_data_path={user_dir}']
 
@@ -900,6 +903,11 @@ def build_board(pcb, spec, contract, template, temp):
         nick, name = part['fpid'].split(':', 1)
         fp.SetFPID(pcb.LIB_ID(nick, name))
         place(pcb, frame, fp, part['anchor'])
+        ref_text = part['anchor'].get('ref_text')
+        if ref_text:  # legend position (board mm) when the footprint default lands on a hole or pad
+            fp.Reference().SetPosition(frame.k(*ref_text['at']))
+            if 'angle' in ref_text:
+                fp.Reference().SetTextAngleDegrees(float(ref_text['angle']))
         seen = set()
         for pad in fp.Pads():
             num = str(pad.GetNumber())
@@ -1035,11 +1043,13 @@ def board_facts(pcb, board, frame):
             pads.append({'number': str(pad.GetNumber()), 'net': pad.GetNetname() or None, 'at': list(frame.m(pad.GetPosition())),
                          'box': [lo[0], lo[1], hi[0], hi[1]], 'tht': pad.HasHole() if hasattr(pad, 'HasHole') else drill.x > 0,
                          'npth': pad.GetAttribute() == pcb.PAD_ATTRIB_NPTH,
-                         'annular_mm': r4((min(pcb.ToMM(size.x), pcb.ToMM(size.y)) - max(pcb.ToMM(drill.x), pcb.ToMM(drill.y))) / 2)
+                         'annular_mm': r4(min(pcb.ToMM(size.x) - pcb.ToMM(drill.x), pcb.ToMM(size.y) - pcb.ToMM(drill.y)) / 2)
                          if drill.x > 0 and pad.GetAttribute() != pcb.PAD_ATTRIB_NPTH else None})
         pads.sort(key=lambda p: (sort_ref(p['number']) if p['number'] else ('', -1, ''), p['at']))
         layers = {}
         for item in fp.GraphicalItems():
+            if item.Type() != pcb.PCB_SHAPE_T:  # body and courtyard outlines only, not texts
+                continue
             name = board.GetLayerName(item.GetLayer())
             if name in ('F.Fab', 'B.Fab', 'F.Courtyard', 'B.Courtyard', 'F.CrtYd', 'B.CrtYd'):
                 b = item.GetBoundingBox()

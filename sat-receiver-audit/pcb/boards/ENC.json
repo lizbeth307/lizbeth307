@@ -64,7 +64,8 @@
     {
       "ref": "ENC",
       "source": "graph",
-      "anchor": {"at": [12.0, 12.0], "align": {"pad_centroid": "MP"}, "rotation": 90, "side": "F"},
+      "anchor": {"at": [12.0, 12.0], "align": {"pad_centroid": "MP"}, "rotation": 90, "side": "F",
+                 "ref_text": {"at": [12.0, 22.2], "angle": 0}},
       "anchor_source": "contract encoder_at [12, 12] (mechanical/params/boards.json:162); MP slot centre = shaft axis (footprint descr); rotation 90 keeps the left strip x 0-4.5 free"
     },
     {
