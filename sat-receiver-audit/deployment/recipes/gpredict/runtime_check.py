@@ -4,7 +4,7 @@
 check_repo.py runtime-check runs it as uid 1000 under unshare --net in a fresh chroot from the
 pinned snapshot, with the package and its runtime dependencies installed offline. Standard library
 only. It checks that:
-- /usr/bin/gpredict resolves every library (ldd) and loads no libgps and no libhamlib;
+- /usr/bin/gpredict resolves every library (ldd) and loads no libgps, no libhamlib and no libcurl;
 - the package ships no bundled satellite data (no usr/share/gpredict/data/satdata files: Gpredict
   loads only what the srrx Gpredict bridge writes);
 - the binary carries the lab refusals (no network TLE or transponder update, RX only radios, the
@@ -28,7 +28,7 @@ REQUIRED = (b"network TLE update is disabled in the SR-RX lab build",
             b"is not an RX only radio; refused by the SR-RX lab build",
             b"rotctld answer fills the")
 FORBIDDEN = (b"IQRECORD", b"celestrak.org/NORAD", b"amsat.org/amsat/ftp", b"db.satnogs.org")
-FORBIDDEN_LIBRARIES = re.compile(r"^(libgps|libhamlib)", re.I)
+FORBIDDEN_LIBRARIES = re.compile(r"^(libgps|libhamlib|libcurl)", re.I)
 RADIO = {"host": "127.0.0.1", "port": "4532", "type": "0", "ptt": "0", "signal_aos": "false", "signal_los": "false",
          "signal_aoiq": "false", "signal_loiq": "false"}
 

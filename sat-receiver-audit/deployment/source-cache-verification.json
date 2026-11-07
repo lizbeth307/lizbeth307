@@ -3,7 +3,7 @@
   "entries": 73,
   "includes_core": false,
   "hardware_ready": false,
-  "verified_on": "2026-10-24",
+  "verified_on": "2026-11-07",
   "components": [
     "limesuiteng",
     "rtlsdr",
@@ -35,5 +35,5 @@
     "qttinysa",
     "labwc"
   ],
-  "source_lock_sha256": "46b2654ec88a95751f5cf12fc7b4b2503b1e6c022ad07d5e94ee22d225d53079"
+  "source_lock_sha256": "2dbc3b52613625d218298afed1f9dd9b3397b844896e7352739c55f9c520c4da"
 }
