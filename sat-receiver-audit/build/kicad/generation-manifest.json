@@ -162,58 +162,62 @@
       "stem": "E3",
       "instance": "815659b2-9f99-5caa-9e97-34b4cd398135",
       "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (1/2)",
-      "components": 87,
+      "components": 92,
       "sheet": "E3",
       "notes": [
         "E3-05",
         "E3-04",
-        "E3-08",
+        "N-E3-01",
         "E3-06"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
         "E3-05": 110,
         "E3-04": 110,
-        "E3-08": 110,
+        "N-E3-01": 110,
         "E3-06": 110
       },
-      "fill": 0.804,
+      "fill": 0.784,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 130,
-        "ground_symbols": 35,
-        "junctions": 66,
-        "wire_crossings": 10,
-        "wires": 390
+        "global_labels": 133,
+        "ground_symbols": 37,
+        "junctions": 73,
+        "wire_crossings": 14,
+        "wires": 425
       }
     },
     {
       "stem": "E3_02",
       "instance": "047fcfd6-7912-5c2d-b6e9-2eba49e8ffe0",
       "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (2/2)",
-      "components": 62,
+      "components": 63,
       "sheet": "E3",
       "notes": [
         "E3-03",
         "E3-02",
         "E3-07",
-        "E3-01"
+        "E3-01",
+        "E3-08",
+        "N-E3-02"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
         "E3-03": 110,
         "E3-02": 110,
         "E3-07": 110,
-        "E3-01": 110
+        "E3-01": 110,
+        "E3-08": 110,
+        "N-E3-02": 110
       },
-      "fill": 0.608,
+      "fill": 0.71,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 94,
-        "ground_symbols": 34,
-        "junctions": 43,
-        "wire_crossings": 13,
-        "wires": 267
+        "global_labels": 98,
+        "ground_symbols": 36,
+        "junctions": 39,
+        "wire_crossings": 9,
+        "wires": 255
       }
     },
     {
@@ -343,7 +347,7 @@
         "N-E5-03": 110,
         "E5-03": 110
       },
-      "fill": 0.727,
+      "fill": 0.734,
       "drawing": {
         "fallback_labels": 0,
         "global_labels": 91,
@@ -357,13 +361,15 @@
       "stem": "E5_02",
       "instance": "2f560f15-377c-5a7b-8d16-c38c753251d6",
       "title": "E5 - USB, VBUS, PCIe та корпусні інтерфейси (2/2)",
-      "components": 18,
+      "components": 24,
       "sheet": "E5",
       "notes": [
         "E5-01",
         "E5-06",
         "E5-08",
         "E5-02",
+        "N-E5-04",
+        "N-E5-05",
         "E5-07"
       ],
       "note_wrap_cap": 110,
@@ -372,30 +378,32 @@
         "E5-06": 110,
         "E5-08": 110,
         "E5-02": 110,
+        "N-E5-04": 110,
+        "N-E5-05": 110,
         "E5-07": 110
       },
-      "fill": 0.387,
+      "fill": 0.558,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 39,
-        "ground_symbols": 13,
-        "junctions": 28,
-        "wire_crossings": 0,
-        "wires": 126
+        "global_labels": 40,
+        "ground_symbols": 18,
+        "junctions": 33,
+        "wire_crossings": 4,
+        "wires": 143
       }
     }
   ],
-  "components": 777,
+  "components": 789,
   "supply_annotations": 25,
-  "connected_contacts": 2253,
-  "nets": 478,
+  "connected_contacts": 2287,
+  "nets": 485,
   "drawing": {
     "fallback_labels": 0,
-    "global_labels": 933,
-    "ground_symbols": 480,
-    "junctions": 460,
-    "wire_crossings": 45,
-    "wires": 2736
+    "global_labels": 941,
+    "ground_symbols": 489,
+    "junctions": 468,
+    "wire_crossings": 49,
+    "wires": 2776
   },
   "sparse_last_pages": [],
   "single_contact_nets": {},
@@ -508,7 +516,7 @@
     },
     {
       "id": "E2-03",
-      "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 112k/10.0k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
+      "description": "Остаточні ILIM і пускові струми RTL-B, Lime, LNB, Boni та LaNA WB потребують натурних вимірів; ємність riser і комерційних модулів не опублікована. Поріг OVLO Boni (R263/R264, стартовий розрахунок 102k/9.09k) STACK §5.1 вимагає перерахувати для 13.8 V; на стенді його не перевірено.",
       "blocking": true,
       "resolve": "FNB58/INA228/INA3221: 20 холодних і теплих пусків, струми стримінгу, КЗ і SOA. Установити ILIM 1.5–2× виміряного струму з допусками. Boni (v2.1, R-E2-19): RILM 7.15k 1% ≤100 ppm/K → ILIM 0.122…0.153 A (0.1215…0.154 A з TCR) проти найгіршого сталого ≈79.7 mA (Boni 65 mA тип. + bleed E4 до 14.35 mA + R283/R284 і DCS tap), тобто 1.53…1.92×; з блокувальним елементом E4-06 (+≈1.6 mA) ≈81.3 mA і 1.5× = 0.122 A — на межі ILIM min. Після HF-9 (струм Boni-Whip холодним і гарячим при 13.8 і 14.1 V) перерахувати RILM = 903/(ILIM−0.0112): ILIM min ≥1.5×, ILIM max ≤ min(2×, DC-рейтинг bias-tee ≥0.16 A). Електронне навантаження на BONI13V8 при 13.8 V: спрацювання в межах 0.122…0.153 A, поведінка понад TA 80 °C. Тверде КЗ на P5 при ввімкненому bias (v2.1, Q2903 послідовно): пара Q2903 самозміщується біля VGS(th) і тримає BONI13V8 на ≈1.2…4.4 V; струм U214 — між foldback ≈0.09…0.115 A (Figure 22, VOUT = 0) і ILIM, U214 ≈0.9…1.9 W, Q2903 ≈0.1…0.7 W у лінійному режимі; FLT мовчить — записати BONI13V8, струм, температуру корпусу Q2903 і поведінку U214 (обмеження чи TSD) до зняття EN_BONI та підтвердити, що labd знімає EN_BONI за min_voltage_v і PG_BONI ≤2 s. Межа labd 0.113 A не змінюється. Загальний LAB5 тестується за новими воротами E1 для D36V50F5 + запобіжник 4A; старі 2.5A не є лімітом default-збірки. OVLO Boni (STACK §8.1 HF-8/RF-5): без Boni-Whip і зі струмовим обмеженням — повільна розгортка вузла E2_BONI_LDO (вхід eFuse U214) 13.8→15.5→13.8 V, записати пороги спрацювання й відпускання; OVLO не спрацьовує в смузі 13.8 V, поріг вище 14.145 V (макс. LDO) і нижче 15 V (межа Boni). Поза вікном — перерахувати R263/R264 і повторити.",
       "stack": "§5.1 (VBUS RTL-B, BONI13V8); §8 (струми; TPS2553DBVR-1 п. 3); §8.1 RF-2, HF-8/RF-5",
@@ -629,10 +637,12 @@
       "id": "E3-08",
       "description": "Pico watchdog, MicroPython GPIO/UART adapter and host handshake implemented 20.10.2026 and tested on the host. Actual GPIO timing, reset levels, WDT/brownout behavior and Linux/serial fault recovery have not been qualified on the device.",
       "blocking": true,
-      "resolve": "Run the implemented firmware with the actual accepted Pico/Q6A assembly: scope MCP RESET assertion/release, safe output image including CHG_INHIBIT=1 after initialization, 100ms guard, 750ms heartbeat deadline plus measured latency, explicit fresh-session recovery, Linux kill/hang, UART loss/corruption, WDT/brownout and GPIO current/backfeed. Complete Pico power loss with Q6A alive remains outside Q306 coverage; no software test closes this boundary.",
+      "resolve": "Run the implemented firmware with the actual accepted Pico/Q6A assembly: scope MCP RESET assertion/release, safe output image including CHG_INHIBIT=1 after initialization, 100ms guard, 750ms heartbeat deadline plus measured latency, explicit fresh-session recovery, Linux kill/hang, UART loss/corruption, WDT/brownout and GPIO current/backfeed. Complete Pico power loss with Q6A alive remains outside Q306 coverage; no software test closes this boundary. GNSS branch (R-E3-15): measure the LC76G board supply current on E3_GNSS5V (cold start, acquisition, active antenna) and set R396 to 1.5-2x the measured current (start 162k, 144-192 mA); confirm U315 follows 3V3_Q6A (off with Q6A off) and record UART6_RX/TX levels and LC76G VCC with LAB5 absent while Q6A runs (no back-feed through RXD above VCC + 0.3 V).",
       "stack": "§5.2; §5.4",
       "refs": [
-        "Q306"
+        "Q306",
+        "U315",
+        "R396"
       ],
       "sheet": "E3"
     },
@@ -772,15 +782,17 @@
     },
     {
       "id": "E5-04",
-      "description": "Current-setting resistors R501 (RTL-A), R509 (HF+) and R514 (T7) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
+      "description": "Current-setting resistors R501 (RTL-A), R509 (HF+), R514 (T7) and R553 (IMU pack, U553) are engineering starting values (RILIM TBD); STACK §5.1 fixes only the rule 1.5–2× measured current. No measured device steady/startup currents or hot-corner proof.",
       "blocking": true,
-      "resolve": "Measure current/inrush; set the RTL-A/HF+/T7 limits to 1.5–2× the measured current as STACK §5.1 requires; confirm HF+ minimum startup ≥0.75 A. Run the STACK §8 TPS2553DBVR-1 item 3 inrush test on latching U503 (HF+ LC 100 µH/100 µF + 220 µF damper) at final RILIM; only if it latches, fit TPS2553DBVR (constant-current) on this channel alone. Retry/latch test at all battery states; scope LC overshoot.",
+      "resolve": "Measure current/inrush; set the RTL-A/HF+/T7 limits to 1.5–2× the measured current as STACK §5.1 requires; confirm HF+ minimum startup ≥0.75 A. Run the STACK §8 TPS2553DBVR-1 item 3 inrush test on latching U503 (HF+ LC 100 µH/100 µF + 220 µF damper) at final RILIM; only if it latches, fit TPS2553DBVR (constant-current) on this channel alone. Retry/latch test at all battery states; scope LC overshoot. IMU pack branch (R-E5-08): measure the pack supply current at the J504 lead (start-up and streaming) and set R553 to 1.5-2x (start 88.7k, 265-339 mA); short the far end of the 2 m cable and confirm U553 limits without latching, recovers after the short is removed and LAB5 does not droop below the E1-05 limits.",
       "stack": "§5.1 (VBUS RTL-A, HF+); §8 (TPS2553DBVR-1 п. 2–3)",
       "refs": [
         "U501",
         "R501",
         "R509",
-        "R514"
+        "R514",
+        "U553",
+        "R553"
       ],
       "sheet": "E5"
     },
@@ -821,14 +833,15 @@
     },
     {
       "id": "E5-08",
-      "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released.",
+      "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin) still needs its contact numbering, mounting side and cut-out from the binder drawing.",
       "blocking": true,
       "resolve": "Record exact supplier part numbers, face-view and wire-color tables; no-power continuity plus first energization current limit.",
       "stack": "§2.9; §5.8",
       "refs": [
         "J502",
         "J505",
-        "J504"
+        "J504",
+        "J551"
       ],
       "sheet": "E5"
     },
@@ -872,7 +885,7 @@
         "R264"
       ],
       "stack": "§5.1 (BONI13V8); §8.1 HF-8/RF-5",
-      "text": "R263/R264 = OVLO TBD (старт 112k/10.0k 0.1%: 14.64 V ном., ≈14.24–14.92 V за R-E2-02). STACK §5.1 (BONI13V8): «OVLO перерахувати для 13.8 V» — номіналу в STACK немає. Ворота: E2-03 (стенд STACK §8.1 HF-8/RF-5: OVLO не спрацьовує в смузі 13.8 V; поріг вище 14.145 V і нижче 15 V).",
+      "text": "R263/R264 = OVLO TBD (старт 102k/9.09k 0.1%: 14.67 V ном., ≈14.26–14.95 V за R-E2-02). STACK §5.1 (BONI13V8): «OVLO перерахувати для 13.8 V» — номіналу в STACK немає. Ворота: E2-03 (стенд STACK §8.1 HF-8/RF-5: OVLO не спрацьовує в смузі 13.8 V; поріг вище 14.145 V і нижче 15 V).",
       "sheet": "E2"
     },
     {
@@ -885,6 +898,24 @@
       "stack": "§5.3 (DC-sense); §8.1 HF-10",
       "text": "Q2901–Q2903 (DMP6050SSD-13) — двобічні блокувальні елементи ±30 V воріт E4-06 між захищеним вузлом E2 і портом E4; закриті при низькому EN_LNA2/EN_LNA3/EN_BONI. Позначення 2900–2999 — задокументований розширений діапазон E2 (R-E2-21). Ворота: E4-06 (повільний і швидкий hot-plug на зібраному порту).",
       "sheet": "E2"
+    },
+    {
+      "id": "N-E3-01",
+      "refs": [
+        "J301"
+      ],
+      "stack": "§5.2 (40-pin хедер, LC76G VCC); §8.1",
+      "text": "Шлейф S01 не несе 5 V: контакти 2 і 4 J20 (VCC_5V_PERI) лишаються лише на Q6A; провідники 2 і 4 стрічки IDC вирізати на обох розетках до обтиснення, контакти 2/4 бокса на CTRL — без кола (R-E3-15, build/21 E5). LC76G живиться від U315 (LAB5, EN = 3V3_Q6A). Перевірка: прозвонка J20.2/J20.4 → CTRL — розрив.",
+      "sheet": "E3"
+    },
+    {
+      "id": "N-E3-02",
+      "refs": [
+        "R396"
+      ],
+      "stack": "§5.1 (правило RILIM); §8.1",
+      "text": "R396 = RILIM TBD (старт 162k 1%, 144–192 mA за рівняннями TI SLVS841G). STACK номіналу не задає, лише правило RILIM = 1.5–2× виміряного струму LC76G. Ворота: E3-08.",
+      "sheet": "E3"
     },
     {
       "id": "N-E4-01",
@@ -989,6 +1020,25 @@
       "stack": "§5.1; §8.1 (T7)",
       "text": "R514 = RILIM TBD (старт 15.8k 1%, 1.51–1.73 A). STACK не задає RILIM для ключа T7 (U505 TPS2553DRVR без засувки — проєктне рішення R-E5-03/R-E5-04). Ворота: E5-04, E5-05.",
       "sheet": "E5"
+    },
+    {
+      "id": "N-E5-04",
+      "refs": [
+        "U553",
+        "R553"
+      ],
+      "stack": "§5.1 (правило RILIM); §8 (пак IMU)",
+      "text": "U553 = TPS2553DBVR зі сталим струмом (не -1): КЗ у 2-метровому кабелі IMU обмежується без засувки й без GPIO. R553 = RILIM TBD (старт 88.7k 1%, 265–339 mA за рівняннями TI SLVS841G); STACK номіналу не задає, лише правило 1.5–2× виміряного струму. Ворота: E5-04.",
+      "sheet": "E5"
+    },
+    {
+      "id": "N-E5-05",
+      "refs": [
+        "J551"
+      ],
+      "stack": "§5.8 (панель, роз'єми); §8.1",
+      "text": "J551 — панельна розетка M8 A-код 3 конт. (binder 76 6618 1111 00003-0200), вилка W425 — 99 3379 100 03: інший корпус, ніж GX16-4 J504 і GX12 J505, тож кабель IMU чи LAB BUS у неї не входить. Позначення контактів функціональні: нумерацію, бік монтажу й виріз — за кресленням binder (MECH-07). Ворота: E5-08.",
+      "sheet": "E5"
     }
   ],
   "title_block": {
@@ -1002,10 +1052,10 @@
     ]
   },
   "source_sha256": {
-    "E1.json": "a5f312ac5162252adbad513e9fddabc8e7c862f5dbf364c853497c683f67083c",
-    "E2.json": "7b41789d38c86a541d1a40bb7ffb348047ba1008a1b9ef75120c4db05084d461",
-    "E3.json": "b3bd4067f6f51fe2b5fe28bcc06d386319c239ec0af0392f1c2d4f61a9aa2132",
+    "E1.json": "572e09c77521b45312cc235761c465703c40cc099689af3b901ce6861705dde4",
+    "E2.json": "cc0580f8c8f896e6d1cca1e9364f64d69cd1d461d94593b33a6668f34f7a4935",
+    "E3.json": "0ae9955a91c906ae6fa7e0cc51a212922ffe791df3d9bd5ccf9381cca55c1e7d",
     "E4.json": "a8c0ab0e6d9bbf4cbd1eb08175a34ec11fc8351b88a900570361a3f916f4142f",
-    "E5.json": "73e901d907a54e8adb05a6750f6f5ee47d9ad22f2b5c4b26575277175e545e79"
+    "E5.json": "7fba795a8408c5037fcfbdddd7659dc58c31f437b360c9ad7ebf271f96b6abcd"
   }
 }
