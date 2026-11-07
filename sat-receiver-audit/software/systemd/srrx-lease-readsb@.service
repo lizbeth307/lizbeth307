@@ -55,6 +55,24 @@ RuntimeMaxSec=12h
 TimeoutStartSec=30s
 TimeoutStopSec=10s
 Restart=no
-# Arguments: the readsb engine package (SW-ADSB). The /usr/bin/env prefix stays: the lab guest
-# verifies every staged unit without the +lab engine packages (guest_smoke.verify_units).
-ExecStart=/usr/bin/env readsb
+# Arguments: readsb 3.16.17+lab1 (W2 SW-ADSB, deployment/recipes/readsb: RTL-SDR only, bias tee
+# compiled out). The /usr/bin/env prefix stays: the lab guest verifies every staged unit without
+# the +lab engine packages (guest_smoke.verify_units).
+# ADS-B privacy (STACK.md:621-622, :2181): readsb writes aircraft.json only into the private
+# RuntimeDirectory, never to /data or the network (no --net option; IPAddressDeny=any), and its
+# own output may name any aircraft, so nothing this unit prints is kept. srrx.adsb_filter is the
+# only path to /data/products/readsb-%i: prepare refuses the lease (fail closed) without the
+# accepted aircraft.csv.gz (at most 90 days old) and military range table of
+# /var/lib/srrx/adsb/acceptance.json and puts the USB serial of /dev/lab/%i into readsb.env for
+# --device; run (detached, stays in this unit's cgroup) publishes only civil aircraft and stops
+# readsb ($MAINPID) on a fatal error; stop removes the published picture. selftest RX-12-readsb
+# pins these lines (deployment/receive-only-policy.json components.readsb).
+Environment=PYTHONPATH=/opt/srrx/software PYTHONDONTWRITEBYTECODE=1 LC_ALL=C.UTF-8
+StandardOutput=null
+StandardError=null
+# Read after ExecStartPre has written it (systemd.exec(5) EnvironmentFile=); "-": absent until then.
+EnvironmentFile=-%t/srrx-lease-readsb-%i/readsb.env
+ExecStartPre=/usr/bin/python3 -P -s -B -m srrx.adsb_filter prepare --receiver %i --run-dir %t/srrx-lease-readsb-%i --products /data/products/readsb-%i
+ExecStart=/usr/bin/env readsb --device-type rtlsdr --device ${SRRX_READSB_SERIAL} --db-file /var/lib/srrx/adsb/aircraft.csv.gz --write-json %t/srrx-lease-readsb-%i/json --write-json-every 1 --net-bind-address 127.0.0.1 --quiet
+ExecStartPost=/usr/bin/python3 -P -s -B -m srrx.adsb_filter run --detach --receiver %i --run-dir %t/srrx-lease-readsb-%i --products /data/products/readsb-%i
+ExecStopPost=/usr/bin/python3 -P -s -B -m srrx.adsb_filter stop --receiver %i --products /data/products/readsb-%i

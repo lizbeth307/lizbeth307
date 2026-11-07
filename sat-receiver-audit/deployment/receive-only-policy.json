@@ -276,6 +276,25 @@
       "rx_only_radio_type": "0",
       "tle_update": {"file_globs": ["home/*/.config/Gpredict/gpredict.cfg", "root/.config/Gpredict/gpredict.cfg", "etc/skel/.config/Gpredict/gpredict.cfg"], "section": "TLE", "key": "AUTO_UPDATE_FREQ", "required": "0"},
       "sources": ["build/07-pz-vstanovlennia.md:505-509", "build/07-pz-vstanovlennia.md:555", "STACK.md:888", "build/09-testy.md:79"]
+    },
+    "readsb": {
+      "footprint": ["usr/bin/readsb", "usr/local/bin/readsb", "usr/bin/viewadsb", "usr/local/bin/viewadsb", "etc/default/readsb", "usr/share/readsb"],
+      "plugin_dirs": [],
+      "allow_plugins": [],
+      "deny_tokens": ["--net", "--net-only", "--net-connector", "--net-api-port", "--net-bo-port", "--net-bi-port", "--net-ro-port", "--net-ri-port", "--net-sbs-port", "--net-sbs-in-port", "--net-sbs-jaero-port", "--net-sbs-jaero-in-port", "--net-json-port", "--net-vrs-port", "--net-beast-reduce-out-port", "--net-uat-replay-port", "--net-uat-in-port", "--net-asterix-out-port", "--net-asterix-in-port", "--net-garbage", "--net-ingest", "--enable-biastee", "--write-globe-history", "--write-state", "--write-state-only-on-exit", "--dump-beast", "--write-prom", "--heatmap", "--heatmap-dir", "--full-trace-dir", "--write-json-globe-index", "--write-receiver-id-json", "--uuid", "--uuid-file", "--interactive", "--show-only", "--raw", "--onlyaddr", "--debug", "--devel"],
+      "config_paths": [],
+      "binaries": ["usr/bin/readsb", "usr/local/bin/readsb"],
+      "allowed_needed": ["librtlsdr.so.2", "libusb-1.0.so.0", "libzstd.so.1", "libz.so.1", "libm.so.6", "libc.so.6"],
+      "forbidden_symbols": ["rtlsdr_set_bias_tee", "bladerf_open", "hackrf_open", "SoapySDRDevice_make", "iio_create_context"],
+      "forbidden_dirs": ["usr/share/tar1090", "usr/local/share/tar1090", "var/www/html/tar1090", "etc/lighttpd/conf-available/*tar1090*", "etc/lighttpd/conf-enabled/*tar1090*", "etc/nginx/*/*tar1090*"],
+      "lease_unit": "srrx-lease-readsb@.service",
+      "exec_start": "/usr/bin/env readsb --device-type rtlsdr --device ${SRRX_READSB_SERIAL} --db-file /var/lib/srrx/adsb/aircraft.csv.gz --write-json %t/srrx-lease-readsb-%i/json --write-json-every 1 --net-bind-address 127.0.0.1 --quiet",
+      "exec_start_pre": ["/usr/bin/python3 -P -s -B -m srrx.adsb_filter prepare --receiver %i --run-dir %t/srrx-lease-readsb-%i --products /data/products/readsb-%i"],
+      "exec_start_post": ["/usr/bin/python3 -P -s -B -m srrx.adsb_filter run --detach --receiver %i --run-dir %t/srrx-lease-readsb-%i --products /data/products/readsb-%i"],
+      "exec_stop_post": ["/usr/bin/python3 -P -s -B -m srrx.adsb_filter stop --receiver %i --products /data/products/readsb-%i"],
+      "required_settings": {"Type": "simple", "User": "lab", "StandardOutput": "null", "StandardError": "null", "EnvironmentFile": "-%t/srrx-lease-readsb-%i/readsb.env"},
+      "filter_module": "software/srrx/adsb_filter.py",
+      "sources": ["STACK.md:621-622", "STACK.md:825", "STACK.md:882", "STACK.md:2180-2181", "build/07-pz-vstanovlennia.md:439", "deployment/recipes/readsb/recipe.json"]
     }
   },
   "lime": {
