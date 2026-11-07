@@ -7,7 +7,7 @@
   "inputs": {
     "board_file": {
       "path": "build/kicad/boards/ENC/ENC.kicad_pcb",
-      "sha256": "270e0269c50cd03b8df6543a5103052c9468a6e0a8a1bfbce07958bd68e7f4ae"
+      "sha256": "dcb35d31e8cac0b02cbc3f0599e12668a7f87e57c776d1b26954d3222d0049b4"
     },
     "projection_sha256": {
       "graph_refs_pins_nets": "738a6dd68bfb0aa9723e4a47e10267467b6ca7b4846a174ea6690063e10f2382",

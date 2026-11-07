@@ -7,7 +7,7 @@
   "kicad_version": "10.0.7",
   "inputs": {
     "board_file": "build/kicad/boards/ENC/ENC.kicad_pcb",
-    "board_sha256": "270e0269c50cd03b8df6543a5103052c9468a6e0a8a1bfbce07958bd68e7f4ae",
+    "board_sha256": "dcb35d31e8cac0b02cbc3f0599e12668a7f87e57c776d1b26954d3222d0049b4",
     "project_sha256": "2aa13b5419374d94ff7d22cf48556ceebc9635e3742b9f4d2eef575c25624f41",
     "spec_projection_sha256": "2cc6aec9318a914fdb54071ced249cf8057df8d724d05ad0683a0c8d4d9e4376",
     "report_projection_sha256": "66f6103b3245233c1f78efb14d14a7d1ce4111ddadb9c1de9d096db4c7a26ae8",
@@ -240,12 +240,12 @@
     },
     {
       "path": "ENC-fab-notes.pdf",
-      "sha256": "b424524bcf5910c4d12ff22e06527ce2a53a0b99bafee83cfc529e8d9daad9a0",
+      "sha256": "53a0f18dd984fec366157a6b5f4f8a6a40f190d9c86b17030763319a5a75dc86",
       "bytes": 7263
     },
     {
       "path": "ENC.ipc356",
-      "sha256": "507b01bf4e6558229c425e366d84d8c79cfdbaa18e47d9237337832ec7c4f0cf",
+      "sha256": "ce7a11c22b4f9aec68525f0d2f6369fd763672d53961d3b62cdee6f39c47bb24",
       "bytes": 1552
     },
     {
@@ -305,12 +305,12 @@
     },
     {
       "path": "gerber/ENC-B_Cu.gbl",
-      "sha256": "3ce55c53e70817bd709bb6690e1d5b2981861495e68996bff54967c7a40fda8d",
-      "bytes": 22468
+      "sha256": "30a771befe5d5f57cf5e2a968681b286236900fe6120672dd6927d78bcab1f72",
+      "bytes": 22473
     },
     {
       "path": "gerber/ENC-B_Mask.gbs",
-      "sha256": "2387fcb4b3b7ba6d70c77eda5a9a19f204cc423958573b3fc1f02ba20fb948b9",
+      "sha256": "e1c9c5fbdb16aa6169fd7f210d3bccff3c7d58d0498e41516b49746b7a02bfae",
       "bytes": 971
     },
     {
@@ -320,7 +320,7 @@
     },
     {
       "path": "gerber/ENC-B_Silkscreen.gbo",
-      "sha256": "3897a0c819a769dab71e082bea2a512d6d6d9ab9f1bb2b86ae82ddb5948a8e80",
+      "sha256": "11158aa61082b6786515651913747411a2769e6f9a8f2a280a3c93a9d7797922",
       "bytes": 981
     },
     {
@@ -330,12 +330,12 @@
     },
     {
       "path": "gerber/ENC-F_Cu.gtl",
-      "sha256": "3db9b8ed1732b6560979e3e1434f611fa91b96db9317d3bf17f5eb834c7d85fc",
-      "bytes": 22217
+      "sha256": "ca113b04471f58365596dcb1b35d0215f9ba2d628988234ff0911132e2d05360",
+      "bytes": 22269
     },
     {
       "path": "gerber/ENC-F_Mask.gts",
-      "sha256": "1cccee315a7892c31189b06b858624d63b21d2cea8bc5955679233438db2b31c",
+      "sha256": "7abf58ac5e9eb1c8055ae3b9b92c04e5eca83e63a7f6b40bfc4c092124e26989",
       "bytes": 971
     },
     {
@@ -345,7 +345,7 @@
     },
     {
       "path": "gerber/ENC-F_Silkscreen.gto",
-      "sha256": "3ee06c183bf129abd37e3a46258c9bd07f42634fd185c109daeb7d5640fed4bd",
+      "sha256": "1065d9494302b69a71d31b8aafd348abe1d12ed6abce651203f443bcc92b925d",
       "bytes": 3164
     },
     {
