@@ -6,7 +6,7 @@ Modes (run from any directory):
                                                      audits on the committed board and fails unless they
                                                      reproduce build/kicad/boards/<B>/report.json.
   python3 pcb/board_gen.py --board ENC --route      places, lays the scripted locked copper, routes the rest
-                                                     with the pinned Freerouting CLI, imports the session,
+                                                     with the pinned Freerouting 2.5.0 JAR, imports the session,
                                                      pours, fills, runs DRC and writes the outputs.
   python3 pcb/board_gen.py --board ENC --inputs-only  standard library only: spec, contract and graph
                                                      projection against the committed report.
@@ -15,7 +15,7 @@ Modes (run from any directory):
 --check and --route need KiCad 10.0.7 (pcbnew Python module and kicad-cli, as in the kicad/kicad:10.0.7
 image); everything else, and pcb/tests, uses the standard library only. Routing is a frozen output: CI
 re-routes a board only when the head commit message carries the token '[pcb-route <BOARD>]'.
-Freerouting (GPL-3.0) is fetched in CI by its pinned SHA256 and is never committed or bundled.
+Freerouting (GPL-3.0) and its Java runtime are fetched in CI by pinned SHA256 and never committed or bundled.
 Results are CI/model results, never a hardware PASS.
 """
 from __future__ import annotations
@@ -46,19 +46,41 @@ REPORT_SCHEMA = 'srrx-board-report-v1'
 # Fixed pattern; the commit message is data and never reaches a shell.
 ROUTE_TOKEN = re.compile(r'\[pcb-route ([A-Z][A-Z0-9_]*)\]')
 
-# Release v2.5.0 of https://github.com/freerouting/freerouting (published 2026-10-05, GPL-3.0).
-# Asset digest read from the GitHub release API (gh api repos/freerouting/freerouting/releases/tags/v2.5.0)
-# on 2026-11-07. Native GraalVM CLI, no JRE; the archive holds the single binary 'freerouting-cli'
-# (.github/workflows/create-release.yml at v2.5.0, 'Package Native Executable Archive').
+# Release v2.5.0 of https://github.com/freerouting/freerouting (published 2026-10-05, GPL-3.0; licence from
+# gh api repos/freerouting/freerouting/license). Asset digests read from the GitHub release API
+# (gh api repos/freerouting/freerouting/releases/tags/v2.5.0) on 2026-11-07.
+# The release also ships a native GraalVM CLI (freerouting-cli-2.5.0-linux-x64.tar.gz, sha256
+# 64a957a9ef2a2fbde6ab2001bb32800f5ba34f9fd15575e363512934b870d63a). The first CI probe (run 42388559634,
+# 2026-11-07) showed that binary dying in its routing thread with GraalVM UnsupportedFeatureError
+# 'SerializationConstructorAccessor class not found for ... ComponentOutline' and then waiting forever:
+# its native-image metadata (src/main/resources/META-INF/native-image/reachability-metadata.json at
+# v2.5.0) registers only DrillItem, Item, Pin, Trace and Via of board.model.items for serialization, so a
+# DSN with component outlines, keepouts or planes fails. The same release's JAR runs on the JVM instead.
 FREEROUTING = {
     'name': 'Freerouting',
     'version': '2.5.0',
     'licence': 'GPL-3.0',
-    'url': 'https://github.com/freerouting/freerouting/releases/download/v2.5.0/freerouting-cli-2.5.0-linux-x64.tar.gz',
-    'sha256': '64a957a9ef2a2fbde6ab2001bb32800f5ba34f9fd15575e363512934b870d63a',
-    'size': 20714066,
-    'binary': 'freerouting-cli',
-    'source_read': 'GitHub release API v2.5.0 asset digest, read 2026-11-07',
+    'url': 'https://github.com/freerouting/freerouting/releases/download/v2.5.0/freerouting-2.5.0.jar',
+    'sha256': 'f6f51bb02245e8e717f9359bd260cc9c5c0b1bc0acc8b7cb2cd5b8ffeb5de3c7',
+    'size': 64599107,
+    'file': 'freerouting-2.5.0.jar',
+    # Headless entry point of the same sources (build.gradle at v2.5.0 :492; src/main/java/app/freerouting/cli/
+    # FreeroutingCli.java disables the GUI, API and MCP servers).
+    'main_class': 'app.freerouting.cli.FreeroutingCli',
+    'requires': 'Java 25 (build.gradle at v2.5.0 :28-33)',
+    'source_read': 'GitHub release API v2.5.0 asset digests, read 2026-11-07',
+}
+# Eclipse Temurin JRE 25.0.5+8 for linux x64 (GPL-2.0 with Classpath Exception, https://adoptium.net/docs/faq/
+# read 2026-11-07). Digest from the Adoptium API (api.adoptium.net/v3/assets/latest/25/hotspot) and the GitHub
+# release API (adoptium/temurin25-binaries tag jdk-25.0.5+8, published 2026-10-22), both read 2026-11-07.
+TEMURIN_JRE = {
+    'name': 'Eclipse Temurin JRE',
+    'version': '25.0.5+8',
+    'licence': 'GPL-2.0-with-classpath-exception',
+    'url': 'https://github.com/adoptium/temurin25-binaries/releases/download/jdk-25.0.5%2B8/OpenJDK25U-jre_x64_linux_hotspot_25.0.5_8.tar.gz',
+    'sha256': '6fac98f0c8202efc3135a9e9e42aa61963ec42d1c5cbb40caf231e7b14a24ef6',
+    'size': 61736206,
+    'source_read': 'Adoptium API and GitHub release API, read 2026-11-07',
 }
 
 # Every DRC check key of KiCad 10.0.7 (pcbnew/drc/drc_item.cpp at tag 10.0.7, read 2026-11-07).
@@ -157,38 +179,58 @@ def route_requested(message, board):
     return board in ROUTE_TOKEN.findall(message or '')
 
 
-def freerouting_command(binary, dsn, ses, max_passes, threads, user_dir):
-    """Headless Freerouting CLI call: analytics off (-da), no GUI, optimizer on one thread (-mt)."""
+def freerouting_command(java, jar, dsn, ses, max_passes, threads, user_dir, job_timeout):
+    """Headless Freerouting call: analytics off (-da), no GUI, optimizer on one thread (-mt), bounded job."""
     if int(max_passes) < 1 or int(threads) < 1:
         raise SpecError('router.max_passes and router.threads must be >= 1')
-    return [str(binary), '-de', str(dsn), '-do', str(ses), '-mp', str(int(max_passes)), '-mt', str(int(threads)),
-            '-da', '--gui.enabled=false', '--logging.file.enabled=false', f'--user_data_path={user_dir}']
+    if not re.fullmatch(r'\d{2}:\d{2}:\d{2}', str(job_timeout)):
+        raise SpecError('router.job_timeout must be HH:MM:SS')
+    return [str(java), '-Djava.awt.headless=true', '-cp', str(jar), FREEROUTING['main_class'],
+            '-de', str(dsn), '-do', str(ses), f'--router.autorouter.max_passes={int(max_passes)}', '-mt', str(int(threads)),
+            '-da', '--gui.enabled=false', f'--router.job_timeout={job_timeout}', '--logging.file.enabled=false',
+            f'--user_data_path={user_dir}']
+
+
+def _download(item, dest):
+    with urllib.request.urlopen(item['url'], timeout=300) as response:  # default urllib User-Agent
+        data = response.read()
+    digest = sha256_bytes(data)
+    if digest != item['sha256']:
+        raise SpecError(f'{item["name"]} download SHA256 mismatch: {digest} != {item["sha256"]}')
+    print(f'{item["name"]} {item["version"]} sha256 match: {digest} ({len(data)} bytes)')
+    path = dest / PurePosixPath(item['url']).name.replace('%2B', '+')
+    path.write_bytes(data)
+    return path
 
 
 def fetch_freerouting(dest):
-    """Download the pinned Freerouting CLI outside the work tree, verify its SHA256 and unpack the binary."""
+    """Download the pinned Freerouting JAR and Temurin JRE outside the work tree; verify both SHA256s.
+
+    Fetch-only: nothing lands in the repository, the bundle or a CI artifact.
+    """
     dest = Path(dest).resolve()
     if dest == BASE or BASE in dest.parents:
         raise SpecError('Freerouting must be fetched outside the repository (fetch-only, never committed)')
     dest.mkdir(parents=True, exist_ok=True)
-    archive = dest / PurePosixPath(FREEROUTING['url']).name
-    with urllib.request.urlopen(FREEROUTING['url'], timeout=120) as response:  # no custom User-Agent
-        data = response.read()
-    digest = sha256_bytes(data)
-    if digest != FREEROUTING['sha256']:
-        raise SpecError(f'Freerouting archive SHA256 mismatch: {digest} != {FREEROUTING["sha256"]}')
-    print(f'Freerouting {FREEROUTING["version"]} archive sha256 match: {digest} ({len(data)} bytes)')
-    archive.write_bytes(data)
+    jar = _download(FREEROUTING, dest)
+    archive = _download(TEMURIN_JRE, dest)
+    jre = dest / 'jre'
+    if jre.exists():
+        shutil.rmtree(jre)
     with tarfile.open(archive, 'r:gz') as tar:
-        members = [m for m in tar.getmembers() if m.isfile() and PurePosixPath(m.name).name == FREEROUTING['binary']]
-        if len(members) != 1:
-            raise SpecError('Freerouting archive layout changed: ' + str(tar.getnames()))
-        source = tar.extractfile(members[0])
-        binary = dest / FREEROUTING['binary']
-        binary.write_bytes(source.read())
-    binary.chmod(0o755)
-    print(f'Freerouting binary: {binary} (sha256 {sha256_file(binary)})')
-    return binary
+        tar.extractall(jre, filter='data')
+    java = java_in(dest)
+    proc = run([java, '-version'], timeout=120)
+    print((proc.stdout + proc.stderr).strip())
+    print(f'Freerouting: {jar}; Java: {java}')
+    return jar, java
+
+
+def java_in(dest):
+    found = sorted(Path(dest, 'jre').glob('*/bin/java'))
+    if len(found) != 1:
+        raise SpecError(f'no single JRE under {dest}/jre')
+    return found[0]
 
 
 # --- footprint text (.kicad_mod) ---------------------------------------------------------------------
@@ -933,6 +975,14 @@ def count_locked(board):
     return sum(1 for t in board.GetTracks() if t.IsLocked())
 
 
+def shown_arg(arg):
+    """A command argument for logs: file names instead of runner paths."""
+    arg = str(arg)
+    if arg.startswith('--user_data_path='):
+        return '--user_data_path=<temp>'
+    return Path(arg).name if '/' in arg or '\\' in arg else arg
+
+
 def run(cmd, timeout=900, cwd=None):
     proc = subprocess.run([str(c) for c in cmd], capture_output=True, text=True, timeout=timeout, cwd=cwd,
                           stdin=subprocess.DEVNULL)
@@ -1181,8 +1231,10 @@ def build_report(spec, contract, stackup, template, proj, facts, drc, audits, bo
         'pads': {f['ref']: [{k: p[k] for k in ('number', 'net', 'at')} for p in f['pads']] for f in facts['footprints']},
         'copper': {'tracks': facts['tracks'], 'zones': facts['zones'], 'copper_layers': facts['copper_layers']},
         'drc': drc, 'audits': audits,
-        'router': {k: FREEROUTING[k] for k in ('name', 'version', 'licence', 'url', 'sha256')}
-        | {'max_passes': spec['router']['max_passes'], 'threads': spec['router']['threads'], 'fetch': 'CI only, never committed'},
+        'router': {k: FREEROUTING[k] for k in ('name', 'version', 'licence', 'url', 'sha256', 'main_class')}
+        | {'runtime': f'{TEMURIN_JRE["name"]} {TEMURIN_JRE["version"]} (sha256 {TEMURIN_JRE["sha256"]})',
+           'max_passes': spec['router']['max_passes'], 'threads': spec['router']['threads'],
+           'job_timeout': spec['router']['job_timeout'], 'fetch': 'CI only, never committed or uploaded'},
         'heights': spec.get('height_zones', []),
         'does_not_prove': NOT_PROVED,
     }
@@ -1275,9 +1327,12 @@ def route(board, freerouting):
     if not str(pcb.Version()).startswith(KICAD_VERSION):
         raise SystemExit(f'board_gen: KiCad {pcb.Version()} found, {KICAD_VERSION} required')
     spec, contract, stackup, graph, db, template, project, proj = prepare_inputs(board)
-    binary = Path(freerouting).resolve()
-    if BASE in binary.parents:
-        raise SpecError('the Freerouting binary must live outside the repository')
+    tools = Path(freerouting).resolve()
+    if tools == BASE or BASE in tools.parents:
+        raise SpecError('the Freerouting tools must live outside the repository')
+    jar, java = tools / FREEROUTING['file'], java_in(tools)
+    if sha256_file(jar) != FREEROUTING['sha256']:
+        raise SpecError('Freerouting JAR SHA256 mismatch: fetch it again with --fetch-freerouting')
     out = OUT_ROOT / board
     out.mkdir(parents=True, exist_ok=True)
     with tempfile.TemporaryDirectory(prefix=f'sr-rx-{board}-') as temp:
@@ -1291,8 +1346,10 @@ def route(board, freerouting):
         if not pcb.ExportSpecctraDSN(board_obj, str(dsn)) or not dsn.is_file():
             raise SystemExit('board_gen: Specctra DSN export failed')
         probe = dsn_probe(dsn.read_text(encoding='utf-8', errors='replace'))
-        cmd = freerouting_command(binary, dsn, ses, spec['router']['max_passes'], spec['router']['threads'], temp / 'fr-user')
-        print('Freerouting command:', ' '.join(Path(c).name if i in (0, 2, 4) else c for i, c in enumerate(cmd)), flush=True)
+        cmd = freerouting_command(java, jar, dsn, ses, spec['router']['max_passes'], spec['router']['threads'],
+                                  temp / 'fr-user', spec['router']['job_timeout'])
+        shown_cmd = [shown_arg(c) for c in cmd]
+        print('Freerouting command:', ' '.join(shown_cmd), flush=True)
         art = os.environ.get('SR_RX_PCB_ARTIFACTS')
         if art:  # the DSN is our design data; keep it for review even if routing fails
             Path(art).mkdir(parents=True, exist_ok=True)
@@ -1326,10 +1383,9 @@ def route(board, freerouting):
         route_log = {
             'schema': 'srrx-board-route-log-v1', 'board_id': board,
             'label': 'Frozen route provenance (CI run); --check does not re-route',
-            'tool': {k: FREEROUTING[k] for k in ('name', 'version', 'licence', 'url', 'sha256', 'source_read')},
-            'binary_sha256': sha256_file(binary),
-            'command': [Path(c).name if i in (0, 2, 4) else ('--user_data_path=<temp>' if c.startswith('--user_data_path') else c)
-                        for i, c in enumerate(cmd)],
+            'tool': {k: FREEROUTING[k] for k in ('name', 'version', 'licence', 'url', 'sha256', 'main_class', 'source_read')},
+            'runtime': {k: TEMURIN_JRE[k] for k in ('name', 'version', 'licence', 'url', 'sha256', 'source_read')},
+            'command': shown_cmd,
             'exit_code': proc, 'log_tail': log.strip().splitlines()[-40:],
             'dsn_sha256': sha256_file(dsn), 'ses_sha256': sha256_file(ses), 'dsn_probe': probe,
             'locked_segments': {'before_ses_import': locked_before, 'after_ses_import': locked_after},
@@ -1397,8 +1453,8 @@ def main(argv=None):
     mode.add_argument('--list-boards', action='store_true')
     mode.add_argument('--mode-from-commit', action='store_true',
                       help="print 'route' if $SR_RX_HEAD_COMMIT_MESSAGE carries [pcb-route BOARD], else 'check'")
-    mode.add_argument('--fetch-freerouting', metavar='DIR', help='download and verify the pinned Freerouting CLI')
-    ap.add_argument('--freerouting', help='Freerouting CLI binary (from --fetch-freerouting)')
+    mode.add_argument('--fetch-freerouting', metavar='DIR', help='download and verify the pinned Freerouting JAR and JRE')
+    ap.add_argument('--freerouting', help='directory filled by --fetch-freerouting (JAR and JRE)')
     args = ap.parse_args(argv)
     if args.list_boards:
         print(json.dumps(list_boards()))

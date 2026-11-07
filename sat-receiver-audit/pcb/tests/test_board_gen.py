@@ -216,17 +216,29 @@ class DrcPolicy(unittest.TestCase):
 
 class RouterAndToken(unittest.TestCase):
     def test_freerouting_is_headless_without_analytics(self):
-        cmd = bg.freerouting_command('/t/freerouting-cli', 'b.dsn', 'b.ses', 20, 1, '/t/u')
+        cmd = bg.freerouting_command('/t/java', '/t/fr.jar', 'b.dsn', 'b.ses', 20, 1, '/t/u', '00:05:00')
+        self.assertEqual(cmd[:5], ['/t/java', '-Djava.awt.headless=true', '-cp', '/t/fr.jar', 'app.freerouting.cli.FreeroutingCli'])
         self.assertIn('-da', cmd)
         self.assertIn('--gui.enabled=false', cmd)
+        self.assertIn('--router.job_timeout=00:05:00', cmd)
+        self.assertIn('--router.autorouter.max_passes=20', cmd)
         self.assertEqual(cmd[cmd.index('-mt') + 1], '1')
         self.assertEqual(cmd[cmd.index('-de') + 1], 'b.dsn')
         self.assertEqual(cmd[cmd.index('-do') + 1], 'b.ses')
+        with self.assertRaises(SystemExit):
+            bg.freerouting_command('/t/java', '/t/fr.jar', 'b.dsn', 'b.ses', 20, 1, '/t/u', '5 min')
 
     def test_pinned_release(self):
         self.assertEqual(bg.FREEROUTING['version'], '2.5.0')
-        self.assertRegex(bg.FREEROUTING['sha256'], r'^[0-9a-f]{64}$')
+        for item in (bg.FREEROUTING, bg.TEMURIN_JRE):
+            self.assertRegex(item['sha256'], r'^[0-9a-f]{64}$')
         self.assertTrue(bg.FREEROUTING['url'].startswith('https://github.com/freerouting/freerouting/releases/download/v2.5.0/'))
+        self.assertTrue(bg.TEMURIN_JRE['url'].startswith('https://github.com/adoptium/temurin25-binaries/releases/download/'))
+
+    def test_logged_arguments_hide_runner_paths(self):
+        self.assertEqual(bg.shown_arg('/__w/_temp/freerouting/jre/x/bin/java'), 'java')
+        self.assertEqual(bg.shown_arg('--user_data_path=/tmp/x'), '--user_data_path=<temp>')
+        self.assertEqual(bg.shown_arg('-da'), '-da')
 
     def test_route_token_is_exact(self):
         self.assertTrue(bg.route_requested('fix [pcb-route ENC]', 'ENC'))
