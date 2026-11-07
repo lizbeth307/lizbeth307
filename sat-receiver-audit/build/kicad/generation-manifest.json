@@ -5,8 +5,8 @@
     {
       "stem": "E1",
       "instance": "a943ccec-2813-5b6f-9c47-b1bcb52cee7f",
-      "title": "E1 - Акумулятор, заряд, AON і головні перетворювачі (1/1)",
-      "components": 80,
+      "title": "E1 - Акумулятор, заряд, AON і головні перетворювачі (1/2)",
+      "components": 73,
       "sheet": "E1",
       "notes": [
         "E1-03",
@@ -14,27 +14,48 @@
         "E1-04",
         "E1-05",
         "E1-02",
-        "E1-01",
         "E1-06"
       ],
-      "note_wrap_cap": 180,
+      "note_wrap_cap": 110,
       "note_wrap_chars": {
-        "E1-03": 180,
-        "E1-07": 180,
-        "E1-04": 180,
-        "E1-05": 180,
-        "E1-02": 121,
-        "E1-01": 180,
+        "E1-03": 110,
+        "E1-07": 110,
+        "E1-04": 110,
+        "E1-05": 110,
+        "E1-02": 110,
         "E1-06": 110
       },
-      "fill": 0.683,
+      "fill": 0.655,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 81,
-        "ground_symbols": 46,
-        "junctions": 31,
+        "global_labels": 72,
+        "ground_symbols": 38,
+        "junctions": 28,
         "wire_crossings": 4,
-        "wires": 215
+        "wires": 194
+      }
+    },
+    {
+      "stem": "E1_02",
+      "instance": "18b3b3ad-34e0-53cc-9f25-c4ecb6dfa9a2",
+      "title": "E1 - Акумулятор, заряд, AON і головні перетворювачі (2/2)",
+      "components": 20,
+      "sheet": "E1",
+      "notes": [
+        "E1-01"
+      ],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {
+        "E1-01": 110
+      },
+      "fill": 0.269,
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 31,
+        "ground_symbols": 15,
+        "junctions": 7,
+        "wire_crossings": 0,
+        "wires": 54
       }
     },
     {
@@ -116,7 +137,7 @@
       "stem": "E2_04",
       "instance": "b86a610c-9540-56eb-9a94-fee3a23ee226",
       "title": "E2 - Захищені рейки, LNA і моніторинг струму (4/5)",
-      "components": 53,
+      "components": 60,
       "sheet": "E2",
       "notes": [
         "E2-02"
@@ -125,14 +146,14 @@
       "note_wrap_chars": {
         "E2-02": 110
       },
-      "fill": 0.494,
+      "fill": 0.631,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 54,
-        "ground_symbols": 20,
-        "junctions": 22,
+        "global_labels": 114,
+        "ground_symbols": 25,
+        "junctions": 28,
         "wire_crossings": 2,
-        "wires": 137
+        "wires": 215
       }
     },
     {
@@ -161,63 +182,86 @@
     {
       "stem": "E3",
       "instance": "815659b2-9f99-5caa-9e97-34b4cd398135",
-      "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (1/2)",
-      "components": 92,
+      "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (1/3)",
+      "components": 76,
       "sheet": "E3",
       "notes": [
-        "E3-05",
         "E3-04",
         "N-E3-01",
+        "N-E3-03",
+        "E3-05",
+        "E3-08",
+        "N-E3-02",
         "E3-06"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
-        "E3-05": 110,
         "E3-04": 110,
         "N-E3-01": 110,
+        "N-E3-03": 110,
+        "E3-05": 110,
+        "E3-08": 110,
+        "N-E3-02": 110,
         "E3-06": 110
       },
-      "fill": 0.784,
+      "fill": 0.747,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 133,
-        "ground_symbols": 37,
-        "junctions": 73,
-        "wire_crossings": 14,
-        "wires": 425
+        "global_labels": 116,
+        "ground_symbols": 34,
+        "junctions": 63,
+        "wire_crossings": 10,
+        "wires": 371
       }
     },
     {
       "stem": "E3_02",
       "instance": "047fcfd6-7912-5c2d-b6e9-2eba49e8ffe0",
-      "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (2/2)",
-      "components": 63,
+      "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (2/3)",
+      "components": 73,
       "sheet": "E3",
       "notes": [
-        "E3-03",
         "E3-02",
         "E3-07",
-        "E3-01",
-        "E3-08",
-        "N-E3-02"
+        "E3-03"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
-        "E3-03": 110,
         "E3-02": 110,
         "E3-07": 110,
-        "E3-01": 110,
-        "E3-08": 110,
-        "N-E3-02": 110
+        "E3-03": 110
       },
-      "fill": 0.71,
+      "fill": 0.633,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 98,
-        "ground_symbols": 36,
-        "junctions": 39,
-        "wire_crossings": 9,
-        "wires": 255
+        "global_labels": 104,
+        "ground_symbols": 35,
+        "junctions": 36,
+        "wire_crossings": 6,
+        "wires": 268
+      }
+    },
+    {
+      "stem": "E3_03",
+      "instance": "c85ad7f8-a0d1-5e29-929c-feed1fd251ab",
+      "title": "E3 - Керування, Pico HMI, GPIO, GNSS і IMU (3/3)",
+      "components": 22,
+      "sheet": "E3",
+      "notes": [
+        "E3-01"
+      ],
+      "note_wrap_cap": 110,
+      "note_wrap_chars": {
+        "E3-01": 110
+      },
+      "fill": 0.448,
+      "drawing": {
+        "fallback_labels": 0,
+        "global_labels": 101,
+        "ground_symbols": 16,
+        "junctions": 19,
+        "wire_crossings": 7,
+        "wires": 155
       }
     },
     {
@@ -253,52 +297,52 @@
       "stem": "E4_02",
       "instance": "29d9ed3f-1ac6-5216-98b0-395a68609862",
       "title": "E4 - РЧ-тракт: DC-розв'язка, перемикачі, приймачі (2/4)",
-      "components": 62,
+      "components": 53,
       "sheet": "E4",
       "notes": [
         "N-E4-01",
         "E4-06",
-        "E4-07"
+        "E4-04"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
         "N-E4-01": 110,
         "E4-06": 110,
-        "E4-07": 110
+        "E4-04": 110
       },
-      "fill": 0.821,
+      "fill": 0.785,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 55,
-        "ground_symbols": 44,
-        "junctions": 23,
+        "global_labels": 53,
+        "ground_symbols": 35,
+        "junctions": 20,
         "wire_crossings": 0,
-        "wires": 172
+        "wires": 164
       }
     },
     {
       "stem": "E4_03",
       "instance": "4dd92141-48db-50ea-8b51-bae65ea8ecfb",
       "title": "E4 - РЧ-тракт: DC-розв'язка, перемикачі, приймачі (3/4)",
-      "components": 80,
+      "components": 92,
       "sheet": "E4",
       "notes": [
         "E4-01",
-        "E4-04"
+        "E4-07"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
         "E4-01": 110,
-        "E4-04": 110
+        "E4-07": 110
       },
-      "fill": 0.668,
+      "fill": 0.803,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 112,
-        "ground_symbols": 50,
-        "junctions": 46,
-        "wire_crossings": 0,
-        "wires": 259
+        "global_labels": 130,
+        "ground_symbols": 61,
+        "junctions": 50,
+        "wire_crossings": 2,
+        "wires": 289
       }
     },
     {
@@ -310,7 +354,7 @@
       "notes": [],
       "note_wrap_cap": 110,
       "note_wrap_chars": {},
-      "fill": 0.367,
+      "fill": 0.363,
       "drawing": {
         "fallback_labels": 0,
         "global_labels": 40,
@@ -324,86 +368,86 @@
       "stem": "E5",
       "instance": "7961f449-97be-5318-9750-0d1b8f253ccf",
       "title": "E5 - USB, VBUS, PCIe та корпусні інтерфейси (1/2)",
-      "components": 41,
+      "components": 56,
       "sheet": "E5",
       "notes": [
-        "E5-08",
-        "E5-02",
-        "N-E5-04",
-        "N-E5-05",
-        "E5-07",
         "E5-10",
+        "E5-09",
+        "E5-04",
+        "N-E5-01",
+        "N-E5-02",
         "E5-05",
         "N-E5-03",
         "E5-03"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
-        "E5-08": 110,
-        "E5-02": 110,
-        "N-E5-04": 110,
-        "N-E5-05": 110,
-        "E5-07": 110,
         "E5-10": 110,
+        "E5-09": 110,
+        "E5-04": 110,
+        "N-E5-01": 110,
+        "N-E5-02": 110,
         "E5-05": 110,
         "N-E5-03": 110,
         "E5-03": 110
       },
-      "fill": 0.808,
+      "fill": 0.734,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 75,
-        "ground_symbols": 31,
-        "junctions": 31,
-        "wire_crossings": 4,
-        "wires": 221
+        "global_labels": 91,
+        "ground_symbols": 48,
+        "junctions": 36,
+        "wire_crossings": 2,
+        "wires": 255
       }
     },
     {
       "stem": "E5_02",
       "instance": "2f560f15-377c-5a7b-8d16-c38c753251d6",
       "title": "E5 - USB, VBUS, PCIe та корпусні інтерфейси (2/2)",
-      "components": 39,
+      "components": 30,
       "sheet": "E5",
       "notes": [
         "E5-01",
         "E5-06",
-        "E5-09",
-        "E5-04",
-        "N-E5-01",
-        "N-E5-02"
+        "E5-08",
+        "E5-02",
+        "N-E5-04",
+        "N-E5-05",
+        "E5-07"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
         "E5-01": 110,
         "E5-06": 110,
-        "E5-09": 110,
-        "E5-04": 110,
-        "N-E5-01": 110,
-        "N-E5-02": 110
+        "E5-08": 110,
+        "E5-02": 110,
+        "N-E5-04": 110,
+        "N-E5-05": 110,
+        "E5-07": 110
       },
-      "fill": 0.506,
+      "fill": 0.549,
       "drawing": {
         "fallback_labels": 0,
         "global_labels": 56,
-        "ground_symbols": 35,
-        "junctions": 38,
-        "wire_crossings": 2,
-        "wires": 177
+        "ground_symbols": 24,
+        "junctions": 30,
+        "wire_crossings": 0,
+        "wires": 155
       }
     }
   ],
-  "components": 794,
+  "components": 839,
   "supply_annotations": 25,
-  "connected_contacts": 2297,
-  "nets": 485,
+  "connected_contacts": 2555,
+  "nets": 486,
   "drawing": {
     "fallback_labels": 0,
-    "global_labels": 942,
-    "ground_symbols": 494,
-    "junctions": 471,
-    "wire_crossings": 48,
-    "wires": 2787
+    "global_labels": 1146,
+    "ground_symbols": 526,
+    "junctions": 485,
+    "wire_crossings": 46,
+    "wires": 3046
   },
   "sparse_last_pages": [],
   "single_contact_nets": {},
@@ -412,11 +456,12 @@
       "id": "E1-01",
       "description": "Ревізія COUT і місця NTC/VSET/ISET/ISET_MODE/CELLSET не підтверджені офіційною схемою. Вікно 0…45 °C та inhibit не перевірені.",
       "blocking": true,
-      "resolve": "До модифікацій отримати ревізійну схему або фото обох боків з continuity до IC. Стенд: NTC 0/45 °C, обрив/КЗ, зупинка charge і reverse boost, 2 h при 3 A, 20 PD cycles, зовнішній VBUS=0 V, startup 5→20 V, CV кожної комірки. При провалі цей модуль не використовувати; ISDT лише після E1-02.",
+      "resolve": "До модифікацій отримати ревізійну схему або фото обох боків з continuity до IC. Стенд: NTC 0/45 °C, обрив/КЗ, зупинка charge і reverse boost, 2 h при 3 A, 20 PD cycles, зовнішній VBUS=0 V, startup 5→20 V, CV кожної комірки. При провалі цей модуль не використовувати; ISDT лише після E1-02. TH102 Sensata 67F070 (build/15 «IP2368»): гарячим повітрям на найгарячіший MOSFET IP2368 — замикається при 65…75 °C, і заряд зупиняється (E1_CHG_INHIBIT_LOW на GND) не пізніше 75 °C; записати температуру повернення й диференціал (даташит Sensata 6700 с. 4: MIN DIFFERENTIAL 4 °C, MIN RESET 50 °C) і частоту повторних пусків заряду; опір замкненого контакту ≤50 mΩ (даташит с. 2, «50 milliohms max»).",
       "stack": "§2.7 (IP2368); §5.1; §8 (IP2368); §8.1 (IP2368, матриця DRP)",
       "refs": [
         "U110",
-        "TH101"
+        "TH101",
+        "TH102"
       ],
       "sheet": "E1"
     },
@@ -637,7 +682,7 @@
       "id": "E3-08",
       "description": "Pico watchdog, MicroPython GPIO/UART adapter and host handshake implemented 20.10.2026 and tested on the host. Actual GPIO timing, reset levels, WDT/brownout behavior and Linux/serial fault recovery have not been qualified on the device.",
       "blocking": true,
-      "resolve": "Run the implemented firmware with the actual accepted Pico/Q6A assembly: scope MCP RESET assertion/release, safe output image including CHG_INHIBIT=1 after initialization, 100ms guard, 750ms heartbeat deadline plus measured latency, explicit fresh-session recovery, Linux kill/hang, UART loss/corruption, WDT/brownout and GPIO current/backfeed. Complete Pico power loss with Q6A alive remains outside Q306 coverage; no software test closes this boundary. GNSS branch (R-E3-15): measure the LC76G board supply current on E3_GNSS5V (cold start, acquisition, active antenna) and set R396 to 1.5-2x the measured current (start 162k, 144-192 mA); confirm U315 follows 3V3_Q6A (off with Q6A off) and record UART6_RX/TX levels and LC76G VCC with LAB5 absent while Q6A runs (no back-feed through RXD above VCC + 0.3 V).",
+      "resolve": "Run the implemented firmware with the actual accepted Pico/Q6A assembly: scope MCP RESET assertion/release, safe output image including CHG_INHIBIT=1 after initialization, 100ms guard, 750ms heartbeat deadline plus measured latency, explicit fresh-session recovery, Linux kill/hang, UART loss/corruption, WDT/brownout and GPIO current/backfeed. Complete Pico power loss with Q6A alive remains outside Q306 coverage; no software test closes this boundary. GNSS branch (R-E3-15): measure the LC76G board supply current on E3_GNSS5V (cold start, acquisition, active antenna) and set R396 to 1.5-2x the measured current (start 162k, 144-192 mA); confirm U315 follows 3V3_Q6A (off with Q6A off) and record UART6_RX/TX levels and LC76G VCC with LAB5 absent while Q6A runs and with U315 latched off after a short on E3_GNSS5V (S25) while Q6A runs (no back-feed through RXD above VCC + 0.3 V in either state); record which action clears the latch (3V3_Q6A or LAB5 power cycle; whether a Q6A software reboot drops 3V3_Q6A).",
       "stack": "§5.2; §5.4",
       "refs": [
         "Q306",
@@ -697,9 +742,9 @@
     },
     {
       "id": "E4-06",
-      "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
+      "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven. Not covered (W2 GR-2 review): the direct P8 port (ch4) has no DC-window detector and no blocking element. With the P8 accessory off-board, panel J408 → U.FL J427 sits on E4_RF_CH4, the RF_DC node of TCBT A424, whose DC port BIAS_CH4 runs through E2 L209 and shunt R246 to TPS2553 U209 OUT (E2_LNA4_SW; OUT abs max −0.3…7 V, TI TPS255xx Rev. G §6.1, https://www.ti.com/lit/ds/symlink/tps2553.pdf, read 2026-11-07) and the INA3221 U216 channel-1 inputs: foreign DC on P8 reaches that protected E2 node, and own ch4 bias reaches whatever is plugged into P8.",
       "blocking": true,
-      "resolve": "Verify each DCS LOW at 0 V and HIGH by ±0.100 V in both sweep directions over the admitted temperature/supply range; record thresholds/hysteresis. With own bias OFF and Q6A ON/OFF (3V3_Q6A <0.1 V when OFF), apply foreign DC at each assembled port P2/P3/HF_CM: (1) slow ±30 V limited DC; (2) fast-edge hot plug — a pre-energised current-limited ±12/±24/±30 V source switched onto the port through a coax plug or relay. Pass: BIAS_CH2/BIAS_CH3/BONI13V8 (TPS2553 OUT, INA3221 inputs, U214 OUT) stay within −0.3…+0.3 V, no INA/MCP fault; repeat at 0 °C and 50 °C. The DPS-150 cannot reach 30 V from the project's 20 V PD or 4S sources; use a source that really delivers 30 V. Hot plug while own bias is ON is not covered and must not be tested destructively. Also measure off-state leakage (protected-node rise <0.1 V at 50 °C), the on-state drop at 184.5/54.5/80 mA including the cold VGS(th) corner (VGS ≈−4.2 V on the 4.30 V rail; total ≤0.25 V to the antenna), turn-on with and without trapped charge (the ≈48 µF protected reservoir dumps into the port outside the TPS2553/U214 limit) and unchanged soft-start/ILIM. A shorted FET is not detectable; an open element on LNA2/LNA3 is silent. Measure RF tap and element IL/RL/NF impact. Require startup/reference-fault HIGH and own bias OFF ≥500 ms before preflight; readiness stays false until qualified. Check floating/open antenna as well as 0 Ω/50 Ω DC loads. Include the 996 Ω bleed load in current baselines and measure its RF loss/parasitics. Reject false-safe at ±0.100 V; false-unsafe units also fail usability qualification. Also qualify cold minimum-supply reference-feed headroom: the arithmetic model requires D450 Vf ≤1.015 V at VDD 3.135 V and REF 2.072 V for at least 80 µA LM4040 cathode current. Reference collapse must force HIGH, and must not be misreported as a working detector.",
+      "resolve": "Verify each DCS LOW at 0 V and HIGH by ±0.100 V in both sweep directions over the admitted temperature/supply range; record thresholds/hysteresis. With own bias OFF and Q6A ON/OFF (3V3_Q6A <0.1 V when OFF), apply foreign DC at each assembled port P2/P3/HF_CM: (1) slow ±30 V limited DC; (2) fast-edge hot plug — a pre-energised current-limited ±12/±24/±30 V source switched onto the port through a coax plug or relay. Pass: BIAS_CH2/BIAS_CH3/BONI13V8 (TPS2553 OUT, INA3221 inputs, U214 OUT) stay within −0.3…+0.3 V, no INA/MCP fault; repeat at 0 °C and 50 °C. The DPS-150 cannot reach 30 V from the project's 20 V PD or 4S sources; use a source that really delivers 30 V. Hot plug while own bias is ON is not covered and must not be tested destructively. Also measure off-state leakage (protected-node rise <0.1 V at 50 °C), the on-state drop at 184.5/54.5/80 mA including the cold VGS(th) corner (VGS ≈−4.2 V on the 4.30 V rail; total ≤0.25 V to the antenna), turn-on with and without trapped charge (the ≈48 µF protected reservoir dumps into the port outside the TPS2553/U214 limit) and unchanged soft-start/ILIM. A shorted FET is not detectable; an open element on LNA2/LNA3 is silent. Measure RF tap and element IL/RL/NF impact. Require startup/reference-fault HIGH and own bias OFF ≥500 ms before preflight; readiness stays false until qualified. Check floating/open antenna as well as 0 Ω/50 Ω DC loads. Include the 996 Ω bleed load in current baselines and measure its RF loss/parasitics. Reject false-safe at ±0.100 V; false-unsafe units also fail usability qualification. Also qualify cold minimum-supply reference-feed headroom: the arithmetic model requires D450 Vf ≤1.015 V at VDD 3.135 V and REF 2.072 V for at least 80 µA LM4040 cathode current. Reference collapse must force HIGH, and must not be misreported as a working detector. P8/ch4 (W2 GR-2): the foreign-DC test above cannot pass on P8, which has no detector and no element; whether ch4 gets an E2 blocking element or a DC-window detector is an owner/E2 decision, OPEN under this gate. Until then P8 must never see a foreign DC source, and EN_LNA4 (low at startup, design/readiness-contract.json startup_output_requests; no DC preflight for LNA4 in software/srrx/policy.py DCS) is switched on only with the P8 accessory fitted (profile rule, STACK.md:78; no hardware check).",
       "stack": "§5.3 (DC-sense); §8.1 HF-10",
       "refs": [
         "D450",
@@ -923,6 +968,16 @@
       "sheet": "E3"
     },
     {
+      "id": "N-E3-03",
+      "refs": [
+        "J301",
+        "J304"
+      ],
+      "stack": "§5.2 (UART7/PPS ≤20 см); §8.1",
+      "text": "Гілка PPS шлейфу S01 (W2 GR-3 за рішенням build/15 W2 MECH-1): провідники 6 (GND), 7 (PPS), 16 і 18 (UART6) стрічки відокремити одразу за розеткою на J20 і довести до P1 LC76G (P1.2/P1.5/P1.4/P1.3, ≤200 мм; модель 196 мм); на розетці CTRL ці провідники вирізати до обтиснення, контакти 6/7/16/18 бокса J304 — без кола. Мережі E3 не змінюються. Перевірка: прозвонка J20.7 → P1.5 — є, J20.7 → J304.7 — розрив.",
+      "sheet": "E3"
+    },
+    {
       "id": "N-E4-01",
       "refs": [
         "R4400",
@@ -1057,10 +1112,10 @@
     ]
   },
   "source_sha256": {
-    "E1.json": "39da4cd1ecdfcad37a4cf5b6ee309846b4aa73243f2c8e7d8f07083ab1824a90",
-    "E2.json": "cc0580f8c8f896e6d1cca1e9364f64d69cd1d461d94593b33a6668f34f7a4935",
-    "E3.json": "0ae9955a91c906ae6fa7e0cc51a212922ffe791df3d9bd5ccf9381cca55c1e7d",
-    "E4.json": "8012086f2be1a33677c53661e01d8ca8f657fd3f10964c115b4893336863dddc",
-    "E5.json": "48c61fa1a77ab35e5d930f377ac2ef473abdd8f6e02da8417e352f168ce562e5"
+    "E1.json": "f854ea931a2f2f35482f650312ee7e6326ee1554e4477f6410b50cd516b99295",
+    "E2.json": "add1bc5d1bbf1cfa391e4f080de7a3ac340d616048a95640607294ad18a75721",
+    "E3.json": "77a0ea41b64b9382ba14b031145f2ba783b6a952ee0e6f190f34370c2f13167b",
+    "E4.json": "e10e0c344463c9e5bc48cb59293853bacc943e8e55f08f2f0cf109211688aa17",
+    "E5.json": "13f0cefe6ebe5c6942b39ccb599a2330395a659535cdb55df9e4a552a3932639"
   }
 }

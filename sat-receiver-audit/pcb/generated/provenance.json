@@ -2,31 +2,31 @@
   "inputs": [
     {
       "file": "design/E1.json",
-      "sha256": "39da4cd1ecdfcad37a4cf5b6ee309846b4aa73243f2c8e7d8f07083ab1824a90"
+      "sha256": "f854ea931a2f2f35482f650312ee7e6326ee1554e4477f6410b50cd516b99295"
     },
     {
       "file": "design/E2.json",
-      "sha256": "cc0580f8c8f896e6d1cca1e9364f64d69cd1d461d94593b33a6668f34f7a4935"
+      "sha256": "add1bc5d1bbf1cfa391e4f080de7a3ac340d616048a95640607294ad18a75721"
     },
     {
       "file": "design/E3.json",
-      "sha256": "0ae9955a91c906ae6fa7e0cc51a212922ffe791df3d9bd5ccf9381cca55c1e7d"
+      "sha256": "77a0ea41b64b9382ba14b031145f2ba783b6a952ee0e6f190f34370c2f13167b"
     },
     {
       "file": "design/E4.json",
-      "sha256": "8012086f2be1a33677c53661e01d8ca8f657fd3f10964c115b4893336863dddc"
+      "sha256": "e10e0c344463c9e5bc48cb59293853bacc943e8e55f08f2f0cf109211688aa17"
     },
     {
       "file": "design/E5.json",
-      "sha256": "48c61fa1a77ab35e5d930f377ac2ef473abdd8f6e02da8417e352f168ce562e5"
+      "sha256": "13f0cefe6ebe5c6942b39ccb599a2330395a659535cdb55df9e4a552a3932639"
     },
     {
       "file": "build/kicad/footprints/manifest.json",
-      "sha256": "d61e32c4ebae8eda9625abd27e778b18c5976a234a84fa25ed0750a57630dff4"
+      "sha256": "6e74404d6a71f8377c77b2bb4d556b7456bccc7b878765c7451a6a4dc766e121"
     },
     {
       "file": "verification/netlist.xml",
-      "sha256": "f112e459f95fb8eddfff80bb5717fd180e95bba9d27efbb6639faae63d83bb26"
+      "sha256": "157cf5c9225d12445f8945ab235dbd5777918f5c4a5ae9e1f6d2b3703d9098d3"
     }
   ],
   "source_documents": [
@@ -135,6 +135,11 @@
       "interface_open",
       "interface_resolved"
     ],
-    "projection_sha256": "f1477e0aa57781213e55a400661a579a0c3bca9f39758f1f2685a2e825d9aa3a"
+    "projection_sha256": "5ef34b43ba1f3e84c09354e8fac6dc075fb1fd1289fef42f4f5e86753d4047f3"
+  },
+  "partition": {
+    "file": "pcb/partition-spec.json",
+    "sha256": "f9b04ebe472003cb83ec8075426407d260ddd307af262c04437a9fd21f1fcbf9",
+    "b2b_currents": "tools/assembly_data.py NET_CURRENT"
   }
 }

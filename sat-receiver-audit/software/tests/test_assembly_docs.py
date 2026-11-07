@@ -320,5 +320,72 @@ class AssemblyDocsTests(unittest.TestCase):
             self.assertNotRegex(text, r"[\w.+-]+@[A-Za-z][\w-]*\.[A-Za-z]{2,}", rel)
 
 
+class HarnessHeaderRefTests(unittest.TestCase):
+    """W2 GR-3: board-side harness headers are graph refs (explicit mode); design data only, no hardware claim."""
+
+    @classmethod
+    def setUpClass(cls):
+        cls.model, cls.h, cls.files = gen.build_all(BASE)
+
+    def rows(self, rel):
+        return list(csv.DictReader(io.StringIO(self.files[rel])))
+
+    def test_no_synthesized_board_header(self):
+        for row in self.rows(gen.OUT["connectors_csv"]):
+            if row["connector"] not in self.model.by_ref:
+                # only the board units that D.PENDING_BOARD_ENDS lists (with a reason) still get an X id
+                self.assertIn(row["unit"], D.PENDING_BOARD_ENDS, row["connector"])
+                self.assertTrue(row["board_part"].startswith("TBD"), row["connector"])
+        for wire in self.h.wires:
+            for key, unit in (("from", wire["from_unit"]), ("to", wire["to_unit"])):
+                if self.model.is_board(unit) and unit not in D.PENDING_BOARD_ENDS:
+                    m = PIN_RE.match(wire[key])
+                    self.assertTrue(m and m[1] in self.model.by_ref, f"{wire['wire']} {key}: {wire[key]}")
+
+    def test_every_header_contact_carries_one_wire_and_lands_where_headers_say(self):
+        ends = {}
+        for wire in self.h.wires:
+            for key in ("from", "to"):
+                m = PIN_RE.match(wire[key])
+                if m and m[1] in D.HEADERS:
+                    ends.setdefault((m[1], m[2]), []).append(wire)
+        for ref, (label, segments) in D.HEADERS.items():
+            comp = self.model.by_ref[ref]
+            for sid, pins in segments.items():
+                for pin in gen.pin_list(pins):
+                    wires = ends.get((ref, pin), [])
+                    self.assertEqual(len(wires), 1, f"{ref}.{pin} ({label})")
+                    self.assertEqual(wires[0]["segment"], sid, f"{ref}.{pin}")
+            listed = {p for pins in segments.values() for p in gen.pin_list(pins)}
+            for pin in comp["pins"]:
+                self.assertEqual(bool(pin.get("net")), str(pin["number"]) in listed, f"{ref}.{pin['number']}: a reserve contact is nc")
+        self.assertEqual(sorted(k for k in ends if k[1] not in {p for v in D.HEADERS[k[0]][1].values() for p in gen.pin_list(v)}), [])
+
+    def test_no_mpn_in_both_the_parts_list_and_the_harness_rollup(self):
+        norm = lambda s: re.sub(r"[\s\-]+", "", s).upper().lstrip("0")
+        bought = {norm(r["MPN"]) for r in csv.DictReader((BASE / "build/10-zakupivlia.csv").open(encoding="utf-8", newline="")) if r["MPN"]}
+        rolled = {norm(r["mpn"].split(" (")[0]) for r in self.rows(gen.OUT["rollup_csv"])
+                  if r["family"] != "провід" and not r["mpn"].startswith("TBD") and r["mpn"] not in ("—", "")}
+        self.assertTrue(rolled)
+        self.assertEqual(sorted(bought & rolled), [])
+
+    def test_no_vertical_micro_fit_on_ctrl_or_rf(self):
+        for row in self.rows(gen.OUT["connectors_csv"]):
+            fp = self.model.db_part.get(row["connector"], {}).get("footprint", "")
+            if row["board"] in ("CTRL", "RF") and row["family"] in ("MF", "MF2"):
+                self.assertTrue(fp.endswith("_Horizontal"), f"{row['connector']} {fp}")
+            if row["board"] in ("CTRL", "RF", "PWR_B") and row["family"] in ("PH", "PHD"):
+                self.assertIn("_Horizontal", fp, row["connector"])
+
+    def test_pps_branch_leaves_the_ribbon(self):
+        branch = [w for w in self.h.wires if w["wire"].startswith("S01-PPS-")]
+        self.assertEqual({w["net"] for w in branch}, {"E3_GNSS_PPS", "UART6_RX", "UART6_TX", "GND"})
+        self.assertEqual({w["segment"] for w in branch} | {w["to_unit"] for w in branch}, {"S01", "GNSS"})
+        self.assertEqual(sorted(w["from"].split(" ")[0] for w in branch), ["J301.16", "J301.18", "J301.6", "J301.7"])
+        to_ctrl = {w["from"].split(" ")[0] for w in self.h.wires if w["segment"] == "S01" and w["to_unit"] == "CTRL"}
+        self.assertFalse({"J301.6", "J301.7", "J301.16", "J301.18"} & to_ctrl)
+        self.assertNotIn("E3_GNSS_PPS", {w["net"] for w in self.h.wires if w["segment"] == "S25"})
+
+
 if __name__ == "__main__":
     unittest.main()

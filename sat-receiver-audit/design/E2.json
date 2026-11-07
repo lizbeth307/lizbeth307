@@ -9173,6 +9173,575 @@
       "notes": [
         "Контрольна точка мережі BIAS_SB_LNA."
       ]
+    },
+    {
+      "ref": "J201",
+      "value": "X02S0-PWR: JST PH 5, боковий вхід, S02",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_S5B-PH-K_1x05_P2.00mm_Horizontal",
+      "mpn": "S5B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C157923",
+      "pins": [
+        {
+          "number": "1",
+          "name": "3V3_Q6A",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "2",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "3",
+          "name": "I2C2_SDA",
+          "type": "passive",
+          "net": "I2C2_SDA"
+        },
+        {
+          "number": "4",
+          "name": "I2C2_SCL",
+          "type": "passive",
+          "net": "I2C2_SCL"
+        },
+        {
+          "number": "5",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X02S0-PWR (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S02; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу. Відповідь J302 (S5B-PH-K-S на CTRL) контакт у контакт; контакт 5 (MCP_INT лише на CTRL) — без кола."
+      ]
+    },
+    {
+      "ref": "J202",
+      "value": "S02-PWR-SIG-1: JST PHD 2×10, боковий вхід, S02",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
+      "mpn": "S20B-PHDSS(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C2983880",
+      "pins": [
+        {
+          "number": "1",
+          "name": "CHG_INHIBIT",
+          "type": "passive",
+          "net": "CHG_INHIBIT"
+        },
+        {
+          "number": "2",
+          "name": "E1_BAT_ADC",
+          "type": "passive",
+          "net": "E1_BAT_ADC"
+        },
+        {
+          "number": "3",
+          "name": "EN_AUX12",
+          "type": "passive",
+          "net": "EN_AUX12"
+        },
+        {
+          "number": "4",
+          "name": "EN_BONI",
+          "type": "passive",
+          "net": "EN_BONI"
+        },
+        {
+          "number": "5",
+          "name": "EN_HFP",
+          "type": "passive",
+          "net": "EN_HFP"
+        },
+        {
+          "number": "6",
+          "name": "EN_LABPORT",
+          "type": "passive",
+          "net": "EN_LABPORT"
+        },
+        {
+          "number": "7",
+          "name": "EN_LIME3V3",
+          "type": "passive",
+          "net": "EN_LIME3V3"
+        },
+        {
+          "number": "8",
+          "name": "EN_LNA1",
+          "type": "passive",
+          "net": "EN_LNA1"
+        },
+        {
+          "number": "9",
+          "name": "EN_LNA2",
+          "type": "passive",
+          "net": "EN_LNA2"
+        },
+        {
+          "number": "10",
+          "name": "EN_LNA3",
+          "type": "passive",
+          "net": "EN_LNA3"
+        },
+        {
+          "number": "11",
+          "name": "EN_LNA4",
+          "type": "passive",
+          "net": "EN_LNA4"
+        },
+        {
+          "number": "12",
+          "name": "EN_LNB",
+          "type": "passive",
+          "net": "EN_LNB"
+        },
+        {
+          "number": "13",
+          "name": "EN_RTLA",
+          "type": "passive",
+          "net": "EN_RTLA"
+        },
+        {
+          "number": "14",
+          "name": "EN_RTLB",
+          "type": "passive",
+          "net": "EN_RTLB"
+        },
+        {
+          "number": "15",
+          "name": "EN_SB_LNA",
+          "type": "passive",
+          "net": "EN_SB_LNA"
+        },
+        {
+          "number": "16",
+          "name": "FAULT_HFP",
+          "type": "passive",
+          "net": "FAULT_HFP"
+        },
+        {
+          "number": "17",
+          "name": "FAULT_LABPORT",
+          "type": "passive",
+          "net": "FAULT_LABPORT"
+        },
+        {
+          "number": "18",
+          "name": "FAULT_LNA1",
+          "type": "passive",
+          "net": "FAULT_LNA1"
+        },
+        {
+          "number": "19",
+          "name": "FAULT_LNA2",
+          "type": "passive",
+          "net": "FAULT_LNA2"
+        },
+        {
+          "number": "20",
+          "name": "FAULT_LNA3",
+          "type": "passive",
+          "net": "FAULT_LNA3"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута S02-PWR-SIG-1 (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S02; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J203",
+      "value": "S02-PWR-SIG-2: JST PHD 2×10, боковий вхід, S02",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
+      "mpn": "S20B-PHDSS(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C2983880",
+      "pins": [
+        {
+          "number": "1",
+          "name": "FAULT_LNA4",
+          "type": "passive",
+          "net": "FAULT_LNA4"
+        },
+        {
+          "number": "2",
+          "name": "FAULT_RTLA",
+          "type": "passive",
+          "net": "FAULT_RTLA"
+        },
+        {
+          "number": "3",
+          "name": "FAULT_RTLB",
+          "type": "passive",
+          "net": "FAULT_RTLB"
+        },
+        {
+          "number": "4",
+          "name": "FLT_BONI",
+          "type": "passive",
+          "net": "FLT_BONI"
+        },
+        {
+          "number": "5",
+          "name": "FLT_LIME3V3",
+          "type": "passive",
+          "net": "FLT_LIME3V3"
+        },
+        {
+          "number": "6",
+          "name": "FLT_LNB",
+          "type": "passive",
+          "net": "FLT_LNB"
+        },
+        {
+          "number": "7",
+          "name": "FLT_SB_LNA",
+          "type": "passive",
+          "net": "FLT_SB_LNA"
+        },
+        {
+          "number": "8",
+          "name": "I2C0_SCL",
+          "type": "passive",
+          "net": "I2C0_SCL"
+        },
+        {
+          "number": "9",
+          "name": "I2C0_SDA",
+          "type": "passive",
+          "net": "I2C0_SDA"
+        },
+        {
+          "number": "10",
+          "name": "IMU_RX",
+          "type": "passive",
+          "net": "IMU_RX"
+        },
+        {
+          "number": "11",
+          "name": "IMU_TX",
+          "type": "passive",
+          "net": "IMU_TX"
+        },
+        {
+          "number": "12",
+          "name": "INA228_ALERT",
+          "type": "passive",
+          "net": "INA228_ALERT"
+        },
+        {
+          "number": "13",
+          "name": "OVP_LNB_N",
+          "type": "passive",
+          "net": "OVP_LNB_N"
+        },
+        {
+          "number": "14",
+          "name": "PG_BONI",
+          "type": "passive",
+          "net": "PG_BONI"
+        },
+        {
+          "number": "15",
+          "name": "PG_LNB",
+          "type": "passive",
+          "net": "PG_LNB"
+        },
+        {
+          "number": "16",
+          "name": "PICO_DISP_EN",
+          "type": "passive",
+          "net": "PICO_DISP_EN"
+        },
+        {
+          "number": "17",
+          "name": "PICO_OFF",
+          "type": "passive",
+          "net": "PICO_OFF"
+        },
+        {
+          "number": "18",
+          "name": "PTC_AUX",
+          "type": "passive",
+          "net": "PTC_AUX"
+        },
+        {
+          "number": "19",
+          "name": "PWR_BUTTON",
+          "type": "passive",
+          "net": "PWR_BUTTON"
+        },
+        {
+          "number": "20",
+          "name": "SLED_DET",
+          "type": "passive",
+          "net": "SLED_DET"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута S02-PWR-SIG-2 (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S02; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J204",
+      "value": "X04S1-PWR: JST PH 8, боковий вхід, S04",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_S8B-PH-K_1x08_P2.00mm_Horizontal",
+      "mpn": "S8B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C157915",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "3V3_Q6A",
+          "type": "passive",
+          "net": "3V3_Q6A"
+        },
+        {
+          "number": "3",
+          "name": "BIAS_CH1",
+          "type": "passive",
+          "net": "BIAS_CH1"
+        },
+        {
+          "number": "4",
+          "name": "BIAS_CH2_PORT",
+          "type": "passive",
+          "net": "BIAS_CH2_PORT"
+        },
+        {
+          "number": "5",
+          "name": "BIAS_CH3_PORT",
+          "type": "passive",
+          "net": "BIAS_CH3_PORT"
+        },
+        {
+          "number": "6",
+          "name": "BIAS_CH4",
+          "type": "passive",
+          "net": "BIAS_CH4"
+        },
+        {
+          "number": "7",
+          "name": "LAB5_RLY",
+          "type": "passive",
+          "net": "LAB5_RLY"
+        },
+        {
+          "number": "8",
+          "name": "LNB13V2",
+          "type": "passive",
+          "net": "LNB13V2"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X04S1-PWR (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S04; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J205",
+      "value": "X19P1-PWR: Molex Micro-Fit 3.0 2, верхній вхід, S19",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
+      "mpn": "43650-0215",
+      "manufacturer": "Molex",
+      "lcsc": "C293740",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "DISP12",
+          "type": "passive",
+          "net": "DISP12"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута X19P1-PWR (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S19; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J206",
+      "value": "SL2-PWR-MF: Molex Micro-Fit 3.0 2×4, верхній вхід, S13, S14, S17, S18",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43045-0812_2x04_P3.00mm_Vertical",
+      "mpn": "43045-0812",
+      "manufacturer": "Molex",
+      "lcsc": "C277661",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "LAB5",
+          "type": "passive",
+          "net": "LAB5"
+        },
+        {
+          "number": "3",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "4",
+          "name": "J21",
+          "type": "passive",
+          "net": "J21"
+        },
+        {
+          "number": "5",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "6",
+          "name": "VCC_3V3_MKEY",
+          "type": "passive",
+          "net": "VCC_3V3_MKEY"
+        },
+        {
+          "number": "7",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "8",
+          "name": "LIME3V3",
+          "type": "passive",
+          "net": "LIME3V3"
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута SL2-PWR-MF (build/16 §4; W2 GR-3): на PWR-A, сегмент(и) S13, S14, S17, S18; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
+    },
+    {
+      "ref": "J207",
+      "value": "SL2-PWR-PH: JST PH 12, боковий вхід, S20, S21, S22, S35, S36",
+      "kind": "connector",
+      "group": "Роз'єми джгутів PWR",
+      "source": "build/16-dzhgut.md §4–5; tools/assembly_data.py HEADERS (W2 GR-3)",
+      "status": "design",
+      "footprint": "Connector_JST:JST_PH_S12B-PH-K_1x12_P2.00mm_Horizontal",
+      "mpn": "S12B-PH-K-S(LF)(SN)",
+      "manufacturer": "JST",
+      "lcsc": "C157943",
+      "pins": [
+        {
+          "number": "1",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "2",
+          "name": "VBUS_RTLA",
+          "type": "passive",
+          "net": "VBUS_RTLA"
+        },
+        {
+          "number": "3",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "4",
+          "name": "VBUS_RTLB",
+          "type": "passive",
+          "net": "VBUS_RTLB"
+        },
+        {
+          "number": "5",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "6",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "7",
+          "name": "VBUS_HFP",
+          "type": "passive",
+          "net": "VBUS_HFP"
+        },
+        {
+          "number": "8",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "9",
+          "name": "BONI13V8_PORT",
+          "type": "passive",
+          "net": "BONI13V8_PORT"
+        },
+        {
+          "number": "10",
+          "name": "GND",
+          "type": "passive",
+          "net": "GND"
+        },
+        {
+          "number": "11",
+          "name": "BIAS_SB_LNA",
+          "type": "passive",
+          "net": "BIAS_SB_LNA"
+        },
+        {
+          "number": "12",
+          "name": "NC",
+          "type": "passive",
+          "nc": true
+        }
+      ],
+      "notes": [
+        "Роз'єм джгута SL2-PWR-PH (build/16 §4; W2 GR-3): на PWR-B, сегмент(и) S20, S21, S22, S35, S36; номери контактів = контакти джгута (tools/assembly_data.py HEADERS); контакти без кола — резерв без проводу."
+      ]
     }
   ],
   "open_items": [

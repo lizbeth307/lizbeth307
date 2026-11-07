@@ -2,22 +2,22 @@
   "passed": true,
   "methodology": "Independent stdlib JSON and XML parsers; no generator/validator imports.",
   "graph_sha256": {
-    "E1.json": "39da4cd1ecdfcad37a4cf5b6ee309846b4aa73243f2c8e7d8f07083ab1824a90",
-    "E2.json": "cc0580f8c8f896e6d1cca1e9364f64d69cd1d461d94593b33a6668f34f7a4935",
-    "E3.json": "0ae9955a91c906ae6fa7e0cc51a212922ffe791df3d9bd5ccf9381cca55c1e7d",
-    "E4.json": "8012086f2be1a33677c53661e01d8ca8f657fd3f10964c115b4893336863dddc",
-    "E5.json": "48c61fa1a77ab35e5d930f377ac2ef473abdd8f6e02da8417e352f168ce562e5"
+    "E1.json": "f854ea931a2f2f35482f650312ee7e6326ee1554e4477f6410b50cd516b99295",
+    "E2.json": "add1bc5d1bbf1cfa391e4f080de7a3ac340d616048a95640607294ad18a75721",
+    "E3.json": "77a0ea41b64b9382ba14b031145f2ba783b6a952ee0e6f190f34370c2f13167b",
+    "E4.json": "e10e0c344463c9e5bc48cb59293853bacc943e8e55f08f2f0cf109211688aa17",
+    "E5.json": "13f0cefe6ebe5c6942b39ccb599a2330395a659535cdb55df9e4a552a3932639"
   },
-  "netlist_sha256": "f112e459f95fb8eddfff80bb5717fd180e95bba9d27efbb6639faae63d83bb26",
+  "netlist_sha256": "157cf5c9225d12445f8945ab235dbd5777918f5c4a5ae9e1f6d2b3703d9098d3",
   "counts": {
-    "hardware_components": 794,
-    "hardware_pin_declarations": 2438,
-    "connected_hardware_pins": 2297,
-    "connected_hardware_nets": 485,
-    "declared_nc_pins": 141,
-    "xml_hardware_components": 794,
-    "xml_pin_nodes": 2438,
-    "xml_nets": 626,
+    "hardware_components": 839,
+    "hardware_pin_declarations": 2718,
+    "connected_hardware_pins": 2555,
+    "connected_hardware_nets": 486,
+    "declared_nc_pins": 163,
+    "xml_hardware_components": 839,
+    "xml_pin_nodes": 2718,
+    "xml_nets": 649,
     "explicit_power_flags": 25
   },
   "dnp_components": [

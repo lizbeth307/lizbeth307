@@ -28,7 +28,8 @@
   "design/parts/snapshots/2026-11-07-w2-reads-rf-lcsc.json",
   "design/parts/snapshots/2026-11-07-w2-mech2-manual.json",
   "design/parts/snapshots/2026-11-07-w2-src1-manual.json",
-  "design/parts/snapshots/2026-11-07-w2-src1-lcsc.json"
+  "design/parts/snapshots/2026-11-07-w2-src1-lcsc.json",
+  "design/parts/snapshots/2026-11-07-w2-gr3-lcsc.json"
  ],
  "bom_v2_rows": {
   "4": {
@@ -622,6 +623,15 @@
       },
       "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical"
      },
+     "header_side": {
+      "manufacturer": "Molex",
+      "mpn": "43650-0200",
+      "sku": {
+       "lcsc": "C192562"
+      },
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0200_1x02_P3.00mm_Horizontal",
+      "note": "кутова (Right Angle); LCSC «Z-Height of the Board» 5.57 мм, з розеткою 6.98 мм (листи Molex, mechanical/params/parts.json harness_headers MF_ra) — низ CTRL (W2 GR-3)"
+     },
      "housing": {
       "manufacturer": "Molex",
       "mpn": "43645-0200",
@@ -657,6 +667,15 @@
        "lcsc": "C293547"
       },
       "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0415_1x04_P3.00mm_Vertical"
+     },
+     "header_side": {
+      "manufacturer": "Molex",
+      "mpn": "43650-0400",
+      "sku": {
+       "lcsc": "C277684"
+      },
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0400_1x04_P3.00mm_Horizontal",
+      "note": "кутова (Right Angle); LCSC «Z-Height of the Board» 5.57 мм, з розеткою 6.98 мм (листи Molex, mechanical/params/parts.json harness_headers MF_ra) — низ CTRL (W2 GR-3)"
      },
      "housing": {
       "manufacturer": "Molex",
@@ -798,6 +817,71 @@
       "sku": {
        "lcsc": "C277696",
        "digikey": "WM3701-ND"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "PHD",
+   "title": "JST PHD 2.0 мм, 2 ряди — зведені сигнальні роз'єми S02",
+   "note": "Рішення build/15 «Сигнальні джгути» (W2 GR-3, зведення pcb/partition-spec.json): S02 CTRL ↔ PWR — дві вилки S20B-PHDSS бокового входу на кожному кінці (висота 5 мм, LCSC «Z-Height of the Board»). Каталог JST PHD (копія LCSC, прочитано 07.11.2026): 3 A при AWG #22, провід AWG #28…#22; клема SPHD-001T-P0.5 — AWG 26…22, ⌀ ізоляції 1.0…1.5 мм, тож проводи PHD — 22 AWG (Alpha 2845/7, ⌀ 1.07 ±0.05).",
+   "terminal": {
+    "manufacturer": "JST",
+    "mpn": "SPHD-001T-P0.5",
+    "sku": {
+     "lcsc": "C246755"
+    },
+    "note": "AWG 26…22, ⌀ ізоляції 1.0…1.5 мм (каталог JST PHD)"
+   },
+   "sizes": [
+    {
+     "pins": 20,
+     "header_side": {
+      "manufacturer": "JST",
+      "mpn": "S20B-PHDSS(LF)(SN)",
+      "sku": {
+       "lcsc": "C2983880"
+      },
+      "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal"
+     },
+     "housing": {
+      "manufacturer": "JST",
+      "mpn": "PHDR-20VS",
+      "sku": {
+       "lcsc": "C594794"
+      }
+     }
+    }
+   ]
+  },
+  {
+   "id": "MF2",
+   "title": "Molex Micro-Fit 3.0, 2 ряди — зведений силовий роз'єм SL2 на PWR-A",
+   "note": "Рішення build/15 «Живлення ≥2 A» (W2 GR-3, зведення pcb/partition-spec.json): S13, S14, S17 і S18 до прорізу SL2 — одна вертикальна вилка 43045-0812 (2 × 4, THT; LCSC «Z-Height of the Board» 9.91 мм) на PWR-A; клема та сама, що в MF.",
+   "terminal": {
+    "manufacturer": "Molex",
+    "mpn": "43030-0007",
+    "sku": {
+     "lcsc": "C293530"
+    }
+   },
+   "sizes": [
+    {
+     "pins": 8,
+     "header_top": {
+      "manufacturer": "Molex",
+      "mpn": "43045-0812",
+      "sku": {
+       "lcsc": "C277661"
+      },
+      "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43045-0812_2x04_P3.00mm_Vertical"
+     },
+     "housing": {
+      "manufacturer": "Molex",
+      "mpn": "43025-0800",
+      "sku": {
+       "lcsc": "C127351"
       }
      }
     }
@@ -4592,6 +4676,7 @@
    "match": "MF-MSMF075/24-2",
    "single_source": "PTC named in STACK §2.7; reflow only",
    "refs": [
+    "F104",
     "F202",
     "F301"
    ]
@@ -4834,39 +4919,336 @@
     "lcsc": "C157923"
    },
    "single_source": "JST PH family (build/15)",
-   "extras": [
-    {
-     "item": "mating housing (both harness ends)",
-     "manufacturer": "JST",
-     "mpn": "PHR-5",
-     "sku": {
-      "lcsc": "C157953"
-     },
-     "qty_per_ref": 2
-    },
-    {
-     "manufacturer": "JST",
-     "mpn": "SPH-002T-P0.5S",
-     "sku": {
-      "lcsc": "C111515"
-     },
-     "item": "crimp contacts",
-     "qty_per_ref": 10
-    },
-    {
-     "item": "power-board end header (graph ref pending)",
-     "manufacturer": "JST",
-     "mpn": "B5B-PH-K-S(LF)(SN)",
-     "sku": {
-      "lcsc": "C157993"
-     },
-     "qty_per_ref": 1
-    }
-   ],
    "refs": [
+    "J201",
     "J302"
    ],
-   "note": "J302 stays on CTRL_HMI as graph E3 puts it (build/15 «Сигнальні джгути», 2026-11-07). Side entry S5B-PH-K-S (4.8 mm, JST ePH) like every PH header on CTRL, RF and ENC, because the top-entry B5B stands about 8 mm with its housing against the 5.5 mm CTRL height (mechanical/params/boards.json; build/15, 2026-11-07); MPN, LCSC and footprint as harness_families PH 5 header_side. The S02 lead carries PHR-5 at both ends and its power-board end plugs into the B5B header listed in extras (build/16 connector X02S0-PWR; PWR takes top-entry headers)."
+   "note": "J302 stays on CTRL_HMI as graph E3 puts it (build/15 «Сигнальні джгути», 2026-11-07); its S02 mate on PWR-B is the graph ref J201 (X02S0-PWR, W2 GR-3), the same side-entry header. Side entry S5B-PH-K-S (4.8 mm, JST ePH) like every PH header on CTRL, RF, ENC and PWR-B; MPN, LCSC and footprint as harness_families PH 5 header_side. The PHR-5 housings and SPH-002T-P0.5S crimps of both S02 ends are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv)."
+  },
+  {
+   "id": "J-HDR-XDFH02542x20P",
+   "mount": "pcb_tht",
+   "footprint": "Connector_IDC:IDC-Header_2x20_P2.54mm_Vertical",
+   "manufacturer": "Lian Xin Technology",
+   "mpn": "XDFH-0254-2*20P",
+   "sku": {
+    "lcsc": "C19193815"
+   },
+   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
+   "refs": [
+    "J304"
+   ],
+   "note": "Board-side harness header (W2 GR-3): J304 X01I1-CTRL on CTRL. Part, LCSC SKU and footprint as harness_families IDC 40 header_top; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+  },
+  {
+   "id": "J-HDR-436500400",
+   "mount": "pcb_tht",
+   "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0400_1x04_P3.00mm_Horizontal",
+   "manufacturer": "Molex",
+   "mpn": "43650-0400",
+   "sku": {
+    "lcsc": "C277684"
+   },
+   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
+   "refs": [
+    "J305"
+   ],
+   "note": "Board-side harness header (W2 GR-3): J305 X02P1-CTRL on CTRL. Part, LCSC SKU and footprint as harness_families MF 4 header_side; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+  },
+  {
+   "id": "J-HDR-S20BPHDSS",
+   "mount": "pcb_tht",
+   "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
+   "manufacturer": "JST",
+   "mpn": "S20B-PHDSS(LF)(SN)",
+   "sku": {
+    "lcsc": "C2983880"
+   },
+   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
+   "refs": [
+    "J202",
+    "J203",
+    "J306",
+    "J307"
+   ],
+   "note": "Board-side harness header (W2 GR-3): J202 S02-PWR-SIG-1, J203 S02-PWR-SIG-2, J306 S02-CTRL-SIG-1, J307 S02-CTRL-SIG-2 on CTRL, PWR_B. Part, LCSC SKU and footprint as harness_families PHD 20 header_side; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+  },
+  {
+   "id": "J-HDR-S8BPH",
+   "mount": "pcb_tht",
+   "footprint": "Connector_JST:JST_PH_S8B-PH-K_1x08_P2.00mm_Horizontal",
+   "manufacturer": "JST",
+   "mpn": "S8B-PH-K-S(LF)(SN)",
+   "sku": {
+    "lcsc": "C157915"
+   },
+   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
+   "refs": [
+    "J204",
+    "J308",
+    "J418",
+    "J420"
+   ],
+   "note": "Board-side harness header (W2 GR-3): J204 X04S1-PWR, J308 X03S1-CTRL, J418 X03S1-RF, J420 X04S1-RF on CTRL, PWR_B, RF. Part, LCSC SKU and footprint as harness_families PH 8 header_side; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+  },
+  {
+   "id": "J-HDR-S4BPH",
+   "mount": "pcb_tht",
+   "footprint": "Connector_JST:JST_PH_S4B-PH-K_1x04_P2.00mm_Horizontal",
+   "manufacturer": "JST",
+   "mpn": "S4B-PH-K-S(LF)(SN)",
+   "sku": {
+    "lcsc": "C157926"
+   },
+   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
+   "refs": [
+    "J309",
+    "J310",
+    "J312",
+    "J316",
+    "J317",
+    "J419"
+   ],
+   "note": "Board-side harness header (W2 GR-3): J309 X03S2-CTRL, J310 S15-30-CTRL, J312 X26S1-CTRL, J316 X37S1-CTRL, J317 X38S1-CTRL, J419 X03S2-RF on CTRL, RF. Part, LCSC SKU and footprint as harness_families PH 4 header_side; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+  },
+  {
+   "id": "J-HDR-S6BPH",
+   "mount": "pcb_tht",
+   "footprint": "Connector_JST:JST_PH_S6B-PH-K_1x06_P2.00mm_Horizontal",
+   "manufacturer": "JST",
+   "mpn": "S6B-PH-K-S(LF)(SN)",
+   "sku": {
+    "lcsc": "C157920"
+   },
+   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
+   "refs": [
+    "J311",
+    "J508"
+   ],
+   "note": "Board-side harness header (W2 GR-3): J311 S24-25-CTRL, J508 X34S1-PWR on CTRL, PWR_B. Part, LCSC SKU and footprint as harness_families PH 6 header_side; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+  },
+  {
+   "id": "J-HDR-22272031",
+   "mount": "pcb_tht",
+   "footprint": "Connector_Molex:Molex_KK-254_AE-6410-03A_1x03_P2.54mm_Vertical",
+   "manufacturer": "Molex",
+   "mpn": "22-27-2031",
+   "sku": {
+    "lcsc": "C471416"
+   },
+   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
+   "refs": [
+    "J313"
+   ],
+   "note": "Board-side harness header (W2 GR-3): J313 X27F1-CTRL on CTRL. Part, LCSC SKU and footprint as harness_families FAN3 3 header_top; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+  },
+  {
+   "id": "J-HDR-436500200",
+   "mount": "pcb_tht",
+   "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0200_1x02_P3.00mm_Horizontal",
+   "manufacturer": "Molex",
+   "mpn": "43650-0200",
+   "sku": {
+    "lcsc": "C192562"
+   },
+   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
+   "refs": [
+    "J314"
+   ],
+   "note": "Board-side harness header (W2 GR-3): J314 X28P1-CTRL on CTRL. Part, LCSC SKU and footprint as harness_families MF 2 header_side; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+  },
+  {
+   "id": "J-HDR-S2BPH",
+   "mount": "pcb_tht",
+   "footprint": "Connector_JST:JST_PH_S2B-PH-K_1x02_P2.00mm_Horizontal",
+   "manufacturer": "JST",
+   "mpn": "S2B-PH-K-S(LF)(SN)",
+   "sku": {
+    "lcsc": "C173752"
+   },
+   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
+   "refs": [
+    "J315",
+    "J318",
+    "J319"
+   ],
+   "note": "Board-side harness header (W2 GR-3): J315 X29S1-CTRL, J318 X39S1-CTRL, J319 X40S1-CTRL on CTRL. Part, LCSC SKU and footprint as harness_families PH 2 header_side; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+  },
+  {
+   "id": "J-HDR-436500415",
+   "mount": "pcb_tht",
+   "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0415_1x04_P3.00mm_Vertical",
+   "manufacturer": "Molex",
+   "mpn": "43650-0415",
+   "sku": {
+    "lcsc": "C293547"
+   },
+   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
+   "refs": [
+    "J104"
+   ],
+   "note": "Board-side harness header (W2 GR-3): J104 X02P1-PWR on PWR_A. Part, LCSC SKU and footprint as harness_families MF 4 header_top; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+  },
+  {
+   "id": "J-HDR-0039288020",
+   "mount": "pcb_tht",
+   "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-02A_2x01_P4.20mm_Vertical",
+   "manufacturer": "Molex",
+   "mpn": "0039288020",
+   "sku": {
+    "lcsc": "C490534",
+    "digikey": "WM23800-ND"
+   },
+   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
+   "refs": [
+    "J105",
+    "J106",
+    "J107"
+   ],
+   "note": "Board-side harness header (W2 GR-3): J105 X05J1-PWR, J106 X06J1-PWR, J107 X07J1-PWR on PWR_A. Part, LCSC SKU and footprint as harness_families MFJ 2 header_top; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+  },
+  {
+   "id": "J-HDR-0039288040",
+   "mount": "pcb_tht",
+   "footprint": "Connector_Molex:Molex_Mini-Fit_Jr_5566-04A_2x02_P4.20mm_Vertical",
+   "manufacturer": "Molex",
+   "mpn": "0039288040",
+   "sku": {
+    "lcsc": "C240829",
+    "digikey": "WM23801-ND"
+   },
+   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
+   "refs": [
+    "J108"
+   ],
+   "note": "Board-side harness header (W2 GR-3): J108 X10J1-PWR on PWR_A. Part, LCSC SKU and footprint as harness_families MFJ 4 header_top; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+  },
+  {
+   "id": "J-HDR-B2BPH",
+   "mount": "pcb_tht",
+   "footprint": "Connector_JST:JST_PH_B2B-PH-K_1x02_P2.00mm_Vertical",
+   "manufacturer": "JST",
+   "mpn": "B2B-PH-K-S(LF)(SN)",
+   "sku": {
+    "lcsc": "C131337"
+   },
+   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
+   "refs": [
+    "J109",
+    "J113",
+    "J510"
+   ],
+   "note": "Board-side harness header (W2 GR-3): J109 X05S1-PWR, J113 X11S1-PWR, J510 X15S1-HATCH on HATCH, PWR_A. Part, LCSC SKU and footprint as harness_families PH 2 header_top; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+  },
+  {
+   "id": "J-HDR-B5BPH",
+   "mount": "pcb_tht",
+   "footprint": "Connector_JST:JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical",
+   "manufacturer": "JST",
+   "mpn": "B5B-PH-K-S(LF)(SN)",
+   "sku": {
+    "lcsc": "C157993"
+   },
+   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
+   "refs": [
+    "J110"
+   ],
+   "note": "Board-side harness header (W2 GR-3): J110 X06S1-PWR on PWR_A. Part, LCSC SKU and footprint as harness_families PH 5 header_top; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+  },
+  {
+   "id": "J-HDR-B3BPH",
+   "mount": "pcb_tht",
+   "footprint": "Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical",
+   "manufacturer": "JST",
+   "mpn": "B3B-PH-K-S(LF)(SN)",
+   "sku": {
+    "lcsc": "C131339"
+   },
+   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
+   "refs": [
+    "J111",
+    "J513"
+   ],
+   "note": "Board-side harness header (W2 GR-3): J111 X07S1-PWR, J513 X30S1-HATCH on HATCH, PWR_A. Part, LCSC SKU and footprint as harness_families PH 3 header_top; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+  },
+  {
+   "id": "J-HDR-B4BPH",
+   "mount": "pcb_tht",
+   "footprint": "Connector_JST:JST_PH_B4B-PH-K_1x04_P2.00mm_Vertical",
+   "manufacturer": "JST",
+   "mpn": "B4B-PH-K-S(LF)(SN)",
+   "sku": {
+    "lcsc": "C131334"
+   },
+   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
+   "refs": [
+    "J112",
+    "J507"
+   ],
+   "note": "Board-side harness header (W2 GR-3): J112 X10S1-PWR, J507 X32S1-PWR on PWR_A. Part, LCSC SKU and footprint as harness_families PH 4 header_top; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+  },
+  {
+   "id": "J-HDR-436500215",
+   "mount": "pcb_tht",
+   "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43650-0215_1x02_P3.00mm_Vertical",
+   "manufacturer": "Molex",
+   "mpn": "43650-0215",
+   "sku": {
+    "lcsc": "C293740"
+   },
+   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
+   "refs": [
+    "J114",
+    "J115",
+    "J205",
+    "J509"
+   ],
+   "note": "Board-side harness header (W2 GR-3): J114 X11P1-PWR, J115 X12P1-PWR, J205 X19P1-PWR, J509 X14P1-HATCH on HATCH, PWR_A. Part, LCSC SKU and footprint as harness_families MF 2 header_top; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+  },
+  {
+   "id": "J-HDR-430450812",
+   "mount": "pcb_tht",
+   "footprint": "Connector_Molex:Molex_Micro-Fit_3.0_43045-0812_2x04_P3.00mm_Vertical",
+   "manufacturer": "Molex",
+   "mpn": "43045-0812",
+   "sku": {
+    "lcsc": "C277661"
+   },
+   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
+   "refs": [
+    "J206"
+   ],
+   "note": "Board-side harness header (W2 GR-3): J206 SL2-PWR-MF on PWR_A. Part, LCSC SKU and footprint as harness_families MF2 8 header_top; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+  },
+  {
+   "id": "J-HDR-S12BPH",
+   "mount": "pcb_tht",
+   "footprint": "Connector_JST:JST_PH_S12B-PH-K_1x12_P2.00mm_Horizontal",
+   "manufacturer": "JST",
+   "mpn": "S12B-PH-K-S(LF)(SN)",
+   "sku": {
+    "lcsc": "C157943"
+   },
+   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
+   "refs": [
+    "J207"
+   ],
+   "note": "Board-side harness header (W2 GR-3): J207 SL2-PWR-PH on PWR_B. Part, LCSC SKU and footprint as harness_families PH 12 header_side; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
+  },
+  {
+   "id": "J-HDR-S3BPH",
+   "mount": "pcb_tht",
+   "footprint": "Connector_JST:JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal",
+   "manufacturer": "JST",
+   "mpn": "S3B-PH-K-S(LF)(SN)",
+   "sku": {
+    "lcsc": "C157929"
+   },
+   "single_source": "family decision build/15 («Сигнальні джгути», «Живлення ≥2 A»; W2 GR-3)",
+   "refs": [
+    "J506"
+   ],
+   "note": "Board-side harness header (W2 GR-3): J506 X23S1-PWR on PWR_B. Part, LCSC SKU and footprint as harness_families PH 3 header_side; the mating housing and the crimp terminals are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv), not here."
   },
   {
    "id": "J-PH-B3B",
@@ -4878,30 +5260,10 @@
     "lcsc": "C131339"
    },
    "single_source": "JST PH family (build/15)",
-   "extras": [
-    {
-     "item": "mating housing for the console adapter lead",
-     "manufacturer": "JST",
-     "mpn": "PHR-3",
-     "sku": {
-      "lcsc": "C265393"
-     },
-     "qty_per_ref": 1
-    },
-    {
-     "manufacturer": "JST",
-     "mpn": "SPH-002T-P0.5S",
-     "sku": {
-      "lcsc": "C111515"
-     },
-     "item": "crimp contacts",
-     "qty_per_ref": 3
-    }
-   ],
    "refs": [
     "J502"
    ],
-   "note": "UART5 console header on the service-hatch board HATCH (pcb/prepare.py domain HATCH), reached through the rear service hatch; the console adapter lead carries the PHR-3 housing (extras). JST PH offers only PCB headers as mates, which is why J502 stays a board header."
+   "note": "UART5 console header on the service-hatch board HATCH (pcb/prepare.py domain HATCH), reached through the rear service hatch; the console adapter lead carries the PHR-3 housing and three SPH-002T-P0.5S crimps, counted by the harness roll-up (build/16-dzhgut-pidsumok.csv, tools/assembly_data.py ROLLUP_EXTRA; W2 GR-3). JST PH offers only PCB headers as mates, which is why J502 stays a board header."
   },
   {
    "id": "J-MICROFIT-3",
@@ -4913,27 +5275,7 @@
     "lcsc": "C293546"
    },
    "single_source": "Molex Micro-Fit 3.0 family for ≥2 A (build/15)",
-   "extras": [
-    {
-     "item": "receptacle housing",
-     "manufacturer": "Molex",
-     "mpn": "43645-0300",
-     "sku": {
-      "lcsc": "C259740"
-     },
-     "qty_per_ref": 1
-    },
-    {
-     "item": "crimp terminals 20-24 AWG",
-     "manufacturer": "Molex",
-     "mpn": "43030-0007",
-     "sku": {
-      "lcsc": "C293530"
-     },
-     "qty_per_ref": 3
-    }
-   ],
-   "note": "J21 service connector on the service-hatch board HATCH (pcb/prepare.py domain HATCH; build/15 «Сигнальні джгути»): 43650-0315 header on the hatch board, 43645-0300 receptacle on the S16 lead to the J21 pads (J521). Gauges: 12 V/GND 20 AWG twisted pair, KEY 24 AWG — the thinnest wire the 43030 terminals take (20-24 AWG; build/15 «Живлення ≥2 A»).",
+   "note": "J21 service connector on the service-hatch board HATCH (pcb/prepare.py domain HATCH; build/15 «Сигнальні джгути»): 43650-0315 header on the hatch board, 43645-0300 receptacle on the S16 lead to the J21 pads (J521). Gauges: 12 V/GND 20 AWG twisted pair, KEY 24 AWG — the thinnest wire the 43030 terminals take (20-24 AWG; build/15 «Живлення ≥2 A»). The receptacle and its three crimps are counted by the harness roll-up (build/16-dzhgut-pidsumok.csv; W2 GR-3).",
    "refs": [
     "J503"
    ]
@@ -4969,7 +5311,7 @@
     "lcsc": "C88373",
     "digikey": "H11891CT-ND"
    },
-   "single_source": "Hirose U.FL-R-SMT-1 — єдина розетка U.FL з офіційним футпринтом KiCad 10.0.7 (Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical); розетка I-PEX MHF I потребує власного прочитаного land pattern",
+   "single_source": "Hirose U.FL-R-SMT-1 стикується з вилкою Hirose U.FL пігтейла CAB.718 (BOM HRS.UFL.PLUG.AH) за прочитаними кресленням і каталогом Hirose; офіційний футпринт KiCad 10.0.7 Connector_Coaxial:U.FL_Hirose_U.FL-R-SMT-1_Vertical. Molex MCRF 73412-0110 теж має офіційний футпринт KiCad 10.0.7, але даних Molex не прочитано (не обрано); розетка I-PEX MHF I потребує власного прочитаного land pattern",
    "note": "Розетка з боку RF-плати для панельних пігтейлів (W2 GR-2): P2 J423, P3 J424, P6 J425, P8 J427. Креслення HRS CL331-0472-2-10: CENTER CONTACT 1 × 1.05, OUTER CONTACT 2 × (1 × 2.2), корпус 3 × 2.6, висота 1.25 ±0.2 мм; каталог U.FL (серпень 2025): 50 Ω, 0–8 ГГц, контактний опір центр 20 mΩ max, зовнішній 10 mΩ max, 30 циклів з'єднання. Номінального струму Hirose не публікує (каталог pp.1–34), тож DC через J423/J424/J427 (ліміти 0.339/0.339/0.192 A) — розрахунок і ворота E4-07 (OPEN): на 0.339 A контакти розсіюють ≈3.4 mW (модель). Знімки 2026-11-07-w2-reads-rf-*.json.",
    "refs": [
     "J423",
@@ -6142,37 +6484,8 @@
    },
    "match": "LAB BUS",
    "single_source": "GX12 6-pin set chosen so LAB BUS cannot mate with the GX16-4 IMU connector",
-   "extras": [
-    {
-     "item": "board-side header (graph ref pending)",
-     "manufacturer": "JST",
-     "mpn": "B6B-PH-K-S(LF)(SN)",
-     "sku": {
-      "lcsc": "C131342"
-     },
-     "qty_per_ref": 1
-    },
-    {
-     "item": "harness housing",
-     "manufacturer": "JST",
-     "mpn": "PHR-6",
-     "sku": {
-      "lcsc": "C157952"
-     },
-     "qty_per_ref": 1
-    },
-    {
-     "manufacturer": "JST",
-     "mpn": "SPH-002T-P0.5S",
-     "sku": {
-      "lcsc": "C111515"
-     },
-     "item": "crimp contacts",
-     "qty_per_ref": 6
-    }
-   ],
    "note": "GX12 6-pin set (male+female) for LAB BUS J505 — the decision of build/15 «Сигнальні джгути» (2026-11-07): verified LCSC code, solder cups for the S34 wire harness, and a different shell size from the GX16-4 IMU connector, so the two cannot be swapped (MECH-07); binder M8 86 6618 1120 00006 stays the recorded IP67 alternative. The LCSC product page (read 2026-11-07) shows no drawing text; the LCSC-hosted drawing C18203264 (READS-E row web:kinghelm-kh-gx12-6p-drawing, read 2026-11-07) gives the D12.0 / 11.2 D-cut, the D15 flange, the M12x0.75 8.8 panel thread and the D14.6 nut, but no IP rating; LAB BUS gets a cap (10-bom row 90).",
-   "interface_open": "Готово до interface_resolved (W2 MECH-2). Сполучна частина — гніздова кабельна вилка GX12 того самого комплекту KH-GX12-6P (стор. 1 креслення), дроти build/16 S34 у чашки під пайку; кріплення — виріз ⌀12.0 з лискою 11.2 у нижній стінці 2.5 мм (M-02 LAB_BUS, x 206 / z 30), фланець ⌀15 × 1.7 зовні, різьба M12×0.75 довжиною 8.8, гайка ⌀14.6 зсередини (конверт nut.LAB_BUS) — за кресленням Kinghelm rev A (рядок READS-E web:kinghelm-kh-gx12-6p-drawing, LCSC C18203264, прочитано 07.11.2026; mechanical/params/parts.json kinghelm_gx12_6p). MODEL FIT ONLY: IP на кресленні не наведено — заглушка (10-bom рядок 90), ущільнення й момент — ворота T-07 (OPEN). Відкрито лише формально: interface_resolved не записано, бо software/tests/test_parts_database.py (test_committed_unresolved_records_keep_the_interface_blockers) вимагає блокуючий запис для кожного інтерфейсного ref — рішення про цей тест за його власником (INT).",
+   "interface_open": "Готово до interface_resolved (W2 MECH-2). Сполучна частина — гніздова кабельна вилка GX12 того самого комплекту KH-GX12-6P (стор. 1 креслення), дроти build/16 S34 від вилки JST PH J508 на PWR-B (ref графа з W2 GR-3) у чашки під пайку; кріплення — виріз ⌀12.0 з лискою 11.2 у нижній стінці 2.5 мм (M-02 LAB_BUS, x 206 / z 30), фланець ⌀15 × 1.7 зовні, різьба M12×0.75 довжиною 8.8, гайка ⌀14.6 зсередини (конверт nut.LAB_BUS) — за кресленням Kinghelm rev A (рядок READS-E web:kinghelm-kh-gx12-6p-drawing, LCSC C18203264, прочитано 07.11.2026; mechanical/params/parts.json kinghelm_gx12_6p). MODEL FIT ONLY: IP на кресленні не наведено — заглушка (10-bom рядок 90), ущільнення й момент — ворота T-07 (OPEN). Відкрито лише формально: interface_resolved не записано, бо software/tests/test_parts_database.py (test_committed_unresolved_records_keep_the_interface_blockers) вимагає блокуючий запис для кожного інтерфейсного ref — рішення про цей тест за його власником (INT).",
    "refs": [
     "J505"
    ]

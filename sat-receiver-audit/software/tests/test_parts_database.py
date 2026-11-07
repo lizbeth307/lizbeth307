@@ -287,5 +287,32 @@ class PcbPreparationBlockersTest(unittest.TestCase):
         self.assertEqual(by_ref["J551"], {"interface_mounting_unresolved"})
 
 
+class HarnessHeaderEntryTest(unittest.TestCase):
+    """W2 GR-3: board-side harness headers are graph refs bought through the parts database; housings and crimps are not."""
+
+    def test_header_entries_follow_their_harness_family(self):
+        model = parts.Model()
+        model.check()
+        self.assertEqual(model.errors, [])
+        items = {}
+        for fam in model.db["harness_families"]:
+            for size in fam["sizes"]:
+                for role in ("header_top", "header_side"):
+                    if role in size:
+                        items[parts.norm_mpn(size[role]["mpn"])] = size[role]
+        headers = [p for p in model.db["parts"] if p["id"].startswith("J-HDR-")]
+        self.assertTrue(headers)
+        for p in headers:
+            self.assertEqual(p["mount"], "pcb_tht", p["id"])
+            item = items[parts.norm_mpn(p["mpn"])]
+            self.assertEqual((p["footprint"], p["sku"]["lcsc"]), (item["footprint"], item["sku"]["lcsc"]), p["id"])
+
+    def test_no_housing_or_crimp_extras_on_harness_headers(self):
+        model = parts.Model()
+        for pid in ("J-PH-S5B", "J-PH-B3B", "J-MICROFIT-3", "J-GX12-6"):
+            extras = [e.get("item", "") for e in part(model.db, pid).get("extras", [])]
+            self.assertFalse([e for e in extras if any(w in e for w in ("housing", "crimp", "header"))], pid)
+
+
 if __name__ == "__main__":
     unittest.main()

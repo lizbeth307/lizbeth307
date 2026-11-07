@@ -25,15 +25,15 @@
   "inputs": {
     "parts": {
       "spec": "003f66d4f0f534d32ce8d7a98827614b9961b52eba4249068834ba6efd69f64d",
-      "contract": "0b9436bfe46eee5085d28b060c3e1ddf51d57a2c4194d0e906e193b2e67bc358",
+      "contract": "8ad359e2b8e9e52974332fa64d0b5a2ef8eca421cf5ed08efb38d2ee3da86707",
       "project_rules": "2aa13b5419374d94ff7d22cf48556ceebc9635e3742b9f4d2eef575c25624f41",
       "template": "4c9dcf416687d46f2147b6af3f9d85d7ae394b072e377e73fba15fcb524a55b9",
       "instances": "19a6ad3075d7bb21f060309f07b73889cd960c616b5337231528298fe5da9c08"
     },
-    "sha256": "a36a205550bd32ad044fac0c4f6bf9f4318b371ecd54a948583066cdf021d8bd"
+    "sha256": "39dcf8e6fe37749bb03cd7152c4ee090ede3b3aa7381b901d6943af546aa75ab"
   },
   "board_file": "build/kicad/boards/ENC/ENC.kicad_pcb",
-  "board_sha256": "bea4842e6d6872d70e2e1c9574fd186e08bba3ca3f3e55b8e420e5e9ebda86c4",
+  "board_sha256": "065243df3d2448b25d5230f43354e57a746ebbd7cb6a010d7c4b3b6f9735d3de",
   "project_file": "build/kicad/boards/ENC/ENC.kicad_pro",
   "fp_lib_table_sha256": "6b2a79120473af8986b9a926ecdd3f0a81eacea4b73a8391c78367962c2525c3",
   "layers": {
@@ -724,8 +724,9 @@
               "ENC.A",
               "J1.2"
             ],
-            "external_refs": 3,
+            "external_refs": 4,
             "external_sample": [
+              "J316",
               "R351",
               "R352",
               "U312"
@@ -739,8 +740,9 @@
               "ENC.B",
               "J1.3"
             ],
-            "external_refs": 3,
+            "external_refs": 4,
             "external_sample": [
+              "J316",
               "R353",
               "R354",
               "U312"
@@ -754,8 +756,9 @@
               "ENC.S1",
               "J1.4"
             ],
-            "external_refs": 2,
+            "external_refs": 3,
             "external_sample": [
+              "J316",
               "R348",
               "U311"
             ],
@@ -769,7 +772,7 @@
               "ENC.S2",
               "J1.1"
             ],
-            "external_refs": 489,
+            "external_refs": 520,
             "external_sample": [
               "A401",
               "A402",
@@ -800,8 +803,9 @@
               "ENC.A",
               "J1.2"
             ],
-            "external_refs": 3,
+            "external_refs": 4,
             "external_sample": [
+              "J317",
               "R355",
               "R356",
               "U312"
@@ -815,8 +819,9 @@
               "ENC.B",
               "J1.3"
             ],
-            "external_refs": 3,
+            "external_refs": 4,
             "external_sample": [
+              "J317",
               "R357",
               "R358",
               "U312"
@@ -830,8 +835,9 @@
               "ENC.S1",
               "J1.4"
             ],
-            "external_refs": 2,
+            "external_refs": 3,
             "external_sample": [
+              "J317",
               "R350",
               "U311"
             ],
@@ -845,7 +851,7 @@
               "ENC.S2",
               "J1.1"
             ],
-            "external_refs": 489,
+            "external_refs": 520,
             "external_sample": [
               "A401",
               "A402",

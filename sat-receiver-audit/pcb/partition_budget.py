@@ -45,6 +45,7 @@ SHEETS = ("E1", "E2", "E3", "E4", "E5")
 # the last two are the PWR-B domains that GR-3 adds to pcb/prepare.py (partition-spec domains.PWR_B); listing them
 # here keeps the PWR part set the same before and after that change
 PWR_DOMAINS = ("PWR_MAIN", "PWR_BRANCH", "USB_POWER", "PWR_BRANCH_SW", "USB_POWER_SW")
+PWR_B_DOMAINS = ("PWR_BRANCH_SW", "USB_POWER_SW")
 CURRENT_BOARDS = {"PWR": PWR_DOMAINS, "RF": ("RF_HMC", "RF_HF", "RF_INJECTOR", "DC_CORE"), "CTRL": ("CTRL_HMI",)}
 
 
@@ -215,6 +216,13 @@ class Design:
         with (ROOT / "pcb/generated/components.csv").open(encoding="utf-8", newline="") as fh:
             for r in csv.DictReader(fh):
                 self.rows[r["ref"]] = r
+        # W2 GR-3: a build/16 header that is a graph ref (bare board part) is counted as a part with its real courtyard;
+        # its family, orientation and board come from build/16-dzhgut-rozyemy.csv
+        self.header_rows = {}
+        with (ROOT / "build/16-dzhgut-rozyemy.csv").open(encoding="utf-8", newline="") as fh:
+            for r in csv.DictReader(fh):
+                if r["connector"] in self.rows and self.rows[r["connector"]]["category"] == "bare_board_part":
+                    self.header_rows[r["connector"]] = r
         self.parts = self._parts()
         self.headers_raw = self._headers()
 
@@ -260,6 +268,12 @@ class Design:
                 raise SystemExit(f"{ref}: footprint {fp} has no F.CrtYd in the vendored library")
             c = self.comp[ref]
             h, hsrc, h_lb = self.height(ref, fp)
+            hdr = self.header_rows.get(ref)
+            if hdr is not None:
+                fam = f"{hdr['family']}_{hdr['orientation']}"
+                f = dict(self.hh.get(fam) or {}, **self.spec["header_families"].get(fam, {}))
+                h = f.get("h_mated", f.get("h"))
+                hsrc, h_lb = f"harness header {fam}: " + (f.get("h_src") or f.get("src") or "mechanical/params/parts.json harness_headers"), False
             w, d = info["crtyd"]
             nets = sorted({p["net"] for p in c["pins"] if p.get("net")})
             out[ref] = {
@@ -268,7 +282,8 @@ class Design:
                 "footprint": fp, "w": w, "d": d, "area": w * d, "h": h, "h_src": hsrc, "h_lower_bound": h_lb,
                 "module": r["mount"] == "pcb_module", "tht": (not tp) and r["mount"] in ("pcb_tht", "pcb_module"),
                 "tht_field": info["tht_field"], "tht_pads": info["tht_pads"] if not tp else 0, "nets": nets,
-                "pins": c["pins"],
+                "pins": c["pins"], "header": hdr is not None,
+                "header_family": f"{hdr['family']}_{hdr['orientation']}" if hdr is not None else None,
             }
         return out
 
@@ -304,7 +319,8 @@ class Design:
 
     def consolidated_headers(self, unit):
         """build/16 headers of one unit after the consolidation map of the spec."""
-        cmap = [m for m in self.spec["consolidation"]["map"] if m["unit"] == unit]
+        # entries implemented as graph refs (W2 GR-3) are counted as parts, not here
+        cmap = [m for m in self.spec["consolidation"]["map"] if m["unit"] == unit and "graph_refs" not in m]
         used, out = set(), []
         raw = {h["id"]: h for h in self.headers_raw if h["unit"] == unit}
         for m in cmap:
@@ -401,6 +417,9 @@ class Evaluator:
             if p["module"] and cand.get("pololu") == "plate":
                 side[ref] = "PLATE"
                 continue
+            if p["header"]:
+                side[ref] = "PWR_B" if p["domain"] in PWR_B_DOMAINS else "PWR_A"
+                continue
             if key in groups_rear and ref not in pinned:
                 if p["h"] is not None and p["h"] <= P["rear_board"]["h_max"] and not p["h_lower_bound"]:
                     side[ref] = "PCB_REAR"
@@ -416,6 +435,9 @@ class Evaluator:
             side[ref] = "PWR_A"
         for ref, p in sorted(self.ctrl_parts.items()):
             key = (p["sheet"], p["group"])
+            if p["header"]:
+                side[ref] = "CTRL"
+                continue
             if key in groups_ctrl_to_b:
                 side[ref] = "PWR_B" if p["h"] is not None and p["h"] <= hB else "CTRL"
             else:
@@ -558,7 +580,7 @@ class Evaluator:
         def acc(board):
             return boards.setdefault(board, {"parts_raw": 0.0, "modules": 0.0, "headers_raw": 0.0, "b2b_raw": 0.0,
                                              "tps_raw": 0.0, "keepouts": 0.0, "refs": 0, "headers": 0, "tht_pads": 0})
-        windows, tp_windows = 0.0, 0.0
+        windows, tp_windows, strips = 0.0, 0.0, 0.0
         win_refs, win_lower_bound = [], []
         for ref, s in sorted(side.items()):
             p = self.D.parts[ref]
@@ -569,6 +591,12 @@ class Evaluator:
             b = acc(s)
             b["refs"] += 1
             b["tht_pads"] += p["tht_pads"] if p["tht"] else 0
+            if p["header"]:
+                b["headers_raw"] += p["area"]
+                b["headers"] += 1
+                if s == "PWR_A":
+                    strips += (p["w"] + 2 * m) * (p["d"] + m)
+                continue
             if p["module"]:
                 b["modules"] += p["area"]
             elif p["tp"]:
@@ -586,7 +614,6 @@ class Evaluator:
                     win_lower_bound.append(ref)
             if s == "PWR_A" and p["tp"]:
                 tp_windows += (P["tp_probe_window"]) ** 2
-        strips = 0.0
         for h in hdrs:
             b = acc(h["board"])
             b["headers_raw"] += h["area"]
@@ -657,6 +684,8 @@ class Evaluator:
         return res
 
     def pin_field(self, h):
+        if h.get("tht_field"):
+            return h["tht_field"]
         fam = self.D.family(h["family"])
         pf = fam.get("pin_field")
         if pf is None:
@@ -673,8 +702,30 @@ class Evaluator:
         rule = S["bottom_header_rule"]
         cap = self.S["envelope"]["cap"]["dz_max"]
         out = []
-        for h in self.D.consolidated_headers("CTRL"):
+        cand = list(self.D.consolidated_headers("CTRL"))
+        for ref, p in sorted(self.ctrl_parts.items()):
+            if p["header"]:
+                hr = self.D.header_rows[ref]
+                cand.append({"id": ref, "label": hr["label"], "unit": "CTRL", "segment": hr["segment"], "family": p["header_family"],
+                             "pins": int(hr["pins"]), "nets": p["nets"], "w": p["w"], "d": p["d"], "area": p["area"], "h": p["h"],
+                             "tht_field": p["tht_field"], "graph_ref": True})
+        for h in cand:
             h = dict(h, unresolved=False, dz=None, tried=[])
+            if h.get("graph_ref"):
+                # the variant is fixed by the footprint of the graph ref: judge its read height only
+                ht = h["h"]
+                if ht is None:
+                    h["tried"].append(f"{h['family']}: height not read (TBD)")
+                    h["unresolved"] = True
+                else:
+                    dz = ht + rule["clearance_mm"] - rule["gap_mm"]
+                    if dz > cap + 1e-9:
+                        h["tried"].append(f"{h['family']}: h {ht:g} + {rule['clearance_mm']:g} - {rule['gap_mm']:g} = {dz:.1f} > dz cap {cap:g}")
+                        h["unresolved"] = True
+                    else:
+                        h["dz"] = rnd(max(dz, 0.0), 2)
+                out.append(h)
+                continue
             if h["id"] in S["headers_top"]:
                 out.append(h)
                 continue
@@ -711,8 +762,8 @@ class Evaluator:
         m = P["window_margin"]
         tht_top = 0
         for ref, p in sorted(self.ctrl_parts.items()):
-            if ref in moved_to_b:
-                continue
+            if ref in moved_to_b or p["header"]:
+                continue  # header refs are counted by self.ctrl_hdrs (bottom side)
             name = p["footprint"].split(":", 1)[-1]
             on_bottom = (not p["tp"]) and name.startswith(bottom_prefix) and ref not in S["keep_top_refs"]
             tgt = bot if on_bottom else top
@@ -801,8 +852,9 @@ def group_table(design, ev):
         k = (p["sheet"], p["group"])
         r = seen.get(k)
         if r is None:
-            r = seen[k] = {"sheet": p["sheet"], "group": p["group"], "refs": 0, "raw_mm2": 0.0, "tall_refs": [], "tht_refs": []}
+            r = seen[k] = {"sheet": p["sheet"], "group": p["group"], "refs": 0, "raw_mm2": 0.0, "tall_refs": [], "tht_refs": [], "headers_only": True}
             rows.append(r)
+        r["headers_only"] = r["headers_only"] and p["header"]
         r["refs"] += 1
         r["raw_mm2"] += p["area"]
         if p["h"] is not None and p["h"] > ev.P["hB"] and not p["tp"]:
@@ -869,7 +921,8 @@ def check_spec(spec, report):
         errs.append(f"chosen candidate {ch}: B2B rule violations: " + "; ".join(res["b2b"]["errors"]))
     if spec["decision"]["fits_at_1_8"] != res["fits"]:
         errs.append(f"decision.fits_at_1_8 is {spec['decision']['fits_at_1_8']} but the computed verdict is {res['fits']}")
-    groups = {(g["sheet"], g["group"]) for g in report["pwr_groups"]}
+    # a group of harness header refs (W2 GR-3) is placed by the pcb/prepare.py domain of each header, not by the group lists
+    groups = {(g["sheet"], g["group"]) for g in report["pwr_groups"] if not g.get("headers_only")}
     rec = spec["partition"]
     listed_a = {(g["sheet"], g["group"]) for g in rec["PWR_A_groups"]}
     listed_b = {(g["sheet"], g["group"]) for g in rec["PWR_B_groups"]}
