@@ -646,6 +646,16 @@
       "mounting": "inserted from inside: the knurled SW 12 collar bears on the inner wall face and the leads stay inside; the SW 11 nut and its ring clamp the wall from outside (READS-E reading of the data-sheet drawing, confirmed here with the 2.5 mm wall inside 2.0-6.5)",
       "status": "datasheet+assumption",
       "src": "READS-E row design/parts/snapshots/2026-11-07-w2-reads-e-manual.json web:binder-76-6618-1111-00003-0200 (data sheet read 2026-11-07, drawings extracted with PyMuPDF): max D12.6, M8x1 mating thread, panel thread M10x0.75, length 15 mm, 10 mm from the front face to the knurled SW 12 collar and 5 mm from there to the rear end, SW 9 hex at the front, SW 11 nut 2 mm thick, a ring between nut and collar, leads 200 mm AWG 24 (OD 1.5); panel cut-out p.3: bore 10.1 (1st proposal with flats 9.1 as anti-rotation, 2nd a plain bore), wall 2.0-6.5, 1 Nm; inner_depth 9.5 = collar to rear 5.0 + 4.5 bend reserve for the 1.5 mm leads (3 x OD, assumption)"
+    },
+    "p8_accessory": {
+      "name": "P8 external inline accessory between the antenna and panel port P8: Flamingo+ FM #2 (A403) and LNA V2 (A404), ch4 bias over the coax (build/15 'Шлях P8 (W2 AREA)'); not in the enclosure, envelope handed to MECH-4 (CC-27)",
+      "modules": {
+        "A403": {"part": "flamingo_fm", "size": [73.7, 30.6, 18.7], "status": "assumption"},
+        "A404": {"size": null, "status": "TBD", "_tbd_reason": "no dimension of the LNA V2 read in this package"}
+      },
+      "size": [73.7, 30.6, 18.7],
+      "status": "assumption",
+      "src": "A403 = the flamingo_fm reserve of this file (no Nooelec dimension found, SAWbird+ case size); A404 TBD; box, SMA adapters and cable are SRC-2's, the accessory envelope, mounting and build/21 steps MECH-4's (W2 MECH-3 hand-off)"
     }
   }
 }
