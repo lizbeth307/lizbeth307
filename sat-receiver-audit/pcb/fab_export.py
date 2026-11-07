@@ -130,7 +130,7 @@ def fab_dir(board):
 NORMALISATION = [
     'Gerber and drill-map Gerber: the %TF.CreationDate attribute line (optional in Gerber X2) is removed; '
     "'G04 Created by KiCad (...) date ...*' keeps the creator and loses the date",
-    'Excellon: the \'; #@! TF.CreationDate\' line is removed; "; DRILL file {KiCad ...} date ..." loses the date',
+    'Excellon: the \'; #@! TF.CreationDate\' line is removed; "; DRILL file KiCad ... date ..." loses the date',
     'Gerber job file (.gbrjob): Header.CreationDate is removed (JSON re-written with indent 2)',
     'IPC-D-356: comment-record dates are removed and file paths become the board file name',
     f'KiCad build strings that start with {KICAD_VERSION} become {KICAD_VERSION} in generator lines',
@@ -159,7 +159,7 @@ def normalise_drill(text):
     for line in text.splitlines():
         if re.match(r'^;\s*#@!\s*TF\.CreationDate,', line):
             continue
-        line = re.sub(r'^(; DRILL file \{.*\}) date .*$', r'\1', line)
+        line = re.sub(r'^(; DRILL file .*?) date .*$', r'\1', line)
         out.append(_version(line))
     return '\n'.join(out) + '\n'
 
@@ -307,7 +307,8 @@ def jobset(board, copper, output_path='${KIPRJMOD}/fab-jobset-raw'):
     plot_common['drill_shape'] = 'none'  # Gerber: no drill marks on copper
     jobs = [
         {'id': _id(board, 'gerbers'), 'type': 'pcb_export_gerbers', 'description': 'Gerber X2 (netlist attributes, Protel extensions)',
-         'settings': {'description': '', 'output_dir': 'gerber', 'layers': gerber_layers(copper), **plot_common,
+         # plot jobs register their output path as output_filename (JOB(type, false)); the plotter uses it as the folder
+         'settings': {'description': '', 'output_filename': 'gerber', 'layers': gerber_layers(copper), **plot_common,
                       'include_netlist_attributes': True, 'use_x2_format': True, 'disable_aperture_macros': False,
                       'use_protel_file_extension': True, 'precision': 6, 'create_gerber_job_file': True}},
         {'id': _id(board, 'drill'), 'type': 'pcb_export_drill', 'description': 'Excellon PTH/NPTH, mm, decimal, Gerber X2 map',
@@ -329,7 +330,12 @@ def jobset(board, copper, output_path='${KIPRJMOD}/fab-jobset-raw'):
     return {'jobs': jobs, 'meta': {'version': 1}, 'outputs': outputs}
 
 
-def jobset_check(board, copper, direct, temp):
+def jobset_name(rel):
+    """The direct-export name of a jobset output: a jobset pos job appends '-all-pos' to a both-sides file."""
+    return re.sub(r'-all-pos(\.csv)$', r'\1', rel)
+
+
+def jobset_check(board, copper, direct, temp, raw_copy=None):
     """Run the jobset on a staged copy and compare its normalised outputs with the direct export."""
     cli = kicad_cli()
     src = stage_sources(board, Path(temp) / 'jobset')
@@ -337,7 +343,13 @@ def jobset_check(board, copper, direct, temp):
     path = src / f'{board}.kicad_jobset'
     path.write_text(json.dumps(jobset(board, copper, str(out)), indent=2) + '\n', encoding='utf-8')
     run([cli, 'jobset', 'run', '--stop-on-error', '--file', str(path), str(src / f'{board}.kicad_pro')], timeout=900)
-    got = {rel: normalise(rel, data, board) for rel, data in collect(out).items()}
+    produced = collect(out)
+    if raw_copy:  # raw jobset outputs next to the direct ones in the CI artifact
+        for rel, data in produced.items():
+            dest = Path(raw_copy) / f'{board}-jobset' / rel
+            dest.parent.mkdir(parents=True, exist_ok=True)
+            dest.write_bytes(data)
+    got = {jobset_name(rel): normalise(jobset_name(rel), data, board) for rel, data in produced.items()}
     want = {rel: normalise(rel, data, board) for rel, data in direct.items()}
     problems = []
     for rel in sorted(set(got) | set(want)):
@@ -948,7 +960,7 @@ def check(board, raw_copy=None, jobset_run=True):
         inputs, raw, files, cov, problems = produce(board, temp, raw_copy)
         problems = list(problems)
         if jobset_run:
-            problems += jobset_check(board, inputs['spec']['layers']['copper'], raw, temp)
+            problems += jobset_check(board, inputs['spec']['layers']['copper'], raw, temp, raw_copy)
     out = fab_dir(board)
     have = collect(out) if out.is_dir() else {}
     for rel in sorted(set(files) | set(have)):

@@ -36,7 +36,7 @@ M02*
 '''
 
 DRILL = '''M48
-; DRILL file {KiCad 10.0.7} date 2026-11-07T10:20:31+0000
+; DRILL file KiCad 10.0.7 date 2026-11-07T10:20:31
 ; FORMAT={-:-/ absolute / metric / decimal}
 ; #@! TF.CreationDate,2026-11-07T10:20:31+00:00
 ; #@! TF.GenerationSoftware,Kicad,Pcbnew,10.0.7
@@ -112,7 +112,7 @@ class NormalisationTests(unittest.TestCase):
 
     def test_drill_dates(self):
         out = fx.normalise_drill(DRILL)
-        self.assertIn('; DRILL file {KiCad 10.0.7}\n', out)
+        self.assertIn('; DRILL file KiCad 10.0.7\n', out)
         self.assertNotIn('CreationDate', out)
         self.assertEqual(fx.drill_hits(out), 2)
         self.assertEqual(fx.normalise_drill(out), out)
@@ -199,6 +199,8 @@ class PdfAndJobsetTests(unittest.TestCase):
         self.assertEqual((p['format'], p['units'], p['side'], p['exclude_dnp'], p['use_drill_place_file_origin']),
                          ('csv', 'mm', 'both', True, False))
         self.assertEqual(fx.jobset('ENC', 2), js)
+        self.assertEqual(g['output_filename'], 'gerber')
+        self.assertEqual(fx.jobset_name('assembly/ENC-pos-kicad-all-pos.csv'), 'assembly/ENC-pos-kicad.csv')
         self.assertEqual(fx.gerber_layers(4)[:4], ['F.Cu', 'In1.Cu', 'In2.Cu', 'B.Cu'])
         args = dict(fx.cli_jobs('ENC', Path('b.kicad_pcb'), Path('raw'), 2))
         self.assertNotIn('--no-x2', args['gerbers'])
