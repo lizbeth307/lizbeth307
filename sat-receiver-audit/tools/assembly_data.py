@@ -24,11 +24,6 @@ SOURCES = {
                "SPH-002T-P0.5S — AWG #30…#24, ⌀0.8…1.5 мм; PHR-2…PHR-16; B2B…B16B-PH-K-S (верхній вхід), S2B…S16B-PH-K-S (боковий); "
                "THT-вилки: довжина B = 2(n−1) + 3.9; верхній вхід — висота 6, глибина 4.5, монтажна висота з розеткою (8); боковий — висота 4.8, "
                "глибина 7.6, з розеткою (9.6) (каталог ePH, с. 1 і 3, PDF від 27.01.2026)"),
-    "JST-PHD": ("https://datasheet.lcsc.com/datasheet/pdf/5f2def6b1b145b42d10ba2e392671cbf.pdf?productCode=C111516",
-                "JST PHD (каталог JST, копія LCSC до C111516; jst-mfg.com/product/pdf/eng/ePHD.pdf відповів 403 07.11.2026): 2.0 мм, 2 ряди; "
-                "3 A AC/DC (AWG #22) — інших перерізів номінал не наводить; 250 V, −25…+85 °C; опір контакту 10 mΩ макс. початково / 20 mΩ після "
-                "тесту; провід AWG #28…#22; SPHD-001T-P0.5 — AWG 26…22, ⌀ ізоляції 1.0…1.5 мм; SPHD-002T-P0.5 — AWG 28…24, ⌀ 0.9…1.5 мм; "
-                "розетки PHDR-08VS…PHDR-34VS; вилки B8B…B34B-PHDSS (верхній вхід), S8B…S34B-PHDSS (боковий); аплікатор AP-K2N з матрицею MK/SPHD-001-05 (с. 1–2)"),
     "MOLEX-43030": ("https://www.farnell.com/datasheets/1887331.pdf",
                     "Molex 43030-0007 (пакет; 43030-0001 — котушка, https://www.farnell.com/datasheets/1864962.pdf): гніздова клема Micro-Fit 3.0, "
                     "20/22/24 AWG, ізоляція ≤1.85 мм, 5 A на контакт (документи 2014–2016; лист 2018 https://www.farnell.com/datasheets/2696325.pdf — 8.5 A); "
@@ -115,9 +110,7 @@ SOURCES = {
 # --- Physical units ----------------------------------------------------------
 # kind: board (copper can route a net through), module, panel (part in a wall),
 # cable (assembly end), remote (outside the enclosure).
-BOARD_OF_DOMAIN = {  # build/15 «Кількість плат»
-    # PWR = the PWR-A/PWR-B stack (pcb/partition-spec.json, W2 AREA): PWR-B is a mezzanine on the PWR-A L, joined by the Samtec B2B
-    # pair, so one harness unit serves both; the physical board of each header is PHYSICAL_BOARD (build/16-dzhgut-rozyemy.csv).
+BOARD_OF_DOMAIN = {  # build/15 «Кількість плат»; PWR = the PWR-A/PWR-B stack, one harness unit (PHYSICAL_BOARD below)
     "PWR_MAIN": "PWR", "PWR_BRANCH": "PWR", "USB_POWER": "PWR", "PWR_BRANCH_SW": "PWR", "USB_POWER_SW": "PWR",
     "RF_HMC": "RF", "RF_HF": "RF", "RF_INJECTOR": "RF", "DC_CORE": "RF",
     "CTRL_HMI": "CTRL", "HATCH": "HATCH",
@@ -240,6 +233,15 @@ UNIT_OF_GROUP = {("E3", "External IMU"): "IMUPACK"}
 # JLC BOM board names of tools/build_parts.py BOARD3 are the same).
 PHYSICAL_BOARD = {"PWR_MAIN": "PWR_A", "PWR_BRANCH": "PWR_A", "USB_POWER": "PWR_A", "PWR_BRANCH_SW": "PWR_B", "USB_POWER_SW": "PWR_B",
                   "CTRL_HMI": "CTRL", "RF_HMC": "RF", "RF_HF": "RF", "RF_INJECTOR": "RF", "DC_CORE": "RF", "HATCH": "HATCH", "ENC": "ENC"}
+# PWR-B is a mezzanine on the PWR-A L, joined by the Samtec B2B pair (pcb/partition-spec.json, W2 AREA), so BOARD_OF_DOMAIN keeps
+# one harness unit PWR for both. Source of the dual-row PHD headers (W2 GR-3), set here after the units so that the line citations
+# into this file (side-entry rule and ENC units: build/15, pcb/README.md, pcb/boards/ENC.json) keep their numbers.
+SOURCES["JST-PHD"] = ("https://datasheet.lcsc.com/datasheet/pdf/5f2def6b1b145b42d10ba2e392671cbf.pdf?productCode=C111516",
+                      "JST PHD (каталог JST, копія LCSC до C111516; jst-mfg.com/product/pdf/eng/ePHD.pdf відповів 403 07.11.2026): 2.0 мм, 2 ряди; "
+                      "3 A AC/DC (AWG #22) — інших перерізів номінал не наводить; 250 V, −25…+85 °C; опір контакту 10 mΩ макс. початково / 20 mΩ після "
+                      "тесту; провід AWG #28…#22; SPHD-001T-P0.5 — AWG 26…22, ⌀ ізоляції 1.0…1.5 мм; SPHD-002T-P0.5 — AWG 28…24, ⌀ 0.9…1.5 мм; "
+                      "розетки PHDR-08VS…PHDR-34VS; вилки B8B…B34B-PHDSS (верхній вхід), S8B…S34B-PHDSS (боковий); аплікатор AP-K2N з матрицею "
+                      "MK/SPHD-001-05 (с. 1–2)")
 
 # --- Board-side harness headers (graph refs, W2 GR-3 / W2-01) ------------------------------------------------
 # ref -> (harness label, {segment: "contact numbers"}). Every board end of a harness wire lands on a listed contact of one
@@ -340,7 +342,8 @@ SEGMENTS = [
      "провідники 6 (GND), 7 (PPS), 16 і 18 (UART6) стрічки S01 відокремлено одразу за розеткою на J20 і проведено задньою площиною до P1 LC76G "
      "(mechanical/params/mechanical.json harness_routes branches.PPS; рішення build/15 W2 MECH-1); на LC76G — пайка; мережі E3 не змінюються"),
     ("S02", "CTRL", "PWR", "Керування і LAB5: CTRL ↔ PWR", None, "TBD (CAD)",
-     "на CTRL 5 мереж I2C2/INT/3V3_Q6A — у J302 (E3, S5B-PH-K-S, боковий вхід), на PWR — відповідь X02S0-PWR (B5B, верхній вхід, супутня деталь бази); решта — у роз'єми X02"),
+     "I2C2/3V3_Q6A: на CTRL — J302 (E3, S5B-PH-K-S, боковий вхід; контакт 5 MCP_INT лишається на CTRL), на PWR-B — J201 (S5B-PH-K-S, боковий вхід, "
+     "контакт 5 без кола); LAB5 — кутова J305 (43650-0400) на CTRL ↔ J104 (43650-0415) на PWR-A; сигнали — 2 × S20B-PHDSS: J306/J307 ↔ J202/J203 (W2 GR-3)"),
     ("S03", "CTRL", "RF", "Керування RF: CTRL ↔ RF", None, "TBD (CAD)",
      "лінії HMC7992/G6K/DCS; крізь проріз SL2 (M-07) і виріз N4 стінки РЧ-відсіку; подалі від буферних дроселів"),
     ("S04", "PWR", "RF", "Зміщення і реле: PWR ↔ RF", None, "TBD (CAD)",
@@ -541,7 +544,8 @@ COLOURS = [
     (r".*", "білий"),
 ]
 INSULATION = ("PTFE, посріблена мідь багатодротова, −60…+200 °C (Alpha Wire, assembly_items AI-WIRE-PTFE): 26 AWG 5853, 20 AWG 5856 і 18 AWG 5857 — "
-              "MIL-W-16878/4 type E, 24 AWG 2844/7 — MIL-W-16878/6 type ET; ⌀ ізоляції в межах клеми; артикул за кольором — підсумок закупівлі")
+              "MIL-W-16878/4 type E, 24 AWG 2844/7 і 22 AWG 2845/7 — MIL-W-16878/6 type ET; ⌀ ізоляції в межах клеми; артикул за кольором — "
+              "підсумок закупівлі")
 # Hook-up wire per gauge (W2 SRC-1, build/15 «Провід, стрічка й інструмент (W2 SRC-1)»): Alpha Wire PTFE, silver-plated copper.
 # AWG -> (Alpha Wire item, MIL-W-16878 type, insulation OD mm, OD tolerance mm), from the Alpha Wire customer specifications read
 # 07.11.2026 (design/parts/snapshots/2026-11-07-w2-src1-manual.json web:alphawire-*; inch values x 25.4). Per gauge the thinnest
