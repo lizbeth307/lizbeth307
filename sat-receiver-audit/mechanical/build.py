@@ -24,7 +24,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
-from srrx_mech import VERSION, antennas, boards, drawings_enclosure as de, layout, report_md, routes, rules, thermal, writers  # noqa: E402
+from srrx_mech import VERSION, antennas, boards, drawings_enclosure as de, fasteners, layout, report_md, routes, rules, thermal, writers  # noqa: E402
 from srrx_mech.geom2d import scale_label  # noqa: E402
 from srrx_mech.params import Params  # noqa: E402
 
@@ -91,14 +91,16 @@ def envelope_report(P):
         "front_m2": round(W * H / 1e6, 4), "front_ratio": round(W * H / (D15[0] * D15[1]), 3),
         "closed_bbox_mm": {"x": [-belt, W + belt], "y": [-belt, H + belt], "z": [z0, z1],
                            "rear_protrusions_z": rear, "front_protrusions_z": front,
-                           "note": "GX16 cap, SMA/F/BNC caps and screw heads on the T7 holder are not counted (parts not chosen)"},
+                           "note": "GX16 cap, SMA/F/BNC caps and screw heads on the T7 holder are not counted (parts not chosen); side-face parts (RX2/REF IN bulkheads, the J551 M8 receptacle 7.5 mm proud of the right face) are not in W/H"},
         "fire_bag_23x30cm": {
             "rule": "flat bag: half-girths W + D <= 300 and H + D <= 230 mm, W/H over the seam belt, D = closed depth with every fixed protrusion (geometry estimate, model)",
             "depth_mm": round(Dc, 1), "depth_without_t7_holder_mm": round(no_t7, 1),
             "w_plus_d": round(Wb + Dc, 1), "h_plus_d": round(Hb + Dc, 1),
             "result": "PASS (model)" if ok else "FAIL (model): charge on a non-flammable surface instead (STACK 5.8 fallback)"},
-        "reason": ("height: battery strip (33.4) + middle row with the 112 x 56 HF+ can beside the Q6A + RF bay (60.5) along the top; "
-                   "depth: rear layer 36 (Q6A with cooler and fan duct) + plate 2 + front layer 16 (HDMI board, path-2 channel) + display 7; "
+        "reason": ("height: battery strip (33.4) + middle row with the 112 x 56 HF+ can beside the Q6A + RF bay (64.3: two rows of cased LNA modules, "
+                   "arrangement b, W2 MECH-3) along the top; "
+                   "depth: rear layer 36 (Q6A with cooler and fan duct) + plate 2 + front layer 18.1 (PWR-A + B2B 5.0 + PWR-B + parts 5.5 + "
+                   "path-2 channel 4.0, W2 MECH-3 dz 2.1) + display 7; "
                    "width: display glass 164.8 + HMI column 51 (build/05 1.1)"),
     }
 
@@ -261,6 +263,7 @@ def build(out, vendor_cache=None, skip_cad=False, offline=False):
     route_res = routes.evaluate(P)
     if route_res is not None:
         write(out, "harness-routes.json", jdump(routes.document(P, route_res)), files)
+    write(out, "fastener-stacks.json", jdump(fasteners.stacks(P)), files)
     coll, outside = layout.fit_checks(P)
     trows = thermal.interfaces(P)
     report = {

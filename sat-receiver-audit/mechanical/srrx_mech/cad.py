@@ -427,6 +427,8 @@ def plate(P):
     cutters += [box(nx, ny, 0, nw, nh, 100) for (nx, ny, nw, nh) in pl.get("notches", [])]
     cutters += [box(nx, ny, 0, nw + 5.0, nh, 100) for (nx, ny, nw, nh) in pl.get("notches_right", [])]
     cutters += [box(sl["rect"][0], sl["rect"][1], 0, sl["rect"][2], sl["rect"][3], 100) for sl in pl.get("slots", [])]
+    from .rules import pwr_pockets   # W2 MECH-3: blind relief pockets in the front face under the PWR-A THT pin fields
+    cutters += [box(x0, y0, sz["plate_front"] - d, x1 - x0, y1 - y0, d + 1.0) for _, _, (x0, y0, x1, y1), d in pwr_pockets(P)]
     return cut(part, cutters)
 
 
