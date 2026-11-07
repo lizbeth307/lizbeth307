@@ -1010,7 +1010,9 @@ def lab_package_issues(tree, policy=None):
 def _record_binding(record, label):
     """The build record names the reviewed recipe and patch that are in this tree now, one receipt
     per listed patch of the recipe (source.patches, in order, with the SHA-256 of the file in this
-    tree), the recipe's source member and the recipe files it used (hook script, files/)."""
+    tree), the recipe's source member, exactly the recipe files the recipe uses (hook script,
+    files/ matches; the set comes from the recipe, not from the record) and one entry per recipe
+    hook with its argv and script."""
     recipe_path = HERE / "recipes" / record["component"] / "recipe.json"
     if not recipe_path.is_file() or record["recipe_sha256"] != sha(recipe_path):
         raise DeploymentError("build record was made from another recipe than deployment/recipes/" + record["component"] + ": " + label)
@@ -1035,10 +1037,33 @@ def _record_binding(record, label):
     wanted = {"path": member.get("path"), "sha256": member.get("sha256")} if type(member) is dict else None
     if environment.get("source_member") != wanted:
         raise DeploymentError("build record source member differs from the reviewed recipe: " + label)
+    # The recipe names the files it used: check_recipe.py when it has a hook, and every regular file
+    # its {recipe}/files/ globs in install.copy match now (build_recipe records each match).
+    import glob
+    hooks = recipe.get("hooks") if type(recipe) is dict and type(recipe.get("hooks")) is dict else {}
+    named = [(n, hooks[n]) for n in ("source_check", "package") if hooks.get(n) is not None]
+    install = recipe.get("install") if type(recipe) is dict and type(recipe.get("install")) is dict else {}
+    wanted = {"check_recipe.py"} if named else set()
+    for item in install.get("copy") if type(install.get("copy")) is list else []:
+        pattern = item.get("from") if type(item) is dict else None
+        if type(pattern) is str and pattern.startswith("{recipe}/files/"):
+            wanted.update(Path(m).relative_to(directory).as_posix()
+                          for m in glob.glob(glob.escape(str(directory)) + pattern[len("{recipe}"):]))
     files = environment.get("recipe_files", {})
-    if type(files) is not dict or any(type(f) is not str or ".." in f.split("/") or not (directory / f).is_file() or sha(directory / f) != d
-                                      for f, d in files.items()):
+    if (type(files) is not dict or set(files) != wanted
+            or any(type(f) is not str or ".." in f.split("/") or (directory / f).is_symlink() or not (directory / f).is_file()
+                   or sha(directory / f) != d for f, d in files.items())):
         raise DeploymentError("build record recipe files differ from deployment/recipes/" + record["component"] + ": " + label)
+    # One hook entry per hook of the recipe, in builder order, with its argv and the bound script; the
+    # package hook names its output (<id>.package-hook.json, check_repo.py compares it) iff it writes {hook_out}.
+    ran = environment.get("hooks", [])
+    if (type(ran) is not list or [h.get("hook") if type(h) is dict else None for h in ran] != [n for n, _ in named]
+            or any(h.get("argv") != argv or h.get("script_sha256") != files.get("check_recipe.py")
+                   or ("output" in h) != (name == "package" and type(argv) is list and any("{hook_out}" in str(a) for a in argv))
+                   or ("output" in h and (h["output"] != record["component"] + ".package-hook.json"
+                                          or type(h.get("output_sha256")) is not str or not re.fullmatch(r"[0-9a-f]{64}", h["output_sha256"])))
+                   for h, (name, argv) in zip(ran, named))):
+        raise DeploymentError("build record hooks differ from the reviewed recipe hooks of deployment/recipes/" + record["component"] + ": " + label)
 
 
 def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrelease_sha256=None, target_status=None, release=False):
@@ -1156,7 +1181,7 @@ def verify_repo(repo, keyring, fingerprint, build_records, sources_entry, inrele
         raise DeploymentError("apt entry must be one deb822 stanza with Signed-By " + policy["keyring_path"])
     return {"status": "SIGNED_REPOSITORY_MATCHES_BUILD_RECORDS", "packages": len(referenced), "inrelease_sha256": sha(inrelease),
             "signing_fingerprint": fingerprint.upper(), "build_records": records, "release_path": bool(release), "hardware_ready": False,
-            "scope": "Signature, index and package hashes, build-record, recipe, patch, listed-patch, source-member and source-lock binding, named receive-only "
+            "scope": "Signature, index and package hashes, build-record, recipe, patch, listed-patch, source-member, recipe-file, hook and source-lock binding, named receive-only "
                      "content rules" + (", REVIEWED records and verify_build per package" if release else "") + "; no install, no receive-only proof."}
 
 

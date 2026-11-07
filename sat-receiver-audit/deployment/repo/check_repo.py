@@ -8,14 +8,14 @@ build_recipe.package_manifest writes it: a -dev .so link into another package, L
 SONAME'd library carries DEBIAN/shlibs and the ldconfig trigger, and deploy.verify_build still
 refuses the manifest because it is OPEN (a reviewer, never CI, sets REVIEWED). Each record is
 bound to this tree as deploy.verify_repo binds it (recipe, -rx-only patch, one receipt per listed
-patch, source member, recipe files), and a package hook output it names must have the recorded
+patch, source member, the recipe files and hooks of the recipe), and a package hook output it names must have the recorded
 SHA-256 and carry the record's record_digests.
 `publishable`: the .deb files a lab repository may carry now (no deploy.lab_package_issues
 finding: Lime while Lime is disabled, Soapy modules outside the allowlist, TX/control tools); the
 others are listed as held back with their findings.
 `tamper`: the published repository passes deploy.verify_repo, and each tampered copy (index,
 pool, keyring, InRelease pin, build record, recipe, patch, listed-patch receipts, source member,
-apt entry, held package, release path with CI records or OPEN manifests, a repository holding
+recipe files, hooks, apt entry, held package, release path with CI records or OPEN manifests, a repository holding
 the held-back Lime packages) is refused.
 Read-only for its inputs; writes only into new temporary directories. CI evidence only.
 """
@@ -224,6 +224,13 @@ def tamper(repo, keyring, wrong_keyring, fingerprint, record_paths, sources_entr
     def other_member(record):
         record["build_environment"]["source_member"] = {"path": "not-in-the-recipe/src/inner.tgz", "sha256": "0" * 64}
 
+    def other_recipe_files(record):
+        record["build_environment"]["recipe_files"] = {"check_recipe.py": "0" * 64}
+
+    def other_hooks(record):
+        record["build_environment"]["hooks"] = [{"hook": "package", "argv": ["python3", "-I", "{recipe}/check_recipe.py", "package"],
+                                                 "script_sha256": "0" * 64, "status": "CI_PASS", "report": {"ok": True, "findings": []}}]
+
     def reviewed(record):
         record["status"] = "REVIEWED"
 
@@ -244,6 +251,8 @@ def tamper(repo, keyring, wrong_keyring, fingerprint, record_paths, sources_entr
     expect("build record with another patch", "patch differs", edited_records(other_patch))
     expect("build record with another listed-patch list", "patch list differs", edited_records(other_patch_list))
     expect("build record with another source member", "source member differs", edited_records(other_member))
+    expect("build record with other recipe files", "recipe files differ", edited_records(other_recipe_files))
+    expect("build record with other hooks", "hooks differ", edited_records(other_hooks))
     expect("release path with CI_BUILT_UNREVIEWED records", "REVIEWED build record", release=True)
     expect("release path with OPEN package manifests", "OPEN/unreviewed", edited_records(reviewed, release=True))
     expect("release path with another manifest", "build manifest differs", edited_records(reviewed_other_manifest, release=True))

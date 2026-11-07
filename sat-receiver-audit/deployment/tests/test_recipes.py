@@ -635,6 +635,27 @@ class SchemaV2Tests(unittest.TestCase):
         with self.assertRaisesRegex(build_recipe.RecipeError, "check_recipe.py is missing"):
             self.validate(self.recipe())
 
+    def test_placeholders_outside_their_place_are_refused(self):
+        # {recipe} and {hook_out} are not step placeholders, even next to {src} or {build}; a copy
+        # takes one leading placeholder only.
+        cmake = lambda extra: (lambda d: (d.update(build_system="cmake", autotools=None, build=[["cmake", "--build", "{build}"]],  # noqa: E731
+                                                   cmake=dict(copy.deepcopy(recipe("rtlsdr")["cmake"]),
+                                                              configure=recipe("rtlsdr")["cmake"]["configure"] + [extra])),
+                                          d["install"].update(make_install=False, cmake_install=True)))
+        self.validate(self.recipe(cmake("-DSRRX_SOURCE={src}")))  # the same recipe with a step placeholder validates
+        for label, change, needle in (
+                ("recipe placeholder in a build step", lambda d: d["build"][0].append("F={src}{recipe}"), "unknown placeholder"),
+                ("hook_out placeholder in a build step", lambda d: d["build"][0].append("OUT={src}{hook_out}"), "unknown placeholder"),
+                ("unclosed placeholder in a build step", lambda d: d["build"][0].append("X={src}{"), "unknown placeholder"),
+                ("hook_out placeholder in cmake.configure", cmake("-DOUT={build}{hook_out}"), "unknown placeholder"),
+                ("recipe placeholder in cmake.configure", cmake("-DR={build}/{recipe}"), "unknown placeholder"),
+                ("placeholder after a copy prefix", lambda d: d["install"]["copy"].append({"from": "{src}/{recipe}/files/x", "to": "etc"}),
+                 "install copy goes from"),
+                ("placeholder in a copy target", lambda d: d["install"]["copy"].append({"from": "{src}/src/a.txt", "to": "{destdir}/etc"}),
+                 "install copy goes from")):
+            with self.subTest(label), self.assertRaisesRegex(build_recipe.RecipeError, needle):
+                self.validate(self.recipe(change))
+
     def test_schema_1_keeps_its_exact_shape(self):
         data = recipe("rtlsdr")
         with patch.object(build_recipe, "DEPLOYMENT", HERE):
@@ -733,8 +754,31 @@ class SchemaV2BuilderStepTests(unittest.TestCase):
     def test_vendor_patch_pins_come_from_the_lock(self):
         import vendor_patch
         lock = {c["id"]: c["commit"] for c in LOCK["components"]}
-        self.assertEqual(vendor_patch.pins(), {"rtlsdr": lock["rtlsdr"], "limesuiteng": lock["limesuiteng"]})
+        order = list(json.loads((HERE / "patches/target-hashes.json").read_text(encoding="utf-8")))
+        self.assertLessEqual({"rtlsdr", "limesuiteng"}, set(order))
+        self.assertEqual(list(vendor_patch.pins().items()), [(c, lock[c]) for c in order])  # target-hashes order, lock commits
         self.assertFalse(hasattr(vendor_patch, "PINS"))  # no second copy of the pinned commits
+
+    def test_a_reviewed_patch_without_a_fixture_is_listed_or_refused(self):
+        import vendor_patch
+        here = Path(self.temp.name) / "vendor"
+        (here / "recipes" / FIXTURE).mkdir(parents=True)
+        recipe_path = here / "recipes" / FIXTURE / "recipe.json"
+        with patch.object(vendor_patch, "HERE", here), patch.object(vendor_patch, "pins", return_value={FIXTURE: "0" * 40}):
+            with self.assertRaisesRegex(vendor_patch.PatchError, "no upstream fixture and no recipe that applies it: " + FIXTURE):
+                vendor_patch.check_fixtures()  # neither a fixture nor a recipe
+            recipe_path.write_text(json.dumps({"schema_version": 2, "source": {"patch": None}}), encoding="utf-8")
+            with self.assertRaisesRegex(vendor_patch.PatchError, "no recipe that applies it"):
+                vendor_patch.without_fixture()  # a recipe that does not apply the reviewed patch
+            recipe_path.write_text(json.dumps({"schema_version": 1, "source": {"patch": "deployment/patches/%s-rx-only.patch" % FIXTURE}}),
+                                   encoding="utf-8")
+            listed = vendor_patch.without_fixture()
+            self.assertEqual([(e["component"], e["status"], e["source_fixture_only"], e["release_ready"]) for e in listed],
+                             [(FIXTURE, "NO_UPSTREAM_FIXTURE", False, False)])
+            self.assertIn("deployment/recipes/" + FIXTURE, listed[0]["checked_by"])
+            self.assertEqual(vendor_patch.check_fixtures(), [])  # listed, never counted as a fixture result
+        # In this tree rtl-sdr and limesuiteng have fixtures; any other reviewed patch is listed with its recipe.
+        self.assertFalse({"rtlsdr", "limesuiteng"} & {e["component"] for e in vendor_patch.without_fixture()})
 
     def test_configure_must_be_generated_and_declare_every_flag(self):
         _, tree = self.extracted()
