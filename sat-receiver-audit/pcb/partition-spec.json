@@ -324,21 +324,25 @@
     "from": [
      "X02S1-PWR",
      "X02S2-PWR",
-     "X02S3-PWR",
-     "X02S0-PWR"
+     "X02S3-PWR"
     ],
     "headers": [
      {
       "id": "S02-PWR-SIG-1",
       "family": "PHD_side",
-      "pins": 26
+      "pins": 20
      },
      {
       "id": "S02-PWR-SIG-2",
       "family": "PHD_side",
       "pins": 20
      }
-    ]
+    ],
+    "graph_refs": [
+     "J202",
+     "J203"
+    ],
+    "deviation": "X02S0-PWR (the J302 mate) stays its own PH 5 header J201 (S5B on PWR-B): PHD wires are 22 AWG (SPHD-001T-P0.5, AWG 26-22, insulation 1.0-1.5 mm; the SRC-1 26/24 AWG series are below 1.0 mm), while J302 (PH, SPH-002T-P0.5S) takes AWG 30-24, so one wire cannot serve both ends; 40 signal contacts -> 2 x S20B-PHDSS instead of S26B + S20B"
    },
    {
     "unit": "PWR",
@@ -353,7 +357,9 @@
       "family": "MFJ_top",
       "pins": 4
      }
-    ]
+    ],
+    "graph_refs": [],
+    "deviation": "not consolidated: the per-contact rating of the 4-circuit 5566 (derating, PS-5666-001) is not in the READS-E rows, so by the note above S06 and S07 keep two 2-pin headers (J106, J107)"
    },
    {
     "unit": "PWR",
@@ -368,8 +374,13 @@
      {
       "id": "SL2-PWR-MF",
       "family": "MF2_top",
-      "pins": 8
+      "pins": 8,
+      "mpn": "43045-0812",
+      "lcsc": "C277661"
      }
+    ],
+    "graph_refs": [
+     "J206"
     ]
    },
    {
@@ -385,10 +396,14 @@
     "headers": [
      {
       "id": "SL2-PWR-PH",
-      "family": "PH_top",
+      "family": "PH_side",
       "pins": 12
      }
-    ]
+    ],
+    "graph_refs": [
+     "J207"
+    ],
+    "note_gr3": "on PWR-B (side entry S12B-PH-K-S): its nets have pins on PWR-B parts (VBUS_RTLA, VBUS_RTLB, BIAS_SB_LNA)"
    },
    {
     "unit": "CTRL",
@@ -411,6 +426,10 @@
       "family": "PHD_side",
       "pins": 20
      }
+    ],
+    "graph_refs": [
+     "J306",
+     "J307"
     ]
    },
    {
@@ -424,9 +443,13 @@
      {
       "id": "S15-30-CTRL",
       "family": "PH_side",
-      "pins": 5
+      "pins": 4
      }
-    ]
+    ],
+    "graph_refs": [
+     "J310"
+    ],
+    "note_gr3": "4 contacts: PWR_ON_KEY (S15, no GND by NO_GND) + GND/UART5_RX/UART5_TX (S30)"
    },
    {
     "unit": "CTRL",
@@ -439,9 +462,13 @@
      {
       "id": "S24-25-CTRL",
       "family": "PH_side",
-      "pins": 7
+      "pins": 6
      }
-    ]
+    ],
+    "graph_refs": [
+     "J311"
+    ],
+    "note_gr3": "6 contacts after the PPS branch (S25 = GND, E3_GNSS5V, E3_GNSS_RESET_N; S24 = GND, 3V3_Q6A, EN_T7)"
    }
   ],
   "notes": [
@@ -452,7 +479,8 @@
    "SL2-bound PH S20/S21/S22/S35/S36 (11 pins) -> one PH 12 (<= 1.2 A per contact, build/15 'Сигнальні джгути')",
    "S15 + S30 (both to HATCH) -> one PH 5 on CTRL; S24 + S25 PH -> one PH 7 on CTRL",
    "the harness breaks out after the plate slot; GR-3 applies this map to the segment definitions"
-  ]
+  ],
+  "implemented": "W2 GR-3, 07.11.2026: the map below is implemented in design/E1-E5.json as graph header refs (graph_refs; tools/assembly_data.py HEADERS, build/16-dzhgut-rozyemy.csv label column); pcb/partition_budget.py counts these headers as bare board parts with their vendored KiCad 10.0.7 courtyards and skips an entry that carries graph_refs"
  },
  "b2b": {
   "contacts": 120,
