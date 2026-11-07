@@ -1593,7 +1593,9 @@ class MirrorSelectionTests(unittest.TestCase):
         good = [("srrx-closure-data", "2026e-0ubuntu0.24.04.1", "all", {"usr/share/srrx-closure-data/zone": b"z"}),
                 ("srrx-closure-tool", "1.0-1", "arm64", {"usr/sbin/srrx-closure-tool": b"\x7fELF t"})]
         selected, closure, debs = self.select(good)
-        self.assertEqual([(s["package"], s["architecture"]) for s in selected], [("srrx-closure-data", "all"), ("srrx-closure-tool", "arm64")])
+        self.assertEqual([(s["package"], s["architecture"], s["data_member"]) for s in selected],
+                         [("srrx-closure-data", "all", "data.tar.xz"), ("srrx-closure-tool", "arm64", "data.tar.xz")])
+        self.assertEqual(self.check_repo.deb_members(debs["srrx-closure-tool"]), ["debian-binary", "control.tar.xz", "data.tar.xz"])
         debs["srrx-closure-tool"].write_bytes(debs["srrx-closure-tool"].read_bytes() + b"\n")
         with self.assertRaisesRegex(self.check_repo.CheckError, "differs from its package-closure.json entry"):
             self.check_repo.mirror_selection(closure, debs)

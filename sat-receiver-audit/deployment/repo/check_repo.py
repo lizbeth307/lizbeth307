@@ -918,6 +918,23 @@ def load_mirror_closure(path):
         raise CheckError(str(exc)) from exc
 
 
+def deb_members(deb):
+    """The ar member names of a .deb up to its data member (reported: data.tar.zst means deploy reads
+    the data tree through dpkg-deb --fsys-tarfile)."""
+    names = []
+    with open(deb, "rb") as stream:
+        if stream.read(8) != b"!<arch>\n":
+            raise CheckError("not a .deb (ar) archive: " + Path(deb).name)
+        while not (names and names[-1].startswith("data.tar")):
+            header = stream.read(60)
+            if len(header) != 60 or header[58:60] != b"`\n" or not header[48:58].strip().isdigit():
+                raise CheckError(".deb has no data member: " + Path(deb).name)
+            size = int(header[48:58])
+            names.append(header[:16].decode("ascii", "replace").strip().rstrip("/"))
+            stream.seek(size + (size & 1), os.SEEK_CUR)
+    return names
+
+
 def mirror_selection(closure, debs):
     """The closure debs (debs: {package: path}) the srrx-mirror publication carries, each checked to be
     exactly its closure entry (size and SHA-256 of the file; Package, Version and Architecture of its
@@ -942,7 +959,7 @@ def mirror_selection(closure, debs):
         if issues:
             findings.append(name + ": " + "; ".join(issues))
         selected.append({"package": name, "version": entry["version"], "architecture": entry["architecture"], "sha256": entry["sha256"],
-                         "size": entry["size"], "data_tree_entries": len(inventory), "path": str(deb)})
+                         "size": entry["size"], "data_member": deb_members(deb)[-1], "data_tree_entries": len(inventory), "path": str(deb)})
     forbidden = deploy.prohibited_installed({p["package"]: p["version"] for p in closure["packages"]}, identifiers=True)
     findings += ["receive-only policy forbids " + f for f in forbidden]
     if findings:
