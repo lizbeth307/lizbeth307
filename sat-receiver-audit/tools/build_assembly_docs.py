@@ -278,12 +278,36 @@ def colour(net):
     return "білий"
 
 
+ROUTES_JSON = "mechanical/generated/harness-routes.json"
+
+
+def harness_routes(base=BASE):
+    """Segment routes of the mechanical model (generated, committed): {segment: route} or {} when the file is absent."""
+    path = Path(base) / ROUTES_JSON
+    if not path.is_file():
+        return {}
+    return json.loads(path.read_text(encoding="utf-8")).get("segments", {})
+
+
+def routed_length(text, route):
+    """Length column of a segment: the model route length (MODEL ESTIMATE) replaces 'TBD (CAD)'; a limit text stays after it."""
+    if not route or route.get("length_mm") is None or route.get("kind") == "external":
+        return text
+    label = f"{route['length_mm']} (модель{', кінець попередній' if route.get('provisional') else ''})"
+    if route.get("kind") == "stock_lead":
+        return f"{text}; траса {label}"
+    if "TBD" in str(text):
+        return label
+    return f"{label}; {text}"
+
+
 class Harness:
     def __init__(self, model):
         self.model = model
         self.routed, self.assemblies, self.coax = classify(model)
         self.seg_nets, self.passthrough, self.internal = route(model, self.routed)
-        self.segments = OrderedDict((s[0], s) for s in D.SEGMENTS)
+        routes = harness_routes(model.base)
+        self.segments = OrderedDict((s[0], s[:5] + (routed_length(s[5], routes.get(s[0])),) + s[6:]) for s in D.SEGMENTS)
         self.warnings = []
         self.wires, self.connectors = [], OrderedDict()
         for (sid, unit, net), text in D.END_PIN.items():
@@ -591,7 +615,9 @@ def render_harness(model, h):
         ("Колір", "чорний GND, коричневий батарея/N/SW, жовтий 12 V, червоний 5 V, помаранчевий 3.3 V, рожевий bias 4.3 V, "
          "фіолетовий LNB/Boni, синій SDA, білий SCL та інше, зелений UART/IMU, сірий EN, блакитний FAULT/PG; колір лише допоміжний", "рішення asm"),
         ("Маркер", "друкований термоусадковий маркер з ID проводу на обох кінцях, ≤20 мм від клеми (build/18)", "build/15 «Маркування»"),
-        ("Довжина", "траса з моделі корпусу + 2 × 15 мм сервісної петлі; де модель ще не готова — TBD (CAD)", "рішення asm"),
+        ("Довжина", "траса з моделі корпусу + запас на вигини + 2 × 15 мм сервісної петлі (mechanical/generated/harness-routes.json, MODEL ESTIMATE); "
+         "«кінець попередній» — роз'єм на крайовій зоні плати або модуль без конверту, доки немає їхніх позицій; де траси ще немає — TBD (CAD)",
+         "рішення asm; mechanical/params/mechanical.json harness_routes"),
         ("Розвантаження натягу", "стяжка до пластини або бобишки ≤30 мм від кожного роз'єму, далі кожні 50–80 мм; "
          "силові джгути не ближче 20 мм до РЧ-відсіку й фідера GNSS; джгути між лицьовим і тильним шаром — лише крізь прорізи пластини з кантом: "
          "SL1 (стрічка S01 над верхнім краєм Q6A), SL2 (PWR/CTRL → тильний шар: S03, S04, S13–S15, S17, S18, S20–S22, S24, S25, S30, S35), SL3 (нижній ряд "
@@ -795,9 +821,14 @@ HARNESS_FINDINGS = [
     "Площа й край плат (модель механіки, fit-report «board_area»): з роз'ємами джгутів цього розділу §4 оцінка площі PWR перевищує контур, а сума "
     "ширин роз'ємів — його крайові зони; розкладка PWR і архітектура джгутів (менше роз'ємів на PWR або більша плата) — хвиля 2, до того ворота "
     "розміщення PCB лишаються OPEN.",
-    "Висота роз'ємів на CTRL і RF (обмеження 5.5 мм): PH — лише боковий вхід (4.8 мм, каталог ePH), зокрема роз'єм графа J302 (S5B-PH-K-S); бокс IDC XDFH-0254-2*20P (S01) і вертикальні Micro-Fit "
-    "43650 (X02P1-CTRL, X25P1-CTRL, X28P1-CTRL, X04P1-RF) — висоту не прочитано (сторінки LCSC/Molex не дали креслення): TBD; якщо вони вищі за 5.5 мм — "
-    "кутові вилки 43650-0n00 (коди не в базі) або перенесення на PWR чи гнучкий вивід.",
+    "Висота роз'ємів на CTRL і RF (обмеження 5.5 мм): PH — лише боковий вхід (4.8 мм, каталог ePH), зокрема роз'єм графа J302 (S5B-PH-K-S). "
+    "Прочитано 07.11.2026: вертикальна Micro-Fit 43650 — 9.90 мм над платою (каталог Molex MX01 F-119 з PS-43650 rev J), кутова 43650-0209 — "
+    "6.98 мм (сторінка деталі Molex, креслення SD-43650-004); креслення XDFH-0254-2*20P не читається (LCSC дає лише HTML), еталонний бокс 2×20 "
+    "Würth WR-BHD 61204021621 — 9.1 мм (mechanical/params/parts.json harness_headers). Тож X02P1-CTRL, X25P1-CTRL, X28P1-CTRL, X04P1-RF і бокс "
+    "X01I1-CTRL (S01) вищі за 5.5 мм, а кутова 43650 не вміщується і на лиці CTRL (найбільша зона 6.5 мм). Карта вільної висоти (boards.json "
+    "height_zones/rear_zones, fit-report «Зони висоти CTRL і RF»): на RF над донглами V4L вміщується 16.3 мм (вертикальна X04P1-RF підходить), "
+    "на тилі CTRL біля пластини — до 13.9 мм (X25P1-CTRL і X28P1-CTRL — вивідні з тилу); X02P1-CTRL (4 конт.) і бокс IDC не вміщуються в жодну "
+    "зону. Орієнтацію, бік плати або перенесення на PWR вирішує розкладка роз'ємів (правило R-HDR-HEIGHT — OPEN).",
     "S25 + S01 ≤200 мм для PPS (STACK §5.2): LC76G у моделі — задня стінка ліворуч, CTRL — праворуч за колонкою HMI, тож бюджет навряд чи виконується — "
     "перевірити трасу в CAD або перенести LC76G (build/15 «Оболонка D15»); пігтейл P7 W407 100 мм також не дістає (≥113 мм по прямій).",
 ]

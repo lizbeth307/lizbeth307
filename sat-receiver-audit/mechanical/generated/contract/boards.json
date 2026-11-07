@@ -167,6 +167,19 @@
           ]
         }
       ],
+      "height_zones": [
+        {
+          "rect": [
+            0,
+            35,
+            42,
+            75
+          ],
+          "max_height": 10.5,
+          "why": "Pololu D36V50F12/F5 on their header spacer (parts.json pololu_d36v50: 7.67 + mount_standoff 2.5, bottom-side parts 1.8 per the Pololu drawing); rule R-PWR-MODULES"
+        }
+      ],
+      "rear_zones": [],
       "dxf": "boards/pwr-edge-cuts.dxf"
     },
     "RF": {
@@ -265,6 +278,117 @@
       ],
       "thermal_bond_mm": [],
       "modules_on_board": [],
+      "height_zones": [
+        {
+          "rect": [
+            0.0,
+            0.0,
+            95.0,
+            27.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 16.8,
+          "fits_mm": 16.3,
+          "limit": "v4l_a"
+        },
+        {
+          "rect": [
+            95.0,
+            0.0,
+            1.5,
+            27.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 29.8,
+          "fits_mm": 29.3,
+          "limit": "rfbay.lid"
+        },
+        {
+          "rect": [
+            96.5,
+            0.0,
+            87.5,
+            27.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 16.8,
+          "fits_mm": 16.3,
+          "limit": "v4l_b"
+        },
+        {
+          "rect": [
+            0.0,
+            27.0,
+            184.0,
+            0.5
+          ],
+          "max_height": 5.5,
+          "free_mm": 29.8,
+          "fits_mm": 29.3,
+          "limit": "rfbay.lid"
+        },
+        {
+          "rect": [
+            0.0,
+            27.5,
+            73.7,
+            17.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 11.1,
+          "fits_mm": 10.6,
+          "limit": "sawbird"
+        },
+        {
+          "rect": [
+            73.7,
+            27.5,
+            9.6,
+            17.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 29.8,
+          "fits_mm": 29.3,
+          "limit": "rfbay.lid"
+        },
+        {
+          "rect": [
+            83.3,
+            27.5,
+            73.7,
+            17.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 11.1,
+          "fits_mm": 10.6,
+          "limit": "flamingo"
+        },
+        {
+          "rect": [
+            157.0,
+            27.5,
+            27.0,
+            17.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 29.8,
+          "fits_mm": 29.3,
+          "limit": "rfbay.lid"
+        }
+      ],
+      "rear_zones": [
+        {
+          "rect": [
+            0.0,
+            0.0,
+            184.0,
+            44.5
+          ],
+          "free_mm": 3.0,
+          "fits_mm": 2.5,
+          "limit": "plate.main"
+        }
+      ],
       "dxf": "boards/rf-edge-cuts.dxf"
     },
     "CTRL": {
@@ -369,6 +493,596 @@
       ],
       "thermal_bond_mm": [],
       "modules_on_board": [],
+      "height_zones": [
+        {
+          "rect": [
+            0.0,
+            0.0,
+            6.0,
+            14.5
+          ],
+          "max_height": 5.5,
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            6.0,
+            0.0,
+            15.0,
+            14.5
+          ],
+          "max_height": 5.5,
+          "free_mm": 5.5,
+          "fits_mm": 5.0,
+          "limit": "button_flange.02"
+        },
+        {
+          "rect": [
+            21.0,
+            0.0,
+            7.0,
+            14.5
+          ],
+          "max_height": 5.5,
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            28.0,
+            0.0,
+            15.0,
+            14.5
+          ],
+          "max_height": 5.5,
+          "free_mm": 5.5,
+          "fits_mm": 5.0,
+          "limit": "button_flange.12"
+        },
+        {
+          "rect": [
+            43.0,
+            0.0,
+            7.0,
+            14.5
+          ],
+          "max_height": 5.5,
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            0.0,
+            14.5,
+            50.0,
+            7.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            0.0,
+            21.5,
+            6.0,
+            15.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            6.0,
+            21.5,
+            15.0,
+            15.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 5.5,
+          "fits_mm": 5.0,
+          "limit": "button_flange.01"
+        },
+        {
+          "rect": [
+            21.0,
+            21.5,
+            7.0,
+            15.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            28.0,
+            21.5,
+            15.0,
+            15.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 5.5,
+          "fits_mm": 5.0,
+          "limit": "button_flange.11"
+        },
+        {
+          "rect": [
+            43.0,
+            21.5,
+            7.0,
+            15.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            0.0,
+            36.5,
+            50.0,
+            7.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            0.0,
+            43.5,
+            6.0,
+            15.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            6.0,
+            43.5,
+            15.0,
+            15.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 5.5,
+          "fits_mm": 5.0,
+          "limit": "button_flange.00"
+        },
+        {
+          "rect": [
+            21.0,
+            43.5,
+            7.0,
+            15.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            28.0,
+            43.5,
+            15.0,
+            15.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 5.5,
+          "fits_mm": 5.0,
+          "limit": "button_flange.10"
+        },
+        {
+          "rect": [
+            43.0,
+            43.5,
+            7.0,
+            15.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            0.0,
+            58.5,
+            50.0,
+            10.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            0.0,
+            68.5,
+            12.0,
+            25.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            37.0,
+            68.5,
+            13.0,
+            25.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            0.0,
+            93.5,
+            50.0,
+            16.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            0.0,
+            109.5,
+            12.0,
+            25.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            37.0,
+            109.5,
+            13.0,
+            25.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            0.0,
+            134.5,
+            50.0,
+            2.5
+          ],
+          "max_height": 5.5,
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            0.0,
+            137.0,
+            40.0,
+            7.0
+          ],
+          "max_height": 5.5,
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        }
+      ],
+      "rear_zones": [
+        {
+          "rect": [
+            0.0,
+            0.0,
+            34.0,
+            57.0
+          ],
+          "free_mm": 3.9,
+          "fits_mm": 3.4,
+          "limit": "bms"
+        },
+        {
+          "rect": [
+            34.0,
+            0.0,
+            9.5,
+            5.5
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.ext"
+        },
+        {
+          "rect": [
+            43.5,
+            0.0,
+            6.5,
+            5.5
+          ],
+          "free_mm": 0.4,
+          "fits_mm": 0.0,
+          "limit": "plate.boss2"
+        },
+        {
+          "rect": [
+            34.0,
+            5.5,
+            16.0,
+            8.7
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.ext"
+        },
+        {
+          "rect": [
+            34.0,
+            14.2,
+            6.2,
+            11.3
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.ext"
+        },
+        {
+          "rect": [
+            40.2,
+            14.2,
+            5.6,
+            49.6
+          ],
+          "free_mm": 3.6,
+          "fits_mm": 3.1,
+          "limit": "hdmi_route_front_up"
+        },
+        {
+          "rect": [
+            45.8,
+            14.2,
+            4.2,
+            11.3
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.ext"
+        },
+        {
+          "rect": [
+            34.0,
+            25.5,
+            6.2,
+            27.5
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.main"
+        },
+        {
+          "rect": [
+            45.8,
+            25.5,
+            4.2,
+            38.3
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.main"
+        },
+        {
+          "rect": [
+            34.0,
+            53.0,
+            0.8,
+            4.0
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.main"
+        },
+        {
+          "rect": [
+            34.8,
+            53.0,
+            5.4,
+            10.8
+          ],
+          "free_mm": 3.6,
+          "fits_mm": 3.1,
+          "limit": "hdmi_route_front_turn"
+        },
+        {
+          "rect": [
+            0.0,
+            57.0,
+            34.8,
+            1.2
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.main"
+        },
+        {
+          "rect": [
+            0.0,
+            58.2,
+            34.8,
+            5.6
+          ],
+          "free_mm": 3.6,
+          "fits_mm": 3.1,
+          "limit": "hdmi_route_front_run"
+        },
+        {
+          "rect": [
+            0.0,
+            63.8,
+            50.0,
+            4.7
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.main"
+        },
+        {
+          "rect": [
+            0.0,
+            68.5,
+            12.0,
+            14.5
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.main"
+        },
+        {
+          "rect": [
+            37.0,
+            68.5,
+            13.0,
+            14.5
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.main"
+        },
+        {
+          "rect": [
+            0.0,
+            83.0,
+            12.0,
+            10.5
+          ],
+          "free_mm": 1.4,
+          "fits_mm": 0.9,
+          "limit": "lime"
+        },
+        {
+          "rect": [
+            37.0,
+            83.0,
+            13.0,
+            10.5
+          ],
+          "free_mm": 1.4,
+          "fits_mm": 0.9,
+          "limit": "lime"
+        },
+        {
+          "rect": [
+            0.0,
+            93.5,
+            50.0,
+            15.5
+          ],
+          "free_mm": 1.4,
+          "fits_mm": 0.9,
+          "limit": "lime"
+        },
+        {
+          "rect": [
+            0.0,
+            109.0,
+            50.0,
+            0.5
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.main"
+        },
+        {
+          "rect": [
+            0.0,
+            109.5,
+            12.0,
+            25.0
+          ],
+          "free_mm": 3.9,
+          "fits_mm": 3.4,
+          "limit": "ip2368"
+        },
+        {
+          "rect": [
+            37.0,
+            109.5,
+            7.0,
+            25.0
+          ],
+          "free_mm": 3.9,
+          "fits_mm": 3.4,
+          "limit": "ip2368"
+        },
+        {
+          "rect": [
+            44.0,
+            109.5,
+            6.0,
+            27.5
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.main"
+        },
+        {
+          "rect": [
+            0.0,
+            134.5,
+            44.0,
+            2.5
+          ],
+          "free_mm": 3.9,
+          "fits_mm": 3.4,
+          "limit": "ip2368"
+        },
+        {
+          "rect": [
+            0.0,
+            137.0,
+            40.0,
+            6.5
+          ],
+          "free_mm": 3.9,
+          "fits_mm": 3.4,
+          "limit": "ip2368"
+        },
+        {
+          "rect": [
+            0.0,
+            143.5,
+            40.0,
+            0.5
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.main"
+        }
+      ],
       "dxf": "boards/ctrl-edge-cuts.dxf"
     },
     "ENC": {
@@ -440,6 +1154,8 @@
       ],
       "thermal_bond_mm": [],
       "modules_on_board": [],
+      "height_zones": [],
+      "rear_zones": [],
       "dxf": "boards/enc-edge-cuts.dxf"
     }
   }

@@ -3,7 +3,7 @@
   "status": "MODEL FIT ONLY: envelopes and datasheet dimensions; no physical part was fitted. Hardware gates stay OPEN.",
   "generator": {
     "version": "1.0.0",
-    "params_sha256": "135211b0855f5c0223ffe92eb2eb899278c93e488a60a8905117cd2c05b02c00",
+    "params_sha256": "fab8754f230bbdbcf67e6aae5b11cd850203cf138ab7ece36ee9f29e8077695f",
     "pcb_components_sha256": "9e6bdc34a545f2e336583bc95d6d830c613508a454faee6549c191a62d61c21b"
   },
   "envelope": {
@@ -411,6 +411,980 @@
       "source": "mechanical.json hdmi_route, layout hdmi_*"
     },
     {
+      "id": "R-PPS-LEN",
+      "rule": "PPS path Q6A J20.7 -> LC76G: harness length <= 200 mm (STACK 5.2 'UART7/PPS wiring <= 20 cm'; E3 J301 note)",
+      "value_mm": {
+        "via_segments_mm": 329,
+        "branch_mm": 196
+      },
+      "limit_mm": 200.0,
+      "result": "OPEN (end provisional): S01+S25 = 329 mm > 200: decision (build/15 W2 MECH-1) — PPS + UART6 + GND branch off the S01 ribbon at the Q6A end and run directly to the LC76G in the rear layer (harness only, E3 nets unchanged; build/15 W2 MECH-1); branch PPS = 196 mm <= 200 (model; ends on board edge zones / envelope faces until the header and pin positions are placed)",
+      "source": "mechanical.json harness_routes; generated/harness-routes.json"
+    },
+    {
+      "id": "R-ROUTE-CLEAR",
+      "rule": "harness route centrelines (mechanical.json harness_routes) clear of every envelope, keep-clear reserve and structure part; plate and RF-bay wall only through openings",
+      "value_mm": {
+        "routed": 33,
+        "clear": 33,
+        "provisional_end": 33,
+        "no_route_unplaced_end": [
+          "S06",
+          "S07",
+          "S36",
+          "S39",
+          "S40"
+        ],
+        "external": [
+          "S33",
+          "S41"
+        ],
+        "crossing": []
+      },
+      "result": "OPEN (end provisional): every routed centreline clears the envelopes and structure; 33 of 33 routes end on a board edge zone or at a module without an envelope (header positions, module envelopes and the bundle OD (AI-WIRE-PTFE) TBD); no route yet (end not placed): S06, S07, S36, S39, S40; routes through a plate slot that plate.slots does not list (R-PLATE-SLOT-FILL undercounts): SL1: S27",
+      "source": "mechanical.json harness_routes, layout, plate.slots, rf_bay.notches"
+    },
+    {
+      "id": "R-HDR-HEIGHT",
+      "rule": "board-side harness headers (build/16 §4) inside the board height limit, or in a computed height zone (component side) / rear zone",
+      "source": "parts.json harness_headers h; boards.json max_height, height_zones, rear_zones (clearance map)",
+      "value_mm": {
+        "above_limit": [
+          "X01I1-CTRL IDC_top 9.1",
+          "X02P1-CTRL MF_top 9.9",
+          "X02P1-PWR MF_top 9.9",
+          "X04P1-PWR MF_top 9.9",
+          "X04P1-RF MF_top 9.9",
+          "X11P1-PWR MF_top 9.9",
+          "X12P1-PWR MF_top 9.9",
+          "X13P1-PWR MF_top 9.9",
+          "X14P1-PWR MF_top 9.9",
+          "X17P1-PWR MF_top 9.9",
+          "X18P1-PWR MF_top 9.9",
+          "X19P1-PWR MF_top 9.9",
+          "X25P1-CTRL MF_top 9.9",
+          "X28P1-CTRL MF_top 9.9",
+          "X32P1-PWR MF_top 9.9"
+        ],
+        "height_not_read": [
+          "X05J1-PWR",
+          "X06J1-PWR",
+          "X07J1-PWR",
+          "X10J1-PWR",
+          "X27F1-CTRL"
+        ]
+      },
+      "limit_mm": {
+        "PWR": 9.0,
+        "RF": 5.5,
+        "CTRL": 5.5,
+        "ENC": 6.5
+      },
+      "headers": [
+        {
+          "connector": "X01I1-CTRL",
+          "board": "CTRL",
+          "family": "IDC",
+          "orientation": "top",
+          "h_mm": 9.1,
+          "courtyard_mm": [
+            61.0,
+            9.0
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 5.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "above the board limit 5.5; fits no computed zone that takes its courtyard"
+        },
+        {
+          "connector": "X02P1-CTRL",
+          "board": "CTRL",
+          "family": "MF",
+          "orientation": "top",
+          "h_mm": 9.9,
+          "courtyard_mm": [
+            16.66,
+            6.77
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 3.4,
+          "verdict": "above the board limit 5.5; fits no computed zone that takes its courtyard"
+        },
+        {
+          "connector": "X02P1-PWR",
+          "board": "PWR",
+          "family": "MF",
+          "orientation": "top",
+          "h_mm": 9.9,
+          "courtyard_mm": [
+            16.66,
+            6.77
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "above the board limit 9; fits a component-side height zone"
+        },
+        {
+          "connector": "X02S0-PWR",
+          "board": "PWR",
+          "family": "PH",
+          "orientation": "top",
+          "h_mm": 8.0,
+          "courtyard_mm": [
+            12.9,
+            5.5
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X02S1-CTRL",
+          "board": "CTRL",
+          "family": "PH",
+          "orientation": "side",
+          "h_mm": 4.8,
+          "courtyard_mm": [
+            18.9,
+            8.6
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 3.4,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X02S1-PWR",
+          "board": "PWR",
+          "family": "PH",
+          "orientation": "top",
+          "h_mm": 8.0,
+          "courtyard_mm": [
+            34.9,
+            5.5
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X02S2-CTRL",
+          "board": "CTRL",
+          "family": "PH",
+          "orientation": "side",
+          "h_mm": 4.8,
+          "courtyard_mm": [
+            18.9,
+            8.6
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 3.4,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X02S3-CTRL",
+          "board": "CTRL",
+          "family": "PH",
+          "orientation": "side",
+          "h_mm": 4.8,
+          "courtyard_mm": [
+            18.9,
+            8.6
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 3.4,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X02S2-PWR",
+          "board": "PWR",
+          "family": "PH",
+          "orientation": "top",
+          "h_mm": 8.0,
+          "courtyard_mm": [
+            34.9,
+            5.5
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X02S4-CTRL",
+          "board": "CTRL",
+          "family": "PH",
+          "orientation": "side",
+          "h_mm": 4.8,
+          "courtyard_mm": [
+            18.9,
+            8.6
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 3.4,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X02S5-CTRL",
+          "board": "CTRL",
+          "family": "PH",
+          "orientation": "side",
+          "h_mm": 4.8,
+          "courtyard_mm": [
+            18.9,
+            8.6
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 3.4,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X02S3-PWR",
+          "board": "PWR",
+          "family": "PH",
+          "orientation": "top",
+          "h_mm": 8.0,
+          "courtyard_mm": [
+            18.9,
+            5.5
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X03S1-CTRL",
+          "board": "CTRL",
+          "family": "PH",
+          "orientation": "side",
+          "h_mm": 4.8,
+          "courtyard_mm": [
+            18.9,
+            8.6
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 3.4,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X03S1-RF",
+          "board": "RF",
+          "family": "PH",
+          "orientation": "side",
+          "h_mm": 4.8,
+          "courtyard_mm": [
+            18.9,
+            8.6
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 29.3,
+          "best_rear_zone_mm": 2.5,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X03S2-CTRL",
+          "board": "CTRL",
+          "family": "PH",
+          "orientation": "side",
+          "h_mm": 4.8,
+          "courtyard_mm": [
+            10.9,
+            8.6
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 13.9,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X03S2-RF",
+          "board": "RF",
+          "family": "PH",
+          "orientation": "side",
+          "h_mm": 4.8,
+          "courtyard_mm": [
+            10.9,
+            8.6
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 29.3,
+          "best_rear_zone_mm": 2.5,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X04P1-PWR",
+          "board": "PWR",
+          "family": "MF",
+          "orientation": "top",
+          "h_mm": 9.9,
+          "courtyard_mm": [
+            10.66,
+            6.77
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "above the board limit 9; fits a component-side height zone"
+        },
+        {
+          "connector": "X04P1-RF",
+          "board": "RF",
+          "family": "MF",
+          "orientation": "top",
+          "h_mm": 9.9,
+          "courtyard_mm": [
+            10.66,
+            6.77
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 29.3,
+          "best_rear_zone_mm": 2.5,
+          "verdict": "above the board limit 5.5; fits a component-side height zone"
+        },
+        {
+          "connector": "X04S1-PWR",
+          "board": "PWR",
+          "family": "PH",
+          "orientation": "top",
+          "h_mm": 8.0,
+          "courtyard_mm": [
+            16.9,
+            5.5
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X04S1-RF",
+          "board": "RF",
+          "family": "PH",
+          "orientation": "side",
+          "h_mm": 4.8,
+          "courtyard_mm": [
+            16.9,
+            8.6
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 29.3,
+          "best_rear_zone_mm": 2.5,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X05J1-PWR",
+          "board": "PWR",
+          "family": "MFJ",
+          "orientation": "top",
+          "h_mm": null,
+          "courtyard_mm": [
+            11.7,
+            13.0
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "height of MFJ_top not read (TBD)"
+        },
+        {
+          "connector": "X05S1-PWR",
+          "board": "PWR",
+          "family": "PH",
+          "orientation": "top",
+          "h_mm": 8.0,
+          "courtyard_mm": [
+            6.9,
+            5.5
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X06J1-PWR",
+          "board": "PWR",
+          "family": "MFJ",
+          "orientation": "top",
+          "h_mm": null,
+          "courtyard_mm": [
+            11.7,
+            13.0
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "height of MFJ_top not read (TBD)"
+        },
+        {
+          "connector": "X06S1-PWR",
+          "board": "PWR",
+          "family": "PH",
+          "orientation": "top",
+          "h_mm": 8.0,
+          "courtyard_mm": [
+            12.9,
+            5.5
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X07J1-PWR",
+          "board": "PWR",
+          "family": "MFJ",
+          "orientation": "top",
+          "h_mm": null,
+          "courtyard_mm": [
+            11.7,
+            13.0
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "height of MFJ_top not read (TBD)"
+        },
+        {
+          "connector": "X07S1-PWR",
+          "board": "PWR",
+          "family": "PH",
+          "orientation": "top",
+          "h_mm": 8.0,
+          "courtyard_mm": [
+            8.9,
+            5.5
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X10J1-PWR",
+          "board": "PWR",
+          "family": "MFJ",
+          "orientation": "top",
+          "h_mm": null,
+          "courtyard_mm": [
+            15.9,
+            13.0
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "height of MFJ_top not read (TBD)"
+        },
+        {
+          "connector": "X10S1-PWR",
+          "board": "PWR",
+          "family": "PH",
+          "orientation": "top",
+          "h_mm": 8.0,
+          "courtyard_mm": [
+            10.9,
+            5.5
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X11P1-PWR",
+          "board": "PWR",
+          "family": "MF",
+          "orientation": "top",
+          "h_mm": 9.9,
+          "courtyard_mm": [
+            10.66,
+            6.77
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "above the board limit 9; fits a component-side height zone"
+        },
+        {
+          "connector": "X11S1-PWR",
+          "board": "PWR",
+          "family": "PH",
+          "orientation": "top",
+          "h_mm": 8.0,
+          "courtyard_mm": [
+            6.9,
+            5.5
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X12P1-PWR",
+          "board": "PWR",
+          "family": "MF",
+          "orientation": "top",
+          "h_mm": 9.9,
+          "courtyard_mm": [
+            10.66,
+            6.77
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "above the board limit 9; fits a component-side height zone"
+        },
+        {
+          "connector": "X13P1-PWR",
+          "board": "PWR",
+          "family": "MF",
+          "orientation": "top",
+          "h_mm": 9.9,
+          "courtyard_mm": [
+            10.66,
+            6.77
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "above the board limit 9; fits a component-side height zone"
+        },
+        {
+          "connector": "X14P1-PWR",
+          "board": "PWR",
+          "family": "MF",
+          "orientation": "top",
+          "h_mm": 9.9,
+          "courtyard_mm": [
+            10.66,
+            6.77
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "above the board limit 9; fits a component-side height zone"
+        },
+        {
+          "connector": "X15S1-CTRL",
+          "board": "CTRL",
+          "family": "PH",
+          "orientation": "side",
+          "h_mm": 4.8,
+          "courtyard_mm": [
+            6.9,
+            8.6
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 13.9,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X17P1-PWR",
+          "board": "PWR",
+          "family": "MF",
+          "orientation": "top",
+          "h_mm": 9.9,
+          "courtyard_mm": [
+            10.66,
+            6.77
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "above the board limit 9; fits a component-side height zone"
+        },
+        {
+          "connector": "X18P1-PWR",
+          "board": "PWR",
+          "family": "MF",
+          "orientation": "top",
+          "h_mm": 9.9,
+          "courtyard_mm": [
+            10.66,
+            6.77
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "above the board limit 9; fits a component-side height zone"
+        },
+        {
+          "connector": "X19P1-PWR",
+          "board": "PWR",
+          "family": "MF",
+          "orientation": "top",
+          "h_mm": 9.9,
+          "courtyard_mm": [
+            10.66,
+            6.77
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "above the board limit 9; fits a component-side height zone"
+        },
+        {
+          "connector": "X20S1-PWR",
+          "board": "PWR",
+          "family": "PH",
+          "orientation": "top",
+          "h_mm": 8.0,
+          "courtyard_mm": [
+            6.9,
+            5.5
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X21S1-PWR",
+          "board": "PWR",
+          "family": "PH",
+          "orientation": "top",
+          "h_mm": 8.0,
+          "courtyard_mm": [
+            6.9,
+            5.5
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X22S1-PWR",
+          "board": "PWR",
+          "family": "PH",
+          "orientation": "top",
+          "h_mm": 8.0,
+          "courtyard_mm": [
+            8.9,
+            5.5
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X23S1-PWR",
+          "board": "PWR",
+          "family": "PH",
+          "orientation": "top",
+          "h_mm": 8.0,
+          "courtyard_mm": [
+            8.9,
+            5.5
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X24S1-CTRL",
+          "board": "CTRL",
+          "family": "PH",
+          "orientation": "side",
+          "h_mm": 4.8,
+          "courtyard_mm": [
+            8.9,
+            8.6
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 13.9,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X25P1-CTRL",
+          "board": "CTRL",
+          "family": "MF",
+          "orientation": "top",
+          "h_mm": 9.9,
+          "courtyard_mm": [
+            10.66,
+            6.77
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 13.9,
+          "verdict": "above the board limit 5.5; fits a rear zone (THT from the back)"
+        },
+        {
+          "connector": "X25S1-CTRL",
+          "board": "CTRL",
+          "family": "PH",
+          "orientation": "side",
+          "h_mm": 4.8,
+          "courtyard_mm": [
+            10.9,
+            8.6
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 13.9,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X26S1-CTRL",
+          "board": "CTRL",
+          "family": "PH",
+          "orientation": "side",
+          "h_mm": 4.8,
+          "courtyard_mm": [
+            10.9,
+            8.6
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 13.9,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X27F1-CTRL",
+          "board": "CTRL",
+          "family": "FAN3",
+          "orientation": "top",
+          "h_mm": null,
+          "courtyard_mm": [
+            10.08,
+            6.0
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 13.9,
+          "verdict": "height of FAN3_top not read (TBD)"
+        },
+        {
+          "connector": "X28P1-CTRL",
+          "board": "CTRL",
+          "family": "MF",
+          "orientation": "top",
+          "h_mm": 9.9,
+          "courtyard_mm": [
+            10.66,
+            6.77
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 13.9,
+          "verdict": "above the board limit 5.5; fits a rear zone (THT from the back)"
+        },
+        {
+          "connector": "X29S1-CTRL",
+          "board": "CTRL",
+          "family": "PH",
+          "orientation": "side",
+          "h_mm": 4.8,
+          "courtyard_mm": [
+            6.9,
+            8.6
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 13.9,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X30S1-CTRL",
+          "board": "CTRL",
+          "family": "PH",
+          "orientation": "side",
+          "h_mm": 4.8,
+          "courtyard_mm": [
+            8.9,
+            8.6
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 13.9,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X32P1-PWR",
+          "board": "PWR",
+          "family": "MF",
+          "orientation": "top",
+          "h_mm": 9.9,
+          "courtyard_mm": [
+            10.66,
+            6.77
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "above the board limit 9; fits a component-side height zone"
+        },
+        {
+          "connector": "X32S1-PWR",
+          "board": "PWR",
+          "family": "PH",
+          "orientation": "top",
+          "h_mm": 8.0,
+          "courtyard_mm": [
+            6.9,
+            5.5
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X34S1-PWR",
+          "board": "PWR",
+          "family": "PH",
+          "orientation": "top",
+          "h_mm": 8.0,
+          "courtyard_mm": [
+            14.9,
+            5.5
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X35S1-PWR",
+          "board": "PWR",
+          "family": "PH",
+          "orientation": "top",
+          "h_mm": 8.0,
+          "courtyard_mm": [
+            6.9,
+            5.5
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X36S1-PWR",
+          "board": "PWR",
+          "family": "PH",
+          "orientation": "top",
+          "h_mm": 8.0,
+          "courtyard_mm": [
+            6.9,
+            5.5
+          ],
+          "max_height": 9.0,
+          "best_front_zone_mm": 10.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X37S1-CTRL",
+          "board": "CTRL",
+          "family": "PH",
+          "orientation": "side",
+          "h_mm": 4.8,
+          "courtyard_mm": [
+            10.9,
+            8.6
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 13.9,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X37S1-ENCM",
+          "board": "ENC",
+          "family": "PH",
+          "orientation": "side",
+          "h_mm": 4.8,
+          "courtyard_mm": [
+            10.9,
+            8.6
+          ],
+          "max_height": 6.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X38S1-CTRL",
+          "board": "CTRL",
+          "family": "PH",
+          "orientation": "side",
+          "h_mm": 4.8,
+          "courtyard_mm": [
+            10.9,
+            8.6
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 13.9,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X38S1-ENCV",
+          "board": "ENC",
+          "family": "PH",
+          "orientation": "side",
+          "h_mm": 4.8,
+          "courtyard_mm": [
+            10.9,
+            8.6
+          ],
+          "max_height": 6.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 0.0,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X39S1-CTRL",
+          "board": "CTRL",
+          "family": "PH",
+          "orientation": "side",
+          "h_mm": 4.8,
+          "courtyard_mm": [
+            6.9,
+            8.6
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 13.9,
+          "verdict": "inside the board limit"
+        },
+        {
+          "connector": "X40S1-CTRL",
+          "board": "CTRL",
+          "family": "PH",
+          "orientation": "side",
+          "h_mm": 4.8,
+          "courtyard_mm": [
+            6.9,
+            8.6
+          ],
+          "max_height": 5.5,
+          "best_front_zone_mm": 6.5,
+          "best_rear_zone_mm": 13.9,
+          "verdict": "inside the board limit"
+        }
+      ],
+      "result": "OPEN: GR-3 decides (header orientation, board side or board): 15 headers above their board limit (X01I1-CTRL IDC_top 9.1, X02P1-CTRL MF_top 9.9, X02P1-PWR MF_top 9.9, X04P1-PWR MF_top 9.9, X04P1-RF MF_top 9.9, X11P1-PWR MF_top 9.9, X12P1-PWR MF_top 9.9, X13P1-PWR MF_top 9.9, X14P1-PWR MF_top 9.9, X17P1-PWR MF_top 9.9, X18P1-PWR MF_top 9.9, X19P1-PWR MF_top 9.9, X25P1-CTRL MF_top 9.9, X28P1-CTRL MF_top 9.9, X32P1-PWR MF_top 9.9); 5 heights not read; right-angle Micro-Fit 6.98 mm does not fit the CTRL component side (best zone 6.5 mm)"
+    },
+    {
       "id": "R-TOOL-ACCESS",
       "rule": "every closure, hatch and T7-holder screw: clear tool path (counterbore, then d 8.0 for 60 mm) from outside",
       "value_mm": [
@@ -457,75 +1431,1581 @@
     "result": "OPEN: the female USB ends of the two V4L leads are not inside the modelled bay; with the current reserves neither arrangement fits (measure the V4L and the socket, then re-pack or move the cased LNA modules out of the bay)"
   },
   "board_area": {
-    "method": "courtyard estimate per footprint class x 1.8 placement density (model, not a placement)",
+    "method": "sum of the vendored KiCad 10.0.7 F.CrtYd courtyards (bbox; polygon area for a single fp_poly) of the bare board parts of pcb/generated/components.csv (DNP excluded) per board domain; need = modules (mount pcb_module) x 1.0 + other parts x fill factor 1.5 or 1.8 (1.8 = planning value) — MODEL ESTIMATE, not a placement",
+    "source": "KiCad 10.0.7 courtyards (build/kicad/footprints/manifest.json)",
+    "status": "MODEL ESTIMATE: reported, not gated (OPEN = need at the planning factor exceeds the outline; the real placement decides)",
+    "fill_factors": [
+      1.5,
+      1.8
+    ],
+    "parts_without_courtyard": [],
     "boards": {
       "PWR": {
         "area_mm2": 7910.0,
-        "estimate_mm2": 7597.0,
-        "ratio": 1.04,
-        "scope": "board parts and modules_on_board, without the harness headers",
-        "result": "PASS (model)"
+        "courtyard_raw_mm2": 6411.0,
+        "modules_mm2": 1342.0,
+        "per_domain_raw_mm2": {
+          "PWR_MAIN": 2290.0,
+          "PWR_BRANCH": 3515.0,
+          "USB_POWER": 606.0
+        },
+        "per_group_raw_mm2": {
+          "E1 LAB5": 1149.0,
+          "E1 SYS12": 753.0,
+          "E1 Сервісний заряд": 119.0,
+          "E1 AON і UV": 94.0,
+          "E1 Головний вимикач": 92.0,
+          "E1 Захист USB-PD": 43.0,
+          "E1 Інгібування заряду": 26.0,
+          "E1 Аварійний ADC": 13.0,
+          "E2 Boni: малошумна захищена шина": 500.0,
+          "E2 LNB: малошумна захищена шина": 410.0,
+          "E2 J21: захищене живлення 12 V": 399.0,
+          "E2 LNA4V5: паралельні LT3045": 352.0,
+          "E2 LNA: канал 2": 247.0,
+          "E2 LNA: канал 3": 247.0,
+          "E2 AUX12: верхній ключ і PTC": 185.0,
+          "E2 Дисплей: захищене живлення 12 V": 171.0,
+          "E2 Lime M.2: комутована шина 3.3 V": 166.0,
+          "E2 LNA: канал 1": 146.0,
+          "E2 LNA: канал 4": 146.0,
+          "E2 RTL-B: комутований VBUS": 136.0,
+          "E2 S-band LaNA WB: захищена шина 5 V": 136.0,
+          "E2 INA3221: струми LNA1–3": 67.0,
+          "E2 INA3221: струми LNA4, LNB і Boni": 67.0,
+          "E2 LNB: незалежне точне відсікання OVP": 46.0,
+          "E2 LNB: контроль напруги": 31.0,
+          "E2 Boni: контроль напруги": 31.0,
+          "E2 AUX12: контроль напруги після PTC": 31.0,
+          "E5 VBUS HF+ з демпфованим LC": 306.0,
+          "E5 VBUS RTL-A і LAB PORT": 228.0,
+          "E5 LAB BUS I2C buffer": 57.0,
+          "E5 Сервіс і зовнішні шини": 14.0
+        },
+        "per_group_need_mm2": {
+          "E1 LAB5": [
+            1388.0,
+            1532.0
+          ],
+          "E1 SYS12": [
+            794.0,
+            818.0
+          ],
+          "E1 Сервісний заряд": [
+            179.0,
+            215.0
+          ],
+          "E1 AON і UV": [
+            142.0,
+            170.0
+          ],
+          "E1 Головний вимикач": [
+            138.0,
+            166.0
+          ],
+          "E1 Захист USB-PD": [
+            65.0,
+            78.0
+          ],
+          "E1 Інгібування заряду": [
+            39.0,
+            47.0
+          ],
+          "E1 Аварійний ADC": [
+            19.0,
+            23.0
+          ],
+          "E2 Boni: малошумна захищена шина": [
+            750.0,
+            899.0
+          ],
+          "E2 LNB: малошумна захищена шина": [
+            614.0,
+            737.0
+          ],
+          "E2 J21: захищене живлення 12 V": [
+            599.0,
+            719.0
+          ],
+          "E2 LNA4V5: паралельні LT3045": [
+            528.0,
+            633.0
+          ],
+          "E2 LNA: канал 2": [
+            370.0,
+            444.0
+          ],
+          "E2 LNA: канал 3": [
+            370.0,
+            444.0
+          ],
+          "E2 AUX12: верхній ключ і PTC": [
+            278.0,
+            333.0
+          ],
+          "E2 Дисплей: захищене живлення 12 V": [
+            256.0,
+            307.0
+          ],
+          "E2 Lime M.2: комутована шина 3.3 V": [
+            249.0,
+            299.0
+          ],
+          "E2 LNA: канал 1": [
+            220.0,
+            263.0
+          ],
+          "E2 LNA: канал 4": [
+            220.0,
+            263.0
+          ],
+          "E2 RTL-B: комутований VBUS": [
+            204.0,
+            245.0
+          ],
+          "E2 S-band LaNA WB: захищена шина 5 V": [
+            204.0,
+            245.0
+          ],
+          "E2 INA3221: струми LNA1–3": [
+            101.0,
+            121.0
+          ],
+          "E2 INA3221: струми LNA4, LNB і Boni": [
+            101.0,
+            121.0
+          ],
+          "E2 LNB: незалежне точне відсікання OVP": [
+            69.0,
+            83.0
+          ],
+          "E2 LNB: контроль напруги": [
+            47.0,
+            56.0
+          ],
+          "E2 Boni: контроль напруги": [
+            47.0,
+            56.0
+          ],
+          "E2 AUX12: контроль напруги після PTC": [
+            47.0,
+            56.0
+          ],
+          "E5 VBUS HF+ з демпфованим LC": [
+            460.0,
+            552.0
+          ],
+          "E5 VBUS RTL-A і LAB PORT": [
+            342.0,
+            410.0
+          ],
+          "E5 LAB BUS I2C buffer": [
+            86.0,
+            103.0
+          ],
+          "E5 Сервіс і зовнішні шини": [
+            21.0,
+            25.0
+          ]
+        },
+        "parts": 329,
+        "need_1_5_mm2": 8945.0,
+        "need_1_8_mm2": 10466.0,
+        "estimate_mm2": 10466.0,
+        "ratio_1_5": 1.13,
+        "ratio_1_8": 1.32,
+        "scope": "board parts and modules, without the harness headers",
+        "result": "OPEN: need 10466 mm2 at fill 1.8 > outline 7910 mm2 (model estimate; partition and placement decide, AREA / PCB)"
       },
       "RF": {
         "area_mm2": 8188.0,
-        "estimate_mm2": 2787.0,
-        "ratio": 2.94,
-        "scope": "board parts and modules_on_board, without the harness headers",
-        "result": "PASS (model)"
+        "courtyard_raw_mm2": 2056.0,
+        "modules_mm2": 0.0,
+        "per_domain_raw_mm2": {
+          "RF_HMC": 1011.0,
+          "RF_HF": 302.0,
+          "RF_INJECTOR": 252.0,
+          "DC_CORE": 490.0
+        },
+        "per_group_raw_mm2": {
+          "E4 RF and receiver interfaces": 20.0,
+          "E4 RF passives and drivers": 31.0,
+          "E4 SP4T switches": 54.0,
+          "E4 DC detectors: UHF": 95.0,
+          "E4 DC detectors: LBAND": 95.0,
+          "E4 DC detectors: HF": 95.0,
+          "E4 RF bias injector local decoupling": 18.0,
+          "E4 DC detectors: common reference": 171.0,
+          "E4 DC detectors: local power": 35.0
+        },
+        "per_group_need_mm2": {
+          "E4 RF and receiver interfaces": [
+            29.0,
+            35.0
+          ],
+          "E4 RF passives and drivers": [
+            47.0,
+            56.0
+          ],
+          "E4 SP4T switches": [
+            82.0,
+            98.0
+          ],
+          "E4 DC detectors: UHF": [
+            142.0,
+            171.0
+          ],
+          "E4 DC detectors: LBAND": [
+            142.0,
+            171.0
+          ],
+          "E4 DC detectors: HF": [
+            142.0,
+            171.0
+          ],
+          "E4 RF bias injector local decoupling": [
+            27.0,
+            32.0
+          ],
+          "E4 DC detectors: common reference": [
+            257.0,
+            308.0
+          ],
+          "E4 DC detectors: local power": [
+            52.0,
+            62.0
+          ]
+        },
+        "parts": 163,
+        "need_1_5_mm2": 3083.0,
+        "need_1_8_mm2": 3700.0,
+        "estimate_mm2": 3700.0,
+        "ratio_1_5": 0.38,
+        "ratio_1_8": 0.45,
+        "scope": "board parts and modules, without the harness headers",
+        "result": "PASS (model estimate)"
       },
       "CTRL": {
         "area_mm2": 5915.0,
-        "estimate_mm2": 3049.0,
-        "ratio": 1.94,
-        "scope": "board parts and modules_on_board, without the harness headers",
-        "result": "PASS (model)"
+        "courtyard_raw_mm2": 3248.0,
+        "modules_mm2": 1221.0,
+        "per_domain_raw_mm2": {
+          "CTRL_HMI": 3248.0
+        },
+        "per_group_raw_mm2": {
+          "E3 Pico HMI": 1287.0,
+          "E3 MCP23017 control": 783.0,
+          "E3 HMI buttons": 487.0,
+          "E3 Indicators": 219.0,
+          "E3 Cooling": 147.0,
+          "E3 Q6A header": 120.0,
+          "E3 HMI encoders": 66.0,
+          "E3 Pico power control": 48.0,
+          "E3 Ambient sensor": 31.0,
+          "E3 MCP hardware watchdog reset": 26.0,
+          "E3 GNSS": 17.0,
+          "E3 Thermal sensors": 17.0
+        },
+        "per_group_need_mm2": {
+          "E3 Pico HMI": [
+            1320.0,
+            1340.0
+          ],
+          "E3 MCP23017 control": [
+            1174.0,
+            1409.0
+          ],
+          "E3 HMI buttons": [
+            730.0,
+            876.0
+          ],
+          "E3 Indicators": [
+            328.0,
+            394.0
+          ],
+          "E3 Cooling": [
+            221.0,
+            265.0
+          ],
+          "E3 Q6A header": [
+            179.0,
+            215.0
+          ],
+          "E3 HMI encoders": [
+            99.0,
+            118.0
+          ],
+          "E3 Pico power control": [
+            72.0,
+            86.0
+          ],
+          "E3 Ambient sensor": [
+            47.0,
+            56.0
+          ],
+          "E3 MCP hardware watchdog reset": [
+            39.0,
+            47.0
+          ],
+          "E3 GNSS": [
+            26.0,
+            31.0
+          ],
+          "E3 Thermal sensors": [
+            26.0,
+            31.0
+          ]
+        },
+        "parts": 125,
+        "need_1_5_mm2": 4261.0,
+        "need_1_8_mm2": 4869.0,
+        "estimate_mm2": 4869.0,
+        "ratio_1_5": 0.72,
+        "ratio_1_8": 0.82,
+        "scope": "board parts and modules, without the harness headers",
+        "result": "PASS (model estimate)"
       }
     },
     "with_harness": {
-      "method": "courtyard w x d per header (parts.json harness_headers) x 1.8 placement density, added to the parts estimate; frontage = sum of header widths against the edge zones of boards.json (every header at an edge, cable leaving sideways)",
+      "method": "header courtyard w x d (vendored KiCad 10.0.7 footprint where that pin count exists, else parts.json harness_headers) x fill factor 1.5 or 1.8, added to the parts need; frontage = sum of header widths against the edge zones of boards.json (every header at an edge, cable leaving sideways); Mini-Fit Jr., IDC and FAN3 courtyards are assumptions (parts.json)",
       "status": "MODEL ESTIMATE: reported, not gated (OPEN = the outline or the harness architecture needs a wave-2 decision)",
       "families_without_courtyard": [],
+      "counted_with_parts": [],
+      "courtyard_sources": {
+        "KiCad": 3,
+        "parts.json": 57
+      },
       "boards": {
         "PWR": {
           "headers": 32,
           "header_courtyard_mm2": 2702.0,
           "area_mm2": 7910.0,
-          "estimate_with_headers_mm2": 12461.0,
-          "ratio": 0.63,
+          "with_headers_raw_mm2": 9113.0,
+          "estimate_with_headers_1_5_mm2": 12999.0,
+          "estimate_with_headers_mm2": 15330.0,
+          "ratio": 1.94,
           "frontage_mm": 396.0,
           "edge_zones_mm": 233,
-          "result": "OPEN: area 12461 > 7910 mm2; frontage 396 > 233 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"
+          "result": "OPEN: area 15330 > 7910 mm2 at fill 1.8; frontage 396 > 233 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"
         },
         "RF": {
           "headers": 4,
           "header_courtyard_mm2": 474.0,
           "area_mm2": 8188.0,
-          "estimate_with_headers_mm2": 3640.0,
-          "ratio": 2.25,
+          "with_headers_raw_mm2": 2530.0,
+          "estimate_with_headers_1_5_mm2": 3794.0,
+          "estimate_with_headers_mm2": 4553.0,
+          "ratio": 0.56,
           "frontage_mm": 57.0,
           "edge_zones_mm": 344,
-          "result": "PASS (model)"
+          "result": "PASS (model estimate)"
         },
         "CTRL": {
           "headers": 22,
           "header_courtyard_mm2": 2701.0,
           "area_mm2": 5915.0,
-          "estimate_with_headers_mm2": 7911.0,
-          "ratio": 0.75,
+          "with_headers_raw_mm2": 5949.0,
+          "estimate_with_headers_1_5_mm2": 8312.0,
+          "estimate_with_headers_mm2": 9731.0,
+          "ratio": 1.65,
           "frontage_mm": 322.0,
           "edge_zones_mm": 145,
-          "result": "OPEN: area 7911 > 5915 mm2; frontage 322 > 145 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"
+          "result": "OPEN: area 9731 > 5915 mm2 at fill 1.8; frontage 322 > 145 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"
         },
         "ENC": {
           "headers": 2,
           "header_courtyard_mm2": 94.0,
           "area_mm2": 576.0,
+          "with_headers_raw_mm2": 94.0,
+          "estimate_with_headers_1_5_mm2": 141.0,
           "estimate_with_headers_mm2": 169.0,
-          "ratio": 3.41,
+          "ratio": 0.29,
           "frontage_mm": 11.0,
           "edge_zones_mm": 12,
-          "result": "PASS (model)"
+          "result": "PASS (model estimate)"
         }
+      }
+    }
+  },
+  "board_zones": {
+    "CTRL": {
+      "front": [
+        {
+          "rect": [
+            0.0,
+            0.0,
+            6.0,
+            14.5
+          ],
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            6.0,
+            0.0,
+            15.0,
+            14.5
+          ],
+          "free_mm": 5.5,
+          "fits_mm": 5.0,
+          "limit": "button_flange.02"
+        },
+        {
+          "rect": [
+            21.0,
+            0.0,
+            7.0,
+            14.5
+          ],
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            28.0,
+            0.0,
+            15.0,
+            14.5
+          ],
+          "free_mm": 5.5,
+          "fits_mm": 5.0,
+          "limit": "button_flange.12"
+        },
+        {
+          "rect": [
+            43.0,
+            0.0,
+            7.0,
+            14.5
+          ],
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            0.0,
+            14.5,
+            50.0,
+            7.0
+          ],
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            0.0,
+            21.5,
+            6.0,
+            15.0
+          ],
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            6.0,
+            21.5,
+            15.0,
+            15.0
+          ],
+          "free_mm": 5.5,
+          "fits_mm": 5.0,
+          "limit": "button_flange.01"
+        },
+        {
+          "rect": [
+            21.0,
+            21.5,
+            7.0,
+            15.0
+          ],
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            28.0,
+            21.5,
+            15.0,
+            15.0
+          ],
+          "free_mm": 5.5,
+          "fits_mm": 5.0,
+          "limit": "button_flange.11"
+        },
+        {
+          "rect": [
+            43.0,
+            21.5,
+            7.0,
+            15.0
+          ],
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            0.0,
+            36.5,
+            50.0,
+            7.0
+          ],
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            0.0,
+            43.5,
+            6.0,
+            15.0
+          ],
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            6.0,
+            43.5,
+            15.0,
+            15.0
+          ],
+          "free_mm": 5.5,
+          "fits_mm": 5.0,
+          "limit": "button_flange.00"
+        },
+        {
+          "rect": [
+            21.0,
+            43.5,
+            7.0,
+            15.0
+          ],
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            28.0,
+            43.5,
+            15.0,
+            15.0
+          ],
+          "free_mm": 5.5,
+          "fits_mm": 5.0,
+          "limit": "button_flange.10"
+        },
+        {
+          "rect": [
+            43.0,
+            43.5,
+            7.0,
+            15.0
+          ],
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            0.0,
+            58.5,
+            50.0,
+            10.0
+          ],
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            0.0,
+            68.5,
+            12.0,
+            25.0
+          ],
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            37.0,
+            68.5,
+            13.0,
+            25.0
+          ],
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            0.0,
+            93.5,
+            50.0,
+            16.0
+          ],
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            0.0,
+            109.5,
+            12.0,
+            25.0
+          ],
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            37.0,
+            109.5,
+            13.0,
+            25.0
+          ],
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            0.0,
+            134.5,
+            50.0,
+            2.5
+          ],
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        },
+        {
+          "rect": [
+            0.0,
+            137.0,
+            40.0,
+            7.0
+          ],
+          "free_mm": 7.0,
+          "fits_mm": 6.5,
+          "limit": "front wall"
+        }
+      ],
+      "rear": [
+        {
+          "rect": [
+            0.0,
+            0.0,
+            34.0,
+            57.0
+          ],
+          "free_mm": 3.9,
+          "fits_mm": 3.4,
+          "limit": "bms"
+        },
+        {
+          "rect": [
+            34.0,
+            0.0,
+            9.5,
+            5.5
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.ext"
+        },
+        {
+          "rect": [
+            43.5,
+            0.0,
+            6.5,
+            5.5
+          ],
+          "free_mm": 0.4,
+          "fits_mm": 0.0,
+          "limit": "plate.boss2"
+        },
+        {
+          "rect": [
+            34.0,
+            5.5,
+            16.0,
+            8.7
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.ext"
+        },
+        {
+          "rect": [
+            34.0,
+            14.2,
+            6.2,
+            11.3
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.ext"
+        },
+        {
+          "rect": [
+            40.2,
+            14.2,
+            5.6,
+            49.6
+          ],
+          "free_mm": 3.6,
+          "fits_mm": 3.1,
+          "limit": "hdmi_route_front_up"
+        },
+        {
+          "rect": [
+            45.8,
+            14.2,
+            4.2,
+            11.3
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.ext"
+        },
+        {
+          "rect": [
+            34.0,
+            25.5,
+            6.2,
+            27.5
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.main"
+        },
+        {
+          "rect": [
+            45.8,
+            25.5,
+            4.2,
+            38.3
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.main"
+        },
+        {
+          "rect": [
+            34.0,
+            53.0,
+            0.8,
+            4.0
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.main"
+        },
+        {
+          "rect": [
+            34.8,
+            53.0,
+            5.4,
+            10.8
+          ],
+          "free_mm": 3.6,
+          "fits_mm": 3.1,
+          "limit": "hdmi_route_front_turn"
+        },
+        {
+          "rect": [
+            45.8,
+            53.0,
+            0.0,
+            10.8
+          ],
+          "free_mm": 3.6,
+          "fits_mm": 3.1,
+          "limit": "hdmi_route_front_turn"
+        },
+        {
+          "rect": [
+            0.0,
+            57.0,
+            34.8,
+            1.2
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.main"
+        },
+        {
+          "rect": [
+            0.0,
+            58.2,
+            34.8,
+            5.6
+          ],
+          "free_mm": 3.6,
+          "fits_mm": 3.1,
+          "limit": "hdmi_route_front_run"
+        },
+        {
+          "rect": [
+            0.0,
+            63.8,
+            50.0,
+            4.7
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.main"
+        },
+        {
+          "rect": [
+            0.0,
+            68.5,
+            12.0,
+            14.5
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.main"
+        },
+        {
+          "rect": [
+            37.0,
+            68.5,
+            13.0,
+            14.5
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.main"
+        },
+        {
+          "rect": [
+            0.0,
+            83.0,
+            12.0,
+            10.5
+          ],
+          "free_mm": 1.4,
+          "fits_mm": 0.9,
+          "limit": "lime"
+        },
+        {
+          "rect": [
+            37.0,
+            83.0,
+            13.0,
+            10.5
+          ],
+          "free_mm": 1.4,
+          "fits_mm": 0.9,
+          "limit": "lime"
+        },
+        {
+          "rect": [
+            0.0,
+            93.5,
+            50.0,
+            15.5
+          ],
+          "free_mm": 1.4,
+          "fits_mm": 0.9,
+          "limit": "lime"
+        },
+        {
+          "rect": [
+            0.0,
+            109.0,
+            50.0,
+            0.5
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.main"
+        },
+        {
+          "rect": [
+            0.0,
+            109.5,
+            12.0,
+            25.0
+          ],
+          "free_mm": 3.9,
+          "fits_mm": 3.4,
+          "limit": "ip2368"
+        },
+        {
+          "rect": [
+            37.0,
+            109.5,
+            7.0,
+            25.0
+          ],
+          "free_mm": 3.9,
+          "fits_mm": 3.4,
+          "limit": "ip2368"
+        },
+        {
+          "rect": [
+            44.0,
+            109.5,
+            6.0,
+            27.5
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.main"
+        },
+        {
+          "rect": [
+            0.0,
+            134.5,
+            44.0,
+            2.5
+          ],
+          "free_mm": 3.9,
+          "fits_mm": 3.4,
+          "limit": "ip2368"
+        },
+        {
+          "rect": [
+            0.0,
+            137.0,
+            40.0,
+            6.5
+          ],
+          "free_mm": 3.9,
+          "fits_mm": 3.4,
+          "limit": "ip2368"
+        },
+        {
+          "rect": [
+            0.0,
+            143.5,
+            40.0,
+            0.5
+          ],
+          "free_mm": 14.4,
+          "fits_mm": 13.9,
+          "limit": "plate.main"
+        }
+      ]
+    },
+    "RF": {
+      "front": [
+        {
+          "rect": [
+            0.0,
+            0.0,
+            95.0,
+            27.0
+          ],
+          "free_mm": 16.8,
+          "fits_mm": 16.3,
+          "limit": "v4l_a"
+        },
+        {
+          "rect": [
+            95.0,
+            0.0,
+            1.5,
+            27.0
+          ],
+          "free_mm": 29.8,
+          "fits_mm": 29.3,
+          "limit": "rfbay.lid"
+        },
+        {
+          "rect": [
+            96.5,
+            0.0,
+            87.5,
+            27.0
+          ],
+          "free_mm": 16.8,
+          "fits_mm": 16.3,
+          "limit": "v4l_b"
+        },
+        {
+          "rect": [
+            0.0,
+            27.0,
+            184.0,
+            0.5
+          ],
+          "free_mm": 29.8,
+          "fits_mm": 29.3,
+          "limit": "rfbay.lid"
+        },
+        {
+          "rect": [
+            0.0,
+            27.5,
+            73.7,
+            17.0
+          ],
+          "free_mm": 11.1,
+          "fits_mm": 10.6,
+          "limit": "sawbird"
+        },
+        {
+          "rect": [
+            73.7,
+            27.5,
+            9.6,
+            17.0
+          ],
+          "free_mm": 29.8,
+          "fits_mm": 29.3,
+          "limit": "rfbay.lid"
+        },
+        {
+          "rect": [
+            83.3,
+            27.5,
+            73.7,
+            17.0
+          ],
+          "free_mm": 11.1,
+          "fits_mm": 10.6,
+          "limit": "flamingo"
+        },
+        {
+          "rect": [
+            157.0,
+            27.5,
+            27.0,
+            17.0
+          ],
+          "free_mm": 29.8,
+          "fits_mm": 29.3,
+          "limit": "rfbay.lid"
+        }
+      ],
+      "rear": [
+        {
+          "rect": [
+            0.0,
+            0.0,
+            184.0,
+            44.5
+          ],
+          "free_mm": 3.0,
+          "fits_mm": 2.5,
+          "limit": "plate.main"
+        }
+      ]
+    }
+  },
+  "harness_routes": {
+    "file": "generated/harness-routes.json",
+    "pps": {
+      "limit_mm": 200.0,
+      "via_segments": [
+        "S01",
+        "S25"
+      ],
+      "via_segments_mm": 329,
+      "via_segments_provisional": true,
+      "decision": "PPS + UART6 + GND branch off the S01 ribbon at the Q6A end and run directly to the LC76G in the rear layer (harness only, E3 nets unchanged; build/15 W2 MECH-1)",
+      "branch": "PPS",
+      "branch_mm": 196,
+      "branch_provisional": true,
+      "value_mm": 196
+    },
+    "segments": {
+      "S01": {
+        "kind": "harness",
+        "length_mm": 102,
+        "path_mm": 66.0,
+        "bends": 3,
+        "bundle_od_mm": 2.54,
+        "bend_allowance_mm": 6.0,
+        "through": [
+          "SL1"
+        ],
+        "status": "OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S02": {
+        "kind": "harness",
+        "length_mm": 189,
+        "path_mm": 80.5,
+        "bends": 6,
+        "bundle_od_mm": 16.55,
+        "bend_allowance_mm": 78.0,
+        "through": [],
+        "status": "OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S03": {
+        "kind": "harness",
+        "length_mm": 308,
+        "path_mm": 219.1,
+        "bends": 11,
+        "bundle_od_mm": 6.71,
+        "bend_allowance_mm": 58.0,
+        "through": [
+          "SL2",
+          "N4"
+        ],
+        "status": "OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone; RF header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S04": {
+        "kind": "harness",
+        "length_mm": 221,
+        "path_mm": 151.4,
+        "bends": 7,
+        "bundle_od_mm": 7.17,
+        "bend_allowance_mm": 39.4,
+        "through": [
+          "SL2",
+          "N4"
+        ],
+        "status": "OPEN (end provisional): PWR header position TBD (board layout; GR-3 header refs): end on the edge zone; RF header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S05": {
+        "kind": "harness",
+        "length_mm": 35,
+        "path_mm": 4.8,
+        "bends": 0,
+        "bundle_od_mm": 6.93,
+        "bend_allowance_mm": 0.0,
+        "through": [],
+        "status": "OPEN (end provisional): F101 carrier PACK_FUSE not modelled (mechanical/README): end on the pack top face; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S06": {
+        "kind": "harness",
+        "length_mm": null,
+        "status": "OPEN (end provisional): INA228 5832 has no envelope or place in the model yet (MECH-3)"
+      },
+      "S07": {
+        "kind": "harness",
+        "length_mm": null,
+        "status": "OPEN (end provisional): Pololu #2813 has no envelope or place in the model yet (MECH-3)"
+      },
+      "S10": {
+        "kind": "harness",
+        "length_mm": 248,
+        "path_mm": 150.8,
+        "bends": 8,
+        "bundle_od_mm": 10.59,
+        "bend_allowance_mm": 66.5,
+        "through": [],
+        "status": "OPEN (end provisional): PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S11": {
+        "kind": "harness",
+        "length_mm": 229,
+        "path_mm": 175.6,
+        "bends": 6,
+        "bundle_od_mm": 4.78,
+        "bend_allowance_mm": 22.5,
+        "through": [
+          "SL3"
+        ],
+        "status": "OPEN (end provisional): behind-panel envelope of MUSBRM5C130 TBD (MECH-2): end at the port centre on the wall; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S12": {
+        "kind": "harness",
+        "length_mm": 35,
+        "path_mm": 4.8,
+        "bends": 0,
+        "bundle_od_mm": 3.38,
+        "bend_allowance_mm": 0.0,
+        "through": [],
+        "status": "OPEN (end provisional): XT30 pigtail place in the battery compartment TBD: end on the pack top face; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S13": {
+        "kind": "harness",
+        "length_mm": 134,
+        "path_mm": 87.4,
+        "bends": 6,
+        "bundle_od_mm": 3.38,
+        "bend_allowance_mm": 15.9,
+        "through": [
+          "SL2"
+        ],
+        "status": "OPEN (end provisional): Adafruit 5997 has no envelope (mechanical/README): end below the Q6A USB stack (J2); PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S14": {
+        "kind": "harness",
+        "length_mm": 68,
+        "path_mm": 34.8,
+        "bends": 1,
+        "bundle_od_mm": 3.38,
+        "bend_allowance_mm": 2.7,
+        "through": [
+          "SL2"
+        ],
+        "status": "OPEN (end provisional): hatch-board layout TBD (W2-05): end on the hatch-board envelope; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S15": {
+        "kind": "harness",
+        "length_mm": 157,
+        "path_mm": 115.3,
+        "bends": 7,
+        "bundle_od_mm": 1.94,
+        "bend_allowance_mm": 10.7,
+        "through": [
+          "SL2"
+        ],
+        "status": "OPEN (end provisional): hatch-board layout TBD (W2-05): end on the hatch-board envelope; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S16": {
+        "kind": "harness",
+        "length_mm": 123,
+        "path_mm": 86.2,
+        "bends": 2,
+        "bundle_od_mm": 4.14,
+        "bend_allowance_mm": 6.5,
+        "through": [],
+        "status": "OPEN (end provisional): hatch-board layout TBD (W2-05): J503 on the hatch-board envelope"
+      },
+      "S17": {
+        "kind": "harness",
+        "length_mm": 66,
+        "path_mm": 27.6,
+        "bends": 3,
+        "bundle_od_mm": 3.38,
+        "bend_allowance_mm": 7.5,
+        "through": [
+          "SL2"
+        ],
+        "status": "OPEN (end provisional): VCC_3V3_MKEY tap on the Q6A not chosen (E5/E2; MECH-6 B-07): end at the Q6A board edge; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S18": {
+        "kind": "harness",
+        "length_mm": 164,
+        "path_mm": 122.8,
+        "bends": 4,
+        "bundle_od_mm": 3.38,
+        "bend_allowance_mm": 10.6,
+        "through": [
+          "SL2"
+        ],
+        "status": "OPEN (end provisional): R44SF envelope TBD: end at the riser window (plate rear face); PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S19": {
+        "kind": "harness",
+        "length_mm": 38,
+        "path_mm": 5.0,
+        "bends": 1,
+        "bundle_od_mm": 3.38,
+        "bend_allowance_mm": 2.7,
+        "through": [],
+        "status": "OPEN (end provisional): barrel jack position on the Wisecoco HDMI board TBD (STACK D5): end on the board envelope; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S20": {
+        "kind": "harness",
+        "length_mm": 156,
+        "path_mm": 115.2,
+        "bends": 5,
+        "bundle_od_mm": 2.74,
+        "bend_allowance_mm": 10.8,
+        "through": [
+          "SL2",
+          "N2"
+        ],
+        "status": "OPEN (end provisional): J543 pigtail (H2) place TBD: end at notch N2 of the RTL-A USB lead; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S21": {
+        "kind": "harness",
+        "length_mm": 142,
+        "path_mm": 100.7,
+        "bends": 5,
+        "bundle_od_mm": 2.74,
+        "bend_allowance_mm": 10.8,
+        "through": [
+          "SL2",
+          "N3"
+        ],
+        "status": "OPEN (end provisional): J541 place TBD: end at notch N3 of the RTL-B USB lead; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S22": {
+        "kind": "harness",
+        "length_mm": 55,
+        "path_mm": 19.2,
+        "bends": 2,
+        "bundle_od_mm": 3.35,
+        "bend_allowance_mm": 5.3,
+        "through": [
+          "SL2"
+        ],
+        "status": "OPEN (end provisional): J544 micro-USB pigtail exit on the HF+ can TBD: end on the can face; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S23": {
+        "kind": "harness",
+        "length_mm": 242,
+        "path_mm": 193.3,
+        "bends": 7,
+        "bundle_od_mm": 3.35,
+        "bend_allowance_mm": 18.4,
+        "through": [
+          "SL3"
+        ],
+        "status": "OPEN (end provisional): behind-panel envelope of PX0845/A TBD (MECH-2): end at the port centre on the wall; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S24": {
+        "kind": "harness",
+        "length_mm": 193,
+        "path_mm": 139.0,
+        "bends": 9,
+        "bundle_od_mm": 3.35,
+        "bend_allowance_mm": 23.7,
+        "through": [
+          "SL2"
+        ],
+        "status": "OPEN (end provisional): T7_INSERT envelope TBD (in the USB3 cable between Q6A J5 and the T7 gland): end beside the gland; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S25": {
+        "kind": "harness",
+        "length_mm": 227,
+        "path_mm": 159.5,
+        "bends": 8,
+        "bundle_od_mm": 5.85,
+        "bend_allowance_mm": 36.8,
+        "through": [
+          "SL2"
+        ],
+        "status": "OPEN (end provisional): P1 header position on the Waveshare 24370 board not read: end on the LC76G envelope face towards the route; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S26": {
+        "kind": "harness",
+        "length_mm": 97,
+        "path_mm": 63.6,
+        "bends": 1,
+        "bundle_od_mm": 3.87,
+        "bend_allowance_mm": 3.0,
+        "through": [],
+        "status": "OPEN (end provisional): Adafruit 4162 envelope TBD: end at the bezel window on the top wall; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S27": {
+        "kind": "stock_lead",
+        "length_mm": 111,
+        "path_mm": 67.5,
+        "bends": 5,
+        "bundle_od_mm": 3.35,
+        "bend_allowance_mm": 13.2,
+        "through": [
+          "SL1"
+        ],
+        "status": "OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S28": {
+        "kind": "harness",
+        "length_mm": 38,
+        "path_mm": 4.9,
+        "bends": 1,
+        "bundle_od_mm": 3.38,
+        "bend_allowance_mm": 2.7,
+        "through": [],
+        "status": "OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S29": {
+        "kind": "harness",
+        "length_mm": 72,
+        "path_mm": 32.9,
+        "bends": 4,
+        "bundle_od_mm": 2.74,
+        "bend_allowance_mm": 8.6,
+        "through": [],
+        "status": "OPEN (end provisional): CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S30": {
+        "kind": "harness",
+        "length_mm": 177,
+        "path_mm": 125.1,
+        "bends": 8,
+        "bundle_od_mm": 3.35,
+        "bend_allowance_mm": 21.0,
+        "through": [
+          "SL2"
+        ],
+        "status": "OPEN (end provisional): hatch-board layout TBD (W2-05): J502 on the hatch-board envelope; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S31": {
+        "kind": "harness",
+        "length_mm": 58,
+        "path_mm": 24.2,
+        "bends": 2,
+        "bundle_od_mm": 2.74,
+        "bend_allowance_mm": 3.1,
+        "through": [],
+        "status": "OPEN (end provisional): J522 EDL contact pads on the Q6A not localised (E5 §9): end at the Q6A board edge"
+      },
+      "S32": {
+        "kind": "harness",
+        "length_mm": 216,
+        "path_mm": 162.9,
+        "bends": 6,
+        "bundle_od_mm": 4.78,
+        "bend_allowance_mm": 22.5,
+        "through": [
+          "SL3"
+        ],
+        "status": "OPEN (end provisional): PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S33": {
+        "kind": "external",
+        "length_mm": null,
+        "status": "EXTERNAL: outside the enclosure; the length is set by the cable, not by the enclosure model"
+      },
+      "S34": {
+        "kind": "harness",
+        "length_mm": 201,
+        "path_mm": 144.5,
+        "bends": 7,
+        "bundle_od_mm": 4.74,
+        "bend_allowance_mm": 26.1,
+        "through": [
+          "SL3"
+        ],
+        "status": "OPEN (end provisional): behind-panel envelope of KH-GX12-6P TBD (MECH-2): end at the port centre on the wall; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S35": {
+        "kind": "harness",
+        "length_mm": 157,
+        "path_mm": 117.5,
+        "bends": 4,
+        "bundle_od_mm": 2.74,
+        "bend_allowance_mm": 8.6,
+        "through": [
+          "SL2"
+        ],
+        "status": "OPEN (end provisional): Boni-Whip bias-tee has no envelope (mechanical/README): end at the HF+ can top edge; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S36": {
+        "kind": "harness",
+        "length_mm": null,
+        "status": "OPEN (end provisional): pod power entry (J551 panel receptacle, GR-1) is not placed on a face yet (MECH-3)"
+      },
+      "S37": {
+        "kind": "harness",
+        "length_mm": 31,
+        "path_mm": 0.8,
+        "bends": 0,
+        "bundle_od_mm": 3.87,
+        "bend_allowance_mm": 0.0,
+        "through": [],
+        "status": "OPEN (end provisional): ENC header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S38": {
+        "kind": "harness",
+        "length_mm": 31,
+        "path_mm": 0.8,
+        "bends": 0,
+        "bundle_od_mm": 3.87,
+        "bend_allowance_mm": 0.0,
+        "through": [],
+        "status": "OPEN (end provisional): ENC header position TBD (board layout; GR-3 header refs): end on the edge zone"
+      },
+      "S39": {
+        "kind": "harness",
+        "length_mm": null,
+        "status": "OPEN (end provisional): TH301 place on the panel rear heat spreader TBD (MECH-6 B-10)"
+      },
+      "S40": {
+        "kind": "harness",
+        "length_mm": null,
+        "status": "OPEN (end provisional): TH302 place on the inner frame TBD (MECH-6 B-10)"
+      },
+      "S41": {
+        "kind": "external",
+        "length_mm": null,
+        "status": "EXTERNAL: outside the enclosure; the length is set by the cable, not by the enclosure model"
+      }
+    },
+    "branches": {
+      "PPS": {
+        "kind": "harness",
+        "length_mm": 196,
+        "path_mm": 159.4,
+        "bends": 2,
+        "bundle_od_mm": 3.87,
+        "bend_allowance_mm": 6.1,
+        "through": [],
+        "status": "OPEN (end provisional): P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge"
+      }
+    },
+    "slots": {
+      "SL1": {
+        "listed": [
+          "S01"
+        ],
+        "routed": [
+          "S01",
+          "S27"
+        ],
+        "listed_not_routed": [],
+        "routed_not_listed": [
+          "S27"
+        ]
+      },
+      "SL2": {
+        "listed": [
+          "S03",
+          "S04",
+          "S13",
+          "S14",
+          "S15",
+          "S17",
+          "S18",
+          "S20",
+          "S21",
+          "S22",
+          "S24",
+          "S25",
+          "S30",
+          "S35"
+        ],
+        "routed": [
+          "S03",
+          "S04",
+          "S13",
+          "S14",
+          "S15",
+          "S17",
+          "S18",
+          "S20",
+          "S21",
+          "S22",
+          "S24",
+          "S25",
+          "S30",
+          "S35"
+        ],
+        "listed_not_routed": [],
+        "routed_not_listed": []
+      },
+      "SL3": {
+        "listed": [
+          "S11",
+          "S23",
+          "S32",
+          "S34"
+        ],
+        "routed": [
+          "S11",
+          "S23",
+          "S32",
+          "S34"
+        ],
+        "listed_not_routed": [],
+        "routed_not_listed": []
       }
     }
   },
@@ -1538,9 +4018,10 @@
     "collisions": 0,
     "outside": 0,
     "rule_failures": 0,
-    "rules_open": 6,
+    "rules_open": 9,
     "antenna_rule_failures": 0,
     "board_area_failures": 0,
+    "board_area_open": 1,
     "board_area_harness_open": 2,
     "thermal_failures": 0,
     "thermal_open": 3,

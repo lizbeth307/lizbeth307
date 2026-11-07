@@ -313,6 +313,7 @@ def evaluate(P):
     out.append({"id": "R-HDMI-ROUTE", "rule": "HDMI cable Q6A to HDMI board: keep-clear route in the envelope check (plug head, bends, plate notch, run)",
                 "value_mm": {"cable_od": hr["cable_od"], "bend_r": hr["bend_r"]},
                 "result": "OPEN: " + hr["_status"], "source": "mechanical.json hdmi_route, layout hdmi_*"})
+    out += w2_mech1_rules(P)
     return out
 
 
@@ -513,3 +514,9 @@ def bay_packing(P):
         res["result"] = ("OPEN: the female USB ends of the two V4L leads are not inside the modelled bay; with the current reserves "
                          "neither arrangement fits (measure the V4L and the socket, then re-pack or move the cased LNA modules out of the bay)")
     return res
+
+
+def w2_mech1_rules(P):
+    """Harness routes (R-PPS-LEN, R-ROUTE-CLEAR; srrx_mech/routes.py) and board header heights (R-HDR-HEIGHT; boards.py)."""
+    from . import boards, routes
+    return routes.route_rules(P) + [boards.header_height_rule(P)]

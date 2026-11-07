@@ -786,5 +786,499 @@
       "_note": "battery compartment: front face below the display; the thread passes the front wall of the tray and ends in the 3 mm foam layer (z 54.2-57.2), clear of the pack; the foam gets a 13 mm hole at the vent axis so the membrane breathes into the pack compartment"
     }
   ],
-  "vents_src": "Amphenol LTW M12 plastic vents (parts.json ltw_vent): through-hole 2.0-3.5 mm with nut (VENT-PS1YBK-O8002, the 3 Gainta boxes), or threaded hole >= 4.0 mm without nut (VENT-PS1NBK-O8002, used for V1 and V2); never facing up (STACK D15); purchase: parts DB assembly_items AI-VENT-NBK / AI-VENT-YBK"
+  "vents_src": "Amphenol LTW M12 plastic vents (parts.json ltw_vent): through-hole 2.0-3.5 mm with nut (VENT-PS1YBK-O8002, the 3 Gainta boxes), or threaded hole >= 4.0 mm without nut (VENT-PS1NBK-O8002, used for V1 and V2); never facing up (STACK D15); purchase: parts DB assembly_items AI-VENT-NBK / AI-VENT-YBK",
+  "harness_routes": {
+    "_note": "Harness routes per build/16 segment (B-00, W2 MECH-1): waypoints name the layout envelope, structure part, slot, notch, port or board edge zone they use (srrx_mech/routes.py); lengths go to generated/harness-routes.json and from there to build/16 (tools/build_assembly_docs.py). MODEL ESTIMATE: centrelines, not measured cut lengths.",
+    "status": "MODEL_ESTIMATE",
+    "service_loops_mm": [15.0, 15.0],
+    "_service_loops_src": "build/16 §1 'Довжина': траса з моделі корпусу + 2 x 15 мм сервісної петлі (tools/build_assembly_docs.py)",
+    "edge_exit_mm": 5.0,
+    "_edge_exit_note": "cable exit above the component face at a board edge zone while the header positions are TBD (assumption of this package; CTRL/RF/ENC side-entry PH use dz 2.4 = PH_side h 4.8 / 2)",
+    "fill": 0.6,
+    "insulation_max_mm": {"PH": 1.5, "MF": {"20": 1.85, "22": 1.85, "24": 1.85, "26": 1.27, "28": 1.27, "30": 1.27}, "MFJ": 3.1, "IDC": 1.27, "default": 1.5},
+    "_insulation_src": "largest insulation OD each terminal accepts (upper bound for the bundle until AI-WIRE-PTFE is chosen): PH SPH-002T-P0.5S 0.8-1.5 (JST ePH, build/16 §1); Micro-Fit 43030: 1.85 for 20-24 AWG, 1.27 for 26-30 AWG (Molex PS-43650 rev J 2006/08/08 sheet 1, 4.2, read 2026-11-07 from https://static.datasheets.com/doc/21423501-molex-43650-0715-ds.pdf); Mini-Fit Jr. 0039000060 1.30-3.10 (build/16 §1, MOLEX-5556); IDC: 1.27 mm ribbon pitch; default (solder ends, fan lead) = PH value (assumption)",
+    "flat": {"S01": {"thickness_mm": 2.54, "_note": "ribbon: two stacked 20-way halves (build/16 S01), 2 x 1.27 pitch as the bend thickness"}},
+    "pps": {"path": ["S01", "S25"], "limit_mm": 200.0, "branch": "PPS", "decision": "PPS + UART6 + GND branch off the S01 ribbon at the Q6A end and run directly to the LC76G in the rear layer (harness only, E3 nets unchanged; build/15 W2 MECH-1)", "_src": "STACK 5.2 / E3 J301 note 'UART7/PPS wiring <=20cm'"},
+    "segments": {
+      "S01": {
+        "ends": ["Q6A.HDR", "CTRL"],
+        "via": [
+          {"box": "q6a.s01_idc_socket", "at": [0.5, 1.0, 0.0]},
+          {"slot": "SL1", "at": [0.5, 0.5, 0.5], "keep": "xz"},
+          {"edge": "CTRL", "zone": 0, "s": 0, "off": [-0.8, 0, 0], "keep": "yz"},
+          {"edge": "CTRL", "zone": 0, "s": 0, "dz": 2.4, "keep": "xy"},
+          {"edge": "CTRL", "zone": 0, "s": 82.8, "dz": 2.4}
+        ],
+        "note": "40-way ribbon (two stacked 20-way halves) from the socket face over the Q6A top edge, through SL1 into the front layer, to the CTRL left edge at the SL1 row"
+      },
+      "S02": {
+        "ends": ["CTRL", "PWR"],
+        "via": [
+          {"edge": "CTRL", "zone": 0, "s": 47, "dz": 2.4},
+          {"edge": "CTRL", "zone": 0, "s": 47, "dz": 2.4, "off": [-0.8, 0, 0]},
+          {"box": "hdmi_route_front_run", "at": [0.5, 1.0, 0.5], "off": [0, 1.2, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
+          {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"box": "PWR.r0", "at": [1.0, 0.5, 0.5], "off": [1.0, 0, 0], "keep": "yz"},
+          {"box": "PWR.r0", "at": [1.0, 0.9, 0.5], "off": [1.0, 0, 0], "keep": "xz"},
+          {"edge": "PWR", "zone": 1, "s": 31.5}
+        ],
+        "note": "front layer: CTRL left edge, down at y 78, west along y 74.25 to the PWR right edge zone"
+      },
+      "S03": {
+        "ends": ["CTRL", "RF"],
+        "via": [
+          {"edge": "CTRL", "zone": 0, "s": 71, "dz": 2.4},
+          {"edge": "CTRL", "zone": 0, "s": 71, "dz": 2.4, "off": [-0.8, 0, 0]},
+          {"box": "hdmi_route_front_run", "at": [0.5, 1.0, 0.5], "off": [0, 1.2, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
+          {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"slot": "SL2", "at": [0.5, 0.5, 0.5], "keep": "yz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
+          {"slot": "SL1", "at": [0.5, 0.5, 0.5], "keep": "xz"},
+          {"notch": "N4", "at": [0.35, 0.5, 0.5], "keep": "yz"},
+          {"notch": "N4", "at": [0.5, 0.5, 0.5], "keep": "xy"},
+          {"notch": "N4", "at": [0.35, 0.5, 0.5]},
+          {"box": "rfbay.wall.bottom", "at": [0.5, 1.0, 0.5], "off": [0, 0.2, 0], "keep": "xz"},
+          {"edge": "RF", "zone": 2, "s": 63.3, "dz": 2.4, "keep": "xy"},
+          {"edge": "RF", "zone": 2, "s": 63.3, "dz": 2.4}
+        ],
+        "note": "SL2 to the rear layer, along y 95.8 to notch N4 at the lid edge, up inside the bay wall to the RF bottom edge"
+      },
+      "S04": {
+        "ends": ["PWR", "RF"],
+        "via": [
+          {"edge": "PWR", "zone": 3, "s": 10},
+          {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
+          {"slot": "SL1", "at": [0.5, 0.5, 0.5], "keep": "xz"},
+          {"notch": "N4", "at": [0.65, 0.5, 0.5], "keep": "yz"},
+          {"notch": "N4", "at": [0.5, 0.5, 0.5], "keep": "xy"},
+          {"notch": "N4", "at": [0.65, 0.5, 0.5]},
+          {"box": "rfbay.wall.bottom", "at": [0.5, 1.0, 0.5], "off": [0, 0.2, 0], "keep": "xz"},
+          {"edge": "RF", "zone": 2, "s": 67.5, "dz": 2.4, "keep": "xy"},
+          {"edge": "RF", "zone": 2, "s": 67.5, "dz": 2.4}
+        ],
+        "note": "PWR top edge zone over SL2, rear layer, notch N4, RF bottom edge"
+      },
+      "S05": {
+        "ends": ["PACK", "PWR"],
+        "via": [
+          {"edge": "PWR", "zone": 0, "s": 14},
+          {"box": "battery_pack", "at": [0.5, 1.0, 0.5], "keep": "xz"}
+        ],
+        "touch": ["battery_tray"],
+        "end_status": [{"unit": "PACK", "provisional": "F101 carrier PACK_FUSE not modelled (mechanical/README): end on the pack top face"}],
+        "note": "shortest: PWR bottom edge straight down into the battery tray"
+      },
+      "S06": {
+        "ends": ["PWR", "INA"],
+        "via": [],
+        "open": "INA228 5832 has no envelope or place in the model yet (MECH-3)"
+      },
+      "S07": {
+        "ends": ["PWR", "SWM"],
+        "via": [],
+        "open": "Pololu #2813 has no envelope or place in the model yet (MECH-3)"
+      },
+      "S10": {
+        "ends": ["PWR", "CHG"],
+        "via": [
+          {"edge": "PWR", "zone": 0, "s": 124},
+          {"box": "PWR.r0", "at": [0.5, 0.0, 0.5], "off": [0, -0.3, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
+          {"box": "PWR.r0", "at": [1.0, 0.5, 0.5], "off": [1.0, 0, 0], "keep": "yz"},
+          {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"box": "ip2368", "at": [0.0, 0.5, 0.5], "off": [1.0, 0, 0], "keep": "yz"},
+          {"box": "hdmi_route_front_run", "at": [0.5, 1.0, 0.5], "off": [0, 1.2, 0], "keep": "xz"},
+          {"box": "lime", "at": [0.5, 0.5, 1.0], "off": [0, 0, 1.5], "keep": "xy"},
+          {"box": "ip2368", "at": [0.5, 0.05, 0.5], "keep": "xz"},
+          {"box": "ip2368", "at": [0.5, 0.5, 1.0], "keep": "xy"}
+        ],
+        "note": "PWR bottom edge, along y 38.2 and up the gap right of PWR at plate level, east along y 74.25 under the HDMI cable run, up between the display edge and the CTRL over the Lime to the IP2368"
+      },
+      "S11": {
+        "ends": ["USBC", "PWR"],
+        "via": [
+          {"port": "USB_C_IN"},
+          {"slot": "SL3", "at": [0.5, 0.167, 0.5], "keep": "xz"},
+          {"slot": "SL3", "at": [0.5, 0.5, 0.5], "keep": "yz"},
+          {"box": "bms", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
+          {"box": "PWR.r0", "at": [0.5, 0.0, 0.5], "off": [0, -0.3, 0], "keep": "xz"},
+          {"box": "PWR.r0", "at": [1.0, 0.5, 0.5], "off": [1.0, 0, 0], "keep": "yz"},
+          {"box": "PWR.r0", "at": [1.0, 0.33, 0.5], "off": [1.0, 0, 0], "keep": "xz"},
+          {"edge": "PWR", "zone": 1, "s": 11.5}
+        ],
+        "end_status": [{"unit": "USBC", "provisional": "behind-panel envelope of MUSBRM5C130 TBD (MECH-2): end at the port centre on the wall"}],
+        "note": "bottom-face port, under the plate extension to SL3, front layer over the BMS, along y 38.2 to the PWR right edge"
+      },
+      "S12": {
+        "ends": ["PWR", "XT30"],
+        "via": [
+          {"edge": "PWR", "zone": 0, "s": 74},
+          {"box": "battery_pack", "at": [0.5, 1.0, 0.5], "keep": "xz"}
+        ],
+        "touch": ["battery_tray"],
+        "end_status": [{"unit": "XT30", "provisional": "XT30 pigtail place in the battery compartment TBD: end on the pack top face"}],
+        "note": "service XT30 pigtail into the battery compartment"
+      },
+      "S13": {
+        "ends": ["PWR", "HUB"],
+        "via": [
+          {"edge": "PWR", "zone": 3, "s": 14},
+          {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
+          {"box": "q6a.usb_stack", "at": [0.0, 0.5, 0.5], "off": [0.75, 0, 0], "keep": "yz"},
+          {"box": "t7_gland_body", "at": [0.5, 0.43, 0.5], "keep": "xz"},
+          {"box": "hatch_parts", "at": [0.5, 0.5, 0.0], "off": [0, 0, 5.5], "keep": "xy"},
+          {"box": "q6a.usb_stack", "at": [0.5, 0.5, 0.5], "keep": "xz"},
+          {"box": "q6a.usb_stack", "at": [0.5, 0.5, 0.5], "keep": "yz"}
+        ],
+        "end_status": [{"unit": "HUB", "provisional": "Adafruit 5997 has no envelope (mechanical/README): end below the Q6A USB stack (J2)"}],
+        "note": "SL2, rear layer east of the EDL key, down beside the T7 gland, under the Q6A USB stack"
+      },
+      "S14": {
+        "ends": ["PWR", "HATCH"],
+        "via": [
+          {"edge": "PWR", "zone": 3, "s": 3},
+          {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
+          {"box": "hatch_parts", "at": [0.0, 0.5, 0.5], "off": [1.0, 0, 0], "keep": "yz"},
+          {"box": "hatch_parts", "at": [0.5, 0.5, 1.0], "keep": "xy"}
+        ],
+        "end_status": [{"unit": "HATCH", "provisional": "hatch-board layout TBD (W2-05): end on the hatch-board envelope"}],
+        "note": "SL2 west end, down between the HF+ can and the EDL key to the hatch board"
+      },
+      "S15": {
+        "ends": ["CTRL", "HATCH"],
+        "via": [
+          {"edge": "CTRL", "zone": 0, "s": 73, "dz": 2.4},
+          {"edge": "CTRL", "zone": 0, "s": 73, "dz": 2.4, "off": [-0.8, 0, 0]},
+          {"box": "hdmi_route_front_run", "at": [0.5, 1.0, 0.5], "off": [0, 1.2, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
+          {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"slot": "SL2", "at": [0.14, 0.5, 0.5], "keep": "yz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
+          {"box": "hatch_parts", "at": [0.0, 0.5, 0.5], "off": [1.8, 0, 0], "keep": "yz"},
+          {"box": "hatch_parts", "at": [0.5, 0.5, 1.0], "keep": "xy"}
+        ],
+        "end_status": [{"unit": "HATCH", "provisional": "hatch-board layout TBD (W2-05): end on the hatch-board envelope"}],
+        "note": "front layer to SL2, down beside the EDL key to the hatch board"
+      },
+      "S16": {
+        "ends": ["HATCH", "Q6A.J21"],
+        "via": [
+          {"box": "hatch_parts", "at": [1.0, 0.1, 0.5]},
+          {"box": "q6a.j21_3p", "at": [0.5, 0.5, 0.5], "keep": "yz"},
+          {"box": "q6a.j21_3p", "at": [0.5, 0.5, 0.0], "keep": "xy"},
+          {"box": "q6a.j21_3p", "at": [0.5, 1.0, 0.0]}
+        ],
+        "end_status": [{"unit": "HATCH", "provisional": "hatch-board layout TBD (W2-05): J503 on the hatch-board envelope"}],
+        "note": "rear layer under the Q6A USB stack, south of the fan duct, up to the J21 pads"
+      },
+      "S17": {
+        "ends": ["PWR", "Q6A.CORE"],
+        "via": [
+          {"edge": "PWR", "zone": 3, "s": 18},
+          {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
+          {"box": "q6a.board", "at": [0.0, 0.5, 0.5], "off": [-1.0, 0, 0], "keep": "yz"},
+          {"box": "q6a.board", "at": [0.0, 0.5, 1.0], "keep": "y"}
+        ],
+        "end_status": [{"unit": "Q6A.CORE", "provisional": "VCC_3V3_MKEY tap on the Q6A not chosen (E5/E2; MECH-6 B-07): end at the Q6A board edge"}],
+        "note": "SL2, rear layer east to the Q6A board edge"
+      },
+      "S18": {
+        "ends": ["PWR", "RISER"],
+        "via": [
+          {"edge": "PWR", "zone": 3, "s": 16},
+          {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
+          {"slot": "SL1", "at": [0.5, 0.5, 0.5], "keep": "xz"},
+          {"window": "riser_window", "at": [0.5, 0.5, 0.5], "keep": "yz"},
+          {"window": "riser_window", "at": [0.5, 0.5, 0.0]}
+        ],
+        "end_status": [{"unit": "RISER", "provisional": "R44SF envelope TBD: end at the riser window (plate rear face)"}],
+        "note": "SL2, rear layer north to y 95.8, east to the riser window"
+      },
+      "S19": {
+        "ends": ["PWR", "DISP"],
+        "via": [
+          {"edge": "PWR", "zone": 2, "s": 40},
+          {"box": "PWR.r1", "at": [0.5, 1.0, 0.5], "off": [0, 1.0, 0], "keep": "xz"},
+          {"box": "hdmi_board", "at": [0.0, 0.5, 0.5], "keep": "yz"}
+        ],
+        "end_status": [{"unit": "DISP", "provisional": "barrel jack position on the Wisecoco HDMI board TBD (STACK D5): end on the board envelope"}],
+        "note": "PWR top edge of the left leg to the left edge of the HDMI driver board"
+      },
+      "S20": {
+        "ends": ["PWR", "RTLA"],
+        "via": [
+          {"edge": "PWR", "zone": 3, "s": 2.5},
+          {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
+          {"slot": "SL1", "at": [0.5, 0.5, 0.5], "keep": "xz"},
+          {"notch": "N2", "at": [0.5, 0.5, 0.5], "keep": "yz"},
+          {"notch": "N2", "at": [0.5, 0.5, 0.5], "keep": "xy"},
+          {"notch": "N2", "at": [0.5, 0.5, 0.5]}
+        ],
+        "end_status": [{"unit": "RTLA", "provisional": "J543 pigtail (H2) place TBD: end at notch N2 of the RTL-A USB lead"}],
+        "note": "SL2, rear layer along y 95.8 west to notch N2"
+      },
+      "S21": {
+        "ends": ["PWR", "RTLB"],
+        "via": [
+          {"edge": "PWR", "zone": 3, "s": 6},
+          {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
+          {"slot": "SL1", "at": [0.5, 0.5, 0.5], "keep": "xz"},
+          {"notch": "N3", "at": [0.5, 0.5, 0.5], "keep": "yz"},
+          {"notch": "N3", "at": [0.5, 0.5, 0.5], "keep": "xy"},
+          {"notch": "N3", "at": [0.5, 0.5, 0.5]}
+        ],
+        "end_status": [{"unit": "RTLB", "provisional": "J541 place TBD: end at notch N3 of the RTL-B USB lead"}],
+        "note": "SL2, rear layer along y 95.8 east to notch N3"
+      },
+      "S22": {
+        "ends": ["PWR", "HFP"],
+        "via": [
+          {"edge": "PWR", "zone": 3, "s": 4.5},
+          {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
+          {"box": "hfplus", "at": [1.0, 0.5, 0.5], "keep": "yz"}
+        ],
+        "end_status": [{"unit": "HFP", "provisional": "J544 micro-USB pigtail exit on the HF+ can TBD: end on the can face"}],
+        "note": "SL2, rear layer to the right face of the HF+ can"
+      },
+      "S23": {
+        "ends": ["PWR", "LABUSB"],
+        "via": [
+          {"edge": "PWR", "zone": 1, "s": 6.5},
+          {"box": "PWR.r0", "at": [1.0, 0.5, 0.5], "off": [1.0, 0, 0], "keep": "yz"},
+          {"box": "PWR.r0", "at": [0.5, 0.0, 0.5], "off": [0, -0.3, 0], "keep": "xz"},
+          {"box": "bms", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
+          {"slot": "SL3", "at": [0.5, 0.5, 0.5], "keep": "yz"},
+          {"slot": "SL3", "at": [0.5, 0.167, 0.5], "keep": "xz"},
+          {"box": "gx16", "at": [0.5, 0.5, 0.0], "off": [0, 0, 17.5], "keep": "xy"},
+          {"port": "LAB_USB_A", "keep": "yz"},
+          {"port": "LAB_USB_A"}
+        ],
+        "end_status": [{"unit": "LABUSB", "provisional": "behind-panel envelope of PX0845/A TBD (MECH-2): end at the port centre on the wall"}],
+        "note": "PWR right edge, along y 38.2 over the BMS to SL3, rear layer under the plate extension to the bottom-face port"
+      },
+      "S24": {
+        "ends": ["CTRL", "T7A"],
+        "via": [
+          {"edge": "CTRL", "zone": 0, "s": 75, "dz": 2.4},
+          {"edge": "CTRL", "zone": 0, "s": 75, "dz": 2.4, "off": [-0.8, 0, 0]},
+          {"box": "hdmi_route_front_run", "at": [0.5, 1.0, 0.5], "off": [0, 1.2, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
+          {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"slot": "SL2", "at": [0.97, 0.5, 0.5], "keep": "yz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
+          {"box": "q6a.usb_stack", "at": [0.0, 0.5, 0.5], "off": [0.75, 0, 0], "keep": "yz"},
+          {"box": "t7_gland_body", "at": [0.5, 0.0, 0.5], "off": [0, -2.0, 0], "keep": "xz"},
+          {"box": "t7_gland_body", "at": [0.5, 0.5, 0.5], "off": [0, 0, 3.0], "keep": "xy"},
+          {"box": "t7_gland_body", "at": [0.5, 0.0, 0.5], "off": [0, -2.0, 3.0]}
+        ],
+        "end_status": [{"unit": "T7A", "provisional": "T7_INSERT envelope TBD (in the USB3 cable between Q6A J5 and the T7 gland): end beside the gland"}],
+        "note": "front layer to SL2, rear layer east of the EDL key, down to the USB3 cable beside the T7 gland"
+      },
+      "S25": {
+        "ends": ["CTRL", "GNSS"],
+        "via": [
+          {"edge": "CTRL", "zone": 0, "s": 67, "dz": 2.4},
+          {"edge": "CTRL", "zone": 0, "s": 67, "dz": 2.4, "off": [-0.8, 0, 0]},
+          {"box": "hdmi_route_front_run", "at": [0.5, 1.0, 0.5], "off": [0, 1.2, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
+          {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"slot": "SL2", "at": [0.5, 0.5, 0.5], "keep": "yz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
+          {"box": "hfplus", "at": [1.0, 0.5, 0.5], "off": [0.7, 0, 0], "keep": "yz"},
+          {"box": "lc76g", "at": [0.5, 0.5, 0.5], "keep": "xy"},
+          {"box": "lc76g", "at": [1.0, 0.5, 0.5], "keep": "y"}
+        ],
+        "end_status": [{"unit": "GNSS", "provisional": "P1 header position on the Waveshare 24370 board not read: end on the LC76G envelope face towards the route"}],
+        "note": "front layer to SL2, rear layer: shaft between the HF+ can and the hatch bay, west under the HF+ can to the LC76G"
+      },
+      "S26": {
+        "ends": ["CTRL", "VEML"],
+        "via": [
+          {"edge": "CTRL", "zone": 0, "s": 137, "dz": 2.4},
+          {"edge": "CTRL", "zone": 0, "s": 137, "dz": 2.4, "off": [-0.8, 0, 0]},
+          {"port": "VEML7700", "keep": "yz"},
+          {"port": "VEML7700"}
+        ],
+        "end_status": [{"unit": "VEML", "provisional": "Adafruit 4162 envelope TBD: end at the bezel window on the top wall"}],
+        "note": "front layer above the display edge, west to the VEML7700 window"
+      },
+      "S27": {
+        "kind": "stock_lead",
+        "ends": ["CTRL", "FAN1"],
+        "via": [
+          {"box": "cooler_a.fan", "at": [0.0, 1.0, 0.5]},
+          {"slot": "SL1", "at": [0.5, 0.5, 0.5], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
+          {"edge": "CTRL", "zone": 0, "s": 0, "off": [-0.8, 0, 0], "keep": "yz"},
+          {"edge": "CTRL", "zone": 0, "s": 0, "dz": 2.4, "keep": "xy"},
+          {"edge": "CTRL", "zone": 0, "s": 85, "dz": 2.4, "off": [-0.8, 0, 0]},
+          {"edge": "CTRL", "zone": 0, "s": 85, "dz": 2.4}
+        ],
+        "note": "Noctua NF-A4x10 own lead: fan corner, over the Q6A top edge, through SL1 beside the S01 ribbon, to the CTRL left edge"
+      },
+      "S28": {
+        "ends": ["CTRL", "FAN2"],
+        "via": [
+          {"edge": "CTRL", "zone": 0, "s": 37, "dz": 2.4},
+          {"edge": "CTRL", "zone": 0, "s": 37, "dz": 2.4, "off": [-0.8, 0, 0]},
+          {"box": "blower", "at": [1.0, 0.5, 0.5], "keep": "yz"},
+          {"box": "blower", "at": [1.0, 0.5, 1.0], "keep": "xy"}
+        ],
+        "note": "front layer: CTRL left edge to the top corner of the blower"
+      },
+      "S29": {
+        "ends": ["CTRL", "PWRBTN"],
+        "via": [
+          {"edge": "CTRL", "zone": 0, "s": 122, "dz": 2.4},
+          {"edge": "CTRL", "zone": 0, "s": 122, "dz": 2.4, "off": [-0.8, 0, 0]},
+          {"box": "lime", "at": [0.5, 0.5, 1.0], "off": [0, 0, 1.5], "keep": "xy"},
+          {"box": "pwr_key_body", "at": [0.5, 0.5, 0.5], "keep": "yz"},
+          {"box": "pwr_key_body", "at": [0.5, 0.5, 0.5], "keep": "xy"},
+          {"box": "pwr_key_body", "at": [0.5, 0.0, 0.5]}
+        ],
+        "note": "front layer: between the IP2368 and the display, to the terminal end of the PV6 power key"
+      },
+      "S30": {
+        "ends": ["CTRL", "HATCH"],
+        "via": [
+          {"edge": "CTRL", "zone": 0, "s": 77, "dz": 2.4},
+          {"edge": "CTRL", "zone": 0, "s": 77, "dz": 2.4, "off": [-0.8, 0, 0]},
+          {"box": "hdmi_route_front_run", "at": [0.5, 1.0, 0.5], "off": [0, 1.2, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
+          {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"slot": "SL2", "at": [0.14, 0.5, 0.5], "keep": "yz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
+          {"box": "hatch_parts", "at": [0.0, 0.5, 0.5], "off": [1.8, 0, 0], "keep": "yz"},
+          {"box": "hatch_parts", "at": [0.5, 0.8, 0.5], "keep": "xz"},
+          {"box": "hatch_parts", "at": [0.5, 0.5, 1.0], "keep": "xy"}
+        ],
+        "end_status": [{"unit": "HATCH", "provisional": "hatch-board layout TBD (W2-05): J502 on the hatch-board envelope"}],
+        "note": "front layer to SL2, down beside the EDL key to the hatch board (UART5 console J502)"
+      },
+      "S31": {
+        "ends": ["Q6A.EDL", "EDL"],
+        "via": [
+          {"box": "edl_key_body", "at": [0.5, 0.5, 1.0]},
+          {"box": "q6a.board", "at": [0.5, 0.5, 1.0], "off": [0, 0, 0.8], "keep": "xy"},
+          {"box": "q6a.board", "at": [0.0, 0.5, 0.5], "off": [-1.0, 0, 0], "keep": "yz"},
+          {"box": "q6a.board", "at": [0.0, 0.5, 1.0], "keep": "y"}
+        ],
+        "end_status": [{"unit": "Q6A.EDL", "provisional": "J522 EDL contact pads on the Q6A not localised (E5 §9): end at the Q6A board edge"}],
+        "note": "rear layer: PV6 terminals of SW501 to the Q6A board edge over the RJ45"
+      },
+      "S32": {
+        "ends": ["PWR", "GX16"],
+        "via": [
+          {"edge": "PWR", "zone": 1, "s": 4.5},
+          {"box": "PWR.r0", "at": [1.0, 0.5, 0.5], "off": [1.0, 0, 0], "keep": "yz"},
+          {"box": "PWR.r0", "at": [0.5, 0.0, 0.5], "off": [0, -0.3, 0], "keep": "xz"},
+          {"box": "bms", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
+          {"slot": "SL3", "at": [0.5, 0.5, 0.5], "keep": "yz"},
+          {"box": "gx16", "at": [0.5, 0.1, 0.5], "keep": "xz"},
+          {"box": "gx16", "at": [0.5, 0.5, 0.8], "keep": "xy"},
+          {"box": "gx16", "at": [1.0, 0.1, 0.8]}
+        ],
+        "note": "PWR right edge, along y 38.2 over the BMS to SL3, rear layer to the GX16 socket"
+      },
+      "S33": {
+        "kind": "external",
+        "ends": ["GX16", "IMUPACK"],
+        "via": [],
+        "note": "external IMU cable: its length is set by the cable (build/16 S33), not by the enclosure model"
+      },
+      "S34": {
+        "ends": ["PWR", "LABBUS"],
+        "via": [
+          {"edge": "PWR", "zone": 1, "s": 2.5},
+          {"box": "PWR.r0", "at": [1.0, 0.5, 0.5], "off": [1.0, 0, 0], "keep": "yz"},
+          {"box": "PWR.r0", "at": [0.5, 0.0, 0.5], "off": [0, -0.3, 0], "keep": "xz"},
+          {"box": "bms", "at": [0.5, 0.5, 1.0], "off": [0, 0, 2.0], "keep": "xy"},
+          {"slot": "SL3", "at": [0.5, 0.5, 0.5], "keep": "yz"},
+          {"slot": "SL3", "at": [0.5, 0.167, 0.5], "keep": "xz"},
+          {"port": "LAB_BUS", "keep": "xy"},
+          {"port": "LAB_BUS", "keep": "yz"},
+          {"port": "LAB_BUS"}
+        ],
+        "end_status": [{"unit": "LABBUS", "provisional": "behind-panel envelope of KH-GX12-6P TBD (MECH-2): end at the port centre on the wall"}],
+        "note": "PWR right edge, over the BMS to SL3, rear layer to the LAB BUS port"
+      },
+      "S35": {
+        "ends": ["PWR", "BONI"],
+        "via": [
+          {"edge": "PWR", "zone": 3, "s": 1.6},
+          {"box": "PWR.r0", "at": [0.5, 1.0, 0.5], "off": [0, 0.75, 0], "keep": "xz"},
+          {"box": "plate.main", "at": [0.5, 0.5, 0.0], "off": [0, 0, -5.5], "keep": "xy"},
+          {"slot": "SL1", "at": [0.5, 0.5, 0.5], "keep": "xz"},
+          {"box": "hfplus", "at": [0.3, 0.5, 0.5], "keep": "yz"},
+          {"box": "hfplus", "at": [0.5, 1.0, 0.5], "keep": "xz"}
+        ],
+        "end_status": [{"unit": "BONI", "provisional": "Boni-Whip bias-tee has no envelope (mechanical/README): end at the HF+ can top edge"}],
+        "note": "SL2, rear layer along y 95.8 to the HF+ can top edge (G6K side)"
+      },
+      "S36": {
+        "ends": ["PWR", "SPOD"],
+        "via": [],
+        "open": "pod power entry (J551 panel receptacle, GR-1) is not placed on a face yet (MECH-3)"
+      },
+      "S37": {
+        "ends": ["CTRL", "ENCM"],
+        "via": [
+          {"box": "CTRL.r1", "at": [1.0, 0.814, 0.0], "off": [0, 0, 4.0]},
+          {"edge": "ENC", "zone": 0, "at_place": "main", "t": 0.5, "dz": 2.4}
+        ],
+        "note": "across the CTRL cut-out to the left edge of the main ENC board"
+      },
+      "S38": {
+        "ends": ["CTRL", "ENCV"],
+        "via": [
+          {"box": "CTRL.r1", "at": [1.0, 0.189, 0.0], "off": [0, 0, 4.0]},
+          {"edge": "ENC", "zone": 0, "at_place": "volume", "t": 0.5, "dz": 2.4}
+        ],
+        "note": "across the CTRL cut-out to the left edge of the volume ENC board"
+      },
+      "S39": {
+        "ends": ["CTRL", "NTCP"],
+        "via": [],
+        "open": "TH301 place on the panel rear heat spreader TBD (MECH-6 B-10)"
+      },
+      "S40": {
+        "ends": ["CTRL", "NTCC"],
+        "via": [],
+        "open": "TH302 place on the inner frame TBD (MECH-6 B-10)"
+      },
+      "S41": {
+        "kind": "external",
+        "ends": ["SBPWR", "SPOD"],
+        "via": [],
+        "note": "pre-declared for GR-1: W425 pod power cable from the J551 panel receptacle (SBPWR) to the pod; length set by the cable (parts DB W-USBC-POWER, 1.50 m), not by the enclosure model"
+      }
+    },
+    "branches": {
+      "PPS": {
+        "from_segment": "S01",
+        "ends": ["Q6A.HDR", "GNSS"],
+        "nets": ["E3_GNSS_PPS", "UART6_RX", "UART6_TX", "GND"],
+        "wires": 4,
+        "replaces": "the PPS/UART6 transit of S01 + S25 through CTRL (E3 nets unchanged: harness only)",
+        "via": [
+          {"box": "q6a.s01_idc_socket", "at": [0.5, 1.0, 0.0]},
+          {"slot": "SL1", "at": [0.5, 0.5, 0.5], "keep": "xz"},
+          {"box": "lc76g", "at": [0.5, 0.5, 0.5], "keep": "yz"},
+          {"box": "lc76g", "at": [0.5, 1.0, 0.5], "keep": "z"}
+        ],
+        "end_status": [{"unit": "GNSS", "provisional": "P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge"}],
+        "note": "PPS (J20.7), UART6 (J20.16/18) and one GND leave the S01 ribbon right after the socket and run along y 95.8 in the rear layer to the LC76G"
+      }
+    }
+  }
 }

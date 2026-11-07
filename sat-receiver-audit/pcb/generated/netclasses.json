@@ -1,0 +1,2662 @@
+{
+  "schema": "srrx-netclasses-v1",
+  "status": "MODEL: IPC-2221 curve fit and closed-form CBCPW; finished impedance, trace and via temperature are bench gates (OPEN)",
+  "generator": "pcb/stackup.py",
+  "inputs": [
+    "tools/assembly_data.py NET_CURRENT/SEG_CURRENT",
+    "design/E1.json",
+    "design/E2.json",
+    "design/E3.json",
+    "design/E4.json",
+    "design/E5.json",
+    "pcb/generated/constraints.json DC-04"
+  ],
+  "stackup": {
+    "id": "JLC04161H-7628",
+    "board_thickness_mm": 1.6,
+    "source": "https://jlcpcb.com/impedance",
+    "read": "2026-11-07",
+    "layers": [
+      {
+        "kicad": "F.Cu",
+        "plan": "L1",
+        "copper_mm": 0.035
+      },
+      {
+        "dielectric": "prepreg 7628x1",
+        "thickness_mm": 0.2104,
+        "er": 4.4
+      },
+      {
+        "kicad": "In1.Cu",
+        "plan": "L2",
+        "copper_mm": 0.0152
+      },
+      {
+        "dielectric": "core",
+        "thickness_mm": 1.065,
+        "er": 4.6
+      },
+      {
+        "kicad": "In2.Cu",
+        "plan": "L3",
+        "copper_mm": 0.0152
+      },
+      {
+        "dielectric": "prepreg 7628x1",
+        "thickness_mm": 0.2104,
+        "er": 4.4
+      },
+      {
+        "kicad": "B.Cu",
+        "plan": "L4",
+        "copper_mm": 0.035
+      }
+    ],
+    "solder_mask": {
+      "c1_above_substrate_mil": 1.2,
+      "c2_above_trace_mil": 0.6,
+      "c3_between_traces_mil": 1.2,
+      "er": 3.8
+    },
+    "note": "Layer thicknesses sum to 1.5862 mm (computed). Copper weights: outer 0.035 mm = 1 oz, inner 0.0152 mm = 0.5 oz finished (JLC \"H/HOZ\")."
+  },
+  "fab_floor": {
+    "source": "https://jlcpcb.com/capabilities/pcb-capabilities",
+    "read": "2026-11-07",
+    "jlc_4l_1oz": {
+      "track_width_min": 0.09,
+      "track_spacing_min": 0.09,
+      "pad_to_track_min": 0.1,
+      "smd_pad_to_pad_min": 0.15,
+      "via_hole_min": 0.15,
+      "via_diameter_min": 0.25,
+      "pth_annular_min": 0.15,
+      "pth_annular_recommended": 0.2,
+      "via_hole_to_hole_min": 0.2,
+      "pad_hole_to_hole_min": 0.45,
+      "via_hole_to_track_min": 0.2,
+      "pth_to_track_min": 0.28,
+      "pth_to_track_recommended": 0.35,
+      "npth_to_track_min": 0.2,
+      "inner_via_hole_to_copper_min": 0.2,
+      "inner_pth_hole_to_copper_min": 0.3,
+      "copper_to_routed_edge_min": 0.2,
+      "npth_hole_min": 0.5,
+      "pth_drill_max": 6.3,
+      "plated_slot_min": 0.35,
+      "silk_line_min": 0.15,
+      "silk_text_height_min": 1.0,
+      "mask_bridge_min": 0.1,
+      "hole_wall_plating_mm": 0.018,
+      "impedance_tolerance_pct": 10
+    },
+    "jlc_2l_1oz": {
+      "track_width_min": 0.1,
+      "track_spacing_min": 0.1,
+      "pad_to_track_min": 0.1,
+      "smd_pad_to_pad_min": 0.15,
+      "via_hole_min": 0.15,
+      "via_diameter_min": 0.25,
+      "pth_annular_min": 0.18,
+      "pth_annular_recommended": 0.25,
+      "via_hole_to_hole_min": 0.2,
+      "pad_hole_to_hole_min": 0.45,
+      "via_hole_to_track_min": 0.2,
+      "pth_to_track_min": 0.28,
+      "pth_to_track_recommended": 0.35,
+      "npth_to_track_min": 0.2,
+      "copper_to_routed_edge_min": 0.2,
+      "npth_hole_min": 0.5,
+      "pth_drill_max": 6.3,
+      "plated_slot_min": 0.5,
+      "silk_line_min": 0.15,
+      "silk_text_height_min": 1.0,
+      "mask_bridge_min": 0.1,
+      "hole_wall_plating_mm": 0.018,
+      "impedance_tolerance_pct": 10
+    },
+    "quotes": {
+      "track_width_min": "Min. track width and spacing (1 oz): multilayer 0.09/0.09 mm; 1- and 2-layer 0.10/0.10 mm",
+      "track_spacing_min": "Min. track width and spacing (1 oz): multilayer 0.09/0.09 mm; 1- and 2-layer 0.10/0.10 mm",
+      "pad_to_track_min": "Pad to track clearance (1oz): 0.1 mm",
+      "smd_pad_to_pad_min": "SMD pad to pad clearance (different nets): 0.15 mm",
+      "via_hole_min": "Min. via hole size/diameter: 0.15/0.25 mm (multilayer and 2-layer)",
+      "via_diameter_min": "Min. via hole size/diameter: 0.15/0.25 mm (multilayer and 2-layer)",
+      "pth_annular_min": "PTH annular ring: multilayer 1 oz absolute minimum 0.15 mm, recommended 0.20; 2-layer 1 oz absolute minimum 0.18, recommended 0.25",
+      "pth_annular_recommended": "PTH annular ring: multilayer 1 oz recommended 0.20 mm; 2-layer 1 oz recommended 0.25 mm",
+      "via_hole_to_hole_min": "Via hole-to-hole spacing: 0.2 mm",
+      "pad_hole_to_hole_min": "Pad hole-to-hole spacing: 0.45 mm",
+      "via_hole_to_track_min": "Via hole to Track: 0.2 mm",
+      "pth_to_track_min": "PTH to Track: 0.35 mm is recommended, minimum 0.28 mm",
+      "pth_to_track_recommended": "PTH to Track: 0.35 mm is recommended",
+      "npth_to_track_min": "NPTH to Track: 0.2 mm",
+      "inner_via_hole_to_copper_min": "Inner layer via hole to copper clearance: 0.2 mm",
+      "inner_pth_hole_to_copper_min": "Inner layer PTH pad hole to copper clearance: 0.3 mm",
+      "copper_to_routed_edge_min": "Copper clearance from routed board edges: >=0.2 mm",
+      "npth_hole_min": "Min. Non-plated holes: 0.50 mm",
+      "pth_drill_max": "PTH drill diameter range 0.15 mm to 6.3 mm (holes >=6.3 mm are CNC routed)",
+      "plated_slot_min": "Min. plated slot width: multi-layer 0.35 mm; 2-layer 0.5 mm",
+      "silk_line_min": "Silkscreen min. line width >=0.15 mm",
+      "silk_text_height_min": "Silkscreen min. text height 40 mil (1.0 mm)",
+      "mask_bridge_min": "Solder mask bridge 0.10 mm (1 oz, green and other colours); 0.13 mm black/white",
+      "hole_wall_plating_mm": "Hole wall (average plating) thickness 18 um",
+      "impedance_tolerance_pct": "Impedance control tolerance +/-10 % standard; +/-5 % on special request"
+    },
+    "board_setup_note": "KiCad Board Setup minimums are absolute floors a rule cannot override; board .kicad_pro files take board_setup_floor, the .kicad_dru adds the project defaults.",
+    "board_setup_floor_4l": {
+      "min_clearance": 0.1,
+      "min_track_width": 0.09,
+      "min_via_diameter": 0.25,
+      "min_through_hole": 0.15,
+      "min_via_annular_width": 0.05,
+      "min_hole_to_hole": 0.2,
+      "min_hole_clearance": 0.2,
+      "min_copper_edge_clearance": 0.2,
+      "min_silk_text_height": 1.0,
+      "min_silk_text_thickness": 0.15
+    },
+    "board_setup_floor_2l": {
+      "min_clearance": 0.1,
+      "min_track_width": 0.1,
+      "min_via_diameter": 0.25,
+      "min_through_hole": 0.15,
+      "min_via_annular_width": 0.05,
+      "min_hole_to_hole": 0.2,
+      "min_hole_clearance": 0.2,
+      "min_copper_edge_clearance": 0.2,
+      "min_silk_text_height": 1.0,
+      "min_silk_text_thickness": 0.15
+    }
+  },
+  "project_defaults": {
+    "values_mm": {
+      "track_width": 0.15,
+      "clearance": 0.15,
+      "via_hole": 0.3,
+      "via_diameter": 0.6,
+      "via_annular": 0.15,
+      "hole_to_hole": 0.5,
+      "via_hole_clearance": 0.25,
+      "pth_hole_clearance": 0.35,
+      "npth_hole_clearance": 0.3,
+      "edge_clearance": 0.3,
+      "pth_hole_min": 0.3,
+      "text_height": 1.0,
+      "text_thickness": 0.15
+    },
+    "why": {
+      "track_width": "JLC floor 0.09 (multilayer) / 0.10 (2-layer); 0.15 leaves etch margin",
+      "clearance": "JLC 0.09 track/track, 0.10 pad/track, 0.15 SMD pad/pad (floor)",
+      "via": "0.3/0.6 against the JLC floor 0.15/0.25; annulus 0.15 mm",
+      "hole_to_hole": "JLC pad hole-to-hole 0.45, via hole-to-hole 0.2",
+      "via_hole_clearance": "JLC via hole to track 0.2; inner via hole to copper 0.2",
+      "pth_hole_clearance": "JLC PTH to track 0.28 min / 0.35 recommended; inner PTH hole to copper 0.3",
+      "npth_hole_clearance": "JLC NPTH to track 0.2",
+      "edge_clearance": "JLC copper to routed edge >=0.2",
+      "pth_hole_min": "project: no PTH smaller than the via drill",
+      "text": "equal to the JLC silkscreen floor (1.0 mm text, 0.15 mm line)"
+    }
+  },
+  "formulas": {
+    "ipc2221": {
+      "k_external": 0.048,
+      "k_internal": 0.024,
+      "b": 0.44,
+      "c": 0.725,
+      "area_unit": "mil^2",
+      "sources": [
+        "https://www.digikey.ca/en/resources/conversion-calculators/conversion-calculator-pcb-trace-width (2026-11-07)",
+        "https://jlcpcb.com/blog/pcb-trace-width-guide (2026-11-07)"
+      ],
+      "rule": "width >= max(IPC-2221 at the continuous current and dT 10 degC, at the protective limit and dT 20 degC) (project rule)",
+      "split_rule": "two outer layers in parallel (L1 + L4): each layer sized for 0.6667 of the current (project choice: unequal split up to 2:1)",
+      "checks": {
+        "4.6 A dT10 1 oz external": 2.465,
+        "7.5 A dT20 1 oz external": 3.177
+      }
+    },
+    "cbcpw": {
+      "source": "https://qucs.sourceforge.net/tech/node86.html (2026-11-07); R. N. Simons, Coplanar Waveguide Circuits, Components, and Systems, Wiley 2001 (conductor-backed CPW)"
+    },
+    "via": {
+      "drill_mm": 0.3,
+      "plating_mm": 0.018,
+      "plating_source": "https://jlcpcb.com/capabilities/pcb-capabilities (2026-11-07): hole wall average plating 18 um",
+      "current_a_dt10": 0.738,
+      "current_a_dt20": 1.001,
+      "method": "barrel cross-section with the IPC-2221 internal fit (project method, MODEL)"
+    }
+  },
+  "classes": {
+    "SIG": {
+      "kind": "signal",
+      "capacity": "<= 0.1 A (both values); logic and unlisted nets (assembly_data: \"Signals not listed: 0.05 A\")",
+      "outer_min_width_mm": 0.15,
+      "inner_min_width_mm": 0.15,
+      "clearance_mm": 0.15,
+      "vias_per_transition": 1,
+      "basis": "project default (JLC floor + margin)"
+    },
+    "PWR1A": {
+      "kind": "power",
+      "capacity": {
+        "continuous_a": 1.0,
+        "continuous_dt_c": 10,
+        "protective_a": 1.0,
+        "protective_dt_c": 20,
+        "why": "TPS2553 limits <=0.989 A (VBUS_HFP) and eFuse limits <=1 A"
+      },
+      "outer_min_width_mm": 0.35,
+      "outer_ipc_width_mm": 0.3004,
+      "split_outer_per_layer_mm": null,
+      "inner_min_width_mm": 1.8,
+      "inner_note": null,
+      "clearance_mm": 0.15,
+      "vias_per_transition": 2,
+      "basis": "IPC-2221 external k 0.048 on 1 oz (0.035 mm), internal k 0.024 on 0.5 oz (0.0152 mm); width = max(at continuous, +10 degC; at protective, +20 degC)"
+    },
+    "PWR2A": {
+      "kind": "power",
+      "capacity": {
+        "continuous_a": 2.0,
+        "continuous_dt_c": 10,
+        "protective_a": 2.2,
+        "protective_dt_c": 20,
+        "why": "eFuse U203 limit 1.80-2.20 A (LIME3V3)"
+      },
+      "outer_min_width_mm": 0.8,
+      "outer_ipc_width_mm": 0.7814,
+      "split_outer_per_layer_mm": null,
+      "inner_min_width_mm": 4.7,
+      "inner_note": null,
+      "clearance_mm": 0.15,
+      "vias_per_transition": 3,
+      "basis": "IPC-2221 external k 0.048 on 1 oz (0.035 mm), internal k 0.024 on 0.5 oz (0.0152 mm); width = max(at continuous, +10 degC; at protective, +20 degC)"
+    },
+    "PWR3A": {
+      "kind": "power",
+      "capacity": {
+        "continuous_a": 3.2,
+        "continuous_dt_c": 10,
+        "protective_a": 5.0,
+        "protective_dt_c": 20,
+        "why": "LAB5 budget 3.2 A (E1-05) and F103 5 A (E1_SERVICE_P)"
+      },
+      "outer_min_width_mm": 1.85,
+      "outer_ipc_width_mm": 1.8159,
+      "split_outer_per_layer_mm": 1.05,
+      "inner_min_width_mm": null,
+      "inner_note": "inner 0.5 oz copper is not counted as current path for this class (outer layers carry it)",
+      "clearance_mm": 0.15,
+      "vias_per_transition": 5,
+      "basis": "IPC-2221 external k 0.048 on 1 oz (0.035 mm), internal k 0.024 on 0.5 oz (0.0152 mm); width = max(at continuous, +10 degC; at protective, +20 degC)"
+    },
+    "BATT": {
+      "kind": "power",
+      "capacity": {
+        "continuous_a": 4.6,
+        "continuous_dt_c": 10,
+        "protective_a": 7.5,
+        "protective_dt_c": 20,
+        "why": "battery path 4.6 A model and F101 7.5 A"
+      },
+      "outer_min_width_mm": 3.2,
+      "outer_ipc_width_mm": 3.1766,
+      "split_outer_per_layer_mm": 1.85,
+      "inner_min_width_mm": null,
+      "inner_note": "inner 0.5 oz copper is not counted as current path for this class (outer layers carry it)",
+      "clearance_mm": 0.15,
+      "vias_per_transition": 8,
+      "basis": "IPC-2221 external k 0.048 on 1 oz (0.035 mm), internal k 0.024 on 0.5 oz (0.0152 mm); width = max(at continuous, +10 degC; at protective, +20 degC)"
+    },
+    "RF50": {
+      "kind": "rf",
+      "layer": "F.Cu over In1.Cu GND (L1 over L2)",
+      "width_mm": 0.36,
+      "width_tol_mm": 0.005,
+      "gap_mm": 0.2,
+      "coplanar_ground_within_mm": 0.25,
+      "model": {
+        "z0_ohm": 51.24,
+        "eps_eff": 3.155,
+        "method": "conductor-backed CPW closed form, t = 0, no solder mask (MODEL)",
+        "h_mm": 0.2104,
+        "er": 4.4,
+        "sensitivity_ohm": [
+          46.2,
+          56.3
+        ],
+        "sensitivity_inputs": "w 0.34/0.36/0.38, h 0.2104 +/-10 %, er 4.2/4.4/4.6 (project tolerance assumption)",
+        "not_modelled": "copper thickness 0.035 mm and solder mask (er 3.8) both lower Z0; magnitude not computed here"
+      },
+      "l2_solid_band_mm": 0.8112,
+      "l2_solid_band_basis": "no In1.Cu void within 3h (3 x 0.2104 mm) of either trace edge (project rule)",
+      "fence_pitch_max_mm": 2.0,
+      "fence_row_max_from_gap_mm": 1.0,
+      "fence_basis": "project rule: 2.0 mm <= lambda_g/20 up to 4.22 GHz (eps_eff 3.155); HMC isolation band in constraints.json RF-03 ends at 1.7 GHz",
+      "order_note": "order impedance control (JLC +/-10 % standard); finished impedance only from the coupon (bench, OPEN)",
+      "clearance_mm": 0.2,
+      "vias_per_transition": null
+    },
+    "DCTAP": {
+      "kind": "dc_tap",
+      "width_mm": 0.2,
+      "outer_min_width_mm": 0.2,
+      "inner_min_width_mm": 0.2,
+      "clearance_mm": "TBD",
+      "clearance_ipc": "TBD: IPC-2221B Table 6-1 not readable (paid standard, https://shop.ipc.org/ipc-2221/ipc-2221-standard-only; no readable copy found 2026-11-07)",
+      "project_rule_clearance_mm": 0.3,
+      "project_rule_note": "project choice, not IPC-verified: 0.3 mm to any other net in the .kicad_dru until Table 6-1 is read",
+      "envelope": "+/-30 V limited DC (pcb/generated/constraints.json DC-04)",
+      "vias_per_transition": 1,
+      "basis": "project choice 0.2 mm width (current is mA-level)"
+    }
+  },
+  "default_class": "SIG",
+  "nets": {
+    "3V3_Q6A": {
+      "class": "SIG",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:407",
+      "inputs": {
+        "continuous_a": 0.1,
+        "protective_a": 0.1,
+        "protection": "PMIC Q6A (межа не опублікована)",
+        "current_source": "бюджет шини логіки — рішення asm"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0125
+    },
+    "AON3V3": {
+      "class": "SIG",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:408",
+      "inputs": {
+        "continuous_a": 0.01,
+        "protective_a": 0.01,
+        "protection": "TPS70933",
+        "current_source": "02 §4 (INA228 ≤750 мкА)"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0005
+    },
+    "AUX12": {
+      "class": "PWR1A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:386",
+      "inputs": {
+        "continuous_a": 0.42,
+        "protective_a": 0.75,
+        "protection": "PTC MF-MSMF075/24-2, утримання 0.75 A",
+        "current_source": "02 §2"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.1326
+    },
+    "AUX12_DAMP": {
+      "class": "PWR1A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 0.42,
+        "protective_a": 0.75,
+        "via": "R223 (resistor <= 1 ohm) from AUX12"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.1326
+    },
+    "BIAS_CH1": {
+      "class": "PWR1A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:396",
+      "inputs": {
+        "continuous_a": 0.339,
+        "protective_a": 0.339,
+        "protection": "U206 TPS2553 (RILIM 88.7k: 265–339 mA)",
+        "current_source": "02 §2"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0676
+    },
+    "BIAS_CH1_DAMP": {
+      "class": "PWR1A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 0.339,
+        "protective_a": 0.339,
+        "via": "R232 (resistor <= 1 ohm) from BIAS_CH1"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0676
+    },
+    "BIAS_CH2_PORT": {
+      "class": "PWR1A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:397",
+      "inputs": {
+        "continuous_a": 0.339,
+        "protective_a": 0.339,
+        "protection": "U207 TPS2553 (88.7k)",
+        "current_source": "02 §2"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0676
+    },
+    "BIAS_CH3_PORT": {
+      "class": "PWR1A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:398",
+      "inputs": {
+        "continuous_a": 0.339,
+        "protective_a": 0.339,
+        "protection": "U208 TPS2553 (88.7k)",
+        "current_source": "02 §2"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0676
+    },
+    "BIAS_CH4": {
+      "class": "PWR1A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:399",
+      "inputs": {
+        "continuous_a": 0.192,
+        "protective_a": 0.192,
+        "protection": "U209 TPS2553 (162k: 144–192 mA)",
+        "current_source": "02 §2"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0308
+    },
+    "BIAS_CH4_DAMP": {
+      "class": "PWR1A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 0.192,
+        "protective_a": 0.192,
+        "via": "R247 (resistor <= 1 ohm) from BIAS_CH4"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0308
+    },
+    "BIAS_SB_LNA": {
+      "class": "PWR1A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:400",
+      "inputs": {
+        "continuous_a": 0.065,
+        "protective_a": 0.192,
+        "protection": "U221 TPS2553 (162k: 144–192 mA)",
+        "current_source": "E2.json U221 (LaNA WB ≤65 mA)"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0203
+    },
+    "BONI13V8_PORT": {
+      "class": "PWR1A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:402",
+      "inputs": {
+        "continuous_a": 0.065,
+        "protective_a": 0.153,
+        "protection": "eFuse U214 (RILM 7.15k: 0.122–0.153 A)",
+        "current_source": "02 §2"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0148
+    },
+    "DISP12": {
+      "class": "PWR2A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:385",
+      "inputs": {
+        "continuous_a": 1.27,
+        "protective_a": 1.7,
+        "protection": "eFuse U202 RILM 1.96k ≈1.70 A",
+        "current_source": "E2.json U202; 02 §2 (1.27 A на межі 14 W)"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.4177
+    },
+    "E1_CELL4": {
+      "class": "BATT",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:377",
+      "inputs": {
+        "continuous_a": 4.6,
+        "protective_a": 7.5,
+        "protection": "BMS Daly (DOCP 40±10 A) — провід паку до F101, усередині паку",
+        "current_source": "02 §2–3 (модель 4.6 A з Lime)"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 3.1766
+    },
+    "E1_CHG_INHIBIT_LOW": {
+      "class": "SIG",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:403",
+      "inputs": {
+        "continuous_a": 0.01,
+        "protective_a": 0.01,
+        "protection": "R121 2.2k",
+        "current_source": "E1.json"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0005
+    },
+    "E1_LAB5_DAMP": {
+      "class": "PWR3A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 1.0,
+        "protective_a": 4.0,
+        "via": "R110 (resistor <= 1 ohm) from LAB5"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 1.3348
+    },
+    "E1_LAB5_FUSED": {
+      "class": "PWR3A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 3.2,
+        "protective_a": 4.0,
+        "via": "F102 (fuse, rating 4 A) from E1_LAB5_RAW"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 1.4943
+    },
+    "E1_LAB5_RAW": {
+      "class": "BATT",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:382",
+      "inputs": {
+        "continuous_a": 3.2,
+        "protective_a": 7.5,
+        "protection": "F101 7.5 A вище; F102 4 A — після U108 на міді PWR",
+        "current_source": "E1.json lab5_budget (3.2 A тривало, 4 A перехідно)"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 3.1766
+    },
+    "E1_N": {
+      "class": "BATT",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:379",
+      "inputs": {
+        "continuous_a": 4.6,
+        "protective_a": 7.5,
+        "protection": "F101 7.5 A",
+        "current_source": "02 §3"
+      },
+      "in_graph": true,
+      "harness_segments": [
+        {
+          "segment": "S10",
+          "continuous_a": 3.0,
+          "protective_a": 7.5,
+          "source": "tools/assembly_data.py:413"
+        }
+      ],
+      "required_outer_width_mm": 3.1766
+    },
+    "E1_SERVICE_P": {
+      "class": "PWR3A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:391",
+      "inputs": {
+        "continuous_a": 3.0,
+        "protective_a": 5.0,
+        "protection": "F103 5 A",
+        "current_source": "E1.json F103; v2.1 сервіс заблоковано"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 1.8159
+    },
+    "E1_SHUNT_P": {
+      "class": "BATT",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:378",
+      "inputs": {
+        "continuous_a": 4.6,
+        "protective_a": 7.5,
+        "protection": "F101 7.5 A (у паку)",
+        "current_source": "02 §3"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 3.1766
+    },
+    "E1_SW": {
+      "class": "BATT",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:380",
+      "inputs": {
+        "continuous_a": 4.6,
+        "protective_a": 7.5,
+        "protection": "F101 7.5 A (вище за течією)",
+        "current_source": "02 §3"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 3.1766
+    },
+    "E1_USB_PD_RAW": {
+      "class": "PWR3A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:389",
+      "inputs": {
+        "continuous_a": 3.0,
+        "protective_a": 3.5,
+        "protection": "eFuse U109 RILM 953 Ω ≈3.50 A",
+        "current_source": "E1.json U109"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 1.367
+    },
+    "E1_USB_PD_SAFE": {
+      "class": "PWR3A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:390",
+      "inputs": {
+        "continuous_a": 3.0,
+        "protective_a": 3.5,
+        "protection": "eFuse U109 ≈3.50 A",
+        "current_source": "E1.json U109"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 1.367
+    },
+    "E2_AUX_PTC": {
+      "class": "PWR1A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 0.42,
+        "protective_a": 0.75,
+        "via": "L204 (inductor) from AUX12"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.1326
+    },
+    "E2_AUX_SWITCHED": {
+      "class": "PWR1A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 0.42,
+        "protective_a": 0.75,
+        "via": "F202 (fuse, rating 0.75 A) from E2_AUX_PTC"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.1326
+    },
+    "E2_BONI_IN": {
+      "class": "BATT",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 4.6,
+        "protective_a": 7.5,
+        "via": "L213 (inductor) from E1_SW"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 3.1766
+    },
+    "E2_BONI_IN_DAMP": {
+      "class": "BATT",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 4.6,
+        "protective_a": 7.5,
+        "via": "R260 (resistor <= 1 ohm) from E2_BONI_IN"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 3.1766
+    },
+    "E2_DISP_IN": {
+      "class": "BATT",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 4.0,
+        "protective_a": 7.5,
+        "via": "L202 (inductor) from SYS12"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 3.1766
+    },
+    "E2_DISP_IN_DAMP": {
+      "class": "BATT",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 4.0,
+        "protective_a": 7.5,
+        "via": "R208 (resistor <= 1 ohm) from E2_DISP_IN"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 3.1766
+    },
+    "E2_J21_EF": {
+      "class": "PWR3A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 2.5,
+        "protective_a": 4.0,
+        "via": "L201 (inductor) from J21"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 1.3348
+    },
+    "E2_J21_FUSED": {
+      "class": "BATT",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 4.0,
+        "protective_a": 4.0,
+        "via": "F201 (fuse, rating 4 A) from SYS12"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 2.0329
+    },
+    "E2_LIME_EF": {
+      "class": "PWR2A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 1.2,
+        "protective_a": 2.2,
+        "via": "L203 (inductor) from LIME3V3"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.5852
+    },
+    "E2_LNA1_SHUNT": {
+      "class": "PWR1A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 0.339,
+        "protective_a": 0.339,
+        "via": "L206 (inductor) from BIAS_CH1"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0676
+    },
+    "E2_LNA1_SW": {
+      "class": "PWR1A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 0.339,
+        "protective_a": 0.339,
+        "via": "R231 (resistor <= 1 ohm) from E2_LNA1_SHUNT"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0676
+    },
+    "E2_LNA4_SHUNT": {
+      "class": "PWR1A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 0.192,
+        "protective_a": 0.192,
+        "via": "L209 (inductor) from BIAS_CH4"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0308
+    },
+    "E2_LNA4_SW": {
+      "class": "PWR1A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 0.192,
+        "protective_a": 0.192,
+        "via": "R246 (resistor <= 1 ohm) from E2_LNA4_SHUNT"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0308
+    },
+    "E2_LNA_IN": {
+      "class": "PWR3A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 1.0,
+        "protective_a": 4.0,
+        "via": "L205 (inductor) from LAB5"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 1.3348
+    },
+    "E2_LNA_IN_DAMP": {
+      "class": "PWR3A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 1.0,
+        "protective_a": 4.0,
+        "via": "R224 (resistor <= 1 ohm) from E2_LNA_IN"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 1.3348
+    },
+    "E2_LNB_EF": {
+      "class": "PWR1A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 0.3,
+        "protective_a": 0.499,
+        "via": "R258 (resistor <= 1 ohm) from E2_LNB_MON"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0756
+    },
+    "E2_LNB_IN": {
+      "class": "BATT",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 4.6,
+        "protective_a": 7.5,
+        "via": "L211 (inductor) from E1_SW"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 3.1766
+    },
+    "E2_LNB_IN_DAMP": {
+      "class": "BATT",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 4.6,
+        "protective_a": 7.5,
+        "via": "R252 (resistor <= 1 ohm) from E2_LNB_IN"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 3.1766
+    },
+    "E2_LNB_MON": {
+      "class": "PWR1A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 0.3,
+        "protective_a": 0.499,
+        "via": "L212 (inductor) from LNB13V2"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0756
+    },
+    "E2_RTLB_SW": {
+      "class": "PWR1A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 0.673,
+        "protective_a": 0.673,
+        "via": "L210 (inductor) from VBUS_RTLB"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.174
+    },
+    "E2_SB_DAMP": {
+      "class": "PWR1A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 0.065,
+        "protective_a": 0.192,
+        "via": "R295 (resistor <= 1 ohm) from BIAS_SB_LNA"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0203
+    },
+    "E2_SB_SW": {
+      "class": "PWR1A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 0.065,
+        "protective_a": 0.192,
+        "via": "L215 (inductor) from BIAS_SB_LNA"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0203
+    },
+    "E3_BLOWER_GND": {
+      "class": "PWR3A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:405",
+      "inputs": {
+        "continuous_a": 0.5,
+        "protective_a": 4.0,
+        "protection": "F102 4 A (ключ Q305 без межі струму)",
+        "current_source": "E3-03: 0.25 A тривало / 0.50 A старт"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 1.3348
+    },
+    "E3_FAN5": {
+      "class": "PWR3A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:404",
+      "inputs": {
+        "continuous_a": 0.25,
+        "protective_a": 4.0,
+        "protection": "F102 4 A (ключ Q304 без межі струму)",
+        "current_source": "бюджет вентилятора — рішення asm, виміряти"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 1.3348
+    },
+    "E3_PICO3V3": {
+      "class": "SIG",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:409",
+      "inputs": {
+        "continuous_a": 0.02,
+        "protective_a": 0.02,
+        "protection": "LDO Pico",
+        "current_source": "VEML7700 — малий струм"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0014
+    },
+    "E4_BENCH": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "J409.CENTER"
+      },
+      "in_graph": true
+    },
+    "E4_CH4_RF_ONLY": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A424.RF"
+      },
+      "in_graph": true
+    },
+    "E4_DCS_HF_BLEED_1": {
+      "class": "DCTAP",
+      "basis": "DC tap",
+      "source": "pcb/generated/constraints.json DC-04",
+      "inputs": {
+        "envelope": "+/-30 V limited DC",
+        "pins": [
+          "R4468.2",
+          "R4469.1"
+        ]
+      },
+      "in_graph": true
+    },
+    "E4_DCS_HF_BLEED_2": {
+      "class": "DCTAP",
+      "basis": "DC tap",
+      "source": "pcb/generated/constraints.json DC-04",
+      "inputs": {
+        "envelope": "+/-30 V limited DC",
+        "pins": [
+          "R4469.2",
+          "R4470.1"
+        ]
+      },
+      "in_graph": true
+    },
+    "E4_DCS_HF_BLEED_3": {
+      "class": "DCTAP",
+      "basis": "DC tap",
+      "source": "pcb/generated/constraints.json DC-04",
+      "inputs": {
+        "envelope": "+/-30 V limited DC",
+        "pins": [
+          "R4470.2",
+          "R4471.1"
+        ]
+      },
+      "in_graph": true
+    },
+    "E4_DCS_HF_TAP": {
+      "class": "DCTAP",
+      "basis": "DC tap",
+      "source": "pcb/generated/constraints.json DC-04",
+      "inputs": {
+        "envelope": "+/-30 V limited DC",
+        "pins": [
+          "R4440.2",
+          "R4441.1",
+          "C4440.1"
+        ]
+      },
+      "in_graph": true
+    },
+    "E4_DCS_LBAND_BLEED_1": {
+      "class": "DCTAP",
+      "basis": "DC tap",
+      "source": "pcb/generated/constraints.json DC-04",
+      "inputs": {
+        "envelope": "+/-30 V limited DC",
+        "pins": [
+          "R4464.2",
+          "R4465.1"
+        ]
+      },
+      "in_graph": true
+    },
+    "E4_DCS_LBAND_BLEED_2": {
+      "class": "DCTAP",
+      "basis": "DC tap",
+      "source": "pcb/generated/constraints.json DC-04",
+      "inputs": {
+        "envelope": "+/-30 V limited DC",
+        "pins": [
+          "R4465.2",
+          "R4466.1"
+        ]
+      },
+      "in_graph": true
+    },
+    "E4_DCS_LBAND_BLEED_3": {
+      "class": "DCTAP",
+      "basis": "DC tap",
+      "source": "pcb/generated/constraints.json DC-04",
+      "inputs": {
+        "envelope": "+/-30 V limited DC",
+        "pins": [
+          "R4466.2",
+          "R4467.1"
+        ]
+      },
+      "in_graph": true
+    },
+    "E4_DCS_LBAND_TAP": {
+      "class": "DCTAP",
+      "basis": "DC tap",
+      "source": "pcb/generated/constraints.json DC-04",
+      "inputs": {
+        "envelope": "+/-30 V limited DC",
+        "pins": [
+          "R4430.2",
+          "R4431.1",
+          "C4430.1"
+        ]
+      },
+      "in_graph": true
+    },
+    "E4_DCS_UHF_BLEED_1": {
+      "class": "DCTAP",
+      "basis": "DC tap",
+      "source": "pcb/generated/constraints.json DC-04",
+      "inputs": {
+        "envelope": "+/-30 V limited DC",
+        "pins": [
+          "R4460.2",
+          "R4461.1"
+        ]
+      },
+      "in_graph": true
+    },
+    "E4_DCS_UHF_BLEED_2": {
+      "class": "DCTAP",
+      "basis": "DC tap",
+      "source": "pcb/generated/constraints.json DC-04",
+      "inputs": {
+        "envelope": "+/-30 V limited DC",
+        "pins": [
+          "R4461.2",
+          "R4462.1"
+        ]
+      },
+      "in_graph": true
+    },
+    "E4_DCS_UHF_BLEED_3": {
+      "class": "DCTAP",
+      "basis": "DC tap",
+      "source": "pcb/generated/constraints.json DC-04",
+      "inputs": {
+        "envelope": "+/-30 V limited DC",
+        "pins": [
+          "R4462.2",
+          "R4463.1"
+        ]
+      },
+      "in_graph": true
+    },
+    "E4_DCS_UHF_TAP": {
+      "class": "DCTAP",
+      "basis": "DC tap",
+      "source": "pcb/generated/constraints.json DC-04",
+      "inputs": {
+        "envelope": "+/-30 V limited DC",
+        "pins": [
+          "R4420.2",
+          "R4421.1",
+          "C4420.1"
+        ]
+      },
+      "in_graph": true
+    },
+    "E4_HFP_ANT": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A414.ANT"
+      },
+      "in_graph": true
+    },
+    "E4_HF_BT": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A406.RF"
+      },
+      "in_graph": true
+    },
+    "E4_HF_CM": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A406.ANT"
+      },
+      "in_graph": true
+    },
+    "E4_HF_LINK": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "K401.NO1"
+      },
+      "in_graph": true
+    },
+    "E4_LIME_REF": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A415.J4_REF_IN"
+      },
+      "in_graph": true
+    },
+    "E4_LIME_RF1": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "U407.RF1"
+      },
+      "in_graph": true
+    },
+    "E4_LIME_RF3": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "U407.RF3"
+      },
+      "in_graph": true
+    },
+    "E4_LIME_RFC": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "U407.RFC"
+      },
+      "in_graph": true
+    },
+    "E4_LIME_RFSPARE": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "U407.RF4"
+      },
+      "in_graph": true
+    },
+    "E4_LIME_RX2": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A409.IN"
+      },
+      "in_graph": true
+    },
+    "E4_LIME_TO_RTLB": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "U407.RF2"
+      },
+      "in_graph": true
+    },
+    "E4_LIME_TX": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A415.X1_TX"
+      },
+      "in_graph": true
+    },
+    "E4_LIME_X2_RX": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A415.X2_RX"
+      },
+      "in_graph": true
+    },
+    "E4_LIME_X4_RX": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A415.X4_RX"
+      },
+      "in_graph": true
+    },
+    "E4_LNB_IF": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A420.IF"
+      },
+      "in_graph": true
+    },
+    "E4_LNB_REF25": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A420.REF25"
+      },
+      "in_graph": true
+    },
+    "E4_P1": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A401.IN"
+      },
+      "in_graph": true
+    },
+    "E4_P2": {
+      "class": "RF50",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 0.339,
+        "protective_a": 0.339,
+        "via": "L403 (inductor) from BIAS_CH2_PORT",
+        "rf_pin": "A418.OUT"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0676,
+      "current_class": "PWR1A",
+      "rf50_current_ok": true
+    },
+    "E4_P2_ANT": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A418.IN"
+      },
+      "in_graph": true
+    },
+    "E4_P3": {
+      "class": "RF50",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 0.339,
+        "protective_a": 0.339,
+        "via": "L404 (inductor) from BIAS_CH3_PORT",
+        "rf_pin": "A419.OUT"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0676,
+      "current_class": "PWR1A",
+      "rf50_current_ok": true
+    },
+    "E4_P3_ANT": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A419.IN"
+      },
+      "in_graph": true
+    },
+    "E4_P4": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "J404.CENTER"
+      },
+      "in_graph": true
+    },
+    "E4_P5": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "J405.CENTER"
+      },
+      "in_graph": true
+    },
+    "E4_P6": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "J406.CENTER"
+      },
+      "in_graph": true
+    },
+    "E4_P8": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A403.IN"
+      },
+      "in_graph": true
+    },
+    "E4_PARK_A": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "DC block C401 from E4_RTLA_RF1"
+      },
+      "in_graph": true
+    },
+    "E4_PARK_B": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "DC block C406 from E4_RTLB_RF1"
+      },
+      "in_graph": true
+    },
+    "E4_PARK_C": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "DC block C414 from E4_LIME_RF1"
+      },
+      "in_graph": true
+    },
+    "E4_PARK_C_SPARE": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "DC block C417 from E4_LIME_RFSPARE"
+      },
+      "in_graph": true
+    },
+    "E4_PARK_HF": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "K401.NC1"
+      },
+      "in_graph": true
+    },
+    "E4_PARK_HFP": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "K402.NC2"
+      },
+      "in_graph": true
+    },
+    "E4_PARK_VHF": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "K402.NC1"
+      },
+      "in_graph": true
+    },
+    "E4_REF_IN": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "J415.CENTER"
+      },
+      "in_graph": true
+    },
+    "E4_RELAY_STAGE": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "K401.NC2"
+      },
+      "in_graph": true
+    },
+    "E4_RFC_A": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A411.ANT"
+      },
+      "in_graph": true
+    },
+    "E4_RFC_B": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A412.ANT"
+      },
+      "in_graph": true
+    },
+    "E4_RF_CH1": {
+      "class": "RF50",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 0.339,
+        "protective_a": 0.339,
+        "via": "L402 (inductor) from BIAS_CH1",
+        "rf_pin": "A402.OUT"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0676,
+      "current_class": "PWR1A",
+      "rf50_current_ok": true
+    },
+    "E4_RF_CH3_B": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "DC block C407 from E4_RTLB_RF2"
+      },
+      "in_graph": true
+    },
+    "E4_RF_CH4": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A404.OUT"
+      },
+      "in_graph": true
+    },
+    "E4_RF_CH5": {
+      "class": "RF50",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 0.3,
+        "protective_a": 0.499,
+        "via": "L406 (inductor) from LNB13V2",
+        "rf_pin": "W402.END_B"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0756,
+      "current_class": "PWR1A",
+      "rf50_current_ok": true
+    },
+    "E4_RF_CH5_ATT": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A405.OUT"
+      },
+      "in_graph": true
+    },
+    "E4_RF_CH5_DC": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A405.IN"
+      },
+      "in_graph": true
+    },
+    "E4_RF_P1_FM": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A401.OUT"
+      },
+      "in_graph": true
+    },
+    "E4_RF_P8_FM": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A403.OUT"
+      },
+      "in_graph": true
+    },
+    "E4_RTLA_RF1": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "U405.RF1"
+      },
+      "in_graph": true
+    },
+    "E4_RTLA_RF2": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "U405.RF2"
+      },
+      "in_graph": true
+    },
+    "E4_RTLA_RF3": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "U405.RF3"
+      },
+      "in_graph": true
+    },
+    "E4_RTLA_RF4": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "U405.RF4"
+      },
+      "in_graph": true
+    },
+    "E4_RTLA_RFC": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "U405.RFC"
+      },
+      "in_graph": true
+    },
+    "E4_RTLB_RF1": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "U406.RF1"
+      },
+      "in_graph": true
+    },
+    "E4_RTLB_RF2": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "U406.RF2"
+      },
+      "in_graph": true
+    },
+    "E4_RTLB_RF3": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "U406.RF3"
+      },
+      "in_graph": true
+    },
+    "E4_RTLB_RF4": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "U406.RF4"
+      },
+      "in_graph": true
+    },
+    "E4_RTLB_RFC": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "U406.RFC"
+      },
+      "in_graph": true
+    },
+    "E4_RX1_EDGE": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "J412.CENTER"
+      },
+      "in_graph": true
+    },
+    "E4_RX1_PAD": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A408.IN"
+      },
+      "in_graph": true
+    },
+    "E4_RX1_PANEL": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A408.OUT"
+      },
+      "in_graph": true
+    },
+    "E4_RX2_ANT": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "W422.ANT"
+      },
+      "in_graph": true
+    },
+    "E4_RX2_BLK": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A409.OUT"
+      },
+      "in_graph": true
+    },
+    "E4_SB_FILTER_IN": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A423.SMA_F_A"
+      },
+      "in_graph": true
+    },
+    "E4_SB_FILTER_OUT": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A423.SMA_F_B"
+      },
+      "in_graph": true
+    },
+    "E4_SB_LNA_IN": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A422.SMA_IN"
+      },
+      "in_graph": true
+    },
+    "E4_SB_LNA_OUT": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A422.SMA_OUT"
+      },
+      "in_graph": true
+    },
+    "E4_SB_PREBLOCK": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "W423.BLOCK"
+      },
+      "in_graph": true
+    },
+    "E4_TX_LOAD": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A410.END_A"
+      },
+      "in_graph": true
+    },
+    "E4_VHF_LINK": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "K402.NO1"
+      },
+      "in_graph": true
+    },
+    "E4_YAT_IN": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A407.RF_IN"
+      },
+      "in_graph": true
+    },
+    "E4_YAT_OUT": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "A407.RF_OUT"
+      },
+      "in_graph": true
+    },
+    "E5_VBUS_HFP_SW": {
+      "class": "PWR1A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 0.989,
+        "protective_a": 0.989,
+        "via": "L501 (inductor) from VBUS_HFP"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.2958
+    },
+    "GNSS_ANT": {
+      "class": "RF50",
+      "basis": "RF path",
+      "source": "design/E*.json",
+      "inputs": {
+        "rf_pin": "U304.ANT"
+      },
+      "in_graph": true
+    },
+    "J21": {
+      "class": "PWR3A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:384",
+      "inputs": {
+        "continuous_a": 2.5,
+        "protective_a": 4.0,
+        "protection": "F201 4 A + eFuse U201 ≈4 A",
+        "current_source": "02 §2 (2.5 A з Lime)"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 1.3348
+    },
+    "J21_DAMP": {
+      "class": "PWR3A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 2.5,
+        "protective_a": 4.0,
+        "via": "R207 (resistor <= 1 ohm) from J21"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 1.3348
+    },
+    "LAB5": {
+      "class": "PWR3A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:383",
+      "inputs": {
+        "continuous_a": 1.0,
+        "protective_a": 4.0,
+        "protection": "F102 4 A",
+        "current_source": "бюджет гілки 1.0 A — рішення asm; загальний бюджет LAB5 3.2 A (E1-05)"
+      },
+      "in_graph": true,
+      "harness_segments": [
+        {
+          "segment": "S28",
+          "continuous_a": 0.5,
+          "protective_a": 4.0,
+          "source": "tools/assembly_data.py:414"
+        },
+        {
+          "segment": "S32",
+          "continuous_a": 0.2,
+          "protective_a": 4.0,
+          "source": "tools/assembly_data.py:415"
+        },
+        {
+          "segment": "S13",
+          "continuous_a": 0.3,
+          "protective_a": 4.0,
+          "source": "tools/assembly_data.py:416"
+        },
+        {
+          "segment": "S04",
+          "continuous_a": 0.1,
+          "protective_a": 4.0,
+          "source": "tools/assembly_data.py:417"
+        }
+      ],
+      "required_outer_width_mm": 1.3348
+    },
+    "LIME3V3": {
+      "class": "PWR2A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:387",
+      "inputs": {
+        "continuous_a": 1.2,
+        "protective_a": 2.2,
+        "protection": "eFuse U203 RILM 1.65k: 1.80–2.20 A",
+        "current_source": "E2.json U203; 02 §2 (≈1.2 A модель)"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.5852
+    },
+    "LIME3V3_DAMP": {
+      "class": "PWR2A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 1.2,
+        "protective_a": 2.2,
+        "via": "R219 (resistor <= 1 ohm) from LIME3V3"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.5852
+    },
+    "LNB13V2": {
+      "class": "PWR1A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:401",
+      "inputs": {
+        "continuous_a": 0.3,
+        "protective_a": 0.499,
+        "protection": "eFuse U212 (RILM 2.05k: 0.405–0.499 A)",
+        "current_source": "02 §2"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0756
+    },
+    "LNB13V2_DAMP": {
+      "class": "PWR1A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 0.3,
+        "protective_a": 0.499,
+        "via": "R259 (resistor <= 1 ohm) from LNB13V2"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.0756
+    },
+    "SYS12": {
+      "class": "BATT",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:381",
+      "inputs": {
+        "continuous_a": 4.0,
+        "protective_a": 7.5,
+        "protection": "F101 7.5 A вище; власна межа D36V50F12 — TBD",
+        "current_source": "02 §2 (≈4 A пік з Lime)"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 3.1766
+    },
+    "VBUS_HFP": {
+      "class": "PWR1A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:394",
+      "inputs": {
+        "continuous_a": 0.989,
+        "protective_a": 0.989,
+        "protection": "U503 TPS2553 (старт R509 28.7k: 0.825–0.989 A)",
+        "current_source": "E5 §6"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.2958
+    },
+    "VBUS_LABPORT": {
+      "class": "PWR1A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:395",
+      "inputs": {
+        "continuous_a": 0.825,
+        "protective_a": 0.825,
+        "protection": "U502 TPS2553 (R505 34.8k: 0.678–0.825 A)",
+        "current_source": "E5 §5"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.2304
+    },
+    "VBUS_RTLA": {
+      "class": "PWR1A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:392",
+      "inputs": {
+        "continuous_a": 0.673,
+        "protective_a": 0.673,
+        "protection": "U501 TPS2553 (старт R501 43.2k: 0.544–0.673 A)",
+        "current_source": "E5 §3"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.174
+    },
+    "VBUS_RTLB": {
+      "class": "PWR1A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:393",
+      "inputs": {
+        "continuous_a": 0.673,
+        "protective_a": 0.673,
+        "protection": "U210 TPS2553 (старт R248 56.2k — менша межа, ніж 43.2k)",
+        "current_source": "E2.json R248; E5 §3"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.174
+    },
+    "VBUS_RTLB_DAMP": {
+      "class": "PWR1A",
+      "basis": "series element",
+      "source": "design/E*.json",
+      "inputs": {
+        "continuous_a": 0.673,
+        "protective_a": 0.673,
+        "via": "R251 (resistor <= 1 ohm) from VBUS_RTLB"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.174
+    },
+    "VCC_3V3_MKEY": {
+      "class": "PWR2A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:388",
+      "inputs": {
+        "continuous_a": 1.2,
+        "protective_a": 2.2,
+        "protection": "U203 після; бортовий захист Q6A — TBD",
+        "current_source": "живить LIME3V3"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 0.5852
+    },
+    "VCC_5V_PERI": {
+      "class": "PWR3A",
+      "basis": "NET_CURRENT",
+      "source": "tools/assembly_data.py:406",
+      "inputs": {
+        "continuous_a": 0.1,
+        "protective_a": 4.5,
+        "protection": "бортовий SGM40666 Q6A (≈4.5 A, 02 §2)",
+        "current_source": "LC76G — малий струм; бюджет 0.10 A — рішення asm"
+      },
+      "in_graph": true,
+      "required_outer_width_mm": 1.5703
+    }
+  },
+  "summary": {
+    "nets": 148,
+    "by_class": {
+      "BATT": 13,
+      "DCTAP": 12,
+      "PWR1A": 29,
+      "PWR2A": 5,
+      "PWR3A": 14,
+      "RF50": 71,
+      "SIG": 4
+    },
+    "net_current_entries": 33,
+    "seg_current_entries": 5,
+    "not_in_graph": []
+  },
+  "unclassified_supply_candidates": {
+    "note": "nets on a supply pin of an IC or module (IN/VIN/OUT/VOUT/OUTS of a part with an IN or VIN pin; VSYS/VBUS/5V/3V3_OUT), or on a series element, that neither NET_CURRENT nor the series closure classifies; they default to SIG until tools/assembly_data.py NET_CURRENT lists them (review list, not a finding)",
+    "nets": [
+      "BIAS_CH2",
+      "BIAS_CH2_DAMP",
+      "BIAS_CH3",
+      "BIAS_CH3_DAMP",
+      "BONI13V8",
+      "BONI13V8_DAMP",
+      "E2_BONI_EF",
+      "E2_BONI_LDO",
+      "E2_BONI_MON",
+      "E2_LNA2_SHUNT",
+      "E2_LNA2_SW",
+      "E2_LNA3_SHUNT",
+      "E2_LNA3_SW",
+      "E2_LNB_LDO",
+      "E2_LT_OUT1",
+      "E2_LT_OUT2",
+      "E3_IMU3V3",
+      "E3_PICO_VSYS",
+      "E5_HDMI_5V_DISP",
+      "E5_HDMI_5V_Q6A",
+      "E5_IMU_VIN",
+      "E5_VBUS_J5",
+      "E5_VBUS_T7",
+      "LNA4V5"
+    ]
+  },
+  "kicad": {
+    "netclass_patterns": [
+      {
+        "netclass": "PWR1A",
+        "pattern": "AUX12"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "AUX12_DAMP"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "BIAS_CH1"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "BIAS_CH1_DAMP"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "BIAS_CH2_PORT"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "BIAS_CH3_PORT"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "BIAS_CH4"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "BIAS_CH4_DAMP"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "BIAS_SB_LNA"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "BONI13V8_PORT"
+      },
+      {
+        "netclass": "PWR2A",
+        "pattern": "DISP12"
+      },
+      {
+        "netclass": "BATT",
+        "pattern": "E1_CELL4"
+      },
+      {
+        "netclass": "PWR3A",
+        "pattern": "E1_LAB5_DAMP"
+      },
+      {
+        "netclass": "PWR3A",
+        "pattern": "E1_LAB5_FUSED"
+      },
+      {
+        "netclass": "BATT",
+        "pattern": "E1_LAB5_RAW"
+      },
+      {
+        "netclass": "BATT",
+        "pattern": "E1_N"
+      },
+      {
+        "netclass": "PWR3A",
+        "pattern": "E1_SERVICE_P"
+      },
+      {
+        "netclass": "BATT",
+        "pattern": "E1_SHUNT_P"
+      },
+      {
+        "netclass": "BATT",
+        "pattern": "E1_SW"
+      },
+      {
+        "netclass": "PWR3A",
+        "pattern": "E1_USB_PD_RAW"
+      },
+      {
+        "netclass": "PWR3A",
+        "pattern": "E1_USB_PD_SAFE"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "E2_AUX_PTC"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "E2_AUX_SWITCHED"
+      },
+      {
+        "netclass": "BATT",
+        "pattern": "E2_BONI_IN"
+      },
+      {
+        "netclass": "BATT",
+        "pattern": "E2_BONI_IN_DAMP"
+      },
+      {
+        "netclass": "BATT",
+        "pattern": "E2_DISP_IN"
+      },
+      {
+        "netclass": "BATT",
+        "pattern": "E2_DISP_IN_DAMP"
+      },
+      {
+        "netclass": "PWR3A",
+        "pattern": "E2_J21_EF"
+      },
+      {
+        "netclass": "BATT",
+        "pattern": "E2_J21_FUSED"
+      },
+      {
+        "netclass": "PWR2A",
+        "pattern": "E2_LIME_EF"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "E2_LNA1_SHUNT"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "E2_LNA1_SW"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "E2_LNA4_SHUNT"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "E2_LNA4_SW"
+      },
+      {
+        "netclass": "PWR3A",
+        "pattern": "E2_LNA_IN"
+      },
+      {
+        "netclass": "PWR3A",
+        "pattern": "E2_LNA_IN_DAMP"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "E2_LNB_EF"
+      },
+      {
+        "netclass": "BATT",
+        "pattern": "E2_LNB_IN"
+      },
+      {
+        "netclass": "BATT",
+        "pattern": "E2_LNB_IN_DAMP"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "E2_LNB_MON"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "E2_RTLB_SW"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "E2_SB_DAMP"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "E2_SB_SW"
+      },
+      {
+        "netclass": "PWR3A",
+        "pattern": "E3_BLOWER_GND"
+      },
+      {
+        "netclass": "PWR3A",
+        "pattern": "E3_FAN5"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_BENCH"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_CH4_RF_ONLY"
+      },
+      {
+        "netclass": "DCTAP",
+        "pattern": "E4_DCS_HF_BLEED_1"
+      },
+      {
+        "netclass": "DCTAP",
+        "pattern": "E4_DCS_HF_BLEED_2"
+      },
+      {
+        "netclass": "DCTAP",
+        "pattern": "E4_DCS_HF_BLEED_3"
+      },
+      {
+        "netclass": "DCTAP",
+        "pattern": "E4_DCS_HF_TAP"
+      },
+      {
+        "netclass": "DCTAP",
+        "pattern": "E4_DCS_LBAND_BLEED_1"
+      },
+      {
+        "netclass": "DCTAP",
+        "pattern": "E4_DCS_LBAND_BLEED_2"
+      },
+      {
+        "netclass": "DCTAP",
+        "pattern": "E4_DCS_LBAND_BLEED_3"
+      },
+      {
+        "netclass": "DCTAP",
+        "pattern": "E4_DCS_LBAND_TAP"
+      },
+      {
+        "netclass": "DCTAP",
+        "pattern": "E4_DCS_UHF_BLEED_1"
+      },
+      {
+        "netclass": "DCTAP",
+        "pattern": "E4_DCS_UHF_BLEED_2"
+      },
+      {
+        "netclass": "DCTAP",
+        "pattern": "E4_DCS_UHF_BLEED_3"
+      },
+      {
+        "netclass": "DCTAP",
+        "pattern": "E4_DCS_UHF_TAP"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_HFP_ANT"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_HF_BT"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_HF_CM"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_HF_LINK"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_LIME_REF"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_LIME_RF1"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_LIME_RF3"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_LIME_RFC"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_LIME_RFSPARE"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_LIME_RX2"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_LIME_TO_RTLB"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_LIME_TX"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_LIME_X2_RX"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_LIME_X4_RX"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_LNB_IF"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_LNB_REF25"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_P1"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_P2"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_P2_ANT"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_P3"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_P3_ANT"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_P4"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_P5"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_P6"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_P8"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_PARK_A"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_PARK_B"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_PARK_C"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_PARK_C_SPARE"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_PARK_HF"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_PARK_HFP"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_PARK_VHF"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_REF_IN"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RELAY_STAGE"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RFC_A"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RFC_B"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RF_CH1"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RF_CH3_B"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RF_CH4"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RF_CH5"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RF_CH5_ATT"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RF_CH5_DC"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RF_P1_FM"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RF_P8_FM"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RTLA_RF1"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RTLA_RF2"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RTLA_RF3"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RTLA_RF4"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RTLA_RFC"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RTLB_RF1"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RTLB_RF2"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RTLB_RF3"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RTLB_RF4"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RTLB_RFC"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RX1_EDGE"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RX1_PAD"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RX1_PANEL"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RX2_ANT"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_RX2_BLK"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_SB_FILTER_IN"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_SB_FILTER_OUT"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_SB_LNA_IN"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_SB_LNA_OUT"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_SB_PREBLOCK"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_TX_LOAD"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_VHF_LINK"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_YAT_IN"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "E4_YAT_OUT"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "E5_VBUS_HFP_SW"
+      },
+      {
+        "netclass": "RF50",
+        "pattern": "GNSS_ANT"
+      },
+      {
+        "netclass": "PWR3A",
+        "pattern": "J21"
+      },
+      {
+        "netclass": "PWR3A",
+        "pattern": "J21_DAMP"
+      },
+      {
+        "netclass": "PWR3A",
+        "pattern": "LAB5"
+      },
+      {
+        "netclass": "PWR2A",
+        "pattern": "LIME3V3"
+      },
+      {
+        "netclass": "PWR2A",
+        "pattern": "LIME3V3_DAMP"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "LNB13V2"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "LNB13V2_DAMP"
+      },
+      {
+        "netclass": "BATT",
+        "pattern": "SYS12"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "VBUS_HFP"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "VBUS_LABPORT"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "VBUS_RTLA"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "VBUS_RTLB"
+      },
+      {
+        "netclass": "PWR1A",
+        "pattern": "VBUS_RTLB_DAMP"
+      },
+      {
+        "netclass": "PWR2A",
+        "pattern": "VCC_3V3_MKEY"
+      },
+      {
+        "netclass": "PWR3A",
+        "pattern": "VCC_5V_PERI"
+      }
+    ],
+    "note": "board .kicad_pro: net_settings classes named as above with outer_min_width_mm as track width, patterns as listed; the .kicad_dru conditions use A.hasNetclass(<class>)"
+  },
+  "open": [
+    "Finished RF50 impedance, loss and coupon TDR/S21 (bench).",
+    "Trace and via temperature rise under the protective currents (bench).",
+    "DCTAP clearance: IPC-2221B Table 6-1 not read (https://shop.ipc.org/ipc-2221/ipc-2221-standard-only); project rule 0.3 mm meanwhile.",
+    "RF50 nets inside the DC-04 +/-30 V envelope keep the CPWG gap 0.20 mm: clearance against Table 6-1 not verified (TBD).",
+    "SYS12 and E1_LAB5_RAW carry the F101 7.5 A protective value of NET_CURRENT (D36V50F12 limit TBD there): BATT width until a lower limit is sourced.",
+    "Series-derived nets inherit the neighbour values (upper bound): e.g. E2_J21_FUSED takes the SYS12 continuous 4.0 A (bounded by F201 4 A), not the J21 branch 2.5 A.",
+    "unclassified_supply_candidates: branch rails reached only through ICs, FETs or diodes default to SIG until NET_CURRENT lists them."
+  ]
+}
