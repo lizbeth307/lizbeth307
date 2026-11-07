@@ -1049,8 +1049,9 @@ class PackageClosureFileTests(unittest.TestCase):
         self.closure = json.loads((HERE / "image/package-closure.json").read_text(encoding="utf-8"))
 
     def test_committed_closure_is_consistent_with_the_lock(self):
-        self.assertEqual(build_image.closure_issues(self.closure, self.lock), [])
-        self.assertEqual(build_image.load_closure()["packages"], self.closure["packages"])
+        # A CLOSURE_ROOTS edit ahead of the regenerated file is the image job's check (IMG2-R1, ClosureExtensionRouteTests).
+        drift = build_image.closure_roots_issues(self.closure)
+        self.assertEqual([i for i in build_image.closure_issues(self.closure, self.lock) if i not in drift], [])
         by_name = {p["package"]: p for p in self.closure["packages"]}
         self.assertEqual(sorted(by_name), ["chrony", "gpsd", "libgps30t64", "tzdata", "tzdata-legacy"])
         for name in ("chrony", "gpsd", "libgps30t64"):
@@ -1136,6 +1137,7 @@ class ClosureResolverTests(unittest.TestCase):
     """build_image.resolve_closure on a small signed-index model of the snapshot and the r2 dpkg status."""
 
     def setUp(self):
+        self.enterContext(patch.object(build_image, "CLOSURE_ROOTS", {"chrony": ("_chrony",), "gpsd": ("gpsd",)}))  # the model's roots
         self.lock = _lock()
         locked = {n: _locked_deb(self.lock, n) for n in ("chrony", "gpsd", "libgps30t64")}
 
@@ -1443,7 +1445,10 @@ class GdmMaskAndFactsTests(unittest.TestCase):
 class ClosureExtensionRouteTests(unittest.TestCase):
     """IMG2-R1: a root added to CLOSURE_ROOTS before package-closure.json is regenerated (the IMG-4 route) downloads no
     closure deb and does not stop fetch(); build() records image-facts.json and only then stops, so the CI resolve step
-    can propose the file. load_closure() (step 8b, `closure --check`) stays strict. IMG2-R2: the chrony guard."""
+    can propose the file. load_closure() (step 8b, `closure --check`) stays strict, and the host tests (the recipe gate of
+    the image job) fail on every closure issue except that drift. IMG2-R2: the chrony guard."""
+
+    ROOTS = {"chrony": ("_chrony",), "gpsd": ("gpsd",)}  # the roots of the committed package-closure.json
 
     def fetch(self, cache, roots):
         import deploy
@@ -1455,18 +1460,29 @@ class ClosureExtensionRouteTests(unittest.TestCase):
 
     def test_fetch_reports_an_inconsistent_closure_without_downloading(self):
         with tempfile.TemporaryDirectory() as cache:
-            result, downloads = self.fetch(cache, dict(build_image.CLOSURE_ROOTS))
+            result, downloads = self.fetch(cache, dict(self.ROOTS))
             self.assertEqual(result["closure"]["status"], "CLOSURE_DEBS_VERIFIED")
             self.assertEqual(sorted(result["closure"]["debs"]), ["chrony", "gpsd", "libgps30t64", "tzdata", "tzdata-legacy"])
             self.assertEqual(len(downloads), 5)
-            result, downloads = self.fetch(cache, dict(build_image.CLOSURE_ROOTS, greetd=()))
+            result, downloads = self.fetch(cache, dict(self.ROOTS, greetd=()))
             self.assertEqual(result["status"], "LOCKED_ARTIFACTS_VERIFIED")
             self.assertEqual(result["closure"]["status"], "CLOSURE_INCONSISTENT")
             self.assertTrue(any("roots must be" in issue for issue in result["closure"]["issues"]), result["closure"])
             self.assertEqual(downloads, [])
-        with patch.object(build_image, "CLOSURE_ROOTS", dict(build_image.CLOSURE_ROOTS, greetd=())), \
-                self.assertRaisesRegex(build_image.BuildError, "roots must be"):
-            build_image.load_closure()
+        closure = json.loads((HERE / "image/package-closure.json").read_text(encoding="utf-8"))
+        with patch.object(build_image, "CLOSURE_ROOTS", dict(self.ROOTS, greetd=())):
+            drift = build_image.closure_roots_issues(closure)
+            self.assertEqual(len(drift), 1, drift)  # greetd adds no account here, so only the roots differ
+            self.assertEqual([i for i in build_image.closure_issues(closure, _lock()) if i not in drift], [])
+            with self.assertRaisesRegex(build_image.BuildError, "roots must be"):
+                build_image.load_closure()
+
+    def test_committed_closure_matches_the_closure_roots(self):
+        drift = build_image.closure_roots_issues(json.loads((HERE / "image/package-closure.json").read_text(encoding="utf-8")))
+        if drift:
+            self.skipTest("package-closure.json lags CLOSURE_ROOTS until the tagged image run's Resolve step regenerates it "
+                          "(GENERATED commit): " + "; ".join(drift))
+        self.assertEqual(build_image.load_closure()["roots"], sorted(build_image.CLOSURE_ROOTS))
 
     def test_build_records_the_facts_then_stops_on_the_closure(self):
         fetched = {"status": "LOCKED_ARTIFACTS_VERIFIED", "artifacts": {}, "verify_cache": {},

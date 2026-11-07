@@ -1443,7 +1443,7 @@ def _versions(by_name, name, suites):
     return sorted(seen.values(), key=functools.cmp_to_key(lambda x, y: deb_version_compare(y[0], x[0])))
 
 
-def resolve_closure(stanzas, installed, lock, roots=CLOSURE_ROOTS):
+def resolve_closure(stanzas, installed, lock, roots=None):
     """The packages the image must add to r2 for roots, from the signed snapshot indices.
 
     stanzas: [(suite, area, {field: value})] of every binary-<arch> Packages index of the snapshot;
@@ -1492,7 +1492,7 @@ def resolve_closure(stanzas, installed, lock, roots=CLOSURE_ROOTS):
         options = [v for v in _versions(by_name, name, suites) if version_satisfies(v[0], op, wanted)]
         return ([v for v in options if v[0] in locked.get(name, {})] or options or [None])[0]
 
-    queue = [(name, "root (STACK.md:902, build/07 §1.2)", None, None) for name in sorted(roots)]
+    queue = [(name, "root (STACK.md:902, build/07 §1.2)", None, None) for name in sorted(CLOSURE_ROOTS if roots is None else roots)]
     while queue:
         name, reason, op, wanted = queue.pop(0)
         if name in selected:
@@ -1616,10 +1616,17 @@ def closure_issues(closure, lock):
         pinned = locked.get((p["package"], p["version"]))
         if pinned and any(pinned[k] != p[k] for k in ("architecture", "filename", "sha256", "size")):
             issues.append("differs from sources.lock.json binary_debs: " + p["package"])
-    if closure.get("roots") != sorted(CLOSURE_ROOTS) or not set(CLOSURE_ROOTS) <= set(names):
-        issues.append("roots must be " + ",".join(sorted(CLOSURE_ROOTS)) + " and in packages")
     if set(closure.get("expected_removed") or []) & set(names) or sorted(closure.get("removed_because") or {}) != closure.get("expected_removed"):
         issues.append("expected_removed must be outside packages and match removed_because")
+    return issues + closure_roots_issues(closure)
+
+
+def closure_roots_issues(closure):
+    """The part of closure_issues that a CLOSURE_ROOTS edit causes until `closure --resolve` regenerates the file. The
+    build stops on it after the r2 facts (IMG2-R1); host tests fail on every other issue (PackageClosureFileTests)."""
+    issues, names = [], [p.get("package") for p in closure.get("packages") or []]
+    if closure.get("roots") != sorted(CLOSURE_ROOTS) or not set(CLOSURE_ROOTS) <= set(names):
+        issues.append("roots must be " + ",".join(sorted(CLOSURE_ROOTS)) + " and in packages")
     if closure.get("expected_accounts") != sorted({a for accounts in CLOSURE_ROOTS.values() for a in accounts}):
         issues.append("expected_accounts must be the accounts of the roots")
     return issues
