@@ -5,6 +5,7 @@ Run: python -m unittest discover -s pcb/tests  (from sat-receiver-audit/)
 import ast
 import importlib.util
 import json
+import os
 import re
 import unittest
 from pathlib import Path
@@ -251,6 +252,8 @@ class KicadRuleLoadTests(unittest.TestCase):
         import tempfile
         cli = shutil.which('kicad-cli')
         if not cli:
+            if os.environ.get('SRRX_REQUIRE_KICAD_CLI') == '1':  # set by the KiCad-container CI job: a skip there is a failure
+                self.fail('kicad-cli not found although SRRX_REQUIRE_KICAD_CLI=1')
             self.skipTest('kicad-cli not installed (runs in the KiCad 10.0.7 container)')
         fixture = (PCB / 'tests/fixtures/power_neck.kicad_pcb').read_text(encoding='utf-8')
         # a 0.12 mm GND track (below the 0.15 mm project default, above the KiCad default minimum) and a GND via
@@ -270,6 +273,55 @@ class KicadRuleLoadTests(unittest.TestCase):
         types = [v.get('type') for v in report.get('violations', [])]
         self.assertIn('track_width', types, (types, run.stdout, run.stderr))
         self.assertIn('hole_clearance', types, (types, run.stdout, run.stderr))
+
+
+class ReviewFixRuleTests(unittest.TestCase):
+    """W2 PCB-RULES review: PTH annular ring rule (PR-06), no inner BATT/PWR3A tracks (PR-04), branch and taper rule
+    areas (PR-07), vias per transition advisory (PR-09)."""
+    FILES = RuleFileTests.FILES
+
+    def body(self, text, name):
+        m = re.search(r'\(rule "%s"\n(.*?)\n\)' % re.escape(name), text, re.S)
+        self.assertIsNotNone(m, name)
+        return m[1]
+
+    def test_pth_annular_rule_meets_the_floor(self):
+        doc = load_doc()
+        for kind, path in self.FILES.items():
+            body = self.body(path.read_text(encoding='utf-8'), 'project PTH pad hole')
+            self.assertIn("A.isPlated()", body)
+            value = float(re.search(r'annular_width \(min ([0-9.]+)mm\)', body)[1])
+            self.assertEqual(value, doc['fab_floor']['jlc_4l_1oz' if kind == '4l' else 'jlc_2l_1oz']['pth_annular_min'], path.name)
+
+    def test_no_inner_tracks_for_uncounted_classes(self):
+        doc = load_doc()
+        text = self.FILES['4l'].read_text(encoding='utf-8')
+        for name in stackup.POWER_CLASSES:
+            if doc['classes'][name]['inner_min_width_mm'] is None:
+                body = self.body(text, f'{name} no inner tracks')
+                self.assertIn('(layer inner)', body)
+                self.assertIn('(constraint disallow track)', body)
+                self.assertIn(f"A.hasNetclass('{name}') && !A.intersectsArea('{stackup.BRANCH_AREA}')", body)
+            else:
+                self.assertNotIn(f'"{name} no inner tracks"', text)
+        self.assertEqual({n for n in stackup.POWER_CLASSES if doc['classes'][n]['inner_min_width_mm'] is None}, {'PWR3A', 'BATT'})
+
+    def test_branch_and_taper_rules_follow_the_rules_they_relax(self):
+        for kind, path in self.FILES.items():
+            names = RULE.findall(path.read_text(encoding='utf-8'))
+            branch = names.index('power branch area')
+            for name in stackup.POWER_CLASSES:
+                self.assertLess(names.index(f'{name} outer width'), branch, (path.name, name))
+            if kind == '4l':
+                self.assertLess(names.index('RF50 CPWG on L1'), names.index('RF50 taper area'))
+            else:
+                self.assertNotIn('RF50 taper area', names)
+        self.assertEqual(set(load_doc()['kicad']['rule_areas']), {stackup.BRANCH_AREA, stackup.TAPER_AREA})
+
+    def test_vias_per_transition_is_advisory(self):
+        classes = load_doc()['classes']
+        for name in stackup.POWER_CLASSES:
+            self.assertIn('advisory', classes[name]['vias_per_transition_status'])
 
 
 if __name__ == '__main__':

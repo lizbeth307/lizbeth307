@@ -485,5 +485,349 @@ class ProjectionTests(unittest.TestCase):
         self.assertEqual(changed['contract_board'], base['contract_board'])
 
 
+# ---------------------------------------------------------------- review fixes (W2 PCB-RULES review PR-01 .. PR-11)
+import math  # noqa: E402
+
+ENC_SPEC = ROOT / 'pcb/boards/ENC.json'
+ENC_BOARD = ROOT / 'build/kicad/boards/ENC/ENC.kicad_pcb'
+
+
+def v1_spec(**extra):
+    """A srrx-board-spec-v1 spec in the shape of pcb/boards/ENC.json (PCB-PIPE), on the B2B fixture board:
+    template ref J1 built as X1 and X2, placeholder P1 with a spec pin map."""
+    spec = {
+        'schema': 'srrx-board-spec-v1', 'board_id': 'FIX_B2B', 'status': 'PILOT_NOT_FOR_FABRICATION',
+        'contract': {'file': 'mechanical/generated/contract/boards.json', 'board': 'FIX_B2B'},
+        'domains': ['FIX'], 'layers': {'copper': 2}, 'project': 'build/kicad/boards/FIX_B2B/FIX_B2B.kicad_pro',
+        'instances': {'template_nets': ['LAB5', 'GND', 'SYS12', 'I2C0_SDA', 'I2C0_SCL'], 'list': [
+            {'id': 'a', 'qty': 1, 'refs': {'J1': 'X1', 'P1': None},
+             'nets': {'LAB5': 'LAB5', 'GND': 'GND', 'SYS12': 'SYS12', 'I2C0_SDA': 'I2C0_SDA', 'I2C0_SCL': 'I2C0_SCL'}},
+            {'id': 'b', 'qty': 1, 'refs': {'J1': 'X2', 'P1': None},
+             'nets': {'LAB5': 'LAB5', 'GND': 'GND', 'SYS12': 'SYS12', 'I2C0_SDA': 'I2C2_SDA', 'I2C0_SCL': 'I2C2_SCL'}}]},
+        'parts': [{'ref': 'J1', 'source': 'graph', 'anchor': {'at': [15, 10]}},
+                  {'ref': 'P1', 'source': 'pilot_placeholder', 'pins': {'1': 'GND'}, 'replaced_by': 'test'}],
+        'holes': {'from_contract': True, 'ref_prefix': 'H', 'keepout_layers': ['F.Cu', 'B.Cu'], 'keepout_blocks': ['tracks']},
+        'height_zones': [{'region': 'board', 'max_height_mm_from_contract': 'max_component_height', 'checked': False, 'why': 'test'}],
+        'router': {'tool': 'freerouting'}, 'drc_policy': {'warning_checks': {}},
+    }
+    spec.update(extra)
+    return spec
+
+
+B2B_NETS = ['LAB5', 'LAB5', 'GND', 'GND', 'SYS12', 'SYS12', 'GND', 'GND', 'I2C0_SDA', 'I2C0_SCL']
+B2B_GRAPH = {'X1': {'ref': 'X1', 'footprint': '', 'pins': [{'number': str(i + 1), 'net': n} for i, n in enumerate(B2B_NETS)]},
+             'X2': {'ref': 'X2', 'footprint': '', 'pins': [{'number': str(i + 1), 'net': n.replace('I2C0', 'I2C2')} for i, n in enumerate(B2B_NETS)]}}
+
+
+def b2b_with_placeholder(net='GND'):
+    t = tree('b2b_a.kicad_pcb')
+    x, y = K(26, 4)
+    t.append(['footprint', cb.Q('Fixture:PAD_SMD'), ['layer', cb.Q('F.Cu')], ['at', '%g' % x, '%g' % y],
+              ['property', cb.Q('Reference'), cb.Q('P1')],
+              ['pad', cb.Q('1'), 'smd', 'rect', ['at', '0', '0'], ['size', '1', '1'], ['layers', cb.Q('F.Cu')], ['net', cb.Q(net)]]])
+    return t
+
+
+def seg(t, a, b, width, layer, net):
+    (x0, y0), (x1, y1) = K(*a), K(*b)
+    t.append(['segment', ['start', '%g' % x0, '%g' % y0], ['end', '%g' % x1, '%g' % y1], ['width', '%g' % width],
+              ['layer', cb.Q(layer)], ['net', cb.Q(net)]])
+
+
+def smd_footprint(t, ref, at, net, size=1.0):
+    x, y = K(*at)
+    t.append(['footprint', cb.Q('Fixture:PAD_SMD'), ['layer', cb.Q('F.Cu')], ['at', '%g' % x, '%g' % y],
+              ['property', cb.Q('Reference'), cb.Q(ref)], ['property', cb.Q('Height'), cb.Q('0.5')],
+              ['pad', cb.Q('1'), 'smd', 'rect', ['at', '0', '0'], ['size', '%g' % size, '%g' % size], ['layers', cb.Q('F.Cu')], ['net', cb.Q(net)]]])
+
+
+class SpecFormTests(unittest.TestCase):
+    """PR-01: pcb/boards/<B>.json is shared with board_gen (srrx-board-spec-v1)."""
+
+    def test_v1_shape_translates(self):
+        s = cb.normalize_spec(v1_spec())
+        self.assertEqual(s['contract_board'], 'FIX_B2B')
+        self.assertEqual(s['board_file'], 'build/kicad/boards/FIX_B2B/FIX_B2B.kicad_pcb')
+        self.assertEqual([i['ref_map'] for i in s['instances']], [{'J1': 'X1'}, {'J1': 'X2'}])
+        self.assertEqual(s['instances'][1]['net_map']['I2C0_SDA'], 'I2C2_SDA')
+        self.assertIn('P1', s['board_only_refs'])
+        self.assertEqual(s['board_only_pins'], {'P1': {'1': 'GND'}})
+        self.assertEqual(s['hole_ref_prefixes'], ['H'])
+        self.assertEqual(s['height_zones'], [{'side': 'top', 'board': True, 'max_height_from_contract': 'max_component_height', 'spec_checked': False}])
+        self.assertNotIn('router', s)
+        self.assertEqual(cb.normalize_spec(s), s)  # idempotent
+
+    def test_board_gen_only_keys_do_not_stale_the_review(self):
+        b = cb.Board(b2b_with_placeholder())
+        base = review(b2b_with_placeholder(), v1_spec(), graph=B2B_GRAPH)
+        other = review(b2b_with_placeholder(), v1_spec(router={'tool': 'freerouting', 'max_passes': 99}), graph=B2B_GRAPH)
+        self.assertEqual(base['inputs']['projection_sha256'], other['inputs']['projection_sha256'])
+        self.assertTrue(b.footprints)
+
+    def test_v1_spec_reviews_a_template_board(self):
+        doc = review(b2b_with_placeholder(), v1_spec(), graph=B2B_GRAPH)
+        self.assertEqual(doc['findings'], [])
+        self.assertTrue(any(u['check'] == 'heights' for u in doc['unverified']))
+        bad = v1_spec()
+        bad['instances']['list'][1]['nets']['I2C0_SDA'] = 'I2C0_SDA'
+        bad['instances']['list'][1]['nets']['I2C0_SCL'] = 'I2C0_SCL'
+        self.assertEqual(sorted(f['item'] for f in review(b2b_with_placeholder(), bad, graph=B2B_GRAPH)['findings']), ['J1.10', 'J1.9'])
+
+    def test_placeholder_pins_are_checked(self):
+        doc = review(b2b_with_placeholder('LAB5'), v1_spec(), graph=B2B_GRAPH)
+        self.assertEqual([(f['check'], f['item']) for f in doc['findings']], [('pad_nets', 'P1.1')])
+
+    def test_unknown_shapes_stop_with_a_message(self):
+        for bad in (v1_spec(schema='srrx-board-spec-v9'), v1_spec(instances=['J1']), v1_spec(instances={'list': [{'id': 'a', 'refs': ['J1']}]}),
+                    v1_spec(contract='ENC'), v1_spec(height_zones=[{'region': 'left', 'max_height_mm': 3}]), v1_spec(holes=['H1']),
+                    {'board_id': 'FIX_PWR', 'instances': ['x']}, {'board_id': 'FIX_PWR', 'split_nets': ['E1_SHUNT_P']}):
+            with self.assertRaises(SystemExit, msg=json.dumps(bad)[:120]) as ctx:
+                review(tree('b2b_a.kicad_pcb'), bad, graph=B2B_GRAPH)
+            self.assertIn('check_boards:', str(ctx.exception))
+
+    @unittest.skipUnless(ENC_SPEC.is_file() and ENC_BOARD.is_file(), 'ENC pilot (PCB-PIPE) not on this branch')
+    def test_enc_pilot_spec_and_board(self):
+        # the shared spec and the KiCad-filled pilot board: no crash, and the KiCad knockout polygons pass the keepout check
+        spec = json.loads(ENC_SPEC.read_text(encoding='utf-8'))
+        doc = cb.review_board(cb.load_board(ENC_BOARD), spec, json.loads(cb.CONTRACT.read_text(encoding='utf-8')),
+                              cb.load_graph(), NETCLASSES, {})
+        self.assertEqual(doc['checks']['keepouts']['findings'], 0, doc['findings'])
+        self.assertGreater(doc['checks']['pad_nets']['expected_refs'], 0)
+        self.assertEqual(doc['checks']['pth_annular']['fab_floor'], 'jlc_2l_1oz')
+        out = io.StringIO()
+        with redirect_stdout(out), redirect_stderr(io.StringIO()):
+            rc = cb.main(['--all', '--check'])  # a missing review.json is stale (rc 1), never a traceback
+        self.assertIn(rc, (0, 1))
+        self.assertIn('ENC', out.getvalue())
+
+
+def knockout_fill(cx, cy, r, n=32, outer=3.9):
+    """Fractured fill (square with a zero-width slit into a hole): the hole is the n-gon circumscribed about radius r,
+    vertices on the 1 nm grid, as a KiCad fill around a rule-area keepout. Contract mm."""
+    rr = r / math.cos(math.pi / n)
+    ring = [(round(cx + rr * math.cos(2 * math.pi * k / n), 6), round(cy + rr * math.sin(2 * math.pi * k / n), 6)) for k in range(n)]
+    return [(cx + outer, cy), (cx + outer, cy + outer), (cx - outer, cy + outer), (cx - outer, cy - outer), (cx + outer, cy - outer),
+            (cx + outer, cy), ring[0]] + ring[:0:-1] + [ring[0]]
+
+
+class KeepoutToleranceTests(unittest.TestCase):
+    """PR-02: KiCad knockouts sit a few nm inside the keepout radius."""
+
+    def add_fill(self, t, r):
+        t.append(['zone', ['net', cb.Q('GND')], ['layer', cb.Q('F.Cu')], ['name', cb.Q('GND_KO')],
+                  ['filled_polygon', ['layer', cb.Q('F.Cu')], pts_node(knockout_fill(4, 4, r))]])
+
+    def test_knockout_at_the_keepout_radius_passes(self):
+        t = tree('power_neck.kicad_pcb')
+        self.add_fill(t, 3.5 - 2e-6)  # edge midpoints 2 nm inside r 3.5 (ENC pilot: 2.9999987 against 3.0)
+        doc = review(t, PWR_SPEC)
+        self.assertEqual([f for f in doc['findings'] if f['check'] == 'keepouts'], [])
+
+    def test_copper_20um_inside_fails(self):
+        t = tree('power_neck.kicad_pcb')
+        self.add_fill(t, 3.5 - 0.02)
+        self.assertIn('keepouts', checks_failed(review(t, PWR_SPEC)))
+
+
+def drop_zone(t, name):
+    t[:] = [n for n in t if not (isinstance(n, list) and n and n[0] == 'zone' and cb.kid(n, 'name') and cb.kid(n, 'name')[1] == name)]
+
+
+class SplitVerificationTests(unittest.TestCase):
+    """PR-03: a split_nets declaration is verified, not trusted."""
+
+    def test_split_with_missing_l4_pour_fails(self):
+        t = tree('power_neck.kicad_pcb')
+        drop_zone(t, 'BATT_L4')
+        set_fills(zone(t, 'BATT_L1'), 'F.Cu', [PowerMutationTests().notch(2.0)])
+        doc = review(t, PWR_SPEC)
+        split = [f for f in doc['findings'] if f['item'] == 'split E1_SHUNT_P']
+        self.assertEqual(len(split), 1, doc['findings'])
+        self.assertIn('no B.Cu pour or track', split[0]['detail'])
+        necks = [f for f in doc['findings'] if f['item'] == 'pour E1_SHUNT_P']
+        self.assertEqual([f['limit'] for f in necks], [NETCLASSES['classes']['BATT']['outer_min_width_mm']])
+        self.assertFalse(doc['checks']['class_widths']['split_nets']['E1_SHUNT_P']['verified'])
+
+    def test_split_with_broken_l4_pour_fails(self):
+        t = tree('power_neck.kicad_pcb')
+        set_fills(zone(t, 'BATT_L4'), 'B.Cu', [rect(6, 7, 19, 13), rect(21, 7, 34, 13)])
+        doc = review(t, PWR_SPEC)
+        self.assertEqual([f['item'] for f in doc['findings']], ['split E1_SHUNT_P'])
+        self.assertIn('different groups', doc['findings'][0]['detail'])
+
+    def test_intact_split_is_verified(self):
+        doc = review(tree('power_neck.kicad_pcb'), PWR_SPEC)
+        self.assertTrue(doc['checks']['class_widths']['split_nets']['E1_SHUNT_P']['verified'])
+
+
+class InnerPowerTrackTests(unittest.TestCase):
+    """PR-04: BATT/PWR3A inner copper is not a current path; an inner track of these classes is a finding."""
+
+    def test_batt_track_on_inner_layer_fails(self):
+        t = tree('power_neck.kicad_pcb')
+        seg(t, (10, 10), (30, 10), 0.15, 'In2.Cu', 'E1_SHUNT_P')
+        doc = review(t, PWR_SPEC)
+        hits = [f for f in doc['findings'] if f['check'] == 'class_widths']
+        self.assertEqual(len(hits), 1, doc['findings'])
+        self.assertEqual(hits[0]['layer'], 'In2.Cu')
+        self.assertIn('inner copper not counted', hits[0]['detail'])
+
+    def test_inner_pour_stays_unverified(self):
+        t = tree('power_neck.kicad_pcb')
+        t.append(['zone', ['net', cb.Q('E1_SHUNT_P')], ['layer', cb.Q('In2.Cu')], ['name', cb.Q('BATT_L3')],
+                  ['filled_polygon', ['layer', cb.Q('In2.Cu')], pts_node(rect(6, 7, 34, 13))]])
+        doc = review(t, PWR_SPEC)
+        self.assertEqual(doc['findings'], [])
+        self.assertTrue(any(u['item'] == 'E1_SHUNT_P pour on In2.Cu' for u in doc['unverified']))
+
+
+class NpthPegTests(unittest.TestCase):
+    """PR-05: parts with NPTH locating pegs stay in the height and THT-pocket checks; mounting holes do not."""
+
+    def peg(self, t, local_y):
+        footprint(t, 'J1').append(['pad', cb.Q(''), 'np_thru_hole', 'circle', ['at', '0', '%g' % local_y], ['size', '1.2', '1.2'],
+                                   ['drill', '1.2'], ['layers', cb.Q('*.Cu'), cb.Q('*.Mask')]])
+
+    def test_tall_part_with_peg_fails_heights(self):
+        t = tree('power_neck.kicad_pcb')
+        self.peg(t, 1.0)
+        doc = review(t, dict(PWR_SPEC, heights={'J1': 20.0}))
+        self.assertEqual(checks_failed(doc), ['heights'])
+        self.assertEqual(doc['findings'][0]['item'], 'J1')
+
+    def test_peg_outside_pocket_fails(self):
+        t = tree('power_neck.kicad_pcb')
+        self.peg(t, 3.0)
+        doc = review(t, PWR_SPEC)
+        self.assertEqual(checks_failed(doc), ['tht_pockets'])
+        self.assertEqual(doc['findings'][0]['item'], 'J1.NPTH')
+        self.assertEqual(doc['checks']['tht_pockets']['npth_pegs'], 1)
+
+    def test_mounting_holes_are_left_out(self):
+        b = cb.Board(tree('power_neck.kicad_pcb'))
+        self.assertEqual(cb.mounting_refs(b, PWR_SPEC), {'H1', 'H2', 'H3', 'H4'})
+        doc = review(tree('power_neck.kicad_pcb'), PWR_SPEC)
+        self.assertEqual(doc['checks']['tht_pockets']['tht_pads'], 2)
+
+
+class AnnularFloorTests(unittest.TestCase):
+    """PR-06: the PTH annular floor follows the copper layer count (JLC 0.15 multilayer, 0.18 two-layer)."""
+
+    def test_two_layer_floor(self):
+        t = tree('b2b_a.kicad_pcb')
+        pad = next(p for p in cb.kids(footprint(t, 'J1'), 'pad') if p[1] == '1')
+        cb.kid(pad, 'size')[1:] = ['1.34', '1.34']  # ring 0.17
+        doc = review(t, B2B_SPEC, mates={'FIX_B2B_B': cb.Board(tree('b2b_b.kicad_pcb'))})
+        hits = [f for f in doc['findings'] if f['check'] == 'pth_annular']
+        self.assertEqual([(f['item'], f['limit']) for f in hits], [('J1.1', NETCLASSES['fab_floor']['jlc_2l_1oz']['pth_annular_min'])])
+
+    def test_four_layer_floor(self):
+        t = tree('power_neck.kicad_pcb')
+        cb.kid(cb.kid(footprint(t, 'J1'), 'pad'), 'size')[1:] = ['1.64', '1.64']  # ring 0.17 >= 0.15
+        doc = review(t, PWR_SPEC)
+        self.assertEqual([f for f in doc['findings'] if f['check'] == 'pth_annular'], [])
+        self.assertEqual(doc['checks']['pth_annular']['floor_mm'], NETCLASSES['fab_floor']['jlc_4l_1oz']['pth_annular_min'])
+
+
+class BranchAndTaperTests(unittest.TestCase):
+    """PR-07: low-current branches of power nets and RF50 tapers into IC pins."""
+
+    def sense_line(self):
+        t = tree('power_neck.kicad_pcb')  # a 0.2 mm Kelvin line from TP1 (E1_N, BATT) to the sense pin of U1
+        smd_footprint(t, 'U1', (12, 5), 'E1_N')
+        seg(t, (12, 5), (12, 17), 0.2, 'F.Cu', 'E1_N')
+        return t
+
+    def test_sense_line_fails_without_exemption(self):
+        doc = review(self.sense_line(), dict(PWR_SPEC, board_only_refs={'U1': 'sense amplifier'}))
+        self.assertEqual(checks_failed(doc), ['class_widths'])
+
+    def test_branch_exempt_sense_line(self):
+        spec = dict(PWR_SPEC, board_only_refs={'U1': 'sense amplifier'},
+                    branch_exempt={'U1': {'max_mm': 13.0, 'min_width_mm': 0.15, 'reason': 'Kelvin sense line'}})
+        doc = review(self.sense_line(), spec)
+        self.assertEqual(doc['findings'], [])
+        self.assertTrue(any(u['item'] == 'U1 branch on E1_N' for u in doc['unverified']))
+        spec['branch_exempt'] = {'U1': {'max_mm': 5.0, 'min_width_mm': 0.15, 'reason': 'too short'}}
+        self.assertEqual(checks_failed(review(self.sense_line(), spec)), ['class_widths'])
+        spec['branch_exempt'] = {'U1': {'max_mm': 13.0, 'min_width_mm': 0.25, 'reason': 'too wide a minimum'}}
+        self.assertEqual(checks_failed(review(self.sense_line(), spec)), ['class_widths'])
+
+    def test_decoupling_stub_into_a_pour(self):
+        t = tree('power_neck.kicad_pcb')  # C9 on the BATT pour edge through a 0.3 mm stub
+        smd_footprint(t, 'C9', (20, 15.5), 'E1_SHUNT_P', size=0.8)
+        seg(t, (20, 15.5), (20, 12.5), 0.3, 'F.Cu', 'E1_SHUNT_P')
+        spec = dict(PWR_SPEC, board_only_refs={'C9': 'decoupling'})
+        doc = review(t, spec)
+        self.assertEqual(sorted({f['item'] for f in doc['findings']}), ['pour E1_SHUNT_P', 'track E1_SHUNT_P'])
+        spec['branch_exempt'] = {'C9': {'max_mm': 3.0, 'min_width_mm': 0.25, 'reason': 'decoupling stub'}}
+        self.assertEqual(review(t, spec)['findings'], [])
+
+    def taper(self):
+        t = tree('rf_cpwg.kicad_pcb')
+        s = next(x for x in cb.kids(t, 'segment') if cb.kid(x, 'net')[1] == 'E4_RTLA_RF1')
+        cb.kid(s, 'start')[1] = '112.8'
+        seg(t, (12, 10), (12.8, 10), 0.25, 'F.Cu', 'E4_RTLA_RF1')
+        return t
+
+    def test_rf50_taper(self):
+        self.assertEqual(checks_failed(review(self.taper(), RF_SPEC)), ['rf50'])
+        spec = dict(RF_SPEC, rf50_taper={'C1': {'max_len_mm': 1.0, 'min_width_mm': 0.2, 'reason': 'QFN pin'}})
+        doc = review(self.taper(), spec)
+        self.assertEqual(doc['findings'], [])
+        self.assertTrue(any(u['item'] == 'C1 taper on E4_RTLA_RF1' for u in doc['unverified']))
+        spec['rf50_taper'] = {'C1': {'max_len_mm': 1.0, 'min_width_mm': 0.3, 'reason': 'min above the taper'}}
+        self.assertEqual(checks_failed(review(self.taper(), spec)), ['rf50'])
+
+
+class AdvisoryViaTests(unittest.TestCase):
+    """PR-09: vias_per_transition is advisory and listed, not silently implied."""
+
+    def test_split_net_vias_listed(self):
+        doc = review(tree('power_neck.kicad_pcb'), PWR_SPEC)
+        notes = [u for u in doc['unverified'] if u['item'] == 'E1_SHUNT_P vias']
+        self.assertEqual(len(notes), 1)
+        self.assertIn('advisory', notes[0]['reason'])
+
+
+class ContractProjectionTests(unittest.TestCase):
+    """PR-10: the contract hash covers only the keys the checker reads."""
+
+    def test_unread_contract_keys_keep_the_hash(self):
+        b = cb.Board(tree('power_neck.kicad_pcb'))
+        views = cb.expected_views(PWR_SPEC, GRAPH)
+        cbd = CONTRACT['boards']['FIX_PWR']
+        base = cb.projections(b, PWR_SPEC, cbd, GRAPH, views, NETCLASSES)['contract_board']
+        more = dict(cbd, placements={'U1': [1, 2]}, mount={'standoff': 'M3'}, dxf='x.dxf')
+        self.assertEqual(cb.projections(b, PWR_SPEC, more, GRAPH, views, NETCLASSES)['contract_board'], base)
+        moved = dict(cbd, holes_mm=[[4, 4], [36, 4], [4, 16], [36, 15]])
+        self.assertNotEqual(cb.projections(b, PWR_SPEC, moved, GRAPH, views, NETCLASSES)['contract_board'], base)
+
+
+class PadGeometryTests(unittest.TestCase):
+    """PR-11: a pad without an angle is at absolute 0 deg; custom pads use their primitives."""
+
+    def board_with(self, pad):
+        return cb.Board(cb.parse('(kicad_pcb (layers (0 "F.Cu" signal) (2 "B.Cu" signal)) (footprint "X:Y" (layer "F.Cu") (at 10 10 90)'
+                                 ' (property "Reference" "U1") ' + pad + '))'))
+
+    def test_missing_pad_angle_is_absolute_zero(self):
+        b = self.board_with('(pad "1" smd rect (at 0 0) (size 4 1) (layers "F.Cu") (net "N"))')
+        x0, y0, x1, y1 = b.pads[0]['geo'].bbox
+        self.assertAlmostEqual(x1 - x0, 4.0, places=6)
+        self.assertAlmostEqual(y1 - y0, 1.0, places=6)
+        b90 = self.board_with('(pad "1" smd rect (at 0 0 90) (size 4 1) (layers "F.Cu") (net "N"))')
+        x0, y0, x1, y1 = b90.pads[0]['geo'].bbox
+        self.assertAlmostEqual(y1 - y0, 4.0, places=6)
+
+    def test_custom_pad_primitives(self):
+        b = self.board_with('(pad "1" smd custom (at 0 0) (size 1 1) (layers "F.Cu") (net "N") (options (clearance outline) (anchor rect))'
+                            ' (primitives (gr_poly (pts (xy 0 0) (xy 3 0) (xy 3 1) (xy 0 1)) (width 0) (fill yes))))')
+        geo = b.pads[0]['geo']
+        self.assertTrue(geo.contains(12.5, 10.5))
+        self.assertFalse(geo.contains(10, 12.5))
+        self.assertEqual([u['check'] for u in b.unverified], ['geometry'])
+
+
 if __name__ == '__main__':
     unittest.main()
