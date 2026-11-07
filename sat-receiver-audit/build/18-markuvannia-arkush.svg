@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="210mm" height="188mm" viewBox="0 0 210 188">
+<title>SR-RX-v2.1 аркуш наклейок 1:1 (згенеровано tools/build_assembly_docs.py)</title>
+<rect x="10" y="4" width="100" height="1" fill="#000"/><text x="112" y="6" font-size="2.5" font-family="DejaVu Sans, Arial">100 мм — перевірка масштабу друку</text>
+<rect x="10" y="14" width="40" height="10" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="11" y="18.25" font-family="DejaVu Sans, Arial" font-size="3.00">P1 VHF-137</text>
+<text x="11" y="22.00" font-family="DejaVu Sans, Arial" font-size="3.00">без DC</text>
+<text x="10" y="27" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-J401</text>
+<rect x="56" y="14" width="40" height="10" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="57" y="17.03" font-family="DejaVu Sans, Arial" font-size="2.25">P2 UHF</text>
+<text x="57" y="19.84" font-family="DejaVu Sans, Arial" font-size="2.25">DC 4.3 V після DC-sense; ніколи</text>
+<text x="57" y="22.66" font-family="DejaVu Sans, Arial" font-size="2.25">&gt;5.5 V</text>
+<text x="56" y="27" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-J402</text>
+<rect x="102" y="14" width="40" height="10" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="103" y="17.03" font-family="DejaVu Sans, Arial" font-size="2.25">P3 L-BAND</text>
+<text x="103" y="19.84" font-family="DejaVu Sans, Arial" font-size="2.25">DC 4.3 V після DC-sense; ніколи</text>
+<text x="103" y="22.66" font-family="DejaVu Sans, Arial" font-size="2.25">&gt;5.5 V</text>
+<text x="102" y="27" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-J403</text>
+<rect x="148" y="14" width="40" height="10" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="149" y="17.03" font-family="DejaVu Sans, Arial" font-size="2.25">P4 LNB (F)</text>
+<text x="149" y="19.84" font-family="DejaVu Sans, Arial" font-size="2.25">DC 13.2 V (12.5 V з QRO.cz);</text>
+<text x="149" y="22.66" font-family="DejaVu Sans, Arial" font-size="2.25">заглушка непровідна</text>
+<text x="148" y="27" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-J404</text>
+<rect x="10" y="38" width="40" height="10" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="11" y="42.40" font-family="DejaVu Sans, Arial" font-size="2.40">P5 HF (BNC)</text>
+<text x="11" y="45.40" font-family="DejaVu Sans, Arial" font-size="2.40">DC 13.8 V лише в профілі Boni</text>
+<text x="10" y="51" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-J405</text>
+<rect x="56" y="38" width="40" height="10" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="57" y="42.25" font-family="DejaVu Sans, Arial" font-size="3.00">P6 VHF2/AIS</text>
+<text x="57" y="46.00" font-family="DejaVu Sans, Arial" font-size="3.00">без DC</text>
+<text x="56" y="51" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-J406</text>
+<rect x="102" y="38" width="40" height="10" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="103" y="42.25" font-family="DejaVu Sans, Arial" font-size="3.00">P7 GNSS</text>
+<text x="103" y="46.00" font-family="DejaVu Sans, Arial" font-size="3.00">DC ≈3.1 V від LC76G</text>
+<text x="102" y="51" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-J407</text>
+<rect x="148" y="38" width="40" height="10" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="149" y="42.25" font-family="DejaVu Sans, Arial" font-size="3.00">P8 WIDE</text>
+<text x="149" y="46.00" font-family="DejaVu Sans, Arial" font-size="3.00">DC 4.3 V лише з LNA ch4</text>
+<text x="148" y="51" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-J408</text>
+<rect x="10" y="62" width="40" height="10" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="11" y="66.25" font-family="DejaVu Sans, Arial" font-size="3.00">RX1 (Lime)</text>
+<text x="11" y="70.00" font-family="DejaVu Sans, Arial" font-size="3.00">без DC</text>
+<text x="10" y="75" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-J413</text>
+<rect x="56" y="62" width="40" height="10" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="57" y="66.25" font-family="DejaVu Sans, Arial" font-size="3.00">RX2 (Lime)</text>
+<text x="57" y="70.00" font-family="DejaVu Sans, Arial" font-size="3.00">без DC</text>
+<text x="56" y="75" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-J414</text>
+<rect x="102" y="62" width="40" height="10" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="103" y="66.25" font-family="DejaVu Sans, Arial" font-size="3.00">REF IN (Lime)</text>
+<text x="103" y="70.00" font-family="DejaVu Sans, Arial" font-size="3.00">без DC</text>
+<text x="102" y="75" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-J415</text>
+<rect x="148" y="62" width="40" height="8" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="149" y="65.36" font-family="DejaVu Sans, Arial" font-size="2.55">ЛИШЕ ПРИЙОМ</text>
+<text x="149" y="68.55" font-family="DejaVu Sans, Arial" font-size="2.55">без передавача</text>
+<text x="148" y="73" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-RX</text>
+<rect x="10" y="86" width="30" height="8" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="11" y="89.49" font-family="DejaVu Sans, Arial" font-size="2.05">USB-C</text>
+<text x="11" y="92.05" font-family="DejaVu Sans, Arial" font-size="2.05">єдиний вхід живлення (PD)</text>
+<text x="10" y="97" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-USBC</text>
+<rect x="46" y="86" width="30" height="8" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="47" y="89.36" font-family="DejaVu Sans, Arial" font-size="2.55">LAB USB-A</text>
+<text x="47" y="92.55" font-family="DejaVu Sans, Arial" font-size="2.55">5 V ≤0.75 A</text>
+<text x="46" y="97" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-LABUSB</text>
+<rect x="82" y="86" width="30" height="8" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="83" y="89.36" font-family="DejaVu Sans, Arial" font-size="2.55">LAB BUS</text>
+<text x="83" y="92.55" font-family="DejaVu Sans, Arial" font-size="2.55">AUX 12 V · I2C</text>
+<text x="82" y="97" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-LABBUS</text>
+<rect x="118" y="86" width="20" height="6" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="119" y="90.03" font-family="DejaVu Sans, Arial" font-size="2.75">АУДІО 3.5 мм</text>
+<text x="118" y="95" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-AUDIO</text>
+<rect x="144" y="86" width="20" height="6" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="145" y="90.12" font-family="DejaVu Sans, Arial" font-size="3.00">T7 USB3</text>
+<text x="144" y="95" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-T7</text>
+<rect x="10" y="110" width="30" height="8" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="11" y="113.39" font-family="DejaVu Sans, Arial" font-size="2.45">IMU</text>
+<text x="11" y="116.45" font-family="DejaVu Sans, Arial" font-size="2.45">GX16-4 · 5 V · ключ ▲</text>
+<text x="10" y="121" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-IMU</text>
+<rect x="46" y="110" width="45" height="8" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="47" y="113.36" font-family="DejaVu Sans, Arial" font-size="2.55">СЕРВІС: UART5</text>
+<text x="47" y="116.55" font-family="DejaVu Sans, Arial" font-size="2.55">EDL · J21 · USB-A</text>
+<text x="46" y="121" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-HATCH</text>
+<rect x="97" y="110" width="40" height="6" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="98" y="114.01" font-family="DejaVu Sans, Arial" font-size="2.70">J21 unplugged before USB-C</text>
+<text x="97" y="119" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-J21</text>
+<rect x="143" y="110" width="40" height="6" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="144" y="114.09" font-family="DejaVu Sans, Arial" font-size="2.90">не лишати лицем до сонця</text>
+<text x="143" y="119" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-SUN</text>
+<rect x="10" y="134" width="60" height="20" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="11" y="141.38" font-family="DejaVu Sans, Arial" font-size="3.00">Li-ion 4S1P</text>
+<text x="11" y="145.12" font-family="DejaVu Sans, Arial" font-size="3.00">14.4 V ном. · 72 Wh · F1 7.5 A · не</text>
+<text x="11" y="148.88" font-family="DejaVu Sans, Arial" font-size="3.00">перевозити літаком</text>
+<text x="10" y="157" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-BAT</text>
+<rect x="76" y="134" width="30" height="6" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="77" y="136.56" font-family="DejaVu Sans, Arial" font-size="1.75">F1 7.5 A — вийняти для</text>
+<text x="77" y="138.75" font-family="DejaVu Sans, Arial" font-size="1.75">зберігання &gt;2–4 тиж.</text>
+<text x="76" y="143" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-F101</text>
+<rect x="112" y="134" width="25" height="6" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="113" y="136.56" font-family="DejaVu Sans, Arial" font-size="1.75">DISP12 · 12 V ·</text>
+<text x="113" y="138.75" font-family="DejaVu Sans, Arial" font-size="1.75">полярність TBD (E5-01)</text>
+<text x="112" y="143" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-DISP12</text>
+<rect x="143" y="134" width="20" height="6" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="144" y="138.12" font-family="DejaVu Sans, Arial" font-size="3.00">LABRXA</text>
+<text x="143" y="143" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-LABRXA</text>
+<rect x="169" y="134" width="20" height="6" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="170" y="138.12" font-family="DejaVu Sans, Arial" font-size="3.00">LABRXB</text>
+<text x="169" y="143" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-LABRXB</text>
+<rect x="10" y="158" width="20" height="6" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="11" y="161.96" font-family="DejaVu Sans, Arial" font-size="2.55">Lime X2 → RX1</text>
+<text x="10" y="167" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-LIME-X2</text>
+<rect x="36" y="158" width="20" height="6" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="37" y="161.96" font-family="DejaVu Sans, Arial" font-size="2.55">Lime X4 → RX2</text>
+<text x="36" y="167" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-LIME-X4</text>
+<rect x="62" y="158" width="20" height="6" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="63" y="161.77" font-family="DejaVu Sans, Arial" font-size="2.05">Lime J4 → REF IN</text>
+<text x="62" y="167" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-LIME-J4</text>
+<rect x="88" y="158" width="30" height="6" rx="0.8" fill="none" stroke="#000" stroke-width="0.2"/>
+<text x="89" y="160.56" font-family="DejaVu Sans, Arial" font-size="1.75">Lime X1 → ANNE-50+ (лише</text>
+<text x="89" y="162.75" font-family="DejaVu Sans, Arial" font-size="1.75">навантаження, не на панель)</text>
+<text x="88" y="167" font-family="DejaVu Sans, Arial" font-size="1.8" fill="#555">L-LIME-X1</text>
+</svg>

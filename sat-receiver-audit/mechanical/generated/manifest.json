@@ -1,0 +1,462 @@
+{
+  "schema": "srrx-mech-manifest-v1",
+  "generator": "1.0.0",
+  "params_sha256": "135211b0855f5c0223ffe92eb2eb899278c93e488a60a8905117cd2c05b02c00",
+  "libraries": {
+    "build123d": "0.13.0",
+    "cadquery-ocp-novtk": "8.0.1.0.0",
+    "matplotlib": "3.11.2"
+  },
+  "skip_cad": false,
+  "vendor_fit": true,
+  "files": {
+    "boards/ctrl-edge-cuts.dxf": {
+      "bytes": 1548,
+      "sha256": "17fd5e8e2929ce94bc22eb17db97c0308cc59166a62ef9f463171545b70d827d"
+    },
+    "boards/enc-edge-cuts.dxf": {
+      "bytes": 914,
+      "sha256": "0492685f2ff9ddad0ec9b59f6cdd8d6ce2e05acf74326daaaa37ad95f1e36d42"
+    },
+    "boards/pwr-edge-cuts.dxf": {
+      "bytes": 1216,
+      "sha256": "c687281e88c86c8d5b6554a28d1fad114b552e310a99fd9746e2137abb751520"
+    },
+    "boards/rf-edge-cuts.dxf": {
+      "bytes": 1089,
+      "sha256": "e8305537ee28f53d45d8c7add0e19b92f87005215d4e6c985912bb1bf8e2d2b5"
+    },
+    "contract/boards.json": {
+      "bytes": 8491,
+      "sha256": "0fd6be0d3c2a37afdd4e7c01ea9550119d47ed20af779fd083ad2ac43852233d"
+    },
+    "drawings/A-01.dxf": {
+      "bytes": 3744,
+      "sha256": "a8d9db89dc6dc15b20378856f961988bbd29f1d153cdfac36acf31102d0d6a44"
+    },
+    "drawings/A-01.svg": {
+      "bytes": 10322,
+      "sha256": "12bdeef74385cddddb1e9cecf679dde69da1a721b1e3bf171503e28ba8363e14"
+    },
+    "drawings/A-02.dxf": {
+      "bytes": 3728,
+      "sha256": "27ca8ae4b4dd68c80e0497a81b04bf7f1415ee51d8f72386772133f5e0e15bd8"
+    },
+    "drawings/A-02.svg": {
+      "bytes": 10598,
+      "sha256": "4d27fd0c80dc19d831d38964e7b8760f3bce1c73ac84f3dc8f85d515bccf960e"
+    },
+    "drawings/A-03.dxf": {
+      "bytes": 5161,
+      "sha256": "e81a2a5b46ec575c18e8515955e43b1daa47eec99a62a6379f2f4d0c66d7c5a7"
+    },
+    "drawings/A-03.svg": {
+      "bytes": 13172,
+      "sha256": "251a872f6af64b4fadcedbdd049e6f01672c58a974a34ac17afbfdc9da5f9b55"
+    },
+    "drawings/A-04.dxf": {
+      "bytes": 11972,
+      "sha256": "326ebc3852016e11da4810a6ec3f956fd9e033303fcfc3a6c72b4a261289bc31"
+    },
+    "drawings/A-04.svg": {
+      "bytes": 24157,
+      "sha256": "0ad7442e7b728042776baf0cf3a9f27138c23633d4cff8ca56104daba4c6d665"
+    },
+    "drawings/A-05.dxf": {
+      "bytes": 11954,
+      "sha256": "46914bb9f95d40ef9b7cc8fe058e4f6d25022fc11ffc185798cfe9bd8034cf49"
+    },
+    "drawings/A-05.svg": {
+      "bytes": 23968,
+      "sha256": "ab635fd12366ed39dca6f6a5f7e50c815fa2e376c99b73bcab7e0f4960fdad99"
+    },
+    "drawings/A-06.dxf": {
+      "bytes": 9830,
+      "sha256": "44cced25ece8d13f7af3cddc7ed8592ae99c601f6b93c3c5d45893a80cc45c9e"
+    },
+    "drawings/A-06.svg": {
+      "bytes": 19479,
+      "sha256": "fb17d97c8cee3bdc12e0d13531b34b47c4274f94651f5f944df58cdaf5dbf15e"
+    },
+    "drawings/A-07.dxf": {
+      "bytes": 5288,
+      "sha256": "ebb51bd138ca360656be6a991903d35020cece3043d84ba67f3b29507fdf8c2e"
+    },
+    "drawings/A-07.svg": {
+      "bytes": 14992,
+      "sha256": "556be5a9731bb9826b7a57d95d2ef16c3b5a4775cd145c007c3bd8c09ad88ef0"
+    },
+    "drawings/B-CTRL.dxf": {
+      "bytes": 5378,
+      "sha256": "df52cf91399f98157e3d316b97dea87ce503d85d24e39a37b205706c8de38f1e"
+    },
+    "drawings/B-CTRL.svg": {
+      "bytes": 14904,
+      "sha256": "dad2dec07eb776e66245d80e5640f741318f58ccb0c24f7e36631ccaa18f0e20"
+    },
+    "drawings/B-ENC.dxf": {
+      "bytes": 2607,
+      "sha256": "ffb8b8c04b6a7474483ce096f7ec04dea33545af7629301b47a6112ef8e0417a"
+    },
+    "drawings/B-ENC.svg": {
+      "bytes": 9484,
+      "sha256": "6b8b6b6a1ee3965ee4d38b25fa0920b2879bfd73abafca81f526acde29593919"
+    },
+    "drawings/B-PWR.dxf": {
+      "bytes": 5468,
+      "sha256": "fd803b3e06585c78aa1456d767c96f953726e2b5e95c8d5ee721b88b7bbf11b2"
+    },
+    "drawings/B-PWR.svg": {
+      "bytes": 16518,
+      "sha256": "cf9be36f9eac52f02634210d9e02f5bc0a9222946ea48138d3f7d59fbe5e84cf"
+    },
+    "drawings/B-RF.dxf": {
+      "bytes": 3704,
+      "sha256": "0e901342d0e4ff7534abe48e629ac32ccd964b7fbc7751100478c6fb417c84eb"
+    },
+    "drawings/B-RF.svg": {
+      "bytes": 11926,
+      "sha256": "994dc6e0ab8ae874e2b9bac5168011faa8916c826d510f20f96b98dae14a74b5"
+    },
+    "drawings/I-01.dxf": {
+      "bytes": 3542,
+      "sha256": "ca88798a7cce7484ee89d47e2b3b25f82c69593690958c3b81d060d0a402c54b"
+    },
+    "drawings/I-01.svg": {
+      "bytes": 12125,
+      "sha256": "8705d5a53a8771acac3f98c4bf8216c1a7e727e8c5019ed09a7af209a8d44065"
+    },
+    "drawings/M-01.dxf": {
+      "bytes": 6194,
+      "sha256": "a736f3b62869e48c3e64ff11e9d80cb55b7ed899c976e1f30f543061040194b4"
+    },
+    "drawings/M-01.svg": {
+      "bytes": 19426,
+      "sha256": "872a6591822083751909f427c5f5b41c0e082abb1a406e773f18219f1024bcc7"
+    },
+    "drawings/M-02.dxf": {
+      "bytes": 9224,
+      "sha256": "0b2cc00f66be44d7dc5c88c0e78ccb528c481009c4a706599bf973ab46e0759c"
+    },
+    "drawings/M-02.svg": {
+      "bytes": 28929,
+      "sha256": "bc5c1b50a41a8b63472550c2e7258f553cb2daf9096e4ff8ccc3457a1da0ffa3"
+    },
+    "drawings/M-03.dxf": {
+      "bytes": 4894,
+      "sha256": "e5eadfd6f1ede249bc3081efb7099c5614c8bb4b11afc9344041de11f90edd9a"
+    },
+    "drawings/M-03.svg": {
+      "bytes": 15625,
+      "sha256": "2e16bc917611fe1329d7b8a918a96eacdc82c5304af1d0457f30cd8428158e53"
+    },
+    "drawings/M-06.dxf": {
+      "bytes": 14703,
+      "sha256": "bf53190d606714c2247c5f7e65f4e47633390ab30a6c952dbb035ef6e9731001"
+    },
+    "drawings/M-06.svg": {
+      "bytes": 38932,
+      "sha256": "3a60654a783236bc078a331dd89cda34e158bc54e360046dc2ea5824dc00575e"
+    },
+    "drawings/M-07.dxf": {
+      "bytes": 16882,
+      "sha256": "ff2ba035e5a0ad24ecc7ab6868cc445f149636422b3dce2e0dfe7bf441a1269e"
+    },
+    "drawings/M-07.svg": {
+      "bytes": 48050,
+      "sha256": "9d5aff81480e43935a302fe58bdea13953109a3f5e203d8355b963dad8b26e1a"
+    },
+    "drawings/M-08.dxf": {
+      "bytes": 6129,
+      "sha256": "2681099fa9808687b7ada94bf02f9f02af59e9a5b06d1d895080f545994ec91d"
+    },
+    "drawings/M-08.svg": {
+      "bytes": 17344,
+      "sha256": "9146a1d80282907471ca753ff13b783ae2200d701cf49af542497e0bae539905"
+    },
+    "drawings/M-09.dxf": {
+      "bytes": 11004,
+      "sha256": "74809122e4d85fce6a9617a6eb67bd701cd49f3b318956729dadc249e90c693f"
+    },
+    "drawings/M-09.svg": {
+      "bytes": 27033,
+      "sha256": "5f239cd285b77086dcea1242aae7637314bbf42c11b8bf04a7f595aef322d4d4"
+    },
+    "drawings/M-10.dxf": {
+      "bytes": 8752,
+      "sha256": "e83eb88948936d2253d64229ac1f2f9bcf8c36b0f40f46a03439d644e5699683"
+    },
+    "drawings/M-10.svg": {
+      "bytes": 21354,
+      "sha256": "90aefbfb733a26e508e0d522d23bb4bda0480835550831fe750dc3770ddcfb71"
+    },
+    "drawings/M-11.dxf": {
+      "bytes": 3264,
+      "sha256": "bb9dd2583b18a147bc307ef1b9cb69a4ad03ea85613c2c16b6b7a98b75172d84"
+    },
+    "drawings/M-11.svg": {
+      "bytes": 11429,
+      "sha256": "f1bbf5fafa4a3613dba4765b21de13acdd2f9f6e116f2e78dd964121acc2c533"
+    },
+    "drawings/M-12.dxf": {
+      "bytes": 4204,
+      "sha256": "122419232adc3061532bf97daf836cf474463bfd834c8542867359cfbe262ec1"
+    },
+    "drawings/M-12.svg": {
+      "bytes": 12129,
+      "sha256": "7ed2fd1cf8d4fbe77714a96eb1af0e5aed36b52c6868a43cf7c4a9f67832a25f"
+    },
+    "drawings/M-13.dxf": {
+      "bytes": 4844,
+      "sha256": "38f36a7492c4f9da507dc1a542d8937eb42ef4f01caeaf0bad404c9ab9040aaa"
+    },
+    "drawings/M-13.svg": {
+      "bytes": 14880,
+      "sha256": "097abd833c69a957029b92907b3370dc8803938225499ea189d72167c667b779"
+    },
+    "drawings/P-01.dxf": {
+      "bytes": 3419,
+      "sha256": "e5184d8cb5c3dc1c0635376f6862fc4d86cacd38240c72c127f75170331706cf"
+    },
+    "drawings/P-01.svg": {
+      "bytes": 11180,
+      "sha256": "37871928c8361af35fc7ae2c539178579083a7c0098a65362d33aa918956e515"
+    },
+    "drawings/P-02.dxf": {
+      "bytes": 4882,
+      "sha256": "7ad021485257478b4b0d580a64966d70c0aea336cf1d9e07f757a1af87490975"
+    },
+    "drawings/P-02.svg": {
+      "bytes": 13290,
+      "sha256": "15e5e2d6e34aa69d7055968173f13d8cc3af8837baa769e21db99c6a56a23281"
+    },
+    "drawings/antennas.pdf": {
+      "bytes": 81871,
+      "sha256": "27c7650acc885aa267d3147f50a4fc6b8c8ecfc96f6fea34b147e397dcbbdd70"
+    },
+    "drawings/boards.pdf": {
+      "bytes": 58512,
+      "sha256": "dc2b958ce804a38ccacbc28f5ac93529621cb5381452c71b30520a3502fc8cf0"
+    },
+    "drawings/enclosure.pdf": {
+      "bytes": 168404,
+      "sha256": "632ab14a8bc0594bf1a6bfec3ced8713ddeb172ec0a4632c70aa63a02f135d12"
+    },
+    "drawings/pod-imu.pdf": {
+      "bytes": 46553,
+      "sha256": "284ac2fdc7cb9febbe178962bc4253387d75d4e24ce111d5f937bcc79a35938e"
+    },
+    "fit-report.json": {
+      "bytes": 38766,
+      "sha256": "568872d0e61bb64716339ba9573c5ec443519389a5525d20907ffa02a7b837c4"
+    },
+    "fit-report.md": {
+      "bytes": 21085,
+      "sha256": "89dcfc42c01589fc7d7f14e34712d130ef69b0053576580be7377cd75954bd82"
+    },
+    "step/angle_right_al.step": {
+      "bytes": 40568,
+      "sha256": "32116da4f3326230e14c7b69b315bd51b50fdd67326069657abb9a0988445c24"
+    },
+    "step/angle_top_al.step": {
+      "bytes": 84374,
+      "sha256": "9626e8bfd447e1f11525827f89394683f80d45ac93571710835b1111d017974a"
+    },
+    "step/assembly.step": {
+      "bytes": 3854978,
+      "sha256": "20f5e030e0592cf8899f3644d52ea58b1a7efdbcca82d2872fc25b366e1e610a"
+    },
+    "step/battery_tray.step": {
+      "bytes": 111036,
+      "sha256": "fae85a3394505f06c789a984a7021fd4ea2621b4dfbb5abeb4575eeef61beed8"
+    },
+    "step/button_cap_ribbed_x2.step": {
+      "bytes": 23756,
+      "sha256": "76696dde405e7f2a74a5e97bcedb6049d6ba62db55ea4990f4903d401f9312c6"
+    },
+    "step/button_cap_x4.step": {
+      "bytes": 9352,
+      "sha256": "973cdd554ccf98f5a5c24f0e13b05df33e65bc78688e3929fd808d94d8e40834"
+    },
+    "step/cooler_a_cu_block.step": {
+      "bytes": 29677,
+      "sha256": "f0a9c10462ab15dba7251fca86e79d67791a8977e89d1e316d46fa21ea6bc3c3"
+    },
+    "step/display_clamp_x4.step": {
+      "bytes": 32716,
+      "sha256": "9777a40b8246108fa0861dd2405e94f4472e5271436171f0871ec19c5ae9e557"
+    },
+    "step/front_shell.step": {
+      "bytes": 989865,
+      "sha256": "767ced74387aa41b546afe85bcb9f8e7b2b99c2a86d1a65d9118f75abd3d39c2"
+    },
+    "step/hatch_cover.step": {
+      "bytes": 128975,
+      "sha256": "af1da4ffdc73550aadbac52accc6d4f04589f9e41318689b47f4e58c94166629"
+    },
+    "step/helicone_disk_al.step": {
+      "bytes": 85812,
+      "sha256": "e5a90235814743a38a8af6d7c76c2591cd0b60eecd838ae841349f4b44709239"
+    },
+    "step/hood.step": {
+      "bytes": 95178,
+      "sha256": "65d982f3bc5ae8d4def6cf22fa020a00e808cf9497ded1c91d748d53eaff0bd6"
+    },
+    "step/horn_ring_127.step": {
+      "bytes": 210548,
+      "sha256": "821dcbfd854d974a2ddc7446ffe372c457215479ba7c0ed8f1cd3de0a88df37a"
+    },
+    "step/horn_ring_180.step": {
+      "bytes": 195458,
+      "sha256": "8ceb7b00850e9d555b9d0117840a2e599693d9571c78a6b3fe8a04d6c70eecce"
+    },
+    "step/imu_carrier.step": {
+      "bytes": 61578,
+      "sha256": "2092eca7a549ca6e7af1c9e4deba32f7ab7ababd8d4e489108c2863a7fc05201"
+    },
+    "step/lime_pedestal_al.step": {
+      "bytes": 22713,
+      "sha256": "aef8cf0935fd84769dfdbb62c559f5b045d301a2dfdfffd1a18bdf1646d67d62"
+    },
+    "step/lnb_neck_adapter.step": {
+      "bytes": 356059,
+      "sha256": "5c030f6c29f4032631838e0a6fbf6e63f5e37ddb37828a4a73cfe15a12e1e361"
+    },
+    "step/lnb_throat_ring.step": {
+      "bytes": 35135,
+      "sha256": "ef05ca15808ad948ddb9415057803c9d9407c04f47b3e1bda09bc088f433bda2"
+    },
+    "step/main_knob.step": {
+      "bytes": 223795,
+      "sha256": "aa8a9335035ccf81ab454ae6400816f5837c4a57363d25da1e8c149d8f333e69"
+    },
+    "step/mandrel_hrpt_4t.step": {
+      "bytes": 285310,
+      "sha256": "e48a88b11313282a9576d4a1ecacca68f3b524fbe2488ff2194773d805683b0a"
+    },
+    "step/mandrel_sband_7t.step": {
+      "bytes": 503833,
+      "sha256": "7edd27331aa0fb3d77b2c6fd2de401ba07dac84d01bc42b16e70b88e370511a8"
+    },
+    "step/plate_al.step": {
+      "bytes": 258783,
+      "sha256": "a4838f952919a8d4889c5ce7d014b13ff692edb2f3d9a338a7b101256d231063"
+    },
+    "step/rear_shell.step": {
+      "bytes": 829859,
+      "sha256": "4fb7c324737975b75711dad349e5357fb2804fbd4d983983d39d34f61b180891"
+    },
+    "step/rf_bay_lid_fr4.step": {
+      "bytes": 31178,
+      "sha256": "ed66c0d1a2e4bc4a68c873eb661dff482b556962820cfa3dcfb8c930d127bd75"
+    },
+    "step/rf_bay_walls_fr4.step": {
+      "bytes": 44457,
+      "sha256": "4c726d32a30040062e524d967ca0e5ea7b6d0c8910adc55579a59a11ff4b48ff"
+    },
+    "step/t7_holder.step": {
+      "bytes": 160963,
+      "sha256": "8de9da1ce372e0b05d40001344fe07733f5d69e0d5e9cad0a5a0f2b7cb1fc8af"
+    },
+    "step/ufs_boss_al.step": {
+      "bytes": 22865,
+      "sha256": "1842adf4e197a20550ddae40e2d6abc11373ac98445f0f668d3e99b34c0c7561"
+    },
+    "step/yagi_boom_spigot.step": {
+      "bytes": 73912,
+      "sha256": "804b1267441ba01c272f3cdde02573a675a729734a8cb6de0f0894b80ecfc271"
+    },
+    "step/yagi_de_clamp.step": {
+      "bytes": 64392,
+      "sha256": "ae58b28b1467a82b88d9c308a67f0178df186ecfdae55e5554ce8600caf44dd8"
+    },
+    "step/yagi_tape_clamp.step": {
+      "bytes": 41677,
+      "sha256": "a8d2d08e3c939d299435e2f24839752af3b2e39771c3f624bd467d7b06f166b0"
+    },
+    "stl/battery_tray.stl": {
+      "bytes": 47084,
+      "sha256": "d50a9baeb775b1f7b4622a13a481bf32eaaff109b942a26de50ef9199ca85305"
+    },
+    "stl/button_cap_ribbed_x2.stl": {
+      "bytes": 17484,
+      "sha256": "3e71d3e559c52e20adb378aebeb880b6ef05458188f22ffed9702707816442b3"
+    },
+    "stl/button_cap_x4.stl": {
+      "bytes": 16684,
+      "sha256": "eb184d50c94a5132dc692f71b45fc6b034f6ba7102dd94217695426aa7a4c753"
+    },
+    "stl/display_clamp_x4.stl": {
+      "bytes": 10084,
+      "sha256": "32adedca1b43d30c082e621a3edf967c48302acdcb2a437259a57ae77401ab0b"
+    },
+    "stl/front_shell.stl": {
+      "bytes": 934684,
+      "sha256": "08e21ba81707c8852aef9a3b34d2c89471872c7b494490eabf02081d84dbdd59"
+    },
+    "stl/hatch_cover.stl": {
+      "bytes": 40084,
+      "sha256": "5af089c317394b5dd1e06ba4157aa6950d6f65c4aad06e9909e0e464da118bc2"
+    },
+    "stl/hood.stl": {
+      "bytes": 21884,
+      "sha256": "d7ca48366d604568a525b960e821b0c10b68076ea25bd2d127ae1af176747171"
+    },
+    "stl/horn_ring_127.stl": {
+      "bytes": 91884,
+      "sha256": "b0809bbb01e745e81a9a90714dbe5a8d5d9ca3d7c0da752087a323891453ab85"
+    },
+    "stl/horn_ring_180.stl": {
+      "bytes": 94584,
+      "sha256": "03a107cffa66948bc05098f46f8eb5014fdb5cf088e92420a6a68372600fb90d"
+    },
+    "stl/imu_carrier.stl": {
+      "bytes": 102084,
+      "sha256": "f7f02e9a57bf22c984524f71b66fc55128ad3040cd92f04d6ec19e21f08f8e24"
+    },
+    "stl/lnb_neck_adapter.stl": {
+      "bytes": 72684,
+      "sha256": "3b595c7a3e34a208aed6a6ee59710ccc103318932ba81065901ab0b7380ce38e"
+    },
+    "stl/lnb_throat_ring.stl": {
+      "bytes": 87884,
+      "sha256": "3424ac4479262b1108c0ddad8c53d124b77eb915eb185d1f8472c3d58ebc9c80"
+    },
+    "stl/main_knob.stl": {
+      "bytes": 142384,
+      "sha256": "e5ece12a292e9ccbac08b5f36324de1acb8077bcf2595beb8c1509d246db9d08"
+    },
+    "stl/mandrel_hrpt_4t.stl": {
+      "bytes": 1184784,
+      "sha256": "be1c721c6cb7eb4850a3636e00662b2468c12821f451eb56dfa125ce97394f4b"
+    },
+    "stl/mandrel_sband_7t.stl": {
+      "bytes": 1585084,
+      "sha256": "4dacd4ceac6cfd8a19adcc4f58a7b3778aa37303891b5c0f0b86bf2a5b1c4012"
+    },
+    "stl/rear_shell.stl": {
+      "bytes": 590084,
+      "sha256": "4883427e0d438988c16c2ea724a176e8bd80607ae33235540aa5b7e7cc15f54b"
+    },
+    "stl/t7_holder.stl": {
+      "bytes": 53784,
+      "sha256": "ff4eda9ca4ad5e2fd33b1061289507ae4071a388a05ba3239fb3d3754ef224bd"
+    },
+    "stl/yagi_boom_spigot.stl": {
+      "bytes": 3884,
+      "sha256": "3b4e716b3d1f0ce741386a33f64d1458a13de73cfd3261a5b95cef5c26f68341"
+    },
+    "stl/yagi_de_clamp.stl": {
+      "bytes": 45484,
+      "sha256": "fc9cec39f104cf1965f61cbf01331c3cc8fc892068f6d8c2f3360d00da1d8d00"
+    },
+    "stl/yagi_tape_clamp.stl": {
+      "bytes": 27484,
+      "sha256": "bd4f853a87f8f8e89529131a2a159cd97cc50404d218a157887f52bc6cd830e3"
+    },
+    "vendor-fit.json": {
+      "bytes": 3344,
+      "sha256": "139cae344fb5638e96e5035dabd46ab939087fc86d2f77feba84df9204740940"
+    }
+  }
+}

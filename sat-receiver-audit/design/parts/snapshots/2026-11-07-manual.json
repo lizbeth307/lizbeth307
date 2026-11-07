@@ -1,0 +1,97 @@
+{
+ "schema": 1,
+ "date": "2026-11-07",
+ "note": "Manufacturer catalogue pages read on this date with WebFetch for the self-clinching fasteners of the mid-plate (mechanical/params, drawing M-07). The pages show the part number and its specification but no stock or price, so stock is null (not shown). Installation of both parts needs a press (PEM: 'install with a squeeze in properly sized round holes'). DigiKey DE product pages (and two DigiKey search result pages) were read the same day with WebFetch for the S-band pod enclosure and the Mini-Fit Jr. housings and headers of the battery-circuit harness; stock null = not shown on the page.",
+ "entries": {
+  "web:pem-f-m3-1": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://catalog.pemnet.com/item/pemsert--self-clinching-flush-fasteners---type-f/msert-self-clinching-flush-fasteners-type-f-metric/f-m3-1",
+   "read": "2026-11-07",
+   "method": "WebFetch of the PEM product catalogue page",
+   "mpn": "F-M3-1",
+   "manufacturer": "PennEngineering (PEM)",
+   "title": "PEMSERT self-clinching flush fasteners type F, metric",
+   "stock": null,
+   "price": null,
+   "note": "M3 x 0.5, internal 6H; sheet thickness 1.53 to 2.32 mm; hole size in sheet 4.37 +0.08 mm; A (shank) max 1.53 mm; C max 4.35 mm; H nom 4.8 mm; min distance hole C/L to edge 6.00 mm; for use in sheet hardness HRB 70 / HB 125 or less; 300 series stainless steel, passivated"
+  },
+  "web:pem-so-m3-3zi": {
+   "distributor": "manufacturer/vendor page",
+   "url": "https://catalog.pemnet.com/item/thru-hole-threaded-standoffs-types-so-soa-sos/ru-hole-threaded-standoffs-types-so-soa-sos-metric/so-m3-3zi",
+   "read": "2026-11-07",
+   "method": "WebFetch of the PEM product catalogue page",
+   "mpn": "SO-M3-3ZI",
+   "manufacturer": "PennEngineering (PEM)",
+   "title": "Thru-hole threaded standoffs types SO, SOA, SOS, metric",
+   "stock": null,
+   "price": null,
+   "note": "M3 x 0.5, internal 6H; L 3 mm (+0.05 -0.13); min sheet thickness 1.00 mm; hole size in sheet 4.22 +0.08 mm; H nom 4.8 mm; C 4.20 mm; min distance hole C/L to edge 6.00 mm; heat-treated carbon steel, zinc plated ASTM B633 SC1 Type III colorless; installed with the head flush with one surface of the sheet"
+  },
+  "digikey:HM1816-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/hammond-manufacturing/1554U2GY/2359917",
+   "read": "2026-11-07",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "1554U2GY",
+   "manufacturer": "Hammond Manufacturing",
+   "stock": 155,
+   "price": "EUR 33.97 @1",
+   "note": "BOX PC GRAY 7.87\"L X 4.72\"W; 200.00 x 119.99 x 90.00 mm; IP68, NEMA 4/4X/12/13; cover included; the material attribute shows ABS while the description says PC; factory stock 1140"
+  },
+  "digikey:HM3493-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=1554UPL",
+   "read": "2026-11-07",
+   "method": "WebFetch of the DigiKey DE search result page",
+   "mpn": "1554UPL",
+   "manufacturer": "Hammond Manufacturing",
+   "stock": 40,
+   "price": "EUR 11.50 @1",
+   "note": "inner panel, steel, unpainted, about 190.45 x 106.60 mm, fits the 1554 and 1555 series; factory stock 379"
+  },
+  "digikey:WM3700-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/molex/0039012020/61315",
+   "read": "2026-11-07",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "0039012020",
+   "manufacturer": "Molex",
+   "stock": 283219,
+   "price": "EUR 0.24 @1",
+   "note": "Mini-Fit Jr 5557 receptacle housing (female socket), 2 positions, 2 rows, row spacing 4.20 mm; contacts sold separately (crimp)"
+  },
+  "digikey:WM3701-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/molex/0039012040/61376",
+   "read": "2026-11-07",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "0039012040",
+   "manufacturer": "Molex",
+   "stock": 156876,
+   "price": "EUR 0.28 @1",
+   "note": "Mini-Fit Jr 5557 receptacle housing (female socket), 4 positions, 2 rows, 4.20 mm; factory stock 174000"
+  },
+  "digikey:WM23800-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/detail/molex/0039288020/930296",
+   "read": "2026-11-07",
+   "method": "WebFetch of the DigiKey DE product page",
+   "mpn": "0039288020",
+   "manufacturer": "Molex",
+   "stock": 17016,
+   "price": "EUR 0.69 @1",
+   "note": "Mini-Fit Jr 5566 header, vertical (CONN HEADER VERT 2POS), through hole, 2 positions, 2 rows, 4.20 mm, tin; PCB peg and current rating not shown"
+  },
+  "digikey:WM23801-ND": {
+   "distributor": "DigiKey DE",
+   "url": "https://www.digikey.de/en/products/result?keywords=0039288040",
+   "read": "2026-11-07",
+   "method": "WebFetch of the DigiKey DE search result page",
+   "mpn": "0039288040",
+   "manufacturer": "Molex",
+   "stock": null,
+   "price": "EUR 1.03 @1",
+   "note": "Mini-Fit Jr 5566 header (CONN HEADER VERT 4POS 4.2MM), through hole, 4 positions, 2 rows, tin; stock not shown, manufacturer lead time 14 weeks"
+  }
+ }
+}

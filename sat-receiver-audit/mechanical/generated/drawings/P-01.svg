@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297">
+<title>P-01 Зовнішній S-band вузол: Hammond 1554U2GY</title>
+<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 135211b0855f</desc>
+<rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
+<line x1="30" y1="237" x2="230" y2="237" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="230" y1="237" x2="230" y2="117" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="230" y1="117" x2="30" y2="117" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="30" y1="117" x2="30" y2="237" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="33.935" y1="231.065" x2="226.065" y2="231.065" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="226.065" y1="231.065" x2="226.065" y2="122.935" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="226.065" y1="122.935" x2="33.935" y2="122.935" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="33.935" y1="122.935" x2="33.935" y2="231.065" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<circle cx="36.5" cy="230.5" r="2" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="33" y1="230.5" x2="40" y2="230.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="36.5" y1="234" x2="36.5" y2="227" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<circle cx="223.5" cy="230.5" r="2" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="220" y1="230.5" x2="227" y2="230.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="223.5" y1="234" x2="223.5" y2="227" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<circle cx="223.5" cy="123.5" r="2" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="220" y1="123.5" x2="227" y2="123.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="223.5" y1="127" x2="223.5" y2="120" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<circle cx="36.5" cy="123.5" r="2" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="33" y1="123.5" x2="40" y2="123.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="36.5" y1="127" x2="36.5" y2="120" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="68" y1="225" x2="192" y2="225" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="192" y1="225" x2="192" y2="178" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="192" y1="178" x2="68" y2="178" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="68" y1="178" x2="68" y2="225" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<text x="70" y="223" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.36" text-anchor="start" fill="#000">cf2235-kt30 (шар 1)</text>
+<line x1="100" y1="170" x2="160" y2="170" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="160" y1="170" x2="160" y2="132" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="160" y1="132" x2="100" y2="132" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="100" y1="132" x2="100" y2="170" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<text x="102" y="168" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.36" text-anchor="start" fill="#000">LaNA WB (шар 2, над фільтром)</text>
+<line x1="39" y1="199.5" x2="45" y2="199.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="42" y1="202.5" x2="42" y2="196.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="215" y1="199.5" x2="221" y2="199.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="218" y1="202.5" x2="218" y2="196.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="39" y1="154.5" x2="45" y2="154.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="42" y1="157.5" x2="42" y2="151.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="215" y1="154.5" x2="221" y2="154.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="218" y1="157.5" x2="218" y2="151.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="30" y1="237.8" x2="30" y2="246.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="230" y1="237.8" x2="230" y2="246.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="30" y1="245" x2="230" y2="245" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="30" y1="245" x2="32.2" y2="244.3" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="30" y1="245" x2="32.2" y2="245.7" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="230" y1="245" x2="227.8" y2="244.3" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="230" y1="245" x2="227.8" y2="245.7" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="130" y="248.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000">200</text>
+<line x1="29.2" y1="237" x2="20.5" y2="237" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="29.2" y1="117" x2="20.5" y2="117" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="22" y1="237" x2="22" y2="117" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="22" y1="237" x2="21.3" y2="234.8" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="22" y1="237" x2="22.7" y2="234.8" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="22" y1="117" x2="21.3" y2="119.2" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="22" y1="117" x2="22.7" y2="119.2" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="20.8" y="177" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000" transform="rotate(-90 20.8 177)">120</text>
+<line x1="8" y1="289" x2="412" y2="289" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="412" y1="289" x2="412" y2="8" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="412" y1="8" x2="8" y2="8" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="8" y1="8" x2="8" y2="289" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="14" y1="281" x2="114" y2="281" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="14" y1="281" x2="14" y2="277" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="24" y1="281" x2="24" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="34" y1="281" x2="34" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="44" y1="281" x2="44" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="54" y1="281" x2="54" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="64" y1="281" x2="64" y2="277" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="74" y1="281" x2="74" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="84" y1="281" x2="84" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="94" y1="281" x2="94" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="104" y1="281" x2="104" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="114" y1="281" x2="114" y2="277" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="14" y="285" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.08" text-anchor="start" fill="#000">Контроль масштабу: 100 мм (друкувати 100 %, без підгонки)</text>
+<line x1="262" y1="289" x2="262" y2="247" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="262" y1="247" x2="412" y2="247" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="262" y1="282" x2="412" y2="282" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="262" y1="275" x2="412" y2="275" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="262" y1="268" x2="412" y2="268" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="262" y1="261" x2="412" y2="261" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="264" y="253" font-family="DejaVu Sans, Arial, sans-serif" font-size="4.48" text-anchor="start" fill="#000">Зовнішній S-band вузол: Hammond 1554U2GY</text>
+<text x="264" y="259" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">розміщення і свердління, 1:1</text>
+<text x="264" y="266" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення P-01 · масштаб 1:1 · мм · допуск ±0.2, якщо не вказано</text>
+<text x="264" y="273" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: корпус PC (Hammond), сталева панель 1554UPL</text>
+<text x="264" y="280" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
+<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 135211b0855f · v1.0.0</text>
+<text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">Зовнішній S-band вузол: Hammond 1554U2GY</text>
+<text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">розміщення і свердління, 1:1</text>
+<text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">cf2235-kt30 (124 x 47 x 33) — на сталевій панелі; LaNA WB (60 x 38 x 25) — другим шаром, 5 мм над фільтром (build/12).</text>
+<text x="12" y="28.6" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Стек 33 + 5 + 25 = 63 мм + стійки 6 ≤ внутрішньої висоти 84.5 — модельно, без кабелів; посадка і герметизація — ворота E4-04 OPEN.</text>
+<text x="12" y="32.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Отвори кріплення модулів — за їх кресленнями (TBD); SMA — ⌀6.4, гермоввід і клапан — ⌀12.2; клапан ніколи догори.</text>
+<text x="12" y="35.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Момент гвинтів кришки 30-40 cN·m (креслення Hammond 1554U).</text>
+</svg>

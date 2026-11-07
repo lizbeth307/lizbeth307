@@ -37,9 +37,12 @@ for name in ('dependency-verification.json','software-tests.json','system-smoke.
  except (OSError,ValueError):reports[name]={'status':'MISSING_OR_INVALID'}
 states={k:v.get('status',v.get('host_regression_status','UNKNOWN')) if type(v) is dict else 'INVALID' for k,v in reports.items()}
 # wasSuccessful() ignores skips. Only documented gaps outside the locked guest
-# wheelhouse may skip, each once; NumPy/Qt/ORT/compiler skips fail the run.
+# wheelhouse may skip, each once; NumPy/Qt/ORT/compiler skips fail the run. The third is the offline
+# guard itself (tools/run_tests_offline.py denies AF_INET/AF_INET6): the real 127.0.0.1 UDP datagram
+# test of srrx.baseband.LiveUdpSink cannot run under it; the live path on the device is RX-04-live.
 allowed={'Actual QNN HTP SDK library unavailable; no real manifest was generated',
- 'PyMuPDF is not installed in this environment'}
+ 'PyMuPDF is not installed in this environment',
+ 'Internet sockets are denied in this test process'}
 u=reports['software-tests.json'];skipped=u.get('skipped',[]) if type(u) is dict else None
 if states['software-tests.json']=='PASS' and (u.get('failures') or u.get('errors') or type(skipped) is not list
   or any(type(s) is not dict for s in skipped) or len({s.get('reason') for s in skipped})!=len(skipped)
@@ -148,7 +151,9 @@ cd /opt/srrx
 set +e
 rm -f verification/software-tests.json
 echo 'Running full software regression'
-/opt/srrx/venv/bin/python3 tools/run_tests_offline.py > "$results/unit-tests.log" 2>&1
+# One progress line per test class goes to the serial console, so a run stopped by the time bound
+# still shows how far it got (console.log); the full output stays in unit-tests.log.
+SRRX_TEST_PROGRESS=/dev/console /opt/srrx/venv/bin/python3 tools/run_tests_offline.py > "$results/unit-tests.log" 2>&1
 unit_code=$?
 test ! -f verification/software-tests.json || cp verification/software-tests.json "$results/software-tests.json"
 echo "Software regression exit: $unit_code; running systemd/Unix IPC smoke"

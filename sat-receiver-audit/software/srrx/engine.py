@@ -10,7 +10,7 @@ BRANCHES = {"LNA1": 4.3, "LNA2": 4.3, "LNA3": 4.3, "LNA4": 4.3,
 # (firmware/pico/main.py HELLO_FIELDS); a same-session HELLO keeps these while
 # the STATUS that carried them is at most 500 ms old.
 STATUS_ONLY = ("battery_mv", "panel_temp_c", "case_temp_c", "fan_stalled",
-               "brightness_limit_pct", "adc_raw")
+               "brightness_limit_pct", "adc_raw", "q6a_key_pulses")
 
 
 def _sha256_hex(value):
@@ -19,8 +19,10 @@ def _sha256_hex(value):
 
 class Engine:
     def __init__(self, hardware, link, *, simulated=True, acceptance=None, telemetry_reader=None,
-                 soc_temp_reader=None, qualification_record=None):
+                 soc_temp_reader=None, qualification_record=None, gnss=None):
         self.hardware, self.link = hardware, link
+        # srrx.gnss_orchestrator.GnssOrchestrator (daemon --gnss gpsd|raw), or None for --gnss off.
+        self.gnss = gnss
         self.simulated, self.acceptance = simulated, acceptance
         # sha256 of the exact acceptance bytes (commissioning.load_acceptance_bound),
         # as srrx.provision sealed it into the Pico commissioning.json. Without
@@ -50,6 +52,8 @@ class Engine:
         self.imu_sample = None
         self.hmi_sample = None
         self.requested_mode = "field"
+        # srrx.pass_jobs.PassPlanner (daemon --hardware); without one, plan_passes is PASSES_DISABLED.
+        self.passes = None
         if simulated:
             # These are explicitly synthetic, never written into acceptance.
             self.policy.configure_limits({b: {"baseline_a": min(.1, CAPS[b][0] * .5),
@@ -89,6 +93,20 @@ class Engine:
             return None
         return self.now_ms - min(self.last_status_ms, self.last_readings_ms)
 
+    def _binding_fault(self, hello):
+        """Trip reason of a hardware HELLO that does not bind this Pico to the acceptance, else None."""
+        if not (self.acceptance and
+                hello.get("serial") == self.acceptance["pico_serial"] and
+                hello.get("calibration_crc32") == self.acceptance["battery_adc"]["record"]["crc32"]):
+            return "pico_identity_or_calibration_mismatch"
+        # The Pico reports its digest only with a valid local commissioning
+        # record. Equality pairs this Pico with exactly these acceptance bytes;
+        # like the UART CRC it detects a wrong pairing, not a forged Pico.
+        if not (self.qualification_record is not None and hello.get("hardware_commissioned") is True
+                and hello.get("qualification_record") == self.qualification_record):
+            return "pico_qualification_record_mismatch"
+        return None
+
     def _receive(self, frame):
         if frame["t"] not in {"HELLO", "STATUS", "EVENT"}:
             return
@@ -97,28 +115,20 @@ class Engine:
         if new_session:
             if frame["t"] != "HELLO":
                 return
-            self.trip("new_pico_session", notify=False)
+            # The policy latches the first fault and the console shows it: a HELLO that fails
+            # the binding must not latch as the benign "ready for an explicit start" stop.
+            self.trip((None if self.simulated else self._binding_fault(status)) or "new_pico_session",
+                      notify=False)
             self.imu_sample = self.hmi_sample = None
             self.session, self.rx_seq, self.tx_seq = frame["s"], -1, 0
             self.last_hb_ms = self.last_readings_ms = None
         if frame["q"] <= self.rx_seq:
             return
         if frame["t"] == "HELLO" and not self.simulated:
-            bound = bool(self.acceptance and
-                status.get("serial") == self.acceptance["pico_serial"] and
-                status.get("calibration_crc32") == self.acceptance["battery_adc"]["record"]["crc32"])
-            # The Pico reports its digest only with a valid local commissioning
-            # record. Equality pairs this Pico with exactly these acceptance bytes;
-            # like the UART CRC it detects a wrong pairing, not a forged Pico.
-            self.qualification_ok = bool(bound and self.qualification_record is not None
-                and status.get("hardware_commissioned") is True
-                and status.get("qualification_record") == self.qualification_record)
-            self.identity_ok = self.qualification_ok
-            if not bound:
-                self.trip("pico_identity_or_calibration_mismatch")
-                return
-            if not self.qualification_ok:
-                self.trip("pico_qualification_record_mismatch")
+            fault = self._binding_fault(status)
+            self.qualification_ok = self.identity_ok = fault is None
+            if fault is not None:
+                self.trip(fault)
                 return
         if frame["t"] == "EVENT":
             self.rx_seq = frame["q"]
@@ -161,6 +171,8 @@ class Engine:
 
     def tick(self, now_ms):
         self.now_ms = int(now_ms)
+        if self.gnss is not None:
+            self._gnss_tick()
         try:
             if self.last_tick_ms is not None and self.now_ms - self.last_tick_ms > 100:
                 self.imu_sample = None
@@ -263,6 +275,35 @@ class Engine:
         except (OSError, ValueError, RuntimeError) as exc:
             self.trip(type(exc).__name__ + ": " + str(exc))
 
+    def _gnss_reset_refusal(self, owner):
+        """Engine preconditions of a gnss_reset pulse for owner, else None."""
+        # Mutating: only the caller's own unexpired lease (no lease is no owner).
+        # The policy rechecks fault, width, spacing, rate and the MCP image.
+        if (self.policy.owner != owner or self.policy.lease_deadline_ms is None
+                or self.now_ms >= self.policy.lease_deadline_ms):
+            return "gnss_reset requires the caller's own valid lease"
+        if not self.configured or self.pending_arm:
+            return "gnss_reset requires configured MCP outputs and no pending arm"
+        if (self.pico.get("mcp_reset") is not False or self.last_status_ms is None
+                or not 0 <= self.now_ms - self.last_status_ms <= 500):
+            return "gnss_reset requires fresh Pico status with MCP RESET released"
+        return None
+
+    def _gnss_pulse(self, owner, value):
+        """The orchestrated pulse: the same checks for the requesting owner, at pulse time."""
+        error = self._gnss_reset_refusal(owner)
+        if error is not None:
+            return {"ok": False, "error": error}
+        return self.policy.command("gnss_reset", value, self.now_ms)
+
+    def _gnss_tick(self):
+        # Before the Pico freshness return below: orchestration effects never block, and
+        # an orchestration error is recorded there, never a trip of the power policy.
+        try:
+            self.gnss.tick(self.now_ms, dict(self.policy.gnss_reset), self._gnss_pulse)
+        except Exception as exc:
+            self.gnss.fault("GNSS_ORCHESTRATOR_ERROR: " + type(exc).__name__, self.now_ms)
+
     def _read_soc_temp(self):
         try:
             value = self.soc_temp_reader()
@@ -282,6 +323,11 @@ class Engine:
         owner = request.get("_owner", "direct-test")
         if op == "status":
             return {"ok": True, "data": self.status()}
+        if op == "plan_passes":
+            # Read-only for hardware: no lease, nothing switched; the planner bounds rate and job (LOCATION.md).
+            if self.passes is None:
+                return {"ok": False, "error": "PASSES_DISABLED"}
+            return self.passes.request(request.get("value"), self.now_ms)
         if op in {"arm", "recover", "mode", "control", "relay", "route", "confirmations"} and self.policy.owner not in (None, owner):
             if op != "control" or request.get("value") is not False:
                 return {"ok": False, "error": "another local operator owns the lease"}
@@ -337,17 +383,24 @@ class Engine:
         if op in {"relay", "confirmations"}:
             return self.policy.command(op, request.get("value"), self.now_ms)
         if op == "gnss_reset":
-            # Mutating: only the caller's own unexpired lease (no lease is no owner).
-            # The policy rechecks fault, width, spacing, rate and the MCP image.
+            error = self._gnss_reset_refusal(owner)
+            if error is not None:
+                return {"ok": False, "error": error}
+            if self.gnss is None:
+                return self.policy.command("gnss_reset", request.get("value"), self.now_ms)
+            # Orchestrated: refused now if the pulse itself would be; else PPS is deselected
+            # first and the same owner's checked pulse follows from tick (_gnss_pulse).
+            error = self.policy.gnss_reset_refusal(request.get("value"), self.now_ms)
+            if error is not None:
+                return {"ok": False, "error": error}
+            return self.gnss.request_reset(owner, request.get("value"), self.now_ms)
+        if op == "gnss_config":
+            if self.gnss is None:
+                return {"ok": False, "error": "GNSS_ORCHESTRATION_OFF: labd runs with --gnss off"}
             if (self.policy.owner != owner or self.policy.lease_deadline_ms is None
                     or self.now_ms >= self.policy.lease_deadline_ms):
-                return {"ok": False, "error": "gnss_reset requires the caller's own valid lease"}
-            if not self.configured or self.pending_arm:
-                return {"ok": False, "error": "gnss_reset requires configured MCP outputs and no pending arm"}
-            if (self.pico.get("mcp_reset") is not False or self.last_status_ms is None
-                    or not 0 <= self.now_ms - self.last_status_ms <= 500):
-                return {"ok": False, "error": "gnss_reset requires fresh Pico status with MCP RESET released"}
-            return self.policy.command("gnss_reset", request.get("value"), self.now_ms)
+                return {"ok": False, "error": "gnss_config requires the caller's own valid lease"}
+            return self.gnss.request_config(owner, self.now_ms)
         if op == "route":
             receiver = request.get("receiver")
             if type(receiver) is not str or receiver not in {"RTLA", "RTLB", "LIME"}:
@@ -436,6 +489,8 @@ class Engine:
             "pico_age_ms": None if report_age is None else max(0, report_age),
             "policy": self.policy.status(), "events": list(self.events),
             "imu": imu, "hmi": self._hmi_status(),
+            "passes": self.passes.status(self.now_ms) if self.passes else {"enabled": False, "state": "DISABLED"},
+            "gnss": None if self.gnss is None else self.gnss.status(),
             "live_identity_verified": self.identity_ok,
             "qualification_record_verified": self.qualification_ok and not self.simulated,
             "hardware_qualified": bool(self.acceptance) and self.identity_ok and not self.simulated}
@@ -452,7 +507,7 @@ class Engine:
                         self.hardware.close()
                     finally:
                         try:
-                            for reader in (self.soc_temp_reader, self.telemetry_reader):
+                            for reader in (self.soc_temp_reader, self.telemetry_reader, self.passes):
                                 if reader and hasattr(reader, "close"):
                                     reader.close()
                         finally:

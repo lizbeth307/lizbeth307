@@ -318,7 +318,7 @@
           "raw_status_before_controller_poll": true,
           "cold_start_timeout_s": 20.0,
           "ordinary_timeout_s": 5.0,
-          "elapsed_s": 1.193821,
+          "elapsed_s": 1.118782,
           "mode": "SIMULATION",
           "production_deadlines_changed": false
         },
@@ -351,7 +351,7 @@
         "disabled_tap_issues_no_control": true,
         "reconnect_auto_arm": false,
         "lease_created": false,
-        "worker_connected_snapshots": 10
+        "worker_connected_snapshots": 11
       },
       "limitation": "The fault is the controller transport, not a USB/HDMI removal signal. Production USB display-departure detection is absent."
     },
@@ -456,9 +456,9 @@
   "source_sha256": {
     "deployment/module_lab/io_modules.py": "3a2a53f360b6530cf1bb2b6cf073bc6404a4ce759b09867654e41ec1d3b894a4",
     "deployment/module_lab/io_scenarios.py": "f00a48a7367cf67357bbfe4b75df36703af2f54250aec8c1addcdd661ada2e87",
-    "software/srrx/hmi.py": "e764c84aa66251e338dc4421a6f8e2a6ca5dfa982f2fb26e1f7e6d50ad546e39",
-    "software/srrx/labrx.py": "64b11785da22b2451778a48e011e8dba66177e96e66cb19335b3a87c394ace69",
+    "software/srrx/hmi.py": "7a68ffd0eeea8d4051be291c72661c9e593c0feafc83b711756705f640101392",
+    "software/srrx/labrx.py": "28678af2545d03a1fcda8288988231496ca05ff176d6666a14b1858873c8a9bf",
     "software/srrx/spectrum.py": "95700d52cc9484b9facb337cbbf272deab5f12c594c9662e9a2e7da49297b522",
-    "software/srrx/storage.py": "775fdd716796c15f6fd1b7f9e9105c408bd67c33f45129e4996a6cdaab5ebcd8"
+    "software/srrx/storage.py": "839627c7a9588e4a741d26d281b716d9defe1c68504ca3844efc48406d08da61"
   }
 }

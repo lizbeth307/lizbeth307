@@ -2,7 +2,7 @@
   "cases": [
     {
       "case": "termios_and_fragmented_bidirectional_frames",
-      "elapsed_s": 0.082,
+      "elapsed_s": 0.077,
       "observed": {
         "baud_setting": 115200,
         "directions_checked": 2,
@@ -12,7 +12,7 @@
     },
     {
       "case": "crc_oversize_and_resynchronization",
-      "elapsed_s": 0.017,
+      "elapsed_s": 0.013,
       "observed": {
         "corrupt_crc_rejected": true,
         "next_valid_frame_received": true,
@@ -22,7 +22,7 @@
     },
     {
       "case": "kernel_input_flush_and_decoder_reset",
-      "elapsed_s": 0.016,
+      "elapsed_s": 0.015,
       "observed": {
         "complete_kernel_queue_barrier": true,
         "kernel_tciflush": true,
@@ -33,7 +33,7 @@
     },
     {
       "case": "bounded_transmit_queue",
-      "elapsed_s": 0.056,
+      "elapsed_s": 0.059,
       "observed": {
         "maximum_pending_bytes": 2048,
         "overflow_refused": true
@@ -42,7 +42,7 @@
     },
     {
       "case": "supervisor_handshake_and_clean_close",
-      "elapsed_s": 0.728,
+      "elapsed_s": 0.717,
       "observed": {
         "close_deenergizes_model": true,
         "explicit_arm_handshake": true,
@@ -53,7 +53,7 @@
     },
     {
       "case": "replay_timeout_and_explicit_recovery",
-      "elapsed_s": 1.598,
+      "elapsed_s": 1.623,
       "observed": {
         "accepted_replay_baseline": true,
         "current_tripped_session_barrier": true,
@@ -65,7 +65,7 @@
     },
     {
       "case": "new_session_invalidates_old_frames",
-      "elapsed_s": 0.772,
+      "elapsed_s": 0.828,
       "observed": {
         "new_session_revokes_permission": true,
         "old_session_replay_rejected": true
@@ -74,13 +74,13 @@
     },
     {
       "case": "lost_hello_repeats_and_resynchronizes_without_arm",
-      "elapsed_s": 1.059,
+      "elapsed_s": 1.079,
       "observed": {
         "automatic_arm": false,
         "first_hello_deliberately_tciflush": true,
-        "first_to_resync_hello_ms": 1003,
+        "first_to_resync_hello_ms": 1008,
         "hello_repeats_before_resync": 1,
-        "mean_hello_repeat_interval_ms": 1003,
+        "mean_hello_repeat_interval_ms": 1008,
         "previous_loads_restored": false,
         "repeated_hello_seq": 6,
         "restored_session": 301,
@@ -90,10 +90,10 @@
     },
     {
       "case": "master_hup_trips_and_closes",
-      "elapsed_s": 0.687,
+      "elapsed_s": 0.699,
       "observed": {
         "descriptor_closed": true,
-        "hup_to_model_disarm_ms": 145.301,
+        "hup_to_model_disarm_ms": 125.776,
         "real_kernel_hup": true,
         "status_deadline_disarmed_model": false,
         "transport_fault_disarms_model": true,
@@ -103,7 +103,7 @@
       "status": "PASS"
     }
   ],
-  "elapsed_s": 5.016,
+  "elapsed_s": 5.111,
   "failed": 0,
   "passed": 9,
   "platform": "linux",
@@ -120,13 +120,13 @@
   },
   "source_sha256": {
     "deployment/linux_lab/pty_smoke.py": "0335aad771d7329e496f8e4e0c4694a9c640e69fccace6e15faea6b43432bbd0",
-    "design/E3.json": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0",
-    "firmware/pico/main.py": "c537d05b9699b6f1e1b4e12ded656e947e8b8b398b47ee45ccd315bd3e051fb0",
-    "firmware/pico/supervisor.py": "b62b0aefad7bbc2afb5647022a786ed473065ebad4a27bc5f8f4854bb39d4746",
-    "software/srrx/engine.py": "0325a6cff092f1eca1c65616fb9735199dd1402697a15fa2a740af8588a36538",
+    "design/E3.json": "b3bd4067f6f51fe2b5fe28bcc06d386319c239ec0af0392f1c2d4f61a9aa2132",
+    "firmware/pico/main.py": "e4a727d62038c55d4919196646297823c5d13fd2c7acd9f8ded969579e54f0a2",
+    "firmware/pico/supervisor.py": "1c4b7c4184a56ffb0fddf1718981c252a265d4ddb81cc6a8fe03fe4bcd373b1e",
+    "software/srrx/engine.py": "ffe3d91e135f777cfef4daca788ee50c9423317c6d8b94c6569b9dbab02cfdec",
     "software/srrx/hardware.py": "13f2a5c1ab1a63d1345f57f9a3ca1f39ffbd3c779be9d4e050c85634974279ee",
     "software/srrx/link.py": "c69988ef4ea3bf4ed58b5baf912e2b6bd852139e66c3f41fe6057cae207b2e4f",
-    "software/srrx/policy.py": "0bd60d9734653f24e49606cf46e70895b0a7c7ab8b580c2667aa41e08011d34b",
+    "software/srrx/policy.py": "bdfef4495c37805e64add44a19c9d7311789f663f62f685d451d063356469d77",
     "software/srrx/wire.py": "f4ba993cbca9312c4639d3f6e8ddad083f7219017647026cb97b3e52a2f8fe3f"
   },
   "status": "PASS",

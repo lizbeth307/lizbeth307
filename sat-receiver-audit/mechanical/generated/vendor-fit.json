@@ -1,0 +1,190 @@
+{
+  "board_origin_in_step": [
+    58.68,
+    27.46
+  ],
+  "board_size": [
+    85.01,
+    56.0,
+    1.6
+  ],
+  "items": {
+    "usb_stack": {
+      "uv_step": [
+        70.29,
+        0.75,
+        87.75,
+        16.42
+      ],
+      "top_step": 16.25,
+      "uv_params": [
+        70.29,
+        0.75,
+        87.75,
+        16.42
+      ],
+      "top_params": 16.25,
+      "result": "PASS (model vs vendor STEP)"
+    },
+    "rj45": {
+      "uv_step": [
+        67.04,
+        37.74,
+        88.29,
+        53.97
+      ],
+      "top_step": 13.6,
+      "uv_params": [
+        67.04,
+        37.74,
+        88.29,
+        53.97
+      ],
+      "top_params": 13.6,
+      "result": "PASS (model vs vendor STEP)"
+    },
+    "hdmi": {
+      "uv_step": [
+        24.55,
+        -2.26,
+        39.55,
+        9.74
+      ],
+      "top_step": 6.36,
+      "uv_params": [
+        24.55,
+        -2.27,
+        39.55,
+        9.73
+      ],
+      "top_params": 6.36,
+      "result": "PASS (model vs vendor STEP)"
+    },
+    "audio": {
+      "uv_step": [
+        50.17,
+        -2.61,
+        57.87,
+        11.39
+      ],
+      "top_step": 5.25,
+      "uv_params": [
+        50.17,
+        -2.62,
+        57.87,
+        11.38
+      ],
+      "top_params": 5.25,
+      "result": "PASS (model vs vendor STEP)"
+    },
+    "usb_c": {
+      "uv_step": [
+        6.69,
+        -1.22,
+        15.63,
+        6.13
+      ],
+      "top_step": 3.1,
+      "uv_params": [
+        6.69,
+        -1.23,
+        15.63,
+        6.12
+      ],
+      "top_params": 3.1,
+      "result": "PASS (model vs vendor STEP)"
+    },
+    "header40": {
+      "uv_step": [
+        7.17,
+        48.65,
+        57.97,
+        55.86
+      ],
+      "top_step": 9.65,
+      "uv_params": [
+        7.17,
+        48.64,
+        57.97,
+        55.85
+      ],
+      "top_params": 9.65,
+      "result": "PASS (model vs vendor STEP)"
+    },
+    "j21_3p": {
+      "uv_step": [
+        16.43,
+        0.9,
+        24.05,
+        3.44
+      ],
+      "top_step": 8.5,
+      "uv_params": [
+        16.43,
+        0.89,
+        24.05,
+        3.43
+      ],
+      "top_params": 8.5,
+      "result": "PASS (model vs vendor STEP)"
+    },
+    "soc": {
+      "uv_step": [
+        38.87,
+        28.03,
+        50.87,
+        42.03
+      ],
+      "top_step": 1.0,
+      "uv_params": [
+        38.87,
+        28.03,
+        50.87,
+        42.03
+      ],
+      "top_params": 1.0,
+      "result": "PASS (model vs vendor STEP)"
+    },
+    "lpddr5": {
+      "uv_step": [
+        38.37,
+        14.35,
+        53.37,
+        26.75
+      ],
+      "top_step": 1.0,
+      "uv_params": [
+        38.37,
+        14.34,
+        53.37,
+        26.74
+      ],
+      "top_params": 1.0,
+      "result": "PASS (model vs vendor STEP)"
+    },
+    "hdr2x2": {
+      "uv_step": [
+        59.01,
+        43.86,
+        64.09,
+        48.94
+      ],
+      "top_step": 7.5,
+      "uv_params": [
+        59.01,
+        43.86,
+        64.09,
+        48.94
+      ],
+      "top_params": 7.5,
+      "result": "PASS (model vs vendor STEP)"
+    }
+  },
+  "top_max_above_board": 16.25,
+  "bottom_max_below_board": 3.7,
+  "heights": "PASS (model vs vendor STEP)",
+  "soc_top": 1.0,
+  "lpddr5_top": 1.0,
+  "result": "PASS (model vs vendor STEP)",
+  "status": "MODEL FIT ONLY: vendor STEP V1.21 against parts.json; the physical board is not measured"
+}

@@ -119,7 +119,13 @@
       "RF_HMC",
       "RF_HF",
       "RF_INJECTOR",
-      "DC_CORE"
+      "DC_CORE",
+      "ENC",
+      "HATCH",
+      "T7_INSERT",
+      "HDMI_INSERT",
+      "IMU_CARRIER",
+      "PACK_FUSE"
     ],
     "requirement": "All partitions are engineering candidates. Final outline, mounting, stackup, copper weight, connector MPN/orientation and enclosure proof-fit are unset. No Gerbers/drill/production DRC is authorized by this preparation output.",
     "source": "STACK.md §5.8; build/05-mekhanika.md; build/13-pcb-preparation.md"

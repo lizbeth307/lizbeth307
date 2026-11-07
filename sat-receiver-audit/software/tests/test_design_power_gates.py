@@ -21,6 +21,17 @@ def load():
     return graphs, comps, gates
 
 
+def lcsc_power_w():
+    """Rated power of each LCSC SKU in the parts-database snapshots (design/parts, tools/build_parts.py)."""
+    out = {}
+    for snap in sorted((PROJECT / "design/parts/snapshots").glob("*-lcsc.json")):
+        for code, rec in json.loads(snap.read_text(encoding="utf-8"))["entries"].items():
+            m = re.fullmatch(r"(\d+(?:\.\d+)?)(m?)W", rec.get("attributes", {}).get("Power(Watts)", ""))
+            if m:
+                out[code] = float(m.group(1)) * (1e-3 if m.group(2) else 1)
+    return out
+
+
 def nets(c):
     return [p.get("net") for p in c["pins"]]
 
@@ -69,11 +80,15 @@ class DesignPowerGateTest(unittest.TestCase):
     def test_resistor_rating_fits_vendored_package(self):
         manifest = json.loads((PROJECT / "build/kicad/footprints/manifest.json").read_text(encoding="utf-8"))
         vendored = {f["footprint"] for f in manifest["footprints"]}
+        rated = lcsc_power_w()
         for ref, c in self.comps.items():
             size = re.search(r"R_(\d{4})_", c.get("footprint", ""))
             watt = re.search(r"(\d+(?:\.\d+)?)\s*W\b", c["value"])
             if c["kind"] == "resistor" and size and watt:
-                self.assertGreaterEqual(RATING_W[size.group(1)], float(watt.group(1)), (ref, c["value"], c["footprint"]))
+                # A higher-rated part in the same package (e.g. an anti-surge 0603 at 0.25 W) counts
+                # only through the LCSC SKU that the parts database writes into the graph.
+                rating = max(RATING_W[size.group(1)], rated.get(c.get("lcsc"), 0.0))
+                self.assertGreaterEqual(rating, float(watt.group(1)), (ref, c["value"], c["footprint"], c.get("lcsc")))
         self.assertEqual(self.comps["R512"]["footprint"], "Resistor_SMD:R_1210_3225Metric")
         self.assertIn(self.comps["R512"]["footprint"], vendored)
 

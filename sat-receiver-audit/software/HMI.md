@@ -118,7 +118,20 @@ OFF. Батарея, температури й стан Pico показують�
 ARM. Числа поза діапазоном float (валідні JSON int) показуються як недоступні,
 а не обривають рендер. В обох
 випадках захисний fault labd лишається видимим, але без свіжого Pico консоль
-ніколи не пише «ready for an explicit start». Помилка консолі виводиться окремим рядком `Console:` під
+ніколи не пише «ready for an explicit start». Так само й зі свіжим статусом у режимі
+HARDWARE, коли labd повідомляє `live_identity_verified=false` (HELLO поточного сеансу
+не пройшов звірку serial/CRC/`qualification_record`, і labd відмовляє в ARM): замість
+доброякісної зупинки консоль показує причину `pico_identity_or_calibration_mismatch`
+чи `pico_qualification_record_mismatch` з `last_error`, журналу подій labd або
+зафіксованого fault (`srrx.hmi.binding_fault`); інший зафіксований fault лишається
+першим рядком. Після нового provisioning (`srrx.provision`) або заміни Pico HELLO
+нового сеансу проходить звірку (`live_identity_verified=true`), а labd і далі тримає
+стару причину як перший fault, проте вже приймає RECOVER: консоль пише «Earlier Pico
+binding failure (…); the current Pico HELLO verifies — RECOVER + ARM required»
+(`srrx.hmi.latched_fault_text`), без «ARM refused» і без нового «re-provision»;
+ARM + HOLD для цього fault консоль не надсилає, потрібна кнопка RECOVER + ARM.
+Інша причина звірки в поточному сеансі показується окремим рядком під «Earlier Pico
+binding failure (…)». Помилка консолі виводиться окремим рядком `Console:` під
 захисним fault labd і не приховує його. Помилку зв'язку прибирає перший свіжий
 статус, у якому labd disarmed; поки labd ще armed, «Disarm unconfirmed»
 лишається. Якщо Qt worker зупинився не через закриття вікна, банер постійно
@@ -195,6 +208,10 @@ fix. Без позиції, при збої provider чи збої моното�
 пройшов `srrx.passes.validate_plan` (спостерігач округлений до 0.1°), і позначає
 його як snapshot із версіями Skyfield/sgp4 та станом UTC («UTC not verified —
 times are provisional»); консоль сама проходи не рахує й Skyfield не імпортує.
+Під кнопкою — рядок стану labd `plan_passes` лише для читання (`status["passes"]`:
+стан, код останньої помилки, стан UTC, до чотирьох найближчих проходів, без
+координат); запит плану робить `labctl plan_passes` ([LOCATION](LOCATION.md)),
+не консоль.
 
 IMU й фізичні HMI snapshots
 додатково старіють за часом після GUI poll; старий кватерніон не лишається
@@ -208,6 +225,54 @@ source) знімає підтвердження; потокові кадри т�
 дією. Перевантаження того самого кадру не створює групу автоматично.
 Використовуються лише coarse labels, CPU baseline і heuristic score;
 польова точність та NPU acceleration не оголошуються виміряними.
+
+## Декларативна модель меню (selftest RX-11)
+
+`srrx.menu_model` — чисті дані без Qt, I/O і викликів labd. `PAGES` задає шість
+сторінок у порядку вкладок; `LEAVES` — кожен лист консолі: напис, як його показує
+консоль, бекенд, прапорці `needs_lime`/`needs_t7` з `fallback_text`, ознаку
+`critical` і входи `controls` (touch; клавіші Pico `HOME BACK REC MARK FN LOCK
+ENC1_PRESS ENC2_PRESS`, енкодери `ENC1`/`ENC2`). Види бекенда: `labd_op` — операція
+`Engine.request`; `page_only` — модуль srrx, що виконує дію в консолі (для SIM
+capture — `srrx.labrx --simulate` окремим процесом); `engine_unit` — unit systemd і
+його програма; `decoder_preset` — пресет `decoder_policy.availability()`. Листи
+консолі мають лише `labd_op` і `page_only`; два інші види — для майбутніх хабів Lab
+Shell (наприклад, WEFAX → режим fax OpenWebRX+, STACK.md:884). Сама консоль
+залежить від двох unit: `srrx.service` (labd, `-m srrx.daemon`) і користувацького
+`srrx-menu.service` (`-m srrx.hmi`).
+
+`create_window` будує вкладки в порядку `PAGES` і відмовляє в старті
+(`RuntimeError`), якщо побудована вкладка має інший напис; інших змін поведінки
+немає. `software/tests/test_menu_model.py` в offscreen Qt перевіряє, що кожен
+touch-лист є кнопкою чи галочкою на своїй сторінці (або в рамці вікна), а кожна
+кнопка чи галочка вікна — листом моделі; пари ON/OFF на Bench — рядки `EN_*`.
+Той самий тест натискає віджет кожного touch-листа з записувальним labd. Лист
+`labd_op` має надіслати саме свою операцію через `action()`, чергу worker і
+`ConsoleController`: ARM/RECOVER одразу поновлюють оренду, Shutdown спершу дає
+disarm, «Close + DISARM» — disarm. Лист `page_only` не надсилає нічого (діалоги
+скасовано, SIM capture і навчальні задачі підмінено). Там само: `KEYS` дорівнює
+`KEY_NAMES` прошивки Pico, `GESTURES` — `HMINavigation.NAMES`, `OUTPUTS` — `EN_OUTPUTS`,
+а набір операцій листів дорівнює тому, який може надіслати `ConsoleController`
+(ключі таблиці `required` у `command()` і літерали `{"op": …}` класу, розбір `hmi.py`).
+
+Збірка без Lime і без T7: маршрут LIME і EN_LIME3V3 оголошують бекенд без Lime
+(LIME лишається PARK, EN_LIME3V3 — OFF; OFF і PARK labd приймає без оренди), EN_T7 —
+бекенд без T7 (OFF; сховище — UFS і microSD V30, STACK.md:977). Це декларація для
+перевірки: консоль цей текст не показує й нічого не ховає. Перевірка можливостей,
+що ховає пункти лише для Lime (STACK.md:884), належить Lab Shell, а не цій консолі.
+
+Критичні листи — дії, потрібні в рукавицях, коли ємнісна панель не працює
+(STACK.md:110): навігація HOME/BACK/FN/ENC1/ENC2/ENC1_PRESS/ENC2_PRESS, LOCK,
+Overview (статус і захисний fault за HOME) і **DISARM / STOP**. Фізичні входи лише
+навігують, блокують і показують статус: вхідне ядро Pico не має API живлення
+(`firmware/pico/hmi.py`), тому DISARM сьогодні — лише touch-дія. Selftest RX-11
+через це дає BLOCKED `critical_leaf_touch_only` (`frame.disarm`). Це відкрите
+проєктне рішення, а не порушення «лише прийом». Потрібен фізичний шлях DISARM, що
+діє лише в бік вимкнення (окрема клавіша або утримання LOCK), зі змінами прошивки
+Pico, labd і консолі та рецензією. До того без touch лишається `labctl disarm` з
+локального терміналу. Оренду консоль поновлює, поки GUI відповідає, тож зупинка
+GUI знімає HOLD через 1,5 с, а TTL 3 с і Pico обмежують решту. Shutdown критичним
+листом не вважається: RF він не вимикає швидше за DISARM, а без touch є `labctl shutdown`.
 
 ## Фізичні клавіші й енкодери
 
@@ -246,6 +311,8 @@ LOCK або підтверджене **Unlock touch** розблоковує UI 
 PYTHONPATH=software:. python3 -m unittest discover -s software/tests -p test_hmi.py -v
 QT_QPA_PLATFORM=offscreen PYTHONPATH=/tmp/srrx-qt:software:. \
   python3 -m unittest discover -s software/tests -p test_hmi.py -v
+QT_QPA_PLATFORM=offscreen PYTHONPATH=/tmp/srrx-qt:software:. \
+  python3 -m unittest discover -s software/tests -p test_menu_model.py -v
 ```
 
 Перевірені faults/lease/clock, strict requests, bench, stale IMU/HMI, counter
@@ -277,7 +344,7 @@ lease поновлюється, а найбільший проміжок heartbe
 межа 2 MiB датасету сеансу; задача ніколи не викликає labd.
 
 Offscreen PNG та JSON звіту у [verification/hmi-views](../verification/hmi-views/)
-перегенеровано в CI 24.10.2026 (job `linux-lab`, run 40099774142) для `hmi.py`
+перегенеровано в CI 07.11.2026 (job `linux-lab`, run 42355259865) для `hmi.py`
 цієї ревізії з фоновими навчальними задачами (на сторінці Teach/Classify видно
 вимкнену кнопку «Cancel learning job»). Після будь-якої зміни `hmi.py` вони перестають бути записом
 перевірки поточного коду, доки їх не перегенеровано; чинність визначає

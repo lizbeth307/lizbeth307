@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="297mm" height="210mm" viewBox="0 0 297 210">
+<title>I-01 Пак IMU: Hammond 1550Z101 — свердління, плати, осі</title>
+<desc>SR-RX-v2.1 mechanical drawing, scale 2:1, mm. MODEL FIT ONLY. params 135211b0855f</desc>
+<rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
+<line x1="30" y1="170" x2="118.56" y2="170" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="118.56" y1="170" x2="118.56" y2="91.44" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="118.56" y1="91.44" x2="30" y2="91.44" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="30" y1="91.44" x2="30" y2="170" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="33.6" y1="156.4" x2="115" y2="156.4" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="115" y1="156.4" x2="115" y2="105.2" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="115" y1="105.2" x2="33.6" y2="105.2" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="33.6" y1="105.2" x2="33.6" y2="156.4" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="33.6" y1="156.4" x2="84.8" y2="156.4" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="84.8" y1="156.4" x2="84.8" y2="105.2" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="84.8" y1="105.2" x2="33.6" y2="105.2" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="33.6" y1="105.2" x2="33.6" y2="156.4" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<text x="35.6" y="154.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">BNO085</text>
+<text x="87.6" y="154.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">RP2040-Zero</text>
+<line x1="34" y1="169" x2="114.56" y2="169" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="114.56" y1="169" x2="114.56" y2="157" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="114.56" y1="157" x2="34" y2="157" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="34" y1="157" x2="34" y2="169" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<text x="52" y="165.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="1.96" text-anchor="start" fill="#000">носійна плата IMU_CARRIER (резерв)</text>
+<circle cx="74.28" cy="130.72" r="6.6" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="64.68" y1="130.72" x2="83.88" y2="130.72" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="74.28" y1="140.32" x2="74.28" y2="121.12" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="83.88" y="121.12" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">⌀6.6</text>
+<circle cx="42" cy="162" r="3.4" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="35.6" y1="162" x2="48.4" y2="162" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="42" y1="168.4" x2="42" y2="155.6" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<circle cx="106.56" cy="162" r="3.4" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="100.16" y1="162" x2="112.96" y2="162" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="106.56" y1="168.4" x2="106.56" y2="155.6" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="62.08" y1="91.44" x2="86.48" y2="91.44" stroke="#000" stroke-width="0.35" fill="none"/>
+<text x="46.28" y="88.44" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">SKINTOP M12 ⌀12.2, центр 13 мм від дна (стінка y_max)</text>
+<line x1="74.28" y1="130.72" x2="104.28" y2="130.72" stroke="#000" stroke-width="0.25" fill="none"/>
+<line x1="104.28" y1="130.72" x2="99.28" y2="127.72" stroke="#000" stroke-width="0.25" fill="none"/>
+<line x1="104.28" y1="130.72" x2="99.28" y2="133.72" stroke="#000" stroke-width="0.25" fill="none"/>
+<text x="106.28" y="132.72" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">+X (boresight)</text>
+<line x1="74.28" y1="130.72" x2="74.28" y2="106.72" stroke="#000" stroke-width="0.25" fill="none"/>
+<text x="76.28" y="106.72" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">+Y</text>
+<circle cx="74.28" cy="130.72" r="3" stroke="#000" stroke-width="0.25" fill="none"/>
+<text x="62.28" y="138.72" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">+Z (з кришки)</text>
+<line x1="30" y1="170.8" x2="30" y2="181.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="118.56" y1="170.8" x2="118.56" y2="181.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="30" y1="180" x2="118.56" y2="180" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="30" y1="180" x2="32.2" y2="179.3" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="30" y1="180" x2="32.2" y2="180.7" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="118.56" y1="180" x2="116.36" y2="179.3" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="118.56" y1="180" x2="116.36" y2="180.7" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="74.28" y="183.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000">44.3</text>
+<line x1="29.2" y1="170" x2="18.5" y2="170" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="29.2" y1="91.44" x2="18.5" y2="91.44" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="20" y1="170" x2="20" y2="91.44" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="20" y1="170" x2="19.3" y2="167.8" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="20" y1="170" x2="20.7" y2="167.8" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="20" y1="91.44" x2="19.3" y2="93.64" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="20" y1="91.44" x2="20.7" y2="93.64" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="18.8" y="130.72" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000" transform="rotate(-90 18.8 130.72)">39.3</text>
+<line x1="8" y1="202" x2="289" y2="202" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="289" y1="202" x2="289" y2="8" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="289" y1="8" x2="8" y2="8" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="8" y1="8" x2="8" y2="202" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="14" y1="194" x2="114" y2="194" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="14" y1="194" x2="14" y2="190" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="24" y1="194" x2="24" y2="191.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="34" y1="194" x2="34" y2="191.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="44" y1="194" x2="44" y2="191.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="54" y1="194" x2="54" y2="191.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="64" y1="194" x2="64" y2="190" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="74" y1="194" x2="74" y2="191.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="84" y1="194" x2="84" y2="191.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="94" y1="194" x2="94" y2="191.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="104" y1="194" x2="104" y2="191.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="114" y1="194" x2="114" y2="190" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="14" y="198" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.08" text-anchor="start" fill="#000">Контроль масштабу: 100 мм (друкувати 100 %, без підгонки)</text>
+<line x1="139" y1="202" x2="139" y2="160" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="139" y1="160" x2="289" y2="160" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="139" y1="195" x2="289" y2="195" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="139" y1="188" x2="289" y2="188" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="139" y1="181" x2="289" y2="181" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="139" y1="174" x2="289" y2="174" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="141" y="166" font-family="DejaVu Sans, Arial, sans-serif" font-size="4.48" text-anchor="start" fill="#000">Пак IMU: Hammond 1550Z101 — свердління, пл…</text>
+<text x="141" y="172" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">2:1</text>
+<text x="141" y="179" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення I-01 · масштаб 2:1 · мм · допуск ±0.2, якщо не вказано</text>
+<text x="141" y="186" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: литий Al (Hammond 1550Z101), латунні гвинти кришк…</text>
+<text x="141" y="193" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
+<text x="141" y="200" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 135211b0855f · v1.0.0</text>
+<text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">Пак IMU: Hammond 1550Z101 — свердління, плати, осі</text>
+<text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">2:1</text>
+<text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Осі паку: +X — стрілка на кришці (бортове візування антени), +Z — з кришки, +Y = Z x X (правий трійник).</text>
+<text x="12" y="28.6" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">BNO085 ставиться так, щоб осі мікросхеми збігалися з осями паку (матриця chip_to_pack = I); знаки й орієнтацію перевіряє стенд (OPEN).</text>
+<text x="12" y="32.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Дно: отвір ⌀6.6 під 1/4-20; носій (STL) з латунною вставкою 1/4-20 x 12.7, гвинти M3 у вставки; плати на стійках 13 мм над носієм.</text>
+<text x="12" y="35.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Носійна плата IMU_CARRIER (U552, D502, C519, C520, деталі E3 External IMU) — смуга вздовж стінки y_min під платами, на тих самих гвинтах M3 (резерв, розкладка — хвиля 2).</text>
+<text x="12" y="39.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Стінка y_max: SKINTOP MS-SC-M12 ⌀12.2; шов кришки — провідна фольгова стрічка; момент гвинтів кришки 50-75 cN·m (креслення Hammond).</text>
+<text x="12" y="43" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: литий Al (Hammond 1550Z101), латунні гвинти кришки M4</text>
+</svg>

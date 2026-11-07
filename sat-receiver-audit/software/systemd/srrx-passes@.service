@@ -1,0 +1,59 @@
+[Unit]
+Description=SR-RX reference pass plan %i (local OMM, no network, no device)
+# Started only by labd (operation plan_passes) through the polkit rule 60-srrx-passes.rules.
+# No [Install]: never enabled and never wanted by another unit.
+CollectMode=inactive-or-failed
+
+[Service]
+Type=oneshot
+User=srrx-passes
+Group=srrx-passes
+WorkingDirectory=/
+# PID 1 copies the files labd wrote for this instance into the private credential
+# directory %d, readable only by this unit; the unit user never reads labd's /run/srrx.
+LoadCredential=request:/run/srrx/passes/%i/request.json
+LoadCredential=allowlist:/run/srrx/passes/%i/allowlist.json
+Environment=OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1
+ExecStart=/usr/bin/env /opt/srrx/passes-venv/bin/python3 -I -B -m srrx.passes --omm /var/lib/srrx/orbits/gp.json --allowlist %d/allowlist --request %d/request --output /var/lib/srrx/plans/%i.json --group-readable --keep 8
+# The only writable path: setgid group labd (tmpfiles from srrx.pass_jobs), plans 0640.
+ReadWritePaths=/var/lib/srrx/plans
+UMask=0027
+# RuntimeMaxSec= has no effect on Type=oneshot; TimeoutStartSec= bounds the whole run.
+TimeoutStartSec=120
+MemoryMax=512M
+MemorySwapMax=0
+CPUQuota=100%
+# A55 cores (STACK.md: CPU0-3), away from the receivers on CPU4-7.
+CPUAffinity=0-3
+Nice=10
+TasksMax=4
+LimitCORE=0
+NoNewPrivileges=yes
+CapabilityBoundingSet=
+AmbientCapabilities=
+PrivateNetwork=yes
+IPAddressDeny=any
+RestrictAddressFamilies=none
+PrivateDevices=yes
+DevicePolicy=closed
+PrivateTmp=yes
+PrivateIPC=yes
+ProtectSystem=strict
+ProtectHome=yes
+ProtectProc=invisible
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectKernelLogs=yes
+ProtectControlGroups=yes
+ProtectClock=yes
+ProtectHostname=yes
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+LockPersonality=yes
+KeyringMode=private
+RemoveIPC=yes
+SystemCallArchitectures=native
+SystemCallFilter=@system-service
+SystemCallErrorNumber=EPERM
+# No MemoryDenyWriteExecute=: NumPy imports ctypes, and that import creates a libffi closure.

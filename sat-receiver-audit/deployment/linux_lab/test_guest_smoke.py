@@ -187,6 +187,32 @@ class DeviceWaitTests(unittest.TestCase):
         self.assertIn("deployment/linux_lab/guest_smoke.py", data["source_sha256"])
 
 
+class CandidateUnitTests(unittest.TestCase):
+    """candidate_stage: systemd-analyze verify refuses a masked unit, and an empty unit file is a mask."""
+    PROJECT = Path(__file__).resolve().parents[2]
+
+    def test_verified_units_hold_no_mask_and_the_masks_are_exactly_the_staged_ones(self):
+        deploy = smoke.load_deploy(self.PROJECT)
+        masks = deploy.system_files().masks("gpsd")
+        self.assertIn("ModemManager.service", masks)
+        with tempfile.TemporaryDirectory() as temporary:
+            deploy.stage(Path(temporary) / "candidate")  # what stage_candidate runs: no --devices, gpsd mode
+            rootfs = Path(temporary) / "candidate/rootfs"
+            units = smoke.verify_units(rootfs, masks)
+            self.assertIn(rootfs / "etc/systemd/system/srrx.service", units)
+            self.assertIn(rootfs / "etc/systemd/system/srrx-baseband-sweep.service", units)
+            self.assertEqual([p.name for p in units if p.stat().st_size == 0], [])
+            self.assertNotIn(rootfs / "etc/systemd/system/ModemManager.service", units)
+            # Any other empty unit file (a mask nobody staged) and a missing mask both stop the step.
+            (rootfs / "etc/systemd/system/srrx-unexpected.service").write_text("")
+            with self.assertRaisesRegex(smoke.SmokeError, "not exactly the staged masks"):
+                smoke.verify_units(rootfs, masks)
+            (rootfs / "etc/systemd/system/srrx-unexpected.service").unlink()
+            (rootfs / "etc/systemd/system/ModemManager.service").unlink()
+            with self.assertRaisesRegex(smoke.SmokeError, "not exactly the staged masks"):
+                smoke.verify_units(rootfs, masks)
+
+
 class TripCauseTests(unittest.TestCase):
     """Every trip disarms; fault/link-loss steps must prove their own cause."""
     def runner(self, fault):

@@ -1,0 +1,24 @@
+{
+  "schema_version": 1,
+  "status": "DRAFT",
+  "origin": "srrx-lab",
+  "label": "SR-RX lab +labN builds",
+  "codename": "noble-lab",
+  "component": "main",
+  "architecture": "arm64",
+  "keyring_path": "/usr/share/keyrings/srrx-lab.gpg",
+  "never_in_lab_repo_globs": [
+    "linux-image-*", "linux-headers-*", "linux-modules-*", "linux-libc-dev*", "linux-firmware*",
+    "embloader*", "sdboot-is-embloader", "systemd-boot*", "edk2-*", "u-boot*", "edl-ng",
+    "rsetup*", "radxa-firmware*", "radxa-overlays-dkms", "radxa-system-config-*", "radxa-qcom-qairt",
+    "qcom-*", "fastrpc*", "libadsprpc*", "libcdsprpc*", "libsdsprpc*", "*dsp-default-listener*",
+    "hexagon-dsp-binaries*", "firmware-qcom-*", "aic8800-*", "task-*"
+  ],
+  "notes": [
+    "Origin srrx-lab is the 1001 stanza of etc/apt/preferences.d/lab.pref (repo/lab.pref); the mirrored noble snapshot is a separate publication with origin srrx-mirror at 990 (build/07-pz-vstanovlennia.md section 2; the origin names were TBD there and are fixed here).",
+    "never_in_lab_repo_globs: kernel, bootloader/BIOS (SPI edk2), board firmware and DSP/FastRPC packages never come from the lab repository; they stay on the image at their held versions (build/07-pz-vstanovlennia.md section 1.2 and section 24).",
+    "No Valid-Until in the Release file: the device is offline and its RTC may be wrong. Freshness is the reviewed release record instead: offline_snapshot.inrelease_sha256 pins one exact signed InRelease, so an older signed publication is refused.",
+    "status DRAFT until the owner's offline key ceremony (repo/README.md) fixes the release fingerprint; CI signs only with a throwaway test key."
+  ],
+  "sources": ["build/07-pz-vstanovlennia.md:102-119", "build/07-pz-vstanovlennia.md:565-567", "build/15-rishennia-komplektu.md (Ключ підпису офлайн-репозиторію)"]
+}

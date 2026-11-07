@@ -22,6 +22,8 @@ ASSEMBLY_DETAIL = {'U102', 'R101', 'C101', 'C102'}
 EXISTING_BOARD_DETAIL = {'U500'}
 MODULE_REWORK = {'R117', 'R118', 'R119', 'R120', 'C118'}
 SMT_MODULES = {'A407', 'A424'}  # Documented physical SMT pad maps, despite kind=module.
+PARTS_DB = ROOT / 'design/parts/parts.json'
+BOARD_MOUNTS = {'pcb_smt', 'pcb_tht', 'pcb_module'}
 RF_TAP = {'R4420', 'R4430', 'R4440', 'C4420', 'C4430', 'C4440'}
 RF_BLEED = {f'R{i}' for i in range(4460, 4472)}
 RELAY_REFS = {'K401','K402','Q401','Q402','D401','R412','R413','R414','R415','R417','R418','R419','L407'}
@@ -35,7 +37,19 @@ BOARDS = {
  'RF_HF': {'purpose':'Two DPDT HF/VHF relays, drivers and individually terminated PARK paths.', 'source':['design/E4-review.md','STACK.md §5.7']},
  'RF_INJECTOR': {'purpose':'Band-specific RF bias injectors, local RF bypass and three DC-tap/bleed front ends. May share RF substrate after qualification.', 'source':['design/E4-review.md','STACK.md §5.3']},
  'DC_CORE': {'purpose':'71-part low-frequency comparator/reference/sink core; RF taps and hot bleeds remain at RF ports, not on this core.', 'source':['design/E4-review.md','design/E4-detector-analysis.py']},
+ 'ENC': {'purpose':'Replaceable encoder daughterboard (PEC11R-4220F with its push switch), two in use plus one spare; harness to CTRL_HMI.', 'source':['STACK.md §5.8','mechanical/params/boards.json ENC','build/15-rishennia-komplektu.md']},
+ 'HATCH': {'purpose':'Service-hatch board in the rear hatch bay: J503 J21 service header (Micro-Fit 3) and J502 UART5 console header (JST PH 3); harness from PWR/CTRL.', 'source':['STACK.md §5.8 (service hatch)','build/15-rishennia-komplektu.md']},
+ 'T7_INSERT': {'purpose':'In-line VBUS key insert of the T7 USB3 cable (E5 U505 and its passives); built off the plate boards.', 'source':['design/E5-connection-guide.md §7','build/16-dzhgut.md']},
+ 'HDMI_INSERT': {'purpose':'In-line HDMI pin-18 insert of the display cable (E5 U506 and its passives); built off the plate boards.', 'source':['design/E5-connection-guide.md §8','build/16-dzhgut.md']},
+ 'IMU_CARRIER': {'purpose':'Carrier board inside the Hammond 1550Z101 IMU pack: E5 IMU supply/data protection and the bare parts of E3 group External IMU.', 'source':['design/E5-connection-guide.md','design/E3-review.md','mechanical/params/imu_pack.json']},
+ 'PACK_FUSE': {'purpose':'Small F101 carrier at the pack positive: Keystone 3568 mini-blade holder and 18 AWG solder pads, insulated and fixed beside the battery tray.', 'source':['STACK.md D2','build/15-rishennia-komplektu.md']},
 }
+# Board parts assembled off the plate boards (build/15, build/16 §2): their own domain instead of the sheet default.
+DOMAIN_OVERRIDE = {**{r:'ENC' for r in ('ENC301','ENC302')}, **{r:'HATCH' for r in ('J502','J503')},
+ **{r:'T7_INSERT' for r in ('U505','R514','R515','R516','R517','C514','C515','C516')},
+ **{r:'HDMI_INSERT' for r in ('U506','C517','C518','R552')},
+ **{r:'IMU_CARRIER' for r in ('U552','D502','C519','C520','C340','C341','R390','R391')},
+ 'F101':'PACK_FUSE'}
 CONSTRAINTS = [
  {'id':'PWR-01','boards':['PWR_MAIN','PWR_BRANCH'],'requirement':'4.6 A main path and 50 °C enclosure qualification; LAB5 <=3.2 A continuous, 4 A transient acceptance. Size copper/vias/connectors from chosen stackup and thermal calculation; no trace width is asserted here.','source':'design/E1-review.md; E1-05/E1-06'},
  {'id':'PWR-02','boards':['PWR_MAIN'],'requirement':'Keep raw E1_CELL0/B- distinct from GND/P-. No accidental copper, mounting-hole or balance-cable BMS bypass. J102 remains DNP/service-only.','source':'design/E1-review.md; design/charger-bms-review.md'},
@@ -66,8 +80,42 @@ def csv_text(rows, fields):
     w.writeheader();w.writerows({k:r.get(k,'') for k in fields} for r in rows)
     return stream.getvalue()
 
+def parts_db():
+    # Mount decision per ref (design/parts/parts.json, tools/build_parts.py): which refs are board parts.
+    db=json.loads(PARTS_DB.read_text(encoding='utf-8'))
+    return {r:p for p in db['parts'] for r in p['refs']}
+
+PARTS_DB_FIELDS=('id','mount','mpn','tbd','host','interface_open','interface_resolved')
+def parts_projection(db):
+    # Only the parts-database fields this script reads, per ref: a stock note or harness family edit does not change the outputs.
+    def field(p,k,ref):
+        v=p.get(k)
+        return v.get(ref) if isinstance(v,dict) and k in ('host','interface_open') else v
+    return {ref:{k:field(p,k,ref) for k in PARTS_DB_FIELDS if field(p,k,ref) is not None} for ref,p in sorted(db.items(),key=lambda x:sort_ref(x[0]))}
+
+def interface_issues(c,cat,db,by_ref):
+    """Blocking records of a connector/feed that is not a board part, and of a virtual contact whose host pad has no net."""
+    ref=c['ref'];p=db.get(ref);out=[];why=category(c)[2]
+    if cat=='module_rework_part' or (cat=='physical_interface_boundary' and (p is None or p.get('tbd'))):
+        out.append({'ref':ref,'type':'physical_interface_or_rework_unresolved','blocking':True,'detail':why if p is None or not p.get('tbd') else why+' Parts database: '+p['tbd']})
+    elif cat=='physical_interface_boundary' and not p.get('interface_resolved'):
+        # The part is selected, but its mating part and/or mounting are not: still blocking.
+        opened=p.get('interface_open');opened=opened.get(ref) if isinstance(opened,dict) else opened
+        chosen=f"{p['id']} (mount {p['mount']}"+(f", MPN {p['mpn']}" if p.get('mpn') else ', no MPN')+')'
+        out.append({'ref':ref,'type':'interface_mounting_unresolved','blocking':True,'detail':f'Parts database entry {chosen} in design/parts/parts.json: mating part and mounting are not both fixed. Open: '+(opened or 'not stated (tools/build_parts.py requires interface_open)')})
+    if cat=='integral_to_host_part' and p is not None:
+        host=(p.get('host') or {}).get(ref);host_nets={x['net'] for x in by_ref[host]['pins'] if x.get('net')} if host in by_ref else set()
+        missing=sorted({x['net'] for x in c['pins'] if x.get('net')}-host_nets)
+        if host is None or missing:
+            out.append({'ref':ref,'type':'host_pads_unconnected','blocking':True,'detail':f'Contact of {host} (host in design/parts/parts.json), but net(s) {", ".join(missing)} reach no pin of {host}: the host footprint pads for this contact carry no net, so it is unconnected on any layout until the sheet owner moves the nets onto host pins.'})
+    return out
+
 def category(c):
-    ref=c['ref'];kind=c['kind']
+    ref=c['ref'];kind=c['kind'];mount=c.get('_mount')
+    if mount in BOARD_MOUNTS and ref not in ASSEMBLY_DETAIL|EXISTING_BOARD_DETAIL|MODULE_REWORK:
+        return 'bare_board_part','', f'Board part, mount {mount} in design/parts/parts.json.'
+    if mount=='remote':return 'mechanical_or_remote_part','', 'Leaded/remote part on wires (mount remote in design/parts/parts.json); not a PCB footprint.'
+    if mount=='virtual':return 'integral_to_host_part','', 'Contact of another board part (host in design/parts/parts.json); not bought or placed separately.'
     if ref in ASSEMBLY_DETAIL: return 'purchased_module_internal_detail', 'Adafruit5832', 'Existing purchased-breakout detail; do not buy/place a second INA228/shunt/capacitor.'
     if ref in EXISTING_BOARD_DETAIL:return 'purchased_module_internal_detail', 'Radxa_Q6A', 'Existing Q6A onboard rail-source detail; no second power module or PCB part is procured.'
     if ref.startswith('J'):return 'physical_interface_boundary','', 'Existing board/panel/cable or assembly feed boundary; physical mating part and mounting must be selected separately.'
@@ -83,6 +131,7 @@ def category(c):
 def board(c,cat):
     if cat!='bare_board_part':return ''
     s=c['_sheet'];ref=c['ref']
+    if ref in DOMAIN_OVERRIDE:return DOMAIN_OVERRIDE[ref]
     if s!='E4':return {'E1':'PWR_MAIN','E2':'PWR_BRANCH','E3':'CTRL_HMI','E5':'USB_POWER'}[s]
     if c['group'].startswith('DC detectors'):
         return 'RF_INJECTOR' if ref in RF_TAP|RF_BLEED else 'DC_CORE'
@@ -92,12 +141,12 @@ def board(c,cat):
 
 def main():
     ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--check',action='store_true');args=ap.parse_args()
-    components=[];sources=[];graph_paths=[]
+    components=[];sources=[];graph_paths=[];db=parts_db()
     for i in range(1,6):
         path=ROOT/f'design/E{i}.json';j=json.loads(path.read_text(encoding='utf-8'));graph_paths.append(path)
         sources.extend(j['sources'])
-        for c in j['components']:components.append({**c,'_sheet':f'E{i}'})
-    refs=[c['ref'] for c in components];require(len(refs)==len(set(refs)), 'Duplicate schematic reference')
+        for c in j['components']:components.append({**c,'_sheet':f'E{i}','_mount':db[c['ref']]['mount'] if c['ref'] in db else None})
+    refs=[c['ref'] for c in components];require(len(refs)==len(set(refs)), 'Duplicate schematic reference');by_ref={c['ref']:c for c in components}
     manifest_path=ROOT/'build/kicad/footprints/manifest.json'
     manifest=json.loads(manifest_path.read_text(encoding='utf-8'));fps={f['footprint']:f for f in manifest['footprints']}
     for fp in fps.values():
@@ -119,12 +168,12 @@ def main():
         active=not c.get('dnp',False)
         if cat=='bare_board_part' and active and not fp:issues.append({'ref':ref,'type':'missing_physical_footprint','blocking':True,'detail':'Manufacturer land pattern/package and selected PCB footprint are not fixed.'})
         elif cat=='bare_board_part' and active and not portable:issues.append({'ref':ref,'type':'footprint_not_portable','blocking':True,'detail':fp})
-        if cat in ('physical_interface_boundary','module_rework_part'):
-            issues.append({'ref':ref,'type':'physical_interface_or_rework_unresolved','blocking':True,'detail':why})
+        issues.extend(interface_issues(c,cat,db,by_ref))
         if cat=='bare_board_part' and active and c.get('status')=='TBD':issues.append({'ref':ref,'type':'schematic_component_TBD','blocking':True,'detail':c['value']})
-        row={'ref':ref,'sheet':c['_sheet'],'value':c['value'],'kind':c['kind'],'category':cat,'assembly_owner':owner,'board_candidate':domain,'dnp':not active,'footprint':fp,'portable_footprint':portable,'pad_coverage':'PASS' if portable and not missing else 'UNASSIGNED' if not fp else 'FAIL','pin_count':len(pin_nums),'source':c.get('source',''),'classification_reason':why}
+        row={'ref':ref,'sheet':c['_sheet'],'mount':c['_mount'] or '','value':c['value'],'kind':c['kind'],'category':cat,'assembly_owner':owner,'board_candidate':domain,'dnp':not active,'footprint':fp,'portable_footprint':portable,'pad_coverage':'PASS' if portable and not missing else 'UNASSIGNED' if not fp else 'FAIL','pin_count':len(pin_nums),'source':c.get('source',''),'classification_reason':why}
         rows.append(row)
         if domain=='DC_CORE':
+            c={k:v for k,v in c.items() if k!='_mount'}
             # Physical package selection is separate from verification/procurement readiness.
             candidate=fp
             status='graph_assigned_portable' if portable else 'proposed_not_production_qualified'
@@ -152,11 +201,19 @@ def main():
     require({b['net'] for b in boundary}==expected_boundary, sorted(b['net'] for b in boundary))
     require(len(core)==71, len(core))
     connected_core=sum(bool(p.get('net')) for c in core for p in c['pins'])
-    summary={'status':'PREPARATION_ONLY_NOT_FOR_FABRICATION','components':len(rows),'schematic_contacts':sum(len(c['pins']) for c in components),'connected_contacts':len(all_nodes),'nets':len(net_nodes),'categories':dict(sorted(collections.Counter(r['category'] for r in rows).items())),'board_candidates':dict(sorted(collections.Counter(r['board_candidate'] for r in rows if r['board_candidate']).items())),'graph_assigned_footprints':sum(bool(r['footprint']) for r in rows),'portable_graph_assignments':sum(r['portable_footprint'] for r in rows),'bare_parts_without_footprint':sum(r['category']=='bare_board_part' and not r['footprint'] and not r['dnp'] for r in rows),'pin_pad_mismatches':sum(i['type']=='pin_pad_mismatch' for i in issues),'xml_connected_pin_audit':'PASS','xml_compared_connected_pins':len(all_nodes),'core_parts':len(core),'core_connected_pins':connected_core,'core_boundary_nets':len(boundary),'core_graph_assigned_footprints':sum(c['placement_footprint_status']=='graph_assigned_portable' for c in core),'core_proposed_footprints':sum(c['placement_footprint_status']!='graph_assigned_portable' for c in core),'blocking_issue_records':len(issues)}
-    provenance={'inputs':[{'file':p.relative_to(ROOT).as_posix(),'sha256':sha(p)} for p in graph_paths+[manifest_path,xml_path]],'source_documents':sorted({s['url'] for s in sources}),'generator':'pcb/prepare.py','note':'All classification/board splits are new controlled engineering proposals. They do not change E1..E5, claim module pin order, or authorize production.'}
+    summary={'status':'PREPARATION_ONLY_NOT_FOR_FABRICATION','components':len(rows),'schematic_contacts':sum(len(c['pins']) for c in components),'connected_contacts':len(all_nodes),'nets':len(net_nodes),'categories':dict(sorted(collections.Counter(r['category'] for r in rows).items())),'board_candidates':dict(sorted(collections.Counter(r['board_candidate'] for r in rows if r['board_candidate']).items())),'graph_assigned_footprints':sum(bool(r['footprint']) for r in rows),'portable_graph_assignments':sum(r['portable_footprint'] for r in rows),'bare_parts_without_footprint':sum(r['category']=='bare_board_part' and not r['footprint'] and not r['dnp'] for r in rows),'pin_pad_mismatches':sum(i['type']=='pin_pad_mismatch' for i in issues),'xml_connected_pin_audit':'PASS','xml_compared_connected_pins':len(all_nodes),'core_parts':len(core),'core_connected_pins':connected_core,'core_boundary_nets':len(boundary),'core_graph_assigned_footprints':sum(c['placement_footprint_status']=='graph_assigned_portable' for c in core),'core_proposed_footprints':sum(c['placement_footprint_status']!='graph_assigned_portable' for c in core),'blocking_issue_records':len(issues),'blocking_issue_types':dict(sorted(collections.Counter(i['type'] for i in issues).items()))}
+    # DC_CORE provenance (embedded in detector-core-input.json, which the PCB re-freeze pins) names only the graphs, footprints
+    # and XML; the parts-database projection is recorded in partition/provenance.json, so a parts.json edit outside these fields
+    # does not force a re-freeze.
+    core_provenance={'inputs':[{'file':p.relative_to(ROOT).as_posix(),'sha256':sha(p)} for p in graph_paths+[manifest_path,xml_path]],'source_documents':sorted({s['url'] for s in sources}),'generator':'pcb/prepare.py','note':'All classification/board splits are new controlled engineering proposals. They do not change E1..E5, claim module pin order, or authorize production.'}
+    projection=json.dumps(parts_projection(db),ensure_ascii=False,sort_keys=True,separators=(',',':')).encode('utf-8')
+    provenance={**core_provenance,'parts_database':{'file':PARTS_DB.relative_to(ROOT).as_posix(),'fields_used':list(PARTS_DB_FIELDS),'projection_sha256':hashlib.sha256(projection).hexdigest()}}
     package={'summary':summary,'provenance':provenance,'boards':BOARDS,'constraints':CONSTRAINTS,'parts':rows,'unresolved':issues}
-    detector={'board_id':'DC_CORE','status':'UNROUTED_PLACEMENT_INPUT_NOT_FABRICATION','part_count':len(core),'components':core,'nets':{n:[x for x in net_nodes[n] if x['ref'] in core_refs] for n in sorted(core_nets)},'external_boundary':boundary,'must_remain_at_RF_port':sorted(RF_TAP|RF_BLEED,key=sort_ref),'constraints':[c for c in CONSTRAINTS if 'DC_CORE' in c['boards']],'blockers':['50 passive land patterns are placement proposals, not approved production MPN selections.',*(['Three explicitly0402 resistor footprints must be fetched from official KiCad if absent.'] if not (ROOT/'build/kicad/footprints/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod').is_file() else []),'Eight-net connector/wire-pad implementation, mounting/outline and cable routing are unselected.','RF-port tap/bleed assemblies are excluded from this core and must be placed on the RF substrate.','Prototype threshold/leakage/temperature/ground-offset/RF/rail-off tests remain mandatory.'],'source_node_audit':{'source_graph':'design/E4.json','actual_xml':'verification/netlist.xml','connected_pins_checked':connected_core,'status':'PASS','all_pins':sum(len(c['pins']) for c in core),'nc_pins':sum(bool(p.get('nc')) for c in core for p in c['pins'])},'provenance':provenance}
-    files={'partition.json':dump(package),'components.csv':csv_text(rows,['ref','sheet','value','kind','category','assembly_owner','board_candidate','dnp','footprint','portable_footprint','pad_coverage','pin_count','source','classification_reason']),'unresolved.csv':csv_text([{**i,'detail':json.dumps(i['detail'],ensure_ascii=False) if not isinstance(i['detail'],str) else i['detail']} for i in issues],['ref','type','blocking','detail']),'constraints.json':dump(CONSTRAINTS),'detector-core-input.json':dump(detector),'summary.json':dump(summary),'provenance.json':dump(provenance),'detector-core-nodes.csv':csv_text([{'ref':c['ref'],'pin':p['number'],'name':p['name'],'net':p.get('net',''),'nc':p.get('nc',False),'placement_footprint':c['placement_footprint'],'footprint_status':c['placement_footprint_status']} for c in core for p in c['pins']],['ref','pin','name','net','nc','placement_footprint','footprint_status'])}
+    proposed=summary['core_proposed_footprints']
+    footprint_blocker=(f'{proposed} passive land patterns are placement proposals, not approved production MPN selections.' if proposed else
+                       f'All {len(core)} core parts carry graph-assigned footprints and MPNs selected in design/parts/parts.json; a selected MPN is a procurement record, not a qualification: voltage/power/TCR/leakage ratings and land patterns still need review before production.')
+    detector={'board_id':'DC_CORE','status':'UNROUTED_PLACEMENT_INPUT_NOT_FABRICATION','part_count':len(core),'components':core,'nets':{n:[x for x in net_nodes[n] if x['ref'] in core_refs] for n in sorted(core_nets)},'external_boundary':boundary,'must_remain_at_RF_port':sorted(RF_TAP|RF_BLEED,key=sort_ref),'constraints':[c for c in CONSTRAINTS if 'DC_CORE' in c['boards']],'blockers':[footprint_blocker,*(['Three explicitly0402 resistor footprints must be fetched from official KiCad if absent.'] if not (ROOT/'build/kicad/footprints/Resistor_SMD.pretty/R_0402_1005Metric.kicad_mod').is_file() else []),'Eight-net connector/wire-pad implementation, mounting/outline and cable routing are unselected.','RF-port tap/bleed assemblies are excluded from this core and must be placed on the RF substrate.','Prototype threshold/leakage/temperature/ground-offset/RF/rail-off tests remain mandatory.'],'source_node_audit':{'source_graph':'design/E4.json','actual_xml':'verification/netlist.xml','connected_pins_checked':connected_core,'status':'PASS','all_pins':sum(len(c['pins']) for c in core),'nc_pins':sum(bool(p.get('nc')) for c in core for p in c['pins'])},'provenance':core_provenance}
+    files={'partition.json':dump(package),'components.csv':csv_text(rows,['ref','sheet','value','kind','mount','category','assembly_owner','board_candidate','dnp','footprint','portable_footprint','pad_coverage','pin_count','source','classification_reason']),'unresolved.csv':csv_text([{**i,'detail':json.dumps(i['detail'],ensure_ascii=False) if not isinstance(i['detail'],str) else i['detail']} for i in issues],['ref','type','blocking','detail']),'constraints.json':dump(CONSTRAINTS),'detector-core-input.json':dump(detector),'summary.json':dump(summary),'provenance.json':dump(provenance),'detector-core-nodes.csv':csv_text([{'ref':c['ref'],'pin':p['number'],'name':p['name'],'net':p.get('net',''),'nc':p.get('nc',False),'placement_footprint':c['placement_footprint'],'footprint_status':c['placement_footprint_status']} for c in core for p in c['pins']],['ref','pin','name','net','nc','placement_footprint','footprint_status'])}
     if args.check:
         stale=[name for name,content in files.items() if not (OUT/name).exists() or (OUT/name).read_text(encoding='utf-8')!=content]
         require(not stale,'Stale generated output: '+', '.join(stale))

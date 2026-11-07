@@ -14,6 +14,13 @@ OFF_NOW_DELAY_MS = 20000
 ARM_OFF_HB_LOSS_MS = 60000
 UV_DWELL_MS = 5000
 OFF_PULSE_MS = 250
+# PWR_ON_KEY boot assist (STACK D3, bench B11): GP12 drives Q302, which pulls
+# J21 pin 3 low. STACK allows 0.8-1.0 s, never 2 s; a 6 s hold is the Q6A
+# hard power-off. Retries are bounded per Pico power-on or physical restart.
+KEY_WAIT_MS = 1500
+KEY_PULSE_MS = 900
+KEY_RETRY_MS = 5000
+KEY_MAX_PULSES = 3
 
 
 def _number(value, low, high):
@@ -23,10 +30,14 @@ def _number(value, low, high):
 
 class Supervisor:
     def __init__(self, calibration_valid=False, session_factory=None,
-                 hardware_commissioned=False):
+                 hardware_commissioned=False, power_on_reset=True):
         # A remote ARM can never override either locally established gate.
         self.calibration_valid = calibration_valid is True
         self.hardware_commissioned = hardware_commissioned is True
+        # Only a LAB5 power-on arms the PWR_ON_KEY assist at the first sample.
+        # main.run() passes False after a WDT reboot, which may land inside the
+        # 3 s Q6A_OFF window of a poweroff or J21 UVLO trip.
+        self._power_on_reset = power_on_reset is True
         self._session_factory = session_factory
         self._session_counter = 0
         self.session = 0
@@ -51,6 +62,9 @@ class Supervisor:
         self._off_at = None
         self._q6a_seen = False
         self._q6a_off_at = None
+        self._key_from = None  # Wait reference for the next key pulse; None ends the assist.
+        self._key_at = None    # Start of the key pulse in progress.
+        self.key_pulses = 0
         self._uv_at = None
         self._button_raw = False
         self._button_changed_at = 0
@@ -265,6 +279,13 @@ class Supervisor:
                                  ("case_temp_c", -20, 120)):
             if not _number(self._inputs.get(field), low, high):
                 self._inputs[field] = None
+        if self._inputs_at is None:
+            if self._power_on_reset:
+                self._key_from = self._now  # First sample after power-on starts the 3V3 wait.
+            else:
+                # Not a power-on: absent 3V3 is a Q6A that just went off. Never
+                # press; finish that poweroff with the 3 s Pololu OFF below.
+                self._q6a_seen = True
         self._inputs_at = self._now
         if self._inputs.get("q6a_on") is True:
             self._q6a_seen = True
@@ -273,8 +294,47 @@ class Supervisor:
             self._q6a_off_at = self._now
         self._button_step(self._inputs.get("button_pressed") is True)
         self._advance()
+        self._key_step()
         self._render_outputs()
         return self.outputs
+
+    def _key_battery_ok(self):
+        # A calibrated Pico presses only above the 13.05 V cutoff: below it the
+        # no-HB UV fallback would cut a booting Q6A. Uncalibrated, no battery
+        # value is trusted; E1's hardware UV trip still applies.
+        if not self.calibration_valid:
+            return True
+        battery = self._inputs.get("battery_mv")
+        return _number(battery, 8000, 17500) and battery > 13050
+
+    def _key_release(self):
+        self._key_at = None
+        self._key_from = self._now
+        if self.key_pulses >= KEY_MAX_PULSES:
+            self._key_from = None
+            self._event("Q6A_KEY_GAVE_UP", pulses=self.key_pulses)
+
+    def _key_step(self):
+        # Boot assist only: Q6A 3V3 never seen since this power-on or physical
+        # restart. A seen Q6A (even if lost again) or any state but SAFE ends it.
+        if self._q6a_seen or self.state != "SAFE":
+            self._key_from = self._key_at = None
+            return
+        if self._key_from is None:
+            return
+        # The case button reaches J21 pin 3 itself through D303: never add a
+        # pulse to an operator press, and give the PMIC the full wait after it.
+        hold = self._inputs.get("button_pressed") is True or not self._key_battery_ok()
+        if self._key_at is not None:
+            if hold or self._now - self._key_at >= KEY_PULSE_MS:
+                self._key_release()
+            return
+        if hold:
+            self._key_from = self._now
+        elif self._now - self._key_from >= (KEY_RETRY_MS if self.key_pulses else KEY_WAIT_MS):
+            self._key_at = self._now
+            self.key_pulses += 1
+            self._event("Q6A_KEY_PULSE", pulse=self.key_pulses)
 
     def _button_step(self, pressed):
         if pressed != self._button_raw:
@@ -296,6 +356,8 @@ class Supervisor:
                     self._thermal_trip = False
                     self._q6a_seen = False
                     self._q6a_off_at = None
+                    # A fresh, bounded PWR_ON_KEY assist, as after a LAB5 boot.
+                    self._key_from, self._key_at, self.key_pulses = self._now, None, 0
                     self._off_at = None
                     self._off_now_at = self._shutdown_at = self._shutdown_hb_at = None
                     self._rotate_session()
@@ -365,17 +427,24 @@ class Supervisor:
         else:
             self._fan_latch = self._blower_latch = True
         panel = self._inputs.get("panel_temp_c")
+        stale = self._inputs_at is None or self._now - self._inputs_at > SENSOR_MAX_AGE_MS
         brightness = 100
         if _number(panel, -20, 120):
             brightness = 20 if panel >= 68 else 50 if panel >= 60 else 100
         # DISP12 is the operator console, not an ARM output. Missing, invalid or
         # stale panel NTC counts as hot; it re-enables only at <=60 C. A CASE_HOT
         # or FAN_STALLED trip also removes it until that fault is cleared.
-        if (self._inputs_at is None or self._now - self._inputs_at > SENSOR_MAX_AGE_MS
-                or not _number(panel, -20, 120) or panel >= 68):
+        if stale or not _number(panel, -20, 120) or panel >= 68:
             self._disp_hot = True
         elif panel <= 60:
             self._disp_hot = False
+        # PWR_ON_KEY needs a fresh sample with Q6A 3V3 absent and is time-bounded
+        # here too, so a missed step() cannot stretch the press. A stale sample
+        # ends the press for good (counted); the next try waits KEY_RETRY_MS.
+        if self._key_at is not None and stale:
+            self._key_release()
+        key = (self._key_at is not None and self.state == "SAFE" and not q6a_on
+               and self._now - self._key_at < KEY_PULSE_MS)
         self.outputs = {
             "mcp_reset": not (self.state in ("CONFIGURING", "ACTIVE")),
             "disp_en": (q6a_on and not self._disp_hot and not self._thermal_trip
@@ -384,7 +453,7 @@ class Supervisor:
             "fan_en": self._fan_latch,
             "blower_en": self._blower_latch,
             "pico_off": self.state == "OFF" and self._now - self._off_at < OFF_PULSE_MS,
-            "q6a_key": False,
+            "q6a_key": key,
             "led": not active,
             "brightness_limit_pct": brightness,
         }
@@ -401,4 +470,5 @@ class Supervisor:
                 "panel_temp_c": self._inputs.get("panel_temp_c"),
                 "case_temp_c": self._inputs.get("case_temp_c"),
                 "fan_stalled": self._inputs.get("fan_stalled") is True,
-                "brightness_limit_pct": self.outputs["brightness_limit_pct"]}
+                "brightness_limit_pct": self.outputs["brightness_limit_pct"],
+                "q6a_key_pulses": self.key_pulses}

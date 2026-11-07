@@ -227,8 +227,11 @@ class Hardware:
         # Assert RESET before changing other enables; release it only last.
         if outputs["mcp_reset"]:
             self.pins["mcp_reset"].value(1)
-        for name in ("disp_en", "fan_en", "blower_en", "pico_off", "q6a_key", "led"):
+        for name in ("disp_en", "fan_en", "blower_en", "pico_off", "led"):
             self.pins[name].value(1 if outputs[name] else 0)
+        # PWR_ON_KEY: re-read GP14 here, so Q6A 3V3 that rose after sample()
+        # releases J21 pin 3 now. Pad reset/high-Z also releases it (R331).
+        self.pins["q6a_key"].value(1 if outputs["q6a_key"] and not self.q6a_on.value() else 0)
         if self.uart is not None and self.q6a_on.value():
             self.safe_boot.init(self.machine.Pin.OUT, value=1 if outputs["safe_boot"] else 0)
         else:

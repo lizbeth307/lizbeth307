@@ -1,0 +1,30 @@
+{
+  "schema_version": 1,
+  "kind": "srrx_dt_ci_record",
+  "status": "CI_MERGE_CHECKED_NOT_BOOTED",
+  "recorded_from": {
+    "workflow": ".github/workflows/sr-rx-system.yml job device-tree",
+    "run_id": 40111917626,
+    "commit": "cefa0afc79f44b3e54fbc0223fbd0f2f7b0a577b",
+    "date": "2026-10-24"
+  },
+  "dtc": "Version: DTC 1.7.0",
+  "kernel_deb": "linux-image-6.18.2-4-qcom (deployment/sources.lock.json)",
+  "sources": {
+    "field-q6a.dtso": "f2c249f996f03e7457bc3647e287539557f1b012323631c8a9ffed042a2e3aec",
+    "lab-q6a.dtso": "41183f6b46ae47bcc75e7f535a71195061159d98d4a5cc266b041da5a8049803"
+  },
+  "base_dtb": {
+    "path_in_deb": "usr/lib/linux-image-6.18.2-4-qcom/qcom/qcs6490-radxa-dragon-q6a.dtb",
+    "sha256": "bebaaee8a9182401a09e74e94c09ecd9c40f0c6f122bf51fbce083be9e23a0e3"
+  },
+  "overlays": {
+    "field-q6a.dtbo": "d0b1e32e011a62ada7ea307aa0d8ad6cf952b8a1866954508f7ed5b75b41b8e3",
+    "lab-q6a.dtbo": "0bd409b54e9b70f61997e1a6b385b6a1de3013e7d0788e130f9e068d18e624bf"
+  },
+  "merged": {
+    "field.dtb": "ef88d14c59a90fabde4a6b6bdd08843e40eec453a650a043cfd3ee22b23eaec4",
+    "lab.dtb": "bbdd48e174978253d87a7f5dbde614652e5988926fac10f2a9d238a0b144b086"
+  },
+  "bench": "OPEN: W-10 compares /sys/firmware/fdt node by node (fdt_check.py --reference), pinmux and aliases on the Q6A (build/07 §5.3)"
+}

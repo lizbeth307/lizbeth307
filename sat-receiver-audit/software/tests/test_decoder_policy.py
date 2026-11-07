@@ -3,6 +3,7 @@ import contextlib
 import hashlib
 import io
 import json
+import os
 from pathlib import Path
 import struct
 import sys
@@ -62,9 +63,12 @@ class DecoderPolicyTests(unittest.TestCase):
 
     def test_disabled_safety_presets_refuse_before_any_file_or_header_access(self):
         with mock.patch.object(d, "_file", side_effect=AssertionError("must not inspect payload")):
-            for preset in ("egc-safetynet", "dsc-safety", "satdump-weather", "ais-public", "adsb-public"):
+            for preset in ("egc-safetynet", "dsc-safety", "ais-public", "adsb-public"):
                 with self.subTest(preset=preset), self.assertRaisesRegex(d.DecoderRefused, "DISABLED"):
                     d.make_plan(preset, None, None, None)
+            # satdump-weather is installation-gated (v2.1) and never a noaa-apt file plan.
+            with self.assertRaisesRegex(d.DecoderRefused, "SATDUMP_PRESET_IS_SATDUMP_PLAN"):
+                d.make_plan("satdump-weather", None, None, None)
 
     def test_no_arbitrary_preset_or_argv(self):
         for preset in ("sh", "satdump --source hackrf", ["noaa-apt-weather"]):
@@ -295,6 +299,187 @@ class DecoderPolicyTests(unittest.TestCase):
         self.assertEqual(code, 2)
         self.assertIn("DISABLED_NO_VERIFIED_HEADER_PARSER", stdout.getvalue())
         self.assertNotIn("/missing", stdout.getvalue())
+
+
+class SatDumpProfileTests(unittest.TestCase):
+    """satdump-weather (v2.1): installation record, LRPT-baseband-only plan, PNG-only publication."""
+
+    def setUp(self):
+        from srrx import baseband
+        self.bb = baseband
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        root = Path(self.tmp.name).resolve()
+        self.exe, self.plugins, self.resources = root / "bin/satdump", root / "plugins", root / "resources"
+        self.pipelines, self.core = self.resources / "pipelines", root / "lib/libsatdump_core.so"
+        self.config = root / "satdump_cfg.json"
+        for directory in (self.exe.parent, self.plugins, self.pipelines, self.core.parent, self.resources / "lut"):
+            directory.mkdir(parents=True)
+        self.exe.write_bytes(b"\x7fELF fixture")
+        self.core.write_bytes(b"\x7fELF core fixture")
+        (self.resources / "lut" / "msu_mr.lut").write_bytes(b"lut")
+        sha = lambda path: hashlib.sha256(path.read_bytes()).hexdigest()
+        plugins = {}
+        for name in d.SATDUMP_PLUGINS:
+            path = self.plugins / ("lib%s_support.so" % name)
+            path.write_bytes(b"\x7fELF " + name.encode())
+            plugins[path.name] = sha(path)
+        pipelines = {}
+        for name in d.SATDUMP_PIPELINE_FILES:
+            path = self.pipelines / name
+            path.write_text(json.dumps({name: {}}))
+            pipelines[name] = sha(path)
+        self.config.write_text(json.dumps({"satdump_general": {"kepler_update_interval": {"value": "Never"}}}))
+        self.install = {"v": 1, "tool_id": "satdump", "version": d.SATDUMP_VERSION, "source_commit": d.SATDUMP_COMMIT,
+                        "executable": str(self.exe), "sha256": sha(self.exe), "evidence_id": "admin/satdump-build-001",
+                        "core_sha256": sha(self.core), "resources_sha256": d.satdump_tree_digest(self.resources, admin=False),
+                        "plugins": plugins, "pipelines": pipelines, "config_sha256": sha(self.config),
+                        "recipe_sha256": sha(Path(d.SATDUMP_RECIPE))}  # the committed recipe of this tree
+        original = d._file
+        for target, value in (("SATDUMP_PLUGIN_DIR", str(self.plugins)), ("SATDUMP_PIPELINE_DIR", str(self.pipelines)),
+                              ("SATDUMP_RESOURCES", str(self.resources)), ("SATDUMP_CORE", str(self.core)),
+                              ("SATDUMP_CONFIG", str(self.config))):
+            patcher = mock.patch.object(d, target, value)
+            patcher.start()
+            self.addCleanup(patcher.stop)
+        # The fixture is not root-owned: only the owner checks are relaxed, never the digests or file sets.
+        for target, value in (("_admin_directories", lambda path: None), ("_admin_owned", lambda info: True),
+                              ("_file", lambda path, executable=False: original(path))):
+            patcher = mock.patch.object(d, target, value)
+            patcher.start()
+            self.addCleanup(patcher.stop)
+        window = baseband.window(40001, "Meteor-M N2-3", 137_900_000, 72_000, 1.8e9, 1.8e9 + 600,
+                                 baseband.iso_utc(1.8e9), baseband.iso_utc(1.8e9 + 600))
+        self.meta = baseband.metadata("lrpt-0123456789abcdef", window, created_s=1.8e9 - 50, first_block_s=1.8e9 - 50,
+                                      samples=10, sha512="e" * 128, clipped=0, gaps=0, joins=0, source="HARDWARE",
+                                      group_delay=685, stop_reason="WINDOW_END")
+
+    def test_availability_is_gated_by_the_installation(self):
+        self.assertEqual(d.availability()[d.SATDUMP_PRESET], "UNAVAILABLE_NO_ACCEPTED_INSTALLATION")
+        self.assertEqual(d.availability(satdump_installation=self.install)[d.SATDUMP_PRESET],
+                         "LRPT_FILE_PRESET_ACCEPTED_INTERFACE_PROBE_REQUIRED_AT_RUN")
+        self.assertEqual(d.availability(satdump_installation=dict(self.install, version="1.2.2"))[d.SATDUMP_PRESET],
+                         "UNAVAILABLE_INSTALLATION_NOT_QUALIFIED")
+
+    def test_exact_plugin_and_pipeline_sets_and_digests(self):
+        self.assertEqual(d.satdump_executable(self.install), self.exe)
+        extra = self.plugins / "libhackrf_sdr_support.so"
+        extra.write_bytes(b"\x7fELF")
+        with self.assertRaisesRegex(d.DecoderRefused, "SATDUMP_FILE_SET_NOT_ALLOWLISTED"):
+            d.satdump_executable(self.install)
+        extra.unlink()
+        (self.pipelines / "Syracuse.json").write_text("{}")
+        with self.assertRaisesRegex(d.DecoderRefused, "SATDUMP_FILE_SET_NOT_ALLOWLISTED"):
+            d.satdump_executable(self.install)
+        (self.pipelines / "Syracuse.json").unlink()
+        (self.pipelines / "MetOp.json").write_text('{"metop_ahrpt": {"mqtt": 1}}')
+        with self.assertRaisesRegex(d.DecoderRefused, "SATDUMP_FILE_DIGEST_CHANGED"):
+            d.satdump_executable(self.install)
+        missing = dict(self.install, plugins={k: v for k, v in self.install["plugins"].items() if "net_source" not in k})
+        with self.assertRaisesRegex(d.DecoderRefused, "SATDUMP_FILE_SET_NOT_ALLOWLISTED"):
+            d.satdump_executable(missing)
+
+    def test_core_library_resources_tree_and_recipe_are_bound(self):
+        self.core.write_bytes(b"\x7fELF patched core")
+        with self.assertRaisesRegex(d.DecoderRefused, "SATDUMP_CORE_DIGEST_CHANGED"):
+            d.satdump_executable(self.install)
+        self.install["core_sha256"] = hashlib.sha256(self.core.read_bytes()).hexdigest()
+        (self.resources / "lut" / "msu_mr.lut").write_bytes(b"other lut")
+        with self.assertRaisesRegex(d.DecoderRefused, "SATDUMP_RESOURCES_DIGEST_CHANGED"):
+            d.satdump_executable(self.install)
+        (self.resources / "lut" / "msu_mr.lut").write_bytes(b"lut")
+        (self.resources / "lut" / "extra.lut").write_bytes(b"")  # an added file changes the tree digest too
+        with self.assertRaisesRegex(d.DecoderRefused, "SATDUMP_RESOURCES_DIGEST_CHANGED"):
+            d.satdump_executable(self.install)
+        (self.resources / "lut" / "extra.lut").unlink()
+        self.assertEqual(d.satdump_executable(self.install), self.exe)
+        # A record made from another recipe than the deployed deployment/recipes/satdump/recipe.json.
+        with self.assertRaisesRegex(d.DecoderRefused, "SATDUMP_RECIPE_DIGEST_CHANGED"):
+            d.satdump_executable(dict(self.install, recipe_sha256="d" * 64))
+        with self.assertRaisesRegex(d.DecoderRefused, "INSTALLATION_SCHEMA"):
+            d.satdump_executable({k: v for k, v in self.install.items() if k != "core_sha256"})
+        if hasattr(os, "symlink") and os.name == "posix":
+            os.symlink("/etc/passwd", self.resources / "lut" / "link.lut")
+            with self.assertRaisesRegex(d.DecoderRefused, "SATDUMP_RESOURCES_NOT_ADMIN_TREE"):
+                d.satdump_executable(self.install)
+
+    def test_kepler_update_must_be_never(self):
+        self.config.write_text(json.dumps({"satdump_general": {"kepler_update_interval": {"value": "1 day"}}}))
+        changed = dict(self.install, config_sha256=hashlib.sha256(self.config.read_bytes()).hexdigest())
+        with self.assertRaisesRegex(d.DecoderRefused, "SATDUMP_KEPLER_UPDATE_NOT_NEVER"):
+            d.satdump_executable(changed)
+
+    def test_plan_accepts_only_a_policy_baseband(self):
+        plan = d.satdump_plan(self.meta, self.install)
+        self.assertEqual(plan["argv_template"], ["${ACCEPTED_SATDUMP}", "pipeline", "meteor_m2-x_lrpt", "baseband",
+                                                 "${APPROVED_BASEBAND}", "${OUTPUT_DIR}", "--samplerate=256000",
+                                                 "--baseband_format=cs16"])
+        self.assertFalse(plan["shell"] or plan["live_source"] or plan["stdout_stored"])
+        for change in ({"srrx:export": True}, {"srrx:target": "NOAA 19"}, {"core:datatype": "cu8"}):
+            changed = json.loads(json.dumps(self.meta))
+            changed["global"].update(change)
+            with self.subTest(change=change), self.assertRaisesRegex(d.DecoderRefused, "SOURCE_NOT_APPROVED_LRPT_BASEBAND"):
+                d.satdump_plan(changed, self.install)
+        with self.assertRaisesRegex(d.DecoderRefused, "SOURCE_NOT_APPROVED_LRPT_BASEBAND"):
+            d.satdump_plan(self.meta_wav_like(), self.install)
+        stopped = scope_policy.ScopeLatch()
+        stopped.stop(137.5e6, 137.6e6)
+        with self.assertRaisesRegex(d.DecoderRefused, "OUT_OF_SCOPE"):
+            d.satdump_plan(self.meta, self.install, scope=stopped)
+
+    def meta_wav_like(self):
+        return {"v": 1, "sha256": "a" * 64, "purpose": "public_civil_weather"}
+
+    def test_publish_releases_sanitized_png_only(self):
+        out = Path(self.tmp.name) / "out"
+        (out / "MSU-MR").mkdir(parents=True)
+        (out / "MSU-MR" / "rgb.png").write_bytes(png())
+        (out / "products.cbor").write_bytes(b"cbor")
+        (out / "x.cadu").write_bytes(b"cadu")
+        plan = d.satdump_plan(self.meta, self.install)
+        target = Path(self.tmp.name) / "published"
+        report = d.satdump_publish(out, target, plan, input_iq_deleted=True)
+        self.assertEqual(sorted(p.name for p in target.iterdir()), ["image-00.png", "report.json"])
+        self.assertNotIn(b"PRIVATE_SENTINEL", (target / "image-00.png").read_bytes())
+        self.assertEqual(json.loads((target / "report.json").read_text()), report)
+        self.assertEqual((report["images_skipped_over_limit"], report["images_skipped_invalid"]), (0, 0))
+        self.assertIs(report["input_iq_deleted_after_decode"], True)
+        with self.assertRaisesRegex(d.DecoderRefused, "NEW_ABSOLUTE_OUTPUT_DIRECTORY_REQUIRED"):
+            d.satdump_publish(out, target, plan, input_iq_deleted=True)
+        with self.assertRaisesRegex(d.DecoderRefused, "SATDUMP_REPORT_SCHEMA"):
+            d.satdump_publish(out, Path(self.tmp.name) / "published1", plan, input_iq_deleted="yes")
+        empty = Path(self.tmp.name) / "empty"
+        empty.mkdir()
+        with self.assertRaisesRegex(d.DecoderRefused, "SATDUMP_NO_IMAGE_PRODUCT"):
+            d.satdump_publish(empty, Path(self.tmp.name) / "published2", plan, input_iq_deleted=True)
+        stopped = scope_policy.ScopeLatch()
+        stopped.stop(137.5e6, 137.6e6)
+        with self.assertRaisesRegex(d.DecoderRefused, "OUT_OF_SCOPE"):
+            d.satdump_publish(out, Path(self.tmp.name) / "published3", plan, input_iq_deleted=True, scope=stopped)
+        self.assertFalse((Path(self.tmp.name) / "published3").exists())
+        self.assertFalse((Path(self.tmp.name) / ".published3.publishing").exists())
+
+    def test_publish_skips_images_over_the_limits_instead_of_losing_the_pass(self):
+        out = Path(self.tmp.name) / "many"
+        (out / "MSU-MR").mkdir(parents=True)
+        for index in range(d.MAX_PRODUCTS + 6):
+            (out / "MSU-MR" / ("rgb-%03d.png" % index)).write_bytes(png())
+        # An IHDR of 10000 x 10000 (100 MP > MAX_PIXELS) and a broken file, first in path order: skipped, never published.
+        huge = bytearray(png(text=False))
+        huge[16:24] = struct.pack(">II", 10_000, 10_000)
+        huge[29:33] = struct.pack(">I", zlib.crc32(bytes(huge[12:29])) & 0xffffffff)
+        (out / "0-huge.png").write_bytes(bytes(huge))
+        (out / "1-broken.png").write_bytes(b"\x89PNG\r\n\x1a\nnot a chunk")
+        plan = d.satdump_plan(self.meta, self.install)
+        target = Path(self.tmp.name) / "published-many"
+        report = d.satdump_publish(out, target, plan, input_iq_deleted=True)
+        self.assertEqual(len(report["images"]), d.MAX_PRODUCTS)
+        self.assertEqual(report["images_skipped_over_limit"], 6 + 1)
+        self.assertEqual(report["images_skipped_invalid"], 1)
+        self.assertEqual(len(list(target.glob("image-*.png"))), d.MAX_PRODUCTS)
+        with mock.patch.object(d, "MAX_PRODUCT_TOTAL_BYTES", len(d._sanitized_png(out / "MSU-MR" / "rgb-000.png")[0]) * 2):
+            report = d.satdump_publish(out, Path(self.tmp.name) / "published-total", plan, input_iq_deleted=True)
+        self.assertEqual(len(report["images"]), 2)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
   "fixture": "kill",
-  "pid": 2811,
+  "pid": 3227,
   "uid": 1001,
   "stage": "ACTIVE_STABLE",
   "qt_platform": "offscreen",
@@ -21,33 +21,33 @@
   "action_log": [
     {
       "operation": "recover",
-      "at_s": 7.016935,
+      "at_s": 7.404947,
       "name": null,
       "value": null
     },
     {
       "operation": "control",
-      "at_s": 7.840545,
+      "at_s": 8.039049,
       "name": "EN_RTLA",
       "value": true
     }
   ],
-  "elapsed_s": 9.10069,
+  "elapsed_s": 9.27859,
   "request_counts": {
-    "status": 15,
+    "status": 14,
     "recover": 1,
     "lease": 2,
     "control": 1
   },
   "accepted_lease_at_s": [
-    7.068609,
-    8.271986
+    7.423917,
+    8.676217
   ],
   "qt_timer": {
     "interval_ms": 100,
-    "ticks": 25,
-    "mean_gap_ms": 364.028,
-    "max_gap_ms_including_SIGSTOP": 5455.362
+    "ticks": 23,
+    "mean_gap_ms": 403.417,
+    "max_gap_ms_including_SIGSTOP": 5806.851
   },
   "service": {
     "mode": "SIMULATION",
@@ -56,7 +56,7 @@
     "armed": true,
     "fault": null,
     "owner": "uid:1001",
-    "lease_deadline_ms": 2098389,
+    "lease_deadline_ms": 3548995,
     "outputs": {
       "EN_LNB": false,
       "EN_BONI": false,
@@ -88,11 +88,11 @@
   "holding": true,
   "controller_notice": "control accepted by labd",
   "controller_error": null,
-  "warmup_finished_s": 6.416058,
-  "natural_heartbeat_s": 6.773556,
-  "fresh_poll_s": 6.695698,
-  "arm_requested_s": 7.001889,
-  "active_s": 7.820594,
-  "stable_s": 9.10069,
-  "remaining_lease_ms": 2168
+  "warmup_finished_s": 6.797149,
+  "natural_heartbeat_s": 7.192742,
+  "fresh_poll_s": 7.070958,
+  "arm_requested_s": 7.387816,
+  "active_s": 8.015577,
+  "stable_s": 9.242185,
+  "remaining_lease_ms": 2431
 }

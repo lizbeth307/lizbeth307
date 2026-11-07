@@ -1,14 +1,80 @@
 Offline test guard PASS: IPv4/IPv6 socket creation denied; ORT telemetry disabled before import
-....................................................................................................................................................................................................................................2026-10-24T14:08:10Z out of scope
-.2026-10-24T14:08:14Z out of scope
-2026-10-24T14:08:14Z out of scope
-2026-10-24T14:08:14Z out of scope
-...................................................................................................................................................s...................................................................................................................Unqualified shutdown requested; dry run, no OS action
+...........................................................s...labrx: A baseband pass recording needs --hardware and --storage-root/--storage-device
+labrx: Baseband options require --baseband-plan
+.........usage: python3 -m srrx.baseband [-h] {sweep,usage} ...
+python3 -m srrx.baseband: error: argument command: invalid choice: 'export' (choose from 'sweep', 'usage')
+..............................................................................................................................................................................................................................................................................................2026-11-07T08:45:56Z out of scope
+.2026-11-07T08:45:59Z out of scope
+2026-11-07T08:45:59Z out of scope
+2026-11-07T08:45:59Z out of scope
+.........................................................................................................................................................................s.................................................................................................................................................................................Unqualified shutdown requested; dry run, no OS action
 ...................................................rfkill wlan and bluetooth blocked
 rfkill BLOCKED: not blocked: rfkill3 bluetooth
-rfkill BLOCKED: [Errno 2] No such file or directory: '/tmp/srrx-rfkill-0_cxe0ki/missing'
-.................................................................................................................................................................................................................................................s.................................................................................................................................................
+rfkill BLOCKED: [Errno 2] No such file or directory: '/tmp/srrx-rfkill-jkijpluw/missing'
+........................................................................................................................................................................................................................................................................................s............................................................................................................................................................................................................................................{
+  "file": "fixture.uf2",
+  "sha256": "7a40de0eb08dfa4d26794c009b9be51848acc00cbcd245516a383b2b2fc74f04",
+  "blocks": 2,
+  "status": "UF2_MATCHES_LOCK",
+  "copied": false,
+  "plan": "copy fixture.uf2 to /tmp/srrx-mcu-test-d4erhkig/drive (dry run; add --execute)"
+}
+{
+  "file": "fixture.uf2",
+  "sha256": "7a40de0eb08dfa4d26794c009b9be51848acc00cbcd245516a383b2b2fc74f04",
+  "blocks": 2,
+  "status": "UF2_MATCHES_LOCK",
+  "copied": true
+}
+srrx-bls: 7.0.11-7-qcom is not the pinned slot kernel 6.18.2-4-qcom; no SR-RX entry written
+srrx-bls: removal of the pinned slot kernel keeps the SR-RX entry and ESP files (apt-mark hold, STACK.md:138)
+{"status": "SLOT_ENTRY_WRITTEN", "slot": "A", "entry": "loader/entries/labA+3.conf", "running_slot": false, "route_b_trial_armed": false, "generation": 1, "files": {"/srrx/A/linux": "6923dd1bc0460082c5d55a831908c24a282860b7f1cd6c2b79cf1bc8857c639c", "/srrx/A/initrd.img": "09e6c018d2c8c4903308613dd1b72484d57eadf12ec50ddc8f52e5accce470f2", "/srrx/A/lab.dtb": "a51146d38077ff992eba84cf1d5e9b249073503eb74868699016153b031a38f7", "/srrx/A/field.dtb": "c0d2856b74d0df05b9d4456b177950351bd88e98b77f12574dfb7a911acee0d0"}, "route": "A"}
+{"status": "SLOT_ENTRY_WRITTEN", "slot": "A", "entry": "loader/entries/labA+3.conf", "running_slot": false, "route_b_trial_armed": false, "generation": 5, "files": {"/srrx/A/linux": "6923dd1bc0460082c5d55a831908c24a282860b7f1cd6c2b79cf1bc8857c639c", "/srrx/A/initrd.img": "09e6c018d2c8c4903308613dd1b72484d57eadf12ec50ddc8f52e5accce470f2", "/srrx/A/lab.dtb": "a51146d38077ff992eba84cf1d5e9b249073503eb74868699016153b031a38f7", "/srrx/A/field.dtb": "c0d2856b74d0df05b9d4456b177950351bd88e98b77f12574dfb7a911acee0d0"}, "route": "A"}
+{"status": "SLOT_ENTRY_WRITTEN", "slot": "A", "entry": "loader/entries/labA+3.conf", "running_slot": true, "route_b_trial_armed": false, "generation": 1, "files": {"/srrx/A/linux": "6923dd1bc0460082c5d55a831908c24a282860b7f1cd6c2b79cf1bc8857c639c", "/srrx/A/initrd.img": "09e6c018d2c8c4903308613dd1b72484d57eadf12ec50ddc8f52e5accce470f2", "/srrx/A/lab.dtb": "a51146d38077ff992eba84cf1d5e9b249073503eb74868699016153b031a38f7", "/srrx/A/field.dtb": "c0d2856b74d0df05b9d4456b177950351bd88e98b77f12574dfb7a911acee0d0"}, "route": "A"}
+{"status": "SLOT_ENTRY_WRITTEN", "slot": "A", "entry": "loader/entries/labA.conf", "running_slot": true, "route_b_trial_armed": true, "generation": 1, "files": {"/srrx/A/linux": "6923dd1bc0460082c5d55a831908c24a282860b7f1cd6c2b79cf1bc8857c639c", "/srrx/A/initrd.img": "09e6c018d2c8c4903308613dd1b72484d57eadf12ec50ddc8f52e5accce470f2", "/srrx/A/lab.dtb": "a51146d38077ff992eba84cf1d5e9b249073503eb74868699016153b031a38f7", "/srrx/A/field.dtb": "c0d2856b74d0df05b9d4456b177950351bd88e98b77f12574dfb7a911acee0d0"}, "route": "B"}
+{"status": "SLOT_ENTRY_WRITTEN", "slot": "B", "entry": "loader/entries/labB.conf", "running_slot": false, "route_b_trial_armed": false, "generation": 2, "files": {"/srrx/B/linux": "6923dd1bc0460082c5d55a831908c24a282860b7f1cd6c2b79cf1bc8857c639c", "/srrx/B/initrd.img": "09e6c018d2c8c4903308613dd1b72484d57eadf12ec50ddc8f52e5accce470f2", "/srrx/B/lab.dtb": "a51146d38077ff992eba84cf1d5e9b249073503eb74868699016153b031a38f7", "/srrx/B/field.dtb": "c0d2856b74d0df05b9d4456b177950351bd88e98b77f12574dfb7a911acee0d0"}, "route": "B"}
+fetched sources/rtlsdr.tar.gz
+cached sources/rtlsdr.tar.gz
+fetched debs/documented/edk2-qcs6490_0.1.0-5_all.deb
+..............BLOCKED: output must be a new file outside the prefix
+BLOCKED: output must be a new file outside the prefix
+...............................................................................
+Slowest test durations
 ----------------------------------------------------------------------
-Ran 930 tests in 1271.793s
+318.579s   test_injected_failures_flip_exactly_their_check (test_selftest.SelftestTests.test_injected_failures_flip_exactly_their_check)
+190.098s   test_menu_model_units_follow_the_user_search_path_and_need_their_interpreter (test_selftest.SelftestTests.test_menu_model_units_follow_the_user_search_path_and_need_their_interpreter)
+154.972s   test_radio_off_layers_flip_only_rx_s2 (test_selftest.SelftestTests.test_radio_off_layers_flip_only_rx_s2)
+128.223s   test_accepted_configurations_do_not_flip (test_selftest.SelftestTests.test_accepted_configurations_do_not_flip)
+105.094s   test_voice_mask_row_is_really_evaluated (test_selftest.SelftestTests.test_voice_mask_row_is_really_evaluated)
+94.918s    test_baseband_recorder_row_is_really_evaluated (test_selftest.SelftestTests.test_baseband_recorder_row_is_really_evaluated)
+91.370s    test_menu_model_row_reports_each_defect (test_selftest.SelftestTests.test_menu_model_row_reports_each_defect)
+65.443s    test_fake_readelf_findings_flip_only_rows_9_and_10 (test_selftest.SelftestTests.test_fake_readelf_findings_flip_only_rows_9_and_10)
+56.139s    test_band_mask_and_decoder_gate_are_really_evaluated (test_selftest.SelftestTests.test_band_mask_and_decoder_gate_are_really_evaluated)
+50.107s    test_cli_refuses_existing_or_inside_output_and_writes_new_report (test_selftest.SelftestTests.test_cli_refuses_existing_or_inside_output_and_writes_new_report)
+43.919s    test_sdrangel_full_profile_needs_reviewed_signed_matching_manifest (test_selftest.SelftestTests.test_sdrangel_full_profile_needs_reviewed_signed_matching_manifest)
+42.694s    test_target_module_copy_must_match_the_checker (test_selftest.SelftestTests.test_target_module_copy_must_match_the_checker)
+40.886s    test_symlinked_parents_and_masks_resolve_inside_rootfs (test_selftest.SelftestTests.test_symlinked_parents_and_masks_resolve_inside_rootfs)
+36.772s    test_suite_passes_and_self_test_is_not_credited (test_module_lab.PowerScenarioTests.test_suite_passes_and_self_test_is_not_credited)
+36.481s    test_swapped_lna_channel_labels_are_detected (test_module_lab.PowerScenarioTests.test_swapped_lna_channel_labels_are_detected)
+36.298s    test_lost_flt_glitch_capture_is_detected (test_module_lab.PowerScenarioTests.test_lost_flt_glitch_capture_is_detected)
+34.178s    test_extra_energized_output_is_detected (test_module_lab.PowerScenarioTests.test_extra_energized_output_is_detected)
+33.616s    test_symlink_escape_and_loop_block_while_absolute_links_stay_inside (test_selftest.SelftestTests.test_symlink_escape_and_loop_block_while_absolute_links_stay_inside)
+31.316s    test_learning_diagnostics_summarise_a_dataset_within_the_pane_limit (test_hmi.LearningRunnerTests.test_learning_diagnostics_summarise_a_dataset_within_the_pane_limit)
+29.943s    test_full_profile_requires_row_evidence_for_present_components (test_selftest.SelftestTests.test_full_profile_requires_row_evidence_for_present_components)
+29.440s    test_production_i2c_router_is_exercised (test_module_lab.PowerScenarioTests.test_production_i2c_router_is_exercised)
+25.644s    test_exact_reinstalled_versions_pass_and_any_drift_fails (test_lab_harness.DependencyVerificationTests.test_exact_reinstalled_versions_pass_and_any_drift_fails)
+24.422s    test_out_of_window_tones_are_stored_as_zeros (test_baseband.ChannelTests.test_out_of_window_tones_are_stored_as_zeros)
+23.249s    test_each_stale_or_failed_binding_blocks_packaging (test_bundle_gates.ReleaseGateTests.test_each_stale_or_failed_binding_blocks_packaging)
+23.130s    test_all_offline_rows_pass_exit_zero_and_fail_exits_two (test_selftest.SelftestTests.test_all_offline_rows_pass_exit_zero_and_fail_exits_two)
 
-OK (skipped=2)
+----------------------------------------------------------------------
+Ran 1367 tests in 2704.878s
+
+OK (skipped=3)
+{
+  "status": "OPEN_MANIFEST_WRITTEN",
+  "files": 4,
+  "allowed_modules": 1,
+  "output": "/tmp/srrx-manifest-test-tvr2q8y2/manifest.json",
+  "next": "review, attach PASS evidence, set REVIEWED by hand"
+}

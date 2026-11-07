@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297">
+<title>M-03 Корпус: ліва стінка і права стінка</title>
+<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 135211b0855f</desc>
+<rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
+<line x1="30" y1="227" x2="96" y2="227" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="96" y1="227" x2="96" y2="67" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="96" y1="67" x2="30" y2="67" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="30" y1="67" x2="30" y2="227" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="44" y1="227" x2="44" y2="67" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="4 2"/>
+<line x1="39" y1="227" x2="39" y2="67" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="49" y1="227" x2="49" y2="67" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="30" y1="227.8" x2="30" y2="240.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="96" y1="227.8" x2="96" y2="240.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="30" y1="239" x2="96" y2="239" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="30" y1="239" x2="32.2" y2="238.3" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="30" y1="239" x2="32.2" y2="239.7" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="96" y1="239" x2="93.8" y2="238.3" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="96" y1="239" x2="93.8" y2="239.7" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="63" y="242.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000">66</text>
+<line x1="29.2" y1="227" x2="16.5" y2="227" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="29.2" y1="67" x2="16.5" y2="67" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="18" y1="227" x2="18" y2="67" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="18" y1="227" x2="17.3" y2="224.8" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="18" y1="227" x2="18.7" y2="224.8" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="18" y1="67" x2="17.3" y2="69.2" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="18" y1="67" x2="18.7" y2="69.2" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="16.8" y="147" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000" transform="rotate(-90 16.8 147)">160</text>
+<line x1="72.5" y1="165" x2="84.5" y2="165" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="84.5" y1="165" x2="84.5" y2="115" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="84.5" y1="115" x2="72.5" y2="115" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="72.5" y1="115" x2="72.5" y2="165" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="75" y1="163.5" x2="75" y2="163.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="76.25" y1="162.25" x2="76.25" y2="117.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="75" y1="116.5" x2="75" y2="116.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="73.75" y1="117.75" x2="73.75" y2="162.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 75 163.5 A 1.25 1.25 0 0 1 76.25 162.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 76.25 117.75 A 1.25 1.25 0 0 1 75 116.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 75 116.5 A 1.25 1.25 0 0 1 73.75 117.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 73.75 162.25 A 1.25 1.25 0 0 1 75 163.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="80" y1="163.5" x2="80" y2="163.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="81.25" y1="162.25" x2="81.25" y2="117.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="80" y1="116.5" x2="80" y2="116.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="78.75" y1="117.75" x2="78.75" y2="162.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 80 163.5 A 1.25 1.25 0 0 1 81.25 162.25" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 81.25 117.75 A 1.25 1.25 0 0 1 80 116.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 80 116.5 A 1.25 1.25 0 0 1 78.75 117.75" stroke="#000" stroke-width="0.5" fill="none"/>
+<path d="M 78.75 162.25 A 1.25 1.25 0 0 1 80 163.5" stroke="#000" stroke-width="0.5" fill="none"/>
+<text x="72.5" y="113.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.08" text-anchor="start" fill="#000">EXHAUST_P2 12 x 50</text>
+<text x="30" y="64" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">ліва стінка, вид зліва (лице праворуч)</text>
+<line x1="140" y1="227" x2="206" y2="227" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="206" y1="227" x2="206" y2="67" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="206" y1="67" x2="140" y2="67" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="140" y1="67" x2="140" y2="227" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="192" y1="227" x2="192" y2="67" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="4 2"/>
+<line x1="197" y1="227" x2="197" y2="67" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="187" y1="227" x2="187" y2="67" stroke="#000" stroke-width="0.25" fill="none" stroke-dasharray="2 1.5"/>
+<line x1="140" y1="227.8" x2="140" y2="240.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="206" y1="227.8" x2="206" y2="240.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="140" y1="239" x2="206" y2="239" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="140" y1="239" x2="142.2" y2="238.3" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="140" y1="239" x2="142.2" y2="239.7" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="206" y1="239" x2="203.8" y2="238.3" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="206" y1="239" x2="203.8" y2="239.7" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="173" y="242.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000">66</text>
+<line x1="139.2" y1="227" x2="126.5" y2="227" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="139.2" y1="67" x2="126.5" y2="67" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="128" y1="227" x2="128" y2="67" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="128" y1="227" x2="127.3" y2="224.8" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="128" y1="227" x2="128.7" y2="224.8" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="128" y1="67" x2="127.3" y2="69.2" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="128" y1="67" x2="128.7" y2="69.2" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="126.8" y="147" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000" transform="rotate(-90 126.8 147)">160</text>
+<circle cx="176" cy="85" r="3.2" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="171.3" y1="85" x2="180.7" y2="85" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="176" y1="89.7" x2="176" y2="80.3" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="172.8" y="91.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">RX2</text>
+<circle cx="176" cy="105" r="3.2" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="171.3" y1="105" x2="180.7" y2="105" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="176" y1="109.7" x2="176" y2="100.3" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="172.8" y="111.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">REF_IN</text>
+<circle cx="158.3" cy="141.5" r="5.25" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="151.55" y1="141.5" x2="165.05" y2="141.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="158.3" y1="148.25" x2="158.3" y2="134.75" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="153.05" y="149.95" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">V1</text>
+<text x="140" y="64" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">права стінка, вид справа (лице ліворуч)</text>
+<text x="268" y="75" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.92" text-anchor="start" fill="#000">Таблиця: left</text>
+<text x="268" y="79.5" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">ID                 u       v  розмір</text>
+<text x="268" y="82.9" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">EXHAUST_P2        48.5      87  12 x 50</text>
+<text x="268" y="89.9" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.92" text-anchor="start" fill="#000">Таблиця: right</text>
+<text x="268" y="94.4" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">ID                 u       v  розмір</text>
+<text x="268" y="97.8" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">RX2                 36     142  ⌀6.4</text>
+<text x="272" y="100.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">Taoglas CAB.01075 SMA(f) bulkhead, 1/4-36 assumed; datasheet not readable (403), check the p</text>
+<text x="268" y="103.4" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">REF_IN              36     122  ⌀6.4</text>
+<text x="272" y="106.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">Taoglas CAB.01075 SMA(f) bulkhead, 1/4-36 assumed; datasheet not readable (403), check the p</text>
+<text x="268" y="109" font-family="DejaVu Sans Mono, monospace" font-size="2.8" text-anchor="start" fill="#000">V1                18.3    85.5  ⌀10.5</text>
+<text x="272" y="112" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.24" text-anchor="start" fill="#000">Amphenol LTW vent in a threaded hole (pad &gt;= 4.0 mm, no nut): tap drill 10.5, tap M12x1.5</text>
+<line x1="8" y1="289" x2="412" y2="289" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="412" y1="289" x2="412" y2="8" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="412" y1="8" x2="8" y2="8" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="8" y1="8" x2="8" y2="289" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="14" y1="281" x2="114" y2="281" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="14" y1="281" x2="14" y2="277" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="24" y1="281" x2="24" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="34" y1="281" x2="34" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="44" y1="281" x2="44" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="54" y1="281" x2="54" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="64" y1="281" x2="64" y2="277" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="74" y1="281" x2="74" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="84" y1="281" x2="84" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="94" y1="281" x2="94" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="104" y1="281" x2="104" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="114" y1="281" x2="114" y2="277" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="14" y="285" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.08" text-anchor="start" fill="#000">Контроль масштабу: 100 мм (друкувати 100 %, без підгонки)</text>
+<line x1="262" y1="289" x2="262" y2="247" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="262" y1="247" x2="412" y2="247" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="262" y1="282" x2="412" y2="282" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="262" y1="275" x2="412" y2="275" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="262" y1="268" x2="412" y2="268" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="262" y1="261" x2="412" y2="261" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="264" y="253" font-family="DejaVu Sans, Arial, sans-serif" font-size="4.48" text-anchor="start" fill="#000">Корпус: ліва стінка і права стінка</text>
+<text x="264" y="259" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">свердління/вирізи, 1:1</text>
+<text x="264" y="266" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення M-03 · масштаб 1:1 · мм · допуск ±0.2, якщо не вказано</text>
+<text x="264" y="273" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: ASA (Polymaker PF01002), друк</text>
+<text x="264" y="280" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
+<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 135211b0855f · v1.0.0</text>
+<text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">Корпус: ліва стінка і права стінка</text>
+<text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">свердління/вирізи, 1:1</text>
+<text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Координати u/v — від лівої (A) і нижньої (B) кромок грані, як видно ззовні. Одиниці мм, допуск ±0.2.</text>
+<text x="12" y="28.6" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Лінія роз'єму корпусу показана штриховою (BEND); отвори ⌀3 'TBD' — лише кернування, остаточний виріз за кресленням обраної деталі.</text>
+<text x="12" y="32.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Пунктир уздовж роз'єму — краї пояса шва (1.9 мм назовні від грані, по 5 мм на кожній оболонці, M-13); отвори в поясі не розміщувати.</text>
+<text x="12" y="35.8" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">MODEL FIT ONLY: посадку кожної деталі перевірити на стенді (ворота OPEN).</text>
+</svg>

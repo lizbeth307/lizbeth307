@@ -4,7 +4,7 @@
 
 Програмні тести, перевірка реального stdio-процесу та детермінована симуляція не є стендовим PASS. `verification/software-tests.json` містить фактичні результати, skips і hashes. `verification/software-simulation.json` показує повний шлях ARM → bias → втрата UART → OFF/RESET → зв'язок без auto-arm → явне recovery з усіма навантаженнями OFF → FAULT latch.
 
-Для плат підготовлено [PCB package](13-pcb-preparation.md) і реальний KiCad placement starter на 71 компонент. Його 187 контактів зіставлено зі схемою. Усі траси ще нерозведені; raw DRC збережено, Gerber не випускався. Це не закриває 424 невизначені footprint решти активних custom-board елементів (дубльовані підтяжки R102/R503/R507/R511 вилучено з графів 23.10.2026).
+Для плат підготовлено [PCB package](13-pcb-preparation.md) і реальний KiCad placement starter на 71 компонент. Його 187 контактів зіставлено зі схемою. Усі траси ще нерозведені; raw DRC збережено, Gerber не випускався. Footprint має кожна деталь плати (стан 07.11.2026, `pcb/generated/summary.json`: деталей плат без footprint — 0); розкладка, трасування й Gerber решти плат — хвиля 2 (дубльовані підтяжки R102/R503/R507/R511 вилучено з графів 23.10.2026).
 
 Наступним етапом реалізовано [RX/FFT](../software/RX.md), [Qt-меню](../software/HMI.md), [GNSS](../software/LOCATION.md), [навчання](../software/LEARNING.md), [декодерні адаптери](../software/DECODERS.md) та [deployment](../software/DEPLOYMENT.md). Консоль реально запускає SIM labd і FFT, анотує спектр, навчає й зберігає модель. Qt offscreen views — verification/hmi-views. Є також окремий прототип внутрішнього розведення DC_CORE; його README/raw DRC описують поточний стан точніше за опис первинного нерозведеного starter.
 

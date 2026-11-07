@@ -1,0 +1,21 @@
+[Unit]
+Description=SR-RX Route B: commit the trial slot after boot-complete.target (embloader write-back)
+Documentation=file:/opt/srrx/deployment/image/README.md
+# Route B (STACK.md:844): the trial slot's initramfs already wrote the previous default back;
+# only a boot that reaches boot-complete.target makes the trial slot the default again.
+Requires=boot-complete.target
+After=boot-complete.target
+RequiresMountsFor=/boot/efi /opt/srrx
+ConditionPathExists=/boot/efi/srrx/ab/trial
+
+[Service]
+Type=oneshot
+Environment=PYTHONDONTWRITEBYTECODE=1
+ExecStart=/usr/bin/python3 -I -B /opt/srrx/deployment/image/bootchain.py route-b-commit
+ProtectHome=yes
+PrivateTmp=yes
+PrivateNetwork=yes
+NoNewPrivileges=yes
+
+[Install]
+WantedBy=multi-user.target

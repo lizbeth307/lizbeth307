@@ -4,10 +4,12 @@
 Static allowlist evidence only (build/07-pz-vstanovlennia.md sections 22-23, build/09-testy.md
 POL-01..13): allowlists are the primary control, deny tokens only a second layer (STACK.md:85,
 STACK.md:886). It is not a universal TX proof. Rows that need an arm64 builder, the Q6A or RF
-hardware are RUNTIME_ONLY; rows without code (menu model, voice mask) are BLOCKED with
-evaluability NOT_IMPLEMENTED. No row outside OFFLINE ever reports PASS and the report never sets
-hardware_ready or receive_only_proven. Nothing here runs apt, dpkg, systemctl, chroot or mount or
-follows a target symlink on the host: links resolve chroot-style inside the inventory. Only
+hardware are RUNTIME_ONLY; a row without code would be BLOCKED with evaluability NOT_IMPLEMENTED.
+No row outside OFFLINE ever reports PASS and the report never sets hardware_ready or
+receive_only_proven. A REVIEWED policy still blocks until a review record bound to its bytes is
+given (load_review); nothing here changes a policy status. Nothing here runs apt, dpkg,
+systemctl, chroot or mount or follows a target symlink on the host: links resolve chroot-style
+inside the inventory. Only
 readelf and gpgv run, each with a timeout and a capped output. Findings carry relative paths and
 rule ids, never file contents (decoder_policy privacy principle).
 
@@ -33,6 +35,7 @@ strings such as dataset labels, mode names or DT_NEEDED entries are never echoed
 import argparse
 import ast
 from bisect import bisect_left
+from datetime import date
 import fnmatch
 import functools
 import hashlib
@@ -85,6 +88,10 @@ CATALOGUE = (
     ("RX-03", 3, "OFFLINE", "SDR++: no recorder/iq_exporter/network_sink/pager_decoder, ON list only, no sdrpp --server", (_B07 + ":401-409", _B07 + ":548", "STACK.md:890")),
     ("RX-04", 4, "OFFLINE", "SatDump: allowlisted plugins and five pipelines, no sinks/sources/mqtt, kepler Never", (_B07 + ":362-389", _B07 + ":549", "STACK.md:886", _B09 + ":78")),
     ("RX-04-decode", 4, "BUILDER", "SatDump baseline decode of one stored file per allowlisted pipeline", (_B07 + ":389", _B07 + ":549")),
+    ("RX-04-bb", 4, "OFFLINE", "v2.1 LRPT baseband recorder: policy constants, computed channel filter, out-of-window tone stored as zeros, fixed SatDump units",
+     ("STACK.md:977", "STACK.md:882", "build/12-revision-v2.1.md:71", "software/srrx/baseband.py", "software/srrx/satdump_pass.py")),
+    ("RX-04-live", 4, "DEVICE", "SatDump live unit on the Q6A: only 127.0.0.1 datagrams reach net_source; live products equal the file decode",
+     ("STACK.md:1480", "software/srrx/satdump_pass.py unit_properties")),
     ("RX-05", 5, "OFFLINE", "OpenWebRX+: static modes subset of allowlist, locked settings, admin password present", (_B07 + ":426-433", _B07 + ":550", _B09 + ":79")),
     ("RX-05-live", 5, "DEVICE", "OpenWebRX+ live feature/mode list", (_B07 + ":433", _B07 + ":550")),
     ("RX-06", 6, "OFFLINE", "Soapy modules0.8 exactly rtlsdr/airspyhf, no Lime module, no 0.9, no plugin path override", (_B07 + ":328-338", _B07 + ":551", "deployment/deploy.py validate_devices")),
@@ -95,21 +102,24 @@ CATALOGUE = (
     ("RX-09", 9, "OFFLINE", "librtlsdr.so.2: SONAME, 37 rtlsdr_* exports, no zero-copy text, consumers need .so.2", (_B07 + ":299-307", _B07 + ":554", "deployment/build-vendor.sh:41-48")),
     ("RX-09-hw", 9, "HARDWARE", "RTL bias/token tests without token", (_B07 + ":308-310", _B07 + ":554", _B09 + ":71")),
     ("RX-10", 10, "OFFLINE", "Gpredict: no libgps/libhamlib in DT_NEEDED, RX-only radios, network TLE update off", (_B07 + ":505-509", _B07 + ":555")),
-    ("RX-11", 11, "NOT_IMPLEMENTED", "Menu leaves reach installed backends (no declarative menu model exists)", (_B07 + ":556", "STACK.md:884")),
+    ("RX-11", 11, "OFFLINE", "Menu model: each leaf reaches a staged backend, Lime/T7 leaves declare their fallback, critical leaves have a key or encoder",
+     (_B07 + ":556", "STACK.md:884", "STACK.md:110", "software/srrx/menu_model.py LEAVES")),
     ("RX-12", 12, "OFFLINE", "Lease units (systemd precedence): DevicePolicy=closed, ProtectSystem=strict, /data read-only, products lease, localhost only",
      (_B07 + ":532", _B07 + ":534", _B07 + ":557")),
     ("RX-12-runtime", 12, "DEVICE", "Lease EPERM/EROFS/EGL behaviour on the Q6A", (_B07 + ":557", _B09 + ":62")),
     ("RX-13", 13, "OFFLINE", "Band mask CPU path: 20 kHz, 300 MHz, 406.05 MHz, 1544.5 MHz bins invalid; annotate refuses",
      (_B07 + ":558", _B09 + ":73", "STACK.md:626", "software/srrx/spectrum.py mask_frame")),
     ("RX-13-npu", 13, "DEVICE", "NPU class-signal mask on the device", (_B07 + ":558",)),
-    ("RX-14", 14, "NOT_IMPLEMENTED", "Voice mask (no voice-mask code exists)", (_B07 + ":559", _B09 + ":73")),
+    ("RX-14", 14, "OFFLINE", "Voice mask: synthetic NFM at 145.500, 433.500, 446.006 MHz and the static masks excised from pinned captures",
+     (_B07 + ":559", _B09 + ":73", "STACK.md:977", "software/srrx/voice_mask.py excise")),
     ("RX-15", 15, "OFFLINE", "Dataset/model manifests: labels in learning.LABELS, no forbidden class tokens", (_B07 + ":560", "STACK.md:1147", _B09 + ":77")),
     ("RX-16", 16, "OFFLINE", "apt: no launchpad origin, lab.pref 1001/990/-1, dpkg md5sums of firmware/FastRPC", (_B07 + ":103", _B07 + ":108-119", _B07 + ":135", _B07 + ":561", _B09 + ":216")),
     ("RX-16-sim", 16, "BUILDER", "apt-get -s dist-upgrade and apt policy on the builder/device", (_B07 + ":135", _B07 + ":561")),
     ("RX-17", 17, "OFFLINE", "/etc/kernel/cmdline SHA-256 equals the reviewed record", (_B07 + ":181-193", _B07 + ":562")),
     ("RX-17-proc", 17, "DEVICE", "/proc/cmdline on the running device", (_B07 + ":193", _B07 + ":562")),
     ("RX-18", 18, "DEVICE", "labbar visible over every full-screen Expert GUI", (_B07 + ":563", "STACK.md:884")),
-    ("RX-S1", None, "OFFLINE", "decoder_policy.availability(): EGC, DSC, SatDump, AIS, ADS-B presets disabled", ("software/srrx/decoder_policy.py availability", "STACK.md:85")),
+    ("RX-S1", None, "OFFLINE", "decoder_policy.availability(): EGC, DSC, AIS, ADS-B presets disabled; SatDump installation-gated (unavailable offline)",
+     ("software/srrx/decoder_policy.py availability", "STACK.md:85")),
     ("RX-S2", None, "OFFLINE", "Field/QUIET Wi-Fi/BT off as staged: AIC8800/btusb blacklist + install /bin/false, FE1.1s port-4 authorized=0 rule, "
      "rfkill oneshot required by srrx.service only", ("STACK.md:726", "STACK.md:2167", "STACK.md:125", _B09 + ":69", "deployment/deploy.py stage")),
     ("RX-S2-runtime", None, "DEVICE", "Live rfkill block, no wlan/hci device, AIC8800 modules unloaded, port 4 deauthorized (deploy.py doctor radio_off)",
@@ -235,9 +245,34 @@ def _paths(value, label):
                 _paths(item, label + "." + key)
 
 
-def load_policy(path):
-    """Strict deploy.load plus exact schema; DRAFT is valid input but blocks the overall status."""
-    policy = deploy.load(path)
+def _json_once(path, label):
+    """(value, SHA-256) of one bounded read: deploy.load's strict JSON rules (size, duplicate keys,
+    no NaN/Infinity) applied to the very bytes the digest names, so a report never pairs a verdict
+    with the digest of a file replaced between two reads."""
+    with open(path, "rb") as handle:
+        data = handle.read(4 * 1024 * 1024)
+    if not data or len(data) >= 4 * 1024 * 1024:
+        raise DeploymentError(label + " JSON size is invalid")
+
+    def pairs(items):
+        out = {}
+        for key, value in items:
+            if key in out:
+                raise DeploymentError(label + " has a duplicate JSON key")
+            out[key] = value
+        return out
+    try:
+        value = json.loads(data.decode("utf-8"), object_pairs_hook=pairs,
+                           parse_constant=lambda _: (_ for _ in ()).throw(DeploymentError(label + " has nonfinite JSON")))
+    except (UnicodeDecodeError, json.JSONDecodeError):
+        raise DeploymentError(label + " is not valid UTF-8 JSON") from None
+    return value, hashlib.sha256(data).hexdigest()
+
+
+def load_policy(path, digest=False):
+    """Strict JSON plus exact schema; DRAFT is valid input but blocks the overall status. With
+    digest=True returns (policy, SHA-256 of the bytes read)."""
+    policy, sha256 = _json_once(path, "receive-only policy")
     _shape(policy, POLICY_SCHEMA, "receive-only policy")
     if policy["schema_version"] != 1 or policy["status"] not in ("DRAFT", "REVIEWED"):
         raise DeploymentError("receive-only policy schema/status is unsupported")
@@ -248,7 +283,50 @@ def load_policy(path):
         _relative(entry["path"], "forbidden_path_prefixes")
     _relative(policy["components"]["sdrangel"]["install_prefix"], "sdrangel.install_prefix")
     _relative(policy["apt"]["pref_path"], "apt.pref_path")
-    return policy
+    return (policy, sha256) if digest else policy
+
+
+REVIEW_FIELDS = ("schema_version", "status", "policy_sha256", "source_lock_sha256", "reviewer", "reviewed_on", "builds", "notes")
+
+
+def load_review(path, policy_sha256, policy, source_lock_sha256):
+    """Strict review record of a REVIEWED policy, kept apart because load_policy's schema is exact.
+
+    policy_sha256 and source_lock_sha256 are the digests of the bytes the caller parsed. Returns
+    (BOUND, or NOT_BOUND when the record answers other policy or source-lock bytes; the SHA-256 of
+    the record bytes read once and validated); a malformed record raises. reviewer is a name or
+    role, never an e-mail address; builds are the reviewed build outputs (name, SHA-256); notes
+    answer every policy note by its index.
+    """
+    record, digest = _json_once(path, "policy review record")
+    deploy.keys(record, REVIEW_FIELDS, "policy review record")
+    if record["schema_version"] != 1 or record["status"] != "REVIEWED":
+        raise DeploymentError("policy review record schema/status is unsupported")
+    for name in ("policy_sha256", "source_lock_sha256"):
+        if type(record[name]) is not str or not _HEX64.fullmatch(record[name]):
+            raise DeploymentError("policy review record " + name + " must be 64 lowercase hex digits")
+    reviewer = record["reviewer"]
+    if type(reviewer) is not str or not reviewer.strip() or len(reviewer) > 128 or "@" in reviewer or not reviewer.isprintable():
+        raise DeploymentError("policy review record needs a reviewer name or role (no e-mail address)")
+    try:
+        if type(record["reviewed_on"]) is not str or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", record["reviewed_on"]):
+            raise ValueError
+        date.fromisoformat(record["reviewed_on"])
+    except ValueError:
+        raise DeploymentError("policy review record reviewed_on must be YYYY-MM-DD") from None
+    builds = record["builds"]
+    if type(builds) is not list or not builds or any(type(b) is not dict or set(b) != {"name", "sha256"} or type(b["name"]) is not str
+                                                     or not _SAFE_ITEM.fullmatch(b["name"]) or type(b["sha256"]) is not str
+                                                     or not _HEX64.fullmatch(b["sha256"]) for b in builds) \
+            or len({b["name"] for b in builds}) != len(builds):
+        raise DeploymentError("policy review record needs uniquely named reviewed build outputs with SHA-256")
+    notes = record["notes"]
+    if type(notes) is not list or any(type(n) is not dict or set(n) != {"note", "resolution"} or type(n["note"]) is not int
+                                      or type(n["resolution"]) is not str or not n["resolution"].strip() for n in notes) \
+            or sorted(n["note"] for n in notes) != list(range(len(policy["notes"]))):
+        raise DeploymentError("policy review record must resolve every policy note exactly once")
+    bound = record["policy_sha256"] == policy_sha256 and record["source_lock_sha256"] == source_lock_sha256
+    return ("BOUND" if bound else "NOT_BOUND"), digest
 
 
 # ---------------------------------------------------------------- inventory and bounded I/O
@@ -1696,15 +1774,106 @@ def check_17(ctx, r):
     r.note("proc_cmdline_is_RX-17-proc")
 
 
+# v2.1: only satdump-weather is installation-gated (UNAVAILABLE_* offline); every other gated preset stays DISABLED_*.
+_INSTALLATION_GATED = frozenset(("satdump-weather",))
+
+
 def check_s1(ctx, r):
     module = _target_module(ctx, r, "decoder_policy")
     if module is None:
         return
-    available = module.availability()
+    available = module.availability()  # offline: no installation record, so nothing may read as accepted
     for preset in ctx.policy["decoder_gated_presets"]:
         value = available.get(preset)
-        if type(value) is not str or not value.startswith("DISABLED"):
+        allowed = ("DISABLED", "UNAVAILABLE") if preset in _INSTALLATION_GATED else ("DISABLED",)
+        if type(value) is not str or not value.startswith(allowed):
             r.fail("software/srrx/decoder_policy.py", "gated_preset_enabled", preset)
+
+
+# STACK.md:977 and build/12-revision-v2.1.md:71 (owner decision 24.10.2026), reviewed values.
+_BASEBAND_POLICY = {"INPUT_RATE_HZ": 1_024_000, "DECIMATION": 4, "OUTPUT_RATE_HZ": 256_000, "CI16_SCALE": 32767,
+                    "CLASS_CAP_BYTES": 3 * 512 * 1024 * 1024, "RAW_QUOTA_BYTES": 30 * 1024 ** 3, "RESERVE_FACTOR": 1.1,
+                    "RETENTION_S": 86400, "MAX_FILE_S": 1200, "MARGIN_S": 60.0, "GUARD_HZ": 20_000.0,
+                    "LIVE_HOST": "127.0.0.1", "LIVE_MAX_SAMPLES": 8188, "STOPBAND_DB": -100.0,
+                    "METEOR_TARGETS": ("Meteor-M N2-3", "Meteor-M N2-4"),
+                    "CENTERS_HZ": (137_100_000, 137_900_000, 137_912_500)}
+_LIVE_FORBIDDEN_ARGS = ("--http_server", "--client", "--server_address", "--server_port", "--multi_vfo", "--fft_enable",
+                        "--source_id")
+
+
+def _lrpt_window(bb):
+    """The fixed 600 s Meteor-M N2-3 pass window that the tone probe and the live argv check use."""
+    return bb.window(1, "Meteor-M N2-3", 137_900_000, 72_000, 1e9, 1e9 + 600, bb.iso_utc(1e9), bb.iso_utc(1e9 + 600))
+
+
+def _baseband_probe(np, bb, where, r):
+    """The channel filter of every allowed tuning and the synthetic tones through ChannelChain (_replay_probe)."""
+    for center in bb.CENTERS_HZ:
+        for rate in sorted(bb.PIPELINES):
+            try:
+                low, high = bb.channel_span(center, rate)
+                bb.verify_taps(bb.design_taps(center, rate), center, rate)
+                if not 137e6 < low < high < 138e6:
+                    raise bb.BasebandRefused("span")
+            except bb.BasebandRefused:
+                r.fail(where, "channel_filter_spec", "%d:%d" % (center, rate))
+    window = _lrpt_window(bb)
+    t = np.arange(bb.INPUT_RATE_HZ // 4) / bb.INPUT_RATE_HZ
+    for offset, inside in ((150_000.0, False), (-110_000.0, False), (20_000.0, True)):
+        chain = bb.ChannelChain(window)
+        tone = (0.99 * np.exp(2j * np.pi * offset * t)).astype(np.complex64)
+        stored = np.concatenate([chain.push(tone[k:k + 8192]) for k in range(0, tone.size, 8192)] + [chain.flush()])
+        if not inside and np.count_nonzero(stored):
+            r.fail(where, "out_of_window_tone_stored", "offset%+dkHz" % (offset / 1e3))
+        if inside and abs(np.sqrt(np.mean(stored.astype(np.float64) ** 2 * 2)) / bb.CI16_SCALE - 0.99) > 0.01:
+            r.fail(where, "in_window_tone_not_kept", "offset%+dkHz" % (offset / 1e3))
+
+
+def check_04bb(ctx, r):
+    """srrx.baseband and srrx.satdump_pass as staged: the v2.1 constants, the channel filter of every
+    allowed tuning (stopband <= -100 dB beyond the window), a synthetic out-of-window tone that is stored
+    as zeros, and the fixed SatDump unit properties and argv. Recorder runs on the device are RX-04-live."""
+    bb, glue = _target_module(ctx, r, "baseband"), _target_module(ctx, r, "satdump_pass")
+    if bb is None or glue is None:
+        return
+    try:
+        import numpy as np
+    except ImportError:
+        return r.block(".", "numpy_unavailable")
+    where, units = "software/srrx/baseband.py", "software/srrx/satdump_pass.py"
+    for name, value in _BASEBAND_POLICY.items():
+        if getattr(bb, name, None) != value:
+            r.fail(where, "baseband_policy_constant", name)
+    if bb.LIVE_MAX_SAMPLES * 8 > 65507 or set(bb.PIPELINES.values()) != {"meteor_m2-x_lrpt", "meteor_m2-x_lrpt_80k"}:
+        r.fail(where, "baseband_policy_constant", "LIVE_OR_PIPELINES")
+    _replay_probe(r, "RX-04-bb", np, srrx_closure("baseband"), lambda findings: _baseband_probe(np, bb, where, findings))
+    window = _lrpt_window(bb)
+    ident = "0" * 16
+    decode = glue.unit_properties("decode", ident, work_dir="/data/products/satdump/.satdump-" + ident,
+                                  input_path="/data/raw/baseband-lrpt/lrpt-" + ident + ".sigmf-data")
+    live = glue.unit_properties("live", ident, work_dir="/data/products/satdump/.satdump-" + ident)
+    common = {"ProtectHome=yes", "ProtectSystem=strict", "NoNewPrivileges=yes", "Environment=LC_ALL=C.UTF-8",
+              "WorkingDirectory=" + glue.EMPTY_WORKDIR, "TemporaryFileSystem=/data:ro", "IPAddressDeny=any",
+              "User=" + glue.UNIT_USER}
+    if not common | {"PrivateNetwork=yes", "RestrictAddressFamilies=AF_UNIX"} <= set(decode) or any(
+            p.startswith("IPAddressAllow=") for p in decode):
+        r.fail(units, "decode_unit_properties")
+    if not common | {"IPAddressAllow=localhost"} <= set(live) or "PrivateNetwork=yes" in live:
+        r.fail(units, "live_unit_properties")
+    argv = glue.decode_argv("/usr/bin/satdump", "meteor_m2-x_lrpt", "/data/raw/baseband-lrpt/x", "/data/products/x")
+    if argv[1:4] != ["pipeline", "meteor_m2-x_lrpt", "baseband"] or argv[-2:] != ["--samplerate=256000", "--baseband_format=cs16"]:
+        r.fail(units, "decode_argv")
+    command = glue.live_argv("/usr/bin/satdump", window, "/data/products/x", 8877)
+    if command[1:3] != ["legacy", "live"] or command[command.index("--source") + 1] != "net_source" or any(
+            a in command for a in _LIVE_FORBIDDEN_ARGS):
+        r.fail(units, "live_argv")
+    staged = ctx.file("etc/tmpfiles.d/srrx-satdump.conf")
+    if staged is None:
+        r.note("baseband_tmpfiles_not_staged")
+    elif ctx.read(staged, 64 * 1024).decode("utf-8", "replace") != glue.tmpfiles():
+        r.fail("etc/tmpfiles.d/srrx-satdump.conf", "baseband_tmpfiles_differs")
+    r.note("live_localhost_behaviour_is_RX-04-live")
+    r.note("device_recording_needs_labd_utc_verified")
 
 
 # kmod and udev read these persistent directories in this precedence order (/run is runtime state).
@@ -1798,26 +1967,316 @@ def check_s2(ctx, r):
     r.note("live_rfkill_and_usb_state_is_RX-S2-runtime")
 
 
+# systemd --user unit search order of the image's persistent directories (systemd.unit(5) "User Unit
+# Search Path", XDG defaults): $XDG_CONFIG_DIRS, /etc, $XDG_DATA_DIRS, then the package paths. /run and
+# $XDG_RUNTIME_DIR are runtime state. The per-user directories rank higher (~/.config/systemd/user.control,
+# ~/.config/systemd/user) or between /etc and $XDG_DATA_DIRS (~/.local/share/systemd/user); which home
+# the console session uses is not decidable offline, so a unit, mask or drop-in there is BLOCKED.
+_USER_UNIT_DIRS = ("etc/xdg/systemd/user", "etc/systemd/user", "usr/local/share/systemd/user", "usr/share/systemd/user",
+                   "usr/local/lib/systemd/user", "usr/lib/systemd/user")
+_USER_HOME_UNIT_DIRS = (".config/systemd/user.control", ".config/systemd/user", ".local/share/systemd/user")
+_USER_HOMES = ("root", "home/*", "etc/skel")  # etc/skel: copied into every new home
+# ExecStart= prefixes (systemd.service(5)) and systemd's fixed search path for a bare executable name.
+_EXEC_PREFIXES = "-@:+!|"
+_EXEC_SEARCH = ("usr/local/sbin", "usr/local/bin", "usr/sbin", "usr/bin")
+_PRESET_ACCEPTED = "FILE_PRESET_ACCEPTED"  # decoder_policy.availability() with an accepted installation
+
+
+def _checker_tree(name):
+    return ast.parse((deploy.PROJECT / "software/srrx" / (name + ".py")).read_text(encoding="utf-8"))
+
+
+def _labd_operations():
+    """Operations srrx.engine.Engine.request dispatches: string constants an `if op == ...` or
+    `if op in {...}` test compares with op (the ownership pre-check is a BoolOp and is skipped)."""
+    operations = set()
+    for cls in _checker_tree("engine").body:
+        if not (isinstance(cls, ast.ClassDef) and cls.name == "Engine"):
+            continue
+        for method in cls.body:
+            if not (isinstance(method, ast.FunctionDef) and method.name == "request"):
+                continue
+            for node in ast.walk(method):
+                test = node.test if isinstance(node, ast.If) else None
+                if (isinstance(test, ast.Compare) and isinstance(test.left, ast.Name) and test.left.id == "op"
+                        and len(test.ops) == 1 and isinstance(test.ops[0], (ast.Eq, ast.In))):
+                    value = test.comparators[0]
+                    items = value.elts if isinstance(value, (ast.Set, ast.Tuple, ast.List)) else [value]
+                    operations.update(i.value for i in items if isinstance(i, ast.Constant) and isinstance(i.value, str))
+    return operations
+
+
+def _home_unit_overrides(ctx, r, name):
+    """BLOCKED for each per-user copy, mask or drop-in directory of a user unit (_USER_HOMES)."""
+    names = {name, *_dropin_names(name), name.rpartition(".")[2] + ".d"}
+    for home in ctx.globs(_USER_HOMES):
+        for sub in _USER_HOME_UNIT_DIRS:
+            directory = ctx.resolve_kind(home + "/" + sub, "dir")
+            for child in sorted(names & set(ctx.children(directory))) if directory is not None else ():
+                r.block(home + "/" + sub + "/" + child, "user_unit_in_home_directory")
+
+
+def _exec_chain(words):
+    """Executables an ExecStart command line starts: its first word, and for env(1) also the command
+    after env's NAME=value assignments (None when an env option makes it undecidable)."""
+    if not words:
+        return []
+    chain = [words[0].lstrip(_EXEC_PREFIXES)]
+    if posixpath.basename(chain[0]) == "env":
+        rest = words[1:]
+        while rest and "=" in rest[0] and not rest[0].startswith(("-", "/")):
+            rest = rest[1:]
+        chain.append(rest[0] if rest and not rest[0].startswith("-") else None)
+    return chain
+
+
+def _exec_file(ctx, word):
+    """Rootfs file an executable word names: an absolute path, or a bare name on systemd's search path."""
+    if word is None or not word.startswith("/") and "/" in word:
+        return None
+    if word.startswith("/"):
+        return ctx.file(word.lstrip("/"))
+    return next((f for f in (ctx.file(d + "/" + word) for d in _EXEC_SEARCH) if f is not None), None)
+
+
+def _unit_backend(ctx, r, backend, item):
+    """A unit of the backend's scope is effective in the rootfs and its ExecStart runs the declared
+    program: `-m srrx.<module>` with that module staged, or an absolute binary present in the rootfs.
+    The executables ExecStart starts (the interpreter, also behind /usr/bin/env) must be files of the
+    rootfs; a controller overlay without a dpkg database lacks the base image and the venv, so a
+    missing one is a note there and BLOCKED otherwise. Enablement is an install step, not checked."""
+    where = "software/srrx/menu_model.py"
+    paths = ctx.policy["units"]["system_unit_paths"] if backend["scope"] == "system" else _USER_UNIT_DIRS
+    if backend["scope"] == "user":
+        _home_unit_overrides(ctx, r, backend["name"])
+    dirs = list(dict.fromkeys(d for d in (ctx.resolve_kind(p, "dir") for p in paths) if d is not None))
+    fragment = _unit_fragment(ctx, r, dirs, backend["name"])
+    if fragment is None:
+        return r.fail(where, "backend_unit_missing", item)
+    texts = [ctx.text(fragment[1])] + [ctx.text(f) for f in _unit_dropins(ctx, r, dirs, [backend["name"]])]
+    words, program = _unit_settings(texts).get("ExecStart", "").split(), backend["program"]
+    if program.startswith("srrx."):
+        runs = any(words[i:i + 2] == ["-m", program] for i in range(len(words)))
+        present = ctx.file(ctx.policy["srrx_root"] + "/software/srrx/" + program[5:] + ".py") is not None
+    else:
+        runs = program in [w.lstrip(_EXEC_PREFIXES) for w in words[:2]]
+        present = ctx.file(program.lstrip("/")) is not None
+    if not (runs and present):
+        return r.fail(fragment[0], "backend_program_missing", item)
+    if any(_exec_file(ctx, word) is None for word in _exec_chain(words)):
+        if ctx.profile == "controller" and ctx.file("var/lib/dpkg/status") is None:
+            r.note("unit_interpreter_absent_controller_overlay")
+        else:
+            r.block(fragment[0], "unit_interpreter_missing", item)
+
+
 def check_11(ctx, r):
-    r.block(".", "not_implemented")
-    r.note("no_declarative_menu_model_in_software_srrx")
+    """srrx.menu_model against the staged rootfs (build/07 row 11, STACK.md:884): every leaf reaches
+    its backend, a Lime/T7 leaf declares its no-Lime/no-T7 backend, a critical leaf has a key or
+    encoder (STACK.md:110). The target console (hmi and its imports) must be the evaluated code.
+    The model describes only the srrx.hmi touch console: the Lab Shell menu of STACK.md:884 (hubs,
+    Lime capability check) has no code yet and stays outside this row (note, Д-06)."""
+    menu = _target_module(ctx, r, "menu_model")
+    hmi = _target_module(ctx, r, "hmi") if menu is not None else None  # importing srrx.hmi loads no Qt
+    if hmi is None:
+        return
+    where, console = "software/srrx/menu_model.py", "software/srrx/hmi.py"
+    try:
+        menu.validate()
+    except ValueError:
+        return r.fail(where, "menu_model_invalid")
+    if tuple(hmi.HMINavigation.NAMES) != menu.GESTURES:
+        r.fail(console, "physical_controls_drift")
+    builders = {n.name for n in ast.walk(_checker_tree("hmi")) if isinstance(n, ast.FunctionDef)}
+    for page in menu.PAGES:
+        if "_" + page["id"] + "_page" not in builders:
+            r.fail(console, "page_builder_missing", page["id"])
+    _unit_backend(ctx, r, menu.CONSOLE_UNIT, "console")
+    _unit_backend(ctx, r, menu.LABD_UNIT, "labd")
+    operations = _labd_operations() if _target_identical(ctx, r, "daemon") else None
+    presets, imported = None, set(srrx_closure("hmi"))
+    for leaf in menu.LEAVES:
+        backend, item = leaf["backend"], leaf["id"]
+        if backend["kind"] == "labd_op":
+            if operations is not None and backend["name"] not in operations:
+                r.fail(where, "backend_missing", item)
+        elif backend["kind"] == "engine_unit":
+            _unit_backend(ctx, r, backend, item)
+        elif backend["kind"] == "decoder_preset":
+            if presets is None:
+                module = _target_module(ctx, r, "decoder_policy")
+                presets = module.availability() if module is not None else False  # False: BLOCKED above
+            if presets is not False and backend["name"] not in presets:
+                r.fail(where, "backend_missing", item)
+            elif presets and not str(presets[backend["name"]]).startswith(_PRESET_ACCEPTED) and not leaf["fallback_text"]:
+                # DISABLED_* and UNAVAILABLE_* alike: offline there is no accepted installation either.
+                r.fail(where, "unavailable_preset_without_fallback", item)
+        elif ctx.file(ctx.policy["srrx_root"] + "/software/srrx/" + backend["name"] + ".py") is None:
+            r.fail(where, "backend_missing", item)  # page_only: the srrx module doing the work
+        elif backend["name"] not in imported:
+            _target_identical(ctx, r, backend["name"])  # run apart from the console (labrx --simulate)
+        if leaf["needs_lime"] and not leaf["fallback_text"]:
+            r.fail(where, "no_lime_backend_undeclared", item)
+        if leaf["needs_t7"] and not leaf["fallback_text"]:
+            r.fail(where, "no_t7_backend_undeclared", item)
+        if leaf["critical"] and not leaf["controls"]["keys"]:
+            r.block(where, "critical_leaf_touch_only", item)  # no glove path yet: an open design item
+    r.note("fallback_text_is_declared_not_rendered")
+    r.note("glove_and_physical_key_operation_is_hardware_acceptance")
+    r.note("unit_enablement_is_an_install_step")
+    r.note("lab_shell_menu_not_modelled")
+
+
+# RX-14 probes (build/07 row 14, ПОЛ-05): label, centre, rate, NFM voices, active windows, bench
+# capture, control carriers. A window over 446.006 MHz must not re-open PMR446; the windows over
+# 145.800, 437.800 and 436.795 MHz must not lift the static masks; 145.86, 435.2 and 137.6 MHz
+# carriers must survive (an over-broad mask would make the voice probes meaningless).
+_VOICE_PROBES = (
+    ("145.500MHz", 145.65e6, 500e3, (145.500e6, 145.800e6), ((145.85e6, 145.87e6), (145.79e6, 145.81e6)), True, (145.86e6,)),
+    ("433.500MHz", 434.3e6, 2.048e6, (433.500e6,), ((435.17e6, 435.23e6),), True, (435.2e6,)),
+    ("446.006MHz", 446.05e6, 500e3, (446.00625e6,), ((445.99e6, 446.02e6),), False, ()),
+    ("437.800MHz", 437.3e6, 1.2e6, (437.800e6, 436.795e6), ((437.79e6, 437.81e6), (436.785e6, 436.805e6)), True, ()),
+    ("137.500MHz", 137.5e6, 500e3, (), (), True, (137.6e6,)),
+)
+_VOICE_SAMPLES, _VOICE_MARGIN_DB, _CONTROL_LOSS_DB = 1 << 16, 3.0, 1.0
+
+
+def _voice_capture(np, centre, rate, voices, carriers, seed):
+    """Pinned synthetic capture (seeded PCG64): complex noise, NFM voices (400/1100/2300 Hz tones,
+    2.5 kHz peak deviation) and unmodulated control carriers. Returns (capture, noise)."""
+    rng = np.random.default_rng(seed)
+    t = np.arange(_VOICE_SAMPLES) / rate
+    noise = (rng.standard_normal(t.size) + 1j * rng.standard_normal(t.size)) * (1e-3 / np.sqrt(2))
+    audio = .6 * np.sin(2 * np.pi * 400 * t) + .3 * np.sin(2 * np.pi * 1100 * t + 1) + .1 * np.sin(2 * np.pi * 2300 * t + 2)
+    deviation = 2 * np.pi * 2500 * np.cumsum(audio) / rate
+    signal = np.zeros(t.size, np.complex128)
+    for frequency in voices:
+        signal += .1 * np.exp(1j * (2 * np.pi * (frequency - centre) * t + deviation))
+    for frequency in carriers:
+        signal += .01 * np.exp(2j * np.pi * (frequency - centre) * t)
+    return (noise + signal).astype(np.complex64), noise
+
+
+def _band_power(np, samples, centre, rate, frequency, half):
+    """Mean Welch power (periodic Hann, 4096 bins, 50 % overlap) of the bins within frequency +- half."""
+    size, window, total, count = 4096, np.hanning(4096), np.zeros(4096), 0
+    for start in range(0, samples.size - size + 1, size // 2):
+        total += np.abs(np.fft.fftshift(np.fft.fft(samples[start:start + size] * window))) ** 2
+        count += 1
+    bins = np.abs(centre + (np.arange(size) - size // 2) * rate / size - frequency) <= half
+    return float(total[bins].mean() / count)
+
+
+class _Findings(list):
+    """Records fail/block calls as (method, args) so a numeric probe can be replayed into a Result."""
+
+    def fail(self, *args):
+        self.append(("fail", args))
+
+    def block(self, *args):
+        self.append(("block", args))
+
+
+# The numeric probes of RX-14 and RX-04-bb (NumPy FFT and filter work on pinned synthetic signals) are
+# pure functions of the checker's own srrx modules (imported only after _target_identical) and NumPy.
+# One device run evaluates each once. A process that runs the selftest many times, the regression
+# suites above all (under TCG emulation the probes dominate a run), replays the recorded findings while
+# every object the probe can reach is unchanged: each srrx module of the probed module's closure
+# (srrx_closure), its globals, the attributes of its classes, this module's globals and NumPy. A replaced
+# object (a test patch, a reload) is a new key and is evaluated again. The key's objects are kept, so no
+# id() is reused while its entry exists. Objects mutated in place are outside the key: nothing in srrx
+# or here mutates the probes' inputs that way.
+_PROBE_RESULTS = {}
+
+
+def _probe_key(kind, np, closure):
+    objects, ids = [np], [kind, id(np)]
+    for name in ("srrx" if dependency == "__init__" else "srrx." + dependency for dependency in closure):
+        module = sys.modules.get(name)
+        objects.append(module)
+        ids.append((name, id(module)))
+        if module is None:
+            continue
+        for key, value in sorted(vars(module).items()):
+            objects.append(value)
+            ids.append((key, id(value)))
+            if isinstance(value, type) and getattr(value, "__module__", None) == name:
+                for attr, item in sorted(vars(value).items()):
+                    objects.append(item)
+                    ids.append((key, attr, id(item)))
+    for key, value in sorted(globals().items()):
+        if key != "_PROBE_RESULTS":
+            objects.append(value)
+            ids.append(("selftest", key, id(value)))
+    return tuple(ids), objects
+
+
+def _replay_probe(r, kind, np, closure, probe):
+    """Run probe(findings) once per unchanged key and replay its fail/block calls into r, in order.
+    A probe that raises replays what it recorded first and is not kept (run_offline handles the error)."""
+    key, objects = _probe_key(kind, np, closure)
+    kept = _PROBE_RESULTS.get(key)
+    if kept is None:
+        findings = _Findings()
+        try:
+            probe(findings)
+        finally:
+            for method, args in findings:
+                getattr(r, method)(*args)
+        _PROBE_RESULTS[key] = (objects, tuple(findings))
+        return
+    for method, args in kept[1]:
+        getattr(r, method)(*args)
+
+
+def _voice_probe(np, mask, r):
+    where = "software/srrx/voice_mask.py"
+    for seed, (label, centre, rate, voices, windows, bench, carriers) in enumerate(_VOICE_PROBES, 1):
+        capture, noise = _voice_capture(np, centre, rate, voices, carriers, seed)
+        try:
+            out = np.asarray(mask.excise(capture, centre, rate, windows, bench=bench))
+        except ValueError:
+            r.fail(where, "voice_mask_refused_capture", label)
+            continue
+        if out.shape != capture.shape or not np.all(np.isfinite(out)):
+            r.fail(where, "voice_mask_output_invalid", label)
+            continue
+        for frequency in voices:
+            floor = _band_power(np, noise, centre, rate, frequency, 6e3)
+            if _band_power(np, out, centre, rate, frequency, 6e3) > floor * 10 ** (_VOICE_MARGIN_DB / 10):
+                r.fail(where, "voice_residual_above_noise", "%.3fMHz" % (frequency / 1e6))
+        for frequency in carriers:
+            before = _band_power(np, capture, centre, rate, frequency, 1e3)
+            if _band_power(np, out, centre, rate, frequency, 1e3) < before * 10 ** (-_CONTROL_LOSS_DB / 10):
+                r.block(where, "voice_mask_control_removed", label)
 
 
 def check_14(ctx, r):
-    r.block(".", "not_implemented")
-    r.note("no_voice_mask_code_in_software_srrx")
+    """srrx.voice_mask.excise on pinned captures: the NFM residual of each voice stays within the
+    noise floor + 3 dB, each control carrier keeps its power within 1 dB (STACK.md:977)."""
+    mask = _target_module(ctx, r, "voice_mask")
+    if mask is None:
+        return
+    try:
+        import numpy as np
+    except ImportError:
+        return r.block(".", "numpy_unavailable")
+    _replay_probe(r, "RX-14", np, srrx_closure("voice_mask"), lambda findings: _voice_probe(np, mask, findings))
+    r.note("recorder_excises_through_srrx.baseband_RX-04-bb")
+    r.note("repeater_pass_recording_is_device_evidence")
 
 
 CHECKS = {"RX-00": check_00, "RX-01a": check_01a, "RX-01b": check_01b, "RX-01c": check_01c, "RX-02": check_02, "RX-03": check_03,
-          "RX-04": check_04, "RX-05": check_05, "RX-06": check_06, "RX-07": check_07, "RX-08": check_08, "RX-09": check_09,
+          "RX-04": check_04, "RX-04-bb": check_04bb, "RX-05": check_05, "RX-06": check_06, "RX-07": check_07, "RX-08": check_08, "RX-09": check_09,
           "RX-10": check_10, "RX-11": check_11, "RX-12": check_12, "RX-13": check_13, "RX-14": check_14, "RX-15": check_15,
           "RX-16": check_16, "RX-17": check_17, "RX-S1": check_s1, "RX-S2": check_s2}
 
 
 # ---------------------------------------------------------------- report
 
-def run_offline(rootfs, profile, policy, project=None, manifests=None, keyring=None, cmdline_sha256=None, runner=None):
-    """Evaluate every catalogue row against one rootfs; returns the report dict."""
+def run_offline(rootfs, profile, policy, project=None, manifests=None, keyring=None, cmdline_sha256=None, runner=None, review=None):
+    """Evaluate every catalogue row against one rootfs; returns the report dict. review is the
+    policy review record (load_review); without a bound one a REVIEWED policy still blocks."""
     if profile not in PROFILES:
         raise DeploymentError("profile must be controller or full")
     rootfs = Path(rootfs)
@@ -1839,7 +2298,11 @@ def run_offline(rootfs, profile, policy, project=None, manifests=None, keyring=N
         raise DeploymentError("keyring file is missing")
     project = Path(project if project is not None else deploy.PROJECT).resolve(strict=True)
     policy_path = Path(policy)
-    data = load_policy(policy_path)
+    # Each input is read once: the digests in the report name exactly the bytes validated.
+    data, policy_sha256 = load_policy(policy_path, digest=True)
+    source_lock_sha256 = deploy.sha(HERE / "sources.lock.json")
+    reviewed, review_sha256 = (load_review(review, policy_sha256, data, source_lock_sha256) if review is not None
+                               else ("MISSING", None))
     ctx = Ctx(rootfs, profile, data, project, manifests, Path(keyring).resolve() if keyring else None, cmdline_sha256, runner)
     checks = []
     for row in CATALOGUE:
@@ -1856,7 +2319,9 @@ def run_offline(rootfs, profile, policy, project=None, manifests=None, keyring=N
                 result.block(".", "inventory_incomplete")
         checks.append(result.report())
     counts = {s: sum(c["status"] == s for c in checks) for s in STATUSES}
-    blockers = (["POLICY_NOT_REVIEWED"] if data["status"] != "REVIEWED" else []) + [c["id"] for c in checks if c["status"] == "BLOCKED"]
+    policy_blocker = ("POLICY_NOT_REVIEWED" if data["status"] != "REVIEWED" else None if reviewed == "BOUND"
+                      else "POLICY_REVIEW_RECORD_" + reviewed)
+    blockers = ([policy_blocker] if policy_blocker else []) + [c["id"] for c in checks if c["status"] == "BLOCKED"]
     inventory = hashlib.sha256()
     for rel in ctx.keys:
         entry = ctx.entries[rel]
@@ -1865,8 +2330,9 @@ def run_offline(rootfs, profile, policy, project=None, manifests=None, keyring=N
     dependencies = dict(sorted({"deployment/deploy.py": deploy.sha(Path(deploy.__file__).resolve()), **ctx.evaluated}.items()))
     return {"schema_version": 1, "tool": "srrx-selftest", "mode": "offline", "profile": profile,
             "tool_sha256": deploy.sha(Path(__file__).resolve()), "tool_dependencies": dependencies,
-            "policy_sha256": deploy.sha(policy_path), "policy_status": data["status"],
-            "source_lock_sha256": deploy.sha(HERE / "sources.lock.json"),
+            "policy_sha256": policy_sha256, "policy_status": data["status"],
+            "policy_review": {"status": reviewed, "sha256": review_sha256},
+            "source_lock_sha256": source_lock_sha256,
             "target": {"rootfs": str(rootfs), "files_scanned": sum(e.kind == "file" for e in ctx.entries.values()),
                        "entries": len(ctx.entries), "inventory_sha256": inventory.hexdigest(), "inventory_complete": ctx.complete},
             "status": "FAIL" if counts["FAIL"] else "BLOCKED" if blockers else "OFFLINE_CHECKS_PASS",
@@ -1894,6 +2360,7 @@ def main(argv=None):
     offline.add_argument("--rootfs", type=Path, required=True)
     offline.add_argument("--profile", choices=PROFILES, required=True)
     offline.add_argument("--policy", type=Path, required=True)
+    offline.add_argument("--policy-review", type=Path, help="review record bound to a REVIEWED policy (load_review)")
     offline.add_argument("--project", type=Path)
     offline.add_argument("--component-manifest", action="append", default=[], metavar="NAME=MANIFEST[" + os.pathsep + "SIG]")
     offline.add_argument("--keyring", type=Path)
@@ -1910,7 +2377,7 @@ def main(argv=None):
         if output.resolve().is_relative_to(args.rootfs.resolve()):
             raise DeploymentError("--output must be outside the inspected rootfs")
         report = run_offline(args.rootfs, args.profile, args.policy, args.project, _manifest_args(args.component_manifest),
-                             args.keyring, args.cmdline_sha256)
+                             args.keyring, args.cmdline_sha256, review=args.policy_review)
         with output.open("x", encoding="utf-8", newline="\n") as handle:
             handle.write(json.dumps(report, indent=2) + "\n")
         print(json.dumps({"status": report["status"], "output": str(output), "counts": report["counts"], "blockers": report["blockers"]}, indent=2))

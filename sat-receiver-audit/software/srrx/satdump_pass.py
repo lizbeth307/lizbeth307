@@ -1,0 +1,527 @@
+"""SatDump pass glue for the v2.1 Meteor-M LRPT baseband policy (stdlib only).
+
+Sources: STACK.md:882 and :886 (SatDump unit rules), :977 (baseband policy),
+build/07-pz-vstanovlennia.md section 11, build/12-revision-v2.1.md, build/15 decision 6.
+
+- select_windows(): recording windows from a saved srrx.passes plan. The window source is
+  passes.baseband_windows(plan, ids) (complete passes, nothing without verified UTC:
+  UTC_NOT_VERIFIED); the target set is enforced here: only accepted-allowlist targets with
+  role LRPT whose reviewed display name is Meteor-M N2-3 or N2-4 (baseband.METEOR_TARGETS;
+  software/config/orbit-targets.json names them by SATCAT name and launch date, never by a
+  NORAD id in code). Other LRPT-role targets are counted, never recorded. Each window is
+  AOS-60 s .. LOS+60 s, at most 20 min (srrx.baseband.window).
+- decode_argv()/live_argv() are the only SatDump command lines: the pinned 1aedd60 CLI
+  `satdump pipeline <id> baseband <in> <out> --samplerate=256000 --baseband_format=cs16`
+  (CLI11 options as "--key=value"; c0b6f88 makes "--key value" work too) and the legacy live
+  form `satdump legacy live <id> <out> --source net_source --mode udp --port P ...`, whose
+  parser (src-core/common/cli_utils.cpp parse_common_flags) reads "--key value" pairs only.
+- Each SatDump run is one bounded transient unit (systemd-run, STACK.md:882): own user,
+  empty root-owned WorkingDirectory (no ./resources, ./plugins or ./pipelines.json), a
+  private empty HOME (RuntimeDirectory) so no user pipelines.json or settings load, /data
+  replaced by an empty tmpfs with only the one baseband bound read-only and the work
+  directory bound writable, LC_ALL=C.UTF-8. File decode: PrivateNetwork=yes. Live:
+  IPAddressDeny=any + IPAddressAllow=localhost and AF_INET/AF_UNIX only, because net_source
+  at 1aedd60 binds INADDR_ANY (src-core/common/net/udp.h; the +lab loopback patch of
+  deployment/recipes/satdump is a second layer).
+- run_decode(): decoder_policy.satdump_plan (installation, metadata, scope), the unit, a
+  bounded output scan that fails on "CALCEPH ERROR", the baseband deleted before the sanitized
+  PNG products are published (decoder_policy.satdump_publish), and deleted whatever the outcome.
+- The work tree <products>/.satdump-<id> is made 2770 whatever the caller's umask
+  (make_work_dir), for the decode and the live unit alike. The caller must hold group
+  srrx-satdump (labd through srrx.service SupplementaryGroups= once it schedules decodes, never
+  a sysusers "m" line; an administrator runs as root today): it reads the unit's PNGs and
+  removes the unit's directories.
+- load_plan() reads only /var/lib/srrx/plans/<16 hex>.json written by srrx-passes@.service
+  (srrx.pass_jobs: directory 2750 srrx-passes:labd, plans 0640), so the window source is the
+  isolated plan unit, not any JSON a caller names.
+
+labd does not schedule these jobs yet (an open integration item): the CLI below is for an
+administrator, and the polkit rule that would let labd start the transient units is not
+written. Nothing here is RF or hardware evidence.
+"""
+from __future__ import annotations
+
+import argparse
+import json
+import os
+from pathlib import Path
+import re
+import selectors
+import signal
+import stat
+import subprocess
+import sys
+import time
+
+from . import baseband, passes
+
+SYSTEMD_RUN = "/usr/bin/systemd-run"
+SATDUMP = "/usr/bin/satdump"
+UNIT_USER = "srrx-satdump"
+BASEBAND_GROUP = "srrx-bb"
+EMPTY_WORKDIR = "/var/lib/srrx-satdump/empty"
+BASEBAND_ENV = "/etc/srrx/baseband.env"  # written by the administrator only; staging ships the .template
+DATA_ROOT = baseband.DATA_ROOT
+# srrx.pass_jobs PLAN_ROOT / UNIT_USER (tests check the equality; no import of the labd side here).
+PLAN_ROOT = "/var/lib/srrx/plans"
+PLAN_WRITER = "srrx-passes"
+WORK_MODE = 0o2770
+DECODE_MAX_S = 1800
+LIVE_EXTRA_S = 120
+OUTPUT_LIMIT = 64 * 1024
+FAIL_MARKERS = (b"CALCEPH ERROR",)
+PROBE_MARKERS = (b"level", b"input_file", b"output_folder", b"--samplerate", b"--baseband_format")
+_UNIT_ID = re.compile(r"[0-9a-f]{16}\Z")
+_COMMON = ("Group=" + UNIT_USER, "UMask=0007", "LimitCORE=0", "NoNewPrivileges=yes", "CapabilityBoundingSet=",
+           "AmbientCapabilities=", "ProtectSystem=strict", "ProtectHome=yes", "PrivateTmp=yes", "PrivateDevices=yes",
+           "DevicePolicy=closed", "PrivateIPC=yes", "ProtectKernelTunables=yes", "ProtectKernelModules=yes",
+           "ProtectKernelLogs=yes", "ProtectControlGroups=yes", "ProtectClock=yes", "ProtectHostname=yes",
+           "RestrictNamespaces=yes", "RestrictRealtime=yes", "RestrictSUIDSGID=yes", "LockPersonality=yes",
+           "SystemCallArchitectures=native", "MemoryMax=1536M", "MemorySwapMax=0", "TasksMax=64",
+           "CPUAffinity=0-3", "Nice=10", "TemporaryFileSystem=" + DATA_ROOT + ":ro")
+
+
+class PassRefused(ValueError):
+    """Stable refusal code; never embeds paths, plan contents or decoder output."""
+
+
+def _refuse(code):
+    raise PassRefused(code)
+
+
+# ---------------------------------------------------------------- windows
+
+def meteor_targets(accepted):
+    """({norad: display name} of Meteor-M LRPT targets, count of other LRPT-role targets)."""
+    if type(accepted) is not dict:
+        _refuse("ACCEPTED_ALLOWLIST_REQUIRED")
+    targets, others = {}, 0
+    for norad, target in accepted.items():
+        if type(target) is not dict or type(norad) is not int or target.get("norad_id") != norad:
+            _refuse("ACCEPTED_ALLOWLIST_REQUIRED")
+        if target.get("role") != baseband.BASEBAND_ROLE:
+            continue
+        if target.get("name") in baseband.METEOR_TARGETS:
+            targets[norad] = target["name"]
+        else:
+            others += 1
+    return targets, others
+
+
+def select_windows(plan, accepted, center_hz, symbol_rate):
+    """Recording windows (srrx.baseband.window) of the plan's Meteor-M passes; fail closed.
+
+    plan: a saved srrx.passes plan; accepted: norad_allowlist.load_accepted() output (the
+    SHA-checked reviewed allowlist). center_hz/symbol_rate: one of the allowed LRPT tunings,
+    chosen by the operator; nothing here guesses which satellite uses which.
+    """
+    targets, others = meteor_targets(accepted)
+    baseband.channel_span(center_hz, symbol_rate)  # refuses a tuning outside the allowed set first
+    result = {"windows": [], "reason": None, "non_meteor_lrpt_targets": others}
+    if not targets:
+        result["reason"] = "NO_METEOR_LRPT_TARGET"
+        return result
+    source = passes.baseband_windows(plan, frozenset(targets))
+    if source["reason"] == "UTC_NOT_VERIFIED":
+        result["reason"] = "UTC_NOT_VERIFIED"
+        return result
+    for item in source["windows"]:
+        if item["name"] != targets.get(item["norad_id"]):
+            continue  # the plan was made with another allowlist name: never recorded
+        result["windows"].append(baseband.window(item["norad_id"], targets[item["norad_id"]], center_hz, symbol_rate,
+                                                 item["start_unix_s"], item["end_unix_s"], item["start_utc"],
+                                                 item["end_utc"]))
+    result["reason"] = None if result["windows"] else "NO_METEOR_PASS"
+    return result
+
+
+def window_at(windows, now):
+    """The window to record now: start - EARLY_START_S <= now <= end, or None."""
+    for item in windows:
+        if item["start_unix_s"] - baseband.EARLY_START_S <= now <= item["end_unix_s"]:
+            return baseband.validate_window(item)
+    return None
+
+
+def _plan_writer_uid():
+    import pwd  # POSIX only, as the plan unit
+    try:
+        return pwd.getpwnam(PLAN_WRITER).pw_uid
+    except KeyError:
+        _refuse("PLAN_WRITER_UNKNOWN")
+
+
+def load_plan(path):
+    """A plan of srrx-passes@.service: PLAN_ROOT/<16 hex>.json, regular, <= 2 MiB, checked by passes.validate_plan.
+
+    time_verified and the pass times are the plan unit's statement, so the file must come from
+    that unit: the directory and the file owned by PLAN_WRITER and writable by nobody else.
+    """
+    path = Path(path)
+    if path.parent != Path(PLAN_ROOT) or not re.fullmatch(r"[0-9a-f]{16}\.json", path.name):
+        _refuse("PLAN_NOT_FROM_PLAN_UNIT")
+    writer = _plan_writer_uid()
+    try:
+        directory = os.lstat(PLAN_ROOT)
+    except OSError:
+        _refuse("PLAN_NOT_FROM_PLAN_UNIT")
+    if not stat.S_ISDIR(directory.st_mode) or directory.st_uid != writer or directory.st_mode & 0o022:
+        _refuse("PLAN_NOT_FROM_PLAN_UNIT")
+    descriptor = os.open(path, os.O_RDONLY | getattr(os, "O_NOFOLLOW", 0) | getattr(os, "O_NONBLOCK", 0)
+                         | getattr(os, "O_CLOEXEC", 0))
+    with os.fdopen(descriptor, "rb") as stream:
+        info = os.fstat(stream.fileno())
+        if not stat.S_ISREG(info.st_mode):
+            _refuse("PLAN_NOT_REGULAR_FILE")
+        if info.st_uid != writer or info.st_mode & 0o022 or info.st_nlink != 1:
+            _refuse("PLAN_NOT_FROM_PLAN_UNIT")
+        data = stream.read(passes.MAX_PLAN_BYTES + 1)
+    if len(data) > passes.MAX_PLAN_BYTES:
+        _refuse("PLAN_SIZE_LIMIT")
+    try:
+        return passes.validate_plan(passes.orbits._json(data))
+    except ValueError:
+        _refuse("PLAN_INVALID")
+
+
+# ---------------------------------------------------------------- SatDump command lines and units
+
+def unit_id(recording_id):
+    if type(recording_id) is not str or not baseband._ID.match(recording_id):
+        _refuse("RECORDING_ID")
+    return recording_id[len("lrpt-"):]
+
+
+def decode_argv(executable, pipeline, input_path, output_dir):
+    if pipeline not in baseband.PIPELINES.values():
+        _refuse("PIPELINE_NOT_ALLOWLISTED")
+    return [str(executable), "pipeline", pipeline, "baseband", str(input_path), str(output_dir),
+            "--samplerate=%d" % baseband.OUTPUT_RATE_HZ, "--baseband_format=cs16"]
+
+
+def probe_argv(executable, pipeline):
+    if pipeline not in baseband.PIPELINES.values():
+        _refuse("PIPELINE_NOT_ALLOWLISTED")
+    return [str(executable), "pipeline", pipeline, "--help"]
+
+
+def live_argv(executable, window_value, output_dir, port):
+    checked = baseband.validate_window(window_value)
+    if type(port) is not int or not baseband.LIVE_PORT_RANGE[0] <= port <= baseband.LIVE_PORT_RANGE[1]:
+        _refuse("LIVE_PORT_RANGE")
+    seconds = int(checked["end_unix_s"] - checked["start_unix_s"]) + 60
+    return [str(executable), "legacy", "live", checked["pipeline"], str(output_dir), "--source", "net_source",
+            "--mode", "udp", "--port", str(port), "--samplerate", str(baseband.OUTPUT_RATE_HZ),
+            "--frequency", str(checked["center_hz"]), "--timeout", str(seconds)]
+
+
+def _paths_ok(*paths):
+    for path in paths:
+        text = str(path)
+        if not text.startswith("/") or "/../" in text + "/" or "/./" in text + "/" or any(c in text for c in " \t\n'\"\\;"):
+            _refuse("UNIT_PATH")
+
+
+def unit_properties(kind, ident, *, work_dir, input_path=None, runtime_max_s=DECODE_MAX_S):
+    """The fixed systemd-run properties of one SatDump unit ("decode" or "live")."""
+    if kind not in ("decode", "live") or type(ident) is not str or not _UNIT_ID.match(ident):
+        _refuse("UNIT_KIND")
+    if type(runtime_max_s) is not int or not 60 <= runtime_max_s <= 3 * 3600:
+        _refuse("UNIT_RUNTIME")
+    _paths_ok(work_dir, *(() if input_path is None else (input_path,)))
+    if not str(work_dir).startswith(DATA_ROOT + "/"):
+        _refuse("UNIT_PATH")
+    properties = ["User=" + UNIT_USER, *_COMMON, "WorkingDirectory=" + EMPTY_WORKDIR,
+                  "RuntimeDirectory=srrx-satdump-" + ident, "RuntimeDirectoryMode=0700",
+                  "Environment=HOME=/run/srrx-satdump-" + ident, "Environment=LC_ALL=C.UTF-8",
+                  "BindPaths=" + str(work_dir), "RuntimeMaxSec=%d" % runtime_max_s]
+    if kind == "decode":
+        if input_path is None or not str(input_path).startswith(DATA_ROOT + "/" + baseband.CLASS_DIR + "/"):
+            _refuse("UNIT_PATH")
+        properties += ["SupplementaryGroups=" + BASEBAND_GROUP, "BindReadOnlyPaths=" + str(input_path),
+                       "PrivateNetwork=yes", "IPAddressDeny=any", "RestrictAddressFamilies=AF_UNIX"]
+    else:
+        if input_path is not None:
+            _refuse("UNIT_PATH")
+        properties += ["IPAddressDeny=any", "IPAddressAllow=localhost", "RestrictAddressFamilies=AF_INET AF_UNIX"]
+    return properties
+
+
+def systemd_run_argv(kind, ident, properties, argv):
+    unit = "srrx-satdump-%s-%s" % (kind, ident)
+    command = [SYSTEMD_RUN, "--quiet", "--wait", "--pipe", "--collect", "--service-type=exec", "--unit=" + unit]
+    for value in properties:
+        command += ["-p", value]
+    return command + ["--"] + list(argv)
+
+
+def make_work_dir(work):
+    """Create one new work tree with mode WORK_MODE whatever the umask, or refuse.
+
+    mkdir() masks its mode with the caller's umask (labd has none, a shell 022), so the mode is
+    set by chmod() and read back. The setgid bit survives chmod only when the directory's group
+    (srrx-satdump, inherited from the 2770 products directory) is one of the caller's groups:
+    a caller outside group srrx-satdump gets WORK_DIR_MODE here, not a unit that cannot write.
+    """
+    work = Path(work)
+    os.mkdir(work, 0o700)
+    try:
+        os.chmod(work, WORK_MODE)
+        info = os.lstat(work)
+        if not stat.S_ISDIR(info.st_mode) or stat.S_IMODE(info.st_mode) != WORK_MODE:
+            _refuse("WORK_DIR_MODE")
+    except BaseException:
+        os.rmdir(work)
+        raise
+    return work
+
+
+def live_command(window_value, port, *, executable=SATDUMP, products_root=None, ident=None):
+    """(unit ident, work dir, full systemd-run argv) of the live SatDump unit for one window.
+
+    Creates the new work dir (make_work_dir): BindPaths= of the unit needs it to exist. The
+    caller starts the unit before labrx.run_baseband(..., live_port=port), publishes the work
+    tree's PNGs with decoder_policy.satdump_publish afterwards and removes the tree;
+    RuntimeMaxSec bounds the unit to the window plus LIVE_EXTRA_S. labd does not orchestrate
+    this yet.
+    """
+    checked = baseband.validate_window(window_value)
+    ident = ident if ident is not None else os.urandom(8).hex()
+    work = Path(products_root if products_root is not None else DATA_ROOT + "/products/satdump") / (".satdump-" + ident)
+    seconds = int(checked["end_unix_s"] - checked["start_unix_s"]) + LIVE_EXTRA_S
+    properties = unit_properties("live", ident, work_dir=work, runtime_max_s=seconds)
+    argv = systemd_run_argv("live", ident, properties, live_argv(executable, checked, work / "out", port))
+    if work.exists() or work.is_symlink():
+        _refuse("OUTPUT_EXISTS")
+    make_work_dir(work)
+    return ident, work, argv
+
+
+def run_bounded(argv, timeout_s):
+    """(exit code, last OUTPUT_LIMIT bytes of stdout+stderr plus every FAIL_MARKERS seen anywhere).
+
+    The output is only scanned, never stored or logged.
+    """
+    process = subprocess.Popen(argv, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
+                               env={"PATH": "/usr/bin:/bin", "LC_ALL": "C.UTF-8", "SYSTEMD_PAGER": "",
+                                    "SYSTEMD_COLORS": "0"},
+                               cwd="/", close_fds=True, start_new_session=True)
+    data, seen, deadline = bytearray(), set(), time.monotonic() + timeout_s
+    overlap = max(len(marker) for marker in FAIL_MARKERS)
+    try:
+        with selectors.DefaultSelector() as selector:
+            selector.register(process.stdout, selectors.EVENT_READ)
+            while selector.get_map():
+                remaining = deadline - time.monotonic()
+                if remaining <= 0:
+                    _refuse("SATDUMP_TIMEOUT")
+                for key, unused in selector.select(remaining):
+                    block = os.read(key.fileobj.fileno(), 65536)
+                    if not block:
+                        selector.unregister(key.fileobj)
+                        continue
+                    window = bytes(data[-overlap:]) + block
+                    seen.update(marker for marker in FAIL_MARKERS if marker in window)
+                    data.extend(block)
+                    del data[:max(0, len(data) - OUTPUT_LIMIT)]
+        code = process.wait(timeout=max(0.001, deadline - time.monotonic()))
+        return code, bytes(data) + b"".join(b"\n" + marker for marker in sorted(seen))
+    except subprocess.TimeoutExpired:
+        _refuse("SATDUMP_TIMEOUT")
+    finally:
+        if process.poll() is None:
+            try:
+                os.killpg(process.pid, signal.SIGTERM)  # systemd-run stops its unit on SIGTERM
+            except ProcessLookupError:
+                pass
+            process.wait()
+        process.stdout.close()
+
+
+def output_failed(output):
+    return any(marker in output for marker in FAIL_MARKERS)
+
+
+# ---------------------------------------------------------------- decode job
+
+def run_decode(store, recording_id, installation, products_root, *, scope=None, runner=run_bounded,
+               work_root=None):
+    """Decode one recording into sanitized PNG products; the baseband is deleted in every case.
+
+    After a successful unit run the baseband is deleted first and the products are published
+    second, so the report's input_iq_deleted_after_decode states a completed deletion; a failed
+    deletion publishes nothing (the sweep removes the file later). Returns
+    decoder_policy.satdump_publish's report. Refusals are PassRefused or
+    decoder_policy.DecoderRefused codes.
+    """
+    from . import decoder_policy
+    ident = unit_id(recording_id)
+    products_root = Path(products_root)
+    work = Path(work_root if work_root is not None else products_root) / (".satdump-" + ident)
+    target = products_root / recording_id
+    deleted = False
+    try:
+        meta, identity = store.load(recording_id)
+        plan = decoder_policy.satdump_plan(meta, installation, scope=scope)
+        if target.exists() or target.is_symlink() or work.exists() or work.is_symlink():
+            _refuse("OUTPUT_EXISTS")
+        executable = decoder_policy.satdump_executable(installation)
+        input_path = store.data_path(recording_id)
+        make_work_dir(work)  # 2770, setgid group srrx-satdump of the parent: the unit writes out/ there
+        try:
+            probe = systemd_run_argv("probe", ident, unit_properties("decode", ident, work_dir=work,
+                                                                       input_path=input_path, runtime_max_s=60),
+                                     probe_argv(executable, plan["pipeline"]))
+            code, output = runner(probe, 90)
+            if code or not all(marker in output for marker in PROBE_MARKERS):
+                decoder_policy._refuse("LIVE_VENDOR_INTERFACE_UNVERIFIED")
+            decoder_policy.satdump_executable(installation)  # re-hash after the probe
+            argv = systemd_run_argv("decode", ident, unit_properties("decode", ident, work_dir=work,
+                                                                       input_path=input_path),
+                                    decode_argv(executable, plan["pipeline"], input_path, work / "out"))
+            code, output = runner(argv, DECODE_MAX_S + 60)
+            if code:
+                decoder_policy._refuse("DECODER_NONZERO_EXIT")
+            if output_failed(output):
+                decoder_policy._refuse("SATDUMP_CALCEPH_ERROR")
+            if store.identity(recording_id) != identity:
+                decoder_policy._refuse("SOURCE_CHANGED_DURING_DECODE")
+            store.delete(recording_id)  # raises on failure: nothing is published with a false report
+            deleted = True
+            return decoder_policy.satdump_publish(work / "out", target, plan, input_iq_deleted=True, scope=scope)
+        finally:
+            _remove_tree(work)
+    finally:
+        if not deleted:
+            store.delete(recording_id)  # after a refused decode as well: never kept for later
+
+
+def _remove_tree(path):
+    """Remove a work tree without following links (the unit may have written anything there)."""
+    path = Path(path)
+    try:
+        info = os.lstat(path)
+    except FileNotFoundError:
+        return
+    if not stat.S_ISDIR(info.st_mode):
+        os.unlink(path)
+        return
+    for entry in os.scandir(path):
+        if entry.is_dir(follow_symlinks=False):
+            _remove_tree(entry.path)
+        else:
+            os.unlink(entry.path)
+    os.rmdir(path)
+
+
+def tmpfiles():
+    """tmpfiles.d text: the empty root-owned SatDump working directory and the baseband class directory."""
+    return ("# SR-RX SatDump units (srrx.satdump_pass.tmpfiles): an empty, root-owned working directory and the\n"
+            "# products directory, setgid " + UNIT_USER + " so the unit writes its work tree there; the caller needs\n"
+            "# group " + UNIT_USER + " (it reads the unit's PNGs and removes its work tree): labd via SupplementaryGroups=.\n"
+            "d /var/lib/srrx-satdump 0755 root root -\n"
+            "d " + EMPTY_WORKDIR + " 0555 root root -\n"
+            "d " + DATA_ROOT + "/products/satdump 2770 labd " + UNIT_USER + " -\n" + baseband.tmpfiles(DATA_ROOT))
+
+
+def sweep_units():
+    """srrx-baseband-sweep.service/.timer text: sweep() every 15 min and after boot (24 h rule).
+
+    The sandbox is the one StorageGuard can work in: python3 without -I (-I implies -E and
+    would drop PYTHONPATH; -P and -s keep the working directory and the user site out), the
+    whole bound mount writable (ProtectSystem=strict remounts it read-only, and a nested
+    ReadWritePaths= bind is a foreign mount to the guard), and /dev visible (the guard stats
+    /dev/disk/by-uuid and the mount source) with DevicePolicy=closed denying every open().
+    """
+    service = ("[Unit]\nDescription=SR-RX LRPT baseband sweep (delete >= 24 h, incomplete or invalid recordings)\n"
+               "RequiresMountsFor=" + DATA_ROOT + "\n"
+               "# Skipped, not failed, until the administrator writes the storage binding at commissioning.\n"
+               "ConditionPathExists=" + BASEBAND_ENV + "\n\n[Service]\nType=oneshot\nUser=labd\nGroup=" + BASEBAND_GROUP + "\n"
+               "EnvironmentFile=" + BASEBAND_ENV + "\n"
+               "Environment=PYTHONPATH=/opt/srrx/software PYTHONDONTWRITEBYTECODE=1\nWorkingDirectory=/\n"
+               "ExecStart=/usr/bin/python3 -P -s -B -m srrx.baseband sweep --storage-root " + DATA_ROOT + " "
+               "--storage-device ${SRRX_BB_DEVICE}\n"
+               "ReadWritePaths=" + DATA_ROOT + "\nProtectSystem=strict\nProtectHome=yes\nPrivateTmp=yes\n"
+               "PrivateNetwork=yes\nIPAddressDeny=any\nRestrictAddressFamilies=AF_UNIX\nNoNewPrivileges=yes\n"
+               "DevicePolicy=closed\nCapabilityBoundingSet=\nTimeoutStartSec=120\n")
+    timer = ("[Unit]\nDescription=SR-RX LRPT baseband sweep every 15 min\n\n[Timer]\nOnBootSec=2min\n"
+             "OnUnitActiveSec=15min\nAccuracySec=1min\nPersistent=false\n\n[Install]\nWantedBy=timers.target\n")
+    return {"etc/systemd/system/srrx-baseband-sweep.service": service,
+            "etc/systemd/system/srrx-baseband-sweep.timer": timer}
+
+
+def baseband_env_template():
+    """etc/srrx/baseband.env.template: never the live file, which the administrator writes."""
+    return ("# SR-RX v2.1 LRPT baseband storage binding (srrx.satdump_pass.baseband_env_template). TEMPLATE ONLY.\n"
+            "# At commissioning the administrator writes " + BASEBAND_ENV + " (root:root 0644) with the verified\n"
+            "# UUID of the /data partition of this unit, SRRX_BB_DEVICE=/dev/disk/by-uuid/<UUID>, then enables\n"
+            "# srrx-baseband-sweep.timer. Without that file the sweep unit is skipped (ConditionPathExists=).\n"
+            "SRRX_BB_DEVICE=\n")
+
+
+def transient_units():
+    """The decode and live systemd-run properties as unit text: these units exist only at run time,
+    so deploy.stage hands them to system_files.unknown_accounts (User=, Group=, SupplementaryGroups=)."""
+    ident = "0" * 16
+    work = DATA_ROOT + "/products/satdump/.satdump-" + ident
+    decode = unit_properties("decode", ident, work_dir=work,
+                             input_path=DATA_ROOT + "/" + baseband.CLASS_DIR + "/lrpt-" + ident + ".sigmf-data")
+    live = unit_properties("live", ident, work_dir=work)
+    return ["[Service]\n" + "\n".join(properties) + "\n" for properties in (decode, live)]
+
+
+def staged_files():
+    """Relative rootfs path -> text that deploy.stage writes: tmpfiles, the sweep service and timer
+    (left disabled by the system preset) and the baseband.env template."""
+    return dict(sweep_units(), **{"etc/tmpfiles.d/srrx-satdump.conf": tmpfiles(),
+                                  "etc/srrx/baseband.env.template": baseband_env_template()})
+
+
+def main(argv=None):
+    parser = argparse.ArgumentParser(prog="python3 -m srrx.satdump_pass",
+                                     description="Meteor-M LRPT windows and SatDump decode (v2.1 policy)")
+    commands = parser.add_subparsers(dest="command", required=True)
+    windows = commands.add_parser("windows", help="list the recording windows of a saved plan")
+    windows.add_argument("--plan", type=Path, required=True)
+    windows.add_argument("--orbit-allowlist", type=Path, required=True)
+    windows.add_argument("--orbit-allowlist-record", type=Path, required=True)
+    windows.add_argument("--center-hz", type=int, required=True)
+    windows.add_argument("--symbol-rate", type=int, required=True)
+    decode = commands.add_parser("decode", help="decode one recording, publish sanitized products, delete it")
+    decode.add_argument("--recording", required=True)
+    decode.add_argument("--installation", type=Path, required=True)
+    decode.add_argument("--products", type=Path, required=True)
+    decode.add_argument("--storage-root", required=True)
+    decode.add_argument("--storage-device", required=True)
+    commands.add_parser("units", help="print the tmpfiles and sweep unit texts")
+    args = parser.parse_args(argv)
+    guard = None
+    try:
+        if args.command == "units":
+            result = staged_files()
+        elif args.command == "windows":
+            from . import norad_allowlist
+            accepted = norad_allowlist.load_accepted(args.orbit_allowlist, args.orbit_allowlist_record)
+            selected = select_windows(load_plan(args.plan), accepted, args.center_hz, args.symbol_rate)
+            result = dict(selected, windows=[{key: item[key] for key in ("norad_id", "target", "pipeline", "aos_utc",
+                                                                          "los_utc", "clipped")}
+                                             for item in selected["windows"]])
+        else:
+            from . import decoder_policy
+            from .storage import StorageGuard
+            guard = StorageGuard(args.storage_root, args.storage_device)
+            installation = decoder_policy.load_satdump_installation(args.installation)
+            result = run_decode(baseband.BasebandStore(guard), args.recording, installation, args.products)
+    except (PassRefused, baseband.BasebandRefused, ValueError, OSError) as error:
+        code = str(error) if isinstance(error, ValueError) and re.fullmatch(r"[A-Z0-9_]+", str(error)) else type(error).__name__
+        print(json.dumps({"status": "REFUSED", "reason": code}))
+        return 2
+    finally:
+        if guard is not None:
+            guard.close()
+    print(json.dumps(result, sort_keys=True, indent=1 if args.command == "units" else None))
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

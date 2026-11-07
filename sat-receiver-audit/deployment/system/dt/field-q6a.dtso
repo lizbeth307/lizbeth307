@@ -1,0 +1,25 @@
+// SPDX-License-Identifier: BSD-3-Clause
+/*
+ * SR-RX v2.1 field overlay for the Radxa Dragon Q6A, applied after lab-q6a.dtbo:
+ * field.dtb = package DTB + lab-q6a.dtbo + field-q6a.dtbo (build/07 §3.1, STACK.md:843).
+ *
+ * pcie0 (the Lime M.2 path) is disabled in the field profile.
+ *
+ * The WIFI_PWR_EN output-low gpio-hog is NOT here: its TLMM line is unknown until the
+ * W1-2 bench finds it (E5-10 OPEN, build/07 §25). When it is known, add under &tlmm:
+ *	wifi-pwr-en-hog {
+ *		gpio-hog;
+ *		gpios = <LINE 0>;	// TBD (W1-2)
+ *		output-low;
+ *		line-name = "WIFI_PWR_EN";
+ *	};
+ * Until then the receive-only Wi-Fi/BT layers are the modprobe blacklist, the FE1.1s
+ * port-4 authorized=0 rule and rfkill (software/DEPLOYMENT.md).
+ */
+
+/dts-v1/;
+/plugin/;
+
+&pcie0 {
+	status = "disabled";
+};

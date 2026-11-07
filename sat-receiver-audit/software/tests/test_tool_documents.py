@@ -184,7 +184,7 @@ class BundleTextTests(unittest.TestCase):
 
 # The bundle tools parse HTML with lxml, which the host jobs install (PY_PINS: lxml 6.1.3)
 # and run these tests with. The ARM64 guest runs software/tests too, but its locked
-# wheelhouse has no lxml and guest_bootstrap.sh accepts only two documented skip reasons,
+# wheelhouse has no lxml and guest_bootstrap.sh accepts only three documented skip reasons,
 # so without lxml the class is dropped instead of skipped.
 if importlib.util.find_spec("lxml") is None:
     del BundleTextTests

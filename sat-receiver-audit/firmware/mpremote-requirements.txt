@@ -1,0 +1,5 @@
+# mpremote for tools/flash_mcu.py (firmware/runtime.lock.json). Pure-Python wheels; SHA-256 and sizes from the
+# PyPI JSON API on 2026-10-24: mpremote 1.26.0 (35,913 B), platformdirs 4.12.4 (32,596 B), pyserial 3.5 (90,585 B).
+mpremote==1.26.0 --hash=sha256:daed9b795fdf98edb0c9c4f7f892bf66f075ec5e728bdcc4ab0915abf23d5d17
+platformdirs==4.12.4 --hash=sha256:78bfb9db2a8471ed7eebe3c3c932da413911042994e699b384fbb4493fa872d7
+pyserial==3.5 --hash=sha256:c4451db6ba391ca6ca299fb3ec7bae67a5c55dde170964c7a14ceefec02f2cf0

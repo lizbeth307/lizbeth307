@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="420mm" height="297mm" viewBox="0 0 420 297">
+<title>M-11 Екран HF+ (Schubert Art. 6B): свердління</title>
+<desc>SR-RX-v2.1 mechanical drawing, scale 1:1, mm. MODEL FIT ONLY. params 135211b0855f</desc>
+<rect x="0" y="0" width="100%" height="100%" fill="#ffffff"/>
+<line x1="40" y1="237" x2="151" y2="237" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="151" y1="237" x2="151" y2="217" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="151" y1="217" x2="40" y2="217" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="40" y1="217" x2="40" y2="237" stroke="#000" stroke-width="0.5" fill="none"/>
+<text x="40" y="215" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.36" text-anchor="start" fill="#000">довга стінка (до РЧ-плати)</text>
+<circle cx="60" cy="227" r="2.1" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="56.4" y1="227" x2="63.6" y2="227" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="60" y1="230.6" x2="60" y2="223.4" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="63.6" y="223.4" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">K401 HF ⌀4.2 (RG316 + втулка)</text>
+<circle cx="80" cy="227" r="2.1" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="76.4" y1="227" x2="83.6" y2="227" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="80" y1="230.6" x2="80" y2="223.4" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="83.6" y="234" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">K402 VHF ⌀4.2 (RG316 + втулка)</text>
+<circle cx="130" cy="227" r="4" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="124.5" y1="227" x2="135.5" y2="227" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="130" y1="232.5" x2="130" y2="221.5" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="135.5" y="221.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">micro-USB пігтейл ⌀8</text>
+<line x1="40" y1="197" x2="95" y2="197" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="95" y1="197" x2="95" y2="177" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="95" y1="177" x2="40" y2="177" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="40" y1="177" x2="40" y2="197" stroke="#000" stroke-width="0.5" fill="none"/>
+<text x="40" y="175" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.36" text-anchor="start" fill="#000">торцева стінка: прохідні C (TBD)</text>
+<circle cx="55" cy="187" r="1.5" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="52" y1="187" x2="58" y2="187" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="55" y1="190" x2="55" y2="184" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="58" y="184" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">пілот TBD</text>
+<circle cx="75" cy="187" r="1.5" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="72" y1="187" x2="78" y2="187" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="75" y1="190" x2="75" y2="184" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="78" y="184" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.52" text-anchor="start" fill="#000">пілот TBD</text>
+<line x1="40" y1="157" x2="52" y2="157" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="52" y1="157" x2="52" y2="149" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="52" y1="149" x2="40" y2="149" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="40" y1="149" x2="40" y2="157" stroke="#000" stroke-width="0.5" fill="none"/>
+<circle cx="46" cy="153" r="1.7" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="42.8" y1="153" x2="49.2" y2="153" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="46" y1="156.2" x2="46" y2="149.8" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="139" y1="157" x2="151" y2="157" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="151" y1="157" x2="151" y2="149" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="151" y1="149" x2="139" y2="149" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="139" y1="149" x2="139" y2="157" stroke="#000" stroke-width="0.5" fill="none"/>
+<circle cx="145" cy="153" r="1.7" stroke="#000" stroke-width="0.35" fill="none"/>
+<line x1="141.8" y1="153" x2="148.2" y2="153" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<line x1="145" y1="156.2" x2="145" y2="149.8" stroke="#000" stroke-width="0.18" fill="none" stroke-dasharray="6 1.5 1 1.5"/>
+<text x="40" y="145" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.08" text-anchor="start" fill="#000">лапки кріплення (4 шт., жерсть 0.5, припаяти до стінок)</text>
+<line x1="40" y1="237.8" x2="40" y2="244.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="151" y1="237.8" x2="151" y2="244.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="40" y1="243" x2="151" y2="243" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="40" y1="243" x2="42.2" y2="242.3" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="40" y1="243" x2="42.2" y2="243.7" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="151" y1="243" x2="148.8" y2="242.3" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="151" y1="243" x2="148.8" y2="243.7" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="95.5" y="246.7" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000">111</text>
+<line x1="39.2" y1="237" x2="32.5" y2="237" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="39.2" y1="217" x2="32.5" y2="217" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="34" y1="237" x2="34" y2="217" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="34" y1="237" x2="33.3" y2="234.8" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="34" y1="237" x2="34.7" y2="234.8" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="34" y1="217" x2="33.3" y2="219.2" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="34" y1="217" x2="34.7" y2="219.2" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="32.8" y="227" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.5" text-anchor="middle" fill="#000" transform="rotate(-90 32.8 227)">20</text>
+<line x1="8" y1="289" x2="412" y2="289" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="412" y1="289" x2="412" y2="8" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="412" y1="8" x2="8" y2="8" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="8" y1="8" x2="8" y2="289" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="14" y1="281" x2="114" y2="281" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="14" y1="281" x2="14" y2="277" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="24" y1="281" x2="24" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="34" y1="281" x2="34" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="44" y1="281" x2="44" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="54" y1="281" x2="54" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="64" y1="281" x2="64" y2="277" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="74" y1="281" x2="74" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="84" y1="281" x2="84" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="94" y1="281" x2="94" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="104" y1="281" x2="104" y2="278.5" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="114" y1="281" x2="114" y2="277" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="14" y="285" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.08" text-anchor="start" fill="#000">Контроль масштабу: 100 мм (друкувати 100 %, без підгонки)</text>
+<line x1="262" y1="289" x2="262" y2="247" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="262" y1="247" x2="412" y2="247" stroke="#000" stroke-width="0.5" fill="none"/>
+<line x1="262" y1="282" x2="412" y2="282" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="262" y1="275" x2="412" y2="275" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="262" y1="268" x2="412" y2="268" stroke="#000" stroke-width="0.18" fill="none"/>
+<line x1="262" y1="261" x2="412" y2="261" stroke="#000" stroke-width="0.18" fill="none"/>
+<text x="264" y="253" font-family="DejaVu Sans, Arial, sans-serif" font-size="4.48" text-anchor="start" fill="#000">Екран HF+ (Schubert Art. 6B): свердління</text>
+<text x="264" y="259" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">розгортка бічних стінок 1:1</text>
+<text x="264" y="266" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Креслення M-11 · масштаб 1:1 · мм · допуск ±0.2, якщо не вказано</text>
+<text x="264" y="273" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Матеріал: жерсть 0.5 мм (Schubert 6B)</text>
+<text x="264" y="280" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">SR-RX-v2.1 · MODEL FIT ONLY · фізичні ворота OPEN</text>
+<text x="264" y="287" font-family="DejaVu Sans, Arial, sans-serif" font-size="2.8" text-anchor="start" fill="#000">mechanical/build.py · params 135211b0855f · v1.0.0</text>
+<text x="12" y="15" font-family="DejaVu Sans, Arial, sans-serif" font-size="5.6" text-anchor="start" fill="#000">Екран HF+ (Schubert Art. 6B): свердління</text>
+<text x="12" y="20.5" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.64" text-anchor="start" fill="#000">розгортка бічних стінок 1:1</text>
+<text x="12" y="25" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Вводи: 2 коаксіальні (K401 HF, K402 VHF) і пігтейл micro-USB HF+; прохідні конденсатори живлення — тип і діаметр TBD (STACK 2.10).</text>
+<text x="12" y="28.6" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">4 лапки з отворами M3 — до пластини, контакт по голому металу; кришки екрана паяні у 4 точках мінімум.</text>
+<text x="12" y="32.2" font-family="DejaVu Sans, Arial, sans-serif" font-size="3.22" text-anchor="start" fill="#000">Розміри корпусу 111 x 55 x 20 (components/tinplate_hf_can_lc_mix_31_on_vbus.md).</text>
+</svg>

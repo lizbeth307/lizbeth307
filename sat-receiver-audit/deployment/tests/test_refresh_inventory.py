@@ -21,7 +21,8 @@ class RefreshInventoryTests(unittest.TestCase):
         self.addCleanup(self.temp.cleanup)
         self.root = Path(self.temp.name)
         self.text = refresh.INVENTORY.read_bytes().decode("utf-8")
-        for relative in json.loads(self.text)["source_snapshots"]:
+        committed = json.loads(self.text)
+        for relative in list(committed["source_snapshots"]) + [e["path"] for e in committed["catalogue_source_index"]]:
             (self.root / relative).parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(PROJECT / relative, self.root / relative)
         self.inventory = self.root / "inventory.json"
@@ -78,6 +79,33 @@ class RefreshInventoryTests(unittest.TestCase):
                         "required_model_behaviors", "protocol_or_special_subinterfaces", "commercial_or_functional_module_refs"):
                 self.assertEqual(old.get(key), new.get(key), key)
 
+    def test_catalogue_hashes_follow_the_catalogue_files(self):
+        before = json.loads(self.text)
+        for entry in before["catalogue_source_index"]:
+            self.assertEqual(entry["sha256"], refresh.snapshot(PROJECT / entry["path"])["sha256"], entry["path"])
+        target = before["catalogue_source_index"][1]["path"]
+        with (self.root / target).open("a", encoding="utf-8", newline="\n") as handle:
+            handle.write("\nRefresh fixture line.\n")
+        self.assertEqual(self.main("--check")[0], 1)
+        self.assertEqual(self.inventory.read_bytes().decode("utf-8"), self.text, "--check must not write")
+        code, output = self.main()
+        self.assertEqual(code, 0, output)
+        self.assertIn("catalogue_source_index[" + target + "].sha256", output)
+        after = json.loads(self.inventory.read_bytes().decode("utf-8"))
+        self.assertEqual(self.main("--check")[0], 0)
+        for old, new in zip(before["catalogue_source_index"], after["catalogue_source_index"]):
+            if old["path"] == target:
+                self.assertEqual(new["sha256"], refresh.snapshot(self.root / target)["sha256"])
+                self.assertNotEqual(new["sha256"], old["sha256"])
+                old, new = dict(old, sha256=None), dict(new, sha256=None)
+            self.assertEqual(old, new, "only the edited file's SHA256 may change")  # labels, refs, category, priority kept
+        # A catalogue path that is missing (or not a regular file) is refused without writing.
+        written = self.inventory.read_bytes()
+        (self.root / target).unlink()
+        code, output = self.main()
+        self.assertEqual((code, "REFUSED" in output, "snapshot is not a regular project file" in output), (2, True, True))
+        self.assertEqual(self.inventory.read_bytes(), written)
+
     def test_changed_ref_set_or_class_is_refused_without_writing(self):
         added = lambda comps, graph: graph["components"].append(
             {"ref": "R1999", "value": "10k", "kind": "resistor", "group": "LAB5", "status": "design", "source": "fixture",
@@ -105,7 +133,11 @@ class RefreshInventoryTests(unittest.TestCase):
                        lambda inv: inv["assemblies"][0].update(model_boundary="changed"),
                        lambda inv: inv["scope"].update(detailed_subinterfaces=0),
                        lambda inv: inv["catalogue_only_entities"].pop(),
-                       lambda inv: inv["subinterfaces"][0]["sources"].append({"path": "x"})):
+                       lambda inv: inv["subinterfaces"][0]["sources"].append({"path": "x"}),
+                       lambda inv: inv["catalogue_source_index"].pop(),
+                       lambda inv: inv["catalogue_source_index"][0].update(path="components/renamed.md"),
+                       lambda inv: inv["catalogue_source_index"][0].update(historical_part_label="changed"),
+                       lambda inv: inv["catalogue_source_index"][0]["linked_refs"].append("R1999")):
             new = copy.deepcopy(old)
             mutate(new)
             if new == old:

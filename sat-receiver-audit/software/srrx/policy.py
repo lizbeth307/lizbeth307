@@ -293,31 +293,43 @@ class SafetyPolicy:
             return
         self._gnss_released(now, "GNSS_RESET_OVERRUN" if elapsed > GNSS_RESET_DEADLINE_MS else None, True)
 
+    def _gnss_refusal(self, value, now):
+        """(refusal text, None) or (None, width) for a pulse at now; writes nothing, counts nothing."""
+        if self.fault:
+            return "fault latched: " + self.fault, None
+        value = {} if value is None else value
+        if type(value) is not dict or set(value) - {"width_ms"}:
+            return "gnss_reset value must be {width_ms}", None
+        width = value.get("width_ms", GNSS_RESET_WIDTH_MS)
+        if type(width) is not int or not GNSS_RESET_MIN_MS <= width <= GNSS_RESET_MAX_MS:
+            return "GNSS_RESET_WIDTH: integer 100..500 ms required", None
+        if (not self.hardware.initialized or getattr(self.hardware, "faulted", False)
+                or GNSS_RESET_GATE not in self.outputs):
+            return "GNSS_RESET_HARDWARE: initialized MCP outputs required", None
+        pulse = self.gnss_reset
+        if pulse["state"] != "IDLE" or self.outputs.get(GNSS_RESET_GATE):
+            return "GNSS_RESET_IN_PROGRESS", None
+        if pulse["release_ms"] is not None and now - pulse["release_ms"] < GNSS_RESET_SPACING_MS:
+            return "GNSS_RESET_SPACING: 30 s after the previous release required", None
+        self._gnss_starts = [start for start in self._gnss_starts if now - start < GNSS_RESET_WINDOW_MS]
+        if len(self._gnss_starts) >= GNSS_RESET_MAX_PULSES:
+            return "GNSS_RESET_RATE_LIMIT: at most 3 pulses per 15 min", None
+        return None, width
+
+    def gnss_reset_refusal(self, value, now):
+        """Why a gnss_reset at now would be refused (labd checks before PPS is deselected), else None."""
+        return self._gnss_refusal(value, now)[0]
+
     def _gnss_pulse(self, value, now):
         """Bounded LC76G RESET_N pulse. Energizes nothing, so it is allowed disarmed.
 
         Never escalates or repeats by itself; the raw net stays outside the whitelist.
         """
         self._gnss_service(now)
-        if self.fault:
-            return self._reject("fault latched: " + self.fault)
-        value = {} if value is None else value
-        if type(value) is not dict or set(value) - {"width_ms"}:
-            return self._reject("gnss_reset value must be {width_ms}")
-        width = value.get("width_ms", GNSS_RESET_WIDTH_MS)
-        if type(width) is not int or not GNSS_RESET_MIN_MS <= width <= GNSS_RESET_MAX_MS:
-            return self._reject("GNSS_RESET_WIDTH: integer 100..500 ms required")
-        if (not self.hardware.initialized or getattr(self.hardware, "faulted", False)
-                or GNSS_RESET_GATE not in self.outputs):
-            return self._reject("GNSS_RESET_HARDWARE: initialized MCP outputs required")
+        error, width = self._gnss_refusal(value, now)
+        if error is not None:
+            return self._reject(error)
         pulse = self.gnss_reset
-        if pulse["state"] != "IDLE" or self.outputs.get(GNSS_RESET_GATE):
-            return self._reject("GNSS_RESET_IN_PROGRESS")
-        if pulse["release_ms"] is not None and now - pulse["release_ms"] < GNSS_RESET_SPACING_MS:
-            return self._reject("GNSS_RESET_SPACING: 30 s after the previous release required")
-        self._gnss_starts = [start for start in self._gnss_starts if now - start < GNSS_RESET_WINDOW_MS]
-        if len(self._gnss_starts) >= GNSS_RESET_MAX_PULSES:
-            return self._reject("GNSS_RESET_RATE_LIMIT: at most 3 pulses per 15 min")
         # Counted and marked before the write: a failed OLAT write may still have
         # reached the MCP before its read-back failed (ASSERTING exists only here).
         self._gnss_starts.append(now)

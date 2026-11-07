@@ -144,15 +144,21 @@ class DeploymentTests(unittest.TestCase):
         files = json.loads((self.root / "candidate/stage-files.json").read_text())["files"]
         self.assertIn("etc/systemd/system/srrx.service.d/" + deploy.LAB_DEVICE_DROPIN, files)
         timeouts = sorted(p.relative_to(units).as_posix() for p in units.glob("*.device.d/*"))
-        self.assertEqual(timeouts, sorted(unit + ".d/" + deploy.DEVICE_TIMEOUT_DROPIN for unit in expected))
+        # dev-lab-gnss.device: the one GNSS reader (gpsd here, the default --gnss) waits for it too.
+        self.assertEqual(timeouts, sorted(unit + ".d/" + deploy.DEVICE_TIMEOUT_DROPIN
+                                          for unit in expected | {"dev-lab-gnss.device"}))
         for relative in timeouts:
             self.assertEqual((units / relative).read_text(), "[Unit]\nJobRunningTimeoutSec=30s\n")
             self.assertIn("etc/systemd/system/" + relative, files)
         self.assertEqual(deploy.LAB_DEVICE_TIMEOUT_S, 30)
-        # Neither the shutdown bridge nor the radio-off unit gains device lines.
+        # Neither the shutdown bridge nor the radio-off unit gains device lines; gpsd waits for the GNSS UART only.
         for path in units.rglob("*"):
-            if path.is_file() and "srrx.service.d" not in path.parts and not path.parent.name.endswith(".device.d"):
+            if (path.is_file() and "srrx.service.d" not in path.parts and "gpsd.service.d" not in path.parts
+                    and not path.parent.name.endswith(".device.d")):
                 self.assertNotIn("dev-lab", path.read_text(), path)
+        gpsd = (units / "gpsd.service.d" / deploy.LAB_DEVICE_DROPIN).read_text().splitlines()
+        self.assertEqual([l for l in gpsd if not l.startswith("#")],
+                         ["[Unit]", "Wants=dev-lab-gnss.device", "After=dev-lab-gnss.device"])
         # Config-less staging (the QEMU guest's candidate) ships no device wait at all.
         deploy.stage(self.root / "plain")
         plain = self.root / "plain/rootfs/etc/systemd/system"
@@ -541,15 +547,35 @@ class DeploymentTests(unittest.TestCase):
         config = deploy.load(HERE / "ab.template.json")
         with self.assertRaises(deploy.DeploymentError):
             deploy.stage_ab(config, self.root / "invalid-ab")
-        config.update(root_a_partuuid="11111111-1111-1111-1111-111111111111",
-                      root_b_partuuid="22222222-2222-2222-2222-222222222222",
-                      base_cmdline_without_root="console=ttyMSM0,115200n8 rw earlycon")
-        for key in ("kernel_efi_path", "initrd_efi_path", "lab_dtb_efi_path", "rescue_kernel_efi_path", "rescue_initrd_efi_path", "rescue_dtb_efi_path"):
-            config[key] = "/EFI/Linux/fixture-" + key
+        # The full STACK base line shape (build/07 §4); '@' of the video= addition must pass (IMG-03).
+        config.update(esp_partuuid="00000000-0000-4000-8000-000000000001",
+                      root_a_partuuid="11111111-1111-1111-1111-111111111111",
+                      root_b_partuuid="22222222-2222-2222-2222-222222222222", trial_slot="B",
+                      base_cmdline_without_root="console=ttyMSM0,115200n8 rw earlycon consoleblank=0 console=tty1 coherent_pool=2M "
+                                                "irqchip.gicv3_pseudo_nmi=0 cgroup_enable=cpuset cgroup_memory=1 cgroup_enable=memory swapaccount=1 kasan=off",
+                      rescue={"kernel": "/RadxaOS/6.18.2-3-qcom/linux", "initrd": "/RadxaOS/6.18.2-3-qcom/initrd.img-6.18.2-3-qcom", "dtb": None})
         result = deploy.stage_ab(config, self.root / "ab")
         self.assertFalse(result["active_slot_changed"])
-        self.assertTrue((self.root / "ab/loader/entries/labB+3.conf").exists())
-        self.assertIn("initrd /EFI/", (self.root / "ab/loader/entries/labB+3.conf").read_text())
+        self.assertEqual(result["next_boot_slot"], "B")
+        trial = (self.root / "ab/loader/entries/labB+3.conf").read_text()
+        self.assertIn("initrd /srrx/B/initrd.img", trial)
+        self.assertIn("devicetree /srrx/B/lab.dtb", trial)
+        self.assertIn(" video=HDMI-A-1:1920x1080@60 ", trial)
+        self.assertIn("root=PARTUUID=22222222-2222-2222-2222-222222222222", trial)
+        active = (self.root / "ab/loader/entries/labA.conf").read_text()
+        self.assertIn("linux /srrx/A/linux", active)
+        self.assertNotIn("/srrx/B/", active)  # schema 2: no kernel/initrd/DTB shared between slots
+        self.assertEqual((self.root / "ab/loader/loader.conf").read_text(), "default lab*\ntimeout 3\neditor no\n")
+        field = dict(config, dt_profile="field", trial_slot=None)
+        deploy.stage_ab(field, self.root / "ab-field")
+        self.assertIn("devicetree /srrx/A/field.dtb", (self.root / "ab-field/loader/entries/labA.conf").read_text())
+        shared = copy.deepcopy(config)
+        shared["slots"]["B"]["kernel"] = "/srrx/A/linux"
+        with self.assertRaises(deploy.DeploymentError):
+            deploy.stage_ab(shared, self.root / "ab-shared")
+        legacy = {"schema_version": 1}
+        with self.assertRaisesRegex(deploy.DeploymentError, "schema_version 1"):
+            deploy.stage_ab(legacy, self.root / "ab-legacy")
         config["root_b_partuuid"] = config["root_a_partuuid"]
         with self.assertRaises(deploy.DeploymentError):
             deploy.stage_ab(config, self.root / "ab2")

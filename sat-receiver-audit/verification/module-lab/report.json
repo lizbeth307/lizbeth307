@@ -2,7 +2,7 @@
   "schema_version": 1,
   "execution_status": "PASS",
   "status": "EMULATION_PASS_WITH_GAPS",
-  "created_at_utc": "2026-10-24T14:34:21.690703+00:00",
+  "created_at_utc": "2026-11-07T09:34:06.489328+00:00",
   "environment": {
     "architecture": "aarch64",
     "kernel": "6.8.0-147-generic",
@@ -10,26 +10,26 @@
   },
   "physical_tests_performed": false,
   "hardware_qualified": false,
-  "inventory_sha256": "7e53394d7e1ae8290538b1411d361eff32a98a4308a4549d4d63cbd671d0fd4e",
+  "inventory_sha256": "daa5f99d6c6fea49924bdb94032dd2bd4a35a98d969ba8b75c67667e2e851e95",
   "model_sha256": {
     "connectivity.py": "e779cef97cf4e41c37ae299e54828e0cd165b2edba8e17265dfdd7f24a2cfd5f",
     "io_modules.py": "3a2a53f360b6530cf1bb2b6cf073bc6404a4ce759b09867654e41ec1d3b894a4",
     "io_scenarios.py": "f00a48a7367cf67357bbfe4b75df36703af2f54250aec8c1addcdd661ada2e87",
     "location_modules.py": "6884737b40ef837d33746fce97100e4b0d53f64bb46dec3c118c6d9bfa4b96e4",
     "location_scenarios.py": "48b4407ce4e9f26dab4616546ec66ce9b8c16b80fe5a67ca9a3859311b2adf72",
-    "mcu_bus.py": "b32d6845eacf0dbccb25304b51056dadf00e54aaf645f43e548c0e8c8c4646c7",
-    "mcu_scenarios.py": "44c167c4c8af1796b54f3c3465d6627d13aef7458086d4e7bef7963a62de99df",
+    "mcu_bus.py": "d42db7c6271d37fc3861d471675516f552099575811138dfccea21d9d5311f5e",
+    "mcu_scenarios.py": "06d358b46a87d470f064e4b6a3e07fc136659dffa83a58b431d5c8357aba284e",
     "power_bus.py": "1f0d1cc97edd745cfd2182d07e2e62e15e49413016e790560c5a19b76a11b1e5",
     "power_scenarios.py": "085fe2eb08c4ea6f8850086ab92db5bc91422e5807d11a54c9e7263a36877485",
     "radio_modules.py": "bb9d21fa146f672192e3402c0840374030a7e24532732ebd845c3b3e89df4a32",
     "radio_scenarios.py": "d81e5f0177135bf146d3e5c50f0c5cda0dc3c0feec9c1421c374a4abbef69e9f",
-    "refresh_inventory.py": "be421dc35533d3494e258d5c19a60c634b28beeb82e4065acced521a5cc8c7ac",
+    "refresh_inventory.py": "10572bb62f53c07cda9ddaf5e9527006787a99d9852e8375b70bc3d43f82bdc9",
     "run.py": "dcca8cb5cec9e45604e7cc752ca51addb41028446eff9060179ca559f18bc9eb"
   },
   "domains": {
     "power": {
       "exit_code": 0,
-      "elapsed_s": 40.452,
+      "elapsed_s": 40.501,
       "report": {
         "schema_version": 1,
         "status": "EMULATION_PASS",
@@ -1360,11 +1360,11 @@
         "source_sha256": {
           "software/srrx/hardware.py": "13f2a5c1ab1a63d1345f57f9a3ca1f39ffbd3c779be9d4e050c85634974279ee",
           "software/srrx/telemetry.py": "418148d2427cddf48dabb51c05a54071d465e5697b8727116043c1252e6dfa60",
-          "software/srrx/policy.py": "0bd60d9734653f24e49606cf46e70895b0a7c7ab8b580c2667aa41e08011d34b",
+          "software/srrx/policy.py": "bdfef4495c37805e64add44a19c9d7311789f663f62f685d451d063356469d77",
           "software/srrx/runtime_telemetry.py": "d55b8b1192b8a18953993323fd173ca2f1013fcbe97f28d7e8cbe4ea907b24b5",
-          "design/E1.json": "3d216840beed9e5692858718915e100fba00f9b73aeb57248841f1ecbc76aa5a",
-          "design/E2.json": "19b2247f3b32a547ba1478b37f31177b057f85f213b273e2407ac06a05189196",
-          "design/E3.json": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0",
+          "design/E1.json": "a5f312ac5162252adbad513e9fddabc8e7c862f5dbf364c853497c683f67083c",
+          "design/E2.json": "7b41789d38c86a541d1a40bb7ffb348047ba1008a1b9ef75120c4db05084d461",
+          "design/E3.json": "b3bd4067f6f51fe2b5fe28bcc06d386319c239ec0af0392f1c2d4f61a9aa2132",
           "deployment/module_lab/power_bus.py": "1f0d1cc97edd745cfd2182d07e2e62e15e49413016e790560c5a19b76a11b1e5",
           "deployment/module_lab/power_scenarios.py": "085fe2eb08c4ea6f8850086ab92db5bc91422e5807d11a54c9e7263a36877485"
         },
@@ -1379,7 +1379,7 @@
     },
     "mcu": {
       "exit_code": 0,
-      "elapsed_s": 2.872,
+      "elapsed_s": 6.057,
       "report": {
         "cases": [
           {
@@ -1465,6 +1465,34 @@
               "wdt_timeout_ms": 1000
             },
             "modules": [
+              "pico_watchdog_clock"
+            ],
+            "status": "EMULATION_PASS"
+          },
+          {
+            "case": "pico_q6a_power_key_pulse",
+            "details": {
+              "entrypoint": "firmware/pico/main.py run()",
+              "first_pulse_after_first_sample_ms": 1500,
+              "graph": [
+                "U305 GP12",
+                "Q302",
+                "R331",
+                "D303"
+              ],
+              "hung_loop_press_ms": 1880,
+              "hung_loop_release": "WDT",
+              "physical_pulse_and_b11": "UNSUPPORTED",
+              "pmic_power_on": "MODEL_ONLY",
+              "pulse_ms": 900,
+              "pulses_without_q6a": 3,
+              "release_after_q6a_3v3_loops": 0,
+              "retry_gap_ms": 5000,
+              "wdt_reboot_pololu_off_ms": 3000,
+              "wdt_reboot_pulses": 0
+            },
+            "modules": [
+              "pico_gpio_supervisor",
               "pico_watchdog_clock"
             ],
             "status": "EMULATION_PASS"
@@ -1726,7 +1754,8 @@
             "cases": [
               "graph_connections",
               "pico_safe_gpio_and_adc",
-              "pico_power_uart_and_tach"
+              "pico_power_uart_and_tach",
+              "pico_q6a_power_key_pulse"
             ],
             "module": "pico_gpio_supervisor",
             "physical_qualified": false,
@@ -1766,7 +1795,8 @@
             "cases": [
               "graph_connections",
               "pico_watchdog_ticks_uart",
-              "pico_main_watchdog_feed_policy"
+              "pico_main_watchdog_feed_policy",
+              "pico_q6a_power_key_pulse"
             ],
             "module": "pico_watchdog_clock",
             "physical_qualified": false,
@@ -1816,17 +1846,17 @@
           "wdt": "https://docs.micropython.org/en/v1.26.0/library/machine.WDT.html"
         },
         "source_sha256": {
-          "design/E3.json": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0",
-          "design/E5.json": "9d61ff10e75417c806afda7ab923ac06de7faf9b6ff5b53acce57477b3960212",
+          "design/E3.json": "b3bd4067f6f51fe2b5fe28bcc06d386319c239ec0af0392f1c2d4f61a9aa2132",
+          "design/E5.json": "73e901d907a54e8adb05a6750f6f5ee47d9ad22f2b5c4b26575277175e545e79",
           "firmware/imu/device.py": "02a9a2b6e93074716375617137cdfe1bb6df9d22e5021768c59cf273aeafea2e",
           "firmware/imu/session.py": "89b85991719f5261624adc9a3834b3b0af8bf23ce8ca0a881ec725af1c7a5bcb",
           "firmware/imu/shtp.py": "5c737d0fc01166f04a4fdcba6676b00603fcc80997546cf2969b51d0ad2727dc",
-          "firmware/pico/adapter.py": "f405206c2279fcf8cf6b4225f185c9fc93d87fd23ac9a2ebf763b6fb9db2954a",
+          "firmware/pico/adapter.py": "8ebac64c3880e965ae60bb86b329a53f9dae5666ffe9b8c94e394ab905ea6498",
           "firmware/pico/calibration.py": "f530a3e59ee8c7bd3f9b7a143f326f3a3ab69c1bc1bd55f56751b6be7e6198f6",
           "firmware/pico/hmi.py": "ec1d7bc85d18bf9e2d23689d94a7aebc8922cbe2328f4c2f7488c6fc6ad67208",
           "firmware/pico/imu_relay.py": "192f8bc43cc932c036c13cdf70cc4548eb0f56fa3f7af9c940d42aabc6b6d820",
-          "firmware/pico/main.py": "c537d05b9699b6f1e1b4e12ded656e947e8b8b398b47ee45ccd315bd3e051fb0",
-          "firmware/pico/supervisor.py": "b62b0aefad7bbc2afb5647022a786ed473065ebad4a27bc5f8f4854bb39d4746",
+          "firmware/pico/main.py": "e4a727d62038c55d4919196646297823c5d13fd2c7acd9f8ded969579e54f0a2",
+          "firmware/pico/supervisor.py": "1c4b7c4184a56ffb0fddf1718981c252a265d4ddb81cc6a8fe03fe4bcd373b1e",
           "software/srrx/peripherals.py": "a4e2f614aa969ddbfb4c3465ce1927146825c260a818d82cc5431590de1b7e6b",
           "software/srrx/wire.py": "f4ba993cbca9312c4639d3f6e8ddad083f7219017647026cb97b3e52a2f8fe3f"
         },
@@ -1846,7 +1876,7 @@
     },
     "radio": {
       "exit_code": 0,
-      "elapsed_s": 102.808,
+      "elapsed_s": 101.541,
       "report": {
         "schema_version": 1,
         "status": "EMULATION_PASS",
@@ -3135,9 +3165,9 @@
               "fixture_mode": 1,
               "status": "PASS",
               "issues": [],
-              "ready_after_s": 4.246,
-              "budget_margin_s": 5.754,
-              "first_read_returned_after_s": 4.248,
+              "ready_after_s": 3.766,
+              "budget_margin_s": 6.234,
+              "first_read_returned_after_s": 3.768,
               "first_read_bound_s": 12.0,
               "first_read_within_bound": true,
               "capture_worker_startup_s": null,
@@ -3151,11 +3181,11 @@
               "native_read_entered": true,
               "exception_type": "OSError",
               "exception": "RTL read failed (-71)",
-              "elapsed_s": 4.749,
-              "close_duration_s": 0.28,
+              "elapsed_s": 4.109,
+              "close_duration_s": 0.245,
               "worker_exitcode": 0,
               "worker_alive_after_close": false,
-              "actual_read_observer_checks": 81,
+              "actual_read_observer_checks": 72,
               "production_capture_cleanup_exercised": true,
               "clean_error_boundary": true,
               "branch_off_request_observed": true,
@@ -3174,9 +3204,9 @@
               "fixture_mode": 2,
               "status": "PASS",
               "issues": [],
-              "ready_after_s": 3.577,
-              "budget_margin_s": 6.423,
-              "first_read_returned_after_s": 4.605,
+              "ready_after_s": 3.597,
+              "budget_margin_s": 6.403,
+              "first_read_returned_after_s": 4.627,
               "first_read_bound_s": 12.0,
               "first_read_within_bound": true,
               "capture_worker_startup_s": null,
@@ -3190,8 +3220,8 @@
               "native_read_entered": true,
               "exception_type": "TimeoutError",
               "exception": "No fresh RX block within one second",
-              "elapsed_s": 5.645,
-              "close_duration_s": 1.028,
+              "elapsed_s": 5.682,
+              "close_duration_s": 1.037,
               "worker_exitcode": -9,
               "worker_alive_after_close": false,
               "actual_read_observer_checks": 90,
@@ -3213,9 +3243,9 @@
               "fixture_mode": 3,
               "status": "PASS",
               "issues": [],
-              "ready_after_s": 3.81,
-              "budget_margin_s": 6.19,
-              "first_read_returned_after_s": 3.831,
+              "ready_after_s": 3.486,
+              "budget_margin_s": 6.514,
+              "first_read_returned_after_s": 3.508,
               "first_read_bound_s": 12.0,
               "first_read_within_bound": true,
               "capture_worker_startup_s": null,
@@ -3229,11 +3259,11 @@
               "native_read_entered": true,
               "exception_type": "OSError",
               "exception": "RX worker pipe closed before a complete block",
-              "elapsed_s": 3.844,
+              "elapsed_s": 3.521,
               "close_duration_s": 0.001,
               "worker_exitcode": -11,
               "worker_alive_after_close": false,
-              "actual_read_observer_checks": 75,
+              "actual_read_observer_checks": 69,
               "production_capture_cleanup_exercised": true,
               "clean_error_boundary": true,
               "branch_off_request_observed": true,
@@ -3252,9 +3282,9 @@
               "fixture_mode": 4,
               "status": "PASS",
               "issues": [],
-              "ready_after_s": 3.699,
-              "budget_margin_s": 6.301,
-              "first_read_returned_after_s": 3.7,
+              "ready_after_s": 3.501,
+              "budget_margin_s": 6.499,
+              "first_read_returned_after_s": 3.504,
               "first_read_bound_s": 12.0,
               "first_read_within_bound": true,
               "capture_worker_startup_s": null,
@@ -3268,11 +3298,11 @@
               "native_read_entered": true,
               "exception_type": "OSError",
               "exception": "Invalid/empty RTL IQ block",
-              "elapsed_s": 3.953,
-              "close_duration_s": 0.238,
+              "elapsed_s": 3.771,
+              "close_duration_s": 0.254,
               "worker_exitcode": 0,
               "worker_alive_after_close": false,
-              "actual_read_observer_checks": 73,
+              "actual_read_observer_checks": 69,
               "production_capture_cleanup_exercised": true,
               "clean_error_boundary": true,
               "branch_off_request_observed": true,
@@ -3291,9 +3321,9 @@
               "fixture_mode": 5,
               "status": "PASS",
               "issues": [],
-              "ready_after_s": 3.607,
-              "budget_margin_s": 6.393,
-              "first_read_returned_after_s": 3.628,
+              "ready_after_s": 3.573,
+              "budget_margin_s": 6.427,
+              "first_read_returned_after_s": 3.592,
               "first_read_bound_s": 12.0,
               "first_read_within_bound": true,
               "capture_worker_startup_s": null,
@@ -3307,8 +3337,8 @@
               "native_read_entered": true,
               "exception_type": null,
               "exception": null,
-              "elapsed_s": 3.9,
-              "close_duration_s": 0.263,
+              "elapsed_s": 3.857,
+              "close_duration_s": 0.258,
               "worker_exitcode": 0,
               "worker_alive_after_close": false,
               "actual_read_observer_checks": 71,
@@ -3330,12 +3360,12 @@
               "fixture_mode": 5,
               "status": "PASS",
               "issues": [],
-              "ready_after_s": 4.336,
-              "budget_margin_s": 5.664,
-              "first_read_returned_after_s": 4.349,
+              "ready_after_s": 4.272,
+              "budget_margin_s": 5.728,
+              "first_read_returned_after_s": 4.285,
               "first_read_bound_s": 12.0,
               "first_read_within_bound": true,
-              "capture_worker_startup_s": 4.336,
+              "capture_worker_startup_s": 4.272,
               "page_cache_dropped": true,
               "trusted_library_uids": [
                 0
@@ -3346,11 +3376,11 @@
               "native_read_entered": true,
               "exception_type": null,
               "exception": null,
-              "elapsed_s": 4.667,
-              "close_duration_s": 0.286,
+              "elapsed_s": 4.567,
+              "close_duration_s": 0.255,
               "worker_exitcode": 0,
               "worker_alive_after_close": false,
-              "actual_read_observer_checks": 85,
+              "actual_read_observer_checks": 84,
               "production_capture_cleanup_exercised": true,
               "clean_error_boundary": true,
               "branch_off_request_observed": true,
@@ -3369,12 +3399,12 @@
               "fixture_mode": 5,
               "status": "PASS",
               "issues": [],
-              "ready_after_s": 4.651,
-              "budget_margin_s": 5.349,
-              "first_read_returned_after_s": 4.663,
+              "ready_after_s": 3.509,
+              "budget_margin_s": 6.491,
+              "first_read_returned_after_s": 3.522,
               "first_read_bound_s": 12.0,
               "first_read_within_bound": true,
-              "capture_worker_startup_s": 4.651,
+              "capture_worker_startup_s": 3.509,
               "page_cache_dropped": null,
               "trusted_library_uids": [
                 0
@@ -3385,11 +3415,11 @@
               "native_read_entered": true,
               "exception_type": null,
               "exception": null,
-              "elapsed_s": 4.934,
-              "close_duration_s": 0.256,
+              "elapsed_s": 3.79,
+              "close_duration_s": 0.251,
               "worker_exitcode": 0,
               "worker_alive_after_close": false,
-              "actual_read_observer_checks": 91,
+              "actual_read_observer_checks": 69,
               "production_capture_cleanup_exercised": true,
               "clean_error_boundary": true,
               "branch_off_request_observed": true,
@@ -3408,12 +3438,12 @@
               "fixture_mode": 5,
               "status": "PASS",
               "issues": [],
-              "ready_after_s": 3.609,
-              "budget_margin_s": 6.391,
-              "first_read_returned_after_s": 3.645,
+              "ready_after_s": 3.427,
+              "budget_margin_s": 6.573,
+              "first_read_returned_after_s": 3.44,
               "first_read_bound_s": 12.0,
               "first_read_within_bound": true,
-              "capture_worker_startup_s": 3.609,
+              "capture_worker_startup_s": 3.427,
               "page_cache_dropped": null,
               "trusted_library_uids": [
                 0
@@ -3424,11 +3454,11 @@
               "native_read_entered": true,
               "exception_type": null,
               "exception": null,
-              "elapsed_s": 3.94,
-              "close_duration_s": 0.282,
+              "elapsed_s": 3.7,
+              "close_duration_s": 0.247,
               "worker_exitcode": 0,
               "worker_alive_after_close": false,
-              "actual_read_observer_checks": 71,
+              "actual_read_observer_checks": 68,
               "production_capture_cleanup_exercised": true,
               "clean_error_boundary": true,
               "branch_off_request_observed": true,
@@ -3449,7 +3479,7 @@
               "issues": [],
               "ready_after_s": null,
               "budget_margin_s": null,
-              "first_read_returned_after_s": 10.034,
+              "first_read_returned_after_s": 10.011,
               "first_read_bound_s": 12.0,
               "first_read_within_bound": true,
               "capture_worker_startup_s": null,
@@ -3463,7 +3493,7 @@
               "native_read_entered": false,
               "exception_type": "TimeoutError",
               "exception": "RX worker did not open the receiver within 10 s",
-              "elapsed_s": 10.571,
+              "elapsed_s": 10.546,
               "close_duration_s": 0.525,
               "worker_exitcode": -15,
               "worker_alive_after_close": false,
@@ -3488,7 +3518,7 @@
               "issues": [],
               "ready_after_s": null,
               "budget_margin_s": null,
-              "first_read_returned_after_s": 3.561,
+              "first_read_returned_after_s": 3.636,
               "first_read_bound_s": 12.0,
               "first_read_within_bound": true,
               "capture_worker_startup_s": null,
@@ -3500,11 +3530,11 @@
               "native_read_entered": false,
               "exception_type": "OSError",
               "exception": "Driver library must be a regular file of a trusted UID, without group/world write or setuid/setgid",
-              "elapsed_s": 3.833,
-              "close_duration_s": 0.261,
+              "elapsed_s": 3.924,
+              "close_duration_s": 0.279,
               "worker_exitcode": 0,
               "worker_alive_after_close": false,
-              "actual_read_observer_checks": 69,
+              "actual_read_observer_checks": 71,
               "production_capture_cleanup_exercised": true,
               "clean_error_boundary": true,
               "branch_off_request_observed": true,
@@ -3523,7 +3553,7 @@
               "issues": [],
               "ready_after_s": null,
               "budget_margin_s": null,
-              "first_read_returned_after_s": 3.614,
+              "first_read_returned_after_s": 3.577,
               "first_read_bound_s": 12.0,
               "first_read_within_bound": true,
               "capture_worker_startup_s": null,
@@ -3537,11 +3567,11 @@
               "native_read_entered": false,
               "exception_type": "OSError",
               "exception": "Driver library must be a regular file of a trusted UID, without group/world write or setuid/setgid",
-              "elapsed_s": 3.904,
-              "close_duration_s": 0.279,
+              "elapsed_s": 3.831,
+              "close_duration_s": 0.243,
               "worker_exitcode": 0,
               "worker_alive_after_close": false,
-              "actual_read_observer_checks": 71,
+              "actual_read_observer_checks": 70,
               "production_capture_cleanup_exercised": true,
               "clean_error_boundary": true,
               "branch_off_request_observed": true,
@@ -3564,9 +3594,9 @@
           "acceptance_created": false,
           "production_mode_used": "SIMULATION",
           "production_sources_sha256": {
-            "software/srrx/policy.py": "0bd60d9734653f24e49606cf46e70895b0a7c7ab8b580c2667aa41e08011d34b",
+            "software/srrx/policy.py": "bdfef4495c37805e64add44a19c9d7311789f663f62f685d451d063356469d77",
             "software/srrx/hardware.py": "13f2a5c1ab1a63d1345f57f9a3ca1f39ffbd3c779be9d4e050c85634974279ee",
-            "deployment/deploy.py": "08458c6b5e5a06fcdd0b75392166f3f0600a18bc7369d0e5e52e2584ec8e584d",
+            "deployment/deploy.py": "d19df2932290134df4d779cda200f540c2a2874e2d55c6f4bb33b8ed9addd076",
             "deployment/vendor_patch.py": "449375110754ca75e0dba8336c6b611ee0a87de1f5fd509ccd65b47d289121be",
             "deployment/patches/limesuiteng-rx-only.patch": "e6e3f7abd3dd3cff21c0d7baa98e92f812bd88068a984298a7bebcf5517bc033"
           },
@@ -3581,7 +3611,7 @@
         },
         "production_sources_sha256": {
           "software/srrx/receivers.py": "83cb4e4fbf7d43e47eff0b01b47db1a1c30c72d0295a648626c2d5211ca6ac39",
-          "software/srrx/labrx.py": "64b11785da22b2451778a48e011e8dba66177e96e66cb19335b3a87c394ace69"
+          "software/srrx/labrx.py": "28678af2545d03a1fcda8288988231496ca05ff176d6666a14b1858873c8a9bf"
         },
         "physical_verified": false,
         "raw_iq_persisted": false,
@@ -3596,9 +3626,9 @@
     },
     "location": {
       "exit_code": 0,
-      "elapsed_s": 4.799,
+      "elapsed_s": 4.705,
       "report": {
-        "elapsed_s": 3.212,
+        "elapsed_s": 3.166,
         "modules": [
           {
             "description": "Waveshare LC76G GNSS24370 NMEA output over Linux PTY into the production read-only UART reader",
@@ -3608,7 +3638,7 @@
             ],
             "scenarios": [
               {
-                "elapsed_s": 0.206,
+                "elapsed_s": 0.189,
                 "observed": {
                   "fragment_size_bytes": 1,
                   "gnss_utc_qualified": false,
@@ -3623,7 +3653,7 @@
                 "status": "EMULATION_PASS"
               },
               {
-                "elapsed_s": 0.269,
+                "elapsed_s": 0.256,
                 "observed": {
                   "checksum_rejected": true,
                   "invalid_fix_rejected": true,
@@ -3634,18 +3664,18 @@
                 "status": "EMULATION_PASS"
               },
               {
-                "elapsed_s": 0.357,
+                "elapsed_s": 0.356,
                 "observed": {
                   "fallback_current_accuracy": "unknown",
                   "freshness_ms": 180,
-                  "observed_stale_age_ms": 324,
+                  "observed_stale_age_ms": 323,
                   "replay_does_not_refresh_receipt_time": true
                 },
                 "scenario": "nmea_replayed_epoch_and_stale",
                 "status": "EMULATION_PASS"
               },
               {
-                "elapsed_s": 0.124,
+                "elapsed_s": 0.125,
                 "observed": {
                   "automatic_reopen": false,
                   "disconnect_detection_owner": "production_gnss_uart_NmeaUartReader_pollhup",
@@ -3657,7 +3687,7 @@
                 "status": "EMULATION_PASS"
               },
               {
-                "elapsed_s": 0.47,
+                "elapsed_s": 0.433,
                 "observed": {
                   "duplicate_not_distinct": true,
                   "real_gnss_utc_qualified": false,
@@ -3691,7 +3721,7 @@
             ],
             "scenarios": [
               {
-                "elapsed_s": 0.844,
+                "elapsed_s": 0.86,
                 "observed": {
                   "connections": 2,
                   "fragmented_tpv_bytes": true,
@@ -3705,7 +3735,7 @@
                 "status": "EMULATION_PASS"
               },
               {
-                "elapsed_s": 0.403,
+                "elapsed_s": 0.407,
                 "observed": {
                   "duplicate_json_keys_rejected": true,
                   "freshness_ms": 180,
@@ -3716,7 +3746,7 @@
                 "status": "EMULATION_PASS"
               },
               {
-                "elapsed_s": 0.432,
+                "elapsed_s": 0.434,
                 "observed": {
                   "duplicate_epoch_not_distinct": true,
                   "real_gnss_utc_qualified": false,
@@ -3767,7 +3797,7 @@
         "source_sha256": {
           "deployment/module_lab/location_modules.py": "6884737b40ef837d33746fce97100e4b0d53f64bb46dec3c118c6d9bfa4b96e4",
           "deployment/module_lab/location_scenarios.py": "48b4407ce4e9f26dab4616546ec66ce9b8c16b80fe5a67ca9a3859311b2adf72",
-          "design/E3.json": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0",
+          "design/E3.json": "b3bd4067f6f51fe2b5fe28bcc06d386319c239ec0af0392f1c2d4f61a9aa2132",
           "software/srrx/gnss_uart.py": "b54d7fd8bce48c9a6e0846b4f532b676206855f29bc26d73442f2e4bc4727e38",
           "software/srrx/location.py": "f76fc0ad81f017596f569df502b7d6839028f31be77d37abe018b1d719b25dfb"
         },
@@ -3778,7 +3808,7 @@
     },
     "io": {
       "exit_code": 0,
-      "elapsed_s": 18.985,
+      "elapsed_s": 19.122,
       "report": {
         "suite": "io_modules",
         "status": "EMULATION_PASS_WITH_UNSUPPORTED",
@@ -4099,7 +4129,7 @@
                 "raw_status_before_controller_poll": true,
                 "cold_start_timeout_s": 20.0,
                 "ordinary_timeout_s": 5.0,
-                "elapsed_s": 1.193821,
+                "elapsed_s": 1.118782,
                 "mode": "SIMULATION",
                 "production_deadlines_changed": false
               },
@@ -4132,7 +4162,7 @@
               "disabled_tap_issues_no_control": true,
               "reconnect_auto_arm": false,
               "lease_created": false,
-              "worker_connected_snapshots": 10
+              "worker_connected_snapshots": 11
             },
             "limitation": "The fault is the controller transport, not a USB/HDMI removal signal. Production USB display-departure detection is absent."
           },
@@ -4237,16 +4267,16 @@
         "source_sha256": {
           "deployment/module_lab/io_modules.py": "3a2a53f360b6530cf1bb2b6cf073bc6404a4ce759b09867654e41ec1d3b894a4",
           "deployment/module_lab/io_scenarios.py": "f00a48a7367cf67357bbfe4b75df36703af2f54250aec8c1addcdd661ada2e87",
-          "software/srrx/hmi.py": "e764c84aa66251e338dc4421a6f8e2a6ca5dfa982f2fb26e1f7e6d50ad546e39",
-          "software/srrx/labrx.py": "64b11785da22b2451778a48e011e8dba66177e96e66cb19335b3a87c394ace69",
+          "software/srrx/hmi.py": "7a68ffd0eeea8d4051be291c72661c9e593c0feafc83b711756705f640101392",
+          "software/srrx/labrx.py": "28678af2545d03a1fcda8288988231496ca05ff176d6666a14b1858873c8a9bf",
           "software/srrx/spectrum.py": "95700d52cc9484b9facb337cbbf272deab5f12c594c9662e9a2e7da49297b522",
-          "software/srrx/storage.py": "775fdd716796c15f6fd1b7f9e9105c408bd67c33f45129e4996a6cdaab5ebcd8"
+          "software/srrx/storage.py": "839627c7a9588e4a741d26d281b716d9defe1c68504ca3844efc48406d08da61"
         }
       }
     },
     "connectivity": {
       "exit_code": 0,
-      "elapsed_s": 37.164,
+      "elapsed_s": 34.459,
       "report": {
         "schema_version": 1,
         "status": "CONNECTION_MODEL_PASS",
@@ -4279,7 +4309,7 @@
         },
         "independent_netlist": {
           "tool": "Eeschema 10.0.7",
-          "sha256": "2fbb74498e079e328ec2a1f243522e68668a87e1905d59fa2d4711cc060a3df1",
+          "sha256": "c23ea8194f489a89509642f2889fe73ecaaad4254662e82b93359105c370bad8",
           "xml_pin_nodes": 2393,
           "canonical_nets": 478,
           "nc_nodes": 140,
@@ -125647,13 +125677,13 @@
           }
         ],
         "source_sha256": {
-          "design/E1.json": "3d216840beed9e5692858718915e100fba00f9b73aeb57248841f1ecbc76aa5a",
-          "design/E2.json": "19b2247f3b32a547ba1478b37f31177b057f85f213b273e2407ac06a05189196",
-          "design/E3.json": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0",
-          "design/E4.json": "a3122809dacd86b312516df5b53f932bd0ab95b48122e5cf08351610f538e56b",
-          "design/E5.json": "9d61ff10e75417c806afda7ab923ac06de7faf9b6ff5b53acce57477b3960212",
-          "deployment/module_lab/inventory.json": "7e53394d7e1ae8290538b1411d361eff32a98a4308a4549d4d63cbd671d0fd4e",
-          "verification/netlist.xml": "2fbb74498e079e328ec2a1f243522e68668a87e1905d59fa2d4711cc060a3df1",
+          "design/E1.json": "a5f312ac5162252adbad513e9fddabc8e7c862f5dbf364c853497c683f67083c",
+          "design/E2.json": "7b41789d38c86a541d1a40bb7ffb348047ba1008a1b9ef75120c4db05084d461",
+          "design/E3.json": "b3bd4067f6f51fe2b5fe28bcc06d386319c239ec0af0392f1c2d4f61a9aa2132",
+          "design/E4.json": "a8c0ab0e6d9bbf4cbd1eb08175a34ec11fc8351b88a900570361a3f916f4142f",
+          "design/E5.json": "73e901d907a54e8adb05a6750f6f5ee47d9ad22f2b5c4b26575277175e545e79",
+          "deployment/module_lab/inventory.json": "daa5f99d6c6fea49924bdb94032dd2bd4a35a98d969ba8b75c67667e2e851e95",
+          "verification/netlist.xml": "c23ea8194f489a89509642f2889fe73ecaaad4254662e82b93359105c370bad8",
           "deployment/module_lab/connectivity.py": "e779cef97cf4e41c37ae299e54828e0cd165b2edba8e17265dfdd7f24a2cfd5f"
         },
         "limits": [
@@ -125670,11 +125700,11 @@
   },
   "coverage": {
     "graph_sha256": {
-      "design/E1.json": "3d216840beed9e5692858718915e100fba00f9b73aeb57248841f1ecbc76aa5a",
-      "design/E2.json": "19b2247f3b32a547ba1478b37f31177b057f85f213b273e2407ac06a05189196",
-      "design/E3.json": "0350302b154e1e8fcd1b7dd4a6788e7199324e2e0ab298c6a975c74206ff42b0",
-      "design/E4.json": "a3122809dacd86b312516df5b53f932bd0ab95b48122e5cf08351610f538e56b",
-      "design/E5.json": "9d61ff10e75417c806afda7ab923ac06de7faf9b6ff5b53acce57477b3960212"
+      "design/E1.json": "a5f312ac5162252adbad513e9fddabc8e7c862f5dbf364c853497c683f67083c",
+      "design/E2.json": "7b41789d38c86a541d1a40bb7ffb348047ba1008a1b9ef75120c4db05084d461",
+      "design/E3.json": "b3bd4067f6f51fe2b5fe28bcc06d386319c239ec0af0392f1c2d4f61a9aa2132",
+      "design/E4.json": "a8c0ab0e6d9bbf4cbd1eb08175a34ec11fc8351b88a900570361a3f916f4142f",
+      "design/E5.json": "73e901d907a54e8adb05a6750f6f5ee47d9ad22f2b5c4b26575277175e545e79"
     },
     "component_count": 777,
     "assembly_count": 64,
@@ -132789,7 +132819,7 @@
             "coverage_level": "firmware_module_model",
             "physical_verified": false,
             "pinout": null,
-            "scenario_count": 3,
+            "scenario_count": 4,
             "limitations": [
               "instruction-level RP2040/MicroPython execution",
               "UF2/USB boot/flash",
@@ -132835,7 +132865,7 @@
             "coverage_level": "firmware_module_model",
             "physical_verified": false,
             "pinout": null,
-            "scenario_count": 3,
+            "scenario_count": 4,
             "limitations": [
               "instruction-level RP2040/MicroPython execution",
               "UF2/USB boot/flash",
@@ -141854,7 +141884,7 @@
         "pinout_gate": "project serviceharness assignment; physical qualification required",
         "source_description": "",
         "source_notes": [
-          "PROJECT harness pin assignment matches original J21:1/2/3. Power/GND20AWG twisted pair, KEY26–28AWG; insulation and strain relief. No power source from service PC."
+          "PROJECT harness pin assignment matches original J21:1/2/3. Power/GND20AWG twisted pair, KEY 24 AWG (Micro-Fit 43030 terminals take 20–24 AWG; build/15); insulation and strain relief. No power source from service PC."
         ],
         "status": "CONNECTION_MODEL_ONLY",
         "models": [
@@ -145385,7 +145415,7 @@
         "coverage_level": "firmware_module_model",
         "physical_verified": false,
         "pinout": null,
-        "scenario_count": 3,
+        "scenario_count": 4,
         "limitations": [
           "instruction-level RP2040/MicroPython execution",
           "UF2/USB boot/flash",
@@ -145431,7 +145461,7 @@
         "coverage_level": "firmware_module_model",
         "physical_verified": false,
         "pinout": null,
-        "scenario_count": 3,
+        "scenario_count": 4,
         "limitations": [
           "instruction-level RP2040/MicroPython execution",
           "UF2/USB boot/flash",

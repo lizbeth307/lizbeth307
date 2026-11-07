@@ -38,10 +38,17 @@ class _Hang(BaseException):
 
 
 class Board:
-    """Q6A powered, no calibration records, empty HMI bus, ADC at 25 C NTC."""
-    def __init__(self, loops=14, records=None):
+    """Q6A powered, no calibration records, empty HMI bus, ADC at 25 C NTC.
+
+    q6a=0 boots with Q6A 3V3 absent; q6a_after_key_ms then raises GP14 that
+    long after GP12 asserts PWR_ON_KEY (a PMIC stand-in, not a measurement).
+    reset_cause is what machine.reset_cause() reports (rp2: 1 PWRON, 3 WDT).
+    """
+    def __init__(self, loops=14, records=None, q6a=1, q6a_after_key_ms=None, reset_cause=1):
         self.records = records or {}  # File name -> JSON object in run()'s working folder.
-        self.levels = {14: 1, 11: 1, 22: 1, 10: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1}
+        self.levels = {14: q6a, 11: 1, 22: 1, 10: 1, 2: 1, 3: 1, 4: 1, 5: 1, 6: 1, 7: 1}
+        self.q6a_after_key_ms, self.key = q6a_after_key_ms, []  # (ms, GP12, GP14) per GP12 change.
+        self.off = []  # (ms, GP13) per Pololu OFF change.
         self.log, self.writes, self.uarts, self.display = [], [], {}, []
         self.now, self.loops, self.injected, self.model = 0, loops, False, None
         # Every sleep and tick read counts: an early firmware exception or a
@@ -63,6 +70,10 @@ class Board:
 
             def value(self, value=None):
                 if value is not None:
+                    if self.gpio == 12 and value != board.levels.get(12, 0):
+                        board.key.append((board.now, value, board.levels[14]))
+                    if self.gpio == 13 and value != board.levels.get(13, 0):
+                        board.off.append((board.now, value))
                     board.levels[self.gpio] = value
                     board.writes.append((self.gpio, value))
                     if self.gpio == 16:  # DISP12 eFuse: model state at each write.
@@ -126,7 +137,8 @@ class Board:
         self.machine = types.SimpleNamespace(
             Pin=Pin, UART=UART, ADC=ADC, SoftI2C=SoftI2C, WDT=WDT,
             freq=lambda value: None, unique_id=lambda: bytes(range(8)),
-            disable_irq=lambda: 0, enable_irq=lambda mask: None)
+            disable_irq=lambda: 0, enable_irq=lambda mask: None,
+            PWRON_RESET=1, WDT_RESET=3, reset_cause=lambda: reset_cause)
         self.time = types.SimpleNamespace(ticks_ms=self.ticks_ms,
                                           ticks_diff=lambda new, old: new - old,
                                           sleep_us=lambda value: None, sleep_ms=self.sleep_ms)
@@ -147,6 +159,9 @@ class Board:
 
     def sleep_ms(self, value):
         self.now += value
+        if (self.q6a_after_key_ms is not None and self.levels.get(12) and self.key
+                and self.now - self.key[-1][0] >= self.q6a_after_key_ms):
+            self.levels[14] = 1  # The PMIC answered the press: 3V3 on the 40-pin header.
         if self.loops <= 0:
             raise _Stop()  # fail_safe() idle loop after the budgeted stop below.
         if value != 20:
@@ -154,7 +169,8 @@ class Board:
             # loop after an exception, which the traceback keeps as context.
             raise _Hang("sleep_ms(%d) with %d loops left" % (value, self.loops))
         self.loops -= 1
-        hello = [frame for frame in self.frames() if frame["t"] == "HELLO"]
+        # Decode the growing TX log only until the one TRIP is injected.
+        hello = [] if self.injected else [frame for frame in self.frames() if frame["t"] == "HELLO"]
         if hello and not self.injected:
             # Host TRIP in the current Pico session: forces a supervisor TRIP event.
             self.uarts[0].rx.extend(encode_frame({"v": 1, "t": "TRIP", "s": hello[-1]["s"],
@@ -256,6 +272,45 @@ class MainLoopTests(unittest.TestCase):
         self.assertIsInstance(caught.exception.__context__, AttributeError)
         self.assertEqual(board.loops, 14)
         self.assertEqual(board.display[-1][1], 0)  # fail_safe() still drops DISP12.
+
+
+class PowerKeyLoopTests(unittest.TestCase):
+    """GP12 PWR_ON_KEY from the deployed loop, Q6A 3V3 absent at Pico boot (B11)."""
+    def test_one_pulse_released_in_the_loop_that_sees_q6a_power(self):
+        board = Board(loops=500, q6a=0, q6a_after_key_ms=300)
+        with self.assertRaises(_Stop):
+            board.run()
+        self.assertEqual(board.key, [(1500, 1, 0), (1800, 0, 1)])  # No second press with 3V3 up.
+        self.assertEqual(board.model.status()["q6a_key_pulses"], 1)
+        status = [frame["p"] for frame in board.frames() if frame["t"] == "STATUS"]
+        self.assertTrue(status and status[0]["q6a_key_pulses"] == 1)  # labd sees the assist.
+
+    def test_dead_q6a_gets_three_bounded_pulses_and_a_released_line(self):
+        board = Board(loops=1000, q6a=0)
+        with self.assertRaises(_Stop):
+            board.run()
+        self.assertEqual(board.key, [(1500, 1, 0), (2400, 0, 0), (7400, 1, 0), (8300, 0, 0),
+                                     (13300, 1, 0), (14200, 0, 0)])
+        self.assertEqual(board.levels[12], 0)
+        self.assertNotIn((17, 0), board.writes)  # MCP reset stays asserted throughout.
+
+    def test_watchdog_reboot_never_presses_and_finishes_the_poweroff(self):
+        # A WDT reboot can land in the 3 s Q6A_OFF window of a poweroff: GP12
+        # never rises, and the absent 3V3 still opens #2813 with one GP13 pulse.
+        board = Board(loops=500, q6a=0, q6a_after_key_ms=300, reset_cause=3)
+        with self.assertRaises(_Stop):
+            board.run()
+        self.assertEqual(board.key, [])
+        self.assertEqual(board.off, [(3000, 1), (3260, 0)])  # 250 ms OFF_PULSE_MS, 20 ms loop.
+        self.assertEqual((board.model.state, board.model.fault), ("OFF", "Q6A_POWER_OFF"))
+        self.assertEqual(board.model.status()["q6a_key_pulses"], 0)
+
+    def test_power_on_reset_alone_arms_the_assist(self):
+        for cause, key in ((1, [(1500, 1, 0)]), (3, []), (None, [])):  # None: any other cause.
+            board = Board(loops=90, q6a=0, reset_cause=cause)
+            with self.assertRaises(_Stop):
+                board.run()
+            self.assertEqual(board.key[:1], key, cause)  # fail_safe() then releases GP12.
 
 
 class Bus:

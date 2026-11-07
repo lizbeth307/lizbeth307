@@ -178,7 +178,7 @@
 <rect x="20" y="985" width="400" height="55" rx="4" ry="4" fill="#fff6e0" stroke="#333" stroke-width="1.2"/>
 <text x="26" y="1003" font-size="12" font-weight="bold" text-anchor="start" fill="#111">J21 3-pin з фіксацією (біля лючка)</text>
 <text x="26" y="1018" font-size="12" font-weight="normal" text-anchor="start" fill="#111">12 V + GND: кручена пара 20 AWG;</text>
-<text x="26" y="1033" font-size="12" font-weight="normal" text-anchor="start" fill="#111">PWR_ON_KEY (пін 3): 26-28 AWG до АБО GP12/BAT54</text>
+<text x="26" y="1033" font-size="12" font-weight="normal" text-anchor="start" fill="#111">PWR_ON_KEY (пін 3): 24 AWG до АБО GP12/BAT54 (v2.1)</text>
 <path d="M170,1045 h31 l10,11 l-10,11 h-31 z" fill="#ffffff" stroke="#b00020" stroke-width="1.4"/>
 <text x="176" y="1060" font-size="12" font-weight="bold" text-anchor="start" fill="#b00020">J21</text>
 <text x="230" y="1060" font-size="12" font-weight="normal" text-anchor="start" fill="#111">11.5-12.5 V; 2.5 A пік</text>

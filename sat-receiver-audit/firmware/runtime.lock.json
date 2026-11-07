@@ -1,0 +1,59 @@
+{
+  "schema_version": 1,
+  "kind": "srrx_mcu_runtime_lock",
+  "decision": "build/15-rishennia-komplektu.md, «Мікроконтролери»: standard MicroPython UF2 plus a copy of the reviewed files; every UF2 pinned by SHA-256. Flashing is a bench step; nothing here records a device as flashed.",
+  "verified_on": "2026-10-24",
+  "uf2_family_rp2040": "0xe48bff56",
+  "boards": {
+    "pico": {
+      "board": "Raspberry Pi Pico SC0915 (RP2040, non-wireless)",
+      "micropython": "1.26.0",
+      "uname_machine": "Raspberry Pi Pico with RP2040",
+      "uf2": {
+        "file": "RPI_PICO-20250809-v1.26.0.uf2",
+        "url": "https://micropython.org/resources/firmware/RPI_PICO-20250809-v1.26.0.uf2",
+        "download_page": "https://micropython.org/download/RPI_PICO/",
+        "size": 668672,
+        "sha256": "3fb807524074c75694bd4b13a587dc8673e0815d393a5bdfc250c7cd561b34df",
+        "blocks": 1306
+      },
+      "package": "firmware/dist/pico-micropython-files.zip",
+      "copy_order": ["boot.py", "supervisor.py", "calibration.py", "adapter.py", "imu_relay.py", "hmi.py", "wire.py", "main.py"],
+      "not_copied": [],
+      "records": ["calibration.json", "commissioning.json"]
+    },
+    "imu": {
+      "board": "Waveshare RP2040-Zero",
+      "micropython": "1.28.0",
+      "uname_machine": "Waveshare RP2040-Zero with RP2040",
+      "uf2": {
+        "file": "WAVESHARE_RP2040_ZERO-20260406-v1.28.0.uf2",
+        "url": "https://micropython.org/resources/firmware/WAVESHARE_RP2040_ZERO-20260406-v1.28.0.uf2",
+        "download_page": "https://micropython.org/download/WAVESHARE_RP2040_ZERO/",
+        "size": 672256,
+        "sha256": "0a982393ab4cbc740bc874e4bb4887841bce95441a44336b107b6ffb891ad5f5",
+        "blocks": 1313
+      },
+      "why_this_build": "micropython.org has a WAVESHARE_RP2040_ZERO board build only from v1.28.0 (the earliest listed); its board definition sets the Zero's own flash clock divider (pico-sdk waveshare_rp2040_zero.h PICO_FLASH_SPI_CLKDIV 4, RPI_PICO uses 2) and Waveshare's wiki asks for board firmware on its RP boards. The IMU firmware API target moves from 1.26.0 to 1.28.0; the board run on the bench (firmware/imu/README.md) is the check.",
+      "package": "firmware/dist/imu-micropython-files.zip",
+      "copy_order": ["shtp.py", "session.py", "device.py", "wire.py", "main.py"],
+      "not_copied": ["__init__.py"],
+      "records": []
+    }
+  },
+  "flash_erase": {
+    "purpose": "clean flash before a re-install: the Pico's main.py runs a 1000 ms hardware WDT that a REPL session cannot stop, so files are never edited over a running supervisor",
+    "file": "nuke_universal.uf2",
+    "url": "https://github.com/raspberrypi/pico-sdk-prebuilts/releases/download/v2.3.1-0/nuke_universal.uf2",
+    "redirected_from": "https://datasheets.raspberrypi.com/soft/flash_nuke.uf2",
+    "release": "raspberrypi/pico-sdk-prebuilts v2.3.1-0 (2026-09-06), release-API digest equals the bytes",
+    "size": 114688,
+    "sha256": "f3c3b6a62d2d7e944f336bc2ec73393f00adfbb56b6fa7440ba7ee3d5ad5b49d",
+    "blocks": 224
+  },
+  "mpremote": {
+    "version": "1.26.0",
+    "requirements": "firmware/mpremote-requirements.txt",
+    "install": "python3 -m venv --copies /opt/srrx/mcu-venv && /opt/srrx/mcu-venv/bin/python3 -m pip install --no-index --find-links=<wheel dir> --require-hashes -r firmware/mpremote-requirements.txt"
+  }
+}

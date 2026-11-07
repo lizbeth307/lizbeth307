@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "status": "CANDIDATE",
+  "description": "Ordered image recipe of deployment/image/build_image.py: Radxa OS r2 _4096 + the deploy.py controller bundle -> A/B UFS image file. Every list cites its source; build_image.py records what it applied and what was absent in image-manifest.json.",
+  "base_artifact": "radxa-os-r2-ufs4096",
+  "kernel_artifacts": [
+    "linux-image-6.18.2-4-qcom",
+    "linux-headers-6.18.2-4-qcom",
+    "linux-image-radxa-dragon-q6a",
+    "linux-headers-radxa-dragon-q6a",
+    "linux-libc-dev-radxa-dragon-q6a"
+  ],
+  "kernel_debs_install": {
+    "source": "build/07-pz-vstanovlennia.md:68-69 (dpkg -i of the image/headers debs and their two metapackages before any apt run); linux-libc-dev-radxa-dragon-q6a stays in the cache only: it depends on linux-libc-dev-6.18.2-4-qcom, which the lock does not carry (CI image build 2026-10-24)",
+    "artifacts": ["linux-image-6.18.2-4-qcom", "linux-headers-6.18.2-4-qcom", "linux-image-radxa-dragon-q6a", "linux-headers-radxa-dragon-q6a"]
+  },
+  "kernel_version": "6.18.2-4-qcom",
+  "dtb_name": "qcs6490-radxa-dragon-q6a.dtb",
+  "holds": {
+    "source": "build/07-pz-vstanovlennia.md:76-90 (1.2 hold table); STACK.md:137-138",
+    "names": [
+      "linux-image-6.18.2-4-qcom", "linux-headers-6.18.2-4-qcom", "linux-image-radxa-dragon-q6a", "linux-headers-radxa-dragon-q6a",
+      "edk2-qcs6490", "edk2-radxa-dragon-q6a", "edl-ng", "rsetup", "rsetup-config-first-boot",
+      "systemd-boot", "systemd-boot-efi", "u-boot-menu", "radxa-overlays-dkms",
+      "radxa-firmware", "radxa-firmware-qcs6490", "linux-firmware", "linux-firmware-dragonwing", "qcom-iot-defaults",
+      "task-qcs6490", "task-qualcomm", "task-qualcomm-npu", "task-qualcomm-gstreamer", "task-radxa-dragon-q6a",
+      "alsa-ucm-conf", "aic8800-usb-dkms", "aic8800-firmware",
+      "qcom-qnn-sdk-v68", "radxa-qcom-qairt",
+      "libdrm2", "labwc", "xwayland", "pipewire",
+      "librtlsdr2", "libairspyhf1", "libairspy0", "gpsd", "chrony",
+      "fastrpc", "libcdsprpc1"
+    ],
+    "globs": ["radxa-system-config-*", "libgl1-mesa-dri", "mesa-*", "libwlroots*", "qt6-*", "libqt6*"]
+  },
+  "purge": {
+    "source": "build/07-pz-vstanovlennia.md:92-96 (purge unattended-upgrades brltty)",
+    "names": ["unattended-upgrades", "brltty"]
+  },
+  "mask": {
+    "source": "build/07-pz-vstanovlennia.md:92-96; STACK.md:845 (sleep targets); rsetup.service runs `rsetup __on_boot`, which executes /config/before.txt (https://github.com/radxa-pkg/rsetup debian/rsetup.service, read 2026-10-24) - STACK.md:138 never rsetup in the field, STACK.md:843 BLS entries never from rsetup; ssh.service, ssh.socket, smbd.service, nmbd.service: before.txt disable_service ssh ssh.socket smbd nmbd systemd-networkd (https://raw.githubusercontent.com/radxa-pkg/rsetup/main/config/before.txt, read 2026-11-06), which this image does not run (systemd-networkd is not enabled in r2: image-facts.json units); samba-ad-dc.service (enabled in r2, the samba set), cups.service, cups.socket, cups.path, avahi-daemon.service, avahi-daemon.socket: r2 enables them (image-facts.json multi-user.target.wants, sockets.target.wants), the SR-RX controller needs no print, file-sharing or mDNS service, and avahi announces the unit on any connected LAN; IMG-06 may unmask a service with a recorded reason. IMG-06 decision (build/15-rishennia-komplektu.md «Збирання образу», 07.11.2026): bluetooth.service and wpa_supplicant.service (enabled in r2: image-facts.json bluetooth.target.wants, multi-user.target.wants of CI run 42300813861) are masked, also by deploy.py stage (deployment/system/system_files.py MASKED_UNITS): the field/QUIET root is receive-only, the AIC8800 drivers are blacklisted on it, and wpa_supplicant is the component that would start Wi-Fi frames if an interface ever appeared; ubuntu-advantage.service, ua-reboot-cmds.service, ua-timer.timer and motd-news.timer (enabled in r2, same facts) contact Canonical services, and STACK.md:894 makes the signed offline repository the only package source; NetworkManager stays enabled for wired bench Ethernet (the staged polkit NO rule blocks Wi-Fi enable, scan and hotspot)",
+    "units": ["apt-daily.timer", "apt-daily-upgrade.timer", "fwupd-refresh.timer", "ModemManager.service",
+              "sleep.target", "suspend.target", "hibernate.target", "hybrid-sleep.target",
+              "bluetooth.service", "wpa_supplicant.service", "rsetup.service",
+              "ssh.service", "ssh.socket", "smbd.service", "nmbd.service", "samba-ad-dc.service",
+              "cups.service", "cups.socket", "cups.path", "avahi-daemon.service", "avahi-daemon.socket",
+              "ubuntu-advantage.service", "ua-reboot-cmds.service", "ua-timer.timer", "motd-news.timer"]
+  },
+  "rsetup_first_boot": {
+    "source": "rsetup config/before.txt on the main branch (https://raw.githubusercontent.com/radxa-pkg/rsetup/main/config/before.txt, read 2026-11-06): no_fail, log, update_generic_hostname, add_user + user_append_group (radxa, rock), resize_root, disable_service ssh ssh.socket smbd nmbd systemd-networkd, regenerate_ssh_hostkey, update_locale, `if headless enable_service ssh`, rebuild_current_overlays, remove_packages rsetup-config-first-boot. The r2 copy (/config/before.txt, sha256 and command list in image-facts.json rsetup_first_boot) is what the builder checks: a command without a row here is a blocker, and so is a disable_service unit that is neither masked nor disabled in the image",
+    "handled": {
+      "no_fail": "no effect: error mode of the script",
+      "log": "no effect",
+      "update_generic_hostname": "skipped: the golden image keeps the r2 hostname (image-facts.json root.hostname, radxa-dragon-q6a in CI run 42300813861); IMG-06 decision: one golden image serves many units, so commissioning sets the per-unit hostname from the acceptance hardware_unit_id (build/15)",
+      "add_user": "skipped: no radxa/radxa or rock/rock accounts; any account with a usable password is locked (lock_default_password_accounts); IMG-06 decision: no password account in the image; operator access is the local HMI, service access the rescue microSD and the UART5 console of the service hatch (boot messages; no account can log in) (build/15)",
+      "user_append_group": "skipped together with add_user",
+      "resize_root": "skipped: root A and B have fixed sizes; recovery_kit.py write grows /data to the UFS end",
+      "disable_service": "replaced: every named unit is masked here (mask.units) or not enabled in the image (checked by the builder)",
+      "regenerate_ssh_hostkey": "replaced: the builder removes r2's /etc/ssh/ssh_host_* (names in image-manifest.json hardening); srrx-ssh-hostkeys.service runs ssh-keygen -A before the first sshd start if ssh is ever unmasked with a recorded reason (IMG-06: ssh stays masked)",
+      "update_locale": "skipped: the r2 locale stays (image-facts.json root.locale; in CI run 42300813861 /etc/default/locale holds only the update-locale header, i.e. no LANG); SR-RX units set the locale they need (Environment=LC_ALL=C.UTF-8); IMG-06 decision (build/15)",
+      "enable_service": "skipped: `if headless enable_service ssh` would re-enable ssh; ssh.service and ssh.socket stay masked (IMG-06 decision: no SSH in the golden image, build/15)",
+      "rebuild_current_overlays": "skipped: rsetup overlays are not part of the SR-RX boot chain (STACK.md:138, :843); DT overlays are fdtoverlay output (IMG-05)",
+      "remove_packages": "replaced: rsetup.service is masked instead; rsetup-config-first-boot stays installed and held"
+    }
+  },
+  "lock_default_password_accounts": {
+    "source": "rsetup config/before.txt creates radxa/radxa and rock/rock at first boot; this image disables first boot and locks any account that already has a usable password hash (IMG-06 decision: no password account; operator access is the local HMI, service access the rescue microSD and the UART5 console)",
+    "min_uid": 1000
+  },
+  "ppa_list_tokens_from_policy": "deployment/receive-only-policy.json apt.forbidden_list_name_tokens (STACK.md:894: PPA lists are removed)",
+  "kernel_install": {
+    "source": "STACK.md:843 (entries only from our kernel-install plugin, never rsetup); systemd v255.4 src/kernel-install/kernel-install.c and 90-loaderentry.install.in (layout=other keeps the stock BLS plugin inert)",
+    "mask": ["90-loaderentry.install", "90-uki-copy.install", "91-u-boot-menu.install", "99-update-overlay.install"],
+    "known": ["50-depmod.install", "55-initrd.install", "60-ukify.install", "90-loaderentry.install", "90-uki-copy.install",
+              "91-u-boot-menu.install", "99-update-overlay.install", "dkms"],
+    "why_masked": "r2 ships 91-u-boot-menu.install (extlinux) and 99-update-overlay.install (rsetup overlay folders on the ESP); neither belongs to the SR-RX boot chain; STACK.md:843 (entries never from rsetup) and STACK.md:138 (never rsetup in the field) (image-facts.json, CI 2026-10-24)"
+  },
+  "divert_hooks": {
+    "source": "r2 links /etc/kernel/postinst.d/yz-update-overlays and postrm.d/yz-update-overlays to /usr/bin/rsetup (image-facts.json, CI 2026-10-24); STACK.md:138 never rsetup in the field, STACK.md:843 entries never from rsetup. dpkg-divert --local --rename keeps them away across package upgrades; run-parts skips the dotted name",
+    "paths": ["/etc/kernel/postinst.d/yz-update-overlays", "/etc/kernel/postrm.d/yz-update-overlays"]
+  },
+  "routes": {
+    "A": {
+      "source": "STACK.md:843; build/07-pz-vstanovlennia.md:150-163",
+      "purge": ["sdboot-is-embloader"],
+      "bootctl_install": true,
+      "apt_pin_minus_one": ["embloader", "sdboot-is-embloader"],
+      "enable": {"srrx-boot-check.service": "boot-complete.target.requires multi-user.target.wants"}
+    },
+    "B": {
+      "source": "STACK.md:844; build/07-pz-vstanovlennia.md:165-167; embloader tag 0.4 (https://github.com/BigfootACA/embloader, src/sdboot/file.c, src/loader/loader.c, read 2026-10-24)",
+      "purge": [],
+      "bootctl_install": false,
+      "embloader_version": "0.4",
+      "apt_pin_minus_one": [],
+      "enable": {"srrx-boot-check.service": "boot-complete.target.requires multi-user.target.wants", "srrx-ab-commit.service": "multi-user.target.wants"}
+    }
+  },
+  "enable_common": {
+    "source": "deployment/deploy.py radio_off_unit (WantedBy=sysinit.target); files/srrx-ssh-hostkeys.service (WantedBy=ssh.service: inert while ssh is masked)",
+    "units": {"srrx-radio-off.service": "sysinit.target.wants", "srrx-ssh-hostkeys.service": "ssh.service.wants"}
+  },
+  "not_enabled": {
+    "srrx.service": "IMG-06 decision (acceptance keeps it inert; DEPLOYMENT.md: no .wants links from staging)",
+    "srrx-poweroff.service": "follows srrx.service",
+    "srrx-baseband-sweep.timer": "enabled at commissioning, after the administrator writes /etc/srrx/baseband.env (system preset: disable; software/RX.md)"
+  },
+  "dt_overlays": {
+    "source": "STACK.md:843 (fdtoverlay -i <package DTB> -o lab.dtb lab-q6a.dtbo; field.dtb = package DTB + lab-q6a.dtbo + field-q6a.dtbo, pcie0 disabled: field-q6a.dtso header); sources are IMG-05 in deployment/system/dt, CI record dt-manifest.json",
+    "lab": ["deployment/system/dt/lab-q6a.dtso"],
+    "field": ["deployment/system/dt/field-q6a.dtso"]
+  },
+  "data_cache": {
+    "source": "deployment/deploy.py release_guard (verify_cache of the locked base image and kernel debs at /srv/srrx-cache)",
+    "copy_locked_artifacts": true
+  }
+}

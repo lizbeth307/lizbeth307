@@ -38,14 +38,74 @@ CHANNEL_DISPLAY_ORDER = ("RTLA", "RTLB", "HFP", "LIME3V3", "LNA1", "LNA2", "LNA3
                          "LNB", "BONI", "SB_LNA", "T7", "LABPORT", "AUX12")
 
 
+# Past tense: the latched binding fault of an earlier Pico session (labd keeps its first fault).
+EARLIER_BINDING = {"pico_identity_or_calibration_mismatch":
+                       "Pico serial or calibration CRC did not match the labd acceptance file",
+                   "pico_qualification_record_mismatch":
+                       "Pico commissioning did not match the labd acceptance file"}
+BINDING_FAULTS = tuple(EARLIER_BINDING)
+
+
 def readable_fault(value):
     if not value:
         return "No protection fault reported"
     return {"new_pico_session": "Stopped — ready for an explicit start",
             "operator_disarm": "Stopped by operator",
             "operator_shutdown": "Shutdown requested",
+            "pico_identity_or_calibration_mismatch": "Pico serial or calibration CRC does not match the labd"
+                " acceptance file — wrong Pico or calibration (ARM refused)",
             "pico_qualification_record_mismatch": "Pico commissioning does not match the labd acceptance file"
                 " — re-provision the Pico (ARM refused)"}.get(str(value), str(value).replace("_", " ")[:240])
+
+
+def binding_fault(data):
+    """Why labd refuses ARM for the live Pico, or None.
+
+    labd latches only its first fault, so the policy fault can still be a benign stop (an
+    older new_pico_session or operator_disarm) while the current session's HELLO failed the
+    serial/CRC/qualification binding; labd then reports live_identity_verified false."""
+    if data.get("mode") != "HARDWARE" or data.get("live_identity_verified") is not False:
+        return None
+    # A later trip (the Pico reporting the host TRIP) overwrites last_error; labd's event list
+    # and its latched fault still name the binding failure.
+    events = data.get("events") if type(data.get("events")) is list else []
+    reasons = [data.get("last_error")] + [event.get("reason") for event in reversed(events)
+                                          if type(event) is dict] + [data.get("policy", {}).get("fault")]
+    for reason in reasons:
+        if reason in BINDING_FAULTS:
+            return readable_fault(reason)
+    return "Live Pico identity is not verified against the labd acceptance file (ARM refused)"
+
+
+def binding_verified(data):
+    """labd reports HARDWARE and the current Pico HELLO passed the serial/CRC/qualification binding."""
+    return data.get("mode") == "HARDWARE" and data.get("live_identity_verified") is True
+
+
+def latched_fault_text(fault, verified=False):
+    """readable_fault, except for a binding fault latched by an earlier Pico session.
+
+    After the operator re-provisions or replaces the Pico, the new session's HELLO binds while
+    the first-fault latch still holds the old reason. labd then accepts RECOVER, so the line
+    must neither say "ARM refused" nor ask to re-provision again."""
+    if verified and fault in EARLIER_BINDING:
+        return ("Earlier Pico binding failure (" + EARLIER_BINDING[fault]
+                + "); the current Pico HELLO verifies — RECOVER + ARM required")
+    return readable_fault(fault)
+
+
+def protection_fault_text(fault, binding, verified=False):
+    """The labd fault line; a failed live binding replaces the benign stop and is never hidden.
+
+    binding is binding_fault(status) and verified is binding_verified(status)."""
+    text = latched_fault_text(fault, verified)
+    if binding is None or binding == text:
+        return text
+    if fault in (None, "", "new_pico_session"):
+        return binding
+    if fault in EARLIER_BINDING:  # Latched by an earlier session; the live refusal follows.
+        text = "Earlier Pico binding failure (" + EARLIER_BINDING[fault] + ")"
+    return text + "\n" + binding
 
 
 def channel_rows(data, live):
@@ -195,6 +255,37 @@ def pass_plan_summary(plan, limit=6):
         lines.append("No complete pass inside the window")
     elif len(plan["passes"]) > limit:
         lines.append(f"… {len(plan['passes']) - limit} more passes")
+    return "\n".join(lines)
+
+
+LABD_PLAN_STATES = {"IDLE": "none requested", "RUNNING": "prediction running", "READY": "ready",
+                    "FAILED": "last request failed"}
+
+
+def labd_pass_plan_summary(value, live=False, limit=4):
+    """Read-only labd status["passes"] (srrx.pass_jobs); `labctl plan_passes` requests a plan, not this."""
+    if not live or not isinstance(value, dict):
+        return "labd pass plan: status unavailable"
+    if value.get("enabled") is not True:
+        return "labd pass plan: not provided by this labd backend"
+    parts = ["labd pass plan: " + LABD_PLAN_STATES.get(value.get("state"), "unrecognised state")]
+    error = value.get("error")
+    if error is not None:
+        known = type(error) is str and 0 < len(error) <= 64 and all(c.isascii() and (c.isupper() or c.isdigit() or c == "_") for c in error)
+        parts.append("last error " + (error if known else "unrecognised"))
+    lines, plan = [" · ".join(parts)], value.get("plan")
+    if isinstance(plan, dict):
+        lines.append("UTC verified" if plan.get("time_verified") is True
+                     else "UTC not verified — times are provisional; no baseband window")
+        upcoming = plan.get("upcoming") if isinstance(plan.get("upcoming"), list) else []
+        for item in upcoming[:limit]:
+            try:
+                lines.append(f"{str(item['name'])[:64]} · AOS {str(item['aos_utc'])[5:19].replace('T', ' ')} · "
+                             f"max {float(item['max_el_deg']):.0f}° · LOS {str(item['los_utc'])[11:19]}")
+            except (TypeError, KeyError, ValueError):
+                lines.append("unreadable pass entry")
+        if not upcoming:
+            lines.append("No complete pass ahead in this plan")
     return "\n".join(lines)
 
 
@@ -1187,12 +1278,11 @@ def create_window(controller, *, callbacks=None, start_worker=True, scope_latch=
             layout.addLayout(actions)
             self.tabs = QtWidgets.QTabWidget()
             layout.addWidget(self.tabs, 1)
-            self._overview_page()
-            self._receiver_page()
-            self._spectrum_page()
-            self._location_page()
-            self._learning_page()
-            self._bench_page()
+            from .menu_model import PAGES  # declarative tab order, evaluated by selftest RX-11
+            for entry in PAGES:
+                getattr(self, "_" + entry["id"] + "_page")()
+                if self.tabs.tabText(self.tabs.count() - 1) != entry["label"]:
+                    raise RuntimeError("Console page differs from srrx.menu_model: " + entry["id"])
             self.notice = QtWidgets.QLabel("Status reads do not arm or renew a lease.")
             self.notice.setTextFormat(QtCore.Qt.TextFormat.PlainText)
             self.notice.setWordWrap(True)
@@ -1449,10 +1539,15 @@ def create_window(controller, *, callbacks=None, start_worker=True, scope_latch=
             self.jump_button.setEnabled(False)
             pointing.addWidget(self.jump_button)
             pointing.addWidget(self.button("Load pass plan…", self.open_pass_plan))
-            self.pass_plan_text = QtWidgets.QLabel("No pass plan loaded. Plans are snapshots from the lab-venv predictor.")
+            self.pass_plan_text = QtWidgets.QLabel("No pass plan loaded. Plans are snapshots from the passes-venv predictor.")
             self.pass_plan_text.setTextFormat(QtCore.Qt.TextFormat.PlainText)
             self.pass_plan_text.setWordWrap(True)
             pointing.addWidget(self.pass_plan_text)
+            # Read-only: labd's latest plan_passes job; `labctl plan_passes` requests one.
+            self.labd_plan_text = QtWidgets.QLabel(labd_pass_plan_summary(None))
+            self.labd_plan_text.setTextFormat(QtCore.Qt.TextFormat.PlainText)
+            self.labd_plan_text.setWordWrap(True)
+            pointing.addWidget(self.labd_plan_text)
             layout.addWidget(group)
             # Read-only labd status of the bounded LC76G RESET pulse; the pulse is a labctl operation only.
             self.gnss_reset_text = QtWidgets.QLabel(gnss_reset_summary(None))
@@ -1855,16 +1950,19 @@ def create_window(controller, *, callbacks=None, start_worker=True, scope_latch=
             self.metric_values["temperature"].setText("\n".join(temperatures))
             self.metric_values["supervisor"].setText(state.title() + "\nLease: " + ("holding" if holding else "stopped"))
             fault = ("Connection lost — current power state is unconfirmed." if not live
-                     else readable_fault(policy.get("fault")) if pico_live
+                     else protection_fault_text(policy.get("fault"), binding_fault(data), binding_verified(data))
+                     if pico_live
                      else (("Supervisor status stale — " + (f"last Pico status {pico_age / 1000:.1f} s ago"
                             if type(pico_age) is int and 0 <= pico_age < 1e12 else "no fresh Pico status")
                             + "; ARM will be refused.") if freshness is False
                            else "labd did not report Pico freshness — Pico readouts withheld; labd checks it before ARM.")
                      # The labd fault stays visible, but never as "ready" without fresh Pico status.
-                     + ("\n" + readable_fault(policy["fault"]) if policy.get("fault") not in (None, "", "new_pico_session") else ""))
+                     + ("\n" + latched_fault_text(policy["fault"], binding_verified(data))
+                        if policy.get("fault") not in (None, "", "new_pico_session") else ""))
             # The console's own error never hides the labd protection fault.
             self.fault_text.setText(fault + ("\nConsole: " + str(view["error"])[:240] if view.get("error") else ""))
             self.gnss_reset_text.setText(gnss_reset_summary(policy.get("gnss_reset"), live))
+            self.labd_plan_text.setText(labd_pass_plan_summary(data.get("passes"), live))
             for row, values in enumerate(channel_rows(data, live)):
                 for column, text in enumerate(values):
                     item = self.channel_table.item(row, column)
