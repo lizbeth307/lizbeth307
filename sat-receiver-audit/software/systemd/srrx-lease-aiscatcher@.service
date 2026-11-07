@@ -55,7 +55,16 @@ RuntimeMaxSec=12h
 TimeoutStartSec=30s
 TimeoutStopSec=10s
 Restart=no
-# Arguments: the AIS-catcher engine package (SW-AIS), never -X (STACK.md:882). The /usr/bin/env
-# prefix stays: the lab guest verifies every staged unit without the +lab engine packages
+# Arguments (W2 SW-AIS, ais-catcher 0.70+lab1): srrx.ais_filter prepare writes the receiver
+# selection (-d <serial from /etc/srrx/devices.json> -s <rate>) as an @response file and creates
+# the FIFO, both 0600 here. AIS-catcher writes JSON only into that FIFO (-o 0: nothing on stdout or
+# in the journal), never with -X, -N, -H, -P, -u, -S, -Q, -D or a bias setting (STACK.md:882,
+# selftest RX-12-ais). srrx.ais_filter serve (same user and sandbox; it stays in this unit's cgroup)
+# publishes /data/products/aiscatcher-%i/vessels.json: a vessel only after a static report with a
+# known ship type other than 35, a late type 35 deletes it (STACK.md:599). The /usr/bin/env prefix
+# stays: the lab guest verifies every staged unit without the +lab engine packages
 # (guest_smoke.verify_units).
-ExecStart=/usr/bin/env AIS-catcher
+Environment=PYTHONPATH=/opt/srrx/software PYTHONDONTWRITEBYTECODE=1 LC_ALL=C.UTF-8
+ExecStartPre=/usr/bin/python3 -P -s -B -m srrx.ais_filter prepare --receiver %i --devices /etc/srrx/devices.json --runtime %t/srrx-lease-aiscatcher-%i
+ExecStart=/usr/bin/env AIS-catcher @%t/srrx-lease-aiscatcher-%i/receiver.args -o 0 -f %t/srrx-lease-aiscatcher-%i/ais.fifo MSGFORMAT JSON_FULL
+ExecStartPost=/usr/bin/python3 -P -s -B -m srrx.ais_filter serve --receiver %i --fifo %t/srrx-lease-aiscatcher-%i/ais.fifo --output /data/products/aiscatcher-%i --detach

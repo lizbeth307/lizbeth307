@@ -1459,5 +1459,143 @@ class ImageAptAndPinOnlyTests(unittest.TestCase):
         self.assertIn(("lab_pref_structure", None), self.run_row("RX-16", broken)[0])
 
 
+class AisCatcherRowTests(unittest.TestCase):
+    """W2 SW-AIS: RX-12-ais on a deploy.stage root (the srrx-lease-aiscatcher@.service template and the
+    staged srrx.ais_filter). A synthetic ELF stands in for the ais-catcher package; readelf is the
+    injected FakeTools. Offline unit and file evaluation only: reception and the running lease stay
+    device rows (RX-12-runtime)."""
+
+    ALLOWED = ["librtlsdr.so.2", "libairspyhf.so.0", "libusb-1.0.so.0", "libz.so.1", "libstdc++.so.6", "libm.so.6",
+               "libgcc_s.so.1", "libc.so.6"]
+
+    @classmethod
+    def setUpClass(cls):
+        cls.temp = tempfile.TemporaryDirectory(prefix="srrx-selftest-ais-")
+        cls.root = Path(cls.temp.name)
+        deploy.stage(cls.root / "stage", devices())
+        cls.clean = cls.root / "stage/rootfs"
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.temp.cleanup()
+
+    def case(self, files=(), binary=None, remove=()):
+        rootfs = Path(tempfile.mkdtemp(prefix="case-", dir=self.root)) / "rootfs"
+        self.addCleanup(shutil.rmtree, rootfs.parent, True)
+        shutil.copytree(self.clean, rootfs, symlinks=True)
+        if binary is not None:
+            files = dict(files, **{"usr/bin/AIS-catcher": binary})
+        for rel, data in dict(files).items():
+            path = rootfs / rel
+            path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(data.encode() if isinstance(data, str) else data)
+        for rel in remove:
+            (rootfs / rel).unlink()
+        return rootfs
+
+    def row(self, rootfs, profile="full", needed=None):
+        tools = FakeTools({"AIS-catcher": readelf(None, self.ALLOWED if needed is None else needed)})
+        report = selftest.run_offline(rootfs, profile, POLICY, runner=tools)
+        self.assertFalse(report["hardware_ready"])
+        return next(c for c in report["checks"] if c["id"] == "RX-12-ais")
+
+    def rules(self, row):
+        return {(f["rule"], f.get("item")) for f in row["findings"]}
+
+    def test_staged_template_and_filter_pass_and_the_package_binary_is_evaluated(self):
+        self.assertIn(("RX-12-ais", 12, "OFFLINE"), {c[:3] for c in selftest.CATALOGUE})
+        controller = self.row(self.clean, "controller")
+        self.assertEqual((controller["status"], controller["findings"]), ("PASS", []), controller)
+        self.assertIn("ais-catcher_absent", controller["notes"])
+        absent = self.row(self.clean, "full")
+        self.assertEqual((absent["status"], self.rules(absent)), ("BLOCKED", {("component_not_found", "ais-catcher")}))
+        present = self.row(self.case(binary=FAKE_ELF))
+        self.assertEqual((present["status"], present["findings"]), ("PASS", []), present)
+        self.assertIn("reception_and_lease_runtime_are_device_rows", present["notes"])
+        # In the controller profile the engine package itself is a radio application.
+        self.assertIn(("radio_application_in_controller_profile", None), self.rules(self.row(self.case(binary=FAKE_ELF), "controller")))
+
+    def test_tls_soapy_or_database_libraries_and_a_compiled_bias_call_fail(self):
+        for library, prefix in (("libssl.so.3", "libssl"), ("libSoapySDR.so.0.8", "libSoapySDR"), ("libsqlite3.so.0", "libsqlite3"),
+                                ("libairspy.so.0", "libairspy."), ("libzmq.so.5", "libzmq")):
+            with self.subTest(library=library):
+                row = self.row(self.case(binary=FAKE_ELF), needed=self.ALLOWED + [library])
+                self.assertEqual((row["status"], self.rules(row)), ("FAIL", {("forbidden_dependency", prefix)}))
+        row = self.row(self.case(binary=FAKE_ELF + b"\0rtlsdr_set_bias_tee\0"))
+        self.assertEqual((row["status"], self.rules(row)), ("FAIL", {("bias_tee_call_compiled", None)}))
+        self.assertEqual(self.row(self.case(binary=b"#!/bin/sh\n"))["status"], "BLOCKED")  # not an ELF: never PASS
+
+    def test_changed_arguments_or_a_lease_without_the_filter_fail(self):
+        unit = "etc/systemd/system/srrx-lease-aiscatcher@"
+        reviewed = "ExecStart=/usr/bin/env AIS-catcher @%t/srrx-lease-aiscatcher-%i/receiver.args -o 0 -f %t/srrx-lease-aiscatcher-%i/ais.fifo MSGFORMAT JSON_FULL\n"
+        cases = (
+            ("hfplus.service.d/50-x.conf", "[Service]\nExecStart=\nExecStart=/usr/bin/env AIS-catcher -X 0123 -o 0\n",
+             {("ais_exec_start_not_reviewed", None), ("ais_denied_argument", "X")}),
+            ("rtla.service.d/50-x.conf", "[Service]\nExecStart=\n" + reviewed.replace("-o 0", "-o 5"), {("ais_exec_start_not_reviewed", None)}),
+            ("rtlb.service.d/50-x.conf", "[Service]\nExecStart=\n" + reviewed.rstrip("\n") + " -N 8100\n",
+             {("ais_exec_start_not_reviewed", None), ("ais_denied_argument", "N")}),
+            ("hfplus.service.d/60-x.conf", "[Service]\nExecStart=\n" + reviewed.rstrip("\n") + " -gh BIASTEE on\n",
+             {("ais_exec_start_not_reviewed", None), ("ais_denied_argument", "BIASTEE")}),
+            (".service.d/50-x.conf", "[Service]\nExecStartPost=\n", {("ais_filter_not_in_lease", None)}),
+            ("rtla.service.d/70-x.conf", "[Service]\nExecStartPre=\nExecStartPre=/bin/true\n", {("ais_prepare_not_reviewed", None)}),
+        )
+        for name, text, expected in cases:
+            with self.subTest(dropin=name):
+                row = self.row(self.case({unit + name: text}, binary=FAKE_ELF))
+                self.assertEqual((row["status"], self.rules(row)), ("FAIL", expected), row)
+        # A comment or an unrelated setting in a drop-in changes nothing.
+        quiet = self.row(self.case({unit + "rtla.service.d/80-x.conf": "[Service]\n# ExecStart=/usr/bin/env AIS-catcher -X\nNice=5\n"},
+                                   binary=FAKE_ELF))
+        self.assertEqual(quiet["status"], "PASS", quiet)
+
+    def test_the_engine_outside_its_lease_or_without_the_template_fails(self):
+        other = self.row(self.case({"etc/systemd/system/ais-share.service": "[Service]\nUser=lab\nExecStart=/usr/bin/AIS-catcher -o 5\n"},
+                                   binary=FAKE_ELF))
+        self.assertEqual((other["status"], self.rules(other)), ("FAIL", {("ais_engine_outside_lease", None)}))
+        missing = self.row(self.case(binary=FAKE_ELF, remove=("etc/systemd/system/srrx-lease-aiscatcher@.service",)))
+        self.assertEqual((missing["status"], self.rules(missing)), ("FAIL", {("ais_engine_without_filter_unit", None)}))
+
+    def test_the_target_filter_must_be_the_checkers_and_the_probe_catches_a_weak_filter(self):
+        rel = "opt/srrx/software/srrx/ais_filter.py"
+        changed = self.case({rel: (self.clean / rel).read_text(encoding="utf-8") + "\n# changed target copy\n"})
+        row = self.row(changed, "controller")
+        self.assertEqual((row["status"], self.rules(row)), ("BLOCKED", {("target_module_differs", None)}))
+        self.assertEqual(self.row(self.case(remove=(rel,)), "controller")["status"], "BLOCKED")
+
+        class Everything:  # a filter that publishes every MMSI and never deletes
+            def __init__(self):
+                self.vessels = {}
+
+            def feed(self, record, now):
+                self.vessels[record["mmsi"]] = record
+                return True
+
+        weak = type("Weak", (), {"VesselFilter": Everything, "device_args": staticmethod(lambda r, d: ["-d", "x", "-s", "1", "-X", "k"])})
+        self.assertEqual(selftest._ais_filter_probe(weak),
+                         ["late_type_35_not_deleted", "position_before_static_published", "receiver_arguments_beyond_device_and_rate",
+                          "suppressed_vessel_published_again", "unknown_military_or_part_a_published"])
+        sys.path.insert(0, str(deploy.PROJECT / "software"))
+        from srrx import ais_filter
+        self.assertEqual(selftest._ais_filter_probe(ais_filter), [])
+
+    def test_ais_public_is_installation_gated_offline(self):
+        sys.path.insert(0, str(deploy.PROJECT / "software"))
+        from srrx import decoder_policy
+        self.assertIn("ais-public", selftest._INSTALLATION_GATED)
+        self.assertEqual(decoder_policy.availability()["ais-public"], "UNAVAILABLE_NO_ACCEPTED_INSTALLATION")
+        report = selftest.run_offline(self.clean, "controller", POLICY)
+        self.assertEqual(next(c for c in report["checks"] if c["id"] == "RX-S1")["status"], "PASS")
+        record = {"v": 1, "tool_id": "ais-catcher", "version": "0.70+lab1", "source_commit": decoder_policy.AIS_COMMIT,
+                  "executable": "/usr/bin/AIS-catcher", "sha256": "a" * 64, "evidence_id": "admin/ais-001",
+                  "filter_sha256": "b" * 64, "unit_sha256": "c" * 64, "recipe_sha256": "d" * 64}
+        # Off the device the record cannot be qualified (no root-owned ELF): never accepted here.
+        self.assertTrue(decoder_policy.availability(ais_installation=record)["ais-public"].startswith("UNAVAILABLE"))
+        for change in ({"version": "0.70"}, {"executable": "/usr/local/bin/AIS-catcher"}, {"sha256": "x"}, {"extra": 1}):
+            with self.assertRaises(decoder_policy.DecoderRefused):
+                decoder_policy._validate_ais_installation(dict(record, **change))
+        with self.assertRaisesRegex(decoder_policy.DecoderRefused, "^DISABLED_FILE_PLAN_AIS_RUNS_ONLY_AS_LEASE_ENGINE$"):
+            decoder_policy.make_plan("ais-public", None, None, None)
+
+
 if __name__ == "__main__":
     unittest.main()

@@ -108,6 +108,9 @@ CATALOGUE = (
     ("RX-12", 12, "OFFLINE", "Lease units (systemd precedence): DevicePolicy=closed, ProtectSystem=strict, /data read-only, products lease, localhost only",
      (_B07 + ":532", _B07 + ":534", _B07 + ":557")),
     ("RX-12-runtime", 12, "DEVICE", "Lease EPERM/EROFS/EGL behaviour on the Q6A", (_B07 + ":557", _B09 + ":62")),
+    ("RX-12-ais", 12, "OFFLINE", "AIS-catcher lease engine: reviewed ExecStart through srrx.ais_filter, no network output or bias option, "
+     "no TLS/Soapy/database library, bias-tee call not compiled, filter rules probed",
+     (_B07 + ":440", _B07 + ":557", "STACK.md:599", "STACK.md:882", "software/srrx/ais_filter.py")),
     ("RX-13", 13, "OFFLINE", "Band mask CPU path: 20 kHz, 300 MHz, 406.05 MHz, 1544.5 MHz bins invalid; annotate refuses",
      (_B07 + ":558", _B09 + ":73", "STACK.md:626", "software/srrx/spectrum.py mask_frame")),
     ("RX-13-npu", 13, "DEVICE", "NPU class-signal mask on the device", (_B07 + ":558",)),
@@ -119,7 +122,7 @@ CATALOGUE = (
     ("RX-17", 17, "OFFLINE", "/etc/kernel/cmdline SHA-256 equals the reviewed record", (_B07 + ":181-193", _B07 + ":562")),
     ("RX-17-proc", 17, "DEVICE", "/proc/cmdline on the running device", (_B07 + ":193", _B07 + ":562")),
     ("RX-18", 18, "DEVICE", "labbar visible over every full-screen Expert GUI", (_B07 + ":563", "STACK.md:884")),
-    ("RX-S1", None, "OFFLINE", "decoder_policy.availability(): EGC, DSC, AIS, ADS-B presets disabled; SatDump installation-gated (unavailable offline)",
+    ("RX-S1", None, "OFFLINE", "decoder_policy.availability(): EGC, DSC, ADS-B presets disabled; SatDump and AIS installation-gated (unavailable offline)",
      ("software/srrx/decoder_policy.py availability", "STACK.md:85")),
     ("RX-S2", None, "OFFLINE", "Field/QUIET Wi-Fi/BT off as staged: AIC8800/btusb blacklist + install /bin/false, FE1.1s port-4 authorized=0 rule, "
      "rfkill oneshot required by srrx.service only", ("STACK.md:726", "STACK.md:2167", "STACK.md:125", _B09 + ":69", "deployment/deploy.py stage")),
@@ -196,6 +199,8 @@ POLICY_SCHEMA = {
         "soapy": dict(_COMMON, plugin_dirs=(_text,), forbidden_dirs=[_text]),
         "gpredict": dict(_COMMON, binaries=[_text], forbidden_needed=(_text,), radio_config_globs=[_text], rx_only_radio_type=_text,
                          tle_update={"file_globs": (_text,), "section": _text, "key": _text, "required": _text}),
+        "ais-catcher": dict(_COMMON, binaries=(_text,), forbidden_needed=(_text,), forbidden_strings=(_text,), lease_template=_text,
+                            exec_start_pre=(_text,), exec_start=_text, exec_start_post=(_text,), filter_module=_text),
     },
     "lime": {"runtime_library_globs": [_text], "sources": [_text]},
     "librtlsdr": {"library_glob": _text, "old_library_glob": _text, "soname": _text, "export_prefix": _text, "exports": int, "forbidden_strings": [_text], "sources": [_text]},
@@ -1528,6 +1533,156 @@ def check_12(ctx, r):
     r.note("EPERM_EROFS_behaviour_is_RX-12-runtime")
 
 
+def _service_commands(texts, key):
+    """Every <key>= command line of the [Service] section of a unit fragment and its drop-ins, in
+    application order; an empty assignment resets the list (systemd.service(5)). Comment and
+    continuation handling as in _unit_settings."""
+    commands = []
+    for text in texts:
+        section, lines, joined = None, [], ""
+        for raw in text.splitlines():
+            stripped = raw.strip()
+            if stripped[:1] in ("#", ";"):
+                continue
+            if stripped.endswith("\\"):
+                joined += stripped[:-1] + " "
+                continue
+            lines.append(joined + stripped)
+            joined = ""
+        for line in lines + ([joined] if joined else []):
+            if line.startswith("[") and line.endswith("]"):
+                section = line[1:-1]
+                continue
+            name, sep, value = line.partition("=")
+            if section != "Service" or not sep or name.strip() != key:
+                continue
+            commands = commands + [value.strip()] if value.strip() else []
+    return commands
+
+
+def _checker_module(ctx, r, name):
+    """The checker's software/srrx/<name>.py loaded on its own (a module that imports no srrx module),
+    only when the target copy is byte-identical; otherwise BLOCKED and nothing is imported."""
+    from importlib import util
+    source = deploy.PROJECT / "software/srrx" / (name + ".py")
+    rel = ctx.policy["srrx_root"] + "/software/srrx/" + name + ".py"
+    final = ctx.file(rel)
+    if final is None:
+        r.block(rel, "target_module_missing")
+        return None
+    digest = deploy.sha(source)
+    ctx.evaluated["software/srrx/" + name + ".py"] = digest
+    if ctx.digest(final) != digest:
+        r.block(rel, "target_module_differs")
+        return None
+    spec = util.spec_from_file_location("srrx_selftest_" + name, source)
+    module = util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _ais_filter_probe(module):
+    """Synthetic records through srrx.ais_filter.VesselFilter (STACK.md:599); the rules it breaks."""
+    broken, f = [], module.VesselFilter()
+    f.feed({"class": "AIS", "type": 1, "mmsi": 200000001, "lat": 1.0, "lon": 2.0}, 0.0)
+    if f.vessels:
+        broken.append("position_before_static_published")
+    for shiptype in (0, 35, 100, None):
+        f.feed({"class": "AIS", "type": 5, "mmsi": 200000002, "shiptype": shiptype}, 1.0)
+    f.feed({"class": "AIS", "type": 24, "partno": 0, "mmsi": 200000003, "shipname": "X"}, 1.0)
+    if f.vessels:
+        broken.append("unknown_military_or_part_a_published")
+    f.feed({"class": "AIS", "type": 5, "mmsi": 200000002, "shiptype": 70}, 2.0)
+    if 200000002 in f.vessels:
+        broken.append("suppressed_vessel_published_again")
+    for record in ({"type": 5, "shiptype": 70}, {"type": 19, "shiptype": 30}, {"type": 24, "partno": 1, "shiptype": 37}):
+        mmsi = 200000010 + record["type"]
+        f.feed(dict(record, **{"class": "AIS", "mmsi": mmsi}), 3.0)
+        if mmsi not in f.vessels:
+            broken.append("civil_static_not_published")
+        f.feed(dict(record, **{"class": "AIS", "mmsi": mmsi, "shiptype": 35}), 4.0)
+        if mmsi in f.vessels:
+            broken.append("late_type_35_not_deleted")
+    try:
+        hfplus = module.device_args("hfplus", {"usb": {"hfplus": {"serial": "AIRSPYHF SN:0123456789abcdef"}}})
+        rtla = module.device_args("rtla", {"usb": {"rtl_a": {"serial": "LABRXA"}}})
+    except Exception:  # noqa: BLE001 (any refusal of a valid binding breaks the rule)
+        hfplus = rtla = []
+    if hfplus[0::2] != ["-d", "-s"] or rtla[0::2] != ["-d", "-s"]:
+        broken.append("receiver_arguments_beyond_device_and_rate")
+    return sorted(set(broken))
+
+
+def check_12ais(ctx, r):
+    """AIS-catcher (deployment/recipes/ais-catcher) only as the lease engine behind srrx.ais_filter:
+    the effective template and every instance with drop-ins run exactly the reviewed ExecStartPre,
+    ExecStart and ExecStartPost of the policy (deny tokens as a second layer); the binary links no
+    TLS, Soapy, database or message-bus library and imports no bias-tee call; no other unit starts
+    it; the target filter module (byte-identical to the checker's) passes a synthetic rule probe."""
+    comp = ctx.comp("ais-catcher")
+    binaries = sorted(set(ctx.globs(comp["binaries"])) | {k for k in ctx.keys if k.rsplit("/", 1)[-1] == "AIS-catcher"
+                                                          and k.split("/")[-2:-1] in (["bin"], ["sbin"])})
+    found = sorted(set(ctx.globs(comp["footprint"])) | set(binaries))
+    _presence(ctx, r, found, "ais-catcher")
+    for rel in binaries:
+        final = ctx.file(rel)
+        if final is None:
+            continue
+        if not ctx.is_elf(final):
+            r.block(rel, "not_elf")
+            continue
+        info = ctx.elf(final, r)
+        for needed in (info or {}).get("needed", []):
+            for prefix in comp["forbidden_needed"]:
+                if needed.lower().startswith(prefix.lower()):
+                    r.fail(rel, "forbidden_dependency", prefix)  # the policy prefix, not the DT_NEEDED text
+        if ctx.contains(final, comp["forbidden_strings"]):
+            r.fail(rel, "bias_tee_call_compiled")
+    template = comp["lease_template"]
+    units = ctx.policy["units"]
+    dirs = list(dict.fromkeys(d for d in (ctx.resolve_kind(p, "dir") for p in units["system_unit_paths"]) if d is not None))
+    prefix = template.split("@", 1)[0] + "@"
+    instances = {name[:-2] for d in dirs for name in ctx.children(d) if name.startswith(prefix) and name.endswith(".service.d")
+                 and not name.startswith(prefix + ".")}
+    expected = ([c.split() for c in comp["exec_start_pre"]], [comp["exec_start"].split()], [c.split() for c in comp["exec_start_post"]])
+    evaluated = 0
+    for name in [template] + sorted(instances):
+        fragment = _unit_fragment(ctx, r, dirs, name)
+        if fragment is None:
+            continue
+        listed, final = fragment
+        evaluated += 1
+        texts = [ctx.text(final)] + [ctx.text(f) for f in _unit_dropins(ctx, r, dirs, [name])]
+        if posixpath.basename(listed) != name:  # an instance evaluated through its template: name its drop-ins
+            listed = next((d + "/" + name + ".d" for d in dirs if d + "/" + name + ".d" in ctx.entries), listed)
+        pre, start, post = ([c.split() for c in _service_commands(texts, key)] for key in ("ExecStartPre", "ExecStart", "ExecStartPost"))
+        words = [w for command in start for w in command]
+        for token in comp["deny_tokens"]:  # flags are case-sensitive (-o output, -O own MMSI); setting names are not
+            if any(w == token if token.startswith("-") else w.upper() == token.upper() for w in words):
+                r.fail(listed, "ais_denied_argument", token.lstrip("-"))  # item ids cannot start with a dash
+        for got, want, rule in ((pre, expected[0], "ais_prepare_not_reviewed"), (start, expected[1], "ais_exec_start_not_reviewed"),
+                                (post, expected[2], "ais_filter_not_in_lease")):
+            if got != want:
+                r.fail(listed, rule)
+    if not evaluated:
+        if found:
+            r.fail(found[0], "ais_engine_without_filter_unit")
+        else:
+            r.note("ais_lease_template_absent")
+    for listed, final in ctx.unit_texts():
+        if any(part.startswith(prefix) for part in listed.split("/")) or not ctx.contains(final, ["AIS-catcher"]):
+            continue  # streamed first: only a unit that names the engine is parsed
+        for line in ctx.text(final, 256 * 1024).splitlines():
+            key, sep, value = line.strip().partition("=")
+            if sep and key.strip().startswith("Exec") and any(posixpath.basename(w.lstrip("@-:+!|")) == "AIS-catcher" for w in value.split()):
+                r.fail(listed, "ais_engine_outside_lease")
+    module = _checker_module(ctx, r, comp["filter_module"])
+    if module is not None:
+        for rule in _ais_filter_probe(module):
+            r.fail(ctx.policy["srrx_root"] + "/software/srrx/" + comp["filter_module"] + ".py", "ais_filter_rule", rule)
+    r.note("reception_and_lease_runtime_are_device_rows")
+
+
 def _synthetic_frame(center, rate, size=64):
     width = rate / size
     return {"v": 1, "kind": "spectrum", "center_hz": center, "sample_rate_hz": rate, "fft_size": size,
@@ -1775,8 +1930,9 @@ def check_17(ctx, r):
     r.note("proc_cmdline_is_RX-17-proc")
 
 
-# v2.1: only satdump-weather is installation-gated (UNAVAILABLE_* offline); every other gated preset stays DISABLED_*.
-_INSTALLATION_GATED = frozenset(("satdump-weather",))
+# v2.1: satdump-weather and (W2 SW-AIS) ais-public are installation-gated (UNAVAILABLE_* offline); every other
+# gated preset stays DISABLED_*.
+_INSTALLATION_GATED = frozenset(("satdump-weather", "ais-public"))
 
 
 def check_s1(ctx, r):
@@ -2314,7 +2470,7 @@ def check_14(ctx, r):
 
 CHECKS = {"RX-00": check_00, "RX-01a": check_01a, "RX-01b": check_01b, "RX-01c": check_01c, "RX-02": check_02, "RX-03": check_03,
           "RX-04": check_04, "RX-04-bb": check_04bb, "RX-05": check_05, "RX-06": check_06, "RX-07": check_07, "RX-08": check_08, "RX-09": check_09,
-          "RX-10": check_10, "RX-11": check_11, "RX-12": check_12, "RX-13": check_13, "RX-14": check_14, "RX-15": check_15,
+          "RX-10": check_10, "RX-11": check_11, "RX-12": check_12, "RX-12-ais": check_12ais, "RX-13": check_13, "RX-14": check_14, "RX-15": check_15,
           "RX-16": check_16, "RX-17": check_17, "RX-S1": check_s1, "RX-S2": check_s2}
 
 
