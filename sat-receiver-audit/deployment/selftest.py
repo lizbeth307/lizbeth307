@@ -82,7 +82,8 @@ _B07, _B09 = "build/07-pz-vstanovlennia.md", "build/09-testy.md"
 CATALOGUE = (
     ("RX-00", None, "OFFLINE", "Target inventory: no special file, no symlink escaping the rootfs, within bounds", (_B07 + ":546",)),
     ("RX-01a", 1, "OFFLINE", "dpkg status: no forbidden package present (unpacked/half-*/triggers-* count)", (_B07 + ":540", _B07 + ":546", "STACK.md:888", "STACK.md:892", _B09 + ":70")),
-    ("RX-01b", 1, "OFFLINE", "File names: no forbidden basename, AppImage, snap/flatpak/docker state, transmitting Dream", (_B07 + ":540", _B07 + ":546", "STACK.md:888")),
+    ("RX-01b", 1, "OFFLINE", "File names: no forbidden basename, AppImage, snap/flatpak/docker state, transmitting Dream; wsjtx_app_version only as the lab-wsjt-decoders stub",
+     (_B07 + ":540", _B07 + ":546", "STACK.md:888", "STACK.md:886")),
     ("RX-01c", 1, "OFFLINE", "Engine configs: direct sampling mode 0, no direct_sampling/direct_samp/bias keys or device args, no HF+ 256000",(_B07 + ":324", _B07 + ":409", _B07 + ":431", _B07 + ":540", "STACK.md:888")),
     ("RX-02", 2, "OFFLINE", "SDRangel: plugin set equals allowlist, deny layer, signed reviewed hash manifest", (_B07 + ":415-424", _B07 + ":547", "STACK.md:890", _B09 + ":79")),
     ("RX-03", 3, "OFFLINE", "SDR++: no recorder/iq_exporter/network_sink/pager_decoder, ON list only, no sdrpp --server", (_B07 + ":401-409", _B07 + ":548", "STACK.md:890")),
@@ -196,6 +197,8 @@ POLICY_SCHEMA = {
         "soapy": dict(_COMMON, plugin_dirs=(_text,), forbidden_dirs=[_text]),
         "gpredict": dict(_COMMON, binaries=[_text], forbidden_needed=(_text,), radio_config_globs=[_text], rx_only_radio_type=_text,
                          tle_update={"file_globs": (_text,), "section": _text, "key": _text, "required": _text}),
+        # W2 SW-WSJT: jt9/wsprd and the reviewed wsjtx_app_version stub (RX-01b, _wsjt_app_version).
+        "lab-wsjt-decoders": {"footprint": (_text,), "app_version_stub": {"basename": _text, "lines": (_text,)}, "sources": [_text]},
     },
     "lime": {"runtime_library_globs": [_text], "sources": [_text]},
     "librtlsdr": {"library_glob": _text, "old_library_glob": _text, "soname": _text, "export_prefix": _text, "exports": int, "forbidden_strings": [_text], "sources": [_text]},
@@ -973,6 +976,33 @@ def check_01b(ctx, r):
             final = ctx.file(rel)
             if final is not None and ctx.contains(final, policy["dream"]["forbidden_strings"]):
                 r.fail(rel, "dream_transmitter_strings")
+    _wsjt_app_version(ctx, r)
+
+
+def _wsjt_app_version(ctx, r):
+    """W2 SW-WSJT: every file named wsjtx_app_version (any directory, any case, also behind a
+    link) must be the reviewed 2-line stub of lab-wsjt-decoders, which only prints the version
+    OpenWebRX+ reads; anything else of that name is upstream WSJT-X tooling outside the jt9/wsprd
+    allowlist (STACK.md:127, STACK.md:886). The target file is compared byte for byte, never run."""
+    comp = ctx.comp("lab-wsjt-decoders")
+    stub = comp["app_version_stub"]
+    expected, name = ("\n".join(stub["lines"]) + "\n").encode(), stub["basename"].lower()
+    for rel in ctx.keys:
+        if rel.rsplit("/", 1)[-1].lower() != name:
+            continue
+        final = ctx.file(rel)
+        if final is None:
+            r.block(rel, "wsjtx_app_version_not_a_file")
+            continue
+        try:
+            with ctx.open(final) as handle:
+                data = handle.read(len(expected) + 1)
+        except (OSError, DeploymentError):
+            r.block(rel, "wsjtx_app_version_unreadable")
+            continue
+        if data != expected:
+            r.fail(rel, "wsjtx_app_version_not_stub")
+    r.note("lab_wsjt_decoders_present" if ctx.globs(comp["footprint"]) else "lab_wsjt_decoders_absent")
 
 
 def check_01c(ctx, r):

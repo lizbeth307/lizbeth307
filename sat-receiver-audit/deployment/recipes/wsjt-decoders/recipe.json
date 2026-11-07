@@ -1,0 +1,80 @@
+{
+  "schema_version": 2,
+  "component": "wsjt-decoders",
+  "summary": "lab-wsjt-decoders 2.7.0+lab1: only the jt9 and wsprd decoders of WSJT-X 2.7.0 (release tarball member src/wsjtx.tgz, tag wsjtx-2.7.0 b4f9a43) plus the 2-line wsjtx_app_version stub; no GUI, no utilities, no Hamlib at run time",
+  "source": {
+    "patch": null,
+    "patches": [],
+    "member": {"path": "wsjtx-2.7.0/src/wsjtx.tgz", "sha256": "e92b101bdaa80e0ab7fddd6e86d39bbdd603b2d4afa7fcf9b658536ac2b1901f"}
+  },
+  "build_system": "cmake",
+  "build_depends": ["gfortran", "libfftw3-dev", "libboost-log-dev", "libboost-dev", "qtbase5-dev", "qttools5-dev", "qtmultimedia5-dev",
+                    "libqt5serialport5-dev", "libhamlib-dev", "libusb-1.0-0-dev"],
+  "lab_build_depends": [],
+  "cmake": {
+    "configure": ["cmake", "-S", "{src}", "-B", "{build}", "-G", "Unix Makefiles"],
+    "options": {
+      "BUILD_SHARED_LIBS": "OFF",
+      "UPDATE_TRANSLATIONS": "OFF",
+      "WSJT_BUILD_UTILS": "OFF",
+      "WSJT_CREATE_WINMAIN": "OFF",
+      "WSJT_ENABLE_EXPERIMENTAL_FEATURES": "OFF",
+      "WSJT_FOX_OTP": "ON",
+      "WSJT_GENERATE_DOCS": "OFF",
+      "WSJT_QDEBUG_IN_RELEASE": "OFF",
+      "WSJT_QDEBUG_TO_FILE": "OFF",
+      "WSJT_RIG_NONE_CAN_SPLIT": "OFF",
+      "WSJT_SHARED_RUNTIME": "OFF",
+      "WSJT_SKIP_MANPAGES": "ON",
+      "WSJT_SOFT_KEYING": "ON",
+      "WSJT_TRACE_UDP": "OFF"
+    },
+    "variables": {
+      "CMAKE_BUILD_TYPE": "Release",
+      "CMAKE_INSTALL_PREFIX": "/usr",
+      "FETCHCONTENT_FULLY_DISCONNECTED": "ON"
+    }
+  },
+  "autotools": null,
+  "build": [["cmake", "--build", "{build}", "--target", "jt9", "wsprd", "--parallel", "{jobs}"]],
+  "install": {
+    "cmake_install": false,
+    "make_install": false,
+    "copy": [
+      {"from": "{build}/jt9", "to": "usr/bin"},
+      {"from": "{build}/wsprd", "to": "usr/bin"},
+      {"from": "{recipe}/files/wsjtx_app_version", "to": "usr/bin"},
+      {"from": "{src}/COPYING", "to": "usr/share/doc/lab-wsjt-decoders"}
+    ]
+  },
+  "hooks": {"source_check": null, "package": null},
+  "packages": [
+    {
+      "name": "lab-wsjt-decoders",
+      "section": "hamradio",
+      "description": "WSJT-X 2.7.0 jt9 and wsprd decoders only, receive-only lab build (no GUI, no Hamlib)",
+      "files": ["usr/bin/jt9", "usr/bin/wsprd", "usr/bin/wsjtx_app_version", "usr/share/doc/lab-wsjt-decoders/COPYING"],
+      "depends": [],
+      "shlibs_depends": true
+    }
+  ],
+  "drop": [],
+  "checks": [
+    {"kind": "require_paths", "globs": ["usr/bin/jt9", "usr/bin/wsprd", "usr/bin/wsjtx_app_version", "usr/share/doc/lab-wsjt-decoders/COPYING"]},
+    {"kind": "forbid_paths", "globs": ["usr/bin/wsjtx", "usr/bin/wsjtx-*", "*rigctl*", "*rotctl*", "*hamlib*", "usr/bin/*code", "usr/bin/*sim", "usr/bin/*sim_*",
+                                       "usr/bin/udp_daemon", "usr/bin/message_aggregator", "usr/bin/record_time_signal", "usr/bin/qmap", "usr/lib/*",
+                                       "usr/share/applications/*", "usr/share/wsjtx/*", "usr/share/man/*"]},
+    {"kind": "forbid_needed", "files": ["usr/bin/jt9", "usr/bin/wsprd"],
+     "needed": ["libhamlib*", "libusb-1.0*", "libQt5SerialPort*", "libQt5Network*", "libQt5Widgets*", "libQt5Gui*", "libQt5Multimedia*"]}
+  ],
+  "ci": {"heavy": false, "runtime_depends": [], "tag_samples": ["samples/FT8/210703_133430.wav", "samples/WSPR/150426_0918.wav"]},
+  "notes": [
+    "Source: the locked release tarball wsjtx-2.7.0.tgz (sources.lock.json wsjt-decoders, SHA-256 3788f5df, re-measured 2026-11-07 from https://downloads.sourceforge.net/project/wsjt/wsjtx-2.7.0/wsjtx-2.7.0.tgz) is a superbuild; its member wsjtx-2.7.0/src/wsjtx.tgz (23719289 bytes, SHA-256 above, MD5 c85a68be equal to the tarball's src/wsjtx.tgz.md5sum) is the WSJT-X tree. The superbuild's wsjtx.patch and hamlib.patch are empty (0 bytes), so the member is built as released; src/hamlib-4.6.1.tar.gz and the superbuild ExternalProject steps are not used.",
+    "Every option()/cmake_dependent_option() of the member tree is set (14, all in CMakeLists.txt:112-141): WSJT_BUILD_UTILS=OFF (no simulators or *code/*sim encoders, CMakeLists.txt:1190-1299), WSJT_GENERATE_DOCS=OFF and WSJT_SKIP_MANPAGES=ON (no asciidoc/asciidoctor in the chroot); the others keep the upstream default. WSJT_SOFT_KEYING and WSJT_RIG_NONE_CAN_SPLIT only reach the GUI modulator/rig code, which the jt9/wsprd targets do not compile. WSJT_QDEBUG_IN_RELEASE, WSJT_ENABLE_EXPERIMENTAL_FEATURES and WSJT_CREATE_WINMAIN are dependent options (forced OFF in a Release build on Linux).",
+    "Only the targets jt9 and wsprd are built (cmake --build --target jt9 wsprd): jt9 links wsjt_fort_omp, wsjt_cxx (Boost.Log) and fort_qt (Qt5::Core), wsprd links FFTW3 and libm (CMakeLists.txt:1314-1316, :1462-1498); Hamlib is linked only by the GUI library wsjt_qt (CMakeLists.txt:1438), so libhamlib-dev (noble 4.5.5) is needed only because configure runs find_package(Hamlib REQUIRED) (CMakeLists.txt:946). It exists only in this recipe's chroot (STACK.md:141); forbid_needed proves jt9 and wsprd do not link it, and dpkg-shlibdeps writes the package Depends.",
+    "configure also needs the Qt5 components Widgets SerialPort Multimedia PrintSupport Sql LinguistTools (CMakeLists.txt:963), FFTW3 single+threads, Boost.Log >= 1.62, libusb-1.0 (FindUsb, also required by FindHamlib) and gfortran; qtbase5-dev provides Widgets/PrintSupport/Sql/Test and qttools5-dev LinguistTools (it depends on qttools5-dev-tools 5.15.13-1, packages.ubuntu.com/noble/qttools5-dev read 2026-11-07).",
+    "usr/bin/wsjtx_app_version is the reviewed 2-line stub of files/ (prints 'WSJT-X 2.7.0' whatever the arguments). OpenWebRX+ 1.2.126 (owrx/feature.py at f2a8fec, read 2026-11-07) reads the first line of `wsjtx_app_version --version` with ^WSJT-X (.*)$ and enables its WSJT-X 2.3/2.4 features (FST4/FST4W, Q65) from that version; jt9 and wsprd on PATH give the base wsjt-x feature. selftest RX-01b fails any other file of that name (receive-only-policy.json components lab-wsjt-decoders).",
+    "Licence: COPYING of the member tree (wsjtx/COPYING, byte-identical to the superbuild COPYING, read 2026-11-07) is the GNU GPL v3; it ships as usr/share/doc/lab-wsjt-decoders/COPYING, and the corresponding source is the locked tarball. Packaging is dpkg-deb from this recipe, not Debian's wsjtx packaging.",
+    "Runtime check (CI model, runtime_check.py): jt9 -8 -d 3 decodes FT8 and wsprd decodes WSPR from the tag samples samples/FT8/210703_133430.wav and samples/WSPR/150426_0918.wav (ci.tag_samples: in the tag tree 3f01398e of b4f9a43, not in the release tarball); the decode counts are a CI model on the arm64 builder, not an on-air or device result. The package stays CI_BUILT_UNREVIEWED."
+  ]
+}

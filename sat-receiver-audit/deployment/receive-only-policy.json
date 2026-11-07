@@ -276,6 +276,11 @@
       "rx_only_radio_type": "0",
       "tle_update": {"file_globs": ["home/*/.config/Gpredict/gpredict.cfg", "root/.config/Gpredict/gpredict.cfg", "etc/skel/.config/Gpredict/gpredict.cfg"], "section": "TLE", "key": "AUTO_UPDATE_FREQ", "required": "0"},
       "sources": ["build/07-pz-vstanovlennia.md:505-509", "build/07-pz-vstanovlennia.md:555", "STACK.md:888", "build/09-testy.md:79"]
+    },
+    "lab-wsjt-decoders": {
+      "footprint": ["usr/bin/jt9", "usr/bin/wsprd", "usr/bin/wsjtx_app_version"],
+      "app_version_stub": {"basename": "wsjtx_app_version", "lines": ["#!/bin/sh", "echo 'WSJT-X 2.7.0'"]},
+      "sources": ["STACK.md:127", "STACK.md:886", "build/07-pz-vstanovlennia.md:449", "deployment/recipes/wsjt-decoders/recipe.json (only jt9, wsprd and files/wsjtx_app_version; RX-01b fails any other file of that basename)"]
     }
   },
   "lime": {

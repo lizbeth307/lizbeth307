@@ -1459,5 +1459,108 @@ class ImageAptAndPinOnlyTests(unittest.TestCase):
         self.assertIn(("lab_pref_structure", None), self.run_row("RX-16", broken)[0])
 
 
+class WsjtDecodersTests(unittest.TestCase):
+    """W2 SW-WSJT: the lab-wsjt-decoders recipe (jt9, wsprd and the wsjtx_app_version stub only), its
+    runtime_check.py output parsing, and RX-01b's stub check on minimal synthetic roots. No decoder
+    runs here; the decodes of the tag samples are the sr-rx-packages runtime check (CI model)."""
+    RECIPE_DIR = HERE / "recipes" / "wsjt-decoders"
+
+    @classmethod
+    def setUpClass(cls):
+        import importlib.util
+        sys.path.insert(0, str(HERE / "recipes"))
+        import build_recipe
+        cls.build_recipe = build_recipe
+        cls.recipe = deploy.load(cls.RECIPE_DIR / "recipe.json")
+        spec = importlib.util.spec_from_file_location("srrx_wsjt_runtime_check", cls.RECIPE_DIR / "runtime_check.py")
+        cls.runtime = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(cls.runtime)
+        cls.policy = selftest.load_policy(POLICY)
+        stub = cls.policy["components"]["lab-wsjt-decoders"]["app_version_stub"]
+        cls.stub = ("\n".join(stub["lines"]) + "\n").encode()
+
+    def rx01b(self, files, links=()):
+        with tempfile.TemporaryDirectory(prefix="srrx-wsjt-") as temp:
+            root = Path(temp)
+            for rel, data in files.items():
+                (root / rel).parent.mkdir(parents=True, exist_ok=True)
+                (root / rel).write_bytes(data)
+            for rel, target in links:
+                (root / rel).parent.mkdir(parents=True, exist_ok=True)
+                try:
+                    os.symlink(target, root / rel)
+                except OSError as exc:  # unprivileged Windows host only; Linux CI always creates links
+                    self.skipTest("symlinks unavailable: " + str(exc))
+            ctx = selftest.Ctx(root, "full", self.policy, deploy.PROJECT, {}, None, None, None)
+            result = selftest.Result(next(row for row in selftest.CATALOGUE if row[0] == "RX-01b"))
+            selftest.check_01b(ctx, result)
+            return {(f["rule"], f["path"]) for f in result.findings}, result.notes
+
+    def test_recipe_builds_only_jt9_wsprd_and_ships_the_policy_stub(self):
+        component = self.build_recipe.validate_recipe(self.recipe)
+        self.assertEqual((component["id"], component["version"], component["tag"]), ("wsjt-decoders", "2.7.0+lab1", "wsjtx-2.7.0"))
+        self.assertEqual(self.recipe["source"]["member"]["path"], "wsjtx-2.7.0/src/wsjtx.tgz")
+        self.assertEqual(self.recipe["build"], [["cmake", "--build", "{build}", "--target", "jt9", "wsprd", "--parallel", "{jobs}"]])
+        options = self.recipe["cmake"]["options"]
+        self.assertEqual((options["WSJT_BUILD_UTILS"], options["WSJT_GENERATE_DOCS"], options["WSJT_SKIP_MANPAGES"]), ("OFF", "OFF", "ON"))
+        self.assertEqual(len(options), 14)  # every option() of the 2.7.0 tree (CMakeLists.txt:112-141), checked again by the build
+        self.assertEqual([p["name"] for p in self.recipe["packages"]], ["lab-wsjt-decoders"])
+        self.assertEqual(sorted(self.recipe["packages"][0]["files"]), ["usr/bin/jt9", "usr/bin/wsjtx_app_version", "usr/bin/wsprd",
+                                                                       "usr/share/doc/lab-wsjt-decoders/COPYING"])
+        self.assertIn({"from": "{recipe}/files/wsjtx_app_version", "to": "usr/bin"}, self.recipe["install"]["copy"])
+        # libhamlib-dev only in this chroot for configure; the binaries must not link it.
+        self.assertIn("libhamlib-dev", self.recipe["build_depends"])
+        needed = next(c for c in self.recipe["checks"] if c["kind"] == "forbid_needed")
+        self.assertEqual(needed["files"], ["usr/bin/jt9", "usr/bin/wsprd"])
+        self.assertIn("libhamlib*", needed["needed"])
+        forbidden = next(c for c in self.recipe["checks"] if c["kind"] == "forbid_paths")["globs"]
+        for path in ("usr/bin/wsjtx", "usr/bin/rigctl", "usr/bin/rigctld-wsjtx", "usr/bin/jt9code", "usr/bin/ft8sim", "usr/lib/libhamlib.so.4"):
+            self.assertTrue(any(fnmatch.fnmatchcase(path, g) for g in forbidden), path)
+        for path in self.recipe["packages"][0]["files"]:
+            self.assertFalse(any(fnmatch.fnmatchcase(path, g) for g in forbidden), path)
+        self.assertEqual(self.recipe["ci"], {"heavy": False, "runtime_depends": [], "tag_samples": list(self.runtime.SAMPLES)})
+        self.assertEqual((self.RECIPE_DIR / "files/wsjtx_app_version").read_bytes(), self.stub)
+        self.assertEqual(self.stub, b"#!/bin/sh\necho 'WSJT-X 2.7.0'\n")  # 2 lines; prints what OpenWebRX+ reads
+        if os.name == "posix":
+            self.assertTrue(os.access(self.RECIPE_DIR / "files/wsjtx_app_version", os.X_OK))
+        with patch.object(self.build_recipe, "DEPLOYMENT", HERE):
+            plan = self.build_recipe.ci_plan()
+        self.assertIn("wsjt-decoders", plan["light"])
+        self.assertTrue(plan["recipes"]["wsjt-decoders"]["runtime_check"])
+
+    def test_runtime_check_counts_decodes_and_finds_hamlib(self):
+        ft8 = ("133430 -12  0.3 1234 ~  CQ K1ABC FN42                          \n"
+               "133430   5 -0.5  456 ~  K1ABC W9XYZ -11                         a1\n"
+               "<DecodeFinished>   2   2        0\n"
+               "133430 -20  1.1 2001 ~  W9XYZ K1ABC RR73                        \n"
+               "<DecodeFinished>   1   1        0\n")
+        self.assertEqual(self.runtime.ft8_messages(ft8), ["CQ K1ABC FN42", "K1ABC W9XYZ -11                         a1", "W9XYZ K1ABC RR73"])
+        wspr = ("0918  -9  0.2   0.001456  0  K1JT FN20 30 \n0918 -25 -1.0   0.001523 -1  W9XYZ EN37 37 \n<DecodeFinished>\n"
+                "0918   1  0.1   0.001500  0  AFTER FINISH 10 \n")
+        self.assertEqual(self.runtime.wspr_messages(wspr), ["K1JT FN20 30", "W9XYZ EN37 37"])
+        self.assertEqual(self.runtime.ft8_messages("EOF on input file x.wav\n"), [])
+        ldd = "\tlibgfortran.so.5 => /lib/x.so (0x1)\n\tlibhamlib.so.4 => /lib/y.so (0x2)\n"
+        self.assertEqual(self.runtime.hamlib_libraries(ldd), ["libhamlib.so.4"])
+        self.assertEqual(self.runtime.STUB_OUTPUT.encode(), self.stub.split(b"\n")[1].split(b"'")[1] + b"\n")
+
+    def test_rx01b_accepts_only_the_stub_as_wsjtx_app_version(self):
+        elf = selftest.ELF_MAGIC + b"\x02\x01\x01" + b"\0" * 57
+        found, notes = self.rx01b({"usr/bin/jt9": elf, "usr/bin/wsprd": elf, "usr/bin/wsjtx_app_version": self.stub})
+        self.assertEqual((found, notes), (set(), ["lab_wsjt_decoders_present"]))
+        self.assertEqual(self.rx01b({"usr/bin/bash": elf}), (set(), ["lab_wsjt_decoders_absent"]))
+        for rel, data in (("usr/bin/wsjtx_app_version", elf), ("usr/bin/wsjtx_app_version", self.stub + b"exec /opt/wsjtx/bin/wsjtx\n"),
+                          ("usr/bin/wsjtx_app_version", self.stub.replace(b"2.7.0", b"2.6.1")), ("opt/other/bin/WSJTX_APP_VERSION", elf)):
+            found, _ = self.rx01b({"usr/bin/jt9": elf, rel: data})
+            self.assertEqual(found, {("wsjtx_app_version_not_stub", rel)}, rel)
+        # The stub's name is not a forbidden basename; the GUI's is.
+        self.assertNotIn("wsjtx_app_version", deploy.forbidden_basenames(self.policy))
+        self.assertIn(("forbidden_basename", "usr/bin/wsjtx"), self.rx01b({"usr/bin/wsjtx": elf})[0])
+        # Links last: an unprivileged Windows host skips from here.
+        found, _ = self.rx01b({"usr/lib/srrx/wsjtx_app_version": self.stub}, links=(("usr/bin/wsjtx_app_version", "/usr/lib/srrx/wsjtx_app_version"),))
+        self.assertEqual(found, set())  # a link to the stub is the stub
+        found, _ = self.rx01b({}, links=(("usr/bin/wsjtx_app_version", "/opt/missing"),))
+        self.assertEqual(found, {("wsjtx_app_version_not_a_file", "usr/bin/wsjtx_app_version")})
+
+
 if __name__ == "__main__":
     unittest.main()
