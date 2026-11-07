@@ -1,11 +1,11 @@
 {
   "status": "PASS",
   "input_sha256": {
-    "design/E1.json": "572e09c77521b45312cc235761c465703c40cc099689af3b901ce6861705dde4",
+    "design/E1.json": "39da4cd1ecdfcad37a4cf5b6ee309846b4aa73243f2c8e7d8f07083ab1824a90",
     "design/E2.json": "cc0580f8c8f896e6d1cca1e9364f64d69cd1d461d94593b33a6668f34f7a4935",
     "design/E3.json": "0ae9955a91c906ae6fa7e0cc51a212922ffe791df3d9bd5ccf9381cca55c1e7d",
     "design/E4.json": "a8c0ab0e6d9bbf4cbd1eb08175a34ec11fc8351b88a900570361a3f916f4142f",
-    "design/E5.json": "7fba795a8408c5037fcfbdddd7659dc58c31f437b360c9ad7ebf271f96b6abcd"
+    "design/E5.json": "a1af787e01694729e34bc1e9f0b854402f53bd20d93a784d9421f63a2f820703"
   },
   "radxa_gpio_contract": "PASS",
   "raw_battery_negative_isolated_from_protected_return": "PASS",

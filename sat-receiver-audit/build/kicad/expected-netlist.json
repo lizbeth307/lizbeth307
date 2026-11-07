@@ -3744,7 +3744,7 @@
     },
     {
       "ref": "J551",
-      "pin": "RTN",
+      "pin": "3",
       "sheet": "E5",
       "type": "passive"
     },
@@ -8996,7 +8996,7 @@
     },
     {
       "ref": "J551",
-      "pin": "VOUT",
+      "pin": "1",
       "sheet": "E5",
       "type": "passive"
     }

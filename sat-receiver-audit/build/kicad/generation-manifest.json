@@ -324,72 +324,72 @@
       "stem": "E5",
       "instance": "7961f449-97be-5318-9750-0d1b8f253ccf",
       "title": "E5 - USB, VBUS, PCIe та корпусні інтерфейси (1/2)",
-      "components": 56,
+      "components": 41,
       "sheet": "E5",
       "notes": [
+        "E5-08",
+        "E5-02",
+        "N-E5-04",
+        "N-E5-05",
+        "E5-07",
         "E5-10",
-        "E5-09",
-        "E5-04",
-        "N-E5-01",
-        "N-E5-02",
         "E5-05",
         "N-E5-03",
         "E5-03"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
+        "E5-08": 110,
+        "E5-02": 110,
+        "N-E5-04": 110,
+        "N-E5-05": 110,
+        "E5-07": 110,
         "E5-10": 110,
-        "E5-09": 110,
-        "E5-04": 110,
-        "N-E5-01": 110,
-        "N-E5-02": 110,
         "E5-05": 110,
         "N-E5-03": 110,
         "E5-03": 110
       },
-      "fill": 0.734,
+      "fill": 0.808,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 91,
-        "ground_symbols": 48,
-        "junctions": 36,
-        "wire_crossings": 2,
-        "wires": 255
+        "global_labels": 75,
+        "ground_symbols": 31,
+        "junctions": 31,
+        "wire_crossings": 4,
+        "wires": 221
       }
     },
     {
       "stem": "E5_02",
       "instance": "2f560f15-377c-5a7b-8d16-c38c753251d6",
       "title": "E5 - USB, VBUS, PCIe та корпусні інтерфейси (2/2)",
-      "components": 24,
+      "components": 39,
       "sheet": "E5",
       "notes": [
         "E5-01",
         "E5-06",
-        "E5-08",
-        "E5-02",
-        "N-E5-04",
-        "N-E5-05",
-        "E5-07"
+        "E5-09",
+        "E5-04",
+        "N-E5-01",
+        "N-E5-02"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
         "E5-01": 110,
         "E5-06": 110,
-        "E5-08": 110,
-        "E5-02": 110,
-        "N-E5-04": 110,
-        "N-E5-05": 110,
-        "E5-07": 110
+        "E5-09": 110,
+        "E5-04": 110,
+        "N-E5-01": 110,
+        "N-E5-02": 110
       },
-      "fill": 0.558,
+      "fill": 0.506,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 40,
-        "ground_symbols": 18,
-        "junctions": 33,
-        "wire_crossings": 4,
-        "wires": 143
+        "global_labels": 56,
+        "ground_symbols": 35,
+        "junctions": 38,
+        "wire_crossings": 2,
+        "wires": 177
       }
     }
   ],
@@ -833,7 +833,7 @@
     },
     {
       "id": "E5-08",
-      "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin) still needs its contact numbering, mounting side and cut-out from the binder drawing.",
+      "description": "Project locking connector/GX16 numbers have been assigned but final keyed part footprints/orientation and wire lengths are not released; the J551 pod power receptacle (M8 3-pin, contacts 1/3/4) still needs its wall position and a confirmed mounting side (MECH-07).",
       "blocking": true,
       "resolve": "Record exact supplier part numbers, face-view and wire-color tables; no-power continuity plus first energization current limit.",
       "stack": "§2.9; §5.8",
@@ -1037,7 +1037,7 @@
         "J551"
       ],
       "stack": "§5.8 (панель, роз'єми); §8.1",
-      "text": "J551 — панельна розетка M8 A-код 3 конт. (binder 76 6618 1111 00003-0200), вилка W425 — 99 3379 100 03: інший корпус, ніж GX16-4 J504 і GX12 J505, тож кабель IMU чи LAB BUS у неї не входить. Позначення контактів функціональні: нумерацію, бік монтажу й виріз — за кресленням binder (MECH-07). Ворота: E5-08.",
+      "text": "J551 — панельна розетка M8 A-код 3 конт. (binder 76 6618 1111 00003-0200), вилка W425 — 99 3379 100 03: інший корпус, ніж GX16-4 J504 і GX12 J505, тож кабель IMU чи LAB BUS у неї не входить. Контакти 1/3/4 (контакту 2 немає): 1 — BIAS_SB_LNA (коричневий вивід), 3 — GND (синій), 4 — вільний (чорний вивід — не GND, ізолювати). Місце на стінці й бік монтажу — MECH-07. Ворота: E5-08.",
       "sheet": "E5"
     }
   ],
@@ -1052,10 +1052,10 @@
     ]
   },
   "source_sha256": {
-    "E1.json": "572e09c77521b45312cc235761c465703c40cc099689af3b901ce6861705dde4",
+    "E1.json": "39da4cd1ecdfcad37a4cf5b6ee309846b4aa73243f2c8e7d8f07083ab1824a90",
     "E2.json": "cc0580f8c8f896e6d1cca1e9364f64d69cd1d461d94593b33a6668f34f7a4935",
     "E3.json": "0ae9955a91c906ae6fa7e0cc51a212922ffe791df3d9bd5ccf9381cca55c1e7d",
     "E4.json": "a8c0ab0e6d9bbf4cbd1eb08175a34ec11fc8351b88a900570361a3f916f4142f",
-    "E5.json": "7fba795a8408c5037fcfbdddd7659dc58c31f437b360c9ad7ebf271f96b6abcd"
+    "E5.json": "a1af787e01694729e34bc1e9f0b854402f53bd20d93a784d9421f63a2f820703"
   }
 }

@@ -54,7 +54,7 @@
     "inputs": [
       {
         "file": "design/E1.json",
-        "sha256": "572e09c77521b45312cc235761c465703c40cc099689af3b901ce6861705dde4"
+        "sha256": "39da4cd1ecdfcad37a4cf5b6ee309846b4aa73243f2c8e7d8f07083ab1824a90"
       },
       {
         "file": "design/E2.json",
@@ -70,7 +70,7 @@
       },
       {
         "file": "design/E5.json",
-        "sha256": "7fba795a8408c5037fcfbdddd7659dc58c31f437b360c9ad7ebf271f96b6abcd"
+        "sha256": "a1af787e01694729e34bc1e9f0b854402f53bd20d93a784d9421f63a2f820703"
       },
       {
         "file": "build/kicad/footprints/manifest.json",
@@ -78,7 +78,7 @@
       },
       {
         "file": "verification/netlist.xml",
-        "sha256": "7b7852b53c6cedf181fec9dcc2a3fd0d7ebbd0dde5c92a971f5e44882739ad0d"
+        "sha256": "3d09dee61fc041157bc541f9a95c96368f71c789cec0499c0f956429ae820a00"
       }
     ],
     "source_documents": [
@@ -187,7 +187,7 @@
         "interface_open",
         "interface_resolved"
       ],
-      "projection_sha256": "5e4892931f8d6b77686636ba63549c0b4a5e57891f95ae72baed356b13b2e35d"
+      "projection_sha256": "69a5c44fcde996d7d3879a0c61ae0543b37ea06c6cf0339ba96727344bd264b7"
     }
   },
   "boards": {
@@ -14067,7 +14067,7 @@
       "ref": "J551",
       "type": "interface_mounting_unresolved",
       "blocking": true,
-      "detail": "Parts database entry J-POD-PWR-PANEL (mount panel, MPN 76 6618 1111 00003-0200) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Розетку J551 і вилку W425 обрано (binder M8 A-код, 3 конт.); відкриті: нумерація контактів (у графі — функціональні VOUT/RTN/SPARE, креслення binder не прочитано), бік монтажу (сторінка binder суперечлива: у назві rear mounting, в адресі front), місце на стінці й виріз (картинка 718 для M10×0.75: отвір 10.1 мм, лиски 9.1 мм, стінка 2.0–6.5 мм, 1 N·m; грань і виріз — MECH-07, моделює MECH-3), довжина виводів 0.2 м проти траси S36 — TBD."
+      "detail": "Parts database entry J-POD-PWR-PANEL (mount panel, MPN 76 6618 1111 00003-0200) in design/parts/parts.json: mating part and mounting are not both fixed. Open: Розетку J551 і вилку W425 обрано (binder M8 A-код, контакти 1/3/4: 1 — BIAS_SB_LNA, 3 — GND, 4 — вільний); виріз — з даташиту (M10×0.75: отвір 10.1 мм, лиски 9.1 мм, стінка 2.0–6.5 мм, 1 N·m); відкриті: місце на стінці (грань — MECH-07, моделює MECH-3), бік монтажу (з креслення: вставляється зсередини, гайка — ззовні; підтвердити з товщиною стінки, MECH-2/3), довжина виводів 0.2 м проти траси S36 — TBD."
     }
   ]
 }

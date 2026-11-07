@@ -2125,7 +2125,7 @@
         <field name="Datasheet">STACK §2.7,§5.1; Sensata 6700 series datasheet (https://static.chipdip.ru/lib/822/DOC031822369.pdf, прочитано 07.11.2026)</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_TH102" description="| module | Паралельно D/S Q101 на сигнальному рівні, сумарно через R121. Ніколи у розрив PD 20 V. Замикається при нагріві 70 ±5 °C (NO, 65…75 °C); розмикається щонайменше на 4 K нижче фактичного замикання і не нижче 50 °C (даташит Sensata 6700, с. 4). Вимогу «reopen щонайменше на 15 K нижче» знято: максимум температури MOSFET задає точка замикання, а клас STACK (повернення 50 ±10 °C) сам допускає 5 K на краях; частота повторних пусків заряду — стенд (build/15 «IP2368»)."/>
+      <libsource lib="sr_rx_v2_completed" part="C_TH102" description="| module | Паралельно D/S Q101 на сигнальному рівні, сумарно через R121. Ніколи у розрив PD 20 V. Замикається при нагріві 70 ±5 °C (NO, 65…75 °C); повернення — за таблицею даташиту Sensata 6700 (с. 4) «MIN DIFFERENTIAL 4 °C, MIN RESET 50 °C», а приклад на тій самій сторінці читається як повернення не далі ніж на 4 K нижче фактичного замикання; за жодним прочитанням повернення ≥15 K нижче не гарантоване. Вимогу «reopen щонайменше на 15 K нижче» знято: максимум температури MOSFET задає точка замикання, а клас STACK (повернення 50 ±10 °C) сам допускає 5 K на краях; частота повторних пусків заряду — стенд (build/15 «IP2368»)."/>
       <property name="ReviewStatus" value="module"/>
       <property name="MPN" value="67F070"/>
       <property name="Manufacturer" value="Sensata-Airpax"/>
@@ -23433,427 +23433,6 @@
         </unit>
       </units>
     </comp>
-    <comp ref="C501">
-      <value>100nF X7R 10V</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">CC0603KRX7R9BB104</field>
-        <field name="Manufacturer">YAGEO</field>
-        <field name="LCSC">C14663</field>
-        <field name="Alt_MPN">TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC</field>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C501" description="| design | Place at IN/GND pins with the shortest current path."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="CC0603KRX7R9BB104"/>
-      <property name="Manufacturer" value="YAGEO"/>
-      <property name="LCSC" value="C14663"/>
-      <property name="Alt_MPN" value="TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>3dfd59fd-4487-55bb-9a6a-19627f2ab19c</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C502">
-      <value>4.7uF X7R 10V</value>
-      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">CC0805KKX7R8BB475</field>
-        <field name="Manufacturer">YAGEO</field>
-        <field name="LCSC">C354262</field>
-        <field name="Alt_MPN">TDK C2012X7R1E475KT000N</field>
-        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C502" description="| design |"/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="CC0805KKX7R8BB475"/>
-      <property name="Manufacturer" value="YAGEO"/>
-      <property name="LCSC" value="C354262"/>
-      <property name="Alt_MPN" value="TDK C2012X7R1E475KT000N"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>c8683587-78d5-565d-a464-d24cdd16a692</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C503">
-      <value>47uF 10V</value>
-      <footprint>Capacitor_SMD:CP_Elec_5x4.5</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">16SVPG47M</field>
-        <field name="Manufacturer">Panasonic</field>
-        <field name="LCSC">C2161511</field>
-        <field name="Footprint">Capacitor_SMD:CP_Elec_5x4.5</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C503" description="| design |"/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="16SVPG47M"/>
-      <property name="Manufacturer" value="Panasonic"/>
-      <property name="LCSC" value="C2161511"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>011fe560-663d-5891-adbb-a6c381863788</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C504">
-      <value>100nF X7R 10V</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">CC0603KRX7R9BB104</field>
-        <field name="Manufacturer">YAGEO</field>
-        <field name="LCSC">C14663</field>
-        <field name="Alt_MPN">TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC</field>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C504" description="| design | Place at IN/GND pins with the shortest current path."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="CC0603KRX7R9BB104"/>
-      <property name="Manufacturer" value="YAGEO"/>
-      <property name="LCSC" value="C14663"/>
-      <property name="Alt_MPN" value="TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>97f1c541-bf12-5021-b9fa-4ff75ca378fc</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C505">
-      <value>4.7uF X7R 10V</value>
-      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">CC0805KKX7R8BB475</field>
-        <field name="Manufacturer">YAGEO</field>
-        <field name="LCSC">C354262</field>
-        <field name="Alt_MPN">TDK C2012X7R1E475KT000N</field>
-        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C505" description="| design |"/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="CC0805KKX7R8BB475"/>
-      <property name="Manufacturer" value="YAGEO"/>
-      <property name="LCSC" value="C354262"/>
-      <property name="Alt_MPN" value="TDK C2012X7R1E475KT000N"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>eb702783-8881-5572-8f7e-8eb9c9415d4b</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C506">
-      <value>150uF 10V low-ESR</value>
-      <footprint>Capacitor_SMD:CP_Elec_8x6.9</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">16SVPC150M</field>
-        <field name="Manufacturer">Panasonic</field>
-        <field name="LCSC">C190722</field>
-        <field name="Alt_MPN">Panasonic 10SVQP150M</field>
-        <field name="Footprint">Capacitor_SMD:CP_Elec_8x6.9</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C506" description="| design | At least120uF at downstream external USB port after gate, not only on common hub supply."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="16SVPC150M"/>
-      <property name="Manufacturer" value="Panasonic"/>
-      <property name="LCSC" value="C190722"/>
-      <property name="Alt_MPN" value="Panasonic 10SVQP150M"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>dc817ddf-e491-5488-bf53-b20237ab4742</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C507">
-      <value>100nF X7R 10V</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">CC0603KRX7R9BB104</field>
-        <field name="Manufacturer">YAGEO</field>
-        <field name="LCSC">C14663</field>
-        <field name="Alt_MPN">TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC</field>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C507" description="| design |"/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="CC0603KRX7R9BB104"/>
-      <property name="Manufacturer" value="YAGEO"/>
-      <property name="LCSC" value="C14663"/>
-      <property name="Alt_MPN" value="TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>b10f1433-e80a-5626-92aa-0e51d162e3e7</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C508">
-      <value>100nF X7R 10V</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">CC0603KRX7R9BB104</field>
-        <field name="Manufacturer">YAGEO</field>
-        <field name="LCSC">C14663</field>
-        <field name="Alt_MPN">TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC</field>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C508" description="| design | Place at IN/GND pins with the shortest current path."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="CC0603KRX7R9BB104"/>
-      <property name="Manufacturer" value="YAGEO"/>
-      <property name="LCSC" value="C14663"/>
-      <property name="Alt_MPN" value="TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>798eabba-5d7c-5227-805d-7ec78739f5bc</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C509">
-      <value>4.7uF X7R 10V</value>
-      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">CC0805KKX7R8BB475</field>
-        <field name="Manufacturer">YAGEO</field>
-        <field name="LCSC">C354262</field>
-        <field name="Alt_MPN">TDK C2012X7R1E475KT000N</field>
-        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C509" description="| design |"/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="CC0805KKX7R8BB475"/>
-      <property name="Manufacturer" value="YAGEO"/>
-      <property name="LCSC" value="C354262"/>
-      <property name="Alt_MPN" value="TDK C2012X7R1E475KT000N"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>97182307-f37c-5018-8027-492504f0d8a7</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C510">
-      <value>1uF X7R 10V</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">CC0603KRX7R9BB105</field>
-        <field name="Manufacturer">YAGEO</field>
-        <field name="LCSC">C559769</field>
-        <field name="Alt_MPN">TDK CGA3E1X7R1E105KT0Y0E</field>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C510" description="| design |"/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="CC0603KRX7R9BB105"/>
-      <property name="Manufacturer" value="YAGEO"/>
-      <property name="LCSC" value="C559769"/>
-      <property name="Alt_MPN" value="TDK CGA3E1X7R1E105KT0Y0E"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>38cb1650-516b-5e87-a85f-ce79d0b4520c</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C511">
-      <value>EEU-FR1C101 100uF 16V</value>
-      <footprint>Capacitor_THT:CP_Radial_D5.0mm_P2.00mm</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">EEU-FR1C101</field>
-        <field name="Manufacturer">Panasonic</field>
-        <field name="LCSC">C278532</field>
-        <field name="Footprint">Capacitor_THT:CP_Radial_D5.0mm_P2.00mm</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C511" description="| design |"/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="EEU-FR1C101"/>
-      <property name="Manufacturer" value="Panasonic"/>
-      <property name="LCSC" value="C278532"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>ca4d3fe8-3391-5532-aa52-6452c56ebf45</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C512">
-      <value>220uF 16V low-ESR</value>
-      <footprint>Capacitor_THT:CP_Radial_D6.3mm_P2.50mm</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">EEU-FR1C221</field>
-        <field name="Manufacturer">Panasonic</field>
-        <field name="Footprint">Capacitor_THT:CP_Radial_D6.3mm_P2.50mm</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C512" description="| design |"/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="EEU-FR1C221"/>
-      <property name="Manufacturer" value="Panasonic"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>a69c6923-e0fc-594b-9e4b-1298861d193d</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C513">
-      <value>100nF X7R 10V</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">CC0603KRX7R9BB104</field>
-        <field name="Manufacturer">YAGEO</field>
-        <field name="LCSC">C14663</field>
-        <field name="Alt_MPN">TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC</field>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C513" description="| design |"/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="CC0603KRX7R9BB104"/>
-      <property name="Manufacturer" value="YAGEO"/>
-      <property name="LCSC" value="C14663"/>
-      <property name="Alt_MPN" value="TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>00074762-e7f5-5634-80ed-3970ec46c125</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
     <comp ref="C514">
       <value>100nF X7R 10V</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
@@ -23953,6 +23532,72 @@
         </unit>
       </units>
     </comp>
+    <comp ref="C519">
+      <value>10uF X7R 10V</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">CC0805KKX7R7BB106</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="LCSC">C326595</field>
+        <field name="Alt_MPN">TDK C2012X7R1A106KT0A0E</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C519" description="| design |"/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="CC0805KKX7R7BB106"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="LCSC" value="C326595"/>
+      <property name="Alt_MPN" value="TDK C2012X7R1A106KT0A0E"/>
+      <property name="Sheetname" value="E5"/>
+      <property name="Sheetfile" value="E5.kicad_sch"/>
+      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
+      <tstamps>c525cb8a-acd7-55ae-9ada-65baafcd45ac</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C520">
+      <value>100nF X7R 10V</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">CC0603KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="LCSC">C14663</field>
+        <field name="Alt_MPN">TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C520" description="| design |"/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="CC0603KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="LCSC" value="C14663"/>
+      <property name="Alt_MPN" value="TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC"/>
+      <property name="Sheetname" value="E5"/>
+      <property name="Sheetfile" value="E5.kicad_sch"/>
+      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
+      <tstamps>a53c9096-9d47-55f5-9019-fdfb7c1d99c4</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
     <comp ref="C550">
       <value>100nF X7R 10V</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
@@ -24019,33 +23664,133 @@
         </unit>
       </units>
     </comp>
-    <comp ref="J501">
-      <value>LAB USB-A panel receptacle</value>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+    <comp ref="C552">
+      <value>100nF X7R 10V</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>TI SLVS841G Table 5-1 (IN &gt;=0.1 uF ceramic); engineering design</datasheet>
       <fields>
         <field name="ReviewStatus">design</field>
-        <field name="MPN">PX0845/A</field>
-        <field name="Manufacturer">Bulgin</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="MPN">CC0603KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="LCSC">C14663</field>
+        <field name="Alt_MPN">TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet">TI SLVS841G Table 5-1 (IN &gt;=0.1 uF ceramic); engineering design</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J501" description="| design | One peripheral only; external powered hub must not backfeed. USB-A standard contact numbering; hub JP3_2 goes USB-A3, JP3_3 goes USB-A2."/>
+      <libsource lib="sr_rx_v2_completed" part="C_C552" description="| design | At U553 IN/GND with the shortest current path."/>
       <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="PX0845/A"/>
-      <property name="Manufacturer" value="Bulgin"/>
+      <property name="MPN" value="CC0603KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="LCSC" value="C14663"/>
+      <property name="Alt_MPN" value="TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC"/>
       <property name="Sheetname" value="E5"/>
       <property name="Sheetfile" value="E5.kicad_sch"/>
       <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>52a17a03-daac-53b1-b4d5-217cf1d2af30</tstamps>
+      <tstamps>0eae1c13-d78e-53ba-860e-3076eb2b1a21</tstamps>
       <units>
         <unit name="A">
           <pins>
-            <pin num="3"/>
-            <pin num="4"/>
-            <pin num="S"/>
             <pin num="1"/>
             <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C553">
+      <value>1uF X7R 10V</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>engineering design (output capacitor of a cable branch, as C510 at U503)</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">CC0603KRX7R9BB105</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="LCSC">C559769</field>
+        <field name="Alt_MPN">TDK CGA3E1X7R1E105KT0Y0E</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet">engineering design (output capacitor of a cable branch, as C510 at U503)</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C553" description="| design | At U553 OUT, before the GX16 J504 lead; the pack keeps C519/C520 after D502."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="CC0603KRX7R9BB105"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="LCSC" value="C559769"/>
+      <property name="Alt_MPN" value="TDK CGA3E1X7R1E105KT0Y0E"/>
+      <property name="Sheetname" value="E5"/>
+      <property name="Sheetfile" value="E5.kicad_sch"/>
+      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
+      <tstamps>c4c46d55-5dbc-50fb-93d9-66dec8f66a45</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="D502">
+      <value>SS14-E3/61T IMU supply reverse isolation</value>
+      <footprint>Diode_SMD:D_SMA</footprint>
+      <datasheet>https://www.vishay.com/doc?88746=</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">SS14-E3/61T</field>
+        <field name="Manufacturer">Vishay General Semiconductor</field>
+        <field name="LCSC">C47460</field>
+        <field name="Alt_MPN">Vishay General Semiconductor SS14-E3/5AT; onsemi SS14</field>
+        <field name="Footprint">Diode_SMD:D_SMA</field>
+        <field name="Datasheet">https://www.vishay.com/doc?88746=</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_D502" description="| design | Located INSIDE IMU pack before MCU5V/VSYS. Band=cathode. No direct cable-5V (E5_IMU5V) wire to RP2040-Zero USB5V.; Output E5_IMU_VIN feeds E3 RP2040-Zero U309 5V_IN. IMU firmware/MCU and BNO085 SPI wiring owned by E3; do not duplicate pack module on E5."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="SS14-E3/61T"/>
+      <property name="Manufacturer" value="Vishay General Semiconductor"/>
+      <property name="LCSC" value="C47460"/>
+      <property name="Alt_MPN" value="Vishay General Semiconductor SS14-E3/5AT; onsemi SS14"/>
+      <property name="Sheetname" value="E5"/>
+      <property name="Sheetfile" value="E5.kicad_sch"/>
+      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
+      <tstamps>9c9efbe7-c1ee-53ad-a6d6-2ae812e05804</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J502">
+      <value>UART5 console 3pin locking</value>
+      <footprint>Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">B3B-PH-K-S(LF)(SN)</field>
+        <field name="Manufacturer">JST</field>
+        <field name="LCSC">C131339</field>
+        <field name="Footprint">Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_J502" description="| design | PROJECT contact assignment. 3.3V TTL only. No5V/3V3 power wire; Q6A header physicalTX/RX mapping remains on E3."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="B3B-PH-K-S(LF)(SN)"/>
+      <property name="Manufacturer" value="JST"/>
+      <property name="LCSC" value="C131339"/>
+      <property name="Sheetname" value="E5"/>
+      <property name="Sheetfile" value="E5.kicad_sch"/>
+      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
+      <tstamps>59f1f3a9-22f5-5085-b38f-e8713cc32ea3</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="2"/>
+            <pin num="1"/>
+            <pin num="3"/>
           </pins>
         </unit>
       </units>
@@ -24078,6 +23823,69 @@
             <pin num="1"/>
             <pin num="2"/>
             <pin num="3"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J504">
+      <value>Olimex GX16-4 IMU DESIGN pinout</value>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">CONNECTOR-GX16-4</field>
+        <field name="Manufacturer">Olimex</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_J504" description="| design | PROJECT assignment engraved at both mating halves; use molded pin numbers, not mirrored face-view guesses. 2m HELU49655 cable; shield360degree to shell/case, &lt;=0.1Ohm. Signals are3.3V TTL, not5V UART."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="CONNECTOR-GX16-4"/>
+      <property name="Manufacturer" value="Olimex"/>
+      <property name="Sheetname" value="E5"/>
+      <property name="Sheetfile" value="E5.kicad_sch"/>
+      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
+      <tstamps>a97a6973-cf12-5c0c-8a59-b413c823f4e0</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+            <pin num="4"/>
+            <pin num="3"/>
+            <pin num="S"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J505">
+      <value>LAB BUS 6pin locking DESIGN</value>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">KH-GX12-6P</field>
+        <field name="Manufacturer">Shenzhen Kinghelm</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_J505" description="| design | PROJECT assignment, not documented factory pinout. Mating sled connects6 to2/4 on insertion; E3 owns10k pullup and MCP#3 GPB6. I2C100kHz; beyond1m use PCA9615 redesign. Key orientation verified before energizing AUX12."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="KH-GX12-6P"/>
+      <property name="Manufacturer" value="Shenzhen Kinghelm"/>
+      <property name="Sheetname" value="E5"/>
+      <property name="Sheetfile" value="E5.kicad_sch"/>
+      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
+      <tstamps>0f290277-2527-5efe-b8e4-59c9ff69858f</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="3"/>
+            <pin num="2"/>
+            <pin num="4"/>
+            <pin num="5"/>
+            <pin num="6"/>
           </pins>
         </unit>
       </units>
@@ -24180,6 +23988,31 @@
         </unit>
       </units>
     </comp>
+    <comp ref="J522">
+      <value>Q6A factory EDL button functional pads</value>
+      <datasheet>https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf</datasheet>
+      <description>Functional switch pads; physical pad orientation to confirm on exact Q6A board before soldering.</description>
+      <fields>
+        <field name="ReviewStatus">module</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf</field>
+        <field name="Description">Functional switch pads; physical pad orientation to confirm on exact Q6A board before soldering.</field>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_J522" description="Functional switch pads; physical pad orientation to confirm on exact Q6A board before soldering. | module | Original factory button remains usable; external switch in parallel. No R137/R207 modifications."/>
+      <property name="ReviewStatus" value="module"/>
+      <property name="Sheetname" value="E5"/>
+      <property name="Sheetfile" value="E5.kicad_sch"/>
+      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
+      <tstamps>5ed11cba-40e3-5116-a632-e84c125b782d</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="B"/>
+            <pin num="A"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
     <comp ref="J530">
       <value>Q6A MKEY host lane0 functional interface</value>
       <datasheet>https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf</datasheet>
@@ -24213,451 +24046,63 @@
         </unit>
       </units>
     </comp>
-    <comp ref="J541">
-      <value>RTL-B split-VBUS USB cable endpoint</value>
+    <comp ref="J550">
+      <value>IMU pack cable termination DESIGN</value>
       <datasheet>STACK.md §5.2 / engineering design</datasheet>
       <fields>
         <field name="ReviewStatus">design</field>
-        <field name="MPN">36700</field>
-        <field name="Manufacturer">Lindy</field>
+        <field name="MPN">SUPERTRONIC-C-PURO 4x0.14 (49655)</field>
+        <field name="Manufacturer">HELU</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK.md §5.2 / engineering design</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J541" description="| design | Lindy36700 plus Würth74271112 if A/B noise-rise&lt;0.5dB. J5 top plug contact1 wire omitted; do not confuse physical stacked J5 pin10 with plug pin1. Receiver module only on E4."/>
+      <libsource lib="sr_rx_v2_completed" part="C_J550" description="| design | Same molded-contact mapping as GX16; cable shields at both enclosures; this models harness, not RP2040-Zero board contact numbers."/>
       <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="36700"/>
-      <property name="Manufacturer" value="Lindy"/>
+      <property name="MPN" value="SUPERTRONIC-C-PURO 4x0.14 (49655)"/>
+      <property name="Manufacturer" value="HELU"/>
       <property name="Sheetname" value="E5"/>
       <property name="Sheetfile" value="E5.kicad_sch"/>
       <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>5e818114-e83f-5c7c-af89-c11d224ad095</tstamps>
+      <tstamps>6258dc49-161c-5341-8185-0c72b54c8c21</tstamps>
       <units>
         <unit name="A">
           <pins>
+            <pin num="3"/>
             <pin num="1"/>
             <pin num="2"/>
             <pin num="4"/>
-            <pin num="3"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="J543">
-      <value>RTL-A USB cable endpoint</value>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">36700</field>
-        <field name="Manufacturer">Lindy</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J543" description="| design | Represents cable contact numbering only; actual RTL-A receiver module drawn on E4, not duplicated. H2/JP1 pad1 not wired."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="36700"/>
-      <property name="Manufacturer" value="Lindy"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>25e130f7-b711-5102-ac77-959cf49782ac</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="3"/>
-            <pin num="2"/>
-            <pin num="1"/>
-            <pin num="4"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="J544">
-      <value>HF+ microUSB-B cable endpoint</value>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J544" description="| design | Endpoint only, Airspy module on E4. Two Fair-Rite2631480002 sleeves surround complete cable including power/data; sleeves are common-mode mechanical ferrites, not a series DC component."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>138c6623-c77e-55cd-b2b6-5c3b6bf964b1</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="3"/>
-            <pin num="4"/>
-            <pin num="5"/>
             <pin num="S"/>
-            <pin num="1"/>
-            <pin num="2"/>
           </pins>
         </unit>
       </units>
     </comp>
-    <comp ref="L501">
-      <value>SRR1260-101M 100uH</value>
-      <footprint>Inductor_SMD:L_Bourns_SRR1260</footprint>
-      <datasheet>https://www.bourns.com/docs/product-datasheets/srr1260.pdf</datasheet>
-      <fields>
-        <field name="ReviewStatus">verified</field>
-        <field name="MPN">SRR1260-101M</field>
-        <field name="Manufacturer">Bourns</field>
-        <field name="LCSC">C2041335</field>
-        <field name="Footprint">Inductor_SMD:L_Bourns_SRR1260</field>
-        <field name="Datasheet">https://www.bourns.com/docs/product-datasheets/srr1260.pdf</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_L501" description="| verified | DCR&lt;=180mOhm; Irms1.7A. Mounted away from HF receiver."/>
-      <property name="ReviewStatus" value="verified"/>
-      <property name="MPN" value="SRR1260-101M"/>
-      <property name="Manufacturer" value="Bourns"/>
-      <property name="LCSC" value="C2041335"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>7ea0e259-bd9a-5637-9f67-6235169df11b</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R501">
-      <value>RILIM TBD (start 43.2k 1%)</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+    <comp ref="J551">
+      <value>S-band pod power M8 3-pin receptacle DESIGN</value>
+      <datasheet>https://www.binder-connector.com/sg/products/automation-technology/m8/female-panel-mount-connector-front-mounting-with-single-wires</datasheet>
+      <description>binder M8 A-coded 3-contact receptacle: contacts 1, 3 and 4, there is no contact 2 (data sheet p.1, plug-in side: 4 at the top, 3 left, 1 right); lead colours 1 brown, 3 blue, 4 black.</description>
       <fields>
         <field name="ReviewStatus">design</field>
-        <field name="MPN">0603WAF4322T5E</field>
-        <field name="Manufacturer">UNI-ROYAL</field>
-        <field name="LCSC">C23053</field>
-        <field name="Alt_MPN">YAGEO RC0603FR-0743K2L</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
+        <field name="MPN">76 6618 1111 00003-0200</field>
+        <field name="Manufacturer">binder</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">https://www.binder-connector.com/sg/products/automation-technology/m8/female-panel-mount-connector-front-mounting-with-single-wires</field>
+        <field name="Description">binder M8 A-coded 3-contact receptacle: contacts 1, 3 and 4, there is no contact 2 (data sheet p.1, plug-in side: 4 at the top, 3 left, 1 right); lead colours 1 brown, 3 blue, 4 black.</field>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R501" description="| design | STACK gives no RILIM value for this channel, only the rule 1.5–2× measured current (§5.1). Starting value per R-E5-03; bench gate E5-04."/>
+      <libsource lib="sr_rx_v2_completed" part="C_J551" description="binder M8 A-coded 3-contact receptacle: contacts 1, 3 and 4, there is no contact 2 (data sheet p.1, plug-in side: 4 at the top, 3 left, 1 right); lead colours 1 brown, 3 blue, 4 black. | design | W425 (E4) is the cable plugged into J551: field-wired M8 male plug 99 3379 100 03 at this end (its contacts 1/3/4 mirror the receptacle), USB-C into the pod (R-E5-09). The receptacle is the female (socket) half, so the live 5 V contact is shrouded.; Lead colours are binder's (1 brown, 3 blue, 4 black): the black lead is the unused contact 4, not GND; insulate it at the PWR end. Map W425 by contact number, not by colour (its black conductor is GND).; Keying: M8 shell differs from GX16-4 J504 and GX12 J505, so neither the IMU nor the LAB BUS plug enters it (build/15 'Ключування панельних роз'ємів'). Unshielded version: no shell or shield contact; the housing is not bonded (ASA wall, power-only cable)."/>
       <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="0603WAF4322T5E"/>
-      <property name="Manufacturer" value="UNI-ROYAL"/>
-      <property name="LCSC" value="C23053"/>
-      <property name="Alt_MPN" value="YAGEO RC0603FR-0743K2L"/>
+      <property name="MPN" value="76 6618 1111 00003-0200"/>
+      <property name="Manufacturer" value="binder"/>
       <property name="Sheetname" value="E5"/>
       <property name="Sheetfile" value="E5.kicad_sch"/>
       <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>6b7a4590-9a45-5a60-9928-1fbe0d143743</tstamps>
+      <tstamps>cb23cd0e-008c-5ec3-b548-d7b74892a33e</tstamps>
       <units>
         <unit name="A">
           <pins>
             <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R502">
-      <value>100k</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">0603WAF1003T5E</field>
-        <field name="Manufacturer">UNI-ROYAL</field>
-        <field name="LCSC">C25803</field>
-        <field name="Alt_MPN">YAGEO RC0603FR-07100KL</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R502" description="| design | Fail-off during GPIO input/reset state."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="0603WAF1003T5E"/>
-      <property name="Manufacturer" value="UNI-ROYAL"/>
-      <property name="LCSC" value="C25803"/>
-      <property name="Alt_MPN" value="YAGEO RC0603FR-07100KL"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>76a6e7c5-dfed-5f76-80f7-804022fb81d4</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R504">
-      <value>10k</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">0603WAF1002T5E</field>
-        <field name="Manufacturer">UNI-ROYAL</field>
-        <field name="LCSC">C25804</field>
-        <field name="Alt_MPN">YAGEO RC0603FR-0710KL</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R504" description="| design | Passive discharge permits defined power-cycle delay; wait until &lt;0.5V before reenable."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="0603WAF1002T5E"/>
-      <property name="Manufacturer" value="UNI-ROYAL"/>
-      <property name="LCSC" value="C25804"/>
-      <property name="Alt_MPN" value="YAGEO RC0603FR-0710KL"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>808afaf3-81e8-535f-83b6-22b5ad431d51</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R505">
-      <value>34.8k 1%</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">AF0603FR-0734K8L</field>
-        <field name="Manufacturer">YAGEO</field>
-        <field name="LCSC">C2098331</field>
-        <field name="Alt_MPN">UNI-ROYAL 0603WAF3482T5E</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R505" description="| design |"/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="AF0603FR-0734K8L"/>
-      <property name="Manufacturer" value="YAGEO"/>
-      <property name="LCSC" value="C2098331"/>
-      <property name="Alt_MPN" value="UNI-ROYAL 0603WAF3482T5E"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>ec3c7f7b-c461-5012-8993-a751919deab0</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R506">
-      <value>100k</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">0603WAF1003T5E</field>
-        <field name="Manufacturer">UNI-ROYAL</field>
-        <field name="LCSC">C25803</field>
-        <field name="Alt_MPN">YAGEO RC0603FR-07100KL</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R506" description="| design | Fail-off during GPIO input/reset state."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="0603WAF1003T5E"/>
-      <property name="Manufacturer" value="UNI-ROYAL"/>
-      <property name="LCSC" value="C25803"/>
-      <property name="Alt_MPN" value="YAGEO RC0603FR-07100KL"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>bec587db-e0e7-58d8-8819-02ac8e1c1d30</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R508">
-      <value>10k</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">0603WAF1002T5E</field>
-        <field name="Manufacturer">UNI-ROYAL</field>
-        <field name="LCSC">C25804</field>
-        <field name="Alt_MPN">YAGEO RC0603FR-0710KL</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R508" description="| design |"/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="0603WAF1002T5E"/>
-      <property name="Manufacturer" value="UNI-ROYAL"/>
-      <property name="LCSC" value="C25804"/>
-      <property name="Alt_MPN" value="YAGEO RC0603FR-0710KL"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>e3291bb6-e4a1-5a10-9da0-cd03245aef37</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R509">
-      <value>RILIM TBD (start 28.7k 1%)</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">0603WAF2872T5E</field>
-        <field name="Manufacturer">UNI-ROYAL</field>
-        <field name="LCSC">C22928</field>
-        <field name="Alt_MPN">Vishay Dale CRCW060328K7FKEA</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R509" description="| design | STACK gives no RILIM value for this channel, only the rule 1.5–2× measured current (§5.1). Starting value per R-E5-03; bench gate E5-04."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="0603WAF2872T5E"/>
-      <property name="Manufacturer" value="UNI-ROYAL"/>
-      <property name="LCSC" value="C22928"/>
-      <property name="Alt_MPN" value="Vishay Dale CRCW060328K7FKEA"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>8df5ed26-788b-52f4-9784-0139d74985ae</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R510">
-      <value>100k</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">0603WAF1003T5E</field>
-        <field name="Manufacturer">UNI-ROYAL</field>
-        <field name="LCSC">C25803</field>
-        <field name="Alt_MPN">YAGEO RC0603FR-07100KL</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R510" description="| design | Fail-off during GPIO input/reset state."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="0603WAF1003T5E"/>
-      <property name="Manufacturer" value="UNI-ROYAL"/>
-      <property name="LCSC" value="C25803"/>
-      <property name="Alt_MPN" value="YAGEO RC0603FR-07100KL"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>720036ba-9ded-54bc-b413-e6aacf000e04</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R512">
-      <value>1Ohm 0.5W</value>
-      <footprint>Resistor_SMD:R_1210_3225Metric</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">1210W2F100KT5E</field>
-        <field name="Manufacturer">UNI-ROYAL</field>
-        <field name="LCSC">C78022</field>
-        <field name="Alt_MPN">YAGEO AC1210FR-071RL</field>
-        <field name="Footprint">Resistor_SMD:R_1210_3225Metric</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R512" description="| design | Series RC damping branch, parallel to main100uF. Not in DC receiver power path.; 1210 package for the 0.5 W rating, as for the ≥0.5 W E4 R44xx bleeds; a standard 0603 part is only about 0.1 W. Startup charge of C512 dissipates at most ½×220 uF×(5 V)² ≈ 2.75 mJ in R512; check it against the chosen part's single-pulse curve."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="1210W2F100KT5E"/>
-      <property name="Manufacturer" value="UNI-ROYAL"/>
-      <property name="LCSC" value="C78022"/>
-      <property name="Alt_MPN" value="YAGEO AC1210FR-071RL"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>d744d3e1-8085-5362-a853-c182414653f8</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="R513">
-      <value>10k</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">0603WAF1002T5E</field>
-        <field name="Manufacturer">UNI-ROYAL</field>
-        <field name="LCSC">C25804</field>
-        <field name="Alt_MPN">YAGEO RC0603FR-0710KL</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R513" description="| design |"/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="0603WAF1002T5E"/>
-      <property name="Manufacturer" value="UNI-ROYAL"/>
-      <property name="LCSC" value="C25804"/>
-      <property name="Alt_MPN" value="YAGEO RC0603FR-0710KL"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>b1c11afb-4226-588b-afe1-050e168676d8</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="4"/>
           </pins>
         </unit>
       </units>
@@ -24860,6 +24305,69 @@
         </unit>
       </units>
     </comp>
+    <comp ref="R553">
+      <value>RILIM TBD (start 88.7k 1%)</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <datasheet>STACK.md §5.1 rule; E2 RILIM value of U206-U208; engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">0603WAF8872T5E</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="LCSC">C23258</field>
+        <field name="Alt_MPN">Bourns CR0603-FX-8872ELF</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §5.1 rule; E2 RILIM value of U206-U208; engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R553" description="| design | Starting value 88.7k as on U206-U208: IOS 264.7-339.1 mA (SLVS841G eq. 1-3). STACK gives only the rule 1.5-2x measured current; bench gate E5-04 (N-E5-04)."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="0603WAF8872T5E"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="LCSC" value="C23258"/>
+      <property name="Alt_MPN" value="Bourns CR0603-FX-8872ELF"/>
+      <property name="Sheetname" value="E5"/>
+      <property name="Sheetfile" value="E5.kicad_sch"/>
+      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
+      <tstamps>16727b1f-869c-565f-9293-2eefd8b1e4a8</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="SW501">
+      <value>EDL recessed momentary NO</value>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">PV6F240SS</field>
+        <field name="Manufacturer">E-Switch</field>
+        <field name="Alt_MPN">E-Switch PV6F240SS-341</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_SW501" description="| design | Dry-contact parallel only to factoryEDL button; no applied voltage. T7 physically unplugged for recovery."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="PV6F240SS"/>
+      <property name="Manufacturer" value="E-Switch"/>
+      <property name="Alt_MPN" value="E-Switch PV6F240SS-341"/>
+      <property name="Sheetname" value="E5"/>
+      <property name="Sheetfile" value="E5.kicad_sch"/>
+      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
+      <tstamps>b2ba80b5-82d6-5a62-bfbd-8800fc43cff6</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
     <comp ref="TP501">
       <value>T7 FAULT_N test point</value>
       <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
@@ -24876,6 +24384,30 @@
       <property name="Sheetfile" value="E5.kicad_sch"/>
       <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
       <tstamps>69328c40-e944-511f-882a-d1f73df03edd</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="TP503">
+      <value>IMU 5V switch FAULT_N test point</value>
+      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
+      <datasheet>engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
+        <field name="Datasheet">engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_TP503" description="| design | Open drain without pull-up; diagnostic probe point only (10k to 3.3 V while probing). No free MCP input claimed."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E5"/>
+      <property name="Sheetfile" value="E5.kicad_sch"/>
+      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
+      <tstamps>d4daae39-0420-5c30-9c25-52d2966f2256</tstamps>
       <units>
         <unit name="A">
           <pins>
@@ -24907,111 +24439,6 @@
             <pin num="GND"/>
             <pin num="5V"/>
             <pin num="MKEY_3V3"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="U501">
-      <value>TPS2553DBVR-1</value>
-      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
-      <datasheet>https://www.ti.com/lit/gpn/tps2553</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">TPS2553DBVR-1</field>
-        <field name="Manufacturer">Texas Instruments</field>
-        <field name="LCSC">C111738</field>
-        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
-        <field name="Datasheet">https://www.ti.com/lit/gpn/tps2553</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_U501" description="| design | RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; its only 10k pull-up to 3V3_Q6A is R324 on E3.; Latch-off version; software reset by EN low then high."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="TPS2553DBVR-1"/>
-      <property name="Manufacturer" value="Texas Instruments"/>
-      <property name="LCSC" value="C111738"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>54912af9-868d-588d-8df6-94dabf4231f6</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="3"/>
-            <pin num="2"/>
-            <pin num="4"/>
-            <pin num="5"/>
-            <pin num="6"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="U502">
-      <value>TPS2553DBVR-1</value>
-      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
-      <datasheet>https://www.ti.com/lit/gpn/tps2553</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">TPS2553DBVR-1</field>
-        <field name="Manufacturer">Texas Instruments</field>
-        <field name="LCSC">C111738</field>
-        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
-        <field name="Datasheet">https://www.ti.com/lit/gpn/tps2553</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_U502" description="| design | RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; its only 10k pull-up to 3V3_Q6A is R308 on E3.; Latch-off version; software reset by EN low then high."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="TPS2553DBVR-1"/>
-      <property name="Manufacturer" value="Texas Instruments"/>
-      <property name="LCSC" value="C111738"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>058908af-996a-52a0-9587-ca7c9b7d9acb</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="3"/>
-            <pin num="2"/>
-            <pin num="4"/>
-            <pin num="5"/>
-            <pin num="6"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="U503">
-      <value>TPS2553DBVR-1</value>
-      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
-      <datasheet>https://www.ti.com/lit/gpn/tps2553</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">TPS2553DBVR-1</field>
-        <field name="Manufacturer">Texas Instruments</field>
-        <field name="LCSC">C111738</field>
-        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
-        <field name="Datasheet">https://www.ti.com/lit/gpn/tps2553</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_U503" description="| design | RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; its only 10k pull-up to 3V3_Q6A is R323 on E3.; Latch-off -1 version, as STACK §5.1/§5.2 specify for VBUS HF+. TPS2553DBVR (constant-current, LCSC C55266) only on this channel and only if it fails the STACK §8 TPS2553DBVR-1 item 3 inrush test at final RILIM (open item E5-04)."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="TPS2553DBVR-1"/>
-      <property name="Manufacturer" value="Texas Instruments"/>
-      <property name="LCSC" value="C111738"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>20b3411c-7760-54c1-aaf5-6d2dc46e9741</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="3"/>
-            <pin num="2"/>
-            <pin num="6"/>
-            <pin num="4"/>
-            <pin num="5"/>
           </pins>
         </unit>
       </units>
@@ -25085,53 +24512,6 @@
             <pin num="4"/>
             <pin num="6"/>
             <pin num="7"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="U510">
-      <value>Adafruit5997 CH334F revC board</value>
-      <datasheet>https://github.com/adafruit/Adafruit-CH334F-Breakout-PCB/blob/main/Adafruit%20CH334F%20Mini%204-Port%20USB%20Hub%20Breakout.sch</datasheet>
-      <description>Commercial assembled hub external solder-pad interface; compound identifiers are PCB connector/contact names, not CH334F IC pins.</description>
-      <fields>
-        <field name="ReviewStatus">module</field>
-        <field name="MPN">5997</field>
-        <field name="Manufacturer">Adafruit</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">https://github.com/adafruit/Adafruit-CH334F-Breakout-PCB/blob/main/Adafruit%20CH334F%20Mini%204-Port%20USB%20Hub%20Breakout.sch</field>
-        <field name="Description">Commercial assembled hub external solder-pad interface; compound identifiers are PCB connector/contact names, not CH334F IC pins.</field>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_U510" description="Commercial assembled hub external solder-pad interface; compound identifiers are PCB connector/contact names, not CH334F IC pins. | module | CRITICAL: JP pads2=D+,3=D−, opposite USB-A contacts2=D−,3=D+. H1=JP2,H2=JP1,H3=JP3,H4=JP4.; H2/H3/H4 pad1 is electrically LAB5 inside board but NO outgoing VBUS wire is fitted. H1 spare not populated. Existing onboard bypass/PTC/clock are part of assembled module.; JP5 5V externally fed from LAB5; its D+/D−/GND from Q6A J2 P3. USB-C upstream socket unused; never plug a second host. H1 USB fallback requires explicit cable build and firmware profile."/>
-      <property name="ReviewStatus" value="module"/>
-      <property name="MPN" value="5997"/>
-      <property name="Manufacturer" value="Adafruit"/>
-      <property name="Sheetname" value="E5"/>
-      <property name="Sheetfile" value="E5.kicad_sch"/>
-      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
-      <tstamps>a596fbbe-cb85-5946-b2be-087974bc0eab</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="JP5_1"/>
-            <pin num="JP5_2"/>
-            <pin num="JP5_3"/>
-            <pin num="JP2_1"/>
-            <pin num="JP2_2"/>
-            <pin num="JP2_3"/>
-            <pin num="JP1_1"/>
-            <pin num="JP5_4"/>
-            <pin num="JP2_4"/>
-            <pin num="JP1_4"/>
-            <pin num="JP3_4"/>
-            <pin num="JP4_4"/>
-            <pin num="JP1_2"/>
-            <pin num="JP1_3"/>
-            <pin num="JP3_2"/>
-            <pin num="JP3_3"/>
-            <pin num="JP4_2"/>
-            <pin num="JP4_3"/>
-            <pin num="JP3_1"/>
-            <pin num="JP4_1"/>
           </pins>
         </unit>
       </units>
@@ -25220,6 +24600,532 @@
         </unit>
       </units>
     </comp>
+    <comp ref="U551">
+      <value>TPD4E1U06DBVR</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
+      <datasheet>https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf</datasheet>
+      <fields>
+        <field name="ReviewStatus">verified</field>
+        <field name="MPN">TPD4E1U06DBVR</field>
+        <field name="Manufacturer">Texas Instruments</field>
+        <field name="LCSC">C124691</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
+        <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_U551" description="| verified | Shunt ESD array. Fit immediately at connector, short ground path; spare channel unconnected. No VCC pin."/>
+      <property name="ReviewStatus" value="verified"/>
+      <property name="MPN" value="TPD4E1U06DBVR"/>
+      <property name="Manufacturer" value="Texas Instruments"/>
+      <property name="LCSC" value="C124691"/>
+      <property name="Sheetname" value="E5"/>
+      <property name="Sheetfile" value="E5.kicad_sch"/>
+      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
+      <tstamps>bad25484-684d-5d75-9a23-0488a7761172</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="6"/>
+            <pin num="5"/>
+            <pin num="2"/>
+            <pin num="1"/>
+            <pin num="3"/>
+            <pin num="4"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="U552">
+      <value>TPD4E1U06DBVR</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
+      <datasheet>https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf</datasheet>
+      <fields>
+        <field name="ReviewStatus">verified</field>
+        <field name="MPN">TPD4E1U06DBVR</field>
+        <field name="Manufacturer">Texas Instruments</field>
+        <field name="LCSC">C124691</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
+        <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_U552" description="| verified | Shunt ESD array. Fit immediately at connector, short ground path; spare channel unconnected. No VCC pin."/>
+      <property name="ReviewStatus" value="verified"/>
+      <property name="MPN" value="TPD4E1U06DBVR"/>
+      <property name="Manufacturer" value="Texas Instruments"/>
+      <property name="LCSC" value="C124691"/>
+      <property name="Sheetname" value="E5"/>
+      <property name="Sheetfile" value="E5.kicad_sch"/>
+      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
+      <tstamps>5ecaf50a-8720-5621-bfdb-fb9d422a316d</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="6"/>
+            <pin num="1"/>
+            <pin num="5"/>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="4"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="U553">
+      <value>TPS2553DBVR</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
+      <datasheet>https://www.ti.com/lit/gpn/tps2553</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">TPS2553DBVR</field>
+        <field name="Manufacturer">Texas Instruments</field>
+        <field name="LCSC">C55266</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
+        <field name="Datasheet">https://www.ti.com/lit/gpn/tps2553</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_U553" description="| design | Constant-current TPS2553DBVR (no -1): in a short on the 2 m IMU cable it limits instead of latching and recovers by itself when the fault clears (SLVS841G p.14-15), so no MCP output, harness wire or software is needed. EN tied to IN: on whenever LAB5 is present (R-E5-08).; DBV SOT-23-6 per SLVS841G Table 5-1: 1 IN, 2 GND, 3 EN, 4 FAULT, 5 ILIM, 6 OUT. RILIM is a starting value (R553). FAULT_N goes to TP503 only."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="TPS2553DBVR"/>
+      <property name="Manufacturer" value="Texas Instruments"/>
+      <property name="LCSC" value="C55266"/>
+      <property name="Sheetname" value="E5"/>
+      <property name="Sheetfile" value="E5.kicad_sch"/>
+      <sheetpath names="/E5/" tstamps="/7961f449-97be-5318-9750-0d1b8f253ccf/"/>
+      <tstamps>f7ce7cba-0310-52f3-a77e-8df5779230cd</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="4"/>
+            <pin num="6"/>
+            <pin num="5"/>
+            <pin num="2"/>
+            <pin num="3"/>
+            <pin num="1"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C501">
+      <value>100nF X7R 10V</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">CC0603KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="LCSC">C14663</field>
+        <field name="Alt_MPN">TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C501" description="| design | Place at IN/GND pins with the shortest current path."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="CC0603KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="LCSC" value="C14663"/>
+      <property name="Alt_MPN" value="TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>99b4ff84-a1e4-5637-aa67-991823a5a0a0</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C502">
+      <value>4.7uF X7R 10V</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">CC0805KKX7R8BB475</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="LCSC">C354262</field>
+        <field name="Alt_MPN">TDK C2012X7R1E475KT000N</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C502" description="| design |"/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="CC0805KKX7R8BB475"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="LCSC" value="C354262"/>
+      <property name="Alt_MPN" value="TDK C2012X7R1E475KT000N"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>546c4086-f641-501e-9959-13c767a612d7</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C503">
+      <value>47uF 10V</value>
+      <footprint>Capacitor_SMD:CP_Elec_5x4.5</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">16SVPG47M</field>
+        <field name="Manufacturer">Panasonic</field>
+        <field name="LCSC">C2161511</field>
+        <field name="Footprint">Capacitor_SMD:CP_Elec_5x4.5</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C503" description="| design |"/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="16SVPG47M"/>
+      <property name="Manufacturer" value="Panasonic"/>
+      <property name="LCSC" value="C2161511"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>5ad77fd3-739f-5b12-9363-b915da575ec0</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C504">
+      <value>100nF X7R 10V</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">CC0603KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="LCSC">C14663</field>
+        <field name="Alt_MPN">TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C504" description="| design | Place at IN/GND pins with the shortest current path."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="CC0603KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="LCSC" value="C14663"/>
+      <property name="Alt_MPN" value="TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>3dc0c44f-9d1f-59ae-ada9-756ff7b54dc2</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C505">
+      <value>4.7uF X7R 10V</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">CC0805KKX7R8BB475</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="LCSC">C354262</field>
+        <field name="Alt_MPN">TDK C2012X7R1E475KT000N</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C505" description="| design |"/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="CC0805KKX7R8BB475"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="LCSC" value="C354262"/>
+      <property name="Alt_MPN" value="TDK C2012X7R1E475KT000N"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>6fcd579a-330b-553c-a3da-9ce5da7f13d6</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C506">
+      <value>150uF 10V low-ESR</value>
+      <footprint>Capacitor_SMD:CP_Elec_8x6.9</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">16SVPC150M</field>
+        <field name="Manufacturer">Panasonic</field>
+        <field name="LCSC">C190722</field>
+        <field name="Alt_MPN">Panasonic 10SVQP150M</field>
+        <field name="Footprint">Capacitor_SMD:CP_Elec_8x6.9</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C506" description="| design | At least120uF at downstream external USB port after gate, not only on common hub supply."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="16SVPC150M"/>
+      <property name="Manufacturer" value="Panasonic"/>
+      <property name="LCSC" value="C190722"/>
+      <property name="Alt_MPN" value="Panasonic 10SVQP150M"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>078aee21-b32d-54dc-b25f-e736a6deb57e</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C507">
+      <value>100nF X7R 10V</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">CC0603KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="LCSC">C14663</field>
+        <field name="Alt_MPN">TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C507" description="| design |"/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="CC0603KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="LCSC" value="C14663"/>
+      <property name="Alt_MPN" value="TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>ed173a59-8aa2-5a14-8df6-466fd7d1e075</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C508">
+      <value>100nF X7R 10V</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">CC0603KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="LCSC">C14663</field>
+        <field name="Alt_MPN">TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C508" description="| design | Place at IN/GND pins with the shortest current path."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="CC0603KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="LCSC" value="C14663"/>
+      <property name="Alt_MPN" value="TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>04f92c0a-e53c-5642-ab1b-9413bfa34f84</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C509">
+      <value>4.7uF X7R 10V</value>
+      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">CC0805KKX7R8BB475</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="LCSC">C354262</field>
+        <field name="Alt_MPN">TDK C2012X7R1E475KT000N</field>
+        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C509" description="| design |"/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="CC0805KKX7R8BB475"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="LCSC" value="C354262"/>
+      <property name="Alt_MPN" value="TDK C2012X7R1E475KT000N"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>0d1ac866-f5f3-5eac-9823-959381eaa3b7</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C510">
+      <value>1uF X7R 10V</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">CC0603KRX7R9BB105</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="LCSC">C559769</field>
+        <field name="Alt_MPN">TDK CGA3E1X7R1E105KT0Y0E</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C510" description="| design |"/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="CC0603KRX7R9BB105"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="LCSC" value="C559769"/>
+      <property name="Alt_MPN" value="TDK CGA3E1X7R1E105KT0Y0E"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>cdebe2f3-0a98-5fef-82f4-e41b552318f5</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C511">
+      <value>EEU-FR1C101 100uF 16V</value>
+      <footprint>Capacitor_THT:CP_Radial_D5.0mm_P2.00mm</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">EEU-FR1C101</field>
+        <field name="Manufacturer">Panasonic</field>
+        <field name="LCSC">C278532</field>
+        <field name="Footprint">Capacitor_THT:CP_Radial_D5.0mm_P2.00mm</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C511" description="| design |"/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="EEU-FR1C101"/>
+      <property name="Manufacturer" value="Panasonic"/>
+      <property name="LCSC" value="C278532"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>01ea5ebd-19b8-5365-8f8a-9d7b59989feb</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C512">
+      <value>220uF 16V low-ESR</value>
+      <footprint>Capacitor_THT:CP_Radial_D6.3mm_P2.50mm</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">EEU-FR1C221</field>
+        <field name="Manufacturer">Panasonic</field>
+        <field name="Footprint">Capacitor_THT:CP_Radial_D6.3mm_P2.50mm</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C512" description="| design |"/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="EEU-FR1C221"/>
+      <property name="Manufacturer" value="Panasonic"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>5e8b1d2e-90fb-50d3-8a36-47b36acd8b92</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="C513">
+      <value>100nF X7R 10V</value>
+      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">CC0603KRX7R9BB104</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="LCSC">C14663</field>
+        <field name="Alt_MPN">TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC</field>
+        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_C513" description="| design |"/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="CC0603KRX7R9BB104"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="LCSC" value="C14663"/>
+      <property name="Alt_MPN" value="TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>21c0de51-2cc3-5996-8709-dd11f0f41fec</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
     <comp ref="C517">
       <value>100nF X7R 10V</value>
       <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
@@ -25286,262 +25192,33 @@
         </unit>
       </units>
     </comp>
-    <comp ref="C519">
-      <value>10uF X7R 10V</value>
-      <footprint>Capacitor_SMD:C_0805_2012Metric</footprint>
+    <comp ref="J501">
+      <value>LAB USB-A panel receptacle</value>
       <datasheet>STACK.md §5.2 / engineering design</datasheet>
       <fields>
         <field name="ReviewStatus">design</field>
-        <field name="MPN">CC0805KKX7R7BB106</field>
-        <field name="Manufacturer">YAGEO</field>
-        <field name="LCSC">C326595</field>
-        <field name="Alt_MPN">TDK C2012X7R1A106KT0A0E</field>
-        <field name="Footprint">Capacitor_SMD:C_0805_2012Metric</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C519" description="| design |"/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="CC0805KKX7R7BB106"/>
-      <property name="Manufacturer" value="YAGEO"/>
-      <property name="LCSC" value="C326595"/>
-      <property name="Alt_MPN" value="TDK C2012X7R1A106KT0A0E"/>
-      <property name="Sheetname" value="E5_02"/>
-      <property name="Sheetfile" value="E5_02.kicad_sch"/>
-      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
-      <tstamps>a9264ad1-ad06-575f-8259-533ec33ce20d</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C520">
-      <value>100nF X7R 10V</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">CC0603KRX7R9BB104</field>
-        <field name="Manufacturer">YAGEO</field>
-        <field name="LCSC">C14663</field>
-        <field name="Alt_MPN">TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC</field>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C520" description="| design |"/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="CC0603KRX7R9BB104"/>
-      <property name="Manufacturer" value="YAGEO"/>
-      <property name="LCSC" value="C14663"/>
-      <property name="Alt_MPN" value="TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC"/>
-      <property name="Sheetname" value="E5_02"/>
-      <property name="Sheetfile" value="E5_02.kicad_sch"/>
-      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
-      <tstamps>f08dd6b5-ac68-5d1c-b56d-8fd92cd74b74</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C552">
-      <value>100nF X7R 10V</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
-      <datasheet>TI SLVS841G Table 5-1 (IN &gt;=0.1 uF ceramic); engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">CC0603KRX7R9BB104</field>
-        <field name="Manufacturer">YAGEO</field>
-        <field name="LCSC">C14663</field>
-        <field name="Alt_MPN">TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC</field>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
-        <field name="Datasheet">TI SLVS841G Table 5-1 (IN &gt;=0.1 uF ceramic); engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C552" description="| design | At U553 IN/GND with the shortest current path."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="CC0603KRX7R9BB104"/>
-      <property name="Manufacturer" value="YAGEO"/>
-      <property name="LCSC" value="C14663"/>
-      <property name="Alt_MPN" value="TDK C1608X7R1H104K080AA; TDK C1608X7R1H104KT000N; Samsung Electro-Mechanics CL10B104KB8NNNC"/>
-      <property name="Sheetname" value="E5_02"/>
-      <property name="Sheetfile" value="E5_02.kicad_sch"/>
-      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
-      <tstamps>eba55ec9-7b97-543c-8e99-af87e07bb578</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="C553">
-      <value>1uF X7R 10V</value>
-      <footprint>Capacitor_SMD:C_0603_1608Metric</footprint>
-      <datasheet>engineering design (output capacitor of a cable branch, as C510 at U503)</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">CC0603KRX7R9BB105</field>
-        <field name="Manufacturer">YAGEO</field>
-        <field name="LCSC">C559769</field>
-        <field name="Alt_MPN">TDK CGA3E1X7R1E105KT0Y0E</field>
-        <field name="Footprint">Capacitor_SMD:C_0603_1608Metric</field>
-        <field name="Datasheet">engineering design (output capacitor of a cable branch, as C510 at U503)</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_C553" description="| design | At U553 OUT, before the GX16 J504 lead; the pack keeps C519/C520 after D502."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="CC0603KRX7R9BB105"/>
-      <property name="Manufacturer" value="YAGEO"/>
-      <property name="LCSC" value="C559769"/>
-      <property name="Alt_MPN" value="TDK CGA3E1X7R1E105KT0Y0E"/>
-      <property name="Sheetname" value="E5_02"/>
-      <property name="Sheetfile" value="E5_02.kicad_sch"/>
-      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
-      <tstamps>228de1e8-06fc-5e46-b59b-9d163d251955</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="D502">
-      <value>SS14-E3/61T IMU supply reverse isolation</value>
-      <footprint>Diode_SMD:D_SMA</footprint>
-      <datasheet>https://www.vishay.com/doc?88746=</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">SS14-E3/61T</field>
-        <field name="Manufacturer">Vishay General Semiconductor</field>
-        <field name="LCSC">C47460</field>
-        <field name="Alt_MPN">Vishay General Semiconductor SS14-E3/5AT; onsemi SS14</field>
-        <field name="Footprint">Diode_SMD:D_SMA</field>
-        <field name="Datasheet">https://www.vishay.com/doc?88746=</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_D502" description="| design | Located INSIDE IMU pack before MCU5V/VSYS. Band=cathode. No direct cable-5V (E5_IMU5V) wire to RP2040-Zero USB5V.; Output E5_IMU_VIN feeds E3 RP2040-Zero U309 5V_IN. IMU firmware/MCU and BNO085 SPI wiring owned by E3; do not duplicate pack module on E5."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="SS14-E3/61T"/>
-      <property name="Manufacturer" value="Vishay General Semiconductor"/>
-      <property name="LCSC" value="C47460"/>
-      <property name="Alt_MPN" value="Vishay General Semiconductor SS14-E3/5AT; onsemi SS14"/>
-      <property name="Sheetname" value="E5_02"/>
-      <property name="Sheetfile" value="E5_02.kicad_sch"/>
-      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
-      <tstamps>0c85a526-3949-5fbc-b9d9-1f0947b6146f</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="J502">
-      <value>UART5 console 3pin locking</value>
-      <footprint>Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical</footprint>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">B3B-PH-K-S(LF)(SN)</field>
-        <field name="Manufacturer">JST</field>
-        <field name="LCSC">C131339</field>
-        <field name="Footprint">Connector_JST:JST_PH_B3B-PH-K_1x03_P2.00mm_Vertical</field>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J502" description="| design | PROJECT contact assignment. 3.3V TTL only. No5V/3V3 power wire; Q6A header physicalTX/RX mapping remains on E3."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="B3B-PH-K-S(LF)(SN)"/>
-      <property name="Manufacturer" value="JST"/>
-      <property name="LCSC" value="C131339"/>
-      <property name="Sheetname" value="E5_02"/>
-      <property name="Sheetfile" value="E5_02.kicad_sch"/>
-      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
-      <tstamps>4e55b5aa-d163-5ea5-b58a-6bb364d26f74</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="2"/>
-            <pin num="1"/>
-            <pin num="3"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="J504">
-      <value>Olimex GX16-4 IMU DESIGN pinout</value>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">CONNECTOR-GX16-4</field>
-        <field name="Manufacturer">Olimex</field>
+        <field name="MPN">PX0845/A</field>
+        <field name="Manufacturer">Bulgin</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK.md §5.2 / engineering design</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J504" description="| design | PROJECT assignment engraved at both mating halves; use molded pin numbers, not mirrored face-view guesses. 2m HELU49655 cable; shield360degree to shell/case, &lt;=0.1Ohm. Signals are3.3V TTL, not5V UART."/>
+      <libsource lib="sr_rx_v2_completed" part="C_J501" description="| design | One peripheral only; external powered hub must not backfeed. USB-A standard contact numbering; hub JP3_2 goes USB-A3, JP3_3 goes USB-A2."/>
       <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="CONNECTOR-GX16-4"/>
-      <property name="Manufacturer" value="Olimex"/>
+      <property name="MPN" value="PX0845/A"/>
+      <property name="Manufacturer" value="Bulgin"/>
       <property name="Sheetname" value="E5_02"/>
       <property name="Sheetfile" value="E5_02.kicad_sch"/>
       <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
-      <tstamps>444da67f-a971-5e47-9ceb-eb81312e5b4c</tstamps>
+      <tstamps>549ceae0-277c-5d67-90d6-221c9be214c2</tstamps>
       <units>
         <unit name="A">
           <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-            <pin num="4"/>
             <pin num="3"/>
+            <pin num="4"/>
             <pin num="S"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="J505">
-      <value>LAB BUS 6pin locking DESIGN</value>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">KH-GX12-6P</field>
-        <field name="Manufacturer">Shenzhen Kinghelm</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J505" description="| design | PROJECT assignment, not documented factory pinout. Mating sled connects6 to2/4 on insertion; E3 owns10k pullup and MCP#3 GPB6. I2C100kHz; beyond1m use PCA9615 redesign. Key orientation verified before energizing AUX12."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="KH-GX12-6P"/>
-      <property name="Manufacturer" value="Shenzhen Kinghelm"/>
-      <property name="Sheetname" value="E5_02"/>
-      <property name="Sheetfile" value="E5_02.kicad_sch"/>
-      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
-      <tstamps>d7290a2c-ece7-5822-b0b5-4c805906b2d5</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
             <pin num="1"/>
-            <pin num="3"/>
             <pin num="2"/>
-            <pin num="4"/>
-            <pin num="5"/>
-            <pin num="6"/>
           </pins>
         </unit>
       </units>
@@ -25587,88 +25264,451 @@
         </unit>
       </units>
     </comp>
-    <comp ref="J522">
-      <value>Q6A factory EDL button functional pads</value>
-      <datasheet>https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf</datasheet>
-      <description>Functional switch pads; physical pad orientation to confirm on exact Q6A board before soldering.</description>
-      <fields>
-        <field name="ReviewStatus">module</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">https://dl.radxa.com/dragon/q6a/hw/radxa_dragon_q6a_schematic_v1.21.pdf</field>
-        <field name="Description">Functional switch pads; physical pad orientation to confirm on exact Q6A board before soldering.</field>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J522" description="Functional switch pads; physical pad orientation to confirm on exact Q6A board before soldering. | module | Original factory button remains usable; external switch in parallel. No R137/R207 modifications."/>
-      <property name="ReviewStatus" value="module"/>
-      <property name="Sheetname" value="E5_02"/>
-      <property name="Sheetfile" value="E5_02.kicad_sch"/>
-      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
-      <tstamps>b03cb865-1615-5a02-a316-e1d9d2f1cdb7</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="B"/>
-            <pin num="A"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="J550">
-      <value>IMU pack cable termination DESIGN</value>
+    <comp ref="J541">
+      <value>RTL-B split-VBUS USB cable endpoint</value>
       <datasheet>STACK.md §5.2 / engineering design</datasheet>
       <fields>
         <field name="ReviewStatus">design</field>
-        <field name="MPN">SUPERTRONIC-C-PURO 4x0.14 (49655)</field>
-        <field name="Manufacturer">HELU</field>
+        <field name="MPN">36700</field>
+        <field name="Manufacturer">Lindy</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK.md §5.2 / engineering design</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J550" description="| design | Same molded-contact mapping as GX16; cable shields at both enclosures; this models harness, not RP2040-Zero board contact numbers."/>
+      <libsource lib="sr_rx_v2_completed" part="C_J541" description="| design | Lindy36700 plus Würth74271112 if A/B noise-rise&lt;0.5dB. J5 top plug contact1 wire omitted; do not confuse physical stacked J5 pin10 with plug pin1. Receiver module only on E4."/>
       <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="SUPERTRONIC-C-PURO 4x0.14 (49655)"/>
-      <property name="Manufacturer" value="HELU"/>
+      <property name="MPN" value="36700"/>
+      <property name="Manufacturer" value="Lindy"/>
       <property name="Sheetname" value="E5_02"/>
       <property name="Sheetfile" value="E5_02.kicad_sch"/>
       <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
-      <tstamps>9730536a-5907-5359-9cda-8ad3a9642ea1</tstamps>
+      <tstamps>cb8af16a-a16a-5a2c-93cf-87124393629f</tstamps>
       <units>
         <unit name="A">
           <pins>
-            <pin num="3"/>
             <pin num="1"/>
             <pin num="2"/>
             <pin num="4"/>
-            <pin num="S"/>
+            <pin num="3"/>
           </pins>
         </unit>
       </units>
     </comp>
-    <comp ref="J551">
-      <value>S-band pod power M8 3-pin receptacle DESIGN</value>
-      <datasheet>https://www.binder-connector.com/sg/products/automation-technology/m8/female-panel-mount-connector-front-mounting-with-single-wires</datasheet>
-      <description>Functional contact identifiers of a keyed panel receptacle: the M8 3-contact numbering is not read from the binder drawing yet, so no physical contact number is implied (MECH-07).</description>
+    <comp ref="J543">
+      <value>RTL-A USB cable endpoint</value>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
       <fields>
         <field name="ReviewStatus">design</field>
-        <field name="MPN">76 6618 1111 00003-0200</field>
-        <field name="Manufacturer">binder</field>
+        <field name="MPN">36700</field>
+        <field name="Manufacturer">Lindy</field>
         <field name="Footprint"/>
-        <field name="Datasheet">https://www.binder-connector.com/sg/products/automation-technology/m8/female-panel-mount-connector-front-mounting-with-single-wires</field>
-        <field name="Description">Functional contact identifiers of a keyed panel receptacle: the M8 3-contact numbering is not read from the binder drawing yet, so no physical contact number is implied (MECH-07).</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_J551" description="Functional contact identifiers of a keyed panel receptacle: the M8 3-contact numbering is not read from the binder drawing yet, so no physical contact number is implied (MECH-07). | design | W425 (E4) is the cable plugged into J551: field-wired M8 male plug at this end, USB-C into the pod (R-E5-09). The receptacle is the female (socket) half, so the live 5 V contact is shrouded.; Keying: M8 shell differs from GX16-4 J504 and GX12 J505, so neither the IMU nor the LAB BUS plug enters it (build/15 'Ключування панельних роз'ємів'). Unshielded version: no shell or shield contact; the housing is not bonded (ASA wall, power-only cable)."/>
+      <libsource lib="sr_rx_v2_completed" part="C_J543" description="| design | Represents cable contact numbering only; actual RTL-A receiver module drawn on E4, not duplicated. H2/JP1 pad1 not wired."/>
       <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="76 6618 1111 00003-0200"/>
-      <property name="Manufacturer" value="binder"/>
+      <property name="MPN" value="36700"/>
+      <property name="Manufacturer" value="Lindy"/>
       <property name="Sheetname" value="E5_02"/>
       <property name="Sheetfile" value="E5_02.kicad_sch"/>
       <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
-      <tstamps>d21e3d4a-45c9-548f-ae1b-f37b13a0bcf0</tstamps>
+      <tstamps>07d51b61-892d-564c-96c7-f7a6a009ed3c</tstamps>
       <units>
         <unit name="A">
           <pins>
-            <pin num="VOUT"/>
-            <pin num="RTN"/>
-            <pin num="SPARE"/>
+            <pin num="3"/>
+            <pin num="2"/>
+            <pin num="1"/>
+            <pin num="4"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="J544">
+      <value>HF+ microUSB-B cable endpoint</value>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_J544" description="| design | Endpoint only, Airspy module on E4. Two Fair-Rite2631480002 sleeves surround complete cable including power/data; sleeves are common-mode mechanical ferrites, not a series DC component."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>af4727ec-c814-5637-84d7-eecdb594b3b7</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="3"/>
+            <pin num="4"/>
+            <pin num="5"/>
+            <pin num="S"/>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="L501">
+      <value>SRR1260-101M 100uH</value>
+      <footprint>Inductor_SMD:L_Bourns_SRR1260</footprint>
+      <datasheet>https://www.bourns.com/docs/product-datasheets/srr1260.pdf</datasheet>
+      <fields>
+        <field name="ReviewStatus">verified</field>
+        <field name="MPN">SRR1260-101M</field>
+        <field name="Manufacturer">Bourns</field>
+        <field name="LCSC">C2041335</field>
+        <field name="Footprint">Inductor_SMD:L_Bourns_SRR1260</field>
+        <field name="Datasheet">https://www.bourns.com/docs/product-datasheets/srr1260.pdf</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_L501" description="| verified | DCR&lt;=180mOhm; Irms1.7A. Mounted away from HF receiver."/>
+      <property name="ReviewStatus" value="verified"/>
+      <property name="MPN" value="SRR1260-101M"/>
+      <property name="Manufacturer" value="Bourns"/>
+      <property name="LCSC" value="C2041335"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>eb633867-d259-5dfb-8e22-82f79ba6fdfb</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R501">
+      <value>RILIM TBD (start 43.2k 1%)</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">0603WAF4322T5E</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="LCSC">C23053</field>
+        <field name="Alt_MPN">YAGEO RC0603FR-0743K2L</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R501" description="| design | STACK gives no RILIM value for this channel, only the rule 1.5–2× measured current (§5.1). Starting value per R-E5-03; bench gate E5-04."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="0603WAF4322T5E"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="LCSC" value="C23053"/>
+      <property name="Alt_MPN" value="YAGEO RC0603FR-0743K2L"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>0dc222ed-29a3-521f-a0dc-6bb7924c96b9</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R502">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">0603WAF1003T5E</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="LCSC">C25803</field>
+        <field name="Alt_MPN">YAGEO RC0603FR-07100KL</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R502" description="| design | Fail-off during GPIO input/reset state."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="0603WAF1003T5E"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="LCSC" value="C25803"/>
+      <property name="Alt_MPN" value="YAGEO RC0603FR-07100KL"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>1eaa23c6-caf2-5ddc-830f-28bab8a41ce5</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R504">
+      <value>10k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">0603WAF1002T5E</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="LCSC">C25804</field>
+        <field name="Alt_MPN">YAGEO RC0603FR-0710KL</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R504" description="| design | Passive discharge permits defined power-cycle delay; wait until &lt;0.5V before reenable."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="0603WAF1002T5E"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="LCSC" value="C25804"/>
+      <property name="Alt_MPN" value="YAGEO RC0603FR-0710KL"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>caac53cc-3332-546d-a809-f780dd7510fe</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R505">
+      <value>34.8k 1%</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">AF0603FR-0734K8L</field>
+        <field name="Manufacturer">YAGEO</field>
+        <field name="LCSC">C2098331</field>
+        <field name="Alt_MPN">UNI-ROYAL 0603WAF3482T5E</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R505" description="| design |"/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="AF0603FR-0734K8L"/>
+      <property name="Manufacturer" value="YAGEO"/>
+      <property name="LCSC" value="C2098331"/>
+      <property name="Alt_MPN" value="UNI-ROYAL 0603WAF3482T5E"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>5c5b2e24-fae5-519a-aa40-15dd2a593baf</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R506">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">0603WAF1003T5E</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="LCSC">C25803</field>
+        <field name="Alt_MPN">YAGEO RC0603FR-07100KL</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R506" description="| design | Fail-off during GPIO input/reset state."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="0603WAF1003T5E"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="LCSC" value="C25803"/>
+      <property name="Alt_MPN" value="YAGEO RC0603FR-07100KL"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>12fcb2ca-fb1b-5d46-9993-a1cb43e345c6</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R508">
+      <value>10k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">0603WAF1002T5E</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="LCSC">C25804</field>
+        <field name="Alt_MPN">YAGEO RC0603FR-0710KL</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R508" description="| design |"/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="0603WAF1002T5E"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="LCSC" value="C25804"/>
+      <property name="Alt_MPN" value="YAGEO RC0603FR-0710KL"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>2979b59b-bf6e-5f46-8921-9212f614d980</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R509">
+      <value>RILIM TBD (start 28.7k 1%)</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">0603WAF2872T5E</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="LCSC">C22928</field>
+        <field name="Alt_MPN">Vishay Dale CRCW060328K7FKEA</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R509" description="| design | STACK gives no RILIM value for this channel, only the rule 1.5–2× measured current (§5.1). Starting value per R-E5-03; bench gate E5-04."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="0603WAF2872T5E"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="LCSC" value="C22928"/>
+      <property name="Alt_MPN" value="Vishay Dale CRCW060328K7FKEA"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>e2f601af-eb6b-533e-98d4-96110d6ee560</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R510">
+      <value>100k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">0603WAF1003T5E</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="LCSC">C25803</field>
+        <field name="Alt_MPN">YAGEO RC0603FR-07100KL</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R510" description="| design | Fail-off during GPIO input/reset state."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="0603WAF1003T5E"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="LCSC" value="C25803"/>
+      <property name="Alt_MPN" value="YAGEO RC0603FR-07100KL"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>27dcbf41-6613-5c38-bde7-98d376df5944</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R512">
+      <value>1Ohm 0.5W</value>
+      <footprint>Resistor_SMD:R_1210_3225Metric</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">1210W2F100KT5E</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="LCSC">C78022</field>
+        <field name="Alt_MPN">YAGEO AC1210FR-071RL</field>
+        <field name="Footprint">Resistor_SMD:R_1210_3225Metric</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R512" description="| design | Series RC damping branch, parallel to main100uF. Not in DC receiver power path.; 1210 package for the 0.5 W rating, as for the ≥0.5 W E4 R44xx bleeds; a standard 0603 part is only about 0.1 W. Startup charge of C512 dissipates at most ½×220 uF×(5 V)² ≈ 2.75 mJ in R512; check it against the chosen part's single-pulse curve."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="1210W2F100KT5E"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="LCSC" value="C78022"/>
+      <property name="Alt_MPN" value="YAGEO AC1210FR-071RL"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>921ce220-e7f6-598d-8bdf-2b3e016dd2b3</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="R513">
+      <value>10k</value>
+      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
+      <datasheet>STACK.md §5.2 / engineering design</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">0603WAF1002T5E</field>
+        <field name="Manufacturer">UNI-ROYAL</field>
+        <field name="LCSC">C25804</field>
+        <field name="Alt_MPN">YAGEO RC0603FR-0710KL</field>
+        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
+        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_R513" description="| design |"/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="0603WAF1002T5E"/>
+      <property name="Manufacturer" value="UNI-ROYAL"/>
+      <property name="LCSC" value="C25804"/>
+      <property name="Alt_MPN" value="YAGEO RC0603FR-0710KL"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>24b29086-f55b-5144-8fa6-5b90c8e377cc</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="2"/>
           </pins>
         </unit>
       </units>
@@ -25706,69 +25746,6 @@
         </unit>
       </units>
     </comp>
-    <comp ref="R553">
-      <value>RILIM TBD (start 88.7k 1%)</value>
-      <footprint>Resistor_SMD:R_0603_1608Metric</footprint>
-      <datasheet>STACK.md §5.1 rule; E2 RILIM value of U206-U208; engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">0603WAF8872T5E</field>
-        <field name="Manufacturer">UNI-ROYAL</field>
-        <field name="LCSC">C23258</field>
-        <field name="Alt_MPN">Bourns CR0603-FX-8872ELF</field>
-        <field name="Footprint">Resistor_SMD:R_0603_1608Metric</field>
-        <field name="Datasheet">STACK.md §5.1 rule; E2 RILIM value of U206-U208; engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_R553" description="| design | Starting value 88.7k as on U206-U208: IOS 264.7-339.1 mA (SLVS841G eq. 1-3). STACK gives only the rule 1.5-2x measured current; bench gate E5-04 (N-E5-04)."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="0603WAF8872T5E"/>
-      <property name="Manufacturer" value="UNI-ROYAL"/>
-      <property name="LCSC" value="C23258"/>
-      <property name="Alt_MPN" value="Bourns CR0603-FX-8872ELF"/>
-      <property name="Sheetname" value="E5_02"/>
-      <property name="Sheetfile" value="E5_02.kicad_sch"/>
-      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
-      <tstamps>fb551493-cbad-53b7-8d6a-d390c1c6735a</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="SW501">
-      <value>EDL recessed momentary NO</value>
-      <datasheet>STACK.md §5.2 / engineering design</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">PV6F240SS</field>
-        <field name="Manufacturer">E-Switch</field>
-        <field name="Alt_MPN">E-Switch PV6F240SS-341</field>
-        <field name="Footprint"/>
-        <field name="Datasheet">STACK.md §5.2 / engineering design</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_SW501" description="| design | Dry-contact parallel only to factoryEDL button; no applied voltage. T7 physically unplugged for recovery."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="PV6F240SS"/>
-      <property name="Manufacturer" value="E-Switch"/>
-      <property name="Alt_MPN" value="E-Switch PV6F240SS-341"/>
-      <property name="Sheetname" value="E5_02"/>
-      <property name="Sheetfile" value="E5_02.kicad_sch"/>
-      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
-      <tstamps>73ccc9e3-7183-5c05-ad1d-1efb45e22ec4</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="1"/>
-            <pin num="2"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
     <comp ref="TP502">
       <value>HDMI ideal diode ST_N diagnostic</value>
       <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
@@ -25793,26 +25770,107 @@
         </unit>
       </units>
     </comp>
-    <comp ref="TP503">
-      <value>IMU 5V switch FAULT_N test point</value>
-      <footprint>TestPoint:TestPoint_Pad_D1.5mm</footprint>
-      <datasheet>engineering design</datasheet>
+    <comp ref="U501">
+      <value>TPS2553DBVR-1</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
+      <datasheet>https://www.ti.com/lit/gpn/tps2553</datasheet>
       <fields>
         <field name="ReviewStatus">design</field>
-        <field name="Footprint">TestPoint:TestPoint_Pad_D1.5mm</field>
-        <field name="Datasheet">engineering design</field>
+        <field name="MPN">TPS2553DBVR-1</field>
+        <field name="Manufacturer">Texas Instruments</field>
+        <field name="LCSC">C111738</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
+        <field name="Datasheet">https://www.ti.com/lit/gpn/tps2553</field>
         <field name="Description"/>
       </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_TP503" description="| design | Open drain without pull-up; diagnostic probe point only (10k to 3.3 V while probing). No free MCP input claimed."/>
+      <libsource lib="sr_rx_v2_completed" part="C_U501" description="| design | RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; its only 10k pull-up to 3V3_Q6A is R324 on E3.; Latch-off version; software reset by EN low then high."/>
       <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="TPS2553DBVR-1"/>
+      <property name="Manufacturer" value="Texas Instruments"/>
+      <property name="LCSC" value="C111738"/>
       <property name="Sheetname" value="E5_02"/>
       <property name="Sheetfile" value="E5_02.kicad_sch"/>
       <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
-      <tstamps>8cd0efc3-914b-5815-9d8e-f3c19eb58f7e</tstamps>
+      <tstamps>71f50fdf-f043-584a-a677-60449f1049ba</tstamps>
       <units>
         <unit name="A">
           <pins>
             <pin num="1"/>
+            <pin num="3"/>
+            <pin num="2"/>
+            <pin num="4"/>
+            <pin num="5"/>
+            <pin num="6"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="U502">
+      <value>TPS2553DBVR-1</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
+      <datasheet>https://www.ti.com/lit/gpn/tps2553</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">TPS2553DBVR-1</field>
+        <field name="Manufacturer">Texas Instruments</field>
+        <field name="LCSC">C111738</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
+        <field name="Datasheet">https://www.ti.com/lit/gpn/tps2553</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_U502" description="| design | RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; its only 10k pull-up to 3V3_Q6A is R308 on E3.; Latch-off version; software reset by EN low then high."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="TPS2553DBVR-1"/>
+      <property name="Manufacturer" value="Texas Instruments"/>
+      <property name="LCSC" value="C111738"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>30e95491-06b0-551c-a49c-22046f851a8b</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="3"/>
+            <pin num="2"/>
+            <pin num="4"/>
+            <pin num="5"/>
+            <pin num="6"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="U503">
+      <value>TPS2553DBVR-1</value>
+      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
+      <datasheet>https://www.ti.com/lit/gpn/tps2553</datasheet>
+      <fields>
+        <field name="ReviewStatus">design</field>
+        <field name="MPN">TPS2553DBVR-1</field>
+        <field name="Manufacturer">Texas Instruments</field>
+        <field name="LCSC">C111738</field>
+        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
+        <field name="Datasheet">https://www.ti.com/lit/gpn/tps2553</field>
+        <field name="Description"/>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_U503" description="| design | RILIM is a selected STARTING design value, not a measured optimum. Fault is open-drain; its only 10k pull-up to 3V3_Q6A is R323 on E3.; Latch-off -1 version, as STACK §5.1/§5.2 specify for VBUS HF+. TPS2553DBVR (constant-current, LCSC C55266) only on this channel and only if it fails the STACK §8 TPS2553DBVR-1 item 3 inrush test at final RILIM (open item E5-04)."/>
+      <property name="ReviewStatus" value="design"/>
+      <property name="MPN" value="TPS2553DBVR-1"/>
+      <property name="Manufacturer" value="Texas Instruments"/>
+      <property name="LCSC" value="C111738"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>1cdceec8-476c-51df-901f-e8ff1bfb01dc</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="1"/>
+            <pin num="3"/>
+            <pin num="2"/>
+            <pin num="6"/>
+            <pin num="4"/>
+            <pin num="5"/>
           </pins>
         </unit>
       </units>
@@ -25848,6 +25906,53 @@
             <pin num="2"/>
             <pin num="5"/>
             <pin num="6"/>
+          </pins>
+        </unit>
+      </units>
+    </comp>
+    <comp ref="U510">
+      <value>Adafruit5997 CH334F revC board</value>
+      <datasheet>https://github.com/adafruit/Adafruit-CH334F-Breakout-PCB/blob/main/Adafruit%20CH334F%20Mini%204-Port%20USB%20Hub%20Breakout.sch</datasheet>
+      <description>Commercial assembled hub external solder-pad interface; compound identifiers are PCB connector/contact names, not CH334F IC pins.</description>
+      <fields>
+        <field name="ReviewStatus">module</field>
+        <field name="MPN">5997</field>
+        <field name="Manufacturer">Adafruit</field>
+        <field name="Footprint"/>
+        <field name="Datasheet">https://github.com/adafruit/Adafruit-CH334F-Breakout-PCB/blob/main/Adafruit%20CH334F%20Mini%204-Port%20USB%20Hub%20Breakout.sch</field>
+        <field name="Description">Commercial assembled hub external solder-pad interface; compound identifiers are PCB connector/contact names, not CH334F IC pins.</field>
+      </fields>
+      <libsource lib="sr_rx_v2_completed" part="C_U510" description="Commercial assembled hub external solder-pad interface; compound identifiers are PCB connector/contact names, not CH334F IC pins. | module | CRITICAL: JP pads2=D+,3=D−, opposite USB-A contacts2=D−,3=D+. H1=JP2,H2=JP1,H3=JP3,H4=JP4.; H2/H3/H4 pad1 is electrically LAB5 inside board but NO outgoing VBUS wire is fitted. H1 spare not populated. Existing onboard bypass/PTC/clock are part of assembled module.; JP5 5V externally fed from LAB5; its D+/D−/GND from Q6A J2 P3. USB-C upstream socket unused; never plug a second host. H1 USB fallback requires explicit cable build and firmware profile."/>
+      <property name="ReviewStatus" value="module"/>
+      <property name="MPN" value="5997"/>
+      <property name="Manufacturer" value="Adafruit"/>
+      <property name="Sheetname" value="E5_02"/>
+      <property name="Sheetfile" value="E5_02.kicad_sch"/>
+      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
+      <tstamps>e874acab-2a28-5c3b-8628-f1cb7518dfaa</tstamps>
+      <units>
+        <unit name="A">
+          <pins>
+            <pin num="JP5_1"/>
+            <pin num="JP5_2"/>
+            <pin num="JP5_3"/>
+            <pin num="JP2_1"/>
+            <pin num="JP2_2"/>
+            <pin num="JP2_3"/>
+            <pin num="JP1_1"/>
+            <pin num="JP5_4"/>
+            <pin num="JP2_4"/>
+            <pin num="JP1_4"/>
+            <pin num="JP3_4"/>
+            <pin num="JP4_4"/>
+            <pin num="JP1_2"/>
+            <pin num="JP1_3"/>
+            <pin num="JP3_2"/>
+            <pin num="JP3_3"/>
+            <pin num="JP4_2"/>
+            <pin num="JP4_3"/>
+            <pin num="JP3_1"/>
+            <pin num="JP4_1"/>
           </pins>
         </unit>
       </units>
@@ -25900,111 +26005,6 @@
             <pin num="TP_DM"/>
             <pin num="HDMI_14"/>
             <pin num="TP_VBUS"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="U551">
-      <value>TPD4E1U06DBVR</value>
-      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
-      <datasheet>https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf</datasheet>
-      <fields>
-        <field name="ReviewStatus">verified</field>
-        <field name="MPN">TPD4E1U06DBVR</field>
-        <field name="Manufacturer">Texas Instruments</field>
-        <field name="LCSC">C124691</field>
-        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
-        <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_U551" description="| verified | Shunt ESD array. Fit immediately at connector, short ground path; spare channel unconnected. No VCC pin."/>
-      <property name="ReviewStatus" value="verified"/>
-      <property name="MPN" value="TPD4E1U06DBVR"/>
-      <property name="Manufacturer" value="Texas Instruments"/>
-      <property name="LCSC" value="C124691"/>
-      <property name="Sheetname" value="E5_02"/>
-      <property name="Sheetfile" value="E5_02.kicad_sch"/>
-      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
-      <tstamps>74fe4aa3-1f50-5424-bfc2-14fb3ef835fb</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="6"/>
-            <pin num="5"/>
-            <pin num="2"/>
-            <pin num="1"/>
-            <pin num="3"/>
-            <pin num="4"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="U552">
-      <value>TPD4E1U06DBVR</value>
-      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
-      <datasheet>https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf</datasheet>
-      <fields>
-        <field name="ReviewStatus">verified</field>
-        <field name="MPN">TPD4E1U06DBVR</field>
-        <field name="Manufacturer">Texas Instruments</field>
-        <field name="LCSC">C124691</field>
-        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
-        <field name="Datasheet">https://www.ti.com/lit/ds/symlink/tpd4e1u06.pdf</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_U552" description="| verified | Shunt ESD array. Fit immediately at connector, short ground path; spare channel unconnected. No VCC pin."/>
-      <property name="ReviewStatus" value="verified"/>
-      <property name="MPN" value="TPD4E1U06DBVR"/>
-      <property name="Manufacturer" value="Texas Instruments"/>
-      <property name="LCSC" value="C124691"/>
-      <property name="Sheetname" value="E5_02"/>
-      <property name="Sheetfile" value="E5_02.kicad_sch"/>
-      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
-      <tstamps>5dd9796c-a9a2-5cea-b381-0b87015007e8</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="6"/>
-            <pin num="1"/>
-            <pin num="5"/>
-            <pin num="2"/>
-            <pin num="3"/>
-            <pin num="4"/>
-          </pins>
-        </unit>
-      </units>
-    </comp>
-    <comp ref="U553">
-      <value>TPS2553DBVR</value>
-      <footprint>Package_TO_SOT_SMD:SOT-23-6</footprint>
-      <datasheet>https://www.ti.com/lit/gpn/tps2553</datasheet>
-      <fields>
-        <field name="ReviewStatus">design</field>
-        <field name="MPN">TPS2553DBVR</field>
-        <field name="Manufacturer">Texas Instruments</field>
-        <field name="LCSC">C55266</field>
-        <field name="Footprint">Package_TO_SOT_SMD:SOT-23-6</field>
-        <field name="Datasheet">https://www.ti.com/lit/gpn/tps2553</field>
-        <field name="Description"/>
-      </fields>
-      <libsource lib="sr_rx_v2_completed" part="C_U553" description="| design | Constant-current TPS2553DBVR (no -1): in a short on the 2 m IMU cable it limits instead of latching and recovers by itself when the fault clears (SLVS841G p.14-15), so no MCP output, harness wire or software is needed. EN tied to IN: on whenever LAB5 is present (R-E5-08).; DBV SOT-23-6 per SLVS841G Table 5-1: 1 IN, 2 GND, 3 EN, 4 FAULT, 5 ILIM, 6 OUT. RILIM is a starting value (R553). FAULT_N goes to TP503 only."/>
-      <property name="ReviewStatus" value="design"/>
-      <property name="MPN" value="TPS2553DBVR"/>
-      <property name="Manufacturer" value="Texas Instruments"/>
-      <property name="LCSC" value="C55266"/>
-      <property name="Sheetname" value="E5_02"/>
-      <property name="Sheetfile" value="E5_02.kicad_sch"/>
-      <sheetpath names="/E5_02/" tstamps="/2f560f15-377c-5a7b-8d16-c38c753251d6/"/>
-      <tstamps>c48a3fa7-4df2-5e6c-97d2-12e1873b90ec</tstamps>
-      <units>
-        <unit name="A">
-          <pins>
-            <pin num="4"/>
-            <pin num="6"/>
-            <pin num="5"/>
-            <pin num="2"/>
-            <pin num="3"/>
-            <pin num="1"/>
           </pins>
         </unit>
       </units>
@@ -31092,19 +31092,19 @@
       </pins>
     </libpart>
     <libpart lib="sr_rx_v2_completed" part="C_J551">
-      <description>Functional contact identifiers of a keyed panel receptacle: the M8 3-contact numbering is not read from the binder drawing yet, so no physical contact number is implied (MECH-07). | design | W425 (E4) is the cable plugged into J551: field-wired M8 male plug at this end, USB-C into the pod (R-E5-09). The receptacle is the female (socket) half, so the live 5 V contact is shrouded.; Keying: M8 shell differs from GX16-4 J504 and GX12 J505, so neither the IMU nor the LAB BUS plug enters it (build/15 'Ключування панельних роз'ємів'). Unshielded version: no shell or shield contact; the housing is not bonded (ASA wall, power-only cable).</description>
+      <description>binder M8 A-coded 3-contact receptacle: contacts 1, 3 and 4, there is no contact 2 (data sheet p.1, plug-in side: 4 at the top, 3 left, 1 right); lead colours 1 brown, 3 blue, 4 black. | design | W425 (E4) is the cable plugged into J551: field-wired M8 male plug 99 3379 100 03 at this end (its contacts 1/3/4 mirror the receptacle), USB-C into the pod (R-E5-09). The receptacle is the female (socket) half, so the live 5 V contact is shrouded.; Lead colours are binder's (1 brown, 3 blue, 4 black): the black lead is the unused contact 4, not GND; insulate it at the PWR end. Map W425 by contact number, not by colour (its black conductor is GND).; Keying: M8 shell differs from GX16-4 J504 and GX12 J505, so neither the IMU nor the LAB BUS plug enters it (build/15 'Ключування панельних роз'ємів'). Unshielded version: no shell or shield contact; the housing is not bonded (ASA wall, power-only cable).</description>
       <docs>https://www.binder-connector.com/sg/products/automation-technology/m8/female-panel-mount-connector-front-mounting-with-single-wires</docs>
       <fields>
         <field name="Reference">J551</field>
         <field name="Value">S-band pod power M8 3-pin receptacle DESIGN</field>
         <field name="Footprint"/>
         <field name="Datasheet">https://www.binder-connector.com/sg/products/automation-technology/m8/female-panel-mount-connector-front-mounting-with-single-wires</field>
-        <field name="Description">Functional contact identifiers of a keyed panel receptacle: the M8 3-contact numbering is not read from the binder drawing yet, so no physical contact number is implied (MECH-07). | design | W425 (E4) is the cable plugged into J551: field-wired M8 male plug at this end, USB-C into the pod (R-E5-09). The receptacle is the female (socket) half, so the live 5 V contact is shrouded.; Keying: M8 shell differs from GX16-4 J504 and GX12 J505, so neither the IMU nor the LAB BUS plug enters it (build/15 'Ключування панельних роз'ємів'). Unshielded version: no shell or shield contact; the housing is not bonded (ASA wall, power-only cable).</field>
+        <field name="Description">binder M8 A-coded 3-contact receptacle: contacts 1, 3 and 4, there is no contact 2 (data sheet p.1, plug-in side: 4 at the top, 3 left, 1 right); lead colours 1 brown, 3 blue, 4 black. | design | W425 (E4) is the cable plugged into J551: field-wired M8 male plug 99 3379 100 03 at this end (its contacts 1/3/4 mirror the receptacle), USB-C into the pod (R-E5-09). The receptacle is the female (socket) half, so the live 5 V contact is shrouded.; Lead colours are binder's (1 brown, 3 blue, 4 black): the black lead is the unused contact 4, not GND; insulate it at the PWR end. Map W425 by contact number, not by colour (its black conductor is GND).; Keying: M8 shell differs from GX16-4 J504 and GX12 J505, so neither the IMU nor the LAB BUS plug enters it (build/15 'Ключування панельних роз'ємів'). Unshielded version: no shell or shield contact; the housing is not bonded (ASA wall, power-only cable).</field>
       </fields>
       <pins>
-        <pin num="RTN" name="return" type="passive"/>
-        <pin num="SPARE" name="third_contact,_unused" type="no_connect"/>
-        <pin num="VOUT" name="+5_V_pod_(BIAS_SB_LNA)" type="passive"/>
+        <pin num="1" name="+5_V_pod_(BIAS_SB_LNA),_lead_brown" type="passive"/>
+        <pin num="3" name="return_(GND),_lead_blue" type="passive"/>
+        <pin num="4" name="unused,_lead_black" type="no_connect"/>
       </pins>
     </libpart>
     <libpart lib="sr_rx_v2_completed" part="C_K401">
@@ -36324,14 +36324,14 @@
       </pins>
     </libpart>
     <libpart lib="sr_rx_v2_completed" part="C_TH102">
-      <description>| module | Паралельно D/S Q101 на сигнальному рівні, сумарно через R121. Ніколи у розрив PD 20 V. Замикається при нагріві 70 ±5 °C (NO, 65…75 °C); розмикається щонайменше на 4 K нижче фактичного замикання і не нижче 50 °C (даташит Sensata 6700, с. 4). Вимогу «reopen щонайменше на 15 K нижче» знято: максимум температури MOSFET задає точка замикання, а клас STACK (повернення 50 ±10 °C) сам допускає 5 K на краях; частота повторних пусків заряду — стенд (build/15 «IP2368»).</description>
+      <description>| module | Паралельно D/S Q101 на сигнальному рівні, сумарно через R121. Ніколи у розрив PD 20 V. Замикається при нагріві 70 ±5 °C (NO, 65…75 °C); повернення — за таблицею даташиту Sensata 6700 (с. 4) «MIN DIFFERENTIAL 4 °C, MIN RESET 50 °C», а приклад на тій самій сторінці читається як повернення не далі ніж на 4 K нижче фактичного замикання; за жодним прочитанням повернення ≥15 K нижче не гарантоване. Вимогу «reopen щонайменше на 15 K нижче» знято: максимум температури MOSFET задає точка замикання, а клас STACK (повернення 50 ±10 °C) сам допускає 5 K на краях; частота повторних пусків заряду — стенд (build/15 «IP2368»).</description>
       <docs>STACK §2.7,§5.1; Sensata 6700 series datasheet (https://static.chipdip.ru/lib/822/DOC031822369.pdf, прочитано 07.11.2026)</docs>
       <fields>
         <field name="Reference">TH102</field>
         <field name="Value">67F070 70 °C NO</field>
         <field name="Footprint"/>
         <field name="Datasheet">STACK §2.7,§5.1; Sensata 6700 series datasheet (https://static.chipdip.ru/lib/822/DOC031822369.pdf, прочитано 07.11.2026)</field>
-        <field name="Description">| module | Паралельно D/S Q101 на сигнальному рівні, сумарно через R121. Ніколи у розрив PD 20 V. Замикається при нагріві 70 ±5 °C (NO, 65…75 °C); розмикається щонайменше на 4 K нижче фактичного замикання і не нижче 50 °C (даташит Sensata 6700, с. 4). Вимогу «reopen щонайменше на 15 K нижче» знято: максимум температури MOSFET задає точка замикання, а клас STACK (повернення 50 ±10 °C) сам допускає 5 K на краях; частота повторних пусків заряду — стенд (build/15 «IP2368»).</field>
+        <field name="Description">| module | Паралельно D/S Q101 на сигнальному рівні, сумарно через R121. Ніколи у розрив PD 20 V. Замикається при нагріві 70 ±5 °C (NO, 65…75 °C); повернення — за таблицею даташиту Sensata 6700 (с. 4) «MIN DIFFERENTIAL 4 °C, MIN RESET 50 °C», а приклад на тій самій сторінці читається як повернення не далі ніж на 4 K нижче фактичного замикання; за жодним прочитанням повернення ≥15 K нижче не гарантоване. Вимогу «reopen щонайменше на 15 K нижче» знято: максимум температури MOSFET задає точка замикання, а клас STACK (повернення 50 ±10 °C) сам допускає 5 K на краях; частота повторних пусків заряду — стенд (build/15 «IP2368»).</field>
       </fields>
       <pins>
         <pin num="1" name="1" type="passive"/>
@@ -38888,7 +38888,7 @@
     </net>
     <net code="15" name="BIAS_SB_LNA" class="Default">
       <node ref="C297" pin="1" pinfunction="1_1" pintype="passive"/>
-      <node ref="J551" pin="VOUT" pinfunction="+5_V_pod_(BIAS_SB_LNA)_VOUT" pintype="passive"/>
+      <node ref="J551" pin="1" pinfunction="+5_V_pod_(BIAS_SB_LNA),_lead_brown_1" pintype="passive"/>
       <node ref="L215" pin="2" pinfunction="2_2" pintype="passive"/>
       <node ref="R295" pin="1" pinfunction="1_1" pintype="passive"/>
       <node ref="TP216" pin="1" pinfunction="TP_1" pintype="passive"/>
@@ -41298,7 +41298,7 @@
       <node ref="J544" pin="5" pinfunction="GND_5" pintype="passive"/>
       <node ref="J544" pin="S" pinfunction="shield_S" pintype="passive"/>
       <node ref="J550" pin="2" pinfunction="GND_2" pintype="passive"/>
-      <node ref="J551" pin="RTN" pinfunction="return_RTN" pintype="passive"/>
+      <node ref="J551" pin="3" pinfunction="return_(GND),_lead_blue_3" pintype="passive"/>
       <node ref="K401" pin="G1" pinfunction="CASE_GND_G1" pintype="passive"/>
       <node ref="K401" pin="G2" pinfunction="CASE_GND_G2" pintype="passive"/>
       <node ref="K402" pin="G1" pinfunction="CASE_GND_G1" pintype="passive"/>
@@ -42038,8 +42038,8 @@
     <net code="511" name="unconnected-(J544-ID_unused-Pad4)" class="Default">
       <node ref="J544" pin="4" pinfunction="ID_unused_4" pintype="passive+no_connect"/>
     </net>
-    <net code="512" name="unconnected-(J551-third_contact,_unused-PadSPARE)" class="Default">
-      <node ref="J551" pin="SPARE" pinfunction="third_contact,_unused_SPARE" pintype="no_connect"/>
+    <net code="512" name="unconnected-(J551-unused,_lead_black-Pad4)" class="Default">
+      <node ref="J551" pin="4" pinfunction="unused,_lead_black_4" pintype="no_connect"/>
     </net>
     <net code="513" name="unconnected-(U103-EN-Pad3)" class="Default">
       <node ref="U103" pin="3" pinfunction="EN_3" pintype="no_connect"/>
