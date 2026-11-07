@@ -398,5 +398,82 @@ class BuildManifestTests(unittest.TestCase):
             build_manifest.main(["--prefix", str(self.prefix), "--output", str(self.prefix / "inside.json")])
 
 
+class NetworkManagerHostnameTests(unittest.TestCase):
+    """No host name over DHCP on NetworkManager 1.46 (build/15 «Ім'я хоста (W2 SYS-HOST)»): the wired
+    profile carries dhcp-send-hostname=false, no in-memory default profile exists, the profile gets 0600."""
+
+    def setUp(self):
+        self.temp = tempfile.TemporaryDirectory(prefix="srrx-nm-test-")
+        self.addCleanup(self.temp.cleanup)
+        self.root = Path(self.temp.name)
+
+    def keyfile(self, text):
+        import configparser
+        parser = configparser.ConfigParser(interpolation=None, comment_prefixes=("#",), strict=True)
+        parser.optionxform = str  # NetworkManager keys are case-sensitive
+        parser.read_string(text)
+        return parser
+
+    def test_profile_never_sends_the_host_name(self):
+        files = system_files.network_manager_files()
+        self.assertEqual(set(files), {system_files.NM_NO_AUTO_DEFAULT, system_files.NM_WIRED_PROFILE, system_files.NM_PROFILE_TMPFILES})
+        profile = self.keyfile(files[system_files.NM_WIRED_PROFILE])
+        self.assertEqual(profile.sections(), ["connection", "ethernet", "ipv4", "ipv6"])
+        self.assertEqual(dict(profile["connection"]), {"id": "srrx-wired", "uuid": system_files.NM_WIRED_UUID,
+                                                       "type": "ethernet", "autoconnect": "true"})
+        import uuid
+        # Deterministic: every unit and every rebuild get the same profile bytes.
+        self.assertEqual(system_files.NM_WIRED_UUID, str(uuid.uuid5(uuid.NAMESPACE_URL, "urn:sr-rx-v2.1:networkmanager:srrx-wired")))
+        for family in ("ipv4", "ipv6"):
+            self.assertEqual(dict(profile[family]), {"method": "auto", "dhcp-send-hostname": "false"}, family)
+        text = "\n".join(l for l in files[system_files.NM_WIRED_PROFILE].splitlines() if not l.startswith("#"))
+        for word in ("interface-name", "mac-address", "dhcp-hostname=", "dhcp-fqdn", "psk", "wifi", "802-11"):
+            self.assertNotIn(word, text)  # any wired port, the same bytes on every unit, no Wi-Fi
+        conf = self.keyfile(files[system_files.NM_NO_AUTO_DEFAULT])
+        self.assertEqual({s: dict(conf[s]) for s in conf.sections()}, {"main": {"no-auto-default": "*"}})
+        # NetworkManager 1.46 has no global default for dhcp-send-hostname: no dead key is shipped.
+        self.assertNotIn("dhcp-send-hostname", files[system_files.NM_NO_AUTO_DEFAULT])
+
+    def test_tmpfiles_line_makes_the_profile_root_0600(self):
+        tmp = system_files.network_manager_files()[system_files.NM_PROFILE_TMPFILES]
+        self.assertEqual([l for l in tmp.splitlines() if l.strip() and not l.startswith("#")],
+                         ["z /" + system_files.NM_WIRED_PROFILE + " 0600 root root -"])
+        self.assertEqual(system_files.tmpfiles_accounts(tmp), {("user", "root"), ("group", "root")})
+        self.assertRegex(system_files.NM_PROFILE_TMPFILES, r"\Ausr/lib/tmpfiles\.d/[^/]+\.conf\Z")  # applied by the builder chroot run
+
+    def test_stage_and_bundle_carry_the_three_files(self):
+        for name, config in (("plain", None), ("bound", devices())):
+            with self.subTest(stage=name):
+                deploy.stage(self.root / name, config)
+                rootfs = self.root / name / "rootfs"
+                for relative, text in system_files.network_manager_files().items():
+                    self.assertEqual((rootfs / relative).read_text(encoding="utf-8"), text, relative)
+                self.assertEqual(system_files.unknown_accounts(rootfs), [])
+        output = self.root / "bundle.tar.gz"
+        deploy.bundle(self.root / "plain", output)
+        with tarfile.open(output) as archive:
+            modes = {m.name: m.mode for m in archive.getmembers() if m.isfile()}
+        # The bundle gives 0644; the tmpfiles z line is what makes the profile readable by NetworkManager.
+        self.assertEqual(modes[system_files.NM_WIRED_PROFILE], 0o644)
+        self.assertIn(system_files.NM_PROFILE_TMPFILES, modes)
+
+    @unittest.skipUnless(os.name == "posix" and hasattr(os, "geteuid") and os.geteuid() == 0
+                         and shutil.which("systemd-tmpfiles"), "root and systemd-tmpfiles (the Linux lab guest)")
+    def test_systemd_tmpfiles_sets_0600_root_in_a_root_directory(self):
+        root = self.root / "sysroot"
+        (root / "etc").mkdir(parents=True)
+        for name in ("passwd", "group"):
+            shutil.copyfile("/etc/" + name, root / "etc" / name)
+        files = system_files.network_manager_files()
+        for relative in (system_files.NM_WIRED_PROFILE, system_files.NM_PROFILE_TMPFILES):
+            (root / relative).parent.mkdir(parents=True, exist_ok=True)
+            (root / relative).write_text(files[relative], encoding="utf-8")
+        (root / system_files.NM_WIRED_PROFILE).chmod(0o644)
+        subprocess.run(["systemd-tmpfiles", "--root=" + str(root), "--create", "/" + system_files.NM_PROFILE_TMPFILES],
+                       check=True, capture_output=True, timeout=60)
+        info = (root / system_files.NM_WIRED_PROFILE).stat()
+        self.assertEqual((stat.S_IMODE(info.st_mode), info.st_uid, info.st_gid), (0o600, 0, 0))
+
+
 if __name__ == "__main__":
     unittest.main()

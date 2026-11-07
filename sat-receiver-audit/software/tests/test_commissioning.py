@@ -405,5 +405,109 @@ class AcceptanceTests(unittest.TestCase):
                 load_acceptance(self.path, self.root)
 
 
+class HostnameTests(unittest.TestCase):
+    """srrx.provision.hostname_for and the host files 'provision prepare' writes (build/15, W2 SYS-HOST)."""
+
+    def label(self, name):
+        from srrx.provision import HOST_LABEL
+        self.assertRegex(name, r"\A[a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\Z")
+        self.assertTrue(HOST_LABEL.fullmatch(name), name)
+        self.assertLessEqual(len(name), 63)
+
+    def suffix(self, unit_id):
+        return hashlib.sha256(unit_id.encode()).hexdigest()[:6]
+
+    def test_lossless_ids_keep_their_readable_name(self):
+        from srrx.provision import hostname_for
+        for unit_id, name in (("FIXTURE-0042", "srrx-fixture-0042"), ("unit-07a", "srrx-unit-07a"),
+                              ("Q6A-2026-0001", "srrx-q6a-2026-0001")):
+            with self.subTest(unit_id=unit_id):
+                self.assertEqual(hostname_for(unit_id), name)
+                self.label(name)
+        # DNS names are case-insensitive (RFC 4343): only the case differs, so the name is the same.
+        self.assertEqual(hostname_for("UNIT-01"), hostname_for("unit-01"))
+
+    def test_lossy_ids_get_the_sha256_suffix(self):
+        from srrx.provision import hostname_for
+        for unit_id, slug in (("SR-RX_U01", "sr-rx-u01"), ("unit.01", "unit-01"), ("lab:rx--3", "lab-rx-3"),
+                              ("abcd-", "abcd"), ("ab__cd", "ab-cd")):
+            with self.subTest(unit_id=unit_id):
+                name = hostname_for(unit_id)
+                self.assertEqual(name, "srrx-" + slug + "-" + self.suffix(unit_id))
+                self.label(name)
+
+    def test_ids_that_normalize_alike_do_not_collide(self):
+        from srrx.provision import hostname_for
+        ids = ("unit-01", "unit_01", "unit.01", "unit:01", "unit__01", "unit-01-")
+        names = [hostname_for(i) for i in ids]
+        self.assertEqual(len(set(names)), len(ids), names)
+        self.assertEqual(names[0], "srrx-unit-01")  # the lossless one alone has no suffix
+        self.assertTrue(all(n.startswith("srrx-unit-01-") for n in names[1:]))
+
+    def test_maximum_length_ids_are_cut_and_stay_distinct(self):
+        from srrx.provision import hostname_for
+        exact = "a" * 58  # srrx- + 58 = 63: still lossless
+        self.assertEqual(hostname_for(exact), "srrx-" + exact)
+        # Cut to 51 slug characters + '-' + 6 hex; a hyphen at the cut is dropped (62 characters then).
+        for unit_id, length in (("a" * 59, 63), ("A1" * 40, 63), ("x" * 79 + "_", 63), ("u" * 50 + "-" + "v" * 29, 62)):
+            with self.subTest(unit_id=unit_id):
+                name = hostname_for(unit_id)
+                self.label(name)
+                self.assertEqual(len(name), length)
+                self.assertTrue(name.endswith("-" + self.suffix(unit_id)))
+                self.assertNotIn("--", name)
+        first, second = "r" * 79 + "1", "r" * 79 + "2"  # differ only beyond the cut
+        self.assertNotEqual(hostname_for(first), hostname_for(second))
+
+    def test_invalid_unit_ids_are_refused(self):
+        from srrx.provision import hostname_for
+        for unit_id in ("", "abc", "-abcd", "_abcd", "ab cd", "unit/01", "ünit-01", "a" * 81, None, b"unit-01", 42):
+            with self.subTest(unit_id=unit_id), self.assertRaises(ValueError):
+                hostname_for(unit_id)
+
+    def accepted_fixture(self):
+        fixture = AcceptanceTests("test_complete_synthetic_fixture_round_trip")
+        fixture.setUp()
+        self.addCleanup(fixture.doCleanups)
+        fixture.complete_fixture()
+        fixture.save()
+        return fixture
+
+    def test_prepare_writes_hostname_and_hosts_with_the_pair(self):
+        import contextlib
+        import io
+        from srrx import provision as module
+        fixture = self.accepted_fixture()
+        output = fixture.root / "provisioned"
+        printed = io.StringIO()
+        with contextlib.redirect_stdout(printed):
+            module.main(["--project", str(fixture.root), "prepare", "--acceptance", str(fixture.path), "--output", str(output)])
+        summary = json.loads(printed.getvalue())
+        self.assertEqual(summary["hostname"], "srrx-fixture-0042")
+        self.assertEqual(summary["files"], ["calibration.json", "commissioning.json", "hostname", "hosts"])
+        self.assertEqual(sorted(p.name for p in output.iterdir()), ["calibration.json", "commissioning.json", "hostname", "hosts"])
+        self.assertEqual((output / "hostname").read_bytes(), b"srrx-fixture-0042\n")
+        hosts = (output / "hosts").read_bytes().decode("ascii").splitlines()
+        self.assertEqual(hosts[:2], ["127.0.0.1\tlocalhost", "127.0.1.1\tsrrx-fixture-0042"])
+        self.assertIn("::1\tlocalhost ip6-localhost ip6-loopback", hosts)
+        self.assertNotIn(b"\r", (output / "hosts").read_bytes())
+        # provision() without host_identity (the library call) still writes only the Pico pair.
+        plain = fixture.root / "plain"
+        provision(fixture.path, fixture.root, plain)
+        self.assertEqual(sorted(p.name for p in plain.iterdir()), ["calibration.json", "commissioning.json"])
+
+    def test_prepare_failure_keeps_every_previous_file(self):
+        fixture = self.accepted_fixture()
+        output = fixture.root / "provisioned"
+        output.mkdir()
+        names = ("calibration.json", "commissioning.json", "hostname", "hosts")
+        for name in names:
+            (output / name).write_text("previous " + name)
+        with patch("srrx.provision.os.fsync", side_effect=[None, None, None, OSError(28, "No space left on device")]):
+            with self.assertRaises(OSError):
+                provision(fixture.path, fixture.root, output, host_identity=True)
+        self.assertEqual({p.name: p.read_text() for p in output.iterdir()}, {name: "previous " + name for name in names})
+
+
 if __name__ == "__main__":
     unittest.main()
