@@ -509,10 +509,31 @@ class Evaluator:
                 pins.setdefault(n, {}).setdefault(h["board"], []).append(h["id"])
         return {n: v for n, v in pins.items() if n != "GND" and len(v) == 2}
 
+    def low_ohm_links(self, max_ohm):
+        """W2 B2B review R2 (the rule of pcb/prepare.py low_ohm_links): nets that a resistor below max_ohm joins to a net other
+        than GND, such as the 0.22 ohm damper nodes; they sit at the potential of that net (rail nodes of b2b.guard_rule)."""
+        out = {}
+        def ref_key(s):  # the ref order of pcb/prepare.py sort_ref
+            m = re.fullmatch(r"([^0-9]+)([0-9]+)", s)
+            return (m[1], int(m[2])) if m else (s, 0)
+        for ref in sorted(self.D.comp, key=ref_key):
+            c = self.D.comp[ref]
+            m = re.match(r"\s*(\d+(?:\.\d+)?)\s*(R|Ω|m)", c.get("value", "")) if c.get("kind") == "resistor" else None
+            if not m:
+                continue
+            nets = [pin.get("net") for pin in c["pins"] if pin.get("net")]
+            if float(m.group(1)) * (1e-3 if m.group(2) == "m" else 1.0) >= max_ohm or len(set(nets)) != 2 or "GND" in nets:
+                continue
+            a, b = nets
+            out.setdefault(a, f"{ref} {c['value']} to {b}")
+            out.setdefault(b, f"{ref} {c['value']} to {a}")
+        return out
+
     def b2b_budget(self, cross, contacts):
         P, S = self.P, self.S
         kelvin, precision = self.sense_nets()
         declared = {n for pair in S["b2b"]["declared_sense_pairs"] for n in pair["nets"]}
+        links = self.low_ohm_links(S["b2b"]["rail_node_max_ohm"])
         extra = S["b2b"]["net_current_extra"]
         rows, errors = [], []
         power_types = ("power_in", "power_out")
@@ -544,16 +565,23 @@ class Evaluator:
                     errors.append(f"{net}: power net crosses PWR-A/PWR-B without a protection current")
                 elif is_power:
                     row.update(kind="power", prot_A=rnd(prot, 3), current_src=src, pins=math.ceil(prot / P["b2b_i_pin_A"] - 1e-9))
+                elif net in links:
+                    row.update(kind="rail node", pins=1, why=links[net])
                 else:
                     row.update(kind="signal", pins=1)
             rows.append(row)
         n_power = sum(1 for r in rows if r["kind"] == "power")
         pins = sum(r["pins"] or 0 for r in rows)
-        # W2 B2B: the LSHM pair has no ground plane, so every power contact gets its own GND contact(s) beside it
-        gnd = sum(r["pins"] or 0 for r in rows if r["kind"] == "power") * S["b2b"]["gnd_pins_per_power_contact"]
+        # W2 B2B: the LSHM pair has no ground plane. b2b.guard_rule (review R2): every rail contact (power, sense/supply tap,
+        # rail node) has its GND return in its column, plus a GND guard column after each crossing declared sense pair and
+        # one GND guard after the rail block
+        rail = sum(r["pins"] or 0 for r in rows if r["kind"] in ("power", "sense/supply tap", "rail node"))
+        pairs = sum(1 for pair in S["b2b"]["declared_sense_pairs"] if all(n in cross for n in pair["nets"]))
+        guards = 2 * pairs + (1 if rail else 0)
+        gnd = rail * S["b2b"]["gnd_pins_per_power_contact"] + guards
         with_spare = math.ceil((pins + gnd) * (1 + S["b2b"]["spare_fraction"]) - 1e-9)
         return {"nets": rows, "power_nets": n_power, "signal_pins": sum(r["pins"] for r in rows if r["kind"] != "power" and r["pins"]),
-                "power_pins": sum(r["pins"] or 0 for r in rows if r["kind"] == "power"), "gnd_pins": gnd,
+                "power_pins": sum(r["pins"] or 0 for r in rows if r["kind"] == "power"), "gnd_pins": gnd, "guard_pins": guards,
                 "contacts_needed": pins + gnd, "contacts_with_spare": with_spare, "contacts_available": contacts,
                 "meets_spare_rule": with_spare <= contacts,
                 "fits": pins + gnd <= contacts and not errors, "errors": errors}

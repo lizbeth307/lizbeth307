@@ -3,7 +3,8 @@
 The pair is one hermaphroditic part on both boards: J208 on the PWR-A top, J209 on the PWR-B bottom. Samtec print
 LSHM-1XX-XX.X-XXX-DV-A-X-X-TR Rev Z note 4: pin 01 mates contact 02 of the other LSHM-DV, so pin n of J208 meets
 pin n+1 (n odd) or n-1 (n even) of J209 (pcb/prepare.py b2b_mate). These tests check that map on the vendored KiCad
-10.0.7 footprint, the contact map of pcb/generated/b2b-nets.json and the graph refs of design/E2.json.
+10.0.7 footprint, the contact map of pcb/generated/b2b-nets.json and the graph refs of design/E2.json, and the GND
+guard rule of the map (b2b.guard_rule, W2 B2B review R2: no rail contact beside anything but GND in its row).
 MODEL/CI checks only: no hardware gate is closed here.
 
 Run: python -m unittest discover -s pcb/tests  (from sat-receiver-audit/)
@@ -101,20 +102,27 @@ class ContactMapTests(unittest.TestCase):
         self.assertEqual(E2[A]['footprint'], SPEC['footprint'])
         self.assertEqual(E2[B]['footprint'], SPEC['footprint'])
 
-    def test_gnd_rule_one_gnd_contact_per_power_contact(self):
-        k = SPEC['gnd_pins_per_power_contact']
+    def test_gnd_rule_gnd_return_beside_every_rail_contact(self):
+        # b2b.guard_rule (W2 B2B review R2): every rail contact (power, sense/supply tap, rail node) has its GND return in its
+        # column; the other GND contacts are the guards
+        self.assertEqual(SPEC['gnd_pins_per_power_contact'], 1)
         rows = NETS['contacts']
         power_nets = {r['net'] for r in NETS['nets'] if r['kind'] == 'power'}
         power = [r for r in rows if r['role'] == 'power']
+        rail = [r for r in rows if r['role'] in prepare.B2B_RAIL_KINDS]
         gnd = [r for r in rows if r['net'] == 'GND']
         self.assertEqual(len(power), NETS['totals']['power_pins'])
-        self.assertEqual(len(gnd), len(power) * k)
-        self.assertEqual(NETS['totals']['gnd_pins'], len(power) * k)
+        self.assertEqual(len(gnd), len(rail) + NETS['totals']['guard_pins'])
+        self.assertEqual(NETS['totals']['gnd_pins'], len(gnd))
+        self.assertEqual({r['role'] for r in gnd}, {'gnd', 'guard'})
+        self.assertEqual(sum(r['role'] == 'guard' for r in gnd), NETS['totals']['guard_pins'])
         by_pin = {int(r['pwr_a_pin']): r for r in rows}
-        for r in power:
-            # the GND return shares the column (pins 2c-1 and 2c) of its power contact
+        for r in rail:
+            # the GND return shares the column (pins 2c-1 and 2c) of its rail contact
             other = by_pin[prepare.b2b_mate(int(r['pwr_a_pin']))]
             self.assertEqual(other['net'], 'GND', r)
+            self.assertEqual(other['role'], 'gnd', r)
+        for r in power:
             self.assertIn(r['net'], power_nets)
         for row in NETS['nets']:
             got = sum(1 for r in rows if r['net'] == row['net'])
@@ -141,6 +149,98 @@ class ContactMapTests(unittest.TestCase):
         self.assertEqual(len(used), t['contacts_needed'])
         self.assertEqual(NETS['errors'], [])
         self.assertEqual(SPEC['budget_chosen']['contacts_needed'], t['contacts_needed'])
+
+
+class GuardRuleTests(unittest.TestCase):
+    """b2b.guard_rule (W2 B2B review R2): pads 0.30 mm wide at 0.50 mm pitch leave 0.20 mm between neighbours of a row, so no
+    contact at a supply-rail potential (rail contacts and declared sense pairs) may have a neighbour in its row other than GND."""
+
+    HOT = prepare.B2B_RAIL_KINDS + ('sense pair',)
+
+    def test_row_neighbours_of_hot_contacts_are_gnd_on_both_halves(self):
+        n_all = SPEC['contacts']
+        for half in ('pwr_a', 'pwr_b'):
+            by_pin = {int(r[half + '_pin']): r for r in NETS['contacts']}
+            hot = [p for p, r in by_pin.items() if r['role'] in self.HOT]
+            self.assertTrue(hot)
+            for p in hot:
+                for q in (p - 2, p + 2):  # the same row (same parity), one column away
+                    if 1 <= q <= n_all:
+                        self.assertEqual(by_pin[q]['net'], 'GND', f'{half} contact {p} {by_pin[p]["net"]} beside {q} {by_pin[q]["net"]}')
+
+    def test_graph_refs_keep_the_guard_rule(self):
+        hot_nets = {r['net'] for r in NETS['contacts'] if r['role'] in self.HOT}
+        for ref in (A, B):
+            net = {int(p['number']): p.get('net', '') for p in E2[ref]['pins']}
+            for p, n in net.items():
+                if n in hot_nets:
+                    for q in (p - 2, p + 2):
+                        if q in net:
+                            self.assertIn(net[q], ('GND',), f'{ref}.{p} {n} beside {ref}.{q} {net[q]}')
+
+    def test_rails_follow_rail_order(self):
+        order = SPEC['rail_order']
+        self.assertEqual(order[0], '3V3_Q6A')
+        seq = []
+        for r in sorted(NETS['contacts'], key=lambda r: int(r['pwr_a_pin'])):
+            if r['role'] in prepare.B2B_RAIL_KINDS and (not seq or seq[-1] != r['net']):
+                seq.append(r['net'])
+        listed = [n for n in seq if n in order]
+        self.assertEqual(listed, sorted(listed, key=order.index))
+        self.assertEqual(seq[:len(listed)], listed, 'unlisted rails come after the listed ones')
+        self.assertEqual(len(seq), len(set(seq)), 'the contacts of one rail are neighbours')
+        # 3V3_Q6A is at the far end of the rail block from the 12-13.8 V rails of the net names
+        hv = [i for i, n in enumerate(seq) if n in ('LNB13V2', 'AUX12', 'BONI13V8_PORT', 'BONI13V8')]
+        self.assertEqual(seq.index('3V3_Q6A'), 0)
+        self.assertEqual(hv, list(range(len(seq) - len(hv), len(seq))))
+
+    def test_rail_nodes_are_the_low_ohm_nodes_of_the_graph(self):
+        # independent scan: a resistor below rail_node_max_ohm joining a net to a net other than GND
+        low = set()
+        for i in range(1, 6):
+            for c in json.loads((ROOT / f'design/E{i}.json').read_text(encoding='utf-8'))['components']:
+                m = re.match(r'\s*(\d+(?:\.\d+)?)\s*(R|Ω|m)', c.get('value', '')) if c.get('kind') == 'resistor' else None
+                nets = [p.get('net') for p in c['pins'] if p.get('net')]
+                if m and float(m.group(1)) * (1e-3 if m.group(2) == 'm' else 1.0) < SPEC['rail_node_max_ohm'] \
+                        and len(set(nets)) == 2 and 'GND' not in nets:
+                    low |= set(nets)
+        kinds = {r['net']: r['kind'] for r in NETS['nets']}
+        for n, kind in kinds.items():
+            if kind == 'signal':
+                self.assertNotIn(n, low, n)
+            if kind == 'rail node':
+                self.assertIn(n, low, n)
+        self.assertEqual(sorted(n for n, k in kinds.items() if k == 'rail node'),
+                         ['BIAS_CH1_DAMP', 'BIAS_CH2_DAMP', 'BIAS_CH3_DAMP', 'BIAS_CH4_DAMP', 'E2_SB_DAMP', 'VBUS_RTLB_DAMP'])
+
+    def test_layout_quoted_in_pin_map_rule(self):
+        # pcb/partition-spec.json b2b.pin_map_rule quotes the layout of (a); a crossing-net change must update that text
+        role = {int(r['pwr_a_pin']): r['role'] for r in NETS['contacts']}
+        self.assertIn('1-2 the LNA4 sense pair, 3-4 guard, 5-46 the rail block (21 columns), 47 guard, 48-69 the 22 signal nets, '
+                      '70-100 spare', SPEC['pin_map_rule'])
+        self.assertEqual([role[p] for p in (1, 2, 3, 4)], ['sense pair', 'sense pair', 'guard', 'guard'])
+        for c in range(3, 24):
+            got = sorted([role[2 * c - 1], role[2 * c]])
+            self.assertEqual(got[0], 'gnd', c)
+            self.assertIn(got[1], prepare.B2B_RAIL_KINDS, c)
+        self.assertEqual(role[47], 'guard')
+        self.assertEqual({role[p] for p in range(48, 70)}, {'signal'})
+        self.assertEqual({role[p] for p in range(70, 101)}, {'spare'})
+
+
+class GraphWriterTests(unittest.TestCase):
+    """pcb/write_b2b_graph.py (W2 B2B review R3) builds the map from the graphs as prepare.py main() does."""
+
+    def test_writer_map_is_the_generated_map_and_the_graph(self):
+        spec = importlib.util.spec_from_file_location('srrx_write_b2b_graph', PCB / 'write_b2b_graph.py')
+        writer = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(writer)
+        graph = json.loads((ROOT / 'design/E2.json').read_text(encoding='utf-8'))
+        res = writer.contact_map(writer.load_prepare(), graph)
+        self.assertEqual(res['contacts'], NETS['contacts'])
+        self.assertEqual(res['totals'], NETS['totals'])
+        for half, ref in (('pwr_a', A), ('pwr_b', B)):
+            self.assertEqual(writer.pins(res['contacts'], half), E2[ref]['pins'], ref)
 
 
 if __name__ == '__main__':
