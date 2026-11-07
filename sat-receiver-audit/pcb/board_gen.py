@@ -1501,42 +1501,45 @@ def add_copper_zone(pcb, board, frame, spec, contract, zone, nets):
     return item
 
 
-def snap_track_ends_to_vias(pcb, board):
-    """Router track ends that lie inside a via of their net, off its centre, move onto the centre (W2 PCB-RF-2).
+def via_centre_stubs(pcb, board):
+    """Join router track ends that end inside a via, off its centre, to the centre with a short stub (W2 PCB-RF-2).
 
-    Freerouting joined a scripted locked via 0.135 mm off its centre (route run 42423540033: two
-    track_not_centered_on_via errors); the copper is already joined, so the end moves by less than the via radius.
-    Locked (scripted) tracks are never moved; a router track that becomes zero-length is removed.
-    Returns [{net, layer, from, to}] in KiCad mm for route-log.json.
+    KiCad 10.0.7 reports track_not_centered_on_via for a via layer where tracks end inside the via but none ends on
+    its centre (pcbnew/drc/drc_test_provider_connectivity.cpp at 10.0.7: layerHasCenteredTrack). Freerouting joined a
+    scripted locked via 0.135 mm off its centre (route run 42423540033). For each such via layer one stub of the
+    track's width runs from that end to the centre, inside the via copper; no track is moved (moving the end tilted
+    long tracks into clearance errors, route run 42424111495). Returns [{net, layer, end, centre}] in KiCad mm.
     """
-    vias = [v for v in board.GetTracks() if v.Type() == pcb.PCB_VIA_T]
-    moved, drop = [], []
-    for track in list(board.GetTracks()):
-        if track.Type() == pcb.PCB_VIA_T or track.IsLocked() or track.Type() == getattr(pcb, 'PCB_ARC_T', -1):
-            continue
-        for end, getter, setter in (('start', track.GetStart, track.SetStart), ('end', track.GetEnd, track.SetEnd)):
-            pt = getter()
-            for via in vias:
-                if via.GetNetCode() != track.GetNetCode() or not via.IsOnLayer(track.GetLayer()):
-                    continue
-                centre = via.GetPosition()
-                d = math.hypot(pt.x - centre.x, pt.y - centre.y)
-                try:
-                    width = via.GetWidth(track.GetLayer())  # KiCad 10: per-layer padstack width
-                except TypeError:
-                    width = via.GetWidth()
-                if 0 < d <= width / 2:
-                    setter(pcb.VECTOR2I(centre.x, centre.y))
-                    moved.append({'net': track.GetNetname(), 'layer': board.GetLayerName(track.GetLayer()),
-                                  'from': [r4(pcb.ToMM(pt.x)), r4(pcb.ToMM(pt.y))],
-                                  'to': [r4(pcb.ToMM(centre.x)), r4(pcb.ToMM(centre.y))]})
-                    break
-        a, b = track.GetStart(), track.GetEnd()
-        if (a.x, a.y) == (b.x, b.y):
-            drop.append(track)
-    for track in drop:
-        board.Remove(track)
-    return sorted(moved, key=lambda m: (m['net'], m['layer'], m['from']))
+    tracks = [t for t in board.GetTracks() if t.Type() == pcb.PCB_TRACE_T]
+    added = []
+    for via in [v for v in board.GetTracks() if v.Type() == pcb.PCB_VIA_T]:
+        c = via.GetPosition()
+        cx, cy = int(c.x), int(c.y)
+        layers = {}
+        for track in tracks:
+            if track.GetNetCode() != via.GetNetCode() or not via.IsOnLayer(track.GetLayer()):
+                continue
+            for pt in (track.GetStart(), track.GetEnd()):
+                x, y = int(pt.x), int(pt.y)
+                entry = layers.setdefault(track.GetLayer(), {'centred': False, 'off': None})
+                if (x, y) == (cx, cy):
+                    entry['centred'] = True
+                elif entry['off'] is None and via.HitTest(pcb.VECTOR2I(x, y)):
+                    entry['off'] = (x, y, track.GetWidth())
+        for layer, entry in sorted(layers.items()):
+            if entry['centred'] or entry['off'] is None:
+                continue
+            x, y, width = entry['off']
+            stub = pcb.PCB_TRACK(board)
+            stub.SetStart(pcb.VECTOR2I(x, y))
+            stub.SetEnd(pcb.VECTOR2I(cx, cy))
+            stub.SetWidth(width)
+            stub.SetLayer(layer)
+            stub.SetNetCode(via.GetNetCode())
+            board.Add(stub)
+            added.append({'net': via.GetNetname(), 'layer': board.GetLayerName(layer),
+                          'end': [r4(pcb.ToMM(x)), r4(pcb.ToMM(y))], 'centre': [r4(pcb.ToMM(cx)), r4(pcb.ToMM(cy))]})
+    return sorted(added, key=lambda m: (m['net'], m['layer'], m['end']))
 
 
 def count_locked(board):
@@ -1978,7 +1981,7 @@ def route(board, freerouting):
         if locked_after < locked_before:
             raise SystemExit(f'board_gen: SES import dropped locked copper ({locked_before} -> {locked_after}); '
                              'use keepouts plus post-route copper for this board')
-        snapped = snap_track_ends_to_vias(pcb, board_obj)
+        stubs = via_centre_stubs(pcb, board_obj)  # track_not_centered_on_via
         sources += add_coupon(pcb, board_obj, frame, spec, contract, nets)
         for zone in spec['post_route_zones']:
             add_copper_zone(pcb, board_obj, frame, spec, contract, zone, nets)
@@ -2001,7 +2004,7 @@ def route(board, freerouting):
             'exit_code': proc, 'log_tail': log.strip().splitlines()[-40:],
             'dsn_sha256': sha256_file(dsn), 'ses_sha256': sha256_file(ses), 'dsn_probe': probe,
             'locked_segments': {'before_ses_import': locked_before, 'after_ses_import': locked_after},
-            'snapped_track_ends': snapped,
+            'via_centre_stubs': stubs,
             'drc_command': drc_cmd, 'board_sha256': sha256_file(board_path), 'previews': shown,
             'footprint_sources': sources, 'kicad_version': str(pcb.Version()),
             'github': {k: os.environ.get(v, '') for k, v in (('run_id', 'GITHUB_RUN_ID'), ('sha', 'GITHUB_SHA'),
