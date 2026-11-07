@@ -9,3 +9,58 @@ Pin-Priority: 990
 Package: *
 Pin: origin *
 Pin-Priority: -1
+
+Explanation: build/07 section 2 and STACK.md:892, Hamlib/WSJT/TX: never installable from any origin
+Package: wsjtx wsjtx-* libhamlib4t64 libhamlib-utils libhamlib-dev libhamlib* fldigi qsstv direwolf js8call python3-js8py
+Pin: release *
+Pin-Priority: -1
+
+Explanation: build/07 section 2 and STACK.md:892, Soapy/Lime (limesuiteng-cli: TX subcommand removal is not verifiable statically)
+Package: soapysdr-module-all soapysdr0.8-module-all soapysdr0.8-module-remote soapysdr-module-remote soapyremote-server soapysdr0.8-module-lms7 soapysdr0.8-module-hackrf soapysdr0.8-module-bladerf soapysdr0.8-module-uhd soapysdr0.8-module-redpitaya soapysdr-module-lms7 soapysdr-module-hackrf soapysdr-module-bladerf soapysdr-module-uhd soapysdr-module-redpitaya libsoapysdr0.9* limesuite limesuiteng-gui gr-limesuiteng limesuiteng-cli
+Pin: release *
+Pin-Priority: -1
+
+Explanation: build/07 section 2 and STACK.md:892, RTL (librtlsdr2 is a lab build only, see the srrx-mirror stanza below)
+Package: librtlsdr0
+Pin: release *
+Pin-Priority: -1
+
+Explanation: build/07 section 2 and STACK.md:892, OpenWebRX+ decoders
+Package: rtl-433 digiham* python3-digiham codecserver* codecserver-driver-* acarsdec dumphfdl dumpvdl2 libacars-tools libacars* dump1090-fa dump1090-fa-minimal dump978-fa* skyaware978 dxlaprs-tetra* dxlaprs-lora python3-meshtastic python3-bleak m17-demod nrsc5 hpsdrconnector piaware
+Pin: release *
+Pin-Priority: -1
+
+Explanation: build/07 section 2 and STACK.md:888, STACK.md:892, other decoders and tools (aicrf-test: build/07 section 23 row 1)
+Package: multimon-ng lame python3-paho-mqtt gr-gsm gr-gsm* gr-iridium gr-iridium* kalibrate-rtl kalibrate-bladerf kalibrate-hackrf kalibrate* urh dsd dsdcc libdsdcc1 op25* sdrtrunk* trunk-recorder* aicrf-test
+Pin: release *
+Pin-Priority: -1
+
+Explanation: STACK.md:888, SDR applications through snap, flatpak or containers
+Package: snapd flatpak docker.io docker-ce* containerd containerd.io
+Pin: release *
+Pin-Priority: -1
+
+Explanation: build/07 section 2 and STACK.md:892, Qualcomm QNN/QAIRT/DSP/firmware and kernel 7 (the held r2 versions stay installed; embloader is route A only: srrx-boot-route-a.pref)
+Package: qcom-fastrpc* qairt-* libqnn* libsnpe* qnn-tools snpe-tools qcom-adreno* dragonwing-defaults firmware-qcom-audioreach firmware-qcom-soc linux-firmware-qualcomm-misc hexagon-dsp-binaries* firmware-qcom-dsp linux-image-7.* linux-headers-7.*
+Pin: release *
+Pin-Priority: -1
+
+Explanation: receive-only-policy.json version_rule require_lab_build: these come only from srrx-lab (+labN, -0labN), never from the mirror
+Package: dream librtlsdr2 rtl-sdr sdrangel sdrangelsrv sdrpp openwebrx satdump gpredict gr-satellites
+Pin: release o=srrx-mirror
+Pin-Priority: -1
+
+Explanation: STACK.md:892, linux-firmware-dragonwing 20260825 of qcom-ppa (r2 holds 1.0.0+20251203)
+Package: linux-firmware-dragonwing
+Pin: version *20260825*
+Pin-Priority: -1
+
+Explanation: STACK.md:892, mesa 26 and later (receive-only-policy.json forbid_at_least 26)
+Package: *mesa*
+Pin: version /^([1-9][0-9]*:|(0+:)?0*(2[6-9]|[3-9][0-9]|[1-9][0-9][0-9]+)([^0-9]|$))/
+Pin-Priority: -1
+
+Explanation: STACK.md:892, edk2 0.1.0-8 and later (receive-only-policy.json forbid_at_least 0.1.0-8; r2 holds 0.1.0-5)
+Package: edk2-*
+Pin: version /^([1-9][0-9]*:|(0+:)?(0*[1-9]|0+\.0*([2-9]|[1-9][0-9])|0+\.0*1\.0*[1-9]|0+\.0*1\.0+[.+]|0+\.0*1\.0+-0*([89]|[1-9][0-9])))/
+Pin-Priority: -1

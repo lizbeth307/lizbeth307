@@ -50,10 +50,28 @@ BLOCKDEV_PREFIXES = ("/dev/sd", "/dev/mmcblk", "/dev/nvme", "/dev/disk/", "/dev/
 CONFIG_KEYS = ("CONFIG_VIRTIO_BLK", "CONFIG_VIRTIO_PCI", "CONFIG_VIRTIO_MMIO", "CONFIG_PCI_HOST_GENERIC", "CONFIG_SERIAL_AMBA_PL011",
                "CONFIG_SERIAL_AMBA_PL011_CONSOLE", "CONFIG_EFI", "CONFIG_EFI_STUB", "CONFIG_EXT4_FS", "CONFIG_VFAT_FS", "CONFIG_NLS_CODEPAGE_437",
                "CONFIG_NLS_ISO8859_1", "CONFIG_QUOTA", "CONFIG_QFMT_V2", "CONFIG_QUOTACTL", "CONFIG_CGROUP_BPF", "CONFIG_PPS_CLIENT_GPIO",
-               "CONFIG_BLK_DEV_LOOP", "CONFIG_RTC_DRV_PL031", "CONFIG_DRM_VIRTIO_GPU", "CONFIG_HW_RANDOM_VIRTIO", "CONFIG_ARM_SMMU_V3")
+               "CONFIG_BLK_DEV_LOOP", "CONFIG_RTC_DRV_PL031", "CONFIG_DRM_VIRTIO_GPU", "CONFIG_HW_RANDOM_VIRTIO", "CONFIG_ARM_SMMU_V3",
+               # Module signing decides whether a builder-built out-of-tree module (DKMS pps-gpio) can load at all.
+               "CONFIG_MODULE_SIG", "CONFIG_MODULE_SIG_FORCE", "CONFIG_MODULE_SIG_ALL", "CONFIG_MODULE_SIG_HASH")
+# The pin_only globs of receive-only-policy.json (libsnpe*, hexagon-dsp-binaries*, dragonwing-defaults) and tzdata
+# (chrony's tzdata-legacy closure) are listed too, so the facts name every package RX-01a could block.
 INTEREST = re.compile(r"(linux-(image|headers|modules|firmware)|systemd|embloader|sdboot|radxa|rsetup|u-boot|edk2|fastrpc|qcom|qnn|qairt|"
                       r"mesa|libdrm|task-|aic8800|unattended|brltty|modemmanager|gdm3|greetd|labwc|python3$|python3\.12|dkms|gcc|initramfs|"
-                      r"util-linux|e2fsprogs|dosfstools|chrony|gpsd|network-manager|openssh|wpasupplicant|bluez)")
+                      r"util-linux|e2fsprogs|dosfstools|chrony|gpsd|network-manager|openssh|wpasupplicant|bluez|"
+                      r"snpe|hexagon-dsp|dragonwing|tzdata)")
+REPO = DEPLOYMENT / "repo"
+# STACK.md:894: the signed publications are the only apt sources of the image (build/07 section 2):
+# srrx-lab (+labN, 1001) and srrx-mirror (mirrored noble snapshot, 990), both Signed-By the owner's
+# keyring; lab.pref goes in byte for byte. {image path: repository file}
+SRRX_APT_FILES = {"etc/apt/preferences.d/lab.pref": REPO / "lab.pref",
+                  "etc/apt/sources.list.d/srrx-lab.sources": REPO / "srrx-lab.sources",
+                  "etc/apt/sources.list.d/srrx-mirror.sources": REPO / "srrx-mirror.sources"}
+SRRX_KEYRING = "usr/share/keyrings/srrx-lab.gpg"
+# NPU payload (build/15 «Збирання образу», software/DEPLOYMENT.md NPU/QNN): the golden image never
+# carries the QNN SDK or QAIRT; the owner installs a verified deb on the unit. Package and file globs.
+NPU_PAYLOAD_PACKAGES = ("qcom-qnn-sdk*", "radxa-qcom-qairt*", "qairt-*", "libqnn*", "libsnpe*", "qnn-tools", "snpe-tools")
+NPU_PAYLOAD_FILES = ("libQnn*", "libSnpe*", "libSNPE*")
+MCU_BUILD_MANIFEST = "firmware/dist/build-manifest.json"
 
 
 class BuildError(RuntimeError):
@@ -664,9 +682,12 @@ STEPS = (
                  "(/data, /run, /tmp left to systemd-tmpfiles-setup on boot); every SERVICE_ACCOUNTS uid/gid recorded, a missing one is a blocker"),
     ("hardening", "apt-mark hold, purge unattended-upgrades/brltty, masks (apt/fwupd timers, ModemManager, sleep targets, rsetup.service, "
                   "ssh/samba/cups/avahi that rsetup's skipped first boot or the recipe disables, bluetooth/wpa_supplicant, the Ubuntu Pro "
-                  "and motd-news units), PPA lists removed, default-password accounts locked, empty machine-id, r2 SSH host keys removed"),
+                  "and motd-news units), PPA lists removed, every other r2 apt source diverted to *.srrx-disabled, deployment/repo "
+                  "lab.pref, srrx-lab.sources and srrx-mirror.sources installed, default-password accounts locked, empty machine-id, "
+                  "r2 SSH host keys removed"),
     ("enable", "srrx-radio-off.service, srrx-boot-check.service (Route B also srrx-ab-commit.service), srrx-ssh-hostkeys.service for a later "
-               "sshd start; srrx.service is not enabled (IMG-06); every before.txt step is checked as replaced or skipped"),
+               "sshd start; srrx.service is not enabled (IMG-06); every before.txt step is checked as replaced or skipped; "
+               "npu_payload (no QNN SDK/QAIRT) and mcu_firmware (staged firmware/dist/build-manifest.json SHA-256) recorded"),
     ("data", "/etc/fstab of slot A, /data directories, the locked cache copied to /data/srrx-cache (read-only bind at /srv/srrx-cache)"),
     ("selftest", "deployment/selftest.py offline --profile controller on root A (policy DRAFT: BLOCKED expected)"),
     ("root-b", "rsync root A to root B, slot B fstab/cmdline/slot file, kernel-install add in a root B chroot (slot B entry and ESP files)"),
@@ -1010,6 +1031,7 @@ def hardening(root, recipe, route):
         if any(t in path.name for t in tokens) or any(o in text for o in origins):
             path.unlink()
             removed.append(path.name)
+    sources = apt_sources(root, removed)
     # STACK.md:894: the signed aptly publication is the only apt source and only lab.pref pins positively
     # (selftest RX-16 apt_pin_positive_outside_lab_pref). r2 ships positive pins (local-apt-repository,
     # ubuntu-pro-esm-*): divert them away from apt (it reads only names without an extension or *.pref).
@@ -1048,7 +1070,40 @@ def hardening(root, recipe, route):
     install_file(FILES / "srrx-ssh-hostkeys.service", root / "etc/systemd/system/srrx-ssh-hostkeys.service")
     return {"held": hold, "hold_names_not_installed": missing, "purged": purge, "masked": masked, "masked_by_stage": masked_by_stage,
             "removed_apt_lists": removed, "diverted_apt_preferences": diverted_prefs, "locked_accounts": locked,
-            "machine_id_before": previous, "removed_ssh_host_keys": host_keys}
+            "machine_id_before": previous, "removed_ssh_host_keys": host_keys, "apt_sources": sources}
+
+
+def apt_sources(root, removed=()):
+    """STACK.md:894: every r2 apt source entry that survived the PPA removal (etc/apt/sources.list and
+    each sources.list.d entry, files and links alike) is diverted to <name>.srrx-disabled with
+    dpkg-divert --local --rename, so a package upgrade writes its copy there too and apt never reads
+    it; then lab.pref, srrx-lab.sources and srrx-mirror.sources are installed byte for byte (0644).
+    Returns {installed, disabled, removed}; installed carries the route A pin file when present."""
+    root = Path(root)
+    lists = root / "etc/apt/sources.list.d"
+    ours = {Path(p).name for p in SRRX_APT_FILES if p.startswith("etc/apt/sources.list.d/")}
+    candidates = [root / "etc/apt/sources.list"] + (sorted(lists.iterdir()) if lists.is_dir() else [])
+    disabled = []
+    for path in candidates:
+        if not os.path.lexists(path) or path.name in ours or path.name.endswith(".srrx-disabled") or path.is_dir():
+            continue
+        target = "/" + path.relative_to(root).as_posix()
+        chroot(root, ["dpkg-divert", "--local", "--rename", "--divert", target + ".srrx-disabled", "--add", target])
+        disabled.append({"path": target[1:], "divert_to": target[1:] + ".srrx-disabled"})
+    installed = []
+    for relative, source in SRRX_APT_FILES.items():
+        install_file(source, root / relative)
+        if sha256(root / relative) != sha256(source):
+            raise BuildError("installed apt file differs from " + source.relative_to(PROJECT).as_posix())
+        installed.append({"path": relative, "source": source.relative_to(PROJECT).as_posix(), "sha256": sha256(root / relative)})
+    route_pref = "etc/apt/preferences.d/srrx-boot-route-a.pref"
+    if (root / route_pref).is_file():
+        installed.append({"path": route_pref, "source": "deployment/image/files/srrx-boot-route-a.pref", "sha256": sha256(root / route_pref)})
+    left = sorted(p.name for p in lists.iterdir() if p.name not in ours and not p.name.endswith(".srrx-disabled")) if lists.is_dir() else []
+    if left or os.path.lexists(root / "etc/apt/sources.list"):
+        raise BuildError("apt source entries other than the SR-RX publications remain: " + ", ".join(left or ["etc/apt/sources.list"]))
+    return {"installed": installed, "disabled": disabled, "removed": ["etc/apt/sources.list.d/" + n for n in removed],
+            "keyring": {"path": SRRX_KEYRING, "present": (root / SRRX_KEYRING).is_file()}}
 
 
 # systemd-tmpfiles-setup.service applies these on every boot: /data is its own partition (not mounted
@@ -1139,6 +1194,84 @@ def selftest(root, cmdline_sha, output):
     report = load_json(output) if Path(output).is_file() else {}
     return {"exit_code": done.returncode, "status": report.get("status"), "counts": report.get("counts"),
             "fail_or_blocked_rows": bootchain.fail_or_blocked_rows(report), "report_sha256": sha256(output) if Path(output).is_file() else None}
+
+
+# What closes each manifest blocker. "recipe": this recipe or CI must still fix it; "commissioning":
+# a per-unit value written when the unit is commissioned; "bench:W-10": the Q6A bench gate;
+# "bench:Phase0": the FastRPC/DSP/HTP matrix on the bench; "owner:key-ceremony": the owner's offline
+# signing-key ceremony (deployment/repo/README.md); "owner:policy-review": the human review that may
+# set receive-only-policy.json REVIEWED (build/09 РЕЦ-01). A tag never removes a blocker.
+CLOSES_AT = ("recipe", "commissioning", "bench:W-10", "bench:Phase0", "owner:key-ceremony", "owner:policy-review")
+BLOCKER_CLOSES_AT = (  # (blocker text prefix, id, tag); the selftest blocker is tagged per row and rule
+    ("dt_overlays_missing", "dt_overlays_missing", "recipe"),
+    ("dt_merge_not_the_ci_record", "dt_merge_not_the_ci_record", "recipe"),
+    ("dt_not_booted", "dt_not_booted", "bench:W-10"),
+    ("route_b_embloader_not_0.4", "route_b_embloader_not_0.4", "recipe"),
+    ("unknown kernel-install plugins", "unknown_kernel_install_plugins", "recipe"),
+    ("service_accounts_missing", "service_accounts_missing", "recipe"),
+    ("package_accounts_missing", "package_accounts_missing", "recipe"),
+    ("rsetup_first_boot_", "rsetup_first_boot", "recipe"),
+    ("locked cache not on /data", "locked_cache_not_on_data", "recipe"),
+    ("target_python_without_numpy", "target_python_without_numpy", "recipe"),
+    ("apt_keyring_absent", "apt_keyring_absent", "owner:key-ceremony"),
+    ("npu_payload_present", "npu_payload_present", "recipe"),
+    ("mcu_firmware_manifest", "mcu_firmware_manifest", "recipe"),
+)
+SELFTEST_BLOCKER = "selftest root A "
+SELFTEST_RULE_CLOSES_AT = {("RX-S2", "radio_off_binding_missing"): "commissioning",
+                           # embloader has its version_rule; any other present pin_only package waits for Phase 0
+                           ("RX-01a", "pinned_package_present_unreviewed"): "bench:Phase0"}
+
+
+def blocking_closes_at(blocking, selftest_report=None):
+    """One {blocker, closes_at} per blocker, the selftest blocker one per (row, rule) plus its policy
+    status; an unlisted blocker is tagged "recipe" (CI must still fix it), so nothing is hidden."""
+    tags = []
+    for text in blocking:
+        if text.startswith(SELFTEST_BLOCKER):
+            rows = (selftest_report or {}).get("fail_or_blocked_rows") or {}
+            for row in sorted(rows):
+                for rule in rows[row] or ["?"]:
+                    tags.append({"blocker": "selftest_root_a:" + row + ":" + rule,
+                                 "closes_at": SELFTEST_RULE_CLOSES_AT.get((row, rule), "recipe")})
+            # DRAFT policy: the overall verdict stays BLOCKED (POLICY_NOT_REVIEWED) even without rows.
+            tags.append({"blocker": "selftest_root_a:policy_not_reviewed", "closes_at": "owner:policy-review"})
+            continue
+        found = next(((i, t) for prefix, i, t in BLOCKER_CLOSES_AT if text.startswith(prefix)), None)
+        tags.append({"blocker": found[0] if found else text.split(":", 1)[0], "closes_at": found[1] if found else "recipe"})
+    return tags
+
+
+def closes_at_summary(tags):
+    """{tag: [blocker ids]} in CLOSES_AT order, for the CI summary and the README."""
+    return {tag: [t["blocker"] for t in tags if t["closes_at"] == tag] for tag in CLOSES_AT if any(t["closes_at"] == tag for t in tags)}
+
+
+def npu_payload(root):
+    """The golden image never carries the QNN SDK or QAIRT (owner install on the unit, never
+    redistributed): installed packages and files matching the NPU globs, names only."""
+    import fnmatch
+    names = sorted({n.split(":", 1)[0] for n in _dpkg_status(root)})
+    packages = sorted(n for n in names if any(fnmatch.fnmatchcase(n, g) for g in NPU_PAYLOAD_PACKAGES))
+    files = sorted({f for pattern in NPU_PAYLOAD_FILES for f in _find(root, pattern, ("usr/lib", "usr/share", "lib/firmware", "opt"))})[:50]
+    status = "absent" if not packages and not files else "PRESENT"
+    return {"status": status, "why": "owner install on the unit from a verified deb (software/DEPLOYMENT.md, NPU/QNN); "
+                                     "QAIRT and the QNN SDK are never redistributed (build/15, «Збирання образу»)",
+            "package_globs": list(NPU_PAYLOAD_PACKAGES), "file_globs": list(NPU_PAYLOAD_FILES), "packages": packages, "files": files}
+
+
+def mcu_firmware(root):
+    """MCU firmware is flashed and verified from a bench host (tools/flash_mcu.py), never from the
+    image; the image carries the pinned packages under /opt/srrx/firmware for audit only and records
+    the SHA-256 of the staged firmware/dist/build-manifest.json it expects."""
+    staged = Path(root) / "opt/srrx" / MCU_BUILD_MANIFEST
+    repo = PROJECT / MCU_BUILD_MANIFEST
+    record = {"flashing": "bench host only: tools/flash_mcu.py before installation; re-flashing is a service step with the case open "
+                          "(BOOTSEL); the image never flashes the Pico or the IMU MCU",
+              "build_manifest": "opt/srrx/" + MCU_BUILD_MANIFEST, "sha256": sha256(staged) if staged.is_file() else None,
+              "repo_sha256": sha256(repo) if repo.is_file() else None}
+    record["matches_repo"] = record["sha256"] is not None and record["sha256"] == record["repo_sha256"]
+    return record
 
 
 # ---------------------------------------------------------------- build
@@ -1275,9 +1408,23 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
         LOG.step("accounts", "DONE", service=len(manifest["accounts"]["service_accounts"]),
                  missing=manifest["accounts"]["service_accounts_missing"] + manifest["accounts"]["package_accounts_missing"])
         manifest["hardening"] = hardening(root_a, recipe, route)
-        LOG.step("hardening", "DONE", held=len(manifest["hardening"]["held"]), masked=manifest["hardening"]["masked"])
+        manifest["apt_sources"] = manifest["hardening"].pop("apt_sources")
+        if not manifest["apt_sources"]["keyring"]["present"]:
+            manifest["blocking"].append("apt_keyring_absent: both SR-RX sources are Signed-By /" + SRRX_KEYRING + ", the public key of the "
+                                        "owner's offline key ceremony (deployment/repo/README.md); until it is installed apt reads no source")
+        LOG.step("hardening", "DONE", held=len(manifest["hardening"]["held"]), masked=manifest["hardening"]["masked"],
+                 apt_sources=[e["path"] for e in manifest["apt_sources"]["installed"]],
+                 apt_disabled=[e["path"] for e in manifest["apt_sources"]["disabled"]])
         manifest["enabled_units"] = enable_units(root_a, recipe, route)
         manifest["not_enabled"] = recipe["not_enabled"]
+        manifest["npu_payload"] = npu_payload(root_a)
+        if manifest["npu_payload"]["packages"]:
+            manifest["blocking"].append("npu_payload_present: " + ", ".join(manifest["npu_payload"]["packages"])
+                                        + " (the golden image never carries the QNN SDK or QAIRT)")
+        manifest["mcu_firmware"] = mcu_firmware(root_a)
+        if not manifest["mcu_firmware"]["matches_repo"]:
+            manifest["blocking"].append("mcu_firmware_manifest: the staged " + manifest["mcu_firmware"]["build_manifest"]
+                                        + " is missing or differs from the tree")
         first_boot = base.get("rsetup_first_boot")
         rows, unhandled = first_boot_review(first_boot, recipe, root_a)
         manifest["rsetup_first_boot"] = {"before_txt_sha256": (first_boot or {}).get("sha256"), "commands": rows}
@@ -1373,6 +1520,8 @@ def build(cache, work, out, route="A", dt_profile="lab", lime=True, seed=None, d
             base_loop.detach()
         if loop:
             loop.detach()
+        manifest["blocking_closes_at"] = blocking_closes_at(manifest["blocking"], manifest.get("selftest_root_a"))
+        manifest["blocking_by_closes_at"] = closes_at_summary(manifest["blocking_closes_at"])
         dump(out / "image-manifest.json", manifest)
 
 
@@ -1419,7 +1568,7 @@ def main():
         else:
             result = build(args.cache, args.work, args.out, args.route, args.dt_profile, not args.no_lime, args.uuid_seed,
                            args.data_bytes, args.allow_unmerged_dtb, not args.no_cache_copy, args.keep_base)
-            result = {k: result[k] for k in ("status", "route", "image", "blocking", "hardware_ready")}
+            result = {k: result[k] for k in ("status", "route", "image", "blocking", "blocking_by_closes_at", "hardware_ready")}
         print(json.dumps(result, indent=2, ensure_ascii=False))
         return 0 if result.get("status") not in ("BLOCKED",) else 2
     except (OSError, ValueError, KeyError, RuntimeError, subprocess.SubprocessError) as exc:

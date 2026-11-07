@@ -431,7 +431,7 @@ class ReleaseGuardRepositoryTests(unittest.TestCase):
 
 class RepositoryLayoutTests(unittest.TestCase):
     def test_lab_pref_is_the_structure_selftest_rx16_accepts(self):
-        stanzas = deploy.deb822((HERE / "repo/lab.pref").read_text(encoding="utf-8"), "lab.pref")
+        stanzas = [s for s in deploy.deb822((HERE / "repo/lab.pref").read_text(encoding="utf-8"), "lab.pref") if s["package"] == "*"]
         self.assertEqual([int(s["pin-priority"]) for s in stanzas], deploy.load(HERE / "receive-only-policy.json")["apt"]["pref_priorities"])
         self.assertEqual([s["pin"] for s in stanzas], ["release o=" + deploy.load(deploy.REPO_POLICY)["origin"], "release o=srrx-mirror", "origin *"])
         self.assertNotIn("<", (HERE / "repo/lab.pref").read_text(encoding="utf-8"))  # no placeholder (RX-16 apt_pin_origin_placeholder)
@@ -631,6 +631,93 @@ class SchemaV2SignedRecordTests(unittest.TestCase):
         self.refused("patch list differs", repo, [self.record(build_environment=self.environment(patch_receipts=[receipt]))])
         self.refused("source member differs", repo, [self.record(build_environment=self.environment(source_member=dict(MEMBER)))])
         self.refused("recipe files differ", repo, [self.record(build_environment=self.environment(recipe_files={"check_recipe.py": "0" * 64}))])
+
+
+class LabPrefMinusOnePinTests(unittest.TestCase):
+    """W2 IMG-1: the -1 pattern pins of build/07 section 2 (STACK.md:892) appended to repo/lab.pref after
+    the three wildcard stanzas, and the srrx-mirror sources entry the image installs next to srrx-lab's."""
+
+    # build/07-pz-vstanovlennia.md section 2 table, by name (globs of the table are policy globs too)
+    BUILD07 = ("wsjtx", "libhamlib4t64", "libhamlib-utils", "libhamlib-dev", "fldigi", "qsstv", "direwolf", "js8call", "python3-js8py",
+               "soapysdr-module-all", "soapysdr0.8-module-all", "soapysdr0.8-module-remote", "soapysdr0.8-module-lms7",
+               "soapysdr0.8-module-hackrf", "soapysdr0.8-module-bladerf", "soapysdr0.8-module-uhd", "soapysdr0.8-module-redpitaya",
+               "libsoapysdr0.9-1", "limesuite", "limesuiteng-gui", "gr-limesuiteng", "limesuiteng-cli", "librtlsdr0", "rtl-433",
+               "digiham-tools", "python3-digiham", "codecserver", "codecserver-driver-ambe3k", "acarsdec", "dumphfdl", "dumpvdl2",
+               "libacars-tools", "libacars2", "dump1090-fa", "dump1090-fa-minimal", "dump978-fa", "skyaware978", "dxlaprs-tetra",
+               "dxlaprs-lora", "python3-meshtastic", "python3-bleak", "m17-demod", "nrsc5", "hpsdrconnector", "multimon-ng", "lame",
+               "python3-paho-mqtt", "gr-gsm", "gr-iridium", "kalibrate-rtl", "urh", "qcom-fastrpc1", "qairt-dsp-binaries", "libqnn1",
+               "libqnn-dev", "libsnpe1", "qnn-tools", "snpe-tools", "qcom-adreno1", "dragonwing-defaults", "firmware-qcom-audioreach",
+               "firmware-qcom-soc", "linux-firmware-qualcomm-misc", "hexagon-dsp-binaries-qcs6490", "firmware-qcom-dsp",
+               "linux-image-7.0.11-7-qcom", "linux-headers-7.0.11-7-qcom")
+
+    def setUp(self):
+        import fnmatch
+        self.match = fnmatch.fnmatchcase
+        self.text = (HERE / "repo/lab.pref").read_text(encoding="utf-8")
+        self.stanzas = deploy.deb822(self.text, "lab.pref")
+        self.extra = [s for s in self.stanzas if s["package"] != "*"]
+        self.policy = deploy.load(HERE / "receive-only-policy.json")
+
+    def tokens(self, pin):
+        return {t for s in self.extra if s["pin"] == pin for t in s["package"].split()}
+
+    def test_wildcards_come_first_and_every_extra_stanza_only_lowers(self):
+        self.assertEqual([s["package"] for s in self.stanzas[:3]], ["*"] * 3)
+        self.assertNotIn("*", [s["package"] for s in self.stanzas[3:]])  # RX-16 accepts exactly three wildcard stanzas
+        self.assertGreaterEqual(len(self.extra), 8)
+        for stanza in self.extra:
+            self.assertEqual(int(stanza["pin-priority"]), -1, stanza["package"])
+            self.assertEqual(list(stanza)[0], "explanation", stanza["package"])  # apt_preferences(5): Explanation begins a record
+        self.assertTrue(self.text.endswith("\n") and "\r" not in self.text and "<" not in self.text)
+
+    def test_policy_packages_without_a_version_rule_are_pinned_from_every_origin(self):
+        never = self.tokens("release *")
+        for entry in self.policy["forbidden_packages"]:
+            rule = entry.get("name") or entry["glob"]
+            if "version_rule" not in entry:  # embloader has one; it is route A only (files/srrx-boot-route-a.pref)
+                self.assertIn(rule, never, rule)
+        for name in self.BUILD07:
+            self.assertTrue(any(self.match(name, token) for token in never), name)
+
+    def test_lab_build_only_packages_never_come_from_the_mirror(self):
+        self.assertEqual(self.tokens("release o=srrx-mirror"), set(deploy.LAB_BUILD_ONLY_PACKAGES))
+        self.assertNotIn("embloader", {t for s in self.extra for t in s["package"].split()})  # route B keeps embloader 0.4
+
+    def test_version_pins_match_the_policy_thresholds_and_spare_the_held_versions(self):
+        pins = {s["package"]: s["pin"][len("version "):] for s in self.extra if s["pin"].startswith("version ")}
+        self.assertEqual(set(pins), {"linux-firmware-dragonwing", "*mesa*", "edk2-*"})
+        self.assertTrue(self.match("1.0.0+20260825", pins["linux-firmware-dragonwing"]))
+        self.assertFalse(self.match("1.0.0+20251203", pins["linux-firmware-dragonwing"]))  # held r2 version
+        rules = {e["glob"]: e["version_rule"]["forbid_at_least"] for e in self.policy["forbidden_packages"]
+                 if e.get("glob") in ("*mesa*", "edk2-*")}
+        grids = {"*mesa*": (["9.0.0-2", "9.0.2-1.1build1", "25.2.8-0ubuntu0.24.04.1"],  # r2 versions (image facts, run 42354844339)
+                            ["2.0", "25", "25.99", "26", "26~rc1", "26.0.1-1", "27.1", "29.0", "30.0", "99.9", "100.0", "260.1", "025.9",
+                             "026.0", "0:25.1", "0:26.0", "1:9.0", "12:1"]),
+                 "edk2-*": (["0.1.0-5", "0.1.0-7"],  # r2 0.1.0-5; 0.1.0-7 is the archived one (STACK.md:896)
+                            ["0.0.9-99", "0.1-9", "0.1.0", "0.1.0-1ubuntu8", "0.1.0-7.1", "0.1.0~rc1-9", "0.1.0-8", "0.1.0-08", "0.1.0-8ubuntu1",
+                             "0.1.0-9", "0.1.0-10", "0.1.0-80", "0.1.0.1-1", "0.1.0+git1-1", "0.1.05-1", "0.1.1-1", "0.1.10-1", "0.2-1",
+                             "0.10.0-1", "00.1.0-8", "1.0-1", "10.0", "1:0.0.1", "0:0.1.0-8"])}
+        for package, (held, grid) in grids.items():
+            pin = pins[package]
+            self.assertTrue(pin.startswith("/^") and pin.endswith("/"), pin)
+            self.assertIsNone(re.search(r"\\[dDwWsSbB]|\(\?|[*+?}]\?", pin))  # POSIX ERE subset only (apt uses regcomp)
+            regex = re.compile(pin[1:-1])
+            for version in held + grid:
+                forbidden = deploy.deb_compare(version, rules[package]) >= 0
+                if forbidden or "~" not in version:  # a pre-release just below the threshold may be blocked (conservative)
+                    self.assertEqual(regex.search(version) is not None, forbidden, (package, version))
+            for version in held:
+                self.assertIsNone(regex.search(version), (package, version))
+
+    def test_mirror_sources_entry_is_the_lab_entry_with_its_own_suite(self):
+        lab = deploy.deb822((HERE / "repo/srrx-lab.sources").read_text(encoding="utf-8"), "lab")[0]
+        mirror = deploy.deb822((HERE / "repo/srrx-mirror.sources").read_text(encoding="utf-8"), "mirror")[0]
+        self.assertEqual(set(mirror), set(lab))
+        for key in ("types", "components", "architectures", "signed-by"):
+            self.assertEqual(mirror[key], lab[key], key)
+        self.assertEqual(mirror["signed-by"], deploy.load(deploy.REPO_POLICY)["keyring_path"])
+        self.assertNotEqual(mirror["suites"], lab["suites"])
+        self.assertTrue(mirror["uris"].startswith("file:/srv/srrx-repo/") and mirror["uris"] != lab["uris"])
 
 
 if __name__ == "__main__":
