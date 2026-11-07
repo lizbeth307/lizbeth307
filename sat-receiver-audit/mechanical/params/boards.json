@@ -6,7 +6,7 @@
     "t": 1.6,
     "layers": 4,
     "fab": "JLC JLC04161H-7628 (build/15)",
-    "components": "top side only (build/15); W2 MECH-3: CTRL two-sided (AREA 'Монтаж'), PWR-A / PWR-B top side only"
+    "components": "top side only (build/15)"
   },
   "boards": {
     "PWR": {
