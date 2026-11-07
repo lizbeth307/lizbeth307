@@ -154,7 +154,7 @@
     "copy": [{"from": "{src}/LICENSE", "to": "opt/sdrangel/share/sdrangel"}]
   },
   "hooks": {
-    "source_check": null,
+    "source_check": ["python3", "-I", "{recipe}/check_recipe.py", "verify-source", "--src", "{src}"],
     "package": ["python3", "-I", "{recipe}/check_recipe.py", "package", "--destdir", "{destdir}", "--out", "{hook_out}"]
   },
   "packages": [

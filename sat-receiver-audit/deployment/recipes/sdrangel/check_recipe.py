@@ -162,14 +162,38 @@ def package(destdir, out):
             "core_libraries": len(CORE_LIBRARIES), **digests}
 
 
+def verify_source(src):
+    """TEMPORARY diagnostic: configure once in a scratch directory and report the first CMake error
+    (the builder keeps its own configure log only inside the chroot)."""
+    import shutil
+    import subprocess
+    import tempfile
+    recipe = json.loads((HERE / "recipe.json").read_text(encoding="utf-8"))
+    cmake = recipe["cmake"]
+    scratch = Path(tempfile.mkdtemp(prefix="srrx-diag-"))
+    argv = ([a.replace("{src}", str(src)).replace("{build}", str(scratch / "b")) for a in cmake["configure"]]
+            + ["-D%s=%s" % (k, v) for k, v in sorted({**cmake["variables"], **cmake["options"]}.items())])
+    result = subprocess.run(argv, capture_output=True, text=True, cwd=str(scratch))
+    text = result.stdout + result.stderr
+    shutil.rmtree(scratch, ignore_errors=True)
+    if result.returncode == 0:
+        return {"ok": True, "findings": []}
+    lines = text.splitlines()
+    start = next((i for i, l in enumerate(lines) if "CMake Error" in l or "Error" in l), max(0, len(lines) - 6))
+    print(text[-6000:])
+    return {"ok": False, "findings": [" | ".join(l.strip() for l in lines[start:start + 8] if l.strip())[:380]]}
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     commands = parser.add_subparsers(dest="command", required=True)
+    diag = commands.add_parser("verify-source", help="TEMPORARY: configure diagnostic")
+    diag.add_argument("--src", type=Path, required=True)
     hook = commands.add_parser("package", help="check the install tree, add the /usr/bin links, write the RX-02 manifest")
     hook.add_argument("--destdir", type=Path, required=True)
     hook.add_argument("--out", type=Path, required=True)
     args = parser.parse_args()
-    result = package(args.destdir, args.out)
+    result = verify_source(args.src) if args.command == "verify-source" else package(args.destdir, args.out)
     print(json.dumps(result, sort_keys=True))
     return 0 if result["ok"] else 1
 
