@@ -13,6 +13,11 @@ SoapySDR input plugin (not loaded by the lease while Lime is disabled) is shown 
 Finally it writes the unsigned per-file manifest of /opt/sdrangel for selftest RX-02 (the walk of
 deploy.build_inventory; status OPEN) into its report.
 
+A new network namespace starts with lo down, and this uid-1000 process cannot bring it up. Then
+the REST part is reported as BLOCKED_NO_LOOPBACK (rest_blocked_reason), not as passed: the plugin
+set still comes from the server log, a non-loopback socket still fails the check, and the REST
+comparison runs only where loopback is up.
+
 Stdlib only (this file is copied alone into the chroot). The last stdout line is the result
 object: ok true and no findings, or the runtime check fails. CI model on the arm64 builder: no
 receiver, no RF, no signature.
@@ -131,9 +136,10 @@ def bound_sockets(proc_net="/proc/net"):
     return sorted(found)
 
 
-def socket_findings(sockets):
+def socket_findings(sockets, require_listen=True):
+    """Every listening TCP and bound UDP socket is loopback; with require_listen the REST port listens."""
     findings = ["%s socket bound to a non-loopback address %s port %d" % (p, a, n) for p, a, n in sockets if not is_loopback(a)]
-    if not any(p.startswith("tcp") and n == PORT for p, a, n in sockets):
+    if require_listen and not any(p.startswith("tcp") and n == PORT for p, a, n in sockets):
         findings.append("no listening TCP socket on port %d" % PORT)
     return findings
 
@@ -219,30 +225,58 @@ def request(method, path, timeout=5.0):
     return response.status, data
 
 
-def serve(argv, home, log):
-    """Start one sdrangelsrv, wait for its REST API, read it, stop it. Returns (rest, sockets, log text, findings)."""
-    findings, rest, sockets = [], {}, []
+def loopback(flags_path="/sys/class/net/lo/flags"):
+    """{"flags": text, "up": bool} of this namespace's loopback (IFF_UP is bit 0). A new network
+    namespace starts with lo down, and uid 1000 without CAP_NET_ADMIN cannot bring it up."""
+    try:
+        text = Path(flags_path).read_text(encoding="ascii").strip()
+        return {"flags": text, "up": bool(int(text, 16) & 0x1)}
+    except (OSError, ValueError):
+        return {"flags": None, "up": False}
+
+
+def _logged(log, needle):
+    try:
+        return needle in Path(log).read_text(encoding="utf-8", errors="replace")
+    except OSError:
+        return False
+
+
+def serve(argv, home, log, lo_up):
+    """Start one sdrangelsrv, wait until it starts its web API server, read the REST API (only with
+    loopback up), the bound sockets and stop it. Returns (rest, sockets, log text, findings, rest state)."""
+    findings, rest, sockets, state = [], {}, [], "NOT_REACHED"
     env = {"PATH": os.environ.get("PATH", "/usr/sbin:/usr/bin:/sbin:/bin"), "HOME": str(home), "LANG": "C.UTF-8",
            "XDG_RUNTIME_DIR": str(home)}
     with open(log, "wb") as stream:
         process = subprocess.Popen(list(argv), stdin=subprocess.DEVNULL, stdout=stream, stderr=subprocess.STDOUT, env=env, cwd=str(home))
     try:
-        deadline = time.monotonic() + START_TIMEOUT
+        deadline, last = time.monotonic() + START_TIMEOUT, None
+        started = False
         while True:
             if process.poll() is not None:
-                findings.append("sdrangelsrv exited with %s before its REST API answered" % process.returncode)
+                findings.append("sdrangelsrv exited with %s before its web API was reached" % process.returncode)
                 break
-            try:
-                status, data = request("GET", "/sdrangel", timeout=2.0)
-                if status == 200:
-                    rest["summary"] = data
-                    break
-            except (OSError, http.client.HTTPException):
-                pass
+            started = started or _logged(log, "WebAPIServer::start: starting web API server at http://127.0.0.1:%d" % PORT)
+            if started and not lo_up:
+                time.sleep(1.0)  # the listener is set up right before that log line
+                state = "BLOCKED_NO_LOOPBACK"
+                break
+            if started:
+                try:
+                    status, data = request("GET", "/sdrangel", timeout=2.0)
+                    last = "HTTP %s" % status
+                    if status == 200:
+                        rest["summary"], state = data, "READ"
+                        break
+                except (OSError, http.client.HTTPException) as exc:
+                    last = "%s %s" % (type(exc).__name__, getattr(exc, "errno", "") or "")
             if time.monotonic() > deadline:
-                findings.append("the REST API did not answer within %d s" % START_TIMEOUT)
+                findings.append("the REST API did not answer within %d s (last: %s)" % (START_TIMEOUT, last or "web API not started"))
                 break
             time.sleep(0.5)
+        if process.poll() is None:
+            sockets = bound_sockets()
         if "summary" in rest:
             for name, path in (("channels_rx", "/sdrangel/channels?direction=0"), ("channels_tx", "/sdrangel/channels?direction=1"),
                                ("channels_mimo", "/sdrangel/channels?direction=2"), ("features", "/sdrangel/features"),
@@ -255,7 +289,6 @@ def serve(argv, home, log):
                 if status != 200:
                     findings.append("GET %s gave %s" % (path, status))
                 rest[name] = data
-            sockets = bound_sockets()
         # DELETE /sdrangel answers 400 at 97e9e21 (the shared WebAPIAdapter::instanceDelete), so
         # the server stops as systemd stops the lease: SIGTERM, which appsrv/main.cpp maps to quit().
         if process.poll() is None:
@@ -269,29 +302,37 @@ def serve(argv, home, log):
             process.kill()
             process.wait()
     text = Path(log).read_text(encoding="utf-8", errors="replace")
-    return rest, sockets, text, findings
+    return rest, sockets, text, findings, state
 
 
 def main():
     findings = installed_findings()
-    report = {"recipe": "sdrangel", "lease_argv": list(LEASE_ARGV), "runs": {}, "hardware_ready": False,
-              "scope": "CI model in the runtime-check chroot: loopback only, no receiver, no RF; the manifest is unsigned."}
+    lo = loopback()
+    report = {"recipe": "sdrangel", "lease_argv": list(LEASE_ARGV), "runs": {}, "hardware_ready": False, "loopback": lo,
+              "scope": "CI model in the runtime-check chroot: no receiver, no RF; the manifest is unsigned."}
+    if not lo["up"]:
+        report["rest_blocked_reason"] = ("loopback is down in the runtime-check network namespace (unshare --net) and uid 1000 "
+                                         "cannot bring it up, so the REST API on 127.0.0.1:%d cannot be reached here; the plugin "
+                                         "set is checked from the server log and the listening socket from /proc/net" % PORT)
     with tempfile.TemporaryDirectory(prefix="srrx-sdrangel-") as temporary:
         for label, argv, soapy in (("lease", LEASE_ARGV, False), ("soapy", LEASE_ARGV + ("--soapy",), True)):
             home = Path(temporary) / label
             home.mkdir(mode=0o700)
-            rest, sockets, text, problems = serve(argv, home, Path(temporary) / (label + ".log"))
+            rest, sockets, text, problems, state = serve(argv, home, Path(temporary) / (label + ".log"), lo["up"])
             problems += rest_findings(rest) if "summary" in rest else []
-            problems += socket_findings(sockets) if "summary" in rest else []
+            problems += socket_findings(sockets, require_listen=lo["up"]) if state in ("READ", "BLOCKED_NO_LOOPBACK") else []
             log_problems, loaded = log_findings(text, soapy)
             problems += log_problems
+            bind_failed = "HttpListener: Cannot bind" in text
+            if bind_failed and lo["up"]:
+                problems.append("the web API listener could not bind 127.0.0.1:%d" % PORT)
             findings += ["%s run: %s" % (label, p) for p in problems]
-            report["runs"][label] = {"argv": list(argv), "summary": rest.get("summary"),
+            report["runs"][label] = {"argv": list(argv), "rest": state, "summary": rest.get("summary"),
                                      "rx_channels": sorted(c.get("id") for c in (rest.get("channels_rx") or {}).get("channels", [])),
                                      "features": sorted(f.get("id") for f in (rest.get("features") or {}).get("features", [])),
                                      "rx_devices": sorted(d.get("hwType") for d in (rest.get("devices_rx") or {}).get("devices", [])),
-                                     "sockets": [list(s) for s in sockets], "loaded_plugins": loaded,
-                                     "log_tail": text.splitlines()[-40:]}
+                                     "sockets": [list(s) for s in sockets], "listener_bind_failed": bind_failed,
+                                     "loaded_plugins": loaded, "log_tail": text.splitlines()[-60:]}
     try:
         document = prefix_manifest()
         report.update(rx02_manifest=document, rx02_manifest_sha256=hashlib.sha256(canonical(document)).hexdigest(),

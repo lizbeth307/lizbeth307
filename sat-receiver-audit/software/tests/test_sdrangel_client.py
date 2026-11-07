@@ -486,6 +486,16 @@ class RuntimeCheckTests(unittest.TestCase):
         self.assertTrue(runtime_check.is_loopback("0000:0000:0000:0000:0000:ffff:7f00:0001"))
         self.assertFalse(runtime_check.is_loopback("0000:0000:0000:0000:0000:0000:0000:0000"))
         self.assertEqual(runtime_check.socket_findings([]), ["no listening TCP socket on port 8091"])
+        self.assertEqual(runtime_check.socket_findings([], require_listen=False), [])  # loopback down: nothing to reach
+        self.assertTrue(runtime_check.socket_findings([("udp", "0.0.0.0", 5353)], require_listen=False))
+
+    def test_loopback_state_from_sysfs_flags(self):
+        with tempfile.TemporaryDirectory(prefix="srrx-lo-") as temporary:
+            flags = Path(temporary) / "flags"
+            for text, up in (("0x8\n", False), ("0x9\n", True), ("0x10049", True), ("junk", False)):
+                flags.write_text(text, encoding="ascii")
+                self.assertEqual(runtime_check.loopback(flags)["up"], up, text)
+            self.assertEqual(runtime_check.loopback(Path(temporary) / "missing"), {"flags": None, "up": False})
 
     def test_log_names_the_loaded_plugins(self):
         lines = ["2026-11-07 12:00:00.000 (I) PluginManager::loadPluginsDir: loaded plugin %s" % n
