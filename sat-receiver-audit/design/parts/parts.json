@@ -190,8 +190,8 @@
   },
   "72": {
    "status": "partial",
-   "note": "склад плат змінено рішенням build/15 (3 плати, 4 шари JLC04161H-7628, деталі зверху, JLC PCBA); деталі плат — у базі, специфікація замовлення плат — у PCB-пакеті",
-   "remaining": "3 друковані плати за специфікацією PCB-пакета (4 шари JLC04161H-7628, build/15); дроселі Murata і C0G цього рядка — лише ті, що є в графах (тоді вони вже в базі)"
+   "note": "склад плат змінено рішенням build/15 (3 основні плати + малі плати, 4 шари JLC04161H-7628, деталі зверху, JLC PCBA); деталі плат — у базі (рядки по платах — 10-jlc-bom.csv), специфікація замовлення плат — у PCB-пакеті",
+   "remaining": "3 основні плати (PWR, RF, CTRL) + малі ENC ×3 (2 + 1 запасна), HATCH, PACK_FUSE, T7_INSERT, HDMI_INSERT, IMU_CARRIER (розкладка малих плат — хвиля 2, специфікація замовлення TBD; build/15 «Кількість плат»); 4 шари JLC04161H-7628; дроселі Murata і C0G цього рядка — лише ті, що є в графах (тоді вони вже в базі)"
   },
   "76": {
    "status": "db",
@@ -4675,13 +4675,13 @@
    ]
   },
   {
-   "id": "J-PH-B5B",
+   "id": "J-PH-S5B",
    "mount": "pcb_tht",
-   "footprint": "Connector_JST:JST_PH_B5B-PH-K_1x05_P2.00mm_Vertical",
+   "footprint": "Connector_JST:JST_PH_S5B-PH-K_1x05_P2.00mm_Horizontal",
    "manufacturer": "JST",
-   "mpn": "B5B-PH-K-S(LF)(SN)",
+   "mpn": "S5B-PH-K-S(LF)(SN)",
    "sku": {
-    "lcsc": "C157993"
+    "lcsc": "C157923"
    },
    "single_source": "JST PH family (build/15)",
    "extras": [
@@ -4716,7 +4716,7 @@
    "refs": [
     "J302"
    ],
-   "note": "J302 stays on CTRL_HMI as graph E3 puts it (build/15 «Сигнальні джгути», 2026-11-07); the S02 lead carries PHR-5 at both ends and its power-board end plugs into the B5B header listed in extras (build/16 connector J302M-PWR)."
+   "note": "J302 stays on CTRL_HMI as graph E3 puts it (build/15 «Сигнальні джгути», 2026-11-07). Side entry S5B-PH-K-S (4.8 mm, JST ePH) like every PH header on CTRL, RF and ENC, because the top-entry B5B stands about 8 mm with its housing against the 5.5 mm CTRL height (mechanical/params/boards.json; build/15, 2026-11-07); MPN, LCSC and footprint as harness_families PH 5 header_side. The S02 lead carries PHR-5 at both ends and its power-board end plugs into the B5B header listed in extras (build/16 connector X02S0-PWR; PWR takes top-entry headers)."
   },
   {
    "id": "J-PH-B3B",
@@ -4932,8 +4932,8 @@
      "qty_per_ref": 1
     }
    ],
-   "note": "Female on the pack/PWR side (the energised side stays female); pigtail 18 AWG; XT30U-M is on the service lead (build/16 S12).",
-   "interface_open": "XT30U-F на пігтейлі 18 AWG і XT30U-M для сервісного дроту обрано; кріплення роз’єму в корпусі (сервісний доступ, фіксація, ущільнення) і з’єднання пігтейла з силовою платою не задано — механічний пакет і таблиця джгутів (build/16).",
+   "note": "Female on the pack/PWR side (the energised side stays female); pigtail 20 AWG into the Micro-Fit X12P1-PWR (build/16 S12); XT30U-M is on the service lead.",
+   "interface_open": "XT30U-F на пігтейлі і XT30U-M для сервісного дроту обрано; пігтейл — 20 AWG до X12P1-PWR (Micro-Fit, build/16 S12: 3 A тривало / F103 5 A, клема 43030 бере 20–24 AWG); відкриті: кріплення роз’єму в корпусі, сервісний доступ, фіксація й ущільнення — механічний пакет.",
    "refs": [
     "J101"
    ]
@@ -4957,7 +4957,7 @@
    "single_source": "Єдиний знайдений на складі DigiKey DE 06.11.2026 панельний USB-C з IP67 і номіналом 5 A; інша серія потребує іншого вирізу панелі",
    "match": "USB-C",
    "note": "IP67, 24 контакти, фланцевий монтаж, виводи THT під пайку: ставиться на малу панельну плату або на дроти лише VBUS/GND/CC1/CC2 (E1: CC прямо до IP2368, без Rd 5.1 kΩ). Номінали 0.25 / 1.25 / 5 A — з таблиці DigiKey; що 5 A стосується VBUS, звірити з кресленням Amphenol io_harsh_musb-type-c.pdf до замовлення.",
-   "interface_open": "MUSBRM5C130 має 24 виводи THT під пайку: потрібна мала панельна плата або дроти лише VBUS/GND/CC1/CC2 (і SHIELD до CHASSIS), а їх немає ні в графі, ні в BOM; виріз панелі й ущільнення — механічний пакет (MECH-07).",
+   "interface_open": "Дроти VBUS/GND/CC1/CC2 задано в build/16 S11 (до X11P1-PWR і X11S1-PWR; CC — транзитом PWR до IP2368); відкриті: виріз панелі, ущільнення й бондинг SHIELD до CHASSIS (build/16 §9, F26) — механічний пакет (MECH-07).",
    "refs": [
     "J103"
    ]
@@ -5758,7 +5758,7 @@
    "single_source": "Bulgin Buccaneer PX0845/A (IP68); Amphenol 17-200881 потребує іншого вирізу панелі",
    "match": "USB-A",
    "note": "Панельна розетка USB 2.0 A серії Buccaneer, IP68/IP69K (з кришкою чи без, сторінка не уточнює), виводи під пайку, гайка з лицьового боку; строк виробника 26 тижнів. Кришку Bulgin PX0711 сторінка лише пропонує поруч — сумісність звірити за кресленням Bulgin (непровідні заглушки — рядок 90 10-bom).",
-   "interface_open": "Розетку обрано; її виводи під пайку з’єднуються з платою USB_POWER (VBUS_LABPORT, D−/D+, GND) дротами, яких немає в графі й таблиці джгутів; виріз і заглушка — механічний пакет (MECH-07).",
+   "interface_open": "Дроти задано в build/16: VBUS_LABPORT і GND — сегмент S23 (до X23S1-PWR), D−/D+ — кабельна збірка C-LAB від хаба H3; відкриті: виріз панелі й заглушка — механічний пакет (MECH-07).",
    "refs": [
     "J501"
    ]
@@ -5926,7 +5926,7 @@
    },
    "match": "GX16-4",
    "single_source": "Olimex GX16-4 pair with tethered cap (STACK §1.1 D12)",
-   "interface_open": "Пару Olimex GX16-4 обрано; виріз панелі й дроти від роз’єму до плати (LAB5, GND, IMU_TX, IMU_RX, CHASSIS) не задано.",
+   "interface_open": "Дроти задано в build/16 S32 (LAB5, GND, IMU_TX, IMU_RX до X32P1-PWR і X32S1-PWR), корпус — бондинг CHASSIS за build/16 §9; відкриті: виріз панелі (отвір ⌀16, M-06) і посадка — механічний пакет.",
    "refs": [
     "J504"
    ]
@@ -5986,9 +5986,7 @@
    "qty": 15,
    "spares": 2,
    "for": "PWR → PEM F-M3-1 ×7 (плата 1.6 + шайба 0.4 + пластина 2.0, boards.json PWR) і кутники → пластина ×8 (кутник 2 + пластина 2, mechanical.json angles)",
-   "manufacturer": "CNC Kitchen",
-   "mpn": "ISO 14580 A2 M3×4 TX10",
-   "source": "CNC Kitchen (10-bom row 87, v2 18.10.2026; page not re-read)"
+   "tbd": "гвинт ISO 14580 A2 TX10 цієї довжини на сторінці продавця не перевірено: CNC Kitchen — лише намічений продавець (10-bom рядок 87 і STACK.md:317 називають тільки M3x8/10/12)"
   },
   {
    "id": "AI-M3X5-ISO14580",
@@ -5996,9 +5994,7 @@
    "qty": 6,
    "spares": 2,
    "for": "RF-плата → стійки SO-M3-3 (boards.json RF, build/17 F07)",
-   "manufacturer": "CNC Kitchen",
-   "mpn": "ISO 14580 A2 M3×5 TX10",
-   "source": "CNC Kitchen (10-bom row 87, v2 18.10.2026; page not re-read)"
+   "tbd": "гвинт ISO 14580 A2 TX10 цієї довжини на сторінці продавця не перевірено: CNC Kitchen — лише намічений продавець (10-bom рядок 87 і STACK.md:317 називають тільки M3x8/10/12)"
   },
   {
    "id": "AI-M3X14-ISO14580",
@@ -6006,9 +6002,7 @@
    "qty": 3,
    "spares": 2,
    "for": "тримач T7 ззовні у вставки на задній стінці (mechanical.json t7_holder; 14 — непереважна довжина ISO)",
-   "manufacturer": "CNC Kitchen",
-   "mpn": "ISO 14580 A2 M3×14 TX10",
-   "source": "CNC Kitchen (10-bom row 87, v2 18.10.2026; page not re-read)"
+   "tbd": "гвинт ISO 14580 A2 TX10 цієї довжини на сторінці продавця не перевірено: CNC Kitchen — лише намічений продавець (10-bom рядок 87 і STACK.md:317 називають тільки M3x8/10/12)"
   },
   {
    "id": "AI-M3-CLOSURE",
@@ -6151,12 +6145,13 @@
   {
    "id": "AI-VENT-YBK",
    "item": "клапан Amphenol LTW VENT-PS1YBK-O8002 (M12×1.5, з гайкою)",
-   "qty": 3,
+   "qty": 4,
    "spares": 0,
-   "for": "3 коробки Gainta (наскрізний отвір 2.0–3.5 мм, build/17 F22b)",
+   "for": "3 коробки Gainta (build/17 F22b) + 1 зовнішній S-band вузол Hammond 1554U2GY (P-02 VENT ⌀12.2, build/17 F44); наскрізний отвір 2.0–3.5 мм",
    "manufacturer": "Amphenol LTW",
    "mpn": "VENT-PS1YBK-O8002",
-   "source": "Amphenol LTW vent catalogue https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/7136/Amphenol%20LTW_Pressure%20Relief%20Vent%20Group.pdf, PDF p. 7 (read 06.11.2026 by the mechanical package, mechanical/params/parts.json ltw_vent); продавці TME/DigiKey — 10-bom row 90 (v2)"
+   "source": "Amphenol LTW vent catalogue https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/7136/Amphenol%20LTW_Pressure%20Relief%20Vent%20Group.pdf, PDF p. 7 (read 06.11.2026 by the mechanical package, mechanical/params/parts.json ltw_vent); продавці TME/DigiKey — 10-bom row 90 (v2)",
+   "note": "разом із 2 × VENT-PS1NBK — 6 клапанів, на один більше за 5 × VENT-PS1YBK у STACK (рядок 43): клапан pod додано до набору (build/15 «Ущільнення»)"
   },
   {
    "id": "AI-M4X20-BRASS",
@@ -6224,11 +6219,11 @@
   },
   {
    "id": "AI-BENCH-LEAD",
-   "item": "стендовий провід: розетка Mini-Fit Jr. 5557 на 2 конт., 18 AWG ≤0.5 м, тримач запобіжника 7.5 A у розриві",
+   "item": "стендовий провід: розетка Mini-Fit Jr. 5557 на 2 конт. (0039012020, DigiKey WM3700-ND) з клемами 0039000060, 18 AWG ≤0.5 м, тримач запобіжника 7.5 A у розриві",
    "qty": 1,
    "spares": 0,
    "for": "вхідний роз’єм S05 на PWR (build/19 §4, ЗБ-02)",
-   "tbd": "коди розетки 5557 і тримача запобіжника не прочитано на сторінці виробника чи дистриб’ютора"
+   "tbd": "код тримача запобіжника 7.5 A не прочитано; розетку 0039012020 прочитано на DigiKey DE 07.11.2026 (https://www.digikey.de/en/products/detail/molex/0039012020/61315, знімок digikey:WM3700-ND)"
   },
   {
    "id": "AI-WIRE-PTFE",
@@ -6269,6 +6264,105 @@
    "spares": 0,
    "for": "LC76G (задня стінка ліворуч) → P7 ≥113 мм по прямій (fit-report), W407 CAB.011 100 мм не дістає",
    "tbd": "MPN і довжину не прочитано"
+  },
+  {
+   "id": "AI-HAMMOND-1554U2GY",
+   "item": "корпус зовнішнього S-band вузла Hammond 1554U2GY (PC, сірий)",
+   "qty": 1,
+   "spares": 0,
+   "for": "зовнішній S-band вузол (design/E4.json, build/12; креслення P-01/P-02; build/21 E9b)",
+   "manufacturer": "Hammond Manufacturing",
+   "mpn": "1554U2GY",
+   "sku": {
+    "digikey": "HM1816-ND"
+   },
+   "note": "сторінка DigiKey суперечлива щодо матеріалу (опис «BOX PC», атрибут ABS); креслення Hammond і P-01 — PC; гвинтів кришки сторінка не називає"
+  },
+  {
+   "id": "AI-HAMMOND-1554UPL",
+   "item": "сталева внутрішня панель Hammond 1554UPL (190.45 × 106.60 мм)",
+   "qty": 1,
+   "spares": 0,
+   "for": "монтажна панель pod під cf2235-kt30 і LaNA WB (P-01 «сталева панель 1554UPL», build/17 F41)",
+   "manufacturer": "Hammond Manufacturing",
+   "mpn": "1554UPL",
+   "sku": {
+    "digikey": "HM3493-ND"
+   }
+  },
+  {
+   "id": "AI-M3-POD-PANEL",
+   "item": "гвинт M3 панелі 1554UPL у вставки корпусу pod",
+   "qty": 4,
+   "spares": 2,
+   "for": "build/17 F41 (крок вставок 176 × 45, mechanical/params/parts.json hammond_1554u2gy)",
+   "tbd": "тип і довжину не обрано (креслення панелі 1554UPL не прочитано)"
+  },
+  {
+   "id": "AI-POD-STANDOFFS",
+   "item": "стійки й гвинти модулів pod: cf2235-kt30 на панелі, LaNA WB 5 мм над фільтром (набір)",
+   "qty": 1,
+   "spares": 0,
+   "for": "build/17 F42; P-01 «Отвори кріплення модулів — за їх кресленнями (TBD)»",
+   "tbd": "отвори кріплення cf2235-kt30 і LaNA WB у прочитаних документах не наведено"
+  },
+  {
+   "id": "AI-SMA-BULK-POD",
+   "item": "SMA-прохідник торця pod (RF_IN, RF_OUT) з кільцем",
+   "qty": 2,
+   "spares": 0,
+   "for": "P-02 RF_IN/RF_OUT ⌀6.4 (1/4-36), build/17 F43",
+   "tbd": "тип прохідника не обрано (MECH-07)"
+  },
+  {
+   "id": "AI-GLAND-POD",
+   "item": "гермоввід M12 кабелю живлення USB-C W425 у pod",
+   "qty": 1,
+   "spares": 0,
+   "for": "P-02 PWR ⌀12.2, build/17 F43 (W425 — лише живлення LaNA)",
+   "tbd": "тип гермовводу під діаметр кабелю W425 не обрано (діаметр кабелю не прочитано)"
+  },
+  {
+   "id": "AI-M3-IMU-CARRIER",
+   "item": "гвинт M3 носія паку IMU у вставки TC-M3x5.7",
+   "qty": 2,
+   "spares": 2,
+   "for": "build/17 F35 (mechanical/params/imu_pack.json carrier.screws; на тих самих гвинтах — носійна плата IMU_CARRIER)",
+   "tbd": "довжину не обрано (CAD носія)"
+  },
+  {
+   "id": "AI-STANDOFF-IMU-13",
+   "item": "стійки 13 мм під пару BNO085 + RP2040-Zero (набір)",
+   "qty": 1,
+   "spares": 0,
+   "for": "build/17 F36 (imu_pack.json boards.standoff_h 13.0; I-01)",
+   "tbd": "тип, кількість і MPN не обрано: кількість — за отворами обох плат (не перевірено)"
+  },
+  {
+   "id": "AI-INSERT-1420",
+   "item": "латунна вставка 1/4-20 × 12.7 у носій паку IMU",
+   "qty": 1,
+   "spares": 1,
+   "for": "build/17 F37 (imu_pack.json tripod.carrier_insert, STACK D15)",
+   "manufacturer": "CNC Kitchen",
+   "mpn": "вставка 1/4-20 × 12.7",
+   "source": "CNC Kitchen (10-bom row 86, v2 18.10.2026: «вставки M3x5.7, M2.5x4, 1/4-20x12.7»; page not re-read)"
+  },
+  {
+   "id": "AI-HATCH-BOARD-FIX",
+   "item": "кріплення плати лючка HATCH до задньої стінки",
+   "qty": 1,
+   "spares": 0,
+   "for": "build/17 F38",
+   "tbd": "контуру й отворів плати лючка ще немає (розкладка малих плат — хвиля 2, W2-05)"
+  },
+  {
+   "id": "AI-PACK-FUSE-FIX",
+   "item": "кріплення носійної плати F101 (PACK_FUSE) біля лотка батареї",
+   "qty": 1,
+   "spares": 0,
+   "for": "build/17 F39 (build/16 §2 PACK: «ізольованій і закріпленій біля лотка»)",
+   "tbd": "конверту носія в моделі механіки ще немає (mechanical/README)"
   }
  ]
 }

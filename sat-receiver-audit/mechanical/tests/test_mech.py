@@ -199,6 +199,22 @@ class Checks(unittest.TestCase):
             with self.subTest(rule=r["id"]):
                 self.assertFalse(r["result"].startswith("FAIL"), r)
 
+    def test_slot_fill_counts_the_build16_wires_and_stays_open(self):
+        path = HERE.parent / "build" / "16-dzhgut.csv"
+        if not path.exists():
+            self.skipTest("build/16-dzhgut.csv not present")
+        r = rules.plate_slot_fill(P)
+        self.assertTrue(r["result"].startswith("OPEN"), r)   # never PASS before the wire OD and the edge trim are chosen
+        with path.open(encoding="utf-8", newline="") as fh:
+            rows = list(csv.DictReader(fh))
+        for sl in P.mech["plate"]["slots"]:
+            n = sum(1 for w in rows if w["segment"] in sl["segments"])
+            self.assertEqual(r["value_mm"][sl["id"]]["wires"], n, sl["id"])
+            self.assertGreater(n, 0, sl["id"])
+        # the one-piece moulded USB3 cable C-T7 never crosses the plate (Q6A J5 is at the plate rear, the T7 gland in the rear wall)
+        sl2 = next(sl for sl in P.mech["plate"]["slots"] if sl["id"] == "SL2")
+        self.assertNotIn("C-T7", sl2["use"].split("(build/16)")[0])
+
     def test_thermal_pad_choice(self):
         t, sku, lo, hi = thermal.choose(P, 0.8, 0.1)
         self.assertEqual((t, sku), (1.0, "TP-GP04-B"))

@@ -293,6 +293,15 @@ class AssemblyDocsTests(unittest.TestCase):
             self.assertTrue(url.startswith("https://"), key)
             self.assertTrue(note)
 
+    def test_every_cited_mechanical_sheet_exists(self):
+        # A builder looks a sheet up by its number: every M-/A-/P-/I-/B- sheet the assembly package names is a drawing of the mechanical package.
+        drawings = {p.stem for p in (BASE / "mechanical/generated/drawings").glob("*.svg")}
+        cited = set()
+        for rel in ("tools/assembly_data.py", "tools/build_assembly_docs.py"):
+            cited |= set(re.findall(r"(?<![\w-])(?:[MAPI]-\d\d|B-[A-Z]{2,})(?![\w-])", (BASE / rel).read_text(encoding="utf-8")))
+        self.assertIn("M-07", cited)
+        self.assertEqual(sorted(cited - drawings), [])
+
     def test_superseded_v2_values_only_in_historic_clauses(self):
         for rel in ("build/02-zhyvlennia.md", "build/04-pidkliuchennia-pinout.md", "build/08-zbyrannia.md"):
             for number, line in enumerate((BASE / rel).read_text(encoding="utf-8").splitlines(), 1):

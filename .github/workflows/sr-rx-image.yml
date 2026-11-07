@@ -16,17 +16,20 @@ on:
   push:
     branches: ['wip/**', 'codex/**', 'ccr-*']
     # Everything the jobs consume: build_image.py stages the controller tree (deploy.py stage copies
-    # software/, firmware/, design/ and deployment/system), runs selftest.py, reads the lock and the policy.
+    # software/, firmware/, design/ and deployment/ into /opt/srrx, with deployment/system and the *.template.json
+    # files), runs selftest.py, reads the lock and the policy.
     paths:
       - 'sat-receiver-audit/deployment/image/**'
       - 'sat-receiver-audit/deployment/deploy.py'
-      - 'sat-receiver-audit/deployment/ab.template.json'
+      - 'sat-receiver-audit/deployment/*.template.json'
       - 'sat-receiver-audit/deployment/tests/test_image.py'
       - 'sat-receiver-audit/deployment/system/**'
       - 'sat-receiver-audit/deployment/sources.lock.json'
       - 'sat-receiver-audit/deployment/selftest.py'
       - 'sat-receiver-audit/deployment/receive-only-policy.json'
       - 'sat-receiver-audit/software/**'
+      - 'sat-receiver-audit/firmware/**'
+      - 'sat-receiver-audit/design/**'
       - '.github/workflows/sr-rx-image.yml'
   workflow_dispatch:
     inputs:
@@ -324,7 +327,8 @@ jobs:
             ${{ env.OUT }}/packed-listing.txt
             ${{ env.OUT }}/build.log
             ${{ env.OUT }}/smoke
-      # UNVERIFIED until it runs once in a private fork: this repository is public, so the step is skipped
+      # UNVERIFIED until it runs once in a private copy of this repository (import or mirror push; a fork of a
+      # public repository cannot be private): this repository is public, so the step is skipped
       # here. The upload is the packed archive (sparse tar + zstd), never the sparse image itself, which
       # upload-artifact would read as its full apparent size. Size: packed-image.json of each run.
       - name: Upload the packed image (private repository only, 1 day)

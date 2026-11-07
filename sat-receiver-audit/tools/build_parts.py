@@ -61,10 +61,10 @@ ITEM_HEAD = {'id': 'запис', 'item': 'що', 'qty': 'к-сть на вирі
              'manufacturer': 'виробник', 'mpn': 'MPN', 'sku': 'сторінка / SKU', 'state': 'стан', 'note': 'примітка'}
 # Harness connector roll-up written by tools/build_assembly_docs.py (quantities per family, pins and role).
 HARNESS_ROLLUP = ROOT / 'build/16-dzhgut-pidsumok.csv'
-BOARD3 = {'PWR_MAIN': 'POWER', 'PWR_BRANCH': 'POWER', 'USB_POWER': 'POWER', 'RF_HMC': 'RF', 'RF_HF': 'RF', 'RF_INJECTOR': 'RF', 'DC_CORE': 'RF', 'CTRL_HMI': 'CTRL',
+BOARD3 = {'PWR_MAIN': 'PWR', 'PWR_BRANCH': 'PWR', 'USB_POWER': 'PWR', 'RF_HMC': 'RF', 'RF_HF': 'RF', 'RF_INJECTOR': 'RF', 'DC_CORE': 'RF', 'CTRL_HMI': 'CTRL',
           # small boards off the three plate boards (pcb/prepare.py DOMAIN_OVERRIDE): each is its own JLC order line
           'ENC': 'ENC', 'HATCH': 'HATCH', 'T7_INSERT': 'T7_INSERT', 'HDMI_INSERT': 'HDMI_INSERT', 'IMU_CARRIER': 'IMU_CARRIER', 'PACK_FUSE': 'PACK_FUSE'}
-SHEET_BOARD = {'E1': 'POWER', 'E2': 'POWER', 'E3': 'CTRL', 'E4': 'RF', 'E5': 'POWER'}
+SHEET_BOARD = {'E1': 'PWR', 'E2': 'PWR', 'E3': 'CTRL', 'E4': 'RF', 'E5': 'PWR'}
 SECTIONS = [('pcb_smt', 'Плати: SMD (збирання JLC PCBA)'), ('pcb_tht', 'Плати: THT (ручне паяння або THT-збирання)'),
             ('pcb_module', 'Модулі, що паяються на плату'), ('module', 'Готові модулі й вузли'), ('panel', 'Панель'),
             ('harness', 'Кабелі та джгути'), ('remote', 'Виносні деталі'), ('rework', 'Переробка готових плат'), ('extra', 'Супутні деталі')]

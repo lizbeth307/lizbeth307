@@ -386,20 +386,23 @@
       {
         "id": "SL1",
         "rect": [163.0, 94.6, 33.0, 2.4],
-        "use": "S01 40-way ribbon Q6A J20 -> CTRL over the Q6A top edge, split into two 20-way halves stacked (build/16 S01), next to the riser window"
+        "use": "S01 40-way ribbon Q6A J20 -> CTRL over the Q6A top edge, split into two 20-way halves stacked (build/16 S01), next to the riser window",
+        "segments": ["S01"]
       },
       {
         "id": "SL2",
         "rect": [115.5, 73.6, 17.5, 3.6],
-        "use": "front layer (PWR top edge, CTRL harness along y 74-77) <-> rear layer above the hatch: S03, S04, S13, S14, S15, S17, S18, S20-S22, S24, S25, S30, S35, C-T7 (build/16)"
+        "use": "front layer (PWR top edge, CTRL harness along y 74-77) <-> rear layer above the hatch: S03, S04, S13, S14, S15, S17, S18, S20-S22, S24, S25, S30, S35 (build/16); C-T7 stays in the rear layer (Q6A J5 at the plate rear, T7 gland in the rear wall)",
+        "segments": ["S03", "S04", "S13", "S14", "S15", "S17", "S18", "S20", "S21", "S22", "S24", "S25", "S30", "S35"]
       },
       {
         "id": "SL3",
         "rect": [210.5, 9.5, 4.5, 15.0],
-        "use": "front layer <-> bottom-face port row and GX16 under the plate extension: S11, S23, S32, S34, the IP2368 PD lead (build/16)"
+        "use": "front layer <-> bottom-face port row and GX16 under the plate extension: S11, S23, S32, S34, the IP2368 PD lead (build/16)",
+        "segments": ["S11", "S23", "S32", "S34"]
       }
     ],
-    "_slots_note": "harness pass-throughs of the plate (M-07): every slot gets an edge trim or grommet on the 2 mm Al edges (parts DB assembly_items AI-EDGE-TRIM, profile TBD); sizes are model reserves to be checked against the bundle diameters of build/16 (TBD); the self-clinching edge distance (R-CLINCH-EDGE) and R-HOLE-EDGE include the slots"
+    "_slots_note": "harness pass-throughs of the plate (M-07): every slot gets an edge trim or grommet on the 2 mm Al edges (parts DB assembly_items AI-EDGE-TRIM, profile TBD); sizes are model reserves to be checked against the bundle diameters of build/16 (TBD; rule R-PLATE-SLOT-FILL reports the wires per slot and stays OPEN until the wire OD and the trim profile are chosen); the self-clinching edge distance (R-CLINCH-EDGE) and R-HOLE-EDGE include the slots"
   },
   "layout": {
     "_note": "Envelope boxes [x, y, z, dx, dy, dz]; mount: plate_rear (hangs from the plate), plate_front, rear_wall, front_wall, rf_lid, free. part = key in parts.json, board = key in boards.json. keep_clear boxes reserve space (plugs, cable bends) and must stay empty.",

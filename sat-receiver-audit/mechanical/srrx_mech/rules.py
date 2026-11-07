@@ -293,6 +293,7 @@ def evaluate(P):
                           "board edge (x 146.2) and the top-right display clamp boss (z >= 56.5): measure the received nut; if it does not clear, re-place "
                           "the key (wave 2 layout)", "source": "parts.json pv6_button; mechanical.json top_face.power_key"})
     out.append(plate_slot_rule(P))
+    out.append(plate_slot_fill(P))
     out += module_rules(P)
     out += cooler_rules(P)
     # Battery-side vents: a thread that ends in the foam layer needs a hole in the foam.
@@ -355,6 +356,41 @@ def plate_slot_rule(P, web_min=1.5):
             "value_mm": round(worst[0], 2) if worst else None, "limit_mm": web_min, "slot": worst[1] if worst else None,
             "slots": [sl["id"] for sl in pl.get("slots", [])], "result": "FAIL (model): " + "; ".join(bad) if bad else _res(ok),
             "source": "mechanical.json plate.slots (harness pass-throughs, build/16 §1)"}
+
+
+def plate_slot_fill(P):
+    """Harness bundle through each plate slot: wires per AWG of the slot's build/16 segments against the bare opening.
+
+    Reported OPEN, never PASS: the PTFE wire type (outer diameter) and the edge-trim profile that narrows the opening are not
+    chosen (parts DB AI-WIRE-PTFE, AI-EDGE-TRIM). A slot segment that build/16 does not have is a FAIL (stale slot list)."""
+    import csv
+    from pathlib import Path
+    path = Path(__file__).resolve().parents[2] / "build" / "16-dzhgut.csv"
+    slots = P.mech["plate"].get("slots", [])
+    rule = {"id": "R-PLATE-SLOT-FILL", "rule": "harness wires through each plate slot (build/16-dzhgut.csv rows of the slot segments) against the bare opening",
+            "source": "mechanical.json plate.slots[].segments; build/16-dzhgut.csv"}
+    if not path.exists():
+        return dict(rule, value_mm=None, result="OPEN: build/16-dzhgut.csv not found, bundle not counted")
+    wires = {}
+    with path.open(encoding="utf-8", newline="") as fh:
+        for r in csv.DictReader(fh):
+            wires.setdefault(r["segment"], []).append(r["awg"])
+    value, missing = {}, []
+    for sl in slots:
+        counts = {}
+        for seg in sl.get("segments", []):
+            if seg not in wires:
+                missing.append(f"{sl['id']}: {seg}")
+            for awg in wires.get(seg, []):
+                counts[awg] = counts.get(awg, 0) + 1
+        value[sl["id"]] = {"opening_mm2": round(sl["rect"][2] * sl["rect"][3], 1), "wires": sum(counts.values()),
+                           "wires_per_awg": {k: counts[k] for k in sorted(counts, key=int)}}
+    if missing:
+        return dict(rule, value_mm=value, result="FAIL (model): slot segments not in build/16: " + ", ".join(missing))
+    return dict(rule, value_mm=value, limit_mm="bundle OD with edge trim inside the opening",
+                result="OPEN: wire outer diameter (AI-WIRE-PTFE) and edge-trim profile (AI-EDGE-TRIM) not chosen, so the fill is not checked "
+                       "(SL1 carries the whole 40-way S01 ribbon as two stacked 20-way halves; build/16 rows count only its connected conductors); "
+                       "resize SL1/SL2 or add a slot once both are read (wave 2)")
 
 
 def module_rules(P):

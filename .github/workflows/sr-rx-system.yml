@@ -136,7 +136,7 @@ jobs:
           EOF
       - name: udev rules, polkit rules and hooks parse
         run: |
-          set -eu
+          set -euo pipefail  # the default shell has no pipefail: a failing tar before the greps would pass
           rootfs="$RUNNER_TEMP/stage/rootfs"
           udevadm verify --resolve-names=never "$rootfs"/etc/udev/rules.d/*.rules
           for rule in "$rootfs"/etc/polkit-1/rules.d/*.rules; do cp "$rule" "$RUNNER_TEMP/check.js"; node --check "$RUNNER_TEMP/check.js"; done
@@ -171,7 +171,7 @@ jobs:
           if [ -s "$RUNNER_TEMP/verify.txt" ]; then cat "$RUNNER_TEMP/verify.txt"; exit 1; fi
       - name: Both hooks inside a real mkinitramfs (noble initramfs-tools)
         run: |
-          set -eu
+          set -euo pipefail  # a failing or truncated lsinitramfs before tee must fail the cdsp.mbn absence check
           rootfs="$RUNNER_TEMP/stage/rootfs"
           conf="$RUNNER_TEMP/initramfs-conf"
           cp -r /etc/initramfs-tools "$conf"

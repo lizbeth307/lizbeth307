@@ -1,5 +1,34 @@
 # HANDOFF — поточний стан SR-RX-v2.1
 
+## Ревізія 07.11.2026: етап 3
+
+Цей розділ має пріоритет над нижчими, зокрема над ревізією 24.10.2026. Мета власника не змінилася: повний комплект документації, за яким пристрій SR-RX-v2.1 можна зібрати пізніше; зараз його не збирають. Усі апаратні й стендові ворота лишаються OPEN, апаратний випуск — BLOCKED.
+
+**Що додав етап 3.** Етап 3A — ПЗ і збірки: labd (проходи, GNSS і час, selftest), рецепти пакетів і підписаний офлайн-репозиторій, образ A/B UFS із комплектом відновлення ([deployment/image](deployment/image/README.md), [software/DEPLOYMENT](software/DEPLOYMENT.md)). Етап 3B — апаратний комплект: база деталей з MPN, SKU і знімками наявності ([design/parts](design/parts/README.md), [закупівля](build/10-zakupivlia.md)), footprint кожної деталі плат і підготовка PCB ([build/13](build/13-pcb-preparation.md)), параметрична механіка з кресленнями 1:1 ([mechanical](mechanical/README.md)), джгути, кріплення, маркування, запуск плат, бланк стенда й порядок збирання ([build/16–21](build/README.md)). Кожне технічне рішення з причиною — [build/15](build/15-rishennia-komplektu.md). Шлях того, хто збиратиме, починається з [build/README](build/README.md), розділ «Порядок роботи».
+
+**Результати CI — модель, не апаратура.** `sr-rx-verify.yml` виконує хостову регресію x86_64/aarch64, module lab і відтворення CAD (KiCad 10.0.7); точні лічильники тестів і стан Linux lab — [COMPLETION](COMPLETION.md) і [verification/linux-lab](verification/linux-lab/README.md). Образ: прогін `sr-rx-image.yml` 42327466839 (07.11.2026) зібрав маршрути A і B як `CANDIDATE_IMAGE_BUILT` з блокуючими записами, QEMU — `MODEL_PASS` у трьох сценаріях ([build/09 §22](build/09-testy.md), ОБР-03 і ОБР-04); на Q6A образ не завантажувався. Механіка — MODEL FIT ONLY ([звіт посадки](mechanical/generated/fit-report.md): FAIL 0, рядки OPEN чекають обраної або виміряної деталі). Жоден із цих результатів не закриває стендових воріт.
+
+**Що ще вирішити, купити й спроєктувати** (стан 07.11.2026; кожен рядок веде до місця, де пункт описано повністю):
+
+| група | пункт | де |
+|---|---|---|
+| A. Хвиля 2: проєкт | W2-01: роз'єми джгутів на платах (`X…`, зокрема Mini-Fit Jr. кола батареї й вилки NTC X39S1/X40S1-CTRL) ще не мають позначень у графах, тож PCB їх не несе | [build/16 §4, §11](build/16-dzhgut.md), [build/15 «Сигнальні джгути»](build/15-rishennia-komplektu.md) |
+| A. Хвиля 2: проєкт | W2-02 і WAVE2-01 (E4): РЧ-порти P1–P3, P6 і кінець W402 без роз'єму з боку RF-плати (U.FL/MHF1); пігтейли й розрахунок втрат для кожного порту | [build/15 «RF-порти»](build/15-rishennia-komplektu.md), [pcb/generated/unresolved.csv](pcb/generated/unresolved.csv) |
+| A. Хвиля 2: проєкт | W2-03 і WAVE2-01 (E3): пари роз'ємів плат ENC; мережі кнопок SW308/SW309 — на S1/S2 енкодерів | [build/13](build/13-pcb-preparation.md), [build/16 §11](build/16-dzhgut.md) |
+| A. Хвиля 2: проєкт | W2-04: межі струму тонких гілок (VCC_5V_PERI у S01, вентилятор S27, LAB5 до паку IMU); ввід кабелю W425 у корпус | [build/16 §11](build/16-dzhgut.md), [build/21 E9b](build/21-poriadok-zbyrannia.md) |
+| A. Хвиля 2: проєкт | W2-05: контури й розкладка малих плат (вставки T7/HDMI, IMU_CARRIER, HATCH, PACK_FUSE, ENC), їхнє кріплення (build/17 F38, F39) | [build/13](build/13-pcb-preparation.md), [build/17](build/17-kriplennia.md) |
+| A. Хвиля 2: проєкт | WAVE2-02: довжини W422/W423 у графі 0.10 м проти куплених 152.4 мм; числовий бюджет S-band | [build/15 «RF-порти»](build/15-rishennia-komplektu.md), [build/06](build/06-anteny.md) |
+| A. Хвиля 2: проєкт | Площа й край плат PWR і CTRL з роз'ємами джгутів — OPEN (модель): більша плата, друга силова плата або менше й щільніших роз'ємів | [звіт посадки «board_area»](mechanical/generated/fit-report.md), [build/15 «Розмір»](build/15-rishennia-komplektu.md) |
+| A. Хвиля 2: проєкт | Траса HDMI (R-HDMI-ROUTE), бюджет PPS S01 + S25 ≤200 мм і пігтейл P7 ≥113 мм, заповнення прорізів пластини SL1–SL3 (R-PLATE-SLOT-FILL), доступ до F101 крізь лючок | [build/15 «Оболонка D15», «Ущільнення»](build/15-rishennia-komplektu.md), [звіт посадки](mechanical/generated/fit-report.md) |
+| A. Хвиля 2: образ | Закриття пакетів IMG-09 (chrony, gpsd, `package_accounts_missing`), numpy для python3 образу (IMG-10), завантаження DT на Q6A (W-10) | [deployment/image/README](deployment/image/README.md) |
+| B. Купити: TBD | 12 записів бази деталей з TBD (R4422/R4432/R4442, R263, L401/L407, J102, U110, TH102, J401–J403/J406, W402, W408, W409, W425, J544) | [build/10-zakupivlia «Відкриті позиції (TBD)»](build/10-zakupivlia.md) |
+| B. Купити: TBD | 32 позиції поза схемою з TBD (`assembly_items`: довжини гвинтів, стійки, гермовводи й прохідники pod, дріт PTFE, кант прорізів, FPC HDMI, пігтейл P7, тримач запобіжника стендового проводу та ін.) | [10-zakupivlia-kriplennia.csv](build/10-zakupivlia-kriplennia.csv) |
+| B. Купити: TBD | 39 блокуючих записів підготовки PCB: 26 інтерфейсів без кріплення, 11 фізичних інтерфейсів або переробок, 2 кнопки енкодерів без площадок | [pcb/generated/unresolved.csv](pcb/generated/unresolved.csv), [build/10-zakupivlia «Інтерфейси без кріплення»](build/10-zakupivlia.md) |
+| B. Купити: TBD | Рядки OPEN механіки (прохідники SMA/F/BNC, гайки панелей, гайка PV6, термоінтерфейси) і перелік TBD механічного пакета | [звіт посадки](mechanical/generated/fit-report.md), [mechanical/README](mechanical/README.md) |
+| C. Стенд | 37 апаратних воріт графів — OPEN | [OPEN_ITEMS](OPEN_ITEMS.md) |
+| C. Стенд | Рядки плану тестів, зокрема ЗБ-01…ЗБ-07 (збирання) і ОБР-05…ОБР-08 (запис і завантаження на Q6A); записи — лише в бланк | [build/09 §21–22](build/09-testy.md), [бланк 20](build/20-forma-stendu.md) |
+| C. Стенд | E4-04 (S-band pod: посадка, герметизація, S21 і NF на 2.2–2.3 ГГц) і кожне значення з позначкою «модель» | [build/21 E9b](build/21-poriadok-zbyrannia.md), [build/09](build/09-testy.md) |
+
 ## Ревізія 24.10.2026 (Claude): етап 2 і рішення власника v2.1
 
 Цей розділ має пріоритет над нижчими, зокрема над ревізією 23.10.2026. Мета власника — повний комплект документації, за яким пристрій можна зібрати; зараз його не збирають, тож усі 37 апаратних воріт лишаються OPEN як чек-лист для збирання, а стендових PASS немає.
