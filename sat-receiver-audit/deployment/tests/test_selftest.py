@@ -1539,6 +1539,8 @@ class WsjtDecodersTests(unittest.TestCase):
                 "0918   1  0.1   0.001500  0  AFTER FINISH 10 \n")
         self.assertEqual(self.runtime.wspr_messages(wspr), ["K1JT FN20 30", "W9XYZ EN37 37"])
         self.assertEqual(self.runtime.ft8_messages("EOF on input file x.wav\n"), [])
+        self.assertTrue(self.runtime.finished(ft8) and self.runtime.finished(wspr))  # jt9 appends counts to the marker
+        self.assertFalse(self.runtime.finished("133430 -12  0.3 1234 ~  CQ K1ABC FN42\n"))
         ldd = "\tlibgfortran.so.5 => /lib/x.so (0x1)\n\tlibhamlib.so.4 => /lib/y.so (0x2)\n"
         self.assertEqual(self.runtime.hamlib_libraries(ldd), ["libhamlib.so.4"])
         self.assertEqual(self.runtime.STUB_OUTPUT.encode(), self.stub.split(b"\n")[1].split(b"'")[1] + b"\n")

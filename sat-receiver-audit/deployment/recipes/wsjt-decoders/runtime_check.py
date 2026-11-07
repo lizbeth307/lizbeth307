@@ -41,6 +41,7 @@ FORBIDDEN_ON_PATH = ("wsjtx", "rigctl", "rigctld", "rigctlcom", "rotctl", "rotct
 FT8_LINE = re.compile(r"^(\d{6})\s*(-?\d+)\s+(-?\d+\.\d)\s+(\d+) ~  (\S.*?)\s*$")
 # lib/wsprd/wsprd.c: "%4s %3.0f %4.1f %10.6f %2d  %-s \n" (time, snr, dt, frequency, drift, message)
 WSPR_LINE = re.compile(r"^\s*(\S{1,6})\s+(-?\d+)\s+(-?\d+\.\d)\s+(-?\d+\.\d{6})\s+(-?\d+)\s+(\S.*?)\s*$")
+# Both decoders end a pass with this marker (jt9 appends its counts: "<DecodeFinished>   2   2        0").
 FINISHED = "<DecodeFinished>"
 TIMEOUT = 900
 
@@ -50,10 +51,15 @@ def ft8_messages(stdout):
     return [m.group(5) for m in map(FT8_LINE.match, stdout.splitlines()) if m]
 
 
+def finished(stdout):
+    """True when the decoder printed its end-of-pass marker."""
+    return any(line.startswith(FINISHED) for line in stdout.splitlines())
+
+
 def wspr_messages(stdout):
     """Decoded WSPR messages of wsprd output: the lines before <DecodeFinished>."""
     lines = stdout.splitlines()
-    end = lines.index(FINISHED) if FINISHED in lines else len(lines)
+    end = next((i for i, line in enumerate(lines) if line.startswith(FINISHED)), len(lines))
     return [m.group(6) for m in map(WSPR_LINE.match, lines[:end]) if m]
 
 
@@ -78,7 +84,7 @@ def decode(program_argv, sample, work, parse):
         result = subprocess.CompletedProcess(exc.cmd, -1, "", "timed out after %d s\n" % TIMEOUT)
     messages = parse(result.stdout)
     return {"exit": result.returncode, "decodes": len(messages), "unique_messages": len(set(messages)),
-            "finished": FINISHED in result.stdout.splitlines()}, result
+            "finished": finished(result.stdout)}, result
 
 
 def main():
