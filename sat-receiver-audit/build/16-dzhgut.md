@@ -68,7 +68,7 @@
 | GX16 | Гніздо IMU GX16-4 (J504) | задня стінка x 175, y 25 (M-06, GX16_IMU) |
 | SBPWR | Панельна розетка живлення S-band pod (J551, binder M8 A-код 3 конт.) | стінка головного корпусу — грань і виріз TBD (MECH-07, моделює MECH-3); вилка — на кабелі W425 (S41); рішення build/15 «Ключування панельних роз'ємів» |
 | EDL | Кнопка EDL (SW501, E-Switch PV6F240SS) | на платі лючка за кришкою сервісного лючка (layout edl_key_body) |
-| PWRBTN | Кнопка живлення (SW301, E-Switch PV6F240SS) | верхня грань x 155, z 48.5 (layout pwr_key_body, M-02, PWR_KEY; рішення build/15 «Оболонка D15») |
+| PWRBTN | Кнопка живлення (SW301, E-Switch PV6F240SS) | верхня грань x 155.5, z 50 (layout pwr_key_body, nut.PWR_KEY, M-02, PWR_KEY; рішення build/15 «Кнопка живлення SW301 (W2 MECH-4)») |
 | IMUPACK | IMU-пак Hammond 1550Z101 (U309, U314, J550, D502, C519, C520, U552 і деталі E3 «External IMU») | на штанзі антени, ≥30 см позаду |
 | GNSS | LC76G (U304) | задня стінка ліворуч x 8–71.6, y 38.5–92.5 (layout lc76g); до P7 (верхня грань x 163.5) ≥113 мм по прямій — W407 CAB.011 100 мм не дістає, потрібен довший пігтейл (MPN TBD, build/15 «Оболонка D15») |
 | VEML | Adafruit 4162 VEML7700 (U308) | верхня грань безеля, вікно ⌀4 x 120, z 60 (layout veml7700_window), поза козирком; конверт плати — TBD |
@@ -115,7 +115,7 @@
 | S26 | CTRL → VEML7700 | CTRL ↔ VEML | 4 | PH, SOLDER | 101 (модель, кінець попередній) | 100 Ω + TVS біля безеля (на CTRL) |
 | S27 | CTRL → Noctua | CTRL ↔ FAN1 | 3 | FAN3 | кабель вентилятора; траса 115 (модель, кінець попередній) | штатний 3-контактний роз'єм Noctua; на CTRL — сумісна 3-контактна вилка 2.54 мм |
 | S28 | CTRL → повітродувка Delta | CTRL ↔ FAN2 | 2 | MF, SOLDER | 42 (модель, кінець попередній) | 2 дроти; низький ключ на CTRL |
-| S29 | CTRL → кнопка живлення | CTRL ↔ PWRBTN | 2 | PH, SOLDER | 80 (модель, кінець попередній) | пайка до виводів PV6F240SS |
+| S29 | CTRL → кнопка живлення | CTRL ↔ PWRBTN | 2 | PH, SOLDER | 78 (модель, кінець попередній) | пайка до виводів PV6F240SS |
 | S30 | CTRL → плата лючка (консоль UART5 J502) | CTRL ↔ HATCH | 3 | PH | 181 (модель, кінець попередній) | лише 3.3 V TTL, без живлення адаптера; крізь проріз SL2 |
 | S31 | Контакти EDL Q6A → SW501 | Q6A.EDL ↔ EDL | 2 | SOLDER | 58 (модель, кінець попередній) | точки пайки на Q6A не локалізовано (E5 §9); пайка до виводів PV6F240SS |
 | S32 | PWR → гніздо GX16-4 (J504) | PWR ↔ GX16 | 4 | PH, SOLDER | 212 (модель, кінець попередній) | U551 біля входу на PWR; корпус GX16 → CHASSIS; крізь проріз SL3 |
@@ -410,7 +410,7 @@
 
 | збірка | призначення | кінці | мережі графа | деталі й вимоги |
 |---|---|---|---|---|
-| C-HDMI | HDMI Q6A → Wisecoco | Q6A.HDMI → HDMIA → DISP | E5_HDMI_5V_DISP, E5_HDMI_5V_Q6A, E5_HDMI_CEC, E5_HDMI_CLK_N, E5_HDMI_CLK_P, E5_HDMI_D0_N, E5_HDMI_D0_P, E5_HDMI_D1_N, E5_HDMI_D1_P, E5_HDMI_D2_N, E5_HDMI_D2_P, E5_HDMI_HPD, E5_HDMI_SCL, E5_HDMI_SDA | R-HDMI-ROUTE OPEN (fit-report): прямий штекер Adafruit 2420 упирається в нижню стінку, кишень під 2× Fair-Rite 0431164281 і S-укладку надлишку на трасі немає; запропоновано за замовчуванням FPC-запас STACK (Adafruit 3550 кутовий + 3548 + 3560, обмотка заземленою мідною стрічкою) — MPN, довжина й ферит для пласкої стрічки TBD (assembly_items AI-HDMI-FPC); pin 18 через U506 на вставці (E5 §8, домен HDMI_INSERT); TMDS не розплітати |
+| C-HDMI | HDMI Q6A → Wisecoco | Q6A.HDMI → HDMIA → DISP | E5_HDMI_5V_DISP, E5_HDMI_5V_Q6A, E5_HDMI_CEC, E5_HDMI_CLK_N, E5_HDMI_CLK_P, E5_HDMI_D0_N, E5_HDMI_D0_P, E5_HDMI_D1_N, E5_HDMI_D1_P, E5_HDMI_D2_N, E5_HDMI_D2_P, E5_HDMI_HPD, E5_HDMI_SCL, E5_HDMI_SDA | FPC-набір (W2 MECH-4, build/15 «Кабель HDMI (W2 MECH-4)»; траса R-HDMI-ROUTE у fit-report — модель): Adafruit 3550 або 3549 у HDMI Q6A, стрічка 3560 10 см з феритом Würth 74278011, вставка HDMI_INSERT біля BMS, стрічка 3560 10 см, Adafruit 3548 у вхід Wisecoco (assembly_items AI-HDMI-FPC, AI-HDMI-FPC-R, AI-HDMI-FPC-FLEX, AI-HDMI-FPC-3548, AI-HDMI-FERRITE); обмотка заземленою мідною стрічкою (AI-HDMI-CU-TAPE, TBD); pin 18 через U506 на вставці (E5 §8, домен HDMI_INSERT); TMDS не розплітати; лінк і EMI — стенд |
 | C-T7 | USB3 Q6A J5 нижній → T7 | Q6A.J5 → T7A → T7 | E5_T7_DM, E5_T7_DP, E5_T7_HOST_RX_N, E5_T7_HOST_RX_P, E5_T7_HOST_TX_N, E5_T7_HOST_TX_P, E5_VBUS_J5, E5_VBUS_T7 | цілісний екранований кабель A–C ≤0.5 м + вставка U505 (E5 §7); перевірка 5000M/uas |
 | C-HUB | USB2 Q6A J2 P3 → CH334F JP5 | Q6A.J2 → HUB | E5_HUB_DM, E5_HUB_DP | VBUS Q6A не підключати (E5 §2) |
 | C-TOUCH | USB2 Q6A J2 P2 → touch Wisecoco | Q6A.J2 → DISP | E5_TOUCH_DM, E5_TOUCH_DP | лише D+/D−/GND, ферит Würth 74271140 |
