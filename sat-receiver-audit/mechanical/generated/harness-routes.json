@@ -383,23 +383,23 @@
           10.55
         ],
         [
-          82.7,
+          98.9,
           74.25,
           10.55
         ],
         [
-          82.7,
-          64.8,
+          98.9,
+          95.3,
           10.55
         ]
       ],
-      "path_mm": 86.5,
+      "path_mm": 81.8,
       "bends": 5,
       "bundle_od_mm": 10.59,
       "wires": 7,
       "bend_allowance_mm": 41.6,
       "service_loops_mm": 30.0,
-      "length_mm": 159,
+      "length_mm": 154,
       "through": [
         "SL2"
       ],
@@ -1468,10 +1468,10 @@
         [
           120.0,
           161.3,
-          64.08
+          63.0
         ]
       ],
-      "path_mm": 67.4,
+      "path_mm": 67.3,
       "bends": 1,
       "bundle_od_mm": 3.87,
       "wires": 4,
@@ -1479,12 +1479,14 @@
       "service_loops_mm": 30.0,
       "length_mm": 101,
       "through": [],
-      "crossings": [],
+      "crossings": [
+        "piece 3 through veml7700"
+      ],
       "provisional": [
         "Adafruit 4162 envelope TBD: end at the bezel window on the top wall",
         "CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
       ],
-      "status": "OPEN (end provisional): Adafruit 4162 envelope TBD: end at the bezel window on the top wall; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone",
+      "status": "OPEN (end provisional): route crosses a solid — re-route when the ends are placed: piece 3 through veml7700",
       "in_build16": true
     },
     "S27": {

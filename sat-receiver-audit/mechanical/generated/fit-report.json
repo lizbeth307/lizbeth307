@@ -3,7 +3,7 @@
   "status": "MODEL FIT ONLY: envelopes and datasheet dimensions; no physical part was fitted. Hardware gates stay OPEN.",
   "generator": {
     "version": "1.0.0",
-    "params_sha256": "bedbb3ef32c865638bac1b706dc8b9e6ab66fb8d94236d636ba890cdeef11fad",
+    "params_sha256": "952a7e3ca9a5cf72cce17e99f15cc5c321324820d79446d570fbe16e31aa1976",
     "pcb_components_sha256": "878b83338d5bcc6c1a133b038580c6a40a9775a6ec0aab2b385f143562a36662"
   },
   "envelope": {
@@ -89,6 +89,12 @@
       "a": "RF.r0",
       "b": "rfbay.wall.bottom",
       "gap_mm": 0.4,
+      "result": "TIGHT (model)"
+    },
+    {
+      "a": "swm_2813",
+      "b": "hub_ch334f",
+      "gap_mm": 0.32,
       "result": "TIGHT (model)"
     }
   ],
@@ -518,7 +524,7 @@
       "rule": "harness route centrelines (mechanical.json harness_routes) clear of every envelope, keep-clear reserve and structure part; plate and RF-bay wall only through openings",
       "value_mm": {
         "routed": 36,
-        "clear": 33,
+        "clear": 32,
         "provisional_end": 36,
         "no_route_unplaced_end": [
           "S39",
@@ -531,10 +537,11 @@
         "crossing": [
           "S11",
           "S23",
+          "S26",
           "S34"
         ]
       },
-      "result": "OPEN (end provisional): every routed centreline clears the envelopes and structure; 36 of 36 routes end on a board edge zone or at a module without an envelope (header positions, module envelopes and the bundle OD (AI-WIRE-PTFE) TBD); no route yet (end not placed): S39, S40; provisional routes crossing a solid: S11, S23, S34; routes through a plate slot that plate.slots does not list (R-PLATE-SLOT-FILL undercounts): SL1: S27",
+      "result": "OPEN (end provisional): every routed centreline clears the envelopes and structure; 36 of 36 routes end on a board edge zone or at a module without an envelope (header positions, module envelopes and the bundle OD (AI-WIRE-PTFE) TBD); no route yet (end not placed): S39, S40; provisional routes crossing a solid: S11, S23, S26, S34; routes through a plate slot that plate.slots does not list (R-PLATE-SLOT-FILL undercounts): SL1: S27",
       "source": "mechanical.json harness_routes, layout, plate.slots, rf_bay.notches"
     },
     {
@@ -1597,6 +1604,150 @@
       },
       "source": "parts.json p8_accessory; build/03 P8 row; build/15 'Шлях P8 (W2 AREA)'",
       "result": "OPEN: A404: RTL-SDR Blog Wideband LNA V2: the maker's page https://www.rtl-sdr.com/product/rtl-sdr-blog-wideband-lna-bias-tee-powered/ (read 2026-11-07 with WebFetch) gives no dimensions and no connector genders; it lists '1x SMA male to SMA male adapter' in the package and 'Requires 3 - 5v bias tee power' (ch4 gives 4.3 V through P8, build/03 P8 row); length = A403 73.7 (reserve) + adapter + A404 (not read); box, adapters, cable and mounting items are SRC-2's (CC-27); sealing of the accessory box is OPEN (T-07); assembly order build/21 E9c"
+    },
+    {
+      "id": "R-MODULE-MOUNTS",
+      "rule": "module fixing (mechanical.json module_mounts): insert hole + skin <= wall + boss, seat face = envelope face, screw holes = the makers' board-file holes, the INA228 terminal wire side free, 18 AWG inside the terminal range; plate standoffs in R-HOLE-EDGE / R-CLINCH-EDGE",
+      "source": "mechanical.json module_mounts; parts.json adafruit_5997, adafruit_4162, adafruit_ina228_5832, pololu_2813, pem_so_m25_6",
+      "value_mm": {
+        "hub_ch334f": {
+          "screws": [
+            {
+              "c": [
+                75.2,
+                42.68
+              ],
+              "skin_mm": 1.5
+            },
+            {
+              "c": [
+                90.44,
+                42.68
+              ],
+              "skin_mm": 1.5
+            },
+            {
+              "c": [
+                75.2,
+                68.08
+              ],
+              "skin_mm": 1.5
+            },
+            {
+              "c": [
+                90.44,
+                68.08
+              ],
+              "skin_mm": 1.5
+            }
+          ]
+        },
+        "ina228": {
+          "screws": [
+            {
+              "c": [
+                88.74,
+                77.52
+              ],
+              "skin_mm": 1.5
+            },
+            {
+              "c": [
+                109.06,
+                77.52
+              ],
+              "skin_mm": 1.5
+            }
+          ],
+          "rests": [
+            {
+              "c": [
+                90.8,
+                86.3
+              ],
+              "skin_mm": null
+            },
+            {
+              "c": [
+                106.8,
+                86.3
+              ],
+              "skin_mm": null
+            }
+          ],
+          "terminal": {
+            "wire_side": "-y",
+            "free_mm": 10.58,
+            "need_mm": 8.0,
+            "awg_range": [
+              16,
+              30
+            ],
+            "vin_awg": 18
+          }
+        },
+        "swm_2813": {
+          "pad": {
+            "rect": [
+              97.46,
+              44.0,
+              12.0,
+              14.0
+            ],
+            "seat_z": 4.5,
+            "tape": 1.0
+          }
+        },
+        "veml7700": {
+          "screws": [
+            {
+              "c": [
+                109.84,
+                64.524
+              ],
+              "skin_mm": 0.7
+            },
+            {
+              "c": [
+                130.16,
+                64.524
+              ],
+              "skin_mm": 0.7
+            }
+          ],
+          "rests": [
+            {
+              "c": [
+                109.84,
+                51.824
+              ],
+              "skin_mm": null
+            },
+            {
+              "c": [
+                130.16,
+                51.824
+              ],
+              "skin_mm": null
+            }
+          ],
+          "pocket_skin_mm": 1.4,
+          "front_edge_to_wall_mm": 0.52
+        },
+        "plate_standoffs": {
+          "pack_fuse": [
+            [
+              169.0,
+              14.5
+            ],
+            [
+              169.0,
+              34.5
+            ]
+          ]
+        }
+      },
+      "result": "PASS (model): CH334F 4 x M2.5 and INA228 2 x M2.5 (+2 rests) into TC-M2,5x4 inserts in rear-wall bosses (skin 1.5), #2813 on a printed pad with acrylic foam tape (no mounting hole on the Pololu drawing), VEML7700 2 x M2.5 (+2 rests) in a 1.1 mm pocket of the top wall (skin 1.4, behind the inserts 0.7), PACK_FUSE on 2 PEM SO-M2.5-6ZI (M-07 PF); INA228 terminal wire side towards the corridor with 10.58 mm free, 18 AWG inside 30-16 AWG (4UCON 19963; block identity inferred, confirm at incoming inspection); torques coupon-defined (build/17 section 2); OPEN: boni_a406: fixing TBD (assumption, no drawing)"
     },
     {
       "id": "R-TOOL-ACCESS",
@@ -2840,7 +2991,7 @@
             81.6,
             0.1,
             95.0,
-            27.0
+            0.5
           ],
           "free_mm": 16.8,
           "fits_mm": 16.3,
@@ -2859,6 +3010,39 @@
         },
         {
           "rect": [
+            81.6,
+            0.6,
+            0.8,
+            26.0
+          ],
+          "free_mm": 16.8,
+          "fits_mm": 16.3,
+          "limit": "v4l_a"
+        },
+        {
+          "rect": [
+            82.4,
+            0.6,
+            30.0,
+            26.0
+          ],
+          "free_mm": 6.5,
+          "fits_mm": 6.0,
+          "limit": "boni_a406"
+        },
+        {
+          "rect": [
+            112.4,
+            0.6,
+            64.2,
+            26.0
+          ],
+          "free_mm": 16.8,
+          "fits_mm": 16.3,
+          "limit": "v4l_a"
+        },
+        {
+          "rect": [
             176.6,
             22.1,
             7.4,
@@ -2867,6 +3051,17 @@
           "free_mm": 29.8,
           "fits_mm": 29.3,
           "limit": "rfbay.lid"
+        },
+        {
+          "rect": [
+            81.6,
+            26.6,
+            95.0,
+            0.5
+          ],
+          "free_mm": 16.8,
+          "fits_mm": 16.3,
+          "limit": "v4l_a"
         },
         {
           "rect": [
@@ -3042,8 +3237,8 @@
       },
       "S06": {
         "kind": "harness",
-        "length_mm": 159,
-        "path_mm": 86.5,
+        "length_mm": 154,
+        "path_mm": 81.8,
         "bends": 5,
         "bundle_od_mm": 10.59,
         "bend_allowance_mm": 41.6,
@@ -3253,12 +3448,12 @@
       "S26": {
         "kind": "harness",
         "length_mm": 101,
-        "path_mm": 67.4,
+        "path_mm": 67.3,
         "bends": 1,
         "bundle_od_mm": 3.87,
         "bend_allowance_mm": 3.0,
         "through": [],
-        "status": "OPEN (end provisional): Adafruit 4162 envelope TBD: end at the bezel window on the top wall; CTRL header position TBD (board layout; GR-3 header refs): end on the edge zone"
+        "status": "OPEN (end provisional): route crosses a solid — re-route when the ends are placed: piece 3 through veml7700"
       },
       "S27": {
         "kind": "stock_lead",
@@ -4008,6 +4203,21 @@
         "result": "BY DESIGN (model)"
       },
       {
+        "item": "tripod_boss",
+        "solid": "rear_shell",
+        "overlap_mm3": 122.1,
+        "by_design_mm3": 122.1,
+        "bbox_mm": [
+          89.0,
+          64.5,
+          2.5,
+          111.0,
+          81.0,
+          4.8
+        ],
+        "result": "BY DESIGN (model)"
+      },
+      {
         "item": "q6a.board",
         "solid": "ufs_boss",
         "overlap_mm3": 73.3,
@@ -4066,13 +4276,28 @@
           3.0
         ],
         "result": "BY DESIGN (model)"
+      },
+      {
+        "item": "veml7700",
+        "solid": "front_shell",
+        "overlap_mm3": 217.1,
+        "by_design_mm3": 217.1,
+        "bbox_mm": [
+          107.3,
+          159.1,
+          49.3,
+          133.8,
+          161.3,
+          67.1
+        ],
+        "result": "BY DESIGN (model)"
       }
     ],
     "result": "PASS (model fit only)"
   },
   "volumes_cm3": {
     "front_shell": {
-      "cm3": 168.4,
+      "cm3": 168.1,
       "printed": true,
       "solids": 1,
       "bbox_mm": [
@@ -4083,10 +4308,10 @@
         165.7,
         76.07
       ],
-      "stl_triangles": 18906
+      "stl_triangles": 19948
     },
     "rear_shell": {
-      "cm3": 128.5,
+      "cm3": 129.43,
       "printed": true,
       "solids": 1,
       "bbox_mm": [
@@ -4097,7 +4322,7 @@
         165.7,
         14.0
       ],
-      "stl_triangles": 11800
+      "stl_triangles": 14186
     },
     "hatch_cover": {
       "cm3": 5.68,
@@ -4212,7 +4437,7 @@
       "stl_triangles": 2846
     },
     "plate_al": {
-      "cm3": 56.95,
+      "cm3": 56.89,
       "printed": false,
       "solids": 1,
       "bbox_mm": [
@@ -4473,7 +4698,7 @@
     "rule": "solid CAD volume x 1.13 g/cm3 (PolyLite ASA, ISO 1183); real prints with 30 % infill weigh less",
     "parts": {
       "front_shell": 190,
-      "rear_shell": 145,
+      "rear_shell": 146,
       "hatch_cover": 6,
       "hood": 18,
       "battery_tray": 26,
