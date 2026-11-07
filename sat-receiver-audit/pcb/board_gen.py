@@ -1198,6 +1198,8 @@ def build_board(pcb, spec, contract, template, temp):
         nick, name = part['fpid'].split(':', 1)
         fp.SetFPID(pcb.LIB_ID(nick, name))
         anchor = part['anchor'] or group_anchors[part['ref']]
+        # On the board before place(): FOOTPRINT::Flip reads the parent board (copper layer count) and crashes without one.
+        board.Add(fp)
         place(pcb, frame, fp, anchor)
         ref_text = anchor.get('ref_text')
         if ref_text:  # legend position (board mm) when the footprint default lands on a hole or pad
@@ -1217,7 +1219,6 @@ def build_board(pcb, spec, contract, template, temp):
                 pad.SetNetCode(0)
         if set(part['pads']) - seen:
             raise SpecError(f'{part["ref"]}: pads {sorted(set(part["pads"]) - seen)} missing in {part["fpid"]}')
-        board.Add(fp)
         sources.append({'ref': part['ref'], 'footprint': part['fpid'],
                         'file': rel(fpath) if part['library'] == 'project' else f'kicad-image:{nick}.pretty/{name}.kicad_mod',
                         'sha256': part['sha256']})
