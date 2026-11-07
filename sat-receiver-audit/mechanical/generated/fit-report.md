@@ -1,6 +1,6 @@
 # Звіт посадки механічної моделі SR-RX-v2.1
 
-Згенеровано `mechanical/build.py` (params 849d6e2620a0); не редагувати вручну. **MODEL FIT ONLY:** це перевірка конвертів і даних з даташитів, а не примірка деталей. Фізичні ворота посадки, ущільнення, тепла й падіння лишаються OPEN.
+Згенеровано `mechanical/build.py` (params fab8754f230b); не редагувати вручну. **MODEL FIT ONLY:** це перевірка конвертів і даних з даташитів, а не примірка деталей. Фізичні ворота посадки, ущільнення, тепла й падіння лишаються OPEN.
 
 ## Габарит
 
@@ -162,11 +162,11 @@ MODEL ESTIMATE: reported, not gated (OPEN = need at the planning factor exceeds 
 | CTRL | 5915 | 3248 | 1221 | 4261 / 4869 | PASS (model estimate) | 22 | 2701 | 8312 / 9731 | 322 / 145 | OPEN: area 9731 > 5915 mm2 at fill 1.8; frontage 322 > 145 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2) |
 | ENC | 576 | — | — | — | — | 2 | 94 | 141 / 169 | 11 / 12 | PASS (model estimate) |
 
-Курт'ярди деталей за групами схем (design/E*.json «group»), мм²:
+Курт'ярди деталей за групами схем (design/E*.json «group»), мм²: курт'ярди (потреба ×1.5 / ×1.8):
 
-- PWR: E1 LAB5 1149; E1 SYS12 753; E1 Сервісний заряд 119; E1 AON і UV 94; E1 Головний вимикач 92; E1 Захист USB-PD 43; E1 Інгібування заряду 26; E1 Аварійний ADC 13; E2 Boni: малошумна захищена шина 500; E2 LNB: малошумна захищена шина 410; E2 J21: захищене живлення 12 V 399; E2 LNA4V5: паралельні LT3045 352; E2 LNA: канал 2 247; E2 LNA: канал 3 247; E2 AUX12: верхній ключ і PTC 185; E2 Дисплей: захищене живлення 12 V 171; E2 Lime M.2: комутована шина 3.3 V 166; E2 LNA: канал 1 146; E2 LNA: канал 4 146; E2 RTL-B: комутований VBUS 136; E2 S-band LaNA WB: захищена шина 5 V 136; E2 INA3221: струми LNA1–3 67; E2 INA3221: струми LNA4, LNB і Boni 67; E2 LNB: незалежне точне відсікання OVP 46; E2 LNB: контроль напруги 31; E2 Boni: контроль напруги 31; E2 AUX12: контроль напруги після PTC 31; E5 VBUS HF+ з демпфованим LC 306; E5 VBUS RTL-A і LAB PORT 228; E5 LAB BUS I2C buffer 57; E5 Сервіс і зовнішні шини 14
-- RF: E4 RF and receiver interfaces 20; E4 RF passives and drivers 31; E4 SP4T switches 54; E4 DC detectors: UHF 95; E4 DC detectors: LBAND 95; E4 DC detectors: HF 95; E4 RF bias injector local decoupling 18; E4 DC detectors: common reference 171; E4 DC detectors: local power 35
-- CTRL: E3 Pico HMI 1287; E3 MCP23017 control 783; E3 HMI buttons 487; E3 Indicators 219; E3 Cooling 147; E3 Q6A header 120; E3 HMI encoders 66; E3 Pico power control 48; E3 Ambient sensor 31; E3 MCP hardware watchdog reset 26; E3 GNSS 17; E3 Thermal sensors 17
+- PWR: E1 LAB5 1149 (1388 / 1532); E1 SYS12 753 (794 / 818); E1 Сервісний заряд 119 (179 / 215); E1 AON і UV 94 (142 / 170); E1 Головний вимикач 92 (138 / 166); E1 Захист USB-PD 43 (65 / 78); E1 Інгібування заряду 26 (39 / 47); E1 Аварійний ADC 13 (19 / 23); E2 Boni: малошумна захищена шина 500 (750 / 899); E2 LNB: малошумна захищена шина 410 (614 / 737); E2 J21: захищене живлення 12 V 399 (599 / 719); E2 LNA4V5: паралельні LT3045 352 (528 / 633); E2 LNA: канал 2 247 (370 / 444); E2 LNA: канал 3 247 (370 / 444); E2 AUX12: верхній ключ і PTC 185 (278 / 333); E2 Дисплей: захищене живлення 12 V 171 (256 / 307); E2 Lime M.2: комутована шина 3.3 V 166 (249 / 299); E2 LNA: канал 1 146 (220 / 263); E2 LNA: канал 4 146 (220 / 263); E2 RTL-B: комутований VBUS 136 (204 / 245); E2 S-band LaNA WB: захищена шина 5 V 136 (204 / 245); E2 INA3221: струми LNA1–3 67 (101 / 121); E2 INA3221: струми LNA4, LNB і Boni 67 (101 / 121); E2 LNB: незалежне точне відсікання OVP 46 (69 / 83); E2 LNB: контроль напруги 31 (47 / 56); E2 Boni: контроль напруги 31 (47 / 56); E2 AUX12: контроль напруги після PTC 31 (47 / 56); E5 VBUS HF+ з демпфованим LC 306 (460 / 552); E5 VBUS RTL-A і LAB PORT 228 (342 / 410); E5 LAB BUS I2C buffer 57 (86 / 103); E5 Сервіс і зовнішні шини 14 (21 / 25)
+- RF: E4 RF and receiver interfaces 20 (29 / 35); E4 RF passives and drivers 31 (47 / 56); E4 SP4T switches 54 (82 / 98); E4 DC detectors: UHF 95 (142 / 171); E4 DC detectors: LBAND 95 (142 / 171); E4 DC detectors: HF 95 (142 / 171); E4 RF bias injector local decoupling 18 (27 / 32); E4 DC detectors: common reference 171 (257 / 308); E4 DC detectors: local power 35 (52 / 62)
+- CTRL: E3 Pico HMI 1287 (1320 / 1340); E3 MCP23017 control 783 (1174 / 1409); E3 HMI buttons 487 (730 / 876); E3 Indicators 219 (328 / 394); E3 Cooling 147 (221 / 265); E3 Q6A header 120 (179 / 215); E3 HMI encoders 66 (99 / 118); E3 Pico power control 48 (72 / 86); E3 Ambient sensor 31 (47 / 56); E3 MCP hardware watchdog reset 26 (39 / 47); E3 GNSS 17 (26 / 31); E3 Thermal sensors 17 (26 / 31)
 
 ## Зони висоти CTRL і RF (карта вільної висоти, модель)
 

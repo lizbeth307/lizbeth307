@@ -3,7 +3,7 @@
   "status": "MODEL FIT ONLY: envelopes and datasheet dimensions; no physical part was fitted. Hardware gates stay OPEN.",
   "generator": {
     "version": "1.0.0",
-    "params_sha256": "849d6e2620a0896d23b14128257bf9223d5db9265c560f63738da688e8da8826",
+    "params_sha256": "fab8754f230bbdbcf67e6aae5b11cd850203cf138ab7ece36ee9f29e8077695f",
     "pcb_components_sha256": "9e6bdc34a545f2e336583bc95d6d830c613508a454faee6549c191a62d61c21b"
   },
   "envelope": {
@@ -1482,6 +1482,132 @@
           "E5 LAB BUS I2C buffer": 57.0,
           "E5 Сервіс і зовнішні шини": 14.0
         },
+        "per_group_need_mm2": {
+          "E1 LAB5": [
+            1388.0,
+            1532.0
+          ],
+          "E1 SYS12": [
+            794.0,
+            818.0
+          ],
+          "E1 Сервісний заряд": [
+            179.0,
+            215.0
+          ],
+          "E1 AON і UV": [
+            142.0,
+            170.0
+          ],
+          "E1 Головний вимикач": [
+            138.0,
+            166.0
+          ],
+          "E1 Захист USB-PD": [
+            65.0,
+            78.0
+          ],
+          "E1 Інгібування заряду": [
+            39.0,
+            47.0
+          ],
+          "E1 Аварійний ADC": [
+            19.0,
+            23.0
+          ],
+          "E2 Boni: малошумна захищена шина": [
+            750.0,
+            899.0
+          ],
+          "E2 LNB: малошумна захищена шина": [
+            614.0,
+            737.0
+          ],
+          "E2 J21: захищене живлення 12 V": [
+            599.0,
+            719.0
+          ],
+          "E2 LNA4V5: паралельні LT3045": [
+            528.0,
+            633.0
+          ],
+          "E2 LNA: канал 2": [
+            370.0,
+            444.0
+          ],
+          "E2 LNA: канал 3": [
+            370.0,
+            444.0
+          ],
+          "E2 AUX12: верхній ключ і PTC": [
+            278.0,
+            333.0
+          ],
+          "E2 Дисплей: захищене живлення 12 V": [
+            256.0,
+            307.0
+          ],
+          "E2 Lime M.2: комутована шина 3.3 V": [
+            249.0,
+            299.0
+          ],
+          "E2 LNA: канал 1": [
+            220.0,
+            263.0
+          ],
+          "E2 LNA: канал 4": [
+            220.0,
+            263.0
+          ],
+          "E2 RTL-B: комутований VBUS": [
+            204.0,
+            245.0
+          ],
+          "E2 S-band LaNA WB: захищена шина 5 V": [
+            204.0,
+            245.0
+          ],
+          "E2 INA3221: струми LNA1–3": [
+            101.0,
+            121.0
+          ],
+          "E2 INA3221: струми LNA4, LNB і Boni": [
+            101.0,
+            121.0
+          ],
+          "E2 LNB: незалежне точне відсікання OVP": [
+            69.0,
+            83.0
+          ],
+          "E2 LNB: контроль напруги": [
+            47.0,
+            56.0
+          ],
+          "E2 Boni: контроль напруги": [
+            47.0,
+            56.0
+          ],
+          "E2 AUX12: контроль напруги після PTC": [
+            47.0,
+            56.0
+          ],
+          "E5 VBUS HF+ з демпфованим LC": [
+            460.0,
+            552.0
+          ],
+          "E5 VBUS RTL-A і LAB PORT": [
+            342.0,
+            410.0
+          ],
+          "E5 LAB BUS I2C buffer": [
+            86.0,
+            103.0
+          ],
+          "E5 Сервіс і зовнішні шини": [
+            21.0,
+            25.0
+          ]
+        },
         "parts": 329,
         "need_1_5_mm2": 8945.0,
         "need_1_8_mm2": 10466.0,
@@ -1512,6 +1638,44 @@
           "E4 DC detectors: common reference": 171.0,
           "E4 DC detectors: local power": 35.0
         },
+        "per_group_need_mm2": {
+          "E4 RF and receiver interfaces": [
+            29.0,
+            35.0
+          ],
+          "E4 RF passives and drivers": [
+            47.0,
+            56.0
+          ],
+          "E4 SP4T switches": [
+            82.0,
+            98.0
+          ],
+          "E4 DC detectors: UHF": [
+            142.0,
+            171.0
+          ],
+          "E4 DC detectors: LBAND": [
+            142.0,
+            171.0
+          ],
+          "E4 DC detectors: HF": [
+            142.0,
+            171.0
+          ],
+          "E4 RF bias injector local decoupling": [
+            27.0,
+            32.0
+          ],
+          "E4 DC detectors: common reference": [
+            257.0,
+            308.0
+          ],
+          "E4 DC detectors: local power": [
+            52.0,
+            62.0
+          ]
+        },
         "parts": 163,
         "need_1_5_mm2": 3083.0,
         "need_1_8_mm2": 3700.0,
@@ -1541,6 +1705,56 @@
           "E3 MCP hardware watchdog reset": 26.0,
           "E3 GNSS": 17.0,
           "E3 Thermal sensors": 17.0
+        },
+        "per_group_need_mm2": {
+          "E3 Pico HMI": [
+            1320.0,
+            1340.0
+          ],
+          "E3 MCP23017 control": [
+            1174.0,
+            1409.0
+          ],
+          "E3 HMI buttons": [
+            730.0,
+            876.0
+          ],
+          "E3 Indicators": [
+            328.0,
+            394.0
+          ],
+          "E3 Cooling": [
+            221.0,
+            265.0
+          ],
+          "E3 Q6A header": [
+            179.0,
+            215.0
+          ],
+          "E3 HMI encoders": [
+            99.0,
+            118.0
+          ],
+          "E3 Pico power control": [
+            72.0,
+            86.0
+          ],
+          "E3 Ambient sensor": [
+            47.0,
+            56.0
+          ],
+          "E3 MCP hardware watchdog reset": [
+            39.0,
+            47.0
+          ],
+          "E3 GNSS": [
+            26.0,
+            31.0
+          ],
+          "E3 Thermal sensors": [
+            26.0,
+            31.0
+          ]
         },
         "parts": 125,
         "need_1_5_mm2": 4261.0,
