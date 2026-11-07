@@ -363,7 +363,7 @@ class LimeTxAuditPartTwoTests(unittest.TestCase):
         self.assertEqual(len({row["id"] for row in rows}), len(rows))
         for row in rows:
             self.assertIn(row["verdict"], PART2_VERDICTS, row["id"])
-        self.assertEqual({row["id"][0] for row in rows}, set("FGHJKLM"))
+        self.assertEqual({row["id"][0] for row in rows}, set("FGHIJKLM"))
         self.assertNotIn("REVIEWED.**", text)
 
     def test_part_two_anchors_stand_at_their_lines(self):

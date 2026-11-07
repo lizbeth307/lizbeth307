@@ -13,7 +13,7 @@
 
 ## Вердикти
 
-- `blocked` — шлях не компілюється (опцією рецепта) або upstream уже повертає помилку чи нічого не робить.
+- `blocked` — шлях не компілюється (опцією рецепта чи патчем), не має жодного зібраного викликача або upstream уже повертає помилку чи нічого не робить.
 - `reachable→patched` — шлях досяжний ззовні бібліотеки й тепер відхиляється патчем (позначка `SRRX_RX_ONLY` у коді).
 - `internal-only` — шлях лишається, бо його викликає лише бібліотека для RX (калібрування RX із внутрішньою петлею TX дозволяє STACK.md:128).
 - `no-TX` — шлях не може ввімкнути чи налаштувати TX (читання, спільний такт).
@@ -204,6 +204,19 @@
 | H-03 | `mmap` вікон BAR і IQFLOOD | drivers/linux/la9310_limesdr/la9310_character_device.c:40 | `static int la9310_mmap(` | open | Пряме відображення регістрів і буфера DMA в процес; бібліотека ним користується |
 | H-04 | Буфер iqflood (`DMA_BIDIRECTIONAL`) | drivers/linux/la9310_limesdr/la9310_base.c:554 | `rc = la9310_alloc_dma_buf(la9310_dev->dev, "IQ Flood Buffer"` | no-TX | Сам модуль у буфер нічого не передає: ділить його бібліотека (LA9310_TRX.cpp:104), дескриптори DMA пише вона ж через HIF VSPA (G-04). `dma_raw_transmit` (la9310_vspa.c:90) — DMA пам'яті VSPA для ініціалізації й завантаження прошивки (:214, :497), не RF |
 | H-05 | Правило udev upstream для вузлів `la9310_limesdr` | udev-rules/65-limesuiteng-pcie.rules:10 | `SUBSYSTEM=="la9310_limesdr", MODE="666"` | blocked | Дало б кожному користувачу H-01…H-03. Рецепт: `INSTALL_UDEV_RULES=OFF`, `forbid_paths` `*udev*`; пакет limesuiteng-udev не ставиться (build/07-pz-vstanovlennia.md:351, рішення в build/15). Права вузла визначить пакет DKMS — OPEN |
+
+### I. Вбудоване ядро C `embedded/lms7002m`
+
+Статична бібліотека `lms7002m` (embedded/lms7002m/CMakeLists.txt:1, `POSITION_INDEPENDENT_CODE`) входить у `liblimesuiteng` з `-fvisibility=hidden` (CMakeLists.txt:102, `add_subdirectory(embedded)` — :246): `nm -D` не показує жодного символу `lms7002m_*` (`exports.json`), тож ці функції викликає лише код бібліотеки — обгортки класу F і калібрування Micro (src/boards/LimeSDR_Micro/calibrations.cpp).
+
+| ID | Точка входу | 37cb183 файл:рядок | Якір | Вердикт | Що зроблено / чому |
+|---|---|---|---|---|---|
+| I-01 | `lms7002m_enable_channel` | embedded/lms7002m/lms7002m.c:108 | `lime_Result lms7002m_enable_channel(` | internal-only | TXEN_A/TXEN_B і живлення TX-тракту; викликає лише F-03 |
+| I-02 | `lms7002m_set_frequency_sx` з `isTx` | embedded/lms7002m/lms7002m.c:1063 | `lime_Result lms7002m_set_frequency_sx(` | internal-only | SXT: F-04, B-05 (закрито) і `lms7002m_calibrate_rx_setup` (G-03) |
+| I-03 | `lms7002m_spi_write`, `lms7002m_spi_modify` (spi.c:21) | embedded/lms7002m/spi.c:6 | `void lms7002m_spi_write(` | internal-only | Сирий запис з обгорток класу F і калібрувань Micro; зовнішні сирі записи закрито (B-15, B-18) |
+| I-04 | `lms7002m_calibrate_tx` | embedded/lms7002m/calibrations.c:1187 | `lime_Result lms7002m_calibrate_tx(` | blocked | Викликає лише F-08 |
+| I-05 | `lms7002m_set_trfpad_db`, `lms7002m_set_tx_lpf` (lms7002m.c:1871) | embedded/lms7002m/lms7002m.c:656 | `lime_Result lms7002m_set_trfpad_db(` | internal-only | Викликають лише F-05, F-07 |
+| I-06 | `lms7002m_save_chip_state` | embedded/lms7002m/save_state.c:30 | `void lms7002m_save_chip_state(struct lms7002m_context* self, bool wr)` | internal-only | Зберігає і відновлює регістри навколо калібрувань Micro (G-02, G-03; calibrations.cpp:716, :993) |
 
 ### J. `TRXLooper` (src/streaming/TRXLooper.cpp)
 
