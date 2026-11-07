@@ -122,8 +122,8 @@ class SystemFilesTests(unittest.TestCase):
         self.assertEqual([l for l in system_files.gnss_blacklist().splitlines() if not l.startswith("#")],
                          ["blacklist gnss-usb", "blacklist gnss-ubx", "blacklist gnss-mtk", "blacklist gnss-sirf", "blacklist gnss-serial"])
         self.assertIn("HandlePowerKey=ignore\nIdleAction=ignore\n", system_files.logind_dropin())
-        # zram-tools 0.3.3.1-1.1 keys: SIZE in MiB; PERCENT would override it, so only SIZE is set.
-        self.assertEqual([l for l in system_files.zramswap_defaults().splitlines() if not l.startswith("#")], ["SIZE=1024"])
+        # zram-tools 0.3.3.1-1.1 keys: SIZE in MiB; PERCENT (r2 sets 50) would override it; r2's ALGO=zstd stays.
+        self.assertEqual([l for l in system_files.zramswap_defaults().splitlines() if not l.startswith("#")], ["ALGO=zstd", "SIZE=1024"])
         self.assertEqual(system_files.ZRAMSWAP_DEFAULTS, "etc/default/zramswap")
         self.assertEqual(set(system_files.MASKED_UNITS) >= {"apt-daily.timer", "apt-daily-upgrade.timer", "fwupd-refresh.timer",
                                                             "ModemManager.service", "sleep.target", "suspend.target",

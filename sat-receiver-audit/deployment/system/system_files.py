@@ -199,10 +199,12 @@ def logind_dropin():
 def zramswap_defaults():
     """build/07 §21 / STACK.md:910: zram 1 GiB, no disk swap. Keys of zram-tools 0.3.3.1-1.1 (its
     conf/zramswap and the zramswap script on sources.debian.org, read 2026-11-07): SIZE in MiB, and
-    PERCENT (of MemTotal) overrides SIZE, so it stays unset; ALGO and PRIORITY keep the script defaults."""
+    PERCENT (of MemTotal) overrides SIZE. r2's own copy (image-facts.json root.zramswap_default, CI
+    run 42318869479) sets ALGO=zstd and PERCENT=50: ALGO is kept, PERCENT is dropped for SIZE.
+    PRIORITY keeps the script default (100; the only swap device, so it orders nothing)."""
     return (GENERATED + "# zram-tools conffile (/usr/sbin/zramswap sources it): one 1 GiB zram swap device, no disk swap.\n"
-            "# PERCENT is deliberately unset: it would override SIZE. ALGO and PRIORITY: zramswap defaults.\n"
-            "SIZE=1024\n")
+            "# Replaces r2's copy (ALGO=zstd, PERCENT=50): the algorithm stays, PERCENT would override SIZE.\n"
+            "ALGO=zstd\nSIZE=1024\n")
 
 
 def system_preset(mode):
