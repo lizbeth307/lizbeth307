@@ -29,6 +29,9 @@ on:
       - 'sat-receiver-audit/deployment/sources.lock.json'
       - 'sat-receiver-audit/deployment/selftest.py'
       - 'sat-receiver-audit/deployment/receive-only-policy.json'
+      # W2 IMG-3: the venv wheels come from the guest wheelhouse (URL, SHA-256, size) and its lock lines.
+      - 'sat-receiver-audit/deployment/linux_lab/wheelhouse-manifest.json'
+      - 'sat-receiver-audit/deployment/linux_lab/wheelhouse-requirements.txt'
       - 'sat-receiver-audit/software/**'
       - 'sat-receiver-audit/firmware/**'
       - 'sat-receiver-audit/design/**'
@@ -252,6 +255,10 @@ jobs:
           print("CACHE_KEY=srrx-locked-" + hashlib.sha256(json.dumps(sorted(a["sha256"] for a in arts)).encode()).hexdigest()[:16])
           # The package closure debs (W2 IMG-2) have their own key: a closure change never refetches the 1.6 GB base image.
           print("CLOSURE_KEY=srrx-closure-" + hashlib.sha256(open("deployment/image/package-closure.json", "rb").read()).hexdigest()[:16])
+          # The venv wheels (W2 IMG-3) likewise: keyed by the two venv locks and the guest lock (its pip line).
+          locks = ("software/config/hmi-requirements.lock", "software/config/passes-requirements.lock",
+                   "deployment/linux_lab/wheelhouse-requirements.txt")
+          print("WHEELS_KEY=srrx-wheels-" + hashlib.sha256(b"".join(open(p, "rb").read() for p in locks)).hexdigest()[:16])
           EOF
       - uses: actions/cache@v4
         if: steps.sel.outputs.run == 'true'
@@ -265,7 +272,13 @@ jobs:
           # Public Ubuntu snapshot debs of deployment/image/package-closure.json only.
           path: ~/srrx-cache/closure
           key: ${{ env.CLOSURE_KEY }}
-      - name: Fetch and verify the locked base image, kernel debs and package closure debs
+      - uses: actions/cache@v4
+        if: steps.sel.outputs.run == 'true'
+        with:
+          # Public PyPI wheels of the two venv locks and the pip bootstrap wheel only (W2 IMG-3).
+          path: ~/srrx-cache/wheels
+          key: ${{ env.WHEELS_KEY }}
+      - name: Fetch and verify the locked base image, kernel debs, package closure debs and venv wheels
         if: steps.sel.outputs.run == 'true'
         run: python3 deployment/image/build_image.py fetch --cache "$CACHE"
       - name: Build the golden image (candidate)
@@ -290,6 +303,8 @@ jobs:
               d = json.loads(p.read_text())
               if name == "image-manifest.json":
                   print(json.dumps({k: d.get(k) for k in ("status", "error", "blocking", "blocking_by_closes_at", "kernel", "package_closure", "bootloader", "entries", "enabled_units", "accounts", "hardening", "apt_sources", "npu_payload", "mcu_firmware", "selftest_root_a", "filesystem_checks", "image")}, indent=1)[:24000])
+                  # W2 IMG-3: the venvs (freeze, tree SHA-256, Qt), each SR-RX python3 unit's interpreter, the build-manifest draft.
+                  print(json.dumps({k: d.get(k) for k in ("venvs", "unit_interpreters", "build_manifest_draft", "target_python_numpy")}, indent=1)[:24000])
               else:
                   r = d.get("root", {})
                   print(json.dumps({"partitions": d.get("partitions"), "base_cmdline_status": d.get("base_cmdline_status"),

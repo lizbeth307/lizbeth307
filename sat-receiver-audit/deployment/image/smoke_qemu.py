@@ -27,9 +27,10 @@ gpsd with the manifest ids, chrony.service active, gpsd as the staged GNSS mode 
 listening, service socket-activated), the built chrony.conf); a boot-check unit in the wrong state carries its journal of that boot into the mismatches, and every
 unexpected failed unit its bounded `systemctl status` tail (address-like tokens removed). srrx-boot-check accepts the smoke's own tokens (bootchain.smoke_tokens) only
 inside a VM (systemd-detect-virt), so every other extra token of an edited entry still fails it. The first slot A boot also runs selftest.py offline on a read-only view of the booted root
-and ESP (bootchain.live_selftest): its FAIL/BLOCKED rows must equal the build-time rows on root A,
-plus INTERPRETER_ROWS when the image's python3 lacks numpy. Bench gates W-03 (rollback on the Q6A)
-and W-10 (DTB provenance) stay OPEN.
+and ESP (bootchain.live_selftest) under the image's /opt/srrx/passes-venv (W2 IMG-3): its FAIL/BLOCKED rows must equal the
+build-time rows on root A, plus INTERPRETER_ROWS only when the interpreter lacks numpy; the same boot reports each
+venv's numpy and an offscreen PySide6 QApplication of /opt/srrx/venv (bootchain.venv_report), compared with the
+manifest's venvs (venv_mismatches). Bench gates W-03 (rollback on the Q6A) and W-10 (DTB provenance) stay OPEN.
 """
 import argparse
 import json
@@ -153,8 +154,9 @@ SCENARIOS = (
                     "bless_status": "clean", "entries_after": sorted(["labA.conf", "labB+0-1.conf"] + RESCUE_ENTRIES), "selftest": False}),
 )
 # Rows whose verdict depends on the interpreter that runs selftest.py, not on the root: the builder
-# runs it with its own python3 and python3-numpy; the live run uses the image's python3, which has
-# no numpy (r2 ships none; the HMI venv is IMG-10). Expected live-only exactly when numpy is absent.
+# runs it with its own python3 and python3-numpy; the live run uses the image's passes-venv since W2
+# IMG-3 (r2's python3 has no numpy). Expected live-only exactly when that interpreter lacks numpy, which
+# venv_mismatches already reports for an image whose manifest records the venv with numpy.
 # RX-14 (voice mask) and RX-04-bb (LRPT baseband recorder, srrx.baseband) both import numpy.
 INTERPRETER_ROWS = {"RX-14": ["numpy_unavailable"], "RX-04-bb": ["numpy_unavailable"]}
 
@@ -268,10 +270,40 @@ def closure_mismatches(observed, recorded):
     return bad
 
 
-def check(scenario, result, expect, build_rows=None, accounts=None, closure=None):
+def venv_mismatches(observed, recorded, selftest):
+    """W2 IMG-3: bootchain.venv_report of the booted slot and the live selftest's interpreter against image-manifest.json
+    venvs.venvs: each venv's numpy version as built, the HMI venv's offscreen QApplication with the built Qt version,
+    and the live selftest under passes-venv with numpy whenever the build recorded numpy there."""
+    if not recorded:
+        return ["image-manifest.json records no venvs (build_image.build_venvs)"]
+    if not observed or "unavailable" in observed:
+        return ["no venv report from the booted slot: %r" % (observed,)]
+    bad = []
+    for venv, entry in sorted(recorded.items()):
+        live = observed.get(venv) or {}
+        numpy = (live.get("numpy") or {}).get("numpy")
+        if not live.get("present") or numpy != entry.get("numpy"):
+            bad.append("%s numpy %r on the booted slot (%s), %r in the image manifest"
+                       % (venv, numpy, json.dumps(live)[:300], entry.get("numpy")))
+        if "qt_offscreen" in entry:
+            built = entry["qt_offscreen"].get("result") or {}
+            qt = live.get("qt_offscreen") or {}
+            if qt.get("platform") != "offscreen" or qt.get("qt") != built.get("qt"):
+                bad.append("%s offscreen QApplication %s on the booted slot, built %s"
+                           % (venv, json.dumps(qt)[:300], json.dumps(built)[:200]))
+    passes = recorded.get(bootchain.SELFTEST_PYTHON.parent.parent.as_posix()) or {}
+    selftest = selftest or {}
+    if passes.get("numpy") and (selftest.get("interpreter") != bootchain.SELFTEST_PYTHON.as_posix() or selftest.get("interpreter_numpy") is not True):
+        bad.append("live selftest ran with %r (numpy %r), expected %s with numpy %s"
+                   % (selftest.get("interpreter"), selftest.get("interpreter_numpy"), bootchain.SELFTEST_PYTHON.as_posix(), passes["numpy"]))
+    return bad
+
+
+def check(scenario, result, expect, build_rows=None, accounts=None, closure=None, venvs=None):
     """Compare one boot with its expectation; every mismatch is listed (host-testable).
     accounts: image-manifest.json accounts.service_accounts (None: not compared);
-    closure: image-manifest.json package_closure (None: not compared)."""
+    closure: image-manifest.json package_closure (None: not compared);
+    venvs: image-manifest.json venvs.venvs, compared on the selftest boot (None: not compared)."""
     report = result["report"] or {}
     bc = report.get("boot_check") or {}
     units = report.get("units") or {}
@@ -314,6 +346,8 @@ def check(scenario, result, expect, build_rows=None, accounts=None, closure=None
         bad += account_mismatches(report.get("accounts"), accounts)
     if closure is not None and report:
         bad += closure_mismatches(report.get("package_closure"), closure)
+    if venvs is not None and report and expect["selftest"]:
+        bad += venv_mismatches(report.get("venvs"), venvs, report.get("selftest"))
     # graphical.target wants display-manager.service: r2's gdm3 alias must resolve to the recipe's gdm mask.
     display_manager = report.get("display_manager")
     if display_manager is not None and display_manager.get("LoadState") not in ("masked", "not-found"):
@@ -369,6 +403,7 @@ def smoke(image, manifest_path, facts_path, work, out, timeout=1800):
     result["build_selftest_rows"] = build_rows
     accounts = (manifest.get("accounts") or {}).get("service_accounts") or {}  # empty: every boot reports the gap
     closure = manifest.get("package_closure") or {}  # likewise
+    venvs = (manifest.get("venvs") or {}).get("venvs") or {}  # likewise, on the selftest boot
     for index, ((name, expect), plan) in enumerate(zip(SCENARIOS, entry_plan(config)), 1):
         with Esp(copy, esp_dir) as esp:
             apply_entry_plan(esp / "loader/entries", plan)
@@ -379,7 +414,7 @@ def smoke(image, manifest_path, facts_path, work, out, timeout=1800):
         run_result = qemu(copy, vars_file, log, timeout + (bootchain.SMOKE_SELFTEST_LIMIT if expect["selftest"] else 0), accel)
         with Esp(copy, esp_dir, read_only=True) as esp:
             run_result["entries_before"], run_result["entries_after"] = before, lab_entries(esp)
-        result["scenarios"].append(check(name, run_result, expect, build_rows, accounts, closure))
+        result["scenarios"].append(check(name, run_result, expect, build_rows, accounts, closure, venvs))
         (out / "smoke-report.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")
     result["status"] = "MODEL_PASS" if all(s["status"] == "MODEL_PASS" for s in result["scenarios"]) else "MODEL_FAIL"
     (out / "smoke-report.json").write_text(json.dumps(result, indent=2) + "\n", encoding="utf-8")

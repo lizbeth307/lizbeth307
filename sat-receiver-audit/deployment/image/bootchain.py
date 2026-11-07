@@ -596,7 +596,17 @@ def fail_or_blocked_rows(report):
 
 
 SMOKE_VIEW = Path("/run/srrx-smoke-root")
-SMOKE_SELFTEST_LIMIT = 1500  # seconds; the live run under QEMU TCG took about 17 min on 2026-11-06
+# seconds; the live run under QEMU TCG took 1024-1092 s without its NumPy probes (2026-11-06/07). W2 IMG-3 adds the
+# RX-14/RX-04-bb probes and the venv files to the walk, so the bound is 2400 s (the QEMU boot timeout grows with it).
+SMOKE_SELFTEST_LIMIT = 2400
+# W2 IMG-3: the live selftest runs under the image's passes-venv (numpy 2.3.5, software/config/passes-requirements.lock)
+# when it exists; build_image.py evaluates the same rows with the builder's python3-numpy.
+SELFTEST_PYTHON = Path("/opt/srrx/passes-venv/bin/python3")
+SMOKE_VENVS = ("/opt/srrx/venv", "/opt/srrx/passes-venv")  # build_image.VENVS
+VENV_NUMPY_CODE = "import json, numpy, sys; print(json.dumps({'python': sys.version.split()[0], 'numpy': numpy.__version__}))"
+VENV_QT_CODE = ("import json\nfrom PySide6 import QtCore, QtGui, QtWidgets\napp = QtWidgets.QApplication(['srrx-smoke'])\n"
+                "print(json.dumps({'qt': QtCore.qVersion(), 'platform': app.platformName()}))\n")
+VENV_PROBE_LIMIT = 600  # seconds per probe under TCG
 # W2 IMG-2: the package closure of the booted slot (package-closure.json, staged under /opt/srrx) and the
 # units it adds or removes; display-manager.service is r2's gdm3 alias, which the recipe masks with gdm.
 CLOSURE_FILE = HERE / "package-closure.json"
@@ -618,19 +628,62 @@ def closure_report(out, root=Path("/")):
             "chrony_conf_sha256": hashlib.sha256(conf.read_bytes()).hexdigest() if conf.is_file() else None}
 
 
-def live_selftest(config, slot, limit=SMOKE_SELFTEST_LIMIT, view=SMOKE_VIEW):
+def _python_json(argv, limit=VENV_PROBE_LIMIT, env=None):
+    """Last stdout line of a bounded interpreter run, parsed as JSON; {"error": ...} when it fails."""
+    import subprocess
+    try:
+        done = subprocess.run(argv, capture_output=True, text=True, timeout=limit, env=env)
+        lines = done.stdout.strip().splitlines()
+        if done.returncode == 0 and lines:
+            return json.loads(lines[-1])
+        return {"error": "exit %d: %s" % (done.returncode, redact_addresses(done.stderr)[-400:])}
+    except (OSError, ValueError, subprocess.SubprocessError) as exc:
+        return {"error": type(exc).__name__}
+
+
+def venv_report(venvs=SMOKE_VENVS):
+    """QEMU smoke only (W2 IMG-3): NumPy of each venv's python3 on the booted slot and, for the HMI venv, an offscreen
+    QApplication of PySide6 (the imports of srrx.hmi). Caches go to /run, so the booted root gains no file."""
+    report = {}
+    env = dict(os.environ, QT_QPA_PLATFORM="offscreen", XDG_RUNTIME_DIR="/run/srrx-smoke-qt", HOME="/run/srrx-smoke-qt",
+               XDG_CACHE_HOME="/run/srrx-smoke-qt/cache", PYTHONDONTWRITEBYTECODE="1")
+    for venv in venvs:
+        python = venv + "/bin/python3"
+        if not Path(python).is_file():
+            report[venv] = {"present": False}
+            continue
+        entry = {"present": True, "numpy": _python_json([python, "-I", "-B", "-c", VENV_NUMPY_CODE])}
+        if Path(venv, "lib").is_dir() and any(Path(venv).glob("lib/python3*/site-packages/PySide6")):
+            Path("/run/srrx-smoke-qt").mkdir(mode=0o700, exist_ok=True)
+            entry["qt_offscreen"] = _python_json([python, "-I", "-B", "-c", VENV_QT_CODE], env=env)
+        report[venv] = entry
+    return report
+
+
+def live_selftest(config, slot, limit=SMOKE_SELFTEST_LIMIT, view=SMOKE_VIEW, python=None):
     """QEMU smoke only: selftest.py offline on a read-only, non-recursive bind of / with /boot/efi
     bound in, i.e. the booted slot's root filesystem and the ESP, the scope of the build-time run
     on root A (no /data, /proc, /run). The CLI writes its report outside that view, in /run, and
-    the run is bounded. interpreter_numpy records whether the image's python3 has numpy: the
-    builder evaluates the target modules with its own python3-numpy."""
+    the run is bounded. The interpreter is the image's passes-venv when it exists (W2 IMG-3), else
+    this python3; interpreter_numpy records whether that interpreter has numpy (the builder
+    evaluates the target modules with its own python3-numpy)."""
     import importlib.util
     import subprocess
     import time
 
     line = cmdline(config["base_cmdline_without_root"], root_partuuid(config, slot), config["lime_build"]) + "\n"
     output = view.with_name(view.name + "-selftest.json")
-    result = {"interpreter_numpy": importlib.util.find_spec("numpy") is not None, "scope": "ro bind of / + /boot/efi"}
+    if python is None:
+        python = SELFTEST_PYTHON.as_posix() if SELFTEST_PYTHON.is_file() else sys.executable
+    if python == sys.executable:
+        numpy = importlib.util.find_spec("numpy") is not None
+    else:
+        try:
+            numpy = subprocess.run([python, "-I", "-B", "-c", "import importlib.util, sys; sys.exit(importlib.util.find_spec('numpy') is None)"],
+                                   capture_output=True, timeout=VENV_PROBE_LIMIT).returncode == 0
+        except (OSError, subprocess.SubprocessError):
+            numpy = None
+    result = {"interpreter": python, "interpreter_numpy": numpy, "scope": "ro bind of / + /boot/efi"}
     mounted = []
     try:
         view.mkdir(exist_ok=True)
@@ -640,7 +693,7 @@ def live_selftest(config, slot, limit=SMOKE_SELFTEST_LIMIT, view=SMOKE_VIEW):
             # private: the ESP bound into the view must not propagate back onto the shared /
             for options in (["--make-private"], ["-o", "remount,bind,ro"]):
                 subprocess.run(["mount"] + options + [str(target)], check=True, capture_output=True, timeout=60)
-        argv = [sys.executable, "-I", "-B", str(DEPLOYMENT / "selftest.py"), "offline", "--rootfs", str(view), "--profile", "controller",
+        argv = [python, "-I", "-B", str(DEPLOYMENT / "selftest.py"), "offline", "--rootfs", str(view), "--profile", "controller",
                 "--policy", str(DEPLOYMENT / "receive-only-policy.json"), "--project", str(DEPLOYMENT.parent),
                 "--cmdline-sha256", hashlib.sha256(line.encode()).hexdigest(), "--output", str(output)]
         started = time.monotonic()
@@ -721,6 +774,10 @@ def smoke_report(timeout=900, root=Path("/"), selftest=False):
         report["package_closure"] = {"unavailable": type(exc).__name__}
     report["display_manager"] = unit_properties(out(["systemctl", "show", UNIT_SHOW, "display-manager.service"]))
     if selftest:
+        try:
+            report["venvs"] = venv_report()
+        except (OSError, ValueError) as exc:
+            report["venvs"] = {"unavailable": type(exc).__name__}
         try:
             report["selftest"] = live_selftest(load_config(root / BOOT_CONFIG.relative_to("/")), read_slot(root / SLOT_FILE.relative_to("/")))
         except (OSError, ValueError, KeyError) as exc:

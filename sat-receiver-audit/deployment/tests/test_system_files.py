@@ -341,7 +341,7 @@ class LockTests(unittest.TestCase):
         lines = [l for l in (PROJECT / "software/config/hmi-requirements.lock").read_text().splitlines() if l and not l.startswith("#")]
         names = {l.split("==")[0] for l in lines}
         self.assertTrue(all(guest.get(l.split("==")[0]) == l for l in lines))
-        self.assertTrue({"numpy", "PySide6", "setuptools"} <= names)
+        self.assertTrue({"numpy", "PySide6_Essentials", "setuptools"} <= names)  # W2 IMG-3: Essentials only
         manifest = json.loads((HERE / "linux_lab/wheelhouse-manifest.json").read_text())
         requires = {w["name"]: w["requires_dist"] for w in manifest["wheels"]}
         for name in names:
@@ -897,6 +897,58 @@ class ChronyConfTests(unittest.TestCase):
         for mode in ("gpsd", "raw", "off"):
             self.assertNotIn(system_files.CHRONY_CONF, system_files.staged_files(gnss=mode))
         self.assertEqual(system_files.CHRONY_CONF, "etc/chrony/chrony.conf")
+
+
+class VenvLockTests(unittest.TestCase):
+    """W2 IMG-3: the two venv locks the golden image installs are verbatim, dependency-closed subsets of the guest
+    lock, the HMI one holds PySide6_Essentials only, both are staged, and the documented pins are the locks."""
+    LOCKS = {"hmi-requirements.lock": {"numpy", "PySide6_Essentials", "setuptools", "shiboken6"},
+             "passes-requirements.lock": {"numpy", "skyfield", "sgp4", "jplephem", "certifi", "setuptools"}}
+
+    @staticmethod
+    def lines(name):
+        return [l for l in (PROJECT / "software/config" / name).read_text().splitlines() if l and not l.startswith("#")]
+
+    def test_locks_are_exact_dependency_closed_subsets(self):
+        guest = set((HERE / "linux_lab/wheelhouse-requirements.txt").read_text().splitlines())
+        manifest = json.loads((HERE / "linux_lab/wheelhouse-manifest.json").read_text())
+        requires = {w["name"]: w["requires_dist"] for w in manifest["wheels"]}
+        for name, expected in self.LOCKS.items():
+            lines = self.lines(name)
+            names = {l.split("==")[0] for l in lines}
+            self.assertEqual(names, expected, name)
+            self.assertTrue(set(lines) <= guest, name)
+            self.assertEqual(len(lines), len(names), name)
+            for dist in names:
+                for requirement in requires[dist]:
+                    if ";" not in requirement:
+                        self.assertIn(re.split(r"[=<>!~ (]", requirement.strip())[0], names, name + ": " + dist + " needs " + requirement)
+        self.assertFalse({"PySide6", "PySide6_Addons", "PySide6_WebEngine", "PySide6_Pdf"} & {l.split("==")[0] for l in self.lines("hmi-requirements.lock")})
+
+    def test_hmi_extra_names_essentials_and_the_locks_satisfy_the_extras(self):
+        import tomllib
+        project = tomllib.loads((PROJECT / "software/pyproject.toml").read_text(encoding="utf-8"))["project"]
+        self.assertEqual(project["optional-dependencies"]["hmi"], ["numpy>=1.26,<3", "PySide6_Essentials>=6.8,<7"])
+        pins = {l.split("==")[0]: l.split("==")[1].split()[0] for l in self.lines("hmi-requirements.lock")}
+        self.assertTrue(pins["PySide6_Essentials"].startswith("6.") and int(pins["PySide6_Essentials"].split(".")[1]) >= 8)
+        self.assertTrue(pins["numpy"].startswith("2."))
+        pins = {l.split("==")[0]: l.split("==")[1].split()[0] for l in self.lines("passes-requirements.lock")}
+        self.assertTrue(pins["skyfield"] >= "1.55" and pins["sgp4"] >= "2.27")  # orbits extra floors
+
+    def test_locks_are_staged_and_the_documented_passes_pins_are_the_lock(self):
+        with tempfile.TemporaryDirectory() as temp:
+            deploy.stage(Path(temp) / "stage")
+            for name in self.LOCKS:
+                staged = Path(temp) / "stage/rootfs/opt/srrx/software/config" / name
+                self.assertEqual(staged.read_bytes(), (PROJECT / "software/config" / name).read_bytes(), name)
+        documented = (PROJECT / "software/DEPLOYMENT.md").read_text(encoding="utf-8")
+        self.assertIn("software/config/passes-requirements.lock", documented)
+        lines = documented.splitlines()
+        start = lines.index("python3 -m venv --copies /opt/srrx/passes-venv")
+        block = lines[start:lines.index("```", start)]
+        paragraph = next(line for line in lines[start + len(block):] if line.strip() and line != "```")
+        pins = set(re.findall(r"`([A-Za-z0-9_.-]+==[0-9][^`]*)`", paragraph))
+        self.assertEqual(pins, {l.split()[0] for l in self.lines("passes-requirements.lock")})
 
 
 if __name__ == "__main__":

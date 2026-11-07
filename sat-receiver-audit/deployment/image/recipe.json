@@ -113,5 +113,25 @@
   "data_cache": {
     "source": "deployment/deploy.py release_guard (verify_cache of the locked base image and kernel debs at /srv/srrx-cache)",
     "copy_locked_artifacts": true
+  },
+  "unit_interpreters": {
+    "source": "W2 IMG-3 (build/15 «Інтерпретатори unit (W2 IMG-3)»): the python3 that the Exec lines of each SR-RX unit start (build_image.py unit_interpreters, step 11b). numpy: the command imports NumPy, so its interpreter must import it (a venv built from software/config/*.lock); stdlib: the command needs the standard library only, and r2's /usr/bin/python3 (no python3-numpy) runs it. A staged python3 unit in neither list is the blocker unit_interpreter_unclassified; deployment/tests/test_image.py keeps both lists equal to the python3 units deploy.py stage and deployment/image/files stage.",
+    "numpy": {
+      "srrx-menu.service": "srrx.hmi touch console: PySide6 QtCore/QtGui/QtWidgets and NumPy (hmi extra, software/config/hmi-requirements.lock)",
+      "srrx-baseband-record@.service": "srrx.satdump_unit record imports srrx.labrx, which imports numpy at module level (software/srrx/labrx.py:22)",
+      "srrx-passes@.service": "srrx.passes predicts with Skyfield, SGP4 and NumPy (orbits extra, software/config/passes-requirements.lock)"
+    },
+    "stdlib": {
+      "srrx.service": "labd (srrx.daemon) and the release guard ExecStartPre (deployment/deploy.py): standard library only (software/DEPLOYMENT.md)",
+      "srrx-poweroff.service": "srrx.poweroff and the release guard ExecStartPre: standard library only",
+      "srrx-radio-off.service": "srrx.rfkill block: standard library only",
+      "srrx-gnss-config.service": "srrx.gnss_config: standard library only",
+      "srrx-locationd.service": "srrx.locationd: standard library only",
+      "srrx-timegate.service": "srrx.timegate: standard library only",
+      "srrx-satdump-decode@.service": "srrx.satdump_unit decode: SatDump decodes; srrx.baseband and srrx.voice_mask import numpy only inside try/except ImportError (software/srrx/baseband.py:54-57) (W2 SW-SCHED, build/15 «Інтерпретатор шаблонів (W2 SW-SCHED)»)",
+      "srrx-baseband-sweep.service": "srrx.baseband sweep: BasebandStore.sweep lists the class directory, reads each metadata file and stats each data file (_sweep_locked, _keep), no NumPy call; the guarded import keeps the module importable without NumPy (deployment/tests/test_image.py UnitInterpreterTests runs the sweep with NumPy blocked)",
+      "srrx-boot-check.service": "deployment/image/bootchain.py boot-check: standard library only",
+      "srrx-ab-commit.service": "deployment/image/bootchain.py route-b-commit (Route B only): standard library only"
+    }
   }
 }

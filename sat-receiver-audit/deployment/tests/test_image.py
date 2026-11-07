@@ -1527,5 +1527,304 @@ class GdmMaskAndFactsTests(unittest.TestCase):
         self.assertEqual([s[0] for s in build_image.STEPS].index("closure"), [s[0] for s in build_image.STEPS].index("kernel") + 1)
 
 
+# Fixture code shared by the parent and a child interpreter that runs with NumPy blocked (sys.modules["numpy"] = None):
+# a StorageGuard stand-in over a temporary directory, as software/tests/test_baseband.py DirGuard.
+_DIRGUARD = '''
+class DirGuard:
+    def __init__(self, root):
+        self.root = Path(root)
+        (self.root / bb.CLASS_DIR).mkdir(parents=True, exist_ok=True)
+        self.identity = {"root": str(self.root), "major": 8, "minor": 7}
+
+    def check(self):
+        pass
+
+    def open_directory(self, path):
+        return os.open(self.root / path, os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW)
+'''
+_SYSFS_UFS = "/sys/devices/platform/soc@0/1d84000.ufshc/host0/target0:0:0/0:0:0:0/block/sda/sda7"  # test_baseband.SYSFS_UFS
+_NO_NUMPY_SWEEP = '''
+import json, os, sys
+from pathlib import Path
+sys.modules["numpy"] = None  # import numpy raises ImportError in this interpreter
+sys.path.insert(0, sys.argv[1])
+from srrx import baseband as bb
+bb.DATA_ROOT, now = sys.argv[2], float(sys.argv[3])
+bb._sysfs_block_path = lambda major, minor: sys.argv[4]
+''' + _DIRGUARD + '''
+result = bb.BasebandStore(DirGuard(sys.argv[2]), clock=lambda: now).sweep()
+print(json.dumps({"numpy": bb._np is not None, "result": result,
+                  "names": sorted(os.listdir(os.path.join(sys.argv[2], bb.CLASS_DIR)))}))
+'''
+_POSIX = os.name == "posix" and hasattr(os, "O_DIRECTORY") and hasattr(os, "fstatvfs")
+
+
+class VenvAndUnitInterpreterTests(unittest.TestCase):
+    """W2 IMG-3 (D-04): the venv locks and wheels, the freeze and copy checks of build_venvs, each SR-RX python3 unit's
+    interpreter class (recipe.json unit_interpreters), the build-manifest draft and the smoke's venv expectations.
+    The chroot, pip and QEMU paths themselves run in sr-rx-image.yml."""
+
+    @staticmethod
+    def names(wheels):
+        return {build_image.normalized(w["name"]) for w in wheels}
+
+    def test_locks_are_closed_subsets_of_the_guest_wheelhouse_and_essentials_drops_the_web_engine(self):
+        plan = build_image.venv_plan()
+        self.assertEqual(plan["pip"]["filename"], "pip-26.2.2-py3-none-any.whl")
+        self.assertEqual(self.names(plan["venvs"]["opt/srrx/venv"]), {"numpy", "pyside6-essentials", "setuptools", "shiboken6"})
+        self.assertEqual(self.names(plan["venvs"]["opt/srrx/passes-venv"]),
+                         {"certifi", "jplephem", "numpy", "setuptools", "sgp4", "skyfield"})
+        wheels = build_image.plan_wheels(plan)
+        self.assertEqual(len(wheels), 9)  # pip + 4 + 6, numpy and setuptools shared
+        self.assertTrue(all(w["url"].startswith(build_image.WHEEL_URL) and w["hash_verified"] for w in wheels.values()))
+        # The full PySide6 of the guest lock adds these four wheels (Chromium is in WebEngine): about 181 MB not installed.
+        manifest = json.loads(build_image.WHEELHOUSE.read_text(encoding="utf-8"))
+        dropped = {w["name"]: w["size_bytes"] for w in manifest["wheels"] if w["name"] in ("PySide6", "PySide6_Addons", "PySide6_WebEngine", "PySide6_Pdf")}
+        self.assertEqual(sum(dropped.values()), 181114548)
+        self.assertEqual(set(dropped) & {w["name"] for w in wheels.values()}, set())
+
+    def test_lock_drift_is_refused(self):
+        manifest = json.loads(build_image.WHEELHOUSE.read_text(encoding="utf-8"))
+        wheels = {build_image.normalized(w["name"]): w for w in manifest["wheels"]}
+        guest = {row[3] for row in build_image.lock_lines(build_image.GUEST_LOCK)}
+        lock = build_image.lock_lines(build_image.PROJECT / "software/config/hmi-requirements.lock")
+        self.assertEqual(build_image.venv_lock_issues(lock, guest, wheels), [])
+        no_shiboken = [row for row in lock if row[0] != "shiboken6"]
+        self.assertEqual(build_image.venv_lock_issues(no_shiboken, guest, wheels), ["PySide6_Essentials needs shiboken6==6.12.0"])
+        other = [(n, v, "0" * 64, n + "==" + v + " --hash=sha256:" + "0" * 64) if n == "numpy" else (n, v, d, l) for n, v, d, l in lock]
+        issues = build_image.venv_lock_issues(other, guest, wheels)
+        self.assertTrue(any(i.startswith("numpy: line differs") for i in issues) and any("no hash-verified wheel" in i for i in issues), issues)
+        self.assertIn("duplicate distribution names", build_image.venv_lock_issues(lock + lock[:1], guest, wheels))
+        with tempfile.TemporaryDirectory() as temp:
+            bad = Path(temp) / "x.lock"
+            bad.write_text("numpy>=2\n", encoding="utf-8")
+            with self.assertRaisesRegex(build_image.BuildError, "unparsable lock line"):
+                build_image.lock_lines(bad)
+
+    def test_fetch_downloads_each_wheel_once_by_its_manifest_hash(self):
+        calls = []
+        with patch.object(build_image, "_download", lambda url, target, sha, size, label: calls.append((url, Path(target).name, sha, size)) or "PRESENT"):
+            result = build_image.fetch_wheels(Path("cache"))
+        self.assertEqual(len(calls), 9)
+        self.assertEqual(sorted(result), sorted(name for _, name, _, _ in calls))
+        self.assertTrue(all(url.endswith("/" + name) for url, name, _, _ in calls))
+
+    def test_freeze_must_equal_the_lock_plus_the_project(self):
+        lock = build_image.PROJECT / "software/config/passes-requirements.lock"
+        want = build_image.expected_freeze(lock, build_image.project_version())
+        self.assertEqual(want["srrx-control"], "0.3.1")
+        freeze = [[name, version] for name, version in want.items()]
+        self.assertEqual(build_image.freeze_issues(freeze, want), [])
+        self.assertEqual(build_image.freeze_issues(freeze + [["pip", "26.2.2"]], want), ["not in the lock: pip 26.2.2"])
+        changed = [[n, "1.26.4" if n == "numpy" else v] for n, v in freeze]
+        self.assertEqual(build_image.freeze_issues(changed, want), ["versions differ: numpy 1.26.4 != 2.3.5"])
+        self.assertEqual(build_image.freeze_issues(freeze[1:], want), ["missing: " + freeze[0][0]])
+        self.assertEqual(build_image.freeze_issues([["NumPy", "2.3.5"], ["numpy", "2.3.5"]], want), ["distribution listed twice: numpy"])
+
+    def test_srrx_copy_and_tree_record(self):
+        with tempfile.TemporaryDirectory() as temp:
+            staged, venv = Path(temp) / "staged/srrx", Path(temp) / "venv"
+            installed = venv / "lib/python3.12/site-packages/srrx"
+            for root in (staged, installed):
+                root.mkdir(parents=True)
+                (root / "__init__.py").write_text("")
+                (root / "baseband.py").write_text("X = 1\n")
+            self.assertEqual(build_image.package_copy_issues(installed, staged), [])
+            (installed / "baseband.py").write_text("X = 2\n")
+            self.assertEqual(build_image.package_copy_issues(installed, staged), ["srrx copy differs from the staged tree: baseband.py"])
+            self.assertEqual(build_image._site_packages(venv), venv / "lib/python3.12/site-packages")
+            first = build_image.tree_record(venv)
+            self.assertEqual((first["files"], first["so_modules"]), (2, 0))
+            (installed / "baseband.py").write_text("X = 1\n")
+            self.assertNotEqual(build_image.tree_record(venv)["tree_sha256"], first["tree_sha256"])
+
+    def test_exec_interpreter(self):
+        cases = (("/usr/bin/env /opt/srrx/venv/bin/python3 -m srrx.hmi", "/opt/srrx/venv/bin/python3"),
+                 ("-/usr/bin/python3 -B /opt/srrx/deployment/deploy.py release-guard", "/usr/bin/python3"),
+                 ("/usr/bin/env PYTHONPATH=/x /usr/bin/python3.12 -m srrx.x", "/usr/bin/python3.12"),
+                 ("/usr/bin/ssh-keygen -A", None), ("/usr/bin/env -S python3 -m x", None), ("/usr/bin/env readsb", None))
+        for line, want in cases:
+            self.assertEqual(build_image.exec_interpreter(line.split()), want, line)
+
+    def staged_root(self, temp):
+        import deploy
+        deploy.stage(Path(temp) / "stage")
+        rootfs = Path(temp) / "stage/rootfs"
+        for name in ("srrx-boot-check.service", "srrx-ab-commit.service", "srrx-ssh-hostkeys.service"):  # build_image install_boot_chain/hardening
+            shutil.copyfile(build_image.FILES / name, rootfs / "etc/systemd/system" / name)
+        return rootfs
+
+    def test_recipe_classifies_exactly_the_staged_python_units_and_numpy_units_run_a_venv(self):
+        recipe = json.loads(build_image.RECIPE.read_text(encoding="utf-8"))
+        classes = recipe["unit_interpreters"]
+        self.assertEqual(set(classes["numpy"]) & set(classes["stdlib"]), set())
+        with tempfile.TemporaryDirectory() as temp:
+            units = build_image.python_units(self.staged_root(temp))
+        self.assertEqual(set(units), set(classes["numpy"]) | set(classes["stdlib"]))
+        venvs = {"/" + v + "/bin/python3" for v in build_image.VENVS}
+        for unit in classes["numpy"]:
+            self.assertTrue(set(units[unit]["interpreters"]) <= venvs, (unit, units[unit]))
+        for unit in classes["stdlib"]:
+            self.assertEqual(units[unit]["interpreters"], ["/usr/bin/python3"], (unit, units[unit]))
+        self.assertEqual(units["srrx-baseband-sweep.service"]["commands"],
+                         [{"key": "ExecStart", "interpreter": "/usr/bin/python3", "module": "srrx.baseband"}])
+        self.assertEqual(units["srrx.service"]["files"], ["etc/systemd/system/srrx.service", "etc/systemd/system/srrx.service.d/20-release-guard.conf"])
+        self.assertEqual(units["srrx-menu.service"]["files"], ["usr/lib/systemd/user/srrx-menu.service"])
+
+    def test_findings_block_a_missing_or_numpy_less_interpreter_and_an_unclassified_unit(self):
+        classes = json.loads(build_image.RECIPE.read_text(encoding="utf-8"))["unit_interpreters"]
+        with tempfile.TemporaryDirectory() as temp:
+            units = build_image.python_units(self.staged_root(temp))
+        good = {"/usr/bin/python3": {"present": True, "numpy": None}, "/opt/srrx/venv/bin/python3": {"present": True, "numpy": "2.3.5"},
+                "/opt/srrx/passes-venv/bin/python3": {"present": True, "numpy": "2.3.5"}}
+        found, blockers = build_image.unit_interpreter_findings(units, good, classes)
+        self.assertEqual(blockers, [])
+        self.assertEqual(found["classified_not_staged"], [])
+        self.assertEqual(found["units"]["srrx-passes@.service"]["needs"], "numpy")
+        # The r2 image before W2 IMG-3: no venv at all.
+        _, blockers = build_image.unit_interpreter_findings(units, {"/usr/bin/python3": good["/usr/bin/python3"]}, classes)
+        self.assertEqual([b.split(":", 1)[0] for b in blockers], ["unit_interpreter_missing"])
+        self.assertIn("srrx-menu.service (/opt/srrx/venv/bin/python3)", blockers[0])
+        probes = dict(good, **{"/opt/srrx/passes-venv/bin/python3": {"present": True, "numpy": None}})
+        _, blockers = build_image.unit_interpreter_findings(units, probes, classes)
+        self.assertEqual(blockers, ["unit_interpreter_without_numpy: srrx-passes@.service (/opt/srrx/passes-venv/bin/python3) "
+                                    "(recipe.json unit_interpreters.numpy)"])
+        fewer = dict(classes, stdlib={k: v for k, v in classes["stdlib"].items() if k != "srrx-timegate.service"})
+        _, blockers = build_image.unit_interpreter_findings(units, good, fewer)
+        self.assertEqual(blockers, ["unit_interpreter_unclassified: srrx-timegate.service (neither list of recipe.json unit_interpreters)"])
+        route_a = {k: v for k, v in units.items() if k != "srrx-ab-commit.service"}
+        found, blockers = build_image.unit_interpreter_findings(route_a, good, classes)
+        self.assertEqual((blockers, found["classified_not_staged"]), ([], ["srrx-ab-commit.service"]))
+        tags = build_image.blocking_closes_at(["unit_interpreter_missing: x", "unit_interpreter_without_numpy: y",
+                                               "unit_interpreter_unclassified: z", "hmi_venv_qt_offscreen_failed: q",
+                                               "build_manifest_draft_blocked: w"])
+        self.assertEqual([t["closes_at"] for t in tags], ["recipe"] * 5)
+        self.assertNotIn("target_python_without_numpy", [p for p, _, _ in build_image.BLOCKER_CLOSES_AT])
+
+    @unittest.skipUnless(_POSIX, "the dirfd-relative baseband store needs Linux")
+    def test_the_sweep_unit_needs_no_numpy(self):
+        # recipe.json unit_interpreters.stdlib: srrx-baseband-sweep.service keeps r2's /usr/bin/python3 (no NumPy).
+        import array
+        software = str(build_image.PROJECT / "software")
+        sys.path.insert(0, software)
+        from srrx import baseband as bb
+        aos = 1_800_000_000.0
+        with tempfile.TemporaryDirectory(prefix="srrx-bb-") as temp:
+            namespace = {"Path": Path, "os": os, "bb": bb}
+            exec(_DIRGUARD, namespace)
+            with patch.object(bb, "DATA_ROOT", temp), patch.object(bb, "_sysfs_block_path", lambda major, minor: _SYSFS_UFS), \
+                    patch.object(bb, "_preallocate", None):
+                store = bb.BasebandStore(namespace["DirGuard"](temp), clock=lambda: aos - 50.0)
+                recording = store.begin(bb.window(40001, "Meteor-M N2-3", 137_900_000, 72_000, aos, aos + 600,
+                                                  bb.iso_utc(aos), bb.iso_utc(aos + 600)))
+                try:
+                    recording.write(array.array("h", [i % 200 - 100 for i in range(8192)]))  # ci16, little-endian hosts
+                    meta = recording.finish(created_s=aos - 50.0, first_block_s=aos - 50.0, clipped=0, gaps=0, joins=0,
+                                            source="SIMULATION", group_delay=685, stop_reason="WINDOW_END")
+                finally:
+                    store.end()
+            rid = meta["global"]["srrx:recording_id"]
+            directory = Path(temp) / bb.CLASS_DIR
+            os.utime(directory / (rid + bb.DATA_SUFFIX), (aos - 50.0, aos - 50.0))
+            (directory / "lrpt-ffffffffffffffff.sigmf-data").write_bytes(b"\0" * 8)
+            (directory / "lrpt-ffffffffffffffff.sigmf-meta").write_text("{}")  # invalid: removed
+            (directory / "stray.txt").write_text("x")  # a file nobody may keep here: removed
+            outcomes = []
+            for now in (aos - 40.0, aos + bb.RETENTION_S + 100.0):  # fresh, then older than 24 h
+                done = subprocess.run([sys.executable, "-I", "-B", "-c", _NO_NUMPY_SWEEP, software, temp, str(now), _SYSFS_UFS],
+                                      capture_output=True, text=True, timeout=120)
+                self.assertEqual(done.returncode, 0, done.stderr[-2000:])
+                outcomes.append(json.loads(done.stdout.strip().splitlines()[-1]))
+        self.assertEqual([o["numpy"] for o in outcomes], [False, False])
+        self.assertEqual(outcomes[0]["result"], {"deleted": 1, "kept": 1, "foreign_directories": 0, "skipped": None})
+        self.assertEqual(outcomes[0]["names"], sorted([bb.LOCK_NAME, rid + bb.DATA_SUFFIX, rid + bb.META_SUFFIX]))
+        self.assertEqual(outcomes[1]["result"], {"deleted": 1, "kept": 0, "foreign_directories": 0, "skipped": None})
+        self.assertEqual(outcomes[1]["names"], [bb.LOCK_NAME])
+
+    @unittest.skipUnless(_POSIX, "the srrx modules of the system units import Linux-only modules")
+    def test_stdlib_units_import_their_modules_without_numpy(self):
+        classes = json.loads(build_image.RECIPE.read_text(encoding="utf-8"))["unit_interpreters"]
+        with tempfile.TemporaryDirectory() as temp:
+            units = build_image.python_units(self.staged_root(temp))
+        modules = sorted({c["module"] for unit in classes["stdlib"] for c in units[unit]["commands"] if c["module"]})
+        self.assertIn("srrx.baseband", modules)
+        code = ("import importlib, json, sys\nsys.modules['numpy'] = None\nsys.path.insert(0, sys.argv[1])\n"
+                "for name in sys.argv[2:]:\n    importlib.import_module(name)\nprint(json.dumps(sorted(sys.argv[2:])))\n")
+        done = subprocess.run([sys.executable, "-I", "-B", "-c", code, str(build_image.PROJECT / "software")] + modules,
+                              capture_output=True, text=True, timeout=120)
+        self.assertEqual(done.returncode, 0, done.stderr[-2000:])
+
+    def test_build_manifest_draft_is_open_and_refuses_what_verify_build_refuses(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root, out = Path(temp) / "root", Path(temp) / "out"
+            prefix = root / "opt/srrx"
+            (prefix / "venv/lib/python3.12/site-packages").mkdir(parents=True)
+            (prefix / "venv/lib/python3.12/site-packages/x.py").write_text("X = 1\n")
+            (prefix / "software").mkdir()
+            (prefix / "software/a.py").write_text("A = 1\n")
+            out.mkdir()
+            try:
+                os.symlink("lib", prefix / "venv/lib64")
+            except OSError:
+                pass
+            draft = build_image.build_manifest_draft(root, out)
+            self.assertEqual((draft["status"], draft["evidence"]), ("OPEN", {"source_audit": "OPEN", "tx_negative_tests": "OPEN"}))
+            written = json.loads((out / build_image.BUILD_MANIFEST_DRAFT).read_text(encoding="utf-8"))
+            self.assertEqual(written["status"], "OPEN")
+            self.assertIn("venv/lib/python3.12/site-packages/x.py", written["files"])
+            self.assertNotIn("REVIEWED", json.dumps(written))
+            (prefix / "software/rtl_tcp").write_text("")  # a verify-build refusal (deploy.BAD_NAMES)
+            (out / build_image.BUILD_MANIFEST_DRAFT).unlink()
+            blocked = build_image.build_manifest_draft(root, out)
+            self.assertEqual(blocked["status"], "BLOCKED")
+            self.assertFalse((out / build_image.BUILD_MANIFEST_DRAFT).exists())
+
+    def test_steps_workflow_and_smoke_bound(self):
+        steps = [s[0] for s in build_image.STEPS]
+        self.assertEqual(steps.index("venvs"), steps.index("enable") + 1)
+        self.assertEqual(steps.index("data"), steps.index("venvs") + 1)
+        workflow = (build_image.PROJECT.parent / ".github/workflows/sr-rx-image.yml").read_text(encoding="utf-8")
+        for text in ("sat-receiver-audit/deployment/linux_lab/wheelhouse-manifest.json", "sat-receiver-audit/deployment/linux_lab/wheelhouse-requirements.txt",
+                     "WHEELS_KEY=srrx-wheels-", "path: ~/srrx-cache/wheels", "key: ${{ env.WHEELS_KEY }}"):
+            self.assertIn(text, workflow)
+        self.assertEqual(bootchain.SELFTEST_PYTHON.as_posix(), "/opt/srrx/passes-venv/bin/python3")
+        self.assertEqual(set(bootchain.SMOKE_VENVS), {"/" + v for v in build_image.VENVS})
+        self.assertGreaterEqual(bootchain.SMOKE_SELFTEST_LIMIT, 2400)
+
+    def test_smoke_compares_the_venvs_and_the_live_selftest_interpreter(self):
+        import smoke_qemu
+        recorded = {"/opt/srrx/venv": {"numpy": "2.3.5", "qt_offscreen": {"status": "OK", "result": {"qt": "6.12.0", "platform": "offscreen"}}},
+                    "/opt/srrx/passes-venv": {"numpy": "2.3.5"}}
+        observed = {"/opt/srrx/venv": {"present": True, "numpy": {"python": "3.12.3", "numpy": "2.3.5"},
+                                       "qt_offscreen": {"qt": "6.12.0", "platform": "offscreen"}},
+                    "/opt/srrx/passes-venv": {"present": True, "numpy": {"python": "3.12.3", "numpy": "2.3.5"}}}
+        live = {"interpreter": "/opt/srrx/passes-venv/bin/python3", "interpreter_numpy": True}
+        self.assertEqual(smoke_qemu.venv_mismatches(observed, recorded, live), [])
+        self.assertEqual(len(smoke_qemu.venv_mismatches(observed, recorded, {"interpreter": "/usr/bin/python3", "interpreter_numpy": False})), 1)
+        broken = copy.deepcopy(observed)
+        broken["/opt/srrx/venv"]["qt_offscreen"] = {"error": "exit 1: qt.qpa.plugin: Could not load the Qt platform plugin"}
+        broken["/opt/srrx/passes-venv"] = {"present": False}
+        self.assertEqual(len(smoke_qemu.venv_mismatches(broken, recorded, live)), 2)
+        self.assertEqual(smoke_qemu.venv_mismatches(None, recorded, live), ["no venv report from the booted slot: None"])
+        self.assertEqual(smoke_qemu.venv_mismatches(observed, {}, live), ["image-manifest.json records no venvs (build_image.build_venvs)"])
+        # In check(): only the selftest boot is compared, and with numpy the live rows equal the build rows.
+        recipe = json.loads((HERE / "image/recipe.json").read_text())
+        units = {"srrx-boot-check.service": {"ActiveState": "active"}, "boot-complete.target": {"ActiveState": "active"},
+                 "systemd-bless-boot.service": {"ActiveState": "active"}, "srrx.service": {"ActiveState": "inactive", "UnitFileState": "disabled"}}
+        report = {"boot_check": {"slot": "A", "status": "BOOT_SELF_CHECK_OK"}, "units": units, "bless_boot_status": "good", "pending_jobs": [],
+                  "masked_units": {u: {"LoadState": "masked"} for u in recipe["mask"]["units"]}, "venvs": observed,
+                  "selftest": dict(live, status="BLOCKED", fail_or_blocked_rows={"RX-S2": ["radio_off_binding_missing"]})}
+        blessed = sorted(["labA.conf", "labB.conf", "labA-rescue.conf", "labB-rescue.conf"])
+        name, expect = smoke_qemu.SCENARIOS[0]
+        result = {"qemu_exit": 0, "report": report, "entries_after": blessed}
+        rows = {"RX-S2": ["radio_off_binding_missing"]}
+        self.assertEqual(smoke_qemu.check(name, result, expect, rows, None, None, recorded)["status"], "MODEL_PASS")
+        report["selftest"]["fail_or_blocked_rows"] = dict(rows, **smoke_qemu.INTERPRETER_ROWS)
+        self.assertEqual(smoke_qemu.check(name, result, expect, rows, None, None, recorded)["status"], "MODEL_FAIL")
+        del report["venvs"]
+        report["selftest"]["fail_or_blocked_rows"] = rows
+        self.assertIn("no venv report from the booted slot: None", smoke_qemu.check(name, result, expect, rows, None, None, recorded)["mismatches"])
+
+
 if __name__ == "__main__":
     unittest.main()
