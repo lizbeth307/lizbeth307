@@ -12,11 +12,11 @@
     "projection_sha256": {
       "graph_refs_pins_nets": "60661f8cf773e1300c243a6468510e734578d1f9e711f225f2a91980df2dae75",
       "footprints": "6ab71e6ba45f706c40b02aaba3cb31d76afda871c96fb040775d53fc01c087f9",
-      "contract_board": "de3e7f015bbdf99ff42f31d12438ee476779aa13010298a906c483047071fa19",
+      "contract_board": "a816690fd47d67589f0d2fd9c80b7214adac4fb8ed77f2b4f035006e3454b4e6",
       "netclasses": "2681d77f0f8c2d81aa4cf979f0c9584329d9bd10918d1594df7d7bd32ccf70ff",
-      "spec": "003f66d4f0f534d32ce8d7a98827614b9961b52eba4249068834ba6efd69f64d"
+      "spec": "49003afb413cf5fd402e66542f42154c573bd0bb7e36071fe8af217185a8fce6"
     },
-    "note": "projections of refs/pins/nets, footprints, the contract entry, the classes used and the spec (F10); the board file itself is hashed whole"
+    "note": "projections of refs/pins/nets, footprints, the contract keys read, the classes used and the checker view of the spec (F10); the board file itself is hashed whole"
   },
   "frame": {
     "origin": [
@@ -51,7 +51,8 @@
     },
     "keepouts": {
       "findings": 0,
-      "keepout_r_mm": 3.0
+      "keepout_r_mm": 3.0,
+      "tolerance_mm": 0.005
     },
     "pad_nets": {
       "findings": 0,
@@ -61,7 +62,8 @@
     "class_widths": {
       "findings": 0,
       "tracks_checked": 8,
-      "pour_necks": []
+      "pour_necks": [],
+      "split_nets": {}
     },
     "rf50": {
       "findings": 0,
@@ -85,16 +87,13 @@
       "checked": 0
     },
     "pth_annular": {
-      "findings": 0
+      "findings": 0,
+      "floor_mm": 0.18,
+      "fab_floor": "jlc_2l_1oz"
     }
   },
   "findings": [],
   "unverified": [
-    {
-      "check": "heights",
-      "item": "board",
-      "reason": "spec height zone without rect (board_gen form): footprints carry no body heights; the enclosure height check belongs to the mechanical model (fit-report)"
-    },
     {
       "check": "heights",
       "item": "ENC",
