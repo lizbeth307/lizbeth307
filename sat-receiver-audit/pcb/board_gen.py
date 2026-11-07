@@ -22,6 +22,7 @@ Results are CI/model results, never a hardware PASS.
 from __future__ import annotations
 
 import argparse
+import faulthandler
 import hashlib
 import json
 import math
@@ -1200,6 +1201,9 @@ def build_board(pcb, spec, contract, template, temp):
         nick, name = part['fpid'].split(':', 1)
         fp.SetFPID(pcb.LIB_ID(nick, name))
         anchor = part['anchor'] or group_anchors[part['ref']]
+        back = anchor.get('side', 'F') == 'B'
+        if back:  # KiCad flips texts and pads through the parent board (FlipLayer): a parentless Flip crashed (W2 PCB-PWRB)
+            board.Add(fp)
         place(pcb, frame, fp, anchor)
         ref_text = anchor.get('ref_text')
         if ref_text:  # legend position (board mm) when the footprint default lands on a hole or pad
@@ -1219,7 +1223,8 @@ def build_board(pcb, spec, contract, template, temp):
                 pad.SetNetCode(0)
         if set(part['pads']) - seen:
             raise SpecError(f'{part["ref"]}: pads {sorted(set(part["pads"]) - seen)} missing in {part["fpid"]}')
-        board.Add(fp)
+        if not back:
+            board.Add(fp)
         sources.append({'ref': part['ref'], 'footprint': part['fpid'],
                         'file': rel(fpath) if part['library'] == 'project' else f'kicad-image:{nick}.pretty/{name}.kicad_mod',
                         'sha256': part['sha256']})
@@ -1804,6 +1809,7 @@ def check(board):
 
 
 def main(argv=None):
+    faulthandler.enable()  # a crash inside pcbnew prints the Python stack (CI log) instead of a bare segfault
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument('--board')
     mode = ap.add_mutually_exclusive_group()
