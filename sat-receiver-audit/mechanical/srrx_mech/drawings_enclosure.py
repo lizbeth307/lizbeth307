@@ -169,6 +169,7 @@ def plate_sheet(P):
                 "AT/AR: гвинти M3 Al-кутників з тильного боку; на лицьовій грані нічого не виступає (там IP2368, Lime, HDMI-плата).",
                 "UB1-2: потай M2.5 з лицьової грані в бобишку UFS; Q6A1-4: M2.5 крізь пластину в стійки 6 мм з тильного боку.",
                 "Ребра шляху 2 (смуги Al 1 x 3.5) — на лицьовій грані під HDMI-платою, уздовж потоку; точки з'єднання — голий метал.",
+                "SL1-SL3: прорізи джгутів між лицьовим і тильним шаром (build/16 §1), кромки — кант або грумет; гайки PEM ставити пресом.",
                 "Пунктир: контури плат, Q6A, бобишки UFS (тильна грань), п'єдесталу Lime і зон термопрокладок PWR."])
     sh.poly(plate_outline(P), True, "CUT")
     rw = pl["riser_window"]
@@ -178,6 +179,10 @@ def plate_sheet(P):
         sh.label((nx, ny - 3), "виріз під гайку кнопки живлення", 1.8)
     for (nx, ny, nw, nh) in pl.get("notches_right", []):
         sh.label((nx - 44, ny + nh / 2 - 1), "відкритий виріз кабелю HDMI", 1.8)
+    for sl in pl.get("slots", []):
+        sx, sy, sw, shh = sl["rect"]
+        sh.rect(sx, sy, sw, shh, "CUT")
+        sh.label((sx, sy + shh + 1), f"проріз джгутів {sl['id']} (кант)", 1.8)
     holes = plate_holes(P)
     for h in holes:
         sh.hole(h["c"], h["d"], h["id"], 1.6)
@@ -223,7 +228,8 @@ def plate_sheet(P):
         line = f"{hrow['id']:7s} {fmt(hrow['c'][0] - dx, 2):>7s} {fmt(hrow['c'][1] - dy, 2):>7s} {fmt(hrow['d'], 2):>5s}  {hrow['use'][:44]}"
         sh.ptext((tx, ty), line, 1.75, layer="TABLE")
         ty -= 2.55
-    wins = [("проріз riser", pl["riser_window"])] + [("виріз HDMI (відкритий)", n) for n in pl.get("notches_right", [])]         + [("виріз під гайку кнопки", n) for n in pl.get("notches", [])]
+    wins = [("проріз riser", pl["riser_window"])] + [("виріз HDMI (відкритий)", n) for n in pl.get("notches_right", [])] \
+        + [("виріз під гайку кнопки", n) for n in pl.get("notches", [])] + [(f"проріз джгутів {sl['id']}", sl["rect"]) for sl in pl.get("slots", [])]
     for label, (rx, ry, rw_, rh_) in wins:
         sh.ptext((tx, ty), f"{label}: X {fmt(rx - dx)}..{fmt(rx + rw_ - dx)}, Y {fmt(ry - dy)}..{fmt(ry + rh_ - dy)}", 1.75, layer="TABLE")
         ty -= 2.55

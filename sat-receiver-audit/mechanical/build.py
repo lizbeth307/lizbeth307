@@ -224,6 +224,7 @@ def summary(report):
         "rules_open": sum(1 for r in report["rules"] + [report["rf_bay_packing"]] if str(r["result"]).startswith("OPEN")),
         "antenna_rule_failures": fails(report["antenna_parts"]),
         "board_area_failures": fails(report["board_area"].get("boards", {}).values()),
+        "board_area_harness_open": sum(1 for r in report["board_area"].get("with_harness", {}).get("boards", {}).values() if str(r["result"]).startswith("OPEN")),
         "thermal_failures": fails(report["thermal_interfaces"]["rows"]),
         "thermal_open": sum(1 for r in report["thermal_interfaces"]["rows"] if r["result"].startswith("OPEN")),
         "gasket": report["gasket"]["result"],

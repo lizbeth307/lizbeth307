@@ -402,6 +402,7 @@ def plate(P):
     cutters.append(box(rw[0], rw[1], 0, rw[2], rw[3], 100))
     cutters += [box(nx, ny, 0, nw, nh, 100) for (nx, ny, nw, nh) in pl.get("notches", [])]
     cutters += [box(nx, ny, 0, nw + 5.0, nh, 100) for (nx, ny, nw, nh) in pl.get("notches_right", [])]
+    cutters += [box(sl["rect"][0], sl["rect"][1], 0, sl["rect"][2], sl["rect"][3], 100) for sl in pl.get("slots", [])]
     return cut(part, cutters)
 
 

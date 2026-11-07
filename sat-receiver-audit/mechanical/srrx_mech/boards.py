@@ -29,8 +29,9 @@ def board_sheet(P, bid):
             sh.line((a0, min(ys0) - 2), (a1, min(ys0) - 2), "CENTER")
             sh.label((a0, min(ys0) - 5.5 - 3.5 * i), f"E{i + 1}: {ez['use'][:70]}", 1.6)
         elif ez["edge"] == "top":
-            sh.line((a0, max(ys0) + 2), (a1, max(ys0) + 2), "CENTER")
-            sh.label((a0, max(ys0) + 3.5 + 3.5 * i), f"E{i + 1}: {ez['use'][:70]}", 1.6)
+            yt = ez.get("at", max(ys0))      # 'at': an inner top edge of a stepped outline (PWR bottom strip)
+            sh.line((a0, yt + 2), (a1, yt + 2), "CENTER")
+            sh.label((a0, yt + 3.5 + 3.5 * i), f"E{i + 1}: {ez['use'][:70]}", 1.6)
         elif ez["edge"] in ("left", "right"):
             x = min(xs0) - 2 if ez["edge"] == "left" else max(xs0) + 2
             sh.line((x, a0), (x, a1), "CENTER")
@@ -86,7 +87,8 @@ def area_check(P):
     comp = root / "pcb" / "generated" / "components.csv"
     if not comp.exists():
         return {"status": "SKIPPED", "reason": "pcb/generated/components.csv not found"}
-    fp = [("R_0402", 2.0), ("C_0402", 2.0), ("R_0603", 4.8), ("C_0603", 4.8), ("R_0805", 7.0), ("C_0805", 7.0),
+    fp = [("Pololu_D36V50Fx", 0.0),   # counted by modules_on_board below
+          ("R_0402", 2.0), ("C_0402", 2.0), ("R_0603", 4.8), ("C_0603", 4.8), ("R_0805", 7.0), ("C_0805", 7.0),
           ("R_1206", 10.0), ("C_1206", 10.0), ("R_1210", 14.4), ("C_1210", 14.4), ("SOT-23-6", 13.0), ("SOT-23-5", 13.0),
           ("SOT-23", 12.0), ("SOT-363", 7.0), ("D_SMA", 22.0), ("SOIC-28W", 240.0), ("SOIC-8", 40.0), ("TSSOP-24", 75.0),
           ("WSON-6", 9.0), ("Nexperia_CFP3", 12.0)]
@@ -107,5 +109,71 @@ def area_check(P):
             continue
         res["boards"][bid] = {"area_mm2": round(have, 0), "estimate_mm2": round(need + mods, 0),
                               "ratio": round(have / (need + mods), 2) if need + mods else None,
+                              "scope": "board parts and modules_on_board, without the harness headers",
                               "result": ("PASS (model)" if have >= need + mods else "FAIL (model)")}
+    res["with_harness"] = harness_check(P, res, root)
     return res
+
+
+SIDE_ENTRY = ("CTRL", "RF", "ENCM", "ENCV")   # tools/assembly_data.py SIDE_ENTRY_UNITS
+UNIT_BOARD = {"PWR": "PWR", "RF": "RF", "CTRL": "CTRL", "ENCM": "ENC", "ENCV": "ENC"}
+
+
+def header_size(P, family, pins, unit):
+    """(width along the edge, depth) of a harness header courtyard, parts.json harness_headers."""
+    hh = P.parts["harness_headers"]
+    key = f"{family}_{'side' if family == 'PH' and unit in SIDE_ENTRY else 'top'}"
+    if key not in hh:
+        return None
+    c = hh[key]
+    return c["a"] * (pins - 1) + c["b"], c["d"]
+
+
+def harness_check(P, parts_res, root):
+    """Board area with the harness headers of build/16 §4 added, and their frontage against the edge zones (model estimate).
+
+    Both are reported, not gated: a board whose estimate exceeds its outline is OPEN until its layout or the harness
+    architecture is re-planned (wave 2); the parts-only row above keeps its own PASS/FAIL."""
+    import csv
+    path = root / "build" / "16-dzhgut-rozyemy.csv"
+    if not path.exists():
+        return {"status": "SKIPPED", "reason": "build/16-dzhgut-rozyemy.csv not found"}
+    hh = P.parts["harness_headers"]
+    area, front, count, unknown = {}, {}, {}, set()
+    with path.open(encoding="utf-8", newline="") as fh:
+        for r in csv.DictReader(fh):
+            bid = UNIT_BOARD.get(r["unit"])
+            if bid is None:
+                continue
+            size = header_size(P, r["family"], int(r["pins"]), r["unit"])
+            if size is None:
+                unknown.add(r["family"])
+                continue
+            w, d = size
+            n_boards = 2 if bid == "ENC" else 1
+            area[bid] = area.get(bid, 0.0) + w * d / n_boards
+            front[bid] = front.get(bid, 0.0) + w / n_boards
+            count[bid] = count.get(bid, 0) + 1
+    out = {"method": f"courtyard w x d per header (parts.json harness_headers) x {hh['density']:g} placement density, added to the parts estimate; "
+                     "frontage = sum of header widths against the edge zones of boards.json (every header at an edge, cable leaving sideways)",
+           "status": "MODEL ESTIMATE: reported, not gated (OPEN = the outline or the harness architecture needs a wave-2 decision)",
+           "families_without_courtyard": sorted(unknown), "boards": {}}
+    for bid, b in P.boards["boards"].items():
+        if bid not in count:
+            continue
+        have = poly_area([tuple(p) for p in b["outline"]]) - sum(c[2] * c[3] for c in b.get("cutouts", []))
+        base = parts_res["boards"].get(bid, {}).get("estimate_mm2", 0.0)
+        need = base + area[bid] * hh["density"]
+        edge = sum(z["span"][1] - z["span"][0] for z in b.get("edge_zones", []))
+        ok_area, ok_front = have >= need, edge >= front[bid]
+        why = []
+        if not ok_area:
+            why.append(f"area {need:.0f} > {have:.0f} mm2")
+        if not ok_front:
+            why.append(f"frontage {front[bid]:.0f} > {edge:.0f} mm of edge zones")
+        out["boards"][bid] = {"headers": count[bid], "header_courtyard_mm2": round(area[bid], 0), "area_mm2": round(have, 0),
+                              "estimate_with_headers_mm2": round(need, 0), "ratio": round(have / need, 2),
+                              "frontage_mm": round(front[bid], 0), "edge_zones_mm": round(edge, 0),
+                              "result": "PASS (model)" if ok_area and ok_front else
+                              "OPEN: " + "; ".join(why) + " (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"}
+    return out

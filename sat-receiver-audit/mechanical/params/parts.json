@@ -48,11 +48,11 @@
           "top": 7.5,
           "src": "2x2 pin header, STEP product 000_4_4_5_1 read with build123d 2026-11-06 (same STEP V1.21); components/mechanical_thermal.md gives x 59-64, y 43.9-48.9, 7.5 mm"
         },
-        "uart5_plug": {
+        "s01_idc_socket": {
           "uv": [7.17, 48.64, 57.97, 55.85],
           "top": 16.5,
           "status": "assumption",
-          "src": "UART5 console pigtail plug on the 40-pin header pins 8/10 + GND (STACK 5.8 hatch content): which end of the header pin 1 is on was not read, so the reserve covers the whole header; 16.5 mm (header base 2.5 + a 14 mm crimp housing) is an assumption, TBD with the chosen pigtail"
+          "src": "IDC socket XDFH-0258-2*20P of the S01 ribbon (build/16 S01; parts DB harness_families IDC) on the whole 40-pin header, with the ribbon leaving towards the board top edge; UART5 goes to the hatch board through CTRL (build/16 S30), not by a pigtail on this header. 16.5 mm above the board is an assumption (socket height not read), TBD with the received socket"
         }
       },
       "soc": {
@@ -149,16 +149,17 @@
     },
     "pololu_d36v50": {
       "name": "Pololu D36V50F12 / D36V50F5 (#4095 / #4091)",
-      "size": [25.4, 25.4, 9.5],
+      "size": [25.4, 25.4, 7.67],
       "holes": {
         "count": 3,
         "d": 2.18,
         "screw": "#2 or M2"
       },
-      "status": "datasheet",
-      "mount_standoff": 0.0,
-      "src": "https://www.pololu.com/product/4091 (read 2026-10-24 and 2026-11-06: 'Compact size: 1 x 1 x 0.375 in (25.4 x 25.4 x 9.5 mm)', three 0.086 in holes for #2/M2, connections on a 0.1 in grid, 1x12 or two 1x6 male header strips included, no thermal pad mentioned; the page does not say whether 9.5 includes pins; hole positions not given: TBD from the Pololu dimension drawing)",
-      "_mount_note": "mount_standoff 0.0 = module soldered flat on the PWR board through the 0.1 in holes (header plastic spacer removed), so the module height above the PWR top face is the 9.5 mm of the Pololu page; this needs a module bottom side free of parts (TBD: check the received module); on the supplied header with its plastic spacer the zone grows by the spacer height and the path-2 channel under the display shrinks (fit-report channel_path2)"
+      "bottom_parts": 1.8,
+      "status": "datasheet+assumption",
+      "mount_standoff": 2.5,
+      "src": "Pololu dimension drawing https://www.pololu.com/file/0J1732/d36v50fx-step-down-voltage-regulator-dimensions.pdf (reg24d, 24 December 2019, linked from https://www.pololu.com/product/4091/resources, read 2026-11-07): board 25.4 x 25.4, 1.57 thick, top-side parts 6.1, bottom-side parts 1.8 (profile view), three D2.18 M2 holes 2.2 from the edges, 12 connection holes D1.02 in two rows (footprint SR_RX_Custom:Pololu_D36V50Fx); size z = 1.57 + 6.1 above the module bottom face; the product page (read 2026-10-24 and 2026-11-06) gives 25.4 x 25.4 x 9.5 = 1.8 + 1.57 + 6.1",
+      "_mount_note": "the 1.8 mm bottom-side parts rule out a flat mount: the module stands on the plastic spacer of its 0.1 in header strips; mount_standoff 2.5 is an assumption for that spacer (TBD: measure the supplied header), so the module top is about 10.2 mm above the PWR top face (height zone of the left leg 10.5, R-PWR-MODULES) and its heat goes into the PWR copper through the pins"
     },
     "ip2368_board": {
       "name": "IP2368 4S 100 W PD board (retail, charge-only BZ config)",
@@ -312,7 +313,7 @@
       "sheet": [1.53, 2.32],
       "edge_min": 6.0,
       "status": "datasheet",
-      "src": "https://catalogue.zygology.com/printitems/pemsert--self-clinching-flush-fasteners---type-f/msert-self-clinching-flush-fasteners-type-f-metric (PEM table, read 2026-10-24: shank 1.53 max, sheet 1.53-2.32 mm, hole 4.37 +0.08, 'both the top and the bottom of the sheet remain smooth'); edge_min 6.00 mm from the PEM product-finder text quoted in a web search 2026-10-24 (page body not readable): confirm on the PEM bulletin before drilling"
+      "src": "PEM catalogue page https://catalog.pemnet.com/item/pemsert--self-clinching-flush-fasteners---type-f/msert-self-clinching-flush-fasteners-type-f-metric/f-m3-1 (read 2026-11-07: M3 x 0.5, sheet thickness 1.53 to 2.32 mm, hole size in sheet 4.37 +0.08, A (shank) max 1.53, C max 4.35, H nom 4.8, min distance hole C/L to edge 6.00 mm, sheet hardness HRB 70 / HB 125 or less, 300 series stainless); earlier table https://catalogue.zygology.com/printitems/pemsert--self-clinching-flush-fasteners---type-f/msert-self-clinching-flush-fasteners-type-f-metric (read 2026-10-24: 'both the top and the bottom of the sheet remain smooth'); installed with a press (build/21 E2)"
     },
     "pem_so_m3_3": {
       "name": "PEM SO-M3-3ZI thru-hole threaded standoff, 3 mm (SOS-M3-3 stainless alternative)",
@@ -323,7 +324,7 @@
       "edge_min": 6.0,
       "head_d": 4.8,
       "status": "datasheet",
-      "src": "https://catalogue.zygology.com/item/thru-hole-threaded-standoffs-types-so-soa-sos/ru-hole-threaded-standoffs-types-so-soa-sos-metric/so-m3-12zi (PEM family data on the SO-M3-12ZI page, read 2026-10-24: min sheet 1.00 mm, hole 4.22 +0.08, H 4.8, min distance hole C/L to edge 6.00 mm, sheet HRB 80 / HB 150 or less, 'installed with their heads flush with one surface of the mounting sheet'); the 3 mm length code is taken from the PEM SO family listing in a web search 2026-10-24: confirm the exact part number before ordering"
+      "src": "PEM catalogue page https://catalog.pemnet.com/item/thru-hole-threaded-standoffs-types-so-soa-sos/ru-hole-threaded-standoffs-types-so-soa-sos-metric/so-m3-3zi (read 2026-11-07: SO-M3-3ZI, M3 x 0.5, L 3 mm +0.05/-0.13, min sheet 1.00 mm, hole 4.22 +0.08, H nom 4.8, C 4.20, min distance hole C/L to edge 6.00 mm, heat-treated carbon steel zinc plated; 'installed with their heads flush with one surface of the mounting sheet'); family data first read on the SO-M3-12ZI page https://catalogue.zygology.com/item/thru-hole-threaded-standoffs-types-so-soa-sos/ru-hole-threaded-standoffs-types-so-soa-sos-metric/so-m3-12zi (2026-10-24)"
     },
     "sma_bulkhead_hw": {
       "name": "SMA bulkhead hardware envelope (1/4-36 UNS jam nut and lock washer), representative part Samtec SMA-J-C-X-ST-BH4",
@@ -342,20 +343,36 @@
       "status": "listing",
       "src": "1.0 mm per distributor listings found 2026-10-24 (RS 2186878/2209906 titles); the 3M TDS returned HTTP 403: confirm thickness, surface prep and temperature range on the 3M TDS before ordering (TBD)"
     },
-    "pv0_button": {
-      "name": "E-Switch PV0 anti-vandal pushbutton (SW301 power key), flat actuator, non-illuminated, solder terminals",
-      "cutout_d": 12.0,
+    "pv6_button": {
+      "name": "E-Switch PV6F240SS anti-vandal pushbutton (SW301 power key, SW501 EDL), flat actuator, non-illuminated, solder terminals",
+      "mpn": "PV6F240SS",
+      "cutout_d": 16.0,
       "cutout_tol": [0.0, 0.2],
-      "panel_t": [1.0, 6.0],
-      "thread": "M12x0.75",
-      "bezel_d": 14.0,
-      "above_panel": 3.0,
-      "below_bezel": 19.0,
-      "below_bezel_tol": 1.0,
-      "nut_torque_Nm": 0.6,
-      "ip": "IP67",
-      "status": "datasheet",
-      "src": "https://configured-product-images.s3.amazonaws.com/Datasheets/PV0.pdf (rev. 3.16.2026, read 2026-11-06: panel cut-out 12.00 +0.20/-0.00, panel 1-6 mm, M12 x 0.75 thread, bezel 14.00, bezel 1.50 + actuator 1.50 above the panel, 19.0 +-1.0 below the bezel to the solder terminals, nut torque 0.6 Nm, IP67, SPST off-(on)); the nut size is not on the datasheet (layout reserve 16 x 3 is an assumption, TBD); the full ordering code is built with the E-Switch configurator (parts database)"
+      "panel_t": [1.0, 10.0],
+      "thread": "M16x1.0",
+      "bezel_d": 18.0,
+      "above_panel": 1.5,
+      "below_bezel": 17.5,
+      "below_bezel_tol": 0.5,
+      "wire_reserve": 2.5,
+      "nut_d": 20.0,
+      "nut_t": 3.0,
+      "torque_Nm": 0.6,
+      "ip": "IP65",
+      "status": "datasheet+assumption",
+      "src": "https://configured-product-images.s3.amazonaws.com/Datasheets/PV6.pdf (8.28.2025, read 2026-11-06 and 2026-11-07: p.1 IP65, panel thickness 1-10 mm, recommended mounting torque 0.6 Nm, 2 A 48 VDC, SPST off-(on); p.3/6 recommended panel cut-out 16.00 +0.20/-0.00; p.5 non-illuminated body: bezel D18.00 x 1.50, M16 x 1.0 thread, 17.50 +-0.50 from the bezel to the terminal ends); the nut is not dimensioned on the datasheet: nut_d 20 x nut_t 3 is an assumption (TBD: measure); wire_reserve 2.5 for the soldered wires is a design value; part number and SKU in the parts database (SW-PV6F240SS)"
+    },
+    "harness_headers": {
+      "name": "Board-side harness headers of build/16 section 4 (courtyard and frontage per family; w = a * (pins - 1) + b, d = depth)",
+      "PH_top": {"a": 2.0, "b": 4.9, "d": 5.5, "h": 6.0, "h_mated": 8.0},
+      "PH_side": {"a": 2.0, "b": 4.9, "d": 8.6, "h": 4.8},
+      "MF_top": {"a": 3.0, "b": 7.66, "d": 6.77},
+      "MFJ_top": {"a": 2.1, "b": 9.6, "d": 13.0},
+      "IDC_top": {"a": 0.0, "b": 61.0, "d": 9.0},
+      "FAN3_top": {"a": 2.54, "b": 5.0, "d": 6.0},
+      "density": 1.8,
+      "status": "datasheet+assumption",
+      "src": "PH: JST ePH catalogue https://www.jst-mfg.com/product/pdf/eng/ePH.pdf (PDF of 27.01.2026, read 2026-11-07: through-hole headers B = 2 (n-1) + 3.9; top entry 4.5 deep, 6 high, mounting height with the housing (8); side entry 7.6 deep, 4.8 high) and the vendored KiCad 10.0.7 courtyards of JST_PH_B3B/B5B (w = 2 (n-1) + 4.9, d 5.5); side-entry d = 7.6 + 1.0 courtyard margin; MF: vendored KiCad courtyard of Molex_Micro-Fit_3.0_43650-0315 (w 13.66 for 3 pins = 3 (n-1) + 7.66, d 6.77); MFJ (Mini-Fit Jr. 5566 dual row, a per contact = 4.2/2), IDC 2x20 box and FAN3 (Molex KK 254) are assumptions: their drawings were not read (TBD); density = the placement factor of the parts estimate (boards.area_check)"
     },
     "ltw_vent": {
       "name": "Amphenol LTW VENT-PS1NBK-O8002 (M12x1.5 vent without nut, oleophobic ePTFE) for the threaded seats V1/V2; VENT-PS1YBK-O8002 is the variant with nut for through-holes 2.0-3.5 mm",

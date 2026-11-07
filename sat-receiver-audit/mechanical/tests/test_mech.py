@@ -60,7 +60,8 @@ class Params_(unittest.TestCase):
             self.skipTest("pcb/generated/components.csv not present")
         with comp.open(encoding="utf-8", newline="") as fh:
             domains = {r["board_candidate"] for r in csv.DictReader(fh) if r["board_candidate"]}
-        mine = {d for bid in ("PWR", "RF", "CTRL") for d in P.boards["boards"][bid]["domains"]}
+        mine = {d for b in P.boards["boards"].values() for d in b["domains"]}
+        mine |= {d for k, b in P.boards["small_boards"].items() if not k.startswith("_") for d in b["domains"]}
         self.assertEqual(mine, domains)
 
     def test_vendor_models_are_pinned_and_not_committed(self):
@@ -83,7 +84,7 @@ class ReceiveOnly(unittest.TestCase):
     def test_the_only_operator_controls_are_hmi_and_the_power_key(self):
         kinds = {f["kind"] for feats in face_features(P).values() for f in feats}
         self.assertNotIn("switch", kinds)
-        self.assertEqual([f["id"] for f in face_features(P)["top"] if f["kind"] == "pv0"], ["PWR_KEY"])
+        self.assertEqual([f["id"] for f in face_features(P)["top"] if f["kind"] == "pv6"], ["PWR_KEY"])
 
 
 class Seam(unittest.TestCase):
@@ -243,7 +244,7 @@ class Review(unittest.TestCase):
 
     def test_cooler_a_is_in_the_layout_and_clears_the_headers(self):
         names = {n for _, n, _, _ in layout.item_boxes(P)}
-        self.assertTrue({"cooler_a.block", "cooler_a.fins", "cooler_a.fan", "q6a.hdr2x2", "q6a.uart5_plug"} <= names)
+        self.assertTrue({"cooler_a.block", "cooler_a.fins", "cooler_a.fan", "q6a.hdr2x2", "q6a.s01_idc_socket"} <= names)
         zt = layout.q6a_top_z(P)
         fan = [b for _, n, b, _ in layout.item_boxes(P) if n == "cooler_a.fan"][0]
         self.assertLessEqual(fan[5], zt - P.parts["q6a_cooler_zone"]["fan_min_above_board"] + 1e-9)
