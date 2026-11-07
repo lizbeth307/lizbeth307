@@ -1749,7 +1749,7 @@ def main():
     signed.add_argument("--sources-entry", type=Path, required=True)
     signed.add_argument("--inrelease-sha256")
     signed.add_argument("--target-status", type=Path, help="dpkg status of the root being updated (held packages)")
-    signed.add_argument("--release", action="store_true", help="release path: REVIEWED build records and verify_build per package")
+    signed.add_argument("--release", action="store_true", help="release path: srrx-lab needs REVIEWED build records and verify_build per package; srrx-mirror (--closure) needs --inrelease-sha256")
     guard = commands.add_parser("release-guard")
     for name in ("devices", "acceptance", "release", "build-manifest", "cache"):
         guard.add_argument("--" + name, type=Path, required=True)
