@@ -1,0 +1,3011 @@
+{
+  "schema": "srrx-pwra-placement-study-v1",
+  "board_id": "PWR_A",
+  "status": "MODEL / planning result of the board_gen planner (standard library); no KiCad board, no routing, no hardware result; bench gates OPEN",
+  "generator": "build/kicad/boards/PWR_A/placement_study.py",
+  "inputs": {
+    "spec_sha256": "a1049664e25117a1c3b1704dcc7146137aacce6ddefbc9b79cf5153d38b41e0d",
+    "contract_pwr": "d5307660571f38e01e7360e185710a9cdb6d2f53f90610941286ad5198b14ca1",
+    "contract_pwr_b_outline": "43f3c25887263a48ccbffef5db4ef30274c120adea255ab19f2249678a5500c4",
+    "template_sha256": "54caa614b628ed1913658c30571d6f499bb96361fcca78d5285f5076be985f61",
+    "project_sha256": "202ab44962f558762ad5fe3ac916d928247669a4cbe85bb255d21431fa716be4"
+  },
+  "spec_checks": {
+    "validate_spec": "passed",
+    "project_rules": "passed",
+    "domain_audit": {
+      "passed": true,
+      "refs": 256,
+      "missing": [],
+      "foreign": []
+    }
+  },
+  "fill": {
+    "label": "MODEL: courtyard boxes of the vendored KiCad 10.0.7 footprints (F.CrtYd), not a routed board",
+    "outline_mm2": 7910.0,
+    "hole_keepouts_mm2": 269.3916,
+    "usable_mm2": 7640.6084,
+    "refs": 256,
+    "courtyard_sum_mm2": 6631.2884,
+    "reserved_rects_mm2": 333.7423,
+    "reserved_area_only_mm2": 359.4,
+    "demand_mm2": 7324.4307,
+    "fill_all_refs": 0.9586,
+    "budget_raw_fill": 0.959,
+    "anchored_refs": 24,
+    "anchored_mm2": 2855.686,
+    "free_after_anchors_and_reserves_mm2": 4091.7801,
+    "remaining_demand_mm2": 3775.6024,
+    "free_regions_of_spec_mm2": 3549.71,
+    "placed_refs": 160,
+    "placed_mm2": 5242.6927,
+    "fill_placed": 0.6862,
+    "unplaced_refs": 96,
+    "unplaced_mm2": 1722.338,
+    "area_to_remove_for_0_60_mm2": 2740.0656,
+    "f2_trigger": "courtyard fill of PWR-A or PWR-B > 0.60 in placement, or unrouted nets after two placement iterations (PCB-PWRA-1/2, PCB-PWRB). The model already exceeds it: raw fill PWR-A 0.972, PWR-B 1.302 for (a)",
+    "f2_fired": true,
+    "f2_fired_why": [
+      "fill of all PWR_A refs > 0.60",
+      "the planner leaves refs unplaced",
+      "fill of the placed subset alone > 0.60"
+    ],
+    "f2_options": {
+      "F2a_pololu_off_board": {
+        "what": "Pololu D36V50F12/F5 on plate standoffs (option F2a (c))",
+        "refs_removed": [
+          "U107",
+          "U108"
+        ],
+        "courtyard_removed_mm2": 1341.62,
+        "fill_all_refs": 0.783,
+        "reaches_0_60": false
+      },
+      "F2b_pcb_rear": {
+        "what": "rear-tier board taking the F2b groups; their THT radials stay on PWR-A (F2b text)",
+        "refs_removed": [
+          "C506",
+          "C508",
+          "C509",
+          "C510",
+          "C513",
+          "L501",
+          "R509",
+          "R510",
+          "R512",
+          "R513",
+          "U503"
+        ],
+        "courtyard_removed_mm2": 332.0232,
+        "fill_all_refs": 0.9152,
+        "reaches_0_60": false
+      },
+      "F2a_plus_F2b": {
+        "what": "both options together",
+        "refs_removed": [
+          "C506",
+          "C508",
+          "C509",
+          "C510",
+          "C513",
+          "L501",
+          "R509",
+          "R510",
+          "R512",
+          "R513",
+          "U107",
+          "U108",
+          "U503"
+        ],
+        "courtyard_removed_mm2": 1673.6432,
+        "fill_all_refs": 0.7396,
+        "reaches_0_60": false
+      }
+    }
+  },
+  "anchors": {
+    "rows": [
+      {
+        "ref": "C113",
+        "at": [
+          37.95,
+          64.6
+        ],
+        "rotation": 270,
+        "courtyard_box": [
+          34.4,
+          59.8,
+          41.5,
+          69.4
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true
+        }
+      },
+      {
+        "ref": "F102",
+        "at": [
+          2.22,
+          69.29
+        ],
+        "rotation": 90,
+        "courtyard_box": [
+          0.3,
+          66.0,
+          7.54,
+          82.5
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true
+        }
+      },
+      {
+        "ref": "J104",
+        "at": [
+          132.0,
+          13.83
+        ],
+        "rotation": 90,
+        "courtyard_box": [
+          129.03,
+          10.0,
+          135.8,
+          26.66
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "right"
+        }
+      },
+      {
+        "ref": "J105",
+        "at": [
+          32.85,
+          3.5
+        ],
+        "rotation": 90,
+        "courtyard_box": [
+          30.1,
+          0.3,
+          42.1,
+          6.7
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "bottom"
+        }
+      },
+      {
+        "ref": "J106",
+        "at": [
+          52.75,
+          3.5
+        ],
+        "rotation": 90,
+        "courtyard_box": [
+          50.0,
+          0.3,
+          62.0,
+          6.7
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "bottom"
+        }
+      },
+      {
+        "ref": "J107",
+        "at": [
+          10.95,
+          3.5
+        ],
+        "rotation": 90,
+        "courtyard_box": [
+          8.2,
+          0.3,
+          20.2,
+          6.7
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "bottom"
+        }
+      },
+      {
+        "ref": "J108",
+        "at": [
+          78.65,
+          3.5
+        ],
+        "rotation": 90,
+        "courtyard_box": [
+          75.9,
+          0.3,
+          87.9,
+          10.9
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "bottom"
+        }
+      },
+      {
+        "ref": "J109",
+        "at": [
+          47.05,
+          2.5
+        ],
+        "rotation": 180,
+        "courtyard_box": [
+          42.6,
+          0.3,
+          49.5,
+          5.8
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "bottom"
+        }
+      },
+      {
+        "ref": "J110",
+        "at": [
+          72.95,
+          2.5
+        ],
+        "rotation": 180,
+        "courtyard_box": [
+          62.5,
+          0.3,
+          75.4,
+          5.8
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "bottom"
+        }
+      },
+      {
+        "ref": "J111",
+        "at": [
+          27.15,
+          2.5
+        ],
+        "rotation": 180,
+        "courtyard_box": [
+          20.7,
+          0.3,
+          29.6,
+          5.8
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "bottom"
+        }
+      },
+      {
+        "ref": "J112",
+        "at": [
+          96.85,
+          2.5
+        ],
+        "rotation": 180,
+        "courtyard_box": [
+          88.4,
+          0.3,
+          99.3,
+          5.8
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "bottom"
+        }
+      },
+      {
+        "ref": "J113",
+        "at": [
+          117.7,
+          14.15
+        ],
+        "rotation": 90,
+        "courtyard_box": [
+          115.5,
+          11.7,
+          121.0,
+          18.6
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "right"
+        }
+      },
+      {
+        "ref": "J114",
+        "at": [
+          124.5,
+          4.13
+        ],
+        "rotation": 90,
+        "courtyard_box": [
+          121.53,
+          0.3,
+          128.3,
+          10.96
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "right"
+        }
+      },
+      {
+        "ref": "J115",
+        "at": [
+          124.5,
+          15.29
+        ],
+        "rotation": 90,
+        "courtyard_box": [
+          121.53,
+          11.46,
+          128.3,
+          22.12
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "right"
+        }
+      },
+      {
+        "ref": "J205",
+        "at": [
+          19.43,
+          106.83
+        ],
+        "rotation": 0,
+        "courtyard_box": [
+          15.6,
+          103.03,
+          26.26,
+          109.8
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "top_left"
+        }
+      },
+      {
+        "ref": "J206",
+        "at": [
+          112.38,
+          31.83
+        ],
+        "rotation": 0,
+        "courtyard_box": [
+          108.3,
+          25.02,
+          125.46,
+          34.8
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "top_sl2"
+        }
+      },
+      {
+        "ref": "J507",
+        "at": [
+          117.7,
+          2.75
+        ],
+        "rotation": 90,
+        "courtyard_box": [
+          115.5,
+          0.3,
+          121.0,
+          11.2
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "exit_edge": "right"
+        }
+      },
+      {
+        "ref": "R110",
+        "at": [
+          37.93,
+          73.63
+        ],
+        "rotation": 270,
+        "courtyard_box": [
+          36.0,
+          69.8,
+          39.86,
+          77.46
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true
+        }
+      },
+      {
+        "ref": "U107",
+        "at": [
+          20.7,
+          52.7
+        ],
+        "rotation": 0,
+        "courtyard_box": [
+          7.75,
+          39.75,
+          33.65,
+          65.65
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "pin_field_contract": {
+            "contract": [
+              13.5,
+              40.42,
+              27.9,
+              44.660000000000004
+            ],
+            "placed_pad_box": [
+              13.5,
+              40.42,
+              27.9,
+              44.66
+            ],
+            "max_dev_mm": 0.0,
+            "within_0_05": true
+          }
+        }
+      },
+      {
+        "ref": "U108",
+        "at": [
+          20.7,
+          84.7
+        ],
+        "rotation": 0,
+        "courtyard_box": [
+          7.75,
+          71.75,
+          33.65,
+          97.65
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "pin_field_contract": {
+            "contract": [
+              13.5,
+              72.42,
+              27.9,
+              76.66
+            ],
+            "placed_pad_box": [
+              13.5,
+              72.42,
+              27.9,
+              76.66
+            ],
+            "max_dev_mm": 0.0,
+            "within_0_05": true
+          }
+        }
+      },
+      {
+        "ref": "U204",
+        "at": [
+          46.13,
+          19.87
+        ],
+        "rotation": 0,
+        "courtyard_box": [
+          43.0,
+          17.6,
+          49.26,
+          22.14
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "inside_thermal_bond_zone": [
+            1
+          ]
+        }
+      },
+      {
+        "ref": "U205",
+        "at": [
+          46.13,
+          13.87
+        ],
+        "rotation": 0,
+        "courtyard_box": [
+          43.0,
+          11.6,
+          49.26,
+          16.14
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "inside_thermal_bond_zone": [
+            1
+          ]
+        }
+      },
+      {
+        "ref": "U211",
+        "at": [
+          12.55,
+          16.55
+        ],
+        "rotation": 0,
+        "courtyard_box": [
+          9.6,
+          13.6,
+          15.5,
+          19.5
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "inside_thermal_bond_zone": [
+            1
+          ]
+        }
+      },
+      {
+        "ref": "U213",
+        "at": [
+          75.55,
+          16.55
+        ],
+        "rotation": 0,
+        "courtyard_box": [
+          72.6,
+          13.6,
+          78.5,
+          19.5
+        ],
+        "checks": {
+          "inside_outline": true,
+          "clear_of_hole_keepouts": true,
+          "inside_thermal_bond_zone": [
+            2
+          ]
+        }
+      }
+    ],
+    "errors": [],
+    "passed": true,
+    "headers_off_their_edge": [
+      "J113",
+      "J114",
+      "J115",
+      "J507"
+    ]
+  },
+  "reserved": {
+    "rects": [
+      {
+        "id": "B2B_QSH060",
+        "rect": [
+          50.0,
+          26.6,
+          91.77,
+          34.59
+        ],
+        "area_mm2": 333.7423,
+        "inside_outline": true,
+        "overlaps_anchors": [],
+        "hole_keepouts_hit": []
+      }
+    ],
+    "area_only": [
+      {
+        "id": "PWR_B_THT_KEEPOUTS",
+        "area_mm2": 359.4,
+        "source": "pcb/partition-budget.json candidates.a.pwr_a_keepouts_mm2"
+      }
+    ]
+  },
+  "groups": [
+    {
+      "group": "LNB",
+      "members": 32,
+      "courtyard_mm2": 433.2604,
+      "placed_refs": 32,
+      "chunks": [
+        {
+          "region": "BAND_LNB",
+          "refs": 18,
+          "courtyard_mm2": 360.3716,
+          "region_mm2": 530.64
+        },
+        {
+          "region": "BAND_LEFT",
+          "refs": 13,
+          "courtyard_mm2": 68.5672,
+          "region_mm2": 153.0
+        },
+        {
+          "region": "BAND_LT_LOW",
+          "refs": 1,
+          "courtyard_mm2": 4.3216,
+          "region_mm2": 28.16
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group LNB@BAND_LEFT+: R292 overlaps U107"
+        }
+      ]
+    },
+    {
+      "group": "LNA4V5",
+      "members": 19,
+      "courtyard_mm2": 301.3248,
+      "placed_refs": 19,
+      "chunks": [
+        {
+          "region": "BAND_LNA",
+          "refs": 15,
+          "courtyard_mm2": 270.142,
+          "region_mm2": 440.38
+        },
+        {
+          "region": "BAND_LT_HIGH",
+          "refs": 2,
+          "courtyard_mm2": 14.6272,
+          "region_mm2": 28.16
+        },
+        {
+          "region": "BAND_BONI",
+          "refs": 2,
+          "courtyard_mm2": 16.5556,
+          "region_mm2": 553.28
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": []
+    },
+    {
+      "group": "BONI",
+      "members": 33,
+      "courtyard_mm2": 477.362,
+      "placed_refs": 33,
+      "chunks": [
+        {
+          "region": "BAND_BOTTOM_R",
+          "refs": 5,
+          "courtyard_mm2": 136.64,
+          "region_mm2": 166.92
+        },
+        {
+          "region": "BAND_COL3_TOP",
+          "refs": 2,
+          "courtyard_mm2": 21.384,
+          "region_mm2": 34.22
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "refs": 1,
+          "courtyard_mm2": 10.3056,
+          "region_mm2": 16.32
+        },
+        {
+          "region": "BAND_TOP_LEFT",
+          "refs": 6,
+          "courtyard_mm2": 187.3468,
+          "region_mm2": 326.82
+        },
+        {
+          "region": "BAND_TOP_MID",
+          "refs": 11,
+          "courtyard_mm2": 78.5712,
+          "region_mm2": 129.56
+        },
+        {
+          "region": "LEG_BOTTOM",
+          "refs": 7,
+          "courtyard_mm2": 38.7928,
+          "region_mm2": 113.96
+        },
+        {
+          "region": "LEG_LEFT_LOW",
+          "refs": 1,
+          "courtyard_mm2": 4.3216,
+          "region_mm2": 222.65
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [
+        {
+          "region": "BAND_COL3_TOP",
+          "first_refusal": "U214 (5.4 x 8.45) does not fit region [115.5, 18.9, 121.3, 24.8]"
+        },
+        {
+          "region": "BAND_COL3_TOP",
+          "first_refusal": "Q2903 (5.4 x 7.4) does not fit region [115.5, 18.9, 121.3, 24.8]"
+        },
+        {
+          "region": "BAND_COL3_TOP",
+          "first_refusal": "L213 (5.98 x 6.18) does not fit region [115.5, 18.9, 121.3, 24.8]"
+        },
+        {
+          "region": "BAND_COL3_TOP",
+          "first_refusal": "L214 (5.98 x 6.18) does not fit region [115.5, 18.9, 121.3, 24.8]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "U214 (8.45 x 5.4) does not fit region [121.5, 22.4, 128.3, 24.8]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "Q2903 (7.4 x 5.4) does not fit region [121.5, 22.4, 128.3, 24.8]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "L213 (6.18 x 5.98) does not fit region [121.5, 22.4, 128.3, 24.8]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "L214 (6.18 x 5.98) does not fit region [121.5, 22.4, 128.3, 24.8]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "C294 (4.6 x 3.2) does not fit region [121.5, 22.4, 128.3, 24.8]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "D2903 (3.86 x 3.4) does not fit region [121.5, 22.4, 128.3, 24.8]"
+        },
+        {
+          "region": "BAND_COL2_TOP",
+          "first_refusal": "Q2913 (3.86 x 3.4) does not fit region [121.5, 22.4, 128.3, 24.8]"
+        }
+      ]
+    },
+    {
+      "group": "INA3221_2",
+      "members": 11,
+      "courtyard_mm2": 67.226,
+      "placed_refs": 11,
+      "chunks": [
+        {
+          "region": "LEG_LEFT_HIGH",
+          "refs": 11,
+          "courtyard_mm2": 67.226,
+          "region_mm2": 141.62
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": []
+    },
+    {
+      "group": "LAB5",
+      "members": 7,
+      "courtyard_mm2": 290.2396,
+      "placed_refs": 7,
+      "chunks": [
+        {
+          "region": "LEG_RIGHT_HIGH",
+          "refs": 4,
+          "courtyard_mm2": 149.234,
+          "region_mm2": 193.55
+        },
+        {
+          "region": "LEG_RIGHT_LOW",
+          "refs": 2,
+          "courtyard_mm2": 89.75,
+          "region_mm2": 135.09
+        },
+        {
+          "region": "BAND_BONI+",
+          "refs": 1,
+          "courtyard_mm2": 51.2556,
+          "region_mm2": 444.08
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [
+        {
+          "region": "LEG_MID",
+          "first_refusal": "L101 (7.26 x 7.06) does not fit region [15.8, 65.9, 33.65, 71.5]"
+        },
+        {
+          "region": "LEG_TOP",
+          "first_refusal": "L101 (7.26 x 7.06) does not fit region [7.8, 97.9, 34.3, 102.8]"
+        },
+        {
+          "region": "LEG_TOP_L",
+          "first_refusal": "L101 (7.26 x 7.06) does not fit region [7.8, 102.8, 15.3, 109.7]"
+        },
+        {
+          "region": "LEG_TOP_R",
+          "first_refusal": "L101 (7.26 x 7.06) does not fit region [26.5, 102.8, 34.3, 109.7]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "L101 (7.26 x 7.06) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LT_LOW+",
+          "first_refusal": "L101 (7.26 x 7.06) does not fit region [43.0, 7.0, 49.4, 9.44]"
+        }
+      ]
+    },
+    {
+      "group": "SYS12",
+      "members": 5,
+      "courtyard_mm2": 88.2972,
+      "placed_refs": 5,
+      "chunks": [
+        {
+          "region": "LEG_MID",
+          "refs": 4,
+          "courtyard_mm2": 21.5572,
+          "region_mm2": 99.96
+        },
+        {
+          "region": "LEG_LEFT_LOW+",
+          "refs": 1,
+          "courtyard_mm2": 66.74,
+          "region_mm2": 197.392
+        }
+      ],
+      "unplaced_refs": [],
+      "regions_refused": [
+        {
+          "region": "LEG_MID",
+          "first_refusal": "C107 (9.4 x 7.1) does not fit region [15.8, 65.9, 33.65, 71.5]"
+        },
+        {
+          "region": "LEG_MID+",
+          "first_refusal": "C107 (9.4 x 7.1) does not fit region [15.8, 65.9, 33.65, 68.5]"
+        },
+        {
+          "region": "LEG_TOP",
+          "first_refusal": "C107 (9.4 x 7.1) does not fit region [7.8, 97.9, 34.3, 102.8]"
+        },
+        {
+          "region": "LEG_TOP_L",
+          "first_refusal": "C107 (9.4 x 7.1) does not fit region [7.8, 102.8, 15.3, 109.7]"
+        },
+        {
+          "region": "LEG_TOP_R",
+          "first_refusal": "C107 (9.4 x 7.1) does not fit region [26.5, 102.8, 34.3, 109.7]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "C107 (9.4 x 7.1) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LT_LOW+",
+          "first_refusal": "C107 (9.4 x 7.1) does not fit region [43.0, 7.0, 49.4, 9.44]"
+        }
+      ]
+    },
+    {
+      "group": "J21",
+      "members": 20,
+      "courtyard_mm2": 411.9912,
+      "placed_refs": 19,
+      "chunks": [
+        {
+          "region": "LEG_TOP",
+          "refs": 5,
+          "courtyard_mm2": 81.0056,
+          "region_mm2": 129.85
+        },
+        {
+          "region": "LEG_TOP_L",
+          "refs": 1,
+          "courtyard_mm2": 46.24,
+          "region_mm2": 51.75
+        },
+        {
+          "region": "LEG_TOP_R",
+          "refs": 1,
+          "courtyard_mm2": 36.9564,
+          "region_mm2": 53.82
+        },
+        {
+          "region": "BAND_LT_LOW+",
+          "refs": 1,
+          "courtyard_mm2": 6.664,
+          "region_mm2": 15.616
+        },
+        {
+          "region": "LEG_LEFT_HIGH+",
+          "refs": 2,
+          "courtyard_mm2": 12.914,
+          "region_mm2": 26.426
+        },
+        {
+          "region": "BAND_BONI++",
+          "refs": 8,
+          "courtyard_mm2": 36.5012,
+          "region_mm2": 168.896
+        },
+        {
+          "region": "LEG_LEFT_LOW++",
+          "refs": 1,
+          "courtyard_mm2": 119.46,
+          "region_mm2": 125.122
+        }
+      ],
+      "unplaced_refs": [
+        "C207"
+      ],
+      "regions_refused": [
+        {
+          "region": "LEG_TOP",
+          "first_refusal": "F201 (16.5 x 7.24) does not fit region [7.8, 97.9, 34.3, 102.8]"
+        },
+        {
+          "region": "LEG_TOP",
+          "first_refusal": "C207 (8.5 x 8.5) does not fit region [7.8, 97.9, 34.3, 102.8]"
+        },
+        {
+          "region": "LEG_TOP",
+          "first_refusal": "C206 (6.800000000000001 x 6.800000000000001) does not fit region [7.8, 97.9, 34.3, 102.8]"
+        },
+        {
+          "region": "LEG_TOP",
+          "first_refusal": "L201 (6.18 x 5.98) does not fit region [7.8, 97.9, 34.3, 102.8]"
+        },
+        {
+          "region": "LEG_TOP_L",
+          "first_refusal": "F201 (16.5 x 7.24) does not fit region [7.8, 102.8, 15.3, 109.7]"
+        },
+        {
+          "region": "LEG_TOP_L",
+          "first_refusal": "C207 (8.5 x 8.5) does not fit region [7.8, 102.8, 15.3, 109.7]"
+        },
+        {
+          "region": "LEG_TOP_R",
+          "first_refusal": "F201 (16.5 x 7.24) does not fit region [26.5, 102.8, 34.3, 109.7]"
+        },
+        {
+          "region": "LEG_TOP_R",
+          "first_refusal": "C207 (8.5 x 8.5) does not fit region [26.5, 102.8, 34.3, 109.7]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "F201 (16.5 x 7.24) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "C207 (8.5 x 8.5) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group J21@BAND_LEFT+: C202 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group J21@BAND_LEFT+: C203 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group J21@BAND_LEFT+: TP201 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group J21@BAND_LEFT+: TP213 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group J21@BAND_LEFT+: C201 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group J21@BAND_LEFT+: R201 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group J21@BAND_LEFT+: R202 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group J21@BAND_LEFT+: R203 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group J21@BAND_LEFT+: R204 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group J21@BAND_LEFT+: R205 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group J21@BAND_LEFT+: R206 overlaps U107"
+        },
+        {
+          "region": "BAND_LT_LOW+",
+          "first_refusal": "F201 (16.5 x 7.24) does not fit region [43.0, 7.0, 49.4, 9.44]"
+        },
+        {
+          "region": "BAND_LT_LOW+",
+          "first_refusal": "C207 (8.5 x 8.5) does not fit region [43.0, 7.0, 49.4, 9.44]"
+        },
+        {
+          "region": "LEG_LEFT_HIGH+",
+          "first_refusal": "F201 (16.5 x 7.24) does not fit region [0.3, 82.8, 7.6, 86.42]"
+        },
+        {
+          "region": "LEG_LEFT_HIGH+",
+          "first_refusal": "C207 (8.5 x 8.5) does not fit region [0.3, 82.8, 7.6, 86.42]"
+        },
+        {
+          "region": "BAND_BONI++",
+          "first_refusal": "F201 (16.5 x 7.24) does not fit region [78.8, 11.2, 115.2, 15.84]"
+        },
+        {
+          "region": "BAND_BONI++",
+          "first_refusal": "C207 (8.5 x 8.5) does not fit region [78.8, 11.2, 115.2, 15.84]"
+        },
+        {
+          "region": "BAND_BONI+++",
+          "first_refusal": "F201 (16.5 x 7.24) does not fit region [78.8, 11.2, 115.2, 12.84]"
+        },
+        {
+          "region": "BAND_BONI+++",
+          "first_refusal": "C207 (8.5 x 8.5) does not fit region [78.8, 11.2, 115.2, 12.84]"
+        },
+        {
+          "region": "LEG_MID+",
+          "first_refusal": "F201 (16.5 x 7.24) does not fit region [15.8, 65.9, 33.65, 68.5]"
+        },
+        {
+          "region": "LEG_MID+",
+          "first_refusal": "C207 (8.5 x 8.5) does not fit region [15.8, 65.9, 33.65, 68.5]"
+        }
+      ]
+    },
+    {
+      "group": "DISP",
+      "members": 16,
+      "courtyard_mm2": 183.1096,
+      "placed_refs": 10,
+      "chunks": [
+        {
+          "region": "LEG_MID+",
+          "refs": 4,
+          "courtyard_mm2": 29.8836,
+          "region_mm2": 46.41
+        },
+        {
+          "region": "BAND_BONI+++",
+          "refs": 6,
+          "courtyard_mm2": 25.9296,
+          "region_mm2": 59.696
+        }
+      ],
+      "unplaced_refs": [
+        "C208",
+        "C209",
+        "C210",
+        "L202",
+        "TP214",
+        "U202"
+      ],
+      "regions_refused": [
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "C210 (6.800000000000001 x 6.800000000000001) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "L202 (6.18 x 5.98) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "C208 (4.6 x 3.2) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "C209 (4.6 x 3.2) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group DISP@BAND_LEFT+: R208 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "U202 (2.9 x 2.9) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group DISP@BAND_LEFT+: C212 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group DISP@BAND_LEFT+: C213 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group DISP@BAND_LEFT+: TP202 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group DISP@BAND_LEFT+: TP214 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group DISP@BAND_LEFT+: C211 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group DISP@BAND_LEFT+: R209 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group DISP@BAND_LEFT+: R210 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group DISP@BAND_LEFT+: R211 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group DISP@BAND_LEFT+: R212 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group DISP@BAND_LEFT+: R213 overlaps U107"
+        },
+        {
+          "region": "LEG_MID+",
+          "first_refusal": "C210 (6.800000000000001 x 6.800000000000001) does not fit region [15.8, 65.9, 33.65, 68.5]"
+        },
+        {
+          "region": "LEG_MID+",
+          "first_refusal": "L202 (6.18 x 5.98) does not fit region [15.8, 65.9, 33.65, 68.5]"
+        },
+        {
+          "region": "LEG_MID+",
+          "first_refusal": "C208 (4.6 x 3.2) does not fit region [15.8, 65.9, 33.65, 68.5]"
+        },
+        {
+          "region": "LEG_MID+",
+          "first_refusal": "C209 (4.6 x 3.2) does not fit region [15.8, 65.9, 33.65, 68.5]"
+        },
+        {
+          "region": "BAND_BONI+++",
+          "first_refusal": "C210 (6.800000000000001 x 6.800000000000001) does not fit region [78.8, 11.2, 115.2, 12.84]"
+        },
+        {
+          "region": "BAND_BONI+++",
+          "first_refusal": "L202 (6.18 x 5.98) does not fit region [78.8, 11.2, 115.2, 12.84]"
+        },
+        {
+          "region": "BAND_BONI+++",
+          "first_refusal": "C208 (4.6 x 3.2) does not fit region [78.8, 11.2, 115.2, 12.84]"
+        },
+        {
+          "region": "BAND_BONI+++",
+          "first_refusal": "C209 (4.6 x 3.2) does not fit region [78.8, 11.2, 115.2, 12.84]"
+        },
+        {
+          "region": "BAND_BONI+++",
+          "first_refusal": "U202 (2.9 x 2.9) does not fit region [78.8, 11.2, 115.2, 12.84]"
+        },
+        {
+          "region": "BAND_BONI+++",
+          "first_refusal": "TP214 (2.5 x 2.5) does not fit region [78.8, 11.2, 115.2, 12.84]"
+        }
+      ]
+    },
+    {
+      "group": "LIME",
+      "members": 14,
+      "courtyard_mm2": 172.538,
+      "placed_refs": 0,
+      "chunks": [],
+      "unplaced_refs": [
+        "C214",
+        "C215",
+        "C216",
+        "C217",
+        "C218",
+        "C219",
+        "L203",
+        "R214",
+        "R215",
+        "R216",
+        "R218",
+        "R219",
+        "TP203",
+        "U203"
+      ],
+      "regions_refused": [
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "C219 (6.800000000000001 x 6.800000000000001) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "L203 (6.18 x 5.98) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "C217 (4.6 x 3.2) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "C218 (4.6 x 3.2) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group LIME@BAND_LEFT+: R219 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "U203 (2.9 x 2.9) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group LIME@BAND_LEFT+: C215 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group LIME@BAND_LEFT+: C216 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group LIME@BAND_LEFT+: TP203 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group LIME@BAND_LEFT+: C214 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group LIME@BAND_LEFT+: R214 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group LIME@BAND_LEFT+: R215 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group LIME@BAND_LEFT+: R216 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group LIME@BAND_LEFT+: R218 overlaps U107"
+        }
+      ]
+    },
+    {
+      "group": "AUX12",
+      "members": 12,
+      "courtyard_mm2": 191.4148,
+      "placed_refs": 0,
+      "chunks": [],
+      "unplaced_refs": [
+        "C220",
+        "C221",
+        "C222",
+        "F202",
+        "L204",
+        "Q201",
+        "Q202",
+        "R220",
+        "R221",
+        "R222",
+        "R223",
+        "TP204"
+      ],
+      "regions_refused": [
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "C222 (6.800000000000001 x 6.800000000000001) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "L204 (6.18 x 5.98) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "F202 (5.9 x 3.9) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "C220 (4.6 x 3.2) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "C221 (4.6 x 3.2) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "Q201 (3.86 x 3.4) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "Q202 (3.86 x 3.4) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group AUX12@BAND_LEFT+: R223 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group AUX12@BAND_LEFT+: TP204 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group AUX12@BAND_LEFT+: R220 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group AUX12@BAND_LEFT+: R221 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group AUX12@BAND_LEFT+: R222 overlaps U107"
+        }
+      ]
+    },
+    {
+      "group": "HFP",
+      "members": 12,
+      "courtyard_mm2": 306.4332,
+      "placed_refs": 0,
+      "chunks": [],
+      "unplaced_refs": [
+        "C508",
+        "C509",
+        "C510",
+        "C511",
+        "C512",
+        "C513",
+        "L501",
+        "R509",
+        "R510",
+        "R512",
+        "R513",
+        "U503"
+      ],
+      "regions_refused": [
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "L501 (13.0 x 13.0) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "C512 (6.800000000000001 x 6.800000000000001) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "C511 (5.5 x 5.5) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "R512 (4.56 x 3.16) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "U503 (4.1 x 3.4) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group HFP@BAND_LEFT+: C509 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group HFP@BAND_LEFT+: C508 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group HFP@BAND_LEFT+: C510 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group HFP@BAND_LEFT+: C513 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group HFP@BAND_LEFT+: R509 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group HFP@BAND_LEFT+: R510 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group HFP@BAND_LEFT+: R513 overlaps U107"
+        }
+      ]
+    },
+    {
+      "group": "E1_SERVICE",
+      "members": 1,
+      "courtyard_mm2": 119.46,
+      "placed_refs": 0,
+      "chunks": [],
+      "unplaced_refs": [
+        "F103"
+      ],
+      "regions_refused": [
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "F103 (16.5 x 7.24) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        }
+      ]
+    },
+    {
+      "group": "E1_CTRL",
+      "members": 28,
+      "courtyard_mm2": 256.7348,
+      "placed_refs": 0,
+      "chunks": [],
+      "unplaced_refs": [
+        "C103",
+        "C104",
+        "C105",
+        "C106",
+        "C114",
+        "D101",
+        "D102",
+        "D103",
+        "D104",
+        "D105",
+        "Q101",
+        "R103",
+        "R104",
+        "R105",
+        "R106",
+        "R107",
+        "R111",
+        "R112",
+        "R121",
+        "R122",
+        "R123",
+        "TP104",
+        "TP105",
+        "TP106",
+        "TP107",
+        "TP108",
+        "U103",
+        "U104"
+      ],
+      "regions_refused": [
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "D104 (7.3 x 4.5) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "D105 (7.3 x 4.5) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "U103 (4.1 x 3.4) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "U104 (4.1 x 3.4) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "D101 (3.86 x 3.4) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "D102 (3.86 x 3.4) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "D103 (3.86 x 3.4) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "Q101 (3.86 x 3.4) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_CTRL@BAND_LEFT+: C103 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_CTRL@BAND_LEFT+: R103 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_CTRL@BAND_LEFT+: C104 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_CTRL@BAND_LEFT+: TP104 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_CTRL@BAND_LEFT+: TP105 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_CTRL@BAND_LEFT+: TP106 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_CTRL@BAND_LEFT+: TP107 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_CTRL@BAND_LEFT+: TP108 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_CTRL@BAND_LEFT+: C105 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_CTRL@BAND_LEFT+: C106 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_CTRL@BAND_LEFT+: C114 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_CTRL@BAND_LEFT+: R104 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_CTRL@BAND_LEFT+: R105 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_CTRL@BAND_LEFT+: R106 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_CTRL@BAND_LEFT+: R107 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_CTRL@BAND_LEFT+: R111 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_CTRL@BAND_LEFT+: R112 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_CTRL@BAND_LEFT+: R121 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_CTRL@BAND_LEFT+: R122 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_CTRL@BAND_LEFT+: R123 overlaps U107"
+        }
+      ]
+    },
+    {
+      "group": "E1_USBPD",
+      "members": 9,
+      "courtyard_mm2": 49.596,
+      "placed_refs": 0,
+      "chunks": [],
+      "unplaced_refs": [
+        "C115",
+        "C116",
+        "C117",
+        "R113",
+        "R114",
+        "R115",
+        "R116",
+        "TP103",
+        "U109"
+      ],
+      "regions_refused": [
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "U109 (2.9 x 2.9) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_USBPD@BAND_LEFT+: C116 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_USBPD@BAND_LEFT+: C117 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_USBPD@BAND_LEFT+: TP103 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_USBPD@BAND_LEFT+: C115 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_USBPD@BAND_LEFT+: R113 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_USBPD@BAND_LEFT+: R114 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_USBPD@BAND_LEFT+: R115 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E1_USBPD@BAND_LEFT+: R116 overlaps U107"
+        }
+      ]
+    },
+    {
+      "group": "E5_SERVICE",
+      "members": 6,
+      "courtyard_mm2": 47.0948,
+      "placed_refs": 0,
+      "chunks": [],
+      "unplaced_refs": [
+        "C552",
+        "C553",
+        "R553",
+        "TP503",
+        "U551",
+        "U553"
+      ],
+      "regions_refused": [
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "U551 (4.1 x 3.4) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "U553 (4.1 x 3.4) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E5_SERVICE@BAND_LEFT+: TP503 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E5_SERVICE@BAND_LEFT+: C552 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E5_SERVICE@BAND_LEFT+: C553 overlaps U107"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "group E5_SERVICE@BAND_LEFT+: R553 overlaps U107"
+        }
+      ]
+    },
+    {
+      "group": "E5_RTLA_LAB",
+      "members": 1,
+      "courtyard_mm2": 102.08,
+      "placed_refs": 0,
+      "chunks": [],
+      "unplaced_refs": [
+        "C506"
+      ],
+      "regions_refused": [
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "C506 (11.6 x 8.8) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        }
+      ]
+    },
+    {
+      "group": "PWRB_RADIALS",
+      "members": 6,
+      "courtyard_mm2": 277.44,
+      "placed_refs": 0,
+      "chunks": [],
+      "unplaced_refs": [
+        "C235",
+        "C239",
+        "C243",
+        "C247",
+        "C251",
+        "C298"
+      ],
+      "regions_refused": [
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "C235 (6.800000000000001 x 6.800000000000001) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "C239 (6.800000000000001 x 6.800000000000001) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "C243 (6.800000000000001 x 6.800000000000001) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "C247 (6.800000000000001 x 6.800000000000001) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "C251 (6.800000000000001 x 6.800000000000001) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        },
+        {
+          "region": "BAND_LEFT+",
+          "first_refusal": "C298 (6.800000000000001 x 6.800000000000001) does not fit region [0.3, 9.8, 9.3, 12.58]"
+        }
+      ]
+    }
+  ],
+  "unplaced_refs": [
+    "C103",
+    "C104",
+    "C105",
+    "C106",
+    "C114",
+    "C115",
+    "C116",
+    "C117",
+    "C207",
+    "C208",
+    "C209",
+    "C210",
+    "C214",
+    "C215",
+    "C216",
+    "C217",
+    "C218",
+    "C219",
+    "C220",
+    "C221",
+    "C222",
+    "C235",
+    "C239",
+    "C243",
+    "C247",
+    "C251",
+    "C298",
+    "C506",
+    "C508",
+    "C509",
+    "C510",
+    "C511",
+    "C512",
+    "C513",
+    "C552",
+    "C553",
+    "D101",
+    "D102",
+    "D103",
+    "D104",
+    "D105",
+    "F103",
+    "F202",
+    "L202",
+    "L203",
+    "L204",
+    "L501",
+    "Q101",
+    "Q201",
+    "Q202",
+    "R103",
+    "R104",
+    "R105",
+    "R106",
+    "R107",
+    "R111",
+    "R112",
+    "R113",
+    "R114",
+    "R115",
+    "R116",
+    "R121",
+    "R122",
+    "R123",
+    "R214",
+    "R215",
+    "R216",
+    "R218",
+    "R219",
+    "R220",
+    "R221",
+    "R222",
+    "R223",
+    "R509",
+    "R510",
+    "R512",
+    "R513",
+    "R553",
+    "TP103",
+    "TP104",
+    "TP105",
+    "TP106",
+    "TP107",
+    "TP108",
+    "TP203",
+    "TP204",
+    "TP214",
+    "TP503",
+    "U103",
+    "U104",
+    "U109",
+    "U202",
+    "U203",
+    "U503",
+    "U551",
+    "U553"
+  ],
+  "exit_edges": {
+    "bottom": {
+      "edge": "bottom",
+      "at": null,
+      "span": [
+        0,
+        136
+      ],
+      "use": "battery circuit (Mini-Fit Jr., 18 AWG), BMS and IP2368 leads",
+      "hole_keepout_chords": [
+        [
+          0.5,
+          7.5
+        ],
+        [
+          128.5,
+          135.5
+        ]
+      ],
+      "free_length_mm": 122.0,
+      "pwr_a_headers": [
+        {
+          "ref": "J105",
+          "extent_mm": 12.0
+        },
+        {
+          "ref": "J106",
+          "extent_mm": 12.0
+        },
+        {
+          "ref": "J107",
+          "extent_mm": 12.0
+        },
+        {
+          "ref": "J108",
+          "extent_mm": 12.0
+        },
+        {
+          "ref": "J109",
+          "extent_mm": 6.9
+        },
+        {
+          "ref": "J110",
+          "extent_mm": 12.9
+        },
+        {
+          "ref": "J111",
+          "extent_mm": 8.9
+        },
+        {
+          "ref": "J112",
+          "extent_mm": 10.9
+        }
+      ],
+      "pwr_b_headers_long_side": [],
+      "pwr_a_need_mm": 87.6,
+      "pwr_a_plus_pwr_b_need_mm": 87.6,
+      "single_row_fits": true
+    },
+    "right": {
+      "edge": "right",
+      "at": null,
+      "span": [
+        0,
+        35
+      ],
+      "use": "blower, BMS, CTRL harness S02 (JST PH, Micro-Fit); bottom-row ports and GX16 through plate slot SL3",
+      "hole_keepout_chords": [
+        [
+          2.5,
+          9.5
+        ],
+        [
+          27.5,
+          34.5
+        ]
+      ],
+      "free_length_mm": 21.0,
+      "pwr_a_headers": [
+        {
+          "ref": "J104",
+          "extent_mm": 16.66
+        },
+        {
+          "ref": "J113",
+          "extent_mm": 6.9
+        },
+        {
+          "ref": "J114",
+          "extent_mm": 10.66
+        },
+        {
+          "ref": "J115",
+          "extent_mm": 10.66
+        },
+        {
+          "ref": "J507",
+          "extent_mm": 10.9
+        }
+      ],
+      "pwr_b_headers_long_side": [
+        {
+          "ref": "J201",
+          "footprint": "Connector_JST:JST_PH_S5B-PH-K_1x05_P2.00mm_Horizontal",
+          "extent_mm": 12.9
+        },
+        {
+          "ref": "J202",
+          "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
+          "extent_mm": 22.9
+        },
+        {
+          "ref": "J203",
+          "footprint": "Connector_JST:JST_PHD_S20B-PHDSS_2x10_P2.00mm_Horizontal",
+          "extent_mm": 22.9
+        },
+        {
+          "ref": "J506",
+          "footprint": "Connector_JST:JST_PH_S3B-PH-K_1x03_P2.00mm_Horizontal",
+          "extent_mm": 8.9
+        },
+        {
+          "ref": "J508",
+          "footprint": "Connector_JST:JST_PH_S6B-PH-K_1x06_P2.00mm_Horizontal",
+          "extent_mm": 14.9
+        }
+      ],
+      "pwr_a_need_mm": 55.78,
+      "pwr_a_plus_pwr_b_need_mm": 138.28,
+      "single_row_fits": false
+    },
+    "top_left": {
+      "edge": "top",
+      "at": null,
+      "span": [
+        0,
+        42
+      ],
+      "use": "DISP12 to the HDMI board (Micro-Fit 3.0)",
+      "hole_keepout_chords": [
+        [
+          0.5,
+          7.5
+        ],
+        [
+          34.5,
+          41.5
+        ]
+      ],
+      "free_length_mm": 28.0,
+      "pwr_a_headers": [
+        {
+          "ref": "J205",
+          "extent_mm": 10.66
+        }
+      ],
+      "pwr_b_headers_long_side": [],
+      "pwr_a_need_mm": 10.66,
+      "pwr_a_plus_pwr_b_need_mm": 10.66,
+      "single_row_fits": true
+    },
+    "top_sl2": {
+      "edge": "top",
+      "at": 35,
+      "span": [
+        108,
+        128
+      ],
+      "use": "rear-layer harness through plate slot SL2 (S04, S13, S14, S17, S18, S20-S22, S35; JST PH, Micro-Fit)",
+      "hole_keepout_chords": [],
+      "free_length_mm": 20.0,
+      "pwr_a_headers": [
+        {
+          "ref": "J206",
+          "extent_mm": 17.16
+        }
+      ],
+      "pwr_b_headers_long_side": [
+        {
+          "ref": "J204",
+          "footprint": "Connector_JST:JST_PH_S8B-PH-K_1x08_P2.00mm_Horizontal",
+          "extent_mm": 18.9
+        },
+        {
+          "ref": "J207",
+          "footprint": "Connector_JST:JST_PH_S12B-PH-K_1x12_P2.00mm_Horizontal",
+          "extent_mm": 26.9
+        }
+      ],
+      "pwr_a_need_mm": 17.16,
+      "pwr_a_plus_pwr_b_need_mm": 62.96,
+      "single_row_fits": false
+    }
+  },
+  "pwr_b_cutouts": {
+    "rule": "pcb/partition-spec.json height_rule and keepouts: courtyard + window_margin for parts taller than hA and for the PWR-A headers; a probe window of tp_probe_window for a test point",
+    "placed": [
+      {
+        "ref": "C107",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          -0.2,
+          52.34,
+          7.9,
+          62.74
+        ],
+        "area_mm2": 84.24
+      },
+      {
+        "ref": "C109",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          33.4,
+          42.4,
+          41.5,
+          52.8
+        ],
+        "area_mm2": 84.24
+      },
+      {
+        "ref": "C111",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          33.4,
+          92.2,
+          41.5,
+          102.8
+        ],
+        "area_mm2": 85.86
+      },
+      {
+        "ref": "C112",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          33.4,
+          82.1,
+          41.5,
+          92.7
+        ],
+        "area_mm2": 85.86
+      },
+      {
+        "ref": "C113",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          33.9,
+          59.3,
+          42.0,
+          69.9
+        ],
+        "area_mm2": 85.86
+      },
+      {
+        "ref": "C206",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          7.3,
+          102.4,
+          15.1,
+          110.2
+        ],
+        "area_mm2": 60.84
+      },
+      {
+        "ref": "C225",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          49.1,
+          19.1,
+          56.9,
+          26.9
+        ],
+        "area_mm2": 60.84
+      },
+      {
+        "ref": "C254",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          15.3,
+          19.5,
+          23.1,
+          27.3
+        ],
+        "area_mm2": 60.84
+      },
+      {
+        "ref": "C262",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          22.6,
+          19.5,
+          30.4,
+          27.3
+        ],
+        "area_mm2": 60.84
+      },
+      {
+        "ref": "C265",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          99.1,
+          3.7,
+          106.9,
+          11.5
+        ],
+        "area_mm2": 60.84
+      },
+      {
+        "ref": "C273",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          106.4,
+          3.7,
+          114.2,
+          11.5
+        ],
+        "area_mm2": 60.84
+      },
+      {
+        "ref": "F102",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          -0.2,
+          65.5,
+          8.04,
+          83.0
+        ],
+        "area_mm2": 144.2
+      },
+      {
+        "ref": "F201",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          -0.2,
+          35.34,
+          8.04,
+          52.84
+        ],
+        "area_mm2": 144.2
+      },
+      {
+        "ref": "J104",
+        "kind": "header_edge_strip",
+        "rect": [
+          128.53,
+          9.5,
+          136.3,
+          27.16
+        ],
+        "area_mm2": 137.2182
+      },
+      {
+        "ref": "J105",
+        "kind": "header_edge_strip",
+        "rect": [
+          29.6,
+          -0.2,
+          42.6,
+          7.2
+        ],
+        "area_mm2": 96.2
+      },
+      {
+        "ref": "J106",
+        "kind": "header_edge_strip",
+        "rect": [
+          49.5,
+          -0.2,
+          62.5,
+          7.2
+        ],
+        "area_mm2": 96.2
+      },
+      {
+        "ref": "J107",
+        "kind": "header_edge_strip",
+        "rect": [
+          7.7,
+          -0.2,
+          20.7,
+          7.2
+        ],
+        "area_mm2": 96.2
+      },
+      {
+        "ref": "J108",
+        "kind": "header_edge_strip",
+        "rect": [
+          75.4,
+          -0.2,
+          88.4,
+          11.4
+        ],
+        "area_mm2": 150.8
+      },
+      {
+        "ref": "J109",
+        "kind": "header_edge_strip",
+        "rect": [
+          42.1,
+          -0.2,
+          50.0,
+          6.3
+        ],
+        "area_mm2": 51.35
+      },
+      {
+        "ref": "J110",
+        "kind": "header_edge_strip",
+        "rect": [
+          62.0,
+          -0.2,
+          75.9,
+          6.3
+        ],
+        "area_mm2": 90.35
+      },
+      {
+        "ref": "J111",
+        "kind": "header_edge_strip",
+        "rect": [
+          20.2,
+          -0.2,
+          30.1,
+          6.3
+        ],
+        "area_mm2": 64.35
+      },
+      {
+        "ref": "J112",
+        "kind": "header_edge_strip",
+        "rect": [
+          87.9,
+          -0.2,
+          99.8,
+          6.3
+        ],
+        "area_mm2": 77.35
+      },
+      {
+        "ref": "J113",
+        "kind": "header_edge_strip",
+        "rect": [
+          115.0,
+          11.2,
+          121.5,
+          19.1
+        ],
+        "area_mm2": 51.35
+      },
+      {
+        "ref": "J114",
+        "kind": "header_edge_strip",
+        "rect": [
+          121.03,
+          -0.2,
+          128.8,
+          11.46
+        ],
+        "area_mm2": 90.5982
+      },
+      {
+        "ref": "J115",
+        "kind": "header_edge_strip",
+        "rect": [
+          121.03,
+          10.96,
+          128.8,
+          22.62
+        ],
+        "area_mm2": 90.5982
+      },
+      {
+        "ref": "J205",
+        "kind": "header_edge_strip",
+        "rect": [
+          15.1,
+          102.53,
+          26.76,
+          110.3
+        ],
+        "area_mm2": 90.5982
+      },
+      {
+        "ref": "J206",
+        "kind": "header_edge_strip",
+        "rect": [
+          107.8,
+          24.52,
+          125.96,
+          35.3
+        ],
+        "area_mm2": 195.7648
+      },
+      {
+        "ref": "J507",
+        "kind": "header_edge_strip",
+        "rect": [
+          115.0,
+          -0.2,
+          121.5,
+          11.7
+        ],
+        "area_mm2": 77.35
+      },
+      {
+        "ref": "L101",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          78.3,
+          15.84,
+          86.56,
+          23.9
+        ],
+        "area_mm2": 66.5756
+      },
+      {
+        "ref": "TP101",
+        "kind": "test_point_probe_window",
+        "rect": [
+          15.55,
+          68.75,
+          18.55,
+          71.75
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP102",
+        "kind": "test_point_probe_window",
+        "rect": [
+          36.11,
+          79.35,
+          39.11,
+          82.35
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP201",
+        "kind": "test_point_probe_window",
+        "rect": [
+          0.05,
+          83.67,
+          3.05,
+          86.67
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP202",
+        "kind": "test_point_probe_window",
+        "rect": [
+          15.55,
+          65.75,
+          18.55,
+          68.75
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP205",
+        "kind": "test_point_probe_window",
+        "rect": [
+          78.55,
+          23.65,
+          81.55,
+          26.65
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP211",
+        "kind": "test_point_probe_window",
+        "rect": [
+          0.05,
+          12.83,
+          3.05,
+          15.83
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP212",
+        "kind": "test_point_probe_window",
+        "rect": [
+          7.5,
+          36.85,
+          10.5,
+          39.85
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP213",
+        "kind": "test_point_probe_window",
+        "rect": [
+          78.55,
+          13.09,
+          81.55,
+          16.09
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP215",
+        "kind": "test_point_probe_window",
+        "rect": [
+          3.05,
+          12.83,
+          6.05,
+          15.83
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "TP2903",
+        "kind": "test_point_probe_window",
+        "rect": [
+          10.5,
+          36.85,
+          13.5,
+          39.85
+        ],
+        "area_mm2": 9.0
+      },
+      {
+        "ref": "U107",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          7.25,
+          39.25,
+          34.15,
+          66.15
+        ],
+        "area_mm2": 723.61
+      },
+      {
+        "ref": "U108",
+        "kind": "window_taller_than_hA",
+        "rect": [
+          7.25,
+          71.25,
+          34.15,
+          98.15
+        ],
+        "area_mm2": 723.61
+      }
+    ],
+    "area_mm2": 4139.5732,
+    "unplaced_needing_one": [
+      "C207",
+      "C210",
+      "C219",
+      "C222",
+      "C235",
+      "C239",
+      "C243",
+      "C247",
+      "C251",
+      "C298",
+      "C506",
+      "C511",
+      "C512",
+      "F103",
+      "L501",
+      "TP103",
+      "TP104",
+      "TP105",
+      "TP106",
+      "TP107",
+      "TP108",
+      "TP203",
+      "TP204",
+      "TP214",
+      "TP503"
+    ]
+  },
+  "tht_pads": {
+    "rule": "every PWR-A THT pad gets a plate relief pocket >= 1.0 mm and polyimide over the 0.4 mm gap (mechanical/params/boards.json tht_pockets); rows inside a thermal_bond zone also cut the Gelid pad",
+    "placed": [
+      {
+        "ref": "C206",
+        "tht_pads": 2,
+        "pin_field": [
+          9.15,
+          105.5,
+          13.25,
+          107.1
+        ],
+        "thermal_bond_zones": []
+      },
+      {
+        "ref": "C225",
+        "tht_pads": 2,
+        "pin_field": [
+          50.95,
+          22.2,
+          55.05,
+          23.8
+        ],
+        "thermal_bond_zones": [
+          1
+        ]
+      },
+      {
+        "ref": "C254",
+        "tht_pads": 2,
+        "pin_field": [
+          17.15,
+          22.6,
+          21.25,
+          24.2
+        ],
+        "thermal_bond_zones": [
+          1
+        ]
+      },
+      {
+        "ref": "C262",
+        "tht_pads": 2,
+        "pin_field": [
+          24.45,
+          22.6,
+          28.55,
+          24.2
+        ],
+        "thermal_bond_zones": [
+          1
+        ]
+      },
+      {
+        "ref": "C265",
+        "tht_pads": 2,
+        "pin_field": [
+          100.95,
+          6.8,
+          105.05,
+          8.4
+        ],
+        "thermal_bond_zones": [
+          2
+        ]
+      },
+      {
+        "ref": "C273",
+        "tht_pads": 2,
+        "pin_field": [
+          108.25,
+          6.8,
+          112.35,
+          8.4
+        ],
+        "thermal_bond_zones": [
+          2
+        ]
+      },
+      {
+        "ref": "F102",
+        "tht_pads": 4,
+        "pin_field": [
+          0.83,
+          67.9,
+          7.01,
+          80.6
+        ],
+        "thermal_bond_zones": [
+          3,
+          4
+        ]
+      },
+      {
+        "ref": "F201",
+        "tht_pads": 4,
+        "pin_field": [
+          0.83,
+          37.74,
+          7.01,
+          50.44
+        ],
+        "thermal_bond_zones": [
+          3
+        ]
+      },
+      {
+        "ref": "J104",
+        "tht_pads": 4,
+        "pin_field": [
+          130.99,
+          13.08,
+          133.01,
+          23.58
+        ],
+        "thermal_bond_zones": []
+      },
+      {
+        "ref": "J105",
+        "tht_pads": 2,
+        "pin_field": [
+          31.2,
+          2.15,
+          40.0,
+          4.85
+        ],
+        "thermal_bond_zones": [
+          1
+        ]
+      },
+      {
+        "ref": "J106",
+        "tht_pads": 2,
+        "pin_field": [
+          51.1,
+          2.15,
+          59.9,
+          4.85
+        ],
+        "thermal_bond_zones": [
+          1
+        ]
+      },
+      {
+        "ref": "J107",
+        "tht_pads": 2,
+        "pin_field": [
+          9.3,
+          2.15,
+          18.1,
+          4.85
+        ],
+        "thermal_bond_zones": [
+          1
+        ]
+      },
+      {
+        "ref": "J108",
+        "tht_pads": 4,
+        "pin_field": [
+          77.0,
+          2.15,
+          85.8,
+          9.05
+        ],
+        "thermal_bond_zones": [
+          2
+        ]
+      },
+      {
+        "ref": "J109",
+        "tht_pads": 2,
+        "pin_field": [
+          44.45,
+          1.625,
+          47.65,
+          3.375
+        ],
+        "thermal_bond_zones": []
+      },
+      {
+        "ref": "J110",
+        "tht_pads": 5,
+        "pin_field": [
+          64.35,
+          1.625,
+          73.55,
+          3.375
+        ],
+        "thermal_bond_zones": []
+      },
+      {
+        "ref": "J111",
+        "tht_pads": 3,
+        "pin_field": [
+          22.55,
+          1.625,
+          27.75,
+          3.375
+        ],
+        "thermal_bond_zones": []
+      },
+      {
+        "ref": "J112",
+        "tht_pads": 4,
+        "pin_field": [
+          90.25,
+          1.625,
+          97.45,
+          3.375
+        ],
+        "thermal_bond_zones": []
+      },
+      {
+        "ref": "J113",
+        "tht_pads": 2,
+        "pin_field": [
+          116.825,
+          13.55,
+          118.575,
+          16.75
+        ],
+        "thermal_bond_zones": [
+          2
+        ]
+      },
+      {
+        "ref": "J114",
+        "tht_pads": 2,
+        "pin_field": [
+          123.49,
+          3.38,
+          125.51,
+          7.88
+        ],
+        "thermal_bond_zones": [
+          2
+        ]
+      },
+      {
+        "ref": "J115",
+        "tht_pads": 2,
+        "pin_field": [
+          123.49,
+          14.54,
+          125.51,
+          19.04
+        ],
+        "thermal_bond_zones": [
+          2
+        ]
+      },
+      {
+        "ref": "J205",
+        "tht_pads": 2,
+        "pin_field": [
+          18.68,
+          105.82,
+          23.18,
+          107.84
+        ],
+        "thermal_bond_zones": []
+      },
+      {
+        "ref": "J206",
+        "tht_pads": 8,
+        "pin_field": [
+          111.63,
+          28.08,
+          122.13,
+          32.58
+        ],
+        "thermal_bond_zones": []
+      },
+      {
+        "ref": "J507",
+        "tht_pads": 4,
+        "pin_field": [
+          116.825,
+          2.15,
+          118.575,
+          9.35
+        ],
+        "thermal_bond_zones": [
+          2
+        ]
+      },
+      {
+        "ref": "U107",
+        "tht_pads": 12,
+        "pin_field": [
+          13.5,
+          40.42,
+          27.9,
+          44.66
+        ],
+        "thermal_bond_zones": [
+          3
+        ]
+      },
+      {
+        "ref": "U108",
+        "tht_pads": 12,
+        "pin_field": [
+          13.5,
+          72.42,
+          27.9,
+          76.66
+        ],
+        "thermal_bond_zones": [
+          4
+        ]
+      },
+      {
+        "ref": "U204",
+        "tht_pads": 6,
+        "pin_field": [
+          45.38,
+          18.62,
+          46.88,
+          21.12
+        ],
+        "thermal_bond_zones": [
+          1
+        ]
+      },
+      {
+        "ref": "U205",
+        "tht_pads": 6,
+        "pin_field": [
+          45.38,
+          12.62,
+          46.88,
+          15.12
+        ],
+        "thermal_bond_zones": [
+          1
+        ]
+      }
+    ],
+    "unplaced": [
+      "C207",
+      "C210",
+      "C219",
+      "C222",
+      "C235",
+      "C239",
+      "C243",
+      "C247",
+      "C251",
+      "C298",
+      "C511",
+      "C512",
+      "F103"
+    ]
+  },
+  "scripted_copper_precheck": {
+    "label": "geometry of the spec copper against the planned pads; KiCad fill, thermal spokes and neck widths are checked only on the routed board",
+    "items": [
+      {
+        "id": "LAB5-DAMP",
+        "kind": "track",
+        "net": "E1_LAB5_DAMP",
+        "class": "PWR3A",
+        "width_mm": 1.85,
+        "class_outer_width_mm": 1.85,
+        "width_ok": true,
+        "end_pads": [
+          [
+            "C113.1"
+          ],
+          [
+            "R110.2"
+          ]
+        ],
+        "ends_on_net_pads": true,
+        "locked": true
+      },
+      {
+        "id": "LAB5-RAW-F",
+        "kind": "zone",
+        "net": "E1_LAB5_RAW",
+        "layer": "F.Cu",
+        "class": "BATT",
+        "rect_min_width_mm": 9.6,
+        "class_width_per_layer_mm": 1.85,
+        "width_ok": true,
+        "net_pads_touched": [
+          "F102.1",
+          "F102.1",
+          "U108.VOUT",
+          "U108.VOUT"
+        ],
+        "foreign_pads_inside": [],
+        "inside_outline": true
+      },
+      {
+        "id": "LAB5-RAW-B",
+        "kind": "zone",
+        "net": "E1_LAB5_RAW",
+        "layer": "B.Cu",
+        "class": "BATT",
+        "rect_min_width_mm": 9.6,
+        "class_width_per_layer_mm": 1.85,
+        "width_ok": true,
+        "net_pads_touched": [
+          "F102.1",
+          "F102.1",
+          "U108.VOUT",
+          "U108.VOUT"
+        ],
+        "foreign_pads_inside": [],
+        "inside_outline": true
+      }
+    ]
+  },
+  "boundary": {
+    "dangling_nets": [
+      "3V3_Q6A",
+      "AUX12",
+      "BIAS_CH1_DAMP",
+      "BIAS_CH2_DAMP",
+      "BIAS_CH3_DAMP",
+      "BIAS_CH4_DAMP",
+      "BONI13V8",
+      "BONI13V8_PORT",
+      "CHG_INHIBIT",
+      "E1_BAT_ADC",
+      "E2_LNA4_SHUNT",
+      "E2_LNA4_SW",
+      "E2_SB_DAMP",
+      "EN_AUX12",
+      "EN_BONI",
+      "EN_HFP",
+      "EN_LIME3V3",
+      "EN_LNB",
+      "FAULT_HFP",
+      "FLT_BONI",
+      "FLT_LIME3V3",
+      "FLT_LNB",
+      "I2C2_SCL",
+      "I2C2_SDA",
+      "LAB5_RLY",
+      "LNA4V5",
+      "LNB13V2",
+      "OVP_LNB_N",
+      "PICO_DISP_EN",
+      "PICO_OFF",
+      "PWR_BUTTON",
+      "VBUS_HFP",
+      "VBUS_LABPORT",
+      "VBUS_RTLB_DAMP"
+    ],
+    "b2b_nets": 40,
+    "dangling_not_in_b2b": [],
+    "b2b_not_dangling": [
+      "I2C0_SCL",
+      "I2C0_SDA",
+      "IMU_RX",
+      "IMU_TX",
+      "INA228_ALERT",
+      "LAB5"
+    ],
+    "note": "nets with pins on other boards that end on no graph connector pin of PWR-A; the B2B is not a graph ref yet (GR-4), so its nets show as dangling here"
+  }
+}
