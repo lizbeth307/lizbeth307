@@ -442,9 +442,9 @@ verified UTC (`UTC_NOT_VERIFIED`); `PassPlanner.windows()` serves the current pl
 The `LRPT` role is the operator allowlist's own label and is bound to no NORAD id
 (none is hard-coded), so these windows are a pre-filter: the policy's
 Meteor-M N2-3/N2-4 restriction rests on a reviewed allowlist that gives the role
-to those two only, and the future recorder must enforce that target set itself,
-together with the AOS-60 s .. LOS+60 s margins and the 20 min file bound of the
-policy (an open item of the recorder package). No recorder exists. Installation
+to those two only, and the recorder `srrx.baseband` enforces that target set itself
+(`METEOR_TARGETS`), together with the AOS-60 s .. LOS+60 s margins and the 20 min file
+bound of the policy (`window`/`validate_window`); scheduling by labd and the bench stay open ([RX](RX.md)). Installation
 (user, plan directory, polkit rule, venv): [DEPLOYMENT](DEPLOYMENT.md). The real
 transient run under `MemoryMax` with no sockets, the polkit decision and the A55
 timing are guest/Q6A checks (RUNTIME_ONLY, build/09 ПРХ-01). Host tests emulate PID 1 and run the unit's own
