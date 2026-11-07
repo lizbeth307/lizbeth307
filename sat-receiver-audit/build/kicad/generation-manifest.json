@@ -48,7 +48,7 @@
       "note_wrap_chars": {
         "E1-01": 110
       },
-      "fill": 0.255,
+      "fill": 0.269,
       "drawing": {
         "fallback_labels": 0,
         "global_labels": 31,
@@ -204,7 +204,7 @@
         "N-E3-02": 110,
         "E3-06": 110
       },
-      "fill": 0.741,
+      "fill": 0.747,
       "drawing": {
         "fallback_labels": 0,
         "global_labels": 116,
@@ -297,52 +297,52 @@
       "stem": "E4_02",
       "instance": "29d9ed3f-1ac6-5216-98b0-395a68609862",
       "title": "E4 - РЧ-тракт: DC-розв'язка, перемикачі, приймачі (2/4)",
-      "components": 62,
+      "components": 53,
       "sheet": "E4",
       "notes": [
         "N-E4-01",
         "E4-06",
-        "E4-07"
+        "E4-04"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
         "N-E4-01": 110,
         "E4-06": 110,
-        "E4-07": 110
+        "E4-04": 110
       },
-      "fill": 0.821,
+      "fill": 0.785,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 55,
-        "ground_symbols": 44,
-        "junctions": 23,
+        "global_labels": 53,
+        "ground_symbols": 35,
+        "junctions": 20,
         "wire_crossings": 0,
-        "wires": 172
+        "wires": 164
       }
     },
     {
       "stem": "E4_03",
       "instance": "4dd92141-48db-50ea-8b51-bae65ea8ecfb",
       "title": "E4 - РЧ-тракт: DC-розв'язка, перемикачі, приймачі (3/4)",
-      "components": 83,
+      "components": 92,
       "sheet": "E4",
       "notes": [
         "E4-01",
-        "E4-04"
+        "E4-07"
       ],
       "note_wrap_cap": 110,
       "note_wrap_chars": {
         "E4-01": 110,
-        "E4-04": 110
+        "E4-07": 110
       },
-      "fill": 0.71,
+      "fill": 0.803,
       "drawing": {
         "fallback_labels": 0,
-        "global_labels": 128,
-        "ground_symbols": 52,
-        "junctions": 47,
+        "global_labels": 130,
+        "ground_symbols": 61,
+        "junctions": 50,
         "wire_crossings": 2,
-        "wires": 281
+        "wires": 289
       }
     },
     {
@@ -354,7 +354,7 @@
       "notes": [],
       "note_wrap_cap": 110,
       "note_wrap_chars": {},
-      "fill": 0.367,
+      "fill": 0.363,
       "drawing": {
         "fallback_labels": 0,
         "global_labels": 40,
@@ -456,11 +456,12 @@
       "id": "E1-01",
       "description": "Ревізія COUT і місця NTC/VSET/ISET/ISET_MODE/CELLSET не підтверджені офіційною схемою. Вікно 0…45 °C та inhibit не перевірені.",
       "blocking": true,
-      "resolve": "До модифікацій отримати ревізійну схему або фото обох боків з continuity до IC. Стенд: NTC 0/45 °C, обрив/КЗ, зупинка charge і reverse boost, 2 h при 3 A, 20 PD cycles, зовнішній VBUS=0 V, startup 5→20 V, CV кожної комірки. При провалі цей модуль не використовувати; ISDT лише після E1-02.",
+      "resolve": "До модифікацій отримати ревізійну схему або фото обох боків з continuity до IC. Стенд: NTC 0/45 °C, обрив/КЗ, зупинка charge і reverse boost, 2 h при 3 A, 20 PD cycles, зовнішній VBUS=0 V, startup 5→20 V, CV кожної комірки. При провалі цей модуль не використовувати; ISDT лише після E1-02. TH102 Sensata 67F070 (build/15 «IP2368»): гарячим повітрям на найгарячіший MOSFET IP2368 — замикається при 65…75 °C, і заряд зупиняється (E1_CHG_INHIBIT_LOW на GND) не пізніше 75 °C; записати температуру повернення й диференціал (даташит Sensata 6700 с. 4: MIN DIFFERENTIAL 4 °C, MIN RESET 50 °C) і частоту повторних пусків заряду; опір замкненого контакту ≤50 mΩ (даташит с. 2, «50 milliohms max»).",
       "stack": "§2.7 (IP2368); §5.1; §8 (IP2368); §8.1 (IP2368, матриця DRP)",
       "refs": [
         "U110",
-        "TH101"
+        "TH101",
+        "TH102"
       ],
       "sheet": "E1"
     },
@@ -681,7 +682,7 @@
       "id": "E3-08",
       "description": "Pico watchdog, MicroPython GPIO/UART adapter and host handshake implemented 20.10.2026 and tested on the host. Actual GPIO timing, reset levels, WDT/brownout behavior and Linux/serial fault recovery have not been qualified on the device.",
       "blocking": true,
-      "resolve": "Run the implemented firmware with the actual accepted Pico/Q6A assembly: scope MCP RESET assertion/release, safe output image including CHG_INHIBIT=1 after initialization, 100ms guard, 750ms heartbeat deadline plus measured latency, explicit fresh-session recovery, Linux kill/hang, UART loss/corruption, WDT/brownout and GPIO current/backfeed. Complete Pico power loss with Q6A alive remains outside Q306 coverage; no software test closes this boundary. GNSS branch (R-E3-15): measure the LC76G board supply current on E3_GNSS5V (cold start, acquisition, active antenna) and set R396 to 1.5-2x the measured current (start 162k, 144-192 mA); confirm U315 follows 3V3_Q6A (off with Q6A off) and record UART6_RX/TX levels and LC76G VCC with LAB5 absent while Q6A runs (no back-feed through RXD above VCC + 0.3 V).",
+      "resolve": "Run the implemented firmware with the actual accepted Pico/Q6A assembly: scope MCP RESET assertion/release, safe output image including CHG_INHIBIT=1 after initialization, 100ms guard, 750ms heartbeat deadline plus measured latency, explicit fresh-session recovery, Linux kill/hang, UART loss/corruption, WDT/brownout and GPIO current/backfeed. Complete Pico power loss with Q6A alive remains outside Q306 coverage; no software test closes this boundary. GNSS branch (R-E3-15): measure the LC76G board supply current on E3_GNSS5V (cold start, acquisition, active antenna) and set R396 to 1.5-2x the measured current (start 162k, 144-192 mA); confirm U315 follows 3V3_Q6A (off with Q6A off) and record UART6_RX/TX levels and LC76G VCC with LAB5 absent while Q6A runs and with U315 latched off after a short on E3_GNSS5V (S25) while Q6A runs (no back-feed through RXD above VCC + 0.3 V in either state); record which action clears the latch (3V3_Q6A or LAB5 power cycle; whether a Q6A software reboot drops 3V3_Q6A).",
       "stack": "§5.2; §5.4",
       "refs": [
         "Q306",
@@ -741,9 +742,9 @@
     },
     {
       "id": "E4-06",
-      "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven.",
+      "description": "Three concrete protected bipolar DC-window detectors are designed; threshold, RF loading and power-off backfeed still need prototype qualification. v2.1 (owner decision): each sensed bias branch has an E2 back-to-back P-MOSFET blocking element (Q2901/Q2902/Q2903 DMP6050SSD-13 with a 100 nF gate-source capacitor, held open by low EN_LNA2/EN_LNA3/EN_BONI) between the protected E2 node (TPS2553/INA3221/U214, polarized capacitors) and the E4 port node; ±30 V at the assembled port is a design target until bench-proven. Not covered (W2 GR-2 review): the direct P8 port (ch4) has no DC-window detector and no blocking element. With the P8 accessory off-board, panel J408 → U.FL J427 sits on E4_RF_CH4, the RF_DC node of TCBT A424, whose DC port BIAS_CH4 runs through E2 L209 and shunt R246 to TPS2553 U209 OUT (E2_LNA4_SW; OUT abs max −0.3…7 V, TI TPS255xx Rev. G §6.1, https://www.ti.com/lit/ds/symlink/tps2553.pdf, read 2026-11-07) and the INA3221 U216 channel-1 inputs: foreign DC on P8 reaches that protected E2 node, and own ch4 bias reaches whatever is plugged into P8.",
       "blocking": true,
-      "resolve": "Verify each DCS LOW at 0 V and HIGH by ±0.100 V in both sweep directions over the admitted temperature/supply range; record thresholds/hysteresis. With own bias OFF and Q6A ON/OFF (3V3_Q6A <0.1 V when OFF), apply foreign DC at each assembled port P2/P3/HF_CM: (1) slow ±30 V limited DC; (2) fast-edge hot plug — a pre-energised current-limited ±12/±24/±30 V source switched onto the port through a coax plug or relay. Pass: BIAS_CH2/BIAS_CH3/BONI13V8 (TPS2553 OUT, INA3221 inputs, U214 OUT) stay within −0.3…+0.3 V, no INA/MCP fault; repeat at 0 °C and 50 °C. The DPS-150 cannot reach 30 V from the project's 20 V PD or 4S sources; use a source that really delivers 30 V. Hot plug while own bias is ON is not covered and must not be tested destructively. Also measure off-state leakage (protected-node rise <0.1 V at 50 °C), the on-state drop at 184.5/54.5/80 mA including the cold VGS(th) corner (VGS ≈−4.2 V on the 4.30 V rail; total ≤0.25 V to the antenna), turn-on with and without trapped charge (the ≈48 µF protected reservoir dumps into the port outside the TPS2553/U214 limit) and unchanged soft-start/ILIM. A shorted FET is not detectable; an open element on LNA2/LNA3 is silent. Measure RF tap and element IL/RL/NF impact. Require startup/reference-fault HIGH and own bias OFF ≥500 ms before preflight; readiness stays false until qualified. Check floating/open antenna as well as 0 Ω/50 Ω DC loads. Include the 996 Ω bleed load in current baselines and measure its RF loss/parasitics. Reject false-safe at ±0.100 V; false-unsafe units also fail usability qualification. Also qualify cold minimum-supply reference-feed headroom: the arithmetic model requires D450 Vf ≤1.015 V at VDD 3.135 V and REF 2.072 V for at least 80 µA LM4040 cathode current. Reference collapse must force HIGH, and must not be misreported as a working detector.",
+      "resolve": "Verify each DCS LOW at 0 V and HIGH by ±0.100 V in both sweep directions over the admitted temperature/supply range; record thresholds/hysteresis. With own bias OFF and Q6A ON/OFF (3V3_Q6A <0.1 V when OFF), apply foreign DC at each assembled port P2/P3/HF_CM: (1) slow ±30 V limited DC; (2) fast-edge hot plug — a pre-energised current-limited ±12/±24/±30 V source switched onto the port through a coax plug or relay. Pass: BIAS_CH2/BIAS_CH3/BONI13V8 (TPS2553 OUT, INA3221 inputs, U214 OUT) stay within −0.3…+0.3 V, no INA/MCP fault; repeat at 0 °C and 50 °C. The DPS-150 cannot reach 30 V from the project's 20 V PD or 4S sources; use a source that really delivers 30 V. Hot plug while own bias is ON is not covered and must not be tested destructively. Also measure off-state leakage (protected-node rise <0.1 V at 50 °C), the on-state drop at 184.5/54.5/80 mA including the cold VGS(th) corner (VGS ≈−4.2 V on the 4.30 V rail; total ≤0.25 V to the antenna), turn-on with and without trapped charge (the ≈48 µF protected reservoir dumps into the port outside the TPS2553/U214 limit) and unchanged soft-start/ILIM. A shorted FET is not detectable; an open element on LNA2/LNA3 is silent. Measure RF tap and element IL/RL/NF impact. Require startup/reference-fault HIGH and own bias OFF ≥500 ms before preflight; readiness stays false until qualified. Check floating/open antenna as well as 0 Ω/50 Ω DC loads. Include the 996 Ω bleed load in current baselines and measure its RF loss/parasitics. Reject false-safe at ±0.100 V; false-unsafe units also fail usability qualification. Also qualify cold minimum-supply reference-feed headroom: the arithmetic model requires D450 Vf ≤1.015 V at VDD 3.135 V and REF 2.072 V for at least 80 µA LM4040 cathode current. Reference collapse must force HIGH, and must not be misreported as a working detector. P8/ch4 (W2 GR-2): the foreign-DC test above cannot pass on P8, which has no detector and no element; whether ch4 gets an E2 blocking element or a DC-window detector is an owner/E2 decision, OPEN under this gate. Until then P8 must never see a foreign DC source, and EN_LNA4 (low at startup, design/readiness-contract.json startup_output_requests; no DC preflight for LNA4 in software/srrx/policy.py DCS) is switched on only with the P8 accessory fitted (profile rule, STACK.md:78; no hardware check).",
       "stack": "§5.3 (DC-sense); §8.1 HF-10",
       "refs": [
         "D450",
@@ -1111,10 +1112,10 @@
     ]
   },
   "source_sha256": {
-    "E1.json": "256ffe717c12e2f876b6c1736a8a9798f5e3de2ffc62f2253995da2d272bf4c4",
+    "E1.json": "f854ea931a2f2f35482f650312ee7e6326ee1554e4477f6410b50cd516b99295",
     "E2.json": "add1bc5d1bbf1cfa391e4f080de7a3ac340d616048a95640607294ad18a75721",
-    "E3.json": "a84e824308def639d81a72ca97b054e329cfed89a76fd1d6a8f45f61c1016db8",
-    "E4.json": "ad20d3e8e9268c3ca74c2e760adc5f1efc93376672a13574cd256a1fa81131ee",
+    "E3.json": "77a0ea41b64b9382ba14b031145f2ba783b6a952ee0e6f190f34370c2f13167b",
+    "E4.json": "e10e0c344463c9e5bc48cb59293853bacc943e8e55f08f2f0cf109211688aa17",
     "E5.json": "13f0cefe6ebe5c6942b39ccb599a2330395a659535cdb55df9e4a552a3932639"
   }
 }
