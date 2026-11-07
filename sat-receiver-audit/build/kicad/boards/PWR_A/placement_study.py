@@ -436,19 +436,23 @@ def study():
         if ref.startswith('__'):
             continue
         anchor = anchored.get(ref) or group_anchors.get(ref)
-        tht_pads = [p for p in geometry[ref]['pads'] if p['type'] == 'thru_hole']
+        # THT pads and the NPTH locating pegs (a connector peg stands below the board like a lead).
+        tht_pads = [p for p in geometry[ref]['pads'] if p['type'] in ('thru_hole', 'np_thru_hole')]
         if not tht_pads:
             continue
         pts = []
         turned = int(round(float(anchor.get('rotation', 0)) / 90.0)) % 2
         for p in tht_pads:
-            cx, cy0 = bg.placed_geometry({'pads': [p], 'courtyard': None}, anchor)['pads'][str(p['number'])][0]
+            q = {**p, 'number': p['number'] or 'NPTH'}
+            cx, cy0 = bg.placed_geometry({'pads': [q], 'courtyard': None}, anchor)['pads'][q['number']][0]
             w, h = (p['size'][1], p['size'][0]) if turned else (p['size'][0], p['size'][1])
             pts.append([cx, cy0, w, h])
         field = [r4(min(p[0] - p[2] / 2 for p in pts)), r4(min(p[1] - p[3] / 2 for p in pts)),
                  r4(max(p[0] + p[2] / 2 for p in pts)), r4(max(p[1] + p[3] / 2 for p in pts))]
         in_zone = [i + 1 for i, z in enumerate(zones) if bg.rects_overlap(field, z)]
-        tht.append({'ref': ref, 'tht_pads': len(tht_pads), 'pin_field': field, 'thermal_bond_zones': in_zone})
+        tht.append({'ref': ref, 'tht_pads': sum(p['type'] == 'thru_hole' for p in tht_pads),
+                    'npth_pegs': sum(p['type'] == 'np_thru_hole' for p in tht_pads), 'pin_field': field,
+                    'thermal_bond_zones': in_zone})
 
     # --- scripted copper, geometric pre-check (KiCad fill and neck widths need the routed board) ---
     cls_of = {n: v['class'] for n, v in netclasses['nets'].items()}
@@ -531,10 +535,11 @@ def study():
                                   'taller than hA and for the PWR-A headers; a probe window of tp_probe_window for a test point',
                           'placed': cutouts, 'area_mm2': r4(sum(c['area_mm2'] for c in cutouts)),
                           'unplaced_needing_one': unplaced_windows},
-        'tht_pads': {'rule': 'every PWR-A THT pad gets a plate relief pocket >= 1.0 mm and polyimide over the 0.4 mm gap '
-                             '(mechanical/params/boards.json tht_pockets); rows inside a thermal_bond zone also cut the Gelid pad',
+        'tht_pads': {'rule': 'every PWR-A THT pad and NPTH connector peg gets a plate relief pocket >= 1.0 mm and polyimide '
+                             'over the 0.4 mm gap (mechanical/params/boards.json tht_pockets); pin_field = pads and pegs; rows '
+                             'inside a thermal_bond zone also cut the Gelid pad',
                      'placed': tht, 'unplaced': sorted((r for r in unplaced if any(
-                         p['type'] == 'thru_hole' for p in geometry[r]['pads'])), key=bg.sort_ref)},
+                         p['type'] in ('thru_hole', 'np_thru_hole') for p in geometry[r]['pads'])), key=bg.sort_ref)},
         'scripted_copper_precheck': {'label': 'geometry of the spec copper against the planned pads; KiCad fill, '
                                               'thermal spokes and neck widths are checked only on the routed board',
                                      'items': copper},

@@ -2544,11 +2544,12 @@
     ]
   },
   "tht_pads": {
-    "rule": "every PWR-A THT pad gets a plate relief pocket >= 1.0 mm and polyimide over the 0.4 mm gap (mechanical/params/boards.json tht_pockets); rows inside a thermal_bond zone also cut the Gelid pad",
+    "rule": "every PWR-A THT pad and NPTH connector peg gets a plate relief pocket >= 1.0 mm and polyimide over the 0.4 mm gap (mechanical/params/boards.json tht_pockets); pin_field = pads and pegs; rows inside a thermal_bond zone also cut the Gelid pad",
     "placed": [
       {
         "ref": "C206",
         "tht_pads": 2,
+        "npth_pegs": 0,
         "pin_field": [
           9.15,
           105.5,
@@ -2560,6 +2561,7 @@
       {
         "ref": "C225",
         "tht_pads": 2,
+        "npth_pegs": 0,
         "pin_field": [
           50.95,
           22.2,
@@ -2573,6 +2575,7 @@
       {
         "ref": "C254",
         "tht_pads": 2,
+        "npth_pegs": 0,
         "pin_field": [
           17.15,
           22.6,
@@ -2586,6 +2589,7 @@
       {
         "ref": "C262",
         "tht_pads": 2,
+        "npth_pegs": 0,
         "pin_field": [
           24.45,
           22.6,
@@ -2599,6 +2603,7 @@
       {
         "ref": "C265",
         "tht_pads": 2,
+        "npth_pegs": 0,
         "pin_field": [
           100.95,
           6.8,
@@ -2612,6 +2617,7 @@
       {
         "ref": "C273",
         "tht_pads": 2,
+        "npth_pegs": 0,
         "pin_field": [
           108.25,
           6.8,
@@ -2625,6 +2631,7 @@
       {
         "ref": "F102",
         "tht_pads": 4,
+        "npth_pegs": 0,
         "pin_field": [
           0.83,
           67.9,
@@ -2639,6 +2646,7 @@
       {
         "ref": "F201",
         "tht_pads": 4,
+        "npth_pegs": 0,
         "pin_field": [
           0.83,
           37.74,
@@ -2652,17 +2660,19 @@
       {
         "ref": "J104",
         "tht_pads": 4,
+        "npth_pegs": 2,
         "pin_field": [
-          130.99,
-          13.08,
+          129.405,
+          10.195,
           133.01,
-          23.58
+          26.465
         ],
         "thermal_bond_zones": []
       },
       {
         "ref": "J105",
         "tht_pads": 2,
+        "npth_pegs": 0,
         "pin_field": [
           31.2,
           2.15,
@@ -2676,6 +2686,7 @@
       {
         "ref": "J106",
         "tht_pads": 2,
+        "npth_pegs": 0,
         "pin_field": [
           51.1,
           2.15,
@@ -2689,6 +2700,7 @@
       {
         "ref": "J107",
         "tht_pads": 2,
+        "npth_pegs": 0,
         "pin_field": [
           9.3,
           2.15,
@@ -2702,6 +2714,7 @@
       {
         "ref": "J108",
         "tht_pads": 4,
+        "npth_pegs": 0,
         "pin_field": [
           77.0,
           2.15,
@@ -2715,6 +2728,7 @@
       {
         "ref": "J109",
         "tht_pads": 2,
+        "npth_pegs": 0,
         "pin_field": [
           44.45,
           1.625,
@@ -2726,6 +2740,7 @@
       {
         "ref": "J110",
         "tht_pads": 5,
+        "npth_pegs": 0,
         "pin_field": [
           64.35,
           1.625,
@@ -2737,6 +2752,7 @@
       {
         "ref": "J111",
         "tht_pads": 3,
+        "npth_pegs": 0,
         "pin_field": [
           22.55,
           1.625,
@@ -2748,6 +2764,7 @@
       {
         "ref": "J112",
         "tht_pads": 4,
+        "npth_pegs": 0,
         "pin_field": [
           90.25,
           1.625,
@@ -2759,6 +2776,7 @@
       {
         "ref": "J113",
         "tht_pads": 2,
+        "npth_pegs": 0,
         "pin_field": [
           116.825,
           13.55,
@@ -2772,11 +2790,12 @@
       {
         "ref": "J114",
         "tht_pads": 2,
+        "npth_pegs": 2,
         "pin_field": [
-          123.49,
-          3.38,
+          121.905,
+          0.495,
           125.51,
-          7.88
+          10.765
         ],
         "thermal_bond_zones": [
           2
@@ -2785,11 +2804,12 @@
       {
         "ref": "J115",
         "tht_pads": 2,
+        "npth_pegs": 2,
         "pin_field": [
-          123.49,
-          14.54,
+          121.905,
+          11.655,
           125.51,
-          19.04
+          21.925
         ],
         "thermal_bond_zones": [
           2
@@ -2798,21 +2818,23 @@
       {
         "ref": "J205",
         "tht_pads": 2,
+        "npth_pegs": 2,
         "pin_field": [
-          18.68,
+          15.795,
           105.82,
-          23.18,
-          107.84
+          26.065,
+          109.425
         ],
         "thermal_bond_zones": []
       },
       {
         "ref": "J206",
         "tht_pads": 8,
+        "npth_pegs": 2,
         "pin_field": [
-          111.63,
-          28.08,
-          122.13,
+          108.87,
+          27.38,
+          124.89,
           32.58
         ],
         "thermal_bond_zones": []
@@ -2820,6 +2842,7 @@
       {
         "ref": "J507",
         "tht_pads": 4,
+        "npth_pegs": 0,
         "pin_field": [
           116.825,
           2.15,
@@ -2833,6 +2856,7 @@
       {
         "ref": "U107",
         "tht_pads": 12,
+        "npth_pegs": 0,
         "pin_field": [
           13.5,
           40.42,
@@ -2846,6 +2870,7 @@
       {
         "ref": "U108",
         "tht_pads": 12,
+        "npth_pegs": 0,
         "pin_field": [
           13.5,
           72.42,
@@ -2859,6 +2884,7 @@
       {
         "ref": "U204",
         "tht_pads": 6,
+        "npth_pegs": 0,
         "pin_field": [
           45.38,
           18.62,
@@ -2872,6 +2898,7 @@
       {
         "ref": "U205",
         "tht_pads": 6,
+        "npth_pegs": 0,
         "pin_field": [
           45.38,
           12.62,
