@@ -132,9 +132,11 @@ def render(P, report, params_short, boards_contract):
                        f"{_r(p_['modules_mm2']) if p_ else '—'} | {need} | {p_.get('result', '—')} | {h_.get('headers', '—')} | "
                        f"{_r(h_['header_courtyard_mm2']) if h_ else '—'} | {hneed} | "
                        f"{(_r(h_['frontage_mm']) + ' / ' + _r(h_['edge_zones_mm'])) if h_ else '—'} | {h_.get('result', '—')} |")
-        out += ["", "Курт'ярди деталей за групами схем (design/E*.json «group»), мм²:", ""]
+        out += ["", "Курт'ярди деталей за групами схем (design/E*.json «group»), мм²: курт'ярди (потреба ×1.5 / ×1.8):", ""]
         for bid, p_ in ba["boards"].items():
-            out.append(f"- {bid}: " + "; ".join(f"{g} {_r(v)}" for g, v in p_.get("per_group_raw_mm2", {}).items()))
+            nd = p_.get("per_group_need_mm2", {})
+            out.append(f"- {bid}: " + "; ".join(f"{g} {_r(v)}" + (f" ({_r(nd[g][0])} / {_r(nd[g][1])})" if g in nd else "")
+                                               for g, v in p_.get("per_group_raw_mm2", {}).items()))
         if wh.get("counted_with_parts"):
             out.append(f"- роз'єми, що вже є деталями плати (пораховано раз): {', '.join(wh['counted_with_parts'])}")
         out.append("")

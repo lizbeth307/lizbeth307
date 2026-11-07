@@ -177,7 +177,7 @@ def area_check(P):
         return {"status": "SKIPPED", "reason": "pcb/generated/components.csv not found"}
     cy = footprint_courtyards(root)
     grp = _groups(root)
-    by, mods, groups, refs, missing = {}, {}, {}, {}, []
+    by, mods, groups, gmods, refs, missing = {}, {}, {}, {}, {}, []
     with comp.open(encoding="utf-8", newline="") as fh:
         for r in csv.DictReader(fh):
             if r["category"] != "bare_board_part" or r["dnp"] == "True":
@@ -189,9 +189,10 @@ def area_check(P):
             d = r["board_candidate"]
             by[d] = by.get(d, 0.0) + c["area"]
             refs.setdefault(d, []).append(r["ref"])
+            g = "{} {}".format(*grp.get(r["ref"], ("?", "?")))
             if r["mount"] == "pcb_module":
                 mods[d] = mods.get(d, 0.0) + c["area"]
-            g = "{} {}".format(*grp.get(r["ref"], ("?", "?")))
+                gmods.setdefault(d, {})[g] = gmods.setdefault(d, {}).get(g, 0.0) + c["area"]
             groups.setdefault(d, {})[g] = groups.setdefault(d, {}).get(g, 0.0) + c["area"]
     res = {"method": "sum of the vendored KiCad 10.0.7 F.CrtYd courtyards (bbox; polygon area for a single fp_poly) of the bare board parts of "
                      "pcb/generated/components.csv (DNP excluded) per board domain; need = modules (mount pcb_module) x 1.0 + other parts x fill "
@@ -210,6 +211,8 @@ def area_check(P):
             "area_mm2": round(have, 0), "courtyard_raw_mm2": round(raw, 0), "modules_mm2": round(mod, 0),
             "per_domain_raw_mm2": {d: round(by.get(d, 0.0), 0) for d in b["domains"]},
             "per_group_raw_mm2": {g: round(v, 0) for d in b["domains"] for g, v in sorted(groups.get(d, {}).items(), key=lambda kv: -kv[1])},
+            "per_group_need_mm2": {g: [round(_need(v, gmods.get(d, {}).get(g, 0.0), FILL[0]), 0), round(_need(v, gmods.get(d, {}).get(g, 0.0), FILL[1]), 0)]
+                                   for d in b["domains"] for g, v in sorted(groups.get(d, {}).items(), key=lambda kv: -kv[1])},
             "parts": sum(len(refs.get(d, [])) for d in b["domains"]),
             "need_1_5_mm2": round(n15, 0), "need_1_8_mm2": round(n18, 0), "estimate_mm2": round(n18, 0),
             "ratio_1_5": round(n15 / have, 2), "ratio_1_8": round(n18 / have, 2),
