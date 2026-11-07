@@ -1,0 +1,772 @@
+{
+  "schema": "srrx-fastener-stacks-v1",
+  "status": "MODEL GEOMETRY ONLY: stacks from mechanical/params (mechanical.json, boards.json, imu_pack.json, parts.json); no screw was fitted",
+  "generator": "mechanical/srrx_mech/fasteners.py (W2 MECH-3)",
+  "rules": {
+    "min_engagement": "heat-set insert in ASA >= 1.5 d, metal thread >= 1 d, PEM flush nut = its full thread (the plate)",
+    "tip_gap_mm": 0.5,
+    "length": "under-head length (ISO 14580); ISO 10642 includes the head",
+    "use": "SRC-2 (C-13/C-14) maps each window to an orderable length; a window that no stocked length meets keeps the item TBD"
+  },
+  "joints": [
+    {
+      "id": "CLOSURE",
+      "build17_row": "F12",
+      "what": "half shells, 14 seam screws",
+      "count": 14,
+      "thread": "M3",
+      "seat": "counterbore bottom, z 3 (rear shell, counterbore d 6.5)",
+      "stack_mm": [
+        [
+          "rear shell boss from the counterbore to the seam",
+          11.0
+        ]
+      ],
+      "grip_mm": 11.0,
+      "receiver": {
+        "kind": "CNC Kitchen TC-M3x5.7 insert in the front-shell boss (hole d 4)",
+        "thread_mm": 5.7,
+        "tip_limit": "blind insert hole bottom (insert + 0.8)"
+      },
+      "min_engagement_mm": 4.5,
+      "length_window_mm": [
+        15.5,
+        17.0
+      ],
+      "max_engagement_mm": 6.0,
+      "result": "PASS (model): under-head length 15.5-17 mm",
+      "note": "the sealing washer under the head (AI-SEAL-WASHER-M3, thickness TBD) adds its thickness to the grip and to both window ends"
+    },
+    {
+      "id": "HATCH",
+      "build17_row": "F13",
+      "what": "service-hatch cover",
+      "count": 2,
+      "thread": "M3",
+      "seat": "cover outer face, z -3.75",
+      "stack_mm": [
+        [
+          "hatch cover (groove depth + 2.2)",
+          3.75
+        ]
+      ],
+      "grip_mm": 3.75,
+      "receiver": {
+        "kind": "CNC Kitchen TC-M3x5.7 insert in the hatch boss (hole to z 6.5)",
+        "thread_mm": 5.7,
+        "tip_limit": "blind insert hole bottom (insert + 0.8)"
+      },
+      "min_engagement_mm": 4.5,
+      "length_window_mm": [
+        8.25,
+        9.75
+      ],
+      "max_engagement_mm": 6.0,
+      "result": "PASS (model): under-head length 8.25-9.75 mm",
+      "note": "captive screw type TBD (AI-M3-HATCH): its shoulder changes the grip"
+    },
+    {
+      "id": "T7_HOLDER",
+      "build17_row": "F33",
+      "what": "T7 holder rails into the rear-face pads",
+      "count": 3,
+      "thread": "M3",
+      "seat": "holder outer face, z -14",
+      "stack_mm": [
+        [
+          "holder rail (gap + T7 + shutter) down to the pad face",
+          9.5
+        ]
+      ],
+      "grip_mm": 9.5,
+      "receiver": {
+        "kind": "CNC Kitchen TC-M3x5.7 insert in the pad (blind, 0.5 skin to the inside)",
+        "thread_mm": 5.7,
+        "tip_limit": "blind insert hole bottom (0.5 mm skin to the enclosure inside)"
+      },
+      "min_engagement_mm": 4.5,
+      "length_window_mm": [
+        14.0,
+        15.5
+      ],
+      "max_engagement_mm": 6.0,
+      "result": "PASS (model): under-head length 14-15.5 mm"
+    },
+    {
+      "id": "PLATE_PM1",
+      "build17_row": "F30",
+      "what": "plate to the front-shell boss PM1",
+      "count": 1,
+      "thread": "M3",
+      "seat": "plate rear face, z 38.5",
+      "stack_mm": [
+        [
+          "plate",
+          2.0
+        ]
+      ],
+      "grip_mm": 2.0,
+      "receiver": {
+        "kind": "CNC Kitchen TC-M3x5.7 insert in the front-shell plate boss (hole to plate front + 6.5)",
+        "thread_mm": 5.7,
+        "tip_limit": "blind insert hole bottom"
+      },
+      "min_engagement_mm": 4.5,
+      "length_window_mm": [
+        6.5,
+        8.0
+      ],
+      "max_engagement_mm": 6.0,
+      "result": "PASS (model): under-head length 6.5-8 mm"
+    },
+    {
+      "id": "PLATE_PM2",
+      "build17_row": "F30",
+      "what": "plate to the front-shell boss PM2",
+      "count": 1,
+      "thread": "M3",
+      "seat": "plate rear face, z 38.5",
+      "stack_mm": [
+        [
+          "plate",
+          2.0
+        ]
+      ],
+      "grip_mm": 2.0,
+      "receiver": {
+        "kind": "CNC Kitchen TC-M3x5.7 insert in the front-shell plate boss (hole to plate front + 6.5)",
+        "thread_mm": 5.7,
+        "tip_limit": "blind insert hole bottom"
+      },
+      "min_engagement_mm": 4.5,
+      "length_window_mm": [
+        6.5,
+        8.0
+      ],
+      "max_engagement_mm": 6.0,
+      "result": "PASS (model): under-head length 6.5-8 mm"
+    },
+    {
+      "id": "PLATE_PM3",
+      "build17_row": "F30",
+      "what": "plate to the front-shell boss PM3",
+      "count": 1,
+      "thread": "M3",
+      "seat": "plate rear face, z 38.5",
+      "stack_mm": [
+        [
+          "plate",
+          2.0
+        ]
+      ],
+      "grip_mm": 2.0,
+      "receiver": {
+        "kind": "CNC Kitchen TC-M3x5.7 insert in the front-shell plate boss (hole to plate front + 6.5)",
+        "thread_mm": 5.7,
+        "tip_limit": "blind insert hole bottom"
+      },
+      "min_engagement_mm": 4.5,
+      "length_window_mm": [
+        6.5,
+        8.0
+      ],
+      "max_engagement_mm": 6.0,
+      "result": "PASS (model): under-head length 6.5-8 mm"
+    },
+    {
+      "id": "PLATE_PM4",
+      "build17_row": "F30",
+      "what": "plate to the front-shell boss PM4",
+      "count": 1,
+      "thread": "M3",
+      "seat": "plate rear face, z 38.5",
+      "stack_mm": [
+        [
+          "plate",
+          2.0
+        ]
+      ],
+      "grip_mm": 2.0,
+      "receiver": {
+        "kind": "CNC Kitchen TC-M3x5.7 insert in the front-shell plate boss (hole to plate front + 6.5)",
+        "thread_mm": 5.7,
+        "tip_limit": "blind insert hole bottom"
+      },
+      "min_engagement_mm": 4.5,
+      "length_window_mm": [
+        6.5,
+        8.0
+      ],
+      "max_engagement_mm": 6.0,
+      "result": "PASS (model): under-head length 6.5-8 mm"
+    },
+    {
+      "id": "ANGLES",
+      "build17_row": "F31",
+      "what": "top and right Al angles to the plate (AT1-5, AR1-3)",
+      "count": 8,
+      "thread": "M3",
+      "seat": "angle plate leg rear face, z 36.5",
+      "stack_mm": [
+        [
+          "Al angle plate leg",
+          2.0
+        ]
+      ],
+      "grip_mm": 2.0,
+      "receiver": {
+        "kind": "PEM F-M3-1 flush nut in the plate (thread = plate thickness)",
+        "thread_mm": 2.0,
+        "tip_limit": "plate front face (flush: IP2368, Lime and HDMI board sit there; PEM F-M3-1 self-clinching flush nut)"
+      },
+      "min_engagement_mm": 2.0,
+      "length_window_mm": [
+        4.0,
+        4.0
+      ],
+      "max_engagement_mm": 2.0,
+      "result": "PASS (model): under-head length 4-4 mm"
+    },
+    {
+      "id": "PWR_A-PLATE",
+      "build17_row": "F06 / F45",
+      "what": "PWR-A to the plate: male stud of each PWR-A/PWR-B standoff",
+      "count": 7,
+      "thread": "M3",
+      "seat": "standoff hex face on the PWR-A top, z 42.5",
+      "stack_mm": [
+        [
+          "PWR-A",
+          1.6
+        ],
+        [
+          "shim washer (pwr_bond.shim)",
+          0.4
+        ]
+      ],
+      "grip_mm": 2.0,
+      "receiver": {
+        "kind": "PEM F-M3-1 flush nut in the plate (thread = plate thickness)",
+        "thread_mm": 2.0,
+        "tip_limit": "plate rear face: the stud must not stand proud (HF+ can lid and RF board behind the plate)"
+      },
+      "min_engagement_mm": 2.0,
+      "length_window_mm": [
+        4.0,
+        4.0
+      ],
+      "max_engagement_mm": 2.0,
+      "result": "PASS (model): under-head length 4-4 mm",
+      "note": "the window is the male stud length of the F45 standoff (male-female M3, body 5.0 = the B2B stack): at most 4.0 mm; the MPN with that stud is SRC-2's (C-14)"
+    },
+    {
+      "id": "PWR_B-STANDOFF",
+      "build17_row": "F46",
+      "what": "PWR-B to the female end of each PWR-A/PWR-B standoff",
+      "count": 7,
+      "thread": "M3",
+      "seat": "PWR-B top face, z 49.1",
+      "stack_mm": [
+        [
+          "PWR-B",
+          1.6
+        ]
+      ],
+      "grip_mm": 1.6,
+      "receiver": {
+        "kind": "female thread of the F45 standoff body 5 mm (depth of the part's thread TBD; taken as the body length)",
+        "thread_mm": 5.0,
+        "tip_limit": "standoff thread bottom / the male stud root"
+      },
+      "min_engagement_mm": 3.0,
+      "length_window_mm": [
+        4.6,
+        6.1
+      ],
+      "max_engagement_mm": 4.5,
+      "result": "PASS (model): under-head length 4.6-6.1 mm",
+      "note": "head height of an ISO 14580 M3 (2.4 max) stays under hB 5.5 on the PWR-B top"
+    },
+    {
+      "id": "RF-STANDOFF",
+      "build17_row": "F07",
+      "what": "RF board to the PEM SO-M3-3 standoffs in the plate",
+      "count": 6,
+      "thread": "M3",
+      "seat": "RF component face, z 33.9",
+      "stack_mm": [
+        [
+          "RF board",
+          1.6
+        ]
+      ],
+      "grip_mm": 1.6,
+      "receiver": {
+        "kind": "PEM SO-M3-3 thru-threaded standoff, L 3 + its head flush in the plate",
+        "thread_mm": 5.0,
+        "tip_limit": "plate front face (PWR-A bottom copper 0.4 above it at RF1/RF4)"
+      },
+      "min_engagement_mm": 3.0,
+      "length_window_mm": [
+        4.6,
+        6.6
+      ],
+      "max_engagement_mm": 5.0,
+      "result": "PASS (model): under-head length 4.6-6.6 mm"
+    },
+    {
+      "id": "CTRL",
+      "build17_row": "F08",
+      "what": "CTRL board to the front-shell bosses",
+      "count": 6,
+      "thread": "M2.5",
+      "seat": "CTRL rear face, z 57",
+      "stack_mm": [
+        [
+          "CTRL board",
+          1.6
+        ]
+      ],
+      "grip_mm": 1.6,
+      "receiver": {
+        "kind": "CNC Kitchen TC-M2,5x4 insert in the front-shell boss (hole to the board face + 4.5)",
+        "thread_mm": 4.0,
+        "tip_limit": "blind insert hole bottom (insert + 0.5)"
+      },
+      "min_engagement_mm": 3.75,
+      "length_window_mm": [
+        5.35,
+        5.6
+      ],
+      "max_engagement_mm": 4.0,
+      "result": "PASS (model): under-head length 5.35-5.6 mm",
+      "note": "the window is narrow: M2.5 x 5 engages 3.4 (1.36 d) and leaves the insert end free; a hole 1 mm deeper would take M2.5 x 6"
+    },
+    {
+      "id": "ENC",
+      "build17_row": "F29",
+      "what": "ENC board to the front-shell bosses",
+      "count": 4,
+      "thread": "M2.5",
+      "seat": "ENC rear face, z 56.4",
+      "stack_mm": [
+        [
+          "ENC board",
+          1.6
+        ]
+      ],
+      "grip_mm": 1.6,
+      "receiver": {
+        "kind": "CNC Kitchen TC-M2,5x4 insert in the front-shell boss (hole to the board face + 4.5)",
+        "thread_mm": 4.0,
+        "tip_limit": "blind insert hole bottom (insert + 0.5)"
+      },
+      "min_engagement_mm": 3.75,
+      "length_window_mm": [
+        5.35,
+        5.6
+      ],
+      "max_engagement_mm": 4.0,
+      "result": "PASS (model): under-head length 5.35-5.6 mm",
+      "note": "the window is narrow: M2.5 x 5 engages 3.4 (1.36 d) and leaves the insert end free; a hole 1 mm deeper would take M2.5 x 6"
+    },
+    {
+      "id": "Q6A-STANDOFF",
+      "build17_row": "F01",
+      "what": "Q6A to the F-F standoffs (component side)",
+      "count": 4,
+      "thread": "M2.5",
+      "seat": "Q6A component face",
+      "stack_mm": [
+        [
+          "Q6A board",
+          1.6
+        ]
+      ],
+      "grip_mm": 1.6,
+      "receiver": {
+        "kind": "F-F standoff 6 mm (AI-STANDOFF-M25-6, part not read): thread depth per end TBD",
+        "thread_mm": null,
+        "tip_limit": "the F02 screw tip from the plate side"
+      },
+      "min_engagement_mm": 2.5,
+      "length_window_mm": null,
+      "result": "OPEN: standoff thread depth per end not read (AI-STANDOFF-M25-6 has no MPN)",
+      "note": "pair rule with F02: engagement F01 + F02 <= 6 - 0.5 if the standoff is threaded through; STACK's M2.5 x 6 for F01 engages 4.4 and leaves 1.1 for F02 (< 1 d): F01 M2.5 x 4 (2.4) with F02 M2.5 x 5 (3.0) fits"
+    },
+    {
+      "id": "Q6A-PLATE",
+      "build17_row": "F02",
+      "what": "F-F standoffs to the plate (from the plate front face)",
+      "count": 4,
+      "thread": "M2.5",
+      "seat": "plate front face, z 40.5",
+      "stack_mm": [
+        [
+          "plate",
+          2.0
+        ]
+      ],
+      "grip_mm": 2.0,
+      "receiver": {
+        "kind": "F-F standoff 6 mm, other end (part not read)",
+        "thread_mm": null,
+        "tip_limit": "the F01 screw tip"
+      },
+      "min_engagement_mm": 2.5,
+      "length_window_mm": null,
+      "result": "OPEN: standoff thread depth per end not read",
+      "note": "see Q6A-STANDOFF"
+    },
+    {
+      "id": "UFS-BOSS",
+      "build17_row": "F32",
+      "what": "UFS boss to the plate (ISO 10642 countersunk from the front face)",
+      "count": 2,
+      "thread": "M2.5",
+      "seat": "countersink in the plate front face",
+      "stack_mm": [
+        [
+          "plate (countersunk head inside it)",
+          2.0
+        ]
+      ],
+      "grip_mm": 2.0,
+      "receiver": {
+        "kind": "Al boss tapped M2.5 through its height 2.7",
+        "thread_mm": 2.7,
+        "tip_limit": "boss rear face under the UFS Gelid pad (the tip must not reach the pad)"
+      },
+      "min_engagement_mm": 2.5,
+      "length_window_mm": [
+        4.5,
+        4.7
+      ],
+      "max_engagement_mm": 2.7,
+      "result": "PASS (model): under-head length 4.5-4.7 mm",
+      "note": "ISO 10642 lengths include the head; no standard length falls in the window: M2.5 x 4 engages 2.0 (0.8 d) unless the boss grows"
+    },
+    {
+      "id": "LIME-PEDESTAL",
+      "build17_row": "F04",
+      "what": "Lime pedestal to the plate (screw from the plate rear face)",
+      "count": 2,
+      "thread": "M3",
+      "seat": "plate rear face, z 38.5 (head in the 3.0 mm gap behind the plate, RF board at LP1)",
+      "stack_mm": [
+        [
+          "plate",
+          2.0
+        ]
+      ],
+      "grip_mm": 2.0,
+      "receiver": {
+        "kind": "Al pedestal tapped M3, height 5.5 (F04: thread in the pedestal)",
+        "thread_mm": 5.5,
+        "tip_limit": "pedestal front face under the Lime pad"
+      },
+      "min_engagement_mm": 3.0,
+      "length_window_mm": [
+        5.0,
+        7.0
+      ],
+      "max_engagement_mm": 5.0,
+      "result": "PASS (model): under-head length 5-7 mm",
+      "note": "cad.lime_pedestal draws the two holes as 3.4 clearance holes: the pedestal drawing must call them M3 tapped (tap drill 2.5)"
+    },
+    {
+      "id": "DISPLAY-CLAMP",
+      "build17_row": "—",
+      "what": "display clamps into the front-shell clamp bosses",
+      "count": 4,
+      "thread": "M2.5",
+      "seat": "clamp rear face, z 56.6",
+      "stack_mm": [
+        [
+          "printed clamp",
+          2.0
+        ]
+      ],
+      "grip_mm": 2.0,
+      "receiver": {
+        "kind": "CNC Kitchen TC-M2,5x4 insert in the clamp boss (hole to the module back + 4.5)",
+        "thread_mm": 4.0,
+        "tip_limit": "blind insert hole bottom"
+      },
+      "min_engagement_mm": 3.75,
+      "length_window_mm": [
+        5.75,
+        6.0
+      ],
+      "max_engagement_mm": 4.0,
+      "result": "PASS (model): under-head length 5.75-6 mm",
+      "note": "no build/17 row for the display clamps yet (DOCS): screw and insert to be added there"
+    },
+    {
+      "id": "IMU-CARRIER",
+      "build17_row": "F35",
+      "what": "IMU carrier to the Hammond 1550Z101 floor (screw from outside)",
+      "count": 2,
+      "thread": "M3",
+      "seat": "box outside floor face",
+      "stack_mm": [
+        [
+          "Hammond 1550Z101 floor",
+          2.5
+        ]
+      ],
+      "grip_mm": 2.5,
+      "receiver": {
+        "kind": "insert hole in the 3 mm printed carrier (imu_pack.json carrier: M3 x 5.7 insert named)",
+        "thread_mm": 3.0,
+        "tip_limit": "carrier top face (board pair and the IMU_CARRIER strip above)"
+      },
+      "min_engagement_mm": 4.5,
+      "length_window_mm": null,
+      "result": "OPEN: the named M3 x 5.7 insert is longer than the 3.0 mm carrier and the IMU_CARRIER strip shares the screws: bosses >= 6.5 at the two screws or a short insert are not designed (imu_pack.json; IMU lineage)"
+    },
+    {
+      "id": "POD-LID",
+      "build17_row": "F40",
+      "what": "S-band pod lid (Hammond 1554U2GY)",
+      "count": 4,
+      "thread": "Hammond lid screw",
+      "seat": "lid",
+      "stack_mm": [],
+      "grip_mm": 0,
+      "receiver": {
+        "kind": "Hammond lid inserts",
+        "thread_mm": null,
+        "tip_limit": "—"
+      },
+      "min_engagement_mm": 0.0,
+      "length_window_mm": null,
+      "result": "OPEN: supplied part: no stack to compute",
+      "note": "screws supplied with the enclosure (DigiKey 'Cover Included'); stack set by Hammond"
+    },
+    {
+      "id": "POD-PANEL",
+      "build17_row": "F41",
+      "what": "steel panel 1554UPL to the pod body (insert pitch [176.0, 45.0])",
+      "count": 4,
+      "thread": "M3",
+      "seat": "panel",
+      "stack_mm": [],
+      "grip_mm": 0,
+      "receiver": {
+        "kind": "Hammond M3 panel inserts (depth not read)",
+        "thread_mm": null,
+        "tip_limit": "insert bottom"
+      },
+      "min_engagement_mm": 3.0,
+      "length_window_mm": null,
+      "result": "OPEN: insert depth and panel thickness at the screws not read (P-01)"
+    },
+    {
+      "id": "PWR-BOND",
+      "build17_row": "F26",
+      "what": "BOND-RF and the other CHASSIS bond points (lug + serrated washer)",
+      "count": null,
+      "thread": "TBD",
+      "seat": "TBD",
+      "stack_mm": [],
+      "grip_mm": 0,
+      "receiver": {
+        "kind": "TBD",
+        "thread_mm": null,
+        "tip_limit": "TBD"
+      },
+      "min_engagement_mm": 0.0,
+      "length_window_mm": null,
+      "result": "OPEN: fixing not designed in the model yet (MECH-4 / MECH-5 / pod lineage): no stack"
+    },
+    {
+      "id": "INA228",
+      "build17_row": "F09",
+      "what": "INA228 5832 on stand-offs on the rear wall (W2 MECH-3 place)",
+      "count": null,
+      "thread": "TBD",
+      "seat": "TBD",
+      "stack_mm": [],
+      "grip_mm": 0,
+      "receiver": {
+        "kind": "TBD",
+        "thread_mm": null,
+        "tip_limit": "TBD"
+      },
+      "min_engagement_mm": 0.0,
+      "length_window_mm": null,
+      "result": "OPEN: fixing not designed in the model yet (MECH-4 / MECH-5 / pod lineage): no stack"
+    },
+    {
+      "id": "SWM-2813",
+      "build17_row": "F05",
+      "what": "Pololu #2813 on stand-offs on the rear wall (W2 MECH-3 place)",
+      "count": null,
+      "thread": "TBD",
+      "seat": "TBD",
+      "stack_mm": [],
+      "grip_mm": 0,
+      "receiver": {
+        "kind": "TBD",
+        "thread_mm": null,
+        "tip_limit": "TBD"
+      },
+      "min_engagement_mm": 0.0,
+      "length_window_mm": null,
+      "result": "OPEN: fixing not designed in the model yet (MECH-4 / MECH-5 / pod lineage): no stack"
+    },
+    {
+      "id": "HUB-5997",
+      "build17_row": "F10",
+      "what": "Adafruit 5997 CH334F",
+      "count": null,
+      "thread": "TBD",
+      "seat": "TBD",
+      "stack_mm": [],
+      "grip_mm": 0,
+      "receiver": {
+        "kind": "TBD",
+        "thread_mm": null,
+        "tip_limit": "TBD"
+      },
+      "min_engagement_mm": 0.0,
+      "length_window_mm": null,
+      "result": "OPEN: fixing not designed in the model yet (MECH-4 / MECH-5 / pod lineage): no stack"
+    },
+    {
+      "id": "IP2368",
+      "build17_row": "F11",
+      "what": "IP2368 board",
+      "count": null,
+      "thread": "TBD",
+      "seat": "TBD",
+      "stack_mm": [],
+      "grip_mm": 0,
+      "receiver": {
+        "kind": "TBD",
+        "thread_mm": null,
+        "tip_limit": "TBD"
+      },
+      "min_engagement_mm": 0.0,
+      "length_window_mm": null,
+      "result": "OPEN: fixing not designed in the model yet (MECH-4 / MECH-5 / pod lineage): no stack"
+    },
+    {
+      "id": "FAN-NF-A4X10",
+      "build17_row": "F27",
+      "what": "Noctua fan of cooler A",
+      "count": null,
+      "thread": "TBD",
+      "seat": "TBD",
+      "stack_mm": [],
+      "grip_mm": 0,
+      "receiver": {
+        "kind": "TBD",
+        "thread_mm": null,
+        "tip_limit": "TBD"
+      },
+      "min_engagement_mm": 0.0,
+      "length_window_mm": null,
+      "result": "OPEN: fixing not designed in the model yet (MECH-4 / MECH-5 / pod lineage): no stack"
+    },
+    {
+      "id": "BLOWER",
+      "build17_row": "F28",
+      "what": "Delta BFB0305HA-C",
+      "count": null,
+      "thread": "TBD",
+      "seat": "TBD",
+      "stack_mm": [],
+      "grip_mm": 0,
+      "receiver": {
+        "kind": "TBD",
+        "thread_mm": null,
+        "tip_limit": "TBD"
+      },
+      "min_engagement_mm": 0.0,
+      "length_window_mm": null,
+      "result": "OPEN: fixing not designed in the model yet (MECH-4 / MECH-5 / pod lineage): no stack"
+    },
+    {
+      "id": "HATCH-BOARD",
+      "build17_row": "F38",
+      "what": "hatch board HATCH",
+      "count": null,
+      "thread": "TBD",
+      "seat": "TBD",
+      "stack_mm": [],
+      "grip_mm": 0,
+      "receiver": {
+        "kind": "TBD",
+        "thread_mm": null,
+        "tip_limit": "TBD"
+      },
+      "min_engagement_mm": 0.0,
+      "length_window_mm": null,
+      "result": "OPEN: fixing not designed in the model yet (MECH-4 / MECH-5 / pod lineage): no stack"
+    },
+    {
+      "id": "PACK-FUSE",
+      "build17_row": "F39",
+      "what": "F101 carrier PACK_FUSE",
+      "count": null,
+      "thread": "TBD",
+      "seat": "TBD",
+      "stack_mm": [],
+      "grip_mm": 0,
+      "receiver": {
+        "kind": "TBD",
+        "thread_mm": null,
+        "tip_limit": "TBD"
+      },
+      "min_engagement_mm": 0.0,
+      "length_window_mm": null,
+      "result": "OPEN: fixing not designed in the model yet (MECH-4 / MECH-5 / pod lineage): no stack"
+    },
+    {
+      "id": "POD-MODULES",
+      "build17_row": "F42",
+      "what": "cf2235 / LaNA WB in the pod",
+      "count": null,
+      "thread": "TBD",
+      "seat": "TBD",
+      "stack_mm": [],
+      "grip_mm": 0,
+      "receiver": {
+        "kind": "TBD",
+        "thread_mm": null,
+        "tip_limit": "TBD"
+      },
+      "min_engagement_mm": 0.0,
+      "length_window_mm": null,
+      "result": "OPEN: fixing not designed in the model yet (MECH-4 / MECH-5 / pod lineage): no stack"
+    }
+  ],
+  "nut_and_kit_rows": {
+    "F14": "SMA bulkheads (R-SMA-THREAD)",
+    "F16": "F bulkhead P4 (R-SMA-THREAD)",
+    "F17": "BNC P5 (R-SMA-THREAD OPEN)",
+    "F18": "GX16-4 nut",
+    "F19": "GX12 LAB BUS nut",
+    "F20": "PEC11R nuts (R-ENC)",
+    "F21": "PV6 power key nut (R-PWR-KEY-NUT)",
+    "F22a": "LTW vents (threaded seats, R-VENT-SEAT)",
+    "F22b": "LTW vents with nuts",
+    "F23": "LAPP gland",
+    "F24": "Hammond 1550Z101 lid",
+    "F25": "captive 1/4-20 nut (R-TRIPOD)",
+    "F34": "PV6 EDL key nut",
+    "F36": "IMU board standoffs",
+    "F37": "1/4-20 insert",
+    "F43": "pod bulkheads and gland",
+    "F44": "pod vent",
+    "F03": "Armor 7056A kit",
+    "F15": "SMA mating torque"
+  },
+  "summary": {
+    "PASS": 16,
+    "OPEN": 15,
+    "FAIL": 0
+  }
+}

@@ -3,19 +3,19 @@
   "status": "MODEL FIT ONLY: envelopes and datasheet dimensions; no physical part was fitted. Hardware gates stay OPEN.",
   "generator": {
     "version": "1.0.0",
-    "params_sha256": "4409635d92266d3bbe1878b2aa12dab0b111f8e4416b362a6984fc772dd991ea",
-    "pcb_components_sha256": "662254f0e1ffab09e12e23b6ad50e02d79f8c1843616972daac8d7fbb32a31cd"
+    "params_sha256": "081a75124c7e420fc6a11df2feffc3716d5fe68af6ba6bf57bf00a52a3965da7",
+    "pcb_components_sha256": "46b558baf81653b225634e7f5e9b87e95d2b96e65617a0e4df9fd4665e1618b6"
   },
   "envelope": {
     "model": [
       230.0,
-      160.0,
-      66.0
+      163.8,
+      68.1
     ],
     "over_seam_belt": [
       233.8,
-      163.8,
-      66.0
+      167.60000000000002,
+      68.1
     ],
     "d15": [
       222.5,
@@ -24,16 +24,16 @@
     ],
     "growth_mm": [
       7.5,
-      22.5,
-      8.5
+      26.3,
+      10.6
     ],
-    "volume_l": 2.429,
+    "volume_l": 2.566,
     "volume_l_d15": 1.759,
-    "surface_m2": 0.1251,
+    "surface_m2": 0.129,
     "surface_m2_d15": 0.1026,
-    "surface_ratio": 1.219,
-    "front_m2": 0.0368,
-    "front_ratio": 1.203,
+    "surface_ratio": 1.257,
+    "front_m2": 0.0377,
+    "front_ratio": 1.231,
     "closed_bbox_mm": {
       "x": [
         -1.9,
@@ -41,11 +41,11 @@
       ],
       "y": [
         -1.9,
-        161.9
+        165.70000000000002
       ],
       "z": [
         -15.0,
-        83.0
+        85.1
       ],
       "rear_protrusions_z": {
         "strap lugs and tunnels": -6.0,
@@ -54,37 +54,25 @@
         "T7 gland outside (assumption)": -15.0
       },
       "front_protrusions_z": {
-        "front face": 66.0,
-        "hood hinge knuckles (hood folded on them)": 72.0,
-        "main knob": 83.0,
-        "volume knob (Adafruit 2055)": 79.5
+        "front face": 68.1,
+        "hood hinge knuckles (hood folded on them)": 74.1,
+        "main knob": 85.1,
+        "volume knob (Adafruit 2055)": 81.6
       },
-      "note": "GX16 cap, SMA/F/BNC caps and screw heads on the T7 holder are not counted (parts not chosen)"
+      "note": "GX16 cap, SMA/F/BNC caps and screw heads on the T7 holder are not counted (parts not chosen); side-face parts (RX2/REF IN bulkheads, the J551 M8 receptacle 7.5 mm proud of the right face) are not in W/H"
     },
     "fire_bag_23x30cm": {
       "rule": "flat bag: half-girths W + D <= 300 and H + D <= 230 mm, W/H over the seam belt, D = closed depth with every fixed protrusion (geometry estimate, model)",
-      "depth_mm": 98.0,
-      "depth_without_t7_holder_mm": 98.0,
-      "w_plus_d": 331.8,
-      "h_plus_d": 261.8,
+      "depth_mm": 100.1,
+      "depth_without_t7_holder_mm": 100.1,
+      "w_plus_d": 333.9,
+      "h_plus_d": 267.7,
       "result": "FAIL (model): charge on a non-flammable surface instead (STACK 5.8 fallback)"
     },
-    "reason": "height: battery strip (33.4) + middle row with the 112 x 56 HF+ can beside the Q6A + RF bay (60.5) along the top; depth: rear layer 36 (Q6A with cooler and fan duct) + plate 2 + front layer 16 (HDMI board, path-2 channel) + display 7; width: display glass 164.8 + HMI column 51 (build/05 1.1)"
+    "reason": "height: battery strip (33.4) + middle row with the 112 x 56 HF+ can beside the Q6A + RF bay (64.3: two rows of cased LNA modules, arrangement b, W2 MECH-3) along the top; depth: rear layer 36 (Q6A with cooler and fan duct) + plate 2 + front layer 18.1 (PWR-A + B2B 5.0 + PWR-B + parts 5.5 + path-2 channel 4.0, W2 MECH-3 dz 2.1) + display 7; width: display glass 164.8 + HMI column 51 (build/05 1.1)"
   },
   "collisions": [],
   "tight_below_0_5mm": [
-    {
-      "a": "display",
-      "b": "pwr_key_body",
-      "gap_mm": 0.0,
-      "result": "TIGHT (model)"
-    },
-    {
-      "a": "CTRL.r0",
-      "b": "plate.boss2",
-      "gap_mm": 0.4,
-      "result": "TIGHT (model)"
-    },
     {
       "a": "q6a.board",
       "b": "closure.boss6",
@@ -95,18 +83,6 @@
       "a": "hatch_parts",
       "b": "edl_key_body",
       "gap_mm": 0.0,
-      "result": "TIGHT (model)"
-    },
-    {
-      "a": "v4l_a",
-      "b": "rfbay.wall.bottom",
-      "gap_mm": 0.4,
-      "result": "TIGHT (model)"
-    },
-    {
-      "a": "v4l_b",
-      "b": "rfbay.wall.bottom",
-      "gap_mm": 0.4,
       "result": "TIGHT (model)"
     },
     {
@@ -126,27 +102,75 @@
   "channel_path2": [
     {
       "item": "PWR.r0",
-      "top_z": 51.5,
-      "gap_to_module_mm": 5.0,
+      "top_z": 47.0,
+      "gap_to_module_mm": 11.6,
       "result": "PASS (model)"
     },
     {
       "item": "PWR.r1",
-      "top_z": 53.0,
-      "gap_to_module_mm": 3.5,
-      "result": "TIGHT (model): local, below the 4 mm channel rule"
+      "top_z": 47.0,
+      "gap_to_module_mm": 11.6,
+      "result": "PASS (model)"
+    },
+    {
+      "item": "PWR.r1z0",
+      "top_z": 54.6,
+      "gap_to_module_mm": 4.0,
+      "result": "PASS (model)"
+    },
+    {
+      "item": "PWR.r1z1",
+      "top_z": 54.6,
+      "gap_to_module_mm": 4.0,
+      "result": "PASS (model)"
+    },
+    {
+      "item": "PWR_B.r0",
+      "top_z": 54.6,
+      "gap_to_module_mm": 4.0,
+      "result": "PASS (model)"
+    },
+    {
+      "item": "PWR_B.r1",
+      "top_z": 54.6,
+      "gap_to_module_mm": 4.0,
+      "result": "PASS (model)"
+    },
+    {
+      "item": "PWR_B.r2",
+      "top_z": 54.6,
+      "gap_to_module_mm": 4.0,
+      "result": "PASS (model)"
+    },
+    {
+      "item": "PWR_B.r3",
+      "top_z": 54.6,
+      "gap_to_module_mm": 4.0,
+      "result": "PASS (model)"
+    },
+    {
+      "item": "PWR_B.r4",
+      "top_z": 54.6,
+      "gap_to_module_mm": 4.0,
+      "result": "PASS (model)"
+    },
+    {
+      "item": "PWR_B.r5",
+      "top_z": 54.6,
+      "gap_to_module_mm": 4.0,
+      "result": "PASS (model)"
     },
     {
       "item": "blower",
       "top_z": 55.5,
-      "gap_to_module_mm": 1.0,
+      "gap_to_module_mm": 3.1,
       "result": "TIGHT (model): local, below the 4 mm channel rule"
     },
     {
       "item": "lime",
       "top_z": 53.5,
-      "gap_to_module_mm": 3.0,
-      "result": "TIGHT (model): local, below the 4 mm channel rule"
+      "gap_to_module_mm": 5.1,
+      "result": "PASS (model)"
     }
   ],
   "rules": [
@@ -209,40 +233,41 @@
       "id": "R-SMA-THREAD",
       "rule": "per panel port: thread left for mating after the 4.5 mm wall (ASA 2.5 + Al angle 2.0), washer and nut >= 3 full threads (1/4-36: 3 x 0.706; 3/8-32: 3 x 0.794)",
       "value_mm": {
-        "P1": "PASS (model): 3.25 mm left >= 2.12 (3 x 0.706); outside: thread (min) - wall - items 5 + 6 (max); the seal sits at the flange inside",
-        "P2": "PASS (model): 3.25 mm left >= 2.12 (3 x 0.706); outside: thread (min) - wall - items 5 + 6 (max); the seal sits at the flange inside",
-        "P3": "PASS (model): 3.25 mm left >= 2.12 (3 x 0.706); outside: thread (min) - wall - items 5 + 6 (max); the seal sits at the flange inside",
+        "P1": "OPEN: washer thickness not drawn: 2.32 mm left for it after the nut and 3 threads",
+        "P2": "OPEN: washer thickness not drawn: 2.48 mm left for it after the nut and 3 threads",
+        "P3": "OPEN: washer thickness not drawn: 2.48 mm left for it after the nut and 3 threads",
         "P4": "PASS (model): 3.6 mm left >= 2.38 (3 x 0.794); inside, for the W402 F plug: long side (min) - wall - washer - nut (max); the 7.6 short side outside is free for W401",
         "P5": "OPEN: drawing not readable: https://www.amphenolrf.com/en-us/assets/file/4065787441/ 2026-11-07 403 (distributor copies 403 or timeout, parts.json amphenol_242181); hole 9.7 is the typical 3/8-32 bulkhead value, the panel end, thread length and nut stay TBD (R-BULKHEAD-NUTS, R-SMA-THREAD)",
-        "P6": "PASS (model): 3.25 mm left >= 2.12 (3 x 0.706); outside: thread (min) - wall - items 5 + 6 (max); the seal sits at the flange inside",
+        "P6": "OPEN: washer thickness not drawn: 2.48 mm left for it after the nut and 3 threads",
         "P7": "OPEN: CAB.011 thread length and D-cut hole not in the READS-RF row web:taoglas-cab011-datasheet-spe-11-8-068-f (2026-11-07); the P7 pigtail is chosen by MECH-6 (B-06)",
-        "P8": "OPEN: washer thickness not drawn: 2.32 mm left for it after the nut and 3 threads",
+        "P8": "OPEN: washer thickness not drawn: 2.48 mm left for it after the nut and 3 threads",
         "RX1": "OPEN: nut and washer not drawn: 4.58 mm left for both after 3 threads (1/4-36 sets read: Taoglas p.11 items 5 + 6 up to 3.35, Samtec 2.5)",
         "RX2": "OPEN: nut and washer not drawn: 4.58 mm left for both after 3 threads (1/4-36 sets read: Taoglas p.11 items 5 + 6 up to 3.35, Samtec 2.5)",
         "REF_IN": "OPEN: nut and washer not drawn: 4.58 mm left for both after 3 threads (1/4-36 sets read: Taoglas p.11 items 5 + 6 up to 3.35, Samtec 2.5)"
       },
       "limit_mm": "3 x pitch; wall 4.5",
-      "result": "OPEN: P5, P7, P8, RX1, RX2, REF_IN (thread or hardware not drawn, or part not read); PASS (model): P1, P2, P3, P4, P6",
-      "source": "STACK 5.8 'стінка 4-5 мм'; parts.json taoglas_mhf1_sma_wp, taoglas_cab01075, adamtech_ca_dkca1_305l5, cinch_vfa340 (read 2026-11-07)"
+      "result": "OPEN: P1, P2, P3, P5, P6, P7, P8, RX1, RX2, REF_IN (thread or hardware not drawn, or part not read); PASS (model): P4",
+      "source": "STACK 5.8 'стінка 4-5 мм'; parts.json taoglas_cab718, taoglas_cab01075, adamtech_ca_dkca1_305l5, cinch_vfa340 (read 2026-11-07; port parts per W2 GR-2)"
     },
     {
       "id": "R-BULKHEAD-NUTS",
       "rule": "nut, washer or connector body of every panel bulkhead inside the wall: an envelope from the part's drawing in the envelope check (nut.*: clear of the RF-bay walls, modules and structure)",
       "value_mm": {
-        "P1": "d 10.20 x 3.40 deep: connector body and seal inside, nut outside (taoglas_mhf1_sma_wp)",
-        "P2": "d 10.20 x 3.40 deep: connector body and seal inside, nut outside (taoglas_mhf1_sma_wp)",
-        "P3": "d 10.20 x 3.40 deep: connector body and seal inside, nut outside (taoglas_mhf1_sma_wp)",
+        "P1": "d 9.24 x 3.40 deep: connector body hex inside, nut outside (adamtech_ca_dkca1_305l5)",
+        "P2": "d 9.24 x 3.60 deep: connector body hex inside, nut outside (taoglas_cab718)",
+        "P3": "d 9.24 x 3.60 deep: connector body hex inside, nut outside (taoglas_cab718)",
         "P4": "d 12.70 x 7.30 deep: washer, nut and the long side inside (cinch_vfa340)",
         "P5": "no envelope: drawing not readable: https://www.amphenolrf.com/en-us/assets/file/4065787441/ 2026-11-07 403 (distributor copies 403 or timeout, parts.json amphenol_242181); hole 9.7 is the typical 3/8-32 bulkhead value, the panel end, thread length and nut stay TBD (R-BULKHEAD-NUTS, R-SMA-THREAD)",
-        "P6": "d 10.20 x 3.40 deep: connector body and seal inside, nut outside (taoglas_mhf1_sma_wp)",
+        "P6": "d 9.24 x 3.60 deep: connector body hex inside, nut outside (taoglas_cab718)",
         "P7": "d 10.15 x 2.50 deep: sma_bulkhead_hw (representative hardware, part not read)",
-        "P8": "d 9.24 x 3.40 deep: connector body hex inside, nut outside (adamtech_ca_dkca1_305l5)",
+        "P8": "d 9.24 x 3.60 deep: connector body hex inside, nut outside (taoglas_cab718)",
         "RX1": "d 10.20 x 3.40 deep: connector body and seal inside, nut outside (taoglas_cab01075)",
         "RX2": "d 10.20 x 3.40 deep: connector body and seal inside, nut outside (taoglas_cab01075)",
         "REF_IN": "d 10.20 x 3.40 deep: connector body and seal inside, nut outside (taoglas_cab01075)",
+        "J551": "d 12.60 x 9.50 deep: collar, rear body and lead bend inside, nut outside (binder_76_6618_1111)",
         "LAB_BUS": "d 14.60 x 10.80 deep: nut and rear thread with solder cups (kinghelm_gx12_6p)"
       },
-      "result": "OPEN: no inner envelope for P5 (drawing not read); body OD or length not dimensioned, envelope reserve for P1, P2, P3, P6, P7, P8, RX1, RX2, REF_IN",
+      "result": "OPEN: no inner envelope for P5 (drawing not read); body OD or length not dimensioned, envelope reserve for P1, P7, RX1, RX2, REF_IN",
       "source": "parts.json (makers' drawings read 2026-11-07); envelopes in fit-report 'tight' / 'collisions'"
     },
     {
@@ -303,11 +328,11 @@
     {
       "id": "R-VENT-REACH",
       "rule": "space behind each vent seat minus the thread reach (worst vent)",
-      "value_mm": 1.8,
+      "value_mm": 3.9,
       "limit_mm": 0.5,
       "vent": "V2",
       "thread_reach_mm": 6.0,
-      "space_mm": 7.8,
+      "space_mm": 9.9,
       "result": "PASS (model)",
       "source": "LTW drawing: thread 10.0 (parts.json ltw_vent); envelopes in mechanical.json layout"
     },
@@ -371,11 +396,12 @@
         },
         "SL2": {
           "opening_mm2": 63.0,
-          "wires": 51,
+          "wires": 65,
           "wires_per_awg": {
+            "18": 4,
             "20": 10,
-            "24": 20,
-            "26": 21
+            "24": 23,
+            "26": 28
           }
         },
         "SL3": {
@@ -395,7 +421,7 @@
       "id": "R-PWR-MODULES",
       "rule": "modules on a board (height + mount standoff) inside the board envelope height there (worst module)",
       "value_mm": 10.17,
-      "limit_mm": 10.5,
+      "limit_mm": 12.1,
       "module": "PWR/D36V50F12",
       "result": "PASS (model)",
       "source": "boards.json modules_on_board / height_zones; parts.json pololu_d36v50"
@@ -439,24 +465,21 @@
       "id": "R-PPS-LEN",
       "rule": "PPS path Q6A J20.7 -> LC76G: harness length <= 200 mm (STACK 5.2 'UART7/PPS wiring <= 20 cm'; E3 J301 note)",
       "value_mm": {
-        "via_segments_mm": 322,
+        "via_segments_mm": 327,
         "branch_mm": 196
       },
       "limit_mm": 200.0,
-      "result": "OPEN (end provisional): S01+S25 = 322 mm > 200: decision (build/15 W2 MECH-1) — PPS + UART6 + GND branch off the S01 ribbon at the Q6A end and run directly to the LC76G in the rear layer (harness only, E3 nets unchanged; build/15 W2 MECH-1); branch PPS = 196 mm <= 200 (model; ends on board edge zones / envelope faces until the header and pin positions are placed); the margin depends on: J20 pin-1 orientation not read (Radxa Q6A header drawing, fetch-only): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch; P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge; P1 at the envelope edge towards the Q6A shortens the branch by up to half the envelope width (31.8 mm)",
+      "result": "OPEN (end provisional): S01+S25 = 327 mm > 200: decision (build/15 W2 MECH-1) — PPS + UART6 + GND branch off the S01 ribbon at the Q6A end and run directly to the LC76G in the rear layer (harness only, E3 nets unchanged; build/15 W2 MECH-1); branch PPS = 196 mm <= 200 (model; ends on board edge zones / envelope faces until the header and pin positions are placed); the margin depends on: J20 pin-1 orientation not read (Radxa Q6A header drawing, fetch-only): take-off at the centre of the S01 socket, while J20.7 (column 4 of 20, 2.54 pitch) sits 16.5 mm to one side of it: +/-16.5 mm on the branch; P1 header position on the Waveshare 24370 not read: end at the centre of the LC76G top edge; P1 at the envelope edge towards the Q6A shortens the branch by up to half the envelope width (31.8 mm)",
       "source": "mechanical.json harness_routes; generated/harness-routes.json"
     },
     {
       "id": "R-ROUTE-CLEAR",
       "rule": "harness route centrelines (mechanical.json harness_routes) clear of every envelope, keep-clear reserve and structure part; plate and RF-bay wall only through openings",
       "value_mm": {
-        "routed": 33,
-        "clear": 30,
-        "provisional_end": 33,
+        "routed": 36,
+        "clear": 33,
+        "provisional_end": 36,
         "no_route_unplaced_end": [
-          "S06",
-          "S07",
-          "S36",
           "S39",
           "S40"
         ],
@@ -470,7 +493,7 @@
           "S34"
         ]
       },
-      "result": "OPEN (end provisional): every routed centreline clears the envelopes and structure; 33 of 33 routes end on a board edge zone or at a module without an envelope (header positions, module envelopes and the bundle OD (AI-WIRE-PTFE) TBD); no route yet (end not placed): S06, S07, S36, S39, S40; provisional routes crossing a solid: S11, S23, S34; routes through a plate slot that plate.slots does not list (R-PLATE-SLOT-FILL undercounts): SL1: S27",
+      "result": "OPEN (end provisional): every routed centreline clears the envelopes and structure; 36 of 36 routes end on a board edge zone or at a module without an envelope (header positions, module envelopes and the bundle OD (AI-WIRE-PTFE) TBD); no route yet (end not placed): S39, S40; provisional routes crossing a solid: S11, S23, S34; routes through a plate slot that plate.slots does not list (R-PLATE-SLOT-FILL undercounts): SL1: S27",
       "source": "mechanical.json harness_routes, layout, plate.slots, rf_bay.notches"
     },
     {
@@ -482,16 +505,34 @@
           "X01I1-CTRL IDC_top 9.1 body",
           "X02P1-CTRL MF_top 17.27 mated",
           "X02P1-PWR MF_top 17.27 mated",
+          "X02S0-PWR PH_top 8 mated",
+          "X02S1-PWR PH_top 8 mated",
+          "X02S2-PWR PH_top 8 mated",
+          "X02S3-PWR PH_top 8 mated",
           "X04P1-PWR MF_top 17.27 mated",
           "X04P1-RF MF_top 17.27 mated",
+          "X04S1-PWR PH_top 8 mated",
+          "X05S1-PWR PH_top 8 mated",
+          "X06S1-PWR PH_top 8 mated",
+          "X07S1-PWR PH_top 8 mated",
+          "X10S1-PWR PH_top 8 mated",
           "X11P1-PWR MF_top 17.27 mated",
+          "X11S1-PWR PH_top 8 mated",
           "X12P1-PWR MF_top 17.27 mated",
           "X13P1-PWR MF_top 17.27 mated",
           "X14P1-PWR MF_top 17.27 mated",
           "X17P1-PWR MF_top 17.27 mated",
           "X18P1-PWR MF_top 17.27 mated",
           "X19P1-PWR MF_top 17.27 mated",
-          "X28P1-CTRL MF_top 17.27 mated"
+          "X20S1-PWR PH_top 8 mated",
+          "X21S1-PWR PH_top 8 mated",
+          "X22S1-PWR PH_top 8 mated",
+          "X23S1-PWR PH_top 8 mated",
+          "X28P1-CTRL MF_top 17.27 mated",
+          "X32S1-PWR PH_top 8 mated",
+          "X34S1-PWR PH_top 8 mated",
+          "X35S1-PWR PH_top 8 mated",
+          "X36S1-PWR PH_top 8 mated"
         ],
         "height_not_read": [
           "X05J1-PWR",
@@ -523,7 +564,8 @@
         }
       },
       "limit_mm": {
-        "PWR": 9.0,
+        "PWR": 4.5,
+        "PWR_B": 5.5,
         "RF": 5.5,
         "CTRL": 5.5,
         "ENC": 6.5
@@ -560,7 +602,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 3.4,
+          "best_rear_zone_mm": 5.5,
           "verdict": "above the board limit 5.5; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): above the board limit 5.5; fits no computed zone that takes its courtyard",
           "alternative": {
             "key": "MF_ra",
@@ -571,7 +613,7 @@
               10.91
             ],
             "best_front_zone_mm": 6.5,
-            "best_rear_zone_mm": 3.4,
+            "best_rear_zone_mm": 5.5,
             "verdict": "above the board limit 5.5; fits no computed zone that takes its courtyard"
           }
         },
@@ -587,10 +629,10 @@
             16.66,
             6.77
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "above the board limit 9; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): inside the board limit",
+          "verdict": "above the board limit 4.5; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): above the board limit 4.5; fits a component-side height zone",
           "alternative": {
             "key": "MF_ra",
             "h_mm": 6.98,
@@ -599,9 +641,9 @@
               16.66,
               10.91
             ],
-            "best_front_zone_mm": 10.5,
+            "best_front_zone_mm": 12.1,
             "best_rear_zone_mm": 0.0,
-            "verdict": "inside the board limit"
+            "verdict": "above the board limit 4.5; fits a component-side height zone"
           }
         },
         {
@@ -616,10 +658,10 @@
             12.9,
             5.5
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "inside the board limit"
+          "verdict": "above the board limit 4.5; fits a component-side height zone"
         },
         {
           "connector": "X02S1-CTRL",
@@ -635,7 +677,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 3.4,
+          "best_rear_zone_mm": 5.5,
           "verdict": "inside the board limit"
         },
         {
@@ -650,10 +692,10 @@
             34.9,
             5.5
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 4.5,
           "best_rear_zone_mm": 0.0,
-          "verdict": "inside the board limit"
+          "verdict": "above the board limit 4.5; fits no computed zone that takes its courtyard"
         },
         {
           "connector": "X02S2-CTRL",
@@ -669,7 +711,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 3.4,
+          "best_rear_zone_mm": 5.5,
           "verdict": "inside the board limit"
         },
         {
@@ -686,7 +728,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 3.4,
+          "best_rear_zone_mm": 5.5,
           "verdict": "inside the board limit"
         },
         {
@@ -701,10 +743,10 @@
             34.9,
             5.5
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 4.5,
           "best_rear_zone_mm": 0.0,
-          "verdict": "inside the board limit"
+          "verdict": "above the board limit 4.5; fits no computed zone that takes its courtyard"
         },
         {
           "connector": "X02S4-CTRL",
@@ -720,7 +762,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 3.4,
+          "best_rear_zone_mm": 5.5,
           "verdict": "inside the board limit"
         },
         {
@@ -737,7 +779,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 3.4,
+          "best_rear_zone_mm": 5.5,
           "verdict": "inside the board limit"
         },
         {
@@ -752,10 +794,10 @@
             18.9,
             5.5
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "inside the board limit"
+          "verdict": "above the board limit 4.5; fits a component-side height zone"
         },
         {
           "connector": "X03S1-CTRL",
@@ -771,7 +813,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 3.4,
+          "best_rear_zone_mm": 5.5,
           "verdict": "inside the board limit"
         },
         {
@@ -787,7 +829,7 @@
             8.6
           ],
           "max_height": 5.5,
-          "best_front_zone_mm": 29.3,
+          "best_front_zone_mm": 16.3,
           "best_rear_zone_mm": 2.5,
           "verdict": "inside the board limit"
         },
@@ -805,7 +847,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 13.9,
+          "best_rear_zone_mm": 16.0,
           "verdict": "inside the board limit"
         },
         {
@@ -821,7 +863,7 @@
             8.6
           ],
           "max_height": 5.5,
-          "best_front_zone_mm": 29.3,
+          "best_front_zone_mm": 16.3,
           "best_rear_zone_mm": 2.5,
           "verdict": "inside the board limit"
         },
@@ -837,10 +879,10 @@
             10.66,
             6.77
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "above the board limit 9; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): inside the board limit",
+          "verdict": "above the board limit 4.5; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): above the board limit 4.5; fits a component-side height zone",
           "alternative": {
             "key": "MF_ra",
             "h_mm": 6.98,
@@ -849,9 +891,9 @@
               10.66,
               10.91
             ],
-            "best_front_zone_mm": 10.5,
+            "best_front_zone_mm": 12.1,
             "best_rear_zone_mm": 0.0,
-            "verdict": "inside the board limit"
+            "verdict": "above the board limit 4.5; fits a component-side height zone"
           }
         },
         {
@@ -878,7 +920,7 @@
               10.66,
               10.91
             ],
-            "best_front_zone_mm": 29.3,
+            "best_front_zone_mm": 16.3,
             "best_rear_zone_mm": 2.5,
             "verdict": "above the board limit 5.5; fits a component-side height zone"
           }
@@ -895,10 +937,10 @@
             16.9,
             5.5
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "inside the board limit"
+          "verdict": "above the board limit 4.5; fits a component-side height zone"
         },
         {
           "connector": "X04S1-RF",
@@ -913,7 +955,7 @@
             8.6
           ],
           "max_height": 5.5,
-          "best_front_zone_mm": 29.3,
+          "best_front_zone_mm": 16.3,
           "best_rear_zone_mm": 2.5,
           "verdict": "inside the board limit"
         },
@@ -929,8 +971,8 @@
             11.7,
             13.0
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
           "verdict": "height of MFJ_top not read (TBD)"
         },
@@ -946,10 +988,10 @@
             6.9,
             5.5
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "inside the board limit"
+          "verdict": "above the board limit 4.5; fits a component-side height zone"
         },
         {
           "connector": "X06J1-PWR",
@@ -963,8 +1005,8 @@
             11.7,
             13.0
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
           "verdict": "height of MFJ_top not read (TBD)"
         },
@@ -980,10 +1022,10 @@
             12.9,
             5.5
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "inside the board limit"
+          "verdict": "above the board limit 4.5; fits a component-side height zone"
         },
         {
           "connector": "X07J1-PWR",
@@ -997,8 +1039,8 @@
             11.7,
             13.0
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
           "verdict": "height of MFJ_top not read (TBD)"
         },
@@ -1014,10 +1056,10 @@
             8.9,
             5.5
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "inside the board limit"
+          "verdict": "above the board limit 4.5; fits a component-side height zone"
         },
         {
           "connector": "X10J1-PWR",
@@ -1031,8 +1073,8 @@
             15.9,
             13.0
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
           "verdict": "height of MFJ_top not read (TBD)"
         },
@@ -1048,10 +1090,10 @@
             10.9,
             5.5
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "inside the board limit"
+          "verdict": "above the board limit 4.5; fits a component-side height zone"
         },
         {
           "connector": "X11P1-PWR",
@@ -1065,10 +1107,10 @@
             10.66,
             6.77
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "above the board limit 9; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): inside the board limit",
+          "verdict": "above the board limit 4.5; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): above the board limit 4.5; fits a component-side height zone",
           "alternative": {
             "key": "MF_ra",
             "h_mm": 6.98,
@@ -1077,9 +1119,9 @@
               10.66,
               10.91
             ],
-            "best_front_zone_mm": 10.5,
+            "best_front_zone_mm": 12.1,
             "best_rear_zone_mm": 0.0,
-            "verdict": "inside the board limit"
+            "verdict": "above the board limit 4.5; fits a component-side height zone"
           }
         },
         {
@@ -1094,10 +1136,10 @@
             6.9,
             5.5
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "inside the board limit"
+          "verdict": "above the board limit 4.5; fits a component-side height zone"
         },
         {
           "connector": "X12P1-PWR",
@@ -1111,10 +1153,10 @@
             10.66,
             6.77
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "above the board limit 9; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): inside the board limit",
+          "verdict": "above the board limit 4.5; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): above the board limit 4.5; fits a component-side height zone",
           "alternative": {
             "key": "MF_ra",
             "h_mm": 6.98,
@@ -1123,9 +1165,9 @@
               10.66,
               10.91
             ],
-            "best_front_zone_mm": 10.5,
+            "best_front_zone_mm": 12.1,
             "best_rear_zone_mm": 0.0,
-            "verdict": "inside the board limit"
+            "verdict": "above the board limit 4.5; fits a component-side height zone"
           }
         },
         {
@@ -1140,10 +1182,10 @@
             10.66,
             6.77
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "above the board limit 9; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): inside the board limit",
+          "verdict": "above the board limit 4.5; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): above the board limit 4.5; fits a component-side height zone",
           "alternative": {
             "key": "MF_ra",
             "h_mm": 6.98,
@@ -1152,9 +1194,9 @@
               10.66,
               10.91
             ],
-            "best_front_zone_mm": 10.5,
+            "best_front_zone_mm": 12.1,
             "best_rear_zone_mm": 0.0,
-            "verdict": "inside the board limit"
+            "verdict": "above the board limit 4.5; fits a component-side height zone"
           }
         },
         {
@@ -1169,10 +1211,10 @@
             10.66,
             6.77
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "above the board limit 9; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): inside the board limit",
+          "verdict": "above the board limit 4.5; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): above the board limit 4.5; fits a component-side height zone",
           "alternative": {
             "key": "MF_ra",
             "h_mm": 6.98,
@@ -1181,9 +1223,9 @@
               10.66,
               10.91
             ],
-            "best_front_zone_mm": 10.5,
+            "best_front_zone_mm": 12.1,
             "best_rear_zone_mm": 0.0,
-            "verdict": "inside the board limit"
+            "verdict": "above the board limit 4.5; fits a component-side height zone"
           }
         },
         {
@@ -1200,7 +1242,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 13.9,
+          "best_rear_zone_mm": 16.0,
           "verdict": "inside the board limit"
         },
         {
@@ -1215,10 +1257,10 @@
             10.66,
             6.77
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "above the board limit 9; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): inside the board limit",
+          "verdict": "above the board limit 4.5; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): above the board limit 4.5; fits a component-side height zone",
           "alternative": {
             "key": "MF_ra",
             "h_mm": 6.98,
@@ -1227,9 +1269,9 @@
               10.66,
               10.91
             ],
-            "best_front_zone_mm": 10.5,
+            "best_front_zone_mm": 12.1,
             "best_rear_zone_mm": 0.0,
-            "verdict": "inside the board limit"
+            "verdict": "above the board limit 4.5; fits a component-side height zone"
           }
         },
         {
@@ -1244,10 +1286,10 @@
             10.66,
             6.77
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "above the board limit 9; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): inside the board limit",
+          "verdict": "above the board limit 4.5; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): above the board limit 4.5; fits a component-side height zone",
           "alternative": {
             "key": "MF_ra",
             "h_mm": 6.98,
@@ -1256,9 +1298,9 @@
               10.66,
               10.91
             ],
-            "best_front_zone_mm": 10.5,
+            "best_front_zone_mm": 12.1,
             "best_rear_zone_mm": 0.0,
-            "verdict": "inside the board limit"
+            "verdict": "above the board limit 4.5; fits a component-side height zone"
           }
         },
         {
@@ -1273,10 +1315,10 @@
             10.66,
             6.77
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "above the board limit 9; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): inside the board limit",
+          "verdict": "above the board limit 4.5; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): above the board limit 4.5; fits a component-side height zone",
           "alternative": {
             "key": "MF_ra",
             "h_mm": 6.98,
@@ -1285,9 +1327,9 @@
               10.66,
               10.91
             ],
-            "best_front_zone_mm": 10.5,
+            "best_front_zone_mm": 12.1,
             "best_rear_zone_mm": 0.0,
-            "verdict": "inside the board limit"
+            "verdict": "above the board limit 4.5; fits a component-side height zone"
           }
         },
         {
@@ -1302,10 +1344,10 @@
             6.9,
             5.5
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "inside the board limit"
+          "verdict": "above the board limit 4.5; fits a component-side height zone"
         },
         {
           "connector": "X21S1-PWR",
@@ -1319,10 +1361,10 @@
             6.9,
             5.5
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "inside the board limit"
+          "verdict": "above the board limit 4.5; fits a component-side height zone"
         },
         {
           "connector": "X22S1-PWR",
@@ -1336,10 +1378,10 @@
             8.9,
             5.5
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "inside the board limit"
+          "verdict": "above the board limit 4.5; fits a component-side height zone"
         },
         {
           "connector": "X23S1-PWR",
@@ -1353,10 +1395,10 @@
             8.9,
             5.5
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "inside the board limit"
+          "verdict": "above the board limit 4.5; fits a component-side height zone"
         },
         {
           "connector": "X24S1-CTRL",
@@ -1372,7 +1414,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 13.9,
+          "best_rear_zone_mm": 16.0,
           "verdict": "inside the board limit"
         },
         {
@@ -1389,7 +1431,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 13.9,
+          "best_rear_zone_mm": 16.0,
           "verdict": "inside the board limit"
         },
         {
@@ -1406,7 +1448,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 13.9,
+          "best_rear_zone_mm": 16.0,
           "verdict": "inside the board limit"
         },
         {
@@ -1423,7 +1465,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 13.9,
+          "best_rear_zone_mm": 16.0,
           "verdict": "height of FAN3_top not read (TBD)"
         },
         {
@@ -1440,7 +1482,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 13.9,
+          "best_rear_zone_mm": 16.0,
           "verdict": "above the board limit 5.5; fits no computed zone that takes its courtyard; as MF_ra (6.98 mm mated): above the board limit 5.5; fits a rear zone (THT from the back)",
           "alternative": {
             "key": "MF_ra",
@@ -1451,7 +1493,7 @@
               10.91
             ],
             "best_front_zone_mm": 6.5,
-            "best_rear_zone_mm": 13.9,
+            "best_rear_zone_mm": 16.0,
             "verdict": "above the board limit 5.5; fits a rear zone (THT from the back)"
           }
         },
@@ -1469,7 +1511,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 13.9,
+          "best_rear_zone_mm": 16.0,
           "verdict": "inside the board limit"
         },
         {
@@ -1486,7 +1528,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 13.9,
+          "best_rear_zone_mm": 16.0,
           "verdict": "inside the board limit"
         },
         {
@@ -1501,10 +1543,10 @@
             10.9,
             5.5
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "inside the board limit"
+          "verdict": "above the board limit 4.5; fits a component-side height zone"
         },
         {
           "connector": "X34S1-PWR",
@@ -1518,10 +1560,10 @@
             14.9,
             5.5
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "inside the board limit"
+          "verdict": "above the board limit 4.5; fits a component-side height zone"
         },
         {
           "connector": "X35S1-PWR",
@@ -1535,10 +1577,10 @@
             6.9,
             5.5
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "inside the board limit"
+          "verdict": "above the board limit 4.5; fits a component-side height zone"
         },
         {
           "connector": "X36S1-PWR",
@@ -1552,10 +1594,10 @@
             6.9,
             5.5
           ],
-          "max_height": 9.0,
-          "best_front_zone_mm": 10.5,
+          "max_height": 4.5,
+          "best_front_zone_mm": 12.1,
           "best_rear_zone_mm": 0.0,
-          "verdict": "inside the board limit"
+          "verdict": "above the board limit 4.5; fits a component-side height zone"
         },
         {
           "connector": "X37S1-CTRL",
@@ -1571,7 +1613,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 13.9,
+          "best_rear_zone_mm": 16.0,
           "verdict": "inside the board limit"
         },
         {
@@ -1605,7 +1647,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 13.9,
+          "best_rear_zone_mm": 16.0,
           "verdict": "inside the board limit"
         },
         {
@@ -1639,7 +1681,7 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 13.9,
+          "best_rear_zone_mm": 16.0,
           "verdict": "inside the board limit"
         },
         {
@@ -1656,11 +1698,11 @@
           ],
           "max_height": 5.5,
           "best_front_zone_mm": 6.5,
-          "best_rear_zone_mm": 13.9,
+          "best_rear_zone_mm": 16.0,
           "verdict": "inside the board limit"
         }
       ],
-      "result": "OPEN: GR-3 decides (header orientation, board side or board): 13 headers above their board limit (X01I1-CTRL IDC_top 9.1 body, X02P1-CTRL MF_top 17.27 mated, X02P1-PWR MF_top 17.27 mated, X04P1-PWR MF_top 17.27 mated, X04P1-RF MF_top 17.27 mated, X11P1-PWR MF_top 17.27 mated, X12P1-PWR MF_top 17.27 mated, X13P1-PWR MF_top 17.27 mated, X14P1-PWR MF_top 17.27 mated, X17P1-PWR MF_top 17.27 mated, X18P1-PWR MF_top 17.27 mated, X19P1-PWR MF_top 17.27 mated, X28P1-CTRL MF_top 17.27 mated); as right-angle Micro-Fit (MF_ra 6.98 mm mated) 11 fit (X02P1-PWR, X04P1-PWR, X04P1-RF, X11P1-PWR, X12P1-PWR, X13P1-PWR, X14P1-PWR, X17P1-PWR, X18P1-PWR, X19P1-PWR, X28P1-CTRL), 1 fit no zone (X02P1-CTRL); judged on the header body because the mated height is not read: IDC_top (X01I1-CTRL); 5 heights not read"
+      "result": "OPEN: GR-3 decides (header orientation, board side or board): 31 headers above their board limit (X01I1-CTRL IDC_top 9.1 body, X02P1-CTRL MF_top 17.27 mated, X02P1-PWR MF_top 17.27 mated, X02S0-PWR PH_top 8 mated, X02S1-PWR PH_top 8 mated, X02S2-PWR PH_top 8 mated, X02S3-PWR PH_top 8 mated, X04P1-PWR MF_top 17.27 mated, X04P1-RF MF_top 17.27 mated, X04S1-PWR PH_top 8 mated, X05S1-PWR PH_top 8 mated, X06S1-PWR PH_top 8 mated, X07S1-PWR PH_top 8 mated, X10S1-PWR PH_top 8 mated, X11P1-PWR MF_top 17.27 mated, X11S1-PWR PH_top 8 mated, X12P1-PWR MF_top 17.27 mated, X13P1-PWR MF_top 17.27 mated, X14P1-PWR MF_top 17.27 mated, X17P1-PWR MF_top 17.27 mated, X18P1-PWR MF_top 17.27 mated, X19P1-PWR MF_top 17.27 mated, X20S1-PWR PH_top 8 mated, X21S1-PWR PH_top 8 mated, X22S1-PWR PH_top 8 mated, X23S1-PWR PH_top 8 mated, X28P1-CTRL MF_top 17.27 mated, X32S1-PWR PH_top 8 mated, X34S1-PWR PH_top 8 mated, X35S1-PWR PH_top 8 mated, X36S1-PWR PH_top 8 mated); as right-angle Micro-Fit (MF_ra 6.98 mm mated) 11 fit (X02P1-PWR, X04P1-PWR, X04P1-RF, X11P1-PWR, X12P1-PWR, X13P1-PWR, X14P1-PWR, X17P1-PWR, X18P1-PWR, X19P1-PWR, X28P1-CTRL), 1 fit no zone (X02P1-CTRL); judged on the header body because the mated height is not read: IDC_top (X01I1-CTRL); 5 heights not read"
     },
     {
       "id": "R-BOTTOM-PITCH",
@@ -1676,6 +1718,121 @@
       "limit_mm": 1.0,
       "result": "OPEN: USB_C_IN, LAB_USB_A, AUDIO_3V5 not modelled (mechanical.json bottom_face '_tbd_reason'); read but not placed: PX0845/A (hex 42) needs 22 mm + the neighbour radius to each neighbour, more than the 17 mm row pitch",
       "source": "mechanical.json bottom_face.ports; parts.json (makers' drawings read 2026-11-07)"
+    },
+    {
+      "id": "R-PWR-POCKETS",
+      "rule": "plate relief pocket >= 1 mm under every PWR-A THT pad group (pin field + 1 mm), polyimide over it",
+      "value_mm": {
+        "PK1": "D36V50F12: 16.40 x 6.24 x 1 deep at x 18.50..34.90, y 77.92..84.16; 10.7 mm to the nearest plate hole",
+        "PK2": "D36V50F5: 16.40 x 6.24 x 1 deep at x 18.50..34.90, y 109.92..116.16; 4.8 mm to the nearest plate hole"
+      },
+      "limit_mm": {
+        "depth_min": 1.0,
+        "plate_t": 2.0
+      },
+      "result": "OPEN: the Pololu pin rows are pocketed (M-07 PK1, PK2); the other PWR-A THT groups (radials C2xx/C511/C512, Keystone 3568 holders F102/F103/F201, the PWR-A harness headers: pcb/partition-budget.json candidates.a pwr_a_tht_pocket_items, 34 items with 72 pads incl. the two Pololu rows) are pocketed at the positions of the PCB-PWRA placement: OPEN until it exists (rule R-PWR-POCKETS)",
+      "source": "boards.json PWR tht_pockets / modules_on_board pin_field; pcb/partition-spec.json keepouts.pwr_a_tht_pockets"
+    },
+    {
+      "id": "R-J551",
+      "rule": "pod power receptacle J551 (binder M8): wall inside the data-sheet range, cut-out from the data sheet, inner envelope nut.J551 in the envelope check",
+      "source": "parts.json binder_76_6618_1111 (READS-E row web:binder-76-6618-1111-00003-0200); mechanical.json right_face.panel",
+      "value_mm": {
+        "face": "right",
+        "y": 106.0,
+        "z": 30.0,
+        "wall": 2.5,
+        "range": [
+          2.0,
+          6.5
+        ],
+        "hole_d": 10.1,
+        "proud_outside": 7.5,
+        "inner": [
+          12.6,
+          9.5
+        ],
+        "leads_mm": 200.0
+      },
+      "limit_mm": {
+        "wall": [
+          2.0,
+          6.5
+        ]
+      },
+      "result": "PASS (model): 2.5 mm ASA wall inside 2-6.5; inserted from inside (collar on the inner face), SW 11 nut outside, 7.5 mm proud of the right face; plain bore 10.1 (binder proposal 2)"
+    },
+    {
+      "id": "R-FASTENER-STACKS",
+      "rule": "screw joints: under-head length window between the minimum engagement and the tip limit (generated/fastener-stacks.json)",
+      "value_mm": {
+        "CLOSURE": [
+          15.5,
+          17.0
+        ],
+        "HATCH": [
+          8.25,
+          9.75
+        ],
+        "T7_HOLDER": [
+          14.0,
+          15.5
+        ],
+        "PLATE_PM1": [
+          6.5,
+          8.0
+        ],
+        "PLATE_PM2": [
+          6.5,
+          8.0
+        ],
+        "PLATE_PM3": [
+          6.5,
+          8.0
+        ],
+        "PLATE_PM4": [
+          6.5,
+          8.0
+        ],
+        "ANGLES": [
+          4.0,
+          4.0
+        ],
+        "PWR_A-PLATE": [
+          4.0,
+          4.0
+        ],
+        "PWR_B-STANDOFF": [
+          4.6,
+          6.1
+        ],
+        "RF-STANDOFF": [
+          4.6,
+          6.6
+        ],
+        "CTRL": [
+          5.35,
+          5.6
+        ],
+        "ENC": [
+          5.35,
+          5.6
+        ],
+        "UFS-BOSS": [
+          4.5,
+          4.7
+        ],
+        "LIME-PEDESTAL": [
+          5.0,
+          7.0
+        ],
+        "DISPLAY-CLAMP": [
+          5.75,
+          6.0
+        ]
+      },
+      "result": "OPEN: Q6A-STANDOFF, Q6A-PLATE, IMU-CARRIER, POD-LID, POD-PANEL, PWR-BOND, INA228, SWM-2813, HUB-5997, IP2368, FAN-NF-A4X10, BLOWER, HATCH-BOARD, PACK-FUSE, POD-MODULES (thread depth not read or fixing not designed); PASS (model): CLOSURE, HATCH, T7_HOLDER, PLATE_PM1, PLATE_PM2, PLATE_PM3, PLATE_PM4, ANGLES, PWR_A-PLATE, PWR_B-STANDOFF, RF-STANDOFF, CTRL, ENC, UFS-BOSS, LIME-PEDESTAL, DISPLAY-CLAMP",
+      "source": "mechanical/srrx_mech/fasteners.py; build/17 rows"
     },
     {
       "id": "R-TOOL-ACCESS",
@@ -1700,28 +1857,58 @@
   "rf_bay_packing": {
     "inner_mm": [
       192.5,
-      58.9
+      62.7
     ],
+    "clearance_mm": 0.5,
     "v4l_reserve": [
       95.0,
       27.0,
       13.0
     ],
+    "v4l_status": "listing",
     "socket_reserve": [
-      40.0,
-      16.0,
-      9.0
+      14.9,
+      22.0,
+      13.0
     ],
+    "socket_part": "wurth_614004190021",
     "lna_case": [
       73.7,
       30.6
     ],
-    "rows_mm": {
-      "layout (two dongles in one row)": 270.0,
-      "alternative (dongle + socket + LNA case per row)": 208.7
+    "arrangements": {
+      "a": {
+        "title": "two dongles with their sockets in one row, the LNA cases in a second row",
+        "row_mm": 221.3,
+        "height_mm": 59.1,
+        "fits": false,
+        "spare_row_mm": -28.8,
+        "spare_height_mm": 3.6
+      },
+      "b": {
+        "title": "LNA case + V4L + socket per row, two rows (LNA cases stacked at one end)",
+        "row_mm": 185.1,
+        "height_mm": 62.7,
+        "dongle_column_mm": 55.5,
+        "fits": true,
+        "spare_row_mm": 7.4,
+        "spare_height_mm": -0.0
+      },
+      "c": {
+        "title": "V4L + socket per row, two rows, LNA cases moved out of the bay",
+        "row_mm": 110.9,
+        "height_mm": 55.5,
+        "note": "fits without growth, but the two cased LNA modules then need a shielded place outside the RF bay with new wall ports and seals: none in the model, so not chosen",
+        "fits": true,
+        "spare_row_mm": 81.6,
+        "spare_height_mm": 7.2
+      }
     },
-    "alternative_height_mm": 61.2,
-    "result": "OPEN: the female USB ends of the two V4L leads are not inside the modelled bay; with the current reserves neither arrangement fits (measure the V4L and the socket, then re-pack or move the cased LNA modules out of the bay)"
+    "chosen": "b",
+    "layout_outside_bay": [],
+    "layout_missing": [],
+    "not_included": "coax mating plugs at the module SMA ends (cable assemblies TBD, SRC-2): (b) leaves the row spare between the LNA case and the V4L SMA end for a right-angle plug; the lead paths beyond notches N2/N3 to the hub (Adafruit 5997, envelope MECH-5)",
+    "result": "PASS (model): arrangement (b) 185.1 x 62.7 mm in 192.5 x 62.7; socket Wurth 614004190021 from its drawing; V4L reserve is the seller-listing maximum (measure at receipt)"
   },
   "board_area": {
     "method": "sum of the vendored KiCad 10.0.7 F.CrtYd courtyards (bbox; polygon area for a single fp_poly) of the bare board parts of pcb/generated/components.csv (DNP excluded) per board domain; need = modules (mount pcb_module) x 1.0 + other parts x fill factor 1.5 or 1.8 (1.8 = planning value) — MODEL ESTIMATE, not a placement",
@@ -1731,44 +1918,47 @@
       1.5,
       1.8
     ],
-    "parts_without_courtyard": [],
+    "parts_without_courtyard": [
+      "NT401"
+    ],
     "boards": {
       "PWR": {
         "area_mm2": 7910.0,
-        "courtyard_raw_mm2": 6438.0,
+        "courtyard_raw_mm2": 6613.0,
         "modules_mm2": 1342.0,
         "per_domain_raw_mm2": {
-          "PWR_MAIN": 2290.0,
-          "PWR_BRANCH": 3515.0,
-          "USB_POWER": 633.0
+          "PWR_MAIN": 2340.0,
+          "PWR_BRANCH": 3634.0,
+          "USB_POWER": 639.0
         },
         "per_group_raw_mm2": {
-          "E1 LAB5": 1149.0,
-          "E1 SYS12": 753.0,
-          "E2 Boni: малошумна захищена шина": 500.0,
-          "E2 LNB: малошумна захищена шина": 410.0,
-          "E2 J21: захищене живлення 12 V": 399.0,
-          "E2 LNA4V5: паралельні LT3045": 352.0,
+          "E1 LAB5": 1155.0,
+          "E1 SYS12": 759.0,
+          "E2 Boni: малошумна захищена шина": 512.0,
+          "E2 LNB: малошумна захищена шина": 416.0,
+          "E2 J21: захищене живлення 12 V": 412.0,
+          "E2 LNA4V5: паралельні LT3045": 358.0,
           "E5 VBUS HF+ з демпфованим LC": 306.0,
-          "E2 LNA: канал 2": 247.0,
-          "E2 LNA: канал 3": 247.0,
+          "E2 LNA: канал 2": 259.0,
+          "E2 LNA: канал 3": 259.0,
           "E5 VBUS RTL-A і LAB PORT": 228.0,
-          "E2 AUX12: верхній ключ і PTC": 185.0,
-          "E2 Дисплей: захищене живлення 12 V": 171.0,
-          "E2 Lime M.2: комутована шина 3.3 V": 166.0,
-          "E2 LNA: канал 1": 146.0,
-          "E2 LNA: канал 4": 146.0,
-          "E2 RTL-B: комутований VBUS": 136.0,
-          "E2 S-band LaNA WB: захищена шина 5 V": 136.0,
+          "E2 AUX12: верхній ключ і PTC": 191.0,
+          "E2 Дисплей: захищене живлення 12 V": 183.0,
+          "E2 Lime M.2: комутована шина 3.3 V": 173.0,
+          "E2 LNA: канал 1": 153.0,
+          "E2 LNA: канал 4": 153.0,
+          "E2 RTL-B: комутований VBUS": 142.0,
+          "E2 S-band LaNA WB: захищена шина 5 V": 142.0,
           "E1 Сервісний заряд": 119.0,
           "E1 AON і UV": 94.0,
           "E1 Головний вимикач": 92.0,
           "E2 INA3221: струми LNA1–3": 67.0,
           "E2 INA3221: струми LNA4, LNB і Boni": 67.0,
           "E5 LAB BUS I2C buffer": 57.0,
-          "E2 LNB: незалежне точне відсікання OVP": 46.0,
-          "E1 Захист USB-PD": 43.0,
-          "E5 Сервіс і зовнішні шини": 41.0,
+          "E2 LNB: незалежне точне відсікання OVP": 52.0,
+          "E1 Захист USB-PD": 50.0,
+          "E5 Сервіс і зовнішні шини": 47.0,
+          "E1 Контрольні точки": 31.0,
           "E2 LNB: контроль напруги": 31.0,
           "E2 Boni: контроль напруги": 31.0,
           "E2 AUX12: контроль напруги після PTC": 31.0,
@@ -1777,72 +1967,72 @@
         },
         "per_group_need_mm2": {
           "E1 LAB5": [
-            1388.0,
-            1532.0
+            1397.0,
+            1543.0
           ],
           "E1 SYS12": [
-            794.0,
-            818.0
+            803.0,
+            830.0
           ],
           "E2 Boni: малошумна захищена шина": [
-            750.0,
-            899.0
+            768.0,
+            922.0
           ],
           "E2 LNB: малошумна захищена шина": [
-            614.0,
-            737.0
+            624.0,
+            748.0
           ],
           "E2 J21: захищене живлення 12 V": [
-            599.0,
-            719.0
+            618.0,
+            742.0
           ],
           "E2 LNA4V5: паралельні LT3045": [
-            528.0,
-            633.0
+            537.0,
+            645.0
           ],
           "E5 VBUS HF+ з демпфованим LC": [
             460.0,
             552.0
           ],
           "E2 LNA: канал 2": [
-            370.0,
-            444.0
+            389.0,
+            466.0
           ],
           "E2 LNA: канал 3": [
-            370.0,
-            444.0
+            389.0,
+            466.0
           ],
           "E5 VBUS RTL-A і LAB PORT": [
             342.0,
             410.0
           ],
           "E2 AUX12: верхній ключ і PTC": [
-            278.0,
-            333.0
+            287.0,
+            345.0
           ],
           "E2 Дисплей: захищене живлення 12 V": [
-            256.0,
-            307.0
+            275.0,
+            330.0
           ],
           "E2 Lime M.2: комутована шина 3.3 V": [
-            249.0,
-            299.0
+            259.0,
+            311.0
           ],
           "E2 LNA: канал 1": [
-            220.0,
-            263.0
+            229.0,
+            275.0
           ],
           "E2 LNA: канал 4": [
-            220.0,
-            263.0
+            229.0,
+            275.0
           ],
           "E2 RTL-B: комутований VBUS": [
-            204.0,
-            245.0
+            213.0,
+            256.0
           ],
           "E2 S-band LaNA WB: захищена шина 5 V": [
-            204.0,
-            245.0
+            213.0,
+            256.0
           ],
           "E1 Сервісний заряд": [
             179.0,
@@ -1869,16 +2059,20 @@
             103.0
           ],
           "E2 LNB: незалежне точне відсікання OVP": [
-            69.0,
-            83.0
+            78.0,
+            94.0
           ],
           "E1 Захист USB-PD": [
-            65.0,
-            78.0
+            74.0,
+            89.0
           ],
           "E5 Сервіс і зовнішні шини": [
-            61.0,
-            74.0
+            71.0,
+            85.0
+          ],
+          "E1 Контрольні точки": [
+            47.0,
+            56.0
           ],
           "E2 LNB: контроль напруги": [
             47.0,
@@ -1901,27 +2095,46 @@
             23.0
           ]
         },
-        "parts": 333,
-        "need_1_5_mm2": 8986.0,
-        "need_1_8_mm2": 10515.0,
-        "estimate_mm2": 10515.0,
-        "ratio_1_5": 1.14,
-        "ratio_1_8": 1.33,
+        "parts": 361,
+        "need_1_5_mm2": 9248.0,
+        "need_1_8_mm2": 10830.0,
+        "estimate_mm2": 10830.0,
+        "ratio_1_5": 1.17,
+        "ratio_1_8": 1.37,
         "scope": "board parts and modules, without the harness headers",
-        "result": "OPEN: need 10515 mm2 at fill 1.8 > outline 7910 mm2 (model estimate; partition and placement decide, AREA / PCB)"
+        "result": "OPEN: need 10830 mm2 at fill 1.8 > outline 7910 mm2 (model estimate; partition and placement decide, AREA / PCB)"
+      },
+      "PWR_B": {
+        "area_mm2": 6516.0,
+        "courtyard_raw_mm2": 0.0,
+        "modules_mm2": 0.0,
+        "per_domain_raw_mm2": {
+          "PWR_BRANCH_SW": 0.0,
+          "USB_POWER_SW": 0.0
+        },
+        "per_group_raw_mm2": {},
+        "per_group_need_mm2": {},
+        "parts": 0,
+        "need_1_5_mm2": 0.0,
+        "need_1_8_mm2": 0.0,
+        "estimate_mm2": 0.0,
+        "ratio_1_5": 0.0,
+        "ratio_1_8": 0.0,
+        "scope": "board parts and modules, without the harness headers",
+        "result": "OPEN: no part of pcb/generated/components.csv in the domains PWR_BRANCH_SW, USB_POWER_SW yet (pcb/prepare.py creates them, GR-3)"
       },
       "RF": {
         "area_mm2": 8188.0,
-        "courtyard_raw_mm2": 2056.0,
+        "courtyard_raw_mm2": 2338.0,
         "modules_mm2": 0.0,
         "per_domain_raw_mm2": {
           "RF_HMC": 1011.0,
-          "RF_HF": 302.0,
-          "RF_INJECTOR": 252.0,
+          "RF_HF": 321.0,
+          "RF_INJECTOR": 516.0,
           "DC_CORE": 490.0
         },
         "per_group_raw_mm2": {
-          "E4 RF and receiver interfaces": 856.0,
+          "E4 RF and receiver interfaces": 1139.0,
           "E4 RF passives and drivers": 454.0,
           "E4 DC detectors: common reference": 171.0,
           "E4 DC detectors: UHF": 156.0,
@@ -1933,8 +2146,8 @@
         },
         "per_group_need_mm2": {
           "E4 RF and receiver interfaces": [
-            1284.0,
-            1541.0
+            1708.0,
+            2050.0
           ],
           "E4 RF passives and drivers": [
             680.0,
@@ -1969,21 +2182,21 @@
             32.0
           ]
         },
-        "parts": 163,
-        "need_1_5_mm2": 3083.0,
-        "need_1_8_mm2": 3700.0,
-        "estimate_mm2": 3700.0,
-        "ratio_1_5": 0.38,
-        "ratio_1_8": 0.45,
+        "parts": 168,
+        "need_1_5_mm2": 3508.0,
+        "need_1_8_mm2": 4209.0,
+        "estimate_mm2": 4209.0,
+        "ratio_1_5": 0.43,
+        "ratio_1_8": 0.51,
         "scope": "board parts and modules, without the harness headers",
         "result": "PASS (model estimate)"
       },
       "CTRL": {
         "area_mm2": 5915.0,
-        "courtyard_raw_mm2": 3300.0,
+        "courtyard_raw_mm2": 3306.0,
         "modules_mm2": 1221.0,
         "per_domain_raw_mm2": {
-          "CTRL_HMI": 3300.0
+          "CTRL_HMI": 3306.0
         },
         "per_group_raw_mm2": {
           "E3 Pico HMI": 1287.0,
@@ -1993,8 +2206,8 @@
           "E3 Cooling": 170.0,
           "E3 Q6A header": 120.0,
           "E3 HMI encoders": 66.0,
+          "E3 GNSS": 53.0,
           "E3 Pico power control": 48.0,
-          "E3 GNSS": 47.0,
           "E3 Ambient sensor": 31.0,
           "E3 MCP hardware watchdog reset": 26.0,
           "E3 Thermal sensors": 17.0
@@ -2028,13 +2241,13 @@
             99.0,
             118.0
           ],
+          "E3 GNSS": [
+            79.0,
+            95.0
+          ],
           "E3 Pico power control": [
             72.0,
             86.0
-          ],
-          "E3 GNSS": [
-            70.0,
-            84.0
           ],
           "E3 Ambient sensor": [
             47.0,
@@ -2049,11 +2262,11 @@
             31.0
           ]
         },
-        "parts": 130,
-        "need_1_5_mm2": 4340.0,
-        "need_1_8_mm2": 4963.0,
-        "estimate_mm2": 4963.0,
-        "ratio_1_5": 0.73,
+        "parts": 131,
+        "need_1_5_mm2": 4349.0,
+        "need_1_8_mm2": 4975.0,
+        "estimate_mm2": 4975.0,
+        "ratio_1_5": 0.74,
         "ratio_1_8": 0.84,
         "scope": "board parts and modules, without the harness headers",
         "result": "PASS (model estimate)"
@@ -2073,22 +2286,22 @@
           "headers": 31,
           "header_courtyard_mm2": 2652.0,
           "area_mm2": 7910.0,
-          "with_headers_raw_mm2": 9090.0,
-          "estimate_with_headers_1_5_mm2": 12964.0,
-          "estimate_with_headers_mm2": 15289.0,
-          "ratio": 1.93,
+          "with_headers_raw_mm2": 9265.0,
+          "estimate_with_headers_1_5_mm2": 13226.0,
+          "estimate_with_headers_mm2": 15604.0,
+          "ratio": 1.97,
           "frontage_mm": 389.0,
           "edge_zones_mm": 233,
-          "result": "OPEN: area 15289 > 7910 mm2 at fill 1.8; frontage 389 > 233 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"
+          "result": "OPEN: area 15604 > 7910 mm2 at fill 1.8; frontage 389 > 233 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"
         },
         "RF": {
           "headers": 4,
           "header_courtyard_mm2": 474.0,
           "area_mm2": 8188.0,
-          "with_headers_raw_mm2": 2530.0,
-          "estimate_with_headers_1_5_mm2": 3794.0,
-          "estimate_with_headers_mm2": 4553.0,
-          "ratio": 0.56,
+          "with_headers_raw_mm2": 2812.0,
+          "estimate_with_headers_1_5_mm2": 4219.0,
+          "estimate_with_headers_mm2": 5062.0,
+          "ratio": 0.62,
           "frontage_mm": 57.0,
           "edge_zones_mm": 344,
           "result": "PASS (model estimate)"
@@ -2097,13 +2310,13 @@
           "headers": 21,
           "header_courtyard_mm2": 2663.0,
           "area_mm2": 5915.0,
-          "with_headers_raw_mm2": 5963.0,
-          "estimate_with_headers_1_5_mm2": 8335.0,
-          "estimate_with_headers_mm2": 9757.0,
+          "with_headers_raw_mm2": 5969.0,
+          "estimate_with_headers_1_5_mm2": 8344.0,
+          "estimate_with_headers_mm2": 9769.0,
           "ratio": 1.65,
           "frontage_mm": 316.0,
           "edge_zones_mm": 145,
-          "result": "OPEN: area 9757 > 5915 mm2 at fill 1.8; frontage 316 > 145 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"
+          "result": "OPEN: area 9769 > 5915 mm2 at fill 1.8; frontage 316 > 145 mm of edge zones (model estimate; re-plan the board outline or fewer/denser headers — wave 2)"
         },
         "ENC": {
           "headers": 2,
@@ -2407,8 +2620,8 @@
             34.0,
             57.0
           ],
-          "free_mm": 3.9,
-          "fits_mm": 3.4,
+          "free_mm": 6.0,
+          "fits_mm": 5.5,
           "limit": "bms"
         },
         {
@@ -2418,8 +2631,8 @@
             9.5,
             5.5
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 16.5,
+          "fits_mm": 16.0,
           "limit": "plate.ext"
         },
         {
@@ -2429,8 +2642,8 @@
             6.5,
             5.5
           ],
-          "free_mm": 0.4,
-          "fits_mm": 0.0,
+          "free_mm": 2.5,
+          "fits_mm": 2.0,
           "limit": "plate.boss2"
         },
         {
@@ -2440,8 +2653,8 @@
             16.0,
             8.7
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 16.5,
+          "fits_mm": 16.0,
           "limit": "plate.ext"
         },
         {
@@ -2451,8 +2664,8 @@
             6.2,
             11.3
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 16.5,
+          "fits_mm": 16.0,
           "limit": "plate.ext"
         },
         {
@@ -2462,8 +2675,8 @@
             5.6,
             49.6
           ],
-          "free_mm": 3.6,
-          "fits_mm": 3.1,
+          "free_mm": 5.7,
+          "fits_mm": 5.2,
           "limit": "hdmi_route_front_up"
         },
         {
@@ -2473,8 +2686,8 @@
             4.2,
             11.3
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 16.5,
+          "fits_mm": 16.0,
           "limit": "plate.ext"
         },
         {
@@ -2484,8 +2697,8 @@
             6.2,
             27.5
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 16.5,
+          "fits_mm": 16.0,
           "limit": "plate.main"
         },
         {
@@ -2495,8 +2708,8 @@
             4.2,
             38.3
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 16.5,
+          "fits_mm": 16.0,
           "limit": "plate.main"
         },
         {
@@ -2506,8 +2719,8 @@
             0.8,
             4.0
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 16.5,
+          "fits_mm": 16.0,
           "limit": "plate.main"
         },
         {
@@ -2517,8 +2730,8 @@
             5.4,
             10.8
           ],
-          "free_mm": 3.6,
-          "fits_mm": 3.1,
+          "free_mm": 5.7,
+          "fits_mm": 5.2,
           "limit": "hdmi_route_front_turn"
         },
         {
@@ -2528,8 +2741,8 @@
             0.0,
             10.8
           ],
-          "free_mm": 3.6,
-          "fits_mm": 3.1,
+          "free_mm": 5.7,
+          "fits_mm": 5.2,
           "limit": "hdmi_route_front_turn"
         },
         {
@@ -2539,8 +2752,8 @@
             34.8,
             1.2
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 16.5,
+          "fits_mm": 16.0,
           "limit": "plate.main"
         },
         {
@@ -2550,8 +2763,8 @@
             34.8,
             5.6
           ],
-          "free_mm": 3.6,
-          "fits_mm": 3.1,
+          "free_mm": 5.7,
+          "fits_mm": 5.2,
           "limit": "hdmi_route_front_run"
         },
         {
@@ -2561,8 +2774,8 @@
             50.0,
             4.7
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 16.5,
+          "fits_mm": 16.0,
           "limit": "plate.main"
         },
         {
@@ -2572,8 +2785,8 @@
             12.0,
             14.5
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 16.5,
+          "fits_mm": 16.0,
           "limit": "plate.main"
         },
         {
@@ -2583,8 +2796,8 @@
             13.0,
             14.5
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 16.5,
+          "fits_mm": 16.0,
           "limit": "plate.main"
         },
         {
@@ -2594,8 +2807,8 @@
             12.0,
             10.5
           ],
-          "free_mm": 1.4,
-          "fits_mm": 0.9,
+          "free_mm": 3.5,
+          "fits_mm": 3.0,
           "limit": "lime"
         },
         {
@@ -2605,8 +2818,8 @@
             13.0,
             10.5
           ],
-          "free_mm": 1.4,
-          "fits_mm": 0.9,
+          "free_mm": 3.5,
+          "fits_mm": 3.0,
           "limit": "lime"
         },
         {
@@ -2616,8 +2829,8 @@
             50.0,
             15.5
           ],
-          "free_mm": 1.4,
-          "fits_mm": 0.9,
+          "free_mm": 3.5,
+          "fits_mm": 3.0,
           "limit": "lime"
         },
         {
@@ -2627,8 +2840,8 @@
             50.0,
             0.5
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 16.5,
+          "fits_mm": 16.0,
           "limit": "plate.main"
         },
         {
@@ -2638,8 +2851,8 @@
             12.0,
             25.0
           ],
-          "free_mm": 3.9,
-          "fits_mm": 3.4,
+          "free_mm": 6.0,
+          "fits_mm": 5.5,
           "limit": "ip2368"
         },
         {
@@ -2649,8 +2862,8 @@
             7.0,
             25.0
           ],
-          "free_mm": 3.9,
-          "fits_mm": 3.4,
+          "free_mm": 6.0,
+          "fits_mm": 5.5,
           "limit": "ip2368"
         },
         {
@@ -2660,8 +2873,8 @@
             6.0,
             27.5
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 16.5,
+          "fits_mm": 16.0,
           "limit": "plate.main"
         },
         {
@@ -2671,8 +2884,8 @@
             44.0,
             2.5
           ],
-          "free_mm": 3.9,
-          "fits_mm": 3.4,
+          "free_mm": 6.0,
+          "fits_mm": 5.5,
           "limit": "ip2368"
         },
         {
@@ -2682,8 +2895,8 @@
             40.0,
             6.5
           ],
-          "free_mm": 3.9,
-          "fits_mm": 3.4,
+          "free_mm": 6.0,
+          "fits_mm": 5.5,
           "limit": "ip2368"
         },
         {
@@ -2693,8 +2906,8 @@
             40.0,
             0.5
           ],
-          "free_mm": 14.4,
-          "fits_mm": 13.9,
+          "free_mm": 16.5,
+          "fits_mm": 16.0,
           "limit": "plate.main"
         }
       ]
@@ -2705,6 +2918,39 @@
           "rect": [
             0.0,
             0.0,
+            184.0,
+            0.1
+          ],
+          "free_mm": 29.8,
+          "fits_mm": 29.3,
+          "limit": "rfbay.lid"
+        },
+        {
+          "rect": [
+            0.0,
+            0.1,
+            73.7,
+            30.6
+          ],
+          "free_mm": 11.1,
+          "fits_mm": 10.6,
+          "limit": "sawbird"
+        },
+        {
+          "rect": [
+            73.7,
+            0.1,
+            7.9,
+            27.0
+          ],
+          "free_mm": 29.8,
+          "fits_mm": 29.3,
+          "limit": "rfbay.lid"
+        },
+        {
+          "rect": [
+            81.6,
+            0.1,
             95.0,
             27.0
           ],
@@ -2714,10 +2960,21 @@
         },
         {
           "rect": [
-            95.0,
-            0.0,
-            1.5,
-            27.0
+            176.6,
+            0.1,
+            7.4,
+            22.0
+          ],
+          "free_mm": 16.8,
+          "fits_mm": 16.3,
+          "limit": "usb_socket_a"
+        },
+        {
+          "rect": [
+            176.6,
+            22.1,
+            7.4,
+            5.0
           ],
           "free_mm": 29.8,
           "fits_mm": 29.3,
@@ -2725,10 +2982,32 @@
         },
         {
           "rect": [
-            96.5,
-            0.0,
-            87.5,
-            27.0
+            73.7,
+            27.1,
+            110.3,
+            0.5
+          ],
+          "free_mm": 29.8,
+          "fits_mm": 29.3,
+          "limit": "rfbay.lid"
+        },
+        {
+          "rect": [
+            73.7,
+            27.6,
+            7.9,
+            3.1
+          ],
+          "free_mm": 29.8,
+          "fits_mm": 29.3,
+          "limit": "rfbay.lid"
+        },
+        {
+          "rect": [
+            81.6,
+            27.6,
+            95.0,
+            16.9
           ],
           "free_mm": 16.8,
           "fits_mm": 16.3,
@@ -2736,9 +3015,20 @@
         },
         {
           "rect": [
+            176.6,
+            27.6,
+            7.4,
+            16.9
+          ],
+          "free_mm": 16.8,
+          "fits_mm": 16.3,
+          "limit": "usb_socket_b"
+        },
+        {
+          "rect": [
             0.0,
-            27.0,
-            184.0,
+            30.7,
+            81.6,
             0.5
           ],
           "free_mm": 29.8,
@@ -2748,31 +3038,9 @@
         {
           "rect": [
             0.0,
-            27.5,
+            31.2,
             73.7,
-            17.0
-          ],
-          "free_mm": 11.1,
-          "fits_mm": 10.6,
-          "limit": "sawbird"
-        },
-        {
-          "rect": [
-            73.7,
-            27.5,
-            9.6,
-            17.0
-          ],
-          "free_mm": 29.8,
-          "fits_mm": 29.3,
-          "limit": "rfbay.lid"
-        },
-        {
-          "rect": [
-            83.3,
-            27.5,
-            73.7,
-            17.0
+            13.3
           ],
           "free_mm": 11.1,
           "fits_mm": 10.6,
@@ -2780,10 +3048,10 @@
         },
         {
           "rect": [
-            157.0,
-            27.5,
-            27.0,
-            17.0
+            73.7,
+            31.2,
+            7.9,
+            13.3
           ],
           "free_mm": 29.8,
           "fits_mm": 29.3,
@@ -2813,7 +3081,7 @@
         "S01",
         "S25"
       ],
-      "via_segments_mm": 322,
+      "via_segments_mm": 327,
       "via_segments_provisional": true,
       "decision": "PPS + UART6 + GND branch off the S01 ribbon at the Q6A end and run directly to the LC76G in the rear layer (harness only, E3 nets unchanged; build/15 W2 MECH-1)",
       "branch": "PPS",
@@ -2828,8 +3096,8 @@
     "segments": {
       "S01": {
         "kind": "harness",
-        "length_mm": 102,
-        "path_mm": 66.0,
+        "length_mm": 105,
+        "path_mm": 68.1,
         "bends": 3,
         "bundle_od_mm": 2.54,
         "bend_allowance_mm": 6.0,
@@ -2840,8 +3108,8 @@
       },
       "S02": {
         "kind": "harness",
-        "length_mm": 189,
-        "path_mm": 80.5,
+        "length_mm": 191,
+        "path_mm": 82.6,
         "bends": 6,
         "bundle_od_mm": 16.55,
         "bend_allowance_mm": 78.0,
@@ -2850,8 +3118,8 @@
       },
       "S03": {
         "kind": "harness",
-        "length_mm": 308,
-        "path_mm": 219.1,
+        "length_mm": 310,
+        "path_mm": 221.2,
         "bends": 11,
         "bundle_od_mm": 6.71,
         "bend_allowance_mm": 58.0,
@@ -2886,13 +3154,27 @@
       },
       "S06": {
         "kind": "harness",
-        "length_mm": null,
-        "status": "OPEN (end provisional): INA228 5832 has no envelope or place in the model yet (MECH-3)"
+        "length_mm": 159,
+        "path_mm": 86.5,
+        "bends": 5,
+        "bundle_od_mm": 10.59,
+        "bend_allowance_mm": 41.6,
+        "through": [
+          "SL2"
+        ],
+        "status": "OPEN (end provisional): INA228 5832 terminal block position on the board not read (Adafruit page gives the outline only): end at the top (+y) face of its envelope; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
       },
       "S07": {
         "kind": "harness",
-        "length_mm": null,
-        "status": "OPEN (end provisional): Pololu #2813 has no envelope or place in the model yet (MECH-3)"
+        "length_mm": 136,
+        "path_mm": 70.1,
+        "bends": 5,
+        "bundle_od_mm": 8.95,
+        "bend_allowance_mm": 35.1,
+        "through": [
+          "SL2"
+        ],
+        "status": "OPEN (end provisional): #2813 terminal positions not read (no Pololu dimension drawing on the product page): end at the top (+y) face of its envelope; PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
       },
       "S10": {
         "kind": "harness",
@@ -2952,8 +3234,8 @@
       },
       "S15": {
         "kind": "harness",
-        "length_mm": 157,
-        "path_mm": 115.3,
+        "length_mm": 159,
+        "path_mm": 117.5,
         "bends": 7,
         "bundle_od_mm": 1.94,
         "bend_allowance_mm": 10.7,
@@ -3008,8 +3290,8 @@
       },
       "S20": {
         "kind": "harness",
-        "length_mm": 156,
-        "path_mm": 115.2,
+        "length_mm": 188,
+        "path_mm": 146.4,
         "bends": 5,
         "bundle_od_mm": 2.74,
         "bend_allowance_mm": 10.8,
@@ -3021,8 +3303,8 @@
       },
       "S21": {
         "kind": "harness",
-        "length_mm": 142,
-        "path_mm": 100.7,
+        "length_mm": 185,
+        "path_mm": 143.9,
         "bends": 5,
         "bundle_od_mm": 2.74,
         "bend_allowance_mm": 10.8,
@@ -3058,8 +3340,8 @@
       },
       "S24": {
         "kind": "harness",
-        "length_mm": 193,
-        "path_mm": 139.0,
+        "length_mm": 195,
+        "path_mm": 141.1,
         "bends": 9,
         "bundle_od_mm": 3.35,
         "bend_allowance_mm": 23.7,
@@ -3070,8 +3352,8 @@
       },
       "S25": {
         "kind": "harness",
-        "length_mm": 220,
-        "path_mm": 159.5,
+        "length_mm": 222,
+        "path_mm": 161.6,
         "bends": 8,
         "bundle_od_mm": 4.74,
         "bend_allowance_mm": 29.8,
@@ -3082,8 +3364,8 @@
       },
       "S26": {
         "kind": "harness",
-        "length_mm": 97,
-        "path_mm": 63.6,
+        "length_mm": 101,
+        "path_mm": 67.4,
         "bends": 1,
         "bundle_od_mm": 3.87,
         "bend_allowance_mm": 3.0,
@@ -3092,8 +3374,8 @@
       },
       "S27": {
         "kind": "stock_lead",
-        "length_mm": 111,
-        "path_mm": 67.5,
+        "length_mm": 113,
+        "path_mm": 69.6,
         "bends": 5,
         "bundle_od_mm": 3.35,
         "bend_allowance_mm": 13.2,
@@ -3104,8 +3386,8 @@
       },
       "S28": {
         "kind": "harness",
-        "length_mm": 38,
-        "path_mm": 4.9,
+        "length_mm": 40,
+        "path_mm": 7.0,
         "bends": 1,
         "bundle_od_mm": 3.38,
         "bend_allowance_mm": 2.7,
@@ -3114,8 +3396,8 @@
       },
       "S29": {
         "kind": "harness",
-        "length_mm": 72,
-        "path_mm": 32.9,
+        "length_mm": 78,
+        "path_mm": 38.8,
         "bends": 4,
         "bundle_od_mm": 2.74,
         "bend_allowance_mm": 8.6,
@@ -3124,8 +3406,8 @@
       },
       "S30": {
         "kind": "harness",
-        "length_mm": 177,
-        "path_mm": 125.1,
+        "length_mm": 179,
+        "path_mm": 127.2,
         "bends": 8,
         "bundle_od_mm": 3.35,
         "bend_allowance_mm": 21.0,
@@ -3187,8 +3469,15 @@
       },
       "S36": {
         "kind": "harness",
-        "length_mm": null,
-        "status": "OPEN (end provisional): pod power entry (J551 panel receptacle, GR-1) is not placed on a face yet (MECH-3)"
+        "length_mm": 190,
+        "path_mm": 148.5,
+        "bends": 5,
+        "bundle_od_mm": 2.74,
+        "bend_allowance_mm": 10.8,
+        "through": [
+          "SL2"
+        ],
+        "status": "OPEN (end provisional): J551 lead exit at the receptacle rear (0.2 m AWG 24 leads, soldered to the S36 wires, build/16): end at the rear face of the receptacle's inner envelope (nut.J551); PWR header position TBD (board layout; GR-3 header refs): end on the edge zone"
       },
       "S37": {
         "kind": "harness",
@@ -3267,11 +3556,16 @@
           "S24",
           "S25",
           "S30",
-          "S35"
+          "S35",
+          "S06",
+          "S07",
+          "S36"
         ],
         "routed": [
           "S03",
           "S04",
+          "S06",
+          "S07",
           "S13",
           "S14",
           "S15",
@@ -3283,7 +3577,8 @@
           "S24",
           "S25",
           "S30",
-          "S35"
+          "S35",
+          "S36"
         ],
         "listed_not_routed": [],
         "routed_not_listed": []
@@ -3589,12 +3884,12 @@
     "land_mm": 0.9,
     "result": "PASS (model)",
     "groove_centre_corner_r": 13.7,
-    "cord_length_mm": 754.0,
+    "cord_length_mm": 762.0,
     "cord_order_mm": 800,
     "closure": {
       "screws": 14,
       "max_span_mm": 121.0,
-      "mean_span_mm": 55.7,
+      "mean_span_mm": 56.3,
       "note": "seam length (outline approximated by its bounding rectangle) between neighbouring screws; the longest span is the lower-left corner, where the battery pack and the HF+ can reach the walls (no boss fits); T-07 decides; every screw is reachable from outside (R-TOOL-ACCESS, screws 1-2 after the T7 holder is removed)"
     }
   },
@@ -3697,10 +3992,10 @@
         "bbox_mm": [
           176.0,
           13.0,
-          56.5,
+          58.6,
           226.0,
           19.0,
-          62.0
+          64.1
         ],
         "result": "BY DESIGN (model)"
       },
@@ -3712,10 +4007,10 @@
         "bbox_mm": [
           176.0,
           110.0,
-          56.5,
+          58.6,
           182.0,
           116.0,
-          62.0
+          64.1
         ],
         "result": "BY DESIGN (model)"
       },
@@ -3727,10 +4022,10 @@
         "bbox_mm": [
           217.3,
           110.0,
-          56.5,
+          58.6,
           226.0,
           147.5,
-          62.0
+          64.1
         ],
         "result": "BY DESIGN (model)"
       },
@@ -3742,10 +4037,10 @@
         "bbox_mm": [
           176.0,
           110.0,
-          56.5,
+          58.6,
           226.0,
           116.0,
-          62.0
+          64.1
         ],
         "result": "BY DESIGN (model)"
       },
@@ -3757,10 +4052,10 @@
         "bbox_mm": [
           176.0,
           151.0,
-          56.5,
+          58.6,
           182.0,
           157.0,
-          62.0
+          64.1
         ],
         "result": "BY DESIGN (model)"
       },
@@ -3772,10 +4067,10 @@
         "bbox_mm": [
           216.0,
           147.5,
-          56.5,
+          58.6,
           222.0,
           150.0,
-          62.0
+          64.1
         ],
         "result": "BY DESIGN (model)"
       },
@@ -3787,10 +4082,10 @@
         "bbox_mm": [
           188.5,
           123.0,
-          55.9,
+          58.0,
           212.5,
           147.0,
-          62.4
+          64.5
         ],
         "result": "BY DESIGN (model)"
       },
@@ -3802,10 +4097,10 @@
         "bbox_mm": [
           188.5,
           82.0,
-          55.9,
+          58.0,
           212.5,
           106.0,
-          62.4
+          64.5
         ],
         "result": "BY DESIGN (model)"
       },
@@ -3889,7 +4184,7 @@
   },
   "volumes_cm3": {
     "front_shell": {
-      "cm3": 157.61,
+      "cm3": 164.65,
       "printed": true,
       "solids": 1,
       "bbox_mm": [
@@ -3897,13 +4192,13 @@
         -1.9,
         14.0,
         231.9,
-        161.9,
-        71.99
+        165.7,
+        74.09
       ],
-      "stl_triangles": 18668
+      "stl_triangles": 18906
     },
     "rear_shell": {
-      "cm3": 126.02,
+      "cm3": 128.5,
       "printed": true,
       "solids": 1,
       "bbox_mm": [
@@ -3911,7 +4206,7 @@
         -1.9,
         -6.0,
         231.9,
-        161.9,
+        165.7,
         14.0
       ],
       "stl_triangles": 11800
@@ -3936,11 +4231,11 @@
       "solids": 1,
       "bbox_mm": [
         6.0,
-        152.0,
-        66.0,
+        155.8,
+        68.1,
         171.0,
-        158.0,
-        101.0
+        161.8,
+        103.1
       ],
       "stl_triangles": 436
     },
@@ -4029,7 +4324,7 @@
       "stl_triangles": 2846
     },
     "plate_al": {
-      "cm3": 55.55,
+      "cm3": 57.04,
       "printed": false,
       "solids": 1,
       "bbox_mm": [
@@ -4037,7 +4332,7 @@
         3.0,
         38.5,
         226.5,
-        157.0,
+        160.8,
         40.5
       ]
     },
@@ -4047,10 +4342,10 @@
       "solids": 1,
       "bbox_mm": [
         36.0,
-        145.5,
+        149.3,
         23.5,
         214.0,
-        157.5,
+        161.3,
         38.5
       ]
     },
@@ -4094,7 +4389,7 @@
       ]
     },
     "rf_bay_walls_fr4": {
-      "cm3": 17.16,
+      "cm3": 17.58,
       "printed": false,
       "solids": 1,
       "bbox_mm": [
@@ -4102,12 +4397,12 @@
         97.0,
         4.1,
         211.2,
-        157.5,
+        161.3,
         38.5
       ]
     },
     "rf_bay_lid_fr4": {
-      "cm3": 18.8,
+      "cm3": 19.99,
       "printed": false,
       "solids": 1,
       "bbox_mm": [
@@ -4115,7 +4410,7 @@
         97.0,
         2.5,
         211.2,
-        157.5,
+        161.3,
         4.1
       ]
     },
@@ -4289,8 +4584,8 @@
   "printed_mass_upper_bound_g": {
     "rule": "solid CAD volume x 1.13 g/cm3 (PolyLite ASA, ISO 1183); real prints with 30 % infill weigh less",
     "parts": {
-      "front_shell": 178,
-      "rear_shell": 142,
+      "front_shell": 186,
+      "rear_shell": 145,
       "hatch_cover": 6,
       "hood": 18,
       "battery_tray": 26,
@@ -4315,10 +4610,10 @@
     "collisions": 0,
     "outside": 0,
     "rule_failures": 0,
-    "rules_open": 10,
+    "rules_open": 11,
     "antenna_rule_failures": 0,
     "board_area_failures": 0,
-    "board_area_open": 1,
+    "board_area_open": 2,
     "board_area_harness_open": 2,
     "thermal_failures": 0,
     "thermal_open": 3,
