@@ -523,6 +523,16 @@ class CutoutsLayerTypesAndDrillOffsets(unittest.TestCase):
         with self.assertRaises(SystemExit):  # a 2-layer board has no inner layer
             bg.validate_spec(candidate, 'ENC')
 
+    def test_cutout_keepout_spec_is_validated(self):
+        spec = copy.deepcopy(bg.read_json(bg.spec_path('CTRL')))
+        self.assertGreater(spec['cutouts']['keepout_margin_mm'], 0.3)  # above the copper-to-edge rule
+        for bad in ({'keepout_margin_mm': -1, 'keepout_layers': ['F.Cu']}, {'keepout_margin_mm': 0.35, 'keepout_layers': []},
+                    {'keepout_layers': ['F.Cu']}):
+            candidate = copy.deepcopy(spec)
+            candidate['cutouts'] = bad
+            with self.assertRaises(SystemExit):
+                bg.validate_spec(candidate, 'CTRL')
+
     def test_smd_drill_offset_without_size(self):
         geo = bg.footprint_geometry(PICO.read_text(encoding='utf-8'))
         self.assertTrue(any(p['number'] == '1' for p in geo['pads']))

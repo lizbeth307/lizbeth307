@@ -1440,10 +1440,10 @@
       "region": [
         0.25,
         6.3,
-        4.4,
+        2.0,
         51.9
       ],
-      "gap_mm": 0.4,
+      "gap_mm": 0.45,
       "decouple_gap_mm": 0.25,
       "members": [
         {
@@ -1493,7 +1493,21 @@
         {
           "ref": "R319",
           "rotation": 90
-        },
+        }
+      ]
+    },
+    {
+      "id": "TR3A",
+      "side": "F",
+      "region": [
+        37.05,
+        84.0,
+        49.95,
+        93.4
+      ],
+      "gap_mm": 0.45,
+      "decouple_gap_mm": 0.25,
+      "members": [
         {
           "ref": "R320",
           "rotation": 90
@@ -1531,15 +1545,49 @@
           "rotation": 90
         },
         {
+          "ref": "C302",
+          "rotation": 90
+        },
+        {
+          "ref": "C304",
+          "rotation": 90
+        },
+        {
+          "ref": "C306",
+          "rotation": 90
+        }
+      ]
+    },
+    {
+      "id": "TR3B",
+      "side": "F",
+      "region": [
+        42.6,
+        74.4,
+        49.95,
+        83.9
+      ],
+      "gap_mm": 0.45,
+      "decouple_gap_mm": 0.25,
+      "members": [
+        {
+          "ref": "Q306",
+          "rotation": 0
+        },
+        {
+          "ref": "R393",
+          "rotation": 90
+        },
+        {
+          "ref": "R394",
+          "rotation": 90
+        },
+        {
+          "ref": "R395",
+          "rotation": 90
+        },
+        {
           "ref": "R305",
-          "rotation": 90
-        },
-        {
-          "ref": "R306",
-          "rotation": 90
-        },
-        {
-          "ref": "R307",
           "rotation": 90
         }
       ]
@@ -1679,7 +1727,7 @@
         39.95,
         54.9
       ],
-      "gap_mm": 0.4,
+      "gap_mm": 0.45,
       "decouple_gap_mm": 0.25,
       "members": [
         {
@@ -1688,18 +1736,6 @@
         },
         {
           "ref": "C307",
-          "rotation": 90
-        },
-        {
-          "ref": "C302",
-          "rotation": 90
-        },
-        {
-          "ref": "C304",
-          "rotation": 90
-        },
-        {
-          "ref": "C306",
           "rotation": 90
         },
         {
@@ -1716,10 +1752,6 @@
         },
         {
           "ref": "Q302",
-          "rotation": 90
-        },
-        {
-          "ref": "Q306",
           "rotation": 90
         },
         {
@@ -1764,26 +1796,6 @@
         },
         {
           "ref": "R333",
-          "rotation": 90
-        },
-        {
-          "ref": "R363",
-          "rotation": 90
-        },
-        {
-          "ref": "R364",
-          "rotation": 90
-        },
-        {
-          "ref": "R393",
-          "rotation": 90
-        },
-        {
-          "ref": "R394",
-          "rotation": 90
-        },
-        {
-          "ref": "R395",
           "rotation": 90
         }
       ]
@@ -1836,6 +1848,10 @@
         },
         {
           "ref": "R371",
+          "rotation": 90
+        },
+        {
+          "ref": "R363",
           "rotation": 90
         }
       ]
@@ -1926,6 +1942,10 @@
         },
         {
           "ref": "R369",
+          "rotation": 90
+        },
+        {
+          "ref": "R364",
           "rotation": 90
         }
       ]
@@ -2078,6 +2098,14 @@
         },
         {
           "ref": "R362",
+          "rotation": 90
+        },
+        {
+          "ref": "R306",
+          "rotation": 90
+        },
+        {
+          "ref": "R307",
           "rotation": 90
         }
       ]
@@ -2738,11 +2766,99 @@
     "top",
     "bottom"
   ],
+  "cutouts": {
+    "keepout_margin_mm": 0.35,
+    "keepout_layers": [
+      "F.Cu",
+      "In1.Cu",
+      "In2.Cu",
+      "B.Cu"
+    ],
+    "why": "router keepout 0.35 mm around both ENC cut-outs: Freerouting keeps only its 0.15 mm clearance to the exported cut-out keepout, while the board rule is copper-to-edge 0.3 mm (route run 42415955022: 7 copper_edge_clearance errors along the cut-out edges)"
+  },
   "branch_exempt": {
     "U315": {
       "max_mm": 3.0,
       "min_width_mm": 0.5,
       "reason": "LAB5 input stub of the GNSS 5 V switch U315 (IN pin between pins at 0.95 mm pitch); the switch limits its own current to 0.144-0.192 A (RILIM 162k, netclasses.json E3_GNSS5V); scripted pre-route LAB5-U315-IN"
+    }
+  },
+  "neck_exempt": {
+    "J305": {
+      "escape_mm": 2.5,
+      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
+    },
+    "J314": {
+      "escape_mm": 2.5,
+      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
+    },
+    "D306": {
+      "escape_mm": 2.5,
+      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
+    },
+    "C342": {
+      "escape_mm": 2.5,
+      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
+    },
+    "C343": {
+      "escape_mm": 2.5,
+      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
+    },
+    "Q305": {
+      "escape_mm": 2.5,
+      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
+    },
+    "Q304": {
+      "escape_mm": 2.5,
+      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
+    },
+    "F301": {
+      "escape_mm": 2.5,
+      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
+    },
+    "C320": {
+      "escape_mm": 2.5,
+      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
+    },
+    "R367": {
+      "escape_mm": 2.5,
+      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
+    },
+    "U315": {
+      "escape_mm": 2.5,
+      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
+    },
+    "C321": {
+      "escape_mm": 2.5,
+      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
+    },
+    "C322": {
+      "escape_mm": 2.5,
+      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
+    },
+    "D301": {
+      "escape_mm": 2.5,
+      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
+    },
+    "D305": {
+      "escape_mm": 2.5,
+      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
+    },
+    "C318": {
+      "escape_mm": 2.5,
+      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
+    },
+    "C319": {
+      "escape_mm": 2.5,
+      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
+    },
+    "J313": {
+      "escape_mm": 2.5,
+      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
+    },
+    "J311": {
+      "escape_mm": 2.5,
+      "reason": "pad escape of a PWR3A/PWR1A net into a pad narrower than the class width: Freerouting 2.5.0 narrows the class track to 75 % next to the pad (route run 42415955022: 1.3874 mm of 1.85, 0.2624 mm of 0.35); the full class width resumes within the escape length"
     }
   },
   "cable_exits": {

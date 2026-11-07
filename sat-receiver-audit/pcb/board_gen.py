@@ -676,6 +676,11 @@ def validate_spec(spec, board):
     for name, kind in (spec['layers'].get('types') or {}).items():
         if name not in inner or kind not in ('power', 'signal'):
             raise SpecError(f'{board}: layers.types {name}: {kind!r} must be an inner copper layer typed power or signal')
+    cut = spec.get('cutouts')
+    if cut is not None:
+        margin = cut.get('keepout_margin_mm') if isinstance(cut, dict) else None
+        if not isinstance(margin, (int, float)) or margin < 0 or not cut.get('keepout_layers'):
+            raise SpecError(f'{board}: cutouts needs keepout_margin_mm >= 0 and keepout_layers')
     if spec.get('rules_file') is not None:
         raise SpecError(f'{board}: rules_file is set, but copying it into build/kicad/boards/{board}/{board}.kicad_dru '
                         '(and hashing it) is not implemented in board_gen yet; keep it null')
@@ -1243,6 +1248,24 @@ def build_board(pcb, spec, contract, template, temp):
             zone.SetDoNotAllowZoneFills('zone_fills' in blocks)
             zone.SetDoNotAllowPads('pads' in blocks)
             zone.SetDoNotAllowFootprints('footprints' in blocks)
+            board.Add(zone)
+    # Optional router keepouts over the contract cut-outs (spec cutouts {keepout_margin_mm, keepout_layers}): the Specctra
+    # export marks a cut-out as a keepout, but Freerouting keeps only its own clearance to it, less than the copper-to-edge
+    # rule, so a rule area grown by the margin blocks tracks and vias next to the cut-out edges.
+    cut_spec = spec.get('cutouts') or {}
+    for i, (x0, y0, x1, y1) in enumerate(cutout_rects(contract), 1):
+        m = float(cut_spec.get('keepout_margin_mm', 0) or 0)
+        if m <= 0:
+            break
+        rect = [(x0 - m, y0 - m), (x1 + m, y0 - m), (x1 + m, y1 + m), (x0 - m, y1 + m)]
+        for name in cut_spec.get('keepout_layers', []):
+            zone = add_polygon_zone(pcb, board, frame, rect, layer_id(board, name), f'KO_CUT{i}_{name}')
+            zone.SetIsRuleArea(True)
+            zone.SetDoNotAllowTracks(True)
+            zone.SetDoNotAllowVias(True)
+            zone.SetDoNotAllowZoneFills(False)
+            zone.SetDoNotAllowPads(False)
+            zone.SetDoNotAllowFootprints(False)
             board.Add(zone)
     for track in spec['pre_route'].get('tracks', []):
         layer = layer_id(board, track['layer'])
